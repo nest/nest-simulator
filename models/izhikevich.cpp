@@ -170,13 +170,6 @@ nest::izhikevich::izhikevich( const izhikevich& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::izhikevich::init_state_( const Node& proto )
-{
-  const izhikevich& pr = downcast< izhikevich >( proto );
-  S_ = pr.S_;
-}
-
-void
 nest::izhikevich::init_buffers_()
 {
   B_.spikes_.clear();   // includes resize

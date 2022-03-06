@@ -1,23 +1,23 @@
+.. _getting_help:
+
 Getting help
 ============
 
 Have a specific question or problem with NEST?
 ----------------------------------------------
 
-Check out the :doc:`troubleshooting section <troubleshooting>` for
+Check out the :ref:`troubleshooting section <troubleshooting>` for
 common issues.
 
 If your question is not on there, you are welcome to subscribe to our
-:doc:`Mailing List <community>` and ask.
+:ref:`Mailing List <community>` and ask.
 
 Getting help on the command line interface
 ------------------------------------------
 
-* The ``helpdesk()`` command will launch the documentation pages on
-  your browser.
-  
-* To access the High-level Python API reference material you can use
-  the commands:
+* The :py:func:`.helpdesk` command will launch the documentation pages on your browser.
+
+* To access the High-level Python API reference material you can use the commands:
 
     .. code-block:: python
 
@@ -30,29 +30,24 @@ Getting help on the command line interface
        # ... or in IPython
        nest.FunctionName?
 
-Model Information
+Model information
 -----------------
 
-* To get a complete list of the models available in NEST type:
+* To get a list of available neuron models, use:
 
     .. code-block:: python
 
-       nest.Models()
+       nest.node_models
 
-   * To get a list of only neuron models use:
-
-    .. code-block:: python
-
-       nest.Models(mtype='nodes')
-
-   * To get a list of only synapse models use:
+* To get a list of available synapse models, use:
 
     .. code-block:: python
 
-       nest.Models(mtype='synapses')
+       nest.synapse_models
 
 * To get details on model equations and parameters, use:
 
     .. code-block:: python
 
        nest.help('model_name')
+

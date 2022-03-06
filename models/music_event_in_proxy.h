@@ -50,14 +50,14 @@ A device which receives spikes from MUSIC
 Description
 +++++++++++
 
-A music_event_in_proxy can be used to pass spikes to nodes within NEST
+A ``music_event_in_proxy`` can be used to pass spikes to nodes within NEST
 which are received from another application.
 
 It uses the MUSIC library to receive spike events from other
-applications. The music_event_in_proxy represents one channel on a port
+applications. The ``music_event_in_proxy`` represents one channel on a port
 to which MUSIC can connect an event source. The music_event_in_proxy can
 be connected to local neurons or devices within NEST to receive
-the events. Multiple music_in_proxies can be configured to listen
+the events. Multiple ``music_in_proxies`` can be configured to listen
 on the same port, but each channel can only listened to by a
 single proxy.
 
@@ -120,7 +120,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& );
   void init_buffers_();
   void calibrate();
 
@@ -137,8 +136,7 @@ private:
     std::string port_name_; //!< the name of MUSIC port to connect to
     int channel_;           //!< the MUSIC channel of the port
 
-    Parameters_();                     //!< Sets default parameter values
-    Parameters_( const Parameters_& ); //!< Recalibrate all times
+    Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const;
 

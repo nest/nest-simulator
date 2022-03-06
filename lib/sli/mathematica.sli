@@ -3477,7 +3477,6 @@ SeeAlso: Max, Sort, Total, Variance
 
 % the following two definitions are used to make escaping of
 % SLI strings in Mathematica easier
-% e.g, see extras/mathematica/LinkMathematica.m
 % Diesmann, 1.4.2003
 %
 /NewLine (\n) def

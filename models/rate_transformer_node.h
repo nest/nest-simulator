@@ -35,10 +35,8 @@
 #include "event.h"
 #include "nest_types.h"
 #include "node.h"
-#include "normal_randomdev.h"
-#include "poisson_randomdev.h"
-#include "ring_buffer.h"
 #include "recordables_map.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 namespace nest
@@ -62,7 +60,7 @@ Base class for rate transformer model of the form
 
 The rate transformer node simply applies the nonlinearity specified in the
 input-function of the template class to all incoming inputs. The boolean
-parameter linear_summation determines whether the input function is applied to
+parameter ``linear_summation`` determines whether the input function is applied to
 the summed up incoming connections (True, default value, input
 represents phi) or to each input individually (False, input represents psi).
 
@@ -74,11 +72,9 @@ receiving rate neuron instead of using a direct connection.
 Please note that for instantaneous rate connections the rate arrives
 one time step later at the receiving rate neurons as with a direct connection.
 
-Remarks:
-
-- Weights on connections from and to the rate_transformer_node
-  are handled as usual.
-- Delays are honored on incoming and outgoing connections.
+Weights on connections from and to the ``rate_transformer_node`` are
+handled as usual. Delays are honored on incoming and outgoing
+connections.
 
 Receives
 ++++++++
@@ -118,8 +114,8 @@ public:
    */
 
   using Node::handle;
-  using Node::sends_secondary_event;
   using Node::handles_test_event;
+  using Node::sends_secondary_event;
 
   void handle( InstantaneousRateConnectionEvent& );
   void handle( DelayedRateConnectionEvent& );
@@ -143,7 +139,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
 

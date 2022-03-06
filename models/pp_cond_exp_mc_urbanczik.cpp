@@ -149,7 +149,8 @@ nest::pp_cond_exp_mc_urbanczik_dynamics( double, const double y[], double f[], v
     // In the paper the resting potential is set to zero and
     // the capacitance to one.
     f[ S::idx( n, S::V_M ) ] = ( -node.P_.urbanczik_params.g_L[ n ] * ( V_dnd - node.P_.urbanczik_params.E_L[ n ] )
-                                 + I_syn_ex + I_syn_in + I_conn_s_d ) / node.P_.urbanczik_params.C_m[ n ];
+                                 + I_syn_ex + I_syn_in + I_conn_s_d )
+      / node.P_.urbanczik_params.C_m[ n ];
 
     // derivative dendritic current
     f[ S::idx( n, S::I_EXC ) ] = -I_syn_ex / node.P_.urbanczik_params.tau_syn_ex[ n ];
@@ -239,8 +240,8 @@ nest::pp_cond_exp_mc_urbanczik::Parameters_::Parameters_( const Parameters_& p )
   }
 }
 
-nest::pp_cond_exp_mc_urbanczik::Parameters_& nest::pp_cond_exp_mc_urbanczik::Parameters_::operator=(
-  const Parameters_& p )
+nest::pp_cond_exp_mc_urbanczik::Parameters_&
+nest::pp_cond_exp_mc_urbanczik::Parameters_::operator=( const Parameters_& p )
 {
   assert( this != &p ); // would be bad logical error in program
 
@@ -291,14 +292,14 @@ nest::pp_cond_exp_mc_urbanczik::State_::State_( const State_& s )
   }
 }
 
-nest::pp_cond_exp_mc_urbanczik::State_& nest::pp_cond_exp_mc_urbanczik::State_::operator=( const State_& s )
+nest::pp_cond_exp_mc_urbanczik::State_&
+nest::pp_cond_exp_mc_urbanczik::State_::operator=( const State_& s )
 {
-  assert( this != &s ); // would be bad logical error in program
+  r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
   {
     y_[ i ] = s.y_[ i ];
   }
-  r_ = s.r_;
   return *this;
 }
 
@@ -495,13 +496,6 @@ nest::pp_cond_exp_mc_urbanczik::~pp_cond_exp_mc_urbanczik()
  * ---------------------------------------------------------------- */
 
 void
-nest::pp_cond_exp_mc_urbanczik::init_state_( const Node& proto )
-{
-  const pp_cond_exp_mc_urbanczik& pr = downcast< pp_cond_exp_mc_urbanczik >( proto );
-  S_ = pr.S_;
-}
-
-void
 nest::pp_cond_exp_mc_urbanczik::init_buffers_()
 {
   B_.spikes_.resize( NUM_SPIKE_RECEPTORS );
@@ -564,7 +558,7 @@ nest::pp_cond_exp_mc_urbanczik::calibrate()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
-  V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
+  V_.rng_ = get_vp_specific_rng( get_thread() );
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref ) ).get_steps();
 
@@ -659,8 +653,8 @@ nest::pp_cond_exp_mc_urbanczik::update( Time const& origin, const long from, con
         else
         {
           // Draw Poisson random number of spikes
-          V_.poisson_dev_.set_lambda( rate * V_.h_ * 1e-3 );
-          n_spikes = V_.poisson_dev_.ldev( V_.rng_ );
+          poisson_distribution::param_type param( rate * V_.h_ * 1e-3 );
+          n_spikes = V_.poisson_dist_( V_.rng_, param );
         }
 
         if ( n_spikes > 0 ) // Is there a spike? Then set the new dead time.

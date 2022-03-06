@@ -41,13 +41,13 @@ Static synapse with stochastic transmission
 Description
 +++++++++++
 
-Spikes are transmitted by bernoulli_synapse following a Bernoulli
-trial with success probability p_transmit. This synaptic mechanism was
+Spikes are transmitted by ``bernoulli_synapse`` following a Bernoulli
+trial with success probability ``p_transmit``. This synaptic mechanism was
 inspired by the results described in [1]_ of greater transmission
 probability for stronger excitatory connections and it was previously
-applied in [2]_ and [3].
+applied in [2]_ and [3]_.
 
-bernoulli_synapse does not support any kind of plasticity. It simply
+``bernoulli_synapse`` does not support any kind of plasticity. It simply
 stores the parameters target, weight, transmission probability, delay
 and receiver port for each connection.
 
@@ -147,13 +147,12 @@ public:
   {
     SpikeEvent e_spike = static_cast< SpikeEvent& >( e );
 
-    librandom::RngPtr rng = kernel().rng_manager.get_rng( t );
     const unsigned long n_spikes_in = e_spike.get_multiplicity();
     unsigned long n_spikes_out = 0;
 
     for ( unsigned long n = 0; n < n_spikes_in; ++n )
     {
-      if ( rng->drand() < p_transmit_ )
+      if ( get_vp_specific_rng( t )->drand() < p_transmit_ )
       {
         ++n_spikes_out;
       }

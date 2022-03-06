@@ -95,12 +95,14 @@ nest::aeif_psc_delta_dynamics( double, const double y[], double f[], void* pnode
   const double V = is_refractory ? node.P_.V_reset_ : std::min( y[ S::V_M ], node.P_.V_peak_ );
   const double& w = y[ S::W ];
 
-  const double I_spike = node.P_.Delta_T == 0. ? 0. : node.P_.g_L * node.P_.Delta_T
-      * std::exp( ( V - node.P_.V_th ) * node.V_.Delta_T_inv_ );
+  const double I_spike = node.P_.Delta_T == 0.
+    ? 0.
+    : node.P_.g_L * node.P_.Delta_T * std::exp( ( V - node.P_.V_th ) * node.V_.Delta_T_inv_ );
 
   // dv/dt
-  f[ S::V_M ] = is_refractory ? 0.0 : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - w + node.P_.I_e
-                                        + node.B_.I_stim_ ) * node.V_.C_m_inv_;
+  f[ S::V_M ] = is_refractory
+    ? 0.0
+    : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - w + node.P_.I_e + node.B_.I_stim_ ) * node.V_.C_m_inv_;
 
   // Adaptation current w.
   f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) * node.V_.tau_w_inv_;
@@ -115,6 +117,7 @@ nest::aeif_psc_delta_dynamics( double, const double y[], double f[], void* pnode
 nest::aeif_psc_delta::Parameters_::Parameters_()
   : V_peak_( 0.0 )    // mV
   , V_reset_( -60.0 ) // mV
+  , t_ref_( 0.0 )     // ms
   , g_L( 30.0 )       // nS
   , C_m( 281.0 )      // pF
   , E_L( -70.6 )      // mV
@@ -123,7 +126,6 @@ nest::aeif_psc_delta::Parameters_::Parameters_()
   , a( 4.0 )          // nS
   , b( 80.5 )         // pA
   , V_th( -50.4 )     // mV
-  , t_ref_( 0.0 )     // ms
   , I_e( 0.0 )        // pA
   , gsl_error_tol( 1e-6 )
   , with_refr_input_( false )
@@ -151,15 +153,15 @@ nest::aeif_psc_delta::State_::State_( const State_& s )
   }
 }
 
-nest::aeif_psc_delta::State_& nest::aeif_psc_delta::State_::operator=( const State_& s )
+nest::aeif_psc_delta::State_&
+nest::aeif_psc_delta::State_::operator=( const State_& s )
 {
-  assert( this != &s ); // would be bad logical error in program
-
+  refr_spikes_buffer_ = s.refr_spikes_buffer_;
+  r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
   {
     y_[ i ] = s.y_[ i ];
   }
-  r_ = s.r_;
   return *this;
 }
 
@@ -335,13 +337,6 @@ nest::aeif_psc_delta::~aeif_psc_delta()
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::aeif_psc_delta::init_state_( const Node& proto )
-{
-  const aeif_psc_delta& pr = downcast< aeif_psc_delta >( proto );
-  S_ = pr.S_;
-}
 
 void
 nest::aeif_psc_delta::init_buffers_()

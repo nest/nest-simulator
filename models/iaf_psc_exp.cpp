@@ -34,6 +34,7 @@
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "ring_buffer_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -58,8 +59,6 @@ RecordablesMap< iaf_psc_exp >::create()
 {
   // use standard names whereever you can for consistency!
   insert_( names::V_m, &iaf_psc_exp::get_V_m_ );
-  insert_( names::weighted_spikes_ex, &iaf_psc_exp::get_weighted_spikes_ex_ );
-  insert_( names::weighted_spikes_in, &iaf_psc_exp::get_weighted_spikes_in_ );
   insert_( names::I_syn_ex, &iaf_psc_exp::get_I_syn_ex_ );
   insert_( names::I_syn_in, &iaf_psc_exp::get_I_syn_in_ );
 }
@@ -234,18 +233,9 @@ nest::iaf_psc_exp::iaf_psc_exp( const iaf_psc_exp& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_psc_exp::init_state_( const Node& proto )
-{
-  const iaf_psc_exp& pr = downcast< iaf_psc_exp >( proto );
-  S_ = pr.S_;
-}
-
-void
 nest::iaf_psc_exp::init_buffers_()
 {
-  B_.spikes_ex_.clear(); // includes resize
-  B_.spikes_in_.clear(); // includes resize
-  B_.currents_.clear();  // includes resize
+  B_.input_buffer_.clear(); // includes resize
   B_.logger_.reset();
   ArchivingNode::clear_history();
 }
@@ -253,36 +243,22 @@ nest::iaf_psc_exp::init_buffers_()
 void
 nest::iaf_psc_exp::calibrate()
 {
-  B_.currents_.resize( 2 );
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
   const double h = Time::get_resolution().get_ms();
 
-  // numbering of state vaiables: i_0 = 0, i_syn_ = 1, V_m_ = 2
-
-  // commented out propagators: forward Euler
-  // needed to exactly reproduce Tsodyks network
-
   // these P are independent
   V_.P11ex_ = std::exp( -h / P_.tau_ex_ );
-  // P11ex_ = 1.0-h/tau_ex_;
-
   V_.P11in_ = std::exp( -h / P_.tau_in_ );
-  // P11in_ = 1.0-h/tau_in_;
 
   V_.P22_ = std::exp( -h / P_.Tau_ );
-  // P22_ = 1.0-h/Tau_;
 
   // these are determined according to a numeric stability criterion
   V_.P21ex_ = propagator_32( P_.tau_ex_, P_.Tau_, P_.C_, h );
   V_.P21in_ = propagator_32( P_.tau_in_, P_.Tau_, P_.C_, h );
 
-  // P21ex_ = h/C_;
-  // P21in_ = h/C_;
-
   V_.P20_ = P_.Tau_ / P_.C_ * ( 1.0 - V_.P22_ );
-  // P20_ = h/C_;
 
   // t_ref_ specifies the length of the absolute refractory period as
   // a double in ms. The grid based iaf_psc_exp can only handle refractory
@@ -305,7 +281,7 @@ nest::iaf_psc_exp::calibrate()
   // since t_ref_ >= 0, this can only fail in error
   assert( V_.RefractoryCounts_ >= 0 );
 
-  V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
+  V_.rng_ = get_vp_specific_rng( get_thread() );
 }
 
 void
@@ -337,11 +313,15 @@ nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
     // add evolution of presynaptic input current
     S_.i_syn_ex_ += ( 1. - V_.P11ex_ ) * S_.i_1_;
 
+    // get read access to the correct input-buffer slot
+    const index input_buffer_slot = kernel().event_delivery_manager.get_modulo( lag );
+    auto& input = B_.input_buffer_.get_values_all_channels( input_buffer_slot );
+
     // the spikes arriving at T+1 have an immediate effect on the state of the
     // neuron
 
-    V_.weighted_spikes_ex_ = B_.spikes_ex_.get_value( lag );
-    V_.weighted_spikes_in_ = B_.spikes_in_.get_value( lag );
+    V_.weighted_spikes_ex_ = input[ Buffers_::SYN_EX ];
+    V_.weighted_spikes_in_ = input[ Buffers_::SYN_IN ];
 
     S_.i_syn_ex_ += V_.weighted_spikes_ex_;
     S_.i_syn_in_ += V_.weighted_spikes_in_;
@@ -359,8 +339,11 @@ nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
     }
 
     // set new input current
-    S_.i_0_ = B_.currents_[ 0 ].get_value( lag );
-    S_.i_1_ = B_.currents_[ 1 ].get_value( lag );
+    S_.i_0_ = input[ Buffers_::I0 ];
+    S_.i_1_ = input[ Buffers_::I1 ];
+
+    // reset all values in the currently processed input-buffer slot
+    B_.input_buffer_.reset_values_all_channels( input_buffer_slot );
 
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );
@@ -372,16 +355,13 @@ nest::iaf_psc_exp::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  if ( e.get_weight() >= 0.0 )
-  {
-    B_.spikes_ex_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-      e.get_weight() * e.get_multiplicity() );
-  }
-  else
-  {
-    B_.spikes_in_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-      e.get_weight() * e.get_multiplicity() );
-  }
+  const index input_buffer_slot = kernel().event_delivery_manager.get_modulo(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
+
+  const double s = e.get_weight() * e.get_multiplicity();
+
+  // separate buffer channels for excitatory and inhibitory inputs
+  B_.input_buffer_.add_value( input_buffer_slot, s > 0 ? Buffers_::SYN_EX : Buffers_::SYN_IN, s );
 }
 
 void
@@ -392,14 +372,16 @@ nest::iaf_psc_exp::handle( CurrentEvent& e )
   const double c = e.get_current();
   const double w = e.get_weight();
 
-  // add weighted current; HEP 2002-10-04
+  const index input_buffer_slot = kernel().event_delivery_manager.get_modulo(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
+
   if ( 0 == e.get_rport() )
   {
-    B_.currents_[ 0 ].add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+    B_.input_buffer_.add_value( input_buffer_slot, Buffers_::I0, w * c );
   }
   if ( 1 == e.get_rport() )
   {
-    B_.currents_[ 1 ].add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+    B_.input_buffer_.add_value( input_buffer_slot, Buffers_::I1, w * c );
   }
 }
 

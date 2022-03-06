@@ -72,7 +72,8 @@ Parser::Parser( void )
 }
 
 
-bool Parser::operator()( Token& t )
+bool
+Parser::operator()( Token& t )
 {
   assert( s != NULL );
 
@@ -104,14 +105,9 @@ bool Parser::operator()( Token& t )
       }
       else if ( t.contains( s->BeginArraySymbol ) )
       {
-#ifdef PS_ARRAYS
         Token cb( new NameDatum( "[" ) );
         t.move( cb );
         result = tokencontinue;
-#else
-        ParseStack.push( new ArrayDatum() );
-        result = scancontinue;
-#endif
       }
       else if ( t.contains( s->EndProcedureSymbol ) )
       {
@@ -135,29 +131,9 @@ bool Parser::operator()( Token& t )
       }
       else if ( t.contains( s->EndArraySymbol ) )
       {
-#ifdef PS_ARRAYS
         Token ob( new NameDatum( "]" ) );
         t.move( ob );
         result = tokencontinue;
-#else
-        if ( not ParseStack.empty() )
-        {
-          ParseStack.pop_move( pt );
-          if ( pt->isoftype( SLIInterpreter::Arraytype ) )
-          {
-            t.move( pt ); // array completed
-            result = tokencontinue;
-          }
-          else
-          {
-            result = endprocexpected;
-          }
-        }
-        else
-        {
-          result = noopenarray;
-        }
-#endif
       }
       else if ( t.contains( s->EndSymbol ) )
       {
@@ -234,12 +210,14 @@ bool Parser::operator()( Token& t )
   return ( result == tokencompleted );
 }
 
-bool operator==( Parser const& p1, Parser const& p2 )
+bool
+operator==( Parser const& p1, Parser const& p2 )
 {
   return &p1 == &p2;
 }
 
-std::ostream& operator<<( std::ostream& out, const Parser& p )
+std::ostream&
+operator<<( std::ostream& out, const Parser& p )
 {
   out << "Parser(" << p.scan() << ')' << std::endl;
   return out;

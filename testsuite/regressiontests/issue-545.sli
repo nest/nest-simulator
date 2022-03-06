@@ -54,18 +54,6 @@ assert_or_die
 }
 assert_or_die
 
-{
-  ResetKernel
-  /iaf_psc_alpha << /C_m 10 >> SetDefaults
-}
-fail_or_die
-
-{
-  ResetKernel
-  /stdp_synapse << /tau_plus 10 >> SetDefaults
-}
-fail_or_die
-
 skip_if_not_threaded
 
 {
@@ -85,19 +73,5 @@ assert_or_die
   10. eq
 }
 assert_or_die
-
-{
-  ResetKernel
-  << /local_num_threads 4 >> SetKernelStatus
-  /iaf_psc_alpha << /C_m 10 >> SetDefaults
-}
-fail_or_die
-
-{
-  ResetKernel
-  << /local_num_threads 4 >> SetKernelStatus
-  /stdp_synapse << /tau_plus 10 >> SetDefaults
-}
-fail_or_die
 
 endusing

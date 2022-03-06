@@ -30,6 +30,7 @@
 #include "manager_interface.h"
 
 #include "recording_backend.h"
+#include "stimulation_backend.h"
 
 namespace nest
 {
@@ -42,15 +43,17 @@ namespace nest
 class IOManager : public ManagerInterface
 {
 public:
-  virtual void initialize(); // called from meta-manager to construct
-  virtual void finalize();   // called from meta-manger to reinit
-  virtual void change_num_threads( thread );
+  void initialize() override;
+  void finalize() override;
+  void change_number_of_threads() override;
+  void set_status( const DictionaryDatum& ) override;
+  void get_status( DictionaryDatum& ) override;
 
-  virtual void set_status( const DictionaryDatum& ); // set parameters
-  virtual void get_status( DictionaryDatum& );       // get parameters
+  void set_recording_backend_status( std::string, const DictionaryDatum& );
+  DictionaryDatum get_recording_backend_status( std::string );
 
   IOManager(); // Construct only by meta-manager
-  ~IOManager();
+  ~IOManager() override;
 
   /**
    * The prefix for files written by devices.
@@ -91,30 +94,36 @@ public:
    * SimulationManager::simulate() or SimulationManager::cleanup() by
    * calling the backends' finalize() functions
    */
-  void cleanup();
-  void prepare();
+  void cleanup() override;
+  void prepare() override;
 
   template < class RBT >
   void register_recording_backend( Name );
+  template < class RBT >
+  void register_stimulation_backend( Name );
 
-  bool is_valid_recording_backend( Name ) const;
+  bool is_valid_recording_backend( const Name& ) const;
+  bool is_valid_stimulation_backend( const Name& ) const;
 
-  void write( Name, const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& );
+  void
+  write( const Name&, const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& );
 
-  void enroll_recorder( Name, const RecordingDevice&, const DictionaryDatum& );
+  void enroll_recorder( const Name&, const RecordingDevice&, const DictionaryDatum& );
+  void enroll_stimulator( const Name&, StimulationDevice&, const DictionaryDatum& );
 
-  void set_recording_value_names( Name backend_name,
+  void set_recording_value_names( const Name& backend_name,
     const RecordingDevice& device,
     const std::vector< Name >& double_value_names,
     const std::vector< Name >& long_value_names );
 
-  void check_recording_backend_device_status( Name, const DictionaryDatum& );
-  void get_recording_backend_device_defaults( Name, DictionaryDatum& );
-  void get_recording_backend_device_status( Name, const RecordingDevice&, DictionaryDatum& );
+  void check_recording_backend_device_status( const Name&, const DictionaryDatum& );
+  void get_recording_backend_device_defaults( const Name&, DictionaryDatum& );
+  void get_recording_backend_device_status( const Name&, const RecordingDevice&, DictionaryDatum& );
 
 private:
   void set_data_path_prefix_( const DictionaryDatum& );
   void register_recording_backends_();
+  void register_stimulation_backends_();
 
   std::string data_path_;   //!< Path for all files written by devices
   std::string data_prefix_; //!< Prefix for all files written by devices
@@ -124,6 +133,10 @@ private:
    * A mapping from names to registered recording backends.
    */
   std::map< Name, RecordingBackend* > recording_backends_;
+  /**
+   * A mapping from names to registered stimulation backends
+   */
+  std::map< Name, StimulationBackend* > stimulation_backends_;
 };
 
 } // namespace nest
@@ -145,5 +158,6 @@ nest::IOManager::overwrite_files() const
 {
   return overwrite_files_;
 }
+
 
 #endif /* IO_MANAGER_H */

@@ -98,8 +98,8 @@ EventDeliveryManager::initialize()
       std::vector< std::vector< Target > >( kernel().connection_manager.get_min_delay(), std::vector< Target >() ) );
 
     off_grid_spike_register_[ tid ].resize( num_threads,
-      std::vector< std::vector< OffGridTarget > >( kernel().connection_manager.get_min_delay(),
-                                              std::vector< OffGridTarget >() ) );
+      std::vector< std::vector< OffGridTarget > >(
+        kernel().connection_manager.get_min_delay(), std::vector< OffGridTarget >() ) );
   } // of omp parallel
 }
 
@@ -116,6 +116,13 @@ EventDeliveryManager::finalize()
   recv_buffer_spike_data_.clear();
   send_buffer_off_grid_spike_data_.clear();
   recv_buffer_off_grid_spike_data_.clear();
+}
+
+void
+EventDeliveryManager::change_number_of_threads()
+{
+  finalize();
+  initialize();
 }
 
 void
@@ -476,10 +483,10 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
   bool is_spike_register_empty = true;
 
   // First dimension: loop over writing thread
-  for (
-    typename std::vector< std::vector< std::vector< std::vector< TargetT > > > >::iterator it = spike_register.begin();
-    it != spike_register.end();
-    ++it )
+  for ( typename std::vector< std::vector< std::vector< std::vector< TargetT > > > >::iterator it =
+          spike_register.begin();
+        it != spike_register.end();
+        ++it )
   {
     // Second dimension: fixed reading thread
 
@@ -585,7 +592,7 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
 {
   const unsigned int send_recv_count_spike_data_per_rank =
     kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
-  const std::vector< ConnectorModel* >& cm = kernel().model_manager.get_synapse_prototypes( tid );
+  const std::vector< ConnectorModel* >& cm = kernel().model_manager.get_connection_models( tid );
 
   bool are_others_completed = true;
 
@@ -620,17 +627,40 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
     {
       const SpikeDataT& spike_data = recv_buffer[ rank * send_recv_count_spike_data_per_rank + i ];
 
-      if ( spike_data.get_tid() == tid )
+      se.set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
+      se.set_offset( spike_data.get_offset() );
+
+      if ( not kernel().connection_manager.use_compressed_spikes() )
       {
-        se.set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
-        se.set_offset( spike_data.get_offset() );
+        if ( spike_data.get_tid() == tid )
+        {
+          const index syn_id = spike_data.get_syn_id();
+          const index lcid = spike_data.get_lcid();
+          const index source_node_id = kernel().connection_manager.get_source_node_id( tid, syn_id, lcid );
+          se.set_sender_node_id( source_node_id );
 
+          kernel().connection_manager.send( tid, syn_id, lcid, cm, se );
+        }
+      }
+      else
+      {
         const index syn_id = spike_data.get_syn_id();
-        const index lcid = spike_data.get_lcid();
-        const index source_node_id = kernel().connection_manager.get_source_node_id( tid, syn_id, lcid );
-        se.set_sender_node_id( source_node_id );
+        // for compressed spikes lcid holds the index in the
+        // compressed_spike_data structure
+        const index idx = spike_data.get_lcid();
+        const std::vector< SpikeData >& compressed_spike_data =
+          kernel().connection_manager.get_compressed_spike_data( syn_id, idx );
+        for ( auto it = compressed_spike_data.cbegin(); it != compressed_spike_data.cend(); ++it )
+        {
+          if ( it->get_tid() == tid )
+          {
+            const index lcid = it->get_lcid();
+            const index source_node_id = kernel().connection_manager.get_source_node_id( tid, syn_id, lcid );
+            se.set_sender_node_id( source_node_id );
 
-        kernel().connection_manager.send( tid, syn_id, lcid, cm, se );
+            kernel().connection_manager.send( tid, syn_id, lcid, cm, se );
+          }
+        }
       }
 
       // break if this was the last valid entry from this rank
@@ -860,10 +890,10 @@ EventDeliveryManager::resize_spike_register_( const thread tid )
     it->resize( kernel().connection_manager.get_min_delay(), std::vector< Target >() );
   }
 
-  for (
-    std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it = off_grid_spike_register_[ tid ].begin();
-    it != off_grid_spike_register_[ tid ].end();
-    ++it )
+  for ( std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it =
+          off_grid_spike_register_[ tid ].begin();
+        it != off_grid_spike_register_[ tid ].end();
+        ++it )
   {
     it->resize( kernel().connection_manager.get_min_delay(), std::vector< OffGridTarget >() );
   }

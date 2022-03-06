@@ -9,10 +9,18 @@ reports/
 pynest/pynestkernel.cxx
 *.la
 *.lo
+*.so
 *.log
 *.o
 *.pyc
-*.so
+
+Makefile
+
+build/
+install/
+examples/example_logs/
+
+/libnestutil/config.h
 /librandom/randomtest
 /nest/nest
 /sli/sli
@@ -29,8 +37,8 @@ CMakeDoxygenDefaults.cmake
 # generated files
 doc/fulldoc.conf
 doc/normaldoc.conf
-extras/nest-config
-extras/nest_vars.sh
+bin/nest-config
+bin/nest_vars.sh
 libnestutil/config.h
 nest/static_modules.h
 pynest/setup.py
@@ -45,8 +53,12 @@ doc/doctrees/
 doc/html/
 doc/models/
 doc/pynestkernel_mock.py
+
+# created when running examples, e.g. by examples/run_examples.py
 examples/microcircuit.png
 examples/reference_data/
+/examples/matplotlib/fontList.json
+/examples/matplotlib/tex.cache/
 
 # macOS
 .DS_Store
@@ -63,3 +75,7 @@ cscope.out
 .project
 .cproject
 .pydevproject
+.python-version
+
+# Merge conflict artifacts
+*.orig

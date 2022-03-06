@@ -27,8 +27,8 @@
 #include <limits>
 
 // Includes from libnestutil:
-#include "dict_util.h"
 #include "compose.hpp"
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -133,11 +133,11 @@ nest::pp_pop_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
 
   if ( tau_eta_.size() != val_eta_.size() )
   {
-    throw BadProperty( String::compose(
-      "'tau_eta' and 'val_eta' need to have the same dimension.\nSize of "
-      "tau_eta: %1\nSize of val_eta: %2",
-      tau_eta_.size(),
-      val_eta_.size() ) );
+    throw BadProperty(
+      String::compose( "'tau_eta' and 'val_eta' need to have the same dimension.\nSize of "
+                       "tau_eta: %1\nSize of val_eta: %2",
+        tau_eta_.size(),
+        val_eta_.size() ) );
   }
   if ( c_m_ <= 0 )
   {
@@ -221,13 +221,6 @@ nest::pp_pop_psc_delta::pp_pop_psc_delta( const pp_pop_psc_delta& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::pp_pop_psc_delta::init_state_( const Node& proto )
-{
-  const pp_pop_psc_delta& pr = downcast< pp_pop_psc_delta >( proto );
-  S_ = pr.S_;
-}
-
-void
 nest::pp_pop_psc_delta::init_buffers_()
 {
   B_.spikes_.clear();   //!< includes resize
@@ -253,7 +246,7 @@ nest::pp_pop_psc_delta::calibrate()
   B_.logger_.init();
 
   V_.h_ = Time::get_resolution().get_ms();
-  V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
+  V_.rng_ = get_vp_specific_rng( get_thread() );
   V_.min_double_ = std::numeric_limits< double >::min();
 
   double tau_eta_max = -1; // finding max of tau_eta_
@@ -303,7 +296,8 @@ nest::pp_pop_psc_delta::calibrate()
       temp = 0;
     }
 
-    for ( int j = 0; j < V_.len_eta_; j++ )
+    // Set all except last state vector elements to zero, then fill last element with initial value
+    for ( int j = 0; j < V_.len_eta_ - 1; j++ )
     {
       S_.age_occupations_.push_back( 0 );
       S_.thetas_ages_.push_back( 0 );
@@ -326,7 +320,7 @@ nest::pp_pop_psc_delta::calibrate()
 void
 nest::pp_pop_psc_delta::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
@@ -384,9 +378,9 @@ nest::pp_pop_psc_delta::update( Time const& origin, const long from, const long 
 
         if ( p_argument > V_.min_double_ )
         {
-          V_.binom_dev_.set_p_n(
-            p_argument, S_.age_occupations_[ ( S_.p_age_occupations_ + i ) % S_.age_occupations_.size() ] );
-          S_.n_spikes_ages_[ i ] = V_.binom_dev_.ldev( V_.rng_ );
+          const auto n = S_.age_occupations_[ ( S_.p_age_occupations_ + i ) % S_.age_occupations_.size() ];
+          binomial_distribution::param_type param( n, p_argument );
+          S_.n_spikes_ages_[ i ] = V_.bino_dist_( V_.rng_, param );
         }
         else
         {

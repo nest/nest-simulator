@@ -19,14 +19,15 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Example using Hodgkin-Huxley neuron
-----------------------------------------
+"""
+Example using Hodgkin-Huxley neuron
+-----------------------------------
 
 This example produces a rate-response (FI) curve of the Hodgkin-Huxley
 neuron ``hh_psc_alpha`` in response to a range of different current (DC) stimulations.
 The result is plotted using matplotlib.
 
-Since a DC input affetcs only the neuron's channel dynamics, this routine
+Since a DC input affects only the neuron's channel dynamics, this routine
 does not yet check correctness of synaptic response.
 """
 
@@ -59,7 +60,7 @@ amplitudes = np.zeros(n_data)
 event_freqs = np.zeros(n_data)
 for i, amp in enumerate(range(dcfrom, dcto, dcstep)):
     neuron.I_e = float(amp)
-    print("Simulating with current I={} pA".format(amp))
+    print(f"Simulating with current I={amp} pA")
     nest.Simulate(1000)  # one second warm-up time for equilibrium state
     sr.n_events = 0  # then reset spike counts
     nest.Simulate(simtime)  # another simulation call to record firing rate

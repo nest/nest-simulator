@@ -39,17 +39,17 @@ import matplotlib.pyplot as plt
 nest.ResetKernel()
 
 ###############################################################################
-# With ``SetKernelStatus``, global properties of the simulation kernel can be
-# specified. The following properties are related to writing to file:
+# Global properties of the simulation kernel can be set via attributes
+# of the nest module. The following properties are related to writing to file:
 #
-# * ``overwrite_files`` is set to True to permit overwriting of an existing file.
+# * ``overwrite_files`` can be set True to permit overwriting of existing files.
 # * ``data_path`` is the path to which all data is written. It is given relative
 #   to  the current working directory.
-# * 'data_prefix' allows to specify a common prefix for all data files.
+# * ``data_prefix`` allows to specify a common prefix for all data files.
 
-nest.SetKernelStatus({"overwrite_files": True,
-                      "data_path": "",
-                      "data_prefix": ""})
+nest.overwrite_files = True
+nest.data_path = ""
+nest.data_prefix = ""
 
 ###############################################################################
 # For illustration, the recordables of the ``iaf_cond_alpha`` neuron model are
@@ -62,7 +62,7 @@ print("iaf_cond_alpha recordables: {0}".format(
       nest.GetDefaults("iaf_cond_alpha")["recordables"]))
 
 ###############################################################################
-# A neuron, a multimeter as recording device and two spike generators for
+# A neuron, a multimeter as recording device, and two spike generators for
 # excitatory and inhibitory stimulation are instantiated. The command ``Create``
 # expects a model type and, optionally, the desired number of nodes and a
 # dictionary of parameters to overwrite the default values of the model.
@@ -72,14 +72,14 @@ print("iaf_cond_alpha recordables: {0}".format(
 #    (`V_reset`, in mV) are specified.
 #  * For the ``multimeter``, the time interval for recording (`interval`, in
 #    ms) and the measures to record (membrane potential `V_m` in mV and
-#    excitatory and inhibitoy synaptic conductances `g_ex` and`g_in` in nS)
+#    excitatory and inhibitory synaptic conductances `g_ex` and`g_in` in nS)
 #    are set.
 #
 #  In addition, more parameters can be modified for writing to file:
 #
 #  - `record_to` indicates where to put recorded data. All possible values are
-#    available by inspecting the keys of the `recording_backends` dictionary
-#    obtained from ``GetKernelStatus()``.
+#    available by inspecting the keys of the dictionary obtained from the
+#    kernel attribute ``recording_backends``.
 #  - `label` specifies an arbitrary label for the device. If writing to files,
 #    it used in the file name instead of the model name.
 #
@@ -101,7 +101,7 @@ s_in = nest.Create("spike_generator",
                    params={"spike_times": numpy.array([15.0, 25.0, 55.0])})
 
 ###############################################################################
-# Next, We connect the spike generators to the neuron with ``Connect``. Synapse
+# Next, we connect the spike generators to the neuron with ``Connect``. Synapse
 # specifications can be provided in a dictionary. In this example of a
 # conductance-based neuron, the synaptic weight ``weight`` is given in nS.
 # Note that the values are  positive for excitatory stimulation and negative
@@ -120,12 +120,12 @@ nest.Simulate(100.)
 # After the simulation, the recordings are obtained from the file the
 # multimeter wrote to, accessed with the `filenames` property of the
 # multimeter. After three header rows, the data is formatted in columns. The
-# first column is the ID of the sender node. The second column is the ID time
+# first column is the ID of the sender node. The second column is the time
 # of the recording, in ms. Subsequent rows are values of properties specified
 # in the `record_from` property of the multimeter.
 
 data = numpy.loadtxt(m.filenames[0], skiprows=3)
-sender, t, v_m, g_in, g_ex = data.T
+sender, t, v_m, g_ex, g_in = data.T
 
 ###############################################################################
 # Finally, the time courses of the membrane voltage and the synaptic

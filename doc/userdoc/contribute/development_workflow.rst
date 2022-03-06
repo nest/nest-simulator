@@ -1,3 +1,5 @@
+.. _git_workflow:
+
 NEST Git workflow
 =================
 
@@ -87,7 +89,7 @@ Then ``git branch -a`` to show you all branches. You’ll get something like:
 
 This tells you that you are currently on the ``master`` branch, and that you
 also have a ``remote`` connection to ``origin/master``. The ``master`` branch is the
-default branch and this is where code that has been reviewed and tested resides. 
+default branch and this is where code that has been reviewed and tested resides.
 ``origin/master`` is just a copy of the ``master`` branch on your system on the ``remote``.
 
 What remote repository is ``remote/origin``? Try ``git remote -v`` to see the web
@@ -248,7 +250,7 @@ Editing workflow - commands explained
    C++ and SLI coding guidelines.
 3. Test your changes by building the source code and running the tests.
    (Usually ``cmake``, ``make``, ``make install``, ``make installcheck``. Please see the
-   :doc:`installation section <../installation>` for details.)
+   :ref:`installation section <install_nest>` for details.)
 4. Check which files have changed with ``git status``. You'll see a listing like this one:
 
    .. code::
@@ -280,7 +282,7 @@ Editing workflow - commands explained
    related, complete changes. Leave files with unfinished changes for later
    commits.
 
-7. To commit the staged files into the local copy of your repository, run 
+7. To commit the staged files into the local copy of your repository, run
    ``git commit``. Write a clear Git commit message that describes the changes
    that you have made. Please read `this article <http://chris.beams.io/posts/git-commit/>`_
    on writing commit messages. If a commit fixes an open issue on the `GitHub issue
@@ -330,5 +332,5 @@ When you feel your work is finished, you can create a pull request (PR). GitHub
 has a nice help page that outlines the process for
 `submitting pull requests <https://help.github.com/articles/using-pull-requests/#initiating-the-pull-request>`_.
 
-Please check out our :doc:`coding style guidelines <coding_guidelines_cpp>` and
-:ref:`code review guidelines <review_guidelines>` prior to submitting it.
+Please check out our :ref:`coding style guidelines <code_style_cpp>` and
+:ref:`code review guidelines <code_guidelines>` prior to submitting it.

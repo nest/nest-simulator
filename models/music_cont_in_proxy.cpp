@@ -32,8 +32,8 @@
 #include "integerdatum.h"
 
 // Includes from libnestutil:
-#include "dict_util.h"
 #include "compose.hpp"
+#include "dict_util.h"
 #include "logging.h"
 
 // Includes from nestkernel:
@@ -45,11 +45,6 @@
 
 nest::music_cont_in_proxy::Parameters_::Parameters_()
   : port_name_( "cont_in" )
-{
-}
-
-nest::music_cont_in_proxy::Parameters_::Parameters_( const Parameters_& op )
-  : port_name_( op.port_name_ )
 {
 }
 
@@ -117,14 +112,6 @@ nest::music_cont_in_proxy::music_cont_in_proxy( const music_cont_in_proxy& n )
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::music_cont_in_proxy::init_state_( const Node& proto )
-{
-  const music_cont_in_proxy& pr = downcast< music_cont_in_proxy >( proto );
-
-  S_ = pr.S_;
-}
 
 void
 nest::music_cont_in_proxy::init_buffers_()

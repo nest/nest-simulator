@@ -112,8 +112,9 @@ nest::aeif_psc_delta_clopath_dynamics( double, const double y[], double f[], voi
     node.P_.Delta_T == 0. ? 0. : ( node.P_.g_L * node.P_.Delta_T * std::exp( ( V - V_th ) / node.P_.Delta_T ) );
 
   // dv/dt
-  f[ S::V_M ] = ( is_refractory || is_clamped ) ? 0.0 : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - w + z
-                                                          + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
+  f[ S::V_M ] = ( is_refractory || is_clamped )
+    ? 0.0
+    : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - w + z + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
   // Adaptation current w.
   f[ S::W ] = is_clamped ? 0.0 : ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
@@ -186,16 +187,15 @@ nest::aeif_psc_delta_clopath::State_::State_( const State_& s )
   }
 }
 
-nest::aeif_psc_delta_clopath::State_& nest::aeif_psc_delta_clopath::State_::operator=( const State_& s )
+nest::aeif_psc_delta_clopath::State_&
+nest::aeif_psc_delta_clopath::State_::operator=( const State_& s )
 {
-  assert( this != &s ); // would be bad logical error in program
-
+  r_ = s.r_;
+  clamp_r_ = s.clamp_r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
   {
     y_[ i ] = s.y_[ i ];
   }
-  r_ = s.r_;
-  clamp_r_ = s.clamp_r_;
   return *this;
 }
 
@@ -404,13 +404,6 @@ nest::aeif_psc_delta_clopath::~aeif_psc_delta_clopath()
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_psc_delta_clopath::init_state_( const Node& proto )
-{
-  const aeif_psc_delta_clopath& pr = downcast< aeif_psc_delta_clopath >( proto );
-  S_ = pr.S_;
-}
-
-void
 nest::aeif_psc_delta_clopath::init_buffers_()
 {
   B_.spikes_.clear();   // includes resize
@@ -547,10 +540,10 @@ nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const
         S_.y_[ State_::V_TH ] = P_.V_th_max;
 
         /* Initialize clamping step counter.
-        * - We need to add 1 to compensate for count-down immediately after
-        *   while loop.
-        * - If neuron does not use clamping, set to 0
-        */
+         * - We need to add 1 to compensate for count-down immediately after
+         *   while loop.
+         * - If neuron does not use clamping, set to 0
+         */
         S_.clamp_r_ = V_.clamp_counts_ > 0 ? V_.clamp_counts_ + 1 : 0;
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
@@ -563,11 +556,11 @@ nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const
         S_.clamp_r_ = 0;
 
         /* Initialize refractory step counter.
-        * - We need to add 1 to compensate for count-down immediately after
-        *   while loop.
-        * - If neuron has no refractory time, set to 0 to avoid refractory
-        *   artifact inside while loop.
-        */
+         * - We need to add 1 to compensate for count-down immediately after
+         *   while loop.
+         * - If neuron has no refractory time, set to 0 to avoid refractory
+         *   artifact inside while loop.
+         */
         S_.r_ = V_.refractory_counts_ > 0 ? V_.refractory_counts_ + 1 : 0;
       }
 

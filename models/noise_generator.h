@@ -26,16 +26,14 @@
 // C++ includes:
 #include <vector>
 
-// Includes from librandom:
-#include "normal_randomdev.h"
-
 // Includes from nestkernel:
 #include "connection.h"
 #include "device_node.h"
 #include "event.h"
 #include "nest_timeconverter.h"
 #include "nest_types.h"
-#include "stimulating_device.h"
+#include "random_generators.h"
+#include "stimulation_device.h"
 #include "universal_data_logger.h"
 
 namespace nest
@@ -46,17 +44,19 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Device to generate Gaussian white noise current
+Generate a Gaussian white noise current
 
 Description
 +++++++++++
 
 This device can be used to inject a Gaussian "white" noise current into a node.
 
-The current is not really white, but a piecewise constant current with Gaussian
-distributed amplitude. The current changes at intervals of dt. dt must be a
-multiple of the simulation step size, the default is 1.0 ms,
-corresponding to a 1 kHz cut-off.
+The current is not really white, but a piecewise constant current with
+Gaussian distributed amplitude. The current changes at intervals of
+dt. dt must be a multiple of the simulation step size, the default is
+10 times the simulation resolution (equating to 1.0 ms, corresponding
+to a 1 kHz cut-off).
+
 Additionally a second sinusodial modulated term can be added to the standard
 deviation of the noise.
 
@@ -64,7 +64,7 @@ The current generated is given by
 
 .. math::
 
-  I(t) = mean + std * N_j  \text{ for } t_0 + j dt \leq t < t_0 + (j-1) dt
+  I(t) = mean + std \cdot N_j  \text{ for } t_0 + j dt \leq t < t_0 + (j-1) dt
 
 where :math:`N_j` are Gaussian random numbers with unit standard deviation and
 :math:`t_0` is the device onset time.
@@ -72,39 +72,35 @@ If the modulation is added the current is given by
 
 .. math::
 
-   I(t) = mean + \sqrt(std^2 + std_{mod}^2 * \sin(\omega * t + phase)) * N_j \\
+   I(t) = mean + \sqrt(std^2 + std_{mod}^2 \cdot \sin(\omega \cdot t + phase)) \cdot N_j \\
                               \text{ for } t_0 + j dt \leq t < t_0 + (j-1) dt
 
 For a detailed discussion of the properties of the noise generator, please see
 `noise_generator <../model_details/noise_generator.ipynb>`_
 notebook included in the NEST source code.
 
-Remarks:
+All targets receive different currents, but the currents for all
+targets change at the same points in time. The interval between
+changes, ``dt``, must be a multiple of the time step.
 
- - All targets receive different currents.
+The effect of this noise current on a neuron depends on ``dt``. Consider
+the membrane potential fluctuations evoked when a noise current is
+injected into a neuron. The standard deviation of these fluctuations
+across an ensemble will increase with ``dt`` for a given value of ``std``.
+For the leaky integrate-and-fire neuron with time constant ``tau_m`` and
+capacity ``C_m``, membrane potential fluctuations Sigma at time
+:math:`t_j+delay` are given by
 
- - The currents for all targets change at the same points in time.
+.. math::
 
- - The interval between changes, dt, must be a multiple of the time step.
+   \Sigma = std \cdot \tau_m / C_m \cdot \sqrt( (1-x) / (1+x) )  \\
+                          \text{where } x = exp(-dt/\tau_m)
 
- - The effect of this noise current on a neuron depends on dt. Consider
-   the membrane potential fluctuations evoked when a noise current is
-   injected into a neuron. The standard deviation of these fluctuations
-   across an ensemble will increase with dt for a given value of std.
-   For the leaky integrate-and-fire neuron with time constant :math:`\tau_m` and
-   capacity :math:`C_m`, membrane potential fluctuations Sigma at time
-   :math:`t_j+delay` are given by
+for large :math:`t_j`. In the white noise limit, :math:`dt \rightarrow 0`, one has
 
-   .. math::
+.. math::
 
-      \Sigma = std * \tau_m / C_m * \sqrt( (1-x) / (1+x) )  \\
-                             \text{where } x = exp(-dt/\tau_m)
-
-   for large :math:`t_j`. In the white noise limit, :math:`dt \rightarrow 0`, one has
-
-   .. math::
-
-      \Sigma \rightarrow std / C_m * \sqrt(dt * \tau / 2).
+   \Sigma \rightarrow std / C_m * \sqrt(dt \cdot \tau / 2).
 
 To obtain comparable results for different values of dt, you must adapt std.
 
@@ -113,88 +109,101 @@ the current recorded represents the instantaneous average of all the
 currents computed. When there exists only a single target, this would be
 equivalent to the actual current provided to that target.
 
-Parameters
-++++++++++
+.. include:: ../models/stimulation_device.rst
 
-The following parameters can be set in the status dictionary:
+mean
+    The mean value of the noise current (pA)
 
-========== ======  =========================================================
- mean      pA      Mean value of the noise current
- std       pA      Standard deviation of noise current
- dt        ms      Interval between changes in current, default 1.0ms
- std_mod   pA      Modulated standard deviation of noise current
- phase     real    Phase of sine modulation (0-360 deg)
- frequency Hz      Frequency of sine modulation
-========== ======  =========================================================
+std
+    The standard deviation of noise current (pA)
+
+dt
+    The interval between changes in current (ms; default: 10 * resolution)
+
+std_mod
+    The modulated standard deviation of noise current (pA)
+
+phase
+    The phase of sine modulation (0-360 deg)
+
+frequency
+    The frequency of the sine modulation
+
+Setting parameters from a stimulation backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The parameters in this stimulation device can be updated with input
+coming from a stimulation backend. The data structure used for the
+update holds one value for each of the parameters mentioned above.
+The indexing is as follows:
+
+ 0. mean
+ 1. std
+ 2. std_mod
+ 3. frequency
+ 4. phase
 
 Sends
 +++++
 
 CurrentEvent
 
+See also
+++++++++
+
+step_current_generator
+
 EndUserDocs */
 
-class noise_generator : public DeviceNode
+class noise_generator : public StimulationDevice
 {
 
 public:
   noise_generator();
   noise_generator( const noise_generator& );
 
-  bool
-  has_proxies() const
-  {
-    return false;
-  }
 
   //! Allow multimeter to connect to local instances
-  bool
-  local_receiver() const
-  {
-    return true;
-  }
-
-  Name
-  get_element_type() const
-  {
-    return names::stimulator;
-  }
+  bool local_receiver() const override;
 
   /**
    * Import sets of overloaded virtual functions.
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
+  using Node::event_hook;
   using Node::handle;
   using Node::handles_test_event;
-  using Node::event_hook;
   using Node::sends_signal;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  SignalType sends_signal() const;
+  SignalType sends_signal() const override;
 
-  void handle( DataLoggingRequest& );
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
-  void calibrate_time( const TimeConverter& tc );
+  void calibrate_time( const TimeConverter& tc ) override;
+
+  StimulationDevice::Type get_type() const override;
+  void set_data_from_stimulation_backend( std::vector< double >& input_param ) override;
 
 private:
-  void init_state_( const Node& );
-  void init_buffers_();
+  void init_state_() override;
+  void init_buffers_() override;
 
   /**
    * Recalculates parameters and forces reinitialization
    * of amplitudes if number of targets has changed.
    */
-  void calibrate();
+  void calibrate() override;
 
-  void update( Time const&, const long, const long );
-  void event_hook( DSCurrentEvent& );
+  void update( Time const&, const long, const long ) override;
+  void event_hook( DSCurrentEvent& ) override;
 
   // ------------------------------------------------------------
 
@@ -227,6 +236,8 @@ private:
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     //! Set values from dictionary
     void set( const DictionaryDatum&, const noise_generator&, Node* node );
+
+    Time get_default_dt();
   };
 
   // ------------------------------------------------------------
@@ -255,7 +266,7 @@ private:
   {
     long next_step_; //!< time step of next change in current
     AmpVec_ amps_;   //!< amplitudes, one per target
-    Buffers_( noise_generator& );
+    explicit Buffers_( noise_generator& );
     Buffers_( const Buffers_&, noise_generator& );
     UniversalDataLogger< noise_generator > logger_;
   };
@@ -264,10 +275,11 @@ private:
 
   struct Variables_
   {
-    long dt_steps_;                         //!< update interval in steps
-    librandom::NormalRandomDev normal_dev_; //!< random deviate generator
-    double omega_;                          //!< Angelfrequency i rad/s
-    double phi_rad_;                        //!< Phase of sine current (0-2Pi rad)
+    normal_distribution normal_dist_; //!< normal distribution
+
+    long dt_steps_;  //!< update interval in steps
+    double omega_;   //!< frequency [radian/s]
+    double phi_rad_; //!< phase of sine current (0-2Pi rad)
 
     // The exact integration matrix
     double A_00_;
@@ -286,7 +298,6 @@ private:
 
   static RecordablesMap< noise_generator > recordablesMap_;
 
-  StimulatingDevice< CurrentEvent > device_;
   Parameters_ P_;
   State_ S_;
   Buffers_ B_;
@@ -308,7 +319,7 @@ noise_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  device_.get_status( d );
+  StimulationDevice::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -323,7 +334,7 @@ noise_generator::set_status( const DictionaryDatum& d )
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  device_.set_status( d );
+  StimulationDevice::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
@@ -336,10 +347,22 @@ noise_generator::sends_signal() const
   return ALL;
 }
 
-inline void
-noise_generator::calibrate_time( const TimeConverter& tc )
+inline bool
+noise_generator::local_receiver() const
 {
-  P_.dt_ = tc.from_old_tics( P_.dt_.get_tics() );
+  return true;
+}
+
+inline StimulationDevice::Type
+noise_generator::get_type() const
+{
+  return StimulationDevice::Type::CURRENT_GENERATOR;
+}
+
+inline Time
+noise_generator::Parameters_::get_default_dt()
+{
+  return 10 * Time::get_resolution();
 }
 
 } // namespace

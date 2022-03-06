@@ -35,11 +35,11 @@
 #include "regula_falsi.h"
 
 // Includes from sli:
+#include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
-#include "integerdatum.h"
 #include "doubledatum.h"
-#include "arraydatum.h"
+#include "integerdatum.h"
 
 
 /* ----------------------------------------------------------------
@@ -262,14 +262,6 @@ nest::iaf_psc_exp_ps_lossless::iaf_psc_exp_ps_lossless( const iaf_psc_exp_ps_los
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::iaf_psc_exp_ps_lossless::init_state_( const Node& proto )
-{
-  const iaf_psc_exp_ps_lossless& pr = downcast< iaf_psc_exp_ps_lossless >( proto );
-
-  S_ = pr.S_;
-}
 
 void
 nest::iaf_psc_exp_ps_lossless::init_buffers_()
@@ -633,7 +625,8 @@ nest::iaf_psc_exp_ps_lossless::is_spike_( const double dt )
 
   // no-spike, NS_1, (V <= g_h,I_e(I) and V < f_h,I_e(I))
   if ( ( V_0 < ( ( ( I_0 + I_e ) * ( V_.b1_ * exp_tau_m + V_.b2_ * exp_tau_s ) + V_.b3_ * ( exp_tau_m - exp_tau_s ) )
-                 / ( V_.b4_ * exp_tau_s ) ) ) and ( V_0 <= f ) )
+           / ( V_.b4_ * exp_tau_s ) ) )
+    and ( V_0 <= f ) )
   {
     return numerics::nan;
   }

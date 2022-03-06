@@ -60,7 +60,7 @@ M_WARNING setverbosity
 } def
 
 
-modeldict keys
+GetKernelStatus /node_models get
 {
   dup cvs dup (cond_exp) searchif exch (multisynapse) searchif not and
   {

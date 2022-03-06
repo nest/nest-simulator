@@ -52,7 +52,7 @@ Conductance based adaptive exponential integrate-and-fire neuron model
 Description
 +++++++++++
 
-aeif_cond_alpha_multisynapse is a conductance-based adaptive
+``aeif_cond_alpha_multisynapse`` is a conductance-based adaptive
 exponential integrate-and-fire neuron model according to Brette and
 Gerstner (2005) with multiple synaptic rise time and decay time
 constants, and synaptic conductance modeled by an alpha function.
@@ -62,16 +62,16 @@ conductance is modeled by an alpha function, as described by A. Roth
 and M. C. W. van Rossum in Computational Modeling Methods for
 Neuroscientists, MIT Press 2013, Chapter 6.
 
-The time constants are supplied by an array, "tau_syn", and the pertaining
-synaptic reversal potentials are supplied by the array "E_rev". Port numbers
+The time constants are supplied by an array, ``tau_syn``, and the pertaining
+synaptic reversal potentials are supplied by the array ``E_rev``. Port numbers
 are automatically assigned in the range from 1 to n_receptors.
-During connection, the ports are selected with the property "receptor_type".
+During connection, the ports are selected with the property ``receptor_type``.
 
 The membrane potential is given by the following differential equation:
 
 .. math::
 
- C dV/dt = -g_L(V-E_L) + g_L*\Delta_T*\exp((V-V_T)/\Delta_T)
+ C dV/dt = -g_L(V-E_L) + g_L \cdot \Delta_T \cdot \exp((V-V_T)/\Delta_T)
  + I_{syn_{tot}}(V, t)- w + I_e
 
 where
@@ -80,15 +80,15 @@ where
 
  I_{syn_{tot}}(V,t) = \sum_i g_i(t) (V - E_{rev,i}) ,
 
-the synapse i is excitatory or inhibitory depending on the value of
+the synapse `i` is excitatory or inhibitory depending on the value of
 :math:`E_{rev,i}` and the differential equation for the
 spike-adaptation current `w` is
 
 .. math::
 
- \tau_w * dw/dt = a(V - E_L) - w
+ \tau_w \cdot dw/dt = a(V - E_L) - w
 
-When the neuron fires a spike, the adaptation current w <- w + b.
+When the neuron fires a spike, the adaptation current :math:`w <- w + b`.
 
 For implementation details see the
 `aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
@@ -205,7 +205,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
   void update( Time const&, const long, const long );
@@ -262,8 +261,7 @@ private:
 
   /**
    * State variables of the model.
-   * @note Copy constructor and assignment operator required because
-   *       of C-style arrays.
+   * @note Copy constructor required because of C-style arrays.
    */
   struct State_
   {
@@ -291,8 +289,6 @@ private:
     int r_;                   //!< number of refractory steps remaining
 
     State_( const Parameters_& ); //!< Default initialization
-    State_( const State_& );
-    State_& operator=( const State_& );
 
     void get( DictionaryDatum& ) const;
     void set( const DictionaryDatum&, Node* node );

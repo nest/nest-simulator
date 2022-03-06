@@ -89,12 +89,14 @@ public:
     return handle_;
   }
 
-  bool operator==( const Name& n ) const
+  bool
+  operator==( const Name& n ) const
   {
     return handle_ == n.handle_;
   }
 
-  bool operator!=( const Name& n ) const
+  bool
+  operator!=( const Name& n ) const
   {
     return not( handle_ == n.handle_ );
   }
@@ -105,7 +107,8 @@ public:
    * on string comparison would be very slow. We thus compare based on
    * table indices.
    */
-  bool operator<( const Name& n ) const
+  bool
+  operator<( const Name& n ) const
   {
     return handle_ < n.handle_;
   }

@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Random balanced network (exp synapses, multiple time constants)
----------------------------------------------------------------------
+"""
+Random balanced network (exp synapses, multiple time constants)
+---------------------------------------------------------------
 
 This script simulates an excitatory and an inhibitory population on
 the basis of the network used in [1]_.
@@ -39,14 +40,14 @@ are established. The building as well as the simulation time of the
 network are recorded.
 
 References
-~~~~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Brunel N (2000). Dynamics of sparsely connected networks of excitatory and
        inhibitory spiking neurons. Journal of Computational Neuroscience 8,
        183-208.
 
 See Also
-~~~~~~~~~~
+~~~~~~~~
 
 :doc:`brunel_alpha_nest`
 
@@ -138,30 +139,23 @@ p_rate = 1000.0 * nu_ex * CE
 # already processed simulation time as well as its percentage of the total
 # simulation time.
 
-nest.SetKernelStatus({"resolution": dt, "print_time": True,
-                      "overwrite_files": True, 'local_num_threads': 4})
+nest.resolution = dt
+nest.print_time = True
+nest.overwrite_files = True
+nest.local_num_threads = 4
 
 print("Building network")
-
-##################################################################################
-# Configuration of the model ``iaf_psc_exp_multisynapse`` and
-# ``poisson_generator`` using ``SetDefaults``. This function expects the model to
-# be the inserted as a string and the parameter to be specified in a
-# dictionary. All instances of theses models created after this point will
-# have the properties specified in the dictionary by default.
-
-nest.SetDefaults("iaf_psc_exp_multisynapse", neuron_params)
-nest.SetDefaults("poisson_generator", {"rate": p_rate})
 
 ###############################################################################
 # Creation of the nodes using ``Create``. We store the returned handles in
 # variables for later reference. Here the excitatory and inhibitory, as well
 # as the poisson generator and two spike recorders. The spike recorders will
-# later be used to record excitatory and inhibitory spikes.
+# later be used to record excitatory and inhibitory spikes. Properties of the
+# nodes are specified via ``params``, which expects a dictionary.
 
-nodes_ex = nest.Create("iaf_psc_exp_multisynapse", NE)
-nodes_in = nest.Create("iaf_psc_exp_multisynapse", NI)
-noise = nest.Create("poisson_generator")
+nodes_ex = nest.Create("iaf_psc_exp_multisynapse", NE, params=neuron_params)
+nodes_in = nest.Create("iaf_psc_exp_multisynapse", NI, params=neuron_params)
+noise = nest.Create("poisson_generator", params={"rate": p_rate})
 espikes = nest.Create("spike_recorder")
 ispikes = nest.Create("spike_recorder")
 
@@ -202,13 +196,11 @@ nest.CopyModel("static_synapse", "inhibitory",
 # which includes the specification of the distribution and the associated
 # parameter.
 
-syn_params_ex = {"model": "excitatory",
-                 "receptor_type": {"distribution": "uniform_int",
-                                   "low": 1, "high": nr_ports}
+syn_params_ex = {"synapse_model": "excitatory",
+                 "receptor_type": nest.random.uniform_int(max=nr_ports - 1) + 1
                  }
-syn_params_in = {"model": "inhibitory",
-                 "receptor_type": {"distribution": "uniform_int",
-                                   "low": 1, "high": nr_ports}
+syn_params_in = {"synapse_model": "inhibitory",
+                 "receptor_type": nest.random.uniform_int(max=nr_ports - 1) + 1
                  }
 
 nest.Connect(noise, nodes_ex, syn_spec=syn_params_ex)
@@ -286,8 +278,8 @@ rate_in = events_in / simtime * 1000.0 / N_rec
 # inhibitory synapse model. The numbers are summed up resulting in the total
 # number of synapses.
 
-num_synapses = (nest.GetDefaults("excitatory")["num_connections"] +
-                nest.GetDefaults("inhibitory")["num_connections"])
+num_synapses = (nest.GetDefaults("excitatory")["num_connections"]
+                + nest.GetDefaults("inhibitory")["num_connections"])
 
 ###############################################################################
 # Establishing the time it took to build and simulate the network by taking
@@ -300,14 +292,14 @@ sim_time = endsimulate - endbuild
 # Printing the network properties, firing rates and building times.
 
 print("Brunel network simulation (Python)")
-print("Number of neurons : {0}".format(N_neurons))
-print("Number of synapses: {0}".format(num_synapses))
-print("       Exitatory  : {0}".format(int(CE * N_neurons) + N_neurons))
-print("       Inhibitory : {0}".format(int(CI * N_neurons)))
-print("Excitatory rate   : %.2f Hz" % rate_ex)
-print("Inhibitory rate   : %.2f Hz" % rate_in)
-print("Building time     : %.2f s" % build_time)
-print("Simulation time   : %.2f s" % sim_time)
+print(f"Number of neurons : {N_neurons}")
+print(f"Number of synapses: {num_synapses}")
+print(f"       Exitatory  : {int(CE * N_neurons) + N_neurons}")
+print(f"       Inhibitory : {int(CI * N_neurons)}")
+print(f"Excitatory rate   : {rate_ex:.2f} Hz")
+print(f"Inhibitory rate   : {rate_in:.2f} Hz")
+print(f"Building time     : {build_time:.2f} s")
+print(f"Simulation time   : {sim_time:.2f} s")
 
 ###############################################################################
 # Plot a raster of the excitatory neurons and a histogram.

@@ -19,102 +19,100 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
+"""
 Weight adaptation according to the Urbanczik-Senn plasticity
-------------------
+------------------------------------------------------------
 
 This script demonstrates the learning in a compartmental neuron where the
 dendritic synapses adapt their weight according to the plasticity rule by
-Urbanczik and Senn [1]. In this simple setup, a spike pattern of 200 poisson
+Urbanczik and Senn [1]_. In this simple setup, a spike pattern of 200 poisson
 spike trains is repeatedly presented to a neuron that is composed of one
 somatic and one dendritic compartment. At the same time, the somatic
 conductances are activated to produce a time-varying matching potential.
 After the learning, this signal is then reproreproduced by the membrane
-potential of the neuron. This script produces Fig. 1B in [1] but uses standard
+potential of the neuron. This script produces Fig. 1B in [1]_ but uses standard
 units instead of the unitless quantities used in the paper.
 
-[1] R. Urbanczik, W. Senn (2014): Learning by the Dendritic Prediction of
-    Somatic Spiking. Neuron, 81, 521-528.
-'''
+References
+~~~~~~~~~~
+
+.. [1] R. Urbanczik, W. Senn (2014): Learning by the Dendritic Prediction of
+       Somatic Spiking. Neuron, 81, 521-528.
+"""
 import numpy as np
 from matplotlib import pyplot as plt
 import nest
 
 
 def g_inh(amplitude, t_start, t_end):
-    '''
+    """
     returns weights for the spike generator that drives the inhibitory
     somatic conductance.
-    '''
+    """
     return lambda t: np.piecewise(t, [(t >= t_start) & (t < t_end)],
                                   [amplitude, 0.0])
 
 
 def g_exc(amplitude, freq, offset, t_start, t_end):
-    '''
+    """
     returns weights for the spike generator that drives the excitatory
     somatic conductance.
-    '''
+    """
     return lambda t: np.piecewise(t, [(t >= t_start) & (t < t_end)],
-                                  [lambda t: amplitude*np.sin(freq*t) + offset, 0.0])
+                                  [lambda t: amplitude * np.sin(freq * t) + offset, 0.0])
 
 
 def matching_potential(g_E, g_I, nrn_params):
-    '''
+    """
     returns the matching potential as a function of the somatic conductances.
-    '''
+    """
     E_E = nrn_params['soma']['E_ex']
     E_I = nrn_params['soma']['E_in']
-    return (g_E*E_E + g_I*E_I) / (g_E + g_I)
+    return (g_E * E_E + g_I * E_I) / (g_E + g_I)
 
 
 def V_w_star(V_w, nrn_params):
-    '''
+    """
     returns the dendritic prediction of the somatic membrane potential.
-    '''
+    """
     g_D = nrn_params['g_sp']
     g_L = nrn_params['soma']['g_L']
     E_L = nrn_params['soma']['E_L']
-    return (g_L*E_L + g_D*V_w) / (g_L + g_D)
+    return (g_L * E_L + g_D * V_w) / (g_L + g_D)
 
 
 def phi(U, nrn_params):
-    '''
+    """
     rate function of the soma
-    '''
+    """
     phi_max = nrn_params['phi_max']
     k = nrn_params['rate_slope']
     beta = nrn_params['beta']
     theta = nrn_params['theta']
-    return phi_max / (1.0 + k*np.exp(beta*(theta - U)))
+    return phi_max / (1.0 + k * np.exp(beta * (theta - U)))
 
 
 def h(U, nrn_params):
-    '''
+    """
     derivative of the rate function phi
-    '''
-    phi_max = nrn_params['phi_max']
+    """
     k = nrn_params['rate_slope']
     beta = nrn_params['beta']
     theta = nrn_params['theta']
-    return 15.0*beta / (1.0 + np.exp(-beta*(theta - U)) / k)
+    return 15.0 * beta / (1.0 + np.exp(-beta * (theta - U)) / k)
 
 
-'''
-simulation params
-'''
+# simulation params
 n_pattern_rep = 100         # number of repetitions of the spike pattern
 pattern_duration = 200.0
-t_start = 2.0*pattern_duration
-t_end = n_pattern_rep*pattern_duration + t_start
-simulation_time = t_end + 2.0*pattern_duration
+t_start = 2.0 * pattern_duration
+t_end = n_pattern_rep * pattern_duration + t_start
+simulation_time = t_end + 2.0 * pattern_duration
 n_rep_total = int(np.around(simulation_time / pattern_duration))
 resolution = 0.1
-nest.SetKernelStatus({'resolution': resolution})
+nest.resolution = resolution
 
-'''
-neuron parameters
-'''
+# neuron parameters
 nrn_model = 'pp_cond_exp_mc_urbanczik'
 nrn_params = {
     't_ref': 3.0,        # refractory period
@@ -144,22 +142,20 @@ nrn_params = {
     'theta': -55.0,
 }
 
-'''
-synapse params
-'''
+# synapse params
 syns = nest.GetDefaults(nrn_model)['receptor_types']
-init_w = 0.3*nrn_params['dendritic']['C_m']
+init_w = 0.3 * nrn_params['dendritic']['C_m']
 syn_params = {
     'synapse_model': 'urbanczik_synapse_wr',
     'receptor_type': syns['dendritic_exc'],
     'tau_Delta': 100.0,  # time constant of low pass filtering of the weight change
     'eta': 0.17,         # learning rate
     'weight': init_w,
-    'Wmax': 4.5*nrn_params['dendritic']['C_m'],
+    'Wmax': 4.5 * nrn_params['dendritic']['C_m'],
     'delay': resolution,
 }
 
-'''
+"""
 # in case you want to use the unitless quantities as in [1]:
 
 # neuron params:
@@ -206,24 +202,20 @@ syn_params = {
     'Wmax': 3.0*nrn_params['dendritic']['g_L'],
     'delay': resolution,
 }
-'''
+"""
 
-'''
-somatic input
-'''
-ampl_exc = 0.016*nrn_params['dendritic']['C_m']
-offset = 0.018*nrn_params['dendritic']['C_m']
-ampl_inh = 0.06*nrn_params['dendritic']['C_m']
+# somatic input
+ampl_exc = 0.016 * nrn_params['dendritic']['C_m']
+offset = 0.018 * nrn_params['dendritic']['C_m']
+ampl_inh = 0.06 * nrn_params['dendritic']['C_m']
 freq = 2.0 / pattern_duration
-soma_exc_inp = g_exc(ampl_exc, 2.0*np.pi*freq, offset, t_start, t_end)
+soma_exc_inp = g_exc(ampl_exc, 2.0 * np.pi * freq, offset, t_start, t_end)
 soma_inh_inp = g_inh(ampl_inh, t_start, t_end)
 
-'''
-dendritic input
-create spike pattern by recording the spikes of a simulation of n_pg
-poisson generators. The recorded spike times are then given to spike
-generators.
-'''
+# dendritic input
+# create spike pattern by recording the spikes of a simulation of n_pg
+# poisson generators. The recorded spike times are then given to spike
+# generators.
 n_pg = 200                 # number of poisson generators
 p_rate = 10.0              # rate in Hz
 
@@ -237,19 +229,15 @@ sr = nest.Create('spike_recorder', n_pg)
 nest.Connect(prrt_nrns_pg, sr, {'rule': 'one_to_one'})
 
 nest.Simulate(pattern_duration)
-t_srs = []
-for i, ssr in enumerate(nest.GetStatus(sr)):
-    t_sr = ssr['events']['times']
-    t_srs.append(t_sr)
+t_srs = [ssr.get('events', 'times') for ssr in sr]
 
 nest.ResetKernel()
-nest.SetKernelStatus({'resolution': resolution})
+nest.resolution = resolution
 
-'''
+"""
 neuron and devices
-'''
-nest.SetDefaults(nrn_model, nrn_params)
-nrn = nest.Create(nrn_model)
+"""
+nrn = nest.Create(nrn_model, params=nrn_params)
 
 # poisson generators are connected to parrot neurons which are
 # connected to the mc neuron
@@ -278,60 +266,55 @@ wr = nest.Create('weight_recorder')
 # for recording the spiking of the soma
 sr_soma = nest.Create('spike_recorder')
 
-'''
-create connections
-'''
+
+# create connections
 nest.Connect(sg_prox, prrt_nrns, {'rule': 'one_to_one'})
 nest.CopyModel('urbanczik_synapse', 'urbanczik_synapse_wr',
                {'weight_recorder': wr[0]})
 nest.Connect(prrt_nrns, nrn, syn_spec=syn_params)
 nest.Connect(mm, nrn, syn_spec={'delay': 0.1})
 nest.Connect(sg_soma_exc, nrn,
-             syn_spec={'receptor_type': syns['soma_exc'], 'weight': 10.0*resolution, 'delay': resolution})
+             syn_spec={'receptor_type': syns['soma_exc'], 'weight': 10.0 * resolution, 'delay': resolution})
 nest.Connect(sg_soma_inh, nrn,
-             syn_spec={'receptor_type': syns['soma_inh'], 'weight': 10.0*resolution, 'delay': resolution})
+             syn_spec={'receptor_type': syns['soma_inh'], 'weight': 10.0 * resolution, 'delay': resolution})
 nest.Connect(nrn, sr_soma)
 
-'''
-simulation divided into intervals of the pattern duration
-'''
+# simulation divided into intervals of the pattern duration
 for i in np.arange(n_rep_total):
     # Set the spike times of the pattern for each spike generator
     for (sg, t_sp) in zip(sg_prox, t_srs):
         nest.SetStatus(
-            sg, {'spike_times': np.array(t_sp) + i*pattern_duration})
+            sg, {'spike_times': np.array(t_sp) + i * pattern_duration})
 
     nest.Simulate(pattern_duration)
 
-'''
-read out devices
-'''
+
+# read out devices
+
 # multimeter
-rec = nest.GetStatus(mm)[0]['events']
-t = rec['times']
-V_s = rec['V_m.s']
-V_d = rec['V_m.p']
+mm_events = mm.events
+t = mm_events['times']
+V_s = mm_events['V_m.s']
+V_d = mm_events['V_m.p']
 V_d_star = V_w_star(V_d, nrn_params)
-g_in = rec['g_in.s']
-g_ex = rec['g_ex.s']
-I_ex = rec['I_ex.p']
-I_in = rec['I_in.p']
+g_in = mm_events['g_in.s']
+g_ex = mm_events['g_ex.s']
+I_ex = mm_events['I_ex.p']
+I_in = mm_events['I_in.p']
 U_M = matching_potential(g_ex, g_in, nrn_params)
 
 # weight recorder
-data = nest.GetStatus(wr)
-senders = data[0]['events']['senders']
-targets = data[0]['events']['targets']
-weights = data[0]['events']['weights']
-times = data[0]['events']['times']
+wr_events = wr.events
+senders = wr_events['senders']
+targets = wr_events['targets']
+weights = wr_events['weights']
+times = wr_events['times']
 
 # spike recorder
-data = nest.GetStatus(sr_soma)[0]['events']
-spike_times_soma = data['times']
+spike_times_soma = sr_soma.get('events', 'times')
 
-'''
-plot results
-'''
+
+# plot results
 fs = 22
 lw = 2.5
 fig1, (axA, axB, axC, axD) = plt.subplots(4, 1, sharex=True)
@@ -366,7 +349,7 @@ axD.plot(t, h(V_d_star, nrn_params), lw=lw,
          label=r'$h(V_W^\ast)$', color='g', ls='--')
 axD.plot(t, phi(V_s, nrn_params) - phi(V_d_star, nrn_params), lw=lw,
          label=r'$\phi(U) - \phi(V_W^\ast)$', color='r', ls='-')
-axD.plot(spike_times_soma, 0.0*np.ones(len(spike_times_soma)),
+axD.plot(spike_times_soma, 0.0 * np.ones(len(spike_times_soma)),
          's', color='k', markersize=2)
 axD.legend(fontsize=fs)
 

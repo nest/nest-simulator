@@ -30,9 +30,6 @@
 #include "enum_bitfield.h"
 #include "logging.h"
 
-// Includes from librandom:
-#include "randomgen.h"
-
 // Includes from nestkernel:
 #include "nest_datums.h"
 #include "nest_time.h"
@@ -97,8 +94,9 @@ void register_secondary_connection_model( const std::string& name,
 
 void print_nodes_to_stream( std::ostream& out = std::cout );
 
-librandom::RngPtr get_vp_rng( thread tid );
-librandom::RngPtr get_global_rng();
+RngPtr get_rank_synced_rng();
+RngPtr get_vp_synced_rng( thread tid );
+RngPtr get_vp_specific_rng( thread tid );
 
 void set_kernel_status( const DictionaryDatum& dict );
 DictionaryDatum get_kernel_status();
@@ -191,27 +189,9 @@ void cleanup();
 
 void copy_model( const Name& oldmodname, const Name& newmodname, const DictionaryDatum& dict );
 
-void set_model_defaults( const Name& model_name, const DictionaryDatum& );
-DictionaryDatum get_model_defaults( const Name& model_name );
+void set_model_defaults( const std::string model_name, const DictionaryDatum& );
+DictionaryDatum get_model_defaults( const std::string model_name );
 
-ParameterDatum multiply_parameter( const ParameterDatum& param1, const ParameterDatum& param2 );
-ParameterDatum divide_parameter( const ParameterDatum& param1, const ParameterDatum& param2 );
-ParameterDatum add_parameter( const ParameterDatum& param1, const ParameterDatum& param2 );
-ParameterDatum subtract_parameter( const ParameterDatum& param1, const ParameterDatum& param2 );
-ParameterDatum
-compare_parameter( const ParameterDatum& param1, const ParameterDatum& param2, const DictionaryDatum& d );
-ParameterDatum
-conditional_parameter( const ParameterDatum& param1, const ParameterDatum& param2, const ParameterDatum& param3 );
-ParameterDatum min_parameter( const ParameterDatum& param, const double other_value );
-ParameterDatum max_parameter( const ParameterDatum& param, const double other_value );
-ParameterDatum redraw_parameter( const ParameterDatum& param, const double min, const double max );
-ParameterDatum exp_parameter( const ParameterDatum& param );
-ParameterDatum sin_parameter( const ParameterDatum& param );
-ParameterDatum cos_parameter( const ParameterDatum& param );
-ParameterDatum pow_parameter( const ParameterDatum& param, const double exponent );
-ParameterDatum dimension_parameter( const ParameterDatum& param_x, const ParameterDatum& param_y );
-ParameterDatum
-dimension_parameter( const ParameterDatum& param_x, const ParameterDatum& param_y, const ParameterDatum& param_z );
 ParameterDatum create_parameter( const DictionaryDatum& param_dict );
 double get_value( const ParameterDatum& param );
 bool is_spatial( const ParameterDatum& param );

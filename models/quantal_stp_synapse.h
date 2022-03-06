@@ -23,9 +23,6 @@
 #ifndef QUANTAL_STP_SYNAPSE_H
 #define QUANTAL_STP_SYNAPSE_H
 
-// Includes from librandom:
-#include "binomial_randomdev.h"
-
 // Includes from nestkernel:
 #include "connection.h"
 
@@ -54,6 +51,13 @@ equations is taken from Maass and Markram 2002 [3]_.
 
 The connection weight is interpreted as the maximal weight that can
 be obtained if all n release sites are activated.
+
+.. warning::
+
+   This synaptic plasticity rule does not take
+   :ref:`precise spike timing <sim_precise_spike_times>` into
+   account. When calculating the weight update, the precise spike time part
+   of the timestamp is ignored.
 
 Parameters
 ++++++++++
@@ -119,8 +123,8 @@ public:
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
-  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
@@ -134,11 +138,6 @@ public:
    * dictionary.
    */
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
-
-  /**
-   * Throws exception if n or a are given in syn_spec.
-   */
-  void check_synapse_params( const DictionaryDatum& d ) const;
 
   /**
    * Send an event to the receiver of this connection.
@@ -206,7 +205,7 @@ quantal_stp_synapse< targetidentifierT >::send( Event& e, thread t, const Common
   int n_release = 0;
   for ( int i = a_; i > 0; --i )
   {
-    if ( kernel().rng_manager.get_rng( t )->drand() < u_ )
+    if ( get_vp_specific_rng( t )->drand() < u_ )
     {
       ++n_release;
     }
@@ -228,7 +227,7 @@ quantal_stp_synapse< targetidentifierT >::send( Event& e, thread t, const Common
   // Compute number of sites that recovered during the interval.
   for ( int depleted = n_ - a_; depleted > 0; --depleted )
   {
-    if ( kernel().rng_manager.get_rng( t )->drand() < ( 1.0 - p_decay ) )
+    if ( get_vp_specific_rng( t )->drand() < ( 1.0 - p_decay ) )
     {
       ++a_;
     }

@@ -23,9 +23,8 @@
 Functions for parallel computing
 """
 
-from ..ll_api import *
+from ..ll_api import check_stack, sps, sr, spp, sli_func
 from .. import pynestkernel as kernel
-from .hl_api_helper import *
 
 __all__ = [
     'NumProcesses',
@@ -119,9 +118,11 @@ def SyncProcesses():
 
 @check_stack
 def GetLocalVPs():
-    """Return iterable representing the virtual processes local to the MPI rank."""
+    """Return iterable representing the VPs local to the MPI rank.
+    """
 
-    # Compute local VPs as range based on round-robin logic in VPManager::get_vp().
-    # mpitest_get_local_vps ensures this is in sync with the kernel.
+    # Compute local VPs as range based on round-robin logic in
+    # VPManager::get_vp(). mpitest_get_local_vps ensures this is in
+    # sync with the kernel.
     n_vp = sli_func("GetKernelStatus /total_num_virtual_procs get")
     return range(Rank(), n_vp, NumProcesses())

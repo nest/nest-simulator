@@ -66,11 +66,13 @@ Simple conductance based leaky integrate-and-fire neuron model
 Description
 +++++++++++
 
-iaf_cond_exp is an implementation of a spiking neuron using IAF dynamics with
+``iaf_cond_exp`` is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses. Incoming spike events induce a postsynaptic change
 of conductance modelled by an exponential function. The exponential function
 is normalized such that an event of weight 1.0 results in a peak conductance of
 1 nS.
+
+See also [1]_.
 
 Parameters
 ++++++++++
@@ -150,7 +152,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
   void update( Time const&, const long, const long );
@@ -195,8 +196,7 @@ public:
 
   /**
    * State variables of the model.
-   * @note Copy constructor and assignment operator required because
-   *       of C-style array.
+   * @note Copy constructor required because of C-style array.
    */
   struct State_
   {
@@ -215,6 +215,7 @@ public:
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
+
     State_& operator=( const State_& );
 
     void get( DictionaryDatum& ) const;
@@ -229,8 +230,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_cond_exp& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, iaf_cond_exp& ); //!<Sets buffer pointers to 0
+    Buffers_( iaf_cond_exp& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, iaf_cond_exp& ); //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< iaf_cond_exp > logger_;

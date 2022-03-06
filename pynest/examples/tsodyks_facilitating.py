@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Tsodyks facilitating example
---------------------------------
+"""
+Tsodyks facilitating example
+----------------------------
 
 This scripts simulates two neurons. One is driven with dc-input and
 connected to the other one with a facilitating Tsodyks synapse. The
@@ -33,13 +34,13 @@ parameter ``U`` causes a slow saturation of the synaptic efficacy
 (Eq. 2.2), enabling a facilitating behavior.
 
 References
-~~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Tsodyks M, Pawelzik K, Markram H (1998). Neural networks with dynamic synapses. Neural
        computation, http://dx.doi.org/10.1162/089976698300017502
 
 See Also
-~~~~~~~~~~
+~~~~~~~~
 
 :doc:`tsodyks_depressing`
 """
@@ -49,28 +50,29 @@ See Also
 
 import nest
 import nest.voltage_trace
+import matplotlib.pyplot as plt
 from numpy import exp
 
 ###############################################################################
 # Second, the simulation parameters are assigned to variables. The neuron
 # and synapse parameters are stored into a dictionary.
 
-h = 0.1    # simulation step size (ms)
-Tau = 40.    # membrane time constant
-Theta = 15.    # threshold
-E_L = 0.     # reset potential of membrane potential
-R = 1.     # membrane resistance (GOhm)
-C = Tau / R  # Tau (ms)/R in NEST units
-TauR = 2.     # refractory time
-Tau_psc = 1.5    # time constant of PSC (= Tau_inact)
-Tau_rec = 130.   # recovery time
-Tau_fac = 530.   # facilitation time
-U = 0.03   # facilitation parameter U
-A = 1540.  # PSC weight in pA
-f = 20. / 1000.  # frequency in Hz converted to 1/ms
-Tend = 1200.  # simulation time
-TIstart = 50.    # start time of dc
-TIend = 1050.  # end time of dc
+resolution = 0.1    # simulation step size (ms)
+Tau = 40.           # membrane time constant
+Theta = 15.0        # threshold
+E_L = 0.0           # reset potential of membrane potential
+R = 1.0             # membrane resistance (GOhm)
+C = Tau / R         # Tau (ms)/R in NEST units
+TauR = 2.0          # refractory time
+Tau_psc = 1.5       # time constant of PSC (= Tau_inact)
+Tau_rec = 130.0     # recovery time
+Tau_fac = 530.0     # facilitation time
+U = 0.03            # facilitation parameter U
+A = 1540.0          # PSC weight in pA
+f = 20.0 / 1000.0   # frequency in Hz converted to 1/ms
+Tend = 1200.0       # simulation time
+TIstart = 50.0      # start time of dc
+TIend = 1050.0      # end time of dc
 I0 = Theta * C / Tau / (1 - exp(-(1 / f - TauR) / Tau))  # dc amplitude
 
 neuron_param = {"tau_m": Tau,
@@ -93,10 +95,11 @@ syn_param = {"tau_psc": Tau_psc,
              "x": 1.0}
 
 ###############################################################################
-# Third, we reset the kernel and set the resolution using ``SetKernelStatus``.
+# Third, we reset the kernel and set the resolution using the corresponding
+# kernel attribute.
 
 nest.ResetKernel()
-nest.SetKernelStatus({"resolution": h})
+nest.resolution = resolution
 
 ###############################################################################
 # Fourth, the nodes are created using ``Create``. We store the returned
@@ -144,4 +147,4 @@ nest.Connect(neurons[0], neurons[1], syn_spec="syn")
 
 nest.Simulate(Tend)
 nest.voltage_trace.from_device(volts)
-nest.voltage_trace.show()
+plt.show()

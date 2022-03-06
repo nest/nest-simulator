@@ -44,7 +44,6 @@
 #   ' 203 Skipped (Threading required),'\
 #   ' 204 Skipped (GSL required),'\
 #   ' 205 Skipped (MUSIC required),'
-#   ' 206 Skipped (Recording backend Arbor required),'
 #   codes_failure=\
 #   ' 1 Failed: missed assertion,'\
 #   ' 2 Failed: error in tested code block,'\
@@ -69,7 +68,7 @@
 #
 run_test ()
 {
-    TEST_TOTAL=$(( ${TEST_TOTAL} + 1 ))
+    TEST_TOTAL=$(( ${TEST_TOTAL:-0} + 1 ))
 
     param_script="$1"
     param_success="$2"
@@ -92,14 +91,18 @@ run_test ()
     echo "#!/bin/sh" >  "${TEST_RUNFILE}"
     echo "set +e"   >> "${TEST_RUNFILE}"
 
-    echo "${param_script}" | grep -q '\.sli'
-    if test $? -eq 0 ; then
+    if echo "${param_script}" | grep -q '\.sli'; then
       command="'${NEST}' '${TEST_BASEDIR}/${param_script}' > '${TEST_OUTFILE}' 2>&1"
     else
       # Use plain python3 if the PYTHON variable is unset (i.e. PyNEST
       # was not enabled)
-      PYTHON_CMD="${PYTHON:-python3}"	
+      if ! test "${PYTHON}"; then
+        echo "! WARNING: STARTING TEST WITH PYTHON='$PYTHON'"
+      fi
+      PYTHON_CMD="${PYTHON}"
+      echo "PYTHON_CMD=$PYTHON_CMD"
       command="'${PYTHON_CMD}' '${TEST_BASEDIR}/${param_script}' > '${TEST_OUTFILE}' 2>&1"
+      echo "command=$command"
     fi
 
     echo "${command}" >> "${TEST_RUNFILE}"
@@ -108,9 +111,9 @@ run_test ()
     chmod 700 "${TEST_RUNFILE}"
 
     TIME_ELAPSED=$( time_cmd "${TEST_RUNFILE}" )
-    TIME_TOTAL=$(( ${TIME_TOTAL} + ${TIME_ELAPSED} ))
-    JUNIT_TESTS=$(( ${JUNIT_TESTS} + 1 ))
-    
+    TIME_TOTAL=$(( ${TIME_TOTAL:-0} + ${TIME_ELAPSED} ))
+    JUNIT_TESTS=$(( ${JUNIT_TESTS:-0} + 1 ))
+
     rm -f "${TEST_RUNFILE}"
 
     exit_code="$(cat "${TEST_RETFILE}")"
@@ -120,6 +123,8 @@ run_test ()
     msg_dirty=${param_success##* ${exit_code} }
     msg_dirty_skip=${param_skipped##* ${exit_code} }
     msg_clean=${msg_dirty%%,*}
+    junit_failure=
+    junit_status=
     if test "${msg_dirty}" != "${param_success}" ; then
         explanation="${msg_clean}"
         junit_status=pass
@@ -164,7 +169,7 @@ run_test ()
     junit_write "${junit_class}" "${junit_name}" "${junit_status}" "${junit_failure}" "$(cat "${TEST_OUTFILE}")"
 
     # Panic on "unexpected" exit code
-    if test "x${unexpected_exitcode}" != x ; then
+    if test "x${unexpected_exitcode:-}" != x ; then
         echo "***"
         echo "*** An unexpected exit code usually hints at a bug in the test suite!"
         ask_results

@@ -35,10 +35,9 @@
 #include "event.h"
 #include "nest_types.h"
 #include "node.h"
-#include "normal_randomdev.h"
-#include "poisson_randomdev.h"
-#include "ring_buffer.h"
+#include "random_generators.h"
 #include "recordables_map.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 namespace nest
@@ -79,15 +78,18 @@ Here :math:`xi_j(t)` denotes a Gaussian white noise.
 
 This template class needs to be instantiated with a class
 containing the following functions:
- - input (nonlinearity that is applied to the input, either psi or phi)
- - mult_coupling_ex (factor of multiplicative coupling for excitatory input)
- - mult_coupling_in (factor of multiplicative coupling for inhibitory input)
 
-The boolean parameter linear_summation determines whether the input function
+- ``input`` (nonlinearity that is applied to the input, either psi or phi)
+- ``mult_coupling_ex`` (factor of multiplicative coupling for excitatory input)
+- ``mult_coupling_in`` (factor of multiplicative coupling for inhibitory input)
+
+The boolean parameter ``linear_summation`` determines whether the input function
 is applied to the summed up incoming connections (True, default value, input
 represents phi) or to each input individually (False, input represents psi).
 In case of multiplicative coupling the nonlinearity is applied separately
-to the summed excitatory and inhibitory inputs if linear_summation=True.
+to the summed excitatory and inhibitory inputs if ``linear_summation=True``.
+
+See also  [1]_.
 
 References
 ++++++++++
@@ -120,8 +122,8 @@ public:
    * Hiding
    */
   using Node::handle;
-  using Node::sends_secondary_event;
   using Node::handles_test_event;
+  using Node::sends_secondary_event;
 
   void handle( InstantaneousRateConnectionEvent& );
   void handle( DelayedRateConnectionEvent& );
@@ -144,7 +146,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
 
@@ -238,9 +239,7 @@ private:
     // by RateConnectionInstantaneous
     std::vector< double > last_y_values;  //!< remembers y_values from last wfr_update
     std::vector< double > random_numbers; //!< remembers the random_numbers in
-    // order to apply the same random
-    // numbers in each iteration when wfr
-    // is used
+    // order to apply the same random numbers in each iteration when wfr is used
     UniversalDataLogger< rate_neuron_opn > logger_; //!< Logger for all analog data
   };
 
@@ -251,7 +250,6 @@ private:
    */
   struct Variables_
   {
-
     // propagators
     double P1_;
     double P2_;
@@ -259,9 +257,7 @@ private:
     // factor accounting for piecewise constant implementation of noise
     double output_noise_factor_;
 
-    librandom::RngPtr rng_;
-    librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
-    librandom::NormalRandomDev normal_dev_;   //!< random deviate generator
+    normal_distribution normal_dist_; //!< normal distribution
   };
 
   //! Read out the rate

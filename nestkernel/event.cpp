@@ -51,72 +51,86 @@ Event::Event()
 }
 
 
-void SpikeEvent::operator()()
+void
+SpikeEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-void WeightRecorderEvent::operator()()
+void
+WeightRecorderEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-void DSSpikeEvent::operator()()
+void
+DSSpikeEvent::operator()()
 {
   sender_->event_hook( *this );
 }
 
-void RateEvent::operator()()
+void
+RateEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-void CurrentEvent::operator()()
+void
+CurrentEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-void DSCurrentEvent::operator()()
+void
+DSCurrentEvent::operator()()
 {
   sender_->event_hook( *this );
 }
 
-void ConductanceEvent::operator()()
+void
+ConductanceEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-void DoubleDataEvent::operator()()
+void
+DoubleDataEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-void DataLoggingRequest::operator()()
+void
+DataLoggingRequest::operator()()
 {
   receiver_->handle( *this );
 }
 
-void DataLoggingReply::operator()()
+void
+DataLoggingReply::operator()()
 {
   receiver_->handle( *this );
 }
 
-void GapJunctionEvent::operator()()
+void
+GapJunctionEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-void InstantaneousRateConnectionEvent::operator()()
+void
+InstantaneousRateConnectionEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-void DelayedRateConnectionEvent::operator()()
+void
+DelayedRateConnectionEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-void DiffusionConnectionEvent::operator()()
+void
+DiffusionConnectionEvent::operator()()
 {
   receiver_->handle( *this );
 }

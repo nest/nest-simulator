@@ -35,7 +35,7 @@ def encode(response):
         raise BadRequest(response.text)
 
 
-class NESTServerClient(object):
+class NESTServerClient:
 
     def __init__(self, host='localhost', port=5000):
         self.url = 'http://{}:{}/'.format(host, port)
@@ -62,7 +62,7 @@ class NESTServerClient(object):
         script = ''.join(lines)
         print('Execute script code of {}'.format(filename))
         print('Return variables: {}'.format(return_vars))
-        print(20*'-')
+        print(20 * '-')
         print(script)
-        print(20*'-')
+        print(20 * '-')
         return self.exec_script(script, return_vars)

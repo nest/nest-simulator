@@ -125,8 +125,9 @@ aeif_cond_beta_multisynapse_dynamics( double, const double y[], double f[], void
     node.P_.Delta_T == 0. ? 0 : ( node.P_.Delta_T * node.P_.g_L * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T ) );
 
   // dv/dt
-  f[ S::V_M ] = is_refractory ? 0 : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike + I_syn - w + node.P_.I_e
-                                      + node.B_.I_stim_ ) / node.P_.C_m;
+  f[ S::V_M ] = is_refractory
+    ? 0
+    : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike + I_syn - w + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
   // Adaptation current w.
   f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
@@ -172,21 +173,6 @@ aeif_cond_beta_multisynapse::State_::State_( const Parameters_& p )
   , r_( 0 )
 {
   y_[ 0 ] = p.E_L;
-}
-
-aeif_cond_beta_multisynapse::State_::State_( const State_& s )
-  : r_( s.r_ )
-{
-  y_ = s.y_;
-}
-
-aeif_cond_beta_multisynapse::State_& aeif_cond_beta_multisynapse::State_::operator=( const State_& s )
-{
-  assert( this != &s ); // would be bad logical error in program
-
-  y_ = s.y_;
-  r_ = s.r_;
-  return *this;
 }
 
 /* ----------------------------------------------------------------
@@ -238,7 +224,8 @@ aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* n
   if ( Erev_flag || taur_flag || taud_flag )
   { // receptor arrays have been modified
     if ( ( E_rev.size() != old_n_receptors || tau_rise.size() != old_n_receptors
-           || tau_decay.size() != old_n_receptors ) && ( not Erev_flag || not taur_flag || not taud_flag ) )
+           || tau_decay.size() != old_n_receptors )
+      && ( not Erev_flag || not taur_flag || not taud_flag ) )
     {
       throw BadProperty(
         "If the number of receptor ports is changed, all three arrays "
@@ -421,13 +408,6 @@ aeif_cond_beta_multisynapse::~aeif_cond_beta_multisynapse()
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-aeif_cond_beta_multisynapse::init_state_( const Node& proto )
-{
-  const aeif_cond_beta_multisynapse& pr = downcast< aeif_cond_beta_multisynapse >( proto );
-  S_ = pr.S_;
-}
 
 void
 aeif_cond_beta_multisynapse::init_buffers_()

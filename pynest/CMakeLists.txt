@@ -54,7 +54,7 @@ if ( HAVE_PYTHON )
   endif ()
 
   target_link_libraries( pynestkernel
-      nest_lib nestutil nestkernel random sli_lib
+      nest_lib nestutil nestkernel sli_lib
       ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES}
       )
 
@@ -64,8 +64,8 @@ if ( HAVE_PYTHON )
       ${PROJECT_SOURCE_DIR}/nest
       ${PROJECT_SOURCE_DIR}/nestkernel
       ${PROJECT_SOURCE_DIR}/nestkernel/spatial
-      ${PROJECT_SOURCE_DIR}/librandom
       ${PROJECT_SOURCE_DIR}/sli
+      ${PROJECT_SOURCE_DIR}/thirdparty
       ${SLI_MODULE_INCLUDE_DIRS}
       ${Python_INCLUDE_DIRS}
       )
@@ -74,50 +74,29 @@ if ( HAVE_PYTHON )
       -D_IS_PYNEST
       )
 
-  install( CODE "execute_process(
-    COMMAND ${PYTHON} setup.py build --build-base=${CMAKE_CURRENT_BINARY_DIR}/build
-                               install --prefix=${CMAKE_INSTALL_PREFIX}
-                                       --install-lib=${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}
-                                       --install-scripts=${CMAKE_INSTALL_FULL_BINDIR}
-                                       --install-data=${CMAKE_INSTALL_FULL_DATADIR}
-    WORKING_DIRECTORY \"${CMAKE_CURRENT_BINARY_DIR}\")"
-      )
+  install(DIRECTORY  nest/ ${PROJECT_BINARY_DIR}/pynest/nest/
+      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest
+      PATTERN "versionchecker.py.in" EXCLUDE
+  )
   install( TARGETS pynestkernel DESTINATION ${PYEXECDIR}/nest/ )
+  install( CODE "
+      execute_process(
+          COMMAND ${PYTHON} ${CMAKE_CURRENT_BINARY_DIR}/setup.py install_egg_info
+            --install-dir=${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}
+          WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}\"
+      )
+      # Use Python's standard library `pkg_resources` module to find
+      # the install requirements of `nest` as specified in `setup.py`.
+      # Then feed them into the stdin pipe of `pip install`.
+      execute_process(
+          COMMAND ${PYTHON} -c \"import pkg_resources as pkg; print('\\\\n'.join(str(r) for r in pkg.get_distribution('nest-simulator').requires()))\"
+          COMMAND ${PYTHON} -m pip install -r /dev/stdin
+      )
+      "
+  )
 
   install( DIRECTORY examples/
       DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples/pynest
-      )
+  )
 
-  install( DIRECTORY nest/random/
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/random
-      )
-
-  install( DIRECTORY nest/spatial/
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/spatial
-      )
-
-  install( DIRECTORY nest/math/
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/math
-      )
-
-  install( DIRECTORY nest/logic/
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/logic
-      )
-
-  install( DIRECTORY nest/spatial_distributions/
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/spatial_distributions
-      )
-
-  install( DIRECTORY nest/server/
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/server
-      )
-
-  find_program( NOSETESTS nosetests )
-  if ( NOT NOSETESTS STREQUAL "NOSETESTS-NOTFOUND" )
-    add_test( NAME PyNEST
-        COMMAND ${NOSETESTS} -v --with-xunit
-        --xunit-file=${PROJECT_BINARY_DIR}/reports/pynest_tests.xml
-        ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/tests
-        )
-  endif ()
 endif ()

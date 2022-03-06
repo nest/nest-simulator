@@ -25,10 +25,10 @@
 #ifdef HAVE_GSL
 
 // C++ includes:
-#include <limits>
+#include <cstdio>
 #include <iomanip>
 #include <iostream>
-#include <cstdio>
+#include <limits>
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -164,13 +164,13 @@ nest::gif_cond_exp::State_::State_( const State_& s )
   }
 }
 
-nest::gif_cond_exp::State_& nest::gif_cond_exp::State_::operator=( const State_& s )
+nest::gif_cond_exp::State_&
+nest::gif_cond_exp::State_::operator=( const State_& s )
 {
-  assert( this != &s ); // would be bad logical error in program
-  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
-  {
-    neuron_state_[ i ] = s.neuron_state_[ i ];
-  }
+  I_stim_ = s.I_stim_;
+  sfa_ = s.sfa_;
+  stc_ = s.stc_;
+  r_ref_ = s.r_ref_;
 
   sfa_elems_.resize( s.sfa_elems_.size(), 0.0 );
   for ( size_t i = 0; i < sfa_elems_.size(); ++i )
@@ -183,12 +183,10 @@ nest::gif_cond_exp::State_& nest::gif_cond_exp::State_::operator=( const State_&
   {
     stc_elems_[ i ] = s.stc_elems_[ i ];
   }
-
-  I_stim_ = s.I_stim_;
-  sfa_ = s.sfa_;
-  stc_ = s.stc_;
-  r_ref_ = s.r_ref_;
-
+  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
+    neuron_state_[ i ] = s.neuron_state_[ i ];
+  }
   return *this;
 }
 
@@ -258,20 +256,20 @@ nest::gif_cond_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
 
   if ( tau_sfa_.size() != q_sfa_.size() )
   {
-    throw BadProperty( String::compose(
-      "'tau_sfa' and 'q_sfa' need to have the same dimensions.\nSize of "
-      "tau_sfa: %1\nSize of q_sfa: %2",
-      tau_sfa_.size(),
-      q_sfa_.size() ) );
+    throw BadProperty(
+      String::compose( "'tau_sfa' and 'q_sfa' need to have the same dimensions.\nSize of "
+                       "tau_sfa: %1\nSize of q_sfa: %2",
+        tau_sfa_.size(),
+        q_sfa_.size() ) );
   }
 
   if ( tau_stc_.size() != q_stc_.size() )
   {
-    throw BadProperty( String::compose(
-      "'tau_stc' and 'q_stc' need to have the same dimensions.\nSize of "
-      "tau_stc: %1\nSize of q_stc: %2",
-      tau_stc_.size(),
-      q_stc_.size() ) );
+    throw BadProperty(
+      String::compose( "'tau_stc' and 'q_stc' need to have the same dimensions.\nSize of "
+                       "tau_stc: %1\nSize of q_stc: %2",
+        tau_stc_.size(),
+        q_stc_.size() ) );
   }
   if ( g_L_ <= 0 )
   {
@@ -396,13 +394,6 @@ nest::gif_cond_exp::~gif_cond_exp()
  * ---------------------------------------------------------------- */
 
 void
-nest::gif_cond_exp::init_state_( const Node& proto )
-{
-  const gif_cond_exp& pr = downcast< gif_cond_exp >( proto );
-  S_ = pr.S_;
-}
-
-void
 nest::gif_cond_exp::init_buffers_()
 {
   B_.spike_exc_.clear(); // includes resize
@@ -453,7 +444,7 @@ nest::gif_cond_exp::calibrate()
   B_.logger_.init();
 
   const double h = Time::get_resolution().get_ms();
-  V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
+  V_.rng_ = get_vp_specific_rng( get_thread() );
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
 

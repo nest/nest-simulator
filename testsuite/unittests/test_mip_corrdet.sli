@@ -45,34 +45,29 @@ SeeAlso: mip_generator, correlation_detector
 
 %
 % Cross check generated with cross_check_test_mip_corrdet.py
-% 
-[ 2453  2528  2507  2439  2459  2451  2441  2523  2494  2445
-  4909  2369  2410  2457  2495  2484  2369  2341  2452  2475
-  2453] { cvd } Map /expected_hist Set
+%
+[ 2335 2317 2364 2370 2376 2336 2308 2325 2292
+  2393 4806 2378 2373 2356 2357 2400 2420 2325 2367 2338 2293 ] { cvd } Map /expected_hist Set
 
 /run_test
 {
- 0.1 /h Set        % computation step size in ms 
+ 0.1 /h Set        % computation step size in ms
  100000.0 /T Set   % total duration
  10.0 /delta_tau Set
  100.0 /tau_max Set
  0.5 /pc Set
  100.0 /nu Set
- 
+
 ResetKernel
 
 userdict begin
 
-<< 
+<<
     /local_num_threads 1
     /resolution h
     /overwrite_files true
-    /grng_seed 0 % because test data was produced for seed = 0
+    /rng_seed 12345
 >> SetKernelStatus
-
-% check, if we can set another rng
-/mip_generator << /mother_rng rngdict/MT19937 :: 101 CreateRNG >> SetDefaults
-/mip_generator << /mother_rng rngdict/knuthlfg :: 101 CreateRNG >> SetDefaults % this seed will be ignored, because explicitly set
 
 /mip_generator Create dup /mg Set
 <<
@@ -83,7 +78,7 @@ userdict begin
 
 /correlation_detector Create dup /cd Set
 <<
-    /tau_max   tau_max 
+    /tau_max   tau_max
     /delta_tau delta_tau
 >> SetStatus
 

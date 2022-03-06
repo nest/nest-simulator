@@ -29,9 +29,6 @@
 #include "dict_util.h"
 #include "numerics.h"
 
-// Includes from librandom:
-#include "gslrandomgen.h"
-
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
@@ -41,7 +38,6 @@
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
-#include "integerdatum.h"
 
 
 /* ----------------------------------------------------------------
@@ -82,7 +78,7 @@ nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d, pulsepa
   // We cannot use a single line here since short-circuiting may stop evaluation
   // prematurely. Therefore, neednewpulse must be second arg on second line.
   bool neednewpulse = updateValueParam< long >( d, names::activity, a_, node );
-  neednewpulse = updateValueParam< double >( d, names::sdev, sdev_, node ) || neednewpulse;
+  neednewpulse = updateValueParam< double >( d, names::sdev, sdev_, node ) or neednewpulse;
   if ( a_ < 0 )
   {
     throw BadProperty( "The activity cannot be negative." );
@@ -93,7 +89,7 @@ nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d, pulsepa
   }
 
 
-  if ( updateValue< std::vector< double > >( d, "pulse_times", pulse_times_ ) || neednewpulse )
+  if ( updateValue< std::vector< double > >( d, "pulse_times", pulse_times_ ) or neednewpulse )
   {
     std::sort( pulse_times_.begin(), pulse_times_.end() );
     ppg.B_.spiketimes_.clear();
@@ -101,19 +97,17 @@ nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d, pulsepa
 }
 
 /* ----------------------------------------------------------------
-* Default and copy constructor for node
-* ---------------------------------------------------------------- */
+ * Default and copy constructor for node
+ * ---------------------------------------------------------------- */
 
 nest::pulsepacket_generator::pulsepacket_generator()
-  : Node()
-  , device_()
+  : StimulationDevice()
   , P_()
 {
 }
 
 nest::pulsepacket_generator::pulsepacket_generator( const pulsepacket_generator& ppg )
-  : Node( ppg )
-  , device_( ppg.device_ )
+  : StimulationDevice( ppg )
   , P_( ppg.P_ )
 {
 }
@@ -123,23 +117,21 @@ nest::pulsepacket_generator::pulsepacket_generator( const pulsepacket_generator&
  * ---------------------------------------------------------------- */
 
 void
-nest::pulsepacket_generator::init_state_( const Node& proto )
+nest::pulsepacket_generator::init_state_()
 {
-  const pulsepacket_generator& pr = downcast< pulsepacket_generator >( proto );
-
-  device_.init_state( pr.device_ );
+  StimulationDevice::init_state();
 }
 
 void
 nest::pulsepacket_generator::init_buffers_()
 {
-  device_.init_buffers();
+  StimulationDevice::init_buffers();
 }
 
 void
 nest::pulsepacket_generator::calibrate()
 {
-  device_.calibrate();
+  StimulationDevice::calibrate();
   assert( V_.start_center_idx_ <= V_.stop_center_idx_ );
 
   if ( P_.sdev_ > 0.0 )
@@ -160,7 +152,7 @@ nest::pulsepacket_generator::calibrate()
   // determine pulse-center times that lie within
   // a window sdev*sdev_tolerance around the current time
   while (
-    V_.stop_center_idx_ < P_.pulse_times_.size() && P_.pulse_times_.at( V_.stop_center_idx_ ) - now <= V_.tolerance )
+    V_.stop_center_idx_ < P_.pulse_times_.size() and P_.pulse_times_.at( V_.stop_center_idx_ ) - now <= V_.tolerance )
   {
     if ( std::abs( P_.pulse_times_.at( V_.stop_center_idx_ ) - now ) > V_.tolerance )
     {
@@ -177,7 +169,8 @@ nest::pulsepacket_generator::update( Time const& T, const long from, const long 
   assert( to >= from );
   assert( ( to - from ) <= kernel().connection_manager.get_min_delay() );
 
-  if ( ( V_.start_center_idx_ == P_.pulse_times_.size() && B_.spiketimes_.empty() ) || ( not device_.is_active( T ) ) )
+  if ( ( V_.start_center_idx_ == P_.pulse_times_.size() and B_.spiketimes_.empty() )
+    or ( not StimulationDevice::is_active( T ) ) )
   {
     return; // nothing left to do
   }
@@ -186,7 +179,7 @@ nest::pulsepacket_generator::update( Time const& T, const long from, const long 
   if ( V_.stop_center_idx_ < P_.pulse_times_.size() )
   {
     while ( V_.stop_center_idx_ < P_.pulse_times_.size()
-      && ( Time( Time::ms( P_.pulse_times_.at( V_.stop_center_idx_ ) ) ) - T ).get_ms() <= V_.tolerance )
+      and ( Time( Time::ms( P_.pulse_times_.at( V_.stop_center_idx_ ) ) ) - T ).get_ms() <= V_.tolerance )
     {
       V_.stop_center_idx_++;
     }
@@ -194,8 +187,7 @@ nest::pulsepacket_generator::update( Time const& T, const long from, const long 
 
   if ( V_.start_center_idx_ < V_.stop_center_idx_ )
   {
-    // obtain rng
-    librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
+    RngPtr rng = get_vp_specific_rng( get_thread() );
 
     bool needtosort = false;
 
@@ -203,7 +195,7 @@ nest::pulsepacket_generator::update( Time const& T, const long from, const long 
     {
       for ( int i = 0; i < P_.a_; i++ )
       {
-        double x = P_.sdev_ * V_.norm_dev_( rng ) + P_.pulse_times_.at( V_.start_center_idx_ );
+        double x = P_.sdev_ * V_.normal_dist_( rng ) + P_.pulse_times_.at( V_.start_center_idx_ );
         if ( Time( Time::ms( x ) ) >= T )
         {
           B_.spiketimes_.push_back( Time( Time::ms( x ) ).get_steps() );
@@ -222,13 +214,13 @@ nest::pulsepacket_generator::update( Time const& T, const long from, const long 
 
   // Since we have an ordered list of spiketimes,
   // we can compute the histogram on the fly.
-  while ( not B_.spiketimes_.empty() && B_.spiketimes_.front() < ( T.get_steps() + to ) )
+  while ( not B_.spiketimes_.empty() and B_.spiketimes_.front() < ( T.get_steps() + to ) )
   {
     n_spikes++;
     long prev_spike = B_.spiketimes_.front();
     B_.spiketimes_.pop_front();
 
-    if ( n_spikes > 0 && prev_spike != B_.spiketimes_.front() )
+    if ( n_spikes > 0 and ( B_.spiketimes_.empty() or prev_spike != B_.spiketimes_.front() ) )
     {
       SpikeEvent se;
       se.set_multiplicity( n_spikes );
@@ -236,4 +228,34 @@ nest::pulsepacket_generator::update( Time const& T, const long from, const long 
       n_spikes = 0;
     }
   }
+}
+
+/* ----------------------------------------------------------------
+ * Other functions
+ * ---------------------------------------------------------------- */
+
+void
+nest::pulsepacket_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+
+  // For the input backend
+  if ( not input_param.empty() )
+  {
+    if ( input_param.size() < 3 )
+    {
+      throw BadParameterValue(
+        "The size of the data for the pulse_generator needs to be higher than 3 "
+        "[activity, sdev, all the pulse times]." );
+    }
+    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    ( *d )[ names::activity ] = DoubleDatum( input_param[ 0 ] );
+    ( *d )[ names::sdev ] = DoubleDatum( input_param[ 1 ] );
+    input_param.erase( input_param.begin(), input_param.begin() + 2 );
+    ( *d )[ names::pulse_times ] = DoubleVectorDatum( input_param );
+    ptmp.set( d, *this, this );
+  }
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
 }

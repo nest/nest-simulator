@@ -33,10 +33,10 @@
 
 // Includes from sli:
 #include "dict.h"
+#include "sharedptrdatum.h"
 #include "slifunction.h"
 #include "slimodule.h"
 #include "slitype.h"
-#include "sharedptrdatum.h"
 
 
 namespace nest
@@ -153,7 +153,6 @@ public:
    * - @c s  : string
    * - @c l  : literal
    * - @c f  : function
-   * - @c r  : rng
    * - @c is : input stream
    * - @c os : output stream
    * - @c t  : any token
@@ -181,8 +180,6 @@ public:
         @verbatim
         /iaf_psc_alpha 6 Create
         @endverbatim
-   *    Literals will be looked up in the corresponding dictionaries
-   *    (modeldict, synapsedict).
    * -# The network is accessed using the get_network() accessor
    *    function.
    * -# Each interface function shall verify that there are enough
@@ -416,11 +413,6 @@ public:
     void execute( SLIInterpreter* ) const;
   } mpiabort_ifunction;
 #endif
-
-  class GetGlobalRngFunction : public SLIFunction
-  {
-    void execute( SLIInterpreter* ) const;
-  } getglobalrngfunction;
 
   class Cvdict_CFunction : public SLIFunction
   {

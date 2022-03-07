@@ -103,7 +103,7 @@ private:
   /**
    * Call placement new on the supplied memory position.
    */
-  Node* allocate_();
+  Node* create_();
 
   /**
    * Prototype node from which all instances are constructed.
@@ -151,7 +151,7 @@ GenericModel< ElementT >::clone( const std::string& newname ) const
 
 template < typename ElementT >
 Node*
-GenericModel< ElementT >::allocate_()
+GenericModel< ElementT >::create_()
 {
   Node* n = new ElementT( proto_ );
   return n;

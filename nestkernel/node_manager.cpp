@@ -204,7 +204,7 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
 
       while ( node_id <= max_node_id )
       {
-        Node* node = model.allocate( t );
+        Node* node = model.create( t );
         node->set_node_id_( node_id );
         node->set_nc_( nc_ptr );
         node->set_model_id( model.get_model_id() );
@@ -239,7 +239,7 @@ NodeManager::add_devices_( Model& model, index min_node_id, index max_node_id, N
         // keep track of number of thread local devices
         ++num_thread_local_devices_[ t ];
 
-        Node* node = model.allocate( t );
+        Node* node = model.create( t );
         node->set_node_id_( node_id );
         node->set_nc_( nc_ptr );
         node->set_model_id( model.get_model_id() );
@@ -276,7 +276,7 @@ NodeManager::add_music_nodes_( Model& model, index min_node_id, index max_node_i
           // keep track of number of thread local devices
           ++num_thread_local_devices_[ t ];
 
-          Node* node = model.allocate( 0 );
+          Node* node = model.create( 0 );
           node->set_node_id_( node_id );
           node->set_nc_( nc_ptr );
           node->set_model_id( model.get_model_id() );

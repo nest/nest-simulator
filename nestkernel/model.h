@@ -83,11 +83,11 @@ public:
 
   /**
    * Allocate new Node and return its pointer.
-   * allocate() is not const, because it
+   * create() is not const, because it
    * is allowed to modify the Model object for
    * 'administrative' purposes.
    */
-  Node* allocate( thread t );
+  Node* create( thread t );
 
   /**
    * Deletes all nodes which belong to this model.
@@ -210,9 +210,9 @@ private:
   void set_threads_( thread t );
 
   /**
-   * Allocate a new object at the specified memory position.
+   * Create a new object.
    */
-  virtual Node* allocate_() = 0;
+  virtual Node* create_() = 0;
 
   /**
    * Name of the Model.
@@ -237,10 +237,10 @@ private:
 
 
 inline Node*
-Model::allocate( thread t )
+Model::create( thread t )
 {
   assert( ( size_t ) t < memory_.size() );
-  Node* n = allocate_();
+  Node* n = create_();
   memory_[ t ].push_back( n );
   return n;
 }

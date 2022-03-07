@@ -49,13 +49,13 @@ Provide a direct current (DC) input
 Description
 +++++++++++
 
-The dc_generator provides a constant DC input to the connected
+The ``dc_generator`` provides a constant DC input to the connected
 node. The unit of the current is pA.
 
-The dc_generator is rather inefficient, since it needs to send the
+The ``dc_generator`` is rather inefficient, since it needs to send the
 same current information on each time step. If you only need a
 constant bias current into a neuron, you could instead directly set
-the property *I_e*, which is available in many neuron models.
+the property ``I_e``, which is available in many neuron models.
 
 .. include:: ../models/stimulation_device.rst
 

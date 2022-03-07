@@ -36,8 +36,7 @@
 namespace nest
 {
 /**
- * Module supplying all models that are included in the NEST release. Sets up
- * the modeldict with all models included with the NEST distribution.
+ * Module supplying all models that are included in the NEST release.
  *
  * First Version: June 2006
  *

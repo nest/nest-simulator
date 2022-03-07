@@ -31,8 +31,8 @@
 
 // Includes from sli:
 #include "dictdatum.h"
-#include "sharedptrdatum.h"
 #include "name.h"
+#include "sharedptrdatum.h"
 
 namespace nest
 {

@@ -95,12 +95,15 @@ const Name comparator( "comparator" );
 const Name configbit_0( "configbit_0" );
 const Name configbit_1( "configbit_1" );
 const Name connection_count( "connection_count" );
+const Name connection_rules( "connection_rules" );
 const Name connection_type( "connection_type" );
 const Name consistent_integration( "consistent_integration" );
 const Name continuous( "continuous" );
 const Name count_covariance( "count_covariance" );
 const Name count_histogram( "count_histogram" );
 const Name covariance( "covariance" );
+const Name compartments( "compartments" );
+const Name comp_idx( "comp_idx" );
 
 const Name Delta_T( "Delta_T" );
 const Name Delta_V( "Delta_V" );
@@ -165,6 +168,7 @@ const Name equilibrate( "equilibrate" );
 const Name eta( "eta" );
 const Name events( "events" );
 const Name extent( "extent" );
+const Name e_L( "e_L" );
 
 const Name file_extension( "file_extension" );
 const Name filename( "filename" );
@@ -209,10 +213,12 @@ const Name global_id( "global_id" );
 const Name grid( "grid" );
 const Name grid3d( "grid3d" );
 const Name growth_curve( "growth_curve" );
+const Name growth_curves( "growth_curves" );
 const Name growth_factor_buffer_spike_data( "growth_factor_buffer_spike_data" );
 const Name growth_factor_buffer_target_data( "growth_factor_buffer_target_data" );
 const Name growth_rate( "growth_rate" );
 const Name gsl_error_tol( "gsl_error_tol" );
+const Name g_C( "g_C" );
 
 const Name h( "h" );
 const Name has_connections( "has_connections" );
@@ -282,6 +288,7 @@ const Name min_delay( "min_delay" );
 const Name min_update_time( "min_update_time" );
 const Name minor_axis( "minor_axis" );
 const Name model( "model" );
+const Name model_id( "model_id" );
 const Name ms_per_tic( "ms_per_tic" );
 const Name mu( "mu" );
 const Name mu_minus( "mu_minus" );
@@ -304,6 +311,7 @@ const Name network_size( "network_size" );
 const Name neuron( "neuron" );
 const Name next_readout_time( "next_readout_time" );
 const Name no_synapses( "no_synapses" );
+const Name node_models( "node_models" );
 const Name node_uses_wfr( "node_uses_wfr" );
 const Name noise( "noise" );
 const Name noisy_rate( "noisy_rate" );
@@ -349,6 +357,8 @@ const Name proximal_inh( "proximal_inh" );
 const Name psi( "psi" );
 const Name published( "published" );
 const Name pulse_times( "pulse_times" );
+const Name parent_idx( "parent_idx" );
+const Name params( "params" );
 
 const Name q_rr( "q_rr" );
 const Name q_sfa( "q_sfa" );
@@ -385,6 +395,7 @@ const Name rng_type( "rng_type" );
 const Name rng_types( "rng_types" );
 const Name rport( "receptor" );
 const Name rule( "rule" );
+const Name receptor_idx( "receptor_idx" );
 
 const Name S( "S" );
 const Name S_act_NMDA( "S_act_NMDA" );
@@ -414,6 +425,7 @@ const Name start( "start" );
 const Name state( "state" );
 const Name std( "std" );
 const Name std_mod( "std_mod" );
+const Name stimulation_backends( "stimulation_backends" );
 const Name stimulator( "stimulator" );
 const Name stimulus_source( "stimulus_source" );
 const Name stop( "stop" );
@@ -422,6 +434,7 @@ const Name structural_plasticity_update_interval( "structural_plasticity_update_
 const Name synapse_id( "synapse_id" );
 const Name synapse_label( "synapse_label" );
 const Name synapse_model( "synapse_model" );
+const Name synapse_models( "synapse_models" );
 const Name synapse_modelid( "synapse_modelid" );
 const Name synapse_parameters( "synapse_parameters" );
 const Name synapses_per_driver( "synapses_per_driver" );
@@ -591,6 +604,7 @@ const Name y_1( "y_1" );
 
 const Name z( "z" );
 const Name z_connected( "z_connected" );
+
 } // namespace names
 
 } // namespace nest

@@ -45,7 +45,7 @@ Generate sinusoidally modulated Poisson spike trains
 Description
 +++++++++++
 
-sinusoidal_poisson_generator generates sinusoidally modulated Poisson spike
+``sinusoidal_poisson_generator`` generates sinusoidally modulated Poisson spike
 trains. By default, each target of the generator will receive a different
 spike train.
 
@@ -54,24 +54,22 @@ The instantaneous rate of the process is given by
 .. math::
 
   f(t) = max(0, rate + amplitude \sin ( 2 \pi frequency t + phase
-     * \pi/180 )) >= 0
+     \cdot \pi/180 )) >= 0
 
-Remarks
-+++++++
+.. note::
 
-- If amplitude > rate, firing rate is cut off at zero. In this case, the mean
-  firing rate will be less than rate.
-- The state of the generator is reset on calibration.
-- The generator does not support precise spike timing.
-- You can use the multimeter to sample the rate of the generator.
-- The generator will create different trains if run at different
-  temporal resolutions.
+   - If amplitude > rate, firing rate is cut off at zero. In this case, the mean
+     firing rate will be less than rate.
+   - The state of the generator is reset on calibration.
+   - The generator does not support precise spike timing.
+   - You can use the multimeter to sample the rate of the generator.
+   - The generator will create different trains if run at different
+     temporal resolutions.
 
-- Individual spike trains vs single spike train:
-  By default, the generator sends a different spike train to each of its
-  targets. If /individual_spike_trains is set to false using either
-  SetDefaults or CopyModel before a generator node is created, the generator
-  will send the same spike train to all of its targets.
+By default, the generator sends a different spike train to each of its
+targets. If /individual_spike_trains is set to false using either
+SetDefaults or CopyModel before a generator node is created, the
+generator will send the same spike train to all of its targets.
 
 .. include:: ../models/stimulation_device.rst
 
@@ -90,8 +88,9 @@ phase
 individual_spike_trains
     See note above, default: true
 
-Set parameters from a stimulation backend
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Setting parameters from a stimulation backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The parameters in this stimulation device can be updated with input
 coming from a stimulation backend. The data structure used for the
@@ -135,9 +134,9 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
+  using Node::event_hook;
   using Node::handle;
   using Node::handles_test_event;
-  using Node::event_hook;
 
   void handle( DataLoggingRequest& ) override;
 

@@ -50,7 +50,7 @@ symmetric nearest-neighbour spike pairing scheme
 Description
 +++++++++++
 
-stdp_nn_restr_synapse is a connector to create synapses with spike time
+``stdp_nn_restr_synapse`` is a connector to create synapses with spike time
 dependent plasticity with the restricted symmetric nearest-neighbour spike
 pairing scheme (fig. 7C in [1]_).
 
@@ -62,21 +62,21 @@ rule with the nearest preceding presynaptic one, but only if the latter
 occured not earlier than the previous postsynaptic one. So, a spike can
 participate neither in two depression pairs nor in two potentiation pairs.
 
-The pairs exactly coinciding (so that presynaptic_spike == postsynaptic_spike
-+ dendritic_delay), leading to zero delta_t, are discarded. In this case the
+The pairs exactly coinciding (so that ``presynaptic_spike == postsynaptic_spike
++ dendritic_delay``), leading to zero ``delta_t``, are discarded. In this case the
 concerned pre/postsynaptic spike is paired with the second latest preceding
-post/presynaptic one (for example, pre=={10 ms; 20 ms} and post=={20 ms} will
+post/presynaptic one (for example, ``pre=={10 ms; 20 ms}`` and ``post=={20 ms}`` will
 result in a potentiation pair 20-to-10).
 
 The implementation relies on an additional variable - the postsynaptic
 eligibility trace [1]_ (implemented on the postsynaptic neuron side). It
-decays exponentially with the time constant tau_minus and increases to 1 on
-a post-spike occurrence (instead of increasing by 1 as in stdp_synapse).
+decays exponentially with the time constant ``tau_minus`` and increases to 1 on
+a post-spike occurrence (instead of increasing by 1 as in ``stdp_synapse``).
 
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
@@ -142,8 +142,8 @@ public:
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
-  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
@@ -281,7 +281,7 @@ stdp_nn_restr_synapse< targetidentifierT >::send( Event& e, thread t, const Comm
       value_to_throw_away, // discard Kminus
       nearest_neighbor_Kminus,
       value_to_throw_away // discard Kminus_triplet
-      );
+    );
     weight_ = depress_( weight_, nearest_neighbor_Kminus );
   }
 

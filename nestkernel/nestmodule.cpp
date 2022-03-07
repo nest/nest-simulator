@@ -327,7 +327,7 @@ create_doughnut( const DictionaryDatum& d )
 
    Author: docu by Sirko Straube
 
-   SeeAlso: ShowStatus, GetStatus, GetKernelStatus, info, modeldict, Set, SetStatus_dict
+   SeeAlso: ShowStatus, GetStatus, GetKernelStatus, info, Set, SetStatus_dict
 */
 void
 NestModule::SetStatus_idFunction::execute( SLIInterpreter* i ) const
@@ -616,10 +616,10 @@ NestModule::SetDefaults_l_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  const Name name = getValue< Name >( i->OStack.pick( 1 ) );
+  const std::string name = getValue< std::string >( i->OStack.pick( 1 ) );
   DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  kernel().model_manager.set_model_defaults( name, params );
+  set_model_defaults( name, params );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -637,7 +637,7 @@ NestModule::GetDefaults_lFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  const Name modelname = getValue< Name >( i->OStack.pick( 0 ) );
+  const std::string modelname = getValue< std::string >( i->OStack.pick( 0 ) );
 
   DictionaryDatum dict = get_model_defaults( modelname );
 
@@ -769,14 +769,11 @@ NestModule::CleanupFunction::execute( SLIInterpreter* i ) const
    /model /new_model            -> -
    Parameters:
    /model      - literal naming an existing model
-   /new_model  - literal giving the name of the copy to create, must not
-                 exist in modeldict or synapsedict before
+   /new_model  - literal name of the copy to create, must not exist before
    /param_dict - parameters to set in the new_model
    Description:
-   A copy of model is created and registered in modeldict or synapsedict
-   under the name new_model. If a parameter dictionary is given, the parameters
-   are set in new_model.
-   Warning: It is impossible to unload modules after use of CopyModel.
+   A copy of model is created and registered under the name new_model.
+   If a parameter dictionary is given, the parameters are set in new_model.
  */
 void
 NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
@@ -804,7 +801,7 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
    /model n params Create -> NodeCollection
 
    Parameters:
-   /model - literal naming the modeltype (entry in modeldict)
+   /model - literal naming the modeltype
    n      - the desired number of nodes
    params - parameters for the newly created node(s)
 
@@ -815,8 +812,6 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
    Create generates n new network objects of the supplied model
    type. If n is not given, a single node is created. params is a
    dictionary with parameters for the new nodes.
-
-   SeeAlso: modeldict
 */
 void
 NestModule::Create_l_iFunction::execute( SLIInterpreter* i ) const
@@ -1996,7 +1991,9 @@ NestModule::Apply_P_DFunction::execute( SLIInterpreter* i ) const
   auto positions = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
   auto param = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
 
-  auto result = apply( param, positions );
+  // ADL requires explicit namespace qualification to avoid confusion with std::apply() in C++17
+  // See https://github.com/llvm/llvm-project/issues/53084#issuecomment-1007969489
+  auto result = nest::apply( param, positions );
 
   i->OStack.pop( 2 );
   i->OStack.push( result );
@@ -2011,7 +2008,9 @@ NestModule::Apply_P_gFunction::execute( SLIInterpreter* i ) const
   NodeCollectionDatum nc = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
   ParameterDatum param = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
 
-  auto result = apply( param, nc );
+  // ADL requires explicit namespace qualification to avoid confusion with std::apply() in C++17
+  // See https://github.com/llvm/llvm-project/issues/53084#issuecomment-1007969489
+  auto result = nest::apply( param, nc );
 
   i->OStack.pop( 2 );
   i->OStack.push( result );
@@ -2743,7 +2742,7 @@ NestModule::GetLayerStatus_gFunction::execute( SLIInterpreter* i ) const
 
   Author: Kittel Austvoll, Hans Ekkehard Plesser
 
-  SeeAlso: nest::DumpLayerConnections, setprecision, modeldict
+  SeeAlso: nest::DumpLayerConnections, setprecision
 */
 void
 NestModule::DumpLayerNodes_os_gFunction::execute( SLIInterpreter* i ) const

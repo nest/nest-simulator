@@ -66,9 +66,9 @@ extern "C" int pp_cond_exp_mc_urbanczik_dynamics( double, const double*, double*
 Name: pp_cond_exp_mc_urbanczik_parameters - Helper class for pp_cond_exp_mc_urbanczik
 
 Description:
-pp_cond_exp_mc_urbanczik_parameters is a helper class for the pp_cond_exp_mc_urbanczik neuron model
+``pp_cond_exp_mc_urbanczik_parameters`` is a helper class for the ``pp_cond_exp_mc_urbanczik`` neuron model
 that contains all parameters of the model that are needed to compute the weight changes of a
-connected urbanczik_synapse in the base class UrbanczikArchivingNode.
+connected ``urbanczik_synapse`` in the base class UrbanczikArchivingNode.
 
 Author: Jonas Stapmanns, David Dahmen, Jan Hahne
 
@@ -157,7 +157,7 @@ delay specified in the synapse model does *not* account for any delay that might
 be associated with information traveling through the explicitly modeled
 dendritic compartments.
 
-In the :ref:`Urbanczik synapse <urbanczik_synapse>`, the change of the synaptic
+In the :doc:`Urbanczik synapse <urbanczik_synapse>`, the change of the synaptic
 weight is driven by an error signal, which is the difference between the firing
 rate of the soma (derived from the somatic spike train :math:`S_{post}`) and the
 dendritic prediction of the firing rate of the soma (derived from the dendritic
@@ -169,7 +169,7 @@ synaptic delay :math:`d`, the synapse combines a delayed version of the error
 signal with the presynaptic spike train (:math:`S_{pre}`), see :ref:`panel c)
 <fig-multicompartment>`.
 
-.. _fig-multicompartment::
+.. _fig-multicompartment:
 
 .. figure:: ../static/img/multicompartment.png
    :width: 75 %
@@ -186,6 +186,7 @@ signal with the presynaptic spike train (:math:`S_{pre}`), see :ref:`panel c)
    quantities; the dendritic membrane potential (middle) and the somatic spike
    train (bottom).
 
+See :doc:`../auto_examples/urbanczik_synapse_example` to learn more.
 
 Parameters
 ++++++++++
@@ -210,14 +211,13 @@ these parameters are marked with an asterisk.
  t_ref          ms      Duration of refractory period
 ============   =====   =====================================================
 
-See :doc:`../auto_examples/urbanczik_synapse_example` to learn more.
+.. note::
 
-Remarks:
-
-The neuron model uses standard units of NEST instead of the unitless quantities
-used in [1]_.
+   The neuron model uses standard units of NEST instead of the unitless quantities
+   used in [1]_.
 
 .. note::
+
    All parameters that occur for both compartments are stored as C arrays, with
    index 0 being soma.
 
@@ -443,7 +443,7 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( pp_cond_exp_mc_urbanczik& ); //!<Sets buffer pointers to 0
+    Buffers_( pp_cond_exp_mc_urbanczik& ); //!< Sets buffer pointers to 0
     //! Sets buffer pointers to 0
     Buffers_( const Buffers_&, pp_cond_exp_mc_urbanczik& );
 

@@ -1,3 +1,5 @@
+.. _pynest_tutorial_2:
+
 Part 2: Populations of neurons
 ==============================
 
@@ -19,15 +21,15 @@ material, you will know how to:
 For more information on the usage of PyNEST, please see the other
 sections of this primer:
 
--  :doc:`Part 1: Neurons and simple neural
-   networks <part_1_neurons_and_simple_neural_networks>`
--  :doc:`Part 3: Connecting networks with
-   synapses <part_3_connecting_networks_with_synapses>`
--  :doc:`Part 4: Spatially structured
-   networks <part_4_spatially_structured_networks>`
+-  :ref:`Part 1: Neurons and simple neural
+   networks <pynest_tutorial_1>`
+-  :ref:`Part 3: Connecting networks with
+   synapses <pynest_tutorial_3>`
+-  :ref:`Part 4: Spatially structured
+   networks <pynest_tutorial_4>`
 
-More advanced examples can be found at `Example
-Networks <https://www.nest-simulator.org/more-example-networks/>`__, or
+More advanced examples can be found at :ref:`Example
+Networks <pynest_examples>`, or
 have a look at at the source directory of your NEST installation in the
 subdirectory: ``pynest/examples/``.
 
@@ -200,7 +202,7 @@ Here we have just used very simple connection schemes. Connectivity
 patterns requiring the specification of further parameters, such as
 in-degree or connection probabilities, must be defined in a dictionary
 containing the key ``rule`` and the key for parameters associated to the
-rule. Please see :doc:`Connection management <../../guides/connection_management>`
+rule. Please see :ref:`Connection management <connection_management>`
 for an illustrated guide to the usage of :py:func:`.Connect`, as well as the example below.
 
 Connecting populations with random connections
@@ -266,7 +268,7 @@ the same population simultaneously in the role of ``pre`` and ``post``.
 
 For more information on connecting neurons, please read the
 documentation of the :py:func:`.Connect` function and consult the guide at
-:doc:`Connection management <../../guides/connection_management>`.
+:ref:`Connection management <connection_management>`.
 
 Specifying the behaviour of devices
 -----------------------------------
@@ -307,7 +309,7 @@ will generate its own using the name of the device, and its id. If the
 simulation is multithreaded or distributed, multiple files will be
 created, one for each process and/or thread. For more information on how
 to customise the behaviour and output format of recording devices,
-please read the documentation for :doc:`RecordingDevice <../../guides/recording_from_simulations>`.
+please read the documentation for :ref:`Recording devices <record_simulations>`.
 
 Resetting simulations
 ---------------------

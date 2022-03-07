@@ -1,5 +1,7 @@
 :orphan:
 
+.. _vim_sli:
+
 Vim support for SLI files
 =========================
 

@@ -425,7 +425,7 @@ The following parameters and functionalities are provided:
 
 For more information, check out the guide on
 :ref:`parametrization <param_ex>` or the documentation on the
-different :doc:`PyNEST APIs <../ref_material/pynest_apis>`.
+different :ref:`PyNEST APIs <pynest_api>`.
 
 ::
 
@@ -466,7 +466,7 @@ distributed parameters, it needs to be defined in two steps:
     nest.Connect(A, B, syn_spec=syn_dict)
 
 For further information on the available distributions see
-:doc:`Random numbers in NEST <random_numbers>`.
+:ref:`Random numbers in NEST <random_numbers>`.
 
 .. _collocated_synapses:
 
@@ -540,8 +540,8 @@ Spatially-structured networks
 Nodes in NEST can be created so that they have a position in two- or
 three-dimensional space. To take full advantage of the arrangement of
 nodes, connection parameters can be based on the nodes' positions or
-their spatial relation to each other. See :doc:`Spatially-structured
-networks <spatial/index>` for the full information about how to create
+their spatial relation to each other. See :ref:`Spatially-structured
+networks <spatial_networks>` for the full information about how to create
 and connect such networks.
 
 Connecting sparse matrices with array indexing
@@ -691,12 +691,11 @@ Synapse Types
 
 NEST provides a number of built-in synapse models that can be used
 during connection setup. The default model is the ``static_synapse``,
-whose only parameters ``weight`` and ``delay`` do not change over time.
-Other synapse types model effects like learning and adaptation in the
+whose only parameters ``weight`` and ``delay`` do not change over
+time. Other synapse models implement learning and adaptation in the
 form of long-term or short-term plasticity. A list of available
-synapse models is accessible via the command
-``nest.Models('synapses')``. A list of available synapse models and
-more detailed information about each of them can be found in the
+synapse models is accessible via the command ``nest.synapse_models``.
+More detailed information about each of them can be found in the
 :doc:`model directory <../models/index_synapse>`.
 
 .. note::
@@ -835,7 +834,7 @@ directly from the SynapseCollection using the dot-notation:
   >>>  conn.delay
        [1.0, 1.0]
 
-For :doc:`spatially distributed networks <spatial/index>`, you can
+For :ref:`spatially distributed networks <spatial_networks>`, you can
 access the distance between the source-target pairs by querying
 `distance` on your SynapseCollection.
 

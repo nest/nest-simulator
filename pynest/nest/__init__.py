@@ -25,13 +25,15 @@ r"""PyNEST - Python interface for the NEST simulator
 
 * ``nest.__version__`` displays the NEST version.
 
-* ``nest.Models()`` shows all available neuron, device and synapse models.
+* ``nest.node_models`` shows all available neuron and device models.
 
-* ``nest.help('model_name') displays help for the given model, e.g., ``nest.help('iaf_psc_exp')``
+* ``nest.synapse_models`` shows all available synapse models.
 
-* To get help on functions in the ``nest`` package, use Python's ``help()`` function
-  or IPython's ``?``, e.g.
+* ``nest.help("model_name") displays help for the given model, e.g.,
+  ``nest.help("iaf_psc_exp")``
 
+* To get help on functions in the ``nest`` package, use Python's
+  ``help()`` function or IPython's ``?``, e.g.
      - ``help(nest.Create)``
      - ``nest.Connect?``
 
@@ -93,13 +95,20 @@ class NestModule(types.ModuleType):
         _rel_import_star(self, ".lib.hl_api_types")
 
         # Lazy loaded modules. They are descriptors, so add them to the type object
+        type(self).raster_plot = _lazy_module_property("raster_plot")
+        type(self).server = _lazy_module_property("server")
         type(self).spatial = _lazy_module_property("spatial")
+        type(self).visualization = _lazy_module_property("visualization")
+        type(self).voltage_trace = _lazy_module_property("voltage_trace")
 
         self.__version__ = ll_api.sli_func("statusdict /version get")
         # Finalize the nest module with a public API.
         _api = list(k for k in self.__dict__ if not k.startswith("_"))
         _api.extend(k for k in dir(type(self)) if not k.startswith("_"))
         self.__all__ = list(set(_api))
+
+        # Block setting of unknown attributes
+        type(self).__setattr__ = _setattr_error
 
     def set(self, **kwargs):
         return self.SetKernelStatus(kwargs)
@@ -297,6 +306,11 @@ class NestModule(types.ModuleType):
         ),
         default=10000.0,
     )
+    growth_curves = KernelAttribute(
+        "list[str]",
+        "The list of the available structural plasticity growth curves",
+        readonly=True,
+    )
     use_compressed_spikes = KernelAttribute(
         "bool",
         (
@@ -330,6 +344,21 @@ class NestModule(types.ModuleType):
         readonly=True,
         localonly=True,
     )
+    connection_rules = KernelAttribute(
+        "list[str]",
+        "The list of available connection rules",
+        readonly=True,
+    )
+    node_models = KernelAttribute(
+        "list[str]",
+        "The list of the available node (i.e., neuron or device) models",
+        readonly=True,
+    )
+    synapse_models = KernelAttribute(
+        "list[str]",
+        "The list of the available synapse models",
+        readonly=True,
+    )
     local_spike_counter = KernelAttribute(
         "int",
         (
@@ -341,23 +370,14 @@ class NestModule(types.ModuleType):
         readonly=True,
     )
     recording_backends = KernelAttribute(
-        "dict[str, dict]",
-        (
-            "Dict of backends for recording devices. Each recording backend can"
-            + " have a set of global parameters that can be modified through"
-            + " this attribute by passing a dictionary with the name of the"
-            + " recording backend as key and a dictionary with the global"
-            + " parameters to be overwritten as value.\n\n"
-            + "Example\n"
-            + "~~~~~~~\n\n"
-            + "Please note that NEST must be compiled with SionLIB for the"
-            + " ``sionlib`` backend to be available.\n\n"
-            + ".. code-block:: python\n\n"
-            + "  nest.recording_backends = dict(sionlib=dict(buffer_size=1024))"
-            + "\n\n"
-            + ".. seealso:: The valid global parameters are listed in the"
-            + " documentation of each recording backend"
-        ),
+        "list[str]",
+        "List of available backends for recording devices.",
+        readonly=True,
+    )
+    stimulation_backends = KernelAttribute(
+        "list[str]",
+        "List of available backends for stimulation devices.",
+        readonly=True,
     )
     dict_miss_is_error = KernelAttribute(
         "bool",
@@ -397,6 +417,32 @@ class NestModule(types.ModuleType):
     _readonly_kernel_attrs = builtins.set(
         k for k, v in vars().items() if isinstance(v, KernelAttribute) and v._readonly
     )
+
+
+def _setattr_error(self, attr, val):
+    """
+    When attributes on the `nest` module instance are set, check if it exists on the
+    module type and try to call `__set__` on them. Without this explicit check `nest`s
+    `__setattr__` shadows class attributes and descriptors (such as `KernelAttribute`s).
+
+    Once this function exists on the `nest` module, new attributes can only be added using
+    `__dict__` manipulation. It is added onto the module at the end of `__init__`,
+    "freezing" the module.
+    """
+    if isinstance(val, types.ModuleType):
+        # Allow import machinery to set imported modules on `nest`
+        self.__dict__[attr] = val
+    else:
+        err = AttributeError(f"Cannot set attribute '{attr}' on module 'nest'")
+        try:
+            cls_attr = getattr(type(self), attr)
+        except AttributeError:
+            raise err from None
+        else:
+            if hasattr(cls_attr, "__set__"):
+                cls_attr.__set__(self, val)
+            else:
+                raise err from None
 
 
 def _rel_import_star(module, import_module_name):

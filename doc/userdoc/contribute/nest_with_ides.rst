@@ -1,3 +1,5 @@
+.. _nest_ides:
+
 Developing NEST with IDEs
 =========================
 
@@ -46,7 +48,7 @@ Preparations
 Setting up the project
 ~~~~~~~~~~~~~~~~~~~~~~
 
-#. :doc:`Clone NEST <development_workflow>` onto your computer
+#. :ref:`Clone NEST <git_workflow>` onto your computer
 #. Build NEST manually
 
    a. Create a build directory

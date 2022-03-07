@@ -1,3 +1,5 @@
+.. _toc_3.0_features:
+
 NEST 3.0 Features
 =================
 

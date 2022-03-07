@@ -118,7 +118,8 @@ M_ERROR setverbosity
 
 {
   % apply to all models of element_type neuron
-  modeldict keys {
+  GetKernelStatus /node_models get
+  {
     /model Set
 
     model skip_list exch MemberQ not
@@ -126,6 +127,7 @@ M_ERROR setverbosity
     {
       ResetKernel
       /n model Create def
+
       extra_params model known
       {
          extra_params model get /params known
@@ -135,6 +137,19 @@ M_ERROR setverbosity
            SetStatus
          } if
       } if
+
+      % if the model is a compartmental model,
+      % we need to add at least a root compartment
+      model GetDefaults dup
+      /compartments known
+      {
+          n
+          <<
+            /compartments << /parent_idx -1  >>
+            /receptors << /comp_idx 0 /receptor_type (AMPA) >>
+          >> SetStatus
+      }
+      if
 
       /pg /poisson_generator << /rate 1e5 >> Create def
       /parrot /parrot_neuron_ps Create def

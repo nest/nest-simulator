@@ -1,3 +1,5 @@
+.. _sim_gap_junctions:
+
 Simulations with gap junctions
 ==============================
 

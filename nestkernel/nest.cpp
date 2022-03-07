@@ -168,15 +168,7 @@ create( const Name& model_name, const index n_nodes )
     throw RangeCheck();
   }
 
-  const Token model = kernel().model_manager.get_modeldict()->lookup( model_name );
-  if ( model.empty() )
-  {
-    throw UnknownModelName( model_name );
-  }
-
-  // create
-  const index model_id = static_cast< index >( model );
-
+  const index model_id = kernel().model_manager.get_node_model_id( model_name );
   return kernel().node_manager.add_node( model_id, n_nodes );
 }
 
@@ -270,36 +262,52 @@ copy_model( const Name& oldmodname, const Name& newmodname, const DictionaryDatu
 }
 
 void
-set_model_defaults( const Name& modelname, const DictionaryDatum& dict )
+set_model_defaults( const std::string component, const DictionaryDatum& dict )
 {
-  kernel().model_manager.set_model_defaults( modelname, dict );
+  if ( kernel().model_manager.set_model_defaults( component, dict ) )
+  {
+    return;
+  }
+
+  if ( kernel().io_manager.is_valid_recording_backend( component ) )
+  {
+    kernel().io_manager.set_recording_backend_status( component, dict );
+    return;
+  }
+
+  throw UnknownComponent( component );
 }
 
 DictionaryDatum
-get_model_defaults( const Name& modelname )
+get_model_defaults( const std::string component )
 {
-  const Token nodemodel = kernel().model_manager.get_modeldict()->lookup( modelname );
-  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( modelname );
-
-  DictionaryDatum dict;
-
-  if ( not nodemodel.empty() )
+  try
   {
-    const long model_id = static_cast< long >( nodemodel );
-    Model* m = kernel().model_manager.get_model( model_id );
-    dict = m->get_status();
+    const index model_id = kernel().model_manager.get_node_model_id( component );
+    return kernel().model_manager.get_node_model( model_id )->get_status();
   }
-  else if ( not synmodel.empty() )
+  catch ( UnknownModelName& )
   {
-    const long synapse_id = static_cast< long >( synmodel );
-    dict = kernel().model_manager.get_connector_defaults( synapse_id );
-  }
-  else
-  {
-    throw UnknownModelName( modelname.toString() );
+    // ignore errors; throw at the end of the function if that's reached
   }
 
-  return dict;
+  try
+  {
+    const index synapse_model_id = kernel().model_manager.get_synapse_model_id( component );
+    return kernel().model_manager.get_connector_defaults( synapse_model_id );
+  }
+  catch ( UnknownSynapseType& )
+  {
+    // ignore errors; throw at the end of the function if that's reached
+  }
+
+  if ( kernel().io_manager.is_valid_recording_backend( component ) )
+  {
+    return kernel().io_manager.get_recording_backend_status( component );
+  }
+
+  throw UnknownComponent( component );
+  return DictionaryDatum(); // supress missing return value warning; never reached
 }
 
 ParameterDatum

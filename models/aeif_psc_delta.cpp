@@ -95,12 +95,14 @@ nest::aeif_psc_delta_dynamics( double, const double y[], double f[], void* pnode
   const double V = is_refractory ? node.P_.V_reset_ : std::min( y[ S::V_M ], node.P_.V_peak_ );
   const double& w = y[ S::W ];
 
-  const double I_spike = node.P_.Delta_T == 0. ? 0. : node.P_.g_L * node.P_.Delta_T
-      * std::exp( ( V - node.P_.V_th ) * node.V_.Delta_T_inv_ );
+  const double I_spike = node.P_.Delta_T == 0.
+    ? 0.
+    : node.P_.g_L * node.P_.Delta_T * std::exp( ( V - node.P_.V_th ) * node.V_.Delta_T_inv_ );
 
   // dv/dt
-  f[ S::V_M ] = is_refractory ? 0.0 : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - w + node.P_.I_e
-                                        + node.B_.I_stim_ ) * node.V_.C_m_inv_;
+  f[ S::V_M ] = is_refractory
+    ? 0.0
+    : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - w + node.P_.I_e + node.B_.I_stim_ ) * node.V_.C_m_inv_;
 
   // Adaptation current w.
   f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) * node.V_.tau_w_inv_;
@@ -151,7 +153,8 @@ nest::aeif_psc_delta::State_::State_( const State_& s )
   }
 }
 
-nest::aeif_psc_delta::State_& nest::aeif_psc_delta::State_::operator=( const State_& s )
+nest::aeif_psc_delta::State_&
+nest::aeif_psc_delta::State_::operator=( const State_& s )
 {
   refr_spikes_buffer_ = s.refr_spikes_buffer_;
   r_ = s.r_;

@@ -74,7 +74,7 @@ number for each of these groups. This algorithm is thus very similar to
 
 However, the adapting threshold :math:`\eta(t)` of the neurons generally makes the
 neurons non-renewal processes. We employ the quasi-renewal approximation
-[1]_, to be able to use the above algorithm. For the extension of [1] to
+[1]_, to be able to use the above algorithm. For the extension of [1]_ to
 coupled populations see [3]_.
 
 In effect, in each simulation time step, a binomial random number for each

@@ -1,5 +1,7 @@
 :orphan:
 
+.. _neural_sims_sli:
+
 Neural simulations
 ==================
 
@@ -192,21 +194,18 @@ depolarize due to the continuing input current.
 Nodes and Models
 ----------------
 
-In NEST, the neural system is a collection of nodes and their
-interactions. Nodes correspond to things like neurons, synapses, and
-devices, and are implemented in C++. The network and its configuration
-are defined at the level of the simulation language interpreter.
+A neuronal model in NEST is represented as a directed weighted graph.
+Nodes in the graph can either be neurons or devices, while the edges
+correspond to the synapses. On the level of their implementation,
+these elements are C++ classes.
 
-Nodes are created from a set of prescribed models which are stored in
-the dictionary ``modeldict``. The most important neuron models are:
+An overview of all available node models can be retrieved from the
+NEST kernel using ``GetKernelStatus /node_models get``, while passing
+the key 'synapse_models' will return the list of available synapse
+models.
 
-Model name Description ``iaf_psc_alpha`` Simple integrate-and-fire
-neuron with alpha-function PSCs. ``iaf_psc_delta`` Integrate-and-fire
-neuron with delta-function PSCs. ``iaf_cond_alpha`` Conductance-based
-integrate-and-fire neuron with alpha-function synapses. ``iaf_cond_exp``
-Conductance-based integrate-and-fire neuron with exp-function synapses.
-``hh_psc_alpha`` ``hh_cond_exp_traub`` In order to make the models
-visible to the interpreter, the model dictionary has to be opened.
+You can find a list of all available neuron models in our :doc:`model
+directory <models/index_neuron>`.
 
 Creating nodes
 ~~~~~~~~~~~~~~
@@ -479,10 +478,10 @@ stored in memory can be retrieved after the simulation using
 
 ::
 
-   SLI ] GetKernelStatus /recording_backends get keys ==
+   SLI ] GetKernelStatus /recording_backends get ==
 
-Device models are also stored in the dictionary ``modeldict``. The most
-important devices are:
+A list of node models including all available device models can be retrieved by calling
+``GetKernelStatus /node_models get`. The most important devices are:
 
 * ``voltmeter`` Device to observe membrane potentials.
 * ``multimeter`` Device to observe arbitrary analog quantities.

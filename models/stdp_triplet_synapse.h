@@ -24,8 +24,8 @@
 #define STDP_TRIPLET_SYNAPSE_H
 
 // C-header for math.h since copysign() is in C99 but not C++98
-#include <math.h>
 #include "connection.h"
+#include <math.h>
 
 namespace nest
 {
@@ -40,16 +40,17 @@ Synapse type with spike-timing dependent plasticity (triplets)
 Description
 +++++++++++
 
-stdp_triplet_synapse is a connection with spike time dependent
+``stdp_triplet_synapse`` is a connection with spike time dependent
 plasticity accounting for spike triplet effects (as defined in [1]_).
 
 Notes:
-- Presynaptic traces r_1 and r_2 of [1]_ are stored in the connection as
-  Kplus and Kplus_triplet and decay with time-constants tau_plus and
-  tau_plus_triplet, respectively.
-- Postsynaptic traces o_1 and o_2 of [1]_ are acquired from the postsynaptic
-  neuron states Kminus_ and triplet_Kminus_ which decay on time-constants
-  tau_minus and tau_minus_triplet, respectively. These two time-constants
+
+- Presynaptic traces ``r_1`` and ``r_2`` of [1]_ are stored in the connection as
+  ``Kplus`` and ``Kplus_triplet`` and decay with time-constants ``tau_plus`` and
+  ``tau_plus_triplet``, respectively.
+- Postsynaptic traces ``o_1`` and ``o_2`` of [1]_ are acquired from the postsynaptic
+  neuron states ``Kminus_`` and ``triplet_Kminus_`` which decay on time-constants
+  ``tau_minus`` and ``tau_minus_triplet``, respectively. These two time-constants
   can be set as properties of the postsynaptic neuron.
 - This version implements the 'all-to-all' spike interaction of [1]_. The
   'nearest-spike' interaction of [1]_ can currently not be implemented
@@ -59,7 +60,7 @@ Notes:
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
@@ -143,8 +144,8 @@ public:
   // ConnectionBase. This avoids explicit name prefixes in all places
   // these functions are used. Since ConnectionBase depends on the template
   // parameter, they are not automatically found in the base class.
-  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 

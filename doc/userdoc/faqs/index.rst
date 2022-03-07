@@ -1,5 +1,7 @@
 :orphan:
 
+.. _toc_faqs:
+
 Frequently Asked Questions
 ==========================
 

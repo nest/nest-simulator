@@ -24,8 +24,8 @@
 #define VOGELS_SPREKELER_SYNAPSE_H
 
 // C-header for math.h since copysign() is in C99 but not C++98
-#include <math.h>
 #include "connection.h"
+#include <math.h>
 
 namespace nest
 {
@@ -40,17 +40,17 @@ Synapse type for symmetric spike-timing dependent plasticity with constant depre
 Description
 +++++++++++
 
-vogels_sprekeler_synapse is a connector to create synapses with symmetric
+``vogels_sprekeler_synapse`` is a connector to create synapses with symmetric
 spike time dependent plasticity and constant depression (as defined in [1]_).
-The learning rule is symmetric, i.e., the synapse is strengthened
+The learning rule is symmetric, that is, the synapse is strengthened
 irrespective of the order of the pre- and postsynaptic spikes. Each
 pre-synaptic spike also causes a constant depression of the synaptic weight
-which differentiates this rule from other classical stdp rules.
+which differentiates this rule from other classical STDP rules.
 
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
@@ -110,8 +110,8 @@ public:
   // Since ConnectionBase depends on the template parameter, they are not
   // automatically
   // found in the base class.
-  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 

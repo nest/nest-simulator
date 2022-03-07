@@ -48,7 +48,7 @@ processes with dead time
 Description
 +++++++++++
 
-The ppd_sup_generator generator simulates the pooled spike train of a
+The ``ppd_sup_generator`` generator simulates the pooled spike train of a
 population of neurons firing independently with Poisson process with dead
 time statistics.
 The rate parameter can also be sine-modulated. The generator does not
@@ -70,6 +70,8 @@ frequency
 
 relative_amplitude
     Relative rate modulation amplitude, default: 0
+
+See also [1]_.
 
 Set parameters from a stimulation backend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

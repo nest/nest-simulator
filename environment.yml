@@ -48,12 +48,18 @@ dependencies:
   - pytest
   - pytest-timeout
   - pytest-xdist
+  - pytest-pylint
+  - pytest-mypy
+  - pytest-cov
   - numpy
   - pandas
   - scipy
   - mpi4py
   - terminaltables
   - pycodestyle
+  - pydocstyle
+  - rstcheck
+  - mypy[version='>=0.8']
 
   # Working with NEST ------
   - ipython

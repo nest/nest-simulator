@@ -92,27 +92,6 @@ jobs:
         run: |
           pydocstyle pynest/
 
-  pycodestyle:
-    runs-on: "ubuntu-20.04"
-    steps:
-      - name: "Checkout repository content"
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: "Set up Python 3.x"
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
-
-      - name: "Install dependencies"
-        run: |
-          pip install pycodestyle
-
-      - name: "Run pycodestyle..."
-        run: |
-          pycodestyle pynest/
-
   mypy:
     runs-on: "ubuntu-20.04"
     #needs: [pydocstyle, pycodestyle, pylint, flake8]
@@ -129,7 +108,8 @@ jobs:
 
       - name: "Install Linux system dependencies"
         run: |
-          pip install mypy matplotlib numpy scipy data-science-types
+          pip install mypy 
+        # matplotlib numpy scipy data-science-types
 
       - name: "Run mypy..."
         run: |
@@ -198,7 +178,7 @@ jobs:
 
       - name: "Run flake8..."
         run: |
-          flake8 pynest
+          flake8 --ignore="E121,E123,E126,E226,E24,E704,W503,W504" pynest/
 
   sphinx-rtd:
     # as close as possible to the Readthedocs setup (system install cmake, pip install -r doc/requirements.txt)

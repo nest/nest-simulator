@@ -29,9 +29,9 @@ setup(
     url = 'https://www.nest-simulator.org',
     license = 'GPLv2+',
     packages = ['nest', 'nest.lib'],
-    install_requires = ['numpy', 'scipy'],
-    extras_require = {'test': ['junitparser', 'matplotlib', 'pytest'],
-                      'server': ['flask', 'werkzeug', 'RestrictedPython']},
+    install_requires = ['numpy'],
+    extras_require = {'test': ['pytest', 'pytest-timeout', 'pytest-xdist', 'scipy', 'pandas', 'mpi4py', 'terminaltables', 'pycodestyle', 'matplotlib'],
+                      'server': ['flask', 'flask_cors', 'requests', 'uwsgi', 'werkzeug']},
     classifiers = [
         'Development Status :: 6 - Mature',
         'Programming Language :: Python :: 3.8',

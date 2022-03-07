@@ -33,16 +33,25 @@ factor for the communication of spikes, some simulations are significantly faste
 If you want to use PyNEST, `Python 3.8 or higher <http://www.python.org>`_ is required, as well as the following
 Python packages:
 
-- `Cython 0.28.3 or higher <https://cython.org>`_
-- `NumPy <http://www.numpy.org>`_
-- `SciPy <http://www.scipy.org>`_
-- Flask
-- Werkzeug
-- RestrictedPython
+- ``numpy``
+
+The following packages are optional, but recommended to run NEST Server:
+
+- ``flask`` and ``flask_cors``
+- ``requests``
+- ``uwsgi``
+- ``werkzeug``
 
 The following packages are optional, but recommended to run the unit tests:
 
-- `Matplotlib 3.0 or higher <http://matplotlib.org>`_
+- ``matplotlib``
+- ``pytest``, ``pytest-timeout``, and ``pytest-xdist``
+- ``scipy``
+- ``pandas``
+- ``mpi4py``
+- ``terminaltables``
+- ``pycodestyle``
+- ``matplotlib``
 
 .. _source-install:
 

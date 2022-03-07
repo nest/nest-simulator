@@ -75,7 +75,7 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, use_connect_ar
     if (not isinstance(syn_spec, CollocatedSynapses) and
         "synapse_model" in syn_spec and
             not isinstance(syn_spec["synapse_model"], str)):
-        raise kernel.NESTError("'synapse_model' must be a string")
+        raise kernel.NESTError("'synapse_model' must be a string or a CollocatedSynapses object")
 
     elif isinstance(syn_spec, dict):
         for key, value in syn_spec.items():

@@ -221,7 +221,7 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
         local_nodes_[ t ].add_local_node( *node );
         node_id += num_vps;
       }
-      local_nodes_[ t ].update_max_node_id( max_node_id );
+      local_nodes_[ t ].set_max_node_id( max_node_id );
     }
     catch ( std::exception& err )
     {
@@ -260,7 +260,7 @@ NodeManager::add_devices_( Model& model, index min_node_id, index max_node_id, N
 
         local_nodes_[ t ].add_local_node( *node );
       }
-      local_nodes_[ t ].update_max_node_id( max_node_id );
+      local_nodes_[ t ].set_max_node_id( max_node_id );
     }
     catch ( std::exception& err )
     {
@@ -298,7 +298,7 @@ NodeManager::add_music_nodes_( Model& model, index min_node_id, index max_node_i
           local_nodes_[ 0 ].add_local_node( *node );
         }
       }
-      local_nodes_.at( t ).update_max_node_id( max_node_id );
+      local_nodes_.at( t ).set_max_node_id( max_node_id );
     }
     catch ( std::exception& err )
     {
@@ -527,28 +527,20 @@ NodeManager::ensure_valid_thread_local_ids()
       {
         wfr_nodes_vec_[ tid ].clear();
 
-        size_t num_thread_local_wfr_nodes = 0;
-        for ( size_t idx = 0; idx < local_nodes_[ tid ].size(); ++idx )
-        {
-          Node* node = local_nodes_[ tid ].get_node_by_index( idx );
-          if ( node != 0 and node->node_uses_wfr_ )
-          {
-            ++num_thread_local_wfr_nodes;
-          }
-        }
+        const size_t num_thread_local_wfr_nodes = std::count_if( local_nodes_[ tid ].begin(),
+          local_nodes_[ tid ].end(),
+          []( const SparseNodeArray::NodeEntry& elem ) { return elem.get_node()->node_uses_wfr_; } );
         wfr_nodes_vec_[ tid ].reserve( num_thread_local_wfr_nodes );
 
-        for ( size_t idx = 0; idx < local_nodes_[ tid ].size(); ++idx )
+        auto node_it = local_nodes_[ tid ].begin();
+        size_t idx = 0;
+        for ( ; node_it < local_nodes_[ tid ].end(); ++node_it, ++idx )
         {
-          Node* node = local_nodes_[ tid ].get_node_by_index( idx );
-
-          if ( node != 0 )
+          auto node = node_it->get_node();
+          node->set_thread_lid( idx );
+          if ( node->node_uses_wfr_ )
           {
-            node->set_thread_lid( idx );
-            if ( node->node_uses_wfr_ )
-            {
-              wfr_nodes_vec_[ tid ].push_back( node );
-            }
+            wfr_nodes_vec_[ tid ].push_back( node );
           }
         }
       } // end of for threads

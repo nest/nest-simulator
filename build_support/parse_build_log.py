@@ -1032,7 +1032,7 @@ if __name__ == '__main__':
                                         "MSGBLD0180", "MSGBLD0175")
 
     summary_pep8 = msg_summary_pep8(log_filename, "MSGBLD0190",
-                                    "MSGBLD0200", "MSGBLD0195", "MSGBLD185")
+                                    "MSGBLD0200", "MSGBLD0195")
 
     # Summarize the per file build error messages and warnings.
     status_make, number_of_errors, summary_errors, number_of_warnings, expected_warnings, \

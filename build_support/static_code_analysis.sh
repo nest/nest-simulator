@@ -251,7 +251,7 @@ for f in $FILE_NAMES; do
        # Skip checking files which cannot be handled correctly by pycodestyle
        # See https://github.com/nest/nest-simulator/issues/2175
        # This should be removed as soon as we have moved to flake8.
-       print_msg "MSGBLD0185: " "Skipping ...........: $f  (not handled correctly by pycodestyle)"
+       print_msg "MSGBLD0211: " "Skipping ...........: $f  (not handled correctly by pycodestyle)"
        continue
        ;;
 

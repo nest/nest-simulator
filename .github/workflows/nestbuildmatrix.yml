@@ -178,7 +178,7 @@ jobs:
 
       - name: "Run flake8..."
         run: |
-          flake8 --ignore="C901,E121,E123,E126,E226,E24,E704,W503,W504" pynest/
+          flake8 pynest/
 
   sphinx-rtd:
     # as close as possible to the Readthedocs setup (system install cmake, pip install -r doc/requirements.txt)
@@ -287,7 +287,7 @@ jobs:
         run: |
           sudo apt-get update
           #https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
-          sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq pycodestyle libpcre3 libpcre3-dev python2-dev libboost-all-dev
+          sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq libpcre3 libpcre3-dev python2-dev libboost-all-dev
           sudo apt-get install openmpi-bin libopenmpi-dev libgsl0-dev tcl8.6 tcl8.6-dev tk8.6-dev
           sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev
           sudo apt-get install vera++ clang-format-9
@@ -389,7 +389,7 @@ jobs:
           sudo apt-get update
           #https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
           sudo apt-get install ccache
-          sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq pycodestyle libpcre3 libpcre3-dev python2-dev libboost-all-dev
+          sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq libpcre3 libpcre3-dev python2-dev libboost-all-dev
           sudo apt-get install openmpi-bin libopenmpi-dev libgsl0-dev tcl8.6 tcl8.6-dev tk8.6-dev
           sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev
           sudo apt-get install vera++

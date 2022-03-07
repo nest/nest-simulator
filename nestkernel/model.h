@@ -96,7 +96,7 @@ public:
   void clear();
 
   /**
-   * Reserve space for n Nodes.
+   * Reserve space for n additional Nodes.
    */
   void reserve_additional( thread t, size_t n );
 

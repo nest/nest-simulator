@@ -339,103 +339,58 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
   std::vector< SpikeDataT >& send_buffer,
   std::vector< SpikeDataT >& recv_buffer )
 {
-  // Assume all threads have some work to do
-  gather_completed_checker_[ tid ].set_false();
-  assert( gather_completed_checker_.all_false() );
-
-  const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
-
-  // Assume a single gather round
-  decrease_buffer_size_spike_data_ = true;
-
-  while ( gather_completed_checker_.any_false() )
+#pragma omp master
   {
-    // Assume this is the last gather round and change to false
-    // otherwise
-    gather_completed_checker_[ tid ].set_true();
+    const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
 
-#pragma omp single
-    {
-      if ( kernel().mpi_manager.adaptive_spike_buffers() and buffer_size_spike_data_has_changed_ )
-      {
-        resize_send_recv_buffers_spike_data_();
-        buffer_size_spike_data_has_changed_ = false;
-      }
-    } // of omp single; implicit barrier
+    kernel().mpi_manager.set_buffer_size_spike_data( 8388608 );
+    resize_send_recv_buffers_spike_data_();
+ 
+    // Need to get new positions in case buffer size has changed
+    SendBufferPosition send_buffer_position( assigned_ranks, kernel().mpi_manager.get_send_recv_count_spike_data_per_rank() );
+
 #ifdef TIMER_DETAILED
-    if ( tid == 0 )
     {
       sw_collocate_spike_data_.start();
     }
 #endif
 
-    // Need to get new positions in case buffer size has changed
-    SendBufferPosition send_buffer_position(
-      assigned_ranks, kernel().mpi_manager.get_send_recv_count_spike_data_per_rank() );
-
     // Collocate spikes to send buffer
-    const bool collocate_completed =
-      collocate_spike_data_buffers_( tid, assigned_ranks, send_buffer_position, spike_register_, send_buffer );
-    gather_completed_checker_[ tid ].logical_and( collocate_completed );
+    collocate_spike_data_buffers_( tid, assigned_ranks, send_buffer_position, spike_register_, send_buffer );
 
-    if ( off_grid_spiking_ )
-    {
-      const bool collocate_completed_off_grid = collocate_spike_data_buffers_(
-        tid, assigned_ranks, send_buffer_position, off_grid_spike_register_, send_buffer );
-      gather_completed_checker_[ tid ].logical_and( collocate_completed_off_grid );
-    }
-
-#pragma omp barrier
     // Set markers to signal end of valid spikes, and remove spikes
     // from register that have been collected in send buffer.
     set_end_and_invalid_markers_( assigned_ranks, send_buffer_position, send_buffer );
-    clean_spike_register_( tid );
 
     // If we do not have any spikes left, set corresponding marker in
     // send buffer.
-    if ( gather_completed_checker_.all_true() )
-    {
-      // Needs to be called /after/ set_end_and_invalid_markers_.
-      set_complete_marker_spike_data_( assigned_ranks, send_buffer_position, send_buffer );
-#pragma omp barrier
-    }
+    set_complete_marker_spike_data_( assigned_ranks, send_buffer_position, send_buffer );
 
 #ifdef TIMER_DETAILED
-    if ( tid == 0 )
     {
       sw_collocate_spike_data_.stop();
       sw_communicate_spike_data_.start();
     }
 #endif
 
-// Communicate spikes using a single thread.
-#pragma omp single
+    kernel().mpi_manager.communicate_spike_data_Alltoall( send_buffer, recv_buffer );
+
+#ifdef TIMER_DETAILED
     {
-      if ( off_grid_spiking_ )
-      {
-        kernel().mpi_manager.communicate_off_grid_spike_data_Alltoall( send_buffer, recv_buffer );
-      }
-      else
-      {
-        kernel().mpi_manager.communicate_spike_data_Alltoall( send_buffer, recv_buffer );
-      }
-    } // of omp single; implicit barrier
+      sw_communicate_spike_data_.stop();
+    }
+#endif
+  } // omp master
+#pragma omp barrier // no implicit barrier after omp master
 
 #ifdef TIMER_DETAILED
     if ( tid == 0 )
     {
-      sw_communicate_spike_data_.stop();
       sw_deliver_spike_data_.start();
     }
 #endif
-
     // Deliver spikes from receive buffer to ring buffers.
-    const bool deliver_completed = deliver_events_( tid, recv_buffer );
-    gather_completed_checker_[ tid ].logical_and( deliver_completed );
-
-// Exit gather loop if all local threads and remote processes are
-// done.
-#pragma omp barrier
+    deliver_events_( tid, recv_buffer );
 
 #ifdef TIMER_DETAILED
     if ( tid == 0 )
@@ -443,27 +398,6 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
       sw_deliver_spike_data_.stop();
     }
 #endif
-
-    // Resize mpi buffers, if necessary and allowed.
-    if ( gather_completed_checker_.any_false() and kernel().mpi_manager.adaptive_spike_buffers() )
-    {
-#pragma omp single
-      {
-        buffer_size_spike_data_has_changed_ = kernel().mpi_manager.increase_buffer_size_spike_data();
-        decrease_buffer_size_spike_data_ = false;
-      }
-    }
-#pragma omp barrier
-
-  } // of while
-
-#pragma omp single
-  {
-    if ( decrease_buffer_size_spike_data_ and kernel().mpi_manager.adaptive_spike_buffers() )
-    {
-      kernel().mpi_manager.decrease_buffer_size_spike_data();
-    }
-  } // of omp single; implicit barrier
 
   reset_spike_register_( tid );
 }

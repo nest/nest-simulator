@@ -28,6 +28,7 @@ import subprocess
 
 from pathlib import Path
 from shutil import copyfile
+import json
 
 import sphinx_rtd_theme
 
@@ -176,18 +177,6 @@ html_theme_options = {'logo_only': True,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = [str(doc_build_dir / 'static')]
 
-if os.environ.get("READTHEDOCS") == "True":
-    # The short X.Y version.
-    version = os.environ.get("READTHEDOCS_VERSION")
-    print(f"NEST Version: {version}")
-    if version == "latest":
-        rst_prolog = ".. warning:: \n   This version of the documentation is NOT an official release. \
-                     You are looking at 'latest', which is in active and ongoing development. \
-                     You can change versions on the bottom left of the screen."
-        rst_epilog = ""
-else:
-    version = "latest"
-
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
@@ -223,6 +212,27 @@ def config_inited_handler(app, config):
     )
 
 
+def toc_customizer(app, docname, source):
+    if docname == "models/models-toc":
+        models_toc = json.load(open(doc_build_dir / "models/toc-tree.json"))
+        html_context = {"nest_models": models_toc}
+        models_source = source[0]
+        rendered = app.builder.templates.render_string(models_source, html_context)
+        source[0] = rendered
+
+
+def setup(app):
+    app.connect("source-read", toc_customizer)
+    app.add_css_file('css/custom.css')
+    app.add_css_file('css/pygments.css')
+    app.add_js_file("js/copybutton.js")
+    app.add_js_file("js/custom.js")
+
+    # for events see
+    # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
+    app.connect('config-inited', config_inited_handler)
+
+
 nitpick_ignore = [('py:class', 'None'),
                   ('py:class', 'optional'),
                   ('py:class', 's'),
@@ -234,17 +244,6 @@ nitpick_ignore = [('py:class', 'None'),
                   ('cpp:identifier', 'ClopathArchivingNode'),
                   ('cpp:identifier', 'MessageHandler'),
                   ('cpp:identifer', 'CommonPropertiesHomW')]
-
-
-def setup(app):
-    app.add_css_file('css/custom.css')
-    app.add_css_file('css/pygments.css')
-    app.add_js_file("js/copybutton.js")
-    app.add_js_file("js/custom.js")
-
-    # for events see
-    # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
-    app.connect('config-inited', config_inited_handler)
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -313,3 +312,4 @@ copy_example_file(source_dir / "pynest/examples/Potjans_2014/box_plot.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/raster_plot.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/microcircuit.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/README.rst")
+copy_example_file(source_dir / "pynest/examples/hpc_benchmark_connectivity.svg")

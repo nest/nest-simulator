@@ -97,8 +97,8 @@ nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d, pulsepa
 }
 
 /* ----------------------------------------------------------------
-* Default and copy constructor for node
-* ---------------------------------------------------------------- */
+ * Default and copy constructor for node
+ * ---------------------------------------------------------------- */
 
 nest::pulsepacket_generator::pulsepacket_generator()
   : StimulationDevice()

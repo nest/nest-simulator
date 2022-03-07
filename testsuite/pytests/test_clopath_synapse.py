@@ -40,7 +40,6 @@ class ClopathSynapseTestCase(unittest.TestCase):
 
         nest.set_verbosity('M_WARNING')
 
-        # Specify supported models
         supported_models = [
             'aeif_psc_delta_clopath',
             'hh_psc_alpha_clopath',
@@ -55,12 +54,8 @@ class ClopathSynapseTestCase(unittest.TestCase):
             nest.Connect(n, n, {"rule": "all_to_all"},
                          {"synapse_model": "clopath_synapse"})
 
-        # Compute not supported models
-        not_supported_models = [n for n in nest.Models(mtype='nodes')
-                                if n not in supported_models]
-
         # Ensure that connecting not supported models fails
-        for nm in not_supported_models:
+        for nm in [n for n in nest.node_models if n not in supported_models]:
             nest.ResetKernel()
 
             n = nest.Create(nm, 2)

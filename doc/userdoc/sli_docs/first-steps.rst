@@ -1,5 +1,7 @@
 :orphan:
 
+.. _first_steps_sli:
+
 First Steps
 ===========
 
@@ -100,7 +102,7 @@ Calculate (10+13) \\(cdot\) (8-12)
    -4
    23
    SLI [2] mul =
-   -92                                                                              
+   -92
 
 Notice that the results of the fist two operations remain on the stack,
 until they are used in the multiplication.

@@ -37,12 +37,12 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
+#include "arraydatum.h"
+#include "booldatum.h"
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
-#include "booldatum.h"
 #include "integerdatum.h"
-#include "arraydatum.h"
 
 
 /* ----------------------------------------------------------------

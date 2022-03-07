@@ -45,11 +45,12 @@ rate model with sigmoidal gain function
 Description
 +++++++++++
 
-sigmoid_rate_gg_1998 is an implementation of a nonlinear rate model with
-input function as in [1]_ :math:`input(h) = ( g * h )^4 / ( .1^4 + ( g * h )^4 )`.
+``sigmoid_rate_gg_1998`` is an implementation of a nonlinear rate model with
+input function as in [1]_ :math:`input(h) = ( g \cdot h )^4 / ( .1^4 +
+ ( g \cdot h )^4 )`.
 
-It either models a rate neuron with input noise (see rate_neuron_ipn)
-or a rate transformer (see rate_transformer_node).
+It either models a rate neuron with input noise (see ``rate_neuron_ipn``)
+or a rate transformer (see ``rate_transformer_node``).
 Input transformation can either be applied to individual inputs
 or to the sum of all inputs.
 
@@ -58,9 +59,10 @@ non-zero delay, and uses the secondary_event concept introduced with
 the gap-junction framework.
 
 Nonlinear rate neurons can be created by typing
-nest.Create('sigmoid_rate_gg_1998_ipn'). Nonlinear rate transformers can be
-created by typing nest.Create('rate_transformer_sigmoid_rate_gg_1998').
+``nest.Create('sigmoid_rate_gg_1998_ipn')``. Nonlinear rate transformers can be
+created by typing ``nest.Create('rate_transformer_sigmoid_rate_gg_1998')``.
 
+See also [2]_, [3]_.
 
 Parameters
 ++++++++++

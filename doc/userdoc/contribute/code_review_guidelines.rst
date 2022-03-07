@@ -1,7 +1,9 @@
+.. _code_guidelines:
+
 Code review guidelines
 ======================
 
-Using our purely :ref:`pull-request-based workflow <development_workflow>`,
+Using our purely :ref:`pull-request-based workflow <git_workflow>`,
 code can be developed very flexibly by internal and external
 contributors. At the same time this workflow allows us to enforce
 stricter rules on code that ends up in the public repository.
@@ -9,7 +11,7 @@ stricter rules on code that ends up in the public repository.
 Following are rough guidelines for the code reviewers. These are not
 meant to prevent progress, but to keep up the code quality as the
 number of developers is growing. All of this is not set in stone and
-can be discussed on the :ref:`NEST mailing lists <../community>`.
+can be discussed on the :ref:`NEST mailing lists <community>`.
 
 * In general, the rule is that each pull request needs an OK from the CI
   platform and at least two reviewers to be merged.
@@ -26,9 +28,9 @@ can be discussed on the :ref:`NEST mailing lists <../community>`.
 * Each change to the code has to be reflected also in the corresponding
   examples and documentation.
 * All source code has to be adhering to the Coding Guidelines for
-  :ref:`C++ <coding_guidelines_cpp>` in order to
-  pass the :doc:`continuous integration system <ci>`.
+  :ref:`C++ <code_style_cpp>` in order to
+  pass the :ref:`continuous integration system <cont_integration>`.
 * All commits should be coherent and contain only changes that belong together.
 * Please check the **typeset documentation** as part of the review process. To
   learn how to test the documentation locally offline, please check out our
-  :doc:`User documentation workflow <../documentation_workflow/user_documentation_workflow>`.
+  :ref:`User documentation workflow <userdoc_workflow>`.

@@ -31,7 +31,6 @@ set( nestutil_sources
     regula_falsi.h
     sort.h
     stopwatch.h stopwatch.cpp
-    streamers.h
     string_utils.h
     vector_util.h
     )

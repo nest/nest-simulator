@@ -35,12 +35,24 @@ std::string
 nest::UnknownModelName::message() const
 {
   std::ostringstream msg;
-  msg << "/" << n_.toString() + " is not a known model name. "
-    "Please check the modeldict for a list of available models.";
+  msg << "/" << n_.toString() + " is not a known model name.";
 #ifndef HAVE_GSL
-  msg << " A frequent cause for this error is that NEST was compiled "
-         "without the GNU Scientific Library, which is required for "
-         "the conductance-based neuron models.";
+  msg << " A frequent cause for this error is that NEST was compiled"
+         " without the GNU Scientific Library, which is required for"
+         " the conductance-based neuron models.";
+#endif
+  return msg.str();
+}
+
+std::string
+nest::UnknownComponent::message() const
+{
+  std::ostringstream msg;
+  msg << "/" << n_.toString() + " is not a known component.";
+#ifndef HAVE_GSL
+  msg << " A frequent cause for this error is that NEST was compiled"
+         " without the GNU Scientific Library, which is required for"
+         " the conductance-based neuron models.";
 #endif
   return msg.str();
 }
@@ -50,15 +62,6 @@ nest::NewModelNameExists::message() const
 {
   std::ostringstream msg;
   msg << "/" << n_.toString() + " is the name of an existing model and cannot be re-used.";
-  return msg.str();
-}
-
-std::string
-nest::UnknownModelID::message() const
-{
-  std::ostringstream msg;
-
-  msg << id_ << " is an invalid model ID. Probably modeldict is corrupted.";
   return msg.str();
 }
 
@@ -132,8 +135,18 @@ nest::NodeWithProxiesExpected::message() const
 {
   std::ostringstream out;
   out << "Nest expected a node with proxies (eg normal model neuron),"
-         "but the node with id " << id_ << " is not a node without proxies, e.g., a device.";
+         "but the node with id "
+      << id_ << " is not a node without proxies, e.g., a device.";
   return out.str();
+}
+
+std::string
+nest::UnknownCompartment::message() const
+{
+  std::ostringstream msg;
+
+  msg << "Compartment " << compartment_idx_ << " " << info_ << ".";
+  return msg.str();
 }
 
 std::string
@@ -159,6 +172,10 @@ nest::UnknownPort::message() const
 {
   std::ostringstream out;
   out << "Port with id " << id_ << " does not exist.";
+  if ( not info_.empty() )
+  {
+    out << " " << info_ << ".";
+  }
   return out.str();
 }
 

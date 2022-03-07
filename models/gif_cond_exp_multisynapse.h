@@ -33,10 +33,10 @@
 #include <gsl/gsl_odeiv.h>
 
 // Includes from nestkernel:
-#include "event.h"
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
+#include "event.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 #include "nest.h"
@@ -56,7 +56,7 @@ Conductance-based generalized integrate-and-fire neuron with multiple synaptic t
 Description
 +++++++++++
 
-gif_cond_exp_multisynapse is the generalized integrate-and-fire neuron
+``gif_cond_exp_multisynapse`` is the generalized integrate-and-fire neuron
 according to Mensi et al. (2012) [1]_ and Pozzorini et al. (2015) [2]_, with
 postsynaptic conductances in the form of truncated exponentials.
 
@@ -66,7 +66,7 @@ differential equation:
 
 .. math::
 
- C*dV(t)/dt = -g_L*(V(t)-E_L) - \eta_1(t) - \eta_2(t) - \ldots - \eta_n(t) + I(t)
+ C \cdot dV(t)/dt = -g_L \cdot (V(t)-E_L) - \eta_1(t) - \eta_2(t) - \ldots - \eta_n(t) + I(t)
 
 where each :math:`\eta_i` is a spike-triggered current (stc), and the neuron
 model can have arbitrary number of them.
@@ -74,7 +74,7 @@ Dynamic of each :math:`\eta_i` is described by:
 
 .. math::
 
- \tau_{\eta_i}*d{\eta_i}/dt = -\eta_i
+ \tau_{\eta_i} \cdot d{\eta_i}/dt = -\eta_i
 
 and in case of spike emission, its value increased by a constant (which can be
 positive or negative):
@@ -88,7 +88,7 @@ firing intensity:
 
 .. math::
 
- \lambda(t) = \lambda_0 * \exp(V(t)-V_T(t)) / \Delta_V
+ \lambda(t) = \lambda_0 \cdot \exp(V(t)-V_T(t)) / \Delta_V
 
 where :math:`V_T(t)` is a time-dependent firing threshold:
 
@@ -102,7 +102,7 @@ Dynamic of each :math:`\gamma_i` is described by:
 
 .. math::
 
- \tau_{\gamma_i}*d\gamma_i/dt = -\gamma_i
+ \tau_{\gamma_i} \cdot d\gamma_i/dt = -\gamma_i
 
 and in case of spike emission, its value increased by a constant (which can be
 positive or negative):
@@ -124,14 +124,14 @@ which fits the model using experimental data, requires a different set of
 
 .. math::
 
-   q_{\eta,giftoolbox} = q_{\eta,NEST} * (1 - \exp( -\tau_{ref} / \tau_\eta ))
+   q_{\eta,giftoolbox} = q_{\eta,NEST} \cdot (1 - \exp( -\tau_{ref} / \tau_\eta ))
 
 The same formula applies for :math:`q_\gamma`.
 
 On the postsynaptic side, there can be arbitrarily many synaptic time constants
-(gif_psc_exp has exactly two: tau_syn_ex and tau_syn_in). This can be reached
+(gif_psc_exp has exactly two: ``tau_syn_ex`` and ``tau_syn_in``). This can be reached
 by specifying separate receptor ports, each for a different time constant. The
-port number has to match the respective "receptor_type" in the connectors.
+port number has to match the respective ``receptor_type`` in the connectors.
 
 The shape of synaptic conductance is exponential.
 

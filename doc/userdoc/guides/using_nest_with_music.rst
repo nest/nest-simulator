@@ -1,3 +1,5 @@
+.. _nest_music:
+
 Using NEST with MUSIC
 =====================
 
@@ -315,7 +317,7 @@ where w is the width of the port. The MUSIC configuration file
     from.contdata -> to.contdata [10]
 
 The receiving side is again implemented using a
-:doc:`PyNEST <../tutorials/index>` script (``conttest.py``).
+:ref:`PyNEST <tutorials>` script (``conttest.py``).
 We first import the NEST and create an instance of the
 ``music_cont_in_proxy``. we set the name of the port
 it listens on to ``msgdata``. We then simulate the network in

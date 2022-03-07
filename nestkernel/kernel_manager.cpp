@@ -83,22 +83,21 @@ nest::KernelManager::~KernelManager()
 void
 nest::KernelManager::initialize()
 {
-  for ( auto& m : managers )
+  for ( auto& manager : managers )
   {
-    m->initialize();
+    manager->initialize();
   }
 
   ++fingerprint_;
-
   initialized_ = true;
 }
 
 void
 nest::KernelManager::prepare()
 {
-  for ( auto& m : managers )
+  for ( auto& manager : managers )
   {
-    m->prepare();
+    manager->prepare();
   }
 }
 
@@ -114,12 +113,11 @@ nest::KernelManager::cleanup()
 void
 nest::KernelManager::finalize()
 {
-  initialized_ = false;
-
   for ( auto&& m_it = managers.rbegin(); m_it != managers.rend(); ++m_it )
   {
     ( *m_it )->finalize();
   }
+  initialized_ = false;
 }
 
 void
@@ -132,25 +130,17 @@ nest::KernelManager::reset()
 void
 nest::KernelManager::change_number_of_threads( thread new_num_threads )
 {
-  node_manager.finalize();
-  connection_manager.finalize();
-  model_manager.finalize();
-  modelrange_manager.finalize();
-  random_manager.finalize();
+  // Inputs are checked in VPManager::set_status().
+  // Just double check here that all values are legal.
+  assert( node_manager.size() == 0 );
+  assert( not connection_manager.get_user_set_delay_extrema() );
+  assert( not simulation_manager.has_been_simulated() );
+  assert( not sp_manager.is_structural_plasticity_enabled() or new_num_threads == 1 );
 
   vp_manager.set_num_threads( new_num_threads );
-
-  random_manager.initialize();
-  modelrange_manager.initialize();
-  model_manager.initialize();
-  connection_manager.initialize();
-  event_delivery_manager.initialize();
-  music_manager.initialize();
-  node_manager.initialize();
-
   for ( auto& manager : managers )
   {
-    manager->change_num_threads( new_num_threads );
+    manager->change_number_of_threads();
   }
 }
 

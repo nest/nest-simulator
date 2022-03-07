@@ -225,8 +225,8 @@ nest::ClopathArchivingNode::write_LTD_history( const double t_ltd_ms, double u_b
 {
   if ( n_incoming_ )
   {
-    const double dw = A_LTD_const_ ? A_LTD_ * ( u_bar_minus - theta_minus_ ) : A_LTD_ * u_bar_bar * u_bar_bar
-        * ( u_bar_minus - theta_minus_ ) / u_ref_squared_;
+    const double dw = A_LTD_const_ ? A_LTD_ * ( u_bar_minus - theta_minus_ )
+                                   : A_LTD_ * u_bar_bar * u_bar_bar * ( u_bar_minus - theta_minus_ ) / u_ref_squared_;
     ltd_history_[ ltd_hist_current_ ] = histentry_extended( t_ltd_ms, dw, 0 );
     ltd_hist_current_ = ( ltd_hist_current_ + 1 ) % ltd_hist_len_;
   }

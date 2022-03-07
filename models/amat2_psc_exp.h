@@ -47,7 +47,7 @@ PSCs and adaptive threshold
 Description
 +++++++++++
 
-amat2_psc_exp is an implementation of a leaky integrate-and-fire model
+``amat2_psc_exp`` is an implementation of a leaky integrate-and-fire model
 with exponential shaped postsynaptic currents (PSCs). Thus, postsynaptic
 currents have an infinitely short rise time.
 
@@ -71,23 +71,19 @@ The general framework for the consistent formulation of systems with
 neuron like dynamics interacting by point events is described in
 [1]_. A flow chart can be found in [2]_.
 
-Remarks:
+The default parameter values for this model are different from the
+corresponding parameter values for ``mat2_psc_exp``. If identical
+parameters are used, and beta is 0, then this model shall behave
+exactly as mat2_psc_exp.
 
-- The default parameter values for this model are different from the
-  corresponding parameter values for mat2_psc_exp.
-- If identical parameters are used, and beta==0, then this model shall
-  behave exactly as mat2_psc_exp.
-- The time constants in the model must fullfill the following conditions:
-  - :math:`\tau_m != {\tau_{syn_{ex}}, \tau_{syn_{in}}}`
-  - :math:`\tau_v != {\tau_{syn_{ex}}, \tau_{syn_{in}}}`
-  - :math:`\tau_m != \tau_v`
-  This is required to avoid singularities in the numerics. This is a
-  problem of implementation only, not a principal problem of the model.
-- Expect unstable numerics if time constants that are required to be
-  different are very close.
-- :math:`\tau_m != \tau_{syn_{ex,in}}` is required by the current
-  implementation to avoid a degenerate case of the ODE describing the
-  model [1]_.  For very similar values, numerics will be unstable.
+The following state variables can be read out using a multimeter:
+
+=========== ==== ==================================
+ V_m        mV   Non-resetting membrane potential
+ V_th       mV   Two-timescale adaptive threshold
+=========== ==== ==================================
+
+See also [4]_.
 
 Parameters
 ++++++++++
@@ -116,12 +112,21 @@ The following parameters can be set in the status dictionary:
                     relative to E_L as in [3]_)
 =========== ======= ===========================================================
 
-=========== ==== =======================================================
-**State variables that can be read out with the multimeter device**
-------------------------------------------------------------------------
- V_m        mV   Non-resetting membrane potential
- V_th       mV   Two-timescale adaptive threshold
-=========== ==== =======================================================
+.. note::
+
+   - The time constants in the model must fullfill the following conditions:
+     - :math:`\tau_m != {\tau_{syn_{ex}}, \tau_{syn_{in}}}`
+     - :math:`\tau_v != {\tau_{syn_{ex}}, \tau_{syn_{in}}}`
+     - :math:`\tau_m != \tau_v`
+     This is required to avoid singularities in the numerics. This is a
+     problem of implementation only, not a principal problem of the model.
+
+   - Expect unstable numerics if time constants that are required to be
+     different are very close.
+
+   - :math:`\tau_m != \tau_{syn_{ex,in}}` is required by the current
+     implementation to avoid a degenerate case of the ODE describing the
+     model [1]_.  For very similar values, numerics will be unstable.
 
 References
 ++++++++++
@@ -291,8 +296,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( amat2_psc_exp& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, amat2_psc_exp& ); //!<Sets buffer pointers to 0
+    Buffers_( amat2_psc_exp& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, amat2_psc_exp& ); //!< Sets buffer pointers to 0
 
     /** buffers and sums up incoming spikes/currents */
     RingBuffer spikes_ex_;

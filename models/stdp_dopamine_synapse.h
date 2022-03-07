@@ -46,7 +46,7 @@ Synapse type for dopamine-modulated spike-timing dependent plasticity
 Description
 +++++++++++
 
-stdp_dopamine_synapse is a connection to create synapses with
+``stdp_dopamine_synapse`` is a connection to create synapses with
 dopamine-modulated spike-timing dependent plasticity (used as a
 benchmark model in [1]_, based on [2]_). The dopaminergic signal is a
 low-pass filtered version of the spike rate of a user-specific pool
@@ -57,7 +57,7 @@ dopaminergic dynamics is calculated in the synapse itself.
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
@@ -101,17 +101,15 @@ Parameters
  Wmax      real    Maximal synaptic weight
 =========  ======= ======================================================
 
+The common properties can only be set by :py:func:`.SetDefaults` and apply
+to all instances of the synapse model.
+
 === ======  =====================================
 **Individual properties**
 -------------------------------------------------
  c  real    Eligibility trace
  n  real    Neuromodulator concentration
 === ======  =====================================
-
-Remarks:
-
-The common properties can only be set by SetDefaults and apply to all
-synapses of the model.
 
 References
 ++++++++++
@@ -409,9 +407,9 @@ stdp_dopamine_synapse< targetidentifierT >::check_synapse_params( const Dictiona
   {
     if ( syn_spec->known( param_arr[ n ] ) )
     {
-      throw NotImplemented(
-        "Connect doesn't support the setting of parameter param_arr[ n ]"
-        "in stdp_dopamine_synapse. Use SetDefaults() or CopyModel()." );
+      std::string msg = "Connect doesn't support the setting of parameter " + param_arr[ n ]
+        + " in stdp_dopamine_synapse. Use SetDefaults() or CopyModel().";
+      throw NotImplemented( msg );
     }
   }
 }
@@ -435,8 +433,9 @@ stdp_dopamine_synapse< targetidentifierT >::update_weight_( double c0,
 {
   const double taus_ = ( cp.tau_c_ + cp.tau_n_ ) / ( cp.tau_c_ * cp.tau_n_ );
   weight_ = weight_
-    - c0 * ( n0 / taus_ * numerics::expm1( taus_ * minus_dt )
-             - cp.b_ * cp.tau_c_ * numerics::expm1( minus_dt / cp.tau_c_ ) );
+    - c0
+      * ( n0 / taus_ * numerics::expm1( taus_ * minus_dt )
+        - cp.b_ * cp.tau_c_ * numerics::expm1( minus_dt / cp.tau_c_ ) );
 
   if ( weight_ < cp.Wmin_ )
   {

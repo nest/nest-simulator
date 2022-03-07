@@ -1,3 +1,5 @@
+.. _pynest_tutorial_1:
+
 Part 1: Neurons and simple neural networks
 ==========================================
 
@@ -18,14 +20,14 @@ know how to:
 For more information on the usage of PyNEST, please see the other
 sections of this primer:
 
--  :doc:`Part 2: Populations of neurons <part_2_populations_of_neurons>`
--  :doc:`Part 3: Connecting networks with
-   synapses <part_3_connecting_networks_with_synapses>`
--  :doc:`Part 4: Spatially structured
-   networks <part_4_spatially_structured_networks>`
+-  :ref:`Part 2: Populations of neurons <pynest_tutorial_2>`
+-  :ref:`Part 3: Connecting networks with
+   synapses <pynest_tutorial_3>`
+-  :ref:`Part 4: Spatially structured
+   networks <pynest_tutorial_4>`
 
-More advanced examples can be found at `Example
-Networks <https://www.nest-simulator.org/more-example-networks/>`__, or
+More advanced examples can be found at :ref:`Example
+Networks <pynest_examples>`, or
 have a look at at the source directory of your NEST installation in the
 subdirectory: ``pynest/examples/``.
 
@@ -90,17 +92,15 @@ prompted for.
 
     dir(nest)
 
-One such command is ``nest.Models()``, which will return a list of all
-the available models you can use. If you want to obtain more information
-about a particular command, you may use Python’s standard help system.
+If you want to obtain more information about a particular command, you
+may use Python’s standard help system, which will return the help text
+(docstring) explaining the use of this particular function. There is a
+help system within NEST as well. You can open the help pages in a
+browser using ``nest.helpdesk()`` and you can get the help page for a
+particular NEST object (like a synapse or neuron model) using
+``nest.help('object')``.
 
-This will return the help text (docstring) explaining the use of this
-particular function. There is a help system within NEST as well. You
-can open the help pages in a browser using ``nest.helpdesk()`` and you
-can get the help page for a particular NEST object (like a synapse or
-neuron model) using ``nest.help(object)``.
-
-Creating Nodes
+Creating nodes
 --------------
 
 A neural network in NEST consists of two basic element types: nodes and
@@ -381,13 +381,13 @@ Additionally, the constant input current should be set to 0:
     neuron.set(I_e=0.0)
 
 Each event of the excitatory generator should produce a postsynaptic
-current of 1.2pA amplitude, an inhibitory event of -2.0pA. The synaptic
-weights can be defined in a dictionary, which is passed to the
-:py:func:`.Connect` function using the keyword ``syn_spec`` (synapse
-specifications). In general all parameters determining the synapse can
-be specified in the synapse dictionary, such as ``"weight"``,
-``"delay"``, the synaptic model (``"synapse_model"``) and parameters specific to
-the synaptic model.
+current of 1.2pA amplitude, an inhibitory event of -2.0pA. The
+synaptic weights can be defined in a dictionary, which is passed to
+the :py:func:`.Connect` function using the keyword ``syn_spec``
+(synapse specifications). In general all parameters determining the
+synapse can be specified in the synapse dictionary, such as
+``"weight"``, ``"delay"``, the synaptic model (``"synapse_model"``)
+and parameters specific to the synaptic model.
 
 ::
 
@@ -419,8 +419,8 @@ the synaptic model.
 The rest of the code remains as before. You should see a membrane
 potential as in :numref:`vm_one_neuron_noise` and :numref:`spikes_one_neuron_noise`.
 
-In the next part of the introduction (:doc:`Part 2: Populations of
-neurons <part_2_populations_of_neurons>`) we will look at more
+In the next part of the introduction (:ref:`Part 2: Populations of
+neurons <pynest_tutorial_2>`) we will look at more
 methods for connecting many neurons at once.
 
 Two connected neurons
@@ -475,7 +475,7 @@ the following sections of this introduction will add more.
 Getting information about NEST
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-See the :doc:`Getting Help Section <../../getting_help>`
+See the :ref:`Getting Help Section <getting_help>`
 
 Nodes
 ~~~~~
@@ -508,7 +508,7 @@ Connections
 
 This is an abbreviated version of the documentation for the :py:func:`.Connect`
 function, please see NEST’s online help for the full version and
-:doc:`Connection Management <../../guides/connection_management>` for an introduction
+:ref:`Connection Management <connection_management>` for an introduction
 and examples.
 
 -  ``Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=False)``
@@ -535,21 +535,22 @@ the dictionary.
 Synapse
 ^^^^^^^
 
-The synapse model and its properties can be inserted either as a string
-describing one synapse model (synapse models are listed in the
-synapsedict) or as a dictionary. If no synapse model
-is specified the default model ``"static_synapse"`` will be used.
-Available keys in the synapse dictionary are ``"synapse_model"``, ``"weight"``,
-``"delay"``, ``"receptor_type"`` and parameters specific to the chosen
-synapse model. All parameters are optional and if not specified will use
-the default values determined by the current synapse model. ``"synapse_model"``
-determines the synapse type, taken from pre-defined synapse types in
-NEST or manually specified synapses created via :py:func:`.CopyModel`. All
-other parameters can be scalars or distributions. In the case of scalar
-parameters, all keys take doubles except for ``"receptor_type"`` which
-has to be initialised with an integer. Distributed parameters are
-initialised with a Parameter with distribution-specific
-arguments (such as ``"mean"`` and ``"std"``).
+The synapse model and its properties can be inserted either as a
+string naming a synapse model (see ``nest.synapse_models`` for all
+available models) or as a dictionary. If no synapse model is
+specified, the default model ``"static_synapse"`` will be used.
+Available keys in the synapse dictionary are ``"synapse_model"``,
+``"weight"``, ``"delay"``, ``"receptor_type"``, as well as parameters
+specific to the chosen synapse model. All parameters are optional and
+if not specified will use the default values determined by the current
+synapse model. ``"synapse_model"`` determines the synapse type, taken
+from pre-defined synapse types in NEST or manually specified synapses
+created via :py:func:`.CopyModel`.  All other parameters can be
+scalars or distributions. In the case of scalar parameters, all keys
+take doubles except for ``"receptor_type"`` which has to be
+initialized with an integer.  Distributed parameters are initialized
+with a Parameter with distribution-specific arguments (such as
+``"mean"`` and ``"std"``).
 
 Simulation control
 ~~~~~~~~~~~~~~~~~~

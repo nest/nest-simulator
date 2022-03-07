@@ -27,8 +27,8 @@
 #include <limits>
 
 // Includes from libnestutil:
-#include "dict_util.h"
 #include "compose.hpp"
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -133,11 +133,11 @@ nest::pp_pop_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
 
   if ( tau_eta_.size() != val_eta_.size() )
   {
-    throw BadProperty( String::compose(
-      "'tau_eta' and 'val_eta' need to have the same dimension.\nSize of "
-      "tau_eta: %1\nSize of val_eta: %2",
-      tau_eta_.size(),
-      val_eta_.size() ) );
+    throw BadProperty(
+      String::compose( "'tau_eta' and 'val_eta' need to have the same dimension.\nSize of "
+                       "tau_eta: %1\nSize of val_eta: %2",
+        tau_eta_.size(),
+        val_eta_.size() ) );
   }
   if ( c_m_ <= 0 )
   {

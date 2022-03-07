@@ -36,6 +36,7 @@ dependencies:
   # Basics ------------------
   - python >= 3.8
   - pip
+  - numpy
 
   # Building NEST -----------
   - cmake >= 3.12
@@ -50,7 +51,6 @@ dependencies:
   - pytest
   - pytest-timeout
   - pytest-xdist
-  - numpy
   - pandas
   - scipy
   - mpi4py

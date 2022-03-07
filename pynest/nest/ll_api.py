@@ -34,12 +34,12 @@ import os
 # Python running on Ubuntu, when invoked from the terminal
 # "python -c 'import nest'"
 if 'linux' in sys.platform and 'Anaconda' in sys.version:
-    import readline
+    import readline  # noqa
 
 # This is a workaround to avoid segmentation faults when importing
 # scipy *after* nest. See https://github.com/numpy/numpy/issues/2521
 try:
-    import scipy
+    import scipy  # noqa
 except ImportError:
     pass
 
@@ -332,12 +332,12 @@ def set_communicator(comm):
 
     Raises
     ------
-    _kernel.NESTError
+    kernel.NESTError
     """
 
     if "mpi4py" not in sys.modules:
-        raise _kernel.NESTError("set_communicator: "
-                                "mpi4py not loaded.")
+        raise kernel.NESTError("set_communicator: "
+                               "mpi4py not loaded.")
 
     engine.set_communicator(comm)
 

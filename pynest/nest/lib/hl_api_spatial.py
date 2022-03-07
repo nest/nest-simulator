@@ -26,8 +26,7 @@ Functions relating to spatial properties of nodes
 
 import numpy as np
 
-from ..ll_api import check_stack, sli_func, sps, sr, spp
-from .. import pynestkernel as kernel
+from ..ll_api import sli_func
 from .hl_api_helper import is_iterable
 from .hl_api_connections import GetConnections
 from .hl_api_parallel_computing import NumProcesses, Rank
@@ -959,8 +958,6 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
 
     elif len(ext) == 3:
         # 3D layer
-        from mpl_toolkits.mplot3d import Axes3D
-
         # extract position information, transpose to list of x,y,z pos
         pos = zip(*GetPosition(layer))
 
@@ -1100,8 +1097,6 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
 
     else:
         # 3D layer
-        from mpl_toolkits.mplot3d import Axes3D
-
         if fig is None:
             fig = plt.figure()
             ax = fig.add_subplot(111, projection='3d')

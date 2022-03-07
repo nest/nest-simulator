@@ -28,17 +28,12 @@ import warnings
 import json
 import functools
 import textwrap
-import subprocess
 import os
-import re
-import shlex
-import sys
-import numpy
 import pydoc
 
 from string import Template
 
-from ..ll_api import check_stack, sli_func, sps, sr, spp
+from ..ll_api import sli_func, sps, sr, spp
 from .. import pynestkernel as kernel
 
 __all__ = [
@@ -46,9 +41,7 @@ __all__ = [
     'deprecated',
     'get_parameters',
     'get_parameters_hierarchical_addressing',
-    'get_unistring_type',
     'get_wrapped_text',
-    'is_coercible_to_sli_array',
     'is_iterable',
     'is_literal',
     'is_sequence_of_connections',
@@ -159,22 +152,7 @@ def deprecated(alt_func_name, text=None):
     return deprecated_decorator
 
 
-def get_unistring_type():
-    """Returns string type dependent on python version.
-
-    Returns
-    -------
-    str or basestring:
-        Depending on Python version
-
-    """
-    import sys
-    if sys.version_info[0] < 3:
-        return basestring
-    return str
-
-
-uni_str = get_unistring_type()
+uni_str = str
 
 
 def is_literal(obj):
@@ -229,28 +207,6 @@ def is_iterable(seq):
         return False
 
     return True
-
-
-def is_coercible_to_sli_array(seq):
-    """Checks whether a given object is coercible to a SLI array
-
-    Parameters
-    ----------
-    seq : object
-        Object to check
-
-    Returns
-    -------
-    bool:
-        True if object is coercible to a SLI array
-    """
-
-    import sys
-
-    if sys.version_info[0] >= 3:
-        return isinstance(seq, (tuple, list, range))
-    else:
-        return isinstance(seq, (tuple, list, xrange))
 
 
 def is_sequence_of_connections(seq):

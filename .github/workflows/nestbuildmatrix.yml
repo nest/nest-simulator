@@ -178,7 +178,7 @@ jobs:
 
       - name: "Run flake8..."
         run: |
-          flake8 --ignore="E121,E123,E126,E226,E24,E704,W503,W504" pynest/
+          flake8 --ignore="C901,E121,E123,E126,E226,E24,E704,W503,W504" pynest/
 
   sphinx-rtd:
     # as close as possible to the Readthedocs setup (system install cmake, pip install -r doc/requirements.txt)

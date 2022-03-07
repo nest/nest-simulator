@@ -23,7 +23,6 @@
 Functions to get information on NEST.
 """
 
-import sys
 import os
 import textwrap
 import webbrowser

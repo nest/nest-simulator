@@ -53,7 +53,6 @@ __all__ = [
     'show_deprecation_warning',
     'show_help_with_pager',
     'SuppressedDeprecationWarning',
-    'uni_str',
 ]
 
 # These flags are used to print deprecation warnings only once.
@@ -152,9 +151,6 @@ def deprecated(alt_func_name, text=None):
     return deprecated_decorator
 
 
-uni_str = str
-
-
 def is_literal(obj):
     """Check whether obj is a "literal": a unicode string or SLI literal
 
@@ -168,7 +164,7 @@ def is_literal(obj):
     bool:
         True if obj is a "literal"
     """
-    return isinstance(obj, (uni_str, kernel.SLILiteral))
+    return isinstance(obj, (str, kernel.SLILiteral))
 
 
 def is_string(obj):
@@ -184,7 +180,7 @@ def is_string(obj):
     bool:
         True if obj is a unicode string
     """
-    return isinstance(obj, uni_str)
+    return isinstance(obj, str)
 
 
 def is_iterable(seq):

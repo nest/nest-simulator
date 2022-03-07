@@ -12,10 +12,6 @@ on: [push, pull_request]
 jobs:
   clang-format:
     runs-on: "ubuntu-20.04"
-    strategy:
-      fail-fast: false
-      matrix:
-        clang_version: [9, 10, 11, 12, 13, 14]
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v2
@@ -24,35 +20,15 @@ jobs:
 
       - name: "Install Linux system dependencies"
         run: |
-          sudo apt-get update
-          sudo apt-get install clang-format-$CLANG_VERSION
+          sudo apt update
+          sudo apt install clang-format-9
 
       - name: "Run clang-format..."
-        id: diffstep
         run: |
-          diff -u <(cat nestkernel/*) <(clang-format nestkernel/*)
-        #run: find . \( -iname "*.cpp" -o -iname "*.cpp" -o -iname "*.h" -o -iname "*.hxx" \) -print0 | xargs -0 clang-format -i
+          files=$(find . \( -iname "*.h" -o -iname "*.c" -o -iname "*.cc" -o -iname "*.cpp" \) -not -path "./thirdparty/*")
+          diff -u <(cat ${files}) <(clang-format-9 ${files})
     env:
       CLANG_FORMAT_FILE: ".clang-format"
-      CLANG_VERSION: ${{ matrix.clang_version }}
-
-  vera:
-    runs-on: "ubuntu-20.04"
-    steps:
-      - name: "Checkout repository content"
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: "Install Linux system dependencies"
-        run: |
-          sudo apt-get update
-          sudo apt-get install vera++
-
-      - name: "Run VERA++..."
-        run: |
-          sudo cp build_support/vera++.profile /usr/lib/vera++/profiles/nest
-          find . -iname "*.cpp" -o -iname "*.cpp" -o -iname "*.h" -o -iname "*.hxx" -print0 | xargs -0 -L10 vera++ --profile nest '{}' >${f_base}_vera.txt 2>&1
 
   cppcheck:
     runs-on: "ubuntu-20.04"
@@ -352,7 +328,7 @@ jobs:
   test_linux:
     if: ${{ always() && !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [clang-format, vera, cppcheck, mypy]
+    needs: [clang-format, cppcheck, mypy]
     strategy:
       fail-fast: false
       matrix:
@@ -412,7 +388,6 @@ jobs:
           sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq pycodestyle libpcre3 libpcre3-dev python2-dev libboost-all-dev
           sudo apt-get install openmpi-bin libopenmpi-dev libgsl0-dev tcl8.6 tcl8.6-dev tk8.6-dev
           sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev
-          sudo apt-get install vera++
           sudo ldconfig
           g++ --version
 
@@ -483,7 +458,7 @@ jobs:
   test_macos:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [clang-format, vera, cppcheck, mypy]
+    needs: [clang-format, cppcheck, mypy]
     strategy:
       fail-fast: false
       matrix:

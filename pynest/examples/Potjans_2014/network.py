@@ -274,7 +274,7 @@ class Network:
         nest.print_time = self.sim_dict['print_time']
         
         if nest.Rank() == 0:
-            print('RNG seed: {} '.format(
+            print('RNG seed: {}'.format(
                 nest.rng_seed))
             print('Total number of virtual processes: {}'.format(
                 nest.total_num_virtual_procs))

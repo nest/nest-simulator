@@ -96,6 +96,11 @@ public:
   void clear();
 
   /**
+   * Reserve space for n Nodes.
+   */
+  void reserve_additional( thread t, size_t n );
+
+  /**
    * Return name of the Model.
    * This function returns the name of the Model as C++ string. The
    * name is defined by the constructor. The result is identical to the value

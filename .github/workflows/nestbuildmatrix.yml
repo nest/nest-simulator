@@ -12,10 +12,6 @@ on: [push, pull_request]
 jobs:
   clang-format:
     runs-on: "ubuntu-20.04"
-    strategy:
-      fail-fast: false
-      matrix:
-        clang_version: [9, 10, 11, 12, 13, 14]
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v2
@@ -25,16 +21,14 @@ jobs:
       - name: "Install Linux system dependencies"
         run: |
           sudo apt update
-          sudo apt install clang-format-$CLANG_VERSION
+          sudo apt install clang-format-9
 
       - name: "Run clang-format..."
-        id: diffstep
         run: |
           files=$(find . \( -iname "*.h" -o -iname "*.c" -o -iname "*.cc" -o -iname "*.cpp" \) -not -path "./thirdparty/*")
-          diff -u <(cat ${files}) <(clang-format-$CLANG_VERSION ${files})
+          diff -u <(cat ${files}) <(clang-format-9 ${files})
     env:
       CLANG_FORMAT_FILE: ".clang-format"
-      CLANG_VERSION: ${{ matrix.clang_version }}
 
   cppcheck:
     runs-on: "ubuntu-20.04"

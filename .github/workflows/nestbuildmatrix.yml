@@ -69,7 +69,7 @@ jobs:
 
       - name: "Run cppcheck..."
         run: |
-          cppcheck --enable=all --language=c++ --std=c++11 --suppress=missingIncludeSystem ./
+          cppcheck --enable=all --language=c++ --std=c++11 -i sli/ --suppressions-list=.cppcheck_suppressions ./
 
   pydocstyle:
     runs-on: "ubuntu-20.04"

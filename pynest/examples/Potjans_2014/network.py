@@ -383,8 +383,15 @@ class Network:
         """ Creates the thalamic neuronal population if specified in
         ``stim_dict``.
 
-        Thalamic neurons are of type ``parrot_neuron`` and receive input from a
-        Poisson generator.
+        Each neuron of the thalamic population is supposed to transmit the same
+        Poisson spike train to all of its targets in the cortical neuronal population,
+        and spike trains elicited by different thalamic neurons should be statistically
+        independent.
+        In NEST, this is achieved with a single Poisson generator connected to all
+        thalamic neurons which are of type ``parrot_neuron``;
+        Poisson generators send independent spike trains to each of their targets and
+        parrot neurons just repeat incoming spikes.        
+        
         Note that the number of thalamic neurons is not scaled with
         ``N_scaling``.
 

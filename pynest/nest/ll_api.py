@@ -34,12 +34,12 @@ import os
 # Python running on Ubuntu, when invoked from the terminal
 # "python -c 'import nest'"
 if 'linux' in sys.platform and 'Anaconda' in sys.version:
-    import readline  # noqa
+    import readline  # noqa: F401
 
 # This is a workaround to avoid segmentation faults when importing
 # scipy *after* nest. See https://github.com/numpy/numpy/issues/2521
 try:
-    import scipy  # noqa
+    import scipy  # noqa: F401
 except ImportError:
     pass
 

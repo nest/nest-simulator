@@ -37,10 +37,10 @@
 #include "manager_interface.h"
 
 // Includes from nestkernel:
-#include "node_collection.h"
 #include "growth_curve_factory.h"
 #include "nest_time.h"
 #include "nest_types.h"
+#include "node_collection.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -71,8 +71,6 @@ public:
 
   virtual void get_status( DictionaryDatum& );
   virtual void set_status( const DictionaryDatum& );
-
-  DictionaryDatum& get_growthcurvedict();
 
   /**
    * Create a new Growth Curve object using the GrowthCurve Factory
@@ -191,26 +189,13 @@ private:
   bool structural_plasticity_enabled_;
   std::vector< SPBuilder* > sp_conn_builders_;
 
-  /** @BeginDocumentation
-
-   Name: growthcurvedict - growth curves for Model of Structural Plasticity
-
-   Description:
-   This dictionary provides indexes for the growth curve factory
-   */
-  DictionaryDatum growthcurvedict_; //!< Dictionary for growth rules.
-
   /**
    * GrowthCurve factories, indexed by growthcurvedict_ elements.
    */
   std::vector< GenericGrowthCurveFactory* > growthcurve_factories_;
-};
 
-inline DictionaryDatum&
-SPManager::get_growthcurvedict()
-{
-  return growthcurvedict_;
-}
+  DictionaryDatum growthcurvedict_; //!< Dictionary for growth rules.
+};
 
 inline GrowthCurve*
 SPManager::new_growth_curve( Name name )
@@ -230,5 +215,7 @@ SPManager::get_structural_plasticity_update_interval() const
 {
   return structural_plasticity_update_interval_;
 }
-}
-#endif /* SP_MANAGER_H */
+
+} // namespace nest
+
+#endif /* #ifndef SP_MANAGER_H */

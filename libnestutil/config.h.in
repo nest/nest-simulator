@@ -156,21 +156,6 @@
 /* define if the compiler fails with ICE */
 #cmakedefine HAVE_XLC_ICE_ON_USING 1
 
-/* Configuring for Blue Gene */
-#cmakedefine IS_BLUEGENE 1
-
-/* Configuring for Blue Gene/L */
-#cmakedefine IS_BLUEGENE_L 1
-
-/* Configuring for Blue Gene/P */
-#cmakedefine IS_BLUEGENE_P 1
-
-/* Configuring for Blue Gene/Q */
-#cmakedefine IS_BLUEGENE_Q 1
-
-/* Configuring for K */
-#cmakedefine IS_K 1
-
 /* Is SIONlib available? */
 #cmakedefine HAVE_SIONLIB 1
 

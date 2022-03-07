@@ -65,11 +65,10 @@ public:
   {
   }
 
-  virtual void initialize();
-  virtual void finalize();
-
-  virtual void set_status( const DictionaryDatum& );
-  virtual void get_status( DictionaryDatum& );
+  virtual void initialize() override;
+  virtual void finalize() override;
+  virtual void set_status( const DictionaryDatum& ) override;
+  virtual void get_status( DictionaryDatum& ) override;
 
   void init_mpi( int* argc, char** argv[] );
 #ifdef HAVE_MPI
@@ -370,8 +369,8 @@ private:
   //!< rank will be written
 
   std::vector< int > send_displacements_secondary_events_in_int_per_rank_; //!< offset in the MPI send buffer (in ints)
-//!< from which elements send to each rank will
-//!< be read
+  //!< from which elements send to each rank will
+  //!< be read
 
 #ifdef HAVE_MPI
   //! array containing communication partner for each step.
@@ -569,16 +568,16 @@ MPIManager::get_send_recv_count_spike_data_per_rank() const
 inline size_t
 MPIManager::get_send_buffer_size_secondary_events_in_int() const
 {
-  return send_displacements_secondary_events_in_int_per_rank_[ send_displacements_secondary_events_in_int_per_rank_
-                                                                 .size() - 1 ]
+  return send_displacements_secondary_events_in_int_per_rank_
+           [ send_displacements_secondary_events_in_int_per_rank_.size() - 1 ]
     + send_counts_secondary_events_in_int_per_rank_[ send_counts_secondary_events_in_int_per_rank_.size() - 1 ];
 }
 
 inline size_t
 MPIManager::get_recv_buffer_size_secondary_events_in_int() const
 {
-  return recv_displacements_secondary_events_in_int_per_rank_[ recv_displacements_secondary_events_in_int_per_rank_
-                                                                 .size() - 1 ]
+  return recv_displacements_secondary_events_in_int_per_rank_
+           [ recv_displacements_secondary_events_in_int_per_rank_.size() - 1 ]
     + recv_counts_secondary_events_in_int_per_rank_[ recv_counts_secondary_events_in_int_per_rank_.size() - 1 ];
 }
 

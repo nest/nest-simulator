@@ -28,7 +28,7 @@ Synopsis: (ticket-459.sli) run -> dies if assertion fails
 
 Description:
 For all models having a reversal potential E_L, we change this potential and check that
-all other parameters and properties of the model remain unchanged. #459 reports that the 
+all other parameters and properties of the model remain unchanged. #459 reports that the
 order in which E_L and V_th are set determines which values are actually set. This is a
 direct consequence of incorrect handling of changes to E_L, which show up as changes in,
 e.g. V_m and V_th as a side effect of changing E_L. This happened in those neuron models
@@ -57,7 +57,7 @@ M_ERROR setverbosity
   % be tested below
   /infdict << >> def
   model GetDefaults /mdefs Set
-  mdefs keys 
+  mdefs keys
   {  /k Set mdefs k get DoubleQ { FiniteQ not { infdict k -150. put } if } if pop }
   forall
   nrn infdict SetStatus
@@ -65,14 +65,14 @@ M_ERROR setverbosity
   nrn GetStatus 0 get /pre Set
   pre /E_L get /ELorig Set
 
-  ELorig 1.0 add /ELnew Set   
+  ELorig 1.0 add /ELnew Set
   nrn << /E_L ELnew >> SetStatus
   nrn GetStatus 0 get /post Set
 
   pre keys post keys eq assert
   % compare all numeric pre-post values, except changed E_L
   pre /E_L undef pre keys
-  { 
+  {
     /key Set
      pre key get DoubleQ
      {
@@ -81,17 +81,18 @@ M_ERROR setverbosity
      }
      { pop true }
      ifelse
-  } Map 
+  } Map
   true exch { and } Fold
   dup not { model =only (  FAILED) = } if
-} 
+}
 def
 
 {
-  modeldict keys { 
+  GetKernelStatus /node_models get
+  {
     dup GetDefaults /E_L known
-    { 
-      run_test 
+    {
+      run_test
     }
     {
       pop   % no E_L, pass, true by default
@@ -101,4 +102,3 @@ def
   true exch { and } Fold
 }
 assert_or_die
-

@@ -28,8 +28,8 @@
  * @file Provide classes to be used as template arguments to Connection<T>.
  */
 
-#include "kernel_manager.h"
 #include "compose.hpp"
+#include "kernel_manager.h"
 
 namespace nest
 {
@@ -104,7 +104,7 @@ private:
  *
  * This class represents a connection target using a thread-local index, while
  * fixing the rport to 0. Connection classes with this class as template
- * argument provide "hpc" synapses with minimal memory requirement..
+ * argument provide "hpc" synapses with minimal memory requirement.
  *
  * See Kunkel et al, Front Neuroinform 8:78 (2014), Sec 3.3.
  */
@@ -171,10 +171,10 @@ TargetIdentifierIndex::set_target( Node* target )
   index target_lid = target->get_thread_lid();
   if ( target_lid > max_targetindex )
   {
-    throw IllegalConnection( String::compose(
-      "HPC synapses support at most %1 nodes per thread. "
-      "See Kunkel et al, Front Neuroinform 8:78 (2014), Sec 3.3.2.",
-      max_targetindex ) );
+    throw IllegalConnection(
+      String::compose( "HPC synapses support at most %1 nodes per thread. "
+                       "See Kunkel et al, Front Neuroinform 8:78 (2014), Sec 3.3.2.",
+        max_targetindex ) );
   }
   target_ = target_lid;
 }

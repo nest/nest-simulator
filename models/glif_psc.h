@@ -42,11 +42,11 @@ Current-based generalized leaky integrate-and-fire models
 Description
 +++++++++++
 
-glif_psc provides five generalized leaky integrate-and-fire
+``glif_psc`` provides five generalized leaky integrate-and-fire
 (GLIF) models [1]_ with alpha-function shaped synaptic currents.
 Incoming spike events induce a postsynaptic change of current modeled
 by an alpha function [2]_. The alpha function is normalized such that an event
-of weight 1.0 results in a peak current of 1 pA at t = tau_syn. By default,
+of weight 1.0 results in a peak current of 1 pA at :math:`t = tau_syn`. By default,
 glif_psc has a single synapse that is accessible through receptor_port 1.
 An arbitrary number of synapses with different time constants can be
 configured by setting the desired time constants as tau_syn array.
@@ -63,10 +63,8 @@ The five GLIF models are:
 * **GLIF Model 5** - Leaky integrate and fire with biologically defined reset rules,
   after-spike currents and a voltage dependent threshold (LIF_R_ASC_A)
 
-Remarks:
-
 GLIF model mechanism setting is based on three parameters
-(spike_dependent_threshold, after_spike_currents, adapting_threshold).
+(``spike_dependent_threshold``, ``after_spike_currents``, ``adapting_threshold``).
 The settings of these three parameters for the five GLIF models are listed
 below. Other combinations of these parameters will not be supported.
 
@@ -95,14 +93,14 @@ parameter setting of voltage_reset_fraction and voltage_reset_add may lead to th
 situation that voltage is bigger than threshold after reset. In this case, the neuron
 will continue to spike until the end of the simulation regardless the stimulated inputs.
 We recommend the setting of the parameters of these three models to follow the
-condition of (E_L + voltage_reset_fraction * ( V_th - E_L ) + voltage_reset_add)
-< (V_th + th_spike_add).
+condition of :math:`(E_L + voltage_reset_fraction * ( V_th - E_L ) + voltage_reset_add)
+< (V_th + th_spike_add)`.
 
 .. note::
 
-  If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
-  will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
-  `tau_syn_in`, respectively, to avoid numerical instabilities.
+  If ``tau_m`` is very close to ``tau_syn_ex`` or ``tau_syn_in``, the model
+  will numerically behave as if ``tau_m`` is equal to ``tau_syn_ex`` or
+  ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
   For implementation details see the
   `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
@@ -129,36 +127,36 @@ V_reset    double   Reset potential of the membrane in mV (GLIF 1 or GLIF 3)
 -------------------------------------------------------------------------------
 th_spike_add               double         Threshold addition following spike
                                           in mV (delta_theta_s in Equation (6)
-                                          in [1])
+                                          in [1]_)
 th_spike_decay             double         Spike-induced threshold time
                                           constant in 1/ms (bs in Equation (2)
-                                          in [1])
+                                          in [1]_)
 voltage_reset_fraction     double         Voltage fraction coefficient
                                           following spike (fv in Equation (5)
-                                          in [1])
+                                          in [1]_)
 voltage_reset_add          double         Voltage addition following spike in
                                           mV (-delta_V (sign flipped) in
-                                          Equation (5) in [1])
+                                          Equation (5) in [1]_)
 asc_init                   double vector  Initial values of after-spike
                                           currents in pA
 asc_decay                  double vector  After-spike current time constants
-                                          in 1/ms (kj in Equation (3) in [1])
+                                          in 1/ms (kj in Equation (3) in [1]_)
 asc_amps                   double vector  After-spike current amplitudes in
-                                          pA (deltaIj in Equation (7) in [1])
+                                          pA (deltaIj in Equation (7) in [1]_)
 asc_r                      double vector  Current fraction following spike
                                           coefficients for fj in Equation (7)
-                                          in [1]
+                                          in [1]_
 th_voltage_index           double         Adaptation index of threshold - A
                                           'leak-conductance' for the
                                           voltage-dependent component of the
                                           threshold in 1/ms (av in Equation
-                                          (4) in [1])
+                                          (4) in [1]_)
 th_voltage_decay           double         Voltage-induced threshold time
                                           constant - Inverse of which is the
                                           time constant of the
                                           voltage-dependent component of the
                                           threshold in 1/ms (bv in Equation
-                                          (4) in [1])
+                                          (4) in [1]_)
 tau_syn                    double vector  Rise time constants of the synaptic
                                           alpha function in ms
 E_rev                      double vector  Reversal potential in mV
@@ -175,13 +173,13 @@ adapting_threshold         bool           flag whether the neuron has a
 References
 ++++++++++
 
-..  [1] Teeter C, Iyer R, Menon V, Gouwens N, Feng D, Berg J, Szafer A,
-        Cain N, Zeng H, Hawrylycz M, Koch C, & Mihalas S (2018)
-        Generalized leaky integrate-and-fire models classify multiple neuron
-        types. Nature Communications 9:709.
-..  [2] Meffin, H., Burkitt, A. N., & Grayden, D. B. (2004). An analytical
-        model for the large, fluctuating synaptic conductance state typical of
-        neocortical neurons in vivo. J.  Comput. Neurosci., 16, 159-175.
+.. [1] Teeter C, Iyer R, Menon V, Gouwens N, Feng D, Berg J, Szafer A,
+       Cain N, Zeng H, Hawrylycz M, Koch C, & Mihalas S (2018)
+       Generalized leaky integrate-and-fire models classify multiple neuron
+       types. Nature Communications 9:709.
+.. [2] Meffin, H., Burkitt, A. N., & Grayden, D. B. (2004). An analytical
+       model for the large, fluctuating synaptic conductance state typical of
+       neocortical neurons in vivo. J.  Comput. Neurosci., 16, 159-175.
 
 See also
 ++++++++

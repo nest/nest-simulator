@@ -93,13 +93,19 @@ nest::RandomManager::finalize()
 }
 
 void
+nest::RandomManager::change_number_of_threads()
+{
+  finalize();
+  initialize();
+}
+
+void
 nest::RandomManager::reset_rngs_()
 {
   // Delete existing RNGs.
   delete rank_synced_rng_;
 
-  auto delete_rngs = []( std::vector< RngPtr >& rng_vec )
-  {
+  auto delete_rngs = []( std::vector< RngPtr >& rng_vec ) {
     for ( auto rng : rng_vec )
     {
       delete rng;

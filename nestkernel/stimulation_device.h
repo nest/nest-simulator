@@ -163,9 +163,9 @@ public:
   bool has_proxies() const override;
   Name get_element_type() const override;
 
-  using Device::init_state;
   using Device::calibrate;
   using Device::init_buffers;
+  using Device::init_state;
   using Node::calibrate;
 
   void calibrate() override;
@@ -190,8 +190,8 @@ public:
     throw KernelException( "WORNG TYPE" );
   };
   const std::string& get_label() const;
-  virtual void set_data_from_stimulation_backend( std::vector< double >& ){};
-  void update( Time const&, const long, const long ) override{};
+  virtual void set_data_from_stimulation_backend( std::vector< double >& ) {};
+  void update( Time const&, const long, const long ) override {};
 
 protected:
   void set_initialized_() final;

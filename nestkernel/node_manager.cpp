@@ -59,8 +59,8 @@ NodeManager::NodeManager()
 
 NodeManager::~NodeManager()
 {
-  destruct_nodes_(); // We must destruct nodes properly, since devices may need
-                     // to close files.
+  // We must destruct nodes here, since devices may need to close files.
+  destruct_nodes_();
 }
 
 void
@@ -79,6 +79,14 @@ void
 NodeManager::finalize()
 {
   destruct_nodes_();
+}
+
+void
+NodeManager::change_number_of_threads()
+{
+  // No nodes exist at this point, so nothing to tear down. See
+  // checks for node_manager.size() in VPManager::set_status()
+  initialize();
 }
 
 DictionaryDatum
@@ -100,17 +108,12 @@ NodeManager::add_node( index model_id, long n )
 
   have_nodes_changed_ = true;
 
-  if ( model_id >= kernel().model_manager.get_num_node_models() )
-  {
-    throw UnknownModelID( model_id );
-  }
-
   if ( n < 1 )
   {
     throw BadProperty();
   }
 
-  Model* model = kernel().model_manager.get_model( model_id );
+  Model* model = kernel().model_manager.get_node_model( model_id );
   assert( model != 0 );
   model->deprecation_warning( "Create" );
 
@@ -218,7 +221,7 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
         local_nodes_[ t ].add_local_node( *node );
         node_id += num_vps;
       }
-      local_nodes_[ t ].update_max_node_id( max_node_id );
+      local_nodes_[ t ].set_max_node_id( max_node_id );
     }
     catch ( std::exception& err )
     {
@@ -226,7 +229,7 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
       // the end of the catch block.
       exceptions_raised_.at( t ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
-  }
+  } // omp parallel
 }
 
 void
@@ -257,7 +260,7 @@ NodeManager::add_devices_( Model& model, index min_node_id, index max_node_id, N
 
         local_nodes_[ t ].add_local_node( *node );
       }
-      local_nodes_[ t ].update_max_node_id( max_node_id );
+      local_nodes_[ t ].set_max_node_id( max_node_id );
     }
     catch ( std::exception& err )
     {
@@ -265,7 +268,7 @@ NodeManager::add_devices_( Model& model, index min_node_id, index max_node_id, N
       // the end of the catch block.
       exceptions_raised_.at( t ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
-  }
+  } // omp parallel
 }
 
 void
@@ -295,7 +298,7 @@ NodeManager::add_music_nodes_( Model& model, index min_node_id, index max_node_i
           local_nodes_[ 0 ].add_local_node( *node );
         }
       }
-      local_nodes_.at( t ).update_max_node_id( max_node_id );
+      local_nodes_.at( t ).set_max_node_id( max_node_id );
     }
     catch ( std::exception& err )
     {
@@ -303,7 +306,7 @@ NodeManager::add_music_nodes_( Model& model, index min_node_id, index max_node_i
       // the end of the catch block.
       exceptions_raised_.at( t ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
-  }
+  } // omp parallel
 }
 
 NodeCollectionPTR
@@ -323,7 +326,8 @@ NodeManager::get_nodes( const DictionaryDatum& params, const bool local_only )
       {
         nodes_on_thread[ tid ].push_back( node.get_node_id() );
       }
-    }
+    } // omp parallel
+
 #pragma omp barrier
 
     for ( auto vec : nodes_on_thread )
@@ -501,16 +505,14 @@ NodeManager::ensure_valid_thread_local_ids()
     return;
   }
 
-#ifdef _OPENMP
 #pragma omp critical( update_wfr_nodes_vec )
   {
-// This code may be called from a thread-parallel context, when it is
-// invoked by TargetIdentifierIndex::set_target() during parallel
-// wiring. Nested OpenMP parallelism is problematic, therefore, we
-// enforce single threading here. This should be unproblematic wrt
-// performance, because the wfr_nodes_vec_ is rebuilt only once after
-// changes in network size.
-#endif
+    // This code may be called from a thread-parallel context, when it is
+    // invoked by TargetIdentifierIndex::set_target() during parallel
+    // wiring. Nested OpenMP parallelism is problematic, therefore, we
+    // enforce single threading here. This should be unproblematic wrt
+    // performance, because the wfr_nodes_vec_ is rebuilt only once after
+    // changes in network size.
 
     // Check again, if the network size changed, since a previous thread
     // can have updated wfr_nodes_vec_ before.
@@ -525,28 +527,20 @@ NodeManager::ensure_valid_thread_local_ids()
       {
         wfr_nodes_vec_[ tid ].clear();
 
-        size_t num_thread_local_wfr_nodes = 0;
-        for ( size_t idx = 0; idx < local_nodes_[ tid ].size(); ++idx )
-        {
-          Node* node = local_nodes_[ tid ].get_node_by_index( idx );
-          if ( node != 0 and node->node_uses_wfr_ )
-          {
-            ++num_thread_local_wfr_nodes;
-          }
-        }
+        const size_t num_thread_local_wfr_nodes = std::count_if( local_nodes_[ tid ].begin(),
+          local_nodes_[ tid ].end(),
+          []( const SparseNodeArray::NodeEntry& elem ) { return elem.get_node()->node_uses_wfr_; } );
         wfr_nodes_vec_[ tid ].reserve( num_thread_local_wfr_nodes );
 
-        for ( size_t idx = 0; idx < local_nodes_[ tid ].size(); ++idx )
+        auto node_it = local_nodes_[ tid ].begin();
+        size_t idx = 0;
+        for ( ; node_it < local_nodes_[ tid ].end(); ++node_it, ++idx )
         {
-          Node* node = local_nodes_[ tid ].get_node_by_index( idx );
-
-          if ( node != 0 )
+          auto node = node_it->get_node();
+          node->set_thread_lid( idx );
+          if ( node->node_uses_wfr_ )
           {
-            node->set_thread_lid( idx );
-            if ( node->node_uses_wfr_ )
-            {
-              wfr_nodes_vec_[ tid ].push_back( node );
-            }
+            wfr_nodes_vec_[ tid ].push_back( node );
           }
         }
       } // end of for threads
@@ -567,23 +561,15 @@ NodeManager::ensure_valid_thread_local_ids()
         }
       }
     }
-#ifdef _OPENMP
-  } // end of omp critical region
-#endif
+  } // omp critical
 }
 
 void
 NodeManager::destruct_nodes_()
 {
-#ifdef _OPENMP
 #pragma omp parallel
   {
     index t = kernel().vp_manager.get_thread_id();
-#else // clang-format off
-  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-  {
-#endif // clang-format on
-
     SparseNodeArray::const_iterator n;
     for ( n = local_nodes_[ t ].begin(); n != local_nodes_[ t ].end(); ++n )
     {
@@ -595,7 +581,7 @@ NodeManager::destruct_nodes_()
     }
 
     local_nodes_[ t ].clear();
-  }
+  } // omp parallel
 }
 
 void
@@ -637,14 +623,9 @@ NodeManager::prepare_nodes()
 
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
 
-#ifdef _OPENMP
 #pragma omp parallel reduction( + : num_active_nodes, num_active_wfr_nodes )
   {
     size_t t = kernel().vp_manager.get_thread_id();
-#else
-    for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    {
-#endif
 
     // We prepare nodes in a parallel region. Therefore, we need to catch
     // exceptions here and then handle them after the parallel region.
@@ -668,8 +649,7 @@ NodeManager::prepare_nodes()
       // so throw the exception after parallel region
       exceptions_raised.at( t ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( e ) );
     }
-
-  } // end of parallel section / end of for threads
+  } // omp parallel
 
   // check if any exceptions have been raised
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
@@ -697,20 +677,15 @@ NodeManager::prepare_nodes()
 void
 NodeManager::post_run_cleanup()
 {
-#ifdef _OPENMP
 #pragma omp parallel
   {
     index t = kernel().vp_manager.get_thread_id();
-#else // clang-format off
-  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-  {
-#endif // clang-format on
     SparseNodeArray::const_iterator n;
     for ( n = local_nodes_[ t ].begin(); n != local_nodes_[ t ].end(); ++n )
     {
       n->get_node()->post_run_cleanup();
     }
-  }
+  } // omp parallel
 }
 
 /**
@@ -720,20 +695,15 @@ NodeManager::post_run_cleanup()
 void
 NodeManager::finalize_nodes()
 {
-#ifdef _OPENMP
 #pragma omp parallel
   {
     thread tid = kernel().vp_manager.get_thread_id();
-#else // clang-format off
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-  {
-#endif // clang-format on
     SparseNodeArray::const_iterator n;
     for ( n = local_nodes_[ tid ].begin(); n != local_nodes_[ tid ].end(); ++n )
     {
       n->get_node()->finalize();
     }
-  }
+  } // omp parallel
 }
 
 void
@@ -761,7 +731,7 @@ NodeManager::print( std::ostream& out ) const
   {
     const index first_node_id = it->get_first_node_id();
     const index last_node_id = it->get_last_node_id();
-    const Model* mod = kernel().model_manager.get_model( it->get_model_id() );
+    const Model* mod = kernel().model_manager.get_node_model( it->get_model_id() );
 
     std::stringstream node_id_range_strs;
     node_id_range_strs << std::setw( max_node_id_width + 1 ) << first_node_id;

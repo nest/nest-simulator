@@ -109,7 +109,6 @@ AH 09) =
  (, i.e. firingrate [Hz]: ) =only 1000.0 mul =
 
 
-
 %%%%%%%%%%%%%%%%%  Start Simulation Section   %%%%%%%%%%%%%%%%%%%%%%%%%
 1 1 2 {
 /sim Set   % sim = 1 Canon / sim = 2 Grid
@@ -147,22 +146,22 @@ sim 1 eq {
 1 1 40 { (#) =only } for
 sim 1 eq {(\nRun the canonical simulations first: )= }
          {(\nRun the grid constrained simulations now: )= } ifelse
-modeldict begin
- userdict begin
+
+userdict begin
  0.0 0.2 5.0 {
   cvd /strength Set
 
   (weigth [pA]:\t) =only strength =
 
   %set resolution and limits on delays
-       % limits must be set BEFORE connecting any elements
-       <<
-         /resolution h                  % time steps in ms
-         /tics_per_ms tics_per_ms       % low-level time resolution
-         /off_grid_spiking true         % precise neuron model
-         /rng_seed rng_seed             % set rng seed
-         /overwrite_files true          % overwrite previous output
-       >> SetKernelStatus
+  % limits must be set BEFORE connecting any elements
+  <<
+      /resolution h                  % time steps in ms
+      /tics_per_ms tics_per_ms       % low-level time resolution
+      /off_grid_spiking true         % precise neuron model
+      /rng_seed rng_seed             % set rng seed
+      /overwrite_files true          % overwrite previous output
+  >> SetKernelStatus
 
   sim 1 eq { /neurons /iaf_psc_alpha_canon nr Create def }
            { /neurons /iaf_psc_alpha nr Create def } ifelse
@@ -224,6 +223,5 @@ modeldict begin
 
   ResetKernel
  } for                                  % for each coupling strength
- end
 end
 } for                                   % for each neuron model

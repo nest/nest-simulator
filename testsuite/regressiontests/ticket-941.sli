@@ -56,15 +56,19 @@ M_ERROR setverbosity
  {
    /expected Set
    /n_expected Set
-   /snode_id Set
+   /source Set
 
-   << /source snode_id >> GetConnections
+   << /source source >> GetConnections
    dup length n_expected eq
    {
-     true exch { cva 4 Take expected eq and } Fold
+     true exch { GetStatus /conns Set
+       conns /source get expected 0 get 0 get eq and
+       conns /target get expected 1 get 0 get eq and
+       conns /synapse_model get expected 2 get eq and
+     } Fold
    }
    {
-     ;   pop dup of GetConnections result
+     ;  % pop dup of GetConnections result
      false
    }
    ifelse
@@ -88,8 +92,8 @@ M_ERROR setverbosity
 
  % check they are the right connections; do not test port, it may change with implementation
  {
-   sg  1 [sg 0 get  pn1 0 get 0 synapsedict/static_synapse :: ] :check_get_conn
-   pn2 1 [pn2 0 get sr 0 get 0 synapsedict/static_synapse :: ] :check_get_conn
+   sg  1 [sg  pn1 /static_synapse ] :check_get_conn
+   pn2 1 [pn2 sr  /static_synapse ] :check_get_conn
    and
  } assert_or_die
 
@@ -102,7 +106,7 @@ M_ERROR setverbosity
 
  % check that GetConnections reports correct outgoing connection from pn1
  {
-   pn1 1 [pn1 0 get pn2 0 get 0 synapsedict/static_synapse :: ] :check_get_conn
+   pn1 1 [pn1 pn2 /static_synapse ] :check_get_conn
  } assert_or_die
 
  % Add another synapse of same type between pn1 and pn2 ---------------------
@@ -114,7 +118,7 @@ M_ERROR setverbosity
 
  % check that GetConnections reports correct outgoing connection from pn1
  {
-   pn1 2 [pn1 0 get pn2 0 get 0 synapsedict/static_synapse :: ] :check_get_conn
+   pn1 2 [pn1 pn2 /static_synapse ] :check_get_conn
  } assert_or_die
 
  % Add synapse with different type  between pn1 and pn2 -----------------------
@@ -136,13 +140,8 @@ M_ERROR setverbosity
  %     This assumption may fail in future versions of NEST. Then, this test needs
  %     to be generalized to handle arbitrary order
  {
-   << /source pn1 >> GetConnections { cva 4 Take } Map
-   dup ==
-
-   [ [pn1 0 get pn2 0 get 0 synapsedict/static_synapse :: ]
-     [pn1 0 get pn2 0 get 0 synapsedict/static_synapse :: ]
-     [pn1 0 get pn2 0 get 0 synapsedict/static_synapse_hom_w :: ]
-   ] eq
+   << /source pn1 /target pn2 >> GetConnections GetStatus { /synapse_model get } Map
+   [ /static_synapse /static_synapse /static_synapse_hom_w ] eq
  } assert_or_die
 
 endusing

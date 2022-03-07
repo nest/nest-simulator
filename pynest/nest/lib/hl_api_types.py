@@ -248,7 +248,7 @@ class NodeCollection:
             if all(isinstance(x, bool) for x in key):
                 if len(key) != len(self):
                     raise IndexError('Bool index array must be the same length as NodeCollection')
-                np_key = numpy.array(key, dtype=numpy.bool)
+                np_key = numpy.array(key, dtype=bool)
             # Checking that elements are not instances of bool too, because bool inherits from int
             elif all(isinstance(x, int) and not isinstance(x, bool) for x in key):
                 np_key = numpy.array(key, dtype=numpy.uint64)
@@ -715,7 +715,7 @@ class SynapseCollection:
     def __setattr__(self, attr, value):
         # `_datum` is the only property of SynapseCollection that should not be
         # interpreted as a property of the model
-        if attr == '_datum' or 'print_full':
+        if attr == '_datum' or attr == 'print_full':
             super().__setattr__(attr, value)
         else:
             self.set({attr: value})

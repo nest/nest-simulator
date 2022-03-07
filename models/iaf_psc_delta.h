@@ -45,14 +45,14 @@ postsynaptic currents
 Description
 +++++++++++
 
-iaf_psc_delta is an implementation of a leaky integrate-and-fire model
+``iaf_psc_delta`` is an implementation of a leaky integrate-and-fire model
 where the potential jumps on each spike arrival.
 
 The threshold crossing is followed by an absolute refractory period
 during which the membrane potential is clamped to the resting potential.
 
 Spikes arriving while the neuron is refractory, are discarded by
-default. If the property "refractory_input" is set to true, such
+default. If the property ``refractory_input`` is set to true, such
 spikes are added to the membrane potential at the end of the
 refractory period, dampened according to the interval between
 arrival and end of refractoriness.
@@ -78,21 +78,6 @@ of the nest simulation kernel because it is at the same time complex
 enough to exhibit non-trivial dynamics and simple enough compute
 relevant measures analytically.
 
-Remarks:
-
-The present implementation uses individual variables for the
-components of the state vector and the non-zero matrix elements of
-the propagator. Because the propagator is a lower triangular matrix,
-no full matrix multiplication needs to be carried out and the
-computation can be done "in place", i.e. no temporary state vector
-object is required.
-
-The template support of recent C++ compilers enables a more succinct
-formulation without loss of runtime performance already at minimal
-optimization levels. A future version of iaf_psc_delta will probably
-address the problem of efficient usage of appropriate vector and
-matrix objects.
-
 Parameters
 ++++++++++
 
@@ -112,7 +97,6 @@ The following parameters can be set in the status dictionary.
                           refractory period. Default: false
 ================= ======= ======================================================
 
-
 References
 ++++++++++
 
@@ -124,7 +108,6 @@ References
        space analysis of synchronous spiking in cortical neural
        networks. Neurocomputing 38-40:565-571.
        DOI: https://doi.org/10.1016/S0925-2312(01)00409-X
-
 
 Sends
 +++++
@@ -142,6 +125,21 @@ See also
 iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_ps
 
 EndUserDocs */
+
+/**
+ * The present implementation uses individual variables for the
+ * components of the state vector and the non-zero matrix elements of
+ * the propagator. Because the propagator is a lower triangular matrix,
+ * no full matrix multiplication needs to be carried out and the
+ * computation can be done "in place", i.e. no temporary state vector
+ * object is required.
+ *
+ * The template support of recent C++ compilers enables a more succinct
+ * formulation without loss of runtime performance already at minimal
+ * optimization levels. A future version of iaf_psc_delta will probably
+ * address the problem of efficient usage of appropriate vector and
+ * matrix objects.
+ */
 
 class iaf_psc_delta : public ArchivingNode
 {

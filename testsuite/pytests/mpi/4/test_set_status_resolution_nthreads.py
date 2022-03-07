@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# __init__.py
+# test_set_status_resolution_nthreads.py
 #
 # This file is part of NEST.
 #
@@ -19,10 +19,30 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# ConnPlotter --- A Tool to Generate Connectivity Pattern Matrices
+import nest
+import pytest
 
-from .simple import *
-from .complex import *
-from .non_dale import *
 
-__all__ = ['simple', 'complex', 'non_dale']
+@pytest.fixture
+def reset():
+    nest.ResetKernel()
+
+
+def testSetStatus_resolution_before_nthreads(reset):
+    """Test if resolution can be set before number of threads."""
+
+    nest.resolution = 0.5
+    nest.local_num_threads = 4
+    nest.Simulate(100)
+    assert(nest.resolution == 0.5)
+    assert(nest.local_num_threads == 4)
+
+
+def testSetStatus_nthreads_before_resolution(reset):
+    """Test if number of threads can be set before resolution."""
+
+    nest.local_num_threads = 4
+    nest.resolution = 0.5
+    nest.Simulate(100)
+    assert(nest.resolution == 0.5)
+    assert(nest.local_num_threads == 4)

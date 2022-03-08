@@ -1,9 +1,6 @@
 Table of Contents
 =================
 
-.. toctree::
-
-   index
 
 .. toctree::
    :maxdepth: 1
@@ -13,34 +10,23 @@ Table of Contents
    tutorials/index
    PyNEST example scripts <examples/index>
 
-.. toctree::
-   :maxdepth: 1
-   :caption: Release notes
-
-   Release notes <release_notes/index>
-
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Specialized setup of NEST
-
-   Connect to other tools <coupling_nest_docs/index>
-   HPC optimization  <hpc_docs/index>
-   Benchmarking <hpc_docs/benchmarking>
-
 
 .. toctree::
    :maxdepth: 1
    :caption: Understand how NEST works
 
    NEST models <models/models-main>
-   Neurons <neuron_docs/index>
-   Synapses and connections <synapse_docs/index>
-   Devices  <device_docs/index>
-   Spatially-structured networks <network_docs/index>
-   Simulation behavior <nest_behavior_docs/running_simulations>
-   Random numbers <nest_behavior_docs/random_numbers>
-   Built-in timers <nest_behavior_docs/built-in_timers>
+   Neurons <neurons/index>
+   Synapses and connections <synapses/index>
+   Devices  <devices/index>
+   Spatially-structured networks <networks/index>
+   Simulation behavior <nest_behavior/running_simulations>
+   Random numbers <nest_behavior/random_numbers>
+   Built-in timers <nest_behavior/built-in_timers>
+   Connect to other tools <nest_behavior/index>
+   HPC optimization  <hpc/index>
+   Benchmarking <hpc/benchmarking>
+
 
 .. toctree::
    :maxdepth: 1
@@ -53,19 +39,21 @@ Table of Contents
 
 .. toctree::
    :maxdepth: 1
-   :caption: Get help
+   :caption: Release notes
 
-   troubleshooting
-   Command line help <getting_help>
-   Contact us <community>
+   Release notes <release_notes/index>
+
 
 .. toctree::
    :maxdepth: 1
    :caption: Community
 
+   troubleshooting
+   Command line help <getting_help>
+   Contact us <community>
    related_projects
-   Contribute <devdoc/contribute>
-   Developer space <devdoc/index>
+   Contribute <developer_space/contribute>
+   Developer space <developer_space/index>
    News and updates <https://nest-simulator.org>
    Publications <https://www.nest-simulator.org/publications/>
    NEST Initiative <https://www.nest-initiative.org/>

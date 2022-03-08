@@ -35,14 +35,12 @@ import glob
 import json
 from itertools import chain, combinations
 import logging
-from collections import Counter
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger()
 
 
 def relative_glob(*pattern, basedir=os.curdir, **kwargs):
     tobase = os.path.relpath(basedir, os.curdir)
-    tohere = os.path.relpath(os.curdir, basedir)
     # prefix all patterns with basedir and expand
     names = chain(*[glob.glob(os.path.join(tobase, pat), **kwargs) for pat in pattern])
     # remove prefix from all expanded names
@@ -497,41 +495,6 @@ def getTitles(text):
                         len(match.group('underline')))
         titles.append(match)
     return titles
-
-
-def getSections(text, titles=None):
-    '''
-    Extract sections between titles
-
-    Parameters
-    ----------
-
-    text : str
-      Full documentation text
-
-    titles : list (optional)
-      Iterable with the ordered title re.match objects.  If not given, titles
-      will be generated with a call to `getTitles()`.
-
-
-    Returns
-    -------
-
-    list
-      tuples of each title re.match object and the text of the following section.
-    '''
-    if titles is None:
-        titles = getTitles(text)
-    sections = list()
-    for title, following in zip(titles, titles[1:]+[None]):
-        secstart = title.end()
-        secend = None   # None = end of string
-        if following:
-            secend = following.start()
-        if title.group('title') in sections:
-            log.warning('Duplicate title in user documentation of %s', filename)
-        sections.append((title.group('title'), text[secstart:secend].strip()))
-    return sections
 
 
 def ExtractUserDocs(listoffiles, basedir='..', outdir='userdocs/'):

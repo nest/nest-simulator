@@ -44,7 +44,6 @@ import nest
 
 try:
     # for debugging
-    from mpl_toolkits.mplot3d import Axes3D
     import matplotlib.pyplot as plt
     # make sure we can open a window; DISPLAY may not be set
     fig = plt.figure()

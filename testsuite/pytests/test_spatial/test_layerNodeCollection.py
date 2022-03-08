@@ -39,9 +39,9 @@ class TestLayerNodeCollection(unittest.TestCase):
                             positions=nest.spatial.grid(shape=[5, 5]))
 
         with self.assertRaises(nest.kernel.NESTError):
-            c = nodes + layer
+            c = nodes + layer   # noqa: F841
         with self.assertRaises(nest.kernel.NESTError):
-            d = layer + nodes
+            d = layer + nodes   # noqa: F841
 
     def test_addTwoLayers(self):
         "Test that concatenation of two layers is illegal"
@@ -51,7 +51,7 @@ class TestLayerNodeCollection(unittest.TestCase):
                              positions=nest.spatial.grid(shape=[5, 5]))
 
         with self.assertRaises(nest.kernel.NESTError):
-            c = layer1 + layer2
+            c = layer1 + layer2  # noqa: F841
 
 
 def suite():

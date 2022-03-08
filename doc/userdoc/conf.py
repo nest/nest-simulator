@@ -22,18 +22,10 @@
 
 import sys
 import os
-import re
-import pip
-import subprocess
 
 from pathlib import Path
 from shutil import copyfile
 import json
-
-import sphinx_rtd_theme
-
-from subprocess import check_output, CalledProcessError
-from mock import Mock as MagicMock
 
 
 source_dir = os.environ.get('NESTSRCDIR', False)

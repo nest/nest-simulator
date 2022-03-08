@@ -145,7 +145,6 @@ class ClopathSynapseTestCase(unittest.TestCase):
                 elif(nrn_model == "hh_psc_alpha_clopath"):
                     conn_weight = 2000.0
 
-                spike_gen_params_post = {"spike_times": s_t_post}
                 spike_gen_post = nest.Create("spike_generator", 1, {
                     "spike_times": s_t_post})
 

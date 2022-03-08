@@ -20,12 +20,11 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import nest
-import pytest
 from math import exp
 import numpy as np
 
 try:
-    import matplotlib as mpl
+    import matplotlib as mpl    # noqa: F401
     import matplotlib.pyplot as plt
     DEBUG_PLOTS = True
 except Exception:

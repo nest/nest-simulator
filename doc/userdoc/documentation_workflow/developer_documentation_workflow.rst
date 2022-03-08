@@ -14,6 +14,7 @@ with ``make doc``. A ``doxygen`` folder with HTML files will be
 generated in the ``doc`` folder in your source directory.
 
 .. note::
+
    This workflow shows you how to create **developer documentation**
    for NEST. For the **user documentation**, please refer to our
    :ref:`User documentation workflow <userdoc_workflow>`.
@@ -27,33 +28,33 @@ directories. Your ``CMake`` version needs to be up-to-date.
 
 1. Install Doxygen.
 
-If you are a Linux user, type:
+   If you are a Linux user, type:
 
-.. code-block::
+   .. code-block::
 
-   sudo apt install doxygen
+      sudo apt install doxygen
 
-For macOS, please use `Homebrew <https://brew.sh/>`_:
+   For macOS, please use `Homebrew <https://brew.sh/>`_:
 
-.. code-block::
+   .. code-block::
 
-   brew install doxygen
+      brew install doxygen
 
 2. Go to your build directory:
 
-.. code-block::
+   .. code-block::
 
-   cd </path/to/nest-build>
+      cd </path/to/nest-build>
 
 3. Generate HTML:
 
-.. code-block::
+   .. code-block::
 
-   make doc
+      make doc
 
 4. Preview documentation:
 
-.. code-block::
+   .. code-block::
 
-   cd doc/doxygen/html
-   browser index.html
+      cd doc/doxygen/html
+      browser index.html

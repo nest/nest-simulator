@@ -1,6 +1,6 @@
 invalidPrintfArgType_sint:./
 invalidscanf:./
-unknownMacro:./
+unknownMacro:./testsuite/cpptests/test_target_fields.h
 useStlAlgorithm:./
 variableScope:./
 shadowVariable:./

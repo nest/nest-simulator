@@ -507,6 +507,6 @@ globals().update(_module.__dict__)
 
 # Clean up obsolete references
 # Since these references are deleted, flake8 complains with an error
-# `F821 undefined name` where these variables are used. Hence we mark all these
+# `F821 undefined name` where these variables are used. Hence we mark all those
 # lines with a `# noqa`
 del _rel_import_star, _lazy_module_property, _module, _original_module_attrs

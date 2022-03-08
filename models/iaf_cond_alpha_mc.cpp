@@ -127,11 +127,12 @@ nest::iaf_cond_alpha_mc_dynamics( double, const double y[], double f[], void* pn
     // membrane potential for current compartment and coupling currents
     double V;
     double I_conn;
-    switch ( n ) {
+    switch ( n )
+    {
     case N::SOMA:
     {
       is_refractory = node.S_.r_ > 0;
-      V = is_refractory ? node.P_.V_reset : std::min(  y[ S::idx( n, S::V_M ) ], node.P_.V_th );
+      V = is_refractory ? node.P_.V_reset : std::min( y[ S::idx( n, S::V_M ) ], node.P_.V_th );
       I_conn = node.P_.g_conn[ n ] * ( V - y[ S::idx( n + 1, S::V_M ) ] );
       break;
     }

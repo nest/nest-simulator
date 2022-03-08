@@ -30,7 +30,6 @@ directories. Your ``CMake`` version needs to be up-to-date.
 If you are a Linux user, type:
 
 .. code-block::
-   :name: Linux
 
    sudo apt install doxygen
 

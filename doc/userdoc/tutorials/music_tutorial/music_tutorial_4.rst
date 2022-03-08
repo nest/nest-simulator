@@ -16,7 +16,6 @@ differences to the C++ API. The full example code is in the
 ``pymusic`` directory in the MUSIC repository.
 
 .. code-block:: python
-    :linenos:
 
     #!/usr/bin/env python3
     import music

@@ -117,17 +117,38 @@ nest::iaf_cond_alpha_mc_dynamics( double, const double y[], double f[], void* pn
   assert( pnode );
   const nest::iaf_cond_alpha_mc& node = *( reinterpret_cast< nest::iaf_cond_alpha_mc* >( pnode ) );
 
-  const bool is_refractory = node.S_.r_ > 0;
+  bool is_refractory = false;
 
   // compute dynamics for each compartment
   // computations written quite explicitly for clarity, assume compile
   // will optimized most stuff away ...
   for ( size_t n = 0; n < N::NCOMP; ++n )
   {
-    // membrane potential for current compartment
-    const double V = is_refractory ? node.P_.V_reset : std::min(  y[ S::idx( n, S::V_M ) ], node.P_.V_th );
-    const double V_nm1 = is_refractory ? node.P_.V_reset : std::min( y[ S::idx( n - 1, S::V_M ) ], node.P_.V_th );
-    const double V_np1 = is_refractory ? node.P_.V_reset : std::min( y[ S::idx( n + 1, S::V_M ) ], node.P_.V_th );
+    // membrane potential for current compartment and coupling currents
+    double V;
+    double I_conn;
+    switch ( n ) {
+      case N::SOMA:
+      {
+        is_refractory = node.S_.r_ > 0;
+        V = is_refractory ? node.P_.V_reset : std::min(  y[ S::idx( n, S::V_M ) ], node.P_.V_th );
+        I_conn = node.P_.g_conn[ n ] * ( V - y[ S::idx( n + 1, S::V_M ) ] );
+        break;
+      }
+      case N::PROX:
+      {
+        V = y[ S::idx( n, S::V_M ) ];
+        I_conn = node.P_.g_conn[ n - 1 ] * ( V - y[ S::idx( n - 1, S::V_M ) ] )
+          + node.P_.g_conn[ n ] * ( V - y[ S::idx( n + 1, S::V_M ) ] );
+        break;
+      }
+      case N::DIST:
+      {
+        V = y[ S::idx( n, S::V_M ) ];
+        I_conn = node.P_.g_conn[ n - 1 ] * ( V - y[ S::idx( n - 1, S::V_M ) ] );
+        break;
+      }
+    }
 
     // excitatory synaptic current
     const double I_syn_exc = y[ S::idx( n, S::G_EXC ) ] * ( V - node.P_.E_ex[ n ] );
@@ -137,10 +158,6 @@ nest::iaf_cond_alpha_mc_dynamics( double, const double y[], double f[], void* pn
 
     // leak current
     const double I_L = node.P_.g_L[ n ] * ( V - node.P_.E_L[ n ] );
-
-    // coupling currents
-    const double I_conn = ( n > N::SOMA ? node.P_.g_conn[ n - 1 ] * ( V - V_nm1 ) : 0 )
-      + ( n < N::NCOMP - 1 ? node.P_.g_conn[ n ] * ( V - V_np1 ) : 0 );
 
     // derivatives
     // membrane potential

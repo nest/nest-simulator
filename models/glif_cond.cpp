@@ -117,8 +117,7 @@ nest::glif_cond_dynamics( double, const double y[], double f[], void* pnode )
   for ( size_t i = 0; i < node.P_.n_receptors_(); ++i )
   {
     const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
-    I_syn +=
-      y[ S::G_SYN - S::NUMBER_OF_RECORDABLES_ELEMENTS + j ] * ( V + node.P_.E_L_ - node.P_.E_rev_[ i ] );
+    I_syn += y[ S::G_SYN - S::NUMBER_OF_RECORDABLES_ELEMENTS + j ] * ( V + node.P_.E_L_ - node.P_.E_rev_[ i ] );
   }
 
   const double I_leak = node.P_.G_ * V;

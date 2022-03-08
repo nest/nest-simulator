@@ -957,7 +957,6 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         _draw_extent(ax, xctr, yctr, xext, yext)
 
     elif len(ext) == 3:
-        # 3D layer
         # extract position information, transpose to list of x,y,z pos
         pos = zip(*GetPosition(layer))
 
@@ -1096,7 +1095,6 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
         _draw_extent(ax, xctr, yctr, xext, yext)
 
     else:
-        # 3D layer
         if fig is None:
             fig = plt.figure()
             ax = fig.add_subplot(111, projection='3d')

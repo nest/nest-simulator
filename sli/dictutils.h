@@ -225,6 +225,8 @@ def( DictionaryDatum& d, Name const n, FT const& value )
 
 /** Update a variable from a dictionary entry if it exists, skip call if it
  * doesn't.
+ * @note It is not possible to update integer values. If the dictionary entry
+ * is an integer, use updateValueInt.
  * @ingroup DictUtils
  * @throws see getValue(DictionaryDatum, Name)
  */

@@ -795,9 +795,12 @@ class SynapseCollection:
         if pandas_output and not HAVE_PANDAS:
             raise ImportError('Pandas could not be imported')
 
-        # Return empty tuple if we have no connections or if we have done a nest.ResetKernel()
+        # Return empty dictionary if we have no connections or if we have done a nest.ResetKernel()
         num_conns = GetKernelStatus('num_connections')  # Has to be called first because it involves MPI communication.
-        if self.__len__() == 0 or num_conns == 0:
+        if keys == None and ( self.__len__() == 0 or num_conns == 0 ):
+            return {}
+        elif self.__len__() == 0 or num_conns == 0:
+            # Return empty tuple if get is called with an argument
             return ()
 
         if keys is None:

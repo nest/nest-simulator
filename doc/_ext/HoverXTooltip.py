@@ -143,10 +143,10 @@ def hxt_role_ref(pattern):
         # for rtd builds
         if os.environ.get("READTHEDOCS") == "True":
             branch_name = base_url.split('/doc/')[0].split('/')[-1]
-            refuri = (f'/en/{branch_name}/glossary.html#term-{term}')
+            refuri = (f'/en/{branch_name}/ref_material/glossary.html#term-{term}')
         # for local builds
         else:
-            refuri = base_url.split('doc')[0] + f'html/glossary.html#term-{term}'
+            refuri = base_url.split('doc')[0] + f'doc/html/ref_material/glossary.html#term-{term}'
 
         # the tag in which the term and description is defined.
         ref_tag = "<a class='reference external' " \
@@ -209,12 +209,14 @@ def get_desc_from_glossary(term):
     """
 
     try:
-        with open(str(doc_build_dir) + '/glossary.rst') as f:
+        with open(str(doc_build_dir) + '/ref_material/glossary.rst') as f:
             file_content = f.read()
 
+        print("HERE IS FFFFFF FFFFFF!!!!!!!", f)
         # generate a list of lines from file content.
         raw_file_content = list(filter(None, file_content
                                 .split('Glossary')[1].splitlines(True)))
+
 
         glossary_dict = {}  # dictionary that holds terms and descriptions.
         for idx, line in enumerate(raw_file_content):

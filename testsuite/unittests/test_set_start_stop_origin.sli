@@ -48,8 +48,8 @@ ResetKernel
 
 % build list of all models having at least one of deviceparams
 /devmodels [] def
-modeldict {
-  ; /mod Set
+GetKernelStatus /node_models get {
+  /mod Set
   mod GetDefaults /defs Set
   false deviceparams { defs exch known or } Fold 
   {

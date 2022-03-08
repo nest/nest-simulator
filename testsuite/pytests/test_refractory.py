@@ -87,8 +87,9 @@ ignore_model = [
     "step_rate_generator"        # No regular neuron model
 ]
 
-tested_models = [m for m in nest.Models("nodes") if (nest.GetDefaults(
-                 m, "element_type") == "neuron" and m not in ignore_model)]
+tested_models = [m for m in nest.node_models
+                 if nest.GetDefaults(m, "element_type") == "neuron"
+                 and m not in ignore_model]
 
 # Additional parameters for the connector
 add_connect_param = {

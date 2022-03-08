@@ -248,7 +248,6 @@ DictinfoFunction::execute( SLIInterpreter* i ) const
  Synopsis: dict length_d -> int
 
  Examples: <</a 1 /b 2>> length_d -> 2
-   modeldict length_d --> 34
 
  Author: docu by Sirko Straube
 
@@ -688,9 +687,8 @@ DictconstructFunction::execute( SLIInterpreter* i ) const
              int  /key known -> bool
 
    Examples:
-   modeldict /iaf_psc_alpha known -> true
-   modeldict /parkinson_neuron known -> false
-   /iaf_psc_alpha_ps GetDefaults /Interpol_Order known -> false
+   statusdict /host known -> true
+   statusdict /hostname known -> false
 
    Author: docu edited by Sirko Straube
 

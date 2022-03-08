@@ -124,6 +124,9 @@ def _array_connect(pre, post, conn_spec, syn_spec=None):
     arrays must be of the same length. You may also specify weight, delay, and
     receptor type for each connection as NumPy arrays in the `syn_spec` dictionary.
 
+    Lists of synapse models and connection rules are available as
+    ``nest.synapse_models`` and ``nest.connection_rules``, respectively.
+
     Parameters
     ----------
     pre: list/array/NodeCollection
@@ -221,16 +224,16 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
 
     **syn_spec**
 
-    The synapse model and its properties can be inserted either as a
-    string describing one synapse model (synapse models are listed in the
-    synapsedict) or as a dictionary as described below.
+    The synapse model and its properties can be specified either as a string naming
+    a synapse model (the list of all available synapse models can be gotten via
+    ``nest.synapse_models``) or as a dictionary as described below.
 
     Note that only the synapse type is checked when we disconnect and that if
-    `syn_spec` is given as a non-empty dictionary, the 'synapse_model' parameter must be
-    present.
+    `syn_spec` is given as a non-empty dictionary, the 'synapse_model' parameter must
+    be present.
 
-    If no synapse model is specified the default model :cpp:class:`static_synapse <nest::static_synapse>`
-    will be used.
+    If no synapse model is specified the default model
+    :cpp:class:`static_synapse <nest::static_synapse>` will be used.
 
     Available keys in the synapse dictionary are:
     ::
@@ -249,6 +252,7 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
     Notes
     -----
     `Disconnect` only disconnects explicitly specified nodes.
+
     """
 
     sps(pre)

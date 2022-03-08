@@ -11,7 +11,7 @@
 # parallelisation, GSL-dependent models, NumPy and Pandas-dependent
 # features of PyNEST and examples requiring Matplotlib, and to run
 # the NEST testsuite. It also comprises all tools required to build
-# NEST documentation and to run NEST server. The requirements for the
+# NEST documentation and to run NEST Server. The requirements for the
 # documentation and server are marked in separate sections below so
 # you can remove them if you would like a leaner environment.
 #
@@ -19,15 +19,13 @@
 #       allow just a single PIP section. All dependencies not satisfied by
 #       conda-forge are placed there.
 #
-# NOTE: If you are working on Apple Silicon (M1 CPU), you must comment out the
-#       NEST Server section below because conda-forge does not provide uwsgi
-#       for osx-arm64 yet.
-#
 # NOTE: libneurosim, MUSIC and SIONLib are not included in this environment.
 #
-# The default name of the environment is nest-simulator-dev, since it is mainly
-# aimed at NEST developers. You can specify a different name by passing
-# -n my_name to the conda env create command.
+# To create an environment from this file, run
+#
+#     conda env create --name <my_env_name> --file environment.yml
+#
+# where <my_env_name> is a name of your choice.
 
 channels:
   - conda-forge
@@ -83,8 +81,9 @@ dependencies:
   # Running NEST Server ----
   - flask
   - flask_cors
+  - gunicorn
   - requests
-  - uwsgi
+  - restrictedpython
   - werkzeug
 
   # PIP dependencies -- do not delete

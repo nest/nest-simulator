@@ -22,10 +22,10 @@
 
 #include <algorithm>
 
-#include "projection_collection.h"
-#include "kernel_manager.h"
-#include "spatial.h"
 #include "connection_creator_impl.h"
+#include "kernel_manager.h"
+#include "projection_collection.h"
+#include "spatial.h"
 
 namespace nest
 {
@@ -56,10 +56,7 @@ ProjectionCollection::ProjectionCollection( const ArrayDatum& projections )
         syn_spec.end(),
         synapse_params.begin(),
         // Lambda expression that handles the conversion of each element.
-        []( Token& token ) -> DictionaryDatum
-        {
-          return getValue< DictionaryDatum >( token );
-        } );
+        []( Token& token ) -> DictionaryDatum { return getValue< DictionaryDatum >( token ); } );
 
       // Need to do the same checks of arguments as in ConnectionManager::connect().
       pre_connector_creation_checks( sources, targets, conn_spec, synapse_params );
@@ -136,7 +133,7 @@ ProjectionCollection::pre_connector_creation_checks( NodeCollectionPTR& sources,
   }
   const Name rule_name = static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
 
-  if ( not kernel().connection_manager.get_connruledict()->known( rule_name ) )
+  if ( not kernel().connection_manager.valid_connection_rule( rule_name.toString() ) )
   {
     throw BadProperty( String::compose( "Unknown connectivity rule: %1", rule_name ) );
   }

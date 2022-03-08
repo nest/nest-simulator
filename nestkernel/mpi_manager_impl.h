@@ -25,9 +25,6 @@
 
 #include "config.h"
 
-/* To avoid problems on BlueGene/L, mpi.h MUST be the
- first included file after config.h.
- */
 #ifdef HAVE_MPI
 // C includes:
 #include <mpi.h>
@@ -57,9 +54,8 @@ extern MPI_Comm comm;
 /* ------------------------------------------------------
    The following datatypes are defined here in communicator_impl.h
    file instead of as static class members, to avoid inclusion
-   of mpi.h in the .h file. This is necessary, because on
-   BlueGene/L mpi.h MUST be included FIRST. Having mpi.h in
-   the .h file would lead to requirements on include-order
+   of mpi.h in the .h file, which caused problems on BlueGene systems.
+   Having mpi.h in the .h file would lead to requirements on include-order
    throughout the NEST code base and is not acceptable.
    Reported by Mikael Djurfeldt.
    Hans Ekkehard Plesser, 2010-01-28

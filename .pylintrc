@@ -1,0 +1,10 @@
+[pylint]
+options = unneeded-not, line-too-long, unnecessary-semicolon, trailing-whitespace, missing-final-newline, bad-indentation, multiple-statements, bare-except
+ignore = CVS .git conda env __pycache__ .pytest_cache .mypy_cache
+
+disable = no-member
+
+const-naming-style = snake_case
+method-naming-style = PascalCase
+
+max-line-length = 120

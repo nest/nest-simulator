@@ -117,17 +117,23 @@ as follows:
 1. Create the virtual environment if it does not exist yet (replace ``nest_env`` by a name of your choice)
 
    .. code-block:: bash
+
       python -m venv nest_env
+
 #. Activate the environment
 
    .. code-block:: bash
+
       source nest_env/bin/activate
+
 #. Navigate to your NEST build directory
 
 #. Configure NEST by running
 
    .. code-block:: sh
+
       CMAKE_PREFIX_PATH=<conda_env_dir> cmake <nest_source_dir>
+
 #. Build and install NEST as described above
 
 If you follow this approach, you do not need to source ``nest_vars.sh``, as the Python package

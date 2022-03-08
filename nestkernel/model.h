@@ -83,13 +83,11 @@ public:
 
   /**
    * Allocate new Node and return its pointer.
-   * allocate() is not const, because it
+   * create() is not const, because it
    * is allowed to modify the Model object for
    * 'administrative' purposes.
    */
-  Node* allocate( thread t );
-
-  void free( thread t, Node* );
+  Node* create( thread t );
 
   /**
    * Deletes all nodes which belong to this model.
@@ -98,13 +96,7 @@ public:
   void clear();
 
   /**
-   * Reserve memory for at least n additional Nodes.
-   * A number of memory managers work more efficiently if they have
-   * an idea about the number of Nodes to be allocated.
-   * This function prepares the memory manager for the subsequent
-   * allocation of n additional Nodes.
-   * @param t Thread for which the Nodes are reserved.
-   * @param n Number of Nodes to be allocated.
+   * Reserve space for n additional Nodes.
    */
   void reserve_additional( thread t, size_t n );
 
@@ -223,14 +215,9 @@ private:
   void set_threads_( thread t );
 
   /**
-   * Initialize the pool allocator with the Node specific values.
+   * Create a new object.
    */
-  virtual void init_memory_( sli::pool& ) = 0;
-
-  /**
-   * Allocate a new object at the specified memory position.
-   */
-  virtual Node* allocate_( void* ) = 0;
+  virtual Node* create_() = 0;
 
   /**
    * Name of the Model.
@@ -250,22 +237,17 @@ private:
   /**
    * Memory for all nodes sorted by threads.
    */
-  std::vector< sli::pool > memory_;
+  std::vector< std::vector< Node* > > memory_;
 };
 
 
 inline Node*
-Model::allocate( thread t )
+Model::create( thread t )
 {
   assert( ( size_t ) t < memory_.size() );
-  return allocate_( memory_[ t ].alloc() );
-}
-
-inline void
-Model::free( thread t, Node* n )
-{
-  assert( ( size_t ) t < memory_.size() );
-  memory_[ t ].free( n );
+  Node* n = create_();
+  memory_[ t ].push_back( n );
+  return n;
 }
 
 inline std::string

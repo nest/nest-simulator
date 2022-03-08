@@ -186,9 +186,9 @@ NodeManager::add_node( index model_id, long n )
 void
 NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr )
 {
-  // upper limit for number of neurons per thread; in practice, either
-  // max_new_per_thread-1 or max_new_per_thread nodes will be created
   const size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
+  // Upper limit for number of neurons per thread; in practice, either
+  // max_new_per_thread-1 or max_new_per_thread nodes will be created.
   const size_t max_new_per_thread =
     static_cast< size_t >( std::ceil( static_cast< double >( max_node_id - min_node_id + 1 ) / num_vps ) );
 
@@ -199,7 +199,6 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
     try
     {
       model.reserve_additional( t, max_new_per_thread );
-
       // Need to find smallest node ID with:
       //   - node ID local to this vp
       //   - node_id >= min_node_id
@@ -210,7 +209,7 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
 
       while ( node_id <= max_node_id )
       {
-        Node* node = model.allocate( t );
+        Node* node = model.create( t );
         node->set_node_id_( node_id );
         node->set_nc_( nc_ptr );
         node->set_model_id( model.get_model_id() );
@@ -249,7 +248,7 @@ NodeManager::add_devices_( Model& model, index min_node_id, index max_node_id, N
         // keep track of number of thread local devices
         ++num_thread_local_devices_[ t ];
 
-        Node* node = model.allocate( t );
+        Node* node = model.create( t );
         node->set_node_id_( node_id );
         node->set_nc_( nc_ptr );
         node->set_model_id( model.get_model_id() );
@@ -286,7 +285,7 @@ NodeManager::add_music_nodes_( Model& model, index min_node_id, index max_node_i
           // keep track of number of thread local devices
           ++num_thread_local_devices_[ t ];
 
-          Node* node = model.allocate( 0 );
+          Node* node = model.create( 0 );
           node->set_node_id_( node_id );
           node->set_nc_( nc_ptr );
           node->set_model_id( model.get_model_id() );

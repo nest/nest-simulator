@@ -64,14 +64,16 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, use_connect_ar
         # for use_connect_arrays, return "static_synapse" by default
         if use_connect_arrays:
             return {"synapse_model": "static_synapse"}
-
         return syn_spec
 
-    rule = conn_spec['rule']
+    if isinstance(syn_spec, CollocatedSynapses):
+        return syn_spec
 
     if isinstance(syn_spec, str):
         return {"synapse_model": syn_spec}
-    elif isinstance(syn_spec, dict):
+
+    rule = conn_spec['rule']
+    if isinstance(syn_spec, dict):
         if "synapse_model" in syn_spec and not isinstance(syn_spec["synapse_model"], str):
             raise kernel.NESTError("'synapse_model' must be a string")
         for key, value in syn_spec.items():
@@ -140,9 +142,8 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, use_connect_ar
             syn_spec["synapse_model"] = "static_synapse"
 
         return syn_spec
-    elif isinstance(syn_spec, CollocatedSynapses):
-        return syn_spec
 
+    # If we get here, syn_spec is of illegal type.
     raise TypeError("syn_spec must be a string, dict or CollocatedSynapses object")
 
 

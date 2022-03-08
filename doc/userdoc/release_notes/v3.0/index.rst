@@ -34,7 +34,7 @@ for more information on the dependencies.
 
 To explore what NEST 3.0 has to offer in more detail, check out the links below!
 
-----
+---
 
 .. toctree::
    :maxdepth: 1

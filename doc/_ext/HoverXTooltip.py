@@ -212,7 +212,6 @@ def get_desc_from_glossary(term):
         with open(str(doc_build_dir) + '/ref_material/glossary.rst') as f:
             file_content = f.read()
 
-        print("HERE IS FFFFFF FFFFFF!!!!!!!", f)
         # generate a list of lines from file content.
         raw_file_content = list(filter(None, file_content
                                 .split('Glossary')[1].splitlines(True)))

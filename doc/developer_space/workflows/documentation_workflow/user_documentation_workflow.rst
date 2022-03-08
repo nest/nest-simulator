@@ -14,7 +14,7 @@ reference
 <https://thomas-cokelaer.info/tutorials/sphinx/rest_syntax.html>`_.
 
 The NEST simulator documentation lives alongside its code. It is
-contained in the ``doc/userdoc`` directory within the `NEST source
+contained in the ``doc/`` directory within the `NEST source
 code repository <https://github.com/nest/nest-simulator>`_ on GitHub.
 
 We work with `GitHub <https://www.github.com>`_ as a web-based hosting
@@ -97,11 +97,11 @@ directory where you ran ``cmake``)
 
    make html
 
-3. Preview files. They are located in ``doc/userdoc/html``
+3. Preview files. They are located in ``doc/html``
 
 .. code-block:: bash
 
-   browser doc/userdoc/html/index.html
+   browser doc/html/index.html
 
 To install the documentation under ``<nest_install_dir>`` along with
 the rest of NEST, the ``make html`` command can be followed by
@@ -122,10 +122,10 @@ Editing and creating pages
 To edit existing `reStructuredText <https://thomas-cokelaer.info/tutorials/
 sphinx/rest_syntax.html>`_ files or to create new ones, follow the steps below:
 
-1. You can edit and/or add ``.rst`` files in the ``doc/userdoc`` directory using your
+1. You can edit and/or add ``.rst`` files in the ``doc`` directory using your
    editor of choice.
 
-2. If you create a new page, open ``contents.rst`` in the ``doc/userdoc`` directory
+2. If you create a new page, open ``contents.rst`` in the ``doc`` directory
    and add the file name under ``.. toctree::``. This will ensure it appears on
    the NEST simulator documentation's table of contents.
 

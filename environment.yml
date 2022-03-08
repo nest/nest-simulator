@@ -60,6 +60,7 @@ dependencies:
   - pydocstyle
   - rstcheck
   - mypy[version='>=0.8']
+  - cppcheck
 
   # Working with NEST ------
   - ipython

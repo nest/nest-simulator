@@ -27,7 +27,7 @@ unusedStructMember:./
 unpreciseMathCall:./
 operatorEqVarError:./
 duplicateExpression:./
-integerOverflow:./
+// integerOverflow:./
 ignoredReturnValue:./
 unusedFunction:./
 duplicateCondition:./

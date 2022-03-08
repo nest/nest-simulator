@@ -54,7 +54,6 @@ current simulation time, and repeatedly send new sets of events as long
 as the current time is smaller than the simulation time.
 
 .. code-block:: python
-    :linenos:
 
     import Queue
 

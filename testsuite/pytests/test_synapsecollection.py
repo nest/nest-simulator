@@ -364,6 +364,7 @@ class TestSynapseCollection(unittest.TestCase):
         conns = nest.GetConnections()
         self.assertEqual(len(conns), 0)
         self.assertEqual(conns.get(), {})
+        self.assertEqual(conns.get('weight'), ())
 
         nrns = nest.Create('iaf_psc_alpha', 2)
         nest.Connect(nrns, nrns, 'one_to_one')

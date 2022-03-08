@@ -103,12 +103,7 @@ private:
   /**
    * Call placement new on the supplied memory position.
    */
-  Node* allocate_( void* );
-
-  /**
-   * Initialize the pool allocator with the node specific properties.
-   */
-  void init_memory_( sli::pool& );
+  Node* create_();
 
   /**
    * Prototype node from which all instances are constructed.
@@ -156,17 +151,10 @@ GenericModel< ElementT >::clone( const std::string& newname ) const
 
 template < typename ElementT >
 Node*
-GenericModel< ElementT >::allocate_( void* adr )
+GenericModel< ElementT >::create_()
 {
-  Node* n = new ( adr ) ElementT( proto_ );
+  Node* n = new ElementT( proto_ );
   return n;
-}
-
-template < typename ElementT >
-void
-GenericModel< ElementT >::init_memory_( sli::pool& mem )
-{
-  mem.init( sizeof( ElementT ), 1000, 1 );
 }
 
 template < typename ElementT >

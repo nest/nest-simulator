@@ -73,17 +73,12 @@ option( static-libraries "Build static executable and libraries [default=OFF]" O
 set( with-optimize ON CACHE STRING "Enable user defined optimizations [default=OFF (uses '-O2')]. When ON, '-O3' is used. Separate multiple flags by ';'." )
 set( with-warning ON CACHE STRING "Enable user defined warnings [default=ON (uses '-Wall')]. Separate  multiple flags by ';'." )
 set( with-debug OFF CACHE STRING "Enable user defined debug flags [default=OFF]. When ON, '-g' is used. Separate  multiple flags by ';'." )
+set( with-cpp-std "c++11" CACHE STRING "C++ standard to use for compilation [default='c++11']." )
 set( with-intel-compiler-flags OFF CACHE STRING "User defined flags for the Intel compiler [default='-fp-model strict']. Separate multiple flags by ';'." )
 set( with-libraries OFF CACHE STRING "Link additional libraries [default=OFF]. Give full path. Separate multiple libraries by ';'." )
 set( with-includes OFF CACHE STRING "Add additional include paths [default=OFF]. Give full path without '-I'. Separate multiple include paths by ';'." )
 set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1' [default=OFF]. Separate multiple defines by ';'." )
 set( with-version-suffix "" CACHE STRING "Set a user defined version suffix [default='']." )
-
-# cross-compiling
-# should be set via toolchain files
-set( enable-bluegene OFF CACHE STRING "Configure for BlueGene." )
-option( k-computer "Enable K computer." OFF )
-
 
 ################################################################################
 ##################      Project Directory variables           ##################
@@ -121,14 +116,10 @@ include( WriteStaticModules_h )
 include( CheckExtraCompilerFeatures )
 include( ConfigureSummary )
 include( GetTriple )
-include( DefaultCompilerFlags )
 
 # get triples arch-vendor-os
 get_host_triple( NEST_HOST_TRIPLE NEST_HOST_ARCH NEST_HOST_VENDOR NEST_HOST_OS )
 get_target_triple( NEST_TARGET_TRIPLE NEST_TARGET_ARCH NEST_TARGET_VENDOR NEST_TARGET_OS )
-
-# set default compiler flags
-nest_set_default_compiler_flags()
 
 # Process the command line arguments
 # IMPORTANT: Do not change the order of nest_process_with_python() and include( GNUInstallDirs )!
@@ -140,13 +131,12 @@ include( GNUInstallDirs )
 nest_post_process_with_python()
 nest_process_with_optimize()
 nest_process_with_debug()
+nest_process_with_std()
 nest_process_with_intel_compiler_flags()
 nest_process_with_warning()
 nest_process_with_libraries()
 nest_process_with_includes()
 nest_process_with_defines()
-nest_process_k_computer()
-nest_process_enable_bluegene()
 nest_process_static_libraries()
 nest_process_external_modules()
 nest_process_tics_per_ms()

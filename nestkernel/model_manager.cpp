@@ -601,7 +601,7 @@ ModelManager::register_connection_model_( ConnectorModel* cf )
 Node*
 ModelManager::create_proxynode_( thread t, int model_id )
 {
-  Node* proxy = proxynode_model_->allocate( t );
+  Node* proxy = proxynode_model_->create( t );
   proxy->set_model_id( model_id );
   return proxy;
 }

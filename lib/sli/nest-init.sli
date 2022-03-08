@@ -1419,12 +1419,6 @@ def
 [/integertype /integertype] /TimeCommunicationAlltoallv_i_i load addtotrie
 def
 
-% can only be defined here because on bg processes.sli is not included
-statusdict /platform get dup (bg/p) eq exch (bg/q) eq or
-{
- /memory_thisjob { :memory_thisjob_bg } def
-} if
-
 /cva [/connectiontype] /cva_C load def
 
 /abort

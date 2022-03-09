@@ -74,6 +74,20 @@ SonataConnector::connect()
     auto edge_dict = getValue< DictionaryDatum >( edge_dictionary_datum );
     auto edge_file = getValue< std::string >( edge_dict->lookup( "edges_file" ) );
 
+    /*
+     * Structure of SONATA files:
+     * edge_file.h5          (name changes)
+     *   edges               (name fixed)
+     *     group_name        (name changes, usually only one, can be more groups)
+     *       0               (name fixed, usually only one)
+     *         syn_weights   (name fixed)
+     *         delays        (name fixed)
+     *       edge_group_id   (name fixed)
+     *       edge_type_id    (name fixed)
+     *       source_node_id  (name fixed)
+     *       target_node_id  (name fixed)
+     */
+
     // Open the specified file and the specified group in the file.
     H5::H5File file( edge_file, H5F_ACC_RDONLY );
     H5::Group edges_group( file.openGroup( "edges" ) );
@@ -83,10 +97,12 @@ SonataConnector::connect()
     // https://support.hdfgroup.org/HDF5/doc/RM/RM_H5L.html#Link-Iterate
     H5Literate( edges_group.getId(), H5_INDEX_NAME, H5_ITER_INC, NULL, get_group_names, &edge_group_names );
 
+    // Iterates the groups of "edges"
     for ( auto&& group_name : edge_group_names )
     {
       H5::Group edges_subgroup( edges_group.openGroup( group_name ) );
 
+      // Open edge_group_id dataset and check if we have more than one group id. Currently only one is allowed
       auto edge_group_id = edges_subgroup.openDataSet( "edge_group_id" );
       auto num_edge_group_id = get_num_elements_( edge_group_id );
       auto edge_group_id_data = read_data_( edge_group_id, num_edge_group_id );
@@ -96,6 +112,7 @@ SonataConnector::connect()
       {
         auto edge_parameters = edges_subgroup.openGroup( std::to_string( *min ) );
 
+        // Read source and target dataset
         auto source_node_id = edges_subgroup.openDataSet( "source_node_id" );
         auto num_source_node_id = get_num_elements_( source_node_id );
         auto source_node_id_data = read_data_( source_node_id, num_source_node_id );
@@ -104,7 +121,7 @@ SonataConnector::connect()
         auto num_target_node_id = get_num_elements_( target_node_id );
         auto target_node_id_data = read_data_( target_node_id, num_target_node_id );
 
-        // Check if weight and delay are given as h5 files
+        // Check if weight and delay are given as h5 files, if so, read the datasets
         weight_and_delay_from_dataset_( edge_parameters );
         if ( weight_dataset_ )
         {
@@ -119,7 +136,8 @@ SonataConnector::connect()
           delay_dataset.read( delay_data_, delay_dataset.getDataType() );
         }
 
-        auto edge_type_id_data = get_data_( edges_subgroup, "edge_type_id" ); //synapses
+        // Get edge_type_id, these are later mapped to the different synapse parameters
+        auto edge_type_id_data = get_data_( edges_subgroup, "edge_type_id" );
 
         // Retrieve source and target attributes to find which node population to map to
         std::string source_attribute_value;
@@ -141,16 +159,16 @@ SonataConnector::connect()
 
           try
           {
-            // Retrieve parameters
+            // Retrieve the correct NodeCollection's
             auto nest_nodes = getValue< DictionaryDatum >( sonata_dynamics_->lookup( "nodes" ) );
             auto current_source_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( source_attribute_value ) );
             auto current_target_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( target_attribute_value ) );
 
-            // Connect
             auto snode_it = current_source_nc->begin();
             auto tnode_it = current_target_nc->begin();
 
-            for ( hsize_t i = 0; i < num_source_node_id; ++i )  // iterate sonata files
+            // Iterate the datasaets and create the connections
+            for ( hsize_t i = 0; i < num_source_node_id; ++i )
             {
               const auto sonata_source_id = source_node_id_data[ i ];
               const index snode_id = ( *( snode_it + sonata_source_id ) ).node_id;
@@ -208,7 +226,7 @@ SonataConnector::connect()
             exceptions_raised_.at( tid ) =
               std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
           }
-        }// omp parallel
+        } // omp parallel
         // check if any exceptions have been raised
         for ( thread thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
         {
@@ -218,6 +236,7 @@ SonataConnector::connect()
           }
         }
 
+        // Delete the datasets and reset all parameters
         delete source_node_id_data;
         delete target_node_id_data;
         delete edge_type_id_data;
@@ -227,9 +246,8 @@ SonataConnector::connect()
       {
         throw NotImplemented( "Connecting with Sonata files with more than one edgegroup is currently not implemented" );
       }
-      // Close the dataset.
       delete edge_group_id_data;
-    }
+    } // groups of "edges"
 
     edges_group.close();
     file.close();

@@ -58,7 +58,7 @@ We review each pull request according to our [code review guidelines](https://ne
 
 ## Submitting Changes
 
-* Sign the [Contributor License Agreement](https://raw.githubusercontent.com/nest/nest-simulator/master/doc/userdoc/contribute/NEST_Contributor_Agreement.pdf).
+* Sign the [Contributor License Agreement](https://raw.githubusercontent.com/nest/nest-simulator/master/doc/htmldoc/contribute/NEST_Contributor_Agreement.pdf).
 * Push your changes to a topic branch in your fork of the repository.
 * Submit a pull request to the [NEST repository](https://github.com/nest/nest-simulator).
 * If your pull request affects documented issues, [mention](https://github.com/blog/957-introducing-issue-mentions) them in the description. If it is solving an issue, you can [state this explicitly](https://help.github.com/articles/closing-issues-via-commit-messages/).

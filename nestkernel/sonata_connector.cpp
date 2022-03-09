@@ -1,5 +1,5 @@
 /*
- *  conn_builder_sonata.cpp
+ *  sonata_connector.cpp
  *
  *  This file is part of NEST.
  *
@@ -30,8 +30,8 @@
 // Includes from sli:
 #include "dictutils.h"
 
-#include <iostream>
-#include <fstream>
+#include <iostream> // for debugging
+#include <fstream>  // for debugging
 
 #include "H5Cpp.h"  // TODO: need an if/else
 

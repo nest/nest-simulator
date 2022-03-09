@@ -239,8 +239,7 @@ def SetKernelStatus(params):
                 warnings.warn(msg + f' \n`{key}` has been ignored')
                 del params[key]
 
-    sps(params)
-    sr('SetKernelStatus')
+    kernel.llapi_set_kernel_status(params)
 
 
 @check_stack

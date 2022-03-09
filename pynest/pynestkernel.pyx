@@ -727,6 +727,14 @@ def llapi_get_kernel_status():
     cdef dictionary cdict = get_kernel_status()
     return dictionary_to_pydict(cdict)
 
+def llapi_set_kernel_status(object params):
+    cdef dictionary params_dict = pydict_to_dictionary(params)
+    try:
+        set_kernel_status(params_dict)
+    except RuntimeError as e:
+        exceptionCls = getattr(NESTErrors, str(e))
+        raise exceptionCls('llapi_set_kernel_status', '') from None
+
 def llapi_simulate(float t):
     simulate(t)
 

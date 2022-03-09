@@ -201,6 +201,7 @@ cdef extern from "nest.h" namespace "nest":
     string pprint_to_string( NodeCollectionPTR nc )
     size_t nc_size( NodeCollectionPTR nc )
     dictionary get_kernel_status()
+    void set_kernel_status( const dictionary& ) except +
     dictionary get_nc_status( NodeCollectionPTR nc )
     void set_nc_status( NodeCollectionPTR nc, dictionary& params ) except +
     void simulate( const double& t )

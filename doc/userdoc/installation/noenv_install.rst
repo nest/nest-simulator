@@ -69,7 +69,7 @@ We will refer to the full path of this directory by <nest_install_dir>.
 
 .. code-block:: sh
 
-   cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir>  </path/to/src/nest-simulator/>
+   cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir>  </path/to/NEST/src/>
 
 .. note::
 

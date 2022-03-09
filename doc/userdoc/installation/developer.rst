@@ -22,7 +22,7 @@ Install NEST from source
 
 .. code-block:: sh
 
-    tar -xzvf nest-simulator-x.y.z.tar.gz
+    tar -xzvf nest-simulator-x.y.tar.gz
 
 
 
@@ -43,7 +43,7 @@ By default, everything will be installed to the subdirectories ``<nest_install_d
 - Executables ``<nest_install_dir>/bin``
 - Dynamic libraries ``<nest_install_dir>/lib/``
 - SLI libraries ``<nest_install_dir>/share/nest/sli``
-- Documentation ``<nest_install_dir>/share/doc/nest``
+- SLI documentation ``<nest_install_dir>/share/doc/nest``
 - Examples ``<nest_install_dir>/share/doc/nest/examples``
 - PyNEST ``<nest_install_dir>/lib/pythonX.Y/site-packages/nest``
 - PyNEST examples ``<nest_install_dir>/share/doc/nest/examples/pynest``

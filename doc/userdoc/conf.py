@@ -44,9 +44,9 @@ else:
 
 
 if os.environ.get("READTHEDOCS") == "True":
-    doc_build_dir = source_dir / "doc"
+    doc_build_dir = source_dir / "doc/userdoc"
 else:
-    doc_build_dir = Path(os.environ["OLDPWD"]) / "doc"
+    doc_build_dir = Path(os.environ["OLDPWD"]) / "doc/userdoc"
 
 sys.path.append(os.path.abspath("./_ext"))
 

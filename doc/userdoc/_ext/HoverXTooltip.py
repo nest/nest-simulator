@@ -146,7 +146,7 @@ def hxt_role_ref(pattern):
             refuri = (f'/en/{branch_name}/ref_material/glossary.html#term-{term}')
         # for local builds
         else:
-            refuri = base_url.split('doc')[0] + f'doc/html/ref_material/glossary.html#term-{term}'
+            refuri = base_url.split('userdoc')[0] + f'userdoc/html/glossary.html#term-{term}'
 
         # the tag in which the term and description is defined.
         ref_tag = "<a class='reference external' " \

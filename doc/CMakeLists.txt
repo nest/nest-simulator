@@ -89,8 +89,9 @@ if ( "${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}" )
 else ()
   set( OUT_OF_TREE_BUILD "True" )
 endif ()
-set( DOC_BUILD_DIR "${PROJECT_BINARY_DIR}/doc" )
-set( DOC_SOURCE_DIR "${PROJECT_SOURCE_DIR}/doc" )
+
+set( DOC_BUILD_DIR "${PROJECT_BINARY_DIR}/doc/userdoc" )
+set( DOC_SOURCE_DIR "${PROJECT_SOURCE_DIR}/doc/userdoc" )
 
 add_custom_target( html
   COMMAND [ "${OUT_OF_TREE_BUILD}" = "True" ] && rm -rf "${DOC_BUILD_DIR}/html" || true

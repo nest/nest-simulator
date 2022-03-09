@@ -36,26 +36,8 @@ You can use the docker images directly out of docker-registry.ebrains.eu like th
 ``TAG`` can be a version of NEST ``2.20.2`` or later. Alternatively, you can use ``dev`` for the
 development branch (master).
 
-
-To run NEST 2.20.2
+NEST 3.2 and later
 ^^^^^^^^^^^^^^^^^^
-
-Jupyter notebook with NEST 2.20.2:
-
-.. code-block:: bash
-
-    docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -e NEST_CONTAINER_MODE=notebook /
-               -p 8080:8080 docker-registry.ebrains.eu/nest/nest-simulator:2.20.2
-
-Jupyter lab with NEST 2.20.2
-
-.. code-block:: bash
-
-    docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -e NEST_CONTAINER_MODE=jupyterlab /
-               -p 8080:8080 docker-registry.ebrains.eu/nest/nest-simulator:2.20.2
-
-NEST 3.2
-^^^^^^^^
 
 As of NEST 3.2, you can use the docker-compose feature.
 
@@ -79,7 +61,7 @@ or
 .. code-block:: bash
 
       docker run -it --rm -e NEST_CONTAINER_MODE=nest-server -p 5000:5000 /
-           docker-registry.ebrains.eu/nest/nest-simulator:3.2
+           docker-registry.ebrains.eu/nest/nest-simulator:<version>
 
 Starts the NEST API server container and opens the corresponding port 5000. Test it with `curl localhost:5000/api`.
 See the :ref:`nest_server` documentation for more details.
@@ -95,9 +77,9 @@ or
 .. code-block:: bash
 
       docker run -it --rm -e NEST_CONTAINER_MODE=nest-server -p 5000:5000 /
-          docker-registry.ebrains.eu/nest/nest-simulator:3.2
+          docker-registry.ebrains.eu/nest/nest-simulator:<version>
       docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -p 8000:8000  /
-          -e NEST_CONTAINER_MODE=nest-desktop docker-registry.ebrains.eu/nest/nest-simulator:3.2
+          -e NEST_CONTAINER_MODE=nest-desktop docker-registry.ebrains.eu/nest/nest-simulator:<version>
 
 Starts the NEST server and the NEST desktop web interface. Port 8000 is also made available.
 Open NEST Desktop in the web browser using the following http link: `http://localhost:8000`
@@ -115,9 +97,9 @@ or
 .. code-block:: bash
 
       docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -e NEST_CONTAINER_MODE=notebook /
-          -p 8080:8080 docker-registry.ebrains.eu/nest/nest-simulator:3.2
+          -p 8080:8080 docker-registry.ebrains.eu/nest/nest-simulator:<version>
 
-Starts a notebook server with pre-installed NEST 3.2. The corresponding URL is displayed in the console. You can copy an
+Starts a notebook server with pre-installed NEST. The corresponding URL is displayed in the console. You can copy an
 d paste into your browser.
 
 
@@ -132,14 +114,32 @@ or
 .. code-block:: bash
 
       docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -e NEST_CONTAINER_MODE=jupyterlab /
-          -p 8080:8080 docker-registry.ebrains.eu/nest/nest-simulator:3.2)
+          -p 8080:8080 docker-registry.ebrains.eu/nest/nest-simulator:<version>)
 
-Starts a Jupyter lab server with pre-installed NEST 3.2. The corresponding URL is displayed in the console.
+Starts a Jupyter lab server with pre-installed NEST. The corresponding URL is displayed in the console.
 Copy and paste the URL into your browser.
 
 
 
 To stop and delete running containers use `docker-compose down`.
+
+
+To run NEST 2.20.2
+^^^^^^^^^^^^^^^^^^
+
+Jupyter notebook with NEST 2.20.2:
+
+.. code-block:: bash
+
+    docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -e NEST_CONTAINER_MODE=notebook /
+               -p 8080:8080 docker-registry.ebrains.eu/nest/nest-simulator:2.20.2
+
+Jupyter lab with NEST 2.20.2
+
+.. code-block:: bash
+
+    docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -e NEST_CONTAINER_MODE=jupyterlab /
+               -p 8080:8080 docker-registry.ebrains.eu/nest/nest-simulator:2.20.2
 
 NEST dev
 ^^^^^^^^
@@ -154,8 +154,10 @@ If you want to use the compose configuration for the ``dev`` NEST version, you c
 On Windows
 ^^^^^^^^^^
 
-The following commands should work on Windows. Please note that NEST does not officially
-support Windows!
+.. note::
+
+    The following commands should work on Windows. Please note that NEST does not officially
+    support Windows!
 
 .. code-block:: bash
 

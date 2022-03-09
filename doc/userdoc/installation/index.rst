@@ -4,6 +4,7 @@ Install NEST
 ============
 
 
+
 Who are you?
 ~~~~~~~~~~~~
 
@@ -13,7 +14,6 @@ Who are you?
 
       .. image:: ../static/img/020-user_black.png
          :target: user.html
-
 
    .. container:: rightside
 

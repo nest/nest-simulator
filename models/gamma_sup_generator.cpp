@@ -205,9 +205,9 @@ nest::gamma_sup_generator::init_buffers_()
 }
 
 void
-nest::gamma_sup_generator::calibrate()
+nest::gamma_sup_generator::pre_run_hook()
 {
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
 
   double h = Time::get_resolution().get_ms();
 

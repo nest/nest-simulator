@@ -271,9 +271,9 @@ nest::correlomatrix_detector::init_buffers_()
 }
 
 void
-nest::correlomatrix_detector::calibrate()
+nest::correlomatrix_detector::pre_run_hook()
 {
-  device_.calibrate();
+  device_.pre_run_hook();
 }
 
 

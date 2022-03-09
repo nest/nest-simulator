@@ -115,7 +115,7 @@ public:
 
 private:
   void init_buffers_();
-  void calibrate();
+  void pre_run_hook();
 
   // gain function functor
   // must have an double operator(double) defined
@@ -433,7 +433,7 @@ binary_neuron< TGainfunction >::init_buffers_()
 
 template < class TGainfunction >
 void
-binary_neuron< TGainfunction >::calibrate()
+binary_neuron< TGainfunction >::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();

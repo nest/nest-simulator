@@ -705,7 +705,7 @@ nest::ht_neuron::get_synapse_constant( double tau_1, double tau_2, double g_peak
 }
 
 void
-nest::ht_neuron::calibrate()
+nest::ht_neuron::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();

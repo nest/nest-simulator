@@ -71,7 +71,7 @@ class ConnectorModel;
 class ConnTestDummyNodeBase : public Node
 {
   void
-  calibrate()
+  pre_run_hook()
   {
   }
   void

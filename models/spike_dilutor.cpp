@@ -99,9 +99,9 @@ nest::spike_dilutor::init_buffers_()
 }
 
 void
-nest::spike_dilutor::calibrate()
+nest::spike_dilutor::pre_run_hook()
 {
-  device_.calibrate();
+  device_.pre_run_hook();
 }
 
 /* ----------------------------------------------------------------

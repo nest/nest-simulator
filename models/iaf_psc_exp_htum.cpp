@@ -230,7 +230,7 @@ nest::iaf_psc_exp_htum::init_buffers_()
 }
 
 void
-nest::iaf_psc_exp_htum::calibrate()
+nest::iaf_psc_exp_htum::pre_run_hook()
 {
   B_.logger_.init();
 

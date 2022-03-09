@@ -227,7 +227,7 @@ private:
   };
 
   void init_buffers_();
-  void calibrate();
+  void pre_run_hook();
 
   void update( Time const&, const long, const long );
 

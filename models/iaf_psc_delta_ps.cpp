@@ -238,7 +238,7 @@ nest::iaf_psc_delta_ps::init_buffers_()
 }
 
 void
-iaf_psc_delta_ps::calibrate()
+iaf_psc_delta_ps::pre_run_hook()
 {
   B_.logger_.init();
 

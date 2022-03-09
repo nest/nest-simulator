@@ -30,6 +30,7 @@ We have provided an `environment.yml <https://github.com/nest/nest-simulator/blo
 file that contains all possible packages needed for NEST development.
 See our instructions for installing NEST from source in a :ref:`conda environment <condaenv>`
 
+OR
 
 If you want to install NEST without any environment, see the :ref:`instructions here <noenv>`.
 
@@ -49,6 +50,5 @@ By default, everything will be installed to the subdirectories ``<nest_install_d
 
 If you want to run the ``nest`` executable or use the ``nest`` Python module without providing explicit paths, you
 have to add the installation directory to your search paths.
-Please refer to the :ref:`next section <environment_variables>` section for this.
 
 

@@ -4,8 +4,8 @@ Install from source in a conda environment
 ==========================================
 
 * Create a conda environment from the `environment.yml <https://github.com/nest/nest-simulator/blob/master/environment.yml>`_ file.
-  We recommend specifying a dedicated location ``-p <path/to/conda/env>`` for your environment.
-  See the `conda documentation <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#specifying-a-location-for-an-environment>`_.
+  We recommend specifying a dedicated location (``-p <path/to/conda/env>``) for your environment.
+  See the `conda documentation <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#specifying-a-location-for-an-environment>`_
   on using a custom location rather than the default envs folder.
 
 .. code-block:: sh

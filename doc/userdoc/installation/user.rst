@@ -128,14 +128,14 @@ Ubuntu version number may be different.
 
 
 .. |linux| image:: ../static/img/linux.png
-   :scale: 15%
+   :scale: 11%
 
 .. |macos| image:: ../static/img/macos.png
-   :scale: 15%
+   :scale: 11%
 
 
 .. |windows| image:: ../static/img/windows.png
-   :scale: 15%
+   :scale: 11%
 
 
 

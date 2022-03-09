@@ -4,83 +4,32 @@ Install NEST
 ============
 
 
+Install pre-built NEST package
+------------------------------
 
-Who are you?
-~~~~~~~~~~~~
-
-.. container:: twocol
-
-   .. container:: leftside
-
-      .. image:: ../static/img/020-user_black.png
-         :target: user.html
-
-   .. container:: rightside
-
-      **User**
-
-      I'm a student or researcher who wants to run neural network simulation scripts
-
-      * :ref:`on my computer <user_install>` or
-      * :ref:`on a cluster of supercomputer <admin_install>`.
+|user|  I'm a user who wants to :ref:`install NEST on my computer <user_install>`
 
 |
-|
 
-.. container:: twocol
+Install NEST for a class or workshop
+------------------------------------
 
-   .. container:: leftside
-
-      .. image:: ../static/img/class_black.png
-         :target: lecturer.html
-
-
-   .. container:: rightside
-
-         **Lecturer**
-
-         I'm a lecturer who wants to set up a temporary NEST environment for a classroom or workshop to demonstrate neuroscientifc concepts.
-
-         Take me to :ref:`lecturer install instructions <lecturer>`,
-|
-|
-
-
-.. container:: twocol
-
-   .. container:: leftside
-
-      .. image:: ../static/img/001-shuttle_black.png
-         :target: admin.html
-
-
-   .. container:: rightside
-
-         **Deployer**
-
-         I'm an administrator responsible for deploying NEST on a cluster or high performance machine for researchers and students.
-
-         Take me to the :ref:`admin installation <admin_install>`.
+|lecturer| I'm a lecturer who wants to :ref:`use NEST to teach <lecturer>`
 
 |
+
+Install NEST for HPC
+--------------------
+
+|admin| I'm an administrator or user who wants to :ref:`set up NEST on a large cluster or supercomputer <admin_install>`
+
 |
 
+Install NEST from source
+------------------------
 
-.. container:: twocol
+|dev| I'm a developer who wants to :ref:`do development in NEST <dev_install>`
 
-   .. container:: leftside
-
-      .. image:: ../static/img/dev_black.png
-         :target: developer.html
-
-
-   .. container:: rightside
-
-         **Developer**
-
-         I am a developer and want to contribute to the code or documentation of NEST.
-
-         Take me to the :ref:`source installation <dev_install>`.
 ----
 
 If installation didn't work, see the :ref:`troubleshooting section <troubleshooting>`.
@@ -88,9 +37,28 @@ If installation didn't work, see the :ref:`troubleshooting section <troubleshoot
 
 .. toctree::
    :hidden:
+   :glob:
 
    linux_install
    mac_install
    hpc_install
    livemedia
    cmake_options
+   *
+
+.. |user| image:: ../static/img/020-user_black.png
+   :target: user.html
+   :width: 100px
+
+.. |dev| image:: ../static/img/dev_black.png
+   :target: developer.html
+   :width: 100px
+
+.. |admin| image:: ../static/img/001-shuttle_black.png
+   :target: admin.html
+   :width: 100px
+
+.. |lecturer| image:: ../static/img/class_black.png
+   :target: lecturer.html
+   :width: 100px
+

@@ -35,13 +35,13 @@ if ( NOT CMAKE_CROSSCOMPILING )
     install( CODE
       "execute_process(
          COMMAND ${Python_EXECUTABLE} -B generate_help.py \"${PROJECT_SOURCE_DIR}\" \"${PROJECT_BINARY_DIR}\"
-         WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/doc/developer_space/sli_docs/slihelp_generator\"
+         WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/doc/slihelp_generator\"
          )"
       )
 
     # Copy the local doc/help directory to the global installation
     # directory for documentation.
-    install( DIRECTORY "${PROJECT_BINARY_DIR}/doc/developer_space/sli_docs/help"
+    install( DIRECTORY "${PROJECT_BINARY_DIR}/doc/help"
       DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}"
       OPTIONAL
       )
@@ -51,7 +51,7 @@ if ( NOT CMAKE_CROSSCOMPILING )
     install( CODE
       "execute_process(
          COMMAND ${Python_EXECUTABLE} -B generate_helpindex.py \"${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}\"
-         WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/doc/developer_space/sli_docs/slihelp_generator\"
+         WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/doc/slihelp_generator\"
          )"
       )
 
@@ -94,8 +94,8 @@ set( DOC_BUILD_DIR "${PROJECT_BINARY_DIR}/doc/userdoc" )
 set( DOC_SOURCE_DIR "${PROJECT_SOURCE_DIR}/doc/userdoc" )
 
 add_custom_target( html
-  COMMAND [ "${OUT_OF_TREE_BUILD}" = "True" ] && rm -rf "${DOC_BUILD_DIR}/html" || true
-  COMMAND [ "${OUT_OF_TREE_BUILD}" = "True" ] && cp -r "${DOC_SOURCE_DIR}/." "${DOC_BUILD_DIR}" || true
+  COMMAND [ "${OUT_OF_TREE_BUILD}" = "True" ] && rm -rf "${DOC_BUILD_DIR}" || true
+  COMMAND [ "${OUT_OF_TREE_BUILD}" = "True" ] && cp -r "${DOC_SOURCE_DIR}" "${DOC_BUILD_DIR}" || true
   COMMAND NESTSRCDIR=${PROJECT_SOURCE_DIR} sphinx-build -b html "${DOC_BUILD_DIR}" "${DOC_BUILD_DIR}/html"
   COMMAND cp "${DOC_BUILD_DIR}/models/*.rst" "${DOC_BUILD_DIR}/html/models"
   COMMAND ${PYTHON_EXECUTABLE} "${DOC_BUILD_DIR}/resolve_includes.py" "${DOC_BUILD_DIR}/html/models"

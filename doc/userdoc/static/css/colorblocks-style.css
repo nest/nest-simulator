@@ -608,6 +608,7 @@ html {
     border-right: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
     padding: 0;
+    color: #666;
 }
 
 #intro .accordion pre:first-of-type {

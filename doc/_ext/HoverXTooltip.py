@@ -216,7 +216,6 @@ def get_desc_from_glossary(term):
         raw_file_content = list(filter(None, file_content
                                 .split('Glossary')[1].splitlines(True)))
 
-
         glossary_dict = {}  # dictionary that holds terms and descriptions.
         for idx, line in enumerate(raw_file_content):
             # detect a term based on value of first column.

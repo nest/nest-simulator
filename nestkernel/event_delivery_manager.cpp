@@ -181,8 +181,9 @@ EventDeliveryManager::configure_spike_data_buffers()
 void
 EventDeliveryManager::configure_spike_register()
 {
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+#pragma omp parallel
   {
+    const thread tid = kernel().vp_manager.get_thread_id();
     reset_spike_register_( tid );
     resize_spike_register_( tid );
   }

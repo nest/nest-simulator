@@ -183,7 +183,7 @@ html_theme_options = {
     'color_primary': 'orange',
     'color_accent': 'white',
     'theme_color': 'ff6633',
-
+    'master_doc': False,
     # Set the repo location to get a badge with stats
     'repo_url': 'https://github.com/nest/nest-simulator/',
     'repo_name': 'NEST simulator',

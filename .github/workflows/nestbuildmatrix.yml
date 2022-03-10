@@ -81,6 +81,10 @@ jobs:
         # 1.0.1
         with:
           config: .vale.ini
+        env:
+          # Required, set by GitHub actions automatically:
+          # https://docs.github.com/en/actions/security-guides/automatic-token-authentication#about-the-github_token-secret
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   vale:
     runs-on: "ubuntu-20.04"

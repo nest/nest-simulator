@@ -158,7 +158,7 @@ static std::string getsliprefix() {
 }
 
 SLIStartup::SLIStartup( int argc, char** argv )
-  : sliprefix( getsliprefix )
+  : sliprefix( getsliprefix() )
   , slilibdir( sliprefix + "/" + NEST_INSTALL_DATADIR )
   , slidocdir( sliprefix + "/" + NEST_INSTALL_DOCDIR )
   , startupfile( slilibdir + "/sli/sli-init.sli" )

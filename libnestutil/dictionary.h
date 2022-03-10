@@ -84,8 +84,18 @@ public:
     auto it = find( key );
     if ( it != end() )
     {
-      value = boost::any_cast< T >( it->second );
-      return true;
+      try
+      {
+        value = boost::any_cast< T >( it->second );
+        return true;
+      }
+      catch ( const boost::bad_any_cast& )
+      {
+        std::string msg = std::string( "Failed to cast " ) + it->first + " from " + debug_type( it->second )
+          + " to type " + std::string( typeid( T ).name() );
+        std::cerr << msg << "\n";
+        throw TypeMismatch( msg );
+      }
     }
     return false;
   }

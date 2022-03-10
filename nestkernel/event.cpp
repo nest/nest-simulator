@@ -68,7 +68,7 @@ Event::retrieve_sender_node_id_from_source_table() const
 }
 
 index
-Event::get_receiver_node_id( void ) const
+Event::get_receiver_node_id() const
 {
   return receiver_->get_node_id();
 }

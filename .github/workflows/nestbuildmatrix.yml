@@ -68,6 +68,20 @@ jobs:
         run: |
           rstcheck -r doc/
 
+  vale-action:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: "Vale documentation linting"
+        uses: errata-ai/vale-action@v2.15.2
+        # 1.0.1
+        with:
+          config: .vale.ini
+
   vale:
     runs-on: "ubuntu-20.04"
     steps:

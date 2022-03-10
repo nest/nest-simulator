@@ -51,6 +51,13 @@
 extern char** environ;
 #endif
 
+#if defined(__linux__) || defined(__APPLE)
+#ifdef __APPLE__
+#define _DARWIN_C_SOURCE
+#endif
+#include <dlfcn.h>
+#endif
+
 /*
 1.  Propagate commandline to the sli level.
     Commandline options will be handled by the startup file.
@@ -133,9 +140,25 @@ SLIStartup::GetenvFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
+static std::string getsliprefix() {
+#if defined(__linux__) || defined(__APPLE)
+    Dl_info info;
+    if (dladdr((void*)getsliprefix, &info)) {
+        char const * soname = info.dli_fname;
+        std::string result = std::string(soname);
+        size_t last_slash = result.rfind('/');
+        result = result.substr(0, last_slash+1);
+        if (result.size() > 0) {
+            result += NEST_INSTALL_PREFIX_RELATIVE_TO_LIBDIR;
+            return result;
+        }
+    }
+#endif
+    return POCL_INSTALL_PRIVATE_DATADIR;
+}
 
 SLIStartup::SLIStartup( int argc, char** argv )
-  : sliprefix( NEST_INSTALL_PREFIX )
+  : sliprefix( getsliprefix )
   , slilibdir( sliprefix + "/" + NEST_INSTALL_DATADIR )
   , slidocdir( sliprefix + "/" + NEST_INSTALL_DOCDIR )
   , startupfile( slilibdir + "/sli/sli-init.sli" )

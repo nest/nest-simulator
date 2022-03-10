@@ -15,8 +15,8 @@ body{
 	background:#fff;
 	color:#666;
 	font-family:'Droid Sans', Arial, Helvetica, sans-serif; 
-	font-size:1.1em;
-	line-height:1.4em; 
+	font-size:1.4rem;
+	line-height:1.5rem; 
 	font-weight:normal;
 }
 h1, h2, h3, h4, h5, h6{
@@ -31,7 +31,7 @@ h1, h2, h3, h4, h5, h6{
 a,
 a:visited,
 a:active {color:#f63;}
-a:hover{text-decoration:underline;}
+a:hover{color:#f63; text-decoration:underline;}
 
 
 /* Box sizing. Awesome thing. Read about it here: http://www.w3schools.com/cssref/css3_pr_box-sizing.asp */
@@ -123,7 +123,7 @@ img{ max-width:100%; height:auto;}
 	margin:1px 0; 
 	padding:10px;
 	text-decoration:none;
-	font-size:1.1em;
+	font-size:1.0em;
 }
 .srt-menu li a:hover{
 	background:#f63;
@@ -217,6 +217,8 @@ a.buttonlink{
 }
 a.buttonlink:hover{
 	background:#36B34F;
+  color: #fff;
+  text-decoration: underline;
 }
 .orangeelement{
 	background:#f63;
@@ -246,6 +248,13 @@ a.buttonlink:hover{
   clear: both;
 }
 
+.green {
+   color: #36B34F;
+}
+
+.darkgreen {
+   color: #15471F;
+}
 /****************************************
 *****************************************
 MEDIAQUERIES
@@ -285,7 +294,7 @@ header{
 #banner{ 
 	float:left; 
 	text-align:left;
-	margin: 50px 0 0 50px;
+	margin: 55px 0 0 50px;
 }
 #hero{
 	padding:13px 0;
@@ -547,7 +556,7 @@ PRINT STYLESHEET
 
 .img-h1 {
     text-align: center;
-    margin: 10px 0;    
+    margin: 10px 0;
 }
 
 hr {
@@ -648,7 +657,7 @@ html {
     width: 65%;
     margin: 0 auto;
     padding: 1em;
-    box-shadow: inset 0 15px 15px -15px #444;               
+    box-shadow: inset 0 15px 15px -15px #444;
 }
 
 #intro .accordion div ul {
@@ -659,7 +668,7 @@ html {
 }
 
 .flexslider {
-    border: 1px solid #ccc;    
+    border: 1px solid #ccc;
     border-radius: 10px;
 }
 
@@ -799,3 +808,5 @@ code.xref, a code {
  color: #444;
  background: #f0f0f0;
 }
+
+

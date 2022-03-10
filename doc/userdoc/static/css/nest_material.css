@@ -25,15 +25,7 @@ html [data-md-color-primary="orange"] .md-nav--primary .md-nav__title--site {
 [data-md-color-primary="orange"] .md-nav__link--active, [data-md-color-primary="orange"] .md-nav__link:active {
 	color: #ff6633;
 }
-/*
-.md-typeset a {
-	color: #f63;
-}
 
-.md-nav__link--active, .md-nav__link:active {
-	color: #8e391d;
-}
-*/
 a.md-tabs__link, a.md-source {
   color: #fff;
 }
@@ -115,4 +107,40 @@ ul.md-tabs__list li.md-tabs__item a.md-tabs__link {
 .md-typeset details.warning > .admonition-title::before, .md-typeset details.warning > summary::before {
 	color: #fff;
 }
+.md-typeset table:not([class]) {
+	font-size: 0.9rem;
+}
+/* make header thicker and increase font size of  */
+.md-header {
+	height: 2.8rem;
+}
+.md-flex {
+  padding-top: 5px
+}
 
+.md-search__input {
+	font-size: .9rem;
+}
+.md-header-nav__title {
+	font-size: 1.1rem;
+}
+
+.md-source {
+	font-size: .95rem;
+}
+.md-source__facts {
+	font-size: .75rem;
+}
+.md-source__icon svg {
+	width: 1.6rem;
+	height: 1.6rem;
+}
+/* set the width wider of main content and sidebars */
+
+.md-grid {
+	max-width: 92rem;
+}
+
+.md-sidebar--secondary {
+	margin-left: 93rem;
+}

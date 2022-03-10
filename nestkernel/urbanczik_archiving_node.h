@@ -27,10 +27,10 @@
 #include <deque>
 
 // Includes from nestkernel:
+#include "archiving_node.h"
 #include "histentry.h"
 #include "nest_time.h"
 #include "nest_types.h"
-#include "archiving_node.h"
 #include "synaptic_element.h"
 
 // Includes from sli:

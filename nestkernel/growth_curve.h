@@ -31,8 +31,8 @@
  */
 
 // Includes from nestkernel:
-#include "nest_types.h"
 #include "exceptions.h"
+#include "nest_types.h"
 
 #include "dictionary.h"
 

@@ -27,8 +27,8 @@
 #include <boost/test/unit_test.hpp>
 
 // C++ includes:
-#include <vector>
 #include <sstream>
+#include <vector>
 
 // Includes from libnestutil:
 #include "streamers.h"

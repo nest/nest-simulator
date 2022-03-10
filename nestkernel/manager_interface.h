@@ -99,13 +99,13 @@ public:
    * and allows the manager to re-allocate data structures
    * accordingly.
    */
-  virtual void change_num_threads( thread ){};
+  virtual void change_num_threads( thread ) {};
 
   virtual void set_status( const dictionary& ) = 0;
   virtual void get_status( dictionary& ) = 0;
 
-  virtual void prepare(){};
-  virtual void cleanup(){};
+  virtual void prepare() {};
+  virtual void cleanup() {};
 };
 }
 

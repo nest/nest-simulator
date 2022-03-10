@@ -35,12 +35,12 @@
 
 // Includes from nestkernel:
 // #include "dynamicloader.h"
+#include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
 #include "nest.h"
 #include "nestmodule.h"
-#include "model_manager_impl.h"
-#include "exceptions.h"
 
 // Includes from sli:
 #include "dict.h"

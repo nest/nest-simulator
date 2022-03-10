@@ -25,8 +25,8 @@
 #include <boost/any.hpp>
 
 // Includes from nestkernel:
-#include "nest_names.h"
 #include "kernel_manager.h"
+#include "nest_names.h"
 
 // Includes from sli:
 #include "arraydatum.h"

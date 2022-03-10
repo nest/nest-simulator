@@ -24,12 +24,12 @@
 #define RECORDING_BACKEND_MPI_H
 
 #include "recording_backend.h"
+#include <arpa/inet.h>
+#include <mpi.h>
+#include <netinet/in.h>
 #include <set>
 #include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include <unistd.h>
-#include <mpi.h>
 
 /* BeginUserDocs: NOINDEX
 
@@ -150,7 +150,7 @@ private:
    * local thread. The map associates the node ID of a device on a
    * given thread with its MPI index and device. Only the master
    * thread has a valid MPI communicator pointer.
-  */
+   */
   typedef std::vector< std::map< index, std::tuple< int, MPI_Comm*, const RecordingDevice* > > > device_map;
   device_map devices_;
 

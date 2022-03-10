@@ -22,8 +22,8 @@
 
 #include "node_collection.h"
 #include "kernel_manager.h"
-#include "vp_manager_impl.h"
 #include "mpi_manager_impl.h"
+#include "vp_manager_impl.h"
 
 
 // C++ includes:
@@ -37,12 +37,14 @@ namespace nest
 // function object for sorting a vector of NodeCollectionPrimitives
 struct PrimitiveSortObject
 {
-  bool operator()( NodeCollectionPrimitive& primitive_lhs, NodeCollectionPrimitive& primitive_rhs )
+  bool
+  operator()( NodeCollectionPrimitive& primitive_lhs, NodeCollectionPrimitive& primitive_rhs )
   {
     return primitive_lhs[ 0 ] < primitive_rhs[ 0 ];
   }
 
-  bool operator()( const NodeCollectionPrimitive& primitive_lhs, const NodeCollectionPrimitive& primitive_rhs )
+  bool
+  operator()( const NodeCollectionPrimitive& primitive_lhs, const NodeCollectionPrimitive& primitive_rhs )
   {
     return primitive_lhs[ 0 ] < primitive_rhs[ 0 ];
   }
@@ -84,7 +86,7 @@ nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
 
   if ( ( part >= collection.parts_.size() or offset >= collection.parts_[ part ].size() )
     and not( part == collection.parts_.size() and offset == 0 ) // end iterator
-    )
+  )
   {
     throw KernelException( "Invalid part or offset into NodeCollectionComposite" );
   }
@@ -97,7 +99,8 @@ nc_const_iterator::print_me( std::ostream& out ) const
       << ", ex: " << element_idx_ << "]]";
 }
 
-NodeCollectionPTR operator+( NodeCollectionPTR lhs, NodeCollectionPTR rhs )
+NodeCollectionPTR
+operator+( NodeCollectionPTR lhs, NodeCollectionPTR rhs )
 {
   return lhs->operator+( rhs );
 }
@@ -294,7 +297,8 @@ NodeCollectionPrimitive::to_array() const
   return node_ids;
 }
 
-NodeCollectionPTR NodeCollectionPrimitive::operator+( NodeCollectionPTR rhs ) const
+NodeCollectionPTR
+NodeCollectionPrimitive::operator+( NodeCollectionPTR rhs ) const
 {
   if ( not valid() or not rhs->valid() )
   {
@@ -586,7 +590,8 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite&
   }
 }
 
-NodeCollectionPTR NodeCollectionComposite::operator+( NodeCollectionPTR rhs ) const
+NodeCollectionPTR
+NodeCollectionComposite::operator+( NodeCollectionPTR rhs ) const
 {
   if ( rhs->empty() )
   {
@@ -627,7 +632,7 @@ NodeCollectionPTR NodeCollectionComposite::operator+( NodeCollectionPTR rhs ) co
     }
 
     // check overlap between the two composites
-    const NodeCollectionComposite* shortest, *longest;
+    const NodeCollectionComposite *shortest, *longest;
     if ( size() < rhs_ptr->size() )
     {
       shortest = this;
@@ -670,7 +675,8 @@ NodeCollectionPTR NodeCollectionComposite::operator+( NodeCollectionPTR rhs ) co
   }
 }
 
-NodeCollectionPTR NodeCollectionComposite::operator+( const NodeCollectionPrimitive& rhs ) const
+NodeCollectionPTR
+NodeCollectionComposite::operator+( const NodeCollectionPrimitive& rhs ) const
 {
   if ( get_metadata().get() and not( get_metadata() == rhs.get_metadata() ) )
   {
@@ -883,10 +889,7 @@ NodeCollectionComposite::find( const index node_id ) const
       }
       else
       {
-        auto size_accu = []( long a, const NodeCollectionPrimitive& b )
-        {
-          return a + b.size();
-        };
+        auto size_accu = []( long a, const NodeCollectionPrimitive& b ) { return a + b.size(); };
         long sum_pre = std::accumulate( parts_.begin(), parts_.begin() + middle, ( long ) 0, size_accu );
         return sum_pre + parts_[ middle ].find( node_id );
       }

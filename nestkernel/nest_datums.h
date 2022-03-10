@@ -31,10 +31,10 @@
 #include "connection_id.h"
 #include "node_collection.h"
 
-#include "nestmodule.h"
 #include "event.h"
 #include "exceptions.h"
 #include "generic_factory.h"
+#include "nestmodule.h"
 #include "ntree.h"
 #include "parameter.h"
 #include "position.h"

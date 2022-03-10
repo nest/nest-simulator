@@ -92,9 +92,9 @@ public:
     return names::stimulator;
   }
 
-  using Node::handles_test_event; // new
-  using Node::handle;
   using Node::event_hook;
+  using Node::handle;
+  using Node::handles_test_event; // new
 
   port send_test_event( Node&, rport, synindex, bool ) override;
   port handles_test_event( SpikeEvent&, rport ) override;

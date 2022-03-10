@@ -27,9 +27,9 @@
 #include <string>
 
 // Generated includes:
+#include "config.h"
 #include "dirent.h"
 #include "errno.h"
-#include "config.h"
 
 // Includes from libnestutil:
 #include "compose.hpp"

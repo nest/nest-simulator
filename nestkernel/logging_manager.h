@@ -28,9 +28,9 @@
 #include <vector>
 
 // Includes from libnestutil:
+#include "dictionary.h"
 #include "logging.h"
 #include "manager_interface.h"
-#include "dictionary.h"
 
 // Includes from sli:
 #include "dictdatum.h"

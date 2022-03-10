@@ -27,8 +27,8 @@
 #include <vector>
 
 // Includes from nestkernel:
-#include "node_collection.h"
 #include "nest_types.h"
+#include "node_collection.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -38,8 +38,8 @@
 #include "token.h"
 
 // Includes from spatial:
-#include "layer.h"
 #include "free_layer.h"
+#include "layer.h"
 #include "mask.h"
 
 
@@ -57,7 +57,7 @@ public:
   {
   }
 
-  void set_status( const dictionary&, bool ){};
+  void set_status( const dictionary&, bool ) {};
 
   void
   get_status( dictionary& d ) const
@@ -92,7 +92,8 @@ public:
 
   void slice( size_t start, size_t stop, size_t step, NodeCollectionPTR node_collection );
 
-  bool operator==( const NodeCollectionMetadataPTR rhs ) const
+  bool
+  operator==( const NodeCollectionMetadataPTR rhs ) const
   {
     const auto rhs_layer_metadata = dynamic_cast< LayerMetadata* >( rhs.get() );
     if ( rhs_layer_metadata == nullptr )

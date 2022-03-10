@@ -260,7 +260,7 @@ private:
   bool collocate_spike_data_buffers_( const thread tid,
     const AssignedRanks& assigned_ranks,
     SendBufferPosition& send_buffer_position,
-    std::vector< std::vector< std::vector< TargetT > > >& spike_register,
+    std::vector< std::vector< std::vector< TargetT > >* >& spike_register,
     std::vector< SpikeDataT >& send_buffer );
 
   /**
@@ -390,7 +390,7 @@ private:
    * - Third dim: lag
    * - Fourth dim: Target (will be converted in SpikeData)
    */
-  std::vector< std::vector< std::vector< Target > > > spike_register_;
+  std::vector< std::vector< std::vector< Target > >* > spike_register_;
 
   /**
    * Register for node IDs of precise neurons that spiked. This is a 4-dim
@@ -446,8 +446,8 @@ private:
 inline void
 EventDeliveryManager::reset_spike_register_( const thread tid )
 {
-  for ( std::vector< std::vector< Target > >::iterator it = spike_register_[ tid ].begin();
-        it < spike_register_[ tid ].end();
+  for ( std::vector< std::vector< Target > >::iterator it = spike_register_[ tid ]->begin();
+        it < spike_register_[ tid ]->end();
         ++it )
   {
     ( *it ).clear();
@@ -474,8 +474,8 @@ EventDeliveryManager::is_marked_for_removal_( const Target& target )
 inline void
 EventDeliveryManager::clean_spike_register_( const thread tid )
 {
-  for ( std::vector< std::vector< Target > >::iterator it = spike_register_[ tid ].begin();
-        it < spike_register_[ tid ].end();
+  for ( std::vector< std::vector< Target > >::iterator it = spike_register_[ tid ]->begin();
+        it < spike_register_[ tid ]->end();
         ++it )
   {
     std::vector< Target >::iterator new_end = std::remove_if( it->begin(), it->end(), is_marked_for_removal_ );

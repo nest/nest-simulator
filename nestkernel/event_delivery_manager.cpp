@@ -94,7 +94,12 @@ EventDeliveryManager::initialize()
 #pragma omp parallel
   {
     const thread tid = kernel().vp_manager.get_thread_id();
-    spike_register_[ tid ].resize( kernel().connection_manager.get_min_delay(), std::vector< Target >() );
+
+    if ( spike_register_[ tid ] == NULL )
+    {
+      spike_register_[ tid ] = new std::vector< std::vector< Target > >();
+    }
+    spike_register_[ tid ]->resize( kernel().connection_manager.get_min_delay(), std::vector< Target >() );
 
     off_grid_spike_register_[ tid ].resize( num_threads,
       std::vector< std::vector< OffGridTarget > >(
@@ -106,7 +111,12 @@ void
 EventDeliveryManager::finalize()
 {
   // clear the spike buffers
-  std::vector< std::vector< std::vector< Target > > >().swap( spike_register_ );
+  for ( auto it = spike_register_.begin(); it < spike_register_.end(); ++it )
+  {
+    ( *it )->clear();
+    delete ( *it );
+  }
+  spike_register_.clear();
   std::vector< std::vector< std::vector< std::vector< OffGridTarget > > > >().swap( off_grid_spike_register_ );
 
   send_buffer_secondary_events_.clear();
@@ -408,7 +418,7 @@ bool
 EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
   const AssignedRanks& assigned_ranks,
   SendBufferPosition& send_buffer_position,
-  std::vector< std::vector< std::vector< TargetT > > >& spike_register,
+  std::vector< std::vector< std::vector< TargetT > >* >& spike_register,
   std::vector< SpikeDataT >& send_buffer )
 {
   reset_complete_marker_spike_data_( assigned_ranks, send_buffer_position, send_buffer );
@@ -418,17 +428,18 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
   bool is_spike_register_empty = true;
 
   // First dimension: loop over writing thread
-  for ( typename std::vector< std::vector< std::vector< TargetT > > >::iterator it = spike_register.begin();
+  for ( typename std::vector< std::vector< std::vector< TargetT > >* >::iterator it = spike_register.begin();
         it != spike_register.end();
         ++it )
   {
     // Second dimension: fixed reading thread --> REMOVE in this branch for testing
 
     // Third dimension: loop over lags
-    for ( unsigned int lag = 0; lag < ( *it ).size(); ++lag )
+    for ( unsigned int lag = 0; lag < ( *it )->size(); ++lag )
     {
       // Fourth dimension: loop over entries
-      for ( typename std::vector< TargetT >::iterator iiit = ( *it )[ lag ].begin(); iiit < ( *it )[ lag ].end();
+      for ( typename std::vector< TargetT >::iterator iiit = ( *( *it ) )[ lag ].begin();
+            iiit < ( *( *it ) )[ lag ].end();
             ++iiit )
       {
         assert( not iiit->is_processed() );
@@ -816,7 +827,11 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid )
 void
 EventDeliveryManager::resize_spike_register_( const thread tid )
 {
-  spike_register_[ tid ].resize( kernel().connection_manager.get_min_delay(), std::vector< Target >() );
+  if ( spike_register_[ tid ] == NULL )
+  {
+    spike_register_[ tid ] = new std::vector< std::vector< Target > >();
+  }
+  spike_register_[ tid ]->resize( kernel().connection_manager.get_min_delay(), std::vector< Target >() );
 
   for ( std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it =
           off_grid_spike_register_[ tid ].begin();

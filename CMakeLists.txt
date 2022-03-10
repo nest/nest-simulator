@@ -40,6 +40,9 @@ if( NOT IS_ABSOLUTE ${CMAKE_INSTALL_PREFIX})
     message(STATUS "Relative CMAKE_INSTALL_PREFIX has been set to absolute path ${CMAKE_INSTALL_PREFIX}")
 endif()
 
+file(RELATIVE_PATH NEST_INSTALL_PREFIX_RELATIVE_TO_LIBDIR ${CMAKE_INSTALL_LIBDIR}/nest ${CMAKE_INSTALL_PREFIX})
+message(STATUS "Nest prefix relative to dynamic library: ${NEST_INSTALL_PREFIX_RELATIVE_TO_LIBDIR}")
+
 ################################################################################
 ##################         All User Defined options           ##################
 ################################################################################

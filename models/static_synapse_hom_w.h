@@ -76,9 +76,9 @@ public:
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
-  using ConnectionBase::get_delay_steps;
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -144,7 +144,7 @@ public:
   void
   check_synapse_params( const dictionary& syn_spec ) const
   {
-    if ( syn_spec.known( names::weight.toString() ) )
+    if ( syn_spec.known( names::weight ) )
     {
       throw BadProperty(
         "Weight cannot be specified since it needs to be equal "
@@ -184,7 +184,7 @@ void
 static_synapse_hom_w< targetidentifierT >::get_status( dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  d[ names::size_of.toString() ] = sizeof( *this );
+  d[ names::size_of ] = sizeof( *this );
 }
 
 } // namespace

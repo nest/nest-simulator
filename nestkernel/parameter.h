@@ -24,8 +24,8 @@
 #define PARAMETER_H_
 
 // C++ includes:
-#include <limits>
 #include <cmath>
+#include <limits>
 
 #include "boost/any.hpp"
 
@@ -117,8 +117,8 @@ public:
   bool returns_int_only() const;
 
 protected:
-  bool is_spatial_{ false };
-  bool returns_int_only_{ false };
+  bool is_spatial_ { false };
+  bool returns_int_only_ { false };
 
   bool value_is_integer_( const double value ) const;
 };
@@ -189,8 +189,8 @@ public:
     : lower_( 0.0 )
     , range_( 1.0 )
   {
-    d.update_value( names::min.toString(), lower_ );
-    d.update_value( names::max.toString(), range_ );
+    d.update_value( names::min, lower_ );
+    d.update_value( names::max, range_ );
     if ( lower_ >= range_ )
     {
       throw BadProperty(
@@ -230,7 +230,7 @@ public:
     : Parameter( false, true )
     , max_( 1.0 )
   {
-    d.update_value( names::max.toString(), max_ );
+    d.update_value( names::max, max_ );
     if ( max_ <= 0 )
     {
       throw BadProperty( "nest::UniformIntParameter: max > 0 required." );
@@ -318,7 +318,7 @@ public:
   ExponentialParameter( const dictionary& d )
     : beta_( 1.0 )
   {
-    d.update_value( names::beta.toString(), beta_ );
+    d.update_value( names::beta, beta_ );
   }
 
   double
@@ -354,7 +354,7 @@ public:
     , dimension_( 0 )
     , synaptic_endpoint_( 0 )
   {
-    bool dimension_specified = d.update_value( names::dimension.toString(), dimension_ );
+    bool dimension_specified = d.update_value( names::dimension, dimension_ );
     if ( not dimension_specified )
     {
       throw BadParameterValue( "Dimension must be specified when creating a node position parameter." );
@@ -363,7 +363,7 @@ public:
     {
       throw BadParameterValue( "Node position parameter dimension cannot be negative." );
     }
-    d.update_value( names::synaptic_endpoint.toString(), synaptic_endpoint_ );
+    d.update_value( names::synaptic_endpoint, synaptic_endpoint_ );
     if ( synaptic_endpoint_ < 0 or 2 < synaptic_endpoint_ )
     {
       throw BadParameterValue( "Synaptic endpoint must either be unspecified (0), source (1) or target (2)." );
@@ -423,7 +423,7 @@ public:
     : Parameter( true )
     , dimension_( 0 )
   {
-    d.update_value( names::dimension.toString(), dimension_ );
+    d.update_value( names::dimension, dimension_ );
     if ( dimension_ < 0 )
     {
       throw BadParameterValue( "Spatial distance parameter dimension cannot be negative." );
@@ -680,7 +680,7 @@ public:
     , parameter2_( m2 )
     , comparator_( -1 )
   {
-    if ( not d.update_value( names::comparator.toString(), comparator_ ) )
+    if ( not d.update_value( names::comparator, comparator_ ) )
     {
       throw BadParameter( "A comparator has to be specified." );
     }
@@ -765,7 +765,7 @@ public:
     std::shared_ptr< Parameter > if_true,
     std::shared_ptr< Parameter > if_false )
     : Parameter( condition->is_spatial() or if_true->is_spatial() or if_false->is_spatial(),
-        if_true->returns_int_only() and if_false->returns_int_only() )
+      if_true->returns_int_only() and if_false->returns_int_only() )
     , condition_( condition )
     , if_true_( if_true )
     , if_false_( if_false )

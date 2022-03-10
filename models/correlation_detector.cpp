@@ -66,7 +66,8 @@ nest::correlation_detector::Parameters_::Parameters_( const Parameters_& p )
   Tstop_.calibrate();
 }
 
-nest::correlation_detector::Parameters_& nest::correlation_detector::Parameters_::operator=( const Parameters_& p )
+nest::correlation_detector::Parameters_&
+nest::correlation_detector::Parameters_::operator=( const Parameters_& p )
 {
   delta_tau_ = p.delta_tau_;
   tau_max_ = p.tau_max_;
@@ -98,19 +99,19 @@ nest::correlation_detector::State_::State_()
 void
 nest::correlation_detector::Parameters_::get( dictionary& d ) const
 {
-  d[ names::delta_tau.toString() ] = delta_tau_.get_ms();
-  d[ names::tau_max.toString() ] = tau_max_.get_ms();
-  d[ names::Tstart.toString() ] = Tstart_.get_ms();
-  d[ names::Tstop.toString() ] = Tstop_.get_ms();
+  d[ names::delta_tau ] = delta_tau_.get_ms();
+  d[ names::tau_max ] = tau_max_.get_ms();
+  d[ names::Tstart ] = Tstart_.get_ms();
+  d[ names::Tstop ] = Tstop_.get_ms();
 }
 
 void
 nest::correlation_detector::State_::get( dictionary& d ) const
 {
-  d[ names::n_events.toString() ] = IntVectorDatum( new std::vector< long >( n_events_ ) );
-  d[ names::histogram.toString() ] = DoubleVectorDatum( new std::vector< double >( histogram_ ) );
-  d[ names::histogram_correction.toString() ] = DoubleVectorDatum( new std::vector< double >( histogram_correction_ ) );
-  d[ names::count_histogram.toString() ] = IntVectorDatum( new std::vector< long >( count_histogram_ ) );
+  d[ names::n_events ] = IntVectorDatum( new std::vector< long >( n_events_ ) );
+  d[ names::histogram ] = DoubleVectorDatum( new std::vector< double >( histogram_ ) );
+  d[ names::histogram_correction ] = DoubleVectorDatum( new std::vector< double >( histogram_correction_ ) );
+  d[ names::count_histogram ] = IntVectorDatum( new std::vector< long >( count_histogram_ ) );
 }
 
 bool
@@ -118,25 +119,25 @@ nest::correlation_detector::Parameters_::set( const dictionary& d, const correla
 {
   bool reset = false;
   double t;
-  if ( update_value_param( d, names::delta_tau.toString(), t, node ) )
+  if ( update_value_param( d, names::delta_tau, t, node ) )
   {
     delta_tau_ = Time::ms( t );
     reset = true;
   }
 
-  if ( update_value_param( d, names::tau_max.toString(), t, node ) )
+  if ( update_value_param( d, names::tau_max, t, node ) )
   {
     tau_max_ = Time::ms( t );
     reset = true;
   }
 
-  if ( update_value_param( d, names::Tstart.toString(), t, node ) )
+  if ( update_value_param( d, names::Tstart, t, node ) )
   {
     Tstart_ = Time::ms( t );
     reset = true;
   }
 
-  if ( update_value_param( d, names::Tstop.toString(), t, node ) )
+  if ( update_value_param( d, names::Tstop, t, node ) )
   {
     Tstop_ = Time::ms( t );
     reset = true;
@@ -159,7 +160,7 @@ void
 nest::correlation_detector::State_::set( const dictionary& d, const Parameters_& p, bool reset_required, Node* )
 {
   std::vector< long > nev;
-  if ( d.update_value( names::n_events.toString(), nev ) )
+  if ( d.update_value( names::n_events, nev ) )
   {
     if ( nev.size() == 2 && nev[ 0 ] == 0 && nev[ 1 ] == 0 )
     {

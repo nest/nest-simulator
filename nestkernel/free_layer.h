@@ -82,11 +82,13 @@ protected:
     {
       return Position< D >( pos_ );
     }
-    bool operator<( const NodePositionData& other ) const
+    bool
+    operator<( const NodePositionData& other ) const
     {
       return node_id_ < other.node_id_;
     }
-    bool operator==( const NodePositionData& other ) const
+    bool
+    operator==( const NodePositionData& other ) const
     {
       return node_id_ == other.node_id_;
     }
@@ -114,20 +116,20 @@ FreeLayer< D >::set_status( const dictionary& d )
   }
 
   // Read positions from dictionary
-  if ( d.known( names::positions.toString() ) )
+  if ( d.known( names::positions ) )
   {
-    const auto positions = d.at( names::positions.toString() );
+    const auto positions = d.at( names::positions );
     if ( is_double_vector_vector( positions ) )
     {
       // If the positions are created from a layer sliced with step, we need to take that into consideration.
       // Because the implementation of NodeCollections sliced with step internally keeps the "skipped" nodes,
       // the positions must include the "skipped" nodes as well for consistency.
       size_t step = 1;
-      if ( d.known( names::step.toString() ) )
+      if ( d.known( names::step ) )
       {
-        step = d.get< long >( names::step.toString() );
+        step = d.get< long >( names::step );
       }
-      const auto pos = d.get< std::vector< std::vector< double > > >( names::positions.toString() );
+      const auto pos = d.get< std::vector< std::vector< double > > >( names::positions );
       const auto num_nodes = this->node_collection_->size();
       // Number of positions, excluding the skipped nodes
       const auto stepped_pos_size = std::floor( pos.size() / ( float ) step ) + ( pos.size() % step > 0 );
@@ -164,7 +166,7 @@ FreeLayer< D >::set_status( const dictionary& d )
     }
     else if ( is_parameter( positions ) )
     {
-      auto pd = d.get< std::shared_ptr< Parameter > >( names::positions.toString() );
+      auto pd = d.get< std::shared_ptr< Parameter > >( names::positions );
       auto pos = dynamic_cast< DimensionParameter* >( pd.get() );
       positions_.clear();
       auto num_nodes = this->node_collection_->size();
@@ -195,9 +197,9 @@ FreeLayer< D >::set_status( const dictionary& d )
       throw KernelException( "'positions' must be an array or a DimensionParameter." );
     }
   }
-  if ( d.known( names::extent.toString() ) )
+  if ( d.known( names::extent ) )
   {
-    this->extent_ = d.get< std::vector< double > >( names::extent.toString() );
+    this->extent_ = d.get< std::vector< double > >( names::extent );
 
     Position< D > center = ( max_point + this->lower_left_ ) / 2;
     auto lower_left_point = this->lower_left_; // save lower-left-most point

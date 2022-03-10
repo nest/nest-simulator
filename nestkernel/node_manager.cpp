@@ -793,8 +793,8 @@ NodeManager::set_status( index node_id, const dictionary& d )
 void
 NodeManager::get_status( dictionary& d )
 {
-  d[ names::network_size.toString() ] = size();
-  d[ names::time_construction_create.toString() ] = sw_construction_create_.elapsed();
+  d[ names::network_size ] = size();
+  d[ names::time_construction_create ] = sw_construction_create_.elapsed();
 }
 
 void

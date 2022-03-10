@@ -93,24 +93,24 @@ nest::iaf_chs_2007::State_::State_()
 void
 nest::iaf_chs_2007::Parameters_::get( dictionary& d ) const
 {
-  d[ names::V_reset.toString() ] = U_reset_;
-  d[ names::V_epsp.toString() ] = U_epsp_;
-  d[ names::tau_epsp.toString() ] = tau_epsp_;
-  d[ names::tau_reset.toString() ] = tau_reset_;
-  d[ names::V_noise.toString() ] = U_noise_;
-  d[ names::noise.toString() ] = DoubleVectorDatum( new std::vector< double >( noise_ ) );
+  d[ names::V_reset ] = U_reset_;
+  d[ names::V_epsp ] = U_epsp_;
+  d[ names::tau_epsp ] = tau_epsp_;
+  d[ names::tau_reset ] = tau_reset_;
+  d[ names::V_noise ] = U_noise_;
+  d[ names::noise ] = DoubleVectorDatum( new std::vector< double >( noise_ ) );
 }
 
 void
 nest::iaf_chs_2007::Parameters_::set( const dictionary& d, State_& s, Node* node )
 {
-  update_value_param( d, names::V_reset.toString(), U_reset_, node );
-  update_value_param( d, names::V_epsp.toString(), U_epsp_, node );
-  update_value_param( d, names::tau_epsp.toString(), tau_epsp_, node );
-  update_value_param( d, names::tau_reset.toString(), tau_reset_, node );
-  update_value_param( d, names::V_noise.toString(), U_noise_, node );
+  update_value_param( d, names::V_reset, U_reset_, node );
+  update_value_param( d, names::V_epsp, U_epsp_, node );
+  update_value_param( d, names::tau_epsp, tau_epsp_, node );
+  update_value_param( d, names::tau_reset, tau_reset_, node );
+  update_value_param( d, names::V_noise, U_noise_, node );
 
-  const bool updated_noise = d.update_value( names::noise.toString(), noise_ );
+  const bool updated_noise = d.update_value( names::noise, noise_ );
   if ( updated_noise )
   {
     s.position_ = 0;
@@ -140,13 +140,13 @@ nest::iaf_chs_2007::Parameters_::set( const dictionary& d, State_& s, Node* node
 void
 nest::iaf_chs_2007::State_::get( dictionary& d ) const
 {
-  d[ names::V_m.toString() ] = V_m_; // Membrane potential
+  d[ names::V_m ] = V_m_; // Membrane potential
 }
 
 void
 nest::iaf_chs_2007::State_::set( dictionary const& d, Node* node )
 {
-  update_value_param( d, names::V_m.toString(), V_m_, node );
+  update_value_param( d, names::V_m, V_m_, node );
 }
 
 nest::iaf_chs_2007::Buffers_::Buffers_( iaf_chs_2007& n )

@@ -23,10 +23,10 @@
 #ifndef CONNECTION_LABEL_H
 #define CONNECTION_LABEL_H
 
-#include "nest.h"
-#include "nest_names.h"
 #include "dictdatum.h"
 #include "dictutils.h"
+#include "nest.h"
+#include "nest_names.h"
 
 namespace nest
 {
@@ -87,11 +87,11 @@ void
 ConnectionLabel< ConnectionT >::get_status( dictionary& d ) const
 {
   ConnectionT::get_status( d );
-  d[ names::synapse_label.toString() ] = label_;
+  d[ names::synapse_label ] = label_;
   // override names::size_of from ConnectionT,
   // as the size from ConnectionLabel< ConnectionT > is
   // one long larger
-  d[ names::size_of.toString() ] = sizeof( *this );
+  d[ names::size_of ] = sizeof( *this );
 }
 
 template < typename ConnectionT >
@@ -99,7 +99,7 @@ void
 ConnectionLabel< ConnectionT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   long lbl;
-  if ( d.update_value( names::synapse_label.toString(), lbl ) )
+  if ( d.update_value( names::synapse_label, lbl ) )
   {
     if ( lbl >= 0 )
     {

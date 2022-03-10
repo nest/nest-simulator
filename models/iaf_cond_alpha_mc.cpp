@@ -223,7 +223,8 @@ nest::iaf_cond_alpha_mc::Parameters_::Parameters_( const Parameters_& p )
   }
 }
 
-nest::iaf_cond_alpha_mc::Parameters_& nest::iaf_cond_alpha_mc::Parameters_::operator=( const Parameters_& p )
+nest::iaf_cond_alpha_mc::Parameters_&
+nest::iaf_cond_alpha_mc::Parameters_::operator=( const Parameters_& p )
 {
   assert( this != &p ); // would be bad logical error in program
 
@@ -277,7 +278,8 @@ nest::iaf_cond_alpha_mc::State_::State_( const State_& s )
   }
 }
 
-nest::iaf_cond_alpha_mc::State_& nest::iaf_cond_alpha_mc::State_::operator=( const State_& s )
+nest::iaf_cond_alpha_mc::State_&
+nest::iaf_cond_alpha_mc::State_::operator=( const State_& s )
 {
   r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -314,26 +316,26 @@ nest::iaf_cond_alpha_mc::Buffers_::Buffers_( const Buffers_&, iaf_cond_alpha_mc&
 void
 nest::iaf_cond_alpha_mc::Parameters_::get( dictionary& d ) const
 {
-  d[ names::V_th.toString() ] = V_th;
-  d[ names::V_reset.toString() ] = V_reset;
-  d[ names::t_ref.toString() ] = t_ref;
+  d[ names::V_th ] = V_th;
+  d[ names::V_reset ] = V_reset;
+  d[ names::t_ref ] = t_ref;
 
-  d[ names::g_sp.toString() ] = g_conn[ SOMA ];
-  d[ names::g_pd.toString() ] = g_conn[ PROX ];
+  d[ names::g_sp ] = g_conn[ SOMA ];
+  d[ names::g_pd ] = g_conn[ PROX ];
 
   // create subdictionaries for per-compartment parameters
   for ( size_t n = 0; n < NCOMP; ++n )
   {
     dictionary dd;
 
-    dd[ names::g_L.toString() ] = g_L[ n ];
-    dd[ names::E_L.toString() ] = E_L[ n ];
-    dd[ names::E_ex.toString() ] = E_ex[ n ];
-    dd[ names::E_in.toString() ] = E_in[ n ];
-    dd[ names::C_m.toString() ] = C_m[ n ];
-    dd[ names::tau_syn_ex.toString() ] = tau_synE[ n ];
-    dd[ names::tau_syn_in.toString() ] = tau_synI[ n ];
-    dd[ names::I_e.toString() ] = I_e[ n ];
+    dd[ names::g_L ] = g_L[ n ];
+    dd[ names::E_L ] = E_L[ n ];
+    dd[ names::E_ex ] = E_ex[ n ];
+    dd[ names::E_in ] = E_in[ n ];
+    dd[ names::C_m ] = C_m[ n ];
+    dd[ names::tau_syn_ex ] = tau_synE[ n ];
+    dd[ names::tau_syn_in ] = tau_synI[ n ];
+    dd[ names::I_e ] = I_e[ n ];
 
     d[ comp_names_[ n ].toString() ] = dd;
   }
@@ -343,9 +345,9 @@ void
 nest::iaf_cond_alpha_mc::Parameters_::set( const dictionary& d, Node* node )
 {
   // allow setting the membrane potential
-  update_value_param( d, names::V_th.toString(), V_th, node );
-  update_value_param( d, names::V_reset.toString(), V_reset, node );
-  update_value_param( d, names::t_ref.toString(), t_ref, node );
+  update_value_param( d, names::V_th, V_th, node );
+  update_value_param( d, names::V_reset, V_reset, node );
+  update_value_param( d, names::t_ref, t_ref, node );
 
   update_value_param( d, Name( names::g_sp ).toString(), g_conn[ SOMA ], node );
   update_value_param( d, Name( names::g_pd ).toString(), g_conn[ PROX ], node );
@@ -357,14 +359,14 @@ nest::iaf_cond_alpha_mc::Parameters_::set( const dictionary& d, Node* node )
     {
       auto dd = d.get< dictionary >( comp_names_[ n ].toString() );
 
-      update_value_param( d, names::E_L.toString(), E_L[ n ], node );
-      update_value_param( d, names::E_ex.toString(), E_ex[ n ], node );
-      update_value_param( d, names::E_in.toString(), E_in[ n ], node );
-      update_value_param( d, names::C_m.toString(), C_m[ n ], node );
-      update_value_param( d, names::g_L.toString(), g_L[ n ], node );
-      update_value_param( d, names::tau_syn_ex.toString(), tau_synE[ n ], node );
-      update_value_param( d, names::tau_syn_in.toString(), tau_synI[ n ], node );
-      update_value_param( d, names::I_e.toString(), I_e[ n ], node );
+      update_value_param( d, names::E_L, E_L[ n ], node );
+      update_value_param( d, names::E_ex, E_ex[ n ], node );
+      update_value_param( d, names::E_in, E_in[ n ], node );
+      update_value_param( d, names::C_m, C_m[ n ], node );
+      update_value_param( d, names::g_L, g_L[ n ], node );
+      update_value_param( d, names::tau_syn_ex, tau_synE[ n ], node );
+      update_value_param( d, names::tau_syn_in, tau_synI[ n ], node );
+      update_value_param( d, names::I_e, I_e[ n ], node );
     }
   }
   if ( V_reset >= V_th )
@@ -400,7 +402,7 @@ nest::iaf_cond_alpha_mc::State_::get( dictionary& d ) const
     assert( d.known( comp_names_[ n ].toString() ) );
     auto dd = d.get< dictionary >( comp_names_[ n ].toString() );
 
-    dd[ names::V_m.toString() ] = y_[ idx( n, V_M ) ]; // Membrane potential
+    dd[ names::V_m ] = y_[ idx( n, V_M ) ]; // Membrane potential
   }
 }
 
@@ -413,7 +415,7 @@ nest::iaf_cond_alpha_mc::State_::set( const dictionary& d, const Parameters_&, N
     if ( d.known( comp_names_[ n ].toString() ) )
     {
       auto dd = d.get< dictionary >( comp_names_[ n ].toString() );
-      update_value_param( d, names::V_m.toString(), y_[ idx( n, V_M ) ], node );
+      update_value_param( d, names::V_m, y_[ idx( n, V_M ) ], node );
     }
   }
 }

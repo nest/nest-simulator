@@ -25,9 +25,9 @@
 
 // Includes from nestkernel:
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
 #include "event.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 #include "nest.h"
@@ -454,7 +454,7 @@ gif_psc_exp_multisynapse::get_status( dictionary& d ) const
   P_.get( d );
   S_.get( d, P_ );
   ArchivingNode::get_status( d );
-  d[ names::recordables.toString() ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void

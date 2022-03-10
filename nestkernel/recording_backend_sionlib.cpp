@@ -599,7 +599,8 @@ nest::RecordingBackendSIONlib::SIONBuffer::write( const char* v, size_t n )
 }
 
 template < typename T >
-nest::RecordingBackendSIONlib::SIONBuffer& nest::RecordingBackendSIONlib::SIONBuffer::operator<<( const T data )
+nest::RecordingBackendSIONlib::SIONBuffer&
+nest::RecordingBackendSIONlib::SIONBuffer::operator<<( const T data )
 {
   write( ( const char* ) &data, sizeof( T ) );
   return *this;
@@ -621,21 +622,21 @@ nest::RecordingBackendSIONlib::Parameters_::Parameters_()
 void
 nest::RecordingBackendSIONlib::Parameters_::get( const RecordingBackendSIONlib&, dictionary& d ) const
 {
-  d[ names::filename.toString() ] = filename_;
-  d[ names::buffer_size.toString() ] = buffer_size_;
-  d[ names::sion_chunksize.toString() ] = sion_chunksize_;
-  d[ names::sion_collective.toString() ] = sion_collective_;
-  d[ names::sion_n_files.toString() ] = sion_n_files_;
+  d[ names::filename ] = filename_;
+  d[ names::buffer_size ] = buffer_size_;
+  d[ names::sion_chunksize ] = sion_chunksize_;
+  d[ names::sion_collective ] = sion_collective_;
+  d[ names::sion_n_files ] = sion_n_files_;
 }
 
 void
 nest::RecordingBackendSIONlib::Parameters_::set( const RecordingBackendSIONlib&, const dictionary& d )
 {
-  d.update_value( names::filename.toString(), filename_ );
-  d.update_value( names::buffer_size.toString(), buffer_size_ );
-  d.update_value( names::sion_chunksize.toString(), sion_chunksize_ );
-  d.update_value( names::sion_collective.toString(), sion_collective_ );
-  d.update_value( names::sion_n_files.toString(), sion_n_files_ );
+  d.update_value( names::filename, filename_ );
+  d.update_value( names::buffer_size, buffer_size_ );
+  d.update_value( names::sion_chunksize, sion_chunksize_ );
+  d.update_value( names::sion_collective, sion_collective_ );
+  d.update_value( names::sion_n_files, sion_n_files_ );
 }
 
 void
@@ -653,7 +654,7 @@ nest::RecordingBackendSIONlib::get_status( dictionary& d ) const
 {
   P_.get( *this, d );
 
-  d[ names::filename.toString() ] = filename_;
+  d[ names::filename ] = filename_;
 }
 
 void

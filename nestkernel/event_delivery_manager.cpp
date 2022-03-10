@@ -98,8 +98,8 @@ EventDeliveryManager::initialize()
       std::vector< std::vector< Target > >( kernel().connection_manager.get_min_delay(), std::vector< Target >() ) );
 
     off_grid_spike_register_[ tid ].resize( num_threads,
-      std::vector< std::vector< OffGridTarget > >( kernel().connection_manager.get_min_delay(),
-                                              std::vector< OffGridTarget >() ) );
+      std::vector< std::vector< OffGridTarget > >(
+        kernel().connection_manager.get_min_delay(), std::vector< OffGridTarget >() ) );
   } // of omp parallel
 }
 
@@ -121,21 +121,20 @@ EventDeliveryManager::finalize()
 void
 EventDeliveryManager::set_status( const dictionary& dict )
 {
-  dict.update_value( names::off_grid_spiking.toString(), off_grid_spiking_ );
+  dict.update_value( names::off_grid_spiking, off_grid_spiking_ );
 }
 
 void
 EventDeliveryManager::get_status( dictionary& dict )
 {
-  dict[ names::off_grid_spiking.toString() ] = off_grid_spiking_;
-  dict[ names::local_spike_counter.toString() ] =
-    std::accumulate( local_spike_counter_.begin(), local_spike_counter_.end(), 0 );
+  dict[ names::off_grid_spiking ] = off_grid_spiking_;
+  dict[ names::local_spike_counter ] = std::accumulate( local_spike_counter_.begin(), local_spike_counter_.end(), 0 );
 
 #ifdef TIMER_DETAILED
-  dict[ names::time_collocate_spike_data.toString() ] = sw_collocate_spike_data_.elapsed();
-  dict[ names::time_communicate_spike_data.toString() ] = sw_communicate_spike_data_.elapsed();
-  dict[ names::time_deliver_spike_data.toString() ] = sw_deliver_spike_data_.elapsed();
-  dict[ names::time_communicate_target_data.toString() ] = sw_communicate_target_data_.elapsed();
+  dict[ names::time_collocate_spike_data ] = sw_collocate_spike_data_.elapsed();
+  dict[ names::time_communicate_spike_data ] = sw_communicate_spike_data_.elapsed();
+  dict[ names::time_deliver_spike_data ] = sw_deliver_spike_data_.elapsed();
+  dict[ names::time_communicate_target_data ] = sw_communicate_target_data_.elapsed();
 #endif
 }
 
@@ -476,10 +475,10 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
   bool is_spike_register_empty = true;
 
   // First dimension: loop over writing thread
-  for (
-    typename std::vector< std::vector< std::vector< std::vector< TargetT > > > >::iterator it = spike_register.begin();
-    it != spike_register.end();
-    ++it )
+  for ( typename std::vector< std::vector< std::vector< std::vector< TargetT > > > >::iterator it =
+          spike_register.begin();
+        it != spike_register.end();
+        ++it )
   {
     // Second dimension: fixed reading thread
 
@@ -883,10 +882,10 @@ EventDeliveryManager::resize_spike_register_( const thread tid )
     it->resize( kernel().connection_manager.get_min_delay(), std::vector< Target >() );
   }
 
-  for (
-    std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it = off_grid_spike_register_[ tid ].begin();
-    it != off_grid_spike_register_[ tid ].end();
-    ++it )
+  for ( std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it =
+          off_grid_spike_register_[ tid ].begin();
+        it != off_grid_spike_register_[ tid ].end();
+        ++it )
   {
     it->resize( kernel().connection_manager.get_min_delay(), std::vector< OffGridTarget >() );
   }

@@ -142,8 +142,8 @@ public:
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
-  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
@@ -281,7 +281,7 @@ stdp_nn_restr_synapse< targetidentifierT >::send( Event& e, thread t, const Comm
       value_to_throw_away, // discard Kminus
       nearest_neighbor_Kminus,
       value_to_throw_away // discard Kminus_triplet
-      );
+    );
     weight_ = depress_( weight_, nearest_neighbor_Kminus );
   }
 
@@ -316,14 +316,14 @@ void
 stdp_nn_restr_synapse< targetidentifierT >::get_status( dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  d[ names::weight.toString() ] = weight_;
-  d[ names::tau_plus.toString() ] = tau_plus_;
-  d[ names::lambda.toString() ] = lambda_;
-  d[ names::alpha.toString() ] = alpha_;
-  d[ names::mu_plus.toString() ] = mu_plus_;
-  d[ names::mu_minus.toString() ] = mu_minus_;
-  d[ names::Wmax.toString() ] = Wmax_;
-  d[ names::size_of.toString() ] = sizeof( *this );
+  d[ names::weight ] = weight_;
+  d[ names::tau_plus ] = tau_plus_;
+  d[ names::lambda ] = lambda_;
+  d[ names::alpha ] = alpha_;
+  d[ names::mu_plus ] = mu_plus_;
+  d[ names::mu_minus ] = mu_minus_;
+  d[ names::Wmax ] = Wmax_;
+  d[ names::size_of ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
@@ -331,13 +331,13 @@ void
 stdp_nn_restr_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  d.update_value( names::weight.toString(), weight_ );
-  d.update_value( names::tau_plus.toString(), tau_plus_ );
-  d.update_value( names::lambda.toString(), lambda_ );
-  d.update_value( names::alpha.toString(), alpha_ );
-  d.update_value( names::mu_plus.toString(), mu_plus_ );
-  d.update_value( names::mu_minus.toString(), mu_minus_ );
-  d.update_value( names::Wmax.toString(), Wmax_ );
+  d.update_value( names::weight, weight_ );
+  d.update_value( names::tau_plus, tau_plus_ );
+  d.update_value( names::lambda, lambda_ );
+  d.update_value( names::alpha, alpha_ );
+  d.update_value( names::mu_plus, mu_plus_ );
+  d.update_value( names::mu_minus, mu_minus_ );
+  d.update_value( names::Wmax, Wmax_ );
 
   // check if weight_ and Wmax_ have the same sign
   if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) )

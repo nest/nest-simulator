@@ -36,8 +36,8 @@
 #include "logging.h"
 
 // Includes from nestkernel:
-#include "kernel_manager.h"
 #include "event_delivery_manager_impl.h"
+#include "kernel_manager.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -61,7 +61,7 @@ nest::music_rate_in_proxy::State_::State_()
 void
 nest::music_rate_in_proxy::Parameters_::get( dictionary& d ) const
 {
-  d[ names::port_name.toString() ] = port_name_;
+  d[ names::port_name ] = port_name_;
 }
 
 void
@@ -73,15 +73,15 @@ nest::music_rate_in_proxy::Parameters_::set( const dictionary& d, State_& s )
 
   if ( not s.registered_ )
   {
-    d.update_value( names::port_name.toString(), port_name_ );
-    d.update_value( names::music_channel.toString(), channel_ );
+    d.update_value( names::port_name, port_name_ );
+    d.update_value( names::music_channel, channel_ );
   }
 }
 
 void
 nest::music_rate_in_proxy::State_::get( dictionary& d ) const
 {
-  d[ names::registered.toString() ] = registered_;
+  d[ names::registered ] = registered_;
 }
 
 void
@@ -136,7 +136,7 @@ nest::music_rate_in_proxy::get_status( dictionary& d ) const
   P_.get( d );
   S_.get( d );
 
-  d[ names::data.toString() ] = DoubleVectorDatum( new std::vector< double >( 1, B_.data_ ) );
+  d[ names::data ] = DoubleVectorDatum( new std::vector< double >( 1, B_.data_ ) );
 }
 
 void

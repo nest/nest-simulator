@@ -53,19 +53,19 @@ CommonSynapseProperties::get_status( dictionary& d ) const
 {
   if ( weight_recorder_.get() )
   {
-    d[ names::weight_recorder.toString() ] = weight_recorder_;
+    d[ names::weight_recorder ] = weight_recorder_;
   }
   else
   {
     ArrayDatum ad;
-    d[ names::weight_recorder.toString() ] = ad;
+    d[ names::weight_recorder ] = ad;
   }
 }
 
 void
 CommonSynapseProperties::set_status( const dictionary& d, ConnectorModel& )
 {
-  const bool update_wr = d.update_value( names::weight_recorder.toString(), weight_recorder_ );
+  const bool update_wr = d.update_value( names::weight_recorder, weight_recorder_ );
   if ( update_wr and weight_recorder_->size() > 1 )
   {
     throw BadProperty( "weight_recorder must be a single element NodeCollection" );

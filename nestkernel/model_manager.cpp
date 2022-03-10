@@ -177,7 +177,7 @@ void
 ModelManager::get_status( dictionary& dict )
 {
   // syn_ids start at 0, so the maximal number of syn models is MAX_SYN_ID + 1
-  dict[ names::max_num_syn_models.toString() ] = MAX_SYN_ID + 1;
+  dict[ names::max_num_syn_models ] = MAX_SYN_ID + 1;
 }
 
 index
@@ -397,7 +397,7 @@ ModelManager::get_connector_defaults( synindex syn_id ) const
     prototypes_[ t ][ syn_id ]->get_status( dict );
   }
 
-  dict[ names::num_connections.toString() ] = kernel().connection_manager.get_num_connections( syn_id );
+  dict[ names::num_connections ] = kernel().connection_manager.get_num_connections( syn_id );
 
   return dict;
 }

@@ -329,11 +329,11 @@ stdp_synapse_hom< targetidentifierT >::get_status( dictionary& d ) const
 
   // base class properties, different for individual synapse
   ConnectionBase::get_status( d );
-  d[ names::weight.toString() ] = weight_;
+  d[ names::weight ] = weight_;
 
   // own properties, different for individual synapse
-  d[ names::Kplus.toString() ] = Kplus_;
-  d[ names::size_of.toString() ] = sizeof( *this );
+  d[ names::Kplus ] = Kplus_;
+  d[ names::size_of ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
@@ -342,9 +342,9 @@ stdp_synapse_hom< targetidentifierT >::set_status( const dictionary& d, Connecto
 {
   // base class properties
   ConnectionBase::set_status( d, cm );
-  d.update_value( names::weight.toString(), weight_ );
+  d.update_value( names::weight, weight_ );
 
-  d.update_value( names::Kplus.toString(), Kplus_ );
+  d.update_value( names::Kplus, Kplus_ );
 }
 
 } // of namespace nest

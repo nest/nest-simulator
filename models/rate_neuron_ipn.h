@@ -36,8 +36,8 @@
 #include "nest_types.h"
 #include "node.h"
 #include "random_generators.h"
-#include "ring_buffer.h"
 #include "recordables_map.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 namespace nest
@@ -116,8 +116,8 @@ public:
    * Hiding
    */
   using Node::handle;
-  using Node::sends_secondary_event;
   using Node::handles_test_event;
+  using Node::sends_secondary_event;
 
   void handle( InstantaneousRateConnectionEvent& );
   void handle( DelayedRateConnectionEvent& );
@@ -350,7 +350,7 @@ rate_neuron_ipn< TNonlinearities >::get_status( dictionary& d ) const
   P_.get( d );
   S_.get( d );
   ArchivingNode::get_status( d );
-  d[ names::recordables.toString() ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 
   nonlinearities_.get( d );
 }

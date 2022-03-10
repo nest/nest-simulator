@@ -97,17 +97,17 @@ nest::StimulationDevice::Parameters_::Parameters_()
 void
 nest::StimulationDevice::Parameters_::get( dictionary& d ) const
 {
-  d[ names::label.toString() ] = label_;
-  d[ names::stimulus_source.toString() ] = stimulus_source_.toString();
+  d[ names::label ] = label_;
+  d[ names::stimulus_source ] = stimulus_source_.toString();
 }
 
 void
 nest::StimulationDevice::Parameters_::set( const dictionary& d )
 {
-  d.update_value( names::label.toString(), label_ );
+  d.update_value( names::label, label_ );
 
   std::string stimulus_source;
-  if ( d.update_value( names::stimulus_source.toString(), stimulus_source ) )
+  if ( d.update_value( names::stimulus_source, stimulus_source ) )
   {
 
     if ( not kernel().io_manager.is_valid_stimulation_backend( stimulus_source ) )
@@ -169,7 +169,7 @@ nest::StimulationDevice::get_status( dictionary& d ) const
 
   Device::get_status( d );
 
-  d[ names::element_type.toString() ] = names::stimulator.toString();
+  d[ names::element_type ] = names::stimulator;
 
   if ( get_node_id() == 0 ) // this is a model prototype, not an actual instance
   {

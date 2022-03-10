@@ -278,8 +278,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_chxk_2008& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, iaf_chxk_2008& ); //!<Sets buffer pointers to 0
+    Buffers_( iaf_chxk_2008& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, iaf_chxk_2008& ); //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< iaf_chxk_2008 > logger_;
@@ -433,7 +433,7 @@ iaf_chxk_2008::get_status( dictionary& d ) const
   S_.get( d );
   ArchivingNode::get_status( d );
 
-  d[ names::recordables.toString() ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void

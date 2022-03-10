@@ -70,7 +70,8 @@ nest::correlomatrix_detector::Parameters_::Parameters_( const Parameters_& p )
   Tstop_.calibrate();
 }
 
-nest::correlomatrix_detector::Parameters_& nest::correlomatrix_detector::Parameters_::operator=( const Parameters_& p )
+nest::correlomatrix_detector::Parameters_&
+nest::correlomatrix_detector::Parameters_::operator=( const Parameters_& p )
 {
   delta_tau_ = p.delta_tau_;
   tau_max_ = p.tau_max_;
@@ -102,17 +103,17 @@ nest::correlomatrix_detector::State_::State_()
 void
 nest::correlomatrix_detector::Parameters_::get( dictionary& d ) const
 {
-  d[ names::delta_tau.toString() ] = delta_tau_.get_ms();
-  d[ names::tau_max.toString() ] = tau_max_.get_ms();
-  d[ names::Tstart.toString() ] = Tstart_.get_ms();
-  d[ names::Tstop.toString() ] = Tstop_.get_ms();
-  d[ names::N_channels.toString() ] = N_channels_;
+  d[ names::delta_tau ] = delta_tau_.get_ms();
+  d[ names::tau_max ] = tau_max_.get_ms();
+  d[ names::Tstart ] = Tstart_.get_ms();
+  d[ names::Tstop ] = Tstop_.get_ms();
+  d[ names::N_channels ] = N_channels_;
 }
 
 void
 nest::correlomatrix_detector::State_::get( dictionary& d ) const
 {
-  d[ names::n_events.toString() ] = IntVectorDatum( new std::vector< long >( n_events_ ) );
+  d[ names::n_events ] = IntVectorDatum( new std::vector< long >( n_events_ ) );
 
   ArrayDatum* C = new ArrayDatum;
   ArrayDatum* CountC = new ArrayDatum;
@@ -128,8 +129,8 @@ nest::correlomatrix_detector::State_::get( dictionary& d ) const
     C->push_back( *C_i );
     CountC->push_back( *CountC_i );
   }
-  d[ names::covariance.toString() ] = C;
-  d[ names::count_covariance.toString() ] = CountC;
+  d[ names::covariance ] = C;
+  d[ names::count_covariance ] = CountC;
 }
 
 bool
@@ -139,7 +140,7 @@ nest::correlomatrix_detector::Parameters_::set( const dictionary& d, const corre
   double t;
   long N;
 
-  if ( update_value_param( d, names::N_channels.toString(), N, node ) )
+  if ( update_value_param( d, names::N_channels, N, node ) )
   {
     if ( N < 1 )
     {
@@ -152,25 +153,25 @@ nest::correlomatrix_detector::Parameters_::set( const dictionary& d, const corre
     }
   }
 
-  if ( update_value_param( d, names::delta_tau.toString(), t, node ) )
+  if ( update_value_param( d, names::delta_tau, t, node ) )
   {
     delta_tau_ = Time::ms( t );
     reset = true;
   }
 
-  if ( update_value_param( d, names::tau_max.toString(), t, node ) )
+  if ( update_value_param( d, names::tau_max, t, node ) )
   {
     tau_max_ = Time::ms( t );
     reset = true;
   }
 
-  if ( update_value_param( d, names::Tstart.toString(), t, node ) )
+  if ( update_value_param( d, names::Tstart, t, node ) )
   {
     Tstart_ = Time::ms( t );
     reset = true;
   }
 
-  if ( update_value_param( d, names::Tstop.toString(), t, node ) )
+  if ( update_value_param( d, names::Tstop, t, node ) )
   {
     Tstop_ = Time::ms( t );
     reset = true;
@@ -360,8 +361,9 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
 
         if ( sender_ind <= other_ind )
         {
-          bin = -1. * std::floor( ( 0.5 * P_.delta_tau_.get_steps() - std::abs( spike_i - spike_j->timestep_ ) )
-                        / P_.delta_tau_.get_steps() );
+          bin = -1.
+            * std::floor( ( 0.5 * P_.delta_tau_.get_steps() - std::abs( spike_i - spike_j->timestep_ ) )
+              / P_.delta_tau_.get_steps() );
         }
         else
         {

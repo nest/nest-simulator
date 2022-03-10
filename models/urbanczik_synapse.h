@@ -132,8 +132,8 @@ public:
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
-  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
@@ -294,12 +294,12 @@ void
 urbanczik_synapse< targetidentifierT >::get_status( dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  d[ names::weight.toString() ] = weight_;
-  d[ names::tau_Delta.toString() ] = tau_Delta_;
-  d[ names::eta.toString() ] = eta_;
-  d[ names::Wmin.toString() ] = Wmin_;
-  d[ names::Wmax.toString() ] = Wmax_;
-  d[ names::size_of.toString() ] = sizeof( *this );
+  d[ names::weight ] = weight_;
+  d[ names::tau_Delta ] = tau_Delta_;
+  d[ names::eta ] = eta_;
+  d[ names::Wmin ] = Wmin_;
+  d[ names::Wmax ] = Wmax_;
+  d[ names::size_of ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
@@ -307,11 +307,11 @@ void
 urbanczik_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  d.update_value( names::weight.toString(), weight_ );
-  d.update_value( names::tau_Delta.toString(), tau_Delta_ );
-  d.update_value( names::eta.toString(), eta_ );
-  d.update_value( names::Wmin.toString(), Wmin_ );
-  d.update_value( names::Wmax.toString(), Wmax_ );
+  d.update_value( names::weight, weight_ );
+  d.update_value( names::tau_Delta, tau_Delta_ );
+  d.update_value( names::eta, eta_ );
+  d.update_value( names::Wmin, Wmin_ );
+  d.update_value( names::Wmax, Wmax_ );
 
   init_weight_ = weight_;
   // check if weight_ and Wmin_ has the same sign

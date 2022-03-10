@@ -195,11 +195,11 @@ nest::MPIManager::finalize()
 void
 nest::MPIManager::set_status( const dictionary& dict )
 {
-  dict.update_value( names::adaptive_target_buffers.toString(), adaptive_target_buffers_ );
-  dict.update_value( names::adaptive_spike_buffers.toString(), adaptive_spike_buffers_ );
+  dict.update_value( names::adaptive_target_buffers, adaptive_target_buffers_ );
+  dict.update_value( names::adaptive_spike_buffers, adaptive_spike_buffers_ );
 
   long new_buffer_size_target_data = buffer_size_target_data_;
-  dict.update_value( names::buffer_size_target_data.toString(), new_buffer_size_target_data );
+  dict.update_value( names::buffer_size_target_data, new_buffer_size_target_data );
   if ( new_buffer_size_target_data != static_cast< long >( buffer_size_target_data_ )
     and new_buffer_size_target_data < static_cast< long >( max_buffer_size_target_data_ ) )
   {
@@ -207,36 +207,36 @@ nest::MPIManager::set_status( const dictionary& dict )
   }
 
   long new_buffer_size_spike_data = buffer_size_spike_data_;
-  dict.update_value( names::buffer_size_spike_data.toString(), new_buffer_size_spike_data );
+  dict.update_value( names::buffer_size_spike_data, new_buffer_size_spike_data );
   if ( new_buffer_size_spike_data != static_cast< long >( buffer_size_spike_data_ )
     and new_buffer_size_spike_data < static_cast< long >( max_buffer_size_spike_data_ ) )
   {
     set_buffer_size_spike_data( new_buffer_size_spike_data );
   }
 
-  dict.update_value( names::growth_factor_buffer_spike_data.toString(), growth_factor_buffer_spike_data_ );
-  dict.update_value( names::growth_factor_buffer_target_data.toString(), growth_factor_buffer_target_data_ );
+  dict.update_value( names::growth_factor_buffer_spike_data, growth_factor_buffer_spike_data_ );
+  dict.update_value( names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
 
-  dict.update_value( names::max_buffer_size_target_data.toString(), max_buffer_size_target_data_ );
-  dict.update_value( names::max_buffer_size_spike_data.toString(), max_buffer_size_spike_data_ );
+  dict.update_value( names::max_buffer_size_target_data, max_buffer_size_target_data_ );
+  dict.update_value( names::max_buffer_size_spike_data, max_buffer_size_spike_data_ );
 
-  dict.update_value( names::shrink_factor_buffer_spike_data.toString(), shrink_factor_buffer_spike_data_ );
+  dict.update_value( names::shrink_factor_buffer_spike_data, shrink_factor_buffer_spike_data_ );
 }
 
 void
 nest::MPIManager::get_status( dictionary& dict )
 {
-  dict[ names::num_processes.toString() ] = num_processes_;
-  dict[ names::adaptive_spike_buffers.toString() ] = adaptive_spike_buffers_;
-  dict[ names::adaptive_target_buffers.toString() ] = adaptive_target_buffers_;
-  dict[ names::buffer_size_target_data.toString() ] = buffer_size_target_data_;
-  dict[ names::buffer_size_spike_data.toString() ] = buffer_size_spike_data_;
-  dict[ names::send_buffer_size_secondary_events.toString() ] = get_send_buffer_size_secondary_events_in_int();
-  dict[ names::recv_buffer_size_secondary_events.toString() ] = get_recv_buffer_size_secondary_events_in_int();
-  dict[ names::max_buffer_size_spike_data.toString() ] = max_buffer_size_spike_data_;
-  dict[ names::max_buffer_size_target_data.toString() ] = max_buffer_size_target_data_;
-  dict[ names::growth_factor_buffer_spike_data.toString() ] = growth_factor_buffer_spike_data_;
-  dict[ names::growth_factor_buffer_target_data.toString() ] = growth_factor_buffer_target_data_;
+  dict[ names::num_processes ] = num_processes_;
+  dict[ names::adaptive_spike_buffers ] = adaptive_spike_buffers_;
+  dict[ names::adaptive_target_buffers ] = adaptive_target_buffers_;
+  dict[ names::buffer_size_target_data ] = buffer_size_target_data_;
+  dict[ names::buffer_size_spike_data ] = buffer_size_spike_data_;
+  dict[ names::send_buffer_size_secondary_events ] = get_send_buffer_size_secondary_events_in_int();
+  dict[ names::recv_buffer_size_secondary_events ] = get_recv_buffer_size_secondary_events_in_int();
+  dict[ names::max_buffer_size_spike_data ] = max_buffer_size_spike_data_;
+  dict[ names::max_buffer_size_target_data ] = max_buffer_size_target_data_;
+  dict[ names::growth_factor_buffer_spike_data ] = growth_factor_buffer_spike_data_;
+  dict[ names::growth_factor_buffer_target_data ] = growth_factor_buffer_target_data_;
 }
 
 #ifdef HAVE_MPI

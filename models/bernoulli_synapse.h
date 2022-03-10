@@ -192,9 +192,9 @@ void
 bernoulli_synapse< targetidentifierT >::get_status( dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  d[ names::weight.toString() ] = weight_;
-  d[ names::p_transmit.toString() ] = p_transmit_;
-  d[ names::size_of.toString() ] = sizeof( *this );
+  d[ names::weight ] = weight_;
+  d[ names::p_transmit ] = p_transmit_;
+  d[ names::size_of ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
@@ -202,8 +202,8 @@ void
 bernoulli_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  d.update_value( names::weight.toString(), weight_ );
-  d.update_value( names::p_transmit.toString(), p_transmit_ );
+  d.update_value( names::weight, weight_ );
+  d.update_value( names::p_transmit, p_transmit_ );
 
   if ( p_transmit_ < 0 || p_transmit_ > 1 )
   {

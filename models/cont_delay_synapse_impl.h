@@ -50,9 +50,9 @@ cont_delay_synapse< targetidentifierT >::get_status( dictionary& d ) const
 {
   ConnectionBase::get_status( d );
 
-  d[ names::weight.toString() ] = weight_;
-  d[ names::delay.toString() ] = Time( Time::step( get_delay_steps() ) ).get_ms() - delay_offset_;
-  d[ names::size_of.toString() ] = sizeof( *this );
+  d[ names::weight ] = weight_;
+  d[ names::delay ] = Time( Time::step( get_delay_steps() ) ).get_ms() - delay_offset_;
+  d[ names::size_of ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
@@ -61,12 +61,12 @@ cont_delay_synapse< targetidentifierT >::set_status( const dictionary& d, Connec
 {
   ConnectionBase::set_status( d, cm );
 
-  d.update_value( names::weight.toString(), weight_ );
+  d.update_value( names::weight, weight_ );
 
   // set delay if mentioned
   double delay;
 
-  if ( d.update_value( names::delay.toString(), delay ) )
+  if ( d.update_value( names::delay, delay ) )
   {
 
     const double h = Time::get_resolution().get_ms();
@@ -94,7 +94,7 @@ template < typename targetidentifierT >
 void
 cont_delay_synapse< targetidentifierT >::check_synapse_params( const dictionary& syn_spec ) const
 {
-  if ( syn_spec.known( names::delay.toString() ) )
+  if ( syn_spec.known( names::delay ) )
   {
     LOG( M_WARNING,
       "Connect",

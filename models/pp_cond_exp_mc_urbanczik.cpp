@@ -149,7 +149,8 @@ nest::pp_cond_exp_mc_urbanczik_dynamics( double, const double y[], double f[], v
     // In the paper the resting potential is set to zero and
     // the capacitance to one.
     f[ S::idx( n, S::V_M ) ] = ( -node.P_.urbanczik_params.g_L[ n ] * ( V_dnd - node.P_.urbanczik_params.E_L[ n ] )
-                                 + I_syn_ex + I_syn_in + I_conn_s_d ) / node.P_.urbanczik_params.C_m[ n ];
+                                 + I_syn_ex + I_syn_in + I_conn_s_d )
+      / node.P_.urbanczik_params.C_m[ n ];
 
     // derivative dendritic current
     f[ S::idx( n, S::I_EXC ) ] = -I_syn_ex / node.P_.urbanczik_params.tau_syn_ex[ n ];
@@ -239,8 +240,8 @@ nest::pp_cond_exp_mc_urbanczik::Parameters_::Parameters_( const Parameters_& p )
   }
 }
 
-nest::pp_cond_exp_mc_urbanczik::Parameters_& nest::pp_cond_exp_mc_urbanczik::Parameters_::operator=(
-  const Parameters_& p )
+nest::pp_cond_exp_mc_urbanczik::Parameters_&
+nest::pp_cond_exp_mc_urbanczik::Parameters_::operator=( const Parameters_& p )
 {
   assert( this != &p ); // would be bad logical error in program
 
@@ -291,7 +292,8 @@ nest::pp_cond_exp_mc_urbanczik::State_::State_( const State_& s )
   }
 }
 
-nest::pp_cond_exp_mc_urbanczik::State_& nest::pp_cond_exp_mc_urbanczik::State_::operator=( const State_& s )
+nest::pp_cond_exp_mc_urbanczik::State_&
+nest::pp_cond_exp_mc_urbanczik::State_::operator=( const State_& s )
 {
   r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -328,28 +330,28 @@ nest::pp_cond_exp_mc_urbanczik::Buffers_::Buffers_( const Buffers_&, pp_cond_exp
 void
 nest::pp_cond_exp_mc_urbanczik::Parameters_::get( dictionary& d ) const
 {
-  d[ names::t_ref.toString() ] = t_ref;
-  d[ names::phi_max.toString() ] = urbanczik_params.phi_max;
-  d[ names::rate_slope.toString() ] = urbanczik_params.rate_slope;
-  d[ names::beta.toString() ] = urbanczik_params.beta;
-  d[ names::theta.toString() ] = urbanczik_params.theta;
+  d[ names::t_ref ] = t_ref;
+  d[ names::phi_max ] = urbanczik_params.phi_max;
+  d[ names::rate_slope ] = urbanczik_params.rate_slope;
+  d[ names::beta ] = urbanczik_params.beta;
+  d[ names::theta ] = urbanczik_params.theta;
 
-  d[ names::g_sp.toString() ] = urbanczik_params.g_conn[ SOMA ];
-  d[ names::g_ps.toString() ] = urbanczik_params.g_conn[ DEND ];
+  d[ names::g_sp ] = urbanczik_params.g_conn[ SOMA ];
+  d[ names::g_ps ] = urbanczik_params.g_conn[ DEND ];
 
   // create subdictionaries for per-compartment parameters
   for ( size_t n = 0; n < NCOMP; ++n )
   {
     dictionary dd;
 
-    dd[ names::g_L.toString() ] = urbanczik_params.g_L[ n ];
-    dd[ names::E_L.toString() ] = urbanczik_params.E_L[ n ];
-    dd[ names::E_ex.toString() ] = E_ex[ n ];
-    dd[ names::E_in.toString() ] = E_in[ n ];
-    dd[ names::C_m.toString() ] = urbanczik_params.C_m[ n ];
-    dd[ names::tau_syn_ex.toString() ] = urbanczik_params.tau_syn_ex[ n ];
-    dd[ names::tau_syn_in.toString() ] = urbanczik_params.tau_syn_in[ n ];
-    dd[ names::I_e.toString() ] = I_e[ n ];
+    dd[ names::g_L ] = urbanczik_params.g_L[ n ];
+    dd[ names::E_L ] = urbanczik_params.E_L[ n ];
+    dd[ names::E_ex ] = E_ex[ n ];
+    dd[ names::E_in ] = E_in[ n ];
+    dd[ names::C_m ] = urbanczik_params.C_m[ n ];
+    dd[ names::tau_syn_ex ] = urbanczik_params.tau_syn_ex[ n ];
+    dd[ names::tau_syn_in ] = urbanczik_params.tau_syn_in[ n ];
+    dd[ names::I_e ] = I_e[ n ];
 
     d[ comp_names_[ n ].toString() ] = dd;
   }
@@ -359,11 +361,11 @@ void
 nest::pp_cond_exp_mc_urbanczik::Parameters_::set( const dictionary& d )
 {
   // allow setting the membrane potential
-  d.update_value( names::t_ref.toString(), t_ref );
-  d.update_value( names::phi_max.toString(), urbanczik_params.phi_max );
-  d.update_value( names::rate_slope.toString(), urbanczik_params.rate_slope );
-  d.update_value( names::beta.toString(), urbanczik_params.beta );
-  d.update_value( names::theta.toString(), urbanczik_params.theta );
+  d.update_value( names::t_ref, t_ref );
+  d.update_value( names::phi_max, urbanczik_params.phi_max );
+  d.update_value( names::rate_slope, urbanczik_params.rate_slope );
+  d.update_value( names::beta, urbanczik_params.beta );
+  d.update_value( names::theta, urbanczik_params.theta );
 
   d.update_value( Name( names::g_sp ).toString(), urbanczik_params.g_conn[ SOMA ] );
   d.update_value( Name( names::g_ps ).toString(), urbanczik_params.g_conn[ DEND ] );
@@ -375,14 +377,14 @@ nest::pp_cond_exp_mc_urbanczik::Parameters_::set( const dictionary& d )
     {
       auto dd = d.get< dictionary >( comp_names_[ n ].toString() );
 
-      dd.update_value( names::E_L.toString(), urbanczik_params.E_L[ n ] );
-      dd.update_value( names::E_ex.toString(), E_ex[ n ] );
-      dd.update_value( names::E_in.toString(), E_in[ n ] );
-      dd.update_value( names::C_m.toString(), urbanczik_params.C_m[ n ] );
-      dd.update_value( names::g_L.toString(), urbanczik_params.g_L[ n ] );
-      dd.update_value( names::tau_syn_ex.toString(), urbanczik_params.tau_syn_ex[ n ] );
-      dd.update_value( names::tau_syn_in.toString(), urbanczik_params.tau_syn_in[ n ] );
-      dd.update_value( names::I_e.toString(), I_e[ n ] );
+      dd.update_value( names::E_L, urbanczik_params.E_L[ n ] );
+      dd.update_value( names::E_ex, E_ex[ n ] );
+      dd.update_value( names::E_in, E_in[ n ] );
+      dd.update_value( names::C_m, urbanczik_params.C_m[ n ] );
+      dd.update_value( names::g_L, urbanczik_params.g_L[ n ] );
+      dd.update_value( names::tau_syn_ex, urbanczik_params.tau_syn_ex[ n ] );
+      dd.update_value( names::tau_syn_in, urbanczik_params.tau_syn_in[ n ] );
+      dd.update_value( names::I_e, I_e[ n ] );
     }
   }
   if ( urbanczik_params.rate_slope < 0 )
@@ -425,7 +427,7 @@ nest::pp_cond_exp_mc_urbanczik::State_::get( dictionary& d ) const
     assert( d.known( comp_names_[ n ].toString() ) );
     auto dd = d.get< dictionary >( comp_names_[ n ].toString() );
 
-    dd[ names::V_m.toString() ] = y_[ idx( n, V_M ) ]; // Membrane potential
+    dd[ names::V_m ] = y_[ idx( n, V_M ) ]; // Membrane potential
   }
 }
 
@@ -438,7 +440,7 @@ nest::pp_cond_exp_mc_urbanczik::State_::set( const dictionary& d, const Paramete
     if ( d.known( comp_names_[ n ].toString() ) )
     {
       auto dd = d.get< dictionary >( comp_names_[ n ].toString() );
-      dd.update_value( names::V_m.toString(), y_[ idx( n, V_M ) ] );
+      dd.update_value( names::V_m, y_[ idx( n, V_M ) ] );
     }
   }
 }

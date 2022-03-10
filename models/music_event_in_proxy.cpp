@@ -39,8 +39,8 @@
 #include "logging.h"
 
 // Includes from nestkernel:
-#include "kernel_manager.h"
 #include "event_delivery_manager_impl.h"
+#include "kernel_manager.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -65,8 +65,8 @@ nest::music_event_in_proxy::State_::State_()
 void
 nest::music_event_in_proxy::Parameters_::get( dictionary& d ) const
 {
-  d[ names::music_channel.toString() ] = channel_;
-  d[ names::port_name.toString() ] = port_name_;
+  d[ names::music_channel ] = channel_;
+  d[ names::port_name ] = port_name_;
 }
 
 void
@@ -74,15 +74,15 @@ nest::music_event_in_proxy::Parameters_::set( const dictionary& d, State_& s )
 {
   if ( not s.registered_ )
   {
-    d.update_value( names::music_channel.toString(), channel_ );
-    d.update_value( names::port_name.toString(), port_name_ );
+    d.update_value( names::music_channel, channel_ );
+    d.update_value( names::port_name, port_name_ );
   }
 }
 
 void
 nest::music_event_in_proxy::State_::get( dictionary& d ) const
 {
-  d[ names::registered.toString() ] = registered_;
+  d[ names::registered ] = registered_;
 }
 
 void

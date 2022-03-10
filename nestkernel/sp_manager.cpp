@@ -98,17 +98,17 @@ SPManager::get_status( dictionary& d )
   for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin(); i != sp_conn_builders_.end(); i++ )
   {
     dictionary sp_synapse;
-    sp_synapse[ names::pre_synaptic_element.toString() ] = ( *i )->get_pre_synaptic_element_name();
-    sp_synapse[ names::post_synaptic_element.toString() ] = ( *i )->get_post_synaptic_element_name();
-    sp_synapse[ names::synapse_model.toString() ] =
+    sp_synapse[ names::pre_synaptic_element ] = ( *i )->get_pre_synaptic_element_name();
+    sp_synapse[ names::post_synaptic_element ] = ( *i )->get_post_synaptic_element_name();
+    sp_synapse[ names::synapse_model ] =
       kernel().model_manager.get_synapse_prototype( ( *i )->get_synapse_model(), 0 ).get_name();
     std::stringstream syn_name;
     syn_name << "syn" << ( sp_conn_builders_.end() - i );
     sp_synapses[ syn_name.str() ] = sp_synapse;
   }
 
-  d[ names::structural_plasticity_synapses.toString() ] = sp_synapses;
-  d[ names::structural_plasticity_update_interval.toString() ] = structural_plasticity_update_interval_;
+  d[ names::structural_plasticity_synapses ] = sp_synapses;
+  d[ names::structural_plasticity_update_interval ] = structural_plasticity_update_interval_;
 }
 
 /**
@@ -119,12 +119,11 @@ SPManager::get_status( dictionary& d )
 void
 SPManager::set_status( const dictionary& d )
 {
-  if ( d.known( names::structural_plasticity_update_interval.toString() ) )
+  if ( d.known( names::structural_plasticity_update_interval ) )
   {
-    d.update_value< double >(
-      names::structural_plasticity_update_interval.toString(), structural_plasticity_update_interval_ );
+    d.update_value< double >( names::structural_plasticity_update_interval, structural_plasticity_update_interval_ );
   }
-  if ( not d.known( names::structural_plasticity_synapses.toString() ) )
+  if ( not d.known( names::structural_plasticity_synapses ) )
   {
     return;
   } /*
@@ -135,13 +134,13 @@ SPManager::set_status( const dictionary& d )
   dictionary syn_spec;
   dictionary conn_spec;
 
-  if ( d.known( names::allow_autapses.toString() ) )
+  if ( d.known( names::allow_autapses ) )
   {
-    conn_spec[ names::allow_autapses.toString() ] = d.get< bool >( names::allow_autapses.toString() );
+    conn_spec[ names::allow_autapses ] = d.get< bool >( names::allow_autapses );
   }
-  if ( d.known( names::allow_multapses.toString() ) )
+  if ( d.known( names::allow_multapses ) )
   {
-    conn_spec[ names::allow_multapses.toString() ] = d.get< bool >( names::allow_multapses.toString() );
+    conn_spec[ names::allow_multapses ] = d.get< bool >( names::allow_multapses );
   }
   NodeCollectionPTR sources( new NodeCollectionPrimitive() );
   NodeCollectionPTR targets( new NodeCollectionPrimitive() );
@@ -151,7 +150,7 @@ SPManager::set_status( const dictionary& d )
     delete ( *i );
   }
   sp_conn_builders_.clear();
-  d.update_value< dictionary >( names::structural_plasticity_synapses.toString(), syn_specs );
+  d.update_value< dictionary >( names::structural_plasticity_synapses, syn_specs );
   for ( auto& kv_pair : syn_specs )
   {
     syn_spec = boost::any_cast< dictionary >( kv_pair.second );
@@ -280,11 +279,11 @@ SPManager::disconnect( NodeCollectionPTR sources,
   conn_spec.init_access_flags();
   syn_spec.init_access_flags();
 
-  if ( not conn_spec.known( names::rule.toString() ) )
+  if ( not conn_spec.known( names::rule ) )
   {
     throw BadProperty( "Disconnection spec must contain disconnection rule." );
   }
-  const std::string rule_name = conn_spec.get< std::string >( names::rule.toString() );
+  const std::string rule_name = conn_spec.get< std::string >( names::rule );
 
   if ( not kernel().connection_manager.get_connruledict().known( rule_name ) )
   {
@@ -296,7 +295,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
 
     for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin(); i != sp_conn_builders_.end(); i++ )
     {
-      std::string synModel = syn_spec.get< std::string >( names::synapse_model.toString() );
+      std::string synModel = syn_spec.get< std::string >( names::synapse_model );
       if ( ( *i )->get_synapse_model()
         == ( index )( kernel().model_manager.get_synapsedict().get< synindex >( synModel ) ) )
       {

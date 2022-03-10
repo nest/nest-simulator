@@ -28,8 +28,8 @@
 #include <limits>
 
 // Includes from libnestutil:
-#include "numerics.h"
 #include "dict_util.h"
+#include "numerics.h"
 
 // Includes from nestkernel:
 #include "archiving_node.h"
@@ -91,8 +91,8 @@ public:
    */
   using Node::handle;
   using Node::handles_test_event;
-  using Node::sends_signal;
   using Node::receives_signal;
+  using Node::sends_signal;
 
   port send_test_event( Node&, rport, synindex, bool );
 
@@ -294,7 +294,7 @@ binary_neuron< TGainfunction >::get_status( dictionary& d ) const
   P_.get( d );
   S_.get( d, P_ );
   ArchivingNode::get_status( d );
-  d[ names::recordables.toString() ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 
   gain_.get( d );
 }
@@ -353,14 +353,14 @@ template < class TGainfunction >
 void
 binary_neuron< TGainfunction >::Parameters_::get( dictionary& d ) const
 {
-  d[ names::tau_m.toString() ] = tau_m_;
+  d[ names::tau_m ] = tau_m_;
 }
 
 template < class TGainfunction >
 void
 binary_neuron< TGainfunction >::Parameters_::set( const dictionary& d, Node* node )
 {
-  update_value_param( d, names::tau_m.toString(), tau_m_, node );
+  update_value_param( d, names::tau_m, tau_m_, node );
   if ( tau_m_ <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
@@ -371,8 +371,8 @@ template < class TGainfunction >
 void
 binary_neuron< TGainfunction >::State_::get( dictionary& d, const Parameters_& ) const
 {
-  d[ names::h.toString() ] = h_; // summed input
-  d[ names::S.toString() ] = y_; // binary_neuron output state
+  d[ names::h ] = h_; // summed input
+  d[ names::S ] = y_; // binary_neuron output state
 }
 
 template < class TGainfunction >

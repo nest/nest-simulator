@@ -71,17 +71,17 @@ nest::RecordingDevice::Parameters_::Parameters_()
 void
 nest::RecordingDevice::Parameters_::get( dictionary& d ) const
 {
-  d[ names::label.toString() ] = label_;
-  d[ names::record_to.toString() ] = record_to_.toString();
+  d[ names::label ] = label_;
+  d[ names::record_to ] = record_to_.toString();
 }
 
 void
 nest::RecordingDevice::Parameters_::set( const dictionary& d )
 {
-  d.update_value( names::label.toString(), label_ );
+  d.update_value( names::label, label_ );
 
   std::string record_to;
-  if ( d.update_value( names::record_to.toString(), record_to ) )
+  if ( d.update_value( names::record_to, record_to ) )
   {
     if ( not kernel().io_manager.is_valid_recording_backend( record_to ) )
     {
@@ -102,15 +102,15 @@ void
 nest::RecordingDevice::State_::get( dictionary& d ) const
 {
   size_t n_events = 0;
-  d.update_value( names::n_events.toString(), n_events );
-  d[ names::n_events.toString() ] = n_events + n_events_;
+  d.update_value( names::n_events, n_events );
+  d[ names::n_events ] = n_events + n_events_;
 }
 
 void
 nest::RecordingDevice::State_::set( const dictionary& d )
 {
   size_t n_events = 0;
-  if ( d.update_value( names::n_events.toString(), n_events ) )
+  if ( d.update_value( names::n_events, n_events ) )
   {
     if ( n_events != 0 )
     {
@@ -183,7 +183,7 @@ nest::RecordingDevice::get_status( dictionary& d ) const
 
   Device::get_status( d );
 
-  d[ names::element_type.toString() ] = names::recorder.toString();
+  d[ names::element_type ] = names::recorder;
 
   if ( get_node_id() == 0 ) // this is a model prototype, not an actual instance
   {

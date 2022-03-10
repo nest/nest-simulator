@@ -112,8 +112,9 @@ nest::aeif_psc_delta_clopath_dynamics( double, const double y[], double f[], voi
     node.P_.Delta_T == 0. ? 0. : ( node.P_.g_L * node.P_.Delta_T * std::exp( ( V - V_th ) / node.P_.Delta_T ) );
 
   // dv/dt
-  f[ S::V_M ] = ( is_refractory || is_clamped ) ? 0.0 : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - w + z
-                                                          + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
+  f[ S::V_M ] = ( is_refractory || is_clamped )
+    ? 0.0
+    : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - w + z + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
   // Adaptation current w.
   f[ S::W ] = is_clamped ? 0.0 : ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
@@ -186,7 +187,8 @@ nest::aeif_psc_delta_clopath::State_::State_( const State_& s )
   }
 }
 
-nest::aeif_psc_delta_clopath::State_& nest::aeif_psc_delta_clopath::State_::operator=( const State_& s )
+nest::aeif_psc_delta_clopath::State_&
+nest::aeif_psc_delta_clopath::State_::operator=( const State_& s )
 {
   r_ = s.r_;
   clamp_r_ = s.clamp_r_;
@@ -204,60 +206,60 @@ nest::aeif_psc_delta_clopath::State_& nest::aeif_psc_delta_clopath::State_::oper
 void
 nest::aeif_psc_delta_clopath::Parameters_::get( dictionary& d ) const
 {
-  d[ names::C_m.toString() ] = C_m;
-  d[ names::V_th_max.toString() ] = V_th_max;
-  d[ names::V_th_rest.toString() ] = V_th_rest;
-  d[ names::tau_V_th.toString() ] = tau_V_th;
-  d[ names::t_ref.toString() ] = t_ref_;
-  d[ names::g_L.toString() ] = g_L;
-  d[ names::E_L.toString() ] = E_L;
-  d[ names::V_reset.toString() ] = V_reset_;
-  d[ names::a.toString() ] = a;
-  d[ names::b.toString() ] = b;
-  d[ names::I_sp.toString() ] = I_sp;
-  d[ names::Delta_T.toString() ] = Delta_T;
-  d[ names::tau_w.toString() ] = tau_w;
-  d[ names::tau_z.toString() ] = tau_z;
-  d[ names::tau_plus.toString() ] = tau_plus;
-  d[ names::tau_minus.toString() ] = tau_minus;
-  d[ names::tau_bar_bar.toString() ] = tau_bar_bar;
-  d[ names::I_e.toString() ] = I_e;
-  d[ names::V_peak.toString() ] = V_peak_;
-  d[ names::gsl_error_tol.toString() ] = gsl_error_tol;
-  d[ names::V_clamp.toString() ] = V_clamp_;
-  d[ names::t_clamp.toString() ] = t_clamp_;
+  d[ names::C_m ] = C_m;
+  d[ names::V_th_max ] = V_th_max;
+  d[ names::V_th_rest ] = V_th_rest;
+  d[ names::tau_V_th ] = tau_V_th;
+  d[ names::t_ref ] = t_ref_;
+  d[ names::g_L ] = g_L;
+  d[ names::E_L ] = E_L;
+  d[ names::V_reset ] = V_reset_;
+  d[ names::a ] = a;
+  d[ names::b ] = b;
+  d[ names::I_sp ] = I_sp;
+  d[ names::Delta_T ] = Delta_T;
+  d[ names::tau_w ] = tau_w;
+  d[ names::tau_z ] = tau_z;
+  d[ names::tau_plus ] = tau_plus;
+  d[ names::tau_minus ] = tau_minus;
+  d[ names::tau_bar_bar ] = tau_bar_bar;
+  d[ names::I_e ] = I_e;
+  d[ names::V_peak ] = V_peak_;
+  d[ names::gsl_error_tol ] = gsl_error_tol;
+  d[ names::V_clamp ] = V_clamp_;
+  d[ names::t_clamp ] = t_clamp_;
 }
 
 void
 nest::aeif_psc_delta_clopath::Parameters_::set( const dictionary& d, Node* node )
 {
-  update_value_param( d, names::V_th_max.toString(), V_th_max, node );
-  update_value_param( d, names::V_th_rest.toString(), V_th_rest, node );
-  update_value_param( d, names::tau_V_th.toString(), tau_V_th, node );
-  update_value_param( d, names::V_peak.toString(), V_peak_, node );
-  update_value_param( d, names::t_ref.toString(), t_ref_, node );
-  update_value_param( d, names::E_L.toString(), E_L, node );
-  update_value_param( d, names::V_reset.toString(), V_reset_, node );
+  update_value_param( d, names::V_th_max, V_th_max, node );
+  update_value_param( d, names::V_th_rest, V_th_rest, node );
+  update_value_param( d, names::tau_V_th, tau_V_th, node );
+  update_value_param( d, names::V_peak, V_peak_, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::E_L, E_L, node );
+  update_value_param( d, names::V_reset, V_reset_, node );
 
-  update_value_param( d, names::C_m.toString(), C_m, node );
-  update_value_param( d, names::g_L.toString(), g_L, node );
+  update_value_param( d, names::C_m, C_m, node );
+  update_value_param( d, names::g_L, g_L, node );
 
-  update_value_param( d, names::a.toString(), a, node );
-  update_value_param( d, names::b.toString(), b, node );
-  update_value_param( d, names::I_sp.toString(), I_sp, node );
-  update_value_param( d, names::Delta_T.toString(), Delta_T, node );
-  update_value_param( d, names::tau_w.toString(), tau_w, node );
-  update_value_param( d, names::tau_z.toString(), tau_z, node );
-  update_value_param( d, names::tau_plus.toString(), tau_plus, node );
-  update_value_param( d, names::tau_minus.toString(), tau_minus, node );
-  update_value_param( d, names::tau_bar_bar.toString(), tau_bar_bar, node );
+  update_value_param( d, names::a, a, node );
+  update_value_param( d, names::b, b, node );
+  update_value_param( d, names::I_sp, I_sp, node );
+  update_value_param( d, names::Delta_T, Delta_T, node );
+  update_value_param( d, names::tau_w, tau_w, node );
+  update_value_param( d, names::tau_z, tau_z, node );
+  update_value_param( d, names::tau_plus, tau_plus, node );
+  update_value_param( d, names::tau_minus, tau_minus, node );
+  update_value_param( d, names::tau_bar_bar, tau_bar_bar, node );
 
-  update_value_param( d, names::I_e.toString(), I_e, node );
+  update_value_param( d, names::I_e, I_e, node );
 
-  update_value_param( d, names::gsl_error_tol.toString(), gsl_error_tol, node );
+  update_value_param( d, names::gsl_error_tol, gsl_error_tol, node );
 
-  update_value_param( d, names::V_clamp.toString(), V_clamp_, node );
-  update_value_param( d, names::t_clamp.toString(), t_clamp_, node );
+  update_value_param( d, names::V_clamp, V_clamp_, node );
+  update_value_param( d, names::t_clamp, t_clamp_, node );
 
   if ( V_reset_ >= V_peak_ )
   {
@@ -322,21 +324,21 @@ nest::aeif_psc_delta_clopath::Parameters_::set( const dictionary& d, Node* node 
 void
 nest::aeif_psc_delta_clopath::State_::get( dictionary& d ) const
 {
-  d[ names::V_m.toString() ] = y_[ V_M ];
-  d[ names::w.toString() ] = y_[ W ];
-  d[ names::u_bar_plus.toString() ] = y_[ U_BAR_PLUS ];
-  d[ names::u_bar_minus.toString() ] = y_[ U_BAR_MINUS ];
-  d[ names::u_bar_bar.toString() ] = y_[ U_BAR_BAR ];
+  d[ names::V_m ] = y_[ V_M ];
+  d[ names::w ] = y_[ W ];
+  d[ names::u_bar_plus ] = y_[ U_BAR_PLUS ];
+  d[ names::u_bar_minus ] = y_[ U_BAR_MINUS ];
+  d[ names::u_bar_bar ] = y_[ U_BAR_BAR ];
 }
 
 void
 nest::aeif_psc_delta_clopath::State_::set( const dictionary& d, const Parameters_&, Node* node )
 {
-  update_value_param( d, names::V_m.toString(), y_[ V_M ], node );
-  update_value_param( d, names::w.toString(), y_[ W ], node );
-  update_value_param( d, names::u_bar_plus.toString(), y_[ U_BAR_PLUS ], node );
-  update_value_param( d, names::u_bar_minus.toString(), y_[ U_BAR_MINUS ], node );
-  update_value_param( d, names::u_bar_bar.toString(), y_[ U_BAR_BAR ], node );
+  update_value_param( d, names::V_m, y_[ V_M ], node );
+  update_value_param( d, names::w, y_[ W ], node );
+  update_value_param( d, names::u_bar_plus, y_[ U_BAR_PLUS ], node );
+  update_value_param( d, names::u_bar_minus, y_[ U_BAR_MINUS ], node );
+  update_value_param( d, names::u_bar_bar, y_[ U_BAR_BAR ], node );
 }
 
 nest::aeif_psc_delta_clopath::Buffers_::Buffers_( aeif_psc_delta_clopath& n )
@@ -538,10 +540,10 @@ nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const
         S_.y_[ State_::V_TH ] = P_.V_th_max;
 
         /* Initialize clamping step counter.
-        * - We need to add 1 to compensate for count-down immediately after
-        *   while loop.
-        * - If neuron does not use clamping, set to 0
-        */
+         * - We need to add 1 to compensate for count-down immediately after
+         *   while loop.
+         * - If neuron does not use clamping, set to 0
+         */
         S_.clamp_r_ = V_.clamp_counts_ > 0 ? V_.clamp_counts_ + 1 : 0;
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
@@ -554,11 +556,11 @@ nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const
         S_.clamp_r_ = 0;
 
         /* Initialize refractory step counter.
-        * - We need to add 1 to compensate for count-down immediately after
-        *   while loop.
-        * - If neuron has no refractory time, set to 0 to avoid refractory
-        *   artifact inside while loop.
-        */
+         * - We need to add 1 to compensate for count-down immediately after
+         *   while loop.
+         * - If neuron has no refractory time, set to 0 to avoid refractory
+         *   artifact inside while loop.
+         */
         S_.r_ = V_.refractory_counts_ > 0 ? V_.refractory_counts_ + 1 : 0;
       }
 

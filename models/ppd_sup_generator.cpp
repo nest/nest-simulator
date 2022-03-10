@@ -120,31 +120,31 @@ nest::ppd_sup_generator::Parameters_::Parameters_()
 void
 nest::ppd_sup_generator::Parameters_::get( dictionary& d ) const
 {
-  d[ names::rate.toString() ] = rate_;
-  d[ names::dead_time.toString() ] = dead_time_;
-  d[ names::n_proc.toString() ] = n_proc_;
-  d[ names::frequency.toString() ] = frequency_;
-  d[ names::relative_amplitude.toString() ] = amplitude_;
+  d[ names::rate ] = rate_;
+  d[ names::dead_time ] = dead_time_;
+  d[ names::n_proc ] = n_proc_;
+  d[ names::frequency ] = frequency_;
+  d[ names::relative_amplitude ] = amplitude_;
 }
 
 void
 nest::ppd_sup_generator::Parameters_::set( const dictionary& d, Node* node )
 {
 
-  update_value_param( d, names::dead_time.toString(), dead_time_, node );
+  update_value_param( d, names::dead_time, dead_time_, node );
   if ( dead_time_ < 0 )
   {
     throw BadProperty( "The dead time cannot be negative." );
   }
 
-  update_value_param( d, names::rate.toString(), rate_, node );
+  update_value_param( d, names::rate, rate_, node );
   if ( 1000.0 / rate_ <= dead_time_ )
   {
     throw BadProperty( "The inverse rate has to be larger than the dead time." );
   }
 
   long n_proc_l = n_proc_;
-  update_value_param( d, names::n_proc.toString(), n_proc_l, node );
+  update_value_param( d, names::n_proc, n_proc_l, node );
   if ( n_proc_l < 1 )
   {
     throw BadProperty( "The number of component processes cannot be smaller than one" );
@@ -154,9 +154,9 @@ nest::ppd_sup_generator::Parameters_::set( const dictionary& d, Node* node )
     n_proc_ = static_cast< unsigned long >( n_proc_l );
   }
 
-  update_value_param( d, names::frequency.toString(), frequency_, node );
+  update_value_param( d, names::frequency, frequency_, node );
 
-  update_value_param( d, names::relative_amplitude.toString(), amplitude_, node );
+  update_value_param( d, names::relative_amplitude, amplitude_, node );
   if ( amplitude_ > 1.0 or amplitude_ < 0.0 )
   {
     throw BadProperty( "The relative amplitude of the rate modulation must be in [0,1]." );
@@ -306,11 +306,11 @@ nest::ppd_sup_generator::set_data_from_stimulation_backend( std::vector< double 
     }
     dictionary d;
     ( new Dictionary );
-    d[ names::dead_time.toString() ] = DoubleDatum( input_param[ 0 ] );
-    d[ names::rate.toString() ] = DoubleDatum( input_param[ 1 ] );
-    d[ names::n_proc.toString() ] = DoubleDatum( input_param[ 2 ] );
-    d[ names::frequency.toString() ] = DoubleDatum( input_param[ 3 ] );
-    d[ names::relative_amplitude.toString() ] = DoubleDatum( input_param[ 4 ] );
+    d[ names::dead_time ] = DoubleDatum( input_param[ 0 ] );
+    d[ names::rate ] = DoubleDatum( input_param[ 1 ] );
+    d[ names::n_proc ] = DoubleDatum( input_param[ 2 ] );
+    d[ names::frequency ] = DoubleDatum( input_param[ 3 ] );
+    d[ names::relative_amplitude ] = DoubleDatum( input_param[ 4 ] );
     ptmp.set( d, this );
   }
 

@@ -26,15 +26,15 @@
 #include <numeric>
 
 // Includes from libnestutil:
-#include "dict_util.h"
 #include "compose.hpp"
+#include "dict_util.h"
 #include "logging.h"
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
-#include "node_collection.h"
 #include "kernel_manager.h"
 #include "nest_datums.h"
+#include "node_collection.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -67,29 +67,28 @@ nest::weight_recorder::Parameters_::get( dictionary& d ) const
 {
   if ( senders_.get() )
   {
-    d[ names::senders.toString() ] = senders_;
+    d[ names::senders ] = senders_;
   }
   else
   {
     ArrayDatum ad;
-    d[ names::senders.toString() ] = ad;
+    d[ names::senders ] = ad;
   }
   if ( targets_.get() )
   {
-    d[ names::targets.toString() ] = targets_;
+    d[ names::targets ] = targets_;
   }
   else
   {
     ArrayDatum ad;
-    d[ names::targets.toString() ] = ad;
+    d[ names::targets ] = ad;
   }
 }
 
 void
 nest::weight_recorder::Parameters_::set( const dictionary& d )
 {
-  auto get_or_create_nc = [&d]( NodeCollectionDatum& nc, const std::string& key )
-  {
+  auto get_or_create_nc = [&d]( NodeCollectionDatum& nc, const std::string& key ) {
     const auto value = d.at( key );
     if ( is_nc( value ) )
     {
@@ -103,8 +102,8 @@ nest::weight_recorder::Parameters_::set( const dictionary& d )
     }
   };
 
-  get_or_create_nc( senders_, names::senders.toString() );
-  get_or_create_nc( targets_, names::targets.toString() );
+  get_or_create_nc( senders_, names::senders );
+  get_or_create_nc( targets_, names::targets );
 }
 
 void
@@ -179,7 +178,7 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
     write( e,
       { e.get_weight() },
       { static_cast< long >( e.get_receiver_node_id() ),
-       static_cast< long >( e.get_rport() ),
-       static_cast< long >( e.get_port() ) } );
+        static_cast< long >( e.get_rport() ),
+        static_cast< long >( e.get_port() ) } );
   }
 }

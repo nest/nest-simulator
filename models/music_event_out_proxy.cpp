@@ -63,7 +63,7 @@ nest::music_event_out_proxy::State_::State_()
 void
 nest::music_event_out_proxy::Parameters_::get( dictionary& d ) const
 {
-  d[ names::port_name.toString() ] = port_name_;
+  d[ names::port_name ] = port_name_;
 }
 
 void
@@ -75,15 +75,15 @@ nest::music_event_out_proxy::Parameters_::set( const dictionary& d, State_& s )
 
   if ( not s.published_ )
   {
-    d.update_value( names::port_name.toString(), port_name_ );
+    d.update_value( names::port_name, port_name_ );
   }
 }
 
 void
 nest::music_event_out_proxy::State_::get( dictionary& d ) const
 {
-  d[ names::published.toString() ] = published_;
-  d[ names::port_width.toString() ] = port_width_;
+  d[ names::published ] = published_;
+  d[ names::port_width ] = port_width_;
 }
 
 void
@@ -180,14 +180,14 @@ nest::music_event_out_proxy::get_status( dictionary& d ) const
   P_.get( d );
   S_.get( d );
 
-  d[ names::connection_count.toString() ] = V_.index_map_.size();
+  d[ names::connection_count ] = V_.index_map_.size();
 
   // make a copy, since MUSIC uses int instead of long int
   std::vector< long >* pInd_map_long = new std::vector< long >( V_.index_map_.size() );
   std::copy< std::vector< MUSIC::GlobalIndex >::const_iterator, std::vector< long >::iterator >(
     V_.index_map_.begin(), V_.index_map_.end(), pInd_map_long->begin() );
 
-  d[ names::index_map.toString() ] = IntVectorDatum( pInd_map_long );
+  d[ names::index_map ] = IntVectorDatum( pInd_map_long );
 }
 
 void

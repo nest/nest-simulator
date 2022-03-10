@@ -28,17 +28,17 @@ namespace nest
 void
 nonlinearities_gauss_rate::get( dictionary& d ) const
 {
-  d[ names::g.toString() ] = g_;
-  d[ names::mu.toString() ] = mu_;
-  d[ names::sigma.toString() ] = sigma_;
+  d[ names::g ] = g_;
+  d[ names::mu ] = mu_;
+  d[ names::sigma ] = sigma_;
 }
 
 void
 nonlinearities_gauss_rate::set( const dictionary& d, Node* node )
 {
-  update_value_param( d, names::g.toString(), g_, node );
-  update_value_param( d, names::mu.toString(), mu_, node );
-  update_value_param( d, names::sigma.toString(), sigma_, node );
+  update_value_param( d, names::g, g_, node );
+  update_value_param( d, names::mu, mu_, node );
+  update_value_param( d, names::sigma, sigma_, node );
 }
 
 /*

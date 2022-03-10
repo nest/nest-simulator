@@ -91,7 +91,7 @@ proxynode::get_status( dictionary& d ) const
 {
   const Model* model = kernel().model_manager.get_model( model_id_ );
   const Name element_type = model->get_prototype().get_element_type();
-  d[ names::element_type.toString() ] = element_type.toString();
+  d[ names::element_type ] = element_type.toString();
 }
 
 

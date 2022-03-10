@@ -176,7 +176,8 @@ public:
   void handle( CurrentEvent& );
   void handle( DataLoggingRequest& );
 
-  bool is_off_grid() const // uses off_grid events
+  bool
+  is_off_grid() const // uses off_grid events
   {
     return true;
   }
@@ -501,7 +502,7 @@ iaf_psc_exp_ps_lossless::get_status( dictionary& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
-  d[ names::recordables.toString() ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void

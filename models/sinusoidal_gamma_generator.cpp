@@ -41,10 +41,10 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
+#include "booldatum.h"
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
-#include "booldatum.h"
 
 namespace nest
 {
@@ -81,8 +81,8 @@ nest::sinusoidal_gamma_generator::Parameters_::Parameters_( const Parameters_& p
 {
 }
 
-nest::sinusoidal_gamma_generator::Parameters_& nest::sinusoidal_gamma_generator::Parameters_::operator=(
-  const Parameters_& p )
+nest::sinusoidal_gamma_generator::Parameters_&
+nest::sinusoidal_gamma_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
   {
@@ -131,12 +131,12 @@ nest::sinusoidal_gamma_generator::Buffers_::Buffers_( const Buffers_& b, sinusoi
 void
 nest::sinusoidal_gamma_generator::Parameters_::get( dictionary& d ) const
 {
-  d[ names::rate.toString() ] = rate_ * 1000.0;
-  d[ names::frequency.toString() ] = om_ / ( 2.0 * numerics::pi / 1000.0 );
-  d[ names::phase.toString() ] = 180.0 / numerics::pi * phi_;
-  d[ names::amplitude.toString() ] = amplitude_ * 1000.0;
-  d[ names::order.toString() ] = order_;
-  d[ names::individual_spike_trains.toString() ] = individual_spike_trains_;
+  d[ names::rate ] = rate_ * 1000.0;
+  d[ names::frequency ] = om_ / ( 2.0 * numerics::pi / 1000.0 );
+  d[ names::phase ] = 180.0 / numerics::pi * phi_;
+  d[ names::amplitude ] = amplitude_ * 1000.0;
+  d[ names::order ] = order_;
+  d[ names::individual_spike_trains ] = individual_spike_trains_;
 }
 
 void
@@ -144,14 +144,14 @@ nest::sinusoidal_gamma_generator::Parameters_::set( const dictionary& d,
   const sinusoidal_gamma_generator& n,
   Node* node )
 {
-  if ( not n.is_model_prototype() && d.known( names::individual_spike_trains.toString() ) )
+  if ( not n.is_model_prototype() && d.known( names::individual_spike_trains ) )
   {
     throw BadProperty(
       "The individual_spike_trains property can only be set as"
       " a model default using SetDefaults or upon CopyModel." );
   }
 
-  if ( d.update_value( names::individual_spike_trains.toString(), individual_spike_trains_ ) )
+  if ( d.update_value( names::individual_spike_trains, individual_spike_trains_ ) )
   {
     // this can happen only on model prototypes
     if ( individual_spike_trains_ )
@@ -166,17 +166,17 @@ nest::sinusoidal_gamma_generator::Parameters_::set( const dictionary& d,
     }
   }
 
-  if ( update_value_param( d, names::frequency.toString(), om_, node ) )
+  if ( update_value_param( d, names::frequency, om_, node ) )
   {
     om_ *= 2.0 * numerics::pi / 1000.0;
   }
 
-  if ( update_value_param( d, names::phase.toString(), phi_, node ) )
+  if ( update_value_param( d, names::phase, phi_, node ) )
   {
     phi_ *= numerics::pi / 180.0;
   }
 
-  if ( update_value_param( d, names::order.toString(), order_, node ) )
+  if ( update_value_param( d, names::order, order_, node ) )
   {
     if ( order_ < 1.0 )
     {
@@ -188,13 +188,13 @@ nest::sinusoidal_gamma_generator::Parameters_::set( const dictionary& d,
      floating-point comparison issues under 32-bit Linux.
   */
   double dc_unscaled = 1e3 * rate_;
-  if ( update_value_param( d, names::rate.toString(), dc_unscaled, node ) )
+  if ( update_value_param( d, names::rate, dc_unscaled, node ) )
   {
     rate_ = 1e-3 * dc_unscaled; // scale to 1/ms
   }
 
   double ac_unscaled = 1e3 * amplitude_;
-  if ( update_value_param( d, names::amplitude.toString(), ac_unscaled, node ) )
+  if ( update_value_param( d, names::amplitude, ac_unscaled, node ) )
   {
     amplitude_ = 1e-3 * ac_unscaled; // scale to 1/ms
   }
@@ -384,12 +384,12 @@ nest::sinusoidal_gamma_generator::set_data_from_stimulation_backend( std::vector
     }
     dictionary d;
     ( new Dictionary );
-    d[ names::frequency.toString() ] = DoubleDatum( input_param[ 0 ] );
-    d[ names::phase.toString() ] = DoubleDatum( input_param[ 1 ] );
-    d[ names::order.toString() ] = DoubleDatum( input_param[ 2 ] );
-    d[ names::rate.toString() ] = DoubleDatum( input_param[ 3 ] );
-    d[ names::amplitude.toString() ] = DoubleDatum( input_param[ 4 ] );
-    d[ names::individual_spike_trains.toString() ] = BoolDatum( input_param[ 5 ] );
+    d[ names::frequency ] = DoubleDatum( input_param[ 0 ] );
+    d[ names::phase ] = DoubleDatum( input_param[ 1 ] );
+    d[ names::order ] = DoubleDatum( input_param[ 2 ] );
+    d[ names::rate ] = DoubleDatum( input_param[ 3 ] );
+    d[ names::amplitude ] = DoubleDatum( input_param[ 4 ] );
+    d[ names::individual_spike_trains ] = BoolDatum( input_param[ 5 ] );
     ptmp.set( d, *this, this );
   }
 

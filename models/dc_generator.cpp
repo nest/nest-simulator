@@ -62,7 +62,8 @@ nest::dc_generator::Parameters_::Parameters_( const Parameters_& p )
 {
 }
 
-nest::dc_generator::Parameters_& nest::dc_generator::Parameters_::operator=( const Parameters_& p )
+nest::dc_generator::Parameters_&
+nest::dc_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
   {
@@ -97,13 +98,13 @@ nest::dc_generator::Buffers_::Buffers_( const Buffers_&, dc_generator& n )
 void
 nest::dc_generator::Parameters_::get( dictionary& d ) const
 {
-  d[ names::amplitude.toString() ] = amp_;
+  d[ names::amplitude ] = amp_;
 }
 
 void
 nest::dc_generator::Parameters_::set( const dictionary& d, Node* node )
 {
-  update_value_param( d, names::amplitude.toString(), amp_, node );
+  update_value_param( d, names::amplitude, amp_, node );
 }
 
 
@@ -199,7 +200,7 @@ nest::dc_generator::set_data_from_stimulation_backend( std::vector< double >& in
       throw BadParameterValue( "The size of the data for the dc_generator needs to be 1 [amplitude]." );
     }
     dictionary d;
-    d[ names::amplitude.toString() ] = input_param[ 0 ];
+    d[ names::amplitude ] = input_param[ 0 ];
     ptmp.set( d, this );
   }
 

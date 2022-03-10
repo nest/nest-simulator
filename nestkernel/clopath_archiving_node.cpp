@@ -86,13 +86,13 @@ nest::ClopathArchivingNode::get_status( dictionary& d ) const
 {
   ArchivingNode::get_status( d );
 
-  d[ names::A_LTD.toString() ] = A_LTD_;
-  d[ names::A_LTP.toString() ] = A_LTP_;
-  d[ names::u_ref_squared.toString() ] = u_ref_squared_;
-  d[ names::theta_plus.toString() ] = theta_plus_;
-  d[ names::theta_minus.toString() ] = theta_minus_;
-  d[ names::A_LTD_const.toString() ] = A_LTD_const_;
-  d[ names::delay_u_bars.toString() ] = delay_u_bars_;
+  d[ names::A_LTD ] = A_LTD_;
+  d[ names::A_LTP ] = A_LTP_;
+  d[ names::u_ref_squared ] = u_ref_squared_;
+  d[ names::theta_plus ] = theta_plus_;
+  d[ names::theta_minus ] = theta_minus_;
+  d[ names::A_LTD_const ] = A_LTD_const_;
+  d[ names::delay_u_bars ] = delay_u_bars_;
 }
 
 void
@@ -108,13 +108,13 @@ nest::ClopathArchivingNode::set_status( const dictionary& d )
   double new_u_ref_squared = u_ref_squared_;
   double new_A_LTD_const = A_LTD_const_;
   double new_delay_u_bars = delay_u_bars_;
-  d.update_value( names::A_LTD.toString(), new_A_LTD );
-  d.update_value( names::A_LTP.toString(), new_A_LTP );
-  d.update_value( names::u_ref_squared.toString(), new_u_ref_squared );
-  d.update_value( names::theta_plus.toString(), new_theta_plus );
-  d.update_value( names::theta_minus.toString(), new_theta_minus );
-  d.update_value( names::A_LTD_const.toString(), new_A_LTD_const );
-  d.update_value( names::delay_u_bars.toString(), new_delay_u_bars );
+  d.update_value( names::A_LTD, new_A_LTD );
+  d.update_value( names::A_LTP, new_A_LTP );
+  d.update_value( names::u_ref_squared, new_u_ref_squared );
+  d.update_value( names::theta_plus, new_theta_plus );
+  d.update_value( names::theta_minus, new_theta_minus );
+  d.update_value( names::A_LTD_const, new_A_LTD_const );
+  d.update_value( names::delay_u_bars, new_delay_u_bars );
   A_LTD_ = new_A_LTD;
   A_LTP_ = new_A_LTP;
   u_ref_squared_ = new_u_ref_squared;
@@ -225,8 +225,8 @@ nest::ClopathArchivingNode::write_LTD_history( const double t_ltd_ms, double u_b
 {
   if ( n_incoming_ )
   {
-    const double dw = A_LTD_const_ ? A_LTD_ * ( u_bar_minus - theta_minus_ ) : A_LTD_ * u_bar_bar * u_bar_bar
-        * ( u_bar_minus - theta_minus_ ) / u_ref_squared_;
+    const double dw = A_LTD_const_ ? A_LTD_ * ( u_bar_minus - theta_minus_ )
+                                   : A_LTD_ * u_bar_bar * u_bar_bar * ( u_bar_minus - theta_minus_ ) / u_ref_squared_;
     ltd_history_[ ltd_hist_current_ ] = histentry_extended( t_ltd_ms, dw, 0 );
     ltd_hist_current_ = ( ltd_hist_current_ + 1 ) % ltd_hist_len_;
   }

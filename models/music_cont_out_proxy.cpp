@@ -96,8 +96,8 @@ nest::music_cont_out_proxy::Buffers_::Buffers_( const Buffers_& b )
 void
 nest::music_cont_out_proxy::Parameters_::get( dictionary& d ) const
 {
-  d[ names::port_name.toString() ] = port_name_;
-  d[ names::interval.toString() ] = interval_.get_ms();
+  d[ names::port_name ] = port_name_;
+  d[ names::interval ] = interval_.get_ms();
 
   std::vector< std::string > ad_record_from;
 
@@ -106,8 +106,8 @@ nest::music_cont_out_proxy::Parameters_::get( dictionary& d ) const
     ad_record_from.push_back( record_from_[ j ].toString() );
   }
 
-  d[ names::record_from.toString() ] = ad_record_from;
-  d[ names::targets.toString() ] = new NodeCollectionDatum( targets_ );
+  d[ names::record_from ] = ad_record_from;
+  d[ names::targets ] = new NodeCollectionDatum( targets_ );
 }
 
 void
@@ -119,10 +119,10 @@ nest::music_cont_out_proxy::Parameters_::set( const dictionary& d,
 
   if ( state.published_ == false )
   {
-    d.update_value( names::port_name.toString(), port_name_ );
+    d.update_value( names::port_name, port_name_ );
   }
 
-  if ( buffers.has_targets_ && ( d.known( names::interval.toString() ) || d.known( names::record_from.toString() ) ) )
+  if ( buffers.has_targets_ && ( d.known( names::interval ) || d.known( names::record_from ) ) )
   {
     throw BadProperty(
       "The recording interval and the list of properties to record "
@@ -130,7 +130,7 @@ nest::music_cont_out_proxy::Parameters_::set( const dictionary& d,
   }
 
   double v;
-  if ( d.update_value( names::interval.toString(), v ) )
+  if ( d.update_value( names::interval, v ) )
   {
     if ( Time( Time::ms( v ) ) < Time::get_resolution() )
     {
@@ -149,18 +149,18 @@ nest::music_cont_out_proxy::Parameters_::set( const dictionary& d,
     }
   }
   // extract data
-  if ( d.known( names::record_from.toString() ) )
+  if ( d.known( names::record_from ) )
   {
     record_from_.clear();
 
-    ArrayDatum ad = d.get< ArrayDatum >( names::record_from.toString() );
+    ArrayDatum ad = d.get< ArrayDatum >( names::record_from );
     for ( Token* t = ad.begin(); t != ad.end(); ++t )
     {
       record_from_.push_back( Name( getValue< std::string >( *t ) ) );
     }
   }
 
-  if ( d.known( names::targets.toString() ) )
+  if ( d.known( names::targets ) )
   {
     if ( record_from_.empty() )
     {
@@ -169,7 +169,7 @@ nest::music_cont_out_proxy::Parameters_::set( const dictionary& d,
 
     if ( state.published_ == false )
     {
-      targets_ = d.get< NodeCollectionDatum >( names::targets.toString() );
+      targets_ = d.get< NodeCollectionDatum >( names::targets );
     }
     else
     {
@@ -181,8 +181,8 @@ nest::music_cont_out_proxy::Parameters_::set( const dictionary& d,
 void
 nest::music_cont_out_proxy::State_::get( dictionary& d ) const
 {
-  d[ names::published.toString() ] = published_;
-  d[ names::port_width.toString() ] = port_width_;
+  d[ names::published ] = published_;
+  d[ names::port_width ] = port_width_;
 }
 
 /* ----------------------------------------------------------------

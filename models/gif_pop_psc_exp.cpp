@@ -32,8 +32,8 @@
         https://doi.org/10.1371/journal.pcbi.1005507 */
 
 #include "gif_pop_psc_exp.h"
-#include "universal_data_logger_impl.h"
 #include "compose.hpp"
+#include "universal_data_logger_impl.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -109,57 +109,57 @@ nest::gif_pop_psc_exp::State_::State_()
 void
 nest::gif_pop_psc_exp::Parameters_::get( dictionary& d ) const
 {
-  d[ names::N.toString() ] = N_;
-  d[ names::tau_m.toString() ] = tau_m_;
-  d[ names::C_m.toString() ] = c_m_;
-  d[ names::lambda_0.toString() ] = lambda_0_;
-  d[ names::Delta_V.toString() ] = Delta_V_;
-  d[ names::len_kernel.toString() ] = len_kernel_;
-  d[ names::I_e.toString() ] = I_e_;
-  d[ names::V_reset.toString() ] = V_reset_;
-  d[ names::V_T_star.toString() ] = V_T_star_;
-  d[ names::E_L.toString() ] = E_L_;
-  d[ names::t_ref.toString() ] = t_ref_;
-  d[ names::tau_syn_ex.toString() ] = tau_syn_ex_;
-  d[ names::tau_syn_in.toString() ] = tau_syn_in_;
+  d[ names::N ] = N_;
+  d[ names::tau_m ] = tau_m_;
+  d[ names::C_m ] = c_m_;
+  d[ names::lambda_0 ] = lambda_0_;
+  d[ names::Delta_V ] = Delta_V_;
+  d[ names::len_kernel ] = len_kernel_;
+  d[ names::I_e ] = I_e_;
+  d[ names::V_reset ] = V_reset_;
+  d[ names::V_T_star ] = V_T_star_;
+  d[ names::E_L ] = E_L_;
+  d[ names::t_ref ] = t_ref_;
+  d[ names::tau_syn_ex ] = tau_syn_ex_;
+  d[ names::tau_syn_in ] = tau_syn_in_;
   d[ "BinoRand" ] = BinoRand_;
 
   ArrayDatum tau_sfa_list_ad( tau_sfa_ );
-  d[ names::tau_sfa.toString() ] = tau_sfa_list_ad;
+  d[ names::tau_sfa ] = tau_sfa_list_ad;
 
   ArrayDatum q_sfa_list_ad( q_sfa_ );
-  d[ names::q_sfa.toString() ] = q_sfa_list_ad;
+  d[ names::q_sfa ] = q_sfa_list_ad;
 }
 
 void
 nest::gif_pop_psc_exp::Parameters_::set( const dictionary& d, Node* node )
 {
-  update_value_param( d, names::N.toString(), N_, node );
-  update_value_param( d, names::tau_m.toString(), tau_m_, node );
-  update_value_param( d, names::C_m.toString(), c_m_, node );
-  update_value_param( d, names::lambda_0.toString(), lambda_0_, node );
-  update_value_param( d, names::Delta_V.toString(), Delta_V_, node );
-  update_value_param( d, names::len_kernel.toString(), len_kernel_, node );
-  update_value_param( d, names::I_e.toString(), I_e_, node );
-  update_value_param( d, names::V_reset.toString(), V_reset_, node );
-  update_value_param( d, names::V_T_star.toString(), V_T_star_, node );
-  update_value_param( d, names::E_L.toString(), E_L_, node );
-  update_value_param( d, names::t_ref.toString(), t_ref_, node );
-  update_value_param( d, names::tau_syn_ex.toString(), tau_syn_ex_, node );
-  update_value_param( d, names::tau_syn_in.toString(), tau_syn_in_, node );
+  update_value_param( d, names::N, N_, node );
+  update_value_param( d, names::tau_m, tau_m_, node );
+  update_value_param( d, names::C_m, c_m_, node );
+  update_value_param( d, names::lambda_0, lambda_0_, node );
+  update_value_param( d, names::Delta_V, Delta_V_, node );
+  update_value_param( d, names::len_kernel, len_kernel_, node );
+  update_value_param( d, names::I_e, I_e_, node );
+  update_value_param( d, names::V_reset, V_reset_, node );
+  update_value_param( d, names::V_T_star, V_T_star_, node );
+  update_value_param( d, names::E_L, E_L_, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::tau_syn_ex, tau_syn_ex_, node );
+  update_value_param( d, names::tau_syn_in, tau_syn_in_, node );
   update_value_param( d, "BinoRand", BinoRand_, node );
 
-  d.update_value( names::tau_sfa.toString(), tau_sfa_ );
-  d.update_value( names::q_sfa.toString(), q_sfa_ );
+  d.update_value( names::tau_sfa, tau_sfa_ );
+  d.update_value( names::q_sfa, q_sfa_ );
 
 
   if ( tau_sfa_.size() != q_sfa_.size() )
   {
-    throw BadProperty( String::compose(
-      "'tau_sfa' and 'q_sfa' need to have the same dimension.\nSize of "
-      "tau_sfa: %1\nSize of q_sfa: %2",
-      tau_sfa_.size(),
-      q_sfa_.size() ) );
+    throw BadProperty(
+      String::compose( "'tau_sfa' and 'q_sfa' need to have the same dimension.\nSize of "
+                       "tau_sfa: %1\nSize of q_sfa: %2",
+        tau_sfa_.size(),
+        q_sfa_.size() ) );
   }
 
   if ( c_m_ <= 0 )
@@ -209,20 +209,20 @@ nest::gif_pop_psc_exp::Parameters_::set( const dictionary& d, Node* node )
 void
 nest::gif_pop_psc_exp::State_::get( dictionary& d, const Parameters_& ) const
 {
-  d[ names::V_m.toString() ] = V_m_;           // Filtered version of input
-  d[ names::n_events.toString() ] = n_spikes_; // Number of generated spikes
-  d[ names::E_sfa.toString() ] = theta_hat_;   // Adaptive threshold potential
-  d[ names::mean.toString() ] = n_expect_;
-  d[ names::I_syn_ex.toString() ] = I_syn_ex_;
-  d[ names::I_syn_in.toString() ] = I_syn_in_;
+  d[ names::V_m ] = V_m_;           // Filtered version of input
+  d[ names::n_events ] = n_spikes_; // Number of generated spikes
+  d[ names::E_sfa ] = theta_hat_;   // Adaptive threshold potential
+  d[ names::mean ] = n_expect_;
+  d[ names::I_syn_ex ] = I_syn_ex_;
+  d[ names::I_syn_in ] = I_syn_in_;
 }
 
 void
 nest::gif_pop_psc_exp::State_::set( const dictionary& d, const Parameters_&, Node* node )
 {
-  update_value_param( d, names::V_m.toString(), V_m_, node );
-  update_value_param( d, names::I_syn_ex.toString(), I_syn_ex_, node );
-  update_value_param( d, names::I_syn_in.toString(), I_syn_in_, node );
+  update_value_param( d, names::V_m, V_m_, node );
+  update_value_param( d, names::I_syn_ex, I_syn_ex_, node );
+  update_value_param( d, names::I_syn_in, I_syn_in_, node );
   initialized_ = false; // vectors of the state should be initialized with new parameter set.
 }
 

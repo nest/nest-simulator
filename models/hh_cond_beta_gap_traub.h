@@ -30,8 +30,8 @@
 
 // C includes:
 #include <gsl/gsl_errno.h>
-#include <gsl/gsl_odeiv.h>
 #include <gsl/gsl_matrix.h>
+#include <gsl/gsl_odeiv.h>
 #include <gsl/gsl_sf_exp.h>
 
 // Includes from nestkernel:
@@ -472,9 +472,9 @@ hh_cond_beta_gap_traub::get_status( dictionary& d ) const
   S_.get( d );
   ArchivingNode::get_status( d );
 
-  d[ names::recordables.toString() ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 
-  d[ names::t_spike.toString() ] = get_spiketime_ms();
+  d[ names::t_spike ] = get_spiketime_ms();
 }
 
 inline void

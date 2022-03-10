@@ -146,7 +146,8 @@ nest::iaf_cond_alpha::State_::State_( const State_& s )
   }
 }
 
-nest::iaf_cond_alpha::State_& nest::iaf_cond_alpha::State_::operator=( const State_& s )
+nest::iaf_cond_alpha::State_&
+nest::iaf_cond_alpha::State_::operator=( const State_& s )
 {
   r = s.r;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -183,38 +184,38 @@ nest::iaf_cond_alpha::Buffers_::Buffers_( const Buffers_&, iaf_cond_alpha& n )
 void
 nest::iaf_cond_alpha::Parameters_::get( dictionary& d ) const
 {
-  d[ names::V_th.toString() ] = V_th;
-  d[ names::V_reset.toString() ] = V_reset;
-  d[ names::t_ref.toString() ] = t_ref;
-  d[ names::g_L.toString() ] = g_L;
-  d[ names::E_L.toString() ] = E_L;
-  d[ names::E_ex.toString() ] = E_ex;
-  d[ names::E_in.toString() ] = E_in;
-  d[ names::C_m.toString() ] = C_m;
-  d[ names::tau_syn_ex.toString() ] = tau_synE;
-  d[ names::tau_syn_in.toString() ] = tau_synI;
-  d[ names::I_e.toString() ] = I_e;
+  d[ names::V_th ] = V_th;
+  d[ names::V_reset ] = V_reset;
+  d[ names::t_ref ] = t_ref;
+  d[ names::g_L ] = g_L;
+  d[ names::E_L ] = E_L;
+  d[ names::E_ex ] = E_ex;
+  d[ names::E_in ] = E_in;
+  d[ names::C_m ] = C_m;
+  d[ names::tau_syn_ex ] = tau_synE;
+  d[ names::tau_syn_in ] = tau_synI;
+  d[ names::I_e ] = I_e;
 }
 
 void
 nest::iaf_cond_alpha::Parameters_::set( const dictionary& d, Node* node )
 {
   // allow setting the membrane potential
-  update_value_param( d, names::V_th.toString(), V_th, node );
-  update_value_param( d, names::V_reset.toString(), V_reset, node );
-  update_value_param( d, names::t_ref.toString(), t_ref, node );
-  update_value_param( d, names::E_L.toString(), E_L, node );
+  update_value_param( d, names::V_th, V_th, node );
+  update_value_param( d, names::V_reset, V_reset, node );
+  update_value_param( d, names::t_ref, t_ref, node );
+  update_value_param( d, names::E_L, E_L, node );
 
-  update_value_param( d, names::E_ex.toString(), E_ex, node );
-  update_value_param( d, names::E_in.toString(), E_in, node );
+  update_value_param( d, names::E_ex, E_ex, node );
+  update_value_param( d, names::E_in, E_in, node );
 
-  update_value_param( d, names::C_m.toString(), C_m, node );
-  update_value_param( d, names::g_L.toString(), g_L, node );
+  update_value_param( d, names::C_m, C_m, node );
+  update_value_param( d, names::g_L, g_L, node );
 
-  update_value_param( d, names::tau_syn_ex.toString(), tau_synE, node );
-  update_value_param( d, names::tau_syn_in.toString(), tau_synI, node );
+  update_value_param( d, names::tau_syn_ex, tau_synE, node );
+  update_value_param( d, names::tau_syn_in, tau_synI, node );
 
-  update_value_param( d, names::I_e.toString(), I_e, node );
+  update_value_param( d, names::I_e, I_e, node );
   if ( V_reset >= V_th )
   {
     throw BadProperty( "Reset potential must be smaller than threshold." );
@@ -236,21 +237,21 @@ nest::iaf_cond_alpha::Parameters_::set( const dictionary& d, Node* node )
 void
 nest::iaf_cond_alpha::State_::get( dictionary& d ) const
 {
-  d[ names::V_m.toString() ] = y[ V_M ]; // Membrane potential
-  d[ names::g_ex.toString() ] = y[ G_EXC ];
-  d[ names::dg_ex.toString() ] = y[ DG_EXC ];
-  d[ names::g_in.toString() ] = y[ G_INH ];
-  d[ names::dg_in.toString() ] = y[ DG_INH ];
+  d[ names::V_m ] = y[ V_M ]; // Membrane potential
+  d[ names::g_ex ] = y[ G_EXC ];
+  d[ names::dg_ex ] = y[ DG_EXC ];
+  d[ names::g_in ] = y[ G_INH ];
+  d[ names::dg_in ] = y[ DG_INH ];
 }
 
 void
 nest::iaf_cond_alpha::State_::set( const dictionary& d, const Parameters_&, Node* node )
 {
-  update_value_param( d, names::V_m.toString(), y[ V_M ], node );
-  update_value_param( d, names::g_ex.toString(), y[ G_EXC ], node );
-  update_value_param( d, names::dg_ex.toString(), y[ DG_EXC ], node );
-  update_value_param( d, names::g_in.toString(), y[ G_INH ], node );
-  update_value_param( d, names::dg_in.toString(), y[ DG_INH ], node );
+  update_value_param( d, names::V_m, y[ V_M ], node );
+  update_value_param( d, names::g_ex, y[ G_EXC ], node );
+  update_value_param( d, names::dg_ex, y[ DG_EXC ], node );
+  update_value_param( d, names::g_in, y[ G_INH ], node );
+  update_value_param( d, names::dg_in, y[ DG_INH ], node );
 }
 
 

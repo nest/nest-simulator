@@ -28,17 +28,17 @@ namespace nest
 void
 nonlinearities_sigmoid_rate::get( dictionary& d ) const
 {
-  d[ names::g.toString() ] = g_;
-  d[ names::beta.toString() ] = beta_;
-  d[ names::theta.toString() ] = theta_;
+  d[ names::g ] = g_;
+  d[ names::beta ] = beta_;
+  d[ names::theta ] = theta_;
 }
 
 void
 nonlinearities_sigmoid_rate::set( const dictionary& d, Node* node )
 {
-  update_value_param( d, names::g.toString(), g_, node );
-  update_value_param( d, names::beta.toString(), beta_, node );
-  update_value_param( d, names::theta.toString(), theta_, node );
+  update_value_param( d, names::g, g_, node );
+  update_value_param( d, names::beta, beta_, node );
+  update_value_param( d, names::theta, theta_, node );
 }
 
 /*

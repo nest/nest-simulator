@@ -131,22 +131,22 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::get_status( dictionary& d 
 {
   CommonSynapseProperties::get_status( d );
 
-  d[ names::tau_plus.toString() ] = tau_plus_;
-  d[ names::tau_minus_stdp.toString() ] = tau_minus_;
-  d[ names::Wmax.toString() ] = Wmax_;
-  d[ names::weight_per_lut_entry.toString() ] = weight_per_lut_entry_;
+  d[ names::tau_plus ] = tau_plus_;
+  d[ names::tau_minus_stdp ] = tau_minus_;
+  d[ names::Wmax ] = Wmax_;
+  d[ names::weight_per_lut_entry ] = weight_per_lut_entry_;
 
-  d[ names::no_synapses.toString() ] = no_synapses_;
-  d[ names::synapses_per_driver.toString() ] = synapses_per_driver_;
-  d[ names::driver_readout_time.toString() ] = driver_readout_time_;
-  d[ names::readout_cycle_duration.toString() ] = readout_cycle_duration_;
+  d[ names::no_synapses ] = no_synapses_;
+  d[ names::synapses_per_driver ] = synapses_per_driver_;
+  d[ names::driver_readout_time ] = driver_readout_time_;
+  d[ names::readout_cycle_duration ] = readout_cycle_duration_;
 
-  d[ names::lookuptable_0.toString() ] = IntVectorDatum( new std::vector< long >( lookuptable_0_ ) );
-  d[ names::lookuptable_1.toString() ] = IntVectorDatum( new std::vector< long >( lookuptable_1_ ) );
-  d[ names::lookuptable_2.toString() ] = IntVectorDatum( new std::vector< long >( lookuptable_2_ ) );
-  d[ names::configbit_0.toString() ] = IntVectorDatum( new std::vector< long >( configbit_0_ ) );
-  d[ names::configbit_1.toString() ] = IntVectorDatum( new std::vector< long >( configbit_1_ ) );
-  d[ names::reset_pattern.toString() ] = IntVectorDatum( new std::vector< long >( reset_pattern_ ) );
+  d[ names::lookuptable_0 ] = IntVectorDatum( new std::vector< long >( lookuptable_0_ ) );
+  d[ names::lookuptable_1 ] = IntVectorDatum( new std::vector< long >( lookuptable_1_ ) );
+  d[ names::lookuptable_2 ] = IntVectorDatum( new std::vector< long >( lookuptable_2_ ) );
+  d[ names::configbit_0 ] = IntVectorDatum( new std::vector< long >( configbit_0_ ) );
+  d[ names::configbit_1 ] = IntVectorDatum( new std::vector< long >( configbit_1_ ) );
+  d[ names::reset_pattern ] = IntVectorDatum( new std::vector< long >( reset_pattern_ ) );
 }
 
 template < typename targetidentifierT >
@@ -155,33 +155,33 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status( const dictiona
 {
   CommonSynapseProperties::set_status( d, cm );
 
-  d.update_value( names::tau_plus.toString(), tau_plus_ );
-  d.update_value( names::tau_minus_stdp.toString(), tau_minus_ );
-  if ( d.update_value( names::Wmax.toString(), Wmax_ ) )
+  d.update_value( names::tau_plus, tau_plus_ );
+  d.update_value( names::tau_minus_stdp, tau_minus_ );
+  if ( d.update_value( names::Wmax, Wmax_ ) )
   {
     weight_per_lut_entry_ = Wmax_ / ( lookuptable_0_.size() - 1 );
   }
 
   // TP: they should not be allowed to be changed! But needed for CopyModel ...
-  d.update_value( names::weight_per_lut_entry.toString(), weight_per_lut_entry_ );
-  d.update_value( names::readout_cycle_duration.toString(), readout_cycle_duration_ );
-  if ( d.update_value( names::no_synapses.toString(), no_synapses_ ) )
+  d.update_value( names::weight_per_lut_entry, weight_per_lut_entry_ );
+  d.update_value( names::readout_cycle_duration, readout_cycle_duration_ );
+  if ( d.update_value( names::no_synapses, no_synapses_ ) )
   {
     calc_readout_cycle_duration_();
   }
 
-  if ( d.update_value( names::synapses_per_driver.toString(), synapses_per_driver_ ) )
+  if ( d.update_value( names::synapses_per_driver, synapses_per_driver_ ) )
   {
     calc_readout_cycle_duration_();
   }
-  if ( d.update_value( names::driver_readout_time.toString(), driver_readout_time_ ) )
+  if ( d.update_value( names::driver_readout_time, driver_readout_time_ ) )
   {
     calc_readout_cycle_duration_();
   }
 
-  if ( d.known( names::lookuptable_0.toString() ) )
+  if ( d.known( names::lookuptable_0 ) )
   {
-    d.update_value( names::lookuptable_0.toString(), lookuptable_0_ );
+    d.update_value( names::lookuptable_0, lookuptable_0_ );
 
     // right size?
     if ( lookuptable_0_.size() != lookuptable_1_.size() )
@@ -198,9 +198,9 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status( const dictiona
       }
     }
   }
-  if ( d.known( names::lookuptable_1.toString() ) )
+  if ( d.known( names::lookuptable_1 ) )
   {
-    d.update_value( names::lookuptable_1.toString(), lookuptable_1_ );
+    d.update_value( names::lookuptable_1, lookuptable_1_ );
 
     // right size?
     if ( lookuptable_1_.size() != lookuptable_0_.size() )
@@ -217,9 +217,9 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status( const dictiona
       }
     }
   }
-  if ( d.known( names::lookuptable_2.toString() ) )
+  if ( d.known( names::lookuptable_2 ) )
   {
-    d.update_value( names::lookuptable_2.toString(), lookuptable_2_ );
+    d.update_value( names::lookuptable_2, lookuptable_2_ );
 
     // right size?
     if ( lookuptable_2_.size() != lookuptable_0_.size() )
@@ -237,9 +237,9 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status( const dictiona
     }
   }
 
-  if ( d.known( names::configbit_0.toString() ) )
+  if ( d.known( names::configbit_0 ) )
   {
-    d.update_value( names::configbit_0.toString(), configbit_0_ );
+    d.update_value( names::configbit_0, configbit_0_ );
 
     // right size?
     if ( configbit_0_.size() != 4 )
@@ -247,9 +247,9 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status( const dictiona
       throw BadProperty( "Wrong number of configuration bits (!=4)." );
     }
   }
-  if ( d.known( names::configbit_1.toString() ) )
+  if ( d.known( names::configbit_1 ) )
   {
-    d.update_value( names::configbit_1.toString(), configbit_1_ );
+    d.update_value( names::configbit_1, configbit_1_ );
 
     // right size?
     if ( configbit_1_.size() != 4 )
@@ -257,9 +257,9 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status( const dictiona
       throw BadProperty( "Wrong number of configuration bits (!=4)." );
     }
   }
-  if ( d.known( names::reset_pattern.toString() ) )
+  if ( d.known( names::reset_pattern ) )
   {
-    d.update_value( names::reset_pattern.toString(), reset_pattern_ );
+    d.update_value( names::reset_pattern, reset_pattern_ );
 
     // right size?
     if ( reset_pattern_.size() != 6 )
@@ -294,17 +294,17 @@ stdp_facetshw_synapse_hom< targetidentifierT >::get_status( dictionary& d ) cons
 {
   // base class properties, different for individual synapse
   ConnectionBase::get_status( d );
-  d[ names::weight.toString() ] = weight_;
+  d[ names::weight ] = weight_;
 
   // own properties, different for individual synapse
-  d[ names::a_causal.toString() ] = a_causal_;
-  d[ names::a_acausal.toString() ] = a_acausal_;
-  d[ names::a_thresh_th.toString() ] = a_thresh_th_;
-  d[ names::a_thresh_tl.toString() ] = a_thresh_tl_;
+  d[ names::a_causal ] = a_causal_;
+  d[ names::a_acausal ] = a_acausal_;
+  d[ names::a_thresh_th ] = a_thresh_th_;
+  d[ names::a_thresh_tl ] = a_thresh_tl_;
 
-  d[ names::init_flag.toString() ] = init_flag_;
-  d[ names::synapse_id.toString() ] = synapse_id_;
-  d[ names::next_readout_time.toString() ] = next_readout_time_;
+  d[ names::init_flag ] = init_flag_;
+  d[ names::synapse_id ] = synapse_id_;
+  d[ names::next_readout_time ] = next_readout_time_;
   // useful to get conversion before activity, but weight_per_lut_entry_ not
   // known here
   // def<unsigned int>(d, "discrete_weight",
@@ -318,18 +318,18 @@ stdp_facetshw_synapse_hom< targetidentifierT >::set_status( const dictionary& d,
 {
   // base class properties
   ConnectionBase::set_status( d, cm );
-  d.update_value( names::weight.toString(), weight_ );
+  d.update_value( names::weight, weight_ );
 
-  d.update_value( names::a_causal.toString(), a_causal_ );
-  d.update_value( names::a_acausal.toString(), a_acausal_ );
-  d.update_value( names::a_thresh_th.toString(), a_thresh_th_ );
-  d.update_value( names::a_thresh_tl.toString(), a_thresh_tl_ );
+  d.update_value( names::a_causal, a_causal_ );
+  d.update_value( names::a_acausal, a_acausal_ );
+  d.update_value( names::a_thresh_th, a_thresh_th_ );
+  d.update_value( names::a_thresh_tl, a_thresh_tl_ );
 
-  d.update_value( names::synapse_id.toString(), synapse_id_ );
+  d.update_value( names::synapse_id, synapse_id_ );
 
   // TP: they should not be allowed to be changed! But needed for CopyModel ...
-  d.update_value( names::init_flag.toString(), init_flag_ );
-  d.update_value( names::next_readout_time.toString(), next_readout_time_ );
+  d.update_value( names::init_flag, init_flag_ );
+  d.update_value( names::next_readout_time, next_readout_time_ );
 
   // setting discrete_weight_ does not make sense, is temporary variable
 }

@@ -236,11 +236,11 @@ set_connection_status( const ConnectionDatum& conn, const dictionary& dict )
   // TODO_PYNEST-NG: Get ConnectionDatum dict
   // dictionary conn_dict = conn.get_dict();
   dictionary conn_dict;
-  const index source_node_id = conn_dict.get< long >( nest::names::source.toString() );
-  const index target_node_id = conn_dict.get< long >( nest::names::target.toString() );
-  const thread tid = conn_dict.get< long >( nest::names::target_thread.toString() );
-  const synindex syn_id = conn_dict.get< long >( nest::names::synapse_modelid.toString() );
-  const port p = conn_dict.get< long >( nest::names::port.toString() );
+  const index source_node_id = conn_dict.get< long >( nest::names::source );
+  const index target_node_id = conn_dict.get< long >( nest::names::target );
+  const thread tid = conn_dict.get< long >( nest::names::target_thread );
+  const synindex syn_id = conn_dict.get< long >( nest::names::synapse_modelid );
+  const port p = conn_dict.get< long >( nest::names::port );
 
   // TODO_PYNEST-NG: Access flags
   // dict->clear_access_flags();
@@ -553,8 +553,8 @@ apply( const ParameterDatum& param, const NodeCollectionDatum& nc )
 std::vector< double >
 apply( const ParameterDatum& param, const dictionary& positions )
 {
-  auto source_nc = positions.get< NodeCollectionPTR >( names::source.toString() );
-  auto targets = positions.get< std::vector< int > >( names::targets.toString() );
+  auto source_nc = positions.get< NodeCollectionPTR >( names::source );
+  auto targets = positions.get< std::vector< int > >( names::targets );
   // TODO-PYNEST-NG: fix Parameter::apply()
   // return param->apply( source_nc, targets );
   return {};

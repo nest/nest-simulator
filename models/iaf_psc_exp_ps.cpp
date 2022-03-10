@@ -107,16 +107,16 @@ nest::iaf_psc_exp_ps::Buffers_::Buffers_( const Buffers_&, iaf_psc_exp_ps& n )
 void
 nest::iaf_psc_exp_ps::Parameters_::get( dictionary& d ) const
 {
-  d[ names::E_L.toString() ] = E_L_;
-  d[ names::I_e.toString() ] = I_e_;
-  d[ names::V_th.toString() ] = U_th_ + E_L_;
-  d[ names::V_min.toString() ] = U_min_ + E_L_;
-  d[ names::V_reset.toString() ] = U_reset_ + E_L_;
-  d[ names::C_m.toString() ] = c_m_;
-  d[ names::tau_m.toString() ] = tau_m_;
-  d[ names::tau_syn_ex.toString() ] = tau_ex_;
-  d[ names::tau_syn_in.toString() ] = tau_in_;
-  d[ names::t_ref.toString() ] = t_ref_;
+  d[ names::E_L ] = E_L_;
+  d[ names::I_e ] = I_e_;
+  d[ names::V_th ] = U_th_ + E_L_;
+  d[ names::V_min ] = U_min_ + E_L_;
+  d[ names::V_reset ] = U_reset_ + E_L_;
+  d[ names::C_m ] = c_m_;
+  d[ names::tau_m ] = tau_m_;
+  d[ names::tau_syn_ex ] = tau_ex_;
+  d[ names::tau_syn_in ] = tau_in_;
+  d[ names::t_ref ] = t_ref_;
 }
 
 double
@@ -125,17 +125,17 @@ nest::iaf_psc_exp_ps::Parameters_::set( const dictionary& d, Node* node )
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
   const double ELold = E_L_;
-  update_value_param( d, names::E_L.toString(), E_L_, node );
+  update_value_param( d, names::E_L, E_L_, node );
   const double delta_EL = E_L_ - ELold;
 
-  update_value_param( d, names::tau_m.toString(), tau_m_, node );
-  update_value_param( d, names::tau_syn_ex.toString(), tau_ex_, node );
-  update_value_param( d, names::tau_syn_in.toString(), tau_in_, node );
-  update_value_param( d, names::C_m.toString(), c_m_, node );
-  update_value_param( d, names::t_ref.toString(), t_ref_, node );
-  update_value_param( d, names::I_e.toString(), I_e_, node );
+  update_value_param( d, names::tau_m, tau_m_, node );
+  update_value_param( d, names::tau_syn_ex, tau_ex_, node );
+  update_value_param( d, names::tau_syn_in, tau_in_, node );
+  update_value_param( d, names::C_m, c_m_, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::I_e, I_e_, node );
 
-  if ( update_value_param( d, names::V_th.toString(), U_th_, node ) )
+  if ( update_value_param( d, names::V_th, U_th_, node ) )
   {
     U_th_ -= E_L_;
   }
@@ -144,7 +144,7 @@ nest::iaf_psc_exp_ps::Parameters_::set( const dictionary& d, Node* node )
     U_th_ -= delta_EL;
   }
 
-  if ( update_value_param( d, names::V_min.toString(), U_min_, node ) )
+  if ( update_value_param( d, names::V_min, U_min_, node ) )
   {
     U_min_ -= E_L_;
   }
@@ -153,7 +153,7 @@ nest::iaf_psc_exp_ps::Parameters_::set( const dictionary& d, Node* node )
     U_min_ -= delta_EL;
   }
 
-  if ( update_value_param( d, names::V_reset.toString(), U_reset_, node ) )
+  if ( update_value_param( d, names::V_reset, U_reset_, node ) )
   {
     U_reset_ -= E_L_;
   }
@@ -189,16 +189,16 @@ nest::iaf_psc_exp_ps::Parameters_::set( const dictionary& d, Node* node )
 void
 nest::iaf_psc_exp_ps::State_::get( dictionary& d, const Parameters_& p ) const
 {
-  d[ names::V_m.toString() ] = y2_ + p.E_L_; // Membrane potential
-  d[ names::I_syn_ex.toString() ] = y1_ex_;  // Excitatory synaptic current
-  d[ names::I_syn_in.toString() ] = y1_in_;  // Inhibitory synaptic current
-  d[ names::is_refractory.toString() ] = is_refractory_;
+  d[ names::V_m ] = y2_ + p.E_L_; // Membrane potential
+  d[ names::I_syn_ex ] = y1_ex_;  // Excitatory synaptic current
+  d[ names::I_syn_in ] = y1_in_;  // Inhibitory synaptic current
+  d[ names::is_refractory ] = is_refractory_;
 }
 
 void
 nest::iaf_psc_exp_ps::State_::set( const dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  if ( update_value_param( d, names::V_m.toString(), y2_, node ) )
+  if ( update_value_param( d, names::V_m, y2_, node ) )
   {
     y2_ -= p.E_L_;
   }
@@ -206,8 +206,8 @@ nest::iaf_psc_exp_ps::State_::set( const dictionary& d, const Parameters_& p, do
   {
     y2_ -= delta_EL;
   }
-  update_value_param( d, names::I_syn_ex.toString(), y1_ex_, node );
-  update_value_param( d, names::I_syn_in.toString(), y1_in_, node );
+  update_value_param( d, names::I_syn_ex, y1_ex_, node );
+  update_value_param( d, names::I_syn_in, y1_in_, node );
 }
 
 /* ----------------------------------------------------------------

@@ -147,7 +147,8 @@ nest::iaf_cond_exp_sfa_rr::State_::State_( const State_& s )
   }
 }
 
-nest::iaf_cond_exp_sfa_rr::State_& nest::iaf_cond_exp_sfa_rr::State_::operator=( const State_& s )
+nest::iaf_cond_exp_sfa_rr::State_&
+nest::iaf_cond_exp_sfa_rr::State_::operator=( const State_& s )
 {
   r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -164,52 +165,52 @@ nest::iaf_cond_exp_sfa_rr::State_& nest::iaf_cond_exp_sfa_rr::State_::operator=(
 void
 nest::iaf_cond_exp_sfa_rr::Parameters_::get( dictionary& d ) const
 {
-  d[ names::V_th.toString() ] = V_th_;
-  d[ names::V_reset.toString() ] = V_reset_;
-  d[ names::t_ref.toString() ] = t_ref_;
-  d[ names::g_L.toString() ] = g_L;
-  d[ names::E_L.toString() ] = E_L;
-  d[ names::E_ex.toString() ] = E_ex;
-  d[ names::E_in.toString() ] = E_in;
-  d[ names::C_m.toString() ] = C_m;
-  d[ names::tau_syn_ex.toString() ] = tau_synE;
-  d[ names::tau_syn_in.toString() ] = tau_synI;
-  d[ names::I_e.toString() ] = I_e;
+  d[ names::V_th ] = V_th_;
+  d[ names::V_reset ] = V_reset_;
+  d[ names::t_ref ] = t_ref_;
+  d[ names::g_L ] = g_L;
+  d[ names::E_L ] = E_L;
+  d[ names::E_ex ] = E_ex;
+  d[ names::E_in ] = E_in;
+  d[ names::C_m ] = C_m;
+  d[ names::tau_syn_ex ] = tau_synE;
+  d[ names::tau_syn_in ] = tau_synI;
+  d[ names::I_e ] = I_e;
 
-  d[ names::tau_sfa.toString() ] = tau_sfa;
-  d[ names::tau_rr.toString() ] = tau_rr;
-  d[ names::E_sfa.toString() ] = E_sfa;
-  d[ names::E_rr.toString() ] = E_rr;
-  d[ names::q_sfa.toString() ] = q_sfa;
-  d[ names::q_rr.toString() ] = q_rr;
+  d[ names::tau_sfa ] = tau_sfa;
+  d[ names::tau_rr ] = tau_rr;
+  d[ names::E_sfa ] = E_sfa;
+  d[ names::E_rr ] = E_rr;
+  d[ names::q_sfa ] = q_sfa;
+  d[ names::q_rr ] = q_rr;
 }
 
 void
 nest::iaf_cond_exp_sfa_rr::Parameters_::set( const dictionary& d, Node* node )
 {
   // allow setting the membrane potential
-  update_value_param( d, names::V_th.toString(), V_th_, node );
-  update_value_param( d, names::V_reset.toString(), V_reset_, node );
-  update_value_param( d, names::t_ref.toString(), t_ref_, node );
-  update_value_param( d, names::E_L.toString(), E_L, node );
+  update_value_param( d, names::V_th, V_th_, node );
+  update_value_param( d, names::V_reset, V_reset_, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::E_L, E_L, node );
 
-  update_value_param( d, names::E_ex.toString(), E_ex, node );
-  update_value_param( d, names::E_in.toString(), E_in, node );
+  update_value_param( d, names::E_ex, E_ex, node );
+  update_value_param( d, names::E_in, E_in, node );
 
-  update_value_param( d, names::C_m.toString(), C_m, node );
-  update_value_param( d, names::g_L.toString(), g_L, node );
+  update_value_param( d, names::C_m, C_m, node );
+  update_value_param( d, names::g_L, g_L, node );
 
-  update_value_param( d, names::tau_syn_ex.toString(), tau_synE, node );
-  update_value_param( d, names::tau_syn_in.toString(), tau_synI, node );
+  update_value_param( d, names::tau_syn_ex, tau_synE, node );
+  update_value_param( d, names::tau_syn_in, tau_synI, node );
 
-  update_value_param( d, names::I_e.toString(), I_e, node );
+  update_value_param( d, names::I_e, I_e, node );
 
-  update_value_param( d, names::E_sfa.toString(), E_sfa, node );
-  update_value_param( d, names::E_rr.toString(), E_rr, node );
-  update_value_param( d, names::q_sfa.toString(), q_sfa, node );
-  update_value_param( d, names::q_rr.toString(), q_rr, node );
-  update_value_param( d, names::tau_sfa.toString(), tau_sfa, node );
-  update_value_param( d, names::tau_rr.toString(), tau_rr, node );
+  update_value_param( d, names::E_sfa, E_sfa, node );
+  update_value_param( d, names::E_rr, E_rr, node );
+  update_value_param( d, names::q_sfa, q_sfa, node );
+  update_value_param( d, names::q_rr, q_rr, node );
+  update_value_param( d, names::tau_sfa, tau_sfa, node );
+  update_value_param( d, names::tau_rr, tau_rr, node );
   if ( V_reset_ >= V_th_ )
   {
     throw BadProperty( "Reset potential must be smaller than threshold." );
@@ -231,21 +232,21 @@ nest::iaf_cond_exp_sfa_rr::Parameters_::set( const dictionary& d, Node* node )
 void
 nest::iaf_cond_exp_sfa_rr::State_::get( dictionary& d ) const
 {
-  d[ names::V_m.toString() ] = y_[ V_M ]; // Membrane potential
-  d[ names::g_ex.toString() ] = y_[ G_EXC ];
-  d[ names::g_in.toString() ] = y_[ G_INH ];
-  d[ names::g_sfa.toString() ] = y_[ G_SFA ];
-  d[ names::g_rr.toString() ] = y_[ G_RR ];
+  d[ names::V_m ] = y_[ V_M ]; // Membrane potential
+  d[ names::g_ex ] = y_[ G_EXC ];
+  d[ names::g_in ] = y_[ G_INH ];
+  d[ names::g_sfa ] = y_[ G_SFA ];
+  d[ names::g_rr ] = y_[ G_RR ];
 }
 
 void
 nest::iaf_cond_exp_sfa_rr::State_::set( const dictionary& d, const Parameters_&, Node* node )
 {
-  update_value_param( d, names::V_m.toString(), y_[ V_M ], node );
-  update_value_param( d, names::g_ex.toString(), y_[ G_EXC ], node );
-  update_value_param( d, names::g_in.toString(), y_[ G_INH ], node );
-  update_value_param( d, names::g_sfa.toString(), y_[ G_SFA ], node );
-  update_value_param( d, names::g_rr.toString(), y_[ G_RR ], node );
+  update_value_param( d, names::V_m, y_[ V_M ], node );
+  update_value_param( d, names::g_ex, y_[ G_EXC ], node );
+  update_value_param( d, names::g_in, y_[ G_INH ], node );
+  update_value_param( d, names::g_sfa, y_[ G_SFA ], node );
+  update_value_param( d, names::g_rr, y_[ G_RR ], node );
 }
 
 nest::iaf_cond_exp_sfa_rr::Buffers_::Buffers_( iaf_cond_exp_sfa_rr& n )

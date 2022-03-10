@@ -55,11 +55,11 @@ nest::StructuralPlasticityNode::get_status( dictionary& d ) const
 {
   dictionary synaptic_elements_d;
 
-  d[ names::Ca.toString() ] = Ca_minus_;
-  d[ names::tau_Ca.toString() ] = tau_Ca_;
-  d[ names::beta_Ca.toString() ] = beta_Ca_;
+  d[ names::Ca ] = Ca_minus_;
+  d[ names::tau_Ca ] = tau_Ca_;
+  d[ names::beta_Ca ] = beta_Ca_;
 
-  d[ names::synaptic_elements.toString() ] = synaptic_elements_d;
+  d[ names::synaptic_elements ] = synaptic_elements_d;
   for ( std::map< Name, SynapticElement >::const_iterator it = synaptic_elements_map_.begin();
         it != synaptic_elements_map_.end();
         ++it )
@@ -76,8 +76,8 @@ nest::StructuralPlasticityNode::set_status( const dictionary& d )
   // We need to preserve values in case invalid values are set
   double new_tau_Ca = tau_Ca_;
   double new_beta_Ca = beta_Ca_;
-  d.update_value( names::tau_Ca.toString(), new_tau_Ca );
-  d.update_value( names::beta_Ca.toString(), new_beta_Ca );
+  d.update_value( names::tau_Ca, new_tau_Ca );
+  d.update_value( names::beta_Ca, new_beta_Ca );
 
   if ( new_tau_Ca <= 0.0 )
   {
@@ -95,16 +95,16 @@ nest::StructuralPlasticityNode::set_status( const dictionary& d )
 
   // check, if to clear spike history and K_minus
   bool clear = false;
-  d.update_value( names::clear.toString(), clear );
+  d.update_value( names::clear, clear );
   if ( clear )
   {
     clear_history();
   }
 
   // TODO-PYNEST-NG: fix
-  // if ( d.known( names::synaptic_elements_param.toString() ) )
+  // if ( d.known( names::synaptic_elements_param ) )
   // {
-  //   const dictionary synaptic_elements_dict = d.get<dictionary>(names::synaptic_elements_param.toString());
+  //   const dictionary synaptic_elements_dict = d.get<dictionary>(names::synaptic_elements_param);
 
   //   for ( std::map< Name, SynapticElement >::iterator it = synaptic_elements_map_.begin();
   //         it != synaptic_elements_map_.end();
@@ -117,7 +117,7 @@ nest::StructuralPlasticityNode::set_status( const dictionary& d )
   //     }
   //   }
   // }
-  if ( not d.known( names::synaptic_elements.toString() ) )
+  if ( not d.known( names::synaptic_elements ) )
   {
     return;
   }
@@ -126,7 +126,7 @@ nest::StructuralPlasticityNode::set_status( const dictionary& d )
   std::pair< std::map< Name, SynapticElement >::iterator, bool > insert_result;
 
   synaptic_elements_map_ = std::map< Name, SynapticElement >();
-  synaptic_elements_d = d.get< dictionary >( names::synaptic_elements.toString() );
+  synaptic_elements_d = d.get< dictionary >( names::synaptic_elements );
 
   // TODO-PYNEST-NG: fix
   // for ( Dictionary::const_iterator i = synaptic_elements_d->begin(); i != synaptic_elements_d->end(); ++i )

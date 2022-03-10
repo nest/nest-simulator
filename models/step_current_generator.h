@@ -31,7 +31,6 @@
 #include "connection.h"
 #include "device_node.h"
 #include "event.h"
-#include "stimulation_device.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
 #include "stimulation_device.h"
@@ -236,7 +235,7 @@ step_current_generator::get_status( dictionary& d ) const
   P_.get( d );
   StimulationDevice::get_status( d );
 
-  d[ names::recordables.toString() ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void

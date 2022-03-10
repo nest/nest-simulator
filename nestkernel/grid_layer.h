@@ -74,7 +74,8 @@ public:
     /**
      * Postfix increment operator.
      */
-    masked_iterator operator++( int )
+    masked_iterator
+    operator++( int )
     {
       masked_iterator tmp = *this;
       ++*this;
@@ -84,11 +85,13 @@ public:
     /**
      * Iterators are equal if they point to the same node in the same layer.
      */
-    bool operator==( const masked_iterator& other ) const
+    bool
+    operator==( const masked_iterator& other ) const
     {
       return ( other.layer_.get_metadata() == layer_.get_metadata() ) && ( other.node_ == node_ );
     }
-    bool operator!=( const masked_iterator& other ) const
+    bool
+    operator!=( const masked_iterator& other ) const
     {
       return ( other.layer_.get_metadata() != layer_.get_metadata() ) || ( other.node_ != node_ );
     }
@@ -168,7 +171,7 @@ GridLayer< D >::set_status( const dictionary& d )
 {
   std::vector< long > new_dims( D );
 
-  d.update_value( names::shape.toString(), new_dims );
+  d.update_value( names::shape, new_dims );
 
   index new_size = 1;
   for ( int i = 0; i < D; ++i )
@@ -183,15 +186,15 @@ GridLayer< D >::set_status( const dictionary& d )
     throw BadProperty( "Total size of layer must be unchanged." );
   }
 
-  if ( d.known( names::extent.toString() ) )
+  if ( d.known( names::extent ) )
   {
     Position< D > center = this->get_center();
-    this->extent_ = d.get< std::vector< double > >( names::extent.toString() );
+    this->extent_ = d.get< std::vector< double > >( names::extent );
     this->lower_left_ = center - this->extent_ / 2;
   }
-  if ( d.known( names::center.toString() ) )
+  if ( d.known( names::center ) )
   {
-    this->lower_left_ = d.get< std::vector< double > >( names::center.toString() );
+    this->lower_left_ = d.get< std::vector< double > >( names::center );
     this->lower_left_ -= this->extent_ / 2;
   }
 
@@ -204,7 +207,7 @@ GridLayer< D >::get_status( dictionary& d ) const
 {
   Layer< D >::get_status( d );
 
-  d[ names::shape.toString() ] = std::vector< index >( dims_.get_vector() );
+  d[ names::shape ] = std::vector< index >( dims_.get_vector() );
 }
 
 template < int D >
@@ -378,7 +381,8 @@ inline std::pair< Position< D >, index > GridLayer< D >::masked_iterator::operat
 }
 
 template < int D >
-typename GridLayer< D >::masked_iterator& GridLayer< D >::masked_iterator::operator++()
+typename GridLayer< D >::masked_iterator&
+GridLayer< D >::masked_iterator::operator++()
 {
   do
   {

@@ -28,8 +28,8 @@
  * @file Provide classes to be used as template arguments to Connection<T>.
  */
 
-#include "kernel_manager.h"
 #include "compose.hpp"
+#include "kernel_manager.h"
 
 namespace nest
 {
@@ -64,8 +64,8 @@ public:
     // Do nothing if called on synapse prototype
     if ( target_ != 0 )
     {
-      d[ names::rport.toString() ] = rport_;
-      d[ names::target.toString() ] = target_->get_node_id();
+      d[ names::rport ] = rport_;
+      d[ names::target ] = target_->get_node_id();
     }
   }
 
@@ -127,8 +127,8 @@ public:
     // Do nothing if called on synapse prototype
     if ( target_ != invalid_targetindex )
     {
-      d[ names::rport.toString() ] = 0;
-      d[ names::target.toString() ] = target_;
+      d[ names::rport ] = 0;
+      d[ names::target ] = target_;
     }
   }
 
@@ -171,10 +171,10 @@ TargetIdentifierIndex::set_target( Node* target )
   index target_lid = target->get_thread_lid();
   if ( target_lid > max_targetindex )
   {
-    throw IllegalConnection( String::compose(
-      "HPC synapses support at most %1 nodes per thread. "
-      "See Kunkel et al, Front Neuroinform 8:78 (2014), Sec 3.3.2.",
-      max_targetindex ) );
+    throw IllegalConnection(
+      String::compose( "HPC synapses support at most %1 nodes per thread. "
+                       "See Kunkel et al, Front Neuroinform 8:78 (2014), Sec 3.3.2.",
+        max_targetindex ) );
   }
   target_ = target_lid;
 }

@@ -141,8 +141,8 @@ public:
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
-  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
@@ -251,14 +251,14 @@ void
 tsodyks2_synapse< targetidentifierT >::get_status( dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  d[ names::weight.toString() ] = weight_;
+  d[ names::weight ] = weight_;
 
-  d[ names::dU.toString() ] = U_;
-  d[ names::u.toString() ] = u_;
-  d[ names::tau_rec.toString() ] = tau_rec_;
-  d[ names::tau_fac.toString() ] = tau_fac_;
-  d[ names::x.toString() ] = x_;
-  d[ names::size_of.toString() ] = sizeof( *this );
+  d[ names::dU ] = U_;
+  d[ names::u ] = u_;
+  d[ names::tau_rec ] = tau_rec_;
+  d[ names::tau_fac ] = tau_fac_;
+  d[ names::x ] = x_;
+  d[ names::size_of ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
@@ -266,33 +266,33 @@ void
 tsodyks2_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  d.update_value( names::weight.toString(), weight_ );
+  d.update_value( names::weight, weight_ );
 
-  d.update_value( names::dU.toString(), U_ );
+  d.update_value( names::dU, U_ );
   if ( U_ > 1.0 || U_ < 0.0 )
   {
     throw BadProperty( "U must be in [0,1]." );
   }
 
-  d.update_value( names::u.toString(), u_ );
+  d.update_value( names::u, u_ );
   if ( u_ > 1.0 || u_ < 0.0 )
   {
     throw BadProperty( "u must be in [0,1]." );
   }
 
-  d.update_value( names::tau_rec.toString(), tau_rec_ );
+  d.update_value( names::tau_rec, tau_rec_ );
   if ( tau_rec_ <= 0.0 )
   {
     throw BadProperty( "tau_rec must be > 0." );
   }
 
-  d.update_value( names::tau_fac.toString(), tau_fac_ );
+  d.update_value( names::tau_fac, tau_fac_ );
   if ( tau_fac_ < 0.0 )
   {
     throw BadProperty( "tau_fac must be >= 0." );
   }
 
-  d.update_value( names::x.toString(), x_ );
+  d.update_value( names::x, x_ );
 }
 
 } // namespace

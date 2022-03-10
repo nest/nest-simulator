@@ -57,21 +57,21 @@ STDPDopaCommonProperties::get_status( dictionary& d ) const
   CommonSynapseProperties::get_status( d );
   if ( vt_ != 0 )
   {
-    d[ names::vt.toString() ] = vt_->get_node_id();
+    d[ names::vt ] = vt_->get_node_id();
   }
   else
   {
-    d[ names::vt.toString() ] = -1;
+    d[ names::vt ] = -1;
   }
 
-  d[ names::A_plus.toString() ] = A_plus_;
-  d[ names::A_minus.toString() ] = A_minus_;
-  d[ names::tau_plus.toString() ] = tau_plus_;
-  d[ names::tau_c.toString() ] = tau_c_;
-  d[ names::tau_n.toString() ] = tau_n_;
-  d[ names::b.toString() ] = b_;
-  d[ names::Wmin.toString() ] = Wmin_;
-  d[ names::Wmax.toString() ] = Wmax_;
+  d[ names::A_plus ] = A_plus_;
+  d[ names::A_minus ] = A_minus_;
+  d[ names::tau_plus ] = tau_plus_;
+  d[ names::tau_c ] = tau_c_;
+  d[ names::tau_n ] = tau_n_;
+  d[ names::b ] = b_;
+  d[ names::Wmin ] = Wmin_;
+  d[ names::Wmax ] = Wmax_;
 }
 
 void
@@ -80,7 +80,7 @@ STDPDopaCommonProperties::set_status( const dictionary& d, ConnectorModel& cm )
   CommonSynapseProperties::set_status( d, cm );
 
   long vtnode_id;
-  if ( d.update_value( names::vt.toString(), vtnode_id ) )
+  if ( d.update_value( names::vt, vtnode_id ) )
   {
     const thread tid = kernel().vp_manager.get_thread_id();
     Node* vt = kernel().node_manager.get_node_or_proxy( vtnode_id, tid );
@@ -91,14 +91,14 @@ STDPDopaCommonProperties::set_status( const dictionary& d, ConnectorModel& cm )
     }
   }
 
-  d.update_value( names::A_plus.toString(), A_plus_ );
-  d.update_value( names::A_minus.toString(), A_minus_ );
-  d.update_value( names::tau_plus.toString(), tau_plus_ );
-  d.update_value( names::tau_c.toString(), tau_c_ );
-  d.update_value( names::tau_n.toString(), tau_n_ );
-  d.update_value( names::b.toString(), b_ );
-  d.update_value( names::Wmin.toString(), Wmin_ );
-  d.update_value( names::Wmax.toString(), Wmax_ );
+  d.update_value( names::A_plus, A_plus_ );
+  d.update_value( names::A_minus, A_minus_ );
+  d.update_value( names::tau_plus, tau_plus_ );
+  d.update_value( names::tau_c, tau_c_ );
+  d.update_value( names::tau_n, tau_n_ );
+  d.update_value( names::b, b_ );
+  d.update_value( names::Wmin, Wmin_ );
+  d.update_value( names::Wmax, Wmax_ );
 }
 
 Node*

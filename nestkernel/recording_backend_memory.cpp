@@ -219,25 +219,23 @@ nest::RecordingBackendMemory::DeviceData::get_status( dictionary& d ) const
 {
   dictionary events;
 
-  if ( not d.known( names::events.toString() ) )
+  if ( not d.known( names::events ) )
   {
-    d[ names::events.toString() ] = events;
+    d[ names::events ] = events;
   }
   else
   {
-    events = d.get< dictionary >( names::events.toString() );
+    events = d.get< dictionary >( names::events );
   }
 
-  auto init_intvector = [&events]( std::string key ) -> std::vector< int >&
-  {
+  auto init_intvector = [&events]( std::string key ) -> std::vector< int >& {
     if ( not events.known( key ) )
     {
       events[ key ] = std::vector< int >();
     }
     return boost::any_cast< std::vector< int >& >( events[ key ] );
   };
-  auto init_doublevector = [&events]( std::string key ) -> std::vector< double >&
-  {
+  auto init_doublevector = [&events]( std::string key ) -> std::vector< double >& {
     if ( not events.known( key ) )
     {
       events[ key ] = std::vector< double >();
@@ -246,20 +244,20 @@ nest::RecordingBackendMemory::DeviceData::get_status( dictionary& d ) const
   };
 
   // TODO-PYNEST-NG: check that the vector in events is appended correctly
-  auto& senders = init_intvector( names::senders.toString() );
+  auto& senders = init_intvector( names::senders );
   senders.insert( senders.end(), senders_.begin(), senders_.end() );
 
   if ( time_in_steps_ )
   {
-    auto& times = init_intvector( names::times.toString() );
+    auto& times = init_intvector( names::times );
     times.insert( times.end(), times_steps_.begin(), times_steps_.end() );
 
-    auto& offsets = init_doublevector( names::offsets.toString() );
+    auto& offsets = init_doublevector( names::offsets );
     offsets.insert( offsets.end(), times_offset_.begin(), times_offset_.end() );
   }
   else
   {
-    auto& times = init_doublevector( names::times.toString() );
+    auto& times = init_doublevector( names::times );
     times.insert( times.end(), times_ms_.begin(), times_ms_.end() );
   }
 
@@ -274,14 +272,14 @@ nest::RecordingBackendMemory::DeviceData::get_status( dictionary& d ) const
     long_name.insert( long_name.end(), long_values_[ i ].begin(), long_values_[ i ].end() );
   }
 
-  d[ names::time_in_steps.toString() ] = time_in_steps_;
+  d[ names::time_in_steps ] = time_in_steps_;
 }
 
 void
 nest::RecordingBackendMemory::DeviceData::set_status( const dictionary& d )
 {
   bool time_in_steps = false;
-  if ( d.update_value( names::time_in_steps.toString(), time_in_steps ) )
+  if ( d.update_value( names::time_in_steps, time_in_steps ) )
   {
     if ( kernel().simulation_manager.has_been_simulated() )
     {
@@ -292,7 +290,7 @@ nest::RecordingBackendMemory::DeviceData::set_status( const dictionary& d )
   }
 
   size_t n_events = 1;
-  if ( d.update_value( names::n_events.toString(), n_events ) and n_events == 0 )
+  if ( d.update_value( names::n_events, n_events ) and n_events == 0 )
   {
     clear();
   }

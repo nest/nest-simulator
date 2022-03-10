@@ -214,10 +214,11 @@ nest::ht_neuron::m_NMDA_( double V, double m_eq, double m_fast, double m_slow ) 
 inline double
 nest::ht_neuron::get_g_NMDA_() const
 {
-  return S_.y_[ State_::G_NMDA_TIMECOURSE ] * m_NMDA_( S_.y_[ State_::V_M ],
-                                                m_eq_NMDA_( S_.y_[ State_::V_M ] ),
-                                                S_.y_[ State_::m_fast_NMDA ],
-                                                S_.y_[ State_::m_slow_NMDA ] );
+  return S_.y_[ State_::G_NMDA_TIMECOURSE ]
+    * m_NMDA_( S_.y_[ State_::V_M ],
+      m_eq_NMDA_( S_.y_[ State_::V_M ] ),
+      S_.y_[ State_::m_fast_NMDA ],
+      S_.y_[ State_::m_slow_NMDA ] );
 }
 
 /* ----------------------------------------------------------------
@@ -307,7 +308,8 @@ nest::ht_neuron::State_::State_( const State_& s )
   }
 }
 
-nest::ht_neuron::State_& nest::ht_neuron::State_::operator=( const State_& s )
+nest::ht_neuron::State_&
+nest::ht_neuron::State_::operator=( const State_& s )
 {
   ref_steps_ = s.ref_steps_;
   I_NaP_ = s.I_NaP_;
@@ -332,95 +334,95 @@ nest::ht_neuron::State_::~State_()
 void
 nest::ht_neuron::Parameters_::get( dictionary& d ) const
 {
-  d[ names::E_Na.toString() ] = E_Na;
-  d[ names::E_K.toString() ] = E_K;
-  d[ names::g_NaL.toString() ] = g_NaL;
-  d[ names::g_KL.toString() ] = g_KL;
-  d[ names::tau_m.toString() ] = tau_m;
-  d[ names::theta_eq.toString() ] = theta_eq;
-  d[ names::tau_theta.toString() ] = tau_theta;
-  d[ names::t_ref.toString() ] = t_ref;
-  d[ names::tau_spike.toString() ] = tau_spike;
-  d[ names::g_peak_AMPA.toString() ] = g_peak_AMPA;
-  d[ names::tau_rise_AMPA.toString() ] = tau_rise_AMPA;
-  d[ names::tau_decay_AMPA.toString() ] = tau_decay_AMPA;
-  d[ names::E_rev_AMPA.toString() ] = E_rev_AMPA;
-  d[ names::g_peak_NMDA.toString() ] = g_peak_NMDA;
-  d[ names::tau_rise_NMDA.toString() ] = tau_rise_NMDA;
-  d[ names::tau_decay_NMDA.toString() ] = tau_decay_NMDA;
-  d[ names::E_rev_NMDA.toString() ] = E_rev_NMDA;
-  d[ names::V_act_NMDA.toString() ] = V_act_NMDA;
-  d[ names::S_act_NMDA.toString() ] = S_act_NMDA;
-  d[ names::tau_Mg_slow_NMDA.toString() ] = tau_Mg_slow_NMDA;
-  d[ names::tau_Mg_fast_NMDA.toString() ] = tau_Mg_fast_NMDA;
-  d[ names::instant_unblock_NMDA.toString() ] = instant_unblock_NMDA;
-  d[ names::g_peak_GABA_A.toString() ] = g_peak_GABA_A;
-  d[ names::tau_rise_GABA_A.toString() ] = tau_rise_GABA_A;
-  d[ names::tau_decay_GABA_A.toString() ] = tau_decay_GABA_A;
-  d[ names::E_rev_GABA_A.toString() ] = E_rev_GABA_A;
-  d[ names::g_peak_GABA_B.toString() ] = g_peak_GABA_B;
-  d[ names::tau_rise_GABA_B.toString() ] = tau_rise_GABA_B;
-  d[ names::tau_decay_GABA_B.toString() ] = tau_decay_GABA_B;
-  d[ names::E_rev_GABA_B.toString() ] = E_rev_GABA_B;
-  d[ names::g_peak_NaP.toString() ] = g_peak_NaP;
-  d[ names::E_rev_NaP.toString() ] = E_rev_NaP;
-  d[ names::N_NaP.toString() ] = N_NaP;
-  d[ names::g_peak_KNa.toString() ] = g_peak_KNa;
-  d[ names::E_rev_KNa.toString() ] = E_rev_KNa;
-  d[ names::tau_D_KNa.toString() ] = tau_D_KNa;
-  d[ names::g_peak_T.toString() ] = g_peak_T;
-  d[ names::E_rev_T.toString() ] = E_rev_T;
-  d[ names::N_T.toString() ] = N_T;
-  d[ names::g_peak_h.toString() ] = g_peak_h;
-  d[ names::E_rev_h.toString() ] = E_rev_h;
-  d[ names::voltage_clamp.toString() ] = voltage_clamp;
+  d[ names::E_Na ] = E_Na;
+  d[ names::E_K ] = E_K;
+  d[ names::g_NaL ] = g_NaL;
+  d[ names::g_KL ] = g_KL;
+  d[ names::tau_m ] = tau_m;
+  d[ names::theta_eq ] = theta_eq;
+  d[ names::tau_theta ] = tau_theta;
+  d[ names::t_ref ] = t_ref;
+  d[ names::tau_spike ] = tau_spike;
+  d[ names::g_peak_AMPA ] = g_peak_AMPA;
+  d[ names::tau_rise_AMPA ] = tau_rise_AMPA;
+  d[ names::tau_decay_AMPA ] = tau_decay_AMPA;
+  d[ names::E_rev_AMPA ] = E_rev_AMPA;
+  d[ names::g_peak_NMDA ] = g_peak_NMDA;
+  d[ names::tau_rise_NMDA ] = tau_rise_NMDA;
+  d[ names::tau_decay_NMDA ] = tau_decay_NMDA;
+  d[ names::E_rev_NMDA ] = E_rev_NMDA;
+  d[ names::V_act_NMDA ] = V_act_NMDA;
+  d[ names::S_act_NMDA ] = S_act_NMDA;
+  d[ names::tau_Mg_slow_NMDA ] = tau_Mg_slow_NMDA;
+  d[ names::tau_Mg_fast_NMDA ] = tau_Mg_fast_NMDA;
+  d[ names::instant_unblock_NMDA ] = instant_unblock_NMDA;
+  d[ names::g_peak_GABA_A ] = g_peak_GABA_A;
+  d[ names::tau_rise_GABA_A ] = tau_rise_GABA_A;
+  d[ names::tau_decay_GABA_A ] = tau_decay_GABA_A;
+  d[ names::E_rev_GABA_A ] = E_rev_GABA_A;
+  d[ names::g_peak_GABA_B ] = g_peak_GABA_B;
+  d[ names::tau_rise_GABA_B ] = tau_rise_GABA_B;
+  d[ names::tau_decay_GABA_B ] = tau_decay_GABA_B;
+  d[ names::E_rev_GABA_B ] = E_rev_GABA_B;
+  d[ names::g_peak_NaP ] = g_peak_NaP;
+  d[ names::E_rev_NaP ] = E_rev_NaP;
+  d[ names::N_NaP ] = N_NaP;
+  d[ names::g_peak_KNa ] = g_peak_KNa;
+  d[ names::E_rev_KNa ] = E_rev_KNa;
+  d[ names::tau_D_KNa ] = tau_D_KNa;
+  d[ names::g_peak_T ] = g_peak_T;
+  d[ names::E_rev_T ] = E_rev_T;
+  d[ names::N_T ] = N_T;
+  d[ names::g_peak_h ] = g_peak_h;
+  d[ names::E_rev_h ] = E_rev_h;
+  d[ names::voltage_clamp ] = voltage_clamp;
 }
 
 void
 nest::ht_neuron::Parameters_::set( const dictionary& d, Node* node )
 {
-  update_value_param( d, names::E_Na.toString(), E_Na, node );
-  update_value_param( d, names::E_K.toString(), E_K, node );
-  update_value_param( d, names::g_NaL.toString(), g_NaL, node );
-  update_value_param( d, names::g_KL.toString(), g_KL, node );
-  update_value_param( d, names::tau_m.toString(), tau_m, node );
-  update_value_param( d, names::theta_eq.toString(), theta_eq, node );
-  update_value_param( d, names::tau_theta.toString(), tau_theta, node );
-  update_value_param( d, names::tau_spike.toString(), tau_spike, node );
-  update_value_param( d, names::t_ref.toString(), t_ref, node );
-  update_value_param( d, names::g_peak_AMPA.toString(), g_peak_AMPA, node );
-  update_value_param( d, names::tau_rise_AMPA.toString(), tau_rise_AMPA, node );
-  update_value_param( d, names::tau_decay_AMPA.toString(), tau_decay_AMPA, node );
-  update_value_param( d, names::E_rev_AMPA.toString(), E_rev_AMPA, node );
-  update_value_param( d, names::g_peak_NMDA.toString(), g_peak_NMDA, node );
-  update_value_param( d, names::tau_rise_NMDA.toString(), tau_rise_NMDA, node );
-  update_value_param( d, names::tau_decay_NMDA.toString(), tau_decay_NMDA, node );
-  update_value_param( d, names::E_rev_NMDA.toString(), E_rev_NMDA, node );
-  update_value_param( d, names::V_act_NMDA.toString(), V_act_NMDA, node );
-  update_value_param( d, names::S_act_NMDA.toString(), S_act_NMDA, node );
-  update_value_param( d, names::tau_Mg_slow_NMDA.toString(), tau_Mg_slow_NMDA, node );
-  update_value_param( d, names::tau_Mg_fast_NMDA.toString(), tau_Mg_fast_NMDA, node );
-  update_value_param( d, names::instant_unblock_NMDA.toString(), instant_unblock_NMDA, node );
-  update_value_param( d, names::g_peak_GABA_A.toString(), g_peak_GABA_A, node );
-  update_value_param( d, names::tau_rise_GABA_A.toString(), tau_rise_GABA_A, node );
-  update_value_param( d, names::tau_decay_GABA_A.toString(), tau_decay_GABA_A, node );
-  update_value_param( d, names::E_rev_GABA_A.toString(), E_rev_GABA_A, node );
-  update_value_param( d, names::g_peak_GABA_B.toString(), g_peak_GABA_B, node );
-  update_value_param( d, names::tau_rise_GABA_B.toString(), tau_rise_GABA_B, node );
-  update_value_param( d, names::tau_decay_GABA_B.toString(), tau_decay_GABA_B, node );
-  update_value_param( d, names::E_rev_GABA_B.toString(), E_rev_GABA_B, node );
-  update_value_param( d, names::g_peak_NaP.toString(), g_peak_NaP, node );
-  update_value_param( d, names::E_rev_NaP.toString(), E_rev_NaP, node );
-  update_value_param( d, names::N_NaP.toString(), N_NaP, node );
-  update_value_param( d, names::g_peak_KNa.toString(), g_peak_KNa, node );
-  update_value_param( d, names::E_rev_KNa.toString(), E_rev_KNa, node );
-  update_value_param( d, names::tau_D_KNa.toString(), tau_D_KNa, node );
-  update_value_param( d, names::g_peak_T.toString(), g_peak_T, node );
-  update_value_param( d, names::E_rev_T.toString(), E_rev_T, node );
-  update_value_param( d, names::N_T.toString(), N_T, node );
-  update_value_param( d, names::g_peak_h.toString(), g_peak_h, node );
-  update_value_param( d, names::E_rev_h.toString(), E_rev_h, node );
-  update_value_param( d, names::voltage_clamp.toString(), voltage_clamp, node );
+  update_value_param( d, names::E_Na, E_Na, node );
+  update_value_param( d, names::E_K, E_K, node );
+  update_value_param( d, names::g_NaL, g_NaL, node );
+  update_value_param( d, names::g_KL, g_KL, node );
+  update_value_param( d, names::tau_m, tau_m, node );
+  update_value_param( d, names::theta_eq, theta_eq, node );
+  update_value_param( d, names::tau_theta, tau_theta, node );
+  update_value_param( d, names::tau_spike, tau_spike, node );
+  update_value_param( d, names::t_ref, t_ref, node );
+  update_value_param( d, names::g_peak_AMPA, g_peak_AMPA, node );
+  update_value_param( d, names::tau_rise_AMPA, tau_rise_AMPA, node );
+  update_value_param( d, names::tau_decay_AMPA, tau_decay_AMPA, node );
+  update_value_param( d, names::E_rev_AMPA, E_rev_AMPA, node );
+  update_value_param( d, names::g_peak_NMDA, g_peak_NMDA, node );
+  update_value_param( d, names::tau_rise_NMDA, tau_rise_NMDA, node );
+  update_value_param( d, names::tau_decay_NMDA, tau_decay_NMDA, node );
+  update_value_param( d, names::E_rev_NMDA, E_rev_NMDA, node );
+  update_value_param( d, names::V_act_NMDA, V_act_NMDA, node );
+  update_value_param( d, names::S_act_NMDA, S_act_NMDA, node );
+  update_value_param( d, names::tau_Mg_slow_NMDA, tau_Mg_slow_NMDA, node );
+  update_value_param( d, names::tau_Mg_fast_NMDA, tau_Mg_fast_NMDA, node );
+  update_value_param( d, names::instant_unblock_NMDA, instant_unblock_NMDA, node );
+  update_value_param( d, names::g_peak_GABA_A, g_peak_GABA_A, node );
+  update_value_param( d, names::tau_rise_GABA_A, tau_rise_GABA_A, node );
+  update_value_param( d, names::tau_decay_GABA_A, tau_decay_GABA_A, node );
+  update_value_param( d, names::E_rev_GABA_A, E_rev_GABA_A, node );
+  update_value_param( d, names::g_peak_GABA_B, g_peak_GABA_B, node );
+  update_value_param( d, names::tau_rise_GABA_B, tau_rise_GABA_B, node );
+  update_value_param( d, names::tau_decay_GABA_B, tau_decay_GABA_B, node );
+  update_value_param( d, names::E_rev_GABA_B, E_rev_GABA_B, node );
+  update_value_param( d, names::g_peak_NaP, g_peak_NaP, node );
+  update_value_param( d, names::E_rev_NaP, E_rev_NaP, node );
+  update_value_param( d, names::N_NaP, N_NaP, node );
+  update_value_param( d, names::g_peak_KNa, g_peak_KNa, node );
+  update_value_param( d, names::E_rev_KNa, E_rev_KNa, node );
+  update_value_param( d, names::tau_D_KNa, tau_D_KNa, node );
+  update_value_param( d, names::g_peak_T, g_peak_T, node );
+  update_value_param( d, names::E_rev_T, E_rev_T, node );
+  update_value_param( d, names::N_T, N_T, node );
+  update_value_param( d, names::g_peak_h, g_peak_h, node );
+  update_value_param( d, names::E_rev_h, E_rev_h, node );
+  update_value_param( d, names::voltage_clamp, voltage_clamp, node );
 
   if ( g_peak_AMPA < 0 )
   {
@@ -554,18 +556,18 @@ nest::ht_neuron::Parameters_::set( const dictionary& d, Node* node )
 void
 nest::ht_neuron::State_::get( dictionary& d ) const
 {
-  d[ names::V_m.toString() ] = y_[ V_M ];     // Membrane potential
-  d[ names::theta.toString() ] = y_[ THETA ]; // Threshold
+  d[ names::V_m ] = y_[ V_M ];     // Membrane potential
+  d[ names::theta ] = y_[ THETA ]; // Threshold
 }
 
 void
 nest::ht_neuron::State_::set( const dictionary& d, const ht_neuron& node, Node* nodeptr )
 {
-  update_value_param( d, names::V_m.toString(), y_[ V_M ], nodeptr );
-  update_value_param( d, names::theta.toString(), y_[ THETA ], nodeptr );
+  update_value_param( d, names::V_m, y_[ V_M ], nodeptr );
+  update_value_param( d, names::theta, y_[ THETA ], nodeptr );
 
   bool equilibrate = false;
-  update_value_param( d, names::equilibrate.toString(), equilibrate, nodeptr );
+  update_value_param( d, names::equilibrate, equilibrate, nodeptr );
   if ( equilibrate )
   {
     y_[ m_fast_NMDA ] = node.m_eq_NMDA_( y_[ V_M ] );
@@ -733,13 +735,13 @@ nest::ht_neuron::get_status( dictionary& d ) const
 
   dictionary receptor_type;
 
-  receptor_type[ names::AMPA.toString() ] = AMPA;
-  receptor_type[ names::NMDA.toString() ] = NMDA;
-  receptor_type[ names::GABA_A.toString() ] = GABA_A;
-  receptor_type[ names::GABA_B.toString() ] = GABA_B;
+  receptor_type[ names::AMPA ] = AMPA;
+  receptor_type[ names::NMDA ] = NMDA;
+  receptor_type[ names::GABA_A ] = GABA_A;
+  receptor_type[ names::GABA_B ] = GABA_B;
 
-  d[ names::receptor_types.toString() ] = receptor_type;
-  d[ names::recordables.toString() ] = recordablesMap_.get_list();
+  d[ names::receptor_types ] = receptor_type;
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 void

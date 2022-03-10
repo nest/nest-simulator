@@ -186,7 +186,8 @@ nest::hh_psc_alpha_clopath::State_::State_( const State_& s )
   }
 }
 
-nest::hh_psc_alpha_clopath::State_& nest::hh_psc_alpha_clopath::State_::operator=( const State_& s )
+nest::hh_psc_alpha_clopath::State_&
+nest::hh_psc_alpha_clopath::State_::operator=( const State_& s )
 {
   r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -203,41 +204,41 @@ nest::hh_psc_alpha_clopath::State_& nest::hh_psc_alpha_clopath::State_::operator
 void
 nest::hh_psc_alpha_clopath::Parameters_::get( dictionary& d ) const
 {
-  d[ names::t_ref.toString() ] = t_ref_;
-  d[ names::g_Na.toString() ] = g_Na;
-  d[ names::g_K.toString() ] = g_K;
-  d[ names::g_L.toString() ] = g_L;
-  d[ names::E_Na.toString() ] = E_Na;
-  d[ names::E_K.toString() ] = E_K;
-  d[ names::E_L.toString() ] = E_L;
-  d[ names::C_m.toString() ] = C_m;
-  d[ names::tau_syn_ex.toString() ] = tau_synE;
-  d[ names::tau_syn_in.toString() ] = tau_synI;
-  d[ names::I_e.toString() ] = I_e;
-  d[ names::tau_plus.toString() ] = tau_plus;
-  d[ names::tau_minus.toString() ] = tau_minus;
-  d[ names::tau_bar_bar.toString() ] = tau_bar_bar;
+  d[ names::t_ref ] = t_ref_;
+  d[ names::g_Na ] = g_Na;
+  d[ names::g_K ] = g_K;
+  d[ names::g_L ] = g_L;
+  d[ names::E_Na ] = E_Na;
+  d[ names::E_K ] = E_K;
+  d[ names::E_L ] = E_L;
+  d[ names::C_m ] = C_m;
+  d[ names::tau_syn_ex ] = tau_synE;
+  d[ names::tau_syn_in ] = tau_synI;
+  d[ names::I_e ] = I_e;
+  d[ names::tau_plus ] = tau_plus;
+  d[ names::tau_minus ] = tau_minus;
+  d[ names::tau_bar_bar ] = tau_bar_bar;
 }
 
 void
 nest::hh_psc_alpha_clopath::Parameters_::set( const dictionary& d, Node* node )
 {
-  update_value_param( d, names::t_ref.toString(), t_ref_, node );
-  update_value_param( d, names::C_m.toString(), C_m, node );
-  update_value_param( d, names::g_Na.toString(), g_Na, node );
-  update_value_param( d, names::E_Na.toString(), E_Na, node );
-  update_value_param( d, names::g_K.toString(), g_K, node );
-  update_value_param( d, names::E_K.toString(), E_K, node );
-  update_value_param( d, names::g_L.toString(), g_L, node );
-  update_value_param( d, names::E_L.toString(), E_L, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::C_m, C_m, node );
+  update_value_param( d, names::g_Na, g_Na, node );
+  update_value_param( d, names::E_Na, E_Na, node );
+  update_value_param( d, names::g_K, g_K, node );
+  update_value_param( d, names::E_K, E_K, node );
+  update_value_param( d, names::g_L, g_L, node );
+  update_value_param( d, names::E_L, E_L, node );
 
-  update_value_param( d, names::tau_syn_ex.toString(), tau_synE, node );
-  update_value_param( d, names::tau_syn_in.toString(), tau_synI, node );
+  update_value_param( d, names::tau_syn_ex, tau_synE, node );
+  update_value_param( d, names::tau_syn_in, tau_synI, node );
 
-  update_value_param( d, names::I_e.toString(), I_e, node );
-  update_value_param( d, names::tau_plus.toString(), tau_plus, node );
-  update_value_param( d, names::tau_minus.toString(), tau_minus, node );
-  update_value_param( d, names::tau_bar_bar.toString(), tau_bar_bar, node );
+  update_value_param( d, names::I_e, I_e, node );
+  update_value_param( d, names::tau_plus, tau_plus, node );
+  update_value_param( d, names::tau_minus, tau_minus, node );
+  update_value_param( d, names::tau_bar_bar, tau_bar_bar, node );
   if ( C_m <= 0 )
   {
     throw BadProperty( "Capacitance must be strictly positive." );
@@ -259,25 +260,25 @@ nest::hh_psc_alpha_clopath::Parameters_::set( const dictionary& d, Node* node )
 void
 nest::hh_psc_alpha_clopath::State_::get( dictionary& d ) const
 {
-  d[ names::V_m.toString() ] = y_[ V_M ];
-  d[ names::Act_m.toString() ] = y_[ HH_M ];
-  d[ names::Inact_h.toString() ] = y_[ HH_H ];
-  d[ names::Act_n.toString() ] = y_[ HH_N ];
-  d[ names::u_bar_plus.toString() ] = y_[ U_BAR_PLUS ];
-  d[ names::u_bar_minus.toString() ] = y_[ U_BAR_MINUS ];
-  d[ names::u_bar_bar.toString() ] = y_[ U_BAR_BAR ];
+  d[ names::V_m ] = y_[ V_M ];
+  d[ names::Act_m ] = y_[ HH_M ];
+  d[ names::Inact_h ] = y_[ HH_H ];
+  d[ names::Act_n ] = y_[ HH_N ];
+  d[ names::u_bar_plus ] = y_[ U_BAR_PLUS ];
+  d[ names::u_bar_minus ] = y_[ U_BAR_MINUS ];
+  d[ names::u_bar_bar ] = y_[ U_BAR_BAR ];
 }
 
 void
 nest::hh_psc_alpha_clopath::State_::set( const dictionary& d, Node* node )
 {
-  update_value_param( d, names::V_m.toString(), y_[ V_M ], node );
-  update_value_param( d, names::Act_m.toString(), y_[ HH_M ], node );
-  update_value_param( d, names::Inact_h.toString(), y_[ HH_H ], node );
-  update_value_param( d, names::Act_n.toString(), y_[ HH_N ], node );
-  update_value_param( d, names::u_bar_plus.toString(), y_[ U_BAR_PLUS ], node );
-  update_value_param( d, names::u_bar_minus.toString(), y_[ U_BAR_MINUS ], node );
-  update_value_param( d, names::u_bar_bar.toString(), y_[ U_BAR_BAR ], node );
+  update_value_param( d, names::V_m, y_[ V_M ], node );
+  update_value_param( d, names::Act_m, y_[ HH_M ], node );
+  update_value_param( d, names::Inact_h, y_[ HH_H ], node );
+  update_value_param( d, names::Act_n, y_[ HH_N ], node );
+  update_value_param( d, names::u_bar_plus, y_[ U_BAR_PLUS ], node );
+  update_value_param( d, names::u_bar_minus, y_[ U_BAR_MINUS ], node );
+  update_value_param( d, names::u_bar_bar, y_[ U_BAR_BAR ], node );
   if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 )
   {
     throw BadProperty( "All (in)activation variables must be non-negative." );

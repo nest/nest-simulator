@@ -95,12 +95,14 @@ nest::aeif_psc_delta_dynamics( double, const double y[], double f[], void* pnode
   const double V = is_refractory ? node.P_.V_reset_ : std::min( y[ S::V_M ], node.P_.V_peak_ );
   const double& w = y[ S::W ];
 
-  const double I_spike = node.P_.Delta_T == 0. ? 0. : node.P_.g_L * node.P_.Delta_T
-      * std::exp( ( V - node.P_.V_th ) * node.V_.Delta_T_inv_ );
+  const double I_spike = node.P_.Delta_T == 0.
+    ? 0.
+    : node.P_.g_L * node.P_.Delta_T * std::exp( ( V - node.P_.V_th ) * node.V_.Delta_T_inv_ );
 
   // dv/dt
-  f[ S::V_M ] = is_refractory ? 0.0 : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - w + node.P_.I_e
-                                        + node.B_.I_stim_ ) * node.V_.C_m_inv_;
+  f[ S::V_M ] = is_refractory
+    ? 0.0
+    : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - w + node.P_.I_e + node.B_.I_stim_ ) * node.V_.C_m_inv_;
 
   // Adaptation current w.
   f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) * node.V_.tau_w_inv_;
@@ -151,7 +153,8 @@ nest::aeif_psc_delta::State_::State_( const State_& s )
   }
 }
 
-nest::aeif_psc_delta::State_& nest::aeif_psc_delta::State_::operator=( const State_& s )
+nest::aeif_psc_delta::State_&
+nest::aeif_psc_delta::State_::operator=( const State_& s )
 {
   refr_spikes_buffer_ = s.refr_spikes_buffer_;
   r_ = s.r_;
@@ -169,42 +172,42 @@ nest::aeif_psc_delta::State_& nest::aeif_psc_delta::State_::operator=( const Sta
 void
 nest::aeif_psc_delta::Parameters_::get( dictionary& d ) const
 {
-  d[ names::C_m.toString() ] = C_m;
-  d[ names::V_th.toString() ] = V_th;
-  d[ names::t_ref.toString() ] = t_ref_;
-  d[ names::g_L.toString() ] = g_L;
-  d[ names::E_L.toString() ] = E_L;
-  d[ names::V_reset.toString() ] = V_reset_;
-  d[ names::a.toString() ] = a;
-  d[ names::b.toString() ] = b;
-  d[ names::Delta_T.toString() ] = Delta_T;
-  d[ names::tau_w.toString() ] = tau_w;
-  d[ names::I_e.toString() ] = I_e;
-  d[ names::V_peak.toString() ] = V_peak_;
-  d[ names::gsl_error_tol.toString() ] = gsl_error_tol;
-  d[ names::refractory_input.toString() ] = with_refr_input_;
+  d[ names::C_m ] = C_m;
+  d[ names::V_th ] = V_th;
+  d[ names::t_ref ] = t_ref_;
+  d[ names::g_L ] = g_L;
+  d[ names::E_L ] = E_L;
+  d[ names::V_reset ] = V_reset_;
+  d[ names::a ] = a;
+  d[ names::b ] = b;
+  d[ names::Delta_T ] = Delta_T;
+  d[ names::tau_w ] = tau_w;
+  d[ names::I_e ] = I_e;
+  d[ names::V_peak ] = V_peak_;
+  d[ names::gsl_error_tol ] = gsl_error_tol;
+  d[ names::refractory_input ] = with_refr_input_;
 }
 
 void
 nest::aeif_psc_delta::Parameters_::set( const dictionary& d, Node* node )
 {
-  update_value_param( d, names::V_th.toString(), V_th, node );
-  update_value_param( d, names::V_peak.toString(), V_peak_, node );
-  update_value_param( d, names::t_ref.toString(), t_ref_, node );
-  update_value_param( d, names::E_L.toString(), E_L, node );
-  update_value_param( d, names::V_reset.toString(), V_reset_, node );
+  update_value_param( d, names::V_th, V_th, node );
+  update_value_param( d, names::V_peak, V_peak_, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::E_L, E_L, node );
+  update_value_param( d, names::V_reset, V_reset_, node );
 
-  update_value_param( d, names::C_m.toString(), C_m, node );
-  update_value_param( d, names::g_L.toString(), g_L, node );
+  update_value_param( d, names::C_m, C_m, node );
+  update_value_param( d, names::g_L, g_L, node );
 
-  update_value_param( d, names::a.toString(), a, node );
-  update_value_param( d, names::b.toString(), b, node );
-  update_value_param( d, names::Delta_T.toString(), Delta_T, node );
-  update_value_param( d, names::tau_w.toString(), tau_w, node );
+  update_value_param( d, names::a, a, node );
+  update_value_param( d, names::b, b, node );
+  update_value_param( d, names::Delta_T, Delta_T, node );
+  update_value_param( d, names::tau_w, tau_w, node );
 
-  update_value_param( d, names::I_e.toString(), I_e, node );
+  update_value_param( d, names::I_e, I_e, node );
 
-  update_value_param( d, names::gsl_error_tol.toString(), gsl_error_tol, node );
+  update_value_param( d, names::gsl_error_tol, gsl_error_tol, node );
 
   if ( V_reset_ >= V_peak_ )
   {
@@ -255,21 +258,21 @@ nest::aeif_psc_delta::Parameters_::set( const dictionary& d, Node* node )
     throw BadProperty( "The gsl_error_tol must be strictly positive." );
   }
 
-  update_value_param( d, names::refractory_input.toString(), with_refr_input_, node );
+  update_value_param( d, names::refractory_input, with_refr_input_, node );
 }
 
 void
 nest::aeif_psc_delta::State_::get( dictionary& d ) const
 {
-  d[ names::V_m.toString() ] = y_[ V_M ];
-  d[ names::w.toString() ] = y_[ W ];
+  d[ names::V_m ] = y_[ V_M ];
+  d[ names::w ] = y_[ W ];
 }
 
 void
 nest::aeif_psc_delta::State_::set( const dictionary& d, const Parameters_&, Node* node )
 {
-  update_value_param( d, names::V_m.toString(), y_[ V_M ], node );
-  update_value_param( d, names::w.toString(), y_[ W ], node );
+  update_value_param( d, names::V_m, y_[ V_M ], node );
+  update_value_param( d, names::w, y_[ W ], node );
 }
 
 

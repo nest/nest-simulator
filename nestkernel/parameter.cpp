@@ -22,8 +22,8 @@
 
 #include <cmath>
 
-#include "node_collection.h"
 #include "node.h"
+#include "node_collection.h"
 #include "spatial.h"
 #include "vp_manager_impl.h"
 
@@ -82,8 +82,8 @@ NormalParameter::NormalParameter( const dictionary& d )
   : mean_( 0.0 )
   , std_( 1.0 )
 {
-  d.update_value( names::mean.toString(), mean_ );
-  d.update_value( names::std.toString(), std_ );
+  d.update_value( names::mean, mean_ );
+  d.update_value( names::std, std_ );
   if ( std_ <= 0 )
   {
     throw BadProperty( "nest::NormalParameter: std > 0 required." );
@@ -108,8 +108,8 @@ LognormalParameter::LognormalParameter( const dictionary& d )
   : mean_( 0.0 )
   , std_( 1.0 )
 {
-  d.update_value( names::mean.toString(), mean_ );
-  d.update_value( names::std.toString(), std_ );
+  d.update_value( names::mean, mean_ );
+  d.update_value( names::std, std_ );
   if ( std_ <= 0 )
   {
     throw BadProperty( "nest::LognormalParameter: std > 0 required." );
@@ -192,10 +192,10 @@ SpatialDistanceParameter::value( RngPtr,
     }
     return std::abs( layer.compute_displacement( source_pos, target_pos, dimension_ - 1 ) );
   default:
-    throw KernelException( String::compose(
-      "SpatialDistanceParameter dimension must be either 0 for unspecified,"
-      " or 1-3 for x-z. Got ",
-      dimension_ ) );
+    throw KernelException(
+      String::compose( "SpatialDistanceParameter dimension must be either 0 for unspecified,"
+                       " or 1-3 for x-z. Got ",
+        dimension_ ) );
     break;
   }
 }
@@ -308,12 +308,15 @@ Gaussian2DParameter::Gaussian2DParameter( const dictionary& d )
   , py_( d.get< ParameterDatum >( "y" ) )
   , mean_x_( d.get< double >( "mean_x" ) )
   , mean_y_( d.get< double >( "mean_y" ) )
-  , x_term_const_( 1. / ( 2. * ( 1. - d.get< double >( "rho" ) * d.get< double >( "rho" ) ) * d.get< double >( "std_x" )
-                          * d.get< double >( "std_x" ) ) )
-  , y_term_const_( 1. / ( 2. * ( 1. - d.get< double >( "rho" ) * d.get< double >( "rho" ) ) * d.get< double >( "std_y" )
-                          * d.get< double >( "std_y" ) ) )
-  , xy_term_const_( d.get< double >( "rho" ) / ( ( 1. - d.get< double >( "rho" ) * d.get< double >( "rho" ) )
-                                                 * d.get< double >( "std_x" ) * d.get< double >( "std_y" ) ) )
+  , x_term_const_( 1.
+      / ( 2. * ( 1. - d.get< double >( "rho" ) * d.get< double >( "rho" ) ) * d.get< double >( "std_x" )
+        * d.get< double >( "std_x" ) ) )
+  , y_term_const_( 1.
+      / ( 2. * ( 1. - d.get< double >( "rho" ) * d.get< double >( "rho" ) ) * d.get< double >( "std_y" )
+        * d.get< double >( "std_y" ) ) )
+  , xy_term_const_( d.get< double >( "rho" )
+      / ( ( 1. - d.get< double >( "rho" ) * d.get< double >( "rho" ) ) * d.get< double >( "std_x" )
+        * d.get< double >( "std_y" ) ) )
 {
   const auto rho = d.get< double >( "rho" );
   const auto std_x = d.get< double >( "std_x" );

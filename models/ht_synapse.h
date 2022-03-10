@@ -115,8 +115,8 @@ public:
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
-  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
@@ -226,11 +226,11 @@ void
 ht_synapse< targetidentifierT >::get_status( dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  d[ names::weight.toString() ] = weight_;
-  d[ names::tau_P.toString() ] = tau_P_;
-  d[ names::delta_P.toString() ] = delta_P_;
-  d[ names::P.toString() ] = p_;
-  d[ names::size_of.toString() ] = sizeof( *this );
+  d[ names::weight ] = weight_;
+  d[ names::tau_P ] = tau_P_;
+  d[ names::delta_P ] = delta_P_;
+  d[ names::P ] = p_;
+  d[ names::size_of ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
@@ -239,10 +239,10 @@ ht_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorModel
 {
   ConnectionBase::set_status( d, cm );
 
-  d.update_value( names::weight.toString(), weight_ );
-  d.update_value( names::tau_P.toString(), tau_P_ );
-  d.update_value( names::delta_P.toString(), delta_P_ );
-  d.update_value( names::P.toString(), p_ );
+  d.update_value( names::weight, weight_ );
+  d.update_value( names::tau_P, tau_P_ );
+  d.update_value( names::delta_P, delta_P_ );
+  d.update_value( names::P, p_ );
 
   if ( tau_P_ <= 0.0 )
   {

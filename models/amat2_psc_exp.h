@@ -291,8 +291,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( amat2_psc_exp& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, amat2_psc_exp& ); //!<Sets buffer pointers to 0
+    Buffers_( amat2_psc_exp& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, amat2_psc_exp& ); //!< Sets buffer pointers to 0
 
     /** buffers and sums up incoming spikes/currents */
     RingBuffer spikes_ex_;
@@ -440,7 +440,7 @@ amat2_psc_exp::get_status( dictionary& d ) const
   S_.get( d, P_ );
   ArchivingNode::get_status( d );
 
-  d[ names::recordables.toString() ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void

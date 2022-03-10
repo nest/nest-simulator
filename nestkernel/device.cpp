@@ -59,7 +59,8 @@ nest::Device::Parameters_::Parameters_( const Parameters_& p )
   stop_.calibrate();
 }
 
-nest::Device::Parameters_& nest::Device::Parameters_::operator=( const Parameters_& p )
+nest::Device::Parameters_&
+nest::Device::Parameters_::operator=( const Parameters_& p )
 {
   origin_ = p.origin_;
   start_ = p.start_;
@@ -76,9 +77,9 @@ nest::Device::Parameters_& nest::Device::Parameters_::operator=( const Parameter
 void
 nest::Device::Parameters_::get( dictionary& d ) const
 {
-  d[ names::origin.toString() ] = origin_.get_ms();
-  d[ names::start.toString() ] = start_.get_ms();
-  d[ names::stop.toString() ] = stop_.get_ms();
+  d[ names::origin ] = origin_.get_ms();
+  d[ names::start ] = start_.get_ms();
+  d[ names::stop ] = stop_.get_ms();
 }
 
 void
@@ -109,9 +110,9 @@ nest::Device::Parameters_::update_( const dictionary& d, const Name& name, Time&
 void
 nest::Device::Parameters_::set( const dictionary& d )
 {
-  d.update_value( names::origin.toString(), origin_ );
-  d.update_value( names::start.toString(), start_ );
-  d.update_value( names::stop.toString(), stop_ );
+  d.update_value( names::origin, origin_ );
+  d.update_value( names::start, start_ );
+  d.update_value( names::stop, stop_ );
 
   if ( stop_ < start_ )
   {

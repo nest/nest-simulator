@@ -97,16 +97,16 @@ nest::iaf_psc_alpha_canon::State_::State_()
 void
 nest::iaf_psc_alpha_canon::Parameters_::get( dictionary& d ) const
 {
-  d[ names::E_L.toString() ] = E_L_;
-  d[ names::I_e.toString() ] = I_e_;
-  d[ names::V_th.toString() ] = U_th_ + E_L_;
-  d[ names::V_min.toString() ] = U_min_ + E_L_;
-  d[ names::V_reset.toString() ] = U_reset_ + E_L_;
-  d[ names::C_m.toString() ] = c_m_;
-  d[ names::tau_m.toString() ] = tau_m_;
-  d[ names::tau_syn.toString() ] = tau_syn_;
-  d[ names::t_ref.toString() ] = t_ref_;
-  d[ names::Interpol_Order.toString() ] = Interpol_;
+  d[ names::E_L ] = E_L_;
+  d[ names::I_e ] = I_e_;
+  d[ names::V_th ] = U_th_ + E_L_;
+  d[ names::V_min ] = U_min_ + E_L_;
+  d[ names::V_reset ] = U_reset_ + E_L_;
+  d[ names::C_m ] = c_m_;
+  d[ names::tau_m ] = tau_m_;
+  d[ names::tau_syn ] = tau_syn_;
+  d[ names::t_ref ] = t_ref_;
+  d[ names::Interpol_Order ] = Interpol_;
 }
 
 double
@@ -115,16 +115,16 @@ nest::iaf_psc_alpha_canon::Parameters_::set( const dictionary& d )
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
   const double ELold = E_L_;
-  d.update_value( names::E_L.toString(), E_L_ );
+  d.update_value( names::E_L, E_L_ );
   const double delta_EL = E_L_ - ELold;
 
-  d.update_value( names::tau_m.toString(), tau_m_ );
-  d.update_value( names::tau_syn.toString(), tau_syn_ );
-  d.update_value( names::C_m.toString(), c_m_ );
-  d.update_value( names::t_ref.toString(), t_ref_ );
-  d.update_value( names::I_e.toString(), I_e_ );
+  d.update_value( names::tau_m, tau_m_ );
+  d.update_value( names::tau_syn, tau_syn_ );
+  d.update_value( names::C_m, c_m_ );
+  d.update_value( names::t_ref, t_ref_ );
+  d.update_value( names::I_e, I_e_ );
 
-  if ( d.update_value( names::V_th.toString(), U_th_ ) )
+  if ( d.update_value( names::V_th, U_th_ ) )
   {
     U_th_ -= E_L_;
   }
@@ -133,7 +133,7 @@ nest::iaf_psc_alpha_canon::Parameters_::set( const dictionary& d )
     U_th_ -= delta_EL;
   }
 
-  if ( d.update_value( names::V_min.toString(), U_min_ ) )
+  if ( d.update_value( names::V_min, U_min_ ) )
   {
     U_min_ -= E_L_;
   }
@@ -142,7 +142,7 @@ nest::iaf_psc_alpha_canon::Parameters_::set( const dictionary& d )
     U_min_ -= delta_EL;
   }
 
-  if ( d.update_value( names::V_reset.toString(), U_reset_ ) )
+  if ( d.update_value( names::V_reset, U_reset_ ) )
   {
     U_reset_ -= E_L_;
   }
@@ -152,7 +152,7 @@ nest::iaf_psc_alpha_canon::Parameters_::set( const dictionary& d )
   }
 
   long tmp;
-  if ( d.update_value( names::Interpol_Order.toString(), tmp ) )
+  if ( d.update_value( names::Interpol_Order, tmp ) )
   {
     if ( NO_INTERPOL <= tmp && tmp < END_INTERP_ORDER )
     {
@@ -193,16 +193,16 @@ nest::iaf_psc_alpha_canon::Parameters_::set( const dictionary& d )
 void
 nest::iaf_psc_alpha_canon::State_::get( dictionary& d, const Parameters_& p ) const
 {
-  d[ names::V_m.toString() ] = y3_ + p.E_L_; // Membrane potential
-  d[ names::y1.toString() ] = y1_;           // y1 state
-  d[ names::y2.toString() ] = y2_;           // y2 state
-  d[ names::is_refractory.toString() ] = is_refractory_;
+  d[ names::V_m ] = y3_ + p.E_L_; // Membrane potential
+  d[ names::y1 ] = y1_;           // y1 state
+  d[ names::y2 ] = y2_;           // y2 state
+  d[ names::is_refractory ] = is_refractory_;
 }
 
 void
 nest::iaf_psc_alpha_canon::State_::set( const dictionary& d, const Parameters_& p, double delta_EL )
 {
-  if ( d.update_value( names::V_m.toString(), y3_ ) )
+  if ( d.update_value( names::V_m, y3_ ) )
   {
     y3_ -= p.E_L_;
   }
@@ -211,8 +211,8 @@ nest::iaf_psc_alpha_canon::State_::set( const dictionary& d, const Parameters_& 
     y3_ -= delta_EL;
   }
 
-  d.update_value( names::y1.toString(), y1_ );
-  d.update_value( names::y2.toString(), y2_ );
+  d.update_value( names::y1, y1_ );
+  d.update_value( names::y2, y2_ );
 }
 
 nest::iaf_psc_alpha_canon::Buffers_::Buffers_( iaf_psc_alpha_canon& n )

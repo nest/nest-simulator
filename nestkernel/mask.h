@@ -531,7 +531,7 @@ public:
   Mask< D >* clone() const;
 
 protected:
-  Mask< D >* mask1_, *mask2_;
+  Mask< D >*mask1_, *mask2_;
 };
 
 /**
@@ -580,7 +580,7 @@ public:
   Mask< D >* clone() const;
 
 protected:
-  Mask< D >* mask1_, *mask2_;
+  Mask< D >*mask1_, *mask2_;
 };
 
 /**
@@ -629,7 +629,7 @@ public:
   Mask< D >* clone() const;
 
 protected:
-  Mask< D >* mask1_, *mask2_;
+  Mask< D >*mask1_, *mask2_;
 };
 
 
@@ -748,8 +748,8 @@ BoxMask< 3 >::get_name()
 template < int D >
 BoxMask< D >::BoxMask( const dictionary& d )
 {
-  lower_left_ = d.get< std::vector< double > >( names::lower_left.toString() );
-  upper_right_ = d.get< std::vector< double > >( names::upper_right.toString() );
+  lower_left_ = d.get< std::vector< double > >( names::lower_left );
+  upper_right_ = d.get< std::vector< double > >( names::upper_right );
 
   if ( not( lower_left_ < upper_right_ ) )
   {
@@ -758,16 +758,16 @@ BoxMask< D >::BoxMask( const dictionary& d )
       "Upper right must be strictly to the right and above lower left." );
   }
 
-  if ( d.known( names::azimuth_angle.toString() ) )
+  if ( d.known( names::azimuth_angle ) )
   {
-    azimuth_angle_ = d.get< double >( names::azimuth_angle.toString() );
+    azimuth_angle_ = d.get< double >( names::azimuth_angle );
   }
   else
   {
     azimuth_angle_ = 0.0;
   }
 
-  if ( d.known( names::polar_angle.toString() ) )
+  if ( d.known( names::polar_angle ) )
   {
     if ( D == 2 )
     {
@@ -775,7 +775,7 @@ BoxMask< D >::BoxMask( const dictionary& d )
         "nest::BoxMask<D>: "
         "polar_angle not defined in 2D." );
     }
-    polar_angle_ = d.get< double >( names::polar_angle.toString() );
+    polar_angle_ = d.get< double >( names::polar_angle );
   }
   else
   {
@@ -909,7 +909,7 @@ BallMask< 3 >::get_name()
 template < int D >
 BallMask< D >::BallMask( const dictionary& d )
 {
-  radius_ = d.get< double >( names::radius.toString() );
+  radius_ = d.get< double >( names::radius );
   if ( radius_ <= 0 )
   {
     throw BadProperty(
@@ -917,9 +917,9 @@ BallMask< D >::BallMask( const dictionary& d )
       "radius > 0 required." );
   }
 
-  if ( d.known( names::anchor.toString() ) )
+  if ( d.known( names::anchor ) )
   {
-    center_ = d.get< std::vector< double > >( names::anchor.toString() );
+    center_ = d.get< std::vector< double > >( names::anchor );
   }
 }
 
@@ -940,8 +940,8 @@ EllipseMask< 3 >::get_name()
 template < int D >
 EllipseMask< D >::EllipseMask( const dictionary& d )
 {
-  major_axis_ = d.get< double >( names::major_axis.toString() );
-  minor_axis_ = d.get< double >( names::minor_axis.toString() );
+  major_axis_ = d.get< double >( names::major_axis );
+  minor_axis_ = d.get< double >( names::minor_axis );
   if ( major_axis_ <= 0 or minor_axis_ <= 0 )
   {
     throw BadProperty(
@@ -958,7 +958,7 @@ EllipseMask< D >::EllipseMask( const dictionary& d )
   x_scale_ = 4.0 / ( major_axis_ * major_axis_ );
   y_scale_ = 4.0 / ( minor_axis_ * minor_axis_ );
 
-  if ( d.known( names::polar_axis.toString() ) )
+  if ( d.known( names::polar_axis ) )
   {
     if ( D == 2 )
     {
@@ -966,7 +966,7 @@ EllipseMask< D >::EllipseMask( const dictionary& d )
         "nest::EllipseMask<D>: "
         "polar_axis not defined in 2D." );
     }
-    polar_axis_ = d.get< double >( names::polar_axis.toString() );
+    polar_axis_ = d.get< double >( names::polar_axis );
 
     if ( polar_axis_ <= 0 )
     {
@@ -983,21 +983,21 @@ EllipseMask< D >::EllipseMask( const dictionary& d )
     z_scale_ = 0.0;
   }
 
-  if ( d.known( names::anchor.toString() ) )
+  if ( d.known( names::anchor ) )
   {
-    center_ = d.get< std::vector< double > >( names::anchor.toString() );
+    center_ = d.get< std::vector< double > >( names::anchor );
   }
 
-  if ( d.known( names::azimuth_angle.toString() ) )
+  if ( d.known( names::azimuth_angle ) )
   {
-    azimuth_angle_ = d.get< double >( names::azimuth_angle.toString() );
+    azimuth_angle_ = d.get< double >( names::azimuth_angle );
   }
   else
   {
     azimuth_angle_ = 0.0;
   }
 
-  if ( d.known( names::polar_angle.toString() ) )
+  if ( d.known( names::polar_angle ) )
   {
     if ( D == 2 )
     {
@@ -1005,7 +1005,7 @@ EllipseMask< D >::EllipseMask( const dictionary& d )
         "nest::EllipseMask<D>: "
         "polar_angle not defined in 2D." );
     }
-    polar_angle_ = d.get< double >( names::polar_angle.toString() );
+    polar_angle_ = d.get< double >( names::polar_angle );
   }
   else
   {

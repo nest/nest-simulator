@@ -48,15 +48,15 @@ nest::mip_generator::Parameters_::Parameters_()
 void
 nest::mip_generator::Parameters_::get( dictionary& d ) const
 {
-  d[ names::rate.toString() ] = rate_;
-  d[ names::p_copy.toString() ] = p_copy_;
+  d[ names::rate ] = rate_;
+  d[ names::p_copy ] = p_copy_;
 }
 
 void
 nest::mip_generator::Parameters_::set( const dictionary& d, Node* node )
 {
-  update_value_param( d, names::rate.toString(), rate_, node );
-  update_value_param( d, names::p_copy.toString(), p_copy_, node );
+  update_value_param( d, names::rate, rate_, node );
+  update_value_param( d, names::p_copy, p_copy_, node );
 
   if ( rate_ < 0 )
   {
@@ -196,8 +196,8 @@ nest::mip_generator::set_data_from_stimulation_backend( std::vector< double >& i
     {
       dictionary d;
       ( new Dictionary );
-      d[ names::rate.toString() ] = DoubleDatum( input_param[ 0 ] );
-      d[ names::p_copy.toString() ] = DoubleDatum( input_param[ 1 ] );
+      d[ names::rate ] = DoubleDatum( input_param[ 0 ] );
+      d[ names::p_copy ] = DoubleDatum( input_param[ 1 ] );
       ptmp.set( d, this );
     }
   }

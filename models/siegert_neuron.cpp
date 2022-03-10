@@ -110,25 +110,25 @@ nest::siegert_neuron::State_::State_()
 void
 nest::siegert_neuron::Parameters_::get( dictionary& d ) const
 {
-  d[ names::mean.toString() ] = mean_;
-  d[ names::theta.toString() ] = theta_;
-  d[ names::V_reset.toString() ] = V_reset_;
-  d[ names::tau.toString() ] = tau_;
-  d[ names::tau_m.toString() ] = tau_m_;
-  d[ names::tau_syn.toString() ] = tau_syn_;
-  d[ names::t_ref.toString() ] = t_ref_;
+  d[ names::mean ] = mean_;
+  d[ names::theta ] = theta_;
+  d[ names::V_reset ] = V_reset_;
+  d[ names::tau ] = tau_;
+  d[ names::tau_m ] = tau_m_;
+  d[ names::tau_syn ] = tau_syn_;
+  d[ names::t_ref ] = t_ref_;
 }
 
 void
 nest::siegert_neuron::Parameters_::set( const dictionary& d, Node* node )
 {
-  update_value_param( d, names::mean.toString(), mean_, node );
-  update_value_param( d, names::theta.toString(), theta_, node );
-  update_value_param( d, names::V_reset.toString(), V_reset_, node );
-  update_value_param( d, names::tau.toString(), tau_, node );
-  update_value_param( d, names::tau_m.toString(), tau_m_, node );
-  update_value_param( d, names::tau_syn.toString(), tau_syn_, node );
-  update_value_param( d, names::t_ref.toString(), t_ref_, node );
+  update_value_param( d, names::mean, mean_, node );
+  update_value_param( d, names::theta, theta_, node );
+  update_value_param( d, names::V_reset, V_reset_, node );
+  update_value_param( d, names::tau, tau_, node );
+  update_value_param( d, names::tau_m, tau_m_, node );
+  update_value_param( d, names::tau_syn, tau_syn_, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
 
   if ( V_reset_ >= theta_ )
   {
@@ -159,13 +159,13 @@ nest::siegert_neuron::Parameters_::set( const dictionary& d, Node* node )
 void
 nest::siegert_neuron::State_::get( dictionary& d ) const
 {
-  d[ names::rate.toString() ] = r_; // Rate
+  d[ names::rate ] = r_; // Rate
 }
 
 void
 nest::siegert_neuron::State_::set( const dictionary& d, Node* node )
 {
-  update_value_param( d, names::rate.toString(), r_, node ); // Rate
+  update_value_param( d, names::rate, r_, node ); // Rate
 }
 
 nest::siegert_neuron::Buffers_::Buffers_( siegert_neuron& n )

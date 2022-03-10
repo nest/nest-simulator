@@ -103,7 +103,8 @@ class MsgHandler : public MUSIC::MessageHandler
   ArrayDatum messages;                 //!< The buffer for incoming message
   std::vector< double > message_times; //!< The buffer for incoming message
 
-  void operator()( double t, void* msg, size_t size )
+  void
+  operator()( double t, void* msg, size_t size )
   {
     message_times.push_back( t * 1000.0 );
     messages.push_back( std::string( static_cast< char* >( msg ), size ) );
@@ -114,10 +115,10 @@ public:
   get_status( dictionary& d ) const
   {
     dictionary dict;
-    dict[ names::messages.toString() ] = messages;
-    dict[ names::message_times.toString() ] = std::vector< double >( message_times );
-    d[ names::n_messages.toString() ] = messages.size();
-    d[ names::data.toString() ] = dict;
+    dict[ names::messages ] = messages;
+    dict[ names::message_times ] = std::vector< double >( message_times );
+    d[ names::n_messages ] = messages.size();
+    d[ names::data ] = dict;
   }
 
   void
@@ -237,7 +238,7 @@ music_message_in_proxy::set_status( const dictionary& d )
   stmp.set( d, P_, this ); // throws if BadProperty
 
   long nm = 0;
-  if ( update_value_param( d, names::n_messages.toString(), nm, this ) )
+  if ( update_value_param( d, names::n_messages, nm, this ) )
   {
     if ( nm == 0 )
     {

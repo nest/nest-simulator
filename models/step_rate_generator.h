@@ -109,7 +109,7 @@ public:
   step_rate_generator( const step_rate_generator& );
 
   // port send_test_event( Node&, rport, synindex, bool );
-  void sends_secondary_event( DelayedRateConnectionEvent& ) override{};
+  void sends_secondary_event( DelayedRateConnectionEvent& ) override {};
 
   using Node::handle;
   using Node::handles_test_event;
@@ -241,7 +241,7 @@ step_rate_generator::get_status( dictionary& d ) const
   P_.get( d );
   StimulationDevice::get_status( d );
 
-  d[ names::recordables.toString() ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void

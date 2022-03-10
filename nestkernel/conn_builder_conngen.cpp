@@ -56,7 +56,7 @@ ConnectionGeneratorBuilder::ConnectionGeneratorBuilder( NodeCollectionPTR source
       nest::kernel().get_dict_access_flag_manager().register_access( params_map_, kv.first );
     }
 
-    if ( syn_specs[ 0 ].known( names::weight.toString() ) or syn_specs[ 0 ].known( names::delay.toString() ) )
+    if ( syn_specs[ 0 ].known( names::weight ) or syn_specs[ 0 ].known( names::delay ) )
     {
       throw BadProperty(
         "Properties weight and delay cannot be specified in syn_spec if the ConnectionGenerator has values." );
@@ -93,13 +93,13 @@ ConnectionGeneratorBuilder::connect_()
   }
   else if ( num_parameters == 2 )
   {
-    if ( not params_map_.known( names::weight.toString() ) or not params_map_.known( names::delay.toString() ) )
+    if ( not params_map_.known( names::weight ) or not params_map_.known( names::delay ) )
     {
       throw BadProperty( "The parameter map has to contain the indices of weight and delay." );
     }
 
-    const size_t d_idx = params_map_.get< size_t >( names::delay.toString() );
-    const size_t w_idx = params_map_.get< size_t >( names::weight.toString() );
+    const size_t d_idx = params_map_.get< size_t >( names::delay );
+    const size_t w_idx = params_map_.get< size_t >( names::weight );
 
     const bool d_idx_is_0_or_1 = ( d_idx == 0 ) or ( d_idx == 1 );
     const bool w_idx_is_0_or_1 = ( w_idx == 0 ) or ( w_idx == 1 );

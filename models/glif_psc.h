@@ -429,7 +429,7 @@ glif_psc::get_status( dictionary& d ) const
   // get information managed by parent class
   ArchivingNode::get_status( d );
 
-  d[ nest::names::recordables.toString() ] = recordablesMap_.get_list();
+  d[ nest::names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void

@@ -62,7 +62,8 @@ nest::step_rate_generator::Parameters_::Parameters_( const Parameters_& p )
 {
 }
 
-nest::step_rate_generator::Parameters_& nest::step_rate_generator::Parameters_::operator=( const Parameters_& p )
+nest::step_rate_generator::Parameters_&
+nest::step_rate_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
   {
@@ -108,9 +109,9 @@ nest::step_rate_generator::Parameters_::get( dictionary& d ) const
   {
     times_ms->push_back( amp_time_stamp.get_ms() );
   }
-  d[ names::amplitude_times.toString() ] = DoubleVectorDatum( times_ms );
-  d[ names::amplitude_values.toString() ] = DoubleVectorDatum( new std::vector< double >( amp_values_ ) );
-  d[ names::allow_offgrid_times.toString() ] = BoolDatum( allow_offgrid_amp_times_ );
+  d[ names::amplitude_times ] = DoubleVectorDatum( times_ms );
+  d[ names::amplitude_values ] = DoubleVectorDatum( new std::vector< double >( amp_values_ ) );
+  d[ names::allow_offgrid_times ] = BoolDatum( allow_offgrid_amp_times_ );
 }
 
 nest::Time
@@ -161,9 +162,9 @@ void
 nest::step_rate_generator::Parameters_::set( const dictionary& d, Buffers_& b, Node* )
 {
   std::vector< double > new_times;
-  const bool times_changed = d.update_value( names::amplitude_times.toString(), new_times );
-  const bool values_changed = d.update_value( names::amplitude_values.toString(), amp_values_ );
-  const bool allow_offgrid_changed = d.update_value( names::allow_offgrid_times.toString(), allow_offgrid_amp_times_ );
+  const bool times_changed = d.update_value( names::amplitude_times, new_times );
+  const bool values_changed = d.update_value( names::amplitude_values, amp_values_ );
+  const bool allow_offgrid_changed = d.update_value( names::allow_offgrid_times, allow_offgrid_amp_times_ );
 
   if ( times_changed xor values_changed )
   {
@@ -367,8 +368,8 @@ nest::step_rate_generator::set_data_from_stimulation_backend( std::vector< doubl
       times_ms.push_back( time_amplitude[ n * 2 ] );
       amplitudes_Hz.push_back( time_amplitude[ n * 2 + 1 ] );
     }
-    d[ names::amplitude_times.toString() ] = DoubleVectorDatum( times_ms );
-    d[ names::amplitude_values.toString() ] = DoubleVectorDatum( amplitudes_Hz );
+    d[ names::amplitude_times ] = DoubleVectorDatum( times_ms );
+    d[ names::amplitude_values ] = DoubleVectorDatum( amplitudes_Hz );
 
     ptmp.set( d, B_, this );
   }

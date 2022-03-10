@@ -138,28 +138,28 @@ nest::gamma_sup_generator::Parameters_::Parameters_()
 void
 nest::gamma_sup_generator::Parameters_::get( dictionary& d ) const
 {
-  d[ names::rate.toString() ] = rate_;
-  d[ names::gamma_shape.toString() ] = gamma_shape_;
-  d[ names::n_proc.toString() ] = n_proc_;
+  d[ names::rate ] = rate_;
+  d[ names::gamma_shape ] = gamma_shape_;
+  d[ names::n_proc ] = n_proc_;
 }
 
 void
 nest::gamma_sup_generator::Parameters_::set( const dictionary& d, Node* node )
 {
-  update_value_param( d, names::gamma_shape.toString(), gamma_shape_, node );
+  update_value_param( d, names::gamma_shape, gamma_shape_, node );
   if ( gamma_shape_ < 1 )
   {
     throw BadProperty( "The shape must be larger or equal 1" );
   }
 
-  update_value_param( d, names::rate.toString(), rate_, node );
+  update_value_param( d, names::rate, rate_, node );
   if ( rate_ < 0.0 )
   {
     throw BadProperty( "The rate must be larger than 0." );
   }
 
   long n_proc_l = n_proc_;
-  update_value_param( d, names::n_proc.toString(), n_proc_l, node );
+  update_value_param( d, names::n_proc, n_proc_l, node );
   if ( n_proc_l < 1 )
   {
     throw BadProperty( "The number of component processes cannot be smaller than one" );
@@ -293,9 +293,9 @@ nest::gamma_sup_generator::set_data_from_stimulation_backend( std::vector< doubl
         "The size of the data for the gamma_sup_generator needs to be 3 [gamma_shape, rate, n_proc]." );
     }
     dictionary d;
-    d[ names::gamma_shape.toString() ] = lround( input_param[ 0 ] );
-    d[ names::rate.toString() ] = input_param[ 1 ];
-    d[ names::n_proc.toString() ] = lround( input_param[ 2 ] );
+    d[ names::gamma_shape ] = lround( input_param[ 0 ] );
+    d[ names::rate ] = input_param[ 1 ];
+    d[ names::n_proc ] = lround( input_param[ 2 ] );
     ptmp.set( d, this );
   }
 

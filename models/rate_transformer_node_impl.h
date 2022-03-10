@@ -34,8 +34,8 @@
 #include <string>
 
 // Includes from libnestutil:
-#include "numerics.h"
 #include "dict_util.h"
+#include "numerics.h"
 
 
 // Includes from nestkernel:
@@ -83,28 +83,28 @@ template < class TNonlinearities >
 void
 nest::rate_transformer_node< TNonlinearities >::Parameters_::get( dictionary& d ) const
 {
-  d[ names::linear_summation.toString() ] = linear_summation_;
+  d[ names::linear_summation ] = linear_summation_;
 }
 
 template < class TNonlinearities >
 void
 nest::rate_transformer_node< TNonlinearities >::Parameters_::set( const dictionary& d, Node* node )
 {
-  update_value_param( d, names::linear_summation.toString(), linear_summation_, node );
+  update_value_param( d, names::linear_summation, linear_summation_, node );
 }
 
 template < class TNonlinearities >
 void
 nest::rate_transformer_node< TNonlinearities >::State_::get( dictionary& d ) const
 {
-  d[ names::rate.toString() ] = rate_; // Rate
+  d[ names::rate ] = rate_; // Rate
 }
 
 template < class TNonlinearities >
 void
 nest::rate_transformer_node< TNonlinearities >::State_::set( const dictionary& d, Node* node )
 {
-  update_value_param( d, names::rate.toString(), rate_, node ); // Rate
+  update_value_param( d, names::rate, rate_, node ); // Rate
 }
 
 template < class TNonlinearities >

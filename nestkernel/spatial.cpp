@@ -91,8 +91,8 @@ LayerMetadata::slice( size_t start, size_t stop, size_t step, NodeCollectionPTR 
   // Inherit status from current layer, but with new positions.
   dictionary layer_dict;
   layer_->get_status( layer_dict );
-  layer_dict[ names::positions.toString() ] = ArrayDatum( new_positions );
-  layer_dict[ names::step.toString() ] = step;
+  layer_dict[ names::positions ] = ArrayDatum( new_positions );
+  layer_dict[ names::step ] = step;
   layer_local->set_status( layer_dict );
 }
 

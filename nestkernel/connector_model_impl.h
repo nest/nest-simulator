@@ -93,20 +93,20 @@ GenericConnectorModel< ConnectionT >::get_status( dictionary& d ) const
   // then get default properties for individual synapses
   default_connection_.get_status( d );
 
-  d[ names::receptor_type.toString() ] = receptor_type_;
-  d[ names::synapse_model.toString() ] = name_;
-  d[ names::requires_symmetric.toString() ] = requires_symmetric_;
-  d[ names::has_delay.toString() ] = has_delay_;
+  d[ names::receptor_type ] = receptor_type_;
+  d[ names::synapse_model ] = name_;
+  d[ names::requires_symmetric ] = requires_symmetric_;
+  d[ names::has_delay ] = has_delay_;
 }
 
 template < typename ConnectionT >
 void
 GenericConnectorModel< ConnectionT >::set_status( const dictionary& d )
 {
-  d.update_value( names::receptor_type.toString(), receptor_type_ );
+  d.update_value( names::receptor_type, receptor_type_ );
 #ifdef HAVE_MUSIC
   // We allow music_channel as alias for receptor_type during connection setup
-  d.update_value( names::music_channel.toString(), receptor_type_ );
+  d.update_value( names::music_channel, receptor_type_ );
 #endif
 
   // If the parameter dict d contains /delay, this should set the delay
@@ -161,9 +161,9 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
       throw BadDelay( default_connection_.get_delay(),
         String::compose( "Default delay of '%1' must be between min_delay %2 "
                          "and max_delay %3.",
-                        get_name(),
-                        Time::delay_steps_to_ms( kernel().connection_manager.get_min_delay() ),
-                        Time::delay_steps_to_ms( kernel().connection_manager.get_max_delay() ) ) );
+          get_name(),
+          Time::delay_steps_to_ms( kernel().connection_manager.get_min_delay() ),
+          Time::delay_steps_to_ms( kernel().connection_manager.get_max_delay() ) ) );
     }
     default_delay_needs_check_ = false;
   }
@@ -193,7 +193,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
       kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
     }
 
-    if ( p.known( names::delay.toString() ) )
+    if ( p.known( names::delay ) )
     {
       throw BadParameter(
         "Parameter dictionary must not contain delay if delay is given "
@@ -205,7 +205,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     // check delay
     double delay = 0.0;
 
-    if ( p.update_value( names::delay.toString(), delay ) )
+    if ( p.update_value( names::delay, delay ) )
     {
       if ( has_delay_ )
       {
@@ -244,9 +244,9 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   rport actual_receptor_type = receptor_type_;
 #ifdef HAVE_MUSIC
   // We allow music_channel as alias for receptor_type during connection setup
-  p.update_value( names::music_channel.toString(), actual_receptor_type );
+  p.update_value( names::music_channel, actual_receptor_type );
 #endif
-  p.update_value( names::receptor_type.toString(), actual_receptor_type );
+  p.update_value( names::receptor_type, actual_receptor_type );
 
   add_connection_( src, tgt, thread_local_connectors, syn_id, connection, actual_receptor_type );
 }

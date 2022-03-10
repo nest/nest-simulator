@@ -243,7 +243,7 @@ ac_generator::get_status( dictionary& d ) const
   S_.get( d );
   StimulationDevice::get_status( d );
 
-  d[ names::recordables.toString() ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void

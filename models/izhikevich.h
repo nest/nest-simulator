@@ -307,7 +307,7 @@ izhikevich::get_status( dictionary& d ) const
   P_.get( d );
   S_.get( d, P_ );
   ArchivingNode::get_status( d );
-  d[ names::recordables.toString() ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void

@@ -125,8 +125,9 @@ aeif_cond_beta_multisynapse_dynamics( double, const double y[], double f[], void
     node.P_.Delta_T == 0. ? 0 : ( node.P_.Delta_T * node.P_.g_L * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T ) );
 
   // dv/dt
-  f[ S::V_M ] = is_refractory ? 0 : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike + I_syn - w + node.P_.I_e
-                                      + node.B_.I_stim_ ) / node.P_.C_m;
+  f[ S::V_M ] = is_refractory
+    ? 0
+    : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike + I_syn - w + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
   // Adaptation current w.
   f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
@@ -181,49 +182,50 @@ aeif_cond_beta_multisynapse::State_::State_( const Parameters_& p )
 void
 aeif_cond_beta_multisynapse::Parameters_::get( dictionary& d ) const
 {
-  d[ names::C_m.toString() ] = C_m;
-  d[ names::V_th.toString() ] = V_th;
-  d[ names::t_ref.toString() ] = t_ref_;
-  d[ names::g_L.toString() ] = g_L;
-  d[ names::E_L.toString() ] = E_L;
-  d[ names::V_reset.toString() ] = V_reset_;
-  d[ names::n_receptors.toString() ] = n_receptors();
+  d[ names::C_m ] = C_m;
+  d[ names::V_th ] = V_th;
+  d[ names::t_ref ] = t_ref_;
+  d[ names::g_L ] = g_L;
+  d[ names::E_L ] = E_L;
+  d[ names::V_reset ] = V_reset_;
+  d[ names::n_receptors ] = n_receptors();
   ArrayDatum E_rev_ad( E_rev );
   ArrayDatum tau_rise_ad( tau_rise );
   ArrayDatum tau_decay_ad( tau_decay );
-  d[ names::E_rev.toString() ] = E_rev_ad;
-  d[ names::tau_rise.toString() ] = tau_rise_ad;
-  d[ names::tau_decay.toString() ] = tau_decay_ad;
-  d[ names::a.toString() ] = a;
-  d[ names::b.toString() ] = b;
-  d[ names::Delta_T.toString() ] = Delta_T;
-  d[ names::tau_w.toString() ] = tau_w;
-  d[ names::I_e.toString() ] = I_e;
-  d[ names::V_peak.toString() ] = V_peak_;
-  d[ names::gsl_error_tol.toString() ] = gsl_error_tol;
-  d[ names::has_connections.toString() ] = has_connections_;
+  d[ names::E_rev ] = E_rev_ad;
+  d[ names::tau_rise ] = tau_rise_ad;
+  d[ names::tau_decay ] = tau_decay_ad;
+  d[ names::a ] = a;
+  d[ names::b ] = b;
+  d[ names::Delta_T ] = Delta_T;
+  d[ names::tau_w ] = tau_w;
+  d[ names::I_e ] = I_e;
+  d[ names::V_peak ] = V_peak_;
+  d[ names::gsl_error_tol ] = gsl_error_tol;
+  d[ names::has_connections ] = has_connections_;
 }
 
 void
 aeif_cond_beta_multisynapse::Parameters_::set( const dictionary& d, Node* node )
 {
-  update_value_param( d, names::V_th.toString(), V_th, node );
-  update_value_param( d, names::V_peak.toString(), V_peak_, node );
-  update_value_param( d, names::t_ref.toString(), t_ref_, node );
-  update_value_param( d, names::E_L.toString(), E_L, node );
-  update_value_param( d, names::V_reset.toString(), V_reset_, node );
+  update_value_param( d, names::V_th, V_th, node );
+  update_value_param( d, names::V_peak, V_peak_, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::E_L, E_L, node );
+  update_value_param( d, names::V_reset, V_reset_, node );
 
-  update_value_param( d, names::C_m.toString(), C_m, node );
-  update_value_param( d, names::g_L.toString(), g_L, node );
+  update_value_param( d, names::C_m, C_m, node );
+  update_value_param( d, names::g_L, g_L, node );
 
   const size_t old_n_receptors = n_receptors();
-  bool Erev_flag = d.update_value( names::E_rev.toString(), E_rev );
-  bool taur_flag = d.update_value( names::tau_rise.toString(), tau_rise );
-  bool taud_flag = d.update_value( names::tau_decay.toString(), tau_decay );
+  bool Erev_flag = d.update_value( names::E_rev, E_rev );
+  bool taur_flag = d.update_value( names::tau_rise, tau_rise );
+  bool taud_flag = d.update_value( names::tau_decay, tau_decay );
   if ( Erev_flag || taur_flag || taud_flag )
   { // receptor arrays have been modified
     if ( ( E_rev.size() != old_n_receptors || tau_rise.size() != old_n_receptors
-           || tau_decay.size() != old_n_receptors ) && ( not Erev_flag || not taur_flag || not taud_flag ) )
+           || tau_decay.size() != old_n_receptors )
+      && ( not Erev_flag || not taur_flag || not taud_flag ) )
     {
       throw BadProperty(
         "If the number of receptor ports is changed, all three arrays "
@@ -254,14 +256,14 @@ aeif_cond_beta_multisynapse::Parameters_::set( const dictionary& d, Node* node )
     }
   }
 
-  update_value_param( d, names::a.toString(), a, node );
-  update_value_param( d, names::b.toString(), b, node );
-  update_value_param( d, names::Delta_T.toString(), Delta_T, node );
-  update_value_param( d, names::tau_w.toString(), tau_w, node );
+  update_value_param( d, names::a, a, node );
+  update_value_param( d, names::b, b, node );
+  update_value_param( d, names::Delta_T, Delta_T, node );
+  update_value_param( d, names::tau_w, tau_w, node );
 
-  update_value_param( d, names::I_e.toString(), I_e, node );
+  update_value_param( d, names::I_e, I_e, node );
 
-  update_value_param( d, names::gsl_error_tol.toString(), gsl_error_tol, node );
+  update_value_param( d, names::gsl_error_tol, gsl_error_tol, node );
 
   if ( V_peak_ < V_th )
   {
@@ -316,7 +318,7 @@ aeif_cond_beta_multisynapse::Parameters_::set( const dictionary& d, Node* node )
 void
 aeif_cond_beta_multisynapse::State_::get( dictionary& d ) const
 {
-  d[ names::V_m.toString() ] = y_[ V_M ];
+  d[ names::V_m ] = y_[ V_M ];
 
   std::vector< double >* dg = new std::vector< double >();
   std::vector< double >* g = new std::vector< double >();
@@ -329,17 +331,17 @@ aeif_cond_beta_multisynapse::State_::get( dictionary& d ) const
     g->push_back( y_[ State_::G + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * i ) ] );
   }
 
-  d[ names::dg.toString() ] = DoubleVectorDatum( dg );
-  d[ names::g.toString() ] = DoubleVectorDatum( g );
+  d[ names::dg ] = DoubleVectorDatum( dg );
+  d[ names::g ] = DoubleVectorDatum( g );
 
-  d[ names::w.toString() ] = y_[ W ];
+  d[ names::w ] = y_[ W ];
 }
 
 void
 aeif_cond_beta_multisynapse::State_::set( const dictionary& d, Node* node )
 {
-  update_value_param( d, names::V_m.toString(), y_[ V_M ], node );
-  update_value_param( d, names::w.toString(), y_[ W ], node );
+  update_value_param( d, names::V_m, y_[ V_M ], node );
+  update_value_param( d, names::w, y_[ W ], node );
 }
 
 aeif_cond_beta_multisynapse::Buffers_::Buffers_( aeif_cond_beta_multisynapse& n )

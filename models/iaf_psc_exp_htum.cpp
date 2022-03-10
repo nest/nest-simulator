@@ -97,16 +97,16 @@ nest::iaf_psc_exp_htum::State_::State_()
 void
 nest::iaf_psc_exp_htum::Parameters_::get( dictionary& d ) const
 {
-  d[ names::E_L.toString() ] = E_L_; // Resting potential
-  d[ names::I_e.toString() ] = I_e_;
-  d[ names::V_th.toString() ] = Theta_ + E_L_; // threshold value
-  d[ names::V_reset.toString() ] = V_reset_ + E_L_;
-  d[ names::C_m.toString() ] = C_;
-  d[ names::tau_m.toString() ] = Tau_;
-  d[ names::tau_syn_ex.toString() ] = tau_ex_;
-  d[ names::tau_syn_in.toString() ] = tau_in_;
-  d[ names::t_ref_abs.toString() ] = tau_ref_abs_;
-  d[ names::t_ref_tot.toString() ] = tau_ref_tot_;
+  d[ names::E_L ] = E_L_; // Resting potential
+  d[ names::I_e ] = I_e_;
+  d[ names::V_th ] = Theta_ + E_L_; // threshold value
+  d[ names::V_reset ] = V_reset_ + E_L_;
+  d[ names::C_m ] = C_;
+  d[ names::tau_m ] = Tau_;
+  d[ names::tau_syn_ex ] = tau_ex_;
+  d[ names::tau_syn_in ] = tau_in_;
+  d[ names::t_ref_abs ] = tau_ref_abs_;
+  d[ names::t_ref_tot ] = tau_ref_tot_;
 }
 
 double
@@ -115,10 +115,10 @@ nest::iaf_psc_exp_htum::Parameters_::set( const dictionary& d, Node* node )
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
   const double ELold = E_L_;
-  update_value_param( d, names::E_L.toString(), E_L_, node );
+  update_value_param( d, names::E_L, E_L_, node );
   const double delta_EL = E_L_ - ELold;
 
-  if ( update_value_param( d, names::V_reset.toString(), V_reset_, node ) )
+  if ( update_value_param( d, names::V_reset, V_reset_, node ) )
   {
     V_reset_ -= E_L_;
   }
@@ -127,7 +127,7 @@ nest::iaf_psc_exp_htum::Parameters_::set( const dictionary& d, Node* node )
     V_reset_ -= delta_EL;
   }
 
-  if ( update_value_param( d, names::V_th.toString(), Theta_, node ) )
+  if ( update_value_param( d, names::V_th, Theta_, node ) )
   {
     Theta_ -= E_L_;
   }
@@ -136,13 +136,13 @@ nest::iaf_psc_exp_htum::Parameters_::set( const dictionary& d, Node* node )
     Theta_ -= delta_EL;
   }
 
-  update_value_param( d, names::I_e.toString(), I_e_, node );
-  update_value_param( d, names::C_m.toString(), C_, node );
-  update_value_param( d, names::tau_m.toString(), Tau_, node );
-  update_value_param( d, names::tau_syn_ex.toString(), tau_ex_, node );
-  update_value_param( d, names::tau_syn_in.toString(), tau_in_, node );
-  update_value_param( d, names::t_ref_abs.toString(), tau_ref_abs_, node );
-  update_value_param( d, names::t_ref_tot.toString(), tau_ref_tot_, node );
+  update_value_param( d, names::I_e, I_e_, node );
+  update_value_param( d, names::C_m, C_, node );
+  update_value_param( d, names::tau_m, Tau_, node );
+  update_value_param( d, names::tau_syn_ex, tau_ex_, node );
+  update_value_param( d, names::tau_syn_in, tau_in_, node );
+  update_value_param( d, names::t_ref_abs, tau_ref_abs_, node );
+  update_value_param( d, names::t_ref_tot, tau_ref_tot_, node );
   if ( V_reset_ >= Theta_ )
   {
     throw BadProperty( "Reset potential must be smaller than threshold." );
@@ -168,13 +168,13 @@ nest::iaf_psc_exp_htum::Parameters_::set( const dictionary& d, Node* node )
 void
 nest::iaf_psc_exp_htum::State_::get( dictionary& d, const Parameters_& p ) const
 {
-  d[ names::V_m.toString() ] = V_m_ + p.E_L_; // Membrane potential
+  d[ names::V_m ] = V_m_ + p.E_L_; // Membrane potential
 }
 
 void
 nest::iaf_psc_exp_htum::State_::set( const dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  if ( update_value_param( d, names::V_m.toString(), V_m_, node ) )
+  if ( update_value_param( d, names::V_m, V_m_, node ) )
   {
     V_m_ -= p.E_L_;
   }

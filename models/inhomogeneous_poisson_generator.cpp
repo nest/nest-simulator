@@ -37,12 +37,12 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
+#include "arraydatum.h"
+#include "booldatum.h"
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
-#include "booldatum.h"
 #include "integerdatum.h"
-#include "arraydatum.h"
 
 
 /* ----------------------------------------------------------------
@@ -72,9 +72,9 @@ nest::inhomogeneous_poisson_generator::Parameters_::get( dictionary& d ) const
     times_ms->push_back( rate_times_[ n ].get_ms() );
   }
 
-  d[ names::rate_times.toString() ] = DoubleVectorDatum( times_ms );
-  d[ names::rate_values.toString() ] = DoubleVectorDatum( new std::vector< double >( rate_values_ ) );
-  d[ names::allow_offgrid_times.toString() ] = BoolDatum( allow_offgrid_times_ );
+  d[ names::rate_times ] = DoubleVectorDatum( times_ms );
+  d[ names::rate_values ] = DoubleVectorDatum( new std::vector< double >( rate_values_ ) );
+  d[ names::allow_offgrid_times ] = BoolDatum( allow_offgrid_times_ );
 }
 
 void
@@ -116,14 +116,14 @@ nest::inhomogeneous_poisson_generator::Parameters_::assert_valid_rate_time_and_i
 void
 nest::inhomogeneous_poisson_generator::Parameters_::set( const dictionary& d, Buffers_& b, Node* )
 {
-  const bool times = d.known( names::rate_times.toString() );
-  const bool rates = d.update_value( names::rate_values.toString(), rate_values_ );
+  const bool times = d.known( names::rate_times );
+  const bool rates = d.update_value( names::rate_values, rate_values_ );
 
   // if offgrid flag changes, it must be done so either before any rates are
   // set or when setting new rates (which removes old ones)
-  if ( d.known( names::allow_offgrid_times.toString() ) )
+  if ( d.known( names::allow_offgrid_times ) )
   {
-    const auto flag_offgrid = d.get< bool >( names::allow_offgrid_times.toString() );
+    const auto flag_offgrid = d.get< bool >( names::allow_offgrid_times );
 
     if ( flag_offgrid != allow_offgrid_times_ and not( times or rate_times_.empty() ) )
     {
@@ -148,7 +148,7 @@ nest::inhomogeneous_poisson_generator::Parameters_::set( const dictionary& d, Bu
     return;
   }
 
-  const auto d_times = d.get< std::vector< double > >( names::rate_times.toString() );
+  const auto d_times = d.get< std::vector< double > >( names::rate_times );
 
   if ( d_times.empty() )
   {
@@ -320,8 +320,8 @@ nest::inhomogeneous_poisson_generator::set_data_from_stimulation_backend( std::v
       times_ms.push_back( rate_time_update[ n * 2 ] );
       rate_values.push_back( rate_time_update[ n * 2 + 1 ] );
     }
-    d[ names::rate_times.toString() ] = DoubleVectorDatum( times_ms );
-    d[ names::rate_values.toString() ] = DoubleVectorDatum( rate_values );
+    d[ names::rate_times ] = DoubleVectorDatum( times_ms );
+    d[ names::rate_values ] = DoubleVectorDatum( rate_values );
 
     ptmp.set( d, B_, this );
   }

@@ -251,7 +251,7 @@ dictionary
 GenericModel< ElementT >::get_status_()
 {
   dictionary d = proto_.get_status_base();
-  d[ names::elementsize.toString() ] = sizeof( ElementT );
+  d[ names::elementsize ] = sizeof( ElementT );
   return d;
 }
 

@@ -376,7 +376,7 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_cond_alpha_mc& ); //!<Sets buffer pointers to 0
+    Buffers_( iaf_cond_alpha_mc& ); //!< Sets buffer pointers to 0
     //! Sets buffer pointers to 0
     Buffers_( const Buffers_&, iaf_cond_alpha_mc& );
 
@@ -530,7 +530,7 @@ iaf_cond_alpha_mc::get_status( dictionary& d ) const
   S_.get( d );
   ArchivingNode::get_status( d );
 
-  d[ names::recordables.toString() ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 
   /**
    * @todo dictionary construction should be done only once for
@@ -538,19 +538,19 @@ iaf_cond_alpha_mc::get_status( dictionary& d ) const
    * a seg fault on exit, see #328
    */
   dictionary receptor_dict_;
-  receptor_dict_[ names::soma_exc.toString() ] = SOMA_EXC;
-  receptor_dict_[ names::soma_inh.toString() ] = SOMA_INH;
-  receptor_dict_[ names::soma_curr.toString() ] = I_SOMA;
+  receptor_dict_[ names::soma_exc ] = SOMA_EXC;
+  receptor_dict_[ names::soma_inh ] = SOMA_INH;
+  receptor_dict_[ names::soma_curr ] = I_SOMA;
 
-  receptor_dict_[ names::proximal_exc.toString() ] = PROX_EXC;
-  receptor_dict_[ names::proximal_inh.toString() ] = PROX_INH;
-  receptor_dict_[ names::proximal_curr.toString() ] = I_PROX;
+  receptor_dict_[ names::proximal_exc ] = PROX_EXC;
+  receptor_dict_[ names::proximal_inh ] = PROX_INH;
+  receptor_dict_[ names::proximal_curr ] = I_PROX;
 
-  receptor_dict_[ names::distal_exc.toString() ] = DIST_EXC;
-  receptor_dict_[ names::distal_inh.toString() ] = DIST_INH;
-  receptor_dict_[ names::distal_curr.toString() ] = I_DIST;
+  receptor_dict_[ names::distal_exc ] = DIST_EXC;
+  receptor_dict_[ names::distal_inh ] = DIST_INH;
+  receptor_dict_[ names::distal_curr ] = I_DIST;
 
-  d[ names::receptor_types.toString() ] = receptor_dict_;
+  d[ names::receptor_types ] = receptor_dict_;
 }
 
 inline void

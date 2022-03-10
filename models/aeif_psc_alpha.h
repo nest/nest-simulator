@@ -292,8 +292,8 @@ public:
    */
   struct Buffers_
   {
-    Buffers_( aeif_psc_alpha& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, aeif_psc_alpha& ); //!<Sets buffer pointers to 0
+    Buffers_( aeif_psc_alpha& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, aeif_psc_alpha& ); //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< aeif_psc_alpha > logger_;
@@ -414,7 +414,7 @@ aeif_psc_alpha::get_status( dictionary& d ) const
   S_.get( d );
   ArchivingNode::get_status( d );
 
-  d[ names::recordables.toString() ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void

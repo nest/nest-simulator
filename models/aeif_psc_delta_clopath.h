@@ -328,8 +328,8 @@ public:
    */
   struct Buffers_
   {
-    Buffers_( aeif_psc_delta_clopath& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, aeif_psc_delta_clopath& ); //!<Sets buffer pointers to 0
+    Buffers_( aeif_psc_delta_clopath& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, aeif_psc_delta_clopath& ); //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< aeif_psc_delta_clopath > logger_;
@@ -444,7 +444,7 @@ aeif_psc_delta_clopath::get_status( dictionary& d ) const
   S_.get( d );
   ClopathArchivingNode::get_status( d );
 
-  d[ names::recordables.toString() ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void

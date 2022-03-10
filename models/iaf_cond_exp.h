@@ -228,8 +228,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_cond_exp& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, iaf_cond_exp& ); //!<Sets buffer pointers to 0
+    Buffers_( iaf_cond_exp& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, iaf_cond_exp& ); //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< iaf_cond_exp > logger_;
@@ -339,7 +339,7 @@ iaf_cond_exp::get_status( dictionary& d ) const
   S_.get( d );
   ArchivingNode::get_status( d );
 
-  d[ names::recordables.toString() ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void

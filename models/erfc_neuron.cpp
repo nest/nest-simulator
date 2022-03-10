@@ -28,15 +28,15 @@ namespace nest
 void
 gainfunction_erfc::get( dictionary& d ) const
 {
-  d[ names::theta.toString() ] = theta_;
-  d[ names::sigma.toString() ] = sigma_;
+  d[ names::theta ] = theta_;
+  d[ names::sigma ] = sigma_;
 }
 
 void
 gainfunction_erfc::set( const dictionary& d, Node* node )
 {
-  update_value_param( d, names::theta.toString(), theta_, node );
-  update_value_param( d, names::sigma.toString(), sigma_, node );
+  update_value_param( d, names::theta, theta_, node );
+  update_value_param( d, names::sigma, sigma_, node );
 }
 
 /*

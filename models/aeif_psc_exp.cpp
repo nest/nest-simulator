@@ -105,8 +105,10 @@ nest::aeif_psc_exp_dynamics( double, const double y[], double f[], void* pnode )
     node.P_.Delta_T == 0. ? 0. : ( node.P_.g_L * node.P_.Delta_T * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T ) );
 
   // dv/dt
-  f[ S::V_M ] = is_refractory ? 0. : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike + I_syn_ex - I_syn_in - w
-                                       + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
+  f[ S::V_M ] = is_refractory
+    ? 0.
+    : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike + I_syn_ex - I_syn_in - w + node.P_.I_e + node.B_.I_stim_ )
+      / node.P_.C_m;
 
   f[ S::I_EXC ] = -I_syn_ex / node.P_.tau_syn_ex; // Exc. synaptic current (pA)
 
@@ -160,7 +162,8 @@ nest::aeif_psc_exp::State_::State_( const State_& s )
   }
 }
 
-nest::aeif_psc_exp::State_& nest::aeif_psc_exp::State_::operator=( const State_& s )
+nest::aeif_psc_exp::State_&
+nest::aeif_psc_exp::State_::operator=( const State_& s )
 {
   r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -177,46 +180,46 @@ nest::aeif_psc_exp::State_& nest::aeif_psc_exp::State_::operator=( const State_&
 void
 nest::aeif_psc_exp::Parameters_::get( dictionary& d ) const
 {
-  d[ names::C_m.toString() ] = C_m;
-  d[ names::V_th.toString() ] = V_th;
-  d[ names::t_ref.toString() ] = t_ref_;
-  d[ names::g_L.toString() ] = g_L;
-  d[ names::E_L.toString() ] = E_L;
-  d[ names::V_reset.toString() ] = V_reset_;
-  d[ names::tau_syn_ex.toString() ] = tau_syn_ex;
-  d[ names::tau_syn_in.toString() ] = tau_syn_in;
-  d[ names::a.toString() ] = a;
-  d[ names::b.toString() ] = b;
-  d[ names::Delta_T.toString() ] = Delta_T;
-  d[ names::tau_w.toString() ] = tau_w;
-  d[ names::I_e.toString() ] = I_e;
-  d[ names::V_peak.toString() ] = V_peak_;
-  d[ names::gsl_error_tol.toString() ] = gsl_error_tol;
+  d[ names::C_m ] = C_m;
+  d[ names::V_th ] = V_th;
+  d[ names::t_ref ] = t_ref_;
+  d[ names::g_L ] = g_L;
+  d[ names::E_L ] = E_L;
+  d[ names::V_reset ] = V_reset_;
+  d[ names::tau_syn_ex ] = tau_syn_ex;
+  d[ names::tau_syn_in ] = tau_syn_in;
+  d[ names::a ] = a;
+  d[ names::b ] = b;
+  d[ names::Delta_T ] = Delta_T;
+  d[ names::tau_w ] = tau_w;
+  d[ names::I_e ] = I_e;
+  d[ names::V_peak ] = V_peak_;
+  d[ names::gsl_error_tol ] = gsl_error_tol;
 }
 
 void
 nest::aeif_psc_exp::Parameters_::set( const dictionary& d, Node* node )
 {
-  update_value_param( d, names::V_th.toString(), V_th, node );
-  update_value_param( d, names::V_peak.toString(), V_peak_, node );
-  update_value_param( d, names::t_ref.toString(), t_ref_, node );
-  update_value_param( d, names::E_L.toString(), E_L, node );
-  update_value_param( d, names::V_reset.toString(), V_reset_, node );
+  update_value_param( d, names::V_th, V_th, node );
+  update_value_param( d, names::V_peak, V_peak_, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::E_L, E_L, node );
+  update_value_param( d, names::V_reset, V_reset_, node );
 
-  update_value_param( d, names::C_m.toString(), C_m, node );
-  update_value_param( d, names::g_L.toString(), g_L, node );
+  update_value_param( d, names::C_m, C_m, node );
+  update_value_param( d, names::g_L, g_L, node );
 
-  update_value_param( d, names::tau_syn_ex.toString(), tau_syn_ex, node );
-  update_value_param( d, names::tau_syn_in.toString(), tau_syn_in, node );
+  update_value_param( d, names::tau_syn_ex, tau_syn_ex, node );
+  update_value_param( d, names::tau_syn_in, tau_syn_in, node );
 
-  update_value_param( d, names::a.toString(), a, node );
-  update_value_param( d, names::b.toString(), b, node );
-  update_value_param( d, names::Delta_T.toString(), Delta_T, node );
-  update_value_param( d, names::tau_w.toString(), tau_w, node );
+  update_value_param( d, names::a, a, node );
+  update_value_param( d, names::b, b, node );
+  update_value_param( d, names::Delta_T, Delta_T, node );
+  update_value_param( d, names::tau_w, tau_w, node );
 
-  update_value_param( d, names::I_e.toString(), I_e, node );
+  update_value_param( d, names::I_e, I_e, node );
 
-  update_value_param( d, names::gsl_error_tol.toString(), gsl_error_tol, node );
+  update_value_param( d, names::gsl_error_tol, gsl_error_tol, node );
 
   if ( V_reset_ >= V_peak_ )
   {
@@ -271,19 +274,19 @@ nest::aeif_psc_exp::Parameters_::set( const dictionary& d, Node* node )
 void
 nest::aeif_psc_exp::State_::get( dictionary& d ) const
 {
-  d[ names::V_m.toString() ] = y_[ V_M ];
-  d[ names::I_syn_ex.toString() ] = y_[ I_EXC ];
-  d[ names::I_syn_in.toString() ] = y_[ I_INH ];
-  d[ names::w.toString() ] = y_[ W ];
+  d[ names::V_m ] = y_[ V_M ];
+  d[ names::I_syn_ex ] = y_[ I_EXC ];
+  d[ names::I_syn_in ] = y_[ I_INH ];
+  d[ names::w ] = y_[ W ];
 }
 
 void
 nest::aeif_psc_exp::State_::set( const dictionary& d, const Parameters_&, Node* node )
 {
-  update_value_param( d, names::V_m.toString(), y_[ V_M ], node );
-  update_value_param( d, names::I_syn_ex.toString(), y_[ I_EXC ], node );
-  update_value_param( d, names::I_syn_in.toString(), y_[ I_INH ], node );
-  update_value_param( d, names::w.toString(), y_[ W ], node );
+  update_value_param( d, names::V_m, y_[ V_M ], node );
+  update_value_param( d, names::I_syn_ex, y_[ I_EXC ], node );
+  update_value_param( d, names::I_syn_in, y_[ I_INH ], node );
+  update_value_param( d, names::w, y_[ W ], node );
   if ( y_[ I_EXC ] < 0 || y_[ I_INH ] < 0 )
   {
     throw BadProperty( "Conductances must not be negative." );

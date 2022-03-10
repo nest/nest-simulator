@@ -354,11 +354,11 @@ stdp_dopamine_synapse< targetidentifierT >::get_status( dictionary& d ) const
 
   // base class properties, different for individual synapse
   ConnectionBase::get_status( d );
-  d[ names::weight.toString() ] = weight_;
+  d[ names::weight ] = weight_;
 
   // own properties, different for individual synapse
-  d[ names::c.toString() ] = c_;
-  d[ names::n.toString() ] = n_;
+  d[ names::c ] = c_;
+  d[ names::n ] = n_;
 }
 
 template < typename targetidentifierT >
@@ -367,17 +367,17 @@ stdp_dopamine_synapse< targetidentifierT >::set_status( const dictionary& d, Con
 {
   // base class properties
   ConnectionBase::set_status( d, cm );
-  d.update_value( names::weight.toString(), weight_ );
+  d.update_value( names::weight, weight_ );
 
-  d.update_value( names::c.toString(), c_ );
-  d.update_value( names::n.toString(), n_ );
+  d.update_value( names::c, c_ );
+  d.update_value( names::n, n_ );
 }
 
 template < typename targetidentifierT >
 void
 stdp_dopamine_synapse< targetidentifierT >::check_synapse_params( const dictionary& syn_spec ) const
 {
-  if ( syn_spec.known( names::vt.toString() ) )
+  if ( syn_spec.known( names::vt ) )
   {
     throw NotImplemented(
       "Connect doesn't support the direct specification of the "
@@ -387,14 +387,14 @@ stdp_dopamine_synapse< targetidentifierT >::check_synapse_params( const dictiona
   // Setting of parameter c and n not thread safe.
   if ( kernel().vp_manager.get_num_threads() > 1 )
   {
-    if ( syn_spec.known( names::c.toString() ) )
+    if ( syn_spec.known( names::c ) )
     {
       throw NotImplemented(
         "For multi-threading Connect doesn't support the setting "
         "of parameter c in stdp_dopamine_synapse. "
         "Use SetDefaults() or CopyModel()." );
     }
-    if ( syn_spec.known( names::n.toString() ) )
+    if ( syn_spec.known( names::n ) )
     {
       throw NotImplemented(
         "For multi-threading Connect doesn't support the setting "
@@ -435,8 +435,9 @@ stdp_dopamine_synapse< targetidentifierT >::update_weight_( double c0,
 {
   const double taus_ = ( cp.tau_c_ + cp.tau_n_ ) / ( cp.tau_c_ * cp.tau_n_ );
   weight_ = weight_
-    - c0 * ( n0 / taus_ * numerics::expm1( taus_ * minus_dt )
-             - cp.b_ * cp.tau_c_ * numerics::expm1( minus_dt / cp.tau_c_ ) );
+    - c0
+      * ( n0 / taus_ * numerics::expm1( taus_ * minus_dt )
+        - cp.b_ * cp.tau_c_ * numerics::expm1( minus_dt / cp.tau_c_ ) );
 
   if ( weight_ < cp.Wmin_ )
   {

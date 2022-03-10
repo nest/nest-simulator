@@ -61,15 +61,15 @@ ConnectionID::get_dict() const
   dictionary dict;
 
   // The node ID of the presynaptic node
-  dict[ nest::names::source.toString() ] = source_node_id_;
+  dict[ nest::names::source ] = source_node_id_;
   // The node ID of the postsynaptic node
-  dict[ nest::names::target.toString() ] = target_node_id_;
+  dict[ nest::names::target ] = target_node_id_;
   // The id of the synapse model
-  dict[ nest::names::synapse_modelid.toString() ] = synapse_modelid_;
+  dict[ nest::names::synapse_modelid ] = synapse_modelid_;
   // The thread of the postsynaptic node
-  dict[ nest::names::target_thread.toString() ] = target_thread_;
+  dict[ nest::names::target_thread ] = target_thread_;
   // The index in the list
-  dict[ nest::names::port.toString() ] = port_;
+  dict[ nest::names::port ] = port_;
 
   return dict;
 }
@@ -86,7 +86,8 @@ ConnectionID::to_ArrayDatum() const
   return ad;
 }
 
-bool ConnectionID::operator==( const ConnectionID& c ) const
+bool
+ConnectionID::operator==( const ConnectionID& c ) const
 {
   return ( source_node_id_ == c.source_node_id_ ) and ( target_node_id_ == c.target_node_id_ )
     and ( target_thread_ == c.target_thread_ ) and ( port_ == c.port_ ) and ( synapse_modelid_ == c.synapse_modelid_ );

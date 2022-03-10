@@ -26,9 +26,9 @@
 #include "layer.h"
 
 // Includes from nestkernel:
-#include "node_collection.h"
-#include "nest_datums.h"
 #include "booldatum.h"
+#include "nest_datums.h"
+#include "node_collection.h"
 
 // Includes from spatial:
 #include "grid_layer.h"
@@ -81,9 +81,9 @@ template < int D >
 void
 Layer< D >::set_status( const dictionary& d )
 {
-  if ( d.known( names::edge_wrap.toString() ) )
+  if ( d.known( names::edge_wrap ) )
   {
-    if ( d.get< bool >( names::edge_wrap.toString() ) )
+    if ( d.get< bool >( names::edge_wrap ) )
     {
       periodic_ = ( 1 << D ) - 1; // All dimensions periodic
     }
@@ -94,16 +94,16 @@ template < int D >
 void
 Layer< D >::get_status( dictionary& d ) const
 {
-  d[ names::extent.toString() ] = std::vector< double >( extent_.get_vector() );
-  d[ names::center.toString() ] = std::vector< double >( ( lower_left_ + extent_ / 2 ).get_vector() );
+  d[ names::extent ] = std::vector< double >( extent_.get_vector() );
+  d[ names::center ] = std::vector< double >( ( lower_left_ + extent_ / 2 ).get_vector() );
 
   if ( periodic_.none() )
   {
-    d[ names::edge_wrap.toString() ] = BoolDatum( false );
+    d[ names::edge_wrap ] = BoolDatum( false );
   }
   else if ( periodic_.count() == D )
   {
-    d[ names::edge_wrap.toString() ] = true;
+    d[ names::edge_wrap ] = true;
   }
 }
 
@@ -306,7 +306,7 @@ Layer< D >::dump_connections( std::ostream& out,
 
   // Dictionary with parameters for get_connections()
   dictionary ncdict;
-  ncdict[ names::synapse_model.toString() ] = syn_model;
+  ncdict[ names::synapse_model ] = syn_model;
 
   // Avoid setting up new array for each iteration of the loop
   std::vector< index > source_array( 1 );
@@ -320,7 +320,7 @@ Layer< D >::dump_connections( std::ostream& out,
     const Position< D > source_pos = src_iter->first;
 
     source_array[ 0 ] = source_node_id;
-    ncdict[ names::source.toString() ] = NodeCollectionDatum( NodeCollection::create( source_array ) );
+    ncdict[ names::source ] = NodeCollectionDatum( NodeCollection::create( source_array ) );
     ArrayDatum connectome = kernel().connection_manager.get_connections( ncdict );
 
     // Print information about all local connections for current source
@@ -333,9 +333,9 @@ Layer< D >::dump_connections( std::ostream& out,
         con_id.get_synapse_model_id(),
         con_id.get_port() );
 
-      long target_node_id = result_dict.get< long >( names::target.toString() );
-      double weight = result_dict.get< double >( names::weight.toString() );
-      double delay = result_dict.get< double >( names::delay.toString() );
+      long target_node_id = result_dict.get< long >( names::target );
+      double weight = result_dict.get< double >( names::weight );
+      double delay = result_dict.get< double >( names::delay );
 
       // Print source, target, weight, delay, rports
       out << source_node_id << ' ' << target_node_id << ' ' << weight << ' ' << delay;

@@ -147,7 +147,7 @@ nest::ConnectionManager::set_status( const dictionary& d )
     delay_checkers_[ i ].set_status( d );
   }
 
-  d.update_value( names::keep_source_table.toString(), keep_source_table_ );
+  d.update_value( names::keep_source_table, keep_source_table_ );
   if ( not keep_source_table_ and kernel().sp_manager.is_structural_plasticity_enabled() )
   {
     throw KernelException(
@@ -155,7 +155,7 @@ nest::ConnectionManager::set_status( const dictionary& d )
       "to false." );
   }
 
-  d.update_value( names::sort_connections_by_source.toString(), sort_connections_by_source_ );
+  d.update_value( names::sort_connections_by_source, sort_connections_by_source_ );
   if ( not sort_connections_by_source_ and kernel().sp_manager.is_structural_plasticity_enabled() )
   {
     throw KernelException(
@@ -163,14 +163,14 @@ nest::ConnectionManager::set_status( const dictionary& d )
       "be set to false." );
   }
 
-  d.update_value( names::use_compressed_spikes.toString(), use_compressed_spikes_ );
+  d.update_value( names::use_compressed_spikes, use_compressed_spikes_ );
   if ( use_compressed_spikes_ and not sort_connections_by_source_ )
   {
     throw KernelException( "Spike compression requires sort_connections_by_source to be true." );
   }
 
   //  Need to update the saved values if we have changed the delay bounds.
-  if ( d.known( names::min_delay.toString() ) or d.known( names::max_delay.toString() ) )
+  if ( d.known( names::min_delay ) or d.known( names::max_delay ) )
   {
     update_delay_extrema_();
   }
@@ -186,16 +186,16 @@ void
 nest::ConnectionManager::get_status( dictionary& dict )
 {
   update_delay_extrema_();
-  dict[ names::min_delay.toString() ] = Time( Time::step( min_delay_ ) ).get_ms();
-  dict[ names::max_delay.toString() ] = Time( Time::step( max_delay_ ) ).get_ms();
+  dict[ names::min_delay ] = Time( Time::step( min_delay_ ) ).get_ms();
+  dict[ names::max_delay ] = Time( Time::step( max_delay_ ) ).get_ms();
 
   const size_t n = get_num_connections();
-  dict[ names::num_connections.toString() ] = n;
-  dict[ names::keep_source_table.toString() ] = keep_source_table_;
-  dict[ names::sort_connections_by_source.toString() ] = sort_connections_by_source_;
-  dict[ names::use_compressed_spikes.toString() ] = use_compressed_spikes_;
+  dict[ names::num_connections ] = n;
+  dict[ names::keep_source_table ] = keep_source_table_;
+  dict[ names::sort_connections_by_source ] = sort_connections_by_source_;
+  dict[ names::use_compressed_spikes ] = use_compressed_spikes_;
 
-  dict[ names::time_construction_connect.toString() ] = sw_construction_connect.elapsed();
+  dict[ names::time_construction_connect ] = sw_construction_connect.elapsed();
 }
 
 dictionary
@@ -208,11 +208,11 @@ nest::ConnectionManager::get_synapse_status( const index source_node_id,
   kernel().model_manager.assert_valid_syn_id( syn_id );
 
   dictionary dict;
-  dict[ names::source.toString() ] = source_node_id;
-  dict[ names::synapse_model.toString() ] = kernel().model_manager.get_synapse_prototype( syn_id ).get_name();
-  dict[ names::target_thread.toString() ] = tid;
-  dict[ names::synapse_id.toString() ] = syn_id;
-  dict[ names::port.toString() ] = lcid;
+  dict[ names::source ] = source_node_id;
+  dict[ names::synapse_model ] = kernel().model_manager.get_synapse_prototype( syn_id ).get_name();
+  dict[ names::target_thread ] = tid;
+  dict[ names::synapse_id ] = syn_id;
+  dict[ names::port ] = lcid;
 
   const Node* source = kernel().node_manager.get_node_or_proxy( source_node_id, tid );
   const Node* target = kernel().node_manager.get_node_or_proxy( target_node_id, tid );
@@ -389,11 +389,11 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
     syn_param.init_access_flags();
   }
 
-  if ( not conn_spec.known( names::rule.toString() ) )
+  if ( not conn_spec.known( names::rule ) )
   {
     throw BadProperty( "Connectivity spec must contain connectivity rule." );
   }
-  const Name rule_name = conn_spec.get< std::string >( names::rule.toString() );
+  const Name rule_name = conn_spec.get< std::string >( names::rule );
 
   if ( not connruledict_.known( rule_name.toString() ) )
   {
@@ -424,9 +424,9 @@ nest::ConnectionManager::connect( TokenArray sources, TokenArray targets, const 
 {
   // Get synapse id
   size_t syn_id = 0;
-  if ( syn_spec.known( names::model.toString() ) )
+  if ( syn_spec.known( names::model ) )
   {
-    std::string synmodel_name = syn_spec.get< std::string >( names::model.toString() );
+    std::string synmodel_name = syn_spec.get< std::string >( names::model );
     const auto& syndict = kernel().model_manager.get_synapsedict();
 
     if ( syndict.known( synmodel_name ) )
@@ -930,19 +930,19 @@ nest::ConnectionManager::get_connections( const dictionary& params )
   NodeCollectionPTR target_a = NodeCollectionPTR( 0 );
 
   long synapse_label = UNLABELED_CONNECTION;
-  params.update_value( names::synapse_label.toString(), synapse_label );
+  params.update_value( names::synapse_label, synapse_label );
 
-  if ( params.known( names::source.toString() ) )
+  if ( params.known( names::source ) )
   {
-    source_a = params.get< NodeCollectionDatum >( names::source.toString() );
+    source_a = params.get< NodeCollectionDatum >( names::source );
     if ( not source_a->valid() )
     {
       throw KernelException( "GetConnection requires valid source NodeCollection." );
     }
   }
-  if ( params.known( names::target.toString() ) )
+  if ( params.known( names::target ) )
   {
-    target_a = params.get< NodeCollectionDatum >( names::target.toString() );
+    target_a = params.get< NodeCollectionDatum >( names::target );
     if ( not target_a->valid() )
     {
       throw KernelException( "GetConnection requires valid target NodeCollection." );
@@ -968,9 +968,9 @@ nest::ConnectionManager::get_connections( const dictionary& params )
 
   // First we check, whether a synapse model is given.
   // If not, we will iterate all.
-  if ( params.known( names::target.toString() ) )
+  if ( params.known( names::target ) )
   {
-    const auto synmodel_name = params.get< std::string >( names::synapse_model.toString() );
+    const auto synmodel_name = params.get< std::string >( names::synapse_model );
     const auto& syndict = kernel().model_manager.get_synapsedict();
     // const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
     if ( syndict.known( synmodel_name ) )

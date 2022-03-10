@@ -79,12 +79,12 @@ nest::glif_psc::Parameters_::Parameters_()
   , th_spike_add_( 0.37 )    // in mV
   , th_spike_decay_( 0.009 ) // in 1/ms
   , voltage_reset_fraction_( 0.20 )
-  , voltage_reset_add_( 18.51 )                          // in mV
-  , th_voltage_index_( 0.005 )                           // in 1/ms
-  , th_voltage_decay_( 0.09 )                            // in 1/ms
-  , asc_init_( std::vector< double >( 2, 0.0 ) )         // in pA
-  , asc_decay_( std::vector< double >{ 0.003, 0.1 } )    // in 1/ms
-  , asc_amps_( std::vector< double >{ -9.18, -198.94 } ) // in pA
+  , voltage_reset_add_( 18.51 )                           // in mV
+  , th_voltage_index_( 0.005 )                            // in 1/ms
+  , th_voltage_decay_( 0.09 )                             // in 1/ms
+  , asc_init_( std::vector< double >( 2, 0.0 ) )          // in pA
+  , asc_decay_( std::vector< double > { 0.003, 0.1 } )    // in 1/ms
+  , asc_amps_( std::vector< double > { -9.18, -198.94 } ) // in pA
   , asc_r_( std::vector< double >( 2, 1.0 ) )
   , tau_syn_( std::vector< double >( 1, 2.0 ) ) // in ms
   , has_connections_( false )
@@ -120,31 +120,31 @@ nest::glif_psc::State_::State_( const Parameters_& p )
 void
 nest::glif_psc::Parameters_::get( dictionary& d ) const
 {
-  d[ names::V_th.toString() ] = th_inf_ + E_L_;
-  d[ names::g.toString() ] = G_;
-  d[ names::E_L.toString() ] = E_L_;
-  d[ names::C_m.toString() ] = C_m_;
-  d[ names::t_ref.toString() ] = t_ref_;
-  d[ names::V_reset.toString() ] = V_reset_ + E_L_;
+  d[ names::V_th ] = th_inf_ + E_L_;
+  d[ names::g ] = G_;
+  d[ names::E_L ] = E_L_;
+  d[ names::C_m ] = C_m_;
+  d[ names::t_ref ] = t_ref_;
+  d[ names::V_reset ] = V_reset_ + E_L_;
 
-  d[ names::th_spike_add.toString() ] = th_spike_add_;
-  d[ names::th_spike_decay.toString() ] = th_spike_decay_;
-  d[ names::voltage_reset_fraction.toString() ] = voltage_reset_fraction_;
-  d[ names::voltage_reset_add.toString() ] = voltage_reset_add_;
+  d[ names::th_spike_add ] = th_spike_add_;
+  d[ names::th_spike_decay ] = th_spike_decay_;
+  d[ names::voltage_reset_fraction ] = voltage_reset_fraction_;
+  d[ names::voltage_reset_add ] = voltage_reset_add_;
 
-  d[ names::th_voltage_index.toString() ] = th_voltage_index_;
-  d[ names::th_voltage_decay.toString() ] = th_voltage_decay_;
+  d[ names::th_voltage_index ] = th_voltage_index_;
+  d[ names::th_voltage_decay ] = th_voltage_decay_;
 
-  d[ names::asc_init.toString() ] = asc_init_;
-  d[ names::asc_decay.toString() ] = asc_decay_;
-  d[ names::asc_amps.toString() ] = asc_amps_;
-  d[ names::asc_r.toString() ] = asc_r_;
+  d[ names::asc_init ] = asc_init_;
+  d[ names::asc_decay ] = asc_decay_;
+  d[ names::asc_amps ] = asc_amps_;
+  d[ names::asc_r ] = asc_r_;
   ArrayDatum tau_syn_ad( tau_syn_ );
-  d[ names::tau_syn.toString() ] = tau_syn_ad;
-  d[ names::has_connections.toString() ] = has_connections_;
-  d[ names::spike_dependent_threshold.toString() ] = has_theta_spike_;
-  d[ names::after_spike_currents.toString() ] = has_asc_;
-  d[ names::adapting_threshold.toString() ] = has_theta_voltage_;
+  d[ names::tau_syn ] = tau_syn_ad;
+  d[ names::has_connections ] = has_connections_;
+  d[ names::spike_dependent_threshold ] = has_theta_spike_;
+  d[ names::after_spike_currents ] = has_asc_;
+  d[ names::adapting_threshold ] = has_theta_voltage_;
 }
 
 double
@@ -153,10 +153,10 @@ nest::glif_psc::Parameters_::set( const dictionary& d )
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
   const double ELold = E_L_;
-  d.update_value( names::E_L.toString(), E_L_ );
+  d.update_value( names::E_L, E_L_ );
   const double delta_EL = E_L_ - ELold;
 
-  if ( d.update_value( names::V_reset.toString(), V_reset_ ) )
+  if ( d.update_value( names::V_reset, V_reset_ ) )
   {
     V_reset_ -= E_L_;
   }
@@ -165,7 +165,7 @@ nest::glif_psc::Parameters_::set( const dictionary& d )
     V_reset_ -= delta_EL;
   }
 
-  if ( d.update_value( names::V_th.toString(), th_inf_ ) )
+  if ( d.update_value( names::V_th, th_inf_ ) )
   {
     th_inf_ -= E_L_;
   }
@@ -174,27 +174,27 @@ nest::glif_psc::Parameters_::set( const dictionary& d )
     th_inf_ -= delta_EL;
   }
 
-  d.update_value( names::g.toString(), G_ );
-  d.update_value( names::C_m.toString(), C_m_ );
-  d.update_value( names::t_ref.toString(), t_ref_ );
+  d.update_value( names::g, G_ );
+  d.update_value( names::C_m, C_m_ );
+  d.update_value( names::t_ref, t_ref_ );
 
-  d.update_value( names::th_spike_add.toString(), th_spike_add_ );
-  d.update_value( names::th_spike_decay.toString(), th_spike_decay_ );
-  d.update_value( names::voltage_reset_fraction.toString(), voltage_reset_fraction_ );
-  d.update_value( names::voltage_reset_add.toString(), voltage_reset_add_ );
+  d.update_value( names::th_spike_add, th_spike_add_ );
+  d.update_value( names::th_spike_decay, th_spike_decay_ );
+  d.update_value( names::voltage_reset_fraction, voltage_reset_fraction_ );
+  d.update_value( names::voltage_reset_add, voltage_reset_add_ );
 
-  d.update_value( names::th_voltage_index.toString(), th_voltage_index_ );
-  d.update_value( names::th_voltage_decay.toString(), th_voltage_decay_ );
+  d.update_value( names::th_voltage_index, th_voltage_index_ );
+  d.update_value( names::th_voltage_decay, th_voltage_decay_ );
 
-  d.update_value( names::asc_init.toString(), asc_init_ );
-  d.update_value( names::asc_decay.toString(), asc_decay_ );
-  d.update_value( names::asc_amps.toString(), asc_amps_ );
-  d.update_value( names::asc_r.toString(), asc_r_ );
+  d.update_value( names::asc_init, asc_init_ );
+  d.update_value( names::asc_decay, asc_decay_ );
+  d.update_value( names::asc_amps, asc_amps_ );
+  d.update_value( names::asc_r, asc_r_ );
 
   // set model mechanisms
-  d.update_value( names::spike_dependent_threshold.toString(), has_theta_spike_ );
-  d.update_value( names::after_spike_currents.toString(), has_asc_ );
-  d.update_value( names::adapting_threshold.toString(), has_theta_voltage_ );
+  d.update_value( names::spike_dependent_threshold, has_theta_spike_ );
+  d.update_value( names::after_spike_currents, has_asc_ );
+  d.update_value( names::adapting_threshold, has_theta_voltage_ );
 
   // check model mechanisms parameter
   if ( not( ( not has_theta_spike_ and not has_asc_ and not has_theta_voltage_ ) or // glif1
@@ -281,7 +281,7 @@ nest::glif_psc::Parameters_::set( const dictionary& d )
   }
 
   const size_t old_n_receptors = this->n_receptors_();
-  if ( d.update_value( names::tau_syn.toString(), tau_syn_ ) )
+  if ( d.update_value( names::tau_syn, tau_syn_ ) )
   {
     if ( this->n_receptors_() != old_n_receptors && has_connections_ == true )
     {
@@ -304,16 +304,16 @@ nest::glif_psc::Parameters_::set( const dictionary& d )
 void
 nest::glif_psc::State_::get( dictionary& d, const Parameters_& p ) const
 {
-  d[ names::V_m.toString() ] = U_ + p.E_L_;
-  d[ names::ASCurrents.toString() ] = ASCurrents_;
-  d[ names::threshold_spike.toString() ] = threshold_spike_;
-  d[ names::threshold_voltage.toString() ] = threshold_voltage_;
+  d[ names::V_m ] = U_ + p.E_L_;
+  d[ names::ASCurrents ] = ASCurrents_;
+  d[ names::threshold_spike ] = threshold_spike_;
+  d[ names::threshold_voltage ] = threshold_voltage_;
 }
 
 void
 nest::glif_psc::State_::set( const dictionary& d, const Parameters_& p, double delta_EL )
 {
-  if ( d.update_value( names::V_m.toString(), U_ ) )
+  if ( d.update_value( names::V_m, U_ ) )
   {
     U_ -= p.E_L_;
   }
@@ -322,7 +322,7 @@ nest::glif_psc::State_::set( const dictionary& d, const Parameters_& p, double d
     U_ -= delta_EL;
   }
 
-  bool asc_flag = d.update_value( names::ASCurrents.toString(), ASCurrents_ );
+  bool asc_flag = d.update_value( names::ASCurrents, ASCurrents_ );
   if ( asc_flag and not p.has_asc_ )
   {
     throw BadProperty( "After spike currents are not supported or settable in the current model mechanisms." );
@@ -338,12 +338,12 @@ nest::glif_psc::State_::set( const dictionary& d, const Parameters_& p, double d
     }
   }
 
-  if ( d.update_value( names::threshold_spike.toString(), threshold_spike_ ) and not p.has_theta_spike_ )
+  if ( d.update_value( names::threshold_spike, threshold_spike_ ) and not p.has_theta_spike_ )
   {
     throw BadProperty( "Threshold spike component is not supported or settable in the current model mechanisms." );
   }
 
-  if ( d.update_value( names::threshold_voltage.toString(), threshold_voltage_ ) and not p.has_theta_voltage_ )
+  if ( d.update_value( names::threshold_voltage, threshold_voltage_ ) and not p.has_theta_voltage_ )
   {
     throw BadProperty( "Threshold voltage component is not supported or settable in the current model mechanisms." );
   }

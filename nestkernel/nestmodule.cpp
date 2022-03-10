@@ -284,13 +284,13 @@ create_doughnut( const DictionaryDatum& d )
 {
   // The doughnut (actually an annulus) is created using a DifferenceMask
   // Position< 2 > center( 0, 0 );
-  // if ( d.known( names::anchor.toString() ) )
+  // if ( d.known( names::anchor ) )
   // {
-  //   center = d.get< std::vector< double > >( names::anchor.toString() );
+  //   center = d.get< std::vector< double > >( names::anchor );
   // }
 
-  // const double outer = d.get< double >( names::outer_radius.toString() );
-  // const double inner = d.get< double >( names::inner_radius.toString() );
+  // const double outer = d.get< double >( names::outer_radius );
+  // const double inner = d.get< double >( names::inner_radius );
   // if ( inner >= outer )
   // {
   //   throw BadProperty(
@@ -588,7 +588,7 @@ NestModule::GetMetadata_gFunction::execute( SLIInterpreter* i ) const
   {
     // meta->get_status( dict );
 
-    // dict[ names::network_size.toString() ] = nc->size();
+    // dict[ names::network_size ] = nc->size();
   }
 
   i->OStack.pop();

@@ -31,8 +31,8 @@
 #include <limits>
 
 // Includes from libnestutil:
-#include "dict_util.h"
 #include "compose.hpp"
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -106,38 +106,38 @@ nest::pp_psc_delta::State_::State_()
 void
 nest::pp_psc_delta::Parameters_::get( dictionary& d ) const
 {
-  d[ names::I_e.toString() ] = I_e_;
-  d[ names::C_m.toString() ] = c_m_;
-  d[ names::tau_m.toString() ] = tau_m_;
-  d[ names::dead_time.toString() ] = dead_time_;
-  d[ names::dead_time_random.toString() ] = dead_time_random_;
-  d[ names::dead_time_shape.toString() ] = dead_time_shape_;
-  d[ names::with_reset.toString() ] = with_reset_;
+  d[ names::I_e ] = I_e_;
+  d[ names::C_m ] = c_m_;
+  d[ names::tau_m ] = tau_m_;
+  d[ names::dead_time ] = dead_time_;
+  d[ names::dead_time_random ] = dead_time_random_;
+  d[ names::dead_time_shape ] = dead_time_shape_;
+  d[ names::with_reset ] = with_reset_;
 
-  d[ names::c_1.toString() ] = c_1_;
-  d[ names::c_2.toString() ] = c_2_;
-  d[ names::c_3.toString() ] = c_3_;
-  d[ names::t_ref_remaining.toString() ] = t_ref_remaining_;
+  d[ names::c_1 ] = c_1_;
+  d[ names::c_2 ] = c_2_;
+  d[ names::c_3 ] = c_3_;
+  d[ names::t_ref_remaining ] = t_ref_remaining_;
 
   if ( multi_param_ )
   {
     ArrayDatum tau_sfa_list_ad( tau_sfa_ );
-    d[ names::tau_sfa.toString() ] = tau_sfa_list_ad;
+    d[ names::tau_sfa ] = tau_sfa_list_ad;
 
     ArrayDatum q_sfa_list_ad( q_sfa_ );
-    d[ names::q_sfa.toString() ] = q_sfa_list_ad;
+    d[ names::q_sfa ] = q_sfa_list_ad;
   }
   else
   {
     if ( tau_sfa_.size() == 0 )
     {
-      d[ names::tau_sfa.toString() ] = 0;
-      d[ names::q_sfa.toString() ] = 0;
+      d[ names::tau_sfa ] = 0;
+      d[ names::q_sfa ] = 0;
     }
     else
     {
-      d[ names::tau_sfa.toString() ] = tau_sfa_[ 0 ];
-      d[ names::q_sfa.toString() ] = q_sfa_[ 0 ];
+      d[ names::tau_sfa ] = tau_sfa_[ 0 ];
+      d[ names::q_sfa ] = q_sfa_[ 0 ];
     }
   }
 }
@@ -146,30 +146,30 @@ void
 nest::pp_psc_delta::Parameters_::set( const dictionary& d, Node* node )
 {
 
-  update_value_param( d, names::I_e.toString(), I_e_, node );
-  update_value_param( d, names::C_m.toString(), c_m_, node );
-  update_value_param( d, names::tau_m.toString(), tau_m_, node );
-  update_value_param( d, names::dead_time.toString(), dead_time_, node );
-  update_value_param( d, names::dead_time_random.toString(), dead_time_random_, node );
-  update_value_param( d, names::dead_time_shape.toString(), dead_time_shape_, node );
-  update_value_param( d, names::with_reset.toString(), with_reset_, node );
-  update_value_param( d, names::c_1.toString(), c_1_, node );
-  update_value_param( d, names::c_2.toString(), c_2_, node );
-  update_value_param( d, names::c_3.toString(), c_3_, node );
-  update_value_param( d, names::t_ref_remaining.toString(), t_ref_remaining_, node );
+  update_value_param( d, names::I_e, I_e_, node );
+  update_value_param( d, names::C_m, c_m_, node );
+  update_value_param( d, names::tau_m, tau_m_, node );
+  update_value_param( d, names::dead_time, dead_time_, node );
+  update_value_param( d, names::dead_time_random, dead_time_random_, node );
+  update_value_param( d, names::dead_time_shape, dead_time_shape_, node );
+  update_value_param( d, names::with_reset, with_reset_, node );
+  update_value_param( d, names::c_1, c_1_, node );
+  update_value_param( d, names::c_2, c_2_, node );
+  update_value_param( d, names::c_3, c_3_, node );
+  update_value_param( d, names::t_ref_remaining, t_ref_remaining_, node );
 
   try
   {
-    d.update_value( names::tau_sfa.toString(), tau_sfa_ );
-    d.update_value( names::q_sfa.toString(), q_sfa_ );
+    d.update_value( names::tau_sfa, tau_sfa_ );
+    d.update_value( names::q_sfa, q_sfa_ );
   }
   catch ( TypeMismatch& e )
   {
     multi_param_ = 0;
     double tau_sfa_temp_;
     double q_sfa_temp_;
-    update_value_param( d, names::tau_sfa.toString(), tau_sfa_temp_, node );
-    update_value_param( d, names::q_sfa.toString(), q_sfa_temp_, node );
+    update_value_param( d, names::tau_sfa, tau_sfa_temp_, node );
+    update_value_param( d, names::q_sfa, q_sfa_temp_, node );
     tau_sfa_.push_back( tau_sfa_temp_ );
     q_sfa_.push_back( q_sfa_temp_ );
   }
@@ -177,11 +177,11 @@ nest::pp_psc_delta::Parameters_::set( const dictionary& d, Node* node )
 
   if ( tau_sfa_.size() != q_sfa_.size() )
   {
-    throw BadProperty( String::compose(
-      "'tau_sfa' and 'q_sfa' need to have the same dimension.\nSize of "
-      "tau_sfa: %1\nSize of q_sfa: %2",
-      tau_sfa_.size(),
-      q_sfa_.size() ) );
+    throw BadProperty(
+      String::compose( "'tau_sfa' and 'q_sfa' need to have the same dimension.\nSize of "
+                       "tau_sfa: %1\nSize of q_sfa: %2",
+        tau_sfa_.size(),
+        q_sfa_.size() ) );
   }
 
   if ( c_m_ <= 0 )
@@ -226,15 +226,15 @@ nest::pp_psc_delta::Parameters_::set( const dictionary& d, Node* node )
 void
 nest::pp_psc_delta::State_::get( dictionary& d, const Parameters_& ) const
 {
-  d[ names::V_m.toString() ] = y3_;  // Membrane potential
-  d[ names::E_sfa.toString() ] = q_; // Adaptive threshold potential
+  d[ names::V_m ] = y3_;  // Membrane potential
+  d[ names::E_sfa ] = q_; // Adaptive threshold potential
 }
 
 void
 nest::pp_psc_delta::State_::set( const dictionary& d, const Parameters_&, Node* node )
 {
-  update_value_param( d, names::V_m.toString(), y3_, node );
-  update_value_param( d, names::E_sfa.toString(), q_, node );
+  update_value_param( d, names::V_m, y3_, node );
+  update_value_param( d, names::E_sfa, q_, node );
   // vectors of the state should be initialized with new parameter set.
   initialized_ = false;
 }

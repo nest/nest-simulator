@@ -150,19 +150,19 @@ Node::get_status_base()
   dictionary dict = get_status_dict_();
 
   // add information available for all nodes
-  dict[ names::local.toString() ] = kernel().node_manager.is_local_node( this );
-  dict[ names::model.toString() ] = get_name();
-  dict[ names::global_id.toString() ] = get_node_id();
-  dict[ names::vp.toString() ] = get_vp();
-  dict[ names::element_type.toString() ] = get_element_type();
+  dict[ names::local ] = kernel().node_manager.is_local_node( this );
+  dict[ names::model ] = get_name();
+  dict[ names::global_id ] = get_node_id();
+  dict[ names::vp ] = get_vp();
+  dict[ names::element_type ] = get_element_type();
 
   // add information available only for local nodes
   if ( not is_proxy() )
   {
-    dict[ names::frozen.toString() ] = is_frozen();
-    dict[ names::node_uses_wfr.toString() ] = node_uses_wfr();
-    dict[ names::thread_local_id.toString() ] = get_thread_lid();
-    dict[ names::thread.toString() ] = get_thread();
+    dict[ names::frozen ] = is_frozen();
+    dict[ names::node_uses_wfr ] = node_uses_wfr();
+    dict[ names::thread_local_id ] = get_thread_lid();
+    dict[ names::thread ] = get_thread();
   }
 
   // now call the child class' hook
@@ -184,7 +184,7 @@ Node::set_status_base( const dictionary& dict )
       String::compose( "Setting status of a '%1' with node ID %2: %3", get_name(), get_node_id(), e.message() ) );
   }
 
-  dict.update_value( names::frozen.toString(), frozen_ );
+  dict.update_value( names::frozen, frozen_ );
 }
 
 /**

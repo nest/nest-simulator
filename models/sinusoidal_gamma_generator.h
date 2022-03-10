@@ -199,9 +199,9 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
+  using Node::event_hook;
   using Node::handle;
   using Node::handles_test_event;
-  using Node::event_hook;
 
   void handle( DataLoggingRequest& ) override;
 
@@ -398,7 +398,7 @@ sinusoidal_gamma_generator::get_status( dictionary& d ) const
 {
   P_.get( d );
   StimulationDevice::get_status( d );
-  d[ names::recordables.toString() ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void

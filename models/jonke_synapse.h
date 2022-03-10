@@ -171,13 +171,13 @@ JonkeCommonProperties::get_status( dictionary& d ) const
 {
   CommonSynapseProperties::get_status( d );
 
-  d[ names::alpha.toString() ] = alpha_;
-  d[ names::beta.toString() ] = beta_;
-  d[ names::lambda.toString() ] = lambda_;
-  d[ names::mu_plus.toString() ] = mu_plus_;
-  d[ names::mu_minus.toString() ] = mu_minus_;
-  d[ names::tau_plus.toString() ] = tau_plus_;
-  d[ names::Wmax.toString() ] = Wmax_;
+  d[ names::alpha ] = alpha_;
+  d[ names::beta ] = beta_;
+  d[ names::lambda ] = lambda_;
+  d[ names::mu_plus ] = mu_plus_;
+  d[ names::mu_minus ] = mu_minus_;
+  d[ names::tau_plus ] = tau_plus_;
+  d[ names::Wmax ] = Wmax_;
 }
 
 void
@@ -185,13 +185,13 @@ JonkeCommonProperties::set_status( const dictionary& d, ConnectorModel& cm )
 {
   CommonSynapseProperties::set_status( d, cm );
 
-  d.update_value( names::alpha.toString(), alpha_ );
-  d.update_value( names::beta.toString(), beta_ );
-  d.update_value( names::lambda.toString(), lambda_ );
-  d.update_value( names::tau_plus.toString(), tau_plus_ );
-  d.update_value( names::mu_plus.toString(), mu_plus_ );
-  d.update_value( names::mu_minus.toString(), mu_minus_ );
-  d.update_value( names::Wmax.toString(), Wmax_ );
+  d.update_value( names::alpha, alpha_ );
+  d.update_value( names::beta, beta_ );
+  d.update_value( names::lambda, lambda_ );
+  d.update_value( names::tau_plus, tau_plus_ );
+  d.update_value( names::mu_plus, mu_plus_ );
+  d.update_value( names::mu_minus, mu_minus_ );
+  d.update_value( names::Wmax, Wmax_ );
 }
 
 
@@ -397,8 +397,8 @@ void
 jonke_synapse< targetidentifierT >::get_status( dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  d[ names::weight.toString() ] = weight_;
-  d[ names::size_of.toString() ] = sizeof( *this );
+  d[ names::weight ] = weight_;
+  d[ names::size_of ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
@@ -406,7 +406,7 @@ void
 jonke_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  d.update_value( names::weight.toString(), weight_ );
+  d.update_value( names::weight, weight_ );
 }
 
 template < typename targetidentifierT >

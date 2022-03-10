@@ -27,8 +27,8 @@
 #include <limits>
 
 // Includes from libnestutil:
-#include "dict_util.h"
 #include "compose.hpp"
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -100,44 +100,44 @@ nest::pp_pop_psc_delta::State_::State_()
 void
 nest::pp_pop_psc_delta::Parameters_::get( dictionary& d ) const
 {
-  d[ names::N.toString() ] = N_;
-  d[ names::rho_0.toString() ] = rho_0_;
-  d[ names::delta_u.toString() ] = delta_u_;
-  d[ names::I_e.toString() ] = I_e_;
-  d[ names::C_m.toString() ] = c_m_;
-  d[ names::tau_m.toString() ] = tau_m_;
-  d[ names::len_kernel.toString() ] = len_kernel_;
+  d[ names::N ] = N_;
+  d[ names::rho_0 ] = rho_0_;
+  d[ names::delta_u ] = delta_u_;
+  d[ names::I_e ] = I_e_;
+  d[ names::C_m ] = c_m_;
+  d[ names::tau_m ] = tau_m_;
+  d[ names::len_kernel ] = len_kernel_;
 
   ArrayDatum tau_eta_list_ad( tau_eta_ );
-  d[ names::tau_eta.toString() ] = tau_eta_list_ad;
+  d[ names::tau_eta ] = tau_eta_list_ad;
 
   ArrayDatum val_eta_list_ad( val_eta_ );
-  d[ names::val_eta.toString() ] = val_eta_list_ad;
+  d[ names::val_eta ] = val_eta_list_ad;
 }
 
 void
 nest::pp_pop_psc_delta::Parameters_::set( const dictionary& d, Node* node )
 {
 
-  update_value_param( d, names::N.toString(), N_, node );
-  update_value_param( d, names::rho_0.toString(), rho_0_, node );
-  update_value_param( d, names::delta_u.toString(), delta_u_, node );
-  update_value_param( d, names::len_kernel.toString(), len_kernel_, node );
+  update_value_param( d, names::N, N_, node );
+  update_value_param( d, names::rho_0, rho_0_, node );
+  update_value_param( d, names::delta_u, delta_u_, node );
+  update_value_param( d, names::len_kernel, len_kernel_, node );
 
-  update_value_param( d, names::I_e.toString(), I_e_, node );
-  update_value_param( d, names::C_m.toString(), c_m_, node );
-  update_value_param( d, names::tau_m.toString(), tau_m_, node );
-  d.update_value( names::tau_eta.toString(), tau_eta_ );
-  d.update_value( names::val_eta.toString(), val_eta_ );
+  update_value_param( d, names::I_e, I_e_, node );
+  update_value_param( d, names::C_m, c_m_, node );
+  update_value_param( d, names::tau_m, tau_m_, node );
+  d.update_value( names::tau_eta, tau_eta_ );
+  d.update_value( names::val_eta, val_eta_ );
 
 
   if ( tau_eta_.size() != val_eta_.size() )
   {
-    throw BadProperty( String::compose(
-      "'tau_eta' and 'val_eta' need to have the same dimension.\nSize of "
-      "tau_eta: %1\nSize of val_eta: %2",
-      tau_eta_.size(),
-      val_eta_.size() ) );
+    throw BadProperty(
+      String::compose( "'tau_eta' and 'val_eta' need to have the same dimension.\nSize of "
+                       "tau_eta: %1\nSize of val_eta: %2",
+        tau_eta_.size(),
+        val_eta_.size() ) );
   }
   if ( c_m_ <= 0 )
   {
@@ -172,16 +172,16 @@ nest::pp_pop_psc_delta::Parameters_::set( const dictionary& d, Node* node )
 void
 nest::pp_pop_psc_delta::State_::get( dictionary& d, const Parameters_& ) const
 {
-  d[ names::V_m.toString() ] = h_; // Filterd version of input
+  d[ names::V_m ] = h_; // Filterd version of input
   int n_spikes = n_spikes_past_.size() > 0 ? n_spikes_past_[ p_n_spikes_past_ ]
                                            : 0; // return 0 if n_spikes_past_ has not been initialized yet
-  d[ names::n_events.toString() ] = n_spikes;   // Number of generated spikes
+  d[ names::n_events ] = n_spikes;              // Number of generated spikes
 }
 
 void
 nest::pp_pop_psc_delta::State_::set( const dictionary& d, const Parameters_&, Node* node )
 {
-  update_value_param( d, names::V_m.toString(), h_, node );
+  update_value_param( d, names::V_m, h_, node );
   initialized_ = false; // vectors of the state should be initialized with new parameter set.
 }
 

@@ -65,7 +65,7 @@ public:
   get_status( dictionary& d ) const
   {
     CommonSynapseProperties::get_status( d );
-    d[ names::weight.toString() ] = weight_;
+    d[ names::weight ] = weight_;
   }
 
   double
@@ -81,7 +81,7 @@ public:
   set_status( const dictionary& d, ConnectorModel& cm )
   {
     CommonSynapseProperties::set_status( d, cm );
-    d.update_value( names::weight.toString(), weight_ );
+    d.update_value( names::weight, weight_ );
   }
 
 private:

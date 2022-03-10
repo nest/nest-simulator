@@ -85,13 +85,13 @@ void
 quantal_stp_synapse< targetidentifierT >::get_status( dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  d[ names::weight.toString() ] = weight_;
-  d[ names::dU.toString() ] = U_;
-  d[ names::u.toString() ] = u_;
-  d[ names::tau_rec.toString() ] = tau_rec_;
-  d[ names::tau_fac.toString() ] = tau_fac_;
-  d[ names::n.toString() ] = n_;
-  d[ names::a.toString() ] = a_;
+  d[ names::weight ] = weight_;
+  d[ names::dU ] = U_;
+  d[ names::u ] = u_;
+  d[ names::tau_rec ] = tau_rec_;
+  d[ names::tau_fac ] = tau_fac_;
+  d[ names::n ] = n_;
+  d[ names::a ] = a_;
 }
 
 
@@ -100,12 +100,12 @@ void
 quantal_stp_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  d.update_value( names::weight.toString(), weight_ );
+  d.update_value( names::weight, weight_ );
 
-  d.update_value( names::dU.toString(), U_ );
-  d.update_value( names::u.toString(), u_ );
-  d.update_value( names::tau_rec.toString(), tau_rec_ );
-  d.update_value( names::tau_fac.toString(), tau_fac_ );
+  d.update_value( names::dU, U_ );
+  d.update_value( names::u, u_ );
+  d.update_value( names::tau_rec, tau_rec_ );
+  d.update_value( names::tau_fac, tau_fac_ );
   update_value_int( d, names::n, n_ );
   update_value_int( d, names::a, a_ );
 }

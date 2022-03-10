@@ -80,7 +80,7 @@ void
 IOManager::set_data_path_prefix_( const dictionary& dict )
 {
   std::string tmp;
-  if ( dict.update_value( names::data_path.toString(), tmp ) )
+  if ( dict.update_value( names::data_path, tmp ) )
   {
     DIR* testdir = opendir( tmp.c_str() );
     if ( testdir != NULL )
@@ -109,7 +109,7 @@ IOManager::set_data_path_prefix_( const dictionary& dict )
     }
   }
 
-  if ( dict.update_value( names::data_prefix.toString(), tmp ) )
+  if ( dict.update_value( names::data_prefix, tmp ) )
   {
     if ( tmp.find( '/' ) == std::string::npos )
     {
@@ -130,12 +130,12 @@ IOManager::initialize()
   char* data_path = std::getenv( "NEST_DATA_PATH" );
   if ( data_path )
   {
-    dict[ names::data_path.toString() ] = std::string( data_path );
+    dict[ names::data_path ] = std::string( data_path );
   }
   char* data_prefix = std::getenv( "NEST_DATA_PREFIX" );
   if ( data_prefix )
   {
-    dict[ names::data_prefix.toString() ] = std::string( data_prefix );
+    dict[ names::data_prefix ] = std::string( data_prefix );
   }
 
   set_data_path_prefix_( dict );
@@ -184,10 +184,10 @@ IOManager::set_status( const dictionary& d )
 {
   set_data_path_prefix_( d );
 
-  d.update_value( names::overwrite_files.toString(), overwrite_files_ );
+  d.update_value( names::overwrite_files, overwrite_files_ );
 
   dictionary recording_backends;
-  if ( d.update_value( names::recording_backends.toString(), recording_backends ) )
+  if ( d.update_value( names::recording_backends, recording_backends ) )
   {
     for ( const auto& it : recording_backends_ )
     {
@@ -203,9 +203,9 @@ IOManager::set_status( const dictionary& d )
 void
 IOManager::get_status( dictionary& d )
 {
-  d[ names::data_path.toString() ] = data_path_;
-  d[ names::data_prefix.toString() ] = data_prefix_;
-  d[ names::overwrite_files.toString() ] = overwrite_files_;
+  d[ names::data_path ] = data_path_;
+  d[ names::data_prefix ] = data_prefix_;
+  d[ names::overwrite_files ] = overwrite_files_;
 
   dictionary recording_backends;
   for ( const auto& it : recording_backends_ )
@@ -214,7 +214,7 @@ IOManager::get_status( dictionary& d )
     it.second->get_status( recording_backend_status );
     recording_backends[ it.first.toString() ] = recording_backend_status;
   }
-  d[ names::recording_backends.toString() ] = recording_backends;
+  d[ names::recording_backends ] = recording_backends;
 }
 
 void

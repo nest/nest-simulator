@@ -119,18 +119,18 @@ iaf_psc_exp_multisynapse::State_::State_()
 void
 iaf_psc_exp_multisynapse::Parameters_::get( dictionary& d ) const
 {
-  d[ names::E_L.toString() ] = E_L_; // resting potential
-  d[ names::I_e.toString() ] = I_e_;
-  d[ names::V_th.toString() ] = Theta_ + E_L_; // threshold value
-  d[ names::V_reset.toString() ] = V_reset_ + E_L_;
-  d[ names::C_m.toString() ] = C_;
-  d[ names::tau_m.toString() ] = Tau_;
-  d[ names::t_ref.toString() ] = refractory_time_;
-  d[ names::n_synapses.toString() ] = n_receptors_();
-  d[ names::has_connections.toString() ] = has_connections_;
+  d[ names::E_L ] = E_L_; // resting potential
+  d[ names::I_e ] = I_e_;
+  d[ names::V_th ] = Theta_ + E_L_; // threshold value
+  d[ names::V_reset ] = V_reset_ + E_L_;
+  d[ names::C_m ] = C_;
+  d[ names::tau_m ] = Tau_;
+  d[ names::t_ref ] = refractory_time_;
+  d[ names::n_synapses ] = n_receptors_();
+  d[ names::has_connections ] = has_connections_;
 
   ArrayDatum tau_syn_ad( tau_syn_ );
-  d[ names::tau_syn.toString() ] = tau_syn_ad;
+  d[ names::tau_syn ] = tau_syn_ad;
 }
 
 double
@@ -139,10 +139,10 @@ iaf_psc_exp_multisynapse::Parameters_::set( const dictionary& d, Node* node )
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
   const double ELold = E_L_;
-  update_value_param( d, names::E_L.toString(), E_L_, node );
+  update_value_param( d, names::E_L, E_L_, node );
   const double delta_EL = E_L_ - ELold;
 
-  if ( update_value_param( d, names::V_reset.toString(), V_reset_, node ) )
+  if ( update_value_param( d, names::V_reset, V_reset_, node ) )
   {
     V_reset_ -= E_L_;
   }
@@ -150,7 +150,7 @@ iaf_psc_exp_multisynapse::Parameters_::set( const dictionary& d, Node* node )
   {
     V_reset_ -= delta_EL;
   }
-  if ( update_value_param( d, names::V_th.toString(), Theta_, node ) )
+  if ( update_value_param( d, names::V_th, Theta_, node ) )
   {
     Theta_ -= E_L_;
   }
@@ -159,10 +159,10 @@ iaf_psc_exp_multisynapse::Parameters_::set( const dictionary& d, Node* node )
     Theta_ -= delta_EL;
   }
 
-  update_value_param( d, names::I_e.toString(), I_e_, node );
-  update_value_param( d, names::C_m.toString(), C_, node );
-  update_value_param( d, names::tau_m.toString(), Tau_, node );
-  update_value_param( d, names::t_ref.toString(), refractory_time_, node );
+  update_value_param( d, names::I_e, I_e_, node );
+  update_value_param( d, names::C_m, C_, node );
+  update_value_param( d, names::tau_m, Tau_, node );
+  update_value_param( d, names::t_ref, refractory_time_, node );
 
   if ( C_ <= 0 )
   {
@@ -206,7 +206,7 @@ iaf_psc_exp_multisynapse::Parameters_::set( const dictionary& d, Node* node )
 void
 iaf_psc_exp_multisynapse::State_::get( dictionary& d, const Parameters_& p ) const
 {
-  d[ names::V_m.toString() ] = V_m_ + p.E_L_; // Membrane potential
+  d[ names::V_m ] = V_m_ + p.E_L_; // Membrane potential
 }
 
 void
@@ -215,7 +215,7 @@ iaf_psc_exp_multisynapse::State_::set( const dictionary& d, const Parameters_& p
   // If the dictionary contains a value for the membrane potential, V_m, adjust
   // it with the resting potential, E_L_. If not, adjust the membrane potential
   // with the provided change in resting potential.
-  if ( update_value_param( d, names::V_m.toString(), V_m_, node ) )
+  if ( update_value_param( d, names::V_m, V_m_, node ) )
   {
     V_m_ -= p.E_L_;
   }

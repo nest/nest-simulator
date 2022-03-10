@@ -24,8 +24,8 @@
 #define STDP_TRIPLET_SYNAPSE_H
 
 // C-header for math.h since copysign() is in C99 but not C++98
-#include <math.h>
 #include "connection.h"
+#include <math.h>
 
 namespace nest
 {
@@ -143,8 +143,8 @@ public:
   // ConnectionBase. This avoids explicit name prefixes in all places
   // these functions are used. Since ConnectionBase depends on the template
   // parameter, they are not automatically found in the base class.
-  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
@@ -317,16 +317,16 @@ void
 stdp_triplet_synapse< targetidentifierT >::get_status( dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  d[ names::weight.toString() ] = weight_;
-  d[ names::tau_plus.toString() ] = tau_plus_;
-  d[ names::tau_plus_triplet.toString() ] = tau_plus_triplet_;
-  d[ names::Aplus.toString() ] = Aplus_;
-  d[ names::Aminus.toString() ] = Aminus_;
-  d[ names::Aplus_triplet.toString() ] = Aplus_triplet_;
-  d[ names::Aminus_triplet.toString() ] = Aminus_triplet_;
-  d[ names::Kplus.toString() ] = Kplus_;
-  d[ names::Kplus_triplet.toString() ] = Kplus_triplet_;
-  d[ names::Wmax.toString() ] = Wmax_;
+  d[ names::weight ] = weight_;
+  d[ names::tau_plus ] = tau_plus_;
+  d[ names::tau_plus_triplet ] = tau_plus_triplet_;
+  d[ names::Aplus ] = Aplus_;
+  d[ names::Aminus ] = Aminus_;
+  d[ names::Aplus_triplet ] = Aplus_triplet_;
+  d[ names::Aminus_triplet ] = Aminus_triplet_;
+  d[ names::Kplus ] = Kplus_;
+  d[ names::Kplus_triplet ] = Kplus_triplet_;
+  d[ names::Wmax ] = Wmax_;
 }
 
 template < typename targetidentifierT >
@@ -334,16 +334,16 @@ void
 stdp_triplet_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  d.update_value( names::weight.toString(), weight_ );
-  d.update_value( names::tau_plus.toString(), tau_plus_ );
-  d.update_value( names::tau_plus_triplet.toString(), tau_plus_triplet_ );
-  d.update_value( names::Aplus.toString(), Aplus_ );
-  d.update_value( names::Aminus.toString(), Aminus_ );
-  d.update_value( names::Aplus_triplet.toString(), Aplus_triplet_ );
-  d.update_value( names::Aminus_triplet.toString(), Aminus_triplet_ );
-  d.update_value( names::Kplus.toString(), Kplus_ );
-  d.update_value( names::Kplus_triplet.toString(), Kplus_triplet_ );
-  d.update_value( names::Wmax.toString(), Wmax_ );
+  d.update_value( names::weight, weight_ );
+  d.update_value( names::tau_plus, tau_plus_ );
+  d.update_value( names::tau_plus_triplet, tau_plus_triplet_ );
+  d.update_value( names::Aplus, Aplus_ );
+  d.update_value( names::Aminus, Aminus_ );
+  d.update_value( names::Aplus_triplet, Aplus_triplet_ );
+  d.update_value( names::Aminus_triplet, Aminus_triplet_ );
+  d.update_value( names::Kplus, Kplus_ );
+  d.update_value( names::Kplus_triplet, Kplus_triplet_ );
+  d.update_value( names::Wmax, Wmax_ );
 
   // check if weight_ and Wmax_ has the same sign
   if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) )

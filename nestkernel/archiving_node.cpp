@@ -220,12 +220,12 @@ nest::ArchivingNode::set_spiketime( Time const& t_sp, double offset )
 void
 nest::ArchivingNode::get_status( dictionary& d ) const
 {
-  d[ names::t_spike.toString() ] = get_spiketime_ms();
-  d[ names::tau_minus.toString() ] = tau_minus_;
-  d[ names::tau_minus_triplet.toString() ] = tau_minus_triplet_;
-  d[ names::post_trace.toString() ] = trace_;
+  d[ names::t_spike ] = get_spiketime_ms();
+  d[ names::tau_minus ] = tau_minus_;
+  d[ names::tau_minus_triplet ] = tau_minus_triplet_;
+  d[ names::post_trace ] = trace_;
 #ifdef DEBUG_ARCHIVER
-  d[ names::archiver_length.toString() ] = history_.size();
+  d[ names::archiver_length ] = history_.size();
 #endif
 
   // add status dict items from the parent class
@@ -238,8 +238,8 @@ nest::ArchivingNode::set_status( const dictionary& d )
   // We need to preserve values in case invalid values are set
   double new_tau_minus = tau_minus_;
   double new_tau_minus_triplet = tau_minus_triplet_;
-  d.update_value( names::tau_minus.toString(), new_tau_minus );
-  d.update_value( names::tau_minus_triplet.toString(), new_tau_minus_triplet );
+  d.update_value( names::tau_minus, new_tau_minus );
+  d.update_value( names::tau_minus_triplet, new_tau_minus_triplet );
 
   if ( new_tau_minus <= 0.0 or new_tau_minus_triplet <= 0.0 )
   {
@@ -256,7 +256,7 @@ nest::ArchivingNode::set_status( const dictionary& d )
 
   // check, if to clear spike history and K_minus
   bool clear = false;
-  d.update_value( names::clear.toString(), clear );
+  d.update_value( names::clear, clear );
   if ( clear )
   {
     clear_history();

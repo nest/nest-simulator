@@ -126,7 +126,7 @@ nest::SimulationManager::set_status( const dictionary& d )
   TimeConverter time_converter;
 
   double time;
-  if ( d.update_value( names::biological_time.toString(), time ) )
+  if ( d.update_value( names::biological_time, time ) )
   {
     if ( time != 0.0 )
     {
@@ -151,15 +151,15 @@ nest::SimulationManager::set_status( const dictionary& d )
     }
   }
 
-  d.update_value( names::print_time.toString(), print_time_ );
+  d.update_value( names::print_time, print_time_ );
 
   // tics_per_ms and resolution must come after local_num_thread /
   // total_num_threads because they might reset the network and the time
   // representation
   double tics_per_ms = 0.0;
-  bool tics_per_ms_updated = d.update_value( names::tics_per_ms.toString(), tics_per_ms );
+  bool tics_per_ms_updated = d.update_value( names::tics_per_ms, tics_per_ms );
   double resd = 0.0;
-  bool res_updated = d.update_value( names::resolution.toString(), resd );
+  bool res_updated = d.update_value( names::resolution, resd );
 
   if ( tics_per_ms_updated or res_updated )
   {
@@ -290,7 +290,7 @@ nest::SimulationManager::set_status( const dictionary& d )
   // must be set before nodes are created.
   // Important: wfr_comm_interval_ may change depending on use_wfr_
   bool wfr;
-  if ( d.update_value( names::use_wfr.toString(), wfr ) )
+  if ( d.update_value( names::use_wfr, wfr ) )
   {
     if ( kernel().node_manager.size() > 0 )
     {
@@ -316,7 +316,7 @@ nest::SimulationManager::set_status( const dictionary& d )
   // connections are created. If use_wfr_ is false wfr_comm_interval_ is set to
   // the resolution whenever the resolution changes.
   double wfr_interval;
-  if ( d.update_value( names::wfr_comm_interval.toString(), wfr_interval ) )
+  if ( d.update_value( names::wfr_comm_interval, wfr_interval ) )
   {
     if ( not use_wfr_ )
     {
@@ -351,7 +351,7 @@ nest::SimulationManager::set_status( const dictionary& d )
 
   // set the convergence tolerance for the waveform relaxation method
   double tol;
-  if ( d.update_value( names::wfr_tol.toString(), tol ) )
+  if ( d.update_value( names::wfr_tol, tol ) )
   {
     if ( tol < 0.0 )
     {
@@ -366,7 +366,7 @@ nest::SimulationManager::set_status( const dictionary& d )
 
   // set the maximal number of iterations for the waveform relaxation method
   long max_iter;
-  if ( d.update_value( names::wfr_max_iterations.toString(), max_iter ) )
+  if ( d.update_value( names::wfr_max_iterations, max_iter ) )
   {
     if ( max_iter <= 0 )
     {
@@ -384,7 +384,7 @@ nest::SimulationManager::set_status( const dictionary& d )
 
   // set the interpolation order for the waveform relaxation method
   long interp_order;
-  if ( d.update_value( names::wfr_interpolation_order.toString(), interp_order ) )
+  if ( d.update_value( names::wfr_interpolation_order, interp_order ) )
   {
     if ( ( interp_order < 0 ) or ( interp_order == 2 ) or ( interp_order > 3 ) )
     {
@@ -399,7 +399,7 @@ nest::SimulationManager::set_status( const dictionary& d )
 
   // update time limit
   double t_new = 0.0;
-  if ( d.update_value( names::update_time_limit.toString(), t_new ) )
+  if ( d.update_value( names::update_time_limit, t_new ) )
   {
     if ( t_new <= 0 )
     {
@@ -414,35 +414,35 @@ nest::SimulationManager::set_status( const dictionary& d )
 void
 nest::SimulationManager::get_status( dictionary& d )
 {
-  d[ names::ms_per_tic.toString() ] = Time::get_ms_per_tic();
-  d[ names::tics_per_ms.toString() ] = Time::get_tics_per_ms();
-  d[ names::tics_per_step.toString() ] =
+  d[ names::ms_per_tic ] = Time::get_ms_per_tic();
+  d[ names::tics_per_ms ] = Time::get_tics_per_ms();
+  d[ names::tics_per_step ] =
     static_cast< size_t >( Time::get_tics_per_step() ); // casting to avoid extra checks of any types
-  d[ names::resolution.toString() ] = Time::get_resolution().get_ms();
+  d[ names::resolution ] = Time::get_resolution().get_ms();
 
-  d[ names::T_min.toString() ] = Time::min().get_ms();
-  d[ names::T_max.toString() ] = Time::max().get_ms();
+  d[ names::T_min ] = Time::min().get_ms();
+  d[ names::T_max ] = Time::max().get_ms();
 
-  d[ names::biological_time.toString() ] = get_time().get_ms();
-  d[ names::to_do.toString() ] = static_cast< long >( to_do_ ); // casting to avoid extra checks of any types
-  d[ names::print_time.toString() ] = print_time_;
+  d[ names::biological_time ] = get_time().get_ms();
+  d[ names::to_do ] = static_cast< long >( to_do_ ); // casting to avoid extra checks of any types
+  d[ names::print_time ] = print_time_;
 
-  d[ names::use_wfr.toString() ] = use_wfr_;
-  d[ names::wfr_comm_interval.toString() ] = wfr_comm_interval_;
-  d[ names::wfr_tol.toString() ] = wfr_tol_;
-  d[ names::wfr_max_iterations.toString() ] = wfr_max_iterations_;
-  d[ names::wfr_interpolation_order.toString() ] = wfr_interpolation_order_;
+  d[ names::use_wfr ] = use_wfr_;
+  d[ names::wfr_comm_interval ] = wfr_comm_interval_;
+  d[ names::wfr_tol ] = wfr_tol_;
+  d[ names::wfr_max_iterations ] = wfr_max_iterations_;
+  d[ names::wfr_interpolation_order ] = wfr_interpolation_order_;
 
-  d[ names::update_time_limit.toString() ] = update_time_limit_;
-  d[ names::min_update_time.toString() ] = min_update_time_;
-  d[ names::max_update_time.toString() ] = max_update_time_;
+  d[ names::update_time_limit ] = update_time_limit_;
+  d[ names::min_update_time ] = min_update_time_;
+  d[ names::max_update_time ] = max_update_time_;
 
-  d[ names::time_simulate.toString() ] = sw_simulate_.elapsed();
-  d[ names::time_communicate_prepare.toString() ] = sw_communicate_prepare_.elapsed();
+  d[ names::time_simulate ] = sw_simulate_.elapsed();
+  d[ names::time_communicate_prepare ] = sw_communicate_prepare_.elapsed();
 #ifdef TIMER_DETAILED
-  d[ names::time_gather_spike_data.toString() ] = sw_gather_spike_data_.elapsed();
-  d[ names::time_update.toString() ] = sw_update_.elapsed();
-  d[ names::time_gather_target_data.toString() ] = sw_gather_target_data_.elapsed();
+  d[ names::time_gather_spike_data ] = sw_gather_spike_data_.elapsed();
+  d[ names::time_update ] = sw_update_.elapsed();
+  d[ names::time_gather_target_data ] = sw_gather_target_data_.elapsed();
 #endif
 }
 
@@ -655,19 +655,15 @@ nest::SimulationManager::call_update_()
   os << "Simulation time (ms): " << t_sim;
 
 #ifdef _OPENMP
-  os << std::endl
-     << "Number of OpenMP threads: " << kernel().vp_manager.get_num_threads();
+  os << std::endl << "Number of OpenMP threads: " << kernel().vp_manager.get_num_threads();
 #else
-  os << std::endl
-     << "Not using OpenMP";
+  os << std::endl << "Not using OpenMP";
 #endif
 
 #ifdef HAVE_MPI
-  os << std::endl
-     << "Number of MPI processes: " << kernel().mpi_manager.get_num_processes();
+  os << std::endl << "Number of MPI processes: " << kernel().mpi_manager.get_num_processes();
 #else
-  os << std::endl
-     << "Not using MPI";
+  os << std::endl << "Not using MPI";
 #endif
 
   LOG( M_INFO, "SimulationManager::start_updating_", os.str() );
@@ -815,7 +811,8 @@ nest::SimulationManager::update_()
 
       if ( kernel().sp_manager.is_structural_plasticity_enabled()
         and ( std::fmod( Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms(),
-                kernel().sp_manager.get_structural_plasticity_update_interval() ) == 0 ) )
+                kernel().sp_manager.get_structural_plasticity_update_interval() )
+          == 0 ) )
       {
         for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
               i != kernel().node_manager.get_local_nodes( tid ).end();

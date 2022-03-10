@@ -58,9 +58,9 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   // read out rule-related parameters -------------------------
   //  - /rule has been taken care of above
   //  - rule-specific params are handled by subclass c'tor
-  conn_spec.update_value< bool >( names::allow_autapses.toString(), allow_autapses_ );
-  conn_spec.update_value< bool >( names::allow_multapses.toString(), allow_multapses_ );
-  conn_spec.update_value< bool >( names::make_symmetric.toString(), make_symmetric_ );
+  conn_spec.update_value< bool >( names::allow_autapses, allow_autapses_ );
+  conn_spec.update_value< bool >( names::allow_multapses, allow_multapses_ );
+  conn_spec.update_value< bool >( names::make_symmetric, make_symmetric_ );
 
   // read out synapse-related parameters ----------------------
 
@@ -93,7 +93,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
 #ifdef HAVE_MUSIC
     // We allow music_channel as alias for receptor_type during
     // connection setup
-    syn_defaults[ names::music_channel.toString() ] = 0;
+    syn_defaults[ names::music_channel ] = 0;
 #endif
 
     set_synapse_params( syn_defaults, syn_params, synapse_indx );
@@ -432,9 +432,9 @@ nest::ConnBuilder::loop_over_targets_() const
 void
 nest::ConnBuilder::set_synapse_model_( dictionary syn_params, size_t synapse_indx )
 {
-  if ( not syn_params.known( names::synapse_model.toString() ) )
+  if ( not syn_params.known( names::synapse_model ) )
   {
-    std::cerr << "synapse_model key: " << names::synapse_model.toString() << "\n";
+    std::cerr << "synapse_model key: " << names::synapse_model << "\n";
     std::cerr << "keys: "
               << "\n";
     for ( auto& kv_pair : syn_params )
@@ -443,7 +443,7 @@ nest::ConnBuilder::set_synapse_model_( dictionary syn_params, size_t synapse_ind
     }
     throw BadProperty( "Synapse spec must contain synapse model." );
   }
-  const std::string syn_name = syn_params.get< std::string >( names::synapse_model.toString() );
+  const std::string syn_name = syn_params.get< std::string >( names::synapse_model );
   if ( not kernel().model_manager.get_synapsedict().known( syn_name ) )
   {
     throw UnknownSynapseType( syn_name );
@@ -464,8 +464,8 @@ nest::ConnBuilder::set_default_weight_or_delay_( dictionary syn_params, size_t s
 
   // All synapse models have the possibility to set the delay (see SynIdDelay), but some have
   // homogeneous weights, hence it should be possible to set the delay without the weight.
-  default_weight_[ synapse_indx ] = not syn_params.known( names::weight.toString() );
-  default_delay_[ synapse_indx ] = not syn_params.known( names::delay.toString() );
+  default_weight_[ synapse_indx ] = not syn_params.known( names::weight );
+  default_delay_[ synapse_indx ] = not syn_params.known( names::delay );
 
   // If neither weight nor delay are given in the dict, we handle this separately. Important for
   // hom_w synapses, on which weight cannot be set. However, we use default weight and delay for
@@ -474,20 +474,20 @@ nest::ConnBuilder::set_default_weight_or_delay_( dictionary syn_params, size_t s
 
   if ( not default_weight_and_delay_[ synapse_indx ] )
   {
-    weights_[ synapse_indx ] = syn_params.known( names::weight.toString() )
-      ? ConnParameter::create( syn_params[ names::weight.toString() ], kernel().vp_manager.get_num_threads() )
-      : ConnParameter::create( syn_defaults[ names::weight.toString() ], kernel().vp_manager.get_num_threads() );
+    weights_[ synapse_indx ] = syn_params.known( names::weight )
+      ? ConnParameter::create( syn_params[ names::weight ], kernel().vp_manager.get_num_threads() )
+      : ConnParameter::create( syn_defaults[ names::weight ], kernel().vp_manager.get_num_threads() );
     register_parameters_requiring_skipping_( *weights_[ synapse_indx ] );
 
-    delays_[ synapse_indx ] = syn_params.known( names::delay.toString() )
-      ? ConnParameter::create( syn_params[ names::delay.toString() ], kernel().vp_manager.get_num_threads() )
-      : ConnParameter::create( syn_defaults[ names::delay.toString() ], kernel().vp_manager.get_num_threads() );
+    delays_[ synapse_indx ] = syn_params.known( names::delay )
+      ? ConnParameter::create( syn_params[ names::delay ], kernel().vp_manager.get_num_threads() )
+      : ConnParameter::create( syn_defaults[ names::delay ], kernel().vp_manager.get_num_threads() );
   }
   else if ( default_weight_[ synapse_indx ] )
   {
-    delays_[ synapse_indx ] = syn_params.known( names::delay.toString() )
-      ? ConnParameter::create( syn_params[ names::delay.toString() ], kernel().vp_manager.get_num_threads() )
-      : ConnParameter::create( syn_defaults[ names::delay.toString() ], kernel().vp_manager.get_num_threads() );
+    delays_[ synapse_indx ] = syn_params.known( names::delay )
+      ? ConnParameter::create( syn_params[ names::delay ], kernel().vp_manager.get_num_threads() )
+      : ConnParameter::create( syn_defaults[ names::delay ], kernel().vp_manager.get_num_threads() );
   }
   register_parameters_requiring_skipping_( *delays_[ synapse_indx ] );
 }
@@ -540,13 +540,13 @@ nest::ConnBuilder::set_structural_plasticity_parameters( std::vector< dictionary
   bool have_one_sp_key = false;
   for ( auto syn_params : syn_specs )
   {
-    if ( not have_both_sp_keys and ( syn_params.known( names::pre_synaptic_element.toString() )
-                                     and syn_params.known( names::post_synaptic_element.toString() ) ) )
+    if ( not have_both_sp_keys
+      and ( syn_params.known( names::pre_synaptic_element ) and syn_params.known( names::post_synaptic_element ) ) )
     {
       have_both_sp_keys = true;
     }
-    if ( not have_one_sp_key and ( syn_params.known( names::pre_synaptic_element.toString() )
-                                   or syn_params.known( names::post_synaptic_element.toString() ) ) )
+    if ( not have_one_sp_key
+      and ( syn_params.known( names::pre_synaptic_element ) or syn_params.known( names::post_synaptic_element ) ) )
     {
       have_one_sp_key = true;
     }
@@ -558,8 +558,8 @@ nest::ConnBuilder::set_structural_plasticity_parameters( std::vector< dictionary
   }
   else if ( have_both_sp_keys )
   {
-    pre_synaptic_element_name_ = syn_specs[ 0 ].get< std::string >( names::pre_synaptic_element.toString() );
-    post_synaptic_element_name_ = syn_specs[ 0 ].get< std::string >( names::post_synaptic_element.toString() );
+    pre_synaptic_element_name_ = syn_specs[ 0 ].get< std::string >( names::pre_synaptic_element );
+    post_synaptic_element_name_ = syn_specs[ 0 ].get< std::string >( names::post_synaptic_element );
 
     use_pre_synaptic_element_ = true;
     use_post_synaptic_element_ = true;
@@ -1092,7 +1092,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
   {
     throw BadProperty( "Source array must not be empty." );
   }
-  auto indegree = conn_spec.at( names::indegree.toString() );
+  auto indegree = conn_spec.at( names::indegree );
   if ( is_parameter( indegree ) )
   {
     // TODO: Checks of parameter range
@@ -1101,7 +1101,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
   else
   {
     // Assume indegree is a scalar
-    const long value = conn_spec.get< long >( names::indegree.toString() );
+    const long value = conn_spec.get< long >( names::indegree );
     indegree_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
 
     // verify that indegree is not larger than source population if multapses are disabled
@@ -1256,7 +1256,7 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
   {
     throw BadProperty( "Target array must not be empty." );
   }
-  auto outdegree = conn_spec.at( names::outdegree.toString() );
+  auto outdegree = conn_spec.at( names::outdegree );
   if ( is_parameter( outdegree ) )
   {
     // TODO: Checks of parameter range
@@ -1265,7 +1265,7 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
   else
   {
     // Assume outdegree is a scalar
-    const long value = conn_spec.get< long >( names::outdegree.toString() );
+    const long value = conn_spec.get< long >( names::outdegree );
     outdegree_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
 
     // verify that outdegree is not larger than target population if multapses
@@ -1378,7 +1378,7 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( NodeCollectionPTR source
   const dictionary& conn_spec,
   const std::vector< dictionary >& syn_specs )
   : ConnBuilder( sources, targets, conn_spec, syn_specs )
-  , N_( boost::any_cast< long >( conn_spec.at( names::N.toString() ) ) )
+  , N_( boost::any_cast< long >( conn_spec.at( names::N ) ) )
 {
 
   // check for potential errors
@@ -1477,7 +1477,7 @@ nest::FixedTotalNumberBuilder::connect_()
     sum_partitions += static_cast< unsigned int >( num_conns_on_vp[ k ] );
   }
 
-// end code adapted from gsl 1.8
+  // end code adapted from gsl 1.8
 
 #pragma omp parallel
   {
@@ -1549,7 +1549,7 @@ nest::BernoulliBuilder::BernoulliBuilder( NodeCollectionPTR sources,
   const std::vector< dictionary >& syn_specs )
   : ConnBuilder( sources, targets, conn_spec, syn_specs )
 {
-  auto p = conn_spec.at( names::p.toString() );
+  auto p = conn_spec.at( names::p );
   if ( is_parameter( p ) )
   {
     p_ = boost::any_cast< Parameter* >( p );
@@ -1558,7 +1558,7 @@ nest::BernoulliBuilder::BernoulliBuilder( NodeCollectionPTR sources,
   else
   {
     // Assume p is a scalar
-    const double value = conn_spec.get< double >( names::p.toString() );
+    const double value = conn_spec.get< double >( names::p );
     if ( value < 0 or 1 < value )
     {
       throw BadProperty( "Connection probability 0 <= p <= 1 required." );
@@ -1663,7 +1663,7 @@ nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( NodeCollectionPTR so
   const dictionary& conn_spec,
   const std::vector< dictionary >& syn_specs )
   : ConnBuilder( sources, targets, conn_spec, syn_specs )
-  , p_( boost::any_cast< double >( conn_spec.at( names::p.toString() ) ) )
+  , p_( boost::any_cast< double >( conn_spec.at( names::p ) ) )
 {
   // This connector takes care of symmetric connections on its own
   creates_symmetric_connections_ = true;

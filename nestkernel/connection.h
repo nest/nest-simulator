@@ -50,24 +50,24 @@ namespace nest
 class ConnectorModel;
 
 /**
-  * Base class for dummy nodes used in connection testing.
-  *
-  * This class provides a based for dummy node objects that
-  * are used to test whether a connection can be established.
-  * The base class provides empty implementations of all pure
-  * virtual functions of class Node.
-  *
-  * Each connection class (i.e., each class derived from class
-  * template Connection<T>), must derive a concrete ConnTestDummyNode
-  * class that overrides method Node::handles_test_event() for all
-  * event types that the connection supports.
-  *
-  * For details, see Kunkel et al, Front Neuroinform 8:78 (2014),
-  * Sec 3.3.1. Note that the ConnTestDummyNode class is called
-  * "check_helper" in the paper.
-  *
-  * @ingroup event_interface
-  */
+ * Base class for dummy nodes used in connection testing.
+ *
+ * This class provides a based for dummy node objects that
+ * are used to test whether a connection can be established.
+ * The base class provides empty implementations of all pure
+ * virtual functions of class Node.
+ *
+ * Each connection class (i.e., each class derived from class
+ * template Connection<T>), must derive a concrete ConnTestDummyNode
+ * class that overrides method Node::handles_test_event() for all
+ * event types that the connection supports.
+ *
+ * For details, see Kunkel et al, Front Neuroinform 8:78 (2014),
+ * Sec 3.3.1. Note that the ConnTestDummyNode class is called
+ * "check_helper" in the paper.
+ *
+ * @ingroup event_interface
+ */
 class ConnTestDummyNodeBase : public Node
 {
   void
@@ -346,7 +346,7 @@ template < typename targetidentifierT >
 inline void
 Connection< targetidentifierT >::get_status( dictionary& d ) const
 {
-  d[ names::delay.toString() ] = syn_id_delay_.get_delay_ms();
+  d[ names::delay ] = syn_id_delay_.get_delay_ms();
   target_.get_status( d );
 }
 
@@ -355,7 +355,7 @@ inline void
 Connection< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& )
 {
   double delay;
-  if ( d.update_value( names::delay.toString(), delay ) )
+  if ( d.update_value( names::delay, delay ) )
   {
     kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
     syn_id_delay_.set_delay_ms( delay );

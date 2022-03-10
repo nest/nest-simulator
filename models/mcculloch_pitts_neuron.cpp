@@ -28,13 +28,13 @@ namespace nest
 void
 gainfunction_mcculloch_pitts::get( dictionary& d ) const
 {
-  d[ names::theta.toString() ] = theta_;
+  d[ names::theta ] = theta_;
 }
 
 void
 gainfunction_mcculloch_pitts::set( const dictionary& d, Node* node )
 {
-  update_value_param( d, names::theta.toString(), theta_, node );
+  update_value_param( d, names::theta, theta_, node );
 }
 
 /*

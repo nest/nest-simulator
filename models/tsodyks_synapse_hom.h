@@ -321,9 +321,9 @@ tsodyks_synapse_hom< targetidentifierT >::get_status( dictionary& d ) const
 {
   ConnectionBase::get_status( d );
 
-  d[ names::x.toString() ] = x_;
-  d[ names::y.toString() ] = y_;
-  d[ names::u.toString() ] = u_;
+  d[ names::x ] = x_;
+  d[ names::y ] = y_;
+  d[ names::u ] = u_;
 }
 
 template < typename targetidentifierT >
@@ -334,8 +334,8 @@ tsodyks_synapse_hom< targetidentifierT >::set_status( const dictionary& d, Conne
   // synapse untouched in case of invalid parameter values
   double x = x_;
   double y = y_;
-  d.update_value( names::x.toString(), x );
-  d.update_value( names::y.toString(), y );
+  d.update_value( names::x, x );
+  d.update_value( names::y, y );
 
   if ( x + y > 1.0 )
   {
@@ -347,7 +347,7 @@ tsodyks_synapse_hom< targetidentifierT >::set_status( const dictionary& d, Conne
 
   ConnectionBase::set_status( d, cm );
 
-  d.update_value( names::u.toString(), u_ );
+  d.update_value( names::u, u_ );
 }
 
 } // namespace

@@ -28,17 +28,17 @@ namespace nest
 void
 nonlinearities_threshold_lin_rate::get( dictionary& d ) const
 {
-  d[ names::g.toString() ] = g_;
-  d[ names::theta.toString() ] = theta_;
-  d[ names::alpha.toString() ] = alpha_;
+  d[ names::g ] = g_;
+  d[ names::theta ] = theta_;
+  d[ names::alpha ] = alpha_;
 }
 
 void
 nonlinearities_threshold_lin_rate::set( const dictionary& d, Node* node )
 {
-  update_value_param( d, names::g.toString(), g_, node );
-  update_value_param( d, names::theta.toString(), theta_, node );
-  update_value_param( d, names::alpha.toString(), alpha_, node );
+  update_value_param( d, names::g, g_, node );
+  update_value_param( d, names::theta, theta_, node );
+  update_value_param( d, names::alpha, alpha_, node );
 }
 
 /*

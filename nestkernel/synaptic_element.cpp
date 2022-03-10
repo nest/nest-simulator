@@ -37,9 +37,9 @@
 #include "dictutils.h"
 
 /* ----------------------------------------------------------------
-* SynapticElement
-* Default constructors defining default parameters and state
-* ---------------------------------------------------------------- */
+ * SynapticElement
+ * Default constructors defining default parameters and state
+ * ---------------------------------------------------------------- */
 
 nest::SynapticElement::SynapticElement()
   : z_( 0.0 )
@@ -68,7 +68,8 @@ nest::SynapticElement::SynapticElement( const SynapticElement& se )
   // growth_curve_->set( nc_parameters );
 }
 
-nest::SynapticElement& nest::SynapticElement::operator=( const SynapticElement& other )
+nest::SynapticElement&
+nest::SynapticElement::operator=( const SynapticElement& other )
 {
   if ( this != &other )
   {
@@ -94,17 +95,17 @@ nest::SynapticElement& nest::SynapticElement::operator=( const SynapticElement& 
 }
 
 /* ----------------------------------------------------------------
-* get function to store current values in dictionary
-* ---------------------------------------------------------------- */
+ * get function to store current values in dictionary
+ * ---------------------------------------------------------------- */
 void
 nest::SynapticElement::get( dictionary& d ) const
 {
   // Store current values in the dictionary
-  d[ names::growth_rate.toString() ] = growth_rate_;
-  d[ names::tau_vacant.toString() ] = tau_vacant_;
-  d[ names::continuous.toString() ] = continuous_;
-  d[ names::z.toString() ] = z_;
-  d[ names::z_connected.toString() ] = z_connected_;
+  d[ names::growth_rate ] = growth_rate_;
+  d[ names::tau_vacant ] = tau_vacant_;
+  d[ names::continuous ] = continuous_;
+  d[ names::z ] = z_;
+  d[ names::z_connected ] = z_connected_;
 
   // Store growth curve
   // TODO-PYNEST-NG: fix growth curve with dictionary
@@ -112,22 +113,22 @@ nest::SynapticElement::get( dictionary& d ) const
 }
 
 /* ----------------------------------------------------------------
-* set function to store dictionary values in the SynaticElement
-* ---------------------------------------------------------------- */
+ * set function to store dictionary values in the SynaticElement
+ * ---------------------------------------------------------------- */
 void
 nest::SynapticElement::set( const dictionary& d )
 {
   double new_tau_vacant = tau_vacant_;
 
   // Store values
-  d.update_value( names::growth_rate.toString(), growth_rate_ );
-  d.update_value( names::tau_vacant.toString(), new_tau_vacant );
-  d.update_value( names::continuous.toString(), continuous_ );
-  d.update_value( names::z.toString(), z_ );
+  d.update_value( names::growth_rate, growth_rate_ );
+  d.update_value( names::tau_vacant, new_tau_vacant );
+  d.update_value( names::continuous, continuous_ );
+  d.update_value( names::z, z_ );
 
-  if ( d.known( names::growth_curve.toString() ) )
+  if ( d.known( names::growth_curve ) )
   {
-    Name growth_curve_name( d.get< std::string >( names::growth_curve.toString() ) );
+    Name growth_curve_name( d.get< std::string >( names::growth_curve ) );
     if ( not growth_curve_->is( growth_curve_name ) )
     {
       growth_curve_ = kernel().sp_manager.new_growth_curve( growth_curve_name );
@@ -145,8 +146,8 @@ nest::SynapticElement::set( const dictionary& d )
 
 
 /* ----------------------------------------------------------------
-* Update the number of element at the time t (in ms)
-* ---------------------------------------------------------------- */
+ * Update the number of element at the time t (in ms)
+ * ---------------------------------------------------------------- */
 void
 nest::SynapticElement::update( double t, double t_minus, double Ca_minus, double tau_Ca )
 {

@@ -79,7 +79,8 @@ nest::noise_generator::Parameters_::Parameters_( const Parameters_& p )
   dt_.calibrate();
 }
 
-nest::noise_generator::Parameters_& nest::noise_generator::Parameters_::operator=( const Parameters_& p )
+nest::noise_generator::Parameters_&
+nest::noise_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
   {
@@ -122,31 +123,31 @@ nest::noise_generator::Buffers_::Buffers_( const Buffers_& b, noise_generator& n
 void
 nest::noise_generator::Parameters_::get( dictionary& d ) const
 {
-  d[ names::mean.toString() ] = mean_;
-  d[ names::std.toString() ] = std_;
-  d[ names::std_mod.toString() ] = std_mod_;
-  d[ names::dt.toString() ] = dt_.get_ms();
-  d[ names::phase.toString() ] = phi_deg_;
-  d[ names::frequency.toString() ] = freq_;
+  d[ names::mean ] = mean_;
+  d[ names::std ] = std_;
+  d[ names::std_mod ] = std_mod_;
+  d[ names::dt ] = dt_.get_ms();
+  d[ names::phase ] = phi_deg_;
+  d[ names::frequency ] = freq_;
 }
 
 void
 nest::noise_generator::State_::get( dictionary& d ) const
 {
-  d[ names::y_0.toString() ] = y_0_;
-  d[ names::y_1.toString() ] = y_1_;
+  d[ names::y_0 ] = y_0_;
+  d[ names::y_1 ] = y_1_;
 }
 
 void
 nest::noise_generator::Parameters_::set( const dictionary& d, const noise_generator& n, Node* node )
 {
-  update_value_param( d, names::mean.toString(), mean_, node );
-  update_value_param( d, names::std.toString(), std_, node );
-  update_value_param( d, names::std_mod.toString(), std_mod_, node );
-  update_value_param( d, names::frequency.toString(), freq_, node );
-  update_value_param( d, names::phase.toString(), phi_deg_, node );
+  update_value_param( d, names::mean, mean_, node );
+  update_value_param( d, names::std, std_, node );
+  update_value_param( d, names::std_mod, std_mod_, node );
+  update_value_param( d, names::frequency, freq_, node );
+  update_value_param( d, names::phase, phi_deg_, node );
   double dt;
-  if ( update_value_param( d, names::dt.toString(), dt, node ) )
+  if ( update_value_param( d, names::dt, dt, node ) )
   {
     dt_ = Time::ms( dt );
   }
@@ -380,11 +381,11 @@ nest::noise_generator::set_data_from_stimulation_backend( std::vector< double >&
     }
     dictionary d;
     ( new Dictionary );
-    d[ names::mean.toString() ] = DoubleDatum( input_param[ 0 ] );
-    d[ names::std.toString() ] = DoubleDatum( input_param[ 1 ] );
-    d[ names::std_mod.toString() ] = DoubleDatum( input_param[ 2 ] );
-    d[ names::frequency.toString() ] = DoubleDatum( input_param[ 3 ] );
-    d[ names::phase.toString() ] = DoubleDatum( input_param[ 4 ] );
+    d[ names::mean ] = DoubleDatum( input_param[ 0 ] );
+    d[ names::std ] = DoubleDatum( input_param[ 1 ] );
+    d[ names::std_mod ] = DoubleDatum( input_param[ 2 ] );
+    d[ names::frequency ] = DoubleDatum( input_param[ 3 ] );
+    d[ names::phase ] = DoubleDatum( input_param[ 4 ] );
     ptmp.set( d, *this, this );
   }
 

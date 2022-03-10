@@ -73,7 +73,8 @@ nest::multimeter::Parameters_::Parameters_( const Parameters_& p )
   interval_.calibrate();
 }
 
-nest::multimeter::Parameters_& nest::multimeter::Parameters_::operator=( const Parameters_& p )
+nest::multimeter::Parameters_&
+nest::multimeter::Parameters_::operator=( const Parameters_& p )
 {
   interval_ = p.interval_;
   offset_ = p.offset_;
@@ -92,21 +93,20 @@ nest::multimeter::Buffers_::Buffers_()
 void
 nest::multimeter::Parameters_::get( dictionary& d ) const
 {
-  d[ names::interval.toString() ] = interval_.get_ms();
-  d[ names::offset.toString() ] = offset_.get_ms();
+  d[ names::interval ] = interval_.get_ms();
+  d[ names::offset ] = offset_.get_ms();
   std::vector< std::string > ad;
   for ( size_t j = 0; j < record_from_.size(); ++j )
   {
     ad.push_back( record_from_[ j ].toString() );
   }
-  d[ names::record_from.toString() ] = ad;
+  d[ names::record_from ] = ad;
 }
 
 void
 nest::multimeter::Parameters_::set( const dictionary& d, const Buffers_& b, Node* node )
 {
-  if ( b.has_targets_ && ( d.known( names::interval.toString() ) || d.known( names::offset.toString() )
-                           || d.known( names::record_from.toString() ) ) )
+  if ( b.has_targets_ && ( d.known( names::interval ) || d.known( names::offset ) || d.known( names::record_from ) ) )
   {
     throw BadProperty(
       "The recording interval, the interval offset and the list of properties "
@@ -115,7 +115,7 @@ nest::multimeter::Parameters_::set( const dictionary& d, const Buffers_& b, Node
   }
 
   double v;
-  if ( update_value_param( d, names::interval.toString(), v, node ) )
+  if ( update_value_param( d, names::interval, v, node ) )
   {
     if ( Time( Time::ms( v ) ) < Time::get_resolution() )
     {
@@ -134,7 +134,7 @@ nest::multimeter::Parameters_::set( const dictionary& d, const Buffers_& b, Node
     }
   }
 
-  if ( update_value_param( d, names::offset.toString(), v, node ) )
+  if ( update_value_param( d, names::offset, v, node ) )
   {
     // if offset is different from the default value (0), it must be at least
     // as large as the resolution
@@ -156,11 +156,11 @@ nest::multimeter::Parameters_::set( const dictionary& d, const Buffers_& b, Node
   }
 
   // extract data
-  if ( d.known( names::record_from.toString() ) )
+  if ( d.known( names::record_from ) )
   {
     record_from_.clear();
 
-    ArrayDatum ad = d.get< ArrayDatum >( names::record_from.toString() );
+    ArrayDatum ad = d.get< ArrayDatum >( names::record_from );
     for ( Token* t = ad.begin(); t != ad.end(); ++t )
     {
       record_from_.push_back( Name( getValue< std::string >( *t ) ) );
@@ -246,8 +246,8 @@ voltmeter::voltmeter()
 {
   dictionary vmdict;
   std::vector< std::string > ad;
-  ad.push_back( names::V_m.toString() );
-  vmdict[ names::record_from.toString() ] = ad;
+  ad.push_back( names::V_m );
+  vmdict[ names::record_from ] = ad;
   set_status( vmdict );
 }
 

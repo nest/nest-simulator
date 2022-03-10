@@ -454,7 +454,7 @@ gif_pop_psc_exp::get_status( dictionary& d ) const
   // not from ArchivingNode, this call has been disabled here
   // (Node does not have a comparable method).
   //  ArchivingNode::get_status(d);
-  d[ names::recordables.toString() ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void

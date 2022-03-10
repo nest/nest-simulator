@@ -91,28 +91,28 @@ nest::izhikevich::State_::State_()
 void
 nest::izhikevich::Parameters_::get( dictionary& d ) const
 {
-  d[ names::I_e.toString() ] = I_e_;
-  d[ names::V_th.toString() ] = V_th_; // threshold value
-  d[ names::V_min.toString() ] = V_min_;
-  d[ names::a.toString() ] = a_;
-  d[ names::b.toString() ] = b_;
-  d[ names::c.toString() ] = c_;
-  d[ names::d.toString() ] = d_;
-  d[ names::consistent_integration.toString() ] = consistent_integration_;
+  d[ names::I_e ] = I_e_;
+  d[ names::V_th ] = V_th_; // threshold value
+  d[ names::V_min ] = V_min_;
+  d[ names::a ] = a_;
+  d[ names::b ] = b_;
+  d[ names::c ] = c_;
+  d[ names::d ] = d_;
+  d[ names::consistent_integration ] = consistent_integration_;
 }
 
 void
 nest::izhikevich::Parameters_::set( const dictionary& d, Node* node )
 {
 
-  update_value_param( d, names::V_th.toString(), V_th_, node );
-  update_value_param( d, names::V_min.toString(), V_min_, node );
-  update_value_param( d, names::I_e.toString(), I_e_, node );
-  update_value_param( d, names::a.toString(), a_, node );
-  update_value_param( d, names::b.toString(), b_, node );
-  update_value_param( d, names::c.toString(), c_, node );
-  update_value_param( d, names::d.toString(), d_, node );
-  d.update_value( names::consistent_integration.toString(), consistent_integration_ );
+  update_value_param( d, names::V_th, V_th_, node );
+  update_value_param( d, names::V_min, V_min_, node );
+  update_value_param( d, names::I_e, I_e_, node );
+  update_value_param( d, names::a, a_, node );
+  update_value_param( d, names::b, b_, node );
+  update_value_param( d, names::c, c_, node );
+  update_value_param( d, names::d, d_, node );
+  d.update_value( names::consistent_integration, consistent_integration_ );
   const double h = Time::get_resolution().get_ms();
   if ( not consistent_integration_ && h != 1.0 )
   {
@@ -123,15 +123,15 @@ nest::izhikevich::Parameters_::set( const dictionary& d, Node* node )
 void
 nest::izhikevich::State_::get( dictionary& d, const Parameters_& ) const
 {
-  d[ names::U_m.toString() ] = u_; // Membrane potential recovery variable
-  d[ names::V_m.toString() ] = v_; // Membrane potential
+  d[ names::U_m ] = u_; // Membrane potential recovery variable
+  d[ names::V_m ] = v_; // Membrane potential
 }
 
 void
 nest::izhikevich::State_::set( const dictionary& d, const Parameters_&, Node* node )
 {
-  update_value_param( d, names::U_m.toString(), u_, node );
-  update_value_param( d, names::V_m.toString(), v_, node );
+  update_value_param( d, names::U_m, u_, node );
+  update_value_param( d, names::V_m, v_, node );
 }
 
 nest::izhikevich::Buffers_::Buffers_( izhikevich& n )

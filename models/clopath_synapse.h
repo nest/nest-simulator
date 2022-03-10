@@ -131,8 +131,8 @@ public:
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
-  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
@@ -281,12 +281,12 @@ void
 clopath_synapse< targetidentifierT >::get_status( dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  d[ names::weight.toString() ] = weight_;
-  d[ names::x_bar.toString() ] = x_bar_;
-  d[ names::tau_x.toString() ] = tau_x_;
-  d[ names::Wmin.toString() ] = Wmin_;
-  d[ names::Wmax.toString() ] = Wmax_;
-  d[ names::size_of.toString() ] = sizeof( *this );
+  d[ names::weight ] = weight_;
+  d[ names::x_bar ] = x_bar_;
+  d[ names::tau_x ] = tau_x_;
+  d[ names::Wmin ] = Wmin_;
+  d[ names::Wmax ] = Wmax_;
+  d[ names::size_of ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
@@ -294,11 +294,11 @@ void
 clopath_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  d.update_value( names::weight.toString(), weight_ );
-  d.update_value( names::x_bar.toString(), x_bar_ );
-  d.update_value( names::tau_x.toString(), tau_x_ );
-  d.update_value( names::Wmin.toString(), Wmin_ );
-  d.update_value( names::Wmax.toString(), Wmax_ );
+  d.update_value( names::weight, weight_ );
+  d.update_value( names::x_bar, x_bar_ );
+  d.update_value( names::tau_x, tau_x_ );
+  d.update_value( names::Wmin, Wmin_ );
+  d.update_value( names::Wmax, Wmax_ );
 
   // check if weight_ and Wmin_ has the same sign
   if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmin_ >= 0 ) - ( Wmin_ < 0 ) ) ) )

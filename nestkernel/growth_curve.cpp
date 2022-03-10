@@ -52,14 +52,14 @@ nest::GrowthCurveLinear::GrowthCurveLinear()
 void
 nest::GrowthCurveLinear::get( dictionary& d ) const
 {
-  d[ names::growth_curve.toString() ] = name_.toString();
-  d[ names::eps.toString() ] = eps_;
+  d[ names::growth_curve ] = name_.toString();
+  d[ names::eps ] = eps_;
 }
 
 void
 nest::GrowthCurveLinear::set( const dictionary& d )
 {
-  d.update_value( names::eps.toString(), eps_ );
+  d.update_value( names::eps, eps_ );
 }
 
 double
@@ -90,16 +90,16 @@ nest::GrowthCurveGaussian::GrowthCurveGaussian()
 void
 nest::GrowthCurveGaussian::get( dictionary& d ) const
 {
-  d[ names::growth_curve.toString() ] = name_.toString();
-  d[ names::eps.toString() ] = eps_;
-  d[ names::eta.toString() ] = eta_;
+  d[ names::growth_curve ] = name_.toString();
+  d[ names::eps ] = eps_;
+  d[ names::eta ] = eta_;
 }
 
 void
 nest::GrowthCurveGaussian::set( const dictionary& d )
 {
-  d.update_value( names::eps.toString(), eps_ );
-  d.update_value( names::eta.toString(), eta_ );
+  d.update_value( names::eps, eps_ );
+  d.update_value( names::eta, eta_ );
 }
 
 double
@@ -143,16 +143,16 @@ nest::GrowthCurveSigmoid::GrowthCurveSigmoid()
 void
 nest::GrowthCurveSigmoid::get( dictionary& d ) const
 {
-  d[ names::growth_curve.toString() ] = name_.toString();
-  d[ names::eps.toString() ] = eps_;
-  d[ names::psi.toString() ] = psi_;
+  d[ names::growth_curve ] = name_.toString();
+  d[ names::eps ] = eps_;
+  d[ names::psi ] = psi_;
 }
 
 void
 nest::GrowthCurveSigmoid::set( const dictionary& d )
 {
-  d.update_value( names::eps.toString(), eps_ );
-  d.update_value( names::psi.toString(), psi_ );
+  d.update_value( names::eps, eps_ );
+  d.update_value( names::psi, psi_ );
 
   // check that w is greater than 0
   if ( not( psi_ >= 0 ) )

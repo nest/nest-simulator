@@ -63,8 +63,8 @@ nest::music_message_in_proxy::State_::State_()
 void
 nest::music_message_in_proxy::Parameters_::get( dictionary& d ) const
 {
-  d[ names::port_name.toString() ] = port_name_;
-  d[ names::acceptable_latency.toString() ] = acceptable_latency_;
+  d[ names::port_name ] = port_name_;
+  d[ names::acceptable_latency ] = acceptable_latency_;
 }
 
 void
@@ -72,16 +72,16 @@ nest::music_message_in_proxy::Parameters_::set( const dictionary& d, State_& s, 
 {
   if ( not s.published_ )
   {
-    d.update_value( names::port_name.toString(), port_name_ );
-    update_value_param( d, names::acceptable_latency.toString(), acceptable_latency_, node );
+    d.update_value( names::port_name, port_name_ );
+    update_value_param( d, names::acceptable_latency, acceptable_latency_, node );
   }
 }
 
 void
 nest::music_message_in_proxy::State_::get( dictionary& d ) const
 {
-  d[ names::published.toString() ] = published_;
-  d[ names::port_width.toString() ] = port_width_;
+  d[ names::published ] = published_;
+  d[ names::port_width ] = port_width_;
 }
 
 void

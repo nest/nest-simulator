@@ -116,8 +116,8 @@ public:
    */
 
   using Node::handle;
-  using Node::sends_secondary_event;
   using Node::handles_test_event;
+  using Node::sends_secondary_event;
 
   void handle( InstantaneousRateConnectionEvent& );
   void handle( DelayedRateConnectionEvent& );
@@ -297,7 +297,7 @@ rate_transformer_node< TNonlinearities >::get_status( dictionary& d ) const
   P_.get( d );
   S_.get( d );
   ArchivingNode::get_status( d );
-  d[ names::recordables.toString() ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 
   nonlinearities_.get( d );
 }

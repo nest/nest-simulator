@@ -24,10 +24,10 @@
 #define GIF_PSC_EXP_H
 
 // Includes from nestkernel:
-#include "event.h"
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
+#include "event.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 #include "nest.h"
@@ -455,7 +455,7 @@ gif_psc_exp::get_status( dictionary& d ) const
   P_.get( d );
   S_.get( d, P_ );
   ArchivingNode::get_status( d );
-  d[ names::recordables.toString() ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void

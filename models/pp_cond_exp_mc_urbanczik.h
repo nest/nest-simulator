@@ -443,7 +443,7 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( pp_cond_exp_mc_urbanczik& ); //!<Sets buffer pointers to 0
+    Buffers_( pp_cond_exp_mc_urbanczik& ); //!< Sets buffer pointers to 0
     //! Sets buffer pointers to 0
     Buffers_( const Buffers_&, pp_cond_exp_mc_urbanczik& );
 
@@ -612,7 +612,7 @@ pp_cond_exp_mc_urbanczik::get_status( dictionary& d ) const
   S_.get( d );
   UrbanczikArchivingNode< pp_cond_exp_mc_urbanczik_parameters >::get_status( d );
 
-  d[ names::recordables.toString() ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 
   /**
    * @todo dictionary construction should be done only once for
@@ -620,15 +620,15 @@ pp_cond_exp_mc_urbanczik::get_status( dictionary& d ) const
    * a seg fault on exit, see #328
    */
   dictionary receptor_dict_;
-  receptor_dict_[ names::soma_exc.toString() ] = SOMA_EXC;
-  receptor_dict_[ names::soma_inh.toString() ] = SOMA_INH;
-  receptor_dict_[ names::soma_curr.toString() ] = I_SOMA;
+  receptor_dict_[ names::soma_exc ] = SOMA_EXC;
+  receptor_dict_[ names::soma_inh ] = SOMA_INH;
+  receptor_dict_[ names::soma_curr ] = I_SOMA;
 
-  receptor_dict_[ names::dendritic_exc.toString() ] = DEND_EXC;
-  receptor_dict_[ names::dendritic_inh.toString() ] = DEND_INH;
-  receptor_dict_[ names::dendritic_curr.toString() ] = I_DEND;
+  receptor_dict_[ names::dendritic_exc ] = DEND_EXC;
+  receptor_dict_[ names::dendritic_inh ] = DEND_INH;
+  receptor_dict_[ names::dendritic_curr ] = I_DEND;
 
-  d[ names::receptor_types.toString() ] = receptor_dict_;
+  d[ names::receptor_types ] = receptor_dict_;
 }
 
 inline void

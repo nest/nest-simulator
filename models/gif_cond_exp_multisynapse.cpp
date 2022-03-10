@@ -25,10 +25,10 @@
 #ifdef HAVE_GSL
 
 // C++ includes:
-#include <limits>
+#include <cstdio>
 #include <iomanip>
 #include <iostream>
-#include <cstdio>
+#include <limits>
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -152,64 +152,64 @@ nest::gif_cond_exp_multisynapse::State_::State_( const Parameters_& p )
 void
 nest::gif_cond_exp_multisynapse::Parameters_::get( dictionary& d ) const
 {
-  d[ names::I_e.toString() ] = I_e_;
-  d[ names::E_L.toString() ] = E_L_;
-  d[ names::g_L.toString() ] = g_L_;
-  d[ names::C_m.toString() ] = c_m_;
-  d[ names::V_reset.toString() ] = V_reset_;
-  d[ names::Delta_V.toString() ] = Delta_V_;
-  d[ names::V_T_star.toString() ] = V_T_star_;
-  d[ names::lambda_0.toString() ] = lambda_0_ * 1000.0; // convert to 1/s
-  d[ names::t_ref.toString() ] = t_ref_;
-  d[ names::n_receptors.toString() ] = n_receptors();
+  d[ names::I_e ] = I_e_;
+  d[ names::E_L ] = E_L_;
+  d[ names::g_L ] = g_L_;
+  d[ names::C_m ] = c_m_;
+  d[ names::V_reset ] = V_reset_;
+  d[ names::Delta_V ] = Delta_V_;
+  d[ names::V_T_star ] = V_T_star_;
+  d[ names::lambda_0 ] = lambda_0_ * 1000.0; // convert to 1/s
+  d[ names::t_ref ] = t_ref_;
+  d[ names::n_receptors ] = n_receptors();
   ArrayDatum E_rev_ad( E_rev_ );
-  d[ names::E_rev.toString() ] = E_rev_ad;
-  d[ names::has_connections.toString() ] = has_connections_;
-  d[ names::gsl_error_tol.toString() ] = gsl_error_tol;
+  d[ names::E_rev ] = E_rev_ad;
+  d[ names::has_connections ] = has_connections_;
+  d[ names::gsl_error_tol ] = gsl_error_tol;
 
   ArrayDatum tau_syn_ad( tau_syn_ );
-  d[ names::tau_syn.toString() ] = tau_syn_ad;
+  d[ names::tau_syn ] = tau_syn_ad;
 
   ArrayDatum tau_sfa_list_ad( tau_sfa_ );
-  d[ names::tau_sfa.toString() ] = tau_sfa_list_ad;
+  d[ names::tau_sfa ] = tau_sfa_list_ad;
 
   ArrayDatum q_sfa_list_ad( q_sfa_ );
-  d[ names::q_sfa.toString() ] = q_sfa_list_ad;
+  d[ names::q_sfa ] = q_sfa_list_ad;
 
   ArrayDatum tau_stc_list_ad( tau_stc_ );
-  d[ names::tau_stc.toString() ] = tau_stc_list_ad;
+  d[ names::tau_stc ] = tau_stc_list_ad;
 
   ArrayDatum q_stc_list_ad( q_stc_ );
-  d[ names::q_stc.toString() ] = q_stc_list_ad;
+  d[ names::q_stc ] = q_stc_list_ad;
 }
 
 void
 nest::gif_cond_exp_multisynapse::Parameters_::set( const dictionary& d, Node* node )
 {
-  update_value_param( d, names::I_e.toString(), I_e_, node );
-  update_value_param( d, names::E_L.toString(), E_L_, node );
-  update_value_param( d, names::g_L.toString(), g_L_, node );
-  update_value_param( d, names::C_m.toString(), c_m_, node );
-  update_value_param( d, names::V_reset.toString(), V_reset_, node );
-  update_value_param( d, names::Delta_V.toString(), Delta_V_, node );
-  update_value_param( d, names::V_T_star.toString(), V_T_star_, node );
+  update_value_param( d, names::I_e, I_e_, node );
+  update_value_param( d, names::E_L, E_L_, node );
+  update_value_param( d, names::g_L, g_L_, node );
+  update_value_param( d, names::C_m, c_m_, node );
+  update_value_param( d, names::V_reset, V_reset_, node );
+  update_value_param( d, names::Delta_V, Delta_V_, node );
+  update_value_param( d, names::V_T_star, V_T_star_, node );
 
-  if ( update_value_param( d, names::lambda_0.toString(), lambda_0_, node ) )
+  if ( update_value_param( d, names::lambda_0, lambda_0_, node ) )
   {
     lambda_0_ /= 1000.0; // convert to 1/ms
   }
 
-  update_value_param( d, names::t_ref.toString(), t_ref_, node );
-  update_value_param( d, names::gsl_error_tol.toString(), gsl_error_tol, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::gsl_error_tol, gsl_error_tol, node );
 
-  d.update_value( names::tau_sfa.toString(), tau_sfa_ );
-  d.update_value( names::q_sfa.toString(), q_sfa_ );
-  d.update_value( names::tau_stc.toString(), tau_stc_ );
-  d.update_value( names::q_stc.toString(), q_stc_ );
+  d.update_value( names::tau_sfa, tau_sfa_ );
+  d.update_value( names::q_sfa, q_sfa_ );
+  d.update_value( names::tau_stc, tau_stc_ );
+  d.update_value( names::q_stc, q_stc_ );
 
   const size_t old_n_receptors = n_receptors();
-  bool Erev_flag = d.update_value( names::E_rev.toString(), E_rev_ );
-  bool tau_flag = d.update_value( names::tau_syn.toString(), tau_syn_ );
+  bool Erev_flag = d.update_value( names::E_rev, E_rev_ );
+  bool tau_flag = d.update_value( names::tau_syn, tau_syn_ );
   if ( Erev_flag || tau_flag )
   { // receptor arrays have been modified
     if ( ( E_rev_.size() != old_n_receptors || tau_syn_.size() != old_n_receptors )
@@ -242,20 +242,20 @@ nest::gif_cond_exp_multisynapse::Parameters_::set( const dictionary& d, Node* no
 
   if ( tau_sfa_.size() != q_sfa_.size() )
   {
-    throw BadProperty( String::compose(
-      "'tau_sfa' and 'q_sfa' need to have the same dimensions.\nSize of "
-      "tau_sfa: %1\nSize of q_sfa: %2",
-      tau_sfa_.size(),
-      q_sfa_.size() ) );
+    throw BadProperty(
+      String::compose( "'tau_sfa' and 'q_sfa' need to have the same dimensions.\nSize of "
+                       "tau_sfa: %1\nSize of q_sfa: %2",
+        tau_sfa_.size(),
+        q_sfa_.size() ) );
   }
 
   if ( tau_stc_.size() != q_stc_.size() )
   {
-    throw BadProperty( String::compose(
-      "'tau_stc' and 'q_stc' need to have the same dimensions.\nSize of "
-      "tau_stc: %1\nSize of q_stc: %2",
-      tau_stc_.size(),
-      q_stc_.size() ) );
+    throw BadProperty(
+      String::compose( "'tau_stc' and 'q_stc' need to have the same dimensions.\nSize of "
+                       "tau_stc: %1\nSize of q_stc: %2",
+        tau_stc_.size(),
+        q_stc_.size() ) );
   }
 
   if ( g_L_ <= 0 )
@@ -303,9 +303,9 @@ nest::gif_cond_exp_multisynapse::Parameters_::set( const dictionary& d, Node* no
 void
 nest::gif_cond_exp_multisynapse::State_::get( dictionary& d, const Parameters_& ) const
 {
-  d[ names::V_m.toString() ] = y_[ V_M ]; // Membrane potential
-  d[ names::E_sfa.toString() ] = sfa_;    // Adaptive threshold potential
-  d[ names::I_stc.toString() ] = stc_;    // Spike-triggered current
+  d[ names::V_m ] = y_[ V_M ]; // Membrane potential
+  d[ names::E_sfa ] = sfa_;    // Adaptive threshold potential
+  d[ names::I_stc ] = stc_;    // Spike-triggered current
 
 
   std::vector< double >* g = new std::vector< double >();
@@ -315,13 +315,13 @@ nest::gif_cond_exp_multisynapse::State_::get( dictionary& d, const Parameters_& 
     g->push_back( y_[ State_::G + State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * i ] );
   }
 
-  d[ names::g.toString() ] = DoubleVectorDatum( g );
+  d[ names::g ] = DoubleVectorDatum( g );
 }
 
 void
 nest::gif_cond_exp_multisynapse::State_::set( const dictionary& d, const Parameters_& p, Node* node )
 {
-  update_value_param( d, names::V_m.toString(), y_[ V_M ], node );
+  update_value_param( d, names::V_m, y_[ V_M ], node );
   y_.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS + State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * p.n_receptors(), 0.0 );
 
   sfa_elems_.resize( p.tau_sfa_.size(), 0.0 );

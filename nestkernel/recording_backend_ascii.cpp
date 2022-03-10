@@ -325,23 +325,23 @@ nest::RecordingBackendASCII::DeviceData::write( const Event& event,
 void
 nest::RecordingBackendASCII::DeviceData::get_status( dictionary& d ) const
 {
-  d[ names::file_extension.toString() ] = file_extension_;
-  d[ names::precision.toString() ] = precision_;
-  d[ names::time_in_steps.toString() ] = time_in_steps_;
+  d[ names::file_extension ] = file_extension_;
+  d[ names::precision ] = precision_;
+  d[ names::time_in_steps ] = time_in_steps_;
 
   std::string filename = compute_filename_();
-  d[ names::filenames.toString() ] = std::vector< std::string >( { filename } );
+  d[ names::filenames ] = std::vector< std::string >( { filename } );
 }
 
 void
 nest::RecordingBackendASCII::DeviceData::set_status( const dictionary& d )
 {
-  d.update_value( names::file_extension.toString(), file_extension_ );
-  d.update_value( names::precision.toString(), precision_ );
-  d.update_value( names::label.toString(), label_ );
+  d.update_value( names::file_extension, file_extension_ );
+  d.update_value( names::precision, precision_ );
+  d.update_value( names::label, label_ );
 
   bool time_in_steps = false;
-  if ( d.update_value( names::time_in_steps.toString(), time_in_steps ) )
+  if ( d.update_value( names::time_in_steps, time_in_steps ) )
   {
     if ( kernel().simulation_manager.has_been_simulated() )
     {

@@ -170,10 +170,10 @@ void
 DiffusionConnection< targetidentifierT >::get_status( dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  d[ names::weight.toString() ] = weight_;
-  d[ names::drift_factor.toString() ] = drift_factor_;
-  d[ names::diffusion_factor.toString() ] = diffusion_factor_;
-  d[ names::size_of.toString() ] = sizeof( *this );
+  d[ names::weight ] = weight_;
+  d[ names::drift_factor ] = drift_factor_;
+  d[ names::diffusion_factor ] = diffusion_factor_;
+  d[ names::size_of ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
@@ -181,12 +181,12 @@ void
 DiffusionConnection< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
-  if ( d.known( names::delay.toString() ) )
+  if ( d.known( names::delay ) )
   {
     throw BadProperty( "diffusion_connection has no delay." );
   }
   // If the parameter weight is set, we throw a BadProperty
-  if ( d.known( names::weight.toString() ) )
+  if ( d.known( names::weight ) )
   {
     throw BadProperty(
       "Please use the parameters drift_factor and "
@@ -194,8 +194,8 @@ DiffusionConnection< targetidentifierT >::set_status( const dictionary& d, Conne
   }
 
   ConnectionBase::set_status( d, cm );
-  d.update_value( names::drift_factor.toString(), drift_factor_ );
-  d.update_value( names::diffusion_factor.toString(), diffusion_factor_ );
+  d.update_value( names::drift_factor, drift_factor_ );
+  d.update_value( names::diffusion_factor, diffusion_factor_ );
 }
 
 } // namespace

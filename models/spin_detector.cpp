@@ -62,7 +62,7 @@ nest::spin_detector::init_buffers_()
 void
 nest::spin_detector::pre_run_hook()
 {
-  RecordingDevice::calibrate( RecordingBackend::NO_DOUBLE_VALUE_NAMES, { nest::names::state } );
+  RecordingDevice::pre_run_hook( RecordingBackend::NO_DOUBLE_VALUE_NAMES, { nest::names::state } );
 }
 
 void

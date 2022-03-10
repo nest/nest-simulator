@@ -134,7 +134,7 @@ public:
 
   using Device::pre_run_hook;
   using Node::pre_run_hook;
-  void calibrate( const std::vector< Name >&, const std::vector< Name >& );
+  void pre_run_hook( const std::vector< Name >&, const std::vector< Name >& );
 
   bool is_active( Time const& T ) const override;
 

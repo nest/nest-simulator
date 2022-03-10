@@ -182,8 +182,9 @@ EventDeliveryManager::configure_spike_data_buffers()
 void
 EventDeliveryManager::configure_spike_register()
 {
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+#pragma omp parallel
   {
+    const thread tid = kernel().vp_manager.get_thread_id();
     reset_spike_register_( tid );
     resize_spike_register_( tid );
   }
@@ -345,9 +346,10 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 
     kernel().mpi_manager.set_buffer_size_spike_data( 8388608 );
     resize_send_recv_buffers_spike_data_();
- 
+
     // Need to get new positions in case buffer size has changed
-    SendBufferPosition send_buffer_position( assigned_ranks, kernel().mpi_manager.get_send_recv_count_spike_data_per_rank() );
+    SendBufferPosition send_buffer_position(
+      assigned_ranks, kernel().mpi_manager.get_send_recv_count_spike_data_per_rank() );
 
 #ifdef TIMER_DETAILED
     {
@@ -380,23 +382,23 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
       sw_communicate_spike_data_.stop();
     }
 #endif
-  } // omp master
+  }                 // omp master
 #pragma omp barrier // no implicit barrier after omp master
 
 #ifdef TIMER_DETAILED
-    if ( tid == 0 )
-    {
-      sw_deliver_spike_data_.start();
-    }
+  if ( tid == 0 )
+  {
+    sw_deliver_spike_data_.start();
+  }
 #endif
-    // Deliver spikes from receive buffer to ring buffers.
-    deliver_events_( tid, recv_buffer );
+  // Deliver spikes from receive buffer to ring buffers.
+  deliver_events_( tid, recv_buffer );
 
 #ifdef TIMER_DETAILED
-    if ( tid == 0 )
-    {
-      sw_deliver_spike_data_.stop();
-    }
+  if ( tid == 0 )
+  {
+    sw_deliver_spike_data_.stop();
+  }
 #endif
 
   reset_spike_register_( tid );

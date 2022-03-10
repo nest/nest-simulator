@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef DICTIONARY_H_
-#define DICTIONARY_H_
+#ifndef DICTIONARY_H
+#define DICTIONARY_H
 
 #include <boost/any.hpp>
 #include <map>
@@ -30,8 +30,6 @@
 #include <vector>
 
 #include "sliexceptions.h"
-
-// using dictionary = std::map< std::string, boost::any >;
 
 std::string debug_type( const boost::any& operand );
 

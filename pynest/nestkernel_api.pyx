@@ -100,14 +100,16 @@ cdef object dictionary_to_pydict(dictionary cdict):
         inc(it)
     return tmp
 
-cdef dictionary pydict_to_dictionary(object py_dict):
+cdef dictionary pydict_to_dictionary(object py_dict) except *:
     cdef dictionary cdict = dictionary()
     for key, value in py_dict.items():
-        if isinstance(value, int):
+        if type(value) is int:
             cdict[key.encode('utf-8')] = <long>value
-        elif isinstance(value, float):
+        elif type(value) is float:
             cdict[key.encode('utf-8')] = <double>value
-        elif isinstance(value, str):
+        elif type(value) is bool:
+            cdict[key.encode('utf-8')] = <cbool>value
+        elif type(value) is str:
             cdict[key.encode('utf-8')] = <string>value.encode('utf-8')
         else:
             raise AttributeError(f'value of key ({key}) is not a known type, got {type(value)}')

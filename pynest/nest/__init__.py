@@ -40,6 +40,12 @@ r"""PyNEST - Python interface for the NEST simulator
 For more information visit https://www.nest-simulator.org.
 """
 
+# WARINIG: Since this file uses a ton of trickery, linter warnings are mostly
+# disabled. This means that you need to make sure style is fine yourself!!!
+#
+# pylint: disable=wrong-import-position, no-name-in-module, undefined-variable
+# pylint: disable=invalid-name, protected-access
+
 # WARNING: This file is only used to create the `NestModule` below and then
 # ignored. If you'd like to make changes to the root `nest` module, they need to
 # be made to the `NestModule` class/instance instead.
@@ -50,11 +56,11 @@ For more information visit https://www.nest-simulator.org.
 # instance later on. Use `.copy()` to prevent pollution with other variables
 _original_module_attrs = globals().copy()
 
-from .ll_api import KernelAttribute  # noqa
 import sys                           # noqa
 import types                         # noqa
 import importlib                     # noqa
 import builtins                      # noqa
+from .ll_api import KernelAttribute  # noqa
 
 try:
     import versionchecker            # noqa: F401
@@ -111,15 +117,16 @@ class NestModule(types.ModuleType):
         type(self).__setattr__ = _setattr_error
 
     def set(self, **kwargs):
+        'Forward kernel attribute setting to `SetKernelStatus()`.'
         return self.SetKernelStatus(kwargs)
 
     def get(self, *args):
-        if len(args) == 0:
+        'Forward kernel attribute getting to `GetKernelStatus()`.'
+        if not args:
             return self.GetKernelStatus()
         if len(args) == 1:
             return self.GetKernelStatus(args[0])
-        else:
-            return self.GetKernelStatus(args)
+        return self.GetKernelStatus(args)
 
     def __dir__(self):
         return list(set(vars(self).keys()) | set(self.__all__))
@@ -476,6 +483,7 @@ def _lazy_module_property(module_name, optional=False, optional_hint=""):
     :type optional_hint: str
     """
     def lazy_loader(self):
+        'Wrap lazy loaded property.'
         cls = type(self)
         delattr(cls, module_name)
         try:

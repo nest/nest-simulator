@@ -109,6 +109,7 @@ jobs:
           pwd
           ls -lisa
           echo "Starting vale..."
+          touch vocab.txt
           ./vale doc
 
   pydocstyle:

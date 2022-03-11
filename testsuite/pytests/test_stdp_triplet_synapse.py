@@ -202,7 +202,6 @@ class STDPTripletSynapseTestCase(unittest.TestCase):
         Kminus = 0.0
         Kminus_triplet = 0.0
         weight = self.status("weight")
-        Wmax = self.status("Wmax")
 
         (Kplus, Kplus_triplet, Kminus, Kminus_triplet) = self.decay(
             2.0, Kplus, Kplus_triplet, Kminus, Kminus_triplet)
@@ -241,7 +240,6 @@ class STDPTripletSynapseTestCase(unittest.TestCase):
         Kminus = 0.0
         Kminus_triplet = 0.0
         weight = self.status("weight")
-        Wmax = self.status("Wmax")
 
         (Kplus, Kplus_triplet, Kminus, Kminus_triplet) = self.decay(
             2.0, Kplus, Kplus_triplet, Kminus, Kminus_triplet)

@@ -20,4 +20,4 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from .NESTServerClient import *
+from .NESTServerClient import *  # noqa: F401,F403

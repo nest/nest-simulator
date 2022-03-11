@@ -71,7 +71,6 @@ References
 """
 
 import nest
-import numpy
 import matplotlib.pyplot as plt
 
 ################################################################################

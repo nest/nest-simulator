@@ -23,7 +23,7 @@
 Classes defining the different PyNEST types
 """
 
-from ..ll_api import check_stack, sli_func, sps, sr, spp, take_array_index
+from ..ll_api import sli_func, sps, sr, spp, take_array_index
 from .. import pynestkernel as kernel
 from .hl_api_helper import (
     broadcast,

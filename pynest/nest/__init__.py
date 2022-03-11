@@ -57,7 +57,7 @@ import importlib                     # noqa
 import builtins                      # noqa
 
 try:
-    import versionchecker
+    import versionchecker            # noqa: F401
 except ImportError:
     pass
 
@@ -81,27 +81,27 @@ class NestModule(types.ModuleType):
         super().__init__(name)
         # Copy over the original module attributes to preserve all interpreter-given
         # magic attributes such as `__name__`, `__path__`, `__package__`, ...
-        self.__dict__.update(_original_module_attrs)
+        self.__dict__.update(_original_module_attrs)    # noqa
 
         # Import public APIs of submodules into the `nest.` namespace
-        _rel_import_star(self, ".lib.hl_api_connections")
-        _rel_import_star(self, ".lib.hl_api_exceptions")
-        _rel_import_star(self, ".lib.hl_api_info")
-        _rel_import_star(self, ".lib.hl_api_models")
-        _rel_import_star(self, ".lib.hl_api_nodes")
-        _rel_import_star(self, ".lib.hl_api_parallel_computing")
-        _rel_import_star(self, ".lib.hl_api_simulation")
-        _rel_import_star(self, ".lib.hl_api_spatial")
-        _rel_import_star(self, ".lib.hl_api_types")
+        _rel_import_star(self, ".lib.hl_api_connections")           # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_exceptions")            # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_info")                  # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_models")                # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_nodes")                 # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_parallel_computing")    # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_simulation")            # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_spatial")               # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_types")                 # noqa: F821
 
         # Lazy loaded modules. They are descriptors, so add them to the type object
-        type(self).raster_plot = _lazy_module_property("raster_plot")
-        type(self).server = _lazy_module_property("server")
-        type(self).spatial = _lazy_module_property("spatial")
-        type(self).visualization = _lazy_module_property("visualization")
-        type(self).voltage_trace = _lazy_module_property("voltage_trace")
+        type(self).raster_plot = _lazy_module_property("raster_plot")       # noqa: F821
+        type(self).server = _lazy_module_property("server")                 # noqa: F821
+        type(self).spatial = _lazy_module_property("spatial")               # noqa: F821
+        type(self).visualization = _lazy_module_property("visualization")   # noqa: F821
+        type(self).voltage_trace = _lazy_module_property("voltage_trace")   # noqa: F821
 
-        self.__version__ = ll_api.sli_func("statusdict /version get")
+        self.__version__ = ll_api.sli_func("statusdict /version get")       # noqa: F821
         # Finalize the nest module with a public API.
         _api = list(k for k in self.__dict__ if not k.startswith("_"))
         _api.extend(k for k in dir(type(self)) if not k.startswith("_"))
@@ -483,8 +483,8 @@ def _lazy_module_property(module_name, optional=False, optional_hint=""):
         except ImportError as e:
             if optional:
                 raise ImportError(
-                    f"This functionality requires the optional module "
-                    + module_name + ". " + optional_hint
+                    f"This functionality requires the optional module \
+                    {module_name}.{optional_hint}"
                 ) from None
             else:
                 raise e from None
@@ -506,4 +506,7 @@ sys.modules[__name__] = _module
 globals().update(_module.__dict__)
 
 # Clean up obsolete references
+# Since these references are deleted, flake8 complains with an error
+# `F821 undefined name` where these variables are used. Hence we mark all those
+# lines with a `# noqa`
 del _rel_import_star, _lazy_module_property, _module, _original_module_attrs

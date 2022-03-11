@@ -117,8 +117,7 @@ def hxt_role(pattern):
             return [hover_raw_node, js_raw_node], []
 
         except Exception as e:
-            print("Something went wrong while parsing the hxt pattern: ({e})"
-                  .format(e))
+            print(f"Something went wrong while parsing the hxt pattern: ({e})")
             sys.exit(-1)
 
     return role
@@ -219,7 +218,7 @@ def get_desc_from_glossary(term):
         glossary_dict = {}  # dictionary that holds terms and descriptions.
         for idx, line in enumerate(raw_file_content):
             # detect a term based on value of first column.
-            if len(line) > 1 and line[1] is not ' ':
+            if len(line) > 1 and line[1] != ' ':
                 # the key is the term in the dictionary.
                 key = line.strip('\n')
                 # the value is the description (which is on the next line).

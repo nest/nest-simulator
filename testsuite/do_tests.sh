@@ -492,8 +492,8 @@ if test "${PYTHON}"; then
           --ignore="${PYNEST_TEST_DIR}/mpi" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}"
 
     # Run tests in the mpi* subdirectories, grouped by number of processes
-    if test "${HAVE_MPI}" = "true" ; then
-        if test "${MPI_LAUNCHER}" ; then
+    if test "${HAVE_MPI}" = "true"; then
+        if test "${MPI_LAUNCHER}"; then
             for numproc in $(cd ${PYNEST_TEST_DIR}/mpi/; ls -d */ | tr -d '/'); do
                 XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
                 PYTEST_ARGS="--verbose --timeout $TIME_LIMIT --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"

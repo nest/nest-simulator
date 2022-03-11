@@ -367,7 +367,7 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin, const long from, cons
       if ( not S_.is_refractory_ )
       {
         // If we use S_.y2_ * std::exp( -V_.h_ms_ / P_.tau_m_ ) instead of
-        // V_.expm1_tau_m_ * S_.y2_ + S_.y2_ here, the accuracy decrease,
+        // V_.expm1_tau_m_ * S_.y2_ + S_.y2_ here, the accuracy decreases,
         // see test_iaf_ps_dc_t_accuracy.sli for details.
         S_.y2_ = V_.P20_ * ( P_.I_e_ + S_.y0_ ) + V_.P21_ex_ * S_.I_syn_ex_ + V_.P21_in_ * S_.I_syn_in_
           + V_.expm1_tau_m_ * S_.y2_ + S_.y2_;

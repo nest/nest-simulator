@@ -132,21 +132,21 @@ nest::iaf_cond_alpha_mc_dynamics( double, const double y[], double f[], void* pn
     case N::SOMA:
     {
       is_refractory = node.S_.r_ > 0;
-      V = is_refractory ? node.P_.V_reset : std::min( y[ S::idx( n, S::V_M ) ], node.P_.V_th );
-      I_conn = node.P_.g_conn[ n ] * ( V - y[ S::idx( n + 1, S::V_M ) ] );
+      V = is_refractory ? node.P_.V_reset : std::min( y[ S::idx( N::SOMA, S::V_M ) ], node.P_.V_th );
+      I_conn = node.P_.g_conn[ N::SOMA ] * ( V - y[ S::idx( N::PROX, S::V_M ) ] );
       break;
     }
     case N::PROX:
     {
-      V = y[ S::idx( n, S::V_M ) ];
-      I_conn = node.P_.g_conn[ n - 1 ] * ( V - y[ S::idx( n - 1, S::V_M ) ] )
-        + node.P_.g_conn[ n ] * ( V - y[ S::idx( n + 1, S::V_M ) ] );
+      V = y[ S::idx( N::PROX, S::V_M ) ];
+      I_conn = node.P_.g_conn[ N::SOMA ] * ( V - y[ S::idx( N::SOMA, S::V_M ) ] )
+        + node.P_.g_conn[ N::PROX ] * ( V - y[ S::idx( N::DIST, S::V_M ) ] );
       break;
     }
     case N::DIST:
     {
-      V = y[ S::idx( n, S::V_M ) ];
-      I_conn = node.P_.g_conn[ n - 1 ] * ( V - y[ S::idx( n - 1, S::V_M ) ] );
+      V = y[ S::idx( N::DIST, S::V_M ) ];
+      I_conn = node.P_.g_conn[ N::PROX ] * ( V - y[ S::idx( N::PROX - 1, S::V_M ) ] );
       break;
     }
     }

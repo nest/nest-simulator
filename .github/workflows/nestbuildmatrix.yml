@@ -103,6 +103,8 @@ jobs:
       - name: "Run vale..."
         run: |
           ./vale -v
+          pwd
+          ls -lisa
           ./vale doc
 
   pydocstyle:

@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# Determine NEST version based on git branch
-#
 # This module defines functions to print warnings, errors and status with colors
 
 

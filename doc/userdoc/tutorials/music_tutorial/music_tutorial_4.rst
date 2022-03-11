@@ -16,7 +16,6 @@ differences to the C++ API. The full example code is in the
 ``pymusic`` directory in the MUSIC repository.
 
 .. code-block:: python
-    :linenos:
 
     #!/usr/bin/env python3
     import music
@@ -55,7 +54,6 @@ current simulation time, and repeatedly send new sets of events as long
 as the current time is smaller than the simulation time.
 
 .. code-block:: python
-    :linenos:
 
     import Queue
 

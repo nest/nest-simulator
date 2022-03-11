@@ -32,10 +32,7 @@ from .hl_api_connection_helpers import (_process_input_nodes, _connect_layers_ne
                                         _connect_spatial, _process_conn_spec,
                                         _process_spatial_projections, _process_syn_spec)
 from .hl_api_helper import is_string
-from .hl_api_info import GetStatus
-from .hl_api_nodes import Create
-from .hl_api_parallel_computing import NumProcesses
-from .hl_api_types import NodeCollection, SynapseCollection, Mask, Parameter
+from .hl_api_types import NodeCollection, SynapseCollection
 
 __all__ = [
     'Connect',

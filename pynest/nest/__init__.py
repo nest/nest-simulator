@@ -40,6 +40,12 @@ r"""PyNEST - Python interface for the NEST simulator
 For more information visit https://www.nest-simulator.org.
 """
 
+# WARINIG: Since this file uses a ton of trickery, linter warnings are mostly
+# disabled. This means that you need to make sure style is fine yourself!!!
+#
+# pylint: disable=wrong-import-position, no-name-in-module, undefined-variable
+# pylint: disable=invalid-name, protected-access
+
 # WARNING: This file is only used to create the `NestModule` below and then
 # ignored. If you'd like to make changes to the root `nest` module, they need to
 # be made to the `NestModule` class/instance instead.
@@ -50,14 +56,14 @@ For more information visit https://www.nest-simulator.org.
 # instance later on. Use `.copy()` to prevent pollution with other variables
 _original_module_attrs = globals().copy()
 
-from .ll_api import KernelAttribute  # noqa
 import sys                           # noqa
 import types                         # noqa
 import importlib                     # noqa
 import builtins                      # noqa
+from .ll_api import KernelAttribute  # noqa
 
 try:
-    import versionchecker
+    import versionchecker            # noqa: F401
 except ImportError:
     pass
 
@@ -81,27 +87,27 @@ class NestModule(types.ModuleType):
         super().__init__(name)
         # Copy over the original module attributes to preserve all interpreter-given
         # magic attributes such as `__name__`, `__path__`, `__package__`, ...
-        self.__dict__.update(_original_module_attrs)
+        self.__dict__.update(_original_module_attrs)    # noqa
 
         # Import public APIs of submodules into the `nest.` namespace
-        _rel_import_star(self, ".lib.hl_api_connections")
-        _rel_import_star(self, ".lib.hl_api_exceptions")
-        _rel_import_star(self, ".lib.hl_api_info")
-        _rel_import_star(self, ".lib.hl_api_models")
-        _rel_import_star(self, ".lib.hl_api_nodes")
-        _rel_import_star(self, ".lib.hl_api_parallel_computing")
-        _rel_import_star(self, ".lib.hl_api_simulation")
-        _rel_import_star(self, ".lib.hl_api_spatial")
-        _rel_import_star(self, ".lib.hl_api_types")
+        _rel_import_star(self, ".lib.hl_api_connections")           # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_exceptions")            # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_info")                  # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_models")                # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_nodes")                 # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_parallel_computing")    # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_simulation")            # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_spatial")               # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_types")                 # noqa: F821
 
         # Lazy loaded modules. They are descriptors, so add them to the type object
-        type(self).raster_plot = _lazy_module_property("raster_plot")
-        type(self).server = _lazy_module_property("server")
-        type(self).spatial = _lazy_module_property("spatial")
-        type(self).visualization = _lazy_module_property("visualization")
-        type(self).voltage_trace = _lazy_module_property("voltage_trace")
+        type(self).raster_plot = _lazy_module_property("raster_plot")       # noqa: F821
+        type(self).server = _lazy_module_property("server")                 # noqa: F821
+        type(self).spatial = _lazy_module_property("spatial")               # noqa: F821
+        type(self).visualization = _lazy_module_property("visualization")   # noqa: F821
+        type(self).voltage_trace = _lazy_module_property("voltage_trace")   # noqa: F821
 
-        self.__version__ = ll_api.sli_func("statusdict /version get")
+        self.__version__ = ll_api.sli_func("statusdict /version get")       # noqa: F821
         # Finalize the nest module with a public API.
         _api = list(k for k in self.__dict__ if not k.startswith("_"))
         _api.extend(k for k in dir(type(self)) if not k.startswith("_"))
@@ -111,15 +117,16 @@ class NestModule(types.ModuleType):
         type(self).__setattr__ = _setattr_error
 
     def set(self, **kwargs):
+        'Forward kernel attribute setting to `SetKernelStatus()`.'
         return self.SetKernelStatus(kwargs)
 
     def get(self, *args):
-        if len(args) == 0:
+        'Forward kernel attribute getting to `GetKernelStatus()`.'
+        if not args:
             return self.GetKernelStatus()
         if len(args) == 1:
             return self.GetKernelStatus(args[0])
-        else:
-            return self.GetKernelStatus(args)
+        return self.GetKernelStatus(args)
 
     def __dir__(self):
         return list(set(vars(self).keys()) | set(self.__all__))
@@ -476,6 +483,7 @@ def _lazy_module_property(module_name, optional=False, optional_hint=""):
     :type optional_hint: str
     """
     def lazy_loader(self):
+        'Wrap lazy loaded property.'
         cls = type(self)
         delattr(cls, module_name)
         try:
@@ -483,8 +491,8 @@ def _lazy_module_property(module_name, optional=False, optional_hint=""):
         except ImportError as e:
             if optional:
                 raise ImportError(
-                    f"This functionality requires the optional module "
-                    + module_name + ". " + optional_hint
+                    f"This functionality requires the optional module \
+                    {module_name}.{optional_hint}"
                 ) from None
             else:
                 raise e from None
@@ -506,4 +514,7 @@ sys.modules[__name__] = _module
 globals().update(_module.__dict__)
 
 # Clean up obsolete references
+# Since these references are deleted, flake8 complains with an error
+# `F821 undefined name` where these variables are used. Hence we mark all those
+# lines with a `# noqa`
 del _rel_import_star, _lazy_module_property, _module, _original_module_attrs

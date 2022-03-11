@@ -7,7 +7,7 @@ Conventions for parameters
 --------------------------
 
 1. Do not use capitalization to indicate whether a value in the status dictionary is variable.
-1. Where available, use the notation from P.Dayan & L.F.Abbott, _Theoretical Neuroscience_, MIT Press, 2001.
+1. Where available, use the notation from P.Dayan & L.F.Abbott, *Theoretical Neuroscience*, MIT Press, 2001.
 1. Where not available, use a notation that is consistent with Dayan & Abbott.
 1. Subscripts are indicated by underscores
 

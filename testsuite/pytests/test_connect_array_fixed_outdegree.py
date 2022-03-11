@@ -26,7 +26,6 @@ and parameter arrays in syn_spec
 
 import unittest
 import nest
-import numpy
 
 
 @nest.ll_api.check_stack

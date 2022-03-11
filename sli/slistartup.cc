@@ -154,7 +154,7 @@ static std::string getsliprefix() {
         }
     }
 #endif
-    return POCL_INSTALL_PRIVATE_DATADIR;
+    return NEST_INSTALL_PREFIX;
 }
 
 SLIStartup::SLIStartup( int argc, char** argv )

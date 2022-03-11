@@ -13,10 +13,6 @@ Reference guide: NEST 2.x vs NEST 3.0
 
 * **Please note that NEST 3.0 no longer supports Python 2**
 
-.. contents:: On this page you'll find
-   :local:
-   :depth: 1
-
 .. seealso::
 
   To see more of the key changes in 3.0, check out our :ref:`list here <toc_3.0_features>`.

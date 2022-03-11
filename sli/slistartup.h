@@ -59,10 +59,11 @@
 
 class SLIStartup : public SLIModule
 {
-  const std::string sliprefix;
-  const std::string slilibdir;
-  const std::string slidocdir;
-  const std::string startupfile;
+	// path and file names not const to prevent incorrect replacement by Conda, see #2237.
+  std::string sliprefix;
+  std::string slilibdir;
+  std::string slidocdir;
+  std::string startupfile;
 
   std::string find_startup_file( const std::string& ) const;
   std::string getenv( const std::string& ) const;

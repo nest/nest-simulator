@@ -270,7 +270,11 @@ DynamicLoaderModule::init( SLIInterpreter* i )
     LOG( M_ERROR, "DynamicLoaderModule::init", "Could not initialize libltdl. No dynamic modules will be available." );
   }
 
-  if ( lt_dladdsearchdir( NEST_INSTALL_PREFIX "/" NEST_INSTALL_LIBDIR ) )
+  // Prevent compile-time construction of path to avoid incorrect Conda replacement. See #2237.
+  std::string moduledir = NEST_INSTALL_PREFIX;
+  moduledir += "/";
+  moduledir += NEST_INSTALL_LIBDIR;
+  if ( lt_dladdsearchdir( moduledir  ) )
   {
     LOG( M_ERROR, "DynamicLoaderModule::init", "Could not add dynamic module search directory." );
   }

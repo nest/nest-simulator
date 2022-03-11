@@ -135,11 +135,7 @@ SLIStartup::GetenvFunction::execute( SLIInterpreter* i ) const
 
 
 SLIStartup::SLIStartup( int argc, char** argv )
-  : sliprefix( NEST_INSTALL_PREFIX )
-  , slilibdir( sliprefix + "/" + NEST_INSTALL_DATADIR )
-  , slidocdir( sliprefix + "/" + NEST_INSTALL_DOCDIR )
-  , startupfile( slilibdir + "/sli/sli-init.sli" )
-  , verbosity_( SLIInterpreter::M_INFO ) // default verbosity level
+  : verbosity_( SLIInterpreter::M_INFO ) // default verbosity level
   , debug_( false )
   , argv_name( "argv" )
   , version_name( "version" )
@@ -188,7 +184,12 @@ SLIStartup::SLIStartup( int argc, char** argv )
   , exitcode_unknownerror_name( "unknownerror" )
   , environment_name( "environment" )
 {
-  ArrayDatum args_array;
+	// Initialize here instead of in initializer list to defer string concatenation
+	// until runtime to avoid incorrect path replacement by Conda. See #2237.
+	sliprefix = NEST_INSTALL_PREFIX;
+	slilibdir = sliprefix + "/" + NEST_INSTALL_DATADIR;
+	slidocdir = sliprefix + "/" + NEST_INSTALL_DOCDIR;
+	startupfile = slilibdir + "/sli/sli-init.sli";
 
   // argv[0] is the name of the program that was given to the shell.
   // This name must be given to SLI, otherwise initialization fails.
@@ -196,6 +197,8 @@ SLIStartup::SLIStartup( int argc, char** argv )
   // a script but by using an interactive session in Python, argv[0] is an
   // empty string, see documentation for argv in
   // https://docs.python.org/3/library/sys.html
+  ArrayDatum args_array;
+
   for ( int i = 0; i < argc; ++i )
   {
     StringDatum* sd = new StringDatum( argv[ i ] );

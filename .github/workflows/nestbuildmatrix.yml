@@ -105,7 +105,8 @@ jobs:
           ./vale -v
           pwd
           ls -lisa
-          ./vale doc
+          echo "Starting vale..."
+          #./vale doc
 
   pydocstyle:
     runs-on: "ubuntu-20.04"

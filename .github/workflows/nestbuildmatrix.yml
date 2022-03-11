@@ -94,6 +94,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.9
+
       - name: "Install dependencies"
         run: |
           wget --progress=dot:mega "https://github.com/errata-ai/vale/releases/download/v2.15.2/vale_2.15.2_Linux_64-bit.tar.gz"

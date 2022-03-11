@@ -83,7 +83,11 @@ aside,
 }
 p{ margin:0 0 1.5em;}
 
+#particles{
+   width: 100%;
+   margin: 0;
 
+}
 /* RESPONSIVE IMAGES  */
 img{ max-width:100%; height:auto;}
 
@@ -123,7 +127,7 @@ img{ max-width:100%; height:auto;}
 	margin:1px 0; 
 	padding:10px;
 	text-decoration:none;
-	font-size:1.0em;
+	font-size:1.1rem;
 }
 .srt-menu li a:hover{
 	background:#f63;

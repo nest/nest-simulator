@@ -144,3 +144,8 @@ ul.md-tabs__list li.md-tabs__item a.md-tabs__link {
 .md-sidebar--secondary {
 	margin-left: 93rem;
 }
+/* set main content section margins wider */
+.md-content__inner {
+    margin-left: 2.5rem;
+    margin-right: 2.5rem
+}

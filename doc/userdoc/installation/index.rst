@@ -39,7 +39,6 @@ If installation didn't work, see the :ref:`troubleshooting section <troubleshoot
    :hidden:
    :glob:
 
-   linux_install
    mac_install
    hpc_install
    livemedia

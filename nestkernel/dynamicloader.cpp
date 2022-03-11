@@ -274,7 +274,7 @@ DynamicLoaderModule::init( SLIInterpreter* i )
   std::string moduledir = NEST_INSTALL_PREFIX;
   moduledir += "/";
   moduledir += NEST_INSTALL_LIBDIR;
-  if ( lt_dladdsearchdir( moduledir  ) )
+  if ( lt_dladdsearchdir( moduledir.c_str() ) )
   {
     LOG( M_ERROR, "DynamicLoaderModule::init", "Could not add dynamic module search directory." );
   }

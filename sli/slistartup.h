@@ -59,7 +59,7 @@
 
 class SLIStartup : public SLIModule
 {
-	// path and file names not const to prevent incorrect replacement by Conda, see #2237.
+  // path and file names not const to prevent incorrect replacement by Conda, see #2237.
   std::string sliprefix;
   std::string slilibdir;
   std::string slidocdir;

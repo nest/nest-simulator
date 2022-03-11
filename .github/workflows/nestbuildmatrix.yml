@@ -149,8 +149,7 @@ jobs:
 
       - name: "Install Linux system dependencies"
         run: |
-          pip install mypy 
-        # matplotlib numpy scipy data-science-types
+          pip install mypy matplotlib numpy scipy data-science-types
 
       - name: "Run mypy..."
         run: |

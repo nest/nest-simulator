@@ -41,6 +41,8 @@ from cython.operator cimport preincrement as inc
 import nest
 from nest.lib.hl_api_exceptions import NESTMappedException, NESTErrors, NESTError
 
+import numpy
+
 
 cdef class NodeCollectionObject(object):
 
@@ -201,3 +203,38 @@ def llapi_set_nc_status(NodeCollectionObject nc, object params):
     except RuntimeError as e:
         exceptionCls = getattr(NESTErrors, str(e))
         raise exceptionCls('llapi_set_nc_status', '') from None
+
+
+def llapi_take_array_index(NodeCollectionObject node_collection, object array):
+    if not isinstance(array, numpy.ndarray):
+        raise TypeError('array must be a 1-dimensional NumPy array of ints or bools, got {}'.format(type(array)))
+    if not array.ndim == 1:
+        raise TypeError('array must be a 1-dimensional NumPy array, got {}-dimensional NumPy array'.format(array.ndim))
+
+    # Get pointers to the first element in the Numpy array
+    cdef long[:] array_long_mv
+    cdef long* array_long_ptr
+
+    cdef cbool[:] array_bool_mv
+    cdef cbool* array_bool_ptr
+
+    cdef NodeCollectionPTR new_nc_ptr
+
+    try:
+        if array.dtype == numpy.bool:
+            # Boolean C-type arrays are not supported in NumPy, so we use an 8-bit integer array
+            array_bool_mv = numpy.ascontiguousarray(array, dtype=numpy.uint8)
+            array_bool_ptr = &array_bool_mv[0]
+            new_nc_ptr = node_collection_array_index(node_collection.thisptr, array_bool_ptr, len(array))
+        elif numpy.issubdtype(array.dtype, numpy.integer):
+            array_long_mv = numpy.ascontiguousarray(array, dtype=numpy.long)
+            array_long_ptr = &array_long_mv[0]
+            new_nc_ptr = node_collection_array_index(node_collection.thisptr, array_long_ptr, len(array))
+        else:
+            raise TypeError('array must be a NumPy array of ints or bools, got {}'.format(array.dtype))
+        obj = NodeCollectionObject()
+        obj._set_nc(new_nc_ptr)
+        return nest.NodeCollection(obj)
+    except RuntimeError as e:
+        exceptionCls = getattr(NESTErrors, str(e))
+        raise exceptionCls('take_array_index', '') from None

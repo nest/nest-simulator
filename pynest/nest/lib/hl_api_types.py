@@ -204,7 +204,7 @@ class NodeCollection(object):
     def __init__(self, data=None):
         if data is None:
             data = []
-        if isinstance(data, kernel.NodeCollectionObject):
+        if isinstance(data, nestkernel.NodeCollectionObject):
             self._datum = data
         else:
             # Data from user, must be converted to datum
@@ -260,7 +260,7 @@ class NodeCollection(object):
                     raise ValueError('All node IDs in a NodeCollection have to be unique')
             else:
                 raise TypeError('Indices must be integers or bools')
-            return take_array_index(self._datum, np_key)
+            return nestkernel.llapi_take_array_index(self._datum, np_key)
         elif isinstance(key, numpy.ndarray):
             if len(key) == 0:
                 return NodeCollection([])
@@ -273,7 +273,7 @@ class NodeCollection(object):
                 raise IndexError('Bool index array must be the same length as NodeCollection')
             if not is_booltype and len(numpy.unique(key)) != len(key):
                 raise ValueError('All node IDs in a NodeCollection have to be unique')
-            return take_array_index(self._datum, key)
+            return nestkernel.llapi_(self._datum, key)
         else:
             raise IndexError('only integers, slices, lists, tuples, and numpy arrays are valid indices')
 

@@ -53,14 +53,14 @@ __all__ = [
     'check_stack',
     'connect_arrays',
     'set_communicator',
-    'take_array_index',
+    # 'take_array_index',
     # 'KernelAttribute', TODO-PYNEST-NG: Enable again when it works without SLI
 ]
 
 
 engine = kernel.NESTEngine()
 
-take_array_index = engine.take_array_index
+# take_array_index = engine.take_array_index
 connect_arrays = engine.connect_arrays
 
 

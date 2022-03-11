@@ -27,6 +27,7 @@ from contextlib import contextmanager
 import warnings
 
 from .. import pynestkernel as kernel
+from .. import nestkernel_api as nestkernel
 
 from ..ll_api import *
 from .hl_api_helper import *
@@ -62,7 +63,7 @@ def Simulate(t):
 
     """
 
-    kernel.llapi_simulate(t)
+    nestkernel.llapi_simulate(t)
 
 
 @check_stack
@@ -193,7 +194,7 @@ def ResetKernel():
     unloaded. This may change in a future version of NEST.
 
    """
-    kernel.llapi_reset_kernel()
+    nestkernel.llapi_reset_kernel()
 
 
 @check_stack
@@ -220,26 +221,27 @@ def SetKernelStatus(params):
     # imported via hl_api during initialization, we can't put the import on
     # the module level, but have to have it on the function level.
     import nest    # noqa
-    raise_errors = params.get('dict_miss_is_error', nest.dict_miss_is_error)
-    valids = nest._kernel_attr_names
-    readonly = nest._readonly_kernel_attrs
-    keys = list(params.keys())
-    for key in keys:
-        msg = None
-        if key not in valids:
-            msg = f'`{key}` is not a valid kernel parameter, ' + \
-                  'valid parameters are: ' + \
-                  ', '.join(f"'{p}'" for p in sorted(valids))
-        elif key in readonly:
-            msg = f'`{key}` is a readonly kernel parameter'
-        if msg is not None:
-            if raise_errors:
-                raise ValueError(msg)
-            else:
-                warnings.warn(msg + f' \n`{key}` has been ignored')
-                del params[key]
+    # TODO-PYNEST-NG: Enable again when KernelAttribute works
+    # raise_errors = params.get('dict_miss_is_error', nest.dict_miss_is_error)
+    # valids = nest._kernel_attr_names
+    # readonly = nest._readonly_kernel_attrs
+    # keys = list(params.keys())
+    # for key in keys:
+    #     msg = None
+    #     if key not in valids:
+    #         msg = f'`{key}` is not a valid kernel parameter, ' + \
+    #               'valid parameters are: ' + \
+    #               ', '.join(f"'{p}'" for p in sorted(valids))
+    #     elif key in readonly:
+    #         msg = f'`{key}` is a readonly kernel parameter'
+    #     if msg is not None:
+    #         if raise_errors:
+    #             raise ValueError(msg)
+    #         else:
+    #             warnings.warn(msg + f' \n`{key}` has been ignored')
+    #             del params[key]
 
-    kernel.llapi_set_kernel_status(params)
+    nestkernel.llapi_set_kernel_status(params)
 
 
 @check_stack
@@ -278,7 +280,7 @@ def GetKernelStatus(keys=None):
 
     """
 
-    status_root = kernel.llapi_get_kernel_status()
+    status_root = nestkernel.llapi_get_kernel_status()
 
     if keys is None:
         return status_root

@@ -24,8 +24,12 @@ if ( HAVE_PYTHON )
     set_source_files_properties(
         pynestkernel.pyx
         PROPERTIES CYTHON_IS_CXX TRUE )
+    set_source_files_properties(
+        nestkernel_api.pyx
+        PROPERTIES CYTHON_IS_CXX TRUE )
 
     cython_add_module( pynestkernel pynestkernel.pyx )
+    cython_add_module( nestkernel_api nestkernel_api.pyx )
   else ()
     # require the source pynest/pynestkernel.cxx precompiled
     set( pynestkernel_generated_file "NOTFOUND" )
@@ -58,7 +62,23 @@ if ( HAVE_PYTHON )
       ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES}
       )
 
+  target_link_libraries( nestkernel_api
+      nest_lib nestutil nestkernel sli_lib
+      ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES}
+      )
+
   target_include_directories( pynestkernel PRIVATE
+      ${PROJECT_BINARY_DIR}/libnestutil
+      ${PROJECT_SOURCE_DIR}/libnestutil
+      ${PROJECT_SOURCE_DIR}/pynest
+      ${PROJECT_SOURCE_DIR}/nestkernel
+      ${PROJECT_SOURCE_DIR}/nestkernel/spatial
+      ${PROJECT_SOURCE_DIR}/sli
+      ${PROJECT_SOURCE_DIR}/thirdparty
+      ${SLI_MODULE_INCLUDE_DIRS}
+      ${Python_INCLUDE_DIRS}
+      )
+  target_include_directories( nestkernel_api PRIVATE
       ${PROJECT_BINARY_DIR}/libnestutil
       ${PROJECT_SOURCE_DIR}/libnestutil
       ${PROJECT_SOURCE_DIR}/pynest
@@ -73,12 +93,16 @@ if ( HAVE_PYTHON )
   target_compile_definitions( pynestkernel PRIVATE
       -D_IS_PYNEST
       )
+  target_compile_definitions( nestkernel_api PRIVATE
+      -D_IS_PYNEST
+      )
 
   install(DIRECTORY  nest/ ${PROJECT_BINARY_DIR}/pynest/nest/
       DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest
       PATTERN "versionchecker.py.in" EXCLUDE
   )
   install( TARGETS pynestkernel DESTINATION ${PYEXECDIR}/nest/ )
+  install( TARGETS nestkernel_api DESTINATION ${PYEXECDIR}/nest/ )
   install( CODE "
       execute_process(
           COMMAND ${PYTHON} ${CMAKE_CURRENT_BINARY_DIR}/setup.py install_egg_info

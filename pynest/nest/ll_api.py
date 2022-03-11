@@ -47,6 +47,7 @@ except ImportError:
 sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
 
 from . import pynestkernel as kernel      # noqa
+from . import nestkernel_api as nestkernel      # noqa
 
 __all__ = [
     'check_stack',

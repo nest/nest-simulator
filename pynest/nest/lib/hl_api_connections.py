@@ -27,6 +27,7 @@ import numpy
 
 from ..ll_api import *
 from .. import pynestkernel as kernel
+from .. import nestkernel_api as nestkernel
 
 from .hl_api_connection_helpers import (_process_input_nodes, _connect_layers_needed,
                                         _connect_spatial, _process_conn_spec,
@@ -279,7 +280,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
         _connect_spatial(pre, post, spatial_projections)
     else:
         # sps(processed_conn_spec)
-        kernel.llapi_connect(pre._datum, post._datum, processed_conn_spec, processed_syn_spec)
+        nestkernel.llapi_connect(pre._datum, post._datum, processed_conn_spec, processed_syn_spec)
         # sr('Connect')
 
     if return_synapsecollection:

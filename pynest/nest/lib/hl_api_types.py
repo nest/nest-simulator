@@ -23,14 +23,31 @@
 Classes defining the different PyNEST types
 """
 
+import numpy
+from math import floor, log
+import json
 from ..ll_api import *
 from .. import pynestkernel as kernel
+from .. import nestkernel_api as nestkernel
 from .hl_api_helper import *
 from .hl_api_simulation import GetKernelStatus
 
-import numpy
-import json
-from math import floor, log
+
+def sli_func(*args, **kwargs):
+    raise RuntimeError(f'Called sli_func with\nargs: {args}\nkwargs: {kwargs}')
+
+
+def sli_run(*args, **kwargs):
+    raise RuntimeError(f'Called sli_run with\nargs: {args}\nkwargs: {kwargs}')
+
+
+def sps(*args, **kwargs):
+    raise RuntimeError(f'Called sps with\nargs: {args}\nkwargs: {kwargs}')
+
+
+def sr(*args, **kwargs):
+    raise RuntimeError(f'Called sr with\nargs: {args}\nkwargs: {kwargs}')
+
 
 try:
     import pandas
@@ -193,7 +210,7 @@ class NodeCollection(object):
             # Data from user, must be converted to datum
             # Data can be anything that can be converted to a NodeCollection,
             # such as list, tuple, etc.
-            nc = kernel.llapi_make_nodecollection(data)  # TODO-PYNEST-NG: implement
+            nc = nestkernel.llapi_make_nodecollection(data)  # TODO-PYNEST-NG: implement
             self._datum = nc._datum
 
     def __iter__(self):
@@ -223,7 +240,7 @@ class NodeCollection(object):
             if step < 1:
                 raise IndexError('slicing step for NodeCollection must be strictly positive')
 
-            return kernel.llapi_slice(self._datum, start, stop, step)
+            return nestkernel.llapi_slice(self._datum, start, stop, step)
         elif isinstance(key, (int, numpy.integer)):
             if abs(key + (key >= 0)) > self.__len__():
                 raise IndexError('index value outside of the NodeCollection')
@@ -279,10 +296,10 @@ class NodeCollection(object):
         return not self == other
 
     def __len__(self):
-        return kernel.llapi_nc_size(self._datum)
+        return nestkernel.llapi_nc_size(self._datum)
 
     def __str__(self):
-        return kernel.llapi_to_string(self._datum).decode('utf8')
+        return nestkernel.llapi_to_string(self._datum).decode('utf8')
 
     def __repr__(self):
         return self.__str__()
@@ -375,7 +392,7 @@ class NodeCollection(object):
 
         if len(params) == 0:
             # get() is called without arguments
-            result = kernel.llapi_get_nc_status(self._datum)
+            result = nestkernel.llapi_get_nc_status(self._datum)
         elif len(params) == 1:
             # params is a tuple with a string or list of strings
             result = get_parameters(self, params[0])
@@ -461,7 +478,7 @@ class NodeCollection(object):
         if (isinstance(params, (list, tuple)) and self.__len__() != len(params)):
             raise TypeError("status dict must be a dict, or a list of dicts of length {} ".format(self.__len__()))
 
-        kernel.llapi_set_nc_status(self._datum, params)
+        nestkernel.llapi_set_nc_status(self._datum, params)
 
     def tolist(self):
         """

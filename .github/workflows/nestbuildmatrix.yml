@@ -101,7 +101,7 @@ jobs:
 
       - name: "Install dependencies"
         run: |
-          apt install python3-docutils
+          sudo apt install python3-docutils
           wget --progress=dot:mega "https://github.com/errata-ai/vale/releases/download/v2.15.2/vale_2.15.2_Linux_64-bit.tar.gz"
           echo "7528175c995818bcb88b07574dd2e17c1aad13f5676880f43927bb8f673095aa  vale_2.15.2_Linux_64-bit.tar.gz" | sha256sum -c
           tar -xzf vale_2.15.2_Linux_64-bit.tar.gz

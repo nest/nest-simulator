@@ -68,6 +68,50 @@ jobs:
         run: |
           rstcheck -r doc/
 
+  vale-action:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: "Vale documentation linting"
+        uses: errata-ai/vale-action@v1.5.0
+        # 1.0.1
+        with:
+          config: https://raw.githubusercontent.com/terhorstd/nest-simulator/separated-checks-vale/.vale.ini
+        env:
+          # Required, set by GitHub actions automatically:
+          # https://docs.github.com/en/actions/security-guides/automatic-token-authentication#about-the-github_token-secret
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  vale:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.9
+
+      - name: "Install dependencies"
+        run: |
+          sudo apt install python3-docutils
+          wget --progress=dot:mega "https://github.com/errata-ai/vale/releases/download/v2.15.2/vale_2.15.2_Linux_64-bit.tar.gz"
+          echo "7528175c995818bcb88b07574dd2e17c1aad13f5676880f43927bb8f673095aa  vale_2.15.2_Linux_64-bit.tar.gz" | sha256sum -c
+          tar -xzf vale_2.15.2_Linux_64-bit.tar.gz
+
+      - name: "Run vale..."
+        run: |
+          echo "Starting vale..."
+          ./vale -v
+          ./vale doc
+
   pydocstyle:
     runs-on: "ubuntu-20.04"
     steps:

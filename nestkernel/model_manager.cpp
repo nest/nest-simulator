@@ -104,7 +104,6 @@ ModelManager::initialize()
     models_.push_back( pristine_models_[ i ].first->clone( name ) );
     if ( not pristine_models_[ i ].second )
     {
-      std::cerr << name << " " << i << "\n";
       modeldict_[ name ] = i;
     }
   }

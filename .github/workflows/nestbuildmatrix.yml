@@ -79,8 +79,8 @@ jobs:
       - name: "Vale documentation linting"
         uses: errata-ai/vale-action@v1.5.0
         # 1.0.1
-        with:
-          config: https://raw.githubusercontent.com/terhorstd/nest-simulator/separated-checks-vale/.vale.ini
+        #with:
+        #  config: https://raw.githubusercontent.com/terhorstd/nest-simulator/separated-checks-vale/.vale.ini
         env:
           # Required, set by GitHub actions automatically:
           # https://docs.github.com/en/actions/security-guides/automatic-token-authentication#about-the-github_token-secret

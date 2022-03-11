@@ -1,3 +1,5 @@
+.. _release_3.3:
+
 All about NEST 3.3
 ==================
 
@@ -10,10 +12,6 @@ NEST.
 
 If you transition from a version earlier than 3.0, please see our
 selection of earlier :doc:`transition guides <release_notes/index>`.
-
-.. contents:: On this page you'll find
-   :local:
-   :depth: 1
 
 Model defaults
 ~~~~~~~~~~~~~~

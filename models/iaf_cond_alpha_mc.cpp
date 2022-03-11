@@ -146,7 +146,7 @@ nest::iaf_cond_alpha_mc_dynamics( double, const double y[], double f[], void* pn
     case N::DIST:
     {
       V = y[ S::idx( N::DIST, S::V_M ) ];
-      I_conn = node.P_.g_conn[ N::PROX ] * ( V - y[ S::idx( N::PROX - 1, S::V_M ) ] );
+      I_conn = node.P_.g_conn[ N::PROX ] * ( V - y[ S::idx( N::PROX, S::V_M ) ] );
       break;
     }
     }

@@ -76,9 +76,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: "Strange file FIXME FIXME FIXME"
-        run: touch vocab.txt
-
       - name: "Vale documentation linting"
         uses: errata-ai/vale-action@v1.5.0
         # 1.0.1
@@ -105,11 +102,8 @@ jobs:
 
       - name: "Run vale..."
         run: |
-          ./vale -v
-          pwd
-          ls -lisa
           echo "Starting vale..."
-          touch vocab.txt
+          ./vale -v
           ./vale doc
 
   pydocstyle:

@@ -40,7 +40,7 @@ If you notice any errors or weaknesses in the documentation, please
 submit an `Issue <https://github.com/nest/nest-simulator/issues>`_ in
 our GitHub repository.
 
-You can also make changes directly to your forked copy of the `NEST source
+You can also make changes directly to your forked copy of the `source
 code repository <https://github.com/nest/nest-simulator>`_ and create a `pull
 request <https://github.com/nest/nest-simulator/pulls>`_. Just follow the
 workflow below!
@@ -85,36 +85,37 @@ You can build and preview the documentation locally by running the following
 commands.
 
 1. Go to the :ref:`build directory <source-install>` of NEST (i.e., the
-directory where you ran ``cmake``)
+   directory where you ran ``cmake``)
 
-.. code-block:: bash
+   .. code-block:: bash
 
-   cd nest-simulator-x.y.z-build
+      cd nest-simulator-x.y.z-build
 
 2. Generate HTML files
 
-.. code-block:: bash
+   .. code-block:: bash
 
-   make html
+      make html
 
 3. Preview files. They are located in ``doc/userdoc/html``
 
-.. code-block:: bash
+   .. code-block:: bash
 
-   browser doc/userdoc/html/index.html
+      browser doc/userdoc/html/index.html
 
-To install the documentation under ``<nest_install_dir>`` along with
-the rest of NEST, the ``make html`` command can be followed by
+   To install the documentation under ``<nest_install_dir>`` along with
+   the rest of NEST, the ``make html`` command can be followed by
 
-.. code-block:: bash
+   .. code-block:: bash
 
-   make install
+      make install
 
-If you want to view the files after installation, you can run
+   If you want to view the files after installation, you can run
 
-.. code-block:: bash
+   .. code-block:: bash
 
-   browser <nest_install_dir>/share/doc/nest/html/index.html
+      browser <nest_install_dir>/share/doc/nest/html/index.html
+
 
 Editing and creating pages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -136,23 +137,24 @@ sphinx/rest_syntax.html>`_ files or to create new ones, follow the steps below:
 
 5. Re-render documentation as described above.
 
-You can find our full :ref:`documentation style guide <doc_styleguide> on Read the Docs (optional).
-++++++++++++++++++++++++++++++++++++++
+.. note::
+
+   You can find our full :ref:`documentation style guide <doc_styleguide>` on Read the Docs (optional).
 
 Proceed as follows to preview your version of the documentation on Read the
 Docs.
 
 1. Check that unwanted directories are listed in ``.gitignore``:
 
-.. code-block:: bash
+   .. code-block:: bash
 
-   _build
-   _static
-   _templates
+       _build
+       _static
+       _templates
 
 2. Add, commit and push your changes to GitHub.
 
-3. Go to `Read the Docs <https://readthedocs.org/>`_. Sign up for an account
+3. `Sign up for a Read the Docs account <https://readthedocs.org/>`_,
    if you don't have one.
 
 4. `Import <https://readthedocs.org/dashboard/import/>`_ the project.

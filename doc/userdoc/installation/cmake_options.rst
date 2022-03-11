@@ -152,6 +152,7 @@ following steps in order to add support for MPI:
   3. If 2. does not work, but you know the correct compiler wrapper
      for your installation, try adding the following to the invocation
      of ``cmake``::
+
          -DMPI_CXX_COMPILER=myC++_CompilerWrapper \
          -DMPI_C_COMPILER=myC_CompilerWrapper -Dwith-mpi=ON
 
@@ -232,6 +233,6 @@ overridden with ::
       -Dwith-intel-compiler-flags="<intel-flags>"
 
 Portland compiler
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 
 Use the ``-Kieee`` flag to ensure that computations obey the IEEE754 standard for floating point numerics.

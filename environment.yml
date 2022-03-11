@@ -55,6 +55,7 @@ dependencies:
   - pandas
   - scipy
   - mpi4py
+  - data-science-types
   - terminaltables
   - pycodestyle
   - pydocstyle

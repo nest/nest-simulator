@@ -527,7 +527,8 @@ TESTSUITE_RESULT=$?
 
 # Mac OS X: Restore old crash reporter state
 if test "x${INFO_OS}" = xDarwin ; then
-    defaults write com.apple.CrashReporter DialogType "${TEST_CRSTATE}" || echo "WARNING: Could not reset CrashReporter DialogType to '${TEST_CRSTATE}'!"
+    #defaults write com.apple.CrashReporter DialogType "${TEST_CRSTATE}" || echo "WARNING: Could not reset CrashReporter DialogType to '${TEST_CRSTATE}'!"
+    defaults write com.apple.CrashReporter DialogType "${TEST_CRSTATE}"
 fi
 
 exit $TESTSUITE_RESULT

@@ -224,7 +224,7 @@ ModelManager::register_node_model_( Model* model )
   builtin_node_models_.push_back( model );
 
   Model* cloned_model = model->clone( name );
-  cloned_model->set_model_id(id);
+  cloned_model->set_model_id( id );
 
   node_models_.push_back( cloned_model );
 

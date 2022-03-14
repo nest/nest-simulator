@@ -34,7 +34,7 @@ as NodeCollections.
 
 .. seealso::
 
-    You can find a :doc:`full SynapseCollection example <../../../auto_examples/synapsecollection>` on our example
+    You can find a :doc:`full SynapseCollection example <../../auto_examples/synapsecollection>` on our example
     network page.
 
 Printing

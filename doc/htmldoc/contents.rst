@@ -19,11 +19,11 @@ Table of Contents
    Neurons <neurons/index>
    Synapses and connections <synapses/index>
    Devices  <devices/index>
-   Spatially-structured networks <networks/index>
+   Spatially-structured networks <networks/spatially_structured_networks>
    Simulation behavior <nest_behavior/running_simulations>
    Random numbers <nest_behavior/random_numbers>
    Built-in timers <nest_behavior/built-in_timers>
-   Connect to other tools <nest_behavior/index>
+   Connect to other tools <coupling_nest/index>
    HPC optimization  <hpc/index>
    Benchmarking <hpc/benchmarking>
 
@@ -57,8 +57,4 @@ Table of Contents
    News and updates <https://nest-simulator.org>
    Publications <https://www.nest-simulator.org/publications/>
    NEST Initiative <https://www.nest-initiative.org/>
-
-.. toctree::
-   :maxdepth: 1
-
    license

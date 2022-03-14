@@ -3,8 +3,6 @@
 Coupling NEST with other tools
 ==============================
 
-Transmit data
-Communicate with other tools
 
 .. toctree::
     :maxdepth: 1

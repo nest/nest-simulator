@@ -74,7 +74,7 @@ distribution.
     ax[0].set_ylabel('V_m');
 
 
-.. image:: ../../../static/img/NEST3_13_0.png
+.. image:: ../static/img/NEST3_13_0.png
 
 
 .. _spatial_ex:
@@ -108,7 +108,7 @@ To create spatially distributed nodes (see :ref:`spatial_networks` for more), us
     grid_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[10, 8]))
     nest.PlotLayer(grid_nodes);
 
-.. image:: ../../../static/img/NEST3_23_0.png
+.. image:: ../static/img/NEST3_23_0.png
   :width: 500px
 
 .. code-block:: ipython
@@ -118,7 +118,7 @@ To create spatially distributed nodes (see :ref:`spatial_networks` for more), us
                                                          num_dimensions=2))
     nest.PlotLayer(free_nodes);
 
-.. image:: ../../../static/img/NEST3_24_0.png
+.. image:: ../static/img/NEST3_24_0.png
   :width: 500px
 
 After you have created your spatially distributed nodes, you can use  the `spatial` property to set
@@ -178,7 +178,7 @@ node or connection parameters.
     ax.set_xlabel('Node position on x-axis')
     ax.set_ylabel('V_m');
 
-  .. image:: ../../../static/img/NEST3_25_0.png
+  .. image:: ../static/img/NEST3_25_0.png
 
 
 
@@ -257,7 +257,7 @@ parameter:
     ax.set_xlabel('Target NodeID')
     ax.set_ylabel('Num. connections');
 
-.. image:: ../../../static/img/NEST3_34_0.png
+.. image:: ../static/img/NEST3_34_0.png
 
 
 
@@ -309,7 +309,7 @@ given as argument.
 
 
 
-.. image:: ../../../static/img/NEST3_27_0.png
+.. image:: ../static/img/NEST3_27_0.png
 
 .. _logic:
 
@@ -401,7 +401,7 @@ statement. Three arguments are required:
 
 
 
-.. image:: ../../../static/img/NEST3_26_0.png
+.. image:: ../static/img/NEST3_26_0.png
 
 
 .. _compare_ex:

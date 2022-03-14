@@ -103,6 +103,10 @@ fi
 
 if test "${PYTHON}"; then
       TIME_LIMIT=120  # seconds, for each of the Python tests
+      echo $PYTHON
+      PYTEST_VERSION="$(${PYTHON -m pytest --version 2>&1)" || {echo "version failed"}
+      echo $PYTEST_VERSION
+      PYTEST_VERSION="$(${PYTHON} -m pytest --version --timeout ${TIME_LIMIT} 2>&1)" || {echo "timeout failed"}
       PYTEST_VERSION="$(${PYTHON} -m pytest --version --timeout ${TIME_LIMIT} --numprocesses=1 2>&1)" || {
         echo "Error: PyNEST testing requested, but 'pytest' cannot be run."
         echo "       Testing also requires the 'pytest-xdist' and 'pytest-timeout' extensions."

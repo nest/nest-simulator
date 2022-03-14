@@ -9,5 +9,4 @@ alongside high quality implementations of models published by the neuroscience c
 
 Need to create your own?
 
-* Check out :doc:`NESTML <nestml:index>`, a domain-specific language supporting neuron and synapse models without
-  any C++.
+* Check out :doc:`NESTML <nestml:index>`, a domain-specific language supporting neuron and synapse models with a code generation backend that generates model code in C++ for NEST.

@@ -44,7 +44,7 @@ and likely used by developers or very advanced users).
    :caption: SLI docs
    :glob:
 
-   sli_docs/*
+   sli_docs/index
 
 .. toctree::
    :maxdepth: 1

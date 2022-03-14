@@ -103,16 +103,16 @@ fi
 
 if test "${PYTHON}"; then
       TIME_LIMIT=120  # seconds, for each of the Python tests
-      echo $PYTHON
+      echo "Python Version: '$PYTHON'"
       PYTEST_VERSION="$(${PYTHON -m pytest --version 2>&1)" || {echo "version failed"}
-      echo $PYTEST_VERSION
-      #PYTEST_VERSION="$(${PYTHON} -m pytest --version --timeout ${TIME_LIMIT} 2>&1)" || {echo "timeout failed"}
-      #PYTEST_VERSION="$(${PYTHON} -m pytest --version --timeout ${TIME_LIMIT} --numprocesses=1 2>&1)" || {
-      #   echo "Error: PyNEST testing requested, but 'pytest' cannot be run."
-      #   echo "       Testing also requires the 'pytest-xdist' and 'pytest-timeout' extensions."
-      #   exit 1
-    #}
-    #PYTEST_VERSION="$(echo "${PYTEST_VERSION}" | cut -d' ' -f2)"
+      echo "Pytest Version: '$PYTEST_VERSION'"
+      PYTEST_VERSION="$(${PYTHON} -m pytest --version --timeout ${TIME_LIMIT} 2>&1)" || {echo "timeout failed"}
+      PYTEST_VERSION="$(${PYTHON} -m pytest --version --timeout ${TIME_LIMIT} --numprocesses=1 2>&1)" || {
+        echo "Error: PyNEST testing requested, but 'pytest' cannot be run."
+        echo "       Testing also requires the 'pytest-xdist' and 'pytest-timeout' extensions."
+        exit 1
+   }
+    PYTEST_VERSION="$(echo "${PYTEST_VERSION}" | cut -d' ' -f2)"
 fi
 
 python3 -c "import junitparser" >/dev/null 2>&1
@@ -527,8 +527,7 @@ TESTSUITE_RESULT=$?
 
 # Mac OS X: Restore old crash reporter state
 if test "x${INFO_OS}" = xDarwin ; then
-    #defaults write com.apple.CrashReporter DialogType "${TEST_CRSTATE}" || echo "WARNING: Could not reset CrashReporter DialogType to '${TEST_CRSTATE}'!"
-    defaults write com.apple.CrashReporter DialogType "${TEST_CRSTATE}"
+    defaults write com.apple.CrashReporter DialogType "${TEST_CRSTATE}" || echo "WARNING: Could not reset CrashReporter DialogType to '${TEST_CRSTATE}'!"
 fi
 
 exit $TESTSUITE_RESULT

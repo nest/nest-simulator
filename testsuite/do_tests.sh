@@ -103,9 +103,10 @@ fi
 
 if test "${PYTHON}"; then
       TIME_LIMIT=120  # seconds, for each of the Python tests
-      echo "Python Version: '$PYTHON'"
+      PYTHON_VERSION=$(python -V 2>&1 | cut -d\  -f 2)
+      echo "${PYTHON_VERSION}"
       PYTEST_VERSION="$(${PYTHON -m pytest --version 2>&1)" || {echo "version failed"}
-      echo "Pytest Version: '$PYTEST_VERSION'"
+      echo "${PYTEST_VERSION}"
       PYTEST_VERSION="$(${PYTHON} -m pytest --version --timeout ${TIME_LIMIT} 2>&1)" || {echo "timeout failed"}
       PYTEST_VERSION="$(${PYTHON} -m pytest --version --timeout ${TIME_LIMIT} --numprocesses=1 2>&1)" || {
         echo "Error: PyNEST testing requested, but 'pytest' cannot be run."

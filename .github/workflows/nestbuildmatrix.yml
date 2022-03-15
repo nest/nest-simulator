@@ -135,6 +135,11 @@ jobs:
       - name: "Run lychee..."
         run: |
           ./lychee .
+        env:
+          # Required, set by GitHub actions automatically:
+          # https://docs.github.com/en/actions/security-guides/automatic-token-authentication#about-the-github_token-secret
+          # to overcome rate limiting
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   pydocstyle:
     runs-on: "ubuntu-20.04"

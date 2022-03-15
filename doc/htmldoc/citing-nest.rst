@@ -1,5 +1,3 @@
-:orphan:
-
 .. _cite_nest:
 
 Cite NEST

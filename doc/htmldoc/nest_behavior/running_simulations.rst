@@ -1,7 +1,7 @@
 .. _run_simulations:
 
-How to run simulations
-======================
+Simulation behavior
+===================
 
 Time-driven and event-driven approaches
 ---------------------------------------

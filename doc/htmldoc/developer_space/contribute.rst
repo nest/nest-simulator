@@ -19,6 +19,8 @@ you need to send us a completed and signed
 :download:`NEST Contributor Agreement <NEST_Contributor_Agreement.pdf>` to transfer your
 copyright to the NEST Initiative before we can merge your pull request.
 
+.. _issues:
+
 Report bugs and request features
 --------------------------------
 

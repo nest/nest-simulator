@@ -1,7 +1,7 @@
 .. _community:
 
-NEST Community
-==============
+Contact us
+==========
 
 Mailing list
 ------------
@@ -16,6 +16,12 @@ By subscribing to the mailing list you will also get notified of all NEST relate
 
 Before submitting a question, please take a look at our :ref:`guidelines for the NEST mailing list <mail_guidelines>`.
 
+Submit an issue or pull request on Github
+-----------------------------------------
+
+You can :ref:`issues` on Github or contribute to the code or documentation. See our :ref:`contriute` page for
+details.
+
 Open video conference
 ---------------------
 
@@ -25,20 +31,4 @@ This is an opportunity to have discussions in real time with developers.
 
 Information for dates and how to join can be found on `our GitHub wiki <https://github.com/nest/nest-simulator/wiki/Open-NEST-Developer-Video-Conference>`_
 
-Publications using NEST
------------------------
-
-We have compiled  a `list of NEST-related peer-reviewed publications <https://www.nest-simulator.org/publications/>`_ that
-we update regularly.
-
-If you have used NEST in your research, let us know!
-Don't forget to :ref:`cite NEST <cite_nest>` in your work.
-
-Have a talk or poster where you used NEST? `Download our logo  <https://github.com/nest/nest-simulator/tree/master/doc/logos>`_!
-
-Become a NEST member
---------------------
-
-If you would like to be actively involved in the NEST Initiative and support its
-goals, please see our `member page <https://www.nest-initiative.org/membership>`_.
 

@@ -21,10 +21,10 @@ Table of Contents
    Devices  <devices/index>
    Spatially-structured networks <networks/spatially_structured_networks>
    Simulation behavior <nest_behavior/running_simulations>
-   Random numbers <nest_behavior/random_numbers>
+   Randomness in NEST <nest_behavior/random_numbers>
    Built-in timers <nest_behavior/built-in_timers>
-   Connect to other tools <coupling_nest/index>
-   HPC optimization  <hpc/index>
+   Connect NEST with other tools <connect_nest/index>
+   Parallel computing <hpc/parallel_computing>
    Benchmarking <hpc/benchmarking>
 
 
@@ -32,6 +32,7 @@ Table of Contents
    :maxdepth: 1
    :caption: Reference material
 
+   Release notes <release_notes/index>
    ref_material/pynest_apis
    Model directory <models/index>
    From NEST 2.x to 3.x <release_notes/v3.0/refguide_nest2_nest3>
@@ -39,22 +40,17 @@ Table of Contents
 
 .. toctree::
    :maxdepth: 1
-   :caption: Release notes
-
-   Release notes <release_notes/index>
-
-
-.. toctree::
-   :maxdepth: 1
    :caption: Community
 
-   troubleshooting
-   Command line help <getting_help>
+   Get help <getting_help>
    Contact us <community>
-   related_projects
    Contribute <developer_space/contribute>
+   Cite NEST <citing-nest>
    Developer space <developer_space/index>
+   related_projects
    News and updates <https://nest-simulator.org>
    Publications <https://www.nest-simulator.org/publications/>
    NEST Initiative <https://www.nest-initiative.org/>
    license
+
+

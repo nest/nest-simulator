@@ -9,11 +9,10 @@ Before you get started, please take a look at our :ref:`detailed guidelines for 
 Development environment
 -----------------------
 
-We have provided an `environment.yml <https://github.com/nest/nest-simulator/blob/master/environment.yml>`_ file that lists and categorizes all tools, including the coding style tools for NEST.
-We recommend that all dependencies and tools needed for NEST development and workflows be installed in a single environment,
-such as conda.
+We have provided an `environment.yml <https://github.com/nest/nest-simulator/blob/master/environment.yml>`_ file that contains all packages to do development
+in NEST, including the tools to check coding style.
 
-See our :ref:`instructions on setting up a NEST developer environment <linux_install>`.
+See our :ref:`instructions on installing NEST from source <dev_install>`.
 
 
 Tooling

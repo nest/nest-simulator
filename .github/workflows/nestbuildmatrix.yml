@@ -133,7 +133,8 @@ jobs:
           tar -xzf 'lychee-v0.8.2-x86_64-unknown-linux-gnu.tar.gz'
 
       - name: "Run lychee..."
-        run: "./lychee build_support/ debian/ doc/{*.txt,*.md,auto_examples,devdoc,userdoc,models} examples/ lib* models/ nest* pynest/ testsuite/ *.md"
+        run: "./lychee build_support/ debian/ doc/{*.txt,*.md,devdoc,userdoc,models} examples/ lib* models/ nest* pynest/ testsuite/ *.md"
+        # ,auto_examples
         env:
           # Required, set by GitHub actions automatically:
           # https://docs.github.com/en/actions/security-guides/automatic-token-authentication#about-the-github_token-secret

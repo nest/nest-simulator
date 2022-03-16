@@ -105,6 +105,15 @@ if test "${PYTHON}"; then
       TIME_LIMIT=120  # seconds, for each of the Python tests
       PYTHON_VERSION=$(${PYTHON} -V 2>&1 | cut -d' ' -f2)
       echo "PYTHON: *${PYTHON_VERSION}*"
+      echo "Trying pytest"
+      ${PYTHON} -m pytest --version
+      echo "Done"
+      echo "Trying pytest timeout"
+      ${PYTHON} -m pytest --version --timeout ${TIME_LIMIT} 
+      echo "Done"
+      echo "Trying pytest all"
+      ${PYTHON} -m pytest --version --numprocesses=1
+      echo "Done"      
       PYTEST_VERSION="$(${PYTHON} -m pytest --version 2>&1)"
       echo "PYTEST: *${PYTEST_VERSION}*"
       PYTEST_VERSION="$(${PYTHON} -m pytest --version --timeout ${TIME_LIMIT} 2>&1)"

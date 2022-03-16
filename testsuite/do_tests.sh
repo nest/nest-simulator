@@ -103,11 +103,14 @@ fi
 
 if test "${PYTHON}"; then
       TIME_LIMIT=120  # seconds, for each of the Python tests
-      #PYTHON_VERSION=$(python -V 2>&1 | cut -d\  -f 2)
-      #echo "${PYTHON_VERSION}"
-      #PYTEST_VERSION="$(${PYTHON -m pytest --version 2>&1)" || {echo "version failed"}
-      #echo "${PYTEST_VERSION}"
-      #PYTEST_VERSION="$(${PYTHON} -m pytest --version --timeout ${TIME_LIMIT} 2>&1)" || {echo "timeout failed"}
+      PYTHON_VERSION=$(${PYTHON} -V 2>&1 | cut -d' ' -f2)
+      echo "PYTHON: *${PYTHON_VERSION}*"
+      PYTEST_VERSION="$(${PYTHON} -m pytest --version 2>&1)" || {echo "version failed"}
+      echo "PYTEST: *${PYTEST_VERSION}*"
+      PYTEST_VERSION="$(${PYTHON} -m pytest --version --timeout ${TIME_LIMIT} 2>&1)" || {echo "timeout failed"}
+      echo "PYTEST: *${PYTEST_VERSION}* WITH TIMEOUT"      
+      PYTEST_VERSION="$(${PYTHON} -m pytest --version --numprocesses=1 2>&1)" || {echo "timeout failed"}
+      echo "PYTEST: *${PYTEST_VERSION}* WITH NUMPROCS"      
       pip freeze > "pippackages.txt"
       pip list -v
       echo "$PATH"
@@ -117,8 +120,9 @@ if test "${PYTHON}"; then
         echo "Error: PyNEST testing requested, but 'pytest' cannot be run."
         echo "       Testing also requires the 'pytest-xdist' and 'pytest-timeout' extensions."
         exit 1
-   }
-    PYTEST_VERSION="$(echo "${PYTEST_VERSION}" | cut -d' ' -f2)"
+        }
+      echo "PYTEST: *${PYTEST_VERSION}* WITH TIMEOUT AND NUMPROCS"
+      PYTEST_VERSION="$(echo "${PYTEST_VERSION}" | cut -d' ' -f2)"
 fi
 
 python3 -c "import junitparser" >/dev/null 2>&1

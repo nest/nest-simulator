@@ -329,6 +329,18 @@ get_nodes( const dictionary& params, const bool local_only )
   return kernel().node_manager.get_nodes( params, local_only );
 }
 
+bool
+equal( const NodeCollectionPTR lhs, const NodeCollectionPTR rhs )
+{
+  return lhs->operator==( rhs );
+}
+
+bool
+contains( const NodeCollectionPTR nc, const size_t node_id )
+{
+  return nc->contains( node_id );
+}
+
 void
 connect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,

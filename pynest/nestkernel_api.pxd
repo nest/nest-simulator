@@ -30,6 +30,7 @@ from cpython.ref cimport PyObject
 cdef extern from "node_collection.h" namespace "nest":
     cppclass NodeCollectionPTR:
         NodeCollectionPTR()
+
     NodeCollectionPTR operator+(NodeCollectionPTR, NodeCollectionPTR)
 
 cdef extern from "node_collection.h":
@@ -77,6 +78,9 @@ cdef extern from "nest.h" namespace "nest":
     NodeCollectionPTR create( const string model_name, const long n ) except +
 
     NodeCollectionPTR make_nodecollection( const vector[size_t] node_ids ) except +
+
+    cbool equal( const NodeCollectionPTR lhs, const NodeCollectionPTR rhs ) except +
+    cbool contains( const NodeCollectionPTR nc, const size_t node_id ) except +
 
     NodeCollectionPTR slice_nc( const NodeCollectionPTR nc, long start, long stop, long step ) except +
     void connect(NodeCollectionPTR sources,

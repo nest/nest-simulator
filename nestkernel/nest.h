@@ -123,6 +123,9 @@ NodeCollectionPTR make_nodecollection( const std::vector< index > node_ids );
 
 NodeCollectionPTR get_nodes( const dictionary& dict, const bool local_only );
 
+bool equal( const NodeCollectionPTR lhs, const NodeCollectionPTR rhs );
+bool contains( const NodeCollectionPTR nc, const size_t node_id );
+
 void connect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const dictionary& connectivity,

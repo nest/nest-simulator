@@ -29,6 +29,7 @@ import cython
 
 from libcpp.string cimport string
 from libcpp.vector cimport vector
+from libcpp.memory cimport shared_ptr
 
 from cython.operator cimport dereference as deref
 from cython.operator cimport preincrement as inc
@@ -216,6 +217,22 @@ def llapi_join_nc(NodeCollectionObject lhs, NodeCollectionObject rhs):
     obj = NodeCollectionObject()
     obj._set_nc(result)
     return nest.NodeCollection(obj)
+
+
+def llapi_eq_nc(NodeCollectionObject lhs, NodeCollectionObject rhs):
+    try:
+        return equal(lhs.thisptr, rhs.thisptr)
+    except RuntimeError as e:
+        exceptionCls = getattr(NESTErrors, str(e))
+        raise exceptionCls('llapi_eq_nc', '') from None
+
+
+def llapi_nc_contains(NodeCollectionObject nc, long node_id):
+    try:
+        return contains(nc.thisptr, node_id)
+    except RuntimeError as e:
+        exceptionCls = getattr(NESTErrors, str(e))
+        raise exceptionCls('llapi_nc_contains', '') from None
 
 
 def llapi_take_array_index(NodeCollectionObject node_collection, object array):

@@ -273,12 +273,12 @@ class NodeCollection(object):
                 raise IndexError('Bool index array must be the same length as NodeCollection')
             if not is_booltype and len(numpy.unique(key)) != len(key):
                 raise ValueError('All node IDs in a NodeCollection have to be unique')
-            return nestkernel.llapi_(self._datum, key)
+            return nestkernel.llapi_take_array_index(self._datum, key)
         else:
             raise IndexError('only integers, slices, lists, tuples, and numpy arrays are valid indices')
 
     def __contains__(self, node_id):
-        return sli_func('MemberQ', self._datum, node_id)
+        return nestkernel.llapi_nc_contains(self._datum, node_id)
 
     def __eq__(self, other):
         if not isinstance(other, NodeCollection):
@@ -287,7 +287,7 @@ class NodeCollection(object):
         if self.__len__() != other.__len__():
             return False
 
-        return sli_func('eq', self, other)
+        return nestkernel.llapi_eq_nc(self._datum, other._datum)
 
     def __neq__(self, other):
         if not isinstance(other, NodeCollection):

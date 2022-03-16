@@ -30,7 +30,7 @@ Features
     intervention.
 
 8.  NEST runs on a wide range of UNIX-like systems, from MacBooks to
-    BlueGene supercomputers.
+    supercomputers.
 
 9.  NEST has minimal dependencies. All it really needs is a C++
     compiler. Everything else is optional.
@@ -132,7 +132,6 @@ Supported platforms
 -  Linux
 -  Mac OS X
 -  Virtual machines for use under Windows
--  IBM BlueGene
 
 By support we mean that we regularly test and use NEST on recent
 versions of these systems and that NEST therefore should work on those

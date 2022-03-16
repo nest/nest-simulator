@@ -186,9 +186,9 @@ NodeManager::add_node( index model_id, long n )
 void
 NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr )
 {
-  // upper limit for number of neurons per thread; in practice, either
-  // max_new_per_thread-1 or max_new_per_thread nodes will be created
   const size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
+  // Upper limit for number of neurons per thread; in practice, either
+  // max_new_per_thread-1 or max_new_per_thread nodes will be created.
   const size_t max_new_per_thread =
     static_cast< size_t >( std::ceil( static_cast< double >( max_node_id - min_node_id + 1 ) / num_vps ) );
 
@@ -199,7 +199,6 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
     try
     {
       model.reserve_additional( t, max_new_per_thread );
-
       // Need to find smallest node ID with:
       //   - node ID local to this vp
       //   - node_id >= min_node_id
@@ -210,7 +209,7 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
 
       while ( node_id <= max_node_id )
       {
-        Node* node = model.allocate( t );
+        Node* node = model.create( t );
         node->set_node_id_( node_id );
         node->set_nc_( nc_ptr );
         node->set_model_id( model.get_model_id() );
@@ -221,7 +220,7 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
         local_nodes_[ t ].add_local_node( *node );
         node_id += num_vps;
       }
-      local_nodes_[ t ].update_max_node_id( max_node_id );
+      local_nodes_[ t ].set_max_node_id( max_node_id );
     }
     catch ( std::exception& err )
     {
@@ -249,7 +248,7 @@ NodeManager::add_devices_( Model& model, index min_node_id, index max_node_id, N
         // keep track of number of thread local devices
         ++num_thread_local_devices_[ t ];
 
-        Node* node = model.allocate( t );
+        Node* node = model.create( t );
         node->set_node_id_( node_id );
         node->set_nc_( nc_ptr );
         node->set_model_id( model.get_model_id() );
@@ -260,7 +259,7 @@ NodeManager::add_devices_( Model& model, index min_node_id, index max_node_id, N
 
         local_nodes_[ t ].add_local_node( *node );
       }
-      local_nodes_[ t ].update_max_node_id( max_node_id );
+      local_nodes_[ t ].set_max_node_id( max_node_id );
     }
     catch ( std::exception& err )
     {
@@ -286,7 +285,7 @@ NodeManager::add_music_nodes_( Model& model, index min_node_id, index max_node_i
           // keep track of number of thread local devices
           ++num_thread_local_devices_[ t ];
 
-          Node* node = model.allocate( 0 );
+          Node* node = model.create( 0 );
           node->set_node_id_( node_id );
           node->set_nc_( nc_ptr );
           node->set_model_id( model.get_model_id() );
@@ -298,7 +297,7 @@ NodeManager::add_music_nodes_( Model& model, index min_node_id, index max_node_i
           local_nodes_[ 0 ].add_local_node( *node );
         }
       }
-      local_nodes_.at( t ).update_max_node_id( max_node_id );
+      local_nodes_.at( t ).set_max_node_id( max_node_id );
     }
     catch ( std::exception& err )
     {
@@ -527,28 +526,20 @@ NodeManager::ensure_valid_thread_local_ids()
       {
         wfr_nodes_vec_[ tid ].clear();
 
-        size_t num_thread_local_wfr_nodes = 0;
-        for ( size_t idx = 0; idx < local_nodes_[ tid ].size(); ++idx )
-        {
-          Node* node = local_nodes_[ tid ].get_node_by_index( idx );
-          if ( node != 0 and node->node_uses_wfr_ )
-          {
-            ++num_thread_local_wfr_nodes;
-          }
-        }
+        const size_t num_thread_local_wfr_nodes = std::count_if( local_nodes_[ tid ].begin(),
+          local_nodes_[ tid ].end(),
+          []( const SparseNodeArray::NodeEntry& elem ) { return elem.get_node()->node_uses_wfr_; } );
         wfr_nodes_vec_[ tid ].reserve( num_thread_local_wfr_nodes );
 
-        for ( size_t idx = 0; idx < local_nodes_[ tid ].size(); ++idx )
+        auto node_it = local_nodes_[ tid ].begin();
+        size_t idx = 0;
+        for ( ; node_it < local_nodes_[ tid ].end(); ++node_it, ++idx )
         {
-          Node* node = local_nodes_[ tid ].get_node_by_index( idx );
-
-          if ( node != 0 )
+          auto node = node_it->get_node();
+          node->set_thread_lid( idx );
+          if ( node->node_uses_wfr_ )
           {
-            node->set_thread_lid( idx );
-            if ( node->node_uses_wfr_ )
-            {
-              wfr_nodes_vec_[ tid ].push_back( node );
-            }
+            wfr_nodes_vec_[ tid ].push_back( node );
           }
         }
       } // end of for threads

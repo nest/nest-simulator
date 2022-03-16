@@ -46,28 +46,31 @@ Currently, AMPA, GABA or AMPA+NMDA receptors.
 Description
 +++++++++++
 
-`cm_default` is an implementation of a compartmental model. The structure of the
+``cm_default`` is an implementation of a compartmental model. The structure of the
 neuron -- soma, dendrites, axon -- is user-defined at runtime by adding
-compartments through `nest.SetStatus()`. Each compartment can be assigned
-receptors, also through `nest.SetStatus()`.
+compartments through ``nest.SetStatus()``. Each compartment can be assigned
+receptors, also through ``nest.SetStatus()``.
 
 The default model is passive, but sodium and potassium currents can be added
-by passing non-zero conductances 'g_Na' and 'g_K' with the parameter dictionary
+by passing non-zero conductances ``g_Na`` and ``g_K`` with the parameter dictionary
 when adding compartments. Receptors can be AMPA and/or NMDA (excitatory), and
 GABA (inhibitory). Ion channel and receptor currents to the compartments can be
 customized through NESTML
 
 Usage
 +++++
+
 The structure of the dendrite is user defined. Thus after creation of the neuron
-in the standard manner
+in the standard manner:
 
 .. code-block:: Python
-    cm =  nest.Create('cm_default')
 
-compartments can be added as follows
+  cm =  nest.Create('cm_default')
+
+compartments can be added as follows:
 
 .. code-block:: Python
+
     cm.compartments = [
         {"parent_idx": -1, "params": {"e_L": -65.}},
         {"parent_idx": 0, "params": {"e_L": -60., "g_C": 0.02}}
@@ -75,13 +78,14 @@ compartments can be added as follows
 
 Each compartment is assigned an index, corresponding to the order in which they
 were added. Subsequently, compartment indices are used to specify parent
-compartments in the tree, or are used to assign receptors to the compartments.
+compartments in the tree or are used to assign receptors to the compartments.
 By convention, the first compartment is the root (soma), which has no parent.
-In this case, `parent_index` is ``-1``.
+In this case, ``parent_index`` is -1.
 
-Synaptic receptors can be added as follows
+Synaptic receptors can be added as follows:
 
 .. code-block:: Python
+
     cm.receptors = [{
         "comp_idx": 1,
         "receptor_type": "AMPA",
@@ -90,36 +94,43 @@ Synaptic receptors can be added as follows
 
 Similar to compartments, each receptor is assigned an index, starting at 0 and
 corresponding to the order in which they are added. This index is used
-subsequently to connect synapses to the receptor
+subsequently to connect synapses to the receptor:
 
 .. code-block:: Python
+
     nest.Connect(pre, cm_model, syn_spec={
         'synapse_model': 'static_synapse', 'weight': 5., 'delay': 0.5,
         'receptor_type': 2})
 
-.. note:: In the `nest.SetStatus()` call, the 'receptor_type' entry is string
-  that specifies the type of receptor. In the `nest.Connect()` call, the
-  'receptor_type' entry is and integer that specifies the receptor index.
+.. note::
 
-.. note:: The "compartments" resp. "receptors" entries can be a dict or a list
-  of dicts containing compartment resp. receptor details. When a dict is provided,
-  a single compartment resp. receptor is added to the model. When a list of dicts
-  is provided, multiple compartments resp. receptors are added with a single
-  `nest.SetStatus()` call.
+  In the ``nest.SetStatus()`` call, the ``receptor_type`` entry is a string
+  that specifies the type of receptor. In the ``nest.Connect()`` call, the
+  ``receptor_type`` entry is an integer that specifies the receptor index.
+
+.. note::
+
+  Each compartments' respective "receptors" entries can be a dictionary or a list
+  of dictionaries containing receptor details. When a dictionary is provided,
+  a single compartment receptor is added to the model. When a list of dicts
+  is provided, multiple compartments' receptors are added with a single
+  ``nest.SetStatus()`` call.
 
 Compartment voltages can be recorded. To do so, create a multimeter in the
-standard manner but specify the to be recorded voltages as
-'v_comp{compartment_index}'. Ion channels state variables can be recorded as well,
-using the syntax '{state_variable_name}{compartment_index}'. For receptor state
-variables, use the receptor index '{state_variable_name}{receptor_index}' i.e.
+standard manner but specify the recorded voltages as
+``v_comp{compartment_index}``. State variables for ion channels can be recorded as well,
+using the syntax ``{state_variable_name}{compartment_index}``. For receptor state
+variables, use the receptor index ``{state_variable_name}{receptor_index}``:
 
 .. code-block:: Python
+
     mm = nest.Create('multimeter', 1, {'record_from': ['v_comp0'}, ...})
 
 Current generators can be connected to the model. In this case, the receptor
-type is the compartment index, i.e.
+type is the compartment index:
 
 .. code-block:: Python
+
     dc = nest.Create('dc_generator', {...})
     nest.Connect(dc, cm, syn_spec={..., 'receptor_type': 0}
 
@@ -132,7 +143,7 @@ The following parameters can be set in the status dictionary.
  V_th       mV      Spike threshold (default: -55.0 mV)
 =========== ======= ===========================================================
 
-The following parameters can be set using the `AddCompartment` function
+The following parameters can be used when adding compartments using ``SetStatus()``
 
 =========== ======= ===============================================================
  C_m        uF      Capacitance of compartment (default: 1 uF)
@@ -143,7 +154,7 @@ The following parameters can be set using the `AddCompartment` function
 
 Ion channels and receptor types for the default model are hardcoded.
 For ion channels, there is a Na-channel and a K-channel. Parameters can be set
-by specifying the following entries in the `SetStatus` dictionary argument:
+by specifying the following entries in the ``SetStatus`` dictionary argument:
 
 =========== ======= ===========================================================
  gbar_Na    uS      Maximal conductance Na channel (default: 0 uS)
@@ -152,10 +163,10 @@ by specifying the following entries in the `SetStatus` dictionary argument:
  e_K        mV      Reversal K channel (default: -85 mV)
 =========== ======= ===========================================================
 
-For receptors, the choice is from 'AMPA', 'GABA' or 'NMDA' or 'AMPA_NMDA'.
-Ion channels and receptor types can be customized with NESTML.
+For receptors, the choice is ``AMPA``, ``GABA`` or ``NMDA`` or ``AMPA_NMDA``.
+Ion channels and receptor types can be customized with :doc:`NESTML <nestml:index>`.
 
-If `receptor_type` is AMPA
+If ``receptor_type`` is AMPA
 
 =========== ======= ===========================================================
  e_AMPA     mV      AMPA reversal (default 0 mV)
@@ -163,7 +174,7 @@ If `receptor_type` is AMPA
  tau_d_AMPA ms      AMPA decay time (default 3. ms)
 =========== ======= ===========================================================
 
-If `receptor_type` is GABA
+If ``receptor_type`` is GABA
 
 =========== ======= ===========================================================
  e_GABA     mV      GABA reversal (default -80 mV)
@@ -171,7 +182,7 @@ If `receptor_type` is GABA
  tau_d_GABA ms      GABA decay time (default 10. ms)
 =========== ======= ===========================================================
 
-If `receptor_type` is NMDA
+If ``receptor_type`` is NMDA
 
 =========== ======= ===========================================================
  e_NMDA     mV      NMDA reversal (default 0 mV)
@@ -179,7 +190,7 @@ If `receptor_type` is NMDA
  tau_d_NMDA ms      NMDA decay time (default 43. ms)
 =========== ======= ===========================================================
 
-If `receptor_type` is AMPA_NMDA
+If ``receptor_type`` is AMPA_NMDA
 
 ============ ======= ===========================================================
  e_AMPA_NMDA mV      NMDA reversal (default 0 mV)

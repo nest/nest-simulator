@@ -24,27 +24,45 @@
 
 // Includes from nestkernel:
 #include "exceptions.h"
-#include "node.h"
-
 #include "kernel_manager.h"
+#include "node.h"
+#include "vp_manager_impl.h"
+
 
 nest::SparseNodeArray::NodeEntry::NodeEntry( Node& node, index node_id )
   : node_( &node )
   , node_id_( node_id )
 {
-  assert( node_id == node.get_node_id() );
 }
 
 nest::SparseNodeArray::SparseNodeArray()
   : nodes_()
-  , max_node_id_( 0 )
+  , global_max_node_id_( 0 )
   , local_min_node_id_( 0 )
   , local_max_node_id_( 0 )
-  , scale_split_id_( 0 )
-  , scale_split_idx_( 0 )
-  , split_has_occured_( false )
-  , adding_nodes_with_proxies_( false ) // meaningless default
+  , left_scale_( 1.0 )
+  , right_scale_( 1.0 )
+  , split_node_id_( 0 )
+  , split_idx_( 0 )
+  , have_split_( false )
+  , left_side_has_proxies_( false ) // meaningless initial value
 {
+}
+
+void
+nest::SparseNodeArray::clear()
+{
+  nodes_.clear();
+
+  global_max_node_id_ = 0;
+  local_min_node_id_ = 0;
+  local_max_node_id_ = 0;
+  left_scale_ = 1.0;
+  right_scale_ = 1.0;
+  split_node_id_ = 0;
+  split_idx_ = 0;
+  have_split_ = false;
+  left_side_has_proxies_ = false;
 }
 
 void
@@ -52,80 +70,65 @@ nest::SparseNodeArray::add_local_node( Node& node )
 {
   const index node_id = node.get_node_id();
 
-  // protect against node ID 0
-  assert( node_id > 0 );
+  // ensure increasing order
+  assert( node_id > local_max_node_id_ );
 
-  // local_min_node_id_ can only be 0 if no node has been stored
-  assert( local_min_node_id_ > 0 or nodes_.size() == 0 );
-
-  // local_min_node_id_ cannot be larger than local_max_node_id_
-  assert( local_min_node_id_ <= local_max_node_id_ );
-
-  // local_max_node_id_ cannot be larger than max_node_id_
-  assert( local_max_node_id_ <= max_node_id_ );
-
-  // node_id must exceed max_node_id_
-  assert( node_id > max_node_id_ );
-
-  // all is consistent, register node and update auxiliary variables
   nodes_.push_back( NodeEntry( node, node_id ) );
-  if ( local_min_node_id_ == 0 ) // only first non-zero
+  local_max_node_id_ = node_id;
+
+  // mark array inconsistent until set_max_node_id() called
+  global_max_node_id_ = 0;
+
+  // set up when first node is added
+  if ( local_min_node_id_ == 0 )
   {
     local_min_node_id_ = node_id;
-    adding_nodes_with_proxies_ = node.has_proxies();
-  }
-  local_max_node_id_ = node_id;
-  max_node_id_ = node_id;
+    left_side_has_proxies_ = node.has_proxies();
 
-  if ( not split_has_occured_ )
-  {
-    if ( adding_nodes_with_proxies_ != node.has_proxies() )
+    // we now know which scale applies on which side of the split
+    const double proxy_scale = 1.0 / static_cast< double >( kernel().vp_manager.get_num_virtual_processes() );
+    if ( left_side_has_proxies_ )
     {
-      split_has_occured_ = true;
+      left_scale_ = proxy_scale;
     }
     else
     {
-      scale_split_id_ = node_id;
-      ++scale_split_idx_;
-      if ( local_max_node_id_ > local_min_node_id_ )
-      {
-        const double size = static_cast< double >( nodes_.size() - 1 );
-        id_idx_scale_[ 0 ] = size / ( local_max_node_id_ - local_min_node_id_ );
-      }
+      right_scale_ = proxy_scale;
     }
   }
-  else
+
+  if ( not have_split_ )
   {
-    if ( local_max_node_id_ > scale_split_id_ )
+    if ( left_side_has_proxies_ != node.has_proxies() )
     {
-      const double size = static_cast< double >( nodes_.size() - scale_split_idx_ );
-      id_idx_scale_[ 1 ] = size / ( local_max_node_id_ - scale_split_id_ );
+      // node is first past splitting point
+      have_split_ = true;
+    }
+    else
+    {
+      ++split_idx_; // index one beyond the node
     }
   }
-  assert( id_idx_scale_[ 0 ] >= 0. );
-  assert( id_idx_scale_[ 0 ] <= 1. );
-  assert( id_idx_scale_[ 1 ] >= 0. );
-  assert( id_idx_scale_[ 1 ] <= 1. );
 }
 
 void
-nest::SparseNodeArray::update_max_node_id( index node_id )
+nest::SparseNodeArray::set_max_node_id( index node_id )
 {
   assert( node_id > 0 ); // minimum node ID is 1
-  assert( node_id >= max_node_id_ );
-  max_node_id_ = node_id;
+  assert( node_id >= local_max_node_id_ );
+  global_max_node_id_ = node_id;
+  if ( not have_split_ )
+  {
+    split_node_id_ = global_max_node_id_ + 1;
+  }
 }
 
 nest::Node*
 nest::SparseNodeArray::get_node_by_node_id( index node_id ) const
 {
-  // local_min_node_id_ cannot be larger than local_max_node_id_
-  assert( local_min_node_id_ <= local_max_node_id_ );
+  assert( is_consistent_() );
 
-  // local_max_node_id_ cannot be larger than max_node_id_
-  assert( local_max_node_id_ <= max_node_id_ );
-
-  if ( node_id < 1 or max_node_id_ < node_id )
+  if ( node_id < 1 or global_max_node_id_ < node_id )
   {
     throw UnknownNode();
   }
@@ -136,17 +139,21 @@ nest::SparseNodeArray::get_node_by_node_id( index node_id ) const
     return 0;
   }
 
-  const bool after_split = node_id > scale_split_id_;
-  const index ref_id = after_split ? scale_split_id_ : local_min_node_id_;
-  const size_t ref_idx = after_split ? scale_split_idx_ : 0;
+  /* Find base index and node ID for estimating location of desired node in array.
+   *
+   * In the expression for base_id, split_node_id_ will only be used if we are on the
+   * right side, when the value is well-defined.
+   */
+  const bool left_side = node_id < split_node_id_;
+  const double scale = left_side ? left_scale_ : right_scale_;
+  const size_t base_idx = left_side ? 0 : split_idx_;
+  const index base_id = left_side ? local_min_node_id_ : split_node_id_;
 
-  // now estimate index
-  const size_t idx_guess =
-    std::min( static_cast< size_t >( ref_idx + std::floor( id_idx_scale_[ after_split ] * ( node_id - ref_id ) ) ),
-      nodes_.size() - 1 );
+  // estimate index, limit to array size for safety size
+  auto idx =
+    std::min( static_cast< size_t >( base_idx + std::floor( scale * ( node_id - base_id ) ) ), nodes_.size() - 1 );
 
   // search left if necessary
-  auto idx = idx_guess;
   while ( 0 < idx and node_id < nodes_[ idx ].node_id_ )
   {
     --idx;
@@ -157,14 +164,6 @@ nest::SparseNodeArray::get_node_by_node_id( index node_id ) const
   {
     ++idx;
   }
-
-  // adjust scaling based on search steps required
-  if ( std::abs( static_cast< long >( idx ) - static_cast< long >( idx_guess ) ) > 10 )
-  {
-    id_idx_scale_[ after_split ] = std::min( 1.0, static_cast< double >( idx - ref_idx ) / ( node_id - ref_id ) );
-  }
-  assert( id_idx_scale_[ after_split ] >= 0.0 );
-  assert( id_idx_scale_[ after_split ] <= 1.0 );
 
   if ( idx < nodes_.size() and nodes_[ idx ].node_id_ == node_id )
   {

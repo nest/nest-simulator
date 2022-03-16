@@ -327,7 +327,7 @@ echo "************************************"
 echo "Phony Installcheck"
 echo "************************************"
 
-make VERBOSE=1 installcheck
+# make VERBOSE=1 installcheck
     
 echo "MSGBLD0240: CMake configure completed."
 echo
@@ -349,6 +349,6 @@ echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
 echo "+               R U N   N E S T   T E S T S U I T E                           +"
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
 echo "MSGBLD0290: Running make installcheck."
-make installcheck
+make VERBOSE=1 installcheck
 echo "MSGBLD0300: Make installcheck completed."
 echo "MSGBLD0340: Build completed."

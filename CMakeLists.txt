@@ -202,7 +202,7 @@ endif ()
 
 add_custom_target( installcheck
   COMMAND ${CMAKE_COMMAND} -E env
-    ${CMAKE_CURRENT_SOURCE_DIR}/testsuite/do_tests.sh
+    ${CMAKE_INSTALL_FULL_DATADIR}/testsuite/do_tests.sh
 	--prefix=${CMAKE_INSTALL_PREFIX}
 	--report-dir="${PROJECT_BINARY_DIR}/reports"
 	${TEST_OPTS}

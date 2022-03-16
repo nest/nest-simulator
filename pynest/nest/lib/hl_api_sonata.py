@@ -274,7 +274,6 @@ class SonataConnector(object):
             with open(edge_types_file, 'r') as csv_file:
                 reader = csv.DictReader(csv_file, delimiter=' ', quotechar='"')
                 rows = list(reader)
-                skip_params = ['edge_type_id', 'target_query', 'source_query', 'dynamics_params']
                 edge_params = {}
 
                 for d in rows:

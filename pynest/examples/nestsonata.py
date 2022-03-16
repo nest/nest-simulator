@@ -19,15 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-
-import h5py   # TODO this need to be a try except thing
-import json
-import pandas as pd
-import numpy as np
 import warnings
 import nest
 import nest.raster_plot
-import csv
 import time
 
 import matplotlib.pyplot as plt

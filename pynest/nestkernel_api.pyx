@@ -142,6 +142,7 @@ def llapi_create(string model, long n):
 def llapi_make_nodecollection(object node_ids):
     cdef NodeCollectionPTR gids
     try:
+        # node_ids list is automatically converted to an std::vector
         gids = make_nodecollection(node_ids)
     except RuntimeError as e:
         exceptionCls = getattr(NESTErrors, str(e))
@@ -203,6 +204,18 @@ def llapi_set_nc_status(NodeCollectionObject nc, object params):
     except RuntimeError as e:
         exceptionCls = getattr(NESTErrors, str(e))
         raise exceptionCls('llapi_set_nc_status', '') from None
+
+def llapi_join_nc(NodeCollectionObject lhs, NodeCollectionObject rhs):
+    cdef NodeCollectionPTR result
+    try:
+        # Using operator+() directly
+        result = lhs.thisptr + rhs.thisptr
+    except RuntimeError as e:
+        exceptionCls = getattr(NESTErrors, str(e))
+        raise exceptionCls('llapi_join_nc', '') from None
+    obj = NodeCollectionObject()
+    obj._set_nc(result)
+    return nest.NodeCollection(obj)
 
 
 def llapi_take_array_index(NodeCollectionObject node_collection, object array):

@@ -30,6 +30,7 @@ from cpython.ref cimport PyObject
 cdef extern from "node_collection.h" namespace "nest":
     cppclass NodeCollectionPTR:
         NodeCollectionPTR()
+    NodeCollectionPTR operator+(NodeCollectionPTR, NodeCollectionPTR)
 
 cdef extern from "node_collection.h":
     cppclass NodeCollectionDatum:

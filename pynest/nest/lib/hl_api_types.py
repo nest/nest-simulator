@@ -210,7 +210,7 @@ class NodeCollection(object):
             # Data from user, must be converted to datum
             # Data can be anything that can be converted to a NodeCollection,
             # such as list, tuple, etc.
-            nc = nestkernel.llapi_make_nodecollection(data)  # TODO-PYNEST-NG: implement
+            nc = nestkernel.llapi_make_nodecollection(data)
             self._datum = nc._datum
 
     def __iter__(self):
@@ -220,7 +220,7 @@ class NodeCollection(object):
         if not isinstance(other, NodeCollection):
             raise NotImplementedError()
 
-        return sli_func('join', self._datum, other._datum)
+        return nestkernel.llapi_join_nc(self._datum, other._datum)
 
     def __getitem__(self, key):
         if isinstance(key, slice):

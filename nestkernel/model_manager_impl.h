@@ -32,7 +32,6 @@
 // Includes from nestkernel:
 #include "connection_label.h"
 #include "kernel_manager.h"
-#include "nest.h"
 #include "target_identifier.h"
 
 

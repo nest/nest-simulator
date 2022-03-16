@@ -203,6 +203,24 @@ private:
 
 KernelManager& kernel();
 
+inline RngPtr
+get_rank_synced_rng()
+{
+  return kernel().random_manager.get_rank_synced_rng();
+}
+
+inline RngPtr
+get_vp_synced_rng( thread tid )
+{
+  return kernel().random_manager.get_vp_synced_rng( tid );
+}
+
+inline RngPtr
+get_vp_specific_rng( thread tid )
+{
+  return kernel().random_manager.get_vp_specific_rng( tid );
+}
+
 } // namespace nest
 
 inline nest::KernelManager&

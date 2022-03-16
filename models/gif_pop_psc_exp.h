@@ -25,7 +25,6 @@
 
 
 // Includes from nestkernel:
-#include "nest.h"
 #include "node.h"
 #include "random_generators.h"
 #include "ring_buffer.h"

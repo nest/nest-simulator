@@ -30,7 +30,6 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-#include "nest.h"
 
 namespace nest
 {

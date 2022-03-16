@@ -30,7 +30,6 @@
 #include "connection.h"
 #include "device_node.h"
 #include "event.h"
-#include "nest.h"
 #include "random_generators.h"
 #include "ring_buffer.h"
 #include "stimulation_device.h"

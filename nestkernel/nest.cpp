@@ -137,25 +137,6 @@ nc_size( NodeCollectionPTR nc )
   return nc->size();
 }
 
-
-RngPtr
-get_rank_synced_rng()
-{
-  return kernel().random_manager.get_rank_synced_rng();
-}
-
-RngPtr
-get_vp_synced_rng( thread tid )
-{
-  return kernel().random_manager.get_vp_synced_rng( tid );
-}
-
-RngPtr
-get_vp_specific_rng( thread tid )
-{
-  return kernel().random_manager.get_vp_specific_rng( tid );
-}
-
 void
 set_kernel_status( const dictionary& dict )
 {

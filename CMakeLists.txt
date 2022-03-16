@@ -202,7 +202,7 @@ endif ()
 
 add_custom_target( installcheck
   COMMAND ${CMAKE_COMMAND} -E env
-    ${CMAKE_INSTALL_FULL_DATADIR}/testsuite/do_tests.sh
+    ${CMAKE_CURRENT_SOURCE_DIR}/testsuite/do_tests.sh
 	--prefix=${CMAKE_INSTALL_PREFIX}
 	--report-dir="${PROJECT_BINARY_DIR}/reports"
 	${TEST_OPTS}
@@ -367,16 +367,9 @@ add_custom_target( install-nodoc
 
 nest_print_config_summary()
 
-if ( HAVE_PYTHON )
-  add_custom_target( installcheck
-    COMMAND ${CMAKE_COMMAND} -E env
-      ${CMAKE_INSTALL_FULL_DATADIR}/testsuite/do_tests.sh
-    --prefix=${CMAKE_INSTALL_PREFIX}
-    --report-dir="${PROJECT_BINARY_DIR}/reports"
-    ${TEST_OPTS}
-    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
-    COMMENT "Executing NEST's testsuite..."
-  )
-endif ()
+#if ( HAVE_PYTHON )
+#    COMMAND ${CMAKE_COMMAND} -E env
+#      ${CMAKE_INSTALL_FULL_DATADIR}/testsuite/do_tests.sh    --prefix=${CMAKE_INSTALL_PREFIX} --report-dir="${PROJECT_BINARY_DIR}/reports" ${TEST_OPTS}
+#endif ()
 
 

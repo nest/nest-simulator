@@ -322,6 +322,13 @@ cmake \
     $CONFIGURE_SIONLIB \
     $CONFIGURE_LIBNEUROSIM \
     ..
+    
+echo "************************************"
+echo "Phony Installcheck"
+echo "************************************"
+
+make VERBOSE=1 installcheck
+    
 echo "MSGBLD0240: CMake configure completed."
 echo
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"

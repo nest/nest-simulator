@@ -37,7 +37,7 @@ pid() {
 
 set-gunicorn_opts() {
   # Set opts for gunicorn.
-  GUNICORN_OPTS="--name nest-server"
+  GUNICORN_OPTS="--bind ${HOST}:${PORT}"
   if [ "${DAEMON}" -eq 1 ]; then
     GUNICORN_OPTS="${GUNICORN_OPTS} --daemon"
   fi
@@ -61,7 +61,7 @@ start() {
     fi
 
     set-gunicorn_opts
-    exec gunicorn nest.server:app --bind "${HOST}:${PORT}" ${GUNICORN_OPTS}
+    exec gunicorn nest.server:app ${GUNICORN_OPTS}
   fi
 }
 

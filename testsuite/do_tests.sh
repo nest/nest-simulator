@@ -105,11 +105,11 @@ if test "${PYTHON}"; then
       TIME_LIMIT=120  # seconds, for each of the Python tests
       PYTHON_VERSION=$(${PYTHON} -V 2>&1 | cut -d' ' -f2)
       echo "PYTHON: *${PYTHON_VERSION}*"
-      PYTEST_VERSION="$(${PYTHON} -m pytest --version 2>&1)" || {echo "version failed"}
+      PYTEST_VERSION="$(${PYTHON} -m pytest --version 2>&1)"
       echo "PYTEST: *${PYTEST_VERSION}*"
-      PYTEST_VERSION="$(${PYTHON} -m pytest --version --timeout ${TIME_LIMIT} 2>&1)" || {echo "timeout failed"}
+      PYTEST_VERSION="$(${PYTHON} -m pytest --version --timeout ${TIME_LIMIT} 2>&1)"
       echo "PYTEST: *${PYTEST_VERSION}* WITH TIMEOUT"      
-      PYTEST_VERSION="$(${PYTHON} -m pytest --version --numprocesses=1 2>&1)" || {echo "timeout failed"}
+      PYTEST_VERSION="$(${PYTHON} -m pytest --version --numprocesses=1 2>&1)"
       echo "PYTEST: *${PYTEST_VERSION}* WITH NUMPROCS"      
       pip freeze > "pippackages.txt"
       pip list -v

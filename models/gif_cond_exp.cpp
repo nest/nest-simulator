@@ -98,7 +98,7 @@ nest::gif_cond_exp_dynamics( double, const double y[], double f[], void* pnode )
   const double stc = node.S_.stc_;
 
   // V dot
-  f[ 0 ] = is_refractory? 0.0 : ( -I_L + node.S_.I_stim_ + node.P_.I_e_ - I_syn_exc - I_syn_inh - stc ) / node.P_.c_m_;
+  f[ 0 ] = is_refractory ? 0.0 : ( -I_L + node.S_.I_stim_ + node.P_.I_e_ - I_syn_exc - I_syn_inh - stc ) / node.P_.c_m_;
 
   f[ 1 ] = -y[ S::G_EXC ] / node.P_.tau_synE_;
   f[ 2 ] = -y[ S::G_INH ] / node.P_.tau_synI_;

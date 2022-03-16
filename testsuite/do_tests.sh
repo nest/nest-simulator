@@ -109,7 +109,7 @@ if test "${PYTHON}"; then
       #echo "${PYTEST_VERSION}"
       #PYTEST_VERSION="$(${PYTHON} -m pytest --version --timeout ${TIME_LIMIT} 2>&1)" || {echo "timeout failed"}
       pip freeze > "pippackages.txt"
-      pip list
+      pip list -v
       echo "$PATH"
       PYTEST_VERSION="$(${PYTHON} -m pytest --version --timeout ${TIME_LIMIT} --numprocesses=1 2>&1)" || {
         echo "Error: PyNEST testing requested, but 'pytest' cannot be run."

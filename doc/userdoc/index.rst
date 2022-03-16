@@ -9,7 +9,7 @@ If you are transitioning from NEST 2.x to NEST 3.x, check out our :ref:`referenc
 
 +------------------------------------+---------------------------------------+
 |                                    |                                       |
-|    :ref:`Download <download>`      |  :ref:`Install <install_nest>`  |
+|    :ref:`Download <download>`      |  :ref:`Install <install_nest>`        |
 |                                    |                                       |
 +------------------------------------+---------------------------------------+
 

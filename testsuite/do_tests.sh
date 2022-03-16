@@ -111,6 +111,8 @@ if test "${PYTHON}"; then
       pip freeze > "pippackages.txt"
       pip list -v
       echo "$PATH"
+      export PATH="$PATH:/Users/runner/hostedtoolcache/Python/3.9.10/x64/lib/python3.9/site-packages"
+      echo "$PATH"
       PYTEST_VERSION="$(${PYTHON} -m pytest --version --timeout ${TIME_LIMIT} --numprocesses=1 2>&1)" || {
         echo "Error: PyNEST testing requested, but 'pytest' cannot be run."
         echo "       Testing also requires the 'pytest-xdist' and 'pytest-timeout' extensions."

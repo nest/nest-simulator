@@ -33,6 +33,7 @@
 #include "exceptions.h"
 #include "nest_time.h"
 #include "nest_types.h"
+#include "spike_data.h"
 #include "vp_manager.h"
 
 // Includes from sli:
@@ -131,14 +132,25 @@ public:
   void set_sender( Node& );
 
   /**
-   * Return node ID of sending Node.
+   * Sender is local. Return node ID of sending Node.
    */
   index get_sender_node_id() const;
 
   /**
+   * Sender is not local. Retrieve node ID of sending Node from SourceTable and return it.
+   */
+  index retrieve_sender_node_id_from_source_table() const;
+
+  /**
    * Change node ID of sending Node.
    */
-  void set_sender_node_id( index );
+  void set_sender_node_id( const index );
+
+  /**
+   * Set tid, syn_id, lcid of spike_data_.
+   * These are required to retrieve the Node ID of a non-local sender from the SourceTable.
+   */
+  void set_sender_node_id_info( const thread tid, const synindex syn_id, const index lcid );
 
   /**
    * Return time stamp of the event.
@@ -280,16 +292,17 @@ public:
   void set_stamp( Time const& );
 
 protected:
-  index sender_node_id_; //!< node ID of sender or -1.
-                         /*
-                          * The original formulation used references to Nodes as
-                          * members, however, in order to avoid the reference of reference
-                          * problem, we store sender and receiver as pointers and use
-                          * references in the interface.
-                          * Thus, we can still ensure that the pointers are never NULL.
-                          */
-  Node* sender_;         //!< Pointer to sender or NULL.
-  Node* receiver_;       //!< Pointer to receiver or NULL.
+  index sender_node_id_;        //!< node ID of sender or 0
+  SpikeData sender_spike_data_; //!< spike data of sender node, in some cases required to retrieve node ID
+  /*
+   * The original formulation used references to Nodes as
+   * members, however, in order to avoid the reference of reference
+   * problem, we store sender and receiver as pointers and use
+   * references in the interface.
+   * Thus, we can still ensure that the pointers are never NULL.
+   */
+  Node* sender_;   //!< Pointer to sender or NULL.
+  Node* receiver_; //!< Pointer to receiver or NULL.
 
 
   /**
@@ -1291,9 +1304,16 @@ Event::set_sender( Node& s )
 }
 
 inline void
-Event::set_sender_node_id( index node_id )
+Event::set_sender_node_id( const index node_id )
 {
   sender_node_id_ = node_id;
+}
+
+inline void
+Event::set_sender_node_id_info( const thread tid, const synindex syn_id, const index lcid )
+{
+  // lag and offset of SpikeData are not used here
+  sender_spike_data_.set( tid, syn_id, lcid, 0, 0.0 );
 }
 
 inline Node&

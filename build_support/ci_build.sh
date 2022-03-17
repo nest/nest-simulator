@@ -177,7 +177,7 @@ if [ "$xNEST_BUILD_TYPE" = "FULL" ]; then
     CXX_FLAGS="-pedantic -Wextra -D_GLIBCXX_ASSERTIONS"
 fi
 
-if [ "$xNEST_BUILD_TYPE" = "FULL_NO_EXTERNAL_FEATURES" ]; then
+if [ "$xNEST_BUILD_TYPE" = "FULL_MACOS" ]; then
     xGSL=1
     xLIBBOOST=1
     xLIBNEUROSIM=0
@@ -188,6 +188,9 @@ if [ "$xNEST_BUILD_TYPE" = "FULL_NO_EXTERNAL_FEATURES" ]; then
     xPYTHON=1
     xREADLINE=1
     xSIONLIB=0
+    # Do not use -pedantic because it triggers warnings from pynestkernel
+    # that are difficult to filter.
+    CXX_FLAGS="-Wextra -Wno-unknown-pragmas -D_GLIBCXX_ASSERTIONS"
 fi
 
 echo "MSGBLD0232: Setting configuration variables."

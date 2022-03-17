@@ -223,7 +223,7 @@ jobs:
 
       - name: "Install MacOS system dependencies"
         run: |
-          brew install coreutils gsl open-mpi libomp automake autoconf libtool
+          brew install coreutils gsl open-mpi libomp automake autoconf libtool boost
           brew info python
 
       - name: "Restore pip cache"

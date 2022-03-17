@@ -182,7 +182,7 @@ if [ "$xNEST_BUILD_TYPE" = "FULL_NO_EXTERNAL_FEATURES" ]; then
     xLIBBOOST=1
     xLIBNEUROSIM=0
     xLTDL=1
-    xMPI=0
+    xMPI=1
     xMUSIC=0
     xOPENMP=1
     xPYTHON=1
@@ -248,10 +248,7 @@ else
     CONFIGURE_READLINE="-Dwith-readline=OFF"
 fi
 if [ "$xLIBBOOST" = "1" ] ; then
-    #CONFIGURE_BOOST="-Dwith-boost=$HOME/.cache/boost_1_72_0.install"
-    CONFIGURE_BOOST="-Dwith-boost=$HOME/.cache/boost_1_71_0.install"
-    chmod +x build_support/install_libboost.sh
-    ./build_support/install_libboost.sh
+    CONFIGURE_BOOST="-Dwith-boost=ON"
 else
     CONFIGURE_BOOST="-Dwith-boost=OFF"
 fi

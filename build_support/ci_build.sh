@@ -189,7 +189,8 @@ if [ "$xNEST_BUILD_TYPE" = "FULL_MACOS" ]; then
     xREADLINE=1
     xSIONLIB=0
     # Do not use -pedantic because it triggers warnings from pynestkernel
-    # that are difficult to filter.
+    # that are difficult to filter automatically when parsing the log. 
+    # See also https://github.com/cython/cython/pull/4687.
     CXX_FLAGS="-Wextra -Wno-unknown-pragmas -D_GLIBCXX_ASSERTIONS"
 fi
 

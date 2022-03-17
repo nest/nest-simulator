@@ -127,6 +127,7 @@ public:
   }
 
   Connection( const Connection< targetidentifierT >& rhs ) = default;
+  Connection& operator=( const Connection< targetidentifierT >& rhs ) = default;
 
   /**
    * Get all properties of this connection and put them into a dictionary.

@@ -24,6 +24,7 @@ from libcpp cimport bool as cbool
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 from libcpp.utility cimport pair
+from libcpp.memory cimport shared_ptr
 
 from cpython.ref cimport PyObject
 
@@ -81,6 +82,8 @@ cdef extern from "nest.h" namespace "nest":
 
     cbool equal( const NodeCollectionPTR lhs, const NodeCollectionPTR rhs ) except +
     cbool contains( const NodeCollectionPTR nc, const size_t node_id ) except +
+    long find( const NodeCollectionPTR nc, size_t node_id ) except +
+    dictionary get_metadata( const NodeCollectionPTR nc ) except +
 
     NodeCollectionPTR slice_nc( const NodeCollectionPTR nc, long start, long stop, long step ) except +
     void connect(NodeCollectionPTR sources,
@@ -94,8 +97,13 @@ cdef extern from "nest.h" namespace "nest":
     dictionary get_nc_status( NodeCollectionPTR nc )
     void set_nc_status( NodeCollectionPTR nc, dictionary& params ) except +
     void simulate( const double& t )
+    shared_ptr[Parameter] create_parameter( const dictionary& param_dict )
 
 cdef extern from "nest.h" namespace "nest":
     NodeCollectionPTR node_collection_array_index(NodeCollectionPTR node_collection, const long* array, unsigned long n) except +
     NodeCollectionPTR node_collection_array_index(NodeCollectionPTR node_collection, const cbool* array, unsigned long n) except +
     void connect_arrays( long* sources, long* targets, double* weights, double* delays, vector[string]& p_keys, double* p_values, size_t n, string syn_model ) except +
+
+cdef extern from "parameter.h" namespace "nest":
+    cppclass Parameter:
+        Parameter()

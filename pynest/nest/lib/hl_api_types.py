@@ -126,7 +126,7 @@ def CreateParameter(parametertype, specs):
                  'min'  : float, # minimum value, default: -inf
                  'max'  : float} # maximum value, default: +inf
     """
-    return sli_func('CreateParameter', {parametertype: specs})
+    return nestkernel.llapi_create_parameter({parametertype: specs})
 
 
 class NodeCollectionIterator(object):
@@ -504,7 +504,7 @@ class NodeCollection(object):
         ValueError
             If the node ID is not in the `NodeCollection`.
         """
-        index = sli_func('Find', self._datum, node_id)
+        index = nestkernel.llapi_nc_find(self._datum, node_id)
 
         if index == -1:
             raise ValueError('{} is not in NodeCollection'.format(node_id))
@@ -524,7 +524,7 @@ class NodeCollection(object):
             raise AttributeError('Cannot get attribute of empty NodeCollection')
 
         if attr == 'spatial':
-            metadata = sli_func('GetMetadata', self._datum)
+            metadata = nestkernel.llapi_get_nc_metadata(self._datum)
             val = metadata if metadata else None
             super().__setattr__(attr, val)
             return self.spatial
@@ -983,6 +983,7 @@ class Mask(object):
         return sli_func("Inside", point, self._datum)
 
 
+# TODO-PYNEST-NG: We may consider moving the entire (or most of) Parameter class to the cython level.
 class Parameter(object):
     """
     Class for parameters
@@ -997,9 +998,9 @@ class Parameter(object):
     # The constructor should not be called by the user
     def __init__(self, datum):
         """Parameters must be created using the CreateParameter command."""
-        if not isinstance(datum,
-                          kernel.SLIDatum) or datum.dtype != "parametertype":
-            raise TypeError("expected parameter datum")
+        if not isinstance(datum, nestkernel.ParameterObject):
+            raise TypeError("expected low-level parameter object;"
+                            " use the CreateParameter() function to create a Parameter")
         self._datum = datum
 
     # Generic binary operation

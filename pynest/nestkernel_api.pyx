@@ -41,11 +41,12 @@ from cython.operator cimport preincrement as inc
 
 import nest
 from nest.lib.hl_api_exceptions import NESTMappedException, NESTErrors, NESTError
+from libcpp.memory cimport shared_ptr
 
 import numpy
 
 
-cdef class NodeCollectionObject(object):
+cdef class NodeCollectionObject:
 
     cdef NodeCollectionPTR thisptr
 
@@ -55,8 +56,15 @@ cdef class NodeCollectionObject(object):
     cdef _set_nc(self, NodeCollectionPTR nc):
         self.thisptr = nc
 
-    # cdef _get_ptr(self):
-    #     return self.thisptr
+cdef class ParameterObject:
+
+    cdef shared_ptr[Parameter] thisptr
+
+    def __repr__(self):
+        return "<ParameterObject>"
+
+    cdef _set_parameter(self, shared_ptr[Parameter] parameter_ptr):
+        self.thisptr = parameter_ptr
 
 
 cdef object any_vector_to_list(vector[any] cvec):
@@ -107,13 +115,15 @@ cdef dictionary pydict_to_dictionary(object py_dict) except *:
     cdef dictionary cdict = dictionary()
     for key, value in py_dict.items():
         if type(value) is int:
-            cdict[key.encode('utf-8')] = <long>value
+            cdict[key.encode('utf-8')] = <int>value
         elif type(value) is float:
             cdict[key.encode('utf-8')] = <double>value
         elif type(value) is bool:
             cdict[key.encode('utf-8')] = <cbool>value
         elif type(value) is str:
             cdict[key.encode('utf-8')] = <string>value.encode('utf-8')
+        elif type(value) is dict:
+            cdict[key.encode('utf-8')] = pydict_to_dictionary(value)
         else:
             raise AttributeError(f'value of key ({key}) is not a known type, got {type(value)}')
     return cdict
@@ -234,6 +244,21 @@ def llapi_nc_contains(NodeCollectionObject nc, long node_id):
         exceptionCls = getattr(NESTErrors, str(e))
         raise exceptionCls('llapi_nc_contains', '') from None
 
+def llapi_nc_find(NodeCollectionObject nc, long node_id):
+    try:
+        return find(nc.thisptr, node_id)
+    except RuntimeError as e:
+        exceptionCls = getattr(NESTErrors, str(e))
+        raise exceptionCls('llapi_nc_find', '') from None
+
+# TODO-PYNEST-NG: decorator for exception handling?
+def llapi_get_nc_metadata(NodeCollectionObject nc):
+    try:
+        return dictionary_to_pydict(get_metadata(nc.thisptr))
+    except RuntimeError as e:
+        exceptionCls = getattr(NESTErrors, str(e))
+        raise exceptionCls('llapi_get_nc_metadata', '') from None
+
 
 def llapi_take_array_index(NodeCollectionObject node_collection, object array):
     if not isinstance(array, numpy.ndarray):
@@ -268,3 +293,15 @@ def llapi_take_array_index(NodeCollectionObject node_collection, object array):
     except RuntimeError as e:
         exceptionCls = getattr(NESTErrors, str(e))
         raise exceptionCls('take_array_index', '') from None
+
+def llapi_create_parameter(object specs):
+    cdef dictionary specs_dictionary = pydict_to_dictionary(specs)
+    cdef shared_ptr[Parameter] parameter
+    try:
+        parameter = create_parameter(specs_dictionary)
+    except RuntimeError as e:
+        exceptionCls = getattr(NESTErrors, str(e))
+        raise exceptionCls('llapi_create_parameter', '') from None
+    obj = ParameterObject()
+    obj._set_parameter(parameter)
+    return nest.Parameter(obj)

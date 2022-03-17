@@ -322,6 +322,26 @@ contains( const NodeCollectionPTR nc, const size_t node_id )
   return nc->contains( node_id );
 }
 
+long
+find( const NodeCollectionPTR nc, size_t node_id )
+{
+  return nc->find( node_id );
+}
+
+dictionary
+get_metadata( const NodeCollectionPTR nc )
+{
+  dictionary status_dict;
+  const auto meta = nc->get_metadata();
+  // Fill the status dictionary only if the NodeCollection has valid metadata.
+  if ( meta.get() )
+  {
+    meta->get_status( status_dict );
+    status_dict[ names::network_size ] = nc->size();
+  }
+  return status_dict;
+}
+
 void
 connect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,

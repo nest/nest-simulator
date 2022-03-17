@@ -210,13 +210,15 @@ fi
 
 if [ "$xPYTHON" = "1" ] ; then
     export PYTHON_EXECUTABLE="$(which python3)"
+    export PYTHON_ROOT="$(dirname $PYTHON_EXECUTABLE | sed s%/bin%%)"
     export PYTHON_INCLUDE_DIR=`python3 -c "import sysconfig; print(sysconfig.get_path('include'))"`
     export PYLIB_BASE=lib`basename $PYTHON_INCLUDE_DIR`
     export PYLIB_DIR=$(dirname `sed 's/include/lib/' <<< $PYTHON_INCLUDE_DIR`)
     export PYTHON_LIBRARY=`find $PYLIB_DIR \( -name $PYLIB_BASE.so -o -name $PYLIB_BASE.dylib \) -print -quit`
+    echo "--> Detected PYTHON_ROOT=$PYTHON_ROOT"
     echo "--> Detected PYTHON_LIBRARY=$PYTHON_LIBRARY"
     echo "--> Detected PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
-    CONFIGURE_PYTHON="-Dwith-python=$PYTHON_EXECUTABLE -DPYTHON_LIBRARY=$PYTHON_LIBRARY -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
+    CONFIGURE_PYTHON="-DPython_ROOT=$PYTHON_ROOT -DPYTHON_LIBRARY=$PYTHON_LIBRARY -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
     mkdir -p $HOME/.matplotlib
     echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
 else

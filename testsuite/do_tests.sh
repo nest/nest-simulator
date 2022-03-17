@@ -104,7 +104,8 @@ fi
 if test "${PYTHON}"; then
       TIME_LIMIT=120  # seconds, for each of the Python tests
       PYTHON_VERSION=$(${PYTHON} -V 2>&1 | cut -d' ' -f2)
-      echo "PYTHON: *${PYTHON_VERSION}*"
+      echo "PYTHON Binary : *${PYTHON}*"
+      echo "PYTHON Version: *${PYTHON_VERSION}*"
       echo "Trying pytest"
       ${PYTHON} -m pytest --version
       echo "Done"
@@ -120,11 +121,6 @@ if test "${PYTHON}"; then
       echo "PYTEST: *${PYTEST_VERSION}* WITH TIMEOUT"      
       PYTEST_VERSION="$(${PYTHON} -m pytest --version --numprocesses=1 2>&1)"
       echo "PYTEST: *${PYTEST_VERSION}* WITH NUMPROCS"      
-      pip freeze > "pippackages.txt"
-      pip list -v
-      echo "$PATH"
-      export PATH="$PATH:/Users/runner/hostedtoolcache/Python/3.9.10/x64/lib/python3.9/site-packages"
-      echo "$PATH"
       PYTEST_VERSION="$(${PYTHON} -m pytest --version --timeout ${TIME_LIMIT} --numprocesses=1 2>&1)" || {
         echo "Error: PyNEST testing requested, but 'pytest' cannot be run."
         echo "       Testing also requires the 'pytest-xdist' and 'pytest-timeout' extensions."

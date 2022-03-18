@@ -433,10 +433,6 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
     const bool deliver_completed = deliver_events_( tid, recv_buffer );
     gather_completed_checker_[ tid ].logical_and( deliver_completed );
 
-// Exit gather loop if all local threads and remote processes are
-// done.
-#pragma omp barrier
-
 #ifdef TIMER_DETAILED
     if ( tid == 0 )
     {
@@ -453,7 +449,6 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
         decrease_buffer_size_spike_data_ = false;
       }
     }
-#pragma omp barrier
 
   } // of while
 
@@ -715,7 +710,6 @@ EventDeliveryManager::gather_target_data( const thread tid )
     if ( gather_completed_checker_.all_true() )
     {
       set_complete_marker_target_data_( assigned_ranks, send_buffer_position );
-#pragma omp barrier
     }
     kernel().connection_manager.save_source_table_entry_point( tid );
 #pragma omp barrier
@@ -735,7 +729,6 @@ EventDeliveryManager::gather_target_data( const thread tid )
 
     const bool distribute_completed = distribute_target_data_buffers_( tid );
     gather_completed_checker_[ tid ].logical_and( distribute_completed );
-#pragma omp barrier
 
     // resize mpi buffers, if necessary and allowed
     if ( gather_completed_checker_.any_false() and kernel().mpi_manager.adaptive_target_buffers() )
@@ -745,7 +738,6 @@ EventDeliveryManager::gather_target_data( const thread tid )
         buffer_size_target_data_has_changed_ = kernel().mpi_manager.increase_buffer_size_target_data();
       }
     }
-#pragma omp barrier
   } // of while
 
   kernel().connection_manager.clear_source_table( tid );

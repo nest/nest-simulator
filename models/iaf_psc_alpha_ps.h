@@ -313,7 +313,8 @@ private:
      */
     double U_reset_;
 
-    propagator prop_;
+    propagator prop_ex_;
+    propagator prop_in_;
 
     Parameters_(); //!< Sets default parameter values
 

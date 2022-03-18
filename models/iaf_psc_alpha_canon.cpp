@@ -279,8 +279,10 @@ nest::iaf_psc_alpha_canon::calibrate()
   V_.expm1_tau_syn_ = numerics::expm1( -V_.h_ms_ / P_.tau_syn_ );
   V_.P30_ = -P_.tau_m_ / P_.c_m_ * V_.expm1_tau_m_;
   // these are determined according to a numeric stability criterion
-  V_.P31_ = propagator_31( P_.tau_syn_, P_.tau_m_, P_.c_m_, V_.h_ms_ );
-  V_.P32_ = propagator_32( P_.tau_syn_, P_.tau_m_, P_.c_m_, V_.h_ms_ );
+  propagator prop( P_.tau_syn_, P_.tau_m_, P_.c_m_ );
+  propogate prop_struct = prop.propagate( V_.h_ms_ );
+  V_.P31_ = prop_struct.P31;
+  V_.P32_ = prop_struct.P32;
 
   // t_ref_ is the refractory period in ms
   // refractory_steps_ is the duration of the refractory period in whole

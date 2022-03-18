@@ -26,24 +26,30 @@
 // Propagators to handle similar tau_m and tau_syn_* time constants.
 // For details, please see doc/userdoc/model_details/IAF_neurons_singularity.ipynb.
 
+struct propogate
+{
+  double P31;
+  double P32;
+};
+
 class propagator
 {
 public:
 
   propagator();
+  propagator( double tau_syn, double tau, double c );
 
-  void calculate_constants( double tau_syn, double tau, double c );
-  double propagator_31( double tau_syn, double tau, double C, double h ) const;
-  double propagator_32( double tau_syn, double tau, double C, double h ) const;
+  void update_constants( double tau_syn, double tau, double c );
+  propogate propagate( double h ) const;
 
 private:
   double alpha_;
   double beta_;
   double gamma_;    //!< 1/c * 1/(1/tau_syn - 1/tau)
-  double gamma_sq_; //!< 1/c * 1/(1/tau_syn - 1/tau)^2
-};
 
-double propagator_31( double tau_syn, double tau, double C, double h );
-double propagator_32( double tau_syn, double tau, double C, double h );
+  double tau_syn_;
+  double tau_;
+  double c_;
+};
 
 #endif

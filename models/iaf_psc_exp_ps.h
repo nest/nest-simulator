@@ -29,6 +29,9 @@
 // Generated includes:
 #include "config.h"
 
+// Includes from libnestutil:
+#include "propagator_stability.h"
+
 // Includes from nestkernel:
 #include "archiving_node.h"
 #include "connection.h"
@@ -300,6 +303,9 @@ private:
         At threshold crossing, the membrane potential is reset to this value.
         Relative to resting potential. */
     double U_reset_;
+
+    propagator prop_ex_;
+    propagator prop_in_;
 
     Parameters_(); //!< Sets default parameter values
 

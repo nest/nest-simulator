@@ -28,84 +28,69 @@
 // Includes from libnestutil:
 #include "numerics.h"
 
-propagator::propagator( )
+propagator::propagator()
   : alpha_( 0 )
   , beta_ ( 0 )
   , gamma_ ( 0 )
-  , gamma_sq_ ( 0 )
+  , tau_syn_ ( 0 )
+  , tau_ ( 0 )
+  , c_ ( 0 )
 {
 }
 
-void propagator::calculate_constants( double tau_syn, double tau, double c )
+propagator::propagator( double tau_syn, double tau, double c )
+  : tau_syn_ ( tau_syn )
+  , tau_ ( tau )
+  , c_ ( c )
 {
-  alpha_ = 1 / ( 3. * c * tau * tau ) * ( tau_syn - tau );
+  alpha_ = 1 / ( c * tau * tau ) * ( tau_syn - tau );
   beta_ = tau_syn  * tau / (tau - tau_syn);
   gamma_ = 1 / c * beta_;
-  gamma_sq_ = 1 / c / ( ( 1 / tau_syn - 1 / tau ) * ( 1 / tau_syn - 1 / tau ) );
 }
 
-double
-propagator::propagator_31( double tau_syn, double tau, double C, double h ) const
+void propagator::update_constants( double tau_syn, double tau, double c )
 {
-  const double exp_h_tau_syn = std::exp( -h / tau_syn );
-  const double expm1_h_tau = numerics::expm1( -h / tau + h / tau_syn );
+  alpha_ = 1 / ( c * tau * tau ) * ( tau_syn - tau );
+  beta_ = tau_syn  * tau / (tau - tau_syn);
+  gamma_ = 1 / c * beta_;
 
+  tau_syn_ = tau_syn;
+  tau_ = tau;
+  c_ = c;
+}
 
-  //const double P31_linear = 1 / ( 3. * C * tau * tau ) * h * h * h * ( tau_syn - tau ) * std::exp( -h / tau );
+propogate
+propagator::propagate( double h ) const
+{
+  const double exp_h_tau_syn = std::exp( -h / tau_syn_ );
+  const double expm1_h_tau = numerics::expm1( -h / tau_ + h / tau_syn_ );
 
-  //const double P31 = 1 / C
-  //  * ( std::exp( -h / tau_syn ) * numerics::expm1( -h / tau + h / tau_syn ) / ( tau / tau_syn - 1 ) * tau
-  //    - h * std::exp( -h / tau_syn ) )
-  //  / ( -1 - -tau / tau_syn ) * tau;
+  propogate P;
 
-  const double P31 = gamma_ * ( beta_ * exp_h_tau_syn * expm1_h_tau - h * exp_h_tau_syn);
+  P.P31 = gamma_ * ( beta_ * exp_h_tau_syn * expm1_h_tau - h * exp_h_tau_syn);
+  P.P32 = gamma_ * exp_h_tau_syn * expm1_h_tau;
 
-  //const double P31_singular = h * h / 2 / C * std::exp( -h / tau );
-  //const double dev_P31 = std::abs( P31 - P31_singular );
-
-  if ( tau == tau_syn or std::abs( tau - tau_syn ) < 0.1 )
+  if ( tau_ == tau_syn_ or std::abs( tau_ - tau_syn_ ) < 0.1 )
   {
-    const double P31_linear = alpha_ * h * h * h * std::exp( -h / tau );
-    const double P31_singular = h * h / 2 / C * std::exp( -h / tau );
-    const double dev_P31 = std::abs( P31 - P31_singular );
+    const double exp_h_tau = std::exp( -h / tau_ );
+
+    const double P31_linear = alpha_ * h * h * h * exp_h_tau / 3.;
+    const double P31_singular = h * h / 2 / c_ * exp_h_tau;
+    const double dev_P31 = std::abs( P.P31 - P31_singular );
 
     if ( dev_P31 > 2 * std::abs( P31_linear ) )
     {
-      return P31_singular;
+      P.P31 =  P31_singular;
+    }
+
+    const double P32_linear = alpha_ * h * h * exp_h_tau / 2.;
+    const double P32_singular = h / c_ * exp_h_tau;
+    const double dev_P32 = std::abs( P.P32 - P32_singular );
+
+    if ( dev_P32 > 2 * std::abs( P32_linear ) )
+    {
+      P.P32 = P32_singular;
     }
   }
-
-  return P31;
-}
-
-double
-propagator::propagator_32( double tau_syn, double tau, double C, double h ) const
-{
-  const double P32_linear = 1 / ( 2. * C * tau * tau ) * h * h * ( tau_syn - tau ) * std::exp( -h / tau );
-  const double P32_singular = h / C * std::exp( -h / tau );
-  const double P32 =
-    -tau / ( C * ( 1 - tau / tau_syn ) ) * std::exp( -h / tau_syn ) * numerics::expm1( h * ( 1 / tau_syn - 1 / tau ) );
-
-  const double dev_P32 = std::abs( P32 - P32_singular );
-
-  if ( tau == tau_syn or ( std::abs( tau - tau_syn ) < 0.1 and dev_P32 > 2 * std::abs( P32_linear ) ) )
-  {
-    return P32_singular;
-  }
-  else
-  {
-    return P32;
-  }
-}
-
-double
-propagator_31( double tau_syn, double tau, double C, double h )
-{
-  return 1.;
-}
-
-double
-propagator_32( double tau_syn, double tau, double C, double h )
-{
-  return 1.;
+  return P;
 }

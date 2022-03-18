@@ -453,8 +453,10 @@ nest::glif_psc::calibrate()
 
     // these are determined according to a numeric stability criterion
     // input time parameter shall be in ms, capacity in pF
-    V_.P31_[ i ] = propagator_31( P_.tau_syn_[ i ], Tau_, P_.C_m_, h );
-    V_.P32_[ i ] = propagator_32( P_.tau_syn_[ i ], Tau_, P_.C_m_, h );
+    propagator prop( P_.tau_syn_[ i ], Tau_, P_.C_m_ );
+    propogate prop_struct = prop.propagate( h );
+    V_.P31_[ i ] = prop_struct.P31;
+    V_.P32_[ i ] = prop_struct.P32;
 
     V_.PSCInitialValues_[ i ] = 1.0 * numerics::e / P_.tau_syn_[ i ];
     B_.spikes_[ i ].resize();

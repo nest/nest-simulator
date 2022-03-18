@@ -272,7 +272,7 @@ class Network:
         nest.rng_seed = self.sim_dict['rng_seed']
         nest.overwrite_files = self.sim_dict['overwrite_files']
         nest.print_time = self.sim_dict['print_time']
-        
+
         if nest.Rank() == 0:
             print('RNG seed: {}'.format(
                 nest.rng_seed))
@@ -384,8 +384,8 @@ class Network:
         In NEST, this is achieved with a single Poisson generator connected to all
         thalamic neurons which are of type ``parrot_neuron``;
         Poisson generators send independent spike trains to each of their targets and
-        parrot neurons just repeat incoming spikes.        
-        
+        parrot neurons just repeat incoming spikes.
+
         Note that the number of thalamic neurons is not scaled with
         ``N_scaling``.
 

@@ -35,8 +35,7 @@ Use Python to build PyNEST
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 +-----------------------------------------------+----------------------------------------------------------------+
-| ``-Dwith-python=[OFF|ON|<path/to/Python>]``   | Build PyNEST [default=ON]. To set a specific Python, give the  |
-|                                               | install path.                                                  |
+| ``-Dwith-python=[OFF|ON]``                    | Build PyNEST [default=ON].                                     |
 +-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dcythonize-pynest=[OFF|ON]``               | Use Cython to cythonize pynestkernel.pyx [default=ON]. If OFF, |
 |                                               | PyNEST has to be build from a pre-cythonized pynestkernel.pyx. |

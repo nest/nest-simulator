@@ -40,6 +40,7 @@ from string import Template
 
 from ..ll_api import *
 from .. import pynestkernel as kernel
+from .. import nestkernel_api as nestkernel
 
 __all__ = [
     'broadcast',
@@ -536,11 +537,7 @@ def get_parameters(nc, param):
     """
     # param is single literal
     if is_literal(param):
-        result = nc.get()[param]
-        # try:
-        # except kernel.NESTError:
-        #     result = nc.get()[param]  # If the NodeCollection is a composite.
-    # param is array of strings
+        result = nestkernel.llapi_get_nc_status(nc._datum, param)
     elif is_iterable(param):
         result = {param_name: get_parameters(nc, param_name) for param_name in param}
     else:

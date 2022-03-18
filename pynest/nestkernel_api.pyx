@@ -218,10 +218,15 @@ def llapi_set_kernel_status(object params):
 def llapi_simulate(float t):
     simulate(t)
 
-def llapi_get_nc_status(NodeCollectionObject nc):
+def llapi_get_nc_status(NodeCollectionObject nc, object key=None):
     cdef dictionary statuses = get_nc_status(nc.thisptr)
-    # return vec_of_dict_to_list(statuses)
-    return dictionary_to_pydict(statuses)
+    if key is None:
+        return dictionary_to_pydict(statuses)
+    elif isinstance(key, str):
+        value = any_to_pyobj(statuses[key.encode('utf-8')])
+        return value[0] if len(value) == 1 else value
+    else:
+        raise TypeError(f'key must be a string, got {type(key)}')
 
 def llapi_set_nc_status(NodeCollectionObject nc, object params):
     cdef dictionary params_dict = pydict_to_dictionary(params)

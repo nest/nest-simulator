@@ -309,6 +309,10 @@ value_equal( const boost::any first, const boost::any second )
 bool
 dictionary::operator==( const dictionary& other ) const
 {
+  if ( size() != other.size() )
+  {
+    return false;
+  }
   // Iterate elements in the other dictionary
   for ( auto& kv_pair : other )
   {

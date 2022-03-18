@@ -100,9 +100,7 @@ def Run(t):
     Prepare, Cleanup, RunManager, Simulate
 
     """
-
-    sps(float(t))
-    sr('ms Run')
+    nestkernel.llapi_run(t)
 
 
 @check_stack
@@ -117,8 +115,7 @@ def Prepare():
     Run, Cleanup
 
     """
-
-    sr('Prepare')
+    nestkernel.llapi_prepare()
 
 
 @check_stack
@@ -133,7 +130,7 @@ def Cleanup():
     Run, Prepare
 
     """
-    sr('Cleanup')
+    nestkernel.llapi_cleanup()
 
 
 @contextmanager

@@ -99,6 +99,9 @@ cdef extern from "nest.h" namespace "nest":
     dictionary get_nc_status( NodeCollectionPTR nc )
     void set_nc_status( NodeCollectionPTR nc, dictionary& params ) except +
     void simulate( const double& t )
+    void prepare()
+    void run( const double& t )
+    void cleanup()
     shared_ptr[Parameter] create_parameter( const dictionary& param_dict )
 
 cdef extern from "nest.h" namespace "nest":

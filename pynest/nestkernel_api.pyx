@@ -218,6 +218,15 @@ def llapi_set_kernel_status(object params):
 def llapi_simulate(float t):
     simulate(t)
 
+def llapi_prepare():
+    prepare()
+
+def llapi_run(float t):
+    run(t)
+
+def llapi_cleanup():
+    cleanup()
+
 def llapi_get_nc_status(NodeCollectionObject nc, object key=None):
     cdef dictionary statuses = get_nc_status(nc.thisptr)
     if key is None:

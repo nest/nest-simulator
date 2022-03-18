@@ -58,7 +58,8 @@ public:
   {
   }
 
-  BoolDatum( const BoolDatum& val ) = default;
+  BoolDatum( const BoolDatum& ) = default;
+  BoolDatum& operator=( const BoolDatum& ) = default;
 
   BoolDatum( bool val )
     : GenericDatum< bool, &SLIInterpreter::Booltype >( val )

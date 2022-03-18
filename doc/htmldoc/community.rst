@@ -19,7 +19,7 @@ Before submitting a question, please take a look at our :ref:`guidelines for the
 Submit an issue or pull request on Github
 -----------------------------------------
 
-You can :ref:`issues` on Github or contribute to the code or documentation. See our :ref:`contriute` page for
+You can :ref:`issues` on Github or contribute to the code or documentation. See our :ref:`contribute` page for
 details.
 
 Open video conference

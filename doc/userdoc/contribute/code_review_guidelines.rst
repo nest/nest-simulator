@@ -13,21 +13,21 @@ meant to prevent progress, but to keep up the code quality as the
 number of developers is growing. All of this is not set in stone and
 can be discussed on the :ref:`NEST mailing lists <community>`.
 
-* In general, the rule is that each pull request needs an OK from the
+* In most cases, each pull request needs an OK from the
   CI platform and at least two reviewers to be merged.
 * The two reviews have to cover the technical side (i.e., if the code
   does the right thing and is architecturally sane) and the content
   side (i.e., if the code is scientifically correct and fixes an
-  actual issue)
+  actual issue).
 * For changes labeled “not code” or “minor” (e.g., changes in
   documentation, fixes for typos, etc.), the need for a second code
-  review can be waived and a single rewiew plus the OK from the CI
-  system is sufficient in order to merge the request.
+  review can be waived, and a single review plus the OK from the CI
+  system is sufficient to merge the request.
 * New features like SLI or PyNEST functions, neuron or synapse models
-  need to be accompanied by one or more tests written either in SLI or
+  need to be accompanied by one or more tests written in either SLI or
   Python.
-* Each change to the code has to be reflected also in the
-  corresponding examples and documentation.
+* Each change to the code has to be reflected in the
+  corresponding examples and documentation, as well.
 * A pull request should be coherent and contain only changes that
   belong together.
 * Please check the **typeset documentation** as part of the review
@@ -36,14 +36,14 @@ can be discussed on the :ref:`NEST mailing lists <community>`.
   <userdoc_workflow>`.
 
 
-At the latest before merging, reviewers have to make sure that:
+Before merging, reviewers have to make sure that:
 
-1. pull request titles have to match the actual content of the PR and
+1. pull request titles match the actual content of the PR and
    be adequate for the release notes
 1. pull request titles are complete sentences that start with an
-  upper-case verb and end without punctuation
+  upper-case, present tense verb and end without punctuation
 1. pull requests are assigned to projects and properly and completely
-   labelled
+   labeled
 1. all discussions are settled and all conversations are marked as
    resolved
 1. there are no blocking issues mentioned in the comments

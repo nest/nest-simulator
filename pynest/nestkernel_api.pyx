@@ -93,6 +93,8 @@ cdef object any_to_pyobj(any operand):
         return any_cast[vector[int]](operand)
     if is_double_vector(operand):
         return any_cast[vector[double]](operand)
+    if is_double_vector_vector(operand):
+        return any_cast[vector[vector[double]]](operand)
     if is_string_vector(operand):
         return any_cast[vector[string]](operand)
     if is_any_vector(operand):
@@ -107,7 +109,7 @@ cdef object dictionary_to_pydict(dictionary cdict):
     while it != cdict.end():
         tmp[deref(it).first.decode('utf8')] = any_to_pyobj(deref(it).second)
         if tmp[deref(it).first.decode('utf8')] is None:
-            print('Could not convert: ' + deref(it).first.decode('utf8') + ' of type ' + debug_type(deref(it).second).decode('utf8'))
+            raise RuntimeError('Could not convert: ' + deref(it).first.decode('utf8') + ' of type ' + debug_type(deref(it).second).decode('utf8'))
         inc(it)
     return tmp
 
@@ -115,7 +117,7 @@ cdef dictionary pydict_to_dictionary(object py_dict) except *:
     cdef dictionary cdict = dictionary()
     for key, value in py_dict.items():
         if type(value) is int:
-            cdict[key.encode('utf-8')] = <int>value
+            cdict[key.encode('utf-8')] = <long>value
         elif type(value) is float:
             cdict[key.encode('utf-8')] = <double>value
         elif type(value) is bool:
@@ -124,6 +126,8 @@ cdef dictionary pydict_to_dictionary(object py_dict) except *:
             cdict[key.encode('utf-8')] = <string>value.encode('utf-8')
         elif type(value) is dict:
             cdict[key.encode('utf-8')] = pydict_to_dictionary(value)
+        elif type(value) is ParameterObject:
+            cdict[key.encode('utf-8')] = (<ParameterObject>value).thisptr
         else:
             raise AttributeError(f'value of key ({key}) is not a known type, got {type(value)}')
     return cdict
@@ -146,6 +150,17 @@ def llapi_create(string model, long n):
     except RuntimeError as e:
         exceptionCls = getattr(NESTErrors, str(e))
         raise exceptionCls('llapi_create', '') from None
+    obj = NodeCollectionObject()
+    obj._set_nc(gids)
+    return nest.NodeCollection(obj)
+
+def llapi_create_spatial(object layer_params):
+    cdef NodeCollectionPTR gids
+    try:
+        gids = create_spatial(pydict_to_dictionary(layer_params))
+    except RuntimeError as e:
+        exceptionCls = getattr(NESTErrors, str(e))
+        raise exceptionCls('llapi_create_spatial', '') from None
     obj = NodeCollectionObject()
     obj._set_nc(gids)
     return nest.NodeCollection(obj)
@@ -304,4 +319,17 @@ def llapi_create_parameter(object specs):
         raise exceptionCls('llapi_create_parameter', '') from None
     obj = ParameterObject()
     obj._set_parameter(parameter)
+    return nest.Parameter(obj)
+
+def llapi_dimension_parameter(object list_of_pos_params):
+    cdef shared_ptr[Parameter] dim_parameter
+    cdef ParameterObject x, y, z
+    if len(list_of_pos_params) == 2:
+        x, y = list_of_pos_params
+        dim_parameter = dimension_parameter(x.thisptr, y.thisptr)
+    if len(list_of_pos_params) == 3:
+        x, y, z = list_of_pos_params
+        dim_parameter = dimension_parameter(x.thisptr, y.thisptr, z.thisptr)
+    obj = ParameterObject()
+    obj._set_parameter(dim_parameter)
     return nest.Parameter(obj)

@@ -93,7 +93,7 @@ def Create(model, n=1, params=None, positions=None):
         layer_specs = {'elements': model}
         layer_specs['edge_wrap'] = positions.edge_wrap
         if isinstance(positions, spatial.free):
-            layer_specs['positions'] = positions.pos
+            layer_specs['positions'] = positions.pos._datum
             # If the positions are based on a parameter object, the number of nodes must be specified.
             if isinstance(positions.pos, Parameter):
                 layer_specs['n'] = n
@@ -109,8 +109,8 @@ def Create(model, n=1, params=None, positions=None):
         # For compatibility with SLI.
         if params is None:
             params = {}
-        layer = sli_func('CreateLayerParams', layer_specs, params)
-
+        layer = nestkernel.llapi_create_spatial(layer_specs)
+        layer.set(params)
         return layer
 
     # If any of the elements in the parameter dictionary is either an array-like object,

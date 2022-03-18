@@ -127,7 +127,7 @@ FreeLayer< D >::set_status( const dictionary& d )
       size_t step = 1;
       if ( d.known( names::step ) )
       {
-        step = d.get< long >( names::step );
+        step = d.get_integer( names::step );
       }
       const auto pos = d.get< std::vector< std::vector< double > > >( names::positions );
       const auto num_nodes = this->node_collection_->size();
@@ -227,15 +227,15 @@ template < int D >
 void
 FreeLayer< D >::get_status( dictionary& d ) const
 {
-  // TODO-PYNEST-NG: fix this
-  // Layer< D >::get_status( d );
+  Layer< D >::get_status( d );
 
-  // TokenArray points;
-  // for ( typename std::vector< Position< D > >::const_iterator it = positions_.begin(); it != positions_.end(); ++it )
-  // {
-  //   points.push_back( it->getToken() );
-  // }
-  // def2< TokenArray, ArrayDatum >( d, names::positions, points );
+  std::vector< std::vector< double > > points;
+  for ( auto& pos : positions_ )
+  {
+    points.emplace_back( pos.get_vector() );
+  }
+
+  d[ names::positions ] = points;
 }
 
 template < int D >

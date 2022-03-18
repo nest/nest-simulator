@@ -74,6 +74,7 @@ dictionary get_connection_status( const ConnectionDatum& conn );
 NodeCollectionPTR slice_nc( const NodeCollectionPTR nc, long start, long stop, long step );
 
 NodeCollectionPTR create( const std::string model_name, const index n );
+NodeCollectionPTR create_spatial( const dictionary& layer_dict );
 
 NodeCollectionPTR make_nodecollection( const std::vector< index > node_ids );
 

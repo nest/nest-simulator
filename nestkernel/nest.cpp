@@ -35,6 +35,7 @@
 #include "iaf_psc_alpha.h"
 #include "static_synapse.h"
 
+#include "spatial.h"
 
 #include "connection_manager_impl.h"
 
@@ -296,6 +297,12 @@ create( const std::string model_name, const index n_nodes )
   const index model_id = static_cast< index >( kernel().model_manager.get_modeldict().get< index >( model_name ) );
 
   return kernel().node_manager.add_node( model_id, n_nodes );
+}
+
+NodeCollectionPTR
+create_spatial( const dictionary& layer_dict )
+{
+  return create_layer( layer_dict );
 }
 
 NodeCollectionPTR

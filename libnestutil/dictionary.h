@@ -59,22 +59,57 @@ class dictionary : public std::map< std::string, boost::any >
 private:
   using maptype_ = std::map< std::string, boost::any >;
 
+  template < typename T >
+  T
+  cast_value_( const boost::any& value, const std::string& key ) const
+  {
+    try
+    {
+      return boost::any_cast< T >( value );
+    }
+    catch ( const boost::bad_any_cast& )
+    {
+      std::string msg = std::string( "Failed to cast " ) + key + " from " + debug_type( value ) + " to type "
+        + std::string( typeid( T ).name() );
+      std::cerr << msg << "\n";
+      throw TypeMismatch( msg );
+    }
+  }
+
+  size_t // TODO: or template?
+  cast_to_integer_( const boost::any& value, const std::string& key ) const
+  {
+    if ( is_size_t( value ) )
+    {
+      return cast_value_< size_t >( value, key );
+    }
+    else if ( is_long( value ) )
+    {
+      return cast_value_< long >( value, key );
+    }
+    else if ( is_int( value ) )
+    {
+      return cast_value_< int >( value, key );
+    }
+    // Not an integer type
+    std::string msg =
+      std::string( "Failed to cast " ) + key + " from " + debug_type( at( key ) ) + " to an integer type ";
+    std::cerr << msg << "\n";
+    throw TypeMismatch( msg );
+  }
+
 public:
   template < typename T >
   T
   get( const std::string& key ) const
   {
-    try
-    {
-      return boost::any_cast< T >( at( key ) );
-    }
-    catch ( const boost::bad_any_cast& )
-    {
-      std::string msg = std::string( "Failed to cast " ) + key + " from " + debug_type( at( key ) ) + " to type "
-        + std::string( typeid( T ).name() );
-      std::cerr << msg << "\n";
-      throw TypeMismatch( msg );
-    }
+    return cast_value_< T >( at( key ), key );
+  }
+
+  size_t // TODO: or template?
+  get_integer( const std::string& key ) const
+  {
+    return cast_to_integer_( at( key ), key );
   }
 
   template < typename T >
@@ -84,18 +119,21 @@ public:
     auto it = find( key );
     if ( it != end() )
     {
-      try
-      {
-        value = boost::any_cast< T >( it->second );
-        return true;
-      }
-      catch ( const boost::bad_any_cast& )
-      {
-        std::string msg = std::string( "Failed to cast " ) + it->first + " from " + debug_type( it->second )
-          + " to type " + std::string( typeid( T ).name() );
-        std::cerr << msg << "\n";
-        throw TypeMismatch( msg );
-      }
+      value = cast_value_< T >( it->second, key );
+      return true;
+    }
+    return false;
+  }
+
+  template < typename T >
+  bool
+  update_integer_value( const std::string& key, T& value ) const
+  {
+    auto it = find( key );
+    if ( it != end() )
+    {
+      value = cast_to_integer_( it->second, key );
+      return true;
     }
     return false;
   }

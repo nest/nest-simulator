@@ -32,7 +32,7 @@ cdef extern from "node_collection.h" namespace "nest":
     cppclass NodeCollectionPTR:
         NodeCollectionPTR()
 
-    NodeCollectionPTR operator+(NodeCollectionPTR, NodeCollectionPTR)
+    NodeCollectionPTR operator+(NodeCollectionPTR, NodeCollectionPTR) except +
 
 cdef extern from "node_collection.h":
     cppclass NodeCollectionDatum:
@@ -69,6 +69,7 @@ cdef extern from "dictionary.h":
     cbool is_string(const any&)
     cbool is_int_vector(const any&)
     cbool is_double_vector(const any&)
+    cbool is_double_vector_vector(const any&)
     cbool is_string_vector(const any&)
     cbool is_any_vector(const any&)
     cbool is_dict(const any&)
@@ -77,6 +78,7 @@ cdef extern from "nest.h" namespace "nest":
     void init_nest( int* argc, char** argv[] )
     void reset_kernel()
     NodeCollectionPTR create( const string model_name, const long n ) except +
+    NodeCollectionPTR create_spatial( const dictionary& )
 
     NodeCollectionPTR make_nodecollection( const vector[size_t] node_ids ) except +
 
@@ -107,3 +109,5 @@ cdef extern from "nest.h" namespace "nest":
 cdef extern from "parameter.h" namespace "nest":
     cppclass Parameter:
         Parameter()
+    shared_ptr[Parameter] dimension_parameter(const shared_ptr[Parameter] x, const shared_ptr[Parameter] y)
+    shared_ptr[Parameter] dimension_parameter(const shared_ptr[Parameter] x, const shared_ptr[Parameter] y, const shared_ptr[Parameter] z)

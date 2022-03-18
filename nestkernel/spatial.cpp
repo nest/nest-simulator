@@ -60,11 +60,10 @@ LayerMetadata::slice( size_t start, size_t stop, size_t step, NodeCollectionPTR 
   // Get positions of current layer, sliced in start-stop. Because the implementation of NodeCollections sliced
   // with step internally keeps the "skipped" nodes, positions must include the "skipped" nodes as well, so that
   // the node indices match the position indices.
-  TokenArray new_positions;
+  std::vector< std::vector< double > > new_positions;
   for ( size_t lid = start; lid < stop; ++lid )
   {
-    const auto pos = layer_->get_position_vector( lid );
-    new_positions.push_back( pos );
+    new_positions.emplace_back( layer_->get_position_vector( lid ) );
   }
 
   // Create new free layer with sliced positions
@@ -91,7 +90,7 @@ LayerMetadata::slice( size_t start, size_t stop, size_t step, NodeCollectionPTR 
   // Inherit status from current layer, but with new positions.
   dictionary layer_dict;
   layer_->get_status( layer_dict );
-  layer_dict[ names::positions ] = ArrayDatum( new_positions );
+  layer_dict[ names::positions ] = new_positions;
   layer_dict[ names::step ] = step;
   layer_local->set_status( layer_dict );
 }

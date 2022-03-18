@@ -354,7 +354,7 @@ public:
     , dimension_( 0 )
     , synaptic_endpoint_( 0 )
   {
-    bool dimension_specified = d.update_value( names::dimension, dimension_ );
+    bool dimension_specified = d.update_integer_value( names::dimension, dimension_ );
     if ( not dimension_specified )
     {
       throw BadParameterValue( "Dimension must be specified when creating a node position parameter." );
@@ -363,7 +363,7 @@ public:
     {
       throw BadParameterValue( "Node position parameter dimension cannot be negative." );
     }
-    d.update_value( names::synaptic_endpoint, synaptic_endpoint_ );
+    d.update_integer_value( names::synaptic_endpoint, synaptic_endpoint_ );
     if ( synaptic_endpoint_ < 0 or 2 < synaptic_endpoint_ )
     {
       throw BadParameterValue( "Synaptic endpoint must either be unspecified (0), source (1) or target (2)." );

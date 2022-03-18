@@ -99,7 +99,7 @@ Layer< D >::get_status( dictionary& d ) const
 
   if ( periodic_.none() )
   {
-    d[ names::edge_wrap ] = BoolDatum( false );
+    d[ names::edge_wrap ] = false;
   }
   else if ( periodic_.count() == D )
   {

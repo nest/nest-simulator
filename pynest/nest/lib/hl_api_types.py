@@ -150,7 +150,8 @@ class NodeCollectionIterator(object):
         if self._increment > len(self._nc) - 1:
             raise StopIteration
 
-        val = sli_func('Take', self._nc._datum, [self._increment + (self._increment >= 0)])
+        index = self._increment + (self._increment >= 0)
+        val = nestkernel.llapi_slice(self._nc._datum, index, index, 1)
         self._increment += 1
         return val
 

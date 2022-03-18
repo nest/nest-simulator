@@ -53,7 +53,7 @@ void enable_dryrun_mode( const index n_procs );
 
 void register_logger_client( const deliver_logging_event_ptr client_callback );
 
-void print_nodes_to_stream( std::ostream& out = std::cout );
+std::string print_nodes_to_string();
 
 std::string pprint_to_string( NodeCollectionPTR nc );
 

@@ -138,8 +138,8 @@ def Create(model, n=1, params=None, positions=None):
 def PrintNodes():
     """Print the `node ID` ranges and `model names` of all the nodes in the network."""
 
-    sr("PrintNodesToStream")
-    print(spp())
+    string = nestkernel.llapi_print_nodes()
+    print(string)
 
 
 def GetNodes(properties={}, local_only=False):
@@ -165,8 +165,7 @@ def GetNodes(properties={}, local_only=False):
     NodeCollection:
         `NodeCollection` of nodes
     """
-
-    return sli_func('GetNodes', properties, local_only)
+    return nestkernel.llapi_get_nodes(properties, local_only)
 
 
 @check_stack

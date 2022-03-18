@@ -300,7 +300,7 @@ class NodeCollection(object):
         return nestkernel.llapi_nc_size(self._datum)
 
     def __str__(self):
-        return nestkernel.llapi_to_string(self._datum).decode('utf8')
+        return nestkernel.llapi_to_string(self._datum)
 
     def __repr__(self):
         return self.__str__()

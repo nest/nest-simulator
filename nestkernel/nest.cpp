@@ -118,10 +118,12 @@ register_logger_client( const deliver_logging_event_ptr client_callback )
   kernel().logging_manager.register_logging_client( client_callback );
 }
 
-void
-print_nodes_to_stream( std::ostream& ostr )
+std::string
+print_nodes_to_string()
 {
-  kernel().node_manager.print( ostr );
+  std::stringstream string_stream;
+  kernel().node_manager.print( string_stream );
+  return string_stream.str();
 }
 
 std::string

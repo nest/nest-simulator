@@ -92,9 +92,11 @@ cdef extern from "nest.h" namespace "nest":
                  NodeCollectionPTR targets,
                  const dictionary& connectivity,
                  const vector[dictionary]& synapse_params ) except +
+    string print_nodes_to_string()
     string pprint_to_string( NodeCollectionPTR nc )
     size_t nc_size( NodeCollectionPTR nc )
     dictionary get_kernel_status()
+    NodeCollectionPTR get_nodes( const dictionary& params, const cbool local_only )
     void set_kernel_status( const dictionary& ) except +
     dictionary get_nc_status( NodeCollectionPTR nc )
     void set_nc_status( NodeCollectionPTR nc, dictionary& params ) except +

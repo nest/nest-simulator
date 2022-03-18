@@ -197,15 +197,25 @@ def llapi_slice(NodeCollectionObject nc, long start, long stop, long step):
     obj._set_nc(nc_ptr)
     return nest.NodeCollection(obj)
 
+def llapi_print_nodes():
+    return print_nodes_to_string().decode('utf8')
+
 def llapi_nc_size(NodeCollectionObject nc):
     return nc_size(nc.thisptr)
 
 def llapi_to_string(NodeCollectionObject nc):
-    return pprint_to_string(nc.thisptr)
+    return pprint_to_string(nc.thisptr).decode('utf8')
 
 def llapi_get_kernel_status():
     cdef dictionary cdict = get_kernel_status()
     return dictionary_to_pydict(cdict)
+
+def llapi_get_nodes(object params, cbool local_only):
+    cdef dictionary params_dict = pydict_to_dictionary(params)
+    cdef NodeCollectionPTR nc_ptr = get_nodes(params_dict, local_only)
+    obj = NodeCollectionObject()
+    obj._set_nc(nc_ptr)
+    return nest.NodeCollection(obj)
 
 def llapi_set_kernel_status(object params):
     cdef dictionary params_dict = pydict_to_dictionary(params)

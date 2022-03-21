@@ -74,6 +74,7 @@ public:
   }
 
   Name( const Name& n ) = default;
+  Name& operator=( const Name& n ) = default;
 
   /**
    * Return string represented by Name.

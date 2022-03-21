@@ -91,7 +91,6 @@ dependencies:
   - pip:
     # For testsuite
     - junitparser >= 2
-    - clang-format == 9.0.0
     # For documentation
     - example
     - Image

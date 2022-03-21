@@ -197,6 +197,12 @@ def llapi_slice(NodeCollectionObject nc, long start, long stop, long step):
     obj._set_nc(nc_ptr)
     return nest.NodeCollection(obj)
 
+def llapi_get_rank():
+    return get_rank()
+
+def llapi_get_num_mpi_processes():
+    return get_num_mpi_processes()
+
 def llapi_print_nodes():
     return print_nodes_to_string().decode('utf8')
 

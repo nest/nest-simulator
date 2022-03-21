@@ -25,6 +25,7 @@ Functions for parallel computing
 
 from ..ll_api import *
 from .. import pynestkernel as kernel
+from .. import nestkernel_api as nestkernel
 from .hl_api_helper import *
 
 __all__ = [
@@ -57,8 +58,7 @@ def Rank():
     may complete but generate nonsensical results.
     """
 
-    sr("Rank")
-    return spp()
+    return nestkernel.llapi_get_rank()
 
 
 @check_stack
@@ -71,8 +71,7 @@ def NumProcesses():
         Number of overall MPI processes
     """
 
-    sr("NumProcesses")
-    return spp()
+    return nestkernel.llapi_get_num_mpi_processes()
 
 
 @check_stack

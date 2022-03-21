@@ -73,6 +73,10 @@ set ( nestkernel_sources
       music_manager.cpp music_manager.h
       nest.h nest_impl.h nest.cpp
       ../models/iaf_psc_alpha.h ../models/iaf_psc_alpha.cpp
+      ../models/iaf_psc_delta.h ../models/iaf_psc_delta.cpp
+      ../models/iaf_psc_exp.h ../models/iaf_psc_exp.cpp
+      ../models/parrot_neuron.h ../models/parrot_neuron.cpp
+      ../models/weight_recorder.h ../models/weight_recorder.cpp
       synaptic_element.h synaptic_element.cpp
       growth_curve.h growth_curve.cpp
       growth_curve_factory.h

@@ -33,7 +33,11 @@
 
 #include "connector_model_impl.h"
 #include "iaf_psc_alpha.h"
+#include "iaf_psc_delta.h"
+#include "iaf_psc_exp.h"
+#include "parrot_neuron.h"
 #include "static_synapse.h"
+#include "weight_recorder.h"
 
 #include "spatial.h"
 
@@ -59,7 +63,13 @@ init_nest( int* argc, char** argv[] )
   KernelManager::create_kernel_manager();
   kernel().mpi_manager.init_mpi( argc, argv );
   kernel().initialize();
+
   kernel().model_manager.register_node_model< iaf_psc_alpha >( "iaf_psc_alpha" );
+  kernel().model_manager.register_node_model< iaf_psc_delta >( "iaf_psc_delta" );
+  kernel().model_manager.register_node_model< iaf_psc_exp >( "iaf_psc_exp" );
+  kernel().model_manager.register_node_model< parrot_neuron >( "parrot_neuron" );
+
+  kernel().model_manager.register_node_model< weight_recorder >( "weight_recorder" );
 
   kernel().model_manager.register_connection_model< static_synapse >( "static_synapse" );
 
@@ -340,6 +350,9 @@ equal( const NodeCollectionPTR lhs, const NodeCollectionPTR rhs )
 bool
 contains( const NodeCollectionPTR nc, const size_t node_id )
 {
+  std::cerr << "NodeCollection:\n";
+  nc->print_me( std::cerr );
+  std::cerr << "\n";
   return nc->contains( node_id );
 }
 

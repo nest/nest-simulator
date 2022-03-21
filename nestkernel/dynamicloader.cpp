@@ -275,7 +275,7 @@ DynamicLoaderModule::init( SLIInterpreter* i )
   // a c_str; converting that to string again will limit at the first 0-byte in the cstr.
   // We then need to convert back to c_str since lt_dladdsearchdir needs that.
   // see #2237 and https://github.com/conda/conda-build/issues/1674#issuecomment-280378336
-  const std::string module_dir = std::string( std::string( NEST_INSTALL_PREFIX ).c_str() ) + "/" + NEST_INSTALL_LIBDIR;
+  const std::string module_dir = std::string( NEST_INSTALL_PREFIX ).c_str() + std::string( "/" NEST_INSTALL_LIBDIR );
   if ( lt_dladdsearchdir( module_dir.c_str() ) )
   {
     LOG( M_ERROR, "DynamicLoaderModule::init", "Could not add dynamic module search directory." );

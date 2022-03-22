@@ -21,7 +21,6 @@
  */
 
 /**
- * \file synaptic_element.cpp
  * Implementation of synaptic_element and growth_curve
  * \author Mikael Naveau
  * \date July 2013

@@ -82,22 +82,22 @@ class TimeConverter;
  */
 
 /** @BeginDocumentation
-
-   Name: Node - General properties of all nodes.
-
-   Parameters:
-   frozen     booltype    - Whether the node is updated during simulation
-   global_id  integertype - The node ID of the node (cf. local_id)
-   local      booltype    - Whether the node is available on the local process
-   model      literaltype - The model type the node was created from
-   state      integertype - The state of the node (see the help on elementstates
-                            for details)
-   thread     integertype - The id of the thread the node is assigned to (valid
-                            locally)
-   vp         integertype - The id of the virtual process the node is assigned
-                            to (valid globally)
-
-   SeeAlso: GetStatus, SetStatus, elementstates
+ *
+ *  Name: Node - General properties of all nodes.
+ *
+ *  Parameters:
+ *  frozen     booltype    - Whether the node is updated during simulation
+ *  global_id  integertype - The node ID of the node (cf. local_id)
+ *  local      booltype    - Whether the node is available on the local process
+ *  model      literaltype - The model type the node was created from
+ *  state      integertype - The state of the node (see the help on elementstates
+ *                            for details)
+ *  thread     integertype - The id of the thread the node is assigned to (valid
+ *                           locally)
+ *  vp         integertype - The id of the virtual process the node is assigned
+ *                           to (valid globally)
+ *
+ *  SeeAlso: GetStatus, SetStatus, elementstates
  */
 
 class Node

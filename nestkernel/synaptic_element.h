@@ -21,7 +21,6 @@
  */
 
 /**
- * \file synaptic_element.h
  * Definition of SynapticElement which is capable of
  * managing a synaptic element of a node.
  * \author Mikael Naveau

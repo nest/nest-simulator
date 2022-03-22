@@ -149,7 +149,7 @@ public:
    */
   Node* get_node_or_proxy( index );
 
-  /*
+  /**
    * Return pointer of Node on the thread we are on.
    *
    * If the node has proxies, it returns the node on the first thread (used by
@@ -208,6 +208,9 @@ public:
 
   /**
    * Invoke finalize() on all nodes.
+   *
+   * This function is called only if the thread data structures are properly set
+   * up.
    */
   void finalize_nodes();
 
@@ -360,4 +363,4 @@ NodeManager::set_have_nodes_changed( const bool changed )
 
 } // namespace
 
-#endif /* NODE_MANAGER_H */
+#endif // NODE_MANAGER_H

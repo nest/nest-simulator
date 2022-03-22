@@ -24,7 +24,6 @@
 #define GROWTH_CURVE_H
 
 /**
- * \file growth_curve.h
  *
  * \author Mikael Naveau
  * \date July 2013

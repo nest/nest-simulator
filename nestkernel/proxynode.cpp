@@ -73,12 +73,6 @@ proxynode::sends_secondary_event( DelayedRateConnectionEvent& re )
   kernel().model_manager.get_node_model( get_model_id() )->sends_secondary_event( re );
 }
 
-/**
- * @returns type of signal this node produces
- * used in check_connection to only connect neurons which send / receive
- * compatible information
- * delgates to underlying model
- */
 nest::SignalType
 proxynode::sends_signal() const
 {

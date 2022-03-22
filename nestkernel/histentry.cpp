@@ -21,7 +21,6 @@
  */
 
 /**
- * \file histentry.cpp
  * Implementation of archiving_node to record and manage spike history
  * \author Moritz Helias, Abigail Morrison
  * \date april 2006

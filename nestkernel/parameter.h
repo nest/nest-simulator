@@ -1473,9 +1473,8 @@ Parameter::returns_int_only() const
 inline bool
 Parameter::value_is_integer_( const double value ) const
 {
-  // Here fmod calculates the remainder of the division operation x/y. By using y=1.0,
-  // the remainder is the fractional part of the value. If the fractional part
-  // is zero, the value is an integer.
+  // Here fmod calculates the remainder of the division operation x/y. By using y=1.0, the remainder is the
+  // fractional part of the value. If the fractional part is zero, the value is an integer.
   return std::fmod( value, static_cast< double >( 1.0 ) ) == 0.0;
 }
 

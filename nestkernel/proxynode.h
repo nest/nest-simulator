@@ -81,6 +81,12 @@ public:
 
   void sends_secondary_event( GapJunctionEvent& );
 
+  /**
+   * @returns type of signal this node produces
+   * used in check_connection to only connect neurons which send / receive
+   * compatible information
+   * delgates to underlying model
+   */
   SignalType sends_signal() const;
 
   void sends_secondary_event( InstantaneousRateConnectionEvent& );

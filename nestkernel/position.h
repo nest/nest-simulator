@@ -369,8 +369,7 @@ public:
       this->x_[ i ] = lower_left_[ i ];
     }
     // If we reach this point, we are outside of bounds. The upper
-    // right point is used as a marker to show that we have reached the
-    // end.
+    // right point is used as a marker to show that we have reached the end.
     for ( int i = 0; i < D; ++i )
     {
       this->x_[ i ] = upper_right_[ i ];

@@ -70,6 +70,12 @@ public:
   virtual void finalize();
 
   virtual void get_status( DictionaryDatum& );
+
+  /**
+   * Set status of synaptic plasticity variables: synaptic update interval,
+   * synapses and synaptic elements.
+   * @param d Dictionary containing the values to be set
+   */
   virtual void set_status( const DictionaryDatum& );
 
   /**
@@ -91,10 +97,12 @@ public:
    *
    * \param sources Node collection of the source Nodes.
    * \param targets Node collection of the target Nodes.
-   * \param connectivityParams connectivity Dictionary
-   * \param synapseParams synapse parameters Dictionary
-   */
-  void disconnect( NodeCollectionPTR, NodeCollectionPTR, DictionaryDatum&, DictionaryDatum& );
+   * \param connectivity Params connectivity Dictionary
+   * \param synapse Params synapse parameters Dictionary
+   *  conn_spec disconnection specs. For now only all to all and one to one
+   * rules are implemented.    */
+  void disconnect( NodeCollectionPTR sources, NodeCollectionPTR targets, DictionaryDatum& conn_spec, 
+      DictionaryDatum& syn_spec);
 
   /**
    * Disconnect two nodes.
@@ -108,7 +116,13 @@ public:
    * \param syn_id The synapse model to use.
    */
   void disconnect( const index snode_id, Node* target, thread target_thread, const index syn_id );
-
+  /**
+   * Handles the general dynamic creation and deletion of synapses when
+   * structural plasticity is enabled. Retrieves the number of available
+   * synaptic elements to create new synapses. Retrieves the number of
+   * deleted synaptic elements to delete already created synapses.
+   * @param sp_builder The structural plasticity connection builder to use
+   */
   void update_structural_plasticity();
   void update_structural_plasticity( SPBuilder* );
 
@@ -144,25 +158,65 @@ public:
    */
   delay builder_max_delay() const;
 
-  // Creation of synapses
+ /**
+   * Dynamic creation of synapses
+   * @param pre_id source id
+   * @param pre_n number of available synaptic elements in the pre node
+   * @param post_id target id
+   * @param post_n number of available synaptic elements in the post node
+   * @param sp_conn_builder structural plasticity connection builder to use
+   *
+   * @return true if synapses are created
+   */
   bool create_synapses( std::vector< index >& pre_vacant_id,
     std::vector< int >& pre_vacant_n,
     std::vector< index >& post_vacant_id,
     std::vector< int >& post_vacant_n,
     SPBuilder* sp_conn_builder );
   // Deletion of synapses on the pre synaptic side
+  /**
+   * Deletion of synapses due to the loss of a pre synaptic element. The
+   * corresponding pre synaptic element will still remain available for a new
+   * connection on the following updates in connectivity
+   * @param pre_deleted_id Id of the node with the deleted pre synaptic element
+   * @param pre_deleted_n number of deleted pre synaptic elements
+   * @param synapse_model model name
+   * @param se_pre_name pre synaptic element name
+   * @param se_post_name postsynaptic element name
+   */
   void delete_synapses_from_pre( const std::vector< index >& pre_deleted_id,
     std::vector< int >& pre_deleted_n,
     const index synapse_model,
     const std::string& se_pre_name,
     const std::string& se_post_name );
   // Deletion of synapses on the postsynaptic side
+  /**
+   * Deletion of synapses due to the loss of a postsynaptic element. The
+   * corresponding pre synaptic element will still remain available for a new
+   * connection on the following updates in connectivity
+   * @param post_deleted_id Id of the node with the deleted postsynaptic element
+   * @param post_deleted_n number of deleted postsynaptic elements
+   * @param synapse_model model name
+   * @param se_pre_name pre synaptic element name
+   * @param se_post_name postsynaptic element name
+   */
   void delete_synapses_from_post( std::vector< index >& post_deleted_id,
     std::vector< int >& post_deleted_n,
     index synapse_model,
     std::string se_pre_name,
     std::string se_post_name );
   // Deletion of synapses
+  /**
+   * Handles the deletion of synapses between source and target nodes. The
+   * deletion is defined by the pre and postsynaptic elements and the synapse
+   * type. Updates the number of connected synaptic elements in the source and
+   * target.
+   * @param snode_id source id
+   * @param tnode_id target id
+   * @param syn_id synapse type
+   * @param se_pre_name name of the pre synaptic element
+   * @param se_post_name name of the postsynaptic element
+   */
   void delete_synapse( index source, index target, long syn_id, std::string se_pre_name, std::string se_post_name );
 
   void get_synaptic_elements( std::string se_name,

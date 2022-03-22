@@ -171,9 +171,8 @@ NodeManager::add_node( index model_id, long n )
       "lead to inconsistent results." );
   }
 
-  // resize the target table for delivery of events to devices to make
-  // sure the first dimension matches the number of local nodes and
-  // the second dimension matches number of synapse types
+  // resize the target table for delivery of events to devices to make sure the first dimension
+  // matches the number of local nodes and the second dimension matches number of synapse types
   kernel().connection_manager.resize_target_table_devices_to_number_of_neurons();
   kernel().connection_manager.resize_target_table_devices_to_number_of_synapse_types();
 
@@ -495,10 +494,11 @@ NodeManager::get_thread_siblings( index node_id ) const
 void
 NodeManager::ensure_valid_thread_local_ids()
 {
-  // Check if the network size changed, in order to not enter
-  // the critical region if it is not necessary. Note that this
-  // test also covers that case that nodes have been deleted
-  // by reset.
+  /* Check if the network size changed, in order to not enter
+   * the critical region if it is not necessary. Note that this
+   * test also covers that case that nodes have been deleted
+   * by reset.
+   */
   if ( size() == wfr_network_size_ )
   {
     return;
@@ -506,19 +506,21 @@ NodeManager::ensure_valid_thread_local_ids()
 
 #pragma omp critical( update_wfr_nodes_vec )
   {
-    // This code may be called from a thread-parallel context, when it is
-    // invoked by TargetIdentifierIndex::set_target() during parallel
-    // wiring. Nested OpenMP parallelism is problematic, therefore, we
-    // enforce single threading here. This should be unproblematic wrt
-    // performance, because the wfr_nodes_vec_ is rebuilt only once after
-    // changes in network size.
-
-    // Check again, if the network size changed, since a previous thread
-    // can have updated wfr_nodes_vec_ before.
+    /*
+     * This code may be called from a thread-parallel context, when it is
+     * invoked by TargetIdentifierIndex::set_target() during parallel
+     * wiring. Nested OpenMP parallelism is problematic, therefore, we
+     * enforce single threading here. This should be unproblematic wrt
+     * performance, because the wfr_nodes_vec_ is rebuilt only once after
+     * changes in network size.
+     *
+     * Check again, if the network size changed, since a previous thread
+     * can have updated wfr_nodes_vec_ before.
+     */
     if ( size() != wfr_network_size_ )
     {
 
-      /* We clear the existing wfr_nodes_vec_ and then rebuild it. */
+      // We clear the existing wfr_nodes_vec_ and then rebuild it.
       wfr_nodes_vec_.clear();
       wfr_nodes_vec_.resize( kernel().vp_manager.get_num_threads() );
 
@@ -546,11 +548,13 @@ NodeManager::ensure_valid_thread_local_ids()
 
       wfr_network_size_ = size();
 
-      // wfr_is_used_ indicates, whether at least one
-      // of the threads has a neuron that uses waveform relaxtion
-      // all threads then need to perform a wfr_update
-      // step, because gather_events() has to be done in a
-      // openmp single section
+      /*
+       * wfr_is_used_ indicates, whether at least one
+       * of the threads has a neuron that uses waveform relaxtion
+       * all threads then need to perform a wfr_update
+       * step, because gather_events() has to be done in a
+       * openmp single section
+       */
       wfr_is_used_ = false;
       for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
       {
@@ -572,10 +576,12 @@ NodeManager::destruct_nodes_()
     SparseNodeArray::const_iterator n;
     for ( n = local_nodes_[ t ].begin(); n != local_nodes_[ t ].end(); ++n )
     {
-      // We call the destructor for each node excplicitly. This
-      // destroys the objects without releasing their memory. Since
-      // the Memory is owned by the Model objects, we must not call
-      // delete on the Node objects!
+      /*
+       * We call the destructor for each node excplicitly. This
+       * destroys the objects without releasing their memory. Since
+       * the Memory is owned by the Model objects, we must not call
+       * delete on the Node objects!
+       */
       n->get_node()->~Node();
     }
 
@@ -687,10 +693,6 @@ NodeManager::post_run_cleanup()
   } // omp parallel
 }
 
-/**
- * This function is called only if the thread data structures are properly set
- * up.
- */
 void
 NodeManager::finalize_nodes()
 {

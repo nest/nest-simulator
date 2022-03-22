@@ -556,12 +556,4 @@ EventDeliveryManager::get_slice_modulo( delay d )
 
 } // namespace nest
 
-#     /**
- * This function is called after all nodes have been updated.
- * We can compute the value of (T+d) mod max_delay without explicit
- * reference to the network clock, because compute_moduli_ is
- * called whenever the network clock advances.
- * The various modulos for all available delays are stored in
- * a lookup-table and this table is rotated once per time slice.
- */
-endif /* EVENT_DELIVERY_MANAGER_H */
+#endif // EVENT_DELIVERY_MANAGER_H

@@ -32,6 +32,14 @@ struct propagators
   double P32;
 };
 
+/**
+ * Propagator class for handling similar tau_m and tau_syn_* time constants.
+ *
+ * Constants are calculated in the constructor or `update_constants`, while
+ * propagator_31 and propagator_32 are calculated in `propagate( h )`.
+ *
+ * For details, please see doc/userdoc/model_details/IAF_neurons_singularity.ipynb.
+ */
 class propagator
 {
 public:
@@ -39,8 +47,23 @@ public:
   propagator();
   propagator( double tau_syn, double tau, double c );
 
+  /**
+   * Update constants used in `propagate`.
+   *
+   * @param tau_syn Time constant of synaptic current in ms
+   * @param tau Membrane time constant in ms
+   * @param Membrane capacitance in pF
+   */
   void update_constants( double tau_syn, double tau, double c );
-  propogate propagate( double h ) const;
+
+  /**
+   * Calculate propagators 31 and 32.
+   *
+   * @param h time step
+   *
+   * @returns propagators struct containing 31 and 32
+   */
+  propagators propagate( double h ) const;
 
 private:
   double alpha_;   //!< 1/(c*tau*tau) * (tau_syn - tau)

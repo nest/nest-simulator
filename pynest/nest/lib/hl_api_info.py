@@ -299,7 +299,7 @@ def SetStatus(nodes, params, val=None):
         sr('2 arraystore')
         sr('Transpose { arrayload pop SetStatus } forall')
     else:
-        sli_func('SetStatus', nodes, params)
+        nodes.set(params)
 
 
 @check_stack
@@ -409,20 +409,11 @@ def GetStatus(nodes, keys=None, output=''):
         return '[]' if output == 'json' else ()
 
     if keys is None:
-        cmd = 'GetStatus'
-    elif is_literal(keys):
-        cmd = 'GetStatus {{ /{0} get }} Map'.format(keys)
-    elif is_iterable(keys):
-        keys_str = " ".join("/{0}".format(x) for x in keys)
-        cmd = 'GetStatus {{ [ [ {0} ] ] get }} Map'.format(keys_str)
+        result = nodes.get()
+    elif is_literal(keys) or is_iterable(keys):
+        result = nodes.get(keys)
     else:
         raise TypeError("keys should be either a string or an iterable")
-
-    sps(nodes)
-
-    sr(cmd)
-
-    result = spp()
 
     if isinstance(result, dict):
         # We have taken GetStatus on a layer object, or another NodeCollection with metadata, which returns a

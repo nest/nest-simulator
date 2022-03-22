@@ -43,13 +43,13 @@ public:
   propogate propagate( double h ) const;
 
 private:
-  double alpha_;
-  double beta_;
-  double gamma_;    //!< 1/c * 1/(1/tau_syn - 1/tau)
+  double alpha_;   //!< 1/(c*tau*tau) * (tau_syn - tau)
+  double beta_;    //!< tau_syn  * tau/(tau - tau_syn)
+  double gamma_;   //!< beta_/c
 
-  double tau_syn_;
-  double tau_;
-  double c_;
+  double tau_syn_; //!< Time constant of synaptic current in ms
+  double tau_;     //!< Membrane time constant in ms
+  double c_;       //!< Membrane capacitance in pF
 };
 
 #endif

@@ -44,15 +44,15 @@ propagator::propagator( double tau_syn, double tau, double c )
   , c_ ( c )
 {
   alpha_ = 1 / ( c * tau * tau ) * ( tau_syn - tau );
-  beta_ = tau_syn  * tau / (tau - tau_syn);
-  gamma_ = 1 / c * beta_;
+  beta_ = tau_syn  * tau / ( tau - tau_syn );
+  gamma_ = beta_ / c;
 }
 
 void propagator::update_constants( double tau_syn, double tau, double c )
 {
   alpha_ = 1 / ( c * tau * tau ) * ( tau_syn - tau );
-  beta_ = tau_syn  * tau / (tau - tau_syn);
-  gamma_ = 1 / c * beta_;
+  beta_ = tau_syn  * tau / ( tau - tau_syn );
+  gamma_ = beta_ / c;
 
   tau_syn_ = tau_syn;
   tau_ = tau;

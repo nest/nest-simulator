@@ -13,7 +13,7 @@ nbsphinx
 numpy
 numpydoc
 path.py
-pathlib
+pathlib2
 pytest
 recommonmark
 scipy

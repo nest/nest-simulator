@@ -40,7 +40,7 @@ Preparations
 
    .. code:: sh
 
-      conda acvitate conda/
+      conda activate conda/
 
    This assumes that you have created the environment in the folder ``conda/`` as given above. Note that the trailing
    slash is necessary for conda to distinguish it from a named environment.

@@ -270,40 +270,6 @@ updateValue2( DictionaryDatum const& d, Name const n, C& obj, void ( C::*setfunc
   }
 }
 
-/** Update an int or a double from a dictionary entry if it exists, and convert it to an int.
- * Skip call if it doesn't exist.
- * @ingroup DictUtils
- * @throws TypeMismatch The entry is neither int nor double.
- * @returns true if the property was found (and updated) in the dictionary, false otherwise
- */
-inline bool
-updateValueInt( const DictionaryDatum& d, Name propname, int& prop )
-{
-  if ( d->known( propname ) )
-  {
-    Datum* dat = ( *d )[ propname ].datum();
-    IntegerDatum* intdat = dynamic_cast< IntegerDatum* >( dat );
-    if ( intdat != nullptr )
-    {
-      prop = static_cast< int >( intdat->get() );
-      return true;
-    }
-    DoubleDatum* doubledat = dynamic_cast< DoubleDatum* >( dat );
-    if ( doubledat != nullptr )
-    {
-      prop = static_cast< int >( doubledat->get() );
-      return true;
-    }
-    else
-    {
-      throw TypeMismatch();
-    }
-  }
-
-  return false;
-}
-
-
 /** Create a property of type ArrayDatum in the dictionary, if it does not
  * already exist.
  * @ingroup DictUtils

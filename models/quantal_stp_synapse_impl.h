@@ -76,8 +76,8 @@ quantal_stp_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, 
   updateValue< double >( d, names::u, u_ );
   updateValue< double >( d, names::tau_rec, tau_rec_ );
   updateValue< double >( d, names::tau_fac, tau_fac_ );
-  updateValueInt( d, names::n, n_ );
-  updateValueInt( d, names::a, a_ );
+  updateValue< long >( d, names::n, n_ );
+  updateValue< long >( d, names::a, a_ );
 }
 
 } // of namespace nest

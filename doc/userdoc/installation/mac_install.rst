@@ -72,7 +72,7 @@ Building NEST
 
 #. Create a build directory outside the NEST sources and change into it.
 
-#. Double check that you have activated a virtual environment as in .
+#. Double check that you have activated a virtual environment.
 
 #. Configure NEST by running
 

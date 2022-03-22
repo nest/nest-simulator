@@ -274,6 +274,10 @@ private:
    */
   double is_spike_( const double );
 
+  /** Propagator object for updating synaptic components */
+  propagator prop_ex_;
+  propagator prop_in_;
+
   // ----------------------------------------------------------------
 
   /**
@@ -314,9 +318,6 @@ private:
         At threshold crossing, the membrane potential is reset to this value.
         Relative to resting potential. */
     double U_reset_;
-
-    propagator prop_ex_;
-    propagator prop_in_;
 
     Parameters_(); //!< Sets default parameter values
 

@@ -51,7 +51,6 @@ namespace nest
 {
 
 /**
- * \file nest_types.h
  * Default types used by the NEST kernel.
  * These typedefs should be used
  * in place of the primitive C/C++ types.

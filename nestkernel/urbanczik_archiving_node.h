@@ -50,13 +50,11 @@ class UrbanczikArchivingNode : public ArchivingNode
 
 public:
   /**
-   * \fn UrbanczikArchivingNode()
    * Constructor.
    */
   UrbanczikArchivingNode();
 
   /**
-   * \fn UrbanczikArchivingNode()
    * Copy Constructor.
    */
   UrbanczikArchivingNode( const UrbanczikArchivingNode& );
@@ -68,7 +66,6 @@ public:
   }
 
   /**
-   * \fn void get_urbanczik_history( double t1, double t2,
    * std::deque<Archiver::histentry>::iterator* start,
    * std::deque<Archiver::histentry>::iterator* finish, int comp )
    * Sets pointer start (finish) to the first (last) entry in urbanczik_history_[comp]
@@ -81,38 +78,32 @@ public:
     int comp );
 
   /**
-   * \fn double get_C_m( int comp )
    * Returns membrane capacitance
    */
   double get_C_m( int comp );
 
   /**
-   * \fn double get_g_L( int comp )
    * Returns leak conductance g_L
    */
   double get_g_L( int comp );
 
   /**
-   * \fn double get_tau_L( int comp )
    * Returns time constant tau_L
    */
   double get_tau_L( int comp );
 
   /**
-   * \fn double get_tau_s( int comp )
    * Returns time constant tau_syn_ex
    */
   double get_tau_syn_ex( int comp );
 
   /**
-   * \fn double get_tau_syn_in( int comp )
    * Returns time constant tau_syn_in
    */
   double get_tau_syn_in( int comp );
 
 protected:
   /**
-   * \fn void write_urbanczik_history( Time const& t_sp, double V_W, int n_spikes, int comp ))
    * Writes the history for compartment comp into the buffers.
    */
   void write_urbanczik_history( Time const& t_sp, double V_W, int n_spikes, int comp );

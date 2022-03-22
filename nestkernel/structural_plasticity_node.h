@@ -49,25 +49,21 @@ class StructuralPlasticityNode : public Node
 
 public:
   /**
-   * \fn StructuralPlasticityNode()
    * Constructor.
    */
   StructuralPlasticityNode();
 
   /**
-   * \fn StructuralPlasticityNode()
    * Copy Constructor.
    */
   StructuralPlasticityNode( const StructuralPlasticityNode& );
   /**
 
-   * \fn double get_Ca_minus()
    * return the current value of Ca_minus
    */
   double get_Ca_minus() const;
 
   /**
-   * \fn double get_synaptic_elements(Name n)
    * get the number of synaptic element for the current Node
    * the number of synaptic elements is a double value but the number of
    * actual vacant and connected elements is an integer truncated from this
@@ -76,41 +72,35 @@ public:
   double get_synaptic_elements( Name n ) const;
 
   /**
-   * \fn int get_synaptic_elements_vacant(Name n)
    * Get the number of synaptic elements of type n which are available
    * for new synapse creation
    */
   int get_synaptic_elements_vacant( Name n ) const;
 
   /**
-   * \fn int get_synaptic_elements_connected(Name n)
    * get the number of synaptic element of type n which are currently
    * connected
    */
   int get_synaptic_elements_connected( Name n ) const;
 
   /**
-   * \fn std::map<Name, double> get_synaptic_elements()
    * get the number of all synaptic elements for the current Node
    */
   std::map< Name, double > get_synaptic_elements() const;
 
   /**
-   * \fn void update_synaptic_elements()
    * Change the number of synaptic elements in the node depending on the
    * dynamics described by the corresponding growth curve
    */
   void update_synaptic_elements( double t );
 
   /**
-   * \fn void decay_synaptic_elements_vacant()
    * Delete a certain portion of the vacant synaptic elements which are not
    * in use
    */
   void decay_synaptic_elements_vacant();
 
   /**
-   * \fn void connect_synaptic_element()
    * Change the number of connected synaptic elements by n
    */
   void connect_synaptic_element( Name name, int n );
@@ -126,13 +116,11 @@ public:
 
 protected:
   /**
-   * \fn void set_spiketime(Time const & t_sp, double offset)
    * record spike history
    */
   void set_spiketime( Time const& t_sp, double offset = 0.0 );
 
   /**
-   * \fn void clear_history()
    * clear spike history
    */
   void clear_history();

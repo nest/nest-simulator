@@ -274,14 +274,14 @@ nest::iaf_psc_alpha_ps::calibrate()
   V_.P30_ = -P_.tau_m_ / P_.c_m_ * V_.expm1_tau_m_;
   // these are determined according to a numeric stability criterion
   P_.prop_ex_.update_constants( P_.tau_syn_ex_, P_.tau_m_, P_.c_m_ );
-  propogate propogate_ex = P_.prop_ex_.propagate( V_.h_ms_ );
-  V_.P31_ex_ = propogate_ex.P31;
-  V_.P32_ex_ = propogate_ex.P32;
+  propagators propagators_ex = P_.prop_ex_.propagate( V_.h_ms_ );
+  V_.P31_ex_ = propagators_ex.P31;
+  V_.P32_ex_ = propagators_ex.P32;
 
   P_.prop_in_.update_constants( P_.tau_syn_in_, P_.tau_m_, P_.c_m_ );
-  propogate propogate_in = P_.prop_in_.propagate( V_.h_ms_ );
-  V_.P31_in_ = propogate_in.P31;
-  V_.P32_in_ = propogate_in.P32;
+  propagators propagators_in = P_.prop_in_.propagate( V_.h_ms_ );
+  V_.P31_in_ = propagators_in.P31;
+  V_.P32_in_ = propagators_in.P32;
 
   // t_ref_ is the refractory period in ms
   // refractory_steps_ is the duration of the refractory period in whole
@@ -507,12 +507,12 @@ nest::iaf_psc_alpha_ps::propagate_( const double dt )
 
     const double ps_P30 = -P_.tau_m_ / P_.c_m_ * expm1_tau_m;
 
-    propogate propogate_ex = P_.prop_ex_.propagate( dt );
-    propogate propogate_in = P_.prop_in_.propagate( dt );
-    const double ps_P31_ex = propogate_ex.P31;
-    const double ps_P32_ex = propogate_ex.P32;
-    const double ps_P31_in = propogate_in.P31;
-    const double ps_P32_in = propogate_in.P32;
+    propagators propagators_ex = P_.prop_ex_.propagate( dt );
+    propagators propagators_in = P_.prop_in_.propagate( dt );
+    const double ps_P31_ex = propagators_ex.P31;
+    const double ps_P32_ex = propagators_ex.P32;
+    const double ps_P31_in = propagators_in.P31;
+    const double ps_P32_in = propagators_in.P32;
 
     S_.V_m_ = ps_P30 * ( P_.I_e_ + S_.y_input_ ) + ps_P31_ex * S_.dI_ex_ + ps_P32_ex * S_.I_ex_ + ps_P31_in * S_.dI_in_
       + ps_P32_in * S_.I_in_ + S_.V_m_ * expm1_tau_m + S_.V_m_;
@@ -585,12 +585,12 @@ nest::iaf_psc_alpha_ps::threshold_distance( double t_step ) const
 
   const double ps_P30 = -P_.tau_m_ / P_.c_m_ * expm1_tau_m;
 
-  propogate propogate_ex = P_.prop_ex_.propagate( t_step );
-  propogate propogate_in = P_.prop_in_.propagate( t_step );
-  const double ps_P31_ex = propogate_ex.P31;
-  const double ps_P32_ex = propogate_ex.P32;
-  const double ps_P31_in = propogate_in.P31;
-  const double ps_P32_in = propogate_in.P32;
+  propagators propagators_ex = P_.prop_ex_.propagate( t_step );
+  propagators propagators_in = P_.prop_in_.propagate( t_step );
+  const double ps_P31_ex = propagators_ex.P31;
+  const double ps_P32_ex = propagators_ex.P32;
+  const double ps_P31_in = propagators_in.P31;
+  const double ps_P32_in = propagators_in.P32;
 
   const double V_m_root = ps_P30 * ( P_.I_e_ + V_.y_input_before_ ) + ps_P31_ex * V_.dI_ex_before_
     + ps_P32_ex * V_.I_ex_before_ + ps_P31_in * V_.dI_in_before_ + ps_P32_in * V_.I_in_before_

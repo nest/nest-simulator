@@ -23,10 +23,10 @@
 #ifndef PROPAGATOR_STABILITY_H
 #define PROPAGATOR_STABILITY_H
 
-// Propagators to handle similar tau_m and tau_syn_* time constants.
-// For details, please see doc/userdoc/model_details/IAF_neurons_singularity.ipynb.
-
-struct propogate
+/**
+ * Propagator variables
+ */
+struct propagators
 {
   double P31;
   double P32;

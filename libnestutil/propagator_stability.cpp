@@ -59,13 +59,13 @@ void propagator::update_constants( double tau_syn, double tau, double c )
   c_ = c;
 }
 
-propogate
+propagators
 propagator::propagate( double h ) const
 {
   const double exp_h_tau_syn = std::exp( -h / tau_syn_ );
   const double expm1_h_tau = numerics::expm1( -h / tau_ + h / tau_syn_ );
 
-  propogate P;
+  propagators P;
 
   P.P31 = gamma_ * ( beta_ * exp_h_tau_syn * expm1_h_tau - h * exp_h_tau_syn);
   P.P32 = gamma_ * exp_h_tau_syn * expm1_h_tau;

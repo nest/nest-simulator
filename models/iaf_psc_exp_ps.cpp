@@ -261,11 +261,11 @@ nest::iaf_psc_exp_ps::calibrate()
 
   // these are determined according to a numeric stability criterion
   P_.prop_ex_.update_constants( P_.tau_ex_, P_.tau_m_, P_.c_m_ );
-  propogate propogate_ex = P_.prop_ex_.propagate( V_.h_ms_ );
-  V_.P21_ex_ = propogate_ex.P32;
+  propagators propagators_ex = P_.prop_ex_.propagate( V_.h_ms_ );
+  V_.P21_ex_ = propagators_ex.P32;
   P_.prop_in_.update_constants( P_.tau_in_, P_.tau_m_, P_.c_m_ );
-  propogate propogate_in = P_.prop_in_.propagate( V_.h_ms_ );
-  V_.P21_in_ = propogate_in.P32;
+  propagators propagators_in = P_.prop_in_.propagate( V_.h_ms_ );
+  V_.P21_in_ = propagators_in.P32;
 
   V_.refractory_steps_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   // since t_ref_ >= sim step size, this can only fail in error
@@ -482,10 +482,10 @@ nest::iaf_psc_exp_ps::propagate_( const double dt )
   {
     const double P20 = -P_.tau_m_ / P_.c_m_ * numerics::expm1( -dt / P_.tau_m_ );
 
-    propogate propogate_ex = P_.prop_ex_.propagate( dt );
-    propogate propogate_in = P_.prop_in_.propagate( dt );
-    const double P21_ex = propogate_ex.P32;
-    const double P21_in = propogate_in.P32;
+    propagators propagators_ex = P_.prop_ex_.propagate( dt );
+    propagators propagators_in = P_.prop_in_.propagate( dt );
+    const double P21_ex = propagators_ex.P32;
+    const double P21_in = propagators_in.P32;
 
     S_.y2_ =
       P20 * ( P_.I_e_ + S_.y0_ ) + P21_ex * S_.y1_ex_ + P21_in * S_.y1_in_ + S_.y2_ * std::exp( -dt / P_.tau_m_ );
@@ -550,10 +550,10 @@ nest::iaf_psc_exp_ps::threshold_distance( double t_step ) const
 {
   const double P20 = -P_.tau_m_ / P_.c_m_ * numerics::expm1( -t_step / P_.tau_m_ );
 
-  propogate propogate_ex = P_.prop_ex_.propagate( t_step );
-  propogate propogate_in = P_.prop_in_.propagate( t_step );
-  const double P21_ex = propogate_ex.P32;
-  const double P21_in = propogate_in.P32;
+  propagators propagators_ex = P_.prop_ex_.propagate( t_step );
+  propagators propagators_in = P_.prop_in_.propagate( t_step );
+  const double P21_ex = propagators_ex.P32;
+  const double P21_in = propagators_in.P32;
 
   double y2_root = P20 * ( P_.I_e_ + V_.y0_before_ ) + P21_ex * V_.y1_ex_before_ + P21_in * V_.y1_in_before_
     + V_.y2_before_ * std::exp( -t_step / P_.tau_m_ );

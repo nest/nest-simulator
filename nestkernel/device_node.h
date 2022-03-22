@@ -69,4 +69,4 @@ DeviceNode::get_local_device_id() const
 
 } // namespace
 
-#endif /* #ifndef DEVICE_NODE_H */
+#endif // #ifndef DEVICE_NODE_H

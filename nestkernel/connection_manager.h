@@ -865,4 +865,4 @@ ConnectionManager::clear_compressed_spike_data_map( const thread tid )
 
 } // namespace nest
 
-#endif /* CONNECTION_MANAGER_H */
+#endif // CONNECTION_MANAGER_H

@@ -48,4 +48,4 @@ ConnBuilder::single_disconnect_( index snode_id, Node& target, thread target_thr
 
 } // namespace nest
 
-#endif /* CONN_BUILDER_IMPL_H */
+#endif // CONN_BUILDER_IMPL_H

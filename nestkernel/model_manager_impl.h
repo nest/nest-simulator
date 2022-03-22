@@ -155,4 +155,4 @@ ModelManager::get_proxy_node( thread tid, index node_id )
 
 } // namespace nest
 
-#endif /* #ifndef MODEL_MANAGER_IMPL_H */
+#endif // #ifndef MODEL_MANAGER_IMPL_H

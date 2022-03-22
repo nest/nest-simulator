@@ -856,4 +856,4 @@ MPIManager::communicate_off_grid_spike_data_Alltoall( std::vector< D >& send_buf
 }
 }
 
-#endif /* MPI_MANAGER_H */
+#endif // MPI_MANAGER_H

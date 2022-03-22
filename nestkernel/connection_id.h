@@ -106,4 +106,4 @@ ConnectionID::get_port() const
 
 } // namespace
 
-#endif /* #ifndef CONNECTION_ID_H */
+#endif // #ifndef CONNECTION_ID_H

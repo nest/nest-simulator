@@ -203,4 +203,4 @@ Datum* node_collection_array_index( const Datum* datum, const bool* array, unsig
 }
 
 
-#endif /* NEST_H */
+#endif // NEST_H

@@ -327,4 +327,4 @@ SimulationManager::get_wfr_interpolation_order() const
 }
 
 
-#endif /* SIMULATION_MANAGER_H */
+#endif // SIMULATION_MANAGER_H

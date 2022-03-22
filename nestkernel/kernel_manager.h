@@ -223,4 +223,4 @@ nest::KernelManager::get_fingerprint() const
   return fingerprint_;
 }
 
-#endif /* KERNEL_MANAGER_H */
+#endif // KERNEL_MANAGER_H

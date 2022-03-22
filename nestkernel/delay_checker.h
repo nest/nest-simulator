@@ -125,4 +125,4 @@ DelayChecker::enable_delay_update()
 }
 
 
-#endif /* DELAY_CHECKER_H */
+#endif // DELAY_CHECKER_H

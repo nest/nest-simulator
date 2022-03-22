@@ -86,4 +86,4 @@ private:
 };
 }
 
-#endif /* DEPRECATION_WARNING_H */
+#endif // DEPRECATION_WARNING_H

@@ -49,4 +49,4 @@ SPManager::register_growth_curve( const std::string& name )
 
 } // namespace nest
 
-#endif /* SP_MANAGER_IMPL_H */
+#endif // SP_MANAGER_IMPL_H

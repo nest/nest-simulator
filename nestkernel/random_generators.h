@@ -383,4 +383,4 @@ private:
 
 } // namespace nest
 
-#endif /* #ifndef RANDOM_GENERATORS_H */
+#endif // #ifndef RANDOM_GENERATORS_H

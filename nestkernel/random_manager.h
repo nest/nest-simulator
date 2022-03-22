@@ -178,4 +178,4 @@ nest::RandomManager::get_vp_specific_rng( thread tid ) const
 
 } // namespace nest
 
-#endif /* RANDOM_MANAGER_H */
+#endif // RANDOM_MANAGER_H

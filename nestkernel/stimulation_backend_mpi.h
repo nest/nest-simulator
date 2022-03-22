@@ -34,55 +34,55 @@
 #include <unistd.h>
 
 /* BeginUserDocs: stimulation backend
-
-Stimulation backend `mpi` - Receive stimulation parameters via MPI
-##################################################################
-
-.. admonition:: Availability
-
-   This stimulation backend is only available if NEST was compiled with
-   :ref:`support for MPI <compile-with-mpi>`.
-
-The `mpi` stimulation backend collects data from MPI channels and
-updates stimulation devices just before each run. This is useful for
-co-simulation or for receiving stimuli from external software.
-
-The name of the MPI port to receive data on is read from a file for
-each device configured to use this backend.  The file needs to be
-named according to the following pattern:
-
-::
-
-   {data_path}/{data_prefix}{label}/{node_id}.txt
-
-The ``data_path`` and ``data_prefix`` are global kernel properties,
-while `label` is a property of the device in question and `node_id`
-its node ID. This path can only be set outside of a ``Run`` context
-(i.e.  after ``Prepare()`` has been called, but ``Cleanup()`` has
-not).
-
-Communication Protocol
-++++++++++++++++++++++
-
-The following protocol is used to exchange information between both
-MPI processes. The protocol is described using the following format
-for the MPI messages: (value, number, type, source/destination, tag)
-
-1) ``Prepare``   : Connection of MPI port include in one file (see below)
-2) ``Run`` begin : Send start run (true, 1, CXX_BOOL, 0, 0)
-3) ``Run`` begin : Send the id of the device to update (node_id, 1, INT, 0, 0)
-4) ``Run`` begin : Receive shape of the data (shape, 1, INT, 0, 0)
-5) ``Run`` begin : Receive the data for updating the device (data, shape, DOUBLE, 0, 0)
-6) ``Run`` end   : Send at each ending of the run (true, 1, CXX_BOOL, 0, 1)
-7) ``Cleanup``   : Send at this en of the simulation (true, 1, CXX_BOOL, 0, 2)
-
-Data format
-+++++++++++
-
-The format of the data depends on the exact type of stimulation
-device.
-
-EndUserDocs */
+ *
+ * Stimulation backend `mpi` - Receive stimulation parameters via MPI
+ * ##################################################################
+ *
+ * .. admonition:: Availability
+ *
+ *    This stimulation backend is only available if NEST was compiled with
+ *    :ref:`support for MPI <compile-with-mpi>`.
+ *
+ * The `mpi` stimulation backend collects data from MPI channels and
+ * updates stimulation devices just before each run. This is useful for
+ * co-simulation or for receiving stimuli from external software.
+ *
+ * The name of the MPI port to receive data on is read from a file for
+ * each device configured to use this backend.  The file needs to be
+ * named according to the following pattern:
+ *
+ * ::
+ *
+ *    {data_path}/{data_prefix}{label}/{node_id}.txt
+ *
+ * The ``data_path`` and ``data_prefix`` are global kernel properties,
+ * while `label` is a property of the device in question and `node_id`
+ * its node ID. This path can only be set outside of a ``Run`` context
+ * (i.e.  after ``Prepare()`` has been called, but ``Cleanup()`` has
+ * not).
+ *
+ * Communication Protocol
+ * ++++++++++++++++++++++
+ *
+ * The following protocol is used to exchange information between both
+ * MPI processes. The protocol is described using the following format
+ * for the MPI messages: (value, number, type, source/destination, tag)
+ *
+ * 1) ``Prepare``   : Connection of MPI port include in one file (see below)
+ * 2) ``Run`` begin : Send start run (true, 1, CXX_BOOL, 0, 0)
+ * 3) ``Run`` begin : Send the id of the device to update (node_id, 1, INT, 0, 0)
+ * 4) ``Run`` begin : Receive shape of the data (shape, 1, INT, 0, 0)
+ * 5) ``Run`` begin : Receive the data for updating the device (data, shape, DOUBLE, 0, 0)
+ * 6) ``Run`` end   : Send at each ending of the run (true, 1, CXX_BOOL, 0, 1)
+ * 7) ``Cleanup``   : Send at this en of the simulation (true, 1, CXX_BOOL, 0, 2)
+ *
+ * Data format
+ * +++++++++++
+ *
+ * The format of the data depends on the exact type of stimulation
+ * device.
+ *
+ * EndUserDocs */
 
 namespace nest
 {

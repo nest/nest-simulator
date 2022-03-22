@@ -320,4 +320,4 @@ OffGridSpikeData::get_offset() const
 
 } // namespace nest
 
-#endif /* SPIKE_DATA_H */
+#endif // SPIKE_DATA_H

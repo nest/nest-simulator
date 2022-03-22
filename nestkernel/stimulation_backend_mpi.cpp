@@ -112,8 +112,7 @@ nest::StimulationBackendMPI::prepare()
   // need to be run only by the master thread : it is the case because this part is not running in parallel
   thread thread_id_master = kernel().vp_manager.get_thread_id();
   // Create the connection with MPI
-  // 1) take all the ports of the connections
-  // get port and update the list of device only for master
+  // 1) take all the ports of the connections. Get port and update the list of device only for master
   for ( auto& it_device : devices_[ thread_id_master ] )
   {
     // add the link between MPI communicator and the device (devices can share the same MPI communicator)
@@ -135,9 +134,11 @@ nest::StimulationBackendMPI::prepare()
     }
     else
     {
-      // create a new MPI communicator to communicate with the external MPI process.
-      // Only the master thread uses the MPI functions of this new communicator.
-      // This is because the management of threads here is using MPI_THREAD_FUNNELED (see mpi_manager.cpp:119).
+      /*
+       * create a new MPI communicator to communicate with the external MPI process.
+       * Only the master thread uses the MPI functions of this new communicator.
+       * This is because the management of threads here is using MPI_THREAD_FUNNELED (see mpi_manager.cpp:119).
+       */
       comm = new MPI_Comm;
       auto vector_id_device = new std::vector< int >; // vector of ID device for the rank
       int* vector_nb_device_th { new int[ kernel().vp_manager.get_num_threads() ] {} }; // number of device by thread
@@ -257,8 +258,7 @@ void
 nest::StimulationBackendMPI::cleanup()
 {
 // Disconnect all the MPI connection and send information about this disconnection
-// Clean all the elements in the map
-// disconnect MPI message
+// Clean all the elements in the map  and disconnect MPI message
 #pragma omp master
   {
     for ( auto& it_comm : commMap_ )

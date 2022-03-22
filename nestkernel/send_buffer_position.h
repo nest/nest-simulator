@@ -156,4 +156,4 @@ SendBufferPosition::increase( const thread rank )
 
 } // namespace nest
 
-#endif /* SEND_BUFFER_POSITION_H */
+#endif // SEND_BUFFER_POSITION_H

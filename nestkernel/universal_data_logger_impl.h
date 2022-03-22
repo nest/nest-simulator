@@ -102,24 +102,24 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::init()
     return;
   }
 
-  // If we get here, the buffer has either never been initialized or has
-  // been dormant during a period when the host node was frozen. We then
-  // (re-)initialize.
+  // If we get here, the buffer has either never been initialized or has been dormant
+  // during a period when the host node was frozen. We then (re-)initialize.
   data_.clear();
 
   // store recording time in steps
   rec_int_steps_ = recording_interval_.get_steps();
 
-  // set next recording step to first multiple of rec_int_steps_
-  // beyond current time, shifted one to left, since rec_step marks
-  // left of update intervals, and we want time stamps at right end of
-  // update interval to be multiples of recording interval. Need to add
-  // +1 because the division result is rounded down.
+  /*
+   * set next recording step to first multiple of rec_int_steps_
+   * beyond current time, shifted one to left, since rec_step marks
+   * left of update intervals, and we want time stamps at right end of
+   * update interval to be multiples of recording interval. Need to add
+   * +1 because the division result is rounded down.
+   */
   next_rec_step_ = ( kernel().simulation_manager.get_time().get_steps() / rec_int_steps_ + 1 ) * rec_int_steps_ - 1;
 
-  // If offset is not 0, adjust next recording step to account for it by
-  // first setting next recording step to be offset and then iterating until
-  // the variable is greater than current simulation time.
+  // If offset is not 0, adjust next recording step to account for it by first setting next recording
+  // step to be offset and then iterating until the variable is greater than current simulation time.
   if ( recording_offset_.get_steps() != 0 )
   {
     next_rec_step_ = recording_offset_.get_steps() - 1; // shifted one to left
@@ -154,11 +154,11 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::record_data( const Ho
   assert( wt < data_.size() );
 
   /* The following assertion may fire if the multimeter connected to
-     this logger is frozen. In that case, handle() is not called and
-     next_rec_[wt] never reset. The assert() prevents error propagation.
-     This is not an exception, since I consider the chance of users
-     freezing multimeters very slim.
-     See #464 for details.
+   * this logger is frozen. In that case, handle() is not called and
+   * next_rec_[wt] never reset. The assert() prevents error propagation.
+   * This is not an exception, since I consider the chance of users
+   * freezing multimeters very slim.
+   * See #464 for details.
    */
   assert( next_rec_[ wt ] < data_[ wt ].size() );
 
@@ -176,10 +176,10 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::record_data( const Ho
   next_rec_step_ += rec_int_steps_;
 
   /* We just increment. Construction ensures that we cannot overflow,
-     and read-out resets.
-     Overflow is possible if the multimeter is frozen, see #464.
-     In that case, the assertion above will trigger.
-  */
+   *  and read-out resets.
+   *  Overflow is possible if the multimeter is frozen, see #464.
+   *  In that case, the assertion above will trigger.
+   */
   ++next_rec_[ wt ];
 }
 
@@ -201,21 +201,24 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& hos
   const size_t rt = kernel().event_delivery_manager.read_toggle();
   assert( not data_[ rt ].empty() );
 
-  // Check if we have valid data, i.e., data with time stamps within the
-  // past time slice. This may not be the case if the node has been frozen.
-  // In that case, we still reset the recording marker, to prepare for the next
-  // round.
+  /*
+   * Check if we have valid data, i.e., data with time stamps within the
+   * past time slice. This may not be the case if the node has been frozen.
+   * In that case, we still reset the recording marker, to prepare for the next round.
+   */
   if ( data_[ rt ][ 0 ].timestamp <= kernel().simulation_manager.get_previous_slice_origin() )
   {
     next_rec_[ rt ] = 0;
     return;
   }
 
-  // If recording interval and min_delay are not commensurable,
-  // the last entry of data_ will not contain useful data for every
-  // other slice. We mark this by time stamp -infinity.
-  // Applying this mark here is less work than initializing all time stamps
-  // to -infinity after each call to this function.
+  /*
+   * If recording interval and min_delay are not commensurable,
+   * the last entry of data_ will not contain useful data for every
+   * other slice. We mark this by time stamp -infinity.
+   * Applying this mark here is less work than initializing all time stamps
+   * to -infinity after each call to this function.
+   */
   if ( next_rec_[ rt ] < data_[ rt ].size() )
   {
     data_[ rt ][ next_rec_[ rt ] ].timestamp = Time::neg_inf();
@@ -309,23 +312,23 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
   }
 
   // If we get here, the buffer has either never been initialized or has
-  // been dormant during a period when the host node was frozen. We then
-  // (re-)initialize.
+  // been dormant during a period when the host node was frozen. We then (re-)initialize.
   data_.clear();
 
   // store recording time in steps
   rec_int_steps_ = recording_interval_.get_steps();
 
-  // set next recording step to first multiple of rec_int_steps_
-  // beyond current time, shifted one to left, since rec_step marks
-  // left of update intervals, and we want time stamps at right end of
-  // update interval to be multiples of recording interval. Need to add
-  // +1 because the division result is rounded down.
+  /*
+   * set next recording step to first multiple of rec_int_steps_
+   * beyond current time, shifted one to left, since rec_step marks
+   * left of update intervals, and we want time stamps at right end of
+   * update interval to be multiples of recording interval. Need to add
+   * +1 because the division result is rounded down.
+   */
   next_rec_step_ = ( kernel().simulation_manager.get_time().get_steps() / rec_int_steps_ + 1 ) * rec_int_steps_ - 1;
 
-  // If offset is not 0, adjust next recording step to account for it by
-  // first setting next recording step to be offset and then iterating until
-  // the variable is greater than current simulation time.
+  // If offset is not 0, adjust next recording step to account for it by first setting next recording
+  // step to be offset and then iterating until the variable is greater than current simulation time.
   if ( recording_offset_.get_steps() != 0 )
   {
     next_rec_step_ = recording_offset_.get_steps() - 1; // shifted one to left
@@ -360,11 +363,11 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::record_data( const HostNode&
   assert( wt < data_.size() );
 
   /* The following assertion may fire if the multimeter connected to
-     this logger is frozen. In that case, handle() is not called and
-     next_rec_[wt] never reset. The assert() prevents error propagation.
-     This is not an exception, since I consider the chance of users
-     freezing multimeters very slim.
-     See #464 for details.
+   * this logger is frozen. In that case, handle() is not called and
+   * next_rec_[wt] never reset. The assert() prevents error propagation.
+   * This is not an exception, since I consider the chance of users
+   * freezing multimeters very slim.
+   * See #464 for details.
    */
   assert( next_rec_[ wt ] < data_[ wt ].size() );
 
@@ -382,10 +385,10 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::record_data( const HostNode&
   next_rec_step_ += rec_int_steps_;
 
   /* We just increment. Construction ensures that we cannot overflow,
-     and read-out resets.
-     Overflow is possible if the multimeter is frozen, see #464.
-     In that case, the assertion above will trigger.
-  */
+   * and read-out resets.
+   * Overflow is possible if the multimeter is frozen, see #464.
+   *  In that case, the assertion above will trigger.
+   */
   ++next_rec_[ wt ];
 }
 
@@ -408,21 +411,23 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host, cons
   const size_t rt = kernel().event_delivery_manager.read_toggle();
   assert( not data_[ rt ].empty() );
 
-  // Check if we have valid data, i.e., data with time stamps within the
-  // past time slice. This may not be the case if the node has been frozen.
-  // In that case, we still reset the recording marker, to prepare for the next
-  // round.
+  /*
+   * Check if we have valid data, i.e., data with time stamps within the
+   * past time slice. This may not be the case if the node has been frozen.
+   * In that case, we still reset the recording marker, to prepare for the next round.
+   */
   if ( data_[ rt ][ 0 ].timestamp <= kernel().simulation_manager.get_previous_slice_origin() )
   {
     next_rec_[ rt ] = 0;
     return;
   }
 
-  // If recording interval and min_delay are not commensurable,
-  // the last entry of data_ will not contain useful data for every
-  // other slice. We mark this by time stamp -infinity.
-  // Applying this mark here is less work than initializing all time stamps
-  // to -infinity after each call to this function.
+  /* If recording interval and min_delay are not commensurable,
+   * the last entry of data_ will not contain useful data for every
+   * other slice. We mark this by time stamp -infinity.
+   * Applying this mark here is less work than initializing all time stamps
+   * to -infinity after each call to this function.
+   */
   if ( next_rec_[ rt ] < data_[ rt ].size() )
   {
     data_[ rt ][ next_rec_[ rt ] ].timestamp = Time::neg_inf();

@@ -106,9 +106,8 @@ VPManager::get_end_rank_per_thread( const thread rank_start, const thread num_as
 {
   thread rank_end = rank_start + num_assigned_ranks_per_thread;
 
-  // if we have more threads than ranks, or if ranks can not be
-  // distributed evenly on threads, we need to make sure, that all
-  // threads care only about existing ranks
+  // if we have more threads than ranks, or if ranks can not be distributed evenly on threads,
+  // we need to make sure, that all threads care only about existing ranks
   while ( rank_end > kernel().mpi_manager.get_num_processes() )
   {
     --rank_end;
@@ -136,4 +135,4 @@ VPManager::get_assigned_ranks( const thread tid )
 
 } // namespace nest
 
-#endif /* VP_MANAGER_IMPL_H */
+#endif // VP_MANAGER_IMPL_H

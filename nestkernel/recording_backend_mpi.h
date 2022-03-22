@@ -32,56 +32,56 @@
 #include <unistd.h>
 
 /* BeginUserDocs: NOINDEX
-
-Recording backend `mpi` - Send data with MPI
-############################################
-
-Description
-+++++++++++
-
-.. admonition:: Availability
-
-   This stimulation backend is only available if NEST was compiled with
-   :ref:`support for MPI <compile-with-mpi>`.
-
-The `mpi` recording backend sends collected data to a remote process
-using MPI.
-
-The name of the MPI port to send data to is read from a file for each
-device configured to use this backend. The file needs to be named
-according to the following pattern:
-
-::
-
-   {data_path}/{data_prefix}{label}/{node_id}.txt
-
-The ``data_path`` and ``data_prefix`` are global kernel properties,
-while `label` is a property of the device in question and `node_id`
-its node ID. This path can only be set outside of a `Run` context
-(i.e. after ``Prepare()`` has been called, but ``Cleanup()`` has not).
-
-Communication Protocol
-++++++++++++++++++++++
-
-The following protocol is used to exchange information between both
-MPI processes. The protocol is described using the following format
-for the MPI messages: (value, number, type, source/destination, tag)
-
-1) ``Prepare``  : Connection of MPI port included in the port_file (see below)
-2) ``Run`` begin: Send at each beginning of the run (true, 1, CXX_BOOL, 0, 0)
-3) ``Run`` end  : Receive at each ending of the run (true, 1, CXX_BOOL, 0, 0)
-4) ``Run`` end  : Send shape of the data of the run (shape, 1,INT, 0, 0)
-5) ``Run`` end  : Send data of the data of the run (data, shape, DOUBLE, 0, 0)
-6) ``Run`` end  : Send at each ending of the run (true, 1, CXX_BOOL, 0, 1)
-7) ``Cleanup``  : Send at this en of the simulation (true, 1, CXX_BOOL, 0, 2)
-
-Data format
-+++++++++++
-
-The format of the data sent is an array consisting of (id device, id node, time
-is ms).
-
-EndUserDocs */
+ *
+ * Recording backend `mpi` - Send data with MPI
+ * ############################################
+ *
+ * Description
+ * +++++++++++
+ *
+ * .. admonition:: Availability
+ *
+ *    This stimulation backend is only available if NEST was compiled with
+ *    :ref:`support for MPI <compile-with-mpi>`.
+ *
+ * The `mpi` recording backend sends collected data to a remote process
+ * using MPI.
+ *
+ * The name of the MPI port to send data to is read from a file for each
+ * device configured to use this backend. The file needs to be named
+ * according to the following pattern:
+ *
+ * ::
+ *
+ *    {data_path}/{data_prefix}{label}/{node_id}.txt
+ *
+ * The ``data_path`` and ``data_prefix`` are global kernel properties,
+ * while `label` is a property of the device in question and `node_id`
+ * its node ID. This path can only be set outside of a `Run` context
+ * (i.e. after ``Prepare()`` has been called, but ``Cleanup()`` has not).
+ *
+ * Communication Protocol
+ * ++++++++++++++++++++++
+ *
+ * The following protocol is used to exchange information between both
+ * MPI processes. The protocol is described using the following format
+ * for the MPI messages: (value, number, type, source/destination, tag)
+ *
+ * 1) ``Prepare``  : Connection of MPI port included in the port_file (see below)
+ * 2) ``Run`` begin: Send at each beginning of the run (true, 1, CXX_BOOL, 0, 0)
+ * 3) ``Run`` end  : Receive at each ending of the run (true, 1, CXX_BOOL, 0, 0)
+ * 4) ``Run`` end  : Send shape of the data of the run (shape, 1,INT, 0, 0)
+ * 5) ``Run`` end  : Send data of the data of the run (data, shape, DOUBLE, 0, 0)
+ * 6) ``Run`` end  : Send at each ending of the run (true, 1, CXX_BOOL, 0, 1)
+ * 7) ``Cleanup``  : Send at this en of the simulation (true, 1, CXX_BOOL, 0, 2)
+ *
+ * Data format
+ * +++++++++++
+ *
+ * The format of the data sent is an array consisting of (id device, id node, time
+ * is ms).
+ *
+ * EndUserDocs */
 
 namespace nest
 {

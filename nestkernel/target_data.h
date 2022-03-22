@@ -173,8 +173,7 @@ enum enum_status_target_data_id
 class TargetData
 {
   // Members must be set explicitly -- no defaults
-  // Done this way to create large vector without preconstruction
-  // and to handle variant fields
+  // Done this way to create large vector without preconstruction and to handle variant fields
 
 private:
   static constexpr uint8_t NUM_BITS_LID = 19U;

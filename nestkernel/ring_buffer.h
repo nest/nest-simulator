@@ -37,46 +37,46 @@ namespace nest
 {
 
 /**
-   Buffer Layout.
-
-   MODIFICATION 2005-06-19:
-   The explanation below no longer holds if we allow direct delivery of events
-   from devices such as the Poisson generator.  The reasoning below applies only
-   to events in the central queue, which are held in that queue until the
-   beginning of the next slice, when system time has been advance from T to
-   T + min_delay.  Direct delivery events, in contrast are delivered when system
-   time is still T.  Their earliest delivery time is
-
-   min T_d = T + min_del
-
-   and the latest
-
-   max T_d = T + (min_del-1) + max_del = T + min_del + max_del - 1
-
-   Since we still need to keep the entries 0..min_del-1 for readout during the
-   time slice beginning at T, we need a buffer with min_del+max_del elements.
-
-   SUPERSEEDED:
-   Let S be the time at the beginning of the present time slice (from).
-   All spikes arriving during this time slice, must have been emitted during
-   the previous time slice, which started at S - min_del.  Then, the earliest
-   spike delivery time (compare Time Memo) is
-
-   min T_d = S-min_del + min_del = S
-
-   and the latest
-
-   max T_d = S-1 + max_del = S + (max_del - 1)
-
-   Thus,
-
-   0 <= S - T_d <= max_del - 1
-
-   so that the ring buffer needs max_del elements.
-
-   Each field represents an entry in the vector.
-
-*/
+ *  Buffer Layout.
+ *
+ *  MODIFICATION 2005-06-19:
+ *  The explanation below no longer holds if we allow direct delivery of events
+ *  from devices such as the Poisson generator.  The reasoning below applies only
+ *  to events in the central queue, which are held in that queue until the
+ *  beginning of the next slice, when system time has been advance from T to
+ *  T + min_delay.  Direct delivery events, in contrast are delivered when system
+ *  time is still T.  Their earliest delivery time is
+ *
+ *  min T_d = T + min_del
+ *
+ *  and the latest
+ *
+ *  max T_d = T + (min_del-1) + max_del = T + min_del + max_del - 1
+ *
+ *  Since we still need to keep the entries 0..min_del-1 for readout during the
+ *  time slice beginning at T, we need a buffer with min_del+max_del elements.
+ *
+ *  SUPERSEEDED:
+ *  Let S be the time at the beginning of the present time slice (from).
+ *  All spikes arriving during this time slice, must have been emitted during
+ *  the previous time slice, which started at S - min_del.  Then, the earliest
+ *  spike delivery time (compare Time Memo) is
+ *
+ *  min T_d = S-min_del + min_del = S
+ *
+ *  and the latest
+ *
+ *  max T_d = S-1 + max_del = S + (max_del - 1)
+ *
+ *  Thus,
+ *
+ *  0 <= S - T_d <= max_del - 1
+ *
+ *  so that the ring buffer needs max_del elements.
+ *
+ *  Each field represents an entry in the vector.
+ *
+ */
 
 
 class RingBuffer

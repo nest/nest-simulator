@@ -521,15 +521,15 @@ nest::iaf_psc_alpha_ps::propagate_( const double dt )
     S_.V_m_ = ( S_.V_m_ < P_.U_min_ ? P_.U_min_ : S_.V_m_ );
   }
 
-  const double ps_e_TauSyn_ex = numerics::expm1( -dt / P_.tau_syn_ex_ );
-  const double ps_e_TauSyn_in = numerics::expm1( -dt / P_.tau_syn_in_ );
+  const double ps_e_TauSyn_ex = std::exp( -dt / P_.tau_syn_ex_ );
+  const double ps_e_TauSyn_in = std::exp( -dt / P_.tau_syn_in_ );
 
   // now the synaptic components
-  S_.I_ex_ = ps_e_TauSyn_ex * dt * S_.dI_ex_ + ps_e_TauSyn_ex * S_.I_ex_ + dt * S_.dI_ex_ + S_.I_ex_;
-  S_.dI_ex_ = ps_e_TauSyn_ex * S_.dI_ex_ + S_.dI_ex_;
+  S_.I_ex_ = ps_e_TauSyn_ex * dt * S_.dI_ex_ + ps_e_TauSyn_ex * S_.I_ex_;
+  S_.dI_ex_ = ps_e_TauSyn_ex * S_.dI_ex_;
 
-  S_.I_in_ = ps_e_TauSyn_in * dt * S_.dI_in_ + ps_e_TauSyn_in * S_.I_in_ + dt * S_.dI_in_ + S_.I_in_;
-  S_.dI_in_ = ps_e_TauSyn_in * S_.dI_in_ + S_.dI_in_;
+  S_.I_in_ = ps_e_TauSyn_in * dt * S_.dI_in_ + ps_e_TauSyn_in * S_.I_in_;
+  S_.dI_in_ = ps_e_TauSyn_in * S_.dI_in_;
 }
 
 void

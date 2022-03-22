@@ -133,6 +133,18 @@ SLIStartup::GetenvFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
+void
+disp( const std::string& s, const std::string& nm )
+{
+  std::cout << nm << "                #" << s << "#" << std::endl;
+  std::cout << nm << ".c_str()        #" << s.c_str() << "#" << std::endl;
+  for ( size_t j = 0; j < s.size(); ++j )
+    std::cout << std::setw( 4 ) << s[ j ];
+  std::cout << std::endl;
+  for ( size_t j = 0; j < s.size(); ++j )
+    std::cout << std::setw( 4 ) << int( s[ j ] );
+  std::cout << std::endl << std::endl;
+}
 
 SLIStartup::SLIStartup( int argc, char** argv )
   // To avoid problems due to string substitution in NEST binaries during
@@ -191,6 +203,10 @@ SLIStartup::SLIStartup( int argc, char** argv )
   , exitcode_unknownerror_name( "unknownerror" )
   , environment_name( "environment" )
 {
+  disp( sliprefix, std::string( "sliprefix" ) );
+  disp( slilibdir, std::string( "slilibdir" ) );
+  disp( startupfile, std::string( "startupfile" ) );
+
   ArrayDatum args_array;
 
   // argv[0] is the name of the program that was given to the shell.

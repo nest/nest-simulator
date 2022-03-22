@@ -353,7 +353,7 @@ nest::iaf_psc_alpha_ps::update( Time const& origin, const long from, const long 
       if ( not S_.is_refractory_ )
       {
         // If we use S_.V_m_ * std::exp( -V_.h_ms_ / P_.tau_m_ ) instead of
-        // V_.expm1_tau_m_ * S_.V_m_ + S_.V_m_ here, the accuracy decrease,
+        // V_.expm1_tau_m_ * S_.V_m_ + S_.V_m_ here, the accuracy decreases,
         // see test_iaf_ps_dc_t_accuracy.sli for details.
         S_.V_m_ = V_.P30_ * ( P_.I_e_ + S_.y_input_ ) + V_.P31_ex_ * S_.dI_ex_ + V_.P32_ex_ * S_.I_ex_
           + V_.P31_in_ * S_.dI_in_ + V_.P32_in_ * S_.I_in_ + V_.expm1_tau_m_ * S_.V_m_ + S_.V_m_;

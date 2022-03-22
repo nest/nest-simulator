@@ -129,6 +129,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   tsodyks2_synapse( const tsodyks2_synapse& ) = default;
+  tsodyks2_synapse& operator=( const tsodyks2_synapse& ) = default;
 
   /**
    * Default Destructor.

@@ -1142,27 +1142,19 @@ This function returns the virtual memory size (VmSize) for the current NEST
 process by checking the /proc filesystem. VmSize is reported in kB. 
 */
 
-% check, if the platform is a bluegene p/q and use corresponding function
-statusdict /platform get dup (bg/p) eq exch (bg/q) eq or
+/memory_thisjob
 {
-  /memory_thisjob { :memory_thisjob_bg } def
-}
-{
-  /memory_thisjob
-  {
-    /os statusdict /hostos get def
+  /os statusdict /hostos get def
 
-    mark 
-    os (darwin) searchif { :memory_thisjob_darwin exit } case
-    os (linux)  searchif { :memory_thisjob_linux  exit } case
-    true { (I do not know how to check memory under ) os join M_ERROR message
-            /memory_thisjob /UnknowOS raiseerror
-            exit 
-         } case
-    switch 
-  } def
-}
-ifelse
+  mark 
+  os (darwin) searchif { :memory_thisjob_darwin exit } case
+  os (linux)  searchif { :memory_thisjob_linux  exit } case
+  true { (I do not know how to check memory under ) os join M_ERROR message
+          /memory_thisjob /UnknowOS raiseerror
+          exit 
+       } case
+  switch 
+} def
 
 /:memory_thisjob_linux
 {
@@ -1182,16 +1174,6 @@ ifelse
  0 7 erase 
  size 3 sub 3 erase    % assuming kb  may be unsafe
  cvi
-} def
-
-/:memory_thisjob_bluegenep
-{
-  % Blue Gene/P version, requires the function BGPMemInfo from NestModule
-
-  memory_thisjob_bgp /mem Set
-  mem /heap get
-  mem /stack get
-  add
 } def
 
 /hardware_memory_thisjob

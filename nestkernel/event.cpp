@@ -30,6 +30,7 @@
 #include "event.h"
 
 // Includes from nestkernel:
+#include "kernel_manager.h"
 #include "node.h"
 
 namespace nest
@@ -38,6 +39,7 @@ Event::Event()
   : sender_node_id_( 0 ) // initializing to 0 as this is an unsigned type
                          // node ID 0 is network, can never send an event, so
                          // this is safe
+  , sender_spike_data_()
   , sender_( NULL )
   , receiver_( NULL )
   , p_( -1 )
@@ -50,6 +52,26 @@ Event::Event()
 {
 }
 
+index
+Event::retrieve_sender_node_id_from_source_table() const
+{
+  if ( sender_node_id_ > 0 )
+  {
+    return sender_node_id_;
+  }
+  else
+  {
+    const index node_id = kernel().connection_manager.get_source_node_id(
+      sender_spike_data_.get_tid(), sender_spike_data_.get_syn_id(), sender_spike_data_.get_lcid() );
+    return node_id;
+  }
+}
+
+index
+Event::get_receiver_node_id() const
+{
+  return receiver_->get_node_id();
+}
 
 void
 SpikeEvent::operator()()
@@ -134,10 +156,5 @@ DiffusionConnectionEvent::operator()()
 {
   receiver_->handle( *this );
 }
-}
 
-nest::index
-nest::Event::get_receiver_node_id( void ) const
-{
-  return receiver_->get_node_id();
-}
+} // namespace nest

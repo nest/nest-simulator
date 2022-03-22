@@ -1,5 +1,5 @@
 /*
- *  bg_get_mem.c
+ *  get_mem.c
  *
  *  This file is part of NEST.
  *
@@ -26,65 +26,6 @@
 // C includes:
 #include <assert.h>
 
-#if defined IS_BLUEGENE_P || defined IS_BLUEGENE_Q
-
-#if defined IS_BLUEGENE_P
-#include <spi/bgp_SPI.h>
-typedef uint32_t bgmemsize_t;
-#elif defined IS_BLUEGENE_Q
-#include <kernel/memory.h>
-typedef uint64_t bgmemsize_t;
-#endif
-
-unsigned long
-bg_get_heap_mem()
-{
-  bgmemsize_t memory = 0;
-  Kernel_GetMemorySize( KERNEL_MEMSIZE_HEAP, &memory );
-  return ( unsigned long ) memory;
-}
-
-unsigned long
-bg_get_stack_mem()
-{
-  bgmemsize_t memory = 0;
-  Kernel_GetMemorySize( KERNEL_MEMSIZE_STACK, &memory );
-  return ( unsigned long ) memory;
-}
-
-unsigned long
-bg_get_mmap_mem()
-{
-  bgmemsize_t memory = 0;
-  Kernel_GetMemorySize( KERNEL_MEMSIZE_MMAP, &memory );
-  return ( unsigned long ) memory;
-}
-
-#else
-
-/* ISO C forbids an empty translation unit, so we define dummies. */
-unsigned long
-bg_get_heap_mem()
-{
-  assert( 0 || "Only implemented on BlueGene." );
-  return 0;
-}
-
-unsigned long
-bg_get_stack_mem()
-{
-  assert( 0 || "Only implemented on BlueGene." );
-  return 0;
-}
-
-unsigned long
-bg_get_mmap_mem()
-{
-  assert( 0 || "Only implemented on BlueGene." );
-  return 0;
-}
-
-#endif
 
 #if defined __APPLE__ && defined HAVE_MACH_MACH_H
 #include <mach/mach.h>

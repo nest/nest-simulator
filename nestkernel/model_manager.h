@@ -187,7 +187,6 @@ public:
 
   /**
    * Print out the memory information for each node model.
-   * @see sli::pool
    */
   void memory_info() const;
 

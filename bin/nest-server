@@ -1,33 +1,27 @@
 #!/bin/bash
 
-BUFFER_SIZE="${NEST_SERVER_BUFFER_SIZE:-4096}"
-DAEMONIZE="${NEST_SERVER_DAEMONIZE:-0}"
+DAEMON="${NEST_SERVER_DAEMON:-0}"
 HOST="${NEST_SERVER_HOST:-127.0.0.1}"
-PLUGIN="${NEST_SERVER_PLUGIN:-}"
 PORT="${NEST_SERVER_PORT:-5000}"
 STDOUT="${NEST_SERVER_STDOUT:-0}"
-USER="${NEST_SERVER_USER:-${USER:-65534}}"
 
 usage() {
   echo "NEST Server"
   echo "-----------"
-  echo "Usage: nest-server log|status|start|stop|restart [-d] [-o] [-h <HOST>] [-p <PORT>] [-P <PLUGIN>] [-u <UID>]"
+  echo "Usage: nest-server log|status|start|stop|restart [-d] [-h <HOST>] [-o] [-p <PORT>]"
   echo ""
   echo "Commands:"
-  echo "  log         display the sever log stored in /tmp/nest-server.log"
-  echo "  status      display the status of NEST Server"
-  echo "  start       start a new instance of the server"
-  echo "  stop        stop a server instance running on <HOST>:<PORT>"
-  echo "  restart     restart (i.e. stop and start) a server on <HOST>:<PORT>"
+  echo "  log         display the server log stored in /tmp/nest-server.log"
+  echo "  status      display the status of all server instances"
+  echo "  start       start a server instance on <HOST>:<PORT>"
+  echo "  stop        stop a server instance on <HOST>:<PORT>"
+  echo "  restart     restart (i.e. stop and start) a server instance on <HOST>:<PORT>"
   echo
   echo "Options:"
-  echo "  -b <BUFFER_SIZE>   set internal buffer size [default: 4096]"
   echo "  -d                 daemonize the server process"
   echo "  -h <HOST>          use hostname/IP address <HOST> for the server [default: 127.0.0.1]"
-  echo "  -o                 print all output to both the console and to the log"
+  echo "  -o                 print all outputs to the console"
   echo "  -p <PORT>          use port <PORT> for opening the socket [default: 5000]"
-  echo "  -P <PLUGIN>        use the specified uWSGI plugin"
-  echo "  -u <UID>           run the server under the user with ID <UID>" >&2; exit 1
 }
 
 log() {
@@ -36,33 +30,30 @@ log() {
 }
 
 pid() {
-  # Get Process ID of instance of NEST Server with host and port.
-  pgrep -f "uwsgi --module nest.server.app --http-socket ${HOST}:${PORT}"
+  # Get process ID of instance on defined host and port.
+  pgrep -f "gunicorn nest.server.app --bind ${HOST}:${PORT}"
 }
 
-set-uwsgi_opts() {
-  # Set opts for uwsgi.
-  UWSGI_OPTS="--module nest.server:app --http-socket ${HOST}:${PORT}"
-  UWSGI_OPTS="${UWSGI_OPTS} --uid ${USER}"
-  UWSGI_OPTS="${UWSGI_OPTS} --buffer-size ${BUFFER_SIZE}"
-  if [ -n "${PLUGIN}" ]; then
-    UWSGI_OPTS="${UWSGI_OPTS} --plugin \"${PLUGIN}\""
+set-gunicorn_opts() {
+  # Set opts for gunicorn.
+  GUNICORN_OPTS="--bind ${HOST}:${PORT}"
+  if [ "${DAEMON}" -eq 1 ]; then
+    GUNICORN_OPTS="${GUNICORN_OPTS} --daemon"
   fi
-  if [ "${STDOUT}" -eq 0 ]; then
-    UWSGI_OPTS="${UWSGI_OPTS} --daemonize /tmp/nest-server.log"
-  fi
+  GUNICORN_OPTS="${GUNICORN_OPTS} --log-file /tmp/nest-server.log"
 }
 
 start() {
-  # Start instance of NEST Server.
+  # Start server instance.
   if pid > /dev/null;  then
     echo "NEST Server is already running at http://${HOST}:${PORT}."
   else
-    set-uwsgi_opts
-    uwsgi ${UWSGI_OPTS}
-    if [ ${STDOUT} == 0 ]; then
+    set-gunicorn_opts
+    gunicorn nest.server:app ${GUNICORN_OPTS}
+
+    if [ "${STDOUT}" -eq 0 ]; then
       echo "NEST Server is running at http://${HOST}:${PORT}."
-      if [ ${DAEMONIZE} == 0 ]; then
+      if [ "${DAEMON}" -eq 0 ]; then
         read -p "Press any key to stop... "
         stop
       fi
@@ -72,16 +63,17 @@ start() {
 
 status() {
   # List all processes of NEST Server.
-  PS_AUX="$(ps aux | grep "[u]wsgi --module nest.server.app")"
+  PS_AUX="$(ps aux | grep "[g]unicorn nest.server.app")"
+
   PS_CMD="$(echo ${PS_AUX} | awk '{ for(i=1;i<=NF;i++) {if ( i >= 11 ) printf $i" "}; printf "\n" }')"
   printf "HTTP-SOCKET\t\tUID\n"
   echo "${PS_CMD}" | awk '{ for(i=1;i<=NF;i++) {if ( i == 5 || i == 7 ) printf $i"\t\t"}; printf "\n" }'
 }
 
 stop() {
-  # Stop instance of NEST Server.
+  # Stop server instance.
   if pid > /dev/null; then
-    kill "$(pid)"
+    kill "$(pid 2>&1 | head -n 1)"
     echo "NEST Server running at http://${HOST}:${PORT} has stopped."
   else
     echo "NEST Server is not running at http://${HOST}:${PORT}."
@@ -90,15 +82,12 @@ stop() {
 }
 
 CMD=$1; shift
-while getopts "b:dh:op:P:u:" opt; do
+while getopts "dh:op:" opt; do
     case $opt in
-        b) BUFFER_SIZE=$OPTARG ;;
-        d) DAEMONIZE=1 ;;
+        d) DAEMON=1 ;;
         h) HOST=$OPTARG ;;
         o) STDOUT=1 ;;
         p) PORT=$OPTARG ;;
-        P) PLUGIN=$OPTARG ;;
-        u) USER=$OPTARG ;;
     esac
 done
 

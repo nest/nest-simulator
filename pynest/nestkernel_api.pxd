@@ -98,25 +98,25 @@ cdef extern from "nest.h" namespace "nest":
                  NodeCollectionPTR targets,
                  const dictionary& connectivity,
                  const vector[dictionary]& synapse_params ) except +
-    int get_rank()
-    int get_num_mpi_processes()
+    int get_rank() except +
+    int get_num_mpi_processes() except +
     string print_nodes_to_string()
-    string pprint_to_string( NodeCollectionPTR nc )
-    size_t nc_size( NodeCollectionPTR nc )
-    dictionary get_kernel_status()
-    NodeCollectionPTR get_nodes( const dictionary& params, const cbool local_only )
-    deque[ConnectionID] get_connections( const dictionary& dict )
+    string pprint_to_string( NodeCollectionPTR nc ) except +
+    size_t nc_size( NodeCollectionPTR nc ) except +
+    dictionary get_kernel_status() except +
+    NodeCollectionPTR get_nodes( const dictionary& params, const cbool local_only ) except +
+    deque[ConnectionID] get_connections( const dictionary& dict ) except +
     void set_kernel_status( const dictionary& ) except +
-    dictionary get_nc_status( NodeCollectionPTR nc )
+    dictionary get_nc_status( NodeCollectionPTR nc ) except +
     void set_nc_status( NodeCollectionPTR nc, dictionary& params ) except +
     vector[dictionary] get_connection_status(const deque[ConnectionID]&) except +
     void set_connection_status(const deque[ConnectionID]&, const dictionary&) except +
     void set_connection_status(const deque[ConnectionID]&, const vector[dictionary]&) except +
-    void simulate( const double& t )
-    void prepare()
-    void run( const double& t )
-    void cleanup()
-    shared_ptr[Parameter] create_parameter( const dictionary& param_dict )
+    void simulate( const double& t ) except +
+    void prepare() except +
+    void run( const double& t ) except +
+    void cleanup() except +
+    shared_ptr[Parameter] create_parameter( const dictionary& param_dict ) except +
 
 cdef extern from "nest.h" namespace "nest":
     NodeCollectionPTR node_collection_array_index(NodeCollectionPTR node_collection, const long* array, unsigned long n) except +
@@ -126,5 +126,5 @@ cdef extern from "nest.h" namespace "nest":
 cdef extern from "parameter.h" namespace "nest":
     cppclass Parameter:
         Parameter()
-    shared_ptr[Parameter] dimension_parameter(const shared_ptr[Parameter] x, const shared_ptr[Parameter] y)
-    shared_ptr[Parameter] dimension_parameter(const shared_ptr[Parameter] x, const shared_ptr[Parameter] y, const shared_ptr[Parameter] z)
+    shared_ptr[Parameter] dimension_parameter(const shared_ptr[Parameter] x, const shared_ptr[Parameter] y) except +
+    shared_ptr[Parameter] dimension_parameter(const shared_ptr[Parameter] x, const shared_ptr[Parameter] y, const shared_ptr[Parameter] z) except +

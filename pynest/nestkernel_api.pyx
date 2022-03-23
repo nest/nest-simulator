@@ -159,43 +159,44 @@ cdef vector[dictionary] list_of_dict_to_vec(object pylist):
         vec.push_back(pydict_to_dictionary(pydict))
     return vec
 
+def catch_cpp_error(func):
+    def wrapper_catch_cpp_error(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except RuntimeError as e:
+            exceptionCls = getattr(NESTErrors, str(e))
+            raise exceptionCls(func.__name__, '') from None
+    return wrapper_catch_cpp_error
+
 def llapi_reset_kernel():
     reset_kernel()
 
+@catch_cpp_error
 def llapi_create(string model, long n):
     cdef NodeCollectionPTR gids
-    try:
-        gids = create(model, n)
-    except RuntimeError as e:
-        exceptionCls = getattr(NESTErrors, str(e))
-        raise exceptionCls('llapi_create', '') from None
+    gids = create(model, n)
     obj = NodeCollectionObject()
     obj._set_nc(gids)
     return nest.NodeCollection(obj)
 
+@catch_cpp_error
 def llapi_create_spatial(object layer_params):
     cdef NodeCollectionPTR gids
-    try:
-        gids = create_spatial(pydict_to_dictionary(layer_params))
-    except RuntimeError as e:
-        exceptionCls = getattr(NESTErrors, str(e))
-        raise exceptionCls('llapi_create_spatial', '') from None
+    gids = create_spatial(pydict_to_dictionary(layer_params))
     obj = NodeCollectionObject()
     obj._set_nc(gids)
     return nest.NodeCollection(obj)
 
+@catch_cpp_error
 def llapi_make_nodecollection(object node_ids):
     cdef NodeCollectionPTR gids
-    try:
-        # node_ids list is automatically converted to an std::vector
-        gids = make_nodecollection(node_ids)
-    except RuntimeError as e:
-        exceptionCls = getattr(NESTErrors, str(e))
-        raise exceptionCls('llapi_make_nodecollection', '') from None
+    # node_ids list is automatically converted to an std::vector
+    gids = make_nodecollection(node_ids)
     obj = NodeCollectionObject()
     obj._set_nc(gids)
     return nest.NodeCollection(obj)
 
+@catch_cpp_error
 def llapi_connect(NodeCollectionObject pre, NodeCollectionObject post, object conn_params, object synapse_params):
     cdef vector[dictionary] syn_param_vec
     if synapse_params is not None:
@@ -205,36 +206,39 @@ def llapi_connect(NodeCollectionObject pre, NodeCollectionObject post, object co
             pydict_to_dictionary(conn_params),
             syn_param_vec)
 
+@catch_cpp_error
 def llapi_slice(NodeCollectionObject nc, long start, long stop, long step):
     cdef NodeCollectionPTR nc_ptr
-    try:
-        nc_ptr = slice_nc(nc.thisptr, start, stop, step)
-    except RuntimeError as e:
-        exceptionCls = getattr(NESTErrors, str(e))
-        raise exceptionCls('llapi_slice', '') from None
+    nc_ptr = slice_nc(nc.thisptr, start, stop, step)
     obj = NodeCollectionObject()
     obj._set_nc(nc_ptr)
     return nest.NodeCollection(obj)
 
+@catch_cpp_error
 def llapi_get_rank():
     return get_rank()
 
+@catch_cpp_error
 def llapi_get_num_mpi_processes():
     return get_num_mpi_processes()
 
 def llapi_print_nodes():
     return print_nodes_to_string().decode('utf8')
 
+@catch_cpp_error
 def llapi_nc_size(NodeCollectionObject nc):
     return nc_size(nc.thisptr)
 
+@catch_cpp_error
 def llapi_to_string(NodeCollectionObject nc):
     return pprint_to_string(nc.thisptr).decode('utf8')
 
+@catch_cpp_error
 def llapi_get_kernel_status():
     cdef dictionary cdict = get_kernel_status()
     return dictionary_to_pydict(cdict)
 
+@catch_cpp_error
 def llapi_get_nodes(object params, cbool local_only):
     cdef dictionary params_dict = pydict_to_dictionary(params)
     cdef NodeCollectionPTR nc_ptr = get_nodes(params_dict, local_only)
@@ -242,26 +246,28 @@ def llapi_get_nodes(object params, cbool local_only):
     obj._set_nc(nc_ptr)
     return nest.NodeCollection(obj)
 
+@catch_cpp_error
 def llapi_set_kernel_status(object params):
     cdef dictionary params_dict = pydict_to_dictionary(params)
-    try:
-        set_kernel_status(params_dict)
-    except RuntimeError as e:
-        exceptionCls = getattr(NESTErrors, str(e))
-        raise exceptionCls('llapi_set_kernel_status', '') from None
+    set_kernel_status(params_dict)
 
+@catch_cpp_error
 def llapi_simulate(float t):
     simulate(t)
 
+@catch_cpp_error
 def llapi_prepare():
     prepare()
 
+@catch_cpp_error
 def llapi_run(float t):
     run(t)
 
+@catch_cpp_error
 def llapi_cleanup():
     cleanup()
 
+@catch_cpp_error
 def llapi_get_nc_status(NodeCollectionObject nc, object key=None):
     cdef dictionary statuses = get_nc_status(nc.thisptr)
     if key is None:
@@ -272,58 +278,37 @@ def llapi_get_nc_status(NodeCollectionObject nc, object key=None):
     else:
         raise TypeError(f'key must be a string, got {type(key)}')
 
+@catch_cpp_error
 def llapi_set_nc_status(NodeCollectionObject nc, object params):
     cdef dictionary params_dict = pydict_to_dictionary(params)
-    try:
-        set_nc_status(nc.thisptr, params_dict)
-    except RuntimeError as e:
-        exceptionCls = getattr(NESTErrors, str(e))
-        raise exceptionCls('llapi_set_nc_status', '') from None
+    set_nc_status(nc.thisptr, params_dict)
 
+@catch_cpp_error
 def llapi_join_nc(NodeCollectionObject lhs, NodeCollectionObject rhs):
     cdef NodeCollectionPTR result
-    try:
-        # Using operator+() directly
-        result = lhs.thisptr + rhs.thisptr
-    except RuntimeError as e:
-        exceptionCls = getattr(NESTErrors, str(e))
-        raise exceptionCls('llapi_join_nc', '') from None
+    # Using operator+() directly
+    result = lhs.thisptr + rhs.thisptr
     obj = NodeCollectionObject()
     obj._set_nc(result)
     return nest.NodeCollection(obj)
 
-
+@catch_cpp_error
 def llapi_eq_nc(NodeCollectionObject lhs, NodeCollectionObject rhs):
-    try:
-        return equal(lhs.thisptr, rhs.thisptr)
-    except RuntimeError as e:
-        exceptionCls = getattr(NESTErrors, str(e))
-        raise exceptionCls('llapi_eq_nc', '') from None
+    return equal(lhs.thisptr, rhs.thisptr)
 
-
+@catch_cpp_error
 def llapi_nc_contains(NodeCollectionObject nc, long node_id):
-    try:
-        return contains(nc.thisptr, node_id)
-    except RuntimeError as e:
-        exceptionCls = getattr(NESTErrors, str(e))
-        raise exceptionCls('llapi_nc_contains', '') from None
+    return contains(nc.thisptr, node_id)
 
+@catch_cpp_error
 def llapi_nc_find(NodeCollectionObject nc, long node_id):
-    try:
-        return find(nc.thisptr, node_id)
-    except RuntimeError as e:
-        exceptionCls = getattr(NESTErrors, str(e))
-        raise exceptionCls('llapi_nc_find', '') from None
+    return find(nc.thisptr, node_id)
 
-# TODO-PYNEST-NG: decorator for exception handling?
+@catch_cpp_error
 def llapi_get_nc_metadata(NodeCollectionObject nc):
-    try:
-        return dictionary_to_pydict(get_metadata(nc.thisptr))
-    except RuntimeError as e:
-        exceptionCls = getattr(NESTErrors, str(e))
-        raise exceptionCls('llapi_get_nc_metadata', '') from None
+    return dictionary_to_pydict(get_metadata(nc.thisptr))
 
-
+@catch_cpp_error
 def llapi_take_array_index(NodeCollectionObject node_collection, object array):
     if not isinstance(array, numpy.ndarray):
         raise TypeError('array must be a 1-dimensional NumPy array of ints or bools, got {}'.format(type(array)))
@@ -339,37 +324,31 @@ def llapi_take_array_index(NodeCollectionObject node_collection, object array):
 
     cdef NodeCollectionPTR new_nc_ptr
 
-    try:
-        if array.dtype == numpy.bool:
-            # Boolean C-type arrays are not supported in NumPy, so we use an 8-bit integer array
-            array_bool_mv = numpy.ascontiguousarray(array, dtype=numpy.uint8)
-            array_bool_ptr = &array_bool_mv[0]
-            new_nc_ptr = node_collection_array_index(node_collection.thisptr, array_bool_ptr, len(array))
-        elif numpy.issubdtype(array.dtype, numpy.integer):
-            array_long_mv = numpy.ascontiguousarray(array, dtype=numpy.long)
-            array_long_ptr = &array_long_mv[0]
-            new_nc_ptr = node_collection_array_index(node_collection.thisptr, array_long_ptr, len(array))
-        else:
-            raise TypeError('array must be a NumPy array of ints or bools, got {}'.format(array.dtype))
-        obj = NodeCollectionObject()
-        obj._set_nc(new_nc_ptr)
-        return nest.NodeCollection(obj)
-    except RuntimeError as e:
-        exceptionCls = getattr(NESTErrors, str(e))
-        raise exceptionCls('take_array_index', '') from None
+    if array.dtype == numpy.bool:
+        # Boolean C-type arrays are not supported in NumPy, so we use an 8-bit integer array
+        array_bool_mv = numpy.ascontiguousarray(array, dtype=numpy.uint8)
+        array_bool_ptr = &array_bool_mv[0]
+        new_nc_ptr = node_collection_array_index(node_collection.thisptr, array_bool_ptr, len(array))
+    elif numpy.issubdtype(array.dtype, numpy.integer):
+        array_long_mv = numpy.ascontiguousarray(array, dtype=numpy.long)
+        array_long_ptr = &array_long_mv[0]
+        new_nc_ptr = node_collection_array_index(node_collection.thisptr, array_long_ptr, len(array))
+    else:
+        raise TypeError('array must be a NumPy array of ints or bools, got {}'.format(array.dtype))
+    obj = NodeCollectionObject()
+    obj._set_nc(new_nc_ptr)
+    return nest.NodeCollection(obj)
 
+@catch_cpp_error
 def llapi_create_parameter(object specs):
     cdef dictionary specs_dictionary = pydict_to_dictionary(specs)
     cdef shared_ptr[Parameter] parameter
-    try:
-        parameter = create_parameter(specs_dictionary)
-    except RuntimeError as e:
-        exceptionCls = getattr(NESTErrors, str(e))
-        raise exceptionCls('llapi_create_parameter', '') from None
+    parameter = create_parameter(specs_dictionary)
     obj = ParameterObject()
     obj._set_parameter(parameter)
     return nest.Parameter(obj)
 
+@catch_cpp_error
 def llapi_dimension_parameter(object list_of_pos_params):
     cdef shared_ptr[Parameter] dim_parameter
     cdef ParameterObject x, y, z
@@ -383,15 +362,12 @@ def llapi_dimension_parameter(object list_of_pos_params):
     obj._set_parameter(dim_parameter)
     return nest.Parameter(obj)
 
+@catch_cpp_error
 def llapi_get_connections(object params):
     cdef dictionary params_dictionary = pydict_to_dictionary(params)
     cdef deque[ConnectionID] connections
 
-    try:
-        connections = get_connections(params_dictionary)
-    except RuntimeError as e:
-        exceptionCls = getattr(NESTErrors, str(e))
-        raise exceptionCls('llapi_get_connections', '') from None
+    connections = get_connections(params_dictionary)
 
     cdef connections_list = []
     cdef deque[ConnectionID].iterator it = connections.begin()
@@ -403,22 +379,21 @@ def llapi_get_connections(object params):
 
     return nest.SynapseCollection(connections_list)
 
+@catch_cpp_error
 def llapi_get_connection_status(object conns):
     cdef vector[dictionary] connection_statuses
+    # Convert the list of connections to a deque
     cdef deque[ConnectionID] conn_deque
     cdef ConnectionObject conn_object
     for conn_object in conns:
         conn_deque.push_back(conn_object.thisobj)
 
-    try:
-        connection_statuses = get_connection_status(conn_deque)
-    except RuntimeError as e:
-        exceptionCls = getattr(NESTErrors, str(e))
-        raise exceptionCls('llapi_get_connection_status', '') from None
+    connection_statuses = get_connection_status(conn_deque)
 
     return vec_of_dict_to_list(connection_statuses)
 
 
+@catch_cpp_error
 def llapi_set_connection_status(object conns, object params):
     # Convert the list of connections to a deque
     cdef deque[ConnectionID] conn_deque
@@ -426,16 +401,12 @@ def llapi_set_connection_status(object conns, object params):
     for conn_object in conns:
         conn_deque.push_back(conn_object.thisobj)
 
-    try:
-        # params can be a dictionary or a list of dictionaries
-        if isinstance(params, dict):
-            set_connection_status(conn_deque, pydict_to_dictionary(params))
-        elif isinstance(params, list):
-            if len(params) != len(conns):
-                raise ValueError('params list length must be equal to number of connections')
-            set_connection_status(conn_deque, list_of_dict_to_vec(params))
-        else:
-            raise TypeError('params must be a dict or a list of dicts')
-    except RuntimeError as e:
-        exceptionCls = getattr(NESTErrors, str(e))
-        raise exceptionCls('llapi_set_connection_status', '') from None
+    # params can be a dictionary or a list of dictionaries
+    if isinstance(params, dict):
+        set_connection_status(conn_deque, pydict_to_dictionary(params))
+    elif isinstance(params, list):
+        if len(params) != len(conns):
+            raise ValueError('params list length must be equal to number of connections')
+        set_connection_status(conn_deque, list_of_dict_to_vec(params))
+    else:
+        raise TypeError('params must be a dict or a list of dicts')

@@ -295,8 +295,8 @@ nest::iaf_psc_exp_multisynapse::calibrate()
     V_.P11_syn_[ i ] = std::exp( -h / P_.tau_syn_[ i ] );
     // these are determined according to a numeric stability criterion
     propagator prop( P_.tau_syn_[ i ], P_.Tau_, P_.C_);
-    propagators propagators = prop.propagate( h );
-    V_.P21_syn_[ i ] = propagators.P32;
+    const propagators pgts = prop.propagate( h );
+    V_.P21_syn_[ i ] = pgts.P32;
 
     B_.spikes_[ i ].resize();
   }

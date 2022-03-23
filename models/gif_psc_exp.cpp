@@ -293,10 +293,10 @@ nest::gif_psc_exp::calibrate()
 
   // these are determined according to a numeric stability criterion
   propagator prop_ex( P_.tau_ex_, tau_m, P_.c_m_ );
-  propagators propagators_ex = prop_ex.propagate( h );
+  const propagators propagators_ex = prop_ex.propagate( h );
   V_.P21ex_ = propagators_ex.P32;
   propagator prop_in( P_.tau_in_, tau_m, P_.c_m_ );
-  propagators propagators_in = prop_in.propagate( h );
+  const propagators propagators_in = prop_in.propagate( h );
   V_.P21in_ = propagators_in.P32;
 
   V_.P33_ = std::exp( -h / tau_m );

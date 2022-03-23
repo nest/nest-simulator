@@ -256,10 +256,10 @@ nest::iaf_psc_exp::calibrate()
 
   // these are determined according to a numeric stability criterion
   propagator prop_ex( P_.tau_ex_, P_.Tau_, P_.C_ );
-  propagators propagators_ex = prop_ex.propagate( h );
+  const propagators propagators_ex = prop_ex.propagate( h );
   V_.P21ex_ = propagators_ex.P32;
   propagator prop_in( P_.tau_in_, P_.Tau_, P_.C_ );
-  propagators propagators_in = prop_in.propagate( h );
+  const propagators propagators_in = prop_in.propagate( h );
   V_.P21in_ = propagators_in.P32;
 
   V_.P20_ = P_.Tau_ / P_.C_ * ( 1.0 - V_.P22_ );

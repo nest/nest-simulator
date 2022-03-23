@@ -316,9 +316,9 @@ iaf_psc_alpha_multisynapse::calibrate()
 
     // these are determined according to a numeric stability criterion
     propagator prop( P_.tau_syn_[ i ], P_.Tau_, P_.C_ );
-    propagators propagators = prop.propagate( h );
-    V_.P31_syn_[ i ] = propagators.P31;
-    V_.P32_syn_[ i ] = propagators.P32;
+    const propagators pgts = prop.propagate( h );
+    V_.P31_syn_[ i ] = pgts.P31;
+    V_.P32_syn_[ i ] = pgts.P32;
 
     V_.PSCInitialValues_[ i ] = 1.0 * numerics::e / P_.tau_syn_[ i ];
     B_.spikes_[ i ].resize();

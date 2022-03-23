@@ -30,7 +30,7 @@ can be discussed on the :ref:`NEST mailing lists <community>`.
   corresponding examples and documentation, as well.
 * A pull request should be coherent and contain only changes that
   belong together.
-* Please check the **typeset documentation** as part of the review
+* Please also check that the typesetting of the documentation looks correct.
   process. To learn how to test the documentation locally offline,
   please check out our :ref:`User documentation workflow
   <userdoc_workflow>`.

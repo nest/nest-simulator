@@ -39,6 +39,7 @@
 std::string debug_type( const boost::any& operand );
 
 bool is_int( const boost::any& operand );
+bool is_uint( const boost::any& operand );
 bool is_long( const boost::any& operand );
 bool is_size_t( const boost::any& operand );
 bool is_double( const boost::any& operand );

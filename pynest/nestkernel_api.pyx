@@ -90,6 +90,8 @@ cdef object any_vector_to_list(vector[any] cvec):
 cdef object any_to_pyobj(any operand):
     if is_int(operand):
         return any_cast[int](operand)
+    if is_uint(operand):
+        return any_cast[uint](operand)
     if is_long(operand):
         return any_cast[long](operand)
     if is_size_t(operand):
@@ -99,7 +101,7 @@ cdef object any_to_pyobj(any operand):
     if is_bool(operand):
         return any_cast[cbool](operand)
     if is_string(operand):
-        return any_cast[string](operand)
+        return any_cast[string](operand).decode('utf8')
     if is_int_vector(operand):
         return any_cast[vector[int]](operand)
     if is_double_vector(operand):
@@ -143,13 +145,19 @@ cdef dictionary pydict_to_dictionary(object py_dict) except *:
             raise AttributeError(f'value of key ({key}) is not a known type, got {type(value)}')
     return cdict
 
-# cdef object vec_of_dict_to_list(vector[dictionary] cvec):
-#     cdef tmp = []
-#     cdef vector[dictionary].iterator it = cvec.begin()
-#     while it != cvec.end():
-#         tmp.append(dictionary_to_pydict(deref(it)))
-#         inc(it)
-#     return tmp
+cdef object vec_of_dict_to_list(vector[dictionary] cvec):
+    cdef tmp = []
+    cdef vector[dictionary].iterator it = cvec.begin()
+    while it != cvec.end():
+        tmp.append(dictionary_to_pydict(deref(it)))
+        inc(it)
+    return tmp
+
+cdef vector[dictionary] list_of_dict_to_vec(object pylist):
+    cdef vector[dictionary] vec
+    for pydict in pylist:
+        vec.push_back(pydict_to_dictionary(pydict))
+    return vec
 
 def llapi_reset_kernel():
     reset_kernel()
@@ -379,7 +387,11 @@ def llapi_get_connections(object params):
     cdef dictionary params_dictionary = pydict_to_dictionary(params)
     cdef deque[ConnectionID] connections
 
-    connections = get_connections(params_dictionary)
+    try:
+        connections = get_connections(params_dictionary)
+    except RuntimeError as e:
+        exceptionCls = getattr(NESTErrors, str(e))
+        raise exceptionCls('llapi_get_connections', '') from None
 
     cdef connections_list = []
     cdef deque[ConnectionID].iterator it = connections.begin()
@@ -390,3 +402,40 @@ def llapi_get_connections(object params):
         inc(it)
 
     return nest.SynapseCollection(connections_list)
+
+def llapi_get_connection_status(object conns):
+    cdef vector[dictionary] connection_statuses
+    cdef deque[ConnectionID] conn_deque
+    cdef ConnectionObject conn_object
+    for conn_object in conns:
+        conn_deque.push_back(conn_object.thisobj)
+
+    try:
+        connection_statuses = get_connection_status(conn_deque)
+    except RuntimeError as e:
+        exceptionCls = getattr(NESTErrors, str(e))
+        raise exceptionCls('llapi_get_connection_status', '') from None
+
+    return vec_of_dict_to_list(connection_statuses)
+
+
+def llapi_set_connection_status(object conns, object params):
+    # Convert the list of connections to a deque
+    cdef deque[ConnectionID] conn_deque
+    cdef ConnectionObject conn_object
+    for conn_object in conns:
+        conn_deque.push_back(conn_object.thisobj)
+
+    try:
+        # params can be a dictionary or a list of dictionaries
+        if isinstance(params, dict):
+            set_connection_status(conn_deque, pydict_to_dictionary(params))
+        elif isinstance(params, list):
+            if len(params) != len(conns):
+                raise ValueError('params list length must be equal to number of connections')
+            set_connection_status(conn_deque, list_of_dict_to_vec(params))
+        else:
+            raise TypeError('params must be a dict or a list of dicts')
+    except RuntimeError as e:
+        exceptionCls = getattr(NESTErrors, str(e))
+        raise exceptionCls('llapi_set_connection_status', '') from None

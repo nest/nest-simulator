@@ -63,6 +63,7 @@ cdef extern from "dictionary.h":
         const_iterator end()
     string debug_type(const any&)
     cbool is_int(const any&)
+    cbool is_uint(const any&)
     cbool is_long(const any&)
     cbool is_size_t(const any&)
     cbool is_double(const any&)
@@ -108,6 +109,9 @@ cdef extern from "nest.h" namespace "nest":
     void set_kernel_status( const dictionary& ) except +
     dictionary get_nc_status( NodeCollectionPTR nc )
     void set_nc_status( NodeCollectionPTR nc, dictionary& params ) except +
+    vector[dictionary] get_connection_status(const deque[ConnectionID]&) except +
+    void set_connection_status(const deque[ConnectionID]&, const dictionary&) except +
+    void set_connection_status(const deque[ConnectionID]&, const vector[dictionary]&) except +
     void simulate( const double& t )
     void prepare()
     void run( const double& t )

@@ -47,6 +47,12 @@ is_int( const boost::any& operand )
   return operand.type() == typeid( int );
 }
 
+bool
+is_uint( const boost::any& operand )
+{
+  return operand.type() == typeid( unsigned int );
+}
+
 // long
 bool
 is_long( const boost::any& operand )

@@ -813,9 +813,7 @@ class SynapseCollection(object):
         else:
             raise TypeError("keys should be either a string or an iterable")
 
-        sps(self._datum)
-        sr(cmd)
-        result = spp()
+        result = nestkernel.llapi_get_connection_status(self._datum)
 
         # Need to restructure the data.
         final_result = restructure_data(result, keys)
@@ -892,13 +890,7 @@ class SynapseCollection(object):
                             temp_dict[key] = vals[i]
                 params = temp_param
 
-        params = broadcast(params, self.__len__(), (dict,), "params")
-
-        sps(self._datum)
-        sps(params)
-
-        sr('2 arraystore')
-        sr('Transpose { arrayload pop SetStatus } forall')
+        nestkernel.llapi_set_connection_status(self._datum, params)
 
 
 class CollocatedSynapses(object):

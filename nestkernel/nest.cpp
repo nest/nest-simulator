@@ -225,6 +225,59 @@ set_nc_status( NodeCollectionPTR nc, dictionary& params )
 }
 
 void
+set_connection_status( const std::deque< ConnectionID >& conns, const dictionary& dict )
+{
+  for ( auto& conn : conns )
+  {
+    kernel().connection_manager.set_synapse_status( conn.get_source_node_id(),
+      conn.get_target_node_id(),
+      conn.get_target_thread(),
+      conn.get_synapse_model_id(),
+      conn.get_port(),
+      dict );
+  }
+}
+
+void
+set_connection_status( const std::deque< ConnectionID >& conns, const std::vector< dictionary >& dicts )
+{
+  if ( conns.size() != dicts.size() )
+  {
+    throw BadParameter( "List of dictionaries must contain one dictionary per connection" );
+  }
+
+  for ( size_t i = 0; i < conns.size(); ++i )
+  {
+    const auto conn = conns[ i ];
+    const auto dict = dicts[ i ];
+    kernel().connection_manager.set_synapse_status( conn.get_source_node_id(),
+      conn.get_target_node_id(),
+      conn.get_target_thread(),
+      conn.get_synapse_model_id(),
+      conn.get_port(),
+      dict );
+  }
+}
+
+std::vector< dictionary >
+get_connection_status( const std::deque< ConnectionID >& conns )
+{
+  std::vector< dictionary > result;
+  result.reserve( conns.size() );
+
+  for ( auto& conn : conns )
+  {
+    const auto d = kernel().connection_manager.get_synapse_status( conn.get_source_node_id(),
+      conn.get_target_node_id(),
+      conn.get_target_thread(),
+      conn.get_synapse_model_id(),
+      conn.get_port() );
+    result.push_back( d );
+  }
+  return result;
+}
+
+void
 set_node_status( const index node_id, const dictionary& dict )
 {
   kernel().node_manager.set_status( node_id, dict );

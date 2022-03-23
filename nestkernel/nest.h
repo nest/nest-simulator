@@ -71,8 +71,9 @@ void set_nc_status( NodeCollectionPTR nc, dictionary& params );
 void set_node_status( const index node_id, const dictionary& dict );
 dictionary get_node_status( const index node_id );
 
-void set_connection_status( const ConnectionDatum& conn, const dictionary& dict );
-dictionary get_connection_status( const ConnectionDatum& conn );
+void set_connection_status( const std::deque< ConnectionID >& conns, const dictionary& dict );
+void set_connection_status( const std::deque< ConnectionID >& conns, const std::vector< dictionary >& dicts );
+std::vector< dictionary > get_connection_status( const std::deque< ConnectionID >& conns );
 
 NodeCollectionPTR slice_nc( const NodeCollectionPTR nc, long start, long stop, long step );
 

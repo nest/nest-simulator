@@ -29,6 +29,7 @@ import cython
 
 from libcpp.string cimport string
 from libcpp.vector cimport vector
+from libcpp.deque cimport deque
 from libcpp.memory cimport shared_ptr
 
 from cython.operator cimport dereference as deref
@@ -55,6 +56,16 @@ cdef class NodeCollectionObject:
 
     cdef _set_nc(self, NodeCollectionPTR nc):
         self.thisptr = nc
+
+cdef class ConnectionObject:
+
+    cdef ConnectionID thisobj
+
+    def __repr__(self):
+        return "<ConnectionIDObject>"
+
+    cdef _set_connection_id(self, ConnectionID conn_id):
+        self.thisobj = conn_id
 
 cdef class ParameterObject:
 
@@ -363,3 +374,19 @@ def llapi_dimension_parameter(object list_of_pos_params):
     obj = ParameterObject()
     obj._set_parameter(dim_parameter)
     return nest.Parameter(obj)
+
+def llapi_get_connections(object params):
+    cdef dictionary params_dictionary = pydict_to_dictionary(params)
+    cdef deque[ConnectionID] connections
+
+    connections = get_connections(params_dictionary)
+
+    cdef connections_list = []
+    cdef deque[ConnectionID].iterator it = connections.begin()
+    while it != connections.end():
+        obj = ConnectionObject()
+        obj._set_connection_id(deref(it))
+        connections_list.append(obj)
+        inc(it)
+
+    return nest.SynapseCollection(connections_list)

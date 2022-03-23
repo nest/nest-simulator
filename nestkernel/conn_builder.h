@@ -245,10 +245,10 @@ private:
   /*
    * Set synapse specific parameters.
    */
-  void set_synapse_model_( dictionary syn_params, size_t indx );
-  void set_default_weight_or_delay_( dictionary syn_params, size_t indx );
-  void set_synapse_params( dictionary syn_defaults, dictionary syn_params, size_t indx );
-  void set_structural_plasticity_parameters( std::vector< dictionary > syn_specs );
+  void set_synapse_model_( const dictionary& syn_params, const size_t indx );
+  void set_default_weight_or_delay_( const dictionary& syn_params, const size_t indx );
+  void set_synapse_params( const dictionary& syn_defaults, const dictionary& syn_params, const size_t indx );
+  void set_structural_plasticity_parameters( const std::vector< dictionary >& syn_specs );
 
   /**
    * Reset weight and delay pointers

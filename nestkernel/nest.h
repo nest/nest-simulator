@@ -118,7 +118,7 @@ void connect_arrays( long* sources,
   size_t n,
   std::string syn_model );
 
-ArrayDatum get_connections( const dictionary& dict );
+std::deque< ConnectionID > get_connections( const dictionary& dict );
 
 void simulate( const double& t );
 

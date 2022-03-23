@@ -398,16 +398,16 @@ connect_arrays( long* sources,
   kernel().connection_manager.connect_arrays( sources, targets, weights, delays, p_keys, p_values, n, syn_model );
 }
 
-ArrayDatum
+std::deque< ConnectionID >
 get_connections( const dictionary& dict )
 {
   dict.init_access_flags();
 
-  ArrayDatum array = kernel().connection_manager.get_connections( dict );
+  const auto& connectome = kernel().connection_manager.get_connections( dict );
 
   dict.all_entries_accessed( "GetConnections", "params" );
 
-  return array;
+  return connectome;
 }
 
 void

@@ -23,6 +23,7 @@ from libcpp cimport bool as cbool
 
 from libcpp.string cimport string
 from libcpp.vector cimport vector
+from libcpp.deque cimport deque
 from libcpp.utility cimport pair
 from libcpp.memory cimport shared_ptr
 
@@ -74,6 +75,10 @@ cdef extern from "dictionary.h":
     cbool is_any_vector(const any&)
     cbool is_dict(const any&)
 
+cdef extern from "connection_id.h" namespace "nest":
+    cppclass ConnectionID:
+        ConnectionID()
+
 cdef extern from "nest.h" namespace "nest":
     void init_nest( int* argc, char** argv[] )
     void reset_kernel()
@@ -99,6 +104,7 @@ cdef extern from "nest.h" namespace "nest":
     size_t nc_size( NodeCollectionPTR nc )
     dictionary get_kernel_status()
     NodeCollectionPTR get_nodes( const dictionary& params, const cbool local_only )
+    deque[ConnectionID] get_connections( const dictionary& dict )
     void set_kernel_status( const dictionary& ) except +
     dictionary get_nc_status( NodeCollectionPTR nc )
     void set_nc_status( NodeCollectionPTR nc, dictionary& params ) except +

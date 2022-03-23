@@ -321,12 +321,12 @@ Layer< D >::dump_connections( std::ostream& out,
 
     source_array[ 0 ] = source_node_id;
     ncdict[ names::source ] = NodeCollectionDatum( NodeCollection::create( source_array ) );
-    ArrayDatum connectome = kernel().connection_manager.get_connections( ncdict );
+    auto connectome = kernel().connection_manager.get_connections( ncdict );
 
     // Print information about all local connections for current source
     for ( size_t i = 0; i < connectome.size(); ++i )
     {
-      ConnectionDatum con_id = getValue< ConnectionDatum >( connectome.get( i ) );
+      auto con_id = connectome[ i ];
       dictionary result_dict = kernel().connection_manager.get_synapse_status( con_id.get_source_node_id(),
         con_id.get_target_node_id(),
         con_id.get_target_thread(),

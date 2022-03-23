@@ -79,11 +79,10 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   synapse_model_id_[ 0 ] = kernel().model_manager.get_synapsedict().get< synindex >( "static_synapse" );
   param_dicts_.resize( syn_specs.size() );
 
-  std::cerr << "syn_specs.size(): " << syn_specs.size() << "\n";
   // loop through vector of synapse dictionaries, and set synapse parameters
   for ( size_t synapse_indx = 0; synapse_indx < syn_specs.size(); ++synapse_indx )
   {
-    auto syn_params = syn_specs[ synapse_indx ];
+    auto& syn_params = syn_specs[ synapse_indx ];
 
     set_synapse_model_( syn_params, synapse_indx );
     set_default_weight_or_delay_( syn_params, synapse_indx );
@@ -430,7 +429,7 @@ nest::ConnBuilder::loop_over_targets_() const
 }
 
 void
-nest::ConnBuilder::set_synapse_model_( dictionary syn_params, size_t synapse_indx )
+nest::ConnBuilder::set_synapse_model_( const dictionary& syn_params, const size_t synapse_indx )
 {
   if ( not syn_params.known( names::synapse_model ) )
   {
@@ -458,7 +457,7 @@ nest::ConnBuilder::set_synapse_model_( dictionary syn_params, size_t synapse_ind
 }
 
 void
-nest::ConnBuilder::set_default_weight_or_delay_( dictionary syn_params, size_t synapse_indx )
+nest::ConnBuilder::set_default_weight_or_delay_( const dictionary& syn_params, const size_t synapse_indx )
 {
   dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
 
@@ -475,25 +474,27 @@ nest::ConnBuilder::set_default_weight_or_delay_( dictionary syn_params, size_t s
   if ( not default_weight_and_delay_[ synapse_indx ] )
   {
     weights_[ synapse_indx ] = syn_params.known( names::weight )
-      ? ConnParameter::create( syn_params[ names::weight ], kernel().vp_manager.get_num_threads() )
+      ? ConnParameter::create( syn_params.at( names::weight ), kernel().vp_manager.get_num_threads() )
       : ConnParameter::create( syn_defaults[ names::weight ], kernel().vp_manager.get_num_threads() );
     register_parameters_requiring_skipping_( *weights_[ synapse_indx ] );
 
     delays_[ synapse_indx ] = syn_params.known( names::delay )
-      ? ConnParameter::create( syn_params[ names::delay ], kernel().vp_manager.get_num_threads() )
+      ? ConnParameter::create( syn_params.at( names::delay ), kernel().vp_manager.get_num_threads() )
       : ConnParameter::create( syn_defaults[ names::delay ], kernel().vp_manager.get_num_threads() );
   }
   else if ( default_weight_[ synapse_indx ] )
   {
     delays_[ synapse_indx ] = syn_params.known( names::delay )
-      ? ConnParameter::create( syn_params[ names::delay ], kernel().vp_manager.get_num_threads() )
+      ? ConnParameter::create( syn_params.at( names::delay ), kernel().vp_manager.get_num_threads() )
       : ConnParameter::create( syn_defaults[ names::delay ], kernel().vp_manager.get_num_threads() );
   }
   register_parameters_requiring_skipping_( *delays_[ synapse_indx ] );
 }
 
 void
-nest::ConnBuilder::set_synapse_params( dictionary syn_defaults, dictionary syn_params, size_t synapse_indx )
+nest::ConnBuilder::set_synapse_params( const dictionary& syn_defaults,
+  const dictionary& syn_params,
+  const size_t synapse_indx )
 {
   for ( auto& syn_kv_pair : syn_defaults )
   {
@@ -506,7 +507,7 @@ nest::ConnBuilder::set_synapse_params( dictionary syn_defaults, dictionary syn_p
     if ( syn_params.known( param_name ) )
     {
       synapse_params_[ synapse_indx ][ param_name ] =
-        ConnParameter::create( syn_params[ param_name ], kernel().vp_manager.get_num_threads() );
+        ConnParameter::create( syn_params.at( param_name ), kernel().vp_manager.get_num_threads() );
       register_parameters_requiring_skipping_( *synapse_params_[ synapse_indx ][ param_name ] );
     }
   }
@@ -532,7 +533,7 @@ nest::ConnBuilder::set_synapse_params( dictionary syn_defaults, dictionary syn_p
 }
 
 void
-nest::ConnBuilder::set_structural_plasticity_parameters( std::vector< dictionary > syn_specs )
+nest::ConnBuilder::set_structural_plasticity_parameters( const std::vector< dictionary >& syn_specs )
 {
   // Check if both pre and postsynaptic element are provided. Currently only possible to have
   // structural plasticity with single element syn_spec.

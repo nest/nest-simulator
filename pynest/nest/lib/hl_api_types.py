@@ -581,18 +581,16 @@ class SynapseCollection(object):
 
         if isinstance(data, list):
             for datum in data:
-                if (not isinstance(datum, kernel.SLIDatum) or
-                        datum.dtype != "connectiontype"):
-                    raise TypeError("Expected Connection Datum.")
+                if (not isinstance(datum, nestkernel.ConnectionObject)):
+                    raise TypeError("Expected ConnectionObject.")
             self._datum = data
         elif data is None:
             # We can have an empty SynapseCollection if there are no connections.
             self._datum = data
         else:
-            if (not isinstance(data, kernel.SLIDatum) or
-                    data.dtype != "connectiontype"):
-                raise TypeError("Expected Connection Datum.")
-            # self._datum needs to be a list of Connection datums.
+            if (not isinstance(data, nestkernel.ConnectionObject)):
+                raise TypeError("Expected ConnectionObject.")
+            # self._datum needs to be a list of ConnectionObjects.
             self._datum = [data]
 
         self.print_full = False

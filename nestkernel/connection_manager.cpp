@@ -42,6 +42,7 @@
 #include "clopath_archiving_node.h"
 #include "conn_builder.h"
 #include "conn_builder_factory.h"
+#include "connection_id.h"
 #include "connection_label.h"
 #include "connector_base.h"
 #include "connector_model.h"
@@ -922,7 +923,7 @@ nest::ConnectionManager::get_num_connections( const synindex syn_id ) const
   return num_connections;
 }
 
-ArrayDatum
+std::deque< nest::ConnectionID >
 nest::ConnectionManager::get_connections( const dictionary& params )
 {
   std::deque< ConnectionID > connectome;
@@ -991,18 +992,9 @@ nest::ConnectionManager::get_connections( const dictionary& params )
     }
   }
 
-  ArrayDatum result;
-  result.reserve( connectome.size() );
-
-  while ( not connectome.empty() )
-  {
-    result.push_back( ConnectionDatum( connectome.front() ) );
-    connectome.pop_front();
-  }
-
   get_connections_has_been_called_ = true;
 
-  return result;
+  return connectome;
 }
 
 // Helper method which removes ConnectionIDs from input deque and

@@ -102,13 +102,7 @@ def GetConnections(source=None, target=None, synapse_model=None,
     if synapse_label is not None:
         params['synapse_label'] = synapse_label
 
-    sps(params)
-    sr("GetConnections")
-
-    conns = spp()
-
-    if isinstance(conns, tuple):
-        conns = SynapseCollection(None)
+    conns = nestkernel.llapi_get_connections(params)
 
     return conns
 

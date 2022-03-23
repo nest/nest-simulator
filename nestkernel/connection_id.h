@@ -38,7 +38,7 @@ public:
   ConnectionID();
   ConnectionID( long source_node_id, long target_node_id, long target_thread, long synapse_modelid, long port );
   ConnectionID( long source_node_id, long target_thread, long synapse_modelid, long port );
-  ConnectionID( const ConnectionID& );
+  ConnectionID( const ConnectionID& ) = default;
 
   dictionary get_dict() const;
   ArrayDatum to_ArrayDatum() const;
@@ -64,15 +64,6 @@ inline ConnectionID::ConnectionID()
   , target_thread_( -1 )
   , synapse_modelid_( -1 )
   , port_( -1 )
-{
-}
-
-inline ConnectionID::ConnectionID( const ConnectionID& cid )
-  : source_node_id_( cid.source_node_id_ )
-  , target_node_id_( cid.target_node_id_ )
-  , target_thread_( cid.target_thread_ )
-  , synapse_modelid_( cid.synapse_modelid_ )
-  , port_( cid.port_ )
 {
 }
 

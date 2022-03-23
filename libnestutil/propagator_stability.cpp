@@ -67,7 +67,7 @@ propagator::propagate( double h ) const
 
   propagators P;
 
-  P.P31 = gamma_ * ( beta_ * exp_h_tau_syn * expm1_h_tau - h * exp_h_tau_syn);
+  P.P31 = gamma_ * ( beta_ * exp_h_tau_syn * expm1_h_tau - h * exp_h_tau_syn );
   P.P32 = gamma_ * exp_h_tau_syn * expm1_h_tau;
 
   if ( tau_ == tau_syn_ or std::abs( tau_ - tau_syn_ ) < 0.1 )
@@ -80,7 +80,7 @@ propagator::propagate( double h ) const
 
     if ( dev_P31 > 2 * std::abs( P31_linear ) )
     {
-      P.P31 =  P31_singular;
+      P.P31 = P31_singular;
     }
 
     const double P32_linear = alpha_ * h * h * exp_h_tau / 2.;

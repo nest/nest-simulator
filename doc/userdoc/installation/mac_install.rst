@@ -104,7 +104,7 @@ Building NEST
       make installcheck
 
 Install NEST outside of a virtual environment
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 By default NEST will be installed into the active virtual Python environment. If you wish to
 install it elsewhere, you can specify an install prefix. Follow the above instructions, but

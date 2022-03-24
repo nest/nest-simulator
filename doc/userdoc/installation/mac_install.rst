@@ -103,7 +103,7 @@ Building NEST
       make install
       make installcheck
 
-Installing outside of a virtual environment
+Install NEST outside of a virtual environment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 By default NEST will be installed into the active virtual Python environment. If you wish to

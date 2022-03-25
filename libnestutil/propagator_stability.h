@@ -42,7 +42,6 @@
 class PropagatorExp
 {
 public:
-
   /**
    * Empty constructor needed for initialization of buffers.
    */
@@ -77,7 +76,6 @@ protected:
 class PropagatorAlpha : public PropagatorExp
 {
 public:
-
   /**
    * Empty constructor needed for initialization of buffers.
    */
@@ -98,7 +96,6 @@ public:
    * @returns tuple containing propagators 31 and 32
    */
   std::tuple< double, double > evaluate( double h ) const;
-
 };
 
 #endif

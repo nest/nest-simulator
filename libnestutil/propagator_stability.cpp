@@ -82,12 +82,12 @@ PropagatorExp::evaluate( double h ) const
 }
 
 PropagatorAlpha::PropagatorAlpha()
-  : PropagatorExp( 0., 0.,  0. )
+  : PropagatorExp( 0., 0., 0. )
 {
 }
 
 PropagatorAlpha::PropagatorAlpha( double tau_syn, double tau, double c )
-  : PropagatorExp( tau_syn, tau,  c )
+  : PropagatorExp( tau_syn, tau, c )
 {
 }
 

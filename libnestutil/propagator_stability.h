@@ -69,9 +69,9 @@ protected:
   double tau_;     //!< Membrane time constant in ms
   double c_m_;     //!< Membrane capacitance in pF
 
-  double alpha_;   //!< 1/(c*tau*tau) * (tau_syn - tau)
-  double beta_;    //!< tau_syn  * tau/(tau - tau_syn)
-  double gamma_;   //!< beta_/c
+  double alpha_; //!< 1/(c*tau*tau) * (tau_syn - tau)
+  double beta_;  //!< tau_syn * tau/(tau - tau_syn)
+  double gamma_; //!< beta_/c
 };
 
 class PropagatorAlpha : public PropagatorExp

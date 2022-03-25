@@ -23,14 +23,8 @@
 #ifndef PROPAGATOR_STABILITY_H
 #define PROPAGATOR_STABILITY_H
 
-/**
- * Propagator variables
- */
-struct propagators
-{
-  double P31;
-  double P32;
-};
+// C++ includes:
+#include <tuple>
 
 /**
  * Propagator class for handling similar tau_m and tau_syn_* time constants.
@@ -40,21 +34,17 @@ struct propagators
  *
  * For details, please see doc/userdoc/model_details/IAF_neurons_singularity.ipynb.
  */
-class propagator
+class PropagatorExp
 {
 public:
 
-  propagator();
-  propagator( double tau_syn, double tau, double c );
-
+  PropagatorExp();
   /**
-   * Update constants used in `propagate`.
-   *
    * @param tau_syn Time constant of synaptic current in ms
    * @param tau Membrane time constant in ms
    * @param Membrane capacitance in pF
    */
-  void update_constants( double tau_syn, double tau, double c );
+  PropagatorExp( double tau_syn, double tau, double c_m );
 
   /**
    * Calculate propagators 31 and 32.
@@ -63,16 +53,39 @@ public:
    *
    * @returns propagators struct containing 31 and 32
    */
-  propagators propagate( double h ) const;
+  double evaluate( double h ) const;
 
-private:
+protected:
+  double tau_syn_; //!< Time constant of synaptic current in ms
+  double tau_;     //!< Membrane time constant in ms
+  double c_m_;       //!< Membrane capacitance in pF
+
   double alpha_;   //!< 1/(c*tau*tau) * (tau_syn - tau)
   double beta_;    //!< tau_syn  * tau/(tau - tau_syn)
   double gamma_;   //!< beta_/c
+};
 
-  double tau_syn_; //!< Time constant of synaptic current in ms
-  double tau_;     //!< Membrane time constant in ms
-  double c_;       //!< Membrane capacitance in pF
+class PropagatorAlpha : public PropagatorExp
+{
+public:
+
+  PropagatorAlpha();
+  /**
+   * @param tau_syn Time constant of synaptic current in ms
+   * @param tau Membrane time constant in ms
+   * @param Membrane capacitance in pF
+   */
+  PropagatorAlpha( double tau_syn, double tau, double c_m );
+
+  /**
+   * Calculate propagators 31 and 32.
+   *
+   * @param h time step
+   *
+   * @returns propagators struct containing 31 and 32
+   */
+  std::tuple< double, double > evaluate( double h ) const;
+
 };
 
 #endif

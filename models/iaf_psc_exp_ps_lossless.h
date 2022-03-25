@@ -275,8 +275,8 @@ private:
   double is_spike_( const double );
 
   /** Propagator object for updating synaptic components */
-  propagator prop_ex_;
-  propagator prop_in_;
+  PropagatorExp propagator_ex_;
+  PropagatorExp propagator_in_;
 
   // ----------------------------------------------------------------
 

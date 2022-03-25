@@ -269,8 +269,8 @@ private:
   void emit_instant_spike_( Time const& origin, const long lag, const double spike_offset );
 
   /** Propagator object for updating synaptic components */
-  propagator prop_ex_;
-  propagator prop_in_;
+  PropagatorAlpha propagator_ex_;
+  PropagatorAlpha propagator_in_;
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< iaf_psc_alpha_ps >;

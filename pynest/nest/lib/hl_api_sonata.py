@@ -73,7 +73,7 @@ class SonataConnector(object):
 
     def convert_config_(self, json_config):
         """Convert SONATA config files to dictionary containing absolute paths and simulation parameters.
-        
+
         Parameters
         ----------
         json_config: json file
@@ -149,13 +149,13 @@ class SonataConnector(object):
                     for population_name in nodes_file['nodes']:
 
                         population = nodes_file['nodes'][population_name]
-                        num_elements =  population['node_id'].size
+                        num_elements = population['node_id'].size
 
                         if model_type == 'virtual':
                             nodes = self.create_spike_generators_(population_name, num_elements)
                         else:
                             # Create non-device nodes
-                            model = node_types.model_template.iloc[0].replace('nest:','')
+                            model = node_types.model_template.iloc[0].replace('nest:', '')
                             nodes = Create(model, num_elements)
 
                         # Set node parameters
@@ -214,7 +214,7 @@ class SonataConnector(object):
                     dynamics.update(json.load(dynamics_file))
                 node_type_map[node_types['node_type_id'][ind]] = dynamics
         return node_type_map
-    
+
     def create_spike_generators_(self, population_name, num_elements):
         """Create `num_elements` spike generators with `spike_times` given in SONATA files.
 
@@ -324,13 +324,13 @@ class SonataConnector(object):
         if not self.config['target_simulator'] == 'NEST':
             raise NotImplementedError('Only `target_simulator` of type NEST is supported.')
 
-        SetKernelStatus({'overwrite_files':True})
+        SetKernelStatus({'overwrite_files': True})
 
         if simulate:
             SetKernelStatus({'resolution': self.config['run']['dt']})
 
         # Create network
-        self.Create() 
+        self.Create()
         self.Connect()
 
         if simulate:

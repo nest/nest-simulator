@@ -26,6 +26,7 @@ import time
 
 import matplotlib.pyplot as plt
 
+
 def memory_thisjob():
     """Wrapper to obtain current memory usage"""
     nest.ll_api.sr('memory_thisjob')
@@ -35,12 +36,12 @@ start_time = time.time()
 
 nest.ResetKernel()
 
-#example = '300_pointneurons'
+# example = '300_pointneurons'
 example = 'GLIF'
 plot = True
 pre_sim_time = 10
 
-create_sonata_network = True  # For testing of conveniece function
+create_sonata_network = False  # For testing of conveniece function
 
 if example == '300_pointneurons':
     base_path = '/home/stine/Work/sonata/examples/300_pointneurons/'
@@ -94,10 +95,9 @@ else:
     print("number of connections: ", nest.GetKernelStatus('num_connections'))
     print("number of neurons: ", nest.GetKernelStatus('network_size'))
 
-
     # Simulate
     start_time_presim = time.time()
-    #nest.Simulate(pre_sim_time)
+    # nest.Simulate(pre_sim_time)
     end_time_presim = time.time() - start_time_presim
 
     if plot:
@@ -106,7 +106,6 @@ else:
         nest.Connect(sonata_connector.node_collections[population_to_plot], s_rec)
 
     print('simulating')
-
 
     start_time_sim = time.time()
 

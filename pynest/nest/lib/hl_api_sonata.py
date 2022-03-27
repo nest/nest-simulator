@@ -30,11 +30,9 @@ import numpy as np
 import pandas as pd
 
 from ..ll_api import sps, sr
-from .hl_api_connections import GetConnections
-from .hl_api_info import GetStatus
 from .hl_api_models import GetDefaults
 from .hl_api_nodes import Create
-from .hl_api_simulation import GetKernelStatus
+from .hl_api_simulation import SetKernelStatus, Simulate
 from .hl_api_types import NodeCollection
 
 
@@ -250,7 +248,7 @@ class SonataConnector(object):
                 break  # Once we have iterated to the correct node set, we can break and return the nodes
         return nodes
 
-    def create_edge_dict(self):
+    def create_edge_dict_(self):
         """Create a list of edge dictionaries used when connecting with SONATA files.
 
         The function iterates edge (synapse) files in the config file and creates one dictionary per edge file.
@@ -305,7 +303,41 @@ class SonataConnector(object):
         NEST kernel will iterate the list in `edge_types` containing dictionaries with the edge files and synapse
         dictionaries, and use the `NodeCollection`s given in `node_collections` to create the connections.
         """
+        self.create_edge_dict_()
+
         sonata_dynamics = {'nodes': self.node_collections, 'edges': self.edge_types}
 
         sps(sonata_dynamics)
         sr('Connect_sonata')
+
+    def CreateSonataNetwork(self, simulate=False):
+        """ Create network defined in SONATA files.
+
+        Convenience function for creating networks in NEST from SONATA files.
+
+        Parameters
+        ----------
+        simulate bool (optional)
+            Whether or not to simulate
+        """
+
+        if not self.config['target_simulator'] == 'NEST':
+            raise NotImplementedError('Only `target_simulator` of type NEST is supported.')
+
+        SetKernelStatus({'overwrite_files':True})
+
+        if simulate:
+            SetKernelStatus({'resolution': self.config['run']['dt']})
+
+        # Create network
+        self.Create() 
+        self.Connect()
+
+        if simulate:
+            simtime = 0
+            if 'tstop' in self.config['run']:
+                simtime = self.config['run']['tstop']
+            else:
+                simtime = self.config['run']['duration']
+
+            Simulate(simtime)

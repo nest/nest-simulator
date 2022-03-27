@@ -358,9 +358,8 @@ endfunction()
 function( NEST_PROCESS_WITH_PYTHON )
   # Find Python
   set( HAVE_PYTHON OFF PARENT_SCOPE )
-  if ( ${with-python} STREQUAL "2" )
-    message( FATAL_ERROR "Python 2 is not supported anymore, please use Python 3 by setting CMake option -Dwith-python=ON." )
-  elseif ( ${with-python} STREQUAL "ON" )
+  
+  if ( ${with-python} STREQUAL "ON" )
 
     # Localize the Python interpreter and ABI
     find_package( Python 3.8 QUIET COMPONENTS Interpreter Development.Module )

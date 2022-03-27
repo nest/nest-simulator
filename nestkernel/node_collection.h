@@ -433,6 +433,13 @@ public:
   NodeCollectionPrimitive( const NodeCollectionPrimitive& ) = default;
 
   /**
+   * Primitive assignment operator.
+   *
+   * @param rhs Primitive to assign
+   */
+  NodeCollectionPrimitive& operator=( const NodeCollectionPrimitive& ) = default;
+
+  /**
    * Create empty NodeCollection.
    *
    * @note This is only for use by SPBuilder.

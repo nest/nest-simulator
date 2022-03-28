@@ -3,11 +3,6 @@
 Conda forge install
 ===================
 
-.. warning::
-
-    The conda package is only available for NEST 2.X.
-    If you want to use NEST 3.X, please see other :ref:`installation options <install_nest>`
-
 1. To keep your conda setup tidy, we recommend that you install NEST into
    a separate `conda environment <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html>`_
    together with Python packages that you will use when working with NEST;
@@ -53,6 +48,6 @@ Conda forge install
      uses on personal computers.
    - Until dedicated conda builds for Apple's M1 chip (arm64) become available, you should expect relatively
      poor performance on computers with the M1 chip. You need to :ref:`build NEST yourself <mac_install>` on
-     M1 systems for good performance... _conda_forge_install:
+     M1 systems for good performance.
 
 

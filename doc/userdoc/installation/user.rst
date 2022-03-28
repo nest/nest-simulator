@@ -11,6 +11,11 @@ Docker
 
 :ref:`See our docker installation instructions <docker>`.
 
+Conda install
+~~~~~~~~~~~~~
+
+You can install NEST with the :ref:`Conda forge package <conda_forge_install>`.
+
 Live media
 ~~~~~~~~~
 
@@ -18,11 +23,6 @@ We have live media (.ova) if you want to run NEST in a virtual machine.
 
 :ref:`Download the live media here <download_livemedia>`, and follow the :doc:`instructions to set up the virtual machine <livemedia>` .
 
-Conda install
-~~~~~~~~~~~~~
-
-For NEST 2.x, you can install NEST with the :ref:`Conda forge package <conda_forge_install>`.
-Note that the Conda package does not work with NEST 3.x.
 
 -------------
 

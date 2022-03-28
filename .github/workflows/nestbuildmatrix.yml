@@ -202,7 +202,7 @@ jobs:
       matrix:
         os: [macos-latest]
         cpp_compiler: ["clang"]
-        xNEST_BUILD_TYPE: ["MINIMAL"]
+        xNEST_BUILD_TYPE: ["FULL_MACOS"]
 
     steps:
       - name: "Checkout repository content"
@@ -223,7 +223,7 @@ jobs:
 
       - name: "Install MacOS system dependencies"
         run: |
-          brew install coreutils gsl open-mpi automake autoconf libtool
+          brew install coreutils gsl open-mpi libomp automake autoconf libtool boost
           brew info python
 
       - name: "Restore pip cache"

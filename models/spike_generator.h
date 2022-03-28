@@ -284,7 +284,7 @@ private:
     //! Shift spike times at present to next step
     bool shift_now_spikes_;
 
-    Parameters_();                               //!< Sets default parameter values
+    Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_& ) = default;
     Parameters_& operator=( const Parameters_& ) = default;
 

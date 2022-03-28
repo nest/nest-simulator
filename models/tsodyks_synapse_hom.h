@@ -78,7 +78,7 @@ probability times the amount of releasable synaptic vesicles at time `t` of the
 presynaptic neuron's spike, so this equals the amount of transmitter expelled
 into the synaptic cleft.
 
-The amount of transmitter than relaxes back to 0 with time constant tau_psc
+The amount of transmitter then relaxes back to 0 with time constant tau_psc
 of the synapse's variable y. Since the dynamics of y(t) is linear, the
 postsynaptic neuron can reconstruct from the amplitude of the synaptic
 impulse u(t)*x(t)*w the full shape of y(t). The postsynaptic neuron, however,
@@ -183,6 +183,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   tsodyks_synapse_hom( const tsodyks_synapse_hom& ) = default;
+  tsodyks_synapse_hom& operator=( const tsodyks_synapse_hom& ) = default;
 
   /**
    * Default Destructor.

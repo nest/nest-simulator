@@ -22,22 +22,22 @@
 
 /** @BeginDocumentation
 Name: testsuite::test_multimeter - Minimal test for correct multimeter setup
- 
+
 Synopsis: (test_multimeter) run -> NEST exits if test fails
 
 Description:
   This test provides a minimal check for correct multimeter setup.
- 
+
   For each model with a "recordables" property, it creates an instance,
   connects a multimeter to them requestin all properties, simulates briefly
   and checks that the correct number of data items is collected for each
   recordable.
- 
+
   This test mainly ensures that init_buffers_() initializes the data logger.
   If a developer has forgotten to add recordables to get_status(), this test
-  will ignore the pertaining neuron.  	
- 
-Author: Hans Ekkehard Plesser, 2010-05-05 
+  will ignore the pertaining neuron.
+
+Author: Hans Ekkehard Plesser, 2010-05-05
  */
 
 (unittest) run
@@ -56,7 +56,7 @@ Author: Hans Ekkehard Plesser, 2010-05-05
 /n_data simtime recint div cvi 1 sub def
 
 {
-  modeldict keys
+  GetKernelStatus /node_models get
   {
     /model Set
 
@@ -67,11 +67,25 @@ Author: Hans Ekkehard Plesser, 2010-05-05
     << /resolution res >> SetKernelStatus
 
     % get recordables, if none, return true
-    model GetDefaults dup /recordables known
+    model GetDefaults dup
+    /recordables known
     {
       % set up for simulation and simulate
       /recordables get /recs Set
       /n model Create def
+
+      % if the model is a compartmental model,
+      % we need to add at least a root compartment
+      model GetDefaults dup
+      /compartments known
+      {
+        n
+        <<
+          /compartments << /parent_idx -1  >>
+        >> SetStatus
+      }
+      if
+
       /mm /multimeter << /interval recint /record_from recs >> Create def
       mm n Connect
       simtime Simulate
@@ -80,13 +94,13 @@ Author: Hans Ekkehard Plesser, 2010-05-05
       /result mm /events get def
       true
       recs % for each recordable, see if we have correct number of data points
-      {	   
+      {
         result exch get cva
-        length n_data eq 
+        length n_data eq
 	and
-      }     
+      }
       Fold
-    }   
+    }
     { ; true }
     ifelse
   }

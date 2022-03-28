@@ -49,14 +49,16 @@ Device for measuring the covariance matrix from several inputs
 Description
 +++++++++++
 
-The ``correlomatrix_detector`` is a recording device. It is used to
-record spikes from several pools of spike inputs and calculates the
-covariance matrix of inter-spike intervals (raw auto and cross correlation)
-binned to bins of duration ``delta_tau``. The histogram is only recorded for
+The ``correlomatrix_detector`` is a device that receives spikes from several pools
+of spike inputs and calculates the covariance matrix of inter-spike intervals
+(raw auto and cross correlation) binned to bins of duration ``delta_tau``, which
+defaults to 5 times the simulation resolution. The histogram is only recorded for
 non-negative time lags. The negative part can be obtained by the symmetry of
-the covariance matrix :math:`C(t) = C^T(-t)`.
+the covariance matrix :math:` C(t) = C^T(-t)`.
 
-The result can be obtained via ``GetStatus`` under the key ``/count_covariance``.
+The result can be obtained from the node's status dictionary under the key
+``count_covariance``.
+
 In parallel it records a weighted histogram, where the connection weight are
 used to weight every count, which is available under the key ``/covariance``.
 Both are matrices of size ``N_channels x N_channels``, with each entry :math:`C_{ij}` being
@@ -96,12 +98,14 @@ Tstop            real      Time when to stop counting events. This time should
                            effects of the correlation counts.
 delta_tau        ms        Bin width. This has to be an odd multiple of
                            the resolution, to allow the symmetry between
-                           positive and negative time-lags.
+                           positive and negative time-lags. Defaults to 5 times
+                           the simulation resolution.
 tau_max          ms        One-sided width. In the lower triagnular part
                            events with differences in [0, tau_max+delta_tau/2)
                            are counted. On the diagonal and in the upper
                            triangular part events with differences in
-                           (0, tau_max+delta_tau/2].
+                           (0, tau_max+delta_tau/2]. Defaults to 10 times the
+                           value of delta_tau.
 N_channels       integer   The number of pools. This defines the range of
                            receptor_type. Default is 1.
                            Setting N_channels clears count_covariance,
@@ -246,6 +250,8 @@ private:
      *          binwidth or tau_max.
      */
     bool set( const DictionaryDatum&, const correlomatrix_detector&, Node* node );
+
+    Time get_default_delta_tau();
   };
 
   // ------------------------------------------------------------
@@ -302,7 +308,7 @@ correlomatrix_detector::handles_test_event( SpikeEvent&, rport receptor_type )
 }
 
 inline void
-nest::correlomatrix_detector::get_status( DictionaryDatum& d ) const
+correlomatrix_detector::get_status( DictionaryDatum& d ) const
 {
   device_.get_status( d );
   P_.get( d );
@@ -310,7 +316,7 @@ nest::correlomatrix_detector::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-nest::correlomatrix_detector::set_status( const DictionaryDatum& d )
+correlomatrix_detector::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_;
   const bool reset_required = ptmp.set( d, *this, this );
@@ -323,13 +329,10 @@ nest::correlomatrix_detector::set_status( const DictionaryDatum& d )
   }
 }
 
-inline void
-nest::correlomatrix_detector::calibrate_time( const TimeConverter& tc )
+inline Time
+correlomatrix_detector::Parameters_::get_default_delta_tau()
 {
-  P_.delta_tau_ = tc.from_old_tics( P_.delta_tau_.get_tics() );
-  P_.tau_max_ = tc.from_old_tics( P_.tau_max_.get_tics() );
-  P_.Tstart_ = tc.from_old_tics( P_.Tstart_.get_tics() );
-  P_.Tstop_ = tc.from_old_tics( P_.Tstop_.get_tics() );
+  return 5 * Time::get_resolution();
 }
 
 } // namespace

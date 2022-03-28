@@ -45,6 +45,7 @@ struct SourceTablePosition
   SourceTablePosition();
   SourceTablePosition( const long tid, const long syn_id, const long lcid );
   SourceTablePosition( const SourceTablePosition& rhs ) = default;
+  SourceTablePosition& operator=( const SourceTablePosition& rhs ) = default;
 
   /**
    * Decreases indices until a valid entry is found.

@@ -14,10 +14,6 @@ If you transition from a version earlier than 3.0, please see our
 extensive :ref:`transition guide from NEST 2.x to 3.0
 <refguide_2_3>`.
 
-.. contents:: On this page you'll find
-   :local:
-   :depth: 1
-
 
 Access to kernel properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

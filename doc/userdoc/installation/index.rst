@@ -127,6 +127,11 @@ and :ref:`cmake_options`.
 
    .. tab:: Conda (Linux/macOS)
 
+       .. note::
+
+         For NEST 3.x, the conda-forge package is available from NEST 3.3.
+
+         For NEST 2.x, the conda-forge package is available from NEST 2.16.0.
 
        1. To keep your conda setup tidy, we recommend that you install NEST into
           a separate `conda environment <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html>`_

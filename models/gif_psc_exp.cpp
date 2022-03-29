@@ -292,10 +292,8 @@ nest::gif_psc_exp::calibrate()
   const double tau_m = P_.c_m_ / P_.g_L_;
 
   // these are determined according to a numeric stability criterion
-  PropagatorExp prop_ex( P_.tau_ex_, tau_m, P_.c_m_ );
-  PropagatorExp prop_in( P_.tau_in_, tau_m, P_.c_m_ );
-  V_.P21ex_ = prop_ex.evaluate( h );
-  V_.P21in_ = prop_in.evaluate( h );
+  V_.P21ex_ = PropagatorExp( P_.tau_ex_, tau_m, P_.c_m_ ).evaluate( h );
+  V_.P21in_ = PropagatorExp( P_.tau_in_, tau_m, P_.c_m_ ).evaluate( h );
 
   V_.P33_ = std::exp( -h / tau_m );
   V_.P30_ = -1 / P_.c_m_ * numerics::expm1( -h / tau_m ) * tau_m;

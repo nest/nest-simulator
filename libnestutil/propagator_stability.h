@@ -24,22 +24,67 @@
 #define PROPAGATOR_STABILITY_H
 
 // C++ includes:
+#include <cmath>
 #include <tuple>
 
+// Includes from libnestutil:
+#include "numerics.h"
+
+
 /**
- * Propagator classes for handling similar tau_m and tau_syn_* time constants.
+ * Propagator class for handling similar tau_m and tau_syn_* time constants.
  *
  * Constants are calculated in the constructor, while
  * propagator_31 and propagator_32 are calculated in `evaluate( h )`.
  *
- * Models with exponential postsynaptic currents should use PropagatorExp.
- * Here `evaluate( h )` returns P32 as a double. Models with postsynaptic
- * currents modeled as an alpha current on the other hand, should use PropagatorAlpha.
- * P31 and P32 are then returned as a tuple, where P31 is the first variable.
- *
  * For details, please see doc/userdoc/model_details/IAF_neurons_singularity.ipynb.
  */
-class PropagatorExp
+class Propagator
+{
+public:
+  /**
+   * Empty constructor needed for initialization of buffers.
+   */
+  Propagator();
+
+  /**
+   * @param tau_syn Time constant of synaptic current in ms
+   * @param tau_m Membrane time constant in ms
+   * @param c_m Membrane capacitance in pF
+   */
+  Propagator( double tau_syn, double tau_m, double c_m );
+
+protected:
+
+  /**
+   * Calculate propagator 32 and return value along with exponentials.
+   *
+   * Exponentials are returned so they can be used directly when calculating P31.
+   *
+   * @param h time step
+   *
+   * @returns tuple with propagator 32, exp( -h / tau_syn_ ), expm1( -h / tau_m_ + h / tau_syn_ )
+   * and exp( -h / tau_m_ ), all as doubles
+   */
+  std::tuple < double, double, double, double > evaluate_P32_( double h ) const;
+
+  double tau_syn_; //!< Time constant of synaptic current in ms
+  double tau_m_;   //!< Membrane time constant in ms
+  double c_m_;     //!< Membrane capacitance in pF
+
+  double alpha_; //!< 1/(c*tau*tau) * (tau_syn - tau)
+  double beta_;  //!< tau_syn * tau/(tau - tau_syn)
+  double gamma_; //!< beta_/c
+};
+
+
+/**
+ * Propagator class for handling similar tau_m and tau_syn_* time constants for
+ * models with exponential postsynaptic currents.
+ *
+ * propagator_32 is calculated in `evaluate( h )` and returned as a double.
+ */
+class PropagatorExp : public Propagator
 {
 public:
   /**
@@ -62,18 +107,16 @@ public:
    * @returns propagator 32 as a double
    */
   double evaluate( double h ) const;
-
-protected:
-  double tau_syn_; //!< Time constant of synaptic current in ms
-  double tau_m_;   //!< Membrane time constant in ms
-  double c_m_;     //!< Membrane capacitance in pF
-
-  double alpha_; //!< 1/(c*tau*tau) * (tau_syn - tau)
-  double beta_;  //!< tau_syn * tau/(tau - tau_syn)
-  double gamma_; //!< beta_/c
 };
 
-class PropagatorAlpha : public PropagatorExp
+/**
+ * Propagator class for handling similar tau_m and tau_syn_* time constants for
+ * models with postsynaptic currents modeled as an alpha current.
+ *
+ * propagator_31 and propagator_32 are calculated in `evaluate( h )` and returned
+ * as a tuple, where P31 is the first variable.
+ */
+class PropagatorAlpha : public Propagator
 {
 public:
   /**
@@ -97,5 +140,38 @@ public:
    */
   std::tuple< double, double > evaluate( double h ) const;
 };
+
+inline std::tuple < double, double, double, double >
+Propagator::evaluate_P32_( double h ) const
+{
+  const double exp_h_tau_syn = std::exp( -h / tau_syn_ );
+  const double expm1_h_tau = numerics::expm1( -h / tau_m_ + h / tau_syn_ );
+
+  double P32 = gamma_ * exp_h_tau_syn * expm1_h_tau;
+
+  double exp_h_tau = 0.0;
+  if ( std::abs( tau_m_ - tau_syn_ ) < 0.1 )
+  {
+    exp_h_tau = std::exp( -h / tau_m_ );
+
+    const double P32_singular = h / c_m_ * exp_h_tau;
+    if ( tau_m_ == tau_syn_ )
+    {
+      P32 = P32_singular;
+    }
+    else
+    {
+      const double P32_linear = alpha_ * h * h * exp_h_tau / 2.;
+      const double dev_P32 = std::abs( P32 - P32_singular );
+
+      if ( dev_P32 > 2 * std::abs( P32_linear ) )
+      {
+        P32 = P32_singular;
+      }
+    }
+  }
+
+  return std::make_tuple(P32, exp_h_tau_syn, expm1_h_tau, exp_h_tau);
+}
 
 #endif

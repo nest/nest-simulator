@@ -31,7 +31,7 @@
 
 PropagatorExp::PropagatorExp()
   : tau_syn_( 0.0 )
-  , tau_( 0.0 )
+  , tau_m_( 0.0 )
   , c_m_( 0.0 )
   , alpha_( 0.0 )
   , beta_( 0.0 )
@@ -39,12 +39,12 @@ PropagatorExp::PropagatorExp()
 {
 }
 
-PropagatorExp::PropagatorExp( double tau_syn, double tau, double c_m )
+PropagatorExp::PropagatorExp( double tau_syn, double tau_m, double c_m )
   : tau_syn_( tau_syn )
-  , tau_( tau )
+  , tau_m_( tau_m )
   , c_m_( c_m )
-  , alpha_( 1 / ( c_m * tau * tau ) * ( tau_syn - tau ) )
-  , beta_( tau_syn * tau / ( tau - tau_syn ) )
+  , alpha_( 1 / ( c_m * tau_m * tau_m ) * ( tau_syn - tau_m ) )
+  , beta_( tau_syn * tau_m / ( tau_m - tau_syn ) )
   , gamma_( beta_ / c_m )
 {
 }
@@ -53,16 +53,16 @@ double
 PropagatorExp::evaluate( double h ) const
 {
   const double exp_h_tau_syn = std::exp( -h / tau_syn_ );
-  const double expm1_h_tau = numerics::expm1( -h / tau_ + h / tau_syn_ );
+  const double expm1_h_tau = numerics::expm1( -h / tau_m_ + h / tau_syn_ );
 
   double P32 = gamma_ * exp_h_tau_syn * expm1_h_tau;
 
-  if ( tau_ == tau_syn_ or std::abs( tau_ - tau_syn_ ) < 0.1 )
+  if ( tau_m_ == tau_syn_ or std::abs( tau_m_ - tau_syn_ ) < 0.1 )
   {
-    const double exp_h_tau = std::exp( -h / tau_ );
+    const double exp_h_tau = std::exp( -h / tau_m_ );
 
     const double P32_singular = h / c_m_ * exp_h_tau;
-    if ( tau_ == tau_syn_ )
+    if ( tau_m_ == tau_syn_ )
     {
       P32 = P32_singular;
     }
@@ -95,18 +95,18 @@ std::tuple< double, double >
 PropagatorAlpha::evaluate( double h ) const
 {
   const double exp_h_tau_syn = std::exp( -h / tau_syn_ );
-  const double expm1_h_tau = numerics::expm1( -h / tau_ + h / tau_syn_ );
+  const double expm1_h_tau = numerics::expm1( -h / tau_m_ + h / tau_syn_ );
 
   double P31 = gamma_ * exp_h_tau_syn * ( beta_ * expm1_h_tau - h );
   double P32 = gamma_ * exp_h_tau_syn * expm1_h_tau;
 
-  if ( std::abs( tau_ - tau_syn_ ) < 0.1 )
+  if ( std::abs( tau_m_ - tau_syn_ ) < 0.1 )
   {
-    const double exp_h_tau = std::exp( -h / tau_ );
+    const double exp_h_tau = std::exp( -h / tau_m_ );
 
     const double P31_singular = h * h / 2 / c_m_ * exp_h_tau;
 
-    if ( tau_ == tau_syn_ )
+    if ( tau_m_ == tau_syn_ )
     {
       P31 = P31_singular;
     }
@@ -122,7 +122,7 @@ PropagatorAlpha::evaluate( double h ) const
     }
 
     const double P32_singular = h / c_m_ * exp_h_tau;
-    if ( tau_ == tau_syn_ )
+    if ( tau_m_ == tau_syn_ )
     {
       P32 = P32_singular;
     }

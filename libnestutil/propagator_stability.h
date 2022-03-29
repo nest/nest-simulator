@@ -49,8 +49,8 @@ public:
 
   /**
    * @param tau_syn Time constant of synaptic current in ms
-   * @param tau Membrane time constant in ms
-   * @param Membrane capacitance in pF
+   * @param tau_m Membrane time constant in ms
+   * @param c_m Membrane capacitance in pF
    */
   PropagatorExp( double tau_syn, double tau_m, double c_m );
 
@@ -65,7 +65,7 @@ public:
 
 protected:
   double tau_syn_; //!< Time constant of synaptic current in ms
-  double tau_;     //!< Membrane time constant in ms
+  double tau_m_;   //!< Membrane time constant in ms
   double c_m_;     //!< Membrane capacitance in pF
 
   double alpha_; //!< 1/(c*tau*tau) * (tau_syn - tau)

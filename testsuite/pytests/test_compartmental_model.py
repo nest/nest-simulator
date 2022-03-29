@@ -27,6 +27,7 @@ import nest
 import unittest
 import math
 import numpy as np
+import nest.lib.hl_api_projections as hl_api_projections
 
 
 SP = {'C_m': 1.00, 'g_C': 0.00, 'g_L': 0.100, 'e_L': -70.0}
@@ -61,7 +62,7 @@ def create_1dend_1comp(dt=0.1):
     ]
 
     m_neat = nest.Create('multimeter', 1, {'record_from': ['v_comp0', 'v_comp1'], 'interval': .1})
-    nest.Connect(m_neat, n_neat)
+    nest.Connect(nest.AllToAll(source=m_neat, target=n_neat))
 
     # create equivalent matrices for inversion test
     aa = np.zeros((2, 2))
@@ -107,7 +108,7 @@ def create_2dend_1comp(dt=0.1):
     ]
 
     m_neat = nest.Create('multimeter', 1, {'record_from': ['v_comp0', 'v_comp1', 'v_comp2'], 'interval': .1})
-    nest.Connect(m_neat, n_neat)
+    nest.Connect(nest.AllToAll(source=m_neat, target=n_neat))
 
     # create equivalent matrices for inversion test
     aa = np.zeros((3, 3))
@@ -168,7 +169,7 @@ def create_1dend_2comp(dt=0.1):
     ]
 
     m_neat = nest.Create('multimeter', 1, {'record_from': ['v_comp0', 'v_comp1', 'v_comp2'], 'interval': .1})
-    nest.Connect(m_neat, n_neat)
+    nest.Connect(nest.AllToAll(source=m_neat, target=n_neat))
 
     # create equivalent matrices for inversion test
     aa = np.zeros((3, 3))
@@ -236,7 +237,7 @@ def create_tdend_4comp(dt=0.1):
     m_neat = nest.Create('multimeter', 1,
                          {'record_from': ['v_comp%d' % ii for ii in range(5)],
                           'interval': .1})
-    nest.Connect(m_neat, n_neat)
+    nest.Connect(nest.AllToAll(source=m_neat, target=n_neat))
 
     # create equivalent matrices for inversion test
     aa = np.zeros((5, 5))
@@ -333,7 +334,7 @@ def create_2tdend_4comp(dt=0.1):
     m_neat = nest.Create('multimeter', 1,
                          {'record_from': ['v_comp%d' % ii for ii in range(9)],
                           'interval': .1})
-    nest.Connect(m_neat, n_neat)
+    nest.Connect(nest.AllToAll(source=m_neat, target=n_neat))
 
     # create equivalent matrices for inversion test
     aa = np.zeros((9, 9))
@@ -456,10 +457,10 @@ class NEASTTestCase(unittest.TestCase):
 
         for ii, i_amp in enumerate(i_in):
             # add current
-            nest.Connect(nest.Create('dc_generator', {'amplitude': i_amp}), n_neat,
+            nest.Connect(nest.AllToAll(nest.Create('dc_generator', {'amplitude': i_amp}), n_neat,
                          syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
                                    'delay': dt, 'receptor_type': ii}
-                         )
+            ))
 
             bb[ii] += i_amp
 
@@ -496,10 +497,10 @@ class NEASTTestCase(unittest.TestCase):
 
         for ii, i_amp in enumerate(i_in):
             # add current
-            nest.Connect(nest.Create('dc_generator', {'amplitude': i_amp}), n_neat,
+            nest.Connect(nest.AllToAll(nest.Create('dc_generator', {'amplitude': i_amp}), n_neat,
                          syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
                                    'delay': dt, 'receptor_type': ii}
-                         )
+            ))
 
             bb[ii] += i_amp
 
@@ -526,9 +527,10 @@ class NEASTTestCase(unittest.TestCase):
         for ii in range(n_comp):
             (n_neat, m_neat), _, gg = eval('create_%s(dt=dt)' % model_name)
             # add current
-            nest.Connect(nest.Create('dc_generator', {'amplitude': i_amp}), n_neat,
-                         syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
-                                   'delay': t_max/2., 'receptor_type': ii})
+
+            nest.Connect(nest.AllToAll(source=nest.Create('dc_generator', {'amplitude': i_amp}),
+                                       target=n_neat,
+                                       syn_spec=nest.synapsemodels.static(weight=1., delay=t_max/2., receptor_type=ii)))
 
             # run the NEST model
             nest.Simulate(t_max)
@@ -560,9 +562,9 @@ class NEASTTestCase(unittest.TestCase):
         el = np.array([SP['e_L']] + [DP[ii]['e_L'] for ii in range(n_comp-1)])
 
         # add current
-        nest.Connect(nest.Create('dc_generator', {'amplitude': 0.}), n_neat,
+        nest.Connect(nest.AllToAll(nest.Create('dc_generator', {'amplitude': 0.}), n_neat,
                      syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
-                               'delay': .1, 'receptor_type': 0})
+                               'delay': .1, 'receptor_type': 0}))
 
         # run the NEST model
         nest.Simulate(t_max)
@@ -609,9 +611,9 @@ class NEASTTestCase(unittest.TestCase):
             syn_idx = ii
             # connect spike generator to AMPA synapse
             sg = nest.Create('spike_generator', 1, {'spike_times': np.arange(0.1, t_max, dt)})
-            nest.Connect(sg, n_neat,
+            nest.Connect(nest.AllToAll(sg, n_neat,
                          syn_spec={'synapse_model': 'static_synapse', 'weight': sw*dt,
-                                   'delay': .1, 'receptor_type': syn_idx})
+                                   'delay': .1, 'receptor_type': syn_idx}))
 
         # run the NEST model
         nest.Simulate(t_max)
@@ -651,18 +653,18 @@ class NEASTTestCase(unittest.TestCase):
         nest.SetStatus(n_neat_1, {"receptors": {"comp_idx": 0, "receptor_type": "AMPA"}})
         syn_idx = 0
 
-        nest.Connect(n_neat_0, n_neat_1, syn_spec={'synapse_model': 'static_synapse', 'weight': .1,
-                                                   'receptor_type': syn_idx})
+        nest.Connect(nest.AllToAll(n_neat_0, n_neat_1, syn_spec={'synapse_model': 'static_synapse', 'weight': .1,
+                                                                 'receptor_type': syn_idx}))
 
         dc = nest.Create('dc_generator', {'amplitude': 2.0})
-        nest.Connect(dc, n_neat_0, syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
-                                             'receptor_type': 0})
+        nest.Connect(nest.AllToAll(dc, n_neat_0, syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
+                                                           'receptor_type': 0}))
 
         m_neat_0 = nest.Create('multimeter', 1, {'record_from': ['v_comp0'], 'interval': dt})
-        nest.Connect(m_neat_0, n_neat_0)
+        nest.Connect(nest.AllToAll(source=m_neat_0, target=n_neat_0))
 
         m_neat_1 = nest.Create('multimeter', 1, {'record_from': ['v_comp0'], 'interval': dt})
-        nest.Connect(m_neat_1, n_neat_1)
+        nest.Connect(nest.AllToAll(source=m_neat_1, target=n_neat_1))
 
         nest.Simulate(100.)
 
@@ -691,8 +693,10 @@ class NEASTTestCase(unittest.TestCase):
             {"comp_idx": 1, "receptor_type": "AMPA"}
         ]
 
-        nest.Connect(sg_01, n_neat_0, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 0})
-        nest.Connect(sg_02, n_neat_0, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 1})
+        nest.Connect(nest.AllToAll(sg_01, n_neat_0, syn_spec={
+                     'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 0}))
+        nest.Connect(nest.AllToAll(sg_02, n_neat_0, syn_spec={
+                     'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 1}))
 
         # set status with single call
         n_neat_1 = nest.Create('cm_default')
@@ -701,14 +705,16 @@ class NEASTTestCase(unittest.TestCase):
                                   "receptors": [{"comp_idx": 0, "receptor_type": "GABA"},
                                                 {"comp_idx": 1, "receptor_type": "AMPA"}]})
 
-        nest.Connect(sg_11, n_neat_1, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 0})
-        nest.Connect(sg_12, n_neat_1, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 1})
+        nest.Connect(nest.AllToAll(sg_11, n_neat_1, syn_spec={
+                     'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 0}))
+        nest.Connect(nest.AllToAll(sg_12, n_neat_1, syn_spec={
+                     'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 1}))
 
         m_neat_0 = nest.Create('multimeter', 1, {'record_from': ['v_comp0'], 'interval': dt})
-        nest.Connect(m_neat_0, n_neat_0)
+        nest.Connect(nest.AllToAll(source=m_neat_0, target=n_neat_0))
 
         m_neat_1 = nest.Create('multimeter', 1, {'record_from': ['v_comp0'], 'interval': dt})
-        nest.Connect(m_neat_1, n_neat_1)
+        nest.Connect(nest.AllToAll(source=m_neat_1, target=n_neat_1))
 
         nest.Simulate(100.)
 
@@ -802,11 +808,15 @@ class NEASTTestCase(unittest.TestCase):
         dc = nest.Create('dc_generator', {'amplitude': 2.0})
 
         with self.assertRaisesRegex(nest.kernel.NESTError,
-                                    r"UnknownPort in SLI function Connect_g_g_D_D: "
+                                    r"UnknownPort in SLI function ConnectProjections_a: "
                                     r"Port with id 3 does not exist. Valid current "
                                     r"receptor ports for cm_default are in \[0, 2\[."):
-            nest.Connect(dc, n_neat, syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
-                                               'receptor_type': 3})
+            nest.Connect(nest.AllToAll(dc, n_neat, syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
+                                                             'receptor_type': 3}))
+            nest.BuildNetwork()
+
+        # Need to clear the projection collection after the failed BuildNetwork() call.
+        hl_api_projections.projection_collection.reset()
 
         # test connection port out of range for spike input
         n_neat = nest.Create('cm_default')
@@ -819,11 +829,13 @@ class NEASTTestCase(unittest.TestCase):
         sg = nest.Create('spike_generator', 1, {'spike_times': [10.]})
 
         with self.assertRaisesRegex(nest.kernel.NESTError,
-                                    r"UnknownPort in SLI function Connect_g_g_D_D: "
+                                    r"UnknownPort in SLI function ConnectProjections_a: "
                                     r"Port with id 3 does not exist. Valid spike "
                                     r"receptor ports for cm_default are in \[0, 3\[."):
-            nest.Connect(sg, n_neat, syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
-                                               'receptor_type': 3})
+            nest.Connect(nest.AllToAll(sg, n_neat, syn_spec=nest.synapsemodels.static(weight=1., receptor_type=3)))
+            nest.BuildNetwork()
+
+        hl_api_projections.projection_collection.reset()
 
         # test connection with unknown recordable
         n_neat = nest.Create('cm_default')
@@ -831,10 +843,13 @@ class NEASTTestCase(unittest.TestCase):
         mm = nest.Create('multimeter', 1, {'record_from': ['v_comp1'], 'interval': 1.})
 
         with self.assertRaisesRegex(nest.kernel.NESTError,
-                                    "IllegalConnection in SLI function Connect_g_g_D_D: "
+                                    "IllegalConnection in SLI function ConnectProjections_a: "
                                     "Creation of connection is not possible because:\n"
                                     "Cannot connect with unknown recordable v_comp1"):
-            nest.Connect(mm, n_neat)
+            nest.Connect(nest.AllToAll(source=mm, target=n_neat))
+            nest.BuildNetwork()
+
+        hl_api_projections.projection_collection.reset()
 
         # test adding compartments and receptors twice
         n_neat = nest.Create('cm_default')
@@ -869,11 +884,13 @@ class NEASTTestCase(unittest.TestCase):
         sg_1 = nest.Create('spike_generator', 1, {'spike_times': [10.]})
         sg_2 = nest.Create('spike_generator', 1, {'spike_times': [15.]})
 
-        nest.Connect(sg_1, n_neat, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 0})
-        nest.Connect(sg_2, n_neat, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 1})
+        nest.Connect(nest.AllToAll(sg_1, n_neat, syn_spec={
+                     'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 0}))
+        nest.Connect(nest.AllToAll(sg_2, n_neat, syn_spec={
+                     'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 1}))
 
         m_neat = nest.Create('multimeter', 1, {'record_from': recordables, 'interval': 1.})
-        nest.Connect(m_neat, n_neat)
+        nest.Connect(nest.AllToAll(source=m_neat, target=n_neat))
 
         nest.Simulate(100.)
 
@@ -892,11 +909,13 @@ class NEASTTestCase(unittest.TestCase):
         sg_1 = nest.Create('spike_generator', 1, {'spike_times': [10.]})
         sg_2 = nest.Create('spike_generator', 1, {'spike_times': [15.]})
 
-        nest.Connect(sg_1, n_neat, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 0})
-        nest.Connect(sg_2, n_neat, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 1})
+        nest.Connect(nest.AllToAll(sg_1, n_neat, syn_spec={
+                     'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 0}))
+        nest.Connect(nest.AllToAll(sg_2, n_neat, syn_spec={
+                     'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 1}))
 
         m_neat = nest.Create('multimeter', 1, {'record_from': recordables, 'interval': 1.})
-        nest.Connect(m_neat, n_neat)
+        nest.Connect(nest.AllToAll(source=m_neat, target=n_neat))
 
         nest.Simulate(12.)
         nest.Simulate(88.)

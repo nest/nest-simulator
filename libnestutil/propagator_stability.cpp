@@ -57,7 +57,7 @@ PropagatorExp::evaluate( double h ) const
 
   double P32 = gamma_ * exp_h_tau_syn * expm1_h_tau;
 
-  if ( tau_m_ == tau_syn_ or std::abs( tau_m_ - tau_syn_ ) < 0.1 )
+  if ( std::abs( tau_m_ - tau_syn_ ) < 0.1 )
   {
     const double exp_h_tau = std::exp( -h / tau_m_ );
 

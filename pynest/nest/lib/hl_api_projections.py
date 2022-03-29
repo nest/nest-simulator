@@ -110,11 +110,10 @@ class Projection(object):
     def to_list(self):
         """Convert object to list.
 
-        Projection connection expects syn_spec to be a list of dicts. Because of the different forms syn_spec
-        can come in, this requires some processing.
-
         TODO: Can this be cleaned up?"""
 
+        # Projection connection expects syn_spec to be a list of dicts. Because of the different forms syn_spec
+        # can come in, this requires some processing.
         syn_spec = self.syn_spec.to_dict() if issubclass(type(self.syn_spec), SynapseModel) else self.syn_spec
         syn_spec = _process_syn_spec(syn_spec, self.conn_spec, len(self.source), len(self.target), False)
 
@@ -122,7 +121,27 @@ class Projection(object):
             syn_spec = {'synapse_model': 'static_synapse'}
         elif isinstance(syn_spec, dict) and 'synapse_model' not in syn_spec:
             syn_spec['synapse_model'] = 'static_synapse'
-        return [self.source, self.target, self.conn_spec, syn_spec]
+
+        if self.use_connect_arrays:
+            # Return arguments passed to _array_connect()
+            return self.source, self.target, self.conn_spec, syn_spec
+        elif _connect_layers_needed(self.conn_spec, syn_spec):
+            # Check that pre and post are layers
+            if self.source.spatial is None:
+                raise TypeError("Presynaptic NodeCollection must have spatial information")
+            if self.target.spatial is None:
+                raise TypeError("Postsynaptic NodeCollection must have spatial information")
+
+            # Merge to a single projection dictionary because we have spatial projections.
+            spatial_projections = _process_spatial_projections(self.conn_spec, syn_spec)
+            return [self.source, self.target, spatial_projections]
+        else:  # It's a normal, non-spatial projection
+            # Convert syn_spec to list of dicts
+            if isinstance(self.syn_spec, CollocatedSynapses):
+                syn_spec = syn_spec.syn_specs
+            elif isinstance(syn_spec, dict):
+                syn_spec = [syn_spec]
+            return [self.source, self.target, self.conn_spec, syn_spec]
 
 
 class ProjectionCollection(object):
@@ -136,6 +155,9 @@ class ProjectionCollection(object):
     def __init__(self):
         self.reset()
         self.network_built = False
+
+    def __len__(self):
+        return len(self._batch_projections)
 
     def reset(self):
         self._batch_projections = []
@@ -261,36 +283,18 @@ def BuildNetwork():
     irregardles of the other projections in the buffer, and will be done in it's own call
     to the kernel.
     """
+    # Have to import _array_connect here to avoid circular import.
     from .hl_api_connections import _array_connect
-
-    print(f'Connecting {len(projection_collection.get())} projections...')
 
     if not projection_collection.network_built:
         # Convert to list of lists
         projection_list = []
-        print(f'Connecting {len(projection_collection.get())} projections...')
-        for proj in projection_collection.get():
-            projection = proj.to_list()
-            source, target, conn_spec, syn_spec = projection
-            if proj.use_connect_arrays:
-                _array_connect(source, target, conn_spec, syn_spec)
-            elif _connect_layers_needed(conn_spec, syn_spec):
-                # Check that pre and post are layers
-                if source.spatial is None:
-                    raise TypeError("Presynaptic NodeCollection must have spatial information")
-                if target.spatial is None:
-                    raise TypeError("Postsynaptic NodeCollection must have spatial information")
-
-                # Merge to a single projection dictionary because we have spatial projections,
-                spatial_projections = _process_spatial_projections(conn_spec, syn_spec)
-                projection_list.append([source, target, spatial_projections])
+        print(f'Connecting {len(projection_collection)} projections...')
+        for projection in projection_collection.get():
+            if projection.use_connect_arrays:
+                _array_connect(*projection.to_list())
             else:
-                # Convert syn_spec to list of dicts
-                if isinstance(syn_spec, CollocatedSynapses):
-                    syn_spec = syn_spec.syn_specs
-                elif isinstance(syn_spec, dict):
-                    syn_spec = [syn_spec]
-                projection_list.append([source, target, conn_spec, syn_spec])
+                projection_list.append(projection.to_list())
 
         # Call SLI function
         sps(projection_list)
@@ -311,6 +315,7 @@ class AllToAll(Projection):
     """
     Class representing `all_to_all` connection rule.
     """
+
     def __init__(self, source, target, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'all_to_all'}
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
@@ -322,6 +327,7 @@ class ArrayConnect(Projection):
 
     NB! Will not be connected with other projections, we send this to C++ on it's own.
     """
+
     def __init__(self, source, target, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'one_to_one'}  # ArrayConnect uses an one-to-one scheme
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
@@ -343,6 +349,7 @@ class Conngen(Projection):
 
     Mandatory associated parameter: `cg`
     """
+
     def __init__(self, source, target, allow_autapses=None, allow_multapses=None, syn_spec=None, cg=None, **kwargs):
         self.conn_spec = {'rule': 'conngen', 'cg': cg}
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
@@ -354,6 +361,7 @@ class FixedIndegree(Projection):
 
     Mandatory associated parameter: `indegree`
     """
+
     def __init__(self, source, target, indegree, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'fixed_indegree', 'indegree': indegree}
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
@@ -365,6 +373,7 @@ class FixedOutdegree(Projection):
 
     Mandatory associated parameter: `outdegree`
     """
+
     def __init__(self, source, target, outdegree, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'fixed_outdegree', 'outdegree': outdegree}
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
@@ -376,6 +385,7 @@ class FixedTotalNumber(Projection):
 
     Mandatory associated parameter: `N`
     """
+
     def __init__(self, source, target, N, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'fixed_total_number', 'N': N}
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
@@ -385,6 +395,7 @@ class OneToOne(Projection):
     """
     Class representing the `one_to_one` connection rule.
     """
+
     def __init__(self, source, target, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'one_to_one'}
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
@@ -396,6 +407,7 @@ class PairwiseBernoulli(Projection):
 
     Mandatory associated parameter: `p`
     """
+
     def __init__(self, source, target, p, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'pairwise_bernoulli', 'p': p}
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
@@ -407,6 +419,7 @@ class SymmetricPairwiseBernoulli(Projection):
 
     Mandatory associated parameter: `p`
     """
+
     def __init__(self, source, target, p, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'symmetric_pairwise_bernoulli', 'p': p}
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)

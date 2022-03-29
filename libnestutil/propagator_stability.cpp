@@ -82,6 +82,7 @@ PropagatorAlpha::evaluate( double h ) const
   std::tie( P32, exp_h_tau_syn, expm1_h_tau, exp_h_tau ) = evaluate_P32_( h );
 
   double P31 = gamma_ * exp_h_tau_syn * ( beta_ * expm1_h_tau - h );
+
   if ( std::abs( tau_m_ - tau_syn_ ) < 0.1 )
   {
     const double P31_singular = h * h / 2 / c_m_ * exp_h_tau;

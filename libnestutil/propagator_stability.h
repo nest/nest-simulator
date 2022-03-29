@@ -55,7 +55,6 @@ public:
   Propagator( double tau_syn, double tau_m, double c_m );
 
 protected:
-
   /**
    * Calculate propagator 32 and return value along with exponentials.
    *
@@ -66,7 +65,7 @@ protected:
    * @returns tuple with propagator 32, exp( -h / tau_syn_ ), expm1( -h / tau_m_ + h / tau_syn_ )
    * and exp( -h / tau_m_ ), all as doubles
    */
-  std::tuple < double, double, double, double > evaluate_P32_( double h ) const;
+  std::tuple< double, double, double, double > evaluate_P32_( double h ) const;
 
   double tau_syn_; //!< Time constant of synaptic current in ms
   double tau_m_;   //!< Membrane time constant in ms
@@ -141,7 +140,7 @@ public:
   std::tuple< double, double > evaluate( double h ) const;
 };
 
-inline std::tuple < double, double, double, double >
+inline std::tuple< double, double, double, double >
 Propagator::evaluate_P32_( double h ) const
 {
   const double exp_h_tau_syn = std::exp( -h / tau_syn_ );
@@ -171,7 +170,7 @@ Propagator::evaluate_P32_( double h ) const
     }
   }
 
-  return std::make_tuple(P32, exp_h_tau_syn, expm1_h_tau, exp_h_tau);
+  return std::make_tuple( P32, exp_h_tau_syn, expm1_h_tau, exp_h_tau );
 }
 
 #endif

@@ -266,11 +266,8 @@ iaf_psc_alpha::calibrate()
   V_.P21_in_ = h * V_.P11_in_;
 
   // these are determined according to a numeric stability criterion
-  PropagatorAlpha prop_ex( P_.tau_ex_, P_.Tau_, P_.C_ );
-  std::tie( V_.P31_ex_, V_.P32_ex_ ) = prop_ex.evaluate( h );
-
-  PropagatorAlpha prop_in( P_.tau_in_, P_.Tau_, P_.C_ );
-  std::tie( V_.P31_in_, V_.P32_in_ ) = prop_ex.evaluate( h );
+  std::tie( V_.P31_ex_, V_.P32_ex_ ) = PropagatorAlpha( P_.tau_ex_, P_.Tau_, P_.C_ ).evaluate( h );
+  std::tie( V_.P31_in_, V_.P32_in_ ) = PropagatorAlpha( P_.tau_in_, P_.Tau_, P_.C_ ).evaluate( h );
 
   V_.EPSCInitialValue_ = 1.0 * numerics::e / P_.tau_ex_;
   V_.IPSCInitialValue_ = 1.0 * numerics::e / P_.tau_in_;

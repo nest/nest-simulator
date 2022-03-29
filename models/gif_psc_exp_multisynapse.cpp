@@ -335,8 +335,7 @@ nest::gif_psc_exp_multisynapse::calibrate()
   {
     V_.P11_syn_[ i ] = std::exp( -h / P_.tau_syn_[ i ] );
 
-    PropagatorExp prop( P_.tau_syn_[ i ], tau_m, P_.c_m_ );
-    V_.P21_syn_[ i ] = prop.evaluate( h );
+    V_.P21_syn_[ i ] = PropagatorExp( P_.tau_syn_[ i ], tau_m, P_.c_m_ ).evaluate( h );
 
     B_.spikes_[ i ].resize();
   }

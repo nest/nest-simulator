@@ -252,10 +252,8 @@ nest::iaf_psc_exp_htum::calibrate()
   // P22_ = 1.0-h/Tau_;
 
   // these are determined according to a numeric stability criterion
-  PropagatorExp prop_ex( P_.tau_ex_, P_.Tau_, P_.C_ );
-  PropagatorExp prop_in( P_.tau_in_, P_.Tau_, P_.C_ );
-  V_.P21ex_ = prop_ex.evaluate( h );
-  V_.P21in_ = prop_in.evaluate( h );
+  V_.P21ex_ = PropagatorExp( P_.tau_ex_, P_.Tau_, P_.C_ ).evaluate( h );
+  V_.P21in_ = PropagatorExp( P_.tau_in_, P_.Tau_, P_.C_ ).evaluate( h );
 
   // P21ex_ = h/C_;
   // P21in_ = h/C_;

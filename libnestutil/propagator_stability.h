@@ -52,7 +52,7 @@ public:
    * @param tau Membrane time constant in ms
    * @param Membrane capacitance in pF
    */
-  PropagatorExp( double tau_syn, double tau, double c_m );
+  PropagatorExp( double tau_syn, double tau_m, double c_m );
 
   /**
    * Calculate propagator 32.
@@ -86,7 +86,7 @@ public:
    * @param tau Membrane time constant in ms
    * @param Membrane capacitance in pF
    */
-  PropagatorAlpha( double tau_syn, double tau, double c_m );
+  PropagatorAlpha( double tau_syn, double tau_m, double c_m );
 
   /**
    * Calculate propagators 31 and 32.

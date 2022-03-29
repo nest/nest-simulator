@@ -86,8 +86,8 @@ PropagatorAlpha::PropagatorAlpha()
 {
 }
 
-PropagatorAlpha::PropagatorAlpha( double tau_syn, double tau, double c )
-  : PropagatorExp( tau_syn, tau, c )
+PropagatorAlpha::PropagatorAlpha( double tau_syn, double tau_m, double c_m )
+  : PropagatorExp( tau_syn, tau_m, c_m )
 {
 }
 

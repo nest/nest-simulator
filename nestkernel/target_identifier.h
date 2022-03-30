@@ -56,6 +56,7 @@ public:
 
 
   TargetIdentifierPtrRport( const TargetIdentifierPtrRport& t ) = default;
+  TargetIdentifierPtrRport& operator=( const TargetIdentifierPtrRport& t ) = default;
 
 
   void
@@ -119,6 +120,7 @@ public:
 
 
   TargetIdentifierIndex( const TargetIdentifierIndex& t ) = default;
+  TargetIdentifierIndex& operator=( const TargetIdentifierIndex& t ) = default;
 
 
   void

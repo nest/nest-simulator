@@ -85,6 +85,8 @@ M_ERROR setverbosity
 [
   /iaf_psc_alpha_ps 
   /iaf_psc_delta_ps
+  /iaf_psc_exp_ps
+  /iaf_psc_exp_ps_lossless
   % other precise models should be tested as well
  ] 
  /models Set
@@ -159,23 +161,23 @@ params begin userdict begin
   endl endl
   (The precise spike time is ) <- t <- ( ms.) <- endl endl
 
-  (                 log_2 h) <-
+  (             log_2 h) <-
   models
   {
-    exch (      ) <- exch <- ( [ms]) <-
-    (               error [ms]) <-
+    exch (  ) <- exch <- ( [ms]) <-
+    (           error [ms]) <-
   } forall
   endl
 
   models length 2 mul 1 add
   {
-    (--------------------------) <-
+    (----------------------) <-
   } repeat
   endl
 
   exch
   {
-    { exch 24 setw exch <- (  ) <- } forall endl
+    { exch 20 setw exch <- (  ) <- } forall endl
   }
   forall 
   ;

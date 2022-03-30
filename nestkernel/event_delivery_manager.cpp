@@ -391,6 +391,8 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
       sw_communicate_spike_data_.stop();
     }
 #endif
+  }                 // omp master
+#pragma omp barrier // no implicit barrier after omp master
 
 #ifdef TIMER_DETAILED
   if ( tid == 0 )

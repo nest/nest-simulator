@@ -27,20 +27,6 @@ from libcpp.deque cimport deque
 from libcpp.utility cimport pair
 from libcpp.memory cimport shared_ptr
 
-from cpython.ref cimport PyObject
-
-cdef extern from "node_collection.h" namespace "nest":
-    cppclass NodeCollectionPTR:
-        NodeCollectionPTR()
-
-    NodeCollectionPTR operator+(NodeCollectionPTR, NodeCollectionPTR) except +
-
-cdef extern from "node_collection.h":
-    cppclass NodeCollectionDatum:
-        NodeCollectionDatum(const NodeCollectionDatum&)
-
-    cppclass NodeCollectionIteratorDatum:
-        NodeCollectionIteratorDatum(const NodeCollectionIteratorDatum&)
 
 cdef extern from "dictionary.h" namespace "boost":
     cppclass any:
@@ -51,8 +37,6 @@ cdef extern from "dictionary.h" namespace "boost":
 cdef extern from "dictionary.h":
     cppclass dictionary:
         dictionary()
-        # ctypedef key_type
-        # ctypedef mapped_type
         any& operator[](const string&)
         cppclass const_iterator:
             pair[string, any]& operator*()
@@ -79,6 +63,25 @@ cdef extern from "dictionary.h":
 cdef extern from "connection_id.h" namespace "nest":
     cppclass ConnectionID:
         ConnectionID()
+
+cdef extern from "node_collection.h" namespace "nest":
+    cppclass NodeCollectionPTR:
+        NodeCollectionPTR()
+
+    NodeCollectionPTR operator+(NodeCollectionPTR, NodeCollectionPTR) except +
+
+cdef extern from "node_collection.h":
+    cppclass NodeCollectionDatum:
+        NodeCollectionDatum(const NodeCollectionDatum&)
+
+    cppclass NodeCollectionIteratorDatum:
+        NodeCollectionIteratorDatum(const NodeCollectionIteratorDatum&)
+
+cdef extern from "parameter.h" namespace "nest":
+    cppclass Parameter:
+        Parameter()
+    shared_ptr[Parameter] dimension_parameter(const shared_ptr[Parameter] x, const shared_ptr[Parameter] y) except +
+    shared_ptr[Parameter] dimension_parameter(const shared_ptr[Parameter] x, const shared_ptr[Parameter] y, const shared_ptr[Parameter] z) except +
 
 cdef extern from "nest.h" namespace "nest":
     void init_nest( int* argc, char** argv[] )
@@ -118,13 +121,6 @@ cdef extern from "nest.h" namespace "nest":
     void cleanup() except +
     shared_ptr[Parameter] create_parameter( const dictionary& param_dict ) except +
 
-cdef extern from "nest.h" namespace "nest":
     NodeCollectionPTR node_collection_array_index(NodeCollectionPTR node_collection, const long* array, unsigned long n) except +
     NodeCollectionPTR node_collection_array_index(NodeCollectionPTR node_collection, const cbool* array, unsigned long n) except +
     void connect_arrays( long* sources, long* targets, double* weights, double* delays, vector[string]& p_keys, double* p_values, size_t n, string syn_model ) except +
-
-cdef extern from "parameter.h" namespace "nest":
-    cppclass Parameter:
-        Parameter()
-    shared_ptr[Parameter] dimension_parameter(const shared_ptr[Parameter] x, const shared_ptr[Parameter] y) except +
-    shared_ptr[Parameter] dimension_parameter(const shared_ptr[Parameter] x, const shared_ptr[Parameter] y, const shared_ptr[Parameter] z) except +

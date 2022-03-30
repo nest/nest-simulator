@@ -22,7 +22,7 @@
 # distutils: language = c++
 #
 
-import cython
+# import cython
 
 # from libc.stdlib cimport malloc, free
 # from libc.string cimport memcpy
@@ -35,14 +35,8 @@ from libcpp.memory cimport shared_ptr
 from cython.operator cimport dereference as deref
 from cython.operator cimport preincrement as inc
 
-# from cpython cimport array
-
-# from cpython.ref cimport PyObject
-# from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
-
 import nest
-from nest.lib.hl_api_exceptions import NESTMappedException, NESTErrors, NESTError
-from libcpp.memory cimport shared_ptr
+from nest.lib.hl_api_exceptions import NESTErrors
 
 import numpy
 
@@ -57,6 +51,7 @@ cdef class NodeCollectionObject:
     cdef _set_nc(self, NodeCollectionPTR nc):
         self.thisptr = nc
 
+
 cdef class ConnectionObject:
 
     cdef ConnectionID thisobj
@@ -66,6 +61,7 @@ cdef class ConnectionObject:
 
     cdef _set_connection_id(self, ConnectionID conn_id):
         self.thisobj = conn_id
+
 
 cdef class ParameterObject:
 
@@ -126,7 +122,7 @@ cdef object dictionary_to_pydict(dictionary cdict):
         inc(it)
     return tmp
 
-cdef dictionary pydict_to_dictionary(object py_dict) except *:
+cdef dictionary pydict_to_dictionary(object py_dict) except *:  # Adding "except *" makes cython propagate the error if it is raised.
     cdef dictionary cdict = dictionary()
     for key, value in py_dict.items():
         if type(value) is int:

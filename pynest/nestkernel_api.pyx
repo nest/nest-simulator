@@ -164,6 +164,11 @@ def catch_cpp_error(func):
             raise exceptionCls(func.__name__, '') from None
     return wrapper_catch_cpp_error
 
+@catch_cpp_error
+def llapi_get_statusdict():
+    cdef dictionary cdict = get_statusdict()
+    return dictionary_to_pydict(cdict)
+
 def llapi_reset_kernel():
     reset_kernel()
 

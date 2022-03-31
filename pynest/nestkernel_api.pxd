@@ -86,6 +86,7 @@ cdef extern from "parameter.h" namespace "nest":
 
 cdef extern from "nest.h" namespace "nest":
     void init_nest( int* argc, char** argv[] )
+    dictionary get_statusdict() except +
     void reset_kernel()
     NodeCollectionPTR create( const string model_name, const long n ) except +
     NodeCollectionPTR create_spatial( const dictionary& )

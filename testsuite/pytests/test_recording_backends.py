@@ -22,7 +22,7 @@
 import unittest
 import nest
 
-HAVE_SIONLIB = nest.ll_api.sli_func("statusdict/have_sionlib ::")
+HAVE_SIONLIB = nest.GetKernelStatus("build_info")["have_sionlib"]
 
 
 class TestRecordingBackends(unittest.TestCase):

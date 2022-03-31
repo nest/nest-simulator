@@ -28,7 +28,7 @@ try:
 except ImportError:
     HAVE_SCIPY = False
 
-HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
+HAVE_GSL = nest.GetKernelStatus("build_info")["have_gsl"]
 
 
 @unittest.skipIf(not HAVE_GSL, 'GSL is not available')

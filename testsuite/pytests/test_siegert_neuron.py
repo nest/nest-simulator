@@ -25,7 +25,7 @@ import nest
 import unittest
 import numpy as np
 
-HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
+HAVE_GSL = nest.GetKernelStatus("build_info")["have_gsl"]
 
 
 @nest.ll_api.check_stack

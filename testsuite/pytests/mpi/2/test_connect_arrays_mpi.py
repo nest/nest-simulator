@@ -31,7 +31,7 @@ try:
 except ImportError:
     HAVE_MPI4PY = False
 
-HAVE_MPI = nest.ll_api.sli_func("statusdict/have_mpi ::")
+HAVE_MPI = nest.GetKernelStatus("build_info")["have_mpi"]
 
 
 @unittest.skipIf(not HAVE_MPI4PY, 'mpi4py is not available')

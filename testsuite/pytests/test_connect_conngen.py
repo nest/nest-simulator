@@ -38,8 +38,7 @@ try:
 except ImportError:
     HAVE_NUMPY = False
 
-nest.ll_api.sli_run("statusdict/have_libneurosim ::")
-HAVE_LIBNEUROSIM = nest.ll_api.sli_pop()
+HAVE_LIBNEUROSIM = nest.GetKernelStatus("build_info")["have_libneurosim"]
 
 
 @nest.ll_api.check_stack

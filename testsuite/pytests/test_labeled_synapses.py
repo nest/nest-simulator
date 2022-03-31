@@ -26,7 +26,7 @@ Test setting and getting labels on synapses.
 import unittest
 import nest
 
-HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
+HAVE_GSL = nest.GetKernelStatus("build_info")["have_gsl"]
 
 
 @nest.ll_api.check_stack

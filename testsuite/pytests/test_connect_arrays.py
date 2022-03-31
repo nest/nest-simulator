@@ -26,7 +26,7 @@ import nest
 
 nest.set_verbosity('M_WARNING')
 
-HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
+HAVE_OPENMP = nest.GetKernelStatus("build_info")["threading"] != "no"
 
 
 class TestConnectArrays(unittest.TestCase):

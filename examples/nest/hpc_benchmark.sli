@@ -80,7 +80,7 @@
 % define all relevant parameters: changes should be made here
 % all data is placed in the userdict dictionary
 
-/nvp 1 def              % total number of virtual processes
+/nvp 4 def              % total number of virtual processes
 /scale 1.0 def          % scaling factor of the network size,
                         % total network size = scale*11250 neurons
 /simtime 250. def       % total simulation time in ms

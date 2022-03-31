@@ -46,6 +46,7 @@ cdef extern from "dictionary.h":
         const_iterator begin()
         const_iterator end()
     string debug_type(const any&)
+    string debug_dict_types(const dictionary&)
     cbool is_int(const any&)
     cbool is_uint(const any&)
     cbool is_long(const any&)

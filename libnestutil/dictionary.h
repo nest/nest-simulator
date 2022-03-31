@@ -30,6 +30,8 @@
 
 #include "sliexceptions.h"
 
+class dictionary;
+
 /**
  * @brief Get the typename of the operand.
  *
@@ -37,6 +39,8 @@
  * @return std::string of the typename.
  */
 std::string debug_type( const boost::any& operand );
+
+std::string debug_dict_types( const dictionary& dict );
 
 bool is_int( const boost::any& operand );
 bool is_uint( const boost::any& operand );

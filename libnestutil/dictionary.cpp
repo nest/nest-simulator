@@ -40,6 +40,19 @@ debug_type( const boost::any& operand )
   return operand.type().name();
 }
 
+std::string
+debug_dict_types( const dictionary& dict )
+{
+  std::string s = "[dictionary]\n";
+
+  for ( auto& kv : dict )
+  {
+    s += kv.first + ": ";
+    s += debug_type( kv.second ) + "\n";
+  }
+  return s;
+}
+
 // int
 bool
 is_int( const boost::any& operand )

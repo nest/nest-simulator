@@ -594,7 +594,7 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
   // deliver only at end of time slice
   assert( kernel().simulation_manager.get_to_step() == kernel().connection_manager.get_min_delay() );
 
-  SpikeEvent se;
+  SpikeEvent se_batch[ BATCH_SIZE ];
 
   // prepare Time objects for every possible time stamp within min_delay_
   std::vector< Time > prepared_timestamps( kernel().connection_manager.get_min_delay() );
@@ -618,54 +618,164 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
       continue;
     }
 
+    index num_valid_entries = 0;
     for ( unsigned int i = 0; i < send_recv_count_spike_data_per_rank; ++i )
     {
-      const SpikeDataT& spike_data = recv_buffer[ rank * send_recv_count_spike_data_per_rank + i ];
-
-      se.set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
-      se.set_offset( spike_data.get_offset() );
-
-      if ( not kernel().connection_manager.use_compressed_spikes() )
-      {
-        if ( spike_data.get_tid() == tid )
-        {
-          const index syn_id = spike_data.get_syn_id();
-          const index lcid = spike_data.get_lcid();
-
-          // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
-          // only if needed, as this is computationally costly
-          se.set_sender_node_id_info( tid, syn_id, lcid );
-          kernel().connection_manager.send( tid, syn_id, lcid, cm, se );
-        }
-      }
-      else
-      {
-        const index syn_id = spike_data.get_syn_id();
-        // for compressed spikes lcid holds the index in the
-        // compressed_spike_data structure
-        const index idx = spike_data.get_lcid();
-        const std::vector< SpikeData >& compressed_spike_data =
-          kernel().connection_manager.get_compressed_spike_data( syn_id, idx );
-        for ( auto it = compressed_spike_data.cbegin(); it != compressed_spike_data.cend(); ++it )
-        {
-          if ( it->get_tid() == tid )
-          {
-            const index lcid = it->get_lcid();
-
-            // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
-            // only if needed, as this is computationally costly
-            se.set_sender_node_id_info( tid, syn_id, lcid );
-            kernel().connection_manager.send( tid, syn_id, lcid, cm, se );
-          }
-        }
-      }
+      const SpikeDataT& spike_data = recv_buffer[ rank * send_recv_count_spike_data_per_rank + i];
 
       // break if this was the last valid entry from this rank
       if ( spike_data.is_end_marker() )
       {
-        break;
+	num_valid_entries = i+1;
+	break;
       }
     }
+
+    const unsigned int num_batches = num_valid_entries / BATCH_SIZE;
+    const unsigned int num_remaining_entries = num_valid_entries - num_batches * BATCH_SIZE;
+
+    index tid_batch[ BATCH_SIZE ];
+    index syn_id_batch[ BATCH_SIZE ]; 
+    index lcid_batch[ BATCH_SIZE ];
+ 
+    if ( not kernel().connection_manager.use_compressed_spikes() )
+    {
+      for ( unsigned int i = 0; i < num_batches; ++i )
+      {
+	for ( unsigned int j = 0; j < BATCH_SIZE; ++j )
+	{
+	  const SpikeDataT& spike_data = recv_buffer[ rank * send_recv_count_spike_data_per_rank + i * BATCH_SIZE + j ];
+
+	  se_batch[j].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
+	  se_batch[j].set_offset( spike_data.get_offset() );
+	  tid_batch[j] = spike_data.get_tid();
+	  syn_id_batch[j] = spike_data.get_syn_id();
+	  lcid_batch[j] = spike_data.get_lcid();
+	  se_batch[j].set_sender_node_id_info( tid_batch[j], syn_id_batch[j], lcid_batch[j] );
+	}
+	for ( unsigned int j = 0; j < BATCH_SIZE; ++j )
+	{
+	  if ( tid_batch[j] == tid )
+	  {
+	    kernel().connection_manager.send( tid_batch[j], syn_id_batch[j], lcid_batch[j], cm, se_batch[j] );
+	  }
+	}
+      } // processed all regular sized batches, now do remainder
+      for ( unsigned int j = 0; j < num_remaining_entries; ++j )
+      {
+	const SpikeDataT& spike_data = recv_buffer[ rank * send_recv_count_spike_data_per_rank + num_batches * BATCH_SIZE + j ];
+
+	se_batch[j].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
+	se_batch[j].set_offset( spike_data.get_offset() );
+	tid_batch[j] = spike_data.get_tid();
+	syn_id_batch[j] = spike_data.get_syn_id();
+	lcid_batch[j] = spike_data.get_lcid();
+	se_batch[j].set_sender_node_id_info( tid_batch[j], syn_id_batch[j], lcid_batch[j] );
+      }
+      for ( unsigned int j = 0; j < num_remaining_entries; ++j )
+      {
+	if ( tid_batch[j] == tid )
+	{
+	  kernel().connection_manager.send( tid_batch[j], syn_id_batch[j], lcid_batch[j], cm, se_batch[j] );
+	}
+      }
+    }
+    else // compressed spikes
+    {
+      for ( unsigned int i = 0; i < num_batches; ++i )
+      {
+	for ( unsigned int j = 0; j < BATCH_SIZE; ++j )
+	{
+	  const SpikeDataT& spike_data = recv_buffer[ rank * send_recv_count_spike_data_per_rank + i * BATCH_SIZE + j ];
+
+	  se_batch[j].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
+	  se_batch[j].set_offset( spike_data.get_offset() );
+
+	  tid_batch[j] = invalid_index;
+	  syn_id_batch[j] = spike_data.get_syn_id();
+	  // for compressed spikes lcid holds the index in the
+	  // compressed_spike_data structure
+	  lcid_batch[j] = spike_data.get_lcid();
+	}
+	for ( unsigned int j = 0; j < BATCH_SIZE; ++j )
+	{
+	  // find the spike-data entry for this thread
+	  const std::vector< SpikeData >& compressed_spike_data =
+	    kernel().connection_manager.get_compressed_spike_data( syn_id_batch[j], lcid_batch[j] );
+	  for ( auto it = compressed_spike_data.cbegin(); it != compressed_spike_data.cend(); ++it )
+	  {
+	    if ( it->get_tid() == tid )
+	    {
+	      tid_batch[j] = tid;
+	      // now lcid is used in the correct way
+	      lcid_batch[j] = it->get_lcid();
+	      break; // there is only one entry for this thread
+	    }
+	  }
+	}
+	for ( unsigned int j = 0; j < BATCH_SIZE; ++j )
+	{
+	  if ( tid_batch[j] != invalid_index )
+	  {
+	    // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
+	    // only if needed, as this is computationally costly
+	    se_batch[j].set_sender_node_id_info( tid_batch[j], syn_id_batch[j], lcid_batch[j] );
+	  }
+	}
+	for ( unsigned int j = 0; j < BATCH_SIZE; ++j )
+	{
+	  if ( tid_batch[j] != invalid_index )
+	  {
+	    kernel().connection_manager.send( tid_batch[j], syn_id_batch[j], lcid_batch[j], cm, se_batch[j] );
+	  }
+	}
+      } // processed all regular sized batches, now do remainder
+      for ( unsigned int j = 0; j < num_remaining_entries; ++j )
+      {
+	const SpikeDataT& spike_data = recv_buffer[ rank * send_recv_count_spike_data_per_rank + num_batches * BATCH_SIZE + j ];
+
+	se_batch[j].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
+	se_batch[j].set_offset( spike_data.get_offset() );
+
+	tid_batch[j] = invalid_index;
+	syn_id_batch[j] = spike_data.get_syn_id();
+	// for compressed spikes lcid holds the index in the
+	// compressed_spike_data structure
+	lcid_batch[j] = spike_data.get_lcid();
+      }
+      for ( unsigned int j = 0; j < num_remaining_entries; ++j )
+      {
+	// find the spike-data entry for this thread
+	const std::vector< SpikeData >& compressed_spike_data =
+	  kernel().connection_manager.get_compressed_spike_data( syn_id_batch[j], lcid_batch[j] );
+	for ( auto it = compressed_spike_data.cbegin(); it != compressed_spike_data.cend(); ++it )
+	{
+	  if ( it->get_tid() == tid )
+	  {
+	    tid_batch[j] = tid;
+	    // now lcid is used in the correct way
+	    lcid_batch[j] = it->get_lcid();
+	    break; // there is only one entry for this thread
+	  }
+	}
+      }
+      for ( unsigned int j = 0; j < num_remaining_entries; ++j )
+      {
+	if ( tid_batch[j] != invalid_index )
+	{
+	  // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
+	  // only if needed, as this is computationally costly
+	  se_batch[j].set_sender_node_id_info( tid_batch[j], syn_id_batch[j], lcid_batch[j] );
+	}
+      }
+      for ( unsigned int j = 0; j < num_remaining_entries; ++j )
+      {
+	if ( tid_batch[j] != invalid_index )
+	{
+	  kernel().connection_manager.send( tid_batch[j], syn_id_batch[j], lcid_batch[j], cm, se_batch[j] );
+	}
+      }
+    } // if-else not compressed
   }
 
   return are_others_completed;

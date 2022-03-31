@@ -122,6 +122,8 @@ private:
   KernelManager( KernelManager const& );  // do not implement
   void operator=( KernelManager const& ); // do not implement
 
+  dictionary get_build_info_();
+
 public:
   /**
    * Create/destroy and access the KernelManager singleton.

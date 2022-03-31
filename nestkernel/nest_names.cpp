@@ -70,6 +70,7 @@ const Name asc_decay( "asc_decay" );
 const Name asc_init( "asc_init" );
 const Name asc_r( "asc_r" );
 const Name available( "available" );
+const Name axonal_delay( "axonal_delay" );
 const Name azimuth_angle( "azimuth_angle" );
 
 const Name b( "b" );

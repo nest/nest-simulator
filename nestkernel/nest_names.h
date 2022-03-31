@@ -94,6 +94,7 @@ extern const Name asc_decay;
 extern const Name asc_init;
 extern const Name asc_r;
 extern const Name available;
+extern const Name axonal_delay;
 extern const Name azimuth_angle;
 
 extern const Name b;

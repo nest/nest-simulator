@@ -116,6 +116,7 @@ public:
   double lambda_;
   double alpha_;
   double mu_;
+  double axonal_delay_; //!< Axonal delay in ms
 };
 
 
@@ -197,13 +198,25 @@ public:
    * \param receptor_type The ID of the requested receptor type
    */
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& cp )
   {
     ConnTestDummyNode dummy_target;
 
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-    t.register_stdp_connection( t_lastspike_ - get_delay(), get_delay() );
+    const double delay = get_delay();
+    if ( cp.axonal_delay_ > delay )
+    {
+      throw BadProperty( "Axonal delay should not exceed total synaptic delay." );
+    }
+    if ( cp.axonal_delay_ > ( delay - cp.axonal_delay_ ) )
+    {
+      LOG( M_WARNING,
+        "stdp_pl_synapse_hom::check_connection",
+        "Axonal delay is greater than dendritic delay, "
+        "which can lead to omission of post-synaptic spikes in this synapse type.");
+    }
+    t.register_stdp_connection( t_lastspike_ - delay, delay );
   }
 
   void
@@ -253,18 +266,18 @@ stdp_pl_synapse_hom< targetidentifierT >::send( Event& e, thread t, const STDPPL
 
   Node* target = get_target( t );
 
-  double dendritic_delay = get_delay();
+  double dendritic_delay = get_delay() - cp.axonal_delay_;
 
   // get spike history in relevant range (t1, t2] from postsynaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
-  target->get_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
+  target->get_history( t_lastspike_ - dendritic_delay + cp.axonal_delay_, t_spike - dendritic_delay + cp.axonal_delay_, &start, &finish );
 
   // facilitation due to postsynaptic spikes since last pre-synaptic spike
   double minus_dt;
   while ( start != finish )
   {
-    minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
+    minus_dt = t_lastspike_ + cp.axonal_delay_ - ( start->t_ + dendritic_delay );
     start++;
     // get_history() should make sure that
     // start->t_ > t_lastspike - dendritic_delay, i.e. minus_dt < 0
@@ -273,7 +286,7 @@ stdp_pl_synapse_hom< targetidentifierT >::send( Event& e, thread t, const STDPPL
   }
 
   // depression due to new pre-synaptic spike
-  weight_ = depress_( weight_, target->get_K_value( t_spike - dendritic_delay ), cp );
+  weight_ = depress_( weight_, target->get_K_value( t_spike + cp.axonal_delay_ - dendritic_delay ), cp );
 
   e.set_receiver( *target );
   e.set_weight( weight_ );

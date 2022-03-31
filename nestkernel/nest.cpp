@@ -177,12 +177,7 @@ get_kernel_status()
   assert( kernel().is_initialized() );
 
   dictionary d;
-
   kernel().get_status( d );
-
-  d[ "test_first" ] = 42;
-
-  // kernel().get_status( d );
 
   return d;
 }

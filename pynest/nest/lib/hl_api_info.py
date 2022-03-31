@@ -36,7 +36,6 @@ import nest
 
 __all__ = [
     'authors',
-    'get_statusdict',
     'get_argv',
     'GetStatus',
     'get_verbosity',
@@ -128,10 +127,6 @@ def help(obj=None, return_text=False):
                 Use the Python help() function to obtain help on PyNEST functions."""))
     else:
         print(nest.__doc__)
-
-
-def get_statusdict():
-    return nestkernel.llapi_get_statusdict()
 
 
 @check_stack

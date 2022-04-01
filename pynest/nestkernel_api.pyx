@@ -135,10 +135,12 @@ cdef dictionary pydict_to_dictionary(object py_dict) except *:  # Adding "except
             cdict[key.encode('utf-8')] = <string>value.encode('utf-8')
         elif type(value) is dict:
             cdict[key.encode('utf-8')] = pydict_to_dictionary(value)
+        elif type(value) is nest.Parameter:
+            cdict[key.encode('utf-8')] = (<ParameterObject>(value._datum)).thisptr
         elif type(value) is ParameterObject:
             cdict[key.encode('utf-8')] = (<ParameterObject>value).thisptr
         else:
-            raise AttributeError(f'value of key ({key}) is not a known type, got {type(value)}')
+            raise AttributeError(f'when converting Python dictionary: value of key ({key}) is not a known type, got {type(value)}')
     return cdict
 
 cdef object vec_of_dict_to_list(vector[dictionary] cvec):

@@ -208,7 +208,10 @@ def set_verbosity(level):
         'M_INFO' or 'M_ALL'.
     """
 
-    sr("{} setverbosity".format(level))
+    # TODO-PYNEST-NG: There are no SLI messages anymore, so verbosity is now irrelevant and should be replaced
+    #                 when a replacement for message() exists.
+    # sr("{} setverbosity".format(level))
+    pass
 
 
 @check_stack

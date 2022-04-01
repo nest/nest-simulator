@@ -351,6 +351,10 @@ def llapi_get_param_value(ParameterObject parameter):
     return get_value(parameter.thisptr)
 
 @catch_cpp_error
+def llapi_param_is_spatial(ParameterObject parameter):
+    return is_spatial(parameter.thisptr)
+
+@catch_cpp_error
 def llapi_multiply_parameter(ParameterObject first, ParameterObject second):
     cdef shared_ptr[Parameter] new_parameter
     new_parameter = multiply_parameter(first.thisptr, second.thisptr)

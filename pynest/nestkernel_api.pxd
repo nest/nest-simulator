@@ -136,6 +136,7 @@ cdef extern from "nest.h" namespace "nest":
     void cleanup() except +
     shared_ptr[Parameter] create_parameter( const dictionary& param_dict ) except +
     double get_value( const shared_ptr[Parameter]& param ) except +
+    cbool is_spatial( const shared_ptr[Parameter]& param ) except +
 
     NodeCollectionPTR node_collection_array_index(NodeCollectionPTR node_collection, const long* array, unsigned long n) except +
     NodeCollectionPTR node_collection_array_index(NodeCollectionPTR node_collection, const cbool* array, unsigned long n) except +

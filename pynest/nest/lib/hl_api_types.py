@@ -1078,7 +1078,7 @@ class Parameter(object):
         return nestkernel.llapi_get_param_value(self._datum)
 
     def is_spatial(self):
-        return sli_func('ParameterIsSpatial', self._datum)
+        return nestkernel.llapi_param_is_spatial(self._datum)
 
     def apply(self, spatial_nc, positions=None):
         if positions is None:

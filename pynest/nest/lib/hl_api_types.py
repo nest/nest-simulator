@@ -994,26 +994,22 @@ class Parameter(object):
                             " use the CreateParameter() function to create a Parameter")
         self._datum = datum
 
-    # Generic binary operation
-    def _binop(self, op, other, params=None):
-        if isinstance(other, (int, float)):
-            other = CreateParameter('constant', {'value': float(other)})
-        if not isinstance(other, Parameter):
-            raise NotImplementedError()
-
-        if params is None:
-            return sli_func(op, self._datum, other._datum)
-        else:
-            return sli_func(op, self._datum, other._datum, params)
+    def _arg_as_parameter(self, arg):
+        if isinstance(arg, Parameter):
+            return arg
+        if isinstance(arg, (int, float)):
+            # Value for the constant parameter must be float.
+            return CreateParameter('constant', {'value': float(arg)})
+        raise NotImplementedError()
 
     def __add__(self, other):
-        return self._binop("add", other)
+        return nestkernel.llapi_add_parameter(self._datum, self._arg_as_parameter(other)._datum)
 
     def __radd__(self, other):
         return self + other
 
     def __sub__(self, other):
-        return self._binop("sub", other)
+        return nestkernel.llapi_subtract_parameter(self._datum, self._arg_as_parameter(other)._datum)
 
     def __rsub__(self, other):
         return self * (-1) + other
@@ -1022,37 +1018,37 @@ class Parameter(object):
         return self * (-1)
 
     def __mul__(self, other):
-        return self._binop("mul", other)
+        return nestkernel.llapi_multiply_parameter(self._datum, self._arg_as_parameter(other)._datum)
 
     def __rmul__(self, other):
         return self * other
 
     def __div__(self, other):
-        return self._binop("div", other)
+        return nestkernel.llapi_divide_parameter(self._datum, self._arg_as_parameter(other)._datum)
 
     def __truediv__(self, other):
-        return self._binop("div", other)
+        return nestkernel.llapi_divide_parameter(self._datum, self._arg_as_parameter(other)._datum)
 
     def __pow__(self, exponent):
-        return sli_func("pow", self._datum, float(exponent))
+        return nestkernel.llapi_pow_parameter(self._datum, self._arg_as_parameter(float(exponent))._datum)
 
     def __lt__(self, other):
-        return self._binop("compare", other, {'comparator': 0})
+        return nestkernel.llapi_compare_parameter(self._datum, self._arg_as_parameter(other)._datum, {'comparator': 0})
 
     def __le__(self, other):
-        return self._binop("compare", other, {'comparator': 1})
+        return nestkernel.llapi_compare_parameter(self._datum, self._arg_as_parameter(other)._datum, {'comparator': 1})
 
     def __eq__(self, other):
-        return self._binop("compare", other, {'comparator': 2})
+        return nestkernel.llapi_compare_parameter(self._datum, self._arg_as_parameter(other)._datum, {'comparator': 2})
 
     def __ne__(self, other):
-        return self._binop("compare", other, {'comparator': 3})
+        return nestkernel.llapi_compare_parameter(self._datum, self._arg_as_parameter(other)._datum, {'comparator': 3})
 
     def __ge__(self, other):
-        return self._binop("compare", other, {'comparator': 4})
+        return nestkernel.llapi_compare_parameter(self._datum, self._arg_as_parameter(other)._datum, {'comparator': 4})
 
     def __gt__(self, other):
-        return self._binop("compare", other, {'comparator': 5})
+        return nestkernel.llapi_compare_parameter(self._datum, self._arg_as_parameter(other)._datum, {'comparator': 5})
 
     def GetValue(self):
         """
@@ -1079,7 +1075,7 @@ class Parameter(object):
                 # get out value
                 P.GetValue()
         """
-        return sli_func("GetValue", self._datum)
+        return nestkernel.llapi_get_param_value(self._datum)
 
     def is_spatial(self):
         return sli_func('ParameterIsSpatial', self._datum)

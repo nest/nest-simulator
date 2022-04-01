@@ -81,6 +81,20 @@ cdef extern from "node_collection.h":
 cdef extern from "parameter.h" namespace "nest":
     cppclass Parameter:
         Parameter()
+    shared_ptr[Parameter] multiply_parameter(const shared_ptr[Parameter] first, const shared_ptr[Parameter] second) except +
+    shared_ptr[Parameter] divide_parameter(const shared_ptr[Parameter] first, const shared_ptr[Parameter] second) except +
+    shared_ptr[Parameter] add_parameter(const shared_ptr[Parameter] first, const shared_ptr[Parameter] second) except +
+    shared_ptr[Parameter] subtract_parameter(const shared_ptr[Parameter] first, const shared_ptr[Parameter] second) except +
+    shared_ptr[Parameter] compare_parameter(const shared_ptr[Parameter] first, const shared_ptr[Parameter] second, const dictionary& d) except +
+    shared_ptr[Parameter] conditional_parameter(const shared_ptr[Parameter] condition, const shared_ptr[Parameter] if_true, const shared_ptr[Parameter] if_false) except +
+    shared_ptr[Parameter] min_parameter(const shared_ptr[Parameter] parameter, const double other) except +
+    shared_ptr[Parameter] max_parameter(const shared_ptr[Parameter] parameter, const double other) except +
+    shared_ptr[Parameter] redraw_parameter(const shared_ptr[Parameter] parameter, const double min, const double max) except +
+    shared_ptr[Parameter] exp_parameter(const shared_ptr[Parameter] parameter) except +
+    shared_ptr[Parameter] sin_parameter(const shared_ptr[Parameter] parameter) except +
+    shared_ptr[Parameter] cos_parameter(const shared_ptr[Parameter] parameter) except +
+    shared_ptr[Parameter] pow_parameter(const shared_ptr[Parameter] parameter, const double exponent) except +
+
     shared_ptr[Parameter] dimension_parameter(const shared_ptr[Parameter] x, const shared_ptr[Parameter] y) except +
     shared_ptr[Parameter] dimension_parameter(const shared_ptr[Parameter] x, const shared_ptr[Parameter] y, const shared_ptr[Parameter] z) except +
 
@@ -121,6 +135,7 @@ cdef extern from "nest.h" namespace "nest":
     void run( const double& t ) except +
     void cleanup() except +
     shared_ptr[Parameter] create_parameter( const dictionary& param_dict ) except +
+    double get_value( const shared_ptr[Parameter]& param ) except +
 
     NodeCollectionPTR node_collection_array_index(NodeCollectionPTR node_collection, const long* array, unsigned long n) except +
     NodeCollectionPTR node_collection_array_index(NodeCollectionPTR node_collection, const cbool* array, unsigned long n) except +

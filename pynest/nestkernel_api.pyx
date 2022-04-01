@@ -345,6 +345,115 @@ def llapi_create_parameter(object specs):
     return nest.Parameter(obj)
 
 @catch_cpp_error
+def llapi_get_param_value(ParameterObject parameter):
+    return get_value(parameter.thisptr)
+
+@catch_cpp_error
+def llapi_multiply_parameter(ParameterObject first, ParameterObject second):
+    cdef shared_ptr[Parameter] new_parameter
+    new_parameter = multiply_parameter(first.thisptr, second.thisptr)
+    obj = ParameterObject()
+    obj._set_parameter(new_parameter)
+    return nest.Parameter(obj)
+
+@catch_cpp_error
+def llapi_divide_parameter(ParameterObject first, ParameterObject second):
+    cdef shared_ptr[Parameter] new_parameter
+    new_parameter = divide_parameter(first.thisptr, second.thisptr)
+    obj = ParameterObject()
+    obj._set_parameter(new_parameter)
+    return nest.Parameter(obj)
+
+@catch_cpp_error
+def llapi_add_parameter(ParameterObject first, ParameterObject second):
+    cdef shared_ptr[Parameter] new_parameter
+    new_parameter = add_parameter(first.thisptr, second.thisptr)
+    obj = ParameterObject()
+    obj._set_parameter(new_parameter)
+    return nest.Parameter(obj)
+
+@catch_cpp_error
+def llapi_subtract_parameter(ParameterObject first, ParameterObject second):
+    cdef shared_ptr[Parameter] new_parameter
+    new_parameter = subtract_parameter(first.thisptr, second.thisptr)
+    obj = ParameterObject()
+    obj._set_parameter(new_parameter)
+    return nest.Parameter(obj)
+
+@catch_cpp_error
+def llapi_compare_parameter(ParameterObject first, ParameterObject second, object pydict):
+    cdef shared_ptr[Parameter] new_parameter
+    cdef dictionary cdict = pydict_to_dictionary(pydict)
+    new_parameter = compare_parameter(first.thisptr, second.thisptr, cdict)
+    obj = ParameterObject()
+    obj._set_parameter(new_parameter)
+    return nest.Parameter(obj)
+
+@catch_cpp_error
+def llapi_conditional_parameter(ParameterObject condition, ParameterObject if_true, ParameterObject if_false):
+    cdef shared_ptr[Parameter] new_parameter
+    new_parameter = conditional_parameter(condition.thisptr, if_true.thisptr, if_false.thisptr)
+    obj = ParameterObject()
+    obj._set_parameter(new_parameter)
+    return nest.Parameter(obj)
+
+@catch_cpp_error
+def llapi_min_parameter(ParameterObject parameter, double other_value):
+    cdef shared_ptr[Parameter] new_parameter
+    new_parameter = min_parameter(parameter.thisptr, other_value)
+    obj = ParameterObject()
+    obj._set_parameter(new_parameter)
+    return nest.Parameter(obj)
+
+@catch_cpp_error
+def llapi_max_parameter(ParameterObject parameter, double other_value):
+    cdef shared_ptr[Parameter] new_parameter
+    new_parameter = max_parameter(parameter.thisptr, other_value)
+    obj = ParameterObject()
+    obj._set_parameter(new_parameter)
+    return nest.Parameter(obj)
+
+@catch_cpp_error
+def llapi_redraw_parameter(ParameterObject parameter, double min_value, double max_value):
+    cdef shared_ptr[Parameter] new_parameter
+    new_parameter = redraw_parameter(parameter.thisptr, min_value, max_value)
+    obj = ParameterObject()
+    obj._set_parameter(new_parameter)
+    return nest.Parameter(obj)
+
+@catch_cpp_error
+def llapi_exp_parameter(ParameterObject parameter):
+    cdef shared_ptr[Parameter] new_parameter
+    new_parameter = exp_parameter(parameter.thisptr)
+    obj = ParameterObject()
+    obj._set_parameter(new_parameter)
+    return nest.Parameter(obj)
+
+@catch_cpp_error
+def llapi_sin_parameter(ParameterObject parameter):
+    cdef shared_ptr[Parameter] new_parameter
+    new_parameter = sin_parameter(parameter.thisptr)
+    obj = ParameterObject()
+    obj._set_parameter(new_parameter)
+    return nest.Parameter(obj)
+
+@catch_cpp_error
+def llapi_cos_parameter(ParameterObject parameter):
+    cdef shared_ptr[Parameter] new_parameter
+    new_parameter = cos_parameter(parameter.thisptr)
+    obj = ParameterObject()
+    obj._set_parameter(new_parameter)
+    return nest.Parameter(obj)
+
+@catch_cpp_error
+def llapi_pow_parameter(ParameterObject parameter, double exponent):
+    cdef shared_ptr[Parameter] new_parameter
+    new_parameter = pow_parameter(parameter.thisptr, exponent)
+    obj = ParameterObject()
+    obj._set_parameter(new_parameter)
+    return nest.Parameter(obj)
+
+@catch_cpp_error
 def llapi_dimension_parameter(object list_of_pos_params):
     cdef shared_ptr[Parameter] dim_parameter
     cdef ParameterObject x, y, z

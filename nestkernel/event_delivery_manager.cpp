@@ -640,7 +640,6 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
       		se_batch[j].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
       		se_batch[j].set_offset( spike_data.get_offset() );
 
-      		tid_batch[j] = invalid_index;
       		syn_id_batch[j] = spike_data.get_syn_id();
       		// for compressed spikes lcid holds the index in the
       		// compressed_spike_data structure
@@ -651,22 +650,22 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
       		// find the spike-data entry for this thread
       		const std::vector< SpikeData >& compressed_spike_data =
       				kernel().connection_manager.get_compressed_spike_data( syn_id_batch[j], lcid_batch[j] );
-      		lcid_batch[j] = compressed_spike_data[ tid_batch[j] ].get_lcid();
+      		lcid_batch[j] = compressed_spike_data[ tid ].get_lcid();
       	}
       	for ( unsigned int j = 0; j < BATCH_SIZE; ++j )
       	{
-      		if ( tid_batch[j] != invalid_index and lcid_batch[j] != invalid_lcid )
+      		if ( lcid_batch[j] != invalid_lcid )
       		{
       			// non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
       			// only if needed, as this is computationally costly
-      			se_batch[j].set_sender_node_id_info( tid_batch[j], syn_id_batch[j], lcid_batch[j] );
+      			se_batch[j].set_sender_node_id_info( tid, syn_id_batch[j], lcid_batch[j] );
       		}
       	}
       	for ( unsigned int j = 0; j < BATCH_SIZE; ++j )
       	{
-      		if ( tid_batch[j] != invalid_index and lcid_batch[j] != invalid_lcid )
+      		if ( lcid_batch[j] != invalid_lcid )
       		{
-      			kernel().connection_manager.send( tid_batch[j], syn_id_batch[j], lcid_batch[j], cm, se_batch[j] );
+      			kernel().connection_manager.send( tid, syn_id_batch[j], lcid_batch[j], cm, se_batch[j] );
       		}
       	}
       }
@@ -680,7 +679,6 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
       	se_batch[j].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
       	se_batch[j].set_offset( spike_data.get_offset() );
 
-      	tid_batch[j] = invalid_index;
       	syn_id_batch[j] = spike_data.get_syn_id();
       	// for compressed spikes lcid holds the index in the
       	// compressed_spike_data structure
@@ -691,22 +689,22 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
       	// find the spike-data entry for this thread
       	const std::vector< SpikeData >& compressed_spike_data =
       			kernel().connection_manager.get_compressed_spike_data( syn_id_batch[j], lcid_batch[j] );
-    		lcid_batch[j] = compressed_spike_data[ tid_batch[j] ].get_lcid();
+    		lcid_batch[j] = compressed_spike_data[ tid ].get_lcid();
       }
       for ( unsigned int j = 0; j < num_remaining_entries; ++j )
       {
-      	if ( tid_batch[j] != invalid_index and lcid_batch[j] != invalid_lcid )
+      	if ( lcid_batch[j] != invalid_lcid )
       	{
       		// non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
       		// only if needed, as this is computationally costly
-      		se_batch[j].set_sender_node_id_info( tid_batch[j], syn_id_batch[j], lcid_batch[j] );
+      		se_batch[j].set_sender_node_id_info( tid, syn_id_batch[j], lcid_batch[j] );
       	}
       }
       for ( unsigned int j = 0; j < num_remaining_entries; ++j )
       {
-      	if ( tid_batch[j] != invalid_index and lcid_batch[j] != invalid_lcid )
+      	if ( lcid_batch[j] != invalid_lcid )
       	{
-      		kernel().connection_manager.send( tid_batch[j], syn_id_batch[j], lcid_batch[j], cm, se_batch[j] );
+      		kernel().connection_manager.send( tid, syn_id_batch[j], lcid_batch[j], cm, se_batch[j] );
       	}
       }
     } // if-else not compressed

@@ -58,7 +58,7 @@ nest::ConnParameter::create( const boost::any& value, const size_t nthreads )
   // Parameter
   if ( is_parameter( value ) )
   {
-    return new ParameterConnParameterWrapper( boost::any_cast< Parameter* >( value ), nthreads );
+    return new ParameterConnParameterWrapper( boost::any_cast< std::shared_ptr< Parameter > >( value ), nthreads );
   }
 
   // array of integer
@@ -71,7 +71,7 @@ nest::ConnParameter::create( const boost::any& value, const size_t nthreads )
 }
 
 
-nest::ParameterConnParameterWrapper::ParameterConnParameterWrapper( Parameter* p, const size_t )
+nest::ParameterConnParameterWrapper::ParameterConnParameterWrapper( std::shared_ptr< Parameter > p, const size_t )
   : parameter_( p )
 {
 }

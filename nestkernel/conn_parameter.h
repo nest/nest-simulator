@@ -400,7 +400,7 @@ private:
 class ParameterConnParameterWrapper : public ConnParameter
 {
 public:
-  ParameterConnParameterWrapper( Parameter*, const size_t );
+  ParameterConnParameterWrapper( std::shared_ptr< Parameter >, const size_t );
 
   double value_double( thread target_thread, RngPtr rng, index snode_id, Node* target ) const;
 
@@ -423,7 +423,7 @@ public:
   }
 
 private:
-  Parameter* parameter_;
+  std::shared_ptr< Parameter > parameter_;
 };
 
 } // namespace nest

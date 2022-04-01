@@ -440,22 +440,21 @@ protected:
 
 private:
   void inner_connect_( const int, RngPtr, Node*, index );
-  void single_connect_astro_( index, const std::vector< index >&, Node&, thread, RngPtr );
   // From conn_spec
   NodeCollectionPTR astrocytes_;
-  ParameterDatum p_; //!< connection probability
-  ParameterDatum p_astro_; //!< connection probability astrocyte=>neuron
+  ParameterDatum p_; //!< connection probability (neuron=>neuron)
+  ParameterDatum p_astro_; //!< connection probability (with astrocyte)
   // From syn_spec
   index synapse_model_id_astro_; // synapse model astrocyte=>neuron
   double c_spill_; // Coefficient c_spill
   double w_; // synaptic weight neuron=>neuron
   double d_; // synaptic delay neuron=>neuron
-  double w_astro_; // synaptic weight astrocyte=>neuron
+  double w_sic_; // synaptic weight astrocyte=>neuron
   // For astrocyte connections
   bool astro_isBernoulli;
   int astrocytes_size_;
   int targets_size_;
-  std::vector< bool > is_target_with_astro_;
+  std::vector<std::vector<bool>> source_astro_flags_;
 };
 
 class SymmetricBernoulliBuilder : public ConnBuilder

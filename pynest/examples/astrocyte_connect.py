@@ -12,10 +12,10 @@ nest.Connect(
     pre_neurons, post_neurons,
     conn_spec=dict(
         rule='pairwise_bernoulli_astro', astrocyte=astrocytes,
-        p=0.1, p_astro=0.1),
+        p=0.2, p_astro=0.5),
     syn_spec=dict(
         synapse_model='tsodyks_synapse', synapse_model_astro='sic_connection',
-        weight=1., delay=2., weight_astro=3, c_spill=0.2)
+        weight=1., delay=2., weight_sic=3, c_spill=0.2)
 )
 
 # Check connections

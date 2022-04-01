@@ -631,7 +631,7 @@ extern const Name vt;
 
 extern const Name w;
 extern const Name weight;
-extern const Name weight_astro;
+extern const Name weight_sic;
 extern const Name weight_per_lut_entry;
 extern const Name weight_recorder;
 extern const Name weights;

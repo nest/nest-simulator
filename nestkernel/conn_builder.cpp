@@ -1612,8 +1612,7 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   astrocytes_ = getValue< NodeCollectionDatum >( conn_spec, names::astrocyte );
   astrocytes_size_ = astrocytes_->size();
   targets_size_ = targets->size();
-  is_target_with_astro_.resize( targets_size_ );
-  std::fill( is_target_with_astro_.begin(), is_target_with_astro_.end(), false );
+  source_astro_flags_.resize( sources->size(), std::vector<bool>( astrocytes_size_, false ) );
   
   // Probability of neuron=>neuron connection
   ParameterDatum* pd_p = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p ].datum() );
@@ -1705,13 +1704,13 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   {
     d_ = ( *syn_defaults_astro )[ names::delay ];
   }
-  if ( syn_specs[0]->known( names::weight_astro ) )
+  if ( syn_specs[0]->known( names::weight_sic ) )
   {
-    w_astro_ = ( *syn_specs[0] )[ names::weight_astro ];
+    w_sic_ = ( *syn_specs[0] )[ names::weight_sic ];
   }
   else
   {
-    w_astro_ = ( *syn_defaults_astro )[ names::weight ];
+    w_sic_ = ( *syn_defaults_astro )[ names::weight ];
   }
 }
 
@@ -1777,8 +1776,6 @@ void
 nest::BernoulliAstroBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, index tnode_id )
 {
   const thread target_thread = target->get_thread();
-  std::vector< index > snode_ids;
-  long index_target = targets_->find( tnode_id );
 
   // check whether the target is on our thread
   if ( tid != target_thread )
@@ -1786,14 +1783,19 @@ nest::BernoulliAstroBuilder::inner_connect_( const int tid, RngPtr rng, Node* ta
     return;
   }
 
+  // Index of this target
+  long target_index = targets_->find( tnode_id );
+  // Astrocyte connected to this target neuron
+  index connected_astro_id = 0;
+
   // It is not possible to create multapses with this type of BernoulliBuilder,
   // hence leave out corresponding checks.
 
-  // Neuron-neuron connections
   NodeCollection::const_iterator source_it = sources_->begin();
   for ( ; source_it < sources_->end(); ++source_it )
   {
     const index snode_id = ( *source_it ).node_id;
+    long source_index = sources_->find( snode_id );
 
     if ( not allow_autapses_ and snode_id == tnode_id )
     {
@@ -1803,6 +1805,7 @@ nest::BernoulliAstroBuilder::inner_connect_( const int tid, RngPtr rng, Node* ta
     {
       continue;
     }
+    // Connect source=>target
     update_param_dict_( snode_id, *target, target_thread, rng, 0 );
     kernel().connection_manager.connect( snode_id,
       target,
@@ -1811,73 +1814,91 @@ nest::BernoulliAstroBuilder::inner_connect_( const int tid, RngPtr rng, Node* ta
       param_dicts_[ 0 ][ target_thread ],
       d_,
       w_ * ( 1 - c_spill_) );
-    snode_ids.push_back( snode_id );
-  }
 
-  // Return if no source neuron for this target neuron
-  if ( snode_ids.size() == 0 )
-  {
-    return;
-  }
-
-  // Connections with astrocytes
-  NodeCollection::const_iterator astro_it = astrocytes_->begin();
-  for ( ; astro_it < astrocytes_->end(); ++astro_it )
-  {
-    const index astro_id = ( *astro_it ).node_id;
-    long index_astro = astrocytes_->find( astro_id );
-
-    // Bernoulli connection
+    // Bernoulli
     if ( astro_isBernoulli == true )
     {
-      if ( ( rng->drand() >= p_astro_->value( rng, target ) ) || ( is_target_with_astro_[ index_target ] == true ) )
+      // Bernoulli trial to determine whether to pair this connection with astrocyte
+      if ( rng->drand() >= p_astro_->value( rng, target ) )
       {
         continue;
       }
+
+      // Connect astrocyte=>target, randomly choose one astrocyte, repetition avoided
+      const index astro_id = ( *astrocytes_ )[ rng->ulrand( astrocytes_->size() ) ];
+      if ( connected_astro_id == 0 )
+      {
+        update_param_dict_( astro_id, *target, target_thread, rng, 0 );
+        kernel().connection_manager.connect( astro_id,
+          target,
+          target_thread,
+          synapse_model_id_astro_,
+          param_dicts_[ 0 ][ target_thread ],
+          numerics::nan,
+          w_sic_ );
+        connected_astro_id = astro_id;
+      }
+
+      // Connect source=>astrocyte, repetition avoided
+      Node* const astro_node = kernel().node_manager.get_node_or_proxy( connected_astro_id );
+      long astro_index = astrocytes_->find( connected_astro_id );
+      if ( source_astro_flags_[ source_index ][ astro_index ] == false )
+      {
+        update_param_dict_( snode_id, *astro_node, target_thread, rng, 0 );
+        kernel().connection_manager.connect( snode_id,
+          astro_node,
+          target_thread,
+          synapse_model_id_[0],
+          param_dicts_[ 0 ][ target_thread ],
+          d_,
+          w_*c_spill_ );
+          source_astro_flags_[ source_index ][ astro_index ] = true;
+      }
     }
-    // Even distribution
+    // Evenly
     else
     {
-      if ( index_astro != std::floor( float( index_target ) * float( astrocytes_size_ ) / float( targets_size_ ) ) )
+      NodeCollection::const_iterator astro_it = astrocytes_->begin();
+      for ( ; astro_it < astrocytes_->end(); ++astro_it )
       {
-        continue;
+        const index astro_id = ( *astro_it ).node_id;
+        // Evenly distribute targets to astrocytes, repetition avoided
+        if ( astrocytes_->find( astro_id ) != std::floor( float( target_index ) * float( astrocytes_size_ ) / float( targets_size_ ) ) )
+        {
+          continue;
+        }
+
+        // Connect astrocyte=>target
+        if ( connected_astro_id == 0 )
+        {
+          update_param_dict_( astro_id, *target, target_thread, rng, 0 );
+          kernel().connection_manager.connect( astro_id,
+            target,
+            target_thread,
+            synapse_model_id_astro_,
+            param_dicts_[ 0 ][ target_thread ],
+            numerics::nan,
+            w_sic_ );
+          connected_astro_id = astro_id;
+        }
+
+        // Connect source=>astrocyte, repetition avoided
+        Node* const astro_node = kernel().node_manager.get_node_or_proxy( connected_astro_id );
+        long astro_index = astrocytes_->find( connected_astro_id );
+        if ( source_astro_flags_[ source_index ][ astro_index ] == false )
+        {
+          update_param_dict_( snode_id, *astro_node, target_thread, rng, 0 );
+          kernel().connection_manager.connect( snode_id,
+            astro_node,
+            target_thread,
+            synapse_model_id_[0],
+            param_dicts_[ 0 ][ target_thread ],
+            d_,
+            w_*c_spill_ );
+          source_astro_flags_[ source_index ][ astro_index ] = true;
+        }
       }
     }
-    single_connect_astro_( astro_id, snode_ids, *target, target_thread, rng );
-    is_target_with_astro_[ index_target ] = true;
-  }
-}
-
-void
-nest::BernoulliAstroBuilder::single_connect_astro_( index astro_id, const std::vector< index >& snode_ids, Node& target, thread target_thread, RngPtr rng )
-{
-  if ( this->requires_proxies() and not target.has_proxies() )
-  {
-    throw IllegalConnection( "Cannot use this rule to connect to nodes without proxies (usually devices)." );
-  }
-  
-  // Connect astrocyte=>postsynaptic
-  update_param_dict_( astro_id, target, target_thread, rng, 0 );
-  kernel().connection_manager.connect( astro_id,
-    &target,
-    target_thread,
-    synapse_model_id_astro_,
-    param_dicts_[ 0 ][ target_thread ],
-    numerics::nan,
-    w_astro_ );
-    
-  // Connect presynaptic=>astrocyte
-  for (std::size_t i = 0; i < snode_ids.size(); ++i)
-  {
-    Node* const astro_node = kernel().node_manager.get_node_or_proxy( astro_id );
-    update_param_dict_( snode_ids[i], *astro_node, target_thread, rng, 0 );
-    kernel().connection_manager.connect( snode_ids[i],
-      astro_node,
-      target_thread,
-      synapse_model_id_[0],
-      param_dicts_[ 0 ][ target_thread ],
-      d_,
-      w_*c_spill_ );
   }
 }
 

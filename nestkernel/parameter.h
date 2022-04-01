@@ -230,7 +230,7 @@ public:
     : Parameter( false, true )
     , max_( 1.0 )
   {
-    d.update_value( names::max, max_ );
+    d.update_integer_value( names::max, max_ );
     if ( max_ <= 0 )
     {
       throw BadProperty( "nest::UniformIntParameter: max > 0 required." );

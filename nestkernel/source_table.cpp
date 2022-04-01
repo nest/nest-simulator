@@ -497,54 +497,51 @@ nest::SourceTable::fill_compressed_spike_data(
       kernel().model_manager.get_num_connection_models(), std::map< index, size_t >() );
   }
 
-  // pseudo-random thread selector to balance memory usage across
-  // threads of compressed_spike_data_map_
-  size_t thread_idx = 0;
-
   // for each local thread and each synapse type we will populate this
   // vector with spike data containing information about all process
   // local targets
-  std::vector< SpikeData > spike_data;
 
-  for ( thread tid = 0; tid < static_cast< thread >( compressible_sources_.size() ); ++tid )
+  for ( synindex syn_id = 0; syn_id < kernel().model_manager.get_num_connection_models() ; ++syn_id )
   {
-    for ( synindex syn_id = 0; syn_id < compressible_sources_[ tid ].size(); ++syn_id )
-    {
-      for ( auto it = compressible_sources_[ tid ][ syn_id ].begin();
-            it != compressible_sources_[ tid ][ syn_id ].end(); )
+  	std::map< index, size_t > temp_map;
+
+  	for ( thread tid = 0; tid < static_cast< thread >( compressible_sources_.size() ); ++tid )
+  	{
+    	for ( auto it = compressible_sources_[ tid ][ syn_id ].begin();
+                 it != compressible_sources_[ tid ][ syn_id ].end();
+                 ++it )
       {
-        spike_data.clear();
+      	const auto sender_gid = it->first;
 
-        // add target position on this thread
-        spike_data.push_back( it->second );
+      	if ( temp_map.find( sender_gid ) == temp_map.end() )
+      	{
+      		std::vector< SpikeData > spike_data( kernel().vp_manager.get_num_threads(),
+      				                                 SpikeData( invalid_targetindex, invalid_synindex, invalid_lcid, 0 ) );
+      		temp_map[ sender_gid ] = compressed_spike_data[ syn_id ].size();
 
-        // add target positions on all other threads
-        for ( thread other_tid = tid + 1; other_tid < static_cast< thread >( compressible_sources_.size() );
-              ++other_tid )
-        {
-          auto other_it = compressible_sources_[ other_tid ][ syn_id ].find( it->first );
-          if ( other_it != compressible_sources_[ other_tid ][ syn_id ].end() )
-          {
-            spike_data.push_back( other_it->second );
-            compressible_sources_[ other_tid ][ syn_id ].erase( other_it );
-          }
-        }
+          // WARNING: store source-node-id -> process-global-synapse
+          // association in compressed_spike_data_map on a
+          // pseudo-randomly selected thread which houses targets for
+          // this source; this tries to balance memory usage of this
+          // data structure across threads
+          const thread responsible_tid = sender_gid % kernel().vp_manager.get_num_threads();
 
-        // WARNING: store source-node-id -> process-global-synapse
-        // association in compressed_spike_data_map on a
-        // pseudo-randomly selected thread which houses targets for
-        // this source; this tries to balance memory usage of this
-        // data structure across threads
-        const thread responsible_tid = spike_data[ thread_idx % spike_data.size() ].get_tid();
-        ++thread_idx;
+          compressed_spike_data_map_[ responsible_tid ][ syn_id ].insert(
+            std::make_pair( it->first, compressed_spike_data[ syn_id ].size() ) );
 
-        compressed_spike_data_map_[ responsible_tid ][ syn_id ].insert(
-          std::make_pair( it->first, compressed_spike_data[ syn_id ].size() ) );
-        compressed_spike_data[ syn_id ].push_back( spike_data );
+          compressed_spike_data[ syn_id ].push_back( spike_data );
+      	}
 
-        it = compressible_sources_[ tid ][ syn_id ].erase( it );
-      }
-      compressible_sources_[ tid ][ syn_id ].clear();
-    }
-  }
+      	const auto map_entry = temp_map.find( sender_gid );
+      	assert( compressed_spike_data[ syn_id ][ map_entry->second ][ tid ].get_lcid() == invalid_lcid );
+      	compressed_spike_data[ syn_id ][ map_entry->second ][ tid ] = it->second;
+
+      } // for it
+
+    	compressible_sources_[ tid ][ syn_id ].clear();
+    }  // for tid
+  }  // for syn_id
 }
+
+
+

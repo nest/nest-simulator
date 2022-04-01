@@ -851,7 +851,7 @@ ConnectionManager::set_source_has_more_targets( const thread tid,
 inline const std::vector< SpikeData >&
 ConnectionManager::get_compressed_spike_data( const synindex syn_id, const index idx )
 {
-  return compressed_spike_data_.at( syn_id ).at( idx );
+  return compressed_spike_data_[ syn_id ][ idx ];
 }
 
 inline void

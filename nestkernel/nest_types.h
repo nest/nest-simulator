@@ -148,6 +148,11 @@ const targetindex invalid_targetindex = USHRT_MAX;
 __attribute__( ( __unused__ ) ) const index max_targetindex = invalid_targetindex - 1;
 
 /**
+ * Marker for invalid LCID values.
+ */
+constexpr index invalid_lcid = MAX_LCID;
+
+/**
  * Thread index type.
  * NEST threads are assigned non-negative numbers for
  * identification.

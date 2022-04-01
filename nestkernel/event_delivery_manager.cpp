@@ -595,6 +595,18 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
         const index idx = spike_data.get_lcid();
         const std::vector< SpikeData >& compressed_spike_data =
           kernel().connection_manager.get_compressed_spike_data( syn_id, idx );
+
+        const index lcid = compressed_spike_data[ tid ].get_lcid();
+
+        if ( lcid != invalid_lcid )
+        {
+          // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
+          // only if needed, as this is computationally costly
+          se.set_sender_node_id_info( tid, syn_id, lcid );
+          kernel().connection_manager.send( tid, syn_id, lcid, cm, se );
+        }
+
+        /*
         for ( auto it = compressed_spike_data.cbegin(); it != compressed_spike_data.cend(); ++it )
         {
           if ( it->get_tid() == tid )
@@ -607,6 +619,7 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
             kernel().connection_manager.send( tid, syn_id, lcid, cm, se );
           }
         }
+        */
       }
 
       // break if this was the last valid entry from this rank

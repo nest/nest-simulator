@@ -935,7 +935,7 @@ nest::ConnectionManager::get_connections( const dictionary& params )
 
   if ( params.known( names::source ) )
   {
-    source_a = params.get< NodeCollectionDatum >( names::source );
+    source_a = params.get< NodeCollectionPTR >( names::source );
     if ( not source_a->valid() )
     {
       throw KernelException( "GetConnection requires valid source NodeCollection." );
@@ -943,7 +943,7 @@ nest::ConnectionManager::get_connections( const dictionary& params )
   }
   if ( params.known( names::target ) )
   {
-    target_a = params.get< NodeCollectionDatum >( names::target );
+    target_a = params.get< NodeCollectionPTR >( names::target );
     if ( not target_a->valid() )
     {
       throw KernelException( "GetConnection requires valid target NodeCollection." );

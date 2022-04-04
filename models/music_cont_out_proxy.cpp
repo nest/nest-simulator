@@ -169,7 +169,7 @@ nest::music_cont_out_proxy::Parameters_::set( const dictionary& d,
 
     if ( state.published_ == false )
     {
-      targets_ = d.get< NodeCollectionDatum >( names::targets );
+      targets_ = d.get< NodeCollectionPTR >( names::targets );
     }
     else
     {

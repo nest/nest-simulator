@@ -88,11 +88,11 @@ nest::weight_recorder::Parameters_::get( dictionary& d ) const
 void
 nest::weight_recorder::Parameters_::set( const dictionary& d )
 {
-  auto get_or_create_nc = [&d]( NodeCollectionDatum& nc, const std::string& key ) {
+  auto get_or_create_nc = [&d]( NodeCollectionPTR& nc, const std::string& key ) {
     const auto value = d.at( key );
     if ( is_nc( value ) )
     {
-      nc = d.get< NodeCollectionDatum >( key );
+      nc = d.get< NodeCollectionPTR >( key );
     }
     else if ( is_int_vector( value ) )
     {

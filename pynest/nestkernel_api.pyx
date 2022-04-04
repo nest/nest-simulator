@@ -135,6 +135,8 @@ cdef dictionary pydict_to_dictionary(object py_dict) except *:  # Adding "except
             cdict[key.encode('utf-8')] = <string>value.encode('utf-8')
         elif type(value) is dict:
             cdict[key.encode('utf-8')] = pydict_to_dictionary(value)
+        elif type(value) is nest.NodeCollection:
+            cdict[key.encode('utf-8')] = (<NodeCollectionObject>(value._datum)).thisptr
         elif type(value) is nest.Parameter:
             cdict[key.encode('utf-8')] = (<ParameterObject>(value._datum)).thisptr
         elif type(value) is ParameterObject:

@@ -51,7 +51,7 @@ extern "C" int gif_cond_exp_multisynapse_dynamics( double, const double*, double
 Short description
 +++++++++++++++++
 
-Conductance-based generalized integrate-and-fire neuron with multiple synaptic time constants
+Conductance-based generalized integrate-and-fire neuron (GIF) with multiple synaptic time constants
 
 Description
 +++++++++++

@@ -53,7 +53,7 @@ extern "C" int gif_cond_exp_dynamics( double, const double*, double*, void* );
 Short description
 +++++++++++++++++
 
-Conductance-based generalized integrate-and-fire neuron model
+Conductance-based generalized integrate-and-fire neuron (GIF) model
 
 Description
 +++++++++++

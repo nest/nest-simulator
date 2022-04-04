@@ -40,7 +40,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Current-based generalized integrate-and-fire neuron (GIF) model
+Current-based generalized integrate-and-fire neuron (GIF) model - Gerstner Group
 
 Description
 +++++++++++

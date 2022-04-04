@@ -969,11 +969,10 @@ nest::ConnectionManager::get_connections( const dictionary& params )
 
   // First we check, whether a synapse model is given.
   // If not, we will iterate all.
-  if ( params.known( names::target ) )
+  if ( params.known( names::synapse_model ) )
   {
     const auto synmodel_name = params.get< std::string >( names::synapse_model );
     const auto& syndict = kernel().model_manager.get_synapsedict();
-    // const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
     if ( syndict.known( synmodel_name ) )
     {
       syn_id = static_cast< size_t >( syndict.get< synindex >( synmodel_name ) );

@@ -399,9 +399,6 @@ equal( const NodeCollectionPTR lhs, const NodeCollectionPTR rhs )
 bool
 contains( const NodeCollectionPTR nc, const size_t node_id )
 {
-  std::cerr << "NodeCollection:\n";
-  nc->print_me( std::cerr );
-  std::cerr << "\n";
   return nc->contains( node_id );
 }
 

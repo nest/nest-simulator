@@ -181,7 +181,6 @@ is_size_t( const boost::any& operand )
   return operand.type() == typeid( size_t );
 }
 
-
 // double
 bool
 is_double( const boost::any& operand )

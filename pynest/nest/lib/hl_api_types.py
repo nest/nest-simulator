@@ -803,17 +803,14 @@ class SynapseCollection(object):
             return ()
 
         if keys is None:
-            cmd = 'GetStatus'
+            result = nestkernel.llapi_get_connection_status(self._datum)
         elif is_literal(keys):
             #  Extracting the correct values will be done in restructure_data below
-            cmd = 'GetStatus'
+            result = nestkernel.llapi_get_connection_status(self._datum)
         elif is_iterable(keys):
-            keys_str = " ".join("/{0}".format(x) for x in keys)
-            cmd = 'GetStatus {{ [ [ {0} ] ] get }} Map'.format(keys_str)
+            result = [[d[key] for key in keys] for d in nestkernel.llapi_get_connection_status(self._datum)]
         else:
             raise TypeError("keys should be either a string or an iterable")
-
-        result = nestkernel.llapi_get_connection_status(self._datum)
 
         # Need to restructure the data.
         final_result = restructure_data(result, keys)

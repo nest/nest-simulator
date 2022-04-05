@@ -31,6 +31,7 @@
 #include "kernel_manager.h"
 #include "nest_datums.h"
 #include "parameter.h"
+#include "streamers.h"
 
 
 // debug
@@ -51,6 +52,107 @@ debug_dict_types( const dictionary& dict )
     s += debug_type( kv.second ) + "\n";
   }
   return s;
+}
+
+std::ostream&
+operator<<( std::ostream& os, const dictionary& dict )
+{
+  const auto max_key_length = std::max_element(
+    dict.begin(), dict.end(), []( const dictionary::value_type s1, const dictionary::value_type s2 ) {
+      return s1.first.length() < s2.first.length();
+    } )->first.length();
+  const std::string pre_padding = "    ";
+  os << "dictionary{\n";
+  for ( auto& kv : dict )
+  {
+    std::string type;
+    std::stringstream value_stream;
+    if ( is_int( kv.second ) )
+    {
+      type = "int";
+      value_stream << boost::any_cast< int >( kv.second ) << '\n';
+    }
+    else if ( is_uint( kv.second ) )
+    {
+      type = "unsigned int";
+      value_stream << boost::any_cast< unsigned int >( kv.second ) << '\n';
+    }
+    else if ( is_long( kv.second ) )
+    {
+      type = "long";
+      value_stream << boost::any_cast< long >( kv.second ) << '\n';
+    }
+    else if ( is_size_t( kv.second ) )
+    {
+      type = "size_t";
+      value_stream << boost::any_cast< size_t >( kv.second ) << '\n';
+    }
+    else if ( is_double( kv.second ) )
+    {
+      type = "double";
+      value_stream << boost::any_cast< double >( kv.second ) << '\n';
+    }
+    else if ( is_bool( kv.second ) )
+    {
+      type = "bool";
+      const auto value = boost::any_cast< bool >( kv.second );
+      value_stream << ( value ? "true" : "false" ) << '\n';
+    }
+    else if ( is_string( kv.second ) )
+    {
+      type = "std::string";
+      value_stream << "\"" << boost::any_cast< std::string >( kv.second ) << "\"\n";
+    }
+    else if ( is_int_vector( kv.second ) )
+    {
+      type = "std::vector<int>";
+      value_stream << boost::any_cast< std::vector< int > >( kv.second ) << '\n';
+    }
+    else if ( is_double_vector( kv.second ) )
+    {
+      type = "std::vector<double>";
+      value_stream << boost::any_cast< std::vector< double > >( kv.second ) << '\n';
+    }
+    else if ( is_double_vector_vector( kv.second ) )
+    {
+      type = "vector<vector<double>>";
+      value_stream << "vector<vector<double>>" << '\n';
+    }
+    else if ( is_string_vector( kv.second ) )
+    {
+      type = "std::vector<std::string>";
+      value_stream << boost::any_cast< std::vector< std::string > >( kv.second ) << '\n';
+    }
+    else if ( is_any_vector( kv.second ) )
+    {
+      type = "vector<boost::any>";
+      value_stream << "vector<any>" << '\n';
+    }
+    else if ( is_dict( kv.second ) )
+    {
+      type = "dictionary";
+      value_stream << "dictionary" << '\n';
+    }
+    else if ( is_parameter( kv.second ) )
+    {
+      type = "parameter";
+      value_stream << "parameter" << '\n';
+    }
+    else if ( is_nc( kv.second ) )
+    {
+      type = "NodeCollection";
+      value_stream << "NodeCollection" << '\n';
+    }
+    else
+    {
+      throw TypeMismatch( "Type is not known" );
+    }
+    const auto s = value_stream.str();
+    const auto post_padding = max_key_length - kv.first.length() + 5;
+    os << pre_padding << kv.first << std::setw( post_padding ) << "(" << type << ")"
+       << " " << std::setw( 25 - type.length() ) << s;
+  }
+  return os << "}";
 }
 
 // int

@@ -268,4 +268,6 @@ public:
   const_iterator find( const std::string& key ) const;
 };
 
+std::ostream& operator<<( std::ostream& os, const dictionary& dict );
+
 #endif /* DICTIONARY_H_ */

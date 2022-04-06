@@ -114,8 +114,14 @@ public:
    * register_prototype_connection
    */
   template < class ModelT >
-  index
-  register_node_model( const Name& name, bool private_model = false, std::string deprecation_info = std::string() );
+  index register_node_model( const Name& name,
+    bool private_model = false,
+    std::string deprecation_info = std::string());
+
+  template < class ModelT >
+  index register_node_model_vectorized( const Name& name,
+    bool private_model = false,
+    std::string deprecation_info = std::string());
 
   /**
    * Register a pre-configured model prototype with the network.
@@ -276,7 +282,8 @@ private:
   void clear_prototypes_();
 
   /**  */
-  index register_node_model_( Model* model, bool private_model = false );
+  index register_node_model_( Model* model, bool private_model );
+
 
   synindex register_connection_model_( ConnectorModel* );
 

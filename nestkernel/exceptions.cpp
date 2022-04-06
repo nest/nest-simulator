@@ -161,6 +161,14 @@ nest::UnknownPort::message() const
   out << "Port with id " << id_ << " does not exist.";
   return out.str();
 }
+std::string
+nest::VectorizedExpected::message() const
+{
+  std::ostringstream out;
+  out << "Instance must be derived from VectorizedExpected";
+  return out.str();
+
+}
 
 std::string
 nest::IllegalConnection::message() const

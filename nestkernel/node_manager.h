@@ -35,6 +35,7 @@
 #include "node_collection.h"
 #include "nest_types.h"
 #include "sparse_node_array.h"
+#include "vectorized_node.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -296,6 +297,7 @@ private:
    * which contains only the thread-local nodes.
   */
   std::vector< SparseNodeArray > local_nodes_;
+ std::vector< std::vector<std::shared_ptr<VectorizedNode>>> vectorized_nodes;
 
   std::vector< std::vector< Node* > > wfr_nodes_vec_; //!< Nodelists for unfrozen nodes that
                                                       //!< use the waveform relaxation method

@@ -39,6 +39,7 @@
 #include "nest_types.h"
 #include "node_collection.h"
 
+
 #include "deprecation_warning.h"
 
 // Includes from sli:
@@ -53,7 +54,7 @@ namespace nest
 class Model;
 class ArchivingNode;
 class TimeConverter;
-
+class VectorizedNode;
 
 /**
  * @defgroup user_interface Model developer interface.
@@ -128,6 +129,17 @@ public:
     return 0;
   }
 
+  virtual void
+  reset_node()
+  {
+  }
+
+  virtual void
+  resize( index extended_space )
+  {
+  }
+
+  virtual std::shared_ptr<VectorizedNode> get_container() {return 0;}
   /**
    * Returns true if the node has proxies on remote threads. This is
    * used to discriminate between different types of nodes, when adding
@@ -196,7 +208,7 @@ public:
    *
    * The smallest valid node ID is 1.
    */
-  index get_node_id() const;
+  virtual index get_node_id() const;
 
   /**
    * Return lockpointer to the NodeCollection that created this node.
@@ -350,6 +362,20 @@ public:
    * @ingroup status_interface
    */
   virtual void get_status( DictionaryDatum& ) const = 0;
+
+  virtual void
+  set_container( std::shared_ptr< VectorizedNode > container )
+  {
+
+  }
+
+
+  virtual Node*
+  get_wrapper(index node_id=-1)
+  {
+    return this;
+  }
+
 
 public:
   /**
@@ -588,7 +614,8 @@ public:
    * Return 0.0 if not overridden
    * @ingroup SP_functions
    */
-  virtual double get_synaptic_elements( Name ) const
+  virtual double
+  get_synaptic_elements( Name ) const
   {
     return 0.0;
   }
@@ -598,7 +625,8 @@ public:
    * Return 0 if not overridden
    * @ingroup SP_functions
    */
-  virtual int get_synaptic_elements_vacant( Name ) const
+  virtual int
+  get_synaptic_elements_vacant( Name ) const
   {
     return 0;
   }
@@ -608,7 +636,8 @@ public:
    * Return 0 if not overridden
    * @ingroup SP_functions
    */
-  virtual int get_synaptic_elements_connected( Name ) const
+  virtual int
+  get_synaptic_elements_connected( Name ) const
   {
     return 0;
   }
@@ -631,14 +660,14 @@ public:
    * @param t double time when the update is being performed
    * @ingroup SP_functions
    */
-  virtual void update_synaptic_elements( double ){};
+  virtual void update_synaptic_elements( double ) {};
 
   /**
    * Is used to reduce the number of synaptic elements in the node through
    * time. This amount is defined by tau_vacant.
    * @ingroup SP_functions
    */
-  virtual void decay_synaptic_elements_vacant(){};
+  virtual void decay_synaptic_elements_vacant() {};
 
   /**
    * Is used to update the number of connected
@@ -648,7 +677,7 @@ public:
    * @param n int number of new connections of the given type
    * @ingroup SP_functions
    */
-  virtual void connect_synaptic_element( Name, int ){};
+  virtual void connect_synaptic_element( Name, int ) {};
 
   /**
    * return the Kminus value at t (in ms).
@@ -666,9 +695,9 @@ public:
   virtual void get_K_values( double t, double& Kminus, double& nearest_neighbor_Kminus, double& Kminus_triplet );
 
   /**
-  * return the spike history for (t1,t2].
-  * @throws UnexpectedEvent
-  */
+   * return the spike history for (t1,t2].
+   * @throws UnexpectedEvent
+   */
   virtual void get_history( double t1,
     double t2,
     std::deque< histentry >::iterator* start,
@@ -785,7 +814,7 @@ public:
    * Forwards to set_status() of the derived class.
    * @internal
    */
-  void set_status_base( const DictionaryDatum& );
+  virtual void set_status_base( const DictionaryDatum& );
 
   /**
    * Returns true if node is model prototype.
@@ -824,7 +853,7 @@ public:
   DeprecationWarning deprecation_warning;
 
 private:
-  void set_node_id_( index ); //!< Set global node id
+  virtual void set_node_id_( index ); //!< Set global node id
 
   void set_nc_( NodeCollectionPTR );
 
@@ -860,7 +889,7 @@ protected:
   Model& get_model_() const;
 
   //! Mark node as frozen.
-  void
+  virtual void
   set_frozen_( bool frozen )
   {
     frozen_ = frozen;
@@ -917,6 +946,7 @@ Node::node_uses_wfr() const
   return node_uses_wfr_;
 }
 
+
 inline bool
 Node::supports_urbanczik_archiving() const
 {
@@ -965,11 +995,6 @@ Node::get_element_type() const
   return names::neuron;
 }
 
-inline index
-Node::get_node_id() const
-{
-  return node_id_;
-}
 
 inline NodeCollectionPTR
 Node::get_nc() const

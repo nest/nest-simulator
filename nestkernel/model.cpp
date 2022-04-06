@@ -42,6 +42,7 @@ Model::Model( const std::string& name )
   : name_( name )
   , type_id_( 0 )
   , memory_()
+  , uses_vectors( false)
 {
 }
 

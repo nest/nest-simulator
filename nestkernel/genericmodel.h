@@ -88,11 +88,17 @@ public:
 
   Node const& get_prototype() const;
 
+
   void set_model_id( int );
 
   int get_model_id();
 
   void deprecation_warning( const std::string& );
+
+
+  std::shared_ptr<VectorizedNode> get_container() {return proto_.get_container();}
+
+
 
 private:
   void set_status_( DictionaryDatum );
@@ -114,6 +120,8 @@ private:
    * Prototype node from which all instances are constructed.
    */
   ElementT proto_;
+
+
 
   /**
    * String containing deprecation information; empty if model not deprecated.

@@ -59,8 +59,9 @@ public:
    * Copy Constructor.
    */
   StructuralPlasticityNode( const StructuralPlasticityNode& );
-  /**
 
+
+  /**
    * \fn double get_Ca_minus()
    * return the current value of Ca_minus
    */

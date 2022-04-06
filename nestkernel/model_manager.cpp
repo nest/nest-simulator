@@ -217,10 +217,15 @@ ModelManager::register_node_model_( Model* model, bool private_model )
   model->set_model_id( id );
   model->set_type_id( id );
 
+
   std::string name = model->get_name();
 
   pristine_models_.push_back( std::pair< Model*, bool >( model, private_model ) );
-  models_.push_back( model->clone( name ) );
+
+  Model* cloned_model = model->clone( name );
+  cloned_model->set_model_id( id );
+  cloned_model->set_uses_vecotrs( model->get_uses_vectors() );
+  models_.push_back( cloned_model );
 
 #pragma omp parallel
   {
@@ -269,7 +274,8 @@ ModelManager::copy_synapse_model_( index old_id, Name new_name )
   {
     const std::string msg =
       "CopyModel cannot generate another synapse. Maximal synapse model count "
-      "of " + std::to_string( MAX_SYN_ID ) + " exceeded.";
+      "of "
+      + std::to_string( MAX_SYN_ID ) + " exceeded.";
     LOG( M_ERROR, "ModelManager::copy_synapse_model_", msg );
     throw KernelException( "Synapse model count exceeded" );
   }

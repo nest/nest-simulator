@@ -117,6 +117,9 @@ public:
    */
   UniversalDataLogger( HostNode& );
 
+  UniversalDataLogger(UniversalDataLogger&&) = default;
+
+
   /**
    * Notify data logger that the node is recorded from.
    *

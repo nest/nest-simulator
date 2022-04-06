@@ -70,6 +70,7 @@ get_layer( NodeCollectionPTR nc )
 NodeCollectionPTR
 create_layer( const DictionaryDatum& layer_dict )
 {
+
   layer_dict->clear_access_flags();
 
   NodeCollectionPTR layer = AbstractLayer::create_layer( layer_dict );
@@ -138,6 +139,8 @@ get_position( const index node_id )
 ArrayDatum
 displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
 {
+    std::cout << "Displacement:sptatial.cpp" << std::endl;
+
   ArrayDatum layer_to_positions = get_position( layer_to_nc );
 
   AbstractLayerPTR layer_from = get_layer( layer_from_nc );

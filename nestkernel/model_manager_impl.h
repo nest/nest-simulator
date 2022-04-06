@@ -31,6 +31,7 @@
 
 // Includes from nestkernel:
 #include "connection_label.h"
+#include "jit_node.h"
 #include "kernel_manager.h"
 #include "nest.h"
 #include "target_identifier.h"
@@ -53,6 +54,31 @@ ModelManager::register_node_model( const Name& name, bool private_model, std::st
   }
 
   Model* model = new GenericModel< ModelT >( name.toString(), deprecation_info );
+  return register_node_model_( model, private_model );
+}
+
+template < class ModelT >
+index
+ModelManager::register_node_model_vectorized( const Name& name, bool private_model, std::string deprecation_info )
+{
+  if ( not private_model and modeldict_->known( name ) )
+  {
+    std::string msg = String::compose(
+      "A model called '%1' already exists.\n"
+      "Please choose a different name!",
+      name );
+    throw NamingConflict( msg );
+  }
+
+
+  Model* model = new GenericModel< JitNode >( name.toString(), deprecation_info );
+  model->set_uses_vecotrs(true);
+
+  std::shared_ptr< ModelT> container = std::make_shared<ModelT>();
+  const Node& wrapper = model->get_prototype(); // const_cast<JitNode*>(model->get_prototype());
+  ( *( JitNode* ) &wrapper ).set_container( container );
+  // wrapper.set_container(container);
+  // model->get_prototype().set_container( &container );
   return register_node_model_( model, private_model );
 }
 

@@ -24,6 +24,8 @@
 #define MODEL_H
 
 // C++ includes:
+#include <algorithm>
+#include <map>
 #include <new>
 #include <string>
 #include <vector>
@@ -33,9 +35,10 @@
 
 // Includes from nestkernel:
 #include "node.h"
-
+#include "vectorized_node.h"
 // Includes from sli:
 #include "dictutils.h"
+
 
 namespace nest
 {
@@ -61,12 +64,14 @@ public:
     : name_( m.name_ )
     , type_id_( m.type_id_ )
     , memory_( m.memory_ )
+    , uses_vectors( m.uses_vectors )
   {
   }
 
   virtual ~Model()
   {
   }
+
 
   /**
    * Create clone with new name.
@@ -88,6 +93,8 @@ public:
    * 'administrative' purposes.
    */
   Node* allocate( thread t );
+
+ virtual std::shared_ptr<VectorizedNode> get_container() {return 0;}
 
   void free( thread t, Node* );
 
@@ -209,6 +216,41 @@ public:
   {
     return type_id_;
   }
+  bool
+  get_uses_vectors() const
+  {
+    return uses_vectors;
+  }
+
+  void
+  set_uses_vecotrs( bool is_vectorized )
+  {
+    uses_vectors = is_vectorized;
+  }
+
+  void
+  add_thread_node_pair( thread t, index pos )
+  {
+    thread_to_node.insert( { t, pos } );
+  }
+
+  bool
+  has_thread_assigned( thread t )
+  {
+    auto thread = thread_to_node.find( t );
+    if ( thread != thread_to_node.end() )
+    {
+      return true;
+    }
+    return false;
+  }
+
+  index
+  get_node_pos_in_thread( thread t )
+  {
+    return thread_to_node.at( t );
+  }
+
 
 private:
   virtual void set_status_( DictionaryDatum ) = 0;
@@ -251,6 +293,10 @@ private:
    * Memory for all nodes sorted by threads.
    */
   std::vector< sli::pool > memory_;
+
+  bool uses_vectors;
+
+  std::map< thread, index > thread_to_node;
 };
 
 

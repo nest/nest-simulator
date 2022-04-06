@@ -47,6 +47,7 @@ namespace nest
 
 NodeManager::NodeManager()
   : local_nodes_( 1 )
+  , vectorized_nodes( 0 )
   , wfr_nodes_vec_()
   , wfr_is_used_( false )
   , wfr_network_size_( 0 ) // zero to force update
@@ -69,6 +70,7 @@ NodeManager::initialize()
   // explicitly force construction of wfr_nodes_vec_ to ensure consistent state
   wfr_network_size_ = 0;
   local_nodes_.resize( kernel().vp_manager.get_num_threads() );
+  vectorized_nodes.resize( kernel().vp_manager.get_num_threads() );
   num_thread_local_devices_.resize( kernel().vp_manager.get_num_threads(), 0 );
   ensure_valid_thread_local_ids();
 
@@ -192,10 +194,28 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
 #pragma omp parallel
   {
     const index t = kernel().vp_manager.get_thread_id();
-
     try
     {
+
+      std::shared_ptr< VectorizedNode > t_container;
       model.reserve_additional( t, max_new_per_thread );
+      if ( model.get_uses_vectors() )
+      {
+        if ( model.has_thread_assigned( t ) )
+        {
+          index t_container_pos = model.get_node_pos_in_thread( t );
+          t_container = vectorized_nodes.at( t ).at( t_container_pos );
+          t_container->resize( max_new_per_thread );
+        }
+        else
+        {
+          t_container = model.get_container()->clone();
+          t_container->resize( max_new_per_thread );
+          vectorized_nodes.at( t ).push_back( t_container );
+          index t_container_pos = vectorized_nodes.at( t ).size() - 1;
+          model.add_thread_node_pair( t, t_container_pos );
+        }
+      }
 
       // Need to find smallest node ID with:
       //   - node ID local to this vp
@@ -208,14 +228,23 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
       while ( node_id <= max_node_id )
       {
         Node* node = model.allocate( t );
+
+        node->set_container( t_container );
+
+
         node->set_node_id_( node_id );
         node->set_nc_( nc_ptr );
         node->set_model_id( model.get_model_id() );
         node->set_thread( t );
         node->set_vp( vp );
-        node->set_initialized();
+        // node->set_initialized();
 
         local_nodes_[ t ].add_local_node( *node );
+        if ( model.get_uses_vectors() )
+        {
+          model.add_thread_node_pair( t, local_nodes_[ t ].size() - 1 );
+        }
+
         node_id += num_vps;
       }
       local_nodes_[ t ].update_max_node_id( max_node_id );
@@ -595,6 +624,7 @@ NodeManager::destruct_nodes_()
     }
 
     local_nodes_[ t ].clear();
+    vectorized_nodes[ t ].clear();
   }
 }
 
@@ -642,8 +672,8 @@ NodeManager::prepare_nodes()
   {
     size_t t = kernel().vp_manager.get_thread_id();
 #else
-    for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    {
+  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  {
 #endif
 
     // We prepare nodes in a parallel region. Therefore, we need to catch

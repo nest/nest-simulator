@@ -226,9 +226,9 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& hos
 
   // "clear" data
   next_rec_[ rt ] = 0;
-
-  reply.set_sender( host );
-  reply.set_sender_node_id( host.get_node_id() );
+  Node* wrapper = host.get_wrapper();
+  reply.set_sender( *wrapper );
+  reply.set_sender_node_id( wrapper->get_node_id() );
   reply.set_receiver( request.get_sender() );
   reply.set_port( request.get_port() );
 
@@ -434,8 +434,9 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host, cons
   // "clear" data
   next_rec_[ rt ] = 0;
 
-  reply.set_sender( host );
-  reply.set_sender_node_id( host.get_node_id() );
+  Node* wrapper = host.get_wrapper();
+  reply.set_sender( *wrapper );
+  reply.set_sender_node_id( wrapper->get_node_id() );
   reply.set_receiver( request.get_sender() );
   reply.set_port( request.get_port() );
 

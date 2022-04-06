@@ -73,7 +73,11 @@ proxynode::sends_secondary_event( DelayedRateConnectionEvent& re )
 {
   kernel().model_manager.get_model( get_model_id() )->sends_secondary_event( re );
 }
-
+std::shared_ptr< VectorizedNode >
+proxynode::get_container()
+{
+  kernel().model_manager.get_model( get_model_id() )->get_container();
+}
 /**
  * @returns type of signal this node produces
  * used in check_connection to only connect neurons which send / receive

@@ -59,8 +59,7 @@ Node::Node( const Node& n )
   , thread_( n.thread_ )
   , vp_( n.vp_ )
   , frozen_( n.frozen_ )
-  // copy must always initialized its own buffers
-  , initialized_( false )
+  // copy must always initialized its own buffersialized_( false )
   , node_uses_wfr_( n.node_uses_wfr_ )
 {
 }
@@ -103,7 +102,11 @@ void
 Node::set_initialized_()
 {
 }
-
+index
+Node::get_node_id() const
+{
+  return node_id_;
+}
 std::string
 Node::get_name() const
 {
@@ -154,6 +157,7 @@ Node::get_status_base()
   ( *dict )[ names::model ] = LiteralDatum( get_name() );
   ( *dict )[ names::global_id ] = get_node_id();
   ( *dict )[ names::vp ] = get_vp();
+  ( *dict )[ Name("is_vectorized") ] = false;
   ( *dict )[ names::element_type ] = LiteralDatum( get_element_type() );
 
   // add information available only for local nodes

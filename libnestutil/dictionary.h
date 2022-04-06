@@ -80,6 +80,7 @@ class dictionary : public std::map< std::string, boost::any >
   //                   * Docstring for each entry
 private:
   using maptype_ = std::map< std::string, boost::any >;
+  using maptype_::maptype_; // Inherit constructors
 
   /**
    * @brief Cast the specified value to the specified type.

@@ -28,6 +28,7 @@
 #include <string>
 #include <vector>
 
+#include "exceptions.h"
 #include "sliexceptions.h"
 
 class dictionary;

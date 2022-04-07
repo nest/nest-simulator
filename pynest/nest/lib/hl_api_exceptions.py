@@ -102,7 +102,7 @@ class NESTErrors(metaclass=NESTMappedException):
             commandname: command name from SLI.
             errormessage: message from SLI.
             """
-            message = "{} in PyNEST function {}{}".format(errorname, commandname, errormessage)
+            message = "{} in PyNEST function {}: {}".format(errorname, commandname, errormessage)
             NESTErrors.NESTError.__init__(self, message)
 
             self.errorname = errorname

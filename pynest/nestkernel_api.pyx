@@ -164,8 +164,7 @@ def catch_cpp_error(func):
         try:
             return func(*args, **kwargs)
         except RuntimeError as e:
-            exceptionCls = getattr(NESTErrors, str(e))
-            raise exceptionCls(func.__name__, '') from None
+            raise NESTErrors.NESTError(f'in {func.__name__}: {e}') from None
     return wrapper_catch_cpp_error
 
 def llapi_reset_kernel():

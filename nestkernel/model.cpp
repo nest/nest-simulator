@@ -119,7 +119,7 @@ Model::set_status( dictionary d )
   }
   catch ( BadProperty& e )
   {
-    throw BadProperty( String::compose( "Setting status of model '%1': %2", get_name(), e.message() ) );
+    throw BadProperty( String::compose( "Setting status of model '%1': %2", get_name(), e.what() ) );
   }
 }
 

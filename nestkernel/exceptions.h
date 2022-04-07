@@ -23,12 +23,13 @@
 #ifndef EXCEPTIONS_H
 #define EXCEPTIONS_H
 
+#include <exception>
+
 // Includes from nestkernel:
 #include "nest_time.h"
 
 // Includes from sli:
 #include "name.h"
-#include "sliexceptions.h"
 
 class SLIInterpreter;
 
@@ -55,32 +56,17 @@ class Event;
  * @ingroup Exceptions
  * @ingroup KernelExceptions
  */
-class KernelException : public SLIException
+class KernelException : public std::runtime_error
 {
 public:
-  KernelException()
-    : SLIException( "KernelException" )
+  explicit KernelException()
+    : std::runtime_error( "" )
   {
   }
 
-  KernelException( char const* const what )
-    : SLIException( what )
+  explicit KernelException( const std::string& msg )
+    : std::runtime_error( msg )
   {
-  }
-
-  KernelException( const std::string& what )
-    : SLIException( what )
-  {
-  }
-
-  virtual ~KernelException() throw()
-  {
-  }
-
-  virtual std::string
-  message() const
-  {
-    return std::string();
   }
 };
 
@@ -101,10 +87,7 @@ public:
   {
   }
 
-  ~UnknownModelName() throw()
-  {
-  }
-  std::string message() const;
+  const char* what() const noexcept override;
 };
 
 /**
@@ -122,10 +105,8 @@ public:
     , n_( n )
   {
   }
-  ~NewModelNameExists() throw()
-  {
-  }
-  std::string message() const;
+
+  const char* what() const noexcept override;
 };
 
 /**
@@ -145,10 +126,8 @@ public:
     , id_( id )
   {
   }
-  ~UnknownModelID() throw()
-  {
-  }
-  std::string message() const;
+
+  const char* what() const noexcept override;
 };
 
 /**
@@ -170,10 +149,7 @@ public:
   {
   }
 
-  ~ModelInUse() throw()
-  {
-  }
-  std::string message() const;
+  const char* what() const noexcept override;
 };
 
 /**
@@ -201,11 +177,7 @@ public:
   {
   }
 
-  ~UnknownSynapseType() throw()
-  {
-  }
-
-  std::string message() const;
+  const char* what() const noexcept override;
 };
 
 /**
@@ -233,11 +205,7 @@ public:
   {
   }
 
-  ~UnknownNode() throw()
-  {
-  }
-
-  std::string message() const;
+  const char* what() const noexcept override;
 };
 
 /**
@@ -265,11 +233,7 @@ public:
   {
   }
 
-  ~NoThreadSiblingsAvailable() throw()
-  {
-  }
-
-  std::string message() const;
+  const char* what() const noexcept override;
 };
 
 
@@ -284,11 +248,7 @@ public:
   {
   }
 
-  ~LocalNodeExpected() throw()
-  {
-  }
-
-  std::string message() const;
+  const char* what() const noexcept override;
 };
 
 class NodeWithProxiesExpected : public KernelException
@@ -302,11 +262,7 @@ public:
   {
   }
 
-  ~NodeWithProxiesExpected() throw()
-  {
-  }
-
-  std::string message() const;
+  const char* what() const noexcept override;
 };
 
 /**
@@ -327,10 +283,7 @@ public:
   {
   }
 
-  ~UnknownReceptorType() throw()
-  {
-  }
-  std::string message() const;
+  const char* what() const noexcept override;
 };
 
 /**
@@ -353,10 +306,7 @@ public:
   {
   }
 
-  ~IncompatibleReceptorType() throw()
-  {
-  }
-  std::string message() const;
+  const char* what() const noexcept override;
 };
 
 /**
@@ -376,11 +326,7 @@ public:
   {
   }
 
-  ~UnknownPort() throw()
-  {
-  }
-
-  std::string message() const;
+  const char* what() const noexcept override;
 };
 
 /**
@@ -404,11 +350,7 @@ public:
   {
   }
 
-  ~IllegalConnection() throw()
-  {
-  }
-
-  std::string message() const;
+  const char* what() const noexcept override;
 
 private:
   std::string msg_;
@@ -436,11 +378,7 @@ public:
   {
   }
 
-  ~InexistentConnection() throw()
-  {
-  }
-
-  std::string message() const;
+  const char* what() const noexcept override;
 
 private:
   std::string msg_;
@@ -461,11 +399,7 @@ public:
   {
   }
 
-  ~UnknownThread() throw()
-  {
-  }
-
-  std::string message() const;
+  const char* what() const noexcept override;
 };
 
 /**
@@ -486,11 +420,7 @@ public:
   {
   }
 
-  ~BadDelay() throw()
-  {
-  }
-
-  std::string message() const;
+  const char* what() const noexcept override;
 };
 
 /**
@@ -513,11 +443,7 @@ public:
   {
   }
 
-  ~UnexpectedEvent() throw()
-  {
-  }
-
-  std::string message() const;
+  const char* what() const noexcept override;
 
 private:
   std::string msg_;
@@ -538,10 +464,7 @@ public:
   {
   }
 
-  ~UnsupportedEvent() throw()
-  {
-  }
-  std::string message() const;
+  const char* what() const noexcept override;
 };
 
 /**
@@ -567,11 +490,7 @@ public:
   {
   }
 
-  ~BadProperty() throw()
-  {
-  }
-
-  std::string message() const;
+  const char* what() const noexcept override;
 };
 
 /**
@@ -597,11 +516,7 @@ public:
   {
   }
 
-  ~BadParameter() throw()
-  {
-  }
-
-  std::string message() const;
+  const char* what() const noexcept override;
 };
 
 /**
@@ -641,12 +556,7 @@ public:
   {
   }
 
-
-  ~DimensionMismatch() throw()
-  {
-  }
-
-  std::string message() const;
+  const char* what() const noexcept override;
 };
 
 /**
@@ -661,11 +571,8 @@ public:
     : KernelException( "DistributionError" )
   {
   }
-  ~DistributionError() throw()
-  {
-  }
 
-  std::string message() const;
+  const char* what() const noexcept override;
 };
 
 /**
@@ -692,11 +599,8 @@ public:
     , val_( value )
   {
   }
-  ~InvalidDefaultResolution() throw()
-  {
-  }
 
-  std::string message() const;
+  const char* what() const noexcept override;
 
 private:
   const std::string model_;
@@ -728,11 +632,8 @@ public:
     , val_( value )
   {
   }
-  ~InvalidTimeInModel() throw()
-  {
-  }
 
-  std::string message() const;
+  const char* what() const noexcept override;
 
 private:
   const std::string model_;
@@ -762,11 +663,8 @@ public:
     , val_( value )
   {
   }
-  ~StepMultipleRequired() throw()
-  {
-  }
 
-  std::string message() const;
+  const char* what() const noexcept override;
 
 private:
   const std::string model_;
@@ -804,11 +702,8 @@ public:
     , val_b_( value_b )
   {
   }
-  ~TimeMultipleRequired() throw()
-  {
-  }
 
-  std::string message() const;
+  const char* what() const noexcept override;
 
 private:
   const std::string model_;
@@ -837,11 +732,8 @@ public:
     , status_( status )
   {
   }
-  ~GSLSolverFailure() throw()
-  {
-  }
 
-  std::string message() const;
+  const char* what() const noexcept override;
 
 private:
   const std::string model_;
@@ -865,11 +757,8 @@ public:
     , model_( model )
   {
   }
-  ~NumericalInstability() throw()
-  {
-  }
 
-  std::string message() const;
+  const char* what() const noexcept override;
 
 private:
   const std::string model_;
@@ -895,10 +784,7 @@ public:
   {
   }
 
-  ~KeyError() throw()
-  {
-  }
-  std::string message() const;
+  const char* what() const noexcept override;
 };
 
 /**
@@ -912,21 +798,16 @@ class InternalError : public KernelException
 public:
   //! @param detailed error message
   InternalError()
-    : KernelException( "InternalError" )
-    , msg_()
+    : KernelException()
+    , msg_( "InternalError" )
   {
   }
   InternalError( std::string msg )
-    : KernelException( "InternalError" )
-    , msg_( msg )
+    : KernelException( msg )
   {
   }
 
-  ~InternalError() throw()
-  {
-  }
-
-  std::string message() const;
+  const char* what() const noexcept override;
 };
 
 
@@ -951,11 +832,8 @@ public:
     , portname_( portname )
   {
   }
-  ~MUSICPortUnconnected() throw()
-  {
-  }
 
-  std::string message() const;
+  const char* what() const noexcept override;
 
 private:
   const std::string model_;
@@ -982,11 +860,8 @@ public:
     , portname_( portname )
   {
   }
-  ~MUSICPortHasNoWidth() throw()
-  {
-  }
 
-  std::string message() const;
+  const char* what() const noexcept override;
 
 private:
   const std::string model_;
@@ -1013,11 +888,8 @@ public:
     , portname_( portname )
   {
   }
-  ~MUSICPortAlreadyPublished() throw()
-  {
-  }
 
-  std::string message() const;
+  const char* what() const noexcept override;
 
 private:
   const std::string model_;
@@ -1042,11 +914,8 @@ public:
     , model_( model )
   {
   }
-  ~MUSICSimulationHasRun() throw()
-  {
-  }
 
-  std::string message() const;
+  const char* what() const noexcept override;
 
 private:
   const std::string model_;
@@ -1073,11 +942,8 @@ public:
     , model_( model )
   {
   }
-  ~MUSICChannelUnknown() throw()
-  {
-  }
 
-  std::string message() const;
+  const char* what() const noexcept override;
 
 private:
   const std::string portname_;
@@ -1098,11 +964,8 @@ public:
     , portname_( portname )
   {
   }
-  ~MUSICPortUnknown() throw()
-  {
-  }
 
-  std::string message() const;
+  const char* what() const noexcept override;
 
 private:
   const std::string portname_;
@@ -1128,11 +991,8 @@ public:
     , model_( model )
   {
   }
-  ~MUSICChannelAlreadyMapped() throw()
-  {
-  }
 
-  std::string message() const;
+  const char* what() const noexcept override;
 
 private:
   const std::string portname_;
@@ -1151,7 +1011,7 @@ public:
   {
   }
 
-  std::string message() const;
+  const char* what() const noexcept override;
 
 private:
   const index node_id_;
@@ -1167,7 +1027,7 @@ public:
   {
   }
 
-  std::string message() const;
+  const char* what() const noexcept override;
 
 private:
   const int current_step_;
@@ -1187,8 +1047,7 @@ public:
   {
   }
 
-
-  std::string message() const;
+  const char* what() const noexcept override;
 
 private:
   const std::string backend_;
@@ -1207,7 +1066,7 @@ public:
   {
   }
 
-  std::string message() const;
+  const char* what() const noexcept override;
 
 private:
   const std::string backend_;
@@ -1220,11 +1079,6 @@ public:
     : KernelException( "LayerExpected" )
   {
   }
-  ~LayerExpected() throw()
-  {
-  }
-
-  std::string message() const;
 };
 
 class LayerNodeExpected : public KernelException
@@ -1234,11 +1088,6 @@ public:
     : KernelException( "LayerNodeExpected" )
   {
   }
-  ~LayerNodeExpected() throw()
-  {
-  }
-
-  std::string message() const;
 };
 
 } // namespace nest

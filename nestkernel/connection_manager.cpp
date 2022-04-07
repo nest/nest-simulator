@@ -289,7 +289,7 @@ nest::ConnectionManager::set_synapse_status( const index source_node_id,
         source_node_id,
         target_node_id,
         lcid,
-        e.message() ) );
+        e.what() ) );
   }
 }
 

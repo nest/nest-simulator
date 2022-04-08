@@ -184,7 +184,7 @@ ModelManager::copy_model( Name old_name, Name new_name, dictionary params )
 {
   if ( modeldict_.known( new_name.toString() ) or synapsedict_.known( new_name.toString() ) )
   {
-    throw NewModelNameExists( new_name );
+    throw NewModelNameExists( new_name.toString() );
   }
 
   index new_id;
@@ -202,7 +202,7 @@ ModelManager::copy_model( Name old_name, Name new_name, dictionary params )
   }
   else
   {
-    throw UnknownModelName( old_name );
+    throw UnknownModelName( old_name.toString() );
   }
 
   return new_id;
@@ -310,7 +310,7 @@ ModelManager::set_model_defaults( Name name, dictionary params )
   }
   else
   {
-    throw UnknownModelName( name );
+    throw UnknownModelName( name.toString() );
   }
 
   model_defaults_modified_ = true;

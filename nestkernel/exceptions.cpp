@@ -33,7 +33,7 @@ const char*
 nest::UnknownModelName::what() const noexcept
 {
   std::ostringstream msg;
-  msg << "/" << n_.toString() + " is not a known model name. "
+  msg << "/" << model_name_ + " is not a known model name. "
     "Please check the modeldict for a list of available models.";
 #ifndef HAVE_GSL
   msg << " A frequent cause for this error is that NEST was compiled "
@@ -47,7 +47,7 @@ const char*
 nest::NewModelNameExists::what() const noexcept
 {
   std::ostringstream msg;
-  msg << "/" << n_.toString() + " is the name of an existing model and cannot be re-used.";
+  msg << "/" << model_name_ + " is the name of an existing model and cannot be re-used.";
   return msg.str().c_str();
 }
 
@@ -58,13 +58,6 @@ nest::UnknownModelID::what() const noexcept
 
   msg << id_ << " is an invalid model ID. Probably modeldict is corrupted.";
   return msg.str().c_str();
-}
-
-const char*
-nest::ModelInUse::what() const noexcept
-{
-  std::string str = "Model " + modelname_ + " is in use and cannot be unloaded/uninstalled.";
-  return str.c_str();
 }
 
 const char*
@@ -113,25 +106,6 @@ nest::NoThreadSiblingsAvailable::what() const noexcept
     // Empty message
   }
 
-  return out.str().c_str();
-}
-
-
-const char*
-nest::LocalNodeExpected::what() const noexcept
-{
-  std::ostringstream out;
-  out << "Node with id " << id_ << " is not a local node.";
-  return out.str().c_str();
-}
-
-const char*
-nest::NodeWithProxiesExpected::what() const noexcept
-{
-  std::ostringstream out;
-  out << "Nest expected a node with proxies (eg normal model neuron),"
-         "but the node with id "
-      << id_ << " is not a node without proxies, e.g., a device.";
   return out.str().c_str();
 }
 
@@ -188,14 +162,6 @@ nest::InexistentConnection::what() const noexcept
 }
 
 const char*
-nest::UnknownThread::what() const noexcept
-{
-  std::ostringstream out;
-  out << "Thread with id " << id_ << " is outside of range.";
-  return out.str().c_str();
-}
-
-const char*
 nest::BadDelay::what() const noexcept
 {
   std::ostringstream out;
@@ -221,15 +187,6 @@ nest::UnexpectedEvent::what() const noexcept
   {
     return ( "UnexpectedEvent: " + msg_ ).c_str();
   }
-}
-
-const char*
-nest::UnsupportedEvent::what() const noexcept
-{
-  return std::string(
-    "The current synapse type does not support the event type of the sender.\n"
-    "    A common cause for this is a plastic synapse between a device and a neuron." )
-    .c_str();
 }
 
 const char*
@@ -266,17 +223,11 @@ nest::DimensionMismatch::what() const noexcept
 }
 
 const char*
-nest::DistributionError::what() const noexcept
-{
-  return std::string().c_str();
-}
-
-const char*
 nest::InvalidDefaultResolution::what() const noexcept
 {
   std::ostringstream msg;
   msg << "The default resolution of " << Time::get_resolution() << " is not consistent with the value " << val_
-      << " of property '" << prop_.toString() << "' in model " << model_ << ".\n"
+      << " of property '" << prop_ << "' in model " << model_ << ".\n"
       << "This is an internal NEST error, please report it at "
          "https://github.com/nest/nest-simulator/issues";
   return msg.str().c_str();
@@ -286,7 +237,7 @@ const char*
 nest::InvalidTimeInModel::what() const noexcept
 {
   std::ostringstream msg;
-  msg << "The time property " << prop_.toString() << " = " << val_ << " of model " << model_
+  msg << "The time property " << prop_ << " = " << val_ << " of model " << model_
       << " is not compatible with the resolution " << Time::get_resolution() << ".\n"
       << "Please set a compatible value with SetDefaults!";
   return msg.str().c_str();
@@ -296,7 +247,7 @@ const char*
 nest::StepMultipleRequired::what() const noexcept
 {
   std::ostringstream msg;
-  msg << "The time property " << prop_.toString() << " = " << val_ << " of model " << model_
+  msg << "The time property " << prop_ << " = " << val_ << " of model " << model_
       << " must be a multiple of the resolution " << Time::get_resolution() << ".";
   return msg.str().c_str();
 }
@@ -305,8 +256,8 @@ const char*
 nest::TimeMultipleRequired::what() const noexcept
 {
   std::ostringstream msg;
-  msg << "In model " << model_ << ", the time property " << prop_a_.toString() << " = " << val_a_
-      << " must be multiple of time property " << prop_b_.toString() << " = " << val_b_ << '.';
+  msg << "In model " << model_ << ", the time property " << prop_a_ << " = " << val_a_
+      << " must be multiple of time property " << prop_b_ << " = " << val_b_ << '.';
   return msg.str().c_str();
 }
 
@@ -405,16 +356,6 @@ nest::NumericalInstability::what() const noexcept
 }
 
 const char*
-nest::UnmatchedSteps::what() const noexcept
-{
-  std::ostringstream msg;
-  msg << "Steps for backend device don't match NEST steps: "
-      << "steps expected: " << total_steps_ << " "
-      << "steps executed: " << current_step_ << ".";
-  return msg.str().c_str();
-}
-
-const char*
 nest::BackendPrepared::what() const noexcept
 {
   std::ostringstream msg;
@@ -423,18 +364,10 @@ nest::BackendPrepared::what() const noexcept
 }
 
 const char*
-nest::BackendNotPrepared::what() const noexcept
-{
-  std::ostringstream msg;
-  msg << "Backend " << backend_ << " may not be cleanup()'d without preparation (multiple cleanups?).";
-  return msg.str().c_str();
-}
-
-const char*
 nest::KeyError::what() const noexcept
 {
   std::ostringstream msg;
-  msg << "Key '" << key_.toString() << "' not found in map."
+  msg << "Key '" << key_ << "' not found in map."
       << "Error encountered with map type: '" << map_type_ << "'"
       << " when applying operation: '" << map_op_ << "'";
   return msg.str().c_str();

@@ -221,7 +221,7 @@ public:
     // If the Name is not in the map, throw an error
     if ( it == this->end() )
     {
-      throw KeyError( n, "DynamicRecordablesMap", "erase" );
+      throw KeyError( n.toString(), "DynamicRecordablesMap", "erase" );
     }
 
     Base_::erase( it );

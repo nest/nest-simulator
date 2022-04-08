@@ -28,11 +28,6 @@
 // Includes from nestkernel:
 #include "nest_time.h"
 
-// Includes from sli:
-#include "name.h"
-
-class SLIInterpreter;
-
 namespace nest
 {
 
@@ -152,12 +147,12 @@ public:
  */
 class UnknownModelName : public KernelException
 {
-  const Name n_;
+  const std::string model_name_;
 
 public:
-  UnknownModelName( const Name& n )
+  UnknownModelName( const std::string& model_name )
     : KernelException( "UnknownModelName" )
-    , n_( n )
+    , model_name_( model_name )
   {
   }
 
@@ -171,12 +166,12 @@ public:
  */
 class NewModelNameExists : public KernelException
 {
-  const Name n_;
+  const std::string model_name_;
 
 public:
-  NewModelNameExists( const Name& n )
+  NewModelNameExists( const std::string& model_name )
     : KernelException( "NewModelNameExists" )
-    , n_( n )
+    , model_name_( model_name )
   {
   }
 
@@ -198,28 +193,6 @@ public:
   UnknownModelID( long id )
     : KernelException( "UnknownModelID" )
     , id_( id )
-  {
-  }
-
-  const char* what() const noexcept override;
-};
-
-/**
- * Exception to be thrown if a (neuron/synapse) model with the the specified ID
- * is used within the network and the providing module hence cannot be
- * uninstalled. This exception can occur if the user tries to uninstall a
- * module.
- * @see UnknownModelID
- * @ingroup KernelExceptions
- */
-class ModelInUse : public KernelException
-{
-  const std::string modelname_;
-
-public:
-  ModelInUse( const std::string& modelname )
-    : KernelException( "ModelInUse" )
-    , modelname_( modelname )
   {
   }
 
@@ -310,34 +283,6 @@ public:
   const char* what() const noexcept override;
 };
 
-
-class LocalNodeExpected : public KernelException
-{
-  int id_;
-
-public:
-  LocalNodeExpected( int id )
-    : KernelException( "LocalNodeExpected" )
-    , id_( id )
-  {
-  }
-
-  const char* what() const noexcept override;
-};
-
-class NodeWithProxiesExpected : public KernelException
-{
-  int id_;
-
-public:
-  NodeWithProxiesExpected( int id )
-    : KernelException( "NodeWithProxiesExpected" )
-    , id_( id )
-  {
-  }
-
-  const char* what() const noexcept override;
-};
 
 /**
  * Exception to be thrown if the specified
@@ -459,24 +404,6 @@ private:
 };
 
 /**
- * Exception to be thrown if a thread id outside the range encountered.
- * @ingroup KernelExceptions
- */
-class UnknownThread : public KernelException
-{
-  int id_;
-
-public:
-  UnknownThread( int id )
-    : KernelException( "UnknownThread" )
-    , id_( id )
-  {
-  }
-
-  const char* what() const noexcept override;
-};
-
-/**
  * Exception to be thrown if an invalid delay is used in a
  * connection.
  * @ingroup KernelExceptions
@@ -523,23 +450,6 @@ private:
   std::string msg_;
 };
 
-
-/**
- * Exception to be thrown by a Connection object if
- * a connection with an unsupported event type is
- * attempted
- * @ingroup KernelExceptions
- */
-class UnsupportedEvent : public KernelException
-{
-public:
-  UnsupportedEvent()
-    : KernelException( "UnsupportedEvent" )
-  {
-  }
-
-  const char* what() const noexcept override;
-};
 
 /**
  * Exception to be thrown if a status parameter
@@ -634,22 +544,6 @@ public:
 };
 
 /**
- * Exception to be thrown if a problem with the
- * distribution of elements is encountered
- * @ingroup KernelExceptions
- */
-class DistributionError : public KernelException
-{
-public:
-  DistributionError()
-    : KernelException( "DistributionError" )
-  {
-  }
-
-  const char* what() const noexcept override;
-};
-
-/**
  * Exception to be thrown on prototype construction if Time objects
  * incompatible. This exception is to be thrown by the default constructor of
  * nodes which require that Time objects have properties wrt resolution.
@@ -666,7 +560,7 @@ public:
    * @param property  name of property conflicting
    * @param value     value of property conflicting
    */
-  InvalidDefaultResolution( const std::string& model, const Name& property, const Time& value )
+  InvalidDefaultResolution( const std::string& model, const std::string& property, const Time& value )
     : KernelException( "InvalidDefaultResolution" )
     , model_( model )
     , prop_( property )
@@ -678,7 +572,7 @@ public:
 
 private:
   const std::string model_;
-  const Name prop_;
+  const std::string prop_;
   const Time val_;
 };
 
@@ -699,7 +593,7 @@ public:
    * @param property  name of property conflicting
    * @param value     value of property conflicting
    */
-  InvalidTimeInModel( const std::string& model, const Name& property, const Time& value )
+  InvalidTimeInModel( const std::string& model, const std::string& property, const Time& value )
     : KernelException( "InvalidTimeInModel" )
     , model_( model )
     , prop_( property )
@@ -711,7 +605,7 @@ public:
 
 private:
   const std::string model_;
-  const Name prop_;
+  const std::string prop_;
   const Time val_;
 };
 
@@ -730,7 +624,7 @@ public:
    * @param property  name of property conflicting
    * @param value     value of property conflicting
    */
-  StepMultipleRequired( const std::string& model, const Name& property, const Time& value )
+  StepMultipleRequired( const std::string& model, const std::string& property, const Time& value )
     : KernelException( "StepMultipleRequired" )
     , model_( model )
     , prop_( property )
@@ -742,7 +636,7 @@ public:
 
 private:
   const std::string model_;
-  const Name prop_;
+  const std::string prop_;
   const Time val_;
 };
 
@@ -764,9 +658,9 @@ public:
    * @param value_b  value of divisor
    */
   TimeMultipleRequired( const std::string& model,
-    const Name& name_a,
+    const std::string& name_a,
     const Time& value_a,
-    const Name& name_b,
+    const std::string& name_b,
     const Time& value_b )
     : KernelException( "StepMultipleRequired" )
     , model_( model )
@@ -781,9 +675,9 @@ public:
 
 private:
   const std::string model_;
-  const Name prop_a_;
+  const std::string prop_a_;
   const Time val_a_;
-  const Name prop_b_;
+  const std::string prop_b_;
   const Time val_b_;
 };
 
@@ -845,12 +739,12 @@ private:
  */
 class KeyError : public KernelException
 {
-  const Name key_;
+  const std::string key_;
   const std::string map_type_;
   const std::string map_op_;
 
 public:
-  KeyError( const Name& key, const std::string& map_type, const std::string& map_op )
+  KeyError( const std::string& key, const std::string& map_type, const std::string& map_op )
     : KernelException( "KeyError" )
     , key_( key )
     , map_type_( map_type )
@@ -1092,22 +986,6 @@ private:
 };
 #endif
 
-class UnmatchedSteps : public KernelException
-{
-public:
-  UnmatchedSteps( int steps_left, int total_steps )
-    : current_step_( total_steps - steps_left )
-    , total_steps_( total_steps )
-  {
-  }
-
-  const char* what() const noexcept override;
-
-private:
-  const int current_step_;
-  const int total_steps_;
-};
-
 class BackendPrepared : public KernelException
 {
 public:
@@ -1127,39 +1005,12 @@ private:
   const std::string backend_;
 };
 
-class BackendNotPrepared : public KernelException
-{
-public:
-  BackendNotPrepared( const std::string& backend )
-    : backend_( backend )
-  {
-  }
-
-  BackendNotPrepared( std::string&& backend )
-    : backend_( std::move( backend ) )
-  {
-  }
-
-  const char* what() const noexcept override;
-
-private:
-  const std::string backend_;
-};
 
 class LayerExpected : public KernelException
 {
 public:
   LayerExpected()
     : KernelException( "LayerExpected" )
-  {
-  }
-};
-
-class LayerNodeExpected : public KernelException
-{
-public:
-  LayerNodeExpected()
-    : KernelException( "LayerNodeExpected" )
   {
   }
 };

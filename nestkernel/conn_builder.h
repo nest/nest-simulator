@@ -37,13 +37,11 @@
 
 // Includes from nestkernel:
 #include "conn_parameter.h"
+#include "exceptions.h"
 #include "nest_time.h"
 #include "node_collection.h"
 #include "parameter.h"
 
-// Includes from sli:
-#include "dictdatum.h"
-#include "sliexceptions.h"
 
 namespace nest
 {

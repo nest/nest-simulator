@@ -32,7 +32,6 @@
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "sliexceptions.h"
 
 nest::LoggingManager::LoggingManager()
   : client_callbacks_()

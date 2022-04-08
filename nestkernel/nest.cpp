@@ -50,11 +50,6 @@
 #include "config.h"
 #include "dictionary.h"
 
-
-// Includes from sli:
-#include "sliexceptions.h"
-#include "token.h"
-
 namespace nest
 {
 

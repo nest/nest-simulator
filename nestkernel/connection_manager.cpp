@@ -57,7 +57,6 @@
 
 // Includes from sli:
 #include "dictutils.h"
-#include "sliexceptions.h"
 #include "token.h"
 #include "tokenutils.h"
 

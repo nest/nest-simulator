@@ -71,6 +71,80 @@ public:
 };
 
 /**
+ * Throw if a feature is unavailable.
+ * @ingroup KernelExceptions
+ */
+class NotImplemented : public KernelException
+{
+public:
+  explicit NotImplemented( const std::string& msg )
+    : KernelException( msg )
+  {
+  }
+};
+
+/**
+ * Exception to be thrown if a given SLI type does not match the
+ * expected type.
+ * @ingroup KernelExceptions
+ */
+
+class TypeMismatch : public KernelException
+{
+
+public:
+  explicit TypeMismatch()
+    : KernelException( "The expected datatype is unknown in the current context." )
+  {
+  }
+
+  explicit TypeMismatch( const std::string& expectedType )
+    : KernelException( "Expected datatype: " + expectedType )
+  {
+  }
+
+  explicit TypeMismatch( const std::string& expectedType, const std::string& providedType )
+    : KernelException( "Expected datatype: " + expectedType + ", provided datatype: " + providedType )
+  {
+  }
+};
+
+/**
+ * Class for packaging exceptions thrown in threads.
+ *
+ * This class is used to wrap exceptions thrown in threads.
+ * It essentially packages the message of the wrapped exception,
+ * avoiding the need of a clone() operation for each exception type.
+ * @ingroup KernelExceptions
+ */
+class WrappedThreadException : public KernelException
+{
+public:
+  explicit WrappedThreadException( const std::exception& e )
+    : KernelException( e.what() )
+  {
+  }
+};
+
+/**
+ * @brief Not all elements in a dictionary have been accessed.
+ *
+ * @param what Which parameter triggers the error
+ * @param where Which function the error occurs in
+ * @param missed Dictionary keys that have not been accessed
+ *
+ */
+class UnaccessedDictionaryEntry : public KernelException
+{
+public:
+  UnaccessedDictionaryEntry( const std::string& what, const std::string& where, const std::string& missed )
+    : KernelException( std::string( "unaccessed elements in " ) + what + std::string( ", in function " ) + where
+      + std::string( ": " ) + missed )
+  {
+  }
+};
+
+/**
  * Exception to be thrown if a model with the the specified name
  * does not exist.
  * @see UnknownModelID

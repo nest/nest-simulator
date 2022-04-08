@@ -29,7 +29,6 @@
 #include <vector>
 
 #include "exceptions.h"
-#include "sliexceptions.h"
 
 class dictionary;
 
@@ -105,7 +104,7 @@ private:
       std::string msg = std::string( "Failed to cast " ) + key + " from " + debug_type( value ) + " to type "
         + std::string( typeid( T ).name() );
       std::cerr << msg << "\n";
-      throw TypeMismatch( msg );
+      throw nest::TypeMismatch( msg );
     }
   }
 
@@ -136,7 +135,7 @@ private:
     std::string msg =
       std::string( "Failed to cast " ) + key + " from " + debug_type( at( key ) ) + " to an integer type ";
     std::cerr << msg << "\n";
-    throw TypeMismatch( msg );
+    throw nest::TypeMismatch( msg );
   }
 
 public:

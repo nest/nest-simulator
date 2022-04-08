@@ -28,6 +28,8 @@
 
 #include "dictionary_access_flag_manager.h"
 
+#include "exceptions.h"
+
 void
 DictionaryAccessFlagManager::all_accessed( const dictionary& dict,
   const std::string where,
@@ -51,8 +53,7 @@ DictionaryAccessFlagManager::all_accessed( const dictionary& dict,
 
     // TODO-PYNEST-NG: special case for blank <what> ("unaccessed elements in function <where>")?
 
-    throw UnaccessedDictionaryEntry( std::string( "unaccessed elements in " ) + what + std::string( ", in function " )
-      + where + std::string( ": " ) + missed );
+    throw nest::UnaccessedDictionaryEntry( what, where, missed );
   }
   // TODO-PYNEST-NG: clear access_flags_[ &dict ] to reclaim memory?
 }

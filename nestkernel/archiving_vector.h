@@ -1,23 +1,23 @@
 /*
-*  archiving_vector.h
-*
-*  This file is part of NEST.
-*
-*  Copyright (C) 2004 The NEST Initiative
-*
-*  NEST is free software: you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation, either version 2 of the License, or
-*  (at your option) any later version.
-*
-*  NEST is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-*  You should have received a copy of the GNU General Public License
-*  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-*
+ *  archiving_vector.h
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 #ifndef ARCHIVING_VECTOR_H
@@ -125,7 +125,7 @@ public:
   void get_status( DictionaryDatum& d, index local_id ) const;
   void set_status( const DictionaryDatum& d, index local_id );
 
-  void resize(index extended_space);
+  void resize( index extended_space );
 
 protected:
   /**
@@ -149,7 +149,7 @@ protected:
   // number of incoming connections from stdp connectors.
   // needed to determine, if every incoming connection has
   // read the spikehistory for a given point in time
- std::vector< size_t> n_incoming_;
+  std::vector< size_t > n_incoming_;
 
 private:
   // sum exp(-(t-ti)/tau_minus)

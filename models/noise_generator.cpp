@@ -23,6 +23,7 @@
 #include "noise_generator.h"
 
 // Includes from libnestutil:
+#include "compose.hpp"
 #include "dict_util.h"
 #include "logging.h"
 #include "numerics.h"
@@ -60,7 +61,7 @@ nest::noise_generator::Parameters_::Parameters_()
   , std_mod_( 0.0 ) // pA / sqrt(s)
   , freq_( 0.0 )    // Hz
   , phi_deg_( 0.0 ) // degree
-  , dt_( Time::ms( 1.0 ) )
+  , dt_( get_default_dt() )
   , num_targets_( 0 )
 {
 }
@@ -74,12 +75,18 @@ nest::noise_generator::Parameters_::Parameters_( const Parameters_& p )
   , dt_( p.dt_ )
   , num_targets_( 0 ) // we do not copy connections
 {
-  // do not check validity of dt_ here, otherwise we cannot copy
-  // to temporary in set(); see node copy c'tor
-  dt_.calibrate();
+  if ( dt_.is_step() )
+  {
+    dt_.calibrate();
+  }
+  else
+  {
+    dt_ = get_default_dt();
+  }
 }
 
-nest::noise_generator::Parameters_& nest::noise_generator::Parameters_::operator=( const Parameters_& p )
+nest::noise_generator::Parameters_&
+nest::noise_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
   {
@@ -183,10 +190,6 @@ nest::noise_generator::noise_generator()
   , B_( *this )
 {
   recordablesMap_.create();
-  if ( not P_.dt_.is_step() )
-  {
-    throw InvalidDefaultResolution( get_name(), names::dt, P_.dt_ );
-  }
 }
 
 nest::noise_generator::noise_generator( const noise_generator& n )
@@ -195,10 +198,6 @@ nest::noise_generator::noise_generator( const noise_generator& n )
   , S_( n.S_ )
   , B_( n.B_, *this )
 {
-  if ( not P_.dt_.is_step() )
-  {
-    throw InvalidTimeInModel( get_name(), names::dt, P_.dt_ );
-  }
 }
 
 
@@ -390,4 +389,20 @@ nest::noise_generator::set_data_from_stimulation_backend( std::vector< double >&
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
   P_.num_targets_ = ptmp.num_targets_;
+}
+
+void
+nest::noise_generator::calibrate_time( const TimeConverter& tc )
+{
+  if ( P_.dt_.is_step() )
+  {
+    P_.dt_ = tc.from_old_tics( P_.dt_.get_tics() );
+  }
+  else
+  {
+    const double old = P_.dt_.get_ms();
+    P_.dt_ = P_.get_default_dt();
+    std::string msg = String::compose( "Default for dt changed from %1 to %2 ms", old, P_.dt_.get_ms() );
+    LOG( M_INFO, get_name(), msg );
+  }
 }

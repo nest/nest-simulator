@@ -35,12 +35,12 @@
 
 // Includes from nestkernel:
 #include "dynamicloader.h"
+#include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
 #include "nest.h"
 #include "nestmodule.h"
-#include "model_manager_impl.h"
-#include "exceptions.h"
 
 // Includes from sli:
 #include "dict.h"
@@ -110,51 +110,40 @@ neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string module
 #endif
 
   addmodule< SLIArrayModule >( engine );
-  addmodule< SpecialFunctionsModule >( engine ); // safe without GSL
+  addmodule< SpecialFunctionsModule >( engine );
   addmodule< SLIgraphics >( engine );
   engine.addmodule( new SLIStartup( *argc, *argv ) );
   addmodule< Processes >( engine );
   addmodule< RegexpModule >( engine );
   addmodule< FilesystemModule >( engine );
 
-  // register NestModule class
+  // NestModule extends SLI by commands for neuronal simulations
   addmodule< nest::NestModule >( engine );
 
-  // this can make problems with reference counting, if
-  // the intepreter decides cleans up memory before NEST is ready
-  engine.def( "modeldict", nest::kernel().model_manager.get_modeldict() );
-  engine.def( "synapsedict", nest::kernel().model_manager.get_synapsedict() );
-  engine.def( "connruledict", nest::kernel().connection_manager.get_connruledict() );
-  engine.def( "growthcurvedict", nest::kernel().sp_manager.get_growthcurvedict() );
-
-  // now add static modules providing models
+  // now add static modules providing components.
   add_static_modules( engine );
 
 /*
  * The following section concerns shared user modules and is thus only
  * included if we built with libtool and libltdl.
  *
- * On BlueGene, we need to link user modules statically, but for convenience
+ * One may want to link user modules statically, but for convenience
  * they still register themselves with the DyamicLoadModule during static
- * initialization. On BlueGene, we then need to prevent that the modules are
- * loaded a second time, therefore the guard below. At the same time, we
- * need to create the DynamicLoaderModule, since the compiler might otherwise
- * optimize DynamicLoaderModule::registerLinkedModule() away.
+ * initialization. At the same time, we need to create the DynamicLoaderModule,
+ * since the compiler might otherwise optimize DynamicLoaderModule::registerLinkedModule() away.
  */
 #ifdef HAVE_LIBLTDL
   // dynamic loader module for managing linked and dynamically loaded extension
   // modules
   nest::DynamicLoaderModule* pDynLoader = new nest::DynamicLoaderModule( engine );
 
-// initialize all modules that were linked into at compile time
-// these modules have registered via calling DynamicLoader::registerLinkedModule
-// from their constructor
-#ifndef IS_BLUEGENE
+  // initialize all modules that were linked at compile time.
+  // These modules were registered via DynamicLoader::registerLinkedModule
+  // from their constructor
   pDynLoader->initLinkedModules( engine );
 
   // interpreter will delete module on destruction
   engine.addmodule( pDynLoader );
-#endif
 #endif
 
 #ifdef _IS_PYNEST

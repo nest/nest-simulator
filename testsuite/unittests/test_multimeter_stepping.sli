@@ -45,7 +45,7 @@ M_ERROR setverbosity
 /skip_list [ ] def
 
 /clear_error
-{ 
+{
   counttomark npop % pop all but mark
   errordict begin /newerror false def end
 } def
@@ -63,14 +63,14 @@ M_ERROR setverbosity
   /n model Create def
   /mm /multimeter << /record_from recs /interval 0.1  >> Create def
 
-  mark 
+  mark
   {
     mm n Connect
     /pg /poisson_generator << /rate 1e4 >> Create def
     pg n Connect
     /minDelay GetKernelStatus /min_delay get def
     continuous
-    { 
+    {
       50 minDelay mul Simulate
     }
     {
@@ -108,27 +108,26 @@ M_ERROR setverbosity
 
     % should have two arrays of events results on the stack now, should be equal
     res1 res2 eq
-    
+
     dup { ( ... ok) == } { ( ... FAIL) ==  } ifelse
    }
   {
     true
   }
   ifelse
-} 
+}
 def
 
 {
-  modeldict keys { 
+  GetKernelStatus /node_models get {
     dup skip_list exch MemberQ not
-    { 
-      run_tests 
-    } 
+    {
+      run_tests
+    }
     {
       pop true  % pop model, define as true
-    } ifelse 
+    } ifelse
    } Map
    true exch { and } Fold
 }
 assert_or_die
-

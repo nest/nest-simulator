@@ -62,7 +62,8 @@ nest::step_rate_generator::Parameters_::Parameters_( const Parameters_& p )
 {
 }
 
-nest::step_rate_generator::Parameters_& nest::step_rate_generator::Parameters_::operator=( const Parameters_& p )
+nest::step_rate_generator::Parameters_&
+nest::step_rate_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
   {

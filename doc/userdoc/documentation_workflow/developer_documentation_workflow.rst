@@ -1,3 +1,5 @@
+.. _devdoc_workflow:
+
 Developer documentation workflow
 ################################
 
@@ -14,13 +16,13 @@ generated in the ``doc`` folder in your source directory.
 .. note::
    This workflow shows you how to create **developer documentation**
    for NEST. For the **user documentation**, please refer to our
-   :doc:`User documentation workflow <user_documentation_workflow>`.
+   :ref:`User documentation workflow <userdoc_workflow>`.
 
 Instructions
 ++++++++++++
 
-Make sure you have already :doc:`installed NEST
-<../installation/index>` and created your ``build`` and ``install``
+Make sure you have already :ref:`installed NEST
+<install_nest>` and created your ``build`` and ``install``
 directories. Your ``CMake`` version needs to be up-to-date.
 
 1. Install Doxygen.

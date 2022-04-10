@@ -32,9 +32,11 @@
 #include "vp_manager_impl.h"
 
 // Includes from libnestutil:
+#ifdef HAVE_RANDOM123
 #include "Random123/conventional/Engine.hpp"
 #include "Random123/philox.h"
 #include "Random123/threefry.h"
+#endif
 
 
 const std::string nest::RandomManager::DEFAULT_RNG_TYPE_ = "mt19937_64";
@@ -93,13 +95,19 @@ nest::RandomManager::finalize()
 }
 
 void
+nest::RandomManager::change_number_of_threads()
+{
+  finalize();
+  initialize();
+}
+
+void
 nest::RandomManager::reset_rngs_()
 {
   // Delete existing RNGs.
   delete rank_synced_rng_;
 
-  auto delete_rngs = []( std::vector< RngPtr >& rng_vec )
-  {
+  auto delete_rngs = []( std::vector< RngPtr >& rng_vec ) {
     for ( auto rng : rng_vec )
     {
       delete rng;

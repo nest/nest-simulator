@@ -23,15 +23,15 @@
 #ifndef STIMULATION_BACKEND_MPI_H
 #define STIMULATION_BACKEND_MPI_H
 
-#include "stimulation_backend.h"
-#include "nest_types.h"
 #include "nest_time.h"
+#include "nest_types.h"
+#include "stimulation_backend.h"
+#include <arpa/inet.h>
+#include <mpi.h>
+#include <netinet/in.h>
 #include <set>
 #include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include <unistd.h>
-#include <mpi.h>
 
 /* BeginUserDocs: stimulation backend
 
@@ -135,7 +135,7 @@ private:
    * A map for the enrolled devices. We have a vector with one map per local
    * thread. The map associates the node ID of a device on a given thread
    * with its device. Only the master thread has a valid MPI communicator pointer.
-  */
+   */
   using device_map = std::vector< std::map< index, std::pair< const MPI_Comm*, StimulationDevice* > > >;
   device_map devices_;
   /**
@@ -171,7 +171,7 @@ private:
    * clean all the memory allocated for the updating device. The function is used only by the master thread
    * @param data
    */
-  void clean_memory_input_data( std::pair< int*, double* >* data );
+  void clean_memory_input_data( std::vector< std::pair< int*, double* > >& data );
 };
 
 } // namespace

@@ -21,9 +21,9 @@
  */
 
 // C++ includes:
-#include <string>
-#include <map>
 #include <iostream>
+#include <map>
+#include <string>
 
 #ifndef DEPRECATION_WARNING_H
 #define DEPRECATION_WARNING_H

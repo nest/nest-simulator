@@ -25,10 +25,10 @@
 #ifdef HAVE_GSL
 
 // C++ includes:
-#include <limits>
+#include <cstdio>
 #include <iomanip>
 #include <iostream>
-#include <cstdio>
+#include <limits>
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -81,19 +81,24 @@ nest::gif_cond_exp_dynamics( double, const double y[], double f[], void* pnode )
   assert( pnode );
   const nest::gif_cond_exp& node = *( reinterpret_cast< nest::gif_cond_exp* >( pnode ) );
 
+  const bool is_refractory = node.S_.r_ref_ > 0;
+
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
 
   // The following code is verbose for the sake of clarity. We assume that a
   // good compiler will optimize the verbosity away ...
 
-  const double I_syn_exc = y[ S::G_EXC ] * ( y[ S::V_M ] - node.P_.E_ex_ );
-  const double I_syn_inh = y[ S::G_INH ] * ( y[ S::V_M ] - node.P_.E_in_ );
-  const double I_L = node.P_.g_L_ * ( y[ S::V_M ] - node.P_.E_L_ );
+  // Clamp membrane potential to V_reset while refractory.
+  const double V = is_refractory ? node.P_.V_reset_ : y[ S::V_M ];
+
+  const double I_syn_exc = y[ S::G_EXC ] * ( V - node.P_.E_ex_ );
+  const double I_syn_inh = y[ S::G_INH ] * ( V - node.P_.E_in_ );
+  const double I_L = node.P_.g_L_ * ( V - node.P_.E_L_ );
   const double stc = node.S_.stc_;
 
   // V dot
-  f[ 0 ] = ( -I_L + node.S_.I_stim_ + node.P_.I_e_ - I_syn_exc - I_syn_inh - stc ) / node.P_.c_m_;
+  f[ 0 ] = is_refractory ? 0.0 : ( -I_L + node.S_.I_stim_ + node.P_.I_e_ - I_syn_exc - I_syn_inh - stc ) / node.P_.c_m_;
 
   f[ 1 ] = -y[ S::G_EXC ] / node.P_.tau_synE_;
   f[ 2 ] = -y[ S::G_INH ] / node.P_.tau_synI_;
@@ -164,7 +169,8 @@ nest::gif_cond_exp::State_::State_( const State_& s )
   }
 }
 
-nest::gif_cond_exp::State_& nest::gif_cond_exp::State_::operator=( const State_& s )
+nest::gif_cond_exp::State_&
+nest::gif_cond_exp::State_::operator=( const State_& s )
 {
   I_stim_ = s.I_stim_;
   sfa_ = s.sfa_;
@@ -255,20 +261,20 @@ nest::gif_cond_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
 
   if ( tau_sfa_.size() != q_sfa_.size() )
   {
-    throw BadProperty( String::compose(
-      "'tau_sfa' and 'q_sfa' need to have the same dimensions.\nSize of "
-      "tau_sfa: %1\nSize of q_sfa: %2",
-      tau_sfa_.size(),
-      q_sfa_.size() ) );
+    throw BadProperty(
+      String::compose( "'tau_sfa' and 'q_sfa' need to have the same dimensions.\nSize of "
+                       "tau_sfa: %1\nSize of q_sfa: %2",
+        tau_sfa_.size(),
+        q_sfa_.size() ) );
   }
 
   if ( tau_stc_.size() != q_stc_.size() )
   {
-    throw BadProperty( String::compose(
-      "'tau_stc' and 'q_stc' need to have the same dimensions.\nSize of "
-      "tau_stc: %1\nSize of q_stc: %2",
-      tau_stc_.size(),
-      q_stc_.size() ) );
+    throw BadProperty(
+      String::compose( "'tau_stc' and 'q_stc' need to have the same dimensions.\nSize of "
+                       "tau_stc: %1\nSize of q_stc: %2",
+        tau_stc_.size(),
+        q_stc_.size() ) );
   }
   if ( g_L_ <= 0 )
   {

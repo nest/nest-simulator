@@ -52,7 +52,7 @@ Generates sinusoidally modulated gamma spike trains
 Description
 +++++++++++
 
-sinusoidal_gamma_generator generates sinusoidally modulated gamma spike
+``sinusoidal_gamma_generator`` generates sinusoidally modulated gamma spike
 trains. By default, each target of the generator will receive a different
 spike train.
 
@@ -60,17 +60,16 @@ The instantaneous rate of the process is given by
 
 .. math::
 
- f(t) = rate + amplitude \sin ( 2 \pi frequency t + phase * \pi/180 )
+ f(t) = rate + amplitude \sin ( 2 \pi frequency t + phase \cdot \pi/180 )
 
-Remarks
-+++++++
+.. note::
 
-- The gamma generator requires 0 <= amplitude <= rate.
-- The state of the generator is reset on calibration.
-- The generator does not support precise spike timing.
-- You can use the multimeter to sample the rate of the generator.
-- The generator will create different trains if run at different
-  temporal resolutions.
+   - The gamma generator requires 0 <= amplitude <= rate.
+   - The state of the generator is reset on calibration.
+   - The generator does not support precise spike timing.
+   - You can use the multimeter to sample the rate of the generator.
+   - The generator will create different trains if run at different
+     temporal resolutions.
 
 Individual spike trains vs single spike train:
 By default, the generator sends a different spike train to each of its
@@ -98,8 +97,10 @@ order
 individual_spike_trains
     See note above, default: true
 
-Set parameters from a stimulation backend
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+See also [1]_.
+
+Setting parameters from a stimulation backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The parameters in this stimulation device can be updated with input
 coming from a stimulation backend. The data structure used for the
@@ -199,9 +200,9 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
+  using Node::event_hook;
   using Node::handle;
   using Node::handles_test_event;
-  using Node::event_hook;
 
   void handle( DataLoggingRequest& ) override;
 

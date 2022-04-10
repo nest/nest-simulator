@@ -82,6 +82,10 @@ set( sli_sources
     utils.cc utils.h
     )
 
+
+# Prevent problems with Conda path substitution (see #2348) 
+set_source_files_properties( slistartup.cc PROPERTIES COMPILE_OPTIONS "-O0" )
+
 add_library( sli_lib ${sli_sources} )
 target_link_libraries( sli_lib nestutil OpenMP::OpenMP_CXX )
 

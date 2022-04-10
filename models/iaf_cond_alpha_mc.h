@@ -75,7 +75,7 @@ Description
 THIS MODEL IS A PROTOTYPE FOR ILLUSTRATION PURPOSES. IT IS NOT YET
 FULLY TESTED. USE AT YOUR OWN PERIL!
 
-iaf_cond_alpha_mc is an implementation of a multi-compartment spiking
+``iaf_cond_alpha_mc`` is an implementation of a multi-compartment spiking
 neuron using IAF dynamics with conductance-based synapses. It serves
 mainly to illustrate the implementation of ref:`multicompartment models
 <multicompartment-models>` in NEST.
@@ -106,9 +106,11 @@ receive current input from a current generator, and an external (rheobase)
 current can be set for each compartment.
 
 Synapses, including those for injection external currents, are addressed through
-the receptor types given in the receptor_types entry of the state dictionary.
-Note that in contrast to the single-compartment iaf_cond_alpha model, all
+the receptor types given in the ``receptor_types`` entry of the state dictionary.
+Note that in contrast to the single-compartment ``iaf_cond_alpha`` model, all
 synaptic weights must be positive numbers!
+
+See also [1]_, [2]_.
 
 Parameters
 ++++++++++
@@ -376,7 +378,7 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_cond_alpha_mc& ); //!<Sets buffer pointers to 0
+    Buffers_( iaf_cond_alpha_mc& ); //!< Sets buffer pointers to 0
     //! Sets buffer pointers to 0
     Buffers_( const Buffers_&, iaf_cond_alpha_mc& );
 

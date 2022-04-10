@@ -68,9 +68,16 @@ nest::SimulationManager::SimulationManager()
 void
 nest::SimulationManager::initialize()
 {
-  // set resolution, ensure clock is calibrated to new resolution
+  Time::reset_to_defaults();
   Time::reset_resolution();
+
+  clock_.set_to_zero();
   clock_.calibrate();
+
+  to_do_ = 0;
+  slice_ = 0;
+  from_step_ = 0;
+  to_step_ = 0; // consistent with to_do_ = 0
 
   prepared_ = false;
   simulating_ = false;
@@ -84,13 +91,6 @@ nest::SimulationManager::initialize()
 void
 nest::SimulationManager::finalize()
 {
-  nest::Time::reset_to_defaults();
-
-  clock_.set_to_zero(); // ensures consistent state
-  to_do_ = 0;
-  slice_ = 0;
-  from_step_ = 0;
-  to_step_ = 0; // consistent with to_do_ = 0
 }
 
 void
@@ -163,74 +163,64 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
 
   if ( tics_per_ms_updated or res_updated )
   {
+    std::vector< std::string > errors;
     if ( kernel().node_manager.size() > 0 )
     {
-      LOG( M_ERROR,
-        "SimulationManager::set_status",
-        "Cannot change time representation after nodes have been created. "
-        "Please call ResetKernel first." );
-      throw KernelException();
+      errors.push_back( "Nodes have already been created" );
     }
-    else if ( has_been_simulated() ) // someone may have simulated empty network
+    if ( has_been_simulated() )
     {
-      LOG( M_ERROR,
-        "SimulationManager::set_status",
-        "Cannot change time representation after the network has been "
-        "simulated. Please call ResetKernel first." );
-      throw KernelException();
+      errors.push_back( "Network has been simulated" );
     }
-    else if ( kernel().connection_manager.get_num_connections() != 0 )
+    if ( kernel().model_manager.are_model_defaults_modified() )
     {
-      LOG( M_ERROR,
-        "SimulationManager::set_status",
-        "Cannot change time representation after connections have been "
-        "created. Please call ResetKernel first." );
-      throw KernelException();
+      errors.push_back( "Model defaults were modified" );
     }
-    else if ( kernel().model_manager.has_user_models() or kernel().model_manager.has_user_prototypes() )
+
+    if ( errors.size() == 1 )
     {
-      LOG( M_ERROR,
-        "SimulationManager::set_status",
-        "Cannot change time representation when user models have been "
-        "created. Please call ResetKernel first." );
-      throw KernelException();
+      throw KernelException( errors[ 0 ] + ": time representation cannot be changed." );
     }
-    else if ( kernel().model_manager.are_model_defaults_modified() )
+    if ( errors.size() > 1 )
     {
-      LOG( M_ERROR,
-        "SimulationManager::set_status",
-        "Cannot change time representation after model defaults have "
-        "been modified. Please call ResetKernel first." );
-      throw KernelException();
+      std::string msg = "Time representation unchanged. Error conditions:";
+      for ( auto& error : errors )
+      {
+        msg += " " + error + ".";
+      }
+      throw KernelException( msg );
     }
-    else if ( res_updated and tics_per_ms_updated ) // only allow TICS_PER_MS to
-                                                    // be changed together with
-                                                    // resolution
+
+    // only allow TICS_PER_MS to be changed together with resolution
+    if ( res_updated and tics_per_ms_updated )
     {
       if ( resd < 1.0 / tics_per_ms )
       {
-        LOG( M_ERROR,
-          "SimulationManager::set_status",
-          "Resolution must be greater than or equal to one tic. Value "
-          "unchanged." );
-        throw KernelException();
+        throw KernelException( "Resolution must be greater than or equal to one tic. Value unchanged." );
       }
       else if ( not is_integer( resd * tics_per_ms ) )
       {
-        LOG( M_ERROR,
-          "SimulationManager::set_status",
-          "Resolution must be a multiple of the tic length. Value unchanged." );
-        throw KernelException();
+        throw KernelException( "Resolution must be a multiple of the tic length. Value unchanged." );
       }
       else
       {
+        const double old_res = nest::Time::get_resolution().get_ms();
+        const tic_t old_tpms = nest::Time::get_resolution().get_tics_per_ms();
+
         nest::Time::set_resolution( tics_per_ms, resd );
         // adjust to new resolution
         clock_.calibrate();
         // adjust delays in the connection system to new resolution
         kernel().connection_manager.calibrate( time_converter );
         kernel().model_manager.calibrate( time_converter );
-        LOG( M_INFO, "SimulationManager::set_status", "tics per ms and resolution changed." );
+
+        std::string msg =
+          String::compose( "Tics per ms and resolution changed from %1 tics and %2 ms to %3 tics and %4 ms.",
+            old_tpms,
+            old_res,
+            tics_per_ms,
+            resd );
+        LOG( M_INFO, "SimulationManager::set_status", msg );
 
         // make sure that wfr communication interval is always greater or equal
         // to resolution if no wfr is used explicitly set wfr_comm_interval
@@ -245,27 +235,24 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
     {
       if ( resd < Time::get_ms_per_tic() )
       {
-        LOG( M_ERROR,
-          "SimulationManager::set_status",
-          "Resolution must be greater than or equal to one tic. Value "
-          "unchanged." );
-        throw KernelException();
+        throw KernelException( "Resolution must be greater than or equal to one tic. Value unchanged." );
       }
       else if ( not is_integer( resd / Time::get_ms_per_tic() ) )
       {
-        LOG( M_ERROR,
-          "SimulationManager::set_status",
-          "Resolution must be a multiple of the tic length. Value unchanged." );
-        throw KernelException();
+        throw KernelException( "Resolution must be a multiple of the tic length. Value unchanged." );
       }
       else
       {
+        const double old_res = nest::Time::get_resolution().get_ms();
+
         Time::set_resolution( resd );
         clock_.calibrate(); // adjust to new resolution
         // adjust delays in the connection system to new resolution
         kernel().connection_manager.calibrate( time_converter );
         kernel().model_manager.calibrate( time_converter );
-        LOG( M_INFO, "SimulationManager::set_status", "Temporal resolution changed." );
+
+        std::string msg = String::compose( "Temporal resolution changed from %1 to %2 ms.", old_res, resd );
+        LOG( M_INFO, "SimulationManager::set_status", msg );
 
         // make sure that wfr communication interval is always greater or equal
         // to resolution if no wfr is used explicitly set wfr_comm_interval
@@ -278,11 +265,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
     }
     else
     {
-      LOG( M_ERROR,
-        "SimulationManager::set_status",
-        "change of tics_per_step requires simultaneous specification of "
-        "resolution." );
-      throw KernelException();
+      throw KernelException( "Change of tics_per_step requires simultaneous specification of resolution." );
     }
   }
 
@@ -654,19 +637,15 @@ nest::SimulationManager::call_update_()
   os << "Simulation time (ms): " << t_sim;
 
 #ifdef _OPENMP
-  os << std::endl
-     << "Number of OpenMP threads: " << kernel().vp_manager.get_num_threads();
+  os << std::endl << "Number of OpenMP threads: " << kernel().vp_manager.get_num_threads();
 #else
-  os << std::endl
-     << "Not using OpenMP";
+  os << std::endl << "Not using OpenMP";
 #endif
 
 #ifdef HAVE_MPI
-  os << std::endl
-     << "Number of MPI processes: " << kernel().mpi_manager.get_num_processes();
+  os << std::endl << "Number of MPI processes: " << kernel().mpi_manager.get_num_processes();
 #else
-  os << std::endl
-     << "Not using MPI";
+  os << std::endl << "Not using MPI";
 #endif
 
   LOG( M_INFO, "SimulationManager::start_updating_", os.str() );
@@ -814,7 +793,8 @@ nest::SimulationManager::update_()
 
       if ( kernel().sp_manager.is_structural_plasticity_enabled()
         and ( std::fmod( Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms(),
-                kernel().sp_manager.get_structural_plasticity_update_interval() ) == 0 ) )
+                kernel().sp_manager.get_structural_plasticity_update_interval() )
+          == 0 ) )
       {
         for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
               i != kernel().node_manager.get_local_nodes( tid ).end();

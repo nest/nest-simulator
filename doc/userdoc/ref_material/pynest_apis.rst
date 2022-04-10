@@ -1,3 +1,5 @@
+.. _pynest_api:
+
 PyNEST API
 ==========
 

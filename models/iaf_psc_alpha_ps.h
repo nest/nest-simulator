@@ -55,7 +55,7 @@ Description
 
 .. versionadded:: 2.18
 
-iaf_psc_alpha_ps is the "canonical" implementation of the leaky
+``iaf_psc_alpha_ps`` is the "canonical" implementation of the leaky
 integrate-and-fire model neuron with alpha-shaped postsynaptic
 currents in the sense of [1]_. This is the most exact implementation
 available.
@@ -77,28 +77,6 @@ application, the canonical application may provide superior overall
 performance given an accuracy goal; see [1]_ for details. Subthreshold
 dynamics are integrated using exact integration between events [2]_.
 
-Parameters
-++++++++++
-
-The following parameters can be set in the status dictionary.
-
-===========  ======  ==========================================================
- V_m         mV      Membrane potential
- E_L         mV      Resting membrane potential
- V_min       mV      Absolute lower value for the membrane potential
- C_m         pF      Capacity of the membrane
- tau_m       ms      Membrane time constant
- t_ref       ms      Duration of refractory period
- V_th        mV      Spike threshold
- V_reset     mV      Reset potential of the membrane
- tau_syn_ex  ms      Rise time of the excitatory synaptic function
- tau_syn_in  ms      Rise time of the inhibitory synaptic function
- I_e         pA      Constant external input current
-===========  ======  ==========================================================
-
-Remarks
-+++++++
-
 This model transmits precise spike times to target nodes (on-grid spike
 time and offset). If this node is connected to a spike_recorder, the
 property "precise_times" of the spike_recorder has to be set to true in
@@ -119,6 +97,25 @@ can only change at on-grid times.
 
 For details about exact subthreshold integration, please see
 :doc:`../guides/exact-integration`.
+
+Parameters
+++++++++++
+
+The following parameters can be set in the status dictionary.
+
+===========  ======  ==========================================================
+ V_m         mV      Membrane potential
+ E_L         mV      Resting membrane potential
+ V_min       mV      Absolute lower value for the membrane potential
+ C_m         pF      Capacity of the membrane
+ tau_m       ms      Membrane time constant
+ t_ref       ms      Duration of refractory period
+ V_th        mV      Spike threshold
+ V_reset     mV      Reset potential of the membrane
+ tau_syn_ex  ms      Rise time of the excitatory synaptic function
+ tau_syn_in  ms      Rise time of the inhibitory synaptic function
+ I_e         pA      Constant external input current
+===========  ======  ==========================================================
 
 References
 ++++++++++
@@ -160,7 +157,7 @@ public:
   iaf_psc_alpha_ps();
 
   /** Copy constructor.
-      GenericModel::allocate_() uses the copy constructor to clone
+      GenericModel::create_() uses the copy constructor to clone
       actual model instances from the prototype instance.
 
       @note The copy constructor MUST NOT be used to create nodes based

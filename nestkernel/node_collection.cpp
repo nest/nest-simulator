@@ -93,6 +93,39 @@ nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
 }
 
 void
+nc_const_iterator::composite_update_indices_()
+{
+  // If we went past the size of the primitive, we need to adjust the element
+  // and primitive part indices.
+  size_t primitive_size = composite_collection_->parts_[ part_idx_ ].size();
+  while ( element_idx_ >= primitive_size )
+  {
+    element_idx_ = element_idx_ - primitive_size;
+    ++part_idx_;
+    if ( part_idx_ < composite_collection_->parts_.size() )
+    {
+      primitive_size = composite_collection_->parts_[ part_idx_ ].size();
+    }
+  }
+  // If we went past the end of the composite, we need to adjust the
+  // position of the iterator.
+  if ( composite_collection_->end_offset_ != 0 or composite_collection_->end_part_ != 0 )
+  {
+    if ( part_idx_ >= composite_collection_->end_part_ and element_idx_ >= composite_collection_->end_offset_ )
+    {
+      part_idx_ = composite_collection_->end_part_;
+      element_idx_ = composite_collection_->end_offset_;
+    }
+  }
+  else if ( part_idx_ >= composite_collection_->parts_.size() )
+  {
+    auto end_of_composite = composite_collection_->end();
+    part_idx_ = end_of_composite.part_idx_;
+    element_idx_ = end_of_composite.element_idx_;
+  }
+}
+
+void
 nc_const_iterator::print_me( std::ostream& out ) const
 {
   out << "[[" << this << " pc: " << primitive_collection_ << ", cc: " << composite_collection_ << ", px: " << part_idx_
@@ -252,7 +285,7 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( index first,
   , last_( last )
   , model_id_( model_id )
   , metadata_( meta )
-  , nodes_have_no_proxies_( not kernel().model_manager.get_model( model_id_ )->has_proxies() )
+  , nodes_have_no_proxies_( not kernel().model_manager.get_node_model( model_id_ )->has_proxies() )
 {
   assert_consistent_model_ids_( model_id_ );
 
@@ -264,7 +297,7 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( index first, index last, index
   , last_( last )
   , model_id_( model_id )
   , metadata_( nullptr )
-  , nodes_have_no_proxies_( not kernel().model_manager.get_model( model_id_ )->has_proxies() )
+  , nodes_have_no_proxies_( not kernel().model_manager.get_node_model( model_id_ )->has_proxies() )
 {
   assert( first_ <= last_ );
 }
@@ -288,7 +321,7 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( index first, index last )
     }
   }
   model_id_ = first_model_id;
-  nodes_have_no_proxies_ = not kernel().model_manager.get_model( model_id_ )->has_proxies();
+  nodes_have_no_proxies_ = not kernel().model_manager.get_node_model( model_id_ )->has_proxies();
 }
 
 NodeCollectionPrimitive::NodeCollectionPrimitive()
@@ -466,7 +499,8 @@ NodeCollectionPrimitive::print_me( std::ostream& out ) const
 void
 NodeCollectionPrimitive::print_primitive( std::ostream& out ) const
 {
-  std::string model = model_id_ != invalid_index ? kernel().model_manager.get_model( model_id_ )->get_name() : "none";
+  std::string model =
+    model_id_ != invalid_index ? kernel().model_manager.get_node_model( model_id_ )->get_name() : "none";
 
   out << "model=" << model << ", size=" << size();
 
@@ -993,7 +1027,8 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
         if ( it != begin() )
         {
           // Need to count the primitive, so can't start at begin()
-          out << "\n" + space << "model=" << kernel().model_manager.get_model( first_in_primitive.model_id )->get_name()
+          out << "\n" + space
+              << "model=" << kernel().model_manager.get_node_model( first_in_primitive.model_id )->get_name()
               << ", size=" << primitive_size << ", ";
           if ( primitive_size == 1 )
           {
@@ -1021,7 +1056,7 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
     }
 
     // Need to also print the last primitive
-    out << "\n" + space << "model=" << kernel().model_manager.get_model( first_in_primitive.model_id )->get_name()
+    out << "\n" + space << "model=" << kernel().model_manager.get_node_model( first_in_primitive.model_id )->get_name()
         << ", size=" << primitive_size << ", ";
     if ( primitive_size == 1 )
     {

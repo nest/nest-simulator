@@ -254,7 +254,7 @@ nest::iaf_psc_exp_ps::calibrate()
 
   V_.h_ms_ = Time::get_resolution().get_ms();
 
-  V_.exp_tau_m_ = std::exp( -V_.h_ms_ / P_.tau_m_ );
+  V_.expm1_tau_m_ = std::expm1( -V_.h_ms_ / P_.tau_m_ );
   V_.exp_tau_ex_ = std::exp( -V_.h_ms_ / P_.tau_ex_ );
   V_.exp_tau_in_ = std::exp( -V_.h_ms_ / P_.tau_in_ );
   V_.P20_ = -P_.tau_m_ / P_.c_m_ * numerics::expm1( -V_.h_ms_ / P_.tau_m_ );
@@ -326,8 +326,11 @@ nest::iaf_psc_exp_ps::update( const Time& origin, const long from, const long to
       // update membrane potential
       if ( not S_.is_refractory_ )
       {
-        S_.y2_ =
-          V_.P20_ * ( P_.I_e_ + S_.y0_ ) + V_.P21_ex_ * S_.y1_ex_ + V_.P21_in_ * S_.y1_in_ + S_.y2_ * V_.exp_tau_m_;
+        // If we use S_.y2_ * std::exp( -V_.h_ms_ / P_.tau_m_ ) instead of
+        // V_.expm1_tau_m_ * S_.y2_ + S_.y2_ here, the accuracy decreases,
+        // see test_iaf_ps_dc_t_accuracy.sli for details.
+        S_.y2_ = V_.P20_ * ( P_.I_e_ + S_.y0_ ) + V_.P21_ex_ * S_.y1_ex_ + V_.P21_in_ * S_.y1_in_
+          + V_.expm1_tau_m_ * S_.y2_ + S_.y2_;
 
         // lower bound of membrane potential
         S_.y2_ = ( S_.y2_ < P_.U_min_ ? P_.U_min_ : S_.y2_ );

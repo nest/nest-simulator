@@ -67,7 +67,7 @@ Hodgkin-Huxley neuron model with support for Clopath plasticity
 Description
 +++++++++++
 
-hh_psc_alpha_clopath is an implementation of a spiking neuron using the
+``hh_psc_alpha_clopath`` is an implementation of a spiking neuron using the
 Hodgkin-Huxley formalism and that is capable of connecting to a Clopath
 synapse.
 
@@ -81,6 +81,8 @@ weight 1.0 results in a peak current of 1 pA.
 Spike detection is done by a combined threshold-and-local-maximum search: if
 there is a local maximum above a certain threshold of the membrane potential,
 it is considered a spike.
+
+See also [1]_, [2]_, [3]_, [4]_, [5]_, [6]_.
 
 Parameters
 ++++++++++
@@ -229,20 +231,20 @@ private:
   //! Independent parameters
   struct Parameters_
   {
-    double t_ref_;      //!< refractory time in ms
-    double g_Na;        //!< Sodium Conductance in nS
-    double g_K;         //!< Potassium Conductance in nS
-    double g_L;         //!< Leak Conductance in nS
-    double C_m;         //!< Membrane Capacitance in pF
-    double E_Na;        //!< Sodium Reversal Potential in mV
-    double E_K;         //!< Potassium Reversal Potential in mV
-    double E_L;         //!< Leak reversal Potential (aka resting potential) in mV
-    double tau_synE;    //!< Synaptic Time Constant Excitatory Synapse in ms
-    double tau_synI;    //!< Synaptic Time Constant for Inhibitory Synapse in ms
-    double I_e;         //!< Constant Current in pA
-    double tau_plus;    //!< time constant of u_bar_plus in ms
-    double tau_minus;   //!< time constant of u_bar_minus in ms
-    double tau_bar_bar; //!< time constant of u_bar_bar in ms
+    double t_ref_;           //!< refractory time in ms
+    double g_Na;             //!< Sodium Conductance in nS
+    double g_K;              //!< Potassium Conductance in nS
+    double g_L;              //!< Leak Conductance in nS
+    double C_m;              //!< Membrane Capacitance in pF
+    double E_Na;             //!< Sodium Reversal Potential in mV
+    double E_K;              //!< Potassium Reversal Potential in mV
+    double E_L;              //!< Leak reversal Potential (aka resting potential) in mV
+    double tau_synE;         //!< Synaptic Time Constant Excitatory Synapse in ms
+    double tau_synI;         //!< Synaptic Time Constant for Inhibitory Synapse in ms
+    double I_e;              //!< Constant Current in pA
+    double tau_u_bar_plus;   //!< time constant of u_bar_plus in ms
+    double tau_u_bar_minus;  //!< time constant of u_bar_minus in ms
+    double tau_u_bar_bar;    //!< time constant of u_bar_bar in ms
 
     Parameters_(); //!< Sets default parameter values
 
@@ -303,8 +305,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( hh_psc_alpha_clopath& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, hh_psc_alpha_clopath& ); //!<Sets buffer pointers to 0
+    Buffers_( hh_psc_alpha_clopath& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, hh_psc_alpha_clopath& ); //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< hh_psc_alpha_clopath > logger_;

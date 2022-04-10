@@ -1,3 +1,5 @@
+.. _install_nest:
+
 Install NEST
 ============
 
@@ -7,7 +9,7 @@ Standard installation
 These installation instructions should work for most users who do
 not need custom configurations for their systems. If you want to
 compile NEST from source, check the :ref:`advanced_install` section
-and :doc:`cmake_options`.
+and :ref:`cmake_options`.
 
 .. tabs::
 
@@ -125,10 +127,15 @@ and :doc:`cmake_options`.
 
    .. tab:: Conda (Linux/macOS)
 
+       .. warning::
+
+           The Conda package is only available for NEST 2.X.
+           If you want to use NEST 3.X, please see other installation options.
+
        1. To keep your conda setup tidy, we recommend that you install NEST into
           a separate `conda environment <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html>`_
           together with Python packages that you will use when working with NEST;
-          see also our :doc:`conda_tips`.
+          see also our :ref:`conda_tips`.
 
           To install the latest version of NEST in a new environment called ``ENVNAME``, just run
 
@@ -169,7 +176,7 @@ and :doc:`cmake_options`.
           - We currently provide NEST with thread-based parallelization on Conda. This should suffice for most
             uses on personal computers.
           - Until dedicated conda builds for Apple's M1 chip (arm64) become available, you should expect relatively
-            poor performance on computers with the M1 chip. You need to :doc:`build NEST yourself <mac_install>` on
+            poor performance on computers with the M1 chip. You need to :ref:`build NEST yourself <mac_install>` on
             M1 systems for good performance.
 
 
@@ -256,7 +263,7 @@ provide containerized versions of NEST in several formats:
        We have live media (.ova) if you want to run NEST in a virtual machine. This option is suitable for Windows users, since we don't support
        NEST natively on Windows,
 
-       :ref:`Download the live media here <download_livemedia>`, and follow the :doc:`instructions to set up the virutal machine <livemedia>` .
+       :ref:`Download the live media here <download_livemedia>`, and follow the :ref:`instructions to set up the virtual machine <live_media>` .
 
 
 
@@ -288,17 +295,17 @@ If installation was successful, you should see the NEST splash screen in the ter
 
 
 **Installation is now complete!**
-**:doc:`Now we can start creating simulations! <../getting_started>`**
+**:ref:`Now we can start creating simulations! <getting_started>`**
 
 ----
 
-If installation didn't work, see the :doc:`troubleshooting section <../troubleshooting>`.
+If installation didn't work, see the :ref:`troubleshooting section <troubleshooting>`.
 
 .. seealso::
 
-    * :doc:`PyNEST tutorials <../tutorials/index>`
+    * :ref:`PyNEST tutorials <tutorials>`
 
-    * :doc:`Example networks <../examples/index>`
+    * :ref:`Example networks <pynest_examples>`
 
 
 ----
@@ -318,22 +325,22 @@ these instructions.**
 
        Download the source code for the  `current release <https://github.com/nest/nest-simulator/archive/v2.20.0.tar.gz>`_.
 
-       Follow instructions for :doc:`linux_install` and take a look at our :doc:`cmake_options`.
+       Follow instructions for :ref:`linux_install` and take a look at our :ref:`cmake_options`.
 
 
    .. tab:: GitHub
 
-       Get the latest developer version on `GitHub <https://github.com/nest/nest-simulator>`_. Fork NEST into your GitHub repository (see details on :doc:`GitHub workflows here <../contribute/development_workflow>`).
+       Get the latest developer version on `GitHub <https://github.com/nest/nest-simulator>`_. Fork NEST into your GitHub repository (see details on :ref:`GitHub workflows here <git_workflow>`).
 
 
    .. tab:: macOS
 
-       For further options on installing NEST on macOS, see :doc:`mac_install` for Macs.
+       For further options on installing NEST on macOS, see :ref:`mac_install` for Macs.
 
 
    .. tab:: HPC systems
 
-       :doc:`Instructions for high performance computers <hpc_install>` provides some instructions for certain machines.
+       :ref:`Instructions for high performance computers <hpc_install>` provides some instructions for certain machines.
 
 
 .. toctree::

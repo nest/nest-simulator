@@ -264,26 +264,20 @@ class Network:
         """ Initializes the NEST kernel.
 
         Reset the NEST kernel and pass parameters to it.
-        The number of seeds for random number generation are computed based on
-        the total number of virtual processes
-        (number of MPI processes x number of threads per MPI process).
         """
         nest.ResetKernel()
 
-        # set seeds for random number generation
         nest.local_num_threads = self.sim_dict['local_num_threads']
-        N_vp = nest.total_num_virtual_procs
-
-        rng_seed = self.sim_dict['rng_seed']
-
-        if nest.Rank() == 0:
-            print('RNG seed: {} '.format(rng_seed))
-            print('  Total number of virtual processes: {}'.format(N_vp))
-
         nest.resolution = self.sim_dict['sim_resolution']
-        nest.rng_seed = rng_seed
+        nest.rng_seed = self.sim_dict['rng_seed']
         nest.overwrite_files = self.sim_dict['overwrite_files']
         nest.print_time = self.sim_dict['print_time']
+
+        if nest.Rank() == 0:
+            print('RNG seed: {}'.format(
+                nest.rng_seed))
+            print('Total number of virtual processes: {}'.format(
+                nest.total_num_virtual_procs))
 
     def __create_neuronal_populations(self):
         """ Creates the neuronal populations.
@@ -383,8 +377,15 @@ class Network:
         """ Creates the thalamic neuronal population if specified in
         ``stim_dict``.
 
-        Thalamic neurons are of type ``parrot_neuron`` and receive input from a
-        Poisson generator.
+        Each neuron of the thalamic population is supposed to transmit the same
+        Poisson spike train to all of its targets in the cortical neuronal population,
+        and spike trains elicited by different thalamic neurons should be statistically
+        independent.
+        In NEST, this is achieved with a single Poisson generator connected to all
+        thalamic neurons which are of type ``parrot_neuron``;
+        Poisson generators send independent spike trains to each of their targets and
+        parrot neurons just repeat incoming spikes.
+
         Note that the number of thalamic neurons is not scaled with
         ``N_scaling``.
 

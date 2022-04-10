@@ -1,3 +1,5 @@
+.. _record_simulations:
+
 Record from simulations
 =======================
 
@@ -15,7 +17,7 @@ section about :ref:`Recording Backends <recording_backends>`.
 
 Recording devices can only reliably record data that was generated
 during the previous simulation time step interval. See the guide about
-:doc:`running simulations <running_simulations>` for details about the
+:ref:`running simulations <run_simulations>` for details about the
 temporal aspects of the simulation loop.
 
 .. note::
@@ -89,32 +91,40 @@ instance using :py:func:`.SetStatus`.
    specific backend was selected has to be *set again* on the new
    backend, if the backend is changed later on.
 
-The full list of available recording backends and their respective
-properties can be obtained from the kernel's status dictionary.
+The full list of available recording backends can be obtained from the
+kernel attribute ``recording_backends``.
 
 ::
 
    >>> print(nest.recording_backends)
-   {u'ascii': {},
-    u'memory': {},
-    u'mpi': {},
-    u'screen': {},
-    u'sionlib': {u'buffer_size': 1024,
-     u'filename': u'',
-     u'sion_chunksize': 262144,
-     u'sion_collective': False,
-     u'sion_n_files': 1}}
+   ('ascii', 'memory', 'mpi', 'screen', 'sionlib')
 
-The example shows that only the `sionlib` backend has backend-specific
-global properties, which can be modified by setting a nested
-dictionary on the kernel attribute ``recording_backends``.
+If a recording backend has global properties (i.e., parameters shared
+by all enrolled recording devices), those can be inspected with
+:py:func`.GetDefaults`
 
 ::
 
-    nest.recording_backends = {'sionlib': {'buffer_size': 512}}
+   >>> nest.GetDefaults("sionlib")
+   {'buffer_size': 1024,
+    'filename': '',
+    'sion_chunksize': 262144,
+    'sion_collective': False,
+    'sion_n_files': 1}
 
-The following is a list of built-in recording backends that come with
-NEST:
+Such global parameters can be set using :py:func:`.SetDefaults`
+
+::
+
+   >>> nest.SetDefaults('sionlib', {'buffer_size': 512})
+
+Built-in backends
+-----------------
+
+Following is a list of built-in recording backends that come with
+NEST. Please note that the availability of some of them depends on the
+compile-time configuration for NEST. See the backend documentation for
+details.
 
 - :doc:`../models/recording_backend_memory`
 - :doc:`../models/recording_backend_ascii`

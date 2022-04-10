@@ -66,20 +66,11 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
         mkdir -p install
         make PREFIX=$HOME/.cache CFGDIR=$HOME/.cache/cfg HAVE_RULES=yes install
         cd -
+        rm -rf cppcheck
         echo "MSGBLD0040: CPPCHECK installation completed."
-
-        echo "MSGBLD0050: Installing CLANG-FORMAT."
-        wget --no-verbose http://llvm.org/releases/3.6.2/clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
-        tar xf clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
-        # Copy and not move because '.cache' may aleady contain other subdirectories and files.
-        cp -R clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04/* $HOME/.cache
-        echo "MSGBLD0060: CLANG-FORMAT installation completed."
-
-        # Remove these directories, otherwise the copyright-header check will complain.
-        rm -rf cppcheck clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04
     fi
 
-    # Ensure that the cppcheck and clang-format installation can be found.
+    # Ensure that the cppcheck installation can be found.
     export PATH=$HOME/.cache/bin:$PATH
 
     echo "MSGBLD0070: Retrieving changed files."
@@ -103,7 +94,7 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
     # The names of the static code analysis tools executables.
     VERA=vera++
     CPPCHECK=cppcheck
-    CLANG_FORMAT=clang-format
+    CLANG_FORMAT=clang-format-9
     PEP8=pycodestyle
     PYCODESTYLE_IGNORES="E121,E123,E126,E226,E24,E704,W503,W504"
 
@@ -186,17 +177,21 @@ if [ "$xNEST_BUILD_TYPE" = "FULL" ]; then
     CXX_FLAGS="-pedantic -Wextra -D_GLIBCXX_ASSERTIONS"
 fi
 
-if [ "$xNEST_BUILD_TYPE" = "FULL_NO_EXTERNAL_FEATURES" ]; then
+if [ "$xNEST_BUILD_TYPE" = "FULL_MACOS" ]; then
     xGSL=1
     xLIBBOOST=1
     xLIBNEUROSIM=0
     xLTDL=1
-    xMPI=0
+    xMPI=1
     xMUSIC=0
     xOPENMP=1
     xPYTHON=1
     xREADLINE=1
     xSIONLIB=0
+    # Do not use -pedantic because it triggers warnings from pynestkernel
+    # that are difficult to filter automatically when parsing the log. 
+    # See also https://github.com/cython/cython/pull/4687.
+    CXX_FLAGS="-Wextra -Wno-unknown-pragmas -D_GLIBCXX_ASSERTIONS"
 fi
 
 echo "MSGBLD0232: Setting configuration variables."
@@ -218,13 +213,16 @@ else
 fi
 
 if [ "$xPYTHON" = "1" ] ; then
+    export PYTHON_EXECUTABLE="$(which python3)"
+    export PYTHON_ROOT="$(dirname $PYTHON_EXECUTABLE | sed s%/bin%%)"
     export PYTHON_INCLUDE_DIR=`python3 -c "import sysconfig; print(sysconfig.get_path('include'))"`
     export PYLIB_BASE=lib`basename $PYTHON_INCLUDE_DIR`
     export PYLIB_DIR=$(dirname `sed 's/include/lib/' <<< $PYTHON_INCLUDE_DIR`)
     export PYTHON_LIBRARY=`find $PYLIB_DIR \( -name $PYLIB_BASE.so -o -name $PYLIB_BASE.dylib \) -print -quit`
+    echo "--> Detected PYTHON_ROOT=$PYTHON_ROOT"
     echo "--> Detected PYTHON_LIBRARY=$PYTHON_LIBRARY"
     echo "--> Detected PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
-    CONFIGURE_PYTHON="-DPYTHON_LIBRARY=$PYTHON_LIBRARY -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
+    CONFIGURE_PYTHON="-DPython_ROOT=$PYTHON_ROOT -DPYTHON_LIBRARY=$PYTHON_LIBRARY -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
     mkdir -p $HOME/.matplotlib
     echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
 else
@@ -254,10 +252,7 @@ else
     CONFIGURE_READLINE="-Dwith-readline=OFF"
 fi
 if [ "$xLIBBOOST" = "1" ] ; then
-    #CONFIGURE_BOOST="-Dwith-boost=$HOME/.cache/boost_1_72_0.install"
-    CONFIGURE_BOOST="-Dwith-boost=$HOME/.cache/boost_1_71_0.install"
-    chmod +x build_support/install_libboost.sh
-    ./build_support/install_libboost.sh
+    CONFIGURE_BOOST="-Dwith-boost=ON"
 else
     CONFIGURE_BOOST="-Dwith-boost=OFF"
 fi
@@ -331,6 +326,7 @@ cmake \
     $CONFIGURE_SIONLIB \
     $CONFIGURE_LIBNEUROSIM \
     ..
+    
 echo "MSGBLD0240: CMake configure completed."
 echo
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
@@ -351,6 +347,6 @@ echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
 echo "+               R U N   N E S T   T E S T S U I T E                           +"
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
 echo "MSGBLD0290: Running make installcheck."
-make installcheck
+make VERBOSE=1 installcheck
 echo "MSGBLD0300: Make installcheck completed."
 echo "MSGBLD0340: Build completed."

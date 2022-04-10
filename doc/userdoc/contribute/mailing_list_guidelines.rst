@@ -1,5 +1,7 @@
 :orphan:
 
+.. _mail_guidelines:
+
 Guidelines for contributing to the mailing list
 ===============================================
 

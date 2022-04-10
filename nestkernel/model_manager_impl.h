@@ -71,7 +71,6 @@ ModelManager::register_node_model_vectorized( const Name& name, std::string depr
   std::shared_ptr< ModelT > container = std::make_shared< ModelT >();
   const Node& wrapper = model->get_prototype();
   ( *( JitNode* ) &wrapper ).set_container( container );
-
   return register_node_model_( model );
 }
 

@@ -92,7 +92,9 @@ ModelManager::initialize()
     // set the number of threads for the number of sli pools
     builtin_node_models_[ i ]->set_threads();
     std::string name = builtin_node_models_[ i ]->get_name();
-    node_models_.push_back( builtin_node_models_[ i ]->clone( name ) );
+    Model* cloned_model = builtin_node_models_[ i ]->clone( name );
+    cloned_model->set_uses_vecotrs( builtin_node_models_[ i ]->get_uses_vectors() );
+    node_models_.push_back( cloned_model );
     modeldict_->insert( name, i );
   }
 
@@ -226,6 +228,7 @@ ModelManager::register_node_model_( Model* model )
 
   Model* cloned_model = model->clone( name );
   cloned_model->set_model_id( id );
+  cloned_model->set_uses_vecotrs( model->get_uses_vectors() );
 
   node_models_.push_back( cloned_model );
 

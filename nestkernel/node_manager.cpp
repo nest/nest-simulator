@@ -114,8 +114,8 @@ NodeManager::add_node( index model_id, long n )
   {
     throw BadProperty();
   }
-
   Model* model = kernel().model_manager.get_node_model( model_id );
+
   assert( model != 0 );
   model->deprecation_warning( "Create" );
 

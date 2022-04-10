@@ -75,7 +75,7 @@ proxynode::sends_secondary_event( DelayedRateConnectionEvent& re )
 std::shared_ptr< VectorizedNode >
 proxynode::get_container()
 {
-  kernel().model_manager.get_model( get_model_id() )->get_container();
+  kernel().model_manager.get_node_model( get_model_id() )->get_container();
 }
 /**
  * @returns type of signal this node produces

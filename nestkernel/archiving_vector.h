@@ -19,6 +19,7 @@
 *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 *
  */
+
 #ifndef ARCHIVING_VECTOR_H
 #define ARCHIVING_VECTOR_H
 
@@ -179,5 +180,4 @@ ArchivingVector::get_spiketime_ms( index local_id ) const
 }
 
 }
-
 #endif // ARCHIVING_VECTOR_H

@@ -115,6 +115,4 @@ StructuralPlasticityVector::get_Ca_minus( index local_id ) const
   return Ca_minus_.at( local_id );
 }
 }
-
-
 #endif // STRUCTURAL_PLASTICITY_VECTOR_H

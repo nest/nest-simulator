@@ -638,5 +638,4 @@ VectorizedNode::init( index local_id )
 
 
 }
-
 #endif // VECTORIZED_NODE_H

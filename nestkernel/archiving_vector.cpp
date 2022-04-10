@@ -1,23 +1,23 @@
 /*
-*  archiving_vector.cpp
-*
-*  This file is part of NEST.
-*
-*  Copyright (C) 2004 The NEST Initiative
-*
-*  NEST is free software: you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation, either version 2 of the License, or
-*  (at your option) any later version.
-*
-*  NEST is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-*  You should have received a copy of the GNU General Public License
-*  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-*
+ *  archiving_vector.cpp
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 #include "archiving_vector.h"
 
@@ -57,7 +57,7 @@ ArchivingVector::resize( index extended_space )
 
   n_incoming_.resize( total_space, 0 );
   Kminus_triplet_.resize( total_space, 0.0 );
-  Kminus_.resize(total_space, 0.0);
+  Kminus_.resize( total_space, 0.0 );
   tau_minus_.resize( total_space, 20.0 );
   tau_minus_inv_.resize( total_space, 1 / 20.0 );
   tau_minus_triplet_.resize( total_space, 110.0 );
@@ -280,4 +280,4 @@ nest::ArchivingVector::clear_history( index local_id )
   Kminus_triplet_.at( local_id ) = 0.0;
   history_.at( local_id ).clear();
 }
-}
+} // of namespace nest

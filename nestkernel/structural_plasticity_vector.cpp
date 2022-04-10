@@ -19,6 +19,7 @@
 *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 *
 */
+
 #include "structural_plasticity_vector.h"
 
 // Includes from nestkernel:

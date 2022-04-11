@@ -44,7 +44,7 @@ Short description
 +++++++++++++++++
 
 Population of generalized integrate-and-fire neurons (GIF) with exponential
-postsynaptic currents and adaptation - Gerstner Group
+postsynaptic currents and adaptation (from the Gerstner lab)
 
 
 Description

@@ -219,7 +219,7 @@ provide containerized versions of NEST in several formats:
 
        .. code-block:: bash
 
-           docker run --rm -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -p 8080:8080 nestsim/nest:<version> notebook
+           docker run --rm -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -p 8080:8080 nestsim/nest:<version> jupyterlab
 
 
        4. Once completed, a link to a Jupyter Notebook will be

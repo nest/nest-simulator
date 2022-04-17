@@ -47,6 +47,7 @@ namespace nest
 
 NodeManager::NodeManager()
   : local_nodes_( 1 )
+  , vectorized_nodes( 0 )
   , wfr_nodes_vec_()
   , wfr_is_used_( false )
   , wfr_network_size_( 0 ) // zero to force update
@@ -69,6 +70,7 @@ NodeManager::initialize()
   // explicitly force construction of wfr_nodes_vec_ to ensure consistent state
   wfr_network_size_ = 0;
   local_nodes_.resize( kernel().vp_manager.get_num_threads() );
+  vectorized_nodes.resize( kernel().vp_manager.get_num_threads() );
   num_thread_local_devices_.resize( kernel().vp_manager.get_num_threads(), 0 );
   ensure_valid_thread_local_ids();
 
@@ -112,8 +114,8 @@ NodeManager::add_node( index model_id, long n )
   {
     throw BadProperty();
   }
-
   Model* model = kernel().model_manager.get_node_model( model_id );
+
   assert( model != 0 );
   model->deprecation_warning( "Create" );
 
@@ -195,10 +197,26 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
 #pragma omp parallel
   {
     const index t = kernel().vp_manager.get_thread_id();
-
     try
     {
+      std::shared_ptr< VectorizedNode > t_container;
       model.reserve_additional( t, max_new_per_thread );
+      if ( model.get_uses_vectors() )
+      {
+        if ( model.has_thread_assigned( t ) )
+        {
+          index t_container_pos = model.get_node_pos_in_thread( t );
+          t_container = vectorized_nodes.at( t ).at( t_container_pos );
+        }
+        else
+        {
+          t_container = model.get_container()->clone();
+          vectorized_nodes.at( t ).push_back( t_container );
+          index t_container_pos = vectorized_nodes.at( t ).size() - 1;
+          model.add_thread_node_pair( t, t_container_pos );
+        }
+      }
+
       // Need to find smallest node ID with:
       //   - node ID local to this vp
       //   - node_id >= min_node_id
@@ -206,10 +224,12 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
       const size_t min_node_id_vp = kernel().vp_manager.node_id_to_vp( min_node_id );
 
       size_t node_id = min_node_id + ( num_vps + vp - min_node_id_vp ) % num_vps;
-
+      bool has_at_leat_one_node = false;
       while ( node_id <= max_node_id )
       {
         Node* node = model.create( t );
+
+        node->set_container( t_container );
         node->set_node_id_( node_id );
         node->set_nc_( nc_ptr );
         node->set_model_id( model.get_model_id() );
@@ -218,9 +238,15 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
         node->set_initialized();
 
         local_nodes_[ t ].add_local_node( *node );
+
         node_id += num_vps;
+        has_at_leat_one_node = true;
       }
       local_nodes_[ t ].set_max_node_id( max_node_id );
+      if ( t_container and has_at_leat_one_node )
+      {
+        t_container->resize( max_new_per_thread );
+      }
     }
     catch ( std::exception& err )
     {
@@ -229,6 +255,7 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
       exceptions_raised_.at( t ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   } // omp parallel
+
 }
 
 void
@@ -580,6 +607,7 @@ NodeManager::destruct_nodes_()
     }
 
     local_nodes_[ t ].clear();
+    vectorized_nodes[ t ].clear();
   } // omp parallel
 }
 
@@ -676,15 +704,19 @@ NodeManager::prepare_nodes()
 void
 NodeManager::post_run_cleanup()
 {
+  std::cout << "cleaning starts" << std::endl;
 #pragma omp parallel
   {
+
     index t = kernel().vp_manager.get_thread_id();
     SparseNodeArray::const_iterator n;
     for ( n = local_nodes_[ t ].begin(); n != local_nodes_[ t ].end(); ++n )
     {
       n->get_node()->post_run_cleanup();
     }
+
   } // omp parallel
+  std::cout << "cleaning ends" << std::endl;
 }
 
 /**

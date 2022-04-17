@@ -94,6 +94,8 @@ public:
   {
   }
 
+  std::shared_ptr<VectorizedNode> get_container();
+
   void get_status( DictionaryDatum& ) const;
 
   /**

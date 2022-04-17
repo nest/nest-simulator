@@ -139,16 +139,34 @@ class DataAccessFunctor
   // copying element in std::map when using libc++ under C++11.
   HostNode* parent_;
   size_t elem_;
+  const std::vector< double >* data_;
+  bool requires_context;
 
 public:
   DataAccessFunctor( HostNode& n, size_t elem )
     : parent_( &n )
-    , elem_( elem ) {};
+    , elem_( elem )
+    , data_( nullptr )
+    , requires_context( false ) {};
+
+  DataAccessFunctor( const std::vector< double >& data )
+    : parent_( nullptr )
+    , elem_( 0 )
+    , data_( &data )
+    , requires_context( true ) {};
 
   double
-  operator()() const
+  operator()( size_t pos = 0 ) const
   {
-    return parent_->get_state_element( elem_ );
+    if ( requires_context )
+    {
+      assert( data_ != nullptr );
+      return data_->at( pos );
+    }
+    else
+    {
+      return parent_->get_state_element( elem_ );
+    }
   };
 };
 

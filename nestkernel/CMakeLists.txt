@@ -112,6 +112,10 @@ set ( nestkernel_sources
       position.h
       spatial.h spatial.cpp
       stimulation_backend.h
+        vectorized_node.h  vectorized_node.cpp
+        jit_node.h jit_node.cpp
+        structural_plasticity_vector.h structural_plasticity_vector.cpp
+        archiving_vector.h archiving_vector.cpp
       )
 
 

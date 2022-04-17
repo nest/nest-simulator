@@ -117,6 +117,8 @@ public:
    */
   UniversalDataLogger( HostNode& );
 
+  UniversalDataLogger( UniversalDataLogger&& ) = default;
+
   /**
    * Notify data logger that the node is recorded from.
    *
@@ -374,6 +376,9 @@ public:
    * Create logger.
    */
   DynamicUniversalDataLogger( HostNode& );
+  
+  DynamicUniversalDataLogger( DynamicUniversalDataLogger&& ) = default;
+
 
   /**
    * Notify data logger that the node is recorded from.

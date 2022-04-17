@@ -1,24 +1,24 @@
 /*
- *  model.cpp
- *
- *  This file is part of NEST.
- *
- *  Copyright (C) 2004 The NEST Initiative
- *
- *  NEST is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  NEST is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+*  model.cpp
+*
+*  This file is part of NEST.
+*
+*  Copyright (C) 2004 The NEST Initiative
+*
+*  NEST is free software: you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation, either version 2 of the License, or
+*  (at your option) any later version.
+*
+*  NEST is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*  GNU General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License
+*  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+*
+*/
 
 #include "model.h"
 
@@ -39,114 +39,125 @@ namespace nest
 {
 
 Model::Model( const std::string& name )
-  : name_( name )
-  , type_id_( 0 )
-  , memory_()
+ : name_( name )
+ , type_id_( 0 )
+ , memory_()
+ , uses_vectors( false)
+ , thread_to_node(kernel().vp_manager.get_num_threads() )
 {
+
 }
 
+Model::Model( const Model& m )
+  : name_( m.name_ )
+  , type_id_( m.type_id_ )
+  , memory_( m.memory_ )
+  , uses_vectors( m.uses_vectors )
+  , thread_to_node(kernel().vp_manager.get_num_threads() )
+{
+}
 void
 Model::set_threads()
 {
-  set_threads_( kernel().vp_manager.get_num_threads() );
+ set_threads_( kernel().vp_manager.get_num_threads() );
 }
 
 void
 Model::set_threads_( thread t )
 {
-  for ( size_t i = 0; i < memory_.size(); ++i )
-  {
-    if ( memory_[ i ].size() > 0 )
-    {
-      throw KernelException();
-    }
-  }
+ for ( size_t i = 0; i < memory_.size(); ++i )
+ {
+   if ( memory_[ i ].size() > 0 )
+   {
+     throw KernelException();
+   }
+ }
 
-  memory_.resize( t );
-  memory_.shrink_to_fit();
+ memory_.resize( t );
+ memory_.shrink_to_fit();
 }
 
 void
 Model::reserve_additional( thread t, size_t n )
 {
-  assert( ( size_t ) t < memory_.size() );
-  memory_[ t ].reserve( n );
+ assert( ( size_t ) t < memory_.size() );
+ memory_[ t ].reserve( n );
 }
 
 void
 Model::clear()
 {
-  memory_.clear();
-  set_threads_( 1 );
+ memory_.clear();
+ set_threads_( 1 );
 }
 
 size_t
 Model::mem_available()
 {
-  size_t result = 0;
-  for ( size_t t = 0; t < memory_.size(); ++t )
-  {
-    result += memory_[ t ].capacity() - memory_[ t ].size();
-  }
+ size_t result = 0;
+ for ( size_t t = 0; t < memory_.size(); ++t )
+ {
+   result += memory_[ t ].capacity() - memory_[ t ].size();
+ }
 
-  return result;
+ return result;
 }
 
 size_t
 Model::mem_capacity()
 {
-  size_t result = 0;
-  for ( size_t t = 0; t < memory_.size(); ++t )
-  {
-    result += memory_[ t ].capacity();
-  }
+ size_t result = 0;
+ for ( size_t t = 0; t < memory_.size(); ++t )
+ {
+   result += memory_[ t ].capacity();
+ }
 
-  return result;
+ return result;
 }
 
 void
 Model::set_status( DictionaryDatum d )
 {
-  try
-  {
-    set_status_( d );
-  }
-  catch ( BadProperty& e )
-  {
-    throw BadProperty( String::compose( "Setting status of model '%1': %2", get_name(), e.message() ) );
-  }
+ try
+ {
+   set_status_( d );
+ }
+ catch ( BadProperty& e )
+ {
+   throw BadProperty( String::compose( "Setting status of model '%1': %2", get_name(), e.message() ) );
+ }
 }
 
 DictionaryDatum
 Model::get_status( void )
 {
-  DictionaryDatum d = get_status_();
+ DictionaryDatum d = get_status_();
 
-  std::vector< long > tmp( memory_.size() );
-  for ( size_t t = 0; t < tmp.size(); ++t )
-  {
-    tmp[ t ] = memory_[ t ].size();
-  }
+ std::vector< long > tmp( memory_.size() );
+ for ( size_t t = 0; t < tmp.size(); ++t )
+ {
+   tmp[ t ] = memory_[ t ].size();
+ }
 
-  ( *d )[ names::instantiations ] = Token( tmp );
-  ( *d )[ names::type_id ] = LiteralDatum( kernel().model_manager.get_node_model( type_id_ )->get_name() );
+ ( *d )[ names::instantiations ] = Token( tmp );
+ ( *d )[ names::type_id ] = LiteralDatum( kernel().model_manager.get_node_model( type_id_ )->get_name() );
 
-  for ( size_t t = 0; t < tmp.size(); ++t )
-  {
-    tmp[ t ] = memory_[ t ].capacity();
-  }
+ for ( size_t t = 0; t < tmp.size(); ++t )
+ {
+   tmp[ t ] = memory_[ t ].capacity();
+ }
 
-  ( *d )[ names::capacity ] = Token( tmp );
+ ( *d )[ names::capacity ] = Token( tmp );
 
-  for ( size_t t = 0; t < tmp.size(); ++t )
-  {
-    tmp[ t ] = memory_[ t ].capacity() - memory_[ t ].size();
-  }
+ for ( size_t t = 0; t < tmp.size(); ++t )
+ {
+   tmp[ t ] = memory_[ t ].capacity() - memory_[ t ].size();
+ }
 
-  ( *d )[ names::available ] = Token( tmp );
+ ( *d )[ names::available ] = Token( tmp );
 
-  ( *d )[ names::model ] = LiteralDatum( get_name() );
-  return d;
+ ( *d )[ names::model ] = LiteralDatum( get_name() );
+ return d;
 }
 
 } // namespace

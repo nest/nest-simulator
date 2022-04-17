@@ -24,6 +24,8 @@
 #define MODEL_H
 
 // C++ includes:
+#include <algorithm>
+#include <map>
 #include <new>
 #include <string>
 #include <vector>
@@ -33,9 +35,10 @@
 
 // Includes from nestkernel:
 #include "node.h"
-
+#include "vectorized_node.h"
 // Includes from sli:
 #include "dictutils.h"
+
 
 namespace nest
 {
@@ -57,16 +60,12 @@ class Model
 {
 public:
   Model( const std::string& name );
-  Model( const Model& m )
-    : name_( m.name_ )
-    , type_id_( m.type_id_ )
-    , memory_( m.memory_ )
-  {
-  }
+  Model( const Model& m );
 
   virtual ~Model()
   {
   }
+
 
   /**
    * Create clone with new name.
@@ -88,6 +87,13 @@ public:
    * 'administrative' purposes.
    */
   Node* create( thread t );
+
+  virtual std::shared_ptr< VectorizedNode >
+  get_container()
+  {
+    return 0;
+  }
+
 
   /**
    * Deletes all nodes which belong to this model.
@@ -201,6 +207,41 @@ public:
   {
     return type_id_;
   }
+  bool
+  get_uses_vectors() const
+  {
+    return uses_vectors;
+  }
+
+  void
+  set_uses_vecotrs( bool is_vectorized )
+  {
+    uses_vectors = is_vectorized;
+  }
+
+  void
+  add_thread_node_pair( thread t, index pos )
+  {
+    thread_to_node.at( t ).push_back( pos );
+  }
+
+  bool
+  has_thread_assigned( thread t )
+  {
+
+    if ( thread_to_node.at( t ).size() > 0 )
+    {
+      return true;
+    }
+    return false;
+  }
+
+  index
+  get_node_pos_in_thread( thread t )
+  {
+    return thread_to_node.at( t ).at(0);
+  }
+
 
 private:
   virtual void set_status_( DictionaryDatum ) = 0;
@@ -238,6 +279,19 @@ private:
    * Memory for all nodes sorted by threads.
    */
   std::vector< std::vector< Node* > > memory_;
+
+  /**
+   * Indicartor if the model supports the vectorization schema
+   *
+   */
+  bool uses_vectors;
+
+  /**
+   * Stores if the model has seen the thread before or not.
+   * Only needed when using the vectorization schema
+   *
+   */
+  std::vector< std::vector< index > > thread_to_node;
 };
 
 

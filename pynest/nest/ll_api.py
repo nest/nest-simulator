@@ -309,7 +309,13 @@ class KernelAttribute:
         if self._full_status:
             return status_root
         else:
-            return status_root[self._name]
+            try:
+                return status_root[self._name]
+            except:
+                import warnings
+                warnings.warn(
+                    f"nestkernel doesn't have the requested key:'{self._name}'. The returned Object is set to a to the key name")
+                return self._name
 
     @stack_checker
     def __set__(self, instance, value):

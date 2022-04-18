@@ -47,7 +47,7 @@ public:
 
  int get_synaptic_elements_connected( Name n, index local_id ) const;
 
- void resize( index extended_space );
+ void resize( index extended_space,  index thread_id = 0 );
 
 
  std::map< Name, double > get_synaptic_elements( index local_id ) const;

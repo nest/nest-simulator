@@ -194,6 +194,7 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
   const size_t max_new_per_thread =
     static_cast< size_t >( std::ceil( static_cast< double >( max_node_id - min_node_id + 1 ) / num_vps ) );
 
+
 #pragma omp parallel
   {
     const index t = kernel().vp_manager.get_thread_id();
@@ -242,10 +243,11 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
         node_id += num_vps;
         has_at_leat_one_node = true;
       }
+
       local_nodes_[ t ].set_max_node_id( max_node_id );
       if ( t_container and has_at_leat_one_node )
       {
-        t_container->resize( max_new_per_thread );
+        t_container->resize( max_new_per_thread, t );
       }
     }
     catch ( std::exception& err )
@@ -255,7 +257,6 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
       exceptions_raised_.at( t ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   } // omp parallel
-
 }
 
 void
@@ -448,8 +449,10 @@ NodeManager::get_num_thread_local_devices( thread t ) const
 Node*
 NodeManager::get_node_or_proxy( index node_id, thread t )
 {
+
   assert( 0 <= t and ( t == -1 or t < kernel().vp_manager.get_num_threads() ) );
-  assert( 0 < node_id and node_id <= size() );
+  // TODO: this assertion must consider dependency between nodes from different threads
+  // assert( 0 < node_id and node_id <= local_nodes_[ t ].size() );
 
   Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
   if ( node == 0 )

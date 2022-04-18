@@ -365,10 +365,10 @@ VectorizedNode::set_initialized_( index local_id )
 }
 
 void
-VectorizedNode::resize( index extended_space )
+VectorizedNode::resize( index extended_space, index thread_id )
 {
-  //index current_size = global_ids.size();
-  index total_space =  global_ids.size();
+  // index current_size = global_ids.size();
+  index total_space = global_ids.size();
 
   node_uses_wfr_.resize( total_space, false );
   frozen_.resize( total_space, false );
@@ -376,10 +376,11 @@ VectorizedNode::resize( index extended_space )
 }
 
 Node*
-VectorizedNode::get_wrapper( index node_id ) const
+VectorizedNode::get_wrapper( index node_id, index thread_id ) const
 {
   assert( node_id >= 0 );
-  Node* node = kernel().node_manager.get_node_or_proxy( get_global_id( node_id ) );
+  nest::index global_id = get_global_id( node_id );
+  Node* node = kernel().node_manager.get_node_or_proxy( global_id, thread_id );
   return node;
 }
 }

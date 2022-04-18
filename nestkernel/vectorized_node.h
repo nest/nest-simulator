@@ -95,7 +95,7 @@ public:
     wrapper_ = wrapper;
   }
 
-  Node* get_wrapper( index node_id = -1 ) const;
+  Node* get_wrapper( index node_id = -1, nest::index thred_id = 0 ) const;
   /**
    * Initialize node prior to first simulation after node has been created.
    *
@@ -568,7 +568,7 @@ public:
 
   virtual void get_status( DictionaryDatum& d, index local_id ) const {};
   virtual void set_status( const DictionaryDatum& d, index local_id ) {};
-  virtual void resize( index extended_space );
+  virtual void resize( index extended_space, index thread_id = 0 );
 
   /**
    * retrieve the current value of tau_Ca which defines the exponential decay

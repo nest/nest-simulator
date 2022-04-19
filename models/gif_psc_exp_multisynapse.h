@@ -40,7 +40,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Current-based generalized integrate-and-fire neuron (GIF) model with multiple synaptic time constants (from the Gerstner 
+Current-based generalized integrate-and-fire neuron (GIF) model with multiple synaptic time constants (from the Gerstner
 lab)
 
 Description

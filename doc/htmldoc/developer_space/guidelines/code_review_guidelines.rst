@@ -11,7 +11,7 @@ stricter rules on code that ends up in the public repository.
 Following are rough guidelines for the code reviewers. These are not
 meant to prevent progress, but to keep up the code quality as the
 number of developers is growing. All of this is not set in stone and
-can be discussed on the :ref:`NEST mailing lists <community>`.
+can be discussed on the :ref:`NEST mailing lists <contact_us>`.
 
 * In general, the rule is that each pull request needs an OK from the CI
   platform and at least two reviewers to be merged.

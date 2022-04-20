@@ -72,6 +72,9 @@ See also https://github.com/nest/nest-extension-module for details about the gen
 Have a question?
 ----------------
 
-If you want to get in contact with us, see our :ref:`community` page for ways you can reach us.
+If you want to get in contact with us, see our :ref:`contact_us` section for ways you can reach us.
 
+.. note::
+
+   For all developer related topics see our :ref:`developer_space`
 

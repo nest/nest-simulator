@@ -72,7 +72,7 @@ references should be provided for clarity in introductory texts and the :ref:`gl
 
 If you have further questions about style rules not addressed here, use
 `the Microsoft style guide <https://docs.microsoft.com/en-us/style-guide/welcome/>`_ as a resource
-or ask on the :ref:`mailing list <community>`.
+or ask on the :ref:`mailing list <contact_us>`.
 
 How to phrase content in NEST
 -----------------------------

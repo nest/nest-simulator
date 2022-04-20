@@ -1,7 +1,7 @@
 .. _getting_help:
 
-Getting help
-============
+Get help
+=======
 
 Have a specific question or problem with NEST?
 ----------------------------------------------
@@ -10,10 +10,10 @@ Check out the :ref:`troubleshooting section <troubleshooting>` for
 common issues.
 
 If your question is not on there, you are welcome to subscribe to our
-:ref:`Mailing List <community>` and ask.
+:ref:`Mailing List <contact_us>` and ask.
 
-Getting help on the command line interface
-------------------------------------------
+Get help on the command line interface
+--------------------------------------
 
 * The :py:func:`.helpdesk` command will launch the documentation pages on your browser.
 

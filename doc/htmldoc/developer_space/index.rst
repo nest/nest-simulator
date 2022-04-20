@@ -4,8 +4,7 @@ Developer space
 ===============
 
 Here is all documentation pertaining to the development of NEST.
-It is documentation for anyone needing to touch the code or documentation (also includes SLI, since it is more complex
-and likely used by developers or very advanced users).
+It is documentation for anyone needing to touch the code or documentation.
 
 
 .. toctree::
@@ -46,8 +45,3 @@ and likely used by developers or very advanced users).
 
    sli_docs/index
 
-.. toctree::
-   :maxdepth: 1
-   :caption: Doxygen output
-
-   doxygen/

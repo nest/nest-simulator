@@ -348,7 +348,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
   // Assume a single gather round
 #pragma omp single
   {
-  	decrease_buffer_size_spike_data_ = true;
+    decrease_buffer_size_spike_data_ = true;
   }
 
   while ( gather_completed_checker_.any_false() )

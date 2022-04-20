@@ -578,17 +578,21 @@ nest::ConnectionManager::connect_arrays( long* sources,
   sw_construction_connect.start();
 
   // Mapping pointers to the first parameter value of each parameter to their respective names.
-  std::map< Name, double* > param_pointers;
+  // The bool indicates whether the value is an integer or not, and is determined at a later point.
+  std::map< Name, std::pair< double*, bool > > param_pointers;
   if ( p_keys.size() != 0 )
   {
     size_t i = 0;
     for ( auto& key : p_keys )
     {
       // Shifting the pointer to the first value of the parameter.
-      param_pointers[ key ] = p_values + i * n;
+      param_pointers[ key ] = std::make_pair( p_values + i * n, false );
       ++i;
     }
   }
+
+  const auto synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_model );
+  const auto syn_model_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
 
   // Dictionary holding additional synapse parameters, passed to the connect call.
   std::vector< DictionaryDatum > param_dicts;
@@ -596,20 +600,28 @@ nest::ConnectionManager::connect_arrays( long* sources,
   for ( thread i = 0; i < kernel().vp_manager.get_num_threads(); ++i )
   {
     param_dicts.emplace_back( new Dictionary );
-    for ( auto& param_keys : p_keys )
+    for ( auto& param_key : p_keys )
     {
-      if ( Name( param_keys ) == names::receptor_type )
+      const Name param_name = param_key; // Convert string to Name
+      // Check that the parameter exists for the synapse model.
+      const auto syn_model_default_it = syn_model_defaults->find( param_name );
+      if ( syn_model_default_it == syn_model_defaults->end() )
       {
-        ( *param_dicts[ i ] )[ param_keys ] = Token( new IntegerDatum( 0 ) );
+        throw BadParameter( syn_model + " does not have parameter " + param_key );
+      }
+
+      // If the default value is an integer, the synapse parameter must also be an integer.
+      if ( dynamic_cast< IntegerDatum* >( syn_model_default_it->second.datum() ) != nullptr )
+      {
+        param_pointers[ param_key ].second = true;
+        ( *param_dicts[ i ] )[ param_key ] = Token( new IntegerDatum( 0 ) );
       }
       else
       {
-        ( *param_dicts[ i ] )[ param_keys ] = Token( new DoubleDatum( 0.0 ) );
+        ( *param_dicts[ i ] )[ param_key ] = Token( new DoubleDatum( 0.0 ) );
       }
     }
   }
-
-  const index synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_model );
 
   // Increments pointers to weight and delay, if they are specified.
   auto increment_wd = [weights, delays]( decltype( weights ) & w, decltype( delays ) & d ) {
@@ -640,7 +652,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
       auto d = delays;
       double weight_buffer = numerics::nan;
       double delay_buffer = numerics::nan;
-      int index_counter = 0;
+      int index_counter = 0; // Index of the current connection, for connection parameters
 
       for ( ; s != sources + n; ++s, ++t, ++index_counter )
       {
@@ -674,16 +686,20 @@ nest::ConnectionManager::connect_arrays( long* sources,
         for ( auto& param_pointer_pair : param_pointers )
         {
           // Increment the pointer to the parameter value.
-          auto* param = param_pointer_pair.second + index_counter;
+          const auto param_pointer = param_pointer_pair.second.first;
+          const auto is_int = param_pointer_pair.second.second;
+          auto* param = param_pointer + index_counter;
 
-          // Receptor type must be an integer.
-          if ( param_pointer_pair.first == names::receptor_type )
+          // Integer parameters are stored as IntegerDatums.
+          if ( is_int )
           {
             const auto rtype_as_long = static_cast< long >( *param );
 
             if ( *param > 1L << 31 or std::abs( *param - rtype_as_long ) > 0 ) // To avoid rounding errors
             {
-              throw BadParameter( "Receptor types must be integers." );
+              const auto msg = std::string( "Expected integer value for " ) + param_pointer_pair.first.toString()
+                + ", but got double.";
+              throw BadParameter( msg );
             }
 
             // Change value of dictionary entry without allocating new datum.

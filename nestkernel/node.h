@@ -262,7 +262,7 @@ public:
   /**
    * Returns true if node is frozen, i.e., shall not be updated.
    */
-  bool is_frozen() const;
+  virtual bool is_frozen() const;
 
   /**
    * Returns true if the node uses the waveform relaxation method
@@ -964,6 +964,7 @@ Node::is_frozen() const
 {
   return frozen_;
 }
+
 
 inline bool
 Node::node_uses_wfr() const

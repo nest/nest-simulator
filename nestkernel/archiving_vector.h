@@ -56,6 +56,19 @@ public:
    */
   ArchivingVector( const ArchivingVector& );
 
+  ~ArchivingVector()
+  {
+    Kminus_.clear();
+    Kminus_triplet_.clear();
+    tau_minus_.clear();
+    tau_minus_inv_.clear();
+    tau_minus_triplet_.clear();
+    tau_minus_triplet_inv_.clear();
+    max_delay_.clear();
+    trace_.clear();
+    last_spike_.clear();
+    history_.clear();
+  }
   /**
    * \fn double get_K_value(long t)
    * return the Kminus (synaptic trace) value at t (in ms). When the trace is

@@ -108,7 +108,6 @@ nest::RecordingBackendMemory::write( const RecordingDevice& device,
 {
   thread t = device.get_thread();
   index node_id = device.get_node_id();
-
   device_data_[ t ][ node_id ].push_back( event, double_values, long_values );
 }
 
@@ -188,10 +187,11 @@ nest::RecordingBackendMemory::DeviceData::set_value_names( const std::vector< Na
 }
 
 void
-nest::RecordingBackendMemory::DeviceData::push_back( const Event& event,
+nest::RecordingBackendMemory::DeviceData::  push_back( const Event& event,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )
 {
+
   senders_.push_back( event.get_sender_node_id() );
 
   if ( time_in_steps_ )
@@ -206,6 +206,7 @@ nest::RecordingBackendMemory::DeviceData::push_back( const Event& event,
 
   for ( size_t i = 0; i < double_values.size(); ++i )
   {
+
     double_values_[ i ].push_back( double_values[ i ] );
   }
   for ( size_t i = 0; i < long_values.size(); ++i )

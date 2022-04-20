@@ -33,7 +33,7 @@ class JitNode : public Node
 {
 private:
   index local_id_;
-  index pos_in_thread;
+
 
 public:
   std::shared_ptr< VectorizedNode > container_;

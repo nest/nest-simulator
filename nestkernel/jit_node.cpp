@@ -36,7 +36,6 @@ namespace nest
 
 JitNode::JitNode()
   : local_id_( -1 )
-  , pos_in_thread( -1 )
 {
 }
 
@@ -48,7 +47,6 @@ JitNode::~JitNode() noexcept
 JitNode::JitNode( const JitNode& n )
   : Node( n )
   , local_id_( -1 )
-  , pos_in_thread( -1 )
   , container_( n.container_ )
 {
 }
@@ -59,7 +57,7 @@ JitNode::resize( index extended_space )
   container_->resize( extended_space );
 }
 
-std::map< std::string, const std::vector<double>& > 
+std::map< std::string, const std::vector< double >& >
 JitNode::get_recordables() const
 {
   return container_->get_recordables();
@@ -68,7 +66,6 @@ void
 JitNode::reset_node()
 {
   local_id_ = -1;
-  pos_in_thread = -1;
   container_->reset();
 }
 bool
@@ -467,17 +464,7 @@ JitNode::set_node_id_( index id )
   local_id_ = container_->size() - 1;
 }
 
-void
-JitNode::set_pos_in_thread( index pos )
-{
-  pos_in_thread = pos;
-}
 
-index
-JitNode::get_pos_in_thread() const
-{
-  return pos_in_thread;
-}
 void
 JitNode::set_container( std::shared_ptr< VectorizedNode > container )
 {

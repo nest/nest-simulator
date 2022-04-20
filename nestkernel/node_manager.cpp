@@ -212,6 +212,7 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
         else
         {
           t_container = model.get_container()->clone();
+          t_container->set_thread( t );
           vectorized_nodes.at( t ).push_back( t_container );
           index t_container_pos = vectorized_nodes.at( t ).size() - 1;
           model.add_thread_node_pair( t, t_container_pos );
@@ -452,6 +453,7 @@ NodeManager::get_node_or_proxy( index node_id, thread t )
 
   assert( 0 <= t and ( t == -1 or t < kernel().vp_manager.get_num_threads() ) );
   // TODO: this assertion must consider dependency between nodes from different threads
+  // TODO: see node_manager:: add_neurons::set_max_node_id
   // assert( 0 < node_id and node_id <= local_nodes_[ t ].size() );
 
   Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );

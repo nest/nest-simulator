@@ -52,7 +52,7 @@ class VectorizedNode
 public:
   VectorizedNode();
 
-  VectorizedNode( const VectorizedNode* );
+  // VectorizedNode( const VectorizedNode* );
 
   virtual std::shared_ptr< VectorizedNode >
   clone() const
@@ -60,6 +60,25 @@ public:
     return 0;
   };
 
+  virtual ~VectorizedNode()
+  {
+    node_uses_wfr_.clear();
+    frozen_.clear();
+    initialized_.clear();
+    global_ids.clear();
+  }
+
+  index
+  get_thread()
+  {
+    return thread;
+  }
+
+  void
+  set_thread( index t )
+  {
+    thread = t;
+  }
   virtual std::map< std::string, const std::vector< double >& >
 
   get_recordables() const
@@ -616,6 +635,7 @@ private:
   std::vector< bool > frozen_;
   std::vector< bool > initialized_;
   std::vector< index > global_ids;
+  index thread;
   Node* wrapper_;
 };
 inline bool

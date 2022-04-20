@@ -38,10 +38,11 @@
 namespace nest
 {
 VectorizedNode::VectorizedNode()
-  : node_uses_wfr_( 1, false )
-  , frozen_( 1, false )
-  , initialized_( 1, false )
+  : node_uses_wfr_( 0 )
+  , frozen_( 0 )
+  , initialized_( 0 )
   , global_ids( 0 )
+  , thread( -1 )
 {
 }
 
@@ -52,6 +53,7 @@ VectorizedNode::reset()
   frozen_.clear();
   initialized_.clear();
   global_ids.clear();
+  thread = -1;
 }
 bool
 VectorizedNode::wfr_update( const Time&, const long, const long, index local_id )
@@ -380,7 +382,7 @@ VectorizedNode::get_wrapper( index node_id, index thread_id ) const
 {
   assert( node_id >= 0 );
   nest::index global_id = get_global_id( node_id );
-  Node* node = kernel().node_manager.get_node_or_proxy( global_id, thread_id );
+  Node* node = kernel().node_manager.get_node_or_proxy( global_id, thread );
   return node;
 }
 }

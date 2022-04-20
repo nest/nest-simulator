@@ -74,6 +74,14 @@ PyNEST examples
    ../auto_examples/intrinsic_currents_spiking
    ../auto_examples/intrinsic_currents_subthreshold
 
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Compartmental neuron examples
+
+   ../auto_examples/compartmental_model/receptors_and_current
+   ../auto_examples/compartmental_model/two_comps
+
 .. toctree::
    :maxdepth: 1
    :caption: Connection set algebra examples

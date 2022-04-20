@@ -137,6 +137,11 @@ private:
     size_t offset,
     size_t step = 1 );
 
+  /**
+   * Conditionally update element_idx and part_idx for composite NodeCollections
+   */
+  void composite_update_indices_();
+
 public:
   nc_const_iterator( const nc_const_iterator& nci ) = default;
   void get_current_part_offset( size_t&, size_t& );
@@ -428,6 +433,13 @@ public:
   NodeCollectionPrimitive( const NodeCollectionPrimitive& ) = default;
 
   /**
+   * Primitive assignment operator.
+   *
+   * @param rhs Primitive to assign
+   */
+  NodeCollectionPrimitive& operator=( const NodeCollectionPrimitive& ) = default;
+
+  /**
    * Create empty NodeCollection.
    *
    * @note This is only for use by SPBuilder.
@@ -665,9 +677,9 @@ inline NodeIDTriple nc_const_iterator::operator*() const
 inline nc_const_iterator&
 nc_const_iterator::operator++()
 {
+  element_idx_ += step_;
   if ( primitive_collection_ )
   {
-    element_idx_ += step_;
     if ( element_idx_ >= primitive_collection_->size() )
     {
       element_idx_ = primitive_collection_->size();
@@ -675,35 +687,7 @@ nc_const_iterator::operator++()
   }
   else
   {
-    element_idx_ += step_;
-    // If we went past the size of the primitive, we need to adjust the element
-    // and primitive part indices.
-    size_t primitive_size = composite_collection_->parts_[ part_idx_ ].size();
-    while ( element_idx_ >= primitive_size )
-    {
-      element_idx_ = element_idx_ - primitive_size;
-      ++part_idx_;
-      if ( part_idx_ < composite_collection_->parts_.size() )
-      {
-        primitive_size = composite_collection_->parts_[ part_idx_ ].size();
-      }
-    }
-    // If we went past the end of the composite, we need to adjust the
-    // position of the iterator.
-    if ( composite_collection_->end_offset_ != 0 or composite_collection_->end_part_ != 0 )
-    {
-      if ( part_idx_ >= composite_collection_->end_part_ and element_idx_ >= composite_collection_->end_offset_ )
-      {
-        part_idx_ = composite_collection_->end_part_;
-        element_idx_ = composite_collection_->end_offset_;
-      }
-    }
-    else if ( part_idx_ >= composite_collection_->parts_.size() )
-    {
-      auto end_of_composite = composite_collection_->end();
-      part_idx_ = end_of_composite.part_idx_;
-      element_idx_ = end_of_composite.element_idx_;
-    }
+    composite_update_indices_();
   }
   return *this;
 }
@@ -711,16 +695,10 @@ nc_const_iterator::operator++()
 inline nc_const_iterator&
 nc_const_iterator::operator+=( const size_t n )
 {
-  if ( primitive_collection_ )
+  element_idx_ += n * step_;
+  if ( composite_collection_ )
   {
-    element_idx_ += n * step_;
-  }
-  else
-  {
-    for ( size_t i = 0; i < n; ++i )
-    {
-      operator++();
-    }
+    composite_update_indices_();
   }
   return *this;
 }

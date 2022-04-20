@@ -37,7 +37,7 @@
 Short description
 +++++++++++++++++
 
-Current-based generalized leaky integrate-and-fire models
+Current-based generalized leaky integrate-and-fire (GLIF) models (from the Allen Institute)
 
 Description
 +++++++++++

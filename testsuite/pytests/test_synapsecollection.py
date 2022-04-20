@@ -115,8 +115,7 @@ class TestSynapseCollection(unittest.TestCase):
         # Key is None
         all_values = conns.get()
 
-        expected_syn_model = 'static_synapse'
-        expected_syn_id = nest.ll_api.sli_func('synapsedict')[expected_syn_model]
+        expected_syn_id = nest.GetDefaults("static_synapse", "synapse_modelid")
 
         target_ref = [1, 2, 1, 2]
         dpw_ref = {'delay': [1., 1., 1., 1.],
@@ -297,8 +296,7 @@ class TestSynapseCollection(unittest.TestCase):
         nest.Connect(nrn, nrn)
         conns = nest.GetConnections()
 
-        expected_syn_model = 'static_synapse'
-        expected_syn_id = nest.ll_api.sli_func('synapsedict')[expected_syn_model]
+        expected_syn_id = nest.GetDefaults("static_synapse", "synapse_modelid")
 
         conns_val = conns.get(output='pandas')
         pnds_ref = pandas.DataFrame({'delay': 1.,
@@ -365,7 +363,8 @@ class TestSynapseCollection(unittest.TestCase):
         """
         conns = nest.GetConnections()
         self.assertEqual(len(conns), 0)
-        self.assertEqual(conns.get(), ())
+        self.assertEqual(conns.get(), {})
+        self.assertEqual(conns.get('weight'), ())
 
         nrns = nest.Create('iaf_psc_alpha', 2)
         nest.Connect(nrns, nrns, 'one_to_one')
@@ -373,7 +372,7 @@ class TestSynapseCollection(unittest.TestCase):
         self.assertEqual(len(conns), 2)
 
         nest.ResetKernel()
-        self.assertEqual(conns.get(), ())
+        self.assertEqual(conns.get(), {})
         conns.set(weight=10.)
         self.assertEqual(conns.get('weight'), ())
 

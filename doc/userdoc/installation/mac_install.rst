@@ -40,7 +40,7 @@ Preparations
 
    .. code:: sh
 
-      conda acvitate conda/
+      conda activate conda/
 
    This assumes that you have created the environment in the folder ``conda/`` as given above. Note that the trailing
    slash is necessary for conda to distinguish it from a named environment.
@@ -72,11 +72,13 @@ Building NEST
 
 #. Create a build directory outside the NEST sources and change into it.
 
+#. Double check that you have activated a virtual environment.
+
 #. Configure NEST by running
 
    .. code-block:: sh
 
-      cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> <nest_source_dir>
+      cmake <nest_source_dir>
 
    If you have libraries required by NEST such as GSL installed with Homebrew and Conda, this
    can lead to library conflicts (error messages like ``Initializing libomp.dylib, but found
@@ -85,7 +87,7 @@ Building NEST
 
    .. code-block:: sh
 
-      CMAKE_PREFIX_PATH=<conda_env_dir> cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> <nest_source_dir>
+      CMAKE_PREFIX_PATH=<conda_env_dir> cmake <nest_source_dir>
 
    You can find the ``<conda_env_dir>`` for the currently active conda environment by running
    ``conda info`` and looking for the "active env location" entry in the output.
@@ -101,38 +103,18 @@ Building NEST
       make install
       make installcheck
 
-#. To run NEST, configure your environment with
+Install NEST outside of a virtual environment
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   .. code-block:: sh
+By default NEST will be installed into the active virtual Python environment. If you wish to
+install it elsewhere, you can specify an install prefix. Follow the above instructions, but
+use ``cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> <nest_source_dir>`` instead. Note
+that when NEST is installed in a non-standard location, automatic discovery of the Python
+module is impossible, and environment variables must be set before NEST can be used:
 
-      source <nest_install_dir>/bin/nest_vars.sh
+.. code-block:: sh
 
-Installing into a virtual environment
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-You can install NEST to the default location for Python packages inside a virtual environment
-by activating the virtual environment before building NEST, by modifying the instructions above
-as follows:
-
-1. Create the virtual environment if it does not exist yet (replace ``nest_env`` by a name of your choice)
-
-   .. code-block:: bash
-      python -m venv nest_env
-#. Activate the environment
-
-   .. code-block:: bash
-      source nest_env/bin/activate
-#. Navigate to your NEST build directory
-
-#. Configure NEST by running
-
-   .. code-block:: sh
-      CMAKE_PREFIX_PATH=<conda_env_dir> cmake <nest_source_dir>
-#. Build and install NEST as described above
-
-If you follow this approach, you do not need to source ``nest_vars.sh``, as the Python package
-for NEST is installed in a default location.
-
+   source <nest_install_dir>/bin/nest_vars.sh
 
 Troubleshooting
 ---------------

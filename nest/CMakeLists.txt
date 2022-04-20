@@ -22,13 +22,6 @@ set( nest_sources
     )
 
 add_executable( nest main.cpp ${nest_sources} )
-if ( IS_BLUEGENE AND static-libraries )
-    set_target_properties( nest
-        PROPERTIES
-        LINK_SEARCH_END_STATIC TRUE
-        LINK_SEARCH_START_STATIC TRUE
-        )
-endif ()
 
 if ( NOT APPLE )
     set_target_properties( nest

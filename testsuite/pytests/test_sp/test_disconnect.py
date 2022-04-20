@@ -65,11 +65,12 @@ class TestDisconnectSingle(unittest.TestCase):
         ]
 
     def test_synapse_deletion_one_to_one_no_sp(self):
-        for syn_model in nest.Models('synapses'):
+        for syn_model in nest.synapse_models:
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
                 nest.resolution = 0.1
                 nest.total_num_virtual_procs = nest.num_processes
+
                 neurons = nest.Create('iaf_psc_alpha', 4)
                 syn_dict = {'synapse_model': syn_model}
 

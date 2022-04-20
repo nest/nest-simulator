@@ -118,7 +118,7 @@ ConnectionCreator::PoolWrapper_< D >::PoolWrapper_()
 }
 
 template < int D >
-ConnectionCreator::PoolWrapper_< D >::~PoolWrapper_< D >()
+ConnectionCreator::PoolWrapper_< D >::~PoolWrapper_()
 {
   if ( masked_layer_ )
   {

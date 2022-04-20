@@ -35,8 +35,7 @@ Use Python to build PyNEST
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 +-----------------------------------------------+----------------------------------------------------------------+
-| ``-Dwith-python=[OFF|ON|<path/to/Python>]``   | Build PyNEST [default=ON]. To set a specific Python, give the  |
-|                                               | install path.                                                  |
+| ``-Dwith-python=[OFF|ON]``                    | Build PyNEST [default=ON].                                     |
 +-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dcythonize-pynest=[OFF|ON]``               | Use Cython to cythonize pynestkernel.pyx [default=ON]. If OFF, |
 |                                               | PyNEST has to be build from a pre-cythonized pynestkernel.pyx. |
@@ -119,6 +118,8 @@ Generic build configuration
 +------------------------------------------------------+------------------------------------------------------------------+
 | ``-Dwith-intel-compiler-flags=[OFF|<list;of;flags>]``| User defined flags for the Intel compiler                        |
 |                                                      | [default='-fp-model strict']. Separate multiple flags by ';'.    |
++------------------------------------------------------+------------------------------------------------------------------+
+| ``-Dwith-cpp-std=[<C++ standard>]``                  | C++ standard to use for compilation [default='c++11'].           |
 +------------------------------------------------------+------------------------------------------------------------------+
 | ``-Dwith-libraries=[OFF|<list;of;libraries>]``       | Link additional libraries [default=OFF]. Give full path. Separate|
 |                                                      | multiple libraries by ';'.                                       |

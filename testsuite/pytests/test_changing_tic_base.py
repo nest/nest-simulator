@@ -27,9 +27,12 @@ import numpy as np
 @nest.ll_api.check_stack
 class TestChangingTicBase(unittest.TestCase):
     eps = 1e-7  # Tolerance value
-    # The defaults of iaf_psc_exp_ps_lossless contains the time of the last spike, converted to ms from step=-1.
-    # As the initialized step-value is negative, there is no need to account for the change in tic-base.
-    # However, because the value in the defaults is converted to ms, it will differ from the reference value.
+
+    # The defaults of iaf_psc_exp_ps_lossless contains the time of the
+    # last spike, converted to ms from step=-1.  As the initialized
+    # step-value is negative, there is no need to account for the
+    # change in tic-base.  However, because the value in the defaults
+    # is converted to ms, it will differ from the reference value.
     # The model is therefore ignored.
     ignored_models = ['iaf_psc_exp_ps_lossless']
 
@@ -38,9 +41,21 @@ class TestChangingTicBase(unittest.TestCase):
 
     def test_models(self):
         """Time objects in models correctly updated"""
+
+        # These parameters are automatically adjusted upon changes to
+        # the tic base or the resolution so they should explicitly not
+        # be the same after a change of those. We therefore exclude
+        # them from the checks below.
+        ignored_params = {
+          "correlation_detector": ["delta_tau"],
+          "correlomatrix_detector": ["delta_tau"],
+          "correlospinmatrix_detector": ["delta_tau"],
+          "noise_generator":  ["dt"],
+        }
+
         # Generate a dictionary of reference values for each model.
         reference = {}
-        for model in nest.Models():
+        for model in nest.node_models + nest.synapse_models:
             if model in self.ignored_models:
                 continue
             try:
@@ -69,11 +84,15 @@ class TestChangingTicBase(unittest.TestCase):
 
             keydiff = []
             for key, value in model_defaults.items():
+                if model in ignored_params and key in ignored_params[model]:
+                    continue
+
                 # value may not be a number, so we test for equality first.
                 # If it's not equal to the reference value, we assume it is a number.
                 if value != model_reference[key] and abs(value - model_reference[key]) > self.eps:
                     print(value - model_reference[key])
                     keydiff.append([key, model_reference[key], value])
+
             # If any keys have values different from the reference, the model fails.
             if len(keydiff) > 0:
                 print(model, keydiff)

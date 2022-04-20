@@ -225,6 +225,7 @@ def( DictionaryDatum& d, Name const n, FT const& value )
 
 /** Update a variable from a dictionary entry if it exists, skip call if it
  * doesn't.
+ * @note If the dictionary entry is an integer, use updateValue< long >.
  * @ingroup DictUtils
  * @throws see getValue(DictionaryDatum, Name)
  */
@@ -267,7 +268,6 @@ updateValue2( DictionaryDatum const& d, Name const n, C& obj, void ( C::*setfunc
     ( obj.*setfunc )( getValue< FT >( d, n ) );
   }
 }
-
 
 /** Create a property of type ArrayDatum in the dictionary, if it does not
  * already exist.

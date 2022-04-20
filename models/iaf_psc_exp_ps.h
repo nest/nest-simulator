@@ -151,7 +151,7 @@ public:
   iaf_psc_exp_ps();
 
   /** Copy constructor.
-      GenericModel::allocate_() uses the copy constructor to clone
+      GenericModel::create_() uses the copy constructor to clone
       actual model instances from the prototype instance.
 
       @note The copy constructor MUST NOT be used to create nodes based
@@ -369,7 +369,7 @@ private:
   {
     double h_ms_;           //!< Time resolution [ms]
     long refractory_steps_; //!< Refractory time in steps
-    double exp_tau_m_;      //!< exp(-h/tau_m)
+    double expm1_tau_m_;    //!< expm1(-h/tau_m)
     double exp_tau_ex_;     //!< exp(-h/tau_ex)
     double exp_tau_in_;     //!< exp(-h/tau_in)
     double P20_;            //!< Progagator matrix element, 2nd row

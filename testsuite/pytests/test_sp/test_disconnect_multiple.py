@@ -52,7 +52,7 @@ class TestDisconnect(unittest.TestCase):
         ]
 
     def test_multiple_synapse_deletion_all_to_all(self):
-        for syn_model in nest.Models('synapses'):
+        for syn_model in nest.synapse_models:
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
                 nest.CopyModel('static_synapse', 'my_static_synapse')
@@ -105,7 +105,7 @@ class TestDisconnect(unittest.TestCase):
                     self.assertEqual(5, st_neuron['SE2']['z_connected'])
 
     def test_multiple_synapse_deletion_one_to_one(self):
-        for syn_model in nest.Models('synapses'):
+        for syn_model in nest.synapse_models:
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
                 nest.CopyModel('static_synapse', 'my_static_synapse')
@@ -158,7 +158,7 @@ class TestDisconnect(unittest.TestCase):
                     self.assertEqual(9, st_neuron['SE2']['z_connected'])
 
     def test_multiple_synapse_deletion_one_to_one_no_sp(self):
-        for syn_model in nest.Models('synapses'):
+        for syn_model in nest.synapse_models:
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
                 nest.CopyModel('static_synapse', 'my_static_synapse')
@@ -187,7 +187,7 @@ class TestDisconnect(unittest.TestCase):
                 assert len(conns) == 20
 
     def test_single_synapse_deletion_sp(self):
-        for syn_model in nest.Models('synapses'):
+        for syn_model in nest.synapse_models:
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
                 nest.CopyModel('static_synapse', 'my_static_synapse')

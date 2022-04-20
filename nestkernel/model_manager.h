@@ -48,15 +48,11 @@ public:
   ModelManager();
   ~ModelManager();
 
-  /**
-   *
-   */
-  virtual void initialize();
-
-  /**
-   *
-   */
-  virtual void finalize();
+  virtual void initialize() override;
+  virtual void finalize() override;
+  virtual void change_number_of_threads() override;
+  virtual void set_status( const DictionaryDatum& ) override;
+  virtual void get_status( DictionaryDatum& ) override;
 
   /**
    * Resize the structures for the Connector objects if necessary.
@@ -68,37 +64,24 @@ public:
    */
   void calibrate( const TimeConverter& );
 
-  /**
-   *
-   */
-  virtual void set_status( const DictionaryDatum& );
 
   /**
-   *
-   */
-  virtual void get_status( DictionaryDatum& );
-
-  /**
-   *
+   * Return a proxynode configured for thread tid and the given
+   * node_id.
    */
   Node* get_proxy_node( thread tid, index node_id );
 
   /**
-   *
-   */
-  Node* get_dummy_spike_source( thread );
-
-  /**
    * Return pointer to protoype for given synapse id.
    * @throws UnknownSynapseType
+   *
+   * @todo: make the return type const, after the increment of
+   *        num_connections and the min_ and max_delay setting in
+   *        ConnectorBase was moved out to the ConnectionManager
    */
+  ConnectorModel& get_connection_model( synindex syn_id, thread t = 0 );
 
-  //  TODO: make the return type const, after the increment of
-  //  num_connections and the min_ and max_delay setting in
-  //  ConnectorBase was moved out to the ConnectionManager
-  ConnectorModel& get_synapse_prototype( synindex syn_id, thread t = 0 );
-
-  const std::vector< ConnectorModel* >& get_synapse_prototypes( thread tid );
+  const std::vector< ConnectorModel* >& get_connection_models( thread tid );
 
   /**
    * Register a node-model prototype.
@@ -106,42 +89,13 @@ public:
    * it known in the simulator. The natural place for a call to this function
    * is in a *module.cpp file.
    * @param name of the new node model.
-   * @param private_model if true, don't add model to modeldict.
    * @param deprecation_info  If non-empty string, deprecation warning will
    *                          be issued for model with this info to user.
    * @return ID of the new model object.
-   * @see register_private_prototype_model, register_preconf_node_model,
-   * register_prototype_connection
+   * @see register_prototype_connection
    */
   template < class ModelT >
-  index
-  register_node_model( const Name& name, bool private_model = false, std::string deprecation_info = std::string() );
-
-  /**
-   * Register a pre-configured model prototype with the network.
-   * This function must be called exactly once for each model class to make
-   * it known to the network. The natural place for a call to this function
-   * is in a *module.cpp file.
-   *
-   * Pre-configured models are models based on the same class, as
-   * another model, but have different parameter settings; e.g.,
-   * voltmeter is a pre-configured multimeter.
-   *
-   * @param name of the new node model.
-   * @param private_model if true, don't add model to modeldict.
-   * @param dictionary to use to pre-configure model
-   * @param deprecation_info  If non-empty string, deprecation warning will
-   *                          be issued for model with this info to user.
-   *
-   * @return ID of the new model object.
-   * @see register_private_prototype_model, register_node_model,
-   * register_prototype_connection
-   */
-  template < class ModelT >
-  index register_preconf_node_model( const Name& name,
-    DictionaryDatum& conf,
-    bool private_model = false,
-    std::string deprecation_info = std::string() );
+  index register_node_model( const Name& name, std::string deprecation_info = std::string() );
 
   /**
    * Copy an existing model and register it as a new model.
@@ -150,7 +104,7 @@ public:
    * @param new_name name of new model.
    * @param params default parameters of new model.
    * @return model ID of new Model object.
-   * @see copy_node_model_, copy_synapse_model_
+   * @see copy_node_model_, copy_connection_model_
    */
   index copy_model( Name old_name, Name new_name, DictionaryDatum params );
 
@@ -158,9 +112,10 @@ public:
    * Set the default parameters of a model.
    * @param name of model.
    * @param params default parameters to be set.
+   * @return true if the operation succeeded, else false
    * @see set_node_defaults_, set_synapse_defaults_
    */
-  void set_model_defaults( Name name, DictionaryDatum params );
+  bool set_model_defaults( Name name, DictionaryDatum params );
 
   /**
    * Register a synape model with a custom Connector model and without any
@@ -185,14 +140,21 @@ public:
     const RegisterConnectionModelFlags flags = default_secondary_connection_model_flags );
 
   /**
-   * @return The model id of a given model name
+   * @return The model ID for a Model with a given name
+   * @throws UnknownModelName if the model is not available
    */
-  int get_model_id( const Name ) const;
+  index get_node_model_id( const Name ) const;
 
   /**
-   * @return The Model of a given model ID
+   * @return The Model registered with the given model ID
    */
-  Model* get_model( index ) const;
+  Model* get_node_model( index ) const;
+
+  /**
+   * @return The numeric ID of a given synapse model
+   * @throws UnknownSynapseType if the model is not available
+   */
+  index get_synapse_model_id( std::string model_name );
 
   DictionaryDatum get_connector_defaults( synindex syn_id ) const;
 
@@ -214,51 +176,17 @@ public:
   void set_connector_defaults( synindex syn_id, const DictionaryDatum& d );
 
   /**
-   * Check, if there are instances of a given model.
-   * @param i the index of the model to check for.
-   * @return True, if model is instantiated at least once.
-   */
-  bool is_model_in_use( index i );
-
-  /**
-   * Checks, whether connections of the given type were created
-   */
-  bool synapse_prototype_in_use( synindex syn_id );
-
-  /**
    * Asserts validity of synapse index, otherwise throws exception.
    * @throws UnknownSynapseType
    */
   void assert_valid_syn_id( synindex syn_id, thread t = 0 ) const;
 
-  /**
-   * @return Reference to the model dictionary
-   */
-  DictionaryDatum& get_modeldict();
-
-  /**
-   * @return Reference to the synapse dictionary
-   */
-  DictionaryDatum& get_synapsedict();
-
-  /**
-   * Does the network contain copies of models created using CopyModel?
-   */
-  bool has_user_models() const;
-
-  bool has_user_prototypes() const;
-
   bool are_model_defaults_modified() const;
 
-  const std::vector< ConnectorModel* >& get_prototypes( const thread t ) const;
-
-  size_t get_num_node_models() const;
-
-  size_t get_num_synapse_prototypes() const;
+  size_t get_num_connection_models() const;
 
   /**
    * Print out the memory information for each node model.
-   * @see sli::pool
    */
   void memory_info() const;
 
@@ -269,14 +197,11 @@ public:
   SecondaryEvent& get_secondary_event_prototype( const synindex syn_id, const thread tid ) const;
 
 private:
-  /**  */
-  void clear_models_();
+  void clear_node_models_();
 
-  /**  */
-  void clear_prototypes_();
+  void clear_connection_models_();
 
-  /**  */
-  index register_node_model_( Model* model, bool private_model = false );
+  index register_node_model_( Model* model );
 
   synindex register_connection_model_( ConnectorModel* );
 
@@ -285,7 +210,7 @@ private:
    * @param old_id ID of existing model.
    * @param new_name name of new model.
    * @return model ID of new Model object.
-   * @see copy_model(), copy_synapse_model_()
+   * @see copy_model(), copy_connection_model_()
    */
   index copy_node_model_( index old_id, Name new_name );
 
@@ -296,7 +221,7 @@ private:
    * @return model ID of new Model object.
    * @see copy_model(), copy_node_model_()
    */
-  index copy_synapse_model_( index old_id, Name new_name );
+  index copy_connection_model_( index old_id, Name new_name );
 
   /**
    * Set the default parameters of a model.
@@ -318,60 +243,39 @@ private:
   static bool compare_model_by_id_( const int a, const int b );
 
   /**
-   * The list of clean node models. The first component of the pair is a
-   * pointer to the actual Model, the second is a flag indicating if
-   * the model is private. Private models are not entered into the
-   * modeldict.
+   * List of clean built-in node models.
    */
-  std::vector< std::pair< Model*, bool > > pristine_models_;
-
-  std::vector< Model* > models_; //!< List of available models
-
+  std::vector< Model* > builtin_node_models_;
 
   /**
-   * The list of clean synapse models. The first component of the pair is a
-   * pointer to the actual Model, the second is a flag indicating if
-   * the model is private. Private models are not entered into the
-   * modeldict.
+   * List of usable node models. This list is cleared and repopulated
+   * upon application startup and calls to ResetKernel. It contains
+   * copies of the built-in models, models registered from extension
+   * modules, and models created by calls to CopyModel(). The elements
+   * of this list also keep the user-modified defaults.
    */
-  std::vector< ConnectorModel* > pristine_prototypes_;
+  std::vector< Model* > node_models_;
 
   /**
-   * The list of available synapse prototypes: first dimension one
-   * entry per thread, second dimension for each synapse type
+   * List of built-in clean connection models.
    */
-  std::vector< std::vector< ConnectorModel* > > prototypes_;
+  std::vector< ConnectorModel* > builtin_connection_models_;
+
+  /**
+   * The list of usable connection models. The first dimension keeps
+   * one entry per thread, the second dimension has the actual models.
+   * This list is cleared and repopulated upon application startup and
+   * calls to ResetKernel. The inner list contains copies of the
+   * built-in models, models registered from extension modules, and
+   * models created by calls to CopyModel(). The elements of the list
+   * also keep the user-modified defaults.
+   */
+  std::vector< std::vector< ConnectorModel* > > connection_models_;
 
   std::vector< ConnectorModel* > secondary_connector_models_;
   std::vector< std::map< synindex, SecondaryEvent* > > secondary_events_prototypes_;
 
-  /** @BeginDocumentation
-   Name: modeldict - dictionary containing all devices and models of NEST
-
-   Description:
-   'modeldict info' shows the contents of the dictionary
-
-   SeeAlso: info, Device, RecordingDevice
-   */
-  DictionaryDatum modeldict_; //!< Dictionary of all models
-
-  /** @BeginDocumentation
-   Name: synapsedict - Dictionary containing all synapse models.
-
-   Description:
-   'synapsedict info' shows the contents of the dictionary
-   Synapse model names ending with '_hpc' provide minimal memory requirements by
-   using thread-local target neuron IDs and fixing the `rport` to 0.
-   Synapse model names ending with '_lbl' allow to assign an individual integer
-   label (`synapse_label`) to created synapses at the cost of increased memory
-   requirements.
-
-   FirstVersion: October 2005
-
-   Author: Jochen Martin Eppler
-
-   SeeAlso: info
-   */
+  DictionaryDatum modeldict_;   //!< Dictionary of all node models
   DictionaryDatum synapsedict_; //!< Dictionary of all synapse models
 
   Model* proxynode_model_;
@@ -380,28 +284,16 @@ private:
 
   //! Placeholders for remote nodes, one per thread
   std::vector< std::vector< Node* > > proxy_nodes_;
-  //! Placeholders for spiking remote nodes, one per thread
-  std::vector< Node* > dummy_spike_sources_;
   //! True if any model defaults have been modified
   bool model_defaults_modified_;
 };
 
 
 inline Model*
-ModelManager::get_model( index m ) const
+ModelManager::get_node_model( index m ) const
 {
-  if ( m >= models_.size() or models_[ m ] == 0 )
-  {
-    throw UnknownModelID( m );
-  }
-
-  return models_[ m ];
-}
-
-inline Node*
-ModelManager::get_dummy_spike_source( thread tid )
-{
-  return dummy_spike_sources_[ tid ];
+  assert( m < node_models_.size() );
+  return node_models_[ m ];
 }
 
 inline bool
@@ -410,71 +302,39 @@ ModelManager::are_model_defaults_modified() const
   return model_defaults_modified_;
 }
 
-inline DictionaryDatum&
-ModelManager::get_modeldict()
-{
-  return modeldict_;
-}
-
-inline DictionaryDatum&
-ModelManager::get_synapsedict()
-{
-  return synapsedict_;
-}
-
-inline bool
-ModelManager::has_user_models() const
-{
-  return models_.size() > pristine_models_.size();
-}
-
 inline ConnectorModel&
-ModelManager::get_synapse_prototype( synindex syn_id, thread t )
+ModelManager::get_connection_model( synindex syn_id, thread t )
 {
   assert_valid_syn_id( syn_id );
-  return *( prototypes_[ t ][ syn_id ] );
+  return *( connection_models_[ t ][ syn_id ] );
 }
 
 inline const std::vector< ConnectorModel* >&
-ModelManager::get_synapse_prototypes( thread tid )
+ModelManager::get_connection_models( thread tid )
 {
-  return prototypes_[ tid ];
+  return connection_models_[ tid ];
 }
 
 inline size_t
-ModelManager::get_num_node_models() const
+ModelManager::get_num_connection_models() const
 {
-  return models_.size();
-}
-
-inline size_t
-ModelManager::get_num_synapse_prototypes() const
-{
-  assert( prototypes_[ 0 ].size() <= invalid_synindex );
-  return prototypes_[ 0 ].size();
+  assert( connection_models_[ 0 ].size() <= invalid_synindex );
+  return connection_models_[ 0 ].size();
 }
 
 inline void
 ModelManager::assert_valid_syn_id( synindex syn_id, thread t ) const
 {
-  if ( syn_id >= prototypes_[ t ].size() or prototypes_[ t ][ syn_id ] == 0 )
+  if ( syn_id >= connection_models_[ t ].size() or connection_models_[ t ][ syn_id ] == 0 )
   {
     throw UnknownSynapseType( syn_id );
   }
 }
 
-inline bool
-ModelManager::has_user_prototypes() const
-{
-  return prototypes_[ 0 ].size() > pristine_prototypes_.size();
-}
-
 inline void
 ModelManager::delete_secondary_events_prototypes()
 {
-  for ( std::vector< std::map< synindex, SecondaryEvent* > >::iterator it = secondary_events_prototypes_.begin();
-        it != secondary_events_prototypes_.end();
-        ++it )
+  for ( auto it = secondary_events_prototypes_.begin(); it != secondary_events_prototypes_.end(); ++it )
   {
     for ( std::map< synindex, SecondaryEvent* >::iterator iit = it->begin(); iit != it->end(); ++iit )
     {

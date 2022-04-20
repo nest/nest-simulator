@@ -46,7 +46,7 @@ SeeAlso: testsuite::test_sinusoidal_gamma_generator_1, testsuite::test_sinusoida
 */
 
 % return success if generator not known due to missing GSL
-modeldict /sinusoidal_gamma_generator known not
+GetKernelStatus /node_models get /sinusoidal_gamma_generator MemberQ not
 {
   (Skipping test: generator missing) ==
   quit  

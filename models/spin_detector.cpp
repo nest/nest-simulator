@@ -26,8 +26,8 @@
 #include <numeric>
 
 // Includes from libnestutil:
-#include "dict_util.h"
 #include "compose.hpp"
+#include "dict_util.h"
 #include "logging.h"
 
 // Includes from nestkernel:

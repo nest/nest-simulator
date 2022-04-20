@@ -93,9 +93,9 @@ public:
     return names::stimulator;
   }
 
-  using Node::handles_test_event; // new
-  using Node::handle;
   using Node::event_hook;
+  using Node::handle;
+  using Node::handles_test_event; // new
 
   port send_test_event( Node&, rport, synindex, bool ) override;
   port handles_test_event( SpikeEvent&, rport ) override;
@@ -124,6 +124,7 @@ private:
 
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_& ) = default;
+    Parameters_& operator=( const Parameters_& ) = default;
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
     void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary

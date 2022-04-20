@@ -1,3 +1,5 @@
+.. _record_simulations:
+
 Record from simulations
 =======================
 
@@ -15,7 +17,7 @@ section about :ref:`Recording Backends <recording_backends>`.
 
 Recording devices can only reliably record data that was generated
 during the previous simulation time step interval. See the guide about
-:doc:`running simulations <running_simulations>` for details about the
+:ref:`running simulations <run_simulations>` for details about the
 temporal aspects of the simulation loop.
 
 .. note::
@@ -23,6 +25,7 @@ temporal aspects of the simulation loop.
    Due to the need for internal buffering and the unpredictable order
    of thread execution, events are not necessarily recorded in
    chronological order.
+
 
 Recording devices can fundamentally be subdivided into two groups:
 
@@ -59,7 +62,7 @@ display it on the terminal, or write it to files.
 To specify the recording backend for a given recording device, the
 property ``record_to`` of the latter has to be set to the name of the
 recording backend to be used. This can either happen already in the
-call to ``Create`` or by using ``SetStatus`` on the model instance.
+call to :py:func:`.Create` or by using :py:func:`.SetStatus` on the model instance.
 
 
 ::
@@ -76,9 +79,9 @@ Each recording backend may provide a specific set of parameters
 in the model status dictionary once the backend is set. This means
 that these parameters can only be reviewed and changed *after* the
 backend has been selected. In particular, recording-device specific
-per-device parameters cannot be set using ``SetDefaults``, but must
-rather be supplied either in the call to ``Create`` or set on an
-instance using ``SetStatus``.
+per-device parameters cannot be set using :py:func:`.SetDefaults`, but must
+rather be supplied either in the call to :py:func:`.Create` or set on an
+instance using :py:func:`.SetStatus`.
 
 .. note::
 
@@ -88,32 +91,40 @@ instance using ``SetStatus``.
    specific backend was selected has to be *set again* on the new
    backend, if the backend is changed later on.
 
-The full list of available recording backends and their respective
-properties can be obtained from the kernel's status dictionary.
+The full list of available recording backends can be obtained from the
+kernel attribute ``recording_backends``.
 
 ::
 
-   nest.GetKernelStatus("recording_backends")
-   {u'ascii': {},
-    u'memory': {},
-    u'mpi': {},
-    u'screen': {},
-    u'sionlib': {u'buffer_size': 1024,
-     u'filename': u'',
-     u'sion_chunksize': 262144,
-     u'sion_collective': False,
-     u'sion_n_files': 1}}
+   >>> print(nest.recording_backends)
+   ('ascii', 'memory', 'mpi', 'screen', 'sionlib')
 
-The example shows that only the `sionlib` backend has backend-specific
-global properties, which can be modified by supplying a nested
-dictionary to ``SetKernelStatus``.
+If a recording backend has global properties (i.e., parameters shared
+by all enrolled recording devices), those can be inspected with
+:py:func`.GetDefaults`
 
 ::
 
-    nest.SetKernelStatus({"recording_backends": {'sionlib': {'buffer_size': 512}}})
+   >>> nest.GetDefaults("sionlib")
+   {'buffer_size': 1024,
+    'filename': '',
+    'sion_chunksize': 262144,
+    'sion_collective': False,
+    'sion_n_files': 1}
 
-The following is a list of built-in recording backends that come with
-NEST:
+Such global parameters can be set using :py:func:`.SetDefaults`
+
+::
+
+   >>> nest.SetDefaults('sionlib', {'buffer_size': 512})
+
+Built-in backends
+-----------------
+
+Following is a list of built-in recording backends that come with
+NEST. Please note that the availability of some of them depends on the
+compile-time configuration for NEST. See the backend documentation for
+details.
 
 - :doc:`../models/recording_backend_memory`
 - :doc:`../models/recording_backend_ascii`

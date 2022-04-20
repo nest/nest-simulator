@@ -39,7 +39,7 @@ Synapse type for static connections
 Description
 +++++++++++
 
-static_synapse does not support any kind of plasticity. It simply stores
+``static_synapse`` does not support any kind of plasticity. It simply stores
 the parameters target, weight, delay and receiver port for each connection.
 
 Transmits
@@ -81,6 +81,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   static_synapse( const static_synapse& rhs ) = default;
+  static_synapse& operator=( const static_synapse& rhs ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these

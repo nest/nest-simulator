@@ -32,6 +32,7 @@ from werkzeug.exceptions import abort
 from werkzeug.wrappers import Response
 
 import nest
+
 import RestrictedPython
 import time
 
@@ -55,7 +56,7 @@ __all__ = [
     'do_exec',
     'set_mpi_comm',
     'run_mpi_app',
-    'NodeCollection',
+    'nestify',
 ]
 
 app = Flask(__name__)
@@ -97,34 +98,39 @@ def do_exec(args, kwargs):
                     data[variable] = locals_.get(variable, None)
             else:
                 data = locals_.get(kwargs['return'], None)
-            response['data'] = nest.hl_api.serializable(data)
+            response['data'] = nest.serializable(data)
         return response
 
     except Exception as e:
         for line in traceback.format_exception(*sys.exc_info()):
-            print(line)
+            print(line, flush=True)
         abort(Response(str(e), EXCEPTION_ERROR_STATUS))
 
 
 def log(call_name, msg):
-    print(f'==> MASTER 0/{time.time():.7f} ({call_name}): {msg}')
+    msg = f'==> MASTER 0/{time.time():.7f} ({call_name}): {msg}'
+    print(msg, flush=True)
 
 
 def do_call(call_name, args=[], kwargs={}):
-    """Call a function of NEST or execute a script within the server.
+    """Call a PYNEST function or execute a script within the server.
 
-    If the server is running in MPI-enabled mode, this function will
-    distribute the name of the function to call aa well as args and
-    kwargs to the worker processes using MPI.
+    If the server is run serially (i.e., without MPI), this function
+    will do one of two things: If call_name is "exec", it will execute
+    the script given in args via do_exec(). If call_name is the name
+    of a PyNEST API function, it will call that function and pass args
+    and kwargs to it.
 
-    In case the call_name is "exec", this function will execute the
-    script either by plain exec, or in a Restricted Python trusted
-    environment.
+    If the server is run with MPI, this function will first communicate
+    the call type ("exec" or API call) and the args and kwargs to all
+    worker processes. Only then will it execute the call in the same
+    way as described above for the serial case. After the call, all
+    worker responses are collected, combined and returned.
 
-    Please note that this function must only be called by the master.
+    Please note that this function must only be called on the master
+    process (i.e., the task with rank 0) in a distributed scenario.
 
     """
-    global mpi_comm
 
     if mpi_comm is not None:
         assert mpi_comm.Get_rank() == 0
@@ -139,18 +145,15 @@ def do_call(call_name, args=[], kwargs={}):
     if call_name == "exec":
         master_response = do_exec(args, kwargs)
     else:
-        call = getattr(nest, call_name)
-        args, kwargs = serialize(call_name, args, kwargs)
-        args, kwargs = NodeCollection(call, args, kwargs)
+        call, args, kwargs = nestify(call_name, args, kwargs)
         log(call_name, f'local call, args={args}, kwargs={kwargs}')
         master_response = call(*args, **kwargs)
 
-    response = [None]
+    response = [nest.serializable(master_response)]
     if mpi_comm is not None:
         log(call_name, 'waiting for response gather')
-        response = mpi_comm.gather(None, root=0)
+        response = mpi_comm.gather(response[0], root=0)
         log(call_name, f'received response gather, data={response}')
-    response[0] = nest.hl_api.serializable(master_response)
 
     return combine(call_name, response)
 
@@ -188,8 +191,9 @@ def route_api():
 def route_api_call(call):
     """ Route to call function in NEST.
     """
-    print("\n========================================\n")
+    print(f"\n{'='*40}\n", flush=True)
     args, kwargs = get_arguments(request)
+    log("route_api_call", f"call={call}, args={args}, kwargs={kwargs}")
     response = api_client(call, args, kwargs)
     return jsonify(response)
 
@@ -224,7 +228,9 @@ def get_arguments(request):
     args, kwargs = [], {}
     if request.is_json:
         json = request.get_json()
-        if isinstance(json, list):
+        if isinstance(json, str) and len(json) > 0:
+            args = [json]
+        elif isinstance(json, list):
             args = json
         elif isinstance(json, dict):
             kwargs = json
@@ -264,7 +270,7 @@ def get_or_error(func):
             return func(call, args, kwargs)
         except Exception as e:
             for line in traceback.format_exception(*sys.exc_info()):
-                print(line)
+                print(line, flush=True)
             abort(Response(str(e), EXCEPTION_ERROR_STATUS))
     return func_wrapper
 
@@ -307,10 +313,11 @@ def get_restricted_globals():
     return restricted_globals
 
 
-def NodeCollection(call, args, kwargs):
-    """ Get Node Collection as arguments for NEST functions.
+def nestify(call_name, args, kwargs):
+    """Get the NEST API call and convert arguments if neccessary.
     """
 
+    call = getattr(nest, call_name)
     objectnames = ['nodes', 'source', 'target', 'pre', 'post']
     paramKeys = list(inspect.signature(call).parameters.keys())
     args = [nest.NodeCollection(arg) if paramKeys[idx] in objectnames
@@ -319,49 +326,13 @@ def NodeCollection(call, args, kwargs):
         if key in objectnames:
             kwargs[key] = nest.NodeCollection(value)
 
-    return args, kwargs
-
-
-def serialize(call_name, args, kwargs):
-    """Serialize arguments with keywords for calling functions in NEST.
-
-    TODO: Explain why we need to run the inverse getter.
-
-    TODO: Find out why the `if "params" in kwargs:` condition is
-    needed in the MPI enabled version, but did not seem to be required
-    in the normal NEST Server.
-
-    When calling the inverse getter function, we only look at the
-    information available on the master, as we're only interested in
-    the keys. We still have to call the getters also on the workers,
-    as not doing so might lead to deadlocks due to unmatched MPI
-    calls, if the getters themselves initiate MPI communication calls
-    internally.
-
-    """
-
-    if call_name.startswith('Set'):
-        status = {}
-        if call_name == 'SetDefaults':
-            status = do_call('GetDefaults', [kwargs['model']])
-        elif call_name == 'SetKernelStatus':
-            status = do_call('GetKernelStatus')
-        elif call_name == 'SetStructuralPlasticityStatus':
-            status = do_call('GetStructuralPlasticityStatus', [kwargs['params']])  # noqa
-        elif call_name == 'SetStatus':
-            status = do_call('GetStatus', [kwargs['nodes']])
-        if "params" in kwargs:
-            for key, val in kwargs['params'].items():
-                if key in status:
-                    kwargs['params'][key] = type(status[key])(val)
-    return args, kwargs
+    return call, args, kwargs
 
 
 @get_or_error
 def api_client(call_name, args, kwargs):
     """ API Client to call function in NEST.
     """
-    global mpi_comm
 
     call = getattr(nest, call_name)
 
@@ -374,7 +345,8 @@ def api_client(call_name, args, kwargs):
             response = do_call(call_name, args, kwargs)
     else:
         response = call
-    return nest.hl_api.serializable(response)
+
+    return response
 
 
 def set_mpi_comm(comm):
@@ -383,24 +355,33 @@ def set_mpi_comm(comm):
 
 
 def run_mpi_app(host="127.0.0.1", port=5000):
-    # NEST segfaults if someone messes with the number of threads, so we don't.
+    # NEST crashes with a segmentation fault if the number of threads
+    # is changed from the outside. Calling run() with threaded=False
+    # prevents Flask from performing such changes.
     app.run(host=host, port=port, threaded=False)
 
 
 def combine(call_name, response):
     """Combine responses from different MPI processes.
 
-    This function combines the responses of all MPI processes and
-    returns a single response object. The type of the result can vary
-    depending on the call of the call that produced it.
+    In a distributed scenario, each MPI process creates its own share
+    of the response from the data available locally. To present a
+    coherent view on the reponse data for the caller, this data has to
+    be combined.
+
+    If this function is run serially (i.e., without MPI), it just
+    returns the response data from the only process immediately.
+
+    The type of the returned result can vary depending on the call
+    that produced it.
 
     The combination of results is based on a cascade of heuristics
     based on the call that was issued and individual repsonse data:
       * if all responses are None, the combined response will also just
         be None
-      * for some specific calls, the responses are known to be the same
-        from all workers and the combined response is just the first
-        element of the response list
+      * for some specific calls, the responses are known to be the
+        same from the master and all workers. In this case, the
+        combined response is just the master response
       * if the response list contains only a single actual response and
         None otherwise, the combined response will be that one actual
         response
@@ -413,25 +394,38 @@ def combine(call_name, response):
       * for calls to GetStatus on neurons, the combined response is just
         the single dictionary returned by the process on which the
         neuron is actually allocated
+      * if the response contains one list per process, the combined
+        response will be those lists concatenated and flattened.
 
     """
 
-    if all(v is None for v in response):
-        result = None
-    elif call_name in ('exec', 'Create', 'GetDefaults'):
-        result = response[0]
-    else:
-        result = list(filter(lambda x: x is not None, response))
-        if len(result) == 1:
-            result = result[0]
-        else:
-            if all(type(v[0]) is dict for v in response):
-                result = merge_dicts(response)
-            else:
-                msg = "Cannot combine data because of unknown reason"
-                raise Exception(msg)
+    if mpi_comm is None:
+        return response[0]
 
-    return result
+    if all(v is None for v in response):
+        return None
+
+    # return the master response if all responses are known to be the same
+    if call_name in ('exec', 'Create', 'GetDefaults', 'GetKernelStatus',
+                     'SetKernelStatus', 'SetStatus'):
+        return response[0]
+
+    # return a single response if there is only one which is not None
+    filtered_response = list(filter(lambda x: x is not None, response))
+    if len(filtered_response) == 1:
+        return filtered_response[0]
+
+    # return a single merged dictionary if there are many of them
+    if all(type(v[0]) is dict for v in response):
+        return merge_dicts(response)
+
+    # return a flattened list if the response only consists of lists
+    if all(type(v) is list for v in response):
+        return [item for lst in response for item in lst]
+
+    log("combine()", f"ERROR: cannot combine response={response}")
+    msg = "Cannot combine data because of unknown reason"
+    raise Exception(msg)
 
 
 def merge_dicts(response):

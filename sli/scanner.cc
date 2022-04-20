@@ -525,7 +525,8 @@ Scanner::source( std::istream* in_s )
   }
 }
 
-bool Scanner::operator()( Token& t )
+bool
+Scanner::operator()( Token& t )
 {
   static const int base = 10;
   ScanStates state = start;
@@ -538,12 +539,9 @@ bool Scanner::operator()( Token& t )
   unsigned char sgc = '\0';
 
   long lng = 0L;
-  double d = 0.0;
   int sg = 1;
   int e = 0;
   int parenth = 0; // to handle PS parenthesis in strings
-  double p = 1.;
-
 
   t.clear();
 
@@ -623,13 +621,11 @@ bool Scanner::operator()( Token& t )
       break;
 
     case intexpst:
-      d = ( double ) lng;
       ds.push_back( 'e' );
       state = expntlst;
       break;
 
     case decpointst:
-      d = ( double ) lng;
       ds.push_back( '.' );
       break;
 
@@ -642,8 +638,6 @@ bool Scanner::operator()( Token& t )
       state = fracdgtst;
     /* no break */
     case fracdgtst:
-      p /= base;
-      d += sg * p * digval( c );
       ds.push_back( c );
       break;
 
@@ -819,6 +813,5 @@ Scanner::print_error( const char* msg )
 {
   std::cout << "% parser: At line " << line << " position " << col << ".\n"
             << "% parser: Syntax Error: " << msg << "\n";
-  std::cout << "% parser: Context preceding the error follows:\n" << old_context << std::endl
-            << context << std::endl;
+  std::cout << "% parser: Context preceding the error follows:\n" << old_context << std::endl << context << std::endl;
 }

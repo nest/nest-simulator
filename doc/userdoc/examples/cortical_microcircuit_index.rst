@@ -1,3 +1,5 @@
+.. _toc_microcircuit:
+
 Cortical microcircuit model
 ===========================
 

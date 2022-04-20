@@ -114,9 +114,6 @@
 /* MUSIC support enabled? */
 #cmakedefine HAVE_MUSIC 1
 
-/* Recording backend Arbor support enabled? */
-#cmakedefine HAVE_RECORDINGBACKEND_ARBOR 1
-
 /* define if M_E is defined */
 #cmakedefine HAVE_M_E 1
 
@@ -158,21 +155,6 @@
 
 /* define if the compiler fails with ICE */
 #cmakedefine HAVE_XLC_ICE_ON_USING 1
-
-/* Configuring for Blue Gene */
-#cmakedefine IS_BLUEGENE 1
-
-/* Configuring for Blue Gene/L */
-#cmakedefine IS_BLUEGENE_L 1
-
-/* Configuring for Blue Gene/P */
-#cmakedefine IS_BLUEGENE_P 1
-
-/* Configuring for Blue Gene/Q */
-#cmakedefine IS_BLUEGENE_Q 1
-
-/* Configuring for K */
-#cmakedefine IS_K 1
 
 /* Is SIONlib available? */
 #cmakedefine HAVE_SIONLIB 1

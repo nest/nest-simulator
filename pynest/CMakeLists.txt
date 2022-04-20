@@ -74,8 +74,9 @@ if ( HAVE_PYTHON )
       -D_IS_PYNEST
       )
 
-  install(DIRECTORY  nest/
+  install(DIRECTORY  nest/ ${PROJECT_BINARY_DIR}/pynest/nest/
       DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest
+      PATTERN "versionchecker.py.in" EXCLUDE
   )
   install( TARGETS pynestkernel DESTINATION ${PYEXECDIR}/nest/ )
   install( CODE "
@@ -88,7 +89,7 @@ if ( HAVE_PYTHON )
       # the install requirements of `nest` as specified in `setup.py`.
       # Then feed them into the stdin pipe of `pip install`.
       execute_process(
-          COMMAND ${PYTHON} -c \"import pkg_resources as pkg; print('\\\\n'.join(str(r) for r in pkg.get_distribution('nest').requires()))\"
+          COMMAND ${PYTHON} -c \"import pkg_resources as pkg; print('\\\\n'.join(str(r) for r in pkg.get_distribution('nest-simulator').requires()))\"
           COMMAND ${PYTHON} -m pip install -r /dev/stdin
       )
       "
@@ -96,14 +97,6 @@ if ( HAVE_PYTHON )
 
   install( DIRECTORY examples/
       DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples/pynest
-      )
+  )
 
-  find_program( NOSETESTS nosetests )
-  if ( NOT NOSETESTS STREQUAL "NOSETESTS-NOTFOUND" )
-    add_test( NAME PyNEST
-        COMMAND ${NOSETESTS} -v --with-xunit
-        --xunit-file=${PROJECT_BINARY_DIR}/reports/pynest_tests.xml
-        ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/tests
-        )
-  endif ()
 endif ()

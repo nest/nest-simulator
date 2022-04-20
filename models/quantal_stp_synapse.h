@@ -52,6 +52,13 @@ equations is taken from Maass and Markram 2002 [3]_.
 The connection weight is interpreted as the maximal weight that can
 be obtained if all n release sites are activated.
 
+.. warning::
+
+   This synaptic plasticity rule does not take
+   :ref:`precise spike timing <sim_precise_spike_times>` into
+   account. When calculating the weight update, the precise spike time part
+   of the timestamp is ignored.
+
 Parameters
 ++++++++++
 
@@ -111,13 +118,14 @@ public:
    * Copy constructor to propagate common properties.
    */
   quantal_stp_synapse( const quantal_stp_synapse& ) = default;
+  quantal_stp_synapse& operator=( const quantal_stp_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
-  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 

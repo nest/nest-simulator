@@ -137,14 +137,14 @@ class EINetwork:
         # easier to add plasticity for inhibitory connections later.
 
         network = {}
-        network["n_vp"] = nest.GetKernelStatus("total_num_virtual_procs")
+        network["n_vp"] = nest.total_num_virtual_procs
         network["e_nrns"] = self.neurons.get(["V_m"], output="pandas")
         network["i_nrns"] = self.neurons.get(["V_m"], output="pandas")
 
         network["e_syns"] = nest.GetConnections(synapse_model="e_syn").get(
-                                     ("source", "target", "weight"), output="pandas")
+            ("source", "target", "weight"), output="pandas")
         network["i_syns"] = nest.GetConnections(synapse_model="i_syn").get(
-                                     ("source", "target", "weight"), output="pandas")
+            ("source", "target", "weight"), output="pandas")
 
         with open(dump_filename, "wb") as f:
             pickle.dump(network, f, pickle.HIGHEST_PROTOCOL)
@@ -159,8 +159,7 @@ class EINetwork:
         with open(dump_filename, "rb") as f:
             network = pickle.load(f)
 
-        assert network["n_vp"] == nest.GetKernelStatus("total_num_virtual_procs"),\
-            "N_VP must match"
+        assert network["n_vp"] == nest.total_num_virtual_procs, "N_VP must match"
 
         ###############################################################################
         # Reconstruct neurons
@@ -292,10 +291,9 @@ if __name__ == "__main__":
 
     ###############################################################################
     # Create network from scratch and simulate 1s.
-    nest.SetKernelStatus({"local_num_threads": 4,
-                          "print_time": True})
+    nest.local_num_threads = 4
+    nest.print_time = True
     ein = EINetwork()
-
     print("*** Initial simulation ***")
     ein.build()
     nest.Simulate(T_sim)
@@ -311,13 +309,13 @@ if __name__ == "__main__":
     # Continue simulation by another 1s.
     print("\n*** Continuing simulation ***")
     nest.Simulate(T_sim)
-    dplot.add_to_plot(ein, lbl="Continued simulation", t_min=T_sim, t_max=2*T_sim)
+    dplot.add_to_plot(ein, lbl="Continued simulation", t_min=T_sim, t_max=2 * T_sim)
 
     ###############################################################################
     # Clear kernel, restore network from file and simulate for 1s.
     print("\n*** Reloading and resuming simulation ***")
     nest.ResetKernel()
-    nest.SetKernelStatus({"local_num_threads": 4})
+    nest.local_num_threads = 4
     ein2 = EINetwork()
     ein2.restore("ein_1000.pkl")
     nest.Simulate(T_sim)
@@ -328,7 +326,7 @@ if __name__ == "__main__":
     # the previous run because we use the same random seed.
     print("\n*** Reloading and resuming simulation (same seed) ***")
     nest.ResetKernel()
-    nest.SetKernelStatus({"local_num_threads": 4})
+    nest.local_num_threads = 4
     ein2 = EINetwork()
     ein2.restore("ein_1000.pkl")
     nest.Simulate(T_sim)
@@ -339,7 +337,8 @@ if __name__ == "__main__":
     # Details in results shall differ from previous run.
     print("\n*** Reloading and resuming simulation (different seed) ***")
     nest.ResetKernel()
-    nest.SetKernelStatus({"local_num_threads": 4, "rng_seed": 987654321})
+    nest.local_num_threads = 4
+    nest.rng_seed = 987654321
     ein2 = EINetwork()
     ein2.restore("ein_1000.pkl")
     nest.Simulate(T_sim)

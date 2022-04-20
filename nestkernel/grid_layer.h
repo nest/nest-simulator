@@ -74,7 +74,8 @@ public:
     /**
      * Postfix increment operator.
      */
-    masked_iterator operator++( int )
+    masked_iterator
+    operator++( int )
     {
       masked_iterator tmp = *this;
       ++*this;
@@ -84,11 +85,13 @@ public:
     /**
      * Iterators are equal if they point to the same node in the same layer.
      */
-    bool operator==( const masked_iterator& other ) const
+    bool
+    operator==( const masked_iterator& other ) const
     {
       return ( other.layer_.get_metadata() == layer_.get_metadata() ) && ( other.node_ == node_ );
     }
-    bool operator!=( const masked_iterator& other ) const
+    bool
+    operator!=( const masked_iterator& other ) const
     {
       return ( other.layer_.get_metadata() != layer_.get_metadata() ) || ( other.node_ != node_ );
     }
@@ -239,9 +242,9 @@ GridLayer< D >::gridpos_to_position( Position< D, int > gridpos ) const
 
 template < int D >
 Position< D >
-GridLayer< D >::get_position( index sind ) const
+GridLayer< D >::get_position( index lid ) const
 {
-  return lid_to_position( sind );
+  return lid_to_position( lid );
 }
 
 template < int D >
@@ -277,14 +280,10 @@ template < class Ins >
 void
 GridLayer< D >::insert_global_positions_( Ins iter, NodeCollectionPTR node_collection )
 {
-  index i = 0;
-  index lid_end = node_collection->size();
-
-  NodeCollection::const_iterator gi = node_collection->begin();
-
-  for ( ; ( gi < node_collection->end() ) && ( i < lid_end ); ++gi, ++i )
+  for ( auto gi = node_collection->begin(); gi < node_collection->end(); ++gi )
   {
-    *iter++ = std::pair< Position< D >, index >( lid_to_position( i ), ( *gi ).node_id );
+    const auto triple = *gi;
+    *iter++ = std::pair< Position< D >, index >( lid_to_position( triple.lid ), triple.node_id );
   }
 }
 
@@ -378,7 +377,8 @@ inline std::pair< Position< D >, index > GridLayer< D >::masked_iterator::operat
 }
 
 template < int D >
-typename GridLayer< D >::masked_iterator& GridLayer< D >::masked_iterator::operator++()
+typename GridLayer< D >::masked_iterator&
+GridLayer< D >::masked_iterator::operator++()
 {
   do
   {

@@ -25,17 +25,16 @@ Functions for connection handling
 
 import numpy
 
-from ..ll_api import *
+from ..ll_api import check_stack, connect_arrays, sps, sr, spp
 from .. import pynestkernel as kernel
 
 from .hl_api_connection_helpers import (_process_input_nodes, _connect_layers_needed,
                                         _connect_spatial, _process_conn_spec,
                                         _process_spatial_projections, _process_syn_spec)
-from .hl_api_helper import *
+from .hl_api_helper import is_string
 from .hl_api_info import GetStatus
 from .hl_api_nodes import Create
 from .hl_api_parallel_computing import NumProcesses
-from .hl_api_simulation import GetKernelStatus, SetKernelStatus
 from .hl_api_types import NodeCollection, SynapseCollection, Mask, Parameter
 
 __all__ = [
@@ -122,6 +121,9 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     Nodes in `pre` and `post` are connected using the specified connectivity
     (`all-to-all` by default) and synapse type (:cpp:class:`static_synapse <nest::static_synapse>` by default).
     Details depend on the connectivity rule.
+
+    Lists of synapse models and connection rules are available as
+    ``nest.synapse_models`` and ``nest.connection_rules``, respectively.
 
     Parameters
     ----------
@@ -321,16 +323,16 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
 
     **syn_spec**
 
-    The synapse model and its properties can be inserted either as a
-    string describing one synapse model (synapse models are listed in the
-    synapsedict) or as a dictionary as described below.
+    The synapse model and its properties can be specified either as a string naming
+    a synapse model (the list of all available synapse models can be gotten via
+    ``nest.synapse_models``) or as a dictionary as described below.
 
     Note that only the synapse type is checked when we disconnect and that if
-    `syn_spec` is given as a non-empty dictionary, the 'synapse_model' parameter must be
-    present.
+    `syn_spec` is given as a non-empty dictionary, the 'synapse_model' parameter must
+    be present.
 
-    If no synapse model is specified the default model :cpp:class:`static_synapse <nest::static_synapse>`
-    will be used.
+    If no synapse model is specified the default model
+    :cpp:class:`static_synapse <nest::static_synapse>` will be used.
 
     Available keys in the synapse dictionary are:
     ::
@@ -349,6 +351,7 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
     Notes
     -----
     `Disconnect` only disconnects explicitly specified nodes.
+
     """
 
     sps(pre)

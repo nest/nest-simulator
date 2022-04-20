@@ -26,15 +26,15 @@
 #include <numeric>
 
 // Includes from libnestutil:
-#include "dict_util.h"
 #include "compose.hpp"
+#include "dict_util.h"
 #include "logging.h"
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
-#include "node_collection.h"
 #include "kernel_manager.h"
 #include "nest_datums.h"
+#include "node_collection.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -205,7 +205,7 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
     write( e,
       { e.get_weight() },
       { static_cast< long >( e.get_receiver_node_id() ),
-       static_cast< long >( e.get_rport() ),
-       static_cast< long >( e.get_port() ) } );
+        static_cast< long >( e.get_rport() ),
+        static_cast< long >( e.get_port() ) } );
   }
 }

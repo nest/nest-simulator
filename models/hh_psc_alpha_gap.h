@@ -39,8 +39,8 @@
 #include "event.h"
 #include "nest_types.h"
 #include "node.h"
-#include "ring_buffer.h"
 #include "recordables_map.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 namespace nest
@@ -68,8 +68,8 @@ Hodgkin-Huxley neuron model with gap-junction support
 Description
 +++++++++++
 
-hh_psc_alpha_gap is an implementation of a spiking neuron using the
-Hodgkin-Huxley formalism. In contrast to hh_psc_alpha the implementation
+``hh_psc_alpha_gap`` is an implementation of a spiking neuron using the
+Hodgkin-Huxley formalism. In contrast to ``hh_psc_alpha`` the implementation
 additionally supports gap junctions.
 
 1. Postsynaptic currents
@@ -85,6 +85,8 @@ it is considered a spike.
 3. Gap Junctions
 Gap Junctions are implemented by a gap current of the form
 :math:`g_{ij}( V_i - V_j)`.
+
+See also [1]_, [2]_, [3]_, [4]_.
 
 Parameters
 ++++++++++
@@ -285,7 +287,7 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( hh_psc_alpha_gap& ); //!<Sets buffer pointers to 0
+    Buffers_( hh_psc_alpha_gap& ); //!< Sets buffer pointers to 0
     //! Sets buffer pointers to 0
     Buffers_( const Buffers_&, hh_psc_alpha_gap& );
 

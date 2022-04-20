@@ -34,10 +34,10 @@
 #include "conn_builder.h"
 #include "connection_id.h"
 #include "connector_base.h"
-#include "node_collection.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"
 #include "nest_types.h"
+#include "node_collection.h"
 #include "per_thread_bool_indicator.h"
 #include "source_table.h"
 #include "spike_data.h"
@@ -78,13 +78,13 @@ public:
   ConnectionManager();
   virtual ~ConnectionManager();
 
-  virtual void initialize();
-  virtual void finalize();
+  virtual void initialize() override;
+  virtual void finalize() override;
+  virtual void change_number_of_threads() override;
+  virtual void set_status( const DictionaryDatum& ) override;
+  virtual void get_status( DictionaryDatum& ) override;
 
-  virtual void set_status( const DictionaryDatum& );
-  virtual void get_status( DictionaryDatum& );
-
-  DictionaryDatum& get_connruledict();
+  bool valid_connection_rule( std::string );
 
   void compute_target_data_buffer_size();
   void compute_compressed_secondary_recv_buffer_positions( const thread tid );
@@ -345,24 +345,19 @@ public:
    * Returns true if connection information needs to be
    * communicated. False otherwise.
    */
-  bool have_connections_changed() const;
+  bool connections_have_changed() const;
 
   /**
    * Sets flag indicating whether connection information needs to be
    * communicated to true.
    */
-  void set_have_connections_changed( const thread tid );
+  void set_connections_have_changed();
 
   /**
    * Sets flag indicating whether connection information needs to be
    * communicated to false.
    */
-  void unset_have_connections_changed( const thread tid );
-
-  /**
-   * Sets flag indicating whether GetConnections has been called since last update of connections.
-   */
-  void set_has_get_connections_been_called( const bool has_get_connections_been_called );
+  void unset_connections_have_changed();
 
   /**
    * Deletes TargetTable and resets processed flags of
@@ -589,17 +584,6 @@ private:
    */
   std::vector< std::vector< size_t > > num_connections_;
 
-  /**
-   * @BeginDocumentation
-   * Name: connruledict - dictionary containing all connectivity rules
-   *
-   * Description:
-   * This dictionary provides the connection rules that can be used
-   * in Connect.
-   * 'connruledict info' shows the contents of the dictionary.
-   *
-   * SeeAlso: Connect
-   */
   DictionaryDatum connruledict_; //!< Dictionary for connection rules.
 
   //! ConnBuilder factories, indexed by connruledict_ elements.
@@ -614,10 +598,10 @@ private:
 
   //! True if new connections have been created since startup or last call to
   //! simulate.
-  PerThreadBoolIndicator have_connections_changed_;
+  bool connections_have_changed_;
 
   //! true if GetConnections has been called.
-  bool has_get_connections_been_called_;
+  bool get_connections_has_been_called_;
 
   //! Whether to sort connections by source node ID.
   bool sort_connections_by_source_;
@@ -647,10 +631,10 @@ private:
   double stdp_eps_;
 };
 
-inline DictionaryDatum&
-ConnectionManager::get_connruledict()
+inline bool
+ConnectionManager::valid_connection_rule( std::string rule_name )
 {
-  return connruledict_;
+  return connruledict_->known( rule_name );
 }
 
 inline delay
@@ -750,9 +734,9 @@ ConnectionManager::get_remote_targets_of_local_node( const thread tid, const ind
 }
 
 inline bool
-ConnectionManager::have_connections_changed() const
+ConnectionManager::connections_have_changed() const
 {
-  return have_connections_changed_.any_true();
+  return connections_have_changed_;
 }
 
 inline void
@@ -862,12 +846,6 @@ ConnectionManager::set_source_has_more_targets( const thread tid,
   const bool more_targets )
 {
   connections_[ tid ][ syn_id ]->set_source_has_more_targets( lcid, more_targets );
-}
-
-inline void
-nest::ConnectionManager::set_has_get_connections_been_called( const bool has_get_connections_been_called )
-{
-  has_get_connections_been_called_ = has_get_connections_been_called;
 }
 
 inline const std::vector< SpikeData >&

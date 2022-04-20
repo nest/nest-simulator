@@ -61,14 +61,16 @@ struct sDynModule
   lt_dlhandle handle;
   SLIModule* pModule;
 
-  bool operator==( const sDynModule& rhs ) const
+  bool
+  operator==( const sDynModule& rhs ) const
   {
     return name == rhs.name;
   }
 
   // operator!= must be implemented explicitly, not all compilers
   // generate it automatically from operator==
-  bool operator!=( const sDynModule& rhs ) const
+  bool
+  operator!=( const sDynModule& rhs ) const
   {
     return not( *this == rhs );
   }
@@ -152,11 +154,6 @@ void
 DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-
-  if ( kernel().model_manager.has_user_models() or kernel().model_manager.has_user_prototypes() )
-  {
-    throw DynamicModuleManagementError( "Modules cannot be installed after CopyModel has been called" );
-  }
 
   sDynModule new_module;
 
@@ -273,7 +270,11 @@ DynamicLoaderModule::init( SLIInterpreter* i )
     LOG( M_ERROR, "DynamicLoaderModule::init", "Could not initialize libltdl. No dynamic modules will be available." );
   }
 
-  if ( lt_dladdsearchdir( NEST_INSTALL_PREFIX "/" NEST_INSTALL_LIBDIR ) )
+  // To avoid problems due to string substitution in NEST binaries during
+  // Conda installation, we need to convert the literal to string, cstr and back,
+  // see #2237 and https://github.com/conda/conda-build/issues/1674#issuecomment-280378336
+  const std::string module_dir = std::string( NEST_INSTALL_PREFIX ).c_str() + std::string( "/" NEST_INSTALL_LIBDIR );
+  if ( lt_dladdsearchdir( module_dir.c_str() ) )
   {
     LOG( M_ERROR, "DynamicLoaderModule::init", "Could not add dynamic module search directory." );
   }

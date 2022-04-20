@@ -46,7 +46,7 @@ Non-resetting leaky integrate-and-fire neuron model with exponential PSCs and ad
 Description
 +++++++++++
 
-mat2_psc_exp is an implementation of a leaky integrate-and-fire model
+``mat2_psc_exp`` is an implementation of a leaky integrate-and-fire model
 with exponential shaped postsynaptic currents (PSCs). Thus, postsynaptic
 currents have an infinitely short rise time.
 
@@ -70,14 +70,16 @@ The general framework for the consistent formulation of systems with
 neuron like dynamics interacting by point events is described in
 [1]_. A flow chart can be found in [2]_.
 
-Remarks:
+The current implementation requires tau_m != tau_syn_{ex,in} to avoid
+a degenerate case of the ODE describing the model [1]_. For very
+similar values, numerics will be unstable.
 
-The present implementation uses individual variables for the
-components of the state vector and the non-zero matrix elements of
-the propagator. Because the propagator is a lower triangular matrix,
-no full matrix multiplication needs to be carried out and the
-computation can be done "in place", i.e. no temporary state vector
-object is required.
+The following state variables can be read out with the multimeter device:
+
+====== ====  =================================
+ V_m   mV    Non-resetting membrane potential
+ V_th  mV    Two-timescale adaptive threshold
+====== ====  =================================
 
 Parameters
 ++++++++++
@@ -101,19 +103,6 @@ The following parameters can be set in the status dictionary:
  omega        mV      Resting spike threshold (absolute value, not
                       relative to E_L as in [3]_)
 ============ =======  ========================================================
-
-The following state variables can be read out with the multimeter device:
-
-====== ====  =================================
- V_m   mV    Non-resetting membrane potential
- V_th  mV    Two-timescale adaptive threshold
-====== ====  =================================
-
-Remarks:
-
-tau_m != tau_syn_{ex,in} is required by the current implementation to avoid a
-degenerate case of the ODE describing the model [1]_. For very similar values,
-numerics will be unstable.
 
 References
 ++++++++++
@@ -142,6 +131,15 @@ Receives
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
 EndUserDocs */
+
+/**
+ * The present implementation uses individual variables for the
+ * components of the state vector and the non-zero matrix elements of
+ * the propagator. Because the propagator is a lower triangular matrix,
+ * no full matrix multiplication needs to be carried out and the
+ * computation can be done "in place", i.e. no temporary state vector
+ * object is required.
+ */
 
 class mat2_psc_exp : public ArchivingNode
 {
@@ -270,8 +268,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( mat2_psc_exp& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, mat2_psc_exp& ); //!<Sets buffer pointers to 0
+    Buffers_( mat2_psc_exp& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, mat2_psc_exp& ); //!< Sets buffer pointers to 0
 
     /** buffers and sums up incoming spikes/currents */
     RingBuffer spikes_ex_;

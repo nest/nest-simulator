@@ -69,7 +69,7 @@ recordables to have them sampled during simulation.
    mm = nest.Create('multimeter', 1, {'record_from': ['V_m', 'g_ex']})
 
 The sampling interval for recordings (given in ms) can be controlled
-using the ``multimeter`` parameter `interval`. The default value of
+using the ``multimeter`` parameter ``interval``. The default value of
 1.0 ms can be changed by supplying a new value either in the call to
 ``Create`` or by using ``SetStatus`` on the model instance.
 
@@ -100,9 +100,9 @@ options when using ``Connect``, see the guide on :ref:`connection
 management <connection_management>`.
 
 The above call to ``Connect`` would fail if the neurons would not
-support the sampling of the values *V_m* and *g_ex*. It would also
-fail if carried out in the wrong direction, i.e., trying to connect the
-*neurons* to *mm*.
+support the sampling of the values ``V_m`` and ``g_ex``. It would also
+fail if carried out in the wrong direction, that is , trying to connect the
+neurons to `mm`.
 
 .. note::
 
@@ -118,7 +118,7 @@ record_from
     recordables are given in the corresponding model documentation.
 
 interval
-    A float (default: `1.0`) specifying the interval in ms, at which
+    A float (default: 1.0) specifying the interval in ms, at which
     data is collected from the nodes, the multimeter is connected to.
 
 See also

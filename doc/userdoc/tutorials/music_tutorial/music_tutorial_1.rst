@@ -1,3 +1,5 @@
+.. _music_tutorial_1:
+
 Introduction to the MUSIC Interface
 ===================================
 
@@ -6,11 +8,6 @@ standard by the INCF, allows the transmission of data between applications
 at runtime. It can be used to couple NEST with other simulators, with
 applications for stimulus generation and data analysis and visualization and
 with custom applications that also use the MUSIC interface.
-
-.. note::
-
-   Please note that MUSIC and the recording backend for Arbor are mutually exclusive
-   and cannot be enabled at the same time.
 
 Setup of System
 -----------------
@@ -45,7 +42,7 @@ constructs.
 
 .. sidebar:: Jump to
 
-    :doc:`Part 1 - Connect 2 NEST simulations <music_tutorial_2>`
+    :ref:`Part 1 - Connect 2 NEST simulations <music_tutorial_2>`
 
 
 

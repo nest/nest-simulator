@@ -27,8 +27,8 @@
 #include <limits>
 
 // Includes from libnestutil:
-#include "dict_util.h"
 #include "compose.hpp"
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -133,11 +133,11 @@ nest::pp_pop_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
 
   if ( tau_eta_.size() != val_eta_.size() )
   {
-    throw BadProperty( String::compose(
-      "'tau_eta' and 'val_eta' need to have the same dimension.\nSize of "
-      "tau_eta: %1\nSize of val_eta: %2",
-      tau_eta_.size(),
-      val_eta_.size() ) );
+    throw BadProperty(
+      String::compose( "'tau_eta' and 'val_eta' need to have the same dimension.\nSize of "
+                       "tau_eta: %1\nSize of val_eta: %2",
+        tau_eta_.size(),
+        val_eta_.size() ) );
   }
   if ( c_m_ <= 0 )
   {
@@ -296,7 +296,8 @@ nest::pp_pop_psc_delta::calibrate()
       temp = 0;
     }
 
-    for ( int j = 0; j < V_.len_eta_; j++ )
+    // Set all except last state vector elements to zero, then fill last element with initial value
+    for ( int j = 0; j < V_.len_eta_ - 1; j++ )
     {
       S_.age_occupations_.push_back( 0 );
       S_.thetas_ages_.push_back( 0 );
@@ -319,7 +320,7 @@ nest::pp_pop_psc_delta::calibrate()
 void
 nest::pp_pop_psc_delta::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )

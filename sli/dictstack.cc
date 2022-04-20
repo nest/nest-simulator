@@ -95,10 +95,10 @@ DictionaryStack::basedef_move( const Name& n, Token& t )
 void
 DictionaryStack::pop( void )
 {
-//
-// remove top dictionary from stack
-// dictionary stack must contain at least one dictionary
-//
+  //
+  // remove top dictionary from stack
+  // dictionary stack must contain at least one dictionary
+  //
 
 #ifdef DICTSTACK_CACHE
   clear_dict_from_cache( *( d.begin() ) );
@@ -163,11 +163,11 @@ DictionaryStack::push( Token& d )
 void
 DictionaryStack::push( const DictionaryDatum& pd )
 {
-//
-// extract Dictionary from Token envelope
-// and push it on top of the stack.
-// a non dictionary datum at this point is a program bug.
-//
+  //
+  // extract Dictionary from Token envelope
+  // and push it on top of the stack.
+  // a non dictionary datum at this point is a program bug.
+  //
 
 #ifdef DICTSTACK_CACHE
   pd->add_dictstack_reference();
@@ -217,7 +217,8 @@ DictionaryStack::top_info( std::ostream& o ) const
   ( *d.begin() )->info( o );
 }
 
-const DictionaryStack& DictionaryStack::operator=( const DictionaryStack& ds )
+const DictionaryStack&
+DictionaryStack::operator=( const DictionaryStack& ds )
 {
   if ( &ds != this )
   {

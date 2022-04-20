@@ -52,6 +52,10 @@ function( NEST_PROCESS_WITH_DEBUG )
   endif ()
 endfunction()
 
+function( NEST_PROCESS_WITH_STD )
+  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=${with-cpp-std}" PARENT_SCOPE )
+endfunction()
+
 function( NEST_PROCESS_WITH_INTEL_COMPILER_FLAGS )
   if ( NOT with-intel-compiler-flags )
     set( with-intel-compiler-flags "-fp-model strict" )
@@ -71,11 +75,7 @@ endfunction()
 function( NEST_PROCESS_WITH_WARNING )
   if ( with-warning )
     if ( with-warning STREQUAL "ON" )
-      if ( NOT k-computer STREQUAL "ON" )
-        set( with-warning "-Wall" )
-      else()
-        set( with-warning "" )
-      endif()
+      set( with-warning "-Wall" )
     endif ()
     foreach ( flag ${with-warning} )
       set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${flag}" PARENT_SCOPE )
@@ -126,35 +126,6 @@ function( NEST_PROCESS_WITH_DEFINES )
         message( FATAL_ERROR "Define '${def}' does not match '-D.*' !" )
       endif ()
     endforeach ()
-  endif ()
-endfunction()
-
-function( NEST_PROCESS_K_COMPUTER )
-  # is set in the Fujitsu-Sparc64.cmake file
-  if ( k-computer )
-    set( IS_K ON PARENT_SCOPE )
-    # need alternative tokens command to compile NEST
-    set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --alternative_tokens" PARENT_SCOPE )
-    # FCC accepts GNU flags when -Xg is supplied
-    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Xg --alternative_tokens" PARENT_SCOPE )
-  endif ()
-endfunction()
-
-function( NEST_PROCESS_ENABLE_BLUEGENE )
-  # is set in the BlueGeneQ.cmake file
-  if ( enable-bluegene )
-    if ( ${enable-bluegene} STREQUAL "L" )
-      set( IS_BLUEGENE_L ON PARENT_SCOPE )
-    elseif ( ${enable-bluegene} STREQUAL "P" )
-      set( IS_BLUEGENE_P ON PARENT_SCOPE )
-    elseif ( ${enable-bluegene} STREQUAL "Q" )
-      set( IS_BLUEGENE_Q ON PARENT_SCOPE )
-    else ()
-      message( FATAL_ERROR "Only L/P/Q is allowed for enable-bluegene." )
-    endif ()
-    set( IS_BLUEGENE ON PARENT_SCOPE )
-  else ()
-    set( IS_BLUEGENE OFF PARENT_SCOPE )
   endif ()
 endfunction()
 
@@ -387,12 +358,22 @@ endfunction()
 function( NEST_PROCESS_WITH_PYTHON )
   # Find Python
   set( HAVE_PYTHON OFF PARENT_SCOPE )
-  if ( ${with-python} STREQUAL "2" )
-    message( FATAL_ERROR "Python 2 is not supported anymore, please use Python 3 by setting CMake option -Dwith-python=ON." )
-  elseif ( ${with-python} STREQUAL "ON" )
+  
+  if ( ${with-python} STREQUAL "ON" )
 
-    # Localize the Python interpreter and lib/header files
-    find_package( Python 3.8 REQUIRED Interpreter Development )
+    # Localize the Python interpreter and ABI
+    find_package( Python 3.8 QUIET COMPONENTS Interpreter Development.Module )
+    if ( NOT Python_FOUND )
+      find_package( Python 3.8 REQUIRED Interpreter Development )
+      string( CONCAT PYABI_WARN "Could not locate Python ABI"
+        ", using shared libraries and header file instead."
+        " Please clear your CMake cache and build folder and verify that CMake"
+        " is up-to-date (3.18+)."
+      )
+      message( WARNING "${PYABI_WARN}")
+    else()
+      find_package( Python 3.8 REQUIRED Interpreter Development.Module )
+    endif()
 
     if ( Python_FOUND )
       if ( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
@@ -658,25 +639,3 @@ function( NEST_PROCESS_WITH_MPI4PY )
 
   endif ()
 endfunction ()
-
-function( NEST_PROCESS_WITH_RECORDINGBACKEND_ARBOR )
-  if (with-recordingbackend-arbor)
-	if (NOT HAVE_MPI)
-	  message( FATAL_ERROR "Recording backend Arbor needs MPI." )
-    endif ()
-
-	if (NOT HAVE_PYTHON)
-	  message( FATAL_ERROR "Recording backend Arbor needs Python." )
-	endif ()
-
-    include( FindPythonModule )
-
-	find_python_module(mpi4py)
-	if ( HAVE_MPI4PY )
-	  include_directories( "${PY_MPI4PY}/include" )
-	else ()
-	  message( FATAL_ERROR "CMake cannot find mpi4py, needed for recording backend Arbor" )
-    endif ()
-	set( HAVE_RECORDINGBACKEND_ARBOR ON PARENT_SCOPE )
-  endif()
-endfunction()

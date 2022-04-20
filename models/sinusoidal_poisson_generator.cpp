@@ -39,11 +39,11 @@
 
 // Includes from sli:
 #include "arraydatum.h"
+#include "booldatum.h"
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
 #include "integerdatum.h"
-#include "booldatum.h"
 
 namespace nest
 {
@@ -79,8 +79,8 @@ nest::sinusoidal_poisson_generator::Parameters_::Parameters_( const Parameters_&
 {
 }
 
-nest::sinusoidal_poisson_generator::Parameters_& nest::sinusoidal_poisson_generator::Parameters_::operator=(
-  const Parameters_& p )
+nest::sinusoidal_poisson_generator::Parameters_&
+nest::sinusoidal_poisson_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
   {

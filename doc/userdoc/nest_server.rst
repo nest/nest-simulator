@@ -1,3 +1,5 @@
+.. _nest_server:
+
 NEST Server
 ===========
 
@@ -10,7 +12,7 @@ What is NEST Server?
 
 NEST Server enables users to interact with the NEST simulation engine
 via a RESTful API. Using this approach, you can perform the same basic
-operations as with :doc:`PyNEST <ref_material/pynest_apis>`, but
+operations as with :ref:`PyNEST <pynest_api>`, but
 instead of doing so by directly importing the ``nest`` module, all
 commands, including their arguments and result data, are channeled
 through HTTP requests and responses over a TCP/IP connection.
@@ -72,7 +74,7 @@ Server and would like to have it listed here, feel free to `drop us a
 line <https://github.com/nest/nest-simulator/issues>`_.
 
 Install and run NEST Server
---------------------------
+---------------------------
 
 NEST Server is included in all source code distributions of NEST and
 consequently, also available in derived packages, our virtual
@@ -81,20 +83,21 @@ machine, and Docker images.
 For native installations, the requirements can be simply installed via
 ``pip``::
 
-  pip3 install RestrictedPython uwsgi flask flask-cors
+  pip3 install Flask Flask-Cors gunicorn RestrictedPython
 
 or by installing the full NEST development environment in case you
 prefer using ``conda``::
 
-  conda env create -f extras/conda-nest-simulator-dev.yml
-  conda activate nest-simulator
+  cd <nest-source-dir>
+  conda env create -p conda/
+  conda activate conda/
 
 As an alternative to a native installation, NEST Server is available
 from the NEST Docker image. Please check out the corresponding
 :ref:`installation instructions <docker_vm_install>` for more details.
 
 Run NEST Server
-~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 
 All NEST Server operations are managed using the ``nest-server``
 command that can either be run directly::
@@ -109,26 +112,22 @@ container::
 The generic invocation command line for the ``nest-server`` command
 looks as follows::
 
-  nest-server <command> [-d] [-o] [-h <host>] [-p <port>] [-P <plugin>] [-u <user>]
+  nest-server <command> [-d] [-h <host>] [-o] [-p <port>]
 
 Possible commands are `start`, `stop`, `status`, or `log`. The meaning
 of the other arguments is as follows:
 
 -d
-    Run nest-server in the background (i.e., daemonize it)
+    Run NEST Server in the background (i.e., daemonize it)
 -o
-    Print all output to both the console and the logger
+    Print all outputs to the console
 -h <host>
-    Use hostname/IP address <host> for the server [default: 127.0.0.1]
+    Use hostname/IP address <host> for the server instance [default: 127.0.0.1]
 -p <port>
     Use port <port> for opening the socket [default: 5000]
--P <plugin>
-    Use the uWSGI plugin <plugin> when running the server
--u <uid>
-    Run the server under the user with ID <user>
 
 Run with MPI
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~
 
 If NEST was compiled with support for :ref:`distributed computing via
 MPI <distributed_computing>`, it will usually execute the exact same
@@ -234,7 +233,7 @@ NEST Server Client.
             print('Number of events:', n_events)
 
 Run scripts
-~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
 
 The NEST Server Client is able to send complete simulation scripts to
 the NEST Server using the functions ``exec_script`` and ``from_file``.
@@ -247,13 +246,14 @@ Client to execute a simple script on the Server using the
     from NESTServerClient import NESTServerClient
     nsc = NESTServerClient()
 
-    response = nsc.exec_script("print('Hello world!')")
-    print(response['stdout'])                        # 'Hello world!'
+    script = "print('Hello world!')"
+    response = nsc.exec_script(script)
+    print(response['stdout'])          # 'Hello world!'
 
-    response = nsc.exec_script("models=nest.Models()", 'models')
+    script = "models=nest.node_models"
+    response = nsc.exec_script(script, return_vars='models')
     models = response['data']
-
-    print(models)                                    # the list of models
+    print(models)                      # the list of models
 
 In a more realistic scenario, you probably already have your
 simulation script stored in a file. Such scripts can be sent to the
@@ -265,7 +265,7 @@ the NEST Server Client.
     from NESTServerClient import NESTServerClient
     nsc = NESTServerClient()
 
-    response = nsc.from_file('simulation_script.py', 'n_events')
+    response = nsc.from_file('simulation_script.py', return_vars='n_events')
     n_events = response['data']
 
     print('Number of events:', n_events)
@@ -338,15 +338,15 @@ To obtain basic information about the running server, run::
 
 NEST Server responds to this by sending data in JSON format::
 
-  {"nest":"master@b08590af6"}
+  {"mpi":false,"nest":"3.2"}
 
 You can retrieve data about the callable functions of NEST by running::
 
   curl localhost:5000/api
 
-Retrieve available models in NEST::
+Retrieve the current kernel status dict from NEST::
 
-  curl localhost:5000/api/Models
+  curl localhost:5000/api/GetKernelStatus
 
 Send API request with function arguments in JSON format::
 
@@ -464,7 +464,7 @@ Advanced topics
 ---------------
 
 Run scripts in NEST Server using `curl`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As shown above, you can send custom simulation code to
 ``localhost:5000/exec``. On the command line, this approach might be a
@@ -489,7 +489,7 @@ command:
 
 
 Interact with NEST Server using JavaScript
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As the NEST Server is built on modern web technologies, it may be
 desirable to create a frontend to it in the form of a
@@ -543,7 +543,7 @@ Using the above code, we can already send API-requests to NEST Server:
 
 .. code-block:: JavaScript
 
-    getAPI('Models');  // a list of models
+    getAPI('GetKernelStatus');  // the current kernel status dict
 
 Sending API calls with data requires a POST request, which can handle
 the data in JSON-format. To allow for this, we can define a function
@@ -609,7 +609,7 @@ Now, we can send a custom Python script to NEST Server:
     account of Steffen Graber.
 
 Control NEST from Bash
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 
 For POST requests to the NEST API Server, we recommend to use a Bash function:
 

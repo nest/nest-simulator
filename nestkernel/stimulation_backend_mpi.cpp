@@ -21,13 +21,14 @@
  */
 
 // C++ includes:
-#include <iostream>
 #include <fstream>
+#include <iostream>
+#include <vector>
 
 // Includes from nestkernel:
+#include "kernel_manager.h"
 #include "stimulation_backend.h"
 #include "stimulation_backend_mpi.h"
-#include "kernel_manager.h"
 #include "stimulation_device.h"
 
 nest::StimulationBackendMPI::StimulationBackendMPI()
@@ -36,7 +37,7 @@ nest::StimulationBackendMPI::StimulationBackendMPI()
 {
 }
 
-nest::StimulationBackendMPI::~StimulationBackendMPI()
+nest::StimulationBackendMPI::~StimulationBackendMPI() noexcept
 {
 }
 
@@ -139,7 +140,7 @@ nest::StimulationBackendMPI::prepare()
       // This is because the management of threads here is using MPI_THREAD_FUNNELED (see mpi_manager.cpp:119).
       comm = new MPI_Comm;
       auto vector_id_device = new std::vector< int >; // vector of ID device for the rank
-      int* vector_nb_device_th{ new int[ kernel().vp_manager.get_num_threads() ]{} }; // number of device by thread
+      int* vector_nb_device_th { new int[ kernel().vp_manager.get_num_threads() ] {} }; // number of device by thread
       std::fill_n( vector_nb_device_th, kernel().vp_manager.get_num_threads(), 0 );
       // add the id of the device if there is a connection with the device.
       if ( kernel().connection_manager.get_device_connected(
@@ -203,7 +204,7 @@ void
 nest::StimulationBackendMPI::pre_run_hook()
 {
   // create the variable which will contain the receiving data from the communication
-  auto data{ new std::pair< int*, double* >[ commMap_.size() ]{} };
+  std::vector< std::pair< int*, double* > > data( commMap_.size() );
   int index = 0;
 #pragma omp master
   {
@@ -233,8 +234,6 @@ nest::StimulationBackendMPI::pre_run_hook()
   {
     // Master thread cleans all the allocated memory
     clean_memory_input_data( data );
-    delete[] data;
-    data = nullptr;
   }
 #pragma omp barrier
 }
@@ -338,10 +337,10 @@ nest::StimulationBackendMPI::receive_spike_train( const MPI_Comm& comm, std::vec
     // Receive the size of data
     MPI_Status status_mpi;
     // Receive the size of the data in total and for each devices
-    int* nb_size_data_per_id{ new int[ size_list + 1 ]{} }; // delete in the function clean_memory_input_data
+    int* nb_size_data_per_id { new int[ size_list + 1 ] {} }; // delete in the function clean_memory_input_data
     MPI_Recv( nb_size_data_per_id, size_list + 1, MPI_INT, MPI_ANY_SOURCE, devices_id[ 0 ], comm, &status_mpi );
     // Receive the data
-    double* data{ new double[ nb_size_data_per_id[ 0 ] ]{} }; // delete in the function clean_memory_input_data
+    double* data { new double[ nb_size_data_per_id[ 0 ] ] {} }; // delete in the function clean_memory_input_data
     MPI_Recv( data, nb_size_data_per_id[ 0 ], MPI_DOUBLE, status_mpi.MPI_SOURCE, devices_id[ 0 ], comm, &status_mpi );
     // return the size of the data by device and the data
     return std::make_pair( nb_size_data_per_id, data );
@@ -396,12 +395,11 @@ nest::StimulationBackendMPI::update_device( int* array_index,
 }
 
 void
-nest::StimulationBackendMPI::clean_memory_input_data( std::pair< int*, double* >* data )
+nest::StimulationBackendMPI::clean_memory_input_data( std::vector< std::pair< int*, double* > >& data )
 {
   // for all the pairs of data, free the memory of data and the array with the size
-  for ( size_t i = 0; i != commMap_.size(); ++i )
+  for ( auto pair_data : data )
   {
-    std::pair< int*, double* > pair_data = data[ i ];
     if ( pair_data.first != nullptr )
     {
       // clean the memory allocated in the function receive_spike_train

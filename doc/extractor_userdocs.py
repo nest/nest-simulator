@@ -145,23 +145,17 @@ def rewrite_short_description(doc, filename, short_description="Short descriptio
     '''
     Modify a given text by replacing the first section named as given in
     `short_description` by the filename and content of that section.
-
     Parameters
     ----------
-
     doc : str
       restructured text with all sections
-
     filename : str, path
       name that is inserted in the replaced title (and used for useful error
       messages).
-
     short_description : str
       title of the section that is to be rewritten to the document title
-
     Returns
     -------
-
     str
         original parameter doc with short_description section replaced
     '''
@@ -191,30 +185,22 @@ def rewrite_see_also(doc, filename, tags, see_also="See also"):
     '''
     Replace the content of a section named `see_also` in the document `doc`
     with links to indices of all its tags.
-
     The original content of the section -if not empty- will discarded and
     logged as a warning.
-
     Parameters
     ----------
-
     doc : str
       restructured text with all sections
-
     filename : str, path
       name that is inserted in the replaced title (and used for useful error
       messages).
-
     tags : iterable (list or dict)
       all tags the given document is linked to. These are used to construct the
       links in the `see_also` section.
-
     see_also : str
       title of the section that is to be rewritten to the document title
-
     Returns
     -------
-
     str
         original parameter doc with see_also section replaced
     '''
@@ -227,20 +213,15 @@ def rewrite_see_also(doc, filename, tags, see_also="See also"):
         '''
         Make text title-case except for acronyms, where an acronym is
         identified simply by being all upper-case.
-
         This function operates on the whole string, so a text with mixed
         acronyms and non-acronyms will not be recognized and everything will be
         title-cased, including the embedded acronyms.
-
         Parameters
         ----------
-
         text : str
           text that needs to be changed to the right casing.
-
         Returns
         -------
-
         str
           original text with poentially different characters being
           upper-/lower-case.
@@ -355,7 +336,7 @@ def rst_index(hierarchy, current_tags=[], underlines='=-~', top=True):
         title = ':doc:`{text} <{filename}>`'.format(
             text=text,
             filename=link or "index_"+t)
-        text = title+'\n'+ul*len(title)+'\n'
+        text = title+'\n'+ul*len(title)+'\n\n'
         return text
 
     def mkitem(t):
@@ -452,7 +433,6 @@ def CreateTagIndices(tags, outdir="userdocs/"):
                              desc="keyword indices", total=nindices):
         current_tags = sorted(current_tags)
         indexname = "index%s.rst" % "".join(["_"+x for x in current_tags])
-
         hier = make_hierarchy(tags.copy(), *current_tags)
         if not any(hier.values()):
             log.debug("index %s is empyt!", str(current_tags))
@@ -470,7 +450,7 @@ def CreateTagIndices(tags, outdir="userdocs/"):
     return indexfiles
 
 
-class JsonWriter(object):
+class JsonWriter:
     """
     Helper class to have a unified data output interface.
     """
@@ -577,6 +557,12 @@ def ExtractUserDocs(listoffiles, basedir='..', outdir='userdocs/'):
 
     indexfiles = CreateTagIndices(tags, outdir=outdir)
     data.write(indexfiles, "indexfiles")
+
+    toc_list = [name[:-4] for names in tags.values() for name in names]
+    idx_list = [indexfile[:-4] for indexfile in indexfiles]
+
+    with open(os.path.join(outdir, "toc-tree.json"), "w") as tocfile:
+        json.dump(list(set(toc_list)) + list(set(idx_list)), tocfile)
 
 
 if __name__ == '__main__':

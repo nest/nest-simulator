@@ -23,9 +23,16 @@
 Classes defining the different PyNEST types
 """
 
-from ..ll_api import *
+from ..ll_api import check_stack, sli_func, sps, sr, spp, take_array_index
 from .. import pynestkernel as kernel
-from .hl_api_helper import *
+from .hl_api_helper import (
+    broadcast,
+    get_parameters,
+    get_parameters_hierarchical_addressing,
+    is_iterable,
+    is_literal,
+    restructure_data,
+)
 from .hl_api_simulation import GetKernelStatus
 
 import numpy
@@ -112,7 +119,7 @@ def CreateParameter(parametertype, specs):
     return sli_func('CreateParameter', {parametertype: specs})
 
 
-class NodeCollectionIterator(object):
+class NodeCollectionIterator:
     """
     Iterator class for `NodeCollection`.
 
@@ -133,12 +140,12 @@ class NodeCollectionIterator(object):
         if self._increment > len(self._nc) - 1:
             raise StopIteration
 
-        val = sli_func('Take', self._nc._datum, [self._increment + (self._increment >= 0)])
+        val = sli_func('Take_g_a', self._nc._datum, [self._increment, self._increment + 1, 1])
         self._increment += 1
         return val
 
 
-class NodeCollection(object):
+class NodeCollection:
     """
     Class for `NodeCollection`.
 
@@ -152,6 +159,10 @@ class NodeCollection(object):
     list of nodes to a `NodeCollection` with ``nest.NodeCollection(list)``.
 
     If your nodes have spatial extent, use the member parameter ``spatial`` to get the spatial information.
+
+    Slicing a NodeCollection follows standard Python slicing syntax: nc[start:stop:step], where start and stop
+    gives the zero-indexed right-open range of nodes, and step gives the step length between nodes. The step must
+    be strictly positive.
 
     Example
     -------
@@ -210,26 +221,26 @@ class NodeCollection(object):
     def __getitem__(self, key):
         if isinstance(key, slice):
             if key.start is None:
-                start = 1
+                start = 0
             else:
-                start = key.start + 1 if key.start >= 0 else max(key.start, -1 * self.__len__())
-                if start > self.__len__():
+                start = key.start
+                if abs(start) > self.__len__():
                     raise IndexError('slice start value outside of the NodeCollection')
             if key.stop is None:
                 stop = self.__len__()
             else:
-                stop = min(key.stop, self.__len__()) if key.stop >= 0 else key.stop - 1
+                stop = key.stop
                 if abs(stop) > self.__len__():
                     raise IndexError('slice stop value outside of the NodeCollection')
             step = 1 if key.step is None else key.step
             if step < 1:
                 raise IndexError('slicing step for NodeCollection must be strictly positive')
 
-            return sli_func('Take', self._datum, [start, stop, step])
+            return sli_func('Take_g_a', self._datum, [start, stop, step])
         elif isinstance(key, (int, numpy.integer)):
-            if abs(key + (key >= 0)) > self.__len__():
+            if key >= self.__len__() or key + self.__len__() < 0:
                 raise IndexError('index value outside of the NodeCollection')
-            return sli_func('Take', self._datum, [key + (key >= 0)])
+            return sli_func('Take_g_a', self._datum, [key, key + 1, 1])
         elif isinstance(key, (list, tuple)):
             if len(key) == 0:
                 return NodeCollection([])
@@ -237,7 +248,7 @@ class NodeCollection(object):
             if all(isinstance(x, bool) for x in key):
                 if len(key) != len(self):
                     raise IndexError('Bool index array must be the same length as NodeCollection')
-                np_key = numpy.array(key, dtype=numpy.bool)
+                np_key = numpy.array(key, dtype=bool)
             # Checking that elements are not instances of bool too, because bool inherits from int
             elif all(isinstance(x, int) and not isinstance(x, bool) for x in key):
                 np_key = numpy.array(key, dtype=numpy.uint64)
@@ -263,7 +274,7 @@ class NodeCollection(object):
             raise IndexError('only integers, slices, lists, tuples, and numpy arrays are valid indices')
 
     def __contains__(self, node_id):
-        return sli_func('MemberQ', self._datum, node_id)
+        return sli_func('InCollection', self._datum, node_id)
 
     def __eq__(self, other):
         if not isinstance(other, NodeCollection):
@@ -532,7 +543,7 @@ class NodeCollection(object):
             self.set({attr: value})
 
 
-class SynapseCollectionIterator(object):
+class SynapseCollectionIterator:
     """
     Iterator class for SynapseCollection.
     """
@@ -547,7 +558,7 @@ class SynapseCollectionIterator(object):
         return SynapseCollection(next(self._iter))
 
 
-class SynapseCollection(object):
+class SynapseCollection:
     """
     Class for Connections.
 
@@ -704,7 +715,7 @@ class SynapseCollection(object):
     def __setattr__(self, attr, value):
         # `_datum` is the only property of SynapseCollection that should not be
         # interpreted as a property of the model
-        if attr == '_datum' or 'print_full':
+        if attr == '_datum' or attr == 'print_full':
             super().__setattr__(attr, value)
         else:
             self.set({attr: value})
@@ -784,10 +795,11 @@ class SynapseCollection(object):
         if pandas_output and not HAVE_PANDAS:
             raise ImportError('Pandas could not be imported')
 
-        # Return empty tuple if we have no connections or if we have done a nest.ResetKernel()
-        num_conn = GetKernelStatus('num_connections')
-        if self.__len__() == 0 or num_conn == 0:
-            return ()
+        # Return empty dictionary if we have no connections or if we have done a nest.ResetKernel()
+        num_conns = GetKernelStatus('num_connections')  # Has to be called first because it involves MPI communication.
+        if self.__len__() == 0 or num_conns == 0:
+            # Return empty tuple if get is called with an argument
+            return {} if keys is None else ()
 
         if keys is None:
             cmd = 'GetStatus'
@@ -850,7 +862,7 @@ class SynapseCollection(object):
         # This was added to ensure that the function is a nop (instead of,
         # for instance, raising an exception) when applied to an empty
         # SynapseCollection, or after having done a nest.ResetKernel().
-        if self.__len__() == 0 or GetKernelStatus()['network_size'] == 0:
+        if self.__len__() == 0 or GetKernelStatus('network_size') == 0:
             return
 
         if (isinstance(params, (list, tuple)) and
@@ -888,7 +900,7 @@ class SynapseCollection(object):
         sr('Transpose { arrayload pop SetStatus } forall')
 
 
-class CollocatedSynapses(object):
+class CollocatedSynapses:
     """
     Class for collocated synapse specifications.
 
@@ -918,7 +930,7 @@ class CollocatedSynapses(object):
         return len(self.syn_specs)
 
 
-class Mask(object):
+class Mask:
     """
     Class for spatial masks.
 
@@ -969,7 +981,7 @@ class Mask(object):
         return sli_func("Inside", point, self._datum)
 
 
-class Parameter(object):
+class Parameter:
     """
     Class for parameters
 

@@ -31,6 +31,7 @@ import os
 import numpy as np
 import nest
 import helpers
+import warnings
 
 
 class Network:
@@ -210,7 +211,7 @@ class Network:
             DC_amp = np.zeros(self.num_pops)
         else:
             if nest.Rank() == 0:
-                print('DC input compensates for missing Poisson input.\n')
+                warnings.warn('DC input created to compensate missing Poisson input.\n')
             DC_amp = helpers.dc_input_compensating_poisson(
                 self.net_dict['bg_rate'], self.net_dict['K_ext'],
                 self.net_dict['neuron_params']['tau_syn'],
@@ -263,31 +264,20 @@ class Network:
         """ Initializes the NEST kernel.
 
         Reset the NEST kernel and pass parameters to it.
-        The number of seeds for random number generation are computed based on
-        the total number of virtual processes
-        (number of MPI processes x number of threads per MPI process).
         """
         nest.ResetKernel()
 
-        # set seeds for random number generation
-        nest.SetKernelStatus(
-            {'local_num_threads': self.sim_dict['local_num_threads']})
-        N_vp = nest.GetKernelStatus('total_num_virtual_procs')
-
-        rng_seed = self.sim_dict['rng_seed']
+        nest.local_num_threads = self.sim_dict['local_num_threads']
+        nest.resolution = self.sim_dict['sim_resolution']
+        nest.rng_seed = self.sim_dict['rng_seed']
+        nest.overwrite_files = self.sim_dict['overwrite_files']
+        nest.print_time = self.sim_dict['print_time']
 
         if nest.Rank() == 0:
-            print('RNG seed: {} '.format(rng_seed))
-            print('  Total number of virtual processes: {}'.format(N_vp))
-
-        # pass parameters to NEST kernel
-        self.sim_resolution = self.sim_dict['sim_resolution']
-        kernel_dict = {
-            'resolution': self.sim_resolution,
-            'rng_seed': rng_seed,
-            'overwrite_files': self.sim_dict['overwrite_files'],
-            'print_time': self.sim_dict['print_time']}
-        nest.SetKernelStatus(kernel_dict)
+            print('RNG seed: {}'.format(
+                nest.rng_seed))
+            print('Total number of virtual processes: {}'.format(
+                nest.total_num_virtual_procs))
 
     def __create_neuronal_populations(self):
         """ Creates the neuronal populations.
@@ -324,8 +314,8 @@ class Network:
                     self.net_dict['neuron_params']['V0_mean']['original'],
                     self.net_dict['neuron_params']['V0_std']['original']))
             else:
-                raise Exception(
-                    'V0_type incorrect. ' +
+                raise ValueError(
+                    'V0_type is incorrect. ' +
                     'Valid options are "optimized" and "original".')
 
             self.pops.append(population)
@@ -387,8 +377,15 @@ class Network:
         """ Creates the thalamic neuronal population if specified in
         ``stim_dict``.
 
-        Thalamic neurons are of type ``parrot_neuron`` and receive input from a
-        Poisson generator.
+        Each neuron of the thalamic population is supposed to transmit the same
+        Poisson spike train to all of its targets in the cortical neuronal population,
+        and spike trains elicited by different thalamic neurons should be statistically
+        independent.
+        In NEST, this is achieved with a single Poisson generator connected to all
+        thalamic neurons which are of type ``parrot_neuron``;
+        Poisson generators send independent spike trains to each of their targets and
+        parrot neurons just repeat incoming spikes.
+
         Note that the number of thalamic neurons is not scaled with
         ``N_scaling``.
 
@@ -419,10 +416,8 @@ class Network:
 
         dc_dict = {'amplitude': dc_amp_stim,
                    'start': self.stim_dict['dc_start'],
-                   'stop': (self.stim_dict['dc_start'] +
-                            self.stim_dict['dc_dur'])}
-        self.dc_stim_input = nest.Create('dc_generator', n=self.num_pops,
-                                         params=dc_dict)
+                   'stop': self.stim_dict['dc_start'] + self.stim_dict['dc_dur']}
+        self.dc_stim_input = nest.Create('dc_generator', n=self.num_pops, params=dc_dict)
 
     def __connect_neuronal_populations(self):
         """ Creates the recurrent connections between neuronal populations. """
@@ -457,7 +452,7 @@ class Network:
                                 mean=self.net_dict['delay_matrix_mean'][i][j],
                                 std=(self.net_dict['delay_matrix_mean'][i][j] *
                                      self.net_dict['delay_rel_std'])),
-                            min=self.sim_resolution,
+                            min=nest.resolution,
                             max=np.Inf)}
 
                     nest.Connect(
@@ -520,7 +515,7 @@ class Network:
                         mean=self.stim_dict['delay_th_mean'],
                         std=(self.stim_dict['delay_th_mean'] *
                              self.stim_dict['delay_th_rel_std'])),
-                    min=self.sim_resolution,
+                    min=nest.resolution,
                     max=np.Inf)}
 
             nest.Connect(

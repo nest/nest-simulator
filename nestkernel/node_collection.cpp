@@ -22,8 +22,8 @@
 
 #include "node_collection.h"
 #include "kernel_manager.h"
-#include "vp_manager_impl.h"
 #include "mpi_manager_impl.h"
+#include "vp_manager_impl.h"
 
 
 // C++ includes:
@@ -37,12 +37,14 @@ namespace nest
 // function object for sorting a vector of NodeCollectionPrimitives
 struct PrimitiveSortObject
 {
-  bool operator()( NodeCollectionPrimitive& primitive_lhs, NodeCollectionPrimitive& primitive_rhs )
+  bool
+  operator()( NodeCollectionPrimitive& primitive_lhs, NodeCollectionPrimitive& primitive_rhs )
   {
     return primitive_lhs[ 0 ] < primitive_rhs[ 0 ];
   }
 
-  bool operator()( const NodeCollectionPrimitive& primitive_lhs, const NodeCollectionPrimitive& primitive_rhs )
+  bool
+  operator()( const NodeCollectionPrimitive& primitive_lhs, const NodeCollectionPrimitive& primitive_rhs )
   {
     return primitive_lhs[ 0 ] < primitive_rhs[ 0 ];
   }
@@ -84,9 +86,42 @@ nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
 
   if ( ( part >= collection.parts_.size() or offset >= collection.parts_[ part ].size() )
     and not( part == collection.parts_.size() and offset == 0 ) // end iterator
-    )
+  )
   {
     throw KernelException( "Invalid part or offset into NodeCollectionComposite" );
+  }
+}
+
+void
+nc_const_iterator::composite_update_indices_()
+{
+  // If we went past the size of the primitive, we need to adjust the element
+  // and primitive part indices.
+  size_t primitive_size = composite_collection_->parts_[ part_idx_ ].size();
+  while ( element_idx_ >= primitive_size )
+  {
+    element_idx_ = element_idx_ - primitive_size;
+    ++part_idx_;
+    if ( part_idx_ < composite_collection_->parts_.size() )
+    {
+      primitive_size = composite_collection_->parts_[ part_idx_ ].size();
+    }
+  }
+  // If we went past the end of the composite, we need to adjust the
+  // position of the iterator.
+  if ( composite_collection_->end_offset_ != 0 or composite_collection_->end_part_ != 0 )
+  {
+    if ( part_idx_ >= composite_collection_->end_part_ and element_idx_ >= composite_collection_->end_offset_ )
+    {
+      part_idx_ = composite_collection_->end_part_;
+      element_idx_ = composite_collection_->end_offset_;
+    }
+  }
+  else if ( part_idx_ >= composite_collection_->parts_.size() )
+  {
+    auto end_of_composite = composite_collection_->end();
+    part_idx_ = end_of_composite.part_idx_;
+    element_idx_ = end_of_composite.element_idx_;
   }
 }
 
@@ -97,7 +132,8 @@ nc_const_iterator::print_me( std::ostream& out ) const
       << ", ex: " << element_idx_ << "]]";
 }
 
-NodeCollectionPTR operator+( NodeCollectionPTR lhs, NodeCollectionPTR rhs )
+NodeCollectionPTR
+operator+( NodeCollectionPTR lhs, NodeCollectionPTR rhs )
 {
   return lhs->operator+( rhs );
 }
@@ -175,7 +211,7 @@ NodeCollection::create( const std::vector< index >& node_ids_vector )
 NodeCollectionPTR
 NodeCollection::create_()
 {
-  return NodeCollectionPTR( new NodeCollectionPrimitive( 0, 0, invalid_index ) );
+  return NodeCollectionPTR( new NodeCollectionPrimitive() );
 }
 
 NodeCollectionPTR
@@ -240,7 +276,10 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( index first,
   , last_( last )
   , model_id_( model_id )
   , metadata_( meta )
+  , nodes_have_no_proxies_( not kernel().model_manager.get_node_model( model_id_ )->has_proxies() )
 {
+  assert_consistent_model_ids_( model_id_ );
+
   assert( first_ <= last_ );
 }
 
@@ -249,6 +288,7 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( index first, index last, index
   , last_( last )
   , model_id_( model_id )
   , metadata_( nullptr )
+  , nodes_have_no_proxies_( not kernel().model_manager.get_node_model( model_id_ )->has_proxies() )
 {
   assert( first_ <= last_ );
 }
@@ -272,6 +312,7 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( index first, index last )
     }
   }
   model_id_ = first_model_id;
+  nodes_have_no_proxies_ = not kernel().model_manager.get_node_model( model_id_ )->has_proxies();
 }
 
 NodeCollectionPrimitive::NodeCollectionPrimitive()
@@ -279,6 +320,7 @@ NodeCollectionPrimitive::NodeCollectionPrimitive()
   , last_( 0 )
   , model_id_( invalid_index )
   , metadata_( nullptr )
+  , nodes_have_no_proxies_( false )
 {
 }
 
@@ -294,7 +336,8 @@ NodeCollectionPrimitive::to_array() const
   return node_ids;
 }
 
-NodeCollectionPTR NodeCollectionPrimitive::operator+( NodeCollectionPTR rhs ) const
+NodeCollectionPTR
+NodeCollectionPrimitive::operator+( NodeCollectionPTR rhs ) const
 {
   if ( not valid() or not rhs->valid() )
   {
@@ -396,13 +439,13 @@ NodeCollectionPrimitive::MPI_local_begin( NodeCollectionPTR cp ) const
 }
 
 NodeCollectionPTR
-NodeCollectionPrimitive::NodeCollectionPrimitive::slice( size_t start, size_t stop, size_t step ) const
+NodeCollectionPrimitive::slice( size_t start, size_t end, size_t step ) const
 {
-  if ( not( start < stop ) )
+  if ( not( start < end ) )
   {
     throw BadParameter( "start < stop required." );
   }
-  if ( not( stop <= size() ) )
+  if ( not( end <= size() ) )
   {
     throw BadParameter( "stop <= size() required." );
   }
@@ -413,17 +456,15 @@ NodeCollectionPrimitive::NodeCollectionPrimitive::slice( size_t start, size_t st
   }
 
   NodeCollectionPTR sliced_nc;
-  if ( step == 1 )
+  if ( step == 1 and metadata_ == nullptr )
   {
-    sliced_nc = std::make_shared< NodeCollectionPrimitive >( first_ + start, first_ + stop - 1, model_id_, metadata_ );
+    // Create primitive NodeCollection passing node IDs.
+    // Subtract 1 because "end" is one past last element to take while constructor expects ID of last node.
+    sliced_nc = std::make_shared< NodeCollectionPrimitive >( first_ + start, first_ + end - 1, model_id_ );
   }
   else
   {
-    sliced_nc = std::make_shared< NodeCollectionComposite >( *this, start, stop, step );
-  }
-  if ( metadata_ )
-  {
-    metadata_->slice( start, stop, step, sliced_nc );
+    sliced_nc = std::make_shared< NodeCollectionComposite >( *this, start, end, step );
   }
 
   return sliced_nc;
@@ -449,7 +490,8 @@ NodeCollectionPrimitive::print_me( std::ostream& out ) const
 void
 NodeCollectionPrimitive::print_primitive( std::ostream& out ) const
 {
-  std::string model = model_id_ != invalid_index ? kernel().model_manager.get_model( model_id_ )->get_name() : "none";
+  std::string model =
+    model_id_ != invalid_index ? kernel().model_manager.get_node_model( model_id_ )->get_name() : "none";
 
   out << "model=" << model << ", size=" << size();
 
@@ -475,18 +517,37 @@ NodeCollectionPrimitive::overlapping( const NodeCollectionPrimitive& rhs ) const
   return ( ( rhs.first_ <= last_ and rhs.first_ >= first_ ) or ( rhs.last_ <= last_ and rhs.last_ >= first_ ) );
 }
 
+void
+NodeCollectionPrimitive::assert_consistent_model_ids_( index expected_model_id ) const
+{
+  for ( index node_id = first_; node_id <= last_; ++node_id )
+  {
+    const auto model_id = kernel().modelrange_manager.get_model_id( node_id );
+    if ( model_id != expected_model_id )
+    {
+      const auto node_model = kernel().modelrange_manager.get_model_of_node_id( model_id )->get_name();
+      const auto expected_model = kernel().modelrange_manager.get_model_of_node_id( expected_model_id )->get_name();
+      const auto message = "All nodes must have the same model (node with ID " + std::to_string( node_id )
+        + " has model " + node_model + ", expected " + expected_model + ")";
+      throw BadProperty( message );
+    }
+  }
+}
+
 NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionPrimitive& primitive,
   size_t start,
-  size_t stop,
+  size_t end,
   size_t step )
-  : size_( std::floor( ( stop - start ) / ( float ) step ) + ( ( stop - start ) % step > 0 ) )
+  : parts_()
+  , size_( ( end - start - 1 ) / step + 1 )
   , step_( step )
   , start_part_( 0 )
   , start_offset_( start )
-  , stop_part_( stop == primitive.size() )
-  , stop_offset_( stop == primitive.size() ? 0 : stop )
+  // If end is at the end of the primitive, set the end to the first in the next (nonexistent) part,
+  // for consistency with iterator comparisons.
+  , end_part_( end == primitive.size() ? 1 : 0 )
+  , end_offset_( end == primitive.size() ? 0 : end )
 {
-  parts_.reserve( 1 );
   parts_.push_back( primitive );
 }
 
@@ -496,8 +557,8 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite&
   , step_( comp.step_ )
   , start_part_( comp.start_part_ )
   , start_offset_( comp.start_offset_ )
-  , stop_part_( comp.stop_part_ )
-  , stop_offset_( comp.stop_offset_ )
+  , end_part_( comp.end_part_ )
+  , end_offset_( comp.end_offset_ )
 {
 }
 
@@ -506,8 +567,8 @@ NodeCollectionComposite::NodeCollectionComposite( const std::vector< NodeCollect
   , step_( 1 )
   , start_part_( 0 )
   , start_offset_( 0 )
-  , stop_part_( 0 )
-  , stop_offset_( 0 )
+  , end_part_( 0 )
+  , end_offset_( 0 )
 {
   if ( parts.size() < 1 )
   {
@@ -530,26 +591,26 @@ NodeCollectionComposite::NodeCollectionComposite( const std::vector< NodeCollect
 
 NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite& composite,
   size_t start,
-  size_t stop,
+  size_t end,
   size_t step )
   : parts_( composite.parts_ )
-  , size_( std::floor( ( stop - start ) / ( float ) step ) + ( ( stop - start ) % step > 0 ) )
+  , size_( ( end - start - 1 ) / step + 1 )
   , step_( step )
   , start_part_( 0 )
   , start_offset_( 0 )
-  , stop_part_( composite.parts_.size() )
-  , stop_offset_( 0 )
+  , end_part_( composite.parts_.size() )
+  , end_offset_( 0 )
 {
-  if ( stop - start < 1 )
+  if ( end - start < 1 )
   {
     throw BadProperty( "Cannot create an empty composite NodeCollection." );
   }
-  if ( start > composite.size() or stop > composite.size() )
+  if ( start > composite.size() or end > composite.size() )
   {
     throw BadProperty( "Index out of range." );
   }
 
-  if ( composite.step_ > 1 or composite.stop_part_ != 0 or composite.stop_offset_ != 0 )
+  if ( composite.step_ > 1 or composite.end_part_ != 0 or composite.end_offset_ != 0 )
   {
     // The NodeCollection is sliced
     if ( size_ > 1 )
@@ -560,8 +621,8 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite&
     // we have a single single node ID, must just find where it is.
     const_iterator it = composite.begin() + start;
     it.get_current_part_offset( start_part_, start_offset_ );
-    stop_part_ = start_part_;
-    stop_offset_ = start_offset_ + 1;
+    end_part_ = start_part_;
+    end_offset_ = start_offset_ + 1;
   }
   else
   {
@@ -576,9 +637,9 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite&
       {
         it.get_current_part_offset( start_part_, start_offset_ );
       }
-      else if ( global_index == stop )
+      else if ( global_index == end )
       {
-        it.get_current_part_offset( stop_part_, stop_offset_ );
+        it.get_current_part_offset( end_part_, end_offset_ );
         break;
       }
       ++global_index;
@@ -586,7 +647,8 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite&
   }
 }
 
-NodeCollectionPTR NodeCollectionComposite::operator+( NodeCollectionPTR rhs ) const
+NodeCollectionPTR
+NodeCollectionComposite::operator+( NodeCollectionPTR rhs ) const
 {
   if ( rhs->empty() )
   {
@@ -601,7 +663,7 @@ NodeCollectionPTR NodeCollectionComposite::operator+( NodeCollectionPTR rhs ) co
     throw KernelException(
       "InvalidNodeCollection: note that ResetKernel invalidates all previously created NodeCollections." );
   }
-  if ( step_ > 1 or stop_part_ != 0 or stop_offset_ != 0 )
+  if ( step_ > 1 or end_part_ != 0 or end_offset_ != 0 )
   {
     throw BadProperty( "Cannot add NodeCollection to a sliced composite." );
   }
@@ -621,13 +683,13 @@ NodeCollectionPTR NodeCollectionComposite::operator+( NodeCollectionPTR rhs ) co
   else // rhs is Composite
   {
     auto const* const rhs_ptr = dynamic_cast< NodeCollectionComposite const* >( rhs.get() );
-    if ( rhs_ptr->step_ > 1 or rhs_ptr->stop_part_ != 0 or rhs_ptr->stop_offset_ != 0 )
+    if ( rhs_ptr->step_ > 1 or rhs_ptr->end_part_ != 0 or rhs_ptr->end_offset_ != 0 )
     {
       throw BadProperty( "Cannot add NodeCollection to a sliced composite." );
     }
 
     // check overlap between the two composites
-    const NodeCollectionComposite* shortest, *longest;
+    const NodeCollectionComposite *shortest, *longest;
     if ( size() < rhs_ptr->size() )
     {
       shortest = this;
@@ -670,7 +732,8 @@ NodeCollectionPTR NodeCollectionComposite::operator+( NodeCollectionPTR rhs ) co
   }
 }
 
-NodeCollectionPTR NodeCollectionComposite::operator+( const NodeCollectionPrimitive& rhs ) const
+NodeCollectionPTR
+NodeCollectionComposite::operator+( const NodeCollectionPrimitive& rhs ) const
 {
   if ( get_metadata().get() and not( get_metadata() == rhs.get_metadata() ) )
   {
@@ -706,7 +769,12 @@ NodeCollectionComposite::local_begin( NodeCollectionPTR cp ) const
   size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
   size_t current_vp = kernel().vp_manager.thread_to_vp( kernel().vp_manager.get_thread_id() );
   size_t vp_first_node = kernel().vp_manager.node_id_to_vp( operator[]( 0 ) );
-  size_t offset = ( current_vp - vp_first_node + num_vps ) % num_vps;
+  size_t offset = ( current_vp - vp_first_node ) % num_vps;
+
+  if ( ( current_vp - vp_first_node ) % step_ != 0 )
+  { // There are no thread local nodes in the NodeCollection.
+    return end( cp );
+  }
 
   size_t current_part = start_part_;
   size_t current_offset = start_offset_;
@@ -729,7 +797,12 @@ NodeCollectionComposite::MPI_local_begin( NodeCollectionPTR cp ) const
   size_t rank = kernel().mpi_manager.get_rank();
   size_t rank_first_node =
     kernel().mpi_manager.get_process_id_of_vp( kernel().vp_manager.node_id_to_vp( operator[]( 0 ) ) );
-  size_t offset = ( rank - rank_first_node + num_processes ) % num_processes;
+  size_t offset = ( rank - rank_first_node ) % num_processes;
+
+  if ( ( rank - rank_first_node ) % step_ != 0 )
+  { // There are no MPI local nodes in the NodeCollection.
+    return end( cp );
+  }
 
   size_t current_part = start_part_;
   size_t current_offset = start_offset_;
@@ -758,15 +831,15 @@ NodeCollectionComposite::to_array() const
 }
 
 NodeCollectionPTR
-NodeCollectionComposite::slice( size_t start, size_t stop, size_t step ) const
+NodeCollectionComposite::slice( size_t start, size_t end, size_t step ) const
 {
-  if ( not( start < stop ) )
+  if ( not( start < end ) )
   {
     throw BadParameter( "start < stop required." );
   }
-  if ( not( stop <= size() ) )
+  if ( not( end <= size() ) )
   {
-    throw BadParameter( "stop <= size() required." );
+    throw BadParameter( "end <= size() required." );
   }
   if ( not valid() )
   {
@@ -774,13 +847,13 @@ NodeCollectionComposite::slice( size_t start, size_t stop, size_t step ) const
       "InvalidNodeCollection: note that ResetKernel invalidates all previously created NodeCollections." );
   }
 
-  auto new_composite = NodeCollectionComposite( *this, start, stop, step );
+  auto new_composite = NodeCollectionComposite( *this, start, end, step );
 
-  if ( step == 1 and new_composite.start_part_ == new_composite.stop_part_ )
+  if ( step == 1 and new_composite.start_part_ == new_composite.end_part_ )
   {
     // Return only the primitive
     return new_composite.parts_[ new_composite.start_part_ ].slice(
-      new_composite.start_offset_, new_composite.stop_offset_ );
+      new_composite.start_offset_, new_composite.end_offset_ );
   }
   return NodeCollectionPTR( new NodeCollectionComposite( new_composite ) );
 }
@@ -819,7 +892,7 @@ NodeCollectionComposite::contains( index node_id ) const
   long upper = parts_.size() - 1;
   while ( lower <= upper )
   {
-    long middle = std::floor( ( lower + upper ) / 2.0 );
+    size_t middle = std::floor( ( lower + upper ) / 2.0 );
 
     if ( ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).node_id < node_id )
     {
@@ -831,14 +904,30 @@ NodeCollectionComposite::contains( index node_id ) const
     }
     else
     {
-      if ( step_ > 1 )
+      if ( start_offset_ != 0 or start_part_ != 0 or end_part_ != 0 or end_offset_ != 0 or step_ > 1 )
       {
-        index start_node_id = ( *( parts_[ middle ].begin() + start_offset_ ) ).node_id;
-        index end_node_id = ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).node_id;
-        index stop_node_id =
-          stop_part_ != ( size_t ) middle ? end_node_id : ( *( parts_[ middle ].begin() + stop_offset_ ) ).node_id;
-
-        return node_id >= start_node_id and ( ( node_id - start_node_id ) % step_ ) == 0 and node_id <= stop_node_id;
+        // NodeCollection is sliced
+        if ( middle < start_part_ or end_part_ < middle )
+        {
+          // middle is outside of the sliced area
+          return false;
+        }
+        // Need to find number of nodes in previous parts to know if the the step hits the node_id.
+        const auto num_prev_nodes = std::accumulate( parts_.begin(),
+          parts_.begin() + middle,
+          static_cast< size_t >( 0 ), // casting 0 to size_t to make std::accumulate return a size_t
+          []( size_t a, NodeCollectionPrimitive primitive ) { return a + primitive.size(); } );
+        if ( start_part_ < middle and middle < end_part_ )
+        {
+          // middle is after the first part and before the last part
+          return ( ( num_prev_nodes + node_id - parts_[ middle ][ 0 ] ) % step_ ) == 0;
+        }
+        // The first or the last node is somewhere in the middle part.
+        index start_node_id = start_part_ == middle ? parts_[ middle ][ start_offset_ ] : parts_[ middle ][ 0 ];
+        index end_node_id =
+          end_part_ == middle ? parts_[ middle ][ end_offset_ - 1 ] : parts_[ middle ][ parts_[ middle ].size() - 1 ];
+        return node_id >= start_node_id and ( ( num_prev_nodes + node_id - start_node_id ) % step_ ) == 0
+          and node_id <= end_node_id;
       }
       return true;
     }
@@ -849,8 +938,8 @@ NodeCollectionComposite::contains( index node_id ) const
 long
 NodeCollectionComposite::find( const index node_id ) const
 {
-  if ( step_ > 1 or start_part_ > 0 or start_offset_ > 0 or ( stop_part_ > 0 and stop_part_ != parts_.size() )
-    or stop_offset_ > 0 )
+  if ( step_ > 1 or start_part_ > 0 or start_offset_ > 0 or ( end_part_ > 0 and end_part_ != parts_.size() )
+    or end_offset_ > 0 )
   {
     // Composite is sliced, we must iterate to find the index.
     auto it = begin();
@@ -883,10 +972,7 @@ NodeCollectionComposite::find( const index node_id ) const
       }
       else
       {
-        auto size_accu = []( long a, const NodeCollectionPrimitive& b )
-        {
-          return a + b.size();
-        };
+        auto size_accu = []( long a, const NodeCollectionPrimitive& b ) { return a + b.size(); };
         long sum_pre = std::accumulate( parts_.begin(), parts_.begin() + middle, ( long ) 0, size_accu );
         return sum_pre + parts_[ middle ].find( node_id );
       }
@@ -895,14 +981,21 @@ NodeCollectionComposite::find( const index node_id ) const
   }
 }
 
+bool
+NodeCollectionComposite::has_proxies() const
+{
+  return std::all_of(
+    parts_.begin(), parts_.end(), []( const NodeCollectionPrimitive& prim ) { return prim.has_proxies(); } );
+}
+
 void
 NodeCollectionComposite::print_me( std::ostream& out ) const
 {
-  std::string metadata = "None";
+  std::string metadata = parts_[ 0 ].get_metadata().get() ? parts_[ 0 ].get_metadata()->get_type() : "None";
   std::string nc = "NodeCollection(";
   std::string space( nc.size(), ' ' );
 
-  if ( step_ > 1 or ( stop_part_ != 0 or stop_offset_ != 0 ) )
+  if ( step_ > 1 or ( end_part_ != 0 or end_offset_ != 0 ) )
   {
     // Sliced composite NodeCollection
 
@@ -925,7 +1018,8 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
         if ( it != begin() )
         {
           // Need to count the primitive, so can't start at begin()
-          out << "\n" + space << "model=" << kernel().model_manager.get_model( first_in_primitive.model_id )->get_name()
+          out << "\n" + space
+              << "model=" << kernel().model_manager.get_node_model( first_in_primitive.model_id )->get_name()
               << ", size=" << primitive_size << ", ";
           if ( primitive_size == 1 )
           {
@@ -953,7 +1047,7 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
     }
 
     // Need to also print the last primitive
-    out << "\n" + space << "model=" << kernel().model_manager.get_model( first_in_primitive.model_id )->get_name()
+    out << "\n" + space << "model=" << kernel().model_manager.get_node_model( first_in_primitive.model_id )->get_name()
         << ", size=" << primitive_size << ", ";
     if ( primitive_size == 1 )
     {

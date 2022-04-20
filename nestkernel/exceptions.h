@@ -87,7 +87,7 @@ public:
 /**
  * Exception to be thrown if a model with the the specified name
  * does not exist.
- * @see UnknownModelID
+ * @see UnknownComponent
  * @ingroup KernelExceptions
  */
 class UnknownModelName : public KernelException
@@ -102,6 +102,29 @@ public:
   }
 
   ~UnknownModelName() throw()
+  {
+  }
+  std::string message() const;
+};
+
+/**
+ * Exception to be thrown if a component with the the specified name
+ * does not exist.
+ * @see UnknownModelName
+ * @ingroup KernelExceptions
+ */
+class UnknownComponent : public KernelException
+{
+  const Name n_;
+
+public:
+  UnknownComponent( const Name& n )
+    : KernelException( "UnknownComponent" )
+    , n_( n )
+  {
+  }
+
+  ~UnknownComponent() throw()
   {
   }
   std::string message() const;
@@ -129,34 +152,10 @@ public:
 };
 
 /**
- * Exception to be thrown if a model with the the specified ID
- * does not exist.
- * This exception can occur if modeldict has corrupt entries.
- * @see UnknownModelID
- * @ingroup KernelExceptions
- */
-class UnknownModelID : public KernelException
-{
-  const long id_;
-
-public:
-  UnknownModelID( long id )
-    : KernelException( "UnknownModelID" )
-    , id_( id )
-  {
-  }
-  ~UnknownModelID() throw()
-  {
-  }
-  std::string message() const;
-};
-
-/**
  * Exception to be thrown if a (neuron/synapse) model with the the specified ID
  * is used within the network and the providing module hence cannot be
  * uninstalled. This exception can occur if the user tries to uninstall a
  * module.
- * @see UnknownModelID
  * @ingroup KernelExceptions
  */
 class ModelInUse : public KernelException
@@ -309,6 +308,30 @@ public:
   std::string message() const;
 };
 
+/*
+ * Exception to be thrown if the parent
+ * compartment does not exist
+ */
+class UnknownCompartment : public KernelException
+{
+  long compartment_idx_;
+  std::string info_;
+
+public:
+  UnknownCompartment( long compartment_idx, std::string info )
+    : KernelException( "UnknownCompartment" )
+    , compartment_idx_( compartment_idx )
+    , info_( info )
+  {
+  }
+
+  ~UnknownCompartment() throw()
+  {
+  }
+  std::string message() const;
+};
+
+
 /**
  * Exception to be thrown if the specified
  * receptor type does not exist in the node.
@@ -368,11 +391,19 @@ public:
 class UnknownPort : public KernelException
 {
   int id_;
+  std::string info_;
 
 public:
   UnknownPort( int id )
     : KernelException( "UnknownPort" )
     , id_( id )
+    , info_( "" )
+  {
+  }
+  UnknownPort( int id, std::string info )
+    : KernelException( "UnknownPort" )
+    , id_( id )
+    , info_( info )
   {
   }
 
@@ -715,8 +746,8 @@ class InvalidTimeInModel : public KernelException
 {
 public:
   /**
-  * @note model should be passed from get_name() to ensure that
-  *             names of copied models are reported correctly.
+   * @note model should be passed from get_name() to ensure that
+   *             names of copied models are reported correctly.
    * @param model     name of model causing problem
    * @param property  name of property conflicting
    * @param value     value of property conflicting
@@ -749,8 +780,8 @@ class StepMultipleRequired : public KernelException
 {
 public:
   /**
-  * @note model should be passed from get_name() to ensure that
-  *             names of copied models are reported correctly.
+   * @note model should be passed from get_name() to ensure that
+   *             names of copied models are reported correctly.
    * @param model     name of model causing problem
    * @param property  name of property conflicting
    * @param value     value of property conflicting
@@ -783,8 +814,8 @@ class TimeMultipleRequired : public KernelException
 {
 public:
   /**
-  * @note model should be passed from get_name() to ensure that
-  *             names of copied models are reported correctly.
+   * @note model should be passed from get_name() to ensure that
+   *             names of copied models are reported correctly.
    * @param model    name of model causing problem
    * @param name_a   name of dividend
    * @param value_a  value of dividend
@@ -826,11 +857,11 @@ class GSLSolverFailure : public KernelException
 {
 public:
   /**
-  * @note model should be passed from get_name() to ensure that
-  *             names of copied models are reported correctly.
-  * @param model name of model causing problem
-  * @param status exit status of the GSL solver
-  */
+   * @note model should be passed from get_name() to ensure that
+   *             names of copied models are reported correctly.
+   * @param model name of model causing problem
+   * @param status exit status of the GSL solver
+   */
   GSLSolverFailure( const std::string& model, const int status )
     : KernelException( "GSLSolverFailure" )
     , model_( model )
@@ -904,7 +935,7 @@ public:
 /**
  * Exception to be thrown if an internal error occures.
  * @ingroup KernelExceptions
-*/
+ */
 class InternalError : public KernelException
 {
   std::string msg_;
@@ -940,8 +971,8 @@ class MUSICPortUnconnected : public KernelException
 {
 public:
   /**
-  * @note model should be passed from get_name() to ensure that
-  *             names of copied models are reported correctly.
+   * @note model should be passed from get_name() to ensure that
+   *             names of copied models are reported correctly.
    * @param model     name of model causing problem
    * @param portname  name of MUSIC port
    */
@@ -971,8 +1002,8 @@ class MUSICPortHasNoWidth : public KernelException
 {
 public:
   /**
-  * @note model should be passed from get_name() to ensure that
-  *             names of copied models are reported correctly.
+   * @note model should be passed from get_name() to ensure that
+   *             names of copied models are reported correctly.
    * @param model     name of model causing problem
    * @param portname  name of music port
    */
@@ -1025,16 +1056,16 @@ private:
 };
 
 /**
-* Exception to be thrown if the user tries to change the name of an already
-* published port.
-* @ingroup KernelExceptions
-*/
+ * Exception to be thrown if the user tries to change the name of an already
+ * published port.
+ * @ingroup KernelExceptions
+ */
 class MUSICSimulationHasRun : public KernelException
 {
 public:
   /**
-  * @note model should be passed from get_name() to ensure that
-  *             names of copied models are reported correctly.
+   * @note model should be passed from get_name() to ensure that
+   *             names of copied models are reported correctly.
    * @param model     name of model causing problem
    */
   MUSICSimulationHasRun( const std::string& model )
@@ -1062,8 +1093,8 @@ class MUSICChannelUnknown : public KernelException
 {
 public:
   /**
-  * @note model should be passed from get_name() to ensure that
-  *             names of copied models are reported correctly.
+   * @note model should be passed from get_name() to ensure that
+   *             names of copied models are reported correctly.
    * @param model     name of model causing problem
    */
   MUSICChannelUnknown( const std::string& model, const std::string& portname, int channel )
@@ -1117,8 +1148,8 @@ class MUSICChannelAlreadyMapped : public KernelException
 {
 public:
   /**
-  * @note model should be passed from get_name() to ensure that
-  *             names of copied models are reported correctly.
+   * @note model should be passed from get_name() to ensure that
+   *             names of copied models are reported correctly.
    * @param model     name of model causing problem
    */
   MUSICChannelAlreadyMapped( const std::string& model, const std::string& portname, int channel )

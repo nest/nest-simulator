@@ -33,10 +33,10 @@
 
 // Includes from sli:
 #include "dict.h"
+#include "sharedptrdatum.h"
 #include "slifunction.h"
 #include "slimodule.h"
 #include "slitype.h"
-#include "sharedptrdatum.h"
 
 
 namespace nest
@@ -180,8 +180,6 @@ public:
         @verbatim
         /iaf_psc_alpha 6 Create
         @endverbatim
-   *    Literals will be looked up in the corresponding dictionaries
-   *    (modeldict, synapsedict).
    * -# The network is accessed using the get_network() accessor
    *    function.
    * -# Each interface function shall verify that there are enough

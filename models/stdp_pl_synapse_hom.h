@@ -42,7 +42,7 @@ Synapse type for spike-timing dependent plasticity with power law
 Description
 +++++++++++
 
-stdp_pl_synapse is a connector to create synapses with spike time
+``stdp_pl_synapse`` is a connector to create synapses with spike time
 dependent plasticity using homoegeneous parameters (as defined in [1]_).
 
 Parameters
@@ -57,10 +57,15 @@ Parameters
  mu        real    Weight dependence exponent, potentiation
 =========  ======  ====================================================
 
-Remarks:
-
 The parameters can only be set by SetDefaults and apply to all synapses of
 the model.
+
+.. warning::
+
+   This synaptic plasticity rule does not take
+   :ref:`precise spike timing <sim_precise_spike_times>` into
+   account. When calculating the weight update, the precise spike time part
+   of the timestamp is ignored.
 
 References
 ++++++++++
@@ -138,6 +143,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   stdp_pl_synapse_hom( const stdp_pl_synapse_hom& ) = default;
+  stdp_pl_synapse_hom& operator=( const stdp_pl_synapse_hom& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these

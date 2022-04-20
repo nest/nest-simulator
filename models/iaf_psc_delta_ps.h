@@ -49,7 +49,7 @@ postsynaptic currents - precise spike timing version
 Description
 +++++++++++
 
-iaf_psc_delta_ps is an implementation of a leaky integrate-and-fire model
+``iaf_psc_delta_ps`` is an implementation of a leaky integrate-and-fire model
 where the potential jumps on each spike arrival.
 
 The threshold crossing is followed by an absolute refractory period
@@ -85,12 +85,22 @@ neuron like dynamics interacting by point events is described in
 
 Critical tests for the formulation of the neuron model are the
 comparisons of simulation results for different computation step
-sizes. sli/testsuite/nest contains a number of such tests.
+sizes and the testsuite contains a number of such tests.
 
-The iaf_psc_delta_ps is the standard model used to check the consistency
+The ``iaf_psc_delta_ps`` is the standard model used to check the consistency
 of the nest simulation kernel because it is at the same time complex
 enough to exhibit non-trivial dynamics and simple enough compute
 relevant measures analytically.
+
+Please note that this node is capable of sending precise spike times
+to target nodes (on-grid spike time plus offset).
+
+The ``af_psc_delta_ps`` neuron accepts connections transmitting
+``CurrentEvents``. These events transmit stepwise-constant currents which
+can only change at on-grid times.
+
+For details about exact subthreshold integration, please see
+:doc:`../guides/exact-integration`.
 
 Parameters
 ++++++++++
@@ -109,19 +119,6 @@ The following parameters can be set in the status dictionary.
  V_min             mV      Absolute lower value for the membrane potential
  refractory_input  (bool)  If true, keep input during refractory period (default: false)
 =================  ======  ==============================================================
-
-Remarks
-+++++++
-
-Please note that this node is capable of sending precise spike times
-to target nodes (on-grid spike time plus offset).
-
-The iaf_psc_delta_ps neuron accepts connections transmitting
-CurrentEvents. These events transmit stepwise-constant currents which
-can only change at on-grid times.
-
-For details about exact subthreshold integration, please see
-:doc:`../guides/exact-integration`.
 
 References
 ++++++++++
@@ -167,7 +164,7 @@ public:
   iaf_psc_delta_ps();
 
   /** Copy constructor.
-      GenericModel::allocate_() uses the copy constructor to clone
+      GenericModel::create_() uses the copy constructor to clone
       actual model instances from the prototype instance.
 
       @note The copy constructor MUST NOT be used to create nodes based

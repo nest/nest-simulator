@@ -79,18 +79,34 @@ print_msg() {
 print_msg "MSGBLD0105: " "Following tools are in use:"
 print_msg "MSGBLD0105: " "---------------------------"
 if $PERFORM_VERA; then
+  if ! command -v $VERA; then
+    print_msg "MSGBLD0105:" "Could not find $VERA!"
+    exit 1
+  fi
   VERA_VERS=`$VERA --version`
   print_msg "MSGBLD0105: " "VERA++       : $VERA_VERS"
 fi
 if $PERFORM_CPPCHECK; then
+  if ! command -v $CPPCHECK; then
+    print_msg "MSGBLD0105:" "Could not find $CPPCHECK!"
+    exit 1
+  fi
   CPPCHECK_VERS=`$CPPCHECK --version | sed 's/^Cppcheck //'`
   print_msg "MSGBLD0105: " "CPPCHECK     : $CPPCHECK_VERS"
 fi
 if $PERFORM_CLANG_FORMAT; then
+  if ! command -v $CLANG_FORMAT; then
+    print_msg "MSGBLD0105:" "Could not find $CLANG_FORMAT!"
+    exit 1
+  fi
   CLANG_FORMAT_VERS=`$CLANG_FORMAT --version`
   print_msg "MSGBLD0105: " "CLANG-FORMAT : $CLANG_FORMAT_VERS"
 fi
 if $PERFORM_PEP8; then
+  if ! command -v $PEP8; then
+    print_msg "MSGBLD0105:" "Could not find $PEP8!"
+    exit 1
+  fi
   PYCODESTYLE_VERS=`$PEP8 --version`
   print_msg "MSGBLD0105: " "PEP8         : $PYCODESTYLE_VERS"
   print_msg "MSGBLD0105: " "PEP8 ignores : $PYCODESTYLE_IGNORES"
@@ -230,6 +246,14 @@ for f in $FILE_NAMES; do
         c_files_with_errors="$c_files_with_errors $f"
       fi
       ;;
+
+    *clopath_synapse_spike_pairing.py )
+       # Skip checking files which cannot be handled correctly by pycodestyle
+       # See https://github.com/nest/nest-simulator/issues/2175
+       # This should be removed as soon as we have moved to flake8.
+       print_msg "MSGBLD0211: " "Skipping ...........: $f  (not handled correctly by pycodestyle)"
+       continue
+       ;;
 
     *.py )
       # PYCODESTYLE

@@ -450,7 +450,7 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
             elif numpy.issubdtype(obj.dtype, numpy.floating):
                 ret = python_buffer_to_datum[object, double](obj)
             else:
-                raise NESTError.PyNESTError("only vectors of integers or floats are supported")
+                raise NESTErrors.PyNESTError("only vectors of integers or floats are supported")
 
         if ret is NULL:
             try:

@@ -687,12 +687,11 @@ Synapse Types
 
 NEST provides a number of built-in synapse models that can be used
 during connection setup. The default model is the ``static_synapse``,
-whose only parameters ``weight`` and ``delay`` do not change over time.
-Other synapse types model effects like learning and adaptation in the
+whose only parameters ``weight`` and ``delay`` do not change over
+time. Other synapse models implement learning and adaptation in the
 form of long-term or short-term plasticity. A list of available
-synapse models is accessible via the command
-``nest.Models('synapses')``. A list of available synapse models and
-more detailed information about each of them can be found in the
+synapse models is accessible via the command ``nest.synapse_models``.
+More detailed information about each of them can be found in the
 :doc:`model directory <../models/index_synapse>`.
 
 .. note::

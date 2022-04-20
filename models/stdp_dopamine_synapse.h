@@ -208,6 +208,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   stdp_dopamine_synapse( const stdp_dopamine_synapse& ) = default;
+  stdp_dopamine_synapse& operator=( const stdp_dopamine_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these

@@ -132,6 +132,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   stdp_triplet_synapse( const stdp_triplet_synapse& ) = default;
+  stdp_triplet_synapse& operator=( const stdp_triplet_synapse& ) = default;
 
   /**
    * Default Destructor.

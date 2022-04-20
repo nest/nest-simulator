@@ -58,7 +58,7 @@ macro(get_version_info)
     endif()
 
     if (NOT NEST_VERSION_BRANCH)
-        set(NEST_VERSION_BRANCH "3.2")
+        set(NEST_VERSION_BRANCH "UNKNOWN")
     endif()
 
     string(SUBSTRING "${NEST_VERSION_BRANCH}" 0 5 isRelease)

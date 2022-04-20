@@ -32,9 +32,11 @@
 #include "vp_manager_impl.h"
 
 // Includes from libnestutil:
+#ifdef HAVE_RANDOM123
 #include "Random123/conventional/Engine.hpp"
 #include "Random123/philox.h"
 #include "Random123/threefry.h"
+#endif
 
 
 const std::string nest::RandomManager::DEFAULT_RNG_TYPE_ = "mt19937_64";
@@ -90,6 +92,13 @@ nest::RandomManager::finalize()
 
   rng_types_.clear();
   vp_specific_rngs_.clear();
+}
+
+void
+nest::RandomManager::change_number_of_threads()
+{
+  finalize();
+  initialize();
 }
 
 void

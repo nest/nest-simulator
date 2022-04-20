@@ -79,20 +79,29 @@ nest::iaf_cond_exp_sfa_rr_dynamics( double, const double y[], double f[], void* 
   assert( pnode );
   const nest::iaf_cond_exp_sfa_rr& node = *( reinterpret_cast< nest::iaf_cond_exp_sfa_rr* >( pnode ) );
 
+  const bool is_refractory = node.S_.r_ > 0;
+
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
 
   // The following code is verbose for the sake of clarity. We assume that a
   // good compiler will optimize the verbosity away ...
-  const double I_syn_exc = y[ S::G_EXC ] * ( y[ S::V_M ] - node.P_.E_ex );
-  const double I_syn_inh = y[ S::G_INH ] * ( y[ S::V_M ] - node.P_.E_in );
-  const double I_L = node.P_.g_L * ( y[ S::V_M ] - node.P_.E_L );
 
-  const double I_sfa = y[ S::G_SFA ] * ( y[ S::V_M ] - node.P_.E_sfa );
-  const double I_rr = y[ S::G_RR ] * ( y[ S::V_M ] - node.P_.E_rr );
+  // Clamp membrane potential to V_reset while refractory, otherwise bound
+  // it to V_th.
+  const double V = is_refractory ? node.P_.V_reset_ : std::min( y[ S::V_M ], node.P_.V_th_ );
+
+  const double I_syn_exc = y[ S::G_EXC ] * ( V - node.P_.E_ex );
+  const double I_syn_inh = y[ S::G_INH ] * ( V - node.P_.E_in );
+  const double I_L = node.P_.g_L * ( V - node.P_.E_L );
+
+  const double I_sfa = y[ S::G_SFA ] * ( V - node.P_.E_sfa );
+  const double I_rr = y[ S::G_RR ] * ( V - node.P_.E_rr );
 
   // V dot
-  f[ S::V_M ] = ( -I_L + node.B_.I_stim_ + node.P_.I_e - I_syn_exc - I_syn_inh - I_sfa - I_rr ) / node.P_.C_m;
+  f[ S::V_M ] = is_refractory
+    ? 0.0
+    : ( -I_L + node.B_.I_stim_ + node.P_.I_e - I_syn_exc - I_syn_inh - I_sfa - I_rr ) / node.P_.C_m;
 
   f[ S::G_EXC ] = -y[ S::G_EXC ] / node.P_.tau_synE;
   f[ S::G_INH ] = -y[ S::G_INH ] / node.P_.tau_synI;

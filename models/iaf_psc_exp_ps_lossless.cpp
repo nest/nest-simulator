@@ -212,7 +212,6 @@ nest::iaf_psc_exp_ps_lossless::State_::get( DictionaryDatum& d, const Parameters
 {
   def< double >( d, names::V_m, y2_ + p.E_L_ ); // Membrane potential
   def< bool >( d, names::is_refractory, is_refractory_ );
-  def< double >( d, names::t_spike, Time( Time::step( last_spike_step_ ) ).get_ms() );
   def< double >( d, names::offset, last_spike_offset_ );
   def< double >( d, names::I_syn_ex, I_syn_ex_ );
   def< double >( d, names::I_syn_in, I_syn_in_ );
@@ -280,7 +279,7 @@ nest::iaf_psc_exp_ps_lossless::calibrate()
 
   V_.h_ms_ = Time::get_resolution().get_ms();
 
-  V_.exp_tau_m_ = std::exp( -V_.h_ms_ / P_.tau_m_ );
+  V_.expm1_tau_m_ = std::expm1( -V_.h_ms_ / P_.tau_m_ );
   V_.exp_tau_ex_ = std::exp( -V_.h_ms_ / P_.tau_ex_ );
   V_.exp_tau_in_ = std::exp( -V_.h_ms_ / P_.tau_in_ );
 
@@ -367,8 +366,11 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin, const long from, cons
       // update membrane potential
       if ( not S_.is_refractory_ )
       {
+        // If we use S_.y2_ * std::exp( -V_.h_ms_ / P_.tau_m_ ) instead of
+        // V_.expm1_tau_m_ * S_.y2_ + S_.y2_ here, the accuracy decreases,
+        // see test_iaf_ps_dc_t_accuracy.sli for details.
         S_.y2_ = V_.P20_ * ( P_.I_e_ + S_.y0_ ) + V_.P21_ex_ * S_.I_syn_ex_ + V_.P21_in_ * S_.I_syn_in_
-          + S_.y2_ * V_.exp_tau_m_;
+          + V_.expm1_tau_m_ * S_.y2_ + S_.y2_;
 
         // lower bound of membrane potential
         S_.y2_ = ( S_.y2_ < P_.U_min_ ? P_.U_min_ : S_.y2_ );

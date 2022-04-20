@@ -47,7 +47,7 @@
 Short description
 +++++++++++++++++
 
-Conductance-based generalized leaky integrate and fire (GLIF) model
+Conductance-based generalized leaky integrate and fire (GLIF) model (from the Allen Institute)
 
 Description
 +++++++++++

@@ -43,8 +43,8 @@ class Network;
 Short description
 +++++++++++++++++
 
-Population of generalized integrate-and-fire neurons with exponential
-postsynaptic currents and adaptation
+Population of generalized integrate-and-fire neurons (GIF) with exponential
+postsynaptic currents and adaptation (from the Gerstner lab)
 
 
 Description

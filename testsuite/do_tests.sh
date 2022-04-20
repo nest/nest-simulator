@@ -107,8 +107,8 @@ if test "${PYTHON}"; then
         echo "Error: PyNEST testing requested, but 'pytest' cannot be run."
         echo "       Testing also requires the 'pytest-xdist' and 'pytest-timeout' extensions."
         exit 1
-    }
-    PYTEST_VERSION="$(echo "${PYTEST_VERSION}" | cut -d' ' -f2)"
+        }
+      PYTEST_VERSION="$(echo "${PYTEST_VERSION}" | cut -d' ' -f2)"
 fi
 
 python3 -c "import junitparser" >/dev/null 2>&1

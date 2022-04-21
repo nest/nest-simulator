@@ -93,18 +93,16 @@ extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
-    'sphinx.ext.todo',
-    'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
     'sphinx_tabs.tabs',
     'nbsphinx',
-    'sphinx_rtd_theme',
+    'sphinx_panels',
     'HoverXTooltip',
     'VersionSyncRole',
 ]
 
 mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa
-
+panels_add_bootstrap_css = False
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['templates']
 
@@ -161,8 +159,8 @@ numfig_format = {'figure': 'Figure %s', 'table': 'Table %s',
 #
 html_theme = 'sphinx_material'
 html_title = 'NEST simulator documentation'
-#html_theme = "pydata_sphinx_Otheme"
 html_logo = str(doc_build_dir / 'static/img/nest_logo.png')
+#html_css_files = ["https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"]
 html_theme_options = {'logo_only': True,
                       'display_version': True}
 
@@ -251,7 +249,7 @@ def toc_customizer(app, docname, source):
 def setup(app):
     app.connect("source-read", toc_customizer)
     app.add_css_file('css/nest_material.css')
-    app.add_css_file('css/custom.css')
+    app.add_css_file('css/colorblocks-style.css')
     app.add_css_file('css/pygments.css')
     app.add_js_file("js/copybutton.js")
     app.add_js_file("js/custom.js")

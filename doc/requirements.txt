@@ -18,6 +18,7 @@ recommonmark
 scipy
 seaborn
 sphinx-tabs
+sphinx-panels
 sphinx>=4.0.2
 sphinx_autobuild
 sphinx_gallery

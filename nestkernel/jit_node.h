@@ -53,8 +53,9 @@ public:
     return container_;
   }
 
+  void clone_container( std::shared_ptr< VectorizedNode > container );
 
-  std::map< std::string, const std::vector<double>& > get_recordables() const;
+  std::map< std::string, const std::vector< double >& > get_recordables() const;
 
 
   index get_pos_in_thread() const;

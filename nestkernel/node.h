@@ -145,6 +145,11 @@ public:
     return 0;
   }
 
+  virtual void
+  clone_container( std::shared_ptr< VectorizedNode > )
+  {
+  }
+
 
   /**
    * Returns true if the node has proxies on remote threads. This is

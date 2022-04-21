@@ -45,7 +45,7 @@ JitNode::~JitNode() noexcept
 }
 
 JitNode::JitNode( const JitNode& n )
-  : Node( n )
+  : Node(n)
   , local_id_( -1 )
   , container_( n.container_ )
 {
@@ -464,6 +464,11 @@ JitNode::set_node_id_( index id )
   local_id_ = container_->size() - 1;
 }
 
+void
+JitNode::clone_container( std::shared_ptr< VectorizedNode > container )
+{
+  container_ = container->clone();
+}
 
 void
 JitNode::set_container( std::shared_ptr< VectorizedNode > container )

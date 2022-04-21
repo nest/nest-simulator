@@ -91,9 +91,15 @@ public:
   virtual std::shared_ptr< VectorizedNode >
   get_container()
   {
+    assert( false );
     return 0;
   }
 
+  virtual void
+  clone_container( std::shared_ptr< VectorizedNode > container )
+  {
+    assert( false );
+  }
 
   /**
    * Deletes all nodes which belong to this model.
@@ -239,7 +245,7 @@ public:
   index
   get_node_pos_in_thread( thread t )
   {
-    return thread_to_node.at( t ).at(0);
+    return thread_to_node.at( t ).at( 0 );
   }
 
 

@@ -36,38 +36,6 @@
 namespace nest
 {
 
-
-/* Polymorphic version of update_value.
- * This code will take either an int or a double and convert it to an
- * int.
- */
-bool
-update_value_int( const DictionaryDatum& d, Name propname, int& prop )
-{
-  if ( d->known( propname ) )
-  {
-    Datum* dat = ( *d )[ propname ].datum();
-    IntegerDatum* intdat = dynamic_cast< IntegerDatum* >( dat );
-    if ( intdat != 0 )
-    {
-      prop = static_cast< int >( intdat->get() );
-      return true;
-    }
-    DoubleDatum* doubledat = dynamic_cast< DoubleDatum* >( dat );
-    if ( doubledat != 0 )
-    {
-      prop = static_cast< int >( doubledat->get() );
-      return true;
-    }
-    else
-    {
-      throw TypeMismatch();
-    }
-  }
-
-  return false;
-}
-
 template < typename targetidentifierT >
 quantal_stp_synapse< targetidentifierT >::quantal_stp_synapse()
   : ConnectionBase()
@@ -108,8 +76,8 @@ quantal_stp_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, 
   updateValue< double >( d, names::u, u_ );
   updateValue< double >( d, names::tau_rec, tau_rec_ );
   updateValue< double >( d, names::tau_fac, tau_fac_ );
-  update_value_int( d, names::n, n_ );
-  update_value_int( d, names::a, a_ );
+  updateValue< long >( d, names::n, n_ );
+  updateValue< long >( d, names::a, a_ );
 }
 
 } // of namespace nest

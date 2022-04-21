@@ -88,7 +88,7 @@ summary](https://www.nest-simulator.org/features/).
   at any time during a simulation.
 - NEST is fast and memory efficient. It makes best use of your multi-core
   computer and compute clusters with minimal user intervention.
-- NEST runs on a wide range of UNIX-like systems, from MacBooks to BlueGene
+- NEST runs on a wide range of UNIX-like systems, from MacBooks to
   supercomputers.
 - NEST has minimal dependencies. All it really needs is a C++ compiler.
   Everything else is optional.

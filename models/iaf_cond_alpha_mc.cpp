@@ -117,13 +117,39 @@ nest::iaf_cond_alpha_mc_dynamics( double, const double y[], double f[], void* pn
   assert( pnode );
   const nest::iaf_cond_alpha_mc& node = *( reinterpret_cast< nest::iaf_cond_alpha_mc* >( pnode ) );
 
+  bool is_refractory = false;
+
   // compute dynamics for each compartment
   // computations written quite explicitly for clarity, assume compile
   // will optimized most stuff away ...
   for ( size_t n = 0; n < N::NCOMP; ++n )
   {
-    // membrane potential for current compartment
-    const double V = y[ S::idx( n, S::V_M ) ];
+    // membrane potential for current compartment and coupling currents
+    double V;
+    double I_conn;
+    switch ( n )
+    {
+    case N::SOMA:
+    {
+      is_refractory = node.S_.r_ > 0;
+      V = is_refractory ? node.P_.V_reset : std::min( y[ S::idx( N::SOMA, S::V_M ) ], node.P_.V_th );
+      I_conn = node.P_.g_conn[ N::SOMA ] * ( V - y[ S::idx( N::PROX, S::V_M ) ] );
+      break;
+    }
+    case N::PROX:
+    {
+      V = y[ S::idx( N::PROX, S::V_M ) ];
+      I_conn = node.P_.g_conn[ N::SOMA ] * ( V - y[ S::idx( N::SOMA, S::V_M ) ] )
+        + node.P_.g_conn[ N::PROX ] * ( V - y[ S::idx( N::DIST, S::V_M ) ] );
+      break;
+    }
+    case N::DIST:
+    {
+      V = y[ S::idx( N::DIST, S::V_M ) ];
+      I_conn = node.P_.g_conn[ N::PROX ] * ( V - y[ S::idx( N::PROX, S::V_M ) ] );
+      break;
+    }
+    }
 
     // excitatory synaptic current
     const double I_syn_exc = y[ S::idx( n, S::G_EXC ) ] * ( V - node.P_.E_ex[ n ] );
@@ -134,14 +160,11 @@ nest::iaf_cond_alpha_mc_dynamics( double, const double y[], double f[], void* pn
     // leak current
     const double I_L = node.P_.g_L[ n ] * ( V - node.P_.E_L[ n ] );
 
-    // coupling currents
-    const double I_conn = ( n > N::SOMA ? node.P_.g_conn[ n - 1 ] * ( V - y[ S::idx( n - 1, S::V_M ) ] ) : 0 )
-      + ( n < N::NCOMP - 1 ? node.P_.g_conn[ n ] * ( V - y[ S::idx( n + 1, S::V_M ) ] ) : 0 );
-
     // derivatives
     // membrane potential
-    f[ S::idx( n, S::V_M ) ] =
-      ( -I_L - I_syn_exc - I_syn_inh - I_conn + node.B_.I_stim_[ n ] + node.P_.I_e[ n ] ) / node.P_.C_m[ n ];
+    f[ S::idx( n, S::V_M ) ] = is_refractory
+      ? 0.0
+      : ( -I_L - I_syn_exc - I_syn_inh - I_conn + node.B_.I_stim_[ n ] + node.P_.I_e[ n ] ) / node.P_.C_m[ n ];
 
     // excitatory conductance
     f[ S::idx( n, S::DG_EXC ) ] = -y[ S::idx( n, S::DG_EXC ) ] / node.P_.tau_synE[ n ];
@@ -530,7 +553,7 @@ nest::iaf_cond_alpha_mc::init_buffers_()
 }
 
 void
-nest::iaf_cond_alpha_mc::calibrate()
+nest::iaf_cond_alpha_mc::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();

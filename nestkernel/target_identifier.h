@@ -56,6 +56,7 @@ public:
 
 
   TargetIdentifierPtrRport( const TargetIdentifierPtrRport& t ) = default;
+  TargetIdentifierPtrRport& operator=( const TargetIdentifierPtrRport& t ) = default;
 
 
   void
@@ -104,7 +105,7 @@ private:
  *
  * This class represents a connection target using a thread-local index, while
  * fixing the rport to 0. Connection classes with this class as template
- * argument provide "hpc" synapses with minimal memory requirement..
+ * argument provide "hpc" synapses with minimal memory requirement.
  *
  * See Kunkel et al, Front Neuroinform 8:78 (2014), Sec 3.3.
  */
@@ -119,6 +120,7 @@ public:
 
 
   TargetIdentifierIndex( const TargetIdentifierIndex& t ) = default;
+  TargetIdentifierIndex& operator=( const TargetIdentifierIndex& t ) = default;
 
 
   void

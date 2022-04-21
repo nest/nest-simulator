@@ -946,7 +946,11 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         xctr, yctr = layer.spatial['center']
 
         # extract position information, transpose to list of x and y pos
-        xpos, ypos = zip(*GetPosition(layer))
+        if len(layer) == 1:
+            # handle case of single node
+            xpos, ypos = GetPosition(layer)
+        else:
+            xpos, ypos = zip(*GetPosition(layer))
 
         if fig is None:
             fig = plt.figure()
@@ -962,7 +966,11 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         from mpl_toolkits.mplot3d import Axes3D
 
         # extract position information, transpose to list of x,y,z pos
-        pos = zip(*GetPosition(layer))
+        if len(layer) == 1:
+            # handle case of single node
+            pos = GetPosition(layer)
+        else:
+            pos = zip(*GetPosition(layer))
 
         if fig is None:
             fig = plt.figure()

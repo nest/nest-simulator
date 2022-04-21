@@ -272,7 +272,7 @@ nest::gif_pop_psc_exp::init_buffers_()
 
 
 void
-nest::gif_pop_psc_exp::calibrate()
+nest::gif_pop_psc_exp::pre_run_hook()
 {
   if ( P_.tau_sfa_.size() == 0 )
   {

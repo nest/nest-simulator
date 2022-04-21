@@ -133,9 +133,11 @@ SLIStartup::GetenvFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-
 SLIStartup::SLIStartup( int argc, char** argv )
-  : sliprefix( NEST_INSTALL_PREFIX )
+  // To avoid problems due to string substitution in NEST binaries during
+  // Conda installation, we need to convert the literal to string, cstr and back,
+  // see #2237 and https://github.com/conda/conda-build/issues/1674#issuecomment-280378336
+  : sliprefix( std::string( NEST_INSTALL_PREFIX ).c_str() )
   , slilibdir( sliprefix + "/" + NEST_INSTALL_DATADIR )
   , slidocdir( sliprefix + "/" + NEST_INSTALL_DOCDIR )
   , startupfile( slilibdir + "/sli/sli-init.sli" )

@@ -115,7 +115,7 @@ public:
 
 private:
   void init_buffers_();
-  void calibrate();
+  void pre_run_hook();
 
   // gain function functor
   // must have an double operator(double) defined
@@ -433,7 +433,7 @@ binary_neuron< TGainfunction >::init_buffers_()
 
 template < class TGainfunction >
 void
-binary_neuron< TGainfunction >::calibrate()
+binary_neuron< TGainfunction >::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -530,7 +530,7 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
 
 
   const long m = e.get_multiplicity();
-  const long node_id = e.get_sender_node_id();
+  const long node_id = e.retrieve_sender_node_id_from_source_table();
   const Time& t_spike = e.get_stamp();
 
   if ( m == 1 )

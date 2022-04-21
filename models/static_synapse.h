@@ -81,6 +81,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   static_synapse( const static_synapse& rhs ) = default;
+  static_synapse& operator=( const static_synapse& rhs ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these

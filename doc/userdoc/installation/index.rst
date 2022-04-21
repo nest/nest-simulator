@@ -127,10 +127,11 @@ and :ref:`cmake_options`.
 
    .. tab:: Conda (Linux/macOS)
 
-       .. warning::
+       .. note::
 
-           The Conda package is only available for NEST 2.X.
-           If you want to use NEST 3.X, please see other installation options.
+         For NEST 3.x, the conda-forge package is available from NEST 3.3.
+
+         For NEST 2.x, the conda-forge package is available from NEST 2.16.0.
 
        1. To keep your conda setup tidy, we recommend that you install NEST into
           a separate `conda environment <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html>`_
@@ -219,7 +220,7 @@ provide containerized versions of NEST in several formats:
 
        .. code-block:: bash
 
-           docker run --rm -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -p 8080:8080 nestsim/nest:<version> notebook
+           docker run --rm -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -p 8080:8080 nestsim/nest:<version> jupyterlab
 
 
        4. Once completed, a link to a Jupyter Notebook will be

@@ -74,7 +74,7 @@ Server and would like to have it listed here, feel free to `drop us a
 line <https://github.com/nest/nest-simulator/issues>`_.
 
 Install and run NEST Server
---------------------------
+---------------------------
 
 NEST Server is included in all source code distributions of NEST and
 consequently, also available in derived packages, our virtual
@@ -83,7 +83,7 @@ machine, and Docker images.
 For native installations, the requirements can be simply installed via
 ``pip``::
 
-  pip3 install RestrictedPython uwsgi flask flask-cors
+  pip3 install Flask Flask-Cors gunicorn RestrictedPython
 
 or by installing the full NEST development environment in case you
 prefer using ``conda``::
@@ -97,7 +97,7 @@ from the NEST Docker image. Please check out the corresponding
 :ref:`installation instructions <docker_vm_install>` for more details.
 
 Run NEST Server
-~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 
 All NEST Server operations are managed using the ``nest-server``
 command that can either be run directly::
@@ -112,26 +112,22 @@ container::
 The generic invocation command line for the ``nest-server`` command
 looks as follows::
 
-  nest-server <command> [-d] [-o] [-h <host>] [-p <port>] [-P <plugin>] [-u <user>]
+  nest-server <command> [-d] [-h <host>] [-o] [-p <port>]
 
 Possible commands are `start`, `stop`, `status`, or `log`. The meaning
 of the other arguments is as follows:
 
 -d
-    Run nest-server in the background (i.e., daemonize it)
+    Run NEST Server in the background (i.e., daemonize it)
 -o
-    Print all output to both the console and the logger
+    Print all outputs to the console
 -h <host>
-    Use hostname/IP address <host> for the server [default: 127.0.0.1]
+    Use hostname/IP address <host> for the server instance [default: 127.0.0.1]
 -p <port>
     Use port <port> for opening the socket [default: 5000]
--P <plugin>
-    Use the uWSGI plugin <plugin> when running the server
--u <uid>
-    Run the server under the user with ID <user>
 
 Run with MPI
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~
 
 If NEST was compiled with support for :ref:`distributed computing via
 MPI <distributed_computing>`, it will usually execute the exact same
@@ -237,7 +233,7 @@ NEST Server Client.
             print('Number of events:', n_events)
 
 Run scripts
-~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
 
 The NEST Server Client is able to send complete simulation scripts to
 the NEST Server using the functions ``exec_script`` and ``from_file``.
@@ -342,7 +338,7 @@ To obtain basic information about the running server, run::
 
 NEST Server responds to this by sending data in JSON format::
 
-  {"nest":"master@b08590af6"}
+  {"mpi":false,"nest":"3.2"}
 
 You can retrieve data about the callable functions of NEST by running::
 
@@ -468,7 +464,7 @@ Advanced topics
 ---------------
 
 Run scripts in NEST Server using `curl`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As shown above, you can send custom simulation code to
 ``localhost:5000/exec``. On the command line, this approach might be a
@@ -493,7 +489,7 @@ command:
 
 
 Interact with NEST Server using JavaScript
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As the NEST Server is built on modern web technologies, it may be
 desirable to create a frontend to it in the form of a
@@ -613,7 +609,7 @@ Now, we can send a custom Python script to NEST Server:
     account of Steffen Graber.
 
 Control NEST from Bash
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 
 For POST requests to the NEST API Server, we recommend to use a Bash function:
 

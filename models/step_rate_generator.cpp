@@ -258,11 +258,11 @@ nest::step_rate_generator::init_buffers_()
 }
 
 void
-nest::step_rate_generator::calibrate()
+nest::step_rate_generator::pre_run_hook()
 {
   B_.logger_.init();
 
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
 }
 
 

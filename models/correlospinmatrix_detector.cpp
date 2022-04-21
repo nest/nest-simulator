@@ -281,9 +281,9 @@ nest::correlospinmatrix_detector::init_buffers_()
 }
 
 void
-nest::correlospinmatrix_detector::calibrate()
+nest::correlospinmatrix_detector::pre_run_hook()
 {
-  device_.calibrate();
+  device_.pre_run_hook();
 }
 
 

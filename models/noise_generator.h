@@ -200,7 +200,7 @@ private:
    * Recalculates parameters and forces reinitialization
    * of amplitudes if number of targets has changed.
    */
-  void calibrate() override;
+  void pre_run_hook() override;
 
   void update( Time const&, const long, const long ) override;
   void event_hook( DSCurrentEvent& ) override;

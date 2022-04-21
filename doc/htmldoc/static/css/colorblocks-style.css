@@ -813,4 +813,16 @@ code.xref, a code {
  background: #f0f0f0;
 }
 
+.particle-img
+{
+ background-image: url('../img/background-particles-flattened-3.png');
+ background-color: #ff6633;
+ height: 350px;
 
+}
+
+.card-header {
+	background-color:#1281B3;
+  color: white;
+  font-weight: bold;
+}

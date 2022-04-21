@@ -554,7 +554,7 @@ nest::pp_cond_exp_mc_urbanczik::init_buffers_()
 }
 
 void
-nest::pp_cond_exp_mc_urbanczik::calibrate()
+nest::pp_cond_exp_mc_urbanczik::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();

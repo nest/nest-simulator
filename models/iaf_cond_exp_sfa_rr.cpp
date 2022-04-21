@@ -369,7 +369,7 @@ nest::iaf_cond_exp_sfa_rr::init_buffers_()
 }
 
 void
-nest::iaf_cond_exp_sfa_rr::calibrate()
+nest::iaf_cond_exp_sfa_rr::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();

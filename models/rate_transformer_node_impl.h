@@ -165,7 +165,7 @@ nest::rate_transformer_node< TNonlinearities >::init_buffers_()
 
 template < class TNonlinearities >
 void
-nest::rate_transformer_node< TNonlinearities >::calibrate()
+nest::rate_transformer_node< TNonlinearities >::pre_run_hook()
 {
   B_.logger_.init(); // ensures initialization in case mm connected after Simulate
 }

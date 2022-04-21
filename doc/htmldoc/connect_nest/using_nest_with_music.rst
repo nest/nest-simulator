@@ -245,7 +245,7 @@ which yields the following output:
 
 ::
 
-	Nov 23 11:18:23 music_message_in_proxy::calibrate() [Info]:
+	Nov 23 11:18:23 music_message_in_proxy::pre_run_hook() [Info]:
 		Mapping MUSIC input port 'msgdata' with width=0 and acceptable latency=0
 		ms.
 
@@ -350,7 +350,7 @@ which yields the following output:
 
 ::
 
-	Nov 23 11:33:26 music_cont_in_proxy::calibrate() [Info]:
+	Nov 23 11:33:26 music_cont_in_proxy::pre_run_hook() [Info]:
 		Mapping MUSIC input port 'contdata' with width=10.
 
 	Nov 23 11:33:26 NodeManager::prepare_nodes [Info]:

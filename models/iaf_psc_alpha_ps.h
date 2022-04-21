@@ -210,7 +210,7 @@ private:
    */
   //@{
   void init_buffers_();
-  void calibrate();
+  void pre_run_hook();
 
   bool get_next_event_( const long T, double& ev_offset, double& ev_weight, bool& end_of_refract );
 

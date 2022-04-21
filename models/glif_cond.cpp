@@ -548,7 +548,7 @@ nest::glif_cond::init_buffers_()
 }
 
 void
-nest::glif_cond::calibrate()
+nest::glif_cond::pre_run_hook()
 {
   B_.logger_.init();
 

@@ -411,7 +411,7 @@ nest::aeif_psc_alpha::init_buffers_()
 }
 
 void
-nest::aeif_psc_alpha::calibrate()
+nest::aeif_psc_alpha::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();

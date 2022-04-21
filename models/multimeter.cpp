@@ -170,9 +170,9 @@ nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b,
 }
 
 void
-multimeter::calibrate()
+multimeter::pre_run_hook()
 {
-  RecordingDevice::calibrate( P_.record_from_, RecordingBackend::NO_LONG_VALUE_NAMES );
+  RecordingDevice::pre_run_hook( P_.record_from_, RecordingBackend::NO_LONG_VALUE_NAMES );
 }
 
 void

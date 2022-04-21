@@ -123,7 +123,7 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void calibrate();
+  void pre_run_hook();
   void update( Time const&, const long, const long );
 };
 

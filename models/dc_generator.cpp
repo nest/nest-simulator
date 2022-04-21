@@ -147,11 +147,11 @@ nest::dc_generator::init_buffers_()
 }
 
 void
-nest::dc_generator::calibrate()
+nest::dc_generator::pre_run_hook()
 {
   B_.logger_.init();
 
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
 }
 
 

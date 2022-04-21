@@ -354,7 +354,7 @@ nest::iaf_cond_alpha::init_buffers_()
 }
 
 void
-nest::iaf_cond_alpha::calibrate()
+nest::iaf_cond_alpha::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();

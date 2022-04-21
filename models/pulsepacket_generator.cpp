@@ -129,9 +129,9 @@ nest::pulsepacket_generator::init_buffers_()
 }
 
 void
-nest::pulsepacket_generator::calibrate()
+nest::pulsepacket_generator::pre_run_hook()
 {
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
   assert( V_.start_center_idx_ <= V_.stop_center_idx_ );
 
   if ( P_.sdev_ > 0.0 )

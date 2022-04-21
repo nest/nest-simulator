@@ -47,7 +47,7 @@
 Short description
 +++++++++++++++++
 
-Conductance-based generalized leaky integrate and fire (GLIF) model
+Conductance-based generalized leaky integrate and fire (GLIF) model (from the Allen Institute)
 
 Description
 +++++++++++
@@ -224,7 +224,7 @@ private:
   void init_buffers_();
 
   //! Initialize auxiliary quantities, leave parameters and state untouched.
-  void calibrate();
+  void pre_run_hook();
 
   //! Take neuron through given time interval
   void update( nest::Time const&, const long, const long );

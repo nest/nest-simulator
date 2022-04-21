@@ -455,7 +455,7 @@ nest::aeif_psc_delta_clopath::init_buffers_()
 }
 
 void
-nest::aeif_psc_delta_clopath::calibrate()
+nest::aeif_psc_delta_clopath::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();

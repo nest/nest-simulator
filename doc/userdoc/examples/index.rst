@@ -11,22 +11,33 @@ PyNEST examples
    ../auto_examples/one_neuron_with_noise
    ../auto_examples/twoneurons
    ../auto_examples/balancedneuron
-   ../auto_examples/recording_demo
-   ../auto_examples/BrodyHopfield
-   ../auto_examples/CampbellSiegert
-   ../auto_examples/hh_psc_alpha
-   ../auto_examples/hh_phaseplane
-   ../auto_examples/gif_population
-   ../auto_examples/gif_pop_psc_exp
+   ../auto_examples/aeif_cond_beta_multisynapse
+   ../auto_examples/gif_cond_exp_multisynapse
    ../auto_examples/brette_gerstner_fig_2c
    ../auto_examples/brette_gerstner_fig_3d
+   ../auto_examples/hh_psc_alpha
+   ../auto_examples/hh_phaseplane
+   ../auto_examples/BrodyHopfield
+   ../auto_examples/gif_population
+   ../auto_examples/gif_pop_psc_exp
    ../auto_examples/mc_neuron
+   ../auto_examples/glif_cond_neuron
+   ../auto_examples/glif_psc_neuron
    ../auto_examples/precise_spiking
+   ../auto_examples/CampbellSiegert
+.. toctree::
+   :maxdepth: 1
+   :caption: Examples for handling networks
+
+   ../auto_examples/vinit_example
+   ../auto_examples/recording_demo
+   ../auto_examples/store_restore_network
 
 .. toctree::
    :maxdepth: 1
    :caption: Synapse examples
 
+   ../auto_examples/synapsecollection
    ../auto_examples/structural_plasticity
    ../auto_examples/gap_junctions_two_neurons
    ../auto_examples/gap_junctions_inhibitory_network
@@ -34,10 +45,16 @@ PyNEST examples
    ../auto_examples/evaluate_quantal_stp_synapse
    ../auto_examples/clopath_synapse_spike_pairing
    ../auto_examples/clopath_synapse_small_network
+   ../auto_examples/urbanczik_synapse_example
    ../auto_examples/tsodyks_depressing
    ../auto_examples/tsodyks_facilitating
-   ../auto_examples/urbanczik_synapse_example
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Compartmental neuron examples
+
+   ../auto_examples/compartmental_model/receptors_and_current
+   ../auto_examples/compartmental_model/two_comps
 
 .. toctree::
    :maxdepth: 1
@@ -55,45 +72,6 @@ PyNEST examples
    ../auto_examples/brunel_siegert_nest
    ../auto_examples/brunel_exp_multisynapse_nest
    ../auto_examples/brunel_alpha_evolution_strategies
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Device usage examples
-
-   ../auto_examples/testiaf
-   ../auto_examples/repeated_stimulation
-   ../auto_examples/multimeter_file
-   ../auto_examples/sensitivity_to_perturbation
-   ../auto_examples/plot_weight_matrices
-   ../auto_examples/if_curve
-   ../auto_examples/pulsepacket
-   ../auto_examples/correlospinmatrix_detector_two_neuron
-   ../auto_examples/sinusoidal_poisson_generator
-   ../auto_examples/sinusoidal_gamma_generator
-   ../auto_examples/cross_check_mip_corrdet
-   ../auto_examples/intrinsic_currents_spiking
-   ../auto_examples/intrinsic_currents_subthreshold
-
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Compartmental neuron examples
-
-   ../auto_examples/compartmental_model/receptors_and_current
-   ../auto_examples/compartmental_model/two_comps
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Connection set algebra examples
-
-   ../auto_examples/csa_example
-   ../auto_examples/csa_spatial_example
-
-.. toctree::
-   :maxdepth: 1
-   :caption: HPC benchmark
-
-   ../auto_examples/hpc_benchmark
 
 .. toctree::
    :maxdepth: 1
@@ -118,3 +96,36 @@ PyNEST examples
    ../auto_examples/spatial/test_3d
    ../auto_examples/spatial/test_3d_exp
    ../auto_examples/spatial/test_3d_gauss
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Device usage examples
+
+   ../auto_examples/testiaf
+   ../auto_examples/repeated_stimulation
+   ../auto_examples/multimeter_file
+   ../auto_examples/sensitivity_to_perturbation
+   ../auto_examples/plot_weight_matrices
+   ../auto_examples/if_curve
+   ../auto_examples/pulsepacket
+   ../auto_examples/correlospinmatrix_detector_two_neuron
+   ../auto_examples/sinusoidal_poisson_generator
+   ../auto_examples/sinusoidal_gamma_generator
+   ../auto_examples/cross_check_mip_corrdet
+   ../auto_examples/intrinsic_currents_spiking
+   ../auto_examples/intrinsic_currents_subthreshold
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Connection set algebra examples
+
+   ../auto_examples/csa_example
+   ../auto_examples/csa_spatial_example
+
+.. toctree::
+   :maxdepth: 1
+   :caption: HPC benchmark
+
+   ../auto_examples/hpc_benchmark
+
+

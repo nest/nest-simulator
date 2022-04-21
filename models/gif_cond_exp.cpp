@@ -444,7 +444,7 @@ nest::gif_cond_exp::init_buffers_()
 }
 
 void
-nest::gif_cond_exp::calibrate()
+nest::gif_cond_exp::pre_run_hook()
 {
   B_.logger_.init();
 

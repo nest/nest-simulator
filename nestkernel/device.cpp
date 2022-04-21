@@ -141,7 +141,7 @@ nest::Device::Device( const Device& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::Device::calibrate()
+nest::Device::pre_run_hook()
 {
   // We do not need to recalibrate time objects, since they are
   // recalibrated on instance construction and resolution cannot

@@ -174,7 +174,7 @@ public:
   void calibrate_time( const TimeConverter& tc );
 
 protected:
-  void calibrate();
+  void pre_run_hook();
 
   /**
    * Collect and output membrane potential information.

@@ -198,9 +198,9 @@ nest::ppd_sup_generator::init_buffers_()
 }
 
 void
-nest::ppd_sup_generator::calibrate()
+nest::ppd_sup_generator::pre_run_hook()
 {
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
 
   double h = Time::get_resolution().get_ms();
 

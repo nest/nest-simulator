@@ -88,6 +88,14 @@ nest::spike_dilutor::spike_dilutor( const spike_dilutor& n )
 void
 nest::spike_dilutor::init_state_()
 {
+  // This check cannot be done in the copy constructor because that is also used to
+  // create model prototypes. Since spike_dilutor is deprecated anyways, we put this
+  // brute-force solution here.
+  if ( kernel().vp_manager.get_num_threads() > 1 )
+  {
+    throw KernelException( "The network contains a spike_dilutor which cannot be used with multiple threads." );
+  }
+
   device_.init_state();
 }
 
@@ -111,7 +119,7 @@ nest::spike_dilutor::calibrate()
 void
 nest::spike_dilutor::update( Time const& T, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and static_cast< delay >( from ) < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
@@ -121,18 +129,12 @@ nest::spike_dilutor::update( Time const& T, const long from, const long to )
       return; // no spikes to be repeated
     }
 
-#pragma omp critical
-    std::cerr << "Thread " << kernel().vp_manager.get_thread_id() << " node " << get_node_id() << " update " << std::endl;
-
     // generate spikes of mother process for each time slice
     const unsigned long n_mother_spikes = static_cast< unsigned long >( B_.n_spikes_.get_value( lag ) );
 
     if ( n_mother_spikes )
     {
       DSSpikeEvent se;
-
-#pragma omp critical
-      std::cerr << "Thread " << kernel().vp_manager.get_thread_id() << " node " << get_node_id() << " sending " << std::endl;
 
       se.set_multiplicity( n_mother_spikes );
       kernel().event_delivery_manager.send( *this, se, lag );
@@ -153,8 +155,6 @@ nest::spike_dilutor::event_hook( DSSpikeEvent& e )
   // store the number of mother spikes again during the next call of
   // event_hook().
 
-  std::cerr << get_node_id() << " event hook " << std::endl;
-
   unsigned long n_mother_spikes = e.get_multiplicity();
   unsigned long n_spikes = 0;
 
@@ -168,10 +168,7 @@ nest::spike_dilutor::event_hook( DSSpikeEvent& e )
 
   if ( n_spikes > 0 )
   {
-#pragma omp critical
-    std::cerr << get_node_id() << " hook sending to " << e.get_receiver().get_node_id() << std::endl;
-
-	e.set_multiplicity( n_spikes );
+    e.set_multiplicity( n_spikes );
     e.get_receiver().handle( e );
   }
 
@@ -181,8 +178,6 @@ nest::spike_dilutor::event_hook( DSSpikeEvent& e )
 void
 nest::spike_dilutor::handle( SpikeEvent& e )
 {
-#pragma omp critical
-  std::cerr << "Thread " << kernel().vp_manager.get_thread_id() << " node " << get_node_id() << " handle receiving from " << e.get_sender().get_node_id() << std::endl;
   B_.n_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     static_cast< double >( e.get_multiplicity() ) );
 }

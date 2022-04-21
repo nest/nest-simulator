@@ -50,6 +50,16 @@ Targets will receive different spike trains.
 In parallel simulations, a copy of the device is present on each process
 and spikes are collected only from local sources.
 
+.. admonition:: Deprecated model
+
+   ``spike_dilutor`` is deprecated because it does not work with multiple threads.
+   To create connections that transmit spikes with a given probability, use :doc:`bernoulli_synapse <bernoulli_synapse>`
+instead.
+
+.. admonition:: Does not work with threads
+
+   ``spike_dilutor`` only works in single-threaded simulations. It can be used with MPI-parallel simulations.
+
 Parameters
 ++++++++++
 

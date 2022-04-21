@@ -270,11 +270,11 @@ nest::sinusoidal_gamma_generator::deltaLambda_( const Parameters_& p, double t_a
 // ----------------------------------------------------
 
 void
-nest::sinusoidal_gamma_generator::calibrate()
+nest::sinusoidal_gamma_generator::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
 
   V_.h_ = Time::get_resolution().get_ms();
   V_.rng_ = get_vp_specific_rng( get_thread() );

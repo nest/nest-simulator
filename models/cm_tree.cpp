@@ -82,9 +82,9 @@ nest::Compartment::Compartment( const long compartment_index,
 }
 
 void
-nest::Compartment::calibrate()
+nest::Compartment::pre_run_hook()
 {
-  compartment_currents.calibrate();
+  compartment_currents.pre_run_hook();
 
   const double dt = Time::get_resolution().get_ms();
   ca__div__dt = ca / dt;
@@ -364,7 +364,7 @@ nest::CompTree::get_recordables()
  * Initialize state variables
  */
 void
-nest::CompTree::calibrate()
+nest::CompTree::pre_run_hook()
 {
   if ( root_.comp_index < 0 )
   {
@@ -375,7 +375,7 @@ nest::CompTree::calibrate()
   // initialize the compartments
   for ( auto compartment_it = compartments_.begin(); compartment_it != compartments_.end(); ++compartment_it )
   {
-    ( *compartment_it )->calibrate();
+    ( *compartment_it )->pre_run_hook();
   }
 }
 

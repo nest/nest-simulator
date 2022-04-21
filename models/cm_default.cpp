@@ -27,7 +27,7 @@ namespace nest
 
 /*
  * For some reason this code block is needed. However, I have found no
- * difference in calling init_recordable_pointers() from the calibrate function,
+ * difference in calling init_recordable_pointers() from the pre_run_hook function,
  * except that an unused-variable warning is generated in the code-checks
  */
 template <>
@@ -270,7 +270,7 @@ nest::cm_default::init_recordables_pointers_()
 }
 
 void
-nest::cm_default::calibrate()
+nest::cm_default::pre_run_hook()
 {
   logger_.init();
 
@@ -281,7 +281,7 @@ nest::cm_default::calibrate()
   // initialize the recordables pointers
   init_recordables_pointers_();
 
-  c_tree_.calibrate();
+  c_tree_.pre_run_hook();
 }
 
 /**

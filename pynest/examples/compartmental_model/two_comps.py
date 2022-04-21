@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 r"""Constructing and simulating compartmental models with active and passive dendrites
-----------------------------------------------------------------
+---------------------------------------------------------------------------------------
 This example demonstrates how to initialize compartmental models. It creates
 two models with two compartments, once with active channels in the dendritic
 compartment and once without. It then adds and excitatory receptors with AMPA

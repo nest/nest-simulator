@@ -142,7 +142,7 @@ namespace nest
  * RecordingBackendASCII maintains a data structure mapping one file
  * stream to every recording device instance on every thread. Files
  * are opened and inserted into the map during the enroll() call
- * (issued by the recorder's calibrate() function) and closed in
+ * (issued by the recorder's pre_run_hook() function) and closed in
  * cleanup(), which is called on all registered recording backends by
  * IOManager::cleanup().
  */

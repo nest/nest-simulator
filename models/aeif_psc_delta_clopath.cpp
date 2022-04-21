@@ -157,8 +157,8 @@ nest::aeif_psc_delta_clopath::Parameters_::Parameters_()
   , I_sp( 400.0 )           // pA
   , I_e( 0.0 )              // pA
   , gsl_error_tol( 1e-6 )
-  , t_clamp_( 2.0 )         // ms
-  , V_clamp_( 33.0 )        // mV
+  , t_clamp_( 2.0 )  // ms
+  , V_clamp_( 33.0 ) // mV
 {
 }
 
@@ -311,7 +311,7 @@ nest::aeif_psc_delta_clopath::Parameters_::set( const DictionaryDatum& d, Node* 
   }
 
   if ( tau_w <= 0 or tau_V_th <= 0 or tau_w <= 0 or tau_z <= 0 or tau_u_bar_plus <= 0 or tau_u_bar_minus <= 0
-       or tau_u_bar_bar <= 0 )
+    or tau_u_bar_bar <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }

@@ -27,7 +27,7 @@ Name: testsuite::issue-2052
 Synopsis: (issue-2052) run -> NEST exits if test fails
 
 Description:
-Ensure that spike_dilutor cannot be created with a single but not multiple threads.
+Ensure that spike_dilutor can be created with a single thread, but not with multiple threads.
 
 Author: Hans Ekkehard Plesser
 FirstVersion: July 2021

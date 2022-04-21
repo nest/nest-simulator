@@ -1724,7 +1724,7 @@ nest::SymmetricBernoulliBuilder::connect_()
         // check whether the target is on this thread
         if ( target->is_proxy() )
         {
-          target_thread = invalid_thread_;
+          target_thread = invalid_thread;
         }
 
         previous_snode_ids.clear();
@@ -1749,7 +1749,7 @@ nest::SymmetricBernoulliBuilder::connect_()
 
           if ( source->is_proxy() )
           {
-            source_thread = invalid_thread_;
+            source_thread = invalid_thread;
           }
 
           // if target is local: connect

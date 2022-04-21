@@ -52,7 +52,7 @@ Co-dependent properties that have to be set together (for instance
 
 
 Deprecation information
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
 
 * The access functions :py:func:`.GetKernelStatus` and
   :py:func:`.SetKernelStatus` are deprecated. They will be

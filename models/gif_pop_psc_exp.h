@@ -137,7 +137,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 See also
 ++++++++
 
-gif_psc_exp, pp_pop_psc_delta, bernoulli_synapse
+gif_psc_exp, bernoulli_synapse
 
 EndUserDocs */
 

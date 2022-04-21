@@ -113,7 +113,7 @@ public:
 private:
   void init_state_() override;
   void init_buffers_() override;
-  void calibrate() override;
+  void pre_run_hook() override;
 
   void update( Time const&, const long, const long ) override;
 

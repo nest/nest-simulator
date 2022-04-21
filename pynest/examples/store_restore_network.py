@@ -66,15 +66,15 @@ import textwrap
 # the initial network builder, the storer and the restorer, thus reducing the
 # amount of data that needs to be stored.
 
+###############################################################################
+# This simple Brunel-style balanced random network has an excitatory
+# and inhibitory population, both driven by external excitatory poisson
+# input. Excitatory connections are plastic (STDP). Spike activity of
+# the excitatory population is recorded.
 
 class EINetwork:
     """
     A simple balanced random network with plastic excitatory synapses.
-
-    This simple Brunel-style balanced random network has an excitatory
-    and inhibitory population, both driven by external excitatory poisson
-    input. Excitatory connections are plastic (STDP). Spike activity of
-    the excitatory population is recorded.
 
     The model is provided as a non-trivial example for storing and restoring.
     """
@@ -126,15 +126,17 @@ class EINetwork:
 
         assert nest.NumProcesses() == 1, "Cannot dump MPI parallel"
 
-        ###############################################################################
-        # Build dictionary with relevant network information:
-        #   - membrane potential for all neurons in each population
-        #   - source, target and weight of all connections
-        # Dictionary entries are Pandas Dataframes.
-        #
-        # Strictly speaking, we would not need to store the weight of the inhibitory
-        # synapses since they are fixed, but we do so out of symmetry and to make it
-        # easier to add plasticity for inhibitory connections later.
+###############################################################################
+# Build dictionary with relevant network information:
+#
+#   - membrane potential for all neurons in each population
+#   - source, target and weight of all connections
+#
+# Dictionary entries are Pandas Dataframes.
+#
+# Strictly speaking, we would not need to store the weight of the inhibitory
+# synapses since they are fixed, but we do so out of symmetry and to make it
+# easier to add plasticity for inhibitory connections later.
 
         network = {}
         network["n_vp"] = nest.total_num_virtual_procs
@@ -161,23 +163,23 @@ class EINetwork:
 
         assert network["n_vp"] == nest.total_num_virtual_procs, "N_VP must match"
 
-        ###############################################################################
-        # Reconstruct neurons
-        # Since NEST does not understand Pandas Series, we must pass the values as
-        # NumPy arrays
+###############################################################################
+# Reconstruct neurons
+# Since NEST does not understand Pandas Series, we must pass the values as
+# NumPy arrays
         self.e_neurons = nest.Create(self.neuron_model, n=self.nE,
                                      params={"V_m": network["e_nrns"].V_m.values})
         self.i_neurons = nest.Create(self.neuron_model, n=self.nI,
                                      params={"V_m": network["i_nrns"].V_m.values})
         self.neurons = self.e_neurons + self.i_neurons
 
-        ###############################################################################
-        # Reconstruct instrumentation
+###############################################################################
+# Reconstruct instrumentation
         self.pg = nest.Create("poisson_generator", {"rate": self.poisson_rate})
         self.sr = nest.Create("spike_recorder")
 
-        ###############################################################################
-        # Reconstruct connectivity
+###############################################################################
+# Reconstruct connectivity
         nest.Connect(network["e_syns"].source.values, network["e_syns"].target.values,
                      "one_to_one",
                      {"synapse_model": "e_syn", "weight": network["e_syns"].weight.values})
@@ -186,8 +188,8 @@ class EINetwork:
                      "one_to_one",
                      {"synapse_model": "i_syn", "weight": network["i_syns"].weight.values})
 
-        ###############################################################################
-        # Reconnect instruments
+###############################################################################
+# Reconnect instruments
         nest.Connect(self.pg, self.neurons, "all_to_all", {"weight": self.JE})
         nest.Connect(self.e_neurons, self.sr)
 
@@ -256,8 +258,9 @@ class DemoPlot:
         elif self._next_line == 4:
             self.rasters[self._next_line].set_xlabel('Time [ms]')
 
-        # To save time while plotting, we extract only a subset of connections.
-        # For simplicity, we just use a prime-number stepping.
+################################################################################################
+# To save time while plotting, we extract only a subset of connections.
+# For simplicity, we just use a prime-number stepping.
         w = nest.GetConnections(source=net.e_neurons[::41], synapse_model="e_syn").weight
         wbins = np.arange(0.7, 1.4, 0.01)
         self.weights.hist(w, bins=wbins,
@@ -284,13 +287,13 @@ if __name__ == "__main__":
 
     dplot = DemoPlot()
 
-    ###############################################################################
-    # Ensure clean slate and make NEST less chatty
+###############################################################################
+# Ensure clean slate and make NEST less chatty
     nest.set_verbosity("M_WARNING")
     nest.ResetKernel()
 
-    ###############################################################################
-    # Create network from scratch and simulate 1s.
+###############################################################################
+# Create network from scratch and simulate 1s.
     nest.local_num_threads = 4
     nest.print_time = True
     ein = EINetwork()
@@ -299,20 +302,20 @@ if __name__ == "__main__":
     nest.Simulate(T_sim)
     dplot.add_to_plot(ein, lbl="Initial simulation")
 
-    ###############################################################################
-    # Store network state to file with state after 1s.
+###############################################################################
+# Store network state to file with state after 1s.
     print("\n*** Storing simulation ...", end="", flush=True)
     ein.store("ein_1000.pkl")
     print(" done ***\n")
 
-    ###############################################################################
-    # Continue simulation by another 1s.
+###############################################################################
+# Continue simulation by another 1s.
     print("\n*** Continuing simulation ***")
     nest.Simulate(T_sim)
     dplot.add_to_plot(ein, lbl="Continued simulation", t_min=T_sim, t_max=2 * T_sim)
 
-    ###############################################################################
-    # Clear kernel, restore network from file and simulate for 1s.
+###############################################################################
+# Clear kernel, restore network from file and simulate for 1s.
     print("\n*** Reloading and resuming simulation ***")
     nest.ResetKernel()
     nest.local_num_threads = 4
@@ -321,9 +324,9 @@ if __name__ == "__main__":
     nest.Simulate(T_sim)
     dplot.add_to_plot(ein2, lbl="Reloaded simulation")
 
-    ###############################################################################
-    # Repeat previous step. This shall result in *exactly* the same results as
-    # the previous run because we use the same random seed.
+###############################################################################
+# Repeat previous step. This shall result in *exactly* the same results as
+# the previous run because we use the same random seed.
     print("\n*** Reloading and resuming simulation (same seed) ***")
     nest.ResetKernel()
     nest.local_num_threads = 4
@@ -332,9 +335,9 @@ if __name__ == "__main__":
     nest.Simulate(T_sim)
     dplot.add_to_plot(ein2, lbl="Reloaded simulation (same seed)")
 
-    ###############################################################################
-    # Clear, restore and simulate again, but now with different random seed.
-    # Details in results shall differ from previous run.
+###############################################################################
+# Clear, restore and simulate again, but now with different random seed.
+# Details in results shall differ from previous run.
     print("\n*** Reloading and resuming simulation (different seed) ***")
     nest.ResetKernel()
     nest.local_num_threads = 4

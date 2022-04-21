@@ -127,7 +127,7 @@ private:
   {
   }
   void
-  calibrate()
+  pre_run_hook()
   {
   }
   void

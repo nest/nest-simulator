@@ -1,7 +1,7 @@
 .. _node_handles:
 
-New functionality for node handles (neurons and devices)
-========================================================
+Functionality for node handles (neurons and devices)
+====================================================
 
 In NEST 3.0, ``nest.Create()`` returns a *NodeCollection* object instead of a list of global IDs.
 This provides a more compact and flexible way for handling nodes.

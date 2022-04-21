@@ -1,7 +1,7 @@
 .. _handling_connections:
 
-New functionality for handling connections (synapses)
-=====================================================
+Functionality for handling connections (synapses)
+=================================================
 
 Just like a NodeCollection is a container for node IDs, a SynapseCollection is a
 container for connections. In NEST 3, when you call :py:func:`.GetConnections` a

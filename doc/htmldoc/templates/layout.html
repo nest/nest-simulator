@@ -22,10 +22,8 @@
   {% block content %}
   <a href="#" id="gototop"><img src="{{ pathto('_static/img/arrow-up-circle.svg',1) }}"/></a>
   <header id="header" class="wrapper clearfix">
-      <div id="background">
-        <img src="{{ pathto('_static/img/background-particles-flattened-3.png',1) }}" alt="logo" width="100%">
-      </div>
-    <div id="banner">
+    <div id="background" class="particle-img">
+     <div id="banner">
       <div id="logo">
         <img src="{{ pathto('_static/img/nest_docs.svg',1) }}" alt="logo" width="600">
       </div>
@@ -39,6 +37,7 @@
 	<li><a href="community.html">Contact us</a></li>
       </ul>
     </nav>
+   </div>
   </header>
   {{ super() }}
   {% endblock %}

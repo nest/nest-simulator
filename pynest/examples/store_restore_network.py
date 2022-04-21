@@ -72,6 +72,7 @@ import textwrap
 # input. Excitatory connections are plastic (STDP). Spike activity of
 # the excitatory population is recorded.
 
+
 class EINetwork:
     """
     A simple balanced random network with plastic excitatory synapses.

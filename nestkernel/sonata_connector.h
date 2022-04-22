@@ -25,6 +25,8 @@
 
 #include "config.h"
 
+#ifdef HAVE_HDF5
+
 // C++ includes:
 #include <map>
 #include <vector>
@@ -177,5 +179,6 @@ private:
 
 } // namespace nest
 
+#endif // ifdef HAVE_HDF5
 
 #endif /* ifdef SONATA_CONNECTOR_H */

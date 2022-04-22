@@ -22,6 +22,9 @@
 
 #include "sonata_connector.h"
 
+#include "config.h"
+
+#ifdef HAVE_HDF5
 
 // Includes from nestkernel:
 #include "conn_parameter.h"
@@ -33,7 +36,7 @@
 #include <iostream> // for debugging
 #include <fstream>  // for debugging
 
-#include "H5Cpp.h"  // TODO: need an if/else
+#include "H5Cpp.h"
 
 extern "C" herr_t get_group_names( hid_t loc_id, const char* name, const H5L_info_t* linfo, void* opdata );
 
@@ -426,3 +429,4 @@ get_group_names( hid_t loc_id, const char* name, const H5L_info_t*, void* opdata
   return 0;
 }
 
+#endif // ifdef HAVE_HDF5

@@ -728,11 +728,16 @@ nest::ConnectionManager::connect_arrays( long* sources,
 void
 nest::ConnectionManager::connect_sonata( const DictionaryDatum& sonata_dynamics )
 {
+#ifdef HAVE_HDF5
   SonataConnector sonata_connector( sonata_dynamics );
 
-  // Set flag before calling sonata_connector.connect() in case exception is thrown after some connections have been created.
+  // Set flag before calling sonata_connector.connect() in case exception is thrown after some connections have been
+  // created.
   set_connections_have_changed();
   sonata_connector.connect();
+#else
+  throw KernelException( "Cannot use connect_sonata because NEST was compiled without HDF5 support" );
+#endif
 }
 
 void

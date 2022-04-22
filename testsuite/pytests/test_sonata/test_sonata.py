@@ -23,8 +23,11 @@ import os
 import nest
 import pytest
 
+skip_if_no_hdf5 = pytest.mark.skipif(not nest.ll_api.sli_func("statusdict/have_hdf5 ::"),
+                                     reason="requires NEST built with HDF5 support")
+
 root_path = os.path.dirname(__file__)
-base_path = os.path.join(root_path, '300_pointneurons') + "/"  # TODO: remove /
+base_path = os.path.join(root_path, '300_pointneurons')
 config = 'circuit_config.json'
 sim_config = 'simulation_config.json'
 EXPECTED_NUM_NODES = 400  # 300 'internal' nodes + 100 'external' nodes
@@ -35,6 +38,7 @@ NUM_THREADS = [1, 2, 4]
 
 @pytest.fixture
 def reset():
+    pytest.importorskip('h5py')  # Skip test if h5py is not found
     nest.ResetKernel()
 
 
@@ -49,6 +53,7 @@ def sonata_connector_fixture():
     return sonata_connector, simtime
 
 
+@skip_if_no_hdf5
 def testSonataConnector(reset, sonata_connector_fixture):
     """Correct positions used in Connect with free positions"""
     print('base_path:', base_path)
@@ -57,6 +62,7 @@ def testSonataConnector(reset, sonata_connector_fixture):
     assert(sonata_connector.config['target_simulator'] == 'NEST')
 
 
+@skip_if_no_hdf5
 @pytest.mark.parametrize("num_threads", NUM_THREADS)
 def testCreate(reset, sonata_connector_fixture, num_threads):
     sonata_connector, _ = sonata_connector_fixture
@@ -67,6 +73,7 @@ def testCreate(reset, sonata_connector_fixture, num_threads):
     assert(num_nodes == EXPECTED_NUM_NODES)
 
 
+@skip_if_no_hdf5
 @pytest.mark.parametrize("num_threads", NUM_THREADS)
 def testConnect(reset, sonata_connector_fixture, num_threads):
     sonata_connector, _ = sonata_connector_fixture
@@ -78,6 +85,7 @@ def testConnect(reset, sonata_connector_fixture, num_threads):
     assert(num_connections == EXPECTED_NUM_CONNECTIONS)
 
 
+@skip_if_no_hdf5
 @pytest.mark.parametrize("num_threads", NUM_THREADS)
 def testSimulate(reset, sonata_connector_fixture, num_threads):
     sonata_connector, simtime = sonata_connector_fixture
@@ -90,6 +98,7 @@ def testSimulate(reset, sonata_connector_fixture, num_threads):
     assert(num_spikes == EXPECTED_NUM_SPIKES)
 
 
+@skip_if_no_hdf5
 @pytest.mark.parametrize("num_threads", NUM_THREADS)
 def testSonataNetwork(reset, sonata_connector_fixture, num_threads):
     """SonataNetwork convenience function"""

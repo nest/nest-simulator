@@ -73,7 +73,6 @@ public:
   void connect();
 
 private:
-
   /**
    * Get number of elements in a dataset
    *
@@ -114,7 +113,7 @@ private:
    *
    * @param group H5 group for which to check if weight or delay exists
    */
-  void weight_and_delay_from_dataset_( H5::Group group);
+  void weight_and_delay_from_dataset_( H5::Group group );
 
   /**
    * Create map between type id and syn_spec given in edge_dict
@@ -134,7 +133,7 @@ private:
    * @param synapse_model_id model id of synapse
    * @param type_id SONATA edge type id for mapping synapse parameters
    */
-  void set_synapse_params(DictionaryDatum syn_dict, index synapse_model_id, int type_id);
+  void set_synapse_params( DictionaryDatum syn_dict, index synapse_model_id, int type_id );
 
   /**
    * Get synapse parameters and convert them to correct datums for connecting

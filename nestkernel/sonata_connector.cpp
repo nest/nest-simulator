@@ -33,8 +33,8 @@
 // Includes from sli:
 #include "dictutils.h"
 
-#include <iostream> // for debugging
 #include <fstream>  // for debugging
+#include <iostream> // for debugging
 
 #include "H5Cpp.h"
 
@@ -44,11 +44,11 @@ namespace nest
 {
 
 SonataConnector::SonataConnector( const DictionaryDatum& sonata_dynamics )
-  : sonata_dynamics_ ( sonata_dynamics )
-  , weight_dataset_ ( false )
-  , delay_dataset_ ( false )
-  , syn_weight_data_ ( 0 )
-  , delay_data_ ( 0 )
+  : sonata_dynamics_( sonata_dynamics )
+  , weight_dataset_( false )
+  , delay_dataset_( false )
+  , syn_weight_data_( 0 )
+  , delay_data_( 0 )
 {
 }
 
@@ -56,7 +56,7 @@ SonataConnector::~SonataConnector()
 {
   for ( auto params_vec_map : type_id_2_syn_spec_ )
   {
-    for ( auto params: params_vec_map.second )
+    for ( auto params : params_vec_map.second )
     {
       for ( auto synapse_parameters : params )
       {
@@ -109,7 +109,7 @@ SonataConnector::connect()
       auto edge_group_id = edges_subgroup.openDataSet( "edge_group_id" );
       auto num_edge_group_id = get_num_elements_( edge_group_id );
       auto edge_group_id_data = read_data_( edge_group_id, num_edge_group_id );
-      const auto [min, max] = std::minmax_element(edge_group_id_data, edge_group_id_data + num_edge_group_id);
+      const auto [ min, max ] = std::minmax_element( edge_group_id_data, edge_group_id_data + num_edge_group_id );
 
       if ( *min == *max ) // only one group_id
       {
@@ -155,7 +155,8 @@ SonataConnector::connect()
 
         assert( num_source_node_id == num_target_node_id );
 
-        std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
+        std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_(
+          kernel().vp_manager.get_num_threads() );
 #pragma omp parallel
         {
           auto tid = kernel().vp_manager.get_thread_id();
@@ -188,7 +189,8 @@ SonataConnector::connect()
               }
 
               auto edge_type_id = edge_type_id_data[ i ];
-              const auto syn_spec = getValue< DictionaryDatum >( edge_params->lookup( std::to_string( edge_type_id ) ) );
+              const auto syn_spec =
+                getValue< DictionaryDatum >( edge_params->lookup( std::to_string( edge_type_id ) ) );
 
               double weight = numerics::nan;
               if ( weight_dataset_ )
@@ -247,7 +249,8 @@ SonataConnector::connect()
       }
       else
       {
-        throw NotImplemented( "Connecting with Sonata files with more than one edgegroup is currently not implemented" );
+        throw NotImplemented(
+          "Connecting with Sonata files with more than one edgegroup is currently not implemented" );
       }
       delete edge_group_id_data;
     } // groups of "edges"
@@ -318,7 +321,9 @@ void
 SonataConnector::set_synapse_params( DictionaryDatum syn_dict, index synapse_model_id, int type_id )
 {
   DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
-  std::set< Name > skip_syn_params_ = { names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model };
+  std::set< Name > skip_syn_params_ = {
+    names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
+  };
 
   std::map< Name, ConnParameter* > synapse_params;
 
@@ -341,7 +346,7 @@ SonataConnector::set_synapse_params( DictionaryDatum syn_dict, index synapse_mod
   // create it here once to avoid re-creating the object over and over again.
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    type_id_2_syn_spec_[ type_id ].push_back( synapse_params );  // DO WE NEED TO DEFINE THIS PER THREAD???
+    type_id_2_syn_spec_[ type_id ].push_back( synapse_params ); // DO WE NEED TO DEFINE THIS PER THREAD???
     type_id_2_param_dicts_[ type_id ].push_back( new Dictionary );
 
     for ( auto param : synapse_params )
@@ -398,7 +403,7 @@ SonataConnector::reset_params()
   type_id_2_syn_model_.clear();
   for ( auto params_vec_map : type_id_2_syn_spec_ )
   {
-    for ( auto params: params_vec_map.second )
+    for ( auto params : params_vec_map.second )
     {
       for ( auto synapse_parameters : params )
       {

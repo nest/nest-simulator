@@ -34,6 +34,8 @@
 (unittest) run
 /unittest using
 
+skip_if_without_music
+
 /*
  * Test logic:
  * For each of the two parrot neurons, exactly one connection from/to the

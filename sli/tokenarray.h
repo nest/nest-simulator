@@ -128,7 +128,6 @@ public:
   TokenArray( const std::vector< size_t >& );
   TokenArray( const std::vector< long >& );
   TokenArray( const std::vector< double >& );
-  TokenArray( const std::vector< float >& );
 
   virtual ~TokenArray()
   {

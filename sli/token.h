@@ -214,7 +214,6 @@ public:
   operator size_t() const;
   operator long() const;
   operator double() const;
-  operator float() const;
   operator bool() const;
   operator std::string() const;
   //  operator vector<double> const;

@@ -62,6 +62,8 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   updateValue< bool >( conn_spec, names::allow_multapses, allow_multapses_ );
   updateValue< bool >( conn_spec, names::make_symmetric, make_symmetric_ );
 
+  printf("Allow autapses sp manager %s\n", allow_autapses_);
+
   // read out synapse-related parameters ----------------------
 
   // synapse-specific parameters that should be skipped when we set default synapse parameters

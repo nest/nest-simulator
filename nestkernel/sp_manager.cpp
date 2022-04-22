@@ -141,14 +141,19 @@ SPManager::set_status( const DictionaryDatum& d )
   DictionaryDatum syn_specs, syn_spec;
   DictionaryDatum conn_spec = DictionaryDatum( new Dictionary() );
 
+  updateValue< DictionaryDatum >( d, names::structural_plasticity_synapses, syn_specs );
+
   if ( d->known( names::allow_autapses ) )
   {
-    def< bool >( conn_spec, names::allow_autapses, getValue< bool >( d, names::allow_autapses ) );
+    def< bool >( conn_spec, names::allow_autapses, getValue< bool >( syn_specs, names::allow_autapses ) );
+    printf("Allow autapses sp manager\n");
   }
   if ( d->known( names::allow_multapses ) )
   {
-    def< bool >( conn_spec, names::allow_multapses, getValue< bool >( d, names::allow_multapses ) );
+    def< bool >( conn_spec, names::allow_multapses, getValue< bool >( syn_specs, names::allow_multapses ) );
   }
+
+  
   NodeCollectionPTR sources( new NodeCollectionPrimitive() );
   NodeCollectionPTR targets( new NodeCollectionPrimitive() );
 
@@ -157,7 +162,7 @@ SPManager::set_status( const DictionaryDatum& d )
     delete ( *i );
   }
   sp_conn_builders_.clear();
-  updateValue< DictionaryDatum >( d, names::structural_plasticity_synapses, syn_specs );
+  
   for ( Dictionary::const_iterator i = syn_specs->begin(); i != syn_specs->end(); ++i )
   {
     syn_spec = getValue< DictionaryDatum >( syn_specs, i->first );

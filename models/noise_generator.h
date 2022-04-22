@@ -307,6 +307,11 @@ private:
 inline port
 noise_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
+  if ( kernel().vp_manager.get_num_threads() > 1 )
+  {
+    throw KernelException( "Recording from a noise_generator is only possible in single-threaded mode." );
+  }
+
   if ( receptor_type != 0 )
   {
     throw UnknownReceptorType( receptor_type, get_name() );

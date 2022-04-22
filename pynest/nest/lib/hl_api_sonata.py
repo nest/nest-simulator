@@ -23,22 +23,31 @@
 Class for creating networks from SONATA files
 """
 
+import os
 import csv
-import h5py   # TODO this need to be a try except thing
 import json
 import numpy as np
 import pandas as pd
 
-from ..ll_api import sps, sr
+from .. import pynestkernel as kernel
+from ..ll_api import sps, sr, sli_func
 from .hl_api_models import GetDefaults
 from .hl_api_nodes import Create
 from .hl_api_simulation import SetKernelStatus, Simulate
 from .hl_api_types import NodeCollection
 
+try:
+    import h5py
+    have_h5py = True
+except ImportError:
+    have_h5py = False
+
+have_hdf5 = sli_func("statusdict/have_hdf5 ::")
 
 __all__ = [
     'SonataConnector'
 ]
+
 
 class SonataConnector(object):
     """ Class for creating networks from SONATA files.
@@ -67,6 +76,11 @@ class SonataConnector(object):
         self.node_collections = {}
         self.edge_types = []
 
+        if not have_hdf5:
+            raise kernel.NESTError("Cannot use SonataConnector because NEST was compiled without HDF5 support")
+        if not have_h5py:
+            raise kernel.NESTError("Cannot use SonataConnector because h5py is not installed or could not be imported")
+
         self.convert_config_(config)
         if sim_config:
             self.convert_config_(sim_config)
@@ -80,14 +94,14 @@ class SonataConnector(object):
             json file containing all SONATA paths and parameters.
         """
 
-        with open(self.base_path + json_config) as fp:
+        with open(os.path.join(self.base_path, json_config)) as fp:
             config = json.load(fp)
 
         subs = {}
         for dir, path in config["manifest"].items():
             if dir.startswith('$'):
                 dir = dir[1:]
-            subs[dir] = self.base_path + path
+            subs[dir] = os.path.join(self.base_path, path)
         for dir, path in subs.items():
             if '$BASE_DIR' in path:
                 subs[dir] = path.replace('$BASE_DIR', '.')
@@ -129,14 +143,14 @@ class SonataConnector(object):
         # Iterate node files in config file
         for nodes in self.config['networks']['nodes']:
             node_types_file_name = nodes['node_types_file']
-            node_types = pd.read_csv(node_types_file_name, sep='\s+')  # CSV file containing parameters ++
+            node_types = pd.read_csv(node_types_file_name, sep=r'\s+')  # CSV file containing parameters ++
 
             one_model = (node_types['model_type'] == 'virtual').all() or self.is_unique_(node_types['model_template'])
 
             if one_model:
                 model_type = node_types.model_type.iloc[0]
                 if model_type not in ['point_neuron', 'point_process', 'virtual']:
-                    raise NotImplemented(f'model of type {model_type} is not a NEST model, it cannot be used.')
+                    raise NotImplementedError(f'model of type {model_type} is not a NEST model, it cannot be used.')
 
                 # Extract node parameters
                 have_dynamics = 'dynamics_params' in node_types.keys()
@@ -167,7 +181,7 @@ class SonataConnector(object):
 
                         self.node_collections[population_name] = nodes
             else:
-                raise NotImplemented("More than one NEST model per csv file currently not implemented")
+                raise NotImplementedError("More than one NEST model per csv file currently not implemented")
 
     def is_unique_(self, col):
         """Check if all values in column are unique.
@@ -230,6 +244,7 @@ class SonataConnector(object):
             Object representing the created spike generators
         """
 
+        nodes = NodeCollection()  # Empty NC in case we don't need any spike generators
         model = 'spike_generator'
         # First need to iterate to the current spike population dictionary in config file
         for input_dict in self.config['inputs'].values():
@@ -266,7 +281,7 @@ class SonataConnector(object):
 
         for edges in self.config['networks']['edges']:
             edge_dict = {}
-            edge_dict['edges_file'] = edges['edges_file']  # File containg all source id's and target id's
+            edge_dict['edges_file'] = edges['edges_file']  # File containing all source id's and target id's
             edge_types_file = edges['edge_types_file']  # CSV file containing synapse parameters
 
             with open(edge_types_file, 'r') as csv_file:
@@ -321,7 +336,7 @@ class SonataConnector(object):
             Whether or not to simulate
         """
 
-        if not self.config['target_simulator'] == 'NEST':
+        if self.config['target_simulator'] != 'NEST':
             raise NotImplementedError('Only `target_simulator` of type NEST is supported.')
 
         SetKernelStatus({'overwrite_files': True})

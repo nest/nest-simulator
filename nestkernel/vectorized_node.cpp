@@ -285,7 +285,8 @@ VectorizedNode::get_urbanczik_history( double t1,
   double,
   std::deque< histentry_extended >::iterator*,
   std::deque< histentry_extended >::iterator*,
-  int, index )
+  int,
+  index )
 {
   throw UnexpectedEvent();
 }

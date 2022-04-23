@@ -122,7 +122,7 @@ JitNode::init()
   container_->init( local_id_ );
 }
 void
-JitNode::calibrate()
+JitNode::pre_run_hook()
 {
   container_->calibrate( local_id_ );
 }

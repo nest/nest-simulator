@@ -22,6 +22,7 @@
 
 #ifndef JITNODE_H
 #define JITNODE_H
+
 #include "node.h"
 #include "vectorized_node.h"
 

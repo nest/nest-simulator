@@ -1,24 +1,24 @@
 /*
- *  model_manager.cpp
- *
- *  This file is part of NEST.
- *
- *  Copyright (C) 2004 The NEST Initiative
- *
- *  NEST is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  NEST is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+*  model_manager.cpp
+*
+*  This file is part of NEST.
+*
+*  Copyright (C) 2004 The NEST Initiative
+*
+*  NEST is free software: you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation, either version 2 of the License, or
+*  (at your option) any later version.
+*
+*  NEST is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*  GNU General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License
+*  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+*
+*/
 
 #include "model_manager.h"
 
@@ -253,8 +253,8 @@ ModelManager::copy_node_model_( index old_id, Name new_name )
   Model* new_model = old_model->clone( new_name.toString() );
   if ( old_model->get_uses_vectors() )
   {
-    new_model->clone_container(old_model->get_container());
-    new_model->set_uses_vecotrs(true);
+    new_model->clone_container( old_model->get_container() );
+    new_model->set_uses_vecotrs( true );
   }
   node_models_.push_back( new_model );
 

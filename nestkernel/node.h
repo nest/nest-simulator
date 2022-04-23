@@ -1110,5 +1110,4 @@ Node::get_thread_lid() const
 }
 
 } // namespace
-
 #endif

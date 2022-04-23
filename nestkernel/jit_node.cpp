@@ -45,7 +45,7 @@ JitNode::~JitNode() noexcept
 }
 
 JitNode::JitNode( const JitNode& n )
-  : Node(n)
+  : Node( n )
   , local_id_( -1 )
   , container_( n.container_ )
 {

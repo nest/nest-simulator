@@ -395,7 +395,7 @@ public:
   }
 
 
-  virtual Node*get_wrapper( index = -1 )
+  virtual Node* get_wrapper( index = -1 )
   {
     return this;
   }

@@ -376,7 +376,7 @@ public:
    * Create logger.
    */
   DynamicUniversalDataLogger( HostNode& );
-  
+
   DynamicUniversalDataLogger( DynamicUniversalDataLogger&& ) = default;
 
 
@@ -405,7 +405,7 @@ public:
    * @param DataLoggingRequest Request to be handled.
    */
   void handle( const DataLoggingRequest& );
-  
+
 
   /**
    * Record data using predefined access functions.

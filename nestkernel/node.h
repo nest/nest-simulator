@@ -141,8 +141,9 @@ public:
     return 0;
   }
 
+
   virtual void
-  clone_container( std::shared_ptr< VectorizedNode > container )
+  clone_container( std::shared_ptr< VectorizedNode > )
   {
   }
 
@@ -230,12 +231,12 @@ public:
     return std::map< std::string, const std::vector< double >& >();
   };
 
-  virtual double
-  get_state_element( size_t elem ) const
-  {
-    assert( false );
-    return 404;
-  }
+  // virtual double
+  // get_state_element( size_t  ) const
+  // {
+  //   assert( false );
+  //   return -1;
+  // }
 
   /**
    * Return lockpointer to the NodeCollection that created this node.
@@ -391,13 +392,13 @@ public:
   virtual void get_status( DictionaryDatum& ) const = 0;
 
   virtual void
-  set_container( std::shared_ptr< VectorizedNode > container )
+  set_container( std::shared_ptr< VectorizedNode > )
   {
   }
 
 
   virtual Node*
-  get_wrapper( index node_id = -1 )
+  get_wrapper( index = -1 )
   {
     return this;
   }

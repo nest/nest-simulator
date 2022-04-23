@@ -54,7 +54,7 @@ public:
    * \fn ArchivingNode()
    * Copy Constructor.
    */
-  ArchivingVector( const ArchivingVector& );
+  ArchivingVector( const ArchivingVector& ) = delete;
 
   ~ArchivingVector()
   {

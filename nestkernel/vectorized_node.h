@@ -90,23 +90,23 @@ public:
   /**
    * Returns true if node is frozen, i.e., shall not be updated.
    */
-  bool is_frozen( index local_id ) const;
+  bool is_frozen( index ) const;
 
   /**
    * Returns true if the node uses the waveform relaxation method
    */
-  bool node_uses_wfr( index local_id ) const;
+  bool node_uses_wfr( index ) const;
 
   index size() const;
   /**
    * Sets node_uses_wfr_ member variable
    * (to be able to set it to "true" for any class derived from Node)
    */
-  void set_node_uses_wfr( const bool, index local_id );
+  void set_node_uses_wfr( const bool, index );
 
-  index get_global_id( index local_id ) const;
+  index get_global_id( index ) const;
 
-  void insert_global_id( index local_id );
+  void insert_global_id( index );
 
   void
   set_wrapper( Node* wrapper )
@@ -114,7 +114,7 @@ public:
     wrapper_ = wrapper;
   }
 
-  Node* get_wrapper( index node_id = -1, nest::index thred_id = 0 ) const;
+  Node* get_wrapper( index = -1, nest::index = 0 ) const;
   /**
    * Initialize node prior to first simulation after node has been created.
    *
@@ -123,7 +123,7 @@ public:
    * called on a given node, otherwise it returns immediately. init() calls
    * virtual functions init_state_() and init_buffers_().
    */
-  void init( index local_id );
+  void init( index );
 
   /**
    * Re-calculate dependent parameters of the node.
@@ -132,14 +132,14 @@ public:
    * for spike handling or updating the node.
    *
    */
-  virtual void calibrate( index local_id ) = 0;
+  virtual void calibrate( index ) = 0;
 
   /**
    * Re-calculate time-based properties of the node.
    * This function is called after a change in resolution.
    */
   virtual void
-  calibrate_time( const TimeConverter&, index local_id )
+  calibrate_time( const TimeConverter&, index )
   {
   }
 
@@ -150,7 +150,7 @@ public:
    * that need to flush buffers.
    */
   virtual void
-  post_run_cleanup( index local_id )
+  post_run_cleanup( index )
   {
   }
   /**
@@ -160,7 +160,7 @@ public:
    * use-cases are devices that need to close files.
    */
   virtual void
-  finalize( index local_id )
+  finalize( index )
   {
   }
 
@@ -176,7 +176,7 @@ public:
    * @param long post-final step inside time slice
    *
    */
-  virtual void update( Time const&, const long, const long, index local_id ) = 0;
+  virtual void update( Time const&, const long, const long, index ) = 0;
 
   /**
    * Bring the node from state $t$ to $t+n*dt$, sends SecondaryEvents
@@ -194,7 +194,7 @@ public:
    * @param long post-final step inside time slice
    *
    */
-  virtual bool wfr_update( Time const&, const long, const long, index local_id );
+  virtual bool wfr_update( Time const&, const long, const long, index );
 
 
 public:
@@ -224,8 +224,7 @@ public:
    * DS*Events when called with the dummy target, and *Events when called with
    * the real target, see #478.
    */
-  virtual port
-  send_test_event( Node& receiving_node, rport receptor_type, synindex syn_id, bool dummy_target, index local_id );
+  virtual port send_test_event( Node& receiving_node, rport receptor_type, synindex syn_id, bool dummy_target, index );
 
   /**
    * Check if the node can handle a particular event and receptor type.
@@ -245,19 +244,19 @@ public:
    * @ingroup event_interface
    * @throws IllegalConnection
    */
-  virtual port handles_test_event( SpikeEvent&, rport receptor_type, index local_id );
-  virtual port handles_test_event( WeightRecorderEvent&, rport receptor_type, index local_id );
-  virtual port handles_test_event( RateEvent&, rport receptor_type, index local_id );
-  virtual port handles_test_event( DataLoggingRequest&, rport receptor_type, index local_id );
-  virtual port handles_test_event( CurrentEvent&, rport receptor_type, index local_id );
-  virtual port handles_test_event( ConductanceEvent&, rport receptor_type, index local_id );
-  virtual port handles_test_event( DoubleDataEvent&, rport receptor_type, index local_id );
-  virtual port handles_test_event( DSSpikeEvent&, rport receptor_type, index local_id );
-  virtual port handles_test_event( DSCurrentEvent&, rport receptor_type, index local_id );
-  virtual port handles_test_event( GapJunctionEvent&, rport receptor_type, index local_id );
-  virtual port handles_test_event( InstantaneousRateConnectionEvent&, rport receptor_type, index local_id );
-  virtual port handles_test_event( DiffusionConnectionEvent&, rport receptor_type, index local_id );
-  virtual port handles_test_event( DelayedRateConnectionEvent&, rport receptor_type, index local_id );
+  virtual port handles_test_event( SpikeEvent&, rport receptor_type, index );
+  virtual port handles_test_event( WeightRecorderEvent&, rport receptor_type, index );
+  virtual port handles_test_event( RateEvent&, rport receptor_type, index );
+  virtual port handles_test_event( DataLoggingRequest&, rport receptor_type, index );
+  virtual port handles_test_event( CurrentEvent&, rport receptor_type, index );
+  virtual port handles_test_event( ConductanceEvent&, rport receptor_type, index );
+  virtual port handles_test_event( DoubleDataEvent&, rport receptor_type, index );
+  virtual port handles_test_event( DSSpikeEvent&, rport receptor_type, index );
+  virtual port handles_test_event( DSCurrentEvent&, rport receptor_type, index );
+  virtual port handles_test_event( GapJunctionEvent&, rport receptor_type, index );
+  virtual port handles_test_event( InstantaneousRateConnectionEvent&, rport receptor_type, index );
+  virtual port handles_test_event( DiffusionConnectionEvent&, rport receptor_type, index );
+  virtual port handles_test_event( DelayedRateConnectionEvent&, rport receptor_type, index );
 
   /**
    * Required to check, if source neuron may send a SecondaryEvent.
@@ -266,7 +265,7 @@ public:
    * @ingroup event_interface
    * @throws IllegalConnection
    */
-  virtual void sends_secondary_event( GapJunctionEvent& ge, index local_id );
+  virtual void sends_secondary_event( GapJunctionEvent&, index );
 
   /**
    * Required to check, if source neuron may send a SecondaryEvent.
@@ -275,7 +274,7 @@ public:
    * @ingroup event_interface
    * @throws IllegalConnection
    */
-  virtual void sends_secondary_event( InstantaneousRateConnectionEvent& re, index local_id );
+  virtual void sends_secondary_event( InstantaneousRateConnectionEvent&, index );
 
   /**
    * Required to check, if source neuron may send a SecondaryEvent.
@@ -284,7 +283,7 @@ public:
    * @ingroup event_interface
    * @throws IllegalConnection
    */
-  virtual void sends_secondary_event( DiffusionConnectionEvent& de, index local_id );
+  virtual void sends_secondary_event( DiffusionConnectionEvent&, index );
 
   /**
    * Required to check, if source neuron may send a SecondaryEvent.
@@ -293,7 +292,7 @@ public:
    * @ingroup event_interface
    * @throws IllegalConnection
    */
-  virtual void sends_secondary_event( DelayedRateConnectionEvent& re, index local_id );
+  virtual void sends_secondary_event( DelayedRateConnectionEvent&, index );
 
   /**
    * Register a STDP connection
@@ -301,7 +300,7 @@ public:
    * @throws IllegalConnection
    *
    */
-  virtual void register_stdp_connection( double, double, index local_id );
+  virtual void register_stdp_connection( double, double, index );
 
   /**
    * Handle incoming spike events.
@@ -313,7 +312,7 @@ public:
    * @see class SpikeEvent
    * @ingroup event_interface
    */
-  virtual void handle( SpikeEvent& e, index local_id );
+  virtual void handle( SpikeEvent&, index );
 
   /**
    * Handle incoming weight recording events.
@@ -325,7 +324,7 @@ public:
    * @see class WeightRecordingEvent
    * @ingroup event_interface
    */
-  virtual void handle( WeightRecorderEvent& e, index local_id );
+  virtual void handle( WeightRecorderEvent&, index );
 
   /**
    * Handler for rate events.
@@ -333,7 +332,7 @@ public:
    * @ingroup event_interface
    * @throws UnexpectedEvent
    */
-  virtual void handle( RateEvent& e, index local_id );
+  virtual void handle( RateEvent&, index );
 
   /**
    * Handler for universal data logging request.
@@ -341,7 +340,7 @@ public:
    * @ingroup event_interface
    * @throws UnexpectedEvent
    */
-  virtual void handle( DataLoggingRequest& e, index local_id );
+  virtual void handle( DataLoggingRequest&, index );
 
   /**
    * Handler for universal data logging request.
@@ -351,7 +350,7 @@ public:
    * @note There is no connect_sender() for DataLoggingReply, since
    *       this event is only used as "back channel" for DataLoggingRequest.
    */
-  virtual void handle( DataLoggingReply& e, index local_id );
+  virtual void handle( DataLoggingReply&, index );
 
   /**
    * Handler for current events.
@@ -359,7 +358,7 @@ public:
    * @ingroup event_interface
    * @throws UnexpectedEvent
    */
-  virtual void handle( CurrentEvent& e, index local_id );
+  virtual void handle( CurrentEvent&, index );
 
   /**
    * Handler for conductance events.
@@ -367,7 +366,7 @@ public:
    * @ingroup event_interface
    * @throws UnexpectedEvent
    */
-  virtual void handle( ConductanceEvent& e, index local_id );
+  virtual void handle( ConductanceEvent&, index );
 
   /**
    * Handler for DoubleData events.
@@ -375,7 +374,7 @@ public:
    * @ingroup event_interface
    * @throws UnexpectedEvent
    */
-  virtual void handle( DoubleDataEvent& e, index local_id );
+  virtual void handle( DoubleDataEvent&, index );
 
   /**
    * Handler for gap junction events.
@@ -383,7 +382,7 @@ public:
    * @ingroup event_interface
    * @throws UnexpectedEvent
    */
-  virtual void handle( GapJunctionEvent& e, index local_id );
+  virtual void handle( GapJunctionEvent&, index );
 
   /**
    * Handler for rate neuron events.
@@ -391,7 +390,7 @@ public:
    * @ingroup event_interface
    * @throws UnexpectedEvent
    */
-  virtual void handle( InstantaneousRateConnectionEvent& e, index local_id );
+  virtual void handle( InstantaneousRateConnectionEvent&, index );
 
   /**
    * Handler for rate neuron events.
@@ -399,7 +398,7 @@ public:
    * @ingroup event_interface
    * @throws UnexpectedEvent
    */
-  virtual void handle( DiffusionConnectionEvent& e, index local_id );
+  virtual void handle( DiffusionConnectionEvent&, index );
 
   /**
    * Handler for delay rate neuron events.
@@ -407,7 +406,7 @@ public:
    * @ingroup event_interface
    * @throws UnexpectedEvent
    */
-  virtual void handle( DelayedRateConnectionEvent& e, index local_id );
+  virtual void handle( DelayedRateConnectionEvent&, index );
 
   /**
    * @defgroup SP_functions Structural Plasticity in NEST.
@@ -418,7 +417,7 @@ public:
 
 
   virtual double
-  get_Ca_minus( index local_id ) const
+  get_Ca_minus( index ) const
   {
     return 0.0;
   }
@@ -433,44 +432,43 @@ public:
    * return the Kminus value at t (in ms).
    * @throws UnexpectedEvent
    */
-  virtual double get_K_value( double t, index local_id );
+  virtual double get_K_value( double t, index );
 
-  virtual double get_LTD_value( double t, index local_id );
+  virtual double get_LTD_value( double t, index );
 
   /**
    * write the Kminus, nearest_neighbor_Kminus, and Kminus_triplet
    * values at t (in ms) to the provided locations.
    * @throws UnexpectedEvent
    */
-  virtual void
-  get_K_values( double t, double& Kminus, double& nearest_neighbor_Kminus, double& Kminus_triplet, index local_id );
+  virtual void get_K_values( double t, double& Kminus, double& nearest_neighbor_Kminus, double& Kminus_triplet, index );
 
   virtual void get_history( double t1,
     double t2,
     std::deque< histentry >::iterator* start,
     std::deque< histentry >::iterator* finish,
-    index local_id );
+    index );
 
   virtual void get_LTP_history( double t1,
     double t2,
     std::deque< histentry_extended >::iterator* start,
     std::deque< histentry_extended >::iterator* finish,
-    index local_id );
+    index );
 
   virtual void get_urbanczik_history( double t1,
     double t2,
     std::deque< histentry_extended >::iterator* start,
     std::deque< histentry_extended >::iterator* finish,
     int,
-    index local_id );
+    index );
 
   // make neuron parameters accessible in Urbanczik synapse
-  virtual double get_C_m( int comp, index local_id );
-  virtual double get_g_L( int comp, index local_id );
-  virtual double get_tau_L( int comp, index local_id );
-  virtual double get_tau_s( int comp, index local_id );
-  virtual double get_tau_syn_ex( int comp, index local_id );
-  virtual double get_tau_syn_in( int comp, index local_id );
+  virtual double get_C_m( int comp, index );
+  virtual double get_g_L( int comp, index );
+  virtual double get_tau_L( int comp, index );
+  virtual double get_tau_s( int comp, index );
+  virtual double get_tau_syn_ex( int comp, index );
+  virtual double get_tau_syn_in( int comp, index );
 
 
   /**
@@ -486,9 +484,9 @@ public:
    * If needed, target->handle(DSSpikeEvent) may be called more than
    * once.
    */
-  virtual void event_hook( DSSpikeEvent&, index local_id );
+  virtual void event_hook( DSSpikeEvent&, index );
 
-  virtual void event_hook( DSCurrentEvent&, index local_id );
+  virtual void event_hook( DSCurrentEvent&, index );
 
 
   /**
@@ -497,7 +495,7 @@ public:
    * compatible information
    */
   virtual SignalType
-  sends_signal( index local_id ) const
+  sends_signal( index ) const
   {
     return SPIKE;
   }
@@ -508,7 +506,7 @@ public:
    * compatible information
    */
   virtual SignalType
-  receives_signal( index local_id ) const
+  receives_signal( index ) const
   {
     return SPIKE;
   }
@@ -522,7 +520,7 @@ public:
    * @param local_id position of node in the vector
    */
   virtual double
-  get_synaptic_elements( Name n, index local_id ) const
+  get_synaptic_elements( Name, index ) const
   {
     return 0.0;
   };
@@ -534,7 +532,7 @@ public:
    * @param local_id position of node in the vector
    */
   virtual int
-  get_synaptic_elements_vacant( Name n, index local_id ) const
+  get_synaptic_elements_vacant( Name, index ) const
   {
     return 0;
   }
@@ -546,7 +544,7 @@ public:
    * @param local_id position of node in the vector
    */
   virtual int
-  get_synaptic_elements_connected( Name n, index local_id ) const
+  get_synaptic_elements_connected( Name, index ) const
   {
     return 0;
   }
@@ -557,7 +555,7 @@ public:
    * @param local_id position of node in the vector
    */
   virtual std::map< Name, double >
-  get_synaptic_elements( index local_id ) const
+  get_synaptic_elements( index ) const
   {
     return std::map< Name, double >();
   }
@@ -568,7 +566,7 @@ public:
    * dynamics described by the corresponding growth curve
    * @param local_id position of node in the vector
    */
-  virtual void update_synaptic_elements( double t, index local_id ) {};
+  virtual void update_synaptic_elements( double, index ) {};
 
   /**
    * \fn void decay_synaptic_elements_vacant()
@@ -576,25 +574,25 @@ public:
    * in use
    * @param local_id position of node in the vector
    */
-  virtual void decay_synaptic_elements_vacant( index local_id ) {};
+  virtual void decay_synaptic_elements_vacant( index ) {};
 
   /**
    * \fn void connect_synaptic_element()
    * Change the number of connected synaptic elements by n
    * @param local_id position of node in the vector
    */
-  virtual void connect_synaptic_element( Name name, int n, index local_id ) {};
+  virtual void connect_synaptic_element( Name, int n, index ) {};
 
-  virtual void get_status( DictionaryDatum& d, index local_id ) const {};
-  virtual void set_status( const DictionaryDatum& d, index local_id ) {};
-  virtual void resize( index extended_space, index thread_id = 0 );
+  virtual void get_status( DictionaryDatum&, index ) const {};
+  virtual void set_status( const DictionaryDatum&, index ) {};
+  virtual void resize( index, index = 0 );
 
   /**
    * retrieve the current value of tau_Ca which defines the exponential decay
    * constant of the intracellular calcium concentration
    * @param local_id position of node in the vector
    */
-  virtual double get_tau_Ca( index local_id ) const = 0;
+  virtual double get_tau_Ca( index ) const = 0;
 
 protected:
   /**
@@ -604,9 +602,9 @@ protected:
    * first simulation to runtime information, e.g., the number of incoming
    * connections.
    */
-  virtual void init_state_( index local_id ) {};
+  virtual void init_state_( index ) {};
 
-  virtual void set_frozen_( bool frozen, index local_id );
+  virtual void set_frozen_( bool, index );
 
   /**
    * Configure persistent internal data structures.
@@ -614,20 +612,20 @@ protected:
    * Let node configure persistent internal data structures, such as input
    * buffers or ODE solvers, to runtime information prior to first simulation.
    */
-  virtual void init_buffers_( index local_id ) {};
+  virtual void init_buffers_( index ) {};
 
-  virtual void set_initialized_( index local_id );
+  virtual void set_initialized_( index );
   /**
    * \fn void set_spiketime(Time const & t_sp, double offset)
    * record spike history
    */
-  virtual void set_spiketime( Time const& t_sp, double offset = 0.0, index local_id = -1 ) {};
+  virtual void set_spiketime( Time const& t_sp, double = 0.0, index = -1 ) {};
 
   /**
    * \fn void clear_history()
    * clear spike history
    */
-  virtual void clear_history( index local_id ) = 0;
+  virtual void clear_history( index ) = 0;
 
 
 private:

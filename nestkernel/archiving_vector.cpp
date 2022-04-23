@@ -45,10 +45,10 @@ nest::ArchivingVector::ArchivingVector()
   , history_( 0 )
 {
 }
-nest::ArchivingVector::ArchivingVector( const ArchivingVector& n )
-{
-  throw std::runtime_error( "ArchivingVector shouldn't be cloned" );
-}
+// nest::ArchivingVector::ArchivingVector( const ArchivingVector& n ) : StructuralPlasticityVector(n)
+// {
+//   throw std::runtime_error( "ArchivingVector shouldn't be cloned" );
+// }
 
 void
 ArchivingVector::resize( index extended_space, index thread_id )

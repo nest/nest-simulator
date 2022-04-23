@@ -356,8 +356,7 @@ void VectorizedNode::set_initialized_( index )
   // does nothing the base implementation
 }
 
-void
-VectorizedNode::resize( index, index )
+void VectorizedNode::resize( index, index )
 {
   // index current_size = global_ids.size();
   index total_space = global_ids.size();

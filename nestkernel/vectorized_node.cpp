@@ -66,11 +66,7 @@ VectorizedNode::set_frozen_( bool frozen, index local_id )
   frozen_.at( local_id ) = frozen;
 }
 port
-VectorizedNode::send_test_event( Node& receiving_node,
-  rport,
-  synindex,
-  bool,
-  index )
+VectorizedNode::send_test_event( Node&, rport, synindex, bool, index )
 {
   throw IllegalConnection(
     "Source node does not send output.\n"
@@ -289,8 +285,7 @@ VectorizedNode::get_urbanczik_history( double t1,
   double,
   std::deque< histentry_extended >::iterator*,
   std::deque< histentry_extended >::iterator*,
-  int,
-  index )
+  int, index )
 {
   throw UnexpectedEvent();
 }

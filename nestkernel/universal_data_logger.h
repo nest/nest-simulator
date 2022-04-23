@@ -376,7 +376,7 @@ public:
    * Create logger.
    */
   DynamicUniversalDataLogger( HostNode& );
-
+  
   DynamicUniversalDataLogger( DynamicUniversalDataLogger&& ) = default;
 
 
@@ -405,16 +405,18 @@ public:
    * @param DataLoggingRequest Request to be handled.
    */
   void handle( const DataLoggingRequest& );
-
+  
 
   /**
-   * @brief
+   * Record data using predefined access functions.
+   * This function should be called once per time step at the end of the
+   * time step to record data from the node to the logger.
    *
+   * @param long    Time in steps at the BEGINNING of the update step, i.e.,
+   *                  origin+lag, but the data is logged with time stamp
+   *                  origin+lag+1, since this is the proper time of the data.
    */
-  *This function should be called once per time step at the end of the *time step to record data from the node to the
-     logger.**@param long Time in steps at the BEGINNING of the update step,
-    i.e., *origin + lag, but the data is logged with time stamp *origin + lag + 1,
-    since this is the proper time of the data.* / void record_data( long );
+  void record_data( long );
 
   //! Erase all existing data
   void reset();

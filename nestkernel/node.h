@@ -648,8 +648,7 @@ public:
    * Return 0 if not overridden
    * @ingroup SP_functions
    */
-  virtual int
-  get_synaptic_elements_vacant( Name ) const
+  virtual int get_synaptic_elements_vacant( Name ) const
   {
     return 0;
   }
@@ -659,8 +658,7 @@ public:
    * Return 0 if not overridden
    * @ingroup SP_functions
    */
-  virtual int
-  get_synaptic_elements_connected( Name ) const
+  virtual int get_synaptic_elements_connected( Name ) const
   {
     return 0;
   }

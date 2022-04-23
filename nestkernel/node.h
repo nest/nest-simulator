@@ -146,7 +146,7 @@ public:
   }
 
   virtual void
-  clone_container( std::shared_ptr< VectorizedNode > )
+  clone_container( std::shared_ptr< VectorizedNode > container )
   {
   }
 
@@ -645,7 +645,7 @@ public:
    * @ingroup SP_functions
    */
   virtual double
-  get_synaptic_elements( Name ) const
+  get_synaptic_elements( Name name ) const
   {
     return 0.0;
   }
@@ -656,7 +656,7 @@ public:
    * @ingroup SP_functions
    */
   virtual int
-  get_synaptic_elements_vacant( Name ) const
+  get_synaptic_elements_vacant( Name name ) const
   {
     return 0;
   }
@@ -667,7 +667,7 @@ public:
    * @ingroup SP_functions
    */
   virtual int
-  get_synaptic_elements_connected( Name ) const
+  get_synaptic_elements_connected( Name name ) const
   {
     return 0;
   }

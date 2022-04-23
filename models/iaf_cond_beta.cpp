@@ -367,7 +367,7 @@ nest::iaf_cond_beta::get_normalisation_factor( double tau_rise, double tau_decay
 }
 
 void
-nest::iaf_cond_beta::calibrate()
+nest::iaf_cond_beta::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();

@@ -297,7 +297,7 @@ public:
    * for spike handling or updating the node.
    *
    */
-  virtual void calibrate() = 0;
+  virtual void pre_run_hook() = 0;
 
   /**
    * Re-calculate time-based properties of the node.

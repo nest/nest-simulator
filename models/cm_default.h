@@ -253,7 +253,7 @@ private:
   void add_receptor_( DictionaryDatum& dd );
 
   void init_recordables_pointers_();
-  void calibrate();
+  void pre_run_hook();
 
   void update( Time const&, const long, const long );
 

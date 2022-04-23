@@ -99,9 +99,8 @@ nest::iaf_cond_exp_sfa_rr_dynamics( double, const double y[], double f[], void* 
   const double I_rr = y[ S::G_RR ] * ( V - node.P_.E_rr );
 
   // V dot
-  f[ S::V_M ] = is_refractory
-    ? 0.0
-    : ( -I_L + node.B_.I_stim_ + node.P_.I_e - I_syn_exc - I_syn_inh - I_sfa - I_rr ) / node.P_.C_m;
+  f[ S::V_M ] =
+    is_refractory ? 0.0 : ( -I_L + node.B_.I_stim_ + node.P_.I_e - I_syn_exc - I_syn_inh - I_sfa - I_rr ) / node.P_.C_m;
 
   f[ S::G_EXC ] = -y[ S::G_EXC ] / node.P_.tau_synE;
   f[ S::G_INH ] = -y[ S::G_INH ] / node.P_.tau_synI;
@@ -435,18 +434,18 @@ nest::iaf_cond_exp_sfa_rr::update( Time const& origin, const long from, const lo
     else
       // neuron is not absolute refractory
       if ( S_.y_[ State_::V_M ] >= P_.V_th_ )
-    {
-      S_.r_ = V_.RefractoryCounts_;
-      S_.y_[ State_::V_M ] = P_.V_reset_;
+      {
+        S_.r_ = V_.RefractoryCounts_;
+        S_.y_[ State_::V_M ] = P_.V_reset_;
 
-      set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
-      S_.y_[ State_::G_SFA ] += P_.q_sfa;
-      S_.y_[ State_::G_RR ] += P_.q_rr;
+        S_.y_[ State_::G_SFA ] += P_.q_sfa;
+        S_.y_[ State_::G_RR ] += P_.q_rr;
 
-      SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
-    }
+        SpikeEvent se;
+        kernel().event_delivery_manager.send( *this, se, lag );
+      }
 
     // set new input current
     B_.I_stim_ = B_.currents_.get_value( lag );

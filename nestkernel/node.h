@@ -395,7 +395,7 @@ public:
   }
 
 
-  virtual Node* get_wrapper( index = -1 )
+  virtual Node*get_wrapper( index = -1 )
   {
     return this;
   }
@@ -638,8 +638,7 @@ public:
    * Return 0.0 if not overridden
    * @ingroup SP_functions
    */
-  virtual double
-  get_synaptic_elements( Name name ) const
+  virtual double get_synaptic_elements( Name ) const
   {
     return 0.0;
   }
@@ -650,7 +649,7 @@ public:
    * @ingroup SP_functions
    */
   virtual int
-  get_synaptic_elements_vacant( Name name ) const
+  get_synaptic_elements_vacant( Name ) const
   {
     return 0;
   }
@@ -661,7 +660,7 @@ public:
    * @ingroup SP_functions
    */
   virtual int
-  get_synaptic_elements_connected( Name name ) const
+  get_synaptic_elements_connected( Name ) const
   {
     return 0;
   }

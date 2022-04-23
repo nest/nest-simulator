@@ -39,7 +39,7 @@ public:
    * \fn StructuralPlasticityNode()
    * Copy Constructor.
    */
-  StructuralPlasticityVector( const StructuralPlasticityVector& );
+  StructuralPlasticityVector( const StructuralPlasticityVector& ) = delete;
 
   ~StructuralPlasticityVector()
   {

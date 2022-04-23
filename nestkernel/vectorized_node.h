@@ -572,7 +572,7 @@ public:
    * Change the number of connected synaptic elements by n
    * @param local_id position of node in the vector
    */
-  virtual void connect_synaptic_element( Name, int n, index ) {};
+  virtual void connect_synaptic_element( Name, int, index ) {};
 
   virtual void get_status( DictionaryDatum&, index ) const {};
   virtual void set_status( const DictionaryDatum&, index ) {};
@@ -610,7 +610,7 @@ protected:
    * \fn void set_spiketime(Time const & t_sp, double offset)
    * record spike history
    */
-  virtual void set_spiketime( Time const& t_sp, double = 0.0, index = -1 ) {};
+  virtual void set_spiketime( Time const&, double = 0.0, index = -1 ) {};
 
   /**
    * \fn void clear_history()

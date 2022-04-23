@@ -40,10 +40,7 @@ nest::StructuralPlasticityVector::StructuralPlasticityVector()
   , synaptic_elements_map_( 0 )
 {
 }
-nest::StructuralPlasticityVector::StructuralPlasticityVector( const StructuralPlasticityVector& other )
-{
-  throw std::runtime_error( "StructuralPlasticityVector shouldn't be cloned" );
-}
+
 
 void
 StructuralPlasticityVector::resize( index extended_space, index thread_id )

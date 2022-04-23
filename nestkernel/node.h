@@ -32,13 +32,15 @@
 #include <vector>
 
 // Includes from nestkernel:
-#include "deprecation_warning.h"
 #include "event.h"
 #include "histentry.h"
 #include "nest_names.h"
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node_collection.h"
+
+
+#include "deprecation_warning.h"
 
 // Includes from sli:
 #include "dictdatum.h"
@@ -47,7 +49,8 @@
  * Declarations for base class Node
  */
 
-namespace nest {
+namespace nest
+{
 class Model;
 class ArchivingNode;
 class TimeConverter;
@@ -98,7 +101,8 @@ class VectorizedNode;
   SeeAlso: GetStatus, SetStatus, elementstates
 */
 
-class Node {
+class Node
+{
   friend class NodeManager;
   friend class ModelManager;
   friend class proxynode;
@@ -106,11 +110,11 @@ class Node {
   friend class Model;
   friend class SimulationManager;
 
-  Node& operator=(const Node&);  //!< not implemented
+  Node& operator=( const Node& ); //!< not implemented
 
- public:
+public:
   Node();
-  Node(Node const&);
+  Node( Node const& );
   virtual ~Node();
 
   /**
@@ -119,13 +123,29 @@ class Node {
    * calling the derived class' copy constructor and
    * return its pointer.
    */
-  virtual Node* clone() const { return 0; }
+  virtual Node*
+  clone() const
+  {
+    return 0;
+  }
 
-  virtual void reset_node() {}
+  virtual void
+  reset_node()
+  {
+  }
 
-  virtual std::shared_ptr<VectorizedNode> get_container() { return 0; }
 
-  virtual void clone_container(std::shared_ptr<VectorizedNode>) {}
+  virtual std::shared_ptr< VectorizedNode >
+  get_container()
+  {
+    return 0;
+  }
+
+
+  virtual void clone_container( std::shared_ptr< VectorizedNode > )
+  {
+  }
+
 
   /**
    * Returns true if the node has proxies on remote threads. This is
@@ -197,11 +217,17 @@ class Node {
    */
   virtual index get_node_id() const;
 
-  virtual index get_node_local_id() const { return get_node_id(); }
+  virtual index
+  get_node_local_id() const
+  {
+    return get_node_id();
+  }
 
-  virtual std::map<std::string, const std::vector<double>&> get_recordables()
-      const {
-    return std::map<std::string, const std::vector<double>&>();
+  virtual std::map< std::string, const std::vector< double >& >
+  get_recordables() const
+  {
+
+    return std::map< std::string, const std::vector< double >& >();
   };
 
   // virtual double
@@ -228,7 +254,9 @@ class Node {
   /**
    * Prints out one line of the tree view of the network.
    */
-  virtual std::string print_network(int, int, std::string = "") {
+  virtual std::string
+  print_network( int, int, std::string = "" )
+  {
     return std::string();
   }
 
@@ -246,7 +274,7 @@ class Node {
    * Sets node_uses_wfr_ member variable
    * (to be able to set it to "true" for any class derived from Node)
    */
-  void set_node_uses_wfr(const bool);
+  void set_node_uses_wfr( const bool );
 
   /**
    * Initialize node prior to first simulation after node has been created.
@@ -271,7 +299,10 @@ class Node {
    * Re-calculate time-based properties of the node.
    * This function is called after a change in resolution.
    */
-  virtual void calibrate_time(const TimeConverter&) {}
+  virtual void
+  calibrate_time( const TimeConverter& )
+  {
+  }
 
   /**
    * Cleanup node after Run. Override this function if a node needs to
@@ -279,7 +310,10 @@ class Node {
    * SimulationManager::run() returns. Typical use-cases are devices
    * that need to flush buffers.
    */
-  virtual void post_run_cleanup() {}
+  virtual void
+  post_run_cleanup()
+  {
+  }
 
   /**
    * Finalize node.
@@ -287,7 +321,10 @@ class Node {
    * full simulation, i.e., a cycle of Prepare, Run, Cleanup. Typical
    * use-cases are devices that need to close files.
    */
-  virtual void finalize() {}
+  virtual void
+  finalize()
+  {
+  }
 
   /**
    * Bring the node from state $t$ to $t+n*dt$.
@@ -301,7 +338,7 @@ class Node {
    * @param long post-final step inside time slice
    *
    */
-  virtual void update(Time const&, const long, const long) = 0;
+  virtual void update( Time const&, const long, const long ) = 0;
 
   /**
    * Bring the node from state $t$ to $t+n*dt$, sends SecondaryEvents
@@ -319,7 +356,7 @@ class Node {
    * @param long post-final step inside time slice
    *
    */
-  virtual bool wfr_update(Time const&, const long, const long);
+  virtual bool wfr_update( Time const&, const long, const long );
 
   /**
    * @defgroup status_interface Configuration interface.
@@ -343,7 +380,7 @@ class Node {
    * @param d Dictionary with named parameter settings.
    * @ingroup status_interface
    */
-  virtual void set_status(const DictionaryDatum&) = 0;
+  virtual void set_status( const DictionaryDatum& ) = 0;
 
   /**
    * Export properties of the node by setting
@@ -351,13 +388,20 @@ class Node {
    * @param d Dictionary.
    * @ingroup status_interface
    */
-  virtual void get_status(DictionaryDatum&) const = 0;
+  virtual void get_status( DictionaryDatum& ) const = 0;
 
-  virtual void set_container(std::shared_ptr<VectorizedNode>) {}
+  virtual void set_container( std::shared_ptr< VectorizedNode > )
+  {
+  }
 
-  virtual Node* get_wrapper(index = -1) { return this; }
 
- public:
+  virtual Node* get_wrapper( index = -1 )
+  {
+    return this;
+  }
+
+
+public:
   /**
    * @defgroup event_interface Communication.
    * Functions and infrastructure, responsible for communication
@@ -384,8 +428,7 @@ class Node {
    * DS*Events when called with the dummy target, and *Events when called with
    * the real target, see #478.
    */
-  virtual port send_test_event(Node& receiving_node, rport receptor_type,
-                               synindex syn_id, bool dummy_target);
+  virtual port send_test_event( Node& receiving_node, rport receptor_type, synindex syn_id, bool dummy_target );
 
   /**
    * Check if the node can handle a particular event and receptor type.
@@ -405,22 +448,19 @@ class Node {
    * @ingroup event_interface
    * @throws IllegalConnection
    */
-  virtual port handles_test_event(SpikeEvent&, rport receptor_type);
-  virtual port handles_test_event(WeightRecorderEvent&, rport receptor_type);
-  virtual port handles_test_event(RateEvent&, rport receptor_type);
-  virtual port handles_test_event(DataLoggingRequest&, rport receptor_type);
-  virtual port handles_test_event(CurrentEvent&, rport receptor_type);
-  virtual port handles_test_event(ConductanceEvent&, rport receptor_type);
-  virtual port handles_test_event(DoubleDataEvent&, rport receptor_type);
-  virtual port handles_test_event(DSSpikeEvent&, rport receptor_type);
-  virtual port handles_test_event(DSCurrentEvent&, rport receptor_type);
-  virtual port handles_test_event(GapJunctionEvent&, rport receptor_type);
-  virtual port handles_test_event(InstantaneousRateConnectionEvent&,
-                                  rport receptor_type);
-  virtual port handles_test_event(DiffusionConnectionEvent&,
-                                  rport receptor_type);
-  virtual port handles_test_event(DelayedRateConnectionEvent&,
-                                  rport receptor_type);
+  virtual port handles_test_event( SpikeEvent&, rport receptor_type );
+  virtual port handles_test_event( WeightRecorderEvent&, rport receptor_type );
+  virtual port handles_test_event( RateEvent&, rport receptor_type );
+  virtual port handles_test_event( DataLoggingRequest&, rport receptor_type );
+  virtual port handles_test_event( CurrentEvent&, rport receptor_type );
+  virtual port handles_test_event( ConductanceEvent&, rport receptor_type );
+  virtual port handles_test_event( DoubleDataEvent&, rport receptor_type );
+  virtual port handles_test_event( DSSpikeEvent&, rport receptor_type );
+  virtual port handles_test_event( DSCurrentEvent&, rport receptor_type );
+  virtual port handles_test_event( GapJunctionEvent&, rport receptor_type );
+  virtual port handles_test_event( InstantaneousRateConnectionEvent&, rport receptor_type );
+  virtual port handles_test_event( DiffusionConnectionEvent&, rport receptor_type );
+  virtual port handles_test_event( DelayedRateConnectionEvent&, rport receptor_type );
 
   /**
    * Required to check, if source neuron may send a SecondaryEvent.
@@ -429,7 +469,7 @@ class Node {
    * @ingroup event_interface
    * @throws IllegalConnection
    */
-  virtual void sends_secondary_event(GapJunctionEvent& ge);
+  virtual void sends_secondary_event( GapJunctionEvent& ge );
 
   /**
    * Required to check, if source neuron may send a SecondaryEvent.
@@ -438,7 +478,7 @@ class Node {
    * @ingroup event_interface
    * @throws IllegalConnection
    */
-  virtual void sends_secondary_event(InstantaneousRateConnectionEvent& re);
+  virtual void sends_secondary_event( InstantaneousRateConnectionEvent& re );
 
   /**
    * Required to check, if source neuron may send a SecondaryEvent.
@@ -447,7 +487,7 @@ class Node {
    * @ingroup event_interface
    * @throws IllegalConnection
    */
-  virtual void sends_secondary_event(DiffusionConnectionEvent& de);
+  virtual void sends_secondary_event( DiffusionConnectionEvent& de );
 
   /**
    * Required to check, if source neuron may send a SecondaryEvent.
@@ -456,7 +496,7 @@ class Node {
    * @ingroup event_interface
    * @throws IllegalConnection
    */
-  virtual void sends_secondary_event(DelayedRateConnectionEvent& re);
+  virtual void sends_secondary_event( DelayedRateConnectionEvent& re );
 
   /**
    * Register a STDP connection
@@ -464,7 +504,7 @@ class Node {
    * @throws IllegalConnection
    *
    */
-  virtual void register_stdp_connection(double, double);
+  virtual void register_stdp_connection( double, double );
 
   /**
    * Handle incoming spike events.
@@ -476,7 +516,7 @@ class Node {
    * @see class SpikeEvent
    * @ingroup event_interface
    */
-  virtual void handle(SpikeEvent& e);
+  virtual void handle( SpikeEvent& e );
 
   /**
    * Handle incoming weight recording events.
@@ -488,7 +528,7 @@ class Node {
    * @see class WeightRecordingEvent
    * @ingroup event_interface
    */
-  virtual void handle(WeightRecorderEvent& e);
+  virtual void handle( WeightRecorderEvent& e );
 
   /**
    * Handler for rate events.
@@ -496,7 +536,7 @@ class Node {
    * @ingroup event_interface
    * @throws UnexpectedEvent
    */
-  virtual void handle(RateEvent& e);
+  virtual void handle( RateEvent& e );
 
   /**
    * Handler for universal data logging request.
@@ -504,7 +544,7 @@ class Node {
    * @ingroup event_interface
    * @throws UnexpectedEvent
    */
-  virtual void handle(DataLoggingRequest& e);
+  virtual void handle( DataLoggingRequest& e );
 
   /**
    * Handler for universal data logging request.
@@ -514,7 +554,7 @@ class Node {
    * @note There is no connect_sender() for DataLoggingReply, since
    *       this event is only used as "back channel" for DataLoggingRequest.
    */
-  virtual void handle(DataLoggingReply& e);
+  virtual void handle( DataLoggingReply& e );
 
   /**
    * Handler for current events.
@@ -522,7 +562,7 @@ class Node {
    * @ingroup event_interface
    * @throws UnexpectedEvent
    */
-  virtual void handle(CurrentEvent& e);
+  virtual void handle( CurrentEvent& e );
 
   /**
    * Handler for conductance events.
@@ -530,7 +570,7 @@ class Node {
    * @ingroup event_interface
    * @throws UnexpectedEvent
    */
-  virtual void handle(ConductanceEvent& e);
+  virtual void handle( ConductanceEvent& e );
 
   /**
    * Handler for DoubleData events.
@@ -538,7 +578,7 @@ class Node {
    * @ingroup event_interface
    * @throws UnexpectedEvent
    */
-  virtual void handle(DoubleDataEvent& e);
+  virtual void handle( DoubleDataEvent& e );
 
   /**
    * Handler for gap junction events.
@@ -546,7 +586,7 @@ class Node {
    * @ingroup event_interface
    * @throws UnexpectedEvent
    */
-  virtual void handle(GapJunctionEvent& e);
+  virtual void handle( GapJunctionEvent& e );
 
   /**
    * Handler for rate neuron events.
@@ -554,7 +594,7 @@ class Node {
    * @ingroup event_interface
    * @throws UnexpectedEvent
    */
-  virtual void handle(InstantaneousRateConnectionEvent& e);
+  virtual void handle( InstantaneousRateConnectionEvent& e );
 
   /**
    * Handler for rate neuron events.
@@ -562,7 +602,7 @@ class Node {
    * @ingroup event_interface
    * @throws UnexpectedEvent
    */
-  virtual void handle(DiffusionConnectionEvent& e);
+  virtual void handle( DiffusionConnectionEvent& e );
 
   /**
    * Handler for delay rate neuron events.
@@ -570,7 +610,7 @@ class Node {
    * @ingroup event_interface
    * @throws UnexpectedEvent
    */
-  virtual void handle(DelayedRateConnectionEvent& e);
+  virtual void handle( DelayedRateConnectionEvent& e );
 
   /**
    * @defgroup SP_functions Structural Plasticity in NEST.
@@ -586,7 +626,11 @@ class Node {
    * Return 0.0 if not overridden
    * @ingroup SP_functions
    */
-  virtual double get_Ca_minus() const { return 0.0; }
+  virtual double
+  get_Ca_minus() const
+  {
+    return 0.0;
+  }
 
   /**
    * Get the number of synaptic element for the current Node at Ca_t which
@@ -594,29 +638,43 @@ class Node {
    * Return 0.0 if not overridden
    * @ingroup SP_functions
    */
-  virtual double get_synaptic_elements(Name name) const { return 0.0; }
+  virtual double
+  get_synaptic_elements( Name name ) const
+  {
+    return 0.0;
+  }
 
   /**
    * Get the number of vacant synaptic element for the current Node
    * Return 0 if not overridden
    * @ingroup SP_functions
    */
-  virtual int get_synaptic_elements_vacant(Name name) const { return 0; }
+  virtual int
+  get_synaptic_elements_vacant( Name name ) const
+  {
+    return 0;
+  }
 
   /**
    * Get the number of connected synaptic element for the current Node
    * Return 0 if not overridden
    * @ingroup SP_functions
    */
-  virtual int get_synaptic_elements_connected(Name name) const { return 0; }
+  virtual int
+  get_synaptic_elements_connected( Name name ) const
+  {
+    return 0;
+  }
 
   /**
    * Get the number of all synaptic elements for the current Node at time t
    * Return an empty map if not overridden
    * @ingroup SP_functions
    */
-  virtual std::map<Name, double> get_synaptic_elements() const {
-    return std::map<Name, double>();
+  virtual std::map< Name, double >
+  get_synaptic_elements() const
+  {
+    return std::map< Name, double >();
   }
 
   /**
@@ -626,14 +684,14 @@ class Node {
    * @param t double time when the update is being performed
    * @ingroup SP_functions
    */
-  virtual void update_synaptic_elements(double){};
+  virtual void update_synaptic_elements( double ) {};
 
   /**
    * Is used to reduce the number of synaptic elements in the node through
    * time. This amount is defined by tau_vacant.
    * @ingroup SP_functions
    */
-  virtual void decay_synaptic_elements_vacant(){};
+  virtual void decay_synaptic_elements_vacant() {};
 
   /**
    * Is used to update the number of connected
@@ -643,48 +701,50 @@ class Node {
    * @param n int number of new connections of the given type
    * @ingroup SP_functions
    */
-  virtual void connect_synaptic_element(Name, int){};
+  virtual void connect_synaptic_element( Name, int ) {};
 
   /**
    * return the Kminus value at t (in ms).
    * @throws UnexpectedEvent
    */
-  virtual double get_K_value(double t);
+  virtual double get_K_value( double t );
 
-  virtual double get_LTD_value(double t);
+  virtual double get_LTD_value( double t );
 
   /**
    * write the Kminus, nearest_neighbor_Kminus, and Kminus_triplet
    * values at t (in ms) to the provided locations.
    * @throws UnexpectedEvent
    */
-  virtual void get_K_values(double t, double& Kminus,
-                            double& nearest_neighbor_Kminus,
-                            double& Kminus_triplet);
+  virtual void get_K_values( double t, double& Kminus, double& nearest_neighbor_Kminus, double& Kminus_triplet );
 
   /**
    * return the spike history for (t1,t2].
    * @throws UnexpectedEvent
    */
-  virtual void get_history(double t1, double t2,
-                           std::deque<histentry>::iterator* start,
-                           std::deque<histentry>::iterator* finish);
+  virtual void get_history( double t1,
+    double t2,
+    std::deque< histentry >::iterator* start,
+    std::deque< histentry >::iterator* finish );
 
   // for Clopath synapse
-  virtual void get_LTP_history(
-      double t1, double t2, std::deque<histentry_extended>::iterator* start,
-      std::deque<histentry_extended>::iterator* finish);
+  virtual void get_LTP_history( double t1,
+    double t2,
+    std::deque< histentry_extended >::iterator* start,
+    std::deque< histentry_extended >::iterator* finish );
   // for Urbanczik synapse
-  virtual void get_urbanczik_history(
-      double t1, double t2, std::deque<histentry_extended>::iterator* start,
-      std::deque<histentry_extended>::iterator* finish, int);
+  virtual void get_urbanczik_history( double t1,
+    double t2,
+    std::deque< histentry_extended >::iterator* start,
+    std::deque< histentry_extended >::iterator* finish,
+    int );
   // make neuron parameters accessible in Urbanczik synapse
-  virtual double get_C_m(int comp);
-  virtual double get_g_L(int comp);
-  virtual double get_tau_L(int comp);
-  virtual double get_tau_s(int comp);
-  virtual double get_tau_syn_ex(int comp);
-  virtual double get_tau_syn_in(int comp);
+  virtual double get_C_m( int comp );
+  virtual double get_g_L( int comp );
+  virtual double get_tau_L( int comp );
+  virtual double get_tau_s( int comp );
+  virtual double get_tau_syn_ex( int comp );
+  virtual double get_tau_syn_in( int comp );
 
   /**
    * Modify Event object parameters during event delivery.
@@ -699,16 +759,16 @@ class Node {
    * If needed, target->handle(DSSpikeEvent) may be called more than
    * once.
    */
-  virtual void event_hook(DSSpikeEvent&);
+  virtual void event_hook( DSSpikeEvent& );
 
-  virtual void event_hook(DSCurrentEvent&);
+  virtual void event_hook( DSCurrentEvent& );
 
   /**
    * Store the number of the thread to which the node is assigned.
    * The assignment is done after node creation by the Network class.
    * @see: NodeManager::add_node().
    */
-  void set_thread(thread);
+  void set_thread( thread );
 
   /**
    * Retrieve the number of the thread to which the node is assigned.
@@ -719,7 +779,7 @@ class Node {
    * Store the number of the virtual process to which the node is assigned.
    * This is assigned to the node in NodeManager::add_node().
    */
-  void set_vp(thread);
+  void set_vp( thread );
 
   /**
    * Retrieve the number of the virtual process to which the node is assigned.
@@ -730,7 +790,7 @@ class Node {
    * This method is called by NodeManager::add_node() when a node is created.
    * @see get_model_id()
    */
-  void set_model_id(int);
+  void set_model_id( int );
 
   /** Execute post-initialization actions in node models.
    * This method is called by NodeManager::add_node() on a node once
@@ -744,14 +804,23 @@ class Node {
    * used in check_connection to only connect neurons which send / receive
    * compatible information
    */
-  virtual SignalType sends_signal() const { return SPIKE; }
+  virtual SignalType
+  sends_signal() const
+  {
+    return SPIKE;
+  }
 
   /**
    * @returns type of signal this node consumes
    * used in check_connection to only connect neurons which send / receive
    * compatible information
    */
-  virtual SignalType receives_signal() const { return SPIKE; }
+  virtual SignalType
+  receives_signal() const
+  {
+    return SPIKE;
+  }
+
 
   /**
    *  Return a dictionary with the node's properties.
@@ -769,7 +838,7 @@ class Node {
    * Forwards to set_status() of the derived class.
    * @internal
    */
-  virtual void set_status_base(const DictionaryDatum&);
+  virtual void set_status_base( const DictionaryDatum& );
 
   /**
    * Returns true if node is model prototype.
@@ -780,7 +849,7 @@ class Node {
    * set thread local index
 
    */
-  void set_thread_lid(const index);
+  void set_thread_lid( const index );
 
   /**
    * get thread local index
@@ -792,7 +861,7 @@ class Node {
    * Throws an error if used on a non-device node.
    * @see get_local_device_id
    */
-  virtual void set_local_device_id(const index lsdid);
+  virtual void set_local_device_id( const index lsdid );
 
   /**
    * Gets the local device id.
@@ -807,10 +876,10 @@ class Node {
    */
   DeprecationWarning deprecation_warning;
 
- private:
-  virtual void set_node_id_(index);  //!< Set global node id
+private:
+  virtual void set_node_id_( index ); //!< Set global node id
 
-  void set_nc_(NodeCollectionPTR);
+  void set_nc_( NodeCollectionPTR );
 
   /** Return a new dictionary datum .
    *
@@ -821,7 +890,7 @@ class Node {
    */
   virtual DictionaryDatum get_status_dict_();
 
- protected:
+protected:
   /**
    * Configure state variables depending on runtime information.
    *
@@ -844,7 +913,11 @@ class Node {
   Model& get_model_() const;
 
   //! Mark node as frozen.
-  virtual void set_frozen_(bool frozen) { frozen_ = frozen; }
+  virtual void
+  set_frozen_( bool frozen )
+  {
+    frozen_ = frozen;
+  }
 
   /**
    * Auxiliary function to downcast a Node to a concrete class derived from
@@ -852,10 +925,10 @@ class Node {
    * @note This function is used to convert generic Node references to specific
    *       ones when intializing parameters or state from a prototype.
    */
-  template <typename ConcreteNode>
-  const ConcreteNode& downcast(const Node&);
+  template < typename ConcreteNode >
+  const ConcreteNode& downcast( const Node& );
 
- private:
+private:
   /**
    * Global Element ID (node ID).
    *
@@ -876,65 +949,159 @@ class Node {
    */
   int model_id_;
 
-  thread thread_;       //!< thread node is assigned to
-  thread vp_;           //!< virtual process node is assigned to
-  bool frozen_;         //!< node shall not be updated if true
-  bool initialized_;    //!< state and buffers have been initialized
-  bool node_uses_wfr_;  //!< node uses waveform relaxation method
+  thread thread_;      //!< thread node is assigned to
+  thread vp_;          //!< virtual process node is assigned to
+  bool frozen_;        //!< node shall not be updated if true
+  bool initialized_;   //!< state and buffers have been initialized
+  bool node_uses_wfr_; //!< node uses waveform relaxation method
 
   NodeCollectionPTR nc_ptr_;
 };
 
-inline bool Node::is_frozen() const { return frozen_; }
+inline bool
+Node::is_frozen() const
+{
+  return frozen_;
+}
 
-inline bool Node::node_uses_wfr() const { return node_uses_wfr_; }
 
-inline bool Node::supports_urbanczik_archiving() const { return false; }
+inline bool
+Node::node_uses_wfr() const
+{
+  return node_uses_wfr_;
+}
 
-inline void Node::set_node_uses_wfr(const bool uwfr) { node_uses_wfr_ = uwfr; }
 
-inline bool Node::has_proxies() const { return true; }
+inline bool
+Node::supports_urbanczik_archiving() const
+{
+  return false;
+}
 
-inline bool Node::local_receiver() const { return false; }
+inline void
+Node::set_node_uses_wfr( const bool uwfr )
+{
+  node_uses_wfr_ = uwfr;
+}
 
-inline bool Node::one_node_per_process() const { return false; }
+inline bool
+Node::has_proxies() const
+{
+  return true;
+}
 
-inline bool Node::is_off_grid() const { return false; }
+inline bool
+Node::local_receiver() const
+{
+  return false;
+}
 
-inline bool Node::is_proxy() const { return false; }
+inline bool
+Node::one_node_per_process() const
+{
+  return false;
+}
 
-inline Name Node::get_element_type() const { return names::neuron; }
+inline bool
+Node::is_off_grid() const
+{
+  return false;
+}
 
-inline NodeCollectionPTR Node::get_nc() const { return nc_ptr_; }
+inline bool
+Node::is_proxy() const
+{
+  return false;
+}
 
-inline void Node::set_node_id_(index i) { node_id_ = i; }
+inline Name
+Node::get_element_type() const
+{
+  return names::neuron;
+}
 
-inline void Node::set_nc_(NodeCollectionPTR nc_ptr) { nc_ptr_ = nc_ptr; }
 
-inline int Node::get_model_id() const { return model_id_; }
+inline NodeCollectionPTR
+Node::get_nc() const
+{
+  return nc_ptr_;
+}
 
-inline void Node::set_model_id(int i) { model_id_ = i; }
+inline void
+Node::set_node_id_( index i )
+{
+  node_id_ = i;
+}
 
-inline bool Node::is_model_prototype() const { return vp_ == invalid_thread_; }
 
-inline void Node::set_thread(thread t) { thread_ = t; }
+inline void
+Node::set_nc_( NodeCollectionPTR nc_ptr )
+{
+  nc_ptr_ = nc_ptr;
+}
 
-inline thread Node::get_thread() const { return thread_; }
+inline int
+Node::get_model_id() const
+{
+  return model_id_;
+}
 
-inline void Node::set_vp(thread vp) { vp_ = vp; }
+inline void
+Node::set_model_id( int i )
+{
+  model_id_ = i;
+}
 
-inline thread Node::get_vp() const { return vp_; }
+inline bool
+Node::is_model_prototype() const
+{
+  return vp_ == invalid_thread_;
+}
 
-template <typename ConcreteNode>
-const ConcreteNode& Node::downcast(const Node& n) {
-  ConcreteNode const* tp = dynamic_cast<ConcreteNode const*>(&n);
-  assert(tp != 0);
+inline void
+Node::set_thread( thread t )
+{
+  thread_ = t;
+}
+
+inline thread
+Node::get_thread() const
+{
+  return thread_;
+}
+
+inline void
+Node::set_vp( thread vp )
+{
+  vp_ = vp;
+}
+
+inline thread
+Node::get_vp() const
+{
+  return vp_;
+}
+
+template < typename ConcreteNode >
+const ConcreteNode&
+Node::downcast( const Node& n )
+{
+  ConcreteNode const* tp = dynamic_cast< ConcreteNode const* >( &n );
+  assert( tp != 0 );
   return *tp;
 }
 
-inline void Node::set_thread_lid(const index tlid) { thread_lid_ = tlid; }
+inline void
+Node::set_thread_lid( const index tlid )
+{
+  thread_lid_ = tlid;
+}
 
-inline index Node::get_thread_lid() const { return thread_lid_; }
+inline index
+Node::get_thread_lid() const
+{
+  return thread_lid_;
+}
 
-}  // namespace nest
+} // namespace
 #endif

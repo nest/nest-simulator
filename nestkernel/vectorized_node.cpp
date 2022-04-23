@@ -272,7 +272,7 @@ VectorizedNode::get_history( double,
   throw UnexpectedEvent();
 }
 void
-VectorizedNode::get_LTP_history( double t1,
+VectorizedNode::get_LTP_history( double,
   double,
   std::deque< histentry_extended >::iterator*,
   std::deque< histentry_extended >::iterator*,
@@ -281,7 +281,7 @@ VectorizedNode::get_LTP_history( double t1,
   throw UnexpectedEvent();
 }
 void
-VectorizedNode::get_urbanczik_history( double t1,
+VectorizedNode::get_urbanczik_history( double,
   double,
   std::deque< histentry_extended >::iterator*,
   std::deque< histentry_extended >::iterator*,
@@ -357,7 +357,7 @@ void VectorizedNode::set_initialized_( index )
 }
 
 void
-VectorizedNode::resize( index, index thread_id )
+VectorizedNode::resize( index, index )
 {
   // index current_size = global_ids.size();
   index total_space = global_ids.size();

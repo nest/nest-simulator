@@ -67,10 +67,10 @@ VectorizedNode::set_frozen_( bool frozen, index local_id )
 }
 port
 VectorizedNode::send_test_event( Node& receiving_node,
-  rport receptor_type,
-  synindex syn_id,
-  bool dummy_target,
-  index local_id )
+  rport,
+  synindex,
+  bool,
+  index )
 {
   throw IllegalConnection(
     "Source node does not send output.\n"
@@ -82,7 +82,7 @@ VectorizedNode::register_stdp_connection( double, double, index )
   throw IllegalConnection( "The target node does not support STDP synapses." );
 }
 void
-VectorizedNode::handle( SpikeEvent& e, index )
+VectorizedNode::handle( SpikeEvent&, index )
 {
   throw UnexpectedEvent( "The target node does not handle spike input." );
 }
@@ -98,7 +98,7 @@ VectorizedNode::handles_test_event( WeightRecorderEvent&, rport, index )
 }
 
 port
-VectorizedNode::handles_test_event( SpikeEvent&, rport receptor_type, index )
+VectorizedNode::handles_test_event( SpikeEvent&, rport, index )
 {
   throw IllegalConnection(
     "The target node or synapse model does not support spike input.\n"
@@ -110,7 +110,7 @@ VectorizedNode::handle( RateEvent&, index )
   throw UnexpectedEvent( "The target node does not handle rate input." );
 }
 port
-VectorizedNode::handles_test_event( RateEvent&, rport receptor_type, index )
+VectorizedNode::handles_test_event( RateEvent&, rport, index )
 {
   throw IllegalConnection( "The target node or synapse model does not support rate input." );
 }
@@ -120,17 +120,17 @@ VectorizedNode::handle( CurrentEvent&, index )
   throw UnexpectedEvent( "The target node does not handle current input." );
 }
 port
-VectorizedNode::handles_test_event( CurrentEvent&, rport receptor_type, index )
+VectorizedNode::handles_test_event( CurrentEvent&, rport, index )
 {
   throw IllegalConnection( "The target node or synapse model does not support current input." );
 }
 void
-VectorizedNode::handle( DataLoggingRequest& e, index local_id )
+VectorizedNode::handle( DataLoggingRequest&, index )
 {
   throw UnexpectedEvent( "The target node does not handle data logging requests." );
 }
 port
-VectorizedNode::handles_test_event( DataLoggingRequest&, rport receptor_type, index )
+VectorizedNode::handles_test_event( DataLoggingRequest&, rport, index )
 {
   throw IllegalConnection( "The target node or synapse model does not support data logging requests." );
 }
@@ -215,7 +215,7 @@ VectorizedNode::sends_secondary_event( InstantaneousRateConnectionEvent&, index 
 }
 
 void
-VectorizedNode::sends_secondary_event( DiffusionConnectionEvent& de, index )
+VectorizedNode::sends_secondary_event( DiffusionConnectionEvent&, index )
 {
   throw IllegalConnection( "The source node does not support instantaneous rate output." );
 }
@@ -252,44 +252,44 @@ VectorizedNode::sends_secondary_event( DelayedRateConnectionEvent&, index )
   throw IllegalConnection( "The source node does not support delayed rate output." );
 }
 double
-VectorizedNode::get_K_value( double t, index )
+VectorizedNode::get_K_value( double, index )
 {
   throw UnexpectedEvent();
 }
 double
-VectorizedNode::get_LTD_value( double t, index )
+VectorizedNode::get_LTD_value( double, index )
 {
   throw UnexpectedEvent();
 }
 void
-VectorizedNode::get_K_values( double t, double&, double&, double&, index )
+VectorizedNode::get_K_values( double, double&, double&, double&, index )
 {
   throw UnexpectedEvent();
 }
 void
-VectorizedNode::get_history( double t1,
-  double t2,
-  std::deque< histentry >::iterator* start,
-  std::deque< histentry >::iterator* finish,
+VectorizedNode::get_history( double,
+  double,
+  std::deque< histentry >::iterator*,
+  std::deque< histentry >::iterator*,
   index )
 {
   throw UnexpectedEvent();
 }
 void
 VectorizedNode::get_LTP_history( double t1,
-  double t2,
-  std::deque< histentry_extended >::iterator* start,
-  std::deque< histentry_extended >::iterator* finish,
+  double,
+  std::deque< histentry_extended >::iterator*,
+  std::deque< histentry_extended >::iterator*,
   index )
 {
   throw UnexpectedEvent();
 }
 void
 VectorizedNode::get_urbanczik_history( double t1,
-  double t2,
-  std::deque< histentry_extended >::iterator* start,
-  std::deque< histentry_extended >::iterator* finish,
-  int value,
+  double,
+  std::deque< histentry_extended >::iterator*,
+  std::deque< histentry_extended >::iterator*,
+  int,
   index )
 {
   throw UnexpectedEvent();
@@ -325,7 +325,7 @@ VectorizedNode::get_tau_syn_ex( int, index )
   throw UnexpectedEvent();
 }
 double
-VectorizedNode::get_tau_syn_in( int, index local_id )
+VectorizedNode::get_tau_syn_in( int, index )
 {
   throw UnexpectedEvent();
 }
@@ -361,7 +361,7 @@ void VectorizedNode::set_initialized_( index )
 }
 
 void
-VectorizedNode::resize( index extended_space, index thread_id )
+VectorizedNode::resize( index, index thread_id )
 {
   // index current_size = global_ids.size();
   index total_space = global_ids.size();
@@ -372,9 +372,8 @@ VectorizedNode::resize( index extended_space, index thread_id )
 }
 
 Node*
-VectorizedNode::get_wrapper( index node_id, index thread_id ) const
+VectorizedNode::get_wrapper( index node_id, index ) const
 {
-  assert( node_id >= 0 );
   nest::index global_id = get_global_id( node_id );
   Node* node = kernel().node_manager.get_node_or_proxy( global_id, thread );
   return node;

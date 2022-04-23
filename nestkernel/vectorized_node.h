@@ -610,7 +610,7 @@ protected:
    * \fn void set_spiketime(Time const & t_sp, double offset)
    * record spike history
    */
-  virtual void set_spiketime( Time const&, double = 0.0, index = -1 ) {};
+  virtual void set_spiketime( Time const&, index = -1, double = 0.0,) {};
 
   /**
    * \fn void clear_history()

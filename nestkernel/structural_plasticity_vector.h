@@ -77,7 +77,7 @@ public:
 
 protected:
   void clear_history( index local_id );
-  void set_spiketime( Time const& t_sp, index local_id, double offset = 0.0 );
+  void set_spiketime( Time const& t_sp, index, double offset = 0.0 );
 
 
 private:

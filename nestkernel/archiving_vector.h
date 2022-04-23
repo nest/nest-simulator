@@ -145,7 +145,7 @@ protected:
    * \fn void set_spiketime(Time const & t_sp, double offset)
    * record spike history
    */
-  void set_spiketime( Time const& t_sp, index local_id, double offset = 0.0 );
+  void set_spiketime( Time const&, index, double = 0.0 );
 
   /**
    * \fn double get_spiketime()

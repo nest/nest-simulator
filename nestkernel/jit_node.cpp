@@ -39,7 +39,7 @@ JitNode::JitNode()
 {
 }
 
-JitNode::~JitNode() noexcept
+JitNode::~JitNode()
 {
   container_->reset();
 }

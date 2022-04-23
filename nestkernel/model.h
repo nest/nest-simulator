@@ -96,7 +96,7 @@ public:
   }
 
   virtual void
-  clone_container( std::shared_ptr< VectorizedNode > container )
+  clone_container( std::shared_ptr< VectorizedNode > )
   {
     assert( false );
   }

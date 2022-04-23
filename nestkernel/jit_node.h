@@ -46,7 +46,6 @@ public:
 
   void reset_node();
 
-  void resize( index extended_space );
 
   std::shared_ptr< VectorizedNode >
   get_container()

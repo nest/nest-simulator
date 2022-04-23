@@ -51,11 +51,6 @@ JitNode::JitNode( const JitNode& n )
 {
 }
 
-void
-JitNode::resize( index extended_space )
-{
-  container_->resize( extended_space );
-}
 
 std::map< std::string, const std::vector< double >& >
 JitNode::get_recordables() const

@@ -134,10 +134,6 @@ public:
   {
   }
 
-  virtual void
-  resize( index extended_space )
-  {
-  }
 
   virtual std::shared_ptr< VectorizedNode >
   get_container()

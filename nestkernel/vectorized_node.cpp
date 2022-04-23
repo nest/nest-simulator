@@ -305,8 +305,7 @@ VectorizedNode::get_g_L( int, index )
   throw UnexpectedEvent();
 }
 
-double
-VectorizedNode::get_tau_Ca( index ) const
+double VectorizedNode::get_tau_Ca( index ) const
 {
   throw UnexpectedEvent();
 }
@@ -356,8 +355,7 @@ VectorizedNode::size() const
   return global_ids.size();
 }
 
-void
-VectorizedNode::set_initialized_( index )
+void VectorizedNode::set_initialized_( index )
 {
   // does nothing the base implementation
 }

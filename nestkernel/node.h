@@ -391,14 +391,12 @@ public:
    */
   virtual void get_status( DictionaryDatum& ) const = 0;
 
-  virtual void
-  set_container( std::shared_ptr< VectorizedNode > )
+  virtual void set_container( std::shared_ptr< VectorizedNode > )
   {
   }
 
 
-  virtual Node*
-  get_wrapper( index = -1 )
+  virtual Node* get_wrapper( index = -1 )
   {
     return this;
   }

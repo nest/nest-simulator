@@ -68,7 +68,7 @@ ArchivingVector::resize( index extended_space, index thread_id )
   history_.resize( total_space, std::deque< histentry >() );
 
 
-  StructuralPlasticityVector::resize( extended_space , thread_id);
+  StructuralPlasticityVector::resize( extended_space, thread_id );
 }
 
 void
@@ -280,4 +280,4 @@ nest::ArchivingVector::clear_history( index local_id )
   Kminus_triplet_.at( local_id ) = 0.0;
   history_.at( local_id ).clear();
 }
-} // of namespace nest
+} // end of namespace nest

@@ -232,15 +232,12 @@ nest::music_cont_out_proxy::send_test_event( Node& target, rport receptor_type, 
 }
 
 void
-nest::music_cont_out_proxy::calibrate()
+nest::music_cont_out_proxy::pre_run_hook()
 {
   // only publish the output port once,
   if ( S_.published_ == false )
   {
-    const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( "static_synapse" );
-    assert( synmodel.empty() == false && "synapse 'static_synapse' not available" );
-
-    const index synmodel_id = static_cast< index >( synmodel );
+    const index synmodel_id = kernel().model_manager.get_synapse_model_id( "static_synapse" );
     std::vector< MUSIC::GlobalIndex > music_index_map;
 
     DictionaryDatum dummy_params = new Dictionary();
@@ -302,7 +299,7 @@ nest::music_cont_out_proxy::calibrate()
 
     std::string msg =
       String::compose( "Mapping MUSIC continuous output port '%1' with width=%2.", P_.port_name_, S_.port_width_ );
-    LOG( M_INFO, "music_cont_out_proxy::calibrate()", msg.c_str() );
+    LOG( M_INFO, "music_cont_out_proxy::pre_run_hook()", msg.c_str() );
   }
 }
 

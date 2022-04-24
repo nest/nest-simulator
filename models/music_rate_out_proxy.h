@@ -51,13 +51,13 @@ Device to forward rates to remote applications using MUSIC
 Description
 +++++++++++
 
-A `music_rate_out_proxy` is used to send rates to a remote application that
+A ``music_rate_out_proxy`` is used to send rates to a remote application that
 also uses MUSIC.
 
-The `music_rate_out_proxy` represents a complete MUSIC rate output
+The ``music_rate_out_proxy`` represents a complete MUSIC rate output
 port. The channel on the port to which a source node forwards its
 events is determined during connection setup by using the parameter
-`music_channel` of the connection. The name of the port is set via
+``music_channel`` of the connection. The name of the port is set via
 ``SetStatus`` (see Parameters section below).
 
 Parameters
@@ -125,7 +125,7 @@ public:
 
 private:
   void init_buffers_();
-  void calibrate();
+  void pre_run_hook();
 
   void
   update( Time const&, const long, const long )

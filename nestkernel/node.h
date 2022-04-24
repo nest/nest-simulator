@@ -254,7 +254,7 @@ public:
    * for spike handling or updating the node.
    *
    */
-  virtual void calibrate() = 0;
+  virtual void pre_run_hook() = 0;
 
   /**
    * Re-calculate time-based properties of the node.
@@ -631,14 +631,14 @@ public:
    * @param t double time when the update is being performed
    * @ingroup SP_functions
    */
-  virtual void update_synaptic_elements( double ){};
+  virtual void update_synaptic_elements( double ) {};
 
   /**
    * Is used to reduce the number of synaptic elements in the node through
    * time. This amount is defined by tau_vacant.
    * @ingroup SP_functions
    */
-  virtual void decay_synaptic_elements_vacant(){};
+  virtual void decay_synaptic_elements_vacant() {};
 
   /**
    * Is used to update the number of connected
@@ -648,7 +648,7 @@ public:
    * @param n int number of new connections of the given type
    * @ingroup SP_functions
    */
-  virtual void connect_synaptic_element( Name, int ){};
+  virtual void connect_synaptic_element( Name, int ) {};
 
   /**
    * return the Kminus value at t (in ms).
@@ -666,9 +666,9 @@ public:
   virtual void get_K_values( double t, double& Kminus, double& nearest_neighbor_Kminus, double& Kminus_triplet );
 
   /**
-  * return the spike history for (t1,t2].
-  * @throws UnexpectedEvent
-  */
+   * return the spike history for (t1,t2].
+   * @throws UnexpectedEvent
+   */
   virtual void get_history( double t1,
     double t2,
     std::deque< histentry >::iterator* start,

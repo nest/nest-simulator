@@ -260,7 +260,7 @@ nest::amat2_psc_exp::init_buffers_()
 }
 
 void
-nest::amat2_psc_exp::calibrate()
+nest::amat2_psc_exp::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -320,13 +320,13 @@ nest::amat2_psc_exp::calibrate()
     / ( c * std::pow( taum - tauV, 2 ) );
   V_.P71_ = ( beta * tauE * taum * tauV
               * ( ( em * taum * std::pow( tauE - tauV, 2 ) - eE * tauE * std::pow( taum - tauV, 2 ) ) * tauV
-                  - eV * ( tauE - taum )
-                    * ( h * ( tauE - tauV ) * ( taum - tauV ) + tauE * taum * tauV - std::pow( tauV, 3 ) ) ) )
+                - eV * ( tauE - taum )
+                  * ( h * ( tauE - tauV ) * ( taum - tauV ) + tauE * taum * tauV - std::pow( tauV, 3 ) ) ) )
     / ( c * ( tauE - taum ) * std::pow( tauE - tauV, 2 ) * std::pow( taum - tauV, 2 ) );
   V_.P72_ = ( beta * tauI * taum * tauV
               * ( ( em * taum * std::pow( tauI - tauV, 2 ) - eI * tauI * std::pow( taum - tauV, 2 ) ) * tauV
-                  - eV * ( tauI - taum )
-                    * ( h * ( tauI - tauV ) * ( taum - tauV ) + tauI * taum * tauV - std::pow( tauV, 3 ) ) ) )
+                - eV * ( tauI - taum )
+                  * ( h * ( tauI - tauV ) * ( taum - tauV ) + tauI * taum * tauV - std::pow( tauV, 3 ) ) ) )
     / ( c * ( tauI - taum ) * std::pow( tauI - tauV, 2 ) * std::pow( taum - tauV, 2 ) );
   V_.P73_ = ( beta * tauV * ( -( em * taum * tauV ) + eV * ( h * ( taum - tauV ) + taum * tauV ) ) )
     / std::pow( taum - tauV, 2 );

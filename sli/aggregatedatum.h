@@ -104,7 +104,8 @@ public:
     return static_cast< C >( *ddc ) == static_cast< C >( *this );
   }
 
-  static void* operator new( size_t size )
+  static void*
+  operator new( size_t size )
   {
     if ( size != memory.size_of() )
     {
@@ -113,7 +114,8 @@ public:
     return memory.alloc();
   }
 
-  static void operator delete( void* p, size_t size )
+  static void
+  operator delete( void* p, size_t size )
   {
     if ( p == NULL )
     {

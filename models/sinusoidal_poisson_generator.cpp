@@ -39,11 +39,11 @@
 
 // Includes from sli:
 #include "arraydatum.h"
+#include "booldatum.h"
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
 #include "integerdatum.h"
-#include "booldatum.h"
 
 namespace nest
 {
@@ -79,8 +79,8 @@ nest::sinusoidal_poisson_generator::Parameters_::Parameters_( const Parameters_&
 {
 }
 
-nest::sinusoidal_poisson_generator::Parameters_& nest::sinusoidal_poisson_generator::Parameters_::operator=(
-  const Parameters_& p )
+nest::sinusoidal_poisson_generator::Parameters_&
+nest::sinusoidal_poisson_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
   {
@@ -210,12 +210,12 @@ nest::sinusoidal_poisson_generator::init_buffers_()
 }
 
 void
-nest::sinusoidal_poisson_generator::calibrate()
+nest::sinusoidal_poisson_generator::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
 
   // time resolution
   V_.h_ = Time::get_resolution().get_ms();

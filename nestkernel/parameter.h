@@ -24,8 +24,8 @@
 #define PARAMETER_H_
 
 // C++ includes:
-#include <limits>
 #include <cmath>
+#include <limits>
 
 // Includes from nestkernel:
 #include "nest_names.h"
@@ -115,8 +115,8 @@ public:
   bool returns_int_only() const;
 
 protected:
-  bool is_spatial_{ false };
-  bool returns_int_only_{ false };
+  bool is_spatial_ { false };
+  bool returns_int_only_ { false };
 
   bool value_is_integer_( const double value ) const;
 };
@@ -763,7 +763,7 @@ public:
     std::shared_ptr< Parameter > if_true,
     std::shared_ptr< Parameter > if_false )
     : Parameter( condition->is_spatial() or if_true->is_spatial() or if_false->is_spatial(),
-        if_true->returns_int_only() and if_false->returns_int_only() )
+      if_true->returns_int_only() and if_false->returns_int_only() )
     , condition_( condition )
     , if_true_( if_true )
     , if_false_( if_false )

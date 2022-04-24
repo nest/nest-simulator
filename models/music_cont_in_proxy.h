@@ -57,11 +57,11 @@ A device which receives continuous data from MUSIC
 Description
 +++++++++++
 
-A music_cont_in_proxy can be used to receive continuous data from
+A ``music_cont_in_proxy`` can be used to receive continuous data from
 remote MUSIC applications in NEST.
 
 It uses the MUSIC library to receive the data from other applications.
-The music_cont_in_proxy represents a complete port to which MUSIC can
+The ``music_cont_in_proxy`` represents a complete port to which MUSIC can
 connect and send data. The music_cont_in_proxy can queried using
 GetStatus to retrieve the messages.
 
@@ -113,7 +113,7 @@ public:
 
 private:
   void init_buffers_();
-  void calibrate();
+  void pre_run_hook();
 
   void
   update( Time const&, const long, const long )

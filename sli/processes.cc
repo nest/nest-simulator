@@ -81,22 +81,11 @@
 #define _POSIX_SOURCE
 #endif
 
-#if defined IS_BLUEGENE_P || defined IS_BLUEGENE_Q
-extern "C" {
-// These functions are defined in the file "get_mem.c". They need
-// to reside in a plain C file, because the #pragmas defined in the
-// BG header files interfere with C++, causing "undefined reference
-// to non-virtual thunk" MH 12-02-22, redid fix by JME 12-01-27.
-long bg_get_heap_mem();
-long bg_get_stack_mem();
-long bg_get_mmap_mem();
-}
-#endif
-
 #if defined __APPLE__ && defined HAVE_MACH_MACH_H
-extern "C" {
-// Similar to the above prototype definitions for BG.
-unsigned long darwin_get_used_mem();
+extern "C"
+{
+  // Similar to the above prototype definitions for BG.
+  unsigned long darwin_get_used_mem();
 }
 #endif
 
@@ -267,9 +256,6 @@ Processes::init( SLIInterpreter* i )
   i->createcommand( "getPPID", &getppidfunction );
   i->createcommand( "getPGRP", &getpgrpfunction );
   i->createcommand( "mkfifo", &mkfifofunction );
-#if defined IS_BLUEGENE_P || defined IS_BLUEGENE_Q
-  i->createcommand( ":memory_thisjob_bg", &memorythisjobbgfunction );
-#endif
 #if defined __APPLE__ && defined HAVE_MACH_MACH_H
   i->createcommand( ":memory_thisjob_darwin", &memorythisjobdarwinfunction );
 #endif
@@ -364,7 +350,7 @@ Processes::Sysexec_aFunction::execute( SLIInterpreter* i ) const
   // **argv denotes an pointer to an array which is allocated dynamically
   // the old formulation char *argv[array->size() + 1]; is no longer legal c++
   // (Ruediger!!)
-  char** argv = new char* [ array->size() + 1 ];
+  char** argv = new char*[ array->size() + 1 ];
 
   for ( unsigned int j = 0; j < array->size(); j++ ) // forall in array
   {
@@ -830,32 +816,6 @@ Processes::MkfifoFunction::execute( SLIInterpreter* i ) const
     i->OStack.pop(); // pop operand from operand stack
   }
 }
-
-#if defined IS_BLUEGENE_P || defined IS_BLUEGENE_Q
-/** @BeginDocumentation
- Name: memory_thisjob_bg - Reports memory usage on Blue Gene/P/Q systems
- Description:
- memory_thisjob_bg returns a dictionary with the heap and stack memory
- usage of a process in Bytes.
- Availability: Processes
- Author: Jochen Martin Eppler
- */
-void
-Processes::MemoryThisjobBgFunction::execute( SLIInterpreter* i ) const
-{
-  DictionaryDatum dict( new Dictionary );
-
-  unsigned long heap_memory = bg_get_heap_mem();
-  ( *dict )[ "heap" ] = heap_memory;
-  unsigned long stack_memory = bg_get_stack_mem();
-  ( *dict )[ "stack" ] = stack_memory;
-  unsigned long mmap_memory = bg_get_mmap_mem();
-  ( *dict )[ "mmap" ] = mmap_memory;
-
-  i->OStack.push( dict );
-  i->EStack.pop();
-}
-#endif
 
 #if defined __APPLE__ && defined HAVE_MACH_MACH_H
 /** @BeginDocumentation

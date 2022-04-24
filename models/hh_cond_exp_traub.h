@@ -65,14 +65,14 @@ Hodgkin-Huxley model for Brette et al (2007) review
 Description
 +++++++++++
 
-hh_cond_exp_traub is an implementation of a modified Hodgkin-Huxley model.
+``hh_cond_exp_traub`` is an implementation of a modified Hodgkin-Huxley model.
 
 This model was specifically developed for a major review of simulators [1]_,
 based on a model of hippocampal pyramidal cells by Traub and Miles [2]_.
 The key differences between the current model and the model in [2]_ are:
 
 - This model is a point neuron, not a compartmental model.
-- This model includes only I_Na and I_K, with simpler I_K dynamics than
+- This model includes only ``I_Na`` and ``I_K``, with simpler ``I_K`` dynamics than
   in [2]_, so it has only three instead of eight gating variables;
   in particular, all Ca dynamics have been removed.
 - Incoming spikes induce an instantaneous conductance change followed by
@@ -177,7 +177,7 @@ public:
 
 private:
   void init_buffers_();
-  void calibrate();
+  void pre_run_hook();
 
   void update( Time const&, const long, const long );
 
@@ -276,7 +276,7 @@ public:
    */
   struct Buffers_
   {
-    Buffers_( hh_cond_exp_traub& ); //!<Sets buffer pointers to 0
+    Buffers_( hh_cond_exp_traub& ); //!< Sets buffer pointers to 0
     //! Sets buffer pointers to 0
     Buffers_( const Buffers_&, hh_cond_exp_traub& );
 
@@ -399,7 +399,7 @@ hh_cond_exp_traub::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 
-  calibrate();
+  pre_run_hook();
 }
 
 } // namespace

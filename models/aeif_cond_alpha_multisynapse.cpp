@@ -126,8 +126,9 @@ aeif_cond_alpha_multisynapse_dynamics( double, const double y[], double f[], voi
     node.P_.Delta_T == 0. ? 0 : ( node.P_.Delta_T * node.P_.g_L * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T ) );
 
   // dv/dt
-  f[ S::V_M ] = is_refractory ? 0 : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike + I_syn - w + node.P_.I_e
-                                      + node.B_.I_stim_ ) / node.P_.C_m;
+  f[ S::V_M ] = is_refractory
+    ? 0
+    : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike + I_syn - w + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
   // Adaptation current w.
   f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
@@ -423,17 +424,17 @@ aeif_cond_alpha_multisynapse::init_buffers_()
     gsl_odeiv_control_init( B_.c_, P_.gsl_error_tol, P_.gsl_error_tol, 0.0, 1.0 );
   }
 
-  // Stepping function and evolution function are allocated in calibrate()
+  // Stepping function and evolution function are allocated in pre_run_hook()
 
   B_.sys_.function = aeif_cond_alpha_multisynapse_dynamics;
   B_.sys_.jacobian = NULL;
   B_.sys_.params = reinterpret_cast< void* >( this );
-  // B_.sys_.dimension is assigned in calibrate()
+  // B_.sys_.dimension is assigned in pre_run_hook()
   B_.I_stim_ = 0.0;
 }
 
 void
-aeif_cond_alpha_multisynapse::calibrate()
+aeif_cond_alpha_multisynapse::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();

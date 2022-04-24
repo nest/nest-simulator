@@ -59,7 +59,8 @@ nest::Device::Parameters_::Parameters_( const Parameters_& p )
   stop_.calibrate();
 }
 
-nest::Device::Parameters_& nest::Device::Parameters_::operator=( const Parameters_& p )
+nest::Device::Parameters_&
+nest::Device::Parameters_::operator=( const Parameters_& p )
 {
   origin_ = p.origin_;
   start_ = p.start_;
@@ -140,7 +141,7 @@ nest::Device::Device( const Device& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::Device::calibrate()
+nest::Device::pre_run_hook()
 {
   // We do not need to recalibrate time objects, since they are
   // recalibrated on instance construction and resolution cannot

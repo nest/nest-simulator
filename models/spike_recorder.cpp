@@ -26,8 +26,8 @@
 #include <numeric>
 
 // Includes from libnestutil:
-#include "dict_util.h"
 #include "compose.hpp"
+#include "dict_util.h"
 #include "logging.h"
 
 // Includes from nestkernel:
@@ -52,9 +52,9 @@ nest::spike_recorder::spike_recorder( const spike_recorder& n )
 }
 
 void
-nest::spike_recorder::calibrate()
+nest::spike_recorder::pre_run_hook()
 {
-  RecordingDevice::calibrate( RecordingBackend::NO_DOUBLE_VALUE_NAMES, RecordingBackend::NO_LONG_VALUE_NAMES );
+  RecordingDevice::pre_run_hook( RecordingBackend::NO_DOUBLE_VALUE_NAMES, RecordingBackend::NO_LONG_VALUE_NAMES );
 }
 
 void

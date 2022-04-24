@@ -126,7 +126,7 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void calibrate();
+  void pre_run_hook();
   void update( Time const&, const long, const long );
 
   struct Parameters_
@@ -136,6 +136,7 @@ private:
 
     Parameters_();
     Parameters_( const Parameters_& ) = default;
+    Parameters_& operator=( const Parameters_& ) = default;
     void get( DictionaryDatum& ) const;
     void set( const DictionaryDatum& );
   };

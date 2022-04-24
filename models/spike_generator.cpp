@@ -307,9 +307,9 @@ nest::spike_generator::init_buffers_()
 }
 
 void
-nest::spike_generator::calibrate()
+nest::spike_generator::pre_run_hook()
 {
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
 }
 
 

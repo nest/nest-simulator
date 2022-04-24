@@ -134,7 +134,7 @@ nest::music_rate_out_proxy::init_buffers_()
 }
 
 void
-nest::music_rate_out_proxy::calibrate()
+nest::music_rate_out_proxy::pre_run_hook()
 {
   // only publish the output port once,
   if ( not S_.published_ )

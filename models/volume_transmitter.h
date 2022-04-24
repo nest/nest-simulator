@@ -24,9 +24,9 @@
 #define VOLUME_TRANSMITTER_H
 
 // Includes from nestkernel:
-#include "node.h"
 #include "event.h"
 #include "nest_types.h"
+#include "node.h"
 #include "ring_buffer.h"
 #include "spikecounter.h"
 
@@ -155,7 +155,7 @@ public:
 
 private:
   void init_buffers_();
-  void calibrate();
+  void pre_run_hook();
 
   void update( const Time&, const long, const long );
 

@@ -108,8 +108,10 @@ nest::aeif_cond_exp_dynamics( double, const double y[], double f[], void* pnode 
     node.P_.Delta_T == 0. ? 0. : ( node.P_.g_L * node.P_.Delta_T * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T ) );
 
   // dv/dt
-  f[ S::V_M ] = is_refractory ? 0. : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - I_syn_exc - I_syn_inh - w
-                                       + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
+  f[ S::V_M ] = is_refractory
+    ? 0.
+    : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - I_syn_exc - I_syn_inh - w + node.P_.I_e + node.B_.I_stim_ )
+      / node.P_.C_m;
 
   f[ S::G_EXC ] = -g_ex / node.P_.tau_syn_ex; // Synaptic Conductance (nS)
 
@@ -166,7 +168,8 @@ nest::aeif_cond_exp::State_::State_( const State_& s )
   }
 }
 
-nest::aeif_cond_exp::State_& nest::aeif_cond_exp::State_::operator=( const State_& s )
+nest::aeif_cond_exp::State_&
+nest::aeif_cond_exp::State_::operator=( const State_& s )
 {
   r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -413,7 +416,7 @@ nest::aeif_cond_exp::init_buffers_()
 }
 
 void
-nest::aeif_cond_exp::calibrate()
+nest::aeif_cond_exp::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();

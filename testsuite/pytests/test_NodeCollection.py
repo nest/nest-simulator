@@ -237,7 +237,7 @@ class TestNodeCollection(unittest.TestCase):
         """Multiple NodeCollection calls give right indexing"""
         compare_begin = 1
         compare_end = 11
-        for model in nest.Models(mtype='nodes'):
+        for model in nest.node_models:
             n = nest.Create(model, 10)
             n_list = n.tolist()
             compare = list(range(compare_begin, compare_end))
@@ -291,7 +291,7 @@ class TestNodeCollection(unittest.TestCase):
 
         n_list = []
         n_models = 0
-        for model in nest.Models(mtype='nodes'):
+        for model in nest.node_models:
             n = nest.Create(model, 10)
             n_list += n.tolist()
             n_models += 1
@@ -507,17 +507,12 @@ class TestNodeCollection(unittest.TestCase):
 
         n = nest.Create('iaf_psc_alpha')
 
-        nest.ll_api.sli_run("modeldict")
-        model_dict = nest.ll_api.sli_pop()
-
-        models = model_dict.keys()
-
-        for model in models:
+        for model in nest.node_models:
             n += nest.Create(model)
 
         self.assertTrue(len(n) > 0)
 
-        models = ['iaf_psc_alpha'] + list(models)
+        models = ['iaf_psc_alpha'] + list(nest.node_models)
         for count, nc in enumerate(n):
             self.assertEqual(nc.get('model'), models[count])
 
@@ -590,8 +585,7 @@ class TestNodeCollection(unittest.TestCase):
         self.assertEqual(get_conn_some.get('source'), compare_source)
         self.assertEqual(get_conn_some.get('target'), compare_target)
 
-        expected_syn_model = 'static_synapse'
-        expected_syn_id = nest.ll_api.sli_func('synapsedict')[expected_syn_model]
+        expected_syn_id = nest.GetDefaults("static_synapse", "synapse_modelid")
 
         compare_list = [3, 1, 0, expected_syn_id, 6]
         conn = [get_conn_some.get('source')[3],

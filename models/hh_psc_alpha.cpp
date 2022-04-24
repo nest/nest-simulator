@@ -172,7 +172,8 @@ nest::hh_psc_alpha::State_::State_( const State_& s )
   }
 }
 
-nest::hh_psc_alpha::State_& nest::hh_psc_alpha::State_::operator=( const State_& s )
+nest::hh_psc_alpha::State_&
+nest::hh_psc_alpha::State_::operator=( const State_& s )
 {
   r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -369,7 +370,7 @@ nest::hh_psc_alpha::init_buffers_()
 }
 
 void
-nest::hh_psc_alpha::calibrate()
+nest::hh_psc_alpha::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();

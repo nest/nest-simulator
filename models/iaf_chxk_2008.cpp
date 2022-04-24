@@ -158,7 +158,8 @@ nest::iaf_chxk_2008::State_::State_( const State_& s )
   }
 }
 
-nest::iaf_chxk_2008::State_& nest::iaf_chxk_2008::State_::operator=( const State_& s )
+nest::iaf_chxk_2008::State_&
+nest::iaf_chxk_2008::State_::operator=( const State_& s )
 {
   r = s.r;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -340,7 +341,7 @@ nest::iaf_chxk_2008::init_buffers_()
 }
 
 void
-nest::iaf_chxk_2008::calibrate()
+nest::iaf_chxk_2008::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();

@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+# This module defines functions to print warnings, errors and status with colors
+
 
 string(ASCII 27 Esc)
 set(Reset "${Esc}[m")

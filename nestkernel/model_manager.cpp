@@ -258,9 +258,9 @@ ModelManager::copy_node_model_( index old_id, Name new_name )
   {
     const thread t = kernel().vp_manager.get_thread_id();
     const int model_id = new_model->get_model_id();
-    
+
     assert(model_id > 0);
-    assert(model_id > old_id);
+    assert(((index)model_id) > old_id);
 
     proxy_nodes_[ t ].push_back( create_proxynode_( t, model_id ) );
   }

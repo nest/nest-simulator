@@ -380,6 +380,60 @@ GammaParameter::value( RngPtr rng,
   return std::pow( x, kappa_ - 1. ) * std::exp( -1. * inv_theta_ * x ) * delta_;
 }
 
+GaborParameter::GaborParameter( const DictionaryDatum& d )
+  : Parameter( true )
+  , px_( getValue< ParameterDatum >( d, "x" ) )
+  , py_( getValue< ParameterDatum >( d, "y" ) )
+  , cos_( std::cos( getValue< double >( d, "theta") ) )
+  , sin_( std::sin( getValue< double >( d, "theta") ) )
+  , aspect_( getValue< double >( d, "gamma") )
+  , inv_two_std2_( 1.0 / ( 2 * getValue< double >( d, "std" ) * getValue< double >( d, "std" ) ) )
+  , lambda_( getValue< double >( d, "lam") )
+  , psi_( getValue< double >( d, "psi") )
+  , sign_( getValue< std::string >( d, "sign") )
+{
+  const auto theta = getValue< double >( d, "theta" );
+  const auto std = getValue< double >( d, "std" );
+  const auto lambda = getValue< double >( d, "lambda");
+  const auto psi = getValue< double >( d, "psi");
+  if ( std <= 0 )
+  {
+    throw BadProperty(
+      "std > 0 required for gabor function parameter, got std=" + std::to_string( std_x ) );
+  }
+}
+
+double
+GaborParameter::value( RngPtr rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const AbstractLayer& layer,
+  Node* node )
+{
+  const auto dx = px_->value( rng, source_pos, target_pos, layer, node ) - mean_x_;
+  const auto dy = py_->value( rng, source_pos, target_pos, layer, node ) - mean_y_;
+  const auto dx_prime = dx * cos_ + dy * sin_
+  const auto dy_prime = - dx * sin_ + dy * cos_
+  const auto gabor_exp = std::exp( - dx_prime * dx_prime * inv_two_std2_ - aspect_ * aspect_ * dy_prime * dy_prime * inv_two_std2_  )
+  const auto gabor_cos = std::cos( 2 * std::M_PI * dx_prime / lambda_ + psi_)
+  const auto gabor_res = gabor_exp * gabor_cos
+
+  if ( sign_ == "positive")
+  {
+    if ( gabor_res > 0. ) return gabor_res;
+    else return 0;
+  }
+  if ( sign_ == "negative")
+  {
+    if ( gabor_res >= 0. ) return 0;
+    else return gabor_res;
+  }
+  else
+  {
+    return gabor_res;
+  }
+}
+
 
 std::shared_ptr< Parameter >
 multiply_parameter( const std::shared_ptr< Parameter > first, const std::shared_ptr< Parameter > second )

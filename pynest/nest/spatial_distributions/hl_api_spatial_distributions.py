@@ -34,6 +34,7 @@ __all__ = [
     'gaussian',
     'gaussian2D',
     'gamma',
+    'gabor'
 ]
 
 
@@ -145,4 +146,43 @@ def gamma(x, kappa=1.0, theta=1.0):
         'x': x,
         'kappa': kappa,
         'theta': theta
+    })
+
+
+def gabor(x, y, theta=0.0, gamma=1.0, std=1.0, lam=1.0, psi=0.0,
+          sign='positive'):
+    """
+    Applies a bivariate gaussian distribution on two Parameters, representing values in the x and y direction.
+
+    Parameters
+    ----------
+    x : Parameter
+        Input Parameter for the x-direction.
+    y : Parameter
+        Input Parameter for the y-direction.
+    mean_x : float, optional
+        Mean of the distribution in the x-direction. Default is 0.0.
+    mean_y : float, optional
+        Mean of the distribution in the y-direction. Default is 0.0.
+    std_x : float, optional
+        Standard deviation of the distribution in the x-direction. Default is 1.0.
+    std_y : float, optional
+        Standard deviation of the distribution in the y-direction. Default is 1.0.
+    rho : float, optional
+        Correlation of x and y. Default is 0.0
+
+    Returns
+    -------
+    Parameter:
+        Object yielding values drawn from the distribution.
+    """
+    return CreateParameter('gabor', {
+        'x': x,
+        'y': y,
+        'theta': theta,
+        'gamma': gamma,
+        'std': std,
+        'lam': lam,
+        'psi': psi,
+        'sign': sign
     })

@@ -16,7 +16,7 @@ can be discussed on the :ref:`NEST mailing lists <community>`.
 * In most cases, each pull request needs an OK from the
   CI platform and at least two reviewers to be merged.
 * The two reviews have to cover the technical side (i.e., if the code
-  does the right thing and is architecturally sane) and the content
+  does the right thing and is architecturally sound) and the content
   side (i.e., if the code is scientifically correct and fixes an
   actual issue).
 * For changes labeled “not code” or “minor” (e.g., changes in
@@ -27,7 +27,7 @@ can be discussed on the :ref:`NEST mailing lists <community>`.
   need to be accompanied by one or more tests written in either SLI or
   Python.
 * Each change to the code has to be reflected in the
-  corresponding examples and documentation, as well.
+  corresponding examples and documentation.
 * A pull request should be coherent and contain only changes that
   belong together.
 * Please also check that the typesetting of the documentation looks
@@ -41,7 +41,7 @@ Before merging, reviewers have to make sure that:
 1. pull request titles match the actual content of the PR and
    be adequate for the release notes
 1. pull request titles are complete sentences that start with an
-  upper-case, present tense verb and end without punctuation
+  upper-case, present-tense verb and end without punctuation
 1. pull requests are assigned to projects and properly and completely
    labeled
 1. all discussions are settled and all conversations are marked as

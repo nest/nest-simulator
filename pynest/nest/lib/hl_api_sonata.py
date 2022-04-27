@@ -252,12 +252,10 @@ class SonataConnector(object):
             if node_set == population_name:
                 # Spiketrains are given in h5 files
                 with h5py.File(input_dict['input_file'], 'r') as spiking_file:
-                    spikes = spiking_file['spikes']['timestamps']
-                    node_ids = spiking_file['spikes']['gids']
-                    timestamps = {i: [] for i in range(num_elements)}  # Map node id's to spike times
-                    for indx, node_id in enumerate(node_ids):
-                        timestamps[node_id].append(spikes[indx])
-
+                    # Convert data to NumPy arrays for performance
+                    spikes = np.array(spiking_file['spikes']['timestamps'])
+                    node_ids = np.array(spiking_file['spikes']['gids'])
+                    timestamps = {i: spikes[node_ids == i] for i in range(num_elements)}  # Map node id's to spike times
                 nodes = Create(model, num_elements)
                 nodes.set([{'spike_times': timestamps[i], 'precise_times': True} for i in range(len(nodes))])
                 break  # Once we have iterated to the correct node set, we can break and return the nodes

@@ -120,7 +120,7 @@ class STDPSynapseTest(unittest.TestCase):
 
     def do_the_nest_simulation(self):
         """
-        This function is where calls to NEST reside. Returns the generated pre-, post spike, dopa spikes 
+        This function is where calls to NEST reside. Returns the generated pre-, post spike, dopa spikes
         sequences, and the resulting weight established by STDP dopamine.
         """
         nest.set_verbosity('M_WARNING')
@@ -154,9 +154,9 @@ class STDPSynapseTest(unittest.TestCase):
             "spike_generator",
             2,
             params=({"spike_times": self.hardcoded_pre_times
-                                    + self.simulation_duration - self.hardcoded_trains_length},
+                        + self.simulation_duration - self.hardcoded_trains_length},
                     {"spike_times": self.hardcoded_post_times
-                                    + self.simulation_duration - self.hardcoded_trains_length})
+                        + self.simulation_duration - self.hardcoded_trains_length})
         )
         pre_spike_generator = spike_senders[0]
         post_spike_generator = spike_senders[1]
@@ -181,7 +181,7 @@ class STDPSynapseTest(unittest.TestCase):
 
         nest.Connect(parrot_neuron, spike_recorder_dopa)
 
-        # creating a link from the synapse to volume transmitter 
+        # creating a link from the synapse to volume transmitter
         self.synapse_parameters["weight_recorder"] = wr
         self.synapse_parameters["vt"] = vt.get('global_id')
         nest.CopyModel(self.synapse_model, self.synapse_model + "_rec", self.synapse_parameters)

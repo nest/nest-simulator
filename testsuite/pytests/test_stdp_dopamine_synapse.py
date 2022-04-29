@@ -44,7 +44,7 @@ class STDPSynapseTest(unittest.TestCase):
 
     def init_params(self):
         self.resolution = 0.1  # [ms]
-        self.simulation_duration = 100  # 1E3    # [ms]
+        self.sim_dura = 100  # 1E3    # [ms]
         self.synapse_model = "stdp_dopamine_synapse"
         self.presynaptic_firing_rate = 20.  # [ms^-1]
         self.postsynaptic_firing_rate = 20.  # [ms^-1]
@@ -138,13 +138,13 @@ class STDPSynapseTest(unittest.TestCase):
             "poisson_generator",
             2,
             params=({"rate": self.presynaptic_firing_rate,
-                     "stop": (self.simulation_duration - self.hardcoded_trains_length)},
+                     "stop": (self.sim_dura - self.hardcoded_trains_length)},
                     {"rate": self.postsynaptic_firing_rate,
-                     "stop": (self.simulation_duration - self.hardcoded_trains_length)}))
+                     "stop": (self.sim_dura - self.hardcoded_trains_length)}))
         presynaptic_generator = generators[0]
         postsynaptic_generator = generators[1]
 
-        # print('stop', self.simulation_duration - self.hardcoded_trains_length)
+        # print('stop', self.sim_dura - self.hardcoded_trains_length)
 
         # create poisson generator for the dopamine release
         pg_dopa = nest.Create("poisson_generator", params={"rate": self.dopa_rate})
@@ -153,11 +153,9 @@ class STDPSynapseTest(unittest.TestCase):
         spike_senders = nest.Create(
             "spike_generator",
             2,
-            params=({"spike_times": self.hardcoded_pre_times
-                        + self.simulation_duration - self.hardcoded_trains_length},
-                    {"spike_times": self.hardcoded_post_times
-                        + self.simulation_duration - self.hardcoded_trains_length})
-        )
+            params=(
+                {"spike_times": self.hardcoded_pre_times + self.sim_dura - self.hardcoded_trains_length},
+                {"spike_times": self.hardcoded_post_times + self.sim_dura - self.hardcoded_trains_length}))
         pre_spike_generator = spike_senders[0]
         post_spike_generator = spike_senders[1]
 
@@ -189,7 +187,7 @@ class STDPSynapseTest(unittest.TestCase):
         nest.Connect(presynaptic_neuron, postsynaptic_neuron, syn_spec={"synapse_model": self.synapse_model + "_rec"})
 
         # simulate network
-        nest.Simulate(self.simulation_duration)
+        nest.Simulate(self.sim_dura)
 
         all_spikes = nest.GetStatus(spike_recorder, keys='events')[0]
         pre_spikes = all_spikes['times'][all_spikes['senders'] == presynaptic_neuron.tolist()[0]]
@@ -282,7 +280,7 @@ class STDPSynapseTest(unittest.TestCase):
         print('post', post_spikes_delayed)
         print('pre', pre_spikes_delayed)
 
-        while t < self.simulation_duration:
+        while t < self.sim_dura:
             print('############################################')
             # idx_next_pre_spike = -1
             t_next_pre_spike = np.inf
@@ -321,7 +319,7 @@ class STDPSynapseTest(unittest.TestCase):
             # print(handle_dopa_spike, handle_pre_spike, handle_post_spike)
             if t_next == np.inf:
                 # no more spikes to process
-                t_next = self.simulation_duration
+                t_next = self.sim_dura
                 break
 
             '''# max timestep
@@ -401,7 +399,7 @@ class STDPSynapseTest(unittest.TestCase):
             _ax.grid(which="major", axis="both")
             _ax.grid(which="minor", axis="x", linestyle=":", alpha=alpha_grid)
             _ax.minorticks_on()
-            _ax.set_xlim(0., self.simulation_duration + 2.)
+            _ax.set_xlim(0., self.sim_dura + 2.)
             if i != len(ax) - 1:
                 _ax.set_xticklabels([])
 

@@ -130,13 +130,6 @@ PyNEST examples
 
 .. toctree::
    :maxdepth: 1
-   :caption: Sudoku
-
-   ../auto_examples/sudoku/sudoku_net
-   ../auto_examples/sudoku/sudoku_solver
-
-.. toctree::
-   :maxdepth: 1
    :caption: Pong
 
    ../auto_examples/pong/run_simulations

@@ -205,7 +205,7 @@ SonataConnector::connect()
               double delay = numerics::nan;
               if ( delay_dataset_ )
               {
-                delay = syn_weight_data_[ i ];
+                delay = delay_data_[ i ];
               }
               else if ( syn_spec->known( names::delay ) )
               {

@@ -92,7 +92,16 @@ SonataConnector::connect()
      */
 
     // Open the specified file and the specified group in the file.
-    H5::H5File file( edge_file, H5F_ACC_RDONLY );
+    H5::H5File file;
+    try
+    {
+      file = H5::H5File( edge_file, H5F_ACC_RDONLY );
+    }
+    catch ( const H5::Exception& e )
+    {
+      throw KernelException( "Could not open HDF5 file " + edge_file );
+    }
+
     H5::Group edges_group( file.openGroup( "edges" ) );
 
     // Get name of groups

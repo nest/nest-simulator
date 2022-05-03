@@ -319,6 +319,13 @@ class SonataConnector(object):
         self.create_edge_dict_()
 
         sonata_dynamics = {'nodes': self.node_collections, 'edges': self.edge_types}
+        # Check if HDF5 files exists and are not blocked.
+        for d in self.edge_types:
+            try:
+                f = h5py.File(d['edges_file'], 'r')
+                f.close()
+            except BlockingIOError as err:
+                raise BlockingIOError(f'{err.strerror} for {os.path.realpath(d["edges_file"])}') from None
 
         sps(sonata_dynamics)
         sr('Connect_sonata')

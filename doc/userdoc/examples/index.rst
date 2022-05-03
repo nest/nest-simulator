@@ -128,4 +128,9 @@ PyNEST examples
 
    ../auto_examples/hpc_benchmark
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Sudoku
 
+   ../auto_examples/sudoku/sudoku_net
+   ../auto_examples/sudoku/sudoku_solver

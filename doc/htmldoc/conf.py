@@ -51,7 +51,7 @@ else:
 sys.path.append(os.path.abspath("./_ext"))
 
 source_suffix = '.rst'
-master_doc = 'contents'
+master_doc = 'index'
 
 # Create the mockfile for extracting the PyNEST
 
@@ -164,7 +164,10 @@ numfig_format = {'figure': 'Figure %s', 'table': 'Table %s',
 html_theme = 'sphinx_rtd_theme'
 html_logo = str(doc_build_dir / 'static/img/nest_logo.png')
 html_theme_options = {'logo_only': True,
-                      'display_version': True}
+                      'display_version': True,
+                      'style_external_links':True}
+
+logo_url: 'https://nest-simulator.com/documentation'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

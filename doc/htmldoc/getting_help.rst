@@ -1,10 +1,10 @@
 .. _getting_help:
 
 Get help
-=======
+--------
 
 Have a specific question or problem with NEST?
-----------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Check out the :ref:`troubleshooting section <troubleshooting>` for
 common issues.
@@ -13,7 +13,7 @@ If your question is not on there, you are welcome to subscribe to our
 :ref:`Mailing List <contact_us>` and ask.
 
 Get help on the command line interface
---------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * The :py:func:`.helpdesk` command will launch the documentation pages on your browser.
 
@@ -31,7 +31,7 @@ Get help on the command line interface
        nest.FunctionName?
 
 Model information
------------------
+~~~~~~~~~~~~~~~~~
 
 * To get a list of available neuron models, use:
 

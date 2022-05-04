@@ -2,6 +2,20 @@
 Welcome to the NEST simulator documentation!
 ********************************************
 
+
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+
+   Install NEST <installation/index>
+   Tutorials and examples <get-started_index>
+   Understand how NEST works <understand_index>
+   API <ref_material/pynest_apis>
+   Model directory <models/index>
+   Contribute <developer_space/contribute>
+   Community <community>
+   license
+
 In our :ref:`release notes <release_notes>`, you can find an overview of the newest changes and features for NEST 3.x.
 
 If you are transitioning from NEST 2.x to NEST 3.x, check out our :ref:`reference guide <refguide_2_3>`.

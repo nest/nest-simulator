@@ -27,6 +27,7 @@
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "iaf_propagator.h"
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
@@ -41,7 +42,6 @@
 
 #include "compose.hpp"
 #include "numerics.h"
-#include "propagator_stability.h"
 
 namespace nest
 {
@@ -292,8 +292,8 @@ nest::gif_psc_exp::pre_run_hook()
   const double tau_m = P_.c_m_ / P_.g_L_;
 
   // these are determined according to a numeric stability criterion
-  V_.P21ex_ = PropagatorExp( P_.tau_ex_, tau_m, P_.c_m_ ).evaluate( h );
-  V_.P21in_ = PropagatorExp( P_.tau_in_, tau_m, P_.c_m_ ).evaluate( h );
+  V_.P21ex_ = IAFPropagatorExp( P_.tau_ex_, tau_m, P_.c_m_ ).evaluate( h );
+  V_.P21in_ = IAFPropagatorExp( P_.tau_in_, tau_m, P_.c_m_ ).evaluate( h );
 
   V_.P33_ = std::exp( -h / tau_m );
   V_.P30_ = -1 / P_.c_m_ * numerics::expm1( -h / tau_m ) * tau_m;

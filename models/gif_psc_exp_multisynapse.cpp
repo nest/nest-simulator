@@ -27,6 +27,7 @@
 
 // Includes from libnestutil:
 #include "dict_util.h"
+#include "iaf_propagator.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -41,7 +42,6 @@
 #include "integerdatum.h"
 
 #include "compose.hpp"
-#include "propagator_stability.h"
 
 namespace nest
 {
@@ -335,7 +335,7 @@ nest::gif_psc_exp_multisynapse::pre_run_hook()
   {
     V_.P11_syn_[ i ] = std::exp( -h / P_.tau_syn_[ i ] );
 
-    V_.P21_syn_[ i ] = PropagatorExp( P_.tau_syn_[ i ], tau_m, P_.c_m_ ).evaluate( h );
+    V_.P21_syn_[ i ] = IAFPropagatorExp( P_.tau_syn_[ i ], tau_m, P_.c_m_ ).evaluate( h );
 
     B_.spikes_[ i ].resize();
   }

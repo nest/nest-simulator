@@ -27,8 +27,8 @@
 
 // Includes from libnestutil:
 #include "dict_util.h"
+#include "iaf_propagator.h"
 #include "numerics.h"
-#include "propagator_stability.h"
 #include "regula_falsi.h"
 
 // Includes from nestkernel:
@@ -260,8 +260,8 @@ nest::iaf_psc_exp_ps::pre_run_hook()
   V_.P20_ = -P_.tau_m_ / P_.c_m_ * numerics::expm1( -V_.h_ms_ / P_.tau_m_ );
 
   // these are determined according to a numeric stability criterion
-  propagator_ex_ = PropagatorExp( P_.tau_ex_, P_.tau_m_, P_.c_m_ );
-  propagator_in_ = PropagatorExp( P_.tau_in_, P_.tau_m_, P_.c_m_ );
+  propagator_ex_ = IAFPropagatorExp( P_.tau_ex_, P_.tau_m_, P_.c_m_ );
+  propagator_in_ = IAFPropagatorExp( P_.tau_in_, P_.tau_m_, P_.c_m_ );
   V_.P21_ex_ = propagator_ex_.evaluate( V_.h_ms_ );
   V_.P21_in_ = propagator_in_.evaluate( V_.h_ms_ );
 

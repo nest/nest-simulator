@@ -26,8 +26,8 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "iaf_propagator.h"
 #include "numerics.h"
-#include "propagator_stability.h"
 #include "regula_falsi.h"
 
 // Includes from nestkernel:
@@ -273,10 +273,10 @@ nest::iaf_psc_alpha_ps::pre_run_hook()
 
   V_.P30_ = -P_.tau_m_ / P_.c_m_ * V_.expm1_tau_m_;
   // these are determined according to a numeric stability criterion
-  propagator_ex_ = PropagatorAlpha( P_.tau_syn_ex_, P_.tau_m_, P_.c_m_ );
+  propagator_ex_ = IAFPropagatorAlpha( P_.tau_syn_ex_, P_.tau_m_, P_.c_m_ );
   std::tie( V_.P31_ex_, V_.P32_ex_ ) = propagator_ex_.evaluate( V_.h_ms_ );
 
-  propagator_in_ = PropagatorAlpha( P_.tau_syn_in_, P_.tau_m_, P_.c_m_ );
+  propagator_in_ = IAFPropagatorAlpha( P_.tau_syn_in_, P_.tau_m_, P_.c_m_ );
   std::tie( V_.P31_in_, V_.P32_in_ ) = propagator_in_.evaluate( V_.h_ms_ );
 
   // t_ref_ is the refractory period in ms

@@ -30,12 +30,10 @@
 #include "config.h"
 
 // Includes from libnestutil:
-#include "propagator_stability.h"
-
-// Includes from nestkernel:
 #include "archiving_node.h"
 #include "connection.h"
 #include "event.h"
+#include "iaf_propagator.h"
 #include "nest_types.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
@@ -264,8 +262,8 @@ private:
   void emit_instant_spike_( const Time& origin, const long lag, const double spike_offset );
 
   /** Propagator object for updating synaptic components */
-  PropagatorExp propagator_ex_;
-  PropagatorExp propagator_in_;
+  IAFPropagatorExp propagator_ex_;
+  IAFPropagatorExp propagator_in_;
 
   // ----------------------------------------------------------------
 

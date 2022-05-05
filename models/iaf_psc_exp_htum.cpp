@@ -27,12 +27,10 @@
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
-#include "propagator_stability.h"
-
-// Includes from nestkernel:
 #include "exceptions.h"
+#include "iaf_propagator.h"
 #include "kernel_manager.h"
+#include "numerics.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -252,8 +250,8 @@ nest::iaf_psc_exp_htum::pre_run_hook()
   // P22_ = 1.0-h/Tau_;
 
   // these are determined according to a numeric stability criterion
-  V_.P21ex_ = PropagatorExp( P_.tau_ex_, P_.Tau_, P_.C_ ).evaluate( h );
-  V_.P21in_ = PropagatorExp( P_.tau_in_, P_.Tau_, P_.C_ ).evaluate( h );
+  V_.P21ex_ = IAFPropagatorExp( P_.tau_ex_, P_.Tau_, P_.C_ ).evaluate( h );
+  V_.P21in_ = IAFPropagatorExp( P_.tau_in_, P_.Tau_, P_.C_ ).evaluate( h );
 
   // P21ex_ = h/C_;
   // P21in_ = h/C_;

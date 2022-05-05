@@ -27,12 +27,10 @@
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
-#include "propagator_stability.h"
-
-// Includes from nestkernel:
 #include "exceptions.h"
+#include "iaf_propagator.h"
 #include "kernel_manager.h"
+#include "numerics.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -294,7 +292,7 @@ nest::iaf_psc_exp_multisynapse::pre_run_hook()
   {
     V_.P11_syn_[ i ] = std::exp( -h / P_.tau_syn_[ i ] );
     // these are determined according to a numeric stability criterion
-    V_.P21_syn_[ i ] = PropagatorExp( P_.tau_syn_[ i ], P_.Tau_, P_.C_ ).evaluate( h );
+    V_.P21_syn_[ i ] = IAFPropagatorExp( P_.tau_syn_[ i ], P_.Tau_, P_.C_ ).evaluate( h );
 
     B_.spikes_[ i ].resize();
   }

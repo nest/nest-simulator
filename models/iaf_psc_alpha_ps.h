@@ -30,12 +30,10 @@
 #include "config.h"
 
 // Includes from libnestutil:
-#include "propagator_stability.h"
-
-// Includes from nestkernel:
 #include "archiving_node.h"
 #include "connection.h"
 #include "event.h"
+#include "iaf_propagator.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
 #include "slice_ring_buffer.h"
@@ -269,8 +267,8 @@ private:
   void emit_instant_spike_( Time const& origin, const long lag, const double spike_offset );
 
   /** Propagator object for updating synaptic components */
-  PropagatorAlpha propagator_ex_;
-  PropagatorAlpha propagator_in_;
+  IAFPropagatorAlpha propagator_ex_;
+  IAFPropagatorAlpha propagator_in_;
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< iaf_psc_alpha_ps >;

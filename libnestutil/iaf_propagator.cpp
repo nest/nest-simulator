@@ -1,5 +1,5 @@
 /*
- *  propagator_stability.cpp
+ *  iaf_propagator.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,10 +20,10 @@
  *
  */
 
-#include "propagator_stability.h"
+#include "iaf_propagator.h"
 
 
-Propagator::Propagator()
+IAFPropagator::IAFPropagator()
   : tau_syn_( 0.0 )
   , tau_m_( 0.0 )
   , c_m_( 0.0 )
@@ -33,7 +33,7 @@ Propagator::Propagator()
 {
 }
 
-Propagator::Propagator( double tau_syn, double tau_m, double c_m )
+IAFPropagator::IAFPropagator( double tau_syn, double tau_m, double c_m )
   : tau_syn_( tau_syn )
   , tau_m_( tau_m )
   , c_m_( c_m )
@@ -43,37 +43,62 @@ Propagator::Propagator( double tau_syn, double tau_m, double c_m )
 {
 }
 
-PropagatorExp::PropagatorExp()
-  : Propagator( 0., 0., 0. )
+std::tuple< double, double, double, double >
+IAFPropagator::evaluate_P32_( double h ) const
+{
+  const double exp_h_tau_syn = std::exp( -h / tau_syn_ );
+  const double expm1_h_tau = numerics::expm1( -h / tau_m_ + h / tau_syn_ );
+
+  double P32 = gamma_ * exp_h_tau_syn * expm1_h_tau;
+
+  double exp_h_tau = 0.0; // exp_h_tau is only relevant if condition below fulfilled
+  if ( std::abs( tau_m_ - tau_syn_ ) < 0.1 )
+  {
+    exp_h_tau = std::exp( -h / tau_m_ );
+
+    const double P32_singular = h / c_m_ * exp_h_tau;
+    if ( tau_m_ == tau_syn_ )
+    {
+      P32 = P32_singular;
+    }
+    else
+    {
+      const double P32_linear = alpha_ * h * h * exp_h_tau / 2.;
+      const double dev_P32 = std::abs( P32 - P32_singular );
+
+      if ( dev_P32 > 2 * std::abs( P32_linear ) )
+      {
+        P32 = P32_singular;
+      }
+    }
+  }
+
+  return std::make_tuple( P32, exp_h_tau_syn, expm1_h_tau, exp_h_tau );
+}
+
+IAFPropagatorExp::IAFPropagatorExp()
+  : IAFPropagator( 0., 0., 0. )
 {
 }
 
-PropagatorExp::PropagatorExp( double tau_syn, double tau_m, double c_m )
-  : Propagator( tau_syn, tau_m, c_m )
+IAFPropagatorExp::IAFPropagatorExp( double tau_syn, double tau_m, double c_m )
+  : IAFPropagator( tau_syn, tau_m, c_m )
 {
 }
 
-double
-PropagatorExp::evaluate( double h ) const
-{
-  double P32;
-  std::tie( P32, std::ignore, std::ignore, std::ignore ) = evaluate_P32_( h );
 
-  return P32;
-}
-
-PropagatorAlpha::PropagatorAlpha()
-  : Propagator( 0., 0., 0. )
+IAFPropagatorAlpha::IAFPropagatorAlpha()
+  : IAFPropagator( 0., 0., 0. )
 {
 }
 
-PropagatorAlpha::PropagatorAlpha( double tau_syn, double tau_m, double c_m )
-  : Propagator( tau_syn, tau_m, c_m )
+IAFPropagatorAlpha::IAFPropagatorAlpha( double tau_syn, double tau_m, double c_m )
+  : IAFPropagator( tau_syn, tau_m, c_m )
 {
 }
 
 std::tuple< double, double >
-PropagatorAlpha::evaluate( double h ) const
+IAFPropagatorAlpha::evaluate( double h ) const
 {
   double P32;
   double exp_h_tau_syn;

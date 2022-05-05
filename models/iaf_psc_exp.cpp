@@ -27,13 +27,11 @@
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
-#include "propagator_stability.h"
-
-// Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
+#include "iaf_propagator.h"
 #include "kernel_manager.h"
+#include "numerics.h"
 #include "ring_buffer_impl.h"
 #include "universal_data_logger_impl.h"
 
@@ -255,8 +253,8 @@ nest::iaf_psc_exp::pre_run_hook()
   V_.P22_ = std::exp( -h / P_.Tau_ );
 
   // these are determined according to a numeric stability criterion
-  V_.P21ex_ = PropagatorExp( P_.tau_ex_, P_.Tau_, P_.C_ ).evaluate( h );
-  V_.P21in_ = PropagatorExp( P_.tau_in_, P_.Tau_, P_.C_ ).evaluate( h );
+  V_.P21ex_ = IAFPropagatorExp( P_.tau_ex_, P_.Tau_, P_.C_ ).evaluate( h );
+  V_.P21in_ = IAFPropagatorExp( P_.tau_in_, P_.Tau_, P_.C_ ).evaluate( h );
 
   V_.P20_ = P_.Tau_ / P_.C_ * ( 1.0 - V_.P22_ );
 

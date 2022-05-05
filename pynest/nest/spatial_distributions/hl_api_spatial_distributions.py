@@ -149,8 +149,7 @@ def gamma(x, kappa=1.0, theta=1.0):
     })
 
 
-def gabor(x, y, theta=0.0, gamma=1.0, std=1.0, lam=1.0, psi=0.0,
-          sign='positive'):
+def gabor(x, y, theta=0.0, gamma=1.0, std=1.0, lam=1.0, psi=0.0):
     """
     Applies a bivariate gaussian distribution on two Parameters, representing values in the x and y direction.
 
@@ -184,5 +183,4 @@ def gabor(x, y, theta=0.0, gamma=1.0, std=1.0, lam=1.0, psi=0.0,
         'std': std,
         'lam': lam,
         'psi': psi,
-        'sign': sign
     })

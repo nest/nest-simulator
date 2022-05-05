@@ -177,7 +177,7 @@ public:
 
 private:
   void init_buffers_();
-  void calibrate();
+  void pre_run_hook();
 
   void update( Time const&, const long, const long );
 
@@ -399,7 +399,7 @@ hh_cond_exp_traub::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 
-  calibrate();
+  pre_run_hook();
 }
 
 } // namespace

@@ -272,7 +272,7 @@ nest::iaf_psc_exp_ps_lossless::init_buffers_()
 }
 
 void
-nest::iaf_psc_exp_ps_lossless::calibrate()
+nest::iaf_psc_exp_ps_lossless::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();

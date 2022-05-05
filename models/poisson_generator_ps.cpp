@@ -123,9 +123,9 @@ nest::poisson_generator_ps::init_buffers_()
 }
 
 void
-nest::poisson_generator_ps::calibrate()
+nest::poisson_generator_ps::pre_run_hook()
 {
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
   if ( P_.rate_ > 0 )
   {
     V_.inv_rate_ms_ = 1000.0 / P_.rate_ - P_.dead_time_;

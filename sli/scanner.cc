@@ -539,12 +539,9 @@ Scanner::operator()( Token& t )
   unsigned char sgc = '\0';
 
   long lng = 0L;
-  double d = 0.0;
   int sg = 1;
   int e = 0;
   int parenth = 0; // to handle PS parenthesis in strings
-  double p = 1.;
-
 
   t.clear();
 
@@ -624,13 +621,11 @@ Scanner::operator()( Token& t )
       break;
 
     case intexpst:
-      d = ( double ) lng;
       ds.push_back( 'e' );
       state = expntlst;
       break;
 
     case decpointst:
-      d = ( double ) lng;
       ds.push_back( '.' );
       break;
 
@@ -643,8 +638,6 @@ Scanner::operator()( Token& t )
       state = fracdgtst;
     /* no break */
     case fracdgtst:
-      p /= base;
-      d += sg * p * digval( c );
       ds.push_back( c );
       break;
 

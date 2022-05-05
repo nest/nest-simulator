@@ -81,19 +81,24 @@ nest::gif_cond_exp_dynamics( double, const double y[], double f[], void* pnode )
   assert( pnode );
   const nest::gif_cond_exp& node = *( reinterpret_cast< nest::gif_cond_exp* >( pnode ) );
 
+  const bool is_refractory = node.S_.r_ref_ > 0;
+
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
 
   // The following code is verbose for the sake of clarity. We assume that a
   // good compiler will optimize the verbosity away ...
 
-  const double I_syn_exc = y[ S::G_EXC ] * ( y[ S::V_M ] - node.P_.E_ex_ );
-  const double I_syn_inh = y[ S::G_INH ] * ( y[ S::V_M ] - node.P_.E_in_ );
-  const double I_L = node.P_.g_L_ * ( y[ S::V_M ] - node.P_.E_L_ );
+  // Clamp membrane potential to V_reset while refractory.
+  const double V = is_refractory ? node.P_.V_reset_ : y[ S::V_M ];
+
+  const double I_syn_exc = y[ S::G_EXC ] * ( V - node.P_.E_ex_ );
+  const double I_syn_inh = y[ S::G_INH ] * ( V - node.P_.E_in_ );
+  const double I_L = node.P_.g_L_ * ( V - node.P_.E_L_ );
   const double stc = node.S_.stc_;
 
   // V dot
-  f[ 0 ] = ( -I_L + node.S_.I_stim_ + node.P_.I_e_ - I_syn_exc - I_syn_inh - stc ) / node.P_.c_m_;
+  f[ 0 ] = is_refractory ? 0.0 : ( -I_L + node.S_.I_stim_ + node.P_.I_e_ - I_syn_exc - I_syn_inh - stc ) / node.P_.c_m_;
 
   f[ 1 ] = -y[ S::G_EXC ] / node.P_.tau_synE_;
   f[ 2 ] = -y[ S::G_INH ] / node.P_.tau_synI_;
@@ -439,7 +444,7 @@ nest::gif_cond_exp::init_buffers_()
 }
 
 void
-nest::gif_cond_exp::calibrate()
+nest::gif_cond_exp::pre_run_hook()
 {
   B_.logger_.init();
 

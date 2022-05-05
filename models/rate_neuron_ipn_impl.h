@@ -237,7 +237,7 @@ nest::rate_neuron_ipn< TNonlinearities >::init_buffers_()
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TNonlinearities >::calibrate()
+nest::rate_neuron_ipn< TNonlinearities >::pre_run_hook()
 {
   B_.logger_.init(); // ensures initialization in case mm connected after Simulate
 

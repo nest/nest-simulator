@@ -279,7 +279,7 @@ nest::gif_psc_exp::init_buffers_()
 }
 
 void
-nest::gif_psc_exp::calibrate()
+nest::gif_psc_exp::pre_run_hook()
 {
   B_.logger_.init();
 

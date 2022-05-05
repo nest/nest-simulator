@@ -223,14 +223,14 @@ nest::noise_generator::init_buffers_()
 }
 
 void
-nest::noise_generator::calibrate()
+nest::noise_generator::pre_run_hook()
 {
   B_.logger_.init();
 
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
   if ( P_.num_targets_ != B_.amps_.size() )
   {
-    LOG( M_INFO, "noise_generator::calibrate()", "The number of targets has changed, drawing new amplitudes." );
+    LOG( M_INFO, "noise_generator::pre_run_hook()", "The number of targets has changed, drawing new amplitudes." );
     init_buffers_();
   }
 

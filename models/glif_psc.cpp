@@ -393,7 +393,7 @@ nest::glif_psc::init_buffers_()
 }
 
 void
-nest::glif_psc::calibrate()
+nest::glif_psc::pre_run_hook()
 {
   B_.logger_.init();
 

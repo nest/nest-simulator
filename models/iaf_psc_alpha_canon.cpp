@@ -263,7 +263,7 @@ nest::iaf_psc_alpha_canon::init_buffers_()
 }
 
 void
-nest::iaf_psc_alpha_canon::calibrate()
+nest::iaf_psc_alpha_canon::pre_run_hook()
 {
   B_.logger_.init();
 

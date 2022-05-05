@@ -45,7 +45,7 @@ endif()
 ################################################################################
 
 # use Python to build PyNEST
-set( with-python ON CACHE STRING "Build PyNEST [default=ON]. To set a specific Python, give the install path." )
+set( with-python ON CACHE STRING "Build PyNEST [default=ON]." )
 option( cythonize-pynest "Use Cython to cythonize pynestkernel.pyx [default=ON]. If OFF, PyNEST has to be build from a pre-cythonized pynestkernel.pyx." ON )
 
 # select parallelization scheme

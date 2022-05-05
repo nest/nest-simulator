@@ -607,7 +607,7 @@ NodeManager::prepare_node_( Node* n )
   // Frozen nodes are initialized and calibrated, so that they
   // have ring buffers and can accept incoming spikes.
   n->init();
-  n->calibrate();
+  n->pre_run_hook();
 }
 
 void

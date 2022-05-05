@@ -92,7 +92,7 @@ nest::volume_transmitter::init_buffers_()
 }
 
 void
-nest::volume_transmitter::calibrate()
+nest::volume_transmitter::pre_run_hook()
 {
   // +1 as pseudo dopa spike at t_trig is inserted after trigger_update_weight
   B_.spikecounter_.reserve( kernel().connection_manager.get_min_delay() * P_.deliver_interval_ + 1 );

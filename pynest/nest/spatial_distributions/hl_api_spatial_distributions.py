@@ -150,8 +150,14 @@ def gamma(x, kappa=1.0, theta=1.0):
 
 
 def gabor(x, y, theta=0.0, gamma=1.0, std=1.0, lam=1.0, psi=0.0):
-    """
+    r"""
     Applies a rectified Gabor function on two Parameters, representing displacements in the x and y direction.
+
+    .. math::
+        p(x) = \big[\cos(2 \pi \frac{x^{\prime}}{\lambda} + \psi)\big]^{+}
+               e^{-\frac{x^{\prime 2}+\gamma^{2}y^{\prime 2}}{2\text{std}^{2}}}
+        \\ x^{\prime} = x\cos\theta + y\sin\theta
+        \\ y^{\prime} = -x\sin\theta + y\cos\theta
 
     Parameters
     ----------

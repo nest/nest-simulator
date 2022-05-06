@@ -4,14 +4,11 @@ jobs:
   trigger_externals:
     name: "Trigger downstream repos"
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        repo: ['nest/nest-extension-module', ]
     steps:
       - name: Trigger nest/nest-extension-module CI
         uses: peter-evans/repository-dispatch@v2
         with:
           token: ${{ secrets.NEST_EXTENSION_MODULE_TRIGGER_TOKEN }}
-          repository: ${{ matrix.repo }}
+          repository: 'nest/nest-extension-module'
           event-type: dispatch-event_nest-update
           client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'

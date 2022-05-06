@@ -397,6 +397,14 @@ conndict = {'rule': 'pairwise_bernoulli',
                                                        std_y=3.),
             'mask': {'circular': {'radius': 4.}}}
 #{ end #}
+#{ conn4gab #}
+conndict = {'rule': 'pairwise_bernoulli',
+            'p': nest.spatial_distributions.gabor(
+                nest.spatial.target_pos.x - nest.spatial.source_pos.x,
+                nest.spatial.target_pos.y - nest.spatial.source_pos.y,
+                theta=np.pi / 4,
+                gamma=0.7)}
+#{ end #}
 kernel_fig(fig, 235, conndict)
 
 plt.savefig('../user_manual_figures/conn4.png', bbox_inches='tight')

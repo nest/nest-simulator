@@ -212,6 +212,16 @@ for spatially distributed nodes.
   |                                              | | rho              |    {2(1-\rho^2)}}                                    |
   |                                              |                    |                                                      |
   +----------------------------------------------+--------------------+------------------------------------------------------+
+  |                                              |                    | .. math::                                            |
+  |                                              | | x,               |                                                      |
+  |                                              | | y,               |    p(x) = \big[\cos(2 \pi \frac{x^{\prime}}{\lambda} |
+  |                                              | | theta,           |    + \psi)\big]^{+} e^{-\frac{                       |
+  | ``nest.spatial_distributions.gabor()``       | | gamma,           |    x^{\prime 2}+\gamma^{2}y^{\prime 2}}{             |
+  |                                              | | std,             |    2\text{std}^{2}}}                                 |
+  |                                              | | lam,             |    \\ x^{\prime} = x\cos\theta + y\sin\theta         |
+  |                                              | | psi              |    \\ y^{\prime} = -x\sin\theta + y\cos\theta        |
+  |                                              |                    |                                                      |
+  +----------------------------------------------+--------------------+------------------------------------------------------+
   |                                              |                    | .. math:: p(x) = \frac{x^{\kappa-1}e^{-\frac{x}      |
   | ``nest.spatial_distributions.gamma()``       | | x,               |     {\theta}}}{\theta^\kappa\Gamma(\kappa)}          |
   |                                              | | kappa            |                                                      |

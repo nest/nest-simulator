@@ -13,5 +13,5 @@ jobs:
         with:
           token: ${{ secrets.NEST_EXTENSION_MODULE_TRIGGER_TOKEN }}
           repository: ${{ matrix.repo }}
-          event-type: nest-update
+          event-type: dispatch-event_nest-update
           client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'

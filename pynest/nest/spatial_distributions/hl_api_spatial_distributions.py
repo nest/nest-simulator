@@ -151,7 +151,7 @@ def gamma(x, kappa=1.0, theta=1.0):
 
 def gabor(x, y, theta=0.0, gamma=1.0, std=1.0, lam=1.0, psi=0.0):
     """
-    Applies a bivariate gaussian distribution on two Parameters, representing values in the x and y direction.
+    Applies a rectified Gabor function on two Parameters, representing displacements in the x and y direction.
 
     Parameters
     ----------
@@ -159,16 +159,16 @@ def gabor(x, y, theta=0.0, gamma=1.0, std=1.0, lam=1.0, psi=0.0):
         Input Parameter for the x-direction.
     y : Parameter
         Input Parameter for the y-direction.
-    mean_x : float, optional
-        Mean of the distribution in the x-direction. Default is 0.0.
-    mean_y : float, optional
-        Mean of the distribution in the y-direction. Default is 0.0.
-    std_x : float, optional
-        Standard deviation of the distribution in the x-direction. Default is 1.0.
-    std_y : float, optional
-        Standard deviation of the distribution in the y-direction. Default is 1.0.
-    rho : float, optional
-        Correlation of x and y. Default is 0.0
+    theta : float, optional
+        Orientation of profile. Default is 0.0.
+    gamma : float, optional
+        Spatial aspect ratio. Controls ratio of major and minor axis. Default is 1.0.
+    std : float, optional
+        Standard deviation of the distribution. Default is 1.0.
+    lam : float, optional
+        Wavelength of spatial oscillations. Default is 1.0.
+    psi : float, optional
+        Phase of spatial oscillations. Default is 0.0
 
     Returns
     -------

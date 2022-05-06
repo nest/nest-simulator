@@ -138,7 +138,7 @@ sphinx/rest_syntax.html>`_ files or to create new ones, follow the steps below:
 
 .. note::
 
-   You can find our full :ref:`documentation style guide <doc_styleguide>`.
+   Please see our :ref:`documentation style guide <doc_styleguide>` for information on how to write good documentation in the NEST style.
 
 Proceed as follows to preview your version of the documentation on Read the
 Docs.

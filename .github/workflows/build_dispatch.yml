@@ -1,0 +1,13 @@
+on: [push]
+
+jobs:
+  trigger_externals:
+    name: "Trigger downstream repos"
+    steps:
+      - name: Trigger nest/nest-extension-module CI
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.NEST_EXTENSION_MODULE_TRIGGER_TOKEN }}
+          repository: https://github.com/nest/nest-extension-module
+          event-type: nest-update
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'

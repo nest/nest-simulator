@@ -42,7 +42,7 @@ namespace nest
 
 template < class ModelT >
 index
-ModelManager::register_node_model( const Name& name, std::string deprecation_info )
+ModelManager::register_node_model(  const Name& name, std::string deprecation_info )
 {
   if ( modeldict_->known( name ) )
   {

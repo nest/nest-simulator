@@ -230,12 +230,12 @@ public:
     return std::map< std::string, const std::vector< double >& >();
   };
 
-  // virtual double
-  // get_state_element( size_t  ) const
-  // {
-  //   assert( false );
-  //   return -1;
-  // }
+  virtual double
+  get_state_element( size_t  ) const
+  {
+    assert( false );
+    return -1;
+  }
 
   /**
    * Return lockpointer to the NodeCollection that created this node.

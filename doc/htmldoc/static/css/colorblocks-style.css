@@ -9,7 +9,19 @@ BASE (MOBILE) SIZE
 	These are the mobile styles. It's what people see on their phones.
 	Remember, keep it light: Speed is Important.
 */
+/* see sphinx-design https://sphinx-design.readthedocs.io/ */
+:root {
+    --sd-color-primary: #ff6633;
+    --sd-color-primary-highlight: #e05a2d;
+    --sd-color-secondary: #6c757d;
+    --sd-color-success: #36B34F;
+    --sd-color-info: #17a2b8;
+    --sd-color-card-header: #1281B3;
+}
 
+.sd-card-header .sd-card-text {
+  color: white;
+}
 /* typography */
 body{
 	background:#fff;
@@ -547,7 +559,7 @@ PRINT STYLESHEET
 
 .icon-h3 {
     text-align: center;
-    font-weighht: bold;
+    font-weight: bold;
     margin: 10px 0;
     font-size: 150%;
 }
@@ -669,8 +681,7 @@ html {
 
 #pulse {
     cursor: pointer;
-}
-
+  }
 .flexslider {
     border: 1px solid #ccc;
     border-radius: 10px;

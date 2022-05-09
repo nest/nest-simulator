@@ -8,115 +8,107 @@ Here you can dive into various topics about NEST.
        :ref:`Devices <device_index>`
        :ref:`Spatially-structured networks <spatial_networks>`
 
-.. panels::
-    :container: container-lg pb-3
-    :column: col-lg-4 col-md-4 col-sm-6 col-xs-12 p-2
-    :card: shadow
+.. grid:: 3
+   :gutter: 1
 
-    All about neurons
-    ^^^^^^^^^^^^^^^^^
+   .. grid-item-card::
+       :img-background: static/img/neuron.png
+ 
+       All about neurons
+       ^^^^^^^^^^^^^^^^^
 
-    :ref:`node_handles`
+       :ref:`node_handles`
 
-    :ref:`param_ex`
+       :ref:`param_ex`
 
-    :ref:`sim_precise_spike_times`
+       :ref:`sim_precise_spike_times`
 
-    :ref:`exact_integration`
+       :ref:`exact_integration`
 
-    ---
-    All about synapses and connections
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   .. grid-item-card:: 
+       :img-background: static/img/synapse1_sm.png
 
-    :ref:`connection_management`
+       All about synapses and connections
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+       :ref:`connection_management`
 
-    :ref:`handling_connections`
+       :ref:`handling_connections`
 
-    :ref:`sim_gap_junctions`
+       :ref:`sim_gap_junctions`
 
-    :ref:`weight_normalization`
+       :ref:`weight_normalization`
 
-    ---
-    All about devices
-    ^^^^^^^^^^^^^^^^^
+   .. grid-item-card:: All about devices
 
-    :ref:`record_simulations`
+       :ref:`record_simulations`
 
-    :ref:`stimulate_network`
+       :ref:`stimulate_network`
 
-.. panels::
-    :column: col-lg-6 p-2
+.. grid:: 2
+   :gutter: 1
 
-    Spatially-structured networks
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   .. grid-item-card:: Spatially-structured networks 
+       :img-top: static/img/synapse1_sm.png
+ 
+       Header
+       ^^^^^^
 
-    .. link-button:: networks/spatially_structured_networks.html
-        :text: Spatial networks
-        :classes: btn-primary
+       
+       :ref:`Spatially-structured networks <spatial_networks>`
 
-    ---
+   .. grid-item-card:: Models in NEST
+       :img-bottom: static/img/synapse1_sm.png
 
-    Models in NEST
-    ^^^^^^^^^^^^^^
+        .. button-link:: models/models-main.html
+            :color: primary
 
-    .. link-button:: models/models-main.html
-       :text: Explore NEST models
-       :classes: btn-primary btn-block
+            Explore NEST models
 
+.. grid::  3
+   :gutter: 1
 
-.. panels::
-    :container: container-fluid pb-1
+   .. grid-item-card::  NEST behavior
 
-    Convert NEST 2.X scripts to 3.X
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+       * :ref:`built_in_timers`
 
-    :ref:`refguide_2_3`
-    ---
-    Release notes
-    ^^^^^^^^^^^^^
+       * :ref:`random_numbers`
 
-    :ref:`release_3.3`
+       * :ref:`run_simulations`
 
-    :ref:`release_3.2`
+   .. grid-item-card:: Connect to other tools
 
-    :ref:`release_3.1`
+       * :ref:`nest_server`
 
-    :ref:`release_3.0`
-    ---
-    Connect to other tools
-    ^^^^^^^^^^^^^^^^^^^^^^
+       * :ref:`nest_music`
 
-    :ref:`nest_server`
+   .. grid-item-card:: High performance computers (HPC) 
 
-    :ref:`nest_music`
+       * :ref:`parallel_computing`
 
 
-.. panels::
 
-    NEST behavior
-    ^^^^^^^^^^^^^
+.. grid::  3
+   :gutter: 1
 
-    * :ref:`built_in_timers`
-    * :ref:`random_numbers`
-    * :ref:`run_simulations`
+   .. grid-item-card:: Convert NEST 2.X scripts to 3.X
 
-    ++++++++++++++
+        :ref:`refguide_2_3`
 
-    ---
+   .. grid-item-card:: Release notes
 
-    High performance computing
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+       :ref:`release_3.3`
 
-    * :ref:`parallel_computing`
+       :ref:`release_3.2`
 
-    ++++++++++++++
+       :ref:`release_3.1`
 
-.. panels::
-    :column: col-sm-2
-    :body: text-center
-    :card: bg-success
+       :ref:`release_3.0`
 
-    .. link-button:: glossary.html
+   .. grid-item-card:: Glossary
+
+
+
+     .. link-button:: glossary.html
        :text: Go to glossary
        :classes: btn-success
 

@@ -998,8 +998,7 @@ Cut-off Gaussian
 2D Gaussian
    Here we use a two-dimensional Gaussian distribution, i.e., a Gaussian with
    different widths in :math:`x`- and :math:`y`- directions. This probability
-   depends on the distance along the coordinates axes, not the distance in the
-   plane:
+   depends on displacement, not only on distance:
 
 .. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn42d #}

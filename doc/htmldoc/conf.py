@@ -94,9 +94,8 @@ extensions = [
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
     'sphinx.ext.mathjax',
-    'sphinx_tabs.tabs',
     'nbsphinx',
-    'sphinx_panels',
+    'sphinx_design',
     'HoverXTooltip',
     'VersionSyncRole',
 ]

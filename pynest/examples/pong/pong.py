@@ -36,7 +36,7 @@ References
        neuromorphic computation: a pilot study. Frontiers in neuroscience, 13, 
        260. https://doi.org/10.3389/fnins.2019.00260
 
-:Authors: T Wunderlich, J Gille
+:Authors: T Wunderlich, Electronic Vision(s), J Gille
 """
 import numpy as np
 

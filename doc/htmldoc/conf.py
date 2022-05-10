@@ -49,7 +49,7 @@ else:
 sys.path.append(os.path.abspath("./_ext"))
 
 source_suffix = '.rst'
-master_doc = 'contents'
+master_doc = 'index'
 
 # Create the mockfile for extracting the PyNEST
 
@@ -180,7 +180,7 @@ html_theme_options = {
     'color_primary': 'orange',
     'color_accent': 'white',
     'theme_color': 'ff6633',
-    'master_doc': False,
+    'master_doc': True,
     # Set the repo location to get a badge with stats
     'repo_url': 'https://github.com/nest/nest-simulator/',
     'repo_name': 'NEST simulator',

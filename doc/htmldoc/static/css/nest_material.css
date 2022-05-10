@@ -150,7 +150,9 @@ ul.md-tabs__list li.md-tabs__item a.md-tabs__link {
     margin-right: 2.5rem
 }
 
+/* set opacity andpadding for images,  use in icons */
+
 .md-typeset img, .md-typeset svg {
 	opacity: 0.5;
-  padding: 10px;
+  padding: 5px;
 }

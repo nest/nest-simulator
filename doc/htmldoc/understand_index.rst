@@ -3,15 +3,11 @@ Understand how NEST works
 
 Here you can dive into various topics about NEST.
 
-    .. :ref:`Neurons <neurons_index>`
-       :ref:`Synapses and connections <synapse_index>`
-       :ref:`Devices <device_index>`
-       :ref:`Spatially-structured networks <spatial_networks>`
-
 .. grid:: 3
    :gutter: 1
 
    .. grid-item-card:: |neuronicon| All about neurons
+       :columns: 4
 
        * :ref:`node_handles`
 
@@ -22,6 +18,7 @@ Here you can dive into various topics about NEST.
        * :ref:`exact_integration`
 
    .. grid-item-card:: |synapseicon| All about synapses and connections
+       :columns: 5
 
        * :ref:`connection_management`
 
@@ -32,6 +29,7 @@ Here you can dive into various topics about NEST.
        * :ref:`weight_normalization`
 
    .. grid-item-card:: |deviceicon| All about devices
+       :columns: 3
 
        * :ref:`record_simulations`
 
@@ -39,24 +37,24 @@ Here you can dive into various topics about NEST.
 
 .. grid:: 2
 
-   .. grid-item-card::
-      :columns: 4
-      :img-background: static/img/brainnetwork_orange128.png
+   .. grid-item-card:: |networkicon| Spatially-strucutred networks
+      :columns: 5
       :link: spatial_networks 
       :link-type: ref
 
-      Spatially-strucutred networks
-      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-
-   .. grid-item-card::
-      :columns: 4 
-      :img-background: static/img/math_orange128.png
+   .. grid-item-card:: |mathicon| Models in NEST
+      :columns: 4
       :link:  models_contents
       :link-type: ref
 
-      Models in NEST
-      ^^^^^^^^^^^^^^^
+.. grid:: 1
+
+   .. grid-item-card:: |hpcicon| High performance computers (HPC) 
+      :columns: 6
+      :text-align: center
+      :link: parallel_computing
+      :link-type: ref
 
 
 .. grid::  3
@@ -76,37 +74,31 @@ Here you can dive into various topics about NEST.
 
        * :ref:`nest_music`
 
-   .. grid-item-card:: High performance computers (HPC) 
-      :img-background: static/img/hpc_orange64.png
-      :link: parallel_computing
-      :link-type: ref
+   .. grid-item-card:: |releaseicon| Release notes
+
+      * :ref:`release_3.3`
+
+      * :ref:`release_3.2`
+
+      * :ref:`release_3.1`
+
+      * :ref:`release_3.0`
 
 
 
-.. grid::  3
+.. grid:: 2 
    :gutter: 1
 
-   .. grid-item-card:: Convert NEST 2.X scripts to 3.X
+   .. grid-item-card:: |converticon| Convert NEST 2.X scripts to 3.X
+      :columns: 5
+      :link: refguide_2_3
+      :link-type: ref
 
-        :ref:`refguide_2_3`
-
-   .. grid-item-card:: Release notes
-
-       :ref:`release_3.3`
-
-       :ref:`release_3.2`
-
-       :ref:`release_3.1`
-
-       :ref:`release_3.0`
-
-   .. grid-item-card:: 
-      :img-background: static/img/glossary_transparent128.png
+   .. grid-item-card:: |glossaryicon| Glossary 
+      :columns: 3
       :link: glossary
       :link-type: ref
 
-      Glossary
-      ^^^^^^^^
 
     
 .. toctree::
@@ -137,3 +129,8 @@ Here you can dive into various topics about NEST.
 .. |deviceicon| image:: static/img/device_orange64.png
 .. |randomicon| image:: static/img/random_orange64.png
 .. |connecticon| image:: static/img/connect_orange64.png
+.. |releaseicon| image:: static/img/version-control_orange64.png
+.. |converticon| image:: static/img/refresh_orange64.png
+.. |glossaryicon| image:: static/img/glossary_orange64.png
+.. |hpcicon| image:: static/img/hpc_orange64.png
+.. |mathicon| image:: static/img/math_orange64.png

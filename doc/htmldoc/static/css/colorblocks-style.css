@@ -17,18 +17,23 @@ BASE (MOBILE) SIZE
     --sd-color-success: #36B34F;
     --sd-color-info: #17a2b8;
     --sd-color-card-header: #1281B3;
+    --sd-color-card-border-hover: #1281B3;
 }
 
 .sd-card-header .sd-card-text {
   color: white;
   text-align: center;
 }
+
+.sd-card-body {
+   padding: 0.8rem;
+}
 /* typography */
 body{
 	background:#fff;
 	color:#666;
 	font-family:'Droid Sans', Arial, Helvetica, sans-serif; 
-	font-size:1.4rem;
+	font-size: medium;
 	line-height:1.5rem; 
 	font-weight:normal;
 }
@@ -140,7 +145,7 @@ p{ margin:0 0 1.5em;}
 	margin:1px 0; 
 	padding:10px;
 	text-decoration:none;
-	font-size:1.1rem;
+	font-size: medium;
 }
 .srt-menu li a:hover{
 	background:#f63;

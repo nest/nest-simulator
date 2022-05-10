@@ -210,12 +210,12 @@ nest::sinusoidal_poisson_generator::init_buffers_()
 }
 
 void
-nest::sinusoidal_poisson_generator::calibrate()
+nest::sinusoidal_poisson_generator::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
 
   // time resolution
   V_.h_ = Time::get_resolution().get_ms();

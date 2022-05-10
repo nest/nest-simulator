@@ -416,7 +416,7 @@ nest::aeif_cond_exp::init_buffers_()
 }
 
 void
-nest::aeif_cond_exp::calibrate()
+nest::aeif_cond_exp::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();

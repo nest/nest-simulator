@@ -125,7 +125,7 @@ sphinx/rest_syntax.html>`_ files or to create new ones, follow the steps below:
 1. You can edit and/or add ``.rst`` files in the ``doc/htmldoc`` directory using your
    editor of choice.
 
-2. If you create a new page, open ``contents.rst`` in the ``doc/htmldoc`` directory
+2. If you create a new page, open ``index.rst`` in the ``doc/htmldoc`` directory
    and add the file name under ``.. toctree::``. This will ensure it appears on
    the NEST simulator documentation's table of contents.
 
@@ -136,8 +136,9 @@ sphinx/rest_syntax.html>`_ files or to create new ones, follow the steps below:
 
 5. Re-render documentation as described above.
 
-You can find our full :ref:`documentation style guide <doc_styleguide> on Read the Docs (optional).
-++++++++++++++++++++++++++++++++++++++
+.. note::
+
+   Please see our :ref:`documentation style guide <doc_styleguide>` for information on how to write good documentation in the NEST style.
 
 Proceed as follows to preview your version of the documentation on Read the
 Docs.

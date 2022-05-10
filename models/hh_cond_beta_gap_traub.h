@@ -214,7 +214,7 @@ public:
 private:
   void init_buffers_();
   double get_normalisation_factor( double, double );
-  void calibrate();
+  void pre_run_hook();
 
   /** This is the actual update function. The additional boolean parameter
    * determines if the function is called by update (false) or wfr_update (true)
@@ -495,7 +495,7 @@ hh_cond_beta_gap_traub::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 
-  calibrate();
+  pre_run_hook();
 }
 
 } // namespace

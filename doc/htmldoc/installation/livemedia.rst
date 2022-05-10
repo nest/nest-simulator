@@ -25,18 +25,45 @@ SuSe::
     sudo zypper install virtualbox
 
 
-Windows users can follow instructions on the website (see above).
 
-NEST image setup
-------------------
 
-* Download the `NEST live medium <https://www.nest-simulator.org/downloads/gplreleases/nest-latest.ova>`_
+.. _download_livemedia:
+
+Download the NEST image for VMs
+-------------------------------
+
+The VM image of NEST is available in the OVA format, and is suitable, for example, for importing into VirtualBox.
+If you run **Windows**, this is the option for you OR if you just want to run NEST without installing it on your computer.
+
+* Download the `latest live media image  <https://nest-simulator.org/downloads/gplreleases/nest-latest.ova>`_.
+
+  `Checksum <https://nest-simulator.org/downloads/gplreleases/nest-latest.ova.sha512sum>`_
 
 * Start Virtual Box and import the virtual machine image (**File** > **Import Appliance**)
 
 * Once imported, you can run the NEST image
 
 * The user password is **nest**.
+
+
+
+Older versions of VM images
+---------------------------
+
+
+`NEST Live Media 3.1 <https://nest-simulator.org/downloads/gplreleases/nest-3.1.ova>`_
+
+`Checksum 3.1 <https://nest-simulator.org/downloads/gplreleases/nest-3.1.ova.sha512sum>`_
+
+`NEST Live Media 2.20.2 <https://nest-simulator.org/downloads/gplreleases/nest-2.20.2.ova>`_
+
+`Checksum 2.20.2 <https://nest-simulator.org/downloads/gplreleases/nest-2.20.2.ova.sha512sum>`_
+
+
+We continuously aim to improve NEST, implement features, and fix bugs with every new version;
+thus, we encourage our users to use the **most recent version of NEST**.
+
+
 
 Notes
 ~~~~~~~~

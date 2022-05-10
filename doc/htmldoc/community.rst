@@ -3,15 +3,6 @@
 Community
 =========
 
-.. toctree::
-  :maxdepth: 1
-
-  News and updates <https://nest-simulator.org>
-  Publications <https://www.nest-simulator.org/publications/>
-  NEST Initiative <https://www.nest-initiative.org/>
-  related_projects
-  citing-nest
-
 .. _contact_us:
 
 Contact us
@@ -30,6 +21,7 @@ By subscribing to the mailing list you will also get notified of all NEST relate
 
 Before submitting a question, please take a look at our :ref:`guidelines for the NEST mailing list <mail_guidelines>`.
 
+
 Submit an issue or pull request on Github
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -44,5 +36,20 @@ We welcome users with questions regarding their implementations or issues they w
 This is an opportunity to have discussions in real time with developers.
 
 Information for dates and how to join can be found on `our GitHub wiki <https://github.com/nest/nest-simulator/wiki/Open-NEST-Developer-Video-Conference>`_
+
+
+.. include:: getting_help.rst
+
+Explore the NEST ecosystem
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. toctree::
+  :maxdepth: 1
+
+  News and updates <https://nest-simulator.org>
+  Publications <https://www.nest-simulator.org/publications/>
+  NEST Initiative <https://www.nest-initiative.org/>
+  related_projects
+  citing-nest
 
 

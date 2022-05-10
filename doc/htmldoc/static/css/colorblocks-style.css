@@ -21,6 +21,7 @@ BASE (MOBILE) SIZE
 
 .sd-card-header .sd-card-text {
   color: white;
+  text-align: center;
 }
 /* typography */
 body{
@@ -826,7 +827,7 @@ code.xref, a code {
 
 .particle-img
 {
- background-image: url('../img/background-particles-flattened-3.png');
+ background-image: url('../img/background-particles-flattened-4.png');
  background-color: #ff6633;
  height: 350px;
 

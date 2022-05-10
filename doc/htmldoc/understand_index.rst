@@ -11,63 +11,58 @@ Here you can dive into various topics about NEST.
 .. grid:: 3
    :gutter: 1
 
-   .. grid-item-card::
-       :img-background: static/img/neuron.png
- 
-       All about neurons
-       ^^^^^^^^^^^^^^^^^
+   .. grid-item-card:: |neuronicon| All about neurons
 
-       :ref:`node_handles`
+       * :ref:`node_handles`
 
-       :ref:`param_ex`
+       * :ref:`param_ex`
 
-       :ref:`sim_precise_spike_times`
+       * :ref:`sim_precise_spike_times`
 
-       :ref:`exact_integration`
+       * :ref:`exact_integration`
 
-   .. grid-item-card:: 
-       :img-background: static/img/synapse1_sm.png
+   .. grid-item-card:: |synapseicon| All about synapses and connections
 
-       All about synapses and connections
-       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-       :ref:`connection_management`
+       * :ref:`connection_management`
 
-       :ref:`handling_connections`
+       * :ref:`handling_connections`
 
-       :ref:`sim_gap_junctions`
+       * :ref:`sim_gap_junctions`
 
-       :ref:`weight_normalization`
+       * :ref:`weight_normalization`
 
-   .. grid-item-card:: All about devices
+   .. grid-item-card:: |deviceicon| All about devices
 
-       :ref:`record_simulations`
+       * :ref:`record_simulations`
 
-       :ref:`stimulate_network`
+       * :ref:`stimulate_network`
 
 .. grid:: 2
-   :gutter: 1
 
-   .. grid-item-card:: Spatially-structured networks 
-       :img-top: static/img/synapse1_sm.png
- 
-       Header
-       ^^^^^^
+   .. grid-item-card::
+      :columns: 4
+      :img-background: static/img/brainnetwork_orange128.png
+      :link: spatial_networks 
+      :link-type: ref
 
-       
-       :ref:`Spatially-structured networks <spatial_networks>`
+      Spatially-strucutred networks
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-   .. grid-item-card:: Models in NEST
-       :img-bottom: static/img/synapse1_sm.png
 
-        .. button-link:: models/models-main.html
-            :color: primary
+   .. grid-item-card::
+      :columns: 4 
+      :img-background: static/img/math_orange128.png
+      :link:  models_contents
+      :link-type: ref
 
-            Explore NEST models
+      Models in NEST
+      ^^^^^^^^^^^^^^^
+
 
 .. grid::  3
    :gutter: 1
 
-   .. grid-item-card::  NEST behavior
+   .. grid-item-card:: |randomicon| NEST behavior
 
        * :ref:`built_in_timers`
 
@@ -75,15 +70,16 @@ Here you can dive into various topics about NEST.
 
        * :ref:`run_simulations`
 
-   .. grid-item-card:: Connect to other tools
+   .. grid-item-card:: |connecticon| Connect to other tools
 
        * :ref:`nest_server`
 
        * :ref:`nest_music`
 
    .. grid-item-card:: High performance computers (HPC) 
-
-       * :ref:`parallel_computing`
+      :img-background: static/img/hpc_orange64.png
+      :link: parallel_computing
+      :link-type: ref
 
 
 
@@ -104,14 +100,15 @@ Here you can dive into various topics about NEST.
 
        :ref:`release_3.0`
 
-   .. grid-item-card:: Glossary
+   .. grid-item-card:: 
+      :img-background: static/img/glossary_transparent128.png
+      :link: glossary
+      :link-type: ref
 
+      Glossary
+      ^^^^^^^^
 
-
-     .. link-button:: glossary.html
-       :text: Go to glossary
-       :classes: btn-success
-
+    
 .. toctree::
    :maxdepth: 1
    :hidden:
@@ -131,3 +128,12 @@ Here you can dive into various topics about NEST.
    Benchmarking <hpc/benchmarking>
    Release notes <release_notes/index>
    Glossary <ref_material/glossary>
+
+
+.. |synapseicon| image:: static/img/synapse_orange64.png
+.. |networkicon| image:: static/img/brainnetwork_orange64.png
+.. |modelicon| image:: static/img/math_orange64.png
+.. |neuronicon| image:: static/img/neuron_orange_64.png
+.. |deviceicon| image:: static/img/device_orange64.png
+.. |randomicon| image:: static/img/random_orange64.png
+.. |connecticon| image:: static/img/connect_orange64.png

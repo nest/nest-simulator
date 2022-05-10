@@ -149,3 +149,8 @@ ul.md-tabs__list li.md-tabs__item a.md-tabs__link {
     margin-left: 2.5rem;
     margin-right: 2.5rem
 }
+
+.md-typeset img, .md-typeset svg {
+	opacity: 0.5;
+  padding: 10px;
+}

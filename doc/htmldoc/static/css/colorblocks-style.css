@@ -102,8 +102,8 @@ p{ margin:0 0 1.5em;}
 
 }
 /* RESPONSIVE IMAGES  */
-img{ max-width:100%; height:auto;}
-
+/*img{ max-width:100%; height:auto;}
+*/
 
 /*MAIN MENU*/
 .menu-toggle{
@@ -827,7 +827,7 @@ code.xref, a code {
 
 .particle-img
 {
- background-image: url('../img/background-particles-flattened-4.png');
+ background-image: url('../img/background-particles-flattened.png');
  background-color: #ff6633;
  height: 350px;
 

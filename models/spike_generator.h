@@ -249,7 +249,7 @@ public:
 private:
   void init_state_() override;
   void init_buffers_() override;
-  void calibrate() override;
+  void pre_run_hook() override;
 
   void update( Time const&, const long, const long ) override;
 
@@ -284,8 +284,9 @@ private:
     //! Shift spike times at present to next step
     bool shift_now_spikes_;
 
-    Parameters_();                               //!< Sets default parameter values
-    Parameters_( const Parameters_& ) = default; //!< Recalibrate all times
+    Parameters_(); //!< Sets default parameter values
+    Parameters_( const Parameters_& ) = default;
+    Parameters_& operator=( const Parameters_& ) = default;
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 

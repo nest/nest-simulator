@@ -102,24 +102,28 @@ nest::glif_cond_dynamics( double, const double y[], double f[], void* pnode )
   assert( pnode );
   const nest::glif_cond& node = *( reinterpret_cast< nest::glif_cond* >( pnode ) );
 
+  const bool is_refractory = node.S_.refractory_steps_ > 0;
+
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
 
   // The following code is verbose for the sake of clarity. We assume that a
   // good compiler will optimize the verbosity away ...
 
+  // Clamp membrane potential to V_reset while refractory.
+  const double V = is_refractory ? node.P_.V_reset_ : y[ S::V_M ];
+
   double I_syn = 0.0;
   for ( size_t i = 0; i < node.P_.n_receptors_(); ++i )
   {
     const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
-    I_syn +=
-      y[ S::G_SYN - S::NUMBER_OF_RECORDABLES_ELEMENTS + j ] * ( y[ S::V_M ] + node.P_.E_L_ - node.P_.E_rev_[ i ] );
+    I_syn += y[ S::G_SYN - S::NUMBER_OF_RECORDABLES_ELEMENTS + j ] * ( V + node.P_.E_L_ - node.P_.E_rev_[ i ] );
   }
 
-  const double I_leak = node.P_.G_ * ( y[ S::V_M ] );
+  const double I_leak = node.P_.G_ * V;
 
   // dV_m/dt
-  f[ 0 ] = ( -I_leak - I_syn + node.B_.I_ + node.S_.ASCurrents_sum_ ) / node.P_.C_m_;
+  f[ 0 ] = is_refractory ? 0.0 : ( -I_leak - I_syn + node.B_.I_ + node.S_.ASCurrents_sum_ ) / node.P_.C_m_;
 
   // d dg/dt
   for ( size_t i = 0; i < node.P_.n_receptors_(); ++i )
@@ -544,7 +548,7 @@ nest::glif_cond::init_buffers_()
 }
 
 void
-nest::glif_cond::calibrate()
+nest::glif_cond::pre_run_hook()
 {
   B_.logger_.init();
 

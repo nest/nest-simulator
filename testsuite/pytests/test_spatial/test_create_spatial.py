@@ -210,6 +210,160 @@ class CreateLayer(unittest.TestCase):
         self.assertEqual(len(layer.spatial['positions']), 10)
         self.assertEqual(len(layer.spatial['positions'][0]), 3)
 
+    def test_Create_2D_grid_params_list(self):
+        """Test Create 2D grid layer with node params as list."""
+
+        params = {'V_m': [-75., -65., -55.]}
+        positions = nest.spatial.grid(shape=[3, 1])
+        layer = nest.Create('iaf_psc_alpha', positions=positions, params=params)
+
+        self.assertEqual(list(layer.V_m), params['V_m'])
+
+    def test_Create_2D_grid_params_tuple(self):
+        """Test Create 2D grid layer with node params as tuple."""
+
+        params = {'V_m': (-75., -65., -55.)}
+        positions = nest.spatial.grid(shape=[3, 1])
+        layer = nest.Create('iaf_psc_alpha', positions=positions, params=params)
+
+        self.assertEqual(layer.V_m, params['V_m'])
+
+    def test_Create_2D_grid_params_parameter(self):
+        """Test Create 2D grid layer with node params as Parameter."""
+
+        min_vm = -75.
+        max_vm = -55.
+        params = {'V_m': nest.random.uniform(min_vm, max_vm)}
+        positions = nest.spatial.grid(shape=[3, 1])
+        layer = nest.Create('iaf_psc_alpha', positions=positions, params=params)
+
+        for vm in layer.V_m:
+            self.assertGreaterEqual(vm, min_vm)
+            self.assertLessEqual(vm, max_vm)
+
+    def test_Create_3D_grid_params_list(self):
+        """Test Create 3D grid layer with node params as list."""
+
+        params = {'V_m': [-75., -65., -55., -45., -35., -25.]}
+        positions = nest.spatial.grid(shape=[3, 1, 2])
+        layer = nest.Create('iaf_psc_alpha', positions=positions, params=params)
+
+        self.assertEqual(list(layer.V_m), params['V_m'])
+
+    def test_Create_3D_grid_params_tuple(self):
+        """Test Create 3D grid layer with node params as tuple."""
+
+        params = {'V_m': (-75., -65., -55., -45., -35., -25.)}
+        positions = nest.spatial.grid(shape=[3, 1, 2])
+        layer = nest.Create('iaf_psc_alpha', positions=positions, params=params)
+
+        self.assertEqual(layer.V_m, params['V_m'])
+
+    def test_Create_3D_grid_params_parameter(self):
+        """Test Create 3D grid layer with node params as Parameter."""
+
+        min_vm = -75.
+        max_vm = -55.
+        params = {'V_m': nest.random.uniform(min_vm, max_vm)}
+        positions = nest.spatial.grid(shape=[3, 1, 2])
+        layer = nest.Create('iaf_psc_alpha', positions=positions, params=params)
+
+        for vm in layer.V_m:
+            self.assertGreaterEqual(vm, min_vm)
+            self.assertLessEqual(vm, max_vm)
+
+    def test_Create_2D_free_params_list(self):
+        """Test Create 2D free layer with node params as list."""
+
+        params = {'V_m': [-75., -65., -55., 45., 35.]}
+        positions = nest.spatial.free(nest.random.uniform(-1, 1), num_dimensions=2)
+        layer = nest.Create('iaf_psc_alpha', n=5, positions=positions, params=params)
+
+        self.assertEqual(list(layer.V_m), params['V_m'])
+
+    def test_Create_2D_free_params_tuple(self):
+        """Test Create 2D free layer with node params as tuple."""
+
+        params = {'V_m': (-75., -65., -55., 45., 35.)}
+        positions = nest.spatial.free(nest.random.uniform(-1, 1), num_dimensions=2)
+        layer = nest.Create('iaf_psc_alpha', n=5, positions=positions, params=params)
+
+        self.assertEqual(layer.V_m, params['V_m'])
+
+    def test_Create_2D_free_params_parameter(self):
+        """Test Create 2D free layer with node params as Parameter."""
+
+        min_vm = -75.
+        max_vm = -55.
+        params = {'V_m': nest.random.uniform(min_vm, max_vm)}
+        positions = nest.spatial.free(nest.random.uniform(-1, 1), num_dimensions=2)
+        layer = nest.Create('iaf_psc_alpha', n=5, positions=positions, params=params)
+
+        for vm in layer.V_m:
+            self.assertGreaterEqual(vm, min_vm)
+            self.assertLessEqual(vm, max_vm)
+
+    def test_Create_3D_free_params_list(self):
+        """Test Create 3D free layer with node params as list."""
+
+        params = {'V_m': [-75., -65., -55., 45., 35., -25., -15.]}
+        positions = nest.spatial.free(nest.random.uniform(-1, 1), num_dimensions=3)
+        layer = nest.Create('iaf_psc_alpha', n=7, positions=positions, params=params)
+
+        self.assertEqual(list(layer.V_m), params['V_m'])
+
+    def test_Create_3D_free_params_tuple(self):
+        """Test Create 3D free layer with node params as tuple."""
+
+        params = {'V_m': (-75., -65., -55., 45., 35., -25., -15.)}
+        positions = nest.spatial.free(nest.random.uniform(-1, 1), num_dimensions=3)
+        layer = nest.Create('iaf_psc_alpha', n=7, positions=positions, params=params)
+
+        self.assertEqual(layer.V_m, params['V_m'])
+
+    def test_Create_3D_free_params_parameter(self):
+        """Test Create 3D free layer with node params as Parameter."""
+
+        min_vm = -75.
+        max_vm = -55.
+        params = {'V_m': nest.random.uniform(min_vm, max_vm)}
+        positions = nest.spatial.free(nest.random.uniform(-1, 1), num_dimensions=3)
+        layer = nest.Create('iaf_psc_alpha', n=7, positions=positions, params=params)
+
+        for vm in layer.V_m:
+            self.assertGreaterEqual(vm, min_vm)
+            self.assertLessEqual(vm, max_vm)
+
+    def test_Create_2D_grid_params_multiple(self):
+        """Test Create 2D grid layer with node params as dictionary with iterables and constants."""
+
+        params = {'V_m': [-75., -65., -55.],
+                  'C_m': 200.,
+                  'tau_syn_ex': nest.random.uniform(1.5, 2.5)}
+        positions = nest.spatial.grid(shape=[3, 1])
+        layer = nest.Create('iaf_psc_alpha', positions=positions, params=params)
+
+        self.assertEqual(list(layer.V_m), params['V_m'])
+        self.assertEqual(list(layer.C_m), [params['C_m']] * len(layer))
+        for tau_syn_ex in layer.tau_syn_ex:
+            self.assertGreaterEqual(tau_syn_ex, 1.5)
+            self.assertLessEqual(tau_syn_ex, 2.5)
+
+    def test_Create_2D_free_params_multiple(self):
+        """Test Create 2D free layer with node params as dictionary with iterables and constants."""
+
+        params = {'V_m': [-75., -65., -55., -45., -35.],
+                  'C_m': 200.,
+                  'tau_syn_ex': nest.random.uniform(1.5, 2.5)}
+        positions = nest.spatial.free(nest.random.normal(0, 0.5), num_dimensions=2)
+        layer = nest.Create('iaf_psc_alpha', n=5, positions=positions, params=params)
+
+        self.assertEqual(list(layer.V_m), params['V_m'])
+        self.assertEqual(list(layer.C_m), [params['C_m']] * len(layer))
+        for tau_syn_ex in layer.tau_syn_ex:
+            self.assertGreaterEqual(tau_syn_ex, 1.5)
+            self.assertLessEqual(tau_syn_ex, 2.5)
+
 
 def suite():
     suite = unittest.makeSuite(CreateLayer, 'test')

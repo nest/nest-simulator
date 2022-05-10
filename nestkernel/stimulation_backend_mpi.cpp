@@ -23,6 +23,7 @@
 // C++ includes:
 #include <fstream>
 #include <iostream>
+#include <vector>
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
@@ -203,7 +204,7 @@ void
 nest::StimulationBackendMPI::pre_run_hook()
 {
   // create the variable which will contain the receiving data from the communication
-  auto data { new std::pair< int*, double* >[commMap_.size()] {} };
+  std::vector< std::pair< int*, double* > > data( commMap_.size() );
   int index = 0;
 #pragma omp master
   {
@@ -233,8 +234,6 @@ nest::StimulationBackendMPI::pre_run_hook()
   {
     // Master thread cleans all the allocated memory
     clean_memory_input_data( data );
-    delete[] data;
-    data = nullptr;
   }
 #pragma omp barrier
 }
@@ -396,12 +395,11 @@ nest::StimulationBackendMPI::update_device( int* array_index,
 }
 
 void
-nest::StimulationBackendMPI::clean_memory_input_data( std::pair< int*, double* >* data )
+nest::StimulationBackendMPI::clean_memory_input_data( std::vector< std::pair< int*, double* > >& data )
 {
   // for all the pairs of data, free the memory of data and the array with the size
-  for ( size_t i = 0; i != commMap_.size(); ++i )
+  for ( auto pair_data : data )
   {
-    std::pair< int*, double* > pair_data = data[ i ];
     if ( pair_data.first != nullptr )
     {
       // clean the memory allocated in the function receive_spike_train

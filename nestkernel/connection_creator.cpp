@@ -94,7 +94,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   // Set default synapse_model, weight and delay if not given explicitly
   if ( synapse_model_.empty() )
   {
-    synapse_model_ = { kernel().model_manager.get_synapsedict()->lookup( "static_synapse" ) };
+    synapse_model_ = { kernel().model_manager.get_synapse_model_id( "static_synapse" ) };
   }
   DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_[ 0 ] );
   if ( weight_.empty() )
@@ -152,11 +152,8 @@ ConnectionCreator::extract_params_( const DictionaryDatum& dict_datum, std::vect
   }
   std::string syn_name = ( *dict_datum )[ names::synapse_model ];
 
-  if ( not kernel().model_manager.get_synapsedict()->known( syn_name ) )
-  {
-    throw UnknownSynapseType( syn_name );
-  }
-  index synapse_model_id = kernel().model_manager.get_synapsedict()->lookup( syn_name );
+  // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
+  const index synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
   synapse_model_.push_back( synapse_model_id );
 
   DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );

@@ -107,12 +107,11 @@ if test "${PYTHON}"; then
         echo "Error: PyNEST testing requested, but 'pytest' cannot be run."
         echo "       Testing also requires the 'pytest-xdist' and 'pytest-timeout' extensions."
         exit 1
-    }
-    PYTEST_VERSION="$(echo "${PYTEST_VERSION}" | cut -d' ' -f2)"
+        }
+      PYTEST_VERSION="$(echo "${PYTEST_VERSION}" | cut -d' ' -f2)"
 fi
 
-python3 -c "import junitparser" >/dev/null 2>&1
-if test $? != 0; then
+if ! python3 -c "import junitparser" >/dev/null 2>&1; then
     echo "Error: Required Python package 'junitparser' not found."
     exit 1
 fi
@@ -492,12 +491,14 @@ if test "${PYTHON}"; then
           --ignore="${PYNEST_TEST_DIR}/mpi" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}"
 
     # Run tests in the mpi* subdirectories, grouped by number of processes
-    if test "${HAVE_MPI}" = "true" -a "${MPI_LAUNCHER}" ; then
-       for numproc in $(cd ${PYNEST_TEST_DIR}/mpi/; ls -d */ | tr -d '/'); do
-           XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
-           PYTEST_ARGS="--verbose --timeout $TIME_LIMIT --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
-           $(sli -c "${numproc} (${PYTHON} -m pytest) (${PYTEST_ARGS}) mpirun =only") 2>&1 | tee -a "${TEST_LOGFILE}"
-       done
+    if test "${HAVE_MPI}" = "true"; then
+        if test "${MPI_LAUNCHER}"; then
+            for numproc in $(cd ${PYNEST_TEST_DIR}/mpi/; ls -d */ | tr -d '/'); do
+                XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
+                PYTEST_ARGS="--verbose --timeout $TIME_LIMIT --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
+                $(sli -c "${numproc} (${PYTHON} -m pytest) (${PYTEST_ARGS}) mpirun =only") 2>&1 | tee -a "${TEST_LOGFILE}"
+            done
+        fi
     fi
 else
     echo
@@ -515,6 +516,9 @@ if command -v run_all_cpptests >/dev/null 2>&1; then
 else
   echo "  Not running C++ tests because NEST was compiled without Boost."
 fi
+
+# the following steps rely on `$?`, so breaking on error is not an option and we turn it off
+set +e
 
 # We use plain python3 here to collect results. This also works if
 # PyNEST was not enabled and ${PYTHON} is consequently not set.

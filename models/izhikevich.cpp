@@ -179,7 +179,7 @@ nest::izhikevich::init_buffers_()
 }
 
 void
-nest::izhikevich::calibrate()
+nest::izhikevich::pre_run_hook()
 {
   B_.logger_.init();
 }

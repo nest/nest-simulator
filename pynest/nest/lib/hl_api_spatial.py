@@ -784,7 +784,7 @@ def GetSourceNodes(src_layer, targets, syn_model=None):
             nest.Connect(s_nodes, s_nodes, conndict)
 
             # get the node IDs of the targets of a source neuron
-            nest.GetSourceNodes(s_nodes[4], s_nodes)
+            nest.GetSourceNodes(s_nodes, s_nodes[4])
     """
     if not isinstance(src_layer, NodeCollection):
         raise TypeError("src_layer must be a NodeCollection")
@@ -1177,6 +1177,7 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
 
     See also
     --------
+    PlotSources: Plot all sources of target neuron in a source layer.
     GetTargetNodes: Obtain targets of a sources in a given target layer.
     GetTargetPositions: Obtain positions of targets of sources in a given target layer.
     probability_parameter: Add indication of connection probability and mask to axes.
@@ -1284,7 +1285,7 @@ def PlotSources(src_layer, tgt_nrn, syn_type=None, fig=None,
                 tgt_color='red', tgt_size=50, src_color='blue', src_size=20,
                 mask_color='yellow', probability_cmap='Greens'):
     """
-    Plot all targets of source neuron `src_nrn` in a target layer `tgt_layer`.
+    Plot all sources of target neuron `tgt_nrn` in a source layer `src_layer`.
 
     Parameters
     ----------
@@ -1319,8 +1320,9 @@ def PlotSources(src_layer, tgt_nrn, syn_type=None, fig=None,
 
     See also
     --------
-    GetTargetNodes: Obtain targets of a sources in a given target layer.
-    GetTargetPositions: Obtain positions of targets of sources in a given target layer.
+    PlotTargets: Plot all targets of source neuron in a target layer.
+    GetSourceNodes: Obtain sources of a target in a given source layer.
+    GetSourcePositions: Obtain positions of sources of target in a given source layer.
     probability_parameter: Add indication of connection probability and mask to axes.
     PlotLayer: Plot all nodes in a spatially distributed population.
     matplotlib.pyplot.scatter : matplotlib scatter plot.
@@ -1349,7 +1351,7 @@ def PlotSources(src_layer, tgt_nrn, syn_type=None, fig=None,
             nest.Connect(s_nodes, s_nodes, conndict)
 
             # plot the targets of a source neuron
-            nest.PlotSources(s_nodes[4], s_nodes)
+            nest.PlotSources(s_nodes, s_nodes[4])
             plt.show()
     """
 

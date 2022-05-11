@@ -374,6 +374,7 @@ was built correctly:
 
    -  ``nest.PlotLayer()``
    -  ``nest.PlotTargets()``
+   -  ``nest.PlotSources()``
    -  ``nest.PlotProbabilityParameter()``
 
    which allow us to generate the plots used with NUTM and this handout.

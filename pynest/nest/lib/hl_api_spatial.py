@@ -1108,7 +1108,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
             # handle case of single node
             xpos, ypos = GetPosition(layer)
         else:
-            xpos, ypos = zip(*GetPosition(layer))pos, ypos = zip(*GetPosition(layer))
+            xpos, ypos = zip(*GetPosition(layer))
 
         if fig is None:
             fig = plt.figure()
@@ -1128,7 +1128,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
             # handle case of single node
             xpos, ypos = GetPosition(layer)
         else:
-            xpos, ypos = zip(*GetPosition(layer))pos, ypos = zip(*GetPosition(layer))
+            xpos, ypos = zip(*GetPosition(layer))
 
         if fig is None:
             fig = plt.figure()

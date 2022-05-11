@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# nodes_positions.py
+# nodes_source_target.py
 #
 # This file is part of NEST.
 #
@@ -64,3 +64,9 @@ print(nest.GetTargetNodes(center_neuron, s_nodes))
 
 print('Global id of source neurons of center neuron')
 print(nest.GetSourceNodes(s_nodes, center_neuron))
+
+print('Positions of target neurons of center neuron')
+print(nest.GetTargetPositions(center_neuron, s_nodes))
+
+print('Positions of source neurons of center neuron')
+print(nest.GetSourcePositions(s_nodes, center_neuron))

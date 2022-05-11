@@ -1,3 +1,31 @@
+# -*- coding: utf-8 -*-
+#
+# nodes_positions.py
+#
+# This file is part of NEST.
+#
+# Copyright (C) 2004 The NEST Initiative
+#
+# NEST is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# NEST is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
+"""
+Showcase of PlotTargets, PlotSources, GetTargetNodes, GetSourceNodes
+--------------------------------------------------------------------
+
+Anno Christopher Kurth, INM-6
+"""
+
 import nest
 from matplotlib import pyplot as plt
 
@@ -32,7 +60,7 @@ plt.title('Source neurons of center neuron')
 plt.show()
 
 print('Global id of target neurons of center neuron')
-print(nest.GetTargetPositions(center_neuron, s_nodes))
+print(nest.GetTargetNodes(center_neuron, s_nodes))
 
 print('Global id of source neurons of center neuron')
-print(nest.GetSourcePositions(s_nodes, center_neuron))
+print(nest.GetSourceNodes(s_nodes, center_neuron))

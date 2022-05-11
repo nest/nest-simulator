@@ -26,7 +26,7 @@ Functions relating to spatial properties of nodes
 
 import numpy as np
 
-from ..ll_api import from check_stack, sli_func, sps, sr, spp
+from ..ll_api import check_stack, sli_func, sps, sr, spp
 from .. import pynestkernel as kernel
 from .hl_api_helper import is_iterable
 from .hl_api_connections import GetConnections

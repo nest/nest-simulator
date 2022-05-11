@@ -1126,9 +1126,9 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         # extract position information, transpose to list of x,y,z pos
         if len(layer) == 1:
             # handle case of single node
-            xpos, ypos = GetPosition(layer)
+            pos = GetPosition(layer)
         else:
-            xpos, ypos = zip(*GetPosition(layer))
+            pos = zip(*GetPosition(layer))
 
         if fig is None:
             fig = plt.figure()

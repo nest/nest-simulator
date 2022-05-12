@@ -19,3 +19,4 @@ Network icon:
 <a href="https://www.flaticon.com/free-icons/conversation" title="conversation icons">Conversation icons created by Freepik - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/quotation-marks" title="quotation marks icons">Quotation marks icons created by Retinaicons - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/quote" title="quote icons">Quote icons created by DinosoftLabs - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/mail" title="mail icons">Mail icons created by Freepik - Flaticon</a>

@@ -159,10 +159,6 @@ numfig_format = {'figure': 'Figure %s', 'table': 'Table %s',
 html_theme = 'sphinx_material'
 html_title = 'NEST simulator documentation'
 html_logo = str(doc_build_dir / 'static/img/nest_logo.png')
-#html_css_files = ["https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"]
-html_theme_options = {'logo_only': True,
-                      'display_version': True,
-                      'style_external_links': True}
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -185,15 +181,15 @@ html_theme_options = {
     # Set the repo location to get a badge with stats
     'repo_url': 'https://github.com/nest/nest-simulator/',
     'repo_name': 'NEST simulator',
-    "nav_links": [
-        {"href": "index", "internal": True, "title": "NEST docs home"}
-        ],
+    #"nav_links": [
+   #     {"href": "index", "internal": True, "title": "NEST docs home"}
+   #     ],
     # Visible levels of the global TOC; -1 means unlimited
     'globaltoc_depth': 1,
     # If False, expand all TOC entries
     'globaltoc_collapse': True,
     # If True, show hidden TOC entries
-    'globaltoc_includehidden': False,
+    'globaltoc_includehidden': True,
     }
 
 html_static_path = [str(doc_build_dir / 'static')]

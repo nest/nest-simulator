@@ -39,7 +39,7 @@ skip_if_without_music
 /*
  * Test logic:
  * For each of the two parrot neurons, exactly one connection from/to the
- * in/out music proxy must be created, specifically to the proxy on the
+ * in/out MUSIC proxy must be created, specifically to the proxy on the
  * rank on which the parrot neuron exists. Therefore, the pooled connections
  * across ranks must be identical independent of number of ranks.
  */

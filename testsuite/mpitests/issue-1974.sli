@@ -22,11 +22,11 @@
 
 
 /** @BeginDocumentation
-    Name: testsuite::issue-1974 - Ensure that from Music proxies are created correctly
+    Name: testsuite::issue-1974 - Ensure that from MUSIC proxies are created correctly
     Synopsis: (issue-1974) run -> - 
 
     Description:
-    issue-1974.sli checks that neurons are connected exactly once to Music proxies.
+    issue-1974.sli checks that neurons are connected exactly once to MUSIC proxies.
     
     Author: Hans Ekkehard Plesser
 */

@@ -34,7 +34,7 @@ a.md-tabs__link, a.md-source {
   background-color: #1281B3;
   border-radius: 5px;
   color: white;
-  font-size: 1rem;
+  font-size: 1em;
 }
 
 .md-typeset .admonition > .admonition-title, .md-typeset .admonition > summary, .md-typeset details > .admonition-title, .md-typeset details > summary {
@@ -79,17 +79,17 @@ code.xref, a code, a.reference.external, a.reference.internal {
 .md-typeset .admonition.warning > .admonition-title,
 ul.md-tabs__list li.md-tabs__item a.md-tabs__link {
  color: #fff;
- font-size: 1.0rem;
+ font-size: 1.0em;
  opacity:0.9;
 }
 .md-typeset {
-	font-size: 1.0rem;
+	font-size: 1.0em;
 }
 .md-nav {
-	font-size: .9rem;
+	font-size: .9em;
 }
 .md-typeset .footnote {
-	font-size: .8rem;
+	font-size: .8em;
 }
 .md-container {
   padding-top: 0;
@@ -108,51 +108,99 @@ ul.md-tabs__list li.md-tabs__item a.md-tabs__link {
 	color: #fff;
 }
 .md-typeset table:not([class]) {
-	font-size: 0.9rem;
+	font-size: 0.9em;
 }
-/* make header thicker and increase font size of  */
+/* make header (top nav) thicker and increase font size of  */
 .md-header {
-	height: 2.8rem;
+	height: 2.8em;
 }
 .md-flex {
   padding-top: 5px
 }
-
+.md-search__icon {
+	font-size: 1.1em;
+}
+.md-source__icon + .md-source__repository {
+	padding-left: 2em;
+}
 .md-search__input {
-	font-size: .9rem;
+	font-size: .9em;
+  height: 2.7em;
 }
 .md-header-nav__title {
-	font-size: 1.1rem;
+	font-size: 1.1em;
 }
 
 .md-source {
-	font-size: .95rem;
+	font-size: .95em;
 }
 .md-source__facts {
-	font-size: .75rem;
+	font-size: .75em;
 }
 .md-source__icon svg {
-	width: 1.6rem;
-	height: 1.6rem;
+	width: 1.6em;
+	height: 1.6em;
 }
 /* set the width wider of main content and sidebars */
 
 .md-grid {
-	max-width: 92rem;
+	max-width: 92em;
 }
-
+.md-sidebar {
+   width: 12.2em;
+}
 .md-sidebar--secondary {
-	margin-left: 93rem;
+	margin-left: 93em;
+  width: 12em;
 }
 /* set main content section margins wider */
-.md-content__inner {
-    margin-left: 2.5rem;
-    margin-right: 2.5rem
+.md-content {
+   margin-left: 12.1em;
+   margin-right: 12.1em;
 }
 
+.md-content__inner {
+    margin-left: 2.5em;
+    margin-right: 2.5em
+}
+/* footer size */
+.md-footer-nav__title, .md-footer-nav__direction {
+	font-size: 1.5em;
+}
+
+.md-footer-nav__button {
+	font-size: 1.2em;
+}
+/* set heading size */
+.md-typeset h1 {
+	margin: 0 0 2rem;
+	font-size: 1.6em;
+}
+.md-typeset h2 {
+	font-size: 1.3em;
+}
+.md-typeset h3 {
+	font-size: 1.1em;
+}
+.md-typeset h4 {
+	font-size: 1em;
+}
+.md-typeset h1 h2 h3 h4 {
+   font-weight: 500;
+}
 /* set opacity andpadding for images,  use in icons */
 
 .md-typeset img, .md-typeset svg {
 	opacity: 0.5;
   padding: 5px;
+}
+
+.md-source__repository {
+	display: inline-block;
+	max-width: fit-content;
+	margin-left: .6rem;
+	font-weight: 700;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	vertical-align: middle;
 }

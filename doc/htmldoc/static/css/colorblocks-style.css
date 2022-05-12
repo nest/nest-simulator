@@ -28,16 +28,22 @@ BASE (MOBILE) SIZE
 .sd-card-body {
    padding: 0.8rem;
 }
+.sd-btn {
+	font-size: 1em;
+	padding: .375em .75em;
+}
+
 /* typography */
 body{
 	background:#fff;
 	color:#666;
 	font-family:'Droid Sans', Arial, Helvetica, sans-serif; 
 	font-size: medium;
-	line-height:1.5rem; 
+	line-height:1.5em; 
 	font-weight:normal;
 }
 h1, h2, h3, h4, h5, h6{
+  font-size: 1.5em;
 	font-weight:400;
 	font-family:'Open Sans', Arial, Helvetica, sans-serif; 
 	line-height:1.5em;
@@ -667,7 +673,10 @@ html {
 }
 
 #backmatter.greenelement.vertical-padding div.wrapper.clearfix p a {
- color: #fff;
+ color: #f63;
+ background-color: #fff;
+ padding: 3px;
+ border-radius: 3px;
 }
 
 #intro .accordion div {

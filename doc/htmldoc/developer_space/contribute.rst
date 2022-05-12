@@ -1,4 +1,3 @@
-.. _contribute:
 
 Contribute to NEST
 ==================

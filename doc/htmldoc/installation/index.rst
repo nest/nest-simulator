@@ -3,32 +3,27 @@
 Install NEST
 ============
 
+.. grid:: 2
 
-Install pre-built NEST package
-------------------------------
+   .. grid-item-card:: |user|  Install pre-built NEST package
 
-|user|  I'm a user who wants to :ref:`install NEST on my computer <user_install>`
+       I'm a user who wants to :ref:`install NEST on my computer <user_install>`
 
-|
 
-Install NEST for a class or workshop
-------------------------------------
+   .. grid-item-card:: |lecturer| Install NEST for a class or workshop
 
-|lecturer| I'm a lecturer who wants to :ref:`use NEST to teach <lecturer>`
+        I'm a lecturer who wants to :ref:`use NEST to teach <lecturer>`
 
-|
 
-Install NEST for HPC
---------------------
+.. grid:: 2
 
-|admin| I'm an administrator or user who wants to :ref:`set up NEST on a large cluster or supercomputer <admin_install>`
+    .. grid-item-card:: |admin| Install NEST for HPC
 
-|
+        I'm an administrator or user who wants to :ref:`set up NEST on a large cluster or supercomputer <admin_install>`
 
-Install NEST from source
-------------------------
+    .. grid-item-card:: |dev| Install NEST from source
 
-|dev| I'm a developer who wants to :ref:`do development in NEST <dev_install>`
+        I'm a developer who wants to :ref:`do development in NEST <dev_install>`
 
 ----
 

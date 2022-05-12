@@ -48,14 +48,13 @@ Here you can dive into various topics about NEST.
       :link:  models_contents
       :link-type: ref
 
-.. grid:: 1
+.. grid:: 2
 
    .. grid-item-card:: |hpcicon| High performance computers (HPC) 
       :columns: 6
       :text-align: center
       :link: parallel_computing
       :link-type: ref
-
 
 .. grid::  3
    :gutter: 1
@@ -74,24 +73,19 @@ Here you can dive into various topics about NEST.
 
        * :ref:`nest_music`
 
-   .. grid-item-card:: |releaseicon| Release notes
+ 
 
-      * :ref:`release_3.3`
-
-      * :ref:`release_3.2`
-
-      * :ref:`release_3.1`
-
-      * :ref:`release_3.0`
-
-
-
-.. grid:: 2 
+.. grid::  3
    :gutter: 1
 
    .. grid-item-card:: |converticon| Convert NEST 2.X scripts to 3.X
       :columns: 5
       :link: refguide_2_3
+      :link-type: ref
+
+   .. grid-item-card:: |releaseicon| Release notes
+      :columns: 4
+      :link: release_notes
       :link-type: ref
 
    .. grid-item-card:: |glossaryicon| Glossary 
@@ -100,7 +94,6 @@ Here you can dive into various topics about NEST.
       :link-type: ref
 
 
-    
 .. toctree::
    :maxdepth: 1
    :hidden:

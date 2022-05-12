@@ -199,7 +199,7 @@ public:
 
 private:
   void init_buffers_();
-  void calibrate();
+  void pre_run_hook();
   void update( const Time&, const long, const long );
 
   // END Boilerplate function declarations ----------------------------

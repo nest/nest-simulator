@@ -31,7 +31,6 @@ with externally applied current and spikes impinging
 
 Voltage traces, current traces, threshold traces, and spikes are shown.
 
-KEYWORDS: glif_psc
 """
 
 ##############################################################################

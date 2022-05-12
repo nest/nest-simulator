@@ -230,7 +230,7 @@ nest::pp_pop_psc_delta::init_buffers_()
 
 
 void
-nest::pp_pop_psc_delta::calibrate()
+nest::pp_pop_psc_delta::pre_run_hook()
 {
 
   if ( P_.tau_eta_.size() == 0 )

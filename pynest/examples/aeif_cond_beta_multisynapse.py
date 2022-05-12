@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-aeif_cond_beta_multisynapse
----------------------------
+Example of an AEIF neuron with multiple synaptic rise and decay time constants
+------------------------------------------------------------------------------
 
 """
 

@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-gif_cond_exp_multisynapse
--------------------------
+Example network using generalized IAF neuron with postsynaptic conductances
+---------------------------------------------------------------------------
 
 """
 

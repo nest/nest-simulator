@@ -32,7 +32,6 @@ with externally applied current and spikes impinging
 Voltage traces, injecting current traces, threshold traces, synaptic
 conductance traces and spikes are shown.
 
-KEYWORDS: glif_cond
 """
 
 ##############################################################################

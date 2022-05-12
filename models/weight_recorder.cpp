@@ -134,9 +134,9 @@ nest::weight_recorder::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::weight_recorder::calibrate()
+nest::weight_recorder::pre_run_hook()
 {
-  RecordingDevice::calibrate(
+  RecordingDevice::pre_run_hook(
     { nest::names::weights }, { nest::names::targets, nest::names::receptors, nest::names::ports } );
 }
 

@@ -91,7 +91,7 @@ public:
   // constructor, destructor
   Compartment( const long compartment_index, const long parent_index );
   Compartment( const long compartment_index, const long parent_index, const DictionaryDatum& compartment_params );
-  ~Compartment(){};
+  ~Compartment() {};
 
   // initialization
   void pre_run_hook();
@@ -168,7 +168,7 @@ private:
 public:
   // constructor, destructor
   CompTree();
-  ~CompTree(){};
+  ~CompTree() {};
 
   // initialization functions for tree structure
   void add_compartment( const long parent_index );

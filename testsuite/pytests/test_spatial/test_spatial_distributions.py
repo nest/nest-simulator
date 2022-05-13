@@ -137,7 +137,7 @@ class SpatialTester:
                            'mean_x': 0.5, 'mean_y': 0.7, 'rho': 0.5, 'c': 0.},
             'gamma': {'kappa': 3., 'theta': self._L / 4.},
             'gabor': {'std': self._L, 'gamma': 0.7, 'lam': self._L,
-                      'theta': math.pi / 4., 'psi': -math.pi / 6}}
+                      'theta': 360. / 8., 'psi': - 360. / 6.}}
         self._params = default_params[spatial_distribution]
         if distribution_params is not None:
             if spatial_distribution == 'constant':
@@ -268,10 +268,10 @@ class SpatialTester:
 
     def _gabor(self, D):
         """Rectified Gabor distribution"""
-        x_prime = D * np.cos(self._params['theta']) + D * np.sin(self._params['theta'])
-        y_prime = - D * np.sin(self._params['theta']) + D * np.cos(self._params['theta'])
-        gabor_cos = np.cos(2 * np.pi * x_prime / self._params['lam'] + self._params['psi'])
-        gabor_exp = np.exp(- (x_prime**2  + self._params['gamma']**2 * y_prime**2) / (2 * self._params['std']**2))
+        x_prime = D * np.cos(self._params['theta'] * np.pi / 180) + D * np.sin(self._params['theta'] * np.pi / 180)
+        y_prime = - D * np.sin(self._params['theta'] * np.pi / 180) + D * np.cos(self._params['theta'] * np.pi / 180)
+        gabor_cos = np.cos(2 * np.pi * y_prime / self._params['lam'] + self._params['psi'] * np.pi / 180)
+        gabor_exp = np.exp(- (self._params['gamma']**2 * x_prime**2 + y_prime**2) / (2 * self._params['std']**2))
         return np.maximum(gabor_cos, 0) * gabor_exp
 
     def _create_distance_data(self):

@@ -926,13 +926,13 @@ parameters drawing values from random distributions.
   +----------------------------------------------+--------------------+------------------------------------------------------+
   |                                              |                    | .. math::                                            |
   |                                              | | x,               |                                                      |
-  |                                              | | y,               |    p(x) = \big[\cos(2 \pi \frac{x^{\prime}}{\lambda} |
-  |                                              | | theta,           |    + \psi)\big]^{+} e^{-\frac{                       |
-  | ``nest.spatial_distributions.gabor()``       | | gamma,           |    x^{\prime 2}+\gamma^{2}y^{\prime 2}}{             |
-  |                                              | | std,             |    2\text{std}^{2}}}                                 |
-  |                                              | | lam,             |    \\ x^{\prime} = x\cos\theta + y\sin\theta         |
-  |                                              | | psi              |    \\ y^{\prime} = -x\sin\theta + y\cos\theta        |
-  |                                              |                    |                                                      |
+  |                                              | | y,               |    p(x) = \big[\cos(360^{\circ}                      |
+  |                                              | | theta,           |    \frac{y^{\prime}}{\lambda}                        |
+  | ``nest.spatial_distributions.gabor()``       | | gamma,           |    + \psi)\big]^{+} e^{-\frac{                       |
+  |                                              | | std,             |    \gamma^{2}x^{\prime 2}+y^{\prime 2}}{             |
+  |                                              | | lam,             |    2\text{std}^{2}}}                                 |
+  |                                              | | psi              |    \\ x^{\prime} = x\cos\theta + y\sin\theta         |
+  |                                              |                    |    \\ y^{\prime} = -x\sin\theta + y\cos\theta        |
   +----------------------------------------------+--------------------+------------------------------------------------------+
   |                                              |                    | .. math:: p(x) = \frac{x^{\kappa-1}e^{-\frac{x}      |
   | ``nest.spatial_distributions.gamma()``       | | x,               |     {\theta}}}{\theta^\kappa\Gamma(\kappa)}          |

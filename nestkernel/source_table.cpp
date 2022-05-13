@@ -238,10 +238,10 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
     // node ID and synapse-type id on this MPI rank
     std::vector< int > recv_counts_secondary_events_in_int_per_rank( kernel().mpi_manager.get_num_processes(), 0 );
 
-    for (
-      std::set< std::pair< index, size_t > >::const_iterator cit = ( *unique_secondary_source_node_id_syn_id ).begin();
-      cit != ( *unique_secondary_source_node_id_syn_id ).end();
-      ++cit )
+    for ( std::set< std::pair< index, size_t > >::const_iterator cit =
+            ( *unique_secondary_source_node_id_syn_id ).begin();
+          cit != ( *unique_secondary_source_node_id_syn_id ).end();
+          ++cit )
     {
       const thread source_rank = kernel().mpi_manager.get_process_id_of_node_id( cit->first );
       const size_t event_size = kernel().model_manager.get_secondary_event_prototype( cit->second, tid ).size();
@@ -279,11 +279,10 @@ nest::SourceTable::source_should_be_processed_( const thread rank_start,
 {
   const thread source_rank = kernel().mpi_manager.get_process_id_of_node_id( source.get_node_id() );
 
-  return not( source.is_processed() or source.is_disabled()
-           // is this thread responsible for this part of the MPI
-           // buffer?
-           or source_rank < rank_start
-           or rank_end <= source_rank );
+  return not( source.is_processed()
+    or source.is_disabled()
+    // is this thread responsible for this part of the MPI buffer?
+    or source_rank < rank_start or rank_end <= source_rank );
 }
 
 bool

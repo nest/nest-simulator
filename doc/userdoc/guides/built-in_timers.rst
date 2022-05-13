@@ -1,3 +1,5 @@
+.. _built_in_timers:
+
 Built-in timers
 ===============
 

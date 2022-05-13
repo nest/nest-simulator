@@ -78,7 +78,7 @@ Conductance based exponential integrate-and-fire neuron model
 Description
 +++++++++++
 
-aeif_cond_exp is the adaptive exponential integrate and fire neuron
+``aeif_cond_exp`` is the adaptive exponential integrate and fire neuron
 according to Brette and Gerstner (2005), with postsynaptic
 conductances in the form of truncated exponentials.
 
@@ -89,14 +89,14 @@ The membrane potential is given by the following differential equation:
 
 .. math::
 
- C dV/dt= -g_L(V-E_L)+g_L*\Delta_T*\exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e) \\
+ C dV/dt= -g_L(V-E_L)+g_L \cdot \Delta_T \cdot \exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e) \\
                                                      -g_i(t)(V-E_i)-w +I_e
 
 and
 
 .. math::
 
- \tau_w * dw/dt= a(V-E_L) -W
+ \tau_w \cdot dw/dt= a(V-E_L) -W
 
 Note that the spike detection threshold V_peak is automatically set to
 :math:`V_th+10 mV` to avoid numerical instabilites that may result from
@@ -104,6 +104,9 @@ setting V_peak too high.
 
 For implementation details see the
 `aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
+
+See also [1]_.
+
 
 Parameters:
 +++++++++++++
@@ -306,8 +309,8 @@ public:
    */
   struct Buffers_
   {
-    Buffers_( aeif_cond_exp& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, aeif_cond_exp& ); //!<Sets buffer pointers to 0
+    Buffers_( aeif_cond_exp& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, aeif_cond_exp& ); //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< aeif_cond_exp > logger_;

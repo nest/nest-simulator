@@ -36,7 +36,7 @@ class Dictionary;
 class SLIModule
 {
 public:
-  virtual ~SLIModule(){};
+  virtual ~SLIModule() {};
 
   /**
    * Initialize the module.

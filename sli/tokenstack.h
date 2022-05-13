@@ -98,7 +98,8 @@ public:
     pop_back();
   }
 
-  void pop_move( Token& e ) // new one 5.5.97
+  void
+  pop_move( Token& e )
   {
     e.move( *( end() - 1 ) );
     pop_back();

@@ -188,12 +188,12 @@ public:
     bool requires_clopath_archiving,
     bool requires_urbanczik_archiving )
     : ConnectorModel( name,
-        is_primary,
-        has_delay,
-        requires_symmetric,
-        supports_wfr,
-        requires_clopath_archiving,
-        requires_urbanczik_archiving )
+      is_primary,
+      has_delay,
+      requires_symmetric,
+      supports_wfr,
+      requires_clopath_archiving,
+      requires_urbanczik_archiving )
     , receptor_type_( 0 )
   {
   }
@@ -283,12 +283,12 @@ public:
     const bool requires_symmetric,
     const bool supports_wfr )
     : GenericConnectorModel< ConnectionT >( name,
-        /*is _primary=*/false,
-        has_delay,
-        requires_symmetric,
-        supports_wfr,
-        /*requires_clopath_archiving=*/false,
-        /*requires_urbanczik_archiving=*/false )
+      /*is _primary=*/false,
+      has_delay,
+      requires_symmetric,
+      supports_wfr,
+      /*requires_clopath_archiving=*/false,
+      /*requires_urbanczik_archiving=*/false )
     , pev_( 0 )
   {
     pev_ = new typename ConnectionT::EventType();

@@ -74,7 +74,7 @@ def helpdesk():
 
     Please note that the help pages will only be available if you ran
     ``make html`` prior to installing NEST. For more details, see
-    :ref:`documentation_workflow`.
+    :ref:`doc_workflow`.
 
     """
 

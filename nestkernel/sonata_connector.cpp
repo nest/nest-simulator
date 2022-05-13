@@ -95,6 +95,8 @@ SonataConnector::connect()
     H5::H5File file;
     try
     {
+      // TODO: H5File has user-provided copy-constructor, so using the implicitly-declared operator=() generates a
+      // warning.
       file = H5::H5File( edge_file, H5F_ACC_RDONLY );
     }
     catch ( const H5::Exception& e )
@@ -137,7 +139,7 @@ SonataConnector::connect()
         weight_and_delay_from_dataset_( edge_parameters );
         auto read_dataset = [&edge_parameters]( double*& data, const char* data_set_name ) {
           const auto dataset = edge_parameters.openDataSet( data_set_name );
-          data = new double[ dataset.getStorageSize() ]; // TODO: shared_ptr?
+          data = new double[ dataset.getStorageSize() ];
           dataset.read( data, dataset.getDataType() );
           return data;
         };
@@ -175,7 +177,7 @@ SonataConnector::connect()
 
           try
           {
-            // Retrieve the correct NodeCollection's
+            // Retrieve the correct NodeCollections
             const auto nest_nodes = getValue< DictionaryDatum >( sonata_dynamics_->lookup( "nodes" ) );
             const auto current_source_nc =
               getValue< NodeCollectionPTR >( nest_nodes->lookup( source_attribute_value ) );
@@ -185,7 +187,8 @@ SonataConnector::connect()
             auto snode_it = current_source_nc->begin();
             auto tnode_it = current_target_nc->begin();
 
-            // Iterate the datasaets and create the connections
+
+            // Iterate the datasets and create the connections
             for ( hsize_t i = 0; i < num_source_node_id; ++i )
             {
               const auto sonata_source_id = source_node_id_data[ i ];
@@ -197,6 +200,7 @@ SonataConnector::connect()
 
               const thread target_thread = target->get_thread();
 
+              // Skip if target is not on this thread, or not on this MPI process.
               if ( target->is_proxy() or tid != target_thread )
               {
                 continue;

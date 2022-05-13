@@ -80,7 +80,7 @@ private:
    *
    * @return number of elements
    */
-  hsize_t get_num_elements_( H5::DataSet& dataset );
+  hsize_t get_num_elements_( const H5::DataSet& dataset );
 
   /**
    * Read data in a dataset
@@ -90,10 +90,10 @@ private:
    *
    * @returns pointer object to data in dataset
    */
-  int* read_data_( H5::DataSet dataset, int num_elements );
+  int* read_data_( const H5::DataSet& dataset, int num_elements );
 
   // TODO: remove, only used once
-  int* get_data_( H5::Group group, std::string name );
+  int* get_data_( const H5::Group& group, const std::string& name );
 
   /**
    * Get attribute of dataset
@@ -102,7 +102,7 @@ private:
    * @param dataset dataset to get attribute from
    * @param attribute_name name of attribute
    */
-  void get_attributes_( std::string& attribute_value, H5::DataSet dataset, std::string attribute_name );
+  void get_attributes_( std::string& attribute_value, const H5::DataSet& dataset, const std::string& attribute_name );
 
   /**
    * Check if weight or delay are given as datasets
@@ -113,7 +113,7 @@ private:
    *
    * @param group H5 group for which to check if weight or delay exists
    */
-  void weight_and_delay_from_dataset_( H5::Group group );
+  void weight_and_delay_from_dataset_( const H5::Group& group );
 
   /**
    * Create map between type id and syn_spec given in edge_dict

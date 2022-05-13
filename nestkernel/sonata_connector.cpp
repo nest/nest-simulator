@@ -135,17 +135,20 @@ SonataConnector::connect()
 
         // Check if weight and delay are given as h5 files, if so, read the datasets
         weight_and_delay_from_dataset_( edge_parameters );
+        auto read_dataset = [&edge_parameters]( double*& data, const char* data_set_name ) {
+          const auto dataset = edge_parameters.openDataSet( data_set_name );
+          data = new double[ dataset.getStorageSize() ]; // TODO: shared_ptr?
+          dataset.read( data, dataset.getDataType() );
+          return data;
+        };
+
         if ( weight_dataset_ )
         {
-          auto weight_dataset = edge_parameters.openDataSet( "syn_weight" );
-          syn_weight_data_ = new double[ weight_dataset.getStorageSize() ];
-          weight_dataset.read( syn_weight_data_, weight_dataset.getDataType() );
+          read_dataset( syn_weight_data_, "syn_weight" );
         }
         if ( delay_dataset_ )
         {
-          auto delay_dataset = edge_parameters.openDataSet( "delay" );
-          delay_data_ = new double[ delay_dataset.getStorageSize() ];
-          delay_dataset.read( delay_data_, delay_dataset.getDataType() );
+          read_dataset( delay_data_, "delay" );
         }
 
         // Get edge_type_id, these are later mapped to the different synapse parameters
@@ -203,25 +206,20 @@ SonataConnector::connect()
               const auto syn_spec =
                 getValue< DictionaryDatum >( edge_params->lookup( std::to_string( edge_type_id ) ) );
 
-              double weight = numerics::nan;
-              if ( weight_dataset_ )
-              {
-                weight = syn_weight_data_[ i ];
-              }
-              else if ( syn_spec->known( names::weight ) )
-              {
-                weight = ( *syn_spec )[ names::weight ];
-              }
+              auto get_syn_property = [&syn_spec, &i]( const bool dataset, const double* data, const Name& name ) {
+                if ( dataset ) // Syn_property is set from dataset if the dataset is defined
+                {
+                  return data[ i ];
+                }
+                else if ( syn_spec->known( name ) ) // Set syn_property from syn_spec if it is defined there
+                {
+                  return static_cast< double >( ( *syn_spec )[ name ] );
+                }
+                return numerics::nan; // Default value is NaN
+              };
 
-              double delay = numerics::nan;
-              if ( delay_dataset_ )
-              {
-                delay = delay_data_[ i ];
-              }
-              else if ( syn_spec->known( names::delay ) )
-              {
-                delay = ( *syn_spec )[ names::delay ];
-              }
+              const double weight = get_syn_property( weight_dataset_, syn_weight_data_, names::weight );
+              const double delay = get_syn_property( delay_dataset_, delay_data_, names::delay );
 
               RngPtr rng = get_vp_specific_rng( target_thread );
               get_synapse_params_( snode_id, *target, target_thread, rng, edge_type_id );

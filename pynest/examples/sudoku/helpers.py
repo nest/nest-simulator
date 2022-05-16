@@ -203,7 +203,7 @@ def validate_solution(puzzle, solution):
 
     # It is possible (in rare cases) that the network finds a valid
     # solution that does not conform to the initial puzzle configuration, that is,
-    # one of the cells where input is applied, is overridden by the rest of the
+    # one of the cells where input is applied is overridden by the rest of the
     # network. This is taken care of here.
     input_cells = np.where(puzzle != 0)
     puzzle_matched = puzzle[input_cells] == solution[input_cells]

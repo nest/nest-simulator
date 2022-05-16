@@ -46,7 +46,7 @@ font_italic = ImageFont.truetype(font_loc_it, 18, encoding="unic")
 
 
 def get_puzzle(puzzle_index):
-    """returns one of 8 sudoku configuration to be solved.
+    """returns one of 8 Sudoku configuration to be solved.
 
     Args:
         puzzle_index (int): index between 0 and 7 indicating the puzzle number

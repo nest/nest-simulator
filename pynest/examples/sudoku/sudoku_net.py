@@ -33,7 +33,7 @@ encodes a digit between 1 and 9 in one of the 81 cells and has outgoing
 inhibitory connections to several other populations. Namely all populations
 coding for the same digit in the same row, column and 3x3 box of the sudoku 
 field, since a given digit can only ever occur once in any of those three. It 
-also inhibits all populations in the same cell which code for different digits 
+also inhibits all populations in the same cell which encode different digits 
 to force the network to converge on a single digit per cell.
 
 If the network is simulated with just this configuration and some background 

@@ -36,7 +36,7 @@ Credit to the original SpiNNaker implementation of the network used here goes
 to Steve Furber and Andrew Rowley from the University of Manchester. 
 
 See Also
----------
+~~~~~~~~
 `Original implementation of this Network on SpiNNaker
 <https://github.com/SpiNNakerManchester/IntroLab/tree/master/sudoku>`_
 :doc:`network class <sudoku_net.py>`

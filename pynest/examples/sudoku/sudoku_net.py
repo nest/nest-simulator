@@ -239,7 +239,7 @@ class SudokuNet:
         self.spikerecorders.n_events = 0
 
     def set_noise_rate(self, rate):
-        """sets the rate of the poisson generator that feeds noise into the network.
+        """sets the rate of the Poisson generator that feeds noise into the network.
 
         Args:
             rate (float): average spike frequency in Hz

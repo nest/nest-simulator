@@ -19,36 +19,100 @@ time allows.
 
 By subscribing to the mailing list you will also get notified of all NEST related events!
 
-Before submitting a question, please take a look at our :ref:`guidelines for the NEST mailing list <mail_guidelines>`.
+.. grid:: 2
+
+   .. button-ref:: mail_guidelines
+       :color: success
+       :shadow: 
+       :ref-type: ref
+
+       See mailing list
+
+GitHub
+~~~~~~
+
+Possible features, bugs, or other issues can be discussed on GitHub.
+We encourage our whole community to provide feedback and help contribute to improving our code and documentation.
+
+.. grid:: 2
+
+   .. button-ref:: contribute
+       :color: success
+       :shadow: 
+       :ref-type: ref
+
+       Submit an issue or pull request 
 
 
-Submit an issue or pull request on Github
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-You can :ref:`issues` on Github or contribute to the code or documentation. See our :ref:`contribute` page for
-details.
-
+ 
 Open video conference
-~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 
 Every two weeks, we have an open video conference to discuss current issues and developments in NEST.
 We welcome users with questions regarding their implementations or issues they want help solving to join.
 This is an opportunity to have discussions in real time with developers.
 
-Information for dates and how to join can be found on `our GitHub wiki <https://github.com/nest/nest-simulator/wiki/Open-NEST-Developer-Video-Conference>`_
+Information for dates and how to join can be found on our GitHub wiki.
 
+.. grid:: 2
 
-.. include:: getting_help.rst
+   .. button-link::  https://github.com/nest/nest-simulator/wiki/Open-NEST-Developer-Video-Conference
+       :color: success
+       :shadow:
+
+       Open video conference wiki
+
+Get help
+--------
+
+.. grid:: 
+
+   .. grid-item-card:: Command line help
+      :link: command_help
+      :link-type: ref
+
+   .. grid-item-card:: Troubleshooting and faqs
+
+      * :ref:`troubleshooting`
+
+      * :ref:`faqs`
 
 Explore the NEST ecosystem
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------
+
+
+.. grid:: 3
+
+   .. grid-item-card:: Cite NEST
+       :link: cite_nest
+       :link-type: ref
+
+       If you used NEST in your work, cite the version you used
+
+   .. grid-item-card:: Publications related to NEST
+       :link: https://www.nest-simulator.org/publications/
+       :link-type: url
+
+   .. grid-item-card:: Find related projects
+       :link: related_projects
+       :link-type: ref
+
+.. grid::
+
+   .. grid-item-card:: News and updates
+       :link: https://nest-simulator.org
+       :link-type: url
+
+   .. grid-item-card:: Become a NEST initiative member 
+         :link: https://www.nest-initiative.org/
+         :link-type: url
+
+
 
 .. toctree::
   :maxdepth: 1
+  :hidden:
 
-  News and updates <https://nest-simulator.org>
-  Publications <https://www.nest-simulator.org/publications/>
-  NEST Initiative <https://www.nest-initiative.org/>
   related_projects
   citing-nest
 

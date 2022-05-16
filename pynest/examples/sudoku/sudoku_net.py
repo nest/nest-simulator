@@ -26,7 +26,7 @@ that due to their connectivity rules can converge on valid solutions for Sudoku.
 
 
 Notes
-------
+~~~~~
 The functionality of the network lies entirely within the inhibitory
 connections between neuron populations. Each population of size ``n_digit``
 encodes a digit between 1 and 9 in one of the 81 cells and has outgoing 

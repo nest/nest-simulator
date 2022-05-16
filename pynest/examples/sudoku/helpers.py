@@ -241,7 +241,7 @@ def plot_field(puzzle, solution, with_color=False):
         Otherwise, only black and white are used. Defaults to False.
 
     Returns:
-        PIL.Image: A visual representation of the sudoku solution.
+        PIL.Image: A visual representation of the Sudoku solution.
     """
     background = np.full((image_size, image_size, 3), 255, dtype=np.uint8)
     field = np.full((field_size, field_size, 3), 255, dtype=np.uint8)

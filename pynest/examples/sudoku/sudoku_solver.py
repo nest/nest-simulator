@@ -23,7 +23,7 @@ r"""Script controlling the simulation of a single game of Sudoku
 ----------------------------------------------------------------
 
 This script instantiates a network and configures it to solve 
-a sudoku puzzle. I then simulates the network until it either
+a Sudoku puzzle. I then simulates the network until it either
 converges on a solution or a maximum simulation time has been
 reached.
 

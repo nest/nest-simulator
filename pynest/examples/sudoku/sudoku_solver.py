@@ -39,7 +39,8 @@ See Also
 ~~~~~~~~
 `Original implementation of this Network on SpiNNaker
 <https://github.com/SpiNNakerManchester/IntroLab/tree/master/sudoku>`_
-:doc:`network class <sudoku_net.py>`
+
+:doc:`Network class <sudoku_net>`
 :doc:`script for generating output gifs <plot_progress.py>`
 :doc:`helper functions <helpers.py>`
 

@@ -201,7 +201,7 @@ def validate_solution(puzzle, solution):
         if expected_numbers != set(solution[:, i]):
             cols[i] = False
 
-    # It is possible (in rare cases), that the network finds a valid
+    # It is possible (in rare cases) that the network finds a valid
     # solution that does not conform to the initial puzzle configuration, i.e.
     # one of the cells where input is applied, is overridden by the rest of the
     # network. This is taken care of here.

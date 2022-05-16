@@ -33,7 +33,7 @@ For creating the individual images, PIL is used. Because the GIF creation
 tool in PIL is faulty, imageio is required for that step.
 
 See Also
----------
+~~~~~~~~
 
 :doc:`sudoku_solver`
 :doc:`helpers`

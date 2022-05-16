@@ -43,7 +43,8 @@ See Also
 :doc:`Network class <sudoku_net>`
 
 :doc:`Script for generating output gifs <plot_progress>`
-:doc:`helper functions <helpers.py>`
+
+:doc:`Helper functions <helpers>`
 
 Notes
 ~~~~~

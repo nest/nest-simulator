@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-r"""Class encapsulating the network for solving sudokus
+r"""Class encapsulating the network for solving Sudoku
 ----------------------------------------------------------------
 The class SudokuNet constructs a network of LIF neurons with static synapses
 that due to their connectivity rules can converge on valid solutions for Sudoku.

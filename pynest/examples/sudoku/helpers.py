@@ -228,7 +228,7 @@ image_size = field_size + 2*frame_width
 
 
 def plot_field(puzzle, solution, with_color=False):
-    """generates a graphical representation of a sudoku field. Digits that are
+    """generates a graphical representation of a Sudoku field. Digits that are
     given by the puzzle are represented as bold and black, while calculated
     digits are represented in grey and italic.
 

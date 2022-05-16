@@ -41,7 +41,8 @@ See Also
 <https://github.com/SpiNNakerManchester/IntroLab/tree/master/sudoku>`_
 
 :doc:`Network class <sudoku_net>`
-:doc:`script for generating output gifs <plot_progress.py>`
+
+:doc:`Script for generating output gifs <plot_progress>`
 :doc:`helper functions <helpers.py>`
 
 Notes

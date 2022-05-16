@@ -202,7 +202,7 @@ def validate_solution(puzzle, solution):
             cols[i] = False
 
     # It is possible (in rare cases) that the network finds a valid
-    # solution that does not conform to the initial puzzle configuration, i.e.
+    # solution that does not conform to the initial puzzle configuration, that is,
     # one of the cells where input is applied, is overridden by the rest of the
     # network. This is taken care of here.
     input_cells = np.where(puzzle != 0)

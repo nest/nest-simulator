@@ -362,7 +362,7 @@ install( FILES LICENSE README.md
     )
 
 add_custom_target( install-nodoc
-  COMMAND make NEST_INSTALL_NODOC=true install
+  COMMAND $(MAKE) NEST_INSTALL_NODOC=true install
 )
 
 nest_print_config_summary()

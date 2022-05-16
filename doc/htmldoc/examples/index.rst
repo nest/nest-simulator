@@ -134,3 +134,4 @@ PyNEST examples
 
    ../auto_examples/sudoku/sudoku_net
    ../auto_examples/sudoku/sudoku_solver
+   ../auto_examples/sudoku/plot_progress

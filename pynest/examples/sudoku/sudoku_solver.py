@@ -44,7 +44,7 @@ See Also
 :doc:`helper functions <helpers.py>`
 
 Notes
-------
+~~~~~
 Terminology used in variable names and documentation:
 cell:       One of the 81 squares that make up the sudoku field
 box:        One of the 9 collections of 3x3 cells necessary to solve a Sudoku

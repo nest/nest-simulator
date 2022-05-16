@@ -34,7 +34,8 @@ tool in PIL is faulty, imageio is required for that step.
 
 See Also
 ---------
-:doc:`sudoku_solver.py`
+
+:doc:`sudoku_solver`
 :doc:`helpers.py`
 
 :Authors: J Gille

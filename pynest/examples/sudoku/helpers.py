@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-r"""Helper functions for the sudoku solver
+r"""Helper functions for the Sudoku solver
 ----------------------------------------------------------------
 
 :Authors: J Gille, S Furber, A Rowley

@@ -227,7 +227,7 @@ gamma_sup_generator::send_test_event( Node& target, rport receptor_type, syninde
     SpikeEvent e;
     e.set_sender( *this );
     const port p = target.handles_test_event( e, receptor_type );
-    if ( p != invalid_port_ )
+    if ( p != invalid_port )
     {
       // count number of targets
       ++P_.num_targets_;

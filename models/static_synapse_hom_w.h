@@ -87,42 +87,42 @@ public:
     port
     handles_test_event( SpikeEvent&, rport )
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
     handles_test_event( RateEvent&, rport )
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
     handles_test_event( DataLoggingRequest&, rport )
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
     handles_test_event( CurrentEvent&, rport )
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
     handles_test_event( ConductanceEvent&, rport )
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
     handles_test_event( DoubleDataEvent&, rport )
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
     handles_test_event( DSSpikeEvent&, rport )
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
     handles_test_event( DSCurrentEvent&, rport )
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 

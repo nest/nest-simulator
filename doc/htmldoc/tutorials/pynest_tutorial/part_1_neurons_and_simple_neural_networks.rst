@@ -475,7 +475,7 @@ the following sections of this introduction will add more.
 Getting information about NEST
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-See the :ref:`Getting Help Section <getting_help>`
+See the :ref:`Getting Help Section <command_help>`
 
 Nodes
 ~~~~~

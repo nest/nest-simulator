@@ -1,6 +1,6 @@
 .. _faqs:
 
-Frequently Asked Questions
+Frequently asked questions
 ==========================
 
 Installation
@@ -87,4 +87,4 @@ Connections
        nest.Connect(n, n[:1], sync_spec={'model'='exc_dist_syn'})
        nest.Simulate(10)
 
-
+.. include:: qa-precise-spike-times.rst

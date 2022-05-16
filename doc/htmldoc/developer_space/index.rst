@@ -61,7 +61,7 @@ Please familiarize yourself with our guides and workflows:
          :ref:`pyexample_template`
        * Check that documentation renders properly: See the :ref:`build documentation <doc_workflow>` guide for developer and user documentation
 
-.. seealso:: Adding models to NEST
+.. note:: Adding models to NEST
 
     If you are looking at creating a new model, please check out :doc:`NESTML <nestml:index>`:
     a modeling language supporting neuron and synapse specification, based on the syntax of Python.
@@ -70,6 +70,8 @@ In order to make sure that the NEST Initiative can manage the NEST code base in 
 you need to send us a completed and signed
 :download:`NEST Contributor Agreement <static/NEST_Contributor_Agreement.pdf>` to transfer your
 copyright to the NEST Initiative before we can merge your pull request.
+
+----
 
 Developer guides
 ----------------

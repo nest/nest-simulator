@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# pynest_example_template.py
+# plot_progress.py
 #
 # This file is part of NEST.
 #

@@ -36,7 +36,7 @@ See Also
 ---------
 
 :doc:`sudoku_solver`
-:doc:`helpers.py`
+:doc:`helpers`
 
 :Authors: J Gille
 """

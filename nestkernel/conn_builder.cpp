@@ -1720,6 +1720,148 @@ nest::BernoulliAstroBuilder::connect_()
 {
 #pragma omp parallel
   {
+    const thread tid = kernel().vp_manager.get_thread_id();
+
+    // Use RNG generating same number sequence on all threads
+    RngPtr synced_rng = get_vp_synced_rng( tid );
+
+    try
+    {
+      unsigned long indegree;
+      index snode_id;
+      std::set< index > previous_snode_ids;
+      index anode_id;
+      std::set< index > previous_anode_ids;
+      Node* target;
+      thread target_thread;
+      Node* astro;
+      thread astro_thread;
+
+      for ( NodeCollection::const_iterator tnode_id = targets_->begin(); tnode_id != targets_->end(); ++tnode_id )
+      {
+        // get target node
+        target = kernel().node_manager.get_node_or_proxy( ( *tnode_id ).node_id, tid );
+        target_thread = tid;
+
+        // sample indegree according to truncated Binomial distribution
+        binomial_distribution bino_dist;
+        // TODO: why use p_->value()? In symmetricBernoulli p_ is simply a float
+        binomial_distribution::param_type param( sources_->size(), p_->value( synced_rng, target ) );
+
+        indegree = sources_->size();
+        while ( indegree >= sources_->size() )
+        {
+          indegree = bino_dist( synced_rng, param );
+        }
+        assert( indegree < sources_->size() );
+
+        // check whether the target is on this thread
+        if ( target->is_proxy() )
+        {
+          target_thread = invalid_thread_;
+        }
+
+        previous_snode_ids.clear();
+        previous_anode_ids.clear();
+
+        // choose indegree number of sources randomly from all sources
+        size_t i = 0;
+        while ( i < indegree )
+        {
+          // choose target randomly
+          snode_id = ( *sources_ )[ synced_rng->ulrand( sources_->size() ) ];
+
+          // Avoid autapses and multapses. Due to symmetric connectivity,
+          // multapses might exist if the target neuron with node ID snode_id draws the
+          // source with node ID tnode_id while choosing sources itself.
+          if ( snode_id == ( *tnode_id ).node_id or previous_snode_ids.find( snode_id ) != previous_snode_ids.end() )
+          {
+            continue;
+          }
+          previous_snode_ids.insert( snode_id );
+
+          // increase i which counts the number of incoming connections
+          ++i;
+
+          // if target is local: connect source -> target
+          if ( target_thread == tid )
+          {
+            assert( target != NULL );
+            update_param_dict_( snode_id, *target, target_thread, synced_rng, 0 );
+            kernel().connection_manager.connect( snode_id,
+              target,
+              target_thread,
+              synapse_model_id_[0],
+              param_dicts_[ 0 ][ target_thread ],
+              d_,
+              w_ * ( 1 - c_spill_) );
+          }
+
+          // Connections from and to astrocyte
+          if ( astro_isBernoulli == true )
+          {
+            // Bernoulli trial to determine whether to pair this connection with astrocyte
+            if ( synced_rng->drand() >= p_astro_->value( synced_rng, target ) )
+            {
+              continue;
+            }
+            // choose astrocyte randomly
+            anode_id = ( *astrocytes_ )[ synced_rng->ulrand( astrocytes_size_ ) ];
+
+            // if astrocyte is local: connect source -> astrocyte
+            astro = kernel().node_manager.get_node_or_proxy( anode_id, tid );
+            astro_thread = tid;
+
+            if ( astro->is_proxy() )
+            {
+              astro_thread = invalid_thread_;
+            }
+            if ( astro_thread == tid )
+            {
+              assert( astro != NULL );
+              update_param_dict_( snode_id, *astro, astro_thread, synced_rng, 0 );
+              kernel().connection_manager.connect( snode_id,
+                astro,
+                astro_thread,
+                synapse_model_id_[0],
+                param_dicts_[ 0 ][ astro_thread ],
+                d_,
+                w_*c_spill_ );
+            }
+            
+            // Avoid connecting the same astrocyte to the target more than once
+            if ( previous_anode_ids.find( anode_id ) != previous_anode_ids.end() )
+            {
+              continue;
+            }
+            // if target is local: connect astrocyte -> target
+            if ( target_thread == tid )
+            {
+              assert( target != NULL );
+              update_param_dict_( anode_id, *target, target_thread, synced_rng, 0 );
+              kernel().connection_manager.connect( anode_id,
+                target,
+                target_thread,
+                synapse_model_id_astro_,
+                param_dicts_[ 0 ][ target_thread ],
+                numerics::nan,
+                w_sic_ );
+              // register astrocyte
+              previous_anode_ids.insert( anode_id );
+            }
+          }
+        }
+      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  }
+  /*
+  {
     // get thread id
     const thread tid = kernel().vp_manager.get_thread_id();
 
@@ -1733,12 +1875,18 @@ nest::BernoulliAstroBuilder::connect_()
         for ( ; target_it < targets_->end(); ++target_it )
         {
           const index tnode_id = ( *target_it ).node_id;
+          std::cout << "get node " << tnode_id;
           Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
           if ( target->is_proxy() )
           {
+            std::cout << " is proxy" << std::endl;
             // skip array parameters handled in other virtual processes
             skip_conn_parameter_( tid );
             continue;
+          }
+          else
+          {
+            std::cout << std::endl;
           }
 
           inner_connect_( tid, rng, target, tnode_id );
@@ -1770,6 +1918,7 @@ nest::BernoulliAstroBuilder::connect_()
       exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   } // of omp parallel
+  */
 }
 
 void

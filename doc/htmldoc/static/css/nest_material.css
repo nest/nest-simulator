@@ -112,7 +112,7 @@ ul.md-tabs__list li.md-tabs__item a.md-tabs__link {
 }
 /* make header (top nav) thicker and increase font size of  */
 .md-header {
-	height: 2.8em;
+	height: 3.0em;
 }
 .md-flex {
   padding-top: 5px
@@ -165,11 +165,12 @@ ul.md-tabs__list li.md-tabs__item a.md-tabs__link {
 }
 /* footer size */
 .md-footer-nav__title, .md-footer-nav__direction {
-	font-size: 1.2em;
+	font-size: 1.1em;
+  margin-top: 1.7rem;
 }
 
 .md-footer-nav__button {
-	font-size: 1.2em;
+	font-size: 1.1em;
 }
 /* set heading size */
 .md-typeset h1 {

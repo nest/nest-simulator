@@ -1,8 +1,11 @@
+Icons provided by Flaticon
+--------------------------
+
+
 <a href="https://www.flaticon.com/free-icons/neuron" title="neuron icons">Neuron icons created by Nadiinko - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/neuron" title="neuron icons">Neuron icons created by Freepik - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/monitor" title="monitor icons">Monitor icons created by Icongeek26 - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/dictionary" title="dictionary icons">Dictionary icons created by Freepik - Flaticon</a>
-Network icon: 
 <a href="https://www.flaticon.com/free-icons/neuron" title="neuron icons">Neuron icons created by Freepik - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/chat" title="chat icons">Chat icons created by Freepik - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/user" title="user icons">User icons created by Freepik - Flaticon</a>

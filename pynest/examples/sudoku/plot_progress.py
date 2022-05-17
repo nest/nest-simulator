@@ -36,6 +36,7 @@ See Also
 ~~~~~~~~
 
 :doc:`sudoku_solver`
+
 :doc:`helpers`
 
 :Authors: J Gille

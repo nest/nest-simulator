@@ -167,7 +167,7 @@ public:
     port
     handles_test_event( SpikeEvent&, rport )
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 

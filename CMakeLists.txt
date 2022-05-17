@@ -27,9 +27,11 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 project( nest CXX C )
 set( NEST_USER_EMAIL "users@nest-simulator.org" )
 
+include( ColorMessages )
+
 # check if the given CMAKE_INSTALL_PREFIX is not empty
 if("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
-  message(FATAL_ERROR "CMAKE_INSTALL_PREFIX cannot be an empty string")
+  printError("CMAKE_INSTALL_PREFIX cannot be an empty string")
 endif()
 
 # handle relative installation prefixes
@@ -37,7 +39,7 @@ if( NOT IS_ABSOLUTE ${CMAKE_INSTALL_PREFIX})
     # convert relative path to absolute path
     get_filename_component(absPath ${CMAKE_INSTALL_PREFIX} ABSOLUTE BASE_DIR ${CMAKE_BINARY_DIR})
     set(CMAKE_INSTALL_PREFIX ${absPath})
-    message(STATUS "Relative CMAKE_INSTALL_PREFIX has been set to absolute path ${CMAKE_INSTALL_PREFIX}")
+    printInfo("Relative CMAKE_INSTALL_PREFIX has been converted to absolute path ${CMAKE_INSTALL_PREFIX}")
 endif()
 
 ################################################################################
@@ -184,7 +186,7 @@ nest_check_random123()
 
 include( NestVersionInfo )
 get_version_info()
-message("-- NEST version: ${NEST_VERSION_STRING}")
+printInfo("-- NEST version: ${NEST_VERSION_STRING}")
 
 ################################################################################
 ##################         Enable Testing Targets             ##################
@@ -260,7 +262,7 @@ elseif ( ${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel" )
   set( ALL_CFLAGS "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_MINSIZEREL}" )
   set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_MINSIZEREL}" )
 else ()
-  message( FATAL_ERROR "Unknown build type: '${CMAKE_BUILD_TYPE}'" )
+  printError( "Unknown build type: '${CMAKE_BUILD_TYPE}'" )
 endif ()
 if ( with-defines )
   foreach ( def ${with-defines} )

@@ -48,18 +48,11 @@ Here you can dive into various topics about NEST.
       :link:  models_contents
       :link-type: ref
 
-.. grid:: 2
-
-   .. grid-item-card:: |hpcicon| High performance computers (HPC) 
-      :columns: 6
-      :text-align: center
-      :link: parallel_computing
-      :link-type: ref
-
 .. grid::  3
    :gutter: 1
 
    .. grid-item-card:: |randomicon| NEST behavior
+      :columns: 3
 
        * :ref:`built_in_timers`
 
@@ -68,12 +61,20 @@ Here you can dive into various topics about NEST.
        * :ref:`run_simulations`
 
    .. grid-item-card:: |connecticon| Connect to other tools
-
+      :columns: 4
+  
        * :ref:`nest_server`
 
        * :ref:`nest_music`
 
- 
+
+   .. grid-item-card:: |hpcicon| High performance computers (HPC) 
+      :columns: 5
+      :text-align: center
+      :link: parallel_computing
+      :link-type: ref
+
+
 
 .. grid::  3
    :gutter: 1

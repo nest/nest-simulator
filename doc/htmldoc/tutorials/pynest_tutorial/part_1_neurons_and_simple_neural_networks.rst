@@ -192,7 +192,7 @@ directly
     neuron.I_e = 376.0
     neuron.I_e
 
-Next we create a `multimeter``, a *device* we can use to record the
+Next we create a :hxt_ref:`multimeter`, a *device* we can use to record the
 membrane voltage of a neuron over time. The property ``record_from``
 expects a list of the names of the variables we would like to
 record. The variables exposed to the multimeter vary from model to

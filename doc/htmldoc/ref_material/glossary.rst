@@ -1,4 +1,4 @@
-::orphan:
+:orphan:
 
 .. _glossary:
 
@@ -50,7 +50,7 @@ Glossary
  MPI
    Message passing interface.
 
- stdp
+ STDP
    Spike-timing dependent plasticity synapse.
 
  st

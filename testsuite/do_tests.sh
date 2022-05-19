@@ -111,8 +111,7 @@ if test "${PYTHON}"; then
       PYTEST_VERSION="$(echo "${PYTEST_VERSION}" | cut -d' ' -f2)"
 fi
 
-python3 -c "import junitparser" >/dev/null 2>&1
-if test $? != 0; then
+if ! python3 -c "import junitparser" >/dev/null 2>&1; then
     echo "Error: Required Python package 'junitparser' not found."
     exit 1
 fi
@@ -517,6 +516,9 @@ if command -v run_all_cpptests >/dev/null 2>&1; then
 else
   echo "  Not running C++ tests because NEST was compiled without Boost."
 fi
+
+# the following steps rely on `$?`, so breaking on error is not an option and we turn it off
+set +e
 
 # We use plain python3 here to collect results. This also works if
 # PyNEST was not enabled and ${PYTHON} is consequently not set.

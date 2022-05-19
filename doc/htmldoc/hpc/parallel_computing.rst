@@ -38,7 +38,7 @@ Virtual processes
 -----------------
 
 We use the concept of local and remote threads, called *virtual processes*.
-A virtual process (VP) is a thread residing in one of NEST's MPI processes.
+A virtual process (VP) is a thread residing in one of NEST's :hxt_ref:`MPI` processes.
 For both thread and distributed parallelization, VPs simplify handling of
 neuron  and synapses distributions.
 Virtual processes are distributed round-robin (i.e. each VP is allocated equal

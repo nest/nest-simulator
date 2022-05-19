@@ -35,7 +35,7 @@ following figure shows the basic loop that is run upon a call to
    Simulation Loop
 
 The simulation loop. Light gray boxes denote thread parallel parts, dark
-gray boxes denote MPI parallel parts. U(St) is the update operator that
+gray boxes denote :hxt_ref:`MPI` parallel parts. U(St) is the update operator that
 propagates the internal state of a neuron or device.
 
 .. _simulation_resolution:
@@ -61,7 +61,7 @@ Two major optimizations in NEST are built on this decoupling:
    always for *dmin* time in one go, as to keep neurons in cache as long
    as possible.
 
-2. MPI processes only communicate in intervals of *dmin* as to minimize
+2. :hxt_ref:`MPI`processes only communicate in intervals of *dmin* as to minimize
    communication costs.
 
 These optimizations mean that the sizes of spike buffers in nodes and
@@ -251,7 +251,7 @@ instances in parallel; don't forget to use different
 :ref:`random seeds <random_numbers>`!
 
 The following example performs simulations of a single neuron driven by
-a Poisson spike train using different seeds and output files for each run:
+a Poisson :hxt_ref:`spike train` using different seeds and output files for each run:
 
 ::
 

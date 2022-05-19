@@ -30,7 +30,7 @@ different way or the terms of mathematical expressions are reordered.
 A: Yes, even though network dynamics may be chaotic, for many neuron
 models relevant to Computational Neuroscience the dynamics of the single
 neuron is not. Examples are integrate-and-fire models with linear
-subthreshold dynamics and the AdEx model considered in `Hanuschkin
+:hxt_ref:`subthreshold dynamics` and the AdEx model considered in `Hanuschkin
 (2010) <http://dx.doi.org/10.3389/fninf.2010.00113>`__. In these cases
 it is possible to study the accuracy of a solution of the single neuron
 dynamics.

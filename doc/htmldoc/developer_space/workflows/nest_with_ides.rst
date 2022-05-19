@@ -249,7 +249,7 @@ documentation on C++ debugging in VS Code, see the
 Xcode Workflow
 --------------
 
-This section contains instructions on how to develop NEST on a Mac (OSX 10.10.3 as of this writing) using Xcode (Version 6.3.2). As the shipped gcc, aka clang (based on LLVM 3.6.0svn), does not support OpenMP and there is no MPI shipped by default, this also explains how to get a proper gcc (with OpenMP and MPI enabled) installed on Mac.
+This section contains instructions on how to develop NEST on a Mac (OSX 10.10.3 as of this writing) using Xcode (Version 6.3.2). As the shipped gcc, aka clang (based on LLVM 3.6.0svn), does not support OpenMP and there is no :hxt_ref:`MPI` shipped by default, this also explains how to get a proper gcc (with OpenMP and MPI enabled) installed on Mac.
 
 Setup Infrastructure
 ~~~~~~~~~~~~~~~~~~~~

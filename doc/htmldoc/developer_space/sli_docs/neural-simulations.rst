@@ -187,7 +187,7 @@ the time step from 1.1 ms to 1.2 ms.
 During the time step from 10.9 ms to 11.0 ms, the membrane potential
 crosses the threshold value -55.0 mV. Thus, the neuron emits an output
 spike at 11.0 ms and the membrane potential is then reset to -70.0 mV
-and clamped to the resting value for 2 ms, the refractory period of the
+and clamped to the resting value for 2 ms, the :hxt_ref:`refractory period` of the
 neuron. After the refractory period, the membrane continues to
 depolarize due to the continuing input current.
 

@@ -17,7 +17,7 @@ By adapting this file, you can set a number of options:
 * The pager for showing the built-in help in the terminal
 * The ``mpirun`` command for :ref:`parallel execution <parallel_computing>` of the testsuite
 
-In case your MPI Implementation requires special options (e.g. ``--oversubscribe`` to allow the use of more
+In case your :hxt_ref:`MPI`Implementation requires special options (e.g. ``--oversubscribe`` to allow the use of more
 processes than available compute cores in OpenMPI versions above 3.0), you can add them to the ``mpirun`` command as shown in
 the following example:
 

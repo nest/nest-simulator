@@ -1,4 +1,4 @@
-:orphan:
+::orphan:
 
 .. _glossary:
 
@@ -47,7 +47,7 @@ Glossary
  MAM
    Multi-area model.
 
- mpi
+ MPI
    Message passing interface.
 
  stdp
@@ -116,7 +116,7 @@ Glossary
  V_th
    Spike threshold in Millivolts (mV).
 
- V_reset double
+ V_reset 
    Reset potential of the membrane in Millivolts (mV).
 
  V_min

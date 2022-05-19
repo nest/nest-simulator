@@ -852,3 +852,35 @@ code.xref, a code {
   color: white;
   font-weight: bold;
 }
+
+/*Breakpoints*/
+
+$bp-small: 48em; /* 768px*/
+$bp-medium: 64em; /* 1024px*/
+$bp-large: 85.375em; /* 1366px*/
+$bp-xlarge: 120em; /* 1920px*/
+$bp-xxlarge: 160em; /* 2560px*/
+
+/* Media Queries*/
+$mq-small: "(min-width: #{$bp-small})";
+$mq-medium: "(min-width: #{$bp-medium})";
+$mq-large: "(min-width: #{$bp-large})";
+$mq-xlarge: "(min-width: #{$bp-xlarge})";
+$mq-xxlarge: "(min-width: #{$bp-xxlarge})";
+$mq-retina: "(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi)";
+
+.container {
+  margin: 0 4%;
+
+  @media #{$mq-medium} {
+    margin: 0 8%;
+  }
+
+  @media #{$mq-large} {
+    margin: 0 12%;
+  }
+
+  @media #{$mq-xlarge} {
+    margin: 0 18%;
+  }
+}

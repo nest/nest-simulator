@@ -37,22 +37,22 @@ Here you can dive into various topics about NEST.
 
 .. grid:: 2
 
-   .. grid-item-card:: |networkicon| Spatially-strucutred networks
-      :columns: 5
-      :link: spatial_networks 
-      :link-type: ref
+   .. grid-item-card:: |networkicon| Spatially-structured networks
+       :columns: 5
+       :link: spatial_networks 
+       :link-type: ref
 
 
    .. grid-item-card:: |mathicon| Models in NEST
-      :columns: 4
-      :link:  models_contents
-      :link-type: ref
+       :columns: 4
+       :link:  models_contents
+       :link-type: ref
 
 .. grid::  3
    :gutter: 1
 
    .. grid-item-card:: |randomicon| NEST behavior
-      :columns: 3
+       :columns: 3
 
        * :ref:`built_in_timers`
 
@@ -61,18 +61,18 @@ Here you can dive into various topics about NEST.
        * :ref:`run_simulations`
 
    .. grid-item-card:: |connecticon| Connect to other tools
-      :columns: 4
-  
+       :columns: 4
+
        * :ref:`nest_server`
 
        * :ref:`nest_music`
 
 
    .. grid-item-card:: |hpcicon| High performance computers (HPC) 
-      :columns: 5
-      :text-align: center
-      :link: parallel_computing
-      :link-type: ref
+       :columns: 5
+       :text-align: center
+       :link: parallel_computing
+       :link-type: ref
 
 
 
@@ -80,19 +80,19 @@ Here you can dive into various topics about NEST.
    :gutter: 1
 
    .. grid-item-card:: |converticon| Convert NEST 2.X scripts to 3.X
-      :columns: 5
-      :link: refguide_2_3
-      :link-type: ref
+       :columns: 5
+       :link: refguide_2_3
+       :link-type: ref
 
    .. grid-item-card:: |releaseicon| Release notes
-      :columns: 4
-      :link: release_notes
-      :link-type: ref
+       :columns: 4
+       :link: release_notes
+       :link-type: ref
 
    .. grid-item-card:: |glossaryicon| Glossary 
-      :columns: 3
-      :link: glossary
-      :link-type: ref
+       :columns: 3
+       :link: glossary
+       :link-type: ref
 
 
 .. toctree::

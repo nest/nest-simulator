@@ -8,51 +8,48 @@ Community
 Contact us
 ----------
 
-Mailing list
-~~~~~~~~~~~~
 
-The NEST users mailing list is intended to be a forum for questions on the usage
-of NEST, the exchange of code and general discussions about NEST.  The philosophy
-is that all users profit by sharing their experience. All NEST core developers
-are subscribed to this list and will participate in the discussions as far as
-time allows.
+.. card:: Mailing list
 
-By subscribing to the mailing list you will also get notified of all NEST related events!
+  The NEST users mailing list is intended to be a forum for questions on the usage
+  of NEST, the exchange of code and general discussions about NEST.  The philosophy
+  is that all users profit by sharing their experience. All NEST core developers
+  are subscribed to this list and will participate in the discussions as far as
+  time allows.
+
+  By subscribing to the mailing list you will also get notified of all NEST related events!
 
 .. grid:: 2
 
    .. button-ref:: mail_guidelines
        :color: success
-       :shadow: 
+       :shadow:
        :ref-type: ref
 
        See mailing list
 
-GitHub
-~~~~~~
 
-Possible features, bugs, or other issues can be discussed on GitHub.
-We encourage our whole community to provide feedback and help contribute to improving our code and documentation.
+.. card:: GitHub
+
+   Possible features, bugs, or other issues can be discussed on GitHub.
+   We encourage our whole community to provide feedback and help contribute to improving our code and documentation.
 
 .. grid:: 2
 
    .. button-ref:: contribute
        :color: success
-       :shadow: 
+       :shadow:
        :ref-type: ref
 
-       Submit an issue or pull request 
+       Submit an issue or pull request
 
+.. card:: Open video conference
 
- 
-Open video conference
-~~~~~~~~~~~~~~~~~~~~~~
+   Every two weeks, we have an open video conference to discuss current issues and developments in NEST.
+   We welcome users with questions regarding their implementations or issues they want help solving to join.
+   This is an opportunity to have discussions in real time with developers.
 
-Every two weeks, we have an open video conference to discuss current issues and developments in NEST.
-We welcome users with questions regarding their implementations or issues they want help solving to join.
-This is an opportunity to have discussions in real time with developers.
-
-Information for dates and how to join can be found on our GitHub wiki.
+   Information for dates and how to join can be found on our GitHub wiki.
 
 .. grid:: 2
 

@@ -151,7 +151,7 @@ Examples of using randomness
 Randomize the membrane potential
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To set the membrane potential at creation, just pass a random distribution as the ``V_m`` value.
+To set the membrane potential at creation, just pass a random distribution as the :hxt_ref:`V_m` value.
 
 ::
 

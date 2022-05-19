@@ -110,7 +110,7 @@ The first part is the name of the `model` (e.g., ``voltmeter`` or
 ``spike_recorder``) or, if set, the `label` of the recording device. Next is
 the node ID of the recording device, followed by the id of the VP
 assigned to the recorder. Spike files have the file extension ``gdf`` and
-analog recordings from the ``multimeter`` have ``dat`` as file extension.
+analog recordings from the :hxt_ref:`multimeter` have ``dat`` as file extension.
 
 The ``label`` and ``file_extension`` of a recording device can be set like any
 other parameter of a node using :py:func:`.SetStatus`.
@@ -132,7 +132,7 @@ Spikes between neurons
   to the `target neuron` may be handled by **different virtual processes**.
 
 * But the virtual process assigned to the `target_neuron` always handles the corresponding spike delivery
-  (see property ``vp`` in the status dictionary).
+  (see property :hxt_ref:`vp` in the status dictionary).
 
 Spikes between neurons and devices
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -286,7 +286,7 @@ layer we have created above:
 
 Using the command ``SetStatus``, it is possible to change the entries of
 this so called *status dictionary*. The following lines of code change
-the threshold value ``V_th`` to -60 mV:
+the threshold value :hxt_ref:`V_th` to -60 mV:
 
 ::
 
@@ -464,7 +464,7 @@ Recording devices
 ~~~~~~~~~~~~~~~~~
 
 All devices which are used to observe the state of other network nodes
-are called recording devices. Examples are ``multimeter`` and
+are called recording devices. Examples are :hxt_ref:`multimeter` and
 ``spike_recorder``.
 
 Recording devices have properties which control the amount, the
@@ -484,7 +484,7 @@ A list of node models including all available device models can be retrieved by 
 ``GetKernelStatus /node_models get`. The most important devices are:
 
 * ``voltmeter`` Device to observe membrane potentials.
-* ``multimeter`` Device to observe arbitrary analog quantities.
+* :hxt_ref:`multimeter` Device to observe arbitrary analog quantities.
 * ``spike_recorder`` Device to observe spike times.
 
 Please note that the connection direction for analog recorders (all

@@ -33,7 +33,7 @@ Changes
 We added the new parameter ``stimulus_source``, which can be used to select
 a backend for the stimulation device. By default, all stimulation
 devices generate their own stimulation signals based on their
-parametrization.  If a backend, such as ``mpi`` is selected, the
+parametrization.  If a backend, such as :hxt_ref:`mpi` is selected, the
 values for producing the stimuli are received from the backend's input
 channel.
 

@@ -17,7 +17,7 @@ kernel attribute:
     nest.resolution = 0.1
 
 Even though a neuron model can use smaller time steps internally, the
-membrane potential will only be visible to a ``multimeter`` on the
+membrane potential will only be visible to a :hxt_ref:`multimeter` on the
 outside at time points that are multiples of the simulation resolution.
 
 In contrast to the update of nodes, an event-driven approach is used for

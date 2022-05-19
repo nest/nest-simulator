@@ -155,7 +155,7 @@ of keys, as an optional argument to :py:meth:`~.NodeCollection.get`:
     neuron.get(["V_reset", "V_th"])
 
 In the first case we query the value of the constant background current
-``I_e``; the result is given as a floating point element. In the second
+:hxt_ref:`I_e`; the result is given as a floating point element. In the second
 case, we query the values of the reset potential and threshold of the
 neuron, and receive the result as a dictionary . If :py:meth:`~.NodeCollection.get` is
 called on a NodeCollection with more than one element, the returned dictionary
@@ -192,7 +192,7 @@ directly
     neuron.I_e = 376.0
     neuron.I_e
 
-Next we create a ``multimeter``, a *device* we can use to record the
+Next we create a `multimeter``, a *device* we can use to record the
 membrane voltage of a neuron over time. The property ``record_from``
 expects a list of the names of the variables we would like to
 record. The variables exposed to the multimeter vary from model to
@@ -212,7 +212,7 @@ spiking events produced by a neuron.
     spikerecorder = nest.Create("spike_recorder")
 
 A short note on naming: here we have called the neuron ``neuron``, the
-multimeter ``multimeter`` and so on. Of course, you can assign your
+multimeter :hxt_ref:`multimeter` and so on. Of course, you can assign your
 created nodes to any variable names you like, but the script is easier
 to read if you choose names that reflect the concepts in your
 simulation.
@@ -276,9 +276,9 @@ the multimeter.
     Vms = dmm["events"]["V_m"]
     ts = dmm["events"]["times"]
 
-In the first line, we obtain a dictionary with status parameters for the ``multimeter``.
+In the first line, we obtain a dictionary with status parameters for the :hxt_ref:`multimeter`.
 This dictionary contains an entry named ``events`` which holds the
-recorded data. It is itself a dictionary with the entries ``V_m`` and
+recorded data. It is itself a dictionary with the entries :hxt_ref:`V_m` and
 ``times``, which we store separately in ``Vms`` and ``ts``, in the
 second and third line, respectively. If you are having trouble imagining
 dictionaries of dictionaries and what you are extracting from where, try
@@ -341,7 +341,7 @@ now connect this newly created neuron to the multimeter:
 
 Run the simulation and plot the results, they will look incorrect. To
 fix this you must plot the two neuron traces separately. Replace the
-code that extracts the events from the ``multimeter`` with the following
+code that extracts the events from the :hxt_ref:`multimeter` with the following
 lines.
 
 ::

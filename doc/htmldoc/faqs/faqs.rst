@@ -58,7 +58,7 @@ running ``nest.data_path = "/path/to/data"``. In scripts, this
 property can be set via the environment variable ``NEST_DATA_PATH``.
 Please note that the directory ``/path/to/data`` has to exist and
 will not be created. A common prefix for all data file names can be
- set by running ``nest.data_prefix = "prefix"`` or by setting the
+set by running ``nest.data_prefix = "prefix"`` or by setting the
 environment variable ``NEST_DATA_PREFIX``.
 
 Neuron models

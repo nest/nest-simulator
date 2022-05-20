@@ -34,7 +34,7 @@ convenient way.
 Use cases for NEST Server
 -------------------------
 
-.. figure:: static/img/nest_server.png
+.. figure:: ../static/img/nest_server.png
     :align: center
     :alt: NEST Server concept
     :width: 240px
@@ -90,7 +90,7 @@ prefer using ``conda``::
 
 As an alternative to a native installation, NEST Server is available
 from the NEST Docker image. Please check out the corresponding
-:ref:`installation instructions <docker_vm_install>` for more details.
+:ref:`installation instructions <docker>` for more details.
 
 Run NEST Server
 ~~~~~~~~~~~~~~~
@@ -494,9 +494,9 @@ client-side language as it is widely supported by all web browsers and
 provides libraries for handling HTTP requests and responses out of the
 box. Here is a small example showing the basic idea:
 
-.. tabs::
+.. grid::
 
-   .. tab:: HMTL
+   .. grid-item-card:: HMTL
 
       .. code-block:: HTML
 
@@ -519,7 +519,7 @@ box. Here is a small example showing the basic idea:
             </body>
           </html>
 
-   .. tab:: JavaScript
+   .. grid-item-card:: JavaScript
 
       .. code-block:: JavaScript
 

@@ -488,7 +488,8 @@ Nodes
         The single values will be applied to all nodes, while the lists will be distributed across
         the nodes. Both single values and lists can be given at the same time.
       - A list with n dictionaries, one dictionary for each node.
-    If omitted, the ``model``\ ’s defaults are used.
+
+   If omitted, the ``model``\ ’s defaults are used.
 
 -  ``get(*params, **kwargs)``
     Return a dictionary with parameter values for the NodeCollection it is called

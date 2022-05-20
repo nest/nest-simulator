@@ -21,7 +21,9 @@ Contact us
 
 .. grid:: 2
 
-   .. button-ref:: mail_guidelines
+  .. grid-item-card::
+
+    .. button-ref:: mail_guidelines
        :color: success
        :shadow:
        :ref-type: ref
@@ -36,7 +38,9 @@ Contact us
 
 .. grid:: 2
 
-   .. button-ref:: contribute
+  .. grid-item-card::
+
+    .. button-ref:: contribute
        :color: success
        :shadow:
        :ref-type: ref
@@ -53,7 +57,9 @@ Contact us
 
 .. grid:: 2
 
-   .. button-link::  https://github.com/nest/nest-simulator/wiki/Open-NEST-Developer-Video-Conference
+  .. grid-item-card::
+
+    .. button-link::  https://github.com/nest/nest-simulator/wiki/Open-NEST-Developer-Video-Conference
        :color: success
        :shadow:
 
@@ -112,5 +118,5 @@ Explore the NEST ecosystem
 
   related_projects
   citing-nest
-
+  getting_help
 

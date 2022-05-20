@@ -185,7 +185,7 @@ The following code creates layers centered about :math:`(0,0)`,
 
 The center is given as a two-element list of floats. Changing the
 center does not affect grid indices: For each of the three layers in
- :numref:`fig_layer3`, grid indices run from 0 to 4 through columns and
+:numref:`fig_layer3`, grid indices run from 0 to 4 through columns and
 rows, respectively, even though elements in these three layers have
 different positions in the global coordinate system.
 
@@ -717,9 +717,8 @@ from the x-axis to the y-axis.
    :name: fig:conn2_c
 
    Rotated rectangular and elliptical mask from  :numref:`fig_conn2_a` and
-    :numref:`fig_conn2_b`, where the rectangular mask is rotated
-   :math:`120^\circ` and the elliptical mask is rotated
-   :math:`45^\circ`.
+   :numref:`fig_conn2_b`, where the rectangular mask is rotated
+   :math:`120^\circ` and the elliptical mask is rotated :math:`45^\circ`.
 
 .. _sec_3d_masks:
 

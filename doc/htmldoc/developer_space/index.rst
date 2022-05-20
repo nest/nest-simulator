@@ -8,6 +8,8 @@ It is documentation for anyone needing to touch the code or documentation.
 
 .. grid:: 2
 
+  .. grid-item-card::
+
    .. button-ref:: dev_install
        :color: success
        :shadow:
@@ -115,9 +117,10 @@ Developer guides
 
    ../installation/linux_install
    workflows/*
+   workflows/documentation_workflow/*
    guidelines/*
    guidelines/styleguide/styleguide
    guidelines/styleguide/vim_support_sli
    templates/*
    sli_docs/index
-
+   *

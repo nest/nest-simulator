@@ -11,7 +11,7 @@ update your simulation scripts when you come from an older version of
 NEST.
 
 If you transition from a version earlier than 3.0, please see our
-selection of earlier :doc:`transition guides <release_notes/index>`.
+selection of earlier :ref:`transition guides <release_notes>`.
 
 Model defaults
 ~~~~~~~~~~~~~~
@@ -40,7 +40,7 @@ implemented using a conditional expression in a list comprehension.
 | NEST 3.2                                   | NEST 3.3                                         |
 +============================================+==================================================+
 | ``nest.Models(mtype="nodes")``             | ``nest.node_models``                             |
-+-----------....-----------------------------+--------------------------------------------------+
++--------------------------------------------+--------------------------------------------------+
 | ``nest.Models(mtype="synapses")``          | ``nest.synapse_models``                          |
 +--------------------------------------------+--------------------------------------------------+
 | ``nest.Models(mtype="nodes", sel="iaf")``  | ``[m for m in nest.node_models if "iaf" in m]``  |

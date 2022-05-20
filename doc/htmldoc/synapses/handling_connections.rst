@@ -207,7 +207,7 @@ Setting connection parameters
     model will point out which parameters can be set and which are read-only.
 
 
-.. _collocated_synapses:
+.. _collocated_synapses2:
 
 Collocated synapses
 ~~~~~~~~~~~~~~~~~~~

@@ -212,7 +212,7 @@ spiking events produced by a neuron.
     spikerecorder = nest.Create("spike_recorder")
 
 A short note on naming: here we have called the neuron ``neuron``, the
-multimeter :hxt_ref:`multimeter` and so on. Of course, you can assign your
+multimeter ``multimeter`` and so on. Of course, you can assign your
 created nodes to any variable names you like, but the script is easier
 to read if you choose names that reflect the concepts in your
 simulation.

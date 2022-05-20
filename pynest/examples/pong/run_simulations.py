@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-r"""Application training networks to play pong against each other
+r"""Application training networks to play pong against each other.
 ----------------------------------------------------------------
 This program makes two spiking neural networks of two layers each compete
 against each other in encoding an input-output mapping within their weights.
@@ -34,12 +34,12 @@ about the state of the game, the left network and the right network respectively
 after every simulation step which can be used to visualize the output
 (e.g. using :doc:`generate_gif.py <./generate_gif.py>`).
 
-The Idea for this simulation, as well as the core of the R-STDP and Pong
-implementation are from [1]_ and were created by Timo Wunderlich (The original
-implementation can be found
+The idea for this simulation, as well as the core of the R-STDP and Pong
+implementation are from [1]_ and were created by Timo Wunderlich and Electronic
+Vision(s) (The original implementation can be found
 'here <https://github.com/electronicvisions/model-sw-pong>'_).
 The visualization and implementation of dopaminergic learning, as well as
-changes to the existing codebase come from Johannes Gille (2022).
+changes to the existing codebase were developed by Johannes Gille (2022).
 
 See Also
 ---------
@@ -67,14 +67,13 @@ import os
 import logging
 import gzip
 import datetime
-
 from networks import POLL_TIME, PongNetDopa,  PongNetRSTDP
 
 
 class AIPong:
     def __init__(self, p1, p2, out_dir=""):
         """A class to run and store pong simulations of two competing spiking
-        neural networks
+        neural networks.
 
         Args:
             p1 (PongNet): network to play on the left side.
@@ -96,12 +95,12 @@ class AIPong:
 
         logging.info(f"setup complete for a pong game between: {p1} and {p2}.")
 
-    def run_games(self,  max_runs=15000):
-        """run a simulation of pong games and store the results
+    def run_games(self,  max_runs=10000):
+        """run a simulation of pong games and store the results.
 
         Args:
             max_runs (int, optional): Number of iterations to simulate.
-            Defaults to 15000.
+            Defaults to 10000.
         """
         self.game_data = []
         l_score, r_score = 0, 0

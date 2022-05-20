@@ -10,10 +10,10 @@ MPI process
 * We typically use the standard Message Passing Interface (MPI) to instruct how processes work in parallel (See e.g.,
   `OpenMPI <https://www.open-mpi.org/>`_).
 
-When using more than 1 MPI process, we recommend using ``mpirun`` to run a script. This ensures each process represents
-a subset of your entire script. For example, if you have 4 processes (``ntasks-per-node = 4``) and use ``mpirun -n 4``,
-your script, ``my_nest_simulation.py``, will be divided up into the 4 processes. If you run ``srun`` with 4 processes, the entire simulation script
-will be run 4 times.
+When using more thant 1 MPI process, we recommend using ``mpirun`` explicity  because it should ensure each process represents a subset of your entire
+script. For example, if you have 4 processes (``ntasks-per-node = 4``) and use ``mpirun -n 4``, your script,
+``my_nest_simulation.py``, will be divided up into the 4 processes. If you run ``srun`` with 4 processes, the entire simulation script
+might run 4 times.
 
 The number of MPI processes on each each node is related to the number of threads you want for each MPI process.
 Multiplied together, the values  should equal the total number of cores in a node. (The number of cores varies depending on what system you are using).

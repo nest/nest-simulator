@@ -3,6 +3,13 @@
 Overview of various hardware and software components
 ====================================================
 
+An unfortunate aspect of computing is that a single component may be called something different by different
+organizations, manufacturers, and companies. We also have overlapping terms, such as nodes, that have one meaning
+in computational neuroscience, and another in computer hardware.
+
+Here we try to provide a brief description of the generic setup of hardware and corresponding software.
+
+Note that these are not terms used specifically for NEST, but are common in HPC organizations.
 
 .. image:: ../static/img/hpc_ware1.png
 
@@ -14,6 +21,10 @@ Overview of various hardware and software components
   This is just one configuration for hardware setup. A particular system may use other components, but for our needs
   nodes and cores are the most important terms to know.
 
+
+Description of physical components (left side of image):
+---------------------------------------------------------
+
 In the image above, on the left side we have a representation of a typical hardware setup.
 
 * In a supercomputer or cluster, there are many nodes.
@@ -24,11 +35,17 @@ In the image above, on the left side we have a representation of a typical hardw
 
 * The cores are where the computations are performed.
 
-* The cache is the local memory store for that processor.
+* The cache is the local memory store for that CPU.
+
+Data flow
+---------
 
 * Data and instructions (your code) are retrieved from the RAM (not shown) and passed to the cache and allocated to the cores.
 
 * The cores execute the instructions and return output to the cache.
+
+Description of software components (right side of image):
+---------------------------------------------------------
 
 On the right side, we see how the data and instructions are allocated through software.
 

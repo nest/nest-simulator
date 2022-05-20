@@ -3,7 +3,7 @@
 Example Slurm script
 ====================
 
-`Slurm <https://slurm.schedmd.com/documentation.html>`_ is a job scheduler used on many/most high performance computing systems.
+`Slurm <https://slurm.schedmd.com/documentation.html>`_ is a job scheduler used on many high performance computing systems.
 
 Typically, you specify system parameters for the job you want to run in a job script.
 
@@ -30,7 +30,7 @@ Finding the optimal parameters for your script may require some trial and error.
    export OMP_PROC_BIND=TRUE
 
    # For one MPI process (ntasks-per-node)
-   srun python my_nest_simulation.py
+   srun python3 my_nest_simulation.py
 
    # For > 1 MPI process (ntasks-per-node)
    module load openmpi
@@ -158,17 +158,17 @@ You can then tell the job script to schedule your simulation.
 
    srun python my_nest_simulation.py
 
-Or, if you are using multiple MPI processes
+Or, if you are using multiple MPI processes, you can invoke the MPI software explicitly:
 
 ::
 
   module load openmpi
   mpirun -n <num_of_processes> python3 my_nest_simulation.py
 
-We invoke ``mpirun`` explicity when running multiple processes because it ensures each process represents a subset of your entire
-script. For example, if you have 4 processes (``ntasks-per-node = 4``) and use ``mpirun -n 4``, your script,
-``my_nest_simulation.py``, will be divided up into the 4 processes. If you run ``srun`` with 4 processes, the entire simulation script
-will be run 4 times.
+.. note:: 
+
+   ``openmpi`` is but one MPI software available. Always check what is available on the system you are using.
+
 
 The `Slurm documentation <https://slurm.schedmd.com/mpi_guide.html#open_mpi>`_  contains additional options for running MPI.
 

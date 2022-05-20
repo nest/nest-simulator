@@ -1,7 +1,7 @@
 Benchmarking NEST
 =================
 
-See that INM-6 repo
+We recommend taking a look at the `beNNch project <https://github.com/INM-6/beNNch>`_ for details on setting up benchmarking in your project.
 
 Helpful commands
 ----------------

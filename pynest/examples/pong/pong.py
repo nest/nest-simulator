@@ -22,8 +22,7 @@
 r"""Classes for running simulations of the classic game Pong
 ----------------------------------------------------------------
 The Class GameOfPong contains all necessary functionality for running simple 
-simulations of Pong games. Its core utility for the simulation is to provide
-pseudo-random inputs to the network and make the output more appealing.
+simulations of Pong games. 
 
 See Also
 ---------
@@ -56,7 +55,7 @@ class GameObject:
         an object inside a game.
 
         Args:
-            game (GameOfPong): Instance of Pong game
+            game (GameOfPong): Instance of Pong game.
             x_pos (float, optional): Initial x position. Defaults to 0.5.
             y_pos (float, optional): Initial y position. Defaults to 0.5.
             velocity (float, optional): Change in position per iteration. 
@@ -113,11 +112,11 @@ class Paddle(GameObject):
             direction (int, optional): Either -1, 0 or 1 for downward, neutral 
             or upwards motion respectively. Defaults to 0.
             left (boolean): If True, paddle is placed on the left side of the 
-            board, otherwise on the right side
+            board, otherwise on the right side.
 
         For other args, see :class:`GameObject`.
     """
-    length = 0.2  # unit length
+    length = 0.2  # paddle length in the scale of GameOfPong.y_length
 
     def __init__(self, game, left, y_pos=0.5, velocity=0.05, direction=0):
         x_pos = 0. if left else game.x_length
@@ -142,8 +141,8 @@ class GameOfPong(object):
 
     x_grid = 32
     y_grid = 20
-    x_length = 1.6  # length in x-direction in unit length
-    y_length = 1.0  # length in y-direction in unit length
+    x_length = 1.6 
+    y_length = 1.0 
 
     def __init__(self):
         self.r_paddle = Paddle(self, False)
@@ -153,7 +152,7 @@ class GameOfPong(object):
         self.result = 0
 
     def reset_ball(self, towards_left=False):
-        """reset the ball position to the center of the field after a goal
+        """reset the ball position to the center of the field after a goal.
 
         Args:
             towards_left (bool, optional): if True, ball direction is 
@@ -178,23 +177,23 @@ class GameOfPong(object):
             and paddle position. 
         """
         if self.ball.y_pos + self.ball.ball_radius >= self.y_length:
-            # Ball on upper edge
+            # Ball on upper edge.
             self.ball.direction[1] = -1 * abs(self.ball.direction[1])
         elif self.ball.y_pos - self.ball.ball_radius <= 0:
-            # Ball on lower edge
+            # Ball on lower edge.
             self.ball.direction[1] = abs(self.ball.direction[1])
 
         if self.ball.x_pos - self.ball.ball_radius <= 0:
-            # Ball on left edge
+            # Ball on left edge.
             if abs(self.l_paddle.y_pos - self.ball.y_pos) <= Paddle.length / 2:
-                # Ball hits left paddle
+                # Ball hits left paddle.
                 self.ball.direction[0] = abs(self.ball.direction[0])
             else:
                 return RIGHT_SCORE
         elif self.ball.x_pos + self.ball.ball_radius >= self.x_length:
-            # Ball on right edge
+            # Ball on right edge.
             if abs(self.r_paddle.y_pos - self.ball.y_pos) <= Paddle.length / 2:
-                # Ball hits right paddle
+                # Ball hits right paddle.
                 self.ball.direction[0] = -1 * abs(self.ball.direction[0])
             else:
                 return LEFT_SCORE
@@ -202,7 +201,6 @@ class GameOfPong(object):
 
     def propagate_ball_and_paddles(self):
         """Update ball and paddle coordinates based on direction and velocity. 
-        Also update their cells.
         """
 
         for paddle in [self.r_paddle, self.l_paddle]:
@@ -220,9 +218,8 @@ class GameOfPong(object):
         return self.ball.get_cell()
 
     def step(self):
-        """Perform one game step by checking collisions and updating ball
-        direction, propagating all game objects and returning the game state
-        after the current step.
+        """Perform one game step by handling collisions, propagating all game 
+        objects and returning the new game state.
 
         Returns:
             Either GAME_CONTINUES, LEFT_SCORE or RIGHT_SCORE depending on ball 

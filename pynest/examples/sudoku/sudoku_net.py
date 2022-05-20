@@ -29,20 +29,20 @@ Notes
 ~~~~~
 The functionality of the network lies entirely within the inhibitory
 connections between neuron populations. Each population of size ``n_digit``
-encodes a digit between 1 and 9 in one of the 81 cells and has outgoing 
+encodes a digit between 1 and 9 in one of the 81 cells and has outgoing
 inhibitory connections to several other populations. Namely all populations
-coding for the same digit in the same row, column and 3x3 box of the sudoku 
-field, since a given digit can only ever occur once in any of those three. It 
-also inhibits all populations in the same cell which encode different digits 
+coding for the same digit in the same row, column and 3x3 box of the sudoku
+field, since a given digit can only ever occur once in any of those three. It
+also inhibits all populations in the same cell which encode different digits
 to force the network to converge on a single digit per cell.
 
-If the network is simulated with just this configuration and some background 
-noise, it converges naturally on states that represent valid solutions for 
+If the network is simulated with just this configuration and some background
+noise, it converges naturally on states that represent valid solutions for
 Sudoku.
 
-If populations coding for specific digits in some of the cells are stimulated 
-externally (therefore inhibiting all other digits in the same cell), the 
-network usually converges on a solution compatible with the input 
+If populations coding for specific digits in some of the cells are stimulated
+externally (therefore inhibiting all other digits in the same cell), the
+network usually converges on a solution compatible with the input
 configuration, thus solving the puzzle.
 
 :Authors: J Gille, S Furber, A Rowley
@@ -79,9 +79,9 @@ class SudokuNet:
         self.stim_rate = stim_rate          # frequency for input generators
         self.pop_size = pop_size            # number of neurons per population
         # total number of neurons
-        self.n_total = self.n_populations * self.pop_size 
-        
-        
+        self.n_total = self.n_populations * self.pop_size
+
+
         logging.info("Creating neuron populations...")
         self.neurons = nest.Create(
             'iaf_psc_exp', self.n_total, params=neuron_params)
@@ -196,7 +196,7 @@ class SudokuNet:
         nest.GetConnections(self.stim).set({"weight": 0.})
 
     def set_input_config(self, input):
-        """sets the connection weights from stimulation sources to populations 
+        """sets the connection weights from stimulation sources to populations
         in order to stimulate the network according to a puzzle configuration.
 
         Args:

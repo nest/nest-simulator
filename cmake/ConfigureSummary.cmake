@@ -18,7 +18,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 function( NEST_PRINT_CONFIG_SUMMARY )
-  message( "" )
+  # set summary color: here please choose appropriate color!
+  message( "${BoldCyan}" )
   message( "--------------------------------------------------------------------------------" )
   message( "NEST Configuration Summary" )
   message( "--------------------------------------------------------------------------------" )
@@ -245,5 +246,7 @@ function( NEST_PRINT_CONFIG_SUMMARY )
   message( "please see https://www.nest-simulator.org/frequently_asked_questions" )
   message( "or go to https://www.nest-simulator.org/community to find out how to" )
   message( "join the user mailing list." )
-  message( "" )
+
+  # reset output color
+  message( "${Reset}" )
 endfunction()

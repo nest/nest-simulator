@@ -141,8 +141,8 @@ class GameOfPong(object):
 
     x_grid = 32
     y_grid = 20
-    x_length = 1.6 
-    y_length = 1.0 
+    x_length = 1.6
+    y_length = 1.0
 
     def __init__(self):
         self.r_paddle = Paddle(self, False)

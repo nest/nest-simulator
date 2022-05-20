@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-r"""This script visualizes a simulated pong game
+r"""Script to visualize a simulated pong game.
 ----------------------------------------------------------------
 All simulations store data about both networks and the game in .pkl files.
 This script reads these files and generates image snapshots at different
@@ -80,7 +80,7 @@ PLOT_INTERVAL = 10
 
 
 def scale_coordinates(coordinates: np.array):
-    """Scale an (x,y) coordinate tuple from simulation scale to a pixel 
+    """Scale an (x,y) coordinate tuple from simulation scale to a pixel
     coordinate in the output image.
 
     Args:
@@ -97,19 +97,19 @@ def scale_coordinates(coordinates: np.array):
 
 
 def grayscale_to_heatmap(in_image, min_val, max_val, base_color):
-    """transform a grayscale image to an RGB heat map. Heatmap will color small 
+    """transform a grayscale image to an RGB heat map. Heatmap will color small
     values in base_color and high values in white.
 
     Args:
         in_image (numpy.array): 2D numpy.array to be transformed.
-        min_val (float): smallest value across the entire image - colored in 
+        min_val (float): smallest value across the entire image - colored in
         base_color in the output.
-        max_val (float): largest value across the entire image - colored 
+        max_val (float): largest value across the entire image - colored
         white in the output.
-        base_color (numpy.array): numpy.array of shape (3,) representing the 
+        base_color (numpy.array): numpy.array of shape (3,) representing the
         base color of the heatmap in RGB.
     Returns:
-        numpy.array: transformed input array with an added 3rd dimension of 
+        numpy.array: transformed input array with an added 3rd dimension of
         length three representing RGB values.
     """
 

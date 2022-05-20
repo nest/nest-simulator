@@ -21,8 +21,8 @@
 
 r"""Classes for running simulations of the classic game Pong
 ----------------------------------------------------------------
-The Class GameOfPong contains all necessary functionality for running simple 
-simulations of Pong games. 
+The Class GameOfPong contains all necessary functionality for running simple
+simulations of Pong games.
 
 See Also
 ---------
@@ -30,7 +30,7 @@ See Also
 
 References
 ----------
-.. [1] Wunderlich, T., Kungl, A. F., Müller, E., Hartel, A., Stradmann, Y., 
+.. [1] Wunderlich, T., Kungl, A. F., Müller, E., Hartel, A., Stradmann, Y.,
        Aamir, S. A., ... & Petrovici, M. A. (2019). Demonstrating advantages of
        neuromorphic computation: a pilot study. Frontiers in neuroscience, 13,
        260. https://doi.org/10.3389/fnins.2019.00260

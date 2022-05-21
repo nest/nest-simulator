@@ -81,7 +81,6 @@ class SudokuNet:
         # total number of neurons
         self.n_total = self.n_populations * self.pop_size
 
-
         logging.info("Creating neuron populations...")
         self.neurons = nest.Create(
             'iaf_psc_exp', self.n_total, params=neuron_params)

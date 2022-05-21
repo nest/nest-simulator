@@ -213,9 +213,6 @@ def validate_solution(puzzle, solution):
 
     return valid, boxes, rows, cols
 
-###############################################################################
-# The next few parameters
-
 
 cell_size = 18  # inner size of the cell
 grid_width = 2  # width of the grid separating cells
@@ -301,7 +298,7 @@ def plot_field(puzzle, solution, with_color=False):
                     font = font_italic
 
                 draw.text((j*cell_step+5, i*cell_step+1),
-                            str(solution[i, j]), color, font)
+                          str(solution[i, j]), color, font)
 
     background = Image.fromarray(background)
     background.paste(field, (frame_width, frame_width))

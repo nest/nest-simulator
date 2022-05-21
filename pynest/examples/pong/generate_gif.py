@@ -114,10 +114,13 @@ def grayscale_to_heatmap(in_image, min_val, max_val, base_color):
     """
 
     x_len, y_len = in_image.shape
-    out_image = np.zeros((x_len, y_len, 3), dtype=np.uint8)
+    out_image = np.ones((x_len, y_len, 3), dtype=np.uint8)
 
-    # add miniscule offsett to avoid zero division error for uniform matrix.
-    span = max_val - min_val + 0.0001
+    span = max_val - min_val
+    # edge case for uniform weight matrix
+    if span == 0:
+        return out_image * base_color
+
     for i in range(x_len):
         for j in range(y_len):
             color_scaled = (in_image[i, j] - min_val) / span

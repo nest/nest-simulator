@@ -32,7 +32,6 @@
 #include <vector>
 
 // Includes from nestkernel:
-#include "adjustentry.h"
 #include "event.h"
 #include "histentry.h"
 #include "nest_names.h"
@@ -819,9 +818,10 @@ public:
   virtual index get_local_device_id() const;
 
   /**
-   * Adds synapses to be checked for missed spike data.
+   * Framework for STDP with predominantly axonal delays:
+   * Buffer a correction entry for a short time window.
    */
-  virtual void add_synapse_to_check( adjustentry& );
+  virtual void add_correction_entry_stdp_ax_delay( Event&, const double, const double );
 
   /**
    * Member of DeprecationWarning class to be used by models if parameters are

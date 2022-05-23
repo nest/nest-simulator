@@ -141,9 +141,9 @@ Node::get_local_device_id() const
 }
 
 void
-Node::add_synapse_to_check( adjustentry& )
+Node::add_correction_entry_stdp_ax_delay( Event&, const double, const double )
 {
-  throw UnexpectedEvent();
+  throw UnexpectedEvent( "Node does not support framework for STDP synapses with predominantly axonal delays." );
 }
 
 DictionaryDatum

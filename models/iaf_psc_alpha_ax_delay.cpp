@@ -247,6 +247,8 @@ iaf_psc_alpha_ax_delay::init_buffers_()
 void
 iaf_psc_alpha_ax_delay::pre_run_hook()
 {
+  ArchivingNode::pre_run_hook_();
+
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
@@ -372,8 +374,7 @@ iaf_psc_alpha_ax_delay::update( Time const& origin, const long from, const long 
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );
   }
-
-  reset_syns_to_check();
+  reset_correction_entries_stdp_ax_delay_();
 }
 
 void

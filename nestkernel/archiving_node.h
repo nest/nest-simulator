@@ -28,7 +28,6 @@
 #include <deque>
 
 // Includes from nestkernel:
-#include "adjustentry.h"
 #include "histentry.h"
 #include "nest_time.h"
 #include "nest_types.h"
@@ -130,12 +129,15 @@ public:
   void set_status( const DictionaryDatum& d );
 
   /**
-   * Adds synapses to be checked for missed spike data.
+   * Framework for STDP with predominantly axonal delays:
+   * Buffer a correction entry for a short time window.
    */
-  void add_synapse_to_check( adjustentry& );
+  void add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event, const double t_last_pre_spike, const double weight_revert );
 
 
 protected:
+  void pre_run_hook_();
+
   /**
    * \fn void set_spiketime(Time const & t_sp, double offset)
    * record spike history
@@ -148,17 +150,13 @@ protected:
    */
   inline double get_spiketime_ms() const;
 
-
-  /**
-   * Resets synsapses to check for missed spike
-   */
-  void reset_syns_to_check();
-
   /**
    * \fn void clear_history()
    * clear spike history
    */
   void clear_history();
+
+  void reset_correction_entries_stdp_ax_delay_();
 
   // number of incoming connections from stdp connectors.
   // needed to determine, if every incoming connection has
@@ -184,13 +182,43 @@ private:
 
   double last_spike_;
 
-  // adjusting weights for missed spike in axonal delay
-  void adjust_weights();
-
-  std::vector< adjustentry > syns_to_check_;
-
   // spiking history needed by stdp synapses
   std::deque< histentry > history_;
+
+  /**
+   * Framework for STDP with predominantly axonal delays:
+   * Due to the long axonal delays, relevant spikes of this neuron might not yet be available at the time when incoming
+   * synapses are updated (spike delivery). Therefore, for each spike received through an STDP synapse with
+   * predominantly axonal delay, information is stored for a short period of time allowing for retrospective correction
+   * of the synapse and the already delivered spike.
+   */
+  struct CorrectionEntrySTDPAxDelay
+  {
+    CorrectionEntrySTDPAxDelay( const SpikeData& spike_data, const double t_last_pre_spike, const double weight_revert )
+      : spike_data_( spike_data )
+      , t_last_pre_spike_( t_last_pre_spike )
+      , weight_revert_( weight_revert )
+    {
+    }
+
+    SpikeData spike_data_;    //!< data of incoming spike including synapse location (tid|syn_id|lcid)
+    double t_last_pre_spike_; //!< time of the last pre-synaptic spike before this spike
+    double weight_revert_;    //!< synaptic weight to revert to (STDP depression needs to be undone)
+  };
+
+  /**
+   * Framework for STDP with predominantly axonal delays:
+   * Buffer of correction entries sorted by t_spike_pre + delay
+   * (i.e., the actual arrival time at this neuron).
+   */
+  std::vector< std::vector< CorrectionEntrySTDPAxDelay > > correction_entries_stdp_ax_delay_;
+  bool has_stdp_ax_delay_; //!< false by default and set to true after the first entry was added to correction_entries_stdp_ax_delay_
+
+  /**
+   * Framework for STDP with predominantly axonal delays:
+   * Triggered when this neuron spikes, to correct all relevant incoming STDP synapses with predominantly axonal delays
+   * and corresponding received spikes. */
+  void correct_synapses_stdp_ax_delay_( const Time& t_spike );
 };
 
 inline double

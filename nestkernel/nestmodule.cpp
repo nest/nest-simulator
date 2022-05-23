@@ -125,6 +125,13 @@ NestModule::create_parameter( const Token& t )
     return new ConstantParameter( *dd );
   }
 
+  // If t is a IntegerDatum, create a ConstantParameter with this value
+  IntegerDatum* id = dynamic_cast< IntegerDatum* >( t.datum() );
+  if ( id )
+  {
+    return new ConstantParameter( static_cast< double >( *id ) );
+  }
+
   DictionaryDatum* dictd = dynamic_cast< DictionaryDatum* >( t.datum() );
   if ( dictd )
   {

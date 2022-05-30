@@ -129,6 +129,7 @@ ul.md-tabs__list li.md-tabs__item a.md-tabs__link {
 }
 .md-header-nav__title {
 	font-size: 1.1em;
+  line-height: 3.4rem;
 }
 
 .md-source {
@@ -166,9 +167,13 @@ ul.md-tabs__list li.md-tabs__item a.md-tabs__link {
 /* footer size */
 .md-footer-nav__title, .md-footer-nav__direction {
 	font-size: 1.1em;
-  margin-top: 1.7rem;
 }
-
+.md-footer-nav__direction {
+	margin-top: -1.5rem;
+}
+div.md-flex__cell--stretch {
+  margin-top: 0.1rem;
+}
 .md-footer-nav__button {
 	font-size: 1.1em;
 }

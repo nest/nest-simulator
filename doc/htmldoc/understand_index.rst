@@ -3,7 +3,7 @@ Understand how NEST works
 
 Here you can dive into various topics about NEST.
 
-.. grid:: 3
+.. grid:: 1 2 3 4
    :gutter: 1
 
    .. grid-item-card:: |neuronicon| All about neurons

@@ -6,14 +6,12 @@ Developer space
 Here is all documentation pertaining to the development of NEST.
 It is documentation for anyone needing to touch the code or documentation.
 
-.. grid:: 2
+.. grid:: 3 
 
-  .. grid-item-card::
-
-   .. button-ref:: dev_install
-       :color: success
-       :shadow:
-       :ref-type: ref
+  .. grid-item-card:: 
+       :link-type: ref
+       :link: dev_install
+       :class-card: sd-bg-success sd-text-white
 
        Install NEST from source
 

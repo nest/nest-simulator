@@ -19,14 +19,13 @@ Contact us
 
   By subscribing to the mailing list you will also get notified of all NEST related events!
 
-.. grid:: 2
+.. grid:: 3
+
 
   .. grid-item-card::
-
-    .. button-ref:: mail_guidelines
-       :color: success
-       :shadow:
-       :ref-type: ref
+       :link-type: ref
+       :link: mail_guidelines
+       :class-card: sd-bg-success sd-text-white
 
        See mailing list
 
@@ -36,14 +35,12 @@ Contact us
    Possible features, bugs, or other issues can be discussed on GitHub.
    We encourage our whole community to provide feedback and help contribute to improving our code and documentation.
 
-.. grid:: 2
+.. grid:: 3
 
   .. grid-item-card::
-
-    .. button-ref:: contribute
-       :color: success
-       :shadow:
-       :ref-type: ref
+       :link-type: ref
+       :link: contribute
+       :class-card: sd-bg-success sd-text-white
 
        Submit an issue or pull request
 
@@ -55,13 +52,12 @@ Contact us
 
    Information for dates and how to join can be found on our GitHub wiki.
 
-.. grid:: 2
+.. grid:: 3
 
   .. grid-item-card::
-
-    .. button-link::  https://github.com/nest/nest-simulator/wiki/Open-NEST-Developer-Video-Conference
-       :color: success
-       :shadow:
+       :link-type: url
+       :link: https://github.com/nest/nest-simulator/wiki/Open-NEST-Developer-Video-Conference
+       :class-card: sd-bg-success sd-text-white
 
        Open video conference wiki
 

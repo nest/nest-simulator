@@ -58,7 +58,7 @@ PyNEST examples
            * :doc:`cortical_microcircuit_index`
 
 
-    .. grid-item-card:: GLIF
+    .. grid-item-card:: GLIF (from Allen institute)
            :img-top: ../static/img/pynest/glif_cond.png
 
            * :doc:`../auto_examples/glif_cond_neuron`
@@ -80,7 +80,7 @@ PyNEST examples
 
 .. grid:: 1 2 3 4
 
-    .. grid-item-card:: GIF
+    .. grid-item-card:: GIF (from Gerstner lab)
            :img-top: ../static/img/pynest/gif_pop.png
 
            * :doc:`../auto_examples/gif_cond_exp_multisynapse`

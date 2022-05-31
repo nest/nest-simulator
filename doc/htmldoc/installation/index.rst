@@ -40,19 +40,19 @@ If installation didn't work, see the :ref:`troubleshooting section <troubleshoot
    cmake_options
    *
 
-.. |user| image:: ../static/img/020-user_black.png
+.. |user| image:: ../static/img/020-user.png
    :target: user.html
-   :width: 100px
+   :width: 80px
 
-.. |dev| image:: ../static/img/dev_black.png
+.. |dev| image:: ../static/img/dev_orange.png
    :target: developer.html
-   :width: 100px
+   :width: 80px
 
-.. |admin| image:: ../static/img/001-shuttle_black.png
+.. |admin| image:: ../static/img/001-shuttle.png
    :target: admin.html
-   :width: 100px
+   :width: 80px
 
-.. |lecturer| image:: ../static/img/class_black.png
+.. |lecturer| image:: ../static/img/014-teacher.png
    :target: lecturer.html
-   :width: 100px
+   :width: 80px
 

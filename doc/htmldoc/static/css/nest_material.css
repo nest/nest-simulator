@@ -1,3 +1,6 @@
+/* This custom css page is for all css related to the material design (md) layout, any other custom
+ * css should be foundin colorblocks.css */
+
 /* Set color scheme to NEST orange */
 
 div.md-header-nav__source a.md-source div.md-source__repository, div.md-source__icon{
@@ -168,6 +171,10 @@ ul.md-tabs__list li.md-tabs__item a.md-tabs__link {
 .md-footer-nav__title, .md-footer-nav__direction {
 	font-size: 1.1em;
 }
+.md-footer-nav__link {
+	margin-top: 1rem;
+}
+
 .md-footer-nav__direction {
 	margin-top: -1.5rem;
 }

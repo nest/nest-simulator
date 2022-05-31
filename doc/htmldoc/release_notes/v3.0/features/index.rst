@@ -12,7 +12,7 @@ Here you can discover the new features NEST 3.0 has to offer!
    * :ref:`handling_connections`
    * :ref:`simpler_rngs`
    * :ref:`record_sims`
-   * :ref:`stimulation_backend`
+   * :ref:`stimulation_backends`
    * :ref:`nest_server`
 
 .. toctree::

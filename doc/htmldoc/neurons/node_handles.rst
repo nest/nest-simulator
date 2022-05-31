@@ -21,20 +21,20 @@ NodeCollection supports the following functionality:
 -  Access to node properties with :ref:`get() <get_param>` and  :ref:`set() <set_param>` or by using :ref:`direct attributes <direct_attributes>`
 -  :ref:`Parametrization <param_ex>`  with spatial, random, distributions, math, and logic parameters
 
-  +-----------------------------------------------+------------------------------------------------+
-  | NEST 2.x                                      | NEST 3.0                                       |
-  +===============================================+================================================+
-  |                                               |                                                |
-  | ::                                            | ::                                             |
-  |                                               |                                                |
-  |     # A list of 10 GIDs is returned           |     # A NodeCollection object is returned      |
-  |     neurons = nest.Create('iaf_psc_alpha', 10)|     neurons = nest.Create('iaf_psc_alpha', 10) |
-  |                                               |                                                |
-  |     # Use lists as arguments in Connect       |     # Use NodeCollection objects as            |
-  |     nest.Connect(neurons, neurons)            |     # arguments in Connect                     |
-  |                                               |     nest.Connect(neurons, neurons)             |
-  |                                               |                                                |
-  +-----------------------------------------------+------------------------------------------------+
++-----------------------------------------------+------------------------------------------------+
+| NEST 2.x                                      | NEST 3.0                                       |
++===============================================+================================================+
+|                                               |                                                |
+| ::                                            | ::                                             |
+|                                               |                                                |
+|     # A list of 10 GIDs is returned           |     # A NodeCollection object is returned      |
+|     neurons = nest.Create('iaf_psc_alpha', 10)|     neurons = nest.Create('iaf_psc_alpha', 10) |
+|                                               |                                                |
+|     # Use lists as arguments in Connect       |     # Use NodeCollection objects as            |
+|     nest.Connect(neurons, neurons)            |     # arguments in Connect                     |
+|                                               |     nest.Connect(neurons, neurons)             |
+|                                               |                                                |
++-----------------------------------------------+------------------------------------------------+
 
 .. _nodeID_support:
 

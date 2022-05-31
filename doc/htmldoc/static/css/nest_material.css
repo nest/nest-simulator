@@ -217,3 +217,7 @@ div.md-flex__cell--stretch {
 	overflow: hidden;
 	vertical-align: middle;
 }
+
+.rst-versions .rst-current-version {
+	font-size: 1.4rem;
+}

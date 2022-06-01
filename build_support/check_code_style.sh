@@ -30,7 +30,7 @@ GIT_END_SHA=HEAD                 # '<master>..<HEAD>' are processed.
 
 VERA=vera++                      # The names of the static code analysis tools executables.
 CPPCHECK=cppcheck                # CPPCHECK version 1.69 or later is required !
-CLANG_FORMAT=clang-format-13     # CLANG-FORMAT version 13 is required !
+CLANG_FORMAT=clang-format        # CLANG-FORMAT version 13 is required !
 PEP8=pycodestyle
 PYCODESTYLE_IGNORES="E121,E123,E126,E226,E24,E704,W503,W504"
 

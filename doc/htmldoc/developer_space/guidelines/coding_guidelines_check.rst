@@ -41,7 +41,7 @@ The code has to compile without warnings (in the default settings of the build
 infrastructure). We restrict ourselves to the C++11 standard for a larger support of
 compilers on various cluster systems and supercomputers.
 
-We use clang-format version 9 in our CI.
+We use clang-format version 13 in our CI.
 
 Furthermore, we use `Vera++ <https://bitbucket.org/verateam/vera/wiki/Home>`_, which
 'is a programmable tool for verification, analysis and transformation of C++
@@ -118,8 +118,8 @@ checks on all changed files as we do during the Travis CI tasks.
                                               the NEST Travis CI build and test environment.
 
        --clang-format=exe               The name of the CLANG-FORMAT executable.
-                                        Default: --clang-format=clang-format-9
-                                        Note: CLANG-FORMAT version 9 is required.
+                                        Default: --clang-format=clang-format-13
+                                        Note: CLANG-FORMAT version 13 is required.
 
        --pep8=exe                       The name of the PEP8 executable.
                                         Default: --pep8=pep8

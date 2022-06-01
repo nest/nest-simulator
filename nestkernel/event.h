@@ -980,7 +980,8 @@ private:
   static std::vector< synindex > supported_syn_ids_;
   static size_t coeff_length_; // length of coeffarray
 
-  union CoeffarrayBegin {
+  union CoeffarrayBegin
+  {
     std::vector< unsigned int >::iterator as_uint;
     typename std::vector< DataType >::iterator as_d;
 
@@ -988,7 +989,8 @@ private:
                           // non-trivial constructors of iterators
   } coeffarray_begin_;
 
-  union CoeffarrayEnd {
+  union CoeffarrayEnd
+  {
     std::vector< unsigned int >::iterator as_uint;
     typename std::vector< DataType >::iterator as_d;
 

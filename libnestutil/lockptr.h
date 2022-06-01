@@ -231,35 +231,40 @@ public:
     return obj->get();
   }
 
-  D* operator->() const
+  D*
+  operator->() const
   {
     assert( obj->get() != NULL );
 
     return obj->get();
   }
 
-  D* operator->()
+  D*
+  operator->()
   {
     assert( obj->get() != NULL );
 
     return obj->get();
   }
 
-  D& operator*()
+  D&
+  operator*()
   {
     assert( obj->get() != NULL );
 
     return *( obj->get() );
   }
 
-  const D& operator*() const
+  const D&
+  operator*() const
   {
     assert( obj->get() != NULL );
     return *( obj->get() );
   }
 
 
-  bool operator not() const //!< returns true if and only if obj->pointee == NULL
+  bool
+  operator not() const //!< returns true if and only if obj->pointee == NULL
   {
     // assert(obj != NULL);
 

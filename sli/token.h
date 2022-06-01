@@ -356,7 +356,8 @@ public:
     return p == NULL;
   }
 
-  bool operator not( void ) const
+  bool
+  operator not( void ) const
   {
     return p == NULL;
   }
@@ -375,14 +376,16 @@ public:
     return not empty();
   }
 
-  Datum* operator->() const
+  Datum*
+  operator->() const
   {
     //      assert(p!= NULL);
     return p;
   }
 
 
-  Datum& operator*() const
+  Datum&
+  operator*() const
   {
     //      assert(p != NULL);
     return *p;

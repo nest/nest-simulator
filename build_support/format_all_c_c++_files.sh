@@ -6,7 +6,7 @@
 # e.g. by executing `CLANG_FORMAT=clang-format-14 ./format_all_c_c++_files.sh`.
 # By default the script starts at the current working directory ($PWD), but
 # supply a different starting directory as the first argument to the command.
-CLANG_FORMAT=${CLANG_FORMAT:-clang-format-13}
+CLANG_FORMAT=${CLANG_FORMAT:-clang-format}
 CLANG_FORMAT_FILE=${CLANG_FORMAT_FILE:-.clang-format}
 
 # Drop files that should not be checked
@@ -56,7 +56,7 @@ function process_dir {
 
 function help_output {
   echo "The $CLANG_FORMAT_FILE requires clang-format version 13 or later."
-  echo "Use like: [CLANG_FORMAT=<clang-format-13>] ./build_support/`basename $0` [start folder, defaults to '$PWD']"
+  echo "Use like: [CLANG_FORMAT=<clang-format>] ./build_support/`basename $0` [start folder, defaults to '$PWD']"
   exit 0
 }
 

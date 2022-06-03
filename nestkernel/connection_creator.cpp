@@ -185,7 +185,8 @@ ConnectionCreator::extract_params_( const DictionaryDatum& dict_datum, std::vect
   DictionaryDatum syn_dict = new Dictionary();
   // Using a lambda function here instead of updateValue because updateValue causes
   // problems when setting a value to a dictionary-entry in syn_dict.
-  auto copy_long_if_known = [&syn_dict, &dict_datum]( const Name& name ) -> void {
+  auto copy_long_if_known = [ &syn_dict, &dict_datum ]( const Name& name ) -> void
+  {
     if ( dict_datum->known( name ) )
     {
       ( *syn_dict )[ name ] = getValue< long >( dict_datum, name );

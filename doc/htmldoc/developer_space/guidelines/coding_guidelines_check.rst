@@ -118,7 +118,7 @@ checks on all changed files as we do during the Travis CI tasks.
                                               the NEST Travis CI build and test environment.
 
        --clang-format=exe               The name of the CLANG-FORMAT executable.
-                                        Default: --clang-format=clang-format-13
+                                        Default: --clang-format=clang-format
                                         Note: CLANG-FORMAT version 13 is required.
 
        --pep8=exe                       The name of the PEP8 executable.

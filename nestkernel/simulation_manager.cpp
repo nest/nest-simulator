@@ -409,6 +409,8 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< long >( d, names::to_do, to_do_ );
   def< bool >( d, names::print_time, print_time_ );
 
+  def< bool >( d, names::prepared, prepared_ );
+
   def< bool >( d, names::use_wfr, use_wfr_ );
   def< double >( d, names::wfr_comm_interval, wfr_comm_interval_ );
   def< double >( d, names::wfr_tol, wfr_tol_ );

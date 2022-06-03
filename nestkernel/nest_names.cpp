@@ -350,6 +350,7 @@ const Name post_trace( "post_trace" );
 const Name pre_synaptic_element( "pre_synaptic_element" );
 const Name precise_times( "precise_times" );
 const Name precision( "precision" );
+const Name prepared( "prepared" );
 const Name print_time( "print_time" );
 const Name proximal_curr( "proximal_curr" );
 const Name proximal_exc( "proximal_exc" );

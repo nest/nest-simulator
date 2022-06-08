@@ -2245,3 +2245,18 @@ SeeAlso: exit_test_gracefully
 /skip_if_without_gsl { statusdict/have_gsl :: not { /skipped_no_gsl exit_test_gracefully } if } def
 /skip_if_without_music { statusdict/have_music :: not { /skipped_no_music exit_test_gracefully } if } def
 
+
+/mpirun
+[/integertype /stringtype /stringtype]
+[/numproc     /executable /scriptfile]
+{
+ () [
+  statusdict/mpiexec :: ( )
+  statusdict/mpiexec_numproc_flag :: ( )
+  numproc cvs ( )
+  statusdict/mpiexec_preflags :: ( )
+  executable ( )
+  statusdict/mpiexec_postflags :: ( )
+  scriptfile
+ ] {join} Fold
+} Function def

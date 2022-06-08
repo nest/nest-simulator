@@ -108,6 +108,12 @@ public:
   Name have_sionlib_name;
   Name ndebug_name;
 
+  Name mpiexec_name;
+  Name mpiexec_numproc_flag_name;
+  Name mpiexec_max_numprocs_name;
+  Name mpiexec_preflags_name;
+  Name mpiexec_postflags_name;
+
   Name exitcodes_name;
   Name exitcode_success_name;
   Name exitcode_skipped_name;

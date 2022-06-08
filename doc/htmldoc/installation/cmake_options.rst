@@ -162,9 +162,27 @@ installation path to the ``-Dwith-sionlib=<path>`` option when calling
 `cmake`, you can enable the :ref:`recording backend for binary files
 <recording_backends>`, which solves this problem.
 
+In order to run the distributed tests upon ``make installcheck``, NEST
+needs to know how to execute the launcher of your MPI implementation.
+CMake is usually able to detect the command line for this, but you can
+customize it using the follwing configuration variables (common
+defaults are shown below)::
 
-See the :ref:`parallel_computing` to learn how to execute
-threaded and distributed simulations with NEST.
+    -DMPIEXEC=/usr/bin/mpiexec
+    -DMPIEXEC_NUMPROCS_FLAG=-np
+    -DMPIEXEC_PREFLAGS=
+    -DMPIEXEC_POSTFLAGS=
+
+The final command line is composed in the following way::
+
+    $MPIEXEC $MPIEXEC_NUMPROC_FLAG <np> $MPIEXEC_PREFLAGS <prog> $MPIEXEC_POSTFLAGS <args>
+
+For details on setting specific flags for your MPI launcher command,
+see the `CMake documentation
+<https://cmake.org/cmake/help/latest/module/FindMPI.html>`_.
+
+See the :ref:`parallel_computing` to learn how to execute threaded and
+distributed simulations with NEST.
 
 .. _compile_with_libneurosim:
 

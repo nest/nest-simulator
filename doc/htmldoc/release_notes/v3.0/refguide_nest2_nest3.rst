@@ -332,9 +332,9 @@ In NEST 3.0, you set only a single `rng_seed`, which is used as a base for all o
 +-------------------------------------------------+----------------------------------------------------------------+
 | NEST 2.x                                        | NEST 3.0                                                       |
 +=================================================+================================================================+
-| nest.SetKernelStatus({’grng_seed’ : msd+N_vp})  | nest.SetKernelStatus({'rng_seed': msd})                        |
+| nest.SetKernelStatus({'grng_seed' : msd+N_vp})  | nest.SetKernelStatus({'rng_seed': msd})                        |
 +-------------------------------------------------+                                                                |
-| nest.SetKernelStatus({’rng_seeds’ : range(      |                                                                |
+| nest.SetKernelStatus({'rng_seeds' : range(      |                                                                |
 | msd+N_vp+1, msd+2*N_vp+1)})                     |                                                                |
 |                                                 |                                                                |
 +-------------------------------------------------+----------------------------------------------------------------+

@@ -30,7 +30,7 @@ A Quick Introduction to NEST and MUSIC
 
 In this tutorial, we will show you how to use the MUSIC library together
 with NEST. We will cover how to use the library from PyNEST and from the
-SLI language interface. In addition, we’ll introduce the use of MUSIC in
+SLI language interface. In addition, we'll introduce the use of MUSIC in
 a C++ application and how to connect such an application to a NEST
 simulation.
 
@@ -89,7 +89,7 @@ ultimately up to the receiving node. In :numref:`neuronpic` A, neuron
 :math:`N_a` has sent a spike to :math:`N_b` at time :math:`t`, over a
 connection with weight :math:`w_a` and delay :math:`d`. The spike is
 sent through the synapse, then buffered on the receiving side until
-:math:`t+d` (:numref:`neuronpic` B). At that time it’s handed over to the
+:math:`t+d` (:numref:`neuronpic` B). At that time it's handed over to the
 neuron model receptor that converts the spike event to a current and
 applies it to the neuron model (:numref:`neuronpic` C).
 
@@ -117,7 +117,7 @@ aggregate output of many neurons.
    :align: center
 
    A: Two connected neurons :math:`N_a` and :math:`N_b`, with delay
-   :math:`d_n` and weight :math:`w_n`. B: We’ve added a MUSIC connection
+   :math:`d_n` and weight :math:`w_n`. B: We've added a MUSIC connection
    with an output proxy :math:`P_a` on one end, and an input proxy
    :math:`P_b` on the other.
 

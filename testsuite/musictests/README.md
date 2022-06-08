@@ -10,9 +10,6 @@ Each test consists of the following parts:
   after the actual test simulation and can be used to test resulting
   data files for consistency
 
-MUSIC tests are run using the `mpirun` function defined in `~/.nestrc`
-and with the total number of processes that is requested in the MUSIC
-configuration file.
 
 Each test is expected to exit with an exit code of 0 if it
 succeeds. All other exit codes indicate an error.

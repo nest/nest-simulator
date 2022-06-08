@@ -162,13 +162,6 @@ installation path to the ``-Dwith-sionlib=<path>`` option when calling
 `cmake`, you can enable the :ref:`recording backend for binary files
 <recording_backends>`, which solves this problem.
 
-If you compiled NEST with support for MPI and also want to run the
-corresponding tests, you have to tell it about how your
-``mpirun``/``mpiexec`` command works by defining the ``mpirun``
-function in your ``~/.nestrc`` file. The file already contains an
-example implementation that should work with the `OpenMPI
-<http://www.openmpi.org>`__ implementation. For more details, see the
-documentation on the :ref:`config_options`.
 
 See the :ref:`parallel_computing` to learn how to execute
 threaded and distributed simulations with NEST.

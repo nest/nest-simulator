@@ -277,13 +277,6 @@ if [ "$xLIBNEUROSIM" = "1" ] ; then
 else
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=OFF"
 fi
-cp examples/sli/nestrc.sli ~/.nestrc
-# Explicitly allow MPI oversubscription. This is required by Open MPI versions > 3.0.
-# Not having this in place leads to a "not enough slots available" error.
-#if [[ "$OSTYPE" = darwin* ]] ; then
-    #sed -i -e 's/mpirun -np/mpirun --oversubscribe -np/g' ~/.nestrc
-#fi
-sed -i -e 's/mpirun -np/mpirun --oversubscribe -np/g' ~/.nestrc
 NEST_RESULT=result
 if [ "$(uname -s)" = 'Linux' ]; then
     NEST_RESULT=$(readlink -f $NEST_RESULT)

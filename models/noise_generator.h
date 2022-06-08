@@ -49,39 +49,36 @@ Generate a Gaussian white noise current
 Description
 +++++++++++
 
-This device can be used to inject a Gaussian "white" noise current into a node.
+The `noise_generator` can be used to inject a Gaussian "white" noise current into a node.
 
-The current is not really white, but a piecewise constant current with
-Gaussian distributed amplitude. The current changes at intervals of
-dt. dt must be a multiple of the simulation step size, the default is
-10 times the simulation resolution (equating to 1.0 ms, corresponding
-to a 1 kHz cut-off).
-
-Additionally a second sinusodial modulated term can be added to the standard
-deviation of the noise.
-
-The current generated is given by
+The current is not truly white, but a piecewise constant current with a Gaussian distributed
+amplitude with mean :math:`\mu` and standard deviation :math:`\sigma`. The current changes at
+a user-defined interval :math:`\delta` and is given by
 
 .. math::
 
-  I(t) = mean + std \cdot N_j  \text{ for } t_0 + j dt \leq t < t_0 + (j-1) dt
+  I(t) = I(t) = \mu + N_j \sigma
+                              \quad \text{for} \quad t_0 + j \delta < t \leq t_0 + (j+1) \delta \;,
 
-where :math:`N_j` are Gaussian random numbers with unit standard deviation and
-:math:`t_0` is the device onset time.
-If the modulation is added the current is given by
+where :math:`N_j` are Gaussian random numbers with unit standard deviation and :math:`t_0` is
+the device onset time.
+
+Additionally a sinusodially modulated term can be added to the standard
+deviation of the noise:
 
 .. math::
 
-   I(t) = mean + \sqrt(std^2 + std_{mod}^2 \cdot \sin(\omega \cdot t + phase)) \cdot N_j \\
-                              \text{ for } t_0 + j dt \leq t < t_0 + (j-1) dt
-
-For a detailed discussion of the properties of the noise generator, please see
-`noise_generator <../model_details/noise_generator.ipynb>`_
-notebook included in the NEST source code.
+   I(t) = \mu + N_j \sqrt{\sigma^2 + \sigma_{\text{mod}}^2 \sin(\omega t + \phi)}
+                              \quad \text{for} \quad t_0 + j \delta < t \leq t_0 + (j+1) \delta \;.
 
 All targets receive different currents, but the currents for all
 targets change at the same points in time. The interval between
-changes, ``dt``, must be a multiple of the time step.
+changes, :math:`\Delta`, must be a multiple of the time step.
+
+For a detailed discussion of the properties of the noise generator, please see the
+`noise_generator <../model_details/noise_generator.ipynb>`_
+notebook included in the NEST source code.
+
 
 The effect of this noise current on a neuron depends on ``dt``. Consider
 the membrane potential fluctuations evoked when a noise current is
@@ -128,6 +125,9 @@ phase
 
 frequency
     The frequency of the sine modulation
+
+.. note::
+
 
 Setting parameters from a stimulation backend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

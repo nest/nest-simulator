@@ -145,8 +145,16 @@ NEST="nest_serial"
 HAVE_MPI="$(sli -c 'statusdict/have_mpi :: =only')"
 
 if test "${HAVE_MPI}" = "true"; then
-  MPI_LAUNCHER="$(sli -c '1 () () mpirun cst 0 get =only')"
-  MPI_LAUNCHER="$(command -v $MPI_LAUNCHER)"
+    MPI_LAUNCHER="$(sli -c 'statusdict/mpiexec :: =only')"
+    MPI_LAUNCHER_IMPL="$($MPI_LAUNCHER --version | head -n 1 | cut -d' ' -f2)"
+    # OpenMPI requires --oversubscribe to allow more processes than available cores
+    if test "${MPI_LAUNCHER_IMPL}" = "(OpenRTE)"; then
+	if [[ "$(sli -c 'statusdict/mpiexec_preflags :: =only')" =~ "--oversubscribe" ]]; then
+	    MPIFLAGCMD=""
+	else
+	    MPIFLAGCMD="statusdict/mpiexec_preflags statusdict/mpiexec_preflags :: (--oversubscribe) join put"
+	fi
+    fi
 fi
 
 # Under Mac OS X, suppress crash reporter dialogs. Restore old state at end.
@@ -403,7 +411,7 @@ if test "${MUSIC}"; then
 
         # Calculate the total number of processes from the '.music' file.
         np=$(($(sed -n 's/np=//p' ${music_file} | paste -sd'+' -)))
-        test_command="$(sli -c "${np} (${MUSIC}) (${test_name}) mpirun =")"
+        test_command="$(sli -c "${MPIFLAGCMD} {np} (${MUSIC}) (${test_name}) mpirun =only")"
 
         proc_txt="processes"
         if test $np -eq 1; then proc_txt="process"; fi
@@ -496,7 +504,7 @@ if test "${PYTHON}"; then
             for numproc in $(cd ${PYNEST_TEST_DIR}/mpi/; ls -d */ | tr -d '/'); do
                 XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
                 PYTEST_ARGS="--verbose --timeout $TIME_LIMIT --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
-                $(sli -c "${numproc} (${PYTHON} -m pytest) (${PYTEST_ARGS}) mpirun =only") 2>&1 | tee -a "${TEST_LOGFILE}"
+                $(sli -c "${MPIFLAGCMD} ${numproc} (${PYTHON} -m pytest) (${PYTEST_ARGS}) mpirun =only") 2>&1 | tee -a "${TEST_LOGFILE}"
             done
         fi
     fi

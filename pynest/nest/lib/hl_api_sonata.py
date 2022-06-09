@@ -246,15 +246,30 @@ class SonataConnector(object):
 
         nodes = NodeCollection()  # Empty NC in case we don't need any spike generators
         model = 'spike_generator'
+
+        def get_spikes_base():
+            all_groups = all([isinstance(g, h5py.Group) for g in spiking_file['spikes'].values()])
+            any_groups = any([isinstance(g, h5py.Group) for g in spiking_file['spikes'].values()])
+            if (all_groups or any_groups) and not (all_groups and any_groups):
+                raise ValueError(f'Got both node_set and values in spikes h5 file ({spiking_file["spikes"].keys()})')
+            if all_groups:
+                if node_set in spiking_file['spikes'].keys():
+                    return spiking_file['spikes'][node_set]
+                else:
+                    raise ValueError(f'node_set group "{node_set}" not found in spikes h5 file')
+            else:
+                return spiking_file['spikes']
+
         # First need to iterate to the current spike population dictionary in config file
         for input_dict in self.config['inputs'].values():
             node_set = input_dict['node_set']
             if node_set == population_name:
                 # Spiketrains are given in h5 files
                 with h5py.File(input_dict['input_file'], 'r') as spiking_file:
+                    spikes_base = get_spikes_base()
                     # Convert data to NumPy arrays for performance
-                    spikes = np.array(spiking_file['spikes']['timestamps'])
-                    node_ids = np.array(spiking_file['spikes']['gids'])
+                    spikes = np.array(spikes_base['timestamps'])
+                    node_ids = np.array(spikes_base['gids'])
                     timestamps = {i: spikes[node_ids == i] for i in range(num_elements)}  # Map node id's to spike times
                 nodes = Create(model, num_elements)
                 nodes.set([{'spike_times': timestamps[i], 'precise_times': True} for i in range(len(nodes))])

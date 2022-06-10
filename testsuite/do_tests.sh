@@ -146,9 +146,9 @@ HAVE_MPI="$(sli -c 'statusdict/have_mpi :: =only')"
 
 if test "${HAVE_MPI}" = "true"; then
     MPI_LAUNCHER="$(sli -c 'statusdict/mpiexec :: =only')"
-    MPI_LAUNCHER_IMPL="$($MPI_LAUNCHER --version | head -n 1 | cut -d' ' -f2)"
+    MPI_LAUNCHER_VERSION="$($MPI_LAUNCHER --version | head -n1)"
     # OpenMPI requires --oversubscribe to allow more processes than available cores
-    if test "${MPI_LAUNCHER_IMPL}" = "(OpenRTE)"; then
+    if [[ "${MPI_LAUNCHER_VERSION}" =~ "(OpenRTE)" ]]; then
 	if [[ "$(sli -c 'statusdict/mpiexec_preflags :: =only')" =~ "--oversubscribe" ]]; then
 	    MPIFLAGCMD=""
 	else
@@ -188,7 +188,8 @@ if test "${PYTHON}"; then
 fi
 if test "${HAVE_MPI}" = "true"; then
     echo "  Running MPI tests .. yes"
-    echo "  MPI launcher ....... $MPI_LAUNCHER"
+    echo "         launcher .... $MPI_LAUNCHER"
+    echo "         version ..... $MPI_LAUNCHER_VERSION"
 else
     echo "  Running MPI tests .. no (compiled without MPI support)"
 fi

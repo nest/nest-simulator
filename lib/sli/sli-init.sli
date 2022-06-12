@@ -2254,6 +2254,7 @@ SeeAlso: exit_test_gracefully
   statusdict/mpiexec :: ( )
   statusdict/mpiexec_numproc_flag :: ( )
   numproc cvs ( )
+  (SLI_MPIEXEC_PREFLAGS) getenv not {()} if ( )
   statusdict/mpiexec_preflags :: ( )
   executable ( )
   statusdict/mpiexec_postflags :: ( )

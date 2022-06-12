@@ -363,13 +363,9 @@ Description:
   option. (See "SetOptions" on how to do this.)
 
 Options:
-  /command - UNIX command to use as browser (default: false)
+  /command - UNIX command to use as browser (default: firefox)
   
-    /command is initially set to (firefox). "helpdesk" will issue a
-    message that the user needs to specify the browser.
-    If /command is set to the name of a UNIX program, "helpdesk" will
-    execute this program as a child process, and use it to display the
-    HTML-helpdesk.
+    /command is initially set to (firefox).
   
   /wait - whether to wait for the UNIX program to finish. (default: false)
   

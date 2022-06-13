@@ -3,11 +3,9 @@ Understand how NEST works
 
 Here you can dive into various topics about NEST.
 
-.. grid:: 1 2 3 4
-   :gutter: 1
+.. grid:: 1 1 2 3
 
    .. grid-item-card:: |neuronicon| All about neurons
-       :columns: 4
 
        * :ref:`node_handles`
 
@@ -18,8 +16,7 @@ Here you can dive into various topics about NEST.
        * :ref:`exact_integration`
 
    .. grid-item-card:: |synapseicon| All about synapses and connections
-       :columns: 5
-
+  
        * :ref:`connection_management`
 
        * :ref:`handling_connections`
@@ -29,30 +26,25 @@ Here you can dive into various topics about NEST.
        * :ref:`weight_normalization`
 
    .. grid-item-card:: |deviceicon| All about devices
-       :columns: 3
 
        * :ref:`record_simulations`
 
        * :ref:`stimulate_network`
 
-.. grid:: 2
+.. grid:: 1 1 2 3
 
    .. grid-item-card:: |networkicon| Spatially-structured networks
-       :columns: 5
        :link: spatial_networks 
        :link-type: ref
 
 
    .. grid-item-card:: |mathicon| Models in NEST
-       :columns: 4
        :link:  models_contents
        :link-type: ref
 
-.. grid::  3
-   :gutter: 1
+.. grid:: 1 1 2 3
 
    .. grid-item-card:: |randomicon| NEST behavior
-       :columns: 3
 
        * :ref:`built_in_timers`
 
@@ -61,7 +53,6 @@ Here you can dive into various topics about NEST.
        * :ref:`run_simulations`
 
    .. grid-item-card:: |connecticon| Connect to other tools
-       :columns: 4
 
        * :ref:`nest_server`
 
@@ -69,18 +60,15 @@ Here you can dive into various topics about NEST.
 
 
    .. grid-item-card:: |hpcicon| High performance computers (HPC) 
-       :columns: 5
        :text-align: center
        :link: parallel_computing
        :link-type: ref
 
 
-
-.. grid::  3
-   :gutter: 1
+.. grid:: 1 1 2 3
 
    .. grid-item-card:: |converticon| Convert NEST 2.X scripts to 3.X
-       :columns: 5
+       :text-align: center
        :link: refguide_2_3
        :link-type: ref
 
@@ -128,3 +116,4 @@ Here you can dive into various topics about NEST.
 .. |glossaryicon| image:: static/img/glossary_orange64.png
 .. |hpcicon| image:: static/img/hpc_orange64.png
 .. |mathicon| image:: static/img/math_orange64.png
+

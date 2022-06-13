@@ -3,7 +3,7 @@
 PyNEST examples
 ===============
 
-.. grid:: 1 2 3 4
+.. grid:: 1 1 2 3
 
     .. grid-item-card:: Simple networks
            :img-top: ../static/img/pynest/mc_neuron.png
@@ -39,6 +39,9 @@ PyNEST examples
            * :doc:`../auto_examples/spatial/test_3d_exp`
            * :doc:`../auto_examples/spatial/test_3d_gauss`
 
+
+.. grid:: 1 1 2 3
+
     .. grid-item-card:: Brunel
            :img-top: ../static/img/pynest/brunel_alpha.png
 
@@ -50,7 +53,6 @@ PyNEST examples
 
  
 
-.. grid:: 1 2 3 4
 
     .. grid-item-card:: Cortical microcircuit (Potjans) 
            :img-top: ../static/img/pynest/raster_plot.png
@@ -63,6 +65,8 @@ PyNEST examples
 
            * :doc:`../auto_examples/glif_cond_neuron`
            * :doc:`../auto_examples/glif_psc_neuron`
+
+.. grid:: 1 1 2 3
 
     .. grid-item-card:: Compartmental neurons
            :img-top: ../static/img/pynest/dendritic_synapse_conductances.png
@@ -78,7 +82,6 @@ PyNEST examples
            * :doc:`../auto_examples/rate_neuron_dm`
 
 
-.. grid:: 1 2 3 4
 
     .. grid-item-card:: GIF (from Gerstner lab)
            :img-top: ../static/img/pynest/gif_pop.png
@@ -87,6 +90,8 @@ PyNEST examples
            * :doc:`../auto_examples/gif_population`
            * :doc:`../auto_examples/gif_pop_psc_exp`
 
+
+.. grid:: 1 1 2 3
 
     .. grid-item-card:: Hodgkin-Huxley 
            :img-top: ../static/img/pynest/hh_phase.png
@@ -105,7 +110,7 @@ PyNEST examples
 
            * :doc:`../auto_examples/CampbellSiegert`
 
-.. grid:: 1 2 3 4
+.. grid:: 1 1 2 3
 
     .. grid-item-card:: Brette and Gerstner
            :img-top: ../static/img/pynest/brette_gerstner2c.png
@@ -121,7 +126,7 @@ PyNEST examples
 
 
 
-.. grid:: 1 2 3 4
+.. grid:: 1 1 2 3
 
     .. grid-item-card:: Gap junctions 
            :img-top: ../static/img/pynest/gap_junctioninhib.png
@@ -141,6 +146,7 @@ PyNEST examples
 
            * :doc:`../auto_examples/synapsecollection`
 
+.. grid:: 1 1 2 3
 
     .. grid-item-card:: Urbanczik 
            :img-top: ../static/img/pynest/urbanczik_syn.png
@@ -148,7 +154,6 @@ PyNEST examples
            * :doc:`../auto_examples/urbanczik_synapse_example`
 
 
-.. grid:: 1 2 3 4
 
     .. grid-item-card:: Clopath
            :img-top: ../static/img/pynest/clopath.png
@@ -168,7 +173,7 @@ PyNEST examples
 
 
 
-.. grid:: 1 2 3 4
+.. grid:: 1 1 2 3
 
     .. grid-item-card:: Recording and analyzing networks
            :img-top: ../static/img/pynest/correlospinmatrix.png
@@ -198,7 +203,7 @@ PyNEST examples
            * :doc:`../auto_examples/store_restore_network`
 
 
-.. grid:: 1 2 3 4
+.. grid:: 1 1 2 3
 
     .. grid-item-card:: HPC benchmark
            :img-top: ../static/img/nest_logo-faded.png

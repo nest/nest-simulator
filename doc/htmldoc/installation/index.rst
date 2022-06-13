@@ -3,7 +3,7 @@
 Install NEST
 ============
 
-.. grid:: 2
+.. grid:: 1 1 2 2
 
    .. grid-item-card:: |user|  Install pre-built NEST package
 
@@ -15,7 +15,7 @@ Install NEST
         I'm a lecturer who wants to :ref:`use NEST to teach <lecturer>`
 
 
-.. grid:: 2
+.. grid:: 1 1 2 2
 
     .. grid-item-card:: |admin| Install NEST for HPC
 

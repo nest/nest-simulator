@@ -172,7 +172,9 @@ html_theme_options = {
     # Specify a base_url used to generate sitemap.xml. If not
     # specified, then no sitemap will be built.
     'base_url': 'https://nest-simulator.readthedocs.io/en/latest/',
-
+    'html_minify': False,
+    'html_prettify': False,
+    'css_minify': True,
     # Set the color and the accent color
     'color_primary': 'orange',
     'color_accent': 'white',

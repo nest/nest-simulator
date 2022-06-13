@@ -1,4 +1,4 @@
-/* This custom css page is for all css related to the material design (md) layout and sd (sphinx design), any other custom
+/* This custom css page is for all css related to the material design (md) layout, any other custom
  * css should be foundin colorblocks.css */
 
 /* Set color scheme to NEST orange */
@@ -145,48 +145,27 @@ ul.md-tabs__list li.md-tabs__item a.md-tabs__link {
 	width: 1.6em;
 	height: 1.6em;
 }
-.sd-card-title {
- text-align: center;
-}
 /* set the width wider of main content and sidebars */
 
-@media only screen and (min-width: 1024px) {
- .md-grid {
- 	max-width: 92em;
- }
- .md-sidebar {
-    width: 12.2em;
- }
- .md-sidebar--secondary {
- 	margin-left: 93em;
-   width: 12em;
- }
- /* set main content section margins wider */
- .md-content {
-    margin-left: 12.1em;
-    margin-right: 12.1em;
- }
-
- .md-content__inner {
-     margin-left: 2.5em;
-     margin-right: 2.5em
- }
+.md-grid {
+	max-width: 92em;
 }
-@media only screen and (max-width: 76.1875em){
-
-#logo img {
-   margin-top: 50px;
- }
-.md-source__icon + .md-source__repository {
-	display: flex;
+.md-sidebar {
+   width: 12.2em;
 }
-.md-nav__button img {
-  display: None;
+.md-sidebar--secondary {
+	margin-left: 93em;
+  width: 12em;
+}
+/* set main content section margins wider */
+.md-content {
+   margin-left: 12.1em;
+   margin-right: 12.1em;
 }
 
- .md-nav--primary .md-nav__item, .md-nav--primary .md-nav__title {
- 	font-size: 1.1rem;
- }
+.md-content__inner {
+    margin-left: 2.5em;
+    margin-right: 2.5em
 }
 /* footer size */
 .md-footer-nav__title, .md-footer-nav__direction {

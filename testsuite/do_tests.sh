@@ -410,7 +410,7 @@ if test "${MUSIC}"; then
 
         # Calculate the total number of processes from the '.music' file.
         np=$(($(sed -n 's/np=//p' ${music_file} | paste -sd'+' -)))
-        test_command="$(sli -c "{np} (${MUSIC}) (${test_name}) mpirun =only")"
+        test_command="$(sli -c "${np} (${MUSIC}) (${test_name}) mpirun =only")"
 
         proc_txt="processes"
         if test $np -eq 1; then proc_txt="process"; fi

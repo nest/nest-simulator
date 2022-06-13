@@ -274,7 +274,7 @@ Note the following points:
 -  The extent is automatically set when using ``nest.spatial.free``, however, it
    is still possible to set the extent yourself by passing the ``extent`` variable to the object.
 
--  All element positions must be *within* the layer’s extent. Elements
+-  All element positions must be *within* the layer's extent. Elements
    may be placed on the perimeter of the extent as long as no periodic
    boundary conditions are used; see the section :ref:`sec_periodic`.
 
@@ -298,7 +298,7 @@ are specified. Furthermore, the extent is calculated from the node positions, an
 3D layers
 ~~~~~~~~~
 
-Although the term “layer” suggests a 2-dimensional structure, the layers
+Although the term "layer" suggests a 2-dimensional structure, the layers
 in NEST may in fact be 3-dimensional. The example from the previous
 section may be easily extended by updating number of dimensions for the positions:
 
@@ -602,7 +602,7 @@ grid-based masks for grid-based NodeCollections. If no mask is specified, all
 nodes in the pool layer will be searched.
 
 Note that the mask size should not exceed the size of the layer when
-using periodic boundary conditions, since the mask would “wrap around”
+using periodic boundary conditions, since the mask would "wrap around"
 in that case and pool nodes would be considered multiple times as
 targets.
 
@@ -967,8 +967,8 @@ Constant
 Gaussian
    The connection probability is a Gaussian distribution based on the distance
    between neurons. In the example, connection
-   probability is 1 for :math:`d=0` and falls off with a “standard
-   deviation” of :math:`\sigma=1`:
+   probability is 1 for :math:`d=0` and falls off with a "standard
+   deviation" of :math:`\sigma=1`:
 
 .. literalinclude:: scripts/connections.py
     :start-after: #{ conn4g #}

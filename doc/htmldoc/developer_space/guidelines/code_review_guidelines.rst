@@ -21,7 +21,7 @@ can be discussed on the :ref:`NEST mailing lists <contact_us>`.
   side (i.e., if the code is scientifically correct and fixes an
   actual issue).
 
-* For changes labeled “not code” or “minor” (e.g., changes in
+* For changes labeled "not code" or "minor" (e.g., changes in
   documentation, fixes for typos, etc.), the need for a second code
   review can be waived, and a single review plus the OK from the CI
   system is sufficient to merge the request.

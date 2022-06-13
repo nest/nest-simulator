@@ -163,9 +163,9 @@ public:
   bool has_proxies() const override;
   Name get_element_type() const override;
 
-  using Device::pre_run_hook;
   using Device::init_buffers;
   using Device::init_state;
+  using Device::pre_run_hook;
   using Node::pre_run_hook;
 
   void pre_run_hook() override;

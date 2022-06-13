@@ -25,7 +25,7 @@ Setting up your GitHub account
 ##############################
 
 The NEST source code is hosted in a public repository on
-`GitHub <https://github.com/nest/nest-simulator>`_. If you don’t have a GitHub
+`GitHub <https://github.com/nest/nest-simulator>`_. If you don't have a GitHub
 account already, please create one.
 
 You then need to configure your account to allow write access - please see the
@@ -76,7 +76,7 @@ Commands explained
 
 This downloads your fork to your local system.  Investigate. Change directory
 to your new repository: ``cd nest-simulator``.
-Then ``git branch -a`` to show you all branches. You’ll get something like:
+Then ``git branch -a`` to show you all branches. You'll get something like:
 
 .. code::
 
@@ -105,7 +105,7 @@ the main source code repository is usually called ``upstream``.
 
 .. note::
 
-   We’ve used ``git://`` in the web address instead of ``git@``.
+   We've used ``git://`` in the web address instead of ``git@``.
    The ``git://`` web address is read only and ensures that you don't make any
    accidental changes to the ``upstream`` repository (if you have permissions to
    write to it, of course).

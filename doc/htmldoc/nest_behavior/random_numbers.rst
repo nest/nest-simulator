@@ -380,7 +380,7 @@ estimate the number of random numbers required per stream as follows:
 Collision risk of parallel random number streams
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`L’Ecuyer et al (2017) <https://dx.doi.org/10.1016/j.matcom.2016.05.005>`__ provide a
+`L'Ecuyer et al (2017) <https://dx.doi.org/10.1016/j.matcom.2016.05.005>`__ provide a
 recent account of random number generation in highly parallel settings.
 The main approach to providing independent random number streams in
 parallel simulations is to use a high-quality random number generator
@@ -414,10 +414,10 @@ while for a period of :math:`r = 2^{256}` we obtain
 The probability of stream collisions is thus negligibly small, provided
 we use random number generators with a period of at least :math:`2^{128}`.
 
-`L’Ecuyer (2012, Ch 3.6) <https://doi.org/10.1007/978-3-642-21551-3_3>`__ points out
+`L'Ecuyer (2012, Ch 3.6) <https://doi.org/10.1007/978-3-642-21551-3_3>`__ points out
 that certain random number generator classes will show too much
 regularity in their output if more than :math:`r^{1/3}` numbers are used (this
-relation is based on exercises in Knuth, TAOCP vol 2, see `L’Ecuyer and
+relation is based on exercises in Knuth, TAOCP vol 2, see `L'Ecuyer and
 Simard (2001) <https://doi.org/10.1016/S0378-4754(00)00253-6>`__). While
 it is not certain that that analysis also applies to (short)
 subsequences of the period of an RNG, one might still re-consider the

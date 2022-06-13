@@ -53,7 +53,7 @@ The NEural Simulation Tool (NEST: www.nest-initiative.org) [1]_
 is designed for the simulation of large heterogeneous networks of point
 neurons. It is open source software released under the GPL licence. The
 simulator comes with an interface to Python [2]_. :numref:`Python-Interface`
-illustrates the interaction between the user’s simulation script
+illustrates the interaction between the user's simulation script
 (``mysimulation.py``) and the NEST simulator. Eppler et al. [3]_
 contains a technically detailed description of the implementation of this
 interface and parts of this text are based on this reference. The
@@ -68,7 +68,7 @@ simulations in text files. These can in turn be run from the command
 line or from the Python or ipython prompt.
 
 Whether working interactively, semi-interactively, or purely executing
-scripts, the first thing that needs to happen is importing NEST’s
+scripts, the first thing that needs to happen is importing NEST's
 functionality into the Python interpreter.
 
 ::
@@ -93,7 +93,7 @@ prompted for.
     dir(nest)
 
 If you want to obtain more information about a particular command, you
-may use Python’s standard help system, which will return the help text
+may use Python's standard help system, which will return the help text
 (docstring) explaining the use of this particular function. There is a
 help system within NEST as well. You can open the help pages in a
 browser using ``nest.helpdesk()`` and you can get the help page for a
@@ -197,7 +197,7 @@ membrane voltage of a neuron over time. The property ``record_from``
 expects a list of the names of the variables we would like to
 record. The variables exposed to the multimeter vary from model to
 model. For a specific model, you can check the names of the exposed
-variables by looking at the neuron’s property ``recordables``.
+variables by looking at the neuron's property ``recordables``.
 
 ::
 
@@ -296,7 +296,7 @@ use of ``matplotlib`` and the ``pyplot`` module.
     plt.plot(ts, Vms)
 
 The second line opens a figure (with the number 1), and the third line
-actually produces the plot. You can’t see it yet because we have not
+actually produces the plot. You can't see it yet because we have not
 used ``plt.show()``. Before we do that, we proceed analogously to
 obtain and display the spikes from the spike recorder.
 
@@ -508,7 +508,7 @@ Connections
 ~~~~~~~~~~~
 
 This is an abbreviated version of the documentation for the :py:func:`.Connect`
-function, please see NEST’s online help for the full version and
+function, please see NEST's online help for the full version and
 :ref:`Connection Management <connection_management>` for an introduction
 and examples.
 

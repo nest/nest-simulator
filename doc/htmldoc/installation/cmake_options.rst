@@ -47,8 +47,8 @@ Select parallelization scheme
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 +---------------------------------------------+----------------------------------------------------------------+
-| ``-Dwith-mpi=[OFF|ON|</path/to/mpi>]``      | Build with MPI parallelization [default=OFF]. Optionally give  |
-|                                             | directory with MPI installation.                               |
+| ``-Dwith-mpi=[OFF|ON]``                     | Build with MPI parallelization [default=OFF].                  |
+|                                             |                                                                |
 +---------------------------------------------+----------------------------------------------------------------+
 | ``-Dwith-openmp=[OFF|ON|<OpenMP-Flag>]``    | Build with OpenMP multi-threading [default=ON]. Optionally set |
 |                                             | OMP compiler flags.                                            |

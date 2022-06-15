@@ -170,7 +170,7 @@ CMake is usually able to detect the command line for this, but you can
 customize it using the follwing configuration variables (common
 defaults are shown below)::
 
-    -DMPIEXEC=/usr/bin/mpiexec
+    -DMPIEXEC=/usr/bin/mpirun
     -DMPIEXEC_NUMPROCS_FLAG=-np
     -DMPIEXEC_PREFLAGS=
     -DMPIEXEC_POSTFLAGS=

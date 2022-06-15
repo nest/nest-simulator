@@ -6,12 +6,18 @@ CMake Options for NEST
 Before compiling and installing NEST, the source code  has to be
 configured with ``cmake``. In the simplest case, the commands::
 
-    cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> <nest_source_dir>
+    cmake <nest_source_dir>
     make
     make install
 
-will build NEST and install it to ``<nest_install_dir>``, which has
-to be writable by the user running the install command.
+will build NEST and install it to the site-packages of your Python
+environment.
+
+.. note::
+
+  If you want to specify an alternative install location, use  
+  ``-DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir>``. It needs to be
+  writable by the user running the install command.
 
 
 Choice of compiler

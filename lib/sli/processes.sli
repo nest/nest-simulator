@@ -1208,11 +1208,12 @@ Name: nest_serial  - Returns a non-distributed call of nest as a string
 Synopsis:  (sli-filename) nest_serial -> (string with shell command)
 
 Description:
-If nest was compiled with MPI it may be unsafe to directly call the binary to
-obtain a non-distributed version. The command nest_serial looks up the appropriate 
-way to call nest and returns a suitable command as a string. If NEST was not
-compiled with MPI, it just returns "nest", else it returns the "mpirun" command
-with the -np 1 equivalent.
+If NEST was compiled with MPI it may be unsafe to directly call the
+binary to obtain a non-distributed version. The command nest_serial
+looks up the appropriate way to call nest and returns a suitable
+command as a string. If NEST was not compiled with MPI, it just
+returns the absolute path to the "nest" executable, else it returns
+the "mpirun" command with the -np 1 equivalent.
 
 Diagnostics:
 This function issues an error if NEST was compiled with MPI but is not aware of 

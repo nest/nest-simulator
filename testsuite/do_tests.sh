@@ -148,7 +148,7 @@ if test "${HAVE_MPI}" = "true"; then
     MPI_LAUNCHER="$(sli -c 'statusdict/mpiexec :: =only')"
     MPI_LAUNCHER_VERSION="$($MPI_LAUNCHER --version | head -n1)"
     # OpenMPI requires --oversubscribe to allow more processes than available cores
-    if [[ "${MPI_LAUNCHER_VERSION}" =~ "(OpenRTE)" ]]; then
+    if [[ "${MPI_LAUNCHER_VERSION}" =~ "(OpenRTE)" ]] ||  [[ "${MPI_LAUNCHER_VERSION}" =~ "(Open MPI)" ]]; then
 	if [[ ! "$(sli -c 'statusdict/mpiexec_preflags :: =only')" =~ "--oversubscribe" ]]; then
 	    export SLI_MPIEXEC_PREFLAGS="--oversubscribe"
 	fi

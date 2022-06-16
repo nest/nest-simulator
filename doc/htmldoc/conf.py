@@ -165,9 +165,9 @@ html_logo = str(doc_build_dir / 'static/img/nest_logo.png')
 # documentation.
 #
 html_theme_options = {
-        # Set the name of the project to appear in the navigation.
+    # Set the name of the project to appear in the navigation.
     # Set you GA account ID to enable tracking
-    #'google_analytics_account': 'UA-XXXXX',
+    # 'google_analytics_account': 'UA-XXXXX',
 
     # Specify a base_url used to generate sitemap.xml. If not
     # specified, then no sitemap will be built.
@@ -183,9 +183,9 @@ html_theme_options = {
     # Set the repo location to get a badge with stats
     'repo_url': 'https://github.com/nest/nest-simulator/',
     'repo_name': 'NEST simulator',
-    #"nav_links": [
-   #     {"href": "index", "internal": True, "title": "NEST docs home"}
-   #     ],
+    # "nav_links": [
+    #     {"href": "index", "internal": True, "title": "NEST docs home"}
+    #     ],
     # Visible levels of the global TOC; -1 means unlimited
     'globaltoc_depth': 1,
     # If False, expand all TOC entries

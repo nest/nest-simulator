@@ -30,7 +30,7 @@ Please familiarize yourself with our guides and workflows:
 
 
 
-.. grid:: 2
+.. grid:: 1 1 2 2
 
     .. grid-item-card:: Mailing list
 
@@ -43,7 +43,7 @@ Please familiarize yourself with our guides and workflows:
       an issue on GitHub using `the templates <https://github.com/nest/nest-simulator/issues/new/choose>`_
 
 
-.. grid:: 2
+.. grid:: 1 1 2 2
 
     .. grid-item-card:: Contribute code
 
@@ -76,7 +76,7 @@ copyright to the NEST Initiative before we can merge your pull request.
 Developer guides
 ----------------
 
-.. grid:: 2 
+.. grid:: 1 1 2 2
 
     .. grid-item-card:: Reviewer guidelines
 
@@ -88,7 +88,7 @@ Developer guides
 
         * Here you can find details on our :ref:`CI workflow <cont_integration>`
 
-.. grid:: 2
+.. grid:: 1 1 2 2
 
     .. grid-item-card:: SLI documentation
         :link: sli_doc
@@ -99,14 +99,16 @@ Developer guides
 
         * see :ref:`devdoc_workflow`
 
-.. card:: Helpful guides
+.. grid:: 1 1 2 2
 
-    Here are a few miscellaneous guides that you might find useful:
+    .. grid-item-card:: Helpful guides
+
+       Here are a few miscellaneous guides that you might find useful:
 
 
-    * :ref:`Developing NEST with IDEs <nest_ides>`
+       * :ref:`Developing NEST with IDEs <nest_ides>`
 
-    * :ref:`vim_sli`
+       * :ref:`vim_sli`
 
 .. toctree::
    :maxdepth: 1

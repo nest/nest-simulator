@@ -42,7 +42,7 @@ PyNEST examples
 
 .. grid:: 1 1 2 3
 
-    .. grid-item-card:: Brunel
+    .. grid-item-card:: Random balanced networks (Brunel)
            :img-top: ../static/img/pynest/brunel_alpha.png
 
            * :doc:`../auto_examples/brunel_alpha_nest`

@@ -246,8 +246,7 @@ def toc_customizer(app, docname, source):
 
 def setup(app):
     app.connect("source-read", toc_customizer)
-    app.add_css_file('css/nest_material.css')
-    app.add_css_file('css/colorblocks-style.css')
+    app.add_css_file('css/custom.css')
     app.add_css_file('css/pygments.css')
     app.add_js_file("js/copybutton.js")
     app.add_js_file("js/custom.js")

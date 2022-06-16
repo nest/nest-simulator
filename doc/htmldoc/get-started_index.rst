@@ -12,17 +12,15 @@ Tutorials and examples
 .. grid:: 1 1 2 2
     :gutter: 1
 
-    .. grid-item-card:: |tutorialicon| Tutorials
+    .. grid-item-card:: Tutorials
+       :img-top: static/img/topm2-GPS-Settings-256_nest.png 
        :link: tutorials
        :link-type: ref
- 
-    .. grid-item-card:: |exampleicon| PyNEST example scripts
+
+    .. grid-item-card:: PyNEST example scripts
+       :img-top:  static/img/topm2-Documents-02-256_nest.png
        :link: pynest_examples
        :link-type: ref
 
 
 
-.. |tutorialicon| image:: static/img/GPS-Settings-256_nest.png 
-   :scale: 25%
-.. |exampleicon| image:: static/img/Documents-02-256_nest.png
-   :scale: 25%

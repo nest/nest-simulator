@@ -200,6 +200,8 @@ std::vector< double > apply( const ParameterDatum& param, const DictionaryDatum&
 
 Datum* node_collection_array_index( const Datum* datum, const long* array, unsigned long n );
 Datum* node_collection_array_index( const Datum* datum, const bool* array, unsigned long n );
+
+void slice_positions_if_sliced_nc( DictionaryDatum& dict, const NodeCollectionDatum& nc );
 }
 
 

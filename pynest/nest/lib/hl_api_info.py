@@ -200,6 +200,11 @@ def set_verbosity(level):
     - M_ERROR=30, display error messages and above
     - M_FATAL=40, display failure messages and above
 
+    .. note::
+
+       If the environment variable PYNEST_QUIET is set, NEST will not print
+       welcome text containing the version and other information.
+
     Parameters
     ----------
     level : str, default: 'M_INFO'

@@ -147,9 +147,6 @@ See the the :doc:`model directory <index>` to access the full description of eac
    * - precise spike timing
      - ps
      -
-   * - exponential function
-     - exp
-     -
 
 
 

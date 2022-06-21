@@ -63,3 +63,13 @@ def testGridPositions(reset):
     # which corresponds to the node ID.
     expected_weight = conns.target
     assert(conns.weight == expected_weight)
+
+
+def testSlicedPositions(reset):
+    """Correct positions from spatial attribute of sliced NodeCollection"""
+    positions = nest.spatial.free(nest.random.uniform(min=-1, max=1), num_dimensions=2)
+    # Positions are only stored for local nodes.
+    nodes = nest.GetLocalNodeCollection(nest.Create('iaf_psc_alpha', positions=positions))
+    all_positions = sum([list(nodes[i].spatial['positions']) for i in range(len(nodes))], start=[])
+    all_positions.sort()
+    assert tuple(all_positions) == nodes.spatial['positions']

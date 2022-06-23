@@ -52,7 +52,7 @@ Synaptic dynamics are given by
 :math:`w(t) = w_{max} \cdot P(t)`   is the resulting synaptic weight
 
 For implementation details see:
-:doc:`HillTononi_model <../neurons/model_details/HillTononiModels>`_
+:doc:`HillTononi_model <../neurons/model_details/HillTononiModels>`
 
 .. warning::
 

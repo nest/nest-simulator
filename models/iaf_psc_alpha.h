@@ -95,7 +95,7 @@ relevant measures analytically.
    ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
    For implementation details see the
-   :doc:`IAF_neurons_singularity <../neurons/neurons/model_details/IAF_neurons_singularity>` notebook.
+   :doc:`IAF_neurons_singularity <../neurons/model_details/IAF_neurons_singularity>` notebook.
 
 See also [3]_.
 

@@ -76,7 +76,7 @@ If the modulation is added the current is given by
                               \text{ for } t_0 + j dt \leq t < t_0 + (j-1) dt
 
 For a detailed discussion of the properties of the noise generator, please see
-:doc:`noise_generator <../neurons/model_details/noise_generator>`_
+:doc:`noise_generator <../neurons/model_details/noise_generator>`
 notebook included in the NEST source code.
 
 All targets receive different currents, but the currents for all

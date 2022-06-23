@@ -74,7 +74,7 @@ meets the threshold.
    ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
   For implementation details see the
-  :doc:`IAF_neurons_singularity <../neurons/neurons/model_details/IAF_neurons_singularity` notebook.
+  :doc:`IAF_neurons_singularity <../neurons/model_details/IAF_neurons_singularity` notebook.
 
 This model transmits precise spike times to target nodes (on-grid spike
 time and offset). If this node is connected to a spike_recorder, the

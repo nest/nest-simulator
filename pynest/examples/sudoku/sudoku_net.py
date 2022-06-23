@@ -112,55 +112,40 @@ class SudokuNet:
 
         logging.info("Creating inter-neuron and IO-connections...")
         for row in range(9):
-            # A mask for indexing the id_matrix while excluding the current row
-            row_mask = np.ones(9, dtype=bool)
-            row_mask[row] = False
-
-            # start and end row of the current 3x3 box
+            # First and last row of the current 3x3 box.
             box_row_start = (row // 3) * 3
             box_row_end = box_row_start + 3
 
             for column in range(9):
-                # A mask for indexing the id_matrix while excluding the current
-                # column.
-                col_mask = np.ones(9, dtype=bool)
-                col_mask[column] = False
-
-                # start and end column of the current 3x3 box
+                # First and last column of the current 3x3 box.
                 box_col_start = (column // 3) * 3
                 box_col_end = box_col_start + 3
 
-                # obtain the surrounding 3x3 box and remove the neurons of the
-                # current cell from it
+                # Obtain all populations in the surrounding 3x3 box. 
                 current_box = self.neuron_indices[box_row_start:box_row_end,
                                                   box_col_start:box_col_end]
-                box_mask = np.ones((3, 3), dtype=bool)
-                box_mask[row % 3, column % 3] = False
-                current_box = current_box[box_mask]
 
                 for digit in range(9):
-                    digit_mask = np.ones(9, dtype=bool)
-                    digit_mask[digit] = False
-
                     # population coding for the current row, column and digit
                     sources = self.neuron_indices[row, column, digit]
 
                     # populations in the same row coding for the same digit
-                    # except those in the current cell
-                    row_targets = self.neuron_indices[row, col_mask, digit]
+                    row_targets = self.neuron_indices[row, :, digit]
                     # same as above for the current column
-                    col_targets = self.neuron_indices[row_mask, column, digit]
+                    col_targets = self.neuron_indices[:, column, digit]
                     # populations coding for the same digit in the current box
-                    box_targets = current_box[:, digit]
+                    box_targets = current_box[:,:, digit]
 
-                    # neurons coding for different digits in the current cell
-                    digit_targets = self.neuron_indices[row, column, digit_mask]
+
 
                     targets = np.concatenate(
                         (row_targets, col_targets, box_targets, digit_targets),
                         axis=None)
                     # Remove duplicates to avoid multapses
                     targets = np.unique(targets)
+                    # Remove the sources from the targets to avoid the 
+                    # population inhibiting itself.
+                    targets = np.setdiff1d(targets, sources)
 
                     # Transform indices into NodeCollections
                     sources = self.neurons[sources]

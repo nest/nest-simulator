@@ -120,7 +120,7 @@ class SudokuNet:
                 box_col_start = (column // 3) * 3
                 box_col_end = box_col_start + 3
 
-                # Obtain all populations in the surrounding 3x3 box. 
+                # Obtain all populations in the surrounding 3x3 box.
                 current_box = self.neuron_indices[box_row_start:box_row_end,
                                                   box_col_start:box_col_end]
 
@@ -133,16 +133,16 @@ class SudokuNet:
                     # same as above for the current column
                     col_targets = self.neuron_indices[:, column, digit]
                     # populations coding for the same digit in the current box
-                    box_targets = current_box[:,:, digit]
-
-
+                    box_targets = current_box[:, :, digit]
+                    # neurons coding for different digits in the current cell
+                    digit_targets = self.neuron_indices[row, column, :]
 
                     targets = np.concatenate(
                         (row_targets, col_targets, box_targets, digit_targets),
                         axis=None)
                     # Remove duplicates to avoid multapses
                     targets = np.unique(targets)
-                    # Remove the sources from the targets to avoid the 
+                    # Remove the sources from the targets to avoid the
                     # population inhibiting itself.
                     targets = np.setdiff1d(targets, sources)
 

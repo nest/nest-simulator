@@ -44,7 +44,7 @@ The app enables the rapid construction, parametrization, and instrumentation of 
 NEST GPU
 --------
 
-NEST GPU is a GPU-MPI library for simulation of large-scale networks of spiking neurons. Iti can be used in Python, in C++ and in C.
+NEST GPU is a GPU-MPI library for simulation of large-scale networks of spiking neurons. It can be used in Python, in C++ and in C.
 
 * :doc:`Get started with NEST GPU <gpu:index>`
 

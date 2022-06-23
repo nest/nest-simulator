@@ -167,18 +167,18 @@ def validate_solution(puzzle, solution):
     """validate a proposed solution for a sudoku puzzle
 
     Args:
-        puzzle (np.array): array of shape (9,9) encoding the puzzle. 
+        puzzle (np.array): array of shape (9,9) encoding the puzzle.
         see get_puzzle().
-        solution (np.array): array of shape (9,9) encoding the proposed 
+        solution (np.array): array of shape (9,9) encoding the proposed
         solution.
 
     Returns:
-        (bool, np.array, np.array, np.array): tuple of values that indicate 
-        the validity of the solution: 
+        (bool, np.array, np.array, np.array): tuple of values that indicate
+        the validity of the solution:
         1. True if the overall solution is valid, False otherwise.
         2. boolean array of shape (3,3) that is True wherever a 3x3 box is valid
-        3. boolean array of shape (9,) encoding the validity of all rows  
-        4. boolean array of shape (9,) encoding the validity of all columns  
+        3. boolean array of shape (9,) encoding the validity of all rows
+        4. boolean array of shape (9,) encoding the validity of all columns
     """
 
     boxes = np.ones((3, 3), dtype=bool)
@@ -213,9 +213,6 @@ def validate_solution(puzzle, solution):
 
     return valid, boxes, rows, cols
 
-###############################################################################
-# The next few parameters
-
 
 cell_size = 18  # inner size of the cell
 grid_width = 2  # width of the grid separating cells
@@ -233,11 +230,11 @@ def plot_field(puzzle, solution, with_color=False):
     digits are represented in grey and italic.
 
     Args:
-        puzzle (np.array): array of shape (9,9) that represents the puzzle 
+        puzzle (np.array): array of shape (9,9) that represents the puzzle
         that is being solved. See get_puzzle()
         solution (np.array): array of shape (9,9) representing the solution.
-        with_color (bool, optional): if True, green and red are used to 
-        indicate which parts of the solution are valid and which are not. 
+        with_color (bool, optional): if True, green and red are used to
+        indicate which parts of the solution are valid and which are not.
         Otherwise, only black and white are used. Defaults to False.
 
     Returns:
@@ -299,9 +296,9 @@ def plot_field(puzzle, solution, with_color=False):
                 else:
                     color = dark_grey
                     font = font_italic
-                
+
                 draw.text((j*cell_step+5, i*cell_step+1),
-                            str(solution[i, j]), color, font)
+                          str(solution[i, j]), color, font)
 
     background = Image.fromarray(background)
     background.paste(field, (frame_width, frame_width))

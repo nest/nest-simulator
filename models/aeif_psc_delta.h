@@ -96,7 +96,7 @@ spikes. This is implemented such that ``V_m`` will be incremented/decremented by
 the value of `J` after a spike.
 
 For implementation details see the
-`aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
+:doc:`aeif_models_implementation <../neurons/model_details/aeif_models_implementation>` notebook.
 
 See also [1]_.
 

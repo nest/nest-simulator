@@ -101,7 +101,7 @@ and
  \tau_w \frac{dw}{dt} = a(V-E_L) - w
 
 For implementation details see the
-`aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
+:doc:`aeif_models_implementation <../neurons/model_details/aeif_models_implementation>` notebook.
 
 See also [1]_.
 

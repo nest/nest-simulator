@@ -91,7 +91,7 @@ spike-adaptation current `w` is
 When the neuron fires a spike, the adaptation current :math:`w <- w + b`.
 
 For implementation details see the
-`aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
+:doc:`aeif_models_implementation <../neurons/model_details/aeif_models_implementation>` notebook.
 
 Parameters
 ++++++++++

@@ -103,7 +103,7 @@ condition of :math:`(E_L + voltage_reset_fraction * ( V_th - E_L ) + voltage_res
   ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
   For implementation details see the
-  `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+  :doc:`IAF_neurons_singularity <../neurons/model_details/IAF_neurons_singularity>` notebook.
 
 Parameters
 ++++++++++

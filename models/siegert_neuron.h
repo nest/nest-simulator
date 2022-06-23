@@ -68,8 +68,8 @@ delay, and uses the secondary_event concept introduced with the
 gap-junction framework.
 
 For details on the numerical solution of the Siegert integral, you can
-check out the `Siegert_neuron_integration
-<../model_details/siegert_neuron_integration.ipynb>`_
+check out the
+:doc:`Siegert_neuron_integration <../neurons/model_details/siegert_neuron_integration>`
 notebook in the NEST source code.
 
 See also [1]_, [4]_.

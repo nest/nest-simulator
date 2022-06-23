@@ -134,7 +134,7 @@ The shape of postsynaptic current is exponential.
    time constant, to avoid numerical instabilities.
 
    For implementation details see the
-   `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+   :doc:`IAF_neurons_singularity <../neurons/model_details/IAF_neurons_singularity>` notebook.
 
 Parameters
 ++++++++++

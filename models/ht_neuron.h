@@ -86,7 +86,7 @@ neuron model described in [1]_. The most important properties are:
 
 For implementation details see:
 
-- `HillTononi_model <../model_details/HillTononiModels.ipynb>`_
+- :doc:`HillTononi_model <../neurons/model_details/HillTononiModels>`
 
 For examples, see:
 

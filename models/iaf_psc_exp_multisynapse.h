@@ -64,7 +64,7 @@ a different time constant. The port number has to match the respective
    ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
    For implementation details see the
-   `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+   :doc:`IAF_neurons_singularity <../neurons/model_details/IAF_neurons_singularity>` notebook.
 
 For conversion between postsynaptic potentials (PSPs) and PSCs,
 please refer to the ``postsynaptic_potential_to_current`` function in

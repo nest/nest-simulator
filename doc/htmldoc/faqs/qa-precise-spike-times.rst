@@ -16,8 +16,8 @@ different spike sequences after a short time.
     expression or an iterative procedure like Newton-Raphson lead to
     machine independent spike sequences?**
 
-A: No. For example, if machine A uses “double” for the representation of
-floating point numbers and machine B uses “quad” precision, the spike
+A: No. For example, if machine A uses "double" for the representation of
+floating point numbers and machine B uses "quad" precision, the spike
 sequences of the two simulations deviate after a short time. Even with
 the same representation of floating point values, results rapidly
 diverge if some library function like exp() is implemented in a slightly
@@ -89,7 +89,7 @@ A: No, for many scientific problems a limited precision is good enough.
 The fastest method delivering at least the required precision is the one
 of choice. In the case of chaotic dynamics there is generally no good
 reason to consider results produced by a neuron model implementation
-with high precision as being ‘more correct’ than those produced by a
+with high precision as being 'more correct' than those produced by a
 faster implementation with lower precision, as long as mesoscopic
 measures of interest remain unchanged. With a more accurate method at
 hand, the researcher can always carry out control simulations at higher

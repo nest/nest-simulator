@@ -376,6 +376,7 @@ extern const Name post_trace;
 extern const Name pre_synaptic_element;
 extern const Name precise_times;
 extern const Name precision;
+extern const Name prepared;
 extern const Name print_time;
 extern const Name proximal_curr;
 extern const Name proximal_exc;

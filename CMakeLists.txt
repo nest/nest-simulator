@@ -51,7 +51,7 @@ set( with-python ON CACHE STRING "Build PyNEST [default=ON]." )
 option( cythonize-pynest "Use Cython to cythonize pynestkernel.pyx [default=ON]. If OFF, PyNEST has to be build from a pre-cythonized pynestkernel.pyx." ON )
 
 # select parallelization scheme
-set( with-mpi OFF CACHE STRING "Build with MPI parallelization [default=OFF]. Optionally give directory with MPI installation." )
+set( with-mpi OFF CACHE STRING "Build with MPI parallelization [default=OFF]." )
 set( with-openmp ON CACHE BOOL "Build with OpenMP multi-threading [default=ON]. Optionally set OMP compiler flags." )
 
 # external libraries

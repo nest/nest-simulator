@@ -433,16 +433,16 @@ nest::iaf_cond_beta::update( Time const& origin, const long from, const long to 
     else
       // neuron is not absolute refractory
       if ( S_.y[ State_::V_M ] >= P_.V_th )
-    {
-      S_.r = V_.RefractoryCounts;
-      S_.y[ State_::V_M ] = P_.V_reset;
+      {
+        S_.r = V_.RefractoryCounts;
+        S_.y[ State_::V_M ] = P_.V_reset;
 
-      // log spike with ArchivingNode
-      set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+        // log spike with ArchivingNode
+        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
-      SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
-    }
+        SpikeEvent se;
+        kernel().event_delivery_manager.send( *this, se, lag );
+      }
 
     // add incoming spikes
     S_.y[ State_::DG_EXC ] += B_.spike_exc_.get_value( lag ) * V_.PSConInit_E;

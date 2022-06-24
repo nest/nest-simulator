@@ -51,8 +51,8 @@ white = np.array((255, 255, 255))
 left_color = np.array((204, 0, 153))  # purple
 right_color = np.array((255, 128, 0))  # orange
 
-# Scaling factor for the entire image. Due to file size constraints, the 
-# intended output size for the created GIF is 400x320. The resolution can be 
+# Scaling factor for the entire image. Due to file size constraints, the
+# intended output size for the created GIF is 400x320. The resolution can be
 # increased linearly by changing this parameter.
 SCALE = 3
 
@@ -61,14 +61,14 @@ IM_SIZE = np.array([400, 320]) * SCALE
 IM_WID, IM_HEIGHT = IM_SIZE
 
 # Original size of the playing field inside the simulation
-FIELD_SIZE = np.array([Pong.x_grid, Pong.y_grid])
-FIELD_SCALE = 8 * SCALE
+GAME_GRID = np.array([Pong.x_grid, Pong.y_grid])
+GRID_SCALE = 8 * SCALE
 # Field size (in px) after upscaling
-FIELD_SIZE_SCALED = FIELD_SIZE * FIELD_SCALE
+GAME_GRID_SCALED = GAME_GRID * GRID_SCALE
 
 # Dimensions of game objects in px
 BALL_RAD = 2 * SCALE
-PADDLE_LEN = int(0.1*FIELD_SIZE_SCALED[1])
+PADDLE_LEN = int(0.1*GAME_GRID_SCALED[1])
 PADDLE_WID = 6 * SCALE
 
 # Add margins left and right to the playing field
@@ -78,7 +78,7 @@ FIELD_SIZE[0] += 2*FIELD_PADDING
 
 HM_SCALE = 4 * SCALE
 # Weight matrix heatmap size (in px) in the final image
-HM_SIZE = np.array([FIELD_SIZE[1], FIELD_SIZE[1]]) * HM_SCALE
+HM_SIZE = np.array([GAME_GRID[1], GAME_GRID[1]]) * HM_SCALE
 HM_HPOS = 10*SCALE
 HM_VPOS = 210*SCALE
 
@@ -93,7 +93,7 @@ PLOT_INTERVAL = 10
 
 
 def scale_coordinates(coordinates: np.array):
-    """Scale a numpy.array of coordinate tuples (x,y) from simulation scale to 
+    """Scale a numpy.array of coordinate tuples (x,y) from simulation scale to
     pixel scale in the output image.
 
     Args:
@@ -103,9 +103,9 @@ def scale_coordinates(coordinates: np.array):
         (int, int): output coordinates in px
     """
     coordinates[:, 0] = coordinates[:, 0] * \
-        FIELD_SIZE_SCALED[0] / Pong.x_length + FIELD_PADDING
+        GAME_GRID_SCALED[0] / Pong.x_length + FIELD_PADDING
     coordinates[:, 1] = coordinates[:, 1] * \
-        FIELD_SIZE_SCALED[1] / Pong.y_length
+        GAME_GRID_SCALED[1] / Pong.y_length
     return coordinates.astype(int)
 
 
@@ -122,7 +122,7 @@ def grayscale_to_heatmap(in_image, min_val, max_val, base_color):
         base_color (numpy.array): numpy.array of shape (3,) representing the
         base color of the heatmap in RGB.
     Returns:
-        numpy.array: transformed input array with an added 3rd dimension of 
+        numpy.array: transformed input array with an added 3rd dimension of
         length 3, representing RGB values.
     """
 
@@ -175,7 +175,6 @@ if __name__ == "__main__":
         game_data = pickle.load(f)
 
     ball_positions = scale_coordinates(np.array(game_data["ball_pos"]))
-    #ball_positions[:, 0] -= BALL_RAD
     l_paddle_positions = scale_coordinates(np.array(game_data["left_paddle"]))
     # move left paddle outwards for symmetry.
     l_paddle_positions[:, 0] -= PADDLE_WID
@@ -230,7 +229,7 @@ if __name__ == "__main__":
         playing_field = np.swapaxes(playing_field, 0, 1)
         playing_field = Image.fromarray(playing_field)
         background.paste(
-            playing_field, (int((IM_SIZE[0]-FIELD_IMAGE_SIZE[0])/2), 36*SCALE))
+            playing_field, (int((IM_SIZE[0]-FIELD_SIZE[0])/2), 36*SCALE))
 
         # Only draw reward plot and heatmaps every PLOT_INTERVAL iterations or
         # every frame when skipping many frames.
@@ -296,11 +295,11 @@ if __name__ == "__main__":
         background.paste(reward_plot, (95*SCALE, 200*SCALE))
 
         image_center = int(IM_WID/2)
-        draw.text((image_center - 25*SCALE, 10*SCALE), p1_name,
+        draw.text((image_center - 25*SCALE, 10*SCALE), name_left,
                   tuple(left_color), font_medium, anchor="rt")
         draw.text((image_center, 10*SCALE), "VS", tuple(black),
                   font_medium, anchor="mt")
-        draw.text((image_center + 25*SCALE, 10*SCALE), p2_name,
+        draw.text((image_center + 25*SCALE, 10*SCALE), name_right,
                   tuple(right_color), font_medium, anchor="lt")
 
         l_score, r_score = score[i]

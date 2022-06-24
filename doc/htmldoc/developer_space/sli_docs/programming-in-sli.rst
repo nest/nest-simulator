@@ -30,12 +30,12 @@ A program is a sequence of SLI objects and procedures which are defined
 in a file. Program files are ordinary ASCII text files, which can be
 created and modified with an editor of your choice (e.g. GNU Emacs).
 
-SLI programs usually have the file ending “sli”, for example
+SLI programs usually have the file ending "sli", for example
 ``hello_world.sli``.
 
 The ``run`` command is used to execute a program file.
 
-Example: “Hello World!”
+Example: "Hello World!"
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Write the program ``hello_world.sli`` according to the example, given
@@ -236,7 +236,7 @@ The simplest loop is performed by the command ``loop``:
       :
 
 ``loop`` performs the procedure repeatedly and thus in the example, an
-infinite succession of the words “Hello World” is printed. The only way
+infinite succession of the words "Hello World" is printed. The only way
 to leave a ``loop``-structure is to call the command ``exit`` somewhere
 inside the loop:
 
@@ -246,7 +246,7 @@ inside the loop:
    SLI [1] { 1 add dup  (Hello World) = 10 eq {exit} if }
    SLI [2] loop
 
-it prints ten times ‘Hello World’. First the initial value 0 is pushed
+it prints ten times "Hello World". First the initial value 0 is pushed
 on the operand stack. The procedure adds 1 in each cycle and takes care
 that one copy of the counter stays on the stack to serve as the initial
 value for the next cycle. After the message has been printed, the stop
@@ -263,7 +263,7 @@ Finite loops
 The last example can be implemented much easier, using a ``repeat``
 loop. ``repeat`` takes two arguments: An integer, and a procedure
 object. The integer determines how often the procedure is executed.
-Thus, in order to print ten times “Hello World” we write:
+Thus, in order to print ten times "Hello World" we write:
 
 ::
 

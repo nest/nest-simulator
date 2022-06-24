@@ -19,15 +19,14 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-r"""This script visualizes a simulated pong game
+r"""Script to visualize a simulated pong game.
 ----------------------------------------------------------------
 All simulations store data about both networks and the game in .pkl files.
 This script reads these files and generates image snapshots at different
-times during the simulation. These are subsequently aggregated into a GIF
+times during the simulation. These are subsequently aggregated into a GIF.
 
 :Authors: J Gille, T Wunderlich, Electronic Vision(s)
 """
-
 
 import numpy as np
 from PIL import Image, ImageFont, ImageDraw
@@ -46,7 +45,7 @@ from matplotlib import font_manager
 
 # base colors used in the plot
 background_color = (220, 220, 220)  # grey
-background_hex = "#dcdcdc"  # hex value of the same color, required for matplotlib
+background_hex = "#dcdcdc"  # hex value of grey, required for matplotlib
 black = np.array((0, 0, 0))
 white = np.array((255, 255, 255))
 left_color = np.array((204, 0, 153))  # purple
@@ -72,10 +71,10 @@ BALL_RAD = 2 * SCALE
 PADDLE_LEN = int(0.1*FIELD_SIZE_SCALED[1])
 PADDLE_WID = 6 * SCALE
 
-# Add margins left and right to the image representing the playing field
+# Add margins left and right to the playing field
 FIELD_PADDING = PADDLE_WID * 2
-FIELD_IMAGE_SIZE = copy(FIELD_SIZE_SCALED)
-FIELD_IMAGE_SIZE[0] += 2*FIELD_PADDING
+FIELD_SIZE = copy(GAME_GRID_SCALED)
+FIELD_SIZE[0] += 2*FIELD_PADDING
 
 HM_SCALE = 4 * SCALE
 # Weight matrix heatmap size (in px) in the final image
@@ -92,16 +91,13 @@ DEFAULT_SPEED = 4
 # To save computing time, the reward plot is not updated every frame.
 PLOT_INTERVAL = 10
 
-out_file = "pong_sim.gif"
-keep_temps = False
-
 
 def scale_coordinates(coordinates: np.array):
     """Scale a numpy.array of coordinate tuples (x,y) from simulation scale to 
     pixel scale in the output image.
 
     Args:
-        pos (float, float): input coordinates to be scaled
+        pos (float, float): input coordinates to be scaled.
 
     Returns:
         (int, int): output coordinates in px
@@ -114,34 +110,42 @@ def scale_coordinates(coordinates: np.array):
 
 
 def grayscale_to_heatmap(in_image, min_val, max_val, base_color):
-    """transform a grayscale image to an RGB heat map. Heatmap will color small 
-    values in base_color and high values white
+    """transform a grayscale image to an RGB heat map. Heatmap will color small
+    values in base_color and high values in white.
 
     Args:
-        in_image (numpy.array): 2D numpy.array to be transformed
-        min_val (float): smallest value across the entire dataset - colored in 
-        base_color in the output
-        max_val (float): largest value across the entire dataset - colored 
-        white (255, 255, 255)
-        base_color (numpy.array): numpy.array of shape (3,) representing the 
-        base color of the heatmap in RGB space
+        in_image (numpy.array): 2D numpy.array to be transformed.
+        min_val (float): smallest value across the entire image - colored in
+        base_color in the output.
+        max_val (float): largest value across the entire image - colored
+        white in the output.
+        base_color (numpy.array): numpy.array of shape (3,) representing the
+        base color of the heatmap in RGB.
     Returns:
         numpy.array: transformed input array with an added 3rd dimension of 
         length 3, representing RGB values.
     """
-    x_len, y_len = in_image.shape
-    out_image = np.zeros((x_len, y_len, 3), dtype=np.uint8)
 
-    # add miniscule offsett to avoid zero division error for uniform matrix
-    span = max_val - min_val + 0.0001
+    x_len, y_len = in_image.shape
+    out_image = np.ones((x_len, y_len, 3), dtype=np.uint8)
+
+    span = max_val - min_val
+    # edge case for uniform weight matrix
+    if span == 0:
+        return out_image * base_color
+
     for i in range(x_len):
         for j in range(y_len):
-            val = (in_image[i, j] - min_val) / span
-            out_image[i, j, :] = base_color + (white-base_color) * val
+            color_scaled = (in_image[i, j] - min_val) / span
+            out_image[i, j, :] = base_color + (white-base_color) * color_scaled
+
     return out_image
 
 
 if __name__ == "__main__":
+    # plotting parameters
+    keep_temps = False
+    out_file = "pong_sim.gif"
 
     if len(sys.argv) != 2:
         print("This programm takes exactly one argument - the location of the "
@@ -160,6 +164,7 @@ if __name__ == "__main__":
     else:
         os.mkdir(temp_dir)
 
+    # retrieve fonts independent of the platform used.
     font_prop = font_manager.FontProperties(family="sans")
     font_name = font_manager.findfont(font_prop)
     font_large = ImageFont.truetype(font_name, 26*SCALE, encoding="unic")
@@ -172,22 +177,23 @@ if __name__ == "__main__":
     ball_positions = scale_coordinates(np.array(game_data["ball_pos"]))
     #ball_positions[:, 0] -= BALL_RAD
     l_paddle_positions = scale_coordinates(np.array(game_data["left_paddle"]))
-    # move left paddle outwards for symmetry
+    # move left paddle outwards for symmetry.
     l_paddle_positions[:, 0] -= PADDLE_WID
     r_paddle_positions = scale_coordinates(np.array(game_data["right_paddle"]))
+
     score = np.array(game_data["score"]).astype(int)
 
     with gzip.open(os.path.join(input_folder, "data_left.pkl.gz"), 'r') as f:
         data = pickle.load(f)
         rewards_left = data["rewards"]
         weights_left = data["weights"]
-        p1_name = data["network_type"]
+        name_left = data["network_type"]
 
     with gzip.open(os.path.join(input_folder, "data_right.pkl.gz"), 'r') as f:
         data = pickle.load(f)
         rewards_right = data["rewards"]
         weights_right = data["weights"]
-        p2_name = data["network_type"]
+        name_right = data["network_type"]
 
     # Extract lowest and highest weights for both players to scale the heatmaps.
     min_r, max_r = np.min(weights_right), np.max(weights_right)
@@ -198,26 +204,26 @@ if __name__ == "__main__":
     rewards_right = [np.mean(x) for x in rewards_right]
 
     print(f"setup complete, generating images to '{temp_dir}'...")
-    sim_iterations = score.shape[0]
+    n_iterations = score.shape[0]
     i = 0
     output_speed = DEFAULT_SPEED
-    while i < sim_iterations:
+    while i < n_iterations:
 
         background = Image.new("RGB", tuple(IM_SIZE), background_color)
         draw = ImageDraw.Draw(background)
 
         # Create an empty array for the playing field.
         playing_field = np.zeros(
-            (FIELD_IMAGE_SIZE[0], FIELD_IMAGE_SIZE[1], 3), dtype=np.uint8)
+            (FIELD_SIZE[0], FIELD_SIZE[1], 3), dtype=np.uint8)
 
         # Draw the ball in white
         x, y = ball_positions[i]
         playing_field[x-BALL_RAD:x+BALL_RAD, y-BALL_RAD:y+BALL_RAD] = white
-
         for (x, y), color in zip([l_paddle_positions[i], r_paddle_positions[i]],
                                  [left_color, right_color]):
+            # clip y coordinate of the paddle so it does not exceed the screen.
             y = max(PADDLE_LEN, y)
-            y = min(FIELD_IMAGE_SIZE[1] - PADDLE_LEN, y)
+            y = min(FIELD_SIZE[1] - PADDLE_LEN, y)
             playing_field[x:x+PADDLE_WID, y-PADDLE_LEN:y+PADDLE_LEN] = color
 
         # Prepare and paste playing field into the image
@@ -259,12 +265,13 @@ if __name__ == "__main__":
             ax.plot(rewards_right[:i+1], color=right_color/255)
             ax.plot(rewards_left[:i+1], color=left_color/255)
 
+            # change x_ticks and x_min for the first few plots.
             if i < 1600:
                 x_min = 0
-                ax.set_xticks(np.arange(0, sim_iterations, 250))
+                ax.set_xticks(np.arange(0, n_iterations, 250))
             else:
                 x_min = i-1600
-                ax.set_xticks(np.arange(0, sim_iterations, 500))
+                ax.set_xticks(np.arange(0, n_iterations, 500))
 
             ax.set_ylabel("mean reward")
             # ax.set_xlabel("iteration")
@@ -272,11 +279,11 @@ if __name__ == "__main__":
             ax.set_ylim(0, 1.0)
             ax.set_xlim(x_min, i+10)
 
-            # fishy workaround to turn a pyplot figure into a PIL.Image
-            buf = io.BytesIO()
-            fig.savefig(buf)
-            buf.seek(0)
-            reward_plot = Image.open(buf)
+            # fishy workaround to turn a pyplot figure into a PIL.Image.
+            buffer = io.BytesIO()
+            fig.savefig(buffer)
+            buffer.seek(0)
+            reward_plot = Image.open(buffer)
 
         background.paste(heatmap_r, (IM_WID - HM_HPOS - HM_SIZE[0], HM_VPOS))
         draw.text((IM_WID-15*SCALE, 294*SCALE), "weights",
@@ -313,16 +320,16 @@ if __name__ == "__main__":
 
         # change the speed of the video to show performance before and after
         # training at DEFAULT_SPEED and fast forward most of the training
-        if 75 <= i < 100 or sim_iterations - 400 <= i < sim_iterations - 350:
+        if 75 <= i < 100 or n_iterations - 400 <= i < n_iterations - 350:
             output_speed = 10
-        elif 100 <= i < sim_iterations - 350:
+        elif 100 <= i < n_iterations - 350:
             output_speed = 50
         else:
             output_speed = DEFAULT_SPEED
 
         i += output_speed
 
-    print("Images complete, collecting them into a GIF...")
+    print("Image creation complete, collecting them into a GIF...")
 
     filenames = sorted(glob(os.path.join(temp_dir, "*.png")))
 
@@ -337,3 +344,5 @@ if __name__ == "__main__":
         for in_file in filenames:
             os.unlink(in_file)
         os.rmdir(temp_dir)
+
+    print("done.")

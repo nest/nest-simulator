@@ -21,9 +21,8 @@
 
 r"""Classes for running simulations of the classic game Pong
 ----------------------------------------------------------------
-The Class GameOfPong contains all necessary functionality for running simple 
-simulations of Pong games. Its core utility for the simulation is to provide
-pseudo-random inputs to the network and make the output more appealing.
+The Class GameOfPong contains all necessary functionality for running simple
+simulations of Pong games.
 
 See Also
 ---------
@@ -31,9 +30,9 @@ See Also
 
 References
 ----------
-.. [1] Wunderlich, T., Kungl, A. F., Müller, E., Hartel, A., Stradmann, Y., 
-       Aamir, S. A., ... & Petrovici, M. A. (2019). Demonstrating advantages of 
-       neuromorphic computation: a pilot study. Frontiers in neuroscience, 13, 
+.. [1] Wunderlich, T., Kungl, A. F., Müller, E., Hartel, A., Stradmann, Y.,
+       Aamir, S. A., ... & Petrovici, M. A. (2019). Demonstrating advantages of
+       neuromorphic computation: a pilot study. Frontiers in neuroscience, 13,
        260. https://doi.org/10.3389/fnins.2019.00260
 
 :Authors: T Wunderlich, Electronic Vision(s), J Gille
@@ -52,14 +51,14 @@ DONT_MOVE = 0
 class GameObject:
     def __init__(self, game, x_pos=0.5, y_pos=0.5, velocity=0.2,
                  direction=[0, 0]):
-        """Base class for Ball and Paddle, containing basic functionality for 
+        """Base class for Ball and Paddle, containing basic functionality for
         an object inside a game.
 
         Args:
-            game (GameOfPong): Instance of Pong game
+            game (GameOfPong): Instance of Pong game.
             x_pos (float, optional): Initial x position. Defaults to 0.5.
             y_pos (float, optional): Initial y position. Defaults to 0.5.
-            velocity (float, optional): Change in position per iteration. 
+            velocity (float, optional): Change in position per iteration.
             Defaults to 0.2.
             direction (list, optional): direction vector. Defaults to [0,0].
         """
@@ -110,14 +109,14 @@ class Paddle(GameObject):
     """Class representing the paddles on either end of the playing field.
 
         Args:
-            direction (int, optional): Either -1, 0 or 1 for downward, neutral 
+            direction (int, optional): Either -1, 0 or 1 for downward, neutral
             or upwards motion respectively. Defaults to 0.
-            left (boolean): If True, paddle is placed on the left side of the 
-            board, otherwise on the right side
+            left (boolean): If True, paddle is placed on the left side of the
+            board, otherwise on the right side.
 
         For other args, see :class:`GameObject`.
     """
-    length = 0.2  # unit length
+    length = 0.2  # paddle length in the scale of GameOfPong.y_length
 
     def __init__(self, game, left, y_pos=0.5, velocity=0.05, direction=0):
         x_pos = 0. if left else game.x_length
@@ -142,8 +141,8 @@ class GameOfPong(object):
 
     x_grid = 32
     y_grid = 20
-    x_length = 1.6  # length in x-direction in unit length
-    y_length = 1.0  # length in y-direction in unit length
+    x_length = 1.6
+    y_length = 1.0
 
     def __init__(self):
         self.r_paddle = Paddle(self, False)
@@ -153,11 +152,11 @@ class GameOfPong(object):
         self.result = 0
 
     def reset_ball(self, towards_left=False):
-        """reset the ball position to the center of the field after a goal
+        """reset the ball position to the center of the field after a goal.
 
         Args:
-            towards_left (bool, optional): if True, ball direction is 
-            initialized towards the left side of the field, otherwise towards 
+            towards_left (bool, optional): if True, ball direction is
+            initialized towards the left side of the field, otherwise towards
             the right. Defaults to False.
         """
         initial_vx = 0.5 + 0.5 * np.random.random()
@@ -170,39 +169,38 @@ class GameOfPong(object):
         self.ball.y_pos = np.random.random() * self.y_length
 
     def update_ball_direction(self):
-        """In case of a collision, update the direction of the ball. Also 
+        """In case of a collision, update the direction of the ball. Also
         determine if the ball is in either player's net.
 
         Returns:
-            Either GAME_CONTINUES, LEFT_SCORE or RIGHT_SCORE depending on ball 
-            and paddle position. 
+            Either GAME_CONTINUES, LEFT_SCORE or RIGHT_SCORE depending on ball
+            and paddle position.
         """
         if self.ball.y_pos + self.ball.ball_radius >= self.y_length:
-            # Ball on upper edge
+            # Ball on upper edge.
             self.ball.direction[1] = -1 * abs(self.ball.direction[1])
         elif self.ball.y_pos - self.ball.ball_radius <= 0:
-            # Ball on lower edge
+            # Ball on lower edge.
             self.ball.direction[1] = abs(self.ball.direction[1])
 
         if self.ball.x_pos - self.ball.ball_radius <= 0:
-            # Ball on left edge
+            # Ball on left edge.
             if abs(self.l_paddle.y_pos - self.ball.y_pos) <= Paddle.length / 2:
-                # Ball hits left paddle
+                # Ball hits left paddle.
                 self.ball.direction[0] = abs(self.ball.direction[0])
             else:
                 return RIGHT_SCORE
         elif self.ball.x_pos + self.ball.ball_radius >= self.x_length:
-            # Ball on right edge
+            # Ball on right edge.
             if abs(self.r_paddle.y_pos - self.ball.y_pos) <= Paddle.length / 2:
-                # Ball hits right paddle
+                # Ball hits right paddle.
                 self.ball.direction[0] = -1 * abs(self.ball.direction[0])
             else:
                 return LEFT_SCORE
         return GAME_CONTINUES
 
     def propagate_ball_and_paddles(self):
-        """Update ball and paddle coordinates based on direction and velocity. 
-        Also update their cells.
+        """Update ball and paddle coordinates based on direction and velocity.
         """
 
         for paddle in [self.r_paddle, self.l_paddle]:
@@ -220,12 +218,11 @@ class GameOfPong(object):
         return self.ball.get_cell()
 
     def step(self):
-        """Perform one game step by checking collisions and updating ball
-        direction, propagating all game objects and returning the game state
-        after the current step.
+        """Perform one game step by handling collisions, propagating all game
+        objects and returning the new game state.
 
         Returns:
-            Either GAME_CONTINUES, LEFT_SCORE or RIGHT_SCORE depending on ball 
+            Either GAME_CONTINUES, LEFT_SCORE or RIGHT_SCORE depending on ball
             and paddle position. see update_ball_direction()
         """
         ball_status = self.update_ball_direction()

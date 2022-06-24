@@ -19,20 +19,19 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-r"""Classes to encapsulate 
+r"""Classes to encapsulate
 ----------------------------------------------------------------
-In this file, two types of network are implemented.
-PongNetRSTDP can solve the Pong problem using static synapses and R-STDP. 
+Two types of network capable of playing pong are implemented. PongNetRSTDP
+can solve the problem using static synapses and R-STDP.
 
-PongNetDopa uses the actor-critic model described in [2]_ to determine the 
-amount of reward to send to the dopaminergic synapses between input and motor 
-neurons. In this framework, the motor neurons represent the actor, while a 
-secondary network of three populations (termed striatum, VP and dopaminergic 
-neurons) form the critic which modulates dopamine concentration based on 
+PongNetDopa uses the actor-critic model described in [2]_ to determine the
+amount of reward to send to the dopaminergic synapses between input and motor
+neurons. In this framework, the motor neurons represent the actor, while a
+secondary network of three populations (termed striatum, VP and dopaminergic
+neurons) form the critic which modulates dopamine concentration based on
 Temporal difference error.
 
-Both of them inherit some functionality from the abstract base class
-PongNet.
+Both of them inherit some functionality from the abstract base class PongNet.
 
 See Also
 ---------
@@ -40,13 +39,13 @@ See Also
 
 References
 ----------
-.. [1] Wunderlich, T., Kungl, A. F., Müller, E., Hartel, A., Stradmann, Y., 
-       Aamir, S. A., ... & Petrovici, M. A. (2019). Demonstrating advantages of 
-       neuromorphic computation: a pilot study. Frontiers in neuroscience, 13, 
+.. [1] Wunderlich, T., Kungl, A. F., Müller, E., Hartel, A., Stradmann, Y.,
+       Aamir, S. A., ... & Petrovici, M. A. (2019). Demonstrating advantages of
+       neuromorphic computation: a pilot study. Frontiers in neuroscience, 13,
        260. https://doi.org/10.3389/fnins.2019.00260
 
-.. [2] Potjans, W., Diesmann, M., & Morrison, A. (2011). An imperfect 
-       dopaminergic error signal can drive temporal-difference learning. PLoS 
+.. [2] Potjans, W., Diesmann, M., & Morrison, A. (2011). An imperfect
+       dopaminergic error signal can drive temporal-difference learning. PLoS
        computational biology, 7(5), e1001133.
        https://doi.org/10.1371/journal.pcbi.1001133
 
@@ -64,11 +63,11 @@ from abc import ABC, abstractmethod
 POLL_TIME = 200
 # Number of spikes in an input spiketrain per iteration.
 N_INPUT_SPIKES = 20
-# Inter-Spike Interval of the input spiketrain.
+# Inter-spike interval of the input spiketrain.
 ISI = 10.
 # Standard deviation of Gaussian current noise in picoampere.
 BG_STD = 220.
-# reward to be applied depending on distance to target neuron.
+# Reward to be applied depending on distance to target neuron.
 REWARDS_DICT = {0: 1., 1: 0.7, 2: 0.4, 3: 0.1}
 
 
@@ -76,18 +75,18 @@ class PongNet(ABC):
 
     def __init__(self, apply_noise=True, num_neurons=20):
         """Abstract base class for network wrappers that learn to play pong.
-        Parts of the network that are required for both types of inheriting 
-        class are created here. Namely spike_generators and their connected 
-        parrot neurons, which serve as input, as well as iaf_psc_exp neurons
-        and their corresponding spike_recorders which serve as output. The 
-        connection between input and output is not established here because it 
+        Parts of the network that are required for both types of inheriting
+        class are created here. Namely spike_generators and their connected
+        parrot_neurons which serve as input, as well as iaf_psc_exp neurons
+        and their corresponding spike_recorders which serve as output. The
+        connection between input and output is not established here because it
         is dependent on the plasticity rule used.
 
         Args:
-            num_neurons (int, optional): number of neurons in both the input and
-            output layer. Changes here need to be matched in the game 
+            num_neurons (int, optional): Number of neurons in both the input and
+            output layer. Changes here need to be matched in the game
             simulation in pong.py. Defaults to 20.
-            apply_noise (bool, optional): If True, poisson noise is applied 
+            apply_noise (bool, optional): If True, Poisson noise is applied
             to the motor neurons of the network. Defaults to True.
         """
         self.apply_noise = apply_noise
@@ -109,12 +108,11 @@ class PongNet(ABC):
                      {'rule': 'one_to_one'})
 
     def get_all_weights(self):
-        """returns all weights between input and motor neurons.
+        """Returns all synaptic weights between input and motor neurons.
 
         Returns:
-            numpy.array: 2D array, input neurons are on the first axis, motor 
-            neurons on the second axis. Note that the indices start at 0, and 
-            not with the NEST internal global_id.
+            numpy.array: 2D array of shape (n_neurons, n_neurons). Input
+            neurons are on the first axis, motor neurons on the second axis.
         """
         x_offset = self.input_neurons[0].get("global_id")
         y_offset = self.motor_neurons[0].get("global_id")
@@ -128,12 +126,12 @@ class PongNet(ABC):
         return weight_matrix
 
     def set_all_weights(self, weights):
-        """set weights between input and motor neurons of the network.
+        """Set synaptic weights between input and motor neurons of the network.
 
         Args:
-            weights (numpy.array): 2D array, first axis representing the input 
-            neuron number, and second axis representing the target motor 
-            neuron. See get_all_weights().
+            weights (numpy.array): 2D array of shape (n_neurons, n_neurons).
+            Input neurons are on the first axis, motor neurons on the second
+            axis. See get_all_weights().
         """
         for i in range(self.num_neurons):
             for j in range(self.num_neurons):
@@ -142,26 +140,27 @@ class PongNet(ABC):
                 connection.set({"weight": weights[i, j]})
 
     def get_spike_counts(self):
-        """get the spike counts of all motor neurons from the spike_recorders.
+        """Returns the spike counts of all motor neurons from the
+        spike_recorders.
 
         Returns:
-            numpy.array: array of spike counts of all motor neurons
+            numpy.array: array of spike counts of all motor neurons.
         """
         events = self.spike_recorders.get("n_events")
         return np.array(events)
 
     def reset(self):
-        """reset the network for a new iteration by clearing the spike recorders
+        """Reset the network for a new iteration by clearing all spike
+        recorders.
         """
         self.spike_recorders.set({"n_events": 0})
 
     def set_input_spiketrain(self, input_cell, biological_time):
-        """Set a spike train to the input neuron encoding the current ball 
-        position along the y-axis.
+        """Set a spike train to the input neuron specified by an index.
 
         Args:
             input_cell (int): Index of the input neuron to be stimulated.
-            biological_time (float): current biological time within the NEST 
+            biological_time (float): current biological time within the NEST
             simulator (in ms).
         """
         self.target_index = input_cell
@@ -171,6 +170,7 @@ class PongNet(ABC):
         # round spike timings to 0.1ms to avoid conflicts with simulation time
         self.input_train = [np.round(x, 1) for x in self.input_train]
 
+        # clear all input generators
         for input_neuron in range(self.num_neurons):
             nest.SetStatus(self.input_generators[input_neuron],
                            {'spike_times': []})
@@ -179,10 +179,10 @@ class PongNet(ABC):
                        {'spike_times': self.input_train})
 
     def get_max_activation(self):
-        """find the motor neuron with the highest activation.
+        """Find the motor neuron with the highest activation (number of spikes).
 
         Returns:
-            int: index of the motor neuron with maximum activation
+            int: Index of the motor neuron with the highest activation.
         """
         spikes = self.get_spike_counts()
         logging.debug(f"Got spike counts: {spikes}")
@@ -191,12 +191,11 @@ class PongNet(ABC):
         return int(np.random.choice(np.flatnonzero(spikes == spikes.max())))
 
     def calculate_reward(self):
-        """calculates the reward to be applied to the network based on 
+        """Calculates the reward to be applied to the network based on
         performance in the previous simulation (distance between target and
         actual output). For R-STDP this reward informs the learning rule,
-        for dopaminergic plasticity this is just a metric of fitness. For 
-        plotting the simulation, this function should be called once at every
-        simulation step.
+        for dopaminergic plasticity this is just a metric of fitness used for
+        plotting the simulation.
 
         Returns:
             float: reward between 0 and 1.
@@ -224,10 +223,10 @@ class PongNet(ABC):
         return reward
 
     def get_performance_data(self):
-        """retrieve the performance of the network across all simulations
+        """Retrieve the performance data of the network across all simulations.
 
         Returns:
-            tuple: a Tuple of 2 numpy.arrays containing: reward history and 
+            tuple: A Tuple of 2 numpy.arrays containing reward history and
             weight history.
         """
         return (self.mean_reward_history,
@@ -235,10 +234,11 @@ class PongNet(ABC):
 
     @abstractmethod
     def apply_synaptic_plasticity(self, biological_time):
-        """apply weight changes to the synapses according to a given update rule
+        """Apply weight changes to the synapses according to a given larning
+        rule.
 
         Args:
-            biological_time (float): current NEST simulation time
+            biological_time (float): Current NEST simulation time in ms.
         """
         pass
 
@@ -247,10 +247,10 @@ class PongNetDopa(PongNet):
 
     # Base reward current that is applied regardless of performance.
     baseline_reward = 100.
-    # maximum reward current to be applied to the dopaminergic neurons
+    # maximum reward current to be applied to the dopaminergic neurons.
     max_reward = 1000
     # constant scaling factor for determining the current to be applied to the
-    # dopaminergic neurons
+    # dopaminergic neurons.
     dopa_signal_factor = 4800
     # Offset for input spikes at every iteration in milliseconds. This offset
     # reserves the first part of every simulation step for the application of
@@ -267,7 +267,7 @@ class PongNetDopa(PongNet):
     n_critic = 8
     # synaptic weights from striatum and VP to the dopaminergic neurons.
     w_da = -1150
-    # synaptic weight between striatum and VP-
+    # synaptic weight between striatum and VP.
     w_str_vp = -250
     # synaptic delay for the direct connection between striatum and
     # dopaminergic neurons.
@@ -299,10 +299,10 @@ class PongNetDopa(PongNet):
                          self.motor_neurons, {'rule': 'one_to_one'},
                          {"weight": self.mean_weight})
         else:
-            # because the poisson_generators cause adtitional spikes in the 
+            # because the poisson_generators cause adtitional spikes in the
             # motor neurons, it is necessary to compensate for their absence by
             # slightly increasing the mean of the weights between input and
-            # motor neurons to achieve similar spiking rates.
+            # motor neurons.
             nest.SetDefaults("stdp_dopamine_synapse", {"Wmax": 1750})
             nest.Connect(self.input_neurons, self.motor_neurons,
                          {'rule': 'all_to_all'},
@@ -311,7 +311,7 @@ class PongNetDopa(PongNet):
                               self.mean_weight*1.3, self.weight_std)})
 
         # Setup the 'critic' as a network of three populations, consisting of
-        # the striatum, ventral pallidum (vp) and dopaminergic neurons.
+        # the striatum, ventral pallidum (vp) and dopaminergic neurons (dopa).
         self.striatum = nest.Create("iaf_psc_exp", self.n_critic)
         nest.Connect(self.input_neurons, self.striatum, {'rule': 'all_to_all'},
                      {"synapse_model": "stdp_dopamine_synapse",
@@ -337,13 +337,13 @@ class PongNetDopa(PongNet):
 
         spike_counts = self.get_spike_counts()
         target_n_spikes = spike_counts[self.target_index]
-        # avoid zero division if none of the neurons fired
+        # avoid zero division if none of the neurons fired.
         total_n_spikes = max(sum(spike_counts), 1)
 
         reward_current = self.dopa_signal_factor * target_n_spikes / \
             total_n_spikes + self.baseline_reward
 
-        # clip the dopaminergic signal to avoid runaway synaptic weights
+        # clip the dopaminergic signal to avoid runaway synaptic weights.
         reward_current = min(reward_current, self.max_reward)
 
         self.dopa_current.stop = biological_time + self.input_t_offset
@@ -388,7 +388,7 @@ class PongNetRSTDP(PongNet):
             # because the noise_generators cause adtitional spikes in the motor
             # neurons, it is necessary to compensate for their absence by
             # slightly increasing the mean of the weights between input and
-            # motor neurons to achieve similar spiking rates.
+            # motor neurons.
             nest.Connect(self.input_neurons, self.motor_neurons,
                          {'rule': 'all_to_all'},
                          {"weight": nest.random.normal(
@@ -402,14 +402,14 @@ class PongNetRSTDP(PongNet):
         self.apply_rstdp(reward)
 
     def apply_rstdp(self, reward):
-        """apply the previously calculated reward to all relevant synapses 
-        according to R-STDP principle
+        """apply the previously calculated reward to all relevant synapses
+        according to R-STDP principle.
 
         Args:
-            reward (float): reward to be passed on to the synapses
+            reward (float): reward to be passed on to the synapses.
         """
 
-        # store spike timings of all motor neurons
+        # store spike timings of all motor neurons.
         post_events = {}
         offset = self.motor_neurons[0].get("global_id")
         for index, event in enumerate(self.spike_recorders.get("events")):
@@ -433,9 +433,9 @@ class PongNetRSTDP(PongNet):
         Args:
             pre_spikes (list, numpy.array): Presynaptic spike times in ms.
             post_spikes (list, numpy.array): Postsynaptic spike times in ms.
-            only_causal (bool, optional): Use only facilitation and not 
+            only_causal (bool, optional): Use only facilitation and not
             depression. Defaults to True.
-            next_neighbor (bool, optional): Use only next-neighbor 
+            next_neighbor (bool, optional): Use only next-neighbor
             coincidences. Defaults to True.
 
         Returns:

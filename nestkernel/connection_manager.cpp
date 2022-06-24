@@ -624,7 +624,8 @@ nest::ConnectionManager::connect_arrays( long* sources,
   }
 
   // Increments pointers to weight and delay, if they are specified.
-  auto increment_wd = [weights, delays]( decltype( weights ) & w, decltype( delays ) & d ) {
+  auto increment_wd = [ weights, delays ]( decltype( weights ) & w, decltype( delays ) & d )
+  {
     if ( weights != nullptr )
     {
       ++w;
@@ -1429,9 +1430,16 @@ nest::ConnectionManager::connection_required( Node*& source, Node*& target, thre
     // or similar devices) have to be established by the thread of the
     // target if the source is on the local process even though the
     // source may be a proxy on tid.
-    if ( target->one_node_per_process() and source->has_proxies() )
+    if ( target->one_node_per_process() )
     {
-      return CONNECT_TO_DEVICE;
+      if ( kernel().node_manager.is_local_node( source ) )
+      {
+        return CONNECT_TO_DEVICE;
+      }
+      else
+      {
+        return NO_CONNECTION;
+      }
     }
 
     // Connections from nodes with proxies (neurons or devices with

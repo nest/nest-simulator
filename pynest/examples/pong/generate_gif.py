@@ -38,7 +38,7 @@ import os
 import io
 import sys
 from copy import copy
-import pong
+from pong import GameOfPong as Pong
 import imageio
 from glob import glob
 from matplotlib import font_manager
@@ -52,30 +52,44 @@ white = np.array((255, 255, 255))
 left_color = np.array((204, 0, 153))  # purple
 right_color = np.array((255, 128, 0))  # orange
 
-# final output image size
-IMAGE_SIZE = np.array([400, 320])
-# original size of the playing field inside the simulation
-FIELD_SIZE = np.array([pong.GameOfPong.x_grid, pong.GameOfPong.y_grid])
+# Scaling factor for the entire image. Due to file size constraints, the 
+# intended output size for the created GIF is 400x320. The resolution can be 
+# increased linearly by changing this parameter.
+SCALE = 3
 
-FIELD_SCALE = 8
-# Field size (in px) in the final image
+# Size (in px) of the final output
+IM_SIZE = np.array([400, 320]) * SCALE
+IM_WID, IM_HEIGHT = IM_SIZE
+
+# Original size of the playing field inside the simulation
+FIELD_SIZE = np.array([Pong.x_grid, Pong.y_grid])
+FIELD_SCALE = 8 * SCALE
+# Field size (in px) after upscaling
 FIELD_SIZE_SCALED = FIELD_SIZE * FIELD_SCALE
 
-# dimensions of game objects in px
-BALL_RAD = 2
+# Dimensions of game objects in px
+BALL_RAD = 2 * SCALE
 PADDLE_LEN = int(0.1*FIELD_SIZE_SCALED[1])
-PADDLE_WID = 6
+PADDLE_WID = 6 * SCALE
 
 # Add margins left and right to the image representing the playing field
 FIELD_PADDING = PADDLE_WID * 2
 FIELD_IMAGE_SIZE = copy(FIELD_SIZE_SCALED)
 FIELD_IMAGE_SIZE[0] += 2*FIELD_PADDING
 
-HEATMAP_SCALE = 4
-# weight matrix heatmap size (in px) in the final image
-HEATMAP_SIZE = np.array([FIELD_SIZE[1], FIELD_SIZE[1]]) * HEATMAP_SCALE
+HM_SCALE = 4 * SCALE
+# Weight matrix heatmap size (in px) in the final image
+HM_SIZE = np.array([FIELD_SIZE[1], FIELD_SIZE[1]]) * HM_SCALE
+HM_HPOS = 10*SCALE
+HM_VPOS = 210*SCALE
 
+# Size of the reward plot in px.
+PLOT_SIZE = np.array([210*SCALE, 115*SCALE])
+PLOT_DPI = 80
+
+# At default, the GIF shows every DEFAUL_SPEEDth simulation step.
 DEFAULT_SPEED = 4
+# To save computing time, the reward plot is not updated every frame.
 PLOT_INTERVAL = 10
 
 out_file = "pong_sim.gif"
@@ -83,19 +97,19 @@ keep_temps = False
 
 
 def scale_coordinates(coordinates: np.array):
-    """Scale an (x,y) coordinate tuple from simulation scale to a pixel 
-    coordinate in the output image
+    """Scale a numpy.array of coordinate tuples (x,y) from simulation scale to 
+    pixel scale in the output image.
 
     Args:
         pos (float, float): input coordinates to be scaled
 
     Returns:
-        (int, int): output coordinates in pixel value
+        (int, int): output coordinates in px
     """
     coordinates[:, 0] = coordinates[:, 0] * \
-        FIELD_SIZE_SCALED[0] / pong.GameOfPong.x_length + FIELD_PADDING
+        FIELD_SIZE_SCALED[0] / Pong.x_length + FIELD_PADDING
     coordinates[:, 1] = coordinates[:, 1] * \
-        FIELD_SIZE_SCALED[1] / pong.GameOfPong.y_length
+        FIELD_SIZE_SCALED[1] / Pong.y_length
     return coordinates.astype(int)
 
 
@@ -113,7 +127,7 @@ def grayscale_to_heatmap(in_image, min_val, max_val, base_color):
         base color of the heatmap in RGB space
     Returns:
         numpy.array: transformed input array with an added 3rd dimension of 
-        length three representing RGB values
+        length 3, representing RGB values.
     """
     x_len, y_len = in_image.shape
     out_image = np.zeros((x_len, y_len, 3), dtype=np.uint8)
@@ -148,15 +162,15 @@ if __name__ == "__main__":
 
     font_prop = font_manager.FontProperties(family="sans")
     font_name = font_manager.findfont(font_prop)
-    font_large = ImageFont.truetype(font_name, 26, encoding="unic")
-    font_medium = ImageFont.truetype(font_name, 18, encoding="unic")
+    font_large = ImageFont.truetype(font_name, 26*SCALE, encoding="unic")
+    font_medium = ImageFont.truetype(font_name, 18*SCALE, encoding="unic")
 
-    print(f"reading game data from {input_folder}...")
+    print(f"reading simulation data from {input_folder}...")
     with open(os.path.join(input_folder, "gamestate.pkl"), 'rb') as f:
         game_data = pickle.load(f)
 
     ball_positions = scale_coordinates(np.array(game_data["ball_pos"]))
-    ball_positions[:, 0] -= BALL_RAD
+    #ball_positions[:, 0] -= BALL_RAD
     l_paddle_positions = scale_coordinates(np.array(game_data["left_paddle"]))
     # move left paddle outwards for symmetry
     l_paddle_positions[:, 0] -= PADDLE_WID
@@ -175,29 +189,28 @@ if __name__ == "__main__":
         weights_right = data["weights"]
         p2_name = data["network_type"]
 
-    # extract lowest and highest weights for both players to scale the heatmaps
+    # Extract lowest and highest weights for both players to scale the heatmaps.
     min_r, max_r = np.min(weights_right), np.max(weights_right)
     min_l, max_l = np.min(weights_left), np.max(weights_left)
 
-    # average rewards at every iteration over all neurons
+    # Average rewards at every iteration over all neurons
     rewards_left = [np.mean(x) for x in rewards_left]
     rewards_right = [np.mean(x) for x in rewards_right]
 
+    print(f"setup complete, generating images to '{temp_dir}'...")
     sim_iterations = score.shape[0]
     i = 0
     output_speed = DEFAULT_SPEED
-
-    print(f"setup complete, generating images to {temp_dir}...")
     while i < sim_iterations:
 
-        background = Image.new("RGB", tuple(IMAGE_SIZE), background_color)
+        background = Image.new("RGB", tuple(IM_SIZE), background_color)
         draw = ImageDraw.Draw(background)
 
-        # create an empty array for the playing field.
+        # Create an empty array for the playing field.
         playing_field = np.zeros(
             (FIELD_IMAGE_SIZE[0], FIELD_IMAGE_SIZE[1], 3), dtype=np.uint8)
 
-        # draw Ball in white
+        # Draw the ball in white
         x, y = ball_positions[i]
         playing_field[x-BALL_RAD:x+BALL_RAD, y-BALL_RAD:y+BALL_RAD] = white
 
@@ -207,14 +220,14 @@ if __name__ == "__main__":
             y = min(FIELD_IMAGE_SIZE[1] - PADDLE_LEN, y)
             playing_field[x:x+PADDLE_WID, y-PADDLE_LEN:y+PADDLE_LEN] = color
 
-        # prepare and paste playing field into image
+        # Prepare and paste playing field into the image
         playing_field = np.swapaxes(playing_field, 0, 1)
         playing_field = Image.fromarray(playing_field)
         background.paste(
-            playing_field, (int((IMAGE_SIZE[0]-FIELD_IMAGE_SIZE[0])/2), 36))
+            playing_field, (int((IM_SIZE[0]-FIELD_IMAGE_SIZE[0])/2), 36*SCALE))
 
-        # only draw reward plot and heatmaps every PLOT_INTERVAL iterations or
-        # every frame when skipping many frames
+        # Only draw reward plot and heatmaps every PLOT_INTERVAL iterations or
+        # every frame when skipping many frames.
         if i % PLOT_INTERVAL == 0 or output_speed > 10:
             plt.close()
 
@@ -222,23 +235,22 @@ if __name__ == "__main__":
             heatmap_r = grayscale_to_heatmap(weights_right[i], min_r,
                                              max_r, right_color)
             heatmap_r = np.kron(heatmap_r, np.ones(
-                (HEATMAP_SCALE, HEATMAP_SCALE, 1), np.uint8))
+                (HM_SCALE, HM_SCALE, 1), np.uint8))
             heatmap_r = Image.fromarray(heatmap_r)
 
             # Left player heatmap
             heatmap_l = grayscale_to_heatmap(weights_left[i], min_l,
                                              max_l, left_color)
             heatmap_l = np.kron(heatmap_l, np.ones(
-                (HEATMAP_SCALE, HEATMAP_SCALE, 1), np.uint8))
+                (HM_SCALE, HM_SCALE, 1), np.uint8))
             heatmap_l = Image.fromarray(heatmap_l)
 
             plt.rcParams["figure.autolayout"] = True
-            plt.rcParams["font.size"] = 8
+            plt.rcParams["font.size"] = 8*SCALE
 
-            # set a constant figsize by pixel size
-            DPI = 80
+            # Set a constant figsize in px
             fig = plt.figure(facecolor=background_hex,
-                             figsize=(210/DPI, 115/DPI), dpi=DPI)
+                             figsize=tuple(PLOT_SIZE/PLOT_DPI), dpi=PLOT_DPI)
             fig.tight_layout()
 
             ax = plt.axes()
@@ -266,39 +278,44 @@ if __name__ == "__main__":
             buf.seek(0)
             reward_plot = Image.open(buf)
 
-        background.paste(heatmap_r, (310, 210))
-        draw.text((315, 290), "weights", tuple(black), font_medium)
+        background.paste(heatmap_r, (IM_WID - HM_HPOS - HM_SIZE[0], HM_VPOS))
+        draw.text((IM_WID-15*SCALE, 294*SCALE), "weights",
+                  tuple(black), font_medium, anchor="rt")
 
-        background.paste(heatmap_l, (10, 210))
-        draw.text((15, 290), "weights", tuple(black), font_medium)
+        background.paste(heatmap_l, (HM_HPOS, HM_VPOS), )
+        draw.text((15*SCALE, 294*SCALE), "weights",
+                  tuple(black), font_medium, anchor="lt")
 
-        background.paste(reward_plot, (95, 200))
+        background.paste(reward_plot, (95*SCALE, 200*SCALE))
 
-        image_center = int(IMAGE_SIZE[0]/2)
-        draw.text((image_center - 25, 10), p1_name,
+        image_center = int(IM_WID/2)
+        draw.text((image_center - 25*SCALE, 10*SCALE), p1_name,
                   tuple(left_color), font_medium, anchor="rt")
-        draw.text((image_center, 10), "VS", tuple(
-            black), font_medium, anchor="mt")
-        draw.text((image_center + 25, 10), p2_name,
+        draw.text((image_center, 10*SCALE), "VS", tuple(black),
+                  font_medium, anchor="mt")
+        draw.text((image_center + 25*SCALE, 10*SCALE), p2_name,
                   tuple(right_color), font_medium, anchor="lt")
 
         l_score, r_score = score[i]
-        draw.text((20, 110), str(l_score), tuple(black), font_large)
-        draw.text((350, 110), str(r_score), tuple(black), font_large)
+        draw.text((20*SCALE, 110*SCALE), str(l_score),
+                  tuple(black), font_large, anchor="lt")
+        draw.text((IM_WID-20*SCALE, 110*SCALE), str(r_score),
+                  tuple(black), font_large, anchor="rt")
 
-        draw.text((10, 35), "run:", tuple(black), font_medium)
-        draw.text((10, 60), str(i), tuple(black), font_medium)
+        draw.text((10*SCALE, 35*SCALE), "run:", tuple(black), font_medium)
+        draw.text((10*SCALE, 60*SCALE), str(i), tuple(black), font_medium)
 
-        draw.text((345, 35), f"speed:", tuple(black), font_medium)
-        draw.text((345, 60), str(output_speed)+'x', tuple(black), font_medium)
+        draw.text((345*SCALE, 35*SCALE), f"speed:", tuple(black), font_medium)
+        draw.text((345*SCALE, 60*SCALE), str(output_speed) +
+                  'x', tuple(black), font_medium)
 
         background.save(os.path.join(temp_dir, f"img_{str(i).zfill(6)}.png"))
 
         # change the speed of the video to show performance before and after
         # training at DEFAULT_SPEED and fast forward most of the training
-        if 75 <= i < 100 or sim_iterations - 300 <= i < sim_iterations - 250:
+        if 75 <= i < 100 or sim_iterations - 400 <= i < sim_iterations - 350:
             output_speed = 10
-        elif 100 <= i < sim_iterations - 300:
+        elif 100 <= i < sim_iterations - 350:
             output_speed = 50
         else:
             output_speed = DEFAULT_SPEED

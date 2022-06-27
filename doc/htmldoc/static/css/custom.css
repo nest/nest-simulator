@@ -52,6 +52,29 @@ a:visited,
 a:active {color:var(--nest-orange);}
 a:hover{color:var(--nest-orange); text-decoration:underline;}
 
+/* set api function and class names style */
+.sig.sig-object.py {
+   font-weight: bold;
+	 background-color: #ffd1c1;
+   font-family: "Roboto Mono","Courier New",Courier,monospace;
+ }
+ /* set the kernelattributes in api  positioning to one line */
+dl.py.attribute dd  {
+ display: flex;
+ align-items: first baseline;
+ flex-wrap: wrap;
+ gap: 10px;
+ margin-left: 0.4em;
+
+}
+section#kernel-attributes dl.py.class dd dl.py.attribute dd dl.field-list.simple {
+	display: flex;
+	align-items: baseline;
+}
+
+.sig-prename.descclassname{
+  display: none;
+}
 /**************************************************************************************
  Setting nest colors to override sphinx material "orange" and other default colors
 **************************************************************************************/
@@ -543,7 +566,7 @@ header{
  }
 header{
   background-color: var(--nest-orange);
-  padding:15px 0;
+  padding:0 0;
   height: 250px;
 }
  #banner{

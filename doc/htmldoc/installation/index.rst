@@ -30,7 +30,15 @@ Install NEST from source
 
 |dev| I'm a developer who wants to :ref:`do development in NEST <dev_install>`
 
+|
+
+Install NESTML + NEST
+---------------------
+
+|nestml| I'm a user who wants to :ref:`create or customize models <nestml>`
+
 ----
+
 
 If installation didn't work, see the :ref:`troubleshooting section <troubleshooting>`.
 
@@ -60,4 +68,9 @@ If installation didn't work, see the :ref:`troubleshooting section <troubleshoot
 .. |lecturer| image:: ../static/img/class_black.png
    :target: lecturer.html
    :width: 100px
+
+.. |nestml| image:: ../static/img/nestml-logo.png
+   :target: nestml.html
+   :width: 150px
+
 

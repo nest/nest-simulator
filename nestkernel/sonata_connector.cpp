@@ -54,16 +54,16 @@ SonataConnector::SonataConnector( const DictionaryDatum& sonata_dynamics )
 
 SonataConnector::~SonataConnector()
 {
-  for ( auto params_vec_map : type_id_2_syn_spec_ )
-  {
-    for ( auto params : params_vec_map.second )
-    {
-      for ( auto synapse_parameters : params )
-      {
-        delete synapse_parameters.second;
-      }
-    }
-  }
+  // for ( auto params_vec_map : type_id_2_syn_spec_ )
+  // {
+  //   for ( auto params : params_vec_map.second )
+  //   {
+  //     for ( auto synapse_parameters : params )
+  //     {
+  //       delete synapse_parameters.second;
+  //     }
+  //   }
+  // }
   type_id_2_syn_spec_.clear();
 }
 
@@ -114,9 +114,11 @@ SonataConnector::connect()
     // Iterates the groups of "edges"
     for ( const auto& group_name : edge_group_names )
     {
+      std::cerr << "Group: " << group_name << "\n";
       const H5::Group edges_subgroup( edges_group.openGroup( group_name ) );
 
       // Open edge_group_id dataset and check if we have more than one group id. Currently only one is allowed
+      std::cerr << "Open dataset edge_group_id...\n";
       const auto edge_group_id = edges_subgroup.openDataSet( "edge_group_id" );
       const auto num_edge_group_id = get_num_elements_( edge_group_id );
       const auto edge_group_id_data = read_data_( edge_group_id, num_edge_group_id );
@@ -127,10 +129,12 @@ SonataConnector::connect()
         const auto edge_parameters = edges_subgroup.openGroup( std::to_string( *min ) );
 
         // Read source and target dataset
+        std::cerr << "Open dataset source_node_id...\n";
         const auto source_node_id = edges_subgroup.openDataSet( "source_node_id" );
         const auto num_source_node_id = get_num_elements_( source_node_id );
         const auto source_node_id_data = read_data_( source_node_id, num_source_node_id );
 
+        std::cerr << "Open dataset target_node_id...\n";
         const auto target_node_id = edges_subgroup.openDataSet( "target_node_id" );
         const auto num_target_node_id = get_num_elements_( target_node_id );
         const auto target_node_id_data = read_data_( target_node_id, num_target_node_id );
@@ -138,7 +142,9 @@ SonataConnector::connect()
         // Check if weight and delay are given as h5 files, if so, read the datasets
         weight_and_delay_from_dataset_( edge_parameters );
         auto read_dataset = [&edge_parameters]( double*& data, const char* data_set_name ) {
+          std::cerr << "(lambda) read " << data_set_name << " dataset...\n";
           const auto dataset = edge_parameters.openDataSet( data_set_name );
+          std::cerr << "(lambda) StorageSize = " << dataset.getStorageSize() << "\n";
           data = new double[ dataset.getStorageSize() ];
           dataset.read( data, dataset.getDataType() );
           return data;
@@ -153,24 +159,31 @@ SonataConnector::connect()
           read_dataset( delay_data_, "delay" );
         }
 
+        std::cerr << "get_data_...\n";
         // Get edge_type_id, these are later mapped to the different synapse parameters
         const auto edge_type_id_data = get_data_( edges_subgroup, "edge_type_id" );
 
+        std::cerr << "get_attributes_ source node_population...\n";
         // Retrieve source and target attributes to find which node population to map to
         std::string source_attribute_value;
         get_attributes_( source_attribute_value, source_node_id, "node_population" );
 
+        std::cerr << "get_attributes_ target node_population...\n";
         std::string target_attribute_value;
         get_attributes_( target_attribute_value, target_node_id, "node_population" );
 
         // Create map of edge type ids to NEST synapse_model ids
         const auto edge_params = getValue< DictionaryDatum >( edge_dict->lookup( "edge_synapse" ) );
+        std::cerr << "create_type_id_2_syn_spec_...\n";
         create_type_id_2_syn_spec_( edge_params );
 
         assert( num_source_node_id == num_target_node_id );
 
         std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_(
           kernel().vp_manager.get_num_threads() );
+
+        std::cerr << "Enter parallel region...\n";
+
 #pragma omp parallel
         {
           const auto tid = kernel().vp_manager.get_thread_id();
@@ -198,6 +211,14 @@ SonataConnector::connect()
               const index target_id = ( *( tnode_it + sonata_target_id ) ).node_id;
               Node* target = kernel().node_manager.get_node_or_proxy( target_id );
 
+              if ( not target ) // TODO: remove
+              {
+#pragma omp critical
+                {
+                  std::cerr << kernel().vp_manager.get_thread_id() << ": " << target_id << " node_or_proxy is NULL!\n";
+                }
+              }
+
               const thread target_thread = target->get_thread();
 
               // Skip if target is not on this thread, or not on this MPI process.
@@ -213,6 +234,14 @@ SonataConnector::connect()
               auto get_syn_property = [&syn_spec, &i]( const bool dataset, const double* data, const Name& name ) {
                 if ( dataset ) // Syn_property is set from dataset if the dataset is defined
                 {
+                  if ( not data[ i ] ) // TODO: remove
+                  {
+#pragma omp critical
+                    {
+                      std::cerr << kernel().vp_manager.get_thread_id() << ": " << name << " " << i
+                                << " data index is NULL!\n";
+                    }
+                  }
                   return data[ i ];
                 }
                 else if ( syn_spec->known( name ) ) // Set syn_property from syn_spec if it is defined there
@@ -231,8 +260,8 @@ SonataConnector::connect()
               kernel().connection_manager.connect( snode_id,
                 target,
                 target_thread,
-                type_id_2_syn_model_[ edge_type_id ],
-                type_id_2_param_dicts_[ edge_type_id ][ tid ],
+                type_id_2_syn_model_.at( edge_type_id ),
+                type_id_2_param_dicts_.at( edge_type_id ).at( tid ),
                 delay,
                 weight );
             }
@@ -245,6 +274,7 @@ SonataConnector::connect()
               std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
           }
         } // omp parallel
+
         // check if any exceptions have been raised
         for ( thread thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
         {
@@ -276,17 +306,44 @@ SonataConnector::connect()
 hsize_t
 SonataConnector::get_num_elements_( const H5::DataSet& dataset )
 {
+  std::cerr << "get_num_elements_...\n";
   auto dataspace = dataset.getSpace();
   hsize_t dims_out[ 1 ];
   dataspace.getSimpleExtentDims( dims_out, NULL );
+  std::cerr << "dims_out: " << *dims_out << "\n";
   return *dims_out;
 }
 
 int*
-SonataConnector::read_data_( const H5::DataSet& dataset, int num_elements )
+SonataConnector::read_data_( const H5::DataSet& dataset, hsize_t num_elements )
 {
+  std::cerr << kernel().vp_manager.get_thread_id() << " read_data_...\n";
+  std::cerr << "Num_elements: " << num_elements << "\n";
+
   int* data = ( int* ) malloc( num_elements * sizeof( int ) );
-  dataset.read( data, H5::PredType::NATIVE_INT );
+#pragma omp critical // TODO: revert
+  {
+    try
+    {
+      dataset.read( data, H5::PredType::NATIVE_INT );
+    }
+    catch ( std::exception const& e )
+    {
+      std::cerr << __FILE__ << ":" << __LINE__ << " : "
+                << "Exception caught " << e.what() << "\n";
+    }
+    catch ( const H5::Exception& e )
+    {
+      // std::cerr << __FILE__ << ":" << __LINE__ << " : " << "H5 exception caught:\n" << e.what() << "\n";
+      std::cerr << __FILE__ << ":" << __LINE__ << " H5 exception caught: " << e.getDetailMsg() << "\n";
+      e.printErrorStack();
+    }
+    catch ( ... )
+    {
+      std::cerr << __FILE__ << ":" << __LINE__ << " : "
+                << "Unknown exception caught\n";
+    }
+  }
   return data;
 }
 
@@ -323,11 +380,14 @@ SonataConnector::create_type_id_2_syn_spec_( DictionaryDatum edge_params )
     const auto type_id = std::stoi( it->first.toString() );
     auto d = getValue< DictionaryDatum >( it->second );
     const auto syn_name = getValue< std::string >( ( *d )[ "synapse_model" ] );
+    std::cerr << "type_id=" << type_id << " syn_name=" << syn_name << "\n";
 
     // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
     const index synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
+    std::cerr << "synapse_model_id=" << synapse_model_id << "\n";
 
     set_synapse_params( d, synapse_model_id, type_id );
+    std::cerr << "synapse_model_id=" << synapse_model_id << "\n";
     type_id_2_syn_model_[ type_id ] = synapse_model_id;
   }
 }
@@ -335,12 +395,13 @@ SonataConnector::create_type_id_2_syn_spec_( DictionaryDatum edge_params )
 void
 SonataConnector::set_synapse_params( DictionaryDatum syn_dict, index synapse_model_id, int type_id )
 {
+  std::cerr << "set_synapse_params...\n";
   DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
   std::set< Name > skip_syn_params_ = {
     names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
   };
 
-  std::map< Name, ConnParameter* > synapse_params;
+  std::map< Name, std::shared_ptr< ConnParameter > > synapse_params; // TODO: Use unique_ptr/shared_ptr
 
   for ( Dictionary::const_iterator default_it = syn_defaults->begin(); default_it != syn_defaults->end(); ++default_it )
   {
@@ -352,8 +413,8 @@ SonataConnector::set_synapse_params( DictionaryDatum syn_dict, index synapse_mod
 
     if ( syn_dict->known( param_name ) )
     {
-      synapse_params[ param_name ] =
-        ConnParameter::create( ( *syn_dict )[ param_name ], kernel().vp_manager.get_num_threads() );
+      synapse_params[ param_name ] = std::shared_ptr< ConnParameter >(
+        ConnParameter::create( ( *syn_dict )[ param_name ], kernel().vp_manager.get_num_threads() ) );
     }
   }
 
@@ -361,18 +422,22 @@ SonataConnector::set_synapse_params( DictionaryDatum syn_dict, index synapse_mod
   // create it here once to avoid re-creating the object over and over again.
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
+    std::cerr << "type_id_2_syn_spec_.at...\n";
     type_id_2_syn_spec_[ type_id ].push_back( synapse_params ); // DO WE NEED TO DEFINE THIS PER THREAD???
+    std::cerr << "type_id_2_param_dicts_.at...\n";
     type_id_2_param_dicts_[ type_id ].push_back( new Dictionary );
 
     for ( auto param : synapse_params )
     {
       if ( param.second->provides_long() )
       {
-        ( *type_id_2_param_dicts_[ type_id ][ tid ] )[ param.first ] = Token( new IntegerDatum( 0 ) );
+        std::cerr << "int type_id_2_param_dicts_.at...\n";
+        ( *type_id_2_param_dicts_.at( type_id ).at( tid ) )[ param.first ] = Token( new IntegerDatum( 0 ) );
       }
       else
       {
-        ( *type_id_2_param_dicts_[ type_id ][ tid ] )[ param.first ] = Token( new DoubleDatum( 0.0 ) );
+        std::cerr << "double type_id_2_param_dicts_.at...\n";
+        ( *type_id_2_param_dicts_.at( type_id ).at( tid ) )[ param.first ] = Token( new DoubleDatum( 0.0 ) );
       }
     }
   }
@@ -381,23 +446,23 @@ SonataConnector::set_synapse_params( DictionaryDatum syn_dict, index synapse_mod
 void
 SonataConnector::get_synapse_params_( index snode_id, Node& target, thread target_thread, RngPtr rng, int edge_type_id )
 {
-  for ( auto const& syn_param : type_id_2_syn_spec_[ edge_type_id ][ target_thread ] )
+  for ( auto const& syn_param : type_id_2_syn_spec_.at( edge_type_id ).at( target_thread ) )
   {
     const Name param_name = syn_param.first;
-    const ConnParameter* param = syn_param.second;
+    const auto param = syn_param.second;
 
     if ( param->provides_long() )
     {
       // change value of dictionary entry without allocating new datum
       IntegerDatum* dd = static_cast< IntegerDatum* >(
-        ( ( *type_id_2_param_dicts_[ edge_type_id ][ target_thread ] )[ param_name ] ).datum() );
+        ( ( *type_id_2_param_dicts_.at( edge_type_id ).at( target_thread ) )[ param_name ] ).datum() );
       ( *dd ) = param->value_int( target_thread, rng, snode_id, &target );
     }
     else
     {
       // change value of dictionary entry without allocating new datum
       DoubleDatum* dd = static_cast< DoubleDatum* >(
-        ( ( *type_id_2_param_dicts_[ edge_type_id ][ target_thread ] )[ param_name ] ).datum() );
+        ( ( *type_id_2_param_dicts_.at( edge_type_id ).at( target_thread ) )[ param_name ] ).datum() );
       ( *dd ) = param->value_double( target_thread, rng, snode_id, &target );
     }
   }

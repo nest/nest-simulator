@@ -90,7 +90,7 @@ private:
    *
    * @returns pointer object to data in dataset
    */
-  int* read_data_( const H5::DataSet& dataset, int num_elements );
+  int* read_data_( const H5::DataSet& dataset, hsize_t num_elements );
 
   // TODO: remove, only used once
   int* get_data_( const H5::Group& group, const std::string& name );
@@ -170,7 +170,7 @@ private:
   std::map< int, index > type_id_2_syn_model_;
 
   //! Map from type id (in SONATA file) to synapse dictionary with ConnParameter's (one per thread)
-  std::map< int, std::vector< std::map< Name, ConnParameter* > > > type_id_2_syn_spec_;
+  std::map< int, std::vector< std::map< Name, std::shared_ptr< ConnParameter > > > > type_id_2_syn_spec_;
 
   //! Map from type id (in SONATA file) to param dictionaries (one per thread) used when creating connections
   std::map< int, std::vector< DictionaryDatum > > type_id_2_param_dicts_;

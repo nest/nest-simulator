@@ -22,6 +22,7 @@
 import nest
 import unittest
 
+
 class TestStructuralPlasticityAutapses(unittest.TestCase):
 
     def setUp(self):
@@ -29,24 +30,22 @@ class TestStructuralPlasticityAutapses(unittest.TestCase):
         nest.set_verbosity('M_INFO')
 
     def test_autapses(self):
-	nest.CopyModel('static_synapse', 'synapse_ex')
-	nest.SetDefaults('synapse_ex', {'weight': 1, 'delay': 1.0})
-	nest.SetKernelStatus({
-	    'structural_plasticity_synapses': {
-		'synapse_ex': {
-		    'synapse_model': 'synapse_ex',
-		    'post_synaptic_element': 'Den_ex',
-		    'pre_synaptic_element': 'Axon_ex',
-		    'allow_autapses': False,
-		},
-	    }
-	})
-	
+        nest.CopyModel('static_synapse', 'synapse_ex')
+        nest.SetDefaults('synapse_ex', {'weight': 1, 'delay': 1.0})
+        nest.SetKernelStatus({
+            'structural_plasticity_synapses': {
+                'synapse_ex': {
+                    'synapse_model': 'synapse_ex',
+                    'post_synaptic_element': 'Den_ex',
+                    'pre_synaptic_element': 'Axon_ex',
+                    'allow_autapses': False,
+                },
+            }
+        })
 
 def suite():
     test_suite = unittest.makeSuite(TestStructuralPlasticityAutapses, 'test')
     return test_suite
-
 
 if __name__ == '__main__':
     unittest.main()

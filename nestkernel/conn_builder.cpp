@@ -58,11 +58,15 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   // read out rule-related parameters -------------------------
   //  - /rule has been taken care of above
   //  - rule-specific params are handled by subclass c'tor
-  updateValue< bool >( conn_spec, names::allow_autapses, allow_autapses_ );
-  updateValue< bool >( conn_spec, names::allow_multapses, allow_multapses_ );
-  updateValue< bool >( conn_spec, names::make_symmetric, make_symmetric_ );
-
-  printf("Allow autapses sp manager %s\n", allow_autapses_);
+  if (conn_spec->known(names::allow_autapses)){
+    updateValue< bool >( conn_spec, names::allow_autapses, allow_autapses_ );
+  }
+  if (conn_spec->known(names::allow_multapses)){
+    updateValue< bool >( conn_spec, names::allow_multapses, allow_multapses_ );
+  }
+  if (conn_spec->known(names::make_symmetric)){
+    updateValue< bool >( conn_spec, names::make_symmetric, make_symmetric_ );
+  }
 
   // read out synapse-related parameters ----------------------
 
@@ -1794,8 +1798,8 @@ nest::SymmetricBernoulliBuilder::connect_()
 nest::SPBuilder::SPBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const std::vector< DictionaryDatum >& syn_spec )
-  : ConnBuilder( sources, targets, conn_spec, syn_spec )
+  const std::vector< DictionaryDatum >& syn_specs )
+  : ConnBuilder( sources, targets, conn_spec, syn_specs )
 {
   // Check that both pre and postsynaptic element are provided
   if ( not use_pre_synaptic_element_ or not use_post_synaptic_element_ )

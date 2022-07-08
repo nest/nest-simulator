@@ -138,22 +138,10 @@ SPManager::set_status( const DictionaryDatum& d )
      * Configure synapses model updated during the simulation.
      */
   Token synmodel;
-  DictionaryDatum syn_specs, syn_spec;
+  DictionaryDatum syn_specs;
+  DictionaryDatum syn_spec;
   DictionaryDatum conn_spec = DictionaryDatum( new Dictionary() );
-
-  updateValue< DictionaryDatum >( d, names::structural_plasticity_synapses, syn_specs );
-
-  if ( d->known( names::allow_autapses ) )
-  {
-    def< bool >( conn_spec, names::allow_autapses, getValue< bool >( syn_specs, names::allow_autapses ) );
-    printf("Allow autapses sp manager\n");
-  }
-  if ( d->known( names::allow_multapses ) )
-  {
-    def< bool >( conn_spec, names::allow_multapses, getValue< bool >( syn_specs, names::allow_multapses ) );
-  }
-
-  
+ 
   NodeCollectionPTR sources( new NodeCollectionPrimitive() );
   NodeCollectionPTR targets( new NodeCollectionPrimitive() );
 
@@ -162,13 +150,20 @@ SPManager::set_status( const DictionaryDatum& d )
     delete ( *i );
   }
   sp_conn_builders_.clear();
-  
+  updateValue< DictionaryDatum >( d, names::structural_plasticity_synapses, syn_specs ); 
   for ( Dictionary::const_iterator i = syn_specs->begin(); i != syn_specs->end(); ++i )
   {
     syn_spec = getValue< DictionaryDatum >( syn_specs, i->first );
+    if ( syn_spec->known( names::allow_autapses ) )
+    {
+      def< bool >( conn_spec, names::allow_autapses, getValue< bool >( syn_spec, names::allow_autapses ) );
+    }
+    if ( syn_spec->known( names::allow_multapses ) )
+    {
+      def< bool >( conn_spec, names::allow_multapses, getValue< bool >( syn_spec, names::allow_multapses ) );
+    }
     // We use a ConnBuilder with dummy values to check the synapse parameters
     SPBuilder* conn_builder = new SPBuilder( sources, targets, conn_spec, { syn_spec } );
-
     // check that the user defined the min and max delay properly, if the
     // default delay is not used.
     if ( not conn_builder->get_default_delay() and not kernel().connection_manager.get_user_set_delay_extrema() )

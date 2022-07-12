@@ -1637,18 +1637,18 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   }
 
   // Number of "neighbor" astrocytes
-  if ( conn_spec->known( names::n_neighbor_astrocytes ) )
+  if ( conn_spec->known( names::max_astro_per_target ) )
   {
-    n_neighbor_astrocytes_ = ( *conn_spec )[ names::n_neighbor_astrocytes ];
-    if ( n_neighbor_astrocytes_ < 1 or astrocytes_size_ < n_neighbor_astrocytes_ )
+    max_astro_per_target_ = ( *conn_spec )[ names::max_astro_per_target ];
+    if ( max_astro_per_target_ < 1 or astrocytes_size_ < max_astro_per_target_ )
     {
-      throw BadProperty( "Number of neighbor astrocytes 1 <= n_neighbor_astrocytes <= number of astrocytes required." );
+      throw BadProperty( "Number of neighbor astrocytes 1 <= max_astro_per_target <= number of astrocytes required." );
     }
   }
   else
   {
     // Not given, all astrocytes can be connected
-    n_neighbor_astrocytes_ = astrocytes_size_;
+    max_astro_per_target_ = astrocytes_size_;
   }
 
   // Astrocyte synapse model
@@ -1797,10 +1797,10 @@ nest::BernoulliAstroBuilder::connect_()
             continue;
           }
           // With number of neighbors
-          if ( 1 <= n_neighbor_astrocytes_ && n_neighbor_astrocytes_ < astrocytes_size_ )
+          if ( 1 <= max_astro_per_target_ && max_astro_per_target_ < astrocytes_size_ )
           {
             long anode_index_base = std::floor( float( targets_->find( ( *tnode_id ).node_id ) ) * float( astrocytes_size_ ) / float( targets_size_ ) );
-            long anode_index = anode_index_base + synced_rng->ulrand( n_neighbor_astrocytes_ ) - long( n_neighbor_astrocytes_ / 2 );
+            long anode_index = anode_index_base + synced_rng->ulrand( max_astro_per_target_ ) - long( max_astro_per_target_ / 2 );
             if ( anode_index < 0 )
             {
               anode_index = 0;

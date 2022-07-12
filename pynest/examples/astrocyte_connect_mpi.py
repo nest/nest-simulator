@@ -18,7 +18,7 @@ nest.Connect(
         'astrocyte':astrocytes,
         'p':0.5,
         'p_astro':0.5,
-        'n_neighbor_astrocytes':2,
+        'max_astro_per_target':2,
         },
     syn_spec=dict(
         synapse_model='tsodyks_synapse', synapse_model_astro='sic_connection',

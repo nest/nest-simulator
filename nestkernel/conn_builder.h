@@ -443,7 +443,7 @@ private:
   NodeCollectionPTR astrocytes_;
   double p_; //!< connection probability (neuron=>neuron)
   double p_astro_; //!< connection probability (with astrocyte)
-  long n_neighbor_astrocytes_; // number of "neighbor" astrocytes
+  long max_astro_per_target_; // max number of astrocytes for a tartget neuron
   // From syn_spec
   index synapse_model_id_astro_; // synapse model astrocyte=>neuron
   double c_spill_; // Coefficient c_spill

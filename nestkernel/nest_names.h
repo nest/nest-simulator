@@ -344,7 +344,7 @@ extern const Name N_T;
 extern const Name n;
 extern const Name n_events;
 extern const Name n_messages;
-extern const Name n_neighbor_astrocytes;
+extern const Name max_astro_per_target;
 extern const Name n_proc;
 extern const Name n_receptors;
 extern const Name n_synapses;

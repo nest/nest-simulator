@@ -319,7 +319,7 @@ const Name N_T( "N_T" );
 const Name n( "n" );
 const Name n_events( "n_events" );
 const Name n_messages( "n_messages" );
-const Name n_neighbor_astrocytes( "n_neighbor_astrocytes" );
+const Name max_astro_per_target( "max_astro_per_target" );
 const Name n_proc( "n_proc" );
 const Name n_receptors( "n_receptors" );
 const Name n_synapses( "n_synapses" );

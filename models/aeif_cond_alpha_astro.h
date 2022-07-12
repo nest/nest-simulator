@@ -205,7 +205,7 @@ public:
 private:
   void init_state_( const Node& proto );
   void init_buffers_();
-  void calibrate();
+  void pre_run_hook();
   void update( Time const&, const long, const long );
 
   // END Boilerplate function declarations ----------------------------

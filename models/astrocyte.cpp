@@ -122,8 +122,6 @@ astrocyte_dynamics( double time, const double y[], double f[], void* pnode )
     throw BadProperty( "Interpolation order must be 0, 1, or 3." );
   }
 
-  const double I_gap = gap;
-
   f[ S::IP3_astro ] = ( node.P_.IP3_0_astro_ - ip3 ) / node.P_.tau_IP3_astro_;
   f[ S::Ca_astro ] = I_channel - I_pump + I_leak;
   f[ S::f_IP3R_astro ] = alpha_f_ip3r * ( 1.0 - f_ip3r ) - beta_f_ip3r * f_ip3r;
@@ -446,7 +444,7 @@ nest::astrocyte::init_buffers_()
 }
 
 void
-nest::astrocyte::calibrate()
+nest::astrocyte::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -501,8 +499,6 @@ nest::astrocyte::update_( Time const& origin, const long from, const long to, co
     }
 
     double t = 0.0;
-    // TODO: deleted to much?
-    const double U_old = S_.y_[ State_::IP3_astro ];
 
     // numerical integration with adaptive step size control:
     // ------------------------------------------------------

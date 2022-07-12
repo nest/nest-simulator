@@ -427,7 +427,7 @@ nest::aeif_cond_alpha_astro::init_buffers_()
 }
 
 void
-nest::aeif_cond_alpha_astro::calibrate()
+nest::aeif_cond_alpha_astro::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -445,7 +445,6 @@ nest::aeif_cond_alpha_astro::calibrate()
   V_.g0_ex_ = 1.0 * numerics::e / P_.tau_syn_ex;
   V_.g0_in_ = 1.0 * numerics::e / P_.tau_syn_in;
   V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  assert( V_.refractory_counts_ >= 0 ); // since t_ref_ >= 0, this can only fail in error
 }
 
 /* ----------------------------------------------------------------

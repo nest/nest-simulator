@@ -1751,7 +1751,7 @@ nest::BernoulliAstroBuilder::connect_()
         // check whether the target is on this thread
         if ( target->is_proxy() )
         {
-          target_thread = invalid_thread_;
+          target_thread = invalid_thread;
         }
 
         previous_snode_ids.clear();
@@ -1823,7 +1823,7 @@ nest::BernoulliAstroBuilder::connect_()
 
           if ( astro->is_proxy() )
           {
-            astro_thread = invalid_thread_;
+            astro_thread = invalid_thread;
           }
           if ( astro_thread == tid )
           {

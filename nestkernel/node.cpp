@@ -392,6 +392,12 @@ Node::handles_test_event( DelayedRateConnectionEvent&, size_t )
   throw IllegalConnection( "The target node or synapse model does not support delayed rate input." );
 }
 
+size_t
+Node::handles_test_event( SICEvent&, size_t )
+{
+  throw IllegalConnection();
+}
+
 void
 Node::sends_secondary_event( DelayedRateConnectionEvent& )
 {

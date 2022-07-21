@@ -1,16 +1,12 @@
 Understand how NEST works
 =========================
 
-    ..   :img-top: static/img/topm-neuron_orange_64.png
-       :img-top: static/img/topm-synapse_orange64.png
-       :img-top: static/img/topm-device_orange64.png
-
 Here you can dive into various topics about NEST.
 
 .. grid:: 1 1 2 3
 
-   .. grid-item-card:: All about neurons
-       :img-top: static/img/topm-neuron_orange_64.png
+   .. grid-item-card:: |neuron| All about neurons
+       :class-title: sd-d-flex-row sd-align-minor-center
 
        * :ref:`node_handles`
 
@@ -20,8 +16,8 @@ Here you can dive into various topics about NEST.
 
        * :ref:`exact_integration`
 
-   .. grid-item-card:: All about synapses and connections
-       :img-top: static/img/topm-synapse_orange64.png
+   .. grid-item-card:: |synapse|  All about synapses and connections
+       :class-title: sd-d-flex-row sd-align-minor-center
 
        * :ref:`connection_management`
 
@@ -31,8 +27,9 @@ Here you can dive into various topics about NEST.
 
        * :ref:`weight_normalization`
 
-   .. grid-item-card::  All about devices
-       :img-top: static/img/topm-device_orange64.png
+
+   .. grid-item-card:: |device| All about devices
+       :class-title: sd-d-flex-row sd-align-minor-center
 
        * :ref:`record_simulations`
 
@@ -40,21 +37,21 @@ Here you can dive into various topics about NEST.
 
 .. grid:: 1 1 2 3
 
-   .. grid-item-card::  Spatially-structured networks
-       :img-top: static/img/topm-brainnetwork_orange64.png
+   .. grid-item-card:: |network| Spatially-structured networks
+       :class-title: sd-d-flex-row sd-align-minor-center
        :link: spatial_networks
        :link-type: ref
 
 
-   .. grid-item-card::  Models in NEST
-       :img-top: static/img/topm-math_orange64.png
+   .. grid-item-card:: |math| Models in NEST
+       :class-title: sd-d-flex-row sd-align-minor-center
        :link:  models_contents
        :link-type: ref
 
 .. grid:: 1 1 2 3
 
-   .. grid-item-card::  NEST behavior
-       :img-top: static/img/topm-random_orange64.png
+   .. grid-item-card::  |random| NEST behavior
+       :class-title: sd-d-flex-row sd-align-minor-center
 
        * :ref:`built_in_timers`
 
@@ -62,34 +59,34 @@ Here you can dive into various topics about NEST.
 
        * :ref:`run_simulations`
 
-   .. grid-item-card::  Connect to other tools
-       :img-top: static/img/topm-connect_orange64.png
+   .. grid-item-card:: |connect| Connect to other tools
+       :class-title: sd-d-flex-row sd-align-minor-center
 
        * :ref:`nest_server`
 
        * :ref:`nest_music`
 
 
-   .. grid-item-card::  High performance computers (HPC)
-       :img-top: static/img/topm-hpc_orange64.png
+   .. grid-item-card:: |hpc| High performance computers (HPC)
+       :class-title: sd-d-flex-row sd-align-minor-center
        :link: parallel_computing
        :link-type: ref
 
 
 .. grid:: 1 1 2 3
 
-   .. grid-item-card::  Convert NEST 2.X scripts to 3.X
-       :img-top: static/img/topm-refresh_orange64.png
+   .. grid-item-card:: |refresh| Convert NEST 2.X scripts to 3.X
+       :class-title: sd-d-flex-row sd-align-minor-center
        :link: refguide_2_3
        :link-type: ref
 
-   .. grid-item-card::  Release notes
-       :img-top: static/img/topm-version-control_orange64.png
+   .. grid-item-card:: |git| Release notes
+       :class-title: sd-d-flex-row sd-align-minor-center
        :link: release_notes
        :link-type: ref
 
-   .. grid-item-card::  Glossary
-       :img-top: static/img/topm-glossary_orange64.png
+   .. grid-item-card::  |glossary| Glossary
+       :class-title: sd-d-flex-row sd-align-minor-center
        :link: glossary
        :link-type: ref
 
@@ -116,4 +113,14 @@ Here you can dive into various topics about NEST.
    Glossary <ref_material/glossary>
 
 
-
+.. |synapse| image:: static/img/synapse_orange128.svg
+.. |neuron|  image:: static/img/neuron_orange.svg
+.. |glossary|  image:: static/img/glossary_orange128.svg
+.. |git|  image:: static/img/version-control_orange128.svg
+.. |refresh|  image:: static/img/refresh_orange128.svg
+.. |hpc|  image:: static/img/hpc_orange128.svg
+.. |random|  image:: static/img/random_orange128.svg
+.. |math|  image:: static/img/math_orange128.svg
+.. |network|  image:: static/img/brainnetwork_orange128.svg
+.. |device|  image:: static/img/device_orange128.svg
+.. |connect|  image:: static/img/connect_orange128.svg

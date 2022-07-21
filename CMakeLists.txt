@@ -72,7 +72,7 @@ set( target-bits-split "standard" CACHE STRING "Split of the 64-bit target neuro
 
 # generic build configuration
 option( static-libraries "Build static executable and libraries [default=OFF]" OFF )
-set( with-optimize ON CACHE STRING "Enable user defined optimizations [default=OFF (uses '-O2')]. When ON, '-O3' is used. Separate multiple flags by ';'." )
+set( with-optimize ON CACHE STRING "Enable user defined optimizations [default=OFF (uses '-O0')]. When ON, '-O3' is used. Separate multiple flags by ';'." )
 set( with-warning ON CACHE STRING "Enable user defined warnings [default=ON (uses '-Wall')]. Separate  multiple flags by ';'." )
 set( with-debug OFF CACHE STRING "Enable user defined debug flags [default=OFF]. When ON, '-g' is used. Separate  multiple flags by ';'." )
 set( with-cpp-std "c++11" CACHE STRING "C++ standard to use for compilation [default='c++11']." )

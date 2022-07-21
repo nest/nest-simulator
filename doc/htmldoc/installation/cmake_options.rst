@@ -107,7 +107,7 @@ Generic build configuration
 | ``-Dstatic-libraries=[OFF|ON]``                      | Build static executable and libraries [default=OFF].             |
 +------------------------------------------------------+------------------------------------------------------------------+
 | ``-Dwith-optimize=[OFF|ON|<list;of;flags>]``         | Enable user defined optimizations                                |
-|                                                      | [default=OFF (uses '-O2')]. When ON, '-O3' is used. Separate     |
+|                                                      | [default=OFF (uses '-O0')]. When ON, '-O3' is used. Separate     |
 |                                                      | multiple flags by ';'.                                           |
 +------------------------------------------------------+------------------------------------------------------------------+
 | ``-Dwith-warning=[OFF|ON|<list;of;flags>]``          | Enable user defined warnings [default=ON (uses '-Wall')].        |

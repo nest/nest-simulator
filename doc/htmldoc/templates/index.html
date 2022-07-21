@@ -22,8 +22,7 @@
     </head>
 <body id="home">
 
-
-  <a href="#" id="gototop"><img src="_static/img/arrow-up-circle.svg"/></a>
+  <a href="#" id="gototop"><img src="{{ pathto('_static/img/arrow-up-circle.svg',1) }}"/></a>
   <header id="header" class="wrapper clearfix">
     <div id="banner">
       <div id="logo">
@@ -45,30 +44,19 @@
   <section id="hero" class="clearfix">
     <div class="wrapper">
       <div class="row">
-        <div class="grid_4">
-          <h1>Welcome!</h1>
-          <h2>NEST simulator documentation</h2>
-  <h3>
-  Click the button below to get NEST!
-  </h3>
+        <div class="grid_3">
+          <h1>Welcome to the NEST simulator documentation!</h1>
         <a href="installation/index.html" class="buttonlink">Install NEST</a>
 
         </div>
-        <div class="grid_2">
-          <h3> Explore the docs </h3>
+        <div class="grid_6">
         <a href="get-started_index.html" class="buttonlink">Tutorials and examples</a>
-        </div>
-        <div class="grid_1">
         <a href="ref_material/pynest_apis.html" class="buttonlink">API</a>
+        <a href="models/index.html" class="buttonlink">Built-in Models</a>
+        <a href="https://nestml.readthedocs.io" class="buttonlink">Custom models</a>
+        <a href="understand_index.html" class="buttonlink">Further topics</a>
         </div>
-        <div class="grid_1">
-        <a href="models/index.html" class="buttonlink">Models</a>
-        </div>
-        <div class="grid_2">
-          <p> </p>
-       <a href="understand_index.html" class="buttonlink">Further topics</a>
-        </div>
-        <div class="grid_2">
+        <div class="grid_3">
           <a href="community.html" class="buttonlink" style="float: right;">Contact us</a>
         </div>
      </section>
@@ -79,24 +67,27 @@
          <h2 id="nest-sample"> Here is a sample NEST script. Click each section and discover related topics!</h2>
       </div>
 
-      <div class="accordion">
-	
-	<pre><code class="language-python">
+
+<div class="accordion"> <img id="pulse" src="_static/img/pulse.svg" style="position:relative" />
+    <pre><code class="language-python">
             import nest
-        </code></pre>
-        <div>
-	  <ul>
-      <li><a href="installation/index.html">Get and install NEST></a></li>
-      <li><a href="ref_material/pynest_apis.html">Access PyNEST APIs</a></li>
-      <li><a href= "release_notes/v3.0/refguide_nest2_nest3.html">Convert script from NEST 2.x to 3.x</a></li>
-	  </ul>
-        </div>
+    </code></pre>
+    <div>
+       <ul>
+        <li><a href="installation/index.html">Get and install NEST</a></li>
+        <li><a href="ref_material/pynest_apis.html">Access PyNEST APIs</a></li>
+        <li><a href= "release_notes/v3.0/refguide_nest2_nest3.html">Convert script from NEST 2.x to 3.x</a></li>
+	     </ul>
+    </div>
+
+
         <pre><code class="language-python">
             neurons = nest.Create("iaf_psc_alpha", 10000, {
                 "V_m": nest.random.normal(-5.0),
                 "I_e": 1000.0
             })
-        </code></pre>
+    </code></pre>
+
         <div>
 	  <ul>
             <li><a href="neurons/node_handles.html">Learn about creating neurons</a></li>
@@ -148,8 +139,8 @@
 	  </ul>
         </div>
       </div>
+      </div>
 
-   </div>
   </section>
 
   <section id="topics" class="vertical-padding">
@@ -225,7 +216,7 @@
           <img class="icon" src="_static/img/3_HBP + EBRAINS logo_Color+White.png" />
         </div>
         <div class="grid_4 narrow">
-          <img class="icon" src="_static/img/eu_logo.jpg" />
+          <img class="icon" src="_static/img/eu_logo.png" />
         </div>
         <div class="grid_4 narrow">
           <h2><a href="https://github.com/nest/nest-simulator/blob/master/ACKNOWLEDGMENTS.md">Acknowledgments</a></h2>
@@ -242,6 +233,7 @@
   <script src="_static/js/jquery-ui.min.js"></script>
   <script defer src="_static/js/flexslider/jquery.flexslider-min.js"></script>
   <script src="_static/js/bootstrap/bootstrap.min.js"></script>
+  <script src="_static/js/custom.js"></script>
   <script src="_static/js/main.js"></script>
 </body>
 </html>

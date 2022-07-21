@@ -111,23 +111,25 @@ section#kernel-attributes dl.py.class dd dl.py.attribute dd dl.field-list.simple
 .md-typeset details > summary::before {
   display: none;
 }
-
+/* settings for icons */
 .md-typeset img {
-	border-bottom-style: groove;
-	border-bottom-color: #dcdcdc8c;
-	border-bottom-width: 2px;
+  border: none;
   opacity: 0.75;
+  width: 64px;
+  height: auto;
+  margin-right: 0.7em;
 }
-
+div.sd-card-title.sd-font-weight-bold.sd-d-flex-row.docutils a.reference.internal img {
+ margin-right: 2em;
+ margin-bottom: 0.5em;
+ 
+}
 .md-typeset .admonition {
   background-color: var(--nest-blue);
   border-left: .2rem solid var(--nest-blue);
   border-radius: 5px;
 }
 
-div.admonition.danger {
-   background-color: darkred;
-}
 .md-typeset .admonition > .admonition-title::before {
   color: #fff;
 }
@@ -140,6 +142,21 @@ div.admonition.danger {
    box-shadow: 0 .125rem .25rem var(--sd-color-shadow);
    margin-left: 17px;
    margin-right: 15px;
+}
+.md-typeset .admonition.seealso > .admonition-title {
+   background-color: var(--nest-green);
+}
+.md-typeset .admonition.seealso {
+  border-left: .2rem solid var(--nest-green);
+}
+.md-typeset .admonition.warning {
+   border-left-color: #be1717;
+} 
+.md-typeset .admonition.warning > .admonition-title {
+   background-color: #be1717;
+}
+.md-typeset .admonition.danger > .admonition-title {
+   background-color: black;
 }
 /* add admonition warning / info (?) */
 .md-nav__extra_link{
@@ -180,6 +197,10 @@ div.md-header-nav__source a.md-source div.md-source__repository, div.md-source__
   color: white;
   text-align: center;
 }
+#pynest-examples img.sd-card-img-top {
+  width: auto;
+  height: max-content;
+}
 
 .sd-card-body {
    padding: 0.6rem;
@@ -212,6 +233,16 @@ div.md-header-nav__source a.md-source div.md-source__repository, div.md-source__
  padding-top: 20px;
 
 }
+
+#pulse span{
+	width: 31px;
+	border-radius: 50%;
+	background: #000;
+	color: #fff;
+  text-align: center;
+  width: 31px;
+  padding: 5px 0px;
+ }
 header.wrapper{
 	padding: 0;
 }
@@ -327,7 +358,7 @@ p{ margin:0 0 1.5em;}
     padding-left: 15px;
     padding-right: 15px;
 }
-.grid_1, .grid_2{
+.grid_3, .grid_6{
 
   margin-top: auto;
 }
@@ -459,7 +490,9 @@ html {
     border-bottom: 1px solid #ccc;
     padding: 0;
     color: #666;
+    cursor: pointer;
 }
+
 
 #intro .accordion pre:first-of-type {
     background: #ccc;
@@ -536,9 +569,16 @@ html {
 MEDIAQUERIES
 *****************************************
 ****************************************/
+
+@media only screen and (min-width: 1920px) {
+.md-typeset img {
+ width: 128px;
+ height: auto;
+  }
+}
 @media only screen and (min-width: 1024px) {
 
- .particle-img
+.particle-img
  {
   background-image: linear-gradient(to bottom, rgba(255, 102, 51, 0.63), rgba(255, 102, 51, 0.1), rgba(255, 102, 51, 0.73)), url('../img/background-particles-flattened.png');
   background-color: #ff6633;

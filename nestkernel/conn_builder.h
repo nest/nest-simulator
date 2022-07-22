@@ -442,8 +442,9 @@ private:
   // From conn_spec
   NodeCollectionPTR astrocytes_;
   double p_; //!< connection probability (neuron=>neuron)
-  double p_astro_; //!< connection probability (with astrocyte)
-  long max_astro_per_target_; // max number of astrocytes for a tartget neuron
+  double p_syn_astro_; //!< connection probability (with astrocyte)
+  size_t max_astro_per_target_; // max number of astrocytes for a tartget neuron
+  bool astro_pool_per_target_det_; // deterministic or random selection of astrocyte pool per target
   // From syn_spec
   index synapse_model_id_astro_; // synapse model astrocyte=>neuron
   double c_spill_; // Coefficient c_spill
@@ -451,9 +452,8 @@ private:
   double d_; // synaptic delay neuron=>neuron
   double w_sic_; // synaptic weight astrocyte=>neuron
   // For astrocyte connections
-  int astrocytes_size_;
-  int targets_size_;
-  // std::vector<std::vector<bool>> source_astro_flags_;
+  size_t astrocytes_size_;
+  size_t targets_size_;
 };
 
 class SymmetricBernoulliBuilder : public ConnBuilder

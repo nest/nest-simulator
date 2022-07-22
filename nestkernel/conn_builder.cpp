@@ -1612,7 +1612,6 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   astrocytes_ = getValue< NodeCollectionDatum >( conn_spec, names::astrocyte );
   astrocytes_size_ = astrocytes_->size();
   targets_size_ = targets->size();
-  // source_astro_flags_.resize( sources->size(), std::vector<bool>( astrocytes_size_, false ) );
 
   // Probability of neuron=>neuron connection
   p_ = ( *conn_spec )[ names::p ];
@@ -1622,33 +1621,43 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   }
 
   // Probability of astrocyte=>neuron connection
-  if ( conn_spec->known( names::p_astro ))
+  if ( conn_spec->known( names::p_syn_astro ))
   {
-    p_astro_ = ( *conn_spec )[ names::p_astro ];
-    if ( p_astro_ < 0 or 1 < p_astro_ )
+    p_syn_astro_ = ( *conn_spec )[ names::p_syn_astro ];
+    if ( p_syn_astro_ < 0 or 1 < p_syn_astro_ )
     {
-      throw BadProperty( "Connection probability 0 <= p_astro <= 1 required." );
+      throw BadProperty( "Connection probability 0 <= p_syn_astro <= 1 required." );
     }
   }
   else
   {
     // Not given, default 1.0
-    p_astro_ = 1.0;
+    p_syn_astro_ = 1.0;
   }
 
-  // Number of "neighbor" astrocytes
+  // Maximum number of astrocytes for a target neuron
   if ( conn_spec->known( names::max_astro_per_target ) )
   {
     max_astro_per_target_ = ( *conn_spec )[ names::max_astro_per_target ];
     if ( max_astro_per_target_ < 1 or astrocytes_size_ < max_astro_per_target_ )
     {
-      throw BadProperty( "Number of neighbor astrocytes 1 <= max_astro_per_target <= number of astrocytes required." );
+      throw BadProperty( "Maximum number of astrocytes per target neuron 1 <= max_astro_per_target <= number of astrocytes required." );
     }
   }
   else
   {
     // Not given, all astrocytes can be connected
     max_astro_per_target_ = astrocytes_size_;
+  }
+
+  // Deterministic or probabilistic selection of astrocyte pool for a target neuron
+  if ( conn_spec->known( names::astro_pool_per_target_det ) )
+  {
+    astro_pool_per_target_det_ = ( *conn_spec )[ names::astro_pool_per_target_det ];
+  }
+  else
+  {
+    astro_pool_per_target_det_ = false;
   }
 
   // Astrocyte synapse model
@@ -1730,6 +1739,8 @@ nest::BernoulliAstroBuilder::connect_()
       thread target_thread;
       Node* astro;
       thread astro_thread;
+      std::vector< index > anode_pool_this_target;
+      std::vector< index > draw_without_replace_set;
 
       for ( NodeCollection::const_iterator tnode_id = targets_->begin(); tnode_id != targets_->end(); ++tnode_id )
       {
@@ -1756,6 +1767,42 @@ nest::BernoulliAstroBuilder::connect_()
 
         previous_snode_ids.clear();
         previous_anode_ids.clear();
+
+        // Selecting astrocyte pool for this target
+        anode_pool_this_target.clear();
+        if ( 1 <= max_astro_per_target_ && max_astro_per_target_ < astrocytes_size_ )
+        {
+          // Get the starting astrocyte node for deterministic
+          size_t anode_index = std::floor( float( targets_->find( ( *tnode_id ).node_id ) ) * float( astrocytes_size_ ) / float( targets_size_ ) ) - size_t( max_astro_per_target_ / 2 );
+          if ( anode_index < 0 )
+          {
+           anode_index = 0;
+          }
+          for ( size_t i = 0; i < max_astro_per_target_; i++ )
+          {
+            // Deterministic
+            if ( astro_pool_per_target_det_ == true )
+            {
+              // Is this checking redundant?
+              if ( anode_index >= astrocytes_size_ )
+              {
+               anode_index = astrocytes_size_ - 1;
+              }
+              anode_id = ( *astrocytes_ )[ anode_index ];
+              ++anode_index;
+            }
+            // Probabilistic
+            else
+            {
+              do
+              {
+                 anode_id = ( *astrocytes_ )[ synced_rng->ulrand( astrocytes_size_ ) ];
+              }
+              while ( std::find( anode_pool_this_target.begin(), anode_pool_this_target.end(), anode_id ) != anode_pool_this_target.end() );
+            }
+            anode_pool_this_target.push_back( anode_id );
+          }
+        }
 
         // choose indegree number of sources randomly from all sources
         size_t i = 0;
@@ -1792,26 +1839,16 @@ nest::BernoulliAstroBuilder::connect_()
 
           // Connections from and to astrocyte
           // Bernoulli trial to determine whether to pair this connection with astrocyte
-          if ( synced_rng->drand() >= p_astro_ )
+          if ( synced_rng->drand() >= p_syn_astro_ )
           {
             continue;
           }
-          // With number of neighbors
+          // With maximum number of astrocytes per target
           if ( 1 <= max_astro_per_target_ && max_astro_per_target_ < astrocytes_size_ )
           {
-            long anode_index_base = std::floor( float( targets_->find( ( *tnode_id ).node_id ) ) * float( astrocytes_size_ ) / float( targets_size_ ) );
-            long anode_index = anode_index_base + synced_rng->ulrand( max_astro_per_target_ ) - long( max_astro_per_target_ / 2 );
-            if ( anode_index < 0 )
-            {
-              anode_index = 0;
-            }
-            else if ( anode_index >= astrocytes_size_ )
-            {
-              anode_index = astrocytes_size_ - 1;
-            }
-            anode_id = ( *astrocytes_ )[ anode_index ];
+            anode_id = anode_pool_this_target.at( synced_rng->ulrand( anode_pool_this_target.size() ) );
           }
-          // All astrocytes can be connected
+          // If not, all astrocytes can be connected
           else
           {
             anode_id = ( *astrocytes_ )[ synced_rng->ulrand( astrocytes_size_ ) ];

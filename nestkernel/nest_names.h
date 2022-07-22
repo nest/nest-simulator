@@ -97,6 +97,7 @@ extern const Name asc_decay;
 extern const Name asc_init;
 extern const Name asc_r;
 extern const Name astrocyte;
+extern const Name astro_pool_per_target_det;
 extern const Name available;
 extern const Name azimuth_angle;
 
@@ -373,7 +374,7 @@ extern const Name overwrite_files;
 
 extern const Name P;
 extern const Name p;
-extern const Name p_astro;
+extern const Name p_syn_astro;
 extern const Name p_copy;
 extern const Name p_transmit;
 extern const Name pairwise_bernoulli_on_source;

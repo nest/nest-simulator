@@ -5,6 +5,7 @@ Understand how NEST works
 .. toctree::
    :maxdepth: 1
 
+   What's new? <whats_new/index>
    Neurons <neurons/index>
    Synapses and connections <synapses/index>
    Devices  <devices/index>
@@ -16,6 +17,5 @@ Understand how NEST works
    Connect NEST with other tools <connect_nest/index>
    Parallel computing <hpc/parallel_computing>
    Benchmarking <hpc/benchmarking>
-   From NEST 2.x to 3.x <release_notes/v3.0/refguide_nest2_nest3>
-   Release notes <release_notes/index>
+   From NEST 2.x to 3.x <whats_new/v3.0/refguide_nest2_nest3>
    Glossary <ref_material/glossary>

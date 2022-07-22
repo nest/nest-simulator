@@ -8,10 +8,10 @@ Here you can discover the new features NEST 3.0 has to offer!
 .. toctree::
    :maxdepth: 1
 
-   node_handles
-   handling_connections
-   parametrization
+   ../../../neurons/node_handles
+   ../../../synapses/handling_connections
+   ../../../neurons/parametrization
    random_number_generators
    recording_simulations
    stimulation_backends
-   ../../../nest_server
+   ../../../connect_nest/nest_server

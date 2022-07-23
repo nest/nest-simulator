@@ -16,7 +16,7 @@ Welcome to the NEST simulator documentation!
    Community <community>
    license
 
-In our :ref:`release notes <release_notes>`, you can find an overview of the newest changes and features for NEST 3.x.
+In our `auto-generated release notes on GitHub <https://github.com/nest/nest-simulator/releases/>`_, you can find an overview of the newest changes and features for NEST 3.x. In addition, a summary of all breaking and non-breaking changes from previous NEST 3.x versions is provided :ref:`here <release_notes>`.
 
 If you are transitioning from NEST 2.x to NEST 3.x, check out our :ref:`reference guide <refguide_2_3>`.
 

@@ -176,7 +176,10 @@ public:
    * Correct this synapse and the corresponding previously sent spike
    * taking into account a new post-synaptic spike.
    */
-  void correct_synapse_stdp_ax_delay( const thread tid, const double t_last_spike, double* weight_revert, const double t_post_spike,
+  void correct_synapse_stdp_ax_delay( const thread tid,
+    const double t_last_spike,
+    double* weight_revert,
+    const double t_post_spike,
     const STDPPLHomAxDelayCommonProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -293,6 +296,7 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::send( Event& e,
     // start->t_ > t_lastspike - dendritic_delay, i.e. minus_dt < 0
     assert( minus_dt < -1.0 * kernel().connection_manager.get_stdp_eps() );
     weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt * cp.tau_plus_inv_ ), cp );
+
     ++start;
   }
 
@@ -356,11 +360,13 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::set_status( const DictionaryD
 
 template < typename targetidentifierT >
 inline void
-stdp_pl_synapse_hom_ax_delay< targetidentifierT >::correct_synapse_stdp_ax_delay(
-  const thread tid, const double t_last_spike, double* weight_revert, const double t_post_spike,
+stdp_pl_synapse_hom_ax_delay< targetidentifierT >::correct_synapse_stdp_ax_delay( const thread tid,
+  const double t_last_spike,
+  double* weight_revert,
+  const double t_post_spike,
   const STDPPLHomAxDelayCommonProperties& cp )
 {
-  const double t_spike = t_lastspike_;        // no new pre-synaptic spike since last send()
+  const double t_spike = t_lastspike_; // no new pre-synaptic spike since last send()
   const double wrong_weight = weight_; // incorrectly transmitted weight
   weight_ = *weight_revert;            // removes the last depressive step
 

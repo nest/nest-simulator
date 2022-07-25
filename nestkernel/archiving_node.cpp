@@ -208,11 +208,12 @@ nest::ArchivingNode::set_spiketime( Time const& t_sp, double offset )
     //   STDP synapses, and
     // - there is another, later spike, that is strictly more than
     //   (max_delay_ + eps) away from the new spike (at t_sp_ms)
+    // [4.6, 5.4] -> 5.9, 6.3  --- 6.4+eps
     while ( history_.size() > 1 )
     {
       const double next_t_sp = history_[ 1 ].t_;
       if ( history_.front().access_counter_ >= n_incoming_
-        and t_sp_ms - next_t_sp > max_delay_ + kernel().connection_manager.get_stdp_eps() )
+        and t_sp_ms - next_t_sp > 2 * max_delay_ + kernel().connection_manager.get_stdp_eps() )
       {
         history_.pop_front();
       }

@@ -1,0 +1,263 @@
+/*
+ *  test_stdp_pl_synapse.sli
+ *
+ *  This file is part of NEST
+ *
+ *  Copyright (C) 2010 by
+ *  The NEST Initiative
+ *
+ *  See the file AUTHORS for details.
+ *
+ *  Permission is granted to compile and modify
+ *  this file for non-commercial use.
+ *  See the file LICENSE for details.
+ *
+ */
+
+
+/* BeginDocumentation
+Name: testsuite::test_stdp_pl_synapse - basic test of stdp_synapse
+
+Synopsis: (test_stdp_pl_synapse) run
+
+Description:
+  A parrot_neuron that repeats the spikes from a poisson generator is
+  connected to an iaf_psc_alpha that is driven by inh. and exc. poisson input.
+  The synapse is an stdp_pl_synapse. After the simulation, we go through the pre-
+  and postsyn. spike-trains spike by spike and try to reproduce the STDP
+  results. The final weight obtained after simulation is compared to the final
+  weight obtained from the test.
+  DONE: Updated to NEST 3 syntax.
+  TODO: Convert to python test.
+
+Author: Kunkel, Nov 2010 -- first version, Mar 2022 -- NEST 3 version
+*/
+
+
+%/unittest (8831) require
+
+(unittest) run
+/unittest using
+
+
+%%% input parameters %%%
+
+/K_exc         8000.0 def  % number of exc. inputs
+/K_inh         2000.0 def  % number of inh. inputs
+/nu              10.0 def  % equil. firing rate
+/nu_x             1.7 def  % external rate
+/w_exc           45.0 def  % strength of exc. connections
+/w_inh w_exc -5.0 mul def  % strength of inh. connections
+/delay           0.1 def  % synaptic transmission delay
+
+
+%%% simulate & check for different axonal delays %%%
+
+%[0.0 0.1 0.2 0.3 0.4 0.5 ]%0.6 0.7 0.8 0.9 1.0]
+%[0.0 1.0 2.0 3.0 4.0 5.0]
+%[0.0 0.1 0.2 1.0, 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 9.8 9.9 10.0]
+%[5.0]
+[0.0]
+{
+  /axonal_delay Set
+  /backpr_delay delay axonal_delay sub def
+
+  ResetKernel
+
+  /resolution 0.1 def %1.0 def %2.0 -4 pow def  % simulation step size
+  << /resolution resolution >> SetKernelStatus %/tics_per_ms 10000.0 >> SetStatus
+
+
+  %%% STDP parameters %%%
+
+  /alpha              0.057 def
+  /lambda             0.1   def
+  /tau_plus          15.0   def
+  /tau_minus         30.0   def
+  /mu                 0.4   def
+
+
+  %%% create poisson generators, neurons and spike detector %%%
+
+  /pg_exc /poisson_generator << /rate K_exc nu nu_x add mul >> Create def
+  /pg_inh /poisson_generator << /rate K_inh nu mul          >> Create def
+
+  /pg_pre /poisson_generator << /rate nu >> Create def
+
+  /parrot /parrot_neuron Create def
+  /neuron /iaf_psc_alpha << /tau_minus tau_minus >> Create def
+
+  /spike_recorder << /record_to (memory)
+		  >> SetDefaults
+  /sd_pre  /spike_recorder Create def
+  /sd_post /spike_recorder Create def
+
+
+  %%% connect %%%
+
+  /stdp_pl_synapse_hom << /alpha        alpha
+			  /lambda       lambda
+			  /tau_plus     tau_plus
+			  /mu           mu
+			  /delay        delay
+			  %/axonal_delay axonal_delay
+		       >> SetDefaults
+
+  pg_exc neuron w_exc delay Connect
+  pg_inh neuron w_inh delay Connect
+  pg_pre parrot w_exc delay Connect
+
+  parrot neuron w_exc delay /stdp_pl_synapse_hom Connect
+
+  parrot sd_pre  1.0 delay Connect
+  neuron sd_post 1.0 delay Connect
+
+
+  %%% simulate and get data %%%
+
+  18000.0 Simulate
+
+  /pre_spikes  sd_pre  GetStatus 0 get /events get /times get cva { axonal_delay add } Map def
+  /post_spikes sd_post GetStatus 0 get /events get /times get cva { backpr_delay add } Map def
+
+  /final_weight << /source parrot /target neuron >> GetConnections 0 get /weight get def
+
+
+  %%% check final weight %%%
+
+  cout 15 setprecision
+
+  /K_plus    0.0 def
+  /K_minus   0.0 def
+  /last_pre  0   def
+  /last_post 0   def
+  /j         0   def
+  /i         0   def
+
+  /post_spike post_spikes i get def
+  /pre_spike  pre_spikes  j get def
+  /w          w_exc             def
+
+  /update_K_plus
+  {
+    last_pre pre_spike sub tau_plus div exp K_plus mul 1.0 add /K_plus Set
+  }
+  def
+
+  /update_K_minus
+  {
+    %(-- update K_minus: ) =only K_minus =only ( ) =only last_post =only ( ) =only post_spike =only ( ) =only
+    last_post post_spike sub tau_minus div exp K_minus mul 1.0 add /K_minus Set
+    %K_minus ==
+  }
+  def
+
+  /next_pre_spike
+  {
+    j 1 add /j Set
+    pre_spike /last_pre Set
+    pre_spikes j get /pre_spike Set
+  }
+  def
+
+  /next_post_spike
+  {
+    i 1 add /i Set
+    post_spike /last_post Set
+    post_spikes i get /post_spike Set
+  }
+  def
+
+  /facilitate
+  {
+    last_pre post_spike sub abs 1e-6 gt
+    {
+      ( w + lambda * w^mu * K_plus * exp((last_pre-post_spike)/tau_plus) ) ExecMath /w Set
+      (facilitation) =only (\t) =only last_pre =only (\t) =only post_spike =only (\t) =only (K_plus * exp((last_pre-post_spike)/tau_plus)) ExecMath =only (\t) =only w =
+    }
+    if
+  }
+  def
+
+  /depress
+  {
+    last_post pre_spike sub abs 1e-6 gt
+    {
+      ( w - lambda * alpha * w * K_minus * exp((last_post-pre_spike)/tau_minus) ) ExecMath
+      dup 0.0 gt { /w Set } { pop 0.0 /w Set } ifelse
+      (depression) =only (\t) =only last_post =only (\t) =only pre_spike =only (\t) =only (K_minus * exp((last_post-pre_spike)/tau_minus) ) ExecMath =only (\t) =only w =
+    }
+    if
+  }
+  def
+
+  {
+    pre_spike post_spike sub abs 1e-6 lt
+    { % pre- and post-syn. spike at the same time
+      (pre- and post-syn. spike at the same time) =
+      last_post post_spike sub abs 1e-6 gt { facilitate } if
+      last_pre pre_spike sub abs 1e-6 gt { depress } if
+      (pre == post) =only (\t) =only pre_spike =only (\t) =only post_spike =only (\t) =only w =
+      j 1 add pre_spikes length lt
+      {
+	update_K_plus
+	next_pre_spike
+	i 1 add post_spikes length lt
+	{
+	  update_K_minus
+	  next_post_spike
+	}
+	if
+      }
+      {
+	exit
+      }
+      ifelse
+    }
+    {
+      pre_spike post_spike lt
+      { % next spike is a pre-syn. spike
+        %(next spike is a pre-syn. spike) =
+	depress
+	update_K_plus
+	j 1 add pre_spikes length lt
+	{
+	  next_pre_spike
+	}
+	{
+	  (last presyn spike) =
+	  % we don't consider the post-syn. spikes after the last pre-syn. spike
+	  exit
+	}
+	ifelse
+      }
+      { % next spike is a post-syn. spike
+        %(next spike is a post-syn. spike) =
+	facilitate
+	update_K_minus
+	i 1 add post_spikes length lt
+	{
+	  next_post_spike
+	}
+	{
+	  (last postsyn spike) =
+	  % we DO consider the pre-syn. spikes after the last post-syn. spike
+	  post_spike /last_post Set
+	  pre_spikes dup length 1 sub get resolution add /post_spike Set  % to make sure we don't come here again
+	}
+	ifelse
+      }
+      ifelse
+    }
+    ifelse
+  }
+  loop
+
+  (axonal delay: ) =only axonal_delay =
+  (sim weight:   ) =only final_weight =
+  (test weight:  ) =only w =
+
+  final_weight w sub abs 1e-13 leq assert_or_die
+
+}
+bind forall % for different axonal delays

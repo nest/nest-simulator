@@ -80,9 +80,9 @@ Here you can dive into various topics about NEST.
        :link: refguide_2_3
        :link-type: ref
 
-   .. grid-item-card:: |git| Release notes
+   .. grid-item-card:: |git| What's new?
        :class-title: sd-d-flex-row sd-align-minor-center
-       :link: release_notes
+       :link: whats_new
        :link-type: ref
 
    .. grid-item-card::  |glossary| Glossary

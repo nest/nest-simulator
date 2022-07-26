@@ -75,6 +75,10 @@ section#kernel-attributes dl.py.class dd dl.py.attribute dd dl.field-list.simple
 .sig-prename.descclassname{
   display: none;
 }
+article.md-content__inner.md-typeset section#spatially-structured-networks img {
+   width: auto;
+}
+
 /**************************************************************************************
  Setting nest colors to override sphinx material "orange" and other default colors
 **************************************************************************************/
@@ -130,7 +134,7 @@ div.sd-card-title.sd-font-weight-bold.sd-d-flex-row.docutils a.reference.interna
   border-radius: 5px;
 }
 
-.md-typeset .admonition > .admonition-title::before {
+.md-typeset .admonition > .admonition-title::before, .md-typeset .admonition.important > .admonition-title::before {
   color: #fff;
 }
 .md-typeset .admonition > .admonition-title{
@@ -143,10 +147,10 @@ div.sd-card-title.sd-font-weight-bold.sd-d-flex-row.docutils a.reference.interna
    margin-left: 17px;
    margin-right: 15px;
 }
-.md-typeset .admonition.seealso > .admonition-title {
+.md-typeset .admonition.seealso > .admonition-title, .md-typeset .admonition.important > .admonition-title {
    background-color: var(--nest-green);
 }
-.md-typeset .admonition.seealso {
+.md-typeset .admonition.seealso, .md-typeset .admonition.important {
   border-left: .2rem solid var(--nest-green);
 }
 .md-typeset .admonition.warning {
@@ -570,7 +574,8 @@ MEDIAQUERIES
 *****************************************
 ****************************************/
 
-@media only screen and (min-width: 1920px) {
+@media only screen and (min-width: 2048px) {
+
 .md-typeset img {
  width: 128px;
  height: auto;

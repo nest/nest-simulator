@@ -3,7 +3,7 @@
 Tutorials
 =========
 
-.. grid:: 1 2 3 4
+.. grid:: 1 1 2 2
 
  .. grid-item-card:: Introduction to PyNEST
 

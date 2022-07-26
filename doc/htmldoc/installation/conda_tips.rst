@@ -53,7 +53,7 @@ To see which environments are installed on your system, use
 Installing NEST with Conda
 --------------------------
 
-We provide pre-built versions of NEST on `Conda Forge <https://anaconda.org/conda-forge/nest-simulator/files>`.
+We provide pre-built versions of NEST on `Conda Forge <https://anaconda.org/conda-forge/nest-simulator/files>`_.
 Follow :ref:`these instructions to install NEST from Conda Forge <conda_forge_install>`.
 
 
@@ -86,7 +86,7 @@ Obtain a good overview of which packages are installed where. You can use
 (replacing the ``yournestenv`` name with whatever you chose). Make
 sure each environment contains all dependencies. One way to make
 this obvious would be to reduce conda stack to ``0`` (conda documentation
-`on nested activations<https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#nested-activation>`_),
+`on nested activations  <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#nested-activation>`_),
 and/or to a certain degree by not auto-activating the base environment (conda documentation
 `on conda-init <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#conda-init>`_).
 Then packages from base do not 'leak' into your new environments.

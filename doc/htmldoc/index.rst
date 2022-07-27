@@ -16,7 +16,7 @@ Welcome to the NEST simulator documentation!
    Community <community>
    license
 
-In our :ref:`release notes <release_notes>`, you can find an overview of the newest changes and features for NEST 3.x.
+Find out  :ref:`what's new <whats_new>` in the most recent releases for NEST 3.x.
 
 If you are transitioning from NEST 2.x to NEST 3.x, check out our :ref:`reference guide <refguide_2_3>`.
 

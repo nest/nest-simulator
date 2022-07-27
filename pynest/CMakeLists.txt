@@ -82,6 +82,7 @@ if ( HAVE_PYTHON )
   install( CODE "
       execute_process(
           COMMAND ${PYTHON} ${CMAKE_CURRENT_BINARY_DIR}/setup.py install_egg_info
+            --root=\${DESTDIR}/
             --install-dir=${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}
           WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}\"
       )

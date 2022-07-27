@@ -25,6 +25,18 @@ if ( HAVE_BOOST )
 
   target_link_libraries( run_all_cpptests ${BOOST_LIBRARIES} nestkernel models )
 
+  if ( NOT APPLE )
+    set_target_properties( run_all_cpptests
+        PROPERTIES
+        INSTALL_RPATH "\$ORIGIN/${executable_libdir_relative_path}/nest"
+        )
+  else ()
+    set_target_properties( run_all_cpptests
+        PROPERTIES
+        INSTALL_RPATH "@executable_path/${executable_libdir_relative_path}/nest"
+        )
+  endif ()
+
   target_include_directories( run_all_cpptests PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil

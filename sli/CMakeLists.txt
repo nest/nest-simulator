@@ -143,6 +143,26 @@ install( TARGETS sli_readline sli_lib sli
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 
+if ( APPLE )
+    set_target_properties( sli
+        PROPERTIES
+        INSTALL_RPATH "@executable_path/${executable_libdir_relative_path}/nest"
+        )
+    set_target_properties( sli_lib sli_readline
+        PROPERTIES
+        INSTALL_RPATH "@loader_path"
+        )
+else ()
+    set_target_properties( sli
+        PROPERTIES
+        INSTALL_RPATH "\$ORIGIN/${executable_libdir_relative_path}/nest"
+        )
+    set_target_properties( sli_lib sli_readline
+        PROPERTIES
+        INSTALL_RPATH "\$ORIGIN"
+        )
+endif ()
+
 FILTER_HEADERS("${sli_sources}" install_headers )
 install( FILES ${install_headers} gnureadline.h
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)

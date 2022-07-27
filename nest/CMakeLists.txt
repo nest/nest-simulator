@@ -27,6 +27,12 @@ if ( NOT APPLE )
     set_target_properties( nest
         PROPERTIES
         LINK_FLAGS "-Wl,--no-as-needed"
+        INSTALL_RPATH "\$ORIGIN/${executable_libdir_relative_path}/nest"
+        )
+else ()
+    set_target_properties( nest
+        PROPERTIES
+        INSTALL_RPATH "@executable_path/${executable_libdir_relative_path}/nest"
         )
 endif ()
 
@@ -36,12 +42,14 @@ if ( NOT APPLE )
     set_target_properties( nest_lib
         PROPERTIES
         OUTPUT_NAME nest
+        INSTALL_RPATH "\$ORIGIN"
         LINK_FLAGS "-Wl,--no-as-needed"
         )
 else ()
     set_target_properties( nest_lib
         PROPERTIES
         OUTPUT_NAME nest
+        INSTALL_RPATH "@loader_path"
 
         # delay lookup of symbols from libpython when building with MPI4Py
         LINK_FLAGS "-Wl,-undefined -Wl,dynamic_lookup"

@@ -150,6 +150,18 @@ set_target_properties( models
     )
 target_link_libraries( models nestutil sli_lib nestkernel )
 
+if ( NOT APPLE )
+    set_target_properties( models
+        PROPERTIES
+        INSTALL_RPATH "\$ORIGIN"
+        )
+else ()
+    set_target_properties( models
+        PROPERTIES
+        INSTALL_RPATH "@loader_path"
+        )
+endif ()
+
 target_include_directories( models PRIVATE
     ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_SOURCE_DIR}/libnestutil

@@ -161,6 +161,18 @@ install( TARGETS nestkernel
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 
+if ( NOT APPLE )
+    set_target_properties( nestkernel
+        PROPERTIES
+        INSTALL_RPATH "\$ORIGIN"
+        )
+else ()
+    set_target_properties( nestkernel
+        PROPERTIES
+        INSTALL_RPATH "@loader_path"
+        )
+endif ()
+
 FILTER_HEADERS("${nestkernel_sources}" install_headers )
 install( FILES ${install_headers}
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)

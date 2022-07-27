@@ -193,13 +193,13 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
     # ``${CMAKE_INSTALL_PREFIX}/lib/python3.x/site-packages/nest`` for ``pynestkernel.so``. The RPATH is relative to
     # this origin. For the libraries, the relative path is the same dir ("./"), for the exucutables and python
     # module the relative path is calculated below.
-    # For simplicity, we set all the possibilities on all generated objects.
 
     # PyNEST can only act as an entry point; it does not need to be included in the other objects' RPATH itself.
 
     cmake_path(RELATIVE_PATH CMAKE_INSTALL_FULL_LIBDIR
                BASE_DIRECTORY ${CMAKE_INSTALL_FULL_BINDIR}
                OUTPUT_VARIABLE executable_libdir_relative_path)
+    set( executable_libdir_relative_path ${executable_libdir_relative_path} PARENT_SCOPE )
 
     if ( HAVE_PYTHON )
       cmake_path(ABSOLUTE_PATH PYEXECDIR
@@ -208,26 +208,7 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
       cmake_path(RELATIVE_PATH CMAKE_INSTALL_FULL_LIBDIR
                  BASE_DIRECTORY "${pyexecdir_full}/nest"
                  OUTPUT_VARIABLE python_libdir_relative_path)
-    endif ()
-
-    if ( APPLE )
-      set( CMAKE_INSTALL_RPATH
-          # for binaries
-          "@executable_path/${executable_libdir_relative_path}/nest"
-          # for libraries (except pynestkernel)
-          "@loader_path"
-          # for pynestkernel: origin at <prefix>/lib/python3.x/site-packages/nest
-          "@loader_path/${python_libdir_relative_path}/nest"
-          PARENT_SCOPE )
-    else ()
-      set( CMAKE_INSTALL_RPATH
-          # for binaries
-          "\$ORIGIN/${executable_libdir_relative_path}/nest"
-          # for libraries (except pynestkernel)
-          "\$ORIGIN"
-          # for pynestkernel: origin at <prefix>/lib/python3.x/site-packages/nest
-          "\$ORIGIN/${python_libdir_relative_path}/nest"
-          PARENT_SCOPE )
+      set( python_libdir_relative_path ${python_libdir_relative_path} PARENT_SCOPE )
     endif ()
 
     # add the automatically determined parts of the RPATH

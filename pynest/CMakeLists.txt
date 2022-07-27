@@ -58,6 +58,18 @@ if ( HAVE_PYTHON )
       ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES}
       )
 
+  if ( NOT APPLE )
+      set_target_properties( pynestkernel
+          PROPERTIES
+          INSTALL_RPATH "\$ORIGIN/${python_libdir_relative_path}/nest"
+          )
+  else ()
+      set_target_properties( pynestkernel
+          PROPERTIES
+          INSTALL_RPATH "@loader_path/${python_libdir_relative_path}/nest"
+          )
+  endif ()
+
   target_include_directories( pynestkernel PRIVATE
       ${PROJECT_BINARY_DIR}/libnestutil
       ${PROJECT_SOURCE_DIR}/libnestutil

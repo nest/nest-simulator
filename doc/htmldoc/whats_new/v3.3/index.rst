@@ -1,17 +1,19 @@
 .. _release_3.3:
 
-All about NEST 3.3
-==================
+What's new in NEST 3.3
+=======================
 
-This page contains a summary of all breaking and non-breaking changes
-from NEST 3.2 to NEST 3.3. In addition to the `auto-generated release
+This page contains a summary of important breaking and non-breaking changes
+from NEST 3.2 to NEST 3.3. In addition to the `release
 notes on GitHub <https://github.com/nest/nest-simulator/releases/>`_,
 this page also contains transition information that helps you to
 update your simulation scripts when you come from an older version of
 NEST.
 
-If you transition from a version earlier than 3.0, please see our
-selection of earlier :ref:`transition guides <release_notes>`.
+If you transition from a version earlier than 3.2, please see our
+extensive :ref:`transition guide from NEST 2.x to 3.0 <refguide_2_3>` 
+or :ref:`release updates for previous releases in 3.x<whats_new>`.
+
 
 Model defaults
 ~~~~~~~~~~~~~~

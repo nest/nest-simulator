@@ -1,7 +1,7 @@
 .. _release_3.0:
 
-All about NEST 3.0
-==================
+What's new in NEST 3.0
+======================
 
 With the release of NEST 3.0, we introduce a ton of new features to improve how you create and manage simulations.
 
@@ -34,6 +34,7 @@ for more information on the dependencies.
 
 To explore what NEST 3.0 has to offer in more detail, check out the links below!
 
+
 ----
 
 .. toctree::
@@ -41,3 +42,8 @@ To explore what NEST 3.0 has to offer in more detail, check out the links below!
 
    New features in NEST 3.0 <features/index>
    Old versus new syntax <refguide_nest2_nest3>
+
+
+.. seealso::
+
+    `Release notes on Github <https://github.com/nest/nest-simulator/releases/>`_

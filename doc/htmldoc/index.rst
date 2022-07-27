@@ -8,7 +8,7 @@ NEST Simulator documentaiton
    Install NEST <installation/index>
    Tutorials and examples <get-started_index>
    Understand how NEST works <understand_index>
-   API <ref_material/pynest_apis>
+   PyNEST API <ref_material/pynest_apis>
    Built-in models <models/index>
    Custom models <https://nestml.readthedocs.io/en/latest/>
    Contribute <developer_space/index>

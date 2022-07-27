@@ -5,7 +5,7 @@ Reference guide: NEST 2.x vs NEST 3.0
 
 * This guide shows changes to functions or their output between PyNEST 2.x and PyNEST 3.0
 
-* For additional changes in NEST 3.1 and beyond see our :ref:`release_notes`
+* For additional changes in NEST 3.1 and beyond see our :ref:`whats_new`
 
 * Functions not mentioned are unchanged
 

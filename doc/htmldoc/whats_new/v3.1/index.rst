@@ -1,10 +1,10 @@
 .. _release_3.1:
 
-All about NEST 3.1
-==================
+What's new in NEST 3.1
+======================
 
-This page contains a summary of all breaking and non-breaking changes
-from NEST 3.0 to NEST 3.1. In addition to the `auto-generated release
+This page contains a summary of important breaking and non-breaking changes
+from NEST 3.0 to NEST 3.1. In addition to the `release
 notes on GitHub <https://github.com/nest/nest-simulator/releases/>`_,
 this page also contains transition information that helps you to
 update your simulation scripts when you come from an older version of

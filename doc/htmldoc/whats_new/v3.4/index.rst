@@ -14,11 +14,13 @@ If you transition from a version earlier than 3.3, please see our
 extensive :ref:`transition guide from NEST 2.x to 3.0
 <refguide_2_3>` or :ref:`release updates for previous releases in 3.x <whats_new>`.
 
-Documentation restructuring
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Documentation restructuring and new theme
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To improve findability of content, the documentation has been reorganized. The table of contents
-is simplified and the content is grouped based on topic (neurons, synapses etc) rather than type of documentation (e.g., 'guides').
+NEST has a new theme! We did a major overhaul of the layout and structure of the documentation.
+The changes aim to improve findability and access of content. With a more modern 
+layout, our wide range of docs can be discovered more easily. 
+The table of contents is simplified and the content is grouped based on topic (neurons, synapses etc) rather than type of documentation (e.g., 'guides').
 
 
 Renaming ``calibrate`` to  ``pre_run_hook``

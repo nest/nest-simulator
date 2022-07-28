@@ -3,6 +3,8 @@
 PyNEST examples
 ===============
 
+
+
 .. grid:: 1 1 2 3
 
     .. grid-item-card:: Simple networks
@@ -51,10 +53,8 @@ PyNEST examples
            * :doc:`../auto_examples/brunel_exp_multisynapse_nest`
            * :doc:`../auto_examples/brunel_alpha_evolution_strategies`
 
- 
 
-
-    .. grid-item-card:: Cortical microcircuit (Potjans) 
+    .. grid-item-card:: Cortical microcircuit (Potjans)
            :img-top: ../static/img/pynest/raster_plot.png
 
            * :doc:`cortical_microcircuit_index`
@@ -219,6 +219,10 @@ PyNEST examples
            * :doc:`../auto_examples/csa_example`
            * :doc:`../auto_examples/csa_spatial_example`
 
+.. |ebrains| image:: https://nest-simulator.org/TryItOnEBRAINS.png
+               :target: https://lab.ebrains.eu/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2Fjessica-mitchell%2Fnest-simulator&urlpath=tree%2Fnest-simulator%2Fdoc%2Fhtmldoc%2Fneurons%2Fmodel_details%2Fnoise_generator.ipynb&branch=master
+               :width: 100%
+
 .. toctree::
    :maxdepth: 1
    :hidden:
@@ -295,7 +299,4 @@ PyNEST examples
    ../auto_examples/csa_spatial_example
    ../auto_examples/hpc_benchmark
 
-.. |ebrains| image:: https://nest-simulator.org/TryItOnEBRAINS.png
-               :target: https://lab.ebrains.eu/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2Fjessica-mitchell%2Fnest-simulator&urlpath=tree%2Fnest-simulator%2Fdoc%2Fhtmldoc%2Fneurons%2Fmodel_details%2Fnoise_generator.ipynb&branch=master
-               :width: auto
 

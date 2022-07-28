@@ -1635,6 +1635,17 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
     p_syn_astro_ = 1.0;
   }
 
+  // Deterministic or probabilistic selection of astrocyte pool for a target neuron
+  if ( conn_spec->known( names::astro_pool_per_target_det ) )
+  {
+    // Exception handling?
+    astro_pool_per_target_det_ = ( *conn_spec )[ names::astro_pool_per_target_det ];
+  }
+  else
+  {
+    astro_pool_per_target_det_ = true;
+  }
+
   // Maximum number of astrocytes for a target neuron
   if ( conn_spec->known( names::max_astro_per_target ) )
   {
@@ -1647,17 +1658,7 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   else
   {
     // Not given, all astrocytes can be connected
-    max_astro_per_target_ = astrocytes_size_;
-  }
-
-  // Deterministic or probabilistic selection of astrocyte pool for a target neuron
-  if ( conn_spec->known( names::astro_pool_per_target_det ) )
-  {
-    astro_pool_per_target_det_ = ( *conn_spec )[ names::astro_pool_per_target_det ];
-  }
-  else
-  {
-    astro_pool_per_target_det_ = false;
+    max_astro_per_target_ = 0;
   }
 
   // Astrocyte synapse model
@@ -1740,7 +1741,6 @@ nest::BernoulliAstroBuilder::connect_()
       Node* astro;
       thread astro_thread;
       std::vector< index > anode_pool_this_target;
-      std::vector< index > draw_without_replace_set;
 
       for ( NodeCollection::const_iterator tnode_id = targets_->begin(); tnode_id != targets_->end(); ++tnode_id )
       {
@@ -1768,39 +1768,58 @@ nest::BernoulliAstroBuilder::connect_()
         previous_snode_ids.clear();
         previous_anode_ids.clear();
 
-        // Selecting astrocyte pool for this target
+        // Define astrocyte pool for this target
         anode_pool_this_target.clear();
-        if ( 1 <= max_astro_per_target_ && max_astro_per_target_ < astrocytes_size_ )
+        // "Deterministic"
+        int anode_index_base = std::floor( targets_->find( ( *tnode_id ).node_id ) * float( astrocytes_size_ ) / targets_size_ );
+        // std::cout << "( *tnode_id ).node_id, anode_index_base = " << ( *tnode_id ).node_id << ", " << anode_index_base << std::endl;
+        if ( astro_pool_per_target_det_ == true )
         {
-          // Get the starting astrocyte node for deterministic
-          size_t anode_index = std::floor( float( targets_->find( ( *tnode_id ).node_id ) ) * float( astrocytes_size_ ) / float( targets_size_ ) ) - size_t( max_astro_per_target_ / 2 );
-          if ( anode_index < 0 )
+          if ( max_astro_per_target_ > 0 )
           {
-           anode_index = 0;
-          }
-          for ( size_t i = 0; i < max_astro_per_target_; i++ )
-          {
-            // Deterministic
-            if ( astro_pool_per_target_det_ == true )
+            // Select the starting astrocyte
+            int anode_index_tmp = anode_index_base - int( max_astro_per_target_ / 2.0 );
+            // Curb the starting astrocyte
+            if ( anode_index_tmp < 0 )
             {
-              // Is this checking redundant?
-              if ( anode_index >= astrocytes_size_ )
-              {
-               anode_index = astrocytes_size_ - 1;
-              }
-              anode_id = ( *astrocytes_ )[ anode_index ];
-              ++anode_index;
+              // std::cout << "( *tnode_id ).node_id, anode_index_tmp (<0) = " << ( *tnode_id ).node_id << ", " << anode_index_tmp << std::endl;
+              anode_index_tmp = 0;
             }
-            // Probabilistic
-            else
+            else if ( anode_index_tmp > int( astrocytes_size_ - max_astro_per_target_ ) )
             {
+              // std::cout << "( *tnode_id ).node_id, anode_index_tmp (>max-N) = " << ( *tnode_id ).node_id << ", " << anode_index_tmp << std::endl;
+              anode_index_tmp = int( astrocytes_size_ - max_astro_per_target_ );
+            }
+            // Loop until desired astrocyte pool size
+            for ( size_t i = 0; i < max_astro_per_target_; i++ )
+            {
+              // Redundant?
+              if ( anode_index_tmp >= int( astrocytes_size_ ) )
+              {
+                // std::cout << "( *tnode_id ).node_id, anode_index_tmp (>max) = " << ( *tnode_id ).node_id << ", " << anode_index_tmp << std::endl;
+                anode_index_tmp = astrocytes_size_ - 1;
+              }
+              anode_id = ( *astrocytes_ )[ anode_index_tmp ];
+              anode_pool_this_target.push_back( anode_id );
+              anode_index_tmp++;
+            }
+          }
+        }
+        // "Probabilistic"
+        else
+        {
+          if ( max_astro_per_target_ > 0 )
+          {
+            for ( size_t i = 0; i < max_astro_per_target_; i++ )
+            {
+              // Draw without repetition
               do
               {
                  anode_id = ( *astrocytes_ )[ synced_rng->ulrand( astrocytes_size_ ) ];
               }
               while ( std::find( anode_pool_this_target.begin(), anode_pool_this_target.end(), anode_id ) != anode_pool_this_target.end() );
+              anode_pool_this_target.push_back( anode_id );
             }
-            anode_pool_this_target.push_back( anode_id );
           }
         }
 
@@ -1843,15 +1862,24 @@ nest::BernoulliAstroBuilder::connect_()
           {
             continue;
           }
-          // With maximum number of astrocytes per target
-          if ( 1 <= max_astro_per_target_ && max_astro_per_target_ < astrocytes_size_ )
+          // If an astrocyte pool was defined, use it
+          if ( max_astro_per_target_ > 0 )
           {
             anode_id = anode_pool_this_target.at( synced_rng->ulrand( anode_pool_this_target.size() ) );
           }
-          // If not, all astrocytes can be connected
+          // If not
           else
           {
-            anode_id = ( *astrocytes_ )[ synced_rng->ulrand( astrocytes_size_ ) ];
+            // If deterministic, only one astrocyte can be connected
+            if ( astro_pool_per_target_det_ == true )
+            {
+              anode_id = ( *astrocytes_ )[ anode_index_base ];
+            }
+            // If probabilistic, all astroyctes can be connected
+            else
+            {
+              anode_id = ( *astrocytes_ )[ synced_rng->ulrand( astrocytes_size_ ) ];
+            }
           }
 
           // if astrocyte is local: connect source -> astrocyte

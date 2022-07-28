@@ -443,15 +443,15 @@ private:
   NodeCollectionPTR astrocytes_;
   double p_; //!< connection probability (neuron=>neuron)
   double p_syn_astro_; //!< connection probability (with astrocyte)
-  size_t max_astro_per_target_; // max number of astrocytes for a tartget neuron
   bool astro_pool_per_target_det_; // deterministic or random selection of astrocyte pool per target
+  size_t max_astro_per_target_; // max number of astrocytes for a tartget neuron
   // From syn_spec
   index synapse_model_id_astro_; // synapse model astrocyte=>neuron
   double c_spill_; // Coefficient c_spill
   double w_; // synaptic weight neuron=>neuron
   double d_; // synaptic delay neuron=>neuron
   double w_sic_; // synaptic weight astrocyte=>neuron
-  // For astrocyte connections
+  // For establishing astrocyte connections
   size_t astrocytes_size_;
   size_t targets_size_;
 };

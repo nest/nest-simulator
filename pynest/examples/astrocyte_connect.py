@@ -1,9 +1,5 @@
 import numpy as np
 import nest
-from mpi4py import MPI
-
-comm = MPI.COMM_WORLD
-rank = comm.Get_rank()
 
 # Populations
 pre_neurons = nest.Create('aeif_cond_alpha_astro', 10)
@@ -26,13 +22,6 @@ nest.Connect(
         'weight': 1., 'delay': 2., 'weight_sic' :3, 'c_spill': 0.2
     }
 )
-
-pre_loc = np.array(nest.GetLocalNodeCollection(pre_neurons))
-print('pre nodes on rank {}:\n{}'.format(rank, pre_loc))
-post_loc = np.array(nest.GetLocalNodeCollection(post_neurons))
-print('post nodes on rank {}:\n{}'.format(rank, post_loc))
-astrocytes_loc = np.array(nest.GetLocalNodeCollection(astrocytes))
-print('astro nodes on rank {}:\n{}'.format(rank, astrocytes_loc))
 
 # Check connections
 print('astrocytes => post_neurons:')

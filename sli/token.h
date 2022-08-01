@@ -214,7 +214,6 @@ public:
   operator size_t() const;
   operator long() const;
   operator double() const;
-  operator float() const;
   operator bool() const;
   operator std::string() const;
   //  operator vector<double> const;
@@ -356,7 +355,8 @@ public:
     return p == NULL;
   }
 
-  bool operator not( void ) const
+  bool
+  operator not( void ) const
   {
     return p == NULL;
   }
@@ -375,14 +375,16 @@ public:
     return not empty();
   }
 
-  Datum* operator->() const
+  Datum*
+  operator->() const
   {
     //      assert(p!= NULL);
     return p;
   }
 
 
-  Datum& operator*() const
+  Datum&
+  operator*() const
   {
     //      assert(p != NULL);
     return *p;

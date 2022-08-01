@@ -47,8 +47,8 @@ Select parallelization scheme
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 +---------------------------------------------+----------------------------------------------------------------+
-| ``-Dwith-mpi=[OFF|ON|</path/to/mpi>]``      | Build with MPI parallelization [default=OFF]. Optionally give  |
-|                                             | directory with MPI installation.                               |
+| ``-Dwith-mpi=[OFF|ON]``                     | Build with MPI parallelization [default=OFF].                  |
+|                                             |                                                                |
 +---------------------------------------------+----------------------------------------------------------------+
 | ``-Dwith-openmp=[OFF|ON|<OpenMP-Flag>]``    | Build with OpenMP multi-threading [default=ON]. Optionally set |
 |                                             | OMP compiler flags.                                            |
@@ -144,13 +144,16 @@ Interface (MPI). Depending on your setup, you have to use one of the
 following steps in order to add support for MPI:
 
   1. Try ``-Dwith-mpi=ON`` as argument for ``cmake``.
+
   2. If 1. does not work, or you want to use a non-standard MPI, try
      ``-Dwith-mpi=/path/to/my/mpi``. The `mpi` directory should
      contain the `include`, `lib` and `bin` subdirectories of the MPI
      installation.
-  3. If 2. does not work, but you know the correct compiler wrapper
+
+  3. IfO 2. does not work, but you know the correct compiler wrapper
      for your installation, try adding the following to the invocation
      of ``cmake``::
+
          -DMPI_CXX_COMPILER=myC++_CompilerWrapper \
          -DMPI_C_COMPILER=myC_CompilerWrapper -Dwith-mpi=ON
 
@@ -231,6 +234,6 @@ overridden with ::
       -Dwith-intel-compiler-flags="<intel-flags>"
 
 Portland compiler
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 
 Use the ``-Kieee`` flag to ensure that computations obey the IEEE754 standard for floating point numerics.

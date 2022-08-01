@@ -1,3 +1,5 @@
+:orphan:
+
 .. _hpc_index:
 
 All about high performance computing
@@ -9,6 +11,3 @@ All about high performance computing
 
   *
 
-.. todo::
-
-   Add pinning threads and benchmarking documentation here.

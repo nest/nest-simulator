@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Connect with circular mask, flat probability using 2 populations of iaf_psc_alpha neurons
--------------------------------------------------------------------------------------------
+Circular mask and flat probability
+----------------------------------
 
 Create two populations on a 30x30 grid of iaf_psc_alpha neurons,
 connect with circular mask, flat probability,

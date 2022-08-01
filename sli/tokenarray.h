@@ -128,7 +128,6 @@ public:
   TokenArray( const std::vector< size_t >& );
   TokenArray( const std::vector< long >& );
   TokenArray( const std::vector< double >& );
-  TokenArray( const std::vector< float >& );
 
   virtual ~TokenArray()
   {
@@ -177,13 +176,15 @@ public:
   // Use the member function get(size_t) const to force
   // constness.
 
-  Token& operator[]( size_t i )
+  Token&
+  operator[]( size_t i )
   {
     clone();
     return ( *data )[ i ];
   }
 
-  const Token& operator[]( size_t i ) const
+  const Token&
+  operator[]( size_t i ) const
   {
     return ( *data )[ i ];
   }

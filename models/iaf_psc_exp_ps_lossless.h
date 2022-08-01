@@ -92,7 +92,7 @@ Support for different time constants may be added in the future,
 see issue #921.
 
 For details about exact subthreshold integration, please see
-:doc:`../guides/exact-integration`.
+:doc:`../neurons/exact-integration`.
 
 Parameters
 ++++++++++

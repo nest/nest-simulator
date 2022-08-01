@@ -40,12 +40,14 @@ Dictionary::~Dictionary()
 {
 }
 
-const Token& Dictionary::operator[]( const char* n ) const
+const Token&
+Dictionary::operator[]( const char* n ) const
 {
   return operator[]( Name( n ) );
 }
 
-Token& Dictionary::operator[]( const char* n )
+Token&
+Dictionary::operator[]( const char* n )
 {
   return operator[]( Name( n ) );
 }

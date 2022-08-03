@@ -41,6 +41,7 @@ nest::ArchivingNode::ArchivingNode()
   , tau_minus_inv_( 1. / tau_minus_ )
   , tau_minus_triplet_( 110.0 )
   , tau_minus_triplet_inv_( 1. / tau_minus_triplet_ )
+  , min_delay_ ( std::numeric_limits<double>::max() )
   , max_delay_( 0 )
   , trace_( 0.0 )
   , last_spike_( -1.0 )
@@ -56,6 +57,7 @@ nest::ArchivingNode::ArchivingNode( const ArchivingNode& n )
   , tau_minus_inv_( n.tau_minus_inv_ )
   , tau_minus_triplet_( n.tau_minus_triplet_ )
   , tau_minus_triplet_inv_( n.tau_minus_triplet_inv_ )
+  , min_delay_( n.min_delay_ )
   , max_delay_( n.max_delay_ )
   , trace_( n.trace_ )
   , last_spike_( n.last_spike_ )
@@ -66,7 +68,7 @@ void
 ArchivingNode::register_stdp_connection( double t_first_read, double delay )
 {
   // Mark all entries in the deque, which we will not read in future as read by
-  // this input input, so that we savely increment the incoming number of
+  // this input, so that we savely increment the incoming number of
   // connections afterwards without leaving spikes in the history.
   // For details see bug #218. MH 08-04-22
 
@@ -79,6 +81,7 @@ ArchivingNode::register_stdp_connection( double t_first_read, double delay )
 
   n_incoming_++;
 
+  min_delay_ = std::min( delay, min_delay_ );
   max_delay_ = std::max( delay, max_delay_ );
 }
 
@@ -196,7 +199,7 @@ nest::ArchivingNode::set_spiketime( Time const& t_sp, double offset )
     {
       const double next_t_sp = history_[ 1 ].t_;
       if ( history_.front().access_counter_ >= n_incoming_
-        and t_sp_ms - next_t_sp > max_delay_ + kernel().connection_manager.get_stdp_eps() )
+        and t_sp_ms - next_t_sp > min_delay_ + max_delay_ + kernel().connection_manager.get_stdp_eps() )
       {
         history_.pop_front();
       }

@@ -41,9 +41,6 @@
 #include "exceptions.h"
 #include "nest_types.h"
 
-// Includes from sli:
-#include "token.h"
-
 namespace nest
 {
 
@@ -489,13 +486,13 @@ inline const T& Position< D, T >::operator[]( int i ) const
   return x_[ i ];
 }
 
-template < int D, class T >
-Token
-Position< D, T >::getToken() const
-{
-  std::vector< T > result = get_vector();
-  return Token( result );
-}
+// template < int D, class T >
+// Token
+// Position< D, T >::getToken() const
+// {
+//   std::vector< T > result = get_vector();
+//   return Token( result );
+// }
 
 
 template < int D, class T >

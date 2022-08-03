@@ -28,11 +28,6 @@
 #include "kernel_manager.h"
 #include "nest_names.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
-#include "tokenutils.h"
 
 nest::ConnParameter*
 nest::ConnParameter::create( const boost::any& value, const size_t nthreads )

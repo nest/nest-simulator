@@ -22,7 +22,7 @@
 
 #include "functiondatum.h"
 
-sli::pool FunctionDatum::memory( sizeof( FunctionDatum ), 1024, 1 );
+nest::pool FunctionDatum::memory( sizeof( FunctionDatum ), 1024, 1 );
 
 void
 FunctionDatum::backtrace( SLIInterpreter* i, int p ) const

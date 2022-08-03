@@ -33,8 +33,6 @@
 #include "nest_types.h"
 #include "synaptic_element.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 namespace nest
 {

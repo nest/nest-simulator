@@ -34,9 +34,6 @@
 #include "event.h"
 #include "nest_types.h"
 
-// Includes from SLI:
-#include "arraydatum.h"
-#include "dictdatum.h"
 
 namespace nest
 {

@@ -31,8 +31,6 @@
 #include "nest_names.h"
 #include "node.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 /* ----------------------------------------------------------------
  * Default constructor defining default parameters
@@ -83,7 +81,7 @@ nest::Device::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::Device::Parameters_::update_( const dictionary& d, const Name& name, Time& value )
+nest::Device::Parameters_::update_( const dictionary& d, const std::string& name, Time& value )
 {
   /* We cannot update the Time values directly, since updateValue()
          doesn't support Time objects. We thus read the value in ms into
@@ -95,12 +93,12 @@ nest::Device::Parameters_::update_( const dictionary& d, const Name& name, Time&
   */
 
   double val;
-  if ( d.update_value( name.toString(), val ) )
+  if ( d.update_value( name, val ) )
   {
     const Time t = Time::ms( val );
     if ( t.is_finite() and not t.is_grid_time() )
     {
-      throw BadProperty( name.toString() +  " must be a multiple "
+      throw BadProperty( name +  " must be a multiple "
                                  "of the simulation resolution." );
     }
     value = t;

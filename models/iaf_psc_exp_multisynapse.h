@@ -306,7 +306,7 @@ private:
   // Utility function that inserts the synaptic conductances to the
   // recordables map
 
-  Name get_i_syn_name( size_t elem );
+  std::string get_i_syn_name( size_t elem );
   void insert_current_recordables( size_t first = 0 );
 };
 

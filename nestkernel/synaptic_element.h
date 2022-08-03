@@ -92,8 +92,6 @@
 
 #include "dictionary.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 namespace nest
 {

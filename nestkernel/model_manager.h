@@ -38,8 +38,6 @@
 #include "nest_types.h"
 #include "node.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {
@@ -157,8 +155,9 @@ public:
    * register_prototype_connection
    */
   template < class ModelT >
-  index
-  register_node_model( const Name& name, bool private_model = false, std::string deprecation_info = std::string() );
+  index register_node_model( const std::string& name,
+    bool private_model = false,
+    std::string deprecation_info = std::string() );
 
   /**
    * Copy an existing model and register it as a new model.
@@ -169,7 +168,7 @@ public:
    * @return model ID of new Model object.
    * @see copy_node_model_, copy_synapse_model_
    */
-  index copy_model( Name old_name, Name new_name, dictionary params );
+  index copy_model( std::string old_name, std::string new_name, dictionary params );
 
   /**
    * Set the default parameters of a model.
@@ -177,7 +176,7 @@ public:
    * @param params default parameters to be set.
    * @see set_node_defaults_, set_synapse_defaults_
    */
-  void set_model_defaults( Name name, dictionary params );
+  void set_model_defaults( std::string name, dictionary params );
 
   /**
    * Register a synape model with a custom Connector model and without any
@@ -204,7 +203,7 @@ public:
   /**
    * @return The model id of a given model name
    */
-  int get_model_id( const Name ) const;
+  int get_model_id( const std::string ) const;
 
   /**
    * @return The Model of a given model ID
@@ -275,7 +274,7 @@ public:
 
   /**
    * Print out the memory information for each node model.
-   * @see sli::pool
+   * @see nest::pool
    */
   void memory_info() const;
 
@@ -304,7 +303,7 @@ private:
    * @return model ID of new Model object.
    * @see copy_model(), copy_synapse_model_()
    */
-  index copy_node_model_( index old_id, Name new_name );
+  index copy_node_model_( index old_id, std::string new_name );
 
   /**
    * Copy an existing synapse model and register it as a new model.
@@ -313,7 +312,7 @@ private:
    * @return model ID of new Model object.
    * @see copy_model(), copy_node_model_()
    */
-  index copy_synapse_model_( index old_id, Name new_name );
+  index copy_synapse_model_( index old_id, std::string new_name );
 
   /**
    * Set the default parameters of a model.

@@ -307,11 +307,11 @@ set_connection_status( const ConnectionDatum& conn, const dictionary& dict )
 dictionary
 get_connection_status( const ConnectionDatum& conn )
 {
-  return kernel().connection_manager.get_synapse_status( conn.get_source_node_id(),
-    conn.get_target_node_id(),
-    conn.get_target_thread(),
-    conn.get_synapse_model_id(),
-    conn.get_port() );
+  return kernel().connection_manager.get_synapse_status( conn->get_source_node_id(),
+    conn->get_target_node_id(),
+    conn->get_target_thread(),
+    conn->get_synapse_model_id(),
+    conn->get_port() );
 }
 
 NodeCollectionPTR
@@ -495,19 +495,19 @@ cleanup()
 }
 
 void
-copy_model( const Name& oldmodname, const Name& newmodname, const dictionary& dict )
+copy_model( const std::string& oldmodname, const std::string& newmodname, const dictionary& dict )
 {
   kernel().model_manager.copy_model( oldmodname, newmodname, dict );
 }
 
 void
-set_model_defaults( const Name& modelname, const dictionary& dict )
+set_model_defaults( const std::string& modelname, const dictionary& dict )
 {
   kernel().model_manager.set_model_defaults( modelname, dict );
 }
 
 dictionary
-get_model_defaults( const Name& modelname )
+get_model_defaults( const std::string& modelname )
 {
   // const Token nodemodel = kernel().model_manager.get_modeldict()->lookup( modelname );
   // const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( modelname );

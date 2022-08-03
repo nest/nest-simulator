@@ -29,9 +29,6 @@
 #include "node_collection.h"
 #include "parameter.h"
 
-// Includes from sli:
-#include "dictutils.h"
-#include "integerdatum.h"
 
 // Includes from spatial:
 #include "connection_creator_impl.h"

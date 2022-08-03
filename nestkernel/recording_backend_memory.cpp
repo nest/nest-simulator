@@ -77,8 +77,8 @@ nest::RecordingBackendMemory::disenroll( const RecordingDevice& device )
 
 void
 nest::RecordingBackendMemory::set_value_names( const RecordingDevice& device,
-  const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names )
+  const std::vector< std::string >& double_value_names,
+  const std::vector< std::string >& long_value_names )
 {
   const thread t = device.get_thread();
   const thread node_id = device.get_node_id();
@@ -177,8 +177,8 @@ nest::RecordingBackendMemory::DeviceData::DeviceData()
 }
 
 void
-nest::RecordingBackendMemory::DeviceData::set_value_names( const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names )
+nest::RecordingBackendMemory::DeviceData::set_value_names( const std::vector< std::string >& double_value_names,
+  const std::vector< std::string >& long_value_names )
 {
   double_value_names_ = double_value_names;
   double_values_.resize( double_value_names.size() );
@@ -263,12 +263,12 @@ nest::RecordingBackendMemory::DeviceData::get_status( dictionary& d ) const
 
   for ( size_t i = 0; i < double_values_.size(); ++i )
   {
-    auto& double_name = init_doublevector( double_value_names_[ i ].toString() );
+    auto& double_name = init_doublevector( double_value_names_[ i ] );
     double_name.insert( double_name.end(), double_values_[ i ].begin(), double_values_[ i ].end() );
   }
   for ( size_t i = 0; i < long_values_.size(); ++i )
   {
-    auto& long_name = init_intvector( long_value_names_[ i ].toString() );
+    auto& long_name = init_intvector( long_value_names_[ i ] );
     long_name.insert( long_name.end(), long_values_[ i ].begin(), long_values_[ i ].end() );
   }
 

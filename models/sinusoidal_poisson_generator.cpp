@@ -53,7 +53,7 @@ template <>
 void
 RecordablesMap< sinusoidal_poisson_generator >::create()
 {
-  insert_( Name( names::rate ), &sinusoidal_poisson_generator::get_rate_ );
+  insert_( names::rate, &sinusoidal_poisson_generator::get_rate_ );
 }
 }
 

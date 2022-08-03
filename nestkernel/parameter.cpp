@@ -34,10 +34,10 @@ namespace nest
 {
 
 std::vector< double >
-Parameter::apply( const NodeCollectionPTR& nc, const TokenArray& token_array )
+Parameter::apply( const NodeCollectionPTR& nc, const std::vector< std::vector< double > >& positions )
 {
   std::vector< double > result;
-  result.reserve( token_array.size() );
+  result.reserve( positions.size() );
   RngPtr rng = get_rank_synced_rng();
 
   // Get source layer from the NodeCollection
@@ -62,9 +62,8 @@ Parameter::apply( const NodeCollectionPTR& nc, const TokenArray& token_array )
   std::vector< double > source_pos = source_layer->get_position_vector( source_lid );
 
   // For each position, calculate the displacement, then calculate the parameter value
-  for ( auto&& token : token_array )
+  for ( auto& target_pos : positions )
   {
-    std::vector< double > target_pos = getValue< std::vector< double > >( token );
     if ( target_pos.size() != source_pos.size() )
     {
       throw BadProperty(

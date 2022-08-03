@@ -123,8 +123,8 @@ public:
   void disenroll( const RecordingDevice& device ) override;
 
   void set_value_names( const RecordingDevice& device,
-    const std::vector< Name >& double_value_names,
-    const std::vector< Name >& long_value_names ) override;
+    const std::vector< std::string >& double_value_names,
+    const std::vector< std::string >& long_value_names ) override;
 
   void prepare() override;
 
@@ -150,7 +150,7 @@ private:
   struct DeviceData
   {
     DeviceData();
-    void set_value_names( const std::vector< Name >&, const std::vector< Name >& );
+    void set_value_names( const std::vector< std::string >&, const std::vector< std::string >& );
     void push_back( const Event&, const std::vector< double >&, const std::vector< long >& );
     void get_status( dictionary& ) const;
     void set_status( const dictionary& );
@@ -161,8 +161,8 @@ private:
     std::vector< double > times_ms_;                     //!< times of registered events in ms
     std::vector< long > times_steps_;                    //!< times of registered events in steps
     std::vector< double > times_offset_;                 //!< offsets of registered events if time_in_steps_
-    std::vector< Name > double_value_names_;             //!< names for values of type double
-    std::vector< Name > long_value_names_;               //!< names for values of type long
+    std::vector< std::string > double_value_names_;      //!< names for values of type double
+    std::vector< std::string > long_value_names_;        //!< names for values of type long
     std::vector< std::vector< double > > double_values_; //!< recorded values of type double, one vector per value
     std::vector< std::vector< long > > long_values_;     //!< recorded values of type long, one vector per value
     bool time_in_steps_;                                 //!< Should time be recorded in steps (ms if false)

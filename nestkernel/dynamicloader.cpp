@@ -46,11 +46,6 @@
 #include "kernel_manager.h"
 #include "model.h"
 
-// Includes from sli:
-#include "integerdatum.h"
-#include "interpret.h"
-#include "stringdatum.h"
-
 
 namespace nest
 {

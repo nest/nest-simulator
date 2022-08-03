@@ -25,8 +25,6 @@
 // Includes from nestkernel:
 #include "kernel_manager.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {
@@ -60,12 +58,12 @@ nest::StructuralPlasticityNode::get_status( dictionary& d ) const
   d[ names::beta_Ca ] = beta_Ca_;
 
   d[ names::synaptic_elements ] = synaptic_elements_d;
-  for ( std::map< Name, SynapticElement >::const_iterator it = synaptic_elements_map_.begin();
+  for ( std::map< std::string, SynapticElement >::const_iterator it = synaptic_elements_map_.begin();
         it != synaptic_elements_map_.end();
         ++it )
   {
     dictionary synaptic_element_d;
-    synaptic_elements_d[ it->first.toString() ] = synaptic_element_d;
+    synaptic_elements_d[ it->first ] = synaptic_element_d;
     it->second.get( synaptic_element_d );
   }
 }
@@ -106,7 +104,7 @@ nest::StructuralPlasticityNode::set_status( const dictionary& d )
   // {
   //   const dictionary synaptic_elements_dict = d.get<dictionary>(names::synaptic_elements_param);
 
-  //   for ( std::map< Name, SynapticElement >::iterator it = synaptic_elements_map_.begin();
+  //   for ( std::map< std::string, SynapticElement >::iterator it = synaptic_elements_map_.begin();
   //         it != synaptic_elements_map_.end();
   //         ++it )
   //   {
@@ -123,15 +121,16 @@ nest::StructuralPlasticityNode::set_status( const dictionary& d )
   }
   // we replace the existing synaptic_elements_map_ by the new one
   dictionary synaptic_elements_d;
-  std::pair< std::map< Name, SynapticElement >::iterator, bool > insert_result;
+  std::pair< std::map< std::string, SynapticElement >::iterator, bool > insert_result;
 
-  synaptic_elements_map_ = std::map< Name, SynapticElement >();
+  synaptic_elements_map_ = std::map< std::string, SynapticElement >();
   synaptic_elements_d = d.get< dictionary >( names::synaptic_elements );
 
   // TODO-PYNEST-NG: fix
   // for ( Dictionary::const_iterator i = synaptic_elements_d->begin(); i != synaptic_elements_d->end(); ++i )
   // {
-  //   insert_result = synaptic_elements_map_.insert( std::pair< Name, SynapticElement >( i->first, SynapticElement() )
+  //   insert_result = synaptic_elements_map_.insert( std::pair< std::string, SynapticElement >( i->first,
+  //   SynapticElement() )
   //   );
   //   ( insert_result.first->second ).set( synaptic_elements_d.get< dictionary >( i->first ) );
   // }
@@ -145,9 +144,9 @@ nest::StructuralPlasticityNode::clear_history()
 }
 
 double
-nest::StructuralPlasticityNode::get_synaptic_elements( Name n ) const
+nest::StructuralPlasticityNode::get_synaptic_elements( std::string n ) const
 {
-  std::map< Name, SynapticElement >::const_iterator se_it;
+  std::map< std::string, SynapticElement >::const_iterator se_it;
   se_it = synaptic_elements_map_.find( n );
   double z_value;
 
@@ -170,9 +169,9 @@ nest::StructuralPlasticityNode::get_synaptic_elements( Name n ) const
 }
 
 int
-nest::StructuralPlasticityNode::get_synaptic_elements_vacant( Name n ) const
+nest::StructuralPlasticityNode::get_synaptic_elements_vacant( std::string n ) const
 {
-  std::map< Name, SynapticElement >::const_iterator se_it;
+  std::map< std::string, SynapticElement >::const_iterator se_it;
   se_it = synaptic_elements_map_.find( n );
 
   if ( se_it != synaptic_elements_map_.end() )
@@ -186,9 +185,9 @@ nest::StructuralPlasticityNode::get_synaptic_elements_vacant( Name n ) const
 }
 
 int
-nest::StructuralPlasticityNode::get_synaptic_elements_connected( Name n ) const
+nest::StructuralPlasticityNode::get_synaptic_elements_connected( std::string n ) const
 {
-  std::map< Name, SynapticElement >::const_iterator se_it;
+  std::map< std::string, SynapticElement >::const_iterator se_it;
   se_it = synaptic_elements_map_.find( n );
 
   if ( se_it != synaptic_elements_map_.end() )
@@ -201,16 +200,16 @@ nest::StructuralPlasticityNode::get_synaptic_elements_connected( Name n ) const
   }
 }
 
-std::map< Name, double >
+std::map< std::string, double >
 nest::StructuralPlasticityNode::get_synaptic_elements() const
 {
-  std::map< Name, double > n_map;
+  std::map< std::string, double > n_map;
 
-  for ( std::map< Name, SynapticElement >::const_iterator it = synaptic_elements_map_.begin();
+  for ( std::map< std::string, SynapticElement >::const_iterator it = synaptic_elements_map_.begin();
         it != synaptic_elements_map_.end();
         ++it )
   {
-    n_map.insert( std::pair< Name, double >( it->first, get_synaptic_elements( it->first ) ) );
+    n_map.insert( std::pair< std::string, double >( it->first, get_synaptic_elements( it->first ) ) );
   }
   return n_map;
 }
@@ -220,7 +219,7 @@ nest::StructuralPlasticityNode::update_synaptic_elements( double t )
 {
   assert( t >= Ca_t_ );
 
-  for ( std::map< Name, SynapticElement >::iterator it = synaptic_elements_map_.begin();
+  for ( std::map< std::string, SynapticElement >::iterator it = synaptic_elements_map_.begin();
         it != synaptic_elements_map_.end();
         ++it )
   {
@@ -234,7 +233,7 @@ nest::StructuralPlasticityNode::update_synaptic_elements( double t )
 void
 nest::StructuralPlasticityNode::decay_synaptic_elements_vacant()
 {
-  for ( std::map< Name, SynapticElement >::iterator it = synaptic_elements_map_.begin();
+  for ( std::map< std::string, SynapticElement >::iterator it = synaptic_elements_map_.begin();
         it != synaptic_elements_map_.end();
         ++it )
   {
@@ -243,9 +242,9 @@ nest::StructuralPlasticityNode::decay_synaptic_elements_vacant()
 }
 
 void
-nest::StructuralPlasticityNode::connect_synaptic_element( Name name, int n )
+nest::StructuralPlasticityNode::connect_synaptic_element( std::string name, int n )
 {
-  std::map< Name, SynapticElement >::iterator se_it;
+  std::map< std::string, SynapticElement >::iterator se_it;
   se_it = synaptic_elements_map_.find( name );
 
   if ( se_it != synaptic_elements_map_.end() )

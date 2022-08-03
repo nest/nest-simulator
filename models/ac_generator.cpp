@@ -48,7 +48,7 @@ template <>
 void
 RecordablesMap< ac_generator >::create()
 {
-  insert_( Name( names::I ), &ac_generator::get_I_ );
+  insert_( names::I, &ac_generator::get_I_ );
 }
 }
 

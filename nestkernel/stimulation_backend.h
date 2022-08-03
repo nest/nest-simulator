@@ -26,10 +26,7 @@
 // C++ includes:
 #include <vector>
 
-// Includes from sli:
-#include "dictdatum.h"
-#include "dictutils.h"
-#include "name.h"
+// Includes from nestkernel:
 #include "stimulation_device.h"
 
 namespace nest

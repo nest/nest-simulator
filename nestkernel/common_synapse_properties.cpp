@@ -28,8 +28,6 @@
 #include "nest_types.h"
 #include "node.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 namespace nest
 {
@@ -57,8 +55,8 @@ CommonSynapseProperties::get_status( dictionary& d ) const
   }
   else
   {
-    ArrayDatum ad;
-    d[ names::weight_recorder ] = ad;
+    const auto nc = NodeCollectionPTR(); // TODO-PYNEST-NG: check that this gives an empty NC
+    d[ names::weight_recorder ] = nc;
   }
 }
 

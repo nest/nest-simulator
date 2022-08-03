@@ -36,8 +36,6 @@
 #include "mpi_manager_impl.h"
 #include "nest_types.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 #ifdef HAVE_MPI
 
@@ -295,7 +293,7 @@ nest::MPIManager::get_processor_name()
 }
 
 void
-nest::MPIManager::communicate( std::vector< long >& local_nodes, std::vector< long >& global_nodes )
+nest::MPIManager::communicate( std::vector< size_t >& local_nodes, std::vector< size_t >& global_nodes )
 {
   size_t np = get_num_processes();
   // Get size of buffers
@@ -316,11 +314,11 @@ nest::MPIManager::communicate( std::vector< long >& local_nodes, std::vector< lo
 
   MPI_Allgatherv( &( *local_nodes.begin() ),
     local_nodes.size(),
-    MPI_Type< long >::type,
+    MPI_Type< size_t >::type,
     &global_nodes[ 0 ],
     &num_nodes_per_rank[ 0 ],
     &displacements[ 0 ],
-    MPI_Type< long >::type,
+    MPI_Type< size_t >::type,
     comm );
 }
 

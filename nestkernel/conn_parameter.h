@@ -34,9 +34,6 @@
 #include "nest_datums.h"
 #include "parameter.h"
 
-// Includes from sli:
-#include "token.h"
-
 /**
  * Base class for parameters provided to connection routines.
  *

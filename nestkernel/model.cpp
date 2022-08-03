@@ -32,8 +32,6 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {
@@ -62,7 +60,7 @@ Model::set_threads_( thread t )
     }
   }
 
-  std::vector< sli::pool > tmp( t );
+  std::vector< pool > tmp( t );
   memory_.swap( tmp );
 
   for ( size_t i = 0; i < memory_.size(); ++i )
@@ -81,7 +79,7 @@ Model::reserve_additional( thread t, size_t s )
 void
 Model::clear()
 {
-  std::vector< sli::pool > mem;
+  std::vector< pool > mem;
   memory_.swap( mem );
   set_threads_( 1 );
 }

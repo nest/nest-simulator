@@ -521,7 +521,7 @@ private:
   Buffers_ B_;
 
   //! Table of compartment names
-  static std::vector< Name > comp_names_;
+  static std::vector< std::string > comp_names_;
 
   //! Dictionary of receptor types, leads to seg fault on exit, see #328
   // static DictionaryDatum receptor_dict_;

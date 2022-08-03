@@ -40,7 +40,7 @@ class Token;
 class BoolDatum : public GenericDatum< bool, &SLIInterpreter::Booltype >
 {
 protected:
-  static sli::pool memory;
+  static nest::pool memory;
 
 private:
   Datum*

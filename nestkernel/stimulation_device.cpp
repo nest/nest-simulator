@@ -90,7 +90,7 @@ nest::StimulationDevice::get_label() const
 
 nest::StimulationDevice::Parameters_::Parameters_()
   : label_()
-  , stimulus_source_( Name() )
+  , stimulus_source_()
 {
 }
 
@@ -98,7 +98,7 @@ void
 nest::StimulationDevice::Parameters_::get( dictionary& d ) const
 {
   d[ names::label ] = label_;
-  d[ names::stimulus_source ] = stimulus_source_.toString();
+  d[ names::stimulus_source ] = stimulus_source_;
 }
 
 void

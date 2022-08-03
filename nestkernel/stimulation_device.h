@@ -28,8 +28,6 @@
 #include "device_node.h"
 #include "nest_types.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -161,7 +159,7 @@ public:
   void set_status( const dictionary& ) override;
 
   bool has_proxies() const override;
-  Name get_element_type() const override;
+  std::string get_element_type() const override;
 
   using Device::calibrate;
   using Device::init_buffers;
@@ -198,8 +196,8 @@ protected:
 
   struct Parameters_
   {
-    std::string label_;    //!< A user-defined label for symbolic device names.
-    Name stimulus_source_; //!< Origin of the stimulation signal.
+    std::string label_;           //!< A user-defined label for symbolic device names.
+    std::string stimulus_source_; //!< Origin of the stimulation signal.
 
     Parameters_();
     Parameters_( const Parameters_& ) = default;
@@ -220,7 +218,7 @@ private:
   dictionary backend_params_;
 };
 
-inline Name
+inline std::string
 StimulationDevice::get_element_type() const
 {
   return names::stimulator;

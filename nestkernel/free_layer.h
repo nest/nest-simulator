@@ -31,8 +31,6 @@
 // Includes from nestkernel:
 #include "nest_names.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 // Includes from spatial:
 #include "layer.h"

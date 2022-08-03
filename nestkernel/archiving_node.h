@@ -34,8 +34,6 @@
 #include "node.h"
 #include "structural_plasticity_node.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 #define DEBUG_ARCHIVER 1
 

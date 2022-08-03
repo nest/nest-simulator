@@ -378,3 +378,12 @@ nest::InternalError::what() const noexcept
 {
   return msg_.c_str();
 }
+
+
+const char*
+nest::UndefinedName::what() const noexcept
+{
+  std::ostringstream msg;
+  msg << "The name " << name_ << " is not defined.";
+  return msg.str().c_str();
+}

@@ -31,11 +31,6 @@
 // Includes from libnestutil:
 #include "numerics.h"
 
-// Includes from sli:
-#include "doubledatum.h"
-#include "integerdatum.h"
-#include "token.h"
-
 using namespace nest;
 
 /* Obtain time resolution information from configuration
@@ -139,24 +134,24 @@ Time::reset_resolution()
   LIM_MIN = -max;
 }
 
-double
-Time::ms::fromtoken( const Token& t )
-{
-  IntegerDatum* idat = dynamic_cast< IntegerDatum* >( t.datum() );
-  if ( idat )
-  {
-    return static_cast< double >( idat->get() );
-  }
+// double
+// Time::ms::fromtoken( const Token& t )
+// {
+//   IntegerDatum* idat = dynamic_cast< IntegerDatum* >( t.datum() );
+//   if ( idat )
+//   {
+//     return static_cast< double >( idat->get() );
+//   }
 
-  DoubleDatum* ddat = dynamic_cast< DoubleDatum* >( t.datum() );
-  if ( ddat )
-  {
-    return ddat->get();
-  }
+//   DoubleDatum* ddat = dynamic_cast< DoubleDatum* >( t.datum() );
+//   if ( ddat )
+//   {
+//     return ddat->get();
+//   }
 
-  throw TypeMismatch( IntegerDatum().gettypename().toString() + " or " + DoubleDatum().gettypename().toString(),
-    t.datum()->gettypename().toString() );
-}
+//   throw TypeMismatch( IntegerDatum().gettypename().toString() + " or " + DoubleDatum().gettypename().toString(),
+//     t.datum()->gettypename().toString() );
+// }
 
 tic_t
 Time::fromstamp( Time::ms_stamp t )

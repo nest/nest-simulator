@@ -32,10 +32,6 @@
 // Includes from nestkernel:
 #include "nest_types.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "name.h"
-
 namespace nest
 {
 /**
@@ -54,15 +50,15 @@ namespace nest
  *       initialization conflicts with the Name class. Thus,
  *       creation is deferred to the plain constructor of the host
  *       Node class, which is called only once to create the
- *       model prototype instance.
+ *       model prototype instance. TODO-PYNEST-NG: is this still the case?
  *
  * @see multimeter, UniversalDataLogger
  * @ingroup Devices
  */
 template < typename HostNode >
-class RecordablesMap : public std::map< Name, double ( HostNode::* )() const >
+class RecordablesMap : public std::map< std::string, double ( HostNode::* )() const >
 {
-  typedef std::map< Name, double ( HostNode::* )() const > Base_;
+  typedef std::map< std::string, double ( HostNode::* )() const > Base_;
 
 public:
   virtual ~RecordablesMap()
@@ -87,13 +83,13 @@ public:
    *       build the list every time, even though that beats the
    *       goal of being more efficient ...
    */
-  ArrayDatum
+  std::vector< std::string >
   get_list() const
   {
-    ArrayDatum recordables;
+    std::vector< std::string > recordables;
     for ( typename Base_::const_iterator it = this->begin(); it != this->end(); ++it )
     {
-      recordables.push_back( new LiteralDatum( it->first ) );
+      recordables.push_back( it->first );
     }
     return recordables;
 
@@ -104,7 +100,7 @@ public:
 private:
   //! Insertion functions to be used in create(), adds entry to map and list
   void
-  insert_( const Name& n, const DataAccessFct f )
+  insert_( const std::string& n, const DataAccessFct f )
   {
     Base_::insert( std::make_pair( n, f ) );
 
@@ -166,9 +162,9 @@ public:
  * @ingroup Devices
  */
 template < typename HostNode >
-class DynamicRecordablesMap : public std::map< Name, const DataAccessFunctor< HostNode > >
+class DynamicRecordablesMap : public std::map< std::string, const DataAccessFunctor< HostNode > >
 {
-  typedef std::map< Name, const DataAccessFunctor< HostNode > > Base_;
+  typedef std::map< std::string, const DataAccessFunctor< HostNode > > Base_;
 
 public:
   virtual ~DynamicRecordablesMap()
@@ -193,20 +189,20 @@ public:
    *       build the list every time, even though that beats the
    *       goal of being more efficient ...
    */
-  ArrayDatum
+  std::vector< std::string >
   get_list() const
   {
-    ArrayDatum recordables;
+    std::vector< std::string > recordables;
     for ( typename Base_::const_iterator it = this->begin(); it != this->end(); ++it )
     {
-      recordables.push_back( new LiteralDatum( it->first ) );
+      recordables.push_back( it->first );
     }
     return recordables;
   }
 
   //! Insertion functions to be used in create(), adds entry to map and list
   void
-  insert( const Name& n, const DataAccessFct& f )
+  insert( const std::string& n, const DataAccessFct& f )
   {
     Base_::insert( std::make_pair( n, f ) );
   }
@@ -214,14 +210,13 @@ public:
   //! Erase functions to be used when setting state, removes entry from map and
   //! list
   void
-  erase( const Name& n )
+  erase( const std::string& n )
   {
-    // .toString() required as work-around for #339, remove when #348 is solved.
-    typename DynamicRecordablesMap< HostNode >::iterator it = this->find( n.toString() );
-    // If the Name is not in the map, throw an error
+    typename DynamicRecordablesMap< HostNode >::iterator it = this->find( n );
+    // If the string is not in the map, throw an error
     if ( it == this->end() )
     {
-      throw KeyError( n.toString(), "DynamicRecordablesMap", "erase" );
+      throw KeyError( n, "DynamicRecordablesMap", "erase" );
     }
 
     Base_::erase( it );

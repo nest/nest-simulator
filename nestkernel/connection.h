@@ -38,12 +38,6 @@
 #include "spikecounter.h"
 #include "syn_id_delay.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-
 namespace nest
 {
 

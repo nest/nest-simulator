@@ -107,7 +107,7 @@ public:
    * @returns true if the new type was successfully registered, or false
    *          if a mask type with the same name already exists.
    */
-  static bool register_mask( const Name& name, MaskCreatorFunction creator );
+  static bool register_mask( const std::string& name, MaskCreatorFunction creator );
 
   /**
    * Return a Mask object.
@@ -817,7 +817,7 @@ NestModule::register_mask()
 }
 
 inline bool
-NestModule::register_mask( const Name& name, MaskCreatorFunction creator )
+NestModule::register_mask( const std::string& name, MaskCreatorFunction creator )
 {
   return mask_factory_().register_subtype( name, creator );
 }

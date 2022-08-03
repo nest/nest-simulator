@@ -38,9 +38,6 @@
 #include "exceptions.h"
 #include "nest_types.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dictdatum.h"
 
 namespace nest
 {
@@ -200,7 +197,7 @@ public:
    * @param node_ids Vector of node IDs from which to create the NodeCollection
    * @return a NodeCollection pointer to the created NodeCollection
    */
-  static NodeCollectionPTR create( const IntVectorDatum& node_ids );
+  // static NodeCollectionPTR create( const IntVectorDatum& node_ids );
 
   /**
    * Create a NodeCollection from an array of node IDs. Results in a primitive if the
@@ -209,7 +206,7 @@ public:
    * @param node_ids Array of node IDs from which to create the NodeCollection
    * @return a NodeCollection pointer to the created NodeCollection
    */
-  static NodeCollectionPTR create( const TokenArray& node_ids );
+  // static NodeCollectionPTR create( const TokenArray& node_ids );
 
   /**
    * Create a NodeCollection from a single node ID. Results in a primitive.
@@ -306,7 +303,7 @@ public:
    *
    * @return an ArrayDatum containing node IDs
    */
-  virtual ArrayDatum to_array() const = 0;
+  // virtual ArrayDatum to_array() const = 0;
 
   /**
    * Get the size of the NodeCollection.
@@ -446,7 +443,7 @@ public:
   const_iterator end( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const override;
 
   //! Returns an ArrayDatum filled with node IDs from the primitive.
-  ArrayDatum to_array() const override;
+  // ArrayDatum to_array() const override;
 
   //! Returns total number of node IDs in the primitive.
   size_t size() const override;
@@ -573,7 +570,7 @@ public:
   const_iterator end( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const override;
 
   //! Returns an ArrayDatum filled with node IDs from the composite.
-  ArrayDatum to_array() const override;
+  // ArrayDatum to_array() const override;
 
   //! Returns total number of node IDs in the composite.
   size_t size() const override;

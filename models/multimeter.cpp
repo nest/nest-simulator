@@ -98,7 +98,7 @@ nest::multimeter::Parameters_::get( dictionary& d ) const
   std::vector< std::string > ad;
   for ( size_t j = 0; j < record_from_.size(); ++j )
   {
-    ad.push_back( record_from_[ j ].toString() );
+    ad.push_back( record_from_[ j ] );
   }
   d[ names::record_from ] = ad;
 }
@@ -163,7 +163,7 @@ nest::multimeter::Parameters_::set( const dictionary& d, const Buffers_& b, Node
     ArrayDatum ad = d.get< ArrayDatum >( names::record_from );
     for ( Token* t = ad.begin(); t != ad.end(); ++t )
     {
-      record_from_.push_back( Name( getValue< std::string >( *t ) ) );
+      record_from_.push_back( getValue< std::string >( *t ) );
     }
   }
 }

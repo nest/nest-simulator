@@ -36,8 +36,6 @@
 
 #include "dictionary.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 namespace nest
 {
@@ -58,22 +56,22 @@ public:
   virtual double
   update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const = 0;
   virtual bool
-  is( Name n )
+  is( std::string n )
   {
     return n == name_;
   }
-  Name
+  std::string
   get_name()
   {
     return name_;
   }
 
 protected:
-  GrowthCurve( const Name name )
+  GrowthCurve( const std::string name )
     : name_( name )
   {
   }
-  const Name name_;
+  const std::string name_;
 };
 
 /** @BeginDocumentation

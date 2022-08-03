@@ -35,10 +35,6 @@
 #include "nest_time.h"
 #include "nest_types.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dictdatum.h"
-
 namespace nest
 {
 void init_nest( int* argc, char** argv[] );
@@ -164,10 +160,10 @@ void prepare();
  */
 void cleanup();
 
-void copy_model( const Name& oldmodname, const Name& newmodname, const dictionary& dict );
+void copy_model( const std::string& oldmodname, const std::string& newmodname, const dictionary& dict );
 
-void set_model_defaults( const Name& model_name, const dictionary& );
-dictionary get_model_defaults( const Name& model_name );
+void set_model_defaults( const std::string& model_name, const dictionary& );
+dictionary get_model_defaults( const std::string& model_name );
 
 // TODO-PYNEST-NG: static functions?
 std::shared_ptr< Parameter > create_parameter( const boost::any& );
@@ -176,9 +172,6 @@ std::shared_ptr< Parameter > create_parameter( const double );
 std::shared_ptr< Parameter > create_parameter( const int );
 std::shared_ptr< Parameter > create_parameter( const dictionary& param_dict );
 std::shared_ptr< Parameter > create_parameter( const std::string& name, const dictionary& d );
-
-template < class T >
-bool register_parameter( const Name& name );
 
 using ParameterFactory = GenericFactory< Parameter >;
 
@@ -195,7 +188,7 @@ NodeCollectionPTR node_collection_array_index( NodeCollectionPTR node_collection
 
 template < class T >
 inline bool
-register_parameter( const Name& name )
+register_parameter( const std::string& name )
 {
   return parameter_factory_().register_subtype< T >( name );
 }

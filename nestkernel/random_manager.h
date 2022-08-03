@@ -34,7 +34,7 @@
 #include "manager_interface.h"
 
 // Includes from nestkernel:
-#include "dictdatum.h"
+
 #include "nest_types.h"
 #include "random_generators.h"
 

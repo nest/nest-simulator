@@ -26,10 +26,6 @@
 // C++ includes:
 #include <vector>
 
-// Includes from sli:
-#include "dictdatum.h"
-#include "name.h"
-
 #include "dictionary.h"
 
 namespace nest
@@ -158,8 +154,8 @@ public:
    * @ingroup NESTio
    */
   virtual void set_value_names( const RecordingDevice& device,
-    const std::vector< Name >& double_value_names,
-    const std::vector< Name >& long_value_names ) = 0;
+    const std::vector< std::string >& double_value_names,
+    const std::vector< std::string >& long_value_names ) = 0;
 
   /**
    * Prepare the backend at begin of the NEST Simulate function.
@@ -320,8 +316,8 @@ public:
    */
   virtual void get_device_status( const RecordingDevice& device, dictionary& params ) const = 0;
 
-  static const std::vector< Name > NO_DOUBLE_VALUE_NAMES;
-  static const std::vector< Name > NO_LONG_VALUE_NAMES;
+  static const std::vector< std::string > NO_DOUBLE_VALUE_NAMES;
+  static const std::vector< std::string > NO_LONG_VALUE_NAMES;
   static const std::vector< double > NO_DOUBLE_VALUES;
   static const std::vector< long > NO_LONG_VALUES;
 };

@@ -32,7 +32,7 @@
 // initialization of static members requires template<>
 // see Stroustrup C.13.1 --- HEP 2001-08-09
 template <>
-sli::pool AggregateDatum< std::string, &SLIInterpreter::Stringtype >::memory(
+nest::pool AggregateDatum< std::string, &SLIInterpreter::Stringtype >::memory(
   sizeof( AggregateDatum< std::string, &SLIInterpreter::Stringtype > ),
   100,
   1 );

@@ -45,7 +45,7 @@
 */
 #ifndef HAVE_STATIC_TEMPLATE_DECLARATION_FAILS
 template <>
-sli::pool NumericDatum< long, &SLIInterpreter::Integertype >::memory;
+nest::pool NumericDatum< long, &SLIInterpreter::Integertype >::memory;
 #endif
 
 typedef NumericDatum< long, &SLIInterpreter::Integertype > IntegerDatum;

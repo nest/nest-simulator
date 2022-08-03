@@ -31,8 +31,6 @@
 #include "mpi_manager_impl.h"
 #include "vp_manager_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 nest::VPManager::VPManager()
 #ifdef _OPENMP

@@ -36,9 +36,6 @@
 #include "node_collection.h"
 #include "sparse_node_array.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dictdatum.h"
 
 namespace nest
 {

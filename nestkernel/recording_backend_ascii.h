@@ -164,8 +164,8 @@ public:
   void disenroll( const RecordingDevice& device ) override;
 
   void set_value_names( const RecordingDevice& device,
-    const std::vector< Name >& double_value_names,
-    const std::vector< Name >& long_value_names ) override;
+    const std::vector< std::string >& double_value_names,
+    const std::vector< std::string >& long_value_names ) override;
 
   void prepare() override;
 
@@ -196,7 +196,7 @@ private:
   {
     DeviceData() = delete;
     DeviceData( std::string, std::string );
-    void set_value_names( const std::vector< Name >&, const std::vector< Name >& );
+    void set_value_names( const std::vector< std::string >&, const std::vector< std::string >& );
     void open_file();
     void write( const Event&, const std::vector< double >&, const std::vector< long >& );
     void flush_file();
@@ -205,15 +205,15 @@ private:
     void set_status( const dictionary& );
 
   private:
-    long precision_;                         //!< Number of decimal places used when writing decimal values
-    bool time_in_steps_;                     //!< Should time be recorded in steps (ms if false)
-    std::string modelname_;                  //!< File name up to but not including the "."
-    std::string vp_node_id_string_;          //!< The vp and node ID component of the filename
-    std::string file_extension_;             //!< File name extension without leading "."
-    std::string label_;                      //!< The label of the device.
-    std::ofstream file_;                     //!< File stream to use for the device
-    std::vector< Name > double_value_names_; //!< names for values of type double
-    std::vector< Name > long_value_names_;   //!< names for values of type long
+    long precision_;                                //!< Number of decimal places used when writing decimal values
+    bool time_in_steps_;                            //!< Should time be recorded in steps (ms if false)
+    std::string modelname_;                         //!< File name up to but not including the "."
+    std::string vp_node_id_string_;                 //!< The vp and node ID component of the filename
+    std::string file_extension_;                    //!< File name extension without leading "."
+    std::string label_;                             //!< The label of the device.
+    std::ofstream file_;                            //!< File stream to use for the device
+    std::vector< std::string > double_value_names_; //!< names for values of type double
+    std::vector< std::string > long_value_names_;   //!< names for values of type long
 
     std::string compute_filename_() const; //!< Compose and return the filename
   };

@@ -35,10 +35,6 @@
 
 #include "dictionary.h"
 
-// Includes from sli:
-#include "slifunction.h"
-#include "slimodule.h"
-
 namespace nest
 {
 

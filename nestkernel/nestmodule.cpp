@@ -279,30 +279,30 @@ NestModule::create_mask( const dictionary& params )
   // }
 }
 
-static AbstractMask*
-create_doughnut( const DictionaryDatum& d )
-{
-  // The doughnut (actually an annulus) is created using a DifferenceMask
-  // Position< 2 > center( 0, 0 );
-  // if ( d.known( names::anchor ) )
-  // {
-  //   center = d.get< std::vector< double > >( names::anchor );
-  // }
+// static AbstractMask*
+// create_doughnut( const DictionaryDatum& d )
+// {
+//   // The doughnut (actually an annulus) is created using a DifferenceMask
+//   // Position< 2 > center( 0, 0 );
+//   // if ( d.known( names::anchor ) )
+//   // {
+//   //   center = d.get< std::vector< double > >( names::anchor );
+//   // }
 
-  // const double outer = d.get< double >( names::outer_radius );
-  // const double inner = d.get< double >( names::inner_radius );
-  // if ( inner >= outer )
-  // {
-  //   throw BadProperty(
-  //     "nest::create_doughnut: "
-  //     "inner_radius < outer_radius required." );
-  // }
+//   // const double outer = d.get< double >( names::outer_radius );
+//   // const double inner = d.get< double >( names::inner_radius );
+//   // if ( inner >= outer )
+//   // {
+//   //   throw BadProperty(
+//   //     "nest::create_doughnut: "
+//   //     "inner_radius < outer_radius required." );
+//   // }
 
-  // BallMask< 2 > outer_circle( center, outer );
-  // BallMask< 2 > inner_circle( center, inner );
+//   // BallMask< 2 > outer_circle( center, outer );
+//   // BallMask< 2 > inner_circle( center, inner );
 
-  // return new DifferenceMask< 2 >( outer_circle, inner_circle );
-}
+//   // return new DifferenceMask< 2 >( outer_circle, inner_circle );
+// }
 
 
 /** @BeginDocumentation
@@ -333,42 +333,42 @@ create_doughnut( const DictionaryDatum& d )
 void
 NestModule::SetStatus_idFunction::execute( SLIInterpreter* i ) const
 {
-  i->assert_stack_load( 2 );
+  // i->assert_stack_load( 2 );
 
-  DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.top() );
-  index node_id = getValue< long >( i->OStack.pick( 1 ) );
+  // DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.top() );
+  // index node_id = getValue< long >( i->OStack.pick( 1 ) );
 
-  // set_node_status( node_id, dict );
+  // // set_node_status( node_id, dict );
 
-  i->OStack.pop( 2 );
-  i->EStack.pop();
+  // i->OStack.pop( 2 );
+  // i->EStack.pop();
 }
 
 void
 NestModule::SetStatus_CDFunction::execute( SLIInterpreter* i ) const
 {
-  i->assert_stack_load( 2 );
+  // i->assert_stack_load( 2 );
 
-  DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.top() );
-  ConnectionDatum conn = getValue< ConnectionDatum >( i->OStack.pick( 1 ) );
+  // DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.top() );
+  // ConnectionDatum conn = getValue< ConnectionDatum >( i->OStack.pick( 1 ) );
 
-  // set_connection_status( conn, dict );
+  // // set_connection_status( conn, dict );
 
-  i->OStack.pop( 2 );
-  i->EStack.pop();
+  // i->OStack.pop( 2 );
+  // i->EStack.pop();
 }
 
 void
 NestModule::SetKernelStatus_DFunction::execute( SLIInterpreter* i ) const
 {
-  i->assert_stack_load( 1 );
+  // i->assert_stack_load( 1 );
 
-  DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.top() );
+  // DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.top() );
 
-  // set_kernel_status( dict );
+  // // set_kernel_status( dict );
 
-  i->OStack.pop();
-  i->EStack.pop();
+  // i->OStack.pop();
+  // i->EStack.pop();
 }
 
 void
@@ -376,11 +376,11 @@ NestModule::Cva_CFunction::execute( SLIInterpreter* i ) const
 {
   ConnectionDatum conn = getValue< ConnectionDatum >( i->OStack.top() );
   ArrayDatum ad;
-  ad.push_back( conn.get_source_node_id() );
-  ad.push_back( conn.get_target_node_id() );
-  ad.push_back( conn.get_target_thread() );
-  ad.push_back( conn.get_synapse_model_id() );
-  ad.push_back( conn.get_port() );
+  // ad.push_back( conn.get_source_node_id() );
+  // ad.push_back( conn.get_target_node_id() );
+  // ad.push_back( conn.get_target_thread() );
+  // ad.push_back( conn.get_synapse_model_id() );
+  // ad.push_back( conn.get_port() );
   Token result( ad );
   i->OStack.top().swap( result );
   i->EStack.pop();
@@ -581,7 +581,7 @@ NestModule::GetMetadata_gFunction::execute( SLIInterpreter* i ) const
   }
 
   NodeCollectionMetadataPTR meta = nc->get_metadata();
-  DictionaryDatum dict = DictionaryDatum( new Dictionary );
+  // DictionaryDatum dict = DictionaryDatum( new Dictionary );
 
   // return empty dict if NC does not have metadata
   if ( meta.get() )
@@ -592,7 +592,7 @@ NestModule::GetMetadata_gFunction::execute( SLIInterpreter* i ) const
   }
 
   i->OStack.pop();
-  i->OStack.push( dict );
+  // i->OStack.push( dict );
   i->EStack.pop();
 }
 
@@ -618,7 +618,7 @@ NestModule::SetDefaults_l_DFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 2 );
 
   const Name name = getValue< Name >( i->OStack.pick( 1 ) );
-  DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  // DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // kernel().model_manager.set_model_defaults( name, params );
 
@@ -652,7 +652,7 @@ NestModule::GetConnections_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  // DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // ArrayDatum array = get_connections( dict );
 
@@ -787,7 +787,7 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
   // fetch existing model name from stack
   const Name old_name = getValue< Name >( i->OStack.pick( 2 ) );
   const Name new_name = getValue< Name >( i->OStack.pick( 1 ) );
-  DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  // DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // kernel().model_manager.copy_model( old_name, new_name, params );
 
@@ -892,8 +892,8 @@ NestModule::Disconnect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
 
   NodeCollectionDatum sources = getValue< NodeCollectionDatum >( i->OStack.pick( 3 ) );
   NodeCollectionDatum targets = getValue< NodeCollectionDatum >( i->OStack.pick( 2 ) );
-  DictionaryDatum connectivity = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
-  DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  // DictionaryDatum connectivity = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
+  // DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // dictionary access checking is handled by disconnect
   // kernel().sp_manager.disconnect( sources, targets, connectivity, synapse_params );
@@ -1332,11 +1332,11 @@ NestModule::Cvnodecollection_iaFunction::execute( SLIInterpreter* i ) const
 
   TokenArray node_ids = getValue< TokenArray >( i->OStack.pick( 0 ) );
 
-  NodeCollectionDatum nodecollection( NodeCollection::create( node_ids ) );
+  // NodeCollectionDatum nodecollection( NodeCollection::create( node_ids ) );
 
-  i->OStack.pop();
-  i->OStack.push( nodecollection );
-  i->EStack.pop();
+  // i->OStack.pop();
+  // i->OStack.push( nodecollection );
+  // i->EStack.pop();
 }
 
 void
@@ -1345,11 +1345,11 @@ NestModule::Cvnodecollection_ivFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   IntVectorDatum node_ids = getValue< IntVectorDatum >( i->OStack.pick( 0 ) );
-  NodeCollectionDatum nodecollection( NodeCollection::create( node_ids ) );
+  // NodeCollectionDatum nodecollection( NodeCollection::create( node_ids ) );
 
-  i->OStack.pop();
-  i->OStack.push( nodecollection );
-  i->EStack.pop();
+  // i->OStack.pop();
+  // i->OStack.push( nodecollection );
+  // i->EStack.pop();
 }
 
 void
@@ -1357,10 +1357,10 @@ NestModule::Cva_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
   NodeCollectionDatum nodecollection = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
-  ArrayDatum node_ids = nodecollection->to_array();
+  // ArrayDatum node_ids = nodecollection->to_array();
 
-  i->OStack.pop();
-  i->OStack.push( node_ids );
+  // i->OStack.pop();
+  // i->OStack.push( node_ids );
   i->EStack.pop();
 }
 
@@ -1709,7 +1709,7 @@ void
 NestModule::CreateParameter_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-  const DictionaryDatum param_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  // const DictionaryDatum param_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // ParameterDatum datum = nest::create_parameter( param_dict );
 
@@ -1843,7 +1843,7 @@ NestModule::Compare_P_P_DFunction::execute( SLIInterpreter* i ) const
 
   ParameterDatum param1 = getValue< ParameterDatum >( i->OStack.pick( 2 ) );
   ParameterDatum param2 = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
-  DictionaryDatum param3 = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  // DictionaryDatum param3 = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // ParameterDatum newparam = compare_parameter( param1, param2, param3 );
 
@@ -1985,7 +1985,7 @@ NestModule::Apply_P_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  auto positions = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  // auto positions = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
   auto param = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
 
   // auto result = apply( param, positions );
@@ -2140,8 +2140,8 @@ NestModule::CreateLayer_D_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  DictionaryDatum layer_dict = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
-  DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  // DictionaryDatum layer_dict = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
+  // DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // NodeCollectionDatum layer = create_layer( layer_dict );
 
@@ -2190,18 +2190,18 @@ NestModule::GetPosition_gFunction::execute( SLIInterpreter* i ) const
 
   const NodeCollectionDatum layer = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
 
-  ArrayDatum result = get_position( layer );
+  // ArrayDatum result = get_position( layer );
 
-  i->OStack.pop( 1 );
-  if ( layer->size() == 1 )
-  {
-    i->OStack.push( result[ 0 ] );
-  }
-  else
-  {
-    i->OStack.push( result );
-  }
-  i->EStack.pop();
+  //   i->OStack.pop( 1 );
+  //   if ( layer->size() == 1 )
+  //   {
+  //     i->OStack.push( result[ 0 ] );
+  //   }
+  //   else
+  //   {
+  //     i->OStack.push( result );
+  //   }
+  //   i->EStack.pop();
 }
 
 /** @BeginDocumentation
@@ -2260,10 +2260,10 @@ NestModule::Displacement_g_gFunction::execute( SLIInterpreter* i ) const
     throw BadProperty( "NodeCollections must have equal length or one must have size 1." );
   }
 
-  ArrayDatum result = displacement( layer_to, layer_from );
+  // ArrayDatum result = displacement( layer_to, layer_from );
 
-  i->OStack.pop( 2 );
-  i->OStack.push( result );
+  // i->OStack.pop( 2 );
+  // i->OStack.push( result );
   i->EStack.pop();
 }
 
@@ -2275,10 +2275,10 @@ NestModule::Displacement_a_gFunction::execute( SLIInterpreter* i ) const
   const NodeCollectionDatum layer = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
   const ArrayDatum point = getValue< ArrayDatum >( i->OStack.pick( 1 ) );
 
-  ArrayDatum result = displacement( layer, point );
+  // ArrayDatum result = displacement( layer, point );
 
-  i->OStack.pop( 2 );
-  i->OStack.push( result );
+  // i->OStack.pop( 2 );
+  // i->OStack.push( result );
   i->EStack.pop();
 }
 
@@ -2353,10 +2353,10 @@ NestModule::Distance_a_gFunction::execute( SLIInterpreter* i ) const
   const NodeCollectionDatum layer = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
   const ArrayDatum point = getValue< ArrayDatum >( i->OStack.pick( 1 ) );
 
-  Token result = distance( layer, point );
+  // Token result = distance( layer, point );
 
-  i->OStack.pop( 2 );
-  i->OStack.push( result );
+  // i->OStack.pop( 2 );
+  // i->OStack.push( result );
   i->EStack.pop();
 }
 
@@ -2367,10 +2367,10 @@ NestModule::Distance_aFunction::execute( SLIInterpreter* i ) const
 
   const ArrayDatum conns = getValue< ArrayDatum >( i->OStack.pick( 0 ) );
 
-  Token result = distance( conns );
+  // Token result = distance( conns );
 
-  i->OStack.pop( 1 );
-  i->OStack.push( result );
+  // i->OStack.pop( 1 );
+  // i->OStack.push( result );
   i->EStack.pop();
 }
 
@@ -2397,7 +2397,7 @@ NestModule::CreateMask_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  const DictionaryDatum mask_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  // const DictionaryDatum mask_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // MaskDatum datum = nest::create_mask( mask_dict );
 
@@ -2663,7 +2663,7 @@ NestModule::ConnectLayers_g_g_DFunction::execute( SLIInterpreter* i ) const
 
   const NodeCollectionDatum source = getValue< NodeCollectionDatum >( i->OStack.pick( 2 ) );
   const NodeCollectionDatum target = getValue< NodeCollectionDatum >( i->OStack.pick( 1 ) );
-  const DictionaryDatum connection_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  // const DictionaryDatum connection_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // connect_layers( source, target, connection_dict );
 
@@ -2743,9 +2743,9 @@ NestModule::DumpLayerNodes_os_gFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 2 );
 
   const NodeCollectionDatum layer = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
-  OstreamDatum out = getValue< OstreamDatum >( i->OStack.pick( 1 ) );
+  // OstreamDatum out = getValue< OstreamDatum >( i->OStack.pick( 1 ) );
 
-  dump_layer_nodes( layer, out );
+  // dump_layer_nodes( layer, out );
 
   i->OStack.pop( 1 ); // leave ostream on stack
   i->EStack.pop();
@@ -2794,12 +2794,12 @@ NestModule::DumpLayerConnections_os_g_g_lFunction::execute( SLIInterpreter* i ) 
 {
   i->assert_stack_load( 4 );
 
-  OstreamDatum out_file = getValue< OstreamDatum >( i->OStack.pick( 3 ) );
+  // OstreamDatum out_file = getValue< OstreamDatum >( i->OStack.pick( 3 ) );
   const NodeCollectionDatum source_layer = getValue< NodeCollectionDatum >( i->OStack.pick( 2 ) );
   const NodeCollectionDatum target_layer = getValue< NodeCollectionDatum >( i->OStack.pick( 1 ) );
   const Token syn_model = i->OStack.pick( 0 );
 
-  dump_layer_connections( syn_model, source_layer, target_layer, out_file );
+  // dump_layer_connections( syn_model, source_layer, target_layer, out_file );
 
   i->OStack.pop( 3 ); // leave ostream on stack
   i->EStack.pop();

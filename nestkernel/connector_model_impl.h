@@ -38,8 +38,6 @@
 #include "nest_time.h"
 #include "nest_timeconverter.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {

@@ -44,10 +44,6 @@
 #include "target_table.h"
 #include "target_table_devices.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dict.h"
-#include "dictdatum.h"
 
 namespace nest
 {
@@ -107,8 +103,6 @@ public:
    * Create connections.
    */
   void connect( NodeCollectionPTR, NodeCollectionPTR, const dictionary&, const std::vector< dictionary >& );
-
-  void connect( TokenArray, TokenArray, const dictionary& );
 
   /**
    * Connect two nodes. The source node is defined by its global ID.

@@ -110,49 +110,49 @@ NodeCollection::NodeCollection()
 {
 }
 
-NodeCollectionPTR
-NodeCollection::create( const IntVectorDatum& node_idsdatum )
-{
-  if ( node_idsdatum->size() == 0 )
-  {
-    return NodeCollection::create_();
-  }
+// NodeCollectionPTR
+// NodeCollection::create( const IntVectorDatum& node_idsdatum )
+// {
+//   if ( node_idsdatum->size() == 0 )
+//   {
+//     return NodeCollection::create_();
+//   }
 
-  std::vector< index > node_ids;
-  node_ids.reserve( node_idsdatum->size() );
-  for ( std::vector< long >::const_iterator it = node_idsdatum->begin(); it != node_idsdatum->end(); ++it )
-  {
-    node_ids.push_back( static_cast< index >( getValue< long >( *it ) ) );
-  }
+//   std::vector< index > node_ids;
+//   node_ids.reserve( node_idsdatum->size() );
+//   for ( std::vector< long >::const_iterator it = node_idsdatum->begin(); it != node_idsdatum->end(); ++it )
+//   {
+//     node_ids.push_back( static_cast< index >( getValue< long >( *it ) ) );
+//   }
 
-  if ( not std::is_sorted( node_ids.begin(), node_ids.end() ) )
-  {
-    throw BadProperty( "Node IDs must be sorted in ascending order" );
-  }
-  return NodeCollection::create_( node_ids );
-}
+//   if ( not std::is_sorted( node_ids.begin(), node_ids.end() ) )
+//   {
+//     throw BadProperty( "Node IDs must be sorted in ascending order" );
+//   }
+//   return NodeCollection::create_( node_ids );
+// }
 
-NodeCollectionPTR
-NodeCollection::create( const TokenArray& node_idsarray )
-{
-  if ( node_idsarray.size() == 0 )
-  {
-    return NodeCollection::create_();
-  }
+// NodeCollectionPTR
+// NodeCollection::create( const TokenArray& node_idsarray )
+// {
+//   if ( node_idsarray.size() == 0 )
+//   {
+//     return NodeCollection::create_();
+//   }
 
-  std::vector< index > node_ids;
-  node_ids.reserve( node_idsarray.size() );
-  for ( const auto& node_id_token : node_idsarray )
-  {
-    node_ids.push_back( static_cast< index >( getValue< long >( node_id_token ) ) );
-  }
+//   std::vector< index > node_ids;
+//   node_ids.reserve( node_idsarray.size() );
+//   for ( const auto& node_id_token : node_idsarray )
+//   {
+//     node_ids.push_back( static_cast< index >( getValue< long >( node_id_token ) ) );
+//   }
 
-  if ( not std::is_sorted( node_ids.begin(), node_ids.end() ) )
-  {
-    throw BadProperty( "Node IDs must be sorted in ascending order" );
-  }
-  return NodeCollection::create_( node_ids );
-}
+//   if ( not std::is_sorted( node_ids.begin(), node_ids.end() ) )
+//   {
+//     throw BadProperty( "Node IDs must be sorted in ascending order" );
+//   }
+//   return NodeCollection::create_( node_ids );
+// }
 
 
 NodeCollectionPTR
@@ -285,17 +285,17 @@ NodeCollectionPrimitive::NodeCollectionPrimitive()
 {
 }
 
-ArrayDatum
-NodeCollectionPrimitive::to_array() const
-{
-  ArrayDatum node_ids;
-  node_ids.reserve( size() );
-  for ( const_iterator it = begin(); it < end(); ++it )
-  {
-    node_ids.push_back( ( *it ).node_id );
-  }
-  return node_ids;
-}
+// ArrayDatum
+// NodeCollectionPrimitive::to_array() const
+// {
+//   ArrayDatum node_ids;
+//   node_ids.reserve( size() );
+//   for ( const_iterator it = begin(); it < end(); ++it )
+//   {
+//     node_ids.push_back( ( *it ).node_id );
+//   }
+//   return node_ids;
+// }
 
 NodeCollectionPTR
 NodeCollectionPrimitive::operator+( NodeCollectionPTR rhs ) const
@@ -751,17 +751,17 @@ NodeCollectionComposite::MPI_local_begin( NodeCollectionPTR cp ) const
   return const_iterator( cp, *this, current_part, current_offset, num_processes * step_ );
 }
 
-ArrayDatum
-NodeCollectionComposite::to_array() const
-{
-  ArrayDatum node_ids;
-  node_ids.reserve( size() );
-  for ( const_iterator it = begin(); it < end(); ++it )
-  {
-    node_ids.push_back( ( *it ).node_id );
-  }
-  return node_ids;
-}
+// ArrayDatum
+// NodeCollectionComposite::to_array() const
+// {
+//   ArrayDatum node_ids;
+//   node_ids.reserve( size() );
+//   for ( const_iterator it = begin(); it < end(); ++it )
+//   {
+//     node_ids.push_back( ( *it ).node_id );
+//   }
+//   return node_ids;
+// }
 
 NodeCollectionPTR
 NodeCollectionComposite::slice( size_t start, size_t stop, size_t step ) const

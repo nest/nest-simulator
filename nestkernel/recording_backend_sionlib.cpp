@@ -112,8 +112,8 @@ nest::RecordingBackendSIONlib::disenroll( const RecordingDevice& device )
 
 void
 nest::RecordingBackendSIONlib::set_value_names( const RecordingDevice& device,
-  const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names )
+  const std::vector< std::string >& double_value_names,
+  const std::vector< std::string >& long_value_names )
 {
   const thread t = device.get_thread();
   const thread node_id = device.get_node_id();

@@ -108,7 +108,7 @@ private:
   /**
    * Initialize the pool allocator with the node specific properties.
    */
-  void init_memory_( sli::pool& );
+  void init_memory_( nest::pool& );
 
   /**
    * Prototype node from which all instances are constructed.
@@ -164,7 +164,7 @@ GenericModel< ElementT >::allocate_( void* adr )
 
 template < typename ElementT >
 void
-GenericModel< ElementT >::init_memory_( sli::pool& mem )
+GenericModel< ElementT >::init_memory_( nest::pool& mem )
 {
   mem.init( sizeof( ElementT ), 1000, 1 );
 }

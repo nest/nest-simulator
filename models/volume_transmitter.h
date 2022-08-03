@@ -122,7 +122,7 @@ public:
     return false;
   }
 
-  Name
+  std::string
   get_element_type() const
   {
     return names::other;

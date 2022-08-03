@@ -57,10 +57,10 @@
 */
 #ifndef HAVE_STATIC_TEMPLATE_DECLARATION_FAILS
 template <>
-sli::pool AggregateDatum< Name, &SLIInterpreter::Nametype >::memory;
+nest::pool AggregateDatum< Name, &SLIInterpreter::Nametype >::memory;
 
 template <>
-sli::pool AggregateDatum< Name, &SLIInterpreter::Literaltype >::memory;
+nest::pool AggregateDatum< Name, &SLIInterpreter::Literaltype >::memory;
 #endif
 
 

@@ -46,7 +46,7 @@ template <>
 void
 RecordablesMap< noise_generator >::create()
 {
-  insert_( Name( names::I ), &noise_generator::get_I_avg_ );
+  insert_( names::I, &noise_generator::get_I_avg_ );
 }
 }
 

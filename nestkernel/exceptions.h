@@ -504,6 +504,35 @@ public:
 };
 
 /**
+ * Exception to be thrown if a parameter value
+ * is not acceptable.
+ */
+class BadParameterValue : public KernelException
+{
+  std::string msg_;
+
+public:
+  //! @param detailed error message
+  BadParameterValue()
+    : KernelException( "BadParameterValue" )
+    , msg_()
+  {
+  }
+
+  BadParameterValue( std::string msg )
+    : KernelException( "BadParameterValue" )
+    , msg_( msg )
+  {
+  }
+
+  ~BadParameterValue() throw()
+  {
+  }
+
+  std::string message() const;
+};
+
+/**
  * Exception to be thrown if the dimensions
  * of two or more objects do not agree.
  * Thrown by Node::set_/get_property methods.
@@ -1014,6 +1043,22 @@ public:
   {
   }
 };
+
+
+class UndefinedName : public KernelException
+{
+  const std::string name_;
+
+public:
+  UndefinedName( std::string name )
+    : KernelException( "UndefinedName" )
+    , name_( name )
+  {
+  }
+
+  const char* what() const noexcept override;
+};
+
 
 } // namespace nest
 

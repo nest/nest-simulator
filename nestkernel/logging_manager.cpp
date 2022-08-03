@@ -29,9 +29,6 @@
 // Includes from libnestutil:
 #include "logging_event.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
 
 nest::LoggingManager::LoggingManager()
   : client_callbacks_()

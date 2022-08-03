@@ -26,7 +26,7 @@
 #include "name.h"
 #include "token.h"
 
-sli::pool BoolDatum::memory( sizeof( BoolDatum ), 1024, 1 );
+nest::pool BoolDatum::memory( sizeof( BoolDatum ), 1024, 1 );
 
 const char* BoolDatum::true_string = "true";
 const char* BoolDatum::false_string = "false";

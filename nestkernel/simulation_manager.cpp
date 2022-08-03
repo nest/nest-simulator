@@ -38,8 +38,6 @@
 #include "event_delivery_manager.h"
 #include "kernel_manager.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 nest::SimulationManager::SimulationManager()
   : clock_( Time::tic( 0L ) )

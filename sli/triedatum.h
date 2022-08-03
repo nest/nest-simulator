@@ -38,7 +38,7 @@
 class TrieDatum : public TypedDatum< &SLIInterpreter::Trietype >
 {
 protected:
-  static sli::pool memory;
+  static nest::pool memory;
 
 private:
   Name name;

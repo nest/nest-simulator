@@ -23,8 +23,7 @@
 #ifndef CONNECTION_LABEL_H
 #define CONNECTION_LABEL_H
 
-#include "dictdatum.h"
-#include "dictutils.h"
+
 #include "nest_names.h"
 
 namespace nest

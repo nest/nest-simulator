@@ -43,8 +43,6 @@
 #include "target_table.h"
 #include "vp_manager.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 namespace nest
 {

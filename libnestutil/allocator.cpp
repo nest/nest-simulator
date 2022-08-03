@@ -22,7 +22,7 @@
 
 #include "allocator.h"
 
-sli::pool::pool()
+nest::pool::pool()
   : initial_block_size( 1024 )
   , growth_factor( 1 )
   , block_size( initial_block_size )
@@ -36,7 +36,7 @@ sli::pool::pool()
 {
 }
 
-sli::pool::pool( const sli::pool& p )
+nest::pool::pool( const nest::pool& p )
   : initial_block_size( p.initial_block_size )
   , growth_factor( p.growth_factor )
   , block_size( initial_block_size )
@@ -51,7 +51,7 @@ sli::pool::pool( const sli::pool& p )
 }
 
 
-sli::pool::pool( size_t n, size_t initial, size_t growth )
+nest::pool::pool( size_t n, size_t initial, size_t growth )
   : initial_block_size( initial )
   , growth_factor( growth )
   , block_size( initial_block_size )
@@ -66,7 +66,7 @@ sli::pool::pool( size_t n, size_t initial, size_t growth )
 }
 
 void
-sli::pool::init( size_t n, size_t initial, size_t growth )
+nest::pool::init( size_t n, size_t initial, size_t growth )
 {
   assert( instantiations == 0 );
 
@@ -83,7 +83,7 @@ sli::pool::init( size_t n, size_t initial, size_t growth )
   head = 0;
 }
 
-sli::pool::~pool()
+nest::pool::~pool()
 {
   chunk* n = chunks;
   while ( n )
@@ -94,8 +94,8 @@ sli::pool::~pool()
   }
 }
 
-sli::pool&
-sli::pool::operator=( const sli::pool& p )
+nest::pool&
+nest::pool::operator=( const nest::pool& p )
 {
   if ( &p == this )
   {
@@ -116,7 +116,7 @@ sli::pool::operator=( const sli::pool& p )
 }
 
 void
-sli::pool::grow( size_t nelements )
+nest::pool::grow( size_t nelements )
 {
   chunk* n = new chunk( nelements * el_size );
   total += nelements;
@@ -134,14 +134,14 @@ sli::pool::grow( size_t nelements )
 }
 
 void
-sli::pool::grow( void )
+nest::pool::grow( void )
 {
   grow( block_size );
   block_size *= growth_factor;
 }
 
 void
-sli::pool::reserve_additional( size_t n )
+nest::pool::reserve_additional( size_t n )
 {
   const size_t capacity = total - instantiations;
   if ( capacity < n )

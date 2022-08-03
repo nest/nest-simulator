@@ -33,8 +33,6 @@
 #include "node.h"
 #include "synaptic_element.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 namespace nest
 {
@@ -67,33 +65,33 @@ public:
   double get_Ca_minus() const;
 
   /**
-   * \fn double get_synaptic_elements(Name n)
+   * \fn double get_synaptic_elements(std::string n)
    * get the number of synaptic element for the current Node
    * the number of synaptic elements is a double value but the number of
    * actual vacant and connected elements is an integer truncated from this
    * value
    */
-  double get_synaptic_elements( Name n ) const;
+  double get_synaptic_elements( std::string n ) const;
 
   /**
-   * \fn int get_synaptic_elements_vacant(Name n)
+   * \fn int get_synaptic_elements_vacant(std::string n)
    * Get the number of synaptic elements of type n which are available
    * for new synapse creation
    */
-  int get_synaptic_elements_vacant( Name n ) const;
+  int get_synaptic_elements_vacant( std::string n ) const;
 
   /**
-   * \fn int get_synaptic_elements_connected(Name n)
+   * \fn int get_synaptic_elements_connected(std::string n)
    * get the number of synaptic element of type n which are currently
    * connected
    */
-  int get_synaptic_elements_connected( Name n ) const;
+  int get_synaptic_elements_connected( std::string n ) const;
 
   /**
-   * \fn std::map<Name, double> get_synaptic_elements()
+   * \fn std::map<std::string, double> get_synaptic_elements()
    * get the number of all synaptic elements for the current Node
    */
-  std::map< Name, double > get_synaptic_elements() const;
+  std::map< std::string, double > get_synaptic_elements() const;
 
   /**
    * \fn void update_synaptic_elements()
@@ -113,7 +111,7 @@ public:
    * \fn void connect_synaptic_element()
    * Change the number of connected synaptic elements by n
    */
-  void connect_synaptic_element( Name name, int n );
+  void connect_synaptic_element( std::string name, int n );
 
   void get_status( dictionary& d ) const;
   void set_status( const dictionary& d );
@@ -166,7 +164,7 @@ private:
   /**
    * Map of the synaptic elements
    */
-  std::map< Name, SynapticElement > synaptic_elements_map_;
+  std::map< std::string, SynapticElement > synaptic_elements_map_;
 };
 
 inline double

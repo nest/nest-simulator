@@ -29,10 +29,6 @@
 // Includes from nestkernel:
 #include "conn_builder.h"
 
-// Includes from sli:
-#include "dictdatum.h"
-#include "name.h"
-#include "sharedptrdatum.h"
 
 namespace nest
 {

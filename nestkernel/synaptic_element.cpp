@@ -33,8 +33,6 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 /* ----------------------------------------------------------------
  * SynapticElement
@@ -128,7 +126,7 @@ nest::SynapticElement::set( const dictionary& d )
 
   if ( d.known( names::growth_curve ) )
   {
-    Name growth_curve_name( d.get< std::string >( names::growth_curve ) );
+    std::string growth_curve_name( d.get< std::string >( names::growth_curve ) );
     if ( not growth_curve_->is( growth_curve_name ) )
     {
       growth_curve_ = kernel().sp_manager.new_growth_curve( growth_curve_name );

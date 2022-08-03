@@ -50,8 +50,7 @@
 #include "recording_backend_sionlib.h"
 #endif
 
-// Includes from sli:
-#include "dictutils.h"
+
 #include <string>
 
 namespace nest
@@ -192,7 +191,7 @@ IOManager::set_status( const dictionary& d )
     for ( const auto& it : recording_backends_ )
     {
       dictionary recording_backend_status;
-      if ( recording_backends.update_value( it.first.toString(), recording_backend_status ) )
+      if ( recording_backends.update_value( it.first, recording_backend_status ) )
       {
         it.second->set_status( recording_backend_status );
       }
@@ -212,7 +211,7 @@ IOManager::get_status( dictionary& d )
   {
     dictionary recording_backend_status;
     it.second->get_status( recording_backend_status );
-    recording_backends[ it.first.toString() ] = recording_backend_status;
+    recording_backends[ it.first ] = recording_backend_status;
   }
   d[ names::recording_backends ] = recording_backends;
 }
@@ -279,22 +278,22 @@ IOManager::cleanup()
 }
 
 bool
-IOManager::is_valid_recording_backend( const Name& backend_name ) const
+IOManager::is_valid_recording_backend( const std::string& backend_name ) const
 {
-  std::map< Name, RecordingBackend* >::const_iterator backend;
+  std::map< std::string, RecordingBackend* >::const_iterator backend;
   backend = recording_backends_.find( backend_name );
   return backend != recording_backends_.end();
 }
 
 bool
-IOManager::is_valid_stimulation_backend( const Name& backend_name ) const
+IOManager::is_valid_stimulation_backend( const std::string& backend_name ) const
 {
   auto backend = stimulation_backends_.find( backend_name );
   return backend != stimulation_backends_.end();
 }
 
 void
-IOManager::write( const Name& backend_name,
+IOManager::write( const std::string& backend_name,
   const RecordingDevice& device,
   const Event& event,
   const std::vector< double >& double_values,
@@ -304,7 +303,7 @@ IOManager::write( const Name& backend_name,
 }
 
 void
-IOManager::enroll_recorder( const Name& backend_name, const RecordingDevice& device, const dictionary& params )
+IOManager::enroll_recorder( const std::string& backend_name, const RecordingDevice& device, const dictionary& params )
 {
   for ( auto& it : recording_backends_ )
   {
@@ -320,14 +319,16 @@ IOManager::enroll_recorder( const Name& backend_name, const RecordingDevice& dev
 }
 
 void
-nest::IOManager::enroll_stimulator( const Name& backend_name, StimulationDevice& device, const dictionary& params )
+nest::IOManager::enroll_stimulator( const std::string& backend_name,
+  StimulationDevice& device,
+  const dictionary& params )
 {
 
-  if ( not is_valid_stimulation_backend( backend_name ) and not backend_name.toString().empty() )
+  if ( not is_valid_stimulation_backend( backend_name ) and not backend_name.empty() )
   {
     return;
   }
-  if ( backend_name.toString().empty() )
+  if ( backend_name.empty() )
   {
     for ( auto& it : stimulation_backends_ )
     {
@@ -351,28 +352,30 @@ nest::IOManager::enroll_stimulator( const Name& backend_name, StimulationDevice&
 }
 
 void
-IOManager::set_recording_value_names( const Name& backend_name,
+IOManager::set_recording_value_names( const std::string& backend_name,
   const RecordingDevice& device,
-  const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names )
+  const std::vector< std::string >& double_value_names,
+  const std::vector< std::string >& long_value_names )
 {
   recording_backends_[ backend_name ]->set_value_names( device, double_value_names, long_value_names );
 }
 
 void
-IOManager::check_recording_backend_device_status( const Name& backend_name, const dictionary& params )
+IOManager::check_recording_backend_device_status( const std::string& backend_name, const dictionary& params )
 {
   recording_backends_[ backend_name ]->check_device_status( params );
 }
 
 void
-IOManager::get_recording_backend_device_defaults( const Name& backend_name, dictionary& params )
+IOManager::get_recording_backend_device_defaults( const std::string& backend_name, dictionary& params )
 {
   recording_backends_[ backend_name ]->get_device_defaults( params );
 }
 
 void
-IOManager::get_recording_backend_device_status( const Name& backend_name, const RecordingDevice& device, dictionary& d )
+IOManager::get_recording_backend_device_status( const std::string& backend_name,
+  const RecordingDevice& device,
+  dictionary& d )
 {
   recording_backends_[ backend_name ]->get_device_status( device, d );
 }

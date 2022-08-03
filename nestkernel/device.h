@@ -29,8 +29,6 @@
 #include "nest_types.h"
 #include "node.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 namespace nest
 {
@@ -138,7 +136,7 @@ private:
 
   private:
     //! Update given Time parameter including error checking
-    static void update_( const dictionary&, const Name&, Time& );
+    static void update_( const dictionary&, const std::string&, Time& );
   };
 
 

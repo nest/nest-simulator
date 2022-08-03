@@ -64,12 +64,12 @@ DynamicRecordablesMap< aeif_cond_alpha_multisynapse >::create( aeif_cond_alpha_m
   host.insert_conductance_recordables();
 }
 
-Name
+std::string
 aeif_cond_alpha_multisynapse::get_g_receptor_name( size_t receptor )
 {
   std::stringstream receptor_name;
   receptor_name << "g_" << receptor + 1;
-  return Name( receptor_name.str() );
+  return receptor_name.str();
 }
 
 void

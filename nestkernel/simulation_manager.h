@@ -37,8 +37,6 @@
 #include "nest_time.h"
 #include "nest_types.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 namespace nest
 {

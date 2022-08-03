@@ -32,8 +32,6 @@
 #include "logging.h"
 #include "manager_interface.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 // Inclused from nestkernel:
 #include "nest_names.h"

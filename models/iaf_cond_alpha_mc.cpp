@@ -54,7 +54,7 @@
    He pointed out that the problem is avoided by defining the comp_names_
    vector with its final size. See also #348.
 */
-std::vector< Name > nest::iaf_cond_alpha_mc::comp_names_( NCOMP );
+std::vector< std::string > nest::iaf_cond_alpha_mc::comp_names_( NCOMP );
 
 /* ----------------------------------------------------------------
  * Receptor dictionary
@@ -77,26 +77,17 @@ template <>
 void
 RecordablesMap< iaf_cond_alpha_mc >::create()
 {
-  insert_(
-    Name( "V_m.s" ), &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::V_M, iaf_cond_alpha_mc::SOMA > );
-  insert_(
-    Name( "g_ex.s" ), &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::G_EXC, iaf_cond_alpha_mc::SOMA > );
-  insert_(
-    Name( "g_in.s" ), &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::G_INH, iaf_cond_alpha_mc::SOMA > );
+  insert_( "V_m.s", &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::V_M, iaf_cond_alpha_mc::SOMA > );
+  insert_( "g_ex.s", &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::G_EXC, iaf_cond_alpha_mc::SOMA > );
+  insert_( "g_in.s", &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::G_INH, iaf_cond_alpha_mc::SOMA > );
 
-  insert_(
-    Name( "V_m.p" ), &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::V_M, iaf_cond_alpha_mc::PROX > );
-  insert_(
-    Name( "g_ex.p" ), &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::G_EXC, iaf_cond_alpha_mc::PROX > );
-  insert_(
-    Name( "g_in.p" ), &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::G_INH, iaf_cond_alpha_mc::PROX > );
+  insert_( "V_m.p", &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::V_M, iaf_cond_alpha_mc::PROX > );
+  insert_( "g_ex.p", &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::G_EXC, iaf_cond_alpha_mc::PROX > );
+  insert_( "g_in.p", &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::G_INH, iaf_cond_alpha_mc::PROX > );
 
-  insert_(
-    Name( "V_m.d" ), &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::V_M, iaf_cond_alpha_mc::DIST > );
-  insert_(
-    Name( "g_ex.d" ), &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::G_EXC, iaf_cond_alpha_mc::DIST > );
-  insert_(
-    Name( "g_in.d" ), &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::G_INH, iaf_cond_alpha_mc::DIST > );
+  insert_( "V_m.d", &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::V_M, iaf_cond_alpha_mc::DIST > );
+  insert_( "g_ex.d", &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::G_EXC, iaf_cond_alpha_mc::DIST > );
+  insert_( "g_in.d", &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::G_INH, iaf_cond_alpha_mc::DIST > );
 
   insert_( names::t_ref_remaining, &iaf_cond_alpha_mc::get_r_ );
 }
@@ -337,7 +328,7 @@ nest::iaf_cond_alpha_mc::Parameters_::get( dictionary& d ) const
     dd[ names::tau_syn_in ] = tau_synI[ n ];
     dd[ names::I_e ] = I_e[ n ];
 
-    d[ comp_names_[ n ].toString() ] = dd;
+    d[ comp_names_[ n ] ] = dd;
   }
 }
 
@@ -349,15 +340,15 @@ nest::iaf_cond_alpha_mc::Parameters_::set( const dictionary& d, Node* node )
   update_value_param( d, names::V_reset, V_reset, node );
   update_value_param( d, names::t_ref, t_ref, node );
 
-  update_value_param( d, Name( names::g_sp ).toString(), g_conn[ SOMA ], node );
-  update_value_param( d, Name( names::g_pd ).toString(), g_conn[ PROX ], node );
+  update_value_param( d, names::g_sp, g_conn[ SOMA ], node );
+  update_value_param( d, names::g_pd, g_conn[ PROX ], node );
 
   // extract from sub-dictionaries
   for ( size_t n = 0; n < NCOMP; ++n )
   {
-    if ( d.known( comp_names_[ n ].toString() ) )
+    if ( d.known( comp_names_[ n ] ) )
     {
-      auto dd = d.get< dictionary >( comp_names_[ n ].toString() );
+      auto dd = d.get< dictionary >( comp_names_[ n ] );
 
       update_value_param( d, names::E_L, E_L[ n ], node );
       update_value_param( d, names::E_ex, E_ex[ n ], node );
@@ -383,11 +374,11 @@ nest::iaf_cond_alpha_mc::Parameters_::set( const dictionary& d, Node* node )
   {
     if ( C_m[ n ] <= 0 )
     {
-      throw BadProperty( "Capacitance (" + comp_names_[ n ].toString() + ") must be strictly positive." );
+      throw BadProperty( "Capacitance (" + comp_names_[ n ] + ") must be strictly positive." );
     }
     if ( tau_synE[ n ] <= 0 || tau_synI[ n ] <= 0 )
     {
-      throw BadProperty( "All time constants (" + comp_names_[ n ].toString() + ") must be strictly positive." );
+      throw BadProperty( "All time constants (" + comp_names_[ n ] + ") must be strictly positive." );
     }
   }
 }
@@ -399,8 +390,8 @@ nest::iaf_cond_alpha_mc::State_::get( dictionary& d ) const
   // Parameters_::get(), so that the per-compartment dictionaries exist
   for ( size_t n = 0; n < NCOMP; ++n )
   {
-    assert( d.known( comp_names_[ n ].toString() ) );
-    auto dd = d.get< dictionary >( comp_names_[ n ].toString() );
+    assert( d.known( comp_names_[ n ] ) );
+    auto dd = d.get< dictionary >( comp_names_[ n ] );
 
     dd[ names::V_m ] = y_[ idx( n, V_M ) ]; // Membrane potential
   }
@@ -412,9 +403,9 @@ nest::iaf_cond_alpha_mc::State_::set( const dictionary& d, const Parameters_&, N
   // extract from sub-dictionaries
   for ( size_t n = 0; n < NCOMP; ++n )
   {
-    if ( d.known( comp_names_[ n ].toString() ) )
+    if ( d.known( comp_names_[ n ] ) )
     {
-      auto dd = d.get< dictionary >( comp_names_[ n ].toString() );
+      auto dd = d.get< dictionary >( comp_names_[ n ] );
       update_value_param( d, names::V_m, y_[ idx( n, V_M ) ], node );
     }
   }
@@ -435,9 +426,9 @@ nest::iaf_cond_alpha_mc::iaf_cond_alpha_mc()
 
   // set up table of compartment names
   // comp_names_.resize(NCOMP); --- Fixed size, see comment on definition
-  comp_names_[ SOMA ] = Name( "soma" );
-  comp_names_[ PROX ] = Name( "proximal" );
-  comp_names_[ DIST ] = Name( "distal" );
+  comp_names_[ SOMA ] = "soma";
+  comp_names_[ PROX ] = "proximal";
+  comp_names_[ DIST ] = "distal";
 }
 
 nest::iaf_cond_alpha_mc::iaf_cond_alpha_mc( const iaf_cond_alpha_mc& n )

@@ -42,7 +42,7 @@ template < class D, SLIType* slt >
 class NumericDatum : public GenericDatum< D, slt >
 {
 protected:
-  static sli::pool memory;
+  static nest::pool memory;
   using GenericDatum< D, slt >::d;
 
 private:

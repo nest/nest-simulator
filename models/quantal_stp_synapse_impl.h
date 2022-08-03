@@ -42,11 +42,11 @@ namespace nest
  * int.
  */
 bool
-update_value_int( const dictionary& d, Name propname, int& prop )
+update_value_int( const dictionary& d, std::string propname, int& prop )
 {
-  if ( d.known( propname.toString() ) )
+  if ( d.known( propname ) )
   {
-    const auto value = d.at( propname.toString() );
+    const auto value = d.at( propname );
     if ( is_int( value ) )
     {
       prop = boost::any_cast< int >( value );

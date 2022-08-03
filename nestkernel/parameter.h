@@ -37,7 +37,7 @@
 #include "random_generators.h"
 
 // Includes from libnestutil:
-#include "dictutils.h"
+
 
 namespace nest
 {
@@ -100,9 +100,9 @@ public:
 
   /**
    * Applies a parameter on a single-node ID NodeCollection and given array of positions.
-   * @returns array of result values, one per position in the TokenArray.
+   * @returns array of result values, one per position in the vector.
    */
-  std::vector< double > apply( const NodeCollectionPTR&, const TokenArray& );
+  std::vector< double > apply( const NodeCollectionPTR&, const std::vector< std::vector< double > >& );
 
   /**
    * Check if the Parameter is based on spatial properties.

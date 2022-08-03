@@ -189,8 +189,8 @@ protected:
 
   // Name of the pre synaptic and postsynaptic elements for this connection
   // builder
-  Name pre_synaptic_element_name_;
-  Name post_synaptic_element_name_;
+  std::string pre_synaptic_element_name_;
+  std::string post_synaptic_element_name_;
 
   bool use_pre_synaptic_element_;
   bool use_post_synaptic_element_;
@@ -210,7 +210,7 @@ protected:
   std::vector< std::vector< dictionary > > param_dicts_;
 
 private:
-  typedef std::map< Name, ConnParameter* > ConnParameterMap;
+  typedef std::map< std::string, ConnParameter* > ConnParameterMap;
 
   //! indicate that weight and delay should not be set per synapse
   std::vector< bool > default_weight_and_delay_;
@@ -229,7 +229,7 @@ private:
   std::vector< ConnParameterMap > synapse_params_;
 
   //! synapse-specific parameters that should be skipped when we set default synapse parameters
-  std::set< Name > skip_syn_params_;
+  std::set< std::string > skip_syn_params_;
 
   /**
    * Collects all array parameters in a vector.
@@ -398,12 +398,12 @@ public:
   std::string
   get_pre_synaptic_element_name() const
   {
-    return pre_synaptic_element_name_.toString();
+    return pre_synaptic_element_name_;
   }
   std::string
   get_post_synaptic_element_name() const
   {
-    return post_synaptic_element_name_.toString();
+    return post_synaptic_element_name_;
   }
 
   /**

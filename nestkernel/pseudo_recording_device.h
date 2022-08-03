@@ -31,9 +31,6 @@
 #include "device.h"
 #include "nest_types.h"
 
-// Includes from sli:
-#include "dictdatum.h"
-#include "dictutils.h"
 
 namespace nest
 {

@@ -42,10 +42,6 @@
 #include "nest_types.h"
 #include "node_collection.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dict.h"
-#include "dictdatum.h"
 
 namespace nest
 {
@@ -79,7 +75,7 @@ public:
    * @param name which defines the type of NC to be created
    * @return a new Growth Curve object of the type indicated by name
    */
-  GrowthCurve* new_growth_curve( Name name );
+  GrowthCurve* new_growth_curve( std::string name );
 
   /**
    * Add a growth curve for MSP
@@ -213,9 +209,9 @@ SPManager::get_growthcurvedict()
 }
 
 inline GrowthCurve*
-SPManager::new_growth_curve( Name name )
+SPManager::new_growth_curve( std::string name )
 {
-  const long nc_id = growthcurvedict_.get< long >( name.toString() );
+  const long nc_id = growthcurvedict_.get< long >( name );
   return growthcurve_factories_.at( nc_id )->create();
 }
 

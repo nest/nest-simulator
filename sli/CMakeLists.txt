@@ -18,7 +18,6 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 set( sli_sources
-    allocator.h allocator.cpp
     aggregatedatum.h
     arraydatum.cc arraydatum.h
     booldatum.cc booldatum.h

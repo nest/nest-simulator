@@ -41,8 +41,6 @@
 #include "vp_manager.h"
 #include "vp_manager_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {

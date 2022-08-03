@@ -49,8 +49,8 @@ nest::RecordingDevice::set_initialized_()
 }
 
 void
-nest::RecordingDevice::calibrate( const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names )
+nest::RecordingDevice::calibrate( const std::vector< std::string >& double_value_names,
+  const std::vector< std::string >& long_value_names )
 {
   Device::calibrate();
   kernel().io_manager.set_recording_value_names( P_.record_to_, *this, double_value_names, long_value_names );
@@ -72,7 +72,7 @@ void
 nest::RecordingDevice::Parameters_::get( dictionary& d ) const
 {
   d[ names::label ] = label_;
-  d[ names::record_to ] = record_to_.toString();
+  d[ names::record_to ] = record_to_;
 }
 
 void

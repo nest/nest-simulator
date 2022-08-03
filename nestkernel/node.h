@@ -41,8 +41,6 @@
 
 #include "deprecation_warning.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 /** @file node.h
  * Declarations for base class Node
@@ -179,14 +177,14 @@ public:
 
   /**
    * Return the element type of the node.
-   * The returned Name is a free label describing the class of network
+   * The returned string is a free label describing the class of network
    * elements a node belongs to. Currently used values are "neuron",
    * "recorder", "stimulator", and "other", which are all defined as
-   * static Name objects in the names namespace.
+   * static string objects in the names namespace.
    * This function is overwritten with a corresponding value in the
    * derived classes
    */
-  virtual Name get_element_type() const;
+  virtual std::string get_element_type() const;
 
   /**
    * Return global Network ID.
@@ -588,7 +586,7 @@ public:
    * Return 0.0 if not overridden
    * @ingroup SP_functions
    */
-  virtual double get_synaptic_elements( Name ) const
+  virtual double get_synaptic_elements( std::string ) const
   {
     return 0.0;
   }
@@ -598,7 +596,7 @@ public:
    * Return 0 if not overridden
    * @ingroup SP_functions
    */
-  virtual int get_synaptic_elements_vacant( Name ) const
+  virtual int get_synaptic_elements_vacant( std::string ) const
   {
     return 0;
   }
@@ -608,7 +606,7 @@ public:
    * Return 0 if not overridden
    * @ingroup SP_functions
    */
-  virtual int get_synaptic_elements_connected( Name ) const
+  virtual int get_synaptic_elements_connected( std::string ) const
   {
     return 0;
   }
@@ -618,10 +616,10 @@ public:
    * Return an empty map if not overridden
    * @ingroup SP_functions
    */
-  virtual std::map< Name, double >
+  virtual std::map< std::string, double >
   get_synaptic_elements() const
   {
-    return std::map< Name, double >();
+    return std::map< std::string, double >();
   }
 
   /**
@@ -644,11 +642,11 @@ public:
    * Is used to update the number of connected
    * synaptic elements (SynapticElement::z_connected_) when a synapse
    * is formed or deleted.
-   * @param type Name, name of the synaptic element to connect
+   * @param type std::string, name of the synaptic element to connect
    * @param n int number of new connections of the given type
    * @ingroup SP_functions
    */
-  virtual void connect_synaptic_element( Name, int ) {};
+  virtual void connect_synaptic_element( std::string, int ) {};
 
   /**
    * return the Kminus value at t (in ms).
@@ -959,7 +957,7 @@ Node::is_proxy() const
   return false;
 }
 
-inline Name
+inline std::string
 Node::get_element_type() const
 {
   return names::neuron;

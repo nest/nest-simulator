@@ -182,7 +182,7 @@ ModelsModule::~ModelsModule()
 const std::string
 ModelsModule::name( void ) const
 {
-  return std::string( "NEST Standard Models Module" ); // Return name of the module
+  return "NEST Standard Models Module"; // Return name of the module
 }
 
 //-------------------------------------------------------------------------------------

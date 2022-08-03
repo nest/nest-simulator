@@ -53,7 +53,7 @@
    He pointed out that the problem is avoided by defining the comp_names_
    vector with its final size. See also #348.
 */
-std::vector< Name > nest::pp_cond_exp_mc_urbanczik::comp_names_( NCOMP );
+std::vector< std::string > nest::pp_cond_exp_mc_urbanczik::comp_names_( NCOMP );
 
 /* ----------------------------------------------------------------
  * Receptor dictionary
@@ -77,17 +77,17 @@ template <>
 void
 RecordablesMap< pp_cond_exp_mc_urbanczik >::create()
 {
-  insert_( Name( "V_m.s" ),
+  insert_( "V_m.s",
     &pp_cond_exp_mc_urbanczik::get_y_elem_< pp_cond_exp_mc_urbanczik::State_::V_M, pp_cond_exp_mc_urbanczik::SOMA > );
-  insert_( Name( "g_ex.s" ),
+  insert_( "g_ex.s",
     &pp_cond_exp_mc_urbanczik::get_y_elem_< pp_cond_exp_mc_urbanczik::State_::G_EXC, pp_cond_exp_mc_urbanczik::SOMA > );
-  insert_( Name( "g_in.s" ),
+  insert_( "g_in.s",
     &pp_cond_exp_mc_urbanczik::get_y_elem_< pp_cond_exp_mc_urbanczik::State_::G_INH, pp_cond_exp_mc_urbanczik::SOMA > );
-  insert_( Name( "V_m.p" ),
+  insert_( "V_m.p",
     &pp_cond_exp_mc_urbanczik::get_y_elem_< pp_cond_exp_mc_urbanczik::State_::V_M, pp_cond_exp_mc_urbanczik::DEND > );
-  insert_( Name( "I_ex.p" ),
+  insert_( "I_ex.p",
     &pp_cond_exp_mc_urbanczik::get_y_elem_< pp_cond_exp_mc_urbanczik::State_::I_EXC, pp_cond_exp_mc_urbanczik::DEND > );
-  insert_( Name( "I_in.p" ),
+  insert_( "I_in.p",
     &pp_cond_exp_mc_urbanczik::get_y_elem_< pp_cond_exp_mc_urbanczik::State_::I_INH, pp_cond_exp_mc_urbanczik::DEND > );
 }
 }
@@ -353,7 +353,7 @@ nest::pp_cond_exp_mc_urbanczik::Parameters_::get( dictionary& d ) const
     dd[ names::tau_syn_in ] = urbanczik_params.tau_syn_in[ n ];
     dd[ names::I_e ] = I_e[ n ];
 
-    d[ comp_names_[ n ].toString() ] = dd;
+    d[ comp_names_[ n ] ] = dd;
   }
 }
 
@@ -367,15 +367,15 @@ nest::pp_cond_exp_mc_urbanczik::Parameters_::set( const dictionary& d )
   d.update_value( names::beta, urbanczik_params.beta );
   d.update_value( names::theta, urbanczik_params.theta );
 
-  d.update_value( Name( names::g_sp ).toString(), urbanczik_params.g_conn[ SOMA ] );
-  d.update_value( Name( names::g_ps ).toString(), urbanczik_params.g_conn[ DEND ] );
+  d.update_value( names::g_sp, urbanczik_params.g_conn[ SOMA ] );
+  d.update_value( names::g_ps, urbanczik_params.g_conn[ DEND ] );
 
   // extract from sub-dictionaries
   for ( size_t n = 0; n < NCOMP; ++n )
   {
-    if ( d.known( comp_names_[ n ].toString() ) )
+    if ( d.known( comp_names_[ n ] ) )
     {
-      auto dd = d.get< dictionary >( comp_names_[ n ].toString() );
+      auto dd = d.get< dictionary >( comp_names_[ n ] );
 
       dd.update_value( names::E_L, urbanczik_params.E_L[ n ] );
       dd.update_value( names::E_ex, E_ex[ n ] );
@@ -407,7 +407,7 @@ nest::pp_cond_exp_mc_urbanczik::Parameters_::set( const dictionary& d )
   {
     if ( urbanczik_params.C_m[ n ] <= 0 )
     {
-      throw BadProperty( "Capacitance (" + comp_names_[ n ].toString() + ") must be strictly positive." );
+      throw BadProperty( "Capacitance (" + comp_names_[ n ] + ") must be strictly positive." );
     }
 
     if ( urbanczik_params.tau_syn_ex[ n ] <= 0 || urbanczik_params.tau_syn_in[ n ] <= 0 )
@@ -424,8 +424,8 @@ nest::pp_cond_exp_mc_urbanczik::State_::get( dictionary& d ) const
   // Parameters_::get(), so that the per-compartment dictionaries exist
   for ( size_t n = 0; n < NCOMP; ++n )
   {
-    assert( d.known( comp_names_[ n ].toString() ) );
-    auto dd = d.get< dictionary >( comp_names_[ n ].toString() );
+    assert( d.known( comp_names_[ n ] ) );
+    auto dd = d.get< dictionary >( comp_names_[ n ] );
 
     dd[ names::V_m ] = y_[ idx( n, V_M ) ]; // Membrane potential
   }
@@ -437,9 +437,9 @@ nest::pp_cond_exp_mc_urbanczik::State_::set( const dictionary& d, const Paramete
   // extract from sub-dictionaries
   for ( size_t n = 0; n < NCOMP; ++n )
   {
-    if ( d.known( comp_names_[ n ].toString() ) )
+    if ( d.known( comp_names_[ n ] ) )
     {
-      auto dd = d.get< dictionary >( comp_names_[ n ].toString() );
+      auto dd = d.get< dictionary >( comp_names_[ n ] );
       dd.update_value( names::V_m, y_[ idx( n, V_M ) ] );
     }
   }
@@ -460,8 +460,8 @@ nest::pp_cond_exp_mc_urbanczik::pp_cond_exp_mc_urbanczik()
 
   // set up table of compartment names
   // comp_names_.resize(NCOMP); --- Fixed size, see comment on definition
-  comp_names_[ SOMA ] = Name( "soma" );
-  comp_names_[ DEND ] = Name( "dendritic" );
+  comp_names_[ SOMA ] = "soma";
+  comp_names_[ DEND ] = "dendritic";
   UrbanczikArchivingNode< pp_cond_exp_mc_urbanczik_parameters >::urbanczik_params = &P_.urbanczik_params;
 }
 

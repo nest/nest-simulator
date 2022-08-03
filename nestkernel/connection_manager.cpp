@@ -55,10 +55,6 @@
 #include "target_table_devices_impl.h"
 #include "vp_manager_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
-#include "token.h"
-#include "tokenutils.h"
 
 nest::ConnectionManager::ConnectionManager()
   : connruledict_()
@@ -417,38 +413,6 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
 
   cb->connect();
   delete cb;
-}
-
-void
-nest::ConnectionManager::connect( TokenArray sources, TokenArray targets, const dictionary& syn_spec )
-{
-  // Get synapse id
-  size_t syn_id = 0;
-  if ( syn_spec.known( names::model ) )
-  {
-    std::string synmodel_name = syn_spec.get< std::string >( names::model );
-    const auto& syndict = kernel().model_manager.get_synapsedict();
-
-    if ( syndict.known( synmodel_name ) )
-    {
-      syn_id = static_cast< size_t >( syndict.get< synindex >( synmodel_name ) );
-    }
-    else
-    {
-      throw UnknownModelName( synmodel_name );
-    }
-  }
-  // Connect all sources to all targets
-  for ( auto&& source : sources )
-  {
-    auto source_node = kernel().node_manager.get_node_or_proxy( source );
-    for ( auto&& target : targets )
-    {
-      auto target_node = kernel().node_manager.get_node_or_proxy( target );
-      auto target_thread = target_node->get_thread();
-      connect_( *source_node, *target_node, source, target_thread, syn_id, syn_spec );
-    }
-  }
 }
 
 void

@@ -61,12 +61,12 @@ DynamicRecordablesMap< iaf_psc_exp_multisynapse >::create( iaf_psc_exp_multisyna
   host.insert_current_recordables();
 }
 
-Name
+std::string
 iaf_psc_exp_multisynapse::get_i_syn_name( size_t elem )
 {
   std::stringstream i_syn_name;
   i_syn_name << "I_syn_" << elem + 1;
-  return Name( i_syn_name.str() );
+  return i_syn_name.str();
 }
 
 void

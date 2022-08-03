@@ -32,9 +32,6 @@
 #include "nest_types.h"
 #include "nestmodule.h"
 
-// Includes from sli:
-#include "dictdatum.h"
-#include "dictutils.h"
 
 // Includes from spatial:
 #include "position.h"

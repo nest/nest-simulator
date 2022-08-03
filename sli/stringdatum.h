@@ -66,7 +66,7 @@
 */
 #ifndef HAVE_STATIC_TEMPLATE_DECLARATION_FAILS
 template <>
-sli::pool AggregateDatum< std::string, &SLIInterpreter::Stringtype >::memory;
+nest::pool AggregateDatum< std::string, &SLIInterpreter::Stringtype >::memory;
 #endif
 
 

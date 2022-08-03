@@ -40,9 +40,9 @@ namespace nest
 
 template < class ModelT >
 index
-ModelManager::register_node_model( const Name& name, bool private_model, std::string deprecation_info )
+ModelManager::register_node_model( const std::string& name, bool private_model, std::string deprecation_info )
 {
-  if ( not private_model and modeldict_.known( name.toString() ) )
+  if ( not private_model and modeldict_.known( name ) )
   {
     std::string msg = String::compose(
       "A model called '%1' already exists.\n"
@@ -51,7 +51,7 @@ ModelManager::register_node_model( const Name& name, bool private_model, std::st
     throw NamingConflict( msg );
   }
 
-  Model* model = new GenericModel< ModelT >( name.toString(), deprecation_info );
+  Model* model = new GenericModel< ModelT >( name, deprecation_info );
   return register_node_model_( model, private_model );
 }
 

@@ -46,9 +46,6 @@
 #include "source.h"
 #include "spikecounter.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dictutils.h"
 
 namespace nest
 {
@@ -283,8 +280,7 @@ public:
         const index current_target_node_id = C_[ lcid ].get_target( tid )->get_node_id();
         if ( current_target_node_id == target_node_id or target_node_id == 0 )
         {
-          conns.push_back(
-            ConnectionDatum( ConnectionID( source_node_id, current_target_node_id, tid, syn_id_, lcid ) ) );
+          conns.push_back( ConnectionID( source_node_id, current_target_node_id, tid, syn_id_, lcid ) );
         }
       }
     }
@@ -306,8 +302,7 @@ public:
         if ( std::find( target_neuron_node_ids.begin(), target_neuron_node_ids.end(), current_target_node_id )
           != target_neuron_node_ids.end() )
         {
-          conns.push_back(
-            ConnectionDatum( ConnectionID( source_node_id, current_target_node_id, tid, syn_id_, lcid ) ) );
+          conns.push_back( ConnectionID( source_node_id, current_target_node_id, tid, syn_id_, lcid ) );
         }
       }
     }

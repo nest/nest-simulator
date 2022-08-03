@@ -23,8 +23,8 @@
 #include "nest_datums.h"
 
 // instantiate memory management pool
-template <>
-sli::pool ConnectionDatum::memory( sizeof( nest::ConnectionID ), 10000, 1 );
+// template <>
+// nest::pool ConnectionDatum::memory( sizeof( nest::ConnectionID ), 10000, 1 );
 
 // simple type printing
 template <>
@@ -39,7 +39,7 @@ template <>
 void
 ConnectionDatum::pprint( std::ostream& out ) const
 {
-  print_me( out );
+  pprint( out );
 }
 
 template <>

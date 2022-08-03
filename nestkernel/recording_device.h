@@ -35,9 +35,6 @@
 #include "node.h"
 #include "recording_backend.h"
 
-// Includes from sli:
-#include "dictdatum.h"
-#include "dictutils.h"
 
 namespace nest
 {
@@ -134,7 +131,7 @@ public:
 
   using Device::calibrate;
   using Node::calibrate;
-  void calibrate( const std::vector< Name >&, const std::vector< Name >& );
+  void calibrate( const std::vector< std::string >&, const std::vector< std::string >& );
 
   bool is_active( Time const& T ) const override;
 
@@ -160,8 +157,8 @@ protected:
 private:
   struct Parameters_
   {
-    std::string label_; //!< A user-defined label for symbolic device names.
-    Name record_to_;    //!< The name of the recording backend to use
+    std::string label_;     //!< A user-defined label for symbolic device names.
+    std::string record_to_; //!< The name of the recording backend to use
 
     Parameters_();
     Parameters_( const Parameters_& ) = default;

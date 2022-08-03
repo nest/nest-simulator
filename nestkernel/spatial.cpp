@@ -118,14 +118,14 @@ create_layer( const dictionary& layer_dict )
   return layer;
 }
 
-ArrayDatum
+std::vector< std::vector< double > >
 get_position( NodeCollectionPTR layer_nc )
 {
   AbstractLayerPTR layer = get_layer( layer_nc );
   NodeCollectionMetadataPTR meta = layer_nc->get_metadata();
   index first_node_id = meta->get_first_node_id();
 
-  ArrayDatum result;
+  std::vector< std::vector< double > > result;
   result.reserve( layer_nc->size() );
 
   for ( NodeCollection::const_iterator it = layer_nc->begin(); it < layer_nc->end(); ++it )
@@ -138,7 +138,7 @@ get_position( NodeCollectionPTR layer_nc )
     }
 
     const long lid = node_id - first_node_id;
-    Token arr = layer->get_position_vector( lid );
+    const auto arr = layer->get_position_vector( lid );
 
     result.push_back( arr );
   }
@@ -174,17 +174,17 @@ get_position( const index node_id )
   return pos_vec;
 }
 
-ArrayDatum
+std::vector< std::vector< double > >
 displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
 {
-  ArrayDatum layer_to_positions = get_position( layer_to_nc );
+  auto layer_to_positions = get_position( layer_to_nc );
 
   AbstractLayerPTR layer_from = get_layer( layer_from_nc );
   NodeCollectionMetadataPTR meta = layer_from_nc->get_metadata();
   index first_node_id = meta->get_first_node_id();
 
   int counter = 0;
-  ArrayDatum result;
+  std::vector< std::vector< double > > result;
 
   // If layer_from has size equal to one, but layer_to do not, we want the
   // displacement between every node in layer_to against the one in layer_from.
@@ -199,11 +199,9 @@ displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
     const long lid = node_id - first_node_id;
 
     // If layer_from has size 1, we need to iterate over the layer_to positions
-    for ( Token const* it = layer_to_positions.begin(); it != layer_to_positions.end(); ++it )
+    for ( auto& pos : layer_to_positions )
     {
-      std::vector< double > pos = getValue< std::vector< double > >( *it );
-      Token disp = layer_from->compute_displacement( pos, lid );
-      result.push_back( disp );
+      result.push_back( layer_from->compute_displacement( pos, lid ) );
     }
   }
   else
@@ -217,10 +215,8 @@ displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
       }
 
       const long lid = node_id - first_node_id;
-
-      std::vector< double > pos = getValue< std::vector< double > >( layer_to_positions[ counter ] );
-      Token disp = layer_from->compute_displacement( pos, lid );
-      result.push_back( disp );
+      const auto pos = layer_to_positions[ counter ];
+      result.push_back( layer_from->compute_displacement( pos, lid ) );
 
       // We only iterate the layer_to positions vector if it has more than one
       // element.
@@ -234,15 +230,15 @@ displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
   return result;
 }
 
-ArrayDatum
-displacement( NodeCollectionPTR layer_nc, const ArrayDatum point )
+std::vector< std::vector< double > >
+displacement( NodeCollectionPTR layer_nc, const std::vector< std::vector< double > >& point )
 {
   AbstractLayerPTR layer = get_layer( layer_nc );
   NodeCollectionMetadataPTR meta = layer_nc->get_metadata();
   index first_node_id = meta->get_first_node_id();
 
   int counter = 0;
-  ArrayDatum result;
+  std::vector< std::vector< double > > result;
   for ( NodeCollection::const_iterator it = layer_nc->begin(); it != layer_nc->end(); ++it )
   {
     index node_id = ( *it ).node_id;
@@ -253,9 +249,8 @@ displacement( NodeCollectionPTR layer_nc, const ArrayDatum point )
 
     const long lid = node_id - first_node_id;
 
-    std::vector< double > pos = getValue< std::vector< double > >( point[ counter ] );
-    Token disp = layer->compute_displacement( pos, lid );
-    result.push_back( disp );
+    const auto pos = point[ counter ];
+    result.push_back( layer->compute_displacement( pos, lid ) );
 
     // We only iterate the positions vector if it has more than one
     // element.
@@ -270,7 +265,7 @@ displacement( NodeCollectionPTR layer_nc, const ArrayDatum point )
 std::vector< double >
 distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
 {
-  ArrayDatum layer_to_positions = get_position( layer_to_nc );
+  auto layer_to_positions = get_position( layer_to_nc );
 
   AbstractLayerPTR layer_from = get_layer( layer_from_nc );
   NodeCollectionMetadataPTR meta = layer_from_nc->get_metadata();
@@ -292,11 +287,9 @@ distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
     const long lid = node_id - first_node_id;
 
     // If layer_from has size 1, we need to iterate over the layer_to positions
-    for ( Token const* it = layer_to_positions.begin(); it != layer_to_positions.end(); ++it )
+    for ( auto& pos : layer_to_positions )
     {
-      std::vector< double > pos = getValue< std::vector< double > >( *it );
-      double disp = layer_from->compute_distance( pos, lid );
-      result.push_back( disp );
+      result.push_back( layer_from->compute_distance( pos, lid ) );
     }
   }
   else
@@ -311,8 +304,8 @@ distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
 
       const long lid = node_id - first_node_id;
 
-      std::vector< double > pos = getValue< std::vector< double > >( layer_to_positions[ counter ] );
-      double disp = layer_from->compute_distance( pos, lid );
+      const auto pos = layer_to_positions[ counter ];
+      const double disp = layer_from->compute_distance( pos, lid );
       result.push_back( disp );
 
       // We only iterate the layer_to positions vector if it has more than one
@@ -328,7 +321,7 @@ distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
 }
 
 std::vector< double >
-distance( NodeCollectionPTR layer_nc, const ArrayDatum point )
+distance( NodeCollectionPTR layer_nc, const std::vector< std::vector< double > >& point )
 {
   AbstractLayerPTR layer = get_layer( layer_nc );
   NodeCollectionMetadataPTR meta = layer_nc->get_metadata();
@@ -346,7 +339,7 @@ distance( NodeCollectionPTR layer_nc, const ArrayDatum point )
 
     const long lid = node_id - first_node_id;
 
-    std::vector< double > pos = getValue< std::vector< double > >( point[ counter ] );
+    const auto pos = point[ counter ];
     double disp = layer->compute_distance( pos, lid );
     result.push_back( disp );
 
@@ -361,21 +354,19 @@ distance( NodeCollectionPTR layer_nc, const ArrayDatum point )
 }
 
 std::vector< double >
-distance( const ArrayDatum conns )
+distance( const std::vector< ConnectionDatum >& conns )
 {
   std::vector< double > result;
 
   size_t num_conns = conns.size();
   result.reserve( num_conns );
 
-  for ( size_t conn_indx = 0; conn_indx < num_conns; ++conn_indx )
+  for ( auto& conn_id : conns )
   {
-    ConnectionDatum conn_id = getValue< ConnectionDatum >( conns.get( conn_indx ) );
-
-    index src = conn_id.get_source_node_id();
+    index src = conn_id->get_source_node_id();
     auto src_position = get_position( src );
 
-    index trgt = conn_id.get_target_node_id();
+    index trgt = conn_id->get_target_node_id();
 
     if ( not kernel().node_manager.is_local_node_id( trgt ) )
     {
@@ -416,7 +407,7 @@ create_mask( const dictionary& mask_dict )
   return datum;
 }
 
-BoolDatum
+bool
 inside( const std::vector< double >& point, const MaskDatum& mask )
 {
   return mask->inside( point );
@@ -457,13 +448,13 @@ connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const 
 }
 
 void
-dump_layer_nodes( NodeCollectionPTR layer_nc, OstreamDatum& out )
+dump_layer_nodes( NodeCollectionPTR layer_nc, std::ostream& out )
 {
   AbstractLayerPTR layer = get_layer( layer_nc );
 
-  if ( out->good() )
+  if ( out.good() )
   {
-    layer->dump_nodes( *out );
+    layer->dump_nodes( out );
   }
 }
 
@@ -471,14 +462,14 @@ void
 dump_layer_connections( const Token& syn_model,
   NodeCollectionPTR source_layer_nc,
   NodeCollectionPTR target_layer_nc,
-  OstreamDatum& out )
+  std::ostream& out )
 {
   AbstractLayerPTR source_layer = get_layer( source_layer_nc );
   AbstractLayerPTR target_layer = get_layer( target_layer_nc );
 
-  if ( out->good() )
+  if ( out.good() )
   {
-    source_layer->dump_connections( *out, source_layer_nc, target_layer, syn_model );
+    source_layer->dump_connections( out, source_layer_nc, target_layer, syn_model );
   }
 }
 

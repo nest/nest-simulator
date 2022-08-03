@@ -29,8 +29,6 @@
 // Includes from nestkernel:
 #include "nest_types.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 #ifdef _OPENMP
 // C includes:

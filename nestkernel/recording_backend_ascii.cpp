@@ -27,8 +27,6 @@
 #include "recording_device.h"
 #include "vp_manager_impl.h"
 
-// includes from sli:
-#include "dictutils.h"
 
 #include "recording_backend_ascii.h"
 
@@ -88,8 +86,8 @@ nest::RecordingBackendASCII::disenroll( const RecordingDevice& device )
 
 void
 nest::RecordingBackendASCII::set_value_names( const RecordingDevice& device,
-  const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names )
+  const std::vector< std::string >& double_value_names,
+  const std::vector< std::string >& long_value_names )
 {
   const thread t = device.get_thread();
   const thread node_id = device.get_node_id();
@@ -232,8 +230,8 @@ nest::RecordingBackendASCII::DeviceData::DeviceData( std::string modelname, std:
 }
 
 void
-nest::RecordingBackendASCII::DeviceData::set_value_names( const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names )
+nest::RecordingBackendASCII::DeviceData::set_value_names( const std::vector< std::string >& double_value_names,
+  const std::vector< std::string >& long_value_names )
 {
   double_value_names_ = double_value_names;
   long_value_names_ = long_value_names;

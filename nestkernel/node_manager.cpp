@@ -39,8 +39,6 @@
 #include "vp_manager.h"
 #include "vp_manager_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {
@@ -309,7 +307,7 @@ NodeManager::add_music_nodes_( Model& model, index min_node_id, index max_node_i
 NodeCollectionPTR
 NodeManager::get_nodes( const dictionary& params, const bool local_only )
 {
-  std::vector< long > nodes;
+  std::vector< size_t > nodes;
 
   if ( params.empty() )
   {
@@ -363,7 +361,7 @@ NodeManager::get_nodes( const dictionary& params, const bool local_only )
 
   if ( not local_only )
   {
-    std::vector< long > globalnodes;
+    std::vector< size_t > globalnodes;
     kernel().mpi_manager.communicate( nodes, globalnodes );
 
     for ( size_t i = 0; i < globalnodes.size(); ++i )
@@ -376,14 +374,13 @@ NodeManager::get_nodes( const dictionary& params, const bool local_only )
 
     // get rid of any multiple entries
     std::sort( nodes.begin(), nodes.end() );
-    std::vector< long >::iterator it;
+    std::vector< size_t >::iterator it;
     it = std::unique( nodes.begin(), nodes.end() );
     nodes.resize( it - nodes.begin() );
   }
 
   std::sort( nodes.begin(), nodes.end() ); // ensure nodes are sorted prior to creating the NodeCollection
-  IntVectorDatum nodes_datum( nodes );
-  NodeCollectionDatum nodecollection( NodeCollection::create( nodes_datum ) );
+  NodeCollectionDatum nodecollection( NodeCollection::create( nodes ) );
 
   return std::move( nodecollection );
 }

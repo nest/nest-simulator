@@ -28,7 +28,7 @@
 // initialization of static members requires template<>
 // see Stroustrup C.13.1 --- HEP 2001-08-09
 template <>
-sli::pool NumericDatum< double, &SLIInterpreter::Doubletype >::memory( sizeof( DoubleDatum ), 1024, 1 );
+nest::pool NumericDatum< double, &SLIInterpreter::Doubletype >::memory( sizeof( DoubleDatum ), 1024, 1 );
 
 template <>
 void

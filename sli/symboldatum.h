@@ -45,7 +45,7 @@
 */
 #ifndef HAVE_STATIC_TEMPLATE_DECLARATION_FAILS
 template <>
-sli::pool AggregateDatum< Name, &SLIInterpreter::Symboltype >::memory;
+nest::pool AggregateDatum< Name, &SLIInterpreter::Symboltype >::memory;
 #endif
 
 class SymbolDatum : public AggregateDatum< Name, &SLIInterpreter::Symboltype >

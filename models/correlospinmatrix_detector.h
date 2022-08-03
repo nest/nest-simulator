@@ -144,7 +144,7 @@ public:
     return true;
   }
 
-  Name
+  std::string
   get_element_type() const
   {
     return names::recorder;

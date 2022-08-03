@@ -45,11 +45,11 @@
 
 #ifndef HAVE_STATIC_TEMPLATE_DECLARATION_FAILS
 template <>
-sli::pool AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >::memory;
+nest::pool AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >::memory;
 template <>
-sli::pool AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::memory;
+nest::pool AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::memory;
 template <>
-sli::pool AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::memory;
+nest::pool AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::memory;
 #endif
 
 template <>

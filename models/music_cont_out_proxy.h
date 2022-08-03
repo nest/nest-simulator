@@ -174,10 +174,10 @@ private:
     Parameters_();                     //!< Sets default parameter values
     Parameters_( const Parameters_& ); //!< Copy constructor for parameter values
 
-    Time interval_;                   //!< sampling interval, in ms
-    std::string port_name_;           //!< the name of MUSIC port to connect to
-    std::vector< Name > record_from_; //!< recordables to record from
-    NodeCollectionPTR targets_;       //!< nodes to be observed
+    Time interval_;                          //!< sampling interval, in ms
+    std::string port_name_;                  //!< the name of MUSIC port to connect to
+    std::vector< std::string > record_from_; //!< recordables to record from
+    NodeCollectionPTR targets_;              //!< nodes to be observed
 
     void get( dictionary& ) const;                                              //!< Store current values in dictionary
     void set( const dictionary&, const Node&, const State_&, const Buffers_& ); //!< Set values from dictionary

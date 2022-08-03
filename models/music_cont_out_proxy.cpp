@@ -103,7 +103,7 @@ nest::music_cont_out_proxy::Parameters_::get( dictionary& d ) const
 
   for ( size_t j = 0; j < record_from_.size(); ++j )
   {
-    ad_record_from.push_back( record_from_[ j ].toString() );
+    ad_record_from.push_back( record_from_[ j ] );
   }
 
   d[ names::record_from ] = ad_record_from;
@@ -156,7 +156,7 @@ nest::music_cont_out_proxy::Parameters_::set( const dictionary& d,
     ArrayDatum ad = d.get< ArrayDatum >( names::record_from );
     for ( Token* t = ad.begin(); t != ad.end(); ++t )
     {
-      record_from_.push_back( Name( getValue< std::string >( *t ) ) );
+      record_from_.push_back( getValue< std::string >( *t ) );
     }
   }
 

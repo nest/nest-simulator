@@ -34,8 +34,6 @@
 // Includes from nestkernel:
 #include "node.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {
@@ -88,8 +86,6 @@ public:
    * 'administrative' purposes.
    */
   Node* allocate( thread t );
-
-  void free( thread t, Node* );
 
   /**
    * Deletes all nodes which belong to this model.
@@ -225,7 +221,7 @@ private:
   /**
    * Initialize the pool allocator with the Node specific values.
    */
-  virtual void init_memory_( sli::pool& ) = 0;
+  virtual void init_memory_( pool& ) = 0;
 
   /**
    * Allocate a new object at the specified memory position.
@@ -250,7 +246,7 @@ private:
   /**
    * Memory for all nodes sorted by threads.
    */
-  std::vector< sli::pool > memory_;
+  std::vector< pool > memory_;
 };
 
 
@@ -259,13 +255,6 @@ Model::allocate( thread t )
 {
   assert( ( size_t ) t < memory_.size() );
   return allocate_( memory_[ t ].alloc() );
-}
-
-inline void
-Model::free( thread t, Node* n )
-{
-  assert( ( size_t ) t < memory_.size() );
-  memory_[ t ].free( n );
 }
 
 inline std::string

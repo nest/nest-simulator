@@ -160,7 +160,7 @@ public:
     return true;
   }
 
-  Name
+  std::string
   get_element_type() const override
   {
     return names::stimulator;

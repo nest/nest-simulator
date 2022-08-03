@@ -59,7 +59,7 @@ template < class C, SLIType* slt >
 class AggregateDatum : public TypedDatum< slt >, public C
 {
 protected:
-  static sli::pool memory;
+  static nest::pool memory;
 
 private:
   virtual Datum*

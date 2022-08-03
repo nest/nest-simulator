@@ -180,29 +180,29 @@ ModelManager::get_status( dictionary& dict )
 }
 
 index
-ModelManager::copy_model( Name old_name, Name new_name, dictionary params )
+ModelManager::copy_model( std::string old_name, std::string new_name, dictionary params )
 {
-  if ( modeldict_.known( new_name.toString() ) or synapsedict_.known( new_name.toString() ) )
+  if ( modeldict_.known( new_name ) or synapsedict_.known( new_name ) )
   {
-    throw NewModelNameExists( new_name.toString() );
+    throw NewModelNameExists( new_name );
   }
 
   index new_id;
-  if ( modeldict_.known( old_name.toString() ) )
+  if ( modeldict_.known( old_name ) )
   {
-    index old_id = modeldict_.get< index >( old_name.toString() );
+    index old_id = modeldict_.get< index >( old_name );
     new_id = copy_node_model_( old_id, new_name );
     set_node_defaults_( new_id, params );
   }
-  else if ( synapsedict_.known( old_name.toString() ) )
+  else if ( synapsedict_.known( old_name ) )
   {
-    index old_id = synapsedict_.get< synindex >( old_name.toString() );
+    index old_id = synapsedict_.get< synindex >( old_name );
     new_id = copy_synapse_model_( old_id, new_name );
     set_synapse_defaults_( new_id, params );
   }
   else
   {
-    throw UnknownModelName( old_name.toString() );
+    throw UnknownModelName( old_name );
   }
 
   return new_id;
@@ -236,16 +236,16 @@ ModelManager::register_node_model_( Model* model, bool private_model )
 }
 
 index
-ModelManager::copy_node_model_( index old_id, Name new_name )
+ModelManager::copy_node_model_( index old_id, std::string new_name )
 {
   Model* old_model = get_model( old_id );
   old_model->deprecation_warning( "CopyModel" );
 
-  Model* new_model = old_model->clone( new_name.toString() );
+  Model* new_model = old_model->clone( new_name );
   models_.push_back( new_model );
 
   index new_id = models_.size() - 1;
-  modeldict_[ new_name.toString() ] = new_id;
+  modeldict_[ new_name ] = new_id;
 
 #pragma omp parallel
   {
@@ -258,7 +258,7 @@ ModelManager::copy_node_model_( index old_id, Name new_name )
 }
 
 index
-ModelManager::copy_synapse_model_( index old_id, Name new_name )
+ModelManager::copy_synapse_model_( index old_id, std::string new_name )
 {
   size_t new_id = prototypes_[ 0 ].size();
 
@@ -283,11 +283,11 @@ ModelManager::copy_synapse_model_( index old_id, Name new_name )
 
   for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
   {
-    prototypes_[ t ].push_back( get_synapse_prototype( old_id ).clone( new_name.toString() ) );
+    prototypes_[ t ].push_back( get_synapse_prototype( old_id ).clone( new_name ) );
     prototypes_[ t ][ new_id ]->set_syn_id( new_id );
   }
 
-  synapsedict_[ new_name.toString() ] = static_cast< synindex >( new_id );
+  synapsedict_[ new_name ] = static_cast< synindex >( new_id );
 
   kernel().connection_manager.resize_connections();
   return new_id;
@@ -295,22 +295,22 @@ ModelManager::copy_synapse_model_( index old_id, Name new_name )
 
 
 void
-ModelManager::set_model_defaults( Name name, dictionary params )
+ModelManager::set_model_defaults( std::string name, dictionary params )
 {
   index id;
-  if ( modeldict_.known( name.toString() ) )
+  if ( modeldict_.known( name ) )
   {
-    id = modeldict_.get< index >( name.toString() );
+    id = modeldict_.get< index >( name );
     set_node_defaults_( id, params );
   }
-  else if ( synapsedict_.known( name.toString() ) )
+  else if ( synapsedict_.known( name ) )
   {
-    id = synapsedict_.get< synindex >( name.toString() );
+    id = synapsedict_.get< synindex >( name );
     set_synapse_defaults_( id, params );
   }
   else
   {
-    throw UnknownModelName( name.toString() );
+    throw UnknownModelName( name );
   }
 
   model_defaults_modified_ = true;
@@ -368,9 +368,9 @@ ModelManager::set_synapse_defaults_( index model_id, const dictionary& params )
 // TODO: replace int with index and return value -1 with invalid_index, also
 // change all pertaining code
 int
-ModelManager::get_model_id( const Name name ) const
+ModelManager::get_model_id( const std::string name ) const
 {
-  const Name model_name( name );
+  const std::string model_name( name );
   for ( int i = 0; i < ( int ) models_.size(); ++i )
   {
     assert( models_[ i ] != NULL );

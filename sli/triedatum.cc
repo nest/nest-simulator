@@ -25,7 +25,7 @@
 // Includes from sli:
 #include "interpret.h"
 
-sli::pool TrieDatum::memory( sizeof( TrieDatum ), 1024, 1 );
+nest::pool TrieDatum::memory( sizeof( TrieDatum ), 1024, 1 );
 
 bool
 TrieDatum::equals( Datum const* dat ) const

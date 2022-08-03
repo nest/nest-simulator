@@ -33,8 +33,6 @@
 #include "nest_names.h"
 #include "nest_types.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 // Includes from spatial:
 #include "connection_creator.h"

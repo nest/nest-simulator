@@ -425,7 +425,7 @@ private:
   // Utility function that inserts the synaptic conductances to the
   // recordables map
 
-  Name get_g_receptor_name( size_t receptor );
+  std::string get_g_receptor_name( size_t receptor );
   void insert_conductance_recordables( size_t first = 0 );
 };
 

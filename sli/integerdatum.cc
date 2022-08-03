@@ -25,4 +25,4 @@
 // initialization of static members requires template<>
 // see Stroustrup C.13.1 --- HEP 2001-08-09
 template <>
-sli::pool NumericDatum< long, &SLIInterpreter::Integertype >::memory( sizeof( IntegerDatum ), 10240, 1 );
+nest::pool NumericDatum< long, &SLIInterpreter::Integertype >::memory( sizeof( IntegerDatum ), 10240, 1 );

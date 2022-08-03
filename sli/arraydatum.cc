@@ -29,11 +29,11 @@
 // initialization of static members requires template<>
 // see Stroustrup C.13.1 --- HEP 2001-08-09
 template <>
-sli::pool AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >::memory( sizeof( ArrayDatum ), 10240, 1 );
+nest::pool AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >::memory( sizeof( ArrayDatum ), 10240, 1 );
 template <>
-sli::pool AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::memory( sizeof( ProcedureDatum ), 10240, 1 );
+nest::pool AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::memory( sizeof( ProcedureDatum ), 10240, 1 );
 template <>
-sli::pool AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::memory(
+nest::pool AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::memory(
   sizeof( AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype > ),
   10240,
   1 );

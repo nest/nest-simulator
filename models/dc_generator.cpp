@@ -44,7 +44,7 @@ template <>
 void
 RecordablesMap< dc_generator >::create()
 {
-  insert_( Name( names::I ), &dc_generator::get_I_ );
+  insert_( names::I, &dc_generator::get_I_ );
 }
 }
 

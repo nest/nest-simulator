@@ -40,7 +40,7 @@ template <>
 void
 RecordablesMap< step_current_generator >::create()
 {
-  insert_( Name( names::I ), &step_current_generator::get_I_ );
+  insert_( names::I, &step_current_generator::get_I_ );
 }
 }
 

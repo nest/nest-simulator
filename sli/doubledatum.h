@@ -46,7 +46,7 @@
 */
 #ifndef HAVE_STATIC_TEMPLATE_DECLARATION_FAILS
 template <>
-sli::pool NumericDatum< double, &SLIInterpreter::Doubletype >::memory;
+nest::pool NumericDatum< double, &SLIInterpreter::Doubletype >::memory;
 #endif
 
 template <>

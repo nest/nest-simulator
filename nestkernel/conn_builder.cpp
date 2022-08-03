@@ -34,11 +34,6 @@
 #include "node.h"
 #include "vp_manager_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "fdstream.h"
-#include "name.h"
-
 nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const dictionary& conn_spec,
@@ -300,12 +295,12 @@ nest::ConnBuilder::update_param_dict_( index snode_id,
   {
     if ( synapse_parameter.second->provides_long() )
     {
-      param_dicts_[ synapse_indx ][ target_thread ][ synapse_parameter.first.toString() ] =
+      param_dicts_[ synapse_indx ][ target_thread ][ synapse_parameter.first ] =
         synapse_parameter.second->value_int( target_thread, rng, snode_id, &target );
     }
     else
     {
-      param_dicts_[ synapse_indx ][ target_thread ][ synapse_parameter.first.toString() ] =
+      param_dicts_[ synapse_indx ][ target_thread ][ synapse_parameter.first ] =
         synapse_parameter.second->value_double( target_thread, rng, snode_id, &target );
     }
   }
@@ -373,7 +368,7 @@ nest::ConnBuilder::set_pre_synaptic_element_name( const std::string& name )
     throw BadProperty( "pre_synaptic_element cannot be empty." );
   }
 
-  pre_synaptic_element_name_ = Name( name );
+  pre_synaptic_element_name_ = name;
   use_pre_synaptic_element_ = not name.empty();
 }
 
@@ -385,7 +380,7 @@ nest::ConnBuilder::set_post_synaptic_element_name( const std::string& name )
     throw BadProperty( "post_synaptic_element cannot be empty." );
   }
 
-  post_synaptic_element_name_ = Name( name );
+  post_synaptic_element_name_ = name;
   use_post_synaptic_element_ = not name.empty();
 }
 
@@ -522,11 +517,11 @@ nest::ConnBuilder::set_synapse_params( const dictionary& syn_defaults,
     {
       if ( param.second->provides_long() )
       {
-        param_dicts_[ synapse_indx ][ tid ][ param.first.toString() ] = 0;
+        param_dicts_[ synapse_indx ][ tid ][ param.first ] = 0;
       }
       else
       {
-        param_dicts_[ synapse_indx ][ tid ][ param.first.toString() ] = 0.0;
+        param_dicts_[ synapse_indx ][ tid ][ param.first ] = 0.0;
       }
     }
   }

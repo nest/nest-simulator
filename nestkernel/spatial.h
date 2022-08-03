@@ -30,13 +30,6 @@
 #include "nest_types.h"
 #include "node_collection.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "booldatum.h"
-#include "dictdatum.h"
-#include "iostreamdatum.h"
-#include "token.h"
-
 // Includes from spatial:
 #include "free_layer.h"
 #include "layer.h"
@@ -115,24 +108,24 @@ private:
 
 AbstractLayerPTR get_layer( NodeCollectionPTR layer_nc );
 NodeCollectionPTR create_layer( const dictionary& layer_dict );
-ArrayDatum get_position( NodeCollectionPTR layer_nc );
+std::vector< std::vector< double > > get_position( NodeCollectionPTR layer_nc );
 std::vector< double > get_position( const index node_id );
-ArrayDatum displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc );
-ArrayDatum displacement( NodeCollectionPTR layer_nc, const ArrayDatum point );
+std::vector< std::vector< double > > displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc );
+std::vector< std::vector< double > > displacement( NodeCollectionPTR layer_nc, const std::vector< double > point );
 std::vector< double > distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc );
-std::vector< double > distance( NodeCollectionPTR layer_nc, const ArrayDatum point );
-std::vector< double > distance( const ArrayDatum conns );
+std::vector< double > distance( NodeCollectionPTR layer_nc, const std::vector< std::vector< double > >& point );
+std::vector< double > distance( const std::vector< ConnectionDatum >& conns );
 MaskDatum create_mask( const dictionary& mask_dict );
-BoolDatum inside( const std::vector< double >& point, const MaskDatum& mask );
+bool inside( const std::vector< double >& point, const MaskDatum& mask );
 MaskDatum intersect_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
 MaskDatum union_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
 MaskDatum minus_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
 void connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const dictionary& dict );
-void dump_layer_nodes( NodeCollectionPTR layer_nc, OstreamDatum& out );
+void dump_layer_nodes( NodeCollectionPTR layer_nc, std::ostream& out );
 void dump_layer_connections( const Token& syn_model,
   NodeCollectionPTR source_layer_nc,
   NodeCollectionPTR target_layer_nc,
-  OstreamDatum& out_file );
+  std::ostream& out_file );
 dictionary get_layer_status( NodeCollectionPTR layer_nc );
 }
 

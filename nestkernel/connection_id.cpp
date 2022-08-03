@@ -27,9 +27,6 @@
 
 #include "dictionary.h"
 
-// Includes from sli:
-#include "integerdatum.h"
-
 namespace nest
 {
 
@@ -72,18 +69,6 @@ ConnectionID::get_dict() const
   dict[ nest::names::port ] = port_;
 
   return dict;
-}
-
-ArrayDatum
-ConnectionID::to_ArrayDatum() const
-{
-  ArrayDatum ad;
-  ad.push_back( new IntegerDatum( source_node_id_ ) );
-  ad.push_back( new IntegerDatum( target_node_id_ ) );
-  ad.push_back( new IntegerDatum( target_thread_ ) );
-  ad.push_back( new IntegerDatum( synapse_modelid_ ) );
-  ad.push_back( new IntegerDatum( port_ ) );
-  return ad;
 }
 
 bool

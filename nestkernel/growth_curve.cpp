@@ -36,8 +36,6 @@
 #include "nest_names.h"
 #include "nest_time.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 /* ----------------------------------------------------------------
  * GrowthCurveLinear
@@ -52,7 +50,7 @@ nest::GrowthCurveLinear::GrowthCurveLinear()
 void
 nest::GrowthCurveLinear::get( dictionary& d ) const
 {
-  d[ names::growth_curve ] = name_.toString();
+  d[ names::growth_curve ] = name_;
   d[ names::eps ] = eps_;
 }
 
@@ -90,7 +88,7 @@ nest::GrowthCurveGaussian::GrowthCurveGaussian()
 void
 nest::GrowthCurveGaussian::get( dictionary& d ) const
 {
-  d[ names::growth_curve ] = name_.toString();
+  d[ names::growth_curve ] = name_;
   d[ names::eps ] = eps_;
   d[ names::eta ] = eta_;
 }
@@ -143,7 +141,7 @@ nest::GrowthCurveSigmoid::GrowthCurveSigmoid()
 void
 nest::GrowthCurveSigmoid::get( dictionary& d ) const
 {
-  d[ names::growth_curve ] = name_.toString();
+  d[ names::growth_curve ] = name_;
   d[ names::eps ] = eps_;
   d[ names::psi ] = psi_;
 }

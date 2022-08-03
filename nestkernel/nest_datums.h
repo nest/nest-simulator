@@ -40,26 +40,21 @@
 #include "position.h"
 
 
-// Includes from sli:
-#include "aggregatedatum.h"
-#include "sharedptrdatum.h"
-#include "slitype.h"
-
 #ifdef HAVE_LIBNEUROSIM
 #include <neurosim/connection_generator.h>
 typedef sharedPtrDatum< ConnectionGenerator, &nest::NestModule::ConnectionGeneratorType > ConnectionGeneratorDatum;
 #endif
 
-typedef AggregateDatum< nest::ConnectionID, &nest::NestModule::ConnectionType > ConnectionDatum;
+typedef sharedPtrDatum< nest::ConnectionID, &nest::NestModule::ConnectionType > ConnectionDatum;
 typedef sharedPtrDatum< nest::NodeCollection, &nest::NestModule::NodeCollectionType > NodeCollectionDatum;
 typedef sharedPtrDatum< nest::nc_const_iterator, &nest::NestModule::NodeCollectionIteratorType >
   NodeCollectionIteratorDatum;
 typedef sharedPtrDatum< nest::Parameter, &nest::NestModule::ParameterType > ParameterDatum;
 
-#ifndef HAVE_STATIC_TEMPLATE_DECLARATION_FAILS
-template <>
-sli::pool ConnectionDatum::memory;
-#endif
+// #ifndef HAVE_STATIC_TEMPLATE_DECLARATION_FAILS
+// template <>
+// nest::pool ConnectionDatum::memory;
+// #endif
 
 template <>
 void ConnectionDatum::print( std::ostream& ) const;

@@ -96,27 +96,30 @@ public:
   void prepare() override;
 
   template < class RBT >
-  void register_recording_backend( Name );
+  void register_recording_backend( std::string );
   template < class RBT >
-  void register_stimulation_backend( Name );
+  void register_stimulation_backend( std::string );
 
-  bool is_valid_recording_backend( const Name& ) const;
-  bool is_valid_stimulation_backend( const Name& ) const;
+  bool is_valid_recording_backend( const std::string& ) const;
+  bool is_valid_stimulation_backend( const std::string& ) const;
 
-  void
-  write( const Name&, const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& );
+  void write( const std::string&,
+    const RecordingDevice&,
+    const Event&,
+    const std::vector< double >&,
+    const std::vector< long >& );
 
-  void enroll_recorder( const Name&, const RecordingDevice&, const dictionary& );
-  void enroll_stimulator( const Name&, StimulationDevice&, const dictionary& );
+  void enroll_recorder( const std::string&, const RecordingDevice&, const dictionary& );
+  void enroll_stimulator( const std::string&, StimulationDevice&, const dictionary& );
 
-  void set_recording_value_names( const Name& backend_name,
+  void set_recording_value_names( const std::string& backend_name,
     const RecordingDevice& device,
-    const std::vector< Name >& double_value_names,
-    const std::vector< Name >& long_value_names );
+    const std::vector< std::string >& double_value_names,
+    const std::vector< std::string >& long_value_names );
 
-  void check_recording_backend_device_status( const Name&, const dictionary& );
-  void get_recording_backend_device_defaults( const Name&, dictionary& );
-  void get_recording_backend_device_status( const Name&, const RecordingDevice&, dictionary& );
+  void check_recording_backend_device_status( const std::string&, const dictionary& );
+  void get_recording_backend_device_defaults( const std::string&, dictionary& );
+  void get_recording_backend_device_status( const std::string&, const RecordingDevice&, dictionary& );
 
 private:
   void set_data_path_prefix_( const dictionary& );
@@ -130,11 +133,11 @@ private:
   /**
    * A mapping from names to registered recording backends.
    */
-  std::map< Name, RecordingBackend* > recording_backends_;
+  std::map< std::string, RecordingBackend* > recording_backends_;
   /**
    * A mapping from names to registered stimulation backends
    */
-  std::map< Name, StimulationBackend* > stimulation_backends_;
+  std::map< std::string, StimulationBackend* > stimulation_backends_;
 };
 
 } // namespace nest

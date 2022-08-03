@@ -71,8 +71,8 @@ nest::RecordingBackendScreen::disenroll( const RecordingDevice& device )
 
 void
 nest::RecordingBackendScreen::set_value_names( const RecordingDevice&,
-  const std::vector< Name >&,
-  const std::vector< Name >& )
+  const std::vector< std::string >&,
+  const std::vector< std::string >& )
 {
   // nothing to do
 }

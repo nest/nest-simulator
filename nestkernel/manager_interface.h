@@ -26,8 +26,7 @@
 // Includes from nestkernel:
 #include "nest_types.h"
 
-// Includes from sli:
-#include "dictdatum.h"
+// Includes from libnestutil:
 #include "dictionary.h"
 
 namespace nest

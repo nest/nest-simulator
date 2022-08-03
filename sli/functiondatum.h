@@ -45,7 +45,7 @@
 
 class FunctionDatum : public TypedDatum< &SLIInterpreter::Functiontype >
 {
-  static sli::pool memory;
+  static nest::pool memory;
 
   Name name;
 

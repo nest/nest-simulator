@@ -107,7 +107,7 @@ class MsgHandler : public MUSIC::MessageHandler
   operator()( double t, void* msg, size_t size )
   {
     message_times.push_back( t * 1000.0 );
-    messages.push_back( std::string( static_cast< char* >( msg ), size ) );
+    messages.push_back( static_cast< char* >( msg ), size );
   }
 
 public:

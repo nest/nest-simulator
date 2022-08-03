@@ -31,7 +31,7 @@
 #include <cstdlib>
 #include <string>
 
-namespace sli
+namespace nest
 {
 
 /**

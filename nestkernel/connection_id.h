@@ -25,9 +25,6 @@
 
 #include "dictionary.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dictutils.h"
 
 namespace nest
 {
@@ -41,7 +38,6 @@ public:
   ConnectionID( const ConnectionID& ) = default;
 
   dictionary get_dict() const;
-  ArrayDatum to_ArrayDatum() const;
   bool operator==( const ConnectionID& c ) const;
   void print_me( std::ostream& out ) const;
   long get_source_node_id() const;

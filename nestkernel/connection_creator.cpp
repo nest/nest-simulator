@@ -21,7 +21,7 @@
  */
 
 #include "connection_creator.h"
-#include "dictutils.h"
+
 #include "nest.h"
 
 namespace nest

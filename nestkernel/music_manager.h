@@ -34,9 +34,6 @@
 #include "manager_interface.h"
 #include "nest_types.h"
 
-// Includes from sli:
-#include "dict.h"
-
 #ifdef HAVE_MUSIC
 #include "music_event_handler.h"
 #include "music_rate_in_handler.h"

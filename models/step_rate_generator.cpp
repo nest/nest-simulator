@@ -40,7 +40,7 @@ template <>
 void
 RecordablesMap< step_rate_generator >::create()
 {
-  insert_( Name( names::rate ), &step_rate_generator::get_rate_ );
+  insert_( names::rate, &step_rate_generator::get_rate_ );
 }
 }
 

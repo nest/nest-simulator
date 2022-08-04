@@ -905,16 +905,37 @@ class NEASTTestCase(unittest.TestCase):
         for key in recordables:
             assert np.allclose(events_neat_0[key], events_neat_1[key])
 
+    def test_compartments_wrapper(self):
+        cm = nest.Create('cm_default')
+        cm.compartments = [{"parent_idx": -1, "params": SP}]
+        compartment_a = cm.compartments.get_compartment_tuple()[0]
+        compartment_b = {"parent_idx": 0, "params": DP[0]}
+
+        for rhs in (compartment_b, [compartment_b], (compartment_b), nest.Compartments((compartment_b,))):
+            compartments = cm.compartments + rhs
+            self.assertEqual(compartments.get_compartment_tuple(), (compartment_a, compartment_b))
+
+        with self.assertRaises(TypeError):
+            # Raises error because argument must be a tuple
+            nest.Compartments(compartment_a)
+
+        not_compartment = ''
+        for rhs in ([compartment_b, not_compartment],
+                    (compartment_b, not_compartment)):
+            with self.assertRaises(TypeError):
+                # Raises because all elements in rhs must be a dict
+                _ = cm.compartments + rhs
+
     def test_add_assign(self):
         cm = nest.Create('cm_default')
         cm.compartments = {"parent_idx": -1, "params": SP}
         cm.compartments += {"parent_idx": 0, "params": DP[0]}
 
         compartments = cm.compartments
-        self.assertTrue(compartments[0]["comp_idx"] == 0)
-        self.assertTrue(compartments[0]["parent_idx"] == -1)
-        self.assertTrue(compartments[1]["comp_idx"] == 1)
-        self.assertTrue(compartments[1]["parent_idx"] == 0)
+        self.assertEqual(compartments[0]["comp_idx"], 0)
+        self.assertEqual(compartments[0]["parent_idx"], -1)
+        self.assertEqual(compartments[1]["comp_idx"], 1)
+        self.assertEqual(compartments[1]["parent_idx"], 0)
 
 
 def suite():

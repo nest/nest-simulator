@@ -99,6 +99,7 @@ extern const Name azimuth_angle;
 extern const Name b;
 extern const Name beta;
 extern const Name beta_Ca;
+extern const Name beta_sir;
 extern const Name biological_time;
 extern const Name box;
 extern const Name buffer_size;
@@ -317,6 +318,7 @@ extern const Name ms_per_tic;
 extern const Name mu;
 extern const Name mu_minus;
 extern const Name mu_plus;
+extern const Name mu_sir;
 extern const Name mult_coupling;
 extern const Name music_channel;
 

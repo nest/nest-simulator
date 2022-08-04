@@ -221,7 +221,8 @@ enum SignalType
   NONE = 0,
   SPIKE = 1,
   BINARY = 2,
-  ALL = SPIKE | BINARY
+  SIR = 3,
+  ALL = SPIKE | BINARY | SIR 
 };
 }
 

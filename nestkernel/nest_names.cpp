@@ -75,6 +75,7 @@ const Name azimuth_angle( "azimuth_angle" );
 const Name b( "b" );
 const Name beta( "beta" );
 const Name beta_Ca( "beta_Ca" );
+const Name beta_sir( "beta_sir" );
 const Name biological_time( "biological_time" );
 const Name box( "box" );
 const Name buffer_size( "buffer_size" );
@@ -293,6 +294,7 @@ const Name ms_per_tic( "ms_per_tic" );
 const Name mu( "mu" );
 const Name mu_minus( "mu_minus" );
 const Name mu_plus( "mu_plus" );
+const Name mu_sir( "mu_sir" );
 const Name mult_coupling( "mult_coupling" );
 const Name music_channel( "music_channel" );
 

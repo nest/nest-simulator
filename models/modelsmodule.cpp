@@ -85,6 +85,7 @@
 #include "siegert_neuron.h"
 #include "sigmoid_rate.h"
 #include "sigmoid_rate_gg_1998.h"
+#include "sir_neuron.h"
 #include "tanh_rate.h"
 #include "threshold_lin_rate.h"
 
@@ -257,6 +258,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< erfc_neuron >( "erfc_neuron" );
   kernel().model_manager.register_node_model< ginzburg_neuron >( "ginzburg_neuron" );
   kernel().model_manager.register_node_model< mcculloch_pitts_neuron >( "mcculloch_pitts_neuron" );
+  kernel().model_manager.register_node_model< sir_neuron >( "sir_neuron" );
   kernel().model_manager.register_node_model< izhikevich >( "izhikevich" );
   kernel().model_manager.register_node_model< spike_dilutor >(
     "spike_dilutor", /*deprecation_info*/ "a future version of NEST" );

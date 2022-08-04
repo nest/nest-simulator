@@ -905,6 +905,17 @@ class NEASTTestCase(unittest.TestCase):
         for key in recordables:
             assert np.allclose(events_neat_0[key], events_neat_1[key])
 
+    def test_add_assign(self):
+        cm = nest.Create('cm_default')
+        cm.compartments = {"parent_idx": -1, "params": SP}
+        cm.compartments += {"parent_idx": 0, "params": DP[0]}
+
+        compartments = cm.compartments
+        self.assertTrue(compartments[0]["comp_idx"] == 0)
+        self.assertTrue(compartments[0]["parent_idx"] == -1)
+        self.assertTrue(compartments[1]["comp_idx"] == 1)
+        self.assertTrue(compartments[1]["parent_idx"] == 0)
+
 
 def suite():
     # makeSuite is sort of obsolete http://bugs.python.org/issue2721

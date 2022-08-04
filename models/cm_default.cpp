@@ -112,18 +112,12 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
    */
   if ( statusdict->known( names::compartments ) )
   {
-    /**
-     * Until an operator to explicititly append compartments is added to the
-     * API, we disable this functionality
-     */
-    if ( c_tree_.get_size() > 0 )
-    {
-      throw BadProperty( "\'compartments\' is already defined for this model" );
-    }
-
     Datum* dat = ( *statusdict )[ names::compartments ].datum();
     ArrayDatum* ad = dynamic_cast< ArrayDatum* >( dat );
     DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( dat );
+
+    // Need to rebuild the compartment tree with new compartments.
+    c_tree_ = {};
 
     if ( ad != nullptr )
     {

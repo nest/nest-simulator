@@ -442,7 +442,7 @@ def create_2tdend_4comp(dt=0.1):
 
 
 @nest.ll_api.check_stack
-class NEASTTestCase(unittest.TestCase):
+class CompartmentsTestCase(unittest.TestCase):
     """ tests for compartmental NEST models """
 
     def test_inversion(self, dt=0.1, model_name='1dend_1comp'):
@@ -836,14 +836,10 @@ class NEASTTestCase(unittest.TestCase):
                                     "Cannot connect with unknown recordable v_comp1"):
             nest.Connect(mm, n_neat)
 
-        # test adding compartments and receptors twice
+        # test adding receptors twice
         n_neat = nest.Create('cm_default')
         n_neat.compartments = {"parent_idx": -1, "params": SP}
         n_neat.receptors = {"comp_idx": 0, "receptor_type": "GABA"}
-
-        with self.assertRaisesRegex(nest.kernel.NESTError,
-                                    "\'compartments\' is already defined for this model"):
-            n_neat.compartments = {"parent_idx": 0, "params": SP}
 
         with self.assertRaisesRegex(nest.kernel.NESTError,
                                     "\'receptors\' is already defined for this model"):
@@ -941,7 +937,7 @@ class NEASTTestCase(unittest.TestCase):
 def suite():
     # makeSuite is sort of obsolete http://bugs.python.org/issue2721
     # using loadTestsFromTestCase instead.
-    suite = unittest.TestLoader().loadTestsFromTestCase(NEASTTestCase)
+    suite = unittest.TestLoader().loadTestsFromTestCase(CompartmentsTestCase)
     return unittest.TestSuite([suite])
 
 

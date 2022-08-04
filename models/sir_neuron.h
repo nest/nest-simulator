@@ -475,17 +475,36 @@ sir_neuron::update( Time const& origin, const long from, const long to )
 
       if (S_.y_ == 0) //neuron is susceptible
       {
+        int new_y = 0;
 
+        if (V_.rng_->drand() < P_.beta_sir_ * S_.h_)
+        {
+          new_y = 1;
+        }
       }
 
-      bool new_y = gain_( V_.rng_, S_.h_ + c );
+      if (S_.y_ == 1) //neuron is infected
+      {
+        int new_y = 1;
+         
+        if (V_.rng_->drand() < P_.mu_sir_)
+        {
+          new_y = 2;
+        }
+      }
+
+      if (S_.y_ == 2) //neuron is recovered
+      {
+        int new_y = 2;
+      }
+
 
       if ( new_y != S_.y_ )
       {
         SpikeEvent se;
-        // use multiplicity 2 to signal transition to 1 state
-        // use multiplicity 1 to signal transition to 0 state
-        se.set_multiplicity( new_y ? 2 : 1 );
+        // use multiplicity 2 to signal transition to 2 state
+        // use multiplicity 1 to signal transition to 1 state
+        se.set_multiplicity( ( new_y == 2 ) ? 2 : 1 );
         kernel().event_delivery_manager.send( *this, se, lag );
 
         // As multiplicity is used only to signal internal information
@@ -495,8 +514,8 @@ sir_neuron::update( Time const& origin, const long from, const long to )
         S_.y_ = new_y;
       }
 
-      // draw next update interval from exponential distribution
-      S_.t_next_ += Time::ms( V_.exp_dist_( V_.rng_ ) * P_.tau_m_ );
+      // update interval
+      S_.t_next_ += Time::ms( P_.tau_m_ );
 
     } // of if (update now)
 
@@ -512,8 +531,8 @@ sir_neuron::handle( SpikeEvent& e )
   assert( e.get_delay_steps() > 0 );
 
   // The following logic implements the encoding:
-  // A single spike signals a transition to 0 state, two spikes in same time
-  // step signal the transition to 1 state.
+  // A single spike signals a transition to 1 state, two spikes in same time
+  // step signal the transition to 2 state.
   //
   // Remember the node ID of the sender of the last spike being received
   // this assumes that several spikes being sent by the same neuron in the same
@@ -534,27 +553,27 @@ sir_neuron::handle( SpikeEvent& e )
   const Time& t_spike = e.get_stamp();
 
   if ( m == 1 )
-  { // multiplicity == 1, either a single 1->0 event or the first or second of a
-    // pair of 0->1 events
+  { // multiplicity == 1, either a single 0->1 event or the first or second of a
+    // pair of 1->2 events
     if ( node_id == S_.last_in_node_id_ && t_spike == S_.t_last_in_spike_ )
     {
-      // received twice the same node ID, so transition 0->1
+      // received twice the same node ID, so transition 1->2
       // take double weight to compensate for subtracting first event
       B_.spikes_.add_value(
-        e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), 2.0 * e.get_weight() );
+        e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), -2.0 * e.get_weight() );
     }
     else
     {
       // count this event negatively, assuming it comes as single event
-      // transition 1->0
+      // transition 0->1
       B_.spikes_.add_value(
-        e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), -e.get_weight() );
+        e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() );
     }
   }
   else if ( m == 2 )
   {
-    // count this event positively, transition 0->1
-    B_.spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() );
+    // count this event positively, transition 1->2
+    B_.spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), -e.get_weight() );
   }
 
   S_.last_in_node_id_ = node_id;

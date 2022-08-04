@@ -1027,9 +1027,12 @@ nest::SimulationManager::update_()
       }
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
+// if block to avoid omp barrier if SIONLIB is not used
+#ifdef HAVE_SIONLIB
       kernel().io_manager.post_step_hook();
 // enforce synchronization after post-step activities of the recording backends
 #pragma omp barrier
+#endif
       const double end_current_update = sw_simulate_.elapsed();
       if ( end_current_update - start_current_update > update_time_limit_ )
       {

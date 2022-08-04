@@ -47,6 +47,7 @@ except ImportError:
 
 __all__ = [
     'CollocatedSynapses',
+    'Compartments',
     'CreateParameter',
     'Mask',
     'NodeCollection',
@@ -392,6 +393,8 @@ class NodeCollection:
         elif len(params) == 1:
             # params is a tuple with a string or list of strings
             result = get_parameters(self, params[0])
+            if params[0] == 'compartments':
+                result = Compartments(result)
         else:
             # Hierarchical addressing
             result = get_parameters_hierarchical_addressing(self, params)
@@ -452,6 +455,9 @@ class NodeCollection:
             raise TypeError("must either provide params or kwargs, but not both.")
 
         local_nodes = [self.local] if len(self) == 1 else self.local
+
+        if isinstance(params, dict) and 'compartments' in params and isinstance(params['compartments'], Compartments):
+            params['compartments'] = params['compartments'].get_compartment_tuple()
 
         if isinstance(params, dict) and all(local_nodes):
 
@@ -1104,6 +1110,38 @@ class Parameter:
                 if len(pos) != len(positions[0]):
                     raise ValueError('All positions must have the same number of dimensions')
             return sli_func('Apply', self._datum, {'source': spatial_nc, 'targets': positions})
+
+
+class Compartments:
+    def __init__(self, compartments):
+        if not isinstance(compartments, tuple):
+            raise TypeError(f'compartments must be a tuple of dicts, got {type(compartments)}')
+        self._compartments = compartments
+
+    def __add__(self, other):
+        new_compartments = list(self._compartments)
+        if isinstance(other, dict):
+            new_compartments += [other]
+        elif isinstance(other, (tuple, list)):
+            if not all(isinstance(d, dict) for d in other):
+                raise TypeError('Compartments can only be added with dicts, lists of dicts, or other Compartments')
+            new_compartments += list(other)
+        elif isinstance(other, Compartments):
+            new_compartments += list(other._compartments)
+        else:
+            raise NotImplementedError('Compartments can only be added with dicts, lists of dicts,'
+                                      f' or other Compartments, got {type(other)}')
+
+        return Compartments(tuple(new_compartments))
+
+    def __getitem__(self, key):
+        return self._compartments[key]
+
+    def __str__(self):
+        return str(self._compartments)
+
+    def get_compartment_tuple(self):
+        return self._compartments
 
 
 def serializable(data):

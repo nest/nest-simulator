@@ -51,20 +51,21 @@ PyNEST examples
            * :doc:`../auto_examples/brunel_exp_multisynapse_nest`
            * :doc:`../auto_examples/brunel_alpha_evolution_strategies`
 
- 
 
 
-    .. grid-item-card:: Cortical microcircuit (Potjans) 
+
+    .. grid-item-card:: Cortical microcircuit (Potjans)
            :img-top: ../static/img/pynest/raster_plot.png
 
            * :doc:`cortical_microcircuit_index`
 
 
-    .. grid-item-card:: GLIF (from Allen institute)
-           :img-top: ../static/img/pynest/glif_cond.png
+    .. grid-item-card:: NEST Sudoku solver
+           :img-top: ../static/img/sudoku_solution.gif
 
-           * :doc:`../auto_examples/glif_cond_neuron`
-           * :doc:`../auto_examples/glif_psc_neuron`
+           * :doc:`../auto_examples/sudoku/sudoku_net`
+           * :doc:`../auto_examples/sudoku/sudoku_solver`
+           * :doc:`../auto_examples/sudoku/plot_progress`
 
 .. grid:: 1 1 2 3
 
@@ -93,7 +94,7 @@ PyNEST examples
 
 .. grid:: 1 1 2 3
 
-    .. grid-item-card:: Hodgkin-Huxley 
+    .. grid-item-card:: Hodgkin-Huxley
            :img-top: ../static/img/pynest/hh_phase.png
 
            * :doc:`../auto_examples/hh_psc_alpha`
@@ -105,10 +106,11 @@ PyNEST examples
            * :doc:`../auto_examples/BrodyHopfield`
 
 
-    .. grid-item-card:: Campbell Siegert
-           :img-top: ../static/img/nest_logo-faded.png
+    .. grid-item-card:: GLIF (from Allen institute)
+           :img-top: ../static/img/pynest/glif_cond.png
 
-           * :doc:`../auto_examples/CampbellSiegert`
+           * :doc:`../auto_examples/glif_cond_neuron`
+           * :doc:`../auto_examples/glif_psc_neuron`
 
 .. grid:: 1 1 2 3
 
@@ -124,11 +126,16 @@ PyNEST examples
 
            * :doc:`../auto_examples/precise_spiking`
 
+    .. grid-item-card:: Campbell Siegert
+           :img-top: ../static/img/nest_logo-faded.png
+
+           * :doc:`../auto_examples/CampbellSiegert`
+
 
 
 .. grid:: 1 1 2 3
 
-    .. grid-item-card:: Gap junctions 
+    .. grid-item-card:: Gap junctions
            :img-top: ../static/img/pynest/gap_junctioninhib.png
 
 
@@ -136,19 +143,19 @@ PyNEST examples
            * :doc:`../auto_examples/gap_junctions_inhibitory_network`
 
 
-    .. grid-item-card:: Structural plasticity 
+    .. grid-item-card:: Structural plasticity
            :img-top: ../static/img/pynest/structuralplasticity.png
 
            * :doc:`../auto_examples/structural_plasticity`
 
-    .. grid-item-card:: Synapse collection 
+    .. grid-item-card:: Synapse collection
            :img-top: ../static/img/pynest/synapsecollection.png
 
            * :doc:`../auto_examples/synapsecollection`
 
 .. grid:: 1 1 2 3
 
-    .. grid-item-card:: Urbanczik 
+    .. grid-item-card:: Urbanczik
            :img-top: ../static/img/pynest/urbanczik_syn.png
 
            * :doc:`../auto_examples/urbanczik_synapse_example`
@@ -294,8 +301,7 @@ PyNEST examples
    ../auto_examples/hpc_benchmark
 
 .. toctree::
-   :maxdepth: 1
-   :caption: Sudoku
+   :hidden:
 
    ../auto_examples/sudoku/sudoku_net
    ../auto_examples/sudoku/sudoku_solver

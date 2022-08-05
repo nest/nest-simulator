@@ -33,6 +33,10 @@ import json
 from subprocess import check_output, CalledProcessError
 from mock import Mock as MagicMock
 
+import nbformat
+
+
+from nbconvert import PythonExporter
 
 source_dir = os.environ.get('NESTSRCDIR', False)
 if source_dir:
@@ -47,6 +51,14 @@ else:
     doc_build_dir = Path(os.environ["OLDPWD"]) / "doc/htmldoc"
 
 sys.path.append(os.path.abspath("./_ext"))
+
+
+# Convert ipynb to py
+exporter = PythonExporter()
+(source, meta) = exporter.from_filename(source_dir / 'pynest/examples/one_neuron_with_noise.ipynb')
+
+with open(doc_build_dir / 'test-notebook/one_neuron_with_noise.py','w') as outfile:
+    outfile.writelines(source)
 
 source_suffix = '.rst'
 master_doc = 'index'

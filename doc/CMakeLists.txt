@@ -95,7 +95,7 @@ set( DOC_SOURCE_DIR "${PROJECT_SOURCE_DIR}/doc/htmldoc" )
 
 add_custom_target( html
   COMMAND [ "${OUT_OF_TREE_BUILD}" = "True" ] && rm -rf "${DOC_BUILD_DIR}" || true
-  COMMAND [ "${OUT_OF_TREE_BUILD}" = "True" ] && cp -r "${DOC_SOURCE_DIR}" "${DOC_BUILD_DIR}" || true
+  COMMAND [ "${OUT_OF_TREE_BUILD}" = "True" ] && cp -rL "${DOC_SOURCE_DIR}" "${DOC_BUILD_DIR}" || true
   COMMAND NESTSRCDIR=${PROJECT_SOURCE_DIR} sphinx-build -b html "${DOC_BUILD_DIR}" "${DOC_BUILD_DIR}/html"
   COMMAND cp "${DOC_BUILD_DIR}/models/*.rst" "${DOC_BUILD_DIR}/html/models"
   COMMAND ${PYTHON_EXECUTABLE} "${DOC_BUILD_DIR}/resolve_includes.py" "${DOC_BUILD_DIR}/html/models"

@@ -1,7 +1,7 @@
 .. _handling_connections:
 
-New functionality for handling connections (synapses)
-=====================================================
+How to handle connections (synapses)
+=====================================
 
 Just like a NodeCollection is a container for node IDs, a SynapseCollection is a
 container for connections. In NEST 3, when you call :py:func:`.GetConnections` a
@@ -207,7 +207,7 @@ Setting connection parameters
     model will point out which parameters can be set and which are read-only.
 
 
-.. _collocated_synapses:
+.. _collocated_synapses2:
 
 Collocated synapses
 ~~~~~~~~~~~~~~~~~~~
@@ -216,16 +216,16 @@ then be applied to each source-target pair. To create these collocated synapses,
 as the ``syn_spec`` argument of :py:func:`.Connect`, instead of the usual syn_spec dictionary argument. The constructor
 ``CollocatedSynapses()`` takes dictionaries as arguments.
 
-  ::
+::
 
-    nodes = nest.Create('iaf_psc_alpha', 3)
-    syn_spec = nest.CollocatedSynapses({'weight': 4., 'delay': 1.5},
-                                       {'synapse_model': 'stdp_synapse'},
-                                       {'synapse_model': 'stdp_synapse', 'alpha': 3.})
-    nest.Connect(nodes, nodes, conn_spec='one_to_one', syn_spec=syn_spec)
+  nodes = nest.Create('iaf_psc_alpha', 3)
+  syn_spec = nest.CollocatedSynapses({'weight': 4., 'delay': 1.5},
+                                     {'synapse_model': 'stdp_synapse'},
+                                     {'synapse_model': 'stdp_synapse', 'alpha': 3.})
+  nest.Connect(nodes, nodes, conn_spec='one_to_one', syn_spec=syn_spec)
 
-    conns = nest.GetConnections()
-    print(conns.alpha)
+  conns = nest.GetConnections()
+  print(conns.alpha)
 
 This will create 9 connections: 3 using ``static_synapse`` with a ``weight`` of `4` and ``delay`` of `1.5`, and 6 using
 the ``stdp_synapse``. Of the 6 using ``stdp_synapse``, 3 will have the default alpha value, and 3 will have an alpha of
@@ -236,18 +236,18 @@ the ``stdp_synapse``. Of the 6 using ``stdp_synapse``, 3 will have the default a
 
 If you want to connect with different receptor types, you can do the following:
 
-  ::
+::
 
-    src = nest.Create('iaf_psc_exp_multisynapse', 7)
-    trgt = nest.Create('iaf_psc_exp_multisynapse', 7, {'tau_syn': [0.1 + i for i in range(7)]})
+  src = nest.Create('iaf_psc_exp_multisynapse', 7)
+  trgt = nest.Create('iaf_psc_exp_multisynapse', 7, {'tau_syn': [0.1 + i for i in range(7)]})
 
-    syn_spec = nest.CollocatedSynapses({'weight': 5.0, 'receptor_type': 2},
-                                       {'weight': 1.5, 'receptor_type': 7})
+  syn_spec = nest.CollocatedSynapses({'weight': 5.0, 'receptor_type': 2},
+                                     {'weight': 1.5, 'receptor_type': 7})
 
-    nest.Connect(src, trgt, 'one_to_one', syn_spec=syn_spec)
+  nest.Connect(src, trgt, 'one_to_one', syn_spec=syn_spec)
 
-    conns = nest.GetConnections()
-    print(conns.get())
+  conns = nest.GetConnections()
+  print(conns.get())
 
 You can see how many synapse parameters you have by calling ``len()`` on your ``CollocatedSynapses`` object:
 

@@ -327,7 +327,8 @@ Dictionary::insert( const Name& n, const Token& t )
 }
 
 
-inline const Token& Dictionary::operator[]( const Name& n ) const
+inline const Token&
+Dictionary::operator[]( const Name& n ) const
 {
   TokenMap::const_iterator where = find( n );
   if ( where != end() )
@@ -341,7 +342,8 @@ inline const Token& Dictionary::operator[]( const Name& n ) const
 }
 
 
-inline Token& Dictionary::operator[]( const Name& n )
+inline Token&
+Dictionary::operator[]( const Name& n )
 {
   return TokenMap::operator[]( n );
 }

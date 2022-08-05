@@ -1,3 +1,5 @@
+:orphan:
+
 .. _hpc_index:
 
 All about high performance computing
@@ -49,15 +51,15 @@ Speed up simulations
 Benchmarking NEST
 -----------------
 
-* Benchmarking
+* See the benchmarking framework beNNch developed by Albers et al [2]_.
+
+* Example :doc:`../auto_examples/hpc_benchmark`
 
 References
 ----------
 
-.. [1] Kurth AC, et al. 2021. Sub-realtime simulation of a neuronal network of natural density. arXiv
-       Web. https://arxiv.org/abs/2111.04398
+.. [1] Kurth AC. Senk J. Terhorst D. Finnerty J. and Diesmann M (2022). Sub-realtime simulation of a neuronal network of natural density. 
+       Neuromorphic Computing and Engineering(2):021001. https://doi.org/10.1088/2634-4386/ac55fc
 
-
-.. todo::
-
-   Add  benchmarking documentation here.
+.. [2] Albers J., et al (2022). A Modular Workflow for Performance Benchmarking of Neuronal Network Simulations. 
+       Frontiers in Neuroinformatics(16):837549. https://doi.org/10.3389/fninf.2022.837549

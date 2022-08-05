@@ -1123,7 +1123,7 @@ nest::SimulationManager::print_progress_()
     rt_factor = t_real_acc / t_sim_acc;
   }
 
-  int percentage = ( 100 - int( float( to_do_ ) / to_do_total_ * 100 ) );
+  int percentage = ( 100 - static_cast< int >( static_cast< double >( to_do_ ) / to_do_total_ * 100 ) );
 
   std::cout << "\r[ " << std::setw( 3 ) << std::right << percentage << "% ] "
             << "Model time: " << std::fixed << std::setprecision( 1 ) << clock_.get_ms() << " ms, "

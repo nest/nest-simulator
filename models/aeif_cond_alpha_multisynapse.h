@@ -153,7 +153,7 @@ Receives
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
 See also
-+++++++
+++++++++
 
 aeif_cond_alpha_multisynapse
 

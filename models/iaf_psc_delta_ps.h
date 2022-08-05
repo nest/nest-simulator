@@ -100,7 +100,7 @@ The ``af_psc_delta_ps`` neuron accepts connections transmitting
 can only change at on-grid times.
 
 For details about exact subthreshold integration, please see
-:doc:`../guides/exact-integration`.
+:doc:`../neurons/exact-integration`.
 
 Parameters
 ++++++++++

@@ -121,6 +121,8 @@ cdef extern from "nest.h" namespace "nest":
     string print_nodes_to_string()
     string pprint_to_string( NodeCollectionPTR nc ) except +
     size_t nc_size( NodeCollectionPTR nc ) except +
+    dictionary get_modeldict() except +
+    dictionary get_synapsedict() except +
     dictionary get_kernel_status() except +
     NodeCollectionPTR get_nodes( const dictionary& params, const cbool local_only ) except +
     deque[ConnectionID] get_connections( const dictionary& dict ) except +

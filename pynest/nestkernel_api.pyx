@@ -233,6 +233,16 @@ def llapi_to_string(NodeCollectionObject nc):
     return pprint_to_string(nc.thisptr).decode('utf8')
 
 @catch_cpp_error
+def llapi_get_modeldict():
+    cdef dictionary cdict = get_modeldict()
+    return dictionary_to_pydict(cdict)
+
+@catch_cpp_error
+def llapi_get_synapsedict():
+    cdef dictionary cdict = get_synapsedict()
+    return dictionary_to_pydict(cdict)
+
+@catch_cpp_error
 def llapi_get_kernel_status():
     cdef dictionary cdict = get_kernel_status()
     return dictionary_to_pydict(cdict)

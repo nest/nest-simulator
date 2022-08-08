@@ -24,6 +24,7 @@ Functions for model handling
 """
 
 from ..ll_api import *
+from .. import nestkernel_api as nestkernel
 from .hl_api_helper import *
 from .hl_api_types import to_json
 
@@ -78,12 +79,10 @@ def Models(mtype="all", sel=None):
     models = []
 
     if mtype in ("all", "nodes"):
-        sr("modeldict")
-        models += spp().keys()
+        models += nestkernel.llapi_get_modeldict().keys()
 
     if mtype in ("all", "synapses"):
-        sr("synapsedict")
-        models += spp().keys()
+        models += nestkernel.llapi_get_synapsedict().keys()
 
     if sel is not None:
         models = [x for x in models if x.find(sel) >= 0]

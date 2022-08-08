@@ -680,5 +680,16 @@ node_collection_array_index( NodeCollectionPTR node_collection, const bool* arra
   return NodeCollection::create( node_ids );
 }
 
+dictionary
+get_modeldict()
+{
+  return kernel().model_manager.get_modeldict();
+}
+
+dictionary
+get_synapsedict()
+{
+  return kernel().model_manager.get_synapsedict();
+}
 
 } // namespace nest

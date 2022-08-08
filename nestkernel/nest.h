@@ -57,6 +57,9 @@ std::string pprint_to_string( NodeCollectionPTR nc );
 
 size_t nc_size( NodeCollectionPTR nc );
 
+dictionary get_modeldict();
+dictionary get_synapsedict();
+
 void set_kernel_status( const dictionary& dict );
 dictionary get_kernel_status();
 

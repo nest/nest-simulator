@@ -34,8 +34,7 @@ class TestSTDPPlSynapse:
     """
     Compare the STDP power-law synaptic plasticity model against a self-contained Python reference.
 
-    Random pre and post spike times are generated according to a Poisson distribution; some hard-coded spike times are
-    added to make sure to test for edge cases such as simultaneous pre and post spike.
+    Pre and post spike times are hard-coded to make sure to test for the edge case.
     """
 
     def __init__(self):

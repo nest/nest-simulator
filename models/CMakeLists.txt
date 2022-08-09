@@ -114,6 +114,7 @@ set( models_sources
     sigmoid_rate_gg_1998.h sigmoid_rate_gg_1998.cpp
     sinusoidal_poisson_generator.h sinusoidal_poisson_generator.cpp
     sinusoidal_gamma_generator.h sinusoidal_gamma_generator.cpp
+    sir_neuron.h sir_neuron.cpp
     spike_recorder.h spike_recorder.cpp
     spike_generator.h spike_generator.cpp
     spin_detector.h spin_detector.cpp

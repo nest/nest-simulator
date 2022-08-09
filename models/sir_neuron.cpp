@@ -104,7 +104,7 @@ sir_neuron::set_status( const DictionaryDatum& d )
   Parameters_ ptmp = P_;     // temporary copy in case of errors
   ptmp.set( d, this );       // throws if BadProperty
   State_ stmp = S_;          // temporary copy in case of errors
-  stmp.set( d, ptmp, this ); // throws if BadProperty
+  stmp.set( d, this ); // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

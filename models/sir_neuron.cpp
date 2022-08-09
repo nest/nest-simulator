@@ -419,5 +419,3 @@ sir_neuron::calibrate_time( const TimeConverter& tc )
 
 
 } // namespace
-
-#endif /* #ifndef SIR_NEURON_H */

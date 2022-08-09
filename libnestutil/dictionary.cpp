@@ -208,6 +208,12 @@ is_int_vector( const boost::any& operand )
 {
   return operand.type() == typeid( std::vector< int > );
 }
+// vector of ints
+bool
+is_long_vector( const boost::any& operand )
+{
+  return operand.type() == typeid( std::vector< long > );
+}
 
 // vector of doubles
 bool

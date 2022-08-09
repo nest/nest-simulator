@@ -509,28 +509,23 @@ set_model_defaults( const std::string& modelname, const dictionary& dict )
 dictionary
 get_model_defaults( const std::string& modelname )
 {
-  // const Token nodemodel = kernel().model_manager.get_modeldict()->lookup( modelname );
-  // const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( modelname );
-
   dictionary dict;
 
-  // TODO-PYNEST-NG: fix when updating models get_status()
-
-  // if ( not nodemodel.empty() )
-  // {
-  //   const long model_id = static_cast< long >( nodemodel );
-  //   Model* m = kernel().model_manager.get_model( model_id );
-  //   dict = m->get_status();
-  // }
-  // else if ( not synmodel.empty() )
-  // {
-  //   const long synapse_id = static_cast< long >( synmodel );
-  //   dict = kernel().model_manager.get_connector_defaults( synapse_id );
-  // }
-  // else
-  // {
-  //   throw UnknownModelName( modelname.toString() );
-  // }
+  if ( kernel().model_manager.get_modeldict().known( modelname ) )
+  {
+    const auto model_id = kernel().model_manager.get_modeldict().get< index >( modelname );
+    const auto model = kernel().model_manager.get_model( model_id );
+    dict = model->get_status();
+  }
+  else if ( kernel().model_manager.get_synapsedict().known( modelname ) )
+  {
+    const auto synapse_id = kernel().model_manager.get_synapsedict().get< index >( modelname );
+    dict = kernel().model_manager.get_connector_defaults( synapse_id );
+  }
+  else
+  {
+    throw UnknownModelName( modelname );
+  }
 
   return dict;
 }

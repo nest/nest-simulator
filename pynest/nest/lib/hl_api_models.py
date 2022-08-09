@@ -134,17 +134,13 @@ def SetDefaults(model, params, val=None):
 
 
 @check_stack
-def GetDefaults(model, keys=None, output=''):
+def GetDefaults(model, output=''):
     """Return default parameters of the given model, specified by a string.
 
     Parameters
     ----------
     model : str
         Name of the model
-    keys : str or list, optional
-        String or a list of strings naming model properties. `GetDefaults` then
-        returns a single value or a list of values belonging to the keys
-        given.
     output : str, optional
         Whether the returned data should be in a format
         (``output='json'``). Default is ''.
@@ -153,11 +149,6 @@ def GetDefaults(model, keys=None, output=''):
     -------
     dict
         A dictionary of default parameters.
-    type
-        If keys is a string, the corrsponding default parameter is returned.
-    list
-        If keys is a list of strings, a list of corrsponding default parameters
-        is returned.
     str :
         If `output` is ``json``, returns parameters in JSON format.
 
@@ -167,19 +158,7 @@ def GetDefaults(model, keys=None, output=''):
 
     """
 
-    if keys is None:
-        cmd = "/{0} GetDefaults".format(model)
-    elif is_literal(keys):
-        cmd = '/{0} GetDefaults /{1} get'.format(model, keys)
-    elif is_iterable(keys):
-        keys_str = " ".join("/{0}".format(x) for x in keys)
-        cmd = "/{0} GetDefaults  [ {1} ] {{ 1 index exch get }}"\
-              .format(model, keys_str) + " Map exch pop"
-    else:
-        raise TypeError("keys should be either a string or an iterable")
-
-    sr(cmd)
-    result = spp()
+    result = nestkernel.llapi_get_defaults(model.encode('utf-8'))
 
     if output == 'json':
         result = to_json(result)

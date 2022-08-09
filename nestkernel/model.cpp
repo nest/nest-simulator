@@ -132,7 +132,7 @@ Model::get_status( void )
     tmp[ t ] = memory_[ t ].get_instantiations();
   }
 
-  d[ names::instantiations ] = Token( tmp );
+  d[ names::instantiations ] = tmp;
   d[ names::type_id ] = kernel().model_manager.get_model( type_id_ )->get_name();
 
   for ( size_t t = 0; t < tmp.size(); ++t )
@@ -140,14 +140,14 @@ Model::get_status( void )
     tmp[ t ] = memory_[ t ].get_total();
   }
 
-  d[ names::capacity ] = Token( tmp );
+  d[ names::capacity ] = tmp;
 
   for ( size_t t = 0; t < tmp.size(); ++t )
   {
     tmp[ t ] = memory_[ t ].available();
   }
 
-  d[ names::available ] = Token( tmp );
+  d[ names::available ] = tmp;
 
   d[ names::model ] = get_name();
   return d;

@@ -55,6 +55,7 @@ cdef extern from "dictionary.h":
     cbool is_bool(const any&)
     cbool is_string(const any&)
     cbool is_int_vector(const any&)
+    cbool is_long_vector(const any&)
     cbool is_double_vector(const any&)
     cbool is_double_vector_vector(const any&)
     cbool is_string_vector(const any&)
@@ -124,6 +125,7 @@ cdef extern from "nest.h" namespace "nest":
     dictionary get_modeldict() except +
     dictionary get_synapsedict() except +
     dictionary get_kernel_status() except +
+    dictionary get_model_defaults( const string& ) except +
     NodeCollectionPTR get_nodes( const dictionary& params, const cbool local_only ) except +
     deque[ConnectionID] get_connections( const dictionary& dict ) except +
     void set_kernel_status( const dictionary& ) except +

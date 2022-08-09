@@ -100,6 +100,8 @@ cdef object any_to_pyobj(any operand):
         return any_cast[string](operand).decode('utf8')
     if is_int_vector(operand):
         return any_cast[vector[int]](operand)
+    if is_long_vector(operand):
+        return any_cast[vector[long]](operand)
     if is_double_vector(operand):
         return any_cast[vector[double]](operand)
     if is_double_vector_vector(operand):
@@ -118,6 +120,7 @@ cdef object dictionary_to_pydict(dictionary cdict):
     while it != cdict.end():
         tmp[deref(it).first.decode('utf8')] = any_to_pyobj(deref(it).second)
         if tmp[deref(it).first.decode('utf8')] is None:
+            # If we end up here, the value in the dictionary is of a type that any_to_pyobj() cannot handle.
             raise RuntimeError('Could not convert: ' + deref(it).first.decode('utf8') + ' of type ' + debug_type(deref(it).second).decode('utf8'))
         inc(it)
     return tmp
@@ -246,6 +249,10 @@ def llapi_get_synapsedict():
 def llapi_get_kernel_status():
     cdef dictionary cdict = get_kernel_status()
     return dictionary_to_pydict(cdict)
+
+@catch_cpp_error
+def llapi_get_defaults(string model_name):
+    return dictionary_to_pydict(get_model_defaults(model_name))
 
 @catch_cpp_error
 def llapi_get_nodes(object params, cbool local_only):

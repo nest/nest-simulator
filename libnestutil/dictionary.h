@@ -50,6 +50,7 @@ bool is_double( const boost::any& operand );
 bool is_bool( const boost::any& operand );
 bool is_string( const boost::any& operand );
 bool is_int_vector( const boost::any& operand );
+bool is_long_vector( const boost::any& operand );
 bool is_double_vector( const boost::any& operand );
 bool is_double_vector_vector( const boost::any& operand );
 bool is_string_vector( const boost::any& operand );

@@ -117,7 +117,7 @@ FreeLayer< D >::set_status( const dictionary& d )
   if ( d.known( names::positions ) )
   {
     const auto positions = d.at( names::positions );
-    if ( is_double_vector_vector( positions ) )
+    if ( is_type< std::vector< std::vector< double > > >( positions ) )
     {
       // If the positions are created from a layer sliced with step, we need to take that into consideration.
       // Because the implementation of NodeCollections sliced with step internally keeps the "skipped" nodes,
@@ -162,7 +162,7 @@ FreeLayer< D >::set_status( const dictionary& d )
         }
       }
     }
-    else if ( is_parameter( positions ) )
+    else if ( is_type< std::shared_ptr< nest::Parameter > >( positions ) )
     {
       auto pd = d.get< std::shared_ptr< Parameter > >( names::positions );
       auto pos = dynamic_cast< DimensionParameter* >( pd.get() );

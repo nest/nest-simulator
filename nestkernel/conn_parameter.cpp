@@ -33,31 +33,31 @@ nest::ConnParameter*
 nest::ConnParameter::create( const boost::any& value, const size_t nthreads )
 {
   // single double
-  if ( is_double( value ) )
+  if ( is_type< double >( value ) )
   {
     return new ScalarDoubleParameter( boost::any_cast< double >( value ), nthreads );
   }
 
   // single integer
-  if ( is_int( value ) )
+  if ( is_type< int >( value ) )
   {
     return new ScalarIntegerParameter( boost::any_cast< int >( value ), nthreads );
   }
 
   // array of doubles
-  if ( is_double_vector( value ) )
+  if ( is_type< std::vector< double > >( value ) )
   {
     return new ArrayDoubleParameter( boost::any_cast< std::vector< double > >( value ), nthreads );
   }
 
   // Parameter
-  if ( is_parameter( value ) )
+  if ( is_type< std::shared_ptr< nest::Parameter > >( value ) )
   {
     return new ParameterConnParameterWrapper( boost::any_cast< std::shared_ptr< Parameter > >( value ), nthreads );
   }
 
   // array of integer
-  if ( is_int_vector( value ) )
+  if ( is_type< std::vector< int > >( value ) )
   {
     return new ArrayIntegerParameter( boost::any_cast< std::vector< int > >( value ), nthreads );
   }

@@ -72,7 +72,7 @@ bool
 update_value_param( dictionary const& d, const std::string& key, T& value, nest::Node* node )
 {
   const auto it = d.find( key );
-  if ( it != d.end() and is_parameter( it->second ) )
+  if ( it != d.end() and is_type< std::shared_ptr< nest::Parameter > >( it->second ) )
   {
     if ( not node )
     {

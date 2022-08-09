@@ -47,20 +47,7 @@ cdef extern from "dictionary.h":
         const_iterator end()
     string debug_type(const any&)
     string debug_dict_types(const dictionary&)
-    cbool is_int(const any&)
-    cbool is_uint(const any&)
-    cbool is_long(const any&)
-    cbool is_size_t(const any&)
-    cbool is_double(const any&)
-    cbool is_bool(const any&)
-    cbool is_string(const any&)
-    cbool is_int_vector(const any&)
-    cbool is_long_vector(const any&)
-    cbool is_double_vector(const any&)
-    cbool is_double_vector_vector(const any&)
-    cbool is_string_vector(const any&)
-    cbool is_any_vector(const any&)
-    cbool is_dict(const any&)
+    cbool is_type[T](const any&)
 
 cdef extern from "connection_id.h" namespace "nest":
     cppclass ConnectionID:

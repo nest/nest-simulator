@@ -47,12 +47,12 @@ update_value_int( const dictionary& d, std::string propname, int& prop )
   if ( d.known( propname ) )
   {
     const auto value = d.at( propname );
-    if ( is_int( value ) )
+    if ( is_type< int >( value ) )
     {
       prop = boost::any_cast< int >( value );
       return true;
     }
-    else if ( is_double( value ) )
+    else if ( is_type< double >( value ) )
     {
       prop = static_cast< int >( boost::any_cast< double >( value ) );
       return true;

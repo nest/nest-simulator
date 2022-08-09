@@ -533,19 +533,19 @@ get_model_defaults( const std::string& modelname )
 std::shared_ptr< Parameter >
 create_parameter( const boost::any& value )
 {
-  if ( is_double( value ) )
+  if ( is_type< double >( value ) )
   {
     return create_parameter( boost::any_cast< double >( value ) );
   }
-  else if ( is_int( value ) )
+  else if ( is_type< int >( value ) )
   {
     return create_parameter( boost::any_cast< int >( value ) );
   }
-  else if ( is_dict( value ) )
+  else if ( is_type< dictionary >( value ) )
   {
     return create_parameter( boost::any_cast< dictionary >( value ) );
   }
-  else if ( is_parameter( value ) )
+  else if ( is_type< std::shared_ptr< nest::Parameter > >( value ) )
   {
     return create_parameter( boost::any_cast< std::shared_ptr< Parameter > >( value ) );
   }

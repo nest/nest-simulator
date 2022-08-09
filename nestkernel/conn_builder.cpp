@@ -1089,7 +1089,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
     throw BadProperty( "Source array must not be empty." );
   }
   auto indegree = conn_spec.at( names::indegree );
-  if ( is_parameter( indegree ) )
+  if ( is_type< std::shared_ptr< nest::Parameter > >( indegree ) )
   {
     // TODO: Checks of parameter range
     indegree_ = boost::any_cast< Parameter* >( indegree );
@@ -1253,7 +1253,7 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
     throw BadProperty( "Target array must not be empty." );
   }
   auto outdegree = conn_spec.at( names::outdegree );
-  if ( is_parameter( outdegree ) )
+  if ( is_type< std::shared_ptr< nest::Parameter > >( outdegree ) )
   {
     // TODO: Checks of parameter range
     outdegree_ = boost::any_cast< Parameter* >( outdegree );
@@ -1546,7 +1546,7 @@ nest::BernoulliBuilder::BernoulliBuilder( NodeCollectionPTR sources,
   : ConnBuilder( sources, targets, conn_spec, syn_specs )
 {
   auto p = conn_spec.at( names::p );
-  if ( is_parameter( p ) )
+  if ( is_type< std::shared_ptr< nest::Parameter > >( p ) )
   {
     p_ = boost::any_cast< Parameter* >( p );
     // TODO: Checks of parameter range

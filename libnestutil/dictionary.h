@@ -42,22 +42,12 @@ std::string debug_type( const boost::any& operand );
 
 std::string debug_dict_types( const dictionary& dict );
 
-bool is_int( const boost::any& operand );
-bool is_uint( const boost::any& operand );
-bool is_long( const boost::any& operand );
-bool is_size_t( const boost::any& operand );
-bool is_double( const boost::any& operand );
-bool is_bool( const boost::any& operand );
-bool is_string( const boost::any& operand );
-bool is_int_vector( const boost::any& operand );
-bool is_long_vector( const boost::any& operand );
-bool is_double_vector( const boost::any& operand );
-bool is_double_vector_vector( const boost::any& operand );
-bool is_string_vector( const boost::any& operand );
-bool is_any_vector( const boost::any& operand );
-bool is_dict( const boost::any& operand );
-bool is_parameter( const boost::any& operand );
-bool is_nc( const boost::any& operand );
+template < typename T >
+bool
+is_type( const boost::any& operand )
+{
+  return operand.type() == typeid( T );
+}
 
 /**
  * @brief Check whether two boost::any values are equal.
@@ -120,15 +110,15 @@ private:
   size_t // TODO: or template?
   cast_to_integer_( const boost::any& value, const std::string& key ) const
   {
-    if ( is_size_t( value ) )
+    if ( is_type< size_t >( value ) )
     {
       return cast_value_< size_t >( value, key );
     }
-    else if ( is_long( value ) )
+    else if ( is_type< long >( value ) )
     {
       return cast_value_< long >( value, key );
     }
-    else if ( is_int( value ) )
+    else if ( is_type< int >( value ) )
     {
       return cast_value_< int >( value, key );
     }

@@ -90,11 +90,11 @@ nest::weight_recorder::Parameters_::set( const dictionary& d )
 {
   auto get_or_create_nc = [&d]( NodeCollectionPTR& nc, const std::string& key ) {
     const auto value = d.at( key );
-    if ( is_nc( value ) )
+    if ( is_type< NodeCollectionDatum >( value ) )
     {
       nc = d.get< NodeCollectionPTR >( key );
     }
-    else if ( is_int_vector( value ) )
+    else if ( is_type< std::vector< int > >( value ) )
     {
       const auto node_ids = d.get< std::vector< int > >( key );
       // TODO-PYNEST-NG: make a NodeCollection::create(vector<int>) variant

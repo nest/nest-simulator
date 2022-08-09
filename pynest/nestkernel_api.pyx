@@ -84,33 +84,33 @@ cdef object any_vector_to_list(vector[any] cvec):
 
 
 cdef object any_to_pyobj(any operand):
-    if is_int(operand):
+    if is_type[int](operand):
         return any_cast[int](operand)
-    if is_uint(operand):
+    if is_type[uint](operand):
         return any_cast[uint](operand)
-    if is_long(operand):
+    if is_type[long](operand):
         return any_cast[long](operand)
-    if is_size_t(operand):
+    if is_type[size_t](operand):
         return any_cast[size_t](operand)
-    if is_double(operand):
+    if is_type[double](operand):
         return any_cast[double](operand)
-    if is_bool(operand):
+    if is_type[cbool](operand):
         return any_cast[cbool](operand)
-    if is_string(operand):
+    if is_type[string](operand):
         return any_cast[string](operand).decode('utf8')
-    if is_int_vector(operand):
+    if is_type[vector[int]](operand):
         return any_cast[vector[int]](operand)
-    if is_long_vector(operand):
+    if is_type[vector[long]](operand):
         return any_cast[vector[long]](operand)
-    if is_double_vector(operand):
+    if is_type[vector[double]](operand):
         return any_cast[vector[double]](operand)
-    if is_double_vector_vector(operand):
+    if is_type[vector[vector[double]]](operand):
         return any_cast[vector[vector[double]]](operand)
-    if is_string_vector(operand):
+    if is_type[vector[string]](operand):
         return any_cast[vector[string]](operand)
-    if is_any_vector(operand):
+    if is_type[vector[any]](operand):
         return tuple(any_vector_to_list(any_cast[vector[any]](operand)))
-    if is_dict(operand):
+    if is_type[dictionary](operand):
         return dictionary_to_pydict(any_cast[dictionary](operand))
 
 cdef object dictionary_to_pydict(dictionary cdict):

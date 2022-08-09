@@ -67,78 +67,78 @@ operator<<( std::ostream& os, const dictionary& dict )
   {
     std::string type;
     std::stringstream value_stream;
-    if ( is_int( kv.second ) )
+    if ( is_type< int >( kv.second ) )
     {
       type = "int";
       value_stream << boost::any_cast< int >( kv.second ) << '\n';
     }
-    else if ( is_uint( kv.second ) )
+    else if ( is_type< unsigned int >( kv.second ) )
     {
       type = "unsigned int";
       value_stream << boost::any_cast< unsigned int >( kv.second ) << '\n';
     }
-    else if ( is_long( kv.second ) )
+    else if ( is_type< long >( kv.second ) )
     {
       type = "long";
       value_stream << boost::any_cast< long >( kv.second ) << '\n';
     }
-    else if ( is_size_t( kv.second ) )
+    else if ( is_type< size_t >( kv.second ) )
     {
       type = "size_t";
       value_stream << boost::any_cast< size_t >( kv.second ) << '\n';
     }
-    else if ( is_double( kv.second ) )
+    else if ( is_type< double >( kv.second ) )
     {
       type = "double";
       value_stream << boost::any_cast< double >( kv.second ) << '\n';
     }
-    else if ( is_bool( kv.second ) )
+    else if ( is_type< bool >( kv.second ) )
     {
       type = "bool";
       const auto value = boost::any_cast< bool >( kv.second );
       value_stream << ( value ? "true" : "false" ) << '\n';
     }
-    else if ( is_string( kv.second ) )
+    else if ( is_type< std::string >( kv.second ) )
     {
       type = "std::string";
       value_stream << "\"" << boost::any_cast< std::string >( kv.second ) << "\"\n";
     }
-    else if ( is_int_vector( kv.second ) )
+    else if ( is_type< std::vector< int > >( kv.second ) )
     {
       type = "std::vector<int>";
       value_stream << boost::any_cast< std::vector< int > >( kv.second ) << '\n';
     }
-    else if ( is_double_vector( kv.second ) )
+    else if ( is_type< std::vector< double > >( kv.second ) )
     {
       type = "std::vector<double>";
       value_stream << boost::any_cast< std::vector< double > >( kv.second ) << '\n';
     }
-    else if ( is_double_vector_vector( kv.second ) )
+    else if ( is_type< std::vector< std::vector< double > > >( kv.second ) )
     {
       type = "vector<vector<double>>";
       value_stream << "vector<vector<double>>" << '\n';
     }
-    else if ( is_string_vector( kv.second ) )
+    else if ( is_type< std::vector< std::string > >( kv.second ) )
     {
       type = "std::vector<std::string>";
       value_stream << boost::any_cast< std::vector< std::string > >( kv.second ) << '\n';
     }
-    else if ( is_any_vector( kv.second ) )
+    else if ( is_type< std::vector< boost::any > >( kv.second ) )
     {
       type = "vector<boost::any>";
       value_stream << "vector<any>" << '\n';
     }
-    else if ( is_dict( kv.second ) )
+    else if ( is_type< dictionary >( kv.second ) )
     {
       type = "dictionary";
       value_stream << "dictionary" << '\n';
     }
-    else if ( is_parameter( kv.second ) )
+    else if ( is_type< std::shared_ptr< nest::Parameter > >( kv.second ) )
     {
       type = "parameter";
       value_stream << "parameter" << '\n';
     }
-    else if ( is_nc( kv.second ) )
+    else if ( is_type< NodeCollectionDatum >( kv.second ) )
     {
       type = "NodeCollection";
       value_stream << "NodeCollection" << '\n';
@@ -155,121 +155,12 @@ operator<<( std::ostream& os, const dictionary& dict )
   return os << "}";
 }
 
-// int
-bool
-is_int( const boost::any& operand )
-{
-  return operand.type() == typeid( int );
-}
-
-bool
-is_uint( const boost::any& operand )
-{
-  return operand.type() == typeid( unsigned int );
-}
-
-// long
-bool
-is_long( const boost::any& operand )
-{
-  return operand.type() == typeid( long );
-}
-
-bool
-is_size_t( const boost::any& operand )
-{
-  return operand.type() == typeid( size_t );
-}
-
-// double
-bool
-is_double( const boost::any& operand )
-{
-  return operand.type() == typeid( double );
-}
-
-// bool
-bool
-is_bool( const boost::any& operand )
-{
-  return operand.type() == typeid( bool );
-}
-
-// string
-bool
-is_string( const boost::any& operand )
-{
-  return operand.type() == typeid( std::string );
-}
-
-// vector of ints
-bool
-is_int_vector( const boost::any& operand )
-{
-  return operand.type() == typeid( std::vector< int > );
-}
-// vector of ints
-bool
-is_long_vector( const boost::any& operand )
-{
-  return operand.type() == typeid( std::vector< long > );
-}
-
-// vector of doubles
-bool
-is_double_vector( const boost::any& operand )
-{
-  return operand.type() == typeid( std::vector< double > );
-}
-
-// vector of vector of doubles
-bool
-is_double_vector_vector( const boost::any& operand )
-{
-  return operand.type() == typeid( std::vector< std::vector< double > > );
-}
-
-// vector of strings
-bool
-is_string_vector( const boost::any& operand )
-{
-  return operand.type() == typeid( std::vector< std::string > );
-}
-
-// vector of boost::any
-bool
-is_any_vector( const boost::any& operand )
-{
-  return operand.type() == typeid( std::vector< boost::any > );
-}
-
-// dict
-bool
-is_dict( const boost::any& operand )
-{
-  return operand.type() == typeid( dictionary );
-}
-
-// parameter
-bool
-is_parameter( const boost::any& operand )
-{
-  return operand.type() == typeid( std::shared_ptr< nest::Parameter > );
-}
-
-// NodeCollection
-bool
-is_nc( const boost::any& operand )
-{
-  return operand.type() == typeid( NodeCollectionDatum );
-}
-
 bool
 value_equal( const boost::any first, const boost::any second )
 {
-  if ( is_int( first ) )
+  if ( is_type< int >( first ) )
   {
-    if ( not is_int( second ) )
+    if ( not is_type< int >( second ) )
     {
       return false;
     }
@@ -280,9 +171,9 @@ value_equal( const boost::any first, const boost::any second )
       return false;
     }
   }
-  else if ( is_long( first ) )
+  else if ( is_type< long >( first ) )
   {
-    if ( not is_long( second ) )
+    if ( not is_type< long >( second ) )
     {
       return false;
     }
@@ -293,9 +184,9 @@ value_equal( const boost::any first, const boost::any second )
       return false;
     }
   }
-  else if ( is_size_t( first ) )
+  else if ( is_type< size_t >( first ) )
   {
-    if ( not is_size_t( second ) )
+    if ( not is_type< size_t >( second ) )
     {
       return false;
     }
@@ -306,9 +197,9 @@ value_equal( const boost::any first, const boost::any second )
       return false;
     }
   }
-  else if ( is_double( first ) )
+  else if ( is_type< double >( first ) )
   {
-    if ( not is_double( second ) )
+    if ( not is_type< double >( second ) )
     {
       return false;
     }
@@ -319,9 +210,9 @@ value_equal( const boost::any first, const boost::any second )
       return false;
     }
   }
-  else if ( is_bool( first ) )
+  else if ( is_type< bool >( first ) )
   {
-    if ( not is_bool( second ) )
+    if ( not is_type< bool >( second ) )
     {
       return false;
     }
@@ -332,9 +223,9 @@ value_equal( const boost::any first, const boost::any second )
       return false;
     }
   }
-  else if ( is_string( first ) )
+  else if ( is_type< std::string >( first ) )
   {
-    if ( not is_string( second ) )
+    if ( not is_type< std::string >( second ) )
     {
       return false;
     }
@@ -345,9 +236,9 @@ value_equal( const boost::any first, const boost::any second )
       return false;
     }
   }
-  else if ( is_int_vector( first ) )
+  else if ( is_type< std::vector< int > >( first ) )
   {
-    if ( not is_int_vector( second ) )
+    if ( not is_type< std::vector< int > >( second ) )
     {
       return false;
     }
@@ -358,9 +249,9 @@ value_equal( const boost::any first, const boost::any second )
       return false;
     }
   }
-  else if ( is_double_vector( first ) )
+  else if ( is_type< std::vector< double > >( first ) )
   {
-    if ( not is_double_vector( second ) )
+    if ( not is_type< std::vector< double > >( second ) )
     {
       return false;
     }
@@ -371,9 +262,9 @@ value_equal( const boost::any first, const boost::any second )
       return false;
     }
   }
-  else if ( is_double_vector_vector( first ) )
+  else if ( is_type< std::vector< std::vector< double > > >( first ) )
   {
-    if ( not is_double_vector_vector( second ) )
+    if ( not is_type< std::vector< std::vector< double > > >( second ) )
     {
       return false;
     }
@@ -384,9 +275,9 @@ value_equal( const boost::any first, const boost::any second )
       return false;
     }
   }
-  else if ( is_string_vector( first ) )
+  else if ( is_type< std::vector< std::string > >( first ) )
   {
-    if ( not is_string_vector( second ) )
+    if ( not is_type< std::vector< std::string > >( second ) )
     {
       return false;
     }
@@ -397,9 +288,9 @@ value_equal( const boost::any first, const boost::any second )
       return false;
     }
   }
-  else if ( is_dict( first ) )
+  else if ( is_type< dictionary >( first ) )
   {
-    if ( not is_dict( second ) )
+    if ( not is_type< dictionary >( second ) )
     {
       return false;
     }
@@ -410,9 +301,9 @@ value_equal( const boost::any first, const boost::any second )
       return false;
     }
   }
-  else if ( is_parameter( first ) )
+  else if ( is_type< std::shared_ptr< nest::Parameter > >( first ) )
   {
-    if ( not is_parameter( second ) )
+    if ( not is_type< std::shared_ptr< nest::Parameter > >( second ) )
     {
       return false;
     }

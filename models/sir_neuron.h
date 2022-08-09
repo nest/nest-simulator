@@ -321,8 +321,8 @@ RecordablesMap< nest::sir_neuron > nest::sir_neuron::recordablesMap_;
 
 sir_neuron::Parameters_::Parameters_()
   : tau_m_( 10.0 ) // ms
-  : beta_sir_( 0.1 ) // unitless
-  : mu_sir_( 0.1 ) // unitless
+  , beta_sir_( 0.1 ) // unitless
+  , mu_sir_( 0.1 ) // unitless
 {
   recordablesMap_.create();
 }
@@ -358,13 +358,13 @@ sir_neuron::Parameters_::set( const DictionaryDatum& d, Node* node )
   }
 
   updateValueParam< double >( d, names::beta_sir, beta_sir_, node );
-  if ( !( 0 <= beta_sir_ <= 1 ) )
+  if ( beta_sir_ < 0 || beta_sir_ > 1 )
   {
     throw BadProperty( "All probabilities must be between 0 and 1." );
   }
 
   updateValueParam< double >( d, names::mu_sir, mu_sir_, node );
-  if ( !( 0 <= mu_sir_ <= 1 ) )
+  if ( mu_sir_ < 0 || mu_sir_ > 1 )
   {
     throw BadProperty( "All probabilities must be between 0 and 1." );
   }
@@ -462,7 +462,8 @@ sir_neuron::update( Time const& origin, const long from, const long to )
     // of the total input h with respect to the previous step, so sum them up
     S_.h_ += B_.spikes_.get_value( lag );
 
-    double c = B_.currents_.get_value( lag );
+    // current is always zero
+    // double c = B_.currents_.get_value( lag );
 
     // check, if the update needs to be done
     // why here use origin.get_steps instead of from ?

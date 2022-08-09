@@ -229,6 +229,8 @@ private:
   static RecordablesMap< sir_neuron > recordablesMap_;
 };
 
+template <>
+void RecordablesMap< sir_neuron >::create();
 
 inline port
 sir_neuron::send_test_event( Node& target, rport receptor_type, synindex, bool )

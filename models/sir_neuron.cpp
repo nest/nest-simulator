@@ -183,8 +183,10 @@ sir_neuron::State_::get( DictionaryDatum& d, const Parameters_& ) const
 }
 
 void
-sir_neuron::State_::set( const DictionaryDatum&, const Parameters_&, Node* )
+sir_neuron::State_::set( const DictionaryDatum& d, Node* node )
 {
+  updateValueParam< double >( d, names::h, h_, node );
+  updateValueParam< double >( d, names::S, y_, node );
 }
 
 sir_neuron::Buffers_::Buffers_( sir_neuron& n )

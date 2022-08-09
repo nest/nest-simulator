@@ -219,24 +219,24 @@ def SetKernelStatus(params):
     # the module level, but have to have it on the function level.
     import nest    # noqa
     # TODO-PYNEST-NG: Enable again when KernelAttribute works
-    # raise_errors = params.get('dict_miss_is_error', nest.dict_miss_is_error)
-    # valids = nest._kernel_attr_names
-    # readonly = nest._readonly_kernel_attrs
-    # keys = list(params.keys())
-    # for key in keys:
-    #     msg = None
-    #     if key not in valids:
-    #         msg = f'`{key}` is not a valid kernel parameter, ' + \
-    #               'valid parameters are: ' + \
-    #               ', '.join(f"'{p}'" for p in sorted(valids))
-    #     elif key in readonly:
-    #         msg = f'`{key}` is a readonly kernel parameter'
-    #     if msg is not None:
-    #         if raise_errors:
-    #             raise ValueError(msg)
-    #         else:
-    #             warnings.warn(msg + f' \n`{key}` has been ignored')
-    #             del params[key]
+    raise_errors = params.get('dict_miss_is_error', nest.dict_miss_is_error)
+    valids = nest._kernel_attr_names
+    readonly = nest._readonly_kernel_attrs
+    keys = list(params.keys())
+    for key in keys:
+        msg = None
+        if key not in valids:
+            msg = f'`{key}` is not a valid kernel parameter, ' + \
+                  'valid parameters are: ' + \
+                  ', '.join(f"'{p}'" for p in sorted(valids))
+        elif key in readonly:
+            msg = f'`{key}` is a readonly kernel parameter'
+        if msg is not None:
+            if raise_errors:
+                raise ValueError(msg)
+            else:
+                warnings.warn(msg + f' \n`{key}` has been ignored')
+                del params[key]
 
     nestkernel.llapi_set_kernel_status(params)
 

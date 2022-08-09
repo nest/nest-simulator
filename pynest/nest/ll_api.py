@@ -54,7 +54,7 @@ __all__ = [
     'connect_arrays',
     'set_communicator',
     # 'take_array_index',
-    # 'KernelAttribute', TODO-PYNEST-NG: Enable again when it works without SLI
+    'KernelAttribute',
 ]
 
 
@@ -88,6 +88,48 @@ def set_communicator(comm):
                                 "mpi4py not loaded.")
 
     engine.set_communicator(comm)
+
+
+class KernelAttribute:
+    """
+    Descriptor that dispatches attribute access to the nest kernel.
+    """
+    def __init__(self, typehint, description, readonly=False, default=None, localonly=False):
+        self._readonly = readonly
+        self._localonly = localonly
+        self._default = default
+
+        readonly = readonly and "**read only**"
+        localonly = localonly and "**local only**"
+
+        self.__doc__ = (
+            description
+            + ("." if default is None else f", defaults to ``{default}``.")
+            + ("\n\n" if readonly or localonly else "")
+            + ", ".join(c for c in (readonly, localonly) if c)
+            + f"\n\n:type: {typehint}"
+        )
+
+    def __set_name__(self, cls, name):
+        self._name = name
+        self._full_status = name == "kernel_status"
+
+    def __get__(self, instance, cls=None):
+        if instance is None:
+            return self
+
+        status_root = nestkernel.llapi_get_kernel_status()
+
+        if self._full_status:
+            return status_root
+        else:
+            return status_root[self._name]
+
+    def __set__(self, instance, value):
+        if self._readonly:
+            msg = f"`{self._name}` is a read only kernel attribute."
+            raise AttributeError(msg)
+        nestkernel.llapi_set_kernel_status({self._name: value})
 
 
 def init(argv):
@@ -141,19 +183,18 @@ def init(argv):
             print('NEST initialized successfully!')  # TODO-PYNEST-NG: Implement welcome in Python
             # engine.run("pywelcome")
 
-        # TODO-PYNEST-NG: Enable again when it works without SLI
         # Dirty hack to get tab-completion for models in IPython.
-        # try:
-        #     __IPYTHON__
-        # except NameError:
-        #     pass
-        # else:
-        #     try:
-        #         import keyword
-        #         from .lib.hl_api_models import Models		# noqa
-        #         keyword.kwlist += Models()
-        #     except ImportError:
-        #         pass
+        try:
+            __IPYTHON__
+        except NameError:
+            pass
+        else:
+            try:
+                import keyword
+                from .lib.hl_api_models import Models		# noqa
+                keyword.kwlist += Models()
+            except ImportError:
+                pass
 
     else:
         raise kernel.NESTErrors.PyNESTError("Initialization of NEST failed.")

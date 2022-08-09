@@ -358,13 +358,13 @@ sir_neuron::Parameters_::set( const DictionaryDatum& d, Node* node )
   }
 
   updateValueParam< double >( d, names::beta_sir, beta_sir_, node );
-  if !( 0 <= beta_sir_ <= 1 )
+  if ( !( 0 <= beta_sir_ <= 1 ) )
   {
     throw BadProperty( "All probabilities must be between 0 and 1." );
   }
 
   updateValueParam< double >( d, names::mu_sir, mu_sir_, node );
-  if !( 0 <= mu_sir_ <= 1 )
+  if ( !( 0 <= mu_sir_ <= 1 ) )
   {
     throw BadProperty( "All probabilities must be between 0 and 1." );
   }
@@ -473,9 +473,12 @@ sir_neuron::update( Time const& origin, const long from, const long to )
       // if the state has changed, the neuron produces an event sent to all its
       // targets
 
+      // initialize y_new
+      int new_y;
+
       if (S_.y_ == 0) //neuron is susceptible
       {
-        int new_y = 0;
+        new_y = 0;
 
         if (V_.rng_->drand() < P_.beta_sir_ * S_.h_)
         {
@@ -485,7 +488,7 @@ sir_neuron::update( Time const& origin, const long from, const long to )
 
       if (S_.y_ == 1) //neuron is infected
       {
-        int new_y = 1;
+        new_y = 1;
          
         if (V_.rng_->drand() < P_.mu_sir_)
         {
@@ -495,7 +498,7 @@ sir_neuron::update( Time const& origin, const long from, const long to )
 
       if (S_.y_ == 2) //neuron is recovered
       {
-        int new_y = 2;
+        new_y = 2;
       }
 
 

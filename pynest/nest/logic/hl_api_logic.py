@@ -20,6 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 from ..lib.hl_api_types import CreateParameter
+from .. import nestkernel_api as nestkernel
 
 __all__ = [
     'conditional',
@@ -50,4 +51,4 @@ def conditional(condition, param_if_true, param_if_false):
     if isinstance(param_if_false, (int, float)):
         param_if_false = CreateParameter(
             'constant', {'value': float(param_if_false)})
-    return sli_func("conditional", condition, param_if_true, param_if_false)
+    return nestkernel.llapi_conditional_parameter(condition._datum, param_if_true._datum, param_if_false._datum)

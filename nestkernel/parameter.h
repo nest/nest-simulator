@@ -680,7 +680,7 @@ public:
     , parameter2_( m2 )
     , comparator_( -1 )
   {
-    if ( not d.update_value( names::comparator, comparator_ ) )
+    if ( not d.update_integer_value( names::comparator, comparator_ ) )
     {
       throw BadParameter( "A comparator has to be specified." );
     }

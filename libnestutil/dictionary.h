@@ -92,7 +92,7 @@ private:
     }
     catch ( const boost::bad_any_cast& )
     {
-      std::string msg = std::string( "Failed to cast " ) + key + " from " + debug_type( value ) + " to type "
+      std::string msg = std::string( "Failed to cast '" ) + key + "' from " + debug_type( value ) + " to type "
         + std::string( typeid( T ).name() );
       std::cerr << msg << "\n";
       throw nest::TypeMismatch( msg );
@@ -124,7 +124,7 @@ private:
     }
     // Not an integer type
     std::string msg =
-      std::string( "Failed to cast " ) + key + " from " + debug_type( at( key ) ) + " to an integer type ";
+      std::string( "Failed to cast '" ) + key + "' from " + debug_type( at( key ) ) + " to an integer type ";
     std::cerr << msg << "\n";
     throw nest::TypeMismatch( msg );
   }

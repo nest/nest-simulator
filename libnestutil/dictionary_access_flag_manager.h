@@ -66,13 +66,19 @@ public:
 inline void
 DictionaryAccessFlagManager::init_access_flags( const dictionary& dict )
 {
-  access_flags_[&dict ] = {};
+#pragma omp critical( init_access_flags )
+  {
+    access_flags_[&dict ] = {};
+  }
 }
 
 inline void
 DictionaryAccessFlagManager::register_access( const dictionary& dict, const key_type_& key )
 {
-  access_flags_[&dict ].insert( key );
+#pragma omp critical( register_access )
+  {
+    access_flags_[&dict ].insert( key );
+  }
 }
 
 #endif // DICTIONARY_ACCESS_FLAG_MANAGER_H

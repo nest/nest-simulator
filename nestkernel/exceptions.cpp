@@ -29,18 +29,18 @@
 #include "config.h"
 
 
-const char*
-nest::UnknownModelName::what() const noexcept
+std::string
+nest::UnknownModelName::compose_msg_( const std::string& model_name ) const
 {
   std::ostringstream msg;
-  msg << "/" << model_name_ + " is not a known model name. "
+  msg << model_name + " is not a known model name. "
     "Please check the modeldict for a list of available models.";
 #ifndef HAVE_GSL
   msg << " A frequent cause for this error is that NEST was compiled "
          "without the GNU Scientific Library, which is required for "
          "the conductance-based neuron models.";
 #endif
-  return msg.str().c_str();
+  return msg.str();
 }
 
 const char*
@@ -60,19 +60,39 @@ nest::UnknownModelID::what() const noexcept
   return msg.str().c_str();
 }
 
+std::string
+nest::UnknownSynapseType::compose_msg_( const int id ) const
+{
+  return std::string( "Synapse with id " ) + std::to_string( id ) + std::string( " does not exist." );
+}
+
+std::string
+nest::UnknownSynapseType::compose_msg_( const std::string& name ) const
+{
+  return std::string( "Synapse with name " ) + name + std::string( " does not exist." );
+}
+
 const char*
 nest::UnknownSynapseType::what() const noexcept
 {
-  std::ostringstream out;
+  std::cerr << __FILE__ << ":" << __LINE__ << "\n";
+
+  // std::stringstream out;
+  std::string msg;
   if ( synapsename_.empty() )
   {
-    out << "Synapse with id " << synapseid_ << " does not exist.";
+    // out << "Synapse with id " << synapseid_ << " does not exist.";
+    msg = std::string( "Synapse with id " ) + std::to_string( synapseid_ ) + std::string( " does not exist." );
   }
   else
   {
-    out << "Synapse with name " << synapsename_ << " does not exist.";
+    msg = std::string( "Synapse with name " ) + synapsename_ + std::string( " does not exist." );
   }
-  return out.str().c_str();
+  // std::cerr << "[out]: " << out.str().c_str() << "\n";
+  // return out.str().c_str();
+  // return "TEST";
+  return msg_.c_str();
+  // return msg_.c_str();
 }
 
 const char*

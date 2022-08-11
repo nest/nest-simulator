@@ -147,16 +147,13 @@ public:
  */
 class UnknownModelName : public KernelException
 {
-  const std::string model_name_;
+  std::string compose_msg_( const std::string& model_name ) const;
 
 public:
   UnknownModelName( const std::string& model_name )
-    : KernelException( "UnknownModelName" )
-    , model_name_( model_name )
+    : KernelException( compose_msg_( model_name ) )
   {
   }
-
-  const char* what() const noexcept override;
 };
 
 /**
@@ -206,21 +203,28 @@ public:
  */
 class UnknownSynapseType : public KernelException
 {
+  std::string compose_msg_( const int id ) const;
+  std::string compose_msg_( const std::string& name ) const;
+
   int synapseid_;
   std::string synapsename_;
 
+  std::string msg_;
+
 public:
   UnknownSynapseType( int id )
-    : KernelException( "UnknownSynapseType" )
+    : KernelException( "UnknownSynapseType id" )
     , synapseid_( id )
     , synapsename_()
+    , msg_( compose_msg_( id ) )
   {
   }
 
   UnknownSynapseType( std::string name )
-    : KernelException( "UnknownSynapseType" )
-    , synapseid_()
+    : KernelException( "UnknownSynapseType name" )
+    , synapseid_( -1 )
     , synapsename_( name )
+    , msg_( compose_msg_( name ) )
   {
   }
 

@@ -80,7 +80,7 @@ set( models_sources
     mat2_psc_exp.h mat2_psc_exp.cpp
     mcculloch_pitts_neuron.h mcculloch_pitts_neuron.cpp
     mip_generator.h mip_generator.cpp
-    modelsmodule.h modelsmodule.cpp
+    # modelsmodule.h modelsmodule.cpp
     multimeter.h multimeter.cpp
     music_cont_in_proxy.h music_cont_in_proxy.cpp
     music_cont_out_proxy.h music_cont_out_proxy.cpp

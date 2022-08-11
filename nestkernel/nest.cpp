@@ -36,8 +36,40 @@
 #include "iaf_psc_delta.h"
 #include "iaf_psc_exp.h"
 #include "parrot_neuron.h"
+
+#include "bernoulli_synapse.h"
+#include "clopath_synapse.h"
+#include "common_synapse_properties.h"
+#include "cont_delay_synapse.h"
+#include "cont_delay_synapse_impl.h"
+#include "diffusion_connection.h"
+#include "gap_junction.h"
+#include "ht_synapse.h"
+#include "jonke_synapse.h"
+#include "quantal_stp_synapse.h"
+#include "quantal_stp_synapse_impl.h"
+#include "rate_connection_delayed.h"
+#include "rate_connection_instantaneous.h"
 #include "static_synapse.h"
+#include "static_synapse_hom_w.h"
+// #include "stdp_dopamine_synapse.h"
+#include "stdp_nn_pre_centered_synapse.h"
+#include "stdp_nn_restr_synapse.h"
+#include "stdp_nn_symm_synapse.h"
+// #include "stdp_pl_synapse_hom.h"
+#include "stdp_synapse.h"
+#include "stdp_synapse_facetshw_hom.h"
+#include "stdp_synapse_facetshw_hom_impl.h"
+// #include "stdp_synapse_hom.h"
+#include "stdp_triplet_synapse.h"
+#include "tsodyks2_synapse.h"
+#include "tsodyks_synapse.h"
+// #include "tsodyks_synapse_hom.h"
+#include "urbanczik_synapse.h"
+#include "vogels_sprekeler_synapse.h"
+
 #include "weight_recorder.h"
+// #include "volume_transmitter.h"
 
 #include "spatial.h"
 
@@ -66,8 +98,32 @@ init_nest( int* argc, char** argv[] )
   kernel().model_manager.register_node_model< parrot_neuron >( "parrot_neuron" );
 
   kernel().model_manager.register_node_model< weight_recorder >( "weight_recorder" );
+  // kernel().model_manager.register_node_model< volume_transmitter >( "volume_transmitter" );
 
+  kernel().model_manager.register_connection_model< bernoulli_synapse >( "bernoulli_synapse" );
+  kernel().model_manager.register_connection_model< clopath_synapse >(
+    "clopath_synapse", default_connection_model_flags | RegisterConnectionModelFlags::REQUIRES_CLOPATH_ARCHIVING );
+  kernel().model_manager.register_connection_model< cont_delay_synapse >( "cont_delay_synapse" );
+  kernel().model_manager.register_connection_model< ht_synapse >( "ht_synapse" );
+  kernel().model_manager.register_connection_model< jonke_synapse >( "jonke_synapse" );
+  kernel().model_manager.register_connection_model< quantal_stp_synapse >( "quantal_stp_synapse" );
   kernel().model_manager.register_connection_model< static_synapse >( "static_synapse" );
+  kernel().model_manager.register_connection_model< static_synapse_hom_w >( "static_synapse_hom_w" );
+  kernel().model_manager.register_connection_model< stdp_synapse >( "stdp_synapse" );
+  // kernel().model_manager.register_connection_model< stdp_synapse_hom >( "stdp_synapse_hom" );
+  // kernel().model_manager.register_connection_model< stdp_dopamine_synapse >( "stdp_dopamine_synapse" );
+  kernel().model_manager.register_connection_model< stdp_facetshw_synapse_hom >( "stdp_facetshw_synapse_hom" );
+  kernel().model_manager.register_connection_model< stdp_nn_restr_synapse >( "stdp_nn_restr_synapse" );
+  kernel().model_manager.register_connection_model< stdp_nn_symm_synapse >( "stdp_nn_symm_synapse" );
+  kernel().model_manager.register_connection_model< stdp_nn_pre_centered_synapse >( "stdp_nn_pre_centered_synapse" );
+  // kernel().model_manager.register_connection_model< stdp_pl_synapse_hom >( "stdp_pl_synapse_hom" );
+  kernel().model_manager.register_connection_model< stdp_triplet_synapse >( "stdp_triplet_synapse" );
+  kernel().model_manager.register_connection_model< tsodyks_synapse >( "tsodyks_synapse" );
+  // kernel().model_manager.register_connection_model< tsodyks_synapse_hom >( "tsodyks_synapse_hom" );
+  kernel().model_manager.register_connection_model< tsodyks2_synapse >( "tsodyks2_synapse" );
+  kernel().model_manager.register_connection_model< urbanczik_synapse >(
+    "urbanczik_synapse", default_connection_model_flags | RegisterConnectionModelFlags::REQUIRES_URBANCZIK_ARCHIVING );
+  kernel().model_manager.register_connection_model< vogels_sprekeler_synapse >( "vogels_sprekeler_synapse" );
 
 
   // Add connection rules

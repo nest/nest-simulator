@@ -27,7 +27,7 @@
 
 // Generated includes:
 #include "config.h"
-#include "static_modules.h"
+// #include "static_modules.h"
 
 // Includes from libnestutil:
 #include "logging.h"
@@ -128,7 +128,7 @@ neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string module
   // engine.def( "growthcurvedict", nest::kernel().sp_manager.get_growthcurvedict() );
 
   // now add static modules providing models
-  add_static_modules( engine );
+  // add_static_modules( engine );
 
 /*
  * The following section concerns shared user modules and is thus only

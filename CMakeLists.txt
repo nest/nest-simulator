@@ -164,7 +164,7 @@ set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${NEST_CXX_COLOR_FLAGS}" )
 # requires HAVE_LIBNEUROSIM
 nest_default_modules()
 
-nest_write_static_module_header( "${PROJECT_BINARY_DIR}/nest/static_modules.h" )
+# nest_write_static_module_header( "${PROJECT_BINARY_DIR}/nest/static_modules.h" )
 
 # check additionals
 nest_check_exitcode_abort()

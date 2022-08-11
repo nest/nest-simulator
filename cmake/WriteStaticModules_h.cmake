@@ -42,14 +42,14 @@ function( NEST_WRITE_STATIC_MODULE_HEADER filename )
   file( APPEND "${filename}" "#include \"interpret.h\"\n\n" )
 
   # start `add_static_modules` function
-  file( APPEND "${filename}" "void add_static_modules( SLIInterpreter& engine )\n{\n" )
-  file( APPEND "${filename}" "  // Add all in source modules:\n" )
-  foreach ( mod ${SLI_MODULES} )
-    # get class name, is always in nest namespace
-    file( STRINGS "${PROJECT_SOURCE_DIR}/${mod}/${mod}module.h" module_class_string REGEX "class.*: public SLIModule" )
-    string( REGEX REPLACE "class ([a-zA-Z0-9_]+) : public SLIModule" "\\1" module_class ${module_class_string} )
-    file( APPEND "${filename}" "  engine.addmodule( new nest::${module_class}() );\n" )
-  endforeach ()
+  # file( APPEND "${filename}" "void add_static_modules( SLIInterpreter& engine )\n{\n" )
+  # file( APPEND "${filename}" "  // Add all in source modules:\n" )
+  # foreach ( mod ${SLI_MODULES} )
+  #   # get class name, is always in nest namespace
+  #   file( STRINGS "${PROJECT_SOURCE_DIR}/${mod}/${mod}module.h" module_class_string REGEX "class.*: public SLIModule" )
+  #   string( REGEX REPLACE "class ([a-zA-Z0-9_]+) : public SLIModule" "\\1" module_class ${module_class_string} )
+  #   file( APPEND "${filename}" "  engine.addmodule( new nest::${module_class}() );\n" )
+  # endforeach ()
 
   # when we build statically, we need to add headers and addmodule for external modules
   # just as if it were a in source module.

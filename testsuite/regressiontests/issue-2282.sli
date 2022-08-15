@@ -22,7 +22,7 @@
 
 /** @BeginDocumentation
 
-Name: testsuite::issue-2282 Ensure multimeter-recording from noise_generator prohibited in if multithreaded
+Name: testsuite::issue-2282 Ensure multimeter-recording from noise_generator is prohibited if multithreaded
 
 Synopsis: (issue-2282) run -> NEST exits if test fails
 

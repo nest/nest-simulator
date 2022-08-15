@@ -74,6 +74,9 @@ jobs:
           pip list
           pip show --files clang-format
           ls -al /opt/hostedtoolcache/Python/3.9.13/x64/bin
+          echo "FIND ----"
+          find /opt/hostedtoolcache/Python/3.9.13 -name clang-format
+          echo "FIND ----"
           echo "PP:" `which clang-format`
 
       - name: "Find changed files"

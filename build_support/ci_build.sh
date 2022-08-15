@@ -94,7 +94,7 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
     # The names of the static code analysis tools executables.
     VERA=vera++
     CPPCHECK=cppcheck
-    CLANG_FORMAT=/opt/hostedtoolcache/Python/3.9.13/x64/lib/python3.9/site-packages/clang_format/data/bin/clang-format
+    CLANG_FORMAT=clang-format
     PEP8=pycodestyle
     PYCODESTYLE_IGNORES="E121,E123,E126,E226,E24,E704,W503,W504"
 
@@ -114,8 +114,6 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
     # The script is called within the CI environment and thus can not be run incremental.
     RUNS_ON_CI=true
     INCREMENTAL=false
-    
-    echo "CB: " `which clang-format`
 
     chmod +x build_support/static_code_analysis.sh
     ./build_support/static_code_analysis.sh "$RUNS_ON_CI" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \

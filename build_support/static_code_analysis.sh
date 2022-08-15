@@ -51,6 +51,7 @@ IGNORE_MSG_PYCODESTYLE=${16}  # true or false, indicating whether pycodestyle me
 PYCODESTYLE_IGNORES=${17}     # The list of pycodestyle error and warning codes to ignore.
 
 echo "PATH IN SCA: ${PATH}"
+ls -al /opt/hostedtoolcache/Python/3.9.13/x64/bin
 echo "cf found:" `which clang-format`
 
 # PYCODESTYLE rules to ignore.

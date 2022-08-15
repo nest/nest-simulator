@@ -129,7 +129,7 @@ The following parameters can be set in the status dictionary.
  b       pA      Spike-triggered adaptation
  Delta_T mV      Slope factor
  tau_w   ms      Adaptation time constant
- V_t     mV      Spike initiation threshold
+ V_th    mV      Spike initiation threshold
  V_peak  mV      Spike detection threshold
 ======== ======= ==================================
 
@@ -233,7 +233,7 @@ private:
     double g_L;        //!< Leak Conductance in nS
     double C_m;        //!< Membrane Capacitance in pF
     double E_L;        //!< Leak reversal Potential (aka resting potential) in mV
-    double Delta_T;    //!< Slope factor in ms
+    double Delta_T;    //!< Slope factor in mV
     double tau_w;      //!< Adaptation time-constant in ms
     double a;          //!< Subthreshold adaptation in nS
     double b;          //!< Spike-triggered adaptation in pA

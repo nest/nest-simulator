@@ -57,8 +57,7 @@ a user-defined interval :math:`\delta` and is given by
 
 .. math::
 
-  I(t) = I(t) = \mu + N_j \sigma
-                              \quad \text{for} \quad t_0 + j \delta < t \leq t_0 + (j+1) \delta \;,
+  I(t) = \mu + N_j \sigma \quad \text{for} \quad t_0 + j \delta < t \leq t_0 + (j+1) \delta \;,
 
 where :math:`N_j` are Gaussian random numbers with unit standard deviation and :math:`t_0` is
 the device onset time.
@@ -72,39 +71,35 @@ deviation of the noise:
                               \quad \text{for} \quad t_0 + j \delta < t \leq t_0 + (j+1) \delta \;.
 
 All targets receive different currents, but the currents for all
-targets change at the same points in time. The interval between
-changes, :math:`\Delta`, must be a multiple of the time step.
+targets change at the same points in time. The interval :math:`\delta` between
+changes must be a multiple of the time step.
 
 For a detailed discussion of the properties of the noise generator, please see the
 `noise_generator <../model_details/noise_generator.ipynb>`_
 notebook included in the NEST source code.
 
+.. note::
 
-The effect of this noise current on a neuron depends on ``dt``. Consider
-the membrane potential fluctuations evoked when a noise current is
-injected into a neuron. The standard deviation of these fluctuations
-across an ensemble will increase with ``dt`` for a given value of ``std``.
-For the leaky integrate-and-fire neuron with time constant ``tau_m`` and
-capacity ``C_m``, membrane potential fluctuations Sigma at time
-:math:`t_j+delay` are given by
+   The effect of the noise current on a neuron depends on the switching interval :math:`\delta`.
+   For a leaky integrate-and-fire neuron with time constant :math:`\tau_m` and capacitance
+   :math:`C_m`, the variance of the membrane potential is given by
 
-.. math::
+   .. math::
 
-   \Sigma = std \cdot \tau_m / C_m \cdot \sqrt( (1-x) / (1+x) )  \\
-                          \text{where } x = exp(-dt/\tau_m)
+      \Sigma^2 = \frac{\delta \tau_m \sigma^2}{2 C_m^2}
 
-for large :math:`t_j`. In the white noise limit, :math:`dt \rightarrow 0`, one has
 
-.. math::
+   for :math:`\delta \ll \tau_m`. For details, see the `noise_generator <../model_details/noise_generator.ipynb>`_
+   notebook included in the NEST source code.
 
-   \Sigma \rightarrow std / C_m * \sqrt(dt \cdot \tau / 2).
+.. admonition:: Recording the generated current
 
-To obtain comparable results for different values of dt, you must adapt std.
+   You can use a `multimeter` to record the average current sent to all targets for each time step, provided you
+   are simulating using a single thread (multiple MPI processes with one thread each also work). In this case,
+   the recording `interval` of the `multimeter` should be the simulation resolution to avoid confusing effects
+   due to offset or "gliding" between the recording times of the `multimeter` and the switching times of the
+   `noise_generator`.  In multi-threaded mode, recording is prohibited for technical reasons.
 
-As the noise generator provides a different current for each of its targets,
-the current recorded represents the instantaneous average of all the
-currents computed. When there exists only a single target, this would be
-equivalent to the actual current provided to that target.
 
 .. include:: ../models/stimulation_device.rst
 
@@ -125,8 +120,6 @@ phase
 
 frequency
     The frequency of the sine modulation
-
-.. note::
 
 
 Setting parameters from a stimulation backend

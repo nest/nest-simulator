@@ -98,3 +98,5 @@ dependencies:
     - sphinx_autobuild
     - sphinx_gallery
     - sphinx-tabs
+    - sphinx_design
+    - sphinx-material

@@ -11,7 +11,7 @@ PyNEST examples
            :img-top: ../static/img/pynest/mc_neuron.png
 
            * :doc:`../auto_examples/one_neuron`
-           * :doc:`../1test-examples/one_neuron_with_noise`
+           * .. _link: ../../../pynest/examples/twoneurons.ipynb 
            * :doc:`../auto_examples/twoneurons`
            * :doc:`../auto_examples/balancedneuron`
            * :doc:`../auto_examples/aeif_cond_beta_multisynapse`

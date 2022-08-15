@@ -275,7 +275,7 @@ your code longer and harder to follow. Secondly, it is error-prone. A
 certain percentage of the time you will forget to make all the necessary
 modifications after the copy-and-paste, and this will introduce errors
 into your code that are hard to find, not only because they are
-semantically correct and so don’t cause an obvious error, but also
+semantically correct and so don't cause an obvious error, but also
 because your eye tends to drift over them:
 
 ::

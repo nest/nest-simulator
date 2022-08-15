@@ -206,7 +206,7 @@ bernoulli_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Co
   updateValue< double >( d, names::weight, weight_ );
   updateValue< double >( d, names::p_transmit, p_transmit_ );
 
-  if ( p_transmit_ < 0 || p_transmit_ > 1 )
+  if ( p_transmit_ < 0 or p_transmit_ > 1 )
   {
     throw BadProperty( "Spike transmission probability must be in [0, 1]." );
   }

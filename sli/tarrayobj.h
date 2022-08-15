@@ -80,21 +80,23 @@ public:
   size_t
   size( void ) const
   {
-    return ( size_t )( begin_of_free_storage - p );
+    return ( size_t ) ( begin_of_free_storage - p );
   }
 
   size_t
   capacity( void ) const
   {
-    return ( size_t )( end_of_free_storage - p );
+    return ( size_t ) ( end_of_free_storage - p );
   }
 
-  Token& operator[]( size_t i )
+  Token&
+  operator[]( size_t i )
   {
     return p[ i ];
   }
 
-  const Token& operator[]( size_t i ) const
+  const Token&
+  operator[]( size_t i ) const
   {
     return p[ i ];
   }

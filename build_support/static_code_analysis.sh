@@ -50,6 +50,9 @@ IGNORE_MSG_CLANG_FORMAT=${15} # true or false, indicating whether CLANG-FORMAT m
 IGNORE_MSG_PYCODESTYLE=${16}  # true or false, indicating whether pycodestyle messages should accout for the build result.
 PYCODESTYLE_IGNORES=${17}     # The list of pycodestyle error and warning codes to ignore.
 
+echo "PATH IN SCA: ${PATH}"
+echo "cf found:" `which clang-format`
+
 # PYCODESTYLE rules to ignore.
 PYCODESTYLE_IGNORES_EXAMPLES="${PYCODESTYLE_IGNORES},E402"
 PYCODESTYLE_IGNORES_USER_MANUAL="${PYCODESTYLE_IGNORES_EXAMPLES},E265"

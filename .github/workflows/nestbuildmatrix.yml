@@ -72,6 +72,7 @@ jobs:
           python -m pip install --force-reinstall --upgrade scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc
           python -c "import pytest; print('package location:', pytest.__file__)"
           pip list
+          pip show --files clang-format
 
       - name: "Find changed files"
         run: |

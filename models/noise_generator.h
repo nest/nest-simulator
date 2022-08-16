@@ -70,27 +70,21 @@ deviation of the noise:
    I(t) = \mu + N_j \sqrt{\sigma^2 + \sigma_{\text{mod}}^2 \sin(\omega t + \phi)}
                               \quad \text{for} \quad t_0 + j \delta < t \leq t_0 + (j+1) \delta \;.
 
-All targets receive different currents, but the currents for all
+ The effect of the noise current on a neuron depends on the switching interval :math:`\delta`.
+ For a leaky integrate-and-fire neuron with time constant :math:`\tau_m` and capacitance
+ :math:`C_m`, the variance of the membrane potential is given by
+
+ .. math::
+
+		\Sigma^2 = \frac{\delta \tau_m \sigma^2}{2 C_m^2}
+
+
+ for :math:`\delta \ll \tau_m`. For details, see the `noise_generator <../neurons/model_details/noise_generator.ipynb>`_
+ notebook included in the NEST source code.
+
+All targets of a noise generator receive different currents, but the currents for all
 targets change at the same points in time. The interval :math:`\delta` between
 changes must be a multiple of the time step.
-
-For a detailed discussion of the properties of the noise generator, please see the
-`noise_generator <../model_details/noise_generator.ipynb>`_
-notebook included in the NEST source code.
-
-.. note::
-
-   The effect of the noise current on a neuron depends on the switching interval :math:`\delta`.
-   For a leaky integrate-and-fire neuron with time constant :math:`\tau_m` and capacitance
-   :math:`C_m`, the variance of the membrane potential is given by
-
-   .. math::
-
-      \Sigma^2 = \frac{\delta \tau_m \sigma^2}{2 C_m^2}
-
-
-   for :math:`\delta \ll \tau_m`. For details, see the `noise_generator <../model_details/noise_generator.ipynb>`_
-   notebook included in the NEST source code.
 
 .. admonition:: Recording the generated current
 
@@ -104,22 +98,23 @@ notebook included in the NEST source code.
 .. include:: ../models/stimulation_device.rst
 
 mean
-    The mean value of the noise current (pA)
+    The mean value :math:`\mu` of the noise current (pA)
 
 std
-    The standard deviation of noise current (pA)
+    The standard deviation :math:`\sigma` of the noise current (pA)
 
 dt
-    The interval between changes in current (ms; default: 10 * resolution)
+    The interval :math:`\delta` between changes in current (ms; default: 10 * resolution)
 
 std_mod
-    The modulated standard deviation of noise current (pA)
-
-phase
-    The phase of sine modulation (0-360 deg)
+    The modulation :math:`\sigma_{\text{mod}}` of the standard deviation of the noise current (pA)
 
 frequency
-    The frequency of the sine modulation
+    The frequency of the sine modulation (Hz)
+
+phase
+    The phase of sine modulation (0–360 deg)
+
 
 
 Setting parameters from a stimulation backend

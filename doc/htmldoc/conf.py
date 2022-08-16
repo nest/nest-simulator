@@ -53,13 +53,6 @@ else:
 sys.path.append(os.path.abspath("./_ext"))
 
 
-# Convert ipynb to py
-exporter = PythonExporter()
-(source, meta) = exporter.from_filename(source_dir / 'pynest/examples/one_neuron_with_noise.ipynb')
-
-with open(doc_build_dir / 'test-notebook/one_neuron_with_noise.py','w') as outfile:
-    outfile.writelines(source)
-
 source_suffix = '.rst'
 master_doc = 'index'
 
@@ -127,6 +120,7 @@ sphinx_gallery_conf = {
      'plot_gallery': 'False'
 }
 
+nbsphinx_execute = 'never'
 # General information about the project.
 project = u'NEST simulator user documentation'
 copyright = u'2004, nest-simulator'
@@ -256,9 +250,19 @@ def toc_customizer(app, docname, source):
         rendered = app.builder.templates.render_string(models_source, html_context)
         source[0] = rendered
 
+def convert_nb_py(app, docname, source):
+    # Convert ipynb to py
+    exporter = PythonExporter()
+    (source, meta) = exporter.from_filename(doc_build_dir / 'pynest-examples/one_neuron_with_noise.ipynb')
+
+    with open(doc_build_dir / 'test-notebook/one_neuron_with_noise.py','w') as outfile:
+        outfile.writelines(source)
+
+
 
 def setup(app):
     app.connect("source-read", toc_customizer)
+    app.connect("source-read", convert_nb_py)
     app.add_css_file('css/custom.css')
     app.add_css_file('css/pygments.css')
     app.add_js_file("js/copybutton.js")

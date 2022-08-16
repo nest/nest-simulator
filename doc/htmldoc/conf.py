@@ -25,9 +25,10 @@ import os
 import re
 import pip
 import subprocess
+import glob
 
 from pathlib import Path
-from shutil import copyfile
+from shutil import copyfile, copy
 import json
 
 from subprocess import check_output, CalledProcessError
@@ -47,6 +48,8 @@ else:
 
 if os.environ.get("READTHEDOCS") == "True":
     doc_build_dir = source_dir / "doc/htmldoc"
+    for filename in glob.glob(os.path.join(source_dir / "pynest/examples", "*.ipynb*")):
+        copy(filename, doc_build_dir / "pynest-examples")
 else:
     doc_build_dir = Path(os.environ["OLDPWD"]) / "doc/htmldoc"
 
@@ -336,7 +339,6 @@ texinfo_documents = [
      'Miscellaneous'),
 ]
 
-
 def copy_example_file(src):
     copyfile(src, doc_build_dir / "examples" / src.parts[-1])
 
@@ -353,3 +355,4 @@ copy_example_file(source_dir / "pynest/examples/Potjans_2014/raster_plot.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/microcircuit.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/README.rst")
 copy_example_file(source_dir / "pynest/examples/hpc_benchmark_connectivity.svg")
+

@@ -70,17 +70,16 @@ deviation of the noise:
    I(t) = \mu + N_j \sqrt{\sigma^2 + \sigma_{\text{mod}}^2 \sin(\omega t + \phi)}
                               \quad \text{for} \quad t_0 + j \delta < t \leq t_0 + (j+1) \delta \;.
 
- The effect of the noise current on a neuron depends on the switching interval :math:`\delta`.
- For a leaky integrate-and-fire neuron with time constant :math:`\tau_m` and capacitance
- :math:`C_m`, the variance of the membrane potential is given by
+The effect of the noise current on a neuron depends on the switching interval :math:`\delta`.
+For a leaky integrate-and-fire neuron with time constant :math:`\tau_m` and capacitance
+:math:`C_m`, the variance of the membrane potential is given by
 
- .. math::
+.. math::
 
-		\Sigma^2 = \frac{\delta \tau_m \sigma^2}{2 C_m^2}
+	\Sigma^2 = \frac{\delta \tau_m \sigma^2}{2 C_m^2}
 
-
- for :math:`\delta \ll \tau_m`. For details, see the `noise_generator <../neurons/model_details/noise_generator.ipynb>`_
- notebook included in the NEST source code.
+for :math:`\delta \ll \tau_m`. For details, see the `noise_generator <../neurons/model_details/noise_generator.ipynb>`_
+notebook included in the NEST source code.
 
 All targets of a noise generator receive different currents, but the currents for all
 targets change at the same points in time. The interval :math:`\delta` between

@@ -20,7 +20,6 @@ seaborn
 sphinx>=4.0.2
 sphinx_autobuild
 sphinx-design
-sphinx_gallery
 sphinx-material
 statsmodels
 tqdm

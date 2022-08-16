@@ -243,12 +243,13 @@ def toc_customizer(app, docname, source):
         source[0] = rendered
 
 def convert_nb_py(app, docname, source):
-    # Convert ipynb to py
-    exporter = PythonExporter()
-    (source, meta) = exporter.from_filename(doc_build_dir / 'pynest-examples/one_neuron_with_noise.ipynb')
+    if docname.endswith(".ipynb"):
+        # Convert ipynb to py
+        exporter = PythonExporter()
+        (source, meta) = exporter.from_filename(doc_build_dir / 'pynest-examples/one_neuron_with_noise.ipynb')
 
-    with open(doc_build_dir / 'test-notebook/one_neuron_with_noise.py','w') as outfile:
-        outfile.writelines(source)
+        with open(doc_build_dir / 'test-notebook/one_neuron_with_noise.py','w') as outfile:
+            outfile.writelines(source)
 
 
 

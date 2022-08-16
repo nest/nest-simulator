@@ -96,5 +96,4 @@ dependencies:
     - example
     - Image
     - sphinx_autobuild
-    - sphinx_gallery
     - sphinx-tabs

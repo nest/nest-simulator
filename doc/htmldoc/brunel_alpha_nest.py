@@ -1,1 +1,0 @@
-../../pynest/examples/brunel_alpha_nest.py

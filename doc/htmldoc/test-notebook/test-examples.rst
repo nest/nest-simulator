@@ -13,6 +13,12 @@ TEST examples
 
 
 
+:download:`neuron noise <one_neuron_with_noise.py>`
 
 .. card:: Download Python file
-   :link: twoneurons.py
+
+    :download:`neuron noise <one_neuron_with_noise.py>`
+
+
+
+.. card:: Run Jupyter Notebook    

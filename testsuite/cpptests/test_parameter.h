@@ -32,6 +32,7 @@
 #include <boost/test/unit_test.hpp>
 
 // Includes from nestkernel
+#include "kernel_manager.h"
 #include "nest_datums.h"
 #include "random_generators.h"
 
@@ -46,6 +47,8 @@ BOOST_AUTO_TEST_SUITE( test_parameter )
  */
 BOOST_AUTO_TEST_CASE( test_redraw_value_impossible, *boost::unit_test::timeout( 2 ) )
 {
+  nest::KernelManager::create_kernel_manager();
+
   dictionary d;
   d[ nest::names::min ] = 0.0;
   d[ nest::names::max ] = 1.0;
@@ -66,6 +69,8 @@ BOOST_AUTO_TEST_CASE( test_redraw_value_impossible, *boost::unit_test::timeout( 
  */
 BOOST_AUTO_TEST_CASE( test_uniform_int_returns_integer )
 {
+  nest::KernelManager::create_kernel_manager();
+
   const int max = 100;
   const int num_iterations = 1000;
 

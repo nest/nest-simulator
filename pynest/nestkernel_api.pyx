@@ -253,6 +253,11 @@ def llapi_get_synapsedict():
     return dictionary_to_pydict(cdict)
 
 @catch_cpp_error
+def llapi_get_connruledict():
+    cdef dictionary cdict = get_connruledict()
+    return dictionary_to_pydict(cdict)
+
+@catch_cpp_error
 def llapi_get_kernel_status():
     cdef dictionary cdict = get_kernel_status()
     return dictionary_to_pydict(cdict)

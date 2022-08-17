@@ -111,6 +111,7 @@ cdef extern from "nest.h" namespace "nest":
     size_t nc_size( NodeCollectionPTR nc ) except +
     dictionary get_modeldict() except +
     dictionary get_synapsedict() except +
+    dictionary get_connruledict() except +
     dictionary get_kernel_status() except +
     dictionary get_model_defaults( const string& ) except +
     NodeCollectionPTR get_nodes( const dictionary& params, const cbool local_only ) except +

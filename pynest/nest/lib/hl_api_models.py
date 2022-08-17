@@ -103,8 +103,7 @@ def ConnectionRules():
 
     """
 
-    sr('connruledict')
-    return tuple(sorted(spp().keys()))
+    return tuple(sorted(nestkernel.llapi_get_connruledict().keys()))
 
 
 @check_stack

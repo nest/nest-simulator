@@ -743,4 +743,10 @@ get_synapsedict()
   return kernel().model_manager.get_synapsedict();
 }
 
+dictionary
+get_connruledict()
+{
+  return kernel().connection_manager.get_connruledict();
+}
+
 } // namespace nest

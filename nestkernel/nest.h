@@ -59,6 +59,7 @@ size_t nc_size( NodeCollectionPTR nc );
 
 dictionary get_modeldict();
 dictionary get_synapsedict();
+dictionary get_connruledict();
 
 void set_kernel_status( const dictionary& dict );
 dictionary get_kernel_status();

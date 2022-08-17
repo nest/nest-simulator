@@ -120,7 +120,7 @@ def Create(model, n=1, params=None, positions=None):
     if isinstance(params, dict) and params:  # if params is a dict and not empty
         iterable_or_parameter_in_params = any(is_iterable(v) or isinstance(v, Parameter) for k, v in params.items())
 
-    node_ids = nestkernel.llapi_create(model.encode('utf8'), n)
+    node_ids = nestkernel.llapi_create(model, n)
 
     if params is not None and iterable_or_parameter_in_params:
         try:

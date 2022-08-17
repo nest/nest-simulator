@@ -158,7 +158,7 @@ def GetDefaults(model, output=''):
 
     """
 
-    result = nestkernel.llapi_get_defaults(model.encode('utf-8'))
+    result = nestkernel.llapi_get_defaults(model)
 
     if output == 'json':
         result = to_json(result)

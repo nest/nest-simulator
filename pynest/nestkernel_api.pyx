@@ -97,7 +97,7 @@ cdef object any_to_pyobj(any operand):
     if is_type[cbool](operand):
         return any_cast[cbool](operand)
     if is_type[string](operand):
-        return any_cast[string](operand).decode('utf8')
+        return string_to_pystr(any_cast[string](operand))
     if is_type[vector[int]](operand):
         return any_cast[vector[int]](operand)
     if is_type[vector[long]](operand):
@@ -118,10 +118,11 @@ cdef object dictionary_to_pydict(dictionary cdict):
 
     cdef dictionary.const_iterator it = cdict.begin()
     while it != cdict.end():
-        tmp[deref(it).first.decode('utf8')] = any_to_pyobj(deref(it).second)
-        if tmp[deref(it).first.decode('utf8')] is None:
+        key = string_to_pystr(deref(it).first)
+        tmp[key] = any_to_pyobj(deref(it).second)
+        if tmp[key] is None:
             # If we end up here, the value in the dictionary is of a type that any_to_pyobj() cannot handle.
-            raise RuntimeError('Could not convert: ' + deref(it).first.decode('utf8') + ' of type ' + debug_type(deref(it).second).decode('utf8'))
+            raise RuntimeError('Could not convert: ' + key + ' of type ' + string_to_pystr(debug_type(deref(it).second)))
         inc(it)
     return tmp
 
@@ -129,21 +130,21 @@ cdef dictionary pydict_to_dictionary(object py_dict) except *:  # Adding "except
     cdef dictionary cdict = dictionary()
     for key, value in py_dict.items():
         if type(value) is int:
-            cdict[key.encode('utf-8')] = <long>value
+            cdict[pystr_to_string(key)] = <long>value
         elif type(value) is float:
-            cdict[key.encode('utf-8')] = <double>value
+            cdict[pystr_to_string(key)] = <double>value
         elif type(value) is bool:
-            cdict[key.encode('utf-8')] = <cbool>value
+            cdict[pystr_to_string(key)] = <cbool>value
         elif type(value) is str:
-            cdict[key.encode('utf-8')] = <string>value.encode('utf-8')
+            cdict[pystr_to_string(key)] = <string>pystr_to_string(value)
         elif type(value) is dict:
-            cdict[key.encode('utf-8')] = pydict_to_dictionary(value)
+            cdict[pystr_to_string(key)] = pydict_to_dictionary(value)
         elif type(value) is nest.NodeCollection:
-            cdict[key.encode('utf-8')] = (<NodeCollectionObject>(value._datum)).thisptr
+            cdict[pystr_to_string(key)] = (<NodeCollectionObject>(value._datum)).thisptr
         elif type(value) is nest.Parameter:
-            cdict[key.encode('utf-8')] = (<ParameterObject>(value._datum)).thisptr
+            cdict[pystr_to_string(key)] = (<ParameterObject>(value._datum)).thisptr
         elif type(value) is ParameterObject:
-            cdict[key.encode('utf-8')] = (<ParameterObject>value).thisptr
+            cdict[pystr_to_string(key)] = (<ParameterObject>value).thisptr
         else:
             raise AttributeError(f'when converting Python dictionary: value of key ({key}) is not a known type, got {type(value)}')
     return cdict
@@ -162,6 +163,12 @@ cdef vector[dictionary] list_of_dict_to_vec(object pylist):
         vec.push_back(pydict_to_dictionary(pydict))
     return vec
 
+cdef object string_to_pystr(string s):
+    return s.decode('utf-8')
+
+cdef string pystr_to_string(object s):
+    return s.encode('utf-8')
+
 def catch_cpp_error(func):
     def wrapper_catch_cpp_error(*args, **kwargs):
         try:
@@ -174,9 +181,9 @@ def llapi_reset_kernel():
     reset_kernel()
 
 @catch_cpp_error
-def llapi_create(string model, long n):
+def llapi_create(model, long n):
     cdef NodeCollectionPTR gids
-    gids = create(model, n)
+    gids = create(pystr_to_string(model), n)
     obj = NodeCollectionObject()
     obj._set_nc(gids)
     return nest.NodeCollection(obj)
@@ -225,7 +232,7 @@ def llapi_get_num_mpi_processes():
     return get_num_mpi_processes()
 
 def llapi_print_nodes():
-    return print_nodes_to_string().decode('utf8')
+    return string_to_pystr(print_nodes_to_string())
 
 @catch_cpp_error
 def llapi_nc_size(NodeCollectionObject nc):
@@ -233,7 +240,7 @@ def llapi_nc_size(NodeCollectionObject nc):
 
 @catch_cpp_error
 def llapi_to_string(NodeCollectionObject nc):
-    return pprint_to_string(nc.thisptr).decode('utf8')
+    return string_to_pystr(pprint_to_string(nc.thisptr))
 
 @catch_cpp_error
 def llapi_get_modeldict():
@@ -251,8 +258,8 @@ def llapi_get_kernel_status():
     return dictionary_to_pydict(cdict)
 
 @catch_cpp_error
-def llapi_get_defaults(string model_name):
-    return dictionary_to_pydict(get_model_defaults(model_name))
+def llapi_get_defaults(object model_name):
+    return dictionary_to_pydict(get_model_defaults(pystr_to_string(model_name)))
 
 @catch_cpp_error
 def llapi_get_nodes(object params, cbool local_only):
@@ -289,7 +296,7 @@ def llapi_get_nc_status(NodeCollectionObject nc, object key=None):
     if key is None:
         return dictionary_to_pydict(statuses)
     elif isinstance(key, str):
-        value = any_to_pyobj(statuses[key.encode('utf-8')])
+        value = any_to_pyobj(statuses[pystr_to_string(key)])
         return value[0] if len(value) == 1 else value
     else:
         raise TypeError(f'key must be a string, got {type(key)}')

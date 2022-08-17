@@ -933,7 +933,7 @@ public:
 };
 
 /**
- * Exception to be thrown if an internal error occures.
+ * Exception to be thrown if an internal error occurs.
  * @ingroup KernelExceptions
  */
 class InternalError : public KernelException

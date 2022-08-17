@@ -3,25 +3,33 @@
 CMake Options for NEST
 ======================
 
-NEST is installed with ``cmake`` (at least v3.12). In the simplest case, the commands::
+Before compiling and installing NEST, the source code  has to be
+configured with ``cmake``. In the simplest case, the commands::
 
-    cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> <nest_source_dir>
+    cmake <nest_source_dir>
     make
     make install
 
-should build and install NEST to ``/install/path``, which should be an absolute
-path.
+will build NEST and install it to the site-packages of your Python
+environment.
+
+.. note::
+
+  If you want to specify an alternative install location, use  
+  ``-DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir>``. It needs to be
+  writable by the user running the install command.
 
 
 Choice of compiler
 ------------------
 
-We :ref:`systematically test <cont_integration>` NEST using the GNU gcc and the Clang compiler suites.
-Compilation with other up-to-date compilers should also work, but we do not
-regularly test against those compilers and can thus only provide limited support.
+We :ref:`systematically test <cont_integration>` NEST using the GNU
+gcc and the Clang compiler suites.  Compilation with other up-to-date
+compilers should also work, but we do not regularly test against those
+compilers and can thus only provide limited support.
 
-To select a specific compiler, please add the following flags to your ``cmake``
-line::
+To select a specific compiler, please add the following flags to your
+``cmake`` command line::
 
     -DCMAKE_C_COMPILER=<C-compiler> -DCMAKE_CXX_COMPILER=<C++-compiler>
 
@@ -54,7 +62,7 @@ Select parallelization scheme
 |                                             | OMP compiler flags.                                            |
 +---------------------------------------------+----------------------------------------------------------------+
 
-See also the section on :ref:`building with mpi <compile-with-mpi>` below.
+See also the section on :ref:`building with MPI <compile-with-mpi>` below.
 
 External libraries
 ~~~~~~~~~~~~~~~~~~
@@ -162,19 +170,30 @@ neurons, writing to ASCII files might become prohibitively slow due to
 the large number of resulting files. By installing the `SIONlib
 library <http://www.fz-juelich.de/jsc/sionlib>`_ and supplying its
 installation path to the ``-Dwith-sionlib=<path>`` option when calling
-`cmake`, you can enable the :ref:`recording backend for binary files
+``cmake``, you can enable the :ref:`recording backend for binary files
 <recording_backends>`, which solves this problem.
 
-If you compiled NEST with support for MPI and also want to run the
-corresponding tests, you have to tell it about how your
-``mpirun``/``mpiexec`` command works by defining the ``mpirun``
-function in your ``~/.nestrc`` file. The file already contains an
-example implementation that should work with the `OpenMPI
-<http://www.openmpi.org>`__ implementation. For more details, see the
-documentation on the :ref:`config_options`.
+In order to run the distributed tests upon ``make installcheck``, NEST
+needs to know how to execute the launcher of your MPI implementation.
+CMake is usually able to detect the command line for this, but you can
+customize it using the follwing configuration variables (common
+defaults are shown below)::
 
-See the :ref:`parallel_computing` to learn how to execute
-threaded and distributed simulations with NEST.
+    -DMPIEXEC=/usr/bin/mpirun
+    -DMPIEXEC_NUMPROCS_FLAG=-np
+    -DMPIEXEC_PREFLAGS=
+    -DMPIEXEC_POSTFLAGS=
+
+The final command line is composed in the following way::
+
+    $MPIEXEC $MPIEXEC_NUMPROC_FLAG <np> $MPIEXEC_PREFLAGS <prog> $MPIEXEC_POSTFLAGS <args>
+
+For details on setting specific flags for your MPI launcher command,
+see the `CMake documentation
+<https://cmake.org/cmake/help/latest/module/FindMPI.html>`_.
+
+See the :ref:`parallel_computing` to learn how to execute threaded and
+distributed simulations with NEST.
 
 .. _compile_with_libneurosim:
 

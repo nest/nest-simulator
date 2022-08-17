@@ -238,8 +238,8 @@ command should look like this
 
     mpirun -np 128 python3 simulation.py
 
-Please refer to the MPI library documentation for details on the usage
-of ``mpirun``.
+Please refer to the documentation of your MPI implementation to learn
+more about the usage of ``mpirun``.
 
 MPI related commands
 ~~~~~~~~~~~~~~~~~~~~

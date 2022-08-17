@@ -29,7 +29,6 @@ PyNEST examples
            :img-top: ../static/img/pynest/brunel_alpha.png
 
 
-
     .. grid-item-card:: Cortical microcircuit (Potjans)
            :img-top: ../static/img/pynest/raster_plot.png
 
@@ -38,9 +37,8 @@ PyNEST examples
            +++
            |ebrains|
 
-    .. grid-item-card:: GLIF (from Allen institute)
-           :img-top: ../static/img/pynest/glif_cond.png
-
+    .. grid-item-card:: NEST Sudoku solver
+           :img-top: ../static/img/sudoku_solution.gif
 
 .. grid:: 1 1 2 3
 
@@ -62,7 +60,7 @@ PyNEST examples
 
 .. grid:: 1 1 2 3
 
-    .. grid-item-card:: Hodgkin-Huxley 
+    .. grid-item-card:: Hodgkin-Huxley
            :img-top: ../static/img/pynest/hh_phase.png
 
 
@@ -71,9 +69,8 @@ PyNEST examples
 
 
 
-    .. grid-item-card:: Campbell Siegert
-           :img-top: ../static/img/nest_logo-faded.png
-
+    .. grid-item-card:: GLIF (from Allen institute)
+           :img-top: ../static/img/pynest/glif_cond.png
 
 .. grid:: 1 1 2 3
 
@@ -86,27 +83,32 @@ PyNEST examples
            :img-top: ../static/img/pynest/precisespiking.png
 
 
+    .. grid-item-card:: Campbell Siegert
+           :img-top: ../static/img/nest_logo-faded.png
+
+           * :doc:`../auto_examples/CampbellSiegert`
+
 
 
 .. grid:: 1 1 2 3
 
-    .. grid-item-card:: Gap junctions 
+    .. grid-item-card:: Gap junctions
            :img-top: ../static/img/pynest/gap_junctioninhib.png
 
 
 
 
-    .. grid-item-card:: Structural plasticity 
+    .. grid-item-card:: Structural plasticity
            :img-top: ../static/img/pynest/structuralplasticity.png
 
 
-    .. grid-item-card:: Synapse collection 
+    .. grid-item-card:: Synapse collection
            :img-top: ../static/img/pynest/synapsecollection.png
 
 
 .. grid:: 1 1 2 3
 
-    .. grid-item-card:: Urbanczik 
+    .. grid-item-card:: Urbanczik
            :img-top: ../static/img/pynest/urbanczik_syn.png
 
 
@@ -162,4 +164,9 @@ PyNEST examples
 
    Cortical microcircuit model (based on Potjans and Diesmann, 2014) <cortical_microcircuit_index>
 
+.. toctree::
+   :hidden:
 
+   ../auto_examples/sudoku/sudoku_net
+   ../auto_examples/sudoku/sudoku_solver
+   ../auto_examples/sudoku/plot_progress

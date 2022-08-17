@@ -87,11 +87,11 @@ changes must be a multiple of the time step.
 
 .. admonition:: Recording the generated current
 
-   You can use a `multimeter` to record the average current sent to all targets for each time step, provided you
+   You can use a :doc:`multimeter <multimeter>` to record the average current sent to all targets for each time step, provided you
    are simulating using a single thread (multiple MPI processes with one thread each also work). In this case,
-   the recording `interval` of the `multimeter` should be the simulation resolution to avoid confusing effects
-   due to offset or "gliding" between the recording times of the `multimeter` and the switching times of the
-   `noise_generator`.  In multi-threaded mode, recording is prohibited for technical reasons.
+   the recording interval of the  should be the simulation resolution to avoid confusing effects
+   due to offset or drift between the recording times of the multimeter and the switching times of the
+   noise generator.  In multi-threaded mode, recording is prohibited for technical reasons.
 
 
 .. include:: ../models/stimulation_device.rst

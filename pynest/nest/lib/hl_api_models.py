@@ -184,8 +184,4 @@ def CopyModel(existing, new, params=None):
 
     model_deprecation_warning(existing)
 
-    if params is not None:
-        sps(params)
-        sr("/%s /%s 3 2 roll CopyModel" % (existing, new))
-    else:
-        sr("/%s /%s CopyModel" % (existing, new))
+    nestkernel.llapi_copy_model(existing, new, {} if params is None else params)

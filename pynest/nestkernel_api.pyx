@@ -291,6 +291,11 @@ def llapi_cleanup():
     cleanup()
 
 @catch_cpp_error
+def llapi_copy_model(oldmodname, newmodname, object params):
+    cdef dictionary params_dict = pydict_to_dictionary(params)
+    copy_model(pystr_to_string(oldmodname), pystr_to_string(newmodname), params_dict)
+
+@catch_cpp_error
 def llapi_get_nc_status(NodeCollectionObject nc, object key=None):
     cdef dictionary statuses = get_nc_status(nc.thisptr)
     if key is None:

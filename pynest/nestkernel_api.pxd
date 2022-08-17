@@ -125,6 +125,7 @@ cdef extern from "nest.h" namespace "nest":
     void prepare() except +
     void run( const double& t ) except +
     void cleanup() except +
+    void copy_model( const string&, const string&, const dictionary& )
     shared_ptr[Parameter] create_parameter( const dictionary& param_dict ) except +
     double get_value( const shared_ptr[Parameter]& param ) except +
     cbool is_spatial( const shared_ptr[Parameter]& param ) except +

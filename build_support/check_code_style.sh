@@ -271,7 +271,7 @@ fi
 # Verify the CLANG-FORMAT installation. CLANG-FORMAT version 13 is required.
 if $PERFORM_CLANG_FORMAT; then
   $CLANG_FORMAT -style=file ./nest/main.cpp >/dev/null 2>&1 || error_exit "Failed to verify the CLANG-FORMAT installation. Executable: $CLANG_FORMAT"
-  clang_format_version=`$CLANG_FORMAT --version | sed -${EXTENDED_REGEX_PARAM} 's/^.*([0-9]\.[0-9])\..*/\1/'`
+  clang_format_version=`$CLANG_FORMAT --version | sed -${EXTENDED_REGEX_PARAM} 's/^[^0-9]*([0-9]+\.[0-9]+)\..*/\1/'`
   if [[ "x$clang_format_version" != "x13.0" ]]; then
     error_exit "Failed to verify the CLANG-FORMAT installation. Version 13.0 is required. The executable '$CLANG_FORMAT' is version $clang_format_version."
   fi

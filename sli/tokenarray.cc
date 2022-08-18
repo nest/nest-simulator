@@ -73,18 +73,6 @@ TokenArray::TokenArray( const std::vector< double >& a )
   }
 }
 
-TokenArray::TokenArray( const std::vector< float >& a )
-  : data( new TokenArrayObj( a.size(), Token(), 0 ) )
-{
-  assert( data != NULL );
-  for ( size_t i = 0; i < a.size(); ++i )
-  {
-    Token ddt( new DoubleDatum( a[ i ] ) );
-    ( *data )[ i ].move( ddt );
-  }
-}
-
-
 void
 TokenArray::toVector( std::vector< long >& a ) const
 {

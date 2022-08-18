@@ -30,8 +30,6 @@ from pathlib import Path
 from shutil import copyfile
 import json
 
-import sphinx_rtd_theme
-
 from subprocess import check_output, CalledProcessError
 from mock import Mock as MagicMock
 
@@ -95,27 +93,24 @@ extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
-    'sphinx.ext.todo',
-    'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
-    'sphinx_tabs.tabs',
     'nbsphinx',
-    'sphinx_rtd_theme',
+    'sphinx_design',
     'HoverXTooltip',
     'VersionSyncRole',
 ]
 
 mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa
-
+panels_add_bootstrap_css = False
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ['templates']
 
 sphinx_gallery_conf = {
      # 'doc_module': ('sphinx_gallery', 'numpy'),
      # path to your examples scripts
-     'examples_dirs': source_dir / 'pynest/examples',
+     'examples_dirs': str(source_dir / 'pynest/examples'),
      # path where to save gallery generated examples
-     'gallery_dirs': doc_build_dir / 'auto_examples',
+     'gallery_dirs': str(doc_build_dir / 'auto_examples'),
      # 'backreferences_dir': False
      'plot_gallery': 'False'
 }
@@ -161,22 +156,49 @@ numfig_format = {'figure': 'Figure %s', 'table': 'Table %s',
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'sphinx_material'
+html_title = 'NEST simulator documentation'
 html_logo = str(doc_build_dir / 'static/img/nest_logo.png')
-html_theme_options = {'logo_only': True,
-                      'display_version': True,
-                      'style_external_links': True}
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-# html_theme_options = {}
+html_theme_options = {
+    # Set the name of the project to appear in the navigation.
+    # Set you GA account ID to enable tracking
+    # 'google_analytics_account': 'UA-XXXXX',
 
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
+    # Specify a base_url used to generate sitemap.xml. If not
+    # specified, then no sitemap will be built.
+    'base_url': 'https://nest-simulator.readthedocs.io/en/latest/',
+    'html_minify': False,
+    'html_prettify': False,
+    'css_minify': True,
+    # Set the color and the accent color
+    'color_primary': 'orange',
+    'color_accent': 'white',
+    'theme_color': 'ff6633',
+    'master_doc': True,
+    # Set the repo location to get a badge with stats
+    'repo_url': 'https://github.com/nest/nest-simulator/',
+    'repo_name': 'NEST simulator',
+    # "nav_links": [
+    #     {"href": "index", "internal": True, "title": "NEST docs home"}
+    #     ],
+    # Visible levels of the global TOC; -1 means unlimited
+    'globaltoc_depth': 1,
+    # If False, expand all TOC entries
+    'globaltoc_collapse': True,
+    # If True, show hidden TOC entries
+    'globaltoc_includehidden': True,
+    }
+
 html_static_path = [str(doc_build_dir / 'static')]
+html_additional_pages = {'index': 'index.html'}
+html_sidebars = {
+    "**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]
+}
 
 # -- Options for HTMLHelp output ------------------------------------------
 

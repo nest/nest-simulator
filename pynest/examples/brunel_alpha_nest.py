@@ -290,8 +290,9 @@ rate_in = events_in / simtime * 1000.0 / N_rec
 # inhibitory synapse model. The numbers are summed up resulting in the total
 # number of synapses.
 
-num_synapses = (nest.GetDefaults("excitatory")["num_connections"] +
-                nest.GetDefaults("inhibitory")["num_connections"])
+num_synapses_ex = nest.GetDefaults("excitatory")["num_connections"]
+num_synapses_in = nest.GetDefaults("inhibitory")["num_connections"]
+num_synapses = num_synapses_ex + num_synapses_in
 
 ###############################################################################
 # Establishing the time it took to build and simulate the network by taking
@@ -306,8 +307,8 @@ sim_time = endsimulate - endbuild
 print("Brunel network simulation (Python)")
 print(f"Number of neurons : {N_neurons}")
 print(f"Number of synapses: {num_synapses}")
-print(f"       Exitatory  : {int(CE * N_neurons) + N_neurons}")
-print(f"       Inhibitory : {int(CI * N_neurons)}")
+print(f"       Excitatory : {num_synapses_ex}")
+print(f"       Inhibitory : {num_synapses_in}")
 print(f"Excitatory rate   : {rate_ex:.2f} Hz")
 print(f"Inhibitory rate   : {rate_in:.2f} Hz")
 print(f"Building time     : {build_time:.2f} s")

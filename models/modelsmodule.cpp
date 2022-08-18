@@ -258,7 +258,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< ginzburg_neuron >( "ginzburg_neuron" );
   kernel().model_manager.register_node_model< mcculloch_pitts_neuron >( "mcculloch_pitts_neuron" );
   kernel().model_manager.register_node_model< izhikevich >( "izhikevich" );
-  kernel().model_manager.register_node_model< spike_dilutor >( "spike_dilutor" );
+  kernel().model_manager.register_node_model< spike_dilutor >(
+    "spike_dilutor", /*deprecation_info*/ "a future version of NEST" );
 
   kernel().model_manager.register_node_model< spike_recorder >( "spike_recorder" );
   kernel().model_manager.register_node_model< weight_recorder >( "weight_recorder" );

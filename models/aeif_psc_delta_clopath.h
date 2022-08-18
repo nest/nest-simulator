@@ -112,7 +112,7 @@ u_bar_bar   mV      Low-pass filtered u_bar_minus
 
 ================== ======= =================================================
 **Membrane Parameters**
-----------------------------------------------------------------------
+----------------------------------------------------------------------------
  C_m               pF      Capacity of the membrane
  t_ref             ms      Duration of refractory period
  V_reset           mV      Reset value for V_m after a spike
@@ -158,7 +158,7 @@ U_ref_squared real    Reference value for u_bar_bar_^2.
 -----------------------------------------------------------------------------
 t_clamp  ms     Duration of clamping of Membrane potential after a spike
 V_clamp  mV     Value to which the Membrane potential is clamped
-=======  ====== ============================================================
+=======  ====== =============================================================
 
 ============= ======= =========================================================
 **Integration parameters**
@@ -256,7 +256,7 @@ private:
     double g_L;             //!< Leak Conductance in nS
     double C_m;             //!< Membrane Capacitance in pF
     double E_L;             //!< Leak reversal Potential (aka resting potential) in mV
-    double Delta_T;         //!< Slope factor in ms
+    double Delta_T;         //!< Slope factor in mV
     double tau_w;           //!< Adaptation time constant in ms
     double tau_z;           //!< Spike afterpotential current time constant in ms
     double tau_V_th;        //!< Adaptive threshold time constant in ms

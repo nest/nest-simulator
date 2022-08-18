@@ -136,6 +136,7 @@ public:
   ConstantParameter( double value )
     : value_( value )
   {
+    returns_int_only_ = value_is_integer_( value_ );
   }
 
   /**

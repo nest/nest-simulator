@@ -42,11 +42,6 @@ References
        inhibitory spiking neurons. Journal of Computational Neuroscience 8,
        183-208.
 
-See Also
-~~~~~~~~
-
-:doc:`brunel_alpha_numpy`
-
 """
 
 ###############################################################################

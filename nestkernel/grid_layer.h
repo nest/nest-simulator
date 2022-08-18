@@ -370,7 +370,8 @@ GridLayer< D >::masked_iterator::masked_iterator( const GridLayer< D >& layer,
 }
 
 template < int D >
-inline std::pair< Position< D >, index > GridLayer< D >::masked_iterator::operator*()
+inline std::pair< Position< D >, index >
+GridLayer< D >::masked_iterator::operator*()
 {
   return std::pair< Position< D >, index >(
     layer_.gridpos_to_position( node_ ), layer_.node_collection_->operator[]( layer_.gridpos_to_lid( node_ ) ) );

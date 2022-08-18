@@ -1,0 +1,44 @@
+{% extends "!sphinx_material/layout.html" %}
+
+{%- block extrahead %}
+  <title>NEST documentation index </title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="description" content="This is the documentation index for the NEST, a simulator for spiking neuronal networks.">
+  <meta name="keywords" content="">
+  <link rel="stylesheet" href="{{ pathto('_static/css/normalize.css', 1) }}">
+  <link rel="stylesheet" href="{{ pathto('_static/css/bootstrap.min.css',1) }}">
+  <link rel="stylesheet" href="{{ pathto('_static/js/flexslider/flexslider.css',1) }}">
+  <link rel="stylesheet" href="{{ pathto('_static/css/colorblocks-style.css', 1) }}">
+  <link rel="stylesheet" href="{{ pathto('_static/css/nest_material.css', 1) }}">
+  <script type="text/javascript" src="{{ pathto('_static/js/modernizr-2.6.2.min.js', 1) }}"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/styles/default.min.css">
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+  {{ super() }}
+{% endblock %}
+
+<div role="main">
+  {% block content %}
+  <a href="#" id="gototop"><img src="{{ pathto('_static/img/arrow-up-circle.svg',1) }}"/></a>
+  <header id="header" class="wrapper clearfix">
+    <div id="background" class="particle-img">
+     <div id="banner">
+      <div id="logo">
+        <img src="{{ pathto('_static/img/nest_docs.png',1) }}" alt="logo" width="600">
+      </div>
+    </div>
+    <nav id="topnav" role="navigation">
+      <div class="menu-toggle">Menu</div>
+      <ul class="srt-menu" id="menu-main-navigation">
+	<li><a href="https://www.nest-simulator.org">NEST Homepage</a></li>
+	<li><a href="related_projects.html">Related projects</a></li>
+	<li><a href="community.html">Contact us</a></li>
+      </ul>
+    </nav>
+   </div>
+  </header>
+  {{ super() }}
+  {% endblock %}
+</div>
+

@@ -588,7 +588,8 @@ public:
    * Return 0.0 if not overridden
    * @ingroup SP_functions
    */
-  virtual double get_synaptic_elements( Name ) const
+  virtual double
+  get_synaptic_elements( Name ) const
   {
     return 0.0;
   }
@@ -598,7 +599,8 @@ public:
    * Return 0 if not overridden
    * @ingroup SP_functions
    */
-  virtual int get_synaptic_elements_vacant( Name ) const
+  virtual int
+  get_synaptic_elements_vacant( Name ) const
   {
     return 0;
   }
@@ -608,7 +610,8 @@ public:
    * Return 0 if not overridden
    * @ingroup SP_functions
    */
-  virtual int get_synaptic_elements_connected( Name ) const
+  virtual int
+  get_synaptic_elements_connected( Name ) const
   {
     return 0;
   }
@@ -1005,7 +1008,7 @@ Node::set_model_id( int i )
 inline bool
 Node::is_model_prototype() const
 {
-  return vp_ == invalid_thread_;
+  return vp_ == invalid_thread;
 }
 
 inline void

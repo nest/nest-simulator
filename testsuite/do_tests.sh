@@ -111,8 +111,7 @@ if test "${PYTHON}"; then
       PYTEST_VERSION="$(echo "${PYTEST_VERSION}" | cut -d' ' -f2)"
 fi
 
-python3 -c "import junitparser" >/dev/null 2>&1
-if test $? != 0; then
+if ! python3 -c "import junitparser" >/dev/null 2>&1; then
     echo "Error: Required Python package 'junitparser' not found."
     exit 1
 fi
@@ -146,8 +145,14 @@ NEST="nest_serial"
 HAVE_MPI="$(sli -c 'statusdict/have_mpi :: =only')"
 
 if test "${HAVE_MPI}" = "true"; then
-  MPI_LAUNCHER="$(sli -c '1 () () mpirun cst 0 get =only')"
-  MPI_LAUNCHER="$(command -v $MPI_LAUNCHER)"
+    MPI_LAUNCHER="$(sli -c 'statusdict/mpiexec :: =only')"
+    MPI_LAUNCHER_VERSION="$($MPI_LAUNCHER --version | head -n1)"
+    # OpenMPI requires --oversubscribe to allow more processes than available cores
+    if [[ "${MPI_LAUNCHER_VERSION}" =~ "(OpenRTE)" ]] ||  [[ "${MPI_LAUNCHER_VERSION}" =~ "(Open MPI)" ]]; then
+	if [[ ! "$(sli -c 'statusdict/mpiexec_preflags :: =only')" =~ "--oversubscribe" ]]; then
+	    export SLI_MPIEXEC_PREFLAGS="--oversubscribe"
+	fi
+    fi
 fi
 
 # Under Mac OS X, suppress crash reporter dialogs. Restore old state at end.
@@ -181,7 +186,8 @@ if test "${PYTHON}"; then
 fi
 if test "${HAVE_MPI}" = "true"; then
     echo "  Running MPI tests .. yes"
-    echo "  MPI launcher ....... $MPI_LAUNCHER"
+    echo "         launcher .... $MPI_LAUNCHER"
+    echo "         version ..... $MPI_LAUNCHER_VERSION"
 else
     echo "  Running MPI tests .. no (compiled without MPI support)"
 fi
@@ -404,7 +410,7 @@ if test "${MUSIC}"; then
 
         # Calculate the total number of processes from the '.music' file.
         np=$(($(sed -n 's/np=//p' ${music_file} | paste -sd'+' -)))
-        test_command="$(sli -c "${np} (${MUSIC}) (${test_name}) mpirun =")"
+        test_command="$(sli -c "${np} (${MUSIC}) (${test_name}) mpirun =only")"
 
         proc_txt="processes"
         if test $np -eq 1; then proc_txt="process"; fi
@@ -517,6 +523,9 @@ if command -v run_all_cpptests >/dev/null 2>&1; then
 else
   echo "  Not running C++ tests because NEST was compiled without Boost."
 fi
+
+# the following steps rely on `$?`, so breaking on error is not an option and we turn it off
+set +e
 
 # We use plain python3 here to collect results. This also works if
 # PyNEST was not enabled and ${PYTHON} is consequently not set.

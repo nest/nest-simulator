@@ -17,11 +17,11 @@ pytest
 recommonmark
 scipy
 seaborn
-sphinx-tabs
 sphinx>=4.0.2
 sphinx_autobuild
+sphinx-design
 sphinx_gallery
-sphinx_rtd_theme
+sphinx-material
 statsmodels
 tqdm
 yamllint

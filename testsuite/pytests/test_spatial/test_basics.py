@@ -425,9 +425,8 @@ class BasicsTestCase(unittest.TestCase):
         """Correct positions from spatial attribute of sliced NodeCollection"""
         nest.ResetKernel()
         positions = nest.spatial.free(nest.random.uniform(min=-1, max=1), num_dimensions=2)
-        nodes = nest.Create('iaf_psc_alpha', positions=positions)
+        nodes = nest.Create('iaf_psc_alpha', 10, positions=positions)
         all_positions = sum([list(nodes[i].spatial['positions']) for i in range(len(nodes))], start=[])
-        all_positions.sort()
         self.assertEqual(tuple(all_positions), nodes.spatial['positions'])
 
 

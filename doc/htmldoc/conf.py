@@ -37,7 +37,7 @@ from mock import Mock as MagicMock
 import nbformat
 
 
-from nbconvert import PythonExporter
+from nbconvert import PythonExporter 
 
 source_dir = os.environ.get('NESTSRCDIR', False)
 if source_dir:
@@ -242,20 +242,24 @@ def toc_customizer(app, docname, source):
         rendered = app.builder.templates.render_string(models_source, html_context)
         source[0] = rendered
 
-def convert_nb_py(app, docname, source):
-    if docname.endswith(".ipynb"):
-        # Convert ipynb to py
-        exporter = PythonExporter()
-        (source, meta) = exporter.from_filename(doc_build_dir / 'pynest-examples/one_neuron_with_noise.ipynb')
+# Convert ipynb to py
+#for filename in glob.glob(os.path.join(doc_build_dir / "pynest-examples", "*.ipynb*")):
 
-        with open(doc_build_dir / 'test-notebook/one_neuron_with_noise.py','w') as outfile:
-            outfile.writelines(source)
+filename = doc_build_dir / "pynest-examples/one_neuron_with_noise.ipynb"
+name = os.path.basename(filename)
+exporter = PythonExporter()
+(source, meta) = exporter.from_filename(filename)
+source = source.replace("# In[ ]:", "")
+source = source.replace("# \n", "")
+base = os.path.splitext(name)[0]
+pyname = 'test-notebook/'+ base + '.py'
 
+with open(str(doc_build_dir / pyname), 'w') as outfile:
+    outfile.writelines(source)
 
 
 def setup(app):
     app.connect("source-read", toc_customizer)
-    app.connect("source-read", convert_nb_py)
     app.add_css_file('css/custom.css')
     app.add_css_file('css/pygments.css')
     app.add_js_file("js/copybutton.js")

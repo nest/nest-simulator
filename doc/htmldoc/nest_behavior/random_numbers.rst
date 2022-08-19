@@ -198,7 +198,7 @@ the distribution. Consider the following case
 
 ::
 
-	nest.resolution = 0.1
+    nest.resolution = 0.1
     n = nest.Create('iaf_psc_alpha', 100)
     nest.Connect(n, n, syn_spec={'delay': nest.random.uniform(min=1,
                                                               max=2)})
@@ -226,7 +226,7 @@ this is slightly more cumbersome:
     nest.Connect(n, n, syn_spec={'delay': 1 + 0.1 * nest.random.uniform_int(11)})
     
 An in-depth analysis of delay rounding is available in a
-:ref:`master thesis <https://hdl.handle.net/11250/3012689>`_.
+`master thesis <https://hdl.handle.net/11250/3012689>`_.
 
 Randomize spatial positions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

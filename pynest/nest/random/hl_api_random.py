@@ -47,6 +47,11 @@ def uniform(min=0.0, max=1.0):
     -------
     Parameter:
         Object yielding values drawn from the distribution.
+        
+    .. note: 
+    
+       See :ref:`this documentation <random_delays>` for details on the effect
+       of time discretization on delays drawn from a uniform distribution.
     """
     return CreateParameter('uniform', {'min': min, 'max': max})
 

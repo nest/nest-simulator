@@ -26,6 +26,8 @@
 
 #ifdef HAVE_HDF5
 
+#include <cstdlib>
+
 // Includes from nestkernel:
 #include "conn_parameter.h"
 #include "kernel_manager.h"
@@ -42,6 +44,8 @@ extern "C" herr_t get_group_names( hid_t loc_id, const char* name, const H5L_inf
 
 namespace nest
 {
+
+constexpr hsize_t CHUNK_SIZE = 10000;
 
 SonataConnector::SonataConnector( const DictionaryDatum& sonata_dynamics )
   : sonata_dynamics_( sonata_dynamics )
@@ -76,6 +80,11 @@ SonataConnector::connect()
   {
     const auto edge_dict = getValue< DictionaryDatum >( edge_dictionary_datum );
     const auto edge_file = getValue< std::string >( edge_dict->lookup( "edges_file" ) );
+
+    // Create map of edge type ids to NEST synapse_model ids
+    edge_params_ = getValue< DictionaryDatum >( edge_dict->lookup( "edge_synapse" ) );
+    std::cerr << "create_type_id_2_syn_spec_...\n";
+    create_type_id_2_syn_spec_( edge_params_ );
 
     /*
      * Structure of SONATA files:
@@ -118,30 +127,47 @@ SonataConnector::connect()
       const H5::Group edges_subgroup( edges_group.openGroup( group_name ) );
 
       // Open edge_group_id dataset and check if we have more than one group id. Currently only one is allowed
+      /*
       std::cerr << "Open dataset edge_group_id...\n";
       const auto edge_group_id = edges_subgroup.openDataSet( "edge_group_id" );
       const auto num_edge_group_id = get_num_elements_( edge_group_id );
       const auto edge_group_id_data = read_data_( edge_group_id, num_edge_group_id );
       const auto [ min, max ] = std::minmax_element( edge_group_id_data, edge_group_id_data + num_edge_group_id );
+      */
+
+      const int* min = 0;
+      const int* max = 0;
 
       if ( *min == *max ) // only one group_id
       {
         const auto edge_parameters = edges_subgroup.openGroup( std::to_string( *min ) );
+        // Open datasets
+        const auto source_node_id = edges_subgroup.openDataSet( "source_node_id" );
+        const auto target_node_id = edges_subgroup.openDataSet( "target_node_id" );
+        const auto edge_type_id = edges_subgroup.openDataSet( "edge_type_id" );
 
+        read_datasets( source_node_id, target_node_id, edge_type_id );
+
+        // Reset all parameters
+        reset_params();
+
+        /*
         // Read source and target dataset
         std::cerr << "Open dataset source_node_id...\n";
-        const auto source_node_id = edges_subgroup.openDataSet( "source_node_id" );
         const auto num_source_node_id = get_num_elements_( source_node_id );
         const auto source_node_id_data = read_data_( source_node_id, num_source_node_id );
 
         std::cerr << "Open dataset target_node_id...\n";
-        const auto target_node_id = edges_subgroup.openDataSet( "target_node_id" );
+
         const auto num_target_node_id = get_num_elements_( target_node_id );
         const auto target_node_id_data = read_data_( target_node_id, num_target_node_id );
 
         // Check if weight and delay are given as h5 files, if so, read the datasets
-        weight_and_delay_from_dataset_( edge_parameters );
-        auto read_dataset = [&edge_parameters]( double*& data, const char* data_set_name ) {
+        // weight_and_delay_from_dataset_( edge_parameters );
+        */
+
+        /* deprecated
+        auto read_dataset = [ &edge_parameters ]( double*& data, const char* data_set_name ) {
           std::cerr << "(lambda) read " << data_set_name << " dataset...\n";
           const auto dataset = edge_parameters.openDataSet( data_set_name );
           std::cerr << "(lambda) StorageSize = " << dataset.getStorageSize() << "\n";
@@ -149,153 +175,25 @@ SonataConnector::connect()
           dataset.read( data, dataset.getDataType() );
           return data;
         };
+        */
 
-        if ( weight_dataset_ )
-        {
-          read_dataset( syn_weight_data_, "syn_weight" );
-        }
-        if ( delay_dataset_ )
-        {
-          read_dataset( delay_data_, "delay" );
-        }
-
-        std::cerr << "get_data_...\n";
-        // Get edge_type_id, these are later mapped to the different synapse parameters
-        const auto edge_type_id_data = get_data_( edges_subgroup, "edge_type_id" );
-
-        std::cerr << "get_attributes_ source node_population...\n";
-        // Retrieve source and target attributes to find which node population to map to
-        std::string source_attribute_value;
-        get_attributes_( source_attribute_value, source_node_id, "node_population" );
-
-        std::cerr << "get_attributes_ target node_population...\n";
-        std::string target_attribute_value;
-        get_attributes_( target_attribute_value, target_node_id, "node_population" );
-
-        // Create map of edge type ids to NEST synapse_model ids
-        const auto edge_params = getValue< DictionaryDatum >( edge_dict->lookup( "edge_synapse" ) );
-        std::cerr << "create_type_id_2_syn_spec_...\n";
-        create_type_id_2_syn_spec_( edge_params );
-
-        assert( num_source_node_id == num_target_node_id );
-
-        std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_(
-          kernel().vp_manager.get_num_threads() );
-
-        std::cerr << "Enter parallel region...\n";
-
-#pragma omp parallel
-        {
-          const auto tid = kernel().vp_manager.get_thread_id();
-
-          try
-          {
-            // Retrieve the correct NodeCollections
-            const auto nest_nodes = getValue< DictionaryDatum >( sonata_dynamics_->lookup( "nodes" ) );
-            const auto current_source_nc =
-              getValue< NodeCollectionPTR >( nest_nodes->lookup( source_attribute_value ) );
-            const auto current_target_nc =
-              getValue< NodeCollectionPTR >( nest_nodes->lookup( target_attribute_value ) );
-
-            auto snode_it = current_source_nc->begin();
-            auto tnode_it = current_target_nc->begin();
-
-
-            // Iterate the datasets and create the connections
-            for ( hsize_t i = 0; i < num_source_node_id; ++i )
-            {
-              const auto sonata_source_id = source_node_id_data[ i ];
-              const index snode_id = ( *( snode_it + sonata_source_id ) ).node_id;
-
-              const auto sonata_target_id = target_node_id_data[ i ];
-              const index target_id = ( *( tnode_it + sonata_target_id ) ).node_id;
-              Node* target = kernel().node_manager.get_node_or_proxy( target_id );
-
-              if ( not target ) // TODO: remove
-              {
-#pragma omp critical
-                {
-                  std::cerr << kernel().vp_manager.get_thread_id() << ": " << target_id << " node_or_proxy is NULL!\n";
-                }
-              }
-
-              const thread target_thread = target->get_thread();
-
-              // Skip if target is not on this thread, or not on this MPI process.
-              if ( target->is_proxy() or tid != target_thread )
-              {
-                continue;
-              }
-
-              const auto edge_type_id = edge_type_id_data[ i ];
-              const auto syn_spec =
-                getValue< DictionaryDatum >( edge_params->lookup( std::to_string( edge_type_id ) ) );
-
-              auto get_syn_property = [&syn_spec, &i]( const bool dataset, const double* data, const Name& name ) {
-                if ( dataset ) // Syn_property is set from dataset if the dataset is defined
-                {
-                  if ( not data[ i ] ) // TODO: remove
-                  {
-#pragma omp critical
-                    {
-                      std::cerr << kernel().vp_manager.get_thread_id() << ": " << name << " " << i
-                                << " data index is NULL!\n";
-                    }
-                  }
-                  return data[ i ];
-                }
-                else if ( syn_spec->known( name ) ) // Set syn_property from syn_spec if it is defined there
-                {
-                  return static_cast< double >( ( *syn_spec )[ name ] );
-                }
-                return numerics::nan; // Default value is NaN
-              };
-
-              const double weight = get_syn_property( weight_dataset_, syn_weight_data_, names::weight );
-              const double delay = get_syn_property( delay_dataset_, delay_data_, names::delay );
-
-              RngPtr rng = get_vp_specific_rng( target_thread );
-              get_synapse_params_( snode_id, *target, target_thread, rng, edge_type_id );
-
-              kernel().connection_manager.connect( snode_id,
-                target,
-                target_thread,
-                type_id_2_syn_model_.at( edge_type_id ),
-                type_id_2_param_dicts_.at( edge_type_id ).at( tid ),
-                delay,
-                weight );
-            }
-          }
-          catch ( std::exception& err )
-          {
-            // We must create a new exception here, err's lifetime ends at
-            // the end of the catch block.
-            exceptions_raised_.at( tid ) =
-              std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
-          }
-        } // omp parallel
-
-        // check if any exceptions have been raised
-        for ( thread thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
-        {
-          if ( exceptions_raised_.at( thr ).get() )
-          {
-            throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
-          }
-        }
-
-        // Delete the datasets and reset all parameters
-        delete source_node_id_data;
-        delete target_node_id_data;
-        delete edge_type_id_data;
-        reset_params();
+        /*
+         if ( weight_dataset_ )
+         {
+           read_dataset( syn_weight_data_, "syn_weight" );
+         }
+         if ( delay_dataset_ )
+         {
+           read_dataset( delay_data_, "delay" );
+         }
+         */
       }
       else
       {
         throw NotImplemented(
           "Connecting with Sonata files with more than one edgegroup is currently not implemented" );
       }
-      delete edge_group_id_data;
+      // delete edge_group_id_data;
     } // groups of "edges"
 
     edges_group.close();
@@ -312,6 +210,189 @@ SonataConnector::get_num_elements_( const H5::DataSet& dataset )
   dataspace.getSimpleExtentDims( dims_out, NULL );
   std::cerr << "dims_out: " << *dims_out << "\n";
   return *dims_out;
+}
+
+
+void
+SonataConnector::read_datasets( const H5::DataSet& src_node_id_dset,
+  const H5::DataSet& tgt_node_id_dset,
+  const H5::DataSet& edge_type_id_dset )
+{
+  const auto array_size = get_num_elements_( src_node_id_dset );
+  const auto tgt_array_size = get_num_elements_( tgt_node_id_dset );
+
+  assert( array_size == tgt_array_size );
+
+  hsize_t chunk_size = CHUNK_SIZE;
+
+  // adjust if chunk_size is too large
+  if ( array_size < chunk_size )
+  {
+    chunk_size = array_size;
+  }
+
+  // Divide into chunks + remainder
+  auto dv = std::div( static_cast< int >( array_size ), static_cast< int >( chunk_size ) );
+
+  std::cerr << "get_attributes_ source node_population...\n";
+  // Retrieve source and target attributes to find which node population to map to
+  get_attributes_( source_attribute_value_, src_node_id_dset, "node_population" );
+  get_attributes_( target_attribute_value_, tgt_node_id_dset, "node_population" );
+
+
+  // Iterate chunks
+  hsize_t offset { 0 }; // start coordinates of data selection
+
+  for ( size_t i { 0 }; i < dv.quot; i++ )
+  {
+    // create connections
+    create_connections( src_node_id_dset, tgt_node_id_dset, edge_type_id_dset, chunk_size, offset );
+
+    // increment offset
+    offset += chunk_size;
+  }
+
+  // Handle remainder
+  if ( dv.rem > 0 )
+  {
+    create_connections( src_node_id_dset, tgt_node_id_dset, edge_type_id_dset, dv.rem, offset );
+  }
+}
+
+void
+SonataConnector::create_connections( const H5::DataSet& src_node_id_dset,
+  const H5::DataSet& tgt_node_id_dset,
+  const H5::DataSet& edge_type_id_dset,
+  const hsize_t chunk_size,
+  const hsize_t offset )
+{
+
+  // Read subsets
+  std::vector< int > src_node_id_subset( chunk_size );
+  std::vector< int > tgt_node_id_subset( chunk_size );
+  std::vector< int > edge_type_id_subset( chunk_size );
+
+  read_subset( src_node_id_dset, src_node_id_subset, chunk_size, offset );
+  read_subset( tgt_node_id_dset, tgt_node_id_subset, chunk_size, offset );
+  read_subset( edge_type_id_dset, edge_type_id_subset, chunk_size, offset );
+
+  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
+
+  std::cerr << "Enter parallel region...\n";
+#pragma omp parallel
+  {
+    const auto tid = kernel().vp_manager.get_thread_id();
+
+    try
+    {
+      // Retrieve the correct NodeCollections
+      const auto nest_nodes = getValue< DictionaryDatum >( sonata_dynamics_->lookup( "nodes" ) );
+      const auto current_source_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( source_attribute_value_ ) );
+      const auto current_target_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( target_attribute_value_ ) );
+
+      auto snode_it = current_source_nc->begin();
+      auto tnode_it = current_target_nc->begin();
+
+
+      // Iterate the datasets and create the connections
+      for ( hsize_t i = 0; i < chunk_size; ++i )
+      {
+        const auto sonata_source_id = src_node_id_subset[ i ];
+        const index snode_id = ( *( snode_it + sonata_source_id ) ).node_id;
+
+        const auto sonata_target_id = tgt_node_id_subset[ i ];
+        const index target_id = ( *( tnode_it + sonata_target_id ) ).node_id;
+        Node* target = kernel().node_manager.get_node_or_proxy( target_id );
+
+        if ( not target ) // TODO: remove
+        {
+#pragma omp critical
+          {
+            std::cerr << kernel().vp_manager.get_thread_id() << ": " << target_id << " node_or_proxy is NULL!\n";
+          }
+        }
+
+        const thread target_thread = target->get_thread();
+
+        // Skip if target is not on this thread, or not on this MPI process.
+        if ( target->is_proxy() or tid != target_thread )
+        {
+          continue;
+        }
+
+        const auto edge_type_id = edge_type_id_subset[ i ];
+        const auto syn_spec = getValue< DictionaryDatum >( edge_params_->lookup( std::to_string( edge_type_id ) ) );
+
+        auto get_syn_property = [ &syn_spec, &i ]( const bool dataset, const double* data, const Name& name ) {
+          if ( dataset ) // Syn_property is set from dataset if the dataset is defined
+          {
+            if ( not data[ i ] ) // TODO: remove
+            {
+#pragma omp critical
+              {
+                std::cerr << kernel().vp_manager.get_thread_id() << ": " << name << " " << i
+                          << " data index is NULL!\n";
+              }
+            }
+            return data[ i ];
+          }
+          else if ( syn_spec->known( name ) ) // Set syn_property from syn_spec if it is defined there
+          {
+            return static_cast< double >( ( *syn_spec )[ name ] );
+          }
+          return numerics::nan; // Default value is NaN
+        };
+
+        const double weight = get_syn_property( weight_dataset_, syn_weight_data_, names::weight );
+        const double delay = get_syn_property( delay_dataset_, delay_data_, names::delay );
+
+        RngPtr rng = get_vp_specific_rng( target_thread );
+        get_synapse_params_( snode_id, *target, target_thread, rng, edge_type_id );
+
+        kernel().connection_manager.connect( snode_id,
+          target,
+          target_thread,
+          type_id_2_syn_model_.at( edge_type_id ),
+          type_id_2_param_dicts_.at( edge_type_id ).at( tid ),
+          delay,
+          weight );
+      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  } // omp parallel
+
+  // check if any exceptions have been raised
+  for ( thread thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+  {
+    if ( exceptions_raised_.at( thr ).get() )
+    {
+      throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
+    }
+  }
+}
+
+void
+SonataConnector::read_subset( const H5::DataSet& dataset,
+  std::vector< int >& data_buf,
+  hsize_t chunk_size,
+  hsize_t offset )
+{
+  // Define Memory Dataspace. Get file dataspace and select
+  // a subset from the file dataspace.
+  const int RANK = 1;
+  H5::DataSpace memspace( RANK, &chunk_size, NULL );
+
+  // select hyperslab
+  H5::DataSpace dataspace = dataset.getSpace();
+  dataspace.selectHyperslab( H5S_SELECT_SET, &chunk_size, &offset );
+
+  // Read subset
+  dataset.read( data_buf.data(), H5::PredType::NATIVE_INT, memspace, dataspace );
 }
 
 int*

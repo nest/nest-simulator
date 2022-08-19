@@ -146,6 +146,17 @@ private:
    */
   void get_synapse_params_( index snode_id, Node& target, thread target_thread, RngPtr rng, int edge_type_id );
 
+  void read_datasets( const H5::DataSet& src_node_id_dset,
+    const H5::DataSet& tgt_node_id_dset,
+    const H5::DataSet& edge_type_id_dset );
+  void read_subset( const H5::DataSet& dataset, std::vector< int >& data_buf, hsize_t chunk_size, hsize_t offset );
+
+  void create_connections( const H5::DataSet& src_node_id_dset,
+    const H5::DataSet& tgt_node_id_dset,
+    const H5::DataSet& edge_type_id_dset,
+    const hsize_t chunk_size,
+    const hsize_t offset );
+
   /**
    * Reset all parameters
    */
@@ -165,6 +176,15 @@ private:
 
   //! Pointer to delay dataset
   double* delay_data_;
+
+  //! Source node attribute
+  std::string source_attribute_value_;
+
+  //! Target node attribute
+  std::string target_attribute_value_;
+
+  //! Edge parameters
+  DictionaryDatum edge_params_;
 
   //! Map from type id (in SONATA file) to synapse model
   std::map< int, index > type_id_2_syn_model_;

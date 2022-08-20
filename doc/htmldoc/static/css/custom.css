@@ -129,7 +129,6 @@ div.sd-card-title.sd-font-weight-bold.sd-d-flex-row.docutils a.reference.interna
  
 }
 .md-typeset .admonition {
-  background-color: var(--nest-blue);
   border-left: .2rem solid var(--nest-blue);
   border-radius: 5px;
 }

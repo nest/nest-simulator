@@ -20,7 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Assert that all existing neuronal models are copied correctly and new Ids are correctly assigned to the new copied models.
+Assert that all existing neuronal models are copied correctly
+and new Ids are correctly assigned to the new copied models.
 """
 
 import unittest
@@ -32,7 +33,8 @@ class CopyModelTestCase(unittest.TestCase):
     """nest.CopyModel Test"""
 
     def check_copied_model(self, original_model, is_synapse=False):
-        """Test if the new copied neuron or synapse model has been assigned a correct ID and if the new name is correctly stored in the new instances."""
+        """Test if the new copied neuron or synapse model has been assigned a correct ID
+        and if the new name is correctly stored in the new instances."""
 
         keys_to_query = ["model", "model_id"]
         if is_synapse:
@@ -62,7 +64,8 @@ class CopyModelTestCase(unittest.TestCase):
             self.assertGreater(copied_model_instance_info[keys_to_query[1]],  original_model_instance_info[keys_to_query[1]])
 
     def check_copy_model_correctness(self, models, synapse=False):
-        """Iterates over all registered and available model and checks the correctness of the nest.CopyModel on each model."""
+        """Iterates over all registered and available model
+        and checks the correctness of the nest.CopyModel on each model."""
 
         for model in models:
             self.check_copied_model(model, is_synapse=synapse)

@@ -52,16 +52,16 @@ class CopyModelTestCase(unittest.TestCase):
             original_model_instance = nest.Create(original_model)
             copied_model_instance = nest.Create(new_name)
 
-            original_model_instance_info = original_model_instance.get(keys_to_query)
+            original_model_info = original_model_instance.get(keys_to_query)
 
-            copied_model_instance_info = copied_model_instance.get(keys_to_query)
+            copied_model_info = copied_model_instance.get(keys_to_query)
 
-            self.assertNotEqual(copied_model_instance_info[keys_to_query[0]],
-                                original_model_instance_info[keys_to_query[0]])
+            self.assertNotEqual(copied_model_info[keys_to_query[0]],
+                                original_model_info[keys_to_query[0]])
 
-            self.assertNotEqual(original_model_instance_info[keys_to_query[0]], "UnknownNode")
+            self.assertNotEqual(original_model_info[keys_to_query[0]], "UnknownNode")
 
-            self.assertGreater(copied_model_instance_info[keys_to_query[1]],  original_model_instance_info[keys_to_query[1]])
+            self.assertGreater(copied_model_info[keys_to_query[1]],  original_model_info[keys_to_query[1]])
 
     def check_copy_model_correctness(self, models, synapse=False):
         """Iterates over all registered and available model

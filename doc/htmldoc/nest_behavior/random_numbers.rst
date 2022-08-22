@@ -204,7 +204,7 @@ the distribution. Consider the following case:
     
 This will create 10000 connections in total with delay values 1.0, 1.1, ..., 2.0. But while
 the interior delay values 1.1, ..., 1.9 will occur approximately 1000 times each, the first and last
-cases 1.0 and 2.0 will occur only approximately 500 times each. This happens because NEST
+cases, 1.0 and 2.0, will occur only approximately 500 times each. This happens because NEST
 first draws the delay uniformly from :math:`[1, 2)` and then rounds to a fixed delay. Thus,
 any number from :math:`[1.05, 1.15)` will be rounded to 1.1, but only numbers in
 :math:`[1.0, 1.05)` will be rounded to 1.0.

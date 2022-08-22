@@ -194,7 +194,7 @@ Connection delays in NEST are rounded to the nearest multiple of the simulation 
 even if delays are drawn from a continuous distribution. This will work as expected if the
 distribution has infinite support, for example, the normal distribution. For the uniform distribution,
 though, this rounding will usually lead to lower probabilities for the delays at the edges of
-the distribution. Consider the following case
+the distribution. Consider the following case:
 
 ::
 

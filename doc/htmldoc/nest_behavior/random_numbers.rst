@@ -214,8 +214,8 @@ of the uniform distribution by half the resolution
 
 ::
 
-    nest.Connect(n, n, syn_spec={'delay': nest.random.uniform(min=1-0.5*nest.resolution,
-                                                              max=2+0.5*nest.resolution)})
+    nest.Connect(n, n, syn_spec={'delay': nest.random.uniform(min=1 - 0.5 * nest.resolution,
+                                                              max=2 + 0.5 * nest.resolution)})
 
 or use the uniform integer distribution. Since it always draws numbers beginning with zero,
 this is slightly more cumbersome:

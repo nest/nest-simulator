@@ -200,8 +200,7 @@ the distribution. Consider the following case
 
     nest.resolution = 0.1
     n = nest.Create('iaf_psc_alpha', 100)
-    nest.Connect(n, n, syn_spec={'delay': nest.random.uniform(min=1,
-                                                              max=2)})
+    nest.Connect(n, n, syn_spec={'delay': nest.random.uniform(min=1, max=2)})
     
 This will create 10000 connections in total with delay values 1.0, 1.1, ..., 2.0. But while
 the interior delay values 1.1, ..., 1.9 will occur approximately 1000 times each, the corner

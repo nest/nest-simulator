@@ -210,7 +210,7 @@ any number from :math:`[1.05, 1.15)` will be rounded to 1.1, but only numbers in
 :math:`[1.0, 1.05)` will be rounded to 1.0.
 
 To achieve equal probabilities of the first and last values, you can either extend the interval
-of the uniform distribution by half the resolution
+of the uniform distribution by half the resolution:
 
 ::
 

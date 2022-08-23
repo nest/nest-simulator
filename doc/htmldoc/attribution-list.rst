@@ -26,3 +26,5 @@ Icons provided by Flaticon
 <a href="https://www.flaticon.com/free-icons/quote" title="quote icons">Quote icons created by DinosoftLabs - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/mail" title="mail icons">Mail icons created by Freepik - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/external-link" title="external link icons">External link icons created by Bharat Icons - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/example" title="example icons">Example icons created by kerismaker - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/puzzle" title="puzzle icons">Puzzle icons created by mynamepong - Flaticon</a>

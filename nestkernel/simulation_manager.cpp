@@ -825,6 +825,34 @@ nest::SimulationManager::update_()
 
       } // of structural plasticity
 
+      bool end_min_delay = to_step_ == kernel().connection_manager.get_min_delay();
+
+      if ( end_min_delay )
+      {
+#ifdef TIMER_DETAILED
+        if ( tid == 0 )
+        {
+          sw_gather_spike_data_.start();
+        }
+#endif
+        if ( kernel().connection_manager.has_primary_connections() )
+        {
+          // Deliver spikes from receive buffer to ring buffers.
+          kernel().event_delivery_manager.deliver_events( tid );
+        }
+        if ( kernel().connection_manager.secondary_connections_exist() )
+        {
+          kernel().event_delivery_manager.deliver_secondary_events( tid, false );
+        }
+
+#ifdef TIMER_DETAILED
+        if ( tid == 0 )
+        {
+          sw_gather_spike_data_.stop();
+        }
+#endif
+      }
+
       if ( from_step_ == 0 )
       {
 #ifdef HAVE_MUSIC
@@ -972,36 +1000,11 @@ nest::SimulationManager::update_()
 
 // parallel section ends, wait until all threads are done -> synchronize
 #pragma omp barrier
+
 #ifdef TIMER_DETAILED
       if ( tid == 0 )
       {
         sw_update_.stop();
-        sw_gather_spike_data_.start();
-      }
-#endif
-
-      // gather and deliver only at end of slice, i.e., end of min_delay step
-      if ( to_step_ == kernel().connection_manager.get_min_delay() )
-      {
-        if ( kernel().connection_manager.has_primary_connections() )
-        {
-          kernel().event_delivery_manager.gather_spike_data( tid );
-        }
-        if ( kernel().connection_manager.secondary_connections_exist() )
-        {
-#pragma omp single
-          {
-            kernel().event_delivery_manager.gather_secondary_events( true );
-          }
-          kernel().event_delivery_manager.deliver_secondary_events( tid, false );
-        }
-      }
-
-#pragma omp barrier
-#ifdef TIMER_DETAILED
-      if ( tid == 0 )
-      {
-        sw_gather_spike_data_.stop();
       }
 #endif
 
@@ -1009,6 +1012,33 @@ nest::SimulationManager::update_()
 // the other threads are enforced to wait at the end of the block
 #pragma omp master
       {
+#ifdef TIMER_DETAILED
+        if ( tid == 0 )
+        {
+          sw_gather_spike_data_.start();
+        }
+#endif
+
+        // gather only at end of slice, i.e., end of min_delay step
+        if ( end_min_delay )
+        {
+          if ( kernel().connection_manager.has_primary_connections() )
+          {
+            kernel().event_delivery_manager.gather_spike_data( tid );
+          }
+          if ( kernel().connection_manager.secondary_connections_exist() )
+          {
+            kernel().event_delivery_manager.gather_secondary_events( true );
+          }
+        }
+
+#ifdef TIMER_DETAILED
+        if ( tid == 0 )
+        {
+          sw_gather_spike_data_.stop();
+        }
+#endif
+
         advance_time_();
 
         if ( print_time_ )

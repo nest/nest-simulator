@@ -349,68 +349,46 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
   std::vector< SpikeDataT >& send_buffer,
   std::vector< SpikeDataT >& recv_buffer )
 {
-#pragma omp master
+  const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
+
+  kernel().mpi_manager.set_buffer_size_spike_data( 8388608 );
+  resize_send_recv_buffers_spike_data_();
+
+  // Need to get new positions in case buffer size has changed
+  SendBufferPosition send_buffer_position(
+    assigned_ranks, kernel().mpi_manager.get_send_recv_count_spike_data_per_rank() );
+
+#ifdef TIMER_DETAILED
   {
-    const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
-
-    kernel().mpi_manager.set_buffer_size_spike_data( 8388608 );
-    resize_send_recv_buffers_spike_data_();
-
-    // Need to get new positions in case buffer size has changed
-    SendBufferPosition send_buffer_position(
-      assigned_ranks, kernel().mpi_manager.get_send_recv_count_spike_data_per_rank() );
-
-#ifdef TIMER_DETAILED
-    {
-      sw_collocate_spike_data_.start();
-    }
-#endif
-
-    // Collocate spikes to send buffer
-    collocate_spike_data_buffers_( tid, assigned_ranks, send_buffer_position, spike_register_, send_buffer );
-
-    // Set markers to signal end of valid spikes, and remove spikes
-    // from register that have been collected in send buffer.
-    set_end_and_invalid_markers_( assigned_ranks, send_buffer_position, send_buffer );
-
-    // If we do not have any spikes left, set corresponding marker in
-    // send buffer.
-    set_complete_marker_spike_data_( assigned_ranks, send_buffer_position, send_buffer );
-
-#ifdef TIMER_DETAILED
-    {
-      sw_collocate_spike_data_.stop();
-      sw_communicate_spike_data_.start();
-    }
-#endif
-
-    kernel().mpi_manager.communicate_spike_data_Alltoall( send_buffer, recv_buffer );
-
-#ifdef TIMER_DETAILED
-    {
-      sw_communicate_spike_data_.stop();
-    }
-#endif
-  }                 // omp master
-#pragma omp barrier // no implicit barrier after omp master
-
-#ifdef TIMER_DETAILED
-  if ( tid == 0 )
-  {
-    sw_deliver_spike_data_.start();
-  }
-#endif
-  // Deliver spikes from receive buffer to ring buffers.
-  deliver_events_( tid, recv_buffer );
-
-#ifdef TIMER_DETAILED
-  if ( tid == 0 )
-  {
-    sw_deliver_spike_data_.stop();
+    sw_collocate_spike_data_.start();
   }
 #endif
 
-  reset_spike_register_( tid );
+  // Collocate spikes to send buffer
+  collocate_spike_data_buffers_( tid, assigned_ranks, send_buffer_position, spike_register_, send_buffer );
+
+  // Set markers to signal end of valid spikes, and remove spikes
+  // from register that have been collected in send buffer.
+  set_end_and_invalid_markers_( assigned_ranks, send_buffer_position, send_buffer );
+
+  // If we do not have any spikes left, set corresponding marker in
+  // send buffer.
+  set_complete_marker_spike_data_( assigned_ranks, send_buffer_position, send_buffer );
+
+#ifdef TIMER_DETAILED
+  {
+    sw_collocate_spike_data_.stop();
+    sw_communicate_spike_data_.start();
+  }
+#endif
+
+  kernel().mpi_manager.communicate_spike_data_Alltoall( send_buffer, recv_buffer );
+
+#ifdef TIMER_DETAILED
+  {
+    sw_communicate_spike_data_.stop();
+  }
+#endif
 }
 
 template < typename TargetT, typename SpikeDataT >
@@ -512,6 +490,35 @@ EventDeliveryManager::set_complete_marker_spike_data_( const AssignedRanks& assi
     const thread idx = send_buffer_position.end( target_rank ) - 1;
     send_buffer[ idx ].set_complete_marker();
   }
+}
+
+void
+EventDeliveryManager::deliver_events( const thread tid )
+{
+#ifdef TIMER_DETAILED
+  if ( tid == 0 )
+  {
+    sw_deliver_spike_data_.start();
+  }
+#endif
+
+  if ( off_grid_spiking_ )
+  {
+    deliver_events_( tid, recv_buffer_off_grid_spike_data_ );
+  }
+  else
+  {
+    deliver_events_( tid, recv_buffer_spike_data_ );
+  }
+
+#ifdef TIMER_DETAILED
+  if ( tid == 0 )
+  {
+    sw_deliver_spike_data_.stop();
+  }
+#endif
+
+  reset_spike_register_( tid );
 }
 
 template < typename SpikeDataT >

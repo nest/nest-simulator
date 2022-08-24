@@ -206,6 +206,11 @@ public:
    */
   void gather_target_data( const thread tid );
 
+   /**
+   * Delivers events to targets.
+   */
+  void deliver_events( const thread tid );
+
   /**
    * Collocates presynaptic connection information for secondary events (MPI
    * buffer offsets), communicates via MPI and create presynaptic connection

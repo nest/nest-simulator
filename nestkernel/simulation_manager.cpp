@@ -825,9 +825,7 @@ nest::SimulationManager::update_()
 
       } // of structural plasticity
 
-      bool end_min_delay = to_step_ == kernel().connection_manager.get_min_delay();
-
-      if ( end_min_delay )
+      if ( from_step_ == 0 )
       {
 #ifdef TIMER_DETAILED
         if ( tid == 0 )
@@ -835,6 +833,7 @@ nest::SimulationManager::update_()
           sw_gather_spike_data_.start();
         }
 #endif
+
         if ( kernel().connection_manager.has_primary_connections() )
         {
           // Deliver spikes from receive buffer to ring buffers.
@@ -851,10 +850,7 @@ nest::SimulationManager::update_()
           sw_gather_spike_data_.stop();
         }
 #endif
-      }
 
-      if ( from_step_ == 0 )
-      {
 #ifdef HAVE_MUSIC
 // advance the time of music by one step (min_delay * h) must
 // be done after deliver_events_() since it calls
@@ -1013,14 +1009,11 @@ nest::SimulationManager::update_()
 #pragma omp master
       {
 #ifdef TIMER_DETAILED
-        if ( tid == 0 )
-        {
-          sw_gather_spike_data_.start();
-        }
+        sw_gather_spike_data_.start();
 #endif
 
         // gather only at end of slice, i.e., end of min_delay step
-        if ( end_min_delay )
+        if ( to_step_ == kernel().connection_manager.get_min_delay() )
         {
           if ( kernel().connection_manager.has_primary_connections() )
           {
@@ -1033,10 +1026,7 @@ nest::SimulationManager::update_()
         }
 
 #ifdef TIMER_DETAILED
-        if ( tid == 0 )
-        {
-          sw_gather_spike_data_.stop();
-        }
+        sw_gather_spike_data_.stop();
 #endif
 
         advance_time_();

@@ -468,7 +468,7 @@ html {
 }
 
 #gototop {
-    display: none;
+    display: block;
 }
 
 #gototop img {

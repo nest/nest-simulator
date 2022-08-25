@@ -100,7 +100,8 @@ extensions = [
     'VersionSyncRole',
 ]
 
-mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+mathjax_path =  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML" 
+#"https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
 #"https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa
 
 panels_add_bootstrap_css = False
@@ -251,7 +252,6 @@ def setup(app):
     app.connect("source-read", toc_customizer)
     app.add_css_file('css/custom.css')
     app.add_css_file('css/pygments.css')
-    app.add_js_file("js/copybutton.js")
     app.add_js_file("js/custom.js")
 
     # for events see

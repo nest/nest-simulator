@@ -350,7 +350,7 @@ class SonataConnector(object):
             except BlockingIOError as err:
                 raise BlockingIOError(f'{err.strerror} for {os.path.realpath(d["edges_file"])}') from None
 
-        print(sonata_dynamics)
+        # print(sonata_dynamics)
         sps(sonata_dynamics)
         sr('Connect_sonata')
 

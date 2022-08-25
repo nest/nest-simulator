@@ -113,7 +113,7 @@ private:
    *
    * @param group H5 group for which to check if weight or delay exists
    */
-  void weight_and_delay_from_dataset_( const H5::Group& group );
+  void is_weight_and_delay_from_dataset_( const H5::Group& group );
 
   /**
    * Create map between type id and syn_spec given in edge_dict
@@ -146,16 +146,16 @@ private:
    */
   void get_synapse_params_( index snode_id, Node& target, thread target_thread, RngPtr rng, int edge_type_id );
 
-  void read_datasets( const H5::DataSet& src_node_id_dset,
-    const H5::DataSet& tgt_node_id_dset,
-    const H5::DataSet& edge_type_id_dset );
-  void read_subset( const H5::DataSet& dataset, std::vector< int >& data_buf, hsize_t chunk_size, hsize_t offset );
+  void read_datasets_();
 
-  void create_connections( const H5::DataSet& src_node_id_dset,
-    const H5::DataSet& tgt_node_id_dset,
-    const H5::DataSet& edge_type_id_dset,
-    const hsize_t chunk_size,
-    const hsize_t offset );
+  void read_subset_int_( const H5::DataSet& dataset, std::vector< int >& data_buf, hsize_t chunk_size, hsize_t offset );
+
+  void read_subset_double_( const H5::DataSet& dataset,
+    std::vector< double >& data_buf,
+    hsize_t chunk_size,
+    hsize_t offset );
+
+  void create_connections_( const hsize_t chunk_size, const hsize_t offset );
 
   /**
    * Reset all parameters
@@ -166,16 +166,10 @@ private:
   DictionaryDatum sonata_dynamics_;
 
   //! Indicates whether weights are given as dataset in SONATA file
-  bool weight_dataset_;
+  bool weight_dataset_exist_;
 
   //! Indicates whether delays are given as dataset in SONATA file
-  bool delay_dataset_;
-
-  //! Pointer to weight dataset
-  double* syn_weight_data_;
-
-  //! Pointer to delay dataset
-  double* delay_data_;
+  bool delay_dataset_exist_;
 
   //! Source node attribute
   std::string source_attribute_value_;
@@ -194,7 +188,15 @@ private:
 
   //! Map from type id (in SONATA file) to param dictionaries (one per thread) used when creating connections
   std::map< int, std::vector< DictionaryDatum > > type_id_2_param_dicts_;
+
+  //! Datasets
+  H5::DataSet src_node_id_dset_;
+  H5::DataSet tgt_node_id_dset_;
+  H5::DataSet edge_type_id_dset_;
+  H5::DataSet syn_weight_dset_;
+  H5::DataSet delay_dset_;
 };
+
 
 } // namespace nest
 

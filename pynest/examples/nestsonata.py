@@ -23,6 +23,7 @@ import warnings
 import nest
 import nest.raster_plot
 import time
+from pprint import pprint
 
 import matplotlib.pyplot as plt
 
@@ -30,26 +31,29 @@ import matplotlib.pyplot as plt
 def memory_thisjob():
     """Wrapper to obtain current memory usage"""
     nest.ll_api.sr('memory_thisjob')
-    return nest.ll_api.spp()
+    return nest.ll_api.spp() / 1e6
+
 
 start_time = time.time()
 
 nest.ResetKernel()
-
-# example = '300_pointneurons'
-example = 'GLIF'
-plot = True
+example = '300_pointneurons'
+#example = 'GLIF'
+simulate = True
+plot = False
 pre_sim_time = 10
 
-create_sonata_network = False  # For testing of conveniece function
+n_vp = 16    # Set number of virtual processes
+
+create_sonata_network = False  # For testing of convenience function
 
 if example == '300_pointneurons':
-    base_path = '/home/stine/Work/sonata/examples/300_pointneurons/'
+    base_path = '/Users/nicolai/github/sonata/examples/300_pointneurons/'
     config = 'circuit_config.json'
     sim_config = 'simulation_config.json'
     population_to_plot = 'internal'
 elif example == 'GLIF':
-    base_path = '/home/stine/Work/sonata/examples/glif_nest_220/'
+    base_path = '/Users/nicolai/github/nest_dev/glif_nest_220/'
     config = 'config.json'
     sim_config = None
     population_to_plot = 'v1'
@@ -58,7 +62,7 @@ elif example == 'GLIF':
 sonata_connector = nest.SonataConnector(base_path, config, sim_config)
 
 if create_sonata_network:
-    nest.set(total_num_virtual_procs=4)
+    nest.set(total_num_virtual_procs=n_vp)
     sonata_connector.CreateSonataNetwork(simulate=True)
 
     if plot:
@@ -69,7 +73,7 @@ else:
     if not sonata_connector.config['target_simulator'] == 'NEST':
         raise NotImplementedError('Only `target_simulator` of type NEST is supported.')
 
-    nest.set(resolution=sonata_connector.config['run']['dt'], overwrite_files=True, total_num_virtual_procs=4)
+    nest.set(resolution=sonata_connector.config['run']['dt'], overwrite_files=True, total_num_virtual_procs=n_vp)
 
     mem_ini = memory_thisjob()
     start_time_create = time.time()
@@ -80,8 +84,8 @@ else:
     end_time_create = time.time() - start_time_create
     mem_create = memory_thisjob()
 
-    print(sonata_connector.node_collections)
-    print()
+    # print(sonata_connector.node_collections)
+    # print()
 
     # Connect
     start_time_connect = time.time()
@@ -115,7 +119,7 @@ else:
     else:
         simtime = sonata_connector.config['run']['duration']
 
-    if plot:
+    if simulate:
         nest.Simulate(simtime)
 
     end_time_sim = time.time() - start_time_sim
@@ -127,17 +131,24 @@ else:
     print(f"Pre-simulation (10 ms) took: {end_time_presim} s")
     print(f"simulation took: {end_time_sim} s")
     print(f"all took: {end_time} s")
-    print(f'initial memory: {mem_ini}')
-    print(f'memory create: {mem_create}')
-    print(f'memory connect: {mem_connect}\n')
+    print(f'initial memory: {mem_ini} MB')
+    print(f'memory create: {mem_create} MB')
+    print(f'memory connect: {mem_connect} MB\n')
+    # pprint(nest.GetKernelStatus())
     print(f'number of spikes: {nest.GetKernelStatus("local_spike_counter")}')
+    # print(nest.GetConnections())
 
 if plot:
-    nest.raster_plot.from_device(s_rec)
-    plt.show()
+    if not simulate:
+        print("simulate must be True in order to plot")
+    else:
+        nest.raster_plot.from_device(s_rec)
+        plt.show()
 
+""" 
 net_size = nest.GetKernelStatus('network_size')
 print(nest.NodeCollection([net_size - 1]).get())
 print(nest.NodeCollection([net_size]).get())
 print("number of neurons: ", nest.GetKernelStatus('network_size'))
 print(nest.NodeCollection(list(range(1, net_size+1))))
+"""

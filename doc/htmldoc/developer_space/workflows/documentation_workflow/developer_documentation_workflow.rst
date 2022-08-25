@@ -14,6 +14,7 @@ with ``make doc``. A ``doxygen`` folder with HTML files will be
 generated in the ``doc`` folder in your source directory.
 
 .. note::
+
    This workflow shows you how to create **developer documentation**
    for NEST. For the **user documentation**, please refer to our
    :ref:`User documentation workflow <userdoc_workflow>`.

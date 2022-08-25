@@ -1,3 +1,5 @@
+:orphan:
+
 .. Color profiles for Sphinx.
 .. role:: maroon
 .. role:: red

@@ -1,3 +1,5 @@
+:orphan:
+
 .. _troubleshooting:
 
 Troubleshooting
@@ -8,7 +10,7 @@ Here you can find some tips to try to find out why your installation of NEST did
 Please make sure you have:
 
 * Followed the :ref:`installation instructions <install_nest>`
-* Installed the required :ref:`dependencies <standard>`
+* Installed the required `dependencies <https://github.com/nest/nest-simulator/blob/master/environment.yml>`_
 * Viewed the :ref:`CMake options <cmake_options>`
 
 You can also check our `Mailing List Archive <https://www.nest-initiative.org/mailinglist/hyperkitty/list/

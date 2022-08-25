@@ -185,7 +185,7 @@ Running and debugging
 ~~~~~~~~~~~~~~~~~~~~~
 
 Running a NEST Python script
-############################
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The steps below give a rough guide to how you can run a NEST Python script. For more detailed
 documentation on working with Python in VS Code, see the
@@ -210,7 +210,7 @@ documentation on working with Python in VS Code, see the
    **Run Python file in Terminal**. A panel should open with a terminal showing the output.
 
 Running a NEST Python script with a Python debugger
-###################################################
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The steps below give a rough guide to how you can run a NEST Python script with the built-in debugger. For more detailed
 documentation on Python debugging in VS Code, see the
@@ -228,7 +228,7 @@ documentation on Python debugging in VS Code, see the
 #. A panel with output will open, and the program will run until it finishes, or encounters an error or a breakpoint.
 
 Running a SLI script with a debugger
-####################################
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The steps below give a rough guide to how you can run NEST with GDB in VS Code. For more detailed
 documentation on C++ debugging in VS Code, see the
@@ -373,27 +373,27 @@ Get Xcode working with NEST
    .. figure:: _images/xcode_article/add_files.png
       :alt: Add Sources
 
-   Also add the generated files:
+       Also add the generated files:
 
-   .. code-block::
+  .. code-block::
 
-      <somebase>/NEST/build/libnestutil/config.h
-      <somebase>/NEST/build/libnestutil/sliconfig.h
-      <somebase>/NEST/build/nest/static_modules.h
+    <somebase>/NEST/build/libnestutil/config.h
+    <somebase>/NEST/build/libnestutil/sliconfig.h
+    <somebase>/NEST/build/nest/static_modules.h
 
 1. On the left panel select the newly created project ``NEST-fork``, then select the created target:
 
    .. figure:: _images/xcode_article/execution_dir.png
       :alt: Execution path
 
-   Here you set set Directory to ``<somebase>/NEST/build``. This will be the directory, in which the ``make`` command is executed. Also check ``Pass build settings in environment``.
+       Here you set set Directory to ``<somebase>/NEST/build``. This will be the directory, in which the ``make`` command is executed. Also check ``Pass build settings in environment``.
 
 1. Next select the ``Build Settings`` panel.
 
    .. figure:: _images/xcode_article/add_path.png
       :alt: Add $PATH
 
-  Here you ``Add User-Defined Setting`` and name it ``PATH``. In the ``NEST-fork`` column (the second) you copy the content of your ``PATH`` variable (do ``echo $PATH`` in the Terminal).
+      Here you ``Add User-Defined Setting`` and name it ``PATH``. In the ``NEST-fork`` column (the second) you copy the content of your ``PATH`` variable (do ``echo $PATH`` in the Terminal).
 
 1. The build system (CMD+B) should work from now on.
 

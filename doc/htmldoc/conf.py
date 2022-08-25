@@ -100,7 +100,7 @@ extensions = [
     'VersionSyncRole',
 ]
 
-mathjax_path = "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa
+mathjax_path = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa
 
 panels_add_bootstrap_css = False
 # Add any paths that contain templates here, relative to this directory.

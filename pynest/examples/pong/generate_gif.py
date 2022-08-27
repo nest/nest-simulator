@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-r"""Script to visualize a simulated pong game.
+r"""Script to visualize a simulated Pong game.
 ----------------------------------------------------------------
 All simulations store data about both networks and the game in .pkl files.
 This script reads these files and generates image snapshots at different
@@ -110,7 +110,7 @@ def scale_coordinates(coordinates: np.array):
 
 
 def grayscale_to_heatmap(in_image, min_val, max_val, base_color):
-    """transform a grayscale image to an RGB heat map. Heatmap will color small
+    """Transform a grayscale image to an RGB heat map. Heatmap will color small
     values in base_color and high values in white.
 
     Args:

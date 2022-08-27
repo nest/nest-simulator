@@ -26,7 +26,7 @@ simulations of Pong games.
 
 See Also
 ---------
-'Original implementation <https://github.com/electronicvisions/model-sw-pong>'_
+`Original implementation <https://github.com/electronicvisions/model-sw-pong>`_
 
 References
 ----------
@@ -51,7 +51,7 @@ DONT_MOVE = 0
 class GameObject:
     def __init__(self, game, x_pos=0.5, y_pos=0.5, velocity=0.2,
                  direction=[0, 0]):
-        """Base class for Ball and Paddle, containing basic functionality for
+        """Base class for Ball and Paddle that contains basic functionality for
         an object inside a game.
 
         Args:
@@ -109,8 +109,8 @@ class Paddle(GameObject):
     """Class representing the paddles on either end of the playing field.
 
         Args:
-            direction (int, optional): Either -1, 0 or 1 for downward, neutral
-            or upwards motion respectively. Defaults to 0.
+            direction (int, optional): Either -1, 0, or 1 for downward, neutral
+            or upwards motion, respectively. Defaults to 0.
             left (boolean): If True, paddle is placed on the left side of the
             board, otherwise on the right side.
 
@@ -152,7 +152,7 @@ class GameOfPong(object):
         self.result = 0
 
     def reset_ball(self, towards_left=False):
-        """reset the ball position to the center of the field after a goal.
+        """Reset the ball position to the center of the field after a goal.
 
         Args:
             towards_left (bool, optional): if True, ball direction is

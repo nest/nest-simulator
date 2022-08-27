@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-r"""Application training networks to play pong against each other.
+r"""Application to train networks to play pong against each other
 ----------------------------------------------------------------
 This program makes two spiking neural networks of two layers each compete
 against each other in encoding an input-output mapping within their weights.
@@ -30,20 +30,20 @@ in which the vertical position of the ball determines the input for both
 time changes the paddle positions within the game.
 
 The output of the script is stored in three .pkl files which contain information
-about the state of the game, the left network and the right network respectively
+about the state of the game, the left network, and the right network, respectively.
 after every simulation step which can be used to visualize the output
-(e.g. using :doc:`generate_gif.py <./generate_gif.py>`).
+(e.g., using :doc:`generate_gif.py <generate_gif>`).
 
-The idea for this simulation, as well as the core of the R-STDP and Pong
+The idea for this simulation as well as the core of the R-STDP and Pong
 implementation are from [1]_ and were created by Timo Wunderlich and Electronic
 Vision(s) (The original implementation can be found
-'here <https://github.com/electronicvisions/model-sw-pong>'_).
+`here <https://github.com/electronicvisions/model-sw-pong>`_).
 The visualization and implementation of dopaminergic learning, as well as
 changes to the existing codebase were developed by Johannes Gille (2022).
 
 See Also
 ---------
-:doc:`code for visualizing the output <./generate_gif.py>`
+:doc:`Code for visualizing the output <generate_gif>`
 
 
 References
@@ -96,7 +96,7 @@ class AIPong:
         logging.info(f"setup complete for a pong game between: {p1} and {p2}.")
 
     def run_games(self,  max_runs=10000):
-        """run a simulation of pong games and store the results.
+        """Run a simulation of pong games and store the results.
 
         Args:
             max_runs (int, optional): Number of iterations to simulate.

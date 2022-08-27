@@ -27,7 +27,7 @@ can solve the problem using static synapses and R-STDP.
 PongNetDopa uses the actor-critic model described in [2]_ to determine the
 amount of reward to send to the dopaminergic synapses between input and motor
 neurons. In this framework, the motor neurons represent the actor, while a
-secondary network of three populations (termed striatum, VP and dopaminergic
+secondary network of three populations (termed striatum, VP, and dopaminergic
 neurons) form the critic which modulates dopamine concentration based on
 Temporal difference error.
 
@@ -35,7 +35,7 @@ Both of them inherit some functionality from the abstract base class PongNet.
 
 See Also
 ---------
-'Original implementation <https://github.com/electronicvisions/model-sw-pong>'_
+`Original implementation <https://github.com/electronicvisions/model-sw-pong>`_
 
 References
 ----------
@@ -44,9 +44,9 @@ References
        neuromorphic computation: a pilot study. Frontiers in neuroscience, 13,
        260. https://doi.org/10.3389/fnins.2019.00260
 
-.. [2] Potjans, W., Diesmann, M., & Morrison, A. (2011). An imperfect
+.. [2] Potjans W, Diesmann M.  and Morrison A. (2011). An imperfect
        dopaminergic error signal can drive temporal-difference learning. PLoS
-       computational biology, 7(5), e1001133.
+       Computational Biology, 7(5), e1001133.
        https://doi.org/10.1371/journal.pcbi.1001133
 
 :Authors: J Gille, T Wunderlich, Electronic Vision(s)
@@ -77,7 +77,7 @@ class PongNet(ABC):
         """Abstract base class for network wrappers that learn to play pong.
         Parts of the network that are required for both types of inheriting
         class are created here. Namely spike_generators and their connected
-        parrot_neurons which serve as input, as well as iaf_psc_exp neurons
+        parrot_neurons, which serve as input, as well as iaf_psc_exp neurons
         and their corresponding spike_recorders which serve as output. The
         connection between input and output is not established here because it
         is dependent on the plasticity rule used.
@@ -234,7 +234,7 @@ class PongNet(ABC):
 
     @abstractmethod
     def apply_synaptic_plasticity(self, biological_time):
-        """Apply weight changes to the synapses according to a given larning
+        """Apply weight changes to the synapses according to a given learning
         rule.
 
         Args:
@@ -331,7 +331,7 @@ class PongNetDopa(PongNet):
         nest.Connect(self.dopa_current, self.dopa)
 
     def apply_synaptic_plasticity(self, biological_time):
-        """ inject a current into the dopaminergic neurons based on how much of
+        """ Inject a current into the dopaminergic neurons based on how much of
         the motor neurons' activity stems from the target output neuron.
         """
 
@@ -402,7 +402,7 @@ class PongNetRSTDP(PongNet):
         self.apply_rstdp(reward)
 
     def apply_rstdp(self, reward):
-        """apply the previously calculated reward to all relevant synapses
+        """Apply the previously calculated reward to all relevant synapses
         according to R-STDP principle.
 
         Args:

@@ -266,8 +266,8 @@ for filename in glob.glob(os.path.join(filepath, "*.ipynb")):
     base = os.path.splitext(name)[0]
     pyname = base + '.py'
     # create link for python down
-    pybutton = python_button.replace('pythonlink', '../test-notebook/' + pyname)
-    with open('test-notebook/' + pyname, 'w') as outfile:
+    pybutton = python_button.replace('pythonlink', '../pynest-examples/python/' + pyname)
+    with open('pynest-examples/python/' + pyname, 'w') as outfile:
         outfile.write(source)
     # append the buttons for nblinkpuller, python download to each notebook
     nb = nbformat.read(filename, as_version=4)

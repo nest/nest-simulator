@@ -30,8 +30,7 @@ See Also
 
 References
 ----------
-.. [1] Wunderlich, T., Kungl, A. F., Müller, E., Hartel, A., Stradmann, Y.,
-       Aamir, S. A., ... & Petrovici, M. A. (2019). Demonstrating advantages of
+.. [1] Wunderlich T., et al (2019). Demonstrating advantages of
        neuromorphic computation: a pilot study. Frontiers in neuroscience, 13,
        260. https://doi.org/10.3389/fnins.2019.00260
 

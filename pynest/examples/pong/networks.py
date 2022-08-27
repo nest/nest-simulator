@@ -19,17 +19,18 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-r"""Classes to encapsulate
+r"""Classes to encapsulate the neuronal networks.
 ----------------------------------------------------------------
 Two types of network capable of playing pong are implemented. PongNetRSTDP
-can solve the problem using static synapses and R-STDP.
+can solve the problem by updating the weights of static synapses after
+every simulation step according to the R-STDP rules defined in [1]_.
 
 PongNetDopa uses the actor-critic model described in [2]_ to determine the
 amount of reward to send to the dopaminergic synapses between input and motor
 neurons. In this framework, the motor neurons represent the actor, while a
 secondary network of three populations (termed striatum, VP, and dopaminergic
 neurons) form the critic which modulates dopamine concentration based on
-Temporal difference error.
+temporal difference error.
 
 Both of them inherit some functionality from the abstract base class PongNet.
 
@@ -39,12 +40,11 @@ See Also
 
 References
 ----------
-.. [1] Wunderlich, T., Kungl, A. F., Müller, E., Hartel, A., Stradmann, Y.,
-       Aamir, S. A., ... & Petrovici, M. A. (2019). Demonstrating advantages of
+.. [1] Wunderlich T., et al (2019). Demonstrating advantages of
        neuromorphic computation: a pilot study. Frontiers in neuroscience, 13,
        260. https://doi.org/10.3389/fnins.2019.00260
 
-.. [2] Potjans W, Diesmann M.  and Morrison A. (2011). An imperfect
+.. [2] Potjans W., Diesmann M.  and Morrison A. (2011). An imperfect
        dopaminergic error signal can drive temporal-difference learning. PLoS
        Computational Biology, 7(5), e1001133.
        https://doi.org/10.1371/journal.pcbi.1001133

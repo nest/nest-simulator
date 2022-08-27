@@ -29,10 +29,10 @@ in which the vertical position of the ball determines the input for both
 'players' and their output activation after a predetermined simulation
 time changes the paddle positions within the game.
 
-The output of the script is stored in three .pkl files which contain information
-about the state of the game, the left network, and the right network, respectively.
-after every simulation step which can be used to visualize the output
-(e.g., using :doc:`generate_gif.py <generate_gif>`).
+The output of the script stores information about the state of the game,
+and both networks after every simulation step. this data is saved to three
+.pkl files after the simulation is complete, which can be used to visualize
+the output (e.g., using :doc:`generate_gif.py <generate_gif>`).
 
 The idea for this simulation as well as the core of the R-STDP and Pong
 implementation are from [1]_ and were created by Timo Wunderlich and Electronic
@@ -48,8 +48,7 @@ See Also
 
 References
 ----------
-.. [1] Wunderlich, T., Kungl, A. F., Müller, E., Hartel, A., Stradmann, Y.,
-       Aamir, S. A., ... & Petrovici, M. A. (2019). Demonstrating advantages of
+.. [1] Wunderlich T., et al (2019). Demonstrating advantages of
        neuromorphic computation: a pilot study. Frontiers in neuroscience, 13,
        260. https://doi.org/10.3389/fnins.2019.00260
 
@@ -229,7 +228,7 @@ if __name__ == "__main__":
 
     p1, p2 = args.players
     if p1[0] == p2[0] == 'd':
-        logging.error("""Nest currently (v3.1) does not support addressing
+        logging.error("""Nest currently (August 2022) does not support addressing
         multiple populations of dopaminergic synapses because all of them
         recieve their signal from a single volume transmitter. For this reason,
         no two dopaminergic networks can be trained simultaneously. One of the

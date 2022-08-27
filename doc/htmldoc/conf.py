@@ -36,7 +36,6 @@ from mock import Mock as MagicMock
 
 import nbformat
 
-
 from nbconvert import PythonExporter 
 
 source_dir = os.environ.get('NESTSRCDIR', False)
@@ -48,7 +47,7 @@ else:
 
 if os.environ.get("READTHEDOCS") == "True":
     doc_build_dir = source_dir / "doc/htmldoc"
-    for filename in glob.glob(os.path.join(source_dir / "pynest/examples", "*.ipynb*")):
+    for filename in glob.glob(os.path.join(source_dir / "pynest/examples/notebooks", "*.ipynb*")):
         copy(filename, doc_build_dir / "pynest-examples")
 else:
     doc_build_dir = Path(os.environ["OLDPWD"]) / "doc/htmldoc"
@@ -242,20 +241,39 @@ def toc_customizer(app, docname, source):
         rendered = app.builder.templates.render_string(models_source, html_context)
         source[0] = rendered
 
-# Convert ipynb to py
-#for filename in glob.glob(os.path.join(doc_build_dir / "pynest-examples", "*.ipynb*")):
+# This is using the branch ebrains-button (set as default on jessica-mitchell github).
+# This should use either stable or master once done
+link_puller = "https://lab.ebrains.eu/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2Fjessica-mitchell%2Fnest-simulator&urlpath=lab%2Ftree%2Fnest-simulator%2Fpynest%2Fexamples%2Fone_neuron_with_noise.ipynb&branch=ebrains-button"
 
-filename = doc_build_dir / "pynest-examples/one_neuron_with_noise.ipynb"
-name = os.path.basename(filename)
-exporter = PythonExporter()
-(source, meta) = exporter.from_filename(filename)
-source = source.replace("# In[ ]:", "")
-source = source.replace("# \n", "")
-base = os.path.splitext(name)[0]
-pyname = 'test-notebook/'+ base + '.py'
+filepath = "pynest-examples/"
 
-with open(str(doc_build_dir / pyname), 'w') as outfile:
-    outfile.writelines(source)
+md_ebrains_button = "[![EBRAINS Notebook](https://nest-simulator.org/TryItOnEBRAINS.png)](nblink)\n"
+#                             :target: nblink"""
+python_button = "[![Download Python file](../static/img/python-download.png)](pythonlink)\n"
+
+for filename in glob.glob(os.path.join(filepath, "*.ipynb")):
+    name = os.path.basename(filename)
+    # Create proper links for nbgitpuller for each notebook
+    links = link_puller.replace('one_neuron_with_noise.ipynb', name)
+    button = md_ebrains_button.replace('nblink', links)
+    # convert ipynb to py
+    exporter = PythonExporter()
+    (source, meta) = exporter.from_filename(filename)
+    # remove excess lines produced in python
+    source = source.replace("# In[ ]:", "")
+    source = source.replace("# \n", "")
+    # ensure name is the same for python file and ipynb
+    base = os.path.splitext(name)[0]
+    pyname = base + '.py'
+    # create link for python down
+    pybutton = python_button.replace('pythonlink', '../test-notebook/' + pyname)
+    with open('test-notebook/' + pyname, 'w') as outfile:
+        outfile.write(source)
+    # append the buttons for nblinkpuller, python download to each notebook
+    nb = nbformat.read(filename, as_version=4)
+    cells = [nbformat.v4.new_markdown_cell(button), nbformat.v4.new_markdown_cell(pybutton)]
+    nb['cells'].extend(cells)
+    nbformat.write(nb, filename)
 
 
 def setup(app):

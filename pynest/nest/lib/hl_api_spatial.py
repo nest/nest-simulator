@@ -746,7 +746,7 @@ def GetSourceNodes(src_layer, targets, syn_model=None):
     targets : NodeCollection
         NodeCollection with node IDs of `targets`
     syn_model : [None | str], optional, default: None
-        Return only target positions for a given synapse model.
+        Return only source positions for a given synapse model.
 
     Returns
     -------

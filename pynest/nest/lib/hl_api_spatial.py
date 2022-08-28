@@ -757,8 +757,7 @@ def GetSourceNodes(src_layer, targets, syn_model=None):
     See also
     --------
     GetSourcePositions: Obtain positions of sources in a given source layer connected to given target.
-    GetConnections: Return connection identifiers between
-        sources and targets
+    GetConnections: Return connection identifiers between sources and targets.
 
     Notes
     -----

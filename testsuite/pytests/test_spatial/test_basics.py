@@ -346,7 +346,7 @@ class BasicsTestCase(unittest.TestCase):
         self.assertEqual(t[0], nest.NodeCollection([1, 3, 7, 9]))
 
     def test_GetSourceNodes(self):
-        """Interface check for finding source."""
+        """Interface check for finding source"""
 
         cdict = {'rule': 'pairwise_bernoulli',
                  'p': 1.,

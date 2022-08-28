@@ -1308,17 +1308,17 @@ The following table presents some query functions provided by NEST.
 +---------------------------------+-----------------------------------------------------+
 | ``nest.GetPosition()``          | Return the spatial locations of nodes.              |
 +---------------------------------+-----------------------------------------------------+
-| ``nest.GetTargetNodes()``       | Obtain targets of sources in a                      |
-|                                 | given target layer.                                 |
-+---------------------------------+-----------------------------------------------------+
 | ``nest.GetSourceNodes()``       | Obtain sources of targets in a                      |
 |                                 | given source layer.                                 |
 +---------------------------------+-----------------------------------------------------+
-| ``nest.GetTargetPositions()``   | Obtain positions of targets of                      |
-|                                 | sources in a given target layer.                    |
+| ``nest.GetTargetNodes()``       | Obtain targets of sources in a                      |
+|                                 | given target layer.                                 |
 +---------------------------------+-----------------------------------------------------+
 | ``nest.GetSourcePositions()``   | Obtain positions of sources of                      |
 |                                 | targets in a given source layer.                    |
++---------------------------------+-----------------------------------------------------+
+| ``nest.GetTargetPositions()``   | Obtain positions of targets of                      |
+|                                 | sources in a given target layer.                    |
 +---------------------------------+-----------------------------------------------------+
 | ``nest.FindNearestElement()``   | Return the node(s) closest to the                   |
 |                                 | location(s) in the given NodeCollection.            |
@@ -1356,10 +1356,10 @@ NEST provides three functions to visualize networks:
 | :py:func:`.PlotLayer`                | Plot nodes in a spatially distributed    |
 |                                      | NodeCollection.                          |
 +--------------------------------------+------------------------------------------+
-| :py:func:`.PlotTargets`              | Plot all targets of a node in a given    |
+| :py:func:`.PlotSources`              | Plot all sources of a node in a given    |
 |                                      | NodeCollection.                          |
 +--------------------------------------+------------------------------------------+
-| :py:func:`.PlotSources`              | Plot all sources of a node in a given    |
+| :py:func:`.PlotTargets`              | Plot all targets of a node in a given    |
 |                                      | NodeCollection.                          |
 +--------------------------------------+------------------------------------------+
 | :py:func:`.PlotProbabilityParameter` | Add indication of mask and probability   |

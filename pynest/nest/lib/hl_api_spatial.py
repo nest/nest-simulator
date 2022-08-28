@@ -1351,7 +1351,7 @@ def PlotSources(src_layer, tgt_nrn, syn_type=None, fig=None,
             # connectivity specifications with a mask
             conndict = {'rule': 'pairwise_bernoulli', 'p': 1.,
                         'use_on_source': True,
-                        'mask': {'rectangular': {'lower_left' : [-2.0, -1.0],
+                        'mask': {'rectangular': {'lower_left': [-2.0, -1.0],
                                                  'upper_right': [2.0, 1.0]}}}
 
             # connect population s_nodes with itself according to the given

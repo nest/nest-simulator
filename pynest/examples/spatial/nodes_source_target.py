@@ -62,7 +62,7 @@ plt.show()
 print('Target neurons of center neuron')
 print(nest.GetTargetNodes(center_neuron, s_nodes))
 
-print('Global id of source neurons of center neuron')
+print('Source neurons of center neuron')
 print(nest.GetSourceNodes(s_nodes, center_neuron))
 
 print('Positions of target neurons of center neuron')

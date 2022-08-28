@@ -893,7 +893,7 @@ def GetSourcePositions(src_layer, targets, syn_model=None):
 
     For each neuron in `targets`, this function finds all source elements
     in `src_layer`. If `syn_model` is not given (default), all targets are
-    returned, otherwise only source of specific type.
+    returned, otherwise only sources connected via the given synapse model.
 
     Parameters
     ----------

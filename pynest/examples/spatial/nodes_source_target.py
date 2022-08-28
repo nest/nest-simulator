@@ -35,10 +35,10 @@ s_nodes = nest.Create('iaf_psc_alpha',
                                                   extent=[11., 11.]))
 # connectivity specifications with a mask
 conndict = {'rule': 'pairwise_bernoulli', 'p': 1.,
-            'mask': {'rectangular': {'lower_left' : [-1.0, -1.0],
+            'mask': {'rectangular': {'lower_left': [-1.0, -1.0],
                                      'upper_right': [1.0, 1.0]},
-                     'anchor': [3. , 3.]}
-           }
+                     'anchor': [3., 3.]}
+            }
 
 # get center element
 center_neuron = nest.FindCenterElement(s_nodes)

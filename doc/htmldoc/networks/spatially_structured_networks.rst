@@ -1359,7 +1359,7 @@ NEST provides three functions to visualize networks:
 | :py:func:`.PlotTargets`              | Plot all targets of a node in a given    |
 |                                      | NodeCollection.                          |
 +--------------------------------------+------------------------------------------+
-| :py:func:`.PlotSources`              | Plot all source of a node in a given    |
+| :py:func:`.PlotSources`              | Plot all sources of a node in a given    |
 |                                      | NodeCollection.                          |
 +--------------------------------------+------------------------------------------+
 | :py:func:`.PlotProbabilityParameter` | Add indication of mask and probability   |

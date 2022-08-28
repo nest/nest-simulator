@@ -733,7 +733,7 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
 
 def GetSourceNodes(src_layer, targets, syn_model=None):
     """
-    Obtain sources of `targets` in given `source` population.
+    Obtain sources of `targets` in given `src_layer` population.
 
     For each neuron in `targets`, this function finds all target elements
     in `src_layer`. If `syn_model` is not given (default), all sources are
@@ -775,7 +775,7 @@ def GetSourceNodes(src_layer, targets, syn_model=None):
 
             # connectivity specifications with a mask
             conndict = {'rule': 'pairwise_bernoulli', 'p': 1.,
-                        'mask': {'rectangular': {'lower_left' : [-2.0, -1.0],
+                        'mask': {'rectangular': {'lower_left': [-2.0, -1.0],
                                                  'upper_right': [2.0, 1.0]}}}
 
             # connect population s_nodes with itself according to the given

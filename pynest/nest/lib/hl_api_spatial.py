@@ -662,7 +662,7 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
 
     For each neuron in `sources`, this function finds all target elements
     in `tgt_layer`. If `syn_model` is not given (default), all targets are
-    returned, otherwise only targets of specific type.
+    returned, otherwise only targets connected via the given synapse model.
 
     Parameters
     ----------
@@ -737,7 +737,7 @@ def GetSourceNodes(src_layer, targets, syn_model=None):
 
     For each neuron in `targets`, this function finds all target elements
     in `src_layer`. If `syn_model` is not given (default), all sources are
-    returned, otherwise only targets of specific type.
+    returned, otherwise only sources connected via the given synapse model.
 
     Parameters
     ----------
@@ -811,7 +811,7 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
 
     For each neuron in `sources`, this function finds all target elements
     in `tgt_layer`. If `syn_model` is not given (default), all targets are
-    returned, otherwise only targets of specific type.
+    returned, otherwise only targets connected via the given syanpse model.
 
     Parameters
     ----------

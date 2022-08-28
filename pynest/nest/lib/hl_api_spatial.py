@@ -733,7 +733,7 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
 
 def GetSourceNodes(src_layer, targets, syn_model=None):
     """
-    Obtain sources of `targets` in given `source` population.
+    Obtain sources of `targets` in given `src_layer` population.
 
     For each neuron in `targets`, this function finds all target elements
     in `src_layer`. If `syn_model` is not given (default), all sources are

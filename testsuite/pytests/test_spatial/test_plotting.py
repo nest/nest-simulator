@@ -86,7 +86,7 @@ class PlottingTestCase(unittest.TestCase):
         self.assertGreaterEqual(len(ax.patches), 1)
 
     def test_PlotSources(self):
-        """Test plotting sources."""
+        """Test plotting sources"""
         delta = 0.05
         mask = {'rectangular': {'lower_left': [-delta, -2/3 - delta], 'upper_right': [2/3 + delta, delta]}}
         cdict = {'rule': 'pairwise_bernoulli', 'p': 1.,

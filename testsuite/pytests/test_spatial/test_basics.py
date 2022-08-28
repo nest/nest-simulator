@@ -378,8 +378,7 @@ class BasicsTestCase(unittest.TestCase):
 
         s = nest.GetSourceNodes(layer, layer, syn_model='stdp_synapse')
         self.assertEqual(len(s), len(layer))
-        self.assertTrue(
-            all([len(g) == 4 for g in s]))  # 2x2 mask  -> four sources
+        self.assertTrue(all([len(g) == 4 for g in s]))  # 2x2 mask  -> four sources
 
         s = nest.GetSourceNodes(layer, layer[0])
         self.assertEqual(len(s), 1)

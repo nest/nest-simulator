@@ -23,7 +23,7 @@ with each release of NEST having its own documentation.
 
 This workflow aims for the concept of **user-correctable documentation**.
 
-.. image:: ../static/img/documentation_workflow.png
+.. image:: ../../../static/img/documentation_workflow.png
   :width: 500
   :alt: Alternative text
 
@@ -84,7 +84,7 @@ Rendering HTML
 You can build and preview the documentation locally by running the following
 commands.
 
-1. Go to the :ref:`build directory <source-install>` of NEST (i.e., the
+1. Go to the :ref:`build directory <dev_install>` of NEST (i.e., the
 directory where you ran ``cmake``)
 
 .. code-block:: bash

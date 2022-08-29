@@ -29,8 +29,8 @@ GIT_START_SHA=master             # If 'file=' is not specified all changed files
 GIT_END_SHA=HEAD                 # '<master>..<HEAD>' are processed.
 
 VERA=vera++                      # The names of the static code analysis tools executables.
-CPPCHECK=cppcheck                # CPPCHECK version 1.69 or later is required !
-CLANG_FORMAT=clang-format-9      # CLANG-FORMAT version 9 is required !
+CPPCHECK=cppcheck                # CPPCHECK version 1.69 or later is required!
+CLANG_FORMAT=clang-format        # CLANG-FORMAT version 13 is required!
 PEP8=pycodestyle
 PYCODESTYLE_IGNORES="E121,E123,E126,E226,E24,E704,W503,W504"
 
@@ -113,8 +113,8 @@ Options:
                                            the NEST CI build and test environment.
 
     --clang-format=exe               The name of the CLANG-FORMAT executable.
-                                     Default: --clang-format=clang-format-9
-                                     Note: CLANG-FORMAT version 9 is required.
+                                     Default: --clang-format=clang-format
+                                     Note: CLANG-FORMAT version 13 is required.
 
     --pep8=exe                       The name of the PEP8 executable.
                                      Default: --pep8=pycodestyle
@@ -268,12 +268,12 @@ if $PERFORM_CPPCHECK; then
   fi
 fi
 
-# Verify the CLANG-FORMAT installation. CLANG-FORMAT version 9 is required.
+# Verify the CLANG-FORMAT installation. CLANG-FORMAT version 13 is required.
 if $PERFORM_CLANG_FORMAT; then
   $CLANG_FORMAT -style=file ./nest/main.cpp >/dev/null 2>&1 || error_exit "Failed to verify the CLANG-FORMAT installation. Executable: $CLANG_FORMAT"
-  clang_format_version=`$CLANG_FORMAT --version | sed -${EXTENDED_REGEX_PARAM} 's/^.*([0-9]\.[0-9])\..*/\1/'`
-  if [[ "x$clang_format_version" != "x9.0" ]]; then
-    error_exit "Failed to verify the CLANG-FORMAT installation. Version 9 is required. The executable '$CLANG_FORMAT' is of version $clang_format_version."
+  clang_format_version=`$CLANG_FORMAT --version | sed -${EXTENDED_REGEX_PARAM} 's/^[^0-9]*([0-9]+\.[0-9]+)\..*/\1/'`
+  if [[ "x$clang_format_version" != "x13.0" ]]; then
+    error_exit "Failed to verify the CLANG-FORMAT installation. Version 13.0 is required. The executable '$CLANG_FORMAT' is version $clang_format_version."
   fi
 fi
 

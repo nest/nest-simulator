@@ -1,6 +1,6 @@
 .. _naming_conventions:
 
-Variables and parameter Names
+Variables and parameter names
 =============================
 
 Conventions for parameters

@@ -36,7 +36,7 @@ import json
 from itertools import chain, combinations
 import logging
 from collections import Counter
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.WARNING)
 log = logging.getLogger()
 
 
@@ -111,13 +111,13 @@ def UserDocExtractor(
         for filename in filenames:
             progress.set_postfix(file=os.path.basename(filename)[:15], refresh=False)
             progress.update(1)
-            log.warning("extracting user documentation from %s...", filename)
+            log.info("extracting user documentation from %s...", filename)
             nfiles_total += 1
             match = None
             with open(os.path.join(basedir, filename), 'r', encoding='utf8') as infile:
                 match = userdoc_re.search(infile.read())
             if not match:
-                log.warning("No user documentation found in " + filename)
+                log.info("No user documentation found in " + filename)
                 continue
             outname = os.path.basename(os.path.splitext(filename)[0]) + replace_ext
             tags = [t.strip() for t in match.group('tags').split(',')]

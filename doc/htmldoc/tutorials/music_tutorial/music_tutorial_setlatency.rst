@@ -14,7 +14,7 @@ events have to be delivered through the MUSIC connection to the
 recipient nodes no later than that time.
 
 In practice, MUSIC can — and, when you have recurrent connections, has
-to — use a bit of in-simulation time to deliver events. It’s often more
+to — use a bit of in-simulation time to deliver events. It's often more
 effective to send several steps worth of events in one packet than to
 send one packet of data per time step. In order to do this, MUSIC needs
 to know how much time is available for such delays.

@@ -3,10 +3,6 @@
 Connection Management
 =====================
 
-.. contents:: On this page, you'll find
-   :local:
-   :depth: 2
-
 Connections between populations of neurons and between neurons and
 devices for stimulation and recording in NEST are created with the
 :py:func:`.Connect` function. Although each connection is internally
@@ -588,22 +584,22 @@ columns and :math:`m` rows.
         # Extract the weights column.
         weights = W[:, i]
 
-        # To only connect pairs with a nonzero weight, we use array indexing
-	# to extract the weights and post-synaptic neurons.
-        nonzero_indices = numpy.where(weights != 0)[0]
-        weights = weights[nonzero_indices]
-        post = B[nonzero_indices]
+    # To only connect pairs with a nonzero weight, we use array indexing
+    # to extract the weights and post-synaptic neurons.
+          nonzero_indices = numpy.where(weights != 0)[0]
+          weights = weights[nonzero_indices]
+          post = B[nonzero_indices]
 
-        # Generate an array of node IDs for the column of the weight
-	# matrix, with length based on the number of nonzero
-	# elements. The array's dtype must be an integer.
-        pre_array = numpy.ones(len(nonzero_indices), dtype=numpy.int64) * pre.get('global_id')
+    # Generate an array of node IDs for the column of the weight
+    # matrix, with length based on the number of nonzero
+    # elements. The array's dtype must be an integer.
+          pre_array = numpy.ones(len(nonzero_indices), dtype=numpy.int64) * pre.get('global_id')
 
-        # nest.Connect() automatically converts post to a NumPy array
-	# because pre_array contains multiple identical node IDs. When
-	# also specifying a one_to_one connection rule, the arrays of
-	# node IDs can then be connected.
-        nest.Connect(pre_array, post, conn_spec='one_to_one', syn_spec={'weight': weights})
+    # nest.Connect() automatically converts post to a NumPy array
+    # because pre_array contains multiple identical node IDs. When
+    # also specifying a one_to_one connection rule, the arrays of
+    # node IDs can then be connected.
+          nest.Connect(pre_array, post, conn_spec='one_to_one', syn_spec={'weight': weights})
 
 .. _receptor-types:
 

@@ -33,7 +33,7 @@ particular,
    classes in an extension module.
 
 The Python scripts used throughout this manual are found in the NEST
-sources under ``doc/guides/spatially_structured_networks/scripts``.
+sources under ``doc/htmldoc/networks/scripts``.
 
 There may be a number of undocumented features, which you may discover
 by browsing the code. These features are highly experimental and
@@ -78,7 +78,7 @@ We create a first, grid-based simple NodeCollection with the following command:
 
 .. _fig_layer1:
 
-.. figure:: spatially_structured_networks/figures/layer1.png
+.. figure:: figures/layer1.png
    :name: fig:layer1
 
    Simple grid-based NodeCollection centered about the origin. Blue circles mark
@@ -147,7 +147,7 @@ different extent of a layer, i.e., its size in :math:`x`- and
 
 .. _fig_layer2:
 
-.. figure:: spatially_structured_networks/figures/layer2.png
+.. figure:: figures/layer2.png
    :name: fig:layer2
 
    Same layer as in :numref:`fig_layer1`, but with different extent.
@@ -177,7 +177,7 @@ The following code creates layers centered about :math:`(0,0)`,
 
 .. _fig_layer3:
 
-.. figure:: spatially_structured_networks/figures/layer3.png
+.. figure:: figures/layer3.png
    :name: fig:layer3
 
    Three layers centered, respectively, about :math:`(0,0)` (blue),
@@ -185,7 +185,7 @@ The following code creates layers centered about :math:`(0,0)`,
 
 The center is given as a two-element list of floats. Changing the
 center does not affect grid indices: For each of the three layers in
- :numref:`fig_layer3`, grid indices run from 0 to 4 through columns and
+:numref:`fig_layer3`, grid indices run from 0 to 4 through columns and
 rows, respectively, even though elements in these three layers have
 different positions in the global coordinate system.
 
@@ -223,7 +223,7 @@ and shown in :numref:`fig_layer3a`:
 
 .. _fig_layer3a:
 
-.. figure:: spatially_structured_networks/figures/layer3a.png
+.. figure:: figures/layer3a.png
    :name: fig:layer3a
 
    NodeCollection with :math:`n_x=5` columns and :math:`n_y=3` rows, spacing
@@ -249,7 +249,7 @@ extent :math:`1\times 1`, i.e., spanning the square
 
 .. _fig_layer4:
 
-.. figure:: spatially_structured_networks/figures/layer4.png
+.. figure:: figures/layer4.png
    :name: fig:layer4
 
    A free layer with 50 elements uniformly distributed in an extent of
@@ -274,7 +274,7 @@ Note the following points:
 -  The extent is automatically set when using ``nest.spatial.free``, however, it
    is still possible to set the extent yourself by passing the ``extent`` variable to the object.
 
--  All element positions must be *within* the layer’s extent. Elements
+-  All element positions must be *within* the layer's extent. Elements
    may be placed on the perimeter of the extent as long as no periodic
    boundary conditions are used; see the section :ref:`sec_periodic`.
 
@@ -286,7 +286,7 @@ To create a spatially distributed NodeCollection from a list, do the following:
 
 .. _fig_layer4b:
 
-.. figure:: spatially_structured_networks/figures/layer4b.png
+.. figure:: figures/layer4b.png
    :name: fig:layer4b
 
    A free layer with 3 elements freely distributed space. The extent is given by the gray lines.
@@ -298,7 +298,7 @@ are specified. Furthermore, the extent is calculated from the node positions, an
 3D layers
 ~~~~~~~~~
 
-Although the term “layer” suggests a 2-dimensional structure, the layers
+Although the term "layer" suggests a 2-dimensional structure, the layers
 in NEST may in fact be 3-dimensional. The example from the previous
 section may be easily extended by updating number of dimensions for the positions:
 
@@ -308,7 +308,7 @@ section may be easily extended by updating number of dimensions for the position
 
 .. _fig_layer4_3d:
 
-.. figure:: spatially_structured_networks/figures/layer4_3d.png
+.. figure:: figures/layer4_3d.png
    :name: fig:layer4_3d
 
    A free 3D layer with 200 elements uniformly distributed in an extent
@@ -324,7 +324,7 @@ the shape argument, ``shape=[nx, ny, nz]``:
 
 .. _fig_layer4_3d_b:
 
-.. figure:: spatially_structured_networks/figures/layer4_3d_b.png
+.. figure:: figures/layer4_3d_b.png
    :name: fig:layer4_3d_b
 
    A grid 3D NodeCollection with 120 elements distributed on a grid with 4 elements in the x-direction,
@@ -361,7 +361,7 @@ the entry ``edge_wrap``:
 
 .. _fig_player:
 
-.. figure:: spatially_structured_networks/figures/player.png
+.. figure:: figures/player.png
    :name: fig:player
 
    Top left: Layer with single row and five columns without periodic
@@ -545,7 +545,7 @@ Here is a simple example, cf. :numref:`fig_conn1`
 
 .. _fig_conn1:
 
-.. figure:: spatially_structured_networks/figures/conn1.png
+.. figure:: figures/conn1.png
    :name: fig:conn1
 
    Left: Minimal connection example from a layer onto itself using a
@@ -602,7 +602,7 @@ grid-based masks for grid-based NodeCollections. If no mask is specified, all
 nodes in the pool layer will be searched.
 
 Note that the mask size should not exceed the size of the layer when
-using periodic boundary conditions, since the mask would “wrap around”
+using periodic boundary conditions, since the mask would "wrap around"
 in that case and pool nodes would be considered multiple times as
 targets.
 
@@ -656,7 +656,7 @@ Elliptical
 
 .. _fig_conn2_a:
 
-.. figure:: spatially_structured_networks/figures/conn2_a.png
+.. figure:: figures/conn2_a.png
    :name: fig:conn2_a
 
    Masks for 2D layers. For all mask types, the driver node is marked by
@@ -690,7 +690,7 @@ examples (cf.  :numref:`fig_conn2_b`).
 
 .. _fig_conn2_b:
 
-.. figure:: spatially_structured_networks/figures/conn2_b.png
+.. figure:: figures/conn2_b.png
    :name: fig:conn2_b
 
    The same masks as in :numref:`fig_conn2_a`, but centered about
@@ -713,13 +713,12 @@ from the x-axis to the y-axis.
 
 .. _fig_conn2_c:
 
-.. figure:: spatially_structured_networks/figures/conn2_c.png
+.. figure:: figures/conn2_c.png
    :name: fig:conn2_c
 
    Rotated rectangular and elliptical mask from  :numref:`fig_conn2_a` and
-    :numref:`fig_conn2_b`, where the rectangular mask is rotated
-   :math:`120^\circ` and the elliptical mask is rotated
-   :math:`45^\circ`.
+   :numref:`fig_conn2_b`, where the rectangular mask is rotated
+   :math:`120^\circ` and the elliptical mask is rotated :math:`45^\circ`.
 
 .. _sec_3d_masks:
 
@@ -768,7 +767,7 @@ the (possibly rotated) x-axis is missing.
 
 .. _fig_conn_3d:
 
-.. figure:: spatially_structured_networks/figures/conn_3d.png
+.. figure:: figures/conn_3d.png
    :name: fig:conn3d
 
    Masks for 3D NodeCollections. For all mask types, the driver node is marked by
@@ -808,7 +807,7 @@ The resulting connection patterns are shown in  :numref:`fig_conn3`.
 
 .. _fig_conn3:
 
-.. figure:: spatially_structured_networks/figures/conn3.png
+.. figure:: figures/conn3.png
    :name: fig:conn3
 
    Grid masks for connections between grid-based layers. Left:
@@ -947,7 +946,7 @@ parameters drawing values from random distributions.
 
 .. _fig_conn4:
 
-.. figure:: spatially_structured_networks/figures/conn4.png
+.. figure:: figures/conn4.png
    :name: fig:conn4
 
    Illustration of various connection probabilities. Top left: constant probability,
@@ -968,8 +967,8 @@ Constant
 Gaussian
    The connection probability is a Gaussian distribution based on the distance
    between neurons. In the example, connection
-   probability is 1 for :math:`d=0` and falls off with a “standard
-   deviation” of :math:`\sigma=1`:
+   probability is 1 for :math:`d=0` and falls off with a "standard
+   deviation" of :math:`\sigma=1`:
 
 .. literalinclude:: scripts/connections.py
     :start-after: #{ conn4g #}
@@ -1013,7 +1012,7 @@ passed along in a synapse dictionary to the ``Connect()`` call.
 
 
 Figure :numref:`fig_conn5` illustrates weights and delays generated using these
-parameters. The code examples used to generate the spatially_structured_networks/figures are shown below.
+parameters. The code examples used to generate the figures are shown below.
 All examples use a spatially distributed NodeCollection
 of 51 nodes placed on a line; the line is centered about :math:`(25,0)`,
 so that the leftmost node has coordinates :math:`(0,0)`. The distance
@@ -1073,7 +1072,7 @@ Randomized weights and delays
 
 .. _fig_conn5:
 
-.. figure:: spatially_structured_networks/figures/conn5.png
+.. figure:: figures/conn5.png
    :name: fig:conn5
 
    Distance-dependent and randomized weights and delays. See text for
@@ -1208,7 +1207,7 @@ The resulting distribution of distances between connected nodes is shown in
 
 .. _fig_conn6:
 
-.. figure:: spatially_structured_networks/figures/conn6.png
+.. figure:: figures/conn6.png
    :name: fig:conn6
 
    Distribution of distances between source and target for a network of
@@ -1370,7 +1369,7 @@ NEST provides three functions to visualize networks:
 
 .. _fig_vislayer:
 
-.. figure:: spatially_structured_networks/figures/vislayer.png
+.. figure:: figures/vislayer.png
    :name: fig:vislayer
 
    :math:`21\times 21` grid with divergent Gaussian projections onto

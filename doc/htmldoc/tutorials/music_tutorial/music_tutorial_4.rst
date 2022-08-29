@@ -7,7 +7,7 @@ MUSIC has recently acquired a `plain Python interface <https://github.com/INCF/M
 to go along with the C++ API. If you just want to connect with a simulation
 rather than adding MUSIC capability to a simulator, this Python interface can
 be a lot more convenient than C++. You have Numpy, Scipy and other high-level
-libraries available, and you don’t need to compile anything.
+libraries available, and you don't need to compile anything.
 
 The interface is closely modelled on the C++ API; indeed, the steps to
 use it is almost exactly the same. You can mostly refer to the :ref:`C++
@@ -47,7 +47,7 @@ Unlike the C++ API, the index is not an object, but simply a label
 indicating global or local indexing. The ``map()`` call
 thus need to get the first ID and the number of elements mapped to this
 rank directly. Also note that the ``map()`` functions have
-a somewhat unexpected parameter order, so it’s best to use named
+a somewhat unexpected parameter order, so it's best to use named
 parameters just in case.
 
 The runtime looks the same as the C++ counterpart as well. We get the

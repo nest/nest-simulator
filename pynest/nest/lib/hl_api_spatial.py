@@ -1367,9 +1367,6 @@ def PlotSources(src_layer, tgt_nrn, syn_type=None, fig=None,
     # from changing matplotlib backend after importing nest
     import matplotlib.pyplot as plt
 
-    if not HAVE_MPL:
-        raise ImportError("Matplotlib could not be imported")
-
     if not isinstance(tgt_nrn, NodeCollection) or len(tgt_nrn) != 1:
         raise TypeError("tgt_nrn must be a single element NodeCollection.")
     if not isinstance(src_layer, NodeCollection):

@@ -41,7 +41,7 @@ def testFreePositions(reset):
 
     positions = [[0.1 * x, 0.0] for x in range(1, 10)]
     nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.free(positions))
-    pre = nest.Create('iaf_psc_alpha', positions=nest.spatial.free([[0.0, 0.0]]))
+    pre = nest.Create('iaf_psc_alpha', positions=nest.spatial.free([[0.0, 0.0]], extent=[1.0, 1.0]))
 
     conns = connect_and_get_connections(pre, nodes)
 

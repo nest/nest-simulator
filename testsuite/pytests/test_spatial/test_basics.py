@@ -428,6 +428,7 @@ class BasicsTestCase(unittest.TestCase):
         nodes = nest.Create('iaf_psc_alpha', 10, positions=positions)
         all_positions = sum([list(nodes[i].spatial['positions']) for i in range(len(nodes))], start=[])
         self.assertEqual(tuple(all_positions), nodes.spatial['positions'])
+        self.assertEqual(tuple(nodes[::2].spatial['positions']), nodes.spatial['positions'][::2])
 
 
 def suite():

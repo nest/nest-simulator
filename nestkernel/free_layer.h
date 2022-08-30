@@ -236,18 +236,14 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
 
     const auto positional_extent = max_point - this->lower_left_;
     const auto center = ( max_point + this->lower_left_ ) / 2;
-    Position< D > rounded_center;
     for ( int d = 0; d < D; ++d )
     {
-      // Round to the first decimal.
-      rounded_center[ d ] = ( std::round( 10.0 * center[ d ] ) ) / 10;
-
       // Set extent to be extent of the points, rounded up in each dimension.
       this->extent_[ d ] = std::ceil( positional_extent[ d ] );
     }
 
     // Adjust lower_left relative to the rounded center with the rounded up extent.
-    this->lower_left_ = rounded_center - this->extent_ / 2;
+    this->lower_left_ = center - this->extent_ / 2;
   }
 }
 

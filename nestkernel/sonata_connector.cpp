@@ -102,6 +102,49 @@ SonataConnector::connect()
       throw error;
     }
 
+    /* NOTE 1
+    // catch failure caused by the H5File operations
+    catch (FileIException error) {
+        error.printErrorStack();
+        return -1;
+    }
+
+    // catch failure caused by the DataSet operations
+    catch (DataSetIException error) {
+        error.printErrorStack();
+        return -1;
+    }
+
+    // catch failure caused by the DataSpace operations
+    catch (DataSpaceIException error) {
+        error.printErrorStack();
+        return -1;
+    }
+    */
+
+    /* NOTE 2
+    try
+     {
+       dataset.read( data, H5::PredType::NATIVE_INT );
+     }
+     catch ( std::exception const& e )
+     {
+       std::cerr << __FILE__ << ":" << __LINE__ << " : "
+                 << "Exception caught " << e.what() << "\n";
+     }
+     catch ( const H5::Exception& e )
+     {
+       // std::cerr << __FILE__ << ":" << __LINE__ << " : " << "H5 exception caught:\n" << e.what() << "\n";
+       std::cerr << __FILE__ << ":" << __LINE__ << " H5 exception caught: " << e.getDetailMsg() << "\n";
+       e.printErrorStack();
+     }
+     catch ( ... )
+     {
+       std::cerr << __FILE__ << ":" << __LINE__ << " : "
+                 << "Unknown exception caught\n";
+     }
+    */
+
     /*
     H5::H5File file;
     try
@@ -115,6 +158,7 @@ SonataConnector::connect()
       throw KernelException( "Could not open HDF5 file " + edge_filename );
     }
     */
+
 
     // Open top-level group (always one group named 'edges')
     H5::Group edges_group( file.openGroup( "edges" ) );
@@ -199,9 +243,10 @@ SonataConnector::connect()
           "Connecting with Sonata files with more than one edgegroup is currently not implemented" );
       }
       // delete edge_group_id_data;
-    } // groups of "edges"
-  }
-}
+    } // end iteration over population groups
+
+  } // end iteration over edge files
+} // end of SonataConnector::connect
 
 hsize_t
 SonataConnector::get_num_elements_( const H5::DataSet& dataset )
@@ -313,13 +358,15 @@ SonataConnector::create_connections_( const hsize_t chunk_size, const hsize_t of
         const index target_id = ( *( tnode_it + sonata_target_id ) ).node_id;
         Node* target = kernel().node_manager.get_node_or_proxy( target_id );
 
-        if ( not target ) // TODO: remove
-        {
-#pragma omp critical
+        /*
+          if ( not target ) // TODO: remove
           {
-            // std::cerr << kernel().vp_manager.get_thread_id() << ": " << target_id << " node_or_proxy is NULL!\n";
+  #pragma omp critical
+            {
+              std::cerr << kernel().vp_manager.get_thread_id() << ": " << target_id << " node_or_proxy is NULL!\n";
+            }
           }
-        }
+          */
 
         const thread target_thread = target->get_thread();
 

@@ -62,33 +62,37 @@ class TestLayerNodeCollection(unittest.TestCase):
         rel_limit = 0.05
         num_nodes = 100
         r = 0.5
-        # Iterate over values of lower left and upper right.
-        for ll, ur in ((-3, -1),
-                       (-2, 0),
-                       (-1, 1),
-                       (0, 2),
-                       (1, 3)):
-            nest.ResetKernel()
-            param = nest.random.uniform(ll * r, ur * r)
-            free_positions = nest.spatial.free(param, num_dimensions=2, edge_wrap=True)
 
-            nodes = nest.Create('iaf_psc_alpha', num_nodes, positions=free_positions)
-            spatial = nodes.spatial  # Extract spatial information
-            center_coord = r * (ur + ll) / 2.0  # Expected center coordinate
-            self.assertEqual(spatial["center"], (center_coord, center_coord))
-            self.assertEqual(spatial["extent"], (2 * r, 2 * r))
+        for num_dimensions in (2, 3):
+            # Iterate over values of lower left and upper right.
+            for ll, ur in ((-3, -1),
+                           (-2, 0),
+                           (-1, 1),
+                           (0, 2),
+                           (1, 3)):
+                nest.ResetKernel()
+                param = nest.random.uniform(ll * r, ur * r)
+                free_positions = nest.spatial.free(param, num_dimensions=num_dimensions, edge_wrap=True)
 
-            mask_radius = r
-            mask = {'circular': {'radius': mask_radius}}
-            area = np.pi * mask_radius**2
-            density = num_nodes / (2 * r)**2
-            expected_conns_per_node = density * area
-            expected_total_conns = expected_conns_per_node * num_nodes
-            print(f'Expecting {expected_total_conns:.0f} connections')
-            nest.Connect(nodes, nodes, {'rule': 'pairwise_bernoulli', 'p': 1.0, 'mask': mask})
-            print(f'Num. connections: {nest.GetKernelStatus("num_connections")}')
-            rel_diff = abs(nest.GetKernelStatus("num_connections") - expected_total_conns) / expected_total_conns
-            self.assertLess(rel_diff, rel_limit)
+                nodes = nest.Create('iaf_psc_alpha', num_nodes, positions=free_positions)
+                spatial = nodes.spatial  # Extract spatial information
+                self.assertAlmostEqual(spatial["extent"], tuple([2 * r for _ in range(num_dimensions)]))
+
+                mask_radius = r
+                if num_dimensions == 2:
+                    mask = {'circular': {'radius': mask_radius}}
+                    n_dim_volume = np.pi * mask_radius**2
+                else:
+                    mask = {'spherical': {'radius': mask_radius}}
+                    n_dim_volume = 4/3 * np.pi * mask_radius**3
+                density = num_nodes / (2 * r)**num_dimensions
+                expected_conns_per_node = density * n_dim_volume
+                expected_total_conns = expected_conns_per_node * num_nodes
+                print(f'Expecting {expected_total_conns:.0f} connections')
+                nest.Connect(nodes, nodes, {'rule': 'pairwise_bernoulli', 'p': 1.0, 'mask': mask})
+                print(f'Num. connections: {nest.GetKernelStatus("num_connections")}')
+                rel_diff = abs(nest.GetKernelStatus("num_connections") - expected_total_conns) / expected_total_conns
+                self.assertLess(rel_diff, rel_limit)
 
     def test_extent_center_single(self):
         """Correct extent and center with single node"""

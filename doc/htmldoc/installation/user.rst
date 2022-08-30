@@ -7,7 +7,7 @@ Cross-platform |macos| |linux| |windows|
 ----------------------------------------
 
 Docker
-~~~~~
+~~~~~~
 
 :ref:`See our docker installation instructions <docker>`.
 
@@ -17,7 +17,7 @@ Conda install
 You can install NEST with the :ref:`Conda forge package <conda_forge_install>`.
 
 Live media
-~~~~~~~~~
+~~~~~~~~~~
 
 We have live media (.ova) if you want to run NEST in a virtual machine.
 

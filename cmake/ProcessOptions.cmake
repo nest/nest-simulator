@@ -358,7 +358,7 @@ endfunction()
 function( NEST_PROCESS_WITH_PYTHON )
   # Find Python
   set( HAVE_PYTHON OFF PARENT_SCOPE )
-  
+
   if ( ${with-python} STREQUAL "ON" )
 
     # Localize the Python interpreter and ABI
@@ -462,7 +462,7 @@ function( NEST_PROCESS_WITH_MPI )
   # Find MPI
   set( HAVE_MPI OFF PARENT_SCOPE )
   if ( with-mpi )
-    find_package( MPI )
+    find_package( MPI REQUIRED )
     if ( MPI_CXX_FOUND )
       set( HAVE_MPI ON PARENT_SCOPE )
 

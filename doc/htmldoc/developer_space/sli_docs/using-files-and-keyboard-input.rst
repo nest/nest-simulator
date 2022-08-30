@@ -8,7 +8,7 @@ Using files and keyboard input
 Overview
 --------
 
-SLI’s input/output fascilities differ from those of PostScript and are
+SLI's input/output fascilities differ from those of PostScript and are
 close to the stream concept of C++. However, for compatibility some
 PostScript output commands are implemented.
 
@@ -29,7 +29,7 @@ Print *Hello World* to the standard output.
    SLI ]
 
 ``cout`` is the standard output of SLI. The command ``<-`` takes the
-role of C++’s ``<<`` output operator and prints the ASCII representation
+role of C++'s ``<<`` output operator and prints the ASCII representation
 of the object at stack level 0 to the stream at level 1. After this, the
 object is removed and the stream remains at level 0.
 
@@ -111,7 +111,7 @@ to right of the field. ``ostream internal`` Sign left and number right.
 ``stream uppercase`` ``ostream nouppercase`` ``ostream oct`` Switch to
 octal notation. ``ostream dec`` Switch to decimal notation.
 ``ostream hex`` Switch to hexadecimal notation. ``ostream showbase``
-Show base according to use of oct/dec/hex. ``ostream noshowbase`` Don’t
+Show base according to use of oct/dec/hex. ``ostream noshowbase`` Don't
 show base according to use of oct/dec/hex. ``ostream showpoint`` Decimal
 point is always printed. ``ostream noshowpoint`` Decimal point is never
 printed. ``ostream n setprecision`` Set number of decimal places to

@@ -213,9 +213,6 @@ Glossary
  eligibility trace
    A property of a synapse, which allows it to be modified for a period of time when some constraints are satisfied.
 
- reversal potential
-   The membrane potential in which a neuron causes no net current flow.
-
  alpha function
    Instance of a synaptic response.
 
@@ -241,10 +238,7 @@ Glossary
  renewal process
    Spike-time statistical analysis.
 
- spike train
-   A sequence of action potentials.
-
- spike-frequency adaptation
+  spike-frequency adaptation
    After stimulation, neurons show a reduction in the firing frequency of their spike response following an initial increase.
 
  GIF

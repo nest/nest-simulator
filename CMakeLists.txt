@@ -51,7 +51,7 @@ set( with-python ON CACHE STRING "Build PyNEST [default=ON]." )
 option( cythonize-pynest "Use Cython to cythonize pynestkernel.pyx [default=ON]. If OFF, PyNEST has to be build from a pre-cythonized pynestkernel.pyx." ON )
 
 # select parallelization scheme
-set( with-mpi OFF CACHE STRING "Build with MPI parallelization [default=OFF]. Optionally give directory with MPI installation." )
+set( with-mpi OFF CACHE STRING "Build with MPI parallelization [default=OFF]." )
 set( with-openmp ON CACHE BOOL "Build with OpenMP multi-threading [default=ON]. Optionally set OMP compiler flags." )
 
 # external libraries
@@ -72,7 +72,7 @@ set( target-bits-split "standard" CACHE STRING "Split of the 64-bit target neuro
 
 # generic build configuration
 option( static-libraries "Build static executable and libraries [default=OFF]" OFF )
-set( with-optimize ON CACHE STRING "Enable user defined optimizations [default=OFF (uses '-O2')]. When ON, '-O3' is used. Separate multiple flags by ';'." )
+set( with-optimize ON CACHE STRING "Enable user defined optimizations [default=ON (uses '-O2')]. When OFF, no '-O' flag is passed to the compiler. Explicit compiler flags can be given; separate multiple flags by ';'." )
 set( with-warning ON CACHE STRING "Enable user defined warnings [default=ON (uses '-Wall')]. Separate  multiple flags by ';'." )
 set( with-debug OFF CACHE STRING "Enable user defined debug flags [default=OFF]. When ON, '-g' is used. Separate  multiple flags by ';'." )
 set( with-cpp-std "c++11" CACHE STRING "C++ standard to use for compilation [default='c++11']." )
@@ -364,7 +364,7 @@ install( FILES LICENSE README.md
     )
 
 add_custom_target( install-nodoc
-  COMMAND make NEST_INSTALL_NODOC=true install
+  COMMAND $(MAKE) NEST_INSTALL_NODOC=true install
 )
 
 nest_print_config_summary()

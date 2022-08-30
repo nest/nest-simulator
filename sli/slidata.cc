@@ -114,7 +114,7 @@ Get_a_aFunction::execute( SLIInterpreter* i ) const
     {
       std::ostringstream sout;
 
-      sout << "Index at position " << ( size_t )( t - idx->begin() ) << " ignored." << std::ends;
+      sout << "Index at position " << ( size_t ) ( t - idx->begin() ) << " ignored." << std::ends;
       i->message( SLIInterpreter::M_INFO, "get_a_a", sout.str().c_str() );
       i->message( SLIInterpreter::M_INFO, "get_a_a", "Index must be an integer." );
       continue;
@@ -123,7 +123,7 @@ Get_a_aFunction::execute( SLIInterpreter* i ) const
     if ( not( ( id->get() >= 0 ) && ( ( size_t ) id->get() < obj->size() ) ) )
     {
       std::ostringstream sout;
-      sout << "At position " << ( size_t )( t - idx->begin() ) << "." << std::ends;
+      sout << "At position " << ( size_t ) ( t - idx->begin() ) << "." << std::ends;
       i->message( SLIInterpreter::M_ERROR, "get_a_a", sout.str().c_str() );
       i->message( SLIInterpreter::M_ERROR, "get_a_a", "Index out of range." );
       i->raiseerror( i->RangeCheckError );

@@ -212,7 +212,7 @@ cluster or supercomputer, you most likely already have this. In case
 you are using a pre-packaged MPI library, please make sure that you
 also have the MPI development packages installed.
 
-When using the :ref:`standard installation instructions <standard>`, it
+When installing :ref:`from source <dev_install>`, it
 is usually sufficient to add ``-Dwith-mpi=ON`` when calling `cmake`.
 However, more detailed information on this and related flags (e.g., for
 enabling the :ref:`recording backend for recording to binary files
@@ -238,8 +238,8 @@ command should look like this
 
     mpirun -np 128 python3 simulation.py
 
-Please refer to the MPI library documentation for details on the usage
-of ``mpirun``.
+Please refer to the documentation of your MPI implementation to learn
+more about the usage of ``mpirun``.
 
 MPI related commands
 ~~~~~~~~~~~~~~~~~~~~

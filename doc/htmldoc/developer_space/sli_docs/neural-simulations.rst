@@ -9,7 +9,7 @@ Overview
 --------
 
 A simulation of a network is like an experiment with the difference that
-it takes place inside the computer’s memory rather than in the physical
+it takes place inside the computer's memory rather than in the physical
 world.
 
 Like in a real experiment, you need a system which you want to
@@ -205,7 +205,7 @@ the key 'synapse_models' will return the list of available synapse
 models.
 
 You can find a list of all available neuron models in our :doc:`model
-directory <models/index_neuron>`.
+directory <../../models/index_neuron>`.
 
 Creating nodes
 ~~~~~~~~~~~~~~
@@ -232,7 +232,7 @@ In the fist line, we create one integrate and fire neuron from the model
 The return value of ``Create`` is an integer that identifies the last
 node that was created in the network (note that this can be different
 from 1 if you have not called ``ResetKernel before)``. This integer is
-called the node’s *node ID* (the network as a whole owns the node ID
+called the node's *node ID* (the network as a whole owns the node ID
 ``0``, therefore the ids of user-created nodes start with ``1``). Often,
 it is neccessary to have a large number of nodes of the same type. The
 command Create can also be used for this purpose. The following line of
@@ -295,7 +295,7 @@ the threshold value :hxt_ref:`V_th` to -60 mV:
    -60
 
 Please note, that ``SetStatus`` checks if a property really exists in a
-node and will issue an error if it doesn’t. This behavior can be changed
+node and will issue an error if it doesn't. This behavior can be changed
 by the following command:
 
 ::
@@ -318,7 +318,7 @@ expected type:
        Provided datatype: stringtype
 
 In order to find out, which properties of a given model can be changed
-an which not, you have to refer to the model’s documentation.
+an which not, you have to refer to the model's documentation.
 
 Connections
 -----------
@@ -416,7 +416,7 @@ By definition, a device is active in the interval \\((t_1,t_2)\) if we
 can observe events \\(E\) with time stamps \\(t_E\) which obey \\(t_1 <=
 t_E < t_2\) for all \\(E\) . In other words, the interval during which
 the device is active corresponds to the range of time-stamps of the
-device’s events.
+device's events.
 
 Note that it is not possible to generate/observe an event with time
 stamp 0.

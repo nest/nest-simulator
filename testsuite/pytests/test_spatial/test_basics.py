@@ -421,6 +421,15 @@ class BasicsTestCase(unittest.TestCase):
             self.assertAlmostEqual(positions[indx][0], p[0][indx][0])
             self.assertAlmostEqual(positions[indx][1], p[0][indx][1])
 
+    def testSlicedPositions(self):
+        """Correct positions from spatial attribute of sliced NodeCollection"""
+        nest.ResetKernel()
+        positions = nest.spatial.free(nest.random.uniform(min=-1, max=1), num_dimensions=2)
+        nodes = nest.Create('iaf_psc_alpha', 10, positions=positions)
+        all_positions = sum([list(nodes[i].spatial['positions']) for i in range(len(nodes))], start=[])
+        self.assertEqual(tuple(all_positions), nodes.spatial['positions'])
+        self.assertEqual(tuple(nodes[::2].spatial['positions']), nodes.spatial['positions'][::2])
+
 
 def suite():
     suite = unittest.makeSuite(BasicsTestCase, 'test')

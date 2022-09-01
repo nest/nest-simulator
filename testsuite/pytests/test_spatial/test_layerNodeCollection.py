@@ -76,7 +76,8 @@ class TestLayerNodeCollection(unittest.TestCase):
 
                 nodes = nest.Create('iaf_psc_alpha', num_nodes, positions=free_positions)
                 spatial = nodes.spatial  # Extract spatial information
-                self.assertAlmostEqual(spatial["extent"], tuple([2 * r for _ in range(num_dimensions)]))
+                for value in spatial["extent"]:
+                    self.assertAlmostEqual(value, 2 * r)
 
                 mask_radius = r
                 if num_dimensions == 2:

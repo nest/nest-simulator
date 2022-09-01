@@ -25,3 +25,4 @@ sphinx-material
 statsmodels
 tqdm
 yamllint
+pandoc

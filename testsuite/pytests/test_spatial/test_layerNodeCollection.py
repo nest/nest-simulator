@@ -58,7 +58,9 @@ class TestLayerNodeCollection(unittest.TestCase):
         """Correct extent and center when connecting with mask"""
         nest.SetKernelStatus({'rng_seed': 1234})
         # Allowing up to 5 percent relative difference from expected number of connections,
-        # because of randomness.
+        # because of randomness. With 100 different seeds the standard deviation is 0.007,
+        # with a maximum relative difference of 1.8 percent. Without the fix from #2459 the
+        # relative difference would be 20-30 percent.
         rel_limit = 0.05
         num_nodes = 100
         r = 0.5

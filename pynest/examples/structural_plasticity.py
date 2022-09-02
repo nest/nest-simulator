@@ -71,13 +71,13 @@ class StructralPlasticityExample:
         self.bg_rate = 10000.0
         self.neuron_model = 'iaf_psc_exp'
 
-####################################################################################
-# In this implementation of structural plasticity, neurons grow
-# connection points called synaptic elements. Synapses can be created
-# between compatible synaptic elements. The growth of these elements is
-# guided by homeostatic rules, defined as growth curves.
-# Here we specify the growth curves for synaptic elements of excitatory
-# and inhibitory neurons.
+    ####################################################################################
+    # In this implementation of structural plasticity, neurons grow
+    # connection points called synaptic elements. Synapses can be created
+    # between compatible synaptic elements. The growth of these elements is
+    # guided by homeostatic rules, defined as growth curves.
+    # Here we specify the growth curves for synaptic elements of excitatory
+    # and inhibitory neurons.
 
         # Excitatory synaptic elements of excitatory neurons
         self.growth_curve_e_e = {
@@ -137,11 +137,11 @@ class StructralPlasticityExample:
         self.total_connections_i = []
 
 
-####################################################################################
-# We initialize variables for the postsynaptic currents of the
-# excitatory, inhibitory, and external synapses. These values were
-# calculated from a PSP amplitude of 1 for excitatory synapses,
-# -1 for inhibitory synapses and 0.11 for external synapses.
+    ####################################################################################
+    # We initialize variables for the postsynaptic currents of the
+    # excitatory, inhibitory, and external synapses. These values were
+    # calculated from a PSP amplitude of 1 for excitatory synapses,
+    # -1 for inhibitory synapses and 0.11 for external synapses.
 
         self.psc_e = 585.0
         self.psc_i = -585.0
@@ -152,30 +152,30 @@ class StructralPlasticityExample:
         nest.set_verbosity('M_ERROR')
 
 
-####################################################################################
-# We set global kernel parameters. Here we define the resolution
-# for the simulation, which is also the time resolution for the update
-# of the synaptic elements.
+    ####################################################################################
+    # We set global kernel parameters. Here we define the resolution
+    # for the simulation, which is also the time resolution for the update
+    # of the synaptic elements.
 
         nest.resolution = self.dt
 
 
-####################################################################################
-# Set Structural Plasticity synaptic update interval which is how often
-# the connectivity will be updated inside the network. It is important
-# to notice that synaptic elements and connections change on different
-# time scales.
+    ####################################################################################
+    # Set Structural Plasticity synaptic update interval which is how often
+    # the connectivity will be updated inside the network. It is important
+    # to notice that synaptic elements and connections change on different
+    # time scales.
 
         nest.structural_plasticity_update_interval = self.update_interval
 
 
-####################################################################################
-# Now we define Structural Plasticity synapses. In this example we create
-# two synapse models, one for excitatory and one for inhibitory synapses.
-# Then we define that excitatory synapses can only be created between a
-# pre-synaptic element called `Axon_ex` and a postsynaptic element
-# called `Den_ex`. In a similar manner, synaptic elements for inhibitory
-# synapses are defined.
+    ####################################################################################
+    # Now we define Structural Plasticity synapses. In this example we create
+    # two synapse models, one for excitatory and one for inhibitory synapses.
+    # Then we define that excitatory synapses can only be created between a
+    # pre-synaptic element called `Axon_ex` and a postsynaptic element
+    # called `Den_ex`. In a similar manner, synaptic elements for inhibitory
+    # synapses are defined.
 
         nest.CopyModel('static_synapse', 'synapse_ex')
         nest.SetDefaults('synapse_ex', {'weight': self.psc_e, 'delay': 1.0})
@@ -212,10 +212,10 @@ class StructralPlasticityExample:
         }
 
 
-####################################################################################
-# Then it is time to create a population with 80% of the total network
-# size excitatory neurons and another one with 20% of the total network
-# size of inhibitory neurons.
+    ####################################################################################
+    # Then it is time to create a population with 80% of the total network
+    # size excitatory neurons and another one with 20% of the total network
+    # size of inhibitory neurons.
 
         self.nodes_e = nest.Create('iaf_psc_alpha',
                                    self.number_excitatory_neurons,
@@ -313,12 +313,12 @@ class StructralPlasticityExample:
         print("Simulation finished successfully")
 
 
-####################################################################################
-# Finally we take all the functions that we have defined and create the sequence
-# for our example. We prepare the simulation, create the nodes for the network,
-# connect the external input and then simulate. Please note that as we are
-# simulating 200 biological seconds in this example, it will take a few minutes
-# to complete.
+    ####################################################################################
+    # Finally we take all the functions that we have defined and create the sequence
+    # for our example. We prepare the simulation, create the nodes for the network,
+    # connect the external input and then simulate. Please note that as we are
+    # simulating 200 biological seconds in this example, it will take a few minutes
+    # to complete.
 if __name__ == '__main__':
     example = StructralPlasticityExample()
     # Prepare simulation

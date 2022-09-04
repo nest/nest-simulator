@@ -586,6 +586,7 @@ NestModule::GetMetadata_gFunction::execute( SLIInterpreter* i ) const
   if ( meta.get() )
   {
     meta->get_status( dict );
+    slice_positions_if_sliced_nc( dict, nc );
 
     ( *dict )[ names::network_size ] = nc->size();
   }

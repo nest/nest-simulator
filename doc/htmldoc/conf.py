@@ -252,6 +252,10 @@ md_ebrains_button = "[![EBRAINS Notebook](https://nest-simulator.org/TryItOnEBRA
 python_button = "[![Download Python file](../static/img/python-download.png)](pythonlink)\n"
 
 for filename in glob.glob(os.path.join(filepath, "*.ipynb")):
+    with open(filename, 'r') as checkfile:
+        content = checkfile.read()
+        if "EBRAINS Notebook" in content:
+            continue
     name = os.path.basename(filename)
     # Create proper links for nbgitpuller for each notebook
     links = link_puller.replace('one_neuron_with_noise.ipynb', name)

@@ -51,10 +51,13 @@ __all__ = [
     'FindNearestElement',
     'GetPosition',
     'GetTargetNodes',
+    'GetSourceNodes',
     'GetTargetPositions',
+    'GetSourcePositions',
     'PlotLayer',
     'PlotProbabilityParameter',
     'PlotTargets',
+    'PlotSources',
     'SelectNodesByMask',
 ]
 
@@ -659,7 +662,7 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
 
     For each neuron in `sources`, this function finds all target elements
     in `tgt_layer`. If `syn_model` is not given (default), all targets are
-    returned, otherwise only targets of specific type.
+    returned, otherwise only targets connected via the given synapse model.
 
     Parameters
     ----------
@@ -728,13 +731,87 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
     return tuple(src_tgt_map[snode_id] for snode_id in sources.tolist())
 
 
+def GetSourceNodes(src_layer, targets, syn_model=None):
+    """
+    Obtain sources of `targets` in given `src_layer` population.
+
+    For each neuron in `targets`, this function finds all target elements
+    in `src_layer`. If `syn_model` is not given (default), all sources are
+    returned, otherwise only sources connected via the given synapse model.
+
+    Parameters
+    ----------
+    src_layer : NodeCollection
+        NodeCollection with node IDs of `src_layer`
+    targets : NodeCollection
+        NodeCollection with node IDs of `targets`
+    syn_model : [None | str], optional, default: None
+        Return only source positions for a given synapse model.
+
+    Returns
+    -------
+    tuple of NodeCollection:
+        Tuple of `NodeCollections` of source neurons fulfilling the given criteria, one `NodeCollection` per
+        target node ID in `target`.
+
+    See also
+    --------
+    GetSourcePositions: Obtain positions of sources in a given source layer connected to given target.
+    GetConnections: Return connection identifiers between sources and targets.
+
+    Notes
+    -----
+    * For distributed simulations, this function only returns source on the
+      local MPI process.
+
+    Example
+    -------
+        ::
+
+            import nest
+
+            # create a spatial population
+            s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[11, 11], extent=[11., 11.]))
+
+            # connectivity specifications with a mask
+            conndict = {'rule': 'pairwise_bernoulli', 'p': 1.,
+                        'mask': {'rectangular': {'lower_left': [-2.0, -1.0],
+                                                 'upper_right': [2.0, 1.0]}}}
+
+            # connect population s_nodes with itself according to the given
+            # specifications
+            nest.Connect(s_nodes, s_nodes, conndict)
+
+            # get the node IDs of the targets of a source neuron
+            nest.GetSourceNodes(s_nodes, s_nodes[4])
+    """
+    if not isinstance(src_layer, NodeCollection):
+        raise TypeError("src_layer must be a NodeCollection")
+
+    if not isinstance(targets, NodeCollection):
+        raise TypeError("targets must be a NodeCollection.")
+
+    conns = GetConnections(src_layer, targets, synapse_model=syn_model)
+
+    # Re-organize conns into one list per target, containing only source node IDs.
+    tgt_src_map = dict((tnode_id, []) for tnode_id in targets.tolist())
+    for src, tgt in zip(conns.sources(), conns.targets()):
+        tgt_src_map[tgt].append(src)
+
+    for tgt in tgt_src_map.keys():
+        tgt_src_map[tgt] = NodeCollection(list(np.unique(tgt_src_map[tgt])))
+
+    # convert dict to nested list in same order as sources
+    return tuple(tgt_src_map[tnode_id] for tnode_id in targets.tolist())
+
+
 def GetTargetPositions(sources, tgt_layer, syn_model=None):
     """
     Obtain positions of targets to a given `NodeCollection` of `sources`.
 
     For each neuron in `sources`, this function finds all target elements
     in `tgt_layer`. If `syn_model` is not given (default), all targets are
-    returned, otherwise only targets of specific type.
+    returned, otherwise only targets connected via the given syanpse model.
 
     Parameters
     ----------
@@ -808,6 +885,87 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
 
     # Turn dict into list in same order as sources
     return [src_tgt_pos_map[snode_id] for snode_id in sources.tolist()]
+
+
+def GetSourcePositions(src_layer, targets, syn_model=None):
+    """
+    Obtain positions of sources to a given `NodeCollection` of `targets`.
+
+    For each neuron in `targets`, this function finds all source elements
+    in `src_layer`. If `syn_model` is not given (default), all targets are
+    returned, otherwise only sources connected via the given synapse model.
+
+    Parameters
+    ----------
+    src_layer : NodeCollection
+        `NodeCollection` of src_layer
+    targets : NodeCollection
+        `NodeCollection` with node ID(s) of target neurons
+    syn_type : [None | str], optional, default: None
+        Return only source positions for a given synapse model.
+
+    Returns
+    -------
+    list of list(s) of tuple(s) of floats:
+        Positions of source neurons fulfilling the given criteria as a nested
+        list, containing one list of positions per node in targets.
+
+    See also
+    --------
+    GetSourceNodes: Obtain sources of a `NodeCollection` of targets in a given source
+    population.
+
+    Notes
+    -----
+    * For distributed simulations, this function only returns sources on the
+      local MPI process.
+
+    Example
+    -------
+        ::
+
+            import nest
+
+            # create a spatial population
+            s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[11, 11], extent=[11., 11.]))
+
+            # connectivity specifications with a mask
+            conndict = {'rule': 'pairwise_bernoulli', 'p': 1.,
+                        'mask': {'rectangular': {'lower_left': [-2.0, -1.0],
+                                                 'upper_right': [2.0, 1.0]}}}
+
+            # connect population s_nodes with itself according to the given
+            # specifications
+            nest.Connect(s_nodes, s_nodes, conndict)
+
+            # get the positions of the targets of a source neuron
+            nest.GetSourcePositions(s_nodes, s_nodes[5])
+    """
+    if not isinstance(targets, NodeCollection):
+        raise TypeError("targets must be a NodeCollection.")
+
+    # Find positions to all nodes in source layer
+    pos_all_srcs = GetPosition(src_layer)
+    first_src_node_id = src_layer[0].get('global_id')
+
+    connections = GetConnections(src_layer, targets,
+                                 synapse_model=syn_model)
+    srcs = connections.get('source')
+    tgts = connections.get('target')
+    if isinstance(srcs, int):
+        srcs = [srcs]
+    if isinstance(tgts, int):
+        tgts = [tgts]
+
+    # Make dictionary where the keys are the target node_ids, which is mapped to a
+    # list with the positions of the sources connected to the targets.
+    tgt_src_pos_map = dict((tnode_id, []) for tnode_id in targets.tolist())
+    for i in range(len(connections)):
+        src_indx = srcs[i] - first_src_node_id
+        tgt_src_pos_map[tgts[i]].append(pos_all_srcs[src_indx])
+
+    # Turn dict into list in same order as target
+    return [tgt_src_pos_map[tnode_id] for tnode_id in targets.tolist()]
 
 
 def SelectNodesByMask(layer, anchor, mask_obj):
@@ -1027,6 +1185,7 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
 
     See also
     --------
+    PlotSources: Plot all sources of target neuron in a source layer.
     GetTargetNodes: Obtain targets of a sources in a given target layer.
     GetTargetPositions: Obtain positions of targets of sources in a given target layer.
     probability_parameter: Add indication of connection probability and mask to axes.
@@ -1123,6 +1282,147 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
             ax.scatter3D(xpos, ypos, zpos, s=tgt_size, facecolor=tgt_color)
 
         ax.scatter3D(srcpos[:1], srcpos[1:2], srcpos[2:], s=src_size, facecolor=src_color, alpha=0.4, zorder=-10)
+
+    plt.draw_if_interactive()
+
+    return fig
+
+
+def PlotSources(src_layer, tgt_nrn, syn_type=None, fig=None,
+                mask=None, probability_parameter=None,
+                tgt_color='red', tgt_size=50, src_color='blue', src_size=20,
+                mask_color='yellow', probability_cmap='Greens'):
+    """
+    Plot all sources of target neuron `tgt_nrn` in a source layer `src_layer`.
+
+    Parameters
+    ----------
+    src_layer : NodeCollection
+        `NodeCollection` of src_layer
+    tgt_nrn : NodeCollection
+        `NodeCollection` of target neuron (as single-element NodeCollection)
+    syn_type : [None | str], optional, default: None
+        Show only targets connected with a given synapse type
+    fig : [None | matplotlib.figure.Figure object], optional, default: None
+        Matplotlib figure to plot to. If not given, a new figure is created.
+    mask : [None | dict], optional, default: None
+        Draw mask with targets; see :py:func:`.PlotProbabilityParameter` for details.
+    probability_parameter : [None | Parameter], optional, default: None
+        Draw connection probability with targets; see :py:func:`.PlotProbabilityParameter` for details.
+    tgt_color : [None | any matplotlib color], optional, default: 'red'
+        Color used to mark target node position
+    tgt_size : float, optional, default: 50
+        Size of target marker (see scatter for details)
+    src_color : [None | any matplotlib color], optional, default: 'blue'
+        Color used to mark source node positions
+    src_size : float, optional, default: 20
+        Size of source markers (see scatter for details)
+    mask_color : [None | any matplotlib color], optional, default: 'red'
+        Color used for line marking mask
+    probability_cmap : [None | any matplotlib cmap color], optional, default: 'Greens'
+        Color used for lines marking probability parameter.
+
+    Returns
+    -------
+    matplotlib.figure.Figure object
+
+    See also
+    --------
+    PlotTargets: Plot all targets of source neuron in a target layer.
+    GetSourceNodes: Obtain sources of a target in a given source layer.
+    GetSourcePositions: Obtain positions of sources of target in a given source layer.
+    probability_parameter: Add indication of connection probability and mask to axes.
+    PlotLayer: Plot all nodes in a spatially distributed population.
+    matplotlib.pyplot.scatter : matplotlib scatter plot.
+
+    Notes
+    -----
+    * Do **not** use this function in distributed simulations.
+
+    **Example**
+        ::
+
+            import nest
+            import matplotlib.pyplot as plt
+
+            # create a spatial population
+            s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[11, 11], extent=[11., 11.]))
+
+            # connectivity specifications with a mask
+            conndict = {'rule': 'pairwise_bernoulli', 'p': 1.,
+                        'use_on_source': True,
+                        'mask': {'rectangular': {'lower_left': [-2.0, -1.0],
+                                                 'upper_right': [2.0, 1.0]}}}
+
+            # connect population s_nodes with itself according to the given
+            # specifications
+            nest.Connect(s_nodes, s_nodes, conndict)
+
+            # plot the targets of a source neuron
+            nest.PlotSources(s_nodes, s_nodes[4])
+            plt.show()
+    """
+
+    # import pyplot here and not at toplevel to avoid preventing users
+    # from changing matplotlib backend after importing nest
+    import matplotlib.pyplot as plt
+
+    if not isinstance(tgt_nrn, NodeCollection) or len(tgt_nrn) != 1:
+        raise TypeError("tgt_nrn must be a single element NodeCollection.")
+    if not isinstance(src_layer, NodeCollection):
+        raise TypeError("src_layer must be a NodeCollection.")
+
+    # get position of source
+    tgtpos = GetPosition(tgt_nrn)
+
+    # get layer extent
+    ext = src_layer.spatial['extent']
+
+    if len(ext) == 2:
+        # 2D layer
+
+        # get layer extent and center, x and y
+        xext, yext = ext
+        xctr, yctr = src_layer.spatial['center']
+
+        if fig is None:
+            fig = plt.figure()
+            ax = fig.add_subplot(111)
+        else:
+            ax = fig.gca()
+
+        # get positions, reorganize to x and y vectors
+        srcpos = GetSourcePositions(src_layer, tgt_nrn, syn_type)
+        if srcpos:
+            xpos, ypos = zip(*srcpos[0])
+            ax.scatter(xpos, ypos, s=src_size, facecolor=src_color)
+
+        ax.scatter(tgtpos[:1], tgtpos[1:], s=tgt_size, facecolor=src_color, alpha=0.4, zorder=-10)
+
+        if mask is not None or probability_parameter is not None:
+            edges = [xctr - xext, xctr + xext, yctr - yext, yctr + yext]
+            PlotProbabilityParameter(tgt_nrn, probability_parameter, mask=mask, edges=edges, ax=ax,
+                                     prob_cmap=probability_cmap, mask_color=mask_color)
+
+        _draw_extent(ax, xctr, yctr, xext, yext)
+
+    else:
+        # 3D layer
+        from mpl_toolkits.mplot3d import Axes3D
+
+        if fig is None:
+            fig = plt.figure()
+            ax = fig.add_subplot(111, projection='3d')
+        else:
+            ax = fig.gca()
+
+        # get positions, reorganize to x,y,z vectors
+        srcpos = GetSourcePositions(src_layer, tgt_nrn, syn_type)
+        if tgtpos:
+            xpos, ypos, zpos = zip(*srcpos[0])
+            ax.scatter3D(xpos, ypos, zpos, s=src_size, facecolor=tgt_color)
+
+        ax.scatter3D(tgtpos[:1], tgtpos[1:2], tgtpos[2:], s=tgt_size, facecolor=tgt_color, alpha=0.4, zorder=-10)
 
     plt.draw_if_interactive()
 

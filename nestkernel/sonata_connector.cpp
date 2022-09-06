@@ -89,161 +89,125 @@ SonataConnector::connect()
     edge_params_ = getValue< DictionaryDatum >( edge_dict->lookup( "edge_synapse" ) );
     // std::cerr << "create_type_id_2_syn_spec_...\n";
     create_type_id_2_syn_spec_( edge_params_ );
-    H5::H5File file;
 
     try
     {
-      file = H5::H5File( edge_filename, H5F_ACC_RDONLY );
-    }
 
-    catch ( H5::DataSpaceIException error )
-    {
-      error.printErrorStack();
-      throw error;
-    }
 
-    /* NOTE 1
-    // catch failure caused by the H5File operations
-    catch (FileIException error) {
-        error.printErrorStack();
-        return -1;
-    }
-
-    // catch failure caused by the DataSet operations
-    catch (DataSetIException error) {
-        error.printErrorStack();
-        return -1;
-    }
-
-    // catch failure caused by the DataSpace operations
-    catch (DataSpaceIException error) {
-        error.printErrorStack();
-        return -1;
-    }
-    */
-
-    /* NOTE 2
-    try
-     {
-       dataset.read( data, H5::PredType::NATIVE_INT );
-     }
-     catch ( std::exception const& e )
-     {
-       std::cerr << __FILE__ << ":" << __LINE__ << " : "
-                 << "Exception caught " << e.what() << "\n";
-     }
-     catch ( const H5::Exception& e )
-     {
-       // std::cerr << __FILE__ << ":" << __LINE__ << " : " << "H5 exception caught:\n" << e.what() << "\n";
-       std::cerr << __FILE__ << ":" << __LINE__ << " H5 exception caught: " << e.getDetailMsg() << "\n";
-       e.printErrorStack();
-     }
-     catch ( ... )
-     {
-       std::cerr << __FILE__ << ":" << __LINE__ << " : "
-                 << "Unknown exception caught\n";
-     }
-    */
-
-    /*
-    H5::H5File file;
-    try
-    {
       // Open specified HDF5 edge file with read only access
-      // H5::H5File file( edge_filename, H5F_ACC_RDONLY );
-      file = H5::H5File( edge_filename, H5F_ACC_RDONLY );
-    } // end of try block
+      H5::H5File edge_h5_file( edge_filename, H5F_ACC_RDONLY );
+
+      // Open top-level group (always one group named 'edges')
+      H5::Group edges_group( edge_h5_file.openGroup( "edges" ) );
+
+      // Get names of population groups
+      std::vector< std::string > population_group_names;
+      // https://support.hdfgroup.org/HDF5/doc/RM/RM_H5L.html#Link-Iterate
+      H5Literate(
+        edges_group.getId(), H5_INDEX_NAME, H5_ITER_INC, NULL, get_group_names_callback, &population_group_names );
+
+
+      // Iterate the population groups
+      for ( const auto& population_group_name : population_group_names )
+      {
+        // std::cerr << "Group: " << population_group_name << "\n";
+        const H5::Group population_group( edges_group.openGroup( population_group_name ) );
+
+        // Find the number of edge id groups, i.e. ones with label "0", "1", ..., by finding
+        // the names of the population's datasets and subgroups
+        // Note we assume edge ids are contiguous starting from zero, which is the
+        // SONATA default. Edge id keys can also be custom (not handled here)
+        std::vector< std::string > population_group_dset_and_subgroup_names;
+        H5Literate( population_group.getId(),
+          H5_INDEX_NAME,
+          H5_ITER_INC,
+          NULL,
+          get_group_names_callback,
+          &population_group_dset_and_subgroup_names );
+
+        size_t num_edge_id_groups { 0 };
+        bool is_edge_id_name;
+        std::vector< std::string > edge_id_names;
+
+        for ( const auto& name : population_group_dset_and_subgroup_names )
+        {
+          is_edge_id_name = ( name.find_first_not_of( "0123456789" ) == std::string::npos );
+
+          if ( is_edge_id_name == 1 )
+          {
+            edge_id_names.push_back( name );
+          }
+
+          num_edge_id_groups += is_edge_id_name;
+        }
+
+        // Currently only SONATA edge files with one edge id group is supported
+        if ( num_edge_id_groups == 1 )
+        {
+          const auto edge_id_group = population_group.openGroup( edge_id_names[ 0 ] );
+
+          // Check if weight and delay are given as h5 files
+          is_weight_and_delay_from_dataset_( edge_id_group );
+
+          // Open datasets
+          src_node_id_dset_ = population_group.openDataSet( "source_node_id" );
+          tgt_node_id_dset_ = population_group.openDataSet( "target_node_id" );
+          edge_type_id_dset_ = population_group.openDataSet( "edge_type_id" );
+
+          if ( weight_dataset_exist_ )
+          {
+            syn_weight_dset_ = edge_id_group.openDataSet( "syn_weight" );
+          }
+
+          if ( delay_dataset_exist_ )
+          {
+            delay_dset_ = edge_id_group.openDataSet( "delay" );
+          }
+
+          // HERE
+          read_datasets_();
+
+          // Reset all parameters
+          reset_params();
+
+          // Close H5 objects in scope
+          edges_group.close();
+          edge_h5_file.close();
+        }
+        else
+        {
+          throw NotImplemented(
+            "Connecting with Sonata files with more than one edgegroup is currently not implemented" );
+        }
+      } // end iteration over population groups
+    }
+
+    // Might need more catches
+    /*
     catch ( const H5::Exception& e )
     {
       throw KernelException( "Could not open HDF5 file " + edge_filename );
     }
     */
 
-
-    // Open top-level group (always one group named 'edges')
-    H5::Group edges_group( file.openGroup( "edges" ) );
-
-    // Get names of population groups
-    std::vector< std::string > population_group_names;
-    // https://support.hdfgroup.org/HDF5/doc/RM/RM_H5L.html#Link-Iterate
-    H5Literate(
-      edges_group.getId(), H5_INDEX_NAME, H5_ITER_INC, NULL, get_group_names_callback, &population_group_names );
-
-
-    // Iterate the population groups
-    for ( const auto& population_group_name : population_group_names )
+    catch ( std::exception const& e )
     {
-      // std::cerr << "Group: " << population_group_name << "\n";
-      const H5::Group population_group( edges_group.openGroup( population_group_name ) );
+      std::cerr << __FILE__ << ":" << __LINE__ << " : "
+                << "Exception caught " << e.what() << "\n";
+    }
 
-      // Find the number of edge id groups, i.e. ones with label "0", "1", ..., by finding
-      // the names of the population's datasets and subgroups
-      // Note we assume edge ids are contiguous starting from zero, which is the
-      // SONATA default. Edge id keys can also be custom (not handled here)
-      std::vector< std::string > population_group_dset_and_subgroup_names;
-      H5Literate( population_group.getId(),
-        H5_INDEX_NAME,
-        H5_ITER_INC,
-        NULL,
-        get_group_names_callback,
-        &population_group_dset_and_subgroup_names );
+    catch ( const H5::Exception& e )
+    {
+      // std::cerr << __FILE__ << ":" << __LINE__ << " : " << "H5 exception caught:\n" << e.what() << "\n";
+      std::cerr << __FILE__ << ":" << __LINE__ << " H5 exception caught: " << e.getDetailMsg() << "\n";
+      e.printErrorStack();
+    }
 
-      size_t num_edge_id_groups { 0 };
-      bool is_edge_id_name;
-      std::vector< std::string > edge_id_names;
-
-      for ( const auto& name : population_group_dset_and_subgroup_names )
-      {
-        is_edge_id_name = ( name.find_first_not_of( "0123456789" ) == std::string::npos );
-
-        if ( is_edge_id_name == 1 )
-        {
-          edge_id_names.push_back( name );
-        }
-
-        num_edge_id_groups += is_edge_id_name;
-      }
-
-      // Currently only SONATA edge files with one edge id group is supported
-      if ( num_edge_id_groups == 1 )
-      {
-        const auto edge_id_group = population_group.openGroup( edge_id_names[ 0 ] );
-
-        // Check if weight and delay are given as h5 files
-        is_weight_and_delay_from_dataset_( edge_id_group );
-
-        // Open datasets
-        src_node_id_dset_ = population_group.openDataSet( "source_node_id" );
-        tgt_node_id_dset_ = population_group.openDataSet( "target_node_id" );
-        edge_type_id_dset_ = population_group.openDataSet( "edge_type_id" );
-
-        if ( weight_dataset_exist_ )
-        {
-          syn_weight_dset_ = edge_id_group.openDataSet( "syn_weight" );
-        }
-
-        if ( delay_dataset_exist_ )
-        {
-          delay_dset_ = edge_id_group.openDataSet( "delay" );
-        }
-
-        // HERE
-        read_datasets_();
-
-        // Reset all parameters
-        reset_params();
-
-        // close in or outside of loop?
-        edges_group.close();
-        file.close();
-      }
-      else
-      {
-        throw NotImplemented(
-          "Connecting with Sonata files with more than one edgegroup is currently not implemented" );
-      }
-      // delete edge_group_id_data;
-    } // end iteration over population groups
+    catch ( ... )
+    {
+      std::cerr << __FILE__ << ":" << __LINE__ << " : "
+                << "Unknown exception caught\n";
+    }
 
   } // end iteration over edge files
 } // end of SonataConnector::connect
@@ -379,7 +343,8 @@ SonataConnector::create_connections_( const hsize_t chunk_size, const hsize_t of
         const auto edge_type_id = edge_type_id_data_subset[ i ];
         const auto syn_spec = getValue< DictionaryDatum >( edge_params_->lookup( std::to_string( edge_type_id ) ) );
 
-        auto get_syn_property = [ &syn_spec, &i ]( const bool dataset, std::vector< double >& data, const Name& name ) {
+        auto get_syn_property = [ &syn_spec, &i ]( const bool dataset, std::vector< double >& data, const Name& name )
+        {
           if ( dataset ) // Syn_property is set from dataset if the dataset is defined
           {
             if ( not data[ i ] ) // TODO: remove
@@ -440,16 +405,22 @@ SonataConnector::read_subset_int_( const H5::DataSet& dataset,
   hsize_t offset )
 {
   // Define Memory Dataspace. Get file dataspace and select
-  // a subset from the file dataspace.
+  // hyperslab from the file dataspace. In calls for selecting
+  // hyperslab 'stride' and 'block' are implicitly given as NULL.
+  // H5S_SELECT_SET replaces any existing selection with the parameters
+  // from this call
   const int array_dim = 1;
   H5::DataSpace memspace( array_dim, &chunk_size, NULL );
-
-  // select hyperslab
   H5::DataSpace dataspace = dataset.getSpace();
+  memspace.selectHyperslab( H5S_SELECT_SET, &chunk_size, &offset );
   dataspace.selectHyperslab( H5S_SELECT_SET, &chunk_size, &offset );
 
   // Read subset
   dataset.read( data_buf.data(), H5::PredType::NATIVE_INT, memspace, dataspace );
+
+  // Close dataspaces
+  dataspace.close();
+  memspace.close();
 }
 
 void
@@ -459,16 +430,22 @@ SonataConnector::read_subset_double_( const H5::DataSet& dataset,
   hsize_t offset )
 {
   // Define Memory Dataspace. Get file dataspace and select
-  // a subset from the file dataspace.
+  // hyperslab from the file dataspace. In calls for selecting
+  // hyperslab 'stride' and 'block' are implicitly given as NULL.
+  // H5S_SELECT_SET replaces any existing selection with the parameters
+  // from this call
   const int array_dim = 1;
   H5::DataSpace memspace( array_dim, &chunk_size, NULL );
-
-  // select hyperslab
   H5::DataSpace dataspace = dataset.getSpace();
+  memspace.selectHyperslab( H5S_SELECT_SET, &chunk_size, &offset );
   dataspace.selectHyperslab( H5S_SELECT_SET, &chunk_size, &offset );
 
   // Read subset
   dataset.read( data_buf.data(), H5::PredType::NATIVE_DOUBLE, memspace, dataspace );
+
+  // Close dataspaces
+  dataspace.close();
+  memspace.close();
 }
 
 void

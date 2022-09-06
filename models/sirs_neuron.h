@@ -139,6 +139,8 @@ private:
     double beta_sirs_;
     //! transition probability I->R
     double mu_sirs_;
+    //! transition probability R->S
+    double eta_sirs_;
 
 
     Parameters_(); //!< Sets default parameter values

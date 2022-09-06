@@ -336,6 +336,9 @@ sirs_neuron::update( Time const& origin, const long from, const long to )
         // of multiplicity.
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         S_.y_ = new_y;
+      } else if ( new_y != S_.y_ && new_y == 0 )
+      {
+        S_.y_ = new_y;
       }
 
       // update interval

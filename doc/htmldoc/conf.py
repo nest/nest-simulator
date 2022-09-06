@@ -241,24 +241,35 @@ def toc_customizer(app, docname, source):
         rendered = app.builder.templates.render_string(models_source, html_context)
         source[0] = rendered
 
+
 # This is using the branch ebrains-button (set as default on jessica-mitchell github).
 # This should use either stable or master once done
-link_puller = "https://lab.ebrains.eu/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2Fjessica-mitchell%2Fnest-simulator&urlpath=lab%2Ftree%2Fnest-simulator%2Fpynest%2Fexamples%2Fone_neuron_with_noise.ipynb&branch=ebrains-button"
+link_puller = ("https://lab.ebrains.eu/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com"
+              "%2Fjessica-mitchell%2Fnest-simulator&urlpath=lab%2Ftree%2Fnest-simulator%2Fpynest"
+              "%2Fexamples%2Fnotebooks%2Fone_neuron_with_noise.ipynb&branch=ebrains-button")
 
 filepath = "pynest-examples/"
 
 md_ebrains_button = "[![EBRAINS Notebook](https://nest-simulator.org/TryItOnEBRAINS.png)](nblink)\n"
-#                             :target: nblink"""
-python_button = "[![Download Python file](../static/img/python-download.png)](pythonlink)\n"
 
-for filename in glob.glob(os.path.join(filepath, "*.ipynb")):
+python_button = "[![Download Python file](../../static/img/python-download.png)](pythonlink)\n"
+
+for filename in Path(filepath).rglob('*.ipynb'):
     with open(filename, 'r') as checkfile:
         content = checkfile.read()
         if "EBRAINS Notebook" in content:
             continue
     name = os.path.basename(filename)
-    # Create proper links for nbgitpuller for each notebook
-    links = link_puller.replace('one_neuron_with_noise.ipynb', name)
+    path2dir = os.path.dirname(filename)
+    path2sub = os.path.basename(path2dir)
+    # Create proper Olinks for nbgitpuller for each notebook
+    if path2sub != "pynest-examples":
+        link_sub_path = path2sub + "%2F" + name
+        links = link_puller.replace('one_neuron_with_noise.ipynb', link_sub_path)
+    else:
+
+        links = link_puller.replace('one_neuron_with_noise.ipynb', name)
+
     button = md_ebrains_button.replace('nblink', links)
     # convert ipynb to py
     exporter = PythonExporter()
@@ -270,8 +281,8 @@ for filename in glob.glob(os.path.join(filepath, "*.ipynb")):
     base = os.path.splitext(name)[0]
     pyname = base + '.py'
     # create link for python down
-    pybutton = python_button.replace('pythonlink', '../pynest-examples/python/' + pyname)
-    with open('pynest-examples/python/' + pyname, 'w') as outfile:
+    pybutton = python_button.replace('pythonlink', pyname)
+    with open(path2dir + '/' + pyname, 'w') as outfile:
         outfile.write(source)
     # append the buttons for nblinkpuller, python download to each notebook
     nb = nbformat.read(filename, as_version=4)
@@ -372,4 +383,3 @@ copy_example_file(source_dir / "pynest/examples/Potjans_2014/raster_plot.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/microcircuit.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/README.rst")
 copy_example_file(source_dir / "pynest/examples/hpc_benchmark_connectivity.svg")
-

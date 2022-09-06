@@ -115,6 +115,7 @@ set( models_sources
     sinusoidal_poisson_generator.h sinusoidal_poisson_generator.cpp
     sinusoidal_gamma_generator.h sinusoidal_gamma_generator.cpp
     sir_neuron.h sir_neuron.cpp
+    sirs_neuron.h sirs_neuron.cpp
     spike_recorder.h spike_recorder.cpp
     spike_generator.h spike_generator.cpp
     spin_detector.h spin_detector.cpp

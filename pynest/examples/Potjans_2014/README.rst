@@ -1,5 +1,5 @@
-Cortical microcircuit model
-===========================
+PyNEST implementation of microcircuit model
+-------------------------------------------
 
 This is a PyNEST implementation of the cortical microcircuit model by Potjans and Diesmann [1]_.
 The network model represents four layers of cortex, L2/3, L4, L5, and L6, each consisting of a population of excitatory neurons and a population of inhibitory neurons.
@@ -16,7 +16,7 @@ The network model represents four layers of cortex, L2/3, L4, L5, and L6, each c
    +--------+--------+--------+
    | |img1| | |img2| | |img3| |
    +--------+--------+--------+
-   
+
 Left: network sketch [2]_. Middle: raster plot showing spiking activity. Right: firing rates as box plots.
 
 Citing this code

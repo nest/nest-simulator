@@ -20,10 +20,24 @@ PyNEST examples
     .. grid-item-card:: 2D Spatially-structured networks
            :img-top: ../static/img/pynest/layer4.png
 
+           * :doc:`../pynest-examples/spatial/conncomp`
+           * :doc:`../pynest-examples/spatial/conncon_sources`
+           * :doc:`../pynest-examples/spatial/conncon_targets`
+           * :doc:`../pynest-examples/spatial/connex`
+           * :doc:`../pynest-examples/spatial/connex_ew`
+           * :doc:`../pynest-examples/spatial/ctx_2n`
+           * :doc:`../pynest-examples/spatial/gaussex`
+           * :doc:`../pynest-examples/spatial/grid_iaf`
+           * :doc:`../pynest-examples/spatial/grid_iaf_irr`
+           * :doc:`../pynest-examples/spatial/grid_iaf_oc`
+
 
     .. grid-item-card:: 3D Spatially-structured networks
            :img-top: ../static/img/pynest/spatial_test3d.png
 
+           * :doc:`../pynest-examples/spatial/test_3d`
+           * :doc:`../pynest-examples/spatial/test_3d_exp`
+           * :doc:`../pynest-examples/spatial/test_3d_gauss`
 
 
 .. grid:: 1 1 2 3
@@ -46,12 +60,16 @@ PyNEST examples
     .. grid-item-card:: NEST Sudoku solver
            :img-top: ../static/img/sudoku_solution.gif
 
+           * :doc:`../pynest-examples/sudoku/sudoku_solver`
+           * :doc:`../pynest-examples/sudoku/plot_progress`
+
 .. grid:: 1 1 2 3
 
     .. grid-item-card:: Compartmental neurons
            :img-top: ../static/img/pynest/dendritic_synapse_conductances.png
 
-
+           * :doc:`../pynest-examples/compartmental_model/receptors_and_current`
+           * :doc:`../pynest-examples/compartmental_model/two_comps`
 
     .. grid-item-card:: Rate neurons
            :img-top: ../static/img/pynest/rate_neuron.png

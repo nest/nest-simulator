@@ -180,7 +180,7 @@ class EINetwork:
         self.sr = nest.Create("spike_recorder")
 
     ###############################################################################
-     # Reconstruct connectivity
+    # Reconstruct connectivity
         nest.Connect(network["e_syns"].source.values, network["e_syns"].target.values,
                      "one_to_one",
                      {"synapse_model": "e_syn", "weight": network["e_syns"].weight.values})

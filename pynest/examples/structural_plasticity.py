@@ -136,7 +136,6 @@ class StructralPlasticityExample:
         self.total_connections_e = []
         self.total_connections_i = []
 
-
     ####################################################################################
     # We initialize variables for the postsynaptic currents of the
     # excitatory, inhibitory, and external synapses. These values were
@@ -151,14 +150,12 @@ class StructralPlasticityExample:
         nest.ResetKernel()
         nest.set_verbosity('M_ERROR')
 
-
     ####################################################################################
     # We set global kernel parameters. Here we define the resolution
     # for the simulation, which is also the time resolution for the update
     # of the synaptic elements.
 
         nest.resolution = self.dt
-
 
     ####################################################################################
     # Set Structural Plasticity synaptic update interval which is how often
@@ -167,7 +164,6 @@ class StructralPlasticityExample:
     # time scales.
 
         nest.structural_plasticity_update_interval = self.update_interval
-
 
     ####################################################################################
     # Now we define Structural Plasticity synapses. In this example we create
@@ -210,7 +206,6 @@ class StructralPlasticityExample:
             'Den_in': self.growth_curve_i_i,
             'Axon_in': self.growth_curve_i_i,
         }
-
 
     ####################################################################################
     # Then it is time to create a population with 80% of the total network
@@ -311,7 +306,6 @@ class StructralPlasticityExample:
             if i % 20 == 0:
                 print("Progress: " + str(i / 2) + "%")
         print("Simulation finished successfully")
-
 
     ####################################################################################
     # Finally we take all the functions that we have defined and create the sequence

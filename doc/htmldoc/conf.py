@@ -36,7 +36,7 @@ from mock import Mock as MagicMock
 
 import nbformat
 
-from nbconvert import PythonExporter 
+from nbconvert import PythonExporter
 
 source_dir = os.environ.get('NESTSRCDIR', False)
 if source_dir:
@@ -354,6 +354,7 @@ texinfo_documents = [
      author, 'NESTsimulator', 'One line description of project.',
      'Miscellaneous'),
 ]
+
 
 def copy_example_file(src):
     copyfile(src, doc_build_dir / "examples" / src.parts[-1])

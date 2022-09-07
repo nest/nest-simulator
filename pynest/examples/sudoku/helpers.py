@@ -1,3 +1,4 @@
+# %%
 # -*- coding: utf-8 -*-
 #
 # helpers.py
@@ -25,8 +26,9 @@ r"""Helper functions for the Sudoku solver
 :Authors: J Gille, S Furber, A Rowley
 """
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
-from matplotlib import font_manager
+import matplotlib.pyplot as plt
+import matplotlib.patches as patch
+
 
 # RGB values for the colors used in the generated images
 green = (0, 115, 0)
@@ -35,14 +37,6 @@ black = (0, 0, 0)
 dark_grey = (50, 50, 50)
 light_grey = (160, 160, 160)
 white = (255, 255, 255)
-
-font_prop_b = font_manager.FontProperties(family='sans', weight='bold')
-font_loc_b = font_manager.findfont(font_prop_b)
-font_bold = ImageFont.truetype(font_loc_b, 18, encoding="unic")
-
-font_prop_it = font_manager.FontProperties(family='sans', style='italic')
-font_loc_it = font_manager.findfont(font_prop_it)
-font_italic = ImageFont.truetype(font_loc_it, 18, encoding="unic")
 
 
 def get_puzzle(puzzle_index):
@@ -240,66 +234,113 @@ def plot_field(puzzle, solution, with_color=False):
     Returns:
         PIL.Image: A visual representation of the Sudoku solution.
     """
-    background = np.full((image_size, image_size, 3), 255, dtype=np.uint8)
-    field = np.full((field_size, field_size, 3), 255, dtype=np.uint8)
+    ax2 = plt.subplot2grid((20, 3), (10, 2), rowspan=10, colspan=1)
+    decorate_sudoku_box(ax2)
+    fill_numbers(ax2, puzzle, solution)
 
     # color every other box in light grey
     for i in range(0, 9, 3):
         for j in range(0, 9, 3):
             if (i+j) % 2 == 0:
-                field[i*cell_step:(i+3)*cell_step,
-                      j*cell_step:(j+3)*cell_step] = light_grey
-
-    # draw the frames between cells in black
-    for i in range(0, 10):
-        field[i*cell_step:i*cell_step+grid_width, :] = black
-        field[:, i*cell_step:i*cell_step+grid_width] = black
-
-    field = Image.fromarray(field)
-    draw = ImageDraw.Draw(field)
-
+                ax2.add_patch(patch.Rectangle((j, i), 3, 3, facecolor="grey",
+                                              alpha=0.5))
     if with_color:
         valid, boxes, rows, cols = validate_solution(puzzle, solution)
         # draw a red or green line in the background to indicate validity of
         # all rows and columns
-        for i in range(9):
-            cell_center = (i + 1) * cell_step
-            background[cell_center - 3:
-                       cell_center + 3] = white if rows[i] else red
 
-            background[:, cell_center - 3:
-                       cell_center + 3] = white if cols[i] else red
+        for i in range(9):
+            ax2.vlines(np.where(rows)[0] +0.5, -0.5, 9.5, color="red")
+            ax2.hlines(np.where(cols), 0, 9, color="red")
 
         # draw a red frame around boxes that are not valid
         for i in range(3):
             for j in range(3):
                 if not boxes[i, j]:
-                    draw.rectangle([3 * j * cell_step + grid_width,
-                                    3 * i * cell_step + grid_width,
-                                    3 * (j + 1) * cell_step,
-                                    3 * (i + 1) * cell_step],
-                                   outline=red, width=2)
+                    print(f"patching: {i,j}")
+                    ax2.add_patch(patch.Rectangle((3*j, 3*j + 0.1), 2.9, 2.9,
+                                                  color="red", fill=False, linewidth=3))
+    return ax2
 
-    # write the digits into the cells.
+
+def fill_numbers(axis, puzzle, solution):
+    # fill the numbers
     for i in range(9):
         for j in range(9):
-            if 1 <= solution[i, j] <= 9:
-                if puzzle[i, j] != 0:
-                    if solution[i, j] == puzzle[i, j]:
-                        color = black
-                    else:
-                        # If the network proposes a solution where a digit
-                        # from the input configuration is altered, that
-                        # digit is colored in red.
-                        color = red
-                    font = font_bold
+            # quirk: when plotting matrix, transpose it; i is in y-axis and j is in x-axis
+            if puzzle[i][j] == 0:
+                text_style = 'normal'
+                text_col = 'black'
+            else:
+                text_style = 'italic'
+                if puzzle[i][j] == solution[i][j]:
+                    text_col = 'gray'
                 else:
-                    color = dark_grey
-                    font = font_italic
+                    # If the network proposes a solution where a digit
+                    # from the input configuration is altered, that
+                    # digit is colored in red.
+                    text_col = 'red'
 
-                draw.text((j*cell_step+5, i*cell_step+1),
-                          str(solution[i, j]), color, font)
+            axis.text(j + 0.5, i + 0.5, solution[i][j], horizontalalignment='center',
+                      verticalalignment='center', color=text_col, fontsize=9, style=text_style)
 
-    background = Image.fromarray(background)
-    background.paste(field, (frame_width, frame_width))
-    return background
+
+def decorate_sudoku_box(axis):
+    """
+    Modify line and color properties of sudoku grid to make it look good
+    """
+    [x, y, xr, yr] = generate_sudoku_box_lines()
+    axis.plot(x, y, color='gray')
+    axis.plot(xr, yr, color='gray', linewidth=2)
+    # turn off tick markers
+    axis.set_xticks([])
+    axis.set_yticks([])
+
+
+
+def generate_sudoku_box_lines():
+    # TODO: unfuck this shite!
+    # lines for cells
+    x = []
+    y = []
+    # lines for regions
+    xr = []
+    yr = []
+
+    # data for vertical lines
+    for i in range(10):
+        x.append(i)
+        x.append(i)
+        y.append(0)
+        y.append(9)
+        x.append(None)
+        y.append(None)
+        if divmod(i, 3)[1] == 0:
+            xr.append(i)
+            xr.append(i)
+            yr.append(0)
+            yr.append(9)
+            xr.append(None)
+            yr.append(None)
+
+    # data for horizontal lines
+    for j in range(10):
+        x.append(0)
+        x.append(9)
+        y.append(j)
+        y.append(j)
+        x.append(None)
+        y.append(None)
+        if divmod(j, 3)[1] == 0:
+            xr.append(0)
+            xr.append(9)
+            yr.append(j)
+            yr.append(j)
+            xr.append(None)
+            yr.append(None)
+
+
+    return [x, y, xr, yr]
+
+
+# %%

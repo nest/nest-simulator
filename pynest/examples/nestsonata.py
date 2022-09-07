@@ -119,7 +119,7 @@ else:
 
     if plot:
         s_rec = nest.Create('spike_recorder')
-        s_rec.record_to = 'ascii'
+        s_rec.record_to = 'memory'
         nest.Connect(sonata_connector.node_collections[population_to_plot], s_rec)
 
     if simulate:

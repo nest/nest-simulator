@@ -93,7 +93,6 @@ SonataConnector::connect()
     try
     {
 
-
       // Open specified HDF5 edge file with read only access
       H5::H5File edge_h5_file( edge_filename, H5F_ACC_RDONLY );
 
@@ -110,7 +109,6 @@ SonataConnector::connect()
       // Iterate the population groups
       for ( const auto& population_group_name : population_group_names )
       {
-        // std::cerr << "Group: " << population_group_name << "\n";
         const H5::Group population_group( edges_group.openGroup( population_group_name ) );
 
         // Find the number of edge id groups, i.e. ones with label "0", "1", ..., by finding
@@ -144,7 +142,8 @@ SonataConnector::connect()
         // Currently only SONATA edge files with one edge id group is supported
         if ( num_edge_id_groups == 1 )
         {
-          const auto edge_id_group = population_group.openGroup( edge_id_names[ 0 ] );
+          // const auto edge_id_group = population_group.openGroup( edge_id_names[ 0 ] );
+          const H5::Group edge_id_group( population_group.openGroup( edge_id_names[ 0 ] ) );
 
           // Check if weight and delay are given as h5 files
           is_weight_and_delay_from_dataset_( edge_id_group );
@@ -164,15 +163,63 @@ SonataConnector::connect()
             delay_dset_ = edge_id_group.openDataSet( "delay" );
           }
 
-          // HERE
-          read_datasets_();
+          // Verify that source and target are equal in size
+          const auto src_array_size = get_num_elements_( src_node_id_dset_ );
+          const auto tgt_array_size = get_num_elements_( tgt_node_id_dset_ );
+          assert( src_array_size == tgt_array_size );
+
+          hsize_t chunk_size = CHUNK_SIZE;
+
+          // adjust if chunk_size is too large
+          if ( src_array_size < chunk_size )
+          {
+            chunk_size = src_array_size;
+          }
+
+          // Divide into chunks + remainder
+          auto dv = std::div( static_cast< int >( src_array_size ), static_cast< int >( chunk_size ) );
+
+          // std::cerr << "get_attributes_ source node_population...\n";
+          // Retrieve source and target attributes to find which node population to map to
+          get_attributes_( source_attribute_value_, src_node_id_dset_, "node_population" );
+          get_attributes_( target_attribute_value_, tgt_node_id_dset_, "node_population" );
+
+
+          // Iterate chunks
+          hsize_t offset { 0 }; // start coordinates of data selection
+
+          for ( size_t i { 0 }; i < dv.quot; i++ )
+          {
+            // create connections
+            create_connections_( chunk_size, offset );
+
+            // increment offset
+            offset += chunk_size;
+          }
+
+          // Handle remainder
+          if ( dv.rem > 0 )
+          {
+            create_connections_( dv.rem, offset );
+          }
+
+          // Close datasets
+          src_node_id_dset_.close();
+          src_node_id_dset_.close();
+          edge_type_id_dset_.close();
+
+          if ( weight_dataset_exist_ )
+          {
+            syn_weight_dset_.close();
+          }
+
+          if ( delay_dataset_exist_ )
+          {
+            delay_dset_.close();
+          }
 
           // Reset all parameters
           reset_params();
-
-          // Close H5 objects in scope
-          edges_group.close();
-          edge_h5_file.close();
         }
         else
         {
@@ -180,7 +227,12 @@ SonataConnector::connect()
             "Connecting with Sonata files with more than one edgegroup is currently not implemented" );
         }
       } // end iteration over population groups
-    }
+
+      // Close H5 objects in scope
+      edges_group.close();
+      edge_h5_file.close();
+
+    } // end try block
 
     // Might need more catches
     /*
@@ -198,10 +250,24 @@ SonataConnector::connect()
 
     catch ( const H5::Exception& e )
     {
-      // std::cerr << __FILE__ << ":" << __LINE__ << " : " << "H5 exception caught:\n" << e.what() << "\n";
-      std::cerr << __FILE__ << ":" << __LINE__ << " H5 exception caught: " << e.getDetailMsg() << "\n";
-      e.printErrorStack();
+      throw KernelException( "H5 exception caught: " + e.getDetailMsg() );
     }
+
+    /*
+    catch ( const H5::FileIException& e )
+    {
+      // Other:
+      // H5::DataSetIException - caused by the DataSet operations
+      // H5::DataSpaceIException - caused by the DataSpace operations
+      // H5::DataTypeIException - caused by DataSpace operations
+      std::cerr << __FILE__ << ":" << __LINE__ << " : "
+                << "H5 FileIException caught:\n"
+                << e.what() << "\n";
+      std::cerr << __FILE__ << ":" << __LINE__ << " H5 FileIException caught: " << e.getDetailMsg() << "\n";
+      e.printErrorStack();
+      throw KernelException( "Failure caused by H5File operations with file " + edge_filename );
+    }
+    */
 
     catch ( ... )
     {
@@ -216,58 +282,14 @@ hsize_t
 SonataConnector::get_num_elements_( const H5::DataSet& dataset )
 {
   // std::cerr << "get_num_elements_...\n";
-  auto dataspace = dataset.getSpace();
+  H5::DataSpace dataspace = dataset.getSpace();
   hsize_t dims_out[ 1 ];
   dataspace.getSimpleExtentDims( dims_out, NULL );
   // std::cerr << "dims_out: " << *dims_out << "\n";
+  dataspace.close();
   return *dims_out;
 }
 
-
-void
-SonataConnector::read_datasets_()
-{
-  const auto src_array_size = get_num_elements_( src_node_id_dset_ );
-  const auto tgt_array_size = get_num_elements_( tgt_node_id_dset_ );
-
-  // Verify that source and target are equal in size
-  assert( src_array_size == tgt_array_size );
-
-  hsize_t chunk_size = CHUNK_SIZE;
-
-  // adjust if chunk_size is too large
-  if ( src_array_size < chunk_size )
-  {
-    chunk_size = src_array_size;
-  }
-
-  // Divide into chunks + remainder
-  auto dv = std::div( static_cast< int >( src_array_size ), static_cast< int >( chunk_size ) );
-
-  // std::cerr << "get_attributes_ source node_population...\n";
-  // Retrieve source and target attributes to find which node population to map to
-  get_attributes_( source_attribute_value_, src_node_id_dset_, "node_population" );
-  get_attributes_( target_attribute_value_, tgt_node_id_dset_, "node_population" );
-
-
-  // Iterate chunks
-  hsize_t offset { 0 }; // start coordinates of data selection
-
-  for ( size_t i { 0 }; i < dv.quot; i++ )
-  {
-    // create connections
-    create_connections_( chunk_size, offset );
-
-    // increment offset
-    offset += chunk_size;
-  }
-
-  // Handle remainder
-  if ( dv.rem > 0 )
-  {
-    create_connections_( dv.rem, offset );
-  }
-}
 
 void
 SonataConnector::create_connections_( const hsize_t chunk_size, const hsize_t offset )
@@ -405,14 +427,13 @@ SonataConnector::read_subset_int_( const H5::DataSet& dataset,
   hsize_t offset )
 {
   // Define Memory Dataspace. Get file dataspace and select
-  // hyperslab from the file dataspace. In calls for selecting
+  // hyperslab from the file dataspace. In call for selecting
   // hyperslab 'stride' and 'block' are implicitly given as NULL.
   // H5S_SELECT_SET replaces any existing selection with the parameters
   // from this call
   const int array_dim = 1;
   H5::DataSpace memspace( array_dim, &chunk_size, NULL );
   H5::DataSpace dataspace = dataset.getSpace();
-  memspace.selectHyperslab( H5S_SELECT_SET, &chunk_size, &offset );
   dataspace.selectHyperslab( H5S_SELECT_SET, &chunk_size, &offset );
 
   // Read subset
@@ -430,14 +451,13 @@ SonataConnector::read_subset_double_( const H5::DataSet& dataset,
   hsize_t offset )
 {
   // Define Memory Dataspace. Get file dataspace and select
-  // hyperslab from the file dataspace. In calls for selecting
+  // hyperslab from the file dataspace. In call for selecting
   // hyperslab 'stride' and 'block' are implicitly given as NULL.
   // H5S_SELECT_SET replaces any existing selection with the parameters
   // from this call
   const int array_dim = 1;
   H5::DataSpace memspace( array_dim, &chunk_size, NULL );
   H5::DataSpace dataspace = dataset.getSpace();
-  memspace.selectHyperslab( H5S_SELECT_SET, &chunk_size, &offset );
   dataspace.selectHyperslab( H5S_SELECT_SET, &chunk_size, &offset );
 
   // Read subset

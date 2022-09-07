@@ -146,8 +146,6 @@ private:
    */
   void get_synapse_params_( index snode_id, Node& target, thread target_thread, RngPtr rng, int edge_type_id );
 
-  void read_datasets_();
-
   void read_subset_int_( const H5::DataSet& dataset, std::vector< int >& data_buf, hsize_t chunk_size, hsize_t offset );
 
   void read_subset_double_( const H5::DataSet& dataset,

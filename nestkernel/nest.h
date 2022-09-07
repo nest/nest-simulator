@@ -200,6 +200,16 @@ std::vector< double > apply( const ParameterDatum& param, const DictionaryDatum&
 
 Datum* node_collection_array_index( const Datum* datum, const long* array, unsigned long n );
 Datum* node_collection_array_index( const Datum* datum, const bool* array, unsigned long n );
+
+/**
+ * @brief Get only positions of the sliced nodes if metadata contains node positions and the NodeCollection is sliced.
+ *
+ * Puts an array of positions sliced the same way as a sliced NodeCollection into dict.
+ * Positions have to be sliced on introspection because metadata of a sliced NodeCollection
+ * for internal consistency and efficiency points to the metadata of the original
+ * NodeCollection.
+ */
+void slice_positions_if_sliced_nc( DictionaryDatum& dict, const NodeCollectionDatum& nc );
 }
 
 

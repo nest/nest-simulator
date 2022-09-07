@@ -41,20 +41,9 @@ When ``extent`` or ``center``are given explicitly, these values will be used.
 When creating a layer with only a single node, the ``extent` has to be specified explicitly in NEST 3.4 or later.
 
 
-
 Deprecation information
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 * Model ``spike_dilutor`` is now deprecated and can only be used
   in single-threaded mode. To implement connections which transmit
   spikes with fixed probability, use ``bernoulli_synapse`` instead.
-
-
-Changes relevant for NEST developers
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
-Renaming ``calibrate`` to  ``pre_run_hook``
-...........................................
-
-Method ``nest::Node::calibrate()``, used in many models, has been renamed to ``nest::Node::pre_run_hook()``
-to better describe its purpose.

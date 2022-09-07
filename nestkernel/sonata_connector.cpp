@@ -45,7 +45,10 @@ extern "C" herr_t get_group_names_callback( hid_t loc_id, const char* name, cons
 namespace nest
 {
 
+// constexpr hsize_t CHUNK_SIZE = 10000;
+// constexpr hsize_t CHUNK_SIZE = 100000;
 constexpr hsize_t CHUNK_SIZE = 1000000;
+// constexpr hsize_t CHUNK_SIZE = 10000000;
 
 SonataConnector::SonataConnector( const DictionaryDatum& sonata_dynamics )
   : sonata_dynamics_( sonata_dynamics )

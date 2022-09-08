@@ -36,7 +36,7 @@ In that case, in NEST 3.4 and later, the ``extent`` will now be determined exact
 lower-leftmost and upper-rightmost nodes in the layer; earlier versions of NEST added a hard-coded
 padding to the extent. The ``center`` is computed as the center point of the ``extent`` if not given.
 
-When ``extent`` or ``center``are given explicitly, these values will be used.
+When ``extent`` or ``center`` are given explicitly, these values will be used.
 
 When creating a layer with only a single node, the ``extent` has to be specified explicitly in NEST 3.4 or later.
 

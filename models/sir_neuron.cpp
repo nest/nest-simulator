@@ -240,8 +240,7 @@ sir_neuron::pre_run_hook()
   B_.logger_.init();
   V_.rng_ = get_vp_specific_rng( get_thread() );
 
-  // draw next time of update for the neuron from exponential distribution
-  // only if not yet initialized
+  // update neuron in every time step
   if ( S_.t_next_.is_neg_inf() )
   {
     S_.t_next_ = Time::ms( P_.tau_m_ );
@@ -256,8 +255,7 @@ sir_neuron::pre_run_hook()
 void
 sir_neuron::update( Time const& origin, const long from, const long to )
 {
-  //update neuron from timepoint from to to timepoint to
-  // what does (delay) from , ... do?
+  // update neuron from timepoint 'from' to timepoint 'to'
   assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
@@ -269,42 +267,38 @@ sir_neuron::update( Time const& origin, const long from, const long to )
     // of the total input h with respect to the previous step, so sum them up
     S_.h_ += B_.spikes_.get_value( lag );
 
-    // current is always zero
-    // double c = B_.currents_.get_value( lag );
-
     // check, if the update needs to be done
-    // why here use origin.get_steps instead of from ?
     if ( Time::step( origin.get_steps() + lag ) > S_.t_next_ )
     {
       // change the state of the neuron with probability given by
-      // gain function
+      // infection / recovery rate and next neighbors
       // if the state has changed, the neuron produces an event sent to all its
       // targets
 
       // initialize y_new
       int new_y;
 
-      if (S_.y_ == 0) //neuron is susceptible
+      if (S_.y_ == 0) // neuron is susceptible
       {
         new_y = 0;
 
         if (V_.rng_->drand() < P_.beta_sir_ * S_.h_)
         {
-          new_y = 1;
+          new_y = 1; // neuron gets infected
         }
       }
 
-      if (S_.y_ == 1) //neuron is infected
+      if (S_.y_ == 1) // neuron is infected
       {
         new_y = 1;
          
         if (V_.rng_->drand() < P_.mu_sir_)
         {
-          new_y = 2;
+          new_y = 2;  // neuron recovers
         }
       }
 
-      if (S_.y_ == 2) //neuron is recovered
+      if (S_.y_ == 2) // neuron is recovered
       {
         new_y = 2;
       }
@@ -342,8 +336,8 @@ sir_neuron::handle( SpikeEvent& e )
   assert( e.get_delay_steps() > 0 );
 
   // The following logic implements the encoding:
-  // A single spike signals a transition to 1 state, two spikes in same time
-  // step signal the transition to 2 state.
+  // A single spike signals a transition to I state, two spikes in same time
+  // step signal the transition to R state.
   //
   // Remember the node ID of the sender of the last spike being received
   // this assumes that several spikes being sent by the same neuron in the same
@@ -364,11 +358,11 @@ sir_neuron::handle( SpikeEvent& e )
   const Time& t_spike = e.get_stamp();
 
   if ( m == 1 )
-  { // multiplicity == 1, either a single 0->1 event or the first or second of a
-    // pair of 1->2 events
+  { // multiplicity == 1, either a single S->I event or the first or second of a
+    // pair of I->R events
     if ( node_id == S_.last_in_node_id_ && t_spike == S_.t_last_in_spike_ )
     {
-      // received twice the same node ID, so transition 1->2
+      // received twice the same node ID, so transition I->R
       // take double weight to compensate for subtracting first event
       B_.spikes_.add_value(
         e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), -2.0 * e.get_weight() );
@@ -376,14 +370,14 @@ sir_neuron::handle( SpikeEvent& e )
     else
     {
       // count this event negatively, assuming it comes as single event
-      // transition 0->1
+      // transition S->I
       B_.spikes_.add_value(
         e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() );
     }
   }
   else if ( m == 2 )
   {
-    // count this event positively, transition 1->2
+    // count this event positively, transition I->R
     B_.spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), -e.get_weight() );
   }
 

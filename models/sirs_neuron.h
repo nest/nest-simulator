@@ -55,27 +55,24 @@
 namespace nest
 {
 /**
- * SIRS neuron with linear or sigmoidal gain function.
- *
- * This class is a base class that needs to be instantiated with a gain
- * function.
+ * SIRS neuron with three discrete states: S, I, R.
  *
  * @note
  * This neuron has a special use for spike events to convey the
  * sirs state of the neuron to the target. The neuron model
  * only sends a spike if a transition of its state occurs. If the
- * state makes an up-transition it sends a spike with multiplicity 2,
- * if a down-transition occurs, it sends a spike with multiplicity 1.
+ * state makes a transition from S to I it sends a spike with multiplicity 1,
+ * if a transition from I to R occurs, it sends a spike with multiplicity 2.
+ * If a neuron transitions from R to S, no spike is sent because this state
+ * change is not relevant for other receiving neurons.
  * The decoding scheme relies on the feature that spikes with multiplicity
  * larger than 1 are delivered consecutively, also in a parallel setting.
- * The creation of double connections between sirs neurons will
+ * The creation of double connections between sir neurons will
  * destroy the decoding scheme, as this effectively duplicates
  * every event. Using random connection routines it is therefore
  * advisable to set the property 'allow_multapses' to false.
- * The neuron accepts several sources of currents, e.g. from a
- * noise_generator.
- *
- * @see ginzburg_neuron, mccullogh_pitts_neuron, erfc_neuron
+ * 
+ * @see sir_neuron
  */
 class sirs_neuron : public ArchivingNode
 {
@@ -116,9 +113,6 @@ public:
 private:
   void init_buffers_();
   void pre_run_hook();
-
-  // gain function functor
-  // must have an double operator(double) defined
 
   void update( Time const&, const long, const long );
 

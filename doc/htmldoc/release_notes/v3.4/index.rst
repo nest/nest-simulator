@@ -13,6 +13,10 @@ NEST.
 If you transition from a version earlier than 3.3, please see our
 selection of earlier :ref:`transition guides <release_notes>`.
 
+* Calculation of extent when specifying node positions with ``spatial.free``
+  is changed (see `#2459 <https://github.com/nest/nest-simulator/pull/2459>`_).
+  Furthermore, if creating a single node, extent has to be explicitly specified.
+
 Deprecation information
 ~~~~~~~~~~~~~~~~~~~~~~~
 

@@ -38,7 +38,7 @@ padding to the extent. The ``center`` is computed as the center point of the ``e
 
 When ``extent`` or ``center`` are given explicitly, these values will be used.
 
-When creating a layer with only a single node, the ``extent` has to be specified explicitly in NEST 3.4 or later.
+When creating a layer with only a single node, the ``extent`` has to be specified explicitly in NEST 3.4 or later.
 
 
 Deprecation information

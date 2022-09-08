@@ -31,14 +31,13 @@ Inferred extent of spatial layers with freely placed neurons
 ............................................................
 
 Spatial layers can be created by specifying only the node positions using ``spatial.free``,
-without explicitly specifying the ``extent`` or ``center`` of the layer. 
-In that case, in NEST 3.4 and later, the ``extent`` will now be determined exactly by the position of the
+without explicitly specifying the ``extent``. 
+In that case, in NEST 3.4 and later, the ``extent`` will be determined by the position of the
 lower-leftmost and upper-rightmost nodes in the layer; earlier versions of NEST added a hard-coded
-padding to the extent. The ``center`` is computed as the center point of the ``extent`` if not given.
+padding to the extent. The ``center`` is computed as the midpoint between the lower-leftmost and
+upper-rightmost nodes.
 
-When ``extent`` or ``center`` are given explicitly, these values will be used.
-
-When creating a layer with only a single node, the ``extent`` has to be specified explicitly in NEST 3.4 or later.
+When creating a layer with only a single node, the ``extent`` has to be specified explicitly.
 
 
 Deprecation information

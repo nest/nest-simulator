@@ -7,14 +7,9 @@ An unfortunate aspect of computing is that a single component may be called some
 organizations, manufacturers, and companies. We also have overlapping terms, such as nodes, that have one meaning
 in computational neuroscience, and another in computer hardware.
 
+To optimize NEST performance, it's important to understand the system you are using and its components.
 Here we try to provide a brief description of the generic setup of hardware and corresponding software.
-
 Note that these are not terms used specifically for NEST, but are common in HPC organizations.
-
-.. image:: ../static/img/hpc_ware1.png
-
-
-
 
 .. note::
 
@@ -22,54 +17,50 @@ Note that these are not terms used specifically for NEST, but are common in HPC 
   nodes and cores are the most important terms to know.
 
 
-Description of physical components (left side of image):
----------------------------------------------------------
+.. seealso::
 
-In the image above, on the left side we have a representation of a typical hardware setup.
+    * :ref:`slurm_script`
+    * :ref:`threads`
+    * :ref:`mpi_process`
 
-* In a supercomputer or cluster, there are many nodes.
 
-* Each node contains CPUs (or processors) and each CPU has its own cores and cache (L1, L2, L3).
+.. image:: ../static/img/hpc_ware.png
+    :align: center
+    :scale: 80%
 
-* Each node is basically its own computer and comprises other components not shown here.
+.. grid:: 1 1 2 2
 
-* The cores are where the computations are performed.
+    .. grid-item-card:: Physical components (left side of image)
 
-* The cache is the local memory store for that CPU.
+        This a representation of a typical hardware setup.
 
-Data flow
----------
+        * In a supercomputer or cluster, there are many nodes.
 
-* Data and instructions (your code) are retrieved from the RAM (not shown) and passed to the cache and allocated to the cores.
+        * Each node contains processors (also called CPUs) and each one has its own cores and cache (L1, L2, L3)
 
-* The cores execute the instructions and return output to the cache.
+        * Each node is basically its own computer and comprises other components not shown here.
 
-Description of software components (right side of image):
----------------------------------------------------------
+        * The cores are where the computations are performed.
 
-On the right side, we see how the data and instructions are allocated through software.
+        * The cache is the local memory store for that processor.
 
-* A set of data and instructions that belong together is referred to as a task or process. This can be your entire simulation
-  script or a subset of it.
+    .. grid-item-card:: Software components (right side of image)
 
-* We typically use the standard Message Passing Interface (MPI) to instruct how processes work in parallel (See e.g.,
-  `OpenMPI <https://www.open-mpi.org/>`_).
+        This is how the data and instructions are allocated through software.
 
-* The smallest unit of executable program is known as a thread. The thread is a virtual component.
+        * A set of data and instructions that belong together is referred to as a task or process. This can be your entire simulation
+          script or a subset of it.
 
-* A single core can have one or two threads. Therefore the total number of possible threads is double the number of cores.
-  In NEST, we recommend only having one thread per core.
+        * We typically use the standard Message Passing Interface (MPI) to instruct how processes work in parallel (See e.g.,
+          `OpenMPI <https://www.open-mpi.org/>`_).
 
-* We can adjust the number of processes and threads. For example, instead of the 2 processes and 4 threads per process in the
-  image above, we could have 1 process with 8 threads.
+        * The smallest unit of executable program is known as a thread. The thread is a virtual component.
 
-* We can control the number and placement of threads with programs like `OpenMP <https://www.openmp.org/>`_.
+        * A single core can have one or two threads. Therefore the total number of possible threads is double the number of cores.
+          *In NEST, we recommend only having one thread per core.*
 
 To efficiently run your large and complex simulation, you need to configure the optimal number of threads and processes for
 your simulation and the given hardware of the HPC system you are using.
 
-The section :ref:`slurm_script`  provides a detailed example of setting up a job script with the
-possible configuration options.
-
-
+See configuration options for :ref:`threads` and :ref:`MPI processes <mpi_process>`.
 

@@ -14,6 +14,13 @@ Always consult the documentation of the system you are running on to find out ex
 You will likely need to alter the job script to optimize the performance on the system your're using.
 Finding the optimal parameters for your script may require some trial and error.
 
+
+.. seealso::
+
+    * :ref:`overview_hardware`
+    * :ref:`threads`
+    * :ref:`mpi_process`
+
 .. code-block:: sh
 
    #!/bin/bash -l

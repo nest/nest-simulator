@@ -30,7 +30,7 @@ Changes in NEST behavior
 Inferred extent of spatial layers with freely placed neurons
 ............................................................
 
-Spatial layers can be created by specifiying only the node positions using ``spatial.free``,
+Spatial layers can be created by specifying only the node positions using ``spatial.free``,
 without explicitly specifying the ``extent`` or ``center`` of the layer. 
 In that case, in NEST 3.4 and later, the ``extent`` will now be determined exactly by the position of the
 lower-leftmost and upper-rightmost nodes in the layer; earlier versions of NEST added a hard-coded

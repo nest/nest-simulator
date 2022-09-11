@@ -1,4 +1,3 @@
-# %%
 # -*- coding: utf-8 -*-
 #
 # helpers.py
@@ -30,15 +29,6 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patch
 
 
-# RGB values for the colors used in the generated images
-green = (0, 115, 0)
-red = (180, 0, 0)
-black = (0, 0, 0)
-dark_grey = (50, 50, 50)
-light_grey = (160, 160, 160)
-white = (255, 255, 255)
-
-
 def get_puzzle(puzzle_index):
     """returns one of 8 Sudoku configuration to be solved.
 
@@ -51,10 +41,6 @@ def get_puzzle(puzzle_index):
         digit otherwise.
     """
     init_config = None
-
-    if not 0 <= puzzle_index < 8:
-        raise ValueError(
-            "Cannot return puzzle - index must be between 0 and 7!")
 
     if puzzle_index == 0:
         # Dream problem: make the network come up with a valid sudoku without
@@ -154,6 +140,10 @@ def get_puzzle(puzzle_index):
                        [9, 0, 4,  0, 0, 6,  0, 0, 7],
                        [0, 0, 0,  0, 0, 8,  0, 0, 2]]
 
+    else:
+        raise ValueError(
+            f"No puzzle for Index {puzzle_index} found.")
+
     return np.array(init_config)
 
 
@@ -208,16 +198,6 @@ def validate_solution(puzzle, solution):
     return valid, boxes, rows, cols
 
 
-cell_size = 18  # inner size of the cell
-grid_width = 2  # width of the grid separating cells
-# step size from a position in a cell to the same position in the next
-cell_step = cell_size + grid_width
-
-field_size = 9 * cell_size + 10 * grid_width
-frame_width = 10
-image_size = field_size + 2*frame_width
-
-
 def plot_field(puzzle, solution, with_color=False):
     """generates a graphical representation of a Sudoku field. Digits that are
     given by the puzzle are represented as bold and black, while calculated
@@ -234,72 +214,99 @@ def plot_field(puzzle, solution, with_color=False):
     Returns:
         PIL.Image: A visual representation of the Sudoku solution.
     """
-    ax2 = plt.subplot2grid((20, 3), (10, 2), rowspan=10, colspan=1)
-    decorate_sudoku_box(ax2)
-    fill_numbers(ax2, puzzle, solution)
+    ax = plt.subplot2grid((3, 3), (0, 1), rowspan=3, colspan=2)
+    decorate_sudoku_box(ax)
+    fill_numbers(ax, puzzle, solution)
 
     # color every other box in light grey
     for i in range(0, 9, 3):
         for j in range(0, 9, 3):
             if (i+j) % 2 == 0:
-                ax2.add_patch(patch.Rectangle((j, i), 3, 3, facecolor="grey",
-                                              alpha=0.5))
+                ax.add_patch(patch.Rectangle((j, i), 3, 3, facecolor="grey",
+                                             alpha=0.5))
+
+    # Plotting invisible lines ensures a consistent scaling of the padding around
+    # the plot even when no hbars or vbars are drawn to indicate errors in the solution.
+    ax.vlines(0, -0.5, 9.5, alpha=0)
+    ax.hlines(0, -0.5, 9.5, alpha=0)
+
     if with_color:
         valid, boxes, rows, cols = validate_solution(puzzle, solution)
-        # draw a red or green line in the background to indicate validity of
-        # all rows and columns
 
-        for i in range(9):
-            ax2.vlines(np.where(rows)[0] +0.5, -0.5, 9.5, color="red")
-            ax2.hlines(np.where(cols), 0, 9, color="red")
+        # draw red lines around the field to indicate validity of rows and cols
+        for f, values in zip((ax.vlines, ax.hlines), (rows, cols)):
+            locations = np.where(np.invert(values))[0] + 0.5
+            # f(locations, -0.3, 9.3, color="red", linewidth=4, alpha=0.25)
+            f(locations, -0.5, 0, color="red")
+            f(locations, 9, 9.5, color="red")
 
-        # draw a red frame around boxes that are not valid
+        # draw a red frame around invalid boxes
         for i in range(3):
             for j in range(3):
                 if not boxes[i, j]:
-                    print(f"patching: {i,j}")
-                    ax2.add_patch(patch.Rectangle((3*j, 3*j + 0.1), 2.9, 2.9,
-                                                  color="red", fill=False, linewidth=3))
-    return ax2
+                    ax.add_patch(patch.Rectangle((3*j, 3*j), 3, 3,
+                                                 color="red", fill=False, linewidth=3))
+    return ax
 
 
-def fill_numbers(axis, puzzle, solution):
-    # fill the numbers
+def fill_numbers(ax, puzzle, solution):
+    """Fill the digits of a proposed solution into an Axes object which represents the
+    Sudoku field.
+
+    Args:
+        ax (plt.Axes): Axes in wich to draw the numbers
+        puzzle (np.array): array of shape (9,9) that represents the puzzle
+        that is being solved. See get_puzzle()
+        solution (np.array): array of shape (9,9) representing the solution.
+    """
     for i in range(9):
         for j in range(9):
-            # quirk: when plotting matrix, transpose it; i is in y-axis and j is in x-axis
-            if puzzle[i][j] == 0:
+            if solution[i][j] == 0:
+                continue
+            if puzzle[i][j] != 0:
                 text_style = 'normal'
-                text_col = 'black'
-            else:
-                text_style = 'italic'
                 if puzzle[i][j] == solution[i][j]:
-                    text_col = 'gray'
+                    text_col = 'black'
                 else:
                     # If the network proposes a solution where a digit
                     # from the input configuration is altered, that
                     # digit is colored in red.
                     text_col = 'red'
 
-            axis.text(j + 0.5, i + 0.5, solution[i][j], horizontalalignment='center',
-                      verticalalignment='center', color=text_col, fontsize=9, style=text_style)
+            else:
+                text_style = 'italic'
+                text_col = 'gray'
+
+            ax.text(j + 0.5, i + 0.5, solution[i][j], horizontalalignment='center',
+                    verticalalignment='center', color=text_col, fontsize=9, style=text_style)
 
 
-def decorate_sudoku_box(axis):
-    """
-    Modify line and color properties of sudoku grid to make it look good
+def decorate_sudoku_box(ax):
+    """Decorate the Axes object to resemble an empty sudoku field.
+
+    Args:
+        ax (plt.Axes): Axes to be decorated
     """
     [x, y, xr, yr] = generate_sudoku_box_lines()
-    axis.plot(x, y, color='gray')
-    axis.plot(xr, yr, color='gray', linewidth=2)
-    # turn off tick markers
-    axis.set_xticks([])
-    axis.set_yticks([])
+    ax.plot(x, y, color='gray')
+    ax.plot(y, x, color='gray')
 
+    ax.plot(xr, yr, color='black', linewidth=2)
+    ax.plot(yr, xr, color='black', linewidth=2)
+
+    ax.axis("off")
+    ax.set_aspect("equal")
 
 
 def generate_sudoku_box_lines():
-    # TODO: unfuck this shite!
+    """Generate coordinates for the lines that divide the Sudoku field
+
+    Returns:
+        list: List of 4 lists that represent the coordinates which separate
+        the Sudoku field. The first pair is used to separate all cells, and
+        the second pair is drawn around 3x3 boxes.
+    """
+
     # lines for cells
     x = []
     y = []
@@ -307,40 +314,12 @@ def generate_sudoku_box_lines():
     xr = []
     yr = []
 
-    # data for vertical lines
     for i in range(10):
-        x.append(i)
-        x.append(i)
-        y.append(0)
-        y.append(9)
-        x.append(None)
-        y.append(None)
-        if divmod(i, 3)[1] == 0:
-            xr.append(i)
-            xr.append(i)
-            yr.append(0)
-            yr.append(9)
-            xr.append(None)
-            yr.append(None)
-
-    # data for horizontal lines
-    for j in range(10):
-        x.append(0)
-        x.append(9)
-        y.append(j)
-        y.append(j)
-        x.append(None)
-        y.append(None)
-        if divmod(j, 3)[1] == 0:
-            xr.append(0)
-            xr.append(9)
-            yr.append(j)
-            yr.append(j)
-            xr.append(None)
-            yr.append(None)
-
+        if i % 3 != 0:
+            x.extend([i, i, None])
+            y.extend([0, 9, None])
+        else:
+            xr.extend([i, i, None])
+            yr.extend([0, 9, None])
 
     return [x, y, xr, yr]
-
-
-# %%

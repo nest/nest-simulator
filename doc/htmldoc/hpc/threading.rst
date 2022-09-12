@@ -57,8 +57,6 @@ For more advanced cases, you may want to look into pinning schemes, detailed bel
 Sequential pinning scheme
 `````````````````````````
 
-Sequential pinning scheme means the cores are allocated in sequence.
-
 .. figure:: ../static/img/CPUs-lin-lin.gif
 
    Sequential placing
@@ -70,7 +68,7 @@ Sequential pinning scheme means the cores are allocated in sequence.
 - Possible disadvantage
    - This scheme could be slower: threads need to fight for resources
 - Possible advantages
-   - You might save enrergy: shut off unused processors processors
+   - You might save enrergy: shut off unused processors
    - This scheme may allow sharing of memory prefetching
 
 Distant pinning scheme

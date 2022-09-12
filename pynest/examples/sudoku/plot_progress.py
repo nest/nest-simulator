@@ -59,10 +59,11 @@ def get_progress(puzzle, solution):
 in_files = ["output/10Hz_puzzle_3.pkl", "output/350Hz_puzzle_3.pkl"]
 temp_dir = "tmp"                # Name of directory for temporary files
 out_file = "sudoku.gif"         # Name of the output GIF
-keep_temps = True              # If True, temporary files will not be deleted
+keep_temps = False              # If True, temporary files will not be deleted
 
-plt.rcParams['figure.constrained_layout.use'] = True
-plt.rcParams['figure.dpi'] = 120
+px = 1/plt.rcParams['figure.dpi']
+plt.subplots(figsize=(600*px, 400*px))
+
 
 if os.path.exists(out_file):
     print(f"Target file ({out_file}) already exists! Aborting.")
@@ -91,8 +92,6 @@ for file in in_files:
     solution_progress = []
 
     lines.append([[], [], f"{sim_data['noise_rate']}Hz"])
-
-    field = helpers.plot_field(sim_data['puzzle'], sim_data['puzzle'], False)
 
     n_iterations = len(solution_states)
 
@@ -124,11 +123,13 @@ for file in in_files:
         stats.text(0, 0.2, f'{sim_data["noise_rate"]}Hz\n', horizontalalignment='left', verticalalignment='center',
                    fontsize=12, color='gray')
 
+        ax = plt.subplot2grid((3, 3), (0, 1), rowspan=3, colspan=2)
         if i == 0:
             # repeat the (colorless) starting configuration several times
+            field = helpers.plot_field(sim_data['puzzle'], sim_data['puzzle'], ax, False)
             image_repeat = 8
         else:
-            field = helpers.plot_field(puzzle, current_state, True)
+            field = helpers.plot_field(puzzle, current_state, ax, True)
             image_repeat = 1
 
         if i == len(solution_states) - 1:
@@ -136,6 +137,7 @@ for file in in_files:
             # before the gif loops again
             image_repeat = 15
 
+        plt.subplots_adjust(wspace=0, hspace=0, left=0.1, right=1.05)
         for j in range(image_repeat):
             plt.savefig(os.path.join(temp_dir, f"{str(image_count).zfill(4)}.png"))
             image_count += 1

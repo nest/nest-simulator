@@ -198,7 +198,7 @@ def validate_solution(puzzle, solution):
     return valid, boxes, rows, cols
 
 
-def plot_field(puzzle, solution, with_color=False):
+def plot_field(puzzle, solution, ax, with_color=False):
     """generates a graphical representation of a Sudoku field. Digits that are
     given by the puzzle are represented as bold and black, while calculated
     digits are represented in grey and italic.
@@ -207,6 +207,7 @@ def plot_field(puzzle, solution, with_color=False):
         puzzle (np.array): array of shape (9,9) that represents the puzzle
         that is being solved. See get_puzzle()
         solution (np.array): array of shape (9,9) representing the solution.
+        ax (plt.Axes): Axes object on which to draw the field.
         with_color (bool, optional): if True, green and red are used to
         indicate which parts of the solution are valid and which are not.
         Otherwise, only black and white are used. Defaults to False.
@@ -214,7 +215,6 @@ def plot_field(puzzle, solution, with_color=False):
     Returns:
         PIL.Image: A visual representation of the Sudoku solution.
     """
-    ax = plt.subplot2grid((3, 3), (0, 1), rowspan=3, colspan=2)
     decorate_sudoku_box(ax)
     fill_numbers(ax, puzzle, solution)
 
@@ -237,15 +237,15 @@ def plot_field(puzzle, solution, with_color=False):
         for f, values in zip((ax.vlines, ax.hlines), (rows, cols)):
             locations = np.where(np.invert(values))[0] + 0.5
             # f(locations, -0.3, 9.3, color="red", linewidth=4, alpha=0.25)
-            f(locations, -0.5, 0, color="red")
-            f(locations, 9, 9.5, color="red")
+            f(locations, -0.5, -0.1, color="red", linewidth=4)
+            f(locations, 9.1, 9.5, color="red", linewidth=4)
 
         # draw a red frame around invalid boxes
         for i in range(3):
             for j in range(3):
                 if not boxes[i, j]:
                     ax.add_patch(patch.Rectangle((3*j, 3*j), 3, 3,
-                                                 color="red", fill=False, linewidth=3))
+                                                 color="red", fill=False, linewidth=3.5))
     return ax
 
 
@@ -278,7 +278,7 @@ def fill_numbers(ax, puzzle, solution):
                 text_col = 'gray'
 
             ax.text(j + 0.5, i + 0.5, solution[i][j], horizontalalignment='center',
-                    verticalalignment='center', color=text_col, fontsize=9, style=text_style)
+                    verticalalignment='center', color=text_col, fontsize=15, style=text_style)
 
 
 def decorate_sudoku_box(ax):

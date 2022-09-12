@@ -300,9 +300,6 @@ void
 SonataConnector::create_connections_( const hsize_t chunk_size, const hsize_t offset )
 {
 
-  const index static_syn_model_id = kernel().model_manager.get_synapse_model_id( "static_synapse" );
-  DictionaryDatum dd_empty = DictionaryDatum( new Dictionary );
-  ( *dd_empty )[ "receptor_type" ] = 1;
 
   // Read subsets
   std::vector< int > src_node_id_data_subset( chunk_size );
@@ -329,6 +326,11 @@ SonataConnector::create_connections_( const hsize_t chunk_size, const hsize_t of
   // std::cerr << "Enter parallel region...\n";
 #pragma omp parallel
   {
+
+    const index static_syn_model_id = kernel().model_manager.get_synapse_model_id( "static_synapse" );
+    DictionaryDatum dd_empty = DictionaryDatum( new Dictionary );
+    ( *dd_empty )[ "receptor_type" ] = 1;
+
     const auto tid = kernel().vp_manager.get_thread_id();
 
     // try

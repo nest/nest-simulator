@@ -54,6 +54,7 @@ variables related the implementation of the multiprocessing API.
 .. seealso::
 
    For general details on pinning options in OpenMPI see `the HPC wiki article <https://hpc-wiki.info/hpc/Binding/Pinning>`_.
+   The `Slurm documentation <https://slurm.schedmd.com/mpi_guide.html#open_mpi>`_  contains additional options for running MPI.
 
 In addition, you can consider the number of physical processors (also known as  CPUs) you are using.
 See :ref:`overview_hardware`.
@@ -76,7 +77,6 @@ with eachother (e.g., virtual memory thrashing).
 Over-subscribing processes is typically used in development in testing and can help identify performance bottlenecks.
 But performance can be degraded in this scenario.
 
-The `Slurm documentation <https://slurm.schedmd.com/mpi_guide.html#open_mpi>`_  contains additional options for running MPI.
 
 
 

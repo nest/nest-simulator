@@ -3,9 +3,15 @@
 Guide to parallel computing
 ===========================
 
+This guide is to explain how NEST utilizes thread parallel and distributed computing in simulations.
+We explain how neurons, devices, and synapses in NEST intersect with threads and processes in parallel setups.
 
-.. contents::
-   :local:
+.. admonition:: Speed up parallel simulations
+
+    During network construction, create all nodes of one type (e.g., neurons) followed by all nodes of another type (e.g., devices).
+    See :py:func:`.Create`.
+    For comparison tests, see `this GitHub thread <https://github.com/nest/nest-simulator/pull/2290>`_.
+
 
 What is parallelization?
 ------------------------

@@ -175,9 +175,7 @@ Or, if you are using multiple MPI processes, you can invoke the MPI software exp
 .. note:: 
 
    ``openmpi`` is but one MPI software available. Always check what is available on the system you are using.
-
-
-The `Slurm documentation <https://slurm.schedmd.com/mpi_guide.html#open_mpi>`_  contains additional options for running MPI.
+    The `Slurm documentation <https://slurm.schedmd.com/mpi_guide.html#open_mpi>`_  contains additional options for running MPI.
 
 
 ----
@@ -222,6 +220,4 @@ Don't forget to set ``local_num_threads`` in your script!
      - Prevents other processes or jobs from doing work on the same node
 
 
-For more information about how parallelism works in NEST see our guide to :ref:`parallel_computing`.
 
-For advanced configuration options, see our :ref:`mpi_process` and :ref:`threads` documentation.

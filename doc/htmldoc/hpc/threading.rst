@@ -25,7 +25,7 @@ Pinning threads
 Pinning threads allows you to control the distribution of threads across available cores on your system, and is particularly
 useful in high performance computing (HPC) systems.
 
-See also Anno et al. [1]_ for detailed investigation into this topic.
+See also Anno et al. 2022 [1]_ for detailed investigation into this topic.
 
 We recommend that you include  ``OMP_NUM_THREADS=$CPUS_PER_TASK`` and ``OMP_PROC_BIND=True`` in your :ref:`job script <slurm_script>`.
 

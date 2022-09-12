@@ -324,14 +324,27 @@ SonataConnector::create_connections_( const hsize_t chunk_size, const hsize_t of
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
 
   // std::cerr << "Enter parallel region...\n";
+
+  const auto n_threads = kernel().vp_manager.get_num_threads();
+  std::vector< DictionaryDatum > dd_vec( n_threads );
+  for ( size_t i = 0; i < n_threads; i++ )
+  {
+    DictionaryDatum dd_tmp = DictionaryDatum( new Dictionary );
+    ( *dd_tmp )[ "receptor_type" ] = 1;
+    dd_vec[ i ] = dd_tmp;
+  }
+
+  const index static_syn_model_id = kernel().model_manager.get_synapse_model_id( "static_synapse" );
+  // DictionaryDatum dd_empty = DictionaryDatum( new Dictionary );
+  //( *dd_empty )[ "receptor_type" ] = 1;
+
 #pragma omp parallel
   {
 
-    const index static_syn_model_id = kernel().model_manager.get_synapse_model_id( "static_synapse" );
-    DictionaryDatum dd_empty = DictionaryDatum( new Dictionary );
-    ( *dd_empty )[ "receptor_type" ] = 1;
 
     const auto tid = kernel().vp_manager.get_thread_id();
+
+    const auto dd_empty = dd_vec[ tid ];
 
     // try
     //{
@@ -412,7 +425,6 @@ SonataConnector::create_connections_( const hsize_t chunk_size, const hsize_t of
         delay,                                               // fixed as 1
         weight );
         */
-
 
       const double delay_fixed = 1.0;
       const double weight_fixed = 1.0;

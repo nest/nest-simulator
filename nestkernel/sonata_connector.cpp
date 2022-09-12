@@ -245,11 +245,13 @@ SonataConnector::connect()
     }
     */
 
-    catch ( std::exception const& e )
-    {
-      std::cerr << __FILE__ << ":" << __LINE__ << " : "
-                << "Exception caught " << e.what() << "\n";
-    }
+    /*
+     catch ( std::exception const& e )
+     {
+       std::cerr << __FILE__ << ":" << __LINE__ << " : "
+                 << "Exception caught " << e.what() << "\n";
+     }
+     */
 
     catch ( const H5::Exception& e )
     {
@@ -298,6 +300,10 @@ void
 SonataConnector::create_connections_( const hsize_t chunk_size, const hsize_t offset )
 {
 
+  const index static_syn_model_id = kernel().model_manager.get_synapse_model_id( "static_synapse" );
+  DictionaryDatum dd_empty = DictionaryDatum( new Dictionary );
+  ( *dd_empty )[ "receptor_type" ] = 1;
+
   // Read subsets
   std::vector< int > src_node_id_data_subset( chunk_size );
   std::vector< int > tgt_node_id_data_subset( chunk_size );
@@ -325,102 +331,104 @@ SonataConnector::create_connections_( const hsize_t chunk_size, const hsize_t of
   {
     const auto tid = kernel().vp_manager.get_thread_id();
 
-    try
+    // try
+    //{
+    //  Retrieve the correct NodeCollections
+    const auto nest_nodes = getValue< DictionaryDatum >( sonata_dynamics_->lookup( "nodes" ) );
+    const auto current_source_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( source_attribute_value_ ) );
+    const auto current_target_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( target_attribute_value_ ) );
+
+    auto snode_it = current_source_nc->begin();
+    auto tnode_it = current_target_nc->begin();
+
+
+    // Iterate the datasets and create the connections
+    for ( hsize_t i = 0; i < chunk_size; ++i )
     {
-      // Retrieve the correct NodeCollections
-      const auto nest_nodes = getValue< DictionaryDatum >( sonata_dynamics_->lookup( "nodes" ) );
-      const auto current_source_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( source_attribute_value_ ) );
-      const auto current_target_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( target_attribute_value_ ) );
 
-      auto snode_it = current_source_nc->begin();
-      auto tnode_it = current_target_nc->begin();
+      const auto sonata_source_id = src_node_id_data_subset[ i ];
+      const index snode_id = ( *( snode_it + sonata_source_id ) ).node_id;
 
+      const auto sonata_target_id = tgt_node_id_data_subset[ i ];
+      const index target_id = ( *( tnode_it + sonata_target_id ) ).node_id;
+      Node* target = kernel().node_manager.get_node_or_proxy( target_id );
 
-      // Iterate the datasets and create the connections
-      for ( hsize_t i = 0; i < chunk_size; ++i )
-      {
-
-        const auto sonata_source_id = src_node_id_data_subset[ i ];
-        const index snode_id = ( *( snode_it + sonata_source_id ) ).node_id;
-
-        const auto sonata_target_id = tgt_node_id_data_subset[ i ];
-        const index target_id = ( *( tnode_it + sonata_target_id ) ).node_id;
-        Node* target = kernel().node_manager.get_node_or_proxy( target_id );
-
-        /*
-          if ( not target ) // TODO: remove
-          {
-  #pragma omp critical
-            {
-              std::cerr << kernel().vp_manager.get_thread_id() << ": " << target_id << " node_or_proxy is NULL!\n";
-            }
-          }
-          */
-
-        const thread target_thread = target->get_thread();
-
-        // Skip if target is not on this thread, or not on this MPI process.
-        if ( target->is_proxy() or tid != target_thread )
+      /*
+        if ( not target ) // TODO: remove
         {
-          continue;
-        }
-
-        /*
-          const auto edge_type_id = edge_type_id_data_subset[ i ];
-          const auto syn_spec = getValue< DictionaryDatum >( edge_params_->lookup( std::to_string( edge_type_id ) ) );
-
-          auto get_syn_property = [ &syn_spec, &i ]( const bool dataset, std::vector< double >& data, const Name& name )
+#pragma omp critical
           {
-            if ( dataset ) // Syn_property is set from dataset if the dataset is defined
-            {
-              if ( not data[ i ] ) // TODO: remove
-              {
-  #pragma omp critical
-                {
-                  // //std::cerr << kernel().vp_manager.get_thread_id() << ": " << name << " " << i
-                  //          << " data index is NULL!\n";
-                }
-              }
-              return data[ i ];
-            }
-            else if ( syn_spec->known( name ) ) // Set syn_property from syn_spec if it is defined there
-            {
-              return static_cast< double >( ( *syn_spec )[ name ] );
-            }
-            return numerics::nan; // Default value is NaN
-          };
+            std::cerr << kernel().vp_manager.get_thread_id() << ": " << target_id << " node_or_proxy is NULL!\n";
+          }
+        }
+        */
 
-          const double weight = get_syn_property( weight_dataset_exist_, syn_weight_data_subset, names::weight );
-          const double delay = get_syn_property( delay_dataset_exist_, delay_data_subset, names::delay );
+      const thread target_thread = target->get_thread();
 
-          RngPtr rng = get_vp_specific_rng( target_thread );
-          get_synapse_params_( snode_id, *target, target_thread, rng, edge_type_id );
-
-          kernel().connection_manager.connect( snode_id,
-          target,
-          target_thread,
-          type_id_2_syn_model_.at( edge_type_id ),             // static synapse
-          type_id_2_param_dicts_.at( edge_type_id ).at( tid ), // send empty param dict
-          delay,                                               // fixed as 1
-          weight );
-          */
-
-        const index static_syn_model_id = kernel().model_manager.get_synapse_model_id( "static_synapse" );
-        DictionaryDatum dd_empty = DictionaryDatum( new Dictionary );
-        const double delay_fixed = 1.0;
-        const double weight_fixed = 1.0;
-
-
-        kernel().connection_manager.connect(
-          snode_id, target, target_thread, static_syn_model_id, dd_empty, delay_fixed, weight_fixed );
+      // Skip if target is not on this thread, or not on this MPI process.
+      if ( target->is_proxy() or tid != target_thread )
+      {
+        continue;
       }
+
+      /*
+        const auto edge_type_id = edge_type_id_data_subset[ i ];
+        const auto syn_spec = getValue< DictionaryDatum >( edge_params_->lookup( std::to_string( edge_type_id ) ) );
+
+        auto get_syn_property = [ &syn_spec, &i ]( const bool dataset, std::vector< double >& data, const Name& name )
+        {
+          if ( dataset ) // Syn_property is set from dataset if the dataset is defined
+          {
+            if ( not data[ i ] ) // TODO: remove
+            {
+#pragma omp critical
+              {
+                // //std::cerr << kernel().vp_manager.get_thread_id() << ": " << name << " " << i
+                //          << " data index is NULL!\n";
+              }
+            }
+            return data[ i ];
+          }
+          else if ( syn_spec->known( name ) ) // Set syn_property from syn_spec if it is defined there
+          {
+            return static_cast< double >( ( *syn_spec )[ name ] );
+          }
+          return numerics::nan; // Default value is NaN
+        };
+
+        const double weight = get_syn_property( weight_dataset_exist_, syn_weight_data_subset, names::weight );
+        const double delay = get_syn_property( delay_dataset_exist_, delay_data_subset, names::delay );
+
+        RngPtr rng = get_vp_specific_rng( target_thread );
+        get_synapse_params_( snode_id, *target, target_thread, rng, edge_type_id );
+
+        kernel().connection_manager.connect( snode_id,
+        target,
+        target_thread,
+        type_id_2_syn_model_.at( edge_type_id ),             // static synapse
+        type_id_2_param_dicts_.at( edge_type_id ).at( tid ), // send empty param dict
+        delay,                                               // fixed as 1
+        weight );
+        */
+
+
+      const double delay_fixed = 1.0;
+      const double weight_fixed = 1.0;
+
+
+      kernel().connection_manager.connect(
+        snode_id, target, target_thread, static_syn_model_id, dd_empty, delay_fixed, weight_fixed );
     }
+    //}
+    /*
     catch ( std::exception& err )
     {
       // We must create a new exception here, err's lifetime ends at
       // the end of the catch block.
       exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
+    */
+
   } // omp parallel
 
   // check if any exceptions have been raised

@@ -365,43 +365,54 @@ SonataConnector::create_connections_( const hsize_t chunk_size, const hsize_t of
           continue;
         }
 
-        const auto edge_type_id = edge_type_id_data_subset[ i ];
-        const auto syn_spec = getValue< DictionaryDatum >( edge_params_->lookup( std::to_string( edge_type_id ) ) );
+        /*
+          const auto edge_type_id = edge_type_id_data_subset[ i ];
+          const auto syn_spec = getValue< DictionaryDatum >( edge_params_->lookup( std::to_string( edge_type_id ) ) );
 
-        auto get_syn_property = [ &syn_spec, &i ]( const bool dataset, std::vector< double >& data, const Name& name )
-        {
-          if ( dataset ) // Syn_property is set from dataset if the dataset is defined
+          auto get_syn_property = [ &syn_spec, &i ]( const bool dataset, std::vector< double >& data, const Name& name )
           {
-            if ( not data[ i ] ) // TODO: remove
+            if ( dataset ) // Syn_property is set from dataset if the dataset is defined
             {
-#pragma omp critical
+              if ( not data[ i ] ) // TODO: remove
               {
-                // //std::cerr << kernel().vp_manager.get_thread_id() << ": " << name << " " << i
-                //          << " data index is NULL!\n";
+  #pragma omp critical
+                {
+                  // //std::cerr << kernel().vp_manager.get_thread_id() << ": " << name << " " << i
+                  //          << " data index is NULL!\n";
+                }
               }
+              return data[ i ];
             }
-            return data[ i ];
-          }
-          else if ( syn_spec->known( name ) ) // Set syn_property from syn_spec if it is defined there
-          {
-            return static_cast< double >( ( *syn_spec )[ name ] );
-          }
-          return numerics::nan; // Default value is NaN
-        };
+            else if ( syn_spec->known( name ) ) // Set syn_property from syn_spec if it is defined there
+            {
+              return static_cast< double >( ( *syn_spec )[ name ] );
+            }
+            return numerics::nan; // Default value is NaN
+          };
 
-        const double weight = get_syn_property( weight_dataset_exist_, syn_weight_data_subset, names::weight );
-        const double delay = get_syn_property( delay_dataset_exist_, delay_data_subset, names::delay );
+          const double weight = get_syn_property( weight_dataset_exist_, syn_weight_data_subset, names::weight );
+          const double delay = get_syn_property( delay_dataset_exist_, delay_data_subset, names::delay );
 
-        RngPtr rng = get_vp_specific_rng( target_thread );
-        get_synapse_params_( snode_id, *target, target_thread, rng, edge_type_id );
+          RngPtr rng = get_vp_specific_rng( target_thread );
+          get_synapse_params_( snode_id, *target, target_thread, rng, edge_type_id );
 
-        kernel().connection_manager.connect( snode_id,
+          kernel().connection_manager.connect( snode_id,
           target,
           target_thread,
-          type_id_2_syn_model_.at( edge_type_id ),
-          type_id_2_param_dicts_.at( edge_type_id ).at( tid ),
-          delay,
+          type_id_2_syn_model_.at( edge_type_id ),             // static synapse
+          type_id_2_param_dicts_.at( edge_type_id ).at( tid ), // send empty param dict
+          delay,                                               // fixed as 1
           weight );
+          */
+
+        const index static_syn_model_id = kernel().model_manager.get_synapse_model_id( "static_synapse" );
+        DictionaryDatum dd_empty = DictionaryDatum( new Dictionary );
+        const double delay_fixed = 1.0;
+        const double weight_fixed = 1.0;
+
+
+        kernel().connection_manager.connect(
+          snode_id, target, target_thread, static_syn_model_id, dd_empty, delay_fixed, weight_fixed );
       }
     }
     catch ( std::exception& err )

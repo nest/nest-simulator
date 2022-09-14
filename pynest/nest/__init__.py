@@ -371,12 +371,12 @@ class NestModule(types.ModuleType):
     )
     recording_backends = KernelAttribute(
         "list[str]",
-        "List of available backends for recording devices.",
+        "List of available backends for recording devices",
         readonly=True,
     )
     stimulation_backends = KernelAttribute(
         "list[str]",
-        "List of available backends for stimulation devices.",
+        "List of available backends for stimulation devices",
         readonly=True,
     )
     dict_miss_is_error = KernelAttribute(

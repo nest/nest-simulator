@@ -140,7 +140,7 @@ In short:
 3. When you are satisfied with your edits, push these changes to your own GitHub fork,
    and open a pull request to notify the development team that you'd like
    to make these changes available at the ``upstream`` repository.
-   The steps for this are documented in the :ref:`pull_request` section.
+   The steps for this are documented in the :ref:`creating-a-pull-request` section.
 
 This suggested workflow helps to keep the source code repository properly
 organized. It also ensures that the history of changes that have been made to

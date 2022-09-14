@@ -276,7 +276,7 @@ foreach ( def ${SIONLIB_DEFINES} )
     set( ALL_CXXFLAGS "${ALL_CXXFLAGS} ${def}" )
 endforeach ()
 
-# libraries required to link extention modules
+# libraries required to link extension modules
 set( MODULE_LINK_LIBS
   "-lnestutil"
   "-lsli"

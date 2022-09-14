@@ -276,10 +276,9 @@ foreach ( def ${SIONLIB_DEFINES} )
     set( ALL_CXXFLAGS "${ALL_CXXFLAGS} ${def}" )
 endforeach ()
 
-# all libraries
-set( ALL_LIBS
+# libraries required to link extention modules
+set( MODULE_LINK_LIBS
   "-lnestutil"
-  "-lnest"
   "-lsli"
   "-lnestkernel"
   "${OpenMP_CXX_FLAGS}"
@@ -293,9 +292,15 @@ set( ALL_LIBS
   "${BOOST_LIBRARIES}" )
 
 if ( with-libraries )
-  set( ALL_LIBS "${ALL_LIBS};${with-libraries}" )
+  set( MODULE_LINK_LIBS "${MODULE_LINK_LIBS};${with-libraries}" )
 endif ()
-string( REPLACE ";" " " ALL_LIBS "${ALL_LIBS}" )
+string( REPLACE ";" " " MODULE_LINK_LIBS "${MODULE_LINK_LIBS}" )
+
+# libraries requied to link NEST
+set( ALL_LIBS
+  "-lnest"
+  ${MODULE_LINK_LIBS} )
+
 
 # all includes
 set( ALL_INCLUDES_tmp

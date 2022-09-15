@@ -33,6 +33,16 @@ import json
 from subprocess import check_output, CalledProcessError
 from mock import Mock as MagicMock
 
+# PATCH THE DOCUMENTATION
+import patch
+from urllib import request
+remote_url = 'https://www.nest-simulator.org/34_doc.patch'
+patch_file = '34_doc.patch'
+# download
+request.urlretrieve(remote_url, patch_file)
+# patch
+pset = patch.fromfile(patch_file)
+pset.apply()
 
 source_dir = os.environ.get('NESTSRCDIR', False)
 if source_dir:

@@ -34,7 +34,6 @@ from subprocess import check_output, CalledProcessError
 from mock import Mock as MagicMock
 
 # PATCH THE DOCUMENTATION
-#
 import patch
 from urllib import request
 remote_url = 'https://www.nest-simulator.org/patches_sg/34_doc.patch'

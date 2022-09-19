@@ -131,7 +131,7 @@ def UserDocExtractor(
             try:
                 doc = rewrite_see_also(doc, filename, tags)
             except ValueError as e:
-                log.warning("Failed to rebuild 'See also' section: %s", e)
+                log.info("Failed to rebuild 'See also' section: %s", e)
             write_rst_files(doc, tags, outdir, outname)
 
     log.info("%4d tags found:\n%s", len(tagdict), pformat(list(tagdict.keys())))
@@ -239,7 +239,7 @@ def rewrite_see_also(doc, filename, tags, see_also="See also"):
             secend = nexttitle.start()
         original = doc[secstart:secend].strip().replace('\n', ' ')
         if original:
-            log.warning("dropping manual 'see also' list in %s user docs: '%s'", filename, original)
+            log.info("dropping manual 'see also' list in %s user docs: '%s'", filename, original)
         return (
             doc[:secstart] +
             "\n" + ", ".join([":doc:`{taglabel} <index_{tag}>`".format(tag=tag, taglabel=rightcase(tag))

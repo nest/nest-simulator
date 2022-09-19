@@ -45,7 +45,7 @@ Here you can dive into various topics about NEST.
 
    .. grid-item-card:: |math| Models in NEST
        :class-title: sd-d-flex-row sd-align-minor-center
-       :link:  models_contents
+       :link:  modelsmain
        :link-type: ref
 
 .. grid:: 1 1 2 3

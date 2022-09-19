@@ -133,24 +133,6 @@ See the the :doc:`model directory <index>` to access the full description of eac
    * - Compartmental model
      - cm
      -
-   * - Multi compartment model
-     - mc
-     -
-   * - alpha function
-     - alpha
-     -
-   * - beta function
-     - beta
-     -
-   * - gamma function
-     - gamma
-     -
-   * - delta function
-     - delta
-     -
-   * - exponential function
-     - exp
-     -
    * - precise spike timing
      - ps
      -

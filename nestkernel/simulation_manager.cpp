@@ -834,14 +834,19 @@ nest::SimulationManager::update_()
         }
 #endif
 
-        if ( kernel().connection_manager.has_primary_connections() )
+        // gather only at end of slice, i.e., end of min_delay step
+        if ( to_step_ == kernel().connection_manager.get_min_delay() )
         {
-          // Deliver spikes from receive buffer to ring buffers.
-          kernel().event_delivery_manager.deliver_events( tid );
-        }
-        if ( kernel().connection_manager.secondary_connections_exist() )
-        {
-          kernel().event_delivery_manager.deliver_secondary_events( tid, false );
+          if ( kernel().connection_manager.has_primary_connections() )
+          {
+            kernel().event_delivery_manager.gather_spike_data( tid );
+            kernel().event_delivery_manager.deliver_events( tid );
+          }
+          if ( kernel().connection_manager.secondary_connections_exist() )
+          {
+            kernel().event_delivery_manager.gather_secondary_events( true );
+            kernel().event_delivery_manager.deliver_secondary_events( tid, false );
+          }
         }
 
 #ifdef TIMER_DETAILED

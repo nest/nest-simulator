@@ -719,18 +719,15 @@ nest::MPIManager::communicate_Allreduce_sum( std::vector< double >& send_buffer,
   MPI_Allreduce( &send_buffer[ 0 ], &recv_buffer[ 0 ], send_buffer.size(), MPI_Type< double >::type, MPI_SUM, comm );
 }
 
-double
-nest::MPIManager::min_cross_ranks( double value )
+bool
+nest::MPIManager::equal_cross_ranks( const double value )
 {
-  MPI_Allreduce( MPI_IN_PLACE, &value, 1, MPI_DOUBLE, MPI_MIN, comm );
-  return value;
-}
-
-double
-nest::MPIManager::max_cross_ranks( double value )
-{
-  MPI_Allreduce( MPI_IN_PLACE, &value, 1, MPI_DOUBLE, MPI_MAX, comm );
-  return value;
+  // Flipping the sign of one argument to check both min and max values.
+  double values[ 2 ];
+  values[ 0 ] = -value;
+  values[ 1 ] = value;
+  MPI_Allreduce( MPI_IN_PLACE, &values, 2, MPI_DOUBLE, MPI_MIN, comm );
+  return values[ 0 ] == -values[ 1 ];
 }
 
 void

@@ -49,6 +49,8 @@
 
  Parameters:
  The following parameters are available in the kernel status dictionary.
+ 
+ kernel_status                         dicttype    - Get the complete kernel status (read only).
 
  Time and resolution
  biological_time                       doubletype  - The current simulation time (in ms).

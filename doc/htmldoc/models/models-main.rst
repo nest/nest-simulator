@@ -127,13 +127,13 @@ See the the :doc:`model directory <index>` to access the full description of eac
    * - Point process
      - pp
      -
-   * - spike timing dependent plasticity
+   * - Spike timing dependent plasticity
      - stdp
      -
    * - Compartmental model
      - cm
      -
-   * - precise spike timing
+   * - Precise spike timing
      - ps
      -
 

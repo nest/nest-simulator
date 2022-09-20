@@ -195,11 +195,14 @@ on your machine.
 Multiprocessing
 ---------------
 
-**Using Python's ``multiprocessing`` module with NEST may lead to unpredictable results!**
 
 NEST internally parallelizes network construction [1]_ and maintains internal data structures in this process. For
 example, running several :py:func:`.Connect` calls simultaneously can interfere with the internal parallelization and will
 likely lead to unpredictable/wrong results.
+
+.. warning::
+
+   Using Python's ``multiprocessing`` module with NEST may lead to unpredictable results!
 
 .. _distributed_computing:
 

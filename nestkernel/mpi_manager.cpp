@@ -1073,16 +1073,10 @@ nest::MPIManager::communicate_Allreduce_sum( std::vector< double >& send_buffer,
   recv_buffer.swap( send_buffer );
 }
 
-double
-nest::MPIManager::min_cross_ranks( double value )
+bool
+nest::MPIManager::equal_cross_ranks( const double )
 {
-  return value;
-}
-
-double
-nest::MPIManager::max_cross_ranks( double value )
-{
-  return value;
+  return true;
 }
 
 void

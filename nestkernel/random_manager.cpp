@@ -218,7 +218,7 @@ nest::RandomManager::check_rng_synchrony() const
     // If local values are not equal, flag this in local_min.
     if ( local_min != local_max )
     {
-      local_min = -1;
+      local_min = -std::numeric_limits< double >::infinity();
     }
 
     if ( not kernel().mpi_manager.equal_cross_ranks( local_min ) )

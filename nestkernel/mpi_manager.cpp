@@ -727,7 +727,7 @@ nest::MPIManager::equal_cross_ranks( const double value )
   values[ 0 ] = -value;
   values[ 1 ] = value;
   MPI_Allreduce( MPI_IN_PLACE, &values, 2, MPI_DOUBLE, MPI_MIN, comm );
-  return values[ 0 ] == -values[ 1 ];
+  return values[ 0 ] == -values[ 1 ] and values[ 1 ] != -std::numeric_limits< double >::infinity();
 }
 
 void

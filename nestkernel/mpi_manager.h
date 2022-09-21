@@ -164,7 +164,8 @@ public:
    * Equal across all ranks.
    *
    * @param value value on calling rank
-   * @return true if values across all ranks are equal, false otherwise
+   * @return true if values across all ranks are equal, false otherwise or if
+   *         any rank passes -inf as value
    */
   bool equal_cross_ranks( const double value );
 

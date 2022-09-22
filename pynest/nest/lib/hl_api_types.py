@@ -84,7 +84,7 @@ def CreateParameter(parametertype, specs):
 
     **Parameter types**
 
-    Some available parameter types (`parametertype` parameter), their function and
+    Examples of available parameter types (`parametertype` parameter), with their function and
     acceptable keys for their corresponding specification dictionaries:
 
     * Constant

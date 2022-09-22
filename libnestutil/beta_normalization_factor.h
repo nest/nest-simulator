@@ -75,7 +75,7 @@ beta_normalization_factor( const double tau_rise, const double tau_decay )
 {
   const double tau_difference = tau_decay - tau_rise;
   double peak_value = 0;
-  double normalization_factor = 0;
+  double normalization_factor;
   if ( std::abs( tau_difference ) > std::numeric_limits< double >::epsilon() )
   {
     // peak time

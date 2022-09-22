@@ -101,10 +101,10 @@ public:
   {
   }
 
-  ~UnknownModelName() throw()
+  ~UnknownModelName() throw() override
   {
   }
-  std::string message() const;
+  std::string message() const override;
 };
 
 /**
@@ -124,10 +124,10 @@ public:
   {
   }
 
-  ~UnknownComponent() throw()
+  ~UnknownComponent() throw() override
   {
   }
-  std::string message() const;
+  std::string message() const override;
 };
 
 /**
@@ -145,10 +145,10 @@ public:
     , n_( n )
   {
   }
-  ~NewModelNameExists() throw()
+  ~NewModelNameExists() throw() override
   {
   }
-  std::string message() const;
+  std::string message() const override;
 };
 
 /**
@@ -169,10 +169,10 @@ public:
   {
   }
 
-  ~ModelInUse() throw()
+  ~ModelInUse() throw() override
   {
   }
-  std::string message() const;
+  std::string message() const override;
 };
 
 /**
@@ -200,11 +200,11 @@ public:
   {
   }
 
-  ~UnknownSynapseType() throw()
+  ~UnknownSynapseType() throw() override
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 /**
@@ -232,11 +232,11 @@ public:
   {
   }
 
-  ~UnknownNode() throw()
+  ~UnknownNode() throw() override
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 /**
@@ -264,11 +264,11 @@ public:
   {
   }
 
-  ~NoThreadSiblingsAvailable() throw()
+  ~NoThreadSiblingsAvailable() throw() override
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 
@@ -283,11 +283,11 @@ public:
   {
   }
 
-  ~LocalNodeExpected() throw()
+  ~LocalNodeExpected() throw() override
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 class NodeWithProxiesExpected : public KernelException
@@ -301,11 +301,11 @@ public:
   {
   }
 
-  ~NodeWithProxiesExpected() throw()
+  ~NodeWithProxiesExpected() throw() override
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 /*
@@ -325,10 +325,10 @@ public:
   {
   }
 
-  ~UnknownCompartment() throw()
+  ~UnknownCompartment() throw() override
   {
   }
-  std::string message() const;
+  std::string message() const override;
 };
 
 
@@ -350,10 +350,10 @@ public:
   {
   }
 
-  ~UnknownReceptorType() throw()
+  ~UnknownReceptorType() throw() override
   {
   }
-  std::string message() const;
+  std::string message() const override;
 };
 
 /**
@@ -376,10 +376,10 @@ public:
   {
   }
 
-  ~IncompatibleReceptorType() throw()
+  ~IncompatibleReceptorType() throw() override
   {
   }
-  std::string message() const;
+  std::string message() const override;
 };
 
 /**
@@ -407,11 +407,11 @@ public:
   {
   }
 
-  ~UnknownPort() throw()
+  ~UnknownPort() throw() override
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 /**
@@ -435,11 +435,11 @@ public:
   {
   }
 
-  ~IllegalConnection() throw()
+  ~IllegalConnection() throw() override
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 
 private:
   std::string msg_;
@@ -467,11 +467,11 @@ public:
   {
   }
 
-  ~InexistentConnection() throw()
+  ~InexistentConnection() throw() override
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 
 private:
   std::string msg_;
@@ -492,11 +492,11 @@ public:
   {
   }
 
-  ~UnknownThread() throw()
+  ~UnknownThread() throw() override
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 /**
@@ -517,11 +517,11 @@ public:
   {
   }
 
-  ~BadDelay() throw()
+  ~BadDelay() throw() override
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 /**
@@ -544,11 +544,11 @@ public:
   {
   }
 
-  ~UnexpectedEvent() throw()
+  ~UnexpectedEvent() throw() override
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 
 private:
   std::string msg_;
@@ -569,10 +569,10 @@ public:
   {
   }
 
-  ~UnsupportedEvent() throw()
+  ~UnsupportedEvent() throw() override
   {
   }
-  std::string message() const;
+  std::string message() const override;
 };
 
 /**
@@ -598,11 +598,11 @@ public:
   {
   }
 
-  ~BadProperty() throw()
+  ~BadProperty() throw() override
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 /**
@@ -628,11 +628,11 @@ public:
   {
   }
 
-  ~BadParameter() throw()
+  ~BadParameter() throw() override
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 /**
@@ -652,7 +652,7 @@ public:
     : KernelException( "DimensionMismatch" )
     , expected_( -1 )
     , provided_( -1 )
-    , msg_( "" )
+    ,
   {
   }
 
@@ -660,7 +660,7 @@ public:
     : KernelException( "DimensionMismatch" )
     , expected_( expected )
     , provided_( provided )
-    , msg_( "" )
+    ,
   {
   }
 
@@ -673,11 +673,11 @@ public:
   }
 
 
-  ~DimensionMismatch() throw()
+  ~DimensionMismatch() throw() override
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 /**
@@ -692,11 +692,11 @@ public:
     : KernelException( "DistributionError" )
   {
   }
-  ~DistributionError() throw()
+  ~DistributionError() throw() override
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 /**
@@ -723,11 +723,11 @@ public:
     , val_( value )
   {
   }
-  ~InvalidDefaultResolution() throw()
+  ~InvalidDefaultResolution() throw() override
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 
 private:
   const std::string model_;
@@ -759,11 +759,11 @@ public:
     , val_( value )
   {
   }
-  ~InvalidTimeInModel() throw()
+  ~InvalidTimeInModel() throw() override
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 
 private:
   const std::string model_;
@@ -793,11 +793,11 @@ public:
     , val_( value )
   {
   }
-  ~StepMultipleRequired() throw()
+  ~StepMultipleRequired() throw() override
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 
 private:
   const std::string model_;
@@ -835,11 +835,11 @@ public:
     , val_b_( value_b )
   {
   }
-  ~TimeMultipleRequired() throw()
+  ~TimeMultipleRequired() throw() override
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 
 private:
   const std::string model_;
@@ -868,11 +868,11 @@ public:
     , status_( status )
   {
   }
-  ~GSLSolverFailure() throw()
+  ~GSLSolverFailure() throw() override
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 
 private:
   const std::string model_;
@@ -896,11 +896,11 @@ public:
     , model_( model )
   {
   }
-  ~NumericalInstability() throw()
+  ~NumericalInstability() throw() override
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 
 private:
   const std::string model_;
@@ -926,10 +926,10 @@ public:
   {
   }
 
-  ~KeyError() throw()
+  ~KeyError() throw() override
   {
   }
-  std::string message() const;
+  std::string message() const override;
 };
 
 /**
@@ -953,11 +953,11 @@ public:
   {
   }
 
-  ~InternalError() throw()
+  ~InternalError() throw() override
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 
@@ -1198,7 +1198,7 @@ public:
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 
 private:
   const int current_step_;
@@ -1219,7 +1219,7 @@ public:
   }
 
 
-  std::string message() const;
+  std::string message() const override;
 
 private:
   const std::string backend_;
@@ -1238,7 +1238,7 @@ public:
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 
 private:
   const std::string backend_;
@@ -1251,11 +1251,11 @@ public:
     : KernelException( "LayerExpected" )
   {
   }
-  ~LayerExpected() throw()
+  ~LayerExpected() throw() override
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 class LayerNodeExpected : public KernelException
@@ -1265,11 +1265,11 @@ public:
     : KernelException( "LayerNodeExpected" )
   {
   }
-  ~LayerNodeExpected() throw()
+  ~LayerNodeExpected() throw() override
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 } // namespace nest

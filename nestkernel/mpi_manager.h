@@ -61,7 +61,7 @@ public:
   class OffGridSpike;
 
   MPIManager();
-  ~MPIManager()
+  ~MPIManager() override
   {
   }
 

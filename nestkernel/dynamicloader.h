@@ -58,12 +58,12 @@ class DynamicLoaderModule : public SLIModule
 {
 public:
   DynamicLoaderModule( SLIInterpreter& interpreter );
-  ~DynamicLoaderModule();
+  ~DynamicLoaderModule() override;
 
-  void init( SLIInterpreter* );
+  void init( SLIInterpreter* ) override;
 
-  const std::string commandstring( void ) const;
-  const std::string name( void ) const;
+  const std::string commandstring( ) const override;
+  const std::string name( ) const override;
 
 
   /**
@@ -85,7 +85,7 @@ public:
     LoadModuleFunction( vecDynModules& dyn_modules );
 
   private:
-    void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const override;
 
   private:
     vecDynModules& dyn_modules_;

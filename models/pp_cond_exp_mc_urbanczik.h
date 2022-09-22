@@ -92,8 +92,8 @@ private:
   double rate_slope; //!< Parameter of the rate function
   double beta;       //!< Parameter of the rate function
   double theta;      //!< Parameter of the rate function
-  double phi( double u );
-  double h( double u );
+  double phi( double u ) const;
+  double h( double u ) const;
 
 public:
   // The Urbanczik parameters need to be public within this class as they are passed to the GSL solver
@@ -252,7 +252,7 @@ class pp_cond_exp_mc_urbanczik : public UrbanczikArchivingNode< pp_cond_exp_mc_u
 public:
   pp_cond_exp_mc_urbanczik();
   pp_cond_exp_mc_urbanczik( const pp_cond_exp_mc_urbanczik& );
-  ~pp_cond_exp_mc_urbanczik();
+  ~pp_cond_exp_mc_urbanczik() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -262,23 +262,23 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
-  void pre_run_hook();
-  void update( Time const&, const long, const long );
+  void init_buffers_() override;
+  void pre_run_hook() override;
+  void update( Time const&, const long, const long ) override;
 
   // Enumerations and constants specifying structure and properties ----
 
@@ -533,13 +533,13 @@ private:
 
 // Inline functions of pp_cond_exp_mc_urbanczik_parameters
 inline double
-pp_cond_exp_mc_urbanczik_parameters::phi( double u )
+pp_cond_exp_mc_urbanczik_parameters::phi( double u ) const
 {
   return phi_max / ( 1.0 + rate_slope * exp( beta * ( theta - u ) ) );
 }
 
 inline double
-pp_cond_exp_mc_urbanczik_parameters::h( double u )
+pp_cond_exp_mc_urbanczik_parameters::h( double u ) const
 {
   return 15.0 * beta / ( 1.0 + ( 1.0 / rate_slope ) * exp( -beta * ( theta - u ) ) );
 }

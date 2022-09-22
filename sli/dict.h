@@ -132,7 +132,7 @@ public:
   Token& operator[]( const char* );
 
   bool
-  empty( void ) const
+  empty( ) const
   {
     return TokenMap::empty();
   }
@@ -212,7 +212,7 @@ public:
   /**
    *
    */
-  void initialize_property_array( Name propname );
+  // void initialize_property_array( Name propname );
 
   /**
    * This function is called when a dictionary is pushed to the dictionary

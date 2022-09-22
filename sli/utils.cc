@@ -34,7 +34,7 @@ array2vector( std::vector< long >& v, const TokenArray a )
   for ( Token* t = a.begin(); t != a.end(); ++t )
   {
     IntegerDatum* id = dynamic_cast< IntegerDatum* >( t->datum() );
-    if ( id == NULL )
+    if ( id == nullptr )
     {
       status = false;
       break;

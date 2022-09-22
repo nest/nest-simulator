@@ -336,7 +336,7 @@ public:
    */
   void basedef_move( const Name& n, Token& t );
 
-  bool where( const Name&, Token& );
+  // bool where( const Name&, Token& );
 
   void pop( void );
 

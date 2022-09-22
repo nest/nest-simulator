@@ -43,7 +43,7 @@ template < class D, SLIType* slt >
 class lockPTRDatum : public lockPTR< D >, public TypedDatum< slt >
 {
   Datum*
-  clone( void ) const
+  clone( ) const
   {
     return new lockPTRDatum< D, slt >( *this );
   }
@@ -114,7 +114,7 @@ public:
     implementation is defined.
   */
 private:
-  bool operator==( lockPTR< D >& );
+  // bool operator==( lockPTR< D >& );
 };
 
 /* equals(const Datum* datum)

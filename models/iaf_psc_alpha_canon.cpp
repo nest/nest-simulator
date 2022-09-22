@@ -557,7 +557,6 @@ nest::iaf_psc_alpha_canon::thresh_find_( double const dt ) const
   default:
     throw BadProperty( "Invalid interpolation order in iaf_psc_alpha_canon." );
   }
-  return 0;
 }
 
 // finds threshpassing via linear interpolation

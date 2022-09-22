@@ -331,7 +331,7 @@ stdp_nn_symm_synapse< targetidentifierT >::set_status( const DictionaryDatum& d,
   updateValue< double >( d, names::Wmax, Wmax_ );
 
   // check if weight_ and Wmax_ have the same sign
-  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) )
+  if ( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) != ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) )
   {
     throw BadProperty( "Weight and Wmax must have same sign." );
   }

@@ -46,7 +46,7 @@ class ModelManager : public ManagerInterface
 {
 public:
   ModelManager();
-  ~ModelManager();
+  ~ModelManager() override;
 
   virtual void initialize() override;
   virtual void finalize() override;
@@ -325,7 +325,7 @@ ModelManager::get_num_connection_models() const
 inline void
 ModelManager::assert_valid_syn_id( synindex syn_id, thread t ) const
 {
-  if ( syn_id >= connection_models_[ t ].size() or connection_models_[ t ][ syn_id ] == 0 )
+  if ( syn_id >= connection_models_[ t ].size() or connection_models_[ t ][ syn_id ] == nullptr )
   {
     throw UnknownSynapseType( syn_id );
   }

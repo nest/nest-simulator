@@ -41,7 +41,7 @@ class ModelRangeManager : public ManagerInterface
 {
 public:
   ModelRangeManager();
-  ~ModelRangeManager()
+  ~ModelRangeManager() override
   {
   }
 

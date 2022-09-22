@@ -90,7 +90,7 @@ get_double_in_range( const DictionaryDatum& d, Name const n, double min, double 
   // token.
   const Token& t = d->lookup2( n );
   DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
-  double x = 0.0;
+  double x;
 
   if ( dd != 0 )
   {
@@ -154,7 +154,7 @@ get_long_in_range( const DictionaryDatum& d, Name const n, long min, long max, i
   // token.
   const Token& t = d->lookup2( n );
   DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
-  long x = 0;
+  long x;
 
   if ( dd != 0 )
   {

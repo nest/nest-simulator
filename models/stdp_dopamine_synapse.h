@@ -175,7 +175,7 @@ public:
 inline long
 STDPDopaCommonProperties::get_vt_node_id() const
 {
-  if ( vt_ != 0 )
+  if ( vt_ != nullptr )
   {
     return vt_->get_node_id();
   }
@@ -256,7 +256,7 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
       return invalid_port;
     }
@@ -280,7 +280,7 @@ public:
   void
   check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& cp )
   {
-    if ( cp.vt_ == 0 )
+    if ( cp.vt_ == nullptr )
     {
       throw BadProperty( "No volume transmitter has been assigned to the dopamine synapse." );
     }

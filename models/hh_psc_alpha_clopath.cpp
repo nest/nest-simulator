@@ -287,9 +287,9 @@ nest::hh_psc_alpha_clopath::State_::set( const DictionaryDatum& d, Node* node )
 
 nest::hh_psc_alpha_clopath::Buffers_::Buffers_( hh_psc_alpha_clopath& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -297,9 +297,9 @@ nest::hh_psc_alpha_clopath::Buffers_::Buffers_( hh_psc_alpha_clopath& n )
 
 nest::hh_psc_alpha_clopath::Buffers_::Buffers_( const Buffers_&, hh_psc_alpha_clopath& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -360,7 +360,7 @@ nest::hh_psc_alpha_clopath::init_buffers_()
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ = B_.step_;
 
-  if ( B_.s_ == 0 )
+  if ( B_.s_ == nullptr )
   {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
@@ -369,7 +369,7 @@ nest::hh_psc_alpha_clopath::init_buffers_()
     gsl_odeiv_step_reset( B_.s_ );
   }
 
-  if ( B_.c_ == 0 )
+  if ( B_.c_ == nullptr )
   {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
   }
@@ -378,7 +378,7 @@ nest::hh_psc_alpha_clopath::init_buffers_()
     gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
   }
 
-  if ( B_.e_ == 0 )
+  if ( B_.e_ == nullptr )
   {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }
@@ -388,7 +388,7 @@ nest::hh_psc_alpha_clopath::init_buffers_()
   }
 
   B_.sys_.function = hh_psc_alpha_clopath_dynamics;
-  B_.sys_.jacobian = NULL;
+  B_.sys_.jacobian = nullptr;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
 

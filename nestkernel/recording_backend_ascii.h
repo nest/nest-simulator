@@ -153,7 +153,7 @@ public:
 
   RecordingBackendASCII();
 
-  ~RecordingBackendASCII() throw();
+  ~RecordingBackendASCII() throw() override;
 
   void initialize() override;
 

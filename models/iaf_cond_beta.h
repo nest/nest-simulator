@@ -437,6 +437,6 @@ iaf_cond_beta::set_status( const DictionaryDatum& d )
 
 } // namespace
 
-#endif // IAF_COND_BETA_H
-
 #endif // HAVE_GSL
+
+#endif // IAF_COND_BETA_H

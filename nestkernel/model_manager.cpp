@@ -49,7 +49,7 @@ ModelManager::ModelManager()
   , connection_models_()
   , modeldict_( new Dictionary )
   , synapsedict_( new Dictionary )
-  , proxynode_model_( 0 )
+  , proxynode_model_( nullptr )
   , proxy_nodes_()
   , model_defaults_modified_( false )
 {
@@ -79,7 +79,7 @@ ModelManager::~ModelManager()
 void
 ModelManager::initialize()
 {
-  if ( proxynode_model_ == 0 )
+  if ( proxynode_model_ == nullptr )
   {
     proxynode_model_ = new GenericModel< proxynode >( "proxynode", "" );
     proxynode_model_->set_type_id( 1 );
@@ -380,7 +380,7 @@ ModelManager::get_node_model_id( const Name name ) const
   const Name model_name( name );
   for ( int i = 0; i < ( int ) node_models_.size(); ++i )
   {
-    assert( node_models_[ i ] != 0 );
+    assert( node_models_[ i ] != nullptr );
     if ( model_name == node_models_[ i ]->get_name() )
     {
       return i;
@@ -459,7 +459,7 @@ ModelManager::clear_node_models_()
   }
 
   delete proxynode_model_;
-  proxynode_model_ = 0;
+  proxynode_model_ = nullptr;
 
   node_models_.clear();
   proxy_nodes_.clear();

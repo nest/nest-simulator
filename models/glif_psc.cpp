@@ -283,7 +283,7 @@ nest::glif_psc::Parameters_::set( const DictionaryDatum& d )
   const size_t old_n_receptors = this->n_receptors_();
   if ( updateValue< std::vector< double > >( d, names::tau_syn, tau_syn_ ) )
   {
-    if ( this->n_receptors_() != old_n_receptors && has_connections_ == true )
+    if ( this->n_receptors_() != old_n_receptors && has_connections_ )
     {
       throw BadProperty(
         "The neuron has connections, therefore the number of ports cannot be "

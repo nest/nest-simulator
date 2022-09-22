@@ -358,7 +358,7 @@ stdp_triplet_synapse< targetidentifierT >::set_status( const DictionaryDatum& d,
     throw BadProperty( "State Kplus must be positive." );
   }
 
-  if ( not( Kplus_triplet_ >= 0 ) )
+  if ( Kplus_triplet_ < 0 )
   {
     throw BadProperty( "State Kplus_triplet must be positive." );
   }

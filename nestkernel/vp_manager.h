@@ -52,7 +52,7 @@ class VPManager : public ManagerInterface
 {
 public:
   VPManager();
-  ~VPManager()
+  ~VPManager() override
   {
   }
 

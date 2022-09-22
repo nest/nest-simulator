@@ -132,7 +132,7 @@ public:
    * Framework for STDP with predominantly axonal delays:
    * Buffer a correction entry for a short time window.
    */
-  void add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event, const double t_last_pre_spike, const double weight_revert );
+  void add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event, const double t_last_pre_spike, const double weight_revert, const double dendritic_delay );
 
 
 protected:

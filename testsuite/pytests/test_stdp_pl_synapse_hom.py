@@ -43,25 +43,27 @@ class TestSTDPPlSynapse:
     """
 
     def init_params(self):
+        self.eps = 1e-6
         self.resolution = 0.1  # [ms]
         self.simulation_duration = 1E3  # [ms]
         self.synapse_model = "stdp_pl_synapse_hom_ax_delay"
-        self.presynaptic_firing_rate = 20.  # [ms^-1]
-        self.postsynaptic_firing_rate = 20.  # [ms^-1]
+        self.presynaptic_firing_rate = 200.  # [ms^-1]
+        self.postsynaptic_firing_rate = 200.  # [ms^-1]
         self.tau_pre = 20.0
         self.tau_post = 33.7
         self.init_weight = .5
         self.dendritic_delay = self.delay - self.axonal_delay
-        self.synapse_parameters = {
-            "synapse_model": self.synapse_model,
-            "receptor_type": 0,
-            "delay": self.delay,
+        self.synapse_common_properties = {
             "axonal_delay": self.axonal_delay,
-            # STDP constants
             "lambda": 0.1,
             "alpha": 1.0,
             "mu": 0.4,
             "tau_plus": self.tau_pre,
+        }
+        self.synapse_parameters = {
+            "synapse_model": self.synapse_model,
+            "receptor_type": 0,
+            "delay": self.delay,
             "weight": self.init_weight
         }
         self.neuron_parameters = {
@@ -71,10 +73,10 @@ class TestSTDPPlSynapse:
         # While the random sequences, fairly long, would supposedly reveal small differences in the weight change
         # between NEST and ours, some low-probability events (say, coinciding spikes) can well not have occurred. To
         # generate and test every possible combination of pre/post order, we append some hardcoded spike sequences:
-        # pre: 1       5 6 7   9    11 12 13    15    17
-        # post:  2 3 4       8 9 10    12    14    16    18
-        self.hardcoded_pre_times = np.array([1, 5, 6, 7, 9, 11, 12, 13, 15, 17, 18, 19], dtype=float)
-        self.hardcoded_post_times = np.array([2, 3, 4, 8, 9, 10, 12, 14, 16, 18, 19], dtype=float)
+        # pre: 1       5 6 7   9    11 12 13    15    17 18 19   20.1
+        # post:  2 3 4       8 9 10    12    14    16    18 19.1 20
+        self.hardcoded_pre_times = np.array([1, 5, 6, 7, 9, 11, 12, 13, 15, 17, 18, 19, 20.1], dtype=float)
+        self.hardcoded_post_times = np.array([2, 3, 4, 8, 9, 10, 12, 14, 16, 18, 19.1, 20], dtype=float)
         self.hardcoded_trains_length = 5. + max(np.amax(self.hardcoded_pre_times), np.amax(self.hardcoded_post_times))
 
     def do_nest_simulation_and_compare_to_reproduced_weight(self, fname_snip):
@@ -87,7 +89,7 @@ class TestSTDPPlSynapse:
         # contains the weight at pre *and* post times: check that weights are equal only for pre spike times
         assert len(weight_by_nest) > 0
 
-        difference_matrix = (t_weight_by_nest.reshape(1, -1) - t_weight_reproduced_independently.reshape(-1, 1))
+        difference_matrix = (t_weight_by_nest.reshape(1, -1) + self.axonal_delay - t_weight_reproduced_independently.reshape(-1, 1))
         pre_spike_reproduced_indices = np.abs(difference_matrix).argmin(axis=0)
         time_differences = np.diagonal(difference_matrix[pre_spike_reproduced_indices])
         # make sure all spike times are equal
@@ -149,12 +151,14 @@ class TestSTDPPlSynapse:
         spike_recorder = nest.Create("spike_recorder")
 
         nest.Connect(presynaptic_generator + pre_spike_generator, presynaptic_neuron,
-                     syn_spec={"synapse_model": "static_synapse", "weight": 9999.})
+                     syn_spec={"synapse_model": "static_synapse", "weight": 1000.})
         nest.Connect(postsynaptic_generator + post_spike_generator, postsynaptic_neuron,
-                     syn_spec={"synapse_model": "static_synapse", "weight": 9999.})
+                     syn_spec={"synapse_model": "static_synapse", "weight": 1000.})
         nest.Connect(presynaptic_neuron + postsynaptic_neuron, spike_recorder,
                      syn_spec={"synapse_model": "static_synapse"})
+
         # The synapse of interest itself
+        nest.SetDefaults(self.synapse_model + "_rec", self.synapse_common_properties)
         self.synapse_parameters["synapse_model"] += "_rec"
         nest.Connect(presynaptic_neuron, postsynaptic_neuron, syn_spec=self.synapse_parameters)
         self.synapse_parameters["synapse_model"] = self.synapse_model
@@ -173,79 +177,81 @@ class TestSTDPPlSynapse:
     def reproduce_weight_drift(self, pre_spikes, post_spikes, initial_weight, fname_snip=""):
         """Independent, self-contained model of STDP with power-law"""
 
-        def facilitate(w, Kpre):
-            return w + self.synapse_parameters["lambda"] * pow(w, self.synapse_parameters["mu"]) * Kpre
+        def facilitate(w, Kplus):
+            return w + self.synapse_common_properties["lambda"] * pow(w, self.synapse_common_properties["mu"]) * Kplus
 
-        def depress(w, Kpost):
-            new_weight = w - self.synapse_parameters["alpha"] * self.synapse_parameters["lambda"] * w * Kpost
+        def depress(w, Kminus):
+            new_weight = w - self.synapse_common_properties["alpha"] * self.synapse_common_properties[
+                "lambda"] * w * Kminus
             return new_weight if new_weight > 0.0 else 0.0
 
-        def Kpost_at_time(t, spikes, inclusive=True):
+        def Kminus_at_time(t, spikes, inclusive=True):
             t_curr = 0.
-            Kpost = 0.
+            Kminus = 0.
+            if t == 985.9:
+                a = 2
             for spike_idx, t_sp in enumerate(spikes):
                 if t < t_sp:
                     # integrate to t
-                    Kpost *= exp(-(t - t_curr) / self.tau_post)
-                    return Kpost
+                    Kminus *= exp(-(t - t_curr) / self.tau_post)
+                    return Kminus
                 # integrate to t_sp
-                Kpost *= exp(-(t_sp - t_curr) / self.tau_post)
+                Kminus *= exp(-(t_sp - t_curr) / self.tau_post)
                 if inclusive:
-                    Kpost += 1.
+                    Kminus += 1.
                 if t == t_sp:
-                    return Kpost
+                    return Kminus
                 if not inclusive:
-                    Kpost += 1.
+                    Kminus += 1.
                 t_curr = t_sp
             # if we get here, t > t_last_spike
             # integrate to t
-            Kpost *= exp(-(t - t_curr) / self.tau_post)
-            return Kpost
+            Kminus *= exp(-(t - t_curr) / self.tau_post)
+            return Kminus
 
-        eps = 1e-6
         t = 0.
         idx_next_pre_spike = 0
         idx_next_post_spike = 0
         t_last_pre_spike = -1
         t_last_post_spike = -1
-        Kpre = 0.
+        Kplus = 0.
         weight = initial_weight
 
         t_log = []
         w_log = []
-        Kpre_log = []
-
-        # logging
-        t_log.append(t)
-        w_log.append(weight)
-        Kpre_log.append(Kpre)
+        Kplus_log = []
 
         pre_spikes_delayed = pre_spikes + self.axonal_delay
         post_spikes_delayed = post_spikes + self.dendritic_delay
+        # Make sure only spikes that were relevant for simulation are actually considered in the test
+        # For pre-spikes that will be all spikes with: t_pre < sim_duration
+        pre_spikes_delayed = pre_spikes_delayed[pre_spikes + self.eps < self.simulation_duration]
+        # For post-spikes that will be all spikes with: t_post + d_dend < latest_pre_spike + d_axon
+        post_spikes_delayed = post_spikes_delayed[post_spikes_delayed < pre_spikes_delayed[-1] + self.eps]
 
         while t < self.simulation_duration:
-            if idx_next_pre_spike >= pre_spikes.size:
+            if idx_next_pre_spike >= pre_spikes_delayed.size:
                 t_next_pre_spike = -1
             else:
-                t_next_pre_spike = pre_spikes[idx_next_pre_spike]
+                t_next_pre_spike = pre_spikes_delayed[idx_next_pre_spike]
 
-            if idx_next_post_spike >= post_spikes.size:
+            if idx_next_post_spike >= post_spikes_delayed.size:
                 t_next_post_spike = -1
             else:
                 t_next_post_spike = post_spikes_delayed[idx_next_post_spike]
 
-            if t_next_post_spike >= 0 and t_next_post_spike + eps < t_next_pre_spike or t_next_pre_spike < 0:
+            if t_next_post_spike >= 0 and (t_next_post_spike + self.eps < t_next_pre_spike or t_next_pre_spike < 0):
                 handle_pre_spike = False
                 handle_post_spike = True
                 idx_next_post_spike += 1
-            elif t_next_pre_spike >= 0 and t_next_post_spike > t_next_pre_spike + eps or t_next_post_spike < 0:
+            elif t_next_pre_spike >= 0 and (t_next_post_spike > t_next_pre_spike + self.eps or t_next_post_spike < 0):
                 handle_pre_spike = True
                 handle_post_spike = False
                 idx_next_pre_spike += 1
             else:
                 # simultaneous spikes (both true) or no more spikes to process (both false)
-                handle_pre_spike = idx_next_pre_spike >= 0
-                handle_post_spike = idx_next_post_spike >= 0
+                handle_pre_spike = t_next_pre_spike >= 0
+                handle_post_spike = t_next_post_spike >= 0
                 idx_next_pre_spike += 1
                 idx_next_post_spike += 1
 
@@ -261,21 +267,21 @@ class TestSTDPPlSynapse:
                 t_next = self.simulation_duration
 
             h = t_next - t
-            Kpre *= exp(-h / self.tau_pre)
+            Kplus *= exp(-h / self.tau_pre)
             t = t_next
 
             if handle_post_spike:
-                if not handle_pre_spike or abs(t_next_post_spike - t_last_post_spike) > 1e-6:
-                    if abs(t_next_post_spike - t_last_pre_spike) > 1e-6:
-                        weight = facilitate(weight, Kpre)
+                if not handle_pre_spike or abs(t_next_post_spike - t_last_post_spike) > self.eps:
+                    if abs(t_next_post_spike - t_last_pre_spike) > self.eps:
+                        weight = facilitate(weight, Kplus)
 
             if handle_pre_spike:
-                Kpre += 1.
-                if not handle_post_spike or abs(t_next_pre_spike - t_last_pre_spike) > 1e-6:
-                    if abs(t_next_pre_spike - t_last_post_spike) > 1e-6:
-                        _Kpost = Kpost_at_time(t - self.dendritic_delay, post_spikes, inclusive=False)
-                        weight = depress(weight, _Kpost)
+                if not handle_post_spike or abs(t_next_pre_spike - t_last_pre_spike) > self.eps:
+                    if abs(t_next_pre_spike - t_last_post_spike) > self.eps:
+                        _Kminus = Kminus_at_time(t - self.dendritic_delay, post_spikes, inclusive=False)
+                        weight = depress(weight, _Kminus)
                 t_last_pre_spike = t_next_pre_spike
+                Kplus += 1.
 
             if handle_post_spike:
                 t_last_post_spike = t_next_post_spike
@@ -283,11 +289,11 @@ class TestSTDPPlSynapse:
             # logging
             t_log.append(t)
             w_log.append(weight)
-            Kpre_log.append(Kpre)
+            Kplus_log.append(Kplus)
 
-        Kpost_log = [Kpost_at_time(t - self.dendritic_delay, post_spikes, inclusive=False) for t in t_log]
+        Kminus_log = [Kminus_at_time(t + self.axonal_delay - self.dendritic_delay, post_spikes, inclusive=False) for t in t_log]
 
-        return np.array(t_log), np.array(w_log), Kpre_log, Kpost_log
+        return np.array(t_log), np.array(w_log), Kplus_log, Kminus_log
 
     def plot_weight_evolution(self, pre_spikes, post_spikes, t_log, w_log, Kpre_log=None, Kpost_log=None, pre_indices=slice(-1),
                               fname_snip="", title_snip=""):
@@ -328,7 +334,7 @@ class TestSTDPPlSynapse:
         self.init_params()
         for self.delay, self.axonal_delay in [(1., 0.), (1., .5), (1., 1.), (self.resolution, 0.), (self.resolution, self.resolution)]:
             self.init_params()
-            for self.nest_neuron_model in ["iaf_psc_exp", "iaf_cond_exp"]:
+            for self.nest_neuron_model in ["iaf_psc_alpha_ax_delay"]:
                 for self.neuron_parameters["t_ref"] in [.1, .5, 1., 1.5, 2., 2.5]:
                     print(self.dendritic_delay, self.axonal_delay, self.neuron_parameters["t_ref"], self.nest_neuron_model)
                     fname_snip = "_[nest_neuron_mdl=" + self.nest_neuron_model + "]"

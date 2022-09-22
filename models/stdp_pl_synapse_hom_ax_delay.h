@@ -223,7 +223,7 @@ public:
     if ( cp.axonal_delay_ > ( delay - cp.axonal_delay_ ) )
     {
       LOG( M_WARNING,
-        "stdp_pl_synapse_hom::check_connection",
+        "stdp_pl_synapse_hom_ax_delay::check_connection",
         "Axonal delay is greater than dendritic delay, "
         "which can lead to omission of post-synaptic spikes in this synapse type." );
     }
@@ -297,6 +297,9 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::send( Event& e,
     assert( minus_dt < -1.0 * kernel().connection_manager.get_stdp_eps() );
     weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt * cp.tau_plus_inv_ ), cp );
 
+    // std::cout << std::setprecision( 17 ) << "Post " << start->t_ + dendritic_delay << " "
+    //           << Kplus_ * std::exp( minus_dt * cp.tau_plus_inv_ ) << " " << weight_ << std::endl;
+
     ++start;
   }
 
@@ -308,6 +311,8 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::send( Event& e,
   const double K_minus = target->get_K_value( t_spike + cp.axonal_delay_ - dendritic_delay );
   weight_ = depress_( weight_, K_minus, cp );
 
+  // std::cout << std::setprecision( 17 ) << "Pre " << t_spike + cp.axonal_delay_ << " " << K_minus << " " << weight_ << std::endl;
+
   e.set_receiver( *target );
   e.set_weight( weight_ );
   e.set_delay_steps( get_delay_steps() );
@@ -316,7 +321,8 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::send( Event& e,
 
   if ( ( cp.axonal_delay_ - dendritic_delay ) > kernel().connection_manager.get_stdp_eps() )
   {
-    target->add_correction_entry_stdp_ax_delay( e, t_lastspike_, weight_revert );
+    target->add_correction_entry_stdp_ax_delay(
+      dynamic_cast< SpikeEvent& >( e ), t_lastspike_, weight_revert, dendritic_delay );
   }
 
   Kplus_ = Kplus_ * std::exp( ( t_lastspike_ - t_spike ) * cp.tau_plus_inv_ ) + 1.0;
@@ -376,17 +382,28 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::correct_synapse_stdp_ax_delay
 
   // facilitation due to new post-synaptic spike
   const double minus_dt = t_last_spike + cp.axonal_delay_ - ( t_post_spike + dendritic_delay );
-  assert( minus_dt < -1.0 * kernel().connection_manager.get_stdp_eps() );
-  // Kplus value at t_last_spike_ needed
-  const double K_plus_revert = ( Kplus_ - 1.0 ) / std::exp( ( t_last_spike - t_spike ) * cp.tau_plus_inv_ );
-  weight_ = facilitate_( weight_, K_plus_revert * std::exp( minus_dt * cp.tau_plus_inv_ ), cp );
 
-  // update weight_revert in case further correction will be required later
-  *weight_revert = weight_;
+  double K_plus_revert;
+  // assert( minus_dt < -1.0 * kernel().connection_manager.get_stdp_eps() );  // Edit JV: Multiple pre-spikes before
+  // post-spike possible
+  if ( minus_dt
+    < -1.0 * kernel().connection_manager.get_stdp_eps() ) // Edit JV: Only facilitate if not facilitated already (only
+                                                          // if first correction for this post-spike)
+  {
+    // Kplus value at t_last_spike_ needed
+    K_plus_revert = ( Kplus_ - 1.0 ) / std::exp( ( t_last_spike - t_spike ) * cp.tau_plus_inv_ );
+    weight_ = facilitate_( weight_, K_plus_revert * std::exp( minus_dt * cp.tau_plus_inv_ ), cp );
+
+    // update weight_revert in case further correction will be required later
+    *weight_revert = weight_;
+  }
 
   // depression taking into account new post-synaptic spike
   const double K_minus = target->get_K_value( t_spike + cp.axonal_delay_ - dendritic_delay );
   weight_ = depress_( weight_, K_minus, cp );
+
+  // std::cout << std::setprecision( 17 ) << "Post " << t_post_spike + dendritic_delay << " " << K_plus_revert << " " << weight_
+  // << std::endl;
 
   // send a correcting event to the target neuron
   SpikeEvent e;

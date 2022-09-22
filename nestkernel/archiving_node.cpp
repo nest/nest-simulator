@@ -291,7 +291,7 @@ nest::ArchivingNode::clear_history()
 }
 
 void
-ArchivingNode::add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event, const double t_last_pre_spike, const double weight_revert )
+ArchivingNode::add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event, const double t_last_pre_spike, const double weight_revert, const double dendritic_delay )
 {
   if ( not has_stdp_ax_delay_  )
   {
@@ -307,7 +307,8 @@ ArchivingNode::add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event, cons
   assert( correction_entries_stdp_ax_delay_.size() == static_cast< size_t >( kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay() ) );
 
   const index idx = kernel().event_delivery_manager.get_modulo(
-    spike_event.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
+    spike_event.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) -
+      2 * Time::delay_ms_to_steps( dendritic_delay));
   assert( static_cast< size_t >( idx ) < correction_entries_stdp_ax_delay_.size() );
 
   correction_entries_stdp_ax_delay_[ idx ].push_back( CorrectionEntrySTDPAxDelay( spike_event.get_sender_spike_data(), t_last_pre_spike, weight_revert ) );
@@ -341,7 +342,7 @@ nest::ArchivingNode::correct_synapses_stdp_ax_delay_( const Time& t_spike )
     const long maxdelay_steps = kernel().connection_manager.get_max_delay();
     assert( correction_entries_stdp_ax_delay_.size() == static_cast< size_t >( kernel().connection_manager.get_min_delay() + maxdelay_steps ) );
 
-    for ( long lag = t_spike_rel.get_steps(); lag < maxdelay_steps; ++lag )
+    for ( long lag = t_spike_rel.get_steps() - 1; lag < maxdelay_steps + 1; ++lag ) // Edit JV:
     {
       const long idx = kernel().event_delivery_manager.get_modulo( lag );
       assert( static_cast< size_t >( idx ) < correction_entries_stdp_ax_delay_.size() );

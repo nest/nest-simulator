@@ -821,8 +821,7 @@ public:
    * Framework for STDP with predominantly axonal delays:
    * Buffer a correction entry for a short time window.
    */
-  virtual void add_correction_entry_stdp_ax_delay( Event&, const double, const double );
-
+  virtual void add_correction_entry_stdp_ax_delay( SpikeEvent&, const double, const double, const double );
   /**
    * Member of DeprecationWarning class to be used by models if parameters are
    * deprecated.

@@ -652,7 +652,6 @@ public:
     : KernelException( "DimensionMismatch" )
     , expected_( -1 )
     , provided_( -1 )
-    ,
   {
   }
 
@@ -660,7 +659,6 @@ public:
     : KernelException( "DimensionMismatch" )
     , expected_( expected )
     , provided_( provided )
-    ,
   {
   }
 

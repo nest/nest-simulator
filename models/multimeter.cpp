@@ -206,7 +206,7 @@ multimeter::handle( DataLoggingReply& reply )
   DataLoggingReply::Container const& info = reply.get_info();
 
   // count records that have been skipped during inactivity
-  // size_t inactive_skipped = 0;
+  size_t inactive_skipped = 0;
 
   // record all data, time point by time point
   for ( size_t j = 0; j < info.size(); ++j )
@@ -216,11 +216,11 @@ multimeter::handle( DataLoggingReply& reply )
       break;
     }
 
-    /* if ( not is_active( info[ j ].timestamp ) )
+    if ( not is_active( info[ j ].timestamp ) )
     {
       ++inactive_skipped;
       continue;
-    } */
+    }
 
     reply.set_stamp( info[ j ].timestamp );
     // const index sender = reply.get_sender_node_id();

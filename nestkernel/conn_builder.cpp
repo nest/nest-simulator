@@ -1741,23 +1741,25 @@ nest::BernoulliAstroBuilder::connect_()
       Node* astro;
       thread astro_thread;
       std::vector< index > anode_pool_this_target;
+      int target_count = 0;
 
       for ( NodeCollection::const_iterator tnode_id = targets_->begin(); tnode_id != targets_->end(); ++tnode_id )
       {
         // get target node
         target = kernel().node_manager.get_node_or_proxy( ( *tnode_id ).node_id, tid );
         target_thread = tid;
+        target_count++;
 
         // sample indegree according to truncated Binomial distribution
         binomial_distribution bino_dist;
         binomial_distribution::param_type param( sources_->size(), p_ );
 
-        indegree = sources_->size();
-        while ( indegree >= sources_->size() )
+        indegree = sources_->size() + 1;
+        while ( indegree > sources_->size() )
         {
           indegree = bino_dist( synced_rng, param );
         }
-        assert( indegree < sources_->size() );
+        assert( indegree <= sources_->size() );
 
         // check whether the target is on this thread
         if ( target->is_proxy() )
@@ -1771,34 +1773,50 @@ nest::BernoulliAstroBuilder::connect_()
         // Define astrocyte pool for this target
         anode_pool_this_target.clear();
         // "Deterministic"
-        int anode_index_base = std::floor( targets_->find( ( *tnode_id ).node_id ) * float( astrocytes_size_ ) / targets_size_ );
-        // std::cout << "( *tnode_id ).node_id, anode_index_base = " << ( *tnode_id ).node_id << ", " << anode_index_base << std::endl;
         if ( astro_pool_per_target_det_ == true )
         {
-          if ( max_astro_per_target_ > 0 )
+          if ( max_astro_per_target_ >= 0 )
           {
-            // Select the starting astrocyte
-            int anode_index_tmp = anode_index_base - int( max_astro_per_target_ / 2.0 );
-            // Curb the starting astrocyte
+            // When max_astro_per_target_ not given
+            if ( max_astro_per_target_ == 0 )
+            {
+              // Take max_astro_per_target_ = number of astrocytes/number of neurons
+              max_astro_per_target_ = std::floor( float( astrocytes_size_ ) / targets_size_ );
+              // At least one astrocyte
+              if ( max_astro_per_target_ == 0)
+              {
+                max_astro_per_target_ = 1;
+              }
+            }
+            // Determine starting astrocyte for this neuron
+            int anode_index_tmp;
+            float n_overlap_per_target = max_astro_per_target_ - float( astrocytes_size_ ) / targets_size_;
+            if ( targets_size_ > astrocytes_size_ )
+            {
+              anode_index_tmp = std::floor( targets_->find( ( *tnode_id ).node_id ) / std::floor( float( targets_size_ ) / astrocytes_size_ ) ) - std::round( n_overlap_per_target/2 );
+              if ( target_count/std::floor( float( targets_size_ ) / astrocytes_size_ ) > astrocytes_size_)
+              {
+                // std::cout << "Neurons no. " << target_count << " and after are not paired with astrocytes." << std::endl;
+                break;
+              }
+            }
+            else
+            {
+              anode_index_tmp = targets_->find( ( *tnode_id ).node_id ) * std::floor( float( astrocytes_size_ ) / targets_size_ ) - std::round( n_overlap_per_target/2 );
+            }
+            // Curbing
             if ( anode_index_tmp < 0 )
             {
-              // std::cout << "( *tnode_id ).node_id, anode_index_tmp (<0) = " << ( *tnode_id ).node_id << ", " << anode_index_tmp << std::endl;
               anode_index_tmp = 0;
             }
             else if ( anode_index_tmp > int( astrocytes_size_ - max_astro_per_target_ ) )
             {
-              // std::cout << "( *tnode_id ).node_id, anode_index_tmp (>max-N) = " << ( *tnode_id ).node_id << ", " << anode_index_tmp << std::endl;
-              anode_index_tmp = int( astrocytes_size_ - max_astro_per_target_ );
+              anode_index_tmp = astrocytes_size_ - max_astro_per_target_;
             }
+            // std::cout << "Target, starting astrocyte = " << ( *tnode_id ).node_id << ", " <<  anode_index_tmp << std::endl;
             // Loop until desired astrocyte pool size
             for ( size_t i = 0; i < max_astro_per_target_; i++ )
             {
-              // Redundant?
-              if ( anode_index_tmp >= int( astrocytes_size_ ) )
-              {
-                // std::cout << "( *tnode_id ).node_id, anode_index_tmp (>max) = " << ( *tnode_id ).node_id << ", " << anode_index_tmp << std::endl;
-                anode_index_tmp = astrocytes_size_ - 1;
-              }
               anode_id = ( *astrocytes_ )[ anode_index_tmp ];
               anode_pool_this_target.push_back( anode_id );
               anode_index_tmp++;
@@ -1830,10 +1848,9 @@ nest::BernoulliAstroBuilder::connect_()
           // choose target randomly
           snode_id = ( *sources_ )[ synced_rng->ulrand( sources_->size() ) ];
 
-          // Avoid autapses and multapses. Due to symmetric connectivity,
-          // multapses might exist if the target neuron with node ID snode_id draws the
-          // source with node ID tnode_id while choosing sources itself.
-          if ( snode_id == ( *tnode_id ).node_id or previous_snode_ids.find( snode_id ) != previous_snode_ids.end() )
+          // Allow autapses and but not multapses (to be improved).
+          if ( previous_snode_ids.find( snode_id ) != previous_snode_ids.end() )
+          // if ( snode_id == ( *tnode_id ).node_id or previous_snode_ids.find( snode_id ) != previous_snode_ids.end() )
           {
             continue;
           }
@@ -1867,19 +1884,10 @@ nest::BernoulliAstroBuilder::connect_()
           {
             anode_id = anode_pool_this_target.at( synced_rng->ulrand( anode_pool_this_target.size() ) );
           }
-          // If not
+          // If not, all astrocytes can be connected
           else
           {
-            // If deterministic, only one astrocyte can be connected
-            if ( astro_pool_per_target_det_ == true )
-            {
-              anode_id = ( *astrocytes_ )[ anode_index_base ];
-            }
-            // If probabilistic, all astroyctes can be connected
-            else
-            {
-              anode_id = ( *astrocytes_ )[ synced_rng->ulrand( astrocytes_size_ ) ];
-            }
+            anode_id = ( *astrocytes_ )[ synced_rng->ulrand( astrocytes_size_ ) ];
           }
 
           // if astrocyte is local: connect source -> astrocyte
@@ -1933,65 +1941,6 @@ nest::BernoulliAstroBuilder::connect_()
       exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   }
-  /*
-  {
-    // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
-
-    try
-    {
-      RngPtr rng = get_vp_specific_rng( tid );
-
-      if ( loop_over_targets_() )
-      {
-        NodeCollection::const_iterator target_it = targets_->begin();
-        for ( ; target_it < targets_->end(); ++target_it )
-        {
-          const index tnode_id = ( *target_it ).node_id;
-          std::cout << "get node " << tnode_id;
-          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-          if ( target->is_proxy() )
-          {
-            std::cout << " is proxy" << std::endl;
-            // skip array parameters handled in other virtual processes
-            skip_conn_parameter_( tid );
-            continue;
-          }
-          else
-          {
-            std::cout << std::endl;
-          }
-
-          inner_connect_( tid, rng, target, tnode_id );
-        }
-      }
-
-      else
-      {
-        const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
-        SparseNodeArray::const_iterator n;
-        for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
-        {
-          const index tnode_id = n->get_node_id();
-
-          // Is the local node in the targets list?
-          if ( targets_->find( tnode_id ) < 0 )
-          {
-            continue;
-          }
-
-          inner_connect_( tid, rng, n->get_node(), tnode_id );
-        }
-      }
-    }
-    catch ( std::exception& err )
-    {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
-    }
-  } // of omp parallel
-  */
 }
 
 nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( NodeCollectionPTR sources,

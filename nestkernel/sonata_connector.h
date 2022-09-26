@@ -33,6 +33,7 @@
 
 // Includes from nestkernel:
 #include "conn_parameter.h"
+#include "kernel_manager.h"
 #include "nest_datums.h"
 
 #include "H5Cpp.h"
@@ -193,6 +194,12 @@ private:
   H5::DataSet edge_type_id_dset_;
   H5::DataSet syn_weight_dset_;
   H5::DataSet delay_dset_;
+
+  //! Profiling
+  Stopwatch create_arrays_stopwatch_;
+  Stopwatch read_subsets_stopwatch_;
+  std::vector< Stopwatch > connect_stopwatches_;
+  std::vector< double > connect_times_;
 };
 
 

@@ -267,7 +267,7 @@ private:
     Parameters_();
 
     void get( DictionaryDatum& ) const;
-    double set( const DictionaryDatum& );
+    double set( const DictionaryDatum&, Node* );
   };
 
   struct State_
@@ -287,7 +287,7 @@ private:
     State_( const Parameters_& );
 
     void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, double );
+    void set( const DictionaryDatum&, const Parameters_&, double, Node* );
   };
 
 
@@ -433,10 +433,10 @@ glif_psc::get_status( DictionaryDatum& d ) const
 inline void
 glif_psc::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_;                 // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d ); // throws if BadProperty
-  State_ stmp = S_;                      // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL );         // throws if BadProperty
+  Parameters_ ptmp = P_;                       // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
+  State_ stmp = S_;                            // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
 
   ArchivingNode::set_status( d );
 

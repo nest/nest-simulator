@@ -27,6 +27,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 #include "propagator_stability.h"
 
@@ -148,15 +149,15 @@ nest::glif_psc::Parameters_::get( DictionaryDatum& d ) const
 }
 
 double
-nest::glif_psc::Parameters_::set( const DictionaryDatum& d )
+nest::glif_psc::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
   const double ELold = E_L_;
-  updateValue< double >( d, names::E_L, E_L_ );
+  updateValueParam< double >( d, names::E_L, E_L_, node );
   const double delta_EL = E_L_ - ELold;
 
-  if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
+  if ( updateValueParam< double >( d, names::V_reset, V_reset_, node ) )
   {
     V_reset_ -= E_L_;
   }
@@ -165,7 +166,7 @@ nest::glif_psc::Parameters_::set( const DictionaryDatum& d )
     V_reset_ -= delta_EL;
   }
 
-  if ( updateValue< double >( d, names::V_th, th_inf_ ) )
+  if ( updateValueParam< double >( d, names::V_th, th_inf_, node ) )
   {
     th_inf_ -= E_L_;
   }
@@ -174,17 +175,17 @@ nest::glif_psc::Parameters_::set( const DictionaryDatum& d )
     th_inf_ -= delta_EL;
   }
 
-  updateValue< double >( d, names::g, G_ );
-  updateValue< double >( d, names::C_m, C_m_ );
-  updateValue< double >( d, names::t_ref, t_ref_ );
+  updateValueParam< double >( d, names::g, G_, node );
+  updateValueParam< double >( d, names::C_m, C_m_, node );
+  updateValueParam< double >( d, names::t_ref, t_ref_, node );
 
-  updateValue< double >( d, names::th_spike_add, th_spike_add_ );
-  updateValue< double >( d, names::th_spike_decay, th_spike_decay_ );
-  updateValue< double >( d, names::voltage_reset_fraction, voltage_reset_fraction_ );
-  updateValue< double >( d, names::voltage_reset_add, voltage_reset_add_ );
+  updateValueParam< double >( d, names::th_spike_add, th_spike_add_, node );
+  updateValueParam< double >( d, names::th_spike_decay, th_spike_decay_, node );
+  updateValueParam< double >( d, names::voltage_reset_fraction, voltage_reset_fraction_, node );
+  updateValueParam< double >( d, names::voltage_reset_add, voltage_reset_add_, node );
 
-  updateValue< double >( d, names::th_voltage_index, th_voltage_index_ );
-  updateValue< double >( d, names::th_voltage_decay, th_voltage_decay_ );
+  updateValueParam< double >( d, names::th_voltage_index, th_voltage_index_, node );
+  updateValueParam< double >( d, names::th_voltage_decay, th_voltage_decay_, node );
 
   updateValue< std::vector< double > >( d, names::asc_init, asc_init_ );
   updateValue< std::vector< double > >( d, names::asc_decay, asc_decay_ );
@@ -192,9 +193,9 @@ nest::glif_psc::Parameters_::set( const DictionaryDatum& d )
   updateValue< std::vector< double > >( d, names::asc_r, asc_r_ );
 
   // set model mechanisms
-  updateValue< bool >( d, names::spike_dependent_threshold, has_theta_spike_ );
-  updateValue< bool >( d, names::after_spike_currents, has_asc_ );
-  updateValue< bool >( d, names::adapting_threshold, has_theta_voltage_ );
+  updateValueParam< bool >( d, names::spike_dependent_threshold, has_theta_spike_, node );
+  updateValueParam< bool >( d, names::after_spike_currents, has_asc_, node );
+  updateValueParam< bool >( d, names::adapting_threshold, has_theta_voltage_, node );
 
   // check model mechanisms parameter
   if ( not( ( not has_theta_spike_ and not has_asc_ and not has_theta_voltage_ ) or // glif1
@@ -311,9 +312,9 @@ nest::glif_psc::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 }
 
 void
-nest::glif_psc::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
+nest::glif_psc::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  if ( updateValue< double >( d, names::V_m, U_ ) )
+  if ( updateValueParam< double >( d, names::V_m, U_, node ) )
   {
     U_ -= p.E_L_;
   }
@@ -338,12 +339,13 @@ nest::glif_psc::State_::set( const DictionaryDatum& d, const Parameters_& p, dou
     }
   }
 
-  if ( updateValue< double >( d, names::threshold_spike, threshold_spike_ ) and not p.has_theta_spike_ )
+  if ( updateValueParam< double >( d, names::threshold_spike, threshold_spike_, node ) and not p.has_theta_spike_ )
   {
     throw BadProperty( "Threshold spike component is not supported or settable in the current model mechanisms." );
   }
 
-  if ( updateValue< double >( d, names::threshold_voltage, threshold_voltage_ ) and not p.has_theta_voltage_ )
+  if ( updateValueParam< double >( d, names::threshold_voltage, threshold_voltage_, node )
+    and not p.has_theta_voltage_ )
   {
     throw BadProperty( "Threshold voltage component is not supported or settable in the current model mechanisms." );
   }

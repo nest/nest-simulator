@@ -107,8 +107,8 @@ else:
     end_time_connect = time.time() - start_time_connect
     mem_connect = memory_thisjob()
 
-    print("number of connections: ", nest.GetKernelStatus('num_connections'))
-    print("number of neurons: ", nest.GetKernelStatus('network_size'))
+    print(f"number of connections: {nest.GetKernelStatus('num_connections'):,}")
+    print(f"number of neurons: {nest.GetKernelStatus('network_size'):,}")
 
     # Simulate
     if simulate:
@@ -149,7 +149,7 @@ else:
     print(f'memory create: {mem_create} GB')
     print(f'memory connect: {mem_connect} GB\n')
     if simulate:
-        print(f'number of spikes: {nest.GetKernelStatus("local_spike_counter")}')
+        print(f'number of spikes: {nest.GetKernelStatus("local_spike_counter"):,}')
     # pprint(nest.GetKernelStatus())
     # print(nest.GetConnections())
 

@@ -84,9 +84,9 @@ def scale_coordinates(coordinates: np.array):
         (int, int): output coordinates in px
     """
     coordinates[:, 0] = coordinates[:, 0] * \
-                        GAME_GRID_SCALED[0] / Pong.x_length + FIELD_PADDING
+        GAME_GRID_SCALED[0] / Pong.x_length + FIELD_PADDING
     coordinates[:, 1] = coordinates[:, 1] * \
-                        GAME_GRID_SCALED[1] / Pong.y_length
+        GAME_GRID_SCALED[1] / Pong.y_length
     return coordinates.astype(int)
 
 

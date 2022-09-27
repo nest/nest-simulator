@@ -292,7 +292,7 @@ class PongNetDopa(PongNet):
             self.poisson_noise = nest.Create("poisson_generator",
                                              self.num_neurons,
                                              params={"rate":
-                                                         self.poisson_rate})
+                                                     self.poisson_rate})
             nest.Connect(self.poisson_noise,
                          self.motor_neurons, {'rule': 'one_to_one'},
                          {"weight": self.mean_weight})
@@ -338,7 +338,7 @@ class PongNetDopa(PongNet):
         total_n_spikes = max(sum(spike_counts), 1)
 
         reward_current = self.dopa_signal_factor * target_n_spikes / \
-                         total_n_spikes + self.baseline_reward
+            total_n_spikes + self.baseline_reward
 
         # Clip the dopaminergic signal to avoid runaway synaptic weights
         reward_current = min(reward_current, self.max_reward)
@@ -447,11 +447,11 @@ class PongNetRSTDP(PongNet):
             if position > 0:
                 before_spike = pre_spikes[position - 1]
                 facilitation += self.stdp_amplitude * \
-                                np.exp(-(spike - before_spike) / self.stdp_tau)
+                    np.exp(-(spike - before_spike) / self.stdp_tau)
             if position < len(pre_spikes):
                 after_spike = pre_spikes[position]
                 depression += self.stdp_amplitude * \
-                              np.exp(-(after_spike - spike) / self.stdp_tau)
+                    np.exp(-(after_spike - spike) / self.stdp_tau)
             last_position = position
         if only_causal:
             return min(facilitation, self.stdp_saturation)

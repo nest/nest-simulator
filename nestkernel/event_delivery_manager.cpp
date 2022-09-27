@@ -261,7 +261,7 @@ EventDeliveryManager::update_moduli()
    * Note that for updating the modulos, it is sufficient
    * to rotate the buffer to the left.
    */
-  assert( moduli_.size() == ( index )( min_delay + max_delay ) );
+  assert( moduli_.size() == ( index ) ( min_delay + max_delay ) );
   std::rotate( moduli_.begin(), moduli_.begin() + min_delay, moduli_.end() );
 
   /*
@@ -413,8 +413,8 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
     // Second dimension: fixed reading thread --> REMOVE in this branch for testing
 
     // Third dimension: loop over lags
-  	const size_t sz = ( *it )->size();
-    for ( unsigned int lag = 0; lag < sz ; ++lag )
+    const size_t sz = ( *it )->size();
+    for ( unsigned int lag = 0; lag < sz; ++lag )
     {
       // Fourth dimension: loop over entries
       for ( typename std::vector< TargetT >::iterator iiit = ( *( *it ) )[ lag ].begin();
@@ -423,10 +423,10 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
       {
         const thread rank = 0; // iiit->get_rank();
 
-				send_buffer[ send_buffer_position.idx( rank ) ].set(
-            ( *iiit ).get_tid(), ( *iiit ).get_syn_id(), ( *iiit ).get_lcid(), lag, ( *iiit ).get_offset() );
-          ( *iiit ).set_status( TARGET_ID_PROCESSED ); // mark entry for removal
-          send_buffer_position.increase( rank );
+        send_buffer[ send_buffer_position.idx( rank ) ].set(
+          ( *iiit ).get_tid(), ( *iiit ).get_syn_id(), ( *iiit ).get_lcid(), lag, ( *iiit ).get_offset() );
+        ( *iiit ).set_status( TARGET_ID_PROCESSED ); // mark entry for removal
+        send_buffer_position.increase( rank );
       }
     }
   }
@@ -540,7 +540,7 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
   std::vector< Time > prepared_timestamps( kernel().connection_manager.get_min_delay() );
   for ( size_t lag = 0; lag < ( size_t ) kernel().connection_manager.get_min_delay(); ++lag )
   {
-    prepared_timestamps[ lag ] = kernel().simulation_manager.get_clock() + Time::step( lag + 1 );
+    prepared_timestamps[ lag ] = kernel().simulation_manager.get_clock() - Time::step( lag );
   }
 
   for ( thread rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
@@ -561,13 +561,13 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
     index num_valid_entries = 0;
     for ( unsigned int i = 0; i < send_recv_count_spike_data_per_rank; ++i )
     {
-      const SpikeDataT& spike_data = recv_buffer[ rank * send_recv_count_spike_data_per_rank + i];
+      const SpikeDataT& spike_data = recv_buffer[ rank * send_recv_count_spike_data_per_rank + i ];
 
       // break if this was the last valid entry from this rank
       if ( spike_data.is_end_marker() )
       {
-      	num_valid_entries = i+1;
-      	break;
+        num_valid_entries = i + 1;
+        break;
       }
     }
 
@@ -582,124 +582,127 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
     {
       for ( unsigned int i = 0; i < num_batches; ++i )
       {
-      	for ( unsigned int j = 0; j < BATCH_SIZE; ++j )
-      	{
-      		const SpikeDataT& spike_data = recv_buffer[ rank * send_recv_count_spike_data_per_rank + i * BATCH_SIZE + j ];
+        for ( unsigned int j = 0; j < BATCH_SIZE; ++j )
+        {
+          const SpikeDataT& spike_data = recv_buffer[ rank * send_recv_count_spike_data_per_rank + i * BATCH_SIZE + j ];
 
-      		se_batch[j].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
-      		se_batch[j].set_offset( spike_data.get_offset() );
-      		tid_batch[j] = spike_data.get_tid();
-      		syn_id_batch[j] = spike_data.get_syn_id();
-      		lcid_batch[j] = spike_data.get_lcid();
-      		se_batch[j].set_sender_node_id_info( tid_batch[j], syn_id_batch[j], lcid_batch[j] );
-      	}
-      	for ( unsigned int j = 0; j < BATCH_SIZE; ++j )
-      	{
-      		if ( tid_batch[j] == tid )
-      		{
-      			kernel().connection_manager.send( tid_batch[j], syn_id_batch[j], lcid_batch[j], cm, se_batch[j] );
-      		}
-      	}
+          se_batch[ j ].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
+          se_batch[ j ].set_offset( spike_data.get_offset() );
+          tid_batch[ j ] = spike_data.get_tid();
+          syn_id_batch[ j ] = spike_data.get_syn_id();
+          lcid_batch[ j ] = spike_data.get_lcid();
+          se_batch[ j ].set_sender_node_id_info( tid_batch[ j ], syn_id_batch[ j ], lcid_batch[ j ] );
+        }
+        for ( unsigned int j = 0; j < BATCH_SIZE; ++j )
+        {
+          if ( tid_batch[ j ] == tid )
+          {
+            kernel().connection_manager.send( tid_batch[ j ], syn_id_batch[ j ], lcid_batch[ j ], cm, se_batch[ j ] );
+          }
+        }
       } // processed all regular sized batches, now do remainder
       for ( unsigned int j = 0; j < num_remaining_entries; ++j )
       {
-      	const SpikeDataT& spike_data = recv_buffer[ rank * send_recv_count_spike_data_per_rank + num_batches * BATCH_SIZE + j ];
+        const SpikeDataT& spike_data =
+          recv_buffer[ rank * send_recv_count_spike_data_per_rank + num_batches * BATCH_SIZE + j ];
 
-      	se_batch[j].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
-      	se_batch[j].set_offset( spike_data.get_offset() );
-      	tid_batch[j] = spike_data.get_tid();
-      	syn_id_batch[j] = spike_data.get_syn_id();
-      	lcid_batch[j] = spike_data.get_lcid();
-      	se_batch[j].set_sender_node_id_info( tid_batch[j], syn_id_batch[j], lcid_batch[j] );
+        se_batch[ j ].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
+        se_batch[ j ].set_offset( spike_data.get_offset() );
+        tid_batch[ j ] = spike_data.get_tid();
+        syn_id_batch[ j ] = spike_data.get_syn_id();
+        lcid_batch[ j ] = spike_data.get_lcid();
+        se_batch[ j ].set_sender_node_id_info( tid_batch[ j ], syn_id_batch[ j ], lcid_batch[ j ] );
       }
       for ( unsigned int j = 0; j < num_remaining_entries; ++j )
       {
-      	if ( tid_batch[j] == tid )
-      	{
-      		kernel().connection_manager.send( tid_batch[j], syn_id_batch[j], lcid_batch[j], cm, se_batch[j] );
-      	}
+        if ( tid_batch[ j ] == tid )
+        {
+          kernel().connection_manager.send( tid_batch[ j ], syn_id_batch[ j ], lcid_batch[ j ], cm, se_batch[ j ] );
+        }
       }
     }
     else // compressed spikes
     {
       for ( unsigned int i = 0; i < num_batches; ++i )
       {
-      	for ( unsigned int j = 0; j < BATCH_SIZE; ++j )
-      	{
-      		const SpikeDataT& spike_data = recv_buffer[ rank * send_recv_count_spike_data_per_rank + i * BATCH_SIZE + j ];
+        for ( unsigned int j = 0; j < BATCH_SIZE; ++j )
+        {
+          const SpikeDataT& spike_data = recv_buffer[ rank * send_recv_count_spike_data_per_rank + i * BATCH_SIZE + j ];
 
-      		se_batch[j].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
-      		se_batch[j].set_offset( spike_data.get_offset() );
+          int lag_ = kernel().connection_manager.get_min_delay() - 1;
+          se_batch[ j ].set_stamp( prepared_timestamps[ lag_ - spike_data.get_lag() ] );
+          se_batch[ j ].set_offset( spike_data.get_offset() );
 
-      		syn_id_batch[j] = spike_data.get_syn_id();
-      		// for compressed spikes lcid holds the index in the
-      		// compressed_spike_data structure
-      		lcid_batch[j] = spike_data.get_lcid();
-      	}
-      	for ( unsigned int j = 0; j < BATCH_SIZE; ++j )
-      	{
-      		// find the spike-data entry for this thread
-      		const std::vector< SpikeData >& compressed_spike_data =
-      				kernel().connection_manager.get_compressed_spike_data( syn_id_batch[j], lcid_batch[j] );
-      		lcid_batch[j] = compressed_spike_data[ tid ].get_lcid();
-      	}
-      	for ( unsigned int j = 0; j < BATCH_SIZE; ++j )
-      	{
-      		if ( lcid_batch[j] != invalid_lcid )
-      		{
-      			// non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
-      			// only if needed, as this is computationally costly
-      			se_batch[j].set_sender_node_id_info( tid, syn_id_batch[j], lcid_batch[j] );
-      		}
-      	}
-      	for ( unsigned int j = 0; j < BATCH_SIZE; ++j )
-      	{
-      		if ( lcid_batch[j] != invalid_lcid )
-      		{
-      			kernel().connection_manager.send( tid, syn_id_batch[j], lcid_batch[j], cm, se_batch[j] );
-      		}
-      	}
+          syn_id_batch[ j ] = spike_data.get_syn_id();
+          // for compressed spikes lcid holds the index in the
+          // compressed_spike_data structure
+          lcid_batch[ j ] = spike_data.get_lcid();
+        }
+        for ( unsigned int j = 0; j < BATCH_SIZE; ++j )
+        {
+          // find the spike-data entry for this thread
+          const std::vector< SpikeData >& compressed_spike_data =
+            kernel().connection_manager.get_compressed_spike_data( syn_id_batch[ j ], lcid_batch[ j ] );
+          lcid_batch[ j ] = compressed_spike_data[ tid ].get_lcid();
+        }
+        for ( unsigned int j = 0; j < BATCH_SIZE; ++j )
+        {
+          if ( lcid_batch[ j ] != invalid_lcid )
+          {
+            // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
+            // only if needed, as this is computationally costly
+            se_batch[ j ].set_sender_node_id_info( tid, syn_id_batch[ j ], lcid_batch[ j ] );
+          }
+        }
+        for ( unsigned int j = 0; j < BATCH_SIZE; ++j )
+        {
+          if ( lcid_batch[ j ] != invalid_lcid )
+          {
+            kernel().connection_manager.send( tid, syn_id_batch[ j ], lcid_batch[ j ], cm, se_batch[ j ] );
+          }
+        }
       }
 
       // processed all regular sized batches, now do remainder
 
       for ( unsigned int j = 0; j < num_remaining_entries; ++j )
       {
-      	const SpikeDataT& spike_data = recv_buffer[ rank * send_recv_count_spike_data_per_rank + num_batches * BATCH_SIZE + j ];
+        const SpikeDataT& spike_data =
+          recv_buffer[ rank * send_recv_count_spike_data_per_rank + num_batches * BATCH_SIZE + j ];
 
-      	se_batch[j].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
-      	se_batch[j].set_offset( spike_data.get_offset() );
+        se_batch[ j ].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
+        se_batch[ j ].set_offset( spike_data.get_offset() );
 
-      	syn_id_batch[j] = spike_data.get_syn_id();
-      	// for compressed spikes lcid holds the index in the
-      	// compressed_spike_data structure
-      	lcid_batch[j] = spike_data.get_lcid();
+        syn_id_batch[ j ] = spike_data.get_syn_id();
+        // for compressed spikes lcid holds the index in the
+        // compressed_spike_data structure
+        lcid_batch[ j ] = spike_data.get_lcid();
       }
       for ( unsigned int j = 0; j < num_remaining_entries; ++j )
       {
-      	// find the spike-data entry for this thread
-      	const std::vector< SpikeData >& compressed_spike_data =
-      			kernel().connection_manager.get_compressed_spike_data( syn_id_batch[j], lcid_batch[j] );
-    		lcid_batch[j] = compressed_spike_data[ tid ].get_lcid();
+        // find the spike-data entry for this thread
+        const std::vector< SpikeData >& compressed_spike_data =
+          kernel().connection_manager.get_compressed_spike_data( syn_id_batch[ j ], lcid_batch[ j ] );
+        lcid_batch[ j ] = compressed_spike_data[ tid ].get_lcid();
       }
       for ( unsigned int j = 0; j < num_remaining_entries; ++j )
       {
-      	if ( lcid_batch[j] != invalid_lcid )
-      	{
-      		// non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
-      		// only if needed, as this is computationally costly
-      		se_batch[j].set_sender_node_id_info( tid, syn_id_batch[j], lcid_batch[j] );
-      	}
+        if ( lcid_batch[ j ] != invalid_lcid )
+        {
+          // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
+          // only if needed, as this is computationally costly
+          se_batch[ j ].set_sender_node_id_info( tid, syn_id_batch[ j ], lcid_batch[ j ] );
+        }
       }
       for ( unsigned int j = 0; j < num_remaining_entries; ++j )
       {
-      	if ( lcid_batch[j] != invalid_lcid )
-      	{
-      		kernel().connection_manager.send( tid, syn_id_batch[j], lcid_batch[j], cm, se_batch[j] );
-      	}
+        if ( lcid_batch[ j ] != invalid_lcid )
+        {
+          kernel().connection_manager.send( tid, syn_id_batch[ j ], lcid_batch[ j ], cm, se_batch[ j ] );
+        }
       }
     } // if-else not compressed
-  } // for rank
+  }   // for rank
 
   return are_others_completed;
 }

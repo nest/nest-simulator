@@ -46,6 +46,7 @@
 #include "aeif_psc_delta_clopath.h"
 #include "aeif_psc_exp.h"
 #include "amat2_psc_exp.h"
+#include "cm_default.h"
 #include "erfc_neuron.h"
 #include "gauss_rate.h"
 #include "gif_cond_exp.h"
@@ -211,6 +212,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< rate_transformer_tanh >( "rate_transformer_tanh" );
   kernel().model_manager.register_node_model< rate_transformer_threshold_lin >( "rate_transformer_threshold_lin" );
 
+  kernel().model_manager.register_node_model< cm_default >( "cm_default" );
+
   kernel().model_manager.register_node_model< iaf_chs_2007 >( "iaf_chs_2007" );
   kernel().model_manager.register_node_model< iaf_psc_alpha >( "iaf_psc_alpha" );
   kernel().model_manager.register_node_model< iaf_psc_alpha_canon >(
@@ -222,8 +225,10 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< iaf_psc_exp >( "iaf_psc_exp" );
   kernel().model_manager.register_node_model< iaf_psc_exp_htum >( "iaf_psc_exp_htum" );
   kernel().model_manager.register_node_model< iaf_psc_exp_multisynapse >( "iaf_psc_exp_multisynapse" );
+
   kernel().model_manager.register_node_model< iaf_psc_exp_ps >( "iaf_psc_exp_ps" );
   kernel().model_manager.register_node_model< iaf_psc_exp_ps_lossless >( "iaf_psc_exp_ps_lossless" );
+
   kernel().model_manager.register_node_model< amat2_psc_exp >( "amat2_psc_exp" );
   kernel().model_manager.register_node_model< mat2_psc_exp >( "mat2_psc_exp" );
   kernel().model_manager.register_node_model< parrot_neuron >( "parrot_neuron" );
@@ -253,7 +258,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< ginzburg_neuron >( "ginzburg_neuron" );
   kernel().model_manager.register_node_model< mcculloch_pitts_neuron >( "mcculloch_pitts_neuron" );
   kernel().model_manager.register_node_model< izhikevich >( "izhikevich" );
-  kernel().model_manager.register_node_model< spike_dilutor >( "spike_dilutor" );
+  kernel().model_manager.register_node_model< spike_dilutor >(
+    "spike_dilutor", /*deprecation_info*/ "a future version of NEST" );
 
   kernel().model_manager.register_node_model< spike_recorder >( "spike_recorder" );
   kernel().model_manager.register_node_model< weight_recorder >( "weight_recorder" );

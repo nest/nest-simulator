@@ -171,7 +171,7 @@ public:
 
 private:
   void init_buffers_();
-  void calibrate();
+  void pre_run_hook();
   void update( Time const&, const long, const long );
 
   // The next two classes need to be friends to access private members

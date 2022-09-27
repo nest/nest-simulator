@@ -100,9 +100,9 @@ nest::poisson_generator::init_buffers_()
 }
 
 void
-nest::poisson_generator::calibrate()
+nest::poisson_generator::pre_run_hook()
 {
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
 
   // rate_ is in Hz, dt in ms, so we have to convert from s to ms
   poisson_distribution::param_type param( Time::get_resolution().get_ms() * P_.rate_ * 1e-3 );

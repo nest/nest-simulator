@@ -119,9 +119,9 @@ hh_psc_alpha_clopath_dynamics( double, const double y[], double f[], void* pnode
   f[ S::HH_N ] = alpha_n * ( 1 - y[ S::HH_N ] ) - beta_n * y[ S::HH_N ]; // n-variable
 
   // convolved membrane potentials for Clopath stdp
-  f[ S::U_BAR_PLUS ] = ( -u_bar_plus + V ) / node.P_.tau_plus;
-  f[ S::U_BAR_MINUS ] = ( -u_bar_minus + V ) / node.P_.tau_minus;
-  f[ S::U_BAR_BAR ] = ( -u_bar_bar + u_bar_minus ) / node.P_.tau_bar_bar;
+  f[ S::U_BAR_PLUS ] = ( -u_bar_plus + V ) / node.P_.tau_u_bar_plus;
+  f[ S::U_BAR_MINUS ] = ( -u_bar_minus + V ) / node.P_.tau_u_bar_minus;
+  f[ S::U_BAR_BAR ] = ( -u_bar_bar + u_bar_minus ) / node.P_.tau_u_bar_bar;
 
   // synapses: alpha functions
   f[ S::DI_EXC ] = -dI_ex / node.P_.tau_synE;
@@ -138,20 +138,20 @@ hh_psc_alpha_clopath_dynamics( double, const double y[], double f[], void* pnode
  * ---------------------------------------------------------------- */
 
 nest::hh_psc_alpha_clopath::Parameters_::Parameters_()
-  : t_ref_( 2.0 )        // ms
-  , g_Na( 12000.0 )      // nS
-  , g_K( 3600.0 )        // nS
-  , g_L( 30.0 )          // nS
-  , C_m( 100.0 )         // pF
-  , E_Na( 50.0 )         // mV
-  , E_K( -77.0 )         // mV
-  , E_L( -54.402 )       // mV
-  , tau_synE( 0.2 )      // ms
-  , tau_synI( 2.0 )      // ms
-  , I_e( 0.0 )           // pA
-  , tau_plus( 114.0 )    // ms
-  , tau_minus( 10.0 )    // ms
-  , tau_bar_bar( 500.0 ) // ms
+  : t_ref_( 2.0 )           // ms
+  , g_Na( 12000.0 )         // nS
+  , g_K( 3600.0 )           // nS
+  , g_L( 30.0 )             // nS
+  , C_m( 100.0 )            // pF
+  , E_Na( 50.0 )            // mV
+  , E_K( -77.0 )            // mV
+  , E_L( -54.402 )          // mV
+  , tau_synE( 0.2 )         // ms
+  , tau_synI( 2.0 )         // ms
+  , I_e( 0.0 )              // pA
+  , tau_u_bar_plus( 114.0 ) // ms
+  , tau_u_bar_minus( 10.0 ) // ms
+  , tau_u_bar_bar( 500.0 )  // ms
 {
 }
 
@@ -215,9 +215,9 @@ nest::hh_psc_alpha_clopath::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_syn_ex, tau_synE );
   def< double >( d, names::tau_syn_in, tau_synI );
   def< double >( d, names::I_e, I_e );
-  def< double >( d, names::tau_plus, tau_plus );
-  def< double >( d, names::tau_minus, tau_minus );
-  def< double >( d, names::tau_bar_bar, tau_bar_bar );
+  def< double >( d, names::tau_u_bar_plus, tau_u_bar_plus );
+  def< double >( d, names::tau_u_bar_minus, tau_u_bar_minus );
+  def< double >( d, names::tau_u_bar_bar, tau_u_bar_bar );
 }
 
 void
@@ -236,9 +236,9 @@ nest::hh_psc_alpha_clopath::Parameters_::set( const DictionaryDatum& d, Node* no
   updateValueParam< double >( d, names::tau_syn_in, tau_synI, node );
 
   updateValueParam< double >( d, names::I_e, I_e, node );
-  updateValueParam< double >( d, names::tau_plus, tau_plus, node );
-  updateValueParam< double >( d, names::tau_minus, tau_minus, node );
-  updateValueParam< double >( d, names::tau_bar_bar, tau_bar_bar, node );
+  updateValueParam< double >( d, names::tau_u_bar_plus, tau_u_bar_plus, node );
+  updateValueParam< double >( d, names::tau_u_bar_minus, tau_u_bar_minus, node );
+  updateValueParam< double >( d, names::tau_u_bar_bar, tau_u_bar_bar, node );
   if ( C_m <= 0 )
   {
     throw BadProperty( "Capacitance must be strictly positive." );
@@ -247,7 +247,7 @@ nest::hh_psc_alpha_clopath::Parameters_::set( const DictionaryDatum& d, Node* no
   {
     throw BadProperty( "Refractory time cannot be negative." );
   }
-  if ( tau_synE <= 0 or tau_synI <= 0 or tau_plus <= 0 or tau_minus <= 0 or tau_bar_bar <= 0 )
+  if ( tau_synE <= 0 or tau_synI <= 0 or tau_u_bar_plus <= 0 or tau_u_bar_minus <= 0 or tau_u_bar_bar <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -398,7 +398,7 @@ nest::hh_psc_alpha_clopath::init_buffers_()
 }
 
 void
-nest::hh_psc_alpha_clopath::calibrate()
+nest::hh_psc_alpha_clopath::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -474,14 +474,14 @@ nest::hh_psc_alpha_clopath::update( Time const& origin, const long from, const l
     else
       // (    threshold    &&     maximum       )
       if ( S_.y_[ State_::V_M ] >= 0 && U_old > S_.y_[ State_::V_M ] )
-    {
-      S_.r_ = V_.RefractoryCounts_;
+      {
+        S_.r_ = V_.RefractoryCounts_;
 
-      set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
-      SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
-    }
+        SpikeEvent se;
+        kernel().event_delivery_manager.send( *this, se, lag );
+      }
 
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );

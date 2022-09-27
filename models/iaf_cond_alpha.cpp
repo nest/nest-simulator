@@ -85,17 +85,24 @@ nest::iaf_cond_alpha_dynamics( double, const double y[], double f[], void* pnode
   assert( pnode );
   const nest::iaf_cond_alpha& node = *( reinterpret_cast< nest::iaf_cond_alpha* >( pnode ) );
 
+  const bool is_refractory = node.S_.r > 0;
+
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
 
   // The following code is verbose for the sake of clarity. We assume that a
   // good compiler will optimize the verbosity away ...
-  const double I_syn_exc = y[ S::G_EXC ] * ( y[ S::V_M ] - node.P_.E_ex );
-  const double I_syn_inh = y[ S::G_INH ] * ( y[ S::V_M ] - node.P_.E_in );
-  const double I_leak = node.P_.g_L * ( y[ S::V_M ] - node.P_.E_L );
+
+  // Clamp membrane potential to V_reset while refractory, otherwise bound
+  // it to V_th.
+  const double V = is_refractory ? node.P_.V_reset : std::min( y[ S::V_M ], node.P_.V_th );
+
+  const double I_syn_exc = y[ S::G_EXC ] * ( V - node.P_.E_ex );
+  const double I_syn_inh = y[ S::G_INH ] * ( V - node.P_.E_in );
+  const double I_leak = node.P_.g_L * ( V - node.P_.E_L );
 
   // dV_m/dt
-  f[ 0 ] = ( -I_leak - I_syn_exc - I_syn_inh + node.B_.I_stim_ + node.P_.I_e ) / node.P_.C_m;
+  f[ 0 ] = is_refractory ? 0.0 : ( -I_leak - I_syn_exc - I_syn_inh + node.B_.I_stim_ + node.P_.I_e ) / node.P_.C_m;
 
   // d dg_exc/dt, dg_exc/dt
   f[ 1 ] = -y[ S::DG_EXC ] / node.P_.tau_synE;
@@ -347,7 +354,7 @@ nest::iaf_cond_alpha::init_buffers_()
 }
 
 void
-nest::iaf_cond_alpha::calibrate()
+nest::iaf_cond_alpha::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -413,16 +420,16 @@ nest::iaf_cond_alpha::update( Time const& origin, const long from, const long to
     else
       // neuron is not absolute refractory
       if ( S_.y[ State_::V_M ] >= P_.V_th )
-    {
-      S_.r = V_.RefractoryCounts;
-      S_.y[ State_::V_M ] = P_.V_reset;
+      {
+        S_.r = V_.RefractoryCounts;
+        S_.y[ State_::V_M ] = P_.V_reset;
 
-      // log spike with ArchivingNode
-      set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+        // log spike with ArchivingNode
+        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
-      SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
-    }
+        SpikeEvent se;
+        kernel().event_delivery_manager.send( *this, se, lag );
+      }
 
     // add incoming spikes
     S_.y[ State_::DG_EXC ] += B_.spike_exc_.get_value( lag ) * V_.PSConInit_E;

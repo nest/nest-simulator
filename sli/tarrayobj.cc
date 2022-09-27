@@ -363,7 +363,7 @@ TokenArrayObj::reduce( Token* first, Token* last )
     i->clear();
     i++;
   }
-  begin_of_free_storage = p + ( size_t )( last - first );
+  begin_of_free_storage = p + ( size_t ) ( last - first );
   // shrink();
 }
 

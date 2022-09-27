@@ -218,7 +218,7 @@ public:
 
 private:
   void init_buffers_();
-  void calibrate();
+  void pre_run_hook();
   void update( Time const&, const long, const long );
 
   // END Boilerplate function declarations ----------------------------
@@ -247,7 +247,7 @@ private:
     double E_ex;       //!< Excitatory reversal Potential in mV
     double E_in;       //!< Inhibitory reversal Potential in mV
     double E_L;        //!< Leak reversal Potential (aka resting potential) in mV
-    double Delta_T;    //!< Slope factor in ms
+    double Delta_T;    //!< Slope factor in mV
     double tau_w;      //!< Adaptation time-constant in ms
     double a;          //!< Subthreshold adaptation in nS
     double b;          //!< Spike-triggered adaptation in pA

@@ -129,6 +129,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   tsodyks2_synapse( const tsodyks2_synapse& ) = default;
+  tsodyks2_synapse& operator=( const tsodyks2_synapse& ) = default;
 
   /**
    * Default Destructor.
@@ -173,7 +174,7 @@ public:
     port
     handles_test_event( SpikeEvent&, rport )
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 

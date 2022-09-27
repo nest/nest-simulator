@@ -37,7 +37,7 @@
 Short description
 +++++++++++++++++
 
-Current-based generalized leaky integrate-and-fire models
+Current-based generalized leaky integrate-and-fire (GLIF) models (from the Allen Institute)
 
 Description
 +++++++++++
@@ -219,7 +219,7 @@ private:
   void init_buffers_();
 
   //! Initialize auxiliary quantities, leave parameters and state untouched.
-  void calibrate();
+  void pre_run_hook();
 
   //! Take neuron through given time interval
   void update( nest::Time const&, const long, const long );

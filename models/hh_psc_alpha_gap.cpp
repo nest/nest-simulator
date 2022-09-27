@@ -434,7 +434,7 @@ nest::hh_psc_alpha_gap::init_buffers_()
 }
 
 void
-nest::hh_psc_alpha_gap::calibrate()
+nest::hh_psc_alpha_gap::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -532,14 +532,14 @@ nest::hh_psc_alpha_gap::update_( Time const& origin, const long from, const long
       else
         // (    threshold    &&     maximum       )
         if ( S_.y_[ State_::V_M ] >= 0 && U_old > S_.y_[ State_::V_M ] )
-      {
-        S_.r_ = V_.RefractoryCounts_;
+        {
+          S_.r_ = V_.RefractoryCounts_;
 
-        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+          set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
-        SpikeEvent se;
-        kernel().event_delivery_manager.send( *this, se, lag );
-      }
+          SpikeEvent se;
+          kernel().event_delivery_manager.send( *this, se, lag );
+        }
 
       // log state data
       B_.logger_.record_data( origin.get_steps() + lag );

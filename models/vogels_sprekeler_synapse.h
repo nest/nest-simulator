@@ -103,6 +103,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   vogels_sprekeler_synapse( const vogels_sprekeler_synapse& ) = default;
+  vogels_sprekeler_synapse& operator=( const vogels_sprekeler_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase.
@@ -143,7 +144,7 @@ public:
     port
     handles_test_event( SpikeEvent&, rport )
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 

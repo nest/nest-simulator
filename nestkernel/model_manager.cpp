@@ -222,7 +222,11 @@ ModelManager::register_node_model_( Model* model )
   std::string name = model->get_name();
 
   builtin_node_models_.push_back( model );
-  node_models_.push_back( model->clone( name ) );
+
+  Model* cloned_model = model->clone( name );
+  cloned_model->set_model_id( id );
+
+  node_models_.push_back( cloned_model );
 
 #pragma omp parallel
   {
@@ -599,7 +603,7 @@ ModelManager::register_connection_model_( ConnectorModel* cf )
 Node*
 ModelManager::create_proxynode_( thread t, int model_id )
 {
-  Node* proxy = proxynode_model_->allocate( t );
+  Node* proxy = proxynode_model_->create( t );
   proxy->set_model_id( model_id );
   return proxy;
 }

@@ -43,8 +43,8 @@ class Network;
 Short description
 +++++++++++++++++
 
-Population of generalized integrate-and-fire neurons with exponential
-postsynaptic currents and adaptation
+Population of generalized integrate-and-fire neurons (GIF) with exponential
+postsynaptic currents and adaptation (from the Gerstner lab)
 
 
 Description
@@ -74,7 +74,7 @@ translation.
 
 Connecting two population models corresponds to full connectivity of every
 neuron in each population. An approximation of random connectivity can be
-implemented by connecting populations through a ``spike_dilutor``.
+implemented by connecting populations using a ``bernoulli_synapse``.
 
 
 Parameters
@@ -137,7 +137,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 See also
 ++++++++
 
-gif_psc_exp, pp_pop_psc_delta, spike_dilutor
+gif_psc_exp, bernoulli_synapse
 
 EndUserDocs */
 
@@ -187,7 +187,7 @@ public:
 
 private:
   void init_buffers_();
-  void calibrate();
+  void pre_run_hook();
 
   void update( Time const&, const long, const long );
 

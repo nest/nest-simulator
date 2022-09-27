@@ -81,6 +81,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   static_synapse( const static_synapse& rhs ) = default;
+  static_synapse& operator=( const static_synapse& rhs ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -100,42 +101,42 @@ public:
     port
     handles_test_event( SpikeEvent&, rport )
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
     handles_test_event( RateEvent&, rport )
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
     handles_test_event( DataLoggingRequest&, rport )
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
     handles_test_event( CurrentEvent&, rport )
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
     handles_test_event( ConductanceEvent&, rport )
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
     handles_test_event( DoubleDataEvent&, rport )
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
     handles_test_event( DSSpikeEvent&, rport )
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
     handles_test_event( DSCurrentEvent&, rport )
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 

@@ -52,7 +52,7 @@ statusdict/is_mpi :: statusdict/userargs :: length 0 eq  and
 %% % if interpreter is serial and parallel nest exists: use parallel version 
 %% statusdict/is_mpi :: not statusdict/have_mpi :: and
 %% {
-%%  1 ( --userargs=indirected ) statusdict/files :: First join mpirun_call 
+%%  1 ( --userargs=indirected ) statusdict/files :: First join mpirun
 %% } if
 */
 

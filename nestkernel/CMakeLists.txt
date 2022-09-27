@@ -132,7 +132,16 @@ if ( HAVE_MPI )
 endif ()
 
 
+# Prevent problems with Conda path substitution (see #2348) 
+set_source_files_properties( dynamicloader.cpp PROPERTIES COMPILE_OPTIONS "-O0" )
+
+
 add_library( nestkernel ${nestkernel_sources} )
+set_target_properties( nestkernel
+    PROPERTIES
+    VERSION ${NEST_VERSION}
+    SOVERSION 3
+    )
 target_link_libraries( nestkernel
     nestutil sli_lib
     ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES}

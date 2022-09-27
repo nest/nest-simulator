@@ -123,6 +123,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   urbanczik_synapse( const urbanczik_synapse& ) = default;
+  urbanczik_synapse& operator=( const urbanczik_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -160,7 +161,7 @@ public:
     port
     handles_test_event( SpikeEvent&, rport )
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 

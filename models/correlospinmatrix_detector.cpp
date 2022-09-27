@@ -281,9 +281,9 @@ nest::correlospinmatrix_detector::init_buffers_()
 }
 
 void
-nest::correlospinmatrix_detector::calibrate()
+nest::correlospinmatrix_detector::pre_run_hook()
 {
-  device_.calibrate();
+  device_.pre_run_hook();
 }
 
 
@@ -354,20 +354,20 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
     }
     else // multiplicity != 1
       if ( m == 2 )
-    {
-      S_.curr_state_[ curr_i ] = true;
-
-      if ( S_.tentative_down_ ) // really was a down transition, because we now
-                                // have another double event
       {
-        down_transition = true;
-      }
+        S_.curr_state_[ curr_i ] = true;
 
-      S_.curr_state_[ S_.last_i_ ] = false;
-      S_.last_change_[ curr_i ] = stamp.get_steps();
-      // previous event was first event of two, so no down transition
-      S_.tentative_down_ = false;
-    }
+        if ( S_.tentative_down_ ) // really was a down transition, because we now
+                                  // have another double event
+        {
+          down_transition = true;
+        }
+
+        S_.curr_state_[ S_.last_i_ ] = false;
+        S_.last_change_[ curr_i ] = stamp.get_steps();
+        // previous event was first event of two, so no down transition
+        S_.tentative_down_ = false;
+      }
 
     if ( down_transition ) // only do something on the downtransitions
     {

@@ -102,6 +102,8 @@ const Name continuous( "continuous" );
 const Name count_covariance( "count_covariance" );
 const Name count_histogram( "count_histogram" );
 const Name covariance( "covariance" );
+const Name compartments( "compartments" );
+const Name comp_idx( "comp_idx" );
 
 const Name Delta_T( "Delta_T" );
 const Name Delta_V( "Delta_V" );
@@ -166,6 +168,7 @@ const Name equilibrate( "equilibrate" );
 const Name eta( "eta" );
 const Name events( "events" );
 const Name extent( "extent" );
+const Name e_L( "e_L" );
 
 const Name file_extension( "file_extension" );
 const Name filename( "filename" );
@@ -215,6 +218,7 @@ const Name growth_factor_buffer_spike_data( "growth_factor_buffer_spike_data" );
 const Name growth_factor_buffer_target_data( "growth_factor_buffer_target_data" );
 const Name growth_rate( "growth_rate" );
 const Name gsl_error_tol( "gsl_error_tol" );
+const Name g_C( "g_C" );
 
 const Name h( "h" );
 const Name has_connections( "has_connections" );
@@ -346,6 +350,7 @@ const Name post_trace( "post_trace" );
 const Name pre_synaptic_element( "pre_synaptic_element" );
 const Name precise_times( "precise_times" );
 const Name precision( "precision" );
+const Name prepared( "prepared" );
 const Name print_time( "print_time" );
 const Name proximal_curr( "proximal_curr" );
 const Name proximal_exc( "proximal_exc" );
@@ -353,6 +358,8 @@ const Name proximal_inh( "proximal_inh" );
 const Name psi( "psi" );
 const Name published( "published" );
 const Name pulse_times( "pulse_times" );
+const Name parent_idx( "parent_idx" );
+const Name params( "params" );
 
 const Name q_rr( "q_rr" );
 const Name q_sfa( "q_sfa" );
@@ -389,6 +396,7 @@ const Name rng_type( "rng_type" );
 const Name rng_types( "rng_types" );
 const Name rport( "receptor" );
 const Name rule( "rule" );
+const Name receptor_idx( "receptor_idx" );
 
 const Name S( "S" );
 const Name S_act_NMDA( "S_act_NMDA" );
@@ -459,7 +467,6 @@ const Name tau_Mg_slow_NMDA( "tau_Mg_slow_NMDA" );
 const Name tau_P( "tau_P" );
 const Name tau_V_th( "tau_V_th" );
 const Name tau_ahp( "tau_ahp" );
-const Name tau_bar_bar( "tau_bar_bar" );
 const Name tau_c( "tau_c" );
 const Name tau_decay( "tau_decay" );
 const Name tau_decay_AMPA( "tau_decay_AMPA" );
@@ -497,6 +504,9 @@ const Name tau_syn( "tau_syn" );
 const Name tau_syn_ex( "tau_syn_ex" );
 const Name tau_syn_in( "tau_syn_in" );
 const Name tau_theta( "tau_theta" );
+const Name tau_u_bar_bar( "tau_u_bar_bar" );
+const Name tau_u_bar_minus( "tau_u_bar_minus" );
+const Name tau_u_bar_plus( "tau_u_bar_plus" );
 const Name tau_v( "tau_v" );
 const Name tau_vacant( "tau_vacant" );
 const Name tau_w( "tau_w" );
@@ -597,6 +607,7 @@ const Name y_1( "y_1" );
 
 const Name z( "z" );
 const Name z_connected( "z_connected" );
+
 } // namespace names
 
 } // namespace nest

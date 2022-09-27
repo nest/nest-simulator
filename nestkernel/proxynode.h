@@ -115,6 +115,7 @@ public:
   get_thread() const
   {
     assert( false );
+    return invalid_thread;
   }
 
 private:
@@ -127,7 +128,7 @@ private:
   {
   }
   void
-  calibrate()
+  pre_run_hook()
   {
   }
   void

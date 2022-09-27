@@ -308,6 +308,30 @@ public:
   std::string message() const;
 };
 
+/*
+ * Exception to be thrown if the parent
+ * compartment does not exist
+ */
+class UnknownCompartment : public KernelException
+{
+  long compartment_idx_;
+  std::string info_;
+
+public:
+  UnknownCompartment( long compartment_idx, std::string info )
+    : KernelException( "UnknownCompartment" )
+    , compartment_idx_( compartment_idx )
+    , info_( info )
+  {
+  }
+
+  ~UnknownCompartment() throw()
+  {
+  }
+  std::string message() const;
+};
+
+
 /**
  * Exception to be thrown if the specified
  * receptor type does not exist in the node.
@@ -367,11 +391,19 @@ public:
 class UnknownPort : public KernelException
 {
   int id_;
+  std::string info_;
 
 public:
   UnknownPort( int id )
     : KernelException( "UnknownPort" )
     , id_( id )
+    , info_( "" )
+  {
+  }
+  UnknownPort( int id, std::string info )
+    : KernelException( "UnknownPort" )
+    , id_( id )
+    , info_( info )
   {
   }
 
@@ -901,7 +933,7 @@ public:
 };
 
 /**
- * Exception to be thrown if an internal error occures.
+ * Exception to be thrown if an internal error occurs.
  * @ingroup KernelExceptions
  */
 class InternalError : public KernelException

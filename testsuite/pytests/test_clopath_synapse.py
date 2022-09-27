@@ -101,8 +101,8 @@ class ClopathSynapseTestCase(unittest.TestCase):
                               'theta_plus': -45.3,
                               'A_LTD': 14.0e-5,
                               'A_LTP': 8.0e-5,
-                              'tau_minus': 10.0,
-                              'tau_plus': 7.0,
+                              'tau_u_bar_minus': 10.0,
+                              'tau_u_bar_plus': 7.0,
                               'delay_u_bars': 4.0,
                               'a': 4.0,
                               'b': 0.0805,
@@ -119,8 +119,8 @@ class ClopathSynapseTestCase(unittest.TestCase):
                               'theta_plus': -35.0,
                               'A_LTD': 14.0e-5,
                               'A_LTP': 8.0e-5,
-                              'tau_minus': 10.0,
-                              'tau_plus': 114.0,
+                              'tau_u_bar_minus': 10.0,
+                              'tau_u_bar_plus': 114.0,
                               'delay_u_bars': 5.0,
                               }
             syn_weights = []

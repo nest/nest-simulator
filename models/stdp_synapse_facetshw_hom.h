@@ -246,6 +246,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   stdp_facetshw_synapse_hom( const stdp_facetshw_synapse_hom& ) = default;
+  stdp_facetshw_synapse_hom& operator=( const stdp_facetshw_synapse_hom& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -282,7 +283,7 @@ public:
     port
     handles_test_event( SpikeEvent&, rport )
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 

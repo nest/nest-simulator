@@ -108,7 +108,7 @@ private:
   void init_buffers_();
 
   void
-  calibrate()
+  pre_run_hook()
   {
   } // no variables
 

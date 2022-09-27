@@ -154,7 +154,7 @@ class GetConnectionsTestCase(unittest.TestCase):
         num_src = 3
         num_tgt = 5
 
-        for synapse_model in  [s for s in nest.synapse_models if s.endswith("_lbl")]:
+        for synapse_model in [s for s in nest.synapse_models if s.endswith("_lbl")]:
             nest.ResetKernel()
 
             src = nest.Create('iaf_psc_alpha', num_src)

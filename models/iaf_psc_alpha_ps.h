@@ -96,7 +96,7 @@ can only change at on-grid times.
   `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
 
 For details about exact subthreshold integration, please see
-:doc:`../guides/exact-integration`.
+:doc:`../neurons/exact-integration`.
 
 Parameters
 ++++++++++
@@ -157,7 +157,7 @@ public:
   iaf_psc_alpha_ps();
 
   /** Copy constructor.
-      GenericModel::allocate_() uses the copy constructor to clone
+      GenericModel::create_() uses the copy constructor to clone
       actual model instances from the prototype instance.
 
       @note The copy constructor MUST NOT be used to create nodes based
@@ -210,7 +210,7 @@ private:
    */
   //@{
   void init_buffers_();
-  void calibrate();
+  void pre_run_hook();
 
   bool get_next_event_( const long T, double& ev_offset, double& ev_weight, bool& end_of_refract );
 

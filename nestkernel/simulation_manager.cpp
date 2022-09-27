@@ -827,29 +827,7 @@ nest::SimulationManager::update_()
 
       if ( from_step_ == 0 )
       {
-#ifdef TIMER_DETAILED
-        if ( tid == 0 )
-        {
-          sw_gather_spike_data_.start();
-        }
-#endif
 
-        if ( kernel().connection_manager.has_primary_connections() )
-        {
-          // Deliver spikes from receive buffer to ring buffers.
-          kernel().event_delivery_manager.deliver_events( tid );
-        }
-        if ( kernel().connection_manager.secondary_connections_exist() )
-        {
-          kernel().event_delivery_manager.deliver_secondary_events( tid, false );
-        }
-
-#ifdef TIMER_DETAILED
-        if ( tid == 0 )
-        {
-          sw_gather_spike_data_.stop();
-        }
-#endif
 
 #ifdef HAVE_MUSIC
 // advance the time of music by one step (min_delay * h) must
@@ -1012,16 +990,19 @@ nest::SimulationManager::update_()
         sw_gather_spike_data_.start();
 #endif
 
+
         // gather only at end of slice, i.e., end of min_delay step
         if ( to_step_ == kernel().connection_manager.get_min_delay() )
         {
           if ( kernel().connection_manager.has_primary_connections() )
           {
             kernel().event_delivery_manager.gather_spike_data( tid );
+            kernel().event_delivery_manager.deliver_events( tid );
           }
           if ( kernel().connection_manager.secondary_connections_exist() )
           {
             kernel().event_delivery_manager.gather_secondary_events( true );
+            kernel().event_delivery_manager.deliver_secondary_events( tid, false );
           }
         }
 

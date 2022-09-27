@@ -1,2 +1,8 @@
 NEST-pong
-===========
+=========
+
+Requirements
+------------
+
+Instructions
+------------

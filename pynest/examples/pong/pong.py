@@ -49,7 +49,7 @@ DONT_MOVE = 0
 
 class GameObject:
     def __init__(self, game, x_pos=0.5, y_pos=0.5, velocity=0.2,
-                 direction=[0, 0]):
+                 direction=(0, 0)):
         """Base class for Ball and Paddle that contains basic functionality for
         an object inside a game.
 
@@ -72,7 +72,7 @@ class GameObject:
         return self.cell
 
     def get_pos(self):
-        return (self.x_pos, self.y_pos)
+        return self.x_pos, self.y_pos
 
     def update_cell(self):
         """Update the cell in the game grid based on position.
@@ -93,14 +93,10 @@ class Ball(GameObject):
         For other args, see :class:`GameObject`.
     """
 
-    def __init__(self, game,
-                 x_pos=0.8,
-                 y_pos=0.5,
-                 velocity=0.025,
-                 direction=[-1 / 2., 1 / 2.],
-                 radius=0.025):
+    def __init__(self, game, x_pos=0.8, y_pos=0.5, velocity=0.025,
+                 direction=(-1 / 2., 1 / 2.), radius=0.025):
         super().__init__(game, x_pos, y_pos, velocity, direction)
-        self.ball_radius = radius  # unit length
+        self.ball_radius = radius  # Unit length
         self.update_cell()
 
 
@@ -115,7 +111,7 @@ class Paddle(GameObject):
 
         For other args, see :class:`GameObject`.
     """
-    length = 0.2  # paddle length in the scale of GameOfPong.y_length
+    length = 0.2  # Paddle length in the scale of GameOfPong.y_length
 
     def __init__(self, game, left, y_pos=0.5, velocity=0.05, direction=0):
         x_pos = 0. if left else game.x_length
@@ -137,7 +133,6 @@ class GameOfPong(object):
     """Class representing a game of Pong. Playing field is 1.6 by 1.0 units
     in size, discretized into x_grid*y_grid cells.
     """
-
     x_grid = 32
     y_grid = 20
     x_length = 1.6
@@ -176,23 +171,23 @@ class GameOfPong(object):
             and paddle position.
         """
         if self.ball.y_pos + self.ball.ball_radius >= self.y_length:
-            # Ball on upper edge.
+            # Ball on upper edge
             self.ball.direction[1] = -1 * abs(self.ball.direction[1])
         elif self.ball.y_pos - self.ball.ball_radius <= 0:
-            # Ball on lower edge.
+            # Ball on lower edge
             self.ball.direction[1] = abs(self.ball.direction[1])
 
         if self.ball.x_pos - self.ball.ball_radius <= 0:
-            # Ball on left edge.
+            # Ball on left edge
             if abs(self.l_paddle.y_pos - self.ball.y_pos) <= Paddle.length / 2:
-                # Ball hits left paddle.
+                # Ball hits left paddle
                 self.ball.direction[0] = abs(self.ball.direction[0])
             else:
                 return RIGHT_SCORE
         elif self.ball.x_pos + self.ball.ball_radius >= self.x_length:
-            # Ball on right edge.
+            # Ball on right edge
             if abs(self.r_paddle.y_pos - self.ball.y_pos) <= Paddle.length / 2:
-                # Ball hits right paddle.
+                # Ball hits right paddle
                 self.ball.direction[0] = -1 * abs(self.ball.direction[0])
             else:
                 return LEFT_SCORE
@@ -201,7 +196,6 @@ class GameOfPong(object):
     def propagate_ball_and_paddles(self):
         """Update ball and paddle coordinates based on direction and velocity.
         """
-
         for paddle in [self.r_paddle, self.l_paddle]:
             paddle.y_pos += paddle.direction * paddle.velocity
             if paddle.y_pos < 0:

@@ -55,18 +55,20 @@ References
 :Authors: J Gille, T Wunderlich, Electronic Vision(s)
 """
 
-import nest
-import sys
 import argparse
-import pong
+import datetime
+import gzip
+import logging
+import nest
+import os
+import sys
+import time
+
 import numpy as np
 import pickle
-import time
-import os
-import logging
-import gzip
-import datetime
-from networks import POLL_TIME, PongNetDopa,  PongNetRSTDP
+
+import pong
+from networks import POLL_TIME, PongNetDopa, PongNetRSTDP
 
 
 class AIPong:
@@ -75,9 +77,9 @@ class AIPong:
         neural networks.
 
         Args:
-            p1 (PongNet): network to play on the left side.
-            p2 (PongNet): network to play on the right side.
-            out_folder (str, optional): name of the output folder. Defaults to
+            p1 (PongNet): Network to play on the left side.
+            p2 (PongNet): Network to play on the right side.
+            out_folder (str, optional): Name of the output folder. Defaults to
             current time stamp (YYYY-mm-dd-HH-MM-SS).
         """
         self.game = pong.GameOfPong()
@@ -94,7 +96,7 @@ class AIPong:
 
         logging.info(f"setup complete for a pong game between: {p1} and {p2}.")
 
-    def run_games(self,  max_runs=10000):
+    def run_games(self, max_runs=10000):
         """Run a simulation of pong games and store the results.
 
         Args:
@@ -112,7 +114,7 @@ class AIPong:
                      f"{POLL_TIME}ms each.")
         while self.run < max_runs:
             logging.debug("")
-            logging.debug(f"iteration {self.run}:")
+            logging.debug(f"Iteration {self.run}:")
             self.input_index = self.game.ball.get_cell()[1]
             self.player1.set_input_spiketrain(
                 self.input_index, biological_time)
@@ -131,7 +133,7 @@ class AIPong:
             biological_time = nest.GetKernelStatus("biological_time")
 
             for network, paddle in zip(
-                [self.player1, self.player2],
+                    [self.player1, self.player2],
                     [self.game.l_paddle, self.game.r_paddle]):
 
                 network.apply_synaptic_plasticity(biological_time)
@@ -162,12 +164,12 @@ class AIPong:
 
         end_time = time.time()
         logging.info(
-            f"simulation of {max_runs} runs complete after: "
-            f"{datetime.timedelta(seconds=end_time-start_time)}")
+            f"Simulation of {max_runs} runs complete after: "
+            f"{datetime.timedelta(seconds=end_time - start_time)}")
 
         self.game_data = np.array(self.game_data)
 
-        out_data = {}
+        out_data = dict()
         out_data["ball_pos"] = self.game_data[:, 0]
         out_data["left_paddle"] = self.game_data[:, 1]
         out_data["right_paddle"] = self.game_data[:, 2]
@@ -179,18 +181,17 @@ class AIPong:
 
         logging.info("saving network data...")
 
-        for net, filename in zip(
-            [self.player1, self.player2],
-                ["data_left.pkl.gz", "data_right.pkl.gz"]):
+        for net, filename in zip([self.player1, self.player2],
+                                 ["data_left.pkl.gz", "data_right.pkl.gz"]):
             with gzip.open(os.path.join(self.out_dir, filename), "w") as file:
-                output = {"network_type": repr(net)}
-                output["with_noise"] = net.apply_noise
+                output = {"network_type": repr(net),
+                          "with_noise": net.apply_noise}
                 performance_data = net.get_performance_data()
                 output["rewards"] = performance_data[0]
                 output["weights"] = performance_data[1]
                 pickle.dump(output, file)
 
-        logging.info("done.")
+        logging.info("Done.")
 
 
 if __name__ == "__main__":
@@ -212,12 +213,10 @@ if __name__ == "__main__":
     parser.add_argument(
         "--players", nargs=2, type=str, choices=["r", "rn", "d", "dn"],
         default=["r", "rn"],
-        help="""types of networks that compete against each other. four
-    learning rule configuations are available:
-    r:  r-STDP without noise,
-    rn: r-STDP with noisy input,
-    d:  dopaminergic synapses without noise,
-    dn: dopaminergic synapses with noisy input.""")
+        help="""types of networks that compete against each other. four learning
+        rule configuations are available: r:  r-STDP without noise, rn: r-STDP
+        with noisy input, d:  dopaminergic synapses without noise,
+        dn: dopaminergic synapses with noisy input.""")
 
     args = parser.parse_args()
 
@@ -228,11 +227,11 @@ if __name__ == "__main__":
 
     p1, p2 = args.players
     if p1[0] == p2[0] == 'd':
-        logging.error("""Nest currently (August 2022) does not support addressing
-        multiple populations of dopaminergic synapses because all of them
-        recieve their signal from a single volume transmitter. For this reason,
-        no two dopaminergic networks can be trained simultaneously. One of the
-        players needs to be changed to the R-STDP type.""")
+        logging.error("""Nest currently (August 2022) does not support
+        addressing multiple populations of dopaminergic synapses because all of
+        them recieve their signal from a single volume transmitter. For this
+        reason, no two dopaminergic networks can be trained simultaneously. One
+        of the players needs to be changed to the R-STDP type.""")
         sys.exit()
 
     apply_noise = len(p1) > 1
@@ -247,5 +246,4 @@ if __name__ == "__main__":
     else:
         p2 = PongNetDopa(apply_noise)
 
-    aipong = AIPong(p1, p2, args.out_dir)
-    aipong.run_games(max_runs=args.runs)
+    AIPong(p1, p2, args.out_dir).run_games(max_runs=args.runs)

@@ -36,7 +36,7 @@ class CopyModelTestCase(unittest.TestCase):
         """Check the correctness of the nest.CopyModel on all built-in models"""
 
         for model in nest.node_models + nest.synapse_models:
-            self.check_copied_model(model)
+            self.check_copied_model_ids(model)
 
     def check_copied_model_ids(self, original_model):
         """Test if copied models get correct model IDs"""

@@ -69,3 +69,23 @@ class CopyModelTestCase(unittest.TestCase):
             original_model_id = original_model_instance.get(model_id_key)
             copied_model_id = copied_model_instance.get(model_id_key)
             self.assertGreater(copied_model_id, original_model_id)
+
+    def test_CopyModel(self):
+        """Test CopyModel"""
+
+        nest.CopyModel('iaf_psc_alpha', 'new_neuron', {'V_m': 10.0})
+        vm = nest.GetDefaults('new_neuron')['V_m']
+        self.assertEqual(vm, 10.0)
+
+        n = nest.Create('new_neuron', 10)
+        vm = nest.GetStatus(n[0])[0]['V_m']
+        self.assertEqual(vm, 10.0)
+
+        nest.CopyModel('static_synapse', 'new_synapse', {'weight': 10.})
+        nest.Connect(n[0], n[1], syn_spec='new_synapse')
+        w = nest.GetDefaults('new_synapse')['weight']
+        self.assertEqual(w, 10.0)
+
+        self.assertRaisesRegex(
+            nest.kernel.NESTError, "NewModelNameExists",
+            nest.CopyModel, 'iaf_psc_alpha', 'new_neuron')

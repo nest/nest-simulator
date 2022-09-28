@@ -699,31 +699,6 @@ class TestNodeParametrization(unittest.TestCase):
         distance_reference = tuple(np.sqrt(position_array[:, 0]**2 + position_array[:, 1]**2))
         self.assertAlmostEqual(distance_reference, nest.spatial.distance.apply(layer[0], positions))
 
-    def test_set_vm(self):
-        nest.set_verbosity('M_FATAL')
-        warnings.simplefilter('ignore')  # Suppress warnings
-        failing_models = []
-        for m in nest.node_models:
-            n = nest.Create(m)
-            try:
-                n.get('V_m')
-            except KeyError:
-                continue
-
-            try:
-                n.V_m = 0.5
-            except nest.NESTError:
-                failing_models.append(m)
-                print(f'Constant Failed: {m}')
-
-            try:
-                n.V_m = nest.random.uniform(0., 1.)
-            except nest.NESTError:
-                failing_models.append(m)
-                print(f'Random Failed : {m}')
-
-        self.assertEqual(failing_models, [])
-
 
 def suite():
     suite = unittest.makeSuite(TestNodeParametrization, 'test')

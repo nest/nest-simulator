@@ -1,5 +1,3 @@
-
-
 # -*- coding: utf-8 -*-
 #
 # test_regression_issue-2480.py

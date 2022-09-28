@@ -261,7 +261,7 @@ EventDeliveryManager::update_moduli()
    * Note that for updating the modulos, it is sufficient
    * to rotate the buffer to the left.
    */
-  assert( moduli_.size() == ( index )( min_delay + max_delay ) );
+  assert( moduli_.size() == ( index ) ( min_delay + max_delay ) );
   std::rotate( moduli_.begin(), moduli_.begin() + min_delay, moduli_.end() );
 
   /*
@@ -531,9 +531,11 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
 
   bool are_others_completed = true;
 
-  // deliver only at end of time slice
-  assert( kernel().simulation_manager.get_to_step() == kernel().connection_manager.get_min_delay() );
-
+  // deliver only at beginning of time slice
+  if ( kernel().simulation_manager.get_from_step() > 0 )
+  {
+    return are_others_completed;
+  }
   SpikeEvent se_batch[ BATCH_SIZE ];
 
   // prepare Time objects for every possible time stamp within min_delay_

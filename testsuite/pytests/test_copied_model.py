@@ -32,51 +32,40 @@ import nest
 class CopyModelTestCase(unittest.TestCase):
     """nest.CopyModel Test"""
 
-    def check_copied_model(self, original_model, is_synapse=False):
-        """Test if the new copied neuron or synapse model has been assigned a correct ID
-        and if the new name is correctly stored in the new instances."""
+    def test_builtin_models(self):
+        """Check the correctness of the nest.CopyModel on all built-in models"""
 
-        keys_to_query = ["model", "model_id"]
-        if is_synapse:
-            keys_to_query = ["synapse_model", "synapse_modelid"]
+        for model in nest.node_models + nest.synapse_models:
+            self.check_copied_model(model)
+
+    def check_copied_model_ids(self, original_model):
+        """Test if copied models get correct model IDs"""
+
+        model_type = nest.GetDefaults(original_model, "element_type")
+
+        model_name_key = "model"
+        model_id_key = "model_id"
+        if model_type == "synapse":
+            model_name_key = "synapse_model"
+            model_id_key = "synapse_modelid"
+
+        original_model_id = nest.GetDefaults(original_model)[model_id_key]
 
         new_name = f"{original_model}_copy"
-        current_model_id = nest.GetDefaults(original_model)[keys_to_query[1]]
-
         nest.CopyModel(original_model, new_name)
-        copied_model_new_id = nest.GetDefaults(new_name)[keys_to_query[1]]
+        copied_model_id = nest.GetDefaults(new_name)[model_id_key]
 
-        self.assertGreater(copied_model_new_id, current_model_id)
+        self.assertGreater(copied_model_id, original_model_id)
 
-        if not is_synapse:
+        if model_type == "neuron":
             original_model_instance = nest.Create(original_model)
             copied_model_instance = nest.Create(new_name)
 
-            original_model_info = original_model_instance.get(keys_to_query)
+            original_model_name = original_model_instance.get(model_name_key)
+            copied_model_name = copied_model_instance.get(model_name_key)
+            self.assertNotEqual(original_model_name, copied_model_name)
+            self.assertNotEqual(copied_model_name, "UnknownNode")
 
-            copied_model_info = copied_model_instance.get(keys_to_query)
-
-            self.assertNotEqual(copied_model_info[keys_to_query[0]],
-                                original_model_info[keys_to_query[0]])
-
-            self.assertNotEqual(original_model_info[keys_to_query[0]], "UnknownNode")
-
-            self.assertGreater(copied_model_info[keys_to_query[1]],  original_model_info[keys_to_query[1]])
-
-    def check_copy_model_correctness(self, models, synapse=False):
-        """Iterates over all registered and available model
-        and checks the correctness of the nest.CopyModel on each model."""
-
-        for model in models:
-            self.check_copied_model(model, is_synapse=synapse)
-
-    def test_builtin_neuron_models(self):
-        """Checks the correctness of the nest.CopyModel on neurons only"""
-
-        neurons = nest.node_models
-        self.check_copy_model_correctness(neurons, synapse=False)
-
-    def test_builtin_synapse_models(self):
-        """Checks the correctness of the nest.CopyModel on synapses only"""
-        synapses = nest.synapse_models
-        self.check_copy_model_correctness(synapses, synapse=True)
+            original_model_id = original_model_instance.get(model_id_key)
+            copied_model_id = copied_model_instance.get(model_id_key)
+            self.assertGreater(copied_model_id, original_model_id)

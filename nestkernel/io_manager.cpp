@@ -198,6 +198,7 @@ IOManager::get_recording_backend_status( std::string recording_backend )
 {
   DictionaryDatum status( new Dictionary );
   recording_backends_[ recording_backend ]->get_status( status );
+  ( *status )[ names::element_type ] = "recording_backend";
   return status;
 }
 

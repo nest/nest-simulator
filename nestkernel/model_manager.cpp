@@ -419,6 +419,7 @@ ModelManager::get_connector_defaults( synindex syn_id ) const
   }
 
   ( *dict )[ names::num_connections ] = kernel().connection_manager.get_num_connections( syn_id );
+  ( *dict )[ names::element_type ] = "synapse";
 
   return dict;
 }

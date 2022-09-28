@@ -244,19 +244,16 @@ ModelManager::copy_node_model_( index old_id, Name new_name )
   old_model->deprecation_warning( "CopyModel" );
 
   Model* new_model = old_model->clone( new_name.toString() );
-  node_models_.push_back( new_model );
-
-  index new_id = node_models_.size() - 1;
+  const index new_id = node_models_.size();
   new_model->set_model_id( new_id );
 
+  node_models_.push_back( new_model );
   modeldict_->insert( new_name, new_id );
 
 #pragma omp parallel
   {
     const thread t = kernel().vp_manager.get_thread_id();
-    const int model_id = new_model->get_model_id();
-
-    proxy_nodes_[ t ].push_back( create_proxynode_( t, model_id ) );
+    proxy_nodes_[ t ].push_back( create_proxynode_( t, new_id ) );
   }
 
   return new_id;

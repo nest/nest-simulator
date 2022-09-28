@@ -40,11 +40,11 @@
 #include <fstream>  // for debugging
 #include <iostream> // for debugging
 
-#define PROFILE_ENABLED false // for profiling
+//#define PROFILE_ENABLED false // for profiling
 
 #include "H5Cpp.h" // HDF5 C++ API header file
 
-extern "C" herr_t get_group_names_callback( hid_t loc_id, const char* name, const H5L_info_t* linfo, void* opdata );
+extern "C" herr_t get_member_names_callback_( hid_t loc_id, const char* name, const H5L_info_t* linfo, void* opdata );
 
 namespace nest
 {
@@ -60,6 +60,7 @@ SonataConnector::SonataConnector( const DictionaryDatum& sonata_dynamics )
   : sonata_dynamics_( sonata_dynamics )
   , weight_dataset_exist_( false )
   , delay_dataset_exist_( false )
+  , tgt_indices_exist_( false )
 {
 }
 
@@ -72,48 +73,37 @@ void
 SonataConnector::connect()
 {
 
+  // clang-format off
   /*
-   * Structure of SONATA files:
-   * edge_file.h5          (name changes)
-   *   edges               (name fixed)
-   *     group_name        (name changes, usually only one, can be more groups)
-   *       0               (name fixed, usually only one)
-   *         syn_weights   (name fixed)
-   *         delays        (name fixed)
-   *       edge_group_id   (name fixed)
-   *       edge_type_id    (name fixed)
-   *       source_node_id  (name fixed)
-   *       target_node_id  (name fixed)
-   */
+  Structure of SONATA edge files:
 
+  <edge_file.h5>                      Filename
+  ├─ edges                            Group - required
+  │  ├─ <population_name>             Group - required - usually only one but can be more population groups per file
+  │  │  ├─ source_node_id             Dataset {N_total_edges} - required - with attribute specifying source population name
+  │  │  ├─ edge_group_id              Dataset {N_total_edges} - required
+  │  │  ├─ edge_group_index           Dataset {N_total_edges} - required
+  │  │  ├─ target_node_id             Dataset {N_total_edges} - required - with attribute specifying target population name
+  │  │  ├─ edge_type_id               Dataset {N_total_edges} - required
+  │  │  ├─ indices                    Group - optional
+  │  │  │  ├─ source_to_target        Group
+  │  │  │  │  ├─ node_id_to_range     Dataset {N_source_nodes x 2}
+  │  │  │  │  ├─ range_to_edge_id     Dataset {N_source_nodes x 2}
+  │  │  │  ├─ target_to_source        Group
+  │  │  │  │  ├─ node_id_to_range     Dataset {N_target_nodes x 2}
+  │  │  │  │  ├─ range_to_edge_id     Dataset {N_target_nodes x 2}
+  │  │  ├─ <edge_id1>                 Group - required 
+  │  │  │  ├─ delay                   Dataset {M_edges} - optional
+  │  │  │  ├─ syn_weights             Dataset {M_edges} - optional
+  │  │  │  ├─ dynamics_params         Group - currently not supported
+  │  │  ├─ <edge_id2>                 Group - optional - currently no support for more than one edge id group
+  │  │  │  ├─ delay                   Dataset {K_edges} - optional
+  │  │  │  ├─ syn_weights             Dataset {K_edges} - optional
+  │  │  │  ├─ dynamics_params         Group
 
-#if PROFILE_ENABLED
-  const auto rank = kernel().mpi_manager.get_rank();
-  const std::string perf_filename = "perf_" + std::to_string( rank ) + ".txt";
-  std::ofstream perf_file( perf_filename );
-
-  // Define vectors for storing parallel stopwatch times
-  // const auto n_threads = kernel().vp_manager.get_num_threads();
-  // connect_stopwatches_.reserve( n_threads );
-  // connect_times_.reserve( n_threads );
-  // std::fill( connect_times_.begin(), connect_times_.end(), 0 );
-  // auto connect_times = std::vector< double >( n_threads, 0 );
-  // auto thread_organ_times = std::vector< double >( n_threads, 0 );
-  // auto get_node_ids_times = std::vector< double >( n_threads, 0 );
-  // auto thread_check_times = std::vector< double >( n_threads, 0 );
-  // auto synapse_prop_times = std::vector< double >( n_threads, 0 );
-  /*
-  for ( size_t i = 0; i < n_threads; i++ )
-  {
-    Stopwatch connect_watch_i;
-    connect_stopwatches_[ i ] = connect_watch_i;
-  }
+  For more details, see https://github.com/AllenInstitute/sonata/blob/master/docs/SONATA_DEVELOPER_GUIDE.md
   */
-
-  // timer start
-  const auto connect_start_t = std::chrono::high_resolution_clock::now();
-#endif
-
+  // clang-format on
 
   auto edges = getValue< ArrayDatum >( sonata_dynamics_->lookup( "edges" ) );
 
@@ -123,583 +113,78 @@ SonataConnector::connect()
     const auto edge_dict = getValue< DictionaryDatum >( edge_dictionary_datum );
     const auto edge_filename = getValue< std::string >( edge_dict->lookup( "edges_file" ) );
 
-#if PROFILE_ENABLED
-    perf_file << "\nCurrent file: " << edge_filename << "\n";
-#endif
+    std::cerr << "Edge file: " << edge_filename << "\n";
 
     // Create map of edge type ids to NEST synapse_model ids
     edge_params_ = getValue< DictionaryDatum >( edge_dict->lookup( "edge_synapse" ) );
-    // std::cerr << "create_type_id_2_syn_spec_...\n";
     create_type_id_2_syn_spec_( edge_params_ );
-
 
     try
     {
 
       // Open specified HDF5 edge file with read only access
-#if PROFILE_ENABLED
-      const auto load_file_start_t = std::chrono::high_resolution_clock::now();
-#endif
-
-      H5::H5File edge_h5_file( edge_filename, H5F_ACC_RDONLY );
-
-#if PROFILE_ENABLED
-      const auto load_file_end_t = std::chrono::high_resolution_clock::now();
-      const std::chrono::duration< double, std::milli > load_file_tot_t = load_file_end_t - load_file_start_t;
-      perf_file << "Open file: " << load_file_tot_t.count() << "ms\n";
-#endif
+      H5::H5File edge_file( edge_filename, H5F_ACC_RDONLY );
 
       // Open top-level group (always one group named 'edges')
-#if PROFILE_ENABLED
-      const auto load_edges_group_start_t = std::chrono::high_resolution_clock::now();
-#endif
+      H5::Group edges_group( edge_file.openGroup( "edges" ) );
 
-      H5::Group edges_group( edge_h5_file.openGroup( "edges" ) );
-
-#if PROFILE_ENABLED
-      const auto load_edges_group_end_t = std::chrono::high_resolution_clock::now();
-      const std::chrono::duration< double, std::milli > load_edges_group_tot_t =
-        load_edges_group_end_t - load_edges_group_start_t;
-      perf_file << "Open 'edges' group: " << load_edges_group_tot_t.count() << "ms\n";
-#endif
-
-      // Get names of population groups
-#if PROFILE_ENABLED
-      const auto get_population_names_start_t = std::chrono::high_resolution_clock::now();
-#endif
-
+      // Get names of population groups (usually just one population group)
       std::vector< std::string > population_group_names;
-      // https://support.hdfgroup.org/HDF5/doc/RM/RM_H5L.html#Link-Iterate
-      H5Literate(
-        edges_group.getId(), H5_INDEX_NAME, H5_ITER_INC, NULL, get_group_names_callback, &population_group_names );
-
-#if PROFILE_ENABLED
-      const auto get_population_names_end_t = std::chrono::high_resolution_clock::now();
-      const std::chrono::duration< double, std::milli > get_population_names_tot_t =
-        get_population_names_end_t - get_population_names_start_t;
-      perf_file << "Get population names: " << get_population_names_tot_t.count() << "ms\n";
-#endif
+      get_member_names_( edges_group.getId(), population_group_names );
 
       // Iterate the population groups
       for ( const auto& population_group_name : population_group_names )
       {
 
         // Open population group
-#if PROFILE_ENABLED
-        const auto load_population_group_start_t = std::chrono::high_resolution_clock::now();
-#endif
-
         const H5::Group population_group( edges_group.openGroup( population_group_name ) );
 
-#if PROFILE_ENABLED
-        const auto load_population_group_end_t = std::chrono::high_resolution_clock::now();
-        const std::chrono::duration< double, std::milli > load_population_group_tot_t =
-          load_population_group_end_t - load_population_group_start_t;
-        perf_file << "Open population group: " << load_population_group_tot_t.count() << "ms\n";
-#endif
-
-        // Find the number of edge id groups, i.e. ones with label "0", "1", ..., by finding
-        // the names of the population's datasets and subgroups
-        // Note we assume edge ids are contiguous starting from zero, which is the
-        // SONATA default. Edge id keys can also be custom (not handled here)
-#if PROFILE_ENABLED
-        const auto find_num_edge_id_groups_start_t = std::chrono::high_resolution_clock::now();
-#endif
-
-        std::vector< std::string > population_group_dset_and_subgroup_names;
-        H5Literate( population_group.getId(),
-          H5_INDEX_NAME,
-          H5_ITER_INC,
-          NULL,
-          get_group_names_callback,
-          &population_group_dset_and_subgroup_names );
-
-        size_t num_edge_id_groups { 0 };
-        bool is_edge_id_name;
-        std::vector< std::string > edge_id_names;
-
-        for ( const auto& name : population_group_dset_and_subgroup_names )
-        {
-          is_edge_id_name = ( name.find_first_not_of( "0123456789" ) == std::string::npos );
-
-          if ( is_edge_id_name == 1 )
-          {
-            edge_id_names.push_back( name );
-          }
-
-          num_edge_id_groups += is_edge_id_name;
-        }
-
-#if PROFILE_ENABLED
-        const auto find_num_edge_id_groups_end_t = std::chrono::high_resolution_clock::now();
-        const std::chrono::duration< double, std::milli > find_num_edge_id_groups_tot_t =
-          find_num_edge_id_groups_end_t - find_num_edge_id_groups_start_t;
-        perf_file << "Find num_edge_id_groups: " << find_num_edge_id_groups_tot_t.count() << "ms\n";
-#endif
-
+        // Find the number of edge id groups and edge id group names
+        std::vector< std::string > edge_id_group_names;
+        const auto num_edge_id_groups = find_edge_id_groups_( population_group, edge_id_group_names );
 
         // Currently only SONATA edge files with one edge id group is supported
-        if ( num_edge_id_groups == 1 )
+        if ( num_edge_id_groups != 1 )
         {
-
-          // Open edge id group
-#if PROFILE_ENABLED
-          const auto load_edge_id_group_start_t = std::chrono::high_resolution_clock::now();
-#endif
-
-          const H5::Group edge_id_group( population_group.openGroup( edge_id_names[ 0 ] ) );
-
-#if PROFILE_ENABLED
-          const auto load_edge_id_group_end_t = std::chrono::high_resolution_clock::now();
-          const std::chrono::duration< double, std::milli > load_edge_id_group_tot_t =
-            load_edge_id_group_end_t - load_edge_id_group_start_t;
-          perf_file << "Open edge id group: " << load_edge_id_group_tot_t.count() << "ms\n";
-#endif
-
-
-          // Check if weight and delay are given as h5 files
-#if PROFILE_ENABLED
-          const auto is_weight_and_delay_start_t = std::chrono::high_resolution_clock::now();
-#endif
-
-          is_weight_and_delay_from_dataset_( edge_id_group );
-
-#if PROFILE_ENABLED
-          const auto is_weight_and_delay_end_t = std::chrono::high_resolution_clock::now();
-          const std::chrono::duration< double, std::milli > is_weight_and_delay_tot_t =
-            is_weight_and_delay_end_t - is_weight_and_delay_start_t;
-          perf_file << "Check if weight and delay dsets exist: " << is_weight_and_delay_tot_t.count() << "ms\n";
-#endif
-
-          // Open src, tgt and edge type id datasets
-#if PROFILE_ENABLED
-          const auto load_dsets_start_t = std::chrono::high_resolution_clock::now();
-#endif
-
-          src_node_id_dset_ = population_group.openDataSet( "source_node_id" );
-          tgt_node_id_dset_ = population_group.openDataSet( "target_node_id" );
-          edge_type_id_dset_ = population_group.openDataSet( "edge_type_id" );
-
-#if PROFILE_ENABLED
-          const auto load_dsets_end_t = std::chrono::high_resolution_clock::now();
-          const std::chrono::duration< double, std::milli > load_dsets_tot_t = load_dsets_end_t - load_dsets_start_t;
-          perf_file << "Open src, tgt and edge type id dsets: " << load_dsets_tot_t.count() << "ms\n";
-#endif
-
-          // Open weight and/or delay dsets if exist
-#if PROFILE_ENABLED
-          const auto load_w_and_d_dsets_start_t = std::chrono::high_resolution_clock::now();
-#endif
-
-          if ( weight_dataset_exist_ )
-          {
-            syn_weight_dset_ = edge_id_group.openDataSet( "syn_weight" );
-          }
-
-          if ( delay_dataset_exist_ )
-          {
-            delay_dset_ = edge_id_group.openDataSet( "delay" );
-          }
-
-#if PROFILE_ENABLED
-          const auto load_w_and_d_dsets_end_t = std::chrono::high_resolution_clock::now();
-          const std::chrono::duration< double, std::milli > load_w_and_d_dsets_tot_t =
-            load_w_and_d_dsets_end_t - load_w_and_d_dsets_start_t;
-          perf_file << "Open weight and/or delay dsets if present: " << load_w_and_d_dsets_tot_t.count() << "ms\n";
-#endif
-
-
-          // Set chunk size
-#if PROFILE_ENABLED
-          const auto set_chunk_size_start_t = std::chrono::high_resolution_clock::now();
-#endif
-
-          // make sure that target and source population have the same size
-          const auto src_array_size = get_num_elements_( src_node_id_dset_ );
-          const auto tgt_array_size = get_num_elements_( tgt_node_id_dset_ );
-
-          if ( src_array_size != tgt_array_size )
-          {
-            throw DimensionMismatch( "Source and Target population must be of the same size." );
-          }
-
-          hsize_t chunk_size = CHUNK_SIZE;
-
-          // adjust if chunk_size is too large
-          if ( src_array_size < chunk_size )
-          {
-            chunk_size = src_array_size;
-          }
-
-          // Divide into chunks + remainder
-          // cast to unsigned long long?
-          // https://learn.microsoft.com/en-us/cpp/c-language/cpp-integer-limits?view=msvc-170
-          auto dv = std::div( static_cast< long >( src_array_size ), static_cast< long >( chunk_size ) );
-
-#if PROFILE_ENABLED
-          const auto set_chunk_size_end_t = std::chrono::high_resolution_clock::now();
-          const std::chrono::duration< double, std::milli > set_chunk_size_tot_t =
-            set_chunk_size_end_t - set_chunk_size_start_t;
-          perf_file << "Set chunk size: " << set_chunk_size_tot_t.count() << "ms\n";
-          perf_file << "The d_set size: " << src_array_size << "\n";
-          perf_file << "The chunk size: " << chunk_size << "\n";
-          perf_file << "Split into chunks + remainder\n";
-          perf_file << "  -> n_chunks: " << dv.quot << "\n";
-          perf_file << "  -> remainder: " << dv.rem << "\n";
-#endif
-
-          // Retrieve source and target attributes to find which node population to map to
-#if PROFILE_ENABLED
-          const auto get_attributes_start_t = std::chrono::high_resolution_clock::now();
-#endif
-
-          get_attributes_( source_attribute_value_, src_node_id_dset_, "node_population" );
-          get_attributes_( target_attribute_value_, tgt_node_id_dset_, "node_population" );
-
-#if PROFILE_ENABLED
-          const auto get_attributes_end_t = std::chrono::high_resolution_clock::now();
-          const std::chrono::duration< double, std::milli > get_attributes_tot_t =
-            get_attributes_end_t - get_attributes_start_t;
-          perf_file << "Get src and tgt attributes: " << get_attributes_tot_t.count() << "ms\n";
-#endif
-
-
-          // Iterate chunks
-#if PROFILE_ENABLED
-          const auto iter_chunks_start_t = std::chrono::high_resolution_clock::now();
-          perf_file << "= Iterating chunks =\n";
-#endif
-
-          hsize_t offset = 0; // start coordinates of data selection
-
-          for ( size_t i = 0; i < dv.quot; i++ )
-          {
-            // create connections
-            create_connections_( chunk_size, offset );
-
-
-            /*
-            //-------------------------------------------------------------------------------------------------------------
-            // BEGIN
-            //-------------------------------------------------------------------------------------------------------------
-
-            dbg_file << "Create arrays\n";
-            // Start stopwatch
-            create_arrays_stopwatch.start();
-
-            // Create arrays
-            std::vector< int > src_node_id_data_subset( chunk_size );
-            std::vector< int > tgt_node_id_data_subset( chunk_size );
-            std::vector< int > edge_type_id_data_subset( chunk_size );
-            std::vector< double > syn_weight_data_subset( chunk_size );
-            std::vector< double > delay_data_subset( chunk_size );
-
-            // Stop stopwatch
-            create_arrays_stopwatch.stop();
-
-            // Start stopwatch
-            read_subsets_stopwatch.start();
-
-            dbg_file << "Read subsets\n";
-            // Read subsets
-            read_subset_int_( src_node_id_dset_, src_node_id_data_subset, chunk_size, offset );
-            dbg_file << "  -> Read src id dset success\n";
-            read_subset_int_( tgt_node_id_dset_, tgt_node_id_data_subset, chunk_size, offset );
-            dbg_file << "  -> Read tgt id dset success\n";
-            read_subset_int_( edge_type_id_dset_, edge_type_id_data_subset, chunk_size, offset );
-            dbg_file << "  -> Read edge type id dset success\n";
-
-            if ( weight_dataset_exist_ )
-            {
-              dbg_file << "  -> Weight dset exists\n";
-              read_subset_double_( syn_weight_dset_, syn_weight_data_subset, chunk_size, offset );
-              dbg_file << "  -> Read weight dset success\n";
-            }
-            if ( delay_dataset_exist_ )
-            {
-              dbg_file << "  -> Delay dset exists\n";
-              read_subset_double_( delay_dset_, syn_weight_data_subset, chunk_size, offset );
-              dbg_file << "  -> Read delay dset success\n";
-            }
-
-            // Stop stopwatch
-            read_subsets_stopwatch.stop();
-
-            std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_(
-              kernel().vp_manager.get_num_threads() );
-
-            dbg_file << "Enter parallel region\n";
-#pragma omp parallel
-            {
-
-              Stopwatch connect_stopwatch;
-              Stopwatch thread_organ_stopwatch;
-              Stopwatch get_node_ids_stopwatch;
-              Stopwatch thread_check_stopwatch;
-              Stopwatch synapse_prop_stopwatch;
-
-              // thread and iterator organization
-              const auto tid = kernel().vp_manager.get_thread_id();
-              const auto vp = kernel().vp_manager.thread_to_vp( tid ); // håkon
-              RngPtr rng = get_vp_specific_rng( tid );                 // moved outside of connect loop
-
-              // start stopwatch
-              thread_organ_stopwatch.start();
-              // does this have to be inside the parallel region?
-              const auto nest_nodes = getValue< DictionaryDatum >( sonata_dynamics_->lookup( "nodes" ) );
-              const auto current_source_nc =
-                getValue< NodeCollectionPTR >( nest_nodes->lookup( source_attribute_value_ ) );
-              const auto current_target_nc =
-                getValue< NodeCollectionPTR >( nest_nodes->lookup( target_attribute_value_ ) );
-
-              auto snode_it = current_source_nc->begin();
-              auto tnode_begin = current_target_nc->begin();
-
-              // stop stopwatch
-              thread_organ_stopwatch.stop();
-
-              // Iterate the datasets and create the connections
-              for ( size_t i = 0; i < chunk_size; ++i )
-              {
-
-                // Start stopwatch
-                get_node_ids_stopwatch.start();
-
-                const auto sonata_source_id = src_node_id_data_subset[ i ];
-                const auto sonata_target_id = tgt_node_id_data_subset[ i ];
-                const index snode_id = ( *( snode_it + sonata_source_id ) ).node_id;
-                // const index tnode_id = ( *( tnode_begin + sonata_target_id ) ).node_id;
-                //  håkon
-                const auto target_triple = *( tnode_begin + sonata_target_id );
-                const index tnode_id = target_triple.node_id;
-
-                // Stop stopwatch
-                // get_node_ids_watches[ tid ].stop();
-                get_node_ids_stopwatch.stop();
-
-                // thread check timer
-                // Start stopwatch
-                thread_check_stopwatch.start();
-
-                thread tgt_vp = kernel().vp_manager.node_id_to_vp( tnode_id );
-
-                if ( tgt_vp != vp )
-                {
-                  continue;
-                }
-
-                Node* target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-                const thread target_thread = target->get_thread();
-
-
-                // newest version
-                // Check whether the target is on this mpi machine
-                //if ( not kernel().node_manager.is_local_node_id( tnode_id ) )
-                //{
-                //  continue;
-                //}
-
-                //Node* target = kernel().node_manager.get_node_or_proxy( tnode_id );
-                //const thread target_thread = target->get_thread();
-
-                // check whether target is on our thread
-                //if ( tid != target_thread )
-                //{
-                //  continue;
-                //}
-
-            // Stop stopwatch
-            thread_check_stopwatch.stop();
-
-            // synapse timer
-            // Start stopwatch
-            synapse_prop_stopwatch.start();
-
-            const auto edge_type_id = edge_type_id_data_subset[ i ];
-            const auto syn_spec = getValue< DictionaryDatum >( edge_params_->lookup( std::to_string( edge_type_id ) ) );
-
-            auto get_syn_property = [ &syn_spec, &i ](
-                                      const bool dataset, std::vector< double >& data, const Name& name )
-            {
-              if ( dataset ) // Syn_property is set from dataset if the dataset is defined
-              {
-                if ( not data[ i ] ) // TODO: remove
-                {
-#pragma omp critical
-                  {
-                    // //std::cerr << kernel().vp_manager.get_thread_id() << ": " << name << " " << i
-                    //          << " data index is NULL!\n";
-                  }
-                }
-                return data[ i ];
-              }
-              else if ( syn_spec->known( name ) ) // Set syn_property from syn_spec if it is defined there
-              {
-                return static_cast< double >( ( *syn_spec )[ name ] );
-              }
-              return numerics::nan; // Default value is NaN
-            };
-
-            const double weight = get_syn_property( weight_dataset_exist_, syn_weight_data_subset, names::weight );
-            const double delay = get_syn_property( delay_dataset_exist_, delay_data_subset, names::delay );
-
-            // RngPtr rng = get_vp_specific_rng( target_thread );  // moved outside of loop since we verify that tid
-            // == target_thread
-            get_synapse_params_( snode_id, *target, target_thread, rng, edge_type_id );
-
-            // Stop stopwatch
-            synapse_prop_stopwatch.stop();
-
-            // Start stopwatch
-            connect_stopwatch.start();
-
-            kernel().connection_manager.connect( snode_id,
-              target,
-              target_thread,
-              type_id_2_syn_model_.at( edge_type_id ),
-              type_id_2_param_dicts_.at( edge_type_id ).at( tid ),
-              delay,
-              weight );
-
-            // Stop stopwatch
-            connect_stopwatch.stop();
-
-          } // end for
-
-          // stopwatch fixpoint
-          thread_organ_times[ tid ] += thread_organ_stopwatch.elapsed( Stopwatch::MILLISEC );
-          get_node_ids_times[ tid ] += get_node_ids_stopwatch.elapsed( Stopwatch::MILLISEC );
-          thread_check_times[ tid ] += thread_check_stopwatch.elapsed( Stopwatch::MILLISEC );
-          synapse_prop_times[ tid ] += synapse_prop_stopwatch.elapsed( Stopwatch::MILLISEC );
-          connect_times[ tid ] += connect_stopwatch.elapsed( Stopwatch::MILLISEC );
-
-
-        } // omp parallel
-        dbg_file << "Exit parallel region\n\n";
-
-        // check if any exceptions have been raised
-        for ( thread thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
-        {
-          if ( exceptions_raised_.at( thr ).get() )
-          {
-            throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
-          }
+          throw NotImplemented(
+            "Connecting with Sonata files with more than one edge id group is currently not implemented" );
         }
 
-        //--------------------------------------------------------------------------------------------------------------
-        // END
-        //--------------------------------------------------------------------------------------------------------------
-        */
+        // Open edge id group
+        const H5::Group edge_id_group( population_group.openGroup( edge_id_group_names[ 0 ] ) );
 
-            // increment offset
-            offset += chunk_size;
-          } // end chunk loop
+        // select read method; either by indices or sequentially in chunks
+        open_dsets_( population_group, edge_id_group );
+        try_to_load_tgt_indices_dsets_( population_group );
 
-          /*
-          // Fix stopwatches here
-
-
-
-          */
-
-#if PROFILE_ENABLED
-
-          /*
-          auto write_min_max_avg = [ &perf_file ]( std::vector< double > times, std::string name )
-          {
-            const auto min_element = std::min_element( times.begin(), times.end() );
-            const auto max_element = std::max_element( times.begin(), times.end() );
-            const auto avg = std::accumulate( times.begin(), times.end(), 0.0 ) / times.size();
-            perf_file << name << " min, max, avg:\t " << *min_element << "ms, " << *max_element << "ms, " << avg
-                      << "ms\n";
-          };
-          */
-
-          // Gather results from chunk iteration
-          const auto iter_chunks_end_t = std::chrono::high_resolution_clock::now();
-          const std::chrono::duration< double, std::milli > iter_chunks_tot_t = iter_chunks_end_t - iter_chunks_start_t;
-          perf_file << "Iterate chunks tot time: " << iter_chunks_tot_t.count() << "ms\n";
-
-          perf_file << "-> Create arrays: " << create_arrays_stopwatch_.elapsed( Stopwatch::MILLISEC ) << "ms\n";
-          perf_file << "-> Read subsets: " << read_subsets_stopwatch_.elapsed( Stopwatch::MILLISEC ) << "ms\n";
-
-
-          // Handle parallel stopwatches
-          /*
-          for ( size_t i = 0; i < n_threads; i++ )
-          {
-            connect_times_[ i ] += connect_stopwatches_[ i ].elapsed( Stopwatch::MILLISEC );
-          }
-          write_min_max_avg( connect_times_, "-> connect edges " );
-          */
-          /*
-          perf_file << "   = Enter parallel region =\n";
-
-          // Write parallel times to dbg file
-          write_min_max_avg( thread_organ_times, "-> thread and iterator organization " );
-          perf_file << "   = Iterate dataset and connect =\n";
-          write_min_max_avg( get_node_ids_times, "-> get node ids " );
-          write_min_max_avg( thread_check_times, "-> is target vp this vp " );
-          write_min_max_avg( synapse_prop_times, "-> synapse properties " );
-          write_min_max_avg( connect_times_, "-> connect edges " );
-          */
-
-
-          // start timer for remainder iteration
-          const auto iter_remainder_start_t = std::chrono::high_resolution_clock::now();
-#endif
-
-          // Handle remainder
-          if ( dv.rem > 0 )
-          {
-            create_connections_( dv.rem, offset );
-          }
-
-#if PROFILE_ENABLED
-          const auto iter_remainder_end_t = std::chrono::high_resolution_clock::now();
-          const std::chrono::duration< double, std::milli > iter_remainder_tot_t =
-            iter_remainder_end_t - iter_remainder_start_t;
-          perf_file << "Iterate possible remainder: " << iter_remainder_tot_t.count() << "ms\n";
-#endif
-
-          // Close datasets and reset
-#if PROFILE_ENABLED
-          const auto close_reset_start_t = std::chrono::high_resolution_clock::now();
-#endif
-
-          src_node_id_dset_.close();
-          src_node_id_dset_.close();
-          edge_type_id_dset_.close();
-
-          if ( weight_dataset_exist_ )
-          {
-            syn_weight_dset_.close();
-          }
-
-          if ( delay_dataset_exist_ )
-          {
-            delay_dset_.close();
-          }
-
-          // Reset all parameters
-          reset_params();
-
-#if PROFILE_ENABLED
-          const auto close_reset_end_t = std::chrono::high_resolution_clock::now();
-          const std::chrono::duration< double, std::milli > close_reset_tot_t = close_reset_end_t - close_reset_start_t;
-          perf_file << "Close dsets and reset: " << close_reset_tot_t.count() << "ms\n";
-#endif
+        if ( tgt_indices_exist_ )
+        {
+          // DEV ZONE
+          H5::DataSpace dataspace = tgt_node_id_to_range_dset_.getSpace();
+          const int rank = dataspace.getSimpleExtentNdims();
+          hsize_t dim[ rank ];
+          dataspace.getSimpleExtentDims( dim, NULL );
+          dataspace.close();
+          std::cerr << "Rank: " << rank << ", Dim: " << *dim << "\n";
         }
         else
         {
-          throw NotImplemented(
-            "Connecting with Sonata files with more than one edgegroup is currently not implemented" );
+          const auto num_conn = get_num_connections_();
+          const auto chunk_size = get_chunk_size_( num_conn );
+          create_connections_in_chunks_( num_conn, chunk_size );
         }
+
+        // Close datasets
+        close_dsets_();
+
+        // Reset all parameters
+        reset_params();
+
       } // end iteration over population groups
 
       // Close H5 objects in scope
       edges_group.close();
-      edge_h5_file.close();
+      edge_file.close();
 
     } // end try block
 
@@ -715,36 +200,39 @@ SonataConnector::connect()
     }
 
   } // end iteration over edge files
-
-#if PROFILE_ENABLED
-  const auto connect_end_t = std::chrono::high_resolution_clock::now();
-  const std::chrono::duration< double, std::milli > connect_tot_t = connect_end_t - connect_start_t;
-  perf_file << "\nConnect(): " << connect_tot_t.count() << "ms\n";
-#endif
-
-} // end of SonataConnector::connect
-
-hsize_t
-SonataConnector::get_num_elements_( const H5::DataSet& dataset )
-{
-  // std::cerr << "get_num_elements_...\n";
-  H5::DataSpace dataspace = dataset.getSpace();
-  hsize_t dims_out[ 1 ];
-  dataspace.getSimpleExtentDims( dims_out, NULL );
-  // std::cerr << "dims_out: " << *dims_out << "\n";
-  dataspace.close();
-  return *dims_out;
 }
 
-
 void
-SonataConnector::create_connections_( const hsize_t chunk_size, const hsize_t offset )
+SonataConnector::create_connections_in_chunks_( hsize_t num_conn, hsize_t chunk_size )
 {
 
-  // Create subset arrays
-#if PROFILE_ENABLED
-  create_arrays_stopwatch_.start();
-#endif
+  // organize chunks; dv.quot = integral quotient, dv.rem = reaminder
+  // https://learn.microsoft.com/en-us/cpp/c-language/cpp-integer-limits?view=msvc-170
+  auto dv = std::div( static_cast< long long >( num_conn ), static_cast< long long >( chunk_size ) );
+
+  // Iterate chunks
+  hsize_t offset = 0; // start coordinates of data selection
+
+  // TODO: should iterator also be hsize_t, and should then dv.quot & dv.rem be cast to hsize_t?
+
+  for ( size_t i = 0; i < dv.quot; i++ )
+  {
+    // create connections
+    connect_subset_( chunk_size, offset );
+    // increment offset
+    offset += chunk_size;
+  } // end chunk loop
+
+  // Handle remainder
+  if ( dv.rem > 0 )
+  {
+    connect_subset_( dv.rem, offset );
+  }
+}
+
+void
+SonataConnector::connect_subset_( const hsize_t chunk_size, const hsize_t offset )
+{
 
   // Read subsets
   std::vector< int > src_node_id_data_subset( chunk_size );
@@ -753,31 +241,20 @@ SonataConnector::create_connections_( const hsize_t chunk_size, const hsize_t of
   std::vector< double > syn_weight_data_subset( chunk_size );
   std::vector< double > delay_data_subset( chunk_size );
 
-#if PROFILE_ENABLED
-  create_arrays_stopwatch_.stop();
-#endif
-
-  // Read subsets
-#if PROFILE_ENABLED
-  read_subsets_stopwatch_.start();
-#endif
-
-  read_subset_int_( src_node_id_dset_, src_node_id_data_subset, chunk_size, offset );
-  read_subset_int_( tgt_node_id_dset_, tgt_node_id_data_subset, chunk_size, offset );
-  read_subset_int_( edge_type_id_dset_, edge_type_id_data_subset, chunk_size, offset );
+  read_subset_( src_node_id_dset_, src_node_id_data_subset, H5::PredType::NATIVE_INT, chunk_size, offset );
+  read_subset_( tgt_node_id_dset_, tgt_node_id_data_subset, H5::PredType::NATIVE_INT, chunk_size, offset );
+  read_subset_( edge_type_id_dset_, edge_type_id_data_subset, H5::PredType::NATIVE_INT, chunk_size, offset );
 
   if ( weight_dataset_exist_ )
   {
-    read_subset_double_( syn_weight_dset_, syn_weight_data_subset, chunk_size, offset );
+    // syn_weight_data_subset.reserve( chunk_size );
+    read_subset_( syn_weight_dset_, syn_weight_data_subset, H5::PredType::NATIVE_DOUBLE, chunk_size, offset );
   }
   if ( delay_dataset_exist_ )
   {
-    read_subset_double_( delay_dset_, syn_weight_data_subset, chunk_size, offset );
+    // delay_data_subset.reserve( chunk_size );
+    read_subset_( delay_dset_, delay_data_subset, H5::PredType::NATIVE_DOUBLE, chunk_size, offset );
   }
-
-#if PROFILE_ENABLED
-  read_subsets_stopwatch_.stop();
-#endif
 
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
 
@@ -800,7 +277,6 @@ SonataConnector::create_connections_( const hsize_t chunk_size, const hsize_t of
       // Iterate the datasets and create the connections
       for ( hsize_t i = 0; i < chunk_size; ++i )
       {
-        // const auto sonata_source_id = src_node_id_data_subset[ i ];
         const auto sonata_target_id = tgt_node_id_data_subset[ i ];
         const index tnode_id = ( *( tnode_begin + sonata_target_id ) ).node_id;
 
@@ -817,58 +293,13 @@ SonataConnector::create_connections_( const hsize_t chunk_size, const hsize_t of
         Node* target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
         const thread target_thread = target->get_thread();
 
-        /*
-        // Check whether the target is on this mpi machine
-        if ( not kernel().node_manager.is_local_node_id( tnode_id ) )
-        {
-          continue;
-        }
-
-        Node* target = kernel().node_manager.get_node_or_proxy( tnode_id );
-        const thread target_thread = target->get_thread();
-
-        // check whether target is on our thread
-        if ( tid != target_thread )
-        {
-          continue;
-        }
-        */
-
         const auto edge_type_id = edge_type_id_data_subset[ i ];
         const auto syn_spec = getValue< DictionaryDatum >( edge_params_->lookup( std::to_string( edge_type_id ) ) );
+        const double weight =
+          get_syn_property_( syn_spec, i, weight_dataset_exist_, syn_weight_data_subset, names::weight );
+        const double delay = get_syn_property_( syn_spec, i, delay_dataset_exist_, delay_data_subset, names::delay );
 
-        auto get_syn_property = [ &syn_spec, &i ]( const bool dataset, std::vector< double >& data, const Name& name )
-        {
-          if ( dataset ) // Syn_property is set from dataset if the dataset is defined
-          {
-            if ( not data[ i ] ) // TODO: remove
-            {
-#pragma omp critical
-              {
-                // //std::cerr << kernel().vp_manager.get_thread_id() << ": " << name << " " << i
-                //          << " data index is NULL!\n";
-              }
-            }
-            return data[ i ];
-          }
-          else if ( syn_spec->known( name ) ) // Set syn_property from syn_spec if it is defined there
-          {
-            return static_cast< double >( ( *syn_spec )[ name ] );
-          }
-          return numerics::nan; // Default value is NaN
-        };
-
-        const double weight = get_syn_property( weight_dataset_exist_, syn_weight_data_subset, names::weight );
-        const double delay = get_syn_property( delay_dataset_exist_, delay_data_subset, names::delay );
-
-        // RngPtr rng = get_vp_specific_rng( target_thread );
         get_synapse_params_( snode_id, *target, target_thread, rng, edge_type_id );
-
-        /*
-        #if PROFILE_ENABLED
-                connect_stopwatches_[ tid ].start();
-        #endif
-        */
 
         kernel().connection_manager.connect( snode_id,
           target,
@@ -877,12 +308,6 @@ SonataConnector::create_connections_( const hsize_t chunk_size, const hsize_t of
           type_id_2_param_dicts_.at( edge_type_id ).at( tid ), // send empty param dict
           delay,                                               // fixed as 1
           weight );
-
-        /*
-        #if PROFILE_ENABLED
-                connect_stopwatches_[ tid ].stop();
-        #endif
-        */
 
       } // end for
     }   // end try
@@ -907,37 +332,190 @@ SonataConnector::create_connections_( const hsize_t chunk_size, const hsize_t of
 } // end create_connections_()
 
 
-void
-SonataConnector::read_subset_int_( const H5::DataSet& dataset,
-  std::vector< int >& data_buf,
-  hsize_t chunk_size,
-  hsize_t offset )
+hsize_t
+SonataConnector::get_num_elements_( const H5::DataSet& dataset )
 {
-  // Define Memory Dataspace. Get file dataspace and select
-  // hyperslab from the file dataspace. In call for selecting
-  // hyperslab 'stride' and 'block' are implicitly given as NULL.
-  // H5S_SELECT_SET replaces any existing selection with the parameters
-  // from this call
+  // std::cerr << "get_num_elements_...\n";
   H5::DataSpace dataspace = dataset.getSpace();
-  // Get the number of dimensions in the dataspace.
-  int array_dim = dataspace.getSimpleExtentNdims(); // should maybe assert if array_dim == 1
-  dataspace.selectHyperslab( H5S_SELECT_SET, &chunk_size, &offset );
-  H5::DataSpace memspace( array_dim, &chunk_size, NULL );
-
-  // Read subset
-  dataset.read( data_buf.data(), H5::PredType::NATIVE_INT, memspace, dataspace );
-
-  // Close dataspaces
+  hsize_t dims_out[ 1 ];
+  dataspace.getSimpleExtentDims( dims_out, NULL );
+  // std::cerr << "dims_out: " << *dims_out << "\n";
   dataspace.close();
-  memspace.close();
+  return *dims_out;
 }
 
 void
-SonataConnector::read_subset_double_( const H5::DataSet& dataset,
-  std::vector< double >& data_buf,
+SonataConnector::get_member_names_( hid_t loc_id, std::vector< std::string >& names )
+{
+  H5Literate( loc_id, H5_INDEX_NAME, H5_ITER_INC, NULL, get_member_names_callback_, &names );
+}
+
+
+hsize_t
+SonataConnector::find_edge_id_groups_( const H5::Group& population_group,
+  std::vector< std::string >& edge_id_group_names )
+{
+  // Find the number of edge id groups, i.e. ones with label "0", "1", ..., by finding
+  // the names of the population's datasets and subgroups
+  // Note we assume edge ids are contiguous starting from zero, which is the
+  // SONATA default. Edge id keys can also be custom (not handled here)
+
+  std::vector< std::string > population_group_dset_and_subgroup_names;
+  get_member_names_( population_group.getId(), population_group_dset_and_subgroup_names );
+
+  size_t num_edge_id_groups { 0 };
+  bool is_edge_id_name;
+
+  for ( const auto& name : population_group_dset_and_subgroup_names )
+  {
+    is_edge_id_name = ( name.find_first_not_of( "0123456789" ) == std::string::npos );
+
+    if ( is_edge_id_name == 1 )
+    {
+      edge_id_group_names.push_back( name );
+    }
+
+    num_edge_id_groups += is_edge_id_name;
+  }
+
+  return num_edge_id_groups;
+}
+
+void
+SonataConnector::try_to_load_tgt_indices_dsets_( H5::Group population_group )
+{
+  bool indices_group_exist = H5Lexists( population_group.getId(), "indices", H5P_DEFAULT ) > 0;
+  if ( indices_group_exist )
+  {
+    const H5::Group indices_group( population_group.openGroup( "indices" ) );
+
+    bool tgt_to_src_group_exist = H5Lexists( indices_group.getId(), "target_to_source", H5P_DEFAULT ) > 0;
+
+    if ( tgt_to_src_group_exist )
+    {
+      const H5::Group tgt_to_src_indices_group( indices_group.openGroup( "target_to_source" ) );
+
+      bool tgt_node_id_to_range_dset_exist =
+        H5Lexists( tgt_to_src_indices_group.getId(), "node_id_to_range", H5P_DEFAULT ) > 0;
+      bool tgt_range_to_edge_id_dset_exist =
+        H5Lexists( tgt_to_src_indices_group.getId(), "range_to_edge_id", H5P_DEFAULT ) > 0;
+
+      if ( tgt_node_id_to_range_dset_exist && tgt_range_to_edge_id_dset_exist )
+      {
+        tgt_node_id_to_range_dset_ = tgt_to_src_indices_group.openDataSet( "node_id_to_range" );
+        tgt_range_to_edge_id_dset_ = tgt_to_src_indices_group.openDataSet( "range_to_edge_id" );
+        tgt_indices_exist_ = true;
+      }
+    }
+  }
+}
+
+
+void
+SonataConnector::open_dsets_( H5::Group population_group, H5::Group edge_id_group )
+{
+
+  // Check if weight and delay are given as h5 files
+  is_weight_and_delay_from_dataset_( edge_id_group );
+
+  // Open src, tgt and edge type id datasets
+  src_node_id_dset_ = population_group.openDataSet( "source_node_id" );
+  tgt_node_id_dset_ = population_group.openDataSet( "target_node_id" );
+  edge_type_id_dset_ = population_group.openDataSet( "edge_type_id" );
+
+  // Open weight and/or delay dsets if exist
+  if ( weight_dataset_exist_ )
+  {
+    syn_weight_dset_ = edge_id_group.openDataSet( "syn_weight" );
+  }
+
+  if ( delay_dataset_exist_ )
+  {
+    delay_dset_ = edge_id_group.openDataSet( "delay" );
+  }
+
+  // Retrieve source and target attributes to find which node population to map to
+  get_attributes_( source_attribute_value_, src_node_id_dset_, "node_population" );
+  get_attributes_( target_attribute_value_, tgt_node_id_dset_, "node_population" );
+}
+
+
+void
+SonataConnector::open_dsets_( H5::Group population_group, H5::Group edge_id_group, H5::Group indices_group )
+{
+
+  // Open datasets in population and edge id group
+  open_dsets_( population_group, edge_id_group );
+
+  // Open target_to_source indices dsets
+  const H5::Group tgt_to_src_indices_group( indices_group.openGroup( "target_to_source" ) );
+  tgt_node_id_to_range_dset_ = tgt_to_src_indices_group.openDataSet( "node_id_to_range" );
+  tgt_range_to_edge_id_dset_ = tgt_to_src_indices_group.openDataSet( "range_to_edge_id" );
+}
+
+void
+SonataConnector::close_dsets_()
+{
+  src_node_id_dset_.close();
+  src_node_id_dset_.close();
+  edge_type_id_dset_.close();
+
+  if ( weight_dataset_exist_ )
+  {
+    syn_weight_dset_.close();
+  }
+
+  if ( delay_dataset_exist_ )
+  {
+    delay_dset_.close();
+  }
+
+  if ( tgt_indices_exist_ )
+  {
+    tgt_node_id_to_range_dset_.close();
+    tgt_range_to_edge_id_dset_.close();
+  }
+}
+
+hsize_t
+SonataConnector::get_num_connections_()
+{
+  const auto src_array_size = get_num_elements_( src_node_id_dset_ );
+  const auto tgt_array_size = get_num_elements_( tgt_node_id_dset_ );
+
+  // make sure that target and source population have the same size
+  if ( src_array_size != tgt_array_size )
+  {
+    throw DimensionMismatch( "Source and Target population must be of the same size." );
+  }
+
+  return tgt_array_size;
+}
+
+hsize_t
+SonataConnector::get_chunk_size_( hsize_t num_conn )
+{
+  // Set chunk size
+  hsize_t chunk_size = CHUNK_SIZE;
+
+  // adjust if chunk_size is too large
+  if ( num_conn < chunk_size )
+  {
+    chunk_size = num_conn;
+  }
+
+  return chunk_size;
+}
+
+template < typename T >
+void
+SonataConnector::read_subset_( const H5::DataSet& dataset,
+  std::vector< T >& data_buf,
+  H5::PredType datatype,
   hsize_t chunk_size,
   hsize_t offset )
 {
+
   // Define Memory Dataspace. Get file dataspace and select
   // hyperslab from the file dataspace. In call for selecting
   // hyperslab 'stride' and 'block' are implicitly given as NULL.
@@ -950,7 +528,7 @@ SonataConnector::read_subset_double_( const H5::DataSet& dataset,
   H5::DataSpace memspace( array_dim, &chunk_size, NULL );
 
   // Read subset
-  dataset.read( data_buf.data(), H5::PredType::NATIVE_DOUBLE, memspace, dataspace );
+  dataset.read( data_buf.data(), datatype, memspace, dataspace );
 
   // Close dataspaces
   dataspace.close();
@@ -973,6 +551,7 @@ SonataConnector::is_weight_and_delay_from_dataset_( const H5::Group& group )
   weight_dataset_exist_ = H5Lexists( group.getId(), "syn_weight", H5P_DEFAULT ) > 0;
   delay_dataset_exist_ = H5Lexists( group.getId(), "delay", H5P_DEFAULT ) > 0;
 }
+
 
 void
 SonataConnector::create_type_id_2_syn_spec_( DictionaryDatum edge_params )
@@ -1070,10 +649,28 @@ SonataConnector::get_synapse_params_( index snode_id, Node& target, thread targe
   }
 }
 
+double
+SonataConnector::get_syn_property_( const DictionaryDatum& syn_spec,
+  hsize_t index,
+  const bool dataset_exists,
+  std::vector< double >& data,
+  const Name& name )
+{
+  if ( dataset_exists )
+  {
+    return data[ index ];
+  }
+  else if ( syn_spec->known( name ) )
+  {
+    return static_cast< double >( ( *syn_spec )[ name ] );
+  }
+  // default value is NaN
+  return numerics::nan;
+}
+
 void
 SonataConnector::reset_params()
 {
-
   type_id_2_syn_model_.clear();
   for ( auto params_vec_map : type_id_2_syn_spec_ )
   {
@@ -1087,18 +684,13 @@ SonataConnector::reset_params()
   }
   type_id_2_syn_spec_.clear();
   type_id_2_param_dicts_.clear();
-
-#if PROFILE_ENABLED
-  create_arrays_stopwatch_.reset();
-  read_subsets_stopwatch_.reset();
-  std::fill( connect_times_.begin(), connect_times_.end(), 0 );
-#endif
+  tgt_indices_exist_ = false;
 }
 
 } // namespace nest
 
 herr_t
-get_group_names_callback( hid_t loc_id, const char* name, const H5L_info_t*, void* opdata )
+get_member_names_callback_( hid_t loc_id, const char* name, const H5L_info_t*, void* opdata )
 {
   // Check that the group exists
   herr_t status = H5Gget_objinfo( loc_id, name, 0, NULL );

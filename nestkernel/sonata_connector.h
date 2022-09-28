@@ -147,14 +147,48 @@ private:
    */
   void get_synapse_params_( index snode_id, Node& target, thread target_thread, RngPtr rng, int edge_type_id );
 
+  template < typename T >
+  void read_subset_( const H5::DataSet& dataset,
+    std::vector< T >& data_buf,
+    H5::PredType datatype,
+    hsize_t chunk_size,
+    hsize_t offset );
+
+  /*
   void read_subset_int_( const H5::DataSet& dataset, std::vector< int >& data_buf, hsize_t chunk_size, hsize_t offset );
 
   void read_subset_double_( const H5::DataSet& dataset,
     std::vector< double >& data_buf,
     hsize_t chunk_size,
     hsize_t offset );
+  */
 
-  void create_connections_( const hsize_t chunk_size, const hsize_t offset );
+  double get_syn_property_( const DictionaryDatum& syn_spec,
+    hsize_t index,
+    const bool dataset,
+    std::vector< double >& data,
+    const Name& name );
+
+  void create_connections_in_chunks_( hsize_t num_conn, hsize_t chunk_size );
+
+  void connect_subset_( const hsize_t chunk_size, const hsize_t offset );
+
+  void get_member_names_( hid_t loc_id, std::vector< std::string >& names );
+
+  hsize_t find_edge_id_groups_( const H5::Group& population_group, std::vector< std::string >& edge_id_group_names );
+
+  void try_to_load_tgt_indices_dsets_( H5::Group population_group );
+
+  void open_dsets_( H5::Group population_group, H5::Group edge_id_group );
+
+  void open_dsets_( H5::Group population_group, H5::Group edge_id_group, H5::Group indices_group );
+
+  void close_dsets_();
+
+  hsize_t get_num_connections_();
+
+  hsize_t get_chunk_size_( hsize_t num_conn );
+
 
   /**
    * Reset all parameters
@@ -169,6 +203,9 @@ private:
 
   //! Indicates whether delays are given as dataset in SONATA file
   bool delay_dataset_exist_;
+
+  //! Indicates whether indices group for target to source is present in SONATA file
+  bool tgt_indices_exist_;
 
   //! Source node attribute
   std::string source_attribute_value_;
@@ -194,6 +231,8 @@ private:
   H5::DataSet edge_type_id_dset_;
   H5::DataSet syn_weight_dset_;
   H5::DataSet delay_dset_;
+  H5::DataSet tgt_node_id_to_range_dset_;
+  H5::DataSet tgt_range_to_edge_id_dset_;
 
   //! Profiling
   Stopwatch create_arrays_stopwatch_;

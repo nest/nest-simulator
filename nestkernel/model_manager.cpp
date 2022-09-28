@@ -216,26 +216,23 @@ index
 ModelManager::register_node_model_( Model* model )
 {
   const index id = node_models_.size();
+  const std::string name = model->get_name();
+
   model->set_model_id( id );
   model->set_type_id( id );
-
-  std::string name = model->get_name();
-
   builtin_node_models_.push_back( model );
 
   Model* cloned_model = model->clone( name );
   cloned_model->set_model_id( id );
-
   node_models_.push_back( cloned_model );
+
+  modeldict_->insert( name, id );
 
 #pragma omp parallel
   {
     const thread t = kernel().vp_manager.get_thread_id();
-    const int model_id = model->get_model_id();
-    proxy_nodes_[ t ].push_back( create_proxynode_( t, model_id ) );
+    proxy_nodes_[ t ].push_back( create_proxynode_( t, id ) );
   }
-
-  modeldict_->insert( name, id );
 
   return id;
 }

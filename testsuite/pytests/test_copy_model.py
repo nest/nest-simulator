@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_copied_model.py
+# test_copy_model.py
 #
 # This file is part of NEST.
 #

@@ -836,14 +836,23 @@ class CompartmentsTestCase(unittest.TestCase):
                                     "Cannot connect with unknown recordable v_comp1"):
             nest.Connect(mm, n_neat)
 
-        # test adding receptors twice
+        # test adding compartments and receptors twice
         n_neat = nest.Create('cm_default')
         n_neat.compartments = {"parent_idx": -1, "params": SP}
         n_neat.receptors = {"comp_idx": 0, "receptor_type": "GABA"}
 
         with self.assertRaisesRegex(nest.kernel.NESTError,
+                                    "\'compartments\' is already defined for this model"):
+            n_neat.compartments = {"parent_idx": 0, "params": SP}
+
+        with self.assertRaisesRegex(nest.kernel.NESTError,
                                     "\'receptors\' is already defined for this model"):
             n_neat.receptors = {"comp_idx": 0, "receptor_type": "GABA"}
+
+        n_neat = nest.Create('cm_default')
+        n_neat.compartments = {"parent_idx": -1, "params": SP}
+        with self.assertRaises(nest.kernel.NESTError):
+            n_neat.compartments = {"parent_idx": 0, "params": SP}
 
     def test_continuerun(self, dt=0.1):
         recordables = [

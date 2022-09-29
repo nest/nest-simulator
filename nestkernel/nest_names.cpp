@@ -102,6 +102,7 @@ const Name continuous( "continuous" );
 const Name count_covariance( "count_covariance" );
 const Name count_histogram( "count_histogram" );
 const Name covariance( "covariance" );
+const Name add_compartments( "add_compartments" );
 const Name compartments( "compartments" );
 const Name comp_idx( "comp_idx" );
 

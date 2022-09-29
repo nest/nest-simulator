@@ -117,6 +117,7 @@ extern const Name circular;
 extern const Name clear;
 extern const Name comp_idx;
 extern const Name comparator;
+extern const Name add_compartments;
 extern const Name compartments;
 extern const Name configbit_0;
 extern const Name configbit_1;

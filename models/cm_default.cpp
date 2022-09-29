@@ -110,15 +110,11 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
    * single compartment or multiple compartments, depending on wether the
    * entry was a list of dicts or a single dict
    */
-  if ( statusdict->known( names::compartments ) )
+  const auto add_compartments_list_or_dict = [ this, statusdict ]( const Name name )
   {
-    Datum* dat = ( *statusdict )[ names::compartments ].datum();
+    Datum* dat = ( *statusdict )[ name ].datum();
     ArrayDatum* ad = dynamic_cast< ArrayDatum* >( dat );
     DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( dat );
-
-    // Need to rebuild the compartment tree with new compartments.
-    c_tree_ = {};
-
     if ( ad != nullptr )
     {
       // A list of compartments is provided, we add them all to the tree
@@ -140,6 +136,22 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
         "\'compartments\' entry could not be identified, provide "
         "list of parameter dicts for multiple compartments" );
     }
+  };
+
+  if ( statusdict->known( names::compartments ) )
+  {
+    // Compartments can only be set on a newly created compartment model.
+    // To add additional compartments, add_compartments should be used.
+    if ( c_tree_.get_size() > 0 )
+    {
+      throw BadProperty( "\'compartments\' is already defined for this model" );
+    }
+    add_compartments_list_or_dict( names::compartments );
+  }
+
+  if ( statusdict->known( names::add_compartments ) )
+  {
+    add_compartments_list_or_dict( names::add_compartments );
   }
 
   /**

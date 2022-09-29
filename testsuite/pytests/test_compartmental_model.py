@@ -916,13 +916,13 @@ class CompartmentsTestCase(unittest.TestCase):
         compartment_a = cm.compartments.get_compartment_tuple()[0]
         compartment_b = {"parent_idx": 0, "params": DP[0]}
 
-        for rhs in (compartment_b, [compartment_b], (compartment_b), nest.Compartments((compartment_b,))):
+        for rhs in (compartment_b, [compartment_b], (compartment_b), nest.Compartments(cm, (compartment_b,))):
             compartments = cm.compartments + rhs
             self.assertEqual(compartments.get_compartment_tuple(), (compartment_a, compartment_b))
 
         with self.assertRaises(TypeError):
             # Raises error because argument must be a tuple
-            nest.Compartments(compartment_a)
+            nest.Compartments(cm, compartment_a)
 
         not_compartment = ''
         for rhs in ([compartment_b, not_compartment],

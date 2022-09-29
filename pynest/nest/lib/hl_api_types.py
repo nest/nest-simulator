@@ -394,7 +394,7 @@ class NodeCollection:
             # params is a tuple with a string or list of strings
             result = get_parameters(self, params[0])
             if params[0] == 'compartments':
-                result = Compartments(result)
+                result = Compartments(self, result)
         else:
             # Hierarchical addressing
             result = get_parameters_hierarchical_addressing(self, params)
@@ -456,8 +456,12 @@ class NodeCollection:
 
         local_nodes = [self.local] if len(self) == 1 else self.local
 
-        if isinstance(params, dict) and 'compartments' in params and isinstance(params['compartments'], Compartments):
-            params['compartments'] = params['compartments'].get_compartment_tuple()
+        if isinstance(params, dict) and 'compartments' in params:
+            if isinstance(params['compartments'], Compartments):
+                params['compartments'] = params['compartments'].get_compartment_tuple()
+            elif params['compartments'] is None:
+                # Adding compartments has been handled by the += operator, so we can remove the entry.
+                params.pop('compartments')
 
         if isinstance(params, dict) and all(local_nodes):
 
@@ -1113,10 +1117,13 @@ class Parameter:
 
 
 class Compartments:
-    def __init__(self, compartments):
+    def __init__(self, node_collection, compartments):
+        if not isinstance(node_collection, NodeCollection):
+            raise TypeError(f'node_collection must be a NodeCollection, got {type(node_collection)}')
         if not isinstance(compartments, tuple):
             raise TypeError(f'compartments must be a tuple of dicts, got {type(compartments)}')
         self._compartments = compartments
+        self._node_collection = node_collection
 
     def __add__(self, other):
         new_compartments = list(self._compartments)
@@ -1132,7 +1139,22 @@ class Compartments:
             raise NotImplementedError('Compartments can only be added with dicts, lists of dicts,'
                                       f' or other Compartments, got {type(other)}')
 
-        return Compartments(tuple(new_compartments))
+        return Compartments(self._node_collection, tuple(new_compartments))
+
+    def __iadd__(self, other):
+        if isinstance(other, dict):
+            new_compartments = [other]
+        elif isinstance(other, (tuple, list)):
+            if not all(isinstance(d, dict) for d in other):
+                raise TypeError('Compartments can only be added with dicts, lists of dicts, or other Compartments')
+            new_compartments = list(other)
+        elif isinstance(other, Compartments):
+            new_compartments = list(other._compartments)
+        else:
+            raise NotImplementedError('Compartments can only be added with dicts, lists of dicts,'
+                                      f' or other Compartments, got {type(other)}')
+        self._node_collection.set(add_compartments=new_compartments)
+        return None  # Flagging compartments as added by returning None
 
     def __getitem__(self, key):
         return self._compartments[key]

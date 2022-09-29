@@ -47,7 +47,7 @@ namespace nest
 // standard implementation to obtain the default delay, assuming that it
 // is located in GenericConnectorModel::default_connection
 // synapse types with homogeneous delays must provide a specialization
-// that returns the default delay from CommonProperties (or from  else where)
+// that returns the default delay from CommonProperties (or from else where)
 // template<typename ConnectionT>
 // double get_default_delay(const GenericConnectorModel<ConnectionT> &cm)
 // {

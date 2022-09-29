@@ -199,7 +199,7 @@ private:
   bool update_( Time const&, const long, const long, const bool );
 
   void update( Time const&, const long, const long ) override;
-  bool wfr_update( Time const&, const long, const long );
+  bool wfr_update( Time const&, const long, const long ) override;
 
   // END Boilerplate function declarations ----------------------------
 

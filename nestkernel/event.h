@@ -451,7 +451,7 @@ WeightRecorderEvent::set_receiver_node_id( index node_id )
 }
 
 inline index
-WeightRecorderEvent::get_receiver_node_id( ) const
+WeightRecorderEvent::get_receiver_node_id() const
 {
   return receiver_node_id_;
 }
@@ -1319,19 +1319,19 @@ Event::set_sender_node_id_info( const thread tid, const synindex syn_id, const i
 }
 
 inline Node&
-Event::get_receiver( ) const
+Event::get_receiver() const
 {
   return *receiver_;
 }
 
 inline Node&
-Event::get_sender( ) const
+Event::get_sender() const
 {
   return *sender_;
 }
 
 inline index
-Event::get_sender_node_id( ) const
+Event::get_sender_node_id() const
 {
   assert( sender_node_id_ > 0 );
   return sender_node_id_;

@@ -306,8 +306,8 @@ public:
    * @param to_pos    position to which displacement is to be computed
    * @returns vector pointing from from_pos to to_pos
    */
-  virtual Position< D > compute_displacement( const Position< D >& from_pos, const Position< D >& to_pos ) const override;
-  virtual double compute_displacement( const std::vector< double >& from_pos,
+  Position< D > compute_displacement( const Position< D >& from_pos, const Position< D >& to_pos ) const override;
+  double compute_displacement( const std::vector< double >& from_pos,
     const std::vector< double >& to_pos,
     const unsigned int dimension ) const override;
 

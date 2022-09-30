@@ -75,7 +75,7 @@ protected:
   }
 
 
-  explicit Datum( const SLIType* t )
+  Datum( const SLIType* t )
     : type( t )
     , action( t->getaction() )
     , reference_count_( 1 )
@@ -83,7 +83,7 @@ protected:
   {
   }
 
-  explicit Datum( const Datum& d )
+  Datum( const Datum& d )
     : type( d.type )
     , action( d.action )
     , reference_count_( 1 )

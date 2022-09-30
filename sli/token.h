@@ -184,7 +184,7 @@ public:
   /**
    * use existing pointer to datum, token takes responsibility of the pointer.
    */
-  explicit Token( Datum* p_s = nullptr )
+  Token( Datum* p_s = nullptr )
     : p( p_s )
   {
   }

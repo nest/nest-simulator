@@ -55,7 +55,7 @@ public:
   {
   }
 
-  explicit GenericDatum( const D& d_s )
+  GenericDatum( const D& d_s )
     : d( d_s )
   {
     TypedDatum< slt >::unset_executable();

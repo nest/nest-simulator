@@ -216,7 +216,7 @@ protected:
       , ms( ms )
     {
     }
-    explicit Limit( const tic_t& );
+    Limit( const tic_t& );
   };
   static Limit LIM_MAX;
   static Limit LIM_MIN;
@@ -246,14 +246,14 @@ public:
   struct tic
   {
     tic_t t;
-    explicit tic( tic_t t )
+    tic( tic_t t )
       : t( t ) {};
   };
 
   struct step
   {
     delay t;
-    explicit step( delay t )
+    step( delay t )
       : t( t )
     {
     }
@@ -262,20 +262,20 @@ public:
   struct ms
   {
     double t;
-    explicit ms( double t )
+    ms( double t )
       : t( t )
     {
     }
 
     static double fromtoken( const Token& t );
-    explicit ms( const Token& t )
+    ms( const Token& t )
       : t( fromtoken( t ) ) {};
   };
 
   struct ms_stamp
   {
     double t;
-    explicit ms_stamp( double t )
+    ms_stamp( double t )
       : t( t )
     {
     }
@@ -286,7 +286,7 @@ public:
   /////////////////////////////////////////////////////////////
 
 protected:
-  explicit Time( tic_t tics )
+  Time( tic_t tics )
     : tics( tics )
   {
   } // This doesn't check ranges.
@@ -301,21 +301,21 @@ public:
   // Defined by compiler.
   // Time(const Time& t);
 
-  explicit Time( tic t )
+  Time( tic t )
     : tics( ( time_abs( t.t ) < LIM_MAX.tics ) ? t.t
         : ( t.t < 0 )                          ? LIM_NEG_INF.tics
                                                : LIM_POS_INF.tics )
   {
   }
 
-  explicit Time( step t )
+  Time( step t )
     : tics( ( time_abs( t.t ) < LIM_MAX.steps ) ? t.t * Range::TICS_PER_STEP
         : ( t.t < 0 )                           ? LIM_NEG_INF.tics
                                                 : LIM_POS_INF.tics )
   {
   }
 
-  explicit Time( ms t )
+  Time( ms t )
     : tics( ( time_abs( t.t ) < LIM_MAX.ms ) ? static_cast< tic_t >( t.t * Range::TICS_PER_MS + 0.5 )
         : ( t.t < 0 )                        ? LIM_NEG_INF.tics
                                              : LIM_POS_INF.tics )
@@ -323,7 +323,7 @@ public:
   }
 
   static tic_t fromstamp( ms_stamp );
-  explicit Time( ms_stamp t )
+  Time( ms_stamp t )
     : tics( fromstamp( t ) )
   {
   }

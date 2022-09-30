@@ -80,12 +80,12 @@ public:
   /**
    * Constructor initializing a Position from an array.
    */
-  explicit Position( const T* const y );
+  Position( const T* const y );
 
   /**
    * Constructor initializing a Position from a std::vector.
    */
-  explicit Position( const std::vector< T >& y );
+  Position( const std::vector< T >& y );
 
   /**
    * Copy constructor.
@@ -300,7 +300,7 @@ public:
   /**
    * Output the Position to an ostream.
    */
-  friend std::ostream& operator<<<>( std::ostream& os, const Position< D, T >& pos );
+  friend std::ostream& operator<< <>( std::ostream& os, const Position< D, T >& pos );
 
 protected:
   std::array< T, D > x_;

@@ -64,11 +64,11 @@ public:
   {
   }
 
-  explicit Name( const char s[] )
+  Name( const char s[] )
     : handle_( insert( std::string( s ) ) )
   {
   }
-  explicit Name( const std::string& s )
+  Name( const std::string& s )
     : handle_( insert( s ) )
   {
   }

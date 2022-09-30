@@ -57,7 +57,7 @@ public:
   {
     d = ( D ) 0;
   }
-  explicit NumericDatum( const D& d_s )
+  NumericDatum( const D& d_s )
   {
     d = d_s;
   }

@@ -35,7 +35,7 @@ template < class D, SLIType* slt >
 class sharedPtrDatum : public std::shared_ptr< D >, public TypedDatum< slt >
 {
   Datum*
-  clone( ) const
+  clone() const
   {
     return new sharedPtrDatum< D, slt >( *this );
   }

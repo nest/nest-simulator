@@ -84,7 +84,7 @@ class pool
     }
 
     size_t
-    size( ) const
+    size() const
     {
       return csize;
     }
@@ -133,15 +133,15 @@ public:
   void reserve_additional( size_t n );
 
   size_t
-  available( ) const
+  available() const
   {
     return total - instantiations;
   }
 
-  inline void* alloc( );  //!< allocate one element
+  inline void* alloc();        //!< allocate one element
   inline void free( void* p ); //!< put element back into the pool
   size_t
-  size_of( ) const
+  size_of() const
   {
     return el_size;
   }
@@ -152,7 +152,7 @@ public:
 };
 
 inline void*
-pool::alloc( )
+pool::alloc()
 {
 
   if ( head == nullptr )

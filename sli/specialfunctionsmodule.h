@@ -53,14 +53,14 @@ class SpecialFunctionsModule : public SLIModule
   // Part 1: Methods pertaining to the module ----------------------
 
 public:
-  SpecialFunctionsModule( ) {};
+  SpecialFunctionsModule() {};
   // ~SpecialFunctionsModule(void);
 
   // The Module is registered by a call to this Function:
   void init( SLIInterpreter* ) override;
 
   // This function will return the name of our module:
-  const std::string name( ) const override;
+  const std::string name() const override;
 
 
   // Part 2: Classes for the implemented functions -----------------
@@ -121,8 +121,8 @@ public:
     void execute( SLIInterpreter* ) const override;
 
     // need constructor and destructor to set up integration workspace
-    GaussDiskConvFunction( );
-    ~GaussDiskConvFunction( ) override;
+    GaussDiskConvFunction();
+    ~GaussDiskConvFunction() override;
 
   private:
     // quadrature parameters, see GSL Reference

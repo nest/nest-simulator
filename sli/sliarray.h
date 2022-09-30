@@ -637,8 +637,8 @@ public:
   }
 
   void init( SLIInterpreter* ) override;
-  const std::string commandstring( ) const override;
-  const std::string name( ) const override;
+  const std::string commandstring() const override;
+  const std::string name() const override;
 };
 
 

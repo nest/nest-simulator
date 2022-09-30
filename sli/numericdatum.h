@@ -47,7 +47,7 @@ protected:
 
 private:
   Datum*
-  clone( ) const
+  clone() const
   {
     return new NumericDatum< D, slt >( *this );
   }

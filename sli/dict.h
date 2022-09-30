@@ -132,7 +132,7 @@ public:
   Token& operator[]( const char* );
 
   bool
-  empty( ) const
+  empty() const
   {
     return TokenMap::empty();
   }

@@ -67,7 +67,7 @@ sli::pool AggregateDatum< Name, &SLIInterpreter::Literaltype >::memory;
 class NameDatum : public AggregateDatum< Name, &SLIInterpreter::Nametype >
 {
   Datum*
-  clone( ) const override
+  clone() const override
   {
     return new NameDatum( *this );
   }
@@ -98,7 +98,7 @@ public:
 class LiteralDatum : public AggregateDatum< Name, &SLIInterpreter::Literaltype >
 {
   Datum*
-  clone( ) const override
+  clone() const override
   {
     return new LiteralDatum( *this );
   }

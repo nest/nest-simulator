@@ -412,7 +412,8 @@ public:
   }
 
   // Implemented in connector_base_impl.h
-  void send_weight_event( const thread tid, const unsigned int lcid, Event& e, const CommonSynapseProperties& cp ) override;
+  void
+  send_weight_event( const thread tid, const unsigned int lcid, Event& e, const CommonSynapseProperties& cp ) override;
 
   void
   trigger_update_weight( const long vt_node_id,
@@ -469,7 +470,9 @@ public:
   }
 
   index
-  find_matching_target( const thread tid, const std::vector< index >& matching_lcids, const index target_node_id ) const override
+  find_matching_target( const thread tid,
+    const std::vector< index >& matching_lcids,
+    const index target_node_id ) const override
   {
     for ( size_t i = 0; i < matching_lcids.size(); ++i )
     {

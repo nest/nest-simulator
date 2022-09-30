@@ -45,7 +45,7 @@ private:
   TypeTrie tree;
 
   Datum*
-  clone( ) const override
+  clone() const override
   {
     return new TrieDatum( *this );
   }
@@ -104,7 +104,7 @@ public:
   bool equals( Datum const* ) const override;
 
   const Name&
-  getname( ) const
+  getname() const
   {
     return name;
   }
@@ -128,7 +128,7 @@ public:
   }
 
   TypeTrie&
-  get( )
+  get()
   {
     return tree;
   }

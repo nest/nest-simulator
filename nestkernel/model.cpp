@@ -118,7 +118,7 @@ Model::set_status( DictionaryDatum d )
 }
 
 DictionaryDatum
-Model::get_status( )
+Model::get_status()
 {
   DictionaryDatum d = get_status_();
 

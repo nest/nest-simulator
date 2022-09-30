@@ -87,13 +87,13 @@ private:
 
 
     void
-    addreference( )
+    addreference()
     {
       ++refs;
     }
 
     void
-    removereference( )
+    removereference()
     {
       if ( --refs == 0 )
       {

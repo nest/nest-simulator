@@ -334,7 +334,7 @@ public:
   }
 
   void
-  clear( )
+  clear()
   {
     if ( p )
     {
@@ -350,19 +350,19 @@ public:
   }
 
   bool
-  empty( ) const
+  empty() const
   {
     return p == nullptr;
   }
 
   bool
-  operator not( ) const
+  operator not() const
   {
     return p == nullptr;
   }
 
   Datum*
-  datum( ) const
+  datum() const
   {
     accessed_ = true;
     return p;
@@ -392,7 +392,7 @@ public:
 
 
   const std::type_info&
-  type( ) const
+  type() const
   {
     return typeid( *p );
   }

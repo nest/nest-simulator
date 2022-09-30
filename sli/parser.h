@@ -59,7 +59,7 @@ class Parser
   void init( std::istream& );
 
 public:
-  Parser( );
+  Parser();
   Parser( std::istream& );
 
   bool operator()( Token& );
@@ -78,7 +78,7 @@ public:
   }
 
   Scanner const*
-  scan( ) const
+  scan() const
   {
     return s;
   }

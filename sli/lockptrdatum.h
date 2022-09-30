@@ -43,7 +43,7 @@ template < class D, SLIType* slt >
 class lockPTRDatum : public lockPTR< D >, public TypedDatum< slt >
 {
   Datum*
-  clone( ) const
+  clone() const
   {
     return new lockPTRDatum< D, slt >( *this );
   }

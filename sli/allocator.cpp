@@ -134,7 +134,7 @@ sli::pool::grow( size_t nelements )
 }
 
 void
-sli::pool::grow( )
+sli::pool::grow()
 {
   grow( block_size );
   block_size *= growth_factor;

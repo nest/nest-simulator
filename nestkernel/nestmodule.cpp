@@ -95,13 +95,13 @@ NestModule::~NestModule()
 // The following concerns the new module:
 
 const std::string
-NestModule::name( ) const
+NestModule::name() const
 {
   return std::string( "NEST Kernel 2" ); // Return name of the module
 }
 
 const std::string
-NestModule::commandstring( ) const
+NestModule::commandstring() const
 {
   return std::string( "(nest-init) run" );
 }
@@ -156,7 +156,7 @@ NestModule::create_parameter( const Name& name, const DictionaryDatum& d )
 }
 
 GenericFactory< Parameter >&
-NestModule::parameter_factory_( )
+NestModule::parameter_factory_()
 {
   static GenericFactory< Parameter > factory;
   return factory;
@@ -164,7 +164,7 @@ NestModule::parameter_factory_( )
 
 
 GenericFactory< AbstractMask >&
-NestModule::mask_factory_( )
+NestModule::mask_factory_()
 {
   static GenericFactory< AbstractMask > factory;
   return factory;

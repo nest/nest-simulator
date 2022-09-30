@@ -116,13 +116,13 @@ DynamicLoaderModule::~DynamicLoaderModule()
 // The following concerns the new module: -----------------------
 
 const std::string
-DynamicLoaderModule::name( ) const
+DynamicLoaderModule::name() const
 {
   return std::string( "NEST-Dynamic Loader" ); // Return name of the module
 }
 
 const std::string
-DynamicLoaderModule::commandstring( ) const
+DynamicLoaderModule::commandstring() const
 {
   return std::string( "" ); // Run associated SLI startup script
 }

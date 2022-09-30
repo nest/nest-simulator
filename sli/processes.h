@@ -140,7 +140,7 @@ public:
   const Name EXDEV_name;
 
   // The constructor and destructor for our module object (-if we need them-):
-  Processes( )
+  Processes()
     : signaldict_name( "signaldict" )
     , SIGABRT_name( "SIGABRT" )
     , SIGALRM_name( "SIGALRM" )
@@ -207,17 +207,17 @@ public:
   {
   } // Processes constructor
 
-  ~Processes( ) override; // clean up dynmem for static variables...
+  ~Processes() override; // clean up dynmem for static variables...
 
   // The Module is registered by a call to this Function:
   void init( SLIInterpreter* ) override;
 
   // This function will return the name of our module:
-  const std::string name( ) const override;
+  const std::string name() const override;
 
   // This function -may- return a string of SLI-commands to be executed for
   // initialization
-  const std::string commandstring( ) const override;
+  const std::string commandstring() const override;
 
 
   // ---------------------------------------------------------------

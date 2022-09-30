@@ -300,7 +300,7 @@ public:
   /**
    * Output the Position to an ostream.
    */
-  friend std::ostream& operator<<<>( std::ostream& os, const Position< D, T >& pos );
+  friend std::ostream& operator<< <>( std::ostream& os, const Position< D, T >& pos );
 
 protected:
   std::array< T, D > x_;

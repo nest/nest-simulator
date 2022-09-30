@@ -68,7 +68,7 @@ private:
   TokenArrayObj* data;
 
   bool
-  clone( )
+  clone()
   {
     if ( data->references() > 1 )
     {
@@ -83,7 +83,7 @@ private:
   }
 
   bool
-  detach( )
+  detach()
   {
     if ( data->references() > 1 )
     {
@@ -106,7 +106,7 @@ protected:
   }
 
 public:
-  TokenArray( )
+  TokenArray()
     : data( new TokenArrayObj() ) {};
 
   explicit TokenArray( size_t n, const Token& t = Token(), size_t alloc = 128 )
@@ -156,7 +156,7 @@ public:
    * Return number of elements in the array.
    */
   size_t
-  size( ) const
+  size() const
   {
     return data->size();
   }
@@ -165,7 +165,7 @@ public:
    * Return maximal number of elements that fit into the container.
    */
   size_t
-  capacity( ) const
+  capacity() const
   {
     return data->capacity();
   }
@@ -227,7 +227,7 @@ public:
    * invalidated.
    */
   bool
-  shrink( )
+  shrink()
   {
     return data->shrink();
   }
@@ -244,7 +244,7 @@ public:
   }
 
   unsigned int
-  references( )
+  references()
   {
     return data->references();
   }
@@ -360,20 +360,20 @@ public:
   }
 
   void
-  pop_back( )
+  pop_back()
   {
     clone();
     data->pop_back();
   }
 
   void
-  clear( )
+  clear()
   {
     erase();
   }
 
   void
-  erase( )
+  erase()
   {
     if ( not detach() )
     {
@@ -435,7 +435,7 @@ public:
   }
 
   bool
-  empty( ) const
+  empty() const
   {
     return size() == 0;
   }
@@ -449,7 +449,7 @@ public:
   void toVector( std::vector< double >& ) const;
   void toVector( std::vector< std::string >& ) const;
 
-  bool valid( ) const; // check integrity
+  bool valid() const; // check integrity
 
   /** Exception classes */
   //  class TypeMismatch {};

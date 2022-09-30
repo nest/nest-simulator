@@ -163,7 +163,7 @@ public:
    * Return input stream.
    */
   std::istream*
-  GetSource( )
+  GetSource()
   {
     return in;
   }

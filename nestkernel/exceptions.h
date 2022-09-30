@@ -63,12 +63,12 @@ public:
   {
   }
 
-  KernelException( char const* const what )
+  explicit KernelException( char const* const what )
     : SLIException( what )
   {
   }
 
-  KernelException( const std::string& what )
+  explicit KernelException( const std::string& what )
     : SLIException( what )
   {
   }
@@ -95,7 +95,7 @@ class UnknownModelName : public KernelException
   const Name n_;
 
 public:
-  UnknownModelName( const Name& n )
+  explicit UnknownModelName( const Name& n )
     : KernelException( "UnknownModelName" )
     , n_( n )
   {
@@ -118,7 +118,7 @@ class UnknownComponent : public KernelException
   const Name n_;
 
 public:
-  UnknownComponent( const Name& n )
+  explicit UnknownComponent( const Name& n )
     : KernelException( "UnknownComponent" )
     , n_( n )
   {
@@ -140,7 +140,7 @@ class NewModelNameExists : public KernelException
   const Name n_;
 
 public:
-  NewModelNameExists( const Name& n )
+  explicit NewModelNameExists( const Name& n )
     : KernelException( "NewModelNameExists" )
     , n_( n )
   {

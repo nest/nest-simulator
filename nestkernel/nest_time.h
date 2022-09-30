@@ -216,7 +216,7 @@ protected:
       , ms( ms )
     {
     }
-    Limit( const tic_t& );
+    explicit Limit( const tic_t& );
   };
   static Limit LIM_MAX;
   static Limit LIM_MIN;
@@ -301,21 +301,21 @@ public:
   // Defined by compiler.
   // Time(const Time& t);
 
-  Time( tic t )
+  explicit Time( tic t )
     : tics( ( time_abs( t.t ) < LIM_MAX.tics ) ? t.t
         : ( t.t < 0 )                          ? LIM_NEG_INF.tics
                                                : LIM_POS_INF.tics )
   {
   }
 
-  Time( step t )
+  explicit Time( step t )
     : tics( ( time_abs( t.t ) < LIM_MAX.steps ) ? t.t * Range::TICS_PER_STEP
         : ( t.t < 0 )                           ? LIM_NEG_INF.tics
                                                 : LIM_POS_INF.tics )
   {
   }
 
-  Time( ms t )
+  explicit Time( ms t )
     : tics( ( time_abs( t.t ) < LIM_MAX.ms ) ? static_cast< tic_t >( t.t * Range::TICS_PER_MS + 0.5 )
         : ( t.t < 0 )                        ? LIM_NEG_INF.tics
                                              : LIM_POS_INF.tics )
@@ -323,7 +323,7 @@ public:
   }
 
   static tic_t fromstamp( ms_stamp );
-  Time( ms_stamp t )
+  explicit Time( ms_stamp t )
     : tics( fromstamp( t ) )
   {
   }

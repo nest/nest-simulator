@@ -57,7 +57,7 @@ typedef std::vector< SLIModule* > vecLinkedModules;
 class DynamicLoaderModule : public SLIModule
 {
 public:
-  DynamicLoaderModule( SLIInterpreter& interpreter );
+  explicit DynamicLoaderModule( SLIInterpreter& interpreter );
   ~DynamicLoaderModule() override;
 
   void init( SLIInterpreter* ) override;
@@ -82,7 +82,7 @@ public:
   class LoadModuleFunction : public SLIFunction
   {
   public:
-    LoadModuleFunction( vecDynModules& dyn_modules );
+    explicit LoadModuleFunction( vecDynModules& dyn_modules );
 
   private:
     void execute( SLIInterpreter* ) const override;

@@ -97,14 +97,14 @@ class lockPTR
     PointerObject( PointerObject const& );
 
   public:
-    PointerObject( D* p = NULL )
+    explicit PointerObject( D* p = NULL )
       : pointee( p )
       , deletable( true )
       , locked( false )
     {
     }
 
-    PointerObject( D& p_o )
+    explicit PointerObject( D& p_o )
       : pointee( &p_o )
       , deletable( false )
       , locked( false )

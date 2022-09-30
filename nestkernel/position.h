@@ -80,12 +80,12 @@ public:
   /**
    * Constructor initializing a Position from an array.
    */
-  Position( const T* const y );
+  explicit Position( const T* const y );
 
   /**
    * Constructor initializing a Position from a std::vector.
    */
-  Position( const std::vector< T >& y );
+  explicit Position( const std::vector< T >& y );
 
   /**
    * Copy constructor.
@@ -340,7 +340,7 @@ public:
   {
   }
 
-  MultiIndex( const Position< D, int >& ur )
+  explicit MultiIndex( const Position< D, int >& ur )
     : Position< D, int >()
     , lower_left_()
     , upper_right_( ur )

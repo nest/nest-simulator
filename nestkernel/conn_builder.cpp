@@ -1731,7 +1731,6 @@ nest::BernoulliAstroBuilder::connect_()
 
     try
     {
-      unsigned long indegree;
       index snode_id;
       std::set< index > previous_snode_ids;
       index anode_id;
@@ -1741,19 +1740,23 @@ nest::BernoulliAstroBuilder::connect_()
       Node* astro;
       thread astro_thread;
       std::vector< index > anode_pool_this_target;
-      int target_count = 0;
+      unsigned long indegree;
+      int default_n_astro_per_target_ = astrocytes_size_ / targets_size_ > 1 ? astrocytes_size_ / targets_size_ : 1;
+      int default_n_target_per_astro = targets_size_ / astrocytes_size_ > 1 ? targets_size_ / astrocytes_size_ : 1;
+      int target_index = 0;
+      int astro_index = 0;
+      int n_astro_overlap_per_target = 0;
 
       for ( NodeCollection::const_iterator tnode_id = targets_->begin(); tnode_id != targets_->end(); ++tnode_id )
       {
         // get target node
         target = kernel().node_manager.get_node_or_proxy( ( *tnode_id ).node_id, tid );
         target_thread = tid;
-        target_count++;
+        target_index = targets_->find( ( *tnode_id ).node_id );
 
         // sample indegree according to truncated Binomial distribution
         binomial_distribution bino_dist;
         binomial_distribution::param_type param( sources_->size(), p_ );
-
         indegree = sources_->size() + 1;
         while ( indegree > sources_->size() )
         {
@@ -1772,54 +1775,58 @@ nest::BernoulliAstroBuilder::connect_()
 
         // Define astrocyte pool for this target
         anode_pool_this_target.clear();
+
+        // When max_astro_per_target_ not given
+        if ( max_astro_per_target_ == 0 )
+        {
+          // Take max_astro_per_target_ = N_astrocyte / N_neuron
+          max_astro_per_target_ = default_n_astro_per_target_;
+        }
+
+        // Determine starting astrocyte
         // "Deterministic"
         if ( astro_pool_per_target_det_ == true )
         {
-          if ( max_astro_per_target_ >= 0 )
+          if ( max_astro_per_target_ > 0 )
           {
-            // When max_astro_per_target_ not given
-            if ( max_astro_per_target_ == 0 )
-            {
-              // Take max_astro_per_target_ = number of astrocytes/number of neurons
-              max_astro_per_target_ = std::floor( float( astrocytes_size_ ) / targets_size_ );
-              // At least one astrocyte
-              if ( max_astro_per_target_ == 0)
-              {
-                max_astro_per_target_ = 1;
-              }
-            }
-            // Determine starting astrocyte for this neuron
-            int anode_index_tmp;
-            float n_overlap_per_target = max_astro_per_target_ - float( astrocytes_size_ ) / targets_size_;
+            // Shifting for balance
+            n_astro_overlap_per_target = max_astro_per_target_ - default_n_astro_per_target_;
+            int shift = std::ceil( n_astro_overlap_per_target/2.0 );
             if ( targets_size_ > astrocytes_size_ )
             {
-              anode_index_tmp = std::floor( targets_->find( ( *tnode_id ).node_id ) / std::floor( float( targets_size_ ) / astrocytes_size_ ) ) - std::round( n_overlap_per_target/2 );
-              if ( target_count/std::floor( float( targets_size_ ) / astrocytes_size_ ) > astrocytes_size_)
+              if ( max_astro_per_target_ % 2 == 0 and target_index % default_n_target_per_astro >= default_n_target_per_astro / 2.0 )
               {
-                // std::cout << "Neurons no. " << target_count << " and after are not paired with astrocytes." << std::endl;
+                shift -= 1; // Rule with even max_astro_per_target_ => reduce shifting in the latter half
+              }
+              // Start from this astrocyte
+              astro_index = ( target_index / default_n_target_per_astro ) - shift;
+              // std::cout << "Target " << target_index << ", starting astrocyte = " << astro_index << ", n_astro_overlap_per_target = " << n_astro_overlap_per_target << ", shift = " << shift << ", default_n_target_per_astro = " << default_n_target_per_astro << std::endl;
+              // Exclude remainder of neurons
+              if ( target_index >= int(astrocytes_size_*default_n_target_per_astro) )
+              {
+                // std::cout << "Target " << target_index << " and after are not paired with astrocytes." << std::endl;
                 break;
               }
             }
             else
             {
-              anode_index_tmp = targets_->find( ( *tnode_id ).node_id ) * std::floor( float( astrocytes_size_ ) / targets_size_ ) - std::round( n_overlap_per_target/2 );
+              astro_index = target_index * default_n_astro_per_target_ - shift;
             }
             // Curbing
-            if ( anode_index_tmp < 0 )
+            if ( astro_index < 0 )
             {
-              anode_index_tmp = 0;
+              astro_index = 0;
             }
-            else if ( anode_index_tmp > int( astrocytes_size_ - max_astro_per_target_ ) )
+            else if ( astro_index > int( astrocytes_size_ - max_astro_per_target_ ) )
             {
-              anode_index_tmp = astrocytes_size_ - max_astro_per_target_;
+              astro_index = astrocytes_size_ - max_astro_per_target_;
             }
-            // std::cout << "Target, starting astrocyte = " << ( *tnode_id ).node_id << ", " <<  anode_index_tmp << std::endl;
             // Loop until desired astrocyte pool size
             for ( size_t i = 0; i < max_astro_per_target_; i++ )
             {
-              anode_id = ( *astrocytes_ )[ anode_index_tmp ];
+              anode_id = ( *astrocytes_ )[ astro_index ];
               anode_pool_this_target.push_back( anode_id );
-              anode_index_tmp++;
+              astro_index++;
             }
           }
         }
@@ -1841,6 +1848,7 @@ nest::BernoulliAstroBuilder::connect_()
           }
         }
 
+        // Make connections
         // choose indegree number of sources randomly from all sources
         size_t i = 0;
         while ( i < indegree )
@@ -1884,7 +1892,7 @@ nest::BernoulliAstroBuilder::connect_()
           {
             anode_id = anode_pool_this_target.at( synced_rng->ulrand( anode_pool_this_target.size() ) );
           }
-          // If not, all astrocytes can be connected
+          // If not, all astrocytes can be connected (may already be redundant)
           else
           {
             anode_id = ( *astrocytes_ )[ synced_rng->ulrand( astrocytes_size_ ) ];

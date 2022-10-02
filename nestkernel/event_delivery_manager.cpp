@@ -542,7 +542,7 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
   std::vector< Time > prepared_timestamps( kernel().connection_manager.get_min_delay() );
   for ( size_t lag = 0; lag < ( size_t ) kernel().connection_manager.get_min_delay(); ++lag )
   {
-    prepared_timestamps[ lag ] = kernel().simulation_manager.get_clock() - Time::step( lag );
+	  prepared_timestamps[ lag ] = kernel().simulation_manager.get_clock() + Time::step( lag + 1  - kernel().connection_manager.get_min_delay() );
   }
 
   for ( thread rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
@@ -587,8 +587,7 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
         for ( unsigned int j = 0; j < BATCH_SIZE; ++j )
         {
           const SpikeDataT& spike_data = recv_buffer[ rank * send_recv_count_spike_data_per_rank + i * BATCH_SIZE + j ];
-          int lag_ = kernel().connection_manager.get_min_delay() - 1;
-          se_batch[ j ].set_stamp( prepared_timestamps[ lag_ - spike_data.get_lag() ] );
+          se_batch[ j ].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
           se_batch[ j ].set_offset( spike_data.get_offset() );
           tid_batch[ j ] = spike_data.get_tid();
           syn_id_batch[ j ] = spike_data.get_syn_id();
@@ -607,8 +606,7 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
       {
         const SpikeDataT& spike_data =
           recv_buffer[ rank * send_recv_count_spike_data_per_rank + num_batches * BATCH_SIZE + j ];
-        int lag_ = kernel().connection_manager.get_min_delay() - 1;
-        se_batch[ j ].set_stamp( prepared_timestamps[ lag_ - spike_data.get_lag() ] );
+        se_batch[ j ].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
         se_batch[ j ].set_offset( spike_data.get_offset() );
         tid_batch[ j ] = spike_data.get_tid();
         syn_id_batch[ j ] = spike_data.get_syn_id();
@@ -631,8 +629,7 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
         {
           const SpikeDataT& spike_data = recv_buffer[ rank * send_recv_count_spike_data_per_rank + i * BATCH_SIZE + j ];
 
-          int lag_ = kernel().connection_manager.get_min_delay() - 1;
-          se_batch[ j ].set_stamp( prepared_timestamps[ lag_ - spike_data.get_lag() ] );
+          se_batch[ j ].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
           se_batch[ j ].set_offset( spike_data.get_offset() );
 
           syn_id_batch[ j ] = spike_data.get_syn_id();
@@ -671,8 +668,7 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
       {
         const SpikeDataT& spike_data =
           recv_buffer[ rank * send_recv_count_spike_data_per_rank + num_batches * BATCH_SIZE + j ];
-        int lag_ = kernel().connection_manager.get_min_delay() - 1;
-        se_batch[ j ].set_stamp( prepared_timestamps[ lag_ - spike_data.get_lag() ] );
+        se_batch[ j ].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
         se_batch[ j ].set_offset( spike_data.get_offset() );
 
         syn_id_batch[ j ] = spike_data.get_syn_id();

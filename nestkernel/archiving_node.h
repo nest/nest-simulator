@@ -103,7 +103,7 @@ public:
    * \fn double get_K_triplet_value(std::deque<histentry>::iterator &iter)
    * return the triplet Kminus value for the associated iterator.
    */
-  // double get_K_triplet_value( const std::deque< histentry >::iterator& iter );
+  double get_K_triplet_value( const std::deque< histentry >::iterator& iter );
 
   /**
    * \fn void get_history(long t1, long t2,

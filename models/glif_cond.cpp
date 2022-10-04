@@ -372,7 +372,7 @@ nest::glif_cond::Parameters_::set( const DictionaryDatum& d )
         + "), must have the same size." );
     }
 
-    if ( this->n_receptors_() != old_n_receptors && has_connections_ )
+    if ( this->n_receptors_() != old_n_receptors and has_connections_ )
     {
       throw BadProperty(
         "The neuron has connections, therefore the number of ports cannot be "

@@ -341,7 +341,7 @@ public:
   bool
   contains( const Datum& d ) const
   {
-    return ( p != nullptr ) && p->equals( &d );
+    return ( p != nullptr ) and p->equals( &d );
   }
 
   bool

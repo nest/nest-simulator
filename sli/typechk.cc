@@ -68,7 +68,7 @@ void
 TypeTrie::TypeNode::toTokenArray( TokenArray& a ) const
 {
   assert( a.size() == 0 );
-  if ( next == nullptr && alt == nullptr ) // Leaf node
+  if ( next == nullptr and alt == nullptr ) // Leaf node
   {
     a.push_back( func );
   }
@@ -92,7 +92,7 @@ TypeTrie::TypeNode::toTokenArray( TokenArray& a ) const
 void
 TypeTrie::TypeNode::info( std::ostream& out, std::vector< TypeNode const* >& tl ) const
 {
-  if ( next == nullptr && alt == nullptr ) // Leaf node
+  if ( next == nullptr and alt == nullptr ) // Leaf node
   {
     // print type list then function
     for ( int i = tl.size() - 1; i >= 0; --i )

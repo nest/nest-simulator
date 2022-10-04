@@ -24,7 +24,7 @@
 
 // C++ includes:
 #include <algorithm> // rotate
-#include <numeric> // accumulate
+#include <numeric>   // accumulate
 
 // Includes from nestkernel:
 #include "connection_manager.h"

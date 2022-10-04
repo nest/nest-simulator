@@ -155,7 +155,7 @@ get_long_in_range( const DictionaryDatum& d, Name const n, long min, long max, i
   // token.
   const Token& t = d->lookup2( n );
   DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
-  long x;
+  long x = std::numeric_limits< long >::quiet_NaN();
 
   if ( dd != 0 )
   {

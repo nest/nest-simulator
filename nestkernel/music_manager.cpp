@@ -29,6 +29,12 @@
 #endif
 #endif
 
+// Includes from libnestutil:
+#include "compose.hpp"
+
+// Includes from nestkernel:
+#include "kernel_manager.h"
+
 // Includes from sli:
 #include "dictutils.h"
 

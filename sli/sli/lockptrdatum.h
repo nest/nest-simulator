@@ -66,6 +66,8 @@ Problems:
 #define DICTSTACK_CACHE 1
 #endif
 
+// #undef DICTSTACK_CACHE
+
 class DictionaryStack
 {
 private:
@@ -333,9 +335,7 @@ public:
    *  The Token is moved.
    */
   void basedef_move( const Name& n, Token& t );
-
-  // bool where( const Name&, Token& );
-
+    
   void pop( void );
 
 

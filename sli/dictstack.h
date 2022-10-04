@@ -66,8 +66,6 @@ Problems:
 #define DICTSTACK_CACHE 1
 #endif
 
-// #undef DICTSTACK_CACHE
-
 class DictionaryStack
 {
 private:

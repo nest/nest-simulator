@@ -285,7 +285,18 @@ nest::StimulationBackendMPI::cleanup()
 void
 nest::StimulationBackendMPI::get_port( nest::StimulationDevice* device, std::string* port_name )
 {
-  get_port( device->get_node_id(), device->get_label(), port_name );
+  const std::string& label = device->get_label();
+  std::size_t address_starts_at;
+  // Case a: label is the endpoint address in the following format:
+  // endpoint_address:address string
+  if ((address_starts_at = label.find(":",0)) != std::string::npos) {
+    *port_name = label.substr(address_starts_at+1);
+  }
+
+  // Case b: label is part of the path to a file that contains endpoint address
+  else {
+    get_port( device->get_node_id(), device->get_label(), port_name );
+  }
 }
 
 void

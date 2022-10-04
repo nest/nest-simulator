@@ -166,7 +166,6 @@ private:
   double tau_minus_triplet_;
   double tau_minus_triplet_inv_;
 
-  double min_delay_;
   double max_delay_;
   double trace_;
 

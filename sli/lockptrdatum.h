@@ -113,8 +113,8 @@ public:
       Thus, the inherited lockPTR<D>::operator== is made private.  No
       implementation is defined.
     */
-    private : bool
-              operator==( lockPTR< D >& );
+private:
+  bool operator==( lockPTR< D >& );
 };
 
 /* equals(const Datum* datum)

@@ -246,14 +246,14 @@ public:
   struct tic
   {
     tic_t t;
-    tic( tic_t t )
+    explicit tic( tic_t t )
       : t( t ) {};
   };
 
   struct step
   {
     delay t;
-    step( delay t )
+    explicit step( delay t )
       : t( t )
     {
     }
@@ -262,20 +262,20 @@ public:
   struct ms
   {
     double t;
-    ms( double t )
+    explicit ms( double t )
       : t( t )
     {
     }
 
     static double fromtoken( const Token& t );
-    ms( const Token& t )
+    explicit ms( const Token& t )
       : t( fromtoken( t ) ) {};
   };
 
   struct ms_stamp
   {
     double t;
-    ms_stamp( double t )
+    explicit ms_stamp( double t )
       : t( t )
     {
     }

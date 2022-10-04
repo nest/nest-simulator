@@ -27,6 +27,7 @@
 #include <algorithm>
 #include <functional>
 #include <string>
+#include <limits>
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -90,7 +91,7 @@ get_double_in_range( const DictionaryDatum& d, Name const n, double min, double 
   // token.
   const Token& t = d->lookup2( n );
   DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
-  double x;
+  double x = std::numeric_limits< double >::quiet_NaN();
 
   if ( dd != 0 )
   {

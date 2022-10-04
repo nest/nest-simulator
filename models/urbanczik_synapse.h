@@ -312,7 +312,7 @@ urbanczik_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Co
 
   init_weight_ = weight_;
   // check if weight_ and Wmin_ has the same sign
-  if ( signbit( weight_ ) != signbit( Wmax_ ) )
+  if ( std::signbit( weight_ ) != std::signbit( Wmax_ ) )
   {
     throw BadProperty( "Weight and Wmin must have same sign." );
   }

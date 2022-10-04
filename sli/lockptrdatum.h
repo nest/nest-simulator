@@ -114,7 +114,7 @@ public:
     implementation is defined.
   */
 private:
-  // bool operator==( lockPTR< D >& );
+  bool operator==( lockPTR< D >& );
 };
 
 /* equals(const Datum* datum)

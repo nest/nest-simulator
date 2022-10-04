@@ -425,8 +425,6 @@ public:
   }
 
   const TokenArray& operator=( const TokenArray& );
-  // const TokenArray& operator=( const std::vector< long >& );
-  // const TokenArray& operator=( const std::vector< double >& );
 
   bool
   operator==( const TokenArray& a ) const
@@ -440,8 +438,6 @@ public:
     return size() == 0;
   }
 
-  // void info( std::ostream& ) const;
-
   /** Fill vectors with homogeneous integer and double arrays */
 
   void toVector( std::vector< size_t >& ) const;
@@ -452,7 +448,6 @@ public:
   bool valid() const; // check integrity
 
   /** Exception classes */
-  //  class TypeMismatch {};
   class OutOfRange
   {
   };

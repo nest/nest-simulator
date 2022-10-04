@@ -22,9 +22,6 @@
 
 #include "modelsmodule.h"
 
-// Includes from nestkernel
-#include "genericmodel_impl.h"
-
 // Generated includes:
 #include "config.h"
 
@@ -119,7 +116,6 @@
 // Prototypes for synapses
 #include "bernoulli_synapse.h"
 #include "clopath_synapse.h"
-#include "common_synapse_properties.h"
 #include "cont_delay_synapse.h"
 #include "cont_delay_synapse_impl.h"
 #include "diffusion_connection.h"
@@ -149,9 +145,6 @@
 #include "vogels_sprekeler_synapse.h"
 
 // Includes from nestkernel:
-#include "common_synapse_properties.h"
-#include "connector_model_impl.h"
-#include "genericmodel.h"
 #include "kernel_manager.h"
 #include "model.h"
 #include "model_manager_impl.h"

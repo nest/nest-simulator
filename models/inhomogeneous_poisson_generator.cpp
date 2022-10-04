@@ -24,25 +24,20 @@
 
 // C++ includes:
 #include <cmath>
-#include <limits>
 
 // Includes from libnestutil:
-#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "arraydatum.h"
 #include "booldatum.h"
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 
 /* ----------------------------------------------------------------

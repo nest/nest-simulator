@@ -29,14 +29,11 @@
 // C++ includes:
 #include <cmath>
 
-// Generated includes:
-#include "config.h"
 
 // Includes from sli:
 #include "booldatum.h"
 #include "doubledatum.h"
 #include "integerdatum.h"
-#include "namedatum.h"
 #include "stringdatum.h"
 
 

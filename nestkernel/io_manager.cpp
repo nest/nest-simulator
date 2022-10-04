@@ -22,13 +22,9 @@
 
 #include "io_manager.h"
 
-// Generated includes:
-#include "config.h"
-
 // C includes:
 #include <dirent.h>
 #include <errno.h>
-#include <sys/types.h>
 
 // C++ includes:
 #include <cstdlib>

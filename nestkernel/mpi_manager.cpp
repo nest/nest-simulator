@@ -22,18 +22,12 @@
 
 #include "mpi_manager.h"
 
-// C++ includes:
-#include <limits>
-#include <numeric>
 
 // Includes from libnestutil:
-#include "compose.hpp"
-#include "logging.h"
 #include "stopwatch.h"
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
-#include "mpi_manager_impl.h"
 #include "nest_types.h"
 
 // Includes from sli:

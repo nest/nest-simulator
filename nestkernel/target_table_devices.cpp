@@ -23,7 +23,6 @@
 // Includes from nestkernel:
 #include "connector_base.h"
 #include "kernel_manager.h"
-#include "target_table_devices_impl.h"
 #include "vp_manager_impl.h"
 
 nest::TargetTableDevices::TargetTableDevices()

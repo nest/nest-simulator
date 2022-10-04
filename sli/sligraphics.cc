@@ -28,11 +28,9 @@
 #include <iostream>
 
 // Includes from sli:
-#include "aggregatedatum.h"
 #include "arraydatum.h"
 #include "fdstream.h"
 #include "integerdatum.h"
-#include "numericdatum.h"
 #include "stringdatum.h"
 
 

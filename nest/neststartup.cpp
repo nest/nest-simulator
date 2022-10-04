@@ -22,29 +22,21 @@
 
 #include "neststartup.h"
 
-// C++ includes:
-#include <fstream>
 
 // Generated includes:
 #include "config.h"
 #include "static_modules.h"
 
 // Includes from libnestutil:
-#include "logging.h"
 #include "logging_event.h"
 
 // Includes from nestkernel:
 #include "dynamicloader.h"
-#include "exceptions.h"
-#include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 #include "nest.h"
 #include "nestmodule.h"
 
 // Includes from sli:
-#include "dict.h"
-#include "dictdatum.h"
 #include "filesystem.h"
 #include "interpret.h"
 #include "oosupport.h"

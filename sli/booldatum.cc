@@ -24,7 +24,6 @@
 
 // Includes from sli:
 #include "name.h"
-#include "token.h"
 
 sli::pool BoolDatum::memory( sizeof( BoolDatum ), 1024, 1 );
 

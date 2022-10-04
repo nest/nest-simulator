@@ -22,9 +22,6 @@
 
 #include "connection_manager.h"
 
-// Generated includes:
-#include "config.h"
-
 // C++ includes:
 #include <algorithm>
 #include <cassert>

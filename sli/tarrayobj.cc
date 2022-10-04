@@ -85,7 +85,7 @@ TokenArrayObj::allocate( size_t new_s, size_t new_c, size_t new_a, const Token& 
 
   size_t old_s = size();
 
-  assert( new_c != 0 )
+  assert( new_c != 0 );
   assert( new_a != 0 );
 
   Token* h = new Token[ new_c ];

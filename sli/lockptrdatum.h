@@ -108,11 +108,11 @@ public:
   */
   lockPTRDatum< D, sli >& operator=( const lockPTRDatum< D, sli >& )
 
-    /* operator==
-      lockPTRDatum should only use the equals method for equality testing.
-      Thus, the inherited lockPTR<D>::operator== is made private.  No
-      implementation is defined.
-    */
+  /* operator==
+    lockPTRDatum should only use the equals method for equality testing.
+    Thus, the inherited lockPTR<D>::operator== is made private.  No
+    implementation is defined.
+  */
 private:
   bool operator==( lockPTR< D >& );
 };

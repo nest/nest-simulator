@@ -152,7 +152,7 @@ TokenArray::toVector( std::vector< std::string >& a ) const
 
 
 bool
-TokenArray::valid( ) const
+TokenArray::valid() const
 {
   if ( data == nullptr )
   {

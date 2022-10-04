@@ -60,13 +60,13 @@ FilesystemModule::init( SLIInterpreter* i )
 
 
 const std::string
-FilesystemModule::name( ) const
+FilesystemModule::name() const
 {
   return std::string( "Filesystem access" );
 }
 
 const std::string
-FilesystemModule::commandstring( ) const
+FilesystemModule::commandstring() const
 {
   return std::string( "(filesystem.sli) run" );
 }

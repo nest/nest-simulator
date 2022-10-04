@@ -63,7 +63,7 @@ Parser::Parser( std::istream& is )
   assert( s != nullptr );
 }
 
-Parser::Parser( )
+Parser::Parser()
   : s( nullptr )
   , ParseStack( 128 )
 {

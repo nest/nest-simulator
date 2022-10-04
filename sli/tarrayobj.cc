@@ -211,7 +211,7 @@ TokenArrayObj::operator=( const TokenArrayObj& a )
 // }
 
 bool
-TokenArrayObj::shrink( )
+TokenArrayObj::shrink()
 {
   size_t new_capacity = size();
 
@@ -281,8 +281,8 @@ TokenArrayObj::erase( Token* first, Token* last )
       // deleting NULL pointer is safe in ISO C++
       to->p->removeReference();
     }
-    to->p = from->p; // move
-    from->p = nullptr;  // might be overwritten or not
+    to->p = from->p;   // move
+    from->p = nullptr; // might be overwritten or not
     ++from;
     ++to;
   }
@@ -317,7 +317,7 @@ TokenArrayObj::erase( size_t i, size_t n )
 }
 
 void
-TokenArrayObj::clear( )
+TokenArrayObj::clear()
 {
   if ( p )
   {
@@ -396,8 +396,8 @@ TokenArrayObj::insert( size_t i, size_t n, const Token& t )
 
   while ( from >= pos )
   {
-    to->p = from->p; // move
-    from->p = nullptr;  // knowing that to->p is
+    to->p = from->p;   // move
+    from->p = nullptr; // knowing that to->p is
     --from;
     --to; // NULL before
   }
@@ -423,8 +423,8 @@ TokenArrayObj::insert_move( size_t i, TokenArrayObj& a )
 
   while ( from >= pos )
   {
-    to->p = from->p; // move
-    from->p = nullptr;  // knowing that to->p is
+    to->p = from->p;   // move
+    from->p = nullptr; // knowing that to->p is
     --from;
     --to; // NULL before
   }
@@ -434,8 +434,8 @@ TokenArrayObj::insert_move( size_t i, TokenArrayObj& a )
 
   while ( from < a.end() )
   {
-    to->p = from->p; // we cannot do this in the loop
-    from->p = nullptr;  // above because of overlapping
+    to->p = from->p;   // we cannot do this in the loop
+    from->p = nullptr; // above because of overlapping
     ++from;
     ++to;
   }
@@ -495,8 +495,8 @@ TokenArrayObj::insert_move( size_t i, Token& t )
 
   while ( from >= pos )
   {
-    to->p = from->p; // move
-    from->p = nullptr;  // knowing that to->p is
+    to->p = from->p;   // move
+    from->p = nullptr; // knowing that to->p is
     --from;
     --to; // NULL before
   }
@@ -530,8 +530,8 @@ TokenArrayObj::replace_move( size_t i, size_t n, TokenArrayObj& a )
 
     while ( from > end )
     {
-      to->p = from->p; // move
-      from->p = nullptr;  // might be overwritten or not
+      to->p = from->p;   // move
+      from->p = nullptr; // might be overwritten or not
       --from;
       --to;
     }
@@ -552,8 +552,8 @@ TokenArrayObj::replace_move( size_t i, size_t n, TokenArrayObj& a )
         // deleting NULL pointer is safe in ISO C++
         to->p->removeReference();
       }
-      to->p = from->p; // move
-      from->p = nullptr;  // might be overwritten or not
+      to->p = from->p;   // move
+      from->p = nullptr; // might be overwritten or not
       ++from;
       ++to;
     }
@@ -585,8 +585,8 @@ TokenArrayObj::replace_move( size_t i, size_t n, TokenArrayObj& a )
       // delete target before
       to->p->removeReference();
     }
-    to->p = from->p; // movement, it is typically
-    from->p = nullptr;  // not the NULL pointer
+    to->p = from->p;   // movement, it is typically
+    from->p = nullptr; // not the NULL pointer
     ++from;
     ++to;
   }
@@ -660,7 +660,7 @@ TokenArrayObj::info( std::ostream& out ) const
 }
 
 bool
-TokenArrayObj::valid( ) const
+TokenArrayObj::valid() const
 {
   if ( p == nullptr )
   {

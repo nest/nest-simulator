@@ -93,7 +93,7 @@ DictionaryStack::basedef_move( const Name& n, Token& t )
 
 
 void
-DictionaryStack::pop( )
+DictionaryStack::pop()
 {
   //
   // remove top dictionary from stack
@@ -108,7 +108,7 @@ DictionaryStack::pop( )
 }
 
 void
-DictionaryStack::clear( )
+DictionaryStack::clear()
 {
   d.erase( d.begin(), d.end() );
 #ifdef DICTSTACK_CACHE
@@ -185,7 +185,7 @@ DictionaryStack::set_basedict()
 }
 
 size_t
-DictionaryStack::size( ) const
+DictionaryStack::size() const
 {
   //
   // return number of dictionaries on stack

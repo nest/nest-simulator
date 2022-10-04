@@ -148,13 +148,13 @@ Processes::fd( std::ostream* s )
 // end of definition of static variables and functions
 
 const std::string
-Processes::name( ) const
+Processes::name() const
 {
   return std::string( "basic process management" ); // Return name of the module
 }
 
 const std::string
-Processes::commandstring( ) const
+Processes::commandstring() const
 {
   return std::string( "(processes.sli) run" );
 }

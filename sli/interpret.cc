@@ -140,7 +140,7 @@ const IforallindexedstringFunction SLIInterpreter::iforallindexedstringfunction;
 const IforallstringFunction SLIInterpreter::iforallstringfunction;
 
 void
-SLIInterpreter::inittypes( )
+SLIInterpreter::inittypes()
 {
   Integertype.settypename( "integertype" );
   Integertype.setdefaultaction( datatypefunction );
@@ -183,7 +183,7 @@ SLIInterpreter::inittypes( )
 }
 
 void
-SLIInterpreter::initdictionaries( )
+SLIInterpreter::initdictionaries()
 {
   assert( DStack == nullptr );
 
@@ -204,7 +204,7 @@ SLIInterpreter::initdictionaries( )
 }
 
 void
-SLIInterpreter::initbuiltins( )
+SLIInterpreter::initbuiltins()
 {
 
   createcommand( ilookup_name, &SLIInterpreter::ilookupfunction );
@@ -224,7 +224,7 @@ SLIInterpreter::initbuiltins( )
 }
 
 void
-SLIInterpreter::initexternals( )
+SLIInterpreter::initexternals()
 {
   init_slidict( this );
   init_slicontrol( this );

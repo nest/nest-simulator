@@ -69,7 +69,7 @@ Name::print_handle( std::ostream& o ) const
 
 
 const std::string&
-Name::toString( ) const
+Name::toString() const
 {
   return handleTableInstance_()[ handle_ ];
 }

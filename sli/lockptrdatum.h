@@ -106,15 +106,15 @@ public:
     TypedDatum<slt>::operator= is called.
     The TypedDatum = is simply return *this.
   */
-  lockPTRDatum<D, sli>& operator=(const lockPTRDatum<D, sli>&)
+  lockPTRDatum< D, sli >& operator=( const lockPTRDatum< D, sli >& )
 
-  /* operator==
-    lockPTRDatum should only use the equals method for equality testing.
-    Thus, the inherited lockPTR<D>::operator== is made private.  No
-    implementation is defined.
-  */
-private:
-  bool operator==( lockPTR< D >& );
+    /* operator==
+      lockPTRDatum should only use the equals method for equality testing.
+      Thus, the inherited lockPTR<D>::operator== is made private.  No
+      implementation is defined.
+    */
+    private : bool
+              operator==( lockPTR< D >& );
 };
 
 /* equals(const Datum* datum)

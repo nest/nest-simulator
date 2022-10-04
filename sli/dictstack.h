@@ -335,7 +335,7 @@ public:
    *  The Token is moved.
    */
   void basedef_move( const Name& n, Token& t );
-    
+
   void pop( void );
 
 

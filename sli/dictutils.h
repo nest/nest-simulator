@@ -26,8 +26,8 @@
 // C++ includes:
 #include <algorithm>
 #include <functional>
-#include <string>
 #include <limits>
+#include <string>
 
 // Includes from sli:
 #include "arraydatum.h"

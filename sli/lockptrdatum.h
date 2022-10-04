@@ -106,7 +106,7 @@ public:
     TypedDatum<slt>::operator= is called.
     The TypedDatum = is simply return *this.
   */
-  // lockPTRDatum<D, sli>& operator=(const lockPTRDatum<D, sli>&)
+  lockPTRDatum<D, sli>& operator=(const lockPTRDatum<D, sli>&)
 
   /* operator==
     lockPTRDatum should only use the equals method for equality testing.

@@ -208,16 +208,11 @@ public:
   Token( const std::vector< double >& );
   Token( const std::vector< long >& );
   Token( const std::vector< size_t >& );
-  // Token( const std::ostream& );
-  // Token( const std::istream& );
-  // operator Datum*() const;
   operator size_t() const;
   operator long() const;
   operator double() const;
   operator bool() const;
   operator std::string() const;
-  //  operator vector<double> const;
-  //  operator vector<long> const;
 
   /**
    * If the contained datum has more than one reference, clone it, so it can

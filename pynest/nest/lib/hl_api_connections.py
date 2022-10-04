@@ -354,15 +354,28 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
 
     """
 
-    sps(pre)
-    sps(post)
-
-    if is_string(conn_spec):
-        conn_spec = {'rule': conn_spec}
-    if is_string(syn_spec):
-        syn_spec = {'synapse_model': syn_spec}
-
-    sps(conn_spec)
-    sps(syn_spec)
-
-    sr('Disconnect_g_g_D_D')
+    if len(args) == 1:
+        synapsecollection = args[0]
+        if not isinstance(synapsecollection, SynapseCollection):
+            raise TypeError('Arguments must be either a SynapseCollection or two NodeCollections')
+        if conn_spec is not None or syn_spec is not None:
+            raise ValueError('When disconnecting with a SynapseCollection, conn_spec and syn_spec cannot be specified')
+        synapsecollection.disconnect()
+    elif len(args) == 2:
+        # Fill default values
+        conn_spec = 'one_to_one' if conn_spec is None else conn_spec
+        syn_spec = 'static_synapse' if syn_spec is None else syn_spec
+        if is_string(conn_spec):
+            conn_spec = {'rule': conn_spec}
+        if is_string(syn_spec):
+            syn_spec = {'synapse_model': syn_spec}
+        pre, post = args
+        if not isinstance(pre, NodeCollection) or not isinstance(post, NodeCollection):
+            raise TypeError('Arguments must be either a SynapseCollection or two NodeCollections')
+        sps(pre)
+        sps(post)
+        sps(conn_spec)
+        sps(syn_spec)
+        sr('Disconnect_g_g_D_D')
+    else:
+        raise TypeError('Arguments must be either a SynapseCollection or two NodeCollections')

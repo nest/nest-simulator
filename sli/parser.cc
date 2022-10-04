@@ -26,14 +26,11 @@
 
 #include "parser.h"
 
-// Generated includes:
-#include "config.h"
 
 // Includes from sli:
 #include "arraydatum.h"
 #include "namedatum.h"
 #include "scanner.h"
-#include "symboldatum.h"
 
 /*****************************************************************/
 /* parse                                                         */

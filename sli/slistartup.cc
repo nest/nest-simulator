@@ -40,7 +40,6 @@
 #include "integerdatum.h"
 #include "interpret.h"
 #include "iostreamdatum.h"
-#include "namedatum.h"
 #include "stringdatum.h"
 
 // Access to environement variables.

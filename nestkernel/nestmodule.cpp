@@ -24,17 +24,13 @@
 
 // C++ includes:
 #include <iostream>
-#include <sstream>
 
 // Includes from libnestutil:
 #include "logging.h"
 
 // Includes from nestkernel:
 #include "conn_builder.h"
-#include "conn_builder_conngen.h"
-#include "connection_creator_impl.h"
 #include "connection_manager_impl.h"
-#include "free_layer.h"
 #include "genericmodel.h"
 #include "grid_layer.h"
 #include "grid_mask.h"
@@ -43,7 +39,6 @@
 #include "layer_impl.h"
 #include "mask.h"
 #include "mask_impl.h"
-#include "model_manager_impl.h"
 #include "nest.h"
 #include "nest_datums.h"
 #include "nest_types.h"
@@ -56,7 +51,6 @@
 #include "arraydatum.h"
 #include "booldatum.h"
 #include "doubledatum.h"
-#include "integerdatum.h"
 #include "interpret.h"
 #include "sliexceptions.h"
 #include "stringdatum.h"

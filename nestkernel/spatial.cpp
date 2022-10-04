@@ -23,7 +23,6 @@
 #include "spatial.h"
 
 // C++ includes:
-#include <ostream>
 #include <string>
 
 // Includes from libnestutil:

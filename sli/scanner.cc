@@ -36,7 +36,6 @@
 #include "integerdatum.h"
 #include "namedatum.h"
 #include "stringdatum.h"
-#include "symboldatum.h"
 
 /*************************************************************************/
 /** Scanner   (implemented as a DFA)                                     */

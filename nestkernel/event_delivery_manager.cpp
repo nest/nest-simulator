@@ -24,18 +24,12 @@
 
 // C++ includes:
 #include <algorithm> // rotate
-#include <iostream>
 #include <numeric> // accumulate
-
-// Includes from libnestutil:
-#include "logging.h"
 
 // Includes from nestkernel:
 #include "connection_manager.h"
 #include "connection_manager_impl.h"
-#include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
-#include "mpi_manager_impl.h"
 #include "send_buffer_position.h"
 #include "source.h"
 #include "vp_manager.h"

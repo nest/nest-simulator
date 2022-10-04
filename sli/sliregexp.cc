@@ -28,7 +28,6 @@
 // Includes from sli:
 #include "arraydatum.h"
 #include "dictdatum.h"
-#include "doubledatum.h"
 #include "integerdatum.h"
 #include "lockptrdatum.h"
 #include "stringdatum.h"

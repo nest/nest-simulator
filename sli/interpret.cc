@@ -31,19 +31,14 @@
 #include <ctime>
 #include <exception>
 #include <fstream>
-#include <functional>
 #include <sstream>
 #include <string>
-
-// Generated includes:
-#include "config.h"
 
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "numerics.h"
 
 // Includes from sli:
-#include "booldatum.h"
 #include "dictdatum.h"
 #include "dictstack.h"
 #include "dictutils.h"
@@ -54,9 +49,7 @@
 #include "iostreamdatum.h"
 #include "namedatum.h"
 #include "parser.h"
-#include "scanner.h"
 #include "stringdatum.h"
-#include "tokenutils.h"
 #include "triedatum.h"
 
 // This function is the only interface to the driver program

@@ -28,7 +28,6 @@
 
 // C includes:
 #include <sys/resource.h>
-#include <sys/time.h>
 #include <sys/times.h>
 #include <time.h>
 #include <unistd.h>
@@ -47,7 +46,6 @@
 #include "arraydatum.h"
 #include "booldatum.h"
 #include "dictstack.h"
-#include "doubledatum.h"
 #include "functiondatum.h"
 #include "integerdatum.h"
 #include "iostreamdatum.h"

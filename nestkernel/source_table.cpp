@@ -24,7 +24,6 @@
 #include <iostream>
 
 // Includes from nestkernel:
-#include "connection_manager.h"
 #include "connection_manager_impl.h"
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"

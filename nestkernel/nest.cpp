@@ -28,7 +28,6 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "mpi_manager_impl.h"
 #include "parameter.h"
 
 // Includes from sli:

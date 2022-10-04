@@ -31,6 +31,7 @@
 #include "kernel_manager.h"
 
 // Includes from sli:
+#include "arraydatum.h"
 #include "dictutils.h"
 #include "namedatum.h"
 

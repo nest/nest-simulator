@@ -20,6 +20,8 @@
  *
  */
 
+#include "conn_builder_conngen.h"
+
 #ifdef HAVE_LIBNEUROSIM
 
 // Includes from nestkernel:

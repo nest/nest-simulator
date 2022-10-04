@@ -36,6 +36,7 @@
 
 // Includes from sli:
 #include "dict.h"
+#include "fdstream.h"
 #include "name.h"
 
 nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,

@@ -22,10 +22,14 @@
 
 #include "device.h"
 
+// C++ includes:
+#include <climits>
+#include <limits>
 
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "nest_names.h"
+#include "node.h"
 
 // Includes from sli:
 #include "dictutils.h"

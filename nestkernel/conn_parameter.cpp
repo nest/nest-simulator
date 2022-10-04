@@ -30,6 +30,7 @@
 #include "arraydatum.h"
 #include "doubledatum.h"
 #include "integerdatum.h"
+#include "tokenutils.h"
 
 nest::ConnParameter*
 nest::ConnParameter::create( const Token& t, const size_t nthreads )

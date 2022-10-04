@@ -31,6 +31,7 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
+#include "node.h"
 
 namespace nest
 {

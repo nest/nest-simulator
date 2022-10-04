@@ -33,6 +33,7 @@
 #include "numerics.h"
 
 // Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"

@@ -171,6 +171,12 @@ private:
 
   void create_connections_in_chunks_( hsize_t num_conn, hsize_t chunk_size );
 
+  void create_connections_with_indices_();
+
+  void create_connections_with_indices_deprecated_();
+
+  void create_connections_with_indices_dev_();
+
   void connect_subset_( const hsize_t chunk_size, const hsize_t offset );
 
   void get_member_names_( hid_t loc_id, std::vector< std::string >& names );
@@ -188,6 +194,10 @@ private:
   hsize_t get_num_connections_();
 
   hsize_t get_chunk_size_( hsize_t num_conn );
+
+  hsize_t get_nrows_( H5::DataSet dataset, int ndim );
+
+  void read_range_to_edge_id_dset_portion_( long data_buf[][ 2 ], hsize_t row_offset );
 
 
   /**

@@ -38,8 +38,8 @@ SYS_DARWIN_SCALE = 1e9
 sys_scale = SYS_DARWIN_SCALE
 
 # Set network config
-#example = '300_pointneurons'
-example = 'GLIF'
+example = '300_pointneurons'
+#example = 'GLIF'
 simulate = False
 plot = False
 create_sonata_network = False  # For testing of convenience function

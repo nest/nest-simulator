@@ -157,15 +157,10 @@ SonataConnector::connect()
         open_dsets_( population_group, edge_id_group );
         try_to_load_tgt_indices_dsets_( population_group );
 
+        // tgt_indices_exist_ = false;
         if ( tgt_indices_exist_ )
         {
-          // DEV ZONE
-          H5::DataSpace dataspace = tgt_node_id_to_range_dset_.getSpace();
-          const int rank = dataspace.getSimpleExtentNdims();
-          hsize_t dim[ rank ];
-          dataspace.getSimpleExtentDims( dim, NULL );
-          dataspace.close();
-          std::cerr << "Rank: " << rank << ", Dim: " << *dim << "\n";
+          create_connections_with_indices_();
         }
         else
         {
@@ -200,6 +195,229 @@ SonataConnector::connect()
     }
 
   } // end iteration over edge files
+}
+
+void
+SonataConnector::create_connections_with_indices_dev_()
+{
+  // read datasets
+  // read node id ranges
+
+  const auto n_sonata_node_ids = get_nrows_( tgt_node_id_to_range_dset_, 2 );
+  std::cerr << "n_sonata_node_ids: " << n_sonata_node_ids << "\n";
+  int tgt_node_id_to_range_data[ n_sonata_node_ids ][ 2 ];
+  tgt_node_id_to_range_dset_.read( tgt_node_id_to_range_data, H5::PredType::NATIVE_INT );
+
+  // connection info
+  const auto num_conn = get_num_connections_();
+  std::cerr << "num_conn: " << num_conn << "\n";
+  std::vector< int > src_node_id_data_subset( num_conn );
+  src_node_id_dset_.read( src_node_id_data_subset.data(), H5::PredType::NATIVE_INT );
+
+  // read range to edge id
+  const auto n_range_edge_ids = get_nrows_( tgt_range_to_edge_id_dset_, 2 );
+  std::cerr << "n_range_edge_ids: " << n_range_edge_ids << "\n";
+  int tgt_range_to_edge_id_data[ n_range_edge_ids ][ 2 ];
+  tgt_range_to_edge_id_dset_.read( tgt_range_to_edge_id_data, H5::PredType::NATIVE_INT );
+
+
+  std::cerr << "Dev zone done\n";
+}
+
+void
+SonataConnector::create_connections_with_indices_()
+{
+
+  const auto n_sonata_node_ids = get_nrows_( tgt_node_id_to_range_dset_, 2 );
+  std::cerr << "n_sonata_node_ids: " << n_sonata_node_ids << "\n";
+
+  // read node id ranges
+  int tgt_node_id_to_range_data[ n_sonata_node_ids ][ 2 ];
+  tgt_node_id_to_range_dset_.read( tgt_node_id_to_range_data, H5::PredType::NATIVE_INT );
+
+  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
+
+  // Retrieve the correct NodeCollections
+  const auto nest_nodes = getValue< DictionaryDatum >( sonata_dynamics_->lookup( "nodes" ) );
+  const auto current_source_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( source_attribute_value_ ) );
+  const auto current_target_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( target_attribute_value_ ) );
+  const auto tnode_begin = current_target_nc->begin();
+  const auto snode_begin = current_source_nc->begin();
+
+#pragma omp parallel
+  {
+
+    const auto tid = kernel().vp_manager.get_thread_id();
+    // const auto this_vp = kernel().vp_manager.thread_to_vp( tid );
+    RngPtr rng = get_vp_specific_rng( tid );
+
+
+    // iterate node ids
+    for ( hsize_t sonata_tgt_node_id = 0; sonata_tgt_node_id < n_sonata_node_ids; sonata_tgt_node_id++ )
+    {
+      // check if target node is vp local first
+      const index tnode_id = ( *( tnode_begin + sonata_tgt_node_id ) ).node_id;
+
+      // std::cerr << "sonata_tgt_node_id: " << sonata_tgt_node_id << "\n";
+
+      // if ( not kernel().node_manager.is_local_node_id( tnode_id ) )
+      if ( not kernel().vp_manager.is_node_id_vp_local( tnode_id ) )
+      {
+        continue;
+      }
+
+      Node* target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+      const thread target_thread = target->get_thread();
+
+      const auto start_node_id_range = tgt_node_id_to_range_data[ sonata_tgt_node_id ][ 0 ];
+      const auto end_node_id_range = tgt_node_id_to_range_data[ sonata_tgt_node_id ][ 1 ];
+
+      // iterate node id range
+      for ( auto node_id_range_it = start_node_id_range; node_id_range_it < end_node_id_range; node_id_range_it++ )
+      {
+
+        long tgt_range_to_edge_id_data[ 1 ][ 2 ] = { { 0, 0 } };
+        read_range_to_edge_id_dset_portion_( tgt_range_to_edge_id_data, node_id_range_it );
+
+        const auto start_edge_id = tgt_range_to_edge_id_data[ 0 ][ 0 ];
+        const auto end_edge_id = tgt_range_to_edge_id_data[ 0 ][ 1 ];
+
+        auto count = end_edge_id - start_edge_id;
+
+        std::vector< int > src_node_id_data_subset( count );
+        // std::vector< int > tgt_node_id_data_subset( count );
+        std::vector< int > edge_type_id_data_subset( count );
+        std::vector< double > syn_weight_data_subset( count );
+        std::vector< double > delay_data_subset( count );
+
+        read_subset_( src_node_id_dset_, src_node_id_data_subset, H5::PredType::NATIVE_INT, count, start_edge_id );
+        // read_subset_( tgt_node_id_dset_, tgt_node_id_data_subset, H5::PredType::NATIVE_INT, count, start_edge_id );
+        read_subset_( edge_type_id_dset_, edge_type_id_data_subset, H5::PredType::NATIVE_INT, count, start_edge_id );
+
+        if ( weight_dataset_exist_ )
+        {
+          // syn_weight_data_subset.reserve( chunk_size );
+          read_subset_( syn_weight_dset_, syn_weight_data_subset, H5::PredType::NATIVE_DOUBLE, count, start_edge_id );
+        }
+        if ( delay_dataset_exist_ )
+        {
+          // delay_data_subset.reserve( chunk_size );
+          read_subset_( delay_dset_, delay_data_subset, H5::PredType::NATIVE_DOUBLE, count, start_edge_id );
+        }
+
+
+        // iterate subsets and connect
+        for ( size_t i = 0; i < count; i++ )
+        {
+          const auto sonata_source_id = src_node_id_data_subset[ i ];
+          const index snode_id = ( *( snode_begin + sonata_source_id ) ).node_id;
+
+
+          const auto edge_type_id = edge_type_id_data_subset[ i ];
+          const auto syn_spec = getValue< DictionaryDatum >( edge_params_->lookup( std::to_string( edge_type_id ) ) );
+          const double weight =
+            get_syn_property_( syn_spec, i, weight_dataset_exist_, syn_weight_data_subset, names::weight );
+          const double delay = get_syn_property_( syn_spec, i, delay_dataset_exist_, delay_data_subset, names::delay );
+
+          get_synapse_params_( snode_id, *target, target_thread, rng, edge_type_id );
+
+          kernel().connection_manager.connect( snode_id,
+            target,
+            target_thread,
+            type_id_2_syn_model_.at( edge_type_id ),             // static synapse
+            type_id_2_param_dicts_.at( edge_type_id ).at( tid ), // send empty param dict
+            delay,                                               // fixed as 1
+            weight );
+        }
+      }
+
+
+    } // end iterate node ids
+
+
+  } // end parallel region
+}
+
+
+void
+SonataConnector::create_connections_with_indices_deprecated_()
+{
+
+  const auto num_conn = get_num_connections_();
+  std::cerr << "num_conn: " << num_conn << "\n";
+
+  // target_to_source/node_id_to_range
+  const auto tgt_node_id_to_range_nrows = get_nrows_( tgt_node_id_to_range_dset_, 2 );
+  int tgt_node_id_to_range_data[ tgt_node_id_to_range_nrows ][ 2 ];
+  tgt_node_id_to_range_dset_.read( tgt_node_id_to_range_data, H5::PredType::NATIVE_INT );
+  std::cerr << "tgt_node_id_to_range_nrows: " << tgt_node_id_to_range_nrows << "\n";
+
+  // target_to_source/range_to_edge_id
+  const auto tgt_range_to_edge_id_nrows = get_nrows_( tgt_range_to_edge_id_dset_, 2 );
+  std::cerr << "tgt_range_to_edge_id_nrows: " << tgt_range_to_edge_id_nrows << "\n";
+
+
+  /*
+    // DEV ZONE
+    H5::DataSpace tgt_node_id_to_range_dspace = tgt_node_id_to_range_dset_.getSpace();
+    const int rank = tgt_node_id_to_range_dspace.getSimpleExtentNdims(); // should be 2, i.e. no. columns
+    hsize_t dim[ rank ];
+    tgt_node_id_to_range_dspace.getSimpleExtentDims( dim, NULL );
+    tgt_node_id_to_range_dspace.close();
+
+    std::cerr << "Rank: " << rank << ", Dim: " << *dim << "\n";
+
+    std::vector< std::vector< int > > tgt_node_id_to_range_data( *dim, std::vector< int >( rank ) );
+    // tgt_node_id_to_range_dspace.selectHyperslab( H5S_ALL );
+    // tgt_node_id_to_range_dset_.read(
+    //   tgt_node_id_to_range_data.data(), H5::PredType::NATIVE_INT, tgt_node_id_to_range_dspace );
+
+    // int tgt_node_id_to_range_data[ *dim ][ rank ];
+    int tgt_node_id_to_range_data[ 300 ][ 2 ];
+    */
+
+  /*
+  for ( int i = 0; i < *dim; i++ )
+  {
+    for ( int j = 0; j < rank; j++ )
+    {
+      tgt_node_id_to_range_data[ i ][ j ] = 0;
+    }
+  }
+  */
+
+  /*
+
+   tgt_node_id_to_range_dset_.read( tgt_node_id_to_range_data, H5::PredType::NATIVE_INT );
+
+   // tgt_node_id_to_range_dspace.close();
+
+   for ( int i = 0; i < *dim; i++ )
+   {
+     for ( int j = 0; j < rank; j++ )
+     {
+       std::cout << tgt_node_id_to_range_data[ i ][ j ] << " ";
+     }
+     std::cout << "\n";
+   }
+   */
+
+
+  /*
+   const auto sonata_target_id = tgt_node_id_data_subset[ i ];
+       const index tnode_id = ( *( tnode_begin + sonata_target_id ) ).node_id;
+
+       thread tgt_vp = kernel().vp_manager.node_id_to_vp( tnode_id );
+
+       if ( tgt_vp != this_vp )
+       {
+         continue;
+       }
+     */
+
+  // const bool local_only = true;
+  // DictionaryDatum dd_empty = DictionaryDatum( new Dictionary );
+  // const auto local_nodes = kernel().node_manager.get_nodes( dd_empty, local_only );
 }
 
 void
@@ -333,8 +551,24 @@ SonataConnector::connect_subset_( const hsize_t chunk_size, const hsize_t offset
 
 
 hsize_t
+SonataConnector::get_nrows_( H5::DataSet dataset, int ndim )
+{
+
+  H5::DataSpace dataspace = dataset.getSpace();
+  hsize_t dims_out[ ndim ];
+  dataspace.getSimpleExtentDims( dims_out, NULL );
+  dataspace.close();
+
+  return dims_out[ 0 ];
+}
+
+
+hsize_t
 SonataConnector::get_num_elements_( const H5::DataSet& dataset )
 {
+
+  // TODO: Remove this function
+
   // std::cerr << "get_num_elements_...\n";
   H5::DataSpace dataspace = dataset.getSpace();
   hsize_t dims_out[ 1 ];
@@ -480,8 +714,12 @@ SonataConnector::close_dsets_()
 hsize_t
 SonataConnector::get_num_connections_()
 {
-  const auto src_array_size = get_num_elements_( src_node_id_dset_ );
-  const auto tgt_array_size = get_num_elements_( tgt_node_id_dset_ );
+
+  // const auto src_array_size = get_num_elements_( src_node_id_dset_ );
+  // const auto tgt_array_size = get_num_elements_( tgt_node_id_dset_ );
+
+  const auto src_array_size = get_nrows_( src_node_id_dset_, 1 );
+  const auto tgt_array_size = get_nrows_( tgt_node_id_dset_, 1 );
 
   // make sure that target and source population have the same size
   if ( src_array_size != tgt_array_size )
@@ -529,6 +767,32 @@ SonataConnector::read_subset_( const H5::DataSet& dataset,
 
   // Read subset
   dataset.read( data_buf.data(), datatype, memspace, dataspace );
+
+  // Close dataspaces
+  dataspace.close();
+  memspace.close();
+}
+
+void
+SonataConnector::read_range_to_edge_id_dset_portion_( long data_buf[][ 2 ], hsize_t row_offset )
+{
+  H5::DataSpace dataspace = tgt_range_to_edge_id_dset_.getSpace();
+  hsize_t offset[ 2 ]; // hyperslab offset in the file
+  hsize_t count[ 2 ];  // size of the hyperslab in the file
+  offset[ 0 ] = row_offset;
+  offset[ 1 ] = 0;
+  count[ 0 ] = 1;
+  count[ 1 ] = 2;
+  dataspace.selectHyperslab( H5S_SELECT_SET, count, offset );
+
+  // memory space dimensions
+  hsize_t dimsm[ 2 ];
+  dimsm[ 0 ] = 1;
+  dimsm[ 1 ] = 2;
+  hsize_t mem_rank = 2;
+  H5::DataSpace memspace( mem_rank, dimsm, NULL );
+
+  tgt_range_to_edge_id_dset_.read( data_buf, H5::PredType::NATIVE_LONG, memspace, dataspace );
 
   // Close dataspaces
   dataspace.close();

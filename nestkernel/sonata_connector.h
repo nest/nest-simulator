@@ -199,6 +199,8 @@ private:
 
   void read_range_to_edge_id_dset_portion_( long data_buf[][ 2 ], hsize_t row_offset );
 
+  std::vector< std::vector< int > > read_indices_dset_( H5::DataSet dataset );
+
 
   /**
    * Reset all parameters

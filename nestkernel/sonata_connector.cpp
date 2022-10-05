@@ -160,7 +160,8 @@ SonataConnector::connect()
         // tgt_indices_exist_ = false;
         if ( tgt_indices_exist_ )
         {
-          create_connections_with_indices_();
+          // create_connections_with_indices_();
+          create_connections_with_indices_dev_();
         }
         else
         {
@@ -197,28 +198,112 @@ SonataConnector::connect()
   } // end iteration over edge files
 }
 
+std::vector< std::vector< int > >
+SonataConnector::read_indices_dset_( H5::DataSet dataset )
+{
+  const auto n_rows = get_nrows_( tgt_node_id_to_range_dset_, 2 );
+  const size_t n_cols = 2;
+
+  // from https://github.com/stevenwalton/H5Easy/blob/master/H5Easy.h#L840
+  auto data = new int[ n_rows * n_cols ];
+  auto md = new int*[ n_rows ];
+  for ( size_t i = 0; i < n_rows; ++i )
+  {
+    md[ i ] = data + i * n_cols;
+  }
+
+  dataset.read( data, H5::PredType::NATIVE_INT );
+
+  std::vector< std::vector< int > > v( n_rows, std::vector< int >( n_cols, 0 ) ); // data, data + npts);
+  // Assign 2D vector
+  for ( size_t i = 0; i < n_rows; ++i )
+    for ( size_t j = 0; j < n_cols; ++j )
+      v[ i ][ j ] = md[ i ][ j ];
+  delete[] md;
+  delete data;
+
+  return v;
+}
+
 void
 SonataConnector::create_connections_with_indices_dev_()
 {
-  // read datasets
-  // read node id ranges
+  const size_t n_cols = 2;
+  const auto n_sonata_node_ids = get_nrows_( tgt_node_id_to_range_dset_, 2 );
+  const auto n_range_edge_ids = get_nrows_( tgt_range_to_edge_id_dset_, 2 );
+  const auto num_conn = get_num_connections_();
 
+  std::cerr << "n_sonata_node_ids: " << n_sonata_node_ids << "\n";
+  std::cerr << "n_range_edge_ids: " << n_range_edge_ids << "\n";
+  std::cerr << "num_conn: " << num_conn << "\n";
+
+
+  // read datasets
+  auto tgt_node_id_to_range_data = read_indices_dset_( tgt_node_id_to_range_dset_ );
+  std::cerr << "read node_id_to_range success\n";
+
+  std::vector< int > src_node_id_data_subset( num_conn );
+  src_node_id_dset_.read( src_node_id_data_subset.data(), H5::PredType::NATIVE_INT );
+  std::cerr << "read source_node_id success\n";
+
+  auto tgt_range_to_edge_id_data = read_indices_dset_( tgt_range_to_edge_id_dset_ );
+  std::cerr << "read range_to_edge_id success\n";
+
+  // read node id ranges
+  /*
+  const auto n_sonata_node_ids = get_nrows_( tgt_node_id_to_range_dset_, 2 );
+  std::cerr << "n_sonata_node_ids: " << n_sonata_node_ids << "\n";
+  std::vector< std::vector< int > > tgt_node_id_to_range_data( n_sonata_node_ids, std::vector< int >( n_cols ) );
+
+  for ( size_t i = 0; i < n_sonata_node_ids; i++ )
+  {
+    for ( size_t j = 0; j < n_cols; j++ )
+    {
+      std::cerr << tgt_node_id_to_range_data[ i ][ j ] << " ";
+    }
+    std::cerr << "\n";
+  }
+  std::cerr << "READ DATA\n";
+  tgt_node_id_to_range_dset_.read( tgt_node_id_to_range_data.data(), H5::PredType::NATIVE_INT );
+  for ( size_t i = 0; i < n_sonata_node_ids; i++ )
+  {
+    for ( size_t j = 0; j < n_cols; j++ )
+    {
+      std::cerr << tgt_node_id_to_range_data[ i ][ j ] << " ";
+    }
+    std::cerr << "\n";
+  }
+  */
+
+  /*
   const auto n_sonata_node_ids = get_nrows_( tgt_node_id_to_range_dset_, 2 );
   std::cerr << "n_sonata_node_ids: " << n_sonata_node_ids << "\n";
   int tgt_node_id_to_range_data[ n_sonata_node_ids ][ 2 ];
   tgt_node_id_to_range_dset_.read( tgt_node_id_to_range_data, H5::PredType::NATIVE_INT );
+  */
 
+  /*
   // connection info
   const auto num_conn = get_num_connections_();
   std::cerr << "num_conn: " << num_conn << "\n";
   std::vector< int > src_node_id_data_subset( num_conn );
   src_node_id_dset_.read( src_node_id_data_subset.data(), H5::PredType::NATIVE_INT );
+  */
 
   // read range to edge id
+  /*
   const auto n_range_edge_ids = get_nrows_( tgt_range_to_edge_id_dset_, 2 );
   std::cerr << "n_range_edge_ids: " << n_range_edge_ids << "\n";
   int tgt_range_to_edge_id_data[ n_range_edge_ids ][ 2 ];
   tgt_range_to_edge_id_dset_.read( tgt_range_to_edge_id_data, H5::PredType::NATIVE_INT );
+  */
+  // Retry
+  // dataset dimensions; allocate: int data[NX][NY] -> data[NX * NY]
+  /*
+  const auto NX = get_nrows_( tgt_range_to_edge_id_dset_, 2 );
+  const int NY = 2;
+  int tgt_range_to_edge_id_data[ NX * NY ];
+  */
 
 
   std::cerr << "Dev zone done\n";

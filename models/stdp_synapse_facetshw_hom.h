@@ -412,7 +412,7 @@ stdp_facetshw_synapse_hom< targetidentifierT >::send( Event& e,
     const_cast< STDPFACETSHWHomCommonProperties< targetidentifierT >& >( cp );
 
   // init the readout time
-  if ( !init_flag_ )
+  if ( not init_flag_ )
   {
     synapse_id_ = cp.no_synapses_;
     ++cp_nonconst.no_synapses_;

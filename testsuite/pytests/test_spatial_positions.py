@@ -48,7 +48,7 @@ def testFreePositions(reset):
     # The expected weight is the distance, which corresponds to the position on the x-axis,
     # which corresponds to the node ID.
     expected_weight = [0.1 * t for t in conns.target]
-    assert(conns.weight == expected_weight)
+    assert conns.weight == expected_weight
 
 
 def testGridPositions(reset):
@@ -62,4 +62,4 @@ def testGridPositions(reset):
     # The expected weight is the distance, which corresponds to the position on the x-axis,
     # which corresponds to the node ID.
     expected_weight = conns.target
-    assert(conns.weight == expected_weight)
+    assert conns.weight == expected_weight

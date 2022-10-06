@@ -164,7 +164,11 @@ public:
    * Correct this synapse and the corresponding presiously sent spike
    * taking into account a new post-synaptic spike.
    */
-  void correct_synapse_stdp_ax_delay( const thread tid, const double t_last_pre_spike, double* weight_revert, const double t_post_spike, const CommonSynapseProperties& );
+  void correct_synapse_stdp_ax_delay( const thread tid,
+    const double t_last_pre_spike,
+    double* weight_revert,
+    const double t_post_spike,
+    const CommonSynapseProperties& );
 
   /**
    * Return the delay of the connection in ms
@@ -392,7 +396,11 @@ Connection< targetidentifierT >::calibrate( const TimeConverter& tc )
 
 template < typename targetidentifierT >
 inline void
-Connection< targetidentifierT >::correct_synapse_stdp_ax_delay(  const thread, const double, double*, const double, const CommonSynapseProperties& )
+Connection< targetidentifierT >::correct_synapse_stdp_ax_delay( const thread,
+  const double,
+  double*,
+  const double,
+  const CommonSynapseProperties& )
 {
   throw IllegalConnection( "Connection does not support correction in case of STDP with predominantly axonal delays." );
 }

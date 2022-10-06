@@ -46,7 +46,8 @@ nest::ArchivingNode::ArchivingNode()
   , last_spike_( -1.0 )
   , has_stdp_ax_delay_( false )
 {
-  const size_t num_time_slots = kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
+  const size_t num_time_slots =
+    kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
   correction_entries_stdp_ax_delay_.resize( num_time_slots );
 }
 
@@ -64,14 +65,16 @@ nest::ArchivingNode::ArchivingNode( const ArchivingNode& n )
   , last_spike_( n.last_spike_ )
   , has_stdp_ax_delay_( false )
 {
-  const size_t num_time_slots = kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
+  const size_t num_time_slots =
+    kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
   correction_entries_stdp_ax_delay_.resize( num_time_slots );
 }
 
 void
 ArchivingNode::pre_run_hook_()
 {
-  const size_t num_time_slots = kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
+  const size_t num_time_slots =
+    kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
   if ( correction_entries_stdp_ax_delay_.size() != num_time_slots )
   {
     correction_entries_stdp_ax_delay_.resize( num_time_slots );
@@ -291,27 +294,34 @@ nest::ArchivingNode::clear_history()
 }
 
 void
-ArchivingNode::add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event, const double t_last_pre_spike, const double weight_revert, const double dendritic_delay )
+ArchivingNode::add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event,
+  const double t_last_pre_spike,
+  const double weight_revert,
+  const double dendritic_delay )
 {
-  if ( not has_stdp_ax_delay_  )
+  if ( not has_stdp_ax_delay_ )
   {
     has_stdp_ax_delay_ = true;
 
-    const size_t num_time_slots = kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
+    const size_t num_time_slots =
+      kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
     if ( correction_entries_stdp_ax_delay_.size() != num_time_slots )
     {
       correction_entries_stdp_ax_delay_.resize( num_time_slots );
     }
   }
 
-  assert( correction_entries_stdp_ax_delay_.size() == static_cast< size_t >( kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay() ) );
+  assert( correction_entries_stdp_ax_delay_.size()
+    == static_cast< size_t >(
+      kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay() ) );
 
   const index idx = kernel().event_delivery_manager.get_modulo(
-    spike_event.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) -
-      2 * Time::delay_ms_to_steps( dendritic_delay));
+    spike_event.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() )
+    - 2 * Time::delay_ms_to_steps( dendritic_delay ) );
   assert( static_cast< size_t >( idx ) < correction_entries_stdp_ax_delay_.size() );
 
-  correction_entries_stdp_ax_delay_[ idx ].push_back( CorrectionEntrySTDPAxDelay( spike_event.get_sender_spike_data(), t_last_pre_spike, weight_revert ) );
+  correction_entries_stdp_ax_delay_[ idx ].push_back(
+    CorrectionEntrySTDPAxDelay( spike_event.get_sender_spike_data(), t_last_pre_spike, weight_revert ) );
 }
 
 void
@@ -320,7 +330,8 @@ ArchivingNode::reset_correction_entries_stdp_ax_delay_()
   if ( has_stdp_ax_delay_ )
   {
     const long mindelay_steps = kernel().connection_manager.get_min_delay();
-    assert( correction_entries_stdp_ax_delay_.size() == static_cast< size_t >( mindelay_steps + kernel().connection_manager.get_max_delay() ) );
+    assert( correction_entries_stdp_ax_delay_.size()
+      == static_cast< size_t >( mindelay_steps + kernel().connection_manager.get_max_delay() ) );
 
     for ( long lag = 0; lag < mindelay_steps; ++lag )
     {
@@ -340,7 +351,8 @@ nest::ArchivingNode::correct_synapses_stdp_ax_delay_( const Time& t_spike )
     const Time& ori = kernel().simulation_manager.get_slice_origin();
     const Time& t_spike_rel = t_spike - ori;
     const long maxdelay_steps = kernel().connection_manager.get_max_delay();
-    assert( correction_entries_stdp_ax_delay_.size() == static_cast< size_t >( kernel().connection_manager.get_min_delay() + maxdelay_steps ) );
+    assert( correction_entries_stdp_ax_delay_.size()
+      == static_cast< size_t >( kernel().connection_manager.get_min_delay() + maxdelay_steps ) );
 
     for ( long lag = t_spike_rel.get_steps() - 1; lag < maxdelay_steps + 1; ++lag ) // Edit JV:
     {
@@ -348,10 +360,13 @@ nest::ArchivingNode::correct_synapses_stdp_ax_delay_( const Time& t_spike )
       assert( static_cast< size_t >( idx ) < correction_entries_stdp_ax_delay_.size() );
 
       for ( auto it_corr_entry = correction_entries_stdp_ax_delay_[ idx ].begin();
-	it_corr_entry < correction_entries_stdp_ax_delay_[ idx ].end(); ++it_corr_entry )
+            it_corr_entry < correction_entries_stdp_ax_delay_[ idx ].end();
+            ++it_corr_entry )
       {
-	kernel().connection_manager.correct_synapse_stdp_ax_delay(
-	  it_corr_entry->spike_data_, it_corr_entry->t_last_pre_spike_, &it_corr_entry->weight_revert_, t_spike.get_ms() );
+        kernel().connection_manager.correct_synapse_stdp_ax_delay( it_corr_entry->spike_data_,
+          it_corr_entry->t_last_pre_spike_,
+          &it_corr_entry->weight_revert_,
+          t_spike.get_ms() );
       }
       // indicate that the new spike was processed by these STDP synapses
       history_.back().access_counter_ += correction_entries_stdp_ax_delay_[ idx ].size();

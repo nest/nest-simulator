@@ -132,7 +132,10 @@ public:
    * Framework for STDP with predominantly axonal delays:
    * Buffer a correction entry for a short time window.
    */
-  void add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event, const double t_last_pre_spike, const double weight_revert, const double dendritic_delay );
+  void add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event,
+    const double t_last_pre_spike,
+    const double weight_revert,
+    const double dendritic_delay );
 
 
 protected:
@@ -212,7 +215,8 @@ private:
    * (i.e., the actual arrival time at this neuron).
    */
   std::vector< std::vector< CorrectionEntrySTDPAxDelay > > correction_entries_stdp_ax_delay_;
-  bool has_stdp_ax_delay_; //!< false by default and set to true after the first entry was added to correction_entries_stdp_ax_delay_
+  bool has_stdp_ax_delay_; //!< false by default and set to true after the first entry was added to
+                           //!< correction_entries_stdp_ax_delay_
 
   /**
    * Framework for STDP with predominantly axonal delays:

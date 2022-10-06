@@ -256,7 +256,10 @@ public:
   void
   send( const thread tid, const synindex syn_id, const index lcid, const std::vector< ConnectorModel* >& cm, Event& e );
 
-  void correct_synapse_stdp_ax_delay( const SpikeData& spike_data, const double t_last_pre_spike, double* weight_revert, const double t_post_spike );
+  void correct_synapse_stdp_ax_delay( const SpikeData& spike_data,
+    const double t_last_pre_spike,
+    double* weight_revert,
+    const double t_post_spike );
 
   /**
    * Send event e to all device targets of source source_node_id
@@ -834,9 +837,13 @@ ConnectionManager::send( const thread tid,
 }
 
 inline void
-ConnectionManager::correct_synapse_stdp_ax_delay( const SpikeData& spike_data, const double t_last_pre_spike, double* weight_revert, const double t_post_spike )
+ConnectionManager::correct_synapse_stdp_ax_delay( const SpikeData& spike_data,
+  const double t_last_pre_spike,
+  double* weight_revert,
+  const double t_post_spike )
 {
-  connections_[ spike_data.get_tid() ][ spike_data.get_syn_id() ]->correct_synapse_stdp_ax_delay( spike_data, t_last_pre_spike, weight_revert, t_post_spike );
+  connections_[ spike_data.get_tid() ][ spike_data.get_syn_id() ]->correct_synapse_stdp_ax_delay(
+    spike_data, t_last_pre_spike, weight_revert, t_post_spike );
 }
 
 inline void

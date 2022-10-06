@@ -311,7 +311,8 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::send( Event& e,
   const double K_minus = target->get_K_value( t_spike + cp.axonal_delay_ - dendritic_delay );
   weight_ = depress_( weight_, K_minus, cp );
 
-  // std::cout << std::setprecision( 17 ) << "Pre " << t_spike + cp.axonal_delay_ << " " << K_minus << " " << weight_ << std::endl;
+  // std::cout << std::setprecision( 17 ) << "Pre " << t_spike + cp.axonal_delay_ << " " << K_minus << " " << weight_ <<
+  // std::endl;
 
   e.set_receiver( *target );
   e.set_weight( weight_ );
@@ -402,7 +403,8 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::correct_synapse_stdp_ax_delay
   const double K_minus = target->get_K_value( t_spike + cp.axonal_delay_ - dendritic_delay );
   weight_ = depress_( weight_, K_minus, cp );
 
-  // std::cout << std::setprecision( 17 ) << "Post " << t_post_spike + dendritic_delay << " " << K_plus_revert << " " << weight_
+  // std::cout << std::setprecision( 17 ) << "Post " << t_post_spike + dendritic_delay << " " << K_plus_revert << " " <<
+  // weight_
   // << std::endl;
 
   // send a correcting event to the target neuron

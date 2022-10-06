@@ -624,7 +624,8 @@ nest::ConnectionManager::connect_arrays( long* sources,
   }
 
   // Increments pointers to weight and delay, if they are specified.
-  auto increment_wd = [weights, delays]( decltype( weights ) & w, decltype( delays ) & d ) {
+  auto increment_wd = [ weights, delays ]( decltype( weights ) & w, decltype( delays ) & d )
+  {
     if ( weights != nullptr )
     {
       ++w;

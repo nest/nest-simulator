@@ -85,6 +85,38 @@ class PlottingTestCase(unittest.TestCase):
         ax.set_title('Call with mask')
         self.assertGreaterEqual(len(ax.patches), 1)
 
+    def test_PlotSources(self):
+        """Test plotting sources"""
+        delta = 0.05
+        mask = {'rectangular': {'lower_left': [-delta, -2/3 - delta], 'upper_right': [2/3 + delta, delta]}}
+        cdict = {'rule': 'pairwise_bernoulli', 'p': 1.,
+                 'mask': mask}
+        sdict = {'synapse_model': 'stdp_synapse'}
+        nest.ResetKernel()
+        layer = nest.Create('iaf_psc_alpha',
+                            positions=nest.spatial.grid(shape=[3, 3],
+                                                        extent=[2., 2.],
+                                                        edge_wrap=True))
+
+        # connect layer -> layer
+        nest.Connect(layer, layer, cdict, sdict)
+
+        ctr = nest.FindCenterElement(layer)
+        fig = nest.PlotSources(layer, ctr)
+        fig.gca().set_title('Plain call')
+
+        plotted_datapoints = plt.gca().collections[0].get_offsets().data
+        eps = 0.01
+        pos = np.array(nest.GetPosition(layer))
+        pos_xmask = pos[np.where(pos[:, 0] < eps)]
+        reference_datapoints = pos_xmask[np.where(pos_xmask[:, 1] > - eps)][::-1]
+        self.assertTrue(np.array_equal(np.sort(plotted_datapoints, axis=0), np.sort(reference_datapoints, axis=0)))
+
+        fig = nest.PlotSources(layer, ctr, mask=mask)
+        ax = fig.gca()
+        ax.set_title('Call with mask')
+        self.assertGreaterEqual(len(ax.patches), 1)
+
     def test_plot_probability_kernel(self):
         """Plot parameter probability"""
         nest.ResetKernel()

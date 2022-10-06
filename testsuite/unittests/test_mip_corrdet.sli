@@ -51,8 +51,14 @@ SeeAlso: mip_generator, correlation_detector
 
 /run_test
 {
- 0.1 /h Set        % computation step size in ms
- 100000.0 /T Set   % total duration
+ 0.1 /h Set              % computation step size in ms
+ h 10 mul /delay Set     % connection and minimal delay
+
+ % Total simulation time is integer multiple of min_delay plus one step
+ % to ensure that all events are delivered to correlation detector at
+ % end of simulation, independent of whether deliver_events() is called
+ % at beginning or end of update loop.
+ delay 1e5 mul h add /T Set         
  10.0 /delta_tau Set
  100.0 /tau_max Set
  0.5 /pc Set
@@ -65,6 +71,8 @@ userdict begin
 <<
     /local_num_threads 1
     /resolution h
+    /min_delay delay
+    /max_delay delay
     /overwrite_files true
     /rng_seed 12345
 >> SetKernelStatus
@@ -88,11 +96,11 @@ userdict begin
 /parrot_neuron Create /pn1 Set
 /parrot_neuron Create /pn2 Set
 
-mg pn1 Connect
-mg pn2 Connect
+mg pn1 /one_to_one << /delay delay >> Connect
+mg pn2 /one_to_one << /delay delay >> Connect
 
-pn1 sr Connect
-pn2 sr Connect
+pn1 sr /one_to_one << /delay delay >> Connect
+pn2 sr /one_to_one << /delay delay >> Connect
 
 /static_synapse
 <<
@@ -100,7 +108,7 @@ pn2 sr Connect
     /receptor_type 0
 >> SetDefaults
 
-pn1 cd Connect
+pn1 cd /one_to_one << /delay delay >> Connect
 
 /static_synapse
 <<
@@ -108,7 +116,7 @@ pn1 cd Connect
     /receptor_type 1
 >> SetDefaults
 
-pn2 cd Connect
+pn2 cd /one_to_one << /delay delay >> Connect
 
 T Simulate
 
@@ -118,13 +126,13 @@ cd /n_events get cva arrayload ; /n2 Set /n1 Set
 n1 T tau_max sub div 1000.0 mul /lmbd1 Set
 n2 T tau_max sub div 1000.0 mul /lmbd2 Set
 
-%cout
-%(rate 1=) <- lmbd1 <- (\n) <-
-%(rate 2=) <- lmbd2 <- (\n) <-
-%(background =) <- lmbd1 lmbd2 mul delta_tau 1000 div mul T tau_max sub 1000 div mul <- (\n) <- pop
+% cout
+% (rate 1=) <- lmbd1 <- (\n) <-
+% (rate 2=) <- lmbd2 <- (\n) <-
+% (background =) <- lmbd1 lmbd2 mul delta_tau 1000 div mul T tau_max sub 1000 div mul <- (\n) <- pop
 
-%hist ==
-%0 hist { add } forall ==
+% hist ==
+% 0 hist { add } forall ==
 
 
 hist expected_hist eq

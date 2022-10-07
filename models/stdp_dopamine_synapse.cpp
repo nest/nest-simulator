@@ -39,7 +39,7 @@ namespace nest
 
 STDPDopaCommonProperties::STDPDopaCommonProperties()
   : CommonSynapseProperties()
-  , vt_( 0 )
+  , vt_( nullptr )
   , A_plus_( 1.0 )
   , A_minus_( 1.5 )
   , tau_plus_( 20.0 )
@@ -55,7 +55,7 @@ void
 STDPDopaCommonProperties::get_status( DictionaryDatum& d ) const
 {
   CommonSynapseProperties::get_status( d );
-  if ( vt_ != 0 )
+  if ( vt_ != nullptr )
   {
     def< long >( d, names::vt, vt_->get_node_id() );
   }
@@ -85,7 +85,7 @@ STDPDopaCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& 
     const thread tid = kernel().vp_manager.get_thread_id();
     Node* vt = kernel().node_manager.get_node_or_proxy( vtnode_id, tid );
     vt_ = dynamic_cast< volume_transmitter* >( vt );
-    if ( vt_ == 0 )
+    if ( vt_ == nullptr )
     {
       throw BadProperty( "Dopamine source must be volume transmitter" );
     }
@@ -104,7 +104,7 @@ STDPDopaCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& 
 Node*
 STDPDopaCommonProperties::get_node()
 {
-  if ( vt_ == 0 )
+  if ( vt_ == nullptr )
   {
     throw BadProperty( "No volume transmitter has been assigned to the dopamine synapse." );
   }

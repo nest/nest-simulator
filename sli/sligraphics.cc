@@ -81,12 +81,12 @@ SLIgraphics::ReadPGMFunction::execute( SLIInterpreter* i ) const
 
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
 
-  if ( sd == NULL )
+  if ( sd == nullptr )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
-  std::istream* in = NULL;
+  std::istream* in = nullptr;
   std::vector< long > image;
   // for the image parameters: width, height, maxval
   int width = 0, height = 0, maxval = 0;
@@ -283,7 +283,7 @@ SLIgraphics::WritePGMFunction::execute( SLIInterpreter* i ) const
   long height = ( long ) h->get();
   long maxval = ( long ) m->get();
 
-  std::ostream* out = NULL;
+  std::ostream* out = nullptr;
 
   try
   {

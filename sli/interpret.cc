@@ -374,10 +374,10 @@ SLIInterpreter::SLIInterpreter( void )
   , cycle_guard( false )
   , cycle_restriction( 0 )
   , verbositylevel( M_INFO )
-  , statusdict( 0 )
-  , errordict( 0 )
-  , DStack( 0 )
-  , parse( 0 )
+  , statusdict( nullptr )
+  , errordict( nullptr )
+  , DStack( nullptr )
+  , parse( nullptr )
   , ilookup_name( "::lookup" )
   , ipop_name( "::pop" )
   , isetcallback_name( "::setcallback" )
@@ -528,7 +528,7 @@ SLIInterpreter::addmodule( SLIModule* m )
   if ( not( m->commandstring().empty() ) )
   {
     ArrayDatum* ad = dynamic_cast< ArrayDatum* >( baselookup( commandstring_name ).datum() );
-    assert( ad != NULL );
+    assert( ad != nullptr );
     ad->push_back( new StringDatum( m->commandstring() ) );
   }
 }
@@ -543,7 +543,7 @@ SLIInterpreter::addlinkedusermodule( SLIModule* m )
   if ( not( m->commandstring().empty() ) )
   {
     ArrayDatum* ad = dynamic_cast< ArrayDatum* >( baselookup( commandstring_name ).datum() );
-    assert( ad != NULL );
+    assert( ad != nullptr );
     ad->push_back( new StringDatum( m->commandstring() ) );
   }
 }
@@ -596,7 +596,7 @@ SLIInterpreter::raiseerror( std::exception& err )
 {
   Name caller = getcurrentname();
 
-  assert( errordict != NULL );
+  assert( errordict != nullptr );
   errordict->insert( "command", EStack.top() ); // store the func/trie that caused the error.
 
   // SLIException provide addtional information
@@ -623,7 +623,7 @@ SLIInterpreter::raiseerror( Name cmd, Name err )
   // All error related symbols are now in their correct dictionary,
   // the error dictionary $errordict ( see Bug #4)
 
-  assert( errordict != NULL );
+  assert( errordict != nullptr );
 
   if ( errordict->lookup( newerror_name ) == baselookup( false_name ) )
   {
@@ -699,14 +699,14 @@ SLIInterpreter::print_error( Token cmd )
 
       // Command information is only printed if the
       // command is of trietype
-      if ( command.datum() != NULL )
+      if ( command.datum() != nullptr )
       {
         if ( command->gettypename() == Name( "trietype" ) )
         {
           msg << "\n\nCandidates for " << command << " are:\n";
 
           TrieDatum* trie = dynamic_cast< TrieDatum* >( command.datum() );
-          assert( trie != NULL );
+          assert( trie != nullptr );
 
           trie->get().info( msg );
         }
@@ -724,7 +724,7 @@ SLIInterpreter::print_error( Token cmd )
 void
 SLIInterpreter::raiseagain( void )
 {
-  assert( errordict != NULL );
+  assert( errordict != nullptr );
 
   if ( errordict->known( commandname_name ) )
   {
@@ -839,7 +839,7 @@ SLIInterpreter::message( std::ostream& out,
 {
   const unsigned buflen = 30;
   char timestring[ buflen + 1 ] = "";
-  const time_t tm = std::time( NULL );
+  const time_t tm = std::time( nullptr );
 
   std::strftime( timestring, buflen, "%b %d %H:%M:%S", std::localtime( &tm ) );
 
@@ -931,12 +931,12 @@ Name
 SLIInterpreter::getcurrentname( void ) const
 {
   FunctionDatum* func = dynamic_cast< FunctionDatum* >( EStack.top().datum() );
-  if ( func != NULL )
+  if ( func != nullptr )
   {
     return ( func->getname() );
   }
   TrieDatum* trie = dynamic_cast< TrieDatum* >( EStack.top().datum() );
-  if ( trie != NULL )
+  if ( trie != nullptr )
   {
     return ( trie->getname() );
   }
@@ -1000,13 +1000,13 @@ SLIInterpreter::stack_backtrace( int n )
     }
 
     FunctionDatum* fd = dynamic_cast< FunctionDatum* >( EStack.pick( p ).datum() );
-    if ( fd != 0 )
+    if ( fd != nullptr )
     {
       fd->backtrace( this, p );
       continue;
     }
     NameDatum* nd = dynamic_cast< NameDatum* >( EStack.pick( p ).datum() );
-    if ( nd != 0 )
+    if ( nd != nullptr )
     {
       std::cerr << "While executing: ";
       nd->print( std::cerr );
@@ -1014,7 +1014,7 @@ SLIInterpreter::stack_backtrace( int n )
       continue;
     }
     TrieDatum* td = dynamic_cast< TrieDatum* >( EStack.pick( p ).datum() );
-    if ( td != 0 )
+    if ( td != nullptr )
     {
       std::cerr << "While executing: ";
       td->print( std::cerr );

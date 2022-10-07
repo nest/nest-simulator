@@ -59,7 +59,7 @@ SLIType::deletetypename( void )
 void
 SLIType::setdefaultaction( SLIFunction& c )
 {
-  if ( defaultaction == NULL )
+  if ( defaultaction == nullptr )
   {
     defaultaction = &c;
   }

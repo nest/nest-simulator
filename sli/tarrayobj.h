@@ -54,9 +54,9 @@ private:
 
 public:
   TokenArrayObj( void )
-    : p( NULL )
-    , begin_of_free_storage( NULL )
-    , end_of_free_storage( NULL )
+    : p( nullptr )
+    , begin_of_free_storage( nullptr )
+    , end_of_free_storage( nullptr )
     , alloc_block_size( ARRAY_ALLOC_SIZE )
     , refs_( 1 ) {};
 

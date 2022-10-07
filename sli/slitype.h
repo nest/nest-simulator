@@ -62,8 +62,8 @@ class SLIType
 public:
   SLIType( void )
     : count( 0 )
-    , name( NULL )
-    , defaultaction( NULL )
+    , name( nullptr )
+    , defaultaction( nullptr )
   {
   }
   ~SLIType()

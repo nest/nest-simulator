@@ -56,7 +56,7 @@ TrieFunction::execute( SLIInterpreter* i ) const
 
   LiteralDatum* name = dynamic_cast< LiteralDatum* >( i->OStack.top().datum() );
 
-  if ( name == NULL )
+  if ( name == nullptr )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -97,7 +97,7 @@ AddtotrieFunction::execute( SLIInterpreter* i ) const
 
   TrieDatum* trie = dynamic_cast< TrieDatum* >( i->OStack.pick( 2 ).datum() );
 
-  if ( trie == NULL )
+  if ( trie == nullptr )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -108,7 +108,7 @@ AddtotrieFunction::execute( SLIInterpreter* i ) const
   // Construct a TypeArray from the TokenArray
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( i->OStack.pick( 1 ).datum() );
 
-  if ( ad == NULL )
+  if ( ad == nullptr )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -127,7 +127,7 @@ AddtotrieFunction::execute( SLIInterpreter* i ) const
   {
     LiteralDatum* nd = dynamic_cast< LiteralDatum* >( t->datum() );
 
-    if ( nd == NULL )
+    if ( nd == nullptr )
     {
       std::ostringstream message;
       message << "In trie " << trie->getname() << ". "
@@ -205,7 +205,7 @@ Cva_tFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop();
 
   TrieDatum* trie = dynamic_cast< TrieDatum* >( trietoken.datum() );
-  assert( trie != NULL );
+  assert( trie != nullptr );
 
   Name triename( trie->getname() );
   i->OStack.push( LiteralDatum( triename ) );
@@ -222,13 +222,13 @@ TrieInfoFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 
   OstreamDatum* osd = dynamic_cast< OstreamDatum* >( i->OStack.pick( 1 ).datum() );
-  assert( osd != 0 );
+  assert( osd != nullptr );
 
   Token trietoken;
   trietoken.move( i->OStack.top() );
 
   TrieDatum* trie = dynamic_cast< TrieDatum* >( trietoken.datum() );
-  assert( trie != NULL );
+  assert( trie != nullptr );
 
   trie->get().info( **osd );
   i->OStack.pop( 2 );
@@ -305,12 +305,12 @@ Cvt_aFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.size() > 1 );
 
   LiteralDatum* name = dynamic_cast< LiteralDatum* >( i->OStack.pick( 1 ).datum() );
-  assert( name != NULL );
+  assert( name != nullptr );
   ArrayDatum* arr = dynamic_cast< ArrayDatum* >( i->OStack.pick( 0 ).datum() );
-  assert( arr != NULL );
+  assert( arr != nullptr );
 
   TrieDatum* trie = new TrieDatum( *name, *arr );
-  assert( trie != NULL );
+  assert( trie != nullptr );
   Token tmp( trie );
   i->OStack.pop();
   i->OStack.push_move( tmp );

@@ -179,7 +179,7 @@ class aeif_cond_alpha_multisynapse : public ArchivingNode
 public:
   aeif_cond_alpha_multisynapse();
   aeif_cond_alpha_multisynapse( const aeif_cond_alpha_multisynapse& );
-  virtual ~aeif_cond_alpha_multisynapse();
+  ~aeif_cond_alpha_multisynapse() override;
 
   friend int aeif_cond_alpha_multisynapse_dynamics( double, const double*, double*, void* );
 

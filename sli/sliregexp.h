@@ -50,17 +50,17 @@ class RegexpModule : public SLIModule
   class RegcompFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const override;
   };
   class RegexecFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const override;
   };
   class RegerrorFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const override;
   };
 
 public:
@@ -114,11 +114,11 @@ public:
   {
   }
 
-  ~RegexpModule();
+  ~RegexpModule() override;
 
-  void init( SLIInterpreter* );
-  const std::string name() const;
-  const std::string commandstring() const;
+  void init( SLIInterpreter* ) override;
+  const std::string name() const override;
+  const std::string commandstring() const override;
 };
 
 #endif

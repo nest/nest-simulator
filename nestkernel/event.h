@@ -857,7 +857,7 @@ class SecondaryEvent : public Event
 {
 
 public:
-  virtual SecondaryEvent* clone() const = 0;
+  SecondaryEvent* clone() const override = 0;
 
   virtual void add_syn_id( const synindex synid ) = 0;
 

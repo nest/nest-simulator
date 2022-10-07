@@ -76,7 +76,7 @@ public:
   };
 
   ConnectionManager();
-  virtual ~ConnectionManager();
+  ~ConnectionManager() override;
 
   virtual void initialize() override;
   virtual void finalize() override;

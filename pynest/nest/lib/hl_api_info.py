@@ -202,8 +202,10 @@ def set_verbosity(level):
 
     .. note::
 
-       If the environment variable PYNEST_QUIET is set, NEST will not print
-       welcome text containing the version and other information.
+       To suppress the usual output when NEST starts up (e.g. the welcome message and
+       version information) you can set the environment variable ``PYNEST_QUIET`` by
+       running ``export PYNEST_QUIET = 1`` on the command line before executing your
+       simulation script. 
 
     Parameters
     ----------

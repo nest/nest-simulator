@@ -87,7 +87,7 @@ Get_a_aFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 1 );
 
   ArrayDatum* idx = dynamic_cast< ArrayDatum* >( i->OStack.top().datum() );
-  if ( idx == nullptr )
+  if ( not idx )
   {
     i->message( SLIInterpreter::M_ERROR, "get_a_a", "Second argument must be an array of indices." );
     i->message( SLIInterpreter::M_ERROR, "get_a_a", "Usage: [a] [i1 .. in] get -> [a[i1] ... a[in]]" );
@@ -96,7 +96,7 @@ Get_a_aFunction::execute( SLIInterpreter* i ) const
   }
 
   ArrayDatum* obj = dynamic_cast< ArrayDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( obj == nullptr )
+  if ( not obj )
   {
     i->message( SLIInterpreter::M_ERROR, "get_a_a", "Usage: [a] [i1 .. in] get -> [a[i1] ... a[in]]" );
     i->message( SLIInterpreter::M_ERROR, "get_a_a", "First argument must be an array." );
@@ -110,7 +110,7 @@ Get_a_aFunction::execute( SLIInterpreter* i ) const
   for ( Token* t = idx->begin(); t != idx->end(); ++t )
   {
     IntegerDatum* id = dynamic_cast< IntegerDatum* >( t->datum() );
-    if ( id == nullptr )
+    if ( not id )
     {
       std::ostringstream sout;
 
@@ -284,7 +284,7 @@ Join_sFunction::execute( SLIInterpreter* i ) const
   StringDatum* s1 = dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
   StringDatum* s2 = dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
 
-  if ( s1 == nullptr || s2 == nullptr )
+  if ( not s1 || s2 == nullptr )
   {
     i->message( SLIInterpreter::M_ERROR, "join_s", "Usage: (string1) (string2) join_s" );
     i->raiseerror( i->ArgumentTypeError );

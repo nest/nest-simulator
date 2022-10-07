@@ -662,19 +662,19 @@ TokenArrayObj::info( std::ostream& out ) const
 bool
 TokenArrayObj::valid() const
 {
-  if ( p == nullptr )
+  if ( not p )
   {
     std::cerr << "TokenArrayObj::valid: Data pointer missing!" << std::endl;
     return false;
   }
 
-  if ( begin_of_free_storage == nullptr )
+  if ( not begin_of_free_storage )
   {
     std::cerr << "TokenArrayObj::valid: begin of free storage pointer missing!" << std::endl;
     return false;
   }
 
-  if ( end_of_free_storage == nullptr )
+  if ( not end_of_free_storage )
   {
     std::cerr << "TokenArrayObj::valid: end of free storage pointer missing!" << std::endl;
     return false;

@@ -253,13 +253,13 @@ RollFunction::execute( SLIInterpreter* i ) const
   }
 
   IntegerDatum* idn = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( idn == nullptr )
+  if ( not idn )
   {
     throw ArgumentType( 1 );
   }
 
   IntegerDatum* idk = dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
-  if ( idk == nullptr )
+  if ( not idk )
   {
     throw ArgumentType( 0 );
   }

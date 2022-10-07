@@ -117,7 +117,7 @@ public:
   static void
   operator delete( void* p, size_t size )
   {
-    if ( p == nullptr )
+    if ( not p )
     {
       return;
     }

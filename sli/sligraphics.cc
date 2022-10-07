@@ -81,7 +81,7 @@ SLIgraphics::ReadPGMFunction::execute( SLIInterpreter* i ) const
 
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
 
-  if ( sd == nullptr )
+  if ( not sd )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;

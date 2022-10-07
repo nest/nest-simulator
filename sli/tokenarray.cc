@@ -81,7 +81,7 @@ TokenArray::toVector( std::vector< long >& a ) const
   for ( Token* idx = begin(); idx != end(); ++idx )
   {
     IntegerDatum* targetid = dynamic_cast< IntegerDatum* >( idx->datum() );
-    if ( targetid == nullptr )
+    if ( not targetid )
     {
       IntegerDatum const d;
       throw TypeMismatch( d.gettypename().toString(), idx->datum()->gettypename().toString() );
@@ -99,7 +99,7 @@ TokenArray::toVector( std::vector< size_t >& a ) const
   for ( Token* idx = begin(); idx != end(); ++idx )
   {
     IntegerDatum* targetid = dynamic_cast< IntegerDatum* >( idx->datum() );
-    if ( targetid == nullptr )
+    if ( not targetid )
     {
       IntegerDatum const d;
       throw TypeMismatch( d.gettypename().toString(), idx->datum()->gettypename().toString() );
@@ -141,7 +141,7 @@ TokenArray::toVector( std::vector< std::string >& a ) const
   for ( Token* idx = begin(); idx != end(); ++idx )
   {
     std::string* target = dynamic_cast< std::string* >( idx->datum() );
-    if ( target == nullptr )
+    if ( not target )
     {
       StringDatum const d;
       throw TypeMismatch( d.gettypename().toString(), idx->datum()->gettypename().toString() );
@@ -154,7 +154,7 @@ TokenArray::toVector( std::vector< std::string >& a ) const
 bool
 TokenArray::valid() const
 {
-  if ( data == nullptr )
+  if ( not data )
   {
     return false;
   }

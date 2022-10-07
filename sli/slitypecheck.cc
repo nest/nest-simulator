@@ -56,7 +56,7 @@ TrieFunction::execute( SLIInterpreter* i ) const
 
   LiteralDatum* name = dynamic_cast< LiteralDatum* >( i->OStack.top().datum() );
 
-  if ( name == nullptr )
+  if ( not name )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -97,7 +97,7 @@ AddtotrieFunction::execute( SLIInterpreter* i ) const
 
   TrieDatum* trie = dynamic_cast< TrieDatum* >( i->OStack.pick( 2 ).datum() );
 
-  if ( trie == nullptr )
+  if ( not trie )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -108,7 +108,7 @@ AddtotrieFunction::execute( SLIInterpreter* i ) const
   // Construct a TypeArray from the TokenArray
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( i->OStack.pick( 1 ).datum() );
 
-  if ( ad == nullptr )
+  if ( not ad )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -127,7 +127,7 @@ AddtotrieFunction::execute( SLIInterpreter* i ) const
   {
     LiteralDatum* nd = dynamic_cast< LiteralDatum* >( t->datum() );
 
-    if ( nd == nullptr )
+    if ( not nd )
     {
       std::ostringstream message;
       message << "In trie " << trie->getname() << ". "

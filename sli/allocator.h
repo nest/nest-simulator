@@ -155,7 +155,7 @@ inline void*
 pool::alloc()
 {
 
-  if ( head == nullptr )
+  if ( not head )
   {
     grow( block_size );
     block_size *= growth_factor;

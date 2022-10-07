@@ -649,7 +649,7 @@ DictconstructFunction::execute( SLIInterpreter* i ) const
   {
     Token& val = ( i->OStack.pick( n ) );
     key = dynamic_cast< LiteralDatum* >( i->OStack.pick( n + 1 ).datum() );
-    if ( key == nullptr )
+    if ( not key )
     {
       i->message( 30, "DictConstruct", "Literal expected. Maybe initializer list is in the wrong order." );
       i->raiseerror( i->ArgumentTypeError );

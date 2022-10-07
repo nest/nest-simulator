@@ -100,7 +100,7 @@ get_double_in_range( const DictionaryDatum& d, Name const n, double min, double 
   else
   {
     IntegerDatum* id = dynamic_cast< IntegerDatum* >( t.datum() );
-    if ( id == nullptr )
+    if ( not id )
     {
       throw TypeMismatch();
     }
@@ -164,7 +164,7 @@ get_long_in_range( const DictionaryDatum& d, Name const n, long min, long max, i
   else
   {
     IntegerDatum* id = dynamic_cast< IntegerDatum* >( t.datum() );
-    if ( id == nullptr )
+    if ( not id )
     {
       throw TypeMismatch();
     }

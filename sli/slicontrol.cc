@@ -343,7 +343,7 @@ RepeatFunction::execute( SLIInterpreter* i ) const
     if ( proc )
     {
       IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-      if ( id == nullptr )
+      if ( not id )
       {
         throw ArgumentType( 1 );
       }

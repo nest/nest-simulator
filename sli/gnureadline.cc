@@ -59,7 +59,7 @@ GNUReadline::GNUReadlineFunction::execute( SLIInterpreter* i ) const
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
   assert( sd );
   char* line_read = readline( sd->c_str() );
-  if ( line_read == nullptr )
+  if ( not line_read )
   {
     // We have received EOF (Ctrl-D), so we quit.
     std::cout << std::endl;

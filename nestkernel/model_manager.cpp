@@ -79,7 +79,7 @@ ModelManager::~ModelManager()
 void
 ModelManager::initialize()
 {
-  if ( proxynode_model_ == nullptr )
+  if ( not proxynode_model_ )
   {
     proxynode_model_ = new GenericModel< proxynode >( "proxynode", "" );
     proxynode_model_->set_type_id( 1 );

@@ -883,7 +883,7 @@ NodeCollectionComposite::operator==( NodeCollectionPTR rhs ) const
 
   // Checking if rhs_ptr is invalid first, to avoid segfaults. If rhs is a NodeCollectionPrimitive,
   // rhs_ptr will be a null pointer.
-  if ( rhs_ptr == nullptr or size_ != rhs_ptr->size() or parts_.size() != rhs_ptr->parts_.size() )
+  if ( not rhs_ptr or size_ != rhs_ptr->size() or parts_.size() != rhs_ptr->parts_.size() )
   {
     return false;
   }

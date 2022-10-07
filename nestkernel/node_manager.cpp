@@ -425,7 +425,7 @@ NodeManager::get_node_or_proxy( index node_id, thread t )
   assert( 0 < node_id and node_id <= size() );
 
   Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
-  if ( node == nullptr )
+  if ( not node )
   {
     return kernel().model_manager.get_proxy_node( t, node_id );
   }
@@ -446,7 +446,7 @@ NodeManager::get_node_or_proxy( index node_id )
 
   thread t = kernel().vp_manager.vp_to_thread( vp );
   Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
-  if ( node == nullptr )
+  if ( not node )
   {
     return kernel().model_manager.get_proxy_node( t, node_id );
   }
@@ -461,7 +461,7 @@ NodeManager::get_mpi_local_node_or_device_head( index node_id )
 
   Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
 
-  if ( node == nullptr )
+  if ( not node )
   {
     return kernel().model_manager.get_proxy_node( t, node_id );
   }
@@ -481,7 +481,7 @@ NodeManager::get_thread_siblings( index node_id ) const
   for ( size_t t = 0; t < num_threads; ++t )
   {
     Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
-    if ( node == nullptr )
+    if ( not node )
     {
       throw NoThreadSiblingsAvailable( node_id );
     }

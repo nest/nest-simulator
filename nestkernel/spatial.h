@@ -95,7 +95,7 @@ public:
   operator==( const NodeCollectionMetadataPTR rhs ) const override
   {
     const auto rhs_layer_metadata = dynamic_cast< LayerMetadata* >( rhs.get() );
-    if ( rhs_layer_metadata == nullptr )
+    if ( not rhs_layer_metadata )
     {
       return false;
     }

@@ -137,7 +137,7 @@ public:
   equals( Datum const* dat ) const override
   {
     const FunctionDatum* fd = dynamic_cast< FunctionDatum* >( const_cast< Datum* >( dat ) );
-    if ( fd == nullptr )
+    if ( not fd )
     {
       return false;
     }
@@ -166,7 +166,7 @@ public:
   static void
   operator delete( void* p, size_t size )
   {
-    if ( p == nullptr )
+    if ( not p )
     {
       return;
     }

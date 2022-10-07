@@ -135,7 +135,7 @@ RegexpModule::RegcompFunction::execute( SLIInterpreter* i ) const
     Token it( new IntegerDatum( e ) );
     i->OStack.push_move( it );
     i->OStack.push( i->baselookup( i->false_name ) );
-  };
+  }
   i->EStack.pop();
 }
 

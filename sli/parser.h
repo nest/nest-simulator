@@ -59,7 +59,7 @@ class Parser
   void init( std::istream& );
 
 public:
-  Parser( void );
+  Parser();
   Parser( std::istream& );
 
   bool operator()( Token& );
@@ -78,7 +78,7 @@ public:
   }
 
   Scanner const*
-  scan( void ) const
+  scan() const
   {
     return s;
   }
@@ -86,7 +86,7 @@ public:
   void
   clear_context()
   {
-    if ( s != NULL )
+    if ( s != nullptr )
     {
       s->clear_context();
     }

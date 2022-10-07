@@ -340,7 +340,7 @@ public:
   {
   }
 
-  MultiIndex( const Position< D, int >& ur )
+  explicit MultiIndex( const Position< D, int >& ur )
     : Position< D, int >()
     , lower_left_()
     , upper_right_( ur )

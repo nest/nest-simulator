@@ -457,8 +457,6 @@ nest::iaf_psc_delta_ps::propagate_( const double dt )
   const double expm1_dt = numerics::expm1( -dt / P_.tau_m_ );
   const double v_inf = V_.R_ * ( S_.I_ + P_.I_e_ );
   S_.U_ = -v_inf * expm1_dt + S_.U_ * expm1_dt + S_.U_;
-
-  return;
 }
 
 void
@@ -483,8 +481,6 @@ nest::iaf_psc_delta_ps::emit_spike_( Time const& origin, const long lag, const d
   SpikeEvent se;
   se.set_offset( S_.last_spike_offset_ );
   kernel().event_delivery_manager.send( *this, se, lag );
-
-  return;
 }
 
 void
@@ -505,8 +501,6 @@ nest::iaf_psc_delta_ps::emit_instant_spike_( Time const& origin, const long lag,
   SpikeEvent se;
   se.set_offset( S_.last_spike_offset_ );
   kernel().event_delivery_manager.send( *this, se, lag );
-
-  return;
 }
 
 void

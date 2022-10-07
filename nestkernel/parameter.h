@@ -62,7 +62,7 @@ public:
   /**
    * Copy constructor
    */
-  Parameter( const Parameter& p ) = default;
+  explicit Parameter( const Parameter& p ) = default;
 
   /**
    * Virtual destructor
@@ -133,7 +133,7 @@ public:
    * Creates a ConstantParameter with a specified value.
    * @param value parameter value
    */
-  ConstantParameter( double value )
+  explicit ConstantParameter( double value )
     : value_( value )
   {
   }

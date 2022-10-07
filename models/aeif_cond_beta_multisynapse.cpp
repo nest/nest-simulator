@@ -346,9 +346,9 @@ aeif_cond_beta_multisynapse::State_::set( const DictionaryDatum& d, Node* node )
 
 aeif_cond_beta_multisynapse::Buffers_::Buffers_( aeif_cond_beta_multisynapse& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
   , step_( Time::get_resolution().get_ms() )
   , IntegrationStep_( std::min( 0.01, step_ ) )
   , I_stim_( 0.0 )
@@ -357,9 +357,9 @@ aeif_cond_beta_multisynapse::Buffers_::Buffers_( aeif_cond_beta_multisynapse& n 
 
 aeif_cond_beta_multisynapse::Buffers_::Buffers_( const Buffers_& b, aeif_cond_beta_multisynapse& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
   , step_( b.step_ )
   , IntegrationStep_( b.IntegrationStep_ )
   , I_stim_( b.I_stim_ )
@@ -423,7 +423,7 @@ aeif_cond_beta_multisynapse::init_buffers_()
   // We must integrate this model with high-precision to obtain decent results
   B_.IntegrationStep_ = std::min( 0.01, B_.step_ );
 
-  if ( B_.c_ == 0 )
+  if ( B_.c_ == nullptr )
   {
     B_.c_ = gsl_odeiv_control_yp_new( P_.gsl_error_tol, P_.gsl_error_tol );
   }
@@ -435,7 +435,7 @@ aeif_cond_beta_multisynapse::init_buffers_()
   // Stepping function and evolution function are allocated in pre_run_hook()
 
   B_.sys_.function = aeif_cond_beta_multisynapse_dynamics;
-  B_.sys_.jacobian = NULL;
+  B_.sys_.jacobian = nullptr;
   B_.sys_.params = reinterpret_cast< void* >( this );
   // B_.sys_.dimension is assigned in pre_run_hook()
   B_.I_stim_ = 0.0;
@@ -473,14 +473,14 @@ aeif_cond_beta_multisynapse::pre_run_hook()
     State_::NUMBER_OF_FIXED_STATES_ELEMENTS + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * P_.n_receptors() ), 0.0 );
 
   // reallocate instance of stepping function for ODE GSL solver
-  if ( B_.s_ != 0 )
+  if ( B_.s_ != nullptr )
   {
     gsl_odeiv_step_free( B_.s_ );
   }
   B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, S_.y_.size() );
 
   // reallocate instance of evolution function for ODE GSL solver
-  if ( B_.e_ != 0 )
+  if ( B_.e_ != nullptr )
   {
     gsl_odeiv_evolve_free( B_.e_ );
   }

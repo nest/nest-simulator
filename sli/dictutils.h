@@ -26,6 +26,7 @@
 // C++ includes:
 #include <algorithm>
 #include <functional>
+#include <limits>
 #include <string>
 
 // Includes from sli:
@@ -90,7 +91,7 @@ get_double_in_range( const DictionaryDatum& d, Name const n, double min, double 
   // token.
   const Token& t = d->lookup2( n );
   DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
-  double x = 0.0;
+  double x = std::numeric_limits< double >::quiet_NaN();
 
   if ( dd != nullptr )
   {
@@ -154,7 +155,7 @@ get_long_in_range( const DictionaryDatum& d, Name const n, long min, long max, i
   // token.
   const Token& t = d->lookup2( n );
   DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
-  long x = 0;
+  long x = std::numeric_limits< long >::min();
 
   if ( dd != nullptr )
   {

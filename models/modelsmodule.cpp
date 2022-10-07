@@ -22,7 +22,7 @@
 
 #include "modelsmodule.h"
 
-// Includes from nestkernel:
+// Includes from nestkernel
 #include "common_synapse_properties.h"
 #include "connector_model_impl.h"
 #include "genericmodel.h"
@@ -32,9 +32,8 @@
 #include "model_manager_impl.h"
 #include "target_identifier.h"
 
-// Generated includes:
+// Generated includes
 #include "config.h"
-
 
 // Neuron models
 #include "aeif_cond_alpha.h"
@@ -124,7 +123,7 @@
 #include "volume_transmitter.h"
 #include "weight_recorder.h"
 
-// Prototypes for synapses
+// Synapse models
 #include "bernoulli_synapse.h"
 #include "clopath_synapse.h"
 #include "common_synapse_properties.h"

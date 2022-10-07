@@ -24,68 +24,103 @@ Assert that all existing neuronal models are copied correctly
 and new Ids are correctly assigned to the new copied models.
 """
 
-import unittest
 import nest
+import pytest
 
 
 @nest.ll_api.check_stack
-class CopyModelTestCase(unittest.TestCase):
+class TestCopyModel:
     """nest.CopyModel Test"""
 
-    def test_builtin_models(self):
-        """Check the correctness of the nest.CopyModel on all built-in models"""
+    @pytest.fixture(autouse=True)
+    def reset_kernel(self):
+        """
+        Reset kernel to clear copied models.
+        """
 
-        for model in nest.node_models + nest.synapse_models:
-            self.check_copied_model_ids(model)
+        nest.ResetKernel()
 
-    def check_copied_model_ids(self, original_model):
-        """Test if copied models get correct model IDs"""
+    @pytest.mark.parametrize('org_model', nest.node_models)
+    def test_copy_node_models(self, org_model):
+        """
+        Test that all built-in node models can be copied.
 
-        model_type = nest.GetDefaults(original_model, "element_type")
+        Nodes created from copy must have higher model_id and correct name.
+        """
 
-        model_name_key = "model"
-        model_id_key = "model_id"
-        if model_type == "synapse":
-            model_name_key = "synapse_model"
-            model_id_key = "synapse_modelid"
+        new_model = f"{org_model}_copy"
+        nest.CopyModel(org_model, new_model)
 
-        original_model_id = nest.GetDefaults(original_model)[model_id_key]
+        org_node = nest.Create(org_model)
+        new_node = nest.Create(new_model)
 
-        new_name = f"{original_model}_copy"
-        nest.CopyModel(original_model, new_name)
-        copied_model_id = nest.GetDefaults(new_name)[model_id_key]
+        assert new_node.model_id > org_node.model_id
+        assert new_node.model == new_model
 
-        self.assertGreater(copied_model_id, original_model_id)
+    # Limit to first 66 models until #2492 is fixed
+    @pytest.mark.parametrize('org_model', nest.synapse_models[:66])
+    def test_copy_synapse_models(self, org_model):
+        """
+        Test that all built-in synapse models can be copied.
 
-        if model_type == "neuron":
-            original_model_instance = nest.Create(original_model)
-            copied_model_instance = nest.Create(new_name)
+        Name and id only checked on model and not on actual synapse
+        because some synapse models only work for some neuron models.
+        """
 
-            original_model_name = original_model_instance.get(model_name_key)
-            copied_model_name = copied_model_instance.get(model_name_key)
-            self.assertNotEqual(original_model_name, copied_model_name)
-            self.assertNotEqual(copied_model_name, "UnknownNode")
+        new_model = f"{org_model}_copy"
+        nest.CopyModel(org_model, new_model)
 
-            original_model_id = original_model_instance.get(model_id_key)
-            copied_model_id = copied_model_instance.get(model_id_key)
-            self.assertGreater(copied_model_id, original_model_id)
+        assert (nest.GetDefaults(new_model)['synapse_modelid']
+                > nest.GetDefaults(org_model)['synapse_modelid'])
+        assert nest.GetDefaults(new_model)['synapse_model'] == new_model
 
-    def test_CopyModel(self):
-        """Test CopyModel"""
+    def test_set_param_on_copy_neuron(self):
+        """
+        Test that parameter is correctly set when neuron model is copied.
+        """
 
-        nest.CopyModel('iaf_psc_alpha', 'new_neuron', {'V_m': 10.0})
-        vm = nest.GetDefaults('new_neuron')['V_m']
-        self.assertEqual(vm, 10.0)
+        test_params = {'V_m': 10.0, 'tau_m': 100.0}
+        nest.CopyModel('iaf_psc_alpha', 'new_neuron', test_params)
+        n = nest.Create('new_neuron')
+        for k, v in test_params.items():
+            assert n.get(k) == pytest.approx(v)
 
-        n = nest.Create('new_neuron', 10)
-        vm = nest.GetStatus(n[0])[0]['V_m']
-        self.assertEqual(vm, 10.0)
+    def test_set_param_on_copy_synapse(self):
+        """
+        Test that parameter is correctly set when neuron model is copied.
+        """
 
-        nest.CopyModel('static_synapse', 'new_synapse', {'weight': 10.})
-        nest.Connect(n[0], n[1], syn_spec='new_synapse')
-        w = nest.GetDefaults('new_synapse')['weight']
-        self.assertEqual(w, 10.0)
+        test_params = {'weight': 10.0, 'delay': 2.0, 'alpha': 99.0}
+        nest.CopyModel('stdp_synapse', 'new_synapse', test_params)
+        n = nest.Create('iaf_psc_alpha')
+        nest.Connect(n, n, syn_spec='new_synapse')
+        conn = nest.GetConnections()
+        for k, v in test_params.items():
+            assert conn.get(k) == pytest.approx(v)
 
-        self.assertRaisesRegex(
-            nest.kernel.NESTError, "NewModelNameExists",
-            nest.CopyModel, 'iaf_psc_alpha', 'new_neuron')
+    @pytest.mark.parametrize('org_model', [nest.node_models[0],
+                                           nest.synapse_models[0]])
+    def test_cannot_copy_to_existing_model(self, org_model):
+        """
+        Test that we cannot copy to an existing model.
+        """
+
+        try:
+            org_name = nest.GetDefaults(org_model)['model']
+        except KeyError:
+            org_name = nest.GetDefaults(org_model)['synapse_model']
+
+        with pytest.raises(nest.kernel.NESTError, match='NewModelNameExists'):
+            nest.CopyModel(org_model, org_model)
+
+    @pytest.mark.parametrize('org_model', [nest.node_models[0],
+                                           nest.synapse_models[0]])
+    def test_cannot_copy_twice(self, org_model):
+        """
+        Test that we cannot copy twice to the same name.
+        """
+
+        new_model = f"{org_model}_copy"
+        nest.CopyModel(org_model, new_model)
+        with pytest.raises(nest.kernel.NESTError, match='NewModelNameExists'):
+            nest.CopyModel(org_model, new_model)

@@ -35,7 +35,7 @@ fdbuf::open( const char* s, std::ios_base::openmode mode )
   if ( is_open() )
   {
     //      std::cerr<<"Is already open!"<<std::endl;
-    return NULL;
+    return nullptr;
   }
   //  bool success=true;
 
@@ -70,7 +70,7 @@ fdbuf::open( const char* s, std::ios_base::openmode mode )
   else
   {
     // std::cerr<<"bad flags!"<<std::endl;
-    return NULL;
+    return nullptr;
   }
 
   // these file permissions are required by POSIX.1 (see Stevens 5.5)
@@ -80,7 +80,7 @@ fdbuf::open( const char* s, std::ios_base::openmode mode )
   {
     // std::cerr<<"::open failed!"<<std::endl;
     // perror(NULL);
-    return NULL;
+    return nullptr;
   }
 
   // beware of operator precedence --- HEP
@@ -91,9 +91,9 @@ fdbuf::open( const char* s, std::ios_base::openmode mode )
       close();
       // std::cerr<<"seek failed!"<<std::endl;
       // perror(NULL);
-      return NULL;
+      return nullptr;
     }
-  };
+  }
 
   m_isopen = true;
   return this;
@@ -105,7 +105,7 @@ fdbuf::close()
   if ( not is_open() )
   {
     // std::cerr<<"File was not open."<<std::endl;
-    return NULL;
+    return nullptr;
   }
 
   bool success = true;
@@ -123,13 +123,13 @@ fdbuf::close()
 
   m_isopen = false;
 
-  return ( success ? this : NULL );
+  return ( success ? this : nullptr );
 }
 
 void
 ofdstream::close()
 {
-  if ( rdbuf()->close() == NULL )
+  if ( rdbuf()->close() == nullptr )
   {
     setstate( failbit );
   }
@@ -139,7 +139,7 @@ ofdstream::close()
 void
 ifdstream::close()
 {
-  if ( rdbuf()->close() == NULL )
+  if ( rdbuf()->close() == nullptr )
   {
     setstate( failbit );
   }
@@ -148,7 +148,7 @@ ifdstream::close()
 void
 fdstream::close()
 {
-  if ( rdbuf()->close() == NULL )
+  if ( rdbuf()->close() == nullptr )
   {
     setstate( failbit );
   }

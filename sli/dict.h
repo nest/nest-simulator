@@ -132,7 +132,7 @@ public:
   Token& operator[]( const char* );
 
   bool
-  empty( void ) const
+  empty() const
   {
     return TokenMap::empty();
   }
@@ -192,27 +192,6 @@ public:
    * we export the constant iterator type and begin() and end() methods.
    */
   typedef TokenMap::const_iterator const_iterator;
-
-  /**
-   * First element in dictionary.
-   * Dictionary inherits privately from std::map to hide implementation
-   * details. To allow for inspection of all elements in a dictionary,
-   * we export the constant iterator type and begin() and end() methods.
-   */
-  //  const_iterator begin() const;
-
-  /**
-   * One-past-last element in dictionary.
-   * Dictionary inherits privately from std::map to hide implementation
-   * details. To allow for inspection of all elements in a dictionary,
-   * we export the constant iterator type and begin() and end() methods.
-   */
-  // const_iterator end() const;
-
-  /**
-   *
-   */
-  void initialize_property_array( Name propname );
 
   /**
    * This function is called when a dictionary is pushed to the dictionary

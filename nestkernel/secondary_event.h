@@ -207,7 +207,7 @@ public:
    * it is called from a pointer on SecondaryEvent.
    */
   void
-  add_syn_id( const synindex synid )
+  add_syn_id( const synindex synid ) override
   {
     assert( not supports_syn_id( synid ) );
     VPManager::assert_single_threaded();
@@ -215,7 +215,7 @@ public:
   }
 
   const std::vector< synindex >&
-  get_supported_syn_ids() const
+  get_supported_syn_ids() const override
   {
     return supported_syn_ids_;
   }
@@ -228,7 +228,7 @@ public:
    * models.
    */
   void
-  reset_supported_syn_ids()
+  reset_supported_syn_ids() override
   {
     supported_syn_ids_.clear();
     for ( size_t i = 0; i < pristine_supported_syn_ids_.size(); ++i )
@@ -245,7 +245,7 @@ public:
   }
 
   bool
-  supports_syn_id( const synindex synid ) const
+  supports_syn_id( const synindex synid ) const override
   {
     return ( std::find( supported_syn_ids_.begin(), supported_syn_ids_.end(), synid ) != supported_syn_ids_.end() );
   }
@@ -263,7 +263,7 @@ public:
    * DataSecondaryEvent from the buffer in EventDeliveryManager::deliver_events
    */
   std::vector< unsigned int >::iterator&
-  operator<<( std::vector< unsigned int >::iterator& pos )
+  operator<<( std::vector< unsigned int >::iterator& pos ) override
   {
     // The synid can be skipped here as it is stored in a static vector
 
@@ -285,7 +285,7 @@ public:
    * first element in supported_syn_ids_.
    */
   std::vector< unsigned int >::iterator&
-  operator>>( std::vector< unsigned int >::iterator& pos )
+  operator>>( std::vector< unsigned int >::iterator& pos ) override
   {
     for ( typename std::vector< DataType >::iterator it = coeffarray_begin_.as_d; it != coeffarray_end_.as_d; ++it )
     {
@@ -297,7 +297,7 @@ public:
   }
 
   size_t
-  size()
+  size() override
   {
     size_t s = number_of_uints_covered< synindex >();
     s += number_of_uints_covered< index >();
@@ -333,8 +333,8 @@ public:
   {
   }
 
-  void operator()();
-  GapJunctionEvent* clone() const;
+  void operator()() override;
+  GapJunctionEvent* clone() const override;
 };
 
 /**
@@ -349,8 +349,8 @@ public:
   {
   }
 
-  void operator()();
-  InstantaneousRateConnectionEvent* clone() const;
+  void operator()() override;
+  InstantaneousRateConnectionEvent* clone() const override;
 };
 
 /**
@@ -365,8 +365,8 @@ public:
   {
   }
 
-  void operator()();
-  DelayedRateConnectionEvent* clone() const;
+  void operator()() override;
+  DelayedRateConnectionEvent* clone() const override;
 };
 
 /**
@@ -386,17 +386,17 @@ public:
   {
   }
 
-  void operator()();
-  DiffusionConnectionEvent* clone() const;
+  void operator()() override;
+  DiffusionConnectionEvent* clone() const override;
 
   void
-  set_diffusion_factor( weight t )
+  set_diffusion_factor( weight t ) override
   {
     diffusion_factor_ = t;
   };
 
   void
-  set_drift_factor( weight t )
+  set_drift_factor( weight t ) override
   {
     drift_factor_ = t;
   };

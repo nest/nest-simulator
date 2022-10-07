@@ -61,7 +61,7 @@ provide_property( DictionaryDatum& d, Name propname, const std::vector< double >
   Token t = d->lookup2( propname );
 
   DoubleVectorDatum* arrd = dynamic_cast< DoubleVectorDatum* >( t.datum() );
-  assert( arrd != 0 );
+  assert( arrd != nullptr );
 
   if ( ( *arrd )->empty() && not prop.empty() ) // not data from before, add
   {
@@ -79,7 +79,7 @@ provide_property( DictionaryDatum& d, Name propname, const std::vector< long >& 
   Token t = d->lookup2( propname );
 
   IntVectorDatum* arrd = dynamic_cast< IntVectorDatum* >( t.datum() );
-  assert( arrd != 0 );
+  assert( arrd != nullptr );
 
   if ( ( *arrd )->empty() && not prop.empty() ) // not data from before, add
   {
@@ -96,7 +96,7 @@ accumulate_property( DictionaryDatum& d, Name propname, const std::vector< doubl
   Token t = d->lookup2( propname );
 
   DoubleVectorDatum* arrd = dynamic_cast< DoubleVectorDatum* >( t.datum() );
-  assert( arrd != 0 );
+  assert( arrd != nullptr );
 
   if ( ( *arrd )->empty() ) // first data, copy
   {

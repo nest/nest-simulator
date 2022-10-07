@@ -50,7 +50,7 @@ class NodeManager : public ManagerInterface
 {
 public:
   NodeManager();
-  ~NodeManager();
+  ~NodeManager() override;
 
   virtual void initialize() override;
   virtual void finalize() override;

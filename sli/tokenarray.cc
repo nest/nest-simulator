@@ -43,7 +43,7 @@ TokenArray::operator=( const TokenArray& a )
 TokenArray::TokenArray( const std::vector< long >& a )
   : data( new TokenArrayObj( a.size(), Token(), 0 ) )
 {
-  assert( data != NULL );
+  assert( data != nullptr );
   for ( size_t i = 0; i < a.size(); ++i )
   {
     Token idt( new IntegerDatum( a[ i ] ) );
@@ -54,7 +54,7 @@ TokenArray::TokenArray( const std::vector< long >& a )
 TokenArray::TokenArray( const std::vector< size_t >& a )
   : data( new TokenArrayObj( a.size(), Token(), 0 ) )
 {
-  assert( data != NULL );
+  assert( data != nullptr );
   for ( size_t i = 0; i < a.size(); ++i )
   {
     Token idt( new IntegerDatum( a[ i ] ) );
@@ -65,7 +65,7 @@ TokenArray::TokenArray( const std::vector< size_t >& a )
 TokenArray::TokenArray( const std::vector< double >& a )
   : data( new TokenArrayObj( a.size(), Token(), 0 ) )
 {
-  assert( data != NULL );
+  assert( data != nullptr );
   for ( size_t i = 0; i < a.size(); ++i )
   {
     Token ddt( new DoubleDatum( a[ i ] ) );
@@ -81,7 +81,7 @@ TokenArray::toVector( std::vector< long >& a ) const
   for ( Token* idx = begin(); idx != end(); ++idx )
   {
     IntegerDatum* targetid = dynamic_cast< IntegerDatum* >( idx->datum() );
-    if ( targetid == NULL )
+    if ( targetid == nullptr )
     {
       IntegerDatum const d;
       throw TypeMismatch( d.gettypename().toString(), idx->datum()->gettypename().toString() );
@@ -99,7 +99,7 @@ TokenArray::toVector( std::vector< size_t >& a ) const
   for ( Token* idx = begin(); idx != end(); ++idx )
   {
     IntegerDatum* targetid = dynamic_cast< IntegerDatum* >( idx->datum() );
-    if ( targetid == NULL )
+    if ( targetid == nullptr )
     {
       IntegerDatum const d;
       throw TypeMismatch( d.gettypename().toString(), idx->datum()->gettypename().toString() );
@@ -141,7 +141,7 @@ TokenArray::toVector( std::vector< std::string >& a ) const
   for ( Token* idx = begin(); idx != end(); ++idx )
   {
     std::string* target = dynamic_cast< std::string* >( idx->datum() );
-    if ( target == NULL )
+    if ( target == nullptr )
     {
       StringDatum const d;
       throw TypeMismatch( d.gettypename().toString(), idx->datum()->gettypename().toString() );
@@ -152,9 +152,9 @@ TokenArray::toVector( std::vector< std::string >& a ) const
 
 
 bool
-TokenArray::valid( void ) const
+TokenArray::valid() const
 {
-  if ( data == NULL )
+  if ( data == nullptr )
   {
     return false;
   }

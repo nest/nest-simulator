@@ -89,7 +89,7 @@ public:
    *  The argument is the time stamp of the event, and the
    *  device is active if start_ < T <= stop_.
    */
-  bool is_active( Time const& T ) const;
+  bool is_active( Time const& T ) const override;
 };
 
 inline PseudoRecordingDevice::PseudoRecordingDevice()

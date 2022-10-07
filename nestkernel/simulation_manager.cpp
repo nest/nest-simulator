@@ -788,7 +788,7 @@ nest::SimulationManager::update_()
     {
       if ( print_time_ )
       {
-        gettimeofday( &t_slice_begin_, NULL );
+        gettimeofday( &t_slice_begin_, nullptr );
       }
 
       if ( kernel().sp_manager.is_structural_plasticity_enabled()
@@ -1013,7 +1013,7 @@ nest::SimulationManager::update_()
 
         if ( print_time_ )
         {
-          gettimeofday( &t_slice_end_, NULL );
+          gettimeofday( &t_slice_end_, nullptr );
           print_progress_();
         }
 

@@ -374,8 +374,8 @@ class SpikeEvent : public Event
 {
 public:
   SpikeEvent();
-  void operator()();
-  SpikeEvent* clone() const;
+  void operator()() override;
+  SpikeEvent* clone() const override;
 
   void set_multiplicity( int );
   int get_multiplicity() const;
@@ -415,8 +415,8 @@ class WeightRecorderEvent : public Event
 {
 public:
   WeightRecorderEvent();
-  WeightRecorderEvent* clone() const;
-  void operator()();
+  WeightRecorderEvent* clone() const override;
+  void operator()() override;
 
   /**
    * Return node ID of receiving Node.
@@ -451,7 +451,7 @@ WeightRecorderEvent::set_receiver_node_id( index node_id )
 }
 
 inline index
-WeightRecorderEvent::get_receiver_node_id( void ) const
+WeightRecorderEvent::get_receiver_node_id() const
 {
   return receiver_node_id_;
 }
@@ -476,7 +476,7 @@ WeightRecorderEvent::get_receiver_node_id( void ) const
 class DSSpikeEvent : public SpikeEvent
 {
 public:
-  void operator()();
+  void operator()() override;
 };
 
 /**
@@ -491,8 +491,8 @@ class RateEvent : public Event
   double r_;
 
 public:
-  void operator()();
-  RateEvent* clone() const;
+  void operator()() override;
+  RateEvent* clone() const override;
 
   void set_rate( double );
   double get_rate() const;
@@ -525,8 +525,8 @@ class CurrentEvent : public Event
   double c_;
 
 public:
-  void operator()();
-  CurrentEvent* clone() const;
+  void operator()() override;
+  CurrentEvent* clone() const override;
 
   void set_current( double );
   double get_current() const;
@@ -569,7 +569,7 @@ CurrentEvent::get_current() const
 class DSCurrentEvent : public CurrentEvent
 {
 public:
-  void operator()();
+  void operator()() override;
 };
 
 /**
@@ -599,9 +599,9 @@ public:
    *  and vector of recordables. */
   DataLoggingRequest( const Time&, const Time&, const std::vector< Name >& );
 
-  DataLoggingRequest* clone() const;
+  DataLoggingRequest* clone() const override;
 
-  void operator()();
+  void operator()() override;
 
   /** Access to stored time interval.*/
   const Time& get_recording_interval() const;
@@ -630,7 +630,7 @@ inline DataLoggingRequest::DataLoggingRequest()
   : Event()
   , recording_interval_( Time::neg_inf() )
   , recording_offset_( Time::ms( 0. ) )
-  , record_from_( 0 )
+  , record_from_( nullptr )
 {
 }
 
@@ -680,7 +680,7 @@ DataLoggingRequest::record_from() const
 {
   // During simulation, events are created without recordables
   // information. On these, record_from() must not be called.
-  assert( record_from_ != 0 );
+  assert( record_from_ != nullptr );
 
   return *record_from_;
 }
@@ -720,7 +720,7 @@ public:
   //! Construct with reference to data and time stamps to transmit
   DataLoggingReply( const Container& );
 
-  void operator()();
+  void operator()() override;
 
   //! Access referenced data
   const Container&
@@ -735,10 +735,10 @@ private:
 
   //! Prohibit cloning
   DataLoggingReply*
-  clone() const
+  clone() const override
   {
     assert( false );
-    return 0;
+    return nullptr;
   }
 
   //! data to be transmitted, with time stamps
@@ -761,8 +761,8 @@ class ConductanceEvent : public Event
   double g_;
 
 public:
-  void operator()();
-  ConductanceEvent* clone() const;
+  void operator()() override;
+  ConductanceEvent* clone() const override;
 
   void set_conductance( double );
   double get_conductance() const;
@@ -829,8 +829,8 @@ DataEvent< D >::get_pointer() const
 class DoubleDataEvent : public DataEvent< double >
 {
 public:
-  void operator()();
-  DoubleDataEvent* clone() const;
+  void operator()() override;
+  DoubleDataEvent* clone() const override;
 };
 
 inline DoubleDataEvent*
@@ -886,19 +886,19 @@ Event::set_sender_node_id_info( const thread tid, const synindex syn_id, const i
 }
 
 inline Node&
-Event::get_receiver( void ) const
+Event::get_receiver() const
 {
   return *receiver_;
 }
 
 inline Node&
-Event::get_sender( void ) const
+Event::get_sender() const
 {
   return *sender_;
 }
 
 inline index
-Event::get_sender_node_id( void ) const
+Event::get_sender_node_id() const
 {
   assert( sender_node_id_ > 0 );
   return sender_node_id_;

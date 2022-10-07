@@ -60,13 +60,13 @@ FilesystemModule::init( SLIInterpreter* i )
 
 
 const std::string
-FilesystemModule::name( void ) const
+FilesystemModule::name() const
 {
   return std::string( "Filesystem access" );
 }
 
 const std::string
-FilesystemModule::commandstring( void ) const
+FilesystemModule::commandstring() const
 {
   return std::string( "(filesystem.sli) run" );
 }
@@ -76,16 +76,16 @@ void
 FilesystemModule::FileNamesFunction::execute( SLIInterpreter* i ) const
 {
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
-  assert( sd != NULL );
+  assert( sd != nullptr );
 
   DIR* TheDirectory = opendir( sd->c_str() );
-  if ( TheDirectory != NULL )
+  if ( TheDirectory != nullptr )
   {
     ArrayDatum* a = new ArrayDatum();
     i->EStack.pop();
     i->OStack.pop();
     dirent* TheEntry;
-    while ( ( TheEntry = readdir( TheDirectory ) ) != NULL )
+    while ( ( TheEntry = readdir( TheDirectory ) ) != nullptr )
     {
       Token string_token( new StringDatum( TheEntry->d_name ) );
       a->push_back_move( string_token );
@@ -104,7 +104,7 @@ FilesystemModule::SetDirectoryFunction::execute( SLIInterpreter* i ) const
 // string -> boolean
 {
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
-  assert( sd != NULL );
+  assert( sd != nullptr );
   int s = chdir( sd->c_str() );
   i->OStack.pop();
   if ( not s )
@@ -114,7 +114,7 @@ FilesystemModule::SetDirectoryFunction::execute( SLIInterpreter* i ) const
   else
   {
     i->OStack.push( i->baselookup( i->false_name ) );
-  };
+  }
   i->EStack.pop();
 }
 
@@ -139,7 +139,7 @@ FilesystemModule::DirectoryFunction::execute( SLIInterpreter* i ) const
 
   int size = SIZE;
   char* path_buffer = new char[ size ];
-  while ( getcwd( path_buffer, size - 1 ) == NULL )
+  while ( getcwd( path_buffer, size - 1 ) == nullptr )
   { // try again with a bigger buffer!
     if ( errno != ERANGE )
     {
@@ -148,7 +148,7 @@ FilesystemModule::DirectoryFunction::execute( SLIInterpreter* i ) const
     delete[] path_buffer;
     size += SIZE;
     path_buffer = new char[ size ];
-    assert( path_buffer != NULL );
+    assert( path_buffer != nullptr );
   }
   Token sd( new StringDatum( path_buffer ) );
   delete[]( path_buffer );
@@ -162,8 +162,8 @@ FilesystemModule::MoveFileFunction::execute( SLIInterpreter* i ) const
 {
   StringDatum* src = dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
   StringDatum* dst = dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
-  assert( src != NULL );
-  assert( dst != NULL );
+  assert( src != nullptr );
+  assert( dst != nullptr );
   int s = link( src->c_str(), dst->c_str() );
   if ( not s )
   {
@@ -192,8 +192,8 @@ FilesystemModule::CopyFileFunction::execute( SLIInterpreter* i ) const
 {
   StringDatum* src = dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
   StringDatum* dst = dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
-  assert( src != NULL );
-  assert( dst != NULL );
+  assert( src != nullptr );
+  assert( dst != nullptr );
 
   std::ofstream deststream( dst->c_str() );
   if ( not deststream )
@@ -232,7 +232,7 @@ FilesystemModule::DeleteFileFunction::execute( SLIInterpreter* i ) const
 // string -> boolean
 {
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
-  assert( sd != NULL );
+  assert( sd != nullptr );
   int s = unlink( sd->c_str() );
   i->OStack.pop();
   if ( not s )
@@ -251,7 +251,7 @@ FilesystemModule::MakeDirectoryFunction::execute( SLIInterpreter* i ) const
 // string -> Boolean
 {
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
-  assert( sd != NULL );
+  assert( sd != nullptr );
   int s = mkdir( sd->c_str(), S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP );
   i->OStack.pop();
   if ( not s )
@@ -270,7 +270,7 @@ FilesystemModule::RemoveDirectoryFunction::execute( SLIInterpreter* i ) const
 // string -> Boolean
 {
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
-  assert( sd != NULL );
+  assert( sd != nullptr );
   int s = rmdir( sd->c_str() );
   i->OStack.pop();
   if ( not s )
@@ -306,7 +306,7 @@ void
 FilesystemModule::TmpNamFunction::execute( SLIInterpreter* i ) const
 {
   std::lock_guard< std::mutex > lock( mtx );
-  static unsigned int seed = std::time( 0 );
+  static unsigned int seed = std::time( nullptr );
   char* env = getenv( "TMPDIR" );
   std::string tmpdir( "/tmp" );
   if ( env )

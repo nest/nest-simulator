@@ -49,7 +49,7 @@ class TargetIdentifierPtrRport
 
 public:
   TargetIdentifierPtrRport()
-    : target_( 0 )
+    : target_( nullptr )
     , rport_( 0 )
   {
   }
@@ -63,7 +63,7 @@ public:
   get_status( DictionaryDatum& d ) const
   {
     // Do nothing if called on synapse prototype
-    if ( target_ != 0 )
+    if ( target_ != nullptr )
     {
       def< long >( d, names::rport, rport_ );
       def< long >( d, names::target, target_->get_node_id() );

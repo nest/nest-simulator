@@ -34,9 +34,9 @@
 size_t TokenArrayObj::allocations = 0;
 
 TokenArrayObj::TokenArrayObj( size_t s, const Token& t, size_t alloc )
-  : p( NULL )
-  , begin_of_free_storage( NULL )
-  , end_of_free_storage( NULL )
+  : p( nullptr )
+  , begin_of_free_storage( nullptr )
+  , end_of_free_storage( nullptr )
   , alloc_block_size( ARRAY_ALLOC_SIZE )
   , refs_( 1 )
 {
@@ -47,13 +47,13 @@ TokenArrayObj::TokenArrayObj( size_t s, const Token& t, size_t alloc )
 
 
 TokenArrayObj::TokenArrayObj( const TokenArrayObj& a )
-  : p( NULL )
-  , begin_of_free_storage( NULL )
-  , end_of_free_storage( NULL )
+  : p( nullptr )
+  , begin_of_free_storage( nullptr )
+  , end_of_free_storage( nullptr )
   , alloc_block_size( ARRAY_ALLOC_SIZE )
   , refs_( 1 )
 {
-  if ( a.p != NULL )
+  if ( a.p != nullptr )
   {
     resize( a.size(), a.alloc_block_size, Token() );
     Token* from = a.p;
@@ -102,7 +102,7 @@ TokenArrayObj::allocate( size_t new_s, size_t new_c, size_t new_a, const Token& 
   end_of_free_storage = h + new_c; // [,) convention
   begin_of_free_storage = h + new_s;
 
-  if ( p != NULL )
+  if ( p != nullptr )
   {
 
     size_t min_l;
@@ -170,10 +170,10 @@ TokenArrayObj::operator=( const TokenArrayObj& a )
   else
   {
 
-    if ( p != NULL )
+    if ( p != nullptr )
     {
       delete[] p;
-      p = NULL;
+      p = nullptr;
     }
 
     resize( a.size(), a.alloc_block_size );
@@ -211,7 +211,7 @@ TokenArrayObj::operator=( const TokenArrayObj& a )
 // }
 
 bool
-TokenArrayObj::shrink( void )
+TokenArrayObj::shrink()
 {
   size_t new_capacity = size();
 
@@ -281,8 +281,8 @@ TokenArrayObj::erase( Token* first, Token* last )
       // deleting NULL pointer is safe in ISO C++
       to->p->removeReference();
     }
-    to->p = from->p; // move
-    from->p = NULL;  // might be overwritten or not
+    to->p = from->p;   // move
+    from->p = nullptr; // might be overwritten or not
     ++from;
     ++to;
   }
@@ -295,7 +295,7 @@ TokenArrayObj::erase( Token* first, Token* last )
       // elements which are still intact
       last->p->removeReference();
     }
-    last->p = NULL; // after the move above.
+    last->p = nullptr; // after the move above.
   }
 
   begin_of_free_storage = to;
@@ -317,13 +317,13 @@ TokenArrayObj::erase( size_t i, size_t n )
 }
 
 void
-TokenArrayObj::clear( void )
+TokenArrayObj::clear()
 {
   if ( p )
   {
     delete[] p;
   }
-  p = begin_of_free_storage = end_of_free_storage = NULL;
+  p = begin_of_free_storage = end_of_free_storage = nullptr;
   alloc_block_size = 1;
 }
 
@@ -396,8 +396,8 @@ TokenArrayObj::insert( size_t i, size_t n, const Token& t )
 
   while ( from >= pos )
   {
-    to->p = from->p; // move
-    from->p = NULL;  // knowing that to->p is
+    to->p = from->p;   // move
+    from->p = nullptr; // knowing that to->p is
     --from;
     --to; // NULL before
   }
@@ -423,8 +423,8 @@ TokenArrayObj::insert_move( size_t i, TokenArrayObj& a )
 
   while ( from >= pos )
   {
-    to->p = from->p; // move
-    from->p = NULL;  // knowing that to->p is
+    to->p = from->p;   // move
+    from->p = nullptr; // knowing that to->p is
     --from;
     --to; // NULL before
   }
@@ -434,8 +434,8 @@ TokenArrayObj::insert_move( size_t i, TokenArrayObj& a )
 
   while ( from < a.end() )
   {
-    to->p = from->p; // we cannot do this in the loop
-    from->p = NULL;  // above because of overlapping
+    to->p = from->p;   // we cannot do this in the loop
+    from->p = nullptr; // above because of overlapping
     ++from;
     ++to;
   }
@@ -456,7 +456,7 @@ TokenArrayObj::assign_move( TokenArrayObj& a, size_t i, size_t n )
   while ( from < end )
   {
     to->p = from->p;
-    from->p = NULL;
+    from->p = nullptr;
     ++from;
     ++to;
   }
@@ -495,14 +495,14 @@ TokenArrayObj::insert_move( size_t i, Token& t )
 
   while ( from >= pos )
   {
-    to->p = from->p; // move
-    from->p = NULL;  // knowing that to->p is
+    to->p = from->p;   // move
+    from->p = nullptr; // knowing that to->p is
     --from;
     --to; // NULL before
   }
 
   ( p + i )->p = t.p; // move contens of t
-  t.p = NULL;
+  t.p = nullptr;
 
   begin_of_free_storage += 1; // new size is old + 1
 }
@@ -530,8 +530,8 @@ TokenArrayObj::replace_move( size_t i, size_t n, TokenArrayObj& a )
 
     while ( from > end )
     {
-      to->p = from->p; // move
-      from->p = NULL;  // might be overwritten or not
+      to->p = from->p;   // move
+      from->p = nullptr; // might be overwritten or not
       --from;
       --to;
     }
@@ -552,8 +552,8 @@ TokenArrayObj::replace_move( size_t i, size_t n, TokenArrayObj& a )
         // deleting NULL pointer is safe in ISO C++
         to->p->removeReference();
       }
-      to->p = from->p; // move
-      from->p = NULL;  // might be overwritten or not
+      to->p = from->p;   // move
+      from->p = nullptr; // might be overwritten or not
       ++from;
       ++to;
     }
@@ -566,7 +566,7 @@ TokenArrayObj::replace_move( size_t i, size_t n, TokenArrayObj& a )
         // elements which are still intact
         last->p->removeReference();
       }
-      last->p = NULL; // after the move above.
+      last->p = nullptr; // after the move above.
     }
   }
 
@@ -585,8 +585,8 @@ TokenArrayObj::replace_move( size_t i, size_t n, TokenArrayObj& a )
       // delete target before
       to->p->removeReference();
     }
-    to->p = from->p; // movement, it is typically
-    from->p = NULL;  // not the NULL pointer
+    to->p = from->p;   // movement, it is typically
+    from->p = nullptr; // not the NULL pointer
     ++from;
     ++to;
   }
@@ -604,7 +604,7 @@ TokenArrayObj::append_move( TokenArrayObj& a )
   while ( from < a.end() ) // move
   {                        // knowing that to->p is
     to->p = from->p;       // NULL before
-    from->p = NULL;
+    from->p = nullptr;
     ++from;
     ++to;
   }
@@ -660,21 +660,21 @@ TokenArrayObj::info( std::ostream& out ) const
 }
 
 bool
-TokenArrayObj::valid( void ) const
+TokenArrayObj::valid() const
 {
-  if ( p == NULL )
+  if ( p == nullptr )
   {
     std::cerr << "TokenArrayObj::valid: Data pointer missing!" << std::endl;
     return false;
   }
 
-  if ( begin_of_free_storage == NULL )
+  if ( begin_of_free_storage == nullptr )
   {
     std::cerr << "TokenArrayObj::valid: begin of free storage pointer missing!" << std::endl;
     return false;
   }
 
-  if ( end_of_free_storage == NULL )
+  if ( end_of_free_storage == nullptr )
   {
     std::cerr << "TokenArrayObj::valid: end of free storage pointer missing!" << std::endl;
     return false;

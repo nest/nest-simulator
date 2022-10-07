@@ -81,7 +81,7 @@ public:
      * Initialize an iterator to point to the first node in the first
      * non-empty leaf within the tree below this Ntree.
      */
-    iterator( Ntree& q );
+    explicit iterator( Ntree& q );
 
     /**
      * Initialize an iterator to point to the nth node in this Ntree,

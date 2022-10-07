@@ -310,9 +310,9 @@ nest::aeif_cond_alpha::State_::set( const DictionaryDatum& d, const Parameters_&
 
 nest::aeif_cond_alpha::Buffers_::Buffers_( aeif_cond_alpha& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -320,9 +320,9 @@ nest::aeif_cond_alpha::Buffers_::Buffers_( aeif_cond_alpha& n )
 
 nest::aeif_cond_alpha::Buffers_::Buffers_( const Buffers_&, aeif_cond_alpha& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -385,7 +385,7 @@ nest::aeif_cond_alpha::init_buffers_()
   // We must integrate this model with high-precision to obtain decent results
   B_.IntegrationStep_ = std::min( 0.01, B_.step_ );
 
-  if ( B_.s_ == 0 )
+  if ( B_.s_ == nullptr )
   {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
@@ -394,7 +394,7 @@ nest::aeif_cond_alpha::init_buffers_()
     gsl_odeiv_step_reset( B_.s_ );
   }
 
-  if ( B_.c_ == 0 )
+  if ( B_.c_ == nullptr )
   {
     B_.c_ = gsl_odeiv_control_yp_new( P_.gsl_error_tol, P_.gsl_error_tol );
   }
@@ -403,7 +403,7 @@ nest::aeif_cond_alpha::init_buffers_()
     gsl_odeiv_control_init( B_.c_, P_.gsl_error_tol, P_.gsl_error_tol, 0.0, 1.0 );
   }
 
-  if ( B_.e_ == 0 )
+  if ( B_.e_ == nullptr )
   {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }
@@ -412,7 +412,7 @@ nest::aeif_cond_alpha::init_buffers_()
     gsl_odeiv_evolve_reset( B_.e_ );
   }
 
-  B_.sys_.jacobian = NULL;
+  B_.sys_.jacobian = nullptr;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
   B_.sys_.function = aeif_cond_alpha_dynamics;

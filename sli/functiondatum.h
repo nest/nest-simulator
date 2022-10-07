@@ -56,7 +56,7 @@ class FunctionDatum : public TypedDatum< &SLIInterpreter::Functiontype >
   bool deprecation_warning_issued_;
 
   Datum*
-  clone( void ) const
+  clone() const
   {
     return new FunctionDatum( *this );
   }
@@ -146,7 +146,7 @@ public:
   }
 
   const Name&
-  getname( void ) const
+  getname() const
   {
     return name;
   }

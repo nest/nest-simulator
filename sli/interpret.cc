@@ -249,13 +249,13 @@ SLIInterpreter::initexternals( void )
 ****************************************/
 
 FunctionDatum*
-SLIInterpreter::Ilookup( void ) const
+SLIInterpreter::Ilookup() const
 {
   return new FunctionDatum( ilookup_name, &SLIInterpreter::ilookupfunction, "" );
 }
 
 FunctionDatum*
-SLIInterpreter::Iiterate( void ) const
+SLIInterpreter::Iiterate() const
 {
   return new FunctionDatum( iiterate_name, &SLIInterpreter::iiteratefunction, "" );
 }
@@ -362,7 +362,7 @@ SLIInterpreter::basedef_move( Name const& n, Token& t )
   DStack->basedef_move( n, t );
 }
 
-SLIInterpreter::SLIInterpreter( void )
+SLIInterpreter::SLIInterpreter()
   : debug_mode_( false )
   , show_stack_( false )
   , show_backtrace_( false )
@@ -722,7 +722,7 @@ SLIInterpreter::print_error( Token cmd )
 }
 
 void
-SLIInterpreter::raiseagain( void )
+SLIInterpreter::raiseagain()
 {
   assert( errordict != nullptr );
 
@@ -757,7 +757,7 @@ SLIInterpreter::verbosity( int level )
 }
 
 int
-SLIInterpreter::verbosity( void ) const
+SLIInterpreter::verbosity() const
 {
   return verbositylevel;
 }
@@ -928,7 +928,7 @@ SLIInterpreter::message( std::ostream& out,
 }
 
 Name
-SLIInterpreter::getcurrentname( void ) const
+SLIInterpreter::getcurrentname() const
 {
   FunctionDatum* func = dynamic_cast< FunctionDatum* >( EStack.top().datum() );
   if ( func != nullptr )
@@ -951,7 +951,7 @@ SLIInterpreter::setcycleguard( Index c )
 }
 
 void
-SLIInterpreter::removecycleguard( void )
+SLIInterpreter::removecycleguard()
 {
   cycle_guard = false;
 }

@@ -54,7 +54,7 @@ public:
    */
   void init( SLIInterpreter* );
 
-  const std::string name( void ) const;
+  const std::string name() const;
 };
 
 

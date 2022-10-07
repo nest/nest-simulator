@@ -41,7 +41,7 @@ public:
   ~GNUReadline();
 
   const std::string
-  name( void ) const
+  name() const override
   {
     return "GNUReadline";
   }

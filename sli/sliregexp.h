@@ -42,7 +42,7 @@ class Regex
 public:
   Regex();
   ~Regex();
-  regex_t* get( void );
+  regex_t* get();
 };
 
 class RegexpModule : public SLIModule
@@ -91,7 +91,7 @@ public:
 
   static SLIType RegexType;
 
-  RegexpModule( void )
+  RegexpModule()
     : regexdict_name( "regexdict" )
     , REG_NOTBOL_name( "REG_NOTBOL" )
     , REG_NOTEOL_name( "REG_NOTEOL" )
@@ -117,8 +117,8 @@ public:
   ~RegexpModule();
 
   void init( SLIInterpreter* );
-  const std::string name( void ) const;
-  const std::string commandstring( void ) const;
+  const std::string name() const;
+  const std::string commandstring() const;
 };
 
 #endif

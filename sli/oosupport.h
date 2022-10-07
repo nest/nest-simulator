@@ -41,13 +41,13 @@ class OOSupportModule : public SLIModule
   CallMemberFunction callmemberfunction;
 
 public:
-  OOSupportModule( void )
+  OOSupportModule()
   {
   }
 
   void init( SLIInterpreter* );
-  const std::string commandstring( void ) const;
-  const std::string name( void ) const;
+  const std::string commandstring() const;
+  const std::string name() const;
 };
 
 

@@ -881,7 +881,7 @@ public:
  */
 template < typename T >
 size_t
-number_of_uints_covered( void )
+number_of_uints_covered()
 {
   size_t num_uints = sizeof( T ) / sizeof( unsigned int );
   if ( num_uints * sizeof( unsigned int ) < sizeof( T ) )

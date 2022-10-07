@@ -45,7 +45,7 @@ SLIType::settypename( const std::string& s )
 }
 
 void
-SLIType::deletetypename( void )
+SLIType::deletetypename()
 {
   assert( count > 0 );
   if ( count == 1 )

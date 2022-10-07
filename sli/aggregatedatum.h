@@ -63,7 +63,7 @@ protected:
 
 private:
   virtual Datum*
-  clone( void ) const
+  clone() const
   {
     return new AggregateDatum< C, slt >( *this );
   }

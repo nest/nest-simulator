@@ -338,7 +338,7 @@ public:
 
   bool where( const Name&, Token& );
 
-  void pop( void );
+  void pop();
 
 
   //
@@ -348,7 +348,7 @@ public:
   void push( const DictionaryDatum& );
   void push( Token& );
 
-  void clear( void );
+  void clear();
   void toArray( TokenArray& ) const;
   //
   // move is efficient for interaction with operand and execution
@@ -360,7 +360,7 @@ public:
   //
   // number of dictionaries currently on the stack
   //
-  size_t size( void ) const;
+  size_t size() const;
 
 
   //

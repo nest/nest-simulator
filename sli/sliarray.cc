@@ -47,13 +47,13 @@
 #include "tokenutils.h"
 
 const std::string
-SLIArrayModule::commandstring( void ) const
+SLIArrayModule::commandstring() const
 {
   return std::string( "(mathematica) run (arraylib) run" );
 }
 
 const std::string
-SLIArrayModule::name( void ) const
+SLIArrayModule::name() const
 {
   return std::string( "SLI Array Module" );
 }

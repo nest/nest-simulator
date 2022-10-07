@@ -48,7 +48,7 @@ Regex::~Regex()
 }
 
 regex_t*
-Regex::get( void )
+Regex::get()
 {
   return &r;
 }
@@ -95,13 +95,13 @@ RegexpModule::init( SLIInterpreter* i )
 
 
 const std::string
-RegexpModule::name( void ) const
+RegexpModule::name() const
 {
   return std::string( "POSIX-Regexp" );
 }
 
 const std::string
-RegexpModule::commandstring( void ) const
+RegexpModule::commandstring() const
 {
   return std::string( "(regexp) run" );
 }

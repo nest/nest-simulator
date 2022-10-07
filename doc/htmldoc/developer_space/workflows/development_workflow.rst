@@ -3,10 +3,6 @@
 NEST Git workflow
 =================
 
-.. contents:: On this page, you'll find
-   :local:
-   :depth: 2
-
 Basic Git setup
 ---------------
 

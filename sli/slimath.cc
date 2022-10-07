@@ -1121,7 +1121,7 @@ OrFunction::execute( SLIInterpreter* i ) const
   BoolDatum* op2 = static_cast< BoolDatum* >( i->OStack.pick( 0 ).datum() );
   assert( op1 != NULL && op2 != NULL );
 
-  op1->get() = ( op1->get() == true || op2->get() == true );
+  op1->get() = ( op1->get() or op2->get() );
 
   i->OStack.pop();
 }

@@ -213,31 +213,31 @@ public:
     const synindex syn_id,
     const DictionaryDatum& d,
     const double delay,
-    const double weight );
+    const double weight ) override;
 
-  ConnectorModel* clone( std::string ) const;
+  ConnectorModel* clone( std::string ) const override;
 
-  void calibrate( const TimeConverter& tc );
+  void calibrate( const TimeConverter& tc ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
   void
-  check_synapse_params( const DictionaryDatum& syn_spec ) const
+  check_synapse_params( const DictionaryDatum& syn_spec ) const override
   {
     default_connection_.check_synapse_params( syn_spec );
   }
 
   typename ConnectionT::CommonPropertiesType const&
-  get_common_properties() const
+  get_common_properties() const override
   {
     return cp_;
   }
 
-  void set_syn_id( synindex syn_id );
+  void set_syn_id( synindex syn_id ) override;
 
-  virtual typename ConnectionT::EventType*
-  get_event() const
+  typename ConnectionT::EventType*
+  get_event() const override
   {
     assert( false );
     return 0;
@@ -249,13 +249,13 @@ public:
     return default_connection_;
   }
 
-  virtual SecondaryEvent*
-  create_event() const
+  SecondaryEvent*
+  create_event() const override
   {
     // Must not be called for a ConnectorModel belonging to a primary
     // connection. Only required for secondary connection types.
     assert( false );
-    return 0; // make the compiler happy
+    return nullptr; // make the compiler happy
   }
 
 private:

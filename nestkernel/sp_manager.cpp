@@ -282,7 +282,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
     }
   }
 
-  ConnBuilder* cb = NULL;
+  ConnBuilder* cb = nullptr;
   conn_spec->clear_access_flags();
   syn_spec->clear_access_flags();
 
@@ -315,7 +315,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
   {
     cb = kernel().connection_manager.get_conn_builder( rule_name, sources, targets, conn_spec, { syn_spec } );
   }
-  assert( cb != 0 );
+  assert( cb != nullptr );
 
   // at this point, all entries in conn_spec and syn_spec have been checked
   ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries: " );

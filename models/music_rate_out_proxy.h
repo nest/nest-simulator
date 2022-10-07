@@ -206,6 +206,6 @@ music_rate_out_proxy::handles_test_event( InstantaneousRateConnectionEvent&, rpo
 
 } // namespace
 
-#endif /* #ifndef MUSIC_RATE_OUT_PROXY_H */
+#endif /* HAVE_MUSIC */
 
 #endif

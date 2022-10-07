@@ -14,10 +14,6 @@ pynest/pynestkernel.cxx
 *.o
 *.pyc
 
-Makefile
-
-build/
-install/
 examples/example_logs/
 
 /libnestutil/config.h

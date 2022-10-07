@@ -134,30 +134,30 @@ public:
   }
 
   double
-  value_double( thread, RngPtr, index, Node* ) const
+  value_double( thread, RngPtr, index, Node* ) const override
   {
     return value_;
   }
 
   long
-  value_int( thread, RngPtr, index, Node* ) const
+  value_int( thread, RngPtr, index, Node* ) const override
   {
     throw KernelException( "ConnParameter calls value function with false return type." );
   }
 
   inline bool
-  is_array() const
+  is_array() const override
   {
     return false;
   }
 
   void
-  reset() const
+  reset() const override
   {
   }
 
   bool
-  is_scalar() const
+  is_scalar() const override
   {
     return true;
   }
@@ -180,36 +180,36 @@ public:
   }
 
   double
-  value_double( thread, RngPtr, index, Node* ) const
+  value_double( thread, RngPtr, index, Node* ) const override
   {
     return static_cast< double >( value_ );
   }
 
   long
-  value_int( thread, RngPtr, index, Node* ) const
+  value_int( thread, RngPtr, index, Node* ) const override
   {
     return value_;
   }
 
   inline bool
-  is_array() const
+  is_array() const override
   {
     return false;
   }
 
   void
-  reset() const
+  reset() const override
   {
   }
 
   bool
-  is_scalar() const
+  is_scalar() const override
   {
     return true;
   }
 
   bool
-  provides_long() const
+  provides_long() const override
   {
     return true;
   }
@@ -244,7 +244,7 @@ public:
   }
 
   void
-  skip( thread tid, size_t n_skip ) const
+  skip( thread tid, size_t n_skip ) const override
   {
     if ( next_[ tid ] < values_->end() )
     {
@@ -257,13 +257,13 @@ public:
   }
 
   size_t
-  number_of_values() const
+  number_of_values() const override
   {
     return values_->size();
   }
 
   double
-  value_double( thread tid, RngPtr, index, Node* ) const
+  value_double( thread tid, RngPtr, index, Node* ) const override
   {
     if ( next_[ tid ] != values_->end() )
     {
@@ -276,19 +276,19 @@ public:
   }
 
   long
-  value_int( thread, RngPtr, index, Node* ) const
+  value_int( thread, RngPtr, index, Node* ) const override
   {
     throw KernelException( "ConnParameter calls value function with false return type." );
   }
 
   inline bool
-  is_array() const
+  is_array() const override
   {
     return true;
   }
 
   void
-  reset() const
+  reset() const override
   {
     for ( std::vector< std::vector< double >::const_iterator >::iterator it = next_.begin(); it != next_.end(); ++it )
     {
@@ -326,7 +326,7 @@ public:
   }
 
   void
-  skip( thread tid, size_t n_skip ) const
+  skip( thread tid, size_t n_skip ) const override
   {
     if ( next_[ tid ] < values_->end() )
     {
@@ -339,13 +339,13 @@ public:
   }
 
   size_t
-  number_of_values() const
+  number_of_values() const override
   {
     return values_->size();
   }
 
   long
-  value_int( thread tid, RngPtr, index, Node* ) const
+  value_int( thread tid, RngPtr, index, Node* ) const override
   {
     if ( next_[ tid ] != values_->end() )
     {
@@ -358,7 +358,7 @@ public:
   }
 
   double
-  value_double( thread tid, RngPtr, index, Node* ) const
+  value_double( thread tid, RngPtr, index, Node* ) const override
   {
     if ( next_[ tid ] != values_->end() )
     {
@@ -371,19 +371,19 @@ public:
   }
 
   inline bool
-  is_array() const
+  is_array() const override
   {
     return true;
   }
 
   bool
-  provides_long() const
+  provides_long() const override
   {
     return true;
   }
 
   void
-  reset() const
+  reset() const override
   {
     for ( std::vector< std::vector< long >::const_iterator >::iterator it = next_.begin(); it != next_.end(); ++it )
     {
@@ -401,22 +401,22 @@ class ParameterConnParameterWrapper : public ConnParameter
 public:
   ParameterConnParameterWrapper( const ParameterDatum&, const size_t );
 
-  double value_double( thread target_thread, RngPtr rng, index snode_id, Node* target ) const;
+  double value_double( thread target_thread, RngPtr rng, index snode_id, Node* target ) const override;
 
   long
-  value_int( thread target_thread, RngPtr rng, index snode_id, Node* target ) const
+  value_int( thread target_thread, RngPtr rng, index snode_id, Node* target ) const override
   {
     return value_double( target_thread, rng, snode_id, target );
   }
 
   inline bool
-  is_array() const
+  is_array() const override
   {
     return false;
   }
 
   bool
-  provides_long() const
+  provides_long() const override
   {
     return parameter_->returns_int_only();
   }

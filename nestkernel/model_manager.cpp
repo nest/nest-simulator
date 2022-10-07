@@ -137,7 +137,6 @@ ModelManager::finalize()
 {
   clear_node_models_();
   clear_connection_models_();
-  delete_secondary_events_prototypes();
 
   // We free all Node memory
   for ( auto& node_model : builtin_node_models_ )
@@ -282,7 +281,7 @@ ModelManager::copy_connection_model_( index old_id, Name new_name )
   // has to be mapped to the corresponding secondary event type
   if ( not get_connection_model( old_id ).is_primary() )
   {
-    ( get_connection_model( old_id ).get_event() )->add_syn_id( new_id );
+    get_connection_model( old_id ).get_event()->add_syn_id( new_id );
   }
 
   for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
@@ -546,26 +545,6 @@ ModelManager::memory_info() const
 
   std::cout << sep << std::endl;
   std::cout.unsetf( std::ios::left );
-}
-
-void
-ModelManager::create_secondary_events_prototypes()
-{
-  delete_secondary_events_prototypes();
-  secondary_events_prototypes_.resize( kernel().vp_manager.get_num_threads() );
-
-  for ( thread tid = 0; tid < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++tid )
-  {
-    secondary_events_prototypes_[ tid ].clear();
-    for ( synindex syn_id = 0; syn_id < connection_models_[ tid ].size(); ++syn_id )
-    {
-      if ( not connection_models_[ tid ][ syn_id ]->is_primary() )
-      {
-        secondary_events_prototypes_[ tid ].insert(
-          std::pair< synindex, SecondaryEvent* >( syn_id, connection_models_[ tid ][ syn_id ]->create_event() ) );
-      }
-    }
-  }
 }
 
 synindex

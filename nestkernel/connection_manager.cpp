@@ -981,10 +981,6 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params )
   // as this may involve sorting connections by source node IDs.
   if ( connections_have_changed() )
   {
-    if ( not kernel().simulation_manager.has_been_simulated() )
-    {
-      kernel().model_manager.create_secondary_events_prototypes();
-    }
 #pragma omp parallel
     {
       const thread tid = kernel().vp_manager.get_thread_id();

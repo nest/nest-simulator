@@ -506,7 +506,7 @@ NodeCollectionPrimitive::print_primitive( std::ostream& out ) const
 }
 
 bool
-NodeCollectionPrimitive::is_contiguous_ascending( NodeCollectionPrimitive& other )
+NodeCollectionPrimitive::is_contiguous_ascending( NodeCollectionPrimitive& other ) const
 {
   return ( ( last_ + 1 ) == other.first_ ) and ( model_id_ == other.model_id_ );
 }

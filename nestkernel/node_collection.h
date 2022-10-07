@@ -488,7 +488,7 @@ public:
    * the last element in this primitive, and they both have the same model ID.
    * Otherwise false.
    */
-  bool is_contiguous_ascending( NodeCollectionPrimitive& other );
+  bool is_contiguous_ascending( NodeCollectionPrimitive& other ) const;
 
   /**
    * Checks if node IDs of another primitive is overlapping node IDs of this primitive

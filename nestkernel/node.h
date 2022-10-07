@@ -125,7 +125,7 @@ public:
   virtual Node*
   clone() const
   {
-    return 0;
+    return nullptr;
   }
 
   /**

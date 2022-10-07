@@ -70,9 +70,9 @@ class pool
     chunk* next;
     char* mem;
 
-    chunk( size_t s )
+    explicit chunk( size_t s )
       : csize( s )
-      , next( 0 )
+      , next( nullptr )
       , mem( new char[ csize ] )
     {
     }
@@ -80,11 +80,11 @@ class pool
     ~chunk()
     {
       delete[] mem;
-      mem = NULL;
+      mem = nullptr;
     }
 
     size_t
-    size( void )
+    size() const
     {
       return csize;
     }
@@ -117,7 +117,7 @@ public:
   pool( const pool& );
   pool& operator=( const pool& );
 
-  pool( size_t n, size_t initial = 100, size_t growth = 1 );
+  explicit pool( size_t n, size_t initial = 100, size_t growth = 1 );
   void init( size_t n, size_t initial = 100, size_t growth = 1 );
 
   ~pool(); //!< deallocate ALL memory
@@ -133,15 +133,15 @@ public:
   void reserve_additional( size_t n );
 
   size_t
-  available( void ) const
+  available() const
   {
     return total - instantiations;
   }
 
-  inline void* alloc( void );  //!< allocate one element
+  inline void* alloc();        //!< allocate one element
   inline void free( void* p ); //!< put element back into the pool
   size_t
-  size_of( void ) const
+  size_of() const
   {
     return el_size;
   }
@@ -152,10 +152,10 @@ public:
 };
 
 inline void*
-pool::alloc( void )
+pool::alloc()
 {
 
-  if ( head == 0 )
+  if ( head == nullptr )
   {
     grow( block_size );
     block_size *= growth_factor;

@@ -89,7 +89,7 @@ FunctiontypeFunction::execute( SLIInterpreter* i ) const
   if ( i->step_mode() )
   {
     std::cerr << "Calling builtin function: ";
-    if ( fd != NULL )
+    if ( fd != nullptr )
     {
       fd->pprint( std::cerr );
     }

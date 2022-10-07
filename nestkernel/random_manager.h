@@ -51,7 +51,7 @@ class RandomManager : public ManagerInterface
 {
 public:
   RandomManager();
-  ~RandomManager();
+  ~RandomManager() override;
 
   /**
    * Register available RNG types, set default RNG type and create RNGs.

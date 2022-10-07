@@ -64,7 +64,7 @@ public:
    * \fn double get_Ca_minus()
    * return the current value of Ca_minus
    */
-  double get_Ca_minus() const;
+  double get_Ca_minus() const override;
 
   /**
    * \fn double get_synaptic_elements(Name n)
@@ -73,50 +73,50 @@ public:
    * actual vacant and connected elements is an integer truncated from this
    * value
    */
-  double get_synaptic_elements( Name n ) const;
+  double get_synaptic_elements( Name n ) const override;
 
   /**
    * \fn int get_synaptic_elements_vacant(Name n)
    * Get the number of synaptic elements of type n which are available
    * for new synapse creation
    */
-  int get_synaptic_elements_vacant( Name n ) const;
+  int get_synaptic_elements_vacant( Name n ) const override;
 
   /**
    * \fn int get_synaptic_elements_connected(Name n)
    * get the number of synaptic element of type n which are currently
    * connected
    */
-  int get_synaptic_elements_connected( Name n ) const;
+  int get_synaptic_elements_connected( Name n ) const override;
 
   /**
    * \fn std::map<Name, double> get_synaptic_elements()
    * get the number of all synaptic elements for the current Node
    */
-  std::map< Name, double > get_synaptic_elements() const;
+  std::map< Name, double > get_synaptic_elements() const override;
 
   /**
    * \fn void update_synaptic_elements()
    * Change the number of synaptic elements in the node depending on the
    * dynamics described by the corresponding growth curve
    */
-  void update_synaptic_elements( double t );
+  void update_synaptic_elements( double t ) override;
 
   /**
    * \fn void decay_synaptic_elements_vacant()
    * Delete a certain portion of the vacant synaptic elements which are not
    * in use
    */
-  void decay_synaptic_elements_vacant();
+  void decay_synaptic_elements_vacant() override;
 
   /**
    * \fn void connect_synaptic_element()
    * Change the number of connected synaptic elements by n
    */
-  void connect_synaptic_element( Name name, int n );
+  void connect_synaptic_element( Name name, int n ) override;
 
-  void get_status( DictionaryDatum& d ) const;
-  void set_status( const DictionaryDatum& d );
+  void get_status( DictionaryDatum& d ) const override;
+  void set_status( const DictionaryDatum& d ) override;
 
   /**
    * retrieve the current value of tau_Ca which defines the exponential decay

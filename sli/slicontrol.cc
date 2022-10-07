@@ -343,7 +343,7 @@ RepeatFunction::execute( SLIInterpreter* i ) const
     if ( proc )
     {
       IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-      if ( id == 0 )
+      if ( id == nullptr )
       {
         throw ArgumentType( 1 );
       }
@@ -1706,7 +1706,7 @@ PgetrusageFunction::getinfo_( int who, DictionaryDatum& dict ) const
 void
 TimeFunction::execute( SLIInterpreter* i ) const
 {
-  long secs = time( 0 );
+  long secs = time( nullptr );
   Token tmp( new IntegerDatum( secs ) );
   i->EStack.pop();
   i->OStack.push_move( tmp );

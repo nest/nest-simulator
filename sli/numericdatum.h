@@ -47,7 +47,7 @@ protected:
 
 private:
   Datum*
-  clone( void ) const
+  clone() const
   {
     return new NumericDatum< D, slt >( *this );
   }
@@ -100,7 +100,7 @@ public:
   static void
   operator delete( void* p, size_t size )
   {
-    if ( p == NULL )
+    if ( p == nullptr )
     {
       return;
     }

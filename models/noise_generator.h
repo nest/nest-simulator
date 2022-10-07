@@ -91,7 +91,7 @@ changes must be a multiple of the time step.
    if simulating on a single thread; multiple MPI processes with one thread each also work. In this case,
    the recording interval of the multimeter should be the equal to the simulation resolution to avoid confusing effects
    due to offset or drift between the recording times of the multimeter and the switching times of the
-   noise generator. In multi-threaded mode, recording is noise current is prohibited for technical reasons.
+   noise generator. In multi-threaded mode, recording of noise currents is prohibited for technical reasons.
 
 
 .. include:: ../models/stimulation_device.rst

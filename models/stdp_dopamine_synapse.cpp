@@ -55,7 +55,7 @@ void
 STDPDopaCommonProperties::get_status( DictionaryDatum& d ) const
 {
   CommonSynapseProperties::get_status( d );
-  if ( vt_ != nullptr )
+  if ( vt_ )
   {
     def< long >( d, names::vt, vt_->get_node_id() );
   }

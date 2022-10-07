@@ -175,7 +175,7 @@ public:
 inline long
 STDPDopaCommonProperties::get_vt_node_id() const
 {
-  if ( vt_ != nullptr )
+  if ( vt_ )
   {
     return vt_->get_node_id();
   }

@@ -155,7 +155,7 @@ getValue< std::string >( const Token& t )
 {
   // If it is a StringDatum, it can be casted to a string:
   std::string* s = dynamic_cast< std::string* >( t.datum() );
-  if ( s != nullptr )
+  if ( s )
   {
     return *s;
   }
@@ -164,7 +164,7 @@ getValue< std::string >( const Token& t )
     // If it is a NameDatum, LiteralDatum or SymbolDatum,
     // (or even a BoolDatum!) it can be casted to a Name:
     Name* n = dynamic_cast< Name* >( t.datum() );
-    if ( n != nullptr )
+    if ( n )
     {
       return n->toString();
     }
@@ -188,7 +188,7 @@ setValue< std::string >( const Token& t, std::string const& value )
 {
   // If it is a StringDatum, it can be casted to a string:
   std::string* s = dynamic_cast< std::string* >( t.datum() );
-  if ( s != nullptr )
+  if ( s )
   {
     *s = value;
   }
@@ -197,7 +197,7 @@ setValue< std::string >( const Token& t, std::string const& value )
     // If it is a BoolDatum, it -could- be set from a string, but
     // this operation shall not be allowed!
     BoolDatum* b = dynamic_cast< BoolDatum* >( t.datum() );
-    if ( b != nullptr )
+    if ( b )
     {
       // We have to create Datum objects to get the expected names...
       StringDatum const d1;
@@ -213,7 +213,7 @@ setValue< std::string >( const Token& t, std::string const& value )
       // If it is a NameDatum, LiteralDatum or SymbolDatum,
       // it can be casted to a Name:
       Name* n = dynamic_cast< Name* >( t.datum() );
-      if ( n != nullptr )
+      if ( n )
       {
         *n = Name( value );
       }

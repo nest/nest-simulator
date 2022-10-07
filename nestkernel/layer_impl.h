@@ -117,7 +117,7 @@ Layer< D >::connect( NodeCollectionPTR source_nc,
   // We need to extract the real pointer here to be able to cast to the
   // dimension-specific subclass.
   AbstractLayer* target_abs = target_layer.get();
-  assert( target_abs != nullptr );
+  assert( target_abs );
 
   try
   {

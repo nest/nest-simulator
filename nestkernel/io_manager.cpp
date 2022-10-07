@@ -83,7 +83,7 @@ IOManager::set_data_path_prefix_( const DictionaryDatum& dict )
   if ( updateValue< std::string >( dict, names::data_path, tmp ) )
   {
     DIR* testdir = opendir( tmp.c_str() );
-    if ( testdir != nullptr )
+    if ( testdir )
     {
       data_path_ = tmp;    // absolute path & directory exists
       closedir( testdir ); // we only opened it to check it exists

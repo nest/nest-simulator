@@ -680,7 +680,7 @@ DataLoggingRequest::record_from() const
 {
   // During simulation, events are created without recordables
   // information. On these, record_from() must not be called.
-  assert( record_from_ != nullptr );
+  assert( record_from_ );
 
   return *record_from_;
 }
@@ -1278,13 +1278,13 @@ DiffusionConnectionEvent::get_diffusion_factor() const
 inline bool
 Event::sender_is_valid() const
 {
-  return sender_ != nullptr;
+  return sender_;
 }
 
 inline bool
 Event::receiver_is_valid() const
 {
-  return receiver_ != nullptr;
+  return receiver_;
 }
 
 inline bool

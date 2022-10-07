@@ -292,7 +292,7 @@ OfsopenFunction::execute( SLIInterpreter* i ) const
     return;
   }
 
-  if ( out != nullptr )
+  if ( out )
   {
     i->OStack.pop( 2 );
     if ( out->good() )
@@ -416,10 +416,10 @@ StrSStreamFunction::execute( SLIInterpreter* i ) const
 #else
   std::ostrstream* out = dynamic_cast< std::ostrstream* >( ostreamdatum->get() );
 #endif
-  assert( out != nullptr );
+  assert( out );
   ostreamdatum->unlock();
 
-  if ( out != nullptr )
+  if ( out )
   {
     if ( out->good() )
     {
@@ -781,7 +781,7 @@ CloseistreamFunction::execute( SLIInterpreter* i ) const
     // the datum conatains &std::cin !!
     ifdstream* ifs = dynamic_cast< ifdstream* >( istreamdatum->get() );
     istreamdatum->unlock();
-    if ( ifs != nullptr )
+    if ( ifs )
     {
       ifs->close();
       // iostreamhandle->destroy();
@@ -829,7 +829,7 @@ CloseostreamFunction::execute( SLIInterpreter* i ) const
     ofdstream* ofs = dynamic_cast< ofdstream* >( ostreamdatum->get() );
     ostreamdatum->unlock();
 
-    if ( ofs != nullptr )
+    if ( ofs )
     {
       ofs->close();
       i->OStack.pop();
@@ -1720,7 +1720,7 @@ Cvx_fFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   IstreamDatum* sd = dynamic_cast< IstreamDatum* >( i->OStack.top().datum() );
-  if ( sd != nullptr )
+  if ( sd )
   {
     Token handle_token( new XIstreamDatum( *sd ) );
     i->OStack.pop();

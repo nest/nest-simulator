@@ -60,7 +60,7 @@ ModelManager::~ModelManager()
   clear_connection_models_();
   for ( auto&& connection_model : builtin_connection_models_ )
   {
-    if ( connection_model != nullptr )
+    if ( connection_model )
     {
       delete connection_model;
     }
@@ -69,7 +69,7 @@ ModelManager::~ModelManager()
   clear_node_models_();
   for ( auto&& node_model : builtin_node_models_ )
   {
-    if ( node_model != nullptr )
+    if ( node_model )
     {
       delete node_model;
     }
@@ -120,7 +120,7 @@ ModelManager::initialize()
   // (re-)append all synapse prototypes
   for ( auto&& connection_model : builtin_connection_models_ )
   {
-    if ( connection_model != nullptr )
+    if ( connection_model )
     {
       std::string name = connection_model->get_name();
       for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
@@ -377,7 +377,7 @@ ModelManager::get_node_model_id( const Name name ) const
   const Name model_name( name );
   for ( int i = 0; i < ( int ) node_models_.size(); ++i )
   {
-    assert( node_models_[ i ] != nullptr );
+    assert( node_models_[ i ] );
     if ( model_name == node_models_[ i ]->get_name() )
     {
       return i;
@@ -450,7 +450,7 @@ ModelManager::clear_node_models_()
   // init()
   for ( auto&& node_model : node_models_ )
   {
-    if ( node_model != nullptr )
+    if ( node_model )
     {
       delete node_model;
     }
@@ -474,7 +474,7 @@ ModelManager::clear_connection_models_()
   {
     for ( auto&& connection_model : connection_models_[ t ] )
     {
-      if ( connection_model != nullptr )
+      if ( connection_model )
       {
         delete connection_model;
       }
@@ -495,7 +495,7 @@ ModelManager::calibrate( const TimeConverter& tc )
   {
     for ( auto&& connection_model : connection_models_[ t ] )
     {
-      if ( connection_model != nullptr )
+      if ( connection_model )
       {
         connection_model->calibrate( tc );
       }

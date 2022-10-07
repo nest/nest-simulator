@@ -63,7 +63,7 @@ public:
   get_status( DictionaryDatum& d ) const
   {
     // Do nothing if called on synapse prototype
-    if ( target_ != nullptr )
+    if ( target_ )
     {
       def< long >( d, names::rport, rport_ );
       def< long >( d, names::target, target_->get_node_id() );

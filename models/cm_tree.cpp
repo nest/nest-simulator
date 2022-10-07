@@ -115,7 +115,7 @@ nest::Compartment::construct_matrix_element( const long lag )
   // matrix diagonal element
   gg = gg0;
 
-  if ( parent != nullptr )
+  if ( parent )
   {
     gg += gc__div__2;
     // matrix off diagonal element
@@ -130,7 +130,7 @@ nest::Compartment::construct_matrix_element( const long lag )
   // right hand side
   ff = ( ca__div__dt - gl__div__2 ) * v_comp + gl__times__el;
 
-  if ( parent != nullptr )
+  if ( parent )
   {
     ff -= gc__div__2 * ( v_comp - parent->v_comp );
   }
@@ -436,7 +436,7 @@ nest::CompTree::solve_matrix_downsweep( Compartment* compartment, std::vector< C
   std::pair< double, double > output = compartment->io();
 
   // move on to the parent layer
-  if ( compartment->parent != nullptr )
+  if ( compartment->parent )
   {
     Compartment* parent = compartment->parent;
     // gather input from child layers
@@ -488,7 +488,7 @@ nest::CompTree::print_tree() const
     std::cout << "C_m = " << compartment->ca << " nF, ";
     std::cout << "g_L = " << compartment->gl << " uS, ";
     std::cout << "e_L = " << compartment->el << " mV, ";
-    if ( compartment->parent != nullptr )
+    if ( compartment->parent )
     {
       std::cout << "Parent " << compartment->parent->comp_index << " --> ";
       std::cout << "g_c = " << compartment->gc << " uS, ";

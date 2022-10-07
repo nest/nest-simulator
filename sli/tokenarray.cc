@@ -43,7 +43,7 @@ TokenArray::operator=( const TokenArray& a )
 TokenArray::TokenArray( const std::vector< long >& a )
   : data( new TokenArrayObj( a.size(), Token(), 0 ) )
 {
-  assert( data != nullptr );
+  assert( data );
   for ( size_t i = 0; i < a.size(); ++i )
   {
     Token idt( new IntegerDatum( a[ i ] ) );
@@ -54,7 +54,7 @@ TokenArray::TokenArray( const std::vector< long >& a )
 TokenArray::TokenArray( const std::vector< size_t >& a )
   : data( new TokenArrayObj( a.size(), Token(), 0 ) )
 {
-  assert( data != nullptr );
+  assert( data );
   for ( size_t i = 0; i < a.size(); ++i )
   {
     Token idt( new IntegerDatum( a[ i ] ) );
@@ -65,7 +65,7 @@ TokenArray::TokenArray( const std::vector< size_t >& a )
 TokenArray::TokenArray( const std::vector< double >& a )
   : data( new TokenArrayObj( a.size(), Token(), 0 ) )
 {
-  assert( data != nullptr );
+  assert( data );
   for ( size_t i = 0; i < a.size(); ++i )
   {
     Token ddt( new DoubleDatum( a[ i ] ) );

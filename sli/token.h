@@ -312,7 +312,7 @@ public:
   void
   assign_by_pointer( Datum* rhs )
   {
-    assert( rhs != nullptr );
+    assert( rhs );
     rhs->addReference();
     if ( p )
     {
@@ -341,7 +341,7 @@ public:
   bool
   contains( const Datum& d ) const
   {
-    return ( p != nullptr ) and p->equals( &d );
+    return ( p ) and p->equals( &d );
   }
 
   bool

@@ -74,12 +74,12 @@ TypeTrie::TypeNode::toTokenArray( TokenArray& a ) const
   }
   else
   {
-    assert( next != nullptr );
+    assert( next );
     a.push_back( LiteralDatum( type ) );
     TokenArray a_next;
     next->toTokenArray( a_next );
     a.push_back( ArrayDatum( a_next ) );
-    if ( alt != nullptr )
+    if ( alt )
     {
       TokenArray a_alt;
       alt->toTokenArray( a_alt );
@@ -103,11 +103,11 @@ TypeTrie::TypeNode::info( std::ostream& out, std::vector< TypeNode const* >& tl 
   }
   else
   {
-    assert( next != nullptr );
+    assert( next );
     tl.push_back( this );
     next->info( out, tl );
     tl.pop_back();
-    if ( alt != nullptr )
+    if ( alt )
     {
       alt->info( out, tl );
     }
@@ -130,15 +130,15 @@ TypeTrie::newnode( const TokenArray& ta ) const
     // first object in the array must be a literal, indicating the type
     // the second and third object must be an array.
     LiteralDatum* typed = dynamic_cast< LiteralDatum* >( ta[ 0 ].datum() );
-    assert( typed != nullptr );
+    assert( typed );
     ArrayDatum* nextd = dynamic_cast< ArrayDatum* >( ta[ 1 ].datum() );
-    assert( nextd != nullptr );
+    assert( nextd );
     n = new TypeNode( *typed );
     n->next = newnode( *nextd );
     if ( ta.size() == 3 )
     {
       ArrayDatum* altd = dynamic_cast< ArrayDatum* >( ta[ 2 ].datum() );
-      assert( altd != nullptr );
+      assert( altd );
       n->alt = newnode( *altd );
     }
   }
@@ -235,7 +235,7 @@ TypeTrie::insert_move( const TypeArray& a, Token& f )
   TypeNode* pos = root;
   const Name empty;
 
-  assert( root != nullptr );
+  assert( root );
 
   // Functions with no parameters are possible, but useless in trie
   // structures, so it is best to forbid them!
@@ -280,7 +280,7 @@ void
 TypeTrie::toTokenArray( TokenArray& a ) const
 {
   a.clear();
-  if ( root != nullptr )
+  if ( root )
   {
     root->toTokenArray( a );
   }
@@ -291,7 +291,7 @@ TypeTrie::info( std::ostream& out ) const
 {
   std::vector< TypeNode const* > tl;
   tl.reserve( 5 );
-  if ( root != nullptr )
+  if ( root )
   {
     root->info( out, tl );
   }

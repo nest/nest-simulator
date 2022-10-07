@@ -117,8 +117,8 @@ RegexpModule::RegcompFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
 
-  assert( sd != nullptr );
-  assert( id != nullptr );
+  assert( sd );
+  assert( id );
 
 
   Regex* MyRegex = new Regex;
@@ -147,8 +147,8 @@ RegexpModule::RegerrorFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
   RegexDatum* rd = dynamic_cast< RegexDatum* >( i->OStack.pick( 1 ).datum() );
 
-  assert( rd != nullptr );
-  assert( id != nullptr );
+  assert( rd );
+  assert( id );
 
   char* error_buffer = new char[ 256 ];
   regerror( id->get(), rd->get()->get(), error_buffer, 256 );
@@ -178,16 +178,16 @@ RegexpModule::RegexecFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* sized = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   IntegerDatum* eflagsd = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
-  assert( rd != nullptr );
-  assert( sd != nullptr );
-  assert( sized != nullptr );
-  assert( eflagsd != nullptr );
+  assert( rd );
+  assert( sd );
+  assert( sized );
+  assert( eflagsd );
 
   int size = sized->get();
   regmatch_t* pm = new regmatch_t[ size ];
 
   Regex* r = rd->get();
-  assert( r != nullptr );
+  assert( r );
   rd->unlock();
 
   int e = regexec( r->get(), sd->c_str(), size, pm, eflagsd->get() );

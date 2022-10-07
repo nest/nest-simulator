@@ -209,7 +209,7 @@ NestModule::create_mask( const Token& t )
       else
       {
 
-        if ( mask != nullptr )
+        if ( mask )
         { // mask has already been defined
           throw BadProperty( "Mask definition dictionary contains extraneous items." );
         }

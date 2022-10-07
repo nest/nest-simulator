@@ -205,7 +205,7 @@ Cva_tFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop();
 
   TrieDatum* trie = dynamic_cast< TrieDatum* >( trietoken.datum() );
-  assert( trie != nullptr );
+  assert( trie );
 
   Name triename( trie->getname() );
   i->OStack.push( LiteralDatum( triename ) );
@@ -222,13 +222,13 @@ TrieInfoFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 
   OstreamDatum* osd = dynamic_cast< OstreamDatum* >( i->OStack.pick( 1 ).datum() );
-  assert( osd != nullptr );
+  assert( osd );
 
   Token trietoken;
   trietoken.move( i->OStack.top() );
 
   TrieDatum* trie = dynamic_cast< TrieDatum* >( trietoken.datum() );
-  assert( trie != nullptr );
+  assert( trie );
 
   trie->get().info( **osd );
   i->OStack.pop( 2 );
@@ -305,12 +305,12 @@ Cvt_aFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.size() > 1 );
 
   LiteralDatum* name = dynamic_cast< LiteralDatum* >( i->OStack.pick( 1 ).datum() );
-  assert( name != nullptr );
+  assert( name );
   ArrayDatum* arr = dynamic_cast< ArrayDatum* >( i->OStack.pick( 0 ).datum() );
-  assert( arr != nullptr );
+  assert( arr );
 
   TrieDatum* trie = new TrieDatum( *name, *arr );
-  assert( trie != nullptr );
+  assert( trie );
   Token tmp( trie );
   i->OStack.pop();
   i->OStack.push_move( tmp );

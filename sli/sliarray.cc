@@ -67,11 +67,11 @@ SLIArrayModule::RangeFunction::execute( SLIInterpreter* i ) const
 
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( i->OStack.pick( 0 ).datum() );
 
-  assert( ad != nullptr );
+  assert( ad );
   if ( ad->size() == 1 ) // Construct an array of elements 1 ... N
   {
     IntegerDatum* nd = dynamic_cast< IntegerDatum* >( ad->get( 0 ).datum() );
-    if ( nd != nullptr )
+    if ( nd )
     {
       long n = nd->get();
       ad->erase();
@@ -106,7 +106,7 @@ SLIArrayModule::RangeFunction::execute( SLIInterpreter* i ) const
   {
     IntegerDatum* n1d = dynamic_cast< IntegerDatum* >( ad->get( 0 ).datum() );
     IntegerDatum* n2d = dynamic_cast< IntegerDatum* >( ad->get( 1 ).datum() );
-    if ( ( n1d != nullptr ) && ( n2d != nullptr ) )
+    if ( ( n1d ) && ( n2d ) )
     {
       long n = 1 + n2d->get() - n1d->get();
 
@@ -130,7 +130,7 @@ SLIArrayModule::RangeFunction::execute( SLIInterpreter* i ) const
     {
       DoubleDatum* n1d = dynamic_cast< DoubleDatum* >( ad->get( 0 ).datum() );
       DoubleDatum* n2d = dynamic_cast< DoubleDatum* >( ad->get( 1 ).datum() );
-      if ( ( n1d != nullptr ) && ( n2d != nullptr ) )
+      if ( ( n1d ) && ( n2d ) )
       {
         long n = 1 + static_cast< long >( n2d->get() - n1d->get() );
 
@@ -161,7 +161,7 @@ SLIArrayModule::RangeFunction::execute( SLIInterpreter* i ) const
     IntegerDatum* n1d = dynamic_cast< IntegerDatum* >( ad->get( 0 ).datum() );
     IntegerDatum* n2d = dynamic_cast< IntegerDatum* >( ad->get( 1 ).datum() );
     IntegerDatum* n3d = dynamic_cast< IntegerDatum* >( ad->get( 2 ).datum() );
-    if ( ( n1d != nullptr ) && ( n2d != nullptr ) && ( n3d != nullptr ) )
+    if ( ( n1d ) && ( n2d ) && ( n3d ) )
     {
       long di = n3d->get();
       long start = n1d->get();
@@ -192,7 +192,7 @@ SLIArrayModule::RangeFunction::execute( SLIInterpreter* i ) const
       DoubleDatum* n1d = dynamic_cast< DoubleDatum* >( ad->get( 0 ).datum() );
       DoubleDatum* n2d = dynamic_cast< DoubleDatum* >( ad->get( 1 ).datum() );
       DoubleDatum* n3d = dynamic_cast< DoubleDatum* >( ad->get( 2 ).datum() );
-      if ( ( n1d != nullptr ) && ( n2d != nullptr ) && ( n3d != nullptr ) )
+      if ( ( n1d ) && ( n2d ) && ( n3d ) )
       {
         double di = n3d->get();
         double start = n1d->get();
@@ -240,11 +240,11 @@ SLIArrayModule::ArangeFunction::execute( SLIInterpreter* i ) const
 
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( i->OStack.pick( 0 ).datum() );
 
-  assert( ad != nullptr );
+  assert( ad );
   if ( ad->size() == 1 ) // Construct an array of elements 1 ... N
   {
     IntegerDatum* nd = dynamic_cast< IntegerDatum* >( ad->get( 0 ).datum() );
-    if ( nd != nullptr )
+    if ( nd )
     {
       long n = nd->get();
       if ( n < 0 )
@@ -286,7 +286,7 @@ SLIArrayModule::ArangeFunction::execute( SLIInterpreter* i ) const
   {
     IntegerDatum* n1d = dynamic_cast< IntegerDatum* >( ad->get( 0 ).datum() );
     IntegerDatum* n2d = dynamic_cast< IntegerDatum* >( ad->get( 1 ).datum() );
-    if ( ( n1d != nullptr ) && ( n2d != nullptr ) )
+    if ( ( n1d ) && ( n2d ) )
     {
       const long start = n1d->get();
       const long stop = n2d->get();
@@ -310,7 +310,7 @@ SLIArrayModule::ArangeFunction::execute( SLIInterpreter* i ) const
     {
       DoubleDatum* n1d = dynamic_cast< DoubleDatum* >( ad->get( 0 ).datum() );
       DoubleDatum* n2d = dynamic_cast< DoubleDatum* >( ad->get( 1 ).datum() );
-      if ( ( n1d != nullptr ) && ( n2d != nullptr ) )
+      if ( ( n1d ) && ( n2d ) )
       {
         double start = n1d->get();
         double stop = n2d->get();
@@ -338,7 +338,7 @@ SLIArrayModule::ArangeFunction::execute( SLIInterpreter* i ) const
     IntegerDatum* n1d = dynamic_cast< IntegerDatum* >( ad->get( 0 ).datum() );
     IntegerDatum* n2d = dynamic_cast< IntegerDatum* >( ad->get( 1 ).datum() );
     IntegerDatum* n3d = dynamic_cast< IntegerDatum* >( ad->get( 2 ).datum() );
-    if ( ( n1d != nullptr ) && ( n2d != nullptr ) && ( n3d != nullptr ) )
+    if ( ( n1d ) && ( n2d ) && ( n3d ) )
     {
       long di = n3d->get();
       long start = n1d->get();
@@ -372,7 +372,7 @@ SLIArrayModule::ArangeFunction::execute( SLIInterpreter* i ) const
       DoubleDatum* n1d = dynamic_cast< DoubleDatum* >( ad->get( 0 ).datum() );
       DoubleDatum* n2d = dynamic_cast< DoubleDatum* >( ad->get( 1 ).datum() );
       DoubleDatum* n3d = dynamic_cast< DoubleDatum* >( ad->get( 2 ).datum() );
-      if ( ( n1d != nullptr ) && ( n2d != nullptr ) && ( n3d != nullptr ) )
+      if ( ( n1d ) && ( n2d ) && ( n3d ) )
       {
         double di = n3d->get();
         double start = n1d->get();
@@ -421,7 +421,7 @@ SLIArrayModule::ReverseFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( i->OStack.top().datum() );
-  assert( ad != nullptr );
+  assert( ad );
   ad->reverse();
   i->EStack.pop();
 }
@@ -447,7 +447,7 @@ SLIArrayModule::FlattenFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 0 );
 
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( i->OStack.top().datum() );
-  assert( ad != nullptr );
+  assert( ad );
   ArrayDatum* ta = new ArrayDatum();
   Token at( ta );
 
@@ -457,7 +457,7 @@ SLIArrayModule::FlattenFunction::execute( SLIInterpreter* i ) const
   for ( Token const* t = ad->begin(); t != ad->end(); ++t )
   {
     ArrayDatum* ad1 = dynamic_cast< ArrayDatum* >( t->datum() );
-    if ( ad1 != nullptr )
+    if ( ad1 )
     {
       size += ad1->size();
     }
@@ -480,7 +480,7 @@ SLIArrayModule::FlattenFunction::execute( SLIInterpreter* i ) const
     for ( Token* t = ad->begin(); t != ad->end(); ++t )
     {
       ArrayDatum* ad1 = dynamic_cast< ArrayDatum* >( t->datum() );
-      if ( ad1 != nullptr )
+      if ( ad1 )
       {
         if ( ad1->references() > 1 )
         {
@@ -508,7 +508,7 @@ SLIArrayModule::FlattenFunction::execute( SLIInterpreter* i ) const
     for ( Token const* t = ad->begin(); t != ad->end(); ++t )
     {
       ArrayDatum* ad1 = dynamic_cast< ArrayDatum* >( t->datum() );
-      if ( ad1 != nullptr )
+      if ( ad1 )
       {
         for ( Token const* t1 = ad1->begin(); t1 != ad1->end(); ++t1 )
         {
@@ -648,10 +648,10 @@ SLIArrayModule::TransposeFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 0 );
 
   ArrayDatum* sd = dynamic_cast< ArrayDatum* >( i->OStack.top().datum() );
-  assert( sd != nullptr );
+  assert( sd );
 
   ArrayDatum* hd = dynamic_cast< ArrayDatum* >( sd->begin()->datum() );
-  assert( hd != nullptr );
+  assert( hd );
 
   // size of source first level
   size_t m = sd->size();
@@ -664,7 +664,7 @@ SLIArrayModule::TransposeFunction::execute( SLIInterpreter* i ) const
 
 
   ArrayDatum* td = new ArrayDatum();
-  assert( td != nullptr );
+  assert( td );
 
   Token tt( td );
 
@@ -675,7 +675,7 @@ SLIArrayModule::TransposeFunction::execute( SLIInterpreter* i ) const
   for ( size_t j = 0; j < n; j++ )
   {
     hd = new ArrayDatum();
-    assert( td != nullptr );
+    assert( td );
 
     hd->reserve( m );
 
@@ -687,7 +687,7 @@ SLIArrayModule::TransposeFunction::execute( SLIInterpreter* i ) const
     hd = dynamic_cast< ArrayDatum* >( sr->datum() );
 
     // raiseerror instead
-    assert( hd != nullptr );
+    assert( hd );
 
     Token* sc;
     Token* tr;
@@ -698,7 +698,7 @@ SLIArrayModule::TransposeFunction::execute( SLIInterpreter* i ) const
       ArrayDatum* trd = dynamic_cast< ArrayDatum* >( tr->datum() );
 
       // raiseerror instead
-      assert( trd != nullptr );
+      assert( trd );
 
       trd->push_back( *sc );
     }
@@ -719,11 +719,11 @@ SLIArrayModule::PartitionFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 2 );
 
   IntegerDatum* dd = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
-  assert( dd != nullptr );
+  assert( dd );
   IntegerDatum* nd = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  assert( nd != nullptr );
+  assert( nd );
   ArrayDatum* source = dynamic_cast< ArrayDatum* >( i->OStack.pick( 2 ).datum() );
-  assert( source != nullptr );
+  assert( source );
   ArrayDatum* target = new ArrayDatum;
 
   long n = nd->get();
@@ -805,7 +805,7 @@ SLIArrayModule::ArrayloadFunction::execute( SLIInterpreter* i ) const
   at.move( i->OStack.top() );
   i->OStack.pop();
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( at.datum() );
-  assert( ad != nullptr );
+  assert( ad );
   i->EStack.pop();
   int arraysize = ad->size();
   i->OStack.reserve_token( arraysize );
@@ -861,7 +861,7 @@ SLIArrayModule::ArraystoreFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
-  assert( id != nullptr );
+  assert( id );
 
   long n = id->get();
   if ( n >= 0 )
@@ -938,13 +938,13 @@ void
 SLIArrayModule::IMapFunction::backtrace( SLIInterpreter* i, int p ) const
 {
   IntegerDatum* id = static_cast< IntegerDatum* >( i->EStack.pick( p + 3 ).datum() );
-  assert( id != nullptr );
+  assert( id );
 
   IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 2 ).datum() );
-  assert( count != nullptr );
+  assert( count );
 
   ProcedureDatum const* pd = static_cast< ProcedureDatum* >( i->EStack.pick( p + 1 ).datum() );
-  assert( pd != nullptr );
+  assert( pd );
 
   std::cerr << "During Map at iteration " << count->get() << "." << std::endl;
 
@@ -1036,7 +1036,7 @@ SLIArrayModule::IMapFunction::execute( SLIInterpreter* i ) const
         char cmd = i->debug_commandline( i->EStack.top() );
         if ( cmd == 'l' ) // List the procedure
         {
-          if ( proc != nullptr )
+          if ( proc )
           {
             proc->list( std::cerr, "   ", pos );
             std::cerr << std::endl;
@@ -1058,13 +1058,13 @@ void
 SLIArrayModule::IMap_ivFunction::backtrace( SLIInterpreter* i, int p ) const
 {
   IntegerDatum* id = static_cast< IntegerDatum* >( i->EStack.pick( p + 3 ).datum() );
-  assert( id != nullptr );
+  assert( id );
 
   IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 2 ).datum() );
-  assert( count != nullptr );
+  assert( count );
 
   ProcedureDatum const* pd = static_cast< ProcedureDatum* >( i->EStack.pick( p + 1 ).datum() );
-  assert( pd != nullptr );
+  assert( pd );
 
   std::cerr << "During Map at iteration " << count->get() << "." << std::endl;
 
@@ -1174,7 +1174,7 @@ SLIArrayModule::IMap_ivFunction::execute( SLIInterpreter* i ) const
         char cmd = i->debug_commandline( i->EStack.top() );
         if ( cmd == 'l' ) // List the procedure
         {
-          if ( proc != nullptr )
+          if ( proc )
           {
             proc->list( std::cerr, "   ", pos );
             std::cerr << std::endl;
@@ -1197,13 +1197,13 @@ void
 SLIArrayModule::IMap_dvFunction::backtrace( SLIInterpreter* i, int p ) const
 {
   IntegerDatum* id = static_cast< IntegerDatum* >( i->EStack.pick( p + 3 ).datum() );
-  assert( id != nullptr );
+  assert( id );
 
   IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 2 ).datum() );
-  assert( count != nullptr );
+  assert( count );
 
   ProcedureDatum const* pd = static_cast< ProcedureDatum* >( i->EStack.pick( p + 1 ).datum() );
-  assert( pd != nullptr );
+  assert( pd );
 
   std::cerr << "During Map at iteration " << count->get() << "." << std::endl;
 
@@ -1309,7 +1309,7 @@ SLIArrayModule::IMap_dvFunction::execute( SLIInterpreter* i ) const
         char cmd = i->debug_commandline( i->EStack.top() );
         if ( cmd == 'l' ) // List the procedure
         {
-          if ( proc != nullptr )
+          if ( proc )
           {
             proc->list( std::cerr, "   ", pos );
             std::cerr << std::endl;
@@ -1388,7 +1388,7 @@ SLIArrayModule::MapFunction::execute( SLIInterpreter* i ) const
 {
   i->EStack.pop();
   ProcedureDatum* proc = dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
-  assert( proc != nullptr );
+  assert( proc );
 
   if ( proc->size() == 0 )
   {
@@ -1426,7 +1426,7 @@ SLIArrayModule::ValidFunction::execute( SLIInterpreter* i ) const
 {
   assert( i->OStack.load() > 0 );
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( i->OStack.top().datum() );
-  assert( ad != nullptr );
+  assert( ad );
   i->OStack.push( ad->valid() );
 
   i->EStack.pop();
@@ -1436,13 +1436,13 @@ void
 SLIArrayModule::IMapIndexedFunction::backtrace( SLIInterpreter* i, int p ) const
 {
   IntegerDatum* id = static_cast< IntegerDatum* >( i->EStack.pick( p + 3 ).datum() );
-  assert( id != nullptr );
+  assert( id );
 
   IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 2 ).datum() );
-  assert( count != nullptr );
+  assert( count );
 
   ProcedureDatum const* pd = static_cast< ProcedureDatum* >( i->EStack.pick( p + 1 ).datum() );
-  assert( pd != nullptr );
+  assert( pd );
 
 
   std::cerr << "During MapIndexed at iteration " << count->get() << "." << std::endl;
@@ -1538,7 +1538,7 @@ SLIArrayModule::IMapIndexedFunction::execute( SLIInterpreter* i ) const
         char cmd = i->debug_commandline( i->EStack.top() );
         if ( cmd == 'l' ) // List the procedure
         {
-          if ( proc != nullptr )
+          if ( proc )
           {
             proc->list( std::cerr, "   ", pos );
             std::cerr << std::endl;
@@ -1563,7 +1563,7 @@ SLIArrayModule::MapIndexedFunction::execute( SLIInterpreter* i ) const
 {
   i->EStack.pop();
   ProcedureDatum* proc = dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
-  assert( proc != nullptr );
+  assert( proc );
 
   if ( proc->size() == 0 )
   {
@@ -1588,13 +1588,13 @@ void
 SLIArrayModule::IMapThreadFunction::backtrace( SLIInterpreter* i, int p ) const
 {
   IntegerDatum* id = static_cast< IntegerDatum* >( i->EStack.pick( p + 3 ).datum() );
-  assert( id != nullptr );
+  assert( id );
 
   IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 2 ).datum() );
-  assert( count != nullptr );
+  assert( count );
 
   ProcedureDatum const* pd = static_cast< ProcedureDatum* >( i->EStack.pick( p + 1 ).datum() );
-  assert( pd != nullptr );
+  assert( pd );
 
 
   std::cerr << "During MapThread at iteration " << count->get() << "." << std::endl;
@@ -1710,7 +1710,7 @@ SLIArrayModule::IMapThreadFunction::execute( SLIInterpreter* i ) const
         char cmd = i->debug_commandline( i->EStack.top() );
         if ( cmd == 'l' ) // List the procedure
         {
-          if ( procd != nullptr )
+          if ( procd )
           {
             procd->list( std::cerr, "   ", proccount );
             std::cerr << std::endl;
@@ -1756,7 +1756,7 @@ SLIArrayModule::MapThreadFunction::execute( SLIInterpreter* i ) const
 {
   assert( i->OStack.load() >= 2 );
   ProcedureDatum* proc = dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
-  assert( proc != nullptr );
+  assert( proc );
 
   if ( proc->size() == 0 )
   {
@@ -1767,7 +1767,7 @@ SLIArrayModule::MapThreadFunction::execute( SLIInterpreter* i ) const
   }
 
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( i->OStack.pick( 1 ).datum() );
-  assert( ad != nullptr );
+  assert( ad );
 
   if ( ad->size() > 0 )
   {
@@ -1853,7 +1853,7 @@ SLIArrayModule::Put_a_a_tFunction::execute( SLIInterpreter* i ) const
 
   for ( Token* t = pos->begin(); t != pos->end(); ++t )
   {
-    assert( t != nullptr );
+    assert( t );
     IntegerDatum* idx = dynamic_cast< IntegerDatum* >( t->datum() );
     if ( idx == nullptr )
     {
@@ -4006,7 +4006,7 @@ void
 SLIArrayModule::Iforall_ivFunction::backtrace( SLIInterpreter* i, int p ) const
 {
   IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 3 ).datum() );
-  assert( count != nullptr );
+  assert( count );
 
   std::cerr << "During forall (IntVector) at iteration " << count->get() << "." << std::endl;
 }
@@ -4082,7 +4082,7 @@ void
 SLIArrayModule::Iforall_dvFunction::backtrace( SLIInterpreter* i, int p ) const
 {
   IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 3 ).datum() );
-  assert( count != nullptr );
+  assert( count );
 
   std::cerr << "During forall (DoubleVector) at iteration " << count->get() << "." << std::endl;
 }

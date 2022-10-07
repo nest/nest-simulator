@@ -68,7 +68,7 @@ nest::LoggingManager::get_status( DictionaryDatum& dict )
 void
 nest::LoggingManager::register_logging_client( const deliver_logging_event_ptr callback )
 {
-  assert( callback != nullptr );
+  assert( callback );
 
   client_callbacks_.push_back( callback );
 }

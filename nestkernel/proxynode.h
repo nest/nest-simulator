@@ -111,8 +111,8 @@ public:
 
   bool is_proxy() const override;
 
-  static thread
-  get_thread()
+  thread
+  get_thread() const
   {
     assert( false );
   }

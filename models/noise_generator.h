@@ -115,7 +115,6 @@ phase
     The phase of sine modulation (0–360 deg)
 
 
-
 Setting parameters from a stimulation backend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

@@ -76,16 +76,16 @@ void
 FilesystemModule::FileNamesFunction::execute( SLIInterpreter* i ) const
 {
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
-  assert( sd != nullptr );
+  assert( sd );
 
   DIR* TheDirectory = opendir( sd->c_str() );
-  if ( TheDirectory != nullptr )
+  if ( TheDirectory )
   {
     ArrayDatum* a = new ArrayDatum();
     i->EStack.pop();
     i->OStack.pop();
     dirent* TheEntry;
-    while ( ( TheEntry = readdir( TheDirectory ) ) != nullptr )
+    while ( ( TheEntry = readdir( TheDirectory ) ) )
     {
       Token string_token( new StringDatum( TheEntry->d_name ) );
       a->push_back_move( string_token );
@@ -104,7 +104,7 @@ FilesystemModule::SetDirectoryFunction::execute( SLIInterpreter* i ) const
 // string -> boolean
 {
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
-  assert( sd != nullptr );
+  assert( sd );
   int s = chdir( sd->c_str() );
   i->OStack.pop();
   if ( not s )
@@ -139,7 +139,7 @@ FilesystemModule::DirectoryFunction::execute( SLIInterpreter* i ) const
 
   int size = SIZE;
   char* path_buffer = new char[ size ];
-  while ( getcwd( path_buffer, size - 1 ) == nullptr )
+  while ( not getcwd( path_buffer, size - 1 ) )
   { // try again with a bigger buffer!
     if ( errno != ERANGE )
     {
@@ -148,7 +148,7 @@ FilesystemModule::DirectoryFunction::execute( SLIInterpreter* i ) const
     delete[] path_buffer;
     size += SIZE;
     path_buffer = new char[ size ];
-    assert( path_buffer != nullptr );
+    assert( path_buffer );
   }
   Token sd( new StringDatum( path_buffer ) );
   delete[]( path_buffer );
@@ -162,8 +162,8 @@ FilesystemModule::MoveFileFunction::execute( SLIInterpreter* i ) const
 {
   StringDatum* src = dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
   StringDatum* dst = dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
-  assert( src != nullptr );
-  assert( dst != nullptr );
+  assert( src );
+  assert( dst );
   int s = link( src->c_str(), dst->c_str() );
   if ( not s )
   {
@@ -192,8 +192,8 @@ FilesystemModule::CopyFileFunction::execute( SLIInterpreter* i ) const
 {
   StringDatum* src = dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
   StringDatum* dst = dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
-  assert( src != nullptr );
-  assert( dst != nullptr );
+  assert( src );
+  assert( dst );
 
   std::ofstream deststream( dst->c_str() );
   if ( not deststream )
@@ -232,7 +232,7 @@ FilesystemModule::DeleteFileFunction::execute( SLIInterpreter* i ) const
 // string -> boolean
 {
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
-  assert( sd != nullptr );
+  assert( sd );
   int s = unlink( sd->c_str() );
   i->OStack.pop();
   if ( not s )
@@ -251,7 +251,7 @@ FilesystemModule::MakeDirectoryFunction::execute( SLIInterpreter* i ) const
 // string -> Boolean
 {
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
-  assert( sd != nullptr );
+  assert( sd );
   int s = mkdir( sd->c_str(), S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP );
   i->OStack.pop();
   if ( not s )
@@ -270,7 +270,7 @@ FilesystemModule::RemoveDirectoryFunction::execute( SLIInterpreter* i ) const
 // string -> Boolean
 {
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
-  assert( sd != nullptr );
+  assert( sd );
   int s = rmdir( sd->c_str() );
   i->OStack.pop();
   if ( not s )

@@ -456,7 +456,7 @@ NodeCollectionPrimitive::slice( size_t start, size_t end, size_t step ) const
   }
 
   NodeCollectionPTR sliced_nc;
-  if ( step == 1 and metadata_ == nullptr )
+  if ( step == 1 and not metadata_ )
   {
     // Create primitive NodeCollection passing node IDs.
     // Subtract 1 because "end" is one past last element to take while constructor expects ID of last node.

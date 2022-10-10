@@ -325,7 +325,7 @@ ModelManager::get_num_connection_models() const
 inline void
 ModelManager::assert_valid_syn_id( synindex syn_id, thread t ) const
 {
-  if ( syn_id >= connection_models_[ t ].size() or connection_models_[ t ][ syn_id ] == nullptr )
+  if ( syn_id >= connection_models_[ t ].size() or not connection_models_[ t ][ syn_id ] )
   {
     throw UnknownSynapseType( syn_id );
   }

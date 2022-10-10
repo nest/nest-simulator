@@ -226,7 +226,7 @@ public:
   void
   open( const char* s, std::ios_base::openmode mode = std::ios_base::out )
   {
-    if ( rdbuf()->open( s, mode | std::ios_base::out ) == nullptr )
+    if ( not rdbuf()->open( s, mode | std::ios_base::out ) )
     {
       setstate( failbit );
     }
@@ -283,7 +283,7 @@ public:
   void
   open( const char* s, std::ios_base::openmode mode = std::ios_base::in )
   {
-    if ( rdbuf()->open( s, mode | std::ios_base::in ) == nullptr )
+    if ( not rdbuf()->open( s, mode | std::ios_base::in ) )
     {
       setstate( failbit );
     }
@@ -341,7 +341,7 @@ public:
   void
   open( const char* s, std::ios_base::openmode mode )
   {
-    if ( rdbuf()->open( s, mode ) == nullptr )
+    if ( not rdbuf()->open( s, mode ) )
     {
       setstate( failbit );
     }

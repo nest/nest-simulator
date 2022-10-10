@@ -1755,14 +1755,14 @@ nest::SymmetricBernoulliBuilder::connect_()
           // if target is local: connect
           if ( target_thread == tid )
           {
-            assert( target != nullptr );
+            assert( target );
             single_connect_( snode_id, *target, target_thread, synced_rng );
           }
 
           // if source is local: connect
           if ( source_thread == tid )
           {
-            assert( source != nullptr );
+            assert( source );
             single_connect_( ( *tnode_id ).node_id, *source, source_thread, synced_rng );
           }
 

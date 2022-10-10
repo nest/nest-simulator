@@ -116,10 +116,10 @@ SLIStartup::GetenvFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
-  assert( sd != nullptr );
+  assert( sd );
   const char* s = ::getenv( sd->c_str() );
   i->OStack.pop();
-  if ( s != nullptr )
+  if ( s )
   {
     Token t( new StringDatum( s ) );
     i->OStack.push_move( t );

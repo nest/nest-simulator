@@ -184,7 +184,7 @@ NestModule::create_mask( const Token& t )
   {
 
     DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( t.datum() );
-    if ( dd == nullptr )
+    if ( not dd )
     {
       throw BadProperty( "Mask must be masktype or dictionary." );
     }
@@ -209,7 +209,7 @@ NestModule::create_mask( const Token& t )
       else
       {
 
-        if ( mask != nullptr )
+        if ( mask )
         { // mask has already been defined
           throw BadProperty( "Mask definition dictionary contains extraneous items." );
         }

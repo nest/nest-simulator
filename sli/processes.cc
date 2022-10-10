@@ -100,7 +100,7 @@ const std::string
 Processes::systemerror( SLIInterpreter* i )
 {
   Token errordict_t( i->baselookup( i->errordict_name ) );
-  assert( errordict_t.datum() != nullptr );
+  assert( errordict_t.datum() );
   DictionaryDatum errordict_d = *dynamic_cast< DictionaryDatum* >( errordict_t.datum() );
 
   std::string ErrorMessage( std::strerror( errno ) );
@@ -121,7 +121,7 @@ Processes::fd( std::istream* s )
   else
   {
     ifdstream* fs = dynamic_cast< ifdstream* >( s );
-    assert( fs != nullptr );
+    assert( fs );
     return fs->rdbuf()->fd();
   }
 }
@@ -140,7 +140,7 @@ Processes::fd( std::ostream* s )
   else
   {
     ofdstream* fs = dynamic_cast< ofdstream* >( s );
-    assert( fs != nullptr );
+    assert( fs );
     return fs->rdbuf()->fd();
   }
 }
@@ -196,7 +196,7 @@ Processes::init( SLIInterpreter* i )
   // create variables "sys_errname" and "sys_errno"
   //  and all needed errornumbers in errordict
   Token errordict_t( i->baselookup( i->errordict_name ) );
-  assert( errordict_t.datum() != nullptr );
+  assert( errordict_t.datum() );
   DictionaryDatum errordict_d = *dynamic_cast< DictionaryDatum* >( errordict_t.datum() );
 
   errordict_d->insert( sys_errname, new LiteralDatum( "" ) );
@@ -338,7 +338,7 @@ Processes::Sysexec_aFunction::execute( SLIInterpreter* i ) const
 
   // this is an array of tokens (to names)
   ArrayDatum* array = dynamic_cast< ArrayDatum* >( array_token.datum() );
-  assert( array != nullptr );
+  assert( array );
 
   assert( array->size() > 0 ); // need at least the commandname
 
@@ -355,7 +355,7 @@ Processes::Sysexec_aFunction::execute( SLIInterpreter* i ) const
   for ( unsigned int j = 0; j < array->size(); j++ ) // forall in array
   {
     StringDatum* nd = dynamic_cast< StringDatum* >( ( *array )[ j ].datum() );
-    assert( nd != nullptr );
+    assert( nd );
     // StringDatum is derived from class string.
     argv[ j ] = const_cast< char* >( nd->c_str() );
   }
@@ -383,10 +383,10 @@ Processes::WaitPIDFunction::execute( SLIInterpreter* i ) const
 
   // Read arguments from operand Stack, but leave tokens on stack:
   IntegerDatum* pidin_d = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  assert( pidin_d != nullptr );
+  assert( pidin_d );
 
   BoolDatum* nohangflag_d = dynamic_cast< BoolDatum* >( i->OStack.top().datum() );
-  assert( nohangflag_d != nullptr );
+  assert( nohangflag_d );
 
   // call waitpid()
   int stat_value;
@@ -455,10 +455,10 @@ Processes::KillFunction::execute( SLIInterpreter* i ) const
 
   // Read arguments from operand Stack, but leave tokens on stack:
   IntegerDatum* pid_d = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  assert( pid_d != nullptr );
+  assert( pid_d );
 
   IntegerDatum* signal_d = dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
-  assert( signal_d != nullptr );
+  assert( signal_d );
 
   // call kill()
   int result = kill( pid_d->get(), signal_d->get() );
@@ -510,9 +510,9 @@ Processes::Dup2_is_isFunction::execute( SLIInterpreter* i ) const
 
   // Read arguments from operand Stack, but leave tokens on stack:
   IstreamDatum* s_d1 = dynamic_cast< IstreamDatum* >( i->OStack.pick( 1 ).datum() );
-  assert( s_d1 != nullptr );
+  assert( s_d1 );
   IstreamDatum* s_d2 = dynamic_cast< IstreamDatum* >( i->OStack.top().datum() );
-  assert( s_d2 != nullptr );
+  assert( s_d2 );
 
   // call dup2();
   // int result = dup2( fd(s_d1->get()) , fd(s_d2->get()) );//using get() on a
@@ -544,9 +544,9 @@ Processes::Dup2_os_osFunction::execute( SLIInterpreter* i ) const
 
   // Read arguments from operand Stack, but leave tokens on stack:
   OstreamDatum* s_d1 = dynamic_cast< OstreamDatum* >( i->OStack.pick( 1 ).datum() );
-  assert( s_d1 != nullptr );
+  assert( s_d1 );
   OstreamDatum* s_d2 = dynamic_cast< OstreamDatum* >( i->OStack.top().datum() );
-  assert( s_d2 != nullptr );
+  assert( s_d2 );
 
   // call dup2();
   // for comments on LockPTRs see Dup2_is_isFunction::execute
@@ -572,9 +572,9 @@ Processes::Dup2_is_osFunction::execute( SLIInterpreter* i ) const
 
   // Read arguments from operand Stack, but leave tokens on stack:
   IstreamDatum* s_d1 = dynamic_cast< IstreamDatum* >( i->OStack.pick( 1 ).datum() );
-  assert( s_d1 != nullptr );
+  assert( s_d1 );
   OstreamDatum* s_d2 = dynamic_cast< OstreamDatum* >( i->OStack.top().datum() );
-  assert( s_d2 != nullptr );
+  assert( s_d2 );
 
   // call dup2();
   // int result = dup2( fd(s_d1->get()) , fd(s_d2->get()) );//using get() on a
@@ -606,9 +606,9 @@ Processes::Dup2_os_isFunction::execute( SLIInterpreter* i ) const
 
   // Read arguments from operand Stack, but leave tokens on stack:
   OstreamDatum* s_d1 = dynamic_cast< OstreamDatum* >( i->OStack.pick( 1 ).datum() );
-  assert( s_d1 != nullptr );
+  assert( s_d1 );
   IstreamDatum* s_d2 = dynamic_cast< IstreamDatum* >( i->OStack.top().datum() );
-  assert( s_d2 != nullptr );
+  assert( s_d2 );
 
   // call dup2();
   // for comments on LockPTRs see Dup2_is_isFunction::execute
@@ -633,7 +633,7 @@ Processes::AvailableFunction::execute( SLIInterpreter* i ) const
 
   IstreamDatum* istreamdatum = dynamic_cast< IstreamDatum* >( i->OStack.top().datum() );
 
-  assert( istreamdatum != nullptr );
+  assert( istreamdatum );
   assert( istreamdatum->valid() );
 
   if ( not( **istreamdatum ).good() )
@@ -797,7 +797,7 @@ Processes::MkfifoFunction::execute( SLIInterpreter* i ) const
 
   // Read arguments from operand Stack, but leave tokens on stack:
   StringDatum* s_d = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
-  assert( s_d != nullptr );
+  assert( s_d );
 
   // call mkfifo();
   mode_t mode = S_IRWXU | S_IRWXG | S_IRWXO; // Try to give all permissions,
@@ -841,11 +841,11 @@ Processes::SetNonblockFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() >= 2 ); // setNONBLOCK takes 2 arguments
 
   IstreamDatum* istreamdatum = dynamic_cast< IstreamDatum* >( i->OStack.pick( 1 ).datum() );
-  assert( istreamdatum != nullptr );
+  assert( istreamdatum );
   assert( istreamdatum->valid() );
 
   BoolDatum* newflag_d = dynamic_cast< BoolDatum* >( i->OStack.top().datum() );
-  assert( newflag_d != nullptr );
+  assert( newflag_d );
 
   // get filedescriptor:
   // istreamdatum is a pointer to a LockPTR
@@ -907,7 +907,7 @@ Processes::Isatty_osFunction::execute( SLIInterpreter* i ) const
 
   // Read arguments from operand Stack, but leave tokens on stack:
   OstreamDatum* s_d1 = dynamic_cast< OstreamDatum* >( i->OStack.pick( 0 ).datum() );
-  assert( s_d1 != nullptr );
+  assert( s_d1 );
 
   int fd = Processes::fd( **s_d1 ); // Get FileDescriptor
 
@@ -932,7 +932,7 @@ Processes::Isatty_isFunction::execute( SLIInterpreter* i ) const
 
   // Read arguments from operand Stack, but leave tokens on stack:
   IstreamDatum* s_d1 = dynamic_cast< IstreamDatum* >( i->OStack.pick( 0 ).datum() );
-  assert( s_d1 != nullptr );
+  assert( s_d1 );
 
   int fd = Processes::fd( **s_d1 ); // Get FileDescriptor
 

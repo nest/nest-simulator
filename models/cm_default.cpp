@@ -125,7 +125,7 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
     ArrayDatum* ad = dynamic_cast< ArrayDatum* >( dat );
     DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( dat );
 
-    if ( ad != nullptr )
+    if ( ad )
     {
       // A list of compartments is provided, we add them all to the tree
       for ( Token* tt = ( *ad ).begin(); tt != ( *ad ).end(); ++tt )
@@ -135,7 +135,7 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
         add_compartment_( *dynamic_cast< DictionaryDatum* >( tt->datum() ) );
       }
     }
-    else if ( dd != nullptr )
+    else if ( dd )
     {
       // A single compartment is provided, we add add it to the tree
       add_compartment_( *dd );
@@ -170,7 +170,7 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
     ArrayDatum* ad = dynamic_cast< ArrayDatum* >( dat );
     DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( dat );
 
-    if ( ad != nullptr )
+    if ( ad )
     {
       for ( Token* tt = ( *ad ).begin(); tt != ( *ad ).end(); ++tt )
       {
@@ -179,7 +179,7 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
         add_receptor_( *dynamic_cast< DictionaryDatum* >( tt->datum() ) );
       }
     }
-    else if ( dd != nullptr )
+    else if ( dd )
     {
       add_receptor_( *dd );
     }

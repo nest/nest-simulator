@@ -57,9 +57,9 @@ GNUReadline::GNUReadlineFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
-  assert( sd != nullptr );
+  assert( sd );
   char* line_read = readline( sd->c_str() );
-  if ( line_read == nullptr )
+  if ( not line_read )
   {
     // We have received EOF (Ctrl-D), so we quit.
     std::cout << std::endl;
@@ -97,7 +97,7 @@ GNUReadline::GNUAddhistoryFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
   i->EStack.pop();
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
-  assert( sd != nullptr );
+  assert( sd );
   add_history( sd->c_str() );
   char* home = std::getenv( "HOME" );
   std::string hist_file = std::string( home ) + std::string( "/.nest_history" );

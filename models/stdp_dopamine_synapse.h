@@ -175,7 +175,7 @@ public:
 inline long
 STDPDopaCommonProperties::get_vt_node_id() const
 {
-  if ( vt_ != nullptr )
+  if ( vt_ )
   {
     return vt_->get_node_id();
   }
@@ -280,7 +280,7 @@ public:
   void
   check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& cp )
   {
-    if ( cp.vt_ == nullptr )
+    if ( not cp.vt_ )
     {
       throw BadProperty( "No volume transmitter has been assigned to the dopamine synapse." );
     }

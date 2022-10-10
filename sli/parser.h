@@ -86,7 +86,7 @@ public:
   void
   clear_context()
   {
-    if ( s != nullptr )
+    if ( s )
     {
       s->clear_context();
     }

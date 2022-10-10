@@ -967,9 +967,4 @@ def run():
 
 
 if __name__ == "__main__":
-    # run()
-
-    ctc = CompartmentsTestCase()
-    ctc.test_add_assign()
-
-
+    run()

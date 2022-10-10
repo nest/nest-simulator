@@ -162,7 +162,7 @@ iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d, Node* node )
     throw BadProperty( "Membrane time constant must be > 0." );
   }
 
-  if ( tau_ex_ <= 0.0 || tau_in_ <= 0.0 )
+  if ( tau_ex_ <= 0.0 or tau_in_ <= 0.0 )
   {
     throw BadProperty( "All synaptic time constants must be > 0." );
   }

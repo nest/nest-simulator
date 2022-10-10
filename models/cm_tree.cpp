@@ -241,14 +241,14 @@ nest::CompTree::get_compartment( const long compartment_index, Compartment* comp
   else
   {
     auto child_it = compartment->children.begin();
-    while ( ( not r_compartment ) and child_it != compartment->children.end() )
+    while ( r_compartment and child_it != compartment->children.end() )
     {
       r_compartment = get_compartment( compartment_index, &( *child_it ), 0 );
       ++child_it;
     }
   }
 
-  if ( ( not r_compartment ) and raise_flag )
+  if ( r_compartment and raise_flag )
   {
     std::string msg = "does not exist in tree";
     throw UnknownCompartment( compartment_index, msg );

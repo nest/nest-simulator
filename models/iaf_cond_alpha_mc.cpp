@@ -408,7 +408,7 @@ nest::iaf_cond_alpha_mc::Parameters_::set( const DictionaryDatum& d, Node* node 
     {
       throw BadProperty( "Capacitance (" + comp_names_[ n ].toString() + ") must be strictly positive." );
     }
-    if ( tau_synE[ n ] <= 0 || tau_synI[ n ] <= 0 )
+    if ( tau_synE[ n ] <= 0 or tau_synI[ n ] <= 0 )
     {
       throw BadProperty( "All time constants (" + comp_names_[ n ].toString() + ") must be strictly positive." );
     }

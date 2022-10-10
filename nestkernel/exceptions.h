@@ -1211,7 +1211,7 @@ public:
   {
   }
 
-  BackendPrepared( std::stringand backend )
+  BackendPrepared( std::string&& backend )
     : backend_( std::move( backend ) )
   {
   }

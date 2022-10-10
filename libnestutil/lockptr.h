@@ -114,7 +114,7 @@ class lockPTR
     ~PointerObject()
     {
       assert( not locked );
-      if ( ( pointee != NULL ) and deletable and ( not locked ) )
+      if ( ( pointee != NULL ) and deletable and locked )
       {
         delete pointee;
       }

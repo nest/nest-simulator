@@ -270,7 +270,7 @@ nest::aeif_cond_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
     throw BadProperty( "Refractory time cannot be negative." );
   }
 
-  if ( tau_syn_ex <= 0 || tau_syn_in <= 0 || tau_w <= 0 )
+  if ( tau_syn_ex <= 0 or tau_syn_in <= 0 or tau_w <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }

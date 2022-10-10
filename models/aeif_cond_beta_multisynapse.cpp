@@ -221,17 +221,17 @@ aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* n
   bool Erev_flag = updateValue< std::vector< double > >( d, names::E_rev, E_rev );
   bool taur_flag = updateValue< std::vector< double > >( d, names::tau_rise, tau_rise );
   bool taud_flag = updateValue< std::vector< double > >( d, names::tau_decay, tau_decay );
-  if ( Erev_flag || taur_flag || taud_flag )
+  if ( Erev_flag or taur_flag or taud_flag )
   { // receptor arrays have been modified
-    if ( ( E_rev.size() != old_n_receptors || tau_rise.size() != old_n_receptors
-           || tau_decay.size() != old_n_receptors )
-      and ( not Erev_flag || not taur_flag || not taud_flag ) )
+    if ( ( E_rev.size() != old_n_receptors or tau_rise.size() != old_n_receptors
+           or tau_decay.size() != old_n_receptors )
+      and ( not Erev_flag or not taur_flag or not taud_flag ) )
     {
       throw BadProperty(
         "If the number of receptor ports is changed, all three arrays "
         "E_rev, tau_rise and tau_decay must be provided." );
     }
-    if ( ( E_rev.size() != tau_rise.size() ) || ( E_rev.size() != tau_decay.size() ) )
+    if ( ( E_rev.size() != tau_rise.size() ) or ( E_rev.size() != tau_decay.size() ) )
     {
       throw BadProperty(
         "The reversal potential, synaptic rise time and synaptic decay time "
@@ -245,7 +245,7 @@ aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* n
     }
     for ( size_t i = 0; i < tau_rise.size(); ++i )
     {
-      if ( tau_rise[ i ] <= 0 || tau_decay[ i ] <= 0 )
+      if ( tau_rise[ i ] <= 0 or tau_decay[ i ] <= 0 )
       {
         throw BadProperty( "All synaptic time constants must be strictly positive" );
       }
@@ -533,7 +533,7 @@ aeif_cond_beta_multisynapse::update( Time const& origin, const long from, const 
       }
 
       // check for unreasonable values; we allow V_M to explode
-      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6 || S_.y_[ State_::W ] > 1e6 )
+      if ( S_.y_[ State_::V_M ] < -1e3 or S_.y_[ State_::W ] < -1e6 or S_.y_[ State_::W ] > 1e6 )
       {
         throw NumericalInstability( get_name() );
       }
@@ -583,7 +583,7 @@ aeif_cond_beta_multisynapse::update( Time const& origin, const long from, const 
 port
 aeif_cond_beta_multisynapse::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type <= 0 || receptor_type > static_cast< port >( P_.n_receptors() ) )
+  if ( receptor_type <= 0 or receptor_type > static_cast< port >( P_.n_receptors() ) )
   {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }

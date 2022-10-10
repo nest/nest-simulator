@@ -410,7 +410,7 @@ nest::pp_cond_exp_mc_urbanczik::Parameters_::set( const DictionaryDatum& d )
       throw BadProperty( "Capacitance (" + comp_names_[ n ].toString() + ") must be strictly positive." );
     }
 
-    if ( urbanczik_params.tau_syn_ex[ n ] <= 0 || urbanczik_params.tau_syn_in[ n ] <= 0 )
+    if ( urbanczik_params.tau_syn_ex[ n ] <= 0 or urbanczik_params.tau_syn_in[ n ] <= 0 )
     {
       throw BadProperty( "All time constants must be strictly positive." );
     }

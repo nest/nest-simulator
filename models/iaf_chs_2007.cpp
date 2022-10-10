@@ -131,7 +131,7 @@ nest::iaf_chs_2007::Parameters_::set( const DictionaryDatum& d, State_& s, Node*
   {
     throw BadProperty( "Reset potential cannot be negative." );
   }
-  if ( tau_epsp_ <= 0 || tau_reset_ <= 0 )
+  if ( tau_epsp_ <= 0 or tau_reset_ <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }

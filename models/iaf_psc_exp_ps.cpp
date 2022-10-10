@@ -178,7 +178,7 @@ nest::iaf_psc_exp_ps::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Refractory time must be at least one time step." );
   }
-  if ( tau_m_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 )
+  if ( tau_m_ <= 0 or tau_ex_ <= 0 || tau_in_ <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }

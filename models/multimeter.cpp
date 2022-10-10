@@ -107,7 +107,7 @@ void
 nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b, Node* node )
 {
   if ( b.has_targets_
-    and ( d->known( names::interval ) || d->known( names::offset ) || d->known( names::record_from ) ) )
+    and ( d->known( names::interval ) or d->known( names::offset ) or d->known( names::record_from ) ) )
   {
     throw BadProperty(
       "The recording interval, the interval offset and the list of properties "
@@ -183,7 +183,7 @@ multimeter::update( Time const& origin, const long from, const long )
      previous slice if we are called at the beginning of the slice. Otherwise,
      we do nothing.
    */
-  if ( origin.get_steps() == 0 || from != 0 )
+  if ( origin.get_steps() == 0 or from != 0 )
   {
     return;
   }

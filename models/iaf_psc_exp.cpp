@@ -154,7 +154,7 @@ nest::iaf_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Capacitance must be strictly positive." );
   }
-  if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 )
+  if ( Tau_ <= 0 or tau_ex_ <= 0 or tau_in_ <= 0 )
   {
     throw BadProperty( "Membrane and synapse time constants must be strictly positive." );
   }

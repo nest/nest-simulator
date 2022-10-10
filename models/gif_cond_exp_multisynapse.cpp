@@ -210,10 +210,10 @@ nest::gif_cond_exp_multisynapse::Parameters_::set( const DictionaryDatum& d, Nod
   const size_t old_n_receptors = n_receptors();
   bool Erev_flag = updateValue< std::vector< double > >( d, names::E_rev, E_rev_ );
   bool tau_flag = updateValue< std::vector< double > >( d, names::tau_syn, tau_syn_ );
-  if ( Erev_flag || tau_flag )
+  if ( Erev_flag or tau_flag )
   { // receptor arrays have been modified
-    if ( ( E_rev_.size() != old_n_receptors || tau_syn_.size() != old_n_receptors )
-      and ( not Erev_flag || not tau_flag ) )
+    if ( ( E_rev_.size() != old_n_receptors or tau_syn_.size() != old_n_receptors )
+      and ( not Erev_flag or not tau_flag ) )
     {
       throw BadProperty(
         "If the number of receptor ports is changed, both arrays "

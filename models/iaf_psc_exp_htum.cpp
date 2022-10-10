@@ -157,7 +157,7 @@ nest::iaf_psc_exp_htum::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Capacitance must be strictly positive." );
   }
-  if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || tau_ref_tot_ <= 0 || tau_ref_abs_ <= 0 )
+  if ( Tau_ <= 0 or tau_ex_ <= 0 or tau_in_ <= 0 or tau_ref_tot_ <= 0 or tau_ref_abs_ <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }

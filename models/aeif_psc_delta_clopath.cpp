@@ -98,7 +98,7 @@ nest::aeif_psc_delta_clopath_dynamics( double, const double y[], double f[], voi
 
   // Clamp membrane potential to V_reset while refractory, otherwise bound
   // it to V_peak.
-  const double& V = ( is_refractory || is_clamped ) ? ( is_clamped ? node.P_.V_clamp_ : node.P_.V_reset_ )
+  const double& V = ( is_refractory or is_clamped ) ? ( is_clamped ? node.P_.V_clamp_ : node.P_.V_reset_ )
                                                     : std::min( y[ S::V_M ], node.P_.V_peak_ );
   // shorthand for the other state variables
   const double& w = y[ S::W ];
@@ -112,7 +112,7 @@ nest::aeif_psc_delta_clopath_dynamics( double, const double y[], double f[], voi
     node.P_.Delta_T == 0. ? 0. : ( node.P_.g_L * node.P_.Delta_T * std::exp( ( V - V_th ) / node.P_.Delta_T ) );
 
   // dv/dt
-  f[ S::V_M ] = ( is_refractory || is_clamped )
+  f[ S::V_M ] = ( is_refractory or is_clamped )
     ? 0.0
     : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - w + z + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 

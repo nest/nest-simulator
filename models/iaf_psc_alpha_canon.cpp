@@ -182,7 +182,7 @@ nest::iaf_psc_alpha_canon::Parameters_::set( const DictionaryDatum& d )
   {
     throw BadProperty( "Refractory time must be at least one time step." );
   }
-  if ( tau_m_ <= 0 || tau_syn_ <= 0 )
+  if ( tau_m_ <= 0 or tau_syn_ <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }

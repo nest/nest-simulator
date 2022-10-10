@@ -159,18 +159,18 @@ nest::amat2_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Capacitance must be strictly positive." );
   }
-  if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || tau_ref_ <= 0 || tau_1_ <= 0 || tau_2_ <= 0 || tau_v_ <= 0 )
+  if ( Tau_ <= 0 or tau_ex_ <= 0 or tau_in_ <= 0 or tau_ref_ <= 0 or tau_1_ <= 0 or tau_2_ <= 0 or tau_v_ <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
-  if ( Tau_ == tau_ex_ || Tau_ == tau_in_ || Tau_ == tau_v_ )
+  if ( Tau_ == tau_ex_ or Tau_ == tau_in_ or Tau_ == tau_v_ )
   {
     throw BadProperty(
       "tau_m must differ from tau_syn_ex, tau_syn_in and tau_v. "
       "See note in documentation." );
   }
 
-  if ( tau_v_ == tau_ex_ || tau_v_ == tau_in_ ) // tau_v_ == tau_m_  checked above
+  if ( tau_v_ == tau_ex_ or tau_v_ == tau_in_ ) // tau_v_ == tau_m_  checked above
   {
     throw BadProperty(
       "tau_v must differ from tau_syn_ex, tau_syn_in and tau_m. "

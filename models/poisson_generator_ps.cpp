@@ -181,7 +181,7 @@ nest::poisson_generator_ps::update( Time const& T, const long from, const long t
   assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  if ( P_.rate_ <= 0 || P_.num_targets_ == 0 )
+  if ( P_.rate_ <= 0 or P_.num_targets_ == 0 )
   {
     return;
   }

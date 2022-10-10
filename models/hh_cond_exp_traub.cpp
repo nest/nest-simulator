@@ -230,7 +230,7 @@ nest::hh_cond_exp_traub::Parameters_::set( const DictionaryDatum& d, Node* node 
     throw BadProperty( "Capacitance must be strictly positive." );
   }
 
-  if ( tau_synE <= 0 || tau_synI <= 0 )
+  if ( tau_synE <= 0 or tau_synI <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -257,7 +257,7 @@ nest::hh_cond_exp_traub::State_::set( const DictionaryDatum& d, const Parameters
   updateValueParam< double >( d, names::Act_m, y_[ HH_M ], node );
   updateValueParam< double >( d, names::Inact_h, y_[ HH_H ], node );
   updateValueParam< double >( d, names::Act_n, y_[ HH_N ], node );
-  if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 )
+  if ( y_[ HH_M ] < 0 or y_[ HH_H ] < 0 or y_[ HH_N ] < 0 )
   {
     throw BadProperty( "All (in)activation variables must be non-negative." );
   }

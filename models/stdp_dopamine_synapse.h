@@ -280,7 +280,7 @@ public:
   void
   check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& cp )
   {
-    if ( not _ )
+    if ( not cp.vt_ )
     {
       throw BadProperty( "No volume transmitter has been assigned to the dopamine synapse." );
     }

@@ -953,7 +953,6 @@ class CompartmentsTestCase(unittest.TestCase):
         self.assertEqual(len(list(cm2.compartments)), 3)
 
 
-
 def suite():
     # makeSuite is sort of obsolete http://bugs.python.org/issue2721
     # using loadTestsFromTestCase instead.

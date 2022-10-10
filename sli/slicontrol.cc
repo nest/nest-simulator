@@ -1170,7 +1170,7 @@ RaiseerrorFunction::execute( SLIInterpreter* i ) const
 
   Name* errorname = dynamic_cast< Name* >( err.datum() );
   Name* cmdname = dynamic_cast< Name* >( cmd.datum() );
-  if ( errorname or cmdname )
+  if ( not errorname or not cmdname )
   {
     i->message( SLIInterpreter::M_ERROR, "raiseerror", "Usage: /command /errorname raiserror" );
     i->raiseerror( "ArgumentType" );

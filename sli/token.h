@@ -401,7 +401,7 @@ public:
       return *this;
     }
 
-    if ( not p )
+    if ( not c_s.p )
     {
       clear();
       return *this;

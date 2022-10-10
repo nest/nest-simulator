@@ -942,6 +942,16 @@ class CompartmentsTestCase(unittest.TestCase):
         self.assertEqual(compartments[1]["comp_idx"], 1)
         self.assertEqual(compartments[1]["parent_idx"], 0)
 
+        cm2 = nest.Create('cm_default')
+        cm2.compartments = {"parent_idx": -1, "params": SP}
+        cm2.compartments += [{"parent_idx": 0, "params": DP[0]}, {"parent_idx": 0, "params": DP[0]}]
+        self.assertEqual(len(list(cm2.compartments)), 3)
+
+        cm3 = nest.Create('cm_default')
+        cm3.compartments = [{"parent_idx": -1, "params": SP}, {"parent_idx": 0, "params": DP[0]}]
+        cm3.compartments += {"parent_idx": 1, "params": DP[0]}
+        self.assertEqual(len(list(cm3.compartments)), 3)
+
 
 def suite():
     # makeSuite is sort of obsolete http://bugs.python.org/issue2721

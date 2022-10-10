@@ -950,7 +950,7 @@ class CompartmentsTestCase(unittest.TestCase):
         cm3 = nest.Create('cm_default')
         cm3.compartments = [{"parent_idx": -1, "params": SP}, {"parent_idx": 0, "params": DP[0]}]
         cm3.compartments += {"parent_idx": 1, "params": DP[0]}
-        self.assertEqual(len(list(cm2.compartments)), 3)
+        self.assertEqual(len(list(cm3.compartments)), 3)
 
 
 def suite():

@@ -32,7 +32,7 @@ import pandas as pd
 from .. import pynestkernel as kernel
 from ..ll_api import sps, sr, sli_func
 from .hl_api_models import GetDefaults
-from .hl_api_nodes import Create
+from .hl_api_nodes import Create, GetLocalNodeCollection
 from .hl_api_simulation import SetKernelStatus, Simulate
 from .hl_api_types import NodeCollection
 
@@ -74,6 +74,7 @@ class SonataConnector(object):
         self.base_path = base_path
         self.config = {}
         self.node_collections = {}
+        self.local_node_collections = {}
         self.edge_types = []
 
         if not have_hdf5:
@@ -182,6 +183,10 @@ class SonataConnector(object):
                         self.node_collections[population_name] = nodes
             else:
                 raise NotImplementedError("More than one NEST model per csv file currently not implemented")
+
+        # local NC
+        for population_name, nc in self.node_collections.items():
+            self.local_node_collections[population_name] = GetLocalNodeCollection(nc)
 
     def is_unique_(self, col):
         """Check if all values in column are unique.
@@ -341,7 +346,9 @@ class SonataConnector(object):
         """
         self.create_edge_dict_()
 
-        sonata_dynamics = {'nodes': self.node_collections, 'edges': self.edge_types}
+        sonata_dynamics = {'nodes': self.node_collections,
+                           'edges': self.edge_types,
+                           'local_nodes': self.local_node_collections}
         # Check if HDF5 files exists and are not blocked.
         for d in self.edge_types:
             try:

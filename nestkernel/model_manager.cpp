@@ -450,7 +450,7 @@ ModelManager::clear_node_models_()
   // init()
   for ( auto&& node_model : node_models_ )
   {
-    if ( node_model != 0 )
+    if ( node_model != nullptr )
     {
       delete node_model;
     }
@@ -474,7 +474,7 @@ ModelManager::clear_connection_models_()
   {
     for ( auto&& connection_model : connection_models_[ t ] )
     {
-      if ( connection_model != 0 )
+      if ( connection_model != nullptr )
       {
         delete connection_model;
       }
@@ -495,7 +495,7 @@ ModelManager::calibrate( const TimeConverter& tc )
   {
     for ( auto&& connection_model : connection_models_[ t ] )
     {
-      if ( connection_model != 0 )
+      if ( connection_model != nullptr )
       {
         connection_model->calibrate( tc );
       }

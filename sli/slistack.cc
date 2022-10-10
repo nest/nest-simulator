@@ -75,7 +75,7 @@ NpopFunction::execute( SLIInterpreter* i ) const
   }
 
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
-  assert( id != NULL );
+  assert( id != nullptr );
   size_t n = id->get();
   if ( n < i->OStack.load() )
   {
@@ -166,7 +166,7 @@ IndexFunction::execute( SLIInterpreter* i ) const
     return;
   }
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
-  assert( id != NULL );
+  assert( id != nullptr );
   size_t pos = id->get();
 
   if ( pos + 1 < i->OStack.load() )
@@ -201,7 +201,7 @@ CopyFunction::execute( SLIInterpreter* i ) const
     return;
   }
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
-  assert( id != NULL );
+  assert( id != nullptr );
   size_t n = id->get();
   if ( n < i->OStack.load() )
   {
@@ -253,13 +253,13 @@ RollFunction::execute( SLIInterpreter* i ) const
   }
 
   IntegerDatum* idn = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( idn == NULL )
+  if ( idn == nullptr )
   {
     throw ArgumentType( 1 );
   }
 
   IntegerDatum* idk = dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
-  if ( idk == NULL )
+  if ( idk == nullptr )
   {
     throw ArgumentType( 0 );
   }
@@ -404,7 +404,7 @@ RestoreestackFunction::execute( SLIInterpreter* i ) const
   }
 
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( i->OStack.top().datum() );
-  assert( ad != NULL );
+  assert( ad != nullptr );
   TokenArray ta = *ad;
   i->OStack.pop();
   i->EStack = ta;
@@ -434,7 +434,7 @@ RestoreostackFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( i->OStack.top().datum() );
-  assert( ad != NULL );
+  assert( ad != nullptr );
   TokenArray ta = *ad;
   i->OStack = ta;
 }

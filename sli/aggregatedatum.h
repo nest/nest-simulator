@@ -63,7 +63,7 @@ protected:
 
 private:
   virtual Datum*
-  clone( void ) const
+  clone() const
   {
     return new AggregateDatum< C, slt >( *this );
   }
@@ -117,7 +117,7 @@ public:
   static void
   operator delete( void* p, size_t size )
   {
-    if ( p == NULL )
+    if ( p == nullptr )
     {
       return;
     }

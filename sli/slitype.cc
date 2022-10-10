@@ -45,7 +45,7 @@ SLIType::settypename( const std::string& s )
 }
 
 void
-SLIType::deletetypename( void )
+SLIType::deletetypename()
 {
   assert( count > 0 );
   if ( count == 1 )
@@ -59,7 +59,7 @@ SLIType::deletetypename( void )
 void
 SLIType::setdefaultaction( SLIFunction& c )
 {
-  if ( defaultaction == NULL )
+  if ( defaultaction == nullptr )
   {
     defaultaction = &c;
   }

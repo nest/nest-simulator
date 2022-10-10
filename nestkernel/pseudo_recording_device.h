@@ -81,7 +81,7 @@ class PseudoRecordingDevice : public Device
 public:
   PseudoRecordingDevice();
   PseudoRecordingDevice( const PseudoRecordingDevice& );
-  virtual ~PseudoRecordingDevice()
+  ~PseudoRecordingDevice() override
   {
   }
 

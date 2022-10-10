@@ -117,7 +117,7 @@ Layer< D >::connect( NodeCollectionPTR source_nc,
   // We need to extract the real pointer here to be able to cast to the
   // dimension-specific subclass.
   AbstractLayer* target_abs = target_layer.get();
-  assert( target_abs != 0 );
+  assert( target_abs != nullptr );
 
   try
   {
@@ -173,7 +173,7 @@ Layer< D >::get_global_positions_ntree( std::bitset< D > periodic,
   do_get_global_positions_ntree_( node_collection );
 
   // Do not use cache since the periodic bits and extents were altered.
-  cached_ntree_md_ = NodeCollectionMetadataPTR( 0 );
+  cached_ntree_md_ = NodeCollectionMetadataPTR( nullptr );
 
   return cached_ntree_;
 }

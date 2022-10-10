@@ -62,9 +62,9 @@ Get_aFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 1 );
 
   IntegerDatum* idx = dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
-  assert( idx != NULL );
+  assert( idx != nullptr );
   ArrayDatum* obj = dynamic_cast< ArrayDatum* >( i->OStack.pick( 1 ).datum() );
-  assert( obj != NULL );
+  assert( obj != nullptr );
 
 
   if ( ( idx->get() >= 0 ) && ( ( size_t ) idx->get() < obj->size() ) )
@@ -87,7 +87,7 @@ Get_a_aFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 1 );
 
   ArrayDatum* idx = dynamic_cast< ArrayDatum* >( i->OStack.top().datum() );
-  if ( idx == NULL )
+  if ( idx == nullptr )
   {
     i->message( SLIInterpreter::M_ERROR, "get_a_a", "Second argument must be an array of indices." );
     i->message( SLIInterpreter::M_ERROR, "get_a_a", "Usage: [a] [i1 .. in] get -> [a[i1] ... a[in]]" );
@@ -96,7 +96,7 @@ Get_a_aFunction::execute( SLIInterpreter* i ) const
   }
 
   ArrayDatum* obj = dynamic_cast< ArrayDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( obj == NULL )
+  if ( obj == nullptr )
   {
     i->message( SLIInterpreter::M_ERROR, "get_a_a", "Usage: [a] [i1 .. in] get -> [a[i1] ... a[in]]" );
     i->message( SLIInterpreter::M_ERROR, "get_a_a", "First argument must be an array." );
@@ -110,7 +110,7 @@ Get_a_aFunction::execute( SLIInterpreter* i ) const
   for ( Token* t = idx->begin(); t != idx->end(); ++t )
   {
     IntegerDatum* id = dynamic_cast< IntegerDatum* >( t->datum() );
-    if ( id == NULL )
+    if ( id == nullptr )
     {
       std::ostringstream sout;
 
@@ -154,9 +154,9 @@ Get_pFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 1 );
 
   IntegerDatum* idx = dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
-  assert( idx != NULL );
+  assert( idx != nullptr );
   ProcedureDatum* obj = dynamic_cast< ProcedureDatum* >( i->OStack.pick( 1 ).datum() );
-  assert( obj != NULL );
+  assert( obj != nullptr );
 
 
   if ( ( idx->get() >= 0 ) && ( ( size_t ) idx->get() < obj->size() ) )
@@ -179,9 +179,9 @@ Get_lpFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 1 );
 
   IntegerDatum* idx = dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
-  assert( idx != NULL );
+  assert( idx != nullptr );
   LitprocedureDatum* obj = dynamic_cast< LitprocedureDatum* >( i->OStack.pick( 1 ).datum() );
-  assert( obj != NULL );
+  assert( obj != nullptr );
 
   if ( ( idx->get() >= 0 ) && ( ( size_t ) idx->get() < obj->size() ) )
   {
@@ -204,7 +204,7 @@ Append_aFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 1 );
 
   ArrayDatum* obj = dynamic_cast< ArrayDatum* >( i->OStack.pick( 1 ).datum() );
-  assert( obj != NULL );
+  assert( obj != nullptr );
 
 
   obj->push_back_move( i->OStack.top() );
@@ -219,7 +219,7 @@ Append_pFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 1 );
 
   ProcedureDatum* obj = dynamic_cast< ProcedureDatum* >( i->OStack.pick( 1 ).datum() );
-  assert( obj != NULL );
+  assert( obj != nullptr );
 
 
   obj->push_back_move( i->OStack.top() );
@@ -251,7 +251,7 @@ Append_sFunction::execute( SLIInterpreter* i ) const
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
-  assert( sd != NULL && id != NULL );
+  assert( sd != nullptr && id != nullptr );
 
   ( *sd ) += static_cast< char >( id->get() );
 
@@ -284,7 +284,7 @@ Join_sFunction::execute( SLIInterpreter* i ) const
   StringDatum* s1 = dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
   StringDatum* s2 = dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
 
-  if ( s1 == NULL || s2 == NULL )
+  if ( s1 == nullptr || s2 == nullptr )
   {
     i->message( SLIInterpreter::M_ERROR, "join_s", "Usage: (string1) (string2) join_s" );
     i->raiseerror( i->ArgumentTypeError );
@@ -307,7 +307,7 @@ Join_aFunction::execute( SLIInterpreter* i ) const
   ArrayDatum* a1 = dynamic_cast< ArrayDatum* >( i->OStack.pick( 1 ).datum() );
   ArrayDatum* a2 = dynamic_cast< ArrayDatum* >( i->OStack.pick( 0 ).datum() );
 
-  assert( a1 != NULL && a2 != NULL );
+  assert( a1 != nullptr && a2 != nullptr );
 
   a1->append_move( *a2 );
 
@@ -325,7 +325,7 @@ Join_pFunction::execute( SLIInterpreter* i ) const
   ProcedureDatum* a1 = dynamic_cast< ProcedureDatum* >( i->OStack.pick( 1 ).datum() );
   ProcedureDatum* a2 = dynamic_cast< ProcedureDatum* >( i->OStack.pick( 0 ).datum() );
 
-  assert( a1 != NULL && a2 != NULL );
+  assert( a1 != nullptr && a2 != nullptr );
 
   a1->append_move( *a2 );
 
@@ -355,7 +355,7 @@ Insert_sFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   StringDatum* s2 = dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
 
-  assert( s1 != NULL && id != NULL && s2 != NULL );
+  assert( s1 != nullptr && id != nullptr && s2 != nullptr );
 
   if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < s1->size() ) )
   {
@@ -391,7 +391,7 @@ InsertElement_sFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   IntegerDatum* c = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
-  assert( s1 != NULL && id != NULL && c != NULL );
+  assert( s1 != nullptr && id != nullptr && c != nullptr );
 
   if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < s1->size() ) )
   {
@@ -430,7 +430,7 @@ Prepend_sFunction::execute( SLIInterpreter* i ) const
   StringDatum* s1 = dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
   IntegerDatum* c = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
-  assert( s1 != NULL && c != NULL );
+  assert( s1 != nullptr && c != nullptr );
 
   s1->insert( ( size_t ) 0, 1, static_cast< char >( c->get() ) );
 
@@ -447,7 +447,7 @@ Insert_aFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   ArrayDatum* a2 = dynamic_cast< ArrayDatum* >( i->OStack.pick( 0 ).datum() );
 
-  assert( a1 != NULL && id != NULL && a2 != NULL );
+  assert( a1 != nullptr && id != nullptr && a2 != nullptr );
 
   if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < a1->size() ) )
   {
@@ -470,7 +470,7 @@ InsertElement_aFunction::execute( SLIInterpreter* i ) const
   ArrayDatum* a1 = dynamic_cast< ArrayDatum* >( i->OStack.pick( 2 ).datum() );
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
 
-  assert( a1 != NULL && id != NULL );
+  assert( a1 != nullptr && id != nullptr );
 
   if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < a1->size() ) )
   {
@@ -494,7 +494,7 @@ Prepend_aFunction::execute( SLIInterpreter* i ) const
 
   ArrayDatum* a1 = dynamic_cast< ArrayDatum* >( i->OStack.pick( 1 ).datum() );
 
-  assert( a1 != NULL );
+  assert( a1 != nullptr );
 
   a1->insert_move( 0, i->OStack.top() );
 
@@ -511,7 +511,7 @@ Prepend_pFunction::execute( SLIInterpreter* i ) const
 
   ProcedureDatum* a1 = dynamic_cast< ProcedureDatum* >( i->OStack.pick( 1 ).datum() );
 
-  assert( a1 != NULL );
+  assert( a1 != nullptr );
 
   a1->insert_move( 0, i->OStack.top() );
 
@@ -544,7 +544,7 @@ Replace_sFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* n = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   StringDatum* s2 = dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
 
-  assert( s1 != NULL && id != NULL && n != NULL && s2 != NULL );
+  assert( s1 != nullptr && id != nullptr && n != nullptr && s2 != nullptr );
 
   if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < s1->size() ) )
   {
@@ -576,7 +576,7 @@ Replace_aFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* n = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   ArrayDatum* s2 = dynamic_cast< ArrayDatum* >( i->OStack.pick( 0 ).datum() );
 
-  assert( s1 != NULL && id != NULL && n != NULL && s2 != NULL );
+  assert( s1 != nullptr && id != nullptr && n != nullptr && s2 != nullptr );
 
   if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < s1->size() ) )
   {
@@ -621,7 +621,7 @@ Erase_sFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   IntegerDatum* n = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
-  assert( s1 != NULL && id != NULL && n != NULL );
+  assert( s1 != nullptr && id != nullptr && n != nullptr );
 
   if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < s1->size() ) )
   {
@@ -652,7 +652,7 @@ Erase_aFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   IntegerDatum* n = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
-  assert( s1 != NULL && id != NULL && n != NULL );
+  assert( s1 != nullptr && id != nullptr && n != nullptr );
 
   if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < s1->size() ) )
   {
@@ -683,7 +683,7 @@ Erase_pFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   IntegerDatum* n = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
-  assert( s1 != NULL && id != NULL && n != NULL );
+  assert( s1 != nullptr && id != nullptr && n != nullptr );
 
   if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < s1->size() ) )
   {
@@ -715,7 +715,7 @@ Put_sFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   IntegerDatum* cd = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
-  assert( s1 != NULL && id != NULL && cd != NULL );
+  assert( s1 != nullptr && id != nullptr && cd != nullptr );
 
   if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < s1->size() ) )
   {
@@ -739,7 +739,7 @@ Put_aFunction::execute( SLIInterpreter* i ) const
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( i->OStack.pick( 2 ).datum() );
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
 
-  assert( ad != NULL && id != NULL );
+  assert( ad != nullptr && id != nullptr );
 
   if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < ad->size() ) )
   {
@@ -763,7 +763,7 @@ Put_pFunction::execute( SLIInterpreter* i ) const
   ProcedureDatum* ad = dynamic_cast< ProcedureDatum* >( i->OStack.pick( 2 ).datum() );
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
 
-  assert( ad != NULL && id != NULL );
+  assert( ad != nullptr && id != nullptr );
 
   if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < ad->size() ) )
   {
@@ -787,7 +787,7 @@ Put_lpFunction::execute( SLIInterpreter* i ) const
   LitprocedureDatum* ad = dynamic_cast< LitprocedureDatum* >( i->OStack.pick( 2 ).datum() );
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
 
-  assert( ad != NULL && id != NULL );
+  assert( ad != nullptr && id != nullptr );
 
   if ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < ad->size() ) )
   {
@@ -819,7 +819,7 @@ Length_sFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 0 );
 
   StringDatum* s = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
-  assert( s != NULL );
+  assert( s != nullptr );
 
   Token t( new IntegerDatum( s->length() ) );
 
@@ -845,7 +845,7 @@ Length_aFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 0 );
 
   ArrayDatum* s = dynamic_cast< ArrayDatum* >( i->OStack.top().datum() );
-  assert( s != NULL );
+  assert( s != nullptr );
 
   Token t( new IntegerDatum( s->size() ) );
 
@@ -871,7 +871,7 @@ Length_pFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 0 );
 
   ProcedureDatum* s = dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
-  assert( s != NULL );
+  assert( s != nullptr );
 
   Token t( new IntegerDatum( s->size() ) );
 
@@ -901,7 +901,7 @@ Length_lpFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 0 );
 
   LitprocedureDatum* s = dynamic_cast< LitprocedureDatum* >( i->OStack.top().datum() );
-  assert( s != NULL );
+  assert( s != nullptr );
 
   Token t( new IntegerDatum( s->size() ) );
 
@@ -931,7 +931,7 @@ Capacity_aFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 0 );
 
   ArrayDatum* s = dynamic_cast< ArrayDatum* >( i->OStack.top().datum() );
-  assert( s != NULL );
+  assert( s != nullptr );
 
   Token t( new IntegerDatum( s->capacity() ) );
 
@@ -958,7 +958,7 @@ Size_aFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 0 );
 
   ArrayDatum* s = dynamic_cast< ArrayDatum* >( i->OStack.top().datum() );
-  assert( s != NULL );
+  assert( s != nullptr );
 
   Token t( new IntegerDatum( s->size() ) );
 
@@ -983,7 +983,7 @@ Reserve_aFunction::execute( SLIInterpreter* i ) const
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( i->OStack.pick( 1 ).datum() );
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
-  assert( ad != NULL && id != NULL );
+  assert( ad != nullptr && id != nullptr );
   if ( id->get() >= 0 )
   {
     i->EStack.pop();
@@ -1018,7 +1018,7 @@ Resize_aFunction::execute( SLIInterpreter* i ) const
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( i->OStack.pick( 1 ).datum() );
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
-  assert( ad != NULL && id != NULL );
+  assert( ad != nullptr && id != nullptr );
   if ( id->get() >= 0 )
   {
     i->EStack.pop();
@@ -1040,7 +1040,7 @@ Empty_aFunction::execute( SLIInterpreter* i ) const
 
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( i->OStack.top().datum() );
 
-  assert( ad != NULL );
+  assert( ad != nullptr );
 
   if ( ad->empty() )
   {
@@ -1061,7 +1061,7 @@ References_aFunction::execute( SLIInterpreter* i ) const
 
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( i->OStack.top().datum() );
 
-  assert( ad != NULL );
+  assert( ad != nullptr );
 
   Token t( new IntegerDatum( ad->references() ) );
 
@@ -1084,7 +1084,7 @@ Shrink_aFunction::execute( SLIInterpreter* i ) const
 
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( i->OStack.top().datum() );
 
-  assert( ad != NULL );
+  assert( ad != nullptr );
 
   if ( ad->shrink() )
   {
@@ -1104,7 +1104,7 @@ Capacity_sFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 0 );
 
   StringDatum* s = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
-  assert( s != NULL );
+  assert( s != nullptr );
 
   Token t( new IntegerDatum( s->capacity() ) );
 
@@ -1119,7 +1119,7 @@ Size_sFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 0 );
 
   StringDatum* s = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
-  assert( s != NULL );
+  assert( s != nullptr );
 
   Token t( new IntegerDatum( s->size() ) );
 
@@ -1135,7 +1135,7 @@ Reserve_sFunction::execute( SLIInterpreter* i ) const
   StringDatum* ad = dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
-  assert( ad != NULL && id != NULL );
+  assert( ad != nullptr && id != nullptr );
 
   if ( id->get() >= 0 )
   {
@@ -1158,7 +1158,7 @@ Resize_sFunction::execute( SLIInterpreter* i ) const
   StringDatum* ad = dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
-  assert( ad != NULL && id != NULL );
+  assert( ad != nullptr && id != nullptr );
 
   if ( id->get() >= 0 )
   {
@@ -1182,7 +1182,7 @@ Empty_sFunction::execute( SLIInterpreter* i ) const
 
   StringDatum* ad = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
 
-  assert( ad != NULL );
+  assert( ad != nullptr );
 
   if ( ad->empty() )
   {
@@ -1229,7 +1229,7 @@ Getinterval_sFunction::execute( SLIInterpreter* i ) const
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.pick( 2 ).datum() );
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   IntegerDatum* cd = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
-  assert( sd != NULL && id != NULL && cd != NULL );
+  assert( sd != nullptr && id != nullptr && cd != nullptr );
 
   if ( cd->get() >= 0 )
   {
@@ -1261,7 +1261,7 @@ Getinterval_aFunction::execute( SLIInterpreter* i ) const
   ArrayDatum* sd = dynamic_cast< ArrayDatum* >( i->OStack.pick( 2 ).datum() );
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   IntegerDatum* cd = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
-  assert( sd != NULL && id != NULL && cd != NULL );
+  assert( sd != nullptr && id != nullptr && cd != nullptr );
 
   if ( cd->get() >= 0 )
   {
@@ -1293,7 +1293,7 @@ Cvx_aFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 0 );
 
   ArrayDatum* obj = dynamic_cast< ArrayDatum* >( i->OStack.top().datum() );
-  assert( obj != NULL );
+  assert( obj != nullptr );
   Token t( new ProcedureDatum( *obj ) );
   t->set_executable();
   i->OStack.top().swap( t );
@@ -1305,7 +1305,7 @@ Cvlit_nFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 0 );
 
   NameDatum* obj = dynamic_cast< NameDatum* >( i->OStack.top().datum() );
-  assert( obj != NULL );
+  assert( obj != nullptr );
   Token t( new LiteralDatum( *obj ) );
   i->OStack.top().swap( t );
   i->EStack.pop();
@@ -1317,7 +1317,7 @@ Cvn_lFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 0 );
 
   LiteralDatum* obj = dynamic_cast< LiteralDatum* >( i->OStack.top().datum() );
-  assert( obj != NULL );
+  assert( obj != nullptr );
   Token t( new NameDatum( *obj ) );
   i->OStack.top().swap( t );
   i->EStack.pop();
@@ -1329,7 +1329,7 @@ Cvn_sFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 0 );
 
   StringDatum* obj = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
-  assert( obj != NULL );
+  assert( obj != nullptr );
   Token t( new NameDatum( *obj ) );
   i->OStack.top().swap( t );
   i->EStack.pop();
@@ -1341,7 +1341,7 @@ Cvlit_pFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 0 );
 
   ProcedureDatum* obj = dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
-  assert( obj != NULL );
+  assert( obj != nullptr );
   Token t( new ArrayDatum( *obj ) );
   i->OStack.top().swap( t );
   i->EStack.pop();
@@ -1356,7 +1356,7 @@ Cvlp_pFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 0 );
 
   ProcedureDatum* obj = dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
-  assert( obj != NULL );
+  assert( obj != nullptr );
   Token t( new LitprocedureDatum( *obj ) );
   t->set_executable();
   i->OStack.top().swap( t );
@@ -1370,7 +1370,7 @@ Cvi_sFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 0 );
 
   StringDatum* obj = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
-  assert( obj != NULL );
+  assert( obj != nullptr );
   Token t( new IntegerDatum( std::atoi( obj->c_str() ) ) );
   i->OStack.top().swap( t );
   i->EStack.pop();
@@ -1383,7 +1383,7 @@ Cvd_sFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 0 );
 
   StringDatum* obj = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
-  assert( obj != NULL );
+  assert( obj != nullptr );
   Token t( new DoubleDatum( std::atof( obj->c_str() ) ) );
   i->OStack.top().swap( t );
   i->EStack.pop();
@@ -1397,10 +1397,10 @@ Get_sFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 1 );
 
   IntegerDatum* idx = dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
-  assert( idx != NULL );
+  assert( idx != nullptr );
 
   StringDatum* obj = dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
-  assert( obj != NULL );
+  assert( obj != nullptr );
 
 
   if ( ( idx->get() >= 0 ) && ( ( size_t ) idx->get() < obj->size() ) )
@@ -1439,7 +1439,7 @@ Search_sFunction::execute( SLIInterpreter* i ) const
   StringDatum* s1 = dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
   StringDatum* s2 = dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
 
-  assert( s1 != NULL && s2 != NULL );
+  assert( s1 != nullptr && s2 != nullptr );
 
   size_t p = s1->find( *s2 );
 
@@ -1474,7 +1474,7 @@ Search_aFunction::execute( SLIInterpreter* i ) const
   ArrayDatum* s1 = dynamic_cast< ArrayDatum* >( i->OStack.pick( 1 ).datum() );
   ArrayDatum* s2 = dynamic_cast< ArrayDatum* >( i->OStack.pick( 0 ).datum() );
 
-  assert( s1 != NULL && s2 != NULL );
+  assert( s1 != nullptr && s2 != nullptr );
 
   Token* p = std::search( s1->begin(), s1->end(), s2->begin(), s2->end() );
 

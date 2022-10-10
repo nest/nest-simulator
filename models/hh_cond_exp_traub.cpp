@@ -265,9 +265,9 @@ nest::hh_cond_exp_traub::State_::set( const DictionaryDatum& d, const Parameters
 
 nest::hh_cond_exp_traub::Buffers_::Buffers_( hh_cond_exp_traub& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -275,9 +275,9 @@ nest::hh_cond_exp_traub::Buffers_::Buffers_( hh_cond_exp_traub& n )
 
 nest::hh_cond_exp_traub::Buffers_::Buffers_( const Buffers_&, hh_cond_exp_traub& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -340,7 +340,7 @@ nest::hh_cond_exp_traub::init_buffers_()
 
   B_.I_stim_ = 0.0;
 
-  if ( B_.s_ == 0 )
+  if ( B_.s_ == nullptr )
   {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
@@ -349,7 +349,7 @@ nest::hh_cond_exp_traub::init_buffers_()
     gsl_odeiv_step_reset( B_.s_ );
   }
 
-  if ( B_.c_ == 0 )
+  if ( B_.c_ == nullptr )
   {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
   }
@@ -358,7 +358,7 @@ nest::hh_cond_exp_traub::init_buffers_()
     gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
   }
 
-  if ( B_.e_ == 0 )
+  if ( B_.e_ == nullptr )
   {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }
@@ -368,7 +368,7 @@ nest::hh_cond_exp_traub::init_buffers_()
   }
 
   B_.sys_.function = hh_cond_exp_traub_dynamics;
-  B_.sys_.jacobian = 0;
+  B_.sys_.jacobian = nullptr;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
 }

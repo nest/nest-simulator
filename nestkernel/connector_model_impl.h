@@ -264,7 +264,7 @@ GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
 {
   assert( syn_id != invalid_synindex );
 
-  if ( thread_local_connectors[ syn_id ] == nullptr )
+  if ( not thread_local_connectors[ syn_id ] )
   {
     // No homogeneous Connector with this syn_id exists, we need to create a new
     // homogeneous Connector.

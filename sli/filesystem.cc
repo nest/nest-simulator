@@ -139,7 +139,7 @@ FilesystemModule::DirectoryFunction::execute( SLIInterpreter* i ) const
 
   int size = SIZE;
   char* path_buffer = new char[ size ];
-  while ( getcwd( path_buffer, size - 1 ) == nullptr )
+  while ( not getcwd( path_buffer, size - 1 ) )
   { // try again with a bigger buffer!
     if ( errno != ERANGE )
     {

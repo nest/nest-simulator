@@ -347,13 +347,13 @@ public:
   bool
   empty() const
   {
-    return p == nullptr;
+    return not p;
   }
 
   bool
   operator not() const
   {
-    return p == nullptr;
+    return not p;
   }
 
   Datum*
@@ -401,7 +401,7 @@ public:
       return *this;
     }
 
-    if ( c_s.p == nullptr )
+    if ( not p )
     {
       clear();
       return *this;

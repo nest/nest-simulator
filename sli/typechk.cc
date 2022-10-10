@@ -68,7 +68,7 @@ void
 TypeTrie::TypeNode::toTokenArray( TokenArray& a ) const
 {
   assert( a.size() == 0 );
-  if ( not next and alt == nullptr ) // Leaf node
+  if ( not next and not alt ) // Leaf node
   {
     a.push_back( func );
   }
@@ -92,7 +92,7 @@ TypeTrie::TypeNode::toTokenArray( TokenArray& a ) const
 void
 TypeTrie::TypeNode::info( std::ostream& out, std::vector< TypeNode const* >& tl ) const
 {
-  if ( not next and alt == nullptr ) // Leaf node
+  if ( not next and not alt ) // Leaf node
   {
     // print type list then function
     for ( int i = tl.size() - 1; i >= 0; --i )
@@ -173,7 +173,7 @@ TypeTrie::getalternative( TypeTrie::TypeNode* pos, const Name& type )
 
   while ( type != pos->type )
   {
-    if ( pos->alt == nullptr )
+    if ( not pos->alt )
     {
       pos->alt = new TypeNode( type );
     }
@@ -245,7 +245,7 @@ TypeTrie::insert_move( const TypeArray& a, Token& f )
   {
 
     pos = getalternative( pos, a[ level ] );
-    if ( pos->next == nullptr )
+    if ( not pos->next )
     {
       pos->next = new TypeNode( empty );
     }
@@ -258,7 +258,7 @@ TypeTrie::insert_move( const TypeArray& a, Token& f )
      2. If pos->alt != NULL, something undefined must have happened.
      This should be impossible.
   */
-  if ( pos->next == nullptr )
+  if ( not pos->next )
   {
     pos->type = sli::object;
     pos->func.move( f );

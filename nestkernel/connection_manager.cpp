@@ -1575,7 +1575,7 @@ nest::ConnectionManager::remove_disabled_connections( const thread tid )
 
   for ( synindex syn_id = 0; syn_id < connectors.size(); ++syn_id )
   {
-    if ( connectors[ syn_id ] == nullptr )
+    if ( not connectors[ syn_id ] )
     {
       continue;
     }

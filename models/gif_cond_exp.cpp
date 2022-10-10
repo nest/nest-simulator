@@ -410,7 +410,7 @@ nest::gif_cond_exp::init_buffers_()
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ = B_.step_;
 
-  if ( B_.s_ == nullptr )
+  if ( not _ )
   {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
@@ -419,7 +419,7 @@ nest::gif_cond_exp::init_buffers_()
     gsl_odeiv_step_reset( B_.s_ );
   }
 
-  if ( B_.c_ == nullptr )
+  if ( not _ )
   {
     B_.c_ = gsl_odeiv_control_y_new( P_.gsl_error_tol, 0.0 );
   }
@@ -428,7 +428,7 @@ nest::gif_cond_exp::init_buffers_()
     gsl_odeiv_control_init( B_.c_, P_.gsl_error_tol, 0.0, 1.0, 0.0 );
   }
 
-  if ( B_.e_ == nullptr )
+  if ( not _ )
   {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }

@@ -267,7 +267,7 @@ OfsopenFunction::execute( SLIInterpreter* i ) const
 
   StringDatum* md = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
 
-  if ( not sd or md == nullptr )
+  if ( not sd or not md )
   {
     StringDatum const d;
     Token t1 = i->OStack.pick( 1 );

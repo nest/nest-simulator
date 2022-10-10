@@ -269,7 +269,7 @@ Mod_iiFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* op1 = static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
-  if ( not op1 || op2 == nullptr )
+  if ( not op1 or not op2 )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;

@@ -185,7 +185,7 @@ SLIInterpreter::inittypes()
 void
 SLIInterpreter::initdictionaries()
 {
-  assert( DStack == nullptr );
+  assert( not DStack );
 
   DStack = new DictionaryStack();
   assert( DStack );

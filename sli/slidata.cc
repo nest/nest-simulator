@@ -284,7 +284,7 @@ Join_sFunction::execute( SLIInterpreter* i ) const
   StringDatum* s1 = dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
   StringDatum* s2 = dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
 
-  if ( not s1 || s2 == nullptr )
+  if ( not s1 or not s2 )
   {
     i->message( SLIInterpreter::M_ERROR, "join_s", "Usage: (string1) (string2) join_s" );
     i->raiseerror( i->ArgumentTypeError );

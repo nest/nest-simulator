@@ -204,7 +204,7 @@ def set_verbosity(level):
 
        To suppress the usual output when NEST starts up (e.g. the welcome message and
        version information) you can run ``export PYNEST_QUIET=1`` on the command
-       line before executing your simulation script. 
+       line before executing your simulation script.
 
     Parameters
     ----------

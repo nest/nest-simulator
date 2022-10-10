@@ -276,7 +276,7 @@ nest::RecordingBackendSIONlib::close_files_()
     const thread t = kernel().vp_manager.get_thread_id();
     const thread task = kernel().vp_manager.thread_to_vp( t );
 
-    assert( ( files_.find( task ) != files_.end() ) && "initialize() was not called before calling cleanup()" );
+    assert( ( files_.find( task ) != files_.end() ) and "initialize() was not called before calling cleanup()" );
 
     FileEntry& file = files_[ task ];
     SIONBuffer& buffer = file.buffer;

@@ -1462,7 +1462,7 @@ nest::ConnectionManager::connection_required( Node*& source, Node*& target, thre
       const bool target_vp_local = kernel().vp_manager.is_local_vp( target_vp );
       const thread target_thread = kernel().vp_manager.vp_to_thread( target_vp );
 
-      if ( target_vp_local && target_thread == tid )
+      if ( target_vp_local and target_thread == tid )
       {
         const index source_node_id = source->get_node_id();
         source = kernel().node_manager.get_node_or_proxy( source_node_id, target_thread );

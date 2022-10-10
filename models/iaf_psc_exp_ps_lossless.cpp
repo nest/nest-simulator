@@ -341,7 +341,7 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin, const long from, cons
 
     // if neuron returns from refractoriness during this step, place
     // pseudo-event in queue to mark end of refractory period
-    if ( S_.is_refractory_ && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
+    if ( S_.is_refractory_ and ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
     {
       B_.events_.add_refractory( T, S_.last_spike_offset_ );
     }

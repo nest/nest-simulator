@@ -416,7 +416,7 @@ nest::aeif_psc_delta::pre_run_hook()
 void
 nest::aeif_psc_delta::update( const Time& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
   const double h = Time::get_resolution().get_ms();
@@ -465,7 +465,7 @@ nest::aeif_psc_delta::update( const Time& origin, const long from, const long to
 
         // if we have accumulated spikes from refractory period,
         // add and reset accumulator
-        if ( P_.with_refr_input_ && S_.refr_spikes_buffer_ != 0.0 )
+        if ( P_.with_refr_input_ and S_.refr_spikes_buffer_ != 0.0 )
         {
           S_.y_[ State_::V_M ] += S_.refr_spikes_buffer_;
           S_.refr_spikes_buffer_ = 0.0;

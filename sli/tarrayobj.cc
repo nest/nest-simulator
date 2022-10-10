@@ -133,7 +133,7 @@ TokenArrayObj::resize( size_t s, size_t alloc, const Token& t )
 {
   alloc_block_size = ( alloc == 0 ) ? alloc_block_size : alloc;
 
-  if ( ( s != size() && ( s != 0 ) ) || ( size() == 0 && alloc_block_size != 0 ) )
+  if ( ( s != size() and ( s != 0 ) ) or ( size() == 0 and alloc_block_size != 0 ) )
   {
     allocate( s, s + alloc_block_size, alloc_block_size, t );
   }
@@ -240,7 +240,7 @@ TokenArrayObj::rotate( Token* first, Token* middle, Token* last )
 {
 
   // This algorithm is taken from the HP STL implementation.
-  if ( ( first < middle ) && ( middle < last ) )
+  if ( ( first < middle ) and ( middle < last ) )
   {
     for ( Token* i = middle;; )
     {
@@ -630,7 +630,7 @@ TokenArrayObj::operator==( const TokenArrayObj& a ) const
   // experimentally replaced by line below 090120, Diesmann
   // because [] cvx has non NULL p
   //
-  //    if( p == NULL || a.p == NULL || size() != a.size())
+  //    if( p == NULL or a.p == NULL or size() != a.size())
   //    return false;
 
   if ( size() != a.size() )

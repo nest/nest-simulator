@@ -233,7 +233,7 @@ aeif_cond_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* 
         "The reversal potential, and synaptic time constant arrays "
         "must have the same size." );
     }
-    if ( tau_syn.size() < old_n_receptors && has_connections_ )
+    if ( tau_syn.size() < old_n_receptors and has_connections_ )
     {
       throw BadProperty(
         "The neuron has connections, therefore the number of ports cannot be "
@@ -486,7 +486,7 @@ aeif_cond_alpha_multisynapse::pre_run_hook()
 void
 aeif_cond_alpha_multisynapse::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 
@@ -592,7 +592,7 @@ aeif_cond_alpha_multisynapse::handle( SpikeEvent& e )
       "must be positive." );
   }
   assert( e.get_delay_steps() > 0 );
-  assert( ( e.get_rport() > 0 ) && ( ( size_t ) e.get_rport() <= P_.n_receptors() ) );
+  assert( ( e.get_rport() > 0 ) and ( ( size_t ) e.get_rport() <= P_.n_receptors() ) );
 
   B_.spikes_[ e.get_rport() - 1 ].add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );

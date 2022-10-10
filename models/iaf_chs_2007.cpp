@@ -118,7 +118,7 @@ nest::iaf_chs_2007::Parameters_::set( const DictionaryDatum& d, State_& s, Node*
   /*
   // TODO: How to handle setting U_noise first and noise later and still make
            sure they are consistent?
-  if ( U_noise_ > 0 && noise_.empty() )
+  if ( U_noise_ > 0 and noise_.empty() )
         throw BadProperty("Noise amplitude larger than zero while noise signal "
                           "is missing.");
   */
@@ -222,7 +222,7 @@ nest::iaf_chs_2007::pre_run_hook()
 void
 nest::iaf_chs_2007::update( const Time& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
@@ -240,7 +240,7 @@ nest::iaf_chs_2007::update( const Time& origin, const long from, const long to )
     // exponentially decaying ahp
     S_.V_spike_ *= V_.P30_;
 
-    double noise_term = P_.U_noise_ > 0.0 && not P_.noise_.empty() ? P_.U_noise_ * P_.noise_[ S_.position_++ ] : 0.0;
+    double noise_term = P_.U_noise_ > 0.0 and not P_.noise_.empty() ? P_.U_noise_ * P_.noise_[ S_.position_++ ] : 0.0;
 
     S_.V_m_ = S_.V_syn_ + S_.V_spike_ + noise_term;
 

@@ -475,7 +475,7 @@ nest::aeif_psc_delta_clopath::pre_run_hook()
 void
 nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 
@@ -516,7 +516,7 @@ nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const
 
       // spikes are handled inside the while-loop
       // due to spike-driven adaptation
-      if ( S_.r_ == 0 && S_.clamp_r_ == 0 )
+      if ( S_.r_ == 0 and S_.clamp_r_ == 0 )
       {
         // neuron not refractory
         S_.y_[ State_::V_M ] = S_.y_[ State_::V_M ] + B_.spikes_.get_value( lag );
@@ -533,7 +533,7 @@ nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const
                                             // Delta_T == 0.
       }
 
-      if ( S_.y_[ State_::V_M ] >= V_.V_peak_ && S_.clamp_r_ == 0 )
+      if ( S_.y_[ State_::V_M ] >= V_.V_peak_ and S_.clamp_r_ == 0 )
       {
         S_.y_[ State_::V_M ] = P_.V_clamp_;
         S_.y_[ State_::W ] += P_.b;   // spike-driven adaptation

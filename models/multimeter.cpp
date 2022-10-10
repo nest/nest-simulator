@@ -107,7 +107,7 @@ void
 nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b, Node* node )
 {
   if ( b.has_targets_
-    && ( d->known( names::interval ) || d->known( names::offset ) || d->known( names::record_from ) ) )
+    and ( d->known( names::interval ) || d->known( names::offset ) || d->known( names::record_from ) ) )
   {
     throw BadProperty(
       "The recording interval, the interval offset and the list of properties "
@@ -139,7 +139,7 @@ nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b,
   {
     // if offset is different from the default value (0), it must be at least
     // as large as the resolution
-    if ( v != 0 && Time( Time::ms( v ) ) < Time::get_resolution() )
+    if ( v != 0 and Time( Time::ms( v ) ) < Time::get_resolution() )
     {
       throw BadProperty(
         "The offset for the sampling interval must be at least as long as the "

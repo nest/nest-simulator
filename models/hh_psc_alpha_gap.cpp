@@ -454,7 +454,7 @@ bool
 nest::hh_psc_alpha_gap::update_( Time const& origin, const long from, const long to, const bool called_from_wfr_update )
 {
 
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   const size_t interpolation_order = kernel().simulation_manager.get_wfr_interpolation_order();
@@ -530,8 +530,8 @@ nest::hh_psc_alpha_gap::update_( Time const& origin, const long from, const long
         --S_.r_;
       }
       else
-        // (    threshold    &&     maximum       )
-        if ( S_.y_[ State_::V_M ] >= 0 && U_old > S_.y_[ State_::V_M ] )
+        // (    threshold    and     maximum       )
+        if ( S_.y_[ State_::V_M ] >= 0 and U_old > S_.y_[ State_::V_M ] )
         {
           S_.r_ = V_.RefractoryCounts_;
 

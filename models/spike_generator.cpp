@@ -68,7 +68,7 @@ nest::spike_generator::Parameters_::get( DictionaryDatum& d ) const
   const size_t n_spikes = spike_stamps_.size();
   const size_t n_offsets = spike_offsets_.size();
 
-  assert( ( precise_times_ && n_offsets == n_spikes ) || ( not precise_times_ && n_offsets == 0 ) );
+  assert( ( precise_times_ and n_offsets == n_spikes ) || ( not precise_times_ and n_offsets == 0 ) );
 
   auto* times_ms = new std::vector< double >();
   times_ms->reserve( n_spikes );
@@ -91,7 +91,7 @@ nest::spike_generator::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double t, const Time& origin, const Time& now )
 {
-  if ( t == 0.0 && not shift_now_spikes_ )
+  if ( t == 0.0 and not shift_now_spikes_ )
   {
     throw BadProperty( "spike time cannot be set to 0." );
   }
@@ -124,7 +124,7 @@ nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double 
     }
 
     assert( t_spike.is_grid_time() );
-    if ( origin + t_spike == now && shift_now_spikes_ )
+    if ( origin + t_spike == now and shift_now_spikes_ )
     {
       t_spike.advance();
     }
@@ -165,7 +165,7 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
   bool allow_offgrid_times_changed =
     updateValueParam< bool >( d, names::allow_offgrid_times, allow_offgrid_times_, node );
   bool flags_changed = precise_times_changed or shift_now_spikes_changed or allow_offgrid_times_changed;
-  if ( precise_times_ && ( allow_offgrid_times_ || shift_now_spikes_ ) )
+  if ( precise_times_ and ( allow_offgrid_times_ || shift_now_spikes_ ) )
   {
     throw BadProperty(
       "Option precise_times cannot be set to true when either "
@@ -173,7 +173,7 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
   }
 
   const bool updated_spike_times = d->known( names::spike_times );
-  if ( flags_changed && not( updated_spike_times || spike_stamps_.empty() ) )
+  if ( flags_changed and not( updated_spike_times || spike_stamps_.empty() ) )
   {
     throw BadProperty(
       "Options can only be set together with spike times or if no "

@@ -76,7 +76,7 @@ BoolDatum::operator new( size_t size )
 void
 BoolDatum::operator delete( void* p, size_t size )
 {
-  if ( p == NULL )
+  if ( not p )
   {
     return;
   }

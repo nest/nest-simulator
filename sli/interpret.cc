@@ -133,7 +133,7 @@ const IforallindexedstringFunction SLIInterpreter::iforallindexedstringfunction;
 const IforallstringFunction SLIInterpreter::iforallstringfunction;
 
 void
-SLIInterpreter::inittypes( void )
+SLIInterpreter::inittypes()
 {
   Integertype.settypename( "integertype" );
   Integertype.setdefaultaction( datatypefunction );
@@ -176,12 +176,12 @@ SLIInterpreter::inittypes( void )
 }
 
 void
-SLIInterpreter::initdictionaries( void )
+SLIInterpreter::initdictionaries()
 {
-  assert( DStack == NULL );
+  assert( not DStack );
 
   DStack = new DictionaryStack();
-  assert( DStack != NULL );
+  assert( DStack );
 
   errordict = new Dictionary();
   DictionaryDatum sysdict( new Dictionary() );
@@ -197,7 +197,7 @@ SLIInterpreter::initdictionaries( void )
 }
 
 void
-SLIInterpreter::initbuiltins( void )
+SLIInterpreter::initbuiltins()
 {
 
   createcommand( ilookup_name, &SLIInterpreter::ilookupfunction );
@@ -217,7 +217,7 @@ SLIInterpreter::initbuiltins( void )
 }
 
 void
-SLIInterpreter::initexternals( void )
+SLIInterpreter::initexternals()
 {
   init_slidict( this );
   init_slicontrol( this );
@@ -242,13 +242,13 @@ SLIInterpreter::initexternals( void )
 ****************************************/
 
 FunctionDatum*
-SLIInterpreter::Ilookup( void ) const
+SLIInterpreter::Ilookup() const
 {
   return new FunctionDatum( ilookup_name, &SLIInterpreter::ilookupfunction, "" );
 }
 
 FunctionDatum*
-SLIInterpreter::Iiterate( void ) const
+SLIInterpreter::Iiterate() const
 {
   return new FunctionDatum( iiterate_name, &SLIInterpreter::iiteratefunction, "" );
 }
@@ -355,7 +355,7 @@ SLIInterpreter::basedef_move( Name const& n, Token& t )
   DStack->basedef_move( n, t );
 }
 
-SLIInterpreter::SLIInterpreter( void )
+SLIInterpreter::SLIInterpreter()
   : debug_mode_( false )
   , show_stack_( false )
   , show_backtrace_( false )
@@ -367,10 +367,10 @@ SLIInterpreter::SLIInterpreter( void )
   , cycle_guard( false )
   , cycle_restriction( 0 )
   , verbositylevel( M_INFO )
-  , statusdict( 0 )
-  , errordict( 0 )
-  , DStack( 0 )
-  , parse( 0 )
+  , statusdict( nullptr )
+  , errordict( nullptr )
+  , DStack( nullptr )
+  , parse( nullptr )
   , ilookup_name( "::lookup" )
   , ipop_name( "::pop" )
   , isetcallback_name( "::setcallback" )
@@ -521,7 +521,7 @@ SLIInterpreter::addmodule( SLIModule* m )
   if ( not( m->commandstring().empty() ) )
   {
     ArrayDatum* ad = dynamic_cast< ArrayDatum* >( baselookup( commandstring_name ).datum() );
-    assert( ad != NULL );
+    assert( ad );
     ad->push_back( new StringDatum( m->commandstring() ) );
   }
 }
@@ -536,7 +536,7 @@ SLIInterpreter::addlinkedusermodule( SLIModule* m )
   if ( not( m->commandstring().empty() ) )
   {
     ArrayDatum* ad = dynamic_cast< ArrayDatum* >( baselookup( commandstring_name ).datum() );
-    assert( ad != NULL );
+    assert( ad );
     ad->push_back( new StringDatum( m->commandstring() ) );
   }
 }
@@ -589,7 +589,7 @@ SLIInterpreter::raiseerror( std::exception& err )
 {
   Name caller = getcurrentname();
 
-  assert( errordict != NULL );
+  assert( errordict );
   errordict->insert( "command", EStack.top() ); // store the func/trie that caused the error.
 
   // SLIException provide addtional information
@@ -616,7 +616,7 @@ SLIInterpreter::raiseerror( Name cmd, Name err )
   // All error related symbols are now in their correct dictionary,
   // the error dictionary $errordict ( see Bug #4)
 
-  assert( errordict != NULL );
+  assert( errordict );
 
   if ( errordict->lookup( newerror_name ) == baselookup( false_name ) )
   {
@@ -692,14 +692,14 @@ SLIInterpreter::print_error( Token cmd )
 
       // Command information is only printed if the
       // command is of trietype
-      if ( command.datum() != NULL )
+      if ( command.datum() )
       {
         if ( command->gettypename() == Name( "trietype" ) )
         {
           msg << "\n\nCandidates for " << command << " are:\n";
 
           TrieDatum* trie = dynamic_cast< TrieDatum* >( command.datum() );
-          assert( trie != NULL );
+          assert( trie );
 
           trie->get().info( msg );
         }
@@ -715,9 +715,9 @@ SLIInterpreter::print_error( Token cmd )
 }
 
 void
-SLIInterpreter::raiseagain( void )
+SLIInterpreter::raiseagain()
 {
-  assert( errordict != NULL );
+  assert( errordict );
 
   if ( errordict->known( commandname_name ) )
   {
@@ -750,7 +750,7 @@ SLIInterpreter::verbosity( int level )
 }
 
 int
-SLIInterpreter::verbosity( void ) const
+SLIInterpreter::verbosity() const
 {
   return verbositylevel;
 }
@@ -832,7 +832,7 @@ SLIInterpreter::message( std::ostream& out,
 {
   const unsigned buflen = 30;
   char timestring[ buflen + 1 ] = "";
-  const time_t tm = std::time( NULL );
+  const time_t tm = std::time( nullptr );
 
   std::strftime( timestring, buflen, "%b %d %H:%M:%S", std::localtime( &tm ) );
 
@@ -921,15 +921,15 @@ SLIInterpreter::message( std::ostream& out,
 }
 
 Name
-SLIInterpreter::getcurrentname( void ) const
+SLIInterpreter::getcurrentname() const
 {
   FunctionDatum* func = dynamic_cast< FunctionDatum* >( EStack.top().datum() );
-  if ( func != NULL )
+  if ( func )
   {
     return ( func->getname() );
   }
   TrieDatum* trie = dynamic_cast< TrieDatum* >( EStack.top().datum() );
-  if ( trie != NULL )
+  if ( trie )
   {
     return ( trie->getname() );
   }
@@ -944,7 +944,7 @@ SLIInterpreter::setcycleguard( Index c )
 }
 
 void
-SLIInterpreter::removecycleguard( void )
+SLIInterpreter::removecycleguard()
 {
   cycle_guard = false;
 }
@@ -993,13 +993,13 @@ SLIInterpreter::stack_backtrace( int n )
     }
 
     FunctionDatum* fd = dynamic_cast< FunctionDatum* >( EStack.pick( p ).datum() );
-    if ( fd != 0 )
+    if ( fd )
     {
       fd->backtrace( this, p );
       continue;
     }
     NameDatum* nd = dynamic_cast< NameDatum* >( EStack.pick( p ).datum() );
-    if ( nd != 0 )
+    if ( nd )
     {
       std::cerr << "While executing: ";
       nd->print( std::cerr );
@@ -1007,7 +1007,7 @@ SLIInterpreter::stack_backtrace( int n )
       continue;
     }
     TrieDatum* td = dynamic_cast< TrieDatum* >( EStack.pick( p ).datum() );
-    if ( td != 0 )
+    if ( td )
     {
       std::cerr << "While executing: ";
       td->print( std::cerr );

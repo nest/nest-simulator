@@ -326,9 +326,9 @@ nest::gif_cond_exp_multisynapse::State_::set( const DictionaryDatum& d, const Pa
 
 nest::gif_cond_exp_multisynapse::Buffers_::Buffers_( gif_cond_exp_multisynapse& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
   , step_( Time::get_resolution().get_ms() )
   , IntegrationStep_( step_ )
 {
@@ -338,9 +338,9 @@ nest::gif_cond_exp_multisynapse::Buffers_::Buffers_( gif_cond_exp_multisynapse& 
 
 nest::gif_cond_exp_multisynapse::Buffers_::Buffers_( const Buffers_& b, gif_cond_exp_multisynapse& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
   , step_( b.step_ )
   , IntegrationStep_( b.IntegrationStep_ )
 {
@@ -408,7 +408,7 @@ nest::gif_cond_exp_multisynapse::init_buffers_()
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ = B_.step_;
 
-  if ( B_.s_ == 0 )
+  if ( not B_.s_ )
   {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, state_size );
   }
@@ -417,7 +417,7 @@ nest::gif_cond_exp_multisynapse::init_buffers_()
     gsl_odeiv_step_reset( B_.s_ );
   }
 
-  if ( B_.c_ == 0 )
+  if ( not B_.c_ )
   {
     B_.c_ = gsl_odeiv_control_y_new( P_.gsl_error_tol, 0.0 );
   }
@@ -426,7 +426,7 @@ nest::gif_cond_exp_multisynapse::init_buffers_()
     gsl_odeiv_control_init( B_.c_, P_.gsl_error_tol, 0.0, 1.0, 0.0 );
   }
 
-  if ( B_.e_ == 0 )
+  if ( not B_.e_ )
   {
     B_.e_ = gsl_odeiv_evolve_alloc( state_size );
   }
@@ -436,7 +436,7 @@ nest::gif_cond_exp_multisynapse::init_buffers_()
   }
 
   B_.sys_.function = gif_cond_exp_multisynapse_dynamics;
-  B_.sys_.jacobian = NULL;
+  B_.sys_.jacobian = nullptr;
   B_.sys_.dimension = state_size;
   B_.sys_.params = reinterpret_cast< void* >( this );
 }

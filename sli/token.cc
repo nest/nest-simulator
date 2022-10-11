@@ -201,5 +201,4 @@ Token::matches_as_string( const Token& rhs ) const
   {
     return false;
   }
-  return false;
 }

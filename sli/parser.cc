@@ -53,26 +53,26 @@ Parser::init( std::istream& is )
 }
 
 Parser::Parser( std::istream& is )
-  : s( NULL )
+  : s( nullptr )
   , ParseStack( 128 )
 {
   init( is );
-  assert( s != NULL );
+  assert( s );
 }
 
-Parser::Parser( void )
-  : s( NULL )
+Parser::Parser()
+  : s( nullptr )
   , ParseStack( 128 )
 {
   init( std::cin );
-  assert( s != NULL );
+  assert( s );
 }
 
 
 bool
 Parser::operator()( Token& t )
 {
-  assert( s != NULL );
+  assert( s );
 
   Token pt;
 
@@ -155,13 +155,13 @@ Parser::operator()( Token& t )
           if ( pt->isoftype( SLIInterpreter::Arraytype ) )
           {
             ArrayDatum* pa = dynamic_cast< ArrayDatum* >( pt.datum() );
-            assert( pa != NULL );
+            assert( pa );
             pa->push_back( t );
           }
           else // now it must be a procedure
           {
             LitprocedureDatum* pp = dynamic_cast< LitprocedureDatum* >( pt.datum() );
-            assert( pp != NULL );
+            assert( pp );
             pp->set_executable();
             pp->push_back( t );
           }

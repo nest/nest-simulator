@@ -156,7 +156,7 @@ class iaf_cond_beta : public ArchivingNode
 public:
   iaf_cond_beta();
   iaf_cond_beta( const iaf_cond_beta& );
-  ~iaf_cond_beta();
+  ~iaf_cond_beta() override;
 
   /*
    * Import all overloaded virtual functions that we
@@ -167,24 +167,24 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node& tagret, rport receptor_type, synindex, bool );
+  port send_test_event( Node& tagret, rport receptor_type, synindex, bool ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
+  void init_buffers_() override;
   double get_normalisation_factor( double, double );
-  void pre_run_hook();
-  void update( Time const&, const long, const long );
+  void pre_run_hook() override;
+  void update( Time const&, const long, const long ) override;
 
   // END Boilerplate function declarations ----------------------------
 
@@ -437,6 +437,6 @@ iaf_cond_beta::set_status( const DictionaryDatum& d )
 
 } // namespace
 
-#endif // IAF_COND_BETA_H
-
 #endif // HAVE_GSL
+
+#endif // IAF_COND_BETA_H

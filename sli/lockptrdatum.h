@@ -43,7 +43,7 @@ template < class D, SLIType* slt >
 class lockPTRDatum : public lockPTR< D >, public TypedDatum< slt >
 {
   Datum*
-  clone( void ) const
+  clone() const
   {
     return new lockPTRDatum< D, slt >( *this );
   }
@@ -99,14 +99,6 @@ public:
   // tests for equality via lockPTR<D>::operator==
   // It is defined as identity of the underly D, i.e. &this->D == &other->D
   bool equals( const Datum* ) const;
-
-  /* operator=
-    The assignment operator is defaulted.
-    Therefore, lockPTR<D>::operator= is called, and
-    TypedDatum<slt>::operator= is called.
-    The TypedDatum = is simply return *this.
-  */
-  // lockPTRDatum<D, sli>& operator=(const lockPTRDatum<D, sli>&)
 
   /* operator==
     lockPTRDatum should only use the equals method for equality testing.

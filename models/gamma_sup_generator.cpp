@@ -78,7 +78,7 @@ nest::gamma_sup_generator::Internal_states_::update( double transition_prob, Rng
        http://en.wikipedia.org/wiki/Binomial_distribution#Poisson_approximation
        */
       if ( ( occ_[ i ] >= 100 and transition_prob <= 0.01 )
-        || ( occ_[ i ] >= 500 and transition_prob * occ_[ i ] <= 0.1 ) )
+        or ( occ_[ i ] >= 500 and transition_prob * occ_[ i ] <= 0.1 ) )
       {
         poisson_distribution::param_type param( transition_prob * occ_[ i ] );
         n_trans[ i ] = poisson_dist_( rng, param );
@@ -235,7 +235,7 @@ nest::gamma_sup_generator::update( Time const& T, const long from, const long to
   assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  if ( P_.rate_ <= 0 || P_.num_targets_ == 0 )
+  if ( P_.rate_ <= 0 or P_.num_targets_ == 0 )
   {
     return;
   }

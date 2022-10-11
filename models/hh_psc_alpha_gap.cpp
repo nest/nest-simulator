@@ -267,11 +267,11 @@ nest::hh_psc_alpha_gap::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Refractory time cannot be negative." );
   }
-  if ( tau_synE <= 0 || tau_synI <= 0 )
+  if ( tau_synE <= 0 or tau_synI <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
-  if ( g_Kv1 < 0 || g_Kv3 < 0 || g_Na < 0 || g_L < 0 )
+  if ( g_Kv1 < 0 or g_Kv3 < 0 or g_Na < 0 or g_L < 0 )
   {
     throw BadProperty( "All conductances must be non-negative." );
   }
@@ -295,7 +295,7 @@ nest::hh_psc_alpha_gap::State_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::Inact_h, y_[ HH_H ], node );
   updateValueParam< double >( d, names::Act_n, y_[ HH_N ], node );
   updateValueParam< double >( d, names::Inact_p, y_[ HH_P ], node );
-  if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 || y_[ HH_P ] < 0 )
+  if ( y_[ HH_M ] < 0 or y_[ HH_H ] < 0 or y_[ HH_N ] < 0 or y_[ HH_P ] < 0 )
   {
     throw BadProperty( "All (in)activation variables must be non-negative." );
   }

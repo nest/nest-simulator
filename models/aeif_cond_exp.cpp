@@ -297,7 +297,7 @@ nest::aeif_cond_exp::State_::set( const DictionaryDatum& d, const Parameters_&, 
   updateValueParam< double >( d, names::g_ex, y_[ G_EXC ], node );
   updateValueParam< double >( d, names::g_in, y_[ G_INH ], node );
   updateValueParam< double >( d, names::w, y_[ W ], node );
-  if ( y_[ G_EXC ] < 0 || y_[ G_INH ] < 0 )
+  if ( y_[ G_EXC ] < 0 or y_[ G_INH ] < 0 )
   {
     throw BadProperty( "Conductances must not be negative." );
   }
@@ -475,7 +475,7 @@ nest::aeif_cond_exp::update( const Time& origin, const long from, const long to 
       }
 
       // check for unreasonable values; we allow V_M to explode
-      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6 || S_.y_[ State_::W ] > 1e6 )
+      if ( S_.y_[ State_::V_M ] < -1e3 or S_.y_[ State_::W ] < -1e6 or S_.y_[ State_::W ] > 1e6 )
       {
         throw NumericalInstability( get_name() );
       }

@@ -124,7 +124,7 @@ nest::mip_generator::update( Time const& T, const long from, const long to )
 
   for ( long lag = from; lag < to; ++lag )
   {
-    if ( not StimulationDevice::is_active( T ) || P_.rate_ <= 0 )
+    if ( not StimulationDevice::is_active( T ) or P_.rate_ <= 0 )
     {
       return; // no spikes to be generated
     }

@@ -312,7 +312,7 @@ nest::gif_cond_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
       throw BadProperty( "All time constants must be strictly positive." );
     }
   }
-  if ( tau_synE_ <= 0 || tau_synI_ <= 0 )
+  if ( tau_synE_ <= 0 or tau_synI_ <= 0 )
   {
     throw BadProperty( "Synapse time constants must be strictly positive." );
   }

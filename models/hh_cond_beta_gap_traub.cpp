@@ -305,7 +305,7 @@ nest::hh_cond_beta_gap_traub::State_::set( const DictionaryDatum& d, const Param
   updateValue< double >( d, names::Act_m, y_[ HH_M ] );
   updateValue< double >( d, names::Inact_h, y_[ HH_H ] );
   updateValue< double >( d, names::Act_n, y_[ HH_N ] );
-  if ( y_[ HH_M ] < 0 or y_[ HH_H ] < 0 || y_[ HH_N ] < 0 )
+  if ( y_[ HH_M ] < 0 or y_[ HH_H ] < 0 or y_[ HH_N ] < 0 )
   {
     throw BadProperty( "All (in)activation variables must be non-negative." );
   }

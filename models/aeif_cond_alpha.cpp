@@ -271,7 +271,7 @@ nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d, Node* node )
     throw BadProperty( "Refractory time cannot be negative." );
   }
 
-  if ( tau_syn_ex <= 0 || tau_syn_in <= 0 || tau_w <= 0 )
+  if ( tau_syn_ex <= 0 or tau_syn_in <= 0 or tau_w <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -302,7 +302,7 @@ nest::aeif_cond_alpha::State_::set( const DictionaryDatum& d, const Parameters_&
   updateValueParam< double >( d, names::g_in, y_[ G_INH ], node );
   updateValueParam< double >( d, names::dg_in, y_[ DG_INH ], node );
   updateValueParam< double >( d, names::w, y_[ W ], node );
-  if ( y_[ G_EXC ] < 0 || y_[ G_INH ] < 0 )
+  if ( y_[ G_EXC ] < 0 or y_[ G_INH ] < 0 )
   {
     throw BadProperty( "Conductances must not be negative." );
   }
@@ -485,7 +485,7 @@ nest::aeif_cond_alpha::update( Time const& origin, const long from, const long t
       }
 
       // check for unreasonable values; we allow V_M to explode
-      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6 || S_.y_[ State_::W ] > 1e6 )
+      if ( S_.y_[ State_::V_M ] < -1e3 or S_.y_[ State_::W ] < -1e6 or S_.y_[ State_::W ] > 1e6 )
       {
         throw NumericalInstability( get_name() );
       }

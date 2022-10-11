@@ -279,7 +279,7 @@ nest::hh_psc_alpha_clopath::State_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::u_bar_plus, y_[ U_BAR_PLUS ], node );
   updateValueParam< double >( d, names::u_bar_minus, y_[ U_BAR_MINUS ], node );
   updateValueParam< double >( d, names::u_bar_bar, y_[ U_BAR_BAR ], node );
-  if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 )
+  if ( y_[ HH_M ] < 0 or y_[ HH_H ] < 0 or y_[ HH_N ] < 0 )
   {
     throw BadProperty( "All (in)activation variables must be non-negative." );
   }

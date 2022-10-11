@@ -494,16 +494,20 @@ if test "${PYTHON}"; then
 
     # Run all tests except those in the mpi* subdirectories because they cannot be run concurrently
     XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
+    set +e
     "${PYTHON}" -m pytest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" --numprocesses=1 \
           --ignore="${PYNEST_TEST_DIR}/mpi" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}"
-
+    set -e
+    
     # Run tests in the mpi* subdirectories, grouped by number of processes
     if test "${HAVE_MPI}" = "true"; then
         if test "${MPI_LAUNCHER}"; then
             for numproc in $(cd ${PYNEST_TEST_DIR}/mpi/; ls -d */ | tr -d '/'); do
                 XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
                 PYTEST_ARGS="--verbose --timeout $TIME_LIMIT --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
+		set +e
                 $(sli -c "${numproc} (${PYTHON} -m pytest) (${PYTEST_ARGS}) mpirun =only") 2>&1 | tee -a "${TEST_LOGFILE}"
+		set -e
             done
         fi
     fi
@@ -518,7 +522,9 @@ echo "Phase 8: Running C++ tests (experimental)"
 echo "-----------------------------------------"
 
 if command -v run_all_cpptests >/dev/null 2>&1; then
+  set +e
   CPP_TEST_OUTPUT=$( run_all_cpptests --logger=JUNIT,error,"${REPORTDIR}/08_cpptests.xml":HRF,error,stdout 2>&1 )
+  set -e
   echo "${CPP_TEST_OUTPUT}" | tail -2
 else
   echo "  Not running C++ tests because NEST was compiled without Boost."

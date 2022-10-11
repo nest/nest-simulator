@@ -935,12 +935,19 @@ class CompartmentsTestCase(unittest.TestCase):
         cm = nest.Create('cm_default')
         cm.compartments = {"parent_idx": -1, "params": SP}
         cm.compartments += {"parent_idx": 0, "params": DP[0]}
+        cm.receptors = {"comp_idx": 0, "receptor_type": "GABA"}
+        cm.receptors += {"comp_idx": 1, "receptor_type": "AMPA"}
 
         compartments = cm.compartments
         self.assertEqual(compartments[0]["comp_idx"], 0)
         self.assertEqual(compartments[0]["parent_idx"], -1)
         self.assertEqual(compartments[1]["comp_idx"], 1)
         self.assertEqual(compartments[1]["parent_idx"], 0)
+        receptors = cm.receptors
+        self.assertEqual(receptors[0]["receptor_idx"], 0)
+        self.assertEqual(receptors[0]["receptor_type"], 'GABA')
+        self.assertEqual(receptors[1]["receptor_idx"], 1)
+        self.assertEqual(receptors[1]["receptor_type"], 'AMPA')
 
         cm2 = nest.Create('cm_default')
         cm2.compartments = {"parent_idx": -1, "params": SP}
@@ -951,6 +958,10 @@ class CompartmentsTestCase(unittest.TestCase):
         cm3.compartments = [{"parent_idx": -1, "params": SP}, {"parent_idx": 0, "params": DP[0]}]
         cm3.compartments += {"parent_idx": 1, "params": DP[0]}
         self.assertEqual(len(list(cm3.compartments)), 3)
+
+        cm2.receptors = {"comp_idx": 0, "receptor_type": "GABA"}
+        cm2.receptors += [{"comp_idx": 1, "receptor_type": "AMPA"}, {"comp_idx": 2, "receptor_type": "GABA"}]
+        self.assertEqual(len(list(cm2.receptors)), 3)
 
 
 def suite():

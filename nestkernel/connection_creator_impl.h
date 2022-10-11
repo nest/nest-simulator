@@ -450,7 +450,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           }
 
           index source_id = positions[ random_id ].second;
-          if ( allow_autapses_ and ( source_id == target_id ) )
+          if ( not allow_autapses_ and ( source_id == target_id ) )
           {
             --i;
             continue;

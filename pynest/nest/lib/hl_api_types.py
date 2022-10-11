@@ -52,6 +52,7 @@ __all__ = [
     'Mask',
     'NodeCollection',
     'Parameter',
+    'Receptors',
     'serializable',
     'SynapseCollection',
     'to_json',
@@ -395,6 +396,8 @@ class NodeCollection:
             result = get_parameters(self, params[0])
             if params[0] == 'compartments':
                 result = Compartments(self, result)
+            elif params[0] == 'receptors':
+                result = Receptors(self, result)
         else:
             # Hierarchical addressing
             result = get_parameters_hierarchical_addressing(self, params)
@@ -458,10 +461,17 @@ class NodeCollection:
 
         if isinstance(params, dict) and 'compartments' in params:
             if isinstance(params['compartments'], Compartments):
-                params['compartments'] = params['compartments'].get_compartment_tuple()
+                params['compartments'] = params['compartments'].get_tuple()
             elif params['compartments'] is None:
                 # Adding compartments has been handled by the += operator, so we can remove the entry.
                 params.pop('compartments')
+
+        if isinstance(params, dict) and 'receptors' in params:
+            if isinstance(params['receptors'], Receptors):
+                params['receptors'] = params['receptors'].get_tuple()
+            elif params['receptors'] is None:
+                # Adding receptors has been handled by the += operator, so we can remove the entry.
+                params.pop('receptors')
 
         if isinstance(params, dict) and all(local_nodes):
 
@@ -1116,54 +1126,69 @@ class Parameter:
             return sli_func('Apply', self._datum, {'source': spatial_nc, 'targets': positions})
 
 
-class Compartments:
-    def __init__(self, node_collection, compartments):
+class CmBase:
+
+    def __init__(self, node_collection, elements):
         if not isinstance(node_collection, NodeCollection):
             raise TypeError(f'node_collection must be a NodeCollection, got {type(node_collection)}')
-        if not isinstance(compartments, tuple):
-            raise TypeError(f'compartments must be a tuple of dicts, got {type(compartments)}')
-        self._compartments = compartments
+        if not isinstance(elements, tuple):
+            raise TypeError(f'elements must be a tuple of dicts, got {type(elements)}')
+        self._elements = elements
         self._node_collection = node_collection
+        print(f'init {self.__class__}')
 
     def __add__(self, other):
-        new_compartments = list(self._compartments)
+        new_elements = list(self._elements)
         if isinstance(other, dict):
-            new_compartments += [other]
+            new_elements += [other]
         elif isinstance(other, (tuple, list)):
             if not all(isinstance(d, dict) for d in other):
-                raise TypeError('Compartments can only be added with dicts, lists of dicts, or other Compartments')
-            new_compartments += list(other)
-        elif isinstance(other, Compartments):
-            new_compartments += list(other._compartments)
+                raise TypeError(
+                    f'{self.__class__.__name__} can only be added with dicts, lists of dicts, '
+                    f'or other {self.__class__.__name__}')
+            new_elements += list(other)
+        elif isinstance(other, self.__class__):
+            new_elements += list(other._elements)
         else:
-            raise NotImplementedError('Compartments can only be added with dicts, lists of dicts,'
-                                      f' or other Compartments, got {type(other)}')
+            raise NotImplementedError(f'{self.__class__.__name__} can only be added with dicts, lists of dicts,'
+                                      f' or other {self.__class__.__name__}, got {type(other)}')
 
-        return Compartments(self._node_collection, tuple(new_compartments))
+        return self.__class__(self._node_collection, tuple(new_elements))
 
     def __iadd__(self, other):
         if isinstance(other, dict):
-            new_compartments = [other]
+            new_elements = [other]
         elif isinstance(other, (tuple, list)):
             if not all(isinstance(d, dict) for d in other):
-                raise TypeError('Compartments can only be added with dicts, lists of dicts, or other Compartments')
-            new_compartments = list(other)
-        elif isinstance(other, Compartments):
-            new_compartments = list(other._compartments)
+                raise TypeError(f'{self.__class__.__name__} can only be added with dicts, lists of dicts, '
+                                f'or other {self.__class__.__name__}')
+            new_elements = list(other)
+        elif isinstance(other, self.__class__):
+            new_elements = list(other._elements)
         else:
-            raise NotImplementedError('Compartments can only be added with dicts, lists of dicts,'
-                                      f' or other Compartments, got {type(other)}')
-        self._node_collection.set(add_compartments=new_compartments)
-        return None  # Flagging compartments as added by returning None
+            raise NotImplementedError(f'{self.__class__.__name__} can only be added with dicts, lists of dicts,'
+                                      f' or other {self.__class__.__name__}, got {type(other)}')
+        self._node_collection.set({f'add_{self.__class__.__name__.lower()}': new_elements})
+        return None  # Flagging elements as added by returning None
 
     def __getitem__(self, key):
-        return self._compartments[key]
+        return self._elements[key]
 
     def __str__(self):
-        return str(self._compartments)
+        return str(self._elements)
 
-    def get_compartment_tuple(self):
-        return self._compartments
+    def get_tuple(self):
+        return self._elements
+
+
+class Compartments(CmBase):
+    # No specialization here because all is done in the base class based on the class name.
+    pass
+
+
+class Receptors(CmBase):
+    # No specialization here because all is done in the base class based on the class name.
+    pass
 
 
 def serializable(data):

@@ -913,12 +913,12 @@ class CompartmentsTestCase(unittest.TestCase):
     def test_compartments_wrapper(self):
         cm = nest.Create('cm_default')
         cm.compartments = [{"parent_idx": -1, "params": SP}]
-        compartment_a = cm.compartments.get_compartment_tuple()[0]
+        compartment_a = cm.compartments.get_tuple()[0]
         compartment_b = {"parent_idx": 0, "params": DP[0]}
 
         for rhs in (compartment_b, [compartment_b], (compartment_b), nest.Compartments(cm, (compartment_b,))):
             compartments = cm.compartments + rhs
-            self.assertEqual(compartments.get_compartment_tuple(), (compartment_a, compartment_b))
+            self.assertEqual(compartments.get_tuple(), (compartment_a, compartment_b))
 
         with self.assertRaises(TypeError):
             # Raises error because argument must be a tuple

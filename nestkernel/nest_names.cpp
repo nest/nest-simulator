@@ -51,6 +51,8 @@ const Name activity( "activity" );
 const Name adapting_threshold( "adapting_threshold" );
 const Name adaptive_spike_buffers( "adaptive_spike_buffers" );
 const Name adaptive_target_buffers( "adaptive_target_buffers" );
+const Name add_compartments( "add_compartments" );
+const Name add_receptors( "add_receptors" );
 const Name after_spike_currents( "after_spike_currents" );
 const Name ahp_bug( "ahp_bug" );
 const Name allow_autapses( "allow_autapses" );
@@ -102,7 +104,6 @@ const Name continuous( "continuous" );
 const Name count_covariance( "count_covariance" );
 const Name count_histogram( "count_histogram" );
 const Name covariance( "covariance" );
-const Name add_compartments( "add_compartments" );
 const Name compartments( "compartments" );
 const Name comp_idx( "comp_idx" );
 

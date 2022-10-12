@@ -101,9 +101,9 @@ public:
    *  conn_spec disconnection specs. For now only all to all and one to one
    * rules are implemented.    */
   void disconnect( NodeCollectionPTR sources,
-      NodeCollectionPTR targets,
-      DictionaryDatum& conn_spec,
-      DictionaryDatum& syn_spec);
+    NodeCollectionPTR targets,
+    DictionaryDatum& conn_spec,
+    DictionaryDatum& syn_spec);
 
   /**
    * Disconnect two nodes.
@@ -159,7 +159,7 @@ public:
    */
   delay builder_max_delay() const;
 
- /**
+  /**
    * Dynamic creation of synapses
    * @param pre_id source id
    * @param pre_n number of available synaptic elements in the pre node

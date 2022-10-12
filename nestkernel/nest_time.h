@@ -389,13 +389,13 @@ public:
   bool
   is_neg_inf() const
   {
-    return tics <= LIM_NEG_INF.tics; 
-  /*
-   * Currently tics can never become smaller than LIM_NEG_INF.tics. However, if
-   * LIM_NEG_INF.tics represent negative infinity, any smaller
-   * value cannot be larger and thus must be infinity as well. to be on the safe side
-   * we use less-or-equal instead of just equal.
-   */
+    return tics <= LIM_NEG_INF.tics;
+    /*
+     * Currently tics can never become smaller than LIM_NEG_INF.tics. However, if
+     * LIM_NEG_INF.tics represent negative infinity, any smaller
+     * value cannot be larger and thus must be infinity as well. to be on the safe side
+     * we use less-or-equal instead of just equal.
+     */
   }
   bool
   is_pos_inf() const

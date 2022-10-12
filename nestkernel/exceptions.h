@@ -73,12 +73,12 @@ public:
   {
   }
 
-  virtual ~KernelException() throw()
+  ~KernelException() throw() override
   {
   }
 
-  virtual std::string
-  message() const
+  std::string
+  message() const override
   {
     return std::string();
   }

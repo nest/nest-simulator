@@ -531,7 +531,7 @@ nest::glif_cond::init_buffers_()
   // We must integrate this model with high-precision to obtain decent results
   B_.IntegrationStep_ = std::min( 0.01, B_.step_ );
 
-  if ( B_.c_ == nullptr )
+  if ( not B_.c_ )
   {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
   }
@@ -596,14 +596,14 @@ nest::glif_cond::pre_run_hook()
   }
 
   // reallocate instance of stepping function for ODE GSL solver
-  if ( B_.s_ != nullptr )
+  if ( B_.s_ )
   {
     gsl_odeiv_step_free( B_.s_ );
   }
   B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, S_.y_.size() );
 
   // reallocate instance of evolution function for ODE GSL solver
-  if ( B_.e_ != nullptr )
+  if ( B_.e_ )
   {
     gsl_odeiv_evolve_free( B_.e_ );
   }

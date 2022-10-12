@@ -68,18 +68,18 @@ void
 TypeTrie::TypeNode::toTokenArray( TokenArray& a ) const
 {
   assert( a.size() == 0 );
-  if ( next == nullptr and alt == nullptr ) // Leaf node
+  if ( not next and not alt ) // Leaf node
   {
     a.push_back( func );
   }
   else
   {
-    assert( next != nullptr );
+    assert( next );
     a.push_back( LiteralDatum( type ) );
     TokenArray a_next;
     next->toTokenArray( a_next );
     a.push_back( ArrayDatum( a_next ) );
-    if ( alt != nullptr )
+    if ( alt )
     {
       TokenArray a_alt;
       alt->toTokenArray( a_alt );
@@ -92,7 +92,7 @@ TypeTrie::TypeNode::toTokenArray( TokenArray& a ) const
 void
 TypeTrie::TypeNode::info( std::ostream& out, std::vector< TypeNode const* >& tl ) const
 {
-  if ( next == nullptr and alt == nullptr ) // Leaf node
+  if ( not next and not alt ) // Leaf node
   {
     // print type list then function
     for ( int i = tl.size() - 1; i >= 0; --i )
@@ -103,11 +103,11 @@ TypeTrie::TypeNode::info( std::ostream& out, std::vector< TypeNode const* >& tl 
   }
   else
   {
-    assert( next != nullptr );
+    assert( next );
     tl.push_back( this );
     next->info( out, tl );
     tl.pop_back();
-    if ( alt != nullptr )
+    if ( alt )
     {
       alt->info( out, tl );
     }
@@ -130,15 +130,15 @@ TypeTrie::newnode( const TokenArray& ta ) const
     // first object in the array must be a literal, indicating the type
     // the second and third object must be an array.
     LiteralDatum* typed = dynamic_cast< LiteralDatum* >( ta[ 0 ].datum() );
-    assert( typed != nullptr );
+    assert( typed );
     ArrayDatum* nextd = dynamic_cast< ArrayDatum* >( ta[ 1 ].datum() );
-    assert( nextd != nullptr );
+    assert( nextd );
     n = new TypeNode( *typed );
     n->next = newnode( *nextd );
     if ( ta.size() == 3 )
     {
       ArrayDatum* altd = dynamic_cast< ArrayDatum* >( ta[ 2 ].datum() );
-      assert( altd != nullptr );
+      assert( altd );
       n->alt = newnode( *altd );
     }
   }
@@ -173,7 +173,7 @@ TypeTrie::getalternative( TypeTrie::TypeNode* pos, const Name& type )
 
   while ( type != pos->type )
   {
-    if ( pos->alt == nullptr )
+    if ( not pos->alt )
     {
       pos->alt = new TypeNode( type );
     }
@@ -235,7 +235,7 @@ TypeTrie::insert_move( const TypeArray& a, Token& f )
   TypeNode* pos = root;
   const Name empty;
 
-  assert( root != nullptr );
+  assert( root );
 
   // Functions with no parameters are possible, but useless in trie
   // structures, so it is best to forbid them!
@@ -245,7 +245,7 @@ TypeTrie::insert_move( const TypeArray& a, Token& f )
   {
 
     pos = getalternative( pos, a[ level ] );
-    if ( pos->next == nullptr )
+    if ( not pos->next )
     {
       pos->next = new TypeNode( empty );
     }
@@ -258,7 +258,7 @@ TypeTrie::insert_move( const TypeArray& a, Token& f )
      2. If pos->alt != NULL, something undefined must have happened.
      This should be impossible.
   */
-  if ( pos->next == nullptr )
+  if ( not pos->next )
   {
     pos->type = sli::object;
     pos->func.move( f );
@@ -280,7 +280,7 @@ void
 TypeTrie::toTokenArray( TokenArray& a ) const
 {
   a.clear();
-  if ( root != nullptr )
+  if ( root )
   {
     root->toTokenArray( a );
   }
@@ -291,7 +291,7 @@ TypeTrie::info( std::ostream& out ) const
 {
   std::vector< TypeNode const* > tl;
   tl.reserve( 5 );
-  if ( root != nullptr )
+  if ( root )
   {
     root->info( out, tl );
   }

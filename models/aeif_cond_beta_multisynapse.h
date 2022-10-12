@@ -182,7 +182,7 @@ class aeif_cond_beta_multisynapse : public ArchivingNode
 public:
   aeif_cond_beta_multisynapse();
   aeif_cond_beta_multisynapse( const aeif_cond_beta_multisynapse& );
-  virtual ~aeif_cond_beta_multisynapse();
+  ~aeif_cond_beta_multisynapse() override;
 
   friend int aeif_cond_beta_multisynapse_dynamics( double, const double*, double*, void* );
 

@@ -56,11 +56,11 @@ public:
   {
   }
 
-  virtual void initialize() override;
-  virtual void finalize() override;
+  void initialize() override;
+  void finalize() override;
 
-  virtual void set_status( const DictionaryDatum& ) override;
-  virtual void get_status( DictionaryDatum& ) override;
+  void set_status( const DictionaryDatum& ) override;
+  void get_status( DictionaryDatum& ) override;
 
   /**
    * Gets ID of local thread.

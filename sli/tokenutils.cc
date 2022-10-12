@@ -41,7 +41,7 @@ long
 getValue< long >( const Token& t )
 {
   const IntegerDatum* id = dynamic_cast< const IntegerDatum* >( t.datum() );
-  if ( id == nullptr )
+  if ( not id )
   { // We have to create a Datum object to get the name...
     IntegerDatum const d;
     throw TypeMismatch( d.gettypename().toString(), t.datum()->gettypename().toString() );
@@ -53,7 +53,7 @@ void
 setValue< long >( const Token& t, long const& value )
 {
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( t.datum() );
-  if ( id == nullptr )
+  if ( not id )
   { // We have to create a Datum object to get the name...
     IntegerDatum const d;
     throw TypeMismatch( d.gettypename().toString(), t.datum()->gettypename().toString() );
@@ -95,7 +95,7 @@ void
 setValue< double >( const Token& t, double const& value )
 {
   DoubleDatum* id = dynamic_cast< DoubleDatum* >( t.datum() );
-  if ( id == nullptr )
+  if ( not id )
   { // We have to create a Datum object to get the name...
     DoubleDatum const d;
     throw TypeMismatch( d.gettypename().toString(), t.datum()->gettypename().toString() );
@@ -115,7 +115,7 @@ bool
 getValue< bool >( const Token& t )
 {
   BoolDatum* bd = dynamic_cast< BoolDatum* >( t.datum() );
-  if ( bd == nullptr )
+  if ( not bd )
   { // We have to create a Datum object to get the name...
     BoolDatum const d( false );
     throw TypeMismatch( d.gettypename().toString(), t.datum()->gettypename().toString() );
@@ -128,7 +128,7 @@ void
 setValue< bool >( const Token& t, bool const& value )
 {
   BoolDatum* bd = dynamic_cast< BoolDatum* >( t.datum() );
-  if ( bd == nullptr )
+  if ( not bd )
   { // We have to create a Datum object to get the name...
     BoolDatum const d( false );
     throw TypeMismatch( d.gettypename().toString(), t.datum()->gettypename().toString() );
@@ -155,7 +155,7 @@ getValue< std::string >( const Token& t )
 {
   // If it is a StringDatum, it can be casted to a string:
   std::string* s = dynamic_cast< std::string* >( t.datum() );
-  if ( s != nullptr )
+  if ( s )
   {
     return *s;
   }
@@ -164,7 +164,7 @@ getValue< std::string >( const Token& t )
     // If it is a NameDatum, LiteralDatum or SymbolDatum,
     // (or even a BoolDatum!) it can be casted to a Name:
     Name* n = dynamic_cast< Name* >( t.datum() );
-    if ( n != nullptr )
+    if ( n )
     {
       return n->toString();
     }
@@ -188,7 +188,7 @@ setValue< std::string >( const Token& t, std::string const& value )
 {
   // If it is a StringDatum, it can be casted to a string:
   std::string* s = dynamic_cast< std::string* >( t.datum() );
-  if ( s != nullptr )
+  if ( s )
   {
     *s = value;
   }
@@ -197,7 +197,7 @@ setValue< std::string >( const Token& t, std::string const& value )
     // If it is a BoolDatum, it -could- be set from a string, but
     // this operation shall not be allowed!
     BoolDatum* b = dynamic_cast< BoolDatum* >( t.datum() );
-    if ( b != nullptr )
+    if ( b )
     {
       // We have to create Datum objects to get the expected names...
       StringDatum const d1;
@@ -213,7 +213,7 @@ setValue< std::string >( const Token& t, std::string const& value )
       // If it is a NameDatum, LiteralDatum or SymbolDatum,
       // it can be casted to a Name:
       Name* n = dynamic_cast< Name* >( t.datum() );
-      if ( n != nullptr )
+      if ( n )
       {
         *n = Name( value );
       }
@@ -275,7 +275,7 @@ void
 setValue< std::vector< double > >( const Token& t, std::vector< double > const& value )
 {
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( t.datum() );
-  if ( ad == nullptr )
+  if ( not ad )
   { // We have to create a Datum object to get the name...
     ArrayDatum const d;
     throw TypeMismatch( d.gettypename().toString(), t.datum()->gettypename().toString() );
@@ -332,7 +332,7 @@ void
 setValue< std::vector< long > >( const Token& t, std::vector< long > const& value )
 {
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( t.datum() );
-  if ( ad == nullptr )
+  if ( not ad )
   { // We have to create a Datum object to get the name...
     ArrayDatum const d;
     throw TypeMismatch( d.gettypename().toString(), t.datum()->gettypename().toString() );

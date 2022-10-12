@@ -44,7 +44,7 @@ protected:
 
 private:
   Datum*
-  clone( void ) const override
+  clone() const override
   {
     return new BoolDatum( *this );
   }

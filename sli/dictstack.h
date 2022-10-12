@@ -93,7 +93,7 @@ public:
     Name::handle_t key = n.toIndex();
     if ( key >= cache_.size() )
     {
-      cache_.resize( Name::num_handles() + 100, 0 );
+      cache_.resize( Name::num_handles() + 100, nullptr );
     }
     cache_[ key ] = result;
   }
@@ -104,7 +104,7 @@ public:
     Name::handle_t key = n.toIndex();
     if ( key >= basecache_.size() )
     {
-      basecache_.resize( Name::num_handles() + 100, 0 );
+      basecache_.resize( Name::num_handles() + 100, nullptr );
     }
     basecache_[ key ] = result;
   }
@@ -119,7 +119,7 @@ public:
     Name::handle_t key = n.toIndex();
     if ( key < cache_.size() )
     {
-      cache_[ key ] = 0;
+      cache_[ key ] = nullptr;
     }
   }
 
@@ -129,7 +129,7 @@ public:
     Name::handle_t key = n.toIndex();
     if ( key < basecache_.size() )
     {
-      basecache_[ key ] = 0;
+      basecache_[ key ] = nullptr;
     }
   }
 
@@ -153,7 +153,7 @@ public:
     const size_t cache_size = cache_.size();
     for ( size_t i = 0; i < cache_size; ++i )
     {
-      cache_[ i ] = 0;
+      cache_[ i ] = nullptr;
     }
   }
 
@@ -334,7 +334,7 @@ public:
    */
   void basedef_move( const Name& n, Token& t );
 
-  void pop( void );
+  void pop();
 
 
   //
@@ -344,7 +344,7 @@ public:
   void push( const DictionaryDatum& );
   void push( Token& );
 
-  void clear( void );
+  void clear();
   void toArray( TokenArray& ) const;
   //
   // move is efficient for interaction with operand and execution
@@ -356,7 +356,7 @@ public:
   //
   // number of dictionaries currently on the stack
   //
-  size_t size( void ) const;
+  size_t size() const;
 
 
   //

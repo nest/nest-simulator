@@ -264,7 +264,7 @@ GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
 {
   assert( syn_id != invalid_synindex );
 
-  if ( thread_local_connectors[ syn_id ] == nullptr )
+  if ( not thread_local_connectors[ syn_id ] )
   {
     // No homogeneous Connector with this syn_id exists, we need to create a new
     // homogeneous Connector.
@@ -275,7 +275,7 @@ GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
   // The following line will throw an exception, if it does not work.
   connection.check_connection( src, tgt, receptor_type, get_common_properties() );
 
-  assert( connector != nullptr );
+  assert( connector );
 
   Connector< ConnectionT >* vc = static_cast< Connector< ConnectionT >* >( connector );
   vc->push_back( connection );

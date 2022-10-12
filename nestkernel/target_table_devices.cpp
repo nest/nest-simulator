@@ -142,7 +142,7 @@ nest::TargetTableDevices::get_connections_to_device_for_lid_( const index lid,
   {
     const index source_node_id = kernel().vp_manager.lid_to_node_id( lid );
     // not the valid connector
-    if ( source_node_id > 0 and target_to_devices_[ tid ][ lid ][ syn_id ] != nullptr )
+    if ( source_node_id > 0 and target_to_devices_[ tid ][ lid ][ syn_id ] )
     {
       target_to_devices_[ tid ][ lid ][ syn_id ]->get_all_connections(
         source_node_id, requested_target_node_id, tid, synapse_label, conns );
@@ -171,7 +171,7 @@ nest::TargetTableDevices::get_connections_from_devices_( const index requested_s
       if ( target_from_devices_[ tid ][ ldid ].size() > 0 )
       {
         // not the valid connector
-        if ( target_from_devices_[ tid ][ ldid ][ syn_id ] != nullptr )
+        if ( target_from_devices_[ tid ][ ldid ][ syn_id ] )
         {
           target_from_devices_[ tid ][ ldid ][ syn_id ]->get_all_connections(
             source_node_id, requested_target_node_id, tid, synapse_label, conns );

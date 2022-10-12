@@ -423,7 +423,7 @@ aeif_cond_beta_multisynapse::init_buffers_()
   // We must integrate this model with high-precision to obtain decent results
   B_.IntegrationStep_ = std::min( 0.01, B_.step_ );
 
-  if ( B_.c_ == nullptr )
+  if ( not B_.c_ )
   {
     B_.c_ = gsl_odeiv_control_yp_new( P_.gsl_error_tol, P_.gsl_error_tol );
   }
@@ -473,14 +473,14 @@ aeif_cond_beta_multisynapse::pre_run_hook()
     State_::NUMBER_OF_FIXED_STATES_ELEMENTS + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * P_.n_receptors() ), 0.0 );
 
   // reallocate instance of stepping function for ODE GSL solver
-  if ( B_.s_ != nullptr )
+  if ( B_.s_ )
   {
     gsl_odeiv_step_free( B_.s_ );
   }
   B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, S_.y_.size() );
 
   // reallocate instance of evolution function for ODE GSL solver
-  if ( B_.e_ != nullptr )
+  if ( B_.e_ )
   {
     gsl_odeiv_evolve_free( B_.e_ );
   }

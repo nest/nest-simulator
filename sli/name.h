@@ -79,13 +79,13 @@ public:
   /**
    * Return string represented by Name.
    */
-  const std::string& toString( void ) const;
+  const std::string& toString() const;
 
   /**
    * Return table index for Name object.
    */
   handle_t
-  toIndex( void ) const
+  toIndex() const
   {
     return handle_;
   }

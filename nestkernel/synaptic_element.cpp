@@ -61,7 +61,7 @@ nest::SynapticElement::SynapticElement( const SynapticElement& se )
   , tau_vacant_( se.tau_vacant_ )
 {
   growth_curve_ = kernel().sp_manager.new_growth_curve( se.growth_curve_->get_name() );
-  assert( growth_curve_ != nullptr );
+  assert( growth_curve_ );
   DictionaryDatum nc_parameters = DictionaryDatum( new Dictionary );
   se.get( nc_parameters );
   growth_curve_->set( nc_parameters );

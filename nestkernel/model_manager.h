@@ -48,11 +48,11 @@ public:
   ModelManager();
   ~ModelManager() override;
 
-  virtual void initialize() override;
-  virtual void finalize() override;
-  virtual void change_number_of_threads() override;
-  virtual void set_status( const DictionaryDatum& ) override;
-  virtual void get_status( DictionaryDatum& ) override;
+  void initialize() override;
+  void finalize() override;
+  void change_number_of_threads() override;
+  void set_status( const DictionaryDatum& ) override;
+  void get_status( DictionaryDatum& ) override;
 
   /**
    * Resize the structures for the Connector objects if necessary.
@@ -318,7 +318,7 @@ ModelManager::get_num_connection_models() const
 inline void
 ModelManager::assert_valid_syn_id( synindex syn_id, thread t ) const
 {
-  if ( syn_id >= connection_models_[ t ].size() or connection_models_[ t ][ syn_id ] == nullptr )
+  if ( syn_id >= connection_models_[ t ].size() or not connection_models_[ t ][ syn_id ] )
   {
     throw UnknownSynapseType( syn_id );
   }

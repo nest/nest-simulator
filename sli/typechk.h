@@ -121,11 +121,11 @@ private:
 
     ~TypeNode()
     {
-      if ( next != nullptr )
+      if ( next )
       {
         next->removereference();
       }
-      if ( alt != nullptr )
+      if ( alt )
       {
         alt->removereference();
       }
@@ -156,7 +156,7 @@ public:
   TypeTrie( const TypeTrie& tt )
     : root( tt.root )
   {
-    if ( root != nullptr )
+    if ( root )
     {
       root->addreference();
     }
@@ -185,7 +185,7 @@ public:
 
 inline TypeTrie::~TypeTrie()
 {
-  if ( root != nullptr )
+  if ( root )
   {
     root->removereference();
   }
@@ -233,7 +233,7 @@ TypeTrie::lookup( const TokenStack& st ) const
 
     while ( not equals( find_type, pos->type ) )
     {
-      if ( pos->alt != nullptr )
+      if ( pos->alt )
       {
         pos = pos->alt;
       }

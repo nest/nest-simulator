@@ -129,7 +129,7 @@ fdbuf::close()
 void
 ofdstream::close()
 {
-  if ( rdbuf()->close() == nullptr )
+  if ( not rdbuf()->close() )
   {
     setstate( failbit );
   }
@@ -139,7 +139,7 @@ ofdstream::close()
 void
 ifdstream::close()
 {
-  if ( rdbuf()->close() == nullptr )
+  if ( not rdbuf()->close() )
   {
     setstate( failbit );
   }
@@ -148,7 +148,7 @@ ifdstream::close()
 void
 fdstream::close()
 {
-  if ( rdbuf()->close() == nullptr )
+  if ( not rdbuf()->close() )
   {
     setstate( failbit );
   }

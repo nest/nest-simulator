@@ -312,7 +312,7 @@ public:
   void
   assign_by_pointer( Datum* rhs )
   {
-    assert( rhs != nullptr );
+    assert( rhs );
     rhs->addReference();
     if ( p )
     {
@@ -341,19 +341,19 @@ public:
   bool
   contains( const Datum& d ) const
   {
-    return ( p != nullptr ) and p->equals( &d );
+    return ( p ) and p->equals( &d );
   }
 
   bool
   empty() const
   {
-    return p == nullptr;
+    return not p;
   }
 
   bool
   operator not() const
   {
-    return p == nullptr;
+    return not p;
   }
 
   Datum*
@@ -401,7 +401,7 @@ public:
       return *this;
     }
 
-    if ( c_s.p == nullptr )
+    if ( not c_s.p )
     {
       clear();
       return *this;

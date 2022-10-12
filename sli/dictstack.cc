@@ -156,7 +156,7 @@ void
 DictionaryStack::push( Token& d )
 {
   DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( d.datum() );
-  assert( dd != nullptr );
+  assert( dd );
   push( *dd );
 }
 

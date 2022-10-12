@@ -53,7 +53,7 @@ TokenArrayObj::TokenArrayObj( const TokenArrayObj& a )
   , alloc_block_size( ARRAY_ALLOC_SIZE )
   , refs_( 1 )
 {
-  if ( a.p != nullptr )
+  if ( a.p )
   {
     resize( a.size(), a.alloc_block_size, Token() );
     Token* from = a.p;
@@ -102,7 +102,7 @@ TokenArrayObj::allocate( size_t new_s, size_t new_c, size_t new_a, const Token& 
   end_of_free_storage = h + new_c; // [,) convention
   begin_of_free_storage = h + new_s;
 
-  if ( p != nullptr )
+  if ( p )
   {
 
     size_t min_l;
@@ -170,7 +170,7 @@ TokenArrayObj::operator=( const TokenArrayObj& a )
   else
   {
 
-    if ( p != nullptr )
+    if ( p )
     {
       delete[] p;
       p = nullptr;
@@ -662,19 +662,19 @@ TokenArrayObj::info( std::ostream& out ) const
 bool
 TokenArrayObj::valid() const
 {
-  if ( p == nullptr )
+  if ( not p )
   {
     std::cerr << "TokenArrayObj::valid: Data pointer missing!" << std::endl;
     return false;
   }
 
-  if ( begin_of_free_storage == nullptr )
+  if ( not begin_of_free_storage )
   {
     std::cerr << "TokenArrayObj::valid: begin of free storage pointer missing!" << std::endl;
     return false;
   }
 
-  if ( end_of_free_storage == nullptr )
+  if ( not end_of_free_storage )
   {
     std::cerr << "TokenArrayObj::valid: end of free storage pointer missing!" << std::endl;
     return false;

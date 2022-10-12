@@ -100,7 +100,9 @@ public:
    * \param synapse Params synapse parameters Dictionary
    *  conn_spec disconnection specs. For now only all to all and one to one
    * rules are implemented.    */
-  void disconnect( NodeCollectionPTR sources, NodeCollectionPTR targets, DictionaryDatum& conn_spec, 
+  void disconnect( NodeCollectionPTR sources,
+      NodeCollectionPTR targets,
+      DictionaryDatum& conn_spec,
       DictionaryDatum& syn_spec);
 
   /**
@@ -172,10 +174,10 @@ public:
     std::vector< index >& post_vacant_id,
     std::vector< int >& post_vacant_n,
     SPBuilder* sp_conn_builder );
-  // Deletion of synapses on the pre synaptic side
   /**
-   * Deletion of synapses due to the loss of a pre synaptic element. The
-   * corresponding pre synaptic element will still remain available for a new
+   * Deletion of synapses due to the loss of a pre synaptic element.
+   *
+   * The corresponding pre synaptic element will still remain available for a new
    * connection on the following updates in connectivity
    * @param pre_deleted_id Id of the node with the deleted pre synaptic element
    * @param pre_deleted_n number of deleted pre synaptic elements
@@ -188,10 +190,10 @@ public:
     const index synapse_model,
     const std::string& se_pre_name,
     const std::string& se_post_name );
-  // Deletion of synapses on the postsynaptic side
   /**
-   * Deletion of synapses due to the loss of a postsynaptic element. The
-   * corresponding pre synaptic element will still remain available for a new
+   * Deletion of synapses due to the loss of a postsynaptic element.
+   *
+   * The corresponding pre synaptic element will still remain available for a new
    * connection on the following updates in connectivity
    * @param post_deleted_id Id of the node with the deleted postsynaptic element
    * @param post_deleted_n number of deleted postsynaptic elements
@@ -204,7 +206,6 @@ public:
     index synapse_model,
     std::string se_pre_name,
     std::string se_post_name );
-  // Deletion of synapses
   /**
    * Handles the deletion of synapses between source and target nodes. The
    * deletion is defined by the pre and postsynaptic elements and the synapse

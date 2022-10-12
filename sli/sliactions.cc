@@ -115,7 +115,7 @@ TrietypeFunction::execute( SLIInterpreter* i ) const
 void
 CallbacktypeFunction::execute( SLIInterpreter* i ) const
 {
-  //    assert(i->ct.datum() != NULL); // we wouldn't be here otherwise
+  //    assert(i->ct.datum()); // we wouldn't be here otherwise
 
   CallbackDatum* cb = static_cast< CallbackDatum* >( i->ct.datum() );
 
@@ -125,7 +125,7 @@ CallbacktypeFunction::execute( SLIInterpreter* i ) const
 
   i->EStack.push_move( i->ct );
   // This moves the complete callback datum to the EStack.
-  // Now, the pointer in ct is set to NULL !!
+  // Now, the pointer in ct is set to nullptr !!
 
   // Now push command to restore the callback, once the action has
   // been finished

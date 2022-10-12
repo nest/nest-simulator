@@ -167,7 +167,7 @@ nest::RecordingBackendSIONlib::open_files_()
 
     // we need to delay the throwing of exceptions to the end of the parallel
     // section
-    WrappedThreadException* we = NULL;
+    WrappedThreadException* we = nullptr;
 
     // This code is executed in a parallel region (opened above)!
     const thread t = kernel().vp_manager.get_thread_id();
@@ -228,8 +228,8 @@ nest::RecordingBackendSIONlib::open_files_()
         &sion_chunksize,
         &fs_block_size,
         &rank,
-        NULL,
-        NULL );
+        nullptr,
+        nullptr );
 
       file.buffer.reserve( P_.buffer_size_ );
       file.buffer.clear();
@@ -316,7 +316,7 @@ nest::RecordingBackendSIONlib::close_files_()
     if ( task == 0 )
     {
       int mc;
-      sion_int64* cs = NULL;
+      sion_int64* cs = nullptr;
       int info_blk; // here int, other place sion_int64 due to sion api
       sion_int64 info_pos;
 
@@ -536,14 +536,14 @@ nest::RecordingBackendSIONlib::build_filename_() const
  * ---------------------------------------------------------------- */
 
 nest::RecordingBackendSIONlib::SIONBuffer::SIONBuffer()
-  : buffer_( NULL )
+  : buffer_( nullptr )
   , ptr_( 0 )
   , max_size_( 0 )
 {
 }
 
 nest::RecordingBackendSIONlib::SIONBuffer::SIONBuffer( size_t size )
-  : buffer_( NULL )
+  : buffer_( nullptr )
   , ptr_( 0 )
   , max_size_( 0 )
 {
@@ -552,7 +552,7 @@ nest::RecordingBackendSIONlib::SIONBuffer::SIONBuffer( size_t size )
 
 nest::RecordingBackendSIONlib::SIONBuffer::~SIONBuffer()
 {
-  if ( buffer_ != NULL )
+  if ( buffer_ )
   {
     delete[] buffer_;
   }
@@ -563,7 +563,7 @@ nest::RecordingBackendSIONlib::SIONBuffer::reserve( size_t size )
 {
   char* new_buffer = new char[ size ];
 
-  if ( buffer_ != NULL )
+  if ( buffer_ )
   {
     ptr_ = std::min( ptr_, size );
     memcpy( new_buffer, buffer_, ptr_ );

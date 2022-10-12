@@ -895,7 +895,7 @@ nest::ConnectionManager::trigger_update_weight( const long vt_id,
   for ( std::vector< ConnectorBase* >::iterator it = connections_[ tid ].begin(); it != connections_[ tid ].end();
         ++it )
   {
-    if ( *it != NULL )
+    if ( *it )
     {
       ( *it )->trigger_update_weight(
         vt_id, tid, dopa_spikes, t_trig, kernel().model_manager.get_connection_models( tid ) );

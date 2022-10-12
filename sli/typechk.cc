@@ -167,7 +167,7 @@ TypeTrie::getalternative( TypeTrie::TypeNode* pos, const Name& type )
   if ( pos->type == empty )
   {
     pos->type = type;
-    //    assert(pos->next == NULL);
+    //    assert(not pos->next);
     return pos;
   }
 
@@ -183,7 +183,7 @@ TypeTrie::getalternative( TypeTrie::TypeNode* pos, const Name& type )
       // any must have been the tail and the previous
       // if must have added an extra Node, thus the following
       // assertion must hold:
-      // assert(pos->alt->alt == NULL);
+      // assert(not pos->alt->alt);
 
       TypeNode* new_tail = pos->alt;
 
@@ -255,7 +255,7 @@ TypeTrie::insert_move( const TypeArray& a, Token& f )
   /* Error conditions:
      1. If pos->next!=NULL, the parameter list overlaps with
      an existing function definition.
-     2. If pos->alt != NULL, something undefined must have happened.
+     2. If pos->alt, something undefined must have happened.
      This should be impossible.
   */
   if ( not pos->next )

@@ -373,7 +373,7 @@ public:
   Datum*
   operator->() const
   {
-    //      assert(p!= NULL);
+    //      assert(p!= nullptr);
     return p;
   }
 
@@ -381,7 +381,7 @@ public:
   Datum&
   operator*() const
   {
-    //      assert(p != NULL);
+    //      assert(p);
     return *p;
   }
 

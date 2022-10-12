@@ -79,7 +79,7 @@ inline index
 VPManager::node_id_to_lid( const index node_id ) const
 {
   // starts at lid 0 for node_ids >= 1 (expected value for neurons, excl. node ID 0)
-  return ceil( static_cast< double >( node_id ) / get_num_virtual_processes() ) - 1;
+  return std::ceil( static_cast< double >( node_id ) / get_num_virtual_processes() ) - 1;
 }
 
 inline index
@@ -92,7 +92,7 @@ VPManager::lid_to_node_id( const index lid ) const
 inline thread
 VPManager::get_num_assigned_ranks_per_thread() const
 {
-  return ceil( float( kernel().mpi_manager.get_num_processes() ) / n_threads_ );
+  return std::ceil( static_cast< double >( kernel().mpi_manager.get_num_processes() ) / n_threads_ );
 }
 
 inline thread

@@ -30,11 +30,11 @@
 #endif
 
 // C++ includes:
-//#include <cstdlib>
+// #include <cstdlib>
 
 // Includes from libnestutil:
 #include "compose.hpp"
-//#include "logging.h"
+// #include "logging.h"
 
 // Includes from nestkernel:
 #include "kernel_manager.h"

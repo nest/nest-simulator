@@ -287,41 +287,39 @@ public:
     const std::vector< DictionaryDatum >& syn_specs );
 
   bool
-  supports_symmetric() const
+  supports_symmetric() const override
   {
     return true;
   }
 
   bool
-  requires_proxies() const
+  requires_proxies() const override
   {
     return false;
   }
 
 protected:
-  void connect_();
-
+  void connect_() override;
   /**
    * Solves the connection of two nodes on a OneToOne basis with
    * structural plasticity. This means this method is used by the
    * structural plasticity manager based on the homostatic rules defined
    * for the synaptic elements on each node.
    */
-  void sp_connect_();
-
+  void sp_connect_() override;
   /**
    * Solves the disconnection of two nodes on a OneToOne basis without
    * structural plasticity. This means this method can be manually called
    * by the user to delete existing synapses.
    */
-  void disconnect_();
+  void disconnect_() override;
   /**
    * Solves the disconnection of two nodes on a OneToOne basis with
    * structural plasticity. This means this method is used by the
    * structural plasticity manager based on the homostatic rules defined
    * for the synaptic elements on each node.
    */
-  void sp_disconnect_();
+  void sp_disconnect_() override;
 };
 
 class AllToAllBuilder : public ConnBuilder
@@ -336,18 +334,19 @@ public:
   }
 
   bool
-  is_symmetric() const
+  is_symmetric() const override
   {
     return sources_ == targets_ and all_parameters_scalar_();
   }
 
   bool
-  requires_proxies() const
+  requires_proxies() const override
   {
     return false;
   }
 
 protected:
+<<<<<<< HEAD
   void connect_();
 
   /**
@@ -371,6 +370,12 @@ protected:
    * for the synaptic elements on each node.
    */
   void sp_disconnect_();
+=======
+  void connect_() override;
+  void sp_connect_() override;
+  void disconnect_() override;
+  void sp_disconnect_() override;
+>>>>>>> master
 
 private:
   void inner_connect_( const int, RngPtr, Node*, index, bool );
@@ -386,7 +391,7 @@ public:
     const std::vector< DictionaryDatum >& );
 
 protected:
-  void connect_();
+  void connect_() override;
 
 private:
   void inner_connect_( const int, RngPtr, Node*, index, bool, long );
@@ -402,7 +407,7 @@ public:
     const std::vector< DictionaryDatum >& );
 
 protected:
-  void connect_();
+  void connect_() override;
 
 private:
   ParameterDatum outdegree_;
@@ -417,7 +422,7 @@ public:
     const std::vector< DictionaryDatum >& );
 
 protected:
-  void connect_();
+  void connect_() override;
 
 private:
   long N_;
@@ -432,7 +437,7 @@ public:
     const std::vector< DictionaryDatum >& );
 
 protected:
-  void connect_();
+  void connect_() override;
 
 private:
   void inner_connect_( const int, RngPtr, Node*, index );
@@ -448,13 +453,13 @@ public:
     const std::vector< DictionaryDatum >& );
 
   bool
-  supports_symmetric() const
+  supports_symmetric() const override
   {
     return true;
   }
 
 protected:
-  void connect_();
+  void connect_() override;
 
 private:
   double p_; //!< connection probability
@@ -502,7 +507,7 @@ public:
 
 protected:
   using ConnBuilder::connect_;
-  void connect_();
+  void connect_() override;
   void connect_( NodeCollectionPTR sources, NodeCollectionPTR targets );
 
   /**

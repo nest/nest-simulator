@@ -52,15 +52,15 @@ class VPManager : public ManagerInterface
 {
 public:
   VPManager();
-  ~VPManager()
+  ~VPManager() override
   {
   }
 
-  virtual void initialize();
-  virtual void finalize();
+  void initialize() override;
+  void finalize() override;
 
-  virtual void set_status( const DictionaryDatum& );
-  virtual void get_status( DictionaryDatum& );
+  void set_status( const DictionaryDatum& ) override;
+  void get_status( DictionaryDatum& ) override;
 
   /**
    * Gets ID of local thread.

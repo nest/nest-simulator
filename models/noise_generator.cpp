@@ -223,14 +223,14 @@ nest::noise_generator::init_buffers_()
 }
 
 void
-nest::noise_generator::calibrate()
+nest::noise_generator::pre_run_hook()
 {
   B_.logger_.init();
 
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
   if ( P_.num_targets_ != B_.amps_.size() )
   {
-    LOG( M_INFO, "noise_generator::calibrate()", "The number of targets has changed, drawing new amplitudes." );
+    LOG( M_INFO, "noise_generator::pre_run_hook()", "The number of targets has changed, drawing new amplitudes." );
     init_buffers_();
   }
 
@@ -275,7 +275,7 @@ nest::noise_generator::send_test_event( Node& target, rport receptor_type, synin
     CurrentEvent e;
     e.set_sender( *this );
     const port p = target.handles_test_event( e, receptor_type );
-    if ( p != invalid_port_ and not is_model_prototype() )
+    if ( p != invalid_port and not is_model_prototype() )
     {
       ++P_.num_targets_;
     }

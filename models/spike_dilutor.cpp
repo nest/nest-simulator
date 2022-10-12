@@ -57,7 +57,7 @@ void
 nest::spike_dilutor::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   updateValueParam< double >( d, names::p_copy, p_copy_, node );
-  if ( p_copy_ < 0 || p_copy_ > 1 )
+  if ( p_copy_ < 0 or p_copy_ > 1 )
   {
     throw BadProperty( "Copy probability must be in [0, 1]." );
   }
@@ -88,6 +88,14 @@ nest::spike_dilutor::spike_dilutor( const spike_dilutor& n )
 void
 nest::spike_dilutor::init_state_()
 {
+  // This check cannot be done in the copy constructor because that is also used to
+  // create model prototypes. Since spike_dilutor is deprecated anyways, we put this
+  // brute-force solution here.
+  if ( kernel().vp_manager.get_num_threads() > 1 )
+  {
+    throw KernelException( "The network contains a spike_dilutor which cannot be used with multiple threads." );
+  }
+
   device_.init_state();
 }
 
@@ -99,9 +107,9 @@ nest::spike_dilutor::init_buffers_()
 }
 
 void
-nest::spike_dilutor::calibrate()
+nest::spike_dilutor::pre_run_hook()
 {
-  device_.calibrate();
+  device_.pre_run_hook();
 }
 
 /* ----------------------------------------------------------------
@@ -111,7 +119,7 @@ nest::spike_dilutor::calibrate()
 void
 nest::spike_dilutor::update( Time const& T, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and static_cast< delay >( from ) < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
@@ -122,7 +130,7 @@ nest::spike_dilutor::update( Time const& T, const long from, const long to )
     }
 
     // generate spikes of mother process for each time slice
-    unsigned long n_mother_spikes = static_cast< unsigned long >( B_.n_spikes_.get_value( lag ) );
+    const unsigned long n_mother_spikes = static_cast< unsigned long >( B_.n_spikes_.get_value( lag ) );
 
     if ( n_mother_spikes )
     {
@@ -137,16 +145,15 @@ nest::spike_dilutor::update( Time const& T, const long from, const long to )
 void
 nest::spike_dilutor::event_hook( DSSpikeEvent& e )
 {
-  // note: event_hook() receives a reference of the spike event that
-  // was originally created in the update function. there we set
-  // the multiplicty to store the number of mother spikes. the *same*
+  // Note: event_hook() receives a reference of the spike event that
+  // was originally created in the update function. There we set
+  // the multiplicity to store the number of mother spikes. The *same*
   // reference will be delivered multiple times to the event hook,
-  // once for every receiver. when calling handle() of the receiver
-  // above, we need to change the multiplicty to the number of copied
+  // once for every receiver. When calling handle() of the receiver
+  // above, we need to change the multiplicity to the number of copied
   // child process spikes, so afterwards it needs to be reset to correctly
   // store the number of mother spikes again during the next call of
   // event_hook().
-  // reichert
 
   unsigned long n_mother_spikes = e.get_multiplicity();
   unsigned long n_spikes = 0;

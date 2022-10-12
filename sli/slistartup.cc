@@ -116,10 +116,10 @@ SLIStartup::GetenvFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
-  assert( sd != NULL );
+  assert( sd );
   const char* s = ::getenv( sd->c_str() );
   i->OStack.pop();
-  if ( s != NULL )
+  if ( s )
   {
     Token t( new StringDatum( s ) );
     i->OStack.push_move( t );
@@ -133,9 +133,11 @@ SLIStartup::GetenvFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-
 SLIStartup::SLIStartup( int argc, char** argv )
-  : sliprefix( NEST_INSTALL_PREFIX )
+  // To avoid problems due to string substitution in NEST binaries during
+  // Conda installation, we need to convert the literal to string, cstr and back,
+  // see #2237 and https://github.com/conda/conda-build/issues/1674#issuecomment-280378336
+  : sliprefix( std::string( NEST_INSTALL_PREFIX ).c_str() )
   , slilibdir( sliprefix + "/" + NEST_INSTALL_DATADIR )
   , slidocdir( sliprefix + "/" + NEST_INSTALL_DOCDIR )
   , startupfile( slilibdir + "/sli/sli-init.sli" )
@@ -171,6 +173,11 @@ SLIStartup::SLIStartup( int argc, char** argv )
   , have_libneurosim_name( "have_libneurosim" )
   , have_sionlib_name( "have_sionlib" )
   , ndebug_name( "ndebug" )
+  , mpiexec_name( "mpiexec" )
+  , mpiexec_numproc_flag_name( "mpiexec_numproc_flag" )
+  , mpiexec_max_numprocs_name( "mpiexec_max_numprocs" )
+  , mpiexec_preflags_name( "mpiexec_preflags" )
+  , mpiexec_postflags_name( "mpiexec_postflags" )
   , exitcodes_name( "exitcodes" )
   , exitcode_success_name( "success" )
   , exitcode_skipped_name( "skipped" )
@@ -291,6 +298,11 @@ SLIStartup::init( SLIInterpreter* i )
 
 #ifdef HAVE_MPI
   statusdict->insert( have_mpi_name, Token( new BoolDatum( true ) ) );
+  statusdict->insert( mpiexec_name, Token( new StringDatum( MPIEXEC ) ) );
+  statusdict->insert( mpiexec_numproc_flag_name, Token( new StringDatum( MPIEXEC_NUMPROC_FLAG ) ) );
+  statusdict->insert( mpiexec_max_numprocs_name, Token( new StringDatum( MPIEXEC_MAX_NUMPROCS ) ) );
+  statusdict->insert( mpiexec_preflags_name, Token( new StringDatum( MPIEXEC_PREFLAGS ) ) );
+  statusdict->insert( mpiexec_postflags_name, Token( new StringDatum( MPIEXEC_POSTFLAGS ) ) );
 #else
   statusdict->insert( have_mpi_name, Token( new BoolDatum( false ) ) );
 #endif

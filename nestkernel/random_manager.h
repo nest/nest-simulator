@@ -51,16 +51,16 @@ class RandomManager : public ManagerInterface
 {
 public:
   RandomManager();
-  ~RandomManager();
+  ~RandomManager() override;
 
   /**
    * Register available RNG types, set default RNG type and create RNGs.
    */
-  virtual void initialize() override;
-  virtual void finalize() override;
-  virtual void change_number_of_threads() override;
-  virtual void set_status( const DictionaryDatum& ) override;
-  virtual void get_status( DictionaryDatum& ) override;
+  void initialize() override;
+  void finalize() override;
+  void change_number_of_threads() override;
+  void set_status( const DictionaryDatum& ) override;
+  void get_status( DictionaryDatum& ) override;
 
   /**
    * Get rank-synchronized random number generator.

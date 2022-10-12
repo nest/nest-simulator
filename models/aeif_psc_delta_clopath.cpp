@@ -157,8 +157,8 @@ nest::aeif_psc_delta_clopath::Parameters_::Parameters_()
   , I_sp( 400.0 )           // pA
   , I_e( 0.0 )              // pA
   , gsl_error_tol( 1e-6 )
-  , t_clamp_( 2.0 )         // ms
-  , V_clamp_( 33.0 )        // mV
+  , t_clamp_( 2.0 )  // ms
+  , V_clamp_( 33.0 ) // mV
 {
 }
 
@@ -311,7 +311,7 @@ nest::aeif_psc_delta_clopath::Parameters_::set( const DictionaryDatum& d, Node* 
   }
 
   if ( tau_w <= 0 or tau_V_th <= 0 or tau_w <= 0 or tau_z <= 0 or tau_u_bar_plus <= 0 or tau_u_bar_minus <= 0
-       or tau_u_bar_bar <= 0 )
+    or tau_u_bar_bar <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -344,9 +344,9 @@ nest::aeif_psc_delta_clopath::State_::set( const DictionaryDatum& d, const Param
 
 nest::aeif_psc_delta_clopath::Buffers_::Buffers_( aeif_psc_delta_clopath& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -354,9 +354,9 @@ nest::aeif_psc_delta_clopath::Buffers_::Buffers_( aeif_psc_delta_clopath& n )
 
 nest::aeif_psc_delta_clopath::Buffers_::Buffers_( const Buffers_&, aeif_psc_delta_clopath& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -418,7 +418,7 @@ nest::aeif_psc_delta_clopath::init_buffers_()
   // We must integrate this model with high-precision to obtain decent results
   B_.IntegrationStep_ = std::min( 0.01, B_.step_ );
 
-  if ( B_.s_ == 0 )
+  if ( not B_.s_ )
   {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
@@ -426,7 +426,7 @@ nest::aeif_psc_delta_clopath::init_buffers_()
   {
     gsl_odeiv_step_reset( B_.s_ );
   }
-  if ( B_.c_ == 0 )
+  if ( not B_.c_ )
   {
     B_.c_ = gsl_odeiv_control_yp_new( P_.gsl_error_tol, P_.gsl_error_tol );
   }
@@ -435,7 +435,7 @@ nest::aeif_psc_delta_clopath::init_buffers_()
     gsl_odeiv_control_init( B_.c_, P_.gsl_error_tol, P_.gsl_error_tol, 0.0, 1.0 );
   }
 
-  if ( B_.e_ == 0 )
+  if ( not B_.e_ )
   {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }
@@ -444,7 +444,7 @@ nest::aeif_psc_delta_clopath::init_buffers_()
     gsl_odeiv_evolve_reset( B_.e_ );
   }
 
-  B_.sys_.jacobian = NULL;
+  B_.sys_.jacobian = nullptr;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
   B_.sys_.function = aeif_psc_delta_clopath_dynamics;
@@ -455,7 +455,7 @@ nest::aeif_psc_delta_clopath::init_buffers_()
 }
 
 void
-nest::aeif_psc_delta_clopath::calibrate()
+nest::aeif_psc_delta_clopath::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();

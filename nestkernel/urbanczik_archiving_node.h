@@ -60,7 +60,7 @@ public:
   UrbanczikArchivingNode( const UrbanczikArchivingNode& );
 
   bool
-  supports_urbanczik_archiving() const
+  supports_urbanczik_archiving() const override
   {
     return true;
   }
@@ -75,32 +75,32 @@ public:
     double t2,
     std::deque< histentry_extended >::iterator* start,
     std::deque< histentry_extended >::iterator* finish,
-    int comp );
+    int comp ) override;
 
   /**
    * Returns membrane capacitance
    */
-  double get_C_m( int comp );
+  double get_C_m( int comp ) override;
 
   /**
    * Returns leak conductance g_L
    */
-  double get_g_L( int comp );
+  double get_g_L( int comp ) override;
 
   /**
    * Returns time constant tau_L
    */
-  double get_tau_L( int comp );
+  double get_tau_L( int comp ) override;
 
   /**
    * Returns time constant tau_syn_ex
    */
-  double get_tau_syn_ex( int comp );
+  double get_tau_syn_ex( int comp ) override;
 
   /**
    * Returns time constant tau_syn_in
    */
-  double get_tau_syn_in( int comp );
+  double get_tau_syn_in( int comp ) override;
 
 protected:
   /**
@@ -110,8 +110,8 @@ protected:
 
   urbanczik_parameters* urbanczik_params;
 
-  void get_status( DictionaryDatum& d ) const;
-  void set_status( const DictionaryDatum& d );
+  void get_status( DictionaryDatum& d ) const override;
+  void set_status( const DictionaryDatum& d ) override;
 
 private:
   std::deque< histentry_extended > urbanczik_history_[ urbanczik_parameters::NCOMP - 1 ];

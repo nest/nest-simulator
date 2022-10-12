@@ -115,7 +115,7 @@ ModelManager::register_secondary_connection_model( const std::string& name, cons
   // elements
   if ( secondary_connector_models_.size() < syn_id + ( unsigned int ) 1 )
   {
-    secondary_connector_models_.resize( syn_id + 1, NULL );
+    secondary_connector_models_.resize( syn_id + 1, nullptr );
   }
 
   secondary_connector_models_[ syn_id ] = cm;
@@ -135,7 +135,7 @@ ModelManager::register_secondary_connection_model( const std::string& name, cons
   // elements
   if ( secondary_connector_models_.size() < syn_id + ( unsigned int ) 1 )
   {
-    secondary_connector_models_.resize( syn_id + 1, NULL );
+    secondary_connector_models_.resize( syn_id + 1, nullptr );
   }
 
   secondary_connector_models_[ syn_id ] = cm;

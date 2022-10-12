@@ -127,7 +127,7 @@ public:
   RandomGenerator() = delete;
   RandomGenerator( const RandomEngineT& rng ) = delete;
 
-  RandomGenerator( std::initializer_list< std::uint32_t > seed )
+  explicit RandomGenerator( std::initializer_list< std::uint32_t > seed )
     : rng_()
     , uniform_double_dist_0_1_( 0.0, 1.0 )
   {

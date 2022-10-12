@@ -354,7 +354,7 @@ nest::StimulationBackendMPI::update_device( int* array_index,
   std::vector< int >& devices_id,
   std::pair< int*, double* > data )
 {
-  if ( data.first != nullptr )
+  if ( data.first )
   {
     // if there is some device
     if ( data.first[ 0 ] != 0 )
@@ -400,13 +400,13 @@ nest::StimulationBackendMPI::clean_memory_input_data( std::vector< std::pair< in
   // for all the pairs of data, free the memory of data and the array with the size
   for ( auto pair_data : data )
   {
-    if ( pair_data.first != nullptr )
+    if ( pair_data.first )
     {
       // clean the memory allocated in the function receive_spike_train
       delete[] pair_data.first;
       pair_data.first = nullptr;
     }
-    if ( pair_data.second != nullptr )
+    if ( pair_data.second )
     {
       // clean the memory allocated in the function receive_spike_train
       delete[] pair_data.second;

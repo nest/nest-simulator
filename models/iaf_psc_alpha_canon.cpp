@@ -263,7 +263,7 @@ nest::iaf_psc_alpha_canon::init_buffers_()
 }
 
 void
-nest::iaf_psc_alpha_canon::calibrate()
+nest::iaf_psc_alpha_canon::pre_run_hook()
 {
   B_.logger_.init();
 
@@ -557,7 +557,6 @@ nest::iaf_psc_alpha_canon::thresh_find_( double const dt ) const
   default:
     throw BadProperty( "Invalid interpolation order in iaf_psc_alpha_canon." );
   }
-  return 0;
 }
 
 // finds threshpassing via linear interpolation

@@ -99,9 +99,8 @@ nest::iaf_cond_exp_sfa_rr_dynamics( double, const double y[], double f[], void* 
   const double I_rr = y[ S::G_RR ] * ( V - node.P_.E_rr );
 
   // V dot
-  f[ S::V_M ] = is_refractory
-    ? 0.0
-    : ( -I_L + node.B_.I_stim_ + node.P_.I_e - I_syn_exc - I_syn_inh - I_sfa - I_rr ) / node.P_.C_m;
+  f[ S::V_M ] =
+    is_refractory ? 0.0 : ( -I_L + node.B_.I_stim_ + node.P_.I_e - I_syn_exc - I_syn_inh - I_sfa - I_rr ) / node.P_.C_m;
 
   f[ S::G_EXC ] = -y[ S::G_EXC ] / node.P_.tau_synE;
   f[ S::G_INH ] = -y[ S::G_INH ] / node.P_.tau_synI;
@@ -260,9 +259,9 @@ nest::iaf_cond_exp_sfa_rr::State_::set( const DictionaryDatum& d, const Paramete
 
 nest::iaf_cond_exp_sfa_rr::Buffers_::Buffers_( iaf_cond_exp_sfa_rr& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -270,9 +269,9 @@ nest::iaf_cond_exp_sfa_rr::Buffers_::Buffers_( iaf_cond_exp_sfa_rr& n )
 
 nest::iaf_cond_exp_sfa_rr::Buffers_::Buffers_( const Buffers_&, iaf_cond_exp_sfa_rr& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -333,7 +332,7 @@ nest::iaf_cond_exp_sfa_rr::init_buffers_()
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ = B_.step_;
 
-  if ( B_.s_ == 0 )
+  if ( not B_.s_ )
   {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
@@ -342,7 +341,7 @@ nest::iaf_cond_exp_sfa_rr::init_buffers_()
     gsl_odeiv_step_reset( B_.s_ );
   }
 
-  if ( B_.c_ == 0 )
+  if ( not B_.c_ )
   {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
   }
@@ -351,7 +350,7 @@ nest::iaf_cond_exp_sfa_rr::init_buffers_()
     gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
   }
 
-  if ( B_.e_ == 0 )
+  if ( not B_.e_ )
   {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }
@@ -361,7 +360,7 @@ nest::iaf_cond_exp_sfa_rr::init_buffers_()
   }
 
   B_.sys_.function = iaf_cond_exp_sfa_rr_dynamics;
-  B_.sys_.jacobian = NULL;
+  B_.sys_.jacobian = nullptr;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
 
@@ -369,7 +368,7 @@ nest::iaf_cond_exp_sfa_rr::init_buffers_()
 }
 
 void
-nest::iaf_cond_exp_sfa_rr::calibrate()
+nest::iaf_cond_exp_sfa_rr::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -435,18 +434,18 @@ nest::iaf_cond_exp_sfa_rr::update( Time const& origin, const long from, const lo
     else
       // neuron is not absolute refractory
       if ( S_.y_[ State_::V_M ] >= P_.V_th_ )
-    {
-      S_.r_ = V_.RefractoryCounts_;
-      S_.y_[ State_::V_M ] = P_.V_reset_;
+      {
+        S_.r_ = V_.RefractoryCounts_;
+        S_.y_[ State_::V_M ] = P_.V_reset_;
 
-      set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
-      S_.y_[ State_::G_SFA ] += P_.q_sfa;
-      S_.y_[ State_::G_RR ] += P_.q_rr;
+        S_.y_[ State_::G_SFA ] += P_.q_sfa;
+        S_.y_[ State_::G_RR ] += P_.q_rr;
 
-      SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
-    }
+        SpikeEvent se;
+        kernel().event_delivery_manager.send( *this, se, lag );
+      }
 
     // set new input current
     B_.I_stim_ = B_.currents_.get_value( lag );

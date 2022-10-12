@@ -112,7 +112,7 @@ u_bar_bar   mV      Low-pass filtered u_bar_minus
 
 ================== ======= =================================================
 **Membrane Parameters**
-----------------------------------------------------------------------
+----------------------------------------------------------------------------
  C_m               pF      Capacity of the membrane
  t_ref             ms      Duration of refractory period
  V_reset           mV      Reset value for V_m after a spike
@@ -158,7 +158,7 @@ U_ref_squared real    Reference value for u_bar_bar_^2.
 -----------------------------------------------------------------------------
 t_clamp  ms     Duration of clamping of Membrane potential after a spike
 V_clamp  mV     Value to which the Membrane potential is clamped
-=======  ====== ============================================================
+=======  ====== =============================================================
 
 ============= ======= =========================================================
 **Integration parameters**
@@ -204,7 +204,7 @@ class aeif_psc_delta_clopath : public ClopathArchivingNode
 public:
   aeif_psc_delta_clopath();
   aeif_psc_delta_clopath( const aeif_psc_delta_clopath& );
-  ~aeif_psc_delta_clopath();
+  ~aeif_psc_delta_clopath() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -214,23 +214,23 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
-  void update( const Time&, const long, const long );
+  void init_buffers_() override;
+  void pre_run_hook() override;
+  void update( const Time&, const long, const long ) override;
 
   // END Boilerplate function declarations ----------------------------
 
@@ -253,22 +253,22 @@ private:
     double V_reset_; //!< Reset Potential in mV
     double t_ref_;   //!< Refractory period in ms
 
-    double g_L;                //!< Leak Conductance in nS
-    double C_m;                //!< Membrane Capacitance in pF
-    double E_L;                //!< Leak reversal Potential (aka resting potential) in mV
-    double Delta_T;            //!< Slope factor in ms
-    double tau_w;              //!< Adaptation time constant in ms
-    double tau_z;              //!< Spike afterpotential current time constant in ms
-    double tau_V_th;           //!< Adaptive threshold time constant in ms
-    double V_th_max;           //!< Value of V_th afer a spike in mV
-    double V_th_rest;          //!< Resting value of V_th in mV
-    double tau_u_bar_plus;     //!< Time constant of u_bar_plus in ms
-    double tau_u_bar_minus;    //!< Time constant of u_bar_minus in ms
-    double tau_u_bar_bar;      //!< Time constant of u_bar_bar in ms
-    double a;                  //!< Subthreshold adaptation in nS
-    double b;                  //!< Spike-triggered adaptation in pA
-    double I_sp;               //!< Depolarizing spike afterpotential current in pA
-    double I_e;                //!< Intrinsic current in pA
+    double g_L;             //!< Leak Conductance in nS
+    double C_m;             //!< Membrane Capacitance in pF
+    double E_L;             //!< Leak reversal Potential (aka resting potential) in mV
+    double Delta_T;         //!< Slope factor in mV
+    double tau_w;           //!< Adaptation time constant in ms
+    double tau_z;           //!< Spike afterpotential current time constant in ms
+    double tau_V_th;        //!< Adaptive threshold time constant in ms
+    double V_th_max;        //!< Value of V_th afer a spike in mV
+    double V_th_rest;       //!< Resting value of V_th in mV
+    double tau_u_bar_plus;  //!< Time constant of u_bar_plus in ms
+    double tau_u_bar_minus; //!< Time constant of u_bar_minus in ms
+    double tau_u_bar_bar;   //!< Time constant of u_bar_bar in ms
+    double a;               //!< Subthreshold adaptation in nS
+    double b;               //!< Spike-triggered adaptation in pA
+    double I_sp;            //!< Depolarizing spike afterpotential current in pA
+    double I_e;             //!< Intrinsic current in pA
 
     double gsl_error_tol; //!< Error bound for GSL integrator
 

@@ -81,7 +81,7 @@ public:
      * Initialize an iterator to point to the first node in the first
      * non-empty leaf within the tree below this Ntree.
      */
-    iterator( Ntree& q );
+    explicit iterator( Ntree& q );
 
     /**
      * Initialize an iterator to point to the nth node in this Ntree,
@@ -90,11 +90,13 @@ public:
      */
     iterator( Ntree& q, index n );
 
-    value_type& operator*()
+    value_type&
+    operator*()
     {
       return ntree_->nodes_[ node_ ];
     }
-    value_type* operator->()
+    value_type*
+    operator->()
     {
       return &ntree_->nodes_[ node_ ];
     }
@@ -172,11 +174,13 @@ public:
      */
     masked_iterator( Ntree& q, const Mask< D >& mask, const Position< D >& anchor );
 
-    value_type& operator*()
+    value_type&
+    operator*()
     {
       return ntree_->nodes_[ node_ ];
     }
-    value_type* operator->()
+    value_type*
+    operator->()
     {
       return &ntree_->nodes_[ node_ ];
     }

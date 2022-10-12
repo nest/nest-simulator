@@ -104,7 +104,7 @@ class Mask : public AbstractMask
 public:
   using AbstractMask::inside;
 
-  ~Mask()
+  ~Mask() override
   {
   }
 
@@ -116,7 +116,7 @@ public:
   /**
    * @returns true if point is inside mask.
    */
-  bool inside( const std::vector< double >& pt ) const;
+  bool inside( const std::vector< double >& pt ) const override;
 
   /**
    * @returns true if the whole box is inside the mask.
@@ -144,9 +144,9 @@ public:
    */
   virtual Mask* clone() const = 0;
 
-  AbstractMask* intersect_mask( const AbstractMask& other ) const;
-  AbstractMask* union_mask( const AbstractMask& other ) const;
-  AbstractMask* minus_mask( const AbstractMask& other ) const;
+  AbstractMask* intersect_mask( const AbstractMask& other ) const override;
+  AbstractMask* union_mask( const AbstractMask& other ) const override;
+  AbstractMask* minus_mask( const AbstractMask& other ) const override;
 };
 
 /**
@@ -225,7 +225,7 @@ public:
     const double azimuth_angle = 0.0,
     const double polar_angle = 0.0 );
 
-  ~BoxMask()
+  ~BoxMask() override
   {
   }
 
@@ -234,23 +234,23 @@ public:
   /**
    * @returns true if point is inside the box
    */
-  bool inside( const Position< D >& p ) const;
+  bool inside( const Position< D >& p ) const override;
 
   /**
    * @returns true if the whole given box is inside this box
    */
-  bool inside( const Box< D >& b ) const;
+  bool inside( const Box< D >& b ) const override;
 
   /**
    * @returns true if the whole given box is outside this box
    */
-  bool outside( const Box< D >& b ) const;
+  bool outside( const Box< D >& b ) const override;
 
-  Box< D > get_bbox() const;
+  Box< D > get_bbox() const override;
 
-  DictionaryDatum get_dict() const;
+  DictionaryDatum get_dict() const override;
 
-  Mask< D >* clone() const;
+  Mask< D >* clone() const override;
 
   /**
    * @returns the name of this mask type.
@@ -326,7 +326,7 @@ public:
    */
   BallMask( const DictionaryDatum& );
 
-  ~BallMask()
+  ~BallMask() override
   {
   }
 
@@ -335,23 +335,23 @@ public:
   /**
    * @returns true if point is inside the circle
    */
-  bool inside( const Position< D >& p ) const;
+  bool inside( const Position< D >& p ) const override;
 
   /**
    * @returns true if the whole box is inside the circle
    */
-  bool inside( const Box< D >& ) const;
+  bool inside( const Box< D >& ) const override;
 
   /**
    * @returns true if the whole box is outside the circle
    */
-  bool outside( const Box< D >& b ) const;
+  bool outside( const Box< D >& b ) const override;
 
-  Box< D > get_bbox() const;
+  Box< D > get_bbox() const override;
 
-  DictionaryDatum get_dict() const;
+  DictionaryDatum get_dict() const override;
 
-  Mask< D >* clone() const;
+  Mask< D >* clone() const override;
 
   /**
    * @returns the name of this mask type.
@@ -431,7 +431,7 @@ public:
    */
   EllipseMask( const DictionaryDatum& );
 
-  ~EllipseMask()
+  ~EllipseMask() override
   {
   }
 
@@ -440,23 +440,23 @@ public:
   /**
    * @returns true if point is inside the ellipse
    */
-  bool inside( const Position< D >& p ) const;
+  bool inside( const Position< D >& p ) const override;
 
   /**
    * @returns true if the whole box is inside the ellipse
    */
-  bool inside( const Box< D >& ) const;
+  bool inside( const Box< D >& ) const override;
 
   /**
    * @returns true if the whole box is outside the ellipse
    */
-  bool outside( const Box< D >& b ) const;
+  bool outside( const Box< D >& b ) const override;
 
-  Box< D > get_bbox() const;
+  Box< D > get_bbox() const override;
 
-  DictionaryDatum get_dict() const;
+  DictionaryDatum get_dict() const override;
 
-  Mask< D >* clone() const;
+  Mask< D >* clone() const override;
 
   /**
    * @returns the name of this mask type.

@@ -223,7 +223,7 @@ nest::music_cont_out_proxy::send_test_event( Node& target, rport receptor_type, 
   DataLoggingRequest e( P_.interval_, P_.record_from_ );
   e.set_sender( *this );
   port p = target.handles_test_event( e, receptor_type );
-  if ( p != invalid_port_ and not is_model_prototype() )
+  if ( p != invalid_port and not is_model_prototype() )
   {
     B_.has_targets_ = true;
   }
@@ -232,7 +232,7 @@ nest::music_cont_out_proxy::send_test_event( Node& target, rport receptor_type, 
 }
 
 void
-nest::music_cont_out_proxy::calibrate()
+nest::music_cont_out_proxy::pre_run_hook()
 {
   // only publish the output port once,
   if ( S_.published_ == false )
@@ -299,7 +299,7 @@ nest::music_cont_out_proxy::calibrate()
 
     std::string msg =
       String::compose( "Mapping MUSIC continuous output port '%1' with width=%2.", P_.port_name_, S_.port_width_ );
-    LOG( M_INFO, "music_cont_out_proxy::calibrate()", msg.c_str() );
+    LOG( M_INFO, "music_cont_out_proxy::pre_run_hook()", msg.c_str() );
   }
 }
 

@@ -51,7 +51,7 @@ multimeter::send_test_event( Node& target, rport receptor_type, synindex, bool )
   DataLoggingRequest e( P_.interval_, P_.offset_, P_.record_from_ );
   e.set_sender( *this );
   port p = target.handles_test_event( e, receptor_type );
-  if ( p != invalid_port_ and not is_model_prototype() )
+  if ( p != invalid_port and not is_model_prototype() )
   {
     B_.has_targets_ = true;
   }
@@ -170,9 +170,9 @@ nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b,
 }
 
 void
-multimeter::calibrate()
+multimeter::pre_run_hook()
 {
-  RecordingDevice::calibrate( P_.record_from_, RecordingBackend::NO_LONG_VALUE_NAMES );
+  RecordingDevice::pre_run_hook( P_.record_from_, RecordingBackend::NO_LONG_VALUE_NAMES );
 }
 
 void

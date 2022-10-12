@@ -127,7 +127,7 @@ public:
 
 private:
   void init_buffers_();
-  void calibrate();
+  void pre_run_hook();
 
   void
   update( Time const&, const long, const long )
@@ -202,6 +202,6 @@ music_event_out_proxy::handles_test_event( SpikeEvent&, rport receptor_type )
 
 } // namespace
 
-#endif /* #ifndef MUSIC_EVENT_OUT_PROXY_H */
+#endif /* HAVE_MUSIC */
 
 #endif

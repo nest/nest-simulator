@@ -49,10 +49,10 @@ class SimulationManager : public ManagerInterface
 public:
   SimulationManager();
 
-  virtual void initialize() override;
-  virtual void finalize() override;
-  virtual void set_status( const DictionaryDatum& ) override;
-  virtual void get_status( DictionaryDatum& ) override;
+  void initialize() override;
+  void finalize() override;
+  void set_status( const DictionaryDatum& ) override;
+  void get_status( DictionaryDatum& ) override;
 
   /**
       check for errors in time before run

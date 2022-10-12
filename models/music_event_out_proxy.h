@@ -202,6 +202,6 @@ music_event_out_proxy::handles_test_event( SpikeEvent&, rport receptor_type )
 
 } // namespace
 
-#endif /* #ifndef MUSIC_EVENT_OUT_PROXY_H */
+#endif /* HAVE_MUSIC */
 
 #endif

@@ -49,7 +49,7 @@ ModelManager::ModelManager()
   , connection_models_()
   , modeldict_( new Dictionary )
   , synapsedict_( new Dictionary )
-  , proxynode_model_( 0 )
+  , proxynode_model_( nullptr )
   , proxy_nodes_()
   , model_defaults_modified_( false )
 {
@@ -60,7 +60,7 @@ ModelManager::~ModelManager()
   clear_connection_models_();
   for ( auto&& connection_model : builtin_connection_models_ )
   {
-    if ( connection_model != nullptr )
+    if ( connection_model )
     {
       delete connection_model;
     }
@@ -69,7 +69,7 @@ ModelManager::~ModelManager()
   clear_node_models_();
   for ( auto&& node_model : builtin_node_models_ )
   {
-    if ( node_model != nullptr )
+    if ( node_model )
     {
       delete node_model;
     }
@@ -79,7 +79,7 @@ ModelManager::~ModelManager()
 void
 ModelManager::initialize()
 {
-  if ( proxynode_model_ == 0 )
+  if ( not proxynode_model_ )
   {
     proxynode_model_ = new GenericModel< proxynode >( "proxynode", "" );
     proxynode_model_->set_type_id( 1 );
@@ -120,7 +120,7 @@ ModelManager::initialize()
   // (re-)append all synapse prototypes
   for ( auto&& connection_model : builtin_connection_models_ )
   {
-    if ( connection_model != nullptr )
+    if ( connection_model )
     {
       std::string name = connection_model->get_name();
       for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
@@ -216,26 +216,23 @@ index
 ModelManager::register_node_model_( Model* model )
 {
   const index id = node_models_.size();
+  const std::string name = model->get_name();
+
   model->set_model_id( id );
   model->set_type_id( id );
-
-  std::string name = model->get_name();
-
   builtin_node_models_.push_back( model );
 
   Model* cloned_model = model->clone( name );
   cloned_model->set_model_id( id );
-
   node_models_.push_back( cloned_model );
+
+  modeldict_->insert( name, id );
 
 #pragma omp parallel
   {
     const thread t = kernel().vp_manager.get_thread_id();
-    const int model_id = model->get_model_id();
-    proxy_nodes_[ t ].push_back( create_proxynode_( t, model_id ) );
+    proxy_nodes_[ t ].push_back( create_proxynode_( t, id ) );
   }
-
-  modeldict_->insert( name, id );
 
   return id;
 }
@@ -247,16 +244,16 @@ ModelManager::copy_node_model_( index old_id, Name new_name )
   old_model->deprecation_warning( "CopyModel" );
 
   Model* new_model = old_model->clone( new_name.toString() );
-  node_models_.push_back( new_model );
+  const index new_id = node_models_.size();
+  new_model->set_model_id( new_id );
 
-  index new_id = node_models_.size() - 1;
+  node_models_.push_back( new_model );
   modeldict_->insert( new_name, new_id );
 
 #pragma omp parallel
   {
     const thread t = kernel().vp_manager.get_thread_id();
-    const int model_id = new_model->get_model_id();
-    proxy_nodes_[ t ].push_back( create_proxynode_( t, model_id ) );
+    proxy_nodes_[ t ].push_back( create_proxynode_( t, new_id ) );
   }
 
   return new_id;
@@ -380,7 +377,7 @@ ModelManager::get_node_model_id( const Name name ) const
   const Name model_name( name );
   for ( int i = 0; i < ( int ) node_models_.size(); ++i )
   {
-    assert( node_models_[ i ] != 0 );
+    assert( node_models_[ i ] );
     if ( model_name == node_models_[ i ]->get_name() )
     {
       return i;
@@ -416,6 +413,7 @@ ModelManager::get_connector_defaults( synindex syn_id ) const
   }
 
   ( *dict )[ names::num_connections ] = kernel().connection_manager.get_num_connections( syn_id );
+  ( *dict )[ names::element_type ] = "synapse";
 
   return dict;
 }
@@ -452,14 +450,14 @@ ModelManager::clear_node_models_()
   // init()
   for ( auto&& node_model : node_models_ )
   {
-    if ( node_model != 0 )
+    if ( node_model )
     {
       delete node_model;
     }
   }
 
   delete proxynode_model_;
-  proxynode_model_ = 0;
+  proxynode_model_ = nullptr;
 
   node_models_.clear();
   proxy_nodes_.clear();
@@ -476,7 +474,7 @@ ModelManager::clear_connection_models_()
   {
     for ( auto&& connection_model : connection_models_[ t ] )
     {
-      if ( connection_model != 0 )
+      if ( connection_model )
       {
         delete connection_model;
       }
@@ -497,7 +495,7 @@ ModelManager::calibrate( const TimeConverter& tc )
   {
     for ( auto&& connection_model : connection_models_[ t ] )
     {
-      if ( connection_model != 0 )
+      if ( connection_model )
       {
         connection_model->calibrate( tc );
       }

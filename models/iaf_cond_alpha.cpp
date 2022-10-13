@@ -27,9 +27,7 @@
 
 // C++ includes:
 #include <cstdio>
-#include <iomanip>
 #include <iostream>
-#include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -41,10 +39,7 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map

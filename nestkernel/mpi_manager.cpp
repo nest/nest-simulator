@@ -22,13 +22,8 @@
 
 #include "mpi_manager.h"
 
-// C++ includes:
-#include <limits>
-#include <numeric>
 
 // Includes from libnestutil:
-#include "compose.hpp"
-#include "logging.h"
 #include "stopwatch.h"
 
 // Includes from nestkernel:

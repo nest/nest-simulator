@@ -32,7 +32,6 @@
 
 // C++ includes:
 #include <cassert>
-#include <climits>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -56,7 +55,6 @@
 #include "namedatum.h"
 #include "sliexceptions.h"
 #include "stringdatum.h"
-#include "tokenutils.h"
 
 
 // sstream has functions std::?stringstream

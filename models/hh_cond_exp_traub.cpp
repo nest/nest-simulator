@@ -27,14 +27,9 @@
 
 // C++ includes:
 #include <cstdio>
-#include <iomanip>
-#include <iostream>
-#include <limits>
 
 // External includes:
 #include <gsl/gsl_errno.h>
-#include <gsl/gsl_matrix.h>
-#include <gsl/gsl_sf_exp.h>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -46,10 +41,7 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 nest::RecordablesMap< nest::hh_cond_exp_traub > nest::hh_cond_exp_traub::recordablesMap_;
 

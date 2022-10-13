@@ -27,25 +27,19 @@
 #include "sli_io.h"
 
 // C++ includes:
-#include <cstdio>
-#include <fstream>
 #include <iomanip>
 #include <iostream>
-#include <typeinfo>
 
 // Generated includes:
 #include "config.h"
 
 // Includes from sli:
-#include "arraydatum.h"
 #include "dictstack.h"
 #include "doubledatum.h"
 #include "fdstream.h"
 #include "integerdatum.h"
 #include "iostreamdatum.h"
-#include "namedatum.h"
 #include "stringdatum.h"
-#include "tokenutils.h"
 
 // sstream has functions std::?stringstream
 // strstream has functions std::?strstream

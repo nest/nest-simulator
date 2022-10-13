@@ -106,7 +106,7 @@ SLIArrayModule::RangeFunction::execute( SLIInterpreter* i ) const
   {
     IntegerDatum* n1d = dynamic_cast< IntegerDatum* >( ad->get( 0 ).datum() );
     IntegerDatum* n2d = dynamic_cast< IntegerDatum* >( ad->get( 1 ).datum() );
-    if ( ( n1d ) && ( n2d ) )
+    if ( n1d && n2d )
     {
       long n = 1 + n2d->get() - n1d->get();
 
@@ -130,7 +130,7 @@ SLIArrayModule::RangeFunction::execute( SLIInterpreter* i ) const
     {
       DoubleDatum* n1d = dynamic_cast< DoubleDatum* >( ad->get( 0 ).datum() );
       DoubleDatum* n2d = dynamic_cast< DoubleDatum* >( ad->get( 1 ).datum() );
-      if ( ( n1d ) && ( n2d ) )
+      if ( n1d && n2d )
       {
         long n = 1 + static_cast< long >( n2d->get() - n1d->get() );
 
@@ -161,7 +161,7 @@ SLIArrayModule::RangeFunction::execute( SLIInterpreter* i ) const
     IntegerDatum* n1d = dynamic_cast< IntegerDatum* >( ad->get( 0 ).datum() );
     IntegerDatum* n2d = dynamic_cast< IntegerDatum* >( ad->get( 1 ).datum() );
     IntegerDatum* n3d = dynamic_cast< IntegerDatum* >( ad->get( 2 ).datum() );
-    if ( ( n1d ) && ( n2d ) && ( n3d ) )
+    if ( n1d && n2d && n3d )
     {
       long di = n3d->get();
       long start = n1d->get();
@@ -192,7 +192,7 @@ SLIArrayModule::RangeFunction::execute( SLIInterpreter* i ) const
       DoubleDatum* n1d = dynamic_cast< DoubleDatum* >( ad->get( 0 ).datum() );
       DoubleDatum* n2d = dynamic_cast< DoubleDatum* >( ad->get( 1 ).datum() );
       DoubleDatum* n3d = dynamic_cast< DoubleDatum* >( ad->get( 2 ).datum() );
-      if ( ( n1d ) && ( n2d ) && ( n3d ) )
+      if ( n1d && n2d && n3d )
       {
         double di = n3d->get();
         double start = n1d->get();
@@ -286,7 +286,7 @@ SLIArrayModule::ArangeFunction::execute( SLIInterpreter* i ) const
   {
     IntegerDatum* n1d = dynamic_cast< IntegerDatum* >( ad->get( 0 ).datum() );
     IntegerDatum* n2d = dynamic_cast< IntegerDatum* >( ad->get( 1 ).datum() );
-    if ( ( n1d ) && ( n2d ) )
+    if ( n1d && n2d )
     {
       const long start = n1d->get();
       const long stop = n2d->get();
@@ -310,7 +310,7 @@ SLIArrayModule::ArangeFunction::execute( SLIInterpreter* i ) const
     {
       DoubleDatum* n1d = dynamic_cast< DoubleDatum* >( ad->get( 0 ).datum() );
       DoubleDatum* n2d = dynamic_cast< DoubleDatum* >( ad->get( 1 ).datum() );
-      if ( ( n1d ) && ( n2d ) )
+      if ( n1d && n2d )
       {
         double start = n1d->get();
         double stop = n2d->get();
@@ -338,7 +338,7 @@ SLIArrayModule::ArangeFunction::execute( SLIInterpreter* i ) const
     IntegerDatum* n1d = dynamic_cast< IntegerDatum* >( ad->get( 0 ).datum() );
     IntegerDatum* n2d = dynamic_cast< IntegerDatum* >( ad->get( 1 ).datum() );
     IntegerDatum* n3d = dynamic_cast< IntegerDatum* >( ad->get( 2 ).datum() );
-    if ( ( n1d ) && ( n2d ) && ( n3d ) )
+    if ( n1d && n2d && n3d )
     {
       long di = n3d->get();
       long start = n1d->get();
@@ -372,7 +372,7 @@ SLIArrayModule::ArangeFunction::execute( SLIInterpreter* i ) const
       DoubleDatum* n1d = dynamic_cast< DoubleDatum* >( ad->get( 0 ).datum() );
       DoubleDatum* n2d = dynamic_cast< DoubleDatum* >( ad->get( 1 ).datum() );
       DoubleDatum* n3d = dynamic_cast< DoubleDatum* >( ad->get( 2 ).datum() );
-      if ( ( n1d ) && ( n2d ) && ( n3d ) )
+      if ( n1d && n2d && n3d )
       {
         double di = n3d->get();
         double start = n1d->get();

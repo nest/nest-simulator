@@ -476,7 +476,7 @@ nest::hh_cond_beta_gap_traub::update_( Time const& origin,
   const bool called_from_wfr_update )
 {
 
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && delay from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   const size_t interpolation_order = kernel().simulation_manager.get_wfr_interpolation_order();

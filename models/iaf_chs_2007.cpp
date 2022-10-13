@@ -222,7 +222,7 @@ nest::iaf_chs_2007::pre_run_hook()
 void
 nest::iaf_chs_2007::update( const Time& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && delay from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each

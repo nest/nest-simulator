@@ -87,9 +87,6 @@ public:
    */
   Position( const std::vector< T >& y );
 
-  /**
-   * Copy constructor.
-   */
   Position( const Position& other );
 
   template < class U >

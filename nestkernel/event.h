@@ -93,9 +93,6 @@ public:
   {
   }
 
-  /**
-   * Virtual copy constructor.
-   */
   virtual Event* clone() const = 0;
 
   /**

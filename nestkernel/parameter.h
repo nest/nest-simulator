@@ -59,9 +59,6 @@ public:
   {
   }
 
-  /**
-   * Copy constructor
-   */
   explicit Parameter( const Parameter& p ) = default;
 
   /**
@@ -462,9 +459,6 @@ public:
   {
   }
 
-  /**
-   * Copy constructor.
-   */
   ProductParameter( const ProductParameter& p )
     : Parameter( p )
     , parameter1_( p.parameter1_ )
@@ -514,9 +508,6 @@ public:
   {
   }
 
-  /**
-   * Copy constructor.
-   */
   QuotientParameter( const QuotientParameter& p )
     : Parameter( p )
     , parameter1_( p.parameter1_ )
@@ -566,9 +557,6 @@ public:
   {
   }
 
-  /**
-   * Copy constructor.
-   */
   SumParameter( const SumParameter& p )
     : Parameter( p )
     , parameter1_( p.parameter1_ )
@@ -618,9 +606,6 @@ public:
   {
   }
 
-  /**
-   * Copy constructor.
-   */
   DifferenceParameter( const DifferenceParameter& p )
     : Parameter( p )
     , parameter1_( p.parameter1_ )
@@ -688,9 +673,6 @@ public:
     }
   }
 
-  /**
-   * Copy constructor.
-   */
   ComparingParameter( const ComparingParameter& p )
     : Parameter( p )
     , parameter1_( p.parameter1_ )
@@ -770,9 +752,6 @@ public:
   {
   }
 
-  /**
-   * Copy constructor.
-   */
   ConditionalParameter( const ConditionalParameter& p )
     : Parameter( p )
     , condition_( p.condition_ )
@@ -839,9 +818,6 @@ public:
     assert( is_spatial_ == p->is_spatial() );
   }
 
-  /**
-   * Copy constructor.
-   */
   MinParameter( const MinParameter& p )
     : Parameter( p )
     , p_( p.p_ )
@@ -891,9 +867,6 @@ public:
   {
   }
 
-  /**
-   * Copy constructor.
-   */
   MaxParameter( const MaxParameter& p )
     : Parameter( p )
     , p_( p.p_ )
@@ -938,9 +911,6 @@ public:
    */
   RedrawParameter( std::shared_ptr< Parameter > p, const double min, const double max );
 
-  /**
-   * Copy constructor.
-   */
   RedrawParameter( const RedrawParameter& p )
     : Parameter( p )
     , p_( p.p_ )
@@ -984,9 +954,6 @@ public:
   {
   }
 
-  /**
-   * Copy constructor.
-   */
   ExpParameter( const ExpParameter& p )
     : Parameter( p )
     , p_( p.p_ )
@@ -1033,9 +1000,6 @@ public:
   {
   }
 
-  /**
-   * Copy constructor.
-   */
   SinParameter( const SinParameter& p )
     : Parameter( p )
     , p_( p.p_ )
@@ -1081,9 +1045,6 @@ public:
   {
   }
 
-  /**
-   * Copy constructor.
-   */
   CosParameter( const CosParameter& p )
     : Parameter( p )
     , p_( p.p_ )
@@ -1131,9 +1092,6 @@ public:
   {
   }
 
-  /**
-   * Copy constructor.
-   */
   PowParameter( const PowParameter& p )
     : Parameter( p )
     , p_( p.p_ )
@@ -1200,9 +1158,6 @@ public:
   {
   }
 
-  /**
-   * Copy constructor.
-   */
   DimensionParameter( const DimensionParameter& p )
     : Parameter( p )
     , num_dimensions_( p.num_dimensions_ )
@@ -1266,9 +1221,6 @@ public:
    */
   ExpDistParameter( const DictionaryDatum& d );
 
-  /**
-   * Copy constructor.
-   */
   ExpDistParameter( const ExpDistParameter& p )
     : Parameter( p )
     , p_( p.p_ )
@@ -1312,9 +1264,6 @@ public:
    */
   GaussianParameter( const DictionaryDatum& d );
 
-  /**
-   * Copy constructor.
-   */
   GaussianParameter( const GaussianParameter& p )
     : Parameter( p )
     , p_( p.p_ )
@@ -1359,9 +1308,6 @@ public:
    */
   Gaussian2DParameter( const DictionaryDatum& d );
 
-  /**
-   * Copy constructor.
-   */
   Gaussian2DParameter( const Gaussian2DParameter& p )
     : Parameter( p )
     , px_( p.px_ )
@@ -1414,9 +1360,6 @@ public:
    */
   GammaParameter( const DictionaryDatum& d );
 
-  /**
-   * Copy constructor.
-   */
   GammaParameter( const GammaParameter& p )
     : Parameter( p )
     , p_( p.p_ )

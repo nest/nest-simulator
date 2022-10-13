@@ -110,15 +110,8 @@ class SynapticElement
 {
 
 public:
-  /**
-   * Constructor.
-   */
   SynapticElement();
 
-  /**
-   * Copy Constructor.
-   * @param se SynapticElement
-   */
   SynapticElement( const SynapticElement& se );
 
   /**
@@ -127,9 +120,6 @@ public:
    */
   SynapticElement& operator=( const SynapticElement& other );
 
-  /**
-   * Destructor.
-   */
   ~SynapticElement()
   {
     delete growth_curve_;

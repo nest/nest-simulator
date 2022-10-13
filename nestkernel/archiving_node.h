@@ -49,34 +49,33 @@ namespace nest
 class ArchivingNode : public StructuralPlasticityNode
 {
 public:
-  /**
-   * Constructor
-   */
   ArchivingNode();
 
-  /**
-   * Copy Constructor
-   */
   ArchivingNode( const ArchivingNode& );
 
   /**
-   * Return the Kminus (synaptic trace) value at t (in ms). When the trace is
-   * requested at the exact same time that the neuron emits a spike, the trace
+   * Return the Kminus (synaptic trace) value at t (in ms).
+   *
+   * When the trace is requested at the exact same time that
+   * the neuron emits a spike, the trace
    * value as it was just before the spike is returned.
    */
   double get_K_value( double t ) override;
 
   /**
    * Write the Kminus (eligibility trace for STDP),
-   * nearest_neighbour_Kminus (eligibility trace for nearest-neighbour STDP:
-   * like Kminus, but increased to 1, rather than by 1, on a spike
+   * nearest_neighbour_Kminus (eligibility trace for nearest-neighbour STDP
+   *
+   * Like Kminus, but increased to 1, rather than by 1, on a spike
    * occurrence), and Kminus_triplet values at t (in ms) to the provided locations.
    * @throws UnexpectedEvent
    */
   void get_K_values( double t, double& Kminus, double& nearest_neighbor_Kminus, double& Kminus_triplet ) override;
 
   /**
-   * The legacy version of the function, kept for compatibility
+   * The legacy version of the function
+   *
+   * Kept for compatibility
    * after changing the function signature in PR #865.
    * @throws UnexpectedEvent
    */
@@ -128,10 +127,11 @@ protected:
    */
   void clear_history();
 
-  /*
-   * number of incoming connections from stdp connectors.
-   *  needed to determine, if every incoming connection has
-   *  read the spikehistory for a given point in time
+  /**
+   * Number of incoming connections from stdp connectors.
+   *
+   * It is needed to determine, if every incoming connection has
+   * read the spikehistory for a given point in time
    */
   size_t n_incoming_;
 

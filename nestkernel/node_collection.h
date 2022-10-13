@@ -426,14 +426,12 @@ public:
   NodeCollectionPrimitive( index first, index last );
 
   /**
-   * Primitive copy constructor.
    *
    * @param rhs Primitive to copy
    */
   NodeCollectionPrimitive( const NodeCollectionPrimitive& ) = default;
 
   /**
-   * Primitive assignment operator.
    *
    * @param rhs Primitive to assign
    */
@@ -541,7 +539,6 @@ public:
   NodeCollectionComposite( const NodeCollectionPrimitive&, size_t, size_t, size_t );
 
   /**
-   * Composite copy constructor.
    *
    * @param comp Composite to be copied.
    */

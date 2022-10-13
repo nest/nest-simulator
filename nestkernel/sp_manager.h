@@ -103,7 +103,7 @@ public:
   void disconnect( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     DictionaryDatum& conn_spec,
-    DictionaryDatum& syn_spec);
+    DictionaryDatum& syn_spec );
 
   /**
    * Disconnect two nodes.

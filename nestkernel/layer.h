@@ -53,17 +53,11 @@ typedef std::shared_ptr< AbstractLayer > AbstractLayerPTR;
 class AbstractLayer
 {
 public:
-  /**
-   * Constructor.
-   */
   AbstractLayer()
     : node_collection_( NodeCollectionPTR( nullptr ) )
   {
   }
 
-  /**
-   * Virtual destructor
-   */
   virtual ~AbstractLayer();
 
   /**
@@ -220,9 +214,6 @@ public:
    */
   Layer();
 
-  /**
-   * Copy constructor.
-   */
   Layer( const Layer& other_layer );
 
   /**

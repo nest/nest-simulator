@@ -48,14 +48,8 @@ class StructuralPlasticityNode : public Node
   using Node::get_synaptic_elements;
 
 public:
-  /**
-   * Constructor.
-   */
   StructuralPlasticityNode();
 
-  /**
-   * Copy Constructor.
-   */
   StructuralPlasticityNode( const StructuralPlasticityNode& );
   /**
 

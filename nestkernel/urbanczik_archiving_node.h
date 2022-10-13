@@ -49,14 +49,8 @@ class UrbanczikArchivingNode : public ArchivingNode
 {
 
 public:
-  /**
-   * Constructor.
-   */
   UrbanczikArchivingNode();
 
-  /**
-   * Copy Constructor.
-   */
   UrbanczikArchivingNode( const UrbanczikArchivingNode& );
 
   bool

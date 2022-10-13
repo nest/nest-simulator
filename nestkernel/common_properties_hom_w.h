@@ -49,7 +49,6 @@ class CommonPropertiesHomW : public CommonSynapseProperties
 {
 public:
   /**
-   * Default constructor.
    * Sets all property values to defaults.
    */
   CommonPropertiesHomW()

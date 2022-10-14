@@ -1,40 +1,80 @@
-Rules for C++  code comments
-============================
+Guidelines for C++  code comments
+=================================
 
-* C++ comments single line (max 2 lines if sentence is long): //
-* C++ comments multile line: ``/* * * * */``
+There are two types of code comments for C++ files: doxygen style and C++ style comments.
 
-* avoid doxygen comments in .cpp files, move to header file
-* avoid duplicating code in comments; only include code(parameters, functions etc) that also have additional context, remove redundancies
-* include the variable name in functions in header file to match cpp file.
-
-
-Functions and classes
----------------------
-
-doxygen style: ``/** * */``
+* Doxygen styled comments are used for describing things like the purpose of the function, which parameters it accepts, and what output it generates.
+* Use Doxygen style comments in the header (``.h``)  files. Avoid using them in ``.cpp`` files.
+* Do not duplicate code in comments.
+..  Include the variable name in functions in header file to match cpp file.
 
 
-Variables
----------
+Generate HTML do doxygen comments
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To generate HTML output of the doxgyen comments,
+
+in the build directory, after running ``cmake path/to/nest-simulator/``,
+run
+
+::
+
+   make doc
+   xdg-open doc/doxygen/html/index.html
+
+.. seealso::
+
+  See `the official doxygen documentation <https://www.doxygen.nl/>`_ for details.
 
 
-doxygen comments single line (max 2 lines if sentence is long): //!
-multiline doxygen style: `/** * */`
-doxygen comments side: //!<
+Doxygen style
+~~~~~~~~~~~~~
 
-Use //! for long one-liners above variables and //!< for short ones behind them
+* Multi-line comments
 
-Examples::
+.. code-block:: cpp
 
- /**
-  * Set the minimal and maximal delay and override automatically determined values.
-  */
- void set_delay_extrema(long min_delay, long max_delay);
+  /**
+   * Short description
+   *
+   * Further details, if necesary
+   */
 
- //! The variable min_delay holds the value for the smallest transmission delay in the network in steps
- long min_delay_;
+.. note::
 
- long max_delay_; //!< The largest transmission delay in the network (steps)
+    Functions and classes should use the multi-line style even for single line comments
+
+* Single or two line comments to use with variables:
+
+.. code-block:: cpp
+
+   //! Lorem ipusum . . .
+
+
+* If a short comment is needed for variables, you can add a comment to the right of the code:
+
+.. code-block:: cpp
+
+  long max_delay_; //!< lorem ipsum
+
+C++ style
+~~~~~~~~~
+
+* Multi-line comments:
+
+.. code-block:: cpp
+
+  /*
+   *
+   *
+   */
+
+* Single or two line comments:
+
+.. code-block:: cpp
+
+ //
+
+
 
 

@@ -111,7 +111,9 @@ public:
   void connect( TokenArray sources, TokenArray targets, const DictionaryDatum& syn_spec );
 
   /**
-   * Connect two nodes. The source node is defined by its global ID.
+   * Connect two nodes.
+   *
+   * The source node is defined by its global ID.
    * The target node is defined by the node. The connection is
    * established on the thread/process that owns the target node.
    *
@@ -138,7 +140,9 @@ public:
     const double weight = numerics::nan );
 
   /**
-   * Connect two nodes. The source and target nodes are defined by their
+   * Connect two nodes.
+   *
+   * The source and target nodes are defined by their
    * global ID. The connection is established on the thread/process that owns
    * the target node.
    *
@@ -188,6 +192,7 @@ public:
 
   /**
    * Return connections between pairs of neurons.
+   *
    * The params dictionary can have the following entries:
    * 'source' a token array with node IDs of source neurons.
    * 'target' a token array with node IDs of target neuron.
@@ -233,6 +238,7 @@ public:
   bool get_device_connected( thread tid, index lcid ) const;
   /**
    * Triggered by volume transmitter in update.
+   *
    * Triggeres updates for all connectors of dopamine synapses that
    * are registered with the volume transmitter with node_id vt_node_id.
    */
@@ -275,6 +281,7 @@ public:
 
   /**
    * Resize the structures for the Connector objects if necessary.
+   *
    * This function should be called after number of threads, min_delay,
    * max_delay, and time representation have been changed in the scheduler.
    * The TimeConverter is used to convert times from the old to the new
@@ -360,7 +367,9 @@ public:
 
   /**
    * Deletes TargetTable and resets processed flags of
-   * SourceTable. This function must be called if connections are
+   * SourceTable.
+   *
+   * This function must be called if connections are
    * created after connections have been communicated previously. It
    * basically restores the connection infrastructure to a state where
    * all information only exists on the postsynaptic side.

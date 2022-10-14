@@ -85,7 +85,9 @@ protected:
   void cg_set_masks();
   /**
    * Calculate the right border of the contiguous range of node IDs
-   * starting at left. The element is found using a binary search with
+   * starting at left.
+   *
+   * The element is found using a binary search with
    * stepsize step.
    *
    * \param left The leftmost element of the range

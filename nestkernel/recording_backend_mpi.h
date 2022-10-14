@@ -88,6 +88,7 @@ namespace nest
 
 /**
  * A recording backend for sending information with MPI.
+ *
  * Communication protocol diagram:
  * \image html MPI_backend_protocol_of_communication.svg
  * General state machine diagram of NEST communication with the MPI backend:
@@ -137,8 +138,9 @@ private:
   bool prepared_;
 
   /**
-   * Buffer for saving events before they are sent. The buffer has 3
-   * dimensions: thread_id, MPI_communicator_index and number of
+   * Buffer for saving events before they are sent.
+   *
+   * The buffer has 3 dimensions: thread_id, MPI_communicator_index and number of
    * events elements. The events elements are described as an array
    * with three components: id of device, id of neurons and data ( one
    * double )
@@ -147,7 +149,9 @@ private:
 
   /**
    * A map for the enrolled devices. We have a vector with one map per
-   * local thread. The map associates the node ID of a device on a
+   * local thread.
+   *
+   * The map associates the node ID of a device on a
    * given thread with its MPI index and device. Only the master
    * thread has a valid MPI communicator pointer.
    */
@@ -156,7 +160,9 @@ private:
 
   /**
    * A map of MPI communicators used by the master thread for the MPI
-   * communication.  The values of the map are tuples containing the
+   * communication.
+   *
+   * The values of the map are tuples containing the
    * index of the MPI communicator, the MPI communicator itself, and
    * the number of devices linked to that MPI communicator.
    */

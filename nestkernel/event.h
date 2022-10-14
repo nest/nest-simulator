@@ -151,6 +151,7 @@ public:
 
   /**
    * Return time stamp of the event.
+   *
    * The stamp denotes the time when the event was created.
    * The resolution of Stamp is limited by the time base of the
    * simulation kernel (@see class nest::Time).
@@ -161,6 +162,7 @@ public:
 
   /**
    * Set the transmission delay of the event.
+   *
    * The delay refers to the time until the event is
    * expected to arrive at the receiver.
    * @param t delay.
@@ -170,6 +172,7 @@ public:
 
   /**
    * Return transmission delay of the event.
+   *
    * The delay refers to the time until the event is
    * expected to arrive at the receiver.
    */
@@ -177,6 +180,7 @@ public:
 
   /**
    * Relative spike delivery time in steps.
+   *
    * Returns the delivery time of the spike relative to a given
    * time in steps.  Causality commands that the result should
    * not be negative.
@@ -190,6 +194,7 @@ public:
 
   /**
    * Return the sender port number of the event.
+   *
    * This function returns the number of the port over which the
    * Event was sent.
    * @retval A negative return value indicates that no port number
@@ -199,6 +204,7 @@ public:
 
   /**
    * Return the receiver port number of the event.
+   *
    * This function returns the number of the r-port over which the
    * Event was sent.
    * @note A return value of 0 indicates that the r-port is not used.
@@ -207,6 +213,7 @@ public:
 
   /**
    * Set the port number.
+   *
    * Each event carries the number of the port over which the event
    * is sent. When a connection is established, it receives a unique
    * ID from the sender. This number has to be stored in each Event
@@ -217,6 +224,7 @@ public:
 
   /**
    * Set the receiver port number (r-port).
+   *
    * When a connection is established, the receiving Node may issue
    * a port number (r-port) to distinguish the incomin
    * connection. By the default, the r-port is not used and its port
@@ -227,6 +235,7 @@ public:
 
   /**
    * Return the creation time offset of the Event.
+   *
    * Each Event carries the exact time of creation. This
    * time need not coincide with an integral multiple of the
    * temporal resolution. Rather, Events may be created at any point
@@ -236,6 +245,7 @@ public:
 
   /**
    * Set the creation time of the Event.
+   *
    * Each Event carries the exact time of creation in realtime. This
    * time need not coincide with an integral multiple of the
    * temporal resolution. Rather, Events may be created at any point
@@ -276,6 +286,7 @@ public:
 
   /**
    * Check integrity of the event.
+   *
    * This function returns true, if all data, in particular sender
    * and receiver pointers are correctly set.
    */
@@ -283,6 +294,7 @@ public:
 
   /**
    * Set the time stamp of the event.
+   *
    * The time stamp refers to the time when the event
    * was created.
    */
@@ -304,6 +316,7 @@ protected:
 
   /**
    * Sender port number.
+   *
    * The sender port is used as a unique identifier for the
    * connection.  The receiver of an event can use the port number
    * to obtain data from the sender.  The sender uses this number to
@@ -314,6 +327,7 @@ protected:
 
   /**
    * Receiver port number (r-port).
+   *
    * The receiver port (r-port) can be used by the receiving Node to
    * distinguish incoming connections. E.g. the r-port number can be
    * used by Events to access specific parts of a Node. In most
@@ -325,6 +339,7 @@ protected:
 
   /**
    * Transmission delay.
+   *
    * Number of simulations steps that pass before the event is
    * delivered at the receiver.
    * The delay must be at least 1.
@@ -333,6 +348,7 @@ protected:
 
   /**
    * Time stamp.
+   *
    * The time stamp specifies the absolute time
    * when the event shall arrive at the target.
    */
@@ -340,6 +356,7 @@ protected:
 
   /**
    * Time stamp in steps.
+   *
    * Caches the value of stamp in steps for efficiency.
    * Needs to be declared mutable since it is modified
    * by a const function (get_rel_delivery_steps).
@@ -348,6 +365,7 @@ protected:
 
   /**
    * Offset for precise spike times.
+   *
    * offset_ specifies a correction to the creation time.
    * If the resolution of stamp is not sufficiently precise,
    * this attribute can be used to correct the creation time.
@@ -365,6 +383,7 @@ protected:
 // Built-in event types
 /**
  * Event for spike information.
+ *
  * Used to send a spike from one node to the next.
  */
 class SpikeEvent : public Event
@@ -478,6 +497,7 @@ public:
 
 /**
  * Event for firing rate information.
+ *
  * Used to send firing rate from one node to the next.
  * The rate information is not contained in the event
  * object. Rather, the receiver has to poll this information
@@ -684,6 +704,7 @@ DataLoggingRequest::record_from() const
 
 /**
  * Provide logged data through request transmitting reference.
+ *
  * @see DataLoggingRequest
  * @ingroup DataLoggingEvents
  */
@@ -693,7 +714,9 @@ public:
   //! Data type data at single recording time
   typedef std::vector< double > DataItem;
 
-  /** Data item with pertaining time stamp.
+  /**
+   * Data item with pertaining time stamp.
+   *
    * Items are initialized with time stamp -inf to mark them as invalid.
    * Data is initialized to <double>::max() as a highly implausible value.
    * Ideally, we should initialized to a NaN, but since the C++-standard does
@@ -750,6 +773,7 @@ inline DataLoggingReply::DataLoggingReply( const Container& d )
 
 /**
  * Event for electrical conductances.
+ *
  * Used to send conductance from one node to the next.
  * The conductance is contained in the event object.
  */
@@ -786,6 +810,7 @@ ConductanceEvent::get_conductance() const
 
 /**
  * Event for transmitting arbitrary data.
+ *
  * This event type may be used for transmitting arbitrary
  * data between events, e.g., images or their FFTs.
  * A shared_ptr to the data is transmitted.  The date type
@@ -838,7 +863,9 @@ DoubleDataEvent::clone() const
 
 /**
  * Base class of secondary events. Provides interface for
- * serialization and deserialization. This event type may be
+ * serialization and deserialization.
+ *
+ * This event type may be
  * used to transmit data on a regular basis
  * Further information about secondary events and
  * their usage with gap junctions can be found in
@@ -872,7 +899,9 @@ public:
 
 /**
  * This template function returns the number of uints covered by a variable of
- * type T. This function is used to determine the storage demands for a
+ * type T.
+ *
+ * This function is used to determine the storage demands for a
  * variable of type T in the NEST communication buffer, which is of type
  * std::vector<unsigned int>.
  */
@@ -891,6 +920,7 @@ number_of_uints_covered()
 /**
  * This template function writes data of type T to a given position of a
  * std::vector< unsigned int >.
+ *
  * Please note that this function does not increase the size of the vector,
  * it just writes the data to the position given by the iterator.
  * The function is used to write data from SecondaryEvents to the NEST
@@ -920,7 +950,9 @@ write_to_comm_buffer( T d, std::vector< unsigned int >::iterator& pos )
 
 /**
  * This template function reads data of type T from a given position of a
- * std::vector< unsigned int >. The function is used to read SecondaryEvents
+ * std::vector< unsigned int >.
+ *
+ * The function is used to read SecondaryEvents
  * data from the NEST communication buffer. The pos iterator is advanced
  * during execution. For a discussion on the functionality of this function see
  * github issue #181 and pull request #184.
@@ -947,7 +979,9 @@ read_from_comm_buffer( T& d, std::vector< unsigned int >::iterator& pos )
 
 /**
  * Template class for the storage and communication of a std::vector of type
- * DataType. The class provides the functionality to communicate homogeneous
+ * DataType.
+ *
+ * The class provides the functionality to communicate homogeneous
  * data of type DataType. The second template type Subclass (which should be
  * chosen as the derived class itself) is used to distinguish derived classes
  * with the same DataType. This is required because of the included static
@@ -998,6 +1032,7 @@ private:
 public:
   /**
    * This function is needed to set the synid on model registration.
+   *
    * At this point no object of this type is available and the
    * add_syn_id-function cannot be used as it is virtual in the base class
    * and therefore cannot be declared as static.
@@ -1013,6 +1048,7 @@ public:
   /**
    * This function is needed to add additional synids when the
    * corresponded connector model is copied.
+   *
    * This function needs to be a virtual function of the base class as
    * it is called from a pointer on SecondaryEvent.
    */
@@ -1033,7 +1069,8 @@ public:
   /**
    * Resets the vector of supported syn ids to those originally
    * registered via ModelsModule or user defined Modules, i.e.,
-   * removes all syn ids created by CopyModel. This is important to
+   * removes all syn ids created by CopyModel.
+   * This is important to
    * maintain consistency across ResetKernel, which removes all copied
    * models.
    */
@@ -1091,6 +1128,7 @@ public:
   /**
    * The following operator is used to write the information of the
    * DataSecondaryEvent into the secondary_events_buffer_.
+   *
    * All DataSecondaryEvents are identified by the synid of the
    * first element in supported_syn_ids_.
    */

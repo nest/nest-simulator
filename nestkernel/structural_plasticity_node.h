@@ -40,7 +40,6 @@ namespace nest
 {
 
 /**
- * \class StructuralPlasticityNode
  * Implements functionality related to structural synaptic plasticity.
  */
 class StructuralPlasticityNode : public Node
@@ -58,8 +57,9 @@ public:
   double get_Ca_minus() const override;
 
   /**
-   * get the number of synaptic element for the current Node
-   * the number of synaptic elements is a double value but the number of
+   * Get the number of synaptic element for the current Node
+   *
+   * The number of synaptic elements is a double value but the number of
    * actual vacant and connected elements is an integer truncated from this
    * value
    */
@@ -72,13 +72,13 @@ public:
   int get_synaptic_elements_vacant( Name n ) const override;
 
   /**
-   * get the number of synaptic element of type n which are currently
+   * Get the number of synaptic element of type n which are currently
    * connected
    */
   int get_synaptic_elements_connected( Name n ) const override;
 
   /**
-   * get the number of all synaptic elements for the current Node
+   * Get the number of all synaptic elements for the current Node
    */
   std::map< Name, double > get_synaptic_elements() const override;
 
@@ -103,19 +103,19 @@ public:
   void set_status( const DictionaryDatum& d ) override;
 
   /**
-   * retrieve the current value of tau_Ca which defines the exponential decay
+   * Retrieve the current value of tau_Ca which defines the exponential decay
    * constant of the intracellular calcium concentration
    */
   double get_tau_Ca() const;
 
 protected:
   /**
-   * record spike history
+   * Record spike history
    */
   void set_spiketime( Time const& t_sp, double offset = 0.0 );
 
   /**
-   * clear spike history
+   * Clear spike history
    */
   void clear_history();
 

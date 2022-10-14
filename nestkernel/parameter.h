@@ -50,6 +50,7 @@ class Parameter
 public:
   /**
    * Creates a Parameter, with optionally specified attributes.
+   *
    * @param is_spatial true if the Parameter contains spatial elements
    * @param returns_int_only true if the value of the parameter can only be an integer
    */
@@ -68,6 +69,7 @@ public:
 
   /**
    * Generates a value based on parameter specifications and arguments.
+   *
    * Used when getting a parameter value based on random values or node attributes,
    * like position. Note that not all parameters support all overloaded versions.
    * @param rng pointer to the random number generator
@@ -78,6 +80,7 @@ public:
 
   /**
    * Generates a value based on parameter specifications and arguments.
+   *
    * Used when connecting spatial nodes. Note that not all parameters
    * support all overloaded versions.
    * @param rng pointer to the random number generator
@@ -95,18 +98,21 @@ public:
 
   /**
    * Applies a parameter on a single-node ID NodeCollection and given array of positions.
+   *
    * @returns array of result values, one per position in the TokenArray.
    */
   std::vector< double > apply( const NodeCollectionPTR&, const TokenArray& );
 
   /**
    * Check if the Parameter is based on spatial properties.
+   *
    * @returns true if the Parameter is based on spatial properties, false otherwise.
    */
   bool is_spatial() const;
 
   /**
    * Check if the Parameter only returns integer values.
+   *
    * @returns true if the Parameter only returns integers, false otherwise.
    */
   bool returns_int_only() const;
@@ -128,6 +134,7 @@ public:
 
   /**
    * Creates a ConstantParameter with a specified value.
+   *
    * @param value parameter value
    */
   explicit ConstantParameter( double value )
@@ -137,6 +144,7 @@ public:
 
   /**
    * Creates a ConstantParameter with the value specified in a dictionary.
+   *
    * @param d dictionary with the parameter value
    *
    * The dictionary must include the following entry:
@@ -174,6 +182,7 @@ public:
 
   /**
    * Creates a UniformParameter with specifications specified in a dictionary.
+   *
    * @param d dictionary with parameter specifications
    *
    * The dictionary can include the following entries:
@@ -216,6 +225,7 @@ public:
 
   /**
    * Creates a UniformIntParameter with specifications specified in a dictionary.
+   *
    * @param d dictionary with parameter specifications
    *
    * The dictionary can include the following entries:
@@ -253,6 +263,7 @@ public:
 
   /**
    * Creates a NormalParameter with specifications specified in a dictionary.
+   *
    * @param d dictionary with parameter specifications
    *
    * The dictionary can include the following entries:
@@ -279,6 +290,7 @@ public:
 
   /**
    * Creates a LognormalParameter with specifications specified in a dictionary.
+   *
    * @param d dictionary with parameter specifications
    *
    * The dictionary can include the following entries:
@@ -305,6 +317,7 @@ public:
 
   /**
    * Creates a ExponentialParameter with specifications specified in a dictionary.
+   *
    * @param d dictionary with parameter specifications
    *
    * The dictionary can include the following entries:
@@ -335,6 +348,7 @@ class NodePosParameter : public Parameter
 public:
   /**
    * Creates a NodePosParameter with specifications specified in a dictionary.
+   *
    * @param d dictionary with parameter specifications
    *
    * The dictionary can include the following entries:
@@ -449,8 +463,9 @@ class ProductParameter : public Parameter
 {
 public:
   /**
-   * Construct the product of the two given parameters. Copies are made
-   * of the supplied Parameter objects.
+   * Construct the product of the two given parameters.
+   *
+   * Copies are made of the supplied Parameter objects.
    */
   ProductParameter( const std::shared_ptr< Parameter > m1, const std::shared_ptr< Parameter > m2 )
     : Parameter( m1->is_spatial() or m2->is_spatial(), m1->returns_int_only() and m2->returns_int_only() )
@@ -498,8 +513,9 @@ class QuotientParameter : public Parameter
 {
 public:
   /**
-   * Construct the quotient of two given parameters. Copies are made
-   * of the supplied Parameter objects.
+   * Construct the quotient of two given parameters.
+   *
+   * Copies are made of the supplied Parameter objects.
    */
   QuotientParameter( std::shared_ptr< Parameter > m1, std::shared_ptr< Parameter > m2 )
     : Parameter( m1->is_spatial() or m2->is_spatial(), m1->returns_int_only() and m2->returns_int_only() )
@@ -547,8 +563,9 @@ class SumParameter : public Parameter
 {
 public:
   /**
-   * Construct the sum of two given parameters. Copies are made
-   * of the supplied Parameter objects.
+   * Construct the sum of two given parameters.
+   *
+   * Copies are made of the supplied Parameter objects.
    */
   SumParameter( std::shared_ptr< Parameter > m1, std::shared_ptr< Parameter > m2 )
     : Parameter( m1->is_spatial() or m2->is_spatial(), m1->returns_int_only() and m2->returns_int_only() )
@@ -596,8 +613,9 @@ class DifferenceParameter : public Parameter
 {
 public:
   /**
-   * Construct the difference of two given parameters. Copies are made
-   * of the supplied Parameter objects.
+   * Construct the difference of two given parameters.
+   *
+   * Copies are made of the supplied Parameter objects.
    */
   DifferenceParameter( std::shared_ptr< Parameter > m1, std::shared_ptr< Parameter > m2 )
     : Parameter( m1->is_spatial() or m2->is_spatial(), m1->returns_int_only() and m2->returns_int_only() )
@@ -1135,8 +1153,9 @@ public:
   using Parameter::value;
 
   /**
-   * Construct the Parameter with one given Parameter per dimension. A
-   * copy is made of the supplied Parameter objects.
+   * Construct the Parameter with one given Parameter per dimension.
+   *
+   * A copy is made of the supplied Parameter objects.
    */
   DimensionParameter( std::shared_ptr< Parameter > px, std::shared_ptr< Parameter > py )
     : Parameter( true )
@@ -1178,6 +1197,7 @@ public:
 
   /**
    * Generates a position with values for each dimension generated from their respective parameters.
+   *
    * @returns The position, given as an array.
    */
   std::vector< double >
@@ -1209,6 +1229,7 @@ protected:
 
 /**
  * Parameter class representing an exponential distribution applied on a parameter.
+ *
  * Can only be used when connecting spatially distributed nodes.
  */
 class ExpDistParameter : public Parameter
@@ -1252,6 +1273,7 @@ protected:
 
 /**
  * Parameter class representing a gaussian distribution applied on a parameter.
+ *
  * Can only be used when connecting spatially distributed nodes.
  */
 class GaussianParameter : public Parameter
@@ -1296,6 +1318,7 @@ protected:
 
 /**
  * Parameter class representing a gaussian distribution in two dimensions applied on a parameter.
+ *
  * Can only be used when connecting spatially distributed nodes.
  */
 class Gaussian2DParameter : public Parameter
@@ -1348,6 +1371,7 @@ protected:
 
 /**
  * Parameter class representing a gamma distribution applied on a parameter.
+ *
  * Can only be used when connecting spatially distributed nodes.
  */
 class GammaParameter : public Parameter
@@ -1424,6 +1448,7 @@ Parameter::value_is_integer_( const double value ) const
 
 /**
  * Create the product of one parameter with another.
+ *
  * @returns a new dynamically allocated parameter.
  */
 std::shared_ptr< Parameter > multiply_parameter( const std::shared_ptr< Parameter > first,
@@ -1431,6 +1456,7 @@ std::shared_ptr< Parameter > multiply_parameter( const std::shared_ptr< Paramete
 
 /**
  * Create the quotient of one parameter with another.
+ *
  * @returns a new dynamically allocated parameter.
  */
 std::shared_ptr< Parameter > divide_parameter( const std::shared_ptr< Parameter > first,
@@ -1438,6 +1464,7 @@ std::shared_ptr< Parameter > divide_parameter( const std::shared_ptr< Parameter 
 
 /**
  * Create the sum of one parameter with another.
+ *
  * @returns a new dynamically allocated parameter.
  */
 std::shared_ptr< Parameter > add_parameter( const std::shared_ptr< Parameter > first,
@@ -1445,6 +1472,7 @@ std::shared_ptr< Parameter > add_parameter( const std::shared_ptr< Parameter > f
 
 /**
  * Create the difference between one parameter and another.
+ *
  * @returns a new dynamically allocated parameter.
  */
 std::shared_ptr< Parameter > subtract_parameter( const std::shared_ptr< Parameter > first,
@@ -1452,6 +1480,7 @@ std::shared_ptr< Parameter > subtract_parameter( const std::shared_ptr< Paramete
 
 /**
  * Create comparison of one parameter with another.
+ *
  * @returns a new dynamically allocated parameter.
  */
 std::shared_ptr< Parameter > compare_parameter( const std::shared_ptr< Parameter > first,
@@ -1460,7 +1489,9 @@ std::shared_ptr< Parameter > compare_parameter( const std::shared_ptr< Parameter
 
 /**
  * Create a parameter that chooses between two other parameters,
- * based on a given condition parameter. The resulting value of the condition parameter
+ * based on a given condition parameter.
+ *
+ * The resulting value of the condition parameter
  * is treated as a bool, meaning that a zero value evaluates as false, and all other values
  * evaluate as true.
  * @returns a new dynamically allocated parameter.
@@ -1471,18 +1502,21 @@ std::shared_ptr< Parameter > conditional_parameter( const std::shared_ptr< Param
 
 /**
  * Create parameter whose value is the minimum of a given parameter's value and the given value.
+ *
  * @returns a new dynamically allocated parameter.
  */
 std::shared_ptr< Parameter > min_parameter( const std::shared_ptr< Parameter > parameter, const double other );
 
 /**
  * Create parameter whose value is the maximum of a given parameter's value and the given value.
+ *
  * @returns a new dynamically allocated parameter.
  */
 std::shared_ptr< Parameter > max_parameter( const std::shared_ptr< Parameter > parameter, const double other );
 
 /**
  * Create parameter redrawing the value if the value of a parameter is outside the set limits.
+ *
  * @returns a new dynamically allocated parameter.
  */
 std::shared_ptr< Parameter >
@@ -1490,30 +1524,35 @@ redraw_parameter( const std::shared_ptr< Parameter > parameter, const double min
 
 /**
  * Create the exponential of a parameter.
+ *
  * @returns a new dynamically allocated parameter.
  */
 std::shared_ptr< Parameter > exp_parameter( const std::shared_ptr< Parameter > parameter );
 
 /**
  * Create the sine of a parameter.
+ *
  * @returns a new dynamically allocated parameter.
  */
 std::shared_ptr< Parameter > sin_parameter( const std::shared_ptr< Parameter > parameter );
 
 /**
  * Create the cosine of a parameter.
+ *
  * @returns a new dynamically allocated parameter.
  */
 std::shared_ptr< Parameter > cos_parameter( const std::shared_ptr< Parameter > parameter );
 
 /**
  * Create a parameter raised to the power of an exponent.
+ *
  * @returns a new dynamically allocated parameter.
  */
 std::shared_ptr< Parameter > pow_parameter( const std::shared_ptr< Parameter > parameter, const double exponent );
 
 /**
  * Create a parameter that can generate position vectors from a given set of parameters.
+ *
  * @returns a new dynamically allocated parameter.
  */
 std::shared_ptr< Parameter > dimension_parameter( const std::shared_ptr< Parameter > x_parameter,

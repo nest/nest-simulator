@@ -66,7 +66,9 @@ public:
   void get_status( DictionaryDatum& ) override;
 
   /**
-   * Standard routine for sending events. This method decides if
+   * Standard routine for sending events.
+   *
+   * This method decides if
    * the event has to be delivered locally or globally. It exists
    * to keep a clean and unitary interface for the event sending
    * mechanism.
@@ -90,6 +92,7 @@ public:
 
   /**
    * Add node ID of event sender to the spike_register.
+   *
    * An event sent through this method will remain in the queue until
    * the network time has advanced by min_delay_ steps. After this period
    * the buffers are collocated and sent to the partner machines.
@@ -109,6 +112,7 @@ public:
 
   /**
    * Add node ID of event sender to the spike_register.
+   *
    * Store event offset with node ID.
    * An event sent through this method will remain in the queue until
    * the network time has advanced by min_delay_ steps. After this period
@@ -128,7 +132,9 @@ public:
   void send_off_grid_remote( thread tid, SpikeEvent& e, const long lag = 0 );
 
   /**
-   * Send event e directly to its target node. This should be
+   * Send event e directly to its target node.
+   *
+   * This should be
    * used only where necessary, e.g. if a node wants to reply
    * to a *RequestEvent immediately.
    */
@@ -177,6 +183,7 @@ public:
 
   /**
    * Resize spike_register and comm_buffer to correct dimensions.
+   *
    * Resizes also off_grid_*_buffer_.
    * This is done by simulate() when called for the first time.
    * The spike buffers cannot be reconfigured later, whence neither
@@ -219,6 +226,7 @@ public:
 
   /**
    * This function is called after all nodes have been updated.
+   *
    * We can compute the value of (T+d) mod max_delay without explicit
    * reference to the network clock, because compute_moduli_ is
    * called whenever the network clock advances.
@@ -368,6 +376,7 @@ private:
 
   /**
    * Table of pre-computed modulos.
+   *
    * This table is used to map time steps, given as offset from now,
    * to ring-buffer bins.  There are min_delay+max_delay bins in a ring buffer,
    * and the moduli_ array is rotated by min_delay elements after
@@ -378,6 +387,7 @@ private:
 
   /**
    * Table of pre-computed slice-based modulos.
+   *
    * This table is used to map time steps, give as offset from now,
    * to slice-based ring-buffer bins.  There are ceil(max_delay/min_delay)
    * bins in a slice-based ring buffer, one per slice within max_delay.
@@ -389,8 +399,9 @@ private:
   std::vector< delay > slice_moduli_;
 
   /**
-   * Register for node IDs of neurons that spiked. This is a 4-dim
-   * structure. While spikes are written to the buffer they are
+   * Register for node IDs of neurons that spiked.
+   *
+   * This is a 4-dim structure. While spikes are written to the buffer they are
    * immediately sorted by the thread that will later move the spikes to the
    * MPI buffers.
    * - First dim: write threads (from node to register)
@@ -401,8 +412,9 @@ private:
   std::vector< std::vector< std::vector< std::vector< Target > > > > spike_register_;
 
   /**
-   * Register for node IDs of precise neurons that spiked. This is a 4-dim
-   * structure. While spikes are written to the buffer they are
+   * Register for node IDs of precise neurons that spiked.
+   *
+   * This is a 4-dim structure. While spikes are written to the buffer they are
    * immediately sorted by the thread that will later move the spikes to the
    * MPI buffers.
    * - First dim: write threads (from node to register)

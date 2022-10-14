@@ -51,7 +51,6 @@ namespace nest
 {
 /**
  *  Class to handle simulation time and realtime.
- *  Main idea:
  *
  *  All times given in multiples of "tics":
  *  A "tic" is a microsecond by default, but may be changed through
@@ -536,6 +535,7 @@ public:
 
   /**
    * Convert between delays given in steps and milliseconds.
+   *
    * This is not a reversible operation, since steps have a finite
    * rounding resolution. This is not a truncation, but rounding as per
    * ld_round, which is different from ms_stamp --> Time mapping, which rounds

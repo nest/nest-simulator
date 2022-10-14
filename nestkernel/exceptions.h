@@ -110,6 +110,7 @@ public:
 /**
  * Exception to be thrown if a component with the the specified name
  * does not exist.
+ *
  * @see UnknownModelName
  * @ingroup KernelExceptions
  */
@@ -133,6 +134,7 @@ public:
 /**
  * Exception to be thrown if a name requested for a user-defined
  * model exist already.
+ *
  * @ingroup KernelExceptions
  */
 class NewModelNameExists : public KernelException
@@ -154,7 +156,8 @@ public:
 /**
  * Exception to be thrown if a (neuron/synapse) model with the the specified ID
  * is used within the network and the providing module hence cannot be
- * uninstalled. This exception can occur if the user tries to uninstall a
+ * uninstalled.
+ * This exception can occur if the user tries to uninstall a
  * module.
  * @ingroup KernelExceptions
  */
@@ -210,6 +213,7 @@ public:
 /**
  * Exception to be thrown if the specified
  * Node does not exist.
+ *
  * This exception is thrown, if
  * -# an address did not point to an existing node.
  * -# a node id did not point to an existing node.
@@ -242,6 +246,7 @@ public:
 /**
  * Exception to be thrown if the specified
  * Node does not exist.
+ *
  * This exception is thrown, if
  * -# an address did not point to an existing node.
  * -# a node id did not point to an existing node.
@@ -416,6 +421,7 @@ public:
 
 /**
  * To be thrown if a connection is not possible.
+ *
  * This exception is e.g. thrown if a connection was attempted with
  * an unsupported Event type.
  * @ingroup KernelExceptions
@@ -448,6 +454,7 @@ private:
 /**
  * To be thrown if a connection does not exists but something is to be done with
  * it.
+ *
  * This exception is e.g. thrown if a deletion was attempted with
  * an inexistent connection.
  * @ingroup KernelExceptions
@@ -527,6 +534,7 @@ public:
 /**
  * Exception to be thrown by the event handler
  * of a node if it receives an event it cannot handle.
+ *
  * This case should be prevented by connect_sender().
  * @ingroup KernelExceptions
  */
@@ -578,6 +586,7 @@ public:
 /**
  * Exception to be thrown if a status parameter
  * is incomplete or inconsistent.
+ *
  * Thrown by Node::set_/get_property methods.
  * @ingroup KernelExceptions
  */
@@ -608,6 +617,7 @@ public:
 /**
  * Exception to be thrown if a parameter
  * cannot be set.
+ *
  * Thrown by Node::set_/get_property methods.
  * @ingroup KernelExceptions
  */
@@ -638,6 +648,7 @@ public:
 /**
  * Exception to be thrown if the dimensions
  * of two or more objects do not agree.
+ *
  * Thrown by Node::set_/get_property methods.
  * @ingroup KernelExceptions
  */
@@ -699,7 +710,9 @@ public:
 
 /**
  * Exception to be thrown on prototype construction if Time objects
- * incompatible. This exception is to be thrown by the default constructor of
+ * incompatible.
+ *
+ * This exception is to be thrown by the default constructor of
  * nodes which require that Time objects have properties wrt resolution.
  * @ingroup KernelExceptions
  * @see InvalidTimeInModel
@@ -735,6 +748,7 @@ private:
 
 /**
  * Exception to be thrown on instance construction if Time objects incompatible.
+ *
  * This exception is to be thrown by the copy constructor of nodes which
  * require that Time objects have properties wrt resolution.
  * @ingroup KernelExceptions

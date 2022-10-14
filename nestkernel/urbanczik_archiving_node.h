@@ -40,8 +40,7 @@ namespace nest
 {
 
 /**
- * \class UrbanczikArchivingNode
- * a archiving node which additionally archives parameters
+ * A archiving node which additionally archives parameters
  * and buffers needed for the Urbanczik-Senn plasticity rule
  */
 template < class urbanczik_parameters >
@@ -60,8 +59,6 @@ public:
   }
 
   /**
-   * std::deque<Archiver::histentry>::iterator* start,
-   * std::deque<Archiver::histentry>::iterator* finish, int comp )
    * Sets pointer start (finish) to the first (last) entry in urbanczik_history_[comp]
    * whose time argument is between t1 and t2
    */

@@ -114,6 +114,7 @@ public:
   /**
    * Updates the number of connected synaptic elements in the
    * target and the source.
+   *
    * Returns 0 if the target is either on another
    * MPI machine or another thread. Returns 1 otherwise.
    *
@@ -302,20 +303,26 @@ protected:
   void connect_() override;
   /**
    * Solves the connection of two nodes on a OneToOne basis with
-   * structural plasticity. This means this method is used by the
+   * structural plasticity.
+   *
+   * This means this method is used by the
    * structural plasticity manager based on the homostatic rules defined
    * for the synaptic elements on each node.
    */
   void sp_connect_() override;
   /**
    * Solves the disconnection of two nodes on a OneToOne basis without
-   * structural plasticity. This means this method can be manually called
+   * structural plasticity.
+   *
+   * This means this method can be manually called
    * by the user to delete existing synapses.
    */
   void disconnect_() override;
   /**
    * Solves the disconnection of two nodes on a OneToOne basis with
-   * structural plasticity. This means this method is used by the
+   * structural plasticity.
+   *
+   * This means this method is used by the
    * structural plasticity manager based on the homostatic rules defined
    * for the synaptic elements on each node.
    */
@@ -351,7 +358,9 @@ protected:
 
   /**
    * Solves the connection of two nodes on a AllToAll basis with
-   * structural plasticity. This means this method is used by the
+   * structural plasticity.
+   *
+   * This means this method is used by the
    * structural plasticity manager based on the homostatic rules defined
    * for the synaptic elements on each node.
    */
@@ -359,13 +368,17 @@ protected:
 
   /**
    * Solves the disconnection of two nodes on a AllToAll basis without
-   * structural plasticity. This means this method can be manually called
+   * structural plasticity.
+   *
+   * This means this method can be manually called
    * by the user to delete existing synapses.
    */
   void disconnect_();
   /**
    * Solves the disconnection of two nodes on a AllToAll basis with
-   * structural plasticity. This means this method is used by the
+   * structural plasticity.
+   *
+   * This means this method is used by the
    * structural plasticity manager based on the homostatic rules defined
    * for the synaptic elements on each node.
    */
@@ -471,6 +484,7 @@ public:
   /**
    * The SPBuilder is in charge of the creation of synapses during the simulation
    * under the control of the structural plasticity manager
+   *
    * @param net the network
    * @param sources the source nodes on which synapses can be created/deleted
    * @param targets the target nodes on which synapses can be created/deleted
@@ -495,7 +509,9 @@ public:
 
   /**
    * Writes the default delay of the connection model, if the
-   * SPBuilder only uses the default delay. If not, the min/max_delay
+   * SPBuilder only uses the default delay.
+   *
+   * If not, the min/max_delay
    * has to be specified explicitly with the kernel status.
    */
   void update_delay( delay& d ) const;
@@ -512,6 +528,7 @@ protected:
 
   /**
    * In charge of dynamically creating the new synapses
+   *
    * @param sources nodes from which synapses can be created
    * @param targets target nodes for the newly created synapses
    */

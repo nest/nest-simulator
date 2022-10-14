@@ -99,6 +99,7 @@ class ConnTestDummyNodeBase : public Node
 
 /**
  * Base class for representing connections.
+ *
  * It provides the mandatory properties receiver port and target,
  * as well as the functions get_status() and set_status()
  * to read and write them. A suitable Connector containing these
@@ -220,7 +221,8 @@ public:
   }
 
   /**
-   * triggers an update of a synaptic weight
+   * Triggers an update of a synaptic weight
+   *
    * this function is needed for neuromodulated synaptic plasticity
    */
   void trigger_update_weight( const thread,
@@ -289,6 +291,7 @@ protected:
   /**
    * This function calls check_connection() on the sender to check if the
    * receiver
+   *
    * accepts the event type and receptor type requested by the sender.
    * \param s The source node
    * \param r The target node
@@ -298,14 +301,14 @@ protected:
    */
   void check_connection_( Node& dummy_target, Node& source, Node& target, const rport receptor_type );
 
-  /* the order of the members below is critical
-     as it influcences the size of the object. Please leave unchanged
-     as
-     targetidentifierT target_;
-     SynIdDelay syn_id_delay_;        //!< syn_id (char) and delay (24 bit) in
-     timesteps of this
-     connection
-  */
+  /* The order of the members below is critical
+   * as it influcences the size of the object. Please leave unchanged
+   * as
+   * targetidentifierT target_;
+   * SynIdDelay syn_id_delay_;        //!< syn_id (char) and delay (24 bit) in
+   * timesteps of this
+   * connection
+   */
   targetidentifierT target_;
   //! syn_id (char) and delay (24 bit) in timesteps of this connection
   SynIdDelay syn_id_delay_;
@@ -319,22 +322,28 @@ Connection< targetidentifierT >::check_connection_( Node& dummy_target,
   Node& target,
   const rport receptor_type )
 {
-  // 1. does this connection support the event type sent by source
-  // try to send event from source to dummy_target
-  // this line might throw an exception
+  /*
+   * 1. does this connection support the event type sent by source
+   * try to send event from source to dummy_target
+   * this line might throw an exception
+   */
   source.send_test_event( dummy_target, receptor_type, get_syn_id(), true );
 
-  // 2. does the target accept the event type sent by source
-  // try to send event from source to target
-  // this returns the port of the incoming connection
-  // p must be stored in the base class connection
-  // this line might throw an exception
+  /*
+   * 2. does the target accept the event type sent by source
+   * try to send event from source to target
+   * this returns the port of the incoming connection
+   * p must be stored in the base class connection
+   * this line might throw an exception
+   */
   target_.set_rport( source.send_test_event( target, receptor_type, get_syn_id(), false ) );
 
-  // 3. do the events sent by source mean the same thing as they are
-  // interpreted in target?
-  // note that we here use a bitwise and operation (&), because we interpret
-  // each bit in the signal type as a collection of individual flags
+  /*
+   * 3. do the events sent by source mean the same thing as they are
+   * interpreted in target?
+   * note that we here use a bitwise and operation (&), because we interpret
+   * each bit in the signal type as a collection of individual flags
+   */
   if ( not( source.sends_signal() & target.receives_signal() ) )
   {
     throw IllegalConnection( "Source and target neuron are not compatible (e.g., spiking vs binary neuron)." );

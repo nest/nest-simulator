@@ -40,7 +40,6 @@ namespace nest
 {
 
 /**
- * \class GrowthCurve
  * Defines the way the number of synaptic elements changes through time
  * according to the calcium concentration of the neuron.
  */
@@ -122,7 +121,6 @@ protected:
  */
 
 /**
- * \class GrowthCurveLinear
  * Uses an exact integration method to update the number of synaptic elements:
  * dz/dt = nu (1 - (1/eps) * Ca(t)), where nu is the growth rate and
  * eps is the desired average calcium concentration.
@@ -206,9 +204,9 @@ private:
  */
 
 /**
- * \class GrowthCurveGaussian
  * Uses a forward Euler integration method to update the number of synaptic
- * elements:
+ * elements.
+ *
  * dz/dt = nu (2 * e^(- ((Ca(t) - xi)/zeta)^2 ) - 1)
  * where xi = (eta  + eps)/2,
  * zeta = (eps - eta)/2 * sqrt(ln(2))),

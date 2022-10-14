@@ -56,6 +56,7 @@ class SPBuilder;
 /**
  * The SPManager class is in charge of managing the dynamic creation and
  * deletion of synapses in the simulation when structural plasticity is enabled.
+ *
  * Otherwise it behaves as the normal ConnectionManager.
  * @param
  */
@@ -73,12 +74,14 @@ public:
   /**
    * Set status of synaptic plasticity variables: synaptic update interval,
    * synapses and synaptic elements.
+   *
    * @param d Dictionary containing the values to be set
    */
   void set_status( const DictionaryDatum& ) override;
 
   /**
    * Create a new Growth Curve object using the GrowthCurve Factory
+   *
    * @param name which defines the type of NC to be created
    * @return a new Growth Curve object of the type indicated by name
    */
@@ -91,15 +94,17 @@ public:
   void register_growth_curve( const std::string& name );
 
   /**
-   * Disconnect two collections of nodes.  The connection is
-   * established on the thread/process that owns the target node.
+   * Disconnect two collections of nodes.
+   *
+   * The connection is established on the thread/process that owns the target node.
    *
    * \param sources Node collection of the source Nodes.
    * \param targets Node collection of the target Nodes.
    * \param connectivity Params connectivity Dictionary
    * \param synapse Params synapse parameters Dictionary
    *  conn_spec disconnection specs. For now only all to all and one to one
-   * rules are implemented.    */
+   * rules are implemented.
+   */
   void disconnect( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     DictionaryDatum& conn_spec,
@@ -107,6 +112,7 @@ public:
 
   /**
    * Disconnect two nodes.
+   *
    * The source node is defined by its global ID.
    * The target node is defined by the node. The connection is
    * established on the thread/process that owns the target node.
@@ -119,9 +125,10 @@ public:
   void disconnect( const index snode_id, Node* target, thread target_thread, const index syn_id );
   /**
    * Handles the general dynamic creation and deletion of synapses when
-   * structural plasticity is enabled. Retrieves the number of available
-   * synaptic elements to create new synapses. Retrieves the number of
-   * deleted synaptic elements to delete already created synapses.
+   * structural plasticity is enabled.
+   *
+   * Retrieves the number of available synaptic elements to create new synapses.
+   * Retrieves the number of deleted synaptic elements to delete already created synapses.
    * @param sp_builder The structural plasticity connection builder to use
    */
   void update_structural_plasticity();
@@ -143,6 +150,7 @@ public:
 
   /**
    * Returns the minimum delay of all SP builders.
+   *
    * This influences the min_delay of the kernel, as the connections
    * are build during the simulation. Hence, the
    * ConnectionManager::min_delay() methods have to respect this delay
@@ -152,6 +160,7 @@ public:
 
   /**
    * Returns the maximum delay of all SP builders.
+   *
    * This influences the max_delay of the kernel, as the connections
    * are build during the simulation. Hence, the
    * ConnectionManager::max_delay() methods have to respect this delay
@@ -161,6 +170,7 @@ public:
 
   /**
    * Dynamic creation of synapses
+   *
    * @param pre_id source id
    * @param pre_n number of available synaptic elements in the pre node
    * @param post_id target id
@@ -207,8 +217,9 @@ public:
     std::string se_pre_name,
     std::string se_post_name );
   /**
-   * Handles the deletion of synapses between source and target nodes. The
-   * deletion is defined by the pre and postsynaptic elements and the synapse
+   * Handles the deletion of synapses between source and target node.
+   *
+   * The deletion is defined by the pre and postsynaptic elements and the synapse
    * type. Updates the number of connected synaptic elements in the source and
    * target.
    * @param snode_id source id

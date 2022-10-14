@@ -51,6 +51,7 @@ class Parameter;
 
 /**
  * SLI interface of the NEST kernel.
+ *
  * This class implements the SLI functions which connect the NEST
  * kernel with the interpreter.
  */
@@ -88,8 +89,9 @@ public:
   using MaskCreatorFunction = GenericFactory< AbstractMask >::CreatorFunction;
 
   /**
-   * Register an AbstractMask subclass as a new mask type. The name will
-   * be found using the function T::get_name()
+   * Register an AbstractMask subclass as a new mask type.
+   *
+   * The name will be found using the function T::get_name()
    * @returns true if the new type was successfully registered, or false
    *          if a mask type with the same name already exists.
    */
@@ -99,6 +101,7 @@ public:
   /**
    * Register a new mask type with the given name, with a supplied
    * function to create mask objects of this type.
+   *
    * @param name    name of the new mask type.
    * @param creator function creating objects of this type. The function
    *                will be called with the parameter dictionary as
@@ -111,6 +114,7 @@ public:
 
   /**
    * Return a Mask object.
+   *
    * @param t Either an existing MaskDatum, or a Dictionary containing
    *          mask parameters. The dictionary should contain a key with
    *          the name of the mask type, with a dictionary of parameters
@@ -121,6 +125,7 @@ public:
 
   /**
    * Create a new Mask object using the mask factory.
+   *
    * @param name Mask type to create.
    * @param d    Dictionary with parameters specific for this mask type.
    * @returns dynamically allocated new Mask object.
@@ -129,6 +134,7 @@ public:
 
   /**
    * @defgroup NestSliInterface SLI Interface functions of the NEST kernel.
+   *
    * This group contains the functions that form the SLI interface
    * of the NEST kernel.
    *
@@ -959,8 +965,9 @@ public:
 #endif
 
   /**
-   * Enable Structural Plasticity within the simulation. This allows
-   * dynamic rewiring of the network based on mean electrical activity.
+   * Enable Structural Plasticity within the simulation.
+   *
+   * This allows dynamic rewiring of the network based on mean electrical activity.
    * Please note that, in the current implementation of structural plasticity,
    * spikes could occasionally be delivered via connections that were not present
    * at the time of the spike.
@@ -984,6 +991,7 @@ public:
 
   /**
    * Set epsilon that is used for comparing spike times in STDP.
+   *
    * Spike times in STDP synapses are currently represented as double
    * values. The epsilon defines the maximum distance between spike
    * times that is still considered 0.

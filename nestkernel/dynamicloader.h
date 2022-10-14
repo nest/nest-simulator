@@ -58,6 +58,7 @@ typedef std::vector< SLIModule* > vecLinkedModules;
 
 /**
  * SLI interface of the Ddynamic module loader.
+ *
  * This class implements the SLI functions which allow for
  * loading dynamic modules into the kernel to extend its functionality.
  *
@@ -112,6 +113,7 @@ public:
 private:
   /**
    * Provide access to the list of linked modules managed DynamicLoader.
+   *
    * This function controls access to the list of linked modules managed
    * by DynamicLoaderModule via a Meyers' Singleton (Alexandrescu, ch 6.4).
    * The list is filled by calls to @c registerLinkedModule().

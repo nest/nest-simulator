@@ -40,7 +40,7 @@ namespace nest
 {
 
 /**
- * a archiving node which additionally archives parameters
+ * An archiving node which additionally archives parameters
  * and buffers needed for the Clopath plasticity rule
  */
 class ClopathArchivingNode : public ArchivingNode

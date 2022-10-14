@@ -58,6 +58,7 @@ public:
 
   /**
    * Publish the MUSIC port.
+   *
    * This method has to be called once before the first simulation to
    * tell MUSIC which channels lie on which processor.
    */

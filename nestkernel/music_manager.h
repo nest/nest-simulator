@@ -43,9 +43,10 @@
 #endif
 
 /*
- * Encapsulates all calls to MUSIC. We need to strip out all #ifdef
- * HAVE_MUSIC from other places and put them here. Look into those
- * functions:
+ * Encapsulates all calls to MUSIC.
+ *
+ * We need to strip out all #ifdef HAVE_MUSIC from other places
+ * and put them here. Look into those functions:
  *
  * void nest::Communicator::finalize()
  *
@@ -89,7 +90,9 @@ public:
   void init_music( int* argc, char** argv[] );
 
   /**
-   * Enter the runtime mode. This must be done before simulating. After having
+   * Enter the runtime mode.
+   *
+   * This must be done before simulating. After having
    * entered runtime mode ports cannot be published anymore.
    * \param h_min_delay is the length of a time slice, after which
    * communication should take place.
@@ -111,6 +114,7 @@ public:
 
   /**
    * Register a MUSIC input port (portname) with the port list.
+   *
    * This will increment the counter of the respective entry in the
    * music_in_portlist.
    *
@@ -133,16 +137,18 @@ public:
 
   /**
    * Register a node (of type music_input_proxy) with a given MUSIC
-   * port (portname) and a specific channel. The proxy will be
-   * notified, if a MUSIC event is being received on the respective
+   * port (portname) and a specific channel.
+   *
+   * The proxy will be notified, if a MUSIC event is being received on the respective
    * channel and port.
    */
   void register_music_event_in_proxy( std::string portname, int channel, nest::Node* mp );
 
   /**
    * Register a node (of type music_input_proxy) with a given MUSIC
-   * port (portname) and a specific channel. The proxy will be
-   * notified, if a MUSIC event is being received on the respective
+   * port (portname) and a specific channel.
+   *
+   * The proxy will be notified, if a MUSIC event is being received on the respective
    * channel and port.
    */
   void register_music_rate_in_proxy( std::string portname, int channel, nest::Node* mp );
@@ -175,6 +181,7 @@ public:
   /**
    * The mapping between MUSIC input ports identified by portname
    * and the corresponding port variables and parameters.
+   *
    * @see register_music_in_port()
    * @see unregister_music_in_port()
    */

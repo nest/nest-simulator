@@ -33,6 +33,7 @@ namespace nest
 {
 /**
  * Generic Model template.
+ *
  * The template GenericModel should be used
  * as base class for custom model classes. It already includes the
  * element factory functionality, as well as a pool based memory

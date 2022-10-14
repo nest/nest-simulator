@@ -83,6 +83,7 @@ public:
 
   /**
    * Return the number of processes used during simulation.
+   *
    * This functions returns the number of processes.
    * Since each process has the same number of threads, the total number
    * of threads is given by get_num_threads()*get_num_processes().
@@ -101,8 +102,9 @@ public:
   thread get_rank() const;
 
   /**
-   * Return the process id for a given virtual process. The real process' id
-   * of a virtual process is defined by the relation: p = (vp mod P), where
+   * Return the process id for a given virtual process.
+   * The real process' id of a virtual process is defined
+   * by the relation: p = (vp mod P), where
    * P is the total number of processes.
    */
   thread get_process_id_of_vp( const thread vp ) const;
@@ -253,8 +255,8 @@ public:
   /**
    * Benchmark communication time of different MPI methods
    *
-   *  The methods `time_communicate*` can be used to benchmark the timing
-   *  of different MPI communication methods.
+   * The methods `time_communicate*` can be used to benchmark the timing
+   * of different MPI communication methods.
    */
   double time_communicate( int num_bytes, int samples = 1000 );
   double time_communicatev( int num_bytes, int samples = 1000 );

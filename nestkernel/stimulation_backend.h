@@ -36,7 +36,7 @@ namespace nest
 {
 
 /**
- * Abstract bass class for all NESTio stimulation backends
+ * Abstract base class for all NESTio stimulation backends
  *
  * This class provides the interface for NESTio stimulation backends
  * with which StimulationDevices can be enrolled for receiving

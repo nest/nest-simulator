@@ -45,7 +45,9 @@ public:
 
   /**
    * This method freezes the min/ max delay update in SetDefaults of connections
-   * method. This is used, when the delay of default connections in the
+   * method.
+   *
+   * This is used, when the delay of default connections in the
    * ConnectorModel is set: we do not know, whether new connections with this
    * delay will ever be created.
    */
@@ -53,7 +55,9 @@ public:
 
   /**
    * This method enables the min/ max delay update in SetDefaults of connections
-   * method. This is used, when the delay of default connections in the
+   * method.
+   *
+   * This is used, when the delay of default connections in the
    * ConnectorModel is set: we do not know, whether new connections with this
    * delay will ever be created.
    */

@@ -60,6 +60,7 @@ public:
 
   /**
    * Construct proxy node for internal use from
+   *
    * @param node_id of represented node
    * @param model id of represented node
    * @param vp of represented node
@@ -68,6 +69,7 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
+   *
    * We need to explicitly include sets of overloaded
    * virtual functions into the current scope.
    * According to the SUN C++ FAQ, this is the correct
@@ -83,6 +85,7 @@ public:
 
   /**
    * @returns type of signal this node produces
+   *
    * used in check_connection to only connect neurons which send / receive
    * compatible information
    * delgates to underlying model
@@ -104,6 +107,7 @@ public:
 
   /**
    * Proxy nodes have no properties.
+   *
    * If set_status() gets called for a proxy node, this is
    * and error; we must prevent this from happening, since the
    * user might otherwise thaw a proxy node. It also causes

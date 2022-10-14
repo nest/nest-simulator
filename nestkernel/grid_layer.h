@@ -118,6 +118,7 @@ public:
 
   /**
    * Get position of node. Only possible for local nodes.
+   *
    * @param sind index of node
    * @returns position of node.
    */
@@ -125,6 +126,7 @@ public:
 
   /**
    * Get position of node. Also allowed for non-local nodes.
+   *
    * @param lid local index of node
    * @returns position of node.
    */

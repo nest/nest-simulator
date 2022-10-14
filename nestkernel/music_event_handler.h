@@ -58,6 +58,7 @@ public:
 
   /**
    * Publish the MUSIC port.
+   *
    * This method has to be called once before the first simulation to
    * tell MUSIC which channels lie on which processor.
    */
@@ -65,7 +66,9 @@ public:
 
   /**
    * Called by MUSIC from within tick() to deliver events to
-   * NEST. This function only queues the events. Delivery to the
+   * NEST.
+   *
+   * This function only queues the events. Delivery to the
    * targets takes place in update().
    */
   void operator()( double t, MUSIC::GlobalIndex channel );
@@ -89,8 +92,9 @@ private:
   int max_buffered_;
 
   /**
-   * Buffers incoming spike events until they are due. The vector has
-   * one entry per channel. The priority queues used within the vector
+   * Buffers incoming spike events until they are due.
+   *
+   * The vector has one entry per channel. The priority queues used within the vector
    * implement min-heaps stored in vectors.
    */
   std::vector< std::priority_queue< double, std::vector< double >, std::greater< double > > > eventqueue_;

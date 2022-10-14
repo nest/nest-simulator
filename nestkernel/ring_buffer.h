@@ -86,6 +86,7 @@ public:
 
   /**
    * Add a value to the ring buffer.
+   *
    * @param  offs     Arrival time relative to beginning of slice.
    * @param  double Value to add.
    */
@@ -93,6 +94,7 @@ public:
 
   /**
    * Set a ring buffer entry to a given value.
+   *
    * @param  offs     Arrival time relative to beginning of slice.
    * @param  double Value to set.
    */
@@ -100,6 +102,7 @@ public:
 
   /**
    * Read one value from ring buffer.
+   *
    * @param  offs  Offset of element to read within slice.
    * @returns value
    */
@@ -107,6 +110,7 @@ public:
 
   /**
    * Read one value from ring buffer without deleting it afterwards.
+   *
    * @param  offs  Offset of element to read within slice.
    * @returns value
    */
@@ -114,12 +118,14 @@ public:
 
   /**
    * Initialize the buffer with noughts.
+   *
    * Also resizes the buffer if necessary.
    */
   void clear();
 
   /**
    * Resize the buffer according to max_thread and max_delay.
+   *
    * New elements are filled with noughts.
    * @note resize() has no effect if the buffer has the correct size.
    */
@@ -140,6 +146,7 @@ private:
 
   /**
    * Obtain buffer index.
+   *
    * @param delay delivery delay for event
    * @returns index to buffer element into which event should be
    * recorded.
@@ -240,6 +247,7 @@ private:
 
   /**
    * Obtain buffer index.
+   *
    * @param delay delivery delay for event
    * @returns index to buffer element into which event should be
    * recorded.
@@ -284,6 +292,7 @@ public:
 
   /**
    * Append a value to the ring buffer list.
+   *
    * @param  offs     Arrival time relative to beginning of slice.
    * @param  double Value to append.
    */
@@ -299,6 +308,7 @@ public:
 
   /**
    * Resize the buffer according to max_thread and max_delay.
+   *
    * New elements are filled with empty lists.
    * @note resize() has no effect if the buffer has the correct size.
    */
@@ -319,6 +329,7 @@ private:
 
   /**
    * Obtain buffer index.
+   *
    * @param delay delivery delay for event
    * @returns index to buffer element into which event should be
    * recorded.
@@ -374,6 +385,7 @@ public:
 private:
   /**
    * Buffered data stored in a vector of arrays of double values
+   *
    * 1st dimension: ring buffer slot (index into outer vector)
    * 2nd dimension: channel (index into inner array)
    */

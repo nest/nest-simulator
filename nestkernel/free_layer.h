@@ -67,6 +67,7 @@ protected:
 
   /**
    * Calculate the index in the position vector on this MPI process based on the local ID.
+   *
    * @param lid local ID of the node
    * @return index in the local position vector
    */

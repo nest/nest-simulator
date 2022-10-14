@@ -115,7 +115,6 @@ public:
   SynapticElement( const SynapticElement& se );
 
   /**
-   * copy assignment operator.
    * @param other SynapticElement
    */
   SynapticElement& operator=( const SynapticElement& other );
@@ -127,12 +126,14 @@ public:
 
   /**
    * Store current values in a dictionary.
+   *
    * @param d to write data
    */
   void get( DictionaryDatum& d ) const;
 
   /**
    * Set values from a dictionary.
+   *
    * @param d to take data from
    */
   void set( const DictionaryDatum& d );
@@ -141,6 +142,7 @@ public:
   /*
    * Updates the number of available synaptic elements according to the mean
    * calcium concentration of the neuron at time t.
+   *
    * @param t Current time (in ms)
    * @param t_minus Time of last update
    * @param Ca_minus Calcium concentration at time t_minus
@@ -150,6 +152,7 @@ public:
 
   /**
    * Get the number of synaptic_element at the time t (in ms)
+   *
    * Returns a negative number when synaptic elements must be deleted
    * during the next update
    * @param a node of this synaptic_element
@@ -178,6 +181,7 @@ public:
   }
   /*
    * Changes the number of bound synaptic elements by n.
+   *
    * @param n number of new connections. Can be negative.
    */
   void

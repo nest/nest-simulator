@@ -40,6 +40,7 @@ namespace nest
 {
 /**
  * Queue for all spikes arriving into a neuron.
+ *
  * Spikes are stored unsorted on arrival, but are sorted when
  * prepare_delivery() is called.  They can then be retrieved
  * one by one in correct temporal order.  Coinciding spikes
@@ -64,6 +65,7 @@ public:
 
   /**
    * Add spike to queue.
+   *
    * @param  rel_delivery relative delivery time
    * @param  stamp      Delivery time
    * @param  ps_offset  Precise timing offset of spike time
@@ -73,6 +75,7 @@ public:
 
   /**
    * Add refractory event to queue.
+   *
    * The refractory event is actually stored as a pseudo-event.
    * @param  stamp      Delivery time
    * @param  ps_offset  Precise timing offset of spike time
@@ -91,6 +94,7 @@ public:
 
   /**
    * Return next spike.
+   *
    * @param req_stamp  Request spike with this stamp.  Queue
    *                   should never contain spikes with smaller
    *                   stamps.  Spikes with larger stamps are
@@ -164,7 +168,9 @@ inline void
 SliceRingBuffer::add_refractory( const long stamp, const double ps_offset )
 {
   // We require that only one refractory-return pseudo-event is stored per
-  // time step. We guard against violation using assert(): refract_.stamp_ must
+  // time step.
+  //
+  // We guard against violation using assert(): refract_.stamp_ must
   // be equal to the marker value for non-refractoriness. All else would mean
   // that a refractory neuron fired.
   assert( refract_.stamp_ == std::numeric_limits< long >::max() );

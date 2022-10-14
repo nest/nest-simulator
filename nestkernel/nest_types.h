@@ -52,6 +52,7 @@ namespace nest
 
 /**
  * Default types used by the NEST kernel.
+ *
  * These typedefs should be used
  * in place of the primitive C/C++ types.
  * Thus, it will be easy to change
@@ -61,7 +62,9 @@ namespace nest
 
 /*
  * constexpr-functions for convenient compile-time generation of the bit-masks
- * and bit-constants. An ill-defined length or size will cause a compile-time
+ * and bit-constants.
+ *
+ * An ill-defined length or size will cause a compile-time
  * error, e.g., num_bits to be shifted exceeds the sizeof(<datatype>) * 8.
  */
 constexpr uint64_t
@@ -150,6 +153,7 @@ __attribute__( ( __unused__ ) ) const index max_targetindex = invalid_targetinde
 
 /**
  * Thread index type.
+ *
  * NEST threads are assigned non-negative numbers for
  * identification.
  * For invalid or undefined threads, the value -1 is used.
@@ -164,6 +168,7 @@ const thread invalid_thread = -1;
 /**
  * Connection port number to distinguish incoming connections,
  * also called receiver port.
+ *
  * Connections between Nodes are assigned port numbers.
  * Valid port numbers start at zero (0).
  * The value -1 is used for invalid or unassigned ports.
@@ -172,6 +177,7 @@ typedef long rport;
 
 /**
  * Connection port number to distinguish outgoing connections.
+ *
  * Connections between Nodes are assigned port numbers.
  * Valid port numbers start at zero (0).
  * The value -1 is used for invalid or unassigned ports.
@@ -185,6 +191,7 @@ const rport invalid_port = -1;
 
 /**
  * Weight of a connection.
+ *
  * Connections have a weight which is used to scale the influence
  * of an event.
  * A weight of 0 should have the same influence on the receiving node
@@ -195,6 +202,7 @@ typedef double weight;
 
 /**
  * Delay of a connection.
+ *
  * The delay defines the number of simulation steps which elapse
  * before an Event arrives at the receiving Node.
  * Delays must be equal or larger than one.
@@ -205,6 +213,7 @@ const long delay_max = LONG_MAX;
 
 /**
  * enum type of signal conveyed by spike events of a node.
+ *
  * These types are used upon connect to check if spikes sent by one
  * neuron are interpreted the same way by receiving neuron.
  *

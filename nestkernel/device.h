@@ -152,6 +152,7 @@ private:
 
     /**
      * Time step of device activation.
+     *
      * t_min_ = origin_ + start_, in steps.
      * @note This is an auxiliary variable that is initialized to -1 in the
      * constructor and set to its proper value by calibrate. It should NOT
@@ -161,6 +162,7 @@ private:
 
     /**
      * Time step of device deactivation.
+     *
      * t_max_ = origin_ + stop_, in steps.
      * @note This is an auxiliary variable that is initialized to -1 in the
      * constructor and set to its proper value by calibrate. It should NOT

@@ -64,6 +64,7 @@ public:
 
   /**
    * Gets ID of local thread.
+   *
    * Returns thread ID if OPENMP is installed
    * and zero otherwise.
    */
@@ -78,6 +79,7 @@ public:
 
   /**
    * Get number of threads.
+   *
    * This function returns the total number of threads per process.
    */
   thread get_num_threads() const;
@@ -104,6 +106,7 @@ public:
 
   /**
    * Return a thread number for a given global node id.
+   *
    * Each node has a default thread on which it will run.
    * The thread is defined by the relation:
    * t = (node_id div P) mod T, where P is the number of simulation processes and
@@ -147,8 +150,9 @@ public:
   thread get_end_rank_per_thread( const thread rank_start, const thread num_assigned_ranks_per_thread ) const;
 
   /**
-   * Returns assigned ranks per thread to fill MPI buffers. Thread tid
-   * is responsible for all ranks in [assigned_ranks.begin,
+   * Returns assigned ranks per thread to fill MPI buffers.
+   *
+   * Thread tid is responsible for all ranks in [assigned_ranks.begin,
    * assigned_ranks.end), which are in total assigned_ranks.size and
    * at most assigned_ranks.max_size
    */

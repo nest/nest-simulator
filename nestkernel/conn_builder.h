@@ -353,9 +353,7 @@ public:
   }
 
 protected:
-<<<<<<< HEAD
-  void connect_();
-
+  void connect_() override;
   /**
    * Solves the connection of two nodes on a AllToAll basis with
    * structural plasticity.
@@ -364,8 +362,7 @@ protected:
    * structural plasticity manager based on the homostatic rules defined
    * for the synaptic elements on each node.
    */
-  void sp_connect_();
-
+  void sp_connect_() override;
   /**
    * Solves the disconnection of two nodes on a AllToAll basis without
    * structural plasticity.
@@ -373,7 +370,7 @@ protected:
    * This means this method can be manually called
    * by the user to delete existing synapses.
    */
-  void disconnect_();
+  void disconnect_() override;
   /**
    * Solves the disconnection of two nodes on a AllToAll basis with
    * structural plasticity.
@@ -382,13 +379,7 @@ protected:
    * structural plasticity manager based on the homostatic rules defined
    * for the synaptic elements on each node.
    */
-  void sp_disconnect_();
-=======
-  void connect_() override;
-  void sp_connect_() override;
-  void disconnect_() override;
   void sp_disconnect_() override;
->>>>>>> master
 
 private:
   void inner_connect_( const int, RngPtr, Node*, index, bool );

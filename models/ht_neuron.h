@@ -187,7 +187,7 @@ class ht_neuron : public ArchivingNode
 public:
   ht_neuron();
   ht_neuron( const ht_neuron& );
-  ~ht_neuron();
+  ~ht_neuron() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -197,18 +197,18 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void handle( SpikeEvent& e );
-  void handle( CurrentEvent& e );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& e ) override;
+  void handle( CurrentEvent& e ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
   /**
@@ -226,10 +226,10 @@ private:
     SUP_SPIKE_RECEPTOR
   };
 
-  void init_buffers_();
-  void pre_run_hook();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   double get_synapse_constant( double, double, double );
 

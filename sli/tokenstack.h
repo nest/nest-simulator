@@ -52,7 +52,7 @@ public:
   using TokenArrayObj::reserve_token;
 
   void
-  clear( void )
+  clear()
   {
     erase( begin(), end() );
   }
@@ -93,7 +93,7 @@ public:
   }
 
   void
-  pop( void )
+  pop()
   {
     pop_back();
   }
@@ -113,12 +113,12 @@ public:
 
 
   Token&
-  top( void )
+  top()
   {
     return *( end() - 1 );
   }
   const Token&
-  top( void ) const
+  top() const
   {
     return *( end() - 1 );
   }
@@ -140,7 +140,7 @@ public:
 
 
   void
-  swap( void )
+  swap()
   {
     ( end() - 1 )->swap( *( end() - 2 ) );
   }
@@ -176,12 +176,12 @@ public:
   }
 
   Index
-  size( void ) const
+  size() const
   {
     return TokenArrayObj::capacity();
   }
   Index
-  load( void ) const
+  load() const
   {
     return TokenArrayObj::size();
   }
@@ -189,7 +189,7 @@ public:
   void dump( std::ostream& ) const;
 
   TokenArray
-  toArray( void ) const
+  toArray() const
   {
     return TokenArray( *this );
   }

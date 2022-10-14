@@ -68,7 +68,7 @@ private:
   TokenArrayObj* data;
 
   bool
-  clone( void )
+  clone()
   {
     if ( data->references() > 1 )
     {
@@ -83,7 +83,7 @@ private:
   }
 
   bool
-  detach( void )
+  detach()
   {
     if ( data->references() > 1 )
     {
@@ -106,7 +106,7 @@ protected:
   }
 
 public:
-  TokenArray( void )
+  TokenArray()
     : data( new TokenArrayObj() ) {};
 
   explicit TokenArray( size_t n, const Token& t = Token(), size_t alloc = 128 )
@@ -156,7 +156,7 @@ public:
    * Return number of elements in the array.
    */
   size_t
-  size( void ) const
+  size() const
   {
     return data->size();
   }
@@ -165,7 +165,7 @@ public:
    * Return maximal number of elements that fit into the container.
    */
   size_t
-  capacity( void ) const
+  capacity() const
   {
     return data->capacity();
   }
@@ -227,7 +227,7 @@ public:
    * invalidated.
    */
   bool
-  shrink( void )
+  shrink()
   {
     return data->shrink();
   }
@@ -244,7 +244,7 @@ public:
   }
 
   unsigned int
-  references( void )
+  references()
   {
     return data->references();
   }
@@ -360,20 +360,20 @@ public:
   }
 
   void
-  pop_back( void )
+  pop_back()
   {
     clone();
     data->pop_back();
   }
 
   void
-  clear( void )
+  clear()
   {
     erase();
   }
 
   void
-  erase( void )
+  erase()
   {
     if ( not detach() )
     {
@@ -425,8 +425,6 @@ public:
   }
 
   const TokenArray& operator=( const TokenArray& );
-  const TokenArray& operator=( const std::vector< long >& );
-  const TokenArray& operator=( const std::vector< double >& );
 
   bool
   operator==( const TokenArray& a ) const
@@ -435,12 +433,10 @@ public:
   }
 
   bool
-  empty( void ) const
+  empty() const
   {
     return size() == 0;
   }
-
-  void info( std::ostream& ) const;
 
   /** Fill vectors with homogeneous integer and double arrays */
 
@@ -449,10 +445,9 @@ public:
   void toVector( std::vector< double >& ) const;
   void toVector( std::vector< std::string >& ) const;
 
-  bool valid( void ) const; // check integrity
+  bool valid() const; // check integrity
 
   /** Exception classes */
-  //  class TypeMismatch {};
   class OutOfRange
   {
   };

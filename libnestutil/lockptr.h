@@ -97,14 +97,14 @@ class lockPTR
     PointerObject( PointerObject const& );
 
   public:
-    PointerObject( D* p = NULL )
+    explicit PointerObject( D* p = NULL )
       : pointee( p )
       , deletable( true )
       , locked( false )
     {
     }
 
-    PointerObject( D& p_o )
+    explicit PointerObject( D& p_o )
       : pointee( &p_o )
       , deletable( false )
       , locked( false )
@@ -121,25 +121,25 @@ class lockPTR
     }
 
     D*
-    get( void ) const
+    get() const
     {
       return pointee;
     }
 
     bool
-    islocked( void ) const
+    islocked() const
     {
       return locked;
     }
 
     bool
-    isdeletable( void ) const
+    isdeletable() const
     {
       return deletable;
     }
 
     void
-    lock( void )
+    lock()
     {
       assert( not locked );
 #pragma omp atomic write // To avoid race conditions.
@@ -147,7 +147,7 @@ class lockPTR
     }
 
     void
-    unlock( void )
+    unlock()
     {
       assert( locked );
 #pragma omp atomic write // To avoid race conditions.
@@ -215,7 +215,7 @@ public:
   }
 
   D*
-  get( void )
+  get()
   {
     assert( not obj->islocked() );
     obj->lock(); // Try to lock Object
@@ -223,7 +223,7 @@ public:
   }
 
   D*
-  get( void ) const
+  get() const
   {
     assert( not obj->islocked() );
 
@@ -296,49 +296,49 @@ public:
 
 
   bool
-  valid( void ) const //!< returns true if and only if obj->pointee != NULL
+  valid() const //!< returns true if and only if obj->pointee != NULL
   {
     assert( obj != NULL );
     return ( obj->get() != NULL );
   }
 
   bool
-  islocked( void ) const
+  islocked() const
   {
     assert( obj != NULL );
     return ( obj->islocked() );
   }
 
   bool
-  deletable( void ) const
+  deletable() const
   {
     assert( obj != NULL );
     return ( obj->isdeletable() );
   }
 
   void
-  lock( void ) const
+  lock() const
   {
     assert( obj != NULL );
     obj->lock();
   }
 
   void
-  unlock( void ) const
+  unlock() const
   {
     assert( obj != NULL );
     obj->unlock();
   }
 
   void
-  unlock( void )
+  unlock()
   {
     assert( obj != NULL );
     obj->unlock();
   }
 
   size_t
-  references( void ) const
+  references() const
   {
     return ( obj == NULL ) ? 0 : obj.use_count();
   }

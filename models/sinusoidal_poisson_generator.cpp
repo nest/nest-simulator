@@ -227,8 +227,6 @@ nest::sinusoidal_poisson_generator::pre_run_hook()
 
   V_.sin_ = std::sin( V_.h_ * P_.om_ ); // block elements
   V_.cos_ = std::cos( V_.h_ * P_.om_ );
-
-  return;
 }
 
 void

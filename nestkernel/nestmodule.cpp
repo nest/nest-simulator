@@ -95,13 +95,13 @@ NestModule::~NestModule()
 // The following concerns the new module:
 
 const std::string
-NestModule::name( void ) const
+NestModule::name() const
 {
   return std::string( "NEST Kernel 2" ); // Return name of the module
 }
 
 const std::string
-NestModule::commandstring( void ) const
+NestModule::commandstring() const
 {
   return std::string( "(nest-init) run" );
 }
@@ -156,7 +156,7 @@ NestModule::create_parameter( const Name& name, const DictionaryDatum& d )
 }
 
 GenericFactory< Parameter >&
-NestModule::parameter_factory_( void )
+NestModule::parameter_factory_()
 {
   static GenericFactory< Parameter > factory;
   return factory;
@@ -164,7 +164,7 @@ NestModule::parameter_factory_( void )
 
 
 GenericFactory< AbstractMask >&
-NestModule::mask_factory_( void )
+NestModule::mask_factory_()
 {
   static GenericFactory< AbstractMask > factory;
   return factory;
@@ -184,7 +184,7 @@ NestModule::create_mask( const Token& t )
   {
 
     DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( t.datum() );
-    if ( dd == 0 )
+    if ( not dd )
     {
       throw BadProperty( "Mask must be masktype or dictionary." );
     }
@@ -195,7 +195,7 @@ NestModule::create_mask( const Token& t )
     // anchor key will be stored in the anchor_token variable.
     Token anchor_token;
     bool has_anchor = false;
-    AbstractMask* mask = 0;
+    AbstractMask* mask = nullptr;
 
     for ( Dictionary::iterator dit = ( *dd )->begin(); dit != ( *dd )->end(); ++dit )
     {
@@ -209,7 +209,7 @@ NestModule::create_mask( const Token& t )
       else
       {
 
-        if ( mask != 0 )
+        if ( mask )
         { // mask has already been defined
           throw BadProperty( "Mask definition dictionary contains extraneous items." );
         }
@@ -586,6 +586,7 @@ NestModule::GetMetadata_gFunction::execute( SLIInterpreter* i ) const
   if ( meta.get() )
   {
     meta->get_status( dict );
+    slice_positions_if_sliced_nc( dict, nc );
 
     ( *dict )[ names::network_size ] = nc->size();
   }

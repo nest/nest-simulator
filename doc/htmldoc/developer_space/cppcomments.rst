@@ -1,4 +1,4 @@
-Guidelines for C++  code comments
+Guidelines for C++ code comments
 =================================
 
 There are two types of code comments for C++ files: doxygen style and C++ style comments.

@@ -62,9 +62,6 @@ public:
 
   explicit Parameter( const Parameter& p ) = default;
 
-  /**
-   * Virtual destructor
-   */
   virtual ~Parameter() = default;
 
   /**

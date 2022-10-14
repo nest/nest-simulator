@@ -52,9 +52,6 @@ typedef sharedPtrDatum< AbstractMask, &NestModule::MaskType > MaskDatum;
 class AbstractMask
 {
 public:
-  /**
-   * Virtual destructor
-   */
   virtual ~AbstractMask()
   {
   }

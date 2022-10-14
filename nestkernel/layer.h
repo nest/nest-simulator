@@ -223,9 +223,6 @@ public:
 
   Layer( const Layer& other_layer );
 
-  /**
-   * Virtual destructor
-   */
   ~Layer() override;
 
   /**

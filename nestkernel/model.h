@@ -143,7 +143,7 @@ public:
    * @param d Dictionary.
    * @ingroup status_interface
    */
-  DictionaryDatum get_status( void );
+  DictionaryDatum get_status();
 
   virtual port send_test_event( Node&, rport, synindex, bool ) = 0;
 
@@ -168,7 +168,7 @@ public:
   /**
    * Return const reference to the prototype.
    */
-  virtual Node const& get_prototype( void ) const = 0;
+  virtual Node const& get_prototype() const = 0;
 
   /**
    * Set the model id on the prototype.

@@ -143,6 +143,11 @@ set( models_sources
     )
 
 add_library( models ${models_sources} )
+set_target_properties( models
+    PROPERTIES
+    VERSION ${NEST_VERSION}
+    SOVERSION 3
+    )
 target_link_libraries( models nestutil sli_lib nestkernel )
 
 target_include_directories( models PRIVATE

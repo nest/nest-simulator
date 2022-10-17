@@ -22,9 +22,6 @@
 
 #include "gif_psc_exp.h"
 
-// C++ includes:
-#include <limits>
-
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "iaf_propagator.h"
@@ -37,8 +34,6 @@
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 #include "compose.hpp"
 #include "numerics.h"

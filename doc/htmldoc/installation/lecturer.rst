@@ -7,10 +7,11 @@ Lecturer installation instructions
 NEST Desktop
 ~~~~~~~~~~~~
 
-* :doc:`NEST Desktop <desktop:index>` is a graphical user interface designed for illustrating neural network concepts
-  ideal for the classroom setting.
+:doc:`NEST Desktop <desktop:index>` is a graphical user interface designed for illustrating neural network concepts
+ideal for the classroom setting.
+There are several materials for Bachelor and Master's level already prepared.
 
-We recommend you checkout the NEST desktop project and see if it fits your needs!
+* Check out :doc:`the lecture material for NEST Desktop <desktop:lecturer/index>`
 
 
 Docker install

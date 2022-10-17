@@ -488,7 +488,7 @@ public:
    * the last element in this primitive, and they both have the same model ID.
    * Otherwise false.
    */
-  bool is_contiguous_ascending( NodeCollectionPrimitive& other );
+  bool is_contiguous_ascending( NodeCollectionPrimitive& other ) const;
 
   /**
    * Checks if node IDs of another primitive is overlapping node IDs of this primitive
@@ -615,12 +615,14 @@ NodeCollection::operator!=( NodeCollectionPTR rhs ) const
   return not( *this == rhs );
 }
 
-inline void NodeCollection::set_metadata( NodeCollectionMetadataPTR )
+inline void
+NodeCollection::set_metadata( NodeCollectionMetadataPTR )
 {
   throw KernelException( "Cannot set Metadata on this type of NodeCollection." );
 }
 
-inline NodeIDTriple nc_const_iterator::operator*() const
+inline NodeIDTriple
+nc_const_iterator::operator*() const
 {
   NodeIDTriple gt;
   if ( primitive_collection_ )
@@ -735,7 +737,8 @@ nc_const_iterator::get_current_part_offset( size_t& part, size_t& offset )
   offset = element_idx_;
 }
 
-inline index NodeCollectionPrimitive::operator[]( const size_t idx ) const
+inline index
+NodeCollectionPrimitive::operator[]( const size_t idx ) const
 {
   // throw exception if outside of NodeCollection
   if ( first_ + idx > last_ )
@@ -843,7 +846,8 @@ NodeCollectionPrimitive::has_proxies() const
   return not nodes_have_no_proxies_;
 }
 
-inline index NodeCollectionComposite::operator[]( const size_t i ) const
+inline index
+NodeCollectionComposite::operator[]( const size_t i ) const
 {
   if ( step_ > 1 or start_part_ > 0 or start_offset_ > 0 or end_part_ != parts_.size() or end_offset_ > 0 )
   {
@@ -879,7 +883,7 @@ NodeCollectionComposite::operator==( NodeCollectionPTR rhs ) const
 
   // Checking if rhs_ptr is invalid first, to avoid segfaults. If rhs is a NodeCollectionPrimitive,
   // rhs_ptr will be a null pointer.
-  if ( rhs_ptr == nullptr or size_ != rhs_ptr->size() or parts_.size() != rhs_ptr->parts_.size() )
+  if ( not rhs_ptr or size_ != rhs_ptr->size() or parts_.size() != rhs_ptr->parts_.size() )
   {
     return false;
   }

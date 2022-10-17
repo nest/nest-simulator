@@ -37,6 +37,13 @@ set( nestutil_sources
 
 add_library( nestutil ${nestutil_sources} )
 
+set_target_properties( nestutil
+    PROPERTIES
+    VERSION ${NEST_VERSION}
+    SOVERSION 3
+    )
+
+
 target_link_libraries( nestutil ${GSL_LIBRARIES} ${SIONLIB_LIBS} )
 
 target_include_directories( nestutil PRIVATE

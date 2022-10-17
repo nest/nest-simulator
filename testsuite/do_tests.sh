@@ -145,8 +145,14 @@ NEST="nest_serial"
 HAVE_MPI="$(sli -c 'statusdict/have_mpi :: =only')"
 
 if test "${HAVE_MPI}" = "true"; then
-  MPI_LAUNCHER="$(sli -c '1 () () mpirun cst 0 get =only')"
-  MPI_LAUNCHER="$(command -v $MPI_LAUNCHER)"
+    MPI_LAUNCHER="$(sli -c 'statusdict/mpiexec :: =only')"
+    MPI_LAUNCHER_VERSION="$($MPI_LAUNCHER --version | head -n1)"
+    # OpenMPI requires --oversubscribe to allow more processes than available cores
+    if [[ "${MPI_LAUNCHER_VERSION}" =~ "(OpenRTE)" ]] ||  [[ "${MPI_LAUNCHER_VERSION}" =~ "(Open MPI)" ]]; then
+	if [[ ! "$(sli -c 'statusdict/mpiexec_preflags :: =only')" =~ "--oversubscribe" ]]; then
+	    export SLI_MPIEXEC_PREFLAGS="--oversubscribe"
+	fi
+    fi
 fi
 
 # Under Mac OS X, suppress crash reporter dialogs. Restore old state at end.
@@ -180,7 +186,8 @@ if test "${PYTHON}"; then
 fi
 if test "${HAVE_MPI}" = "true"; then
     echo "  Running MPI tests .. yes"
-    echo "  MPI launcher ....... $MPI_LAUNCHER"
+    echo "         launcher .... $MPI_LAUNCHER"
+    echo "         version ..... $MPI_LAUNCHER_VERSION"
 else
     echo "  Running MPI tests .. no (compiled without MPI support)"
 fi
@@ -403,7 +410,7 @@ if test "${MUSIC}"; then
 
         # Calculate the total number of processes from the '.music' file.
         np=$(($(sed -n 's/np=//p' ${music_file} | paste -sd'+' -)))
-        test_command="$(sli -c "${np} (${MUSIC}) (${test_name}) mpirun =")"
+        test_command="$(sli -c "${np} (${MUSIC}) (${test_name}) mpirun =only")"
 
         proc_txt="processes"
         if test $np -eq 1; then proc_txt="process"; fi
@@ -487,16 +494,20 @@ if test "${PYTHON}"; then
 
     # Run all tests except those in the mpi* subdirectories because they cannot be run concurrently
     XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
+    set +e
     "${PYTHON}" -m pytest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" --numprocesses=1 \
           --ignore="${PYNEST_TEST_DIR}/mpi" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}"
-
+    set -e
+    
     # Run tests in the mpi* subdirectories, grouped by number of processes
     if test "${HAVE_MPI}" = "true"; then
         if test "${MPI_LAUNCHER}"; then
             for numproc in $(cd ${PYNEST_TEST_DIR}/mpi/; ls -d */ | tr -d '/'); do
                 XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
                 PYTEST_ARGS="--verbose --timeout $TIME_LIMIT --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
+		set +e
                 $(sli -c "${numproc} (${PYTHON} -m pytest) (${PYTEST_ARGS}) mpirun =only") 2>&1 | tee -a "${TEST_LOGFILE}"
+		set -e
             done
         fi
     fi
@@ -511,7 +522,9 @@ echo "Phase 8: Running C++ tests (experimental)"
 echo "-----------------------------------------"
 
 if command -v run_all_cpptests >/dev/null 2>&1; then
+  set +e
   CPP_TEST_OUTPUT=$( run_all_cpptests --logger=JUNIT,error,"${REPORTDIR}/08_cpptests.xml":HRF,error,stdout 2>&1 )
+  set -e
   echo "${CPP_TEST_OUTPUT}" | tail -2
 else
   echo "  Not running C++ tests because NEST was compiled without Boost."

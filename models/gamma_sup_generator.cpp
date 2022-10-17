@@ -24,7 +24,6 @@
 
 // C++ includes:
 #include <algorithm>
-#include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -35,10 +34,8 @@
 #include "kernel_manager.h"
 
 // Includes from sli:
-#include "datum.h"
 #include "dict.h"
 #include "doubledatum.h"
-#include "integerdatum.h"
 
 
 /* ----------------------------------------------------------------

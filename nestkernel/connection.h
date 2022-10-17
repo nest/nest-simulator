@@ -71,27 +71,27 @@ class ConnectorModel;
 class ConnTestDummyNodeBase : public Node
 {
   void
-  pre_run_hook()
+  pre_run_hook() override
   {
   }
   void
-  update( const nest::Time&, long, long )
+  update( const nest::Time&, long, long ) override
   {
   }
   void
-  set_status( const DictionaryDatum& )
+  set_status( const DictionaryDatum& ) override
   {
   }
   void
-  get_status( DictionaryDatum& ) const
+  get_status( DictionaryDatum& ) const override
   {
   }
   void
-  init_state_()
+  init_state_() override
   {
   }
   void
-  init_buffers_()
+  init_buffers_() override
   {
   }
 };

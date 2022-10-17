@@ -22,9 +22,6 @@
 
 #include "gif_psc_exp_multisynapse.h"
 
-// C++ includes:
-#include <limits>
-
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "iaf_propagator.h"
@@ -38,8 +35,6 @@
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 #include "compose.hpp"
 

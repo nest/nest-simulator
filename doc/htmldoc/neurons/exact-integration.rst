@@ -61,7 +61,7 @@ Solving it with exact integration
 With exact integration, these costly computations can be avoided.
 
 Restrictions to :math:`g`
-------------------------
+-------------------------
 But only for certain functions :math:`g`! I.e. if :math:`g` satisfies (is a solution of):
 
 .. math::

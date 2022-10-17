@@ -33,7 +33,6 @@
 #include "functiondatum.h"
 #include "integerdatum.h"
 #include "interpret.h"
-#include "iostreamdatum.h"
 #include "namedatum.h"
 #include "triedatum.h"
 
@@ -89,7 +88,7 @@ FunctiontypeFunction::execute( SLIInterpreter* i ) const
   if ( i->step_mode() )
   {
     std::cerr << "Calling builtin function: ";
-    if ( fd != NULL )
+    if ( fd )
     {
       fd->pprint( std::cerr );
     }

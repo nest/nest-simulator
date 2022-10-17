@@ -740,8 +740,8 @@ nest::ConnectionManager::connect_arrays( long* sources,
 }
 
 void
-nest::ConnectionManager::connect_( Node& s,
-  Node& r,
+nest::ConnectionManager::connect_( Node& source,
+  Node& target,
   const index s_node_id,
   const thread tid,
   const synindex syn_id,
@@ -751,25 +751,20 @@ nest::ConnectionManager::connect_( Node& s,
 {
   const bool is_primary = kernel().model_manager.get_connection_model( syn_id, tid ).is_primary();
 
-  if ( kernel().model_manager.connector_requires_clopath_archiving( syn_id )
-    and not dynamic_cast< ClopathArchivingNode* >( &r ) )
+  const bool clopath_archiving = kernel().model_manager.connector_requires_clopath_archiving( syn_id );
+  if ( clopath_archiving and not dynamic_cast< ClopathArchivingNode* >( &target ) )
   {
-    throw NotImplemented(
-      "This synapse model is not supported by the neuron model of at least one "
-      "connection." );
+    throw NotImplemented( "This synapse model is not supported by the neuron model of at least one connection." );
   }
 
-  if ( kernel().model_manager.connector_requires_urbanczik_archiving( syn_id )
-    and not r.supports_urbanczik_archiving() )
+  const bool urbanczik_archiving = kernel().model_manager.connector_requires_urbanczik_archiving( syn_id );
+  if ( urbanczik_archiving and not target.supports_urbanczik_archiving() )
   {
-    throw NotImplemented(
-      "This synapse model is not supported by the neuron model of at least one "
-      "connection." );
+    throw NotImplemented( "This synapse model is not supported by the neuron model of at least one  connection." );
   }
 
-  kernel()
-    .model_manager.get_connection_model( syn_id, tid )
-    .add_connection( s, r, connections_[ tid ], syn_id, params, delay, weight );
+  ConnectorModel& conn_model = kernel().model_manager.get_connection_model( syn_id, tid );
+  conn_model.add_connection( source, target, connections_[ tid ], syn_id, params, delay, weight );
   source_table_.add_source( tid, syn_id, s_node_id, is_primary );
 
   increase_connection_count( tid, syn_id );
@@ -791,8 +786,8 @@ nest::ConnectionManager::connect_( Node& s,
 }
 
 void
-nest::ConnectionManager::connect_to_device_( Node& s,
-  Node& r,
+nest::ConnectionManager::connect_to_device_( Node& source,
+  Node& target,
   const index s_node_id,
   const thread tid,
   const synindex syn_id,
@@ -801,14 +796,14 @@ nest::ConnectionManager::connect_to_device_( Node& s,
   const double weight )
 {
   // create entries in connection structure for connections to devices
-  target_table_devices_.add_connection_to_device( s, r, s_node_id, tid, syn_id, params, delay, weight );
+  target_table_devices_.add_connection_to_device( source, target, s_node_id, tid, syn_id, params, delay, weight );
 
   increase_connection_count( tid, syn_id );
 }
 
 void
-nest::ConnectionManager::connect_from_device_( Node& s,
-  Node& r,
+nest::ConnectionManager::connect_from_device_( Node& source,
+  Node& target,
   const thread tid,
   const synindex syn_id,
   const DictionaryDatum& params,
@@ -816,7 +811,7 @@ nest::ConnectionManager::connect_from_device_( Node& s,
   const double weight )
 {
   // create entries in connections vector of devices
-  target_table_devices_.add_connection_from_device( s, r, tid, syn_id, params, delay, weight );
+  target_table_devices_.add_connection_from_device( source, target, tid, syn_id, params, delay, weight );
 
   increase_connection_count( tid, syn_id );
 }

@@ -288,8 +288,7 @@ public:
 protected:
   /**
    * This function calls check_connection() on the sender to check if the
-   * receiver
-   * accepts the event type and receptor type requested by the sender.
+   * receiver accepts the event type and receptor type requested by the sender.
    * \param s The source node
    * \param r The target node
    * \param receptor The ID of the requested receptor type

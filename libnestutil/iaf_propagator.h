@@ -57,6 +57,9 @@ public:
   IAFPropagator( double tau_syn, double tau_m, double c_m );
 
 protected:
+  //! True if singularity needs to be checked carefully
+  bool possibly_singular_() const;
+
   /**
    * Compute propagator connecting I_syn to V_m and auxiliary quantities for given time interval.
    *

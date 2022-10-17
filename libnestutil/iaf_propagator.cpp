@@ -38,9 +38,18 @@ IAFPropagator::IAFPropagator( double tau_syn, double tau_m, double c_m )
   , tau_m_( tau_m )
   , c_m_( c_m )
   , alpha_( 1 / ( c_m * tau_m * tau_m ) * ( tau_syn - tau_m ) )
-  , beta_( tau_syn * tau_m / ( tau_m - tau_syn ) )
+  , beta_( tau_syn * tau_m / ( tau_m - tau_syn ) ) // == inf if tau_m == tau_syn, thus well-defined
   , gamma_( beta_ / c_m )
 {
+}
+
+inline bool
+IAFPropagator::possibly_singular_() const
+{
+  // Boundary 0.1 ms chosen ad hoc. As the criterium is only used
+  // to decide whether to perform a more careful check for singularity,
+  // the precise value is not important.
+  return std::abs( tau_m_ - tau_syn_ ) < 0.1;
 }
 
 std::tuple< double, double, double, double >
@@ -51,8 +60,8 @@ IAFPropagator::evaluate_P32_( double h ) const
 
   double P32 = gamma_ * exp_h_tau_syn * expm1_h_tau;
 
-  double exp_h_tau = 0.0; // exp_h_tau is only relevant if condition below fulfilled
-  if ( std::abs( tau_m_ - tau_syn_ ) < 0.1 )
+  double exp_h_tau = std::numeric_limits< double >::signaling_NaN(); // only used if condition below fulfilled
+  if ( possibly_singular_() )
   {
     exp_h_tau = std::exp( -h / tau_m_ );
 
@@ -77,7 +86,6 @@ IAFPropagator::evaluate_P32_( double h ) const
 }
 
 IAFPropagatorExp::IAFPropagatorExp()
-  : IAFPropagator( 0., 0., 0. )
 {
 }
 
@@ -86,9 +94,7 @@ IAFPropagatorExp::IAFPropagatorExp( double tau_syn, double tau_m, double c_m )
 {
 }
 
-
 IAFPropagatorAlpha::IAFPropagatorAlpha()
-  : IAFPropagator( 0., 0., 0. )
 {
 }
 
@@ -108,7 +114,7 @@ IAFPropagatorAlpha::evaluate( double h ) const
 
   double P31 = gamma_ * exp_h_tau_syn * ( beta_ * expm1_h_tau - h );
 
-  if ( std::abs( tau_m_ - tau_syn_ ) < 0.1 )
+  if ( possibly_singular_() )
   {
     const double P31_singular = h * h / 2 / c_m_ * exp_h_tau;
 

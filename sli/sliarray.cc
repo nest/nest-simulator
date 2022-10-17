@@ -2739,7 +2739,7 @@ SLIArrayModule::GaborFunction::execute( SLIInterpreter* i ) const
     i->raiseerror( "RangeCheck" );
     return;
   }
-  if (  ncol < 2 or nrow < 2 )
+  if ( ncol < 2 or nrow < 2 )
   {
     i->message( SLIInterpreter::M_ERROR, "Gabor_", "Matrix must have at least two rows and two columns." );
     i->raiseerror( "RangeCheck" );

@@ -143,7 +143,8 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
     {
       if ( has_delay_ )
       {
-        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( default_connection_.get_delay() );
+        const delay d = default_connection_.get_delay();
+        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( d );
       }
       // Let connections without delay contribute to the delay extrema with
       // wfr_comm_interval. For those connections the min_delay is important
@@ -153,8 +154,8 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
       // without delay is created.
       else
       {
-        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
-          kernel().simulation_manager.get_wfr_comm_interval() );
+        const delay wfr_comm_interval = kernel().simulation_manager.get_wfr_comm_interval();
+        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( wfr_comm_interval );
       }
     }
     catch ( BadDelay& e )

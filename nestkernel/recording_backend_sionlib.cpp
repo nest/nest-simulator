@@ -144,7 +144,7 @@ nest::RecordingBackendSIONlib::pre_run_hook()
 void
 nest::RecordingBackendSIONlib::open_files_()
 {
-  if ( files_opened_ or ( num_enrolled_devices_ == 0 ) )
+  if ( files_opened_ or num_enrolled_devices_ == 0 )
   {
     return;
   }

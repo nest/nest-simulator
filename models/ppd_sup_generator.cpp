@@ -249,7 +249,7 @@ nest::ppd_sup_generator::update( Time const& T, const long from, const long to )
     }
 
     // get current (time-dependent) hazard rate and store it.
-    if ( P_.amplitude_ > 0.0 and ( P_.frequency_ > 0.0 or P_.frequency_ < 0.0 ) )
+    if ( P_.amplitude_ > 0.0 and P_.frequency_ > 0.0 or P_.frequency_ < 0.0 )
     {
       double t_ms = t.get_ms();
       V_.hazard_step_t_ = V_.hazard_step_ * ( 1.0 + P_.amplitude_ * std::sin( V_.omega_ * t_ms ) );

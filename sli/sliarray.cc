@@ -907,7 +907,7 @@ SLIArrayModule::ArraycreateFunction::execute( SLIInterpreter* i ) const
   const Token mark_token( new LiteralDatum( i->mark_name ) );
   bool found = false;
 
-  while ( ( n < depth ) and not found )
+  while ( n < depth and not found )
   {
     found = ( i->OStack.pick( n ) == mark_token );
     ++n;
@@ -2739,7 +2739,7 @@ SLIArrayModule::GaborFunction::execute( SLIInterpreter* i ) const
     i->raiseerror( "RangeCheck" );
     return;
   }
-  if ( ( ncol < 2 ) or ( nrow < 2 ) )
+  if (  ncol < 2 or nrow < 2 )
   {
     i->message( SLIInterpreter::M_ERROR, "Gabor_", "Matrix must have at least two rows and two columns." );
     i->raiseerror( "RangeCheck" );
@@ -2847,7 +2847,7 @@ SLIArrayModule::Gauss2dFunction::execute( SLIInterpreter* i ) const
     i->raiseerror( "RangeCheck" );
     return;
   }
-  if ( ( ncol < 2 ) or ( nrow < 2 ) )
+  if ( ncol < 2 or nrow < 2 )
   {
     i->message( SLIInterpreter::M_ERROR, "gauss2d_", "Matrix must have at least two rows and two columns." );
     i->raiseerror( "RangeCheck" );

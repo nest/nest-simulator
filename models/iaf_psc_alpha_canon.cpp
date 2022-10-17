@@ -322,7 +322,7 @@ nest::iaf_psc_alpha_canon::update( Time const& origin, const long from, const lo
     const long T = origin.get_steps() + lag;
     // if neuron returns from refractoriness during this step, place
     // pseudo-event in queue to mark end of refractory period
-    if ( S_.is_refractory_ and ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
+    if ( S_.is_refractory_ and T + 1 - S_.last_spike_step_ == V_.refractory_steps_ )
     {
       B_.events_.add_refractory( T, S_.last_spike_offset_ );
     }
@@ -656,11 +656,11 @@ nest::iaf_psc_alpha_canon::thresh_find3_( double const dt ) const
   // set tau to the smallest root above 0
 
   double tau = ( tau1 >= 0 ) ? tau1 : 2 * h_ms;
-  if ( ( tau2 >= 0 ) and ( tau2 < tau ) )
+  if ( tau2 >= 0 and tau2 < tau )
   {
     tau = tau2;
   }
-  if ( ( tau3 >= 0 ) and ( tau3 < tau ) )
+  if ( tau3 >= 0 and tau3 < tau )
   {
     tau = tau3;
   }

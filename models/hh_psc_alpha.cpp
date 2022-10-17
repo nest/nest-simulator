@@ -436,10 +436,8 @@ nest::hh_psc_alpha::update( Time const& origin, const long from, const long to )
     {
       --S_.r_;
     }
-    else
-      // (    threshold    and     maximum       )
-      if ( S_.y_[ State_::V_M ] >= 0 and U_old > S_.y_[ State_::V_M ] )
-      {
+    else if ( S_.y_[ State_::V_M ] >= 0 and U_old > S_.y_[ State_::V_M ] )  // ( threshold and maximum )
+    {
         S_.r_ = V_.RefractoryCounts_;
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );

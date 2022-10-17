@@ -182,7 +182,7 @@ ExitFunction::execute( SLIInterpreter* i ) const
 
   size_t n = 1;
   size_t load = i->EStack.load();
-  while ( ( load > n ) and not( i->EStack.pick( n++ ) == mark ) )
+  while ( load > n and not( i->EStack.pick( n++ ) == mark ) )
   {
     // do nothing
   }
@@ -443,7 +443,7 @@ StopFunction::execute( SLIInterpreter* i ) const
   bool found = false;
   size_t n = 1;
 
-  while ( ( load > n ) and not( found ) )
+  while ( load > n and not( found ) )
   {
     found = i->EStack.pick( n++ ).contains( istopped );
   }
@@ -507,7 +507,7 @@ CloseinputFunction::execute( SLIInterpreter* i ) const
   bool found = false;
   size_t n = 1;
 
-  while ( ( load > n ) and not( found ) )
+  while ( load > n and not( found ) )
   {
     found = i->EStack.pick( n++ )->isoftype( SLIInterpreter::XIstreamtype );
   }
@@ -601,7 +601,7 @@ CurrentnameFunction::execute( SLIInterpreter* i ) const
 
   bool found = false;
 
-  while ( ( load > n ) and not found )
+  while ( load > n and not found )
   {
     found = i->EStack.pick( n++ ) == i->baselookup( i->ilookup_name );
   }
@@ -1389,7 +1389,7 @@ SwitchFunction::execute( SLIInterpreter* i ) const
 
   bool found = ( i->OStack.pick( pos ) == mark_token );
 
-  while ( ( pos < depth ) and not found )
+  while ( pos < depth and not found )
   {
     i->EStack.push_move( i->OStack.pick( pos ) );
     found = ( i->OStack.pick( ++pos ) == mark_token );
@@ -1438,7 +1438,7 @@ SwitchdefaultFunction::execute( SLIInterpreter* i ) const
   bool found = ( i->OStack.pick( pos ) == mark_token );
 
 
-  while ( ( pos < depth ) and not found )
+  while ( pos < depth and not found )
   {
     i->EStack.push_move( i->OStack.pick( pos ) );
     found = ( i->OStack.pick( ++pos ) == mark_token );
@@ -1495,7 +1495,7 @@ CounttomarkFunction::execute( SLIInterpreter* i ) const
 
   bool found = false;
 
-  while ( ( pos < depth ) and not found )
+  while ( pos < depth and not found )
   {
     found = ( i->OStack.pick( pos ) == mark_token );
     ++pos;

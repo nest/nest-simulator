@@ -83,7 +83,7 @@ Ntree< D, T, max_capacity, max_depth >::iterator::next_leaf_()
 {
 
   // If we are on the last subntree, move up
-  while ( ntree_ and ( ntree_ != top_ ) and ( ntree_->my_subquad_ == N - 1 ) )
+  while ( ntree_ and ( ntree_ != top_ ) and ntree_->my_subquad_ == N - 1 )
   {
     ntree_ = ntree_->parent_;
   }
@@ -250,7 +250,7 @@ Ntree< D, T, max_capacity, max_depth >::masked_iterator::next_leaf_()
     // state: all in
 
     // If we are on the last subtree, move up
-    while ( ntree_ and ( ntree_ != allin_top_ ) and ( ntree_->my_subquad_ == N - 1 ) )
+    while ( ntree_ and ( ntree_ != allin_top_ ) and ntree_->my_subquad_ == N - 1 )
     {
       ntree_ = ntree_->parent_;
     }
@@ -283,7 +283,7 @@ Ntree< D, T, max_capacity, max_depth >::masked_iterator::next_leaf_()
   {
 
     // If we are on the last subtree, move up
-    while ( ntree_ and ( ntree_ != top_ ) and ( ntree_->my_subquad_ == N - 1 ) )
+    while ( ntree_ and ( ntree_ != top_ ) and ntree_->my_subquad_ == N - 1 )
     {
       ntree_ = ntree_->parent_;
     }
@@ -478,7 +478,7 @@ Ntree< D, T, max_capacity, max_depth >::insert( Position< D > pos, const T& node
     }
   }
 
-  if ( leaf_ and ( nodes_.size() >= max_capacity ) and ( my_depth_ < max_depth ) )
+  if ( leaf_ and ( nodes_.size() >= max_capacity ) and my_depth_ < max_depth )
   {
     split_();
   }

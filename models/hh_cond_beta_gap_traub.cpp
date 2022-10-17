@@ -551,9 +551,7 @@ nest::hh_cond_beta_gap_traub::update_( Time const& origin,
       {
         --S_.r_;
       }
-      else
-        // (    threshold    and     maximum       )
-        if ( S_.y_[ State_::V_M ] >= P_.V_T + 30. and U_old > S_.y_[ State_::V_M ] )
+      else if ( S_.y_[ State_::V_M ] >= P_.V_T + 30. and U_old > S_.y_[ State_::V_M ] )  // ( threshold and maximum )
         {
           S_.r_ = V_.refractory_counts_;
 

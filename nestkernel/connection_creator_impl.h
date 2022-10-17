@@ -422,7 +422,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         }
 
         if ( positions.empty()
-          or ( not allow_autapses_ and ( positions.size() == 1 ) and ( positions[ 0 ].second == target_id ) )
+          or ( not allow_autapses_ and ( positions.size() == 1 ) and positions[ 0 ].second == target_id )
           or ( not allow_multapses_ and ( positions.size() < number_of_connections_ ) ) )
         {
           std::string msg = String::compose( "Global target ID %1: Not enough sources found inside mask", target_id );
@@ -443,14 +443,14 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         for ( int i = 0; i < ( int ) number_of_connections_; ++i )
         {
           index random_id = lottery( rng );
-          if ( not allow_multapses_ and ( is_selected[ random_id ] ) )
+          if ( not allow_multapses_ and is_selected[ random_id ] )
           {
             --i;
             continue;
           }
 
           index source_id = positions[ random_id ].second;
-          if ( not allow_autapses_ and ( source_id == target_id ) )
+          if ( not allow_autapses_ and source_id == target_id )
           {
             --i;
             continue;
@@ -473,7 +473,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         // no kernel
 
         if ( positions.empty()
-          or ( not allow_autapses_ and ( positions.size() == 1 ) and ( positions[ 0 ].second == target_id ) )
+          or ( not allow_autapses_ and ( positions.size() == 1 ) and positions[ 0 ].second == target_id )
           or ( not allow_multapses_ and ( positions.size() < number_of_connections_ ) ) )
         {
           std::string msg = String::compose( "Global target ID %1: Not enough sources found inside mask", target_id );
@@ -488,7 +488,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         for ( int i = 0; i < ( int ) number_of_connections_; ++i )
         {
           index random_id = rng->ulrand( positions.size() );
-          if ( not allow_multapses_ and ( is_selected[ random_id ] ) )
+          if ( not allow_multapses_ and is_selected[ random_id ] )
           {
             --i;
             continue;
@@ -567,14 +567,14 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         for ( int i = 0; i < ( int ) number_of_connections_; ++i )
         {
           index random_id = lottery( rng );
-          if ( not allow_multapses_ and ( is_selected[ random_id ] ) )
+          if ( not allow_multapses_ and is_selected[ random_id ] )
           {
             --i;
             continue;
           }
 
           index source_id = ( *positions )[ random_id ].second;
-          if ( not allow_autapses_ and ( source_id == target_id ) )
+          if ( not allow_autapses_ and source_id == target_id )
           {
             --i;
             continue;
@@ -605,14 +605,14 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         for ( int i = 0; i < ( int ) number_of_connections_; ++i )
         {
           index random_id = rng->ulrand( positions->size() );
-          if ( not allow_multapses_ and ( is_selected[ random_id ] ) )
+          if ( not allow_multapses_ and is_selected[ random_id ] )
           {
             --i;
             continue;
           }
 
           index source_id = ( *positions )[ random_id ].second;
-          if ( not allow_autapses_ and ( source_id == target_id ) )
+          if ( not allow_autapses_ and source_id == target_id )
           {
             --i;
             continue;
@@ -739,13 +739,13 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
     for ( long i = 0; i < ( long ) number_of_connections_; ++i )
     {
       index random_id = lottery( get_rank_synced_rng() );
-      if ( not allow_multapses_ and ( is_selected[ random_id ] ) )
+      if ( not allow_multapses_ and is_selected[ random_id ] )
       {
         --i;
         continue;
       }
       index target_id = target_pos_node_id_pairs[ random_id ].second;
-      if ( not allow_autapses_ and ( source_id == target_id ) )
+      if ( not allow_autapses_ and source_id == target_id )
       {
         --i;
         continue;

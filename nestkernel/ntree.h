@@ -125,7 +125,7 @@ public:
     bool
     operator==( const iterator& other ) const
     {
-      return ( other.ntree_ == ntree_ ) and ( other.node_ == node_ );
+      return other.ntree_ == ntree_ and ( other.node_ == node_ );
     }
     bool
     operator!=( const iterator& other ) const
@@ -210,7 +210,7 @@ public:
     bool
     operator==( const masked_iterator& other ) const
     {
-      return ( other.ntree_ == ntree_ ) and ( other.node_ == node_ );
+      return other.ntree_ == ntree_ and ( other.node_ == node_ );
     }
     bool
     operator!=( const masked_iterator& other ) const

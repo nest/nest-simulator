@@ -240,7 +240,7 @@ TokenArrayObj::rotate( Token* first, Token* middle, Token* last )
 {
 
   // This algorithm is taken from the HP STL implementation.
-  if ( ( first < middle ) and ( middle < last ) )
+  if ( first < middle and middle < last )
   {
     for ( Token* i = middle;; )
     {
@@ -617,21 +617,10 @@ TokenArrayObj::append_move( TokenArrayObj& a )
 bool
 TokenArrayObj::operator==( const TokenArrayObj& a ) const
 {
-
-  // std::cout << "comparison of TokenArrayObj" << std::endl;
-  // std::cout << "p:   " << p << std::endl;
-  // std::cout << "a.p: " << a.p << std::endl;
-
   if ( p == a.p )
   {
     return true;
   }
-
-  // experimentally replaced by line below 090120, Diesmann
-  // because [] cvx has non NULL p
-  //
-  //    if( p == NULL or a.p == NULL or size() != a.size())
-  //    return false;
 
   if ( size() != a.size() )
   {

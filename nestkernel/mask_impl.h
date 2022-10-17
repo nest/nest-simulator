@@ -78,7 +78,7 @@ Mask< D >::outside( const Box< D >& b ) const
   Box< D > bb = get_bbox();
   for ( int i = 0; i < D; ++i )
   {
-    if ( ( b.upper_right[ i ] < bb.lower_left[ i ] ) or ( b.lower_left[ i ] > bb.upper_right[ i ] ) )
+    if ( b.upper_right[ i ] < bb.lower_left[ i ] or b.lower_left[ i ] > bb.upper_right[ i ] )
     {
       return true;
     }
@@ -105,7 +105,7 @@ BoxMask< D >::outside( const Box< D >& b ) const
   // so we don't know if it is an actual problem.
   for ( int i = 0; i < D; ++i )
   {
-    if ( ( b.upper_right[ i ] < min_values_[ i ] ) or ( b.lower_left[ i ] > max_values_[ i ] ) )
+    if ( b.upper_right[ i ] < min_values_[ i ] or b.lower_left[ i ] > max_values_[ i ] )
     {
       return true;
     }
@@ -175,7 +175,7 @@ BallMask< D >::outside( const Box< D >& b ) const
   // the ball. This could be made more refined.
   for ( int i = 0; i < D; ++i )
   {
-    if ( ( b.upper_right[ i ] < center_[ i ] - radius_ ) or ( b.lower_left[ i ] > center_[ i ] + radius_ ) )
+    if ( b.upper_right[ i ] < center_[ i ] - radius_ or b.lower_left[ i ] > center_[ i ] + radius_ )
     {
       return true;
     }
@@ -259,7 +259,7 @@ EllipseMask< D >::outside( const Box< D >& b ) const
 
   for ( int i = 0; i < D; ++i )
   {
-    if ( ( b.upper_right[ i ] < bb.lower_left[ i ] ) or ( b.lower_left[ i ] > bb.upper_right[ i ] ) )
+    if ( b.upper_right[ i ] < bb.lower_left[ i ] or b.lower_left[ i ] > bb.upper_right[ i ] )
     {
       return true;
     }

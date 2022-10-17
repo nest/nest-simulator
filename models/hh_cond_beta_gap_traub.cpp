@@ -551,15 +551,15 @@ nest::hh_cond_beta_gap_traub::update_( Time const& origin,
       {
         --S_.r_;
       }
-      else if ( S_.y_[ State_::V_M ] >= P_.V_T + 30. and U_old > S_.y_[ State_::V_M ] )  // ( threshold and maximum )
-        {
-          S_.r_ = V_.refractory_counts_;
+      else if ( S_.y_[ State_::V_M ] >= P_.V_T + 30. and U_old > S_.y_[ State_::V_M ] ) // ( threshold and maximum )
+      {
+        S_.r_ = V_.refractory_counts_;
 
-          set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
-          SpikeEvent se;
-          kernel().event_delivery_manager.send( *this, se, lag );
-        }
+        SpikeEvent se;
+        kernel().event_delivery_manager.send( *this, se, lag );
+      }
 
       // log state data
       B_.logger_.record_data( origin.get_steps() + lag );

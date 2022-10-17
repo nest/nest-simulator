@@ -28,7 +28,6 @@
 
 // C includes:
 #include <sys/resource.h>
-#include <sys/time.h>
 #include <sys/times.h>
 #include <time.h>
 #include <unistd.h>
@@ -47,7 +46,6 @@
 #include "arraydatum.h"
 #include "booldatum.h"
 #include "dictstack.h"
-#include "doubledatum.h"
 #include "functiondatum.h"
 #include "integerdatum.h"
 #include "iostreamdatum.h"
@@ -343,7 +341,7 @@ RepeatFunction::execute( SLIInterpreter* i ) const
     if ( proc )
     {
       IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-      if ( id == 0 )
+      if ( not id )
       {
         throw ArgumentType( 1 );
       }
@@ -1706,7 +1704,7 @@ PgetrusageFunction::getinfo_( int who, DictionaryDatum& dict ) const
 void
 TimeFunction::execute( SLIInterpreter* i ) const
 {
-  long secs = time( 0 );
+  long secs = time( nullptr );
   Token tmp( new IntegerDatum( secs ) );
   i->EStack.pop();
   i->OStack.push_move( tmp );

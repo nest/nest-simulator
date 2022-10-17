@@ -115,13 +115,11 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
   Layer< D >::set_status( d );
 
   Position< D > max_point; // for each dimension, the largest value of the positions, aka upper right
-  Position< D > epsilon;   // small value which may be added to layer size ensuring that single-point layers have a size
 
   for ( int d = 0; d < D; ++d )
   {
     this->lower_left_[ d ] = std::numeric_limits< double >::infinity();
     max_point[ d ] = -std::numeric_limits< double >::infinity();
-    epsilon[ d ] = 0.1;
   }
 
   num_local_nodes_ = std::accumulate( this->node_collection_->begin(),
@@ -234,9 +232,21 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
   }
   else
   {
-    this->extent_ = max_point - this->lower_left_;
-    this->extent_ += epsilon * 2;
-    this->lower_left_ -= epsilon;
+    if ( this->node_collection_->size() <= 1 )
+    {
+      throw KernelException( "If only one node is created, 'extent' must be specified." );
+    }
+
+    const auto positional_extent = max_point - this->lower_left_;
+    const auto center = ( max_point + this->lower_left_ ) / 2;
+    for ( int d = 0; d < D; ++d )
+    {
+      // Set extent to be extent of the points, rounded up in each dimension.
+      this->extent_[ d ] = std::ceil( positional_extent[ d ] );
+    }
+
+    // Adjust lower_left relative to the rounded center with the rounded up extent.
+    this->lower_left_ = center - this->extent_ / 2;
   }
 }
 

@@ -25,7 +25,6 @@
 // C++ includes:
 #include <cmath>
 #include <functional>
-#include <numeric>
 
 // Includes from libnestutil:
 #include "compose.hpp"

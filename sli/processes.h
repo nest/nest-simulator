@@ -140,7 +140,7 @@ public:
   const Name EXDEV_name;
 
   // The constructor and destructor for our module object (-if we need them-):
-  Processes( void )
+  Processes()
     : signaldict_name( "signaldict" )
     , SIGABRT_name( "SIGABRT" )
     , SIGALRM_name( "SIGALRM" )
@@ -207,17 +207,17 @@ public:
   {
   } // Processes constructor
 
-  ~Processes( void ); // clean up dynmem for static variables...
+  ~Processes() override; // clean up dynmem for static variables...
 
   // The Module is registered by a call to this Function:
-  void init( SLIInterpreter* );
+  void init( SLIInterpreter* ) override;
 
   // This function will return the name of our module:
-  const std::string name( void ) const;
+  const std::string name() const override;
 
   // This function -may- return a string of SLI-commands to be executed for
   // initialization
-  const std::string commandstring( void ) const;
+  const std::string commandstring() const override;
 
 
   // ---------------------------------------------------------------
@@ -230,72 +230,72 @@ public:
   class ForkFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const; // This is all we need.
+    void execute( SLIInterpreter* ) const override; // This is all we need.
   };
   class Sysexec_aFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const; // This is all we need.
+    void execute( SLIInterpreter* ) const override; // This is all we need.
   };
   class WaitPIDFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const; // This is all we need.
+    void execute( SLIInterpreter* ) const override; // This is all we need.
   };
   class KillFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const; // This is all we need.
+    void execute( SLIInterpreter* ) const override; // This is all we need.
   };
   class PipeFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const; // This is all we need.
+    void execute( SLIInterpreter* ) const override; // This is all we need.
   };
   class Dup2_is_isFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const; // This is all we need.
+    void execute( SLIInterpreter* ) const override; // This is all we need.
   };
   class Dup2_os_osFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const; // This is all we need.
+    void execute( SLIInterpreter* ) const override; // This is all we need.
   };
   class Dup2_is_osFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const; // This is all we need.
+    void execute( SLIInterpreter* ) const override; // This is all we need.
   };
   class Dup2_os_isFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const; // This is all we need.
+    void execute( SLIInterpreter* ) const override; // This is all we need.
   };
   class AvailableFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const; // This is all we need.
+    void execute( SLIInterpreter* ) const override; // This is all we need.
   };
   class GetPIDFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const; // This is all we need.
+    void execute( SLIInterpreter* ) const override; // This is all we need.
   };
   class GetPPIDFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const; // This is all we need.
+    void execute( SLIInterpreter* ) const override; // This is all we need.
   };
   class GetPGRPFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const; // This is all we need.
+    void execute( SLIInterpreter* ) const override; // This is all we need.
   };
   class MkfifoFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const; // This is all we need.
+    void execute( SLIInterpreter* ) const override; // This is all we need.
   };
 
 #if defined __APPLE__ && defined HAVE_MACH_MACH_H
@@ -308,22 +308,22 @@ public:
   class SetNonblockFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const; // This is all we need.
+    void execute( SLIInterpreter* ) const override; // This is all we need.
   };
   class CtermidFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const; // This is all we need.
+    void execute( SLIInterpreter* ) const override; // This is all we need.
   };
   class Isatty_isFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const; // This is all we need.
+    void execute( SLIInterpreter* ) const override; // This is all we need.
   };
   class Isatty_osFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const; // This is all we need.
+    void execute( SLIInterpreter* ) const override; // This is all we need.
   };
 
   // Module contains -one- instantiation of each new function-class:

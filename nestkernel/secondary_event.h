@@ -163,7 +163,6 @@ class DataSecondaryEvent : public SecondaryEvent
 {
 private:
   // we chose std::vector over std::set because we expect this to be short
-  static std::vector< synindex > pristine_supported_syn_ids_;
   static std::vector< synindex > supported_syn_ids_;
   static size_t coeff_length_; // length of coeffarray
 
@@ -187,24 +186,15 @@ private:
 
 public:
   /**
-   * This function is needed to set the synid on model registration.
-   * At this point no object of this type is available and the
-   * add_syn_id-function cannot be used as it is virtual in the base class
-   * and therefore cannot be declared as static.
-   */
-  static void
-  set_syn_id( const synindex synid )
-  {
-    VPManager::assert_single_threaded();
-    pristine_supported_syn_ids_.push_back( synid );
-    supported_syn_ids_.push_back( synid );
-  }
-
-  /**
-   * This function is needed to add additional synids when the
-   * corresponded connector model is copied.
-   * This function needs to be a virtual function of the base class as
-   * it is called from a pointer on SecondaryEvent.
+   * This function adds the ids of connection models that use this
+   * event type. This is called when the model is registered with the
+   * kernel and when the corresponded connector model is copied.
+   *
+   * This function needs to be a virtual function of the base class
+   * DataSecondaryEvent as it is usually called from a pointer or
+   * reference of type SecondaryEvent.
+   *
+   * See also:
    */
   void
   add_syn_id( const synindex synid ) override
@@ -231,10 +221,6 @@ public:
   reset_supported_syn_ids() override
   {
     supported_syn_ids_.clear();
-    for ( size_t i = 0; i < pristine_supported_syn_ids_.size(); ++i )
-    {
-      supported_syn_ids_.push_back( pristine_supported_syn_ids_[ i ] );
-    }
   }
 
   static void
@@ -413,9 +399,6 @@ DataSecondaryEvent< DataType, Subclass >::get_coeffvalue( std::vector< unsigned 
   read_from_comm_buffer( elem, pos );
   return elem;
 }
-
-template < typename Datatype, typename Subclass >
-std::vector< synindex > DataSecondaryEvent< Datatype, Subclass >::pristine_supported_syn_ids_;
 
 template < typename DataType, typename Subclass >
 std::vector< synindex > DataSecondaryEvent< DataType, Subclass >::supported_syn_ids_;

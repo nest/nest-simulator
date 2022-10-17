@@ -123,11 +123,19 @@ ModelManager::initialize()
     if ( connection_model )
     {
       std::string name = connection_model->get_name();
+      const synindex syn_id = connection_models_[ 0 ].size();
+
+      if ( not connection_model->is_primary() )
+      {
+	connection_model->get_event()->add_syn_id( syn_id );
+      }
+
       for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
       {
         connection_models_[ t ].push_back( connection_model->clone( name ) );
       }
-      synapsedict_->insert( name, connection_models_[ 0 ].size() - 1 );
+
+      synapsedict_->insert( name, syn_id );
     }
   }
 }
@@ -473,6 +481,10 @@ ModelManager::clear_connection_models_()
     {
       if ( connection_model )
       {
+        if ( not connection_model->is_primary() )
+        {
+          connection_model->get_event()->reset_supported_syn_ids();
+        }
         delete connection_model;
       }
     }
@@ -558,7 +570,11 @@ ModelManager::register_connection_model_( ConnectorModel* cf )
   builtin_connection_models_.push_back( cf );
 
   const synindex syn_id = connection_models_[ 0 ].size();
-  builtin_connection_models_[ syn_id ]->set_syn_id( syn_id );
+
+  if ( not cf->is_primary() )
+  {
+    cf->get_event()->add_syn_id( syn_id );
+  }
 
   for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
   {

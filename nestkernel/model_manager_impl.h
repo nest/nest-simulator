@@ -106,8 +106,7 @@ ModelManager::register_secondary_connection_model( const std::string& name, cons
     enumFlagSet( flags, RegisterConnectionModelFlags::REQUIRES_SYMMETRIC ),
     enumFlagSet( flags, RegisterConnectionModelFlags::SUPPORTS_WFR ) );
 
-  synindex syn_id = register_connection_model_( cm );
-  ConnectionT< TargetIdentifierPtrRport >::EventType::set_syn_id( syn_id );
+  register_connection_model_( cm );
 
   // create labeled secondary event connection model
   cm = new GenericSecondaryConnectorModel< ConnectionLabel< ConnectionT< TargetIdentifierPtrRport > > >( name + "_lbl",
@@ -115,8 +114,7 @@ ModelManager::register_secondary_connection_model( const std::string& name, cons
     enumFlagSet( flags, RegisterConnectionModelFlags::REQUIRES_SYMMETRIC ),
     enumFlagSet( flags, RegisterConnectionModelFlags::SUPPORTS_WFR ) );
 
-  syn_id = register_connection_model_( cm );
-  ConnectionT< TargetIdentifierPtrRport >::EventType::set_syn_id( syn_id );
+  register_connection_model_( cm );
 }
 
 inline Node*

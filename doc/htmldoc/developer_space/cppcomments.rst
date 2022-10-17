@@ -9,8 +9,8 @@ There are two types of code comments for C++ files: doxygen style and C++ style 
 ..  Include the variable name in functions in header file to match cpp file.
 
 
-Generate HTML do doxygen comments
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Generate HTML from doxygen comments
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To generate HTML output of the doxgyen comments,
 
@@ -42,7 +42,7 @@ Doxygen style
 
 .. note::
 
-    Functions and classes should use the multi-line style even for single line comments
+    Functions and classes should use the multi-line style even for single line comments.
 
 * Single or two line comments to use with variables:
 

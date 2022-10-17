@@ -251,7 +251,7 @@ EventDeliveryManager::update_moduli()
    * Note that for updating the modulos, it is sufficient
    * to rotate the buffer to the left.
    */
-  assert( moduli_.size() == ( index ) ( min_delay + max_delay ) );
+  assert( moduli_.size() == static_cast< index >( min_delay + max_delay ) );
   std::rotate( moduli_.begin(), moduli_.begin() + min_delay, moduli_.end() );
 
   /*
@@ -601,7 +601,7 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
 
   // prepare Time objects for every possible time stamp within min_delay_
   std::vector< Time > prepared_timestamps( kernel().connection_manager.get_min_delay() );
-  for ( size_t lag = 0; lag < ( size_t ) kernel().connection_manager.get_min_delay(); ++lag )
+  for ( size_t lag = 0; lag < static_cast< size_t >( kernel().connection_manager.get_min_delay() ); ++lag )
   {
     prepared_timestamps[ lag ] = kernel().simulation_manager.get_clock() + Time::step( lag + 1 );
   }

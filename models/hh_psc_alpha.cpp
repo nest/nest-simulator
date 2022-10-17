@@ -390,7 +390,7 @@ void
 nest::hh_psc_alpha::update( Time const& origin, const long from, const long to )
 {
 
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and static_cast< delay >( from ) < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
@@ -436,15 +436,15 @@ nest::hh_psc_alpha::update( Time const& origin, const long from, const long to )
     {
       --S_.r_;
     }
-    else if ( S_.y_[ State_::V_M ] >= 0 and U_old > S_.y_[ State_::V_M ] )  // ( threshold and maximum )
+    else if ( S_.y_[ State_::V_M ] >= 0 and U_old > S_.y_[ State_::V_M ] ) // ( threshold and maximum )
     {
-        S_.r_ = V_.RefractoryCounts_;
+      S_.r_ = V_.RefractoryCounts_;
 
-        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+      set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
-        SpikeEvent se;
-        kernel().event_delivery_manager.send( *this, se, lag );
-      }
+      SpikeEvent se;
+      kernel().event_delivery_manager.send( *this, se, lag );
+    }
 
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );

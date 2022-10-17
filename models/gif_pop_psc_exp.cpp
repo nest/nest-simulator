@@ -479,7 +479,7 @@ nest::gif_pop_psc_exp::get_history_size()
   }
   if ( k * V_.h_ <= P_.t_ref_ )
   {
-    k = ( int ) ( P_.t_ref_ / V_.h_ ) + 1;
+    k = static_cast< int >( P_.t_ref_ / V_.h_ ) + 1;
   }
   return k;
 }
@@ -488,7 +488,7 @@ nest::gif_pop_psc_exp::get_history_size()
 void
 nest::gif_pop_psc_exp::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and static_cast< delay >( from ) < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )

@@ -440,7 +440,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         std::vector< bool > is_selected( positions.size() );
 
         // Draw `number_of_connections_` sources
-        for ( int i = 0; i < ( int ) number_of_connections_; ++i )
+        for ( int i = 0; i < static_cast< int >( number_of_connections_ ); ++i )
         {
           index random_id = lottery( rng );
           if ( not allow_multapses_ and is_selected[ random_id ] )
@@ -485,7 +485,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         std::vector< bool > is_selected( positions.size() );
 
         // Draw `number_of_connections_` sources
-        for ( int i = 0; i < ( int ) number_of_connections_; ++i )
+        for ( int i = 0; i < static_cast< int >( number_of_connections_ ); ++i )
         {
           index random_id = rng->ulrand( positions.size() );
           if ( not allow_multapses_ and is_selected[ random_id ] )
@@ -564,7 +564,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         std::vector< bool > is_selected( positions->size() );
 
         // Draw `number_of_connections_` sources
-        for ( int i = 0; i < ( int ) number_of_connections_; ++i )
+        for ( int i = 0; i < static_cast< int >( number_of_connections_ ); ++i )
         {
           index random_id = lottery( rng );
           if ( not allow_multapses_ and is_selected[ random_id ] )
@@ -602,7 +602,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         std::vector< bool > is_selected( positions->size() );
 
         // Draw `number_of_connections_` sources
-        for ( int i = 0; i < ( int ) number_of_connections_; ++i )
+        for ( int i = 0; i < static_cast< int >( number_of_connections_ ); ++i )
         {
           index random_id = rng->ulrand( positions->size() );
           if ( not allow_multapses_ and is_selected[ random_id ] )
@@ -736,7 +736,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
     std::vector< bool > is_selected( target_pos_node_id_pairs.size() );
 
     // Draw `number_of_connections_` targets
-    for ( long i = 0; i < ( long ) number_of_connections_; ++i )
+    for ( long i = 0; i < static_cast< long >( number_of_connections_ ); ++i )
     {
       index random_id = lottery( get_rank_synced_rng() );
       if ( not allow_multapses_ and is_selected[ random_id ] )

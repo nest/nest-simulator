@@ -71,7 +71,7 @@ public:
 
   enum
   {
-    MICROSEC = ( timeunit_t ) 1,
+    MICROSEC = static_cast< timeunit_t >( 1 ),
     MILLISEC = MICROSEC * 1000,
     SECONDS = MILLISEC * 1000,
     MINUTES = SECONDS * 60,
@@ -222,7 +222,7 @@ nest::Stopwatch::elapsed_timestamp() const
     return _end - _beg + _prev_elapsed;
   }
 #else
-  return ( timestamp_t ) 0;
+  return static_cast< timestamp_t >( 0 );
 #endif
 }
 

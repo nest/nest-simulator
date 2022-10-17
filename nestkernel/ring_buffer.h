@@ -162,8 +162,8 @@ RingBuffer::set_value( const long offs, const double v )
 inline double
 RingBuffer::get_value( const long offs )
 {
-  assert( 0 <= offs and ( size_t ) offs < buffer_.size() );
-  assert( ( delay ) offs < kernel().connection_manager.get_min_delay() );
+  assert( 0 <= offs and static_cast< size_t >( offs ) < buffer_.size() );
+  assert( static_cast< delay >( offs ) < kernel().connection_manager.get_min_delay() );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing
@@ -176,8 +176,8 @@ RingBuffer::get_value( const long offs )
 inline double
 RingBuffer::get_value_wfr_update( const long offs )
 {
-  assert( 0 <= offs and ( size_t ) offs < buffer_.size() );
-  assert( ( delay ) offs < kernel().connection_manager.get_min_delay() );
+  assert( 0 <= offs and static_cast< size_t >( offs ) < buffer_.size() );
+  assert( static_cast< delay >( offs ) < kernel().connection_manager.get_min_delay() );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing
@@ -191,7 +191,7 @@ RingBuffer::get_index_( const delay d ) const
 {
   const long idx = kernel().event_delivery_manager.get_modulo( d );
   assert( 0 <= idx );
-  assert( ( size_t ) idx < buffer_.size() );
+  assert( static_cast< size_t >( idx ) < buffer_.size() );
   return idx;
 }
 
@@ -250,15 +250,15 @@ private:
 inline void
 MultRBuffer::add_value( const long offs, const double v )
 {
-  assert( 0 <= offs and ( size_t ) offs < buffer_.size() );
+  assert( 0 <= offs and static_cast< size_t >( offs ) < buffer_.size() );
   buffer_[ get_index_( offs ) ] *= v;
 }
 
 inline double
 MultRBuffer::get_value( const long offs )
 {
-  assert( 0 <= offs and ( size_t ) offs < buffer_.size() );
-  assert( ( delay ) offs < kernel().connection_manager.get_min_delay() );
+  assert( 0 <= offs and static_cast< size_t >( offs ) < buffer_.size() );
+  assert( static_cast< delay >( offs ) < kernel().connection_manager.get_min_delay() );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing
@@ -272,7 +272,7 @@ inline size_t
 MultRBuffer::get_index_( const delay d ) const
 {
   const long idx = kernel().event_delivery_manager.get_modulo( d );
-  assert( 0 <= idx and ( size_t ) idx < buffer_.size() );
+  assert( 0 <= idx and static_cast< size_t >( idx ) < buffer_.size() );
   return idx;
 }
 
@@ -335,8 +335,8 @@ ListRingBuffer::append_value( const long offs, const double v )
 inline std::list< double >&
 ListRingBuffer::get_list( const long offs )
 {
-  assert( 0 <= offs and ( size_t ) offs < buffer_.size() );
-  assert( ( delay ) offs < kernel().connection_manager.get_min_delay() );
+  assert( 0 <= offs and static_cast< size_t >( offs ) < buffer_.size() );
+  assert( static_cast< delay >( offs ) < kernel().connection_manager.get_min_delay() );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing
@@ -349,7 +349,7 @@ ListRingBuffer::get_index_( const delay d ) const
 {
   const long idx = kernel().event_delivery_manager.get_modulo( d );
   assert( 0 <= idx );
-  assert( ( size_t ) idx < buffer_.size() );
+  assert( static_cast< size_t >( idx ) < buffer_.size() );
   return idx;
 }
 

@@ -375,7 +375,7 @@ index
 ModelManager::get_node_model_id( const Name name ) const
 {
   const Name model_name( name );
-  for ( int i = 0; i < ( int ) node_models_.size(); ++i )
+  for ( int i = 0; i < static_cast< int >( node_models_.size() ); ++i )
   {
     assert( node_models_[ i ] );
     if ( model_name == node_models_[ i ]->get_name() )

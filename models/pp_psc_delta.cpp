@@ -361,7 +361,7 @@ void
 nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
 {
 
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and static_cast< delay >( from ) < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )

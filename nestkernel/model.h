@@ -244,7 +244,7 @@ private:
 inline Node*
 Model::create( thread t )
 {
-  assert( ( size_t ) t < memory_.size() );
+  assert( static_cast< size_t >( t ) < memory_.size() );
   Node* n = create_();
   memory_[ t ].push_back( n );
   return n;

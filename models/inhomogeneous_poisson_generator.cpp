@@ -240,7 +240,7 @@ nest::inhomogeneous_poisson_generator::pre_run_hook()
 void
 nest::inhomogeneous_poisson_generator::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and static_cast< delay >( from ) < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( P_.rate_times_.size() == P_.rate_values_.size() );
 

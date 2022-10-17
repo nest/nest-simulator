@@ -456,7 +456,7 @@ NodeCollectionPrimitive::slice( size_t start, size_t end, size_t step ) const
   }
 
   NodeCollectionPTR sliced_nc;
-  if ( step == 1 and metadata_ == nullptr )
+  if ( step == 1 and not metadata_ )
   {
     // Create primitive NodeCollection passing node IDs.
     // Subtract 1 because "end" is one past last element to take while constructor expects ID of last node.
@@ -506,7 +506,7 @@ NodeCollectionPrimitive::print_primitive( std::ostream& out ) const
 }
 
 bool
-NodeCollectionPrimitive::is_contiguous_ascending( NodeCollectionPrimitive& other )
+NodeCollectionPrimitive::is_contiguous_ascending( NodeCollectionPrimitive& other ) const
 {
   return ( ( last_ + 1 ) == other.first_ ) and ( model_id_ == other.model_id_ );
 }

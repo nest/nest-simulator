@@ -61,7 +61,7 @@ const SpecialFunctionsModule::LambertWm1Function lambertwm1function;
 
 // GSL independent code
 const std::string
-SpecialFunctionsModule::name( void ) const
+SpecialFunctionsModule::name() const
 {
   return std::string( "SpecialFunctionsModule" ); // Return name of the module
 }
@@ -275,7 +275,7 @@ SpecialFunctionsModule::ErfcFunction::execute( SLIInterpreter* i ) const
 gsl_function SpecialFunctionsModule::GaussDiskConvFunction::F_;
 
 
-SpecialFunctionsModule::GaussDiskConvFunction::GaussDiskConvFunction( void )
+SpecialFunctionsModule::GaussDiskConvFunction::GaussDiskConvFunction()
 {
   // allocate integration workspace
   w_ = gsl_integration_workspace_alloc( MAX_QUAD_SIZE );
@@ -284,7 +284,7 @@ SpecialFunctionsModule::GaussDiskConvFunction::GaussDiskConvFunction( void )
   F_.function = SpecialFunctionsModule::GaussDiskConvFunction::f_;
 }
 
-SpecialFunctionsModule::GaussDiskConvFunction::~GaussDiskConvFunction( void )
+SpecialFunctionsModule::GaussDiskConvFunction::~GaussDiskConvFunction()
 {
   // free integration workspace
   gsl_integration_workspace_free( w_ );

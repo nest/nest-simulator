@@ -22,8 +22,6 @@
 
 #include "iaf_psc_exp_multisynapse.h"
 
-// C++ includes:
-#include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -38,8 +36,6 @@
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -175,7 +171,7 @@ iaf_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* node
   const size_t old_n_receptors = this->n_receptors_();
   if ( updateValue< std::vector< double > >( d, "tau_syn", tau_syn_ ) )
   {
-    if ( this->n_receptors_() != old_n_receptors && has_connections_ == true )
+    if ( this->n_receptors_() != old_n_receptors and has_connections_ )
     {
       throw BadProperty( "The neuron has connections, therefore the number of ports cannot be reduced." );
     }

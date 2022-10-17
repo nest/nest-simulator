@@ -35,10 +35,7 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -557,7 +554,6 @@ nest::iaf_psc_alpha_canon::thresh_find_( double const dt ) const
   default:
     throw BadProperty( "Invalid interpolation order in iaf_psc_alpha_canon." );
   }
-  return 0;
 }
 
 // finds threshpassing via linear interpolation

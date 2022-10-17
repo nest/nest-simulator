@@ -53,10 +53,10 @@ private:
   static size_t allocations;
 
 public:
-  TokenArrayObj( void )
-    : p( NULL )
-    , begin_of_free_storage( NULL )
-    , end_of_free_storage( NULL )
+  TokenArrayObj()
+    : p( nullptr )
+    , begin_of_free_storage( nullptr )
+    , end_of_free_storage( nullptr )
     , alloc_block_size( ARRAY_ALLOC_SIZE )
     , refs_( 1 ) {};
 
@@ -78,13 +78,13 @@ public:
   }
 
   size_t
-  size( void ) const
+  size() const
   {
     return ( size_t ) ( begin_of_free_storage - p );
   }
 
   size_t
-  capacity( void ) const
+  capacity() const
   {
     return ( size_t ) ( end_of_free_storage - p );
   }
@@ -119,11 +119,11 @@ public:
 
   // Memory allocation
 
-  bool shrink( void );
+  bool shrink();
   bool reserve( size_t );
 
   unsigned int
-  references( void )
+  references()
   {
     return refs_;
   }
@@ -222,7 +222,7 @@ public:
   }
 
   void
-  pop_back( void )
+  pop_back()
   {
     ( --begin_of_free_storage )->clear();
   }
@@ -257,7 +257,7 @@ public:
 
   void append_move( TokenArrayObj& );
 
-  void clear( void );
+  void clear();
 
 
   const TokenArrayObj& operator=( const TokenArrayObj& );
@@ -265,7 +265,7 @@ public:
   bool operator==( const TokenArrayObj& ) const;
 
   bool
-  empty( void ) const
+  empty() const
   {
     return size() == 0;
   }
@@ -273,12 +273,12 @@ public:
   void info( std::ostream& ) const;
 
   static size_t
-  getallocations( void )
+  getallocations()
   {
     return allocations;
   }
 
-  bool valid( void ) const; // check integrity
+  bool valid() const; // check integrity
 };
 
 std::ostream& operator<<( std::ostream&, const TokenArrayObj& );

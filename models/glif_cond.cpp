@@ -40,9 +40,6 @@
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
-#include "lockptrdatum.h"
 
 using namespace nest;
 
@@ -372,7 +369,7 @@ nest::glif_cond::Parameters_::set( const DictionaryDatum& d )
         + "), must have the same size." );
     }
 
-    if ( this->n_receptors_() != old_n_receptors && has_connections_ == true )
+    if ( this->n_receptors_() != old_n_receptors and has_connections_ )
     {
       throw BadProperty(
         "The neuron has connections, therefore the number of ports cannot be "
@@ -455,9 +452,9 @@ nest::glif_cond::State_::set( const DictionaryDatum& d, const Parameters_& p, do
 
 nest::glif_cond::Buffers_::Buffers_( glif_cond& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
   , step_( Time::get_resolution().get_ms() )
   , IntegrationStep_( std::min( 0.01, step_ ) )
   , I_( 0.0 )
@@ -466,9 +463,9 @@ nest::glif_cond::Buffers_::Buffers_( glif_cond& n )
 
 nest::glif_cond::Buffers_::Buffers_( const Buffers_& b, glif_cond& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
   , step_( b.step_ )
   , IntegrationStep_( b.IntegrationStep_ )
   , I_( b.I_ )
@@ -531,7 +528,7 @@ nest::glif_cond::init_buffers_()
   // We must integrate this model with high-precision to obtain decent results
   B_.IntegrationStep_ = std::min( 0.01, B_.step_ );
 
-  if ( B_.c_ == 0 )
+  if ( not B_.c_ )
   {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
   }
@@ -541,7 +538,7 @@ nest::glif_cond::init_buffers_()
   }
 
   B_.sys_.function = glif_cond_dynamics;
-  B_.sys_.jacobian = NULL;
+  B_.sys_.jacobian = nullptr;
   B_.sys_.params = reinterpret_cast< void* >( this );
 
   B_.I_ = 0.0;
@@ -596,14 +593,14 @@ nest::glif_cond::pre_run_hook()
   }
 
   // reallocate instance of stepping function for ODE GSL solver
-  if ( B_.s_ != 0 )
+  if ( B_.s_ )
   {
     gsl_odeiv_step_free( B_.s_ );
   }
   B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, S_.y_.size() );
 
   // reallocate instance of evolution function for ODE GSL solver
-  if ( B_.e_ != 0 )
+  if ( B_.e_ )
   {
     gsl_odeiv_evolve_free( B_.e_ );
   }

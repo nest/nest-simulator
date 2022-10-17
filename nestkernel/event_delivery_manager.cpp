@@ -24,11 +24,7 @@
 
 // C++ includes:
 #include <algorithm> // rotate
-#include <iostream>
-#include <numeric> // accumulate
-
-// Includes from libnestutil:
-#include "logging.h"
+#include <numeric>   // accumulate
 
 // Includes from nestkernel:
 #include "connection_manager.h"
@@ -346,7 +342,10 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
   const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
 
   // Assume a single gather round
-  decrease_buffer_size_spike_data_ = true;
+#pragma omp single
+  {
+    decrease_buffer_size_spike_data_ = true;
+  }
 
   while ( gather_completed_checker_.any_false() )
   {

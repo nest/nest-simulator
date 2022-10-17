@@ -25,7 +25,6 @@
 
 // C++ includes:
 #include <cmath>
-#include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -38,12 +37,10 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "arraydatum.h"
 #include "booldatum.h"
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
-#include "integerdatum.h"
 
 namespace nest
 {
@@ -227,8 +224,6 @@ nest::sinusoidal_poisson_generator::pre_run_hook()
 
   V_.sin_ = std::sin( V_.h_ * P_.om_ ); // block elements
   V_.cos_ = std::cos( V_.h_ * P_.om_ );
-
-  return;
 }
 
 void

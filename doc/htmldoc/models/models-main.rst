@@ -41,7 +41,11 @@ NESTML combines:
 
 .. seealso::
 
-  :ref:`Install NESTML with NEST <nestml>`
+  See the :doc:`NESTML docs for installation details <nestml:index>`
+
+.. note::
+
+  NESTML is also available as part of NEST's official :ref:`docker image <docker>`
 
 
 
@@ -79,63 +83,11 @@ Synapse models may begin with author name (e.g., ``clopath_synapsae``) or proces
 Devices
 ~~~~~~~
 
-A device name should represent its physical counter point - like a multimeter is ``multimeter``.  In general, the term ``recorder`` is used for devices
+A device name should represent its physical counterpart - like a multimeter is ``multimeter``.  In general, the term ``recorder`` is used for devices
 that store or generate output. The term  ``generator`` is used for devices that provide input into the simulation.
 
 
-Table of model terms
-~~~~~~~~~~~~~~~~~~~~~
+.. seealso::
 
-The following table provides the NEST term used for a specific descriptor of a model along with commonly used alternative terms you may find in the literature.
-Additional terms may be used to help differentiate models not included in the list below.
-See the the :doc:`model directory <index>` to access the full description of each model.
-
-.. list-table:: Common model terms
-   :widths: 50 25 25
-   :header-rows: 1
-
-   * - Model description
-     - NEST term
-     - Alternative terms
-   * - Integrate and fire
-     - iaf
-     - IF
-   * - Adaptive exponential integrate and fire
-     - aeif
-     - AdEx
-   * - Hodgkin Huxley
-     - hh
-     -
-   * - Generalized integrate and fire (Spike response model)
-     - gif
-     - SRM
-   * - Generalized leaky integrate and fire
-     - glif
-     -
-   * -
-     - amat / mat
-     -
-   * - Conductance based
-     - cond
-     - COBA
-   * - Current based
-     - psc
-     - CUBA
-   * - Hill Tononi
-     - ht
-     -
-   * - Point process
-     - pp
-     -
-   * - Spike timing dependent plasticity
-     - stdp
-     -
-   * - Compartmental model
-     - cm
-     -
-   * - Precise spike timing
-     - ps
-     -
-
-
+  See our glossary section on :ref:`common abbreviations used for model terms <model_terms>`. It includes alternative terms commonly used in the literatue.
 

@@ -61,7 +61,7 @@ IAFPropagator::evaluate_P32_( double h ) const
 
   const double P32 = gamma_ * exp_h_tau_syn * expm1_h_tau;
 
-  if ( std::isnormal(P32) and P32 > 0 )
+  if ( std::isnormal( P32 ) and P32 > 0 )
   {
     return std::make_tuple( P32, exp_h_tau_syn, expm1_h_tau, numerics::nan );
   }

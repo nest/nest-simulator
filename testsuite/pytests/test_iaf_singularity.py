@@ -58,10 +58,10 @@ class TestIAFSingularity:
         nest.resolution = h
 
         neurons = nest.Create(model, n=len(tau_syn),
-                      params={"tau_m": tau_m,
-                              "tau_syn_ex": tau_syn,
-                              "tau_syn_in": tau_syn,
-                              "V_th": np.inf})
+                              params={"tau_m": tau_m,
+                                      "tau_syn_ex": tau_syn,
+                                      "tau_syn_in": tau_syn,
+                                      "V_th": np.inf})
 
         spike_gen = nest.Create('spike_generator', params={'spike_times': [1.]})
         vm = nest.Create('voltmeter', params={'interval': h})
@@ -71,7 +71,7 @@ class TestIAFSingularity:
         nest.Connect(vm, neurons)
 
         nest.Simulate(10 * tau_m)
-        
+
         d = pd.DataFrame.from_records(vm.events).set_index(['times', 'senders'])
         assert not any(d.V_m.isnull()), "Voltmeter returned NaN"
 
@@ -83,5 +83,3 @@ class TestIAFSingularity:
 
         # Finally the real test, factor 3 determine by visual checks
         assert all(np.abs(dV_by_sender.V_m.max()) < 3 * V_range * h)
-        
-        

@@ -83,8 +83,8 @@ protected:
   double tau_m_;   //!< Membrane time constant in ms
   double c_m_;     //!< Membrane capacitance in pF
 
-  double h_min_regular_;  //!< Smallest h for which regular P31 case applies
-  
+  double h_min_regular_; //!< Smallest h for which regular P31 case applies
+
   double beta_;  //!< (tau_syn * tau_m) / (tau_m - tau_syn)
   double gamma_; //!< beta_ / c_m
 

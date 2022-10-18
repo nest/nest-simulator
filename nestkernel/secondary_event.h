@@ -169,7 +169,7 @@ private:
   union CoeffarrayBegin
   {
     std::vector< unsigned int >::iterator as_uint;
-    typename std::vector< DataType >::iterator as_d;
+    typename std::vector< DataType >::iterator as_DataType;
 
     CoeffarrayBegin() {}; // need to provide default constructor due to
                           // non-trivial constructors of iterators
@@ -178,7 +178,7 @@ private:
   union CoeffarrayEnd
   {
     std::vector< unsigned int >::iterator as_uint;
-    typename std::vector< DataType >::iterator as_d;
+    typename std::vector< DataType >::iterator as_DataType;
 
     CoeffarrayEnd() {}; // need to provide default constructor due to
                         // non-trivial constructors of iterators
@@ -239,8 +239,8 @@ public:
   void
   set_coeffarray( std::vector< DataType >& ca )
   {
-    coeffarray_begin_.as_d = ca.begin();
-    coeffarray_end_.as_d = ca.end();
+    coeffarray_begin_.as_DataType = ca.begin();
+    coeffarray_end_.as_DataType = ca.end();
     assert( coeff_length_ == ca.size() );
   }
 
@@ -273,7 +273,7 @@ public:
   std::vector< unsigned int >::iterator&
   operator>>( std::vector< unsigned int >::iterator& pos ) override
   {
-    for ( typename std::vector< DataType >::iterator it = coeffarray_begin_.as_d; it != coeffarray_end_.as_d; ++it )
+    for ( auto it = coeffarray_begin_.as_DataType; it != coeffarray_end_.as_DataType; ++it )
     {
       // we need the static_cast here as the size of a stand-alone variable
       // and a std::vector entry may differ (e.g. for std::vector< bool >)

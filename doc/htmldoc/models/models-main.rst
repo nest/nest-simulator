@@ -84,7 +84,7 @@ Devices
 ~~~~~~~
 
 A device name should represent its physical counterpart - like a multimeter is ``multimeter``.  In general, the term ``recorder`` is used for devices
-that store or generate output. The term  ``generator`` is used for devices that provide input into the simulation.
+that store or generate output (e.g., spike times or synaptic strengths over time). The term  ``generator`` is used for devices that provide input into the simulation.
 
 
 .. seealso::

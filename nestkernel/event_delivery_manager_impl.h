@@ -152,7 +152,7 @@ EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
     // make sure also labeled and connection created by CopyModel are
     // considered.
     const std::vector< synindex >& supported_syn_ids = e.get_supported_syn_ids();
-    for ( auto cit = supported_syn_ids.begin(); cit != supported_syn_ids.end(); ++cit )
+    for ( const auto& syn_id : supported_syn_ids )
     {
       const std::vector< size_t >& positions =
         kernel().connection_manager.get_secondary_send_buffer_positions( tid, lid, *cit );

@@ -59,7 +59,7 @@ Note that these are not terms used specifically for NEST, but are common in HPC 
         * A single core can have one or two threads. Therefore the total number of possible threads is double the number of cores.
           *In NEST, we recommend only having one thread per core.*
 
-To efficiently run your large and complex simulation, you need to configure the optimal number of :refs:`threads <threads>` and :ref:`processes <mpi_process>` for
+To efficiently run your large and complex simulation, you need to configure the optimal number of :ref:`threads <threads>` and :ref:`processes <mpi_process>` for
 your simulation and the given hardware of the HPC system you are using.
 
 

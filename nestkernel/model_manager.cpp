@@ -266,8 +266,7 @@ ModelManager::copy_connection_model_( index old_id, Name new_name )
 {
   size_t new_id = connection_models_[ 0 ].size();
 
-  if ( new_id == invalid_synindex ) // we wrapped around (=63), maximal id of
-                                    // connection_model = 62, see nest_types.h
+  if ( new_id == invalid_synindex )
   {
     const std::string msg = String::compose(
       "CopyModel cannot generate another synapse. Maximal synapse model count of %1 exceeded.", MAX_SYN_ID );

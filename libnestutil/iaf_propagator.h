@@ -57,17 +57,25 @@ public:
   IAFPropagator( double tau_syn, double tau_m, double c_m );
 
 protected:
-  //! True if singularity needs to be checked carefully
-  bool possibly_singular_() const;
+  /**
+   * Assume numerical stability if time constants differ by more than this limit.
+   *
+   * Boundary 0.01 ms chosen to balance singularity detection against extra
+   * computational cost in case of suspected singularity. Instabilities are
+   * only observed for differences O(10^-7 ms).
+   */
+  static constexpr double NUMERICAL_STABILITY_LIMIT_ = 0.01;
 
   /**
    * Compute propagator connecting I_syn to V_m and auxiliary quantities for given time interval.
    *
    * This method computes all quantities common to alpha and exponential synaptic dynamics.
    *
+   * @note Fourth return value is real-valued only in the singular limit and `numerics::nan` otherwise
+   * to avoid unnecessary computation of exp().
+   *
    * @param h time interval [ms]
-   * @returns tuple with P_VI, exp( -h / tau_syn_ ), expm1( -h / tau_m_ + h / tau_syn_ )
-   * and exp( -h / tau_m_ )
+   * @returns tuple with P_VI, exp( -h / tau_syn_ ), expm1( -h / tau_m_ + h / tau_syn_ ), exp( -h / tau_m_ )
    */
   std::tuple< double, double, double, double > evaluate_P32_( double h ) const;
 
@@ -75,9 +83,13 @@ protected:
   double tau_m_;   //!< Membrane time constant in ms
   double c_m_;     //!< Membrane capacitance in pF
 
-  double alpha_; //!< 1/(c*tau*tau) * (tau_syn - tau)
-  double beta_;  //!< tau_syn * tau/(tau - tau_syn)
-  double gamma_; //!< beta_/c
+  double beta_;  //!< (tau_syn * tau_m) / (tau_m - tau_syn)
+  double gamma_; //!< beta_ / c_m
+
+  double inv_tau_syn_; //!< 1 / tau_syn
+  double inv_tau_m_;   //!< 1 / tau_m
+  double inv_c_m_;     //!< 1 / c_m
+  double inv_beta_;    //!< 1 / beta
 };
 
 

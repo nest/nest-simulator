@@ -133,6 +133,7 @@ ModelManager::initialize()
       for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
       {
         connection_models_[ t ].push_back( connection_model->clone( name ) );
+        connection_models_[ t ][syn_id]->set_syn_id( syn_id );
       }
 
       synapsedict_->insert( name, syn_id );

@@ -125,15 +125,9 @@ ModelManager::initialize()
       std::string name = connection_model->get_name();
       const synindex syn_id = connection_models_[ 0 ].size();
 
-      if ( not connection_model->is_primary() )
-      {
-	connection_model->get_event()->add_syn_id( syn_id );
-      }
-
       for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
       {
-        connection_models_[ t ].push_back( connection_model->clone( name ) );
-        connection_models_[ t ][syn_id]->set_syn_id( syn_id );
+        connection_models_[ t ].push_back( connection_model->clone( name, syn_id ) );
       }
 
       synapsedict_->insert( name, syn_id );
@@ -282,17 +276,9 @@ ModelManager::copy_connection_model_( index old_id, Name new_name )
   }
   assert( new_id != invalid_synindex );
 
-  // if the copied synapse is a secondary connector model the synid of the copy
-  // has to be mapped to the corresponding secondary event type
-  if ( not get_connection_model( old_id ).is_primary() )
-  {
-    get_connection_model( old_id ).get_event()->add_syn_id( new_id );
-  }
-
   for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
   {
-    connection_models_[ t ].push_back( get_connection_model( old_id ).clone( new_name.toString() ) );
-    connection_models_[ t ][ new_id ]->set_syn_id( new_id );
+    connection_models_[ t ].push_back( get_connection_model( old_id ).clone( new_name.toString(), new_id ) );
   }
 
   synapsedict_->insert( new_name, new_id );
@@ -571,16 +557,9 @@ ModelManager::register_connection_model_( ConnectorModel* cf )
   builtin_connection_models_.push_back( cf );
 
   const synindex syn_id = connection_models_[ 0 ].size();
-
-  if ( not cf->is_primary() )
-  {
-    cf->get_event()->add_syn_id( syn_id );
-  }
-
   for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
   {
-    connection_models_[ t ].push_back( cf->clone( cf->get_name() ) );
-    connection_models_[ t ][ syn_id ]->set_syn_id( syn_id );
+    connection_models_[ t ].push_back( cf->clone( cf->get_name(), syn_id ) );
   }
 
   synapsedict_->insert( cf->get_name(), syn_id );

@@ -86,7 +86,7 @@ public:
     const double delay = NAN,
     const double weight = NAN ) = 0;
 
-  virtual ConnectorModel* clone( std::string ) const = 0;
+  virtual ConnectorModel* clone( std::string, synindex syn_id ) const = 0;
 
   virtual void calibrate( const TimeConverter& tc ) = 0;
 
@@ -216,7 +216,7 @@ public:
     const double delay,
     const double weight ) override;
 
-  ConnectorModel* clone( std::string ) const override;
+  ConnectorModel* clone( std::string, synindex ) const override;
 
   void calibrate( const TimeConverter& tc ) override;
 
@@ -303,9 +303,17 @@ public:
 
 
   ConnectorModel*
-  clone( std::string name ) const
+  clone( std::string name, synindex syn_id ) const
   {
-    return new GenericSecondaryConnectorModel( *this, name ); // calls copy construtor
+    ConnectorModel* new_cm = new GenericSecondaryConnectorModel( *this, name ); // calls copy construtor
+    new_cm->set_syn_id( syn_id );
+
+    if ( not new_cm->is_primary() )
+    {
+      new_cm->get_event()->add_syn_id( syn_id );
+    }
+
+    return new_cm;
   }
 
   SecondaryEvent*

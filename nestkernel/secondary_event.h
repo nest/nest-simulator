@@ -199,9 +199,11 @@ public:
   void
   add_syn_id( const synindex synid ) override
   {
-    assert( not supports_syn_id( synid ) );
-    VPManager::assert_single_threaded();
-    supported_syn_ids_.push_back( synid );
+    if ( not supports_syn_id( synid ) )
+    {
+      VPManager::assert_single_threaded();
+      supported_syn_ids_.push_back( synid );
+    }
   }
 
   const std::vector< synindex >&

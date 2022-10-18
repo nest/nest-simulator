@@ -58,13 +58,13 @@ public:
 
 protected:
   /**
-   * Assume numerical stability if time constants differ by more than this limit.
+   * Scale factor for singularity test for P31 computation.
    *
-   * Boundary 0.01 ms chosen to balance singularity detection against extra
-   * computational cost in case of suspected singularity. Instabilities are
-   * only observed for differences O(10^-7 ms).
+   * Regular case applies if h > NUMERICAL_STABILITY_FACTOR_ * tau_m^2 / |tau_m - tau_syn|
+   *
+   * See IAF_Integration_Singularity for details.
    */
-  static constexpr double NUMERICAL_STABILITY_LIMIT_ = 0.01;
+  static constexpr double NUMERICAL_STABILITY_FACTOR_ = 1e-7;
 
   /**
    * Compute propagator connecting I_syn to V_m and auxiliary quantities for given time interval.
@@ -83,6 +83,8 @@ protected:
   double tau_m_;   //!< Membrane time constant in ms
   double c_m_;     //!< Membrane capacitance in pF
 
+  double h_min_regular_;  //!< Smallest h for which regular P31 case applies
+  
   double beta_;  //!< (tau_syn * tau_m) / (tau_m - tau_syn)
   double gamma_; //!< beta_ / c_m
 

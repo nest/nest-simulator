@@ -28,6 +28,7 @@ IAFPropagator::IAFPropagator()
   : tau_syn_( numerics::nan )
   , tau_m_( numerics::nan )
   , c_m_( numerics::nan )
+  , h_min_regular_( numerics::nan )
   , beta_( numerics::nan )
   , gamma_( numerics::nan )
   , inv_tau_syn_( numerics::nan )
@@ -42,6 +43,7 @@ IAFPropagator::IAFPropagator( double tau_syn, double tau_m, double c_m )
   : tau_syn_( tau_syn )
   , tau_m_( tau_m )
   , c_m_( c_m )
+  , h_min_regular_( NUMERICAL_STABILITY_FACTOR_ * tau_m_ * tau_m_ / std::abs( tau_m_ - tau_syn_ ) )
   , beta_( tau_syn_ * tau_m_ / ( tau_m_ - tau_syn_ ) ) // == inf if tau_m == tau_syn, thus well-defined
   , gamma_( beta_ / c_m_ )
   , inv_tau_syn_( 1 / tau_syn_ )
@@ -59,8 +61,7 @@ IAFPropagator::evaluate_P32_( double h ) const
 
   const double P32 = gamma_ * exp_h_tau_syn * expm1_h_tau;
 
-  // Two-step check for instability to avoid calculation of P32_singular if definitely not singular
-  if ( std::abs( tau_m_ - tau_syn_ ) >= NUMERICAL_STABILITY_LIMIT_ )
+  if ( std::isnormal(P32) and P32 > 0 )
   {
     return std::make_tuple( P32, exp_h_tau_syn, expm1_h_tau, numerics::nan );
   }
@@ -68,15 +69,7 @@ IAFPropagator::evaluate_P32_( double h ) const
   {
     const double exp_h_tau = std::exp( -h * inv_tau_m_ );
     const double P32_singular = h * inv_c_m_ * exp_h_tau;
-
-    if ( tau_m_ == tau_syn_ or std::abs( P32 - P32_singular ) > P32_singular )
-    {
-      return std::make_tuple( P32_singular, exp_h_tau_syn, expm1_h_tau, exp_h_tau );
-    }
-    else
-    {
-      return std::make_tuple( P32, exp_h_tau_syn, expm1_h_tau, numerics::nan );
-    }
+    return std::make_tuple( P32_singular, exp_h_tau_syn, expm1_h_tau, exp_h_tau );
   }
 }
 
@@ -106,20 +99,20 @@ IAFPropagatorAlpha::evaluate( double h ) const
   double expm1_h_tau;
   double exp_h_tau;
 
-  // Compute P32 first, including singularity handling. If conditions are
-  // numerically stable, this will return exp_h_tau == NaN. Since instability
-  // would be introduced to P31 through the same expm1_h_tau term as in P32,
-  // we can use the stability information from P32 for P31 and can directly
-  // evaluate either the stable or singular case.
   std::tie( P32, exp_h_tau_syn, expm1_h_tau, exp_h_tau ) = evaluate_P32_( h );
 
-  if ( numerics::is_nan( exp_h_tau ) )
+  if ( h > h_min_regular_ )
   {
     const double P31 = gamma_ * exp_h_tau_syn * ( beta_ * expm1_h_tau - h );
     return std::make_tuple( P31, P32 );
   }
   else
   {
+    if ( std::isnan( exp_h_tau ) )
+    {
+      // compute locally if not provided by evaluate_P32_()
+      exp_h_tau = std::exp( -h * inv_tau_m_ );
+    }
     const double P31_singular = 0.5 * h * h * inv_c_m_ * exp_h_tau;
     return std::make_tuple( P31_singular, P32 );
   }

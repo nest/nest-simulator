@@ -549,8 +549,8 @@ ModelManager::register_connection_model_( ConnectorModel* cf )
   if ( synapsedict_->known( cf->get_name() ) )
   {
     delete cf;
-    std::string msg = String::compose(
-      "A synapse type called '%1' already exists.\nPlease choose a different name!", cf->get_name() );
+    std::string msg =
+      String::compose( "A synapse type called '%1' already exists.\nPlease choose a different name!", cf->get_name() );
     throw NamingConflict( msg );
   }
 

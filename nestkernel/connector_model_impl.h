@@ -65,7 +65,7 @@ template < typename ConnectionT >
 ConnectorModel*
 GenericConnectorModel< ConnectionT >::clone( std::string name, synindex syn_id ) const
 {
-  ConnectorModel* new_cm = new GenericConnectorModel( *this, name); // calls copy construtor
+  ConnectorModel* new_cm = new GenericConnectorModel( *this, name ); // calls copy construtor
   new_cm->set_syn_id( syn_id );
   return new_cm;
 }

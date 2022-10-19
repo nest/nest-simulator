@@ -24,7 +24,6 @@
 
 // C++ includes:
 #include <iostream>
-#include <sstream>
 
 // Includes from libnestutil:
 #include "logging.h"
@@ -56,7 +55,6 @@
 #include "arraydatum.h"
 #include "booldatum.h"
 #include "doubledatum.h"
-#include "integerdatum.h"
 #include "interpret.h"
 #include "sliexceptions.h"
 #include "stringdatum.h"

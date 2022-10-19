@@ -26,9 +26,6 @@
 
 #include "slistack.h"
 
-// C++ includes:
-#include <typeinfo>
-
 // Includes from sli:
 #include "arraydatum.h"
 #include "integerdatum.h"

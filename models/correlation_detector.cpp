@@ -25,7 +25,6 @@
 // C++ includes:
 #include <cmath>      // for less
 #include <functional> // for bind2nd
-#include <numeric>
 
 // Includes from libnestutil:
 #include "compose.hpp"

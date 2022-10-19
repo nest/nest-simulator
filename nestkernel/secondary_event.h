@@ -23,6 +23,8 @@
 #ifndef SECONDARY_EVENT_H
 #define SECONDARY_EVENT_H
 
+#include <set>
+
 namespace nest
 {
 
@@ -48,14 +50,14 @@ public:
 
   virtual void add_syn_id( const synindex synid ) = 0;
 
-  virtual bool supports_syn_id( const synindex synid ) const = 0;
+  virtual bool has_synid( const synindex synid ) const = 0;
 
   //! size of event in units of unsigned int
   virtual size_t size() = 0;
   virtual std::vector< unsigned int >::iterator& operator<<( std::vector< unsigned int >::iterator& pos ) = 0;
   virtual std::vector< unsigned int >::iterator& operator>>( std::vector< unsigned int >::iterator& pos ) = 0;
 
-  virtual const std::vector< synindex >& get_supported_syn_ids() const = 0;
+  virtual const std::set< synindex >& get_supported_syn_ids() const = 0;
 
   virtual void reset_supported_syn_ids() = 0;
 };
@@ -149,21 +151,20 @@ read_from_comm_buffer( T& d, std::vector< unsigned int >::iterator& pos )
  *
  * Conceptually, there is a one-to-one mapping between a SecondaryEvent
  * and a SecondaryConnectorModel. The synindex of this particular
- * SecondaryConnectorModel is stored as first element in the static vector
+ * SecondaryConnectorModel is stored as first element in the static set
  * supported_syn_ids_ on model registration. There are however reasons (e.g.
  * the usage of CopyModel or the creation of the labeled synapse model
  * duplicates for pyNN) which make it necessary to register several
  * SecondaryConnectorModels with one SecondaryEvent. Therefore the synindices
  * of all these models are added to supported_syn_ids_. The
- * supports_syn_id()-function allows testing if a particular synid is mapped
+ * has_synid()-function allows testing if a particular synid is mapped
  * with the SecondaryEvent in question.
  */
 template < typename DataType, typename Subclass >
 class DataSecondaryEvent : public SecondaryEvent
 {
 private:
-  // we chose std::vector over std::set because we expect this to be short
-  static std::vector< synindex > supported_syn_ids_;
+  static std::set< synindex > supported_syn_ids_;
   static size_t coeff_length_; // length of coeffarray
 
   union CoeffarrayBegin
@@ -199,14 +200,12 @@ public:
   void
   add_syn_id( const synindex synid ) override
   {
-    if ( not supports_syn_id( synid ) )
-    {
-      VPManager::assert_single_threaded();
-      supported_syn_ids_.push_back( synid );
-    }
+
+    VPManager::assert_single_threaded();
+    supported_syn_ids_.insert( synid );
   }
 
-  const std::vector< synindex >&
+  const std::set< synindex >&
   get_supported_syn_ids() const override
   {
     return supported_syn_ids_;
@@ -233,9 +232,11 @@ public:
   }
 
   bool
-  supports_syn_id( const synindex synid ) const override
+  has_synid( const synindex synid ) const override
   {
-    return ( std::find( supported_syn_ids_.begin(), supported_syn_ids_.end(), synid ) != supported_syn_ids_.end() );
+    // Unfortunately, the set::contain function is only available as of C++20
+    auto item = supported_syn_ids_.find( synid );
+    return ( item != supported_syn_ids_.end() );
   }
 
   void
@@ -403,7 +404,7 @@ DataSecondaryEvent< DataType, Subclass >::get_coeffvalue( std::vector< unsigned 
 }
 
 template < typename DataType, typename Subclass >
-std::vector< synindex > DataSecondaryEvent< DataType, Subclass >::supported_syn_ids_;
+std::set< synindex > DataSecondaryEvent< DataType, Subclass >::supported_syn_ids_;
 
 template < typename DataType, typename Subclass >
 size_t DataSecondaryEvent< DataType, Subclass >::coeff_length_ = 0;

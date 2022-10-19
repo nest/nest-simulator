@@ -27,6 +27,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "exceptions.h"
 #include "iaf_propagator.h"
 #include "kernel_manager.h"

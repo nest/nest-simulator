@@ -26,6 +26,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "iaf_propagator.h"
 #include "numerics.h"
 #include "regula_falsi.h"

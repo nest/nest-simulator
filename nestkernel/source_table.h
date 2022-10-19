@@ -145,10 +145,10 @@ private:
    * in the compressed_spike_data_ structure of
    * ConnectionManager. Data from this structure is transferred to the
    * presynaptic side during construction of the presynaptic
-   * connection infrastructure. Arranged as a two dimensional vector
-   * (thread|synapse) with an inner map (source node id -> index).
+   * connection infrastructure. Arranged as a one-dimensional vector
+   * over synapse ids with an inner map (source node id -> index).
    */
-  std::vector< std::vector< std::map< index, size_t > > > compressed_spike_data_map_;
+  std::vector< std::map< index, size_t > > compressed_spike_data_map_;
 
 public:
   SourceTable();
@@ -303,7 +303,7 @@ public:
   // fills the compressed_spike_data structure in ConnectionManager
   void fill_compressed_spike_data( std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data );
 
-  void clear_compressed_spike_data_map( const thread tid );
+  void clear_compressed_spike_data_map();
 };
 
 inline void
@@ -493,11 +493,11 @@ SourceTable::pack_source_node_id_and_syn_id( const index source_node_id, const s
 }
 
 inline void
-SourceTable::clear_compressed_spike_data_map( const thread tid )
+SourceTable::clear_compressed_spike_data_map()
 {
-  for ( synindex syn_id = 0; syn_id < compressed_spike_data_map_[ tid ].size(); ++syn_id )
+  for ( auto& source_index_map : compressed_spike_data_map_ )
   {
-    compressed_spike_data_map_[ tid ][ syn_id ].clear();
+    source_index_map.clear();
   }
 }
 

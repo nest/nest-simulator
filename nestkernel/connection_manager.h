@@ -89,7 +89,7 @@ public:
   void compute_target_data_buffer_size();
   void compute_compressed_secondary_recv_buffer_positions( const thread tid );
   void collect_compressed_spike_data( const thread tid );
-  void clear_compressed_spike_data_map( const thread tid );
+  void clear_compressed_spike_data_map();
 
   /**
    * Add a connectivity rule, i.e. the respective ConnBuilderFactory.
@@ -855,9 +855,9 @@ ConnectionManager::get_compressed_spike_data( const synindex syn_id, const index
 }
 
 inline void
-ConnectionManager::clear_compressed_spike_data_map( const thread tid )
+ConnectionManager::clear_compressed_spike_data_map()
 {
-  source_table_.clear_compressed_spike_data_map( tid );
+  source_table_.clear_compressed_spike_data_map();
 }
 
 } // namespace nest

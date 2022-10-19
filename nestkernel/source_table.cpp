@@ -58,7 +58,7 @@ nest::SourceTable::initialize()
     sources_[ tid ].resize( 0 );
     resize_sources( tid );
     compressible_sources_[ tid ].resize( 0 );
-    compressed_spike_data_map_[ tid ].resize( 0 );
+    compressed_spike_data_map_.resize( 0 );
   } // of omp parallel
 }
 
@@ -71,10 +71,10 @@ nest::SourceTable::finalize()
     {
       clear( tid );
       compressible_sources_[ tid ].clear();
-      compressed_spike_data_map_[ tid ].clear();
     }
   }
 
+  compressed_spike_data_map_.clear();
   sources_.clear();
   current_positions_.clear();
   saved_positions_.clear();
@@ -333,26 +333,10 @@ nest::SourceTable::populate_target_data_fields_( const SourceTablePosition& curr
     target_fields.set_syn_id( current_position.syn_id );
     if ( kernel().connection_manager.use_compressed_spikes() )
     {
-      // WARNING: we set the tid field here to zero just to make sure
-      // it has a defined value; however, this value is _not_ used
-      // anywhere when using compressed spikes
-      target_fields.set_tid( 0 );
-      auto it_idx = compressed_spike_data_map_.at( current_position.tid )
-                      .at( current_position.syn_id )
-                      .find( current_source.get_node_id() );
-      if ( it_idx != compressed_spike_data_map_.at( current_position.tid ).at( current_position.syn_id ).end() )
-      {
-        // WARNING: no matter how tempting, do not try to remove this
-        // entry from the compressed_spike_data_map_; if the MPI buffer
-        // is already full, this entry will need to be communicated the
-        // next MPI comm round, which, naturally, is not possible if it
-        // has been removed
-        target_fields.set_lcid( it_idx->second );
-      }
-      else // another thread is responsible for communicating this compressed source
-      {
-        return false;
-      }
+      const auto source_idx = compressed_spike_data_map_[current_position.syn_id].find( current_source.get_node_id() );
+      assert( source_idx != compressed_spike_data_map_[current_position.syn_id].end() );
+      target_fields.set_tid( invalid_targetindex );
+      target_fields.set_lcid( source_idx->second );
     }
     else
     {
@@ -487,59 +471,41 @@ void
 nest::SourceTable::fill_compressed_spike_data(
   std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data )
 {
+  const size_t num_synapse_models = kernel().model_manager.get_num_connection_models();
   compressed_spike_data.clear();
-  compressed_spike_data.resize( kernel().model_manager.get_num_connection_models() );
+  compressed_spike_data.resize( num_synapse_models );
+  compressed_spike_data_map_.clear();
+  compressed_spike_data_map_.resize( num_synapse_models, std::map< index, size_t >() );
 
-  for ( thread tid = 0; tid < static_cast< thread >( compressible_sources_.size() ); ++tid )
-  {
-    compressed_spike_data_map_[ tid ].clear();
-    compressed_spike_data_map_[ tid ].resize(
-      kernel().model_manager.get_num_connection_models(), std::map< index, size_t >() );
-  }
-
-  // for each local thread and each synapse type we will populate this
-  // vector with spike data containing information about all process
-  // local targets
-
+  // For each synapse type, and for each source neuron with at least one local target,
+  // store in compressed_spike_data one SpikeData entry for each local thread that
+  // owns a local target. In compressed_spike_data_map_ store index into compressed_spike_data[syn_id]
+  // where data for a given source is stored.
   for ( synindex syn_id = 0; syn_id < kernel().model_manager.get_num_connection_models() ; ++syn_id )
   {
-  	std::map< index, size_t > temp_map;
-
-  	for ( thread tid = 0; tid < static_cast< thread >( compressible_sources_.size() ); ++tid )
+  	for ( thread target_thread = 0; target_thread < static_cast< thread >( compressible_sources_.size() ); ++target_thread )
   	{
-    	for ( auto it = compressible_sources_[ tid ][ syn_id ].begin();
-                 it != compressible_sources_[ tid ][ syn_id ].end();
-                 ++it )
+    	for ( const auto& connection : compressible_sources_[ target_thread ][ syn_id ] )
       {
-      	const auto sender_gid = it->first;
+      	const auto source_gid = connection.first;
 
-      	if ( temp_map.find( sender_gid ) == temp_map.end() )
+      	if ( compressed_spike_data_map_[ syn_id ].find( source_gid ) == compressed_spike_data_map_[ syn_id ].end() )
       	{
-      		std::vector< SpikeData > spike_data( kernel().vp_manager.get_num_threads(),
-      				                                 SpikeData( invalid_targetindex, invalid_synindex, invalid_lcid, 0 ) );
-      		temp_map[ sender_gid ] = compressed_spike_data[ syn_id ].size();
-
-          // WARNING: store source-node-id -> process-global-synapse
-          // association in compressed_spike_data_map on a
-          // pseudo-randomly selected thread which houses targets for
-          // this source; this tries to balance memory usage of this
-          // data structure across threads
-          const thread responsible_tid = tid;
-
-          compressed_spike_data_map_[ responsible_tid ][ syn_id ].insert(
-            std::make_pair( sender_gid, compressed_spike_data[ syn_id ].size() ) );
-
-          compressed_spike_data[ syn_id ].push_back( spike_data );
+          // Set up entry for new source
+          const auto new_source_index = compressed_spike_data[ syn_id ].size();
+          compressed_spike_data[ syn_id ].emplace_back( kernel().vp_manager.get_num_threads(),
+                                                        SpikeData( invalid_targetindex, invalid_synindex, invalid_lcid, 0 ) );
+          compressed_spike_data_map_[ syn_id ].insert( std::make_pair( source_gid, new_source_index ) );
       	}
 
-      	const auto map_entry = temp_map.find( sender_gid );
-      	assert( compressed_spike_data[ syn_id ][ map_entry->second ][ tid ].get_lcid() == invalid_lcid );
-      	compressed_spike_data[ syn_id ][ map_entry->second ][ tid ] = it->second;
+      	const auto source_index = compressed_spike_data_map_[ syn_id ].find( source_gid )->second;
+      	assert( compressed_spike_data[ syn_id ][ source_index ][ target_thread ].get_lcid() == invalid_lcid );
+      	compressed_spike_data[ syn_id ][ source_index ][ target_thread ] = connection.second;
+      } // for connection
 
-      } // for it
-
-    	compressible_sources_[ tid ][ syn_id ].clear();
-    }  // for tid
+    	compressible_sources_[ target_thread ][ syn_id ].clear();
+      
+    }  // for target_thread
   }  // for syn_id
 }
 

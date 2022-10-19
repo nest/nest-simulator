@@ -743,13 +743,9 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
   }
 
 #pragma omp barrier
-  if ( kernel().connection_manager.use_compressed_spikes() )
-  {
-    kernel().connection_manager.clear_compressed_spike_data_map( tid );
-  }
-
 #pragma omp single
   {
+    kernel().connection_manager.clear_compressed_spike_data_map();
     kernel().node_manager.set_have_nodes_changed( false );
     kernel().connection_manager.unset_connections_have_changed();
   }

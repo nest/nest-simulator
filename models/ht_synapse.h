@@ -249,12 +249,12 @@ ht_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connector
     throw BadProperty( "tau_P > 0 required." );
   }
 
-  if ( delta_P_ < 0.0 || delta_P_ > 1.0 )
+  if ( delta_P_ < 0.0 or delta_P_ > 1.0 )
   {
     throw BadProperty( "0 <= delta_P <= 1 required." );
   }
 
-  if ( p_ < 0.0 || p_ > 1.0 )
+  if ( p_ < 0.0 or p_ > 1.0 )
   {
     throw BadProperty( "0 <= P <= 1 required." );
   }

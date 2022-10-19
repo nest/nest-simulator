@@ -175,7 +175,7 @@ nest::iaf_psc_alpha_ps::Parameters_::set( const DictionaryDatum& d, Node* node )
     throw BadProperty( "Refractory time must be at least one time step." );
   }
 
-  if ( tau_m_ <= 0 || tau_syn_ex_ <= 0 || tau_syn_in_ <= 0 )
+  if ( tau_m_ <= 0 or tau_syn_ex_ <= 0 or tau_syn_in_ <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -323,7 +323,7 @@ nest::iaf_psc_alpha_ps::update( Time const& origin, const long from, const long 
     const long T = origin.get_steps() + lag;
     // if neuron returns from refractoriness during this step, place
     // pseudo-event in queue to mark end of refractory period
-    if ( S_.is_refractory_ && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
+    if ( S_.is_refractory_ and T + 1 - S_.last_spike_step_ == V_.refractory_steps_ )
     {
       B_.events_.add_refractory( T, S_.last_spike_offset_ );
     }

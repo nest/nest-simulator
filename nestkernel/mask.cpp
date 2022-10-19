@@ -280,7 +280,7 @@ BoxMask< 2 >::inside( const Position< 2 >& p ) const
   // If the box is not rotated we just check if the point is inside the box.
   if ( not is_rotated_ )
   {
-    return ( lower_left_ <= p ) && ( p <= upper_right_ );
+    return lower_left_ <= p and ( p <= upper_right_ );
   }
 
   // If we have a rotated box, we rotate the point down to the unrotated box,
@@ -297,7 +297,7 @@ BoxMask< 2 >::inside( const Position< 2 >& p ) const
   const Position< 2 > new_p( new_x, new_y );
 
   // We need to add a small epsilon in case of rounding errors.
-  return ( lower_left_ - eps_ <= new_p ) && ( new_p <= upper_right_ + eps_ );
+  return lower_left_ - eps_ <= new_p and ( new_p <= upper_right_ + eps_ );
 }
 
 template <>
@@ -307,7 +307,7 @@ BoxMask< 3 >::inside( const Position< 3 >& p ) const
   // If the box is not rotated we just check if the point is inside the box.
   if ( not is_rotated_ )
   {
-    return ( lower_left_ <= p ) && ( p <= upper_right_ );
+    return lower_left_ <= p and ( p <= upper_right_ );
   }
 
   // If we have a rotated box, we rotate the point down to the unrotated box,
@@ -330,7 +330,7 @@ BoxMask< 3 >::inside( const Position< 3 >& p ) const
   const Position< 3 > new_p( new_x, new_y, new_z );
 
   // We need to add a small epsilon in case of rounding errors.
-  return ( lower_left_ - eps_ <= new_p ) && ( new_p <= upper_right_ + eps_ );
+  return lower_left_ - eps_ <= new_p and ( new_p <= upper_right_ + eps_ );
 }
 
 template <>

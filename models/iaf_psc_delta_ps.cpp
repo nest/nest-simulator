@@ -302,7 +302,7 @@ iaf_psc_delta_ps::update( Time const& origin, const long from, const long to )
     double t = V_.h_ms_;
 
     // place pseudo-event in queue to mark end of refractory period
-    if ( S_.is_refractory_ && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
+    if ( S_.is_refractory_ and T + 1 - S_.last_spike_step_ == V_.refractory_steps_ )
     {
       B_.events_.add_refractory( T, S_.last_spike_offset_ );
     }
@@ -427,7 +427,7 @@ iaf_psc_delta_ps::update( Time const& origin, const long from, const long to )
 
       // no events remaining, plain update step across remainder
       // of interval
-      if ( not S_.is_refractory_ && t > 0 ) // not at end of step, do remainder
+      if ( not S_.is_refractory_ and t > 0 ) // not at end of step, do remainder
       {
         propagate_( t );
         if ( S_.U_ >= P_.U_th_ )

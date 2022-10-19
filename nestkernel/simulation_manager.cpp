@@ -471,8 +471,6 @@ nest::SimulationManager::prepare()
   kernel().node_manager.ensure_valid_thread_local_ids();
   kernel().node_manager.prepare_nodes();
 
-  kernel().model_manager.create_secondary_events_prototypes();
-
   // we have to do enter_runtime after prepare_nodes, since we use
   // calibrate to map the ports of MUSIC devices, which has to be done
   // before enter_runtime

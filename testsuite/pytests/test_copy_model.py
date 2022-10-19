@@ -57,8 +57,7 @@ class TestCopyModel:
         assert new_node.model_id > org_node.model_id
         assert new_node.model == new_model
 
-    # Limit to first 66 models until #2492 is fixed
-    @pytest.mark.parametrize('org_model', nest.synapse_models[:66])
+    @pytest.mark.parametrize('org_model', nest.synapse_models)
     def test_copy_synapse_models(self, org_model):
         """
         Test that all built-in synapse models can be copied.

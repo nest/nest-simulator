@@ -524,10 +524,10 @@ nest::SourceTable::fill_compressed_spike_data(
           // pseudo-randomly selected thread which houses targets for
           // this source; this tries to balance memory usage of this
           // data structure across threads
-          const thread responsible_tid = sender_gid % kernel().vp_manager.get_num_threads();
+          const thread responsible_tid = tid;
 
           compressed_spike_data_map_[ responsible_tid ][ syn_id ].insert(
-            std::make_pair( it->first, compressed_spike_data[ syn_id ].size() ) );
+            std::make_pair( sender_gid, compressed_spike_data[ syn_id ].size() ) );
 
           compressed_spike_data[ syn_id ].push_back( spike_data );
       	}

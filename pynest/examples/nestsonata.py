@@ -27,8 +27,8 @@ from pprint import pprint
 
 import matplotlib.pyplot as plt
 
-NUM_PROCESSES = 1
-NUM_THREADS = 8
+NUM_PROCESSES = 4
+NUM_THREADS = 2
 
 SYS_LINUX_SCALE = 1e6
 SYS_DARWIN_SCALE = 1e9
@@ -42,6 +42,7 @@ sys_scale = SYS_DARWIN_SCALE
 example = 'GLIF'
 simulate = False
 plot = False
+verbose_print = True
 create_sonata_network = False  # For testing of convenience function
 pre_sim_time = 10
 
@@ -86,6 +87,9 @@ else:
              overwrite_files=True,
              total_num_virtual_procs=NUM_PROCESSES * NUM_THREADS)
 
+    print("kernel number of processes:", nest.GetKernelStatus('num_processes'))
+    print("kernel number of threads:", nest.GetKernelStatus('local_num_threads'), '\n')
+
     mem_ini = memory_thisjob()
     start_time_create = time.time()
 
@@ -95,14 +99,15 @@ else:
     end_time_create = time.time() - start_time_create
     mem_create = memory_thisjob()
 
-    # print(sonata_connector.node_collections)
-    # print()
+    #print(f"Sonata NC (rank {nest.Rank()}):", sonata_connector.node_collections)
+
+    print(f"Sonata Local NC (rank {nest.Rank()}):", sonata_connector.local_node_collections)
 
     # Connect
     start_time_connect = time.time()
 
     sonata_connector.Connect()
-    print("done connecting")
+    #print("done connecting")
 
     end_time_connect = time.time() - start_time_connect
     mem_connect = memory_thisjob()
@@ -139,19 +144,21 @@ else:
 
     end_time = time.time() - start_time
 
-    print(f"\ncreation took: {end_time_create} s")
-    print(f"connection took: {end_time_connect} s")
-    if simulate:
-        print(f"Pre-simulation (10 ms) took: {end_time_presim} s")
-        print(f"simulation took: {end_time_sim} s")
-    print(f"all took: {end_time} s")
-    print(f'initial memory: {mem_ini} GB')
-    print(f'memory create: {mem_create} GB')
-    print(f'memory connect: {mem_connect} GB\n')
-    if simulate:
-        print(f'number of spikes: {nest.GetKernelStatus("local_spike_counter"):,}')
-    # pprint(nest.GetKernelStatus())
-    # print(nest.GetConnections())
+    if verbose_print:
+        print(f"creation took: {end_time_create} s")
+        print(f"connection took: {end_time_connect} s")
+        if simulate:
+            print(f"Pre-simulation (10 ms) took: {end_time_presim} s")
+            print(f"simulation took: {end_time_sim} s")
+        print(f"all took: {end_time} s")
+        print(f'initial memory: {mem_ini} GB')
+        print(f'memory create: {mem_create} GB')
+        print(f'memory connect: {mem_connect} GB')
+        if simulate:
+            print(f'number of spikes: {nest.GetKernelStatus("local_spike_counter"):,}')
+        # pprint(nest.GetKernelStatus())
+        # print(nest.GetConnections())
+
 
 if plot:
     if not simulate:
@@ -159,6 +166,7 @@ if plot:
     else:
         nest.raster_plot.from_device(s_rec)
         plt.show()
+
 
 """ 
 net_size = nest.GetKernelStatus('network_size')

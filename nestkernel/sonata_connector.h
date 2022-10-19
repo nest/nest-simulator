@@ -197,10 +197,17 @@ private:
 
   hsize_t get_nrows_( H5::DataSet dataset, int ndim );
 
+  hsize_t nest_node_id_to_sonata_node_id( index nest_node_id, hsize_t num_sonata_node_ids );
+
   void read_range_to_edge_id_dset_portion_( long data_buf[][ 2 ], hsize_t row_offset );
 
   std::vector< std::vector< int > > read_indices_dset_( H5::DataSet dataset );
 
+  std::vector< std::vector< int > >
+  read_node_id_to_range_dset_( const size_t tgt_nc_size, const size_t tgt_nc_step, const hsize_t sonata_first_node_id );
+
+  std::vector< std::vector< int > > read_range_to_edge_id_dset_( const size_t tgt_nc_size,
+    std::vector< std::vector< int > > tgt_node_id_to_range_data );
 
   /**
    * Reset all parameters

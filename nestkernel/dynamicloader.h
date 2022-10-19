@@ -87,7 +87,7 @@ private:
    */
   static vecLinkedModules& getLinkedModules();
 
-  // vector to store handles and pointers to dynamic modules
+  //! Vector to store handles and pointers to dynamic modules
   vecDynModules dyn_modules;
 
   //! Dictionary for dynamically loaded modules.

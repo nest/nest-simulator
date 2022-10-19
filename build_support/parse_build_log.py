@@ -419,11 +419,11 @@ def makebuild_summary(log_filename, msg_make_section_start,
                 if is_message(line, msg_make_section_end):
                     # The log file contains only one 'make' section, return.
                     if number_of_error_msgs == 0 and number_of_warning_msgs == expected_warnings:
-                        return(True, number_of_error_msgs, error_summary,
-                               number_of_warning_msgs, expected_warnings, warning_summary)
+                        return (True, number_of_error_msgs, error_summary,
+                                number_of_warning_msgs, expected_warnings, warning_summary)
                     else:
-                        return(False, number_of_error_msgs, error_summary,
-                               number_of_warning_msgs, expected_warnings, warning_summary)
+                        return (False, number_of_error_msgs, error_summary,
+                                number_of_warning_msgs, expected_warnings, warning_summary)
 
     if in_make_section:
         # 'make' was not completed.

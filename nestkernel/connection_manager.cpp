@@ -1499,8 +1499,8 @@ nest::ConnectionManager::deliver_secondary_events( const thread tid,
   std::vector< unsigned int >& recv_buffer )
 {
   const std::vector< ConnectorModel* >& cm = kernel().model_manager.get_connection_models( tid );
-  const Time stamp = kernel().simulation_manager.get_slice_origin() + Time::step( 1  -
-		  kernel().connection_manager.get_min_delay() );
+  const Time stamp =
+    kernel().simulation_manager.get_slice_origin() + Time::step( 1 - kernel().connection_manager.get_min_delay() );
   const std::vector< std::vector< size_t > >& positions_tid = secondary_recv_buffer_pos_[ tid ];
 
   const synindex syn_id_end = positions_tid.size();

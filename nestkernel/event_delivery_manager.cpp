@@ -542,7 +542,8 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
   std::vector< Time > prepared_timestamps( kernel().connection_manager.get_min_delay() );
   for ( size_t lag = 0; lag < ( size_t ) kernel().connection_manager.get_min_delay(); ++lag )
   {
-	  prepared_timestamps[ lag ] = kernel().simulation_manager.get_clock() + Time::step( lag + 1  - kernel().connection_manager.get_min_delay() );
+    prepared_timestamps[ lag ] =
+      kernel().simulation_manager.get_clock() + Time::step( lag + 1 - kernel().connection_manager.get_min_delay() );
   }
 
   for ( thread rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )

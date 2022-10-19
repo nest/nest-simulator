@@ -33,7 +33,7 @@ import pytest
 class TestOnetooneMultithreaded:
     """
     Test that spikes are transmitted correctly after one-to-one connections.
-    
+
     Under certain circumstances in development code, spikes were not transmitted
     after connection with one-to-one rule when running on multiple threads. In
     cases observed, transmission only failed
@@ -58,21 +58,19 @@ class TestOnetooneMultithreaded:
         nest.ResetKernel()
         nest.local_num_threads = num_threads
         nest.use_compressed_spikes = compressed_spikes
-        
+
         sg = nest.Create("spike_generator", params={"spike_times": [t_spike]})
         sr = nest.Create("spike_recorder")
-        
+
         pre = nest.Create("parrot_neuron", num_neurons)
         post = nest.Create("parrot_neuron", num_neurons)
-
 
         nest.Connect(sg, pre)
         nest.Connect(pre, post, "one_to_one", syn_spec={'delay': delay, 'weight': 1})
         nest.Connect(post, sr)
-        
+
         nest.Simulate(t_spike + 3 * delay)
-        
+
         res = sr.get('events')
         assert set(res['senders']) == set(post.tolist())
         assert set(res['times']) == {t_spike + 2 * delay}
-

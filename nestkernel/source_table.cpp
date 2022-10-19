@@ -333,8 +333,9 @@ nest::SourceTable::populate_target_data_fields_( const SourceTablePosition& curr
     target_fields.set_syn_id( current_position.syn_id );
     if ( kernel().connection_manager.use_compressed_spikes() )
     {
-      const auto source_idx = compressed_spike_data_map_[current_position.syn_id].find( current_source.get_node_id() );
-      assert( source_idx != compressed_spike_data_map_[current_position.syn_id].end() );
+      const auto source_idx =
+        compressed_spike_data_map_[ current_position.syn_id ].find( current_source.get_node_id() );
+      assert( source_idx != compressed_spike_data_map_[ current_position.syn_id ].end() );
       target_fields.set_tid( invalid_targetindex );
       target_fields.set_lcid( source_idx->second );
     }
@@ -481,33 +482,31 @@ nest::SourceTable::fill_compressed_spike_data(
   // store in compressed_spike_data one SpikeData entry for each local thread that
   // owns a local target. In compressed_spike_data_map_ store index into compressed_spike_data[syn_id]
   // where data for a given source is stored.
-  for ( synindex syn_id = 0; syn_id < kernel().model_manager.get_num_connection_models() ; ++syn_id )
+  for ( synindex syn_id = 0; syn_id < kernel().model_manager.get_num_connection_models(); ++syn_id )
   {
-  	for ( thread target_thread = 0; target_thread < static_cast< thread >( compressible_sources_.size() ); ++target_thread )
-  	{
-    	for ( const auto& connection : compressible_sources_[ target_thread ][ syn_id ] )
+    for ( thread target_thread = 0; target_thread < static_cast< thread >( compressible_sources_.size() );
+          ++target_thread )
+    {
+      for ( const auto& connection : compressible_sources_[ target_thread ][ syn_id ] )
       {
-      	const auto source_gid = connection.first;
+        const auto source_gid = connection.first;
 
-      	if ( compressed_spike_data_map_[ syn_id ].find( source_gid ) == compressed_spike_data_map_[ syn_id ].end() )
-      	{
+        if ( compressed_spike_data_map_[ syn_id ].find( source_gid ) == compressed_spike_data_map_[ syn_id ].end() )
+        {
           // Set up entry for new source
           const auto new_source_index = compressed_spike_data[ syn_id ].size();
           compressed_spike_data[ syn_id ].emplace_back( kernel().vp_manager.get_num_threads(),
-                                                        SpikeData( invalid_targetindex, invalid_synindex, invalid_lcid, 0 ) );
+            SpikeData( invalid_targetindex, invalid_synindex, invalid_lcid, 0 ) );
           compressed_spike_data_map_[ syn_id ].insert( std::make_pair( source_gid, new_source_index ) );
-      	}
+        }
 
-      	const auto source_index = compressed_spike_data_map_[ syn_id ].find( source_gid )->second;
-      	assert( compressed_spike_data[ syn_id ][ source_index ][ target_thread ].get_lcid() == invalid_lcid );
-      	compressed_spike_data[ syn_id ][ source_index ][ target_thread ] = connection.second;
+        const auto source_index = compressed_spike_data_map_[ syn_id ].find( source_gid )->second;
+        assert( compressed_spike_data[ syn_id ][ source_index ][ target_thread ].get_lcid() == invalid_lcid );
+        compressed_spike_data[ syn_id ][ source_index ][ target_thread ] = connection.second;
       } // for connection
 
-    	compressible_sources_[ target_thread ][ syn_id ].clear();
-      
-    }  // for target_thread
-  }  // for syn_id
+      compressible_sources_[ target_thread ][ syn_id ].clear();
+
+    } // for target_thread
+  }   // for syn_id
 }
-
-
-

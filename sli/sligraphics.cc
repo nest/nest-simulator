@@ -193,7 +193,7 @@ SLIgraphics::ReadPGMFunction::readImage( std::istream* in,
     if ( std::string( magic ) == std::string( "P2" ) ) // ASCII PGM
     {
       int tmp;
-      while ( ( *in >> tmp ) and not( in->eof() ) )
+      while ( *in >> tmp and not in->eof() )
       {
         image.push_back( ( long ) tmp );
       }

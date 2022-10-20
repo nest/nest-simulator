@@ -23,6 +23,7 @@
 #ifndef SECONDARY_EVENT_H
 #define SECONDARY_EVENT_H
 
+// c++ includes
 #include <set>
 
 namespace nest
@@ -49,8 +50,6 @@ public:
   SecondaryEvent* clone() const override = 0;
 
   virtual void add_syn_id( const synindex synid ) = 0;
-
-  virtual bool has_synid( const synindex synid ) const = 0;
 
   //! size of event in units of unsigned int
   virtual size_t size() = 0;
@@ -156,9 +155,7 @@ read_from_comm_buffer( T& d, std::vector< unsigned int >::iterator& pos )
  * the usage of CopyModel or the creation of the labeled synapse model
  * duplicates for pyNN) which make it necessary to register several
  * SecondaryConnectorModels with one SecondaryEvent. Therefore the synindices
- * of all these models are added to supported_syn_ids_. The
- * has_synid()-function allows testing if a particular synid is mapped
- * with the SecondaryEvent in question.
+ * of all these models are added to supported_syn_ids_.
  */
 template < typename DataType, typename Subclass >
 class DataSecondaryEvent : public SecondaryEvent
@@ -200,7 +197,6 @@ public:
   void
   add_syn_id( const synindex synid ) override
   {
-
     VPManager::assert_single_threaded();
     supported_syn_ids_.insert( synid );
   }
@@ -229,14 +225,6 @@ public:
   {
     VPManager::assert_single_threaded();
     coeff_length_ = coeff_length;
-  }
-
-  bool
-  has_synid( const synindex synid ) const override
-  {
-    // Unfortunately, the set::contain function is only available as of C++20
-    auto item = supported_syn_ids_.find( synid );
-    return ( item != supported_syn_ids_.end() );
   }
 
   void

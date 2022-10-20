@@ -161,21 +161,13 @@ public:
   void communicate_Allreduce_sum( std::vector< double >& send_buffer, std::vector< double >& recv_buffer );
 
   /**
-   * Minimum across all ranks.
+   * Equal across all ranks.
    *
    * @param value value on calling rank
-   * @return minimum value across all ranks
+   * @return true if values across all ranks are equal, false otherwise or if
+   *         any rank passes -inf as value
    */
-  double min_cross_ranks( double value );
-
-  /**
-   * Maximum across all ranks.
-   *
-   * @param value value on calling rank
-   * @return maximum value across all ranks
-   */
-  double max_cross_ranks( double value );
-
+  bool equal_cross_ranks( const double value );
 
   std::string get_processor_name();
 

@@ -30,14 +30,12 @@
 // Includes from sli:
 #include "filesystem.h"
 #include "gnureadline.h"
-#include "integerdatum.h"
 #include "interpret.h"
 #include "oosupport.h"
 #include "processes.h"
 #include "sliarray.h"
 #include "sliregexp.h"
 #include "slistartup.h"
-#include "tokenutils.h"
 
 int
 main( int argc, char* argv[] )

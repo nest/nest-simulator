@@ -310,7 +310,7 @@ private:
 inline port
 correlation_detector::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type < 0 || receptor_type > 1 )
+  if ( receptor_type < 0 or receptor_type > 1 )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }

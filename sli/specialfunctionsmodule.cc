@@ -341,7 +341,7 @@ SpecialFunctionsModule::GaussDiskConvFunction::execute( SLIInterpreter* i ) cons
   { /* Gaussian in disk */
     result = 1.0;
   }
-  else if ( y > 1 && r0 > R + sqrt( -log( GSL_DBL_EPSILON / y ) ) )
+  else if ( y > 1 and r0 > R + sqrt( -log( GSL_DBL_EPSILON / y ) ) )
   { /* tail */
     result = 0.25 * R / r0 * ( std::exp( -( r0 - R ) * ( r0 - R ) ) - std::exp( -( r0 + R ) * ( r0 + R ) ) );
   }

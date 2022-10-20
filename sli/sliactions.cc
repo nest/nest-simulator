@@ -33,7 +33,6 @@
 #include "functiondatum.h"
 #include "integerdatum.h"
 #include "interpret.h"
-#include "iostreamdatum.h"
 #include "namedatum.h"
 #include "triedatum.h"
 

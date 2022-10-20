@@ -27,7 +27,6 @@
 // C++ includes:
 #include <cmath>
 #include <cstdio>
-#include <iomanip>
 #include <iostream>
 #include <limits>
 
@@ -42,10 +41,7 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -270,7 +266,7 @@ nest::aeif_cond_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
     throw BadProperty( "Refractory time cannot be negative." );
   }
 
-  if ( tau_syn_ex <= 0 || tau_syn_in <= 0 || tau_w <= 0 )
+  if ( tau_syn_ex <= 0 or tau_syn_in <= 0 or tau_w <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -297,7 +293,7 @@ nest::aeif_cond_exp::State_::set( const DictionaryDatum& d, const Parameters_&, 
   updateValueParam< double >( d, names::g_ex, y_[ G_EXC ], node );
   updateValueParam< double >( d, names::g_in, y_[ G_INH ], node );
   updateValueParam< double >( d, names::w, y_[ W ], node );
-  if ( y_[ G_EXC ] < 0 || y_[ G_INH ] < 0 )
+  if ( y_[ G_EXC ] < 0 or y_[ G_INH ] < 0 )
   {
     throw BadProperty( "Conductances must not be negative." );
   }
@@ -441,7 +437,7 @@ nest::aeif_cond_exp::pre_run_hook()
 void
 nest::aeif_cond_exp::update( const Time& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 
@@ -475,7 +471,7 @@ nest::aeif_cond_exp::update( const Time& origin, const long from, const long to 
       }
 
       // check for unreasonable values; we allow V_M to explode
-      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6 || S_.y_[ State_::W ] > 1e6 )
+      if ( S_.y_[ State_::V_M ] < -1e3 or S_.y_[ State_::W ] < -1e6 or S_.y_[ State_::W ] > 1e6 )
       {
         throw NumericalInstability( get_name() );
       }

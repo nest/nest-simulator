@@ -196,9 +196,7 @@ nest::RandomManager::check_rng_synchrony() const
   for ( auto n = 0; n < NUM_ROUNDS; ++n )
   {
     const auto r = rank_synced_rng_->drand();
-    const auto min = kernel().mpi_manager.min_cross_ranks( r );
-    const auto max = kernel().mpi_manager.max_cross_ranks( r );
-    if ( min != max )
+    if ( not kernel().mpi_manager.equal_cross_ranks( r ) )
     {
       throw KernelException( "Rank-synchronized random number generators are out of sync." );
     }
@@ -217,11 +215,13 @@ nest::RandomManager::check_rng_synchrony() const
       local_max = std::max( r, local_max );
     }
 
-    // Finding the local min and max on each thread and then determining the
-    // global min/max, ensures that all ranks will learn about sync errors.
-    const long min = kernel().mpi_manager.min_cross_ranks( local_min );
-    const long max = kernel().mpi_manager.max_cross_ranks( local_max );
-    if ( min != max )
+    // If local values are not equal, flag this in local_min.
+    if ( local_min != local_max )
+    {
+      local_min = -std::numeric_limits< double >::infinity();
+    }
+
+    if ( not kernel().mpi_manager.equal_cross_ranks( local_min ) )
     {
       throw KernelException( "Thread-synchronized random number generators are out of sync." );
     }

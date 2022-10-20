@@ -27,7 +27,6 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <sys/stat.h>
-#include <sys/types.h>
 #include <unistd.h>
 
 // C++ includes:
@@ -352,7 +351,7 @@ FilesystemModule::CompareFilesFunction::execute( SLIInterpreter* i ) const
   std::ifstream as( flA->c_str(), std::ifstream::in | std::ifstream::binary );
   std::ifstream bs( flB->c_str(), std::ifstream::in | std::ifstream::binary );
 
-  if ( not( as.good() && bs.good() ) )
+  if ( not( as.good() and bs.good() ) )
   {
     as.close();
     bs.close();
@@ -360,12 +359,12 @@ FilesystemModule::CompareFilesFunction::execute( SLIInterpreter* i ) const
   }
 
   bool equal = true;
-  while ( equal && as.good() && bs.good() )
+  while ( equal and as.good() and bs.good() )
   {
     const int ac = as.get();
     const int bc = bs.get();
 
-    if ( not( as.fail() || bs.fail() ) )
+    if ( not( as.fail() or bs.fail() ) )
     {
       equal = ac == bc;
     }

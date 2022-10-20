@@ -557,9 +557,9 @@ pp_cond_exp_mc_urbanczik::send_test_event( Node& target, rport receptor_type, sy
 inline port
 pp_cond_exp_mc_urbanczik::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type < MIN_SPIKE_RECEPTOR || receptor_type >= SUP_SPIKE_RECEPTOR )
+  if ( receptor_type < MIN_SPIKE_RECEPTOR or receptor_type >= SUP_SPIKE_RECEPTOR )
   {
-    if ( receptor_type < 0 || receptor_type >= SUP_CURR_RECEPTOR )
+    if ( receptor_type < 0 or receptor_type >= SUP_CURR_RECEPTOR )
     {
       throw UnknownReceptorType( receptor_type, get_name() );
     }
@@ -574,9 +574,9 @@ pp_cond_exp_mc_urbanczik::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 pp_cond_exp_mc_urbanczik::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type < MIN_CURR_RECEPTOR || receptor_type >= SUP_CURR_RECEPTOR )
+  if ( receptor_type < MIN_CURR_RECEPTOR or receptor_type >= SUP_CURR_RECEPTOR )
   {
-    if ( receptor_type >= 0 && receptor_type < MIN_CURR_RECEPTOR )
+    if ( receptor_type >= 0 and receptor_type < MIN_CURR_RECEPTOR )
     {
       throw IncompatibleReceptorType( receptor_type, get_name(), "CurrentEvent" );
     }
@@ -593,7 +593,7 @@ pp_cond_exp_mc_urbanczik::handles_test_event( DataLoggingRequest& dlr, rport rec
 {
   if ( receptor_type != 0 )
   {
-    if ( receptor_type < 0 || receptor_type >= SUP_CURR_RECEPTOR )
+    if ( receptor_type < 0 or receptor_type >= SUP_CURR_RECEPTOR )
     {
       throw UnknownReceptorType( receptor_type, get_name() );
     }

@@ -63,12 +63,12 @@ provide_property( DictionaryDatum& d, Name propname, const std::vector< double >
   DoubleVectorDatum* arrd = dynamic_cast< DoubleVectorDatum* >( t.datum() );
   assert( arrd );
 
-  if ( ( *arrd )->empty() && not prop.empty() ) // not data from before, add
+  if ( ( *arrd )->empty() and not prop.empty() ) // not data from before, add
   {
     ( *arrd )->insert( ( *arrd )->end(), prop.begin(), prop.end() );
   }
 
-  assert( prop.empty() || **arrd == prop ); // not testing for **arrd.empty()
+  assert( prop.empty() or **arrd == prop ); // not testing for **arrd.empty()
                                             // since that implies prop.empty()
 }
 
@@ -81,12 +81,12 @@ provide_property( DictionaryDatum& d, Name propname, const std::vector< long >& 
   IntVectorDatum* arrd = dynamic_cast< IntVectorDatum* >( t.datum() );
   assert( arrd );
 
-  if ( ( *arrd )->empty() && not prop.empty() ) // not data from before, add
+  if ( ( *arrd )->empty() and not prop.empty() ) // not data from before, add
   {
     ( *arrd )->insert( ( *arrd )->end(), prop.begin(), prop.end() );
   }
 
-  assert( prop.empty() || **arrd == prop ); // not testing for **arrd.empty()
+  assert( prop.empty() or **arrd == prop ); // not testing for **arrd.empty()
                                             // since that implies prop.empty()
 }
 

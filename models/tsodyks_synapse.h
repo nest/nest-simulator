@@ -336,7 +336,7 @@ tsodyks_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Conn
   updateValue< double >( d, names::weight, weight_ );
 
   updateValue< double >( d, names::U, U_ );
-  if ( U_ > 1.0 || U_ < 0.0 )
+  if ( U_ > 1.0 or U_ < 0.0 )
   {
     throw BadProperty( "U must be in [0,1]." );
   }

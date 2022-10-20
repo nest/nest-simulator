@@ -40,8 +40,6 @@
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 namespace nest // template specialization must be placed in namespace
 {
@@ -221,23 +219,23 @@ aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* n
   bool Erev_flag = updateValue< std::vector< double > >( d, names::E_rev, E_rev );
   bool taur_flag = updateValue< std::vector< double > >( d, names::tau_rise, tau_rise );
   bool taud_flag = updateValue< std::vector< double > >( d, names::tau_decay, tau_decay );
-  if ( Erev_flag || taur_flag || taud_flag )
+  if ( Erev_flag or taur_flag or taud_flag )
   { // receptor arrays have been modified
-    if ( ( E_rev.size() != old_n_receptors || tau_rise.size() != old_n_receptors
-           || tau_decay.size() != old_n_receptors )
-      && ( not Erev_flag || not taur_flag || not taud_flag ) )
+    if ( ( E_rev.size() != old_n_receptors or tau_rise.size() != old_n_receptors
+           or tau_decay.size() != old_n_receptors )
+      and ( not Erev_flag or not taur_flag or not taud_flag ) )
     {
       throw BadProperty(
         "If the number of receptor ports is changed, all three arrays "
         "E_rev, tau_rise and tau_decay must be provided." );
     }
-    if ( ( E_rev.size() != tau_rise.size() ) || ( E_rev.size() != tau_decay.size() ) )
+    if ( ( E_rev.size() != tau_rise.size() ) or ( E_rev.size() != tau_decay.size() ) )
     {
       throw BadProperty(
         "The reversal potential, synaptic rise time and synaptic decay time "
         "arrays must have the same size." );
     }
-    if ( tau_rise.size() < old_n_receptors && has_connections_ )
+    if ( tau_rise.size() < old_n_receptors and has_connections_ )
     {
       throw BadProperty(
         "The neuron has connections, therefore the number of ports cannot be "
@@ -245,7 +243,7 @@ aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* n
     }
     for ( size_t i = 0; i < tau_rise.size(); ++i )
     {
-      if ( tau_rise[ i ] <= 0 || tau_decay[ i ] <= 0 )
+      if ( tau_rise[ i ] <= 0 or tau_decay[ i ] <= 0 )
       {
         throw BadProperty( "All synaptic time constants must be strictly positive" );
       }
@@ -495,7 +493,7 @@ aeif_cond_beta_multisynapse::pre_run_hook()
 void
 aeif_cond_beta_multisynapse::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 
@@ -533,7 +531,7 @@ aeif_cond_beta_multisynapse::update( Time const& origin, const long from, const 
       }
 
       // check for unreasonable values; we allow V_M to explode
-      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6 || S_.y_[ State_::W ] > 1e6 )
+      if ( S_.y_[ State_::V_M ] < -1e3 or S_.y_[ State_::W ] < -1e6 or S_.y_[ State_::W ] > 1e6 )
       {
         throw NumericalInstability( get_name() );
       }
@@ -583,7 +581,7 @@ aeif_cond_beta_multisynapse::update( Time const& origin, const long from, const 
 port
 aeif_cond_beta_multisynapse::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type <= 0 || receptor_type > static_cast< port >( P_.n_receptors() ) )
+  if ( receptor_type <= 0 or receptor_type > static_cast< port >( P_.n_receptors() ) )
   {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }
@@ -601,7 +599,7 @@ aeif_cond_beta_multisynapse::handle( SpikeEvent& e )
       "must be positive." );
   }
   assert( e.get_delay_steps() > 0 );
-  assert( ( e.get_rport() > 0 ) && ( ( size_t ) e.get_rport() <= P_.n_receptors() ) );
+  assert( ( e.get_rport() > 0 ) and ( ( size_t ) e.get_rport() <= P_.n_receptors() ) );
 
   B_.spikes_[ e.get_rport() - 1 ].add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );

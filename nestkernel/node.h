@@ -32,14 +32,14 @@
 #include <vector>
 
 // Includes from nestkernel:
+#include "deprecation_warning.h"
 #include "event.h"
 #include "histentry.h"
 #include "nest_names.h"
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node_collection.h"
-
-#include "deprecation_warning.h"
+#include "secondary_event.h"
 
 // Includes from sli:
 #include "dictdatum.h"

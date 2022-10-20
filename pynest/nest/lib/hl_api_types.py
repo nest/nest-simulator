@@ -84,8 +84,8 @@ def CreateParameter(parametertype, specs):
 
     **Parameter types**
 
-    Some available parameter types (`parametertype` parameter), their function and
-    acceptable keys for their corresponding specification dictionaries
+    Examples of available parameter types (`parametertype` parameter), with their function and
+    acceptable keys for their corresponding specification dictionaries:
 
     * Constant
         ::
@@ -100,21 +100,15 @@ def CreateParameter(parametertype, specs):
                 {'min' : float, # minimum value, default: 0.0
                  'max' : float} # maximum value, default: 1.0
 
-            # random parameter with normal distribution, optionally truncated
-            # to [min,max)
+            # random parameter with normal distribution
             'normal':
                 {'mean' : float, # mean value, default: 0.0
-                 'sigma': float, # standard deviation, default: 1.0
-                 'min'  : float, # minimum value, default: -inf
-                 'max'  : float} # maximum value, default: +inf
+                 'std'  : float} # standard deviation, default: 1.0
 
-            # random parameter with lognormal distribution,
-            # optionally truncated to [min,max)
+            # random parameter with lognormal distribution
             'lognormal' :
-                {'mu'   : float, # mean value of logarithm, default: 0.0
-                 'sigma': float, # standard deviation of log, default: 1.0
-                 'min'  : float, # minimum value, default: -inf
-                 'max'  : float} # maximum value, default: +inf
+                {'mean' : float, # mean value of logarithm, default: 0.0
+                 'std'  : float} # standard deviation of log, default: 1.0
     """
     return sli_func('CreateParameter', {parametertype: specs})
 
@@ -1080,7 +1074,7 @@ class Parameter:
                 import nest
 
                 # normal distribution parameter
-                P = nest.CreateParameter('normal', {'mean': 0.0, 'sigma': 1.0})
+                P = nest.CreateParameter('normal', {'mean': 0.0, 'std': 1.0})
 
                 # get out value
                 P.GetValue()

@@ -25,7 +25,6 @@ r"""Helper functions for the Sudoku solver
 :Authors: J Gille, S Furber, A Rowley
 """
 import numpy as np
-import matplotlib.pyplot as plt
 import matplotlib.patches as patch
 
 
@@ -236,7 +235,6 @@ def plot_field(puzzle, solution, ax, with_color=False):
         # draw red lines around the field to indicate validity of rows and cols
         for f, values in zip((ax.vlines, ax.hlines), (rows, cols)):
             locations = np.where(np.invert(values))[0] + 0.5
-            # f(locations, -0.3, 9.3, color="red", linewidth=4, alpha=0.25)
             f(locations, -0.5, -0.1, color="red", linewidth=4)
             f(locations, 9.1, 9.5, color="red", linewidth=4)
 
@@ -254,7 +252,7 @@ def fill_numbers(ax, puzzle, solution):
     Sudoku field.
 
     Args:
-        ax (plt.Axes): Axes in wich to draw the numbers
+        ax (plt.Axes): Axes in which to draw the numbers
         puzzle (np.array): array of shape (9,9) that represents the puzzle
         that is being solved. See get_puzzle()
         solution (np.array): array of shape (9,9) representing the solution.
@@ -272,7 +270,6 @@ def fill_numbers(ax, puzzle, solution):
                     # from the input configuration is altered, that
                     # digit is colored in red.
                     text_col = 'red'
-
             else:
                 text_style = 'italic'
                 text_col = 'gray'

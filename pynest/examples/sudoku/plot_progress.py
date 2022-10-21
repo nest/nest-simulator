@@ -61,8 +61,8 @@ temp_dir = "tmp"                # Name of directory for temporary files
 out_file = "sudoku.gif"         # Name of the output GIF
 keep_temps = False              # If True, temporary files will not be deleted
 
-px = 1/plt.rcParams['figure.dpi']
-plt.subplots(figsize=(600*px, 400*px))
+px = 1 / plt.rcParams['figure.dpi']
+plt.subplots(figsize=(600 * px, 400 * px))
 
 
 if os.path.exists(out_file):
@@ -101,8 +101,8 @@ for file in in_files:
     for i in range(n_iterations):
         current_state = solution_states[i]
 
-        lines[-1][0] = x_data[:i+1]
-        lines[-1][1] = solution_progress[:i+1]
+        lines[-1][0] = x_data[:i + 1]
+        lines[-1][1] = solution_progress[:i + 1]
         progress = plt.subplot2grid((3, 3), (1, 0), rowspan=2, colspan=1)
         progress.set_ylim(0, 1)
         progress.set_xlim(0, 10000)
@@ -116,7 +116,7 @@ for file in in_files:
         stats.axis("off")
         stats.text(0, 1, 'Time progressed:',
                    horizontalalignment='left', verticalalignment='center', fontsize=16)
-        stats.text(0, 0.7, f'{i*sim_data["sim_time"]}ms\n', horizontalalignment='left', verticalalignment='center',
+        stats.text(0, 0.7, f'{i * sim_data["sim_time"]}ms\n', horizontalalignment='left', verticalalignment='center',
                    fontsize=12, color='gray')
         stats.text(0, 0.5, 'Noise rate:', horizontalalignment='left',
                    verticalalignment='center', fontsize=16)

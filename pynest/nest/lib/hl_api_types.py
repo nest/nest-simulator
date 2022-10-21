@@ -1135,7 +1135,6 @@ class CmBase:
             raise TypeError(f'elements must be a tuple of dicts, got {type(elements)}')
         self._elements = elements
         self._node_collection = node_collection
-        print(f'init {self.__class__}')
 
     def __add__(self, other):
         new_elements = list(self._elements)

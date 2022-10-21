@@ -11,7 +11,7 @@ on: [push, pull_request]
 
 jobs:
   static_checks:
-    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    if: false
     env:
       xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
     runs-on: "ubuntu-20.04"
@@ -89,13 +89,13 @@ jobs:
   test_linux:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [static_checks]
+    # needs: [static_checks]
     strategy:
       fail-fast: false
       matrix:
         os: ["ubuntu-20.04"]
         cpp_compiler: ["gcc", "clang"]
-        xNEST_BUILD_TYPE: ["MINIMAL", "MPI_ONLY", "OPENMP_ONLY", "FULL"]
+        xNEST_BUILD_TYPE: ["OPENMP_ONLY"]
         exclude:
           - xNEST_BUILD_TYPE: "MINIMAL"
             cpp_compiler: "clang"
@@ -194,7 +194,7 @@ jobs:
             build/reports/**
 
   test_macos:
-    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    if: false 
     runs-on: ${{ matrix.os }}
     needs: [static_checks]
     strategy:

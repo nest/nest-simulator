@@ -358,6 +358,10 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
    * size to run tests with MPI.
    *
    * TODO: Re-instate proper handling of MPI buffers
+   *
+   * TODO: Re-instate standard test matrix
+   *
+   * NOTE: Due to limited test matrix, developers **must run testsuite locally**.
    */
   kernel().mpi_manager.set_buffer_size_spike_data( 8388608 );
   resize_send_recv_buffers_spike_data_();

@@ -351,6 +351,14 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 {
   const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
 
+  /* NOTE:
+   * For experimentation, the next two lines set MPI buffers to a fixed, large size
+   * This temporarily replaces multi-round collocation with adjustable buffer size.
+   *  As a side-effect, NEST compiled with MPI may see massive slow-down; reduce buffer
+   * size to run tests with MPI.
+   *
+   * TODO: Re-instate proper handling of MPI buffers
+   */
   kernel().mpi_manager.set_buffer_size_spike_data( 8388608 );
   resize_send_recv_buffers_spike_data_();
 

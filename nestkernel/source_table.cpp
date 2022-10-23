@@ -379,14 +379,12 @@ nest::SourceTable::get_next_target_data( const thread tid,
   thread& source_rank,
   TargetData& next_target_data )
 {
-  std::cerr << "NGTD tid: " << tid << std::endl;
   SourceTablePosition& current_position = current_positions_[ tid ];
 
   if ( current_position.is_invalid() )
   {
     return false; // nothing to do here
   }
-  std::cerr << "NGTD pre-loop" << std::endl;
 
   // we stay in this loop either until we can return a valid
   // TargetData object or we have reached the end of the sources table
@@ -424,16 +422,6 @@ nest::SourceTable::get_next_target_data( const thread tid,
 
     // reaching this means we found an entry that should be
     // communicated via MPI, so we prepare to return the relevant data
-    //if ( current_position.tid != tid )
-    {
-      std::cerr << "CPTID: " << current_position.tid << '\t' << tid << std::endl;
-    }
-    if ( kernel().vp_manager.get_thread_id() != tid )
-    {
-      std::cerr << "TTTID: " << kernel().vp_manager.get_thread_id() << '\t' << tid << std::endl;
-    }
-
-    
 
     // set the source rank
     source_rank = kernel().mpi_manager.get_process_id_of_node_id( current_source.get_node_id() );
@@ -477,10 +465,12 @@ nest::SourceTable::collect_compressible_sources( const thread tid )
         std::make_pair( old_source_node_id, SpikeData( tid, syn_id, lcid, 0 ) );
       compressible_sources_[ tid ][ syn_id ].insert( source_node_id_to_spike_data );
 
-      // find next source with different node_id (assumes sorted sources)
+      // For all subsequent connections with same source, set "has more targets" on preceding connection.
+      // Requires sorted connections.
       ++lcid;
       while ( ( lcid < syn_sources.size() ) and ( syn_sources[ lcid ].get_node_id() == old_source_node_id ) )
       {
+        kernel().connection_manager.set_source_has_more_targets( tid, syn_id, lcid-1, true );
         ++lcid;
       }
     }

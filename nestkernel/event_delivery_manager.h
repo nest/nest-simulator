@@ -206,6 +206,10 @@ public:
    */
   void gather_target_data( const thread tid );
 
+  void
+  gather_target_data_compressed( const thread tid );
+
+  
   /**
    * Delivers events to targets.
    */
@@ -270,6 +274,7 @@ private:
     std::vector< std::vector< std::vector< TargetT > >* >& spike_register,
     std::vector< SpikeDataT >& send_buffer );
 
+  
   /**
    * Marks end of valid regions in MPI buffers.
    */
@@ -337,6 +342,11 @@ private:
   bool collocate_target_data_buffers_( const thread tid,
     const AssignedRanks& assigned_ranks,
     SendBufferPosition& send_buffer_position );
+
+  bool
+  collocate_target_data_buffers_compressed_( const thread tid,
+    const AssignedRanks& assigned_ranks,
+                                                                  SendBufferPosition& send_buffer_position );
 
   /**
    * Sets marker in MPI buffer that signals end of communication

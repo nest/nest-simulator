@@ -791,6 +791,82 @@ EventDeliveryManager::gather_target_data( const thread tid )
   kernel().connection_manager.clear_source_table( tid );
 }
 
+void
+EventDeliveryManager::gather_target_data_compressed( const thread tid )
+{
+  // TODO: This assume we can communicate all connectivity in one go.
+  
+  assert( not kernel().connection_manager.is_source_table_cleared() );
+
+  // assume all threads have some work to do
+  gather_completed_checker_[ tid ].set_false();
+  assert( gather_completed_checker_.all_false() );
+
+  const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
+
+  kernel().connection_manager.prepare_target_table( tid );
+  // kernel().connection_manager.reset_source_table_entry_point( tid );
+
+  while ( gather_completed_checker_.any_false() )
+  {
+    // assume this is the last gather round and change to false
+    // otherwise
+    gather_completed_checker_[ tid ].set_true();
+
+#pragma omp single
+    {
+      if ( kernel().mpi_manager.adaptive_target_buffers() and buffer_size_target_data_has_changed_ )
+      {
+        resize_send_recv_buffers_target_data();
+      }
+    } // of omp single; implicit barrier
+
+    // kernel().connection_manager.restore_source_table_entry_point( tid );
+
+    SendBufferPosition send_buffer_position(
+      assigned_ranks, kernel().mpi_manager.get_send_recv_count_target_data_per_rank() );
+
+    const bool gather_completed = collocate_target_data_buffers_compressed_( tid, assigned_ranks, send_buffer_position );
+    assert( gather_completed );
+    
+    gather_completed_checker_[ tid ].logical_and( gather_completed );
+
+    if ( gather_completed_checker_.all_true() )
+    {
+      set_complete_marker_target_data_( assigned_ranks, send_buffer_position );
+    }
+    // kernel().connection_manager.save_source_table_entry_point( tid );
+#pragma omp barrier
+    kernel().connection_manager.clean_source_table( tid );
+
+#pragma omp single
+    {
+#ifdef TIMER_DETAILED
+      sw_communicate_target_data_.start();
+#endif
+      kernel().mpi_manager.communicate_target_data_Alltoall( send_buffer_target_data_, recv_buffer_target_data_ );
+#ifdef TIMER_DETAILED
+      sw_communicate_target_data_.stop();
+#endif
+    } // of omp single (implicit barrier)
+
+
+    const bool distribute_completed = distribute_target_data_buffers_( tid );
+    gather_completed_checker_[ tid ].logical_and( distribute_completed );
+
+    // resize mpi buffers, if necessary and allowed
+    if ( gather_completed_checker_.any_false() and kernel().mpi_manager.adaptive_target_buffers() )
+    {
+#pragma omp single
+      {
+        buffer_size_target_data_has_changed_ = kernel().mpi_manager.increase_buffer_size_target_data();
+      }
+    }
+  } // of while
+
+  kernel().connection_manager.clear_source_table( tid );
+}
+
 bool
 EventDeliveryManager::collocate_target_data_buffers_( const thread tid,
   const AssignedRanks& assigned_ranks,
@@ -870,6 +946,55 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid,
     } // of else
   }   // of while(true)
 }
+
+bool
+EventDeliveryManager::collocate_target_data_buffers_compressed_( const thread tid,
+  const AssignedRanks& assigned_ranks,
+  SendBufferPosition& send_buffer_position )
+{
+  //thread source_rank;
+  //TargetData next_target_data;
+  //bool valid_next_target_data;
+  // bool is_source_table_read = true;
+
+  // no ranks to process for this thread
+  if ( assigned_ranks.begin == assigned_ranks.end )
+  {
+    return true;
+    // kernel().connection_manager.no_targets_to_process( tid );
+    // return is_source_table_read;
+  }
+
+  // reset markers
+  for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
+  {
+    // reset last entry to avoid accidentally communicating done
+    // marker
+    send_buffer_target_data_[ send_buffer_position.end( rank ) - 1 ].reset_marker();
+    // set first entry to invalid to avoid accidentally reading
+    // uninitialized parts of the receive buffer
+    send_buffer_target_data_[ send_buffer_position.begin( rank ) ].set_invalid_marker();
+  }
+
+  kernel().connection_manager.fill_target_buffer(
+    tid, assigned_ranks.begin, assigned_ranks.end,
+                                                 send_buffer_target_data_, send_buffer_position );
+  
+  // mark end of valid data for each rank
+  for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
+  {
+    if ( send_buffer_position.idx( rank ) > send_buffer_position.begin( rank ) )
+    {
+      send_buffer_target_data_[ send_buffer_position.idx( rank ) - 1 ].set_end_marker();
+    }
+    else
+    {
+      send_buffer_target_data_[ send_buffer_position.begin( rank ) ].set_invalid_marker();
+    }
+  }
+  return true; // is_source_table_read;
+}
+
 
 void
 nest::EventDeliveryManager::set_complete_marker_target_data_( const AssignedRanks& assigned_ranks,

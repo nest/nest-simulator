@@ -334,10 +334,17 @@ nest::SourceTable::populate_target_data_fields_( const SourceTablePosition& curr
     if ( kernel().connection_manager.use_compressed_spikes() )
     {
       const auto source_idx =
-        compressed_spike_data_map_[ current_position.syn_id ].find( current_source.get_node_id() );
+        compressed_spike_data_map_.at( current_position.syn_id ).find( current_source.get_node_id() );
       assert( source_idx != compressed_spike_data_map_[ current_position.syn_id ].end() );
-      target_fields.set_tid( invalid_targetindex );
-      target_fields.set_lcid( source_idx->second );
+      if ( true )
+      {
+        target_fields.set_tid( invalid_targetindex );
+        target_fields.set_lcid( source_idx->second );
+      }
+      else
+      {
+        return false;
+      }
     }
     else
     {
@@ -372,12 +379,14 @@ nest::SourceTable::get_next_target_data( const thread tid,
   thread& source_rank,
   TargetData& next_target_data )
 {
+  std::cerr << "NGTD tid: " << tid << std::endl;
   SourceTablePosition& current_position = current_positions_[ tid ];
 
   if ( current_position.is_invalid() )
   {
     return false; // nothing to do here
   }
+  std::cerr << "NGTD pre-loop" << std::endl;
 
   // we stay in this loop either until we can return a valid
   // TargetData object or we have reached the end of the sources table
@@ -415,6 +424,16 @@ nest::SourceTable::get_next_target_data( const thread tid,
 
     // reaching this means we found an entry that should be
     // communicated via MPI, so we prepare to return the relevant data
+    //if ( current_position.tid != tid )
+    {
+      std::cerr << "CPTID: " << current_position.tid << '\t' << tid << std::endl;
+    }
+    if ( kernel().vp_manager.get_thread_id() != tid )
+    {
+      std::cerr << "TTTID: " << kernel().vp_manager.get_thread_id() << '\t' << tid << std::endl;
+    }
+
+    
 
     // set the source rank
     source_rank = kernel().mpi_manager.get_process_id_of_node_id( current_source.get_node_id() );
@@ -495,13 +514,17 @@ nest::SourceTable::fill_compressed_spike_data(
         {
           // Set up entry for new source
           const auto new_source_index = compressed_spike_data[ syn_id ].size();
+          
           compressed_spike_data[ syn_id ].emplace_back( kernel().vp_manager.get_num_threads(),
             SpikeData( invalid_targetindex, invalid_synindex, invalid_lcid, 0 ) );
+          
           compressed_spike_data_map_[ syn_id ].insert( std::make_pair( source_gid, new_source_index ) );
         }
 
         const auto source_index = compressed_spike_data_map_[ syn_id ].find( source_gid )->second;
+        
         assert( compressed_spike_data[ syn_id ][ source_index ][ target_thread ].get_lcid() == invalid_lcid );
+        
         compressed_spike_data[ syn_id ][ source_index ][ target_thread ] = connection.second;
       } // for connection
 

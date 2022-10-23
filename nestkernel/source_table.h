@@ -63,6 +63,8 @@ class TargetData;
  */
 class SourceTable
 {
+  friend class ConnectionManager;
+  
 private:
   /**
    * 3D structure storing node IDs of presynaptic neurons.

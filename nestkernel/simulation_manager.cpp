@@ -727,8 +727,15 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
 
   // communicate connection information from postsynaptic to
   // presynaptic side
-  kernel().event_delivery_manager.gather_target_data( tid );
-
+  if ( kernel().connection_manager.use_compressed_spikes() )
+  {
+    kernel().event_delivery_manager.gather_target_data_compressed( tid );
+  }
+  else
+  {
+    kernel().event_delivery_manager.gather_target_data( tid );
+  }
+  
 #ifdef TIMER_DETAILED
 #pragma omp barrier
   if ( tid == 0 )

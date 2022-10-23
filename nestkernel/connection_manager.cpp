@@ -1638,3 +1638,46 @@ nest::ConnectionManager::collect_compressed_spike_data( const thread tid )
     } // of omp single; implicit barrier
   }
 }
+
+bool
+nest::ConnectionManager::fill_target_buffer( const thread tid,
+  const thread rank_start,
+  const thread rank_end,
+                  std::vector< TargetData >& send_buffer_target_data,
+                        SendBufferPosition& send_buffer_position)
+{
+  const auto& csd_maps = source_table_.compressed_spike_data_map_;
+  for ( auto syn_id = 0 ; syn_id < csd_maps.size() ; ++syn_id )
+  {
+    for ( const auto& source_2_idx : csd_maps.at(syn_id) )
+    {
+      const auto source_gid = source_2_idx.first;
+      const auto source_rank = kernel().mpi_manager.get_process_id_of_node_id( source_gid );
+      
+      if ( not ( rank_start <= source_rank and source_rank < rank_end ) )
+      {
+        continue;
+      }
+      
+      // For source, just take first
+      // const SpikeData& conn_data = compressed_spike_data_.at(syn_id).at(source_2_idx.second).at(0);
+      
+      TargetData next_target_data;
+      next_target_data.set_is_primary( true );
+      next_target_data.reset_marker();
+      next_target_data.set_source_tid( kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( source_gid ) ) );
+      next_target_data.set_source_lid( kernel().vp_manager.node_id_to_lid( source_gid ) );
+      next_target_data.set_source_tid( kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( source_gid ) ) );
+      
+      TargetDataFields& target_fields = next_target_data.target_data;
+      target_fields.set_syn_id( syn_id );
+      target_fields.set_tid( invalid_targetindex );
+      target_fields.set_lcid( source_2_idx.second );
+      
+      
+      send_buffer_target_data[ send_buffer_position.idx( source_rank ) ] = next_target_data;
+      send_buffer_position.increase( source_rank );
+    }
+  }
+}
+

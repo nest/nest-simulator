@@ -39,6 +39,7 @@
 #include "nest_types.h"
 #include "node_collection.h"
 #include "per_thread_bool_indicator.h"
+#include "send_buffer_position.h"
 #include "source_table.h"
 #include "spike_data.h"
 #include "target_table.h"
@@ -311,6 +312,13 @@ public:
     thread& target_rank,
     TargetData& next_target_data );
 
+  bool fill_target_buffer( const thread tid,
+    const thread rank_start,
+    const thread rank_end,
+    std::vector< TargetData >& send_buffer_target_data,
+    SendBufferPosition& send_buffer_position);
+
+  
   void reject_last_target_data( const thread tid );
 
   void save_source_table_entry_point( const thread tid );

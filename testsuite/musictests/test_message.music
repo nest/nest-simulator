@@ -23,12 +23,12 @@
 stoptime=0.1
 
 # Name of the input file needs to be listed here for the testsuite to find it.
-# input file: messages0.dat
+# input file: test_message0.dat
 
 [from]
     binary=messagesource
     np=1
-    args=messages
+    args=test_message
 
 [to]
     binary=nest

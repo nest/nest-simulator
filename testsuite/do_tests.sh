@@ -409,8 +409,8 @@ if test "${MUSIC}"; then
         if test ! -f "${sh_file}"; then sh_file=""; fi
 
         # Check if there is an accompanying input data file
-        input_file=$(grep '\.dat' ${music_file} | sed -e "s%# input file: %${TESTDIR}%g")
-        if test ! -f "${input_file}"; then unset input_file; fi
+        input_file="${TESTDIR}/$(basename ${music_file} .music)0.dat"
+        if test ! -f "${input_file}"; then input_file=""; fi
 
         # Calculate the total number of processes from the '.music' file.
         np=$(($(sed -n 's/np=//p' ${music_file} | paste -sd'+' -)))

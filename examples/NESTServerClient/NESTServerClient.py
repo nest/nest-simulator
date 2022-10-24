@@ -37,7 +37,7 @@ def encode(response):
 
 class NESTServerClient:
 
-    def __init__(self, host='localhost', port=5000):
+    def __init__(self, host='localhost', port=52425):
         self.url = 'http://{}:{}/'.format(host, port)
         self.headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 

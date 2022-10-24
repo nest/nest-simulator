@@ -56,7 +56,7 @@ def get_progress(puzzle, solution):
 
 
 # Name of the .pkl files to read from.
-in_files = ["output/10Hz_puzzle_3.pkl", "output/350Hz_puzzle_3.pkl"]
+in_files = ["10Hz_puzzle_3.pkl", "350Hz_puzzle_3.pkl"]
 temp_dir = "tmp"                # Name of directory for temporary files
 out_file = "sudoku.gif"         # Name of the output GIF
 keep_temps = False              # If True, temporary files will not be deleted
@@ -126,10 +126,10 @@ for file in in_files:
         ax = plt.subplot2grid((3, 3), (0, 1), rowspan=3, colspan=2)
         if i == 0:
             # repeat the (colorless) starting configuration several times
-            field = helpers.plot_field(sim_data['puzzle'], sim_data['puzzle'], ax, False)
+            helpers.plot_field(sim_data['puzzle'], sim_data['puzzle'], ax, False)
             image_repeat = 8
         else:
-            field = helpers.plot_field(puzzle, current_state, ax, True)
+            helpers.plot_field(puzzle, current_state, ax, True)
             image_repeat = 1
 
         if i == len(solution_states) - 1:

@@ -211,8 +211,6 @@ def plot_field(puzzle, solution, ax, with_color=False):
         indicate which parts of the solution are valid and which are not.
         Otherwise, only black and white are used. Defaults to False.
 
-    Returns:
-        PIL.Image: A visual representation of the Sudoku solution.
     """
     decorate_sudoku_box(ax)
     fill_numbers(ax, puzzle, solution)
@@ -244,7 +242,6 @@ def plot_field(puzzle, solution, ax, with_color=False):
                 if not boxes[i, j]:
                     ax.add_patch(patch.Rectangle((3*j, 3*j), 3, 3,
                                                  color="red", fill=False, linewidth=3.5))
-    return ax
 
 
 def fill_numbers(ax, puzzle, solution):

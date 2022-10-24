@@ -39,7 +39,7 @@ typedef std::map< Name, Token, std::less< Name > > TokenMap;
 inline bool
 operator==( const TokenMap& x, const TokenMap& y )
 {
-  return ( x.size() == y.size() ) && equal( x.begin(), x.end(), y.begin() );
+  return ( x.size() == y.size() ) and equal( x.begin(), x.end(), y.begin() );
 }
 
 /** A class that associates names and tokens.

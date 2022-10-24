@@ -297,7 +297,7 @@ nest::pp_psc_delta::pre_run_hook()
   V_.P33_ = std::exp( -V_.h_ / P_.tau_m_ );
   V_.P30_ = 1 / P_.c_m_ * ( 1 - V_.P33_ ) * P_.tau_m_;
 
-  if ( P_.dead_time_ != 0 && P_.dead_time_ < V_.h_ )
+  if ( P_.dead_time_ != 0 and P_.dead_time_ < V_.h_ )
   {
     P_.dead_time_ = V_.h_;
   }
@@ -357,7 +357,7 @@ void
 nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
 {
 
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )

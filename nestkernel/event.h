@@ -857,7 +857,7 @@ Event::receiver_is_valid() const
 inline bool
 Event::is_valid() const
 {
-  return ( sender_is_valid() and receiver_is_valid() and ( d_ > 0 ) );
+  return ( sender_is_valid() and receiver_is_valid() and d_ > 0 );
 }
 
 inline void

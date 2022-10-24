@@ -51,7 +51,7 @@ DivisionByZero::message() const
 std::string
 TypeMismatch::message() const
 {
-  if ( not provided_.empty() && not expected_.empty() )
+  if ( not provided_.empty() and not expected_.empty() )
   {
     return "Expected datatype: " + expected_ + "\nProvided datatype: " + provided_;
   }

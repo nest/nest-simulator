@@ -91,7 +91,7 @@ public:
   equals( const Datum* other ) const
   {
     const sharedPtrDatum< D, slt >* other_dc = dynamic_cast< const sharedPtrDatum< D, slt >* >( other );
-    return other_dc && *this == *other_dc;
+    return other_dc and *this == *other_dc;
   }
 };
 

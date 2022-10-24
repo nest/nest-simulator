@@ -24,6 +24,7 @@
 #define SECONDARY_EVENT_H
 
 // c++ includes
+// C++ includes:
 #include <set>
 
 namespace nest

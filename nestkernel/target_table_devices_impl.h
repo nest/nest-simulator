@@ -97,12 +97,11 @@ nest::TargetTableDevices::send_to_device( const thread tid,
   const std::vector< ConnectorModel* >& cm )
 {
   const index lid = kernel().vp_manager.node_id_to_lid( source_node_id );
-  const std::vector< synindex >& supported_syn_ids = e.get_supported_syn_ids();
-  for ( std::vector< synindex >::const_iterator cit = supported_syn_ids.begin(); cit != supported_syn_ids.end(); ++cit )
+  for ( auto& synid : e.get_supported_syn_ids() )
   {
-    if ( target_to_devices_[ tid ][ lid ][ *cit ] )
+    if ( target_to_devices_[ tid ][ lid ][ synid ] )
     {
-      target_to_devices_[ tid ][ lid ][ *cit ]->send_to_all( tid, cm, e );
+      target_to_devices_[ tid ][ lid ][ synid ]->send_to_all( tid, cm, e );
     }
   }
 }

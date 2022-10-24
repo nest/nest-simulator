@@ -151,7 +151,7 @@ EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
     // We need to consider every synapse type this event supports to
     // make sure also labeled and connection created by CopyModel are
     // considered.
-    const std::vector< synindex >& supported_syn_ids = e.get_supported_syn_ids();
+    const std::set< synindex >& supported_syn_ids = e.get_supported_syn_ids();
     for ( const auto& syn_id : supported_syn_ids )
     {
       const std::vector< size_t >& positions =

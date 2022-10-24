@@ -729,6 +729,11 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
   // presynaptic side
   if ( kernel().connection_manager.use_compressed_spikes() )
   {
+#pragma omp barrier
+#pragma omp single
+    {
+      kernel().connection_manager.initialize_iteration_state();  // could possibly be combined with s'th above
+    }
     kernel().event_delivery_manager.gather_target_data_compressed( tid );
   }
   else

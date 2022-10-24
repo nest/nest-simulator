@@ -416,6 +416,9 @@ public:
   Stopwatch sw_construction_connect;
 
   const std::vector< SpikeData >& get_compressed_spike_data( const synindex syn_id, const index idx );
+  
+  //! Set iteration_state_ entries for all threads to beginning of compressed_spike_data_map_.
+  void initialize_iteration_state();
 
 private:
   size_t get_num_target_data( const thread tid ) const;
@@ -637,6 +640,9 @@ private:
   //! Maximum distance between (double) spike times in STDP that is
   //! still considered 0. See issue #894
   double stdp_eps_;
+  
+  //! For each thread, store (syn_id, compressed_spike_data_map_::iterator) pair for next iteration while filling target buffers
+  std::vector< std::pair< size_t, std::map< index, size_t >::const_iterator > > iteration_state_;
 };
 
 inline bool

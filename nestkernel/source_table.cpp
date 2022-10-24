@@ -333,18 +333,7 @@ nest::SourceTable::populate_target_data_fields_( const SourceTablePosition& curr
     target_fields.set_syn_id( current_position.syn_id );
     if ( kernel().connection_manager.use_compressed_spikes() )
     {
-      const auto source_idx =
-        compressed_spike_data_map_.at( current_position.syn_id ).find( current_source.get_node_id() );
-      assert( source_idx != compressed_spike_data_map_[ current_position.syn_id ].end() );
-      if ( true )
-      {
-        target_fields.set_tid( invalid_targetindex );
-        target_fields.set_lcid( source_idx->second );
-      }
-      else
-      {
-        return false;
-      }
+      assert( false );  // compressed connections handled elsewhere
     }
     else
     {
@@ -491,6 +480,9 @@ nest::SourceTable::fill_compressed_spike_data(
   // store in compressed_spike_data one SpikeData entry for each local thread that
   // owns a local target. In compressed_spike_data_map_ store index into compressed_spike_data[syn_id]
   // where data for a given source is stored.
+  
+  // TODO: I believe that at this point compressible_sources_ is ordered by source gid.
+  //       Maybe one can exploit that to avoid searching with find() below.
   for ( synindex syn_id = 0; syn_id < kernel().model_manager.get_num_connection_models(); ++syn_id )
   {
     for ( thread target_thread = 0; target_thread < static_cast< thread >( compressible_sources_.size() );

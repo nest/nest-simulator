@@ -1646,12 +1646,26 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
                   std::vector< TargetData >& send_buffer_target_data,
                         SendBufferPosition& send_buffer_position)
 {
+  bool some_chunk_full = false;
+  
   const auto& csd_maps = source_table_.compressed_spike_data_map_;
-  for ( auto syn_id = 0 ; syn_id < csd_maps.size() ; ++syn_id )
+  const auto& begin = iteration_state_.at( tid );
+  for ( auto syn_id = begin.first ; syn_id < csd_maps.size() ; ++syn_id )
   {
-    for ( const auto& source_2_idx : csd_maps.at(syn_id) )
+    // We need to use an explicit iterator here since we need to store where we stop when the send buffer is full
+    std::map< index, size_t >::const_iterator inner_begin;
+    if ( syn_id == begin.first )
     {
-      const auto source_gid = source_2_idx.first;
+      inner_begin = begin.second;
+    }
+    else
+    {
+      inner_begin = csd_maps.at(syn_id).begin();
+    }
+    
+    for ( auto source_2_idx = inner_begin ; source_2_idx != csd_maps.at(syn_id).end() ; ++source_2_idx )
+    {
+      const auto source_gid = source_2_idx->first;
       const auto source_rank = kernel().mpi_manager.get_process_id_of_node_id( source_gid );
       
       if ( not ( rank_start <= source_rank and source_rank < rank_end ) )
@@ -1659,25 +1673,66 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
         continue;
       }
       
-      // For source, just take first
-      // const SpikeData& conn_data = compressed_spike_data_.at(syn_id).at(source_2_idx.second).at(0);
-      
+      if ( send_buffer_position.is_chunk_filled( source_rank ) )
+      {
+        // When the we have filled the buffer space for one rank, we stop. If we continued for other ranks,
+        // we would need to introduce "processed" markers to avoid multiple insertion (similar to base case).
+        // Since sources should be evenly distributed, this should not matter very much.
+        //
+        // We store where we need to continue and stop iteration for now.
+        some_chunk_full = true;
+        iteration_state_.at( tid ) = std::pair< size_t, std::map< index, size_t >::const_iterator >( syn_id, source_2_idx );
+        break;
+      }
+
       TargetData next_target_data;
       next_target_data.set_is_primary( true );
       next_target_data.reset_marker();
       next_target_data.set_source_tid( kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( source_gid ) ) );
       next_target_data.set_source_lid( kernel().vp_manager.node_id_to_lid( source_gid ) );
-      next_target_data.set_source_tid( kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( source_gid ) ) );
       
       TargetDataFields& target_fields = next_target_data.target_data;
       target_fields.set_syn_id( syn_id );
       target_fields.set_tid( invalid_targetindex );
-      target_fields.set_lcid( source_2_idx.second );
+      target_fields.set_lcid( source_2_idx->second );
       
-      
-      send_buffer_target_data[ send_buffer_position.idx( source_rank ) ] = next_target_data;
+      send_buffer_target_data.at( send_buffer_position.idx( source_rank ) ) = next_target_data;
       send_buffer_position.increase( source_rank );
     }
+    
+    if ( some_chunk_full )
+    {
+      break;  // continue break from inner loop
+    }
   }
+
+  // Mark end of data for this round
+  for ( thread rank = rank_start ; rank < rank_end ; ++rank )
+  {
+    if ( send_buffer_position.idx( rank ) > send_buffer_position.begin( rank ) )
+    {
+      send_buffer_target_data.at( send_buffer_position.idx( rank ) - 1 ).set_end_marker();
+    }
+    else
+    {
+      send_buffer_target_data.at( send_buffer_position.begin( rank ) ).set_invalid_marker();
+    }
+  }
+
+  // We finished writing all sources if no chunk filled up
+  return not some_chunk_full;
 }
 
+void
+nest::ConnectionManager::initialize_iteration_state()
+{
+  const thread num_threads = kernel().vp_manager.get_num_threads();
+  iteration_state_.clear();
+  iteration_state_.reserve( num_threads );
+
+  std::map< index, size_t >::const_iterator begin = source_table_.compressed_spike_data_map_.at( 0 ).cbegin();
+  for ( thread t = 0 ; t < num_threads ; ++t )
+  {
+    iteration_state_.push_back( std::pair< size_t, std::map< index, size_t >::const_iterator > ( 0, begin ) );
+  }
+}

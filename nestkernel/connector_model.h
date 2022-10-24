@@ -104,8 +104,6 @@ public:
 
   virtual void set_syn_id( synindex syn_id ) = 0;
 
-  virtual SecondaryEvent* create_event() const = 0;
-
   std::string
   get_name() const
   {
@@ -174,8 +172,7 @@ class GenericConnectorModel : public ConnectorModel
 {
 private:
   typename ConnectionT::CommonPropertiesType cp_;
-  //! used to create secondary events that belong to secondary connections
-  typename ConnectionT::EventType* pev_;
+  typename ConnectionT::EventType* pev_; //! Secondary event type used by secondary connections
 
   ConnectionT default_connection_;
   rport receptor_type_;
@@ -250,15 +247,6 @@ public:
     return default_connection_;
   }
 
-  SecondaryEvent*
-  create_event() const override
-  {
-    // Must not be called for a ConnectorModel belonging to a primary
-    // connection. Only required for secondary connection types.
-    assert( false );
-    return nullptr; // make the compiler happy
-  }
-
 private:
   void used_default_delay();
 
@@ -315,13 +303,6 @@ public:
 
     return new_cm;
   }
-
-  SecondaryEvent*
-  create_event() const
-  {
-    return new typename ConnectionT::EventType();
-  }
-
 
   ~GenericSecondaryConnectorModel()
   {

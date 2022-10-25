@@ -40,21 +40,10 @@ from copy import deepcopy
 
 import os
 
-
-# This ensures that the logging information shows up in the console running the server,
-# even when Flask's event loop is running.
-root = logging.getLogger()
-root.addHandler(default_handler)
-
-
-def get_boolean_environ(env_key, default_value='false'):
+def get_boolean_environ(env_key, default_value = 'false'):
     env_value = os.environ.get(env_key, default_value)
     return env_value.lower() in ['yes', 'true', 't', '1']
 
-
-_default_origins = 'localhost,http://localhost,https://localhost'
-DISABLE_AUTHENTICATION = get_boolean_environ('NEST_DISABLE_AUTHENTICATION')
-CORS_ORIGINS = os.environ.get('NEST_SERVER_CORS_ORIGINS', _default_origins).split(',')
 EXEC_SCRIPT = get_boolean_environ('NEST_SERVER_EXEC_SCRIPT')
 MODULES = os.environ.get('NEST_SERVER_MODULES', 'nest').split(',')
 RESTRICTION_OFF = get_boolean_environ('NEST_SERVER_RESTRICTION_OFF')
@@ -263,10 +252,10 @@ def route_exec():
         response = do_call('exec', args, kwargs)
         return jsonify(response)
     else:
-        flask.abort(
-            403,
+        abort(Response(
             'The route `/exec` has been disabled. Please contact the server administrator.',
-        )
+            403
+        ))
 
 
 # --------------------------

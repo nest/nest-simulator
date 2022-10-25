@@ -24,11 +24,7 @@
 
 // C++ includes:
 #include <algorithm> // rotate
-#include <iostream>
-#include <numeric> // accumulate
-
-// Includes from libnestutil:
-#include "logging.h"
+#include <numeric>   // accumulate
 
 // Includes from nestkernel:
 #include "connection_manager.h"

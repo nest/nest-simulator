@@ -118,7 +118,7 @@ public:
   typedef Connection< targetidentifierT > ConnectionBase;
 
   const static RegisterConnectionModelFlags flags =
-      default_connection_model_flags | RegisterConnectionModelFlags::REQUIRES_CLOPATH_ARCHIVING;
+    default_connection_model_flags | RegisterConnectionModelFlags::REQUIRES_CLOPATH_ARCHIVING;
 
   /**
    * Default Constructor.
@@ -168,7 +168,7 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
       return invalid_port;
     }

@@ -473,7 +473,7 @@ nest::gif_pop_psc_exp::get_history_size()
 
   int k = tmax / V_.h_;
   int kmin = 5 * P_.tau_m_ / V_.h_;
-  while ( ( adaptation_kernel( k ) / P_.Delta_V_ < 0.1 ) and ( k > kmin ) )
+  while ( ( adaptation_kernel( k ) / P_.Delta_V_ < 0.1 ) and k > kmin )
   {
     k--;
   }

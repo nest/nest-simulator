@@ -68,7 +68,7 @@ nest::spike_generator::Parameters_::get( DictionaryDatum& d ) const
   const size_t n_spikes = spike_stamps_.size();
   const size_t n_offsets = spike_offsets_.size();
 
-  assert( ( precise_times_ && n_offsets == n_spikes ) || ( not precise_times_ && n_offsets == 0 ) );
+  assert( ( precise_times_ and n_offsets == n_spikes ) or ( not precise_times_ and n_offsets == 0 ) );
 
   auto* times_ms = new std::vector< double >();
   times_ms->reserve( n_spikes );
@@ -91,7 +91,7 @@ nest::spike_generator::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double t, const Time& origin, const Time& now )
 {
-  if ( t == 0.0 && not shift_now_spikes_ )
+  if ( t == 0.0 and not shift_now_spikes_ )
   {
     throw BadProperty( "spike time cannot be set to 0." );
   }
@@ -124,7 +124,7 @@ nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double 
     }
 
     assert( t_spike.is_grid_time() );
-    if ( origin + t_spike == now && shift_now_spikes_ )
+    if ( origin + t_spike == now and shift_now_spikes_ )
     {
       t_spike.advance();
     }
@@ -143,7 +143,7 @@ nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double 
 
     // The second part of the test handles subnormal values of offset.
     if ( ( std::fabs( offset ) < std::numeric_limits< double >::epsilon() * std::fabs( t_spike.get_ms() + t ) * 2.0 )
-      || ( std::fabs( offset ) < std::numeric_limits< double >::min() ) )
+      or ( std::fabs( offset ) < std::numeric_limits< double >::min() ) )
     {
       // if difference is smaller than scaled epsilon it is zero
       offset = 0.0;
@@ -165,7 +165,7 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
   bool allow_offgrid_times_changed =
     updateValueParam< bool >( d, names::allow_offgrid_times, allow_offgrid_times_, node );
   bool flags_changed = precise_times_changed or shift_now_spikes_changed or allow_offgrid_times_changed;
-  if ( precise_times_ && ( allow_offgrid_times_ || shift_now_spikes_ ) )
+  if ( precise_times_ and ( allow_offgrid_times_ or shift_now_spikes_ ) )
   {
     throw BadProperty(
       "Option precise_times cannot be set to true when either "
@@ -173,7 +173,7 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
   }
 
   const bool updated_spike_times = d->known( names::spike_times );
-  if ( flags_changed && not( updated_spike_times || spike_stamps_.empty() ) )
+  if ( flags_changed and not( updated_spike_times or spike_stamps_.empty() ) )
   {
     throw BadProperty(
       "Options can only be set together with spike times or if no "
@@ -264,7 +264,7 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
   }
 
   // Set position to start if something changed
-  if ( updated_spike_times || updated_spike_weights || updated_spike_multiplicities || d->known( names::origin ) )
+  if ( updated_spike_times or updated_spike_weights or updated_spike_multiplicities or d->known( names::origin ) )
   {
     s.position_ = 0;
   }
@@ -324,9 +324,9 @@ nest::spike_generator::update( Time const& sliceT0, const long from, const long 
     return;
   }
 
-  assert( not P_.precise_times_ || P_.spike_stamps_.size() == P_.spike_offsets_.size() );
-  assert( P_.spike_weights_.empty() || P_.spike_stamps_.size() == P_.spike_weights_.size() );
-  assert( P_.spike_multiplicities_.empty() || P_.spike_stamps_.size() == P_.spike_multiplicities_.size() );
+  assert( not P_.precise_times_ or P_.spike_stamps_.size() == P_.spike_offsets_.size() );
+  assert( P_.spike_weights_.empty() or P_.spike_stamps_.size() == P_.spike_weights_.size() );
+  assert( P_.spike_multiplicities_.empty() or P_.spike_stamps_.size() == P_.spike_multiplicities_.size() );
 
   const Time tstart = sliceT0 + Time::step( from );
   const Time tstop = sliceT0 + Time::step( to );

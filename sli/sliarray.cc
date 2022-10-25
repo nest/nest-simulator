@@ -30,9 +30,6 @@
 #include <cmath>
 #include <vector>
 
-// Generated includes:
-#include "config.h"
-
 // Includes from libnestutil:
 #include "numerics.h"
 
@@ -47,13 +44,13 @@
 #include "tokenutils.h"
 
 const std::string
-SLIArrayModule::commandstring( void ) const
+SLIArrayModule::commandstring() const
 {
   return std::string( "(mathematica) run (arraylib) run" );
 }
 
 const std::string
-SLIArrayModule::name( void ) const
+SLIArrayModule::name() const
 {
   return std::string( "SLI Array Module" );
 }
@@ -67,11 +64,11 @@ SLIArrayModule::RangeFunction::execute( SLIInterpreter* i ) const
 
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( i->OStack.pick( 0 ).datum() );
 
-  assert( ad != 0 );
+  assert( ad );
   if ( ad->size() == 1 ) // Construct an array of elements 1 ... N
   {
     IntegerDatum* nd = dynamic_cast< IntegerDatum* >( ad->get( 0 ).datum() );
-    if ( nd != 0 )
+    if ( nd )
     {
       long n = nd->get();
       ad->erase();
@@ -106,7 +103,7 @@ SLIArrayModule::RangeFunction::execute( SLIInterpreter* i ) const
   {
     IntegerDatum* n1d = dynamic_cast< IntegerDatum* >( ad->get( 0 ).datum() );
     IntegerDatum* n2d = dynamic_cast< IntegerDatum* >( ad->get( 1 ).datum() );
-    if ( ( n1d != 0 ) && ( n2d != 0 ) )
+    if ( n1d and n2d )
     {
       long n = 1 + n2d->get() - n1d->get();
 
@@ -130,7 +127,7 @@ SLIArrayModule::RangeFunction::execute( SLIInterpreter* i ) const
     {
       DoubleDatum* n1d = dynamic_cast< DoubleDatum* >( ad->get( 0 ).datum() );
       DoubleDatum* n2d = dynamic_cast< DoubleDatum* >( ad->get( 1 ).datum() );
-      if ( ( n1d != 0 ) && ( n2d != 0 ) )
+      if ( n1d and n2d )
       {
         long n = 1 + static_cast< long >( n2d->get() - n1d->get() );
 
@@ -161,7 +158,7 @@ SLIArrayModule::RangeFunction::execute( SLIInterpreter* i ) const
     IntegerDatum* n1d = dynamic_cast< IntegerDatum* >( ad->get( 0 ).datum() );
     IntegerDatum* n2d = dynamic_cast< IntegerDatum* >( ad->get( 1 ).datum() );
     IntegerDatum* n3d = dynamic_cast< IntegerDatum* >( ad->get( 2 ).datum() );
-    if ( ( n1d != 0 ) && ( n2d != 0 ) && ( n3d != 0 ) )
+    if ( n1d and n2d and n3d )
     {
       long di = n3d->get();
       long start = n1d->get();
@@ -192,7 +189,7 @@ SLIArrayModule::RangeFunction::execute( SLIInterpreter* i ) const
       DoubleDatum* n1d = dynamic_cast< DoubleDatum* >( ad->get( 0 ).datum() );
       DoubleDatum* n2d = dynamic_cast< DoubleDatum* >( ad->get( 1 ).datum() );
       DoubleDatum* n3d = dynamic_cast< DoubleDatum* >( ad->get( 2 ).datum() );
-      if ( ( n1d != 0 ) && ( n2d != 0 ) && ( n3d != 0 ) )
+      if ( n1d and n2d and n3d )
       {
         double di = n3d->get();
         double start = n1d->get();
@@ -240,11 +237,11 @@ SLIArrayModule::ArangeFunction::execute( SLIInterpreter* i ) const
 
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( i->OStack.pick( 0 ).datum() );
 
-  assert( ad != 0 );
+  assert( ad );
   if ( ad->size() == 1 ) // Construct an array of elements 1 ... N
   {
     IntegerDatum* nd = dynamic_cast< IntegerDatum* >( ad->get( 0 ).datum() );
-    if ( nd != 0 )
+    if ( nd )
     {
       long n = nd->get();
       if ( n < 0 )
@@ -286,7 +283,7 @@ SLIArrayModule::ArangeFunction::execute( SLIInterpreter* i ) const
   {
     IntegerDatum* n1d = dynamic_cast< IntegerDatum* >( ad->get( 0 ).datum() );
     IntegerDatum* n2d = dynamic_cast< IntegerDatum* >( ad->get( 1 ).datum() );
-    if ( ( n1d != 0 ) && ( n2d != 0 ) )
+    if ( n1d and n2d )
     {
       const long start = n1d->get();
       const long stop = n2d->get();
@@ -310,7 +307,7 @@ SLIArrayModule::ArangeFunction::execute( SLIInterpreter* i ) const
     {
       DoubleDatum* n1d = dynamic_cast< DoubleDatum* >( ad->get( 0 ).datum() );
       DoubleDatum* n2d = dynamic_cast< DoubleDatum* >( ad->get( 1 ).datum() );
-      if ( ( n1d != 0 ) && ( n2d != 0 ) )
+      if ( n1d and n2d )
       {
         double start = n1d->get();
         double stop = n2d->get();
@@ -338,7 +335,7 @@ SLIArrayModule::ArangeFunction::execute( SLIInterpreter* i ) const
     IntegerDatum* n1d = dynamic_cast< IntegerDatum* >( ad->get( 0 ).datum() );
     IntegerDatum* n2d = dynamic_cast< IntegerDatum* >( ad->get( 1 ).datum() );
     IntegerDatum* n3d = dynamic_cast< IntegerDatum* >( ad->get( 2 ).datum() );
-    if ( ( n1d != 0 ) && ( n2d != 0 ) && ( n3d != 0 ) )
+    if ( n1d and n2d and n3d )
     {
       long di = n3d->get();
       long start = n1d->get();
@@ -372,7 +369,7 @@ SLIArrayModule::ArangeFunction::execute( SLIInterpreter* i ) const
       DoubleDatum* n1d = dynamic_cast< DoubleDatum* >( ad->get( 0 ).datum() );
       DoubleDatum* n2d = dynamic_cast< DoubleDatum* >( ad->get( 1 ).datum() );
       DoubleDatum* n3d = dynamic_cast< DoubleDatum* >( ad->get( 2 ).datum() );
-      if ( ( n1d != 0 ) && ( n2d != 0 ) && ( n3d != 0 ) )
+      if ( n1d and n2d and n3d )
       {
         double di = n3d->get();
         double start = n1d->get();
@@ -421,7 +418,7 @@ SLIArrayModule::ReverseFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( i->OStack.top().datum() );
-  assert( ad != 0 );
+  assert( ad );
   ad->reverse();
   i->EStack.pop();
 }
@@ -447,7 +444,7 @@ SLIArrayModule::FlattenFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 0 );
 
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( i->OStack.top().datum() );
-  assert( ad != 0 );
+  assert( ad );
   ArrayDatum* ta = new ArrayDatum();
   Token at( ta );
 
@@ -457,7 +454,7 @@ SLIArrayModule::FlattenFunction::execute( SLIInterpreter* i ) const
   for ( Token const* t = ad->begin(); t != ad->end(); ++t )
   {
     ArrayDatum* ad1 = dynamic_cast< ArrayDatum* >( t->datum() );
-    if ( ad1 != NULL )
+    if ( ad1 )
     {
       size += ad1->size();
     }
@@ -480,7 +477,7 @@ SLIArrayModule::FlattenFunction::execute( SLIInterpreter* i ) const
     for ( Token* t = ad->begin(); t != ad->end(); ++t )
     {
       ArrayDatum* ad1 = dynamic_cast< ArrayDatum* >( t->datum() );
-      if ( ad1 != NULL )
+      if ( ad1 )
       {
         if ( ad1->references() > 1 )
         {
@@ -508,7 +505,7 @@ SLIArrayModule::FlattenFunction::execute( SLIInterpreter* i ) const
     for ( Token const* t = ad->begin(); t != ad->end(); ++t )
     {
       ArrayDatum* ad1 = dynamic_cast< ArrayDatum* >( t->datum() );
-      if ( ad1 != NULL )
+      if ( ad1 )
       {
         for ( Token const* t1 = ad1->begin(); t1 != ad1->end(); ++t1 )
         {
@@ -648,10 +645,10 @@ SLIArrayModule::TransposeFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 0 );
 
   ArrayDatum* sd = dynamic_cast< ArrayDatum* >( i->OStack.top().datum() );
-  assert( sd != 0 );
+  assert( sd );
 
   ArrayDatum* hd = dynamic_cast< ArrayDatum* >( sd->begin()->datum() );
-  assert( hd != 0 );
+  assert( hd );
 
   // size of source first level
   size_t m = sd->size();
@@ -664,7 +661,7 @@ SLIArrayModule::TransposeFunction::execute( SLIInterpreter* i ) const
 
 
   ArrayDatum* td = new ArrayDatum();
-  assert( td != 0 );
+  assert( td );
 
   Token tt( td );
 
@@ -675,7 +672,7 @@ SLIArrayModule::TransposeFunction::execute( SLIInterpreter* i ) const
   for ( size_t j = 0; j < n; j++ )
   {
     hd = new ArrayDatum();
-    assert( td != 0 );
+    assert( td );
 
     hd->reserve( m );
 
@@ -687,7 +684,7 @@ SLIArrayModule::TransposeFunction::execute( SLIInterpreter* i ) const
     hd = dynamic_cast< ArrayDatum* >( sr->datum() );
 
     // raiseerror instead
-    assert( hd != 0 );
+    assert( hd );
 
     Token* sc;
     Token* tr;
@@ -698,7 +695,7 @@ SLIArrayModule::TransposeFunction::execute( SLIInterpreter* i ) const
       ArrayDatum* trd = dynamic_cast< ArrayDatum* >( tr->datum() );
 
       // raiseerror instead
-      assert( trd != 0 );
+      assert( trd );
 
       trd->push_back( *sc );
     }
@@ -719,11 +716,11 @@ SLIArrayModule::PartitionFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 2 );
 
   IntegerDatum* dd = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
-  assert( dd != NULL );
+  assert( dd );
   IntegerDatum* nd = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  assert( nd != NULL );
+  assert( nd );
   ArrayDatum* source = dynamic_cast< ArrayDatum* >( i->OStack.pick( 2 ).datum() );
-  assert( source != 0 );
+  assert( source );
   ArrayDatum* target = new ArrayDatum;
 
   long n = nd->get();
@@ -805,7 +802,7 @@ SLIArrayModule::ArrayloadFunction::execute( SLIInterpreter* i ) const
   at.move( i->OStack.top() );
   i->OStack.pop();
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( at.datum() );
-  assert( ad != 0 );
+  assert( ad );
   i->EStack.pop();
   int arraysize = ad->size();
   i->OStack.reserve_token( arraysize );
@@ -861,7 +858,7 @@ SLIArrayModule::ArraystoreFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
-  assert( id != NULL );
+  assert( id );
 
   long n = id->get();
   if ( n >= 0 )
@@ -907,7 +904,7 @@ SLIArrayModule::ArraycreateFunction::execute( SLIInterpreter* i ) const
   const Token mark_token( new LiteralDatum( i->mark_name ) );
   bool found = false;
 
-  while ( ( n < depth ) && not found )
+  while ( n < depth and not found )
   {
     found = ( i->OStack.pick( n ) == mark_token );
     ++n;
@@ -938,13 +935,13 @@ void
 SLIArrayModule::IMapFunction::backtrace( SLIInterpreter* i, int p ) const
 {
   IntegerDatum* id = static_cast< IntegerDatum* >( i->EStack.pick( p + 3 ).datum() );
-  assert( id != NULL );
+  assert( id );
 
   IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 2 ).datum() );
-  assert( count != NULL );
+  assert( count );
 
   ProcedureDatum const* pd = static_cast< ProcedureDatum* >( i->EStack.pick( p + 1 ).datum() );
-  assert( pd != NULL );
+  assert( pd );
 
   std::cerr << "During Map at iteration " << count->get() << "." << std::endl;
 
@@ -1036,7 +1033,7 @@ SLIArrayModule::IMapFunction::execute( SLIInterpreter* i ) const
         char cmd = i->debug_commandline( i->EStack.top() );
         if ( cmd == 'l' ) // List the procedure
         {
-          if ( proc != NULL )
+          if ( proc )
           {
             proc->list( std::cerr, "   ", pos );
             std::cerr << std::endl;
@@ -1058,13 +1055,13 @@ void
 SLIArrayModule::IMap_ivFunction::backtrace( SLIInterpreter* i, int p ) const
 {
   IntegerDatum* id = static_cast< IntegerDatum* >( i->EStack.pick( p + 3 ).datum() );
-  assert( id != NULL );
+  assert( id );
 
   IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 2 ).datum() );
-  assert( count != NULL );
+  assert( count );
 
   ProcedureDatum const* pd = static_cast< ProcedureDatum* >( i->EStack.pick( p + 1 ).datum() );
-  assert( pd != NULL );
+  assert( pd );
 
   std::cerr << "During Map at iteration " << count->get() << "." << std::endl;
 
@@ -1174,7 +1171,7 @@ SLIArrayModule::IMap_ivFunction::execute( SLIInterpreter* i ) const
         char cmd = i->debug_commandline( i->EStack.top() );
         if ( cmd == 'l' ) // List the procedure
         {
-          if ( proc != NULL )
+          if ( proc )
           {
             proc->list( std::cerr, "   ", pos );
             std::cerr << std::endl;
@@ -1197,13 +1194,13 @@ void
 SLIArrayModule::IMap_dvFunction::backtrace( SLIInterpreter* i, int p ) const
 {
   IntegerDatum* id = static_cast< IntegerDatum* >( i->EStack.pick( p + 3 ).datum() );
-  assert( id != NULL );
+  assert( id );
 
   IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 2 ).datum() );
-  assert( count != NULL );
+  assert( count );
 
   ProcedureDatum const* pd = static_cast< ProcedureDatum* >( i->EStack.pick( p + 1 ).datum() );
-  assert( pd != NULL );
+  assert( pd );
 
   std::cerr << "During Map at iteration " << count->get() << "." << std::endl;
 
@@ -1309,7 +1306,7 @@ SLIArrayModule::IMap_dvFunction::execute( SLIInterpreter* i ) const
         char cmd = i->debug_commandline( i->EStack.top() );
         if ( cmd == 'l' ) // List the procedure
         {
-          if ( proc != NULL )
+          if ( proc )
           {
             proc->list( std::cerr, "   ", pos );
             std::cerr << std::endl;
@@ -1388,7 +1385,7 @@ SLIArrayModule::MapFunction::execute( SLIInterpreter* i ) const
 {
   i->EStack.pop();
   ProcedureDatum* proc = dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
-  assert( proc != NULL );
+  assert( proc );
 
   if ( proc->size() == 0 )
   {
@@ -1426,7 +1423,7 @@ SLIArrayModule::ValidFunction::execute( SLIInterpreter* i ) const
 {
   assert( i->OStack.load() > 0 );
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( i->OStack.top().datum() );
-  assert( ad != NULL );
+  assert( ad );
   i->OStack.push( ad->valid() );
 
   i->EStack.pop();
@@ -1436,13 +1433,13 @@ void
 SLIArrayModule::IMapIndexedFunction::backtrace( SLIInterpreter* i, int p ) const
 {
   IntegerDatum* id = static_cast< IntegerDatum* >( i->EStack.pick( p + 3 ).datum() );
-  assert( id != NULL );
+  assert( id );
 
   IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 2 ).datum() );
-  assert( count != NULL );
+  assert( count );
 
   ProcedureDatum const* pd = static_cast< ProcedureDatum* >( i->EStack.pick( p + 1 ).datum() );
-  assert( pd != NULL );
+  assert( pd );
 
 
   std::cerr << "During MapIndexed at iteration " << count->get() << "." << std::endl;
@@ -1538,7 +1535,7 @@ SLIArrayModule::IMapIndexedFunction::execute( SLIInterpreter* i ) const
         char cmd = i->debug_commandline( i->EStack.top() );
         if ( cmd == 'l' ) // List the procedure
         {
-          if ( proc != NULL )
+          if ( proc )
           {
             proc->list( std::cerr, "   ", pos );
             std::cerr << std::endl;
@@ -1563,7 +1560,7 @@ SLIArrayModule::MapIndexedFunction::execute( SLIInterpreter* i ) const
 {
   i->EStack.pop();
   ProcedureDatum* proc = dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
-  assert( proc != NULL );
+  assert( proc );
 
   if ( proc->size() == 0 )
   {
@@ -1588,13 +1585,13 @@ void
 SLIArrayModule::IMapThreadFunction::backtrace( SLIInterpreter* i, int p ) const
 {
   IntegerDatum* id = static_cast< IntegerDatum* >( i->EStack.pick( p + 3 ).datum() );
-  assert( id != NULL );
+  assert( id );
 
   IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 2 ).datum() );
-  assert( count != NULL );
+  assert( count );
 
   ProcedureDatum const* pd = static_cast< ProcedureDatum* >( i->EStack.pick( p + 1 ).datum() );
-  assert( pd != NULL );
+  assert( pd );
 
 
   std::cerr << "During MapThread at iteration " << count->get() << "." << std::endl;
@@ -1710,7 +1707,7 @@ SLIArrayModule::IMapThreadFunction::execute( SLIInterpreter* i ) const
         char cmd = i->debug_commandline( i->EStack.top() );
         if ( cmd == 'l' ) // List the procedure
         {
-          if ( procd != NULL )
+          if ( procd )
           {
             procd->list( std::cerr, "   ", proccount );
             std::cerr << std::endl;
@@ -1756,7 +1753,7 @@ SLIArrayModule::MapThreadFunction::execute( SLIInterpreter* i ) const
 {
   assert( i->OStack.load() >= 2 );
   ProcedureDatum* proc = dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
-  assert( proc != NULL );
+  assert( proc );
 
   if ( proc->size() == 0 )
   {
@@ -1767,13 +1764,13 @@ SLIArrayModule::MapThreadFunction::execute( SLIInterpreter* i ) const
   }
 
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( i->OStack.pick( 1 ).datum() );
-  assert( ad != NULL );
+  assert( ad );
 
   if ( ad->size() > 0 )
   {
     // check if the components are arrays of equal length.
     ArrayDatum* ad1 = dynamic_cast< ArrayDatum* >( ad->get( 0 ).datum() );
-    if ( ad1 == NULL )
+    if ( not ad1 )
     {
       i->raiseerror( i->ArgumentTypeError );
       return;
@@ -1782,7 +1779,7 @@ SLIArrayModule::MapThreadFunction::execute( SLIInterpreter* i ) const
     for ( size_t j = 1; j < ad->size(); ++j )
     {
       ArrayDatum* ad2 = dynamic_cast< ArrayDatum* >( ad->get( j ).datum() );
-      if ( ad2 == NULL )
+      if ( not ad2 )
       {
         i->raiseerror( i->ArgumentTypeError );
         return;
@@ -1829,7 +1826,7 @@ SLIArrayModule::Put_a_a_tFunction::execute( SLIInterpreter* i ) const
   }
 
   ArrayDatum* source = dynamic_cast< ArrayDatum* >( i->OStack.pick( 2 ).datum() );
-  if ( source == NULL )
+  if ( not source )
   {
     i->message( SLIInterpreter::M_ERROR, "Put", "First argument must be an array." );
     i->message( SLIInterpreter::M_ERROR, "Put", "Usage: [array] [d1 ...dn]  obj Put -> [array]" );
@@ -1840,7 +1837,7 @@ SLIArrayModule::Put_a_a_tFunction::execute( SLIInterpreter* i ) const
 
   ArrayDatum* pos = dynamic_cast< ArrayDatum* >( i->OStack.pick( 1 ).datum() );
 
-  if ( pos == NULL )
+  if ( not pos )
   {
     i->message( SLIInterpreter::M_ERROR,
       "Put",
@@ -1853,9 +1850,9 @@ SLIArrayModule::Put_a_a_tFunction::execute( SLIInterpreter* i ) const
 
   for ( Token* t = pos->begin(); t != pos->end(); ++t )
   {
-    assert( t != NULL );
+    assert( t );
     IntegerDatum* idx = dynamic_cast< IntegerDatum* >( t->datum() );
-    if ( idx == NULL )
+    if ( not idx )
     {
       i->message( SLIInterpreter::M_ERROR, "Put", "Non integer index found." );
       i->message( SLIInterpreter::M_ERROR, "Put", "Source array is unchanged." );
@@ -1884,7 +1881,7 @@ SLIArrayModule::Put_a_a_tFunction::execute( SLIInterpreter* i ) const
     if ( t < pos->end() - 1 )
     {
       source = dynamic_cast< ArrayDatum* >( ( *source )[ j ].datum() );
-      if ( source == NULL )
+      if ( not source )
       {
         i->message( SLIInterpreter::M_ERROR, "Put", "Dimensions of index and array do not match." );
         i->message( SLIInterpreter::M_ERROR, "Put", "Source array is unchanged." );
@@ -2078,37 +2075,37 @@ SLIArrayModule::AreaFunction::execute( SLIInterpreter* i ) const
   //     i->raiseerror(i->ArgumentTypeError);
   //     return;
   //   }
-  if ( s_w_d == NULL )
+  if ( not s_w_d )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
-  if ( s_y_d == NULL )
+  if ( not s_y_d )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
-  if ( s_x_d == NULL )
+  if ( not s_x_d )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
-  if ( a_h_d == NULL )
+  if ( not a_h_d )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
-  if ( a_w_d == NULL )
+  if ( not a_w_d )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
-  if ( a_y_d == NULL )
+  if ( not a_y_d )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
-  if ( a_x_d == NULL )
+  if ( not a_x_d )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -2347,32 +2344,32 @@ SLIArrayModule::Area2Function::execute( SLIInterpreter* i ) const
   //     i->raiseerror(i->ArgumentTypeError);
   //     return;
   //   }
-  if ( s_y_d == NULL )
+  if ( not s_y_d )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
-  if ( s_x_d == NULL )
+  if ( not s_x_d )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
-  if ( a_h_d == NULL )
+  if ( not a_h_d )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
-  if ( a_w_d == NULL )
+  if ( not a_w_d )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
-  if ( a_y_d == NULL )
+  if ( not a_y_d )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
-  if ( a_x_d == NULL )
+  if ( not a_x_d )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -2446,7 +2443,7 @@ SLIArrayModule::Cv1dFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* x = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   IntegerDatum* y = dynamic_cast< IntegerDatum* >( i->OStack.pick( 2 ).datum() );
 
-  if ( w == NULL )
+  if ( not w )
   {
     i->message( SLIInterpreter::M_ERROR, "cv1d", "integertype expected" );
     i->message( SLIInterpreter::M_ERROR, "cv1d", "Usage: y x w cv1d" );
@@ -2454,7 +2451,7 @@ SLIArrayModule::Cv1dFunction::execute( SLIInterpreter* i ) const
     return;
   }
 
-  if ( x == NULL )
+  if ( not x )
   {
     i->message( SLIInterpreter::M_ERROR, "cv1d", "integertype expected" );
     i->message( SLIInterpreter::M_ERROR, "cv1d", "Usage: y x w cv1d" );
@@ -2462,7 +2459,7 @@ SLIArrayModule::Cv1dFunction::execute( SLIInterpreter* i ) const
     return;
   }
 
-  if ( y == NULL )
+  if ( not y )
   {
     i->message( SLIInterpreter::M_ERROR, "cv1d", "integertype expected" );
     i->message( SLIInterpreter::M_ERROR, "cv1d", "Usage: y x w cv1d" );
@@ -2516,7 +2513,7 @@ SLIArrayModule::Cv2dFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* w = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
   IntegerDatum* in = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
 
-  if ( w == NULL )
+  if ( not w )
   {
     i->message( SLIInterpreter::M_ERROR, "cv2d", "integertype expected" );
     i->message( SLIInterpreter::M_ERROR, "cv2d", "Usage: i w cv2d" );
@@ -2524,7 +2521,7 @@ SLIArrayModule::Cv2dFunction::execute( SLIInterpreter* i ) const
     return;
   }
 
-  if ( in == NULL )
+  if ( not in )
   {
     i->message( SLIInterpreter::M_ERROR, "cv2d", "integertype expected" );
     i->message( SLIInterpreter::M_ERROR, "cv2d", "Usage: i w cv2d" );
@@ -2567,7 +2564,7 @@ SLIArrayModule::GetMaxFunction::execute( SLIInterpreter* i ) const
   }
 
   ArrayDatum* a = dynamic_cast< ArrayDatum* >( i->OStack.top().datum() );
-  if ( a == NULL )
+  if ( not a )
   {
     i->message( SLIInterpreter::M_ERROR, "GetMax", "argument must be an array" );
     i->raiseerror( i->ArgumentTypeError );
@@ -2575,7 +2572,7 @@ SLIArrayModule::GetMaxFunction::execute( SLIInterpreter* i ) const
   }
 
   IntegerDatum* tmp = dynamic_cast< IntegerDatum* >( a->begin()->datum() );
-  if ( tmp == NULL )
+  if ( not tmp )
   {
     i->message( SLIInterpreter::M_ERROR, "GetMax", "argument array may only contain integers" );
     i->raiseerror( i->ArgumentTypeError );
@@ -2587,7 +2584,7 @@ SLIArrayModule::GetMaxFunction::execute( SLIInterpreter* i ) const
   while ( pos < a->size() )
   {
     tmp2 = dynamic_cast< IntegerDatum* >( a->get( pos ).datum() );
-    if ( tmp2 == NULL )
+    if ( not tmp2 )
     {
       i->message( SLIInterpreter::M_ERROR, "GetMax", "argument array may only contain integers" );
       i->raiseerror( i->ArgumentTypeError );
@@ -2629,7 +2626,7 @@ SLIArrayModule::GetMinFunction::execute( SLIInterpreter* i ) const
   }
 
   ArrayDatum* a = dynamic_cast< ArrayDatum* >( i->OStack.top().datum() );
-  if ( a == NULL )
+  if ( not a )
   {
     i->message( SLIInterpreter::M_ERROR, "GetMin", "argument must be an array" );
     i->raiseerror( i->ArgumentTypeError );
@@ -2638,7 +2635,7 @@ SLIArrayModule::GetMinFunction::execute( SLIInterpreter* i ) const
 
 
   IntegerDatum* tmp = dynamic_cast< IntegerDatum* >( a->begin()->datum() );
-  if ( tmp == NULL )
+  if ( not tmp )
   {
     i->message( SLIInterpreter::M_ERROR, "GetMin", "argument array may only contain integers" );
     i->raiseerror( i->ArgumentTypeError );
@@ -2650,7 +2647,7 @@ SLIArrayModule::GetMinFunction::execute( SLIInterpreter* i ) const
   while ( pos < a->size() )
   {
     tmp2 = dynamic_cast< IntegerDatum* >( a->get( pos ).datum() );
-    if ( tmp2 == NULL )
+    if ( not tmp2 )
     {
       i->message( SLIInterpreter::M_ERROR, "GetMin", "argument array may only contain integers" );
       i->raiseerror( i->ArgumentTypeError );
@@ -2739,7 +2736,7 @@ SLIArrayModule::GaborFunction::execute( SLIInterpreter* i ) const
     i->raiseerror( "RangeCheck" );
     return;
   }
-  if ( ( ncol < 2 ) || ( nrow < 2 ) )
+  if ( ncol < 2 or nrow < 2 )
   {
     i->message( SLIInterpreter::M_ERROR, "Gabor_", "Matrix must have at least two rows and two columns." );
     i->raiseerror( "RangeCheck" );
@@ -2847,7 +2844,7 @@ SLIArrayModule::Gauss2dFunction::execute( SLIInterpreter* i ) const
     i->raiseerror( "RangeCheck" );
     return;
   }
-  if ( ( ncol < 2 ) || ( nrow < 2 ) )
+  if ( ncol < 2 or nrow < 2 )
   {
     i->message( SLIInterpreter::M_ERROR, "gauss2d_", "Matrix must have at least two rows and two columns." );
     i->raiseerror( "RangeCheck" );
@@ -2942,7 +2939,7 @@ SLIArrayModule::IntVector2ArrayFunction::execute( SLIInterpreter* i ) const
     return;
   }
   IntVectorDatum* ivd = dynamic_cast< IntVectorDatum* >( i->OStack.top().datum() );
-  if ( ivd == 0 )
+  if ( not ivd )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -2962,13 +2959,13 @@ SLIArrayModule::Add_iv_ivFunction::execute( SLIInterpreter* i ) const
     return;
   }
   IntVectorDatum* ivd1 = dynamic_cast< IntVectorDatum* >( i->OStack.top().datum() );
-  if ( ivd1 == 0 )
+  if ( not ivd1 )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
   IntVectorDatum* ivd2 = dynamic_cast< IntVectorDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( ivd2 == 0 )
+  if ( not ivd2 )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3000,13 +2997,13 @@ SLIArrayModule::Add_i_ivFunction::execute( SLIInterpreter* i ) const
     return;
   }
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( id == 0 )
+  if ( not id )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
   IntVectorDatum* ivd = dynamic_cast< IntVectorDatum* >( i->OStack.pick( 0 ).datum() );
-  if ( ivd == 0 )
+  if ( not ivd )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3034,7 +3031,7 @@ SLIArrayModule::Neg_ivFunction::execute( SLIInterpreter* i ) const
     return;
   }
   IntVectorDatum* ivd = dynamic_cast< IntVectorDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( ivd == 0 )
+  if ( not ivd )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3061,13 +3058,13 @@ SLIArrayModule::Sub_iv_ivFunction::execute( SLIInterpreter* i ) const
     return;
   }
   IntVectorDatum* ivd1 = dynamic_cast< IntVectorDatum* >( i->OStack.top().datum() );
-  if ( ivd1 == 0 )
+  if ( not ivd1 )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
   IntVectorDatum* ivd2 = dynamic_cast< IntVectorDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( ivd2 == 0 )
+  if ( not ivd2 )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3099,13 +3096,13 @@ SLIArrayModule::Mul_iv_ivFunction::execute( SLIInterpreter* i ) const
     return;
   }
   IntVectorDatum* ivd1 = dynamic_cast< IntVectorDatum* >( i->OStack.top().datum() );
-  if ( ivd1 == 0 )
+  if ( not ivd1 )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
   IntVectorDatum* ivd2 = dynamic_cast< IntVectorDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( ivd2 == 0 )
+  if ( not ivd2 )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3138,13 +3135,13 @@ SLIArrayModule::Mul_i_ivFunction::execute( SLIInterpreter* i ) const
     return;
   }
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( id == 0 )
+  if ( not id )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
   IntVectorDatum* ivd = dynamic_cast< IntVectorDatum* >( i->OStack.pick( 0 ).datum() );
-  if ( ivd == 0 )
+  if ( not ivd )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3172,13 +3169,13 @@ SLIArrayModule::Mul_d_ivFunction::execute( SLIInterpreter* i ) const
     return;
   }
   DoubleDatum* dd = dynamic_cast< DoubleDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( dd == 0 )
+  if ( not dd )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
   IntVectorDatum* ivd = dynamic_cast< IntVectorDatum* >( i->OStack.pick( 0 ).datum() );
-  if ( ivd == 0 )
+  if ( not ivd )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3206,13 +3203,13 @@ SLIArrayModule::Div_iv_ivFunction::execute( SLIInterpreter* i ) const
     return;
   }
   IntVectorDatum* ivd1 = dynamic_cast< IntVectorDatum* >( i->OStack.top().datum() );
-  if ( ivd1 == 0 )
+  if ( not ivd1 )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
   IntVectorDatum* ivd2 = dynamic_cast< IntVectorDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( ivd2 == 0 )
+  if ( not ivd2 )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3252,7 +3249,7 @@ SLIArrayModule::Length_ivFunction::execute( SLIInterpreter* i ) const
     return;
   }
   IntVectorDatum* ivd = dynamic_cast< IntVectorDatum* >( i->OStack.top().datum() );
-  if ( ivd == 0 )
+  if ( not ivd )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3275,13 +3272,13 @@ SLIArrayModule::Add_dv_dvFunction::execute( SLIInterpreter* i ) const
     return;
   }
   DoubleVectorDatum* dvd1 = dynamic_cast< DoubleVectorDatum* >( i->OStack.top().datum() );
-  if ( dvd1 == 0 )
+  if ( not dvd1 )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
   DoubleVectorDatum* dvd2 = dynamic_cast< DoubleVectorDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( dvd2 == 0 )
+  if ( not dvd2 )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3313,13 +3310,13 @@ SLIArrayModule::Sub_dv_dvFunction::execute( SLIInterpreter* i ) const
     return;
   }
   DoubleVectorDatum* dvd1 = dynamic_cast< DoubleVectorDatum* >( i->OStack.top().datum() );
-  if ( dvd1 == 0 )
+  if ( not dvd1 )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
   DoubleVectorDatum* dvd2 = dynamic_cast< DoubleVectorDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( dvd2 == 0 )
+  if ( not dvd2 )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3351,13 +3348,13 @@ SLIArrayModule::Add_d_dvFunction::execute( SLIInterpreter* i ) const
     return;
   }
   DoubleDatum* dd = dynamic_cast< DoubleDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( dd == 0 )
+  if ( not dd )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
   DoubleVectorDatum* dvd = dynamic_cast< DoubleVectorDatum* >( i->OStack.pick( 0 ).datum() );
-  if ( dvd == 0 )
+  if ( not dvd )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3387,13 +3384,13 @@ SLIArrayModule::Mul_d_dvFunction::execute( SLIInterpreter* i ) const
     return;
   }
   DoubleDatum* dd = dynamic_cast< DoubleDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( dd == 0 )
+  if ( not dd )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
   DoubleVectorDatum* dvd = dynamic_cast< DoubleVectorDatum* >( i->OStack.pick( 0 ).datum() );
-  if ( dvd == 0 )
+  if ( not dvd )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3423,7 +3420,7 @@ SLIArrayModule::Neg_dvFunction::execute( SLIInterpreter* i ) const
     return;
   }
   DoubleVectorDatum* dvd = dynamic_cast< DoubleVectorDatum* >( i->OStack.top().datum() );
-  if ( dvd == 0 )
+  if ( not dvd )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3451,7 +3448,7 @@ SLIArrayModule::Inv_dvFunction::execute( SLIInterpreter* i ) const
     return;
   }
   DoubleVectorDatum* dvd = dynamic_cast< DoubleVectorDatum* >( i->OStack.top().datum() );
-  if ( dvd == 0 )
+  if ( not dvd )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3486,13 +3483,13 @@ SLIArrayModule::Mul_dv_dvFunction::execute( SLIInterpreter* i ) const
     return;
   }
   DoubleVectorDatum* dvd1 = dynamic_cast< DoubleVectorDatum* >( i->OStack.top().datum() );
-  if ( dvd1 == 0 )
+  if ( not dvd1 )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
   DoubleVectorDatum* dvd2 = dynamic_cast< DoubleVectorDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( dvd2 == 0 )
+  if ( not dvd2 )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3524,13 +3521,13 @@ SLIArrayModule::Div_dv_dvFunction::execute( SLIInterpreter* i ) const
     return;
   }
   DoubleVectorDatum* dvd1 = dynamic_cast< DoubleVectorDatum* >( i->OStack.top().datum() );
-  if ( dvd1 == 0 )
+  if ( not dvd1 )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
   DoubleVectorDatum* dvd2 = dynamic_cast< DoubleVectorDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( dvd2 == 0 )
+  if ( not dvd2 )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3570,7 +3567,7 @@ SLIArrayModule::Length_dvFunction::execute( SLIInterpreter* i ) const
     return;
   }
   DoubleVectorDatum* dvd1 = dynamic_cast< DoubleVectorDatum* >( i->OStack.top().datum() );
-  if ( dvd1 == 0 )
+  if ( not dvd1 )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3592,13 +3589,13 @@ SLIArrayModule::Get_dv_iFunction::execute( SLIInterpreter* i ) const
     return;
   }
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
-  if ( id == 0 )
+  if ( not id )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
   DoubleVectorDatum* dvd = dynamic_cast< DoubleVectorDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( dvd == 0 )
+  if ( not dvd )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3625,13 +3622,13 @@ SLIArrayModule::Get_iv_iFunction::execute( SLIInterpreter* i ) const
     return;
   }
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
-  if ( id == 0 )
+  if ( not id )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
   IntVectorDatum* vd = dynamic_cast< IntVectorDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( vd == 0 )
+  if ( not vd )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3658,13 +3655,13 @@ SLIArrayModule::Get_iv_ivFunction::execute( SLIInterpreter* i ) const
     return;
   }
   IntVectorDatum* id = dynamic_cast< IntVectorDatum* >( i->OStack.pick( 0 ).datum() );
-  if ( id == 0 )
+  if ( not id )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
   IntVectorDatum* vd = dynamic_cast< IntVectorDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( vd == 0 )
+  if ( not vd )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3698,13 +3695,13 @@ SLIArrayModule::Get_dv_ivFunction::execute( SLIInterpreter* i ) const
     return;
   }
   IntVectorDatum* id = dynamic_cast< IntVectorDatum* >( i->OStack.pick( 0 ).datum() );
-  if ( id == 0 )
+  if ( not id )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
   DoubleVectorDatum* vd = dynamic_cast< DoubleVectorDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( vd == 0 )
+  if ( not vd )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3739,19 +3736,19 @@ SLIArrayModule::Put_dv_i_dFunction::execute( SLIInterpreter* i ) const
     return;
   }
   DoubleDatum* val = dynamic_cast< DoubleDatum* >( i->OStack.pick( 0 ).datum() );
-  if ( val == 0 )
+  if ( not val )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
   IntegerDatum* idxd = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( idxd == 0 )
+  if ( not idxd )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
   DoubleVectorDatum* vecd = dynamic_cast< DoubleVectorDatum* >( i->OStack.pick( 2 ).datum() );
-  if ( vecd == 0 )
+  if ( not vecd )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3774,19 +3771,19 @@ SLIArrayModule::Put_iv_i_iFunction::execute( SLIInterpreter* i ) const
 {
 
   IntegerDatum* val = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
-  if ( val == 0 )
+  if ( not val )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
   IntegerDatum* idxd = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( idxd == 0 )
+  if ( not idxd )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
   IntVectorDatum* vecd = dynamic_cast< IntVectorDatum* >( i->OStack.pick( 2 ).datum() );
-  if ( vecd == 0 )
+  if ( not vecd )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3813,7 +3810,7 @@ SLIArrayModule::DoubleVector2ArrayFunction::execute( SLIInterpreter* i ) const
     return;
   }
   DoubleVectorDatum* ivd = dynamic_cast< DoubleVectorDatum* >( i->OStack.top().datum() );
-  if ( ivd == 0 )
+  if ( not ivd )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3833,7 +3830,7 @@ SLIArrayModule::Zeros_dvFunction::execute( SLIInterpreter* i ) const
     return;
   }
   IntegerDatum* num = dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
-  if ( num == 0 )
+  if ( not num )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3858,7 +3855,7 @@ SLIArrayModule::Ones_dvFunction::execute( SLIInterpreter* i ) const
     return;
   }
   IntegerDatum* num = dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
-  if ( num == 0 )
+  if ( not num )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3883,7 +3880,7 @@ SLIArrayModule::Zeros_ivFunction::execute( SLIInterpreter* i ) const
     return;
   }
   IntegerDatum* num = dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
-  if ( num == 0 )
+  if ( not num )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3908,7 +3905,7 @@ SLIArrayModule::Ones_ivFunction::execute( SLIInterpreter* i ) const
     return;
   }
   IntegerDatum* num = dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
-  if ( num == 0 )
+  if ( not num )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
@@ -3930,7 +3927,7 @@ SLIArrayModule::FiniteQ_dFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
   const double x = getValue< double >( i->OStack.pick( 0 ) );
 
-  BoolDatum res( -std::numeric_limits< double >::max() <= x && x <= std::numeric_limits< double >::max() );
+  BoolDatum res( -std::numeric_limits< double >::max() <= x and x <= std::numeric_limits< double >::max() );
   i->OStack.push( res );
   i->EStack.pop();
 }
@@ -4006,7 +4003,7 @@ void
 SLIArrayModule::Iforall_ivFunction::backtrace( SLIInterpreter* i, int p ) const
 {
   IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 3 ).datum() );
-  assert( count != NULL );
+  assert( count );
 
   std::cerr << "During forall (IntVector) at iteration " << count->get() << "." << std::endl;
 }
@@ -4082,7 +4079,7 @@ void
 SLIArrayModule::Iforall_dvFunction::backtrace( SLIInterpreter* i, int p ) const
 {
   IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 3 ).datum() );
-  assert( count != NULL );
+  assert( count );
 
   std::cerr << "During forall (DoubleVector) at iteration " << count->get() << "." << std::endl;
 }
@@ -4135,7 +4132,7 @@ eq_execute( SLIInterpreter* i )
   op1->unlock();
   const std::vector< D >* d2 = op2->get();
   op2->unlock();
-  bool eq = ( d1 == d2 || *d1 == *d2 );
+  bool eq = ( d1 == d2 or *d1 == *d2 );
 
   i->OStack.pop( 2 );
   i->OStack.push_by_pointer( new BoolDatum( eq ) );

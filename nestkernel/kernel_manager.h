@@ -78,8 +78,10 @@
                                                      defaults to true.
  adaptive_target_buffers               booltype    - Whether MPI buffers for communication of connections resize on the
                                                      fly, defaults to true.
- buffer_size_secondary_events          integertype - Size of MPI buffers for communicating secondary events (in bytes;
-                                                     per MPI rank; for developers; read only).
+ send_buffer_size_secondary_events     integertype - Size of MPI send buffers for communicating secondary events (in
+                                                     bytes; per MPI rank; for developers; read only).
+ recv_buffer_size_secondary_events     integertype - Size of MPI recv buffers for communicating secondary events (in
+                                                     bytes; per MPI rank; for developers; read only).
  buffer_size_spike_data                integertype - Total size of MPI buffer for communication of spikes, defaults to
                                                      2.
  buffer_size_target_data               integertype - Total size of MPI buffer for communication of connections, defaults

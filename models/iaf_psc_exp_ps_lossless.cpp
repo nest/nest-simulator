@@ -35,11 +35,8 @@
 #include "regula_falsi.h"
 
 // Includes from sli:
-#include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 
 /* ----------------------------------------------------------------
@@ -341,7 +338,7 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin, const long from, cons
 
     // if neuron returns from refractoriness during this step, place
     // pseudo-event in queue to mark end of refractory period
-    if ( S_.is_refractory_ && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
+    if ( S_.is_refractory_ and T + 1 - S_.last_spike_step_ == V_.refractory_steps_ )
     {
       B_.events_.add_refractory( T, S_.last_spike_offset_ );
     }
@@ -628,7 +625,7 @@ nest::iaf_psc_exp_ps_lossless::is_spike_( const double dt )
   // no-spike, NS_1, (V <= g_h,I_e(I) and V < f_h,I_e(I))
   if ( ( V_0 < ( ( ( I_0 + I_e ) * ( V_.b1_ * exp_tau_m + V_.b2_ * exp_tau_s ) + V_.b3_ * ( exp_tau_m - exp_tau_s ) )
            / ( V_.b4_ * exp_tau_s ) ) )
-    and ( V_0 <= f ) )
+    and V_0 <= f )
   {
     return numerics::nan;
   }

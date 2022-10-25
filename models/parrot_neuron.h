@@ -91,24 +91,24 @@ public:
   using Node::receives_signal;
   using Node::sends_signal;
 
-  port send_test_event( Node&, rport, synindex, bool );
-  SignalType sends_signal() const;
-  SignalType receives_signal() const;
+  port send_test_event( Node&, rport, synindex, bool ) override;
+  SignalType sends_signal() const override;
+  SignalType receives_signal() const override;
 
-  void handle( SpikeEvent& );
-  port handles_test_event( SpikeEvent&, rport );
+  void handle( SpikeEvent& ) override;
+  port handles_test_event( SpikeEvent&, rport ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
+  void init_buffers_() override;
   void
-  pre_run_hook()
+  pre_run_hook() override
   {
   } // no variables
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   /**
      Buffers and accumulates the number of incoming spikes per time step;

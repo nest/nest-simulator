@@ -268,13 +268,6 @@ SPManager::disconnect( NodeCollectionPTR sources,
 {
   if ( kernel().connection_manager.connections_have_changed() )
   {
-    if ( kernel().connection_manager.secondary_connections_exist() )
-    {
-      kernel().model_manager.create_secondary_events_prototypes(); // necessary before
-                                                                   // updating
-                                                                   // connection
-                                                                   // infrastructure
-    }
 #pragma omp parallel
     {
       const thread tid = kernel().vp_manager.get_thread_id();
@@ -282,7 +275,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
     }
   }
 
-  ConnBuilder* cb = NULL;
+  ConnBuilder* cb = nullptr;
   conn_spec->clear_access_flags();
   syn_spec->clear_access_flags();
 
@@ -315,7 +308,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
   {
     cb = kernel().connection_manager.get_conn_builder( rule_name, sources, targets, conn_spec, { syn_spec } );
   }
-  assert( cb != 0 );
+  assert( cb );
 
   // at this point, all entries in conn_spec and syn_spec have been checked
   ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries: " );

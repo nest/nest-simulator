@@ -200,6 +200,12 @@ def set_verbosity(level):
     - M_ERROR=30, display error messages and above
     - M_FATAL=40, display failure messages and above
 
+    .. note::
+
+       To suppress the usual output when NEST starts up (e.g., the welcome message and
+       version information), you can run ``export PYNEST_QUIET=1`` on the command
+       line before executing your simulation script.
+
     Parameters
     ----------
     level : str, default: 'M_INFO'

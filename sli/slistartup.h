@@ -135,20 +135,20 @@ public:
   class GetenvFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const override;
   };
 
   GetenvFunction getenvfunction;
 
   SLIStartup( int, char** );
-  ~SLIStartup()
+  ~SLIStartup() override
   {
   }
 
-  void init( SLIInterpreter* );
+  void init( SLIInterpreter* ) override;
 
   const std::string
-  name( void ) const
+  name() const override
   {
     return "SLIStartup";
   }

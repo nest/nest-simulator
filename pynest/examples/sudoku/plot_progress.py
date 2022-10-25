@@ -56,7 +56,7 @@ def get_progress(puzzle, solution):
 
 
 # Name of the .pkl files to read from.
-in_files = ["10Hz_puzzle_3.pkl", "350Hz_puzzle_3.pkl"]
+in_files = ["350Hz_puzzle_4.pkl"]
 temp_dir = "tmp"                # Name of directory for temporary files
 out_file = "sudoku.gif"         # Name of the output GIF
 keep_temps = False              # If True, temporary files will not be deleted

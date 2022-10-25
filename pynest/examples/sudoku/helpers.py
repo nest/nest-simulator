@@ -210,7 +210,6 @@ def plot_field(puzzle, solution, ax, with_color=False):
         with_color (bool, optional): if True, green and red are used to
         indicate which parts of the solution are valid and which are not.
         Otherwise, only black and white are used. Defaults to False.
-
     """
     decorate_sudoku_box(ax)
     fill_numbers(ax, puzzle, solution)

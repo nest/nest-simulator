@@ -123,7 +123,7 @@ while not valid:
 
 img_name = "sudoku_solution.png"
 logging.info(f"storing final state to: {img_name}...")
-fig, ax = plt.subplots(1, 1)
+fig, ax = plt.subplots()
 plot_field(puzzle, solution, ax, True)
 plt.show()
 plt.savefig(img_name)

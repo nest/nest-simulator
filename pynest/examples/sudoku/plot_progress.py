@@ -79,8 +79,6 @@ except FileExistsError:
 image_count = 0
 # store datapoints for multiple files in a single list
 lines = []
-
-
 for file in in_files:
     with open(file, "rb") as f:
         sim_data = pickle.load(f)

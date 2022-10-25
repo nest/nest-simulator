@@ -17,10 +17,11 @@ If you transition from an earlier version, please see our extensive
 Documentation restructuring and new theme
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-NEST documentation has a new theme! We did a major overhaul of the
-layout and structure of the documentation.  The changes aim to improve
-findability and access of content. With a more modern layout, our wide
-range of docs can be discovered more easily.
+NEST documentation has a new theme! We did a major overhaul of the layout and structure of the documentation.
+The changes aim to improve findability and access of content. With a more modern
+layout, our wide range of docs can be discovered more easily.
+The table of contents is simplified and the content is grouped based on topic (neurons, synapses etc)
+rather than type of documentation (e.g., 'guides').
 
 The table of contents is simplified and the content is grouped based
 on topics (neurons, synapses etc) rather than type of documentation
@@ -35,10 +36,12 @@ GitHub
 Query spatially structured networks from target neuron perspective
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-PyNEST now provides functions :py:func:`.GetSourceNodes`,
-:py:func:`.GetSourcePositions`, and :py:func:`.PlotSources` which
-allow you to query or plot the source neurons of a given target
-neuron.
+Spatial layers can be created by specifying only the node positions using ``spatial.free``,
+without explicitly specifying the ``extent``.
+In that case, in NEST 3.4 and later, the ``extent`` will be determined by the position of the
+lower-leftmost and upper-rightmost nodes in the layer; earlier versions of NEST added a hard-coded
+padding to the extent. The ``center`` is computed as the midpoint between the lower-leftmost and
+upper-rightmost nodes.
 
 Extent and center for spatial layers with freely placed neurons
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -53,36 +56,15 @@ and upper-rightmost nodes in the layer, if omitted. While earlier
 versions of NEST added a hard-coded padding, NEST 3.4 will only use
 the node positions.
 
-Likewise, the ``center`` of a layer is now automatically computed as
-the midpoint between the lower-leftmost and the upper-rightmost nodes.
+* Model ``spike_dilutor`` is now deprecated and can only be used
+  in single-threaded mode. To implement connections which transmit
+  spikes with fixed probability, use ``bernoulli_synapse`` instead.
 
-When creating a layer with only a single node, the ``extent`` still
-has to be specified explicitly.
 
-Disconnect with ``SynapseCollection``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Changes in NEST Server
+~~~~~~~~~~~~~~~~~~~~~~
 
-It is now possible to disconnect nodes using a ``SynapseCollection``
-as argument to either :py:func:`.disconnect` or the member function
-``disconnect()`` of the ``SynapseCollection``.
-
-Removal of deprecated models
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-* The models ``iaf_psc_alpha_canon`` and ``pp_pop_psc_delta`` have
-  long been deprecated and were now removed from NEST. In case you
-  depend on them, you will find similar functionality in the
-  replacement models :doc:`iaf_psc_alpha_ps
-  </models/iaf_psc_alpha_ps>` and :doc:`iaf_psc_alpha_ps
-  </models/gif_pop_psc_exp>`, respectively.
-
-* Model ``spike_dilutor`` is now deprecated and can only be used in
-  single-threaded mode. To implement connections which transmit spikes
-  with fixed probability, use :doc:`bernoulli_synapse
-  </models/bernoulli_synapse>` instead.
-
-Changed port of NEST Server
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-To avoid conflicts with other services, the default port for NEST
-Server has been changed from 5000 to 52025.
+* By default NEST Server runs on port 52425 (previously 5000).
+* Minimize security risk in NEST Server.
+  * By default exec call is disabled, only API calls are enabled.
+  * The user is able to turn on exec call which means that the user is aware of the risk.

@@ -31,6 +31,7 @@
 #include "connection.h"
 #include "connector_model.h"
 #include "event.h"
+#include "nest.h"
 #include "ring_buffer.h"
 
 // Includes from sli:
@@ -115,6 +116,9 @@ class clopath_synapse : public Connection< targetidentifierT >
 public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
+
+  const static RegisterConnectionModelFlags flags =
+      default_connection_model_flags | RegisterConnectionModelFlags::REQUIRES_CLOPATH_ARCHIVING;
 
   /**
    * Default Constructor.

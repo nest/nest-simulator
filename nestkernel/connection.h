@@ -30,6 +30,7 @@
 #include "delay_checker.h"
 #include "event.h"
 #include "kernel_manager.h"
+#include "nest.h"
 #include "nest_names.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"
@@ -119,6 +120,8 @@ public:
   // to attach a specific event type to this connection type, used in secondary
   // connections not used in primary connectors
   typedef SecondaryEvent EventType;
+
+  const static RegisterConnectionModelFlags flags = default_connection_model_flags;
 
   Connection()
     : target_()
@@ -287,8 +290,7 @@ public:
 
 protected:
   /**
-   * This function calls check_connection() on the sender to check if the
-   * receiver
+   * This function calls check_connection() on the sender to check if the receiver
    * accepts the event type and receptor type requested by the sender.
    * \param s The source node
    * \param r The target node
@@ -298,13 +300,10 @@ protected:
    */
   void check_connection_( Node& dummy_target, Node& source, Node& target, const rport receptor_type );
 
-  /* the order of the members below is critical
-     as it influcences the size of the object. Please leave unchanged
-     as
+  /* the order of the members below is critical as it influcences the size of the object. Please leave unchanged as:
+
      targetidentifierT target_;
-     SynIdDelay syn_id_delay_;        //!< syn_id (char) and delay (24 bit) in
-     timesteps of this
-     connection
+     SynIdDelay syn_id_delay_;        //!< syn_id (char) and delay (24 bit) in timesteps of this connection
   */
   targetidentifierT target_;
   //! syn_id (char) and delay (24 bit) in timesteps of this connection

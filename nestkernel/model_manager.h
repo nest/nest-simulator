@@ -132,8 +132,7 @@ public:
    * @param name The name under which the ConnectorModel will be registered.
    */
   template < template < typename targetidentifierT > class ConnectionT >
-  void register_connection_model( const std::string& name,
-    const RegisterConnectionModelFlags flags = default_connection_model_flags );
+  void register_connection_model( const std::string& name );
 
   template < template < typename targetidentifierT > class ConnectionT >
   void register_secondary_connection_model( const std::string& name,

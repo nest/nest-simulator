@@ -82,8 +82,7 @@ const RegisterConnectionModelFlags default_secondary_connection_model_flags =
  * Register connection model (i.e. an instance of a class inheriting from `Connection`).
  */
 template < template < typename > class ConnectorModelT >
-void register_connection_model( const std::string& name,
-  const RegisterConnectionModelFlags flags = default_connection_model_flags );
+void register_connection_model( const std::string& name );
 
 /**
  * Register secondary connection models (e.g. gap junctions, rate-based models).

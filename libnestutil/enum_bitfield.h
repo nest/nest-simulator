@@ -80,12 +80,20 @@ struct EnableBitMaskOperators
   static const bool enable = false;
 };
 
-template < typename Enum >
+/*template < typename Enum >
 typename std::enable_if< EnableBitMaskOperators< Enum >::enable, Enum >::type
 operator|( Enum lhs, Enum rhs )
 {
   using underlying = typename std::underlying_type< Enum >::type;
   return static_cast< Enum >( static_cast< underlying >( lhs ) | static_cast< underlying >( rhs ) );
+}*/
+
+template < typename Enum >
+constexpr typename std::enable_if< EnableBitMaskOperators< Enum >::enable, Enum >::type
+operator|( const Enum lhs, const Enum rhs )
+{
+  using underlying = typename std::underlying_type< const Enum >::type;
+  return static_cast< const Enum >( static_cast< underlying >( lhs ) | static_cast< underlying >( rhs ) );
 }
 
 template < typename Enum >

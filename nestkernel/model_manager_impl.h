@@ -55,8 +55,10 @@ ModelManager::register_node_model( const Name& name, std::string deprecation_inf
 
 template < template < typename targetidentifierT > class ConnectionT >
 void
-ModelManager::register_connection_model( const std::string& name, const RegisterConnectionModelFlags flags )
+ModelManager::register_connection_model( const std::string& name )
 {
+  RegisterConnectionModelFlags flags = ConnectionT< TargetIdentifierPtrRport >::flags;
+
   // register normal version of the synapse
   ConnectorModel* cf = new GenericConnectorModel< ConnectionT< TargetIdentifierPtrRport > >( name,
     enumFlagSet( flags, RegisterConnectionModelFlags::IS_PRIMARY ),

@@ -116,7 +116,7 @@ SonataConnector::connect()
     const auto edge_dict = getValue< DictionaryDatum >( edge_dictionary_datum );
     const auto edge_filename = getValue< std::string >( edge_dict->lookup( "edges_file" ) );
 
-    // std::cerr << "[Rank " << this_rank << "] Edge file: " << edge_filename << "\n";
+    std::cerr << "[Rank " << this_rank << "] Edge file: " << edge_filename << "\n";
 
     // Create map of edge type ids to NEST synapse_model ids
     edge_params_ = getValue< DictionaryDatum >( edge_dict->lookup( "edge_synapse" ) );
@@ -425,6 +425,7 @@ SonataConnector::create_connections_with_indices_dev_()
   const auto this_rank = kernel().mpi_manager.get_rank(); // for debugging
 
   // Retrieve the correct NodeCollections
+  std::cerr << "[Rank " << this_rank << "] Retrieve NodeColletions\n";
   const auto nest_global_nodes = getValue< DictionaryDatum >( sonata_dynamics_->lookup( "nodes" ) );
   const auto tgt_nc_global = getValue< NodeCollectionPTR >( nest_global_nodes->lookup( target_attribute_value_ ) );
   const auto src_nc_global = getValue< NodeCollectionPTR >( nest_global_nodes->lookup( source_attribute_value_ ) );
@@ -449,19 +450,19 @@ SonataConnector::create_connections_with_indices_dev_()
 
   // Translate NEST node id to SONATA node id
   auto sonata_first_node_id = tgt_nc_first_node_lid - tgt_nc_first_node_gid;
-  // std::cerr << "[Rank " << this_rank << "] tgt_nc_local_size " << tgt_nc_size << "\n";
-  // std::cerr << "[Rank " << this_rank << "] sonata_first_node_id " << sonata_first_node_id << "\n";
+  std::cerr << "[Rank " << this_rank << "] tgt_nc_local_size " << tgt_nc_size << "\n";
+  std::cerr << "[Rank " << this_rank << "] sonata_first_node_id " << sonata_first_node_id << "\n";
 
   // const auto n_sonata_node_ids = get_nrows_( tgt_node_id_to_range_dset_, 2 );
   // auto sonata_first_node_id = nest_node_id_to_sonata_node_id( tgt_nc_first_node_id, n_sonata_node_ids );
 
   // Read node_id_to_range dset
-  // std::cerr << "[Rank " << this_rank << "] read node_id_to_range\n";
+  std::cerr << "[Rank " << this_rank << "] read node_id_to_range\n";
   auto tgt_node_id_to_range_data = read_node_id_to_range_dset_( tgt_nc_size, tgt_nc_step, sonata_first_node_id );
 
   // Read range_to_edge_id dset
   // std::cerr << "[Rank " << this_rank << "] read range_to_edge_id\n";
-  auto tgt_range_to_edge_id_data = read_range_to_edge_id_dset_( tgt_nc_size, tgt_node_id_to_range_data );
+  // auto tgt_range_to_edge_id_data = read_range_to_edge_id_dset_( tgt_nc_size, tgt_node_id_to_range_data );
 
   /*
 if ( this_rank == 0 )
@@ -478,7 +479,7 @@ if ( this_rank == 0 )
 }
 */
 
-
+  /*
   // Read connection dsets
   // std::cerr << "[Rank " << this_rank << "] read connection dsets\n";
   auto tgt_range_to_edge_id_data_size = tgt_range_to_edge_id_data.size();
@@ -623,6 +624,7 @@ if ( this_rank == 0 )
         weight );
     }
   }
+  */
 
 
   /*
@@ -987,12 +989,11 @@ SonataConnector::find_edge_id_groups_( const H5::Group& population_group,
   {
     is_edge_id_name = ( name.find_first_not_of( "0123456789" ) == std::string::npos );
 
-    if ( is_edge_id_name == 1 )
+    if ( is_edge_id_name )
     {
       edge_id_group_names.push_back( name );
+      ++num_edge_id_groups;
     }
-
-    num_edge_id_groups += is_edge_id_name;
   }
 
   return num_edge_id_groups;
@@ -1017,7 +1018,7 @@ SonataConnector::try_to_load_tgt_indices_dsets_( H5::Group population_group )
       bool tgt_range_to_edge_id_dset_exist =
         H5Lexists( tgt_to_src_indices_group.getId(), "range_to_edge_id", H5P_DEFAULT ) > 0;
 
-      if ( tgt_node_id_to_range_dset_exist && tgt_range_to_edge_id_dset_exist )
+      if ( tgt_node_id_to_range_dset_exist and tgt_range_to_edge_id_dset_exist )
       {
         tgt_node_id_to_range_dset_ = tgt_to_src_indices_group.openDataSet( "node_id_to_range" );
         tgt_range_to_edge_id_dset_ = tgt_to_src_indices_group.openDataSet( "range_to_edge_id" );

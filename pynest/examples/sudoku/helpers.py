@@ -31,11 +31,15 @@ import matplotlib.patches as patch
 def get_puzzle(puzzle_index):
     """returns one of 8 Sudoku configuration to be solved.
 
-    Args:
-        puzzle_index (int): index between 0 and 7 indicating the puzzle number
+    Parameters
+    ----------
+    puzzle_index : int
+        index between 0 and 7 indicating the puzzle number
 
-    Returns:
-        np.array: array of shape (9,9) representing the puzzle configuration.
+    Returns
+    -------
+    np.array
+        array of shape (9,9) representing the puzzle configuration.
         Array is zero wherever no input is given, and contains the corresponding
         digit otherwise.
     """
@@ -148,19 +152,24 @@ def get_puzzle(puzzle_index):
 def validate_solution(puzzle, solution):
     """validate a proposed solution for a sudoku puzzle
 
-    Args:
-        puzzle (np.array): array of shape (9,9) encoding the puzzle.
+    Parameters
+    ----------
+    puzzle : np.array
+        array of shape (9,9) encoding the puzzle.
         see get_puzzle().
-        solution (np.array): array of shape (9,9) encoding the proposed
-        solution.
+    solution : np.array
+        array of shape (9,9) encoding the proposed solution.
 
-    Returns:
-        (bool, np.array, np.array, np.array): tuple of values that indicate
-        the validity of the solution:
-        1. True if the overall solution is valid, False otherwise.
-        2. boolean array of shape (3,3) that is True wherever a 3x3 box is valid
-        3. boolean array of shape (9,) encoding the validity of all rows
-        4. boolean array of shape (9,) encoding the validity of all columns
+    Returns
+    -------
+    bool
+        True if the overall solution is valid, False otherwise.
+    np.array (3,3)
+        True wherever a 3x3 box is valid
+    np.array (9,)
+        True wherever a row is valid
+    np.array (9,)
+        True wherever a column is valid
     """
 
     boxes = np.ones((3, 3), dtype=bool)
@@ -201,12 +210,17 @@ def plot_field(puzzle, solution, ax, with_color=False):
     given by the puzzle are represented as bold and black, while calculated
     digits are represented in grey and italic.
 
-    Args:
-        puzzle (np.array): array of shape (9,9) that represents the puzzle
-        that is being solved. See get_puzzle()
-        solution (np.array): array of shape (9,9) representing the solution.
-        ax (plt.Axes): Axes object on which to draw the field.
-        with_color (bool, optional): if True, green and red are used to
+    Parameters
+    ----------
+    puzzle : np.array
+        array of shape (9,9) that represents the puzzle that is being solved.
+        See get_puzzle()
+    solution : np.array
+        array of shape (9,9) representing the solution.
+    ax : plt.Axes
+        Axes object on which to draw the field.
+    with_color : bool
+        if True, green and red are used to
         indicate which parts of the solution are valid and which are not.
         Otherwise, only black and white are used. Defaults to False.
     """
@@ -245,11 +259,15 @@ def fill_numbers(ax, puzzle, solution):
     """Fill the digits of a proposed solution into an Axes object which represents the
     Sudoku field.
 
-    Args:
-        ax (plt.Axes): Axes in which to draw the numbers
-        puzzle (np.array): array of shape (9,9) that represents the puzzle
-        that is being solved. See get_puzzle()
-        solution (np.array): array of shape (9,9) representing the solution.
+    Parameters
+    ----------
+    ax : plt.Axes
+        Axes in which to draw the numbers
+    puzzle : np.array
+        array of shape (9,9) that represents the puzzle that is being solved.
+        See get_puzzle()
+    solution : np.array
+        array of shape (9,9) representing the solution.
     """
     for i in range(9):
         for j in range(9):
@@ -275,8 +293,10 @@ def fill_numbers(ax, puzzle, solution):
 def decorate_sudoku_box(ax):
     """Decorate the Axes object to resemble an empty sudoku field.
 
-    Args:
-        ax (plt.Axes): Axes to be decorated
+    Parameters
+    ----------
+    ax : plt.Axes
+        Axes to be decorated
     """
     [x, y, xr, yr] = generate_sudoku_box_lines()
     ax.plot(x, y, color='gray')
@@ -292,8 +312,10 @@ def decorate_sudoku_box(ax):
 def generate_sudoku_box_lines():
     """Generate coordinates for the lines that divide the Sudoku field
 
-    Returns:
-        list: List of 4 lists that represent the coordinates which separate
+    Returns
+    -------
+    list
+        List of 4 lists that represent the coordinates which separate
         the Sudoku field. The first pair is used to separate all cells, and
         the second pair is drawn around 3x3 boxes.
     """

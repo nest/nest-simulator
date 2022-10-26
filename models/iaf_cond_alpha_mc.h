@@ -178,7 +178,7 @@ class iaf_cond_alpha_mc : public ArchivingNode
 public:
   iaf_cond_alpha_mc();
   iaf_cond_alpha_mc( const iaf_cond_alpha_mc& );
-  ~iaf_cond_alpha_mc();
+  ~iaf_cond_alpha_mc() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -188,23 +188,23 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
-  void pre_run_hook();
-  void update( Time const&, const long, const long );
+  void init_buffers_() override;
+  void pre_run_hook() override;
+  void update( Time const&, const long, const long ) override;
 
   // Enumerations and constants specifying structure and properties ----
 
@@ -477,9 +477,9 @@ iaf_cond_alpha_mc::send_test_event( Node& target, rport receptor_type, synindex,
 inline port
 iaf_cond_alpha_mc::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type < MIN_SPIKE_RECEPTOR || receptor_type >= SUP_SPIKE_RECEPTOR )
+  if ( receptor_type < MIN_SPIKE_RECEPTOR or receptor_type >= SUP_SPIKE_RECEPTOR )
   {
-    if ( receptor_type < 0 || receptor_type >= SUP_CURR_RECEPTOR )
+    if ( receptor_type < 0 or receptor_type >= SUP_CURR_RECEPTOR )
     {
       throw UnknownReceptorType( receptor_type, get_name() );
     }
@@ -494,9 +494,9 @@ iaf_cond_alpha_mc::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 iaf_cond_alpha_mc::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type < MIN_CURR_RECEPTOR || receptor_type >= SUP_CURR_RECEPTOR )
+  if ( receptor_type < MIN_CURR_RECEPTOR or receptor_type >= SUP_CURR_RECEPTOR )
   {
-    if ( receptor_type >= 0 && receptor_type < MIN_CURR_RECEPTOR )
+    if ( receptor_type >= 0 and receptor_type < MIN_CURR_RECEPTOR )
     {
       throw IncompatibleReceptorType( receptor_type, get_name(), "CurrentEvent" );
     }
@@ -513,7 +513,7 @@ iaf_cond_alpha_mc::handles_test_event( DataLoggingRequest& dlr, rport receptor_t
 {
   if ( receptor_type != 0 )
   {
-    if ( receptor_type < 0 || receptor_type >= SUP_CURR_RECEPTOR )
+    if ( receptor_type < 0 or receptor_type >= SUP_CURR_RECEPTOR )
     {
       throw UnknownReceptorType( receptor_type, get_name() );
     }

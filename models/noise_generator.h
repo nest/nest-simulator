@@ -49,85 +49,71 @@ Generate a Gaussian white noise current
 Description
 +++++++++++
 
-This device can be used to inject a Gaussian "white" noise current into a node.
+The `noise_generator` can be used to inject a Gaussian "white" noise current into a node.
 
-The current is not really white, but a piecewise constant current with
-Gaussian distributed amplitude. The current changes at intervals of
-dt. dt must be a multiple of the simulation step size, the default is
-10 times the simulation resolution (equating to 1.0 ms, corresponding
-to a 1 kHz cut-off).
-
-Additionally a second sinusodial modulated term can be added to the standard
-deviation of the noise.
-
-The current generated is given by
+The current is not truly white, but a piecewise constant current with a Gaussian distributed
+amplitude with mean :math:`\mu` and standard deviation :math:`\sigma`. The current changes at
+a user-defined interval :math:`\delta` and is given by
 
 .. math::
 
-  I(t) = mean + std \cdot N_j  \text{ for } t_0 + j dt \leq t < t_0 + (j-1) dt
+  I(t) = \mu + N_j \sigma \quad \text{for} \quad t_0 + j \delta < t \leq t_0 + (j+1) \delta \;,
 
-where :math:`N_j` are Gaussian random numbers with unit standard deviation and
-:math:`t_0` is the device onset time.
-If the modulation is added the current is given by
+where :math:`N_j` are Gaussian random numbers with unit standard deviation and :math:`t_0` is
+the device onset time.
 
-.. math::
-
-   I(t) = mean + \sqrt(std^2 + std_{mod}^2 \cdot \sin(\omega \cdot t + phase)) \cdot N_j \\
-                              \text{ for } t_0 + j dt \leq t < t_0 + (j-1) dt
-
-For a detailed discussion of the properties of the noise generator, please see
-`noise_generator <../model_details/noise_generator.ipynb>`_
-notebook included in the NEST source code.
-
-All targets receive different currents, but the currents for all
-targets change at the same points in time. The interval between
-changes, ``dt``, must be a multiple of the time step.
-
-The effect of this noise current on a neuron depends on ``dt``. Consider
-the membrane potential fluctuations evoked when a noise current is
-injected into a neuron. The standard deviation of these fluctuations
-across an ensemble will increase with ``dt`` for a given value of ``std``.
-For the leaky integrate-and-fire neuron with time constant ``tau_m`` and
-capacity ``C_m``, membrane potential fluctuations Sigma at time
-:math:`t_j+delay` are given by
+Additionally a sinusodially modulated term can be added to the standard
+deviation of the noise:
 
 .. math::
 
-   \Sigma = std \cdot \tau_m / C_m \cdot \sqrt( (1-x) / (1+x) )  \\
-                          \text{where } x = exp(-dt/\tau_m)
+   I(t) = \mu + N_j \sqrt{\sigma^2 + \sigma_{\text{mod}}^2 \sin(\omega t + \phi)}
+                              \quad \text{for} \quad t_0 + j \delta < t \leq t_0 + (j+1) \delta \;.
 
-for large :math:`t_j`. In the white noise limit, :math:`dt \rightarrow 0`, one has
+The effect of the noise current on a neuron depends on the switching interval :math:`\delta`.
+For a leaky integrate-and-fire neuron with time constant :math:`\tau_m` and capacitance
+:math:`C_m`, the variance of the membrane potential is given by
 
 .. math::
 
-   \Sigma \rightarrow std / C_m * \sqrt(dt \cdot \tau / 2).
+        \Sigma^2 = \frac{\delta \tau_m \sigma^2}{2 C_m^2}
 
-To obtain comparable results for different values of dt, you must adapt std.
+for :math:`\delta \ll \tau_m`. For details, see the `noise_generator notebook
+<../neurons/model_details/noise_generator.ipynb>`_ included in the NEST source code.
 
-As the noise generator provides a different current for each of its targets,
-the current recorded represents the instantaneous average of all the
-currents computed. When there exists only a single target, this would be
-equivalent to the actual current provided to that target.
+All targets of a noise generator receive different currents, but the currents for all
+targets change at the same points in time. The interval :math:`\delta` between
+changes must be a multiple of the time step.
+
+.. admonition:: Recording the generated current
+
+   You can use a :doc:`multimeter <multimeter>` to record the average current sent to all targets for each time step
+   if simulating on a single thread; multiple MPI processes with one thread each also work. In this case,
+   the recording interval of the multimeter should be the equal to the simulation resolution to avoid confusing effects
+   due to offset or drift between the recording times of the multimeter and the switching times of the
+   noise generator. In multi-threaded mode, recording of noise currents is prohibited for technical reasons.
+
 
 .. include:: ../models/stimulation_device.rst
 
 mean
-    The mean value of the noise current (pA)
+    The mean value :math:`\mu` of the noise current (pA)
 
 std
-    The standard deviation of noise current (pA)
+    The standard deviation :math:`\sigma` of the noise current (pA)
 
 dt
-    The interval between changes in current (ms; default: 10 * resolution)
+    The interval :math:`\delta` between changes in current (ms; default: 10 * resolution)
 
 std_mod
-    The modulated standard deviation of noise current (pA)
-
-phase
-    The phase of sine modulation (0-360 deg)
+    The modulation :math:`\sigma_{\text{mod}}` of the standard deviation of the noise current (pA)
 
 frequency
-    The frequency of the sine modulation
+    The frequency of the sine modulation (Hz)
+
+phase
+    The phase of sine modulation (0–360 deg)
+
 
 Setting parameters from a stimulation backend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -307,6 +293,11 @@ private:
 inline port
 noise_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
+  if ( kernel().vp_manager.get_num_threads() > 1 )
+  {
+    throw KernelException( "Recording from a noise_generator is only possible in single-threaded mode." );
+  }
+
   if ( receptor_type != 0 )
   {
     throw UnknownReceptorType( receptor_type, get_name() );

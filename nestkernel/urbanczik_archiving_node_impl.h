@@ -78,12 +78,12 @@ nest::UrbanczikArchivingNode< urbanczik_parameters >::get_urbanczik_history( dou
     // To have a well defined discretization of the integral, we make sure
     // that we exclude the entry at t1 but include the one at t2 by subtracting
     // a small number so that runner->t_ is never equal to t1 or t2.
-    while ( ( runner != urbanczik_history_[ comp - 1 ].end() ) && ( runner->t_ - 1.0e-6 < t1 ) )
+    while ( ( runner != urbanczik_history_[ comp - 1 ].end() ) and runner->t_ - 1.0e-6 < t1 )
     {
       ++runner;
     }
     *start = runner;
-    while ( ( runner != urbanczik_history_[ comp - 1 ].end() ) && ( runner->t_ - 1.0e-6 < t2 ) )
+    while ( ( runner != urbanczik_history_[ comp - 1 ].end() ) and runner->t_ - 1.0e-6 < t2 )
     {
       ( runner->access_counter_ )++;
       ++runner;

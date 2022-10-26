@@ -288,7 +288,8 @@ class SpatialTester:
             self._ls = nest.Create('iaf_psc_alpha',
                                    positions=nest.spatial.free(
                                        [[self._x_d, self._y_d]],
-                                       edge_wrap=False))
+                                       edge_wrap=False,
+                                       extent=[1.0, 1.0]))
             self._lt = nest.Create('iaf_psc_alpha',
                                    positions=nest.spatial.free(
                                        pos,

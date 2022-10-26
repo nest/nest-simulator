@@ -122,7 +122,7 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
     updateValue< string >( d, names::port_name, port_name_ );
   }
 
-  if ( buffers.has_targets_ && ( d->known( names::interval ) || d->known( names::record_from ) ) )
+  if ( buffers.has_targets_ and ( d->known( names::interval ) or d->known( names::record_from ) ) )
   {
     throw BadProperty(
       "The recording interval and the list of properties to record "
@@ -341,7 +341,7 @@ nest::music_cont_out_proxy::update( Time const& origin, const long from, const l
      the previous slice if we are called at the beginning of the
      slice. Otherwise, we do nothing.
    */
-  if ( origin.get_steps() == 0 || from != 0 )
+  if ( origin.get_steps() == 0 or from != 0 )
   {
     return;
   }

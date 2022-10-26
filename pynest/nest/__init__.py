@@ -208,10 +208,18 @@ class NestModule(types.ModuleType):
         "Whether MPI buffers for communication of connections resize on the fly",
         default=True,
     )
-    buffer_size_secondary_events = KernelAttribute(
+    send_buffer_size_secondary_events = KernelAttribute(
         "int",
         (
-            "Size of MPI buffers for communicating secondary events "
+            "Size of MPI send buffers for communicating secondary events "
+            + "(in bytes, per MPI rank, for developers)"
+        ),
+        readonly=True,
+    )
+    recv_buffer_size_secondary_events = KernelAttribute(
+        "int",
+        (
+            "Size of MPI recv buffers for communicating secondary events "
             + "(in bytes, per MPI rank, for developers)"
         ),
         readonly=True,
@@ -371,12 +379,12 @@ class NestModule(types.ModuleType):
     )
     recording_backends = KernelAttribute(
         "list[str]",
-        "List of available backends for recording devices.",
+        "List of available backends for recording devices",
         readonly=True,
     )
     stimulation_backends = KernelAttribute(
         "list[str]",
-        "List of available backends for stimulation devices.",
+        "List of available backends for stimulation devices",
         readonly=True,
     )
     dict_miss_is_error = KernelAttribute(

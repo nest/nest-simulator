@@ -3,7 +3,7 @@
 DAEMON="${NEST_SERVER_DAEMON:-0}"
 HOST="${NEST_SERVER_HOST:-127.0.0.1}"
 LOGFILE="${NEST_SERVER_LOGFILE:-/tmp/nest-server.log}"
-PORT="${NEST_SERVER_PORT:-5000}"
+PORT="${NEST_SERVER_PORT:-52425}"
 STDOUT="${NEST_SERVER_STDOUT:-0}"
 
 usage() {
@@ -22,7 +22,7 @@ usage() {
   echo "  -d                 daemonize the server process"
   echo "  -h <HOST>          use hostname/IP address <HOST> for the server [default: 127.0.0.1]"
   echo "  -o                 print NEST outputs to the console"
-  echo "  -p <PORT>          use port <PORT> for opening the socket [default: 5000]"
+  echo "  -p <PORT>          use port <PORT> for opening the socket [default: 52425]"
 }
 
 log() {

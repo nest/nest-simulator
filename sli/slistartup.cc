@@ -40,7 +40,6 @@
 #include "integerdatum.h"
 #include "interpret.h"
 #include "iostreamdatum.h"
-#include "namedatum.h"
 #include "stringdatum.h"
 
 // Access to environement variables.
@@ -116,10 +115,10 @@ SLIStartup::GetenvFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
-  assert( sd != NULL );
+  assert( sd );
   const char* s = ::getenv( sd->c_str() );
   i->OStack.pop();
-  if ( s != NULL )
+  if ( s )
   {
     Token t( new StringDatum( s ) );
     i->OStack.push_move( t );
@@ -208,7 +207,7 @@ SLIStartup::SLIStartup( int argc, char** argv )
     StringDatum* sd = new StringDatum( argv[ i ] );
     args_array.push_back( Token( sd ) );
 
-    if ( *sd == "-d" || *sd == "--debug" )
+    if ( *sd == "-d" or *sd == "--debug" )
     {
       debug_ = true;
       verbosity_ = SLIInterpreter::M_ALL; // make the interpreter verbose.

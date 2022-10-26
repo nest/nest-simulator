@@ -125,7 +125,7 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
     ArrayDatum* ad = dynamic_cast< ArrayDatum* >( dat );
     DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( dat );
 
-    if ( ad != nullptr )
+    if ( ad )
     {
       // A list of compartments is provided, we add them all to the tree
       for ( Token* tt = ( *ad ).begin(); tt != ( *ad ).end(); ++tt )
@@ -135,7 +135,7 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
         add_compartment_( *dynamic_cast< DictionaryDatum* >( tt->datum() ) );
       }
     }
-    else if ( dd != nullptr )
+    else if ( dd )
     {
       // A single compartment is provided, we add add it to the tree
       add_compartment_( *dd );
@@ -170,7 +170,7 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
     ArrayDatum* ad = dynamic_cast< ArrayDatum* >( dat );
     DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( dat );
 
-    if ( ad != nullptr )
+    if ( ad )
     {
       for ( Token* tt = ( *ad ).begin(); tt != ( *ad ).end(); ++tt )
       {
@@ -179,7 +179,7 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
         add_receptor_( *dynamic_cast< DictionaryDatum* >( tt->datum() ) );
       }
     }
-    else if ( dd != nullptr )
+    else if ( dd )
     {
       add_receptor_( *dd );
     }
@@ -290,7 +290,7 @@ nest::cm_default::pre_run_hook()
 void
 nest::cm_default::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
@@ -301,7 +301,7 @@ nest::cm_default::update( Time const& origin, const long from, const long to )
     c_tree_.solve_matrix();
 
     // threshold crossing
-    if ( c_tree_.get_root()->v_comp >= V_th_ && v_0_prev < V_th_ )
+    if ( c_tree_.get_root()->v_comp >= V_th_ and v_0_prev < V_th_ )
     {
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
@@ -322,7 +322,7 @@ nest::cm_default::handle( SpikeEvent& e )
   }
 
   assert( e.get_delay_steps() > 0 );
-  assert( ( e.get_rport() >= 0 ) && ( ( size_t ) e.get_rport() < syn_buffers_.size() ) );
+  assert( ( e.get_rport() >= 0 ) and ( ( size_t ) e.get_rport() < syn_buffers_.size() ) );
 
   syn_buffers_[ e.get_rport() ].add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );

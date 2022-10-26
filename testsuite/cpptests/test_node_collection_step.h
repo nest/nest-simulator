@@ -74,7 +74,6 @@ BOOST_AUTO_TEST_CASE( test_empty_node_collection )
  * This test checks that the step getter retrieves the expected step from a composite
  * NodeCollection created from a NodeCollection slice with a step of 2 between node IDs.
  */
-
 BOOST_AUTO_TEST_CASE( test_composite_node_collection )
 {
   KernelManager::create_kernel_manager();

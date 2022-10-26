@@ -642,7 +642,8 @@ NodeCollection::operator!=( NodeCollectionPTR rhs ) const
   return not( *this == rhs );
 }
 
-inline void NodeCollection::set_metadata( NodeCollectionMetadataPTR )
+inline void
+NodeCollection::set_metadata( NodeCollectionMetadataPTR )
 {
   throw KernelException( "Cannot set Metadata on this type of NodeCollection." );
 }

@@ -415,7 +415,7 @@ function( NEST_PROCESS_WITH_PYTHON )
     endif ()
   elseif ( ${with-python} STREQUAL "OFF" )
   else ()
-    printError( "Invalid option: -Dwith-python=" ${with-python} )
+    printError( "Invalid value -Dwith-python=${with-python}, please use 'ON' or 'OFF'" )
   endif ()
 endfunction()
 

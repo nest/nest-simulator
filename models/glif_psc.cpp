@@ -280,7 +280,7 @@ nest::glif_psc::Parameters_::set( const DictionaryDatum& d, Node* node )
   const size_t old_n_receptors = this->n_receptors_();
   if ( updateValue< std::vector< double > >( d, names::tau_syn, tau_syn_ ) )
   {
-    if ( this->n_receptors_() != old_n_receptors && has_connections_ )
+    if ( this->n_receptors_() != old_n_receptors and has_connections_ )
     {
       throw BadProperty(
         "The neuron has connections, therefore the number of ports cannot be "
@@ -599,7 +599,7 @@ nest::glif_psc::update( Time const& origin, const long from, const long to )
 nest::port
 nest::glif_psc::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type <= 0 || receptor_type > static_cast< port >( P_.n_receptors_() ) )
+  if ( receptor_type <= 0 or receptor_type > static_cast< port >( P_.n_receptors_() ) )
   {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }

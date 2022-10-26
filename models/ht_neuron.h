@@ -528,7 +528,7 @@ ht_neuron::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   assert( B_.spike_inputs_.size() == 4 );
 
-  if ( not( INF_SPIKE_RECEPTOR < receptor_type && receptor_type < SUP_SPIKE_RECEPTOR ) )
+  if ( not( INF_SPIKE_RECEPTOR < receptor_type and receptor_type < SUP_SPIKE_RECEPTOR ) )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
     return 0;

@@ -273,12 +273,12 @@ nest::hh_cond_beta_gap_traub::Parameters_::set( const DictionaryDatum& d, Node* 
     throw BadProperty( "Refractory time cannot be negative." );
   }
 
-  if ( tau_rise_ex <= 0 || tau_decay_ex <= 0 || tau_rise_in <= 0 || tau_decay_in <= 0 )
+  if ( tau_rise_ex <= 0 or tau_decay_ex <= 0 or tau_rise_in <= 0 or tau_decay_in <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
 
-  if ( g_K < 0 || g_Na < 0 || g_L < 0 )
+  if ( g_K < 0 or g_Na < 0 or g_L < 0 )
   {
     throw BadProperty( "All conductances must be non-negative." );
   }
@@ -300,7 +300,7 @@ nest::hh_cond_beta_gap_traub::State_::set( const DictionaryDatum& d, const Param
   updateValueParam< double >( d, names::Act_m, y_[ HH_M ], node );
   updateValueParam< double >( d, names::Inact_h, y_[ HH_H ], node );
   updateValueParam< double >( d, names::Act_n, y_[ HH_N ], node );
-  if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 )
+  if ( y_[ HH_M ] < 0 or y_[ HH_H ] < 0 or y_[ HH_N ] < 0 )
   {
     throw BadProperty( "All (in)activation variables must be non-negative." );
   }
@@ -471,7 +471,7 @@ nest::hh_cond_beta_gap_traub::update_( Time const& origin,
   const bool called_from_wfr_update )
 {
 
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   const size_t interpolation_order = kernel().simulation_manager.get_wfr_interpolation_order();
@@ -546,17 +546,15 @@ nest::hh_cond_beta_gap_traub::update_( Time const& origin,
       {
         --S_.r_;
       }
-      else
-        // (    threshold    &&     maximum       )
-        if ( S_.y_[ State_::V_M ] >= P_.V_T + 30. && U_old > S_.y_[ State_::V_M ] )
-        {
-          S_.r_ = V_.refractory_counts_;
+      else if ( S_.y_[ State_::V_M ] >= P_.V_T + 30. and U_old > S_.y_[ State_::V_M ] ) // ( threshold and maximum )
+      {
+        S_.r_ = V_.refractory_counts_;
 
-          set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
-          SpikeEvent se;
-          kernel().event_delivery_manager.send( *this, se, lag );
-        }
+        SpikeEvent se;
+        kernel().event_delivery_manager.send( *this, se, lag );
+      }
 
       // log state data
       B_.logger_.record_data( origin.get_steps() + lag );

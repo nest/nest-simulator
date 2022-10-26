@@ -547,7 +547,7 @@ Scanner::operator()( Token& t )
   do
   {
 
-    if ( not in->eof() && not in->good() )
+    if ( not in->eof() and not in->good() )
     {
       std::cout << "I/O Error in scanner input stream." << std::endl;
       state = error;
@@ -564,7 +564,7 @@ Scanner::operator()( Token& t )
       ++line;
     }
 
-    if ( c == '\0' || in->bad() )
+    if ( c == '\0' or in->bad() )
     {
       c = endof;
     }
@@ -603,7 +603,7 @@ Scanner::operator()( Token& t )
     {
       IntegerDatum id( lng );
       t = id;
-      if ( c != endoln && c != endof )
+      if ( c != endoln and c != endof )
       {
         in->unget();
         --col;
@@ -653,7 +653,7 @@ Scanner::operator()( Token& t )
       ds.clear();
 
       t.move( doubletoken );
-      if ( c != endoln && c != endof )
+      if ( c != endoln and c != endof )
       {
         in->unget();
         --col;
@@ -704,7 +704,7 @@ Scanner::operator()( Token& t )
       state = alphast;
       break;
     case sgalphast:
-      assert( sgc == '+' || sgc == '-' );
+      assert( sgc == '+' or sgc == '-' );
       s.append( 1, sgc );
       state = alphast;
     /* no break */
@@ -738,7 +738,7 @@ Scanner::operator()( Token& t )
     /* no break */
     case aheadalphst:
     {
-      if ( c != endoln && c != endof )
+      if ( c != endoln and c != endof )
       {
         in->unget();
         --col;
@@ -751,7 +751,7 @@ Scanner::operator()( Token& t )
 
     case aheadlitst:
     {
-      if ( c != endoln && c != endof )
+      if ( c != endoln and c != endof )
       {
         in->unget();
         --col;
@@ -803,7 +803,7 @@ Scanner::operator()( Token& t )
     default:
       break;
     }
-  } while ( ( state != error ) && ( state != end ) );
+  } while ( ( state != error ) and ( state != end ) );
   return ( state == end );
 }
 

@@ -131,7 +131,7 @@ Processes::fd( std::ostream* s )
   {
     return STDOUT_FILENO;
   }
-  else if ( ( s == &std::cerr ) || ( s == &std::clog ) )
+  else if ( ( s == &std::cerr ) or ( s == &std::clog ) )
   {
     return STDERR_FILENO;
   }
@@ -662,7 +662,7 @@ Processes::AvailableFunction::execute( SLIInterpreter* i ) const
     //       fcntl(fd,F_SETFL,flags); //reset to old value
     //       // ------------------------------
 
-    //       if ( (peekchar==-1) && (errno!=EAGAIN) && (errno!=ESPIPE) )
+    //       if ( (peekchar==-1) and (errno!=EAGAIN) and (errno!=ESPIPE) )
     //         {// some unexpected error occured!
     //           i->raiseerror(systemerror(i));
     //         }

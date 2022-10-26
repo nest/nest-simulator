@@ -222,7 +222,7 @@ nest::hh_cond_exp_traub::Parameters_::set( const DictionaryDatum& d, Node* node 
     throw BadProperty( "Capacitance must be strictly positive." );
   }
 
-  if ( tau_synE <= 0 || tau_synI <= 0 )
+  if ( tau_synE <= 0 or tau_synI <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -249,7 +249,7 @@ nest::hh_cond_exp_traub::State_::set( const DictionaryDatum& d, const Parameters
   updateValueParam< double >( d, names::Act_m, y_[ HH_M ], node );
   updateValueParam< double >( d, names::Inact_h, y_[ HH_H ], node );
   updateValueParam< double >( d, names::Act_n, y_[ HH_N ], node );
-  if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 )
+  if ( y_[ HH_M ] < 0 or y_[ HH_H ] < 0 or y_[ HH_N ] < 0 )
   {
     throw BadProperty( "All (in)activation variables must be non-negative." );
   }
@@ -380,7 +380,7 @@ nest::hh_cond_exp_traub::pre_run_hook()
 void
 nest::hh_cond_exp_traub::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
@@ -418,8 +418,8 @@ nest::hh_cond_exp_traub::update( Time const& origin, const long from, const long
     }
     else
     {
-      // (threshold   &&    maximum    )
-      if ( S_.y_[ State_::V_M ] >= P_.V_T + 30. && V_.U_old_ > S_.y_[ State_::V_M ] )
+      // (threshold   and    maximum    )
+      if ( S_.y_[ State_::V_M ] >= P_.V_T + 30. and V_.U_old_ > S_.y_[ State_::V_M ] )
       {
         S_.r_ = V_.refractory_counts_;
 

@@ -64,7 +64,7 @@ public:
 
   /**
    * Gets ID of local thread.
-   * Returns thread ID if OPENMP is installed
+   * Returns thread ID if OpenMP is installed
    * and zero otherwise.
    */
   thread get_thread_id() const;

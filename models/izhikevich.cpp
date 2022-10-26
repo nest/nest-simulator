@@ -36,10 +36,7 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -114,7 +111,7 @@ nest::izhikevich::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::d, d_, node );
   updateValue< bool >( d, names::consistent_integration, consistent_integration_ );
   const double h = Time::get_resolution().get_ms();
-  if ( not consistent_integration_ && h != 1.0 )
+  if ( not consistent_integration_ and h != 1.0 )
   {
     LOG( M_INFO, "Parameters_::set", "Use 1.0 ms as resolution for consistency." );
   }
@@ -191,7 +188,7 @@ nest::izhikevich::pre_run_hook()
 void
 nest::izhikevich::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   const double h = Time::get_resolution().get_ms();

@@ -22,8 +22,6 @@
 
 #include "iaf_psc_exp_multisynapse.h"
 
-// C++ includes:
-#include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -38,8 +36,6 @@
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -305,7 +301,7 @@ nest::iaf_psc_exp_multisynapse::pre_run_hook()
 void
 iaf_psc_exp_multisynapse::update( const Time& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
@@ -356,7 +352,7 @@ iaf_psc_exp_multisynapse::update( const Time& origin, const long from, const lon
 port
 iaf_psc_exp_multisynapse::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type <= 0 || receptor_type > static_cast< port >( P_.n_receptors_() ) )
+  if ( receptor_type <= 0 or receptor_type > static_cast< port >( P_.n_receptors_() ) )
   {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }

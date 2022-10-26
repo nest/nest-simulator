@@ -369,7 +369,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   long interp_order;
   if ( updateValue< long >( d, names::wfr_interpolation_order, interp_order ) )
   {
-    if ( ( interp_order < 0 ) or ( interp_order == 2 ) or ( interp_order > 3 ) )
+    if ( interp_order < 0 or interp_order == 2 or interp_order > 3 )
     {
       LOG( M_ERROR, "SimulationManager::set_status", "Interpolation order must be 0, 1, or 3." );
       throw KernelException();
@@ -470,8 +470,6 @@ nest::SimulationManager::prepare()
 
   kernel().node_manager.ensure_valid_thread_local_ids();
   kernel().node_manager.prepare_nodes();
-
-  kernel().model_manager.create_secondary_events_prototypes();
 
   // we have to do enter_runtime after prepare_nodes, since we use
   // calibrate to map the ports of MUSIC devices, which has to be done

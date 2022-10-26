@@ -446,7 +446,7 @@ dump_layer_connections( const Token& syn_model,
 DictionaryDatum
 get_layer_status( NodeCollectionPTR )
 {
-  assert( false && "not implemented" );
+  assert( false and "not implemented" );
 
   return DictionaryDatum();
 }

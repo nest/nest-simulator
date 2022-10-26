@@ -208,10 +208,18 @@ class NestModule(types.ModuleType):
         "Whether MPI buffers for communication of connections resize on the fly",
         default=True,
     )
-    buffer_size_secondary_events = KernelAttribute(
+    send_buffer_size_secondary_events = KernelAttribute(
         "int",
         (
-            "Size of MPI buffers for communicating secondary events "
+            "Size of MPI send buffers for communicating secondary events "
+            + "(in bytes, per MPI rank, for developers)"
+        ),
+        readonly=True,
+    )
+    recv_buffer_size_secondary_events = KernelAttribute(
+        "int",
+        (
+            "Size of MPI recv buffers for communicating secondary events "
             + "(in bytes, per MPI rank, for developers)"
         ),
         readonly=True,

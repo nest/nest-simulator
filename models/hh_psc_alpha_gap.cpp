@@ -28,9 +28,7 @@
 // C++ includes:
 #include <cmath> // in case we need isnan() // fabs
 #include <cstdio>
-#include <iomanip>
 #include <iostream>
-#include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -44,8 +42,6 @@
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 nest::RecordablesMap< nest::hh_psc_alpha_gap > nest::hh_psc_alpha_gap::recordablesMap_;
 
@@ -267,11 +263,11 @@ nest::hh_psc_alpha_gap::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Refractory time cannot be negative." );
   }
-  if ( tau_synE <= 0 || tau_synI <= 0 )
+  if ( tau_synE <= 0 or tau_synI <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
-  if ( g_Kv1 < 0 || g_Kv3 < 0 || g_Na < 0 || g_L < 0 )
+  if ( g_Kv1 < 0 or g_Kv3 < 0 or g_Na < 0 or g_L < 0 )
   {
     throw BadProperty( "All conductances must be non-negative." );
   }
@@ -295,7 +291,7 @@ nest::hh_psc_alpha_gap::State_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::Inact_h, y_[ HH_H ], node );
   updateValueParam< double >( d, names::Act_n, y_[ HH_N ], node );
   updateValueParam< double >( d, names::Inact_p, y_[ HH_P ], node );
-  if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 || y_[ HH_P ] < 0 )
+  if ( y_[ HH_M ] < 0 or y_[ HH_H ] < 0 or y_[ HH_N ] < 0 or y_[ HH_P ] < 0 )
   {
     throw BadProperty( "All (in)activation variables must be non-negative." );
   }
@@ -454,7 +450,7 @@ bool
 nest::hh_psc_alpha_gap::update_( Time const& origin, const long from, const long to, const bool called_from_wfr_update )
 {
 
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   const size_t interpolation_order = kernel().simulation_manager.get_wfr_interpolation_order();
@@ -530,8 +526,8 @@ nest::hh_psc_alpha_gap::update_( Time const& origin, const long from, const long
         --S_.r_;
       }
       else
-        // (    threshold    &&     maximum       )
-        if ( S_.y_[ State_::V_M ] >= 0 && U_old > S_.y_[ State_::V_M ] )
+        // (    threshold    and     maximum       )
+        if ( S_.y_[ State_::V_M ] >= 0 and U_old > S_.y_[ State_::V_M ] )
         {
           S_.r_ = V_.RefractoryCounts_;
 

@@ -22,24 +22,17 @@
 
 #include "spike_recorder.h"
 
-// C++ includes:
-#include <numeric>
 
 // Includes from libnestutil:
 #include "compose.hpp"
-#include "dict_util.h"
-#include "logging.h"
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
 
 // Includes from sli:
-#include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 nest::spike_recorder::spike_recorder()
   : RecordingDevice()

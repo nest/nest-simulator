@@ -233,8 +233,8 @@ IforFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* inc = static_cast< IntegerDatum* >( i->EStack.pick( 5 ).datum() );
 
 
-  if ( ( ( inc->get() > 0 ) && ( count->get() <= lim->get() ) )
-    || ( ( inc->get() < 0 ) && ( count->get() >= lim->get() ) ) )
+  if ( ( ( inc->get() > 0 ) and ( count->get() <= lim->get() ) )
+    or ( ( inc->get() < 0 ) and ( count->get() >= lim->get() ) ) )
   {
     pos = 0; // reset procedure interator
 

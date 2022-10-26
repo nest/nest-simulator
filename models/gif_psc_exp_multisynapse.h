@@ -420,7 +420,7 @@ gif_psc_exp_multisynapse::send_test_event( Node& target, rport receptor_type, sy
 inline port
 gif_psc_exp_multisynapse::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type <= 0 || receptor_type > static_cast< port >( P_.n_receptors_() ) )
+  if ( receptor_type <= 0 or receptor_type > static_cast< port >( P_.n_receptors_() ) )
   {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }

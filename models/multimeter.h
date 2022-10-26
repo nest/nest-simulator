@@ -252,7 +252,7 @@ nest::multimeter::set_status( const DictionaryDatum& d )
 {
   // protect multimeter from being frozen
   bool freeze = false;
-  if ( updateValue< bool >( d, names::frozen, freeze ) && freeze )
+  if ( updateValue< bool >( d, names::frozen, freeze ) and freeze )
   {
     throw BadProperty( "multimeter cannot be frozen." );
   }

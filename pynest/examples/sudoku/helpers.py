@@ -140,8 +140,7 @@ def get_puzzle(puzzle_index):
                        [0, 0, 0,  0, 0, 8,  0, 0, 2]]
 
     else:
-        raise ValueError(
-            f"No puzzle for Index {puzzle_index} found.")
+        raise ValueError(f"No puzzle for index {puzzle_index} found.")
 
     return np.array(init_config)
 
@@ -218,8 +217,7 @@ def plot_field(puzzle, solution, ax, with_color=False):
     for i in range(0, 9, 3):
         for j in range(0, 9, 3):
             if (i+j) % 2 == 0:
-                ax.add_patch(patch.Rectangle((j, i), 3, 3, facecolor="grey",
-                                             alpha=0.5))
+                ax.add_patch(patch.Rectangle((j, i), 3, 3, facecolor="grey", alpha=0.5))
 
     # Plotting invisible lines ensures a consistent scaling of the padding around
     # the plot even when no hbars or vbars are drawn to indicate errors in the solution.

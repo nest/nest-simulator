@@ -205,7 +205,7 @@ class SudokuNet:
 
         Returns:
             np.array
-                array of all the data from all spike recorders 
+                array of all the data from all spike recorders
         """
         return np.array(self.spikerecorders.get("events"))
 

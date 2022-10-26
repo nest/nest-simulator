@@ -26,6 +26,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 #include "propagator_stability.h"
 #include "regula_falsi.h"
@@ -36,10 +37,7 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -115,22 +113,22 @@ nest::iaf_psc_alpha_ps::Parameters_::get( DictionaryDatum& d ) const
 }
 
 double
-nest::iaf_psc_alpha_ps::Parameters_::set( const DictionaryDatum& d )
+nest::iaf_psc_alpha_ps::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
   const double ELold = E_L_;
-  updateValue< double >( d, names::E_L, E_L_ );
+  updateValueParam< double >( d, names::E_L, E_L_, node );
   const double delta_EL = E_L_ - ELold;
 
-  updateValue< double >( d, names::tau_m, tau_m_ );
-  updateValue< double >( d, names::tau_syn_ex, tau_syn_ex_ );
-  updateValue< double >( d, names::tau_syn_in, tau_syn_in_ );
-  updateValue< double >( d, names::C_m, c_m_ );
-  updateValue< double >( d, names::t_ref, t_ref_ );
-  updateValue< double >( d, names::I_e, I_e_ );
+  updateValueParam< double >( d, names::tau_m, tau_m_, node );
+  updateValueParam< double >( d, names::tau_syn_ex, tau_syn_ex_, node );
+  updateValueParam< double >( d, names::tau_syn_in, tau_syn_in_, node );
+  updateValueParam< double >( d, names::C_m, c_m_, node );
+  updateValueParam< double >( d, names::t_ref, t_ref_, node );
+  updateValueParam< double >( d, names::I_e, I_e_, node );
 
-  if ( updateValue< double >( d, names::V_th, U_th_ ) )
+  if ( updateValueParam< double >( d, names::V_th, U_th_, node ) )
   {
     U_th_ -= E_L_;
   }
@@ -139,7 +137,7 @@ nest::iaf_psc_alpha_ps::Parameters_::set( const DictionaryDatum& d )
     U_th_ -= delta_EL;
   }
 
-  if ( updateValue< double >( d, names::V_min, U_min_ ) )
+  if ( updateValueParam< double >( d, names::V_min, U_min_, node ) )
   {
     U_min_ -= E_L_;
   }
@@ -148,7 +146,7 @@ nest::iaf_psc_alpha_ps::Parameters_::set( const DictionaryDatum& d )
     U_min_ -= delta_EL;
   }
 
-  if ( updateValue< double >( d, names::V_reset, U_reset_ ) )
+  if ( updateValueParam< double >( d, names::V_reset, U_reset_, node ) )
   {
     U_reset_ -= E_L_;
   }
@@ -177,7 +175,7 @@ nest::iaf_psc_alpha_ps::Parameters_::set( const DictionaryDatum& d )
     throw BadProperty( "Refractory time must be at least one time step." );
   }
 
-  if ( tau_m_ <= 0 || tau_syn_ex_ <= 0 || tau_syn_in_ <= 0 )
+  if ( tau_m_ <= 0 or tau_syn_ex_ <= 0 or tau_syn_in_ <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -197,9 +195,9 @@ nest::iaf_psc_alpha_ps::State_::get( DictionaryDatum& d, const Parameters_& p ) 
 }
 
 void
-nest::iaf_psc_alpha_ps::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
+nest::iaf_psc_alpha_ps::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  if ( updateValue< double >( d, names::V_m, V_m_ ) )
+  if ( updateValueParam< double >( d, names::V_m, V_m_, node ) )
   {
     V_m_ -= p.E_L_;
   }
@@ -325,7 +323,7 @@ nest::iaf_psc_alpha_ps::update( Time const& origin, const long from, const long 
     const long T = origin.get_steps() + lag;
     // if neuron returns from refractoriness during this step, place
     // pseudo-event in queue to mark end of refractory period
-    if ( S_.is_refractory_ && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
+    if ( S_.is_refractory_ and T + 1 - S_.last_spike_step_ == V_.refractory_steps_ )
     {
       B_.events_.add_refractory( T, S_.last_spike_offset_ );
     }

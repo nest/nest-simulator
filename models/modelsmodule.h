@@ -46,15 +46,15 @@ class ModelsModule : public SLIModule
 {
 public:
   ModelsModule();
-  ~ModelsModule();
+  ~ModelsModule() override;
 
   /**
    * Initialize module by registering models with the network.
    * @param SLIInterpreter* SLI interpreter
    */
-  void init( SLIInterpreter* );
+  void init( SLIInterpreter* ) override;
 
-  const std::string name( void ) const;
+  const std::string name() const override;
 };
 
 

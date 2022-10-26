@@ -181,7 +181,7 @@ SliceRingBuffer::get_next_spike( const long req_stamp,
   bool& end_of_refract )
 {
   end_of_refract = false;
-  if ( deliver_->empty() || refract_ <= deliver_->back() )
+  if ( deliver_->empty() or refract_ <= deliver_->back() )
   {
     if ( refract_.stamp_ == req_stamp )
     { // if relies on stamp_==long::max() if not refractory

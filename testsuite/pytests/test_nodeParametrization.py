@@ -26,6 +26,7 @@ Node Parametrization tests
 import nest
 import numpy as np
 import unittest
+import warnings
 
 
 class TestNodeParametrization(unittest.TestCase):

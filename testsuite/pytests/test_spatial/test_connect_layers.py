@@ -452,6 +452,27 @@ class ConnectLayersTestCase(unittest.TestCase):
         conns = nest.GetConnections()
         self.assertEqual(conns.get('receptor'), [receptor_type]*len(multisyn_layer)*indegree)
 
+    def test_connect_integer_param(self):
+        # weight and delay are intentionally integers for this test.
+        weight = 2
+        delay = 2
+        multisyn_layer = nest.Create(
+            'iaf_psc_exp',
+            positions=nest.spatial.grid(self.dim, extent=self.extent))
+        indegree = 10
+        # Combination of fixed_indegree and connection probability (kernel) to trigger ConnectLayers.
+        conn_spec = {
+            'rule': 'fixed_indegree',
+            'indegree': indegree,
+            'p': 1.0
+        }
+        syn_spec = {'weight': weight, 'delay': delay}
+
+        nest.Connect(multisyn_layer, multisyn_layer, conn_spec, syn_spec)
+        conns = nest.GetConnections()
+        self.assertEqual(conns.weight, [weight] * len(multisyn_layer) * indegree)
+        self.assertEqual(conns.delay, [delay] * len(multisyn_layer) * indegree)
+
 
 def suite():
     suite = unittest.makeSuite(ConnectLayersTestCase, 'test')

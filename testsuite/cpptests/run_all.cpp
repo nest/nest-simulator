@@ -27,6 +27,7 @@
 // Includes from cpptests
 #include "test_block_vector.h"
 #include "test_enum_bitfield.h"
+#include "test_node_collection_step.h"
 #include "test_parameter.h"
 #include "test_sort.h"
 #include "test_target_fields.h"

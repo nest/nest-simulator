@@ -158,7 +158,7 @@ del setup_auth
 @app.route('/', methods=['GET'])
 def index():
     return jsonify({
-        'nest': 1,
+        'nest': nest.__version__,
         'mpi': mpi_comm is not None,
     })
 

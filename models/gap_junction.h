@@ -86,7 +86,7 @@ public:
   typedef Connection< targetidentifierT > ConnectionBase;
   typedef GapJunctionEvent EventType;
 
-  const static RegisterConnectionModelFlags secondaryFlags =
+  static constexpr RegisterConnectionModelFlags secondaryFlags =
     RegisterConnectionModelFlags::REQUIRES_SYMMETRIC | RegisterConnectionModelFlags::SUPPORTS_WFR;
 
   /**

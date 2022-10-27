@@ -82,7 +82,7 @@ public:
   typedef Connection< targetidentifierT > ConnectionBase;
   typedef InstantaneousRateConnectionEvent EventType;
 
-  const static RegisterConnectionModelFlags secondaryFlags = RegisterConnectionModelFlags::SUPPORTS_WFR;
+  static constexpr RegisterConnectionModelFlags secondaryFlags = RegisterConnectionModelFlags::SUPPORTS_WFR;
 
   /**
    * Default Constructor.

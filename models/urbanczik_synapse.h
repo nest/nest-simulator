@@ -111,7 +111,7 @@ public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
-  const static RegisterConnectionModelFlags flags =
+  static constexpr RegisterConnectionModelFlags flags =
     default_connection_model_flags | RegisterConnectionModelFlags::REQUIRES_URBANCZIK_ARCHIVING;
 
   /**

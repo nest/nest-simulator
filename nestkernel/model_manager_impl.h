@@ -70,7 +70,7 @@ ModelManager::register_connection_model( const std::string& name )
   register_connection_model_( cf );
 
   // register the "hpc" version with the same parameters but a different target identifier
-  if ( enumFlagSet( flags, RegisterConnectionModelFlags::REGISTER_HPC ) )
+  if ( enumFlagSet( flags, RegisterConnectionModelFlags::SUPPORTS_HPC ) )
   {
     cf = new GenericConnectorModel< ConnectionT< TargetIdentifierIndex > >( name + "_hpc",
       enumFlagSet( flags, RegisterConnectionModelFlags::IS_PRIMARY ),
@@ -83,7 +83,7 @@ ModelManager::register_connection_model( const std::string& name )
   }
 
   // register the "lbl" (labeled) version with the same parameters but a different connection type
-  if ( enumFlagSet( flags, RegisterConnectionModelFlags::REGISTER_LBL ) )
+  if ( enumFlagSet( flags, RegisterConnectionModelFlags::SUPPORTS_LBL ) )
   {
     cf = new GenericConnectorModel< ConnectionLabel< ConnectionT< TargetIdentifierPtrRport > > >( name + "_lbl",
       enumFlagSet( flags, RegisterConnectionModelFlags::IS_PRIMARY ),

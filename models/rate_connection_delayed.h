@@ -81,7 +81,7 @@ public:
   typedef Connection< targetidentifierT > ConnectionBase;
   typedef DelayedRateConnectionEvent EventType;
 
-  const static RegisterConnectionModelFlags secondaryFlags = RegisterConnectionModelFlags::HAS_DELAY;
+  static constexpr RegisterConnectionModelFlags secondaryFlags = RegisterConnectionModelFlags::HAS_DELAY;
 
   /**
    * Default Constructor.

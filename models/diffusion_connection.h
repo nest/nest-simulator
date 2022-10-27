@@ -93,7 +93,7 @@ public:
   typedef Connection< targetidentifierT > ConnectionBase;
   typedef DiffusionConnectionEvent EventType;
 
-  const static RegisterConnectionModelFlags secondaryFlags = RegisterConnectionModelFlags::SUPPORTS_WFR;
+  static constexpr RegisterConnectionModelFlags secondaryFlags = RegisterConnectionModelFlags::SUPPORTS_WFR;
 
   /**
    * Default Constructor.

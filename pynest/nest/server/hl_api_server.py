@@ -45,7 +45,7 @@ def get_boolean_environ(env_key, default_value = 'false'):
     env_value = os.environ.get(env_key, default_value)
     return env_value.lower() in ['yes', 'true', 't', '1']
 
-CORS_ORIGINS = os.environ.get('NEST_SERVER_CORS_ORIGINS', 'localhost')
+CORS_ORIGINS = os.environ.get('NEST_SERVER_CORS_ORIGINS', 'http://localhost:8000').split(',')
 EXEC_SCRIPT = get_boolean_environ('NEST_SERVER_EXEC_SCRIPT')
 MODULES = os.environ.get('NEST_SERVER_MODULES', 'nest').split(',')
 RESTRICTION_OFF = get_boolean_environ('NEST_SERVER_RESTRICTION_OFF')
@@ -73,14 +73,22 @@ __all__ = [
 ]
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": f"{CORS_ORIGINS}"})
+CORS(app, CORS_ORIGINS=CORS_ORIGINS)
 
 mpi_comm = None
 
 
 @app.after_request
-def add_header(response):
-    response.headers['Access-Control-Allow-Origin'] = CORS_ORIGINS
+def cors_origin(response):
+    # https://kurianbenoy.com/2021-07-04-CORS/
+    response.headers["Access-Control-Allow-Origin"] = "null"
+    request_origin = request.headers['Origin']
+    if len(CORS_ORIGINS) == 0 or "*" in CORS_ORIGINS:
+        response.headers["Access-Control-Allow-Origin"] = "*"
+    else:
+        for allowed_origin in CORS_ORIGINS:
+            if allowed_origin in request_origin:
+                response.headers["Access-Control-Allow-Origin"] = allowed_origin
     return response
 
 

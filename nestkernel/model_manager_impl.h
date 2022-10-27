@@ -101,8 +101,10 @@ ModelManager::register_connection_model( const std::string& name )
  */
 template < template < typename targetidentifierT > class ConnectionT >
 void
-ModelManager::register_secondary_connection_model( const std::string& name, const RegisterConnectionModelFlags flags )
+ModelManager::register_secondary_connection_model( const std::string& name )
 {
+  RegisterConnectionModelFlags flags = ConnectionT< TargetIdentifierPtrRport >::secondaryFlags;
+
   ConnectorModel* cm = new GenericSecondaryConnectorModel< ConnectionT< TargetIdentifierPtrRport > >( name,
     enumFlagSet( flags, RegisterConnectionModelFlags::HAS_DELAY ),
     enumFlagSet( flags, RegisterConnectionModelFlags::REQUIRES_SYMMETRIC ),

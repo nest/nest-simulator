@@ -86,6 +86,9 @@ public:
   typedef Connection< targetidentifierT > ConnectionBase;
   typedef GapJunctionEvent EventType;
 
+  const static RegisterConnectionModelFlags secondaryFlags =
+    RegisterConnectionModelFlags::REQUIRES_SYMMETRIC | RegisterConnectionModelFlags::SUPPORTS_WFR;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.

@@ -87,12 +87,13 @@ EndUserDocs */
 template < typename targetidentifierT >
 class DiffusionConnection : public Connection< targetidentifierT >
 {
-
 public:
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
   typedef DiffusionConnectionEvent EventType;
+
+  const static RegisterConnectionModelFlags secondaryFlags = RegisterConnectionModelFlags::SUPPORTS_WFR;
 
   /**
    * Default Constructor.

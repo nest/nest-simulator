@@ -42,6 +42,32 @@
 
 namespace nest
 {
+
+enum class RegisterConnectionModelFlags : unsigned
+{
+  REGISTER_HPC = 1 << 0,
+  REGISTER_LBL = 1 << 1,
+  IS_PRIMARY = 1 << 2,
+  HAS_DELAY = 1 << 3,
+  SUPPORTS_WFR = 1 << 4,
+  REQUIRES_SYMMETRIC = 1 << 5,
+  REQUIRES_CLOPATH_ARCHIVING = 1 << 6,
+  REQUIRES_URBANCZIK_ARCHIVING = 1 << 7
+};
+
+template <>
+struct EnableBitMaskOperators< RegisterConnectionModelFlags >
+{
+  static const bool enable = true;
+};
+
+const RegisterConnectionModelFlags default_connection_model_flags = RegisterConnectionModelFlags::REGISTER_HPC
+  | RegisterConnectionModelFlags::REGISTER_LBL | RegisterConnectionModelFlags::IS_PRIMARY
+  | RegisterConnectionModelFlags::HAS_DELAY;
+
+const RegisterConnectionModelFlags default_secondary_connection_model_flags =
+  RegisterConnectionModelFlags::SUPPORTS_WFR | RegisterConnectionModelFlags::HAS_DELAY;
+
 class ModelManager : public ManagerInterface
 {
 public:
@@ -135,8 +161,7 @@ public:
   void register_connection_model( const std::string& name );
 
   template < template < typename targetidentifierT > class ConnectionT >
-  void register_secondary_connection_model( const std::string& name,
-    const RegisterConnectionModelFlags flags = default_secondary_connection_model_flags );
+  void register_secondary_connection_model( const std::string& name );
 
   /**
    * @return The model ID for a Model with a given name

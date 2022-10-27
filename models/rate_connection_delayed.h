@@ -81,6 +81,8 @@ public:
   typedef Connection< targetidentifierT > ConnectionBase;
   typedef DelayedRateConnectionEvent EventType;
 
+  const static RegisterConnectionModelFlags secondaryFlags = RegisterConnectionModelFlags::HAS_DELAY;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.

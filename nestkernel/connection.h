@@ -121,7 +121,9 @@ public:
   // connections not used in primary connectors
   typedef SecondaryEvent EventType;
 
+  // flags used when registering a connection with the ModelManager
   const static RegisterConnectionModelFlags flags = default_connection_model_flags;
+  const static RegisterConnectionModelFlags secondaryFlags = default_secondary_connection_model_flags;
 
   Connection()
     : target_()

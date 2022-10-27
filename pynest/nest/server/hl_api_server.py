@@ -45,7 +45,8 @@ def get_boolean_environ(env_key, default_value = 'false'):
     env_value = os.environ.get(env_key, default_value)
     return env_value.lower() in ['yes', 'true', 't', '1']
 
-CORS_ORIGINS = os.environ.get('NEST_SERVER_CORS_ORIGINS', 'http://localhost:8000').split(',')
+_default_origins = 'localhost,http://localhost,https://localhost'
+CORS_ORIGINS = os.environ.get('NEST_SERVER_CORS_ORIGINS', _default_origins).split(',')
 EXEC_SCRIPT = get_boolean_environ('NEST_SERVER_EXEC_SCRIPT')
 MODULES = os.environ.get('NEST_SERVER_MODULES', 'nest').split(',')
 RESTRICTION_OFF = get_boolean_environ('NEST_SERVER_RESTRICTION_OFF')
@@ -73,7 +74,9 @@ __all__ = [
 ]
 
 app = Flask(__name__)
-CORS(app, CORS_ORIGINS=CORS_ORIGINS)
+# Inform client-side user agents that they should not attempt to call our server from any
+# non-whitelisted domain.
+CORS(app, origins=CORS_ORIGINS, methods=["GET", "POST"])
 
 mpi_comm = None
 
@@ -151,7 +154,6 @@ del setup_auth
 
 
 @app.route('/', methods=['GET'])
-@cross_origin()
 def index():
     return jsonify({
         'nest': nest.__version__,

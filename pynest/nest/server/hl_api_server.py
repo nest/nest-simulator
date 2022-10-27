@@ -212,8 +212,7 @@ nest_calls = list(filter(lambda x: not x.startswith("_"), nest_calls))
 nest_calls.sort()
 
 
-@app.route("/api", methods=["GET"])
-@cross_origin()
+@app.route('/api', methods=['GET'])
 def route_api():
     """Route to list call functions in NEST."""
     return jsonify(nest_calls)

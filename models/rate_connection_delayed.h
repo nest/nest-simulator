@@ -143,6 +143,8 @@ private:
   double weight_; //!< connection weight
 };
 
+template < typename targetidentifierT > constexpr RegisterConnectionModelFlags RateConnectionDelayed< targetidentifierT >::secondaryFlags;
+
 template < typename targetidentifierT >
 void
 RateConnectionDelayed< targetidentifierT >::get_status( DictionaryDatum& d ) const

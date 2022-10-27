@@ -200,6 +200,7 @@ private:
   double t_lastspike_;
 };
 
+template < typename targetidentifierT > constexpr RegisterConnectionModelFlags urbanczik_synapse< targetidentifierT >::flags;
 
 /**
  * Send an event to the receiver of this connection.

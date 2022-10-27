@@ -215,6 +215,7 @@ private:
   double t_lastspike_;
 };
 
+template < typename targetidentifierT > constexpr RegisterConnectionModelFlags clopath_synapse< targetidentifierT >::flags;
 
 /**
  * Send an event to the receiver of this connection.

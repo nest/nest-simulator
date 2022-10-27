@@ -151,6 +151,8 @@ private:
   double weight_; //!< connection weight
 };
 
+template < typename targetidentifierT > constexpr RegisterConnectionModelFlags RateConnectionInstantaneous< targetidentifierT >::secondaryFlags;
+
 template < typename targetidentifierT >
 void
 RateConnectionInstantaneous< targetidentifierT >::get_status( DictionaryDatum& d ) const

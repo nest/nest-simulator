@@ -152,6 +152,8 @@ private:
   double weight_; //!< connection weight
 };
 
+template < typename targetidentifierT > constexpr RegisterConnectionModelFlags GapJunction< targetidentifierT >::secondaryFlags;
+
 template < typename targetidentifierT >
 void
 GapJunction< targetidentifierT >::get_status( DictionaryDatum& d ) const

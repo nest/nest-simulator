@@ -97,7 +97,6 @@ class ConnTestDummyNodeBase : public Node
   }
 };
 
-
 /**
  * Base class for representing connections.
  * It provides the mandatory properties receiver port and target,
@@ -312,6 +311,10 @@ protected:
   SynIdDelay syn_id_delay_;
 };
 
+template < typename targetidentifierT > constexpr RegisterConnectionModelFlags Connection< targetidentifierT >::flags;
+template < typename targetidentifierT > constexpr RegisterConnectionModelFlags Connection< targetidentifierT >::secondaryFlags;
+
+//constexpr Connection::RegisterConnectionModelFlags secondaryFlags;
 
 template < typename targetidentifierT >
 inline void

@@ -30,6 +30,7 @@
 
 // Includes from libnestutil:
 #include "compose.hpp"
+#include "enum_bitfield.h"
 
 // Includes from nestkernel:
 #include "connector_base.h"
@@ -98,8 +99,8 @@ GenericConnectorModel< ConnectionT >::get_status( DictionaryDatum& d ) const
   ( *d )[ names::receptor_type ] = receptor_type_;
   ( *d )[ names::synapse_model ] = LiteralDatum( name_ );
   ( *d )[ names::synapse_modelid ] = kernel().model_manager.get_synapse_model_id( name_ );
-  ( *d )[ names::requires_symmetric ] = requires_symmetric_;
-  ( *d )[ names::has_delay ] = has_delay_;
+  ( *d )[ names::requires_symmetric ] = enumFlagSet( flags_, RegisterConnectionModelFlags::REQUIRES_SYMMETRIC );
+  ( *d )[ names::has_delay ] = enumFlagSet( flags_, RegisterConnectionModelFlags::HAS_DELAY );
 }
 
 template < typename ConnectionT >
@@ -143,7 +144,7 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
   {
     try
     {
-      if ( has_delay_ )
+      if ( enumFlagSet( flags_, RegisterConnectionModelFlags::HAS_DELAY ) )
       {
         const double d = default_connection_.get_delay();
         kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( d );
@@ -192,7 +193,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 {
   if ( not numerics::is_nan( delay ) )
   {
-    if ( has_delay_ )
+    if ( enumFlagSet( flags_, RegisterConnectionModelFlags::HAS_DELAY ) )
     {
       kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
     }
@@ -211,7 +212,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 
     if ( updateValue< double >( p, names::delay, delay ) )
     {
-      if ( has_delay_ )
+      if ( enumFlagSet( flags_, RegisterConnectionModelFlags::HAS_DELAY ) )
       {
         kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
       }

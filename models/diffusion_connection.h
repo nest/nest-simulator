@@ -166,6 +166,8 @@ private:
   double diffusion_factor_;
 };
 
+template < typename targetidentifierT > constexpr RegisterConnectionModelFlags DiffusionConnection< targetidentifierT >::secondaryFlags;
+
 template < typename targetidentifierT >
 void
 DiffusionConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const

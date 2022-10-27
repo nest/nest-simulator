@@ -34,7 +34,7 @@ from flask.logging import default_handler
 root = logging.getLogger()
 root.addHandler(default_handler)
 
-# import nest
+import nest
 
 import RestrictedPython
 import time
@@ -264,7 +264,7 @@ def route_exec():
 # RESTful API
 # --------------------------
 
-nest_calls = []
+nest_calls = dir(nest)
 nest_calls = list(filter(lambda x: not x.startswith('_'), nest_calls))
 nest_calls.sort()
 

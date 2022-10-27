@@ -29,7 +29,7 @@
 // C++ includes
 #include <vector>
 
-// Includes from nestkerne
+// Includes from nestkernel
 #include "kernel_manager.h"
 #include "node_collection.h"
 
@@ -49,9 +49,9 @@ BOOST_AUTO_TEST_CASE( test_primitive_node_collection )
 {
   KernelManager::create_kernel_manager();
   const std::vector< index > node_ids { 1, 2, 3 };
-  auto nc = NodeCollection::create_test_collection( node_ids );
-  size_t expected_nc_step = 1;
-  auto actual_nc_step = nc->step();
+  const auto nc = NodeCollection::create_test_collection( node_ids );
+  const size_t expected_nc_step = 1;
+  const auto actual_nc_step = nc->step();
   BOOST_REQUIRE_EQUAL( actual_nc_step, expected_nc_step );
 }
 
@@ -64,9 +64,9 @@ BOOST_AUTO_TEST_CASE( test_empty_node_collection )
 {
   KernelManager::create_kernel_manager();
   const std::vector< index > node_ids {};
-  auto nc = NodeCollection::create_test_collection( node_ids );
-  size_t expected_nc_step = 1;
-  auto actual_nc_step = nc->step();
+  const auto nc = NodeCollection::create_test_collection( node_ids );
+  const size_t expected_nc_step = 1;
+  const auto actual_nc_step = nc->step();
   BOOST_REQUIRE_EQUAL( actual_nc_step, expected_nc_step );
 }
 
@@ -77,11 +77,11 @@ BOOST_AUTO_TEST_CASE( test_empty_node_collection )
 BOOST_AUTO_TEST_CASE( test_composite_node_collection )
 {
   KernelManager::create_kernel_manager();
-  std::vector< index > node_ids { 1, 2, 3, 4, 5 };
-  auto nc = NodeCollection::create_test_collection( node_ids );
-  auto nc_slice = nc->slice( 0, 4, 2 );
-  size_t expected_nc_step = 2;
-  auto actual_nc_step = nc_slice->step();
+  const std::vector< index > node_ids { 1, 2, 3, 4, 5 };
+  const auto nc = NodeCollection::create_test_collection( node_ids );
+  const auto nc_slice = nc->slice( 0, 4, 2 );
+  const size_t expected_nc_step = 2;
+  const auto actual_nc_step = nc_slice->step();
   BOOST_REQUIRE_EQUAL( actual_nc_step, expected_nc_step );
 }
 

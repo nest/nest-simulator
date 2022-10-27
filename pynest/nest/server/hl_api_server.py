@@ -27,7 +27,7 @@ import io
 import sys
 
 from flask import Flask, request, jsonify
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 from flask.logging import default_handler
 
 # This ensures that the logging information shows up in the console running the server,
@@ -53,7 +53,8 @@ def get_boolean_environ(env_key, default_value = 'false'):
     env_value = os.environ.get(env_key, default_value)
     return env_value.lower() in ['yes', 'true', 't', '1']
 
-CORS_ORIGINS = os.environ.get('NEST_SERVER_CORS_ORIGINS', 'http://localhost:8000').split(',')
+_default_origins = 'localhost,http://localhost,https://localhost'
+CORS_ORIGINS = os.environ.get('NEST_SERVER_CORS_ORIGINS', _default_origins).split(',')
 EXEC_SCRIPT = get_boolean_environ('NEST_SERVER_EXEC_SCRIPT')
 MODULES = os.environ.get('NEST_SERVER_MODULES', 'nest').split(',')
 RESTRICTION_OFF = get_boolean_environ('NEST_SERVER_RESTRICTION_OFF')
@@ -81,27 +82,14 @@ __all__ = [
 ]
 
 app = Flask(__name__)
-CORS(app, CORS_ORIGINS=CORS_ORIGINS)
+# Inform client-side user agents that they should not attempt to call our server from any
+# non-whitelisted domain.
+CORS(app, origins=CORS_ORIGINS, methods=["GET", "POST"])
 
 mpi_comm = None
 
 
-@app.after_request
-def cors_origin(response):
-    # https://kurianbenoy.com/2021-07-04-CORS/
-    response.headers["Access-Control-Allow-Origin"] = "null"
-    request_origin = request.headers['Origin']
-    if len(CORS_ORIGINS) == 0 or "*" in CORS_ORIGINS:
-        response.headers["Access-Control-Allow-Origin"] = "*"
-    else:
-        for allowed_origin in CORS_ORIGINS:
-            if allowed_origin in request_origin:
-                response.headers["Access-Control-Allow-Origin"] = allowed_origin
-    return response
-
-
 @app.route('/', methods=['GET'])
-@cross_origin()
 def index():
     return jsonify(
         {
@@ -200,8 +188,7 @@ def do_call(call_name, args=[], kwargs={}):
     return combine(call_name, response)
 
 
-@app.route("/exec", methods=["GET", "POST"])
-@cross_origin()
+@app.route('/exec', methods=['GET', 'POST'])
 def route_exec():
     """Route to execute script in Python."""
 
@@ -232,8 +219,7 @@ def route_api():
     return jsonify(nest_calls)
 
 
-@app.route("/api/<call>", methods=["GET", "POST"])
-@cross_origin()
+@app.route('/api/<call>', methods=['GET', 'POST'])
 def route_api_call(call):
     """Route to call function in NEST."""
     print(f"\n{'='*40}\n", flush=True)

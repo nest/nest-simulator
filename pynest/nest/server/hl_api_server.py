@@ -81,15 +81,15 @@ CORS(app, origins=CORS_ORIGINS, methods=["GET", "POST"])
 
 mpi_comm = None
 
-# Self sufficient, dissapearing authentication function
-#
-# * Generates the login token based on salted hash of the ID of this object and the
-#   current time measured by `perf_counter` giving us enough entropy.
-# * Stores the token on this function.
-# * Removes all `nest` accessible references to it, only `app` and `gc` have it, and the
-#   reference this module holds to `app` is deleted before the first request goes through.
 @app.before_request
 def setup_auth():
+    """
+    Authentication function that generates and validates the Authorization header with a
+    bearer token.
+
+    Cleans up references to itself and the running `app` from this module, as it may be
+    accessible when the code execution sandbox fails.
+    """
     try:
         import inspect
         import gc
@@ -97,7 +97,7 @@ def setup_auth():
         import hashlib
         import hmac
 
-
+        # Find our reference to the current function in the garbage collector.
         frame = inspect.currentframe()
         code  = frame.f_code
         globs = frame.f_globals
@@ -111,6 +111,8 @@ def setup_auth():
                         if len(funcs) > 1:
                             return ("Unauthorized", 403)
         self = funcs[0]
+        # Use the salted hash (unless `PYTHONHASHSEED` is fixed) of the location of this
+        # function in the Python heap and the current timestamp to create a SHA512 hash.
         if not hasattr(self, "_hash"):
             hasher = hashlib.sha512()
             hasher.update(str(hash(id(self))).encode("utf-8"))
@@ -120,21 +122,22 @@ def setup_auth():
                 print("")
                 print("    Bearer token to login to the NEST server with: ", self._hash)
                 print("")
-        # Control flow explanation: The first time we hit this line is when below the
-        # function definition we call `setup_auth` without any request existing yet,
-        # so the function exits here after generating and storing the auth hash.
+        # The first time we hit the line below is when below the function definition we
+        # call `setup_auth` without any Flask request existing yet, so the function errors
+        # and exits here after generating and storing the auth hash.
         auth = request.headers["Authorization"]
-        # We continue here the next time this function is called, which is before the
-        # Flask app handles a request. At that point we also remove this module's
-        # reference to the running app.
+        # We continue here the next time this function is called, before the Flask app
+        # handles the first request. At that point we also remove this module's reference
+        # to the running app.
         try:
             del globals()["app"]
         except KeyError:
             pass
-        # Things get simpler here: We just check if the user has given us the right token.
+        # Things get more straightforward here: Every time a request is handled, compare
+        # the Authorization header to the hash, with a constant-time algorithm to avoid
+        # timing attacks.
         if not (
             DISABLE_AUTHENTICATION
-            # Use constant-time algorithm to campare the strings, to avoid timing attacks.
             or hmac.compare_digest(auth, f"Bearer {self._hash}")
         ):
             return ("Unauthorized", 403)

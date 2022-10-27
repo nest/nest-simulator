@@ -41,20 +41,11 @@ from copy import deepcopy
 
 import os
 
-<<<<<<< HEAD
-MODULES = os.environ.get("NEST_SERVER_MODULES", "nest").split(",")
-RESTRICTION_OFF = bool(os.environ.get("NEST_SERVER_RESTRICTION_OFF", False))
-EXCEPTION_ERROR_STATUS = 400
-
-if RESTRICTION_OFF:
-    msg = "NEST Server runs without a RestrictedPython trusted environment."
-    print(f"***\n*** WARNING: {msg}\n***")
-
-=======
 def get_boolean_environ(env_key, default_value = 'false'):
     env_value = os.environ.get(env_key, default_value)
     return env_value.lower() in ['yes', 'true', 't', '1']
 
+CORS_ORIGINS = os.environ.get('NEST_SERVER_CORS_ORIGINS', 'localhost')
 EXEC_SCRIPT = get_boolean_environ('NEST_SERVER_EXEC_SCRIPT')
 MODULES = os.environ.get('NEST_SERVER_MODULES', 'nest').split(',')
 RESTRICTION_OFF = get_boolean_environ('NEST_SERVER_RESTRICTION_OFF')
@@ -72,7 +63,6 @@ if EXEC_SCRIPT:
         msg = 'NEST Server runs without a RestrictedPython trusted environment.'
         print(f'WARNING: {msg}')
     print(80 * '*')
->>>>>>> f3abc5e61 (Add env EXEC_SCRIPT)
 
 __all__ = [
     "app",
@@ -83,12 +73,18 @@ __all__ = [
 ]
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": f"{CORS_ORIGINS}"})
 
 mpi_comm = None
 
 
-@app.route("/", methods=["GET"])
+@app.after_request
+def add_header(response):
+    response.headers['Access-Control-Allow-Origin'] = CORS_ORIGINS
+    return response
+
+
+@app.route('/', methods=['GET'])
 def index():
     return jsonify(
         {
@@ -188,11 +184,6 @@ def do_call(call_name, args=[], kwargs={}):
 def route_exec():
     """Route to execute script in Python."""
 
-<<<<<<< HEAD
-    args, kwargs = get_arguments(request)
-    response = do_call("exec", args, kwargs)
-    return jsonify(response)
-=======
     if EXEC_SCRIPT:
         args, kwargs = get_arguments(request)
         response = do_call('exec', args, kwargs)
@@ -202,7 +193,6 @@ def route_exec():
             'The route `/exec` has been disabled. Please contact the server administrator.',
             403
         ))
->>>>>>> f3abc5e61 (Add env EXEC_SCRIPT)
 
 
 # --------------------------

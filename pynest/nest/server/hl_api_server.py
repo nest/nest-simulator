@@ -331,7 +331,7 @@ def route_exec():
 # RESTful API
 # --------------------------
 
-nest_calls = []
+nest_calls = dir(nest)
 nest_calls = list(filter(lambda x: not x.startswith('_'), nest_calls))
 nest_calls.sort()
 

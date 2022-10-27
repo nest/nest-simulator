@@ -86,6 +86,7 @@ def add_header(response):
 
 
 @app.route('/', methods=['GET'])
+@cross_origin()
 def index():
     return jsonify(
         {

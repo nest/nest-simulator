@@ -79,6 +79,58 @@ CORS(app, origins=CORS_ORIGINS, methods=["GET", "POST"])
 
 mpi_comm = None
 
+# Self sufficient, dissapearing authentication function:
+#
+# * Generates the login token based on salted hash of the ID of this object and the
+#   current time measured by `perf_counter` giving us enough entropy.
+# * Stores the token on this function.
+# * Removes all `nest` accessible references to it, only `app` and `gc` have it, and the
+#   reference this module holds to `app` is deleted before the first request goes through.
+@app.before_request
+def check_token():
+    try:
+        import inspect
+        import gc
+        import time
+        import hashlib
+        import hmac
+
+
+        frame = inspect.currentframe()
+        code  = frame.f_code
+        globs = frame.f_globals
+        functype = type(lambda: 0)
+        funcs = []
+        for func in gc.get_referrers(code):
+            if type(func) is functype:
+                if getattr(func, "__code__", None) is code:
+                    if getattr(func, "__globals__", None) is globs:
+                        funcs.append(func)
+                        if len(funcs) > 1:
+                            return ("Unauthorized", 403)
+        self = funcs[0]
+        if not hasattr(self, "_hash"):
+            hasher = hashlib.sha512()
+            hasher.update(str(hash(id(self))).encode("utf-8"))
+            hasher.update(str(time.perf_counter()).encode("utf-8"))
+            self._hash = hasher.hexdigest()
+            print("")
+            print("    Bearer token to login to the NEST server with: ", self._hash)
+            print("")
+        auth = request.headers["Authorization"]
+        # The line above triggers an error because below we call `check_token` outside of
+        # any request context. The next time, before the app calls the request route
+        # handler, this line will remove the reference this module holds to `app` as well.
+        del globals()["app"]
+        # Use constant-time comparison to avoid timing attacks.
+        if not hmac.compare_digest(auth, f"Bearer {self._hash}"):
+            return ("Unauthorized", 403)
+    except Exception:
+        return ("Unauthorized", 403)
+
+check_token()
+del check_token
+
 
 @app.before_request
 def setup_auth():
@@ -155,7 +207,7 @@ del setup_auth
 @app.route('/', methods=['GET'])
 def index():
     return jsonify({
-        'nest': nest.__version__,
+        'nest': 1,
         'mpi': mpi_comm is not None,
     })
 
@@ -264,7 +316,7 @@ def route_exec():
 # RESTful API
 # --------------------------
 
-nest_calls = dir(nest)
+nest_calls = []
 nest_calls = list(filter(lambda x: not x.startswith('_'), nest_calls))
 nest_calls.sort()
 

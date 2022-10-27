@@ -46,6 +46,7 @@ def get_boolean_environ(env_key, default_value = 'false'):
     return env_value.lower() in ['yes', 'true', 't', '1']
 
 _default_origins = 'localhost,http://localhost,https://localhost'
+DISABLE_AUTHENTICATION = os.environ.get('NEST_DISABLE_AUTHENTICATION', False) == "TRUE"
 CORS_ORIGINS = os.environ.get('NEST_SERVER_CORS_ORIGINS', _default_origins).split(',')
 EXEC_SCRIPT = get_boolean_environ('NEST_SERVER_EXEC_SCRIPT')
 MODULES = os.environ.get('NEST_SERVER_MODULES', 'nest').split(',')
@@ -80,7 +81,7 @@ CORS(app, origins=CORS_ORIGINS, methods=["GET", "POST"])
 
 mpi_comm = None
 
-# Self sufficient, dissapearing authentication function:
+# Self sufficient, dissapearing authentication function
 #
 # * Generates the login token based on salted hash of the ID of this object and the
 #   current time measured by `perf_counter` giving us enough entropy.
@@ -88,7 +89,7 @@ mpi_comm = None
 # * Removes all `nest` accessible references to it, only `app` and `gc` have it, and the
 #   reference this module holds to `app` is deleted before the first request goes through.
 @app.before_request
-def check_token():
+def setup_auth():
     try:
         import inspect
         import gc
@@ -115,22 +116,36 @@ def check_token():
             hasher.update(str(hash(id(self))).encode("utf-8"))
             hasher.update(str(time.perf_counter()).encode("utf-8"))
             self._hash = hasher.hexdigest()
-            print("")
-            print("    Bearer token to login to the NEST server with: ", self._hash)
-            print("")
+            if not DISABLE_AUTHENTICATION:
+                print("")
+                print("    Bearer token to login to the NEST server with: ", self._hash)
+                print("")
+        # Control flow explanation: The first time we hit this line is when below the
+        # function definition we call `setup_auth` without any request existing yet,
+        # so the function exits here after generating and storing the auth hash.
         auth = request.headers["Authorization"]
-        # The line above triggers an error because below we call `check_token` outside of
-        # any request context. The next time, before the app calls the request route
-        # handler, this line will remove the reference this module holds to `app` as well.
-        del globals()["app"]
-        # Use constant-time comparison to avoid timing attacks.
-        if not hmac.compare_digest(auth, f"Bearer {self._hash}"):
+        # We continue here the next time this function is called, which is before the
+        # Flask app handles a request. At that point we also remove this module's
+        # reference to the running app.
+        try:
+            del globals()["app"]
+        except KeyError:
+            pass
+        # Things get simpler here: We just check if the user has given us the right token.
+        if not (
+            DISABLE_AUTHENTICATION
+            # Use constant-time algorithm to campare the strings, to avoid timing attacks.
+            or hmac.compare_digest(auth, f"Bearer {self._hash}")
+        ):
             return ("Unauthorized", 403)
-    except Exception:
+    # DON'T LINT! Intentional bare except clause! Even `KeyboardInterrupt` and
+    # `SystemExit` exceptions should not bypass authentication!
+    except:
         return ("Unauthorized", 403)
 
-check_token()
-del check_token
+
+setup_auth()
+del setup_auth
 
 
 @app.before_request

@@ -22,11 +22,18 @@
 import ast
 import importlib
 import inspect
+import logging
 import io
 import sys
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
+from flask.logging import default_handler
+
+# This ensures that the logging information shows up in the console running the server,
+# even when Flask's event loop is running.
+root = logging.getLogger()
+root.addHandler(default_handler)
 
 from werkzeug.exceptions import abort
 from werkzeug.wrappers import Response

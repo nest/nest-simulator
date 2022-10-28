@@ -263,10 +263,10 @@ def route_exec():
         response = do_call('exec', args, kwargs)
         return jsonify(response)
     else:
-        abort(Response(
+        flask.abort(
+            403,
             'The route `/exec` has been disabled. Please contact the server administrator.',
-            403
-        ))
+        )
 
 
 # --------------------------
@@ -366,8 +366,7 @@ def get_or_error(func):
         except Exception as e:
             for line in traceback.format_exception(*sys.exc_info()):
                 print(line, flush=True)
-            abort(Response(str(e), EXCEPTION_ERROR_STATUS))
-
+            flask.abort(EXCEPTION_ERROR_STATUS, str(e))
     return func_wrapper
 
 

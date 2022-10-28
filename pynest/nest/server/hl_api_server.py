@@ -89,6 +89,7 @@ CORS(app, origins=CORS_ORIGINS, methods=["GET", "POST"])
 
 mpi_comm = None
 
+
 @app.before_request
 def setup_auth():
     """
@@ -99,15 +100,17 @@ def setup_auth():
     accessible when the code execution sandbox fails.
     """
     try:
-        import inspect
-        import gc
-        import time
-        import hashlib
-        import hmac
+        # Import the modules inside of the auth function, so that if they fail the auth
+        # returns a forbidden error.
+        import inspect  # noqa
+        import gc  # noqa
+        import time  # noqa
+        import hashlib  # noqa
+        import hmac  # noqa
 
         # Find our reference to the current function in the garbage collector.
         frame = inspect.currentframe()
-        code  = frame.f_code
+        code = frame.f_code
         globs = frame.f_globals
         functype = type(lambda: 0)
         funcs = []
@@ -151,7 +154,7 @@ def setup_auth():
             return ("Unauthorized", 403)
     # DON'T LINT! Intentional bare except clause! Even `KeyboardInterrupt` and
     # `SystemExit` exceptions should not bypass authentication!
-    except:
+    except:  # noqa
         return ("Unauthorized", 403)
 
 

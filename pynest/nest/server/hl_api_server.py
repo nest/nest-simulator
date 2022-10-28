@@ -29,11 +29,6 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask.logging import default_handler
 
-# This ensures that the logging information shows up in the console running the server,
-# even when Flask's event loop is running.
-root = logging.getLogger()
-root.addHandler(default_handler)
-
 import nest
 
 import RestrictedPython
@@ -45,12 +40,20 @@ from copy import deepcopy
 
 import os
 
-def get_boolean_environ(env_key, default_value = 'false'):
+
+# This ensures that the logging information shows up in the console running the server,
+# even when Flask's event loop is running.
+root = logging.getLogger()
+root.addHandler(default_handler)
+
+
+def get_boolean_environ(env_key, default_value='false'):
     env_value = os.environ.get(env_key, default_value)
     return env_value.lower() in ['yes', 'true', 't', '1']
 
+
 _default_origins = 'localhost,http://localhost,https://localhost'
-DISABLE_AUTHENTICATION = os.environ.get('NEST_DISABLE_AUTHENTICATION', False) == "TRUE"
+DISABLE_AUTHENTICATION = get_boolean_environ('NEST_DISABLE_AUTHENTICATION')
 CORS_ORIGINS = os.environ.get('NEST_SERVER_CORS_ORIGINS', _default_origins).split(',')
 EXEC_SCRIPT = get_boolean_environ('NEST_SERVER_EXEC_SCRIPT')
 MODULES = os.environ.get('NEST_SERVER_MODULES', 'nest').split(',')

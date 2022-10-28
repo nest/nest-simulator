@@ -61,21 +61,6 @@ MODULES = os.environ.get('NEST_SERVER_MODULES', 'nest').split(',')
 RESTRICTION_DISABLED = get_boolean_environ('NEST_SERVER_DISABLE_RESTRICTION')
 EXCEPTION_ERROR_STATUS = 400
 
-if EXEC_CALL_ENABLED:
-    print(80 * '*')
-    msg = ("\n" + 9*" ").join([
-        'NEST Server runs with the `exec` command activated.',
-        'This means that any code can be executed!',
-        'The security of your system can not be ensured!'
-    ])
-    print(f'WARNING: {msg}')
-    if RESTRICTION_DISABLED:
-        msg = 'NEST Server runs without a RestrictedPython trusted environment.'
-        print(f'WARNING: {msg}')
-    print(80 * '*')
-
-
-
 __all__ = [
     "app",
     "do_exec",
@@ -101,7 +86,7 @@ def check_security():
     if AUTH_DISABLED:
         msg.append('AUTH:\tThe authentication is disabled.')
     if '*' in CORS_ORIGINS:
-        msg.append('CORS:\tAllowed origins is unrestricted.')
+        msg.append('CORS:\tAllowed origins is not restricted.')
     if EXEC_CALL_ENABLED:
         msg.append('EXEC CALL:\tAny code scripts can be executed!')
         if RESTRICTION_DISABLED:
@@ -154,11 +139,9 @@ def setup_auth():
             hasher = hashlib.sha512()
             hasher.update(str(hash(id(self))).encode("utf-8"))
             hasher.update(str(time.perf_counter()).encode("utf-8"))
-            self._hash = hasher.hexdigest()
+            self._hash = hasher.hexdigest()[:48]
             if not AUTH_DISABLED:
-                print("")
-                print("    Bearer token to login to the NEST server with: ", self._hash)
-                print("")
+                print(f"\nBearer token to NEST server: {self._hash}\n")
         # The first time we hit the line below is when below the function definition we
         # call `setup_auth` without any Flask request existing yet, so the function errors
         # and exits here after generating and storing the auth hash.

@@ -1733,15 +1733,14 @@ nest::BernoulliAstroBuilder::connect_()
     try
     {
       index snode_id;
-      std::set< index > previous_snode_ids;
+      std::set< index > connected_snode_ids;
       index anode_id;
-      std::set< index > previous_anode_ids;
+      std::set< index > connected_anode_ids;
       Node* target;
-      // thread checking: maybe just use target->get_thread()?
       thread target_thread;
       Node* astrocyte;
-      thread astro_thread;
-      std::vector< index > anode_pool_this_target;
+      thread astrocyte_thread;
+      std::vector< index > astro_pool_this_target;
       unsigned long indegree;
       int default_n_astro_per_target_ = astrocytes_size_ / targets_size_ > 1 ? astrocytes_size_ / targets_size_ : 1;
       int default_n_target_per_astro = targets_size_ / astrocytes_size_ > 1 ? targets_size_ / astrocytes_size_ : 1;
@@ -1772,11 +1771,11 @@ nest::BernoulliAstroBuilder::connect_()
           target_thread = invalid_thread;
         }
 
-        previous_snode_ids.clear();
-        previous_anode_ids.clear();
+        connected_snode_ids.clear();
+        connected_anode_ids.clear();
 
         // Define astrocyte pool for this target
-        anode_pool_this_target.clear();
+        astro_pool_this_target.clear();
 
         // When max_astro_per_target_ not given
         if ( max_astro_per_target_ == 0 )
@@ -1827,7 +1826,7 @@ nest::BernoulliAstroBuilder::connect_()
             for ( size_t i = 0; i < max_astro_per_target_; i++ )
             {
               anode_id = ( *astrocytes_ )[ astro_index ];
-              anode_pool_this_target.push_back( anode_id );
+              astro_pool_this_target.push_back( anode_id );
               astro_index++;
             }
           }
@@ -1844,8 +1843,8 @@ nest::BernoulliAstroBuilder::connect_()
               {
                  anode_id = ( *astrocytes_ )[ synced_rng->ulrand( astrocytes_size_ ) ];
               }
-              while ( std::find( anode_pool_this_target.begin(), anode_pool_this_target.end(), anode_id ) != anode_pool_this_target.end() );
-              anode_pool_this_target.push_back( anode_id );
+              while ( std::find( astro_pool_this_target.begin(), astro_pool_this_target.end(), anode_id ) != astro_pool_this_target.end() );
+              astro_pool_this_target.push_back( anode_id );
             }
           }
         }
@@ -1859,12 +1858,12 @@ nest::BernoulliAstroBuilder::connect_()
           snode_id = ( *sources_ )[ synced_rng->ulrand( sources_->size() ) ];
 
           // Allow autapses and but not multapses (to be improved).
-          if ( previous_snode_ids.find( snode_id ) != previous_snode_ids.end() )
-          // if ( snode_id == ( *tnode_id ).node_id or previous_snode_ids.find( snode_id ) != previous_snode_ids.end() )
+          if ( connected_snode_ids.find( snode_id ) != connected_snode_ids.end() )
+          // if ( snode_id == ( *tnode_id ).node_id or connected_snode_ids.find( snode_id ) != connected_snode_ids.end() )
           {
             continue;
           }
-          previous_snode_ids.insert( snode_id );
+          connected_snode_ids.insert( snode_id );
 
           // increase i which counts the number of incoming connections
           ++i;
@@ -1892,7 +1891,7 @@ nest::BernoulliAstroBuilder::connect_()
           // If an astrocyte pool was defined, use it
           if ( max_astro_per_target_ > 0 )
           {
-            anode_id = anode_pool_this_target.at( synced_rng->ulrand( anode_pool_this_target.size() ) );
+            anode_id = astro_pool_this_target.at( synced_rng->ulrand( astro_pool_this_target.size() ) );
           }
           // If not, all astrocytes can be connected (may already be redundant)
           else
@@ -1902,27 +1901,27 @@ nest::BernoulliAstroBuilder::connect_()
 
           // if astrocyte is local: connect source -> astrocyte
           astrocyte = kernel().node_manager.get_node_or_proxy( anode_id, tid );
-          astro_thread = tid;
+          astrocyte_thread = tid;
 
           if ( astrocyte->is_proxy() )
           {
-            astro_thread = invalid_thread;
+            astrocyte_thread = invalid_thread;
           }
-          if ( astro_thread == tid )
+          if ( astrocyte_thread == tid )
           {
             assert( astrocyte != NULL );
-            update_param_dict_( snode_id, *astrocyte, astro_thread, synced_rng, 0 );
+            update_param_dict_( snode_id, *astrocyte, astrocyte_thread, synced_rng, 0 );
             kernel().connection_manager.connect( snode_id,
               astrocyte,
-              astro_thread,
+              astrocyte_thread,
               synapse_model_id_[0],
-              param_dicts_[ 0 ][ astro_thread ],
+              param_dicts_[ 0 ][ astrocyte_thread ],
               d_,
               w_*c_spill_ );
           }
 
           // Avoid connecting the same astrocyte to the target more than once
-          if ( previous_anode_ids.find( anode_id ) != previous_anode_ids.end() )
+          if ( connected_anode_ids.find( anode_id ) != connected_anode_ids.end() )
           {
             continue;
           }
@@ -1938,8 +1937,7 @@ nest::BernoulliAstroBuilder::connect_()
               param_dicts_[ 0 ][ target_thread ],
               numerics::nan,
               w_sic_ );
-            // register astrocyte
-            previous_anode_ids.insert( anode_id );
+            connected_anode_ids.insert( anode_id );
           }
         }
       }
@@ -2027,7 +2025,7 @@ nest::SymmetricBernoulliBuilder::connect_()
           target_thread = invalid_thread;
         }
 
-        previous_snode_ids.clear();
+        connected_snode_ids.clear();
 
         // choose indegree number of sources randomly from all sources
         size_t i = 0;
@@ -2038,11 +2036,11 @@ nest::SymmetricBernoulliBuilder::connect_()
           // Avoid autapses and multapses. Due to symmetric connectivity,
           // multapses might exist if the target neuron with node ID snode_id draws the
           // source with node ID tnode_id while choosing sources itself.
-          if ( snode_id == ( *tnode_id ).node_id or previous_snode_ids.find( snode_id ) != previous_snode_ids.end() )
+          if ( snode_id == ( *tnode_id ).node_id or connected_snode_ids.find( snode_id ) != connected_snode_ids.end() )
           {
             continue;
           }
-          previous_snode_ids.insert( snode_id );
+          connected_snode_ids.insert( snode_id );
 
           source = kernel().node_manager.get_node_or_proxy( snode_id, tid );
           source_thread = tid;

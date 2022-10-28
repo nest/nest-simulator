@@ -54,14 +54,14 @@ def get_boolean_environ(env_key, default_value='false'):
 
 
 _default_origins = 'localhost,http://localhost,https://localhost'
-DISABLE_AUTHENTICATION = get_boolean_environ('NEST_DISABLE_AUTHENTICATION')
+AUTH_DISABLED = get_boolean_environ('NEST_SERVER_DISABLE_AUTH')
 CORS_ORIGINS = os.environ.get('NEST_SERVER_CORS_ORIGINS', _default_origins).split(',')
-EXEC_SCRIPT = get_boolean_environ('NEST_SERVER_EXEC_SCRIPT')
+EXEC_CALL_ENABLED = get_boolean_environ('NEST_SERVER_ENABLE_EXEC_CALL')
 MODULES = os.environ.get('NEST_SERVER_MODULES', 'nest').split(',')
-RESTRICTION_OFF = get_boolean_environ('NEST_SERVER_RESTRICTION_OFF')
+RESTRICTION_DISABLED = get_boolean_environ('NEST_SERVER_DISABLE_RESTRICTION')
 EXCEPTION_ERROR_STATUS = 400
 
-if EXEC_SCRIPT:
+if EXEC_CALL_ENABLED:
     print(80 * '*')
     msg = ("\n" + 9*" ").join([
         'NEST Server runs with the `exec` command activated.',
@@ -69,10 +69,12 @@ if EXEC_SCRIPT:
         'The security of your system can not be ensured!'
     ])
     print(f'WARNING: {msg}')
-    if RESTRICTION_OFF:
+    if RESTRICTION_DISABLED:
         msg = 'NEST Server runs without a RestrictedPython trusted environment.'
         print(f'WARNING: {msg}')
     print(80 * '*')
+
+
 
 __all__ = [
     "app",
@@ -88,6 +90,30 @@ app = Flask(__name__)
 CORS(app, origins=CORS_ORIGINS, methods=["GET", "POST"])
 
 mpi_comm = None
+
+
+def check_security():
+    """
+    Checks the security level of the NEST Server instance.
+    """
+
+    msg = []
+    if AUTH_DISABLED:
+        msg.append('AUTH:\tThe authentication is disabled.')
+    if '*' in CORS_ORIGINS:
+        msg.append('CORS:\tAllowed origins is unrestricted.')
+    if EXEC_CALL_ENABLED:
+        msg.append('EXEC CALL:\tAny code scripts can be executed!')
+        if RESTRICTION_DISABLED:
+            msg.append('RESTRICTION: Code scripts will be executed without a restricted environment.')
+
+    level = ['HIGHEST', 'HIGH', 'MODERATE', 'LOW', 'LOWEST']
+    print(f'The security level of NEST Server is {level[len(msg)]}.')
+    if len(msg) > 0:
+        print('WARNING: The security of your system can not be ensured!')
+        print('\n - '.join([' '] + msg) + '\n')
+    else:
+        print('INFO: The security of your system can be ensured!')
 
 
 @app.before_request
@@ -129,7 +155,7 @@ def setup_auth():
             hasher.update(str(hash(id(self))).encode("utf-8"))
             hasher.update(str(time.perf_counter()).encode("utf-8"))
             self._hash = hasher.hexdigest()
-            if not DISABLE_AUTHENTICATION:
+            if not AUTH_DISABLED:
                 print("")
                 print("    Bearer token to login to the NEST server with: ", self._hash)
                 print("")
@@ -148,7 +174,7 @@ def setup_auth():
         # the Authorization header to the hash, with a constant-time algorithm to avoid
         # timing attacks.
         if not (
-            DISABLE_AUTHENTICATION
+            AUTH_DISABLED
             or hmac.compare_digest(auth, f"Bearer {self._hash}")
         ):
             return ("Unauthorized", 403)
@@ -158,8 +184,11 @@ def setup_auth():
         return ("Unauthorized", 403)
 
 
+print( 80 * '*')
+check_security()
 setup_auth()
 del setup_auth
+print( 80 * '*')
 
 
 @app.before_request
@@ -249,7 +278,7 @@ def do_exec(args, kwargs):
 
         locals_ = dict()
         response = dict()
-        if RESTRICTION_OFF:
+        if RESTRICTION_DISABLED:
             with Capturing() as stdout:
                 globals_ = globals().copy()
                 globals_.update(get_modules_from_env())
@@ -335,7 +364,7 @@ def do_call(call_name, args=[], kwargs={}):
 def route_exec():
     """Route to execute script in Python."""
 
-    if EXEC_SCRIPT:
+    if EXEC_CALL_ENABLED:
         args, kwargs = get_arguments(request)
         response = do_call('exec', args, kwargs)
         return jsonify(response)

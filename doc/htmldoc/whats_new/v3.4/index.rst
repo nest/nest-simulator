@@ -64,7 +64,9 @@ the node positions.
 Changes in NEST Server
 ~~~~~~~~~~~~~~~~~~~~~~
 
-* By default NEST Server runs on port 52425 (previously 5000).
-* Minimize security risk in NEST Server.
-  * By default exec call is disabled, only API calls are enabled.
-  * The user is able to turn on exec call which means that the user is aware of the risk.
+* By default, the NEST Server now runs on port ``52425`` (previously ``5000``).
+* Improve the security in NEST Server. The user can modify the security options in environment variables:
+  * Requests require Bearer tokens. By default, the authentication is on (``NEST_SERVER_DISABLE_AUTH=0``).
+  * The CORS origins are restricted. By default, the only allowed CORS origin is ``localhost`` (``NEST_SERVER_CORS_ORIGINS=localhost``).
+  * Only API calls are enabled. By default, the exec call is disabled (``NEST_SERVER_ENABLE_EXEC_CALL=0``).
+  * The code execution is restricted. By default, the restriction is activated (``NEST_SERVER_DISABLE_RESTRICTION=0``).

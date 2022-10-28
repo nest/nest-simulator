@@ -1220,7 +1220,7 @@ Functions determining weight and delay as function of
 distance/displacement work in just the same way as before when the
 number of connections is prescribed.
 
-It is also possible to use a random parameter or spatially dependant parameter
+It is also possible to use a random parameter or spatially dependent parameter
 to set the number of incoming or outgoing connections.
 
 .. literalinclude:: scripts/connections.py

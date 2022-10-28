@@ -340,10 +340,10 @@ def route_exec():
         response = do_call('exec', args, kwargs)
         return jsonify(response)
     else:
-        abort(Response(
+        flask.abort(
+            403,
             'The route `/exec` has been disabled. Please contact the server administrator.',
-            403
-        ))
+        )
 
 
 # --------------------------

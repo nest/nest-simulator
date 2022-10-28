@@ -135,7 +135,7 @@ def setup_auth():
         # The first time we hit the line below is when below the function definition we
         # call `setup_auth` without any Flask request existing yet, so the function errors
         # and exits here after generating and storing the auth hash.
-        auth = request.headers["Authorization"]
+        auth = request.headers.get("Authorization", None)
         # We continue here the next time this function is called, before the Flask app
         # handles the first request. At that point we also remove this module's reference
         # to the running app.

@@ -1693,7 +1693,7 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
       
       TargetDataFields& target_fields = next_target_data.target_data;
       target_fields.set_syn_id( syn_id );
-      target_fields.set_tid( invalid_targetindex );
+      target_fields.set_tid( 0 );  // meaningless, use 0 as fill
       target_fields.set_lcid( source_2_idx->second );
       
       send_buffer_target_data.at( send_buffer_position.idx( source_rank ) ) = next_target_data;

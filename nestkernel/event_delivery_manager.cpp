@@ -433,12 +433,14 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
             iiit < ( *( *it ) )[ lag ].end();
             ++iiit )
       {
-        const thread rank = 0; // iiit->get_rank();
+        assert( not iiit->is_processed() );
 
-        send_buffer[ send_buffer_position.idx( rank ) ].set(
-          ( *iiit ).get_tid(), ( *iiit ).get_syn_id(), ( *iiit ).get_lcid(), lag, ( *iiit ).get_offset() );
-        ( *iiit ).set_status( TARGET_ID_PROCESSED ); // mark entry for removal
-        send_buffer_position.increase( rank );
+        const thread rank = iiit->get_rank();
+
+          send_buffer[ send_buffer_position.idx( rank ) ].set(
+                                                              ( *iiit ).get_tid(), ( *iiit ).get_syn_id(), ( *iiit ).get_lcid(), lag, ( *iiit ).get_offset() );
+          ( *iiit ).set_status( TARGET_ID_PROCESSED ); // mark entry for removal
+          send_buffer_position.increase( rank );
       }
     }
   }
@@ -683,7 +685,6 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
           recv_buffer[ rank * send_recv_count_spike_data_per_rank + num_batches * BATCH_SIZE + j ];
         se_batch[ j ].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
         se_batch[ j ].set_offset( spike_data.get_offset() );
-
         syn_id_batch[ j ] = spike_data.get_syn_id();
         // for compressed spikes lcid holds the index in the
         // compressed_spike_data structure

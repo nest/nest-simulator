@@ -1609,6 +1609,7 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   : ConnBuilder( sources, targets, conn_spec, syn_specs )
 {
   // For astrocyte connectivity
+  // Check the NodeCollection is astrocyte?
   astrocytes_ = getValue< NodeCollectionDatum >( conn_spec, names::astrocyte );
   astrocytes_size_ = astrocytes_->size();
   targets_size_ = targets->size();
@@ -1621,6 +1622,7 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   }
 
   // Probability of astrocyte=>neuron connection
+  // Is this a good way to set the default?
   if ( conn_spec->known( names::p_syn_astro ))
   {
     p_syn_astro_ = ( *conn_spec )[ names::p_syn_astro ];
@@ -1631,14 +1633,12 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   }
   else
   {
-    // Not given, default 1.0
     p_syn_astro_ = 1.0;
   }
 
   // Deterministic or probabilistic selection of astrocyte pool for a target neuron
   if ( conn_spec->known( names::astro_pool_per_target_det ) )
   {
-    // Exception handling?
     astro_pool_per_target_det_ = ( *conn_spec )[ names::astro_pool_per_target_det ];
   }
   else
@@ -1657,11 +1657,12 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   }
   else
   {
-    // Not given, all astrocytes can be connected
+    // Not given, use 0 to stand for the default?
     max_astro_per_target_ = 0;
   }
 
   // Astrocyte synapse model
+  // Only SIC connection works; Is this parameter option still necessary then?
   if ( syn_specs[0]->known( names::synapse_model_astro ) )
   {
     const std::string syn_name = ( *syn_specs[0] )[ names::synapse_model_astro ];
@@ -1736,8 +1737,9 @@ nest::BernoulliAstroBuilder::connect_()
       index anode_id;
       std::set< index > previous_anode_ids;
       Node* target;
+      // thread checking: maybe just use target->get_thread()?
       thread target_thread;
-      Node* astro;
+      Node* astrocyte;
       thread astro_thread;
       std::vector< index > anode_pool_this_target;
       unsigned long indegree;
@@ -1899,19 +1901,19 @@ nest::BernoulliAstroBuilder::connect_()
           }
 
           // if astrocyte is local: connect source -> astrocyte
-          astro = kernel().node_manager.get_node_or_proxy( anode_id, tid );
+          astrocyte = kernel().node_manager.get_node_or_proxy( anode_id, tid );
           astro_thread = tid;
 
-          if ( astro->is_proxy() )
+          if ( astrocyte->is_proxy() )
           {
             astro_thread = invalid_thread;
           }
           if ( astro_thread == tid )
           {
-            assert( astro != NULL );
-            update_param_dict_( snode_id, *astro, astro_thread, synced_rng, 0 );
+            assert( astrocyte != NULL );
+            update_param_dict_( snode_id, *astrocyte, astro_thread, synced_rng, 0 );
             kernel().connection_manager.connect( snode_id,
-              astro,
+              astrocyte,
               astro_thread,
               synapse_model_id_[0],
               param_dicts_[ 0 ][ astro_thread ],

@@ -1732,7 +1732,7 @@ nest::BernoulliAstroBuilder::connect_()
 
     try
     {
-      index snode_id;
+      // index snode_id;
       std::set< index > connected_snode_ids;
       index anode_id;
       std::set< index > connected_anode_ids;
@@ -1741,12 +1741,40 @@ nest::BernoulliAstroBuilder::connect_()
       Node* astrocyte;
       thread astrocyte_thread;
       std::vector< index > astro_pool_this_target;
-      unsigned long indegree;
+      // unsigned long indegree;
       int default_n_astro_per_target_ = astrocytes_size_ / targets_size_ > 1 ? astrocytes_size_ / targets_size_ : 1;
       int default_n_target_per_astro = targets_size_ / astrocytes_size_ > 1 ? targets_size_ / astrocytes_size_ : 1;
       int target_index = 0;
       int astro_index = 0;
       int n_astro_overlap_per_target = 0;
+
+      // user warnings
+      if ( targets_size_ > astrocytes_size_ )
+      {
+        if ( targets_size_ % astrocytes_size_ != 0 )
+        {
+          LOG( M_WARNING,
+            "BernoulliAstroBuilder::connect",
+            "N_post_neuron can not be exactly divided by N_astrocyte. "
+            "Some neurons will be ignored. ");
+        }
+      }
+      else
+      {
+        if ( astrocytes_size_ % targets_size_ != 0 )
+        {
+          LOG( M_WARNING,
+            "BernoulliAstroBuilder::connect",
+            "N_astrocyte can not be exactly divided by N_post_neuron. "
+            "Some astrocytes will be ignored. ");
+        }
+      }
+      if ( max_astro_per_target_ > 0 and max_astro_per_target_ % 2 == 0 and default_n_target_per_astro % 2 == 1)
+      {
+        LOG( M_WARNING,
+          "BernoulliAstroBuilder::connect",
+          "Current N_astrocyte and N_post_neuron could cause uneven pairing assignment. ");
+      }
 
       for ( NodeCollection::const_iterator target_it = targets_->begin(); target_it != targets_->end(); ++target_it )
       {

@@ -349,7 +349,16 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
   std::vector< SpikeDataT >& send_buffer,
   std::vector< SpikeDataT >& recv_buffer )
 {
-  const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
+  // TODO: For this branch, spike gathering is done in master only, which is assigned all ranks.
+  //       Since AssignedRanks are used deeply in send_buffer_position, we fix the rank assignment
+  //       manually here.
+  // const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
+  assert( tid == 0 );
+  AssignedRanks assigned_ranks;
+  assigned_ranks.begin = 0;
+  assigned_ranks.end = kernel().mpi_manager.get_num_processes();
+  assigned_ranks.size = assigned_ranks.end - assigned_ranks.begin;
+  assigned_ranks.max_size = assigned_ranks.size;
 
   /* NOTE:
    * For experimentation, the next two lines set MPI buffers to a fixed, large size
@@ -363,7 +372,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
    *
    * NOTE: Due to limited test matrix, developers **must run testsuite locally**.
    */
-  kernel().mpi_manager.set_buffer_size_spike_data( 8388608 );
+  kernel().mpi_manager.set_buffer_size_spike_data( 8388608 ); // for testsuite use 65536 instead
   resize_send_recv_buffers_spike_data_();
 
   // Need to get new positions in case buffer size has changed
@@ -422,7 +431,7 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
         it != spike_register.end();
         ++it )
   {
-    // Second dimension: fixed reading thread --> REMOVE in this branch for testing
+    // Second dimension: fixed reading thread --> REMOVE in this branch for testing // TODO: That removal is in *( *it) below, not looking up by assigned tid
 
     // Third dimension: loop over lags
     const size_t sz = ( *it )->size();

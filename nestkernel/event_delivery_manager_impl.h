@@ -109,6 +109,7 @@ EventDeliveryManager::send_remote( thread tid, SpikeEvent& e, const long lag )
 
   for ( std::vector< Target >::const_iterator it = targets.begin(); it != targets.end(); ++it )
   {
+    // TODO: Check if we should re-activate assinging to threads
     // const thread assigned_tid = ( *it ).get_rank() / kernel().vp_manager.get_num_assigned_ranks_per_thread();
 
     // Unroll spike multiplicity as plastic synapses only handle individual spikes.

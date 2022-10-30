@@ -403,7 +403,7 @@ private:
    * immediately sorted by the thread that will later move the spikes to the
    * MPI buffers.
    * - First dim: write threads (from node to register)
-   * - Second dim: read threads (from register to MPI buffer) --> REMOVE this dim in this test branch (for 1 MPI)
+   * - Second dim: read threads (from register to MPI buffer) --> REMOVE this dim in this test branch (for 1 MPI)  // TODO: Check if we should re-activate assinging to threads
    * - Third dim: lag
    * - Fourth dim: Target (will be converted in SpikeData)
    */

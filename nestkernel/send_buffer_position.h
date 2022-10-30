@@ -120,24 +120,40 @@ SendBufferPosition::rank_to_index_( const thread rank ) const
 inline unsigned int
 SendBufferPosition::idx( const thread rank ) const
 {
+  if ( rank >= end_rank_ )
+  {
+    std::cerr << __FUNCTION__ << ": rank " << rank << ", beg " << begin_rank_ << ", end " << end_rank_ << ", max " << max_size_ << std::endl;
+  }
   return idx_[ rank_to_index_( rank ) ];
 }
 
 inline unsigned int
 SendBufferPosition::begin( const thread rank ) const
 {
+  if ( rank >= end_rank_ )
+  {
+    std::cerr << __FUNCTION__ << ": rank " << rank << ", beg " << begin_rank_ << ", end " << end_rank_ << ", max " << max_size_ << std::endl;
+  }
   return begin_[ rank_to_index_( rank ) ];
 }
 
 inline unsigned int
 SendBufferPosition::end( const thread rank ) const
 {
+  if ( rank >= end_rank_ )
+  {
+    std::cerr << __FUNCTION__ << ": rank " << rank << ", beg " << begin_rank_ << ", end " << end_rank_ << ", max " << max_size_ << std::endl;
+  }
   return end_[ rank_to_index_( rank ) ];
 }
 
 inline bool
 SendBufferPosition::is_chunk_filled( const thread rank ) const
 {
+  if ( rank >= end_rank_ )
+  {
+    std::cerr << __FUNCTION__ << ": rank " << rank << ", beg " << begin_rank_ << ", end " << end_rank_ << ", max " << max_size_ << std::endl;
+  }
   return idx( rank ) == end( rank );
 }
 
@@ -150,6 +166,10 @@ SendBufferPosition::are_all_chunks_filled() const
 inline void
 SendBufferPosition::increase( const thread rank )
 {
+  if ( rank >= end_rank_ )
+  {
+    std::cerr << __FUNCTION__ << ": rank " << rank << ", beg " << begin_rank_ << ", end " << end_rank_ << ", max " << max_size_ << std::endl;
+  }
   ++idx_[ rank_to_index_( rank ) ];
   ++num_spike_data_written_;
 }

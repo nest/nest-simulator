@@ -266,8 +266,6 @@ public:
   bool
   operator not() const //!< returns true if and only if not obj->pointee
   {
-    // assert(obj);
-
     return not obj->get();
   }
 

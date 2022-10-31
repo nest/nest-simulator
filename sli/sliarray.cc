@@ -1610,26 +1610,21 @@ void
 SLIArrayModule::IMapThreadFunction::execute( SLIInterpreter* i ) const
 {
   ProcedureDatum* procd = static_cast< ProcedureDatum* >( i->EStack.pick( 1 ).datum() );
-  //    assert(procd);
 
   size_t proclimit = procd->size();
 
   IntegerDatum* argcountd = static_cast< IntegerDatum* >( i->EStack.pick( 2 ).datum() );
-  //  assert(argcountd);
 
   size_t argcount = argcountd->get();
 
   IntegerDatum* proccountd = static_cast< IntegerDatum* >( i->EStack.pick( 3 ).datum() );
-  // assert(proccountd);
+
   size_t proccount = proccountd->get();
 
   ArrayDatum* sarray = static_cast< ArrayDatum* >( i->EStack.pick( 4 ).datum() );
-  // assert(sarray);
   ArrayDatum* tarray = static_cast< ArrayDatum* >( i->EStack.pick( 5 ).datum() );
-  // assert(tarray);
 
   IntegerDatum* limitd = static_cast< IntegerDatum* >( i->EStack.pick( 6 ).datum() );
-  // assert(limitd);
 
   size_t args = sarray->size(); // number of argument arrays
   size_t limit = limitd->get(); // number of arguments per array

@@ -237,7 +237,7 @@ private:
   /**
    * Memory for all nodes sorted by threads.
    */
-  std::vector< std::vector< Node* > > memory_;
+  std::vector< std::vector< std::shared_ptr< Node > > > memory_;
 };
 
 
@@ -246,7 +246,7 @@ Model::create( thread t )
 {
   assert( ( size_t ) t < memory_.size() );
   Node* n = create_();
-  memory_[ t ].push_back( n );
+  memory_[ t ].emplace_back( n );
   return n;
 }
 

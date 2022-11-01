@@ -568,17 +568,7 @@ NodeManager::destruct_nodes_()
 {
 #pragma omp parallel
   {
-    index t = kernel().vp_manager.get_thread_id();
-    SparseNodeArray::const_iterator n;
-    for ( n = local_nodes_[ t ].begin(); n != local_nodes_[ t ].end(); ++n )
-    {
-      // We call the destructor for each node excplicitly. This
-      // destroys the objects without releasing their memory. Since
-      // the Memory is owned by the Model objects, we must not call
-      // delete on the Node objects!
-      n->get_node()->~Node();
-    }
-
+    const index t = kernel().vp_manager.get_thread_id();
     local_nodes_[ t ].clear();
   } // omp parallel
 }

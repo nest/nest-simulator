@@ -491,7 +491,7 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
 
         const thread rank = spike.get_rank();
 
-        if ( send_buffer_position.is_chunk_filled( rank ) && send_buffer_position.are_all_chunks_filled() )
+        if ( send_buffer_position.are_all_chunks_filled() )
         {
           // All chunks are full => return false
           return false;

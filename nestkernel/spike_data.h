@@ -193,7 +193,7 @@ template < class TargetT >
 inline void
 SpikeData::set( const TargetT& target, const unsigned int lag )
 {
-  // the assertion in the above function are granted by the Target object!
+  // the assertions in the above function are granted by the TargetT object!
   assert( lag < MAX_LAG );
   lcid_ = target.get_lcid();
   marker_ = SPIKE_DATA_ID_DEFAULT;

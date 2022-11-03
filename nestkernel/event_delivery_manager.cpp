@@ -479,7 +479,7 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
   // First dimension: loop over writing thread
   for ( auto& it : spike_register )
   {
-    // Second dimension: Set reading thread to current running thread
+    // Second dimension: Set the reading thread to current running thread
 
     // Third dimension: loop over lags
     for ( unsigned int lag = 0; lag < ( it )[ tid ].size(); ++lag )

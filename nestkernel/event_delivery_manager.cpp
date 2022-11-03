@@ -491,15 +491,18 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
 
         const thread rank = spike.get_rank();
 
-        if ( send_buffer_position.are_all_chunks_filled() )
+        if ( send_buffer_position.is_chunk_filled( rank ) )
         {
-          // All chunks are full => return false
-          return false;
+          is_spike_register_empty = false;
+          if ( send_buffer_position.are_all_chunks_filled() )
+          {
+            return is_spike_register_empty;
+          }
         }
         else
         {
           send_buffer[ send_buffer_position.idx( rank ) ].set( spike, lag );
-          spike.set_status( TARGET_ID_PROCESSED ); // mark entry for removal
+          spike.mark_for_removal();
           send_buffer_position.increase( rank );
         }
       }

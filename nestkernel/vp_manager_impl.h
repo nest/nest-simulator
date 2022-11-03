@@ -113,16 +113,6 @@ VPManager::get_end_rank_per_thread( const thread rank_start, const thread num_as
   {
     rank_end = std::max( rank_start, kernel().mpi_manager.get_num_processes() );
   }
-  // while ( rank_end > kernel().mpi_manager.get_num_processes() )
-  // {
-  //   --rank_end;
-  //   // we use rank_end == rank_start, as a sign, that this thread
-  //   // does not do any work
-  //   if ( rank_end == rank_start )
-  //   {
-  //     break;
-  //   }
-  // }
 
   return rank_end;
 }

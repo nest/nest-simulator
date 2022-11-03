@@ -477,24 +477,19 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
   bool is_spike_register_empty = true;
 
   // First dimension: loop over writing thread
-  for ( typename std::vector< std::vector< std::vector< std::vector< TargetT > > > >::iterator it =
-          spike_register.begin();
-        it != spike_register.end();
-        ++it )
+  for ( auto& it : spike_register )
   {
-    // Second dimension: fixed reading thread
+    // Second dimension: Set reading thread to current running thread
 
     // Third dimension: loop over lags
-    for ( unsigned int lag = 0; lag < ( *it )[ tid ].size(); ++lag )
+    for ( unsigned int lag = 0; lag < ( it )[ tid ].size(); ++lag )
     {
       // Fourth dimension: loop over entries
-      for ( typename std::vector< TargetT >::iterator iiit = ( *it )[ tid ][ lag ].begin();
-            iiit < ( *it )[ tid ][ lag ].end();
-            ++iiit )
+      for ( auto& spike : ( it )[ tid ][ lag ] )
       {
-        assert( not iiit->is_processed() );
+        assert( not spike.is_processed() );
 
-        const thread rank = iiit->get_rank();
+        const thread rank = spike.get_rank();
 
         if ( send_buffer_position.is_chunk_filled( rank ) )
         {
@@ -510,9 +505,8 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
         }
         else
         {
-          send_buffer[ send_buffer_position.idx( rank ) ].set(
-            ( *iiit ).get_tid(), ( *iiit ).get_syn_id(), ( *iiit ).get_lcid(), lag, ( *iiit ).get_offset() );
-          ( *iiit ).set_status( TARGET_ID_PROCESSED ); // mark entry for removal
+          send_buffer[ send_buffer_position.idx( rank ) ].set( spike, lag );
+          spike.set_status( TARGET_ID_PROCESSED ); // mark entry for removal
           send_buffer_position.increase( rank );
         }
       }

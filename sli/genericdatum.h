@@ -38,7 +38,7 @@ class GenericDatum : public TypedDatum< slt >
 {
 
   virtual Datum*
-  clone( void ) const
+  clone() const
   {
     return new GenericDatum< D, slt >( *this );
   }
@@ -71,13 +71,13 @@ public:
   }
 
   const D&
-  get( void ) const
+  get() const
   {
     return d;
   }
 
   D&
-  get( void )
+  get()
   {
     return d;
   }

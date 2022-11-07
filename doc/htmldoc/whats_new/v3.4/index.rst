@@ -17,14 +17,32 @@ extensive :ref:`transition guide from NEST 2.x to 3.0
 Documentation restructuring and new theme
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-NEST has a new theme! We did a major overhaul of the layout and structure of the documentation.
+NEST documentation has a new theme! We did a major overhaul of the layout and structure of the documentation.
 The changes aim to improve findability and access of content. With a more modern 
 layout, our wide range of docs can be discovered more easily. 
-The table of contents is simplified and the content is grouped based on topic (neurons, synapses etc) rather than type of documentation (e.g., 'guides').
+The table of contents is simplified and the content is grouped based on topic (neurons, synapses etc)
+rather than type of documentation (e.g., 'guides').
 
 
-Renaming ``calibrate`` to  ``pre_run_hook``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Changes in NEST behavior
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-The function :py:func:`calibrate`, used in many models, is now renamed to :py:func:`pre_run_hook` to better describe 
-what the function does.
+Inferred extent of spatial layers with freely placed neurons
+............................................................
+
+Spatial layers can be created by specifying only the node positions using ``spatial.free``,
+without explicitly specifying the ``extent``. 
+In that case, in NEST 3.4 and later, the ``extent`` will be determined by the position of the
+lower-leftmost and upper-rightmost nodes in the layer; earlier versions of NEST added a hard-coded
+padding to the extent. The ``center`` is computed as the midpoint between the lower-leftmost and
+upper-rightmost nodes.
+
+When creating a layer with only a single node, the ``extent`` has to be specified explicitly.
+
+
+Deprecation information
+~~~~~~~~~~~~~~~~~~~~~~~
+
+* Model ``spike_dilutor`` is now deprecated and can only be used
+  in single-threaded mode. To implement connections which transmit
+  spikes with fixed probability, use ``bernoulli_synapse`` instead.

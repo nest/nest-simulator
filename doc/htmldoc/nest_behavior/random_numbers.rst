@@ -136,7 +136,7 @@ The NEST random module
 The ``nest.random`` module provides a range of random distributions that
 can be used to specify parameters for neurons, synapses, and connection
 rules. See :ref:`below for examples <random_examples>` on how to use them in
-practice.
+practice and :ref:`some details on randomizing delays <random_delays>`.
 
 .. automodule:: nest.random.hl_api_random
     :members:
@@ -184,6 +184,48 @@ Likewise, synapse parameters can be specified using the random distributions.
 
    nest.Connect(n, n, syn_spec={'weight': nest.random.normal(mean=0., std=1.),
                                 'delay': nest.random.uniform(min=0.5, max=1.5)})
+
+.. _random_delays:
+
+Rounding effects when randomizing delays
+........................................
+
+Connection delays in NEST are rounded to the nearest multiple of the simulation resolution,
+even if delays are drawn from a continuous distribution. This will work as expected if the
+distribution has infinite support, for example, the normal distribution. For the uniform distribution,
+though, this rounding will usually lead to lower probabilities for the delays at the edges of
+the distribution. Consider the following case:
+
+::
+
+    nest.resolution = 0.1
+    n = nest.Create('iaf_psc_alpha', 100)
+    nest.Connect(n, n, syn_spec={'delay': nest.random.uniform(min=1, max=2)})
+    
+This will create 10000 connections in total with delay values 1.0, 1.1, ..., 2.0. But while
+the interior delay values 1.1, ..., 1.9 will occur approximately 1000 times each, the first and last
+cases, 1.0 and 2.0, will occur only approximately 500 times each. This happens because NEST
+first draws the delay uniformly from :math:`[1, 2)` and then rounds to a fixed delay. Thus,
+any number from :math:`[1.05, 1.15)` will be rounded to 1.1, but only numbers in
+:math:`[1.0, 1.05)` will be rounded to 1.0.
+
+To achieve equal probabilities of the first and last values, you can either extend the interval
+of the uniform distribution by half the resolution:
+
+::
+
+    nest.Connect(n, n, syn_spec={'delay': nest.random.uniform(min=1 - 0.5 * nest.resolution,
+                                                              max=2 + 0.5 * nest.resolution)})
+
+or use the uniform integer distribution. Since it always draws numbers beginning with zero,
+this is slightly more cumbersome:
+
+::
+
+    nest.Connect(n, n, syn_spec={'delay': 1 + 0.1 * nest.random.uniform_int(11)})
+    
+An in-depth analysis of delay rounding is available in a
+`master thesis <https://hdl.handle.net/11250/3012689>`_.
 
 Randomize spatial positions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

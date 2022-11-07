@@ -106,7 +106,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
 
   if ( n_threads_updated or n_vps_updated )
   {
-    if ( kernel().sp_manager.is_structural_plasticity_enabled() and ( n_threads > 1 ) )
+    if ( kernel().sp_manager.is_structural_plasticity_enabled() and n_threads > 1 )
     {
       throw KernelException( "Structural plasticity enabled: multithreading cannot be enabled." );
     }
@@ -157,7 +157,7 @@ nest::VPManager::get_status( DictionaryDatum& d )
 void
 nest::VPManager::set_num_threads( nest::thread n_threads )
 {
-  if ( kernel().sp_manager.is_structural_plasticity_enabled() and ( n_threads > 1 ) )
+  if ( kernel().sp_manager.is_structural_plasticity_enabled() and n_threads > 1 )
   {
     throw KernelException( "Multiple threads can not be used if structural plasticity is enabled" );
   }

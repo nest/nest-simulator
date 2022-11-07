@@ -22,8 +22,6 @@
 
 #include "iaf_psc_exp.h"
 
-// C++ includes:
-#include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -31,17 +29,13 @@
 #include "propagator_stability.h"
 
 // Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "ring_buffer_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -154,7 +148,7 @@ nest::iaf_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Capacitance must be strictly positive." );
   }
-  if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 )
+  if ( Tau_ <= 0 or tau_ex_ <= 0 or tau_in_ <= 0 )
   {
     throw BadProperty( "Membrane and synapse time constants must be strictly positive." );
   }
@@ -287,7 +281,7 @@ nest::iaf_psc_exp::pre_run_hook()
 void
 nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   const double h = Time::get_resolution().get_ms();

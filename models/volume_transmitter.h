@@ -111,19 +111,19 @@ public:
   volume_transmitter( const volume_transmitter& );
 
   bool
-  has_proxies() const
+  has_proxies() const override
   {
     return false;
   }
 
   bool
-  local_receiver() const
+  local_receiver() const override
   {
     return false;
   }
 
   Name
-  get_element_type() const
+  get_element_type() const override
   {
     return names::other;
   }
@@ -136,28 +136,28 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  void handle( SpikeEvent& );
+  void handle( SpikeEvent& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
 
-  void get_status( DictionaryDatum& d ) const;
-  void set_status( const DictionaryDatum& d );
+  void get_status( DictionaryDatum& d ) const override;
+  void set_status( const DictionaryDatum& d ) override;
 
   /**
    * Since volume transmitters are duplicated on each thread, and are
    * hence treated just as devices during node creation, we need to
    * define the corresponding setter and getter for local_device_id.
    **/
-  void set_local_device_id( const index ldid );
-  index get_local_device_id() const;
+  void set_local_device_id( const index ldid ) override;
+  index get_local_device_id() const override;
 
   const std::vector< spikecounter >& deliver_spikes();
 
 private:
-  void init_buffers_();
-  void pre_run_hook();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
-  void update( const Time&, const long, const long );
+  void update( const Time&, const long, const long ) override;
 
   // --------------------------------------------
 

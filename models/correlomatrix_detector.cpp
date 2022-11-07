@@ -25,7 +25,6 @@
 // C++ includes:
 #include <cmath>      // for less
 #include <functional> // for bind2nd
-#include <numeric>
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -295,7 +294,7 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
 
   // If this assertion breaks, the sender does not honor the
   // receiver port during connection or sending.
-  assert( 0 <= sender && sender <= P_.N_channels_ - 1 );
+  assert( 0 <= sender and sender <= P_.N_channels_ - 1 );
 
   // accept spikes only if detector was active when spike was emitted
   Time const stamp = e.get_stamp();
@@ -320,7 +319,7 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
     // throw away all spikes which are too old to
     // enter the correlation window
     const delay min_delay = kernel().connection_manager.get_min_delay();
-    while ( not otherSpikes.empty() && ( spike_i - otherSpikes.front().timestep_ ) >= tau_edge + min_delay )
+    while ( not otherSpikes.empty() and ( spike_i - otherSpikes.front().timestep_ ) >= tau_edge + min_delay )
     {
       otherSpikes.pop_front();
     }
@@ -331,7 +330,7 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
     // window [Tstart,
     // Tstop]
     // this is needed in order to prevent boundary effects
-    if ( P_.Tstart_ <= stamp && stamp <= P_.Tstop_ )
+    if ( P_.Tstart_ <= stamp and stamp <= P_.Tstop_ )
     {
       // calculate the effect of this spike immediately with respect to all
       // spikes in the past of the respectively other sources
@@ -371,14 +370,14 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
         {
           // weighted histogram
           S_.covariance_[ sender_ind ][ other_ind ][ bin ] += e.get_multiplicity() * e.get_weight() * spike_j->weight_;
-          if ( bin == 0 && ( spike_i - spike_j->timestep_ != 0 || other != sender ) )
+          if ( bin == 0 and ( spike_i - spike_j->timestep_ != 0 or other != sender ) )
           {
             S_.covariance_[ other_ind ][ sender_ind ][ bin ] +=
               e.get_multiplicity() * e.get_weight() * spike_j->weight_;
           }
           // pure (unweighted) count histogram
           S_.count_covariance_[ sender_ind ][ other_ind ][ bin ] += e.get_multiplicity();
-          if ( bin == 0 && ( spike_i - spike_j->timestep_ != 0 || other != sender ) )
+          if ( bin == 0 and ( spike_i - spike_j->timestep_ != 0 or other != sender ) )
           {
             S_.count_covariance_[ other_ind ][ sender_ind ][ bin ] += e.get_multiplicity();
           }

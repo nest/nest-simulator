@@ -22,8 +22,6 @@
 
 #include "volume_transmitter.h"
 
-// C++ includes:
-#include <numeric>
 
 // Includes from nestkernel:
 #include "connector_base.h"
@@ -35,11 +33,7 @@
 #include "dict_util.h"
 
 // Includes from sli:
-#include "arraydatum.h"
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Default constructor defining default parameters

@@ -568,8 +568,12 @@ NodeManager::destruct_nodes_()
 {
 #pragma omp parallel
   {
-    const index t = kernel().vp_manager.get_thread_id();
-    local_nodes_[ t ].clear();
+    const index tid = kernel().vp_manager.get_thread_id();
+    for ( auto node : local_nodes_[ tid ] )
+    {
+      delete node.get_node();
+    }
+    local_nodes_[ tid ].clear();
   } // omp parallel
 }
 

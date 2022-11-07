@@ -237,7 +237,7 @@ private:
   /**
    * Memory for all nodes sorted by threads.
    */
-  std::vector< std::vector< std::shared_ptr< Node > > > memory_;
+  std::vector< std::vector< Node* > > memory_;
 };
 
 

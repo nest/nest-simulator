@@ -109,15 +109,9 @@ VPManager::get_end_rank_per_thread( const thread rank_start, const thread num_as
   // if we have more threads than ranks, or if ranks can not be
   // distributed evenly on threads, we need to make sure, that all
   // threads care only about existing ranks
-  while ( rank_end > kernel().mpi_manager.get_num_processes() )
+  if ( rank_end > kernel().mpi_manager.get_num_processes() )
   {
-    --rank_end;
-    // we use rank_end == rank_start, as a sign, that this thread
-    // does not do any work
-    if ( rank_end == rank_start )
-    {
-      break;
-    }
+    rank_end = std::max( rank_start, kernel().mpi_manager.get_num_processes() );
   }
 
   return rank_end;

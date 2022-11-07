@@ -569,16 +569,8 @@ nest::SimulationManager::run( Time const& t )
   // of a simulation, it has been reset properly elsewhere.  If
   // a simulation was ended and is now continued, from_step_ will
   // have the proper value.  to_step_ is set as in advance_time().
+  to_step_ = std::min( from_step_ + to_do_, kernel().connection_manager.get_min_delay() );
 
-  delay end_sim = from_step_ + to_do_;
-  if ( kernel().connection_manager.get_min_delay() < end_sim )
-  {
-    to_step_ = kernel().connection_manager.get_min_delay(); // update to end of time slice
-  }
-  else
-  {
-    to_step_ = end_sim; // update to end of simulation time
-  }
 
   // Warn about possible inconsistencies, see #504.
   // This test cannot come any earlier, because we first need to compute

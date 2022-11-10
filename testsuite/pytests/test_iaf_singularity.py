@@ -33,7 +33,7 @@ import pandas as pd
 @nest.ll_api.check_stack
 class TestIAFSingularity:
     """
-    Test that iaf neurons handle singularities for tau_syn = tau_m correctly.
+    Test that iaf neurons handle singularities for ``tau_syn = tau_m`` correctly.
 
     A single spike is injected into a neuron. Under all conditions, the resulting
     membrane potential trace must be smooth.

@@ -893,6 +893,13 @@ class SynapseCollection:
         sr('2 arraystore')
         sr('Transpose { arrayload pop SetStatus } forall')
 
+    def disconnect(self):
+        """
+        Disconnect the connections in the `SynapseCollection`.
+        """
+        sps(self._datum)
+        sr('Disconnect_a')
+
 
 class CollocatedSynapses:
     """

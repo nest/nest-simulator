@@ -341,7 +341,7 @@ public:
   bool
   contains( const Datum& d ) const
   {
-    return ( p ) and p->equals( &d );
+    return p and p->equals( &d );
   }
 
   bool

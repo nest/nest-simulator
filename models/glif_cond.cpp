@@ -359,7 +359,7 @@ nest::glif_cond::Parameters_::set( const DictionaryDatum& d, Node* node )
   bool Erev_flag = updateValue< std::vector< double > >( d, names::E_rev, E_rev_ );
 
   // receptor arrays have been modified
-  if ( tau_flag || Erev_flag )
+  if ( tau_flag or Erev_flag )
   {
     if ( E_rev_.size() != tau_syn_.size() )
     {
@@ -767,7 +767,7 @@ nest::glif_cond::update( Time const& origin, const long from, const long to )
 nest::port
 nest::glif_cond::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type <= 0 || receptor_type > static_cast< port >( P_.n_receptors_() ) )
+  if ( receptor_type <= 0 or receptor_type > static_cast< port >( P_.n_receptors_() ) )
   {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }

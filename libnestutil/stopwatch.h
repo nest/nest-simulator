@@ -158,7 +158,7 @@ private:
 inline bool
 Stopwatch::correct_timeunit( timeunit_t t )
 {
-  return t == MICROSEC || t == MILLISEC || t == SECONDS || t == MINUTES || t == HOURS || t == DAYS;
+  return t == MICROSEC or t == MILLISEC or t == SECONDS or t == MINUTES or t == HOURS or t == DAYS;
 }
 
 inline void

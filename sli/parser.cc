@@ -177,7 +177,7 @@ Parser::operator()( Token& t )
     } // if(ok)
     //      else std::cerr << "<Scanner> : unable to scan input, Result:" << ok
     //      << '\n';
-  } while ( ( result == tokencontinue ) || ( result == scancontinue ) );
+  } while ( result == tokencontinue or result == scancontinue );
 
   if ( result != tokencompleted )
   {

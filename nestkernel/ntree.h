@@ -125,12 +125,12 @@ public:
     bool
     operator==( const iterator& other ) const
     {
-      return ( other.ntree_ == ntree_ ) && ( other.node_ == node_ );
+      return other.ntree_ == ntree_ and ( other.node_ == node_ );
     }
     bool
     operator!=( const iterator& other ) const
     {
-      return ( other.ntree_ != ntree_ ) || ( other.node_ != node_ );
+      return ( other.ntree_ != ntree_ ) or ( other.node_ != node_ );
     }
 
   protected:
@@ -210,12 +210,12 @@ public:
     bool
     operator==( const masked_iterator& other ) const
     {
-      return ( other.ntree_ == ntree_ ) && ( other.node_ == node_ );
+      return other.ntree_ == ntree_ and ( other.node_ == node_ );
     }
     bool
     operator!=( const masked_iterator& other ) const
     {
-      return ( other.ntree_ != ntree_ ) || ( other.node_ != node_ );
+      return ( other.ntree_ != ntree_ ) or ( other.node_ != node_ );
     }
 
   protected:

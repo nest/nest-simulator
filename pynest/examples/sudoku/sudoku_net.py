@@ -175,16 +175,17 @@ class SudokuNet:
         logging.info("Setup complete.")
 
     def reset_input(self):
-        """sets all weights between input and network neurons to 0.
-        """
+        """sets all weights between input and network neurons to 0."""
         nest.GetConnections(self.stim).set({"weight": 0.})
 
     def set_input_config(self, input):
         """sets the connection weights from stimulation sources to populations
         in order to stimulate the network according to a puzzle configuration.
 
-        Args:
-            input (np.array): a np.array of shape (9,9) where each entry is the value of the corresponding
+        Parameters
+        ----------
+        input : np.array
+            a np.array of shape (9,9) where each entry is the value of the corresponding
             cell in the sudoku field. Zero-valued entries are ignored.
         """
         self.reset_input()
@@ -200,6 +201,12 @@ class SudokuNet:
                     connections.set({"weight": weight_stim})
 
     def get_spike_trains(self):
+        """returns all events recorded by the spike recorders.
+
+        Returns:
+            np.array
+                array of all the data from all spike recorders
+        """
         return np.array(self.spikerecorders.get("events"))
 
     def reset(self):
@@ -213,19 +220,19 @@ class SudokuNet:
         self.reset_spike_recorders()
 
     def reset_V_m(self):
-        """resets membrane potential of all neurons to (uniformly random) default values.
-        """
+        """resets membrane potential of all neurons to (uniformly random) default values."""
         self.neurons.V_m = nest.random.uniform(-65, 55)
 
     def reset_spike_recorders(self):
-        """deletes all recorded spikes from the spike recorders connected to the network.
-        """
+        """deletes all recorded spikes from the spike recorders connected to the network."""
         self.spikerecorders.n_events = 0
 
     def set_noise_rate(self, rate):
         """sets the rate of the Poisson generator that feeds noise into the network.
 
-        Args:
-            rate (float): average spike frequency in Hz
+        Parameters
+        ----------
+        rate : float
+            average spike frequency in Hz
         """
         self.noise.rate = rate

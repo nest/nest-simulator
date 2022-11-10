@@ -157,7 +157,7 @@ iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d, Node* node )
     throw BadProperty( "Membrane time constant must be > 0." );
   }
 
-  if ( tau_ex_ <= 0.0 || tau_in_ <= 0.0 )
+  if ( tau_ex_ <= 0.0 or tau_in_ <= 0.0 )
   {
     throw BadProperty( "All synaptic time constants must be > 0." );
   }
@@ -299,7 +299,7 @@ iaf_psc_alpha::pre_run_hook()
 void
 iaf_psc_alpha::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )

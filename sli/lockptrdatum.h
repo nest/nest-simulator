@@ -123,7 +123,7 @@ bool
 lockPTRDatum< D, slt >::equals( const Datum* dat ) const
 {
   const lockPTRDatum< D, slt >* ddc = dynamic_cast< const lockPTRDatum< D, slt >* >( dat );
-  return ddc && lockPTR< D >::operator==( *ddc );
+  return ddc and lockPTR< D >::operator==( *ddc );
 }
 
 template < class D, SLIType* slt >

@@ -267,7 +267,7 @@ nest::iaf_psc_delta::pre_run_hook()
 void
 nest::iaf_psc_delta::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   const double h = Time::get_resolution().get_ms();
@@ -280,7 +280,7 @@ nest::iaf_psc_delta::update( Time const& origin, const long from, const long to 
 
       // if we have accumulated spikes from refractory period,
       // add and reset accumulator
-      if ( P_.with_refr_input_ && S_.refr_spikes_buffer_ != 0.0 )
+      if ( P_.with_refr_input_ and S_.refr_spikes_buffer_ != 0.0 )
       {
         S_.y3_ += S_.refr_spikes_buffer_;
         S_.refr_spikes_buffer_ = 0.0;

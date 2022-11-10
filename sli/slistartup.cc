@@ -207,7 +207,7 @@ SLIStartup::SLIStartup( int argc, char** argv )
     StringDatum* sd = new StringDatum( argv[ i ] );
     args_array.push_back( Token( sd ) );
 
-    if ( *sd == "-d" || *sd == "--debug" )
+    if ( *sd == "-d" or *sd == "--debug" )
     {
       debug_ = true;
       verbosity_ = SLIInterpreter::M_ALL; // make the interpreter verbose.

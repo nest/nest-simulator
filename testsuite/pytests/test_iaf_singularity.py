@@ -48,7 +48,7 @@ class TestIAFSingularity:
         Confirm that ``V_m`` is smooth with single maximum.
 
         For the sake of efficiency, we actually create multiple neurons with different
-        differences between tau_m and tau_syn.
+        differences between ``tau_m`` and ``tau_syn``.
         """
 
         delta_tau = np.hstack((-np.logspace(-10, -1, 5), [0], np.logspace(-10, -1, 5)))

@@ -45,7 +45,7 @@ class TestIAFSingularity:
     def test_smooth_response(self, model, h, tau_m):
         """
         Drive single neuron with single spike through excitatory and inhibitory synapse.
-        Confirm that V_m is smooth with single maximum.
+        Confirm that ``V_m`` is smooth with single maximum.
 
         For the sake of efficiency, we actually create multiple neurons with different
         differences between tau_m and tau_syn.

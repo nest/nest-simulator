@@ -905,13 +905,7 @@ NestModule::Disconnect_aFunction::execute( SLIInterpreter* i ) const
 
   const ArrayDatum conns = getValue< ArrayDatum >( i->OStack.pick( 0 ) );
 
-  for ( size_t conn_index = 0; conn_index < conns.size(); ++conn_index )
-  {
-    const ConnectionDatum conn_datum = getValue< ConnectionDatum >( conns.get( conn_index ) );
-    const auto target_node = kernel().node_manager.get_node_or_proxy( conn_datum.get_target_node_id() );
-    kernel().sp_manager.disconnect(
-      conn_datum.get_source_node_id(), target_node, conn_datum.get_target_thread(), conn_datum.get_synapse_model_id() );
-  }
+  disconnect( conns );
 
   i->OStack.pop( 1 );
   i->EStack.pop();

@@ -37,9 +37,9 @@
  * This base class provides properties common to different synaptic time courses.
  * This base class and its derived classes provide the propagator matrix elements
  * connecting synaptic current to membrane potential. They handle the singularity
- * at tau_m == tau_syn_* properly.
+ * at `tau_m == tau_syn_*` properly.
  *
- * For details, see :doc:`../doc/userdoc/model_details/IAF_neurons_singularity.ipynb`.
+ * @see `<NEST_SOURCE>/doc/userdoc/model_details/IAF_Integration_Singularity.ipynb`
  */
 class IAFPropagator
 {

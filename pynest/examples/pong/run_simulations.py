@@ -97,7 +97,7 @@ class AIPong:
         logging.info(f"setup complete for a pong game between: {p1} and {p2}.")
 
     def run_games(self, max_runs=10000):
-        """Run a simulation of pong games and store the results.
+        """Runs a simulation of pong games and stores the results.
 
         Args:
             max_runs (int, optional): Number of iterations to simulate.
@@ -213,7 +213,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--players", nargs=2, type=str, choices=["r", "rn", "d", "dn"],
         default=["r", "rn"],
-        help="""types of networks that compete against each other. four learning
+        help="""Types of networks that compete against each other. four learning
         rule configuations are available: r:  r-STDP without noise, rn: r-STDP
         with noisy input, d:  dopaminergic synapses without noise,
         dn: dopaminergic synapses with noisy input.""")

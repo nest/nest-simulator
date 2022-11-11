@@ -29,7 +29,7 @@ import matplotlib.patches as patch
 
 
 def get_puzzle(puzzle_index):
-    """returns one of 8 Sudoku configuration to be solved.
+    """Returns one of 8 Sudoku configuration to be solved.
 
     Parameters
     ----------
@@ -150,7 +150,7 @@ def get_puzzle(puzzle_index):
 
 
 def validate_solution(puzzle, solution):
-    """validate a proposed solution for a sudoku puzzle
+    """Validates a proposed solution for a sudoku puzzle
 
     Parameters
     ----------
@@ -206,7 +206,7 @@ def validate_solution(puzzle, solution):
 
 
 def plot_field(puzzle, solution, ax, with_color=False):
-    """generates a graphical representation of a Sudoku field. Digits that are
+    """Generates a graphical representation of a Sudoku field. Digits that are
     given by the puzzle are represented as bold and black, while calculated
     digits are represented in grey and italic.
 
@@ -256,7 +256,7 @@ def plot_field(puzzle, solution, ax, with_color=False):
 
 
 def fill_numbers(ax, puzzle, solution):
-    """Fill the digits of a proposed solution into an Axes object which represents the
+    """Fills the digits of a proposed solution into an Axes object which represents the
     Sudoku field.
 
     Parameters
@@ -291,7 +291,7 @@ def fill_numbers(ax, puzzle, solution):
 
 
 def decorate_sudoku_box(ax):
-    """Decorate the Axes object to resemble an empty sudoku field.
+    """Decorates an Axes object to resemble an empty sudoku field.
 
     Parameters
     ----------
@@ -310,7 +310,7 @@ def decorate_sudoku_box(ax):
 
 
 def generate_sudoku_box_lines():
-    """Generate coordinates for the lines that divide the Sudoku field
+    """Generates coordinates for the lines that divide the Sudoku field
 
     Returns
     -------

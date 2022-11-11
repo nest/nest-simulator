@@ -175,11 +175,11 @@ class SudokuNet:
         logging.info("Setup complete.")
 
     def reset_input(self):
-        """sets all weights between input and network neurons to 0."""
+        """Sets all weights between input and network neurons to 0."""
         nest.GetConnections(self.stim).set({"weight": 0.})
 
     def set_input_config(self, input):
-        """sets the connection weights from stimulation sources to populations
+        """Sets the connection weights from stimulation sources to populations
         in order to stimulate the network according to a puzzle configuration.
 
         Parameters
@@ -201,7 +201,7 @@ class SudokuNet:
                     connections.set({"weight": weight_stim})
 
     def get_spike_trains(self):
-        """returns all events recorded by the spike recorders.
+        """Returns all events recorded by the spike recorders.
 
         Returns:
             np.array
@@ -210,7 +210,7 @@ class SudokuNet:
         return np.array(self.spikerecorders.get("events"))
 
     def reset(self):
-        """resets the network in three steps:
+        """Resets the network in three steps:
                 setting all input weights to 0
                 resetting all membrane potentials to their default value
                 deleting all recorded spikes
@@ -220,15 +220,15 @@ class SudokuNet:
         self.reset_spike_recorders()
 
     def reset_V_m(self):
-        """resets membrane potential of all neurons to (uniformly random) default values."""
+        """Resets membrane potential of all neurons to (uniformly random) default values."""
         self.neurons.V_m = nest.random.uniform(-65, 55)
 
     def reset_spike_recorders(self):
-        """deletes all recorded spikes from the spike recorders connected to the network."""
+        """Deletes all recorded spikes from the spike recorders connected to the network."""
         self.spikerecorders.n_events = 0
 
     def set_noise_rate(self, rate):
-        """sets the rate of the Poisson generator that feeds noise into the network.
+        """Sets the rate of the Poisson generator that feeds noise into the network.
 
         Parameters
         ----------

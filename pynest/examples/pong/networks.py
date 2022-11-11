@@ -127,7 +127,7 @@ class PongNet(ABC):
         return weight_matrix
 
     def set_all_weights(self, weights):
-        """Set synaptic weights between input and motor neurons of the network.
+        """Sets synaptic weights between input and motor neurons of the network.
 
         Args:
             weights (numpy.array): 2D array of shape (n_neurons, n_neurons).
@@ -151,13 +151,13 @@ class PongNet(ABC):
         return np.array(events)
 
     def reset(self):
-        """Reset the network for a new iteration by clearing all spike
+        """Resets the network for a new iteration by clearing all spike
         recorders.
         """
         self.spike_recorders.set({"n_events": 0})
 
     def set_input_spiketrain(self, input_cell, biological_time):
-        """Set a spike train to the input neuron specified by an index.
+        """Sets a spike train to the input neuron specified by an index.
 
         Args:
             input_cell (int): Index of the input neuron to be stimulated.
@@ -180,7 +180,7 @@ class PongNet(ABC):
                        {'spike_times': self.input_train})
 
     def get_max_activation(self):
-        """Find the motor neuron with the highest activation (number of spikes).
+        """Finds the motor neuron with the highest activation (number of spikes).
 
         Returns:
             int: Index of the motor neuron with the highest activation.
@@ -224,7 +224,7 @@ class PongNet(ABC):
         return reward
 
     def get_performance_data(self):
-        """Retrieve the performance data of the network across all simulations.
+        """Retrieves the performance data of the network across all simulations.
 
         Returns:
             tuple: A Tuple of 2 numpy.arrays containing reward history and
@@ -234,7 +234,7 @@ class PongNet(ABC):
 
     @abstractmethod
     def apply_synaptic_plasticity(self, biological_time):
-        """Apply weight changes to the synapses according to a given learning
+        """Applies weight changes to the synapses according to a given learning
         rule.
 
         Args:
@@ -329,7 +329,7 @@ class PongNetDopa(PongNet):
         nest.Connect(self.dopa_current, self.dopa)
 
     def apply_synaptic_plasticity(self, biological_time):
-        """ Inject a current into the dopaminergic neurons based on how much of
+        """Injects a current into the dopaminergic neurons based on how much of
         the motor neurons' activity stems from the target output neuron.
         """
         spike_counts = self.get_spike_counts()
@@ -391,13 +391,13 @@ class PongNetRSTDP(PongNet):
                              self.mean_weight * 1.22, 5)})
 
     def apply_synaptic_plasticity(self, biological_time):
-        """ Reward network based on how close target and winning neuron are.
+        """Rewards network based on how close target and winning neuron are.
         """
         reward = self.calculate_reward()
         self.apply_rstdp(reward)
 
     def apply_rstdp(self, reward):
-        """Apply the previously calculated reward to all relevant synapses
+        """Applies the previously calculated reward to all relevant synapses
         according to R-STDP principle.
 
         Args:

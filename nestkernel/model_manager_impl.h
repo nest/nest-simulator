@@ -87,7 +87,8 @@ ModelManager::register_secondary_connection_model( const std::string& name )
   register_connection_model_( cm );
 
   // create labeled secondary event connection model
-  cm = new GenericSecondaryConnectorModel< ConnectionLabel< ConnectionT< TargetIdentifierPtrRport > > >( name + "_lbl" );
+  cm =
+    new GenericSecondaryConnectorModel< ConnectionLabel< ConnectionT< TargetIdentifierPtrRport > > >( name + "_lbl" );
   register_connection_model_( cm );
 }
 

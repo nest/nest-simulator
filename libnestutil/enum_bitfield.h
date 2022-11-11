@@ -47,9 +47,9 @@ namespace nest
  * A templated struct `EnableBitMaskOperators` is defined, that, regardless of the template type, contains a single
  * static constant member `enable`, set to false. This is the "default", as the template may be specialised with any
  * type. However, we can override this behaviour by explicitly providing a template specialisation of
- * `EnableBitMaskOperators` for a particular type--namely, our bitfield enum class `MyProperties`--with a static constant
- * member by the same name but with value set to true. If we then want to ask during function definition of bitmask
- * operations whether they should be defined for an arbitrary type `T`, all we have to do is specalise
+ * `EnableBitMaskOperators` for a particular type--namely, our bitfield enum class `MyProperties`--with a static
+ * constant member by the same name but with value set to true. If we then want to ask during function definition of
+ * bitmask operations whether they should be defined for an arbitrary type `T`, all we have to do is specalise
  * `EnableBitMaskOperators` by this type `T`, and check the value of its `enable` member using `enable_if`.
  *
  * To enable the bitfield operators for our `MyProperties` class, we thus specialise the template:

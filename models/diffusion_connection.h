@@ -166,7 +166,8 @@ private:
   double diffusion_factor_;
 };
 
-template < typename targetidentifierT > constexpr ConnectionModelProperties DiffusionConnection< targetidentifierT >::secondaryProperties;
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties DiffusionConnection< targetidentifierT >::secondaryProperties;
 
 template < typename targetidentifierT >
 void

@@ -311,8 +311,10 @@ protected:
   SynIdDelay syn_id_delay_;
 };
 
-template < typename targetidentifierT > constexpr ConnectionModelProperties Connection< targetidentifierT >::properties;
-template < typename targetidentifierT > constexpr ConnectionModelProperties Connection< targetidentifierT >::secondaryProperties;
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties Connection< targetidentifierT >::properties;
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties Connection< targetidentifierT >::secondaryProperties;
 
 template < typename targetidentifierT >
 inline void

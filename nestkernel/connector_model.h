@@ -171,13 +171,13 @@ public:
   bool
   has_flag_set( const ConnectionModelProperties& flag )
   {
-      return has_property( properties_, flag );
+    return has_property( properties_, flag );
   }
 
   ConnectionModelProperties
   get_properties() const
   {
-      return properties_;
+    return properties_;
   }
 
 
@@ -203,9 +203,10 @@ private:
   rport receptor_type_;
 
 public:
-  bool has_flag_set( const ConnectionModelProperties& flag ) {
-//      return default_connection_.has_flag_set(flag);
-      return has_property( properties_, flag );
+  bool
+  has_flag_set( const ConnectionModelProperties& flag )
+  {
+    return has_property( properties_, flag );
   }
 
   GenericConnectorModel( const std::string name )

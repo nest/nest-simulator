@@ -200,7 +200,8 @@ private:
   double t_lastspike_;
 };
 
-template < typename targetidentifierT > constexpr ConnectionModelProperties urbanczik_synapse< targetidentifierT >::properties;
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties urbanczik_synapse< targetidentifierT >::properties;
 
 /**
  * Send an event to the receiver of this connection.

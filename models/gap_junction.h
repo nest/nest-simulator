@@ -152,7 +152,8 @@ private:
   double weight_; //!< connection weight
 };
 
-template < typename targetidentifierT > constexpr ConnectionModelProperties GapJunction< targetidentifierT >::secondaryProperties;
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties GapJunction< targetidentifierT >::secondaryProperties;
 
 template < typename targetidentifierT >
 void

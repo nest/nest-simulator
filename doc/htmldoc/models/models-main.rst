@@ -78,7 +78,7 @@ Synapse models
 
 Synapse models include the word synapse as last word in the model name.
 
-Synapse models may begin with author name (e.g., ``clopath_synapsae``) or process (e.g., ``stdp_synase``).
+Synapse models may begin with author name (e.g., ``clopath_synapse``) or process (e.g., ``stdp_synapse``).
 
 Devices
 ~~~~~~~
@@ -89,5 +89,5 @@ that store or generate output (e.g., spike times or synaptic strengths over time
 
 .. seealso::
 
-  See our glossary section on :ref:`common abbreviations used for model terms <model_terms>`. It includes alternative terms commonly used in the literatue.
+  See our glossary section on :ref:`common abbreviations used for model terms <model_terms>`. It includes alternative terms commonly used in the literature.
 

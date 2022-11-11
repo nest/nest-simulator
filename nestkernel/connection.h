@@ -120,9 +120,9 @@ public:
   // connections not used in primary connectors
   typedef SecondaryEvent EventType;
 
-  // flags used when registering a connection with the ModelManager
-  static constexpr RegisterConnectionModelFlags flags = default_connection_model_flags;
-  static constexpr RegisterConnectionModelFlags secondaryFlags = default_secondary_connection_model_flags;
+  // properties used when registering a connection with the ModelManager
+  static constexpr ConnectionModelProperties properties = default_connection_model_properties;
+  static constexpr ConnectionModelProperties secondaryProperties = default_secondary_connection_model_properties;
 
   Connection()
     : target_()
@@ -311,10 +311,8 @@ protected:
   SynIdDelay syn_id_delay_;
 };
 
-template < typename targetidentifierT > constexpr RegisterConnectionModelFlags Connection< targetidentifierT >::flags;
-template < typename targetidentifierT > constexpr RegisterConnectionModelFlags Connection< targetidentifierT >::secondaryFlags;
-
-//constexpr Connection::RegisterConnectionModelFlags secondaryFlags;
+template < typename targetidentifierT > constexpr ConnectionModelProperties Connection< targetidentifierT >::properties;
+template < typename targetidentifierT > constexpr ConnectionModelProperties Connection< targetidentifierT >::secondaryProperties;
 
 template < typename targetidentifierT >
 inline void

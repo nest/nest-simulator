@@ -93,7 +93,7 @@ public:
   typedef Connection< targetidentifierT > ConnectionBase;
   typedef DiffusionConnectionEvent EventType;
 
-  static constexpr RegisterConnectionModelFlags secondaryFlags = RegisterConnectionModelFlags::SUPPORTS_WFR;
+  static constexpr ConnectionModelProperties secondaryProperties = ConnectionModelProperties::SUPPORTS_WFR;
 
   /**
    * Default Constructor.
@@ -166,7 +166,7 @@ private:
   double diffusion_factor_;
 };
 
-template < typename targetidentifierT > constexpr RegisterConnectionModelFlags DiffusionConnection< targetidentifierT >::secondaryFlags;
+template < typename targetidentifierT > constexpr ConnectionModelProperties DiffusionConnection< targetidentifierT >::secondaryProperties;
 
 template < typename targetidentifierT >
 void

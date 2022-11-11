@@ -82,7 +82,7 @@ public:
   typedef Connection< targetidentifierT > ConnectionBase;
   typedef InstantaneousRateConnectionEvent EventType;
 
-  static constexpr RegisterConnectionModelFlags secondaryFlags = RegisterConnectionModelFlags::SUPPORTS_WFR;
+  static constexpr ConnectionModelProperties secondaryProperties = ConnectionModelProperties::SUPPORTS_WFR;
 
   /**
    * Default Constructor.
@@ -151,7 +151,7 @@ private:
   double weight_; //!< connection weight
 };
 
-template < typename targetidentifierT > constexpr RegisterConnectionModelFlags RateConnectionInstantaneous< targetidentifierT >::secondaryFlags;
+template < typename targetidentifierT > constexpr ConnectionModelProperties RateConnectionInstantaneous< targetidentifierT >::secondaryProperties;
 
 template < typename targetidentifierT >
 void

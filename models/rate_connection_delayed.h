@@ -81,7 +81,7 @@ public:
   typedef Connection< targetidentifierT > ConnectionBase;
   typedef DelayedRateConnectionEvent EventType;
 
-  static constexpr RegisterConnectionModelFlags secondaryFlags = RegisterConnectionModelFlags::HAS_DELAY;
+  static constexpr ConnectionModelProperties secondaryProperties = ConnectionModelProperties::HAS_DELAY;
 
   /**
    * Default Constructor.
@@ -143,7 +143,7 @@ private:
   double weight_; //!< connection weight
 };
 
-template < typename targetidentifierT > constexpr RegisterConnectionModelFlags RateConnectionDelayed< targetidentifierT >::secondaryFlags;
+template < typename targetidentifierT > constexpr ConnectionModelProperties RateConnectionDelayed< targetidentifierT >::secondaryProperties;
 
 template < typename targetidentifierT >
 void

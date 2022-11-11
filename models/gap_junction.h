@@ -86,8 +86,8 @@ public:
   typedef Connection< targetidentifierT > ConnectionBase;
   typedef GapJunctionEvent EventType;
 
-  static constexpr RegisterConnectionModelFlags secondaryFlags =
-    RegisterConnectionModelFlags::REQUIRES_SYMMETRIC | RegisterConnectionModelFlags::SUPPORTS_WFR;
+  static constexpr ConnectionModelProperties secondaryProperties =
+    ConnectionModelProperties::REQUIRES_SYMMETRIC | ConnectionModelProperties::SUPPORTS_WFR;
 
   /**
    * Default Constructor.
@@ -152,7 +152,7 @@ private:
   double weight_; //!< connection weight
 };
 
-template < typename targetidentifierT > constexpr RegisterConnectionModelFlags GapJunction< targetidentifierT >::secondaryFlags;
+template < typename targetidentifierT > constexpr ConnectionModelProperties GapJunction< targetidentifierT >::secondaryProperties;
 
 template < typename targetidentifierT >
 void

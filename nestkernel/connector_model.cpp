@@ -25,17 +25,17 @@
 namespace nest
 {
 
-ConnectorModel::ConnectorModel( const std::string name, const RegisterConnectionModelFlags& flags )
+ConnectorModel::ConnectorModel( const std::string name, const ConnectionModelProperties& properties )
   : name_( name )
   , default_delay_needs_check_( true )
-  , flags_( flags )
+  , properties_( properties )
 {
 }
 
 ConnectorModel::ConnectorModel( const ConnectorModel& cm, const std::string name )
   : name_( name )
   , default_delay_needs_check_( true )
-  , flags_( cm.get_flags() )
+  , properties_( cm.get_properties() )
 {
 }
 

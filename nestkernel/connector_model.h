@@ -47,7 +47,7 @@ class CommonSynapseProperties;
 class TimeConverter;
 class Node;
 
-enum class RegisterConnectionModelFlags : unsigned
+enum class ConnectionModelProperties : unsigned
 {
   SUPPORTS_HPC = 1 << 0,
   SUPPORTS_LBL = 1 << 1,
@@ -60,23 +60,23 @@ enum class RegisterConnectionModelFlags : unsigned
 };
 
 template <>
-struct EnableBitMaskOperators< RegisterConnectionModelFlags >
+struct EnableBitMaskOperators< ConnectionModelProperties >
 {
   static const bool enable = true;
 };
 
-const RegisterConnectionModelFlags default_connection_model_flags = RegisterConnectionModelFlags::SUPPORTS_HPC
-  | RegisterConnectionModelFlags::SUPPORTS_LBL | RegisterConnectionModelFlags::IS_PRIMARY
-  | RegisterConnectionModelFlags::HAS_DELAY;
+const ConnectionModelProperties default_connection_model_properties = ConnectionModelProperties::SUPPORTS_HPC
+  | ConnectionModelProperties::SUPPORTS_LBL | ConnectionModelProperties::IS_PRIMARY
+  | ConnectionModelProperties::HAS_DELAY;
 
-const RegisterConnectionModelFlags default_secondary_connection_model_flags =
-  RegisterConnectionModelFlags::SUPPORTS_WFR | RegisterConnectionModelFlags::HAS_DELAY;
+const ConnectionModelProperties default_secondary_connection_model_properties =
+  ConnectionModelProperties::SUPPORTS_WFR | ConnectionModelProperties::HAS_DELAY;
 
 class ConnectorModel
 {
 
 public:
-  ConnectorModel( const std::string, const RegisterConnectionModelFlags& flags );
+  ConnectorModel( const std::string, const ConnectionModelProperties& properties );
   ConnectorModel( const ConnectorModel&, const std::string );
   virtual ~ConnectorModel()
   {
@@ -135,49 +135,49 @@ public:
   bool
   is_primary() const
   {
-    return enumFlagSet( flags_, RegisterConnectionModelFlags::IS_PRIMARY );
+    return has_property( properties_, ConnectionModelProperties::IS_PRIMARY );
   }
 
   bool
   has_delay() const
   {
-    return enumFlagSet( flags_, RegisterConnectionModelFlags::HAS_DELAY );
+    return has_property( properties_, ConnectionModelProperties::HAS_DELAY );
   }
 
   bool
   requires_symmetric() const
   {
-    return enumFlagSet( flags_, RegisterConnectionModelFlags::REQUIRES_SYMMETRIC );
+    return has_property( properties_, ConnectionModelProperties::REQUIRES_SYMMETRIC );
   }
 
   bool
   requires_clopath_archiving() const
   {
-    return enumFlagSet( flags_, RegisterConnectionModelFlags::REQUIRES_CLOPATH_ARCHIVING );
+    return has_property( properties_, ConnectionModelProperties::REQUIRES_CLOPATH_ARCHIVING );
   }
 
   bool
   requires_urbanczik_archiving() const
   {
-    return enumFlagSet( flags_, RegisterConnectionModelFlags::REQUIRES_URBANCZIK_ARCHIVING );
+    return has_property( properties_, ConnectionModelProperties::REQUIRES_URBANCZIK_ARCHIVING );
   }
 
   bool
   supports_wfr() const
   {
-    return enumFlagSet( flags_, RegisterConnectionModelFlags::SUPPORTS_WFR );
+    return has_property( properties_, ConnectionModelProperties::SUPPORTS_WFR );
   }
 
   bool
-  has_flag_set( const RegisterConnectionModelFlags& flag )
+  has_flag_set( const ConnectionModelProperties& flag )
   {
-      return enumFlagSet( flags_, flag );
+      return has_property( properties_, flag );
   }
 
-  RegisterConnectionModelFlags
-  get_flags() const
+  ConnectionModelProperties
+  get_properties() const
   {
-      return flags_;
+      return properties_;
   }
 
 
@@ -186,8 +186,8 @@ protected:
   std::string name_;
   //! indicates whether the default delay must be checked
   bool default_delay_needs_check_;
-  //! connection flags
-  RegisterConnectionModelFlags flags_;
+  //! connection properties
+  ConnectionModelProperties properties_;
 }; // ConnectorModel
 
 
@@ -203,13 +203,13 @@ private:
   rport receptor_type_;
 
 public:
-  bool has_flag_set( const RegisterConnectionModelFlags& flag ) {
+  bool has_flag_set( const ConnectionModelProperties& flag ) {
 //      return default_connection_.has_flag_set(flag);
-      return enumFlagSet( flags_, flag );
+      return has_property( properties_, flag );
   }
 
   GenericConnectorModel( const std::string name )
-    : ConnectorModel( name, ConnectionT::flags )
+    : ConnectorModel( name, ConnectionT::properties )
     , receptor_type_( 0 )
   {
   }
@@ -299,7 +299,7 @@ public:
     , pev_( 0 )
   {
     pev_ = new typename ConnectionT::EventType();
-    this->flags_ = ConnectionT::secondaryFlags;
+    this->properties_ = ConnectionT::secondaryProperties;
   }
 
   GenericSecondaryConnectorModel( const GenericSecondaryConnectorModel& cm, const std::string name )

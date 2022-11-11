@@ -117,8 +117,8 @@ public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
-  static constexpr RegisterConnectionModelFlags flags =
-    default_connection_model_flags | RegisterConnectionModelFlags::REQUIRES_CLOPATH_ARCHIVING;
+  static constexpr ConnectionModelProperties properties =
+    default_connection_model_properties | ConnectionModelProperties::REQUIRES_CLOPATH_ARCHIVING;
 
   /**
    * Default Constructor.
@@ -215,7 +215,7 @@ private:
   double t_lastspike_;
 };
 
-template < typename targetidentifierT > constexpr RegisterConnectionModelFlags clopath_synapse< targetidentifierT >::flags;
+template < typename targetidentifierT > constexpr ConnectionModelProperties clopath_synapse< targetidentifierT >::properties;
 
 /**
  * Send an event to the receiver of this connection.

@@ -111,8 +111,8 @@ public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
-  static constexpr RegisterConnectionModelFlags flags =
-    default_connection_model_flags | RegisterConnectionModelFlags::REQUIRES_URBANCZIK_ARCHIVING;
+  static constexpr ConnectionModelProperties properties =
+    default_connection_model_properties | ConnectionModelProperties::REQUIRES_URBANCZIK_ARCHIVING;
 
   /**
    * Default Constructor.
@@ -200,7 +200,7 @@ private:
   double t_lastspike_;
 };
 
-template < typename targetidentifierT > constexpr RegisterConnectionModelFlags urbanczik_synapse< targetidentifierT >::flags;
+template < typename targetidentifierT > constexpr ConnectionModelProperties urbanczik_synapse< targetidentifierT >::properties;
 
 /**
  * Send an event to the receiver of this connection.

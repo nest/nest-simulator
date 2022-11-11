@@ -250,7 +250,7 @@ TypeTrie::insert_move( const TypeArray& a, Token& f )
   }
 
   /* Error conditions:
-     1. If pos->next!=NULL, the parameter list overlaps with
+     1. If pos->next != nullptr, the parameter list overlaps with
      an existing function definition.
      2. If pos->alt != nullptr, something undefined must have happened.
      This should be impossible.

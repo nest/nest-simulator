@@ -123,10 +123,10 @@ class TestSTDPSynapse:
             2,
             params=({"rate": self.presynaptic_firing_rate,
                      "stop": (
-                                 self.simulation_duration - self.hardcoded_trains_length)},
+                             self.simulation_duration - self.hardcoded_trains_length)},
                     {"rate": self.postsynaptic_firing_rate,
                      "stop": (
-                                 self.simulation_duration - self.hardcoded_trains_length)}))
+                             self.simulation_duration - self.hardcoded_trains_length)}))
         presynaptic_generator = generators[0]
         postsynaptic_generator = generators[1]
 
@@ -182,21 +182,21 @@ class TestSTDPSynapse:
         """Independent, self-contained model of STDP"""
 
         def facilitate(w, Kpre, Wmax_=1.):
-            norm_w = (w / self.synapse_parameters["Wmax"]) + (
-                    self.synapse_parameters["lambda"] * pow(
-                1 - (w / self.synapse_parameters["Wmax"]),
-                self.synapse_parameters["mu_plus"]) * Kpre)
+            norm_w = (w / self.synapse_parameters["Wmax"]) + \
+                     (self.synapse_parameters["lambda"] *
+                      pow(1 - (w / self.synapse_parameters["Wmax"]),
+                      self.synapse_parameters["mu_plus"]) * Kpre)
             if norm_w < 1.0:
                 return norm_w * self.synapse_parameters["Wmax"]
             else:
                 return self.synapse_parameters["Wmax"]
 
         def depress(w, Kpost):
-            norm_w = (w / self.synapse_parameters["Wmax"]) - (
-                    self.synapse_parameters["alpha"] * self.synapse_parameters[
-                "lambda"] * pow(
-                w / self.synapse_parameters["Wmax"],
-                self.synapse_parameters["mu_minus"]) * Kpost)
+            norm_w = (w / self.synapse_parameters["Wmax"]) - \
+                     (self.synapse_parameters["alpha"] *
+                      self.synapse_parameters["lambda"] *
+                      pow(w / self.synapse_parameters["Wmax"],
+                      self.synapse_parameters["mu_minus"]) * Kpost)
             if norm_w > 0.0:
                 return norm_w * self.synapse_parameters["Wmax"]
             else:

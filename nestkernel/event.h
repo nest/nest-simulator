@@ -299,10 +299,10 @@ protected:
    * members, however, in order to avoid the reference of reference
    * problem, we store sender and receiver as pointers and use
    * references in the interface.
-   * Thus, we can still ensure that the pointers are never NULL.
+   * Thus, we can still ensure that the pointers are never nullptr.
    */
-  Node* sender_;   //!< Pointer to sender or NULL.
-  Node* receiver_; //!< Pointer to receiver or NULL.
+  Node* sender_;   //!< Pointer to sender or nullptr.
+  Node* receiver_; //!< Pointer to receiver or nullptr.
 
 
   /**
@@ -620,7 +620,7 @@ private:
   Time recording_offset_;
   /**
    * Names of properties to record from.
-   * @note This pointer shall be NULL unless the event is sent by a connection
+   * @note This pointer shall be nullptr unless the event is sent by a connection
    * routine.
    */
   std::vector< Name > const* const record_from_;

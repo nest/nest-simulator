@@ -83,7 +83,7 @@ nest::TargetTableDevices::send_to_device( const thread tid,
         it != target_to_devices_[ tid ][ lid ].end();
         ++it )
   {
-    if ( *it != NULL )
+    if ( *it )
     {
       ( *it )->send_to_all( tid, cm, e );
     }

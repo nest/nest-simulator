@@ -50,7 +50,6 @@ class DistanceParameter(Parameter):
 
     def __init__(self):
         distance_parameter = CreateParameter('distance', {})
-
         super().__init__(distance_parameter._datum)
 
     @property

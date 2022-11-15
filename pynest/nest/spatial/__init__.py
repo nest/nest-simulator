@@ -20,3 +20,6 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 from .hl_api_spatial import *  # noqa
+
+# retrieve the DistanceParameter from the distance function
+distance = distance()

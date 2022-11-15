@@ -46,8 +46,11 @@ class DistanceParameter(Parameter):
     be used in contexts with two nodes, e.g. when connecting.
     """
 
+    __distanceParam = None
+
     def __init__(self):
         distance_parameter = CreateParameter('distance', {})
+
         super().__init__(distance_parameter._datum)
 
     @property
@@ -82,8 +85,17 @@ class DistanceParameter(Parameter):
         """
         return CreateParameter('distance', {'dimension': dimension})
 
+    @staticmethod
+    def getInstance():
+        if DistanceParameter.__distanceParam:
+            return DistanceParameter.__distanceParam
+        else:
+            DistanceParameter.__distanceParam = DistanceParameter()
+            return DistanceParameter.__distanceParam
 
-distance = DistanceParameter()
+
+def distance():
+    return DistanceParameter.getInstance()
 
 
 class pos:

@@ -78,6 +78,7 @@ def Run(t):
 
     Call between `Prepare` and `Cleanup` calls, or within a
     ``with RunManager`` clause.
+    `Run` is automatically triggered during call to `simulate`:
 
     Simulate(t): t' = t/m; Prepare(); for _ in range(m): Run(t'); Cleanup()
 

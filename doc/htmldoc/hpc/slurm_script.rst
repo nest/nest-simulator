@@ -119,8 +119,8 @@ varies depending on what HPC system you are using).
 
 .. note::
 
-    In NEST, the above calculation is the same one you would do to determine the number of Virtual processes in a given simulation.
-    See the guide to :ref:`parallel_computing` for more details.
+    In NEST, the above calculation is the same one you would do to determine the number of `virtual processes` in a given simulation.
+    See the :ref:`parallel_computing` for more details.
 
 
 ::

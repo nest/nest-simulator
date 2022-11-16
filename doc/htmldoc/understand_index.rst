@@ -70,10 +70,7 @@ Here you can dive into various topics about NEST.
    .. grid-item-card:: |hpc| High performance computers (HPC)
        :class-title: sd-d-flex-row sd-align-minor-center
 
-       * :ref:`overview_hardware`
-       * :ref:`slurm_script`
-       * :ref:`threads`
-       * :ref:`mpi_process`
+       * :ref:`optimize_performance`
        * :ref:`parallel_computing`
        * :ref:`benchmark`
 

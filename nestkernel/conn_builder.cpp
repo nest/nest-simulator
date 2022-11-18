@@ -1730,8 +1730,8 @@ nest::BernoulliAstroBuilder::connect_()
 
     try
     {
-      // index snode_id;
-      // std::set< index > connected_snode_ids;
+      index snode_id;
+      std::set< index > connected_snode_ids;
       index anode_id;
       std::set< index > connected_anode_ids;
       Node* target;
@@ -1739,7 +1739,7 @@ nest::BernoulliAstroBuilder::connect_()
       Node* astrocyte;
       thread astrocyte_thread;
       std::vector< index > astro_pool_this_target;
-      // unsigned long indegree;
+      unsigned long indegree;
       int default_n_astro_per_target_ = astrocytes_size_ / targets_size_ > 1 ? astrocytes_size_ / targets_size_ : 1;
       int default_n_target_per_astro = targets_size_ / astrocytes_size_ > 1 ? targets_size_ / astrocytes_size_ : 1;
       int target_index = 0;
@@ -1782,23 +1782,30 @@ nest::BernoulliAstroBuilder::connect_()
         target_thread = tid;
         target_index = targets_->find( tnode_id );
 
-        // // sample indegree according to truncated Binomial distribution
-        // binomial_distribution bino_dist;
-        // binomial_distribution::param_type param( sources_->size(), p_ );
-        // indegree = sources_->size() + 1; // to-do: if p=1 and there is overlapping, force indegree -= 1
-        // while ( indegree > sources_->size() )
-        // {
-        //   indegree = bino_dist( synced_rng, param );
-        // }
-        // assert( indegree <= sources_->size() );
-        //
+        // sample indegree according to truncated Binomial distribution
+        binomial_distribution bino_dist;
+        binomial_distribution::param_type param( sources_->size(), p_ );
+        do
+        {
+          indegree = bino_dist( synced_rng, param );
+        }
+        while ( indegree > sources_->size() );
+        // force indegree -= 1 when autapses not allowed, p=1, and target overlaps with sources
+        if ( not allow_autapses_ and indegree == sources_->size() and sources_->find( tnode_id ) >= 0 )
+        {
+          // TODO: a warning here?
+          indegree -= 1;
+          std::cout << "indegree -= 1" << std::endl;
+        }
+        assert( indegree <= sources_->size() );
+
         // check whether the target is on this thread
         if ( target->is_proxy() )
         {
           target_thread = invalid_thread;
         }
 
-        // connected_snode_ids.clear();
+        connected_snode_ids.clear();
         connected_anode_ids.clear();
 
         // Determine astrocyte pool for this target
@@ -1873,33 +1880,37 @@ nest::BernoulliAstroBuilder::connect_()
         }
 
         // Make connections for this target
-        for (NodeCollection::const_iterator source_it = sources_->begin(); source_it != sources_->end(); ++source_it)
+        // for (NodeCollection::const_iterator source_it = sources_->begin(); source_it != sources_->end(); ++source_it)
+        // {
+        //   const index snode_id = ( *source_it ).node_id;
+        //   if ( not allow_autapses_ and snode_id == tnode_id )
+        //   {
+        //     continue;
+        //   }
+        //   // Bernoulli trial for neuron->neuron connections
+        //   if ( synced_rng->drand() >= p_ )
+        //   {
+        //     continue;
+        //   }
+        size_t i = 0;
+        while ( i < indegree )
         {
-          const index snode_id = ( *source_it ).node_id;
+          // choose target randomly
+          snode_id = ( *sources_ )[ synced_rng->ulrand( sources_->size() ) ];
+
+          // handle multapses and autapses
+          if ( connected_snode_ids.find( snode_id ) != connected_snode_ids.end() )
+          {
+            continue;
+          }
           if ( not allow_autapses_ and snode_id == tnode_id )
           {
             continue;
           }
-          // Bernoulli trial for neuron->neuron connections
-          if ( synced_rng->drand() >= p_ )
-          {
-            continue;
-          }
-        // size_t i = 0;
-        // while ( i < indegree )
-        // {
-        //   // choose target randomly
-        //   snode_id = ( *sources_ )[ synced_rng->ulrand( sources_->size() ) ];
-        //
-        //   // Allow autapses and but not multapses (to be improved).
-        //   if ( connected_snode_ids.find( snode_id ) != connected_snode_ids.end() )
-        //   {
-        //     continue;
-        //   }
-        //   connected_snode_ids.insert( snode_id );
-        //
-        //   // increase i which counts the number of incoming connections
-        //   ++i;
+          connected_snode_ids.insert( snode_id );
+
+          // increase i which counts the number of incoming connections
+          ++i;
 
           // if target is local: connect source -> target
           if ( target_thread == tid )

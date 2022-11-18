@@ -1666,15 +1666,13 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   if ( syn_specs[0]->known( names::synapse_model_astro ) )
   {
     const std::string syn_name = ( *syn_specs[0] )[ names::synapse_model_astro ];
-    //if ( not kernel().model_manager.synapsedict_->known( syn_name ) )
-    //{
-    //  throw UnknownSynapseType( syn_name );
-    //}
+    // should also give an error message here, if the connection type is wrong
     synapse_model_id_astro_ = kernel().model_manager.get_synapse_model_id( syn_name );
   }
   else
   {
     synapse_model_id_astro_ = kernel().model_manager.get_synapse_model_id( "sic_connection" );
+    // should give a warning here of using default
   }
   DictionaryDatum syn_defaults_astro = kernel().model_manager.get_connector_defaults( synapse_model_id_astro_ );
 
@@ -1733,7 +1731,7 @@ nest::BernoulliAstroBuilder::connect_()
     try
     {
       // index snode_id;
-      std::set< index > connected_snode_ids;
+      // std::set< index > connected_snode_ids;
       index anode_id;
       std::set< index > connected_anode_ids;
       Node* target;
@@ -1755,8 +1753,8 @@ nest::BernoulliAstroBuilder::connect_()
         {
           LOG( M_WARNING,
             "BernoulliAstroBuilder::connect",
-            "N_post_neuron can not be exactly divided by N_astrocyte. "
-            "Some neurons will be ignored. ");
+            "Number of target neurons cannot be exactly divided by number of astrocytes. "
+            "Some neurons will be excluded from neuron-astrocyte pairings. ");
         }
       }
       else
@@ -1765,15 +1763,15 @@ nest::BernoulliAstroBuilder::connect_()
         {
           LOG( M_WARNING,
             "BernoulliAstroBuilder::connect",
-            "N_astrocyte can not be exactly divided by N_post_neuron. "
-            "Some astrocytes will be ignored. ");
+            "Number of astrocytes cannot be exactly divided by number of target neurons. "
+            "Some astrocytes will be excluded from neuron-astrocyte pairings. ");
         }
       }
       if ( max_astro_per_target_ > 0 and max_astro_per_target_ % 2 == 0 and default_n_target_per_astro % 2 == 1)
       {
         LOG( M_WARNING,
           "BernoulliAstroBuilder::connect",
-          "Current N_astrocyte and N_post_neuron could cause uneven pairing assignment. ");
+          "Current numbers of astrocytes and target neurons could cause uneven pairing assignment. ");
       }
 
       for ( NodeCollection::const_iterator target_it = targets_->begin(); target_it != targets_->end(); ++target_it )
@@ -1787,7 +1785,7 @@ nest::BernoulliAstroBuilder::connect_()
         // // sample indegree according to truncated Binomial distribution
         // binomial_distribution bino_dist;
         // binomial_distribution::param_type param( sources_->size(), p_ );
-        // indegree = sources_->size() + 1;
+        // indegree = sources_->size() + 1; // to-do: if p=1 and there is overlapping, force indegree -= 1
         // while ( indegree > sources_->size() )
         // {
         //   indegree = bino_dist( synced_rng, param );
@@ -1800,19 +1798,17 @@ nest::BernoulliAstroBuilder::connect_()
           target_thread = invalid_thread;
         }
 
-        connected_snode_ids.clear();
+        // connected_snode_ids.clear();
         connected_anode_ids.clear();
 
-        // Define astrocyte pool for this target
+        // Determine astrocyte pool for this target
         astro_pool_this_target.clear();
-
         // When max_astro_per_target_ not given
         if ( max_astro_per_target_ == 0 )
         {
           // Take max_astro_per_target_ = N_astrocyte / N_neuron
           max_astro_per_target_ = default_n_astro_per_target_;
         }
-
         // Determine starting astrocyte
         // "Deterministic"
         if ( astro_pool_per_target_det_ == true )
@@ -1830,11 +1826,9 @@ nest::BernoulliAstroBuilder::connect_()
               }
               // Start from this astrocyte
               astro_index = ( target_index / default_n_target_per_astro ) - shift;
-              // std::cout << "Target " << target_index << ", starting astrocyte = " << astro_index << ", n_astro_overlap_per_target = " << n_astro_overlap_per_target << ", shift = " << shift << ", default_n_target_per_astro = " << default_n_target_per_astro << std::endl;
               // Exclude remainder of neurons
               if ( target_index >= int(astrocytes_size_*default_n_target_per_astro) )
               {
-                // std::cout << "Target " << target_index << " and after are not paired with astrocytes." << std::endl;
                 break;
               }
             }
@@ -1878,8 +1872,7 @@ nest::BernoulliAstroBuilder::connect_()
           }
         }
 
-        // Make connections
-        // choose indegree number of sources randomly from all sources
+        // Make connections for this target
         for (NodeCollection::const_iterator source_it = sources_->begin(); source_it != sources_->end(); ++source_it)
         {
           const index snode_id = ( *source_it ).node_id;
@@ -2065,7 +2058,7 @@ nest::SymmetricBernoulliBuilder::connect_()
           target_thread = invalid_thread;
         }
 
-        connected_snode_ids.clear();
+        previous_snode_ids.clear();
 
         // choose indegree number of sources randomly from all sources
         size_t i = 0;
@@ -2076,11 +2069,11 @@ nest::SymmetricBernoulliBuilder::connect_()
           // Avoid autapses and multapses. Due to symmetric connectivity,
           // multapses might exist if the target neuron with node ID snode_id draws the
           // source with node ID tnode_id while choosing sources itself.
-          if ( snode_id == ( *tnode_id ).node_id or connected_snode_ids.find( snode_id ) != connected_snode_ids.end() )
+          if ( snode_id == ( *tnode_id ).node_id or previous_snode_ids.find( snode_id ) != previous_snode_ids.end() )
           {
             continue;
           }
-          connected_snode_ids.insert( snode_id );
+          previous_snode_ids.insert( snode_id );
 
           source = kernel().node_manager.get_node_or_proxy( snode_id, tid );
           source_thread = tid;

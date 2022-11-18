@@ -64,31 +64,31 @@ extern "C" int astrocyte_dynamics( double, const double*, double*, void* );
 @ingroup hh
 @ingroup gap
 
-Name: 
+Name:
 astrocyte - contains variables IP3_astro, Ca_astro, f_IP3R_astro
 
-Description: 
-The model defines dynamics of the following variables: 
-============  ========   ========================================================== 
-IP3_astro     uM         IP3 concentration in the astrocytic cytosol 
+Description:
+The model defines dynamics of the following variables:
+============  ========   ==========================================================
+IP3_astro     uM         IP3 concentration in the astrocytic cytosol
 Ca_astro      uM         Calcium concentration in the astrocytic cytosol
 f_IP3_astro   unitless   The fraction of active IP3 receptors on the astrocytic ER
-============  ========   ==========================================================  
+============  ========   ==========================================================
 
 The model is developed using the template for Hodgkin-Huxley neuron model with gap-junction support
 (hh_psc_alpha) however, the spiking mechanism implemented in this model is not needed here.
 
 1. Post-synaptic currents:
-Synaptic release of glutamate affects IP3 production according to the model described in 
-Nadkarni & Jung (2003). The percent of released glutamate (model parameter) binds to the astrocyte while the rest 
-binds to the postsynaptic neuron. 
+Synaptic release of glutamate affects IP3 production according to the model described in
+Nadkarni & Jung (2003). The percent of released glutamate (model parameter) binds to the astrocyte while the rest
+binds to the postsynaptic neuron.
 
 2. Spikes: Spikes do not exhist in the astrocyte model, however the spiking-related mechanisms were not removed from
-the code to avoid incmpatibilities with the rest of the simulator. 
+the code to avoid incmpatibilities with the rest of the simulator.
 
-3. Gap Junctions: Used to implement the interaction from astrocyte to neuron in the form of Slow Inward Current (SIC). 
+3. Gap Junctions: Used to implement the interaction from astrocyte to neuron in the form of Slow Inward Current (SIC).
 Gap Junctions are implemented by a gap current of the form
-\f$ g_ij( V_i - V_j) \f$ 
+\f$ g_ij( V_i - V_j) \f$
 
 
 Parameters:
@@ -102,13 +102,13 @@ K_act_astro     uM        Astrocytic IP3R dissociation constant of calcium (acti
 K_inh_astro     uM        Astrocytic IP3R dissociation constant of calcium (inhibition)
 K_IP3_1_astro   uM        Astrocytic IP3R dissociation constant of IP3
 K_IP3_2_astro   uM        Astrocytic IP3R dissociation constant of IP3
-K_SERCA_astro   uM        Activation constant of astrocytic SERCA pump 
+K_SERCA_astro   uM        Activation constant of astrocytic SERCA pump
 r_ER_cyt_astro  unitless  Ratio between astrocytic ER and cytosol volumes
 r_IP3_astro     uM/ms     Rate constant of astrocytic IP3 production
 r_IP3R_astro    1/(uM*ms) Astrocytic IP3R binding constant for calcium inhibition
-r_L_astro       1/ms      Rate constant for calcium leak from the astrocytic ER to cytosol 
-v_IP3R_astro    1/ms      Maximum rate of calcium release via astrocytic IP3R 
-v_SERCA_astro   uM/ms     Maximum rate of calcium uptake by astrocytic IP3R 
+r_L_astro       1/ms      Rate constant for calcium leak from the astrocytic ER to cytosol
+v_IP3R_astro    1/ms      Maximum rate of calcium release via astrocytic IP3R
+v_SERCA_astro   uM/ms     Maximum rate of calcium uptake by astrocytic IP3R
 tau_IP3_astro   ms        Time constant of astrocytic IP3 degradation
 ==============  ======    ==================================================================
 \endverbatim
@@ -116,9 +116,9 @@ tau_IP3_astro   ms        Time constant of astrocytic IP3 degradation
 References:
 
 \verbatim embed:rst
-.. [1] Nadkarni S, and Jung P. Spontaneous oscillations of dressed neurons: A 
-	new mechanism for epilepsy? Physical Review Letters, 91:26. DOI: 10.1103/PhysRevLett.91.268101 
-.. [2] TO DO: add the paper on network modeling	
+.. [1] Nadkarni S, and Jung P. Spontaneous oscillations of dressed neurons: A
+	new mechanism for epilepsy? Physical Review Letters, 91:26. DOI: 10.1103/PhysRevLett.91.268101
+.. [2] TO DO: add the paper on network modeling
 .. [3] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann M
        (2015). A unified framework for spiking and gap-junction interactions
        in distributed neuronal netowrk simulations. Frontiers in
@@ -130,7 +130,7 @@ Sends: SpikeEvent, GapJunctionEvent
 
 Receives: SpikeEvent, GapJunctionEvent, CurrentEvent, DataLoggingRequest
 
-Authors: Jan Hahne, Jonas Stapmanns, Mikko Lehtimaki, Jugoslava Acimovic TO DO: add other authors  
+Authors: Jan Hahne, Jonas Stapmanns, Mikko Lehtimaki, Jugoslava Acimovic TO DO: add other authors
 
 SeeAlso: hh_psc_alpha, hh_cond_exp_traub, gap_junction
 */
@@ -169,7 +169,7 @@ public:
   sends_secondary_event( GapJunctionEvent& )
   {
   }
-  
+
   void
   sends_secondary_event( SICEvent& )
   {
@@ -211,18 +211,18 @@ private:
 
     double Ca_tot_astro_;
     double IP3_0_astro_;
-    double K_act_astro_;
-    double K_inh_astro_;
     double K_IP3_1_astro_;
     double K_IP3_2_astro_;
-    double K_SERCA_astro_; 
-    double r_ER_cyt_astro_; 
-    double r_IP3_astro_; 
+    double K_SERCA_astro_;
+    double K_act_astro_;
+    double K_inh_astro_;
+    double r_ER_cyt_astro_;
+    double r_IP3_astro_;
     double r_IP3R_astro_;
     double r_L_astro_;
+    double tau_IP3_astro_;
     double v_IP3R_astro_;
     double v_SERCA_astro_;
-    double tau_IP3_astro_;
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
@@ -319,8 +319,8 @@ private:
   // ----------------------------------------------------------------
 
   /**
-   * Internal variables of the model. 
-   * TO DO: These are not needed for the astrocyte model. Test whether they can be removed. 
+   * Internal variables of the model.
+   * TO DO: These are not needed for the astrocyte model. Test whether they can be removed.
    */
   struct Variables_
   {

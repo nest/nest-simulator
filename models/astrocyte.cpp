@@ -95,32 +95,32 @@ astrocyte_dynamics( double time, const double y[], double f[], void* pnode )
     std::pow(f_ip3r, 3) * (calc_ER - calc);
 
 
-  // set I_gap depending on interpolation order
-  double gap = 0.0;
-
-  const double t = time / node.B_.step_;
-
-  switch ( kernel().simulation_manager.get_wfr_interpolation_order() )
-  {
-  case 0:
-    gap = -node.B_.sumj_g_ij_ * ip3 + node.B_.interpolation_coefficients[ node.B_.lag_ ];
-    break;
-
-  case 1:
-    gap = -node.B_.sumj_g_ij_ * ip3 + node.B_.interpolation_coefficients[ node.B_.lag_ * 2 + 0 ]
-      + node.B_.interpolation_coefficients[ node.B_.lag_ * 2 + 1 ] * t;
-    break;
-
-  case 3:
-    gap = -node.B_.sumj_g_ij_ * ip3 + node.B_.interpolation_coefficients[ node.B_.lag_ * 4 + 0 ]
-      + node.B_.interpolation_coefficients[ node.B_.lag_ * 4 + 1 ] * t
-      + node.B_.interpolation_coefficients[ node.B_.lag_ * 4 + 2 ] * t * t
-      + node.B_.interpolation_coefficients[ node.B_.lag_ * 4 + 3 ] * t * t * t;
-    break;
-
-  default:
-    throw BadProperty( "Interpolation order must be 0, 1, or 3." );
-  }
+  // // set I_gap depending on interpolation order
+  // double gap = 0.0;
+  //
+  // const double t = time / node.B_.step_;
+  //
+  // switch ( kernel().simulation_manager.get_wfr_interpolation_order() )
+  // {
+  // case 0:
+  //   gap = -node.B_.sumj_g_ij_ * ip3 + node.B_.interpolation_coefficients[ node.B_.lag_ ];
+  //   break;
+  //
+  // case 1:
+  //   gap = -node.B_.sumj_g_ij_ * ip3 + node.B_.interpolation_coefficients[ node.B_.lag_ * 2 + 0 ]
+  //     + node.B_.interpolation_coefficients[ node.B_.lag_ * 2 + 1 ] * t;
+  //   break;
+  //
+  // case 3:
+  //   gap = -node.B_.sumj_g_ij_ * ip3 + node.B_.interpolation_coefficients[ node.B_.lag_ * 4 + 0 ]
+  //     + node.B_.interpolation_coefficients[ node.B_.lag_ * 4 + 1 ] * t
+  //     + node.B_.interpolation_coefficients[ node.B_.lag_ * 4 + 2 ] * t * t
+  //     + node.B_.interpolation_coefficients[ node.B_.lag_ * 4 + 3 ] * t * t * t;
+  //   break;
+  //
+  // default:
+  //   throw BadProperty( "Interpolation order must be 0, 1, or 3." );
+  // }
 
   f[ S::IP3_astro ] = ( node.P_.IP3_0_astro_ - ip3 ) / node.P_.tau_IP3_astro_;
   f[ S::Ca_astro ] = I_channel - I_pump + I_leak;
@@ -135,20 +135,20 @@ astrocyte_dynamics( double time, const double y[], double f[], void* pnode )
  * ---------------------------------------------------------------- */
 
 nest::astrocyte::Parameters_::Parameters_()
-  : tau_IP3_astro_(7142.0 )   // ms
-  , r_IP3_astro_( 5.0 )      // uM / ms
-  , K_IP3_1_astro_( 0.13 )    // uM
-  , K_inh_astro_( 1.049 )    // uM
-  , K_IP3_2_astro_( 0.9434 )    // uM
-  , K_act_astro_( 0.08234 )    // uM
-  , v_IP3R_astro_( 0.006 )    // 1 / ms
-  , r_L_astro_( 0.00011 )    // 1 / ms
-  , v_SERCA_astro_( 0.0009 )    // uM / ms
-  , K_SERCA_astro_( 0.1 )    // uM
-  , r_IP3R_astro_( 0.0002 )    // 1 / (uM*ms)
-  , Ca_tot_astro_( 2.0 )   // uM
-  , r_ER_cyt_astro_( 0.185 ) 
+  : Ca_tot_astro_( 2.0 )   // uM
   , IP3_0_astro_( 0.16 )    // uM
+  , K_IP3_1_astro_( 0.13 )    // uM
+  , K_IP3_2_astro_( 0.9434 )    // uM
+  , K_SERCA_astro_( 0.1 )    // uM
+  , K_act_astro_( 0.08234 )    // uM
+  , K_inh_astro_( 1.049 )    // uM
+  , r_ER_cyt_astro_( 0.185 )
+  , r_IP3_astro_( 5.0 )      // uM / ms
+  , r_IP3R_astro_( 0.0002 )    // 1 / (uM*ms)
+  , r_L_astro_( 0.00011 )    // 1 / ms
+  , tau_IP3_astro_(7142.0 )   // ms
+  , v_IP3R_astro_( 0.006 )    // 1 / ms
+  , v_SERCA_astro_( 0.0009 )    // uM / ms
 {
 }
 
@@ -184,7 +184,7 @@ nest::astrocyte::State_& nest::astrocyte::State_::operator=( const State_& s )
 void
 nest::astrocyte::Parameters_::get( DictionaryDatum& d ) const
 {
-  def< double >( d, names::Ca_tot_astro, Ca_tot_astro_ ); 
+  def< double >( d, names::Ca_tot_astro, Ca_tot_astro_ );
   def< double >( d, names::IP3_0_astro, IP3_0_astro_ );
   def< double >( d, names::K_act_astro, K_act_astro_ );
   def< double >( d, names::K_inh_astro, K_inh_astro_ );
@@ -203,7 +203,7 @@ nest::astrocyte::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::astrocyte::Parameters_::set( const DictionaryDatum& d )
 {
-  updateValue< double >( d, names::Ca_tot_astro, Ca_tot_astro_ ); 
+  updateValue< double >( d, names::Ca_tot_astro, Ca_tot_astro_ );
   updateValue< double >( d, names::IP3_0_astro, IP3_0_astro_ );
   updateValue< double >( d, names::K_act_astro, K_act_astro_ );
   updateValue< double >( d, names::K_inh_astro, K_inh_astro_ );
@@ -217,7 +217,7 @@ nest::astrocyte::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::v_IP3R_astro, v_IP3R_astro_ );
   updateValue< double >( d, names::v_SERCA_astro, v_SERCA_astro_ );
   updateValue< double >( d, names::tau_IP3_astro, tau_IP3_astro_ );
-  
+
   if ( Ca_tot_astro_ <= 0 )
   {
     throw BadProperty( "Total free astrocytic concentration must be positive." );
@@ -297,7 +297,7 @@ nest::astrocyte::State_::set( const DictionaryDatum& d )
   }
   if ( y_[ Ca_astro ] < 0 )
   {
-    throw BadProperty( "Calcium concentration in the astrocyte cytosol must be non-negative." );	  
+    throw BadProperty( "Calcium concentration in the astrocyte cytosol must be non-negative." );
   }
   if ( y_[ f_IP3R_astro ] < 0 || y_[ f_IP3R_astro ] > 1 )
   {
@@ -455,8 +455,8 @@ nest::astrocyte::pre_run_hook()
  *
  * Spikes are not generated by astrocytes and the related functions
  * are not needed. However, it is kept here to avoid possible
- * inconsistencies with the rest of the code. 
- * TO DO: Check how to safely remove spike handling functions. 
+ * inconsistencies with the rest of the code.
+ * TO DO: Check how to safely remove spike handling functions.
  * ---------------------------------------------------------------- */
 
 bool
@@ -609,7 +609,7 @@ nest::astrocyte::update_( Time const& origin, const long from, const long to, co
   GapJunctionEvent ge;
   ge.set_coeffarray( new_coefficients );
   kernel().event_delivery_manager.send_secondary( *this, ge );
-  
+
   // Send sic-event
   SICEvent sic;
   sic.set_coeffarray( sic_values );

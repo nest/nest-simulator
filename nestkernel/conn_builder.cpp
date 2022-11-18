@@ -1795,7 +1795,6 @@ nest::BernoulliAstroBuilder::connect_()
         {
           // TODO: a warning here?
           indegree -= 1;
-          std::cout << "indegree -= 1" << std::endl;
         }
         assert( indegree <= sources_->size() );
 

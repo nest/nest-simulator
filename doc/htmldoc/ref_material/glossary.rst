@@ -100,7 +100,7 @@ Terms for models in NEST
    Integrate and fire. Also known in other sources as `IF`.
 
  gif
-   Generalized integrate and fire. From Gersnter lab.  Also known in other sources as `spike response model (SRM)`.
+   Generalized integrate and fire. From Gersnter lab.
 
  glif
    Generalized leaky integrate and fire. From Allen institute.

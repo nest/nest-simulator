@@ -368,8 +368,14 @@ install( FILES LICENSE README.md
     DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )
 
-add_custom_target( install-nodoc
-  COMMAND $(MAKE) NEST_INSTALL_NODOC=true install
-)
+if(${CMAKE_GENERATOR} STREQUAL "Ninja")
+  add_custom_target( install-nodoc
+    COMMAND ninja NEST_INSTALL_NODOC=true install
+    )
+else()
+  add_custom_target( install-nodoc
+    COMMAND $(MAKE) NEST_INSTALL_NODOC=true install
+    )
+endif()
 
 nest_print_config_summary()

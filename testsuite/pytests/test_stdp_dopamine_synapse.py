@@ -44,7 +44,7 @@ class STDPSynapseTest(unittest.TestCase):
 
     def init_params(self):
         self.resolution = 0.1  # [ms]
-        self.sim_dura = 100  # 1E3    # [ms]
+        self.sim_dura = 100.  # 1E3    # [ms]
         self.synapse_model = "stdp_dopamine_synapse"
         self.presynaptic_firing_rate = 20.  # [ms^-1]
         self.postsynaptic_firing_rate = 20.  # [ms^-1]
@@ -105,10 +105,6 @@ class STDPSynapseTest(unittest.TestCase):
 
         # ``weight_by_nest`` containts only weight values at pre spike times, ``weight_reproduced_independently``
         # contains the weight at pre *and* post times: check that weights are equal only for pre spike times
-        print('\nweight reference', weight_reproduced_independently)
-        print('\nt weight reproduced independently', t_weight_reproduced_independently)
-        print('\nweight nest', weight_by_nest)
-        print('\nt weight nest', t_weight_by_nest)
         assert len(weight_by_nest) > 0
         for idx_pre_spike_nest, t_pre_spike_nest in enumerate(t_weight_by_nest):
             idx_pre_spike_reproduced_independently = \
@@ -198,7 +194,6 @@ class STDPSynapseTest(unittest.TestCase):
         weight = nest.GetStatus(wr, "events")[0]["weights"]
 
         a = nest.GetConnections(synapse_model=self.synapse_model + "_rec")
-        print(a.n, a.c, a.weight)
 
         return pre_spikes, post_spikes, dopa_spikes, t_hist, weight
 
@@ -210,19 +205,17 @@ class STDPSynapseTest(unittest.TestCase):
             n += 1 / self.synapse_parameters["tau_n"]
             return n
 
-        def update_weight(w, c0, n0, minus_dt):
+        def update_weight(w, c, n, h):
 
-            print("\nupdate_weight w: %f, c0: %f, n0: %f, minus_dt:%f" % (w, c0, n0, minus_dt))
 
             taus = (self.synapse_parameters["tau_c"] + self.synapse_parameters["tau_n"]) / \
                    (self.synapse_parameters["tau_c"] * self.synapse_parameters["tau_n"])
 
-            w = w - c0 * (n0 / taus * np.expm1(taus * minus_dt)
+            w = w - c * (n / taus * np.expm1(-taus * h)
                           - self.synapse_parameters["b"] * self.synapse_parameters["tau_c"]
-                          * np.expm1(minus_dt / self.synapse_parameters["tau_c"]))
+                          * np.expm1(-h / self.synapse_parameters["tau_c"]))
 
-            if w <= 0.:
-                w = 0.
+            w = max(0., w)
 
             return w
 
@@ -234,30 +227,10 @@ class STDPSynapseTest(unittest.TestCase):
             c -= self.synapse_parameters["A_minus"] * Kpost
             return c
 
-        def Kpost_at_time(t, spikes, inclusive=True):
-            t_curr = 0.
-            Kpost = 0.
-            for spike_idx, t_sp in enumerate(spikes):
-                if t < t_sp:
-                    # integrate to t
-                    Kpost *= exp(-(t - t_curr) / self.tau_post)
-                    return Kpost
-                # integrate to t_sp
-                Kpost *= exp(-(t_sp - t_curr) / self.tau_post)
-                if inclusive:
-                    Kpost += 1.
-                if t == t_sp:
-                    return Kpost
-                if not inclusive:
-                    Kpost += 1.
-                t_curr = t_sp
-            # if we get here, t > t_last_spike
-            # integrate to t
-            Kpost *= exp(-(t - t_curr) / self.tau_post)
-            return Kpost
-
         t = 0.
         Kpre = 0.
+        Kpost = 0.
+        e = 0.00000001
         weight = self.init_weight
         c = self.init_c
         n = self.init_n
@@ -279,25 +252,26 @@ class STDPSynapseTest(unittest.TestCase):
 
         print('post', post_spikes_delayed)
         print('pre', pre_spikes_delayed)
+        print('dopa', dopa_spikes_delayed)
 
         while t < self.sim_dura:
-            print('############################################')
+            #print('############################################')
             # idx_next_pre_spike = -1
             t_next_pre_spike = np.inf
-            if np.where((pre_spikes_delayed - t) > 0)[0].size > 0:
-                idx_next_pre_spike = np.where((pre_spikes_delayed - t) > 0)[0][0]
+            if np.where(abs(pre_spikes_delayed - t)<e)[0].size > 0:
+                idx_next_pre_spike = np.where(abs(pre_spikes_delayed - t)<e)[0][0]
                 t_next_pre_spike = pre_spikes_delayed[idx_next_pre_spike]
 
             # idx_next_post_spike = -1
             t_next_post_spike = np.inf
-            if np.where((post_spikes_delayed - t) > 0)[0].size > 0:
-                idx_next_post_spike = np.where((post_spikes_delayed - t) > 0)[0][0]
+            if np.where(abs(post_spikes_delayed - t)<e)[0].size > 0:
+                idx_next_post_spike = np.where(abs(post_spikes_delayed - t)<e)[0][0]
                 t_next_post_spike = post_spikes_delayed[idx_next_post_spike]
 
             # idx_next_dopa_spike = -1
             t_next_dopa_spike = np.inf
-            if np.where((dopa_spikes_delayed - t) > 0)[0].size > 0:
-                idx_next_dopa_spike = np.where((dopa_spikes_delayed - t) > 0)[0][0]
+            if np.where(abs(dopa_spikes_delayed - t)<e)[0].size > 0:
+                idx_next_dopa_spike = np.where(abs(dopa_spikes_delayed - t)<e)[0][0]
                 t_next_dopa_spike = dopa_spikes_delayed[idx_next_dopa_spike]
 
             handle_dopa_spike = False
@@ -308,64 +282,50 @@ class STDPSynapseTest(unittest.TestCase):
             if t_next != np.inf:
                 if t_next == t_next_dopa_spike:
                     handle_dopa_spike = True
-                    print('handle_dopa_spike, t_next', t_next)
                 if t_next == t_next_post_spike:
                     handle_post_spike = True
-                    print('handle_post_spike, t_next', t_next)
                 if t_next == t_next_pre_spike:
                     handle_pre_spike = True
-                    print('handle_pre_spike, t_next', t_next)
-            # print(t_next_dopa_spike, t_next_pre_spike, t_next_post_spike)
-            # print(handle_dopa_spike, handle_pre_spike, handle_post_spike)
-            if t_next == np.inf:
-                # no more spikes to process
-                t_next = self.sim_dura
-                break
-
-            '''# max timestep
-            t_next_ = min(t_next, t + 1E-3)
-            if t_next != t_next_:
-                t_next = t_next_
-                handle_pre_spike = False
-                handle_post_spike = False'''
-
-            h = t - t_next
-            t = t_next
-
+            
             # update weight
-            weight = update_weight(weight, c, n, h)
-            print('weight', weight)
+            weight = update_weight(weight, c, n, self.resolution)
 
-            Kpre *= exp(h / self.tau_pre)
-            n *= exp(h / self.synapse_parameters['tau_n'])
-            c *= exp(h / self.synapse_parameters['tau_c'])
+            c = c * exp(-self.resolution / self.synapse_parameters["tau_c"])
+            n = n * exp(-self.resolution / self.synapse_parameters["tau_n"])
+
+            # decay pre and post traces
+            Kpre *= exp(-self.resolution / self.tau_pre)
+            Kpost *= exp(-self.resolution / self.tau_post)
 
             if handle_pre_spike:
                 Kpre += 1.
-                _Kpost = Kpost_at_time(t - self.dendritic_delay, post_spikes, inclusive=True)
-                c = depress(c, _Kpost)
-                print('c, _Kpost', c, _Kpost)
+                c = depress(c, Kpost)
+                print('handle_pre_spike c=%f, n=%f, weight=%f' % (c, n, weight))
+                print('t_next', t_next)
 
             # compute c
             if handle_post_spike:
-                # Kpost += 1.    <-- not necessary, will call Kpost_at_time(t) later to compute Kpost for any value t
+                Kpost += 1. 
                 c = facilitate(c, Kpre)
-                print('c, kpre', c, Kpre)
+                print('handle_post_spike c=%f, n=%f, weight=%f' % (c, n, weight))
+                print('t_next', t_next)
 
             # compute n
             if handle_dopa_spike:
                 n = update_dopamine(n)
-                print('n', n)
+                print('handle_dopa_spike c=%f, n=%f, weight=%f' % (c, n, weight))
+                print('t_next', t_next)
 
             # logging
             t_log.append(t)
             w_log.append(weight)
             Kpre_log.append(Kpre)
 
-        Kpost_log = [Kpost_at_time(t - self.dendritic_delay, post_spikes) for t in t_log]
+            t += self.resolution
+
+        #Kpost_log = [Kpost_at_time(t - self.dendritic_delay, post_spikes) for t in t_log]
         if DEBUG_PLOTS:
-            self.plot_weight_evolution(pre_spikes, post_spikes, dopa_spikes, t_log, w_log, Kpre_log, Kpost_log,
-                                       fname_snip=fname_snip, title_snip="reference")
+            self.plot_weight_evolution(pre_spikes, post_spikes, dopa_spikes, t_log, w_log, fname_snip=fname_snip, title_snip="reference")
 
         return t_log, w_log
 

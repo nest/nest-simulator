@@ -75,6 +75,50 @@ public:
 
 private:
   /**
+   * Open an HDF5 edge file with read access only
+   *
+   * @param fname name of the edge file
+   *
+   * @return H5File pointer
+   */
+  H5::H5File* open_file_();
+
+  /**
+   * Open an HDF5 edge file group
+   *
+   * @param file H5File pointer
+   * @param grp_name name of the group
+   *
+   * @return H5 group pointer
+   */
+  H5::Group* open_group_( const H5::H5File* file, const std::string& grp_name );
+
+  /**
+   * Open an HDF5 edge file subgroup
+   *
+   * @param group H5 group
+   * @param grp_name name of the group
+   *
+   * @return H5 subgroup pointer
+   */
+  H5::Group* open_group_( const H5::Group* group, const std::string& grp_name );
+
+  /**
+   * Open datasets required by the SONATA format
+   *
+   * @param pop_grp population group pointer
+   * @param edge_id_grp edge id group pointer
+   */
+  void open_required_dsets_( const H5::Group* pop_grp );
+
+  void try_open_edge_group_id_dsets_( const H5::Group* edge_id_grp );
+
+  void try_open_indices_dsets_( const H5::Group* pop_grp );
+
+  void read_indices_dev_( std::ofstream& dbg_file );
+  void read_indices_dev_depr_();
+
+  /**
    * Get number of elements in a dataset
    *
    * @param dataset dataset for which to get number of elements
@@ -114,7 +158,7 @@ private:
    *
    * @param group H5 group for which to check if weight or delay exists
    */
-  void is_weight_and_delay_from_dataset_( const H5::Group& group );
+  void is_weight_and_delay_from_dataset_( const H5::Group* edge_id_grp );
 
   /**
    * Create map between type id and syn_spec given in edge_dict
@@ -126,6 +170,8 @@ private:
    * @param edge_dict dictionary containing edge type id's and synapse parameters
    */
   void create_type_id_2_syn_spec_( DictionaryDatum edge_dict );
+
+  void check_dsets_consistency_();
 
   /**
    * Set synapse parameters in type_id_2_syn_spec_ and type_id_2_param_dicts_
@@ -181,7 +227,7 @@ private:
 
   void get_member_names_( hid_t loc_id, std::vector< std::string >& names );
 
-  hsize_t find_edge_id_groups_( const H5::Group& population_group, std::vector< std::string >& edge_id_group_names );
+  hsize_t find_edge_id_groups_( H5::Group* pop_grp, std::vector< std::string >& edge_id_grp_names );
 
   void try_to_load_tgt_indices_dsets_( H5::Group population_group );
 
@@ -245,13 +291,14 @@ private:
   std::map< int, std::vector< DictionaryDatum > > type_id_2_param_dicts_;
 
   //! Datasets
+  std::string fname_;
   H5::DataSet src_node_id_dset_;
   H5::DataSet tgt_node_id_dset_;
   H5::DataSet edge_type_id_dset_;
   H5::DataSet syn_weight_dset_;
   H5::DataSet delay_dset_;
-  H5::DataSet tgt_node_id_to_range_dset_;
-  H5::DataSet tgt_range_to_edge_id_dset_;
+  H5::DataSet node_id_to_range_dset_;
+  H5::DataSet range_to_edge_id_dset_;
 
   //! Profiling
   Stopwatch create_arrays_stopwatch_;

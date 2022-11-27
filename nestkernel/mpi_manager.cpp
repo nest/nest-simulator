@@ -189,7 +189,7 @@ nest::MPIManager::initialize()
   {
     LOG( M_FATAL,
       "MPIManager::initialize()",
-      "You seem to be using NEST via an MPI launcher like mpirun or mpiexec, "
+      "You seem to be using NEST via an MPI launcher like mpirun, mpiexec or srun "
       "although NEST was not compiled with MPI support. Please see the NEST "
       "documentation about parallel and distributed computing. Exiting.");
     std::exit( 127 );

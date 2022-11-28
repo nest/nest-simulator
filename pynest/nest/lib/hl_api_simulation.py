@@ -48,6 +48,7 @@ __all__ = [
 @check_stack
 def Simulate(t):
     """Simulate the network for `t` milliseconds.
+    `Simulate` triggers `Prepare`, `Run`, and `Cleanup` following this formula:
 
     Simulate(t): t' = t/m; Prepare(); for _ in range(m): Run(t'); Cleanup()
 

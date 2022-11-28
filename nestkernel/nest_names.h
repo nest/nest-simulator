@@ -75,6 +75,8 @@ extern const Name activity;
 extern const Name adapting_threshold;
 extern const Name adaptive_spike_buffers;
 extern const Name adaptive_target_buffers;
+extern const Name add_compartments;
+extern const Name add_receptors;
 extern const Name after_spike_currents;
 extern const Name ahp_bug;
 extern const Name allow_autapses;

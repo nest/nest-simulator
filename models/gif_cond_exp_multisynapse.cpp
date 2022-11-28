@@ -587,7 +587,7 @@ nest::gif_cond_exp_multisynapse::handle( SpikeEvent& e )
   if ( e.get_weight() < 0 )
   {
     throw BadProperty(
-      "Synaptic weights for conductance based models "
+      "Synaptic weights for conductance-based multisynapse models "
       "must be positive." );
   }
   assert( e.get_delay_steps() > 0 );

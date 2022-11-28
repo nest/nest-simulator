@@ -80,7 +80,7 @@ def Run(t):
 
     Call between `Prepare` and `Cleanup` calls, or within a
     ``with RunManager`` clause.
-    `Run` is automatically triggered during call to `simulate`:
+    `Run` is automatically triggered during call to `Simulate`:
 
     Simulate(t): t' = t/m; Prepare(); for _ in range(m): Run(t'); Cleanup()
 
@@ -108,12 +108,14 @@ def Run(t):
 
 @check_stack
 def Prepare():
-    """Calibrate the system before a `Run` call. Not needed for `Simulate`.
+    """Calibrate the system before a `Run` call.
+    `Prepare` is automatically triggered at beginning of call to `Simulate`:
+
+    Simulate(t): t' = t/m; Prepare(); for _ in range(m): Run(t'); Cleanup()
 
     Call before the first `Run` call, or before calling `Run` after changing
     the system, calling `SetStatus` or `Cleanup`.
 
-    Simulate(t): t' = t/m; Prepare(); for _ in range(m): Run(t'); Cleanup()
 
     See Also
     --------
@@ -126,7 +128,8 @@ def Prepare():
 
 @check_stack
 def Cleanup():
-    """Cleans up resources after a `Run` call. Not needed for `Simulate`.
+    """Cleans up resources after a `Run` call.
+    `Cleanup` is automatically triggered at the end of call to `Simulate`:
 
     Simulate(t): t' = t/m; Prepare(); for _ in range(m): Run(t'); Cleanup()
 

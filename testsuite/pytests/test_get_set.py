@@ -72,16 +72,21 @@ class TestNestGetSet(unittest.TestCase):
         Test the `nest` module's `.set` function, `KernelAttribute` assignment and errors
         on unknown attribute assignment.
         """
+
+        # Test setting one existing kernel parameter as an exemplary for all
+        # (we just want to test the Python interface, not the setting mechanism itself)
+        nest.set(rng_seed=12345)
+        self.assertEqual(nest.rng_seed, 12345, 'nest.set() failed')
+        nest.rng_seed = 345678
+        self.assertEqual(nest.rng_seed, 345678, 'Setting kernel attribute failed')
+
         # Setting the value of unknown attributes should error. Prevents user errors.
         with self.assertRaises(AttributeError, msg="arbitrary attribute assignment passed"):
             nest.absolutelyUnknownThingOnNestModule = 5
+
         # Don't allow non-KA to be replaced on the module.
         with self.assertRaises(AttributeError, msg="known attribute assignment passed"):
             nest.get = 5
-        nest.set(total_num_virtual_procs=2)
-        self.assertEqual(2, nest.total_num_virtual_procs, 'set failed')
-        nest.total_num_virtual_procs = 3
-        self.assertEqual(3, nest.total_num_virtual_procs, 'kernelattribute set failed')
 
 
 @nest.ll_api.check_stack

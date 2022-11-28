@@ -20,8 +20,10 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Create a population of iaf_psc_alpha neurons on a 4x3 grid
------------------------------------------------------------
+4x3 grid
+---------
+
+Create a population of iaf_psc_alpha neurons on a 4x3 grid.
 
 BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB

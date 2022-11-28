@@ -29,6 +29,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -40,9 +41,6 @@
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
-#include "lockptrdatum.h"
 
 using namespace nest;
 
@@ -102,24 +100,28 @@ nest::glif_cond_dynamics( double, const double y[], double f[], void* pnode )
   assert( pnode );
   const nest::glif_cond& node = *( reinterpret_cast< nest::glif_cond* >( pnode ) );
 
+  const bool is_refractory = node.S_.refractory_steps_ > 0;
+
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
 
   // The following code is verbose for the sake of clarity. We assume that a
   // good compiler will optimize the verbosity away ...
 
+  // Clamp membrane potential to V_reset while refractory.
+  const double V = is_refractory ? node.P_.V_reset_ : y[ S::V_M ];
+
   double I_syn = 0.0;
   for ( size_t i = 0; i < node.P_.n_receptors_(); ++i )
   {
     const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
-    I_syn +=
-      y[ S::G_SYN - S::NUMBER_OF_RECORDABLES_ELEMENTS + j ] * ( y[ S::V_M ] + node.P_.E_L_ - node.P_.E_rev_[ i ] );
+    I_syn += y[ S::G_SYN - S::NUMBER_OF_RECORDABLES_ELEMENTS + j ] * ( V + node.P_.E_L_ - node.P_.E_rev_[ i ] );
   }
 
-  const double I_leak = node.P_.G_ * ( y[ S::V_M ] );
+  const double I_leak = node.P_.G_ * V;
 
   // dV_m/dt
-  f[ 0 ] = ( -I_leak - I_syn + node.B_.I_ + node.S_.ASCurrents_sum_ ) / node.P_.C_m_;
+  f[ 0 ] = is_refractory ? 0.0 : ( -I_leak - I_syn + node.B_.I_ + node.S_.ASCurrents_sum_ ) / node.P_.C_m_;
 
   // d dg/dt
   for ( size_t i = 0; i < node.P_.n_receptors_(); ++i )
@@ -220,7 +222,7 @@ nest::glif_cond::Parameters_::get( DictionaryDatum& d ) const
 }
 
 double
-nest::glif_cond::Parameters_::set( const DictionaryDatum& d )
+nest::glif_cond::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
@@ -228,7 +230,7 @@ nest::glif_cond::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::E_L, E_L_ );
   const double delta_EL = E_L_ - ELold;
 
-  if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
+  if ( updateValueParam< double >( d, names::V_reset, V_reset_, node ) )
   {
     V_reset_ -= E_L_;
   }
@@ -237,7 +239,7 @@ nest::glif_cond::Parameters_::set( const DictionaryDatum& d )
     V_reset_ -= delta_EL;
   }
 
-  if ( updateValue< double >( d, names::V_th, th_inf_ ) )
+  if ( updateValueParam< double >( d, names::V_th, th_inf_, node ) )
   {
     th_inf_ -= E_L_;
   }
@@ -246,17 +248,17 @@ nest::glif_cond::Parameters_::set( const DictionaryDatum& d )
     th_inf_ -= delta_EL;
   }
 
-  updateValue< double >( d, names::g_m, G_ );
-  updateValue< double >( d, names::C_m, C_m_ );
-  updateValue< double >( d, names::t_ref, t_ref_ );
+  updateValueParam< double >( d, names::g_m, G_, node );
+  updateValueParam< double >( d, names::C_m, C_m_, node );
+  updateValueParam< double >( d, names::t_ref, t_ref_, node );
 
-  updateValue< double >( d, names::th_spike_add, th_spike_add_ );
-  updateValue< double >( d, names::th_spike_decay, th_spike_decay_ );
-  updateValue< double >( d, names::voltage_reset_fraction, voltage_reset_fraction_ );
-  updateValue< double >( d, names::voltage_reset_add, voltage_reset_add_ );
+  updateValueParam< double >( d, names::th_spike_add, th_spike_add_, node );
+  updateValueParam< double >( d, names::th_spike_decay, th_spike_decay_, node );
+  updateValueParam< double >( d, names::voltage_reset_fraction, voltage_reset_fraction_, node );
+  updateValueParam< double >( d, names::voltage_reset_add, voltage_reset_add_, node );
 
-  updateValue< double >( d, names::th_voltage_index, th_voltage_index_ );
-  updateValue< double >( d, names::th_voltage_decay, th_voltage_decay_ );
+  updateValueParam< double >( d, names::th_voltage_index, th_voltage_index_, node );
+  updateValueParam< double >( d, names::th_voltage_decay, th_voltage_decay_, node );
 
   updateValue< std::vector< double > >( d, names::asc_init, asc_init_ );
   updateValue< std::vector< double > >( d, names::asc_decay, asc_decay_ );
@@ -357,7 +359,7 @@ nest::glif_cond::Parameters_::set( const DictionaryDatum& d )
   bool Erev_flag = updateValue< std::vector< double > >( d, names::E_rev, E_rev_ );
 
   // receptor arrays have been modified
-  if ( tau_flag || Erev_flag )
+  if ( tau_flag or Erev_flag )
   {
     if ( E_rev_.size() != tau_syn_.size() )
     {
@@ -368,7 +370,7 @@ nest::glif_cond::Parameters_::set( const DictionaryDatum& d )
         + "), must have the same size." );
     }
 
-    if ( this->n_receptors_() != old_n_receptors && has_connections_ == true )
+    if ( this->n_receptors_() != old_n_receptors and has_connections_ )
     {
       throw BadProperty(
         "The neuron has connections, therefore the number of ports cannot be "
@@ -411,9 +413,9 @@ nest::glif_cond::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 }
 
 void
-nest::glif_cond::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
+nest::glif_cond::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  if ( updateValue< double >( d, names::V_m, y_[ V_M ] ) )
+  if ( updateValueParam< double >( d, names::V_m, y_[ V_M ], node ) )
   {
     y_[ V_M ] -= p.E_L_;
   }
@@ -438,12 +440,13 @@ nest::glif_cond::State_::set( const DictionaryDatum& d, const Parameters_& p, do
     }
   }
 
-  if ( updateValue< double >( d, names::threshold_spike, threshold_spike_ ) and not p.has_theta_spike_ )
+  if ( updateValueParam< double >( d, names::threshold_spike, threshold_spike_, node ) and not p.has_theta_spike_ )
   {
     throw BadProperty( "Threshold spike component is not supported or settable in the current model mechanisms." );
   }
 
-  if ( updateValue< double >( d, names::threshold_voltage, threshold_voltage_ ) and not p.has_theta_voltage_ )
+  if ( updateValueParam< double >( d, names::threshold_voltage, threshold_voltage_, node )
+    and not p.has_theta_voltage_ )
   {
     throw BadProperty( "Threshold voltage component is not supported or settable in the current model mechanisms." );
   }
@@ -451,9 +454,9 @@ nest::glif_cond::State_::set( const DictionaryDatum& d, const Parameters_& p, do
 
 nest::glif_cond::Buffers_::Buffers_( glif_cond& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
   , step_( Time::get_resolution().get_ms() )
   , IntegrationStep_( std::min( 0.01, step_ ) )
   , I_( 0.0 )
@@ -462,9 +465,9 @@ nest::glif_cond::Buffers_::Buffers_( glif_cond& n )
 
 nest::glif_cond::Buffers_::Buffers_( const Buffers_& b, glif_cond& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
   , step_( b.step_ )
   , IntegrationStep_( b.IntegrationStep_ )
   , I_( b.I_ )
@@ -527,7 +530,7 @@ nest::glif_cond::init_buffers_()
   // We must integrate this model with high-precision to obtain decent results
   B_.IntegrationStep_ = std::min( 0.01, B_.step_ );
 
-  if ( B_.c_ == 0 )
+  if ( not B_.c_ )
   {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
   }
@@ -537,14 +540,14 @@ nest::glif_cond::init_buffers_()
   }
 
   B_.sys_.function = glif_cond_dynamics;
-  B_.sys_.jacobian = NULL;
+  B_.sys_.jacobian = nullptr;
   B_.sys_.params = reinterpret_cast< void* >( this );
 
   B_.I_ = 0.0;
 }
 
 void
-nest::glif_cond::calibrate()
+nest::glif_cond::pre_run_hook()
 {
   B_.logger_.init();
 
@@ -592,14 +595,14 @@ nest::glif_cond::calibrate()
   }
 
   // reallocate instance of stepping function for ODE GSL solver
-  if ( B_.s_ != 0 )
+  if ( B_.s_ )
   {
     gsl_odeiv_step_free( B_.s_ );
   }
   B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, S_.y_.size() );
 
   // reallocate instance of evolution function for ODE GSL solver
-  if ( B_.e_ != 0 )
+  if ( B_.e_ )
   {
     gsl_odeiv_evolve_free( B_.e_ );
   }
@@ -764,7 +767,7 @@ nest::glif_cond::update( Time const& origin, const long from, const long to )
 nest::port
 nest::glif_cond::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type <= 0 || receptor_type > static_cast< port >( P_.n_receptors_() ) )
+  if ( receptor_type <= 0 or receptor_type > static_cast< port >( P_.n_receptors_() ) )
   {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }

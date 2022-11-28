@@ -131,7 +131,11 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
         extent_pos = nest.spatial.free(nest.random.uniform(-0.5, 0.5), extent=[5., 2.5])
         for pos in [self.free_pos, self.grid_pos, wrapped_pos, extent_pos]:
             nest.ResetKernel()
-            nodes = nest.Create('iaf_psc_alpha', positions=pos)
+            if pos == self.grid_pos:
+                # Don't specify number of nodes if using grid_pos
+                nodes = nest.Create('iaf_psc_alpha', positions=pos)
+            else:
+                nodes = nest.Create('iaf_psc_alpha', 10, positions=pos)
             for nodes_sliced in nodes:
                 for attr in ['edge_wrap', 'extent']:
                     spatial_attr = nodes.spatial[attr]

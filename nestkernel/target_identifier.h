@@ -49,20 +49,21 @@ class TargetIdentifierPtrRport
 
 public:
   TargetIdentifierPtrRport()
-    : target_( 0 )
+    : target_( nullptr )
     , rport_( 0 )
   {
   }
 
 
   TargetIdentifierPtrRport( const TargetIdentifierPtrRport& t ) = default;
+  TargetIdentifierPtrRport& operator=( const TargetIdentifierPtrRport& t ) = default;
 
 
   void
   get_status( DictionaryDatum& d ) const
   {
     // Do nothing if called on synapse prototype
-    if ( target_ != 0 )
+    if ( target_ )
     {
       def< long >( d, names::rport, rport_ );
       def< long >( d, names::target, target_->get_node_id() );
@@ -119,6 +120,7 @@ public:
 
 
   TargetIdentifierIndex( const TargetIdentifierIndex& t ) = default;
+  TargetIdentifierIndex& operator=( const TargetIdentifierIndex& t ) = default;
 
 
   void

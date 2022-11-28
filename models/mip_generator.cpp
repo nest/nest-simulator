@@ -102,9 +102,9 @@ nest::mip_generator::init_buffers_()
 }
 
 void
-nest::mip_generator::calibrate()
+nest::mip_generator::pre_run_hook()
 {
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
 
   // rate_ is in Hz, dt in ms, so we have to convert from s to ms
   poisson_distribution::param_type param( Time::get_resolution().get_ms() * P_.rate_ * 1e-3 );
@@ -124,7 +124,7 @@ nest::mip_generator::update( Time const& T, const long from, const long to )
 
   for ( long lag = from; lag < to; ++lag )
   {
-    if ( not StimulationDevice::is_active( T ) || P_.rate_ <= 0 )
+    if ( not StimulationDevice::is_active( T ) or P_.rate_ <= 0 )
     {
       return; // no spikes to be generated
     }

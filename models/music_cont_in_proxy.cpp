@@ -68,7 +68,7 @@ void
 nest::music_cont_in_proxy::Parameters_::set( const DictionaryDatum& d, State_& s )
 {
   // TODO: This is not possible, as P_ does not know about get_name()
-  //  if(d->known(names::port_name) && s.published_)
+  //  if(d->known(names::port_name) and s.published_)
   //    throw MUSICPortAlreadyPublished(get_name(), P_.port_name_);
 
   if ( not s.published_ )
@@ -119,7 +119,7 @@ nest::music_cont_in_proxy::init_buffers_()
 }
 
 void
-nest::music_cont_in_proxy::calibrate()
+nest::music_cont_in_proxy::pre_run_hook()
 {
   // only publish the port once
   if ( not S_.published_ )
@@ -151,7 +151,7 @@ nest::music_cont_in_proxy::calibrate()
     S_.published_ = true;
 
     std::string msg = String::compose( "Mapping MUSIC input port '%1' with width=%2.", P_.port_name_, S_.port_width_ );
-    LOG( M_INFO, "music_cont_in_proxy::calibrate()", msg.c_str() );
+    LOG( M_INFO, "music_cont_in_proxy::pre_run_hook()", msg.c_str() );
   }
 }
 

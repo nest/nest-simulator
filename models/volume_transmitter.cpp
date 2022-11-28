@@ -22,8 +22,6 @@
 
 #include "volume_transmitter.h"
 
-// C++ includes:
-#include <numeric>
 
 // Includes from nestkernel:
 #include "connector_base.h"
@@ -35,11 +33,7 @@
 #include "dict_util.h"
 
 // Includes from sli:
-#include "arraydatum.h"
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Default constructor defining default parameters
@@ -92,7 +86,7 @@ nest::volume_transmitter::init_buffers_()
 }
 
 void
-nest::volume_transmitter::calibrate()
+nest::volume_transmitter::pre_run_hook()
 {
   // +1 as pseudo dopa spike at t_trig is inserted after trigger_update_weight
   B_.spikecounter_.reserve( kernel().connection_manager.get_min_delay() * P_.deliver_interval_ + 1 );

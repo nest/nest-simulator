@@ -47,7 +47,7 @@ namespace nest
 // standard implementation to obtain the default delay, assuming that it
 // is located in GenericConnectorModel::default_connection
 // synapse types with homogeneous delays must provide a specialization
-// that returns the default delay from CommonProperties (or from  else where)
+// that returns the default delay from CommonProperties (or from else where)
 // template<typename ConnectionT>
 // double get_default_delay(const GenericConnectorModel<ConnectionT> &cm)
 // {
@@ -63,9 +63,11 @@ namespace nest
 
 template < typename ConnectionT >
 ConnectorModel*
-GenericConnectorModel< ConnectionT >::clone( std::string name ) const
+GenericConnectorModel< ConnectionT >::clone( std::string name, synindex syn_id ) const
 {
-  return new GenericConnectorModel( *this, name ); // calls copy construtor
+  ConnectorModel* new_cm = new GenericConnectorModel( *this, name ); // calls copy construtor
+  new_cm->set_syn_id( syn_id );
+  return new_cm;
 }
 
 template < typename ConnectionT >
@@ -143,7 +145,8 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
     {
       if ( has_delay_ )
       {
-        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( default_connection_.get_delay() );
+        const double d = default_connection_.get_delay();
+        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( d );
       }
       // Let connections without delay contribute to the delay extrema with
       // wfr_comm_interval. For those connections the min_delay is important
@@ -153,8 +156,8 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
       // without delay is created.
       else
       {
-        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
-          kernel().simulation_manager.get_wfr_comm_interval() );
+        const double wfr_comm_interval = kernel().simulation_manager.get_wfr_comm_interval();
+        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( wfr_comm_interval );
       }
     }
     catch ( BadDelay& e )
@@ -264,7 +267,7 @@ GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
 {
   assert( syn_id != invalid_synindex );
 
-  if ( thread_local_connectors[ syn_id ] == NULL )
+  if ( not thread_local_connectors[ syn_id ] )
   {
     // No homogeneous Connector with this syn_id exists, we need to create a new
     // homogeneous Connector.
@@ -275,7 +278,7 @@ GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
   // The following line will throw an exception, if it does not work.
   connection.check_connection( src, tgt, receptor_type, get_common_properties() );
 
-  assert( connector != 0 );
+  assert( connector );
 
   Connector< ConnectionT >* vc = static_cast< Connector< ConnectionT >* >( connector );
   vc->push_back( connection );

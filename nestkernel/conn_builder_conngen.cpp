@@ -82,7 +82,7 @@ ConnectionGeneratorBuilder::connect_()
   if ( num_parameters == 0 )
   {
     // connect source to target
-    while ( cg_->next( source, target, NULL ) )
+    while ( cg_->next( source, target, nullptr ) )
     {
       // No need to check for locality of the target, as the mask
       // created by cg_set_masks() only contains local nodes.

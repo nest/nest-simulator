@@ -463,7 +463,7 @@ OstrstreamFunction::execute( SLIInterpreter* i ) const
 #else
   std::ostrstream* out = new std::ostrstream();
 #endif
-  assert( out != NULL );
+  assert( out );
 
   if ( out->good() )
   {
@@ -492,7 +492,7 @@ StrFunction::execute( SLIInterpreter* i ) const
 
   OstreamDatum* ostreamdatum = dynamic_cast< OstreamDatum* >( i->OStack.top().datum() );
 
-  if ( ostreamdatum == NULL )
+  if ( not ostreamdatum )
   {
     OstreamDatum const d;
     Token t = i->OStack.top();
@@ -504,10 +504,10 @@ StrFunction::execute( SLIInterpreter* i ) const
 #else
   std::ostrstream* out = dynamic_cast< std::ostrstream* >( ostreamdatum->get() );
 #endif
-  assert( out != NULL );
+  assert( out );
   ostreamdatum->unlock();
 
-  if ( out != NULL )
+  if ( out )
   {
     if ( out->good() )
     {

@@ -49,6 +49,8 @@ __all__ = [
 def Simulate(t):
     """Simulate the network for `t` milliseconds.
 
+    Simulate(t): t' = t/m; Prepare(); for _ in range(m): Run(t'); Cleanup()
+
     Parameters
     ----------
     t : float
@@ -111,6 +113,8 @@ def Prepare():
     Call before the first `Run` call, or before calling `Run` after changing
     the system, calling `SetStatus` or `Cleanup`.
 
+    Simulate(t): t' = t/m; Prepare(); for _ in range(m): Run(t'); Cleanup()
+
     See Also
     --------
     Run, Cleanup
@@ -124,8 +128,11 @@ def Prepare():
 def Cleanup():
     """Cleans up resources after a `Run` call. Not needed for `Simulate`.
 
+    Simulate(t): t' = t/m; Prepare(); for _ in range(m): Run(t'); Cleanup()
+
     Closes state for a series of runs, such as flushing and closing files.
     A `Prepare` is needed after a `Cleanup` before any more calls to `Run`.
+
 
     See Also
     --------

@@ -77,7 +77,7 @@ jobs:
       - name: "Find changed files"
         run: |
           echo "CHANGED_FILES<<EOF" >> $GITHUB_ENV
-          echo "$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})" >> $GITHUB_ENV
+          echo "$(git diff --name-only ${{ github.event.pull_request.base.sha }}..${{ github.event.after }})" >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
           echo "GITHUB_ENV = $GITHUB_ENV"
           cat $GITHUB_ENV

@@ -30,7 +30,6 @@ from ..ll_api import *
 from .. import pynestkernel as kernel
 from .. import nestkernel_api as nestkernel
 from .hl_api_helper import is_iterable, model_deprecation_warning
-from .hl_api_info import SetStatus
 from .hl_api_types import NodeCollection, Parameter
 
 __all__ = [
@@ -132,7 +131,7 @@ def Create(model, n=1, params=None, positions=None):
         try:
             node_ids.set(params)
         except Exception:
-            warnings.warn("SetStatus() call failed, but nodes have already been " +
+            warnings.warn("Setting node parameters failed, but nodes have already been " +
                           f"created! The node IDs of the new nodes are: {node_ids}.")
             raise
 

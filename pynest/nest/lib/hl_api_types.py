@@ -338,8 +338,6 @@ class NodeCollection:
         See Also
         --------
         :py:func:`set`,
-        :py:func:`GetStatus()<nest.lib.hl_api_info.GetStatus>`,
-        :py:func:`SetStatus()<nest.lib.hl_api_info.SetStatus>`
 
         Examples
         --------
@@ -424,8 +422,6 @@ class NodeCollection:
         """
         Set the parameters of nodes to params.
 
-        NB! This is almost the same implementation as `SetStatus`.
-
         If `kwargs` is given, it has to be names and values of an attribute as keyword argument pairs. The values
         can be single values or list of the same size as the `NodeCollection`.
 
@@ -447,8 +443,6 @@ class NodeCollection:
         See Also
         --------
         :py:func:`get`,
-        :py:func:`SetStatus()<nest.lib.hl_api_info.SetStatus>`,
-        :py:func:`GetStatus()<nest.lib.hl_api_info.GetStatus>`
         """
 
         if not self:
@@ -837,8 +831,6 @@ class SynapseCollection:
     def set(self, params=None, **kwargs):
         """
         Set the parameters of the connections to `params`.
-
-        NB! This is almost the same implementation as SetStatus
 
         If `kwargs` is given, it has to be names and values of an attribute as keyword argument pairs. The values
         can be single values or list of the same size as the `SynapseCollection`.

@@ -282,9 +282,8 @@ nest.Connect(nrn, sr_soma)
 # simulation divided into intervals of the pattern duration
 for i in np.arange(n_rep_total):
     # Set the spike times of the pattern for each spike generator
-    for (sg, t_sp) in zip(sg_prox, t_srs):
-        nest.SetStatus(
-            sg, {'spike_times': np.array(t_sp) + i * pattern_duration})
+    for sg, t_sp in zip(sg_prox, t_srs):
+        sg.spike_times = np.array(t_sp) + i * pattern_duration
 
     nest.Simulate(pattern_duration)
 

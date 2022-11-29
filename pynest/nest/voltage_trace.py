@@ -206,7 +206,7 @@ def from_device(detec, neurons=None, title=None, grayscale=False,
 
         plt.ylabel("Membrane potential (mV)")
 
-        if nest.GetStatus(detec)[0]['time_in_steps']:
+        if detec.time_in_steps:
             plt.xlabel("Steps")
         else:
             plt.xlabel("Time (%s)" % timeunit)

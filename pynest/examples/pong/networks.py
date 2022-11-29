@@ -173,11 +173,9 @@ class PongNet(ABC):
 
         # clear all input generators
         for input_neuron in range(self.num_neurons):
-            nest.SetStatus(self.input_generators[input_neuron],
-                           {'spike_times': []})
+            self.input_generators[input_neuron].spike_times = []
 
-        nest.SetStatus(self.input_generators[input_cell],
-                       {'spike_times': self.input_train})
+        self.input_generators[input_cell].spike_times = self.input_train
 
     def get_max_activation(self):
         """Find the motor neuron with the highest activation (number of spikes).

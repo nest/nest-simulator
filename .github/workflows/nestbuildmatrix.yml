@@ -13,7 +13,7 @@ jobs:
   clang-format:
     runs-on: "ubuntu-20.04"
     env:
-      CLANG_REQUIRE_VERSION: 11
+      CLANG_REQUIRE_VERSION: 13
       CLANG_FORMAT_FILE: ".clang-format"
     steps:
       - name: "Checkout repository content"

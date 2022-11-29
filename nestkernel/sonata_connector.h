@@ -113,10 +113,6 @@ private:
 
   void try_open_edge_group_id_dsets_( const H5::Group* edge_id_grp );
 
-  void try_open_indices_dsets_( const H5::Group* pop_grp );
-
-  void read_indices_dev_( std::ofstream& dbg_file );
-  void read_indices_dev_depr_();
 
   /**
    * Get number of elements in a dataset
@@ -171,7 +167,6 @@ private:
    */
   void create_type_id_2_syn_spec_( DictionaryDatum edge_dict );
 
-  void check_dsets_consistency_();
 
   /**
    * Set synapse parameters in type_id_2_syn_spec_ and type_id_2_param_dicts_
@@ -217,23 +212,11 @@ private:
 
   void create_connections_in_chunks_( hsize_t num_conn, hsize_t chunk_size );
 
-  void create_connections_with_indices_();
-
-  void create_connections_with_indices_deprecated_();
-
-  void create_connections_with_indices_dev_();
-
   void connect_subset_( const hsize_t chunk_size, const hsize_t offset );
 
   void get_member_names_( hid_t loc_id, std::vector< std::string >& names );
 
   hsize_t find_edge_id_groups_( H5::Group* pop_grp, std::vector< std::string >& edge_id_grp_names );
-
-  void try_to_load_tgt_indices_dsets_( H5::Group population_group );
-
-  void open_dsets_( H5::Group population_group, H5::Group edge_id_group );
-
-  void open_dsets_( H5::Group population_group, H5::Group edge_id_group, H5::Group indices_group );
 
   void close_dsets_();
 
@@ -243,17 +226,6 @@ private:
 
   hsize_t get_nrows_( H5::DataSet dataset, int ndim );
 
-  hsize_t nest_node_id_to_sonata_node_id( index nest_node_id, hsize_t num_sonata_node_ids );
-
-  void read_range_to_edge_id_dset_portion_( long data_buf[][ 2 ], hsize_t row_offset );
-
-  std::vector< std::vector< int > > read_indices_dset_( H5::DataSet dataset );
-
-  std::vector< std::vector< int > >
-  read_node_id_to_range_dset_( const size_t tgt_nc_size, const size_t tgt_nc_step, const hsize_t sonata_first_node_id );
-
-  std::vector< std::vector< int > > read_range_to_edge_id_dset_( const size_t tgt_nc_size,
-    std::vector< std::vector< int > > tgt_node_id_to_range_data );
 
   /**
    * Reset all parameters
@@ -268,9 +240,6 @@ private:
 
   //! Indicates whether delays are given as dataset in SONATA file
   bool delay_dataset_exist_;
-
-  //! Indicates whether indices group for target to source is present in SONATA file
-  bool tgt_indices_exist_;
 
   //! Source node attribute
   std::string source_attribute_value_;
@@ -297,14 +266,6 @@ private:
   H5::DataSet edge_type_id_dset_;
   H5::DataSet syn_weight_dset_;
   H5::DataSet delay_dset_;
-  H5::DataSet node_id_to_range_dset_;
-  H5::DataSet range_to_edge_id_dset_;
-
-  //! Profiling
-  Stopwatch create_arrays_stopwatch_;
-  Stopwatch read_subsets_stopwatch_;
-  std::vector< Stopwatch > connect_stopwatches_;
-  std::vector< double > connect_times_;
 };
 
 

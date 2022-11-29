@@ -24,11 +24,12 @@ jobs:
       - name: "Install Linux system dependencies"
         run: |
           python -m pip install --force-reinstall clang-format==${{ env.CLANG_REQUIRE_VERSION }}
+          clang-format --version
 
       - name: "Run clang-format..."
         run: |
           files=$(find . \( -iname "*.h" -o -iname "*.c" -o -iname "*.cc" -o -iname "*.cpp" \) -not -path "./thirdparty/*")
-          diff -u <(cat ${files}) <(clang-format-${{ env.CLANG_REQUIRE_VERSION }} ${files})
+          diff -u <(cat ${files}) <(clang-format ${files})
 
   cppcheck:
     runs-on: "ubuntu-20.04"

@@ -87,8 +87,8 @@ simulators covered is available from ModelDB [3]_.
    In this model, a spike is emitted if :math:`V_m \geq V_T + 30` mV and :math:`V_m`
    has fallen during the current time step.
 
-   To avoid that this leads to multiple spikes during the falling flank of a
-   spike, it is essential to chose a sufficiently long refractory period.
+   To avoid multiple spikes from occurring during the falling flank of a
+   spike, it is essential to choose a sufficiently long refractory period.
    Traub and Miles used  :math:`t_{ref} = 3` ms ([2]_, p 118), while we used
    :math:`t_{ref} = 2` ms in [2]_.
 

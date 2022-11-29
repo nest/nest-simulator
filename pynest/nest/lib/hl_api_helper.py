@@ -38,7 +38,6 @@ import pydoc
 
 from string import Template
 
-#### from ..ll_api import check_stack, sli_func, sps, sr, spp
 from .. import pynestkernel as kernel
 from .. import nestkernel_api as nestkernel
 import nest

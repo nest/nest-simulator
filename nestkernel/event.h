@@ -45,13 +45,13 @@ namespace nest
 class Node;
 
 /**
- * Encapsulate information sent between Nodes.
+ * Encapsulate information sent between nodes.
  *
- * Event is the base class for transmitting information between Nodes in NEST,
+ * Event is the base class for transmitting information between nodes in NEST,
  * with different subclasses for transmitting different types of information. Event
  * types come in three categories
  * -# SpikeEvent can be transmitted between MPI processes
- * -# SecondaryEvent subclasses can also be transmitted between MPI processes, need to be transmitted via secondary
+ * -# SecondaryEvent subclasses can also be transmitted between MPI processes, but need to be transmitted via secondary
  connections. They can transport data.
  * -# All other Event subclasses can only be transmitted within an MPI process
  *
@@ -62,22 +62,22 @@ class Node;
  * ## Events during connection
  *
  * Node::send_test_event() creates an Event instance of the type of event
- * emitted by that Node type, and calls Node::handles_test_event() on the
+ * emitted by that node type, and calls Node::handles_test_event() on the
  * target node. During this call, the event will contain a pointer to a sender
  * node, which is not necessarily the actual sender (which may reside on a
  * different MPI rank), but usually a proxy node. The sender node id is not set.
- * The essential task of this handshake is to ensure that  the target can handle
+ * The essential task of this handshake is to ensure that the target can handle
  * the connection and requested receptor type, and to return `rport` information.
  *
  * ## Events during simulation
  *
  * Events transmit information during simulation. SpikeEvent and SecondaryEvent types are first stored
  * in buffers on the sending VP, then serialized for transmission to destination VPs and finally deserialized
- * for delivery. In this process, for the sake of efficienct NEST creates one Event object and updates its
- * properties for each single event to be delivered. In this case, no pointer to the source Node is stored
+ * for delivery. In this process, for the sake of efficiency, NEST creates one Event object and updates its
+ * properties for each single event to be delivered. In this case, no pointer to the source node is stored
  * in the Event (as it may be on a different MPI rank), but the correct sender node id is provided.
  *
- * Other Event types are delivered directly on the VP on which they are generated and can, e.g., be used
+ * Other Event types are delivered directly on the VP on which they are generated and can, for example, be used
  * for call backs or request-reply sequences.
  *
  * @see Node

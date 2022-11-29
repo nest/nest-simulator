@@ -37,7 +37,7 @@ __all__ = [
 # Type annotation to hint at dynamic singleton of DistanceParameter()
 distance: "DistanceParameter"
 """
-Object representing the distance between two nodes in space.
+A singleton instance representing the distance between two nodes in space.
 
 If used alone, the DistanceObject represents simply the Euclidean
 distance between two nodes.

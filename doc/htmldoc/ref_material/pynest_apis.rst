@@ -100,7 +100,7 @@ Functions related to spatial distributions
 ------------------------------------------
 
 .. automodule:: nest.spatial.hl_api_spatial
-    :members: distance
+    :members: 
 
 
 .. automodule:: nest.spatial_distributions.hl_api_spatial_distributions

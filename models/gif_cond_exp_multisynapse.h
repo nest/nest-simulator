@@ -121,7 +121,7 @@ positive or negative):
    which fits the model using experimental data, requires a different set of
    :math:`\eta_i` and :math:`\gamma_i`. It applies the jump of :math:`\eta_i` and
    :math:`\gamma_i` after the refractory period. One can easily convert between
-   :math:`q_{\eta/\gamma}` of these two approaches:
+   :math:`q_{\eta/\gamma}` with these two approaches:
 
    .. math::
 

@@ -49,10 +49,6 @@ nest::SparseNodeArray::SparseNodeArray()
 {
 }
 
-nest::SparseNodeArray::~SparseNodeArray()
-{
-  LOG( M_INFO, "SparseNodeArray::~", "split " + std::to_string( have_split_ ) );
-}
 
 void
 nest::SparseNodeArray::clear()
@@ -106,7 +102,7 @@ nest::SparseNodeArray::add_local_node( Node& node )
   {
     if ( left_side_has_proxies_ != node.has_proxies() )
     {
-      // node is first past splitting point<
+      // node is first past splitting point
       have_split_ = true;
     }
     else

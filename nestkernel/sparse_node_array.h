@@ -128,8 +128,6 @@ public:
   //! Create empty sparse node array
   SparseNodeArray();
 
-  ~SparseNodeArray();
-
   /**
    * Return size of container.
    *

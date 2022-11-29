@@ -280,8 +280,6 @@ class AEIFTestCase(unittest.TestCase):
         # relative differences: interpolate LSODAR to match NEST times
         mm0 = next(iter(multimeters.values()))
 
-        print(mm0.get())
-        
         nest_times = nest.GetStatus(mm0, "events")[0]["times"]
         reference = {'V_m': V_interp(nest_times), 'w': w_interp(nest_times)}
 

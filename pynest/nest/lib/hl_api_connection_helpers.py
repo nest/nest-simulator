@@ -237,8 +237,6 @@ def _connect_spatial(pre, post, projections):
                 d[k] = v._datum
         return d
 
-    print("### 7", fixdict(projections))
-
     nestkernel.llapi_connect_layers(pre, post, fixdict(projections))
 
 

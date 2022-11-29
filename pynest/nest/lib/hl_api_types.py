@@ -406,15 +406,11 @@ class NodeCollection:
         elif output == 'json':
             result = to_json(result)
 
-        print("### 7", result)
-            
         if isinstance(result, dict) and len(self) == 1:
             new_result = {}
             for k,v in result.items():                
                 new_result[k] = v[0] if is_iterable(v) and len(v) == 1 else v
             result = new_result
-
-        print("### 8", result)
             
         return result
 
@@ -454,8 +450,6 @@ class NodeCollection:
 
         local_nodes = [self.local] if len(self) == 1 else self.local
 
-        print("### 1", params)
-
         if isinstance(params, dict) and all(local_nodes):
 
             node_params = self[0].get()
@@ -476,8 +470,6 @@ class NodeCollection:
 
         if isinstance(params, dict):
             params = [params]
-
-        print("### 2", params)
 
         nestkernel.llapi_set_nc_status(self._datum, params)
 

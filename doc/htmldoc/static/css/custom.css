@@ -679,11 +679,11 @@ margin: 0;
 }
 .flex-control-nav {bottom: 5px;}
 
-
+/*
 aside {
 	float:right;
 	width:30%;
-}
+}*/
 
 /*** MAIN MENU - ESSENTIAL STYLES ***/
 .menu-toggle{display:none;}

@@ -23,8 +23,7 @@ jobs:
 
       - name: "Install Linux system dependencies"
         run: |
-          sudo apt update
-          sudo apt install clang-format-${{ env.CLANG_REQUIRE_VERSION }}
+          python -m pip install --force-reinstall clang-format==${{ env.CLANG_REQUIRE_VERSION }}
 
       - name: "Run clang-format..."
         run: |

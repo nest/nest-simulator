@@ -24,10 +24,8 @@
 
 // C++ includes:
 #include <cmath>
-#include <limits>
 
 // Includes from libnestutil:
-#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -41,8 +39,6 @@
 #include "booldatum.h"
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 
 /* ----------------------------------------------------------------
@@ -227,9 +223,9 @@ nest::inhomogeneous_poisson_generator::init_buffers_()
 }
 
 void
-nest::inhomogeneous_poisson_generator::calibrate()
+nest::inhomogeneous_poisson_generator::pre_run_hook()
 {
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
   V_.h_ = Time::get_resolution().get_ms();
 }
 

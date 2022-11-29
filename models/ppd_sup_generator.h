@@ -128,7 +128,7 @@ public:
 private:
   void init_state_() override;
   void init_buffers_() override;
-  void calibrate() override;
+  void pre_run_hook() override;
 
   /**
    * Update state.
@@ -251,7 +251,7 @@ ppd_sup_generator::send_test_event( Node& target, rport receptor_type, synindex 
     SpikeEvent e;
     e.set_sender( *this );
     const port p = target.handles_test_event( e, receptor_type );
-    if ( p != invalid_port_ and not is_model_prototype() )
+    if ( p != invalid_port and not is_model_prototype() )
     {
       ++P_.num_targets_; // count number of targets
     }

@@ -163,12 +163,12 @@ public:
   bool has_proxies() const override;
   Name get_element_type() const override;
 
-  using Device::calibrate;
   using Device::init_buffers;
   using Device::init_state;
-  using Node::calibrate;
+  using Device::pre_run_hook;
+  using Node::pre_run_hook;
 
-  void calibrate() override;
+  void pre_run_hook() override;
 
   //! Throws IllegalConnection if synapse id differs from initial synapse id
   void enforce_single_syn_type( synindex );
@@ -203,6 +203,7 @@ protected:
 
     Parameters_();
     Parameters_( const Parameters_& ) = default;
+    Parameters_& operator=( const Parameters_& ) = default;
     void get( DictionaryDatum& ) const;
     void set( const DictionaryDatum& );
   } P_;

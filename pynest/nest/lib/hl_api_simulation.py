@@ -92,6 +92,8 @@ def Run(t):
     membrane or synaptic times constants will not work correctly. If in doubt, assume
     that changes may cause undefined behavior and check these thoroughly.
 
+    Also note that `local_spike_counter` is reset each time you call `Run`.
+
     See Also
     --------
     Prepare, Cleanup, RunManager, Simulate
@@ -139,7 +141,7 @@ def RunManager():
 
     Calls `Prepare` before a series of `Run` calls, and calls `Cleanup` at end.
 
-    E.g.:
+    For example:
 
     ::
 

@@ -23,9 +23,16 @@
 #include "modelsmodule.h"
 
 // Includes from nestkernel
+#include "common_synapse_properties.h"
+#include "connector_model_impl.h"
+#include "genericmodel.h"
 #include "genericmodel_impl.h"
+#include "kernel_manager.h"
+#include "model.h"
+#include "model_manager_impl.h"
+#include "target_identifier.h"
 
-// Generated includes:
+// Generated includes
 #include "config.h"
 
 // Neuron models
@@ -116,7 +123,7 @@
 #include "volume_transmitter.h"
 #include "weight_recorder.h"
 
-// Prototypes for synapses
+// Synapse models
 #include "bernoulli_synapse.h"
 #include "clopath_synapse.h"
 #include "common_synapse_properties.h"
@@ -148,15 +155,6 @@
 #include "urbanczik_synapse.h"
 #include "vogels_sprekeler_synapse.h"
 
-// Includes from nestkernel:
-#include "common_synapse_properties.h"
-#include "connector_model_impl.h"
-#include "genericmodel.h"
-#include "kernel_manager.h"
-#include "model.h"
-#include "model_manager_impl.h"
-#include "target_identifier.h"
-
 #ifdef HAVE_MUSIC
 #include "music_cont_in_proxy.h"
 #include "music_cont_out_proxy.h"
@@ -166,6 +164,7 @@
 #include "music_rate_in_proxy.h"
 #include "music_rate_out_proxy.h"
 #endif
+
 
 namespace nest
 {
@@ -181,7 +180,7 @@ ModelsModule::~ModelsModule()
 }
 
 const std::string
-ModelsModule::name( void ) const
+ModelsModule::name() const
 {
   return std::string( "NEST Standard Models Module" ); // Return name of the module
 }
@@ -258,7 +257,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< ginzburg_neuron >( "ginzburg_neuron" );
   kernel().model_manager.register_node_model< mcculloch_pitts_neuron >( "mcculloch_pitts_neuron" );
   kernel().model_manager.register_node_model< izhikevich >( "izhikevich" );
-  kernel().model_manager.register_node_model< spike_dilutor >( "spike_dilutor" );
+  kernel().model_manager.register_node_model< spike_dilutor >(
+    "spike_dilutor", /*deprecation_info*/ "a future version of NEST" );
 
   kernel().model_manager.register_node_model< spike_recorder >( "spike_recorder" );
   kernel().model_manager.register_node_model< weight_recorder >( "weight_recorder" );
@@ -341,7 +341,6 @@ ModelsModule::init( SLIInterpreter* )
   // register secondary connection models
   register_secondary_connection_model< GapJunction >(
     "gap_junction", RegisterConnectionModelFlags::REQUIRES_SYMMETRIC | RegisterConnectionModelFlags::SUPPORTS_WFR );
-
   register_secondary_connection_model< RateConnectionInstantaneous >(
     "rate_connection_instantaneous", RegisterConnectionModelFlags::SUPPORTS_WFR );
   register_secondary_connection_model< RateConnectionDelayed >(

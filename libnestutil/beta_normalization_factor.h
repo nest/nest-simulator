@@ -75,7 +75,6 @@ beta_normalization_factor( const double tau_rise, const double tau_decay )
 {
   const double tau_difference = tau_decay - tau_rise;
   double peak_value = 0;
-  double normalization_factor = 0;
   if ( std::abs( tau_difference ) > std::numeric_limits< double >::epsilon() )
   {
     // peak time
@@ -86,14 +85,13 @@ beta_normalization_factor( const double tau_rise, const double tau_decay )
   if ( std::abs( peak_value ) < std::numeric_limits< double >::epsilon() )
   {
     // if rise time == decay time use alpha function
-    normalization_factor = 1. * numerics::e / tau_decay;
+    return numerics::e / tau_decay;
   }
   else
   {
     // if rise time != decay time use beta function
-    normalization_factor = ( 1. / tau_rise - 1. / tau_decay ) / peak_value;
+    return ( 1. / tau_rise - 1. / tau_decay ) / peak_value;
   }
-  return normalization_factor;
 }
 
 } // of namespace nest

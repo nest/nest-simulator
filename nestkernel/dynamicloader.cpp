@@ -93,7 +93,8 @@ DynamicLoaderModule::getLinkedModules()
   the following SLI datastructures: Name, Dictionary.
 */
 DynamicLoaderModule::DynamicLoaderModule( SLIInterpreter& interpreter )
-  : loadmodule_function( dyn_modules )
+  : dyn_modules()
+  , loadmodule_function( dyn_modules )
 {
   interpreter.def( "moduledict", new DictionaryDatum( moduledict_ ) );
 }
@@ -103,10 +104,10 @@ DynamicLoaderModule::~DynamicLoaderModule()
   // unload all loaded modules
   for ( vecDynModules::iterator it = dyn_modules.begin(); it != dyn_modules.end(); ++it )
   {
-    if ( it->handle != NULL )
+    if ( it->handle )
     {
       lt_dlclose( it->handle );
-      it->handle = NULL;
+      it->handle = nullptr;
     }
   }
 
@@ -116,13 +117,13 @@ DynamicLoaderModule::~DynamicLoaderModule()
 // The following concerns the new module: -----------------------
 
 const std::string
-DynamicLoaderModule::name( void ) const
+DynamicLoaderModule::name() const
 {
   return std::string( "NEST-Dynamic Loader" ); // Return name of the module
 }
 
 const std::string
-DynamicLoaderModule::commandstring( void ) const
+DynamicLoaderModule::commandstring() const
 {
   return std::string( "" ); // Run associated SLI startup script
 }
@@ -270,7 +271,11 @@ DynamicLoaderModule::init( SLIInterpreter* i )
     LOG( M_ERROR, "DynamicLoaderModule::init", "Could not initialize libltdl. No dynamic modules will be available." );
   }
 
-  if ( lt_dladdsearchdir( NEST_INSTALL_PREFIX "/" NEST_INSTALL_LIBDIR ) )
+  // To avoid problems due to string substitution in NEST binaries during
+  // Conda installation, we need to convert the literal to string, cstr and back,
+  // see #2237 and https://github.com/conda/conda-build/issues/1674#issuecomment-280378336
+  const std::string module_dir = std::string( NEST_INSTALL_PREFIX ).c_str() + std::string( "/" NEST_INSTALL_LIBDIR );
+  if ( lt_dladdsearchdir( module_dir.c_str() ) )
   {
     LOG( M_ERROR, "DynamicLoaderModule::init", "Could not add dynamic module search directory." );
   }
@@ -280,7 +285,7 @@ DynamicLoaderModule::init( SLIInterpreter* i )
 int
 DynamicLoaderModule::registerLinkedModule( SLIModule* pModule )
 {
-  assert( pModule != 0 );
+  assert( pModule );
   getLinkedModules().push_back( pModule );
   return getLinkedModules().size();
 }

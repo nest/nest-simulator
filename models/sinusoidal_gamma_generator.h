@@ -223,7 +223,7 @@ public:
 private:
   void init_state_() override;
   void init_buffers_() override;
-  void calibrate() override;
+  void pre_run_hook() override;
   void event_hook( DSSpikeEvent& ) override;
 
   void update( Time const&, const long, const long ) override;
@@ -367,7 +367,7 @@ sinusoidal_gamma_generator::send_test_event( Node& target, rport receptor_type, 
       SpikeEvent e;
       e.set_sender( *this );
       const rport r = target.handles_test_event( e, receptor_type );
-      if ( r != invalid_port_ and not is_model_prototype() )
+      if ( r != invalid_port and not is_model_prototype() )
       {
         ++P_.num_trains_;
       }

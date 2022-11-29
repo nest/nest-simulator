@@ -54,12 +54,12 @@ public:
   /**
    * Return pointer to cloned model with same name.
    */
-  Model* clone( const std::string& ) const;
+  Model* clone( const std::string& ) const override;
 
-  bool has_proxies();
-  bool one_node_per_process();
-  bool is_off_grid();
-  void calibrate_time( const TimeConverter& tc );
+  bool has_proxies() override;
+  bool one_node_per_process() override;
+  bool is_off_grid() override;
+  void calibrate_time( const TimeConverter& tc ) override;
   /**
      @note The decision of whether one node can receive a certain
      event was originally in the node. But in the distributed case,
@@ -74,36 +74,36 @@ public:
      model they represent, they can now answer a call to check
      connection by referring back to the model.
    */
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void sends_secondary_event( GapJunctionEvent& ge );
+  void sends_secondary_event( GapJunctionEvent& ge ) override;
 
-  SignalType sends_signal() const;
+  SignalType sends_signal() const override;
 
-  void sends_secondary_event( InstantaneousRateConnectionEvent& re );
+  void sends_secondary_event( InstantaneousRateConnectionEvent& re ) override;
 
-  void sends_secondary_event( DiffusionConnectionEvent& de );
+  void sends_secondary_event( DiffusionConnectionEvent& de ) override;
 
-  void sends_secondary_event( DelayedRateConnectionEvent& re );
+  void sends_secondary_event( DelayedRateConnectionEvent& re ) override;
 
-  Node const& get_prototype() const;
+  Node const& get_prototype() const override;
 
-  void set_model_id( int );
+  void set_model_id( int ) override;
 
-  int get_model_id();
+  int get_model_id() override;
 
-  void deprecation_warning( const std::string& );
+  void deprecation_warning( const std::string& ) override;
 
 private:
-  void set_status_( DictionaryDatum );
-  DictionaryDatum get_status_();
+  void set_status_( DictionaryDatum ) override;
+  DictionaryDatum get_status_() override;
 
-  size_t get_element_size() const;
+  size_t get_element_size() const override;
 
   /**
    * Call placement new on the supplied memory position.
    */
-  Node* create_();
+  Node* create_() override;
 
   /**
    * Prototype node from which all instances are constructed.

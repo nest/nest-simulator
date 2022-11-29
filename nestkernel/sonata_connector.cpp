@@ -111,14 +111,13 @@ SonataConnector::connect()
   // - target_node_id has the expected shape after tallying the number of connections from range_to_edge_id;
   // the remaining datasets then have to be of correct shape because of the above checks
 
-  const auto rank = kernel().mpi_manager.get_rank();
-  const std::string dbg_filename = "dbg_" + std::to_string( rank ) + ".txt";
+  const auto this_rank = kernel().mpi_manager.get_rank(); // for debugging
+  const std::string dbg_filename = "dbg_" + std::to_string( this_rank ) + ".txt";
   std::ofstream dbg_file( dbg_filename );
 
 
   auto edges = getValue< ArrayDatum >( sonata_dynamics_->lookup( "edges" ) );
 
-  const auto this_rank = kernel().mpi_manager.get_rank(); // for debugging
 
   // Iterate edge files
   for ( auto edge_dictionary_datum : edges )
@@ -657,6 +656,7 @@ SonataConnector::read_indices_dev_( std::ofstream& dbg_file )
         coord[ j ] = start_edge_id + counter;
         counter++;
       }
+
       try
       {
         src_node_id_dspace.selectElements( H5S_SELECT_APPEND, n_conns_cur, coord );

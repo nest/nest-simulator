@@ -34,12 +34,18 @@ set( nestutil_sources
     regula_falsi.h
     sort.h
     stopwatch.h stopwatch.cpp
-    streamers.h
     string_utils.h
     vector_util.h
     )
 
 add_library( nestutil ${nestutil_sources} )
+
+set_target_properties( nestutil
+    PROPERTIES
+    VERSION ${NEST_VERSION}
+    SOVERSION 3
+    )
+
 
 target_link_libraries( nestutil ${GSL_LIBRARIES} ${SIONLIB_LIBS} )
 

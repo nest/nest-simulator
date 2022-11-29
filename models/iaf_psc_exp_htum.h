@@ -45,15 +45,15 @@ Leaky integrate-and-fire model with separate relative and absolute refractory pe
 Description
 +++++++++++
 
-iaf_psc_exp_htum is an implementation of a leaky integrate-and-fire model
+``iaf_psc_exp_htum`` is an implementation of a leaky integrate-and-fire model
 with exponential shaped postsynaptic currents (PSCs) according to [1]_.
 The postsynaptic currents have an infinitely short rise time.
 In particular, this model allows setting an absolute and relative
 refractory time separately, as required by [1]_.
 
 The threshold crossing is followed by an absolute refractory period
-(t_ref_abs) during which the membrane potential is clamped to the resting
-potential. During the total refractory period (t_ref_tot), the membrane
+(``t_ref_abs``) during which the membrane potential is clamped to the resting
+potential. During the total refractory period (``t_ref_tot``), the membrane
 potential evolves, but the neuron will not emit a spike, even if the
 membrane potential reaches threshold. The total refractory time must be
 larger or equal to the absolute refractory time. If equal, the
@@ -88,12 +88,15 @@ neuron like dynamics interacting by point events is described in
 
 .. note::
 
-    If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
-    will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
-    `tau_syn_in`, respectively, to avoid numerical instabilities.
+   If ``tau_m`` is very close to ``tau_syn_ex`` or ``tau_syn_in``, the model
+   will numerically behave as if ``tau_m`` is equal to ``tau_syn_ex`` or
+   ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
     For implementation details see the
     `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+
+
+See also [4]_.
 
 Parameters
 ++++++++++
@@ -160,24 +163,24 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< iaf_psc_exp_htum >;

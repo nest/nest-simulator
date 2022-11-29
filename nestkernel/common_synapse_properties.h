@@ -25,7 +25,6 @@
 
 // Includes from nestkernel:
 #include "connector_model.h"
-#include "nest_datums.h"
 #include "nest_types.h"
 #include "node.h"
 
@@ -93,11 +92,11 @@ public:
   /**
    * get weight_recorder
    */
-  NodeCollectionDatum get_weight_recorder() const;
+  NodeCollectionPTR get_weight_recorder() const;
 
 
 private:
-  NodeCollectionDatum weight_recorder_;
+  NodeCollectionPTR weight_recorder_;
   long wr_node_id_;
 };
 
@@ -113,7 +112,7 @@ CommonSynapseProperties::get_wr_node_id() const
   return wr_node_id_;
 }
 
-inline NodeCollectionDatum
+inline NodeCollectionPTR
 CommonSynapseProperties::get_weight_recorder() const
 {
   return weight_recorder_;

@@ -35,11 +35,8 @@
 #include "regula_falsi.h"
 
 // Includes from sli:
-#include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 
 /* ----------------------------------------------------------------
@@ -270,14 +267,14 @@ nest::iaf_psc_exp_ps_lossless::init_buffers_()
 }
 
 void
-nest::iaf_psc_exp_ps_lossless::calibrate()
+nest::iaf_psc_exp_ps_lossless::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
   V_.h_ms_ = Time::get_resolution().get_ms();
 
-  V_.exp_tau_m_ = std::exp( -V_.h_ms_ / P_.tau_m_ );
+  V_.expm1_tau_m_ = std::expm1( -V_.h_ms_ / P_.tau_m_ );
   V_.exp_tau_ex_ = std::exp( -V_.h_ms_ / P_.tau_ex_ );
   V_.exp_tau_in_ = std::exp( -V_.h_ms_ / P_.tau_in_ );
 
@@ -339,7 +336,7 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin, const long from, cons
 
     // if neuron returns from refractoriness during this step, place
     // pseudo-event in queue to mark end of refractory period
-    if ( S_.is_refractory_ && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
+    if ( S_.is_refractory_ and T + 1 - S_.last_spike_step_ == V_.refractory_steps_ )
     {
       B_.events_.add_refractory( T, S_.last_spike_offset_ );
     }
@@ -364,8 +361,11 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin, const long from, cons
       // update membrane potential
       if ( not S_.is_refractory_ )
       {
+        // If we use S_.y2_ * std::exp( -V_.h_ms_ / P_.tau_m_ ) instead of
+        // V_.expm1_tau_m_ * S_.y2_ + S_.y2_ here, the accuracy decreases,
+        // see test_iaf_ps_dc_t_accuracy.sli for details.
         S_.y2_ = V_.P20_ * ( P_.I_e_ + S_.y0_ ) + V_.P21_ex_ * S_.I_syn_ex_ + V_.P21_in_ * S_.I_syn_in_
-          + S_.y2_ * V_.exp_tau_m_;
+          + V_.expm1_tau_m_ * S_.y2_ + S_.y2_;
 
         // lower bound of membrane potential
         S_.y2_ = ( S_.y2_ < P_.U_min_ ? P_.U_min_ : S_.y2_ );
@@ -623,7 +623,7 @@ nest::iaf_psc_exp_ps_lossless::is_spike_( const double dt )
   // no-spike, NS_1, (V <= g_h,I_e(I) and V < f_h,I_e(I))
   if ( ( V_0 < ( ( ( I_0 + I_e ) * ( V_.b1_ * exp_tau_m + V_.b2_ * exp_tau_s ) + V_.b3_ * ( exp_tau_m - exp_tau_s ) )
            / ( V_.b4_ * exp_tau_s ) ) )
-    and ( V_0 <= f ) )
+    and V_0 <= f )
   {
     return numerics::nan;
   }

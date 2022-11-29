@@ -77,6 +77,8 @@ For all other purposes, it is recommended to use the standard technique for
 forward Euler integration. In this case, ``consistent_integration`` must be set
 to true (default).
 
+For a detailed analysis and discussion of the numerical issues in the original publication, see [2]_.
+
 Parameters
 ++++++++++
 
@@ -98,8 +100,12 @@ The following parameters can be set in the status dictionary.
 References
 ++++++++++
 
-.. [1] Izhikevich EM (2003). Simple model of spiking neurons. IEEE Transactions
+.. [1] Izhikevich EM. (2003). Simple model of spiking neurons. IEEE Transactions
        on Neural Networks, 14:1569-1572. DOI: https://doi.org/10.1109/TNN.2003.820440
+
+.. [2] Pauli R, Weidel P, Kunkel S, Morrison A (2018). Reproducing polychronization: A guide to maximizing
+       the reproducibility of spiking network models. Frontiers in Neuroinformatics, 12.
+       DOI: https://www.frontiersin.org/article/10.3389/fninf.2018.00046
 
 Sends
 +++++
@@ -133,27 +139,27 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  void handle( DataLoggingRequest& );
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
+  void handle( DataLoggingRequest& ) override;
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
 
-  port handles_test_event( DataLoggingRequest&, rport );
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
+  port handles_test_event( DataLoggingRequest&, rport ) override;
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
   friend class RecordablesMap< izhikevich >;
   friend class UniversalDataLogger< izhikevich >;
 
-  void init_buffers_();
-  void calibrate();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   // ----------------------------------------------------------------
 

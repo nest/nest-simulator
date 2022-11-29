@@ -33,11 +33,6 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
@@ -123,9 +118,9 @@ nest::poisson_generator_ps::init_buffers_()
 }
 
 void
-nest::poisson_generator_ps::calibrate()
+nest::poisson_generator_ps::pre_run_hook()
 {
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
   if ( P_.rate_ > 0 )
   {
     V_.inv_rate_ms_ = 1000.0 / P_.rate_ - P_.dead_time_;
@@ -178,10 +173,10 @@ nest::poisson_generator_ps::calibrate()
 void
 nest::poisson_generator_ps::update( Time const& T, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  if ( P_.rate_ <= 0 || P_.num_targets_ == 0 )
+  if ( P_.rate_ <= 0 or P_.num_targets_ == 0 )
   {
     return;
   }
@@ -213,7 +208,7 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
   const port prt = e.get_port();
 
   // we handle only one port here, get reference to vector elem
-  assert( 0 <= prt && static_cast< size_t >( prt ) < B_.next_spike_.size() );
+  assert( 0 <= prt and static_cast< size_t >( prt ) < B_.next_spike_.size() );
 
   // obtain rng
   RngPtr rng = get_vp_specific_rng( get_thread() );
@@ -293,9 +288,8 @@ nest::poisson_generator_ps::set_data_from_stimulation_backend( std::vector< doub
       throw BadParameterValue( "The size of the data for the poisson_generator_ps need to be 2 [dead_time, rate]." );
     }
     dictionary d;
-    ( new Dictionary );
-    d[ names::dead_time ] = DoubleDatum( input_param[ 0 ] );
-    d[ names::rate ] = DoubleDatum( input_param[ 1 ] );
+    d[ names::dead_time ] = input_param[ 0 ];
+    d[ names::rate ] = input_param[ 1 ];
     ptmp.set( d, this );
   }
 

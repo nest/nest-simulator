@@ -78,7 +78,7 @@ public:
   }
 
   /** Set internal variables before calls to SimulationManager::run() */
-  virtual void calibrate();
+  virtual void pre_run_hook();
 
   virtual void get_status( dictionary& ) const;
   virtual void set_status( const dictionary& );

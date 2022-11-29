@@ -40,26 +40,24 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-#include "dictdatum.h"
-
 /* BeginUserDocs: integrate-and-fire, conductance-based
 
 Short description
 +++++++++++++++++
 
-Conductance-based generalized leaky integrate and fire (GLIF) model
+Conductance-based generalized leaky integrate and fire (GLIF) model (from the Allen Institute)
 
 Description
 +++++++++++
 
-glif_cond provides five generalized leaky integrate
+``glif_cond`` provides five generalized leaky integrate
 and fire (GLIF) models [1]_ with conductance-based synapses.
 Incoming spike events induce a postsynaptic change of conductance modeled
 by an alpha function [2]_. The alpha function is normalized such that an event
-of weight 1.0 results in a peak conductance change of 1 nS at t = tau_syn. On
+of weight 1.0 results in a peak conductance change of 1 nS at :math:`t = tau_syn`. On
 the postsynaptic side, there can be arbitrarily many synaptic time constants.
 This can be reached by specifying separate receptor ports, each for a different
-time constant. The port number has to match the respective "receptor_type" in
+time constant. The port number has to match the respective ``receptor_type`` in
 the connectors.
 
 The five GLIF models are:
@@ -76,7 +74,7 @@ The five GLIF models are:
 Remarks:
 
 GLIF model mechanism setting is based on three parameters
-(spike_dependent_threshold, after_spike_currents, adapting_threshold).
+(``spike_dependent_threshold``, ``after_spike_currents``, ``adapting_threshold``).
 The settings of these three parameters for the five GLIF models are listed
 below. Other combinations of these parameters will not be supported.
 
@@ -105,8 +103,8 @@ parameter setting of voltage_reset_fraction and voltage_reset_add may lead to th
 situation that voltage is bigger than threshold after reset. In this case, the neuron
 will continue to spike until the end of the simulation regardless the stimulated inputs.
 We recommend the setting of the parameters of these three models to follow the
-condition of (E_L + voltage_reset_fraction * ( V_th - E_L ) + voltage_reset_add)
-< (V_th + th_spike_add).
+condition of :math:`(E_L + voltage_reset_fraction * ( V_th - E_L ) + voltage_reset_add)
+< (V_th + th_spike_add)`.
 
 Parameters
 ++++++++++
@@ -130,36 +128,36 @@ V_reset    double   Reset potential of the membrane in mV (GLIF 1 or GLIF 3)
 -------------------------------------------------------------------------------
 th_spike_add               double         Threshold addition following spike
                                           in mV (delta_theta_s in Equation (6)
-                                          in [1])
+                                          in [1]_)
 th_spike_decay             double         Spike-induced threshold time
                                           constant in 1/ms (bs in Equation (2)
-                                          in [1])
+                                          in [1]_)
 voltage_reset_fraction     double         Voltage fraction coefficient
                                           following spike (fv in Equation (5)
-                                          in [1])
+                                          in [1]_)
 voltage_reset_add          double         Voltage addition following spike in
                                           mV (-delta_V (sign flipped) in
-                                          Equation (5) in [1])
+                                          Equation (5) in [1]_)
 asc_init                   double vector  Initial values of after-spike
                                           currents in pA
 asc_decay                  double vector  After-spike current time constants
-                                          in 1/ms (kj in Equation (3) in [1])
+                                          in 1/ms (kj in Equation (3) in [1]_)
 asc_amps                   double vector  After-spike current amplitudes in
-                                          pA (deltaIj in Equation (7) in [1])
+                                          pA (deltaIj in Equation (7) in [1]_)
 asc_r                      double vector  Current fraction following spike
                                           coefficients for fj in Equation (7)
-                                          in [1]
+                                          in [1]_
 th_voltage_index           double         Adaptation index of threshold - A
                                           'leak-conductance' for the
                                           voltage-dependent component of the
                                           threshold in 1/ms (av in Equation
-                                          (4) in [1])
+                                          (4) in [1]_)
 th_voltage_decay           double         Voltage-induced threshold time
                                           constant - Inverse of which is the
                                           time constant of the
                                           voltage-dependent component of the
                                           threshold in 1/ms (bv in Equation
-                                          (4) in [1])
+                                          (4) in [1]_)
 tau_syn                    double vector  Rise time constants of the synaptic
                                           alpha function in ms
 E_rev                      double vector  Reversal potential in mV
@@ -176,13 +174,13 @@ adapting_threshold         bool           flag whether the neuron has a
 References
 ++++++++++
 
-..  [1] Teeter C, Iyer R, Menon V, Gouwens N, Feng D, Berg J, Szafer A,
-        Cain N, Zeng H, Hawrylycz M, Koch C, & Mihalas S (2018)
-        Generalized leaky integrate-and-fire models classify multiple neuron
-        types. Nature Communications 9:709.
-..  [2] Meffin, H., Burkitt, A. N., & Grayden, D. B. (2004). An analytical
-        model for the large, fluctuating synaptic conductance state typical of
-        neocortical neurons in vivo. J.  Comput. Neurosci., 16, 159-175.
+.. [1] Teeter C, Iyer R, Menon V, Gouwens N, Feng D, Berg J, Szafer A,
+       Cain N, Zeng H, Hawrylycz M, Koch C, & Mihalas S (2018)
+       Generalized leaky integrate-and-fire models classify multiple neuron
+       types. Nature Communications 9:709.
+.. [2] Meffin, H., Burkitt, A. N., & Grayden, D. B. (2004). An analytical
+       model for the large, fluctuating synaptic conductance state typical of
+       neocortical neurons in vivo. J.  Comput. Neurosci., 16, 159-175.
 
 See also
 ++++++++
@@ -203,33 +201,33 @@ public:
 
   glif_cond( const glif_cond& );
 
-  ~glif_cond();
+  ~glif_cond() override;
 
   using nest::Node::handle;
   using nest::Node::handles_test_event;
 
-  nest::port send_test_event( nest::Node&, nest::port, nest::synindex, bool );
+  nest::port send_test_event( nest::Node&, nest::port, nest::synindex, bool ) override;
 
-  void handle( nest::SpikeEvent& );
-  void handle( nest::CurrentEvent& );
-  void handle( nest::DataLoggingRequest& );
+  void handle( nest::SpikeEvent& ) override;
+  void handle( nest::CurrentEvent& ) override;
+  void handle( nest::DataLoggingRequest& ) override;
 
-  nest::port handles_test_event( nest::SpikeEvent&, nest::port );
-  nest::port handles_test_event( nest::CurrentEvent&, nest::port );
-  nest::port handles_test_event( nest::DataLoggingRequest&, nest::port );
+  nest::port handles_test_event( nest::SpikeEvent&, nest::port ) override;
+  nest::port handles_test_event( nest::CurrentEvent&, nest::port ) override;
+  nest::port handles_test_event( nest::DataLoggingRequest&, nest::port ) override;
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
   //! Reset internal buffers of neuron.
-  void init_buffers_();
+  void init_buffers_() override;
 
   //! Initialize auxiliary quantities, leave parameters and state untouched.
-  void calibrate();
+  void pre_run_hook() override;
 
   //! Take neuron through given time interval
-  void update( nest::Time const&, const long, const long );
+  void update( nest::Time const&, const long, const long ) override;
 
   // make dynamics function quasi-member
   friend int glif_cond_dynamics( double, const double*, double*, void* );
@@ -279,7 +277,7 @@ private:
     Parameters_();
 
     void get( dictionary& ) const;
-    double set( const dictionary& );
+    double set( const dictionary&, Node* );
   };
 
 
@@ -321,7 +319,7 @@ private:
     State_( const Parameters_& );
 
     void get( dictionary&, const Parameters_& ) const;
-    void set( const dictionary&, const Parameters_&, double );
+    void set( const dictionary&, const Parameters_&, double, Node* );
   };
 
 
@@ -482,10 +480,10 @@ glif_cond::get_status( dictionary& d ) const
 inline void
 glif_cond::set_status( const dictionary& d )
 {
-  Parameters_ ptmp = P_;                 // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d ); // throws if BadProperty
-  State_ stmp = S_;                      // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL );         // throws if BadProperty
+  Parameters_ ptmp = P_;                       // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
+  State_ stmp = S_;                            // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
 
   ArchivingNode::set_status( d );
 

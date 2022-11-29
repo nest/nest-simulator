@@ -26,7 +26,6 @@
 #include "layer.h"
 
 // Includes from nestkernel:
-#include "nest_datums.h"
 #include "node_collection.h"
 
 // Includes from spatial:
@@ -116,7 +115,7 @@ Layer< D >::connect( NodeCollectionPTR source_nc,
   // We need to extract the real pointer here to be able to cast to the
   // dimension-specific subclass.
   AbstractLayer* target_abs = target_layer.get();
-  assert( target_abs != 0 );
+  assert( target_abs );
 
   try
   {
@@ -172,7 +171,7 @@ Layer< D >::get_global_positions_ntree( std::bitset< D > periodic,
   do_get_global_positions_ntree_( node_collection );
 
   // Do not use cache since the periodic bits and extents were altered.
-  cached_ntree_md_ = NodeCollectionMetadataPTR( 0 );
+  cached_ntree_md_ = NodeCollectionMetadataPTR( nullptr );
 
   return cached_ntree_;
 }
@@ -247,7 +246,7 @@ Layer< D >::get_global_positions_vector( NodeCollectionPTR node_collection )
 
 template < int D >
 std::vector< std::pair< Position< D >, index > >
-Layer< D >::get_global_positions_vector( const MaskDatum& mask,
+Layer< D >::get_global_positions_vector( const MaskPTR mask,
   const Position< D >& anchor,
   bool allow_oversized,
   NodeCollectionPTR node_collection )
@@ -266,7 +265,7 @@ Layer< D >::get_global_positions_vector( const MaskDatum& mask,
 
 template < int D >
 std::vector< index >
-Layer< D >::get_global_nodes( const MaskDatum& mask,
+Layer< D >::get_global_nodes( const MaskPTR mask,
   const std::vector< double >& anchor,
   bool allow_oversized,
   NodeCollectionPTR node_collection )
@@ -319,7 +318,7 @@ Layer< D >::dump_connections( std::ostream& out,
     const Position< D > source_pos = src_iter->first;
 
     source_array[ 0 ] = source_node_id;
-    ncdict[ names::source ] = NodeCollectionDatum( NodeCollection::create( source_array ) );
+    ncdict[ names::source ] = NodeCollectionPTR( NodeCollection::create( source_array ) );
     auto connectome = kernel().connection_manager.get_connections( ncdict );
 
     // Print information about all local connections for current source
@@ -355,7 +354,7 @@ MaskedLayer< D >::check_mask_( Layer< D >& layer, bool allow_oversized )
 {
   if ( not mask_.get() )
   {
-    mask_ = new AllMask< D >();
+    mask_ = MaskPTR( new AllMask< D >() );
     return;
   }
 
@@ -397,7 +396,7 @@ MaskedLayer< D >::check_mask_( Layer< D >& layer, bool allow_oversized )
     lower_left[ 1 ] = -upper_right[ 1 ];
     upper_right[ 1 ] = -y;
 
-    mask_ = new BoxMask< D >( lower_left, upper_right );
+    mask_ = MaskPTR (new BoxMask< D >( lower_left, upper_right ) );
   }
   catch ( std::bad_cast& )
   {
@@ -415,7 +414,7 @@ MaskedLayer< D >::check_mask_( Layer< D >& layer, bool allow_oversized )
         for ( int i = 0; i < D; ++i )
         {
           oversize |=
-            layer.get_periodic_mask()[ i ] and ( bb.upper_right[ i ] - bb.lower_left[ i ] ) > layer.get_extent()[ i ];
+            layer.get_periodic_mask()[ i ] and bb.upper_right[ i ] - bb.lower_left[ i ] > layer.get_extent()[ i ];
         }
         if ( oversize )
         {

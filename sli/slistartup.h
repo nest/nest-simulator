@@ -59,18 +59,15 @@
 
 class SLIStartup : public SLIModule
 {
-  const std::string startupfilename;
-  const std::string slilibpath;
-  std::string slilibdir;
-  std::string slidocdir;
-  std::string sliprefix;
+  const std::string sliprefix;
+  const std::string slilibdir;
+  const std::string slidocdir;
+  const std::string startupfile;
 
-  std::string locateSLIInstallationPath( void );
-  bool checkpath( std::string const&, std::string& ) const;
+  std::string find_startup_file( const std::string& ) const;
   std::string getenv( const std::string& ) const;
-  std::string checkenvpath( std::string const&, SLIInterpreter*, std::string ) const;
 
-  Token targs;
+  Token commandline_args_;
   int verbosity_;
   bool debug_;
 
@@ -111,6 +108,12 @@ public:
   Name have_sionlib_name;
   Name ndebug_name;
 
+  Name mpiexec_name;
+  Name mpiexec_numproc_flag_name;
+  Name mpiexec_max_numprocs_name;
+  Name mpiexec_preflags_name;
+  Name mpiexec_postflags_name;
+
   Name exitcodes_name;
   Name exitcode_success_name;
   Name exitcode_skipped_name;
@@ -132,20 +135,20 @@ public:
   class GetenvFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const override;
   };
 
   GetenvFunction getenvfunction;
 
   SLIStartup( int, char** );
-  ~SLIStartup()
+  ~SLIStartup() override
   {
   }
 
-  void init( SLIInterpreter* );
+  void init( SLIInterpreter* ) override;
 
   const std::string
-  name( void ) const
+  name() const override
   {
     return "SLIStartup";
   }

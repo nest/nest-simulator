@@ -22,8 +22,6 @@
 
 #include "conn_parameter.h"
 
-#include <boost/any.hpp>
-
 // Includes from nestkernel:
 #include "kernel_manager.h"
 #include "nest_names.h"
@@ -39,9 +37,9 @@ nest::ConnParameter::create( const boost::any& value, const size_t nthreads )
   }
 
   // single integer
-  if ( is_type< int >( value ) )
+  if ( is_type< long >( value ) )
   {
-    return new ScalarIntegerParameter( boost::any_cast< int >( value ), nthreads );
+    return new ScalarIntegerParameter( boost::any_cast< long >( value ), nthreads );
   }
 
   // array of doubles
@@ -53,7 +51,7 @@ nest::ConnParameter::create( const boost::any& value, const size_t nthreads )
   // Parameter
   if ( is_type< std::shared_ptr< nest::Parameter > >( value ) )
   {
-    return new ParameterConnParameterWrapper( boost::any_cast< std::shared_ptr< Parameter > >( value ), nthreads );
+    return new ParameterConnParameterWrapper( boost::any_cast< ParameterPTR >( value ), nthreads );
   }
 
   // array of integer
@@ -66,7 +64,7 @@ nest::ConnParameter::create( const boost::any& value, const size_t nthreads )
 }
 
 
-nest::ParameterConnParameterWrapper::ParameterConnParameterWrapper( std::shared_ptr< Parameter > p, const size_t )
+nest::ParameterConnParameterWrapper::ParameterConnParameterWrapper( ParameterPTR p, const size_t )
   : parameter_( p )
 {
 }

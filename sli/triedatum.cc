@@ -36,5 +36,5 @@ TrieDatum::equals( Datum const* dat ) const
 
   const TrieDatum* fd = dynamic_cast< TrieDatum* >( const_cast< Datum* >( dat ) );
 
-  return ( fd == NULL ) ? false : ( tree == fd->tree );
+  return fd and tree == fd->tree;
 }

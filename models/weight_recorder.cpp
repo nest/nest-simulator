@@ -22,26 +22,14 @@
 
 #include "weight_recorder.h"
 
-// C++ includes:
-#include <numeric>
 
 // Includes from libnestutil:
 #include "compose.hpp"
-#include "dict_util.h"
-#include "logging.h"
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
-#include "nest_datums.h"
 #include "node_collection.h"
-
-// Includes from sli:
-#include "arraydatum.h"
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 // record time, node ID, weight and receiver node ID
 nest::weight_recorder::weight_recorder()
@@ -57,48 +45,34 @@ nest::weight_recorder::weight_recorder( const weight_recorder& n )
 }
 
 nest::weight_recorder::Parameters_::Parameters_()
-  : senders_()
-  , targets_()
+  // PYNEST-NG: check if " new NodeCollectionPrimitive()" is needed here
+  : senders_( new NodeCollectionPrimitive() )
+  , targets_( new NodeCollectionPrimitive() )
 {
 }
 
 void
 nest::weight_recorder::Parameters_::get( dictionary& d ) const
 {
-  if ( senders_.get() )
-  {
-    d[ names::senders ] = senders_;
-  }
-  else
-  {
-    ArrayDatum ad;
-    d[ names::senders ] = ad;
-  }
-  if ( targets_.get() )
-  {
-    d[ names::targets ] = targets_;
-  }
-  else
-  {
-    ArrayDatum ad;
-    d[ names::targets ] = ad;
-  }
+  d[ names::senders ] = senders_;
+  d[ names::targets ] = targets_;
 }
 
 void
 nest::weight_recorder::Parameters_::set( const dictionary& d )
 {
   auto get_or_create_nc = [&d]( NodeCollectionPTR& nc, const std::string& key ) {
-    const auto value = d.at( key );
-    if ( is_type< NodeCollectionDatum >( value ) )
+    if ( not d.empty() and d.known( key) )
     {
-      nc = d.get< NodeCollectionPTR >( key );
-    }
-    else if ( is_type< std::vector< int > >( value ) )
-    {
-      const auto node_ids = d.get< std::vector< int > >( key );
-      // TODO-PYNEST-NG: make a NodeCollection::create(vector<int>) variant
-      // nc = NodeCollection::create(node_ids);
+      const auto value = d.at( key );
+      if ( is_type< NodeCollectionPTR >( value ) )
+      {
+        nc = d.get< NodeCollectionPTR >( key );
+      }
+      else
+      {
+	throw TypeMismatch("NodeCollection", debug_type( d.at( key ) ) );
+      }
     }
   };
 
@@ -107,9 +81,9 @@ nest::weight_recorder::Parameters_::set( const dictionary& d )
 }
 
 void
-nest::weight_recorder::calibrate()
+nest::weight_recorder::pre_run_hook()
 {
-  RecordingDevice::calibrate(
+  RecordingDevice::pre_run_hook(
     { nest::names::weights }, { nest::names::targets, nest::names::receptors, nest::names::ports } );
 }
 

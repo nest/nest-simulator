@@ -23,7 +23,6 @@
 #include "pp_pop_psc_delta.h"
 
 // C++ includes:
-#include <algorithm>
 #include <limits>
 
 // Includes from libnestutil:
@@ -35,12 +34,6 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
-
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 namespace nest
 {
@@ -107,12 +100,8 @@ nest::pp_pop_psc_delta::Parameters_::get( dictionary& d ) const
   d[ names::C_m ] = c_m_;
   d[ names::tau_m ] = tau_m_;
   d[ names::len_kernel ] = len_kernel_;
-
-  ArrayDatum tau_eta_list_ad( tau_eta_ );
-  d[ names::tau_eta ] = tau_eta_list_ad;
-
-  ArrayDatum val_eta_list_ad( val_eta_ );
-  d[ names::val_eta ] = val_eta_list_ad;
+  d[ names::tau_eta ] = tau_eta_;
+  d[ names::val_eta ] = val_eta_;
 }
 
 void
@@ -230,7 +219,7 @@ nest::pp_pop_psc_delta::init_buffers_()
 
 
 void
-nest::pp_pop_psc_delta::calibrate()
+nest::pp_pop_psc_delta::pre_run_hook()
 {
 
   if ( P_.tau_eta_.size() == 0 )

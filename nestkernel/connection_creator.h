@@ -165,12 +165,12 @@ private:
   bool allow_multapses_;
   bool allow_oversized_;
   index number_of_connections_;
-  std::shared_ptr< AbstractMask > mask_;
-  std::shared_ptr< Parameter > kernel_;
+  MaskPTR mask_;
+  ParameterPTR kernel_;
   std::vector< index > synapse_model_;
   std::vector< std::vector< dictionary > > param_dicts_;
-  std::vector< std::shared_ptr< Parameter > > weight_;
-  std::vector< std::shared_ptr< Parameter > > delay_;
+  std::vector< ParameterPTR > weight_;
+  std::vector< ParameterPTR > delay_;
 };
 
 } // namespace nest

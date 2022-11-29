@@ -49,7 +49,7 @@ Synapse type for spike-timing dependent plasticity with symmetric nearest-neighb
 Description
 +++++++++++
 
-stdp_nn_symm_synapse is a connector to create synapses with spike time
+``stdp_nn_symm_synapse`` is a connector to create synapses with spike time
 dependent plasticity with the symmetric nearest-neighbour spike pairing
 scheme [1]_.
 
@@ -57,26 +57,26 @@ When a presynaptic spike occurs, it is taken into account in the depression
 part of the STDP weight change rule with the nearest preceding postsynaptic
 one, and when a postsynaptic spike occurs, it is accounted in the
 facilitation rule with the nearest preceding presynaptic one (instead of
-pairing with all spikes, like in stdp_synapse). For a clear illustration of
+pairing with all spikes, like in ``stdp_synapse``). For a clear illustration of
 this scheme see fig. 7A in [2]_.
 
-The pairs exactly coinciding (so that presynaptic_spike == postsynaptic_spike
-+ dendritic_delay), leading to zero delta_t, are discarded. In this case the
+The pairs exactly coinciding (so that ``presynaptic_spike == postsynaptic_spike
++ dendritic_delay``), leading to zero ``delta_t``, are discarded. In this case the
 concerned pre/postsynaptic spike is paired with the second latest preceding
-post/presynaptic one (for example, pre=={10 ms; 20 ms} and post=={20 ms} will
+post/presynaptic one (for example, ``pre=={10 ms; 20 ms}`` and ``post=={20 ms}`` will
 result in a potentiation pair 20-to-10).
 
 The implementation involves two additional variables - presynaptic and
 postsynaptic traces [2]_. The presynaptic trace decays exponentially over
-time with the time constant tau_plus and increases to 1 on a pre-spike
+time with the time constant ``tau_plus`` and increases to 1 on a pre-spike
 occurrence. The postsynaptic trace (implemented on the postsynaptic neuron
-side) decays with the time constant tau_minus and increases to 1 on a
+side) decays with the time constant ``tau_minus`` and increases to 1 on a
 post-spike occurrence.
 
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
@@ -139,6 +139,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   stdp_nn_symm_synapse( const stdp_nn_symm_synapse& ) = default;
+  stdp_nn_symm_synapse& operator=( const stdp_nn_symm_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -174,9 +175,9 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
@@ -330,7 +331,7 @@ stdp_nn_symm_synapse< targetidentifierT >::set_status( const dictionary& d, Conn
   d.update_value( names::Wmax, Wmax_ );
 
   // check if weight_ and Wmax_ have the same sign
-  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) )
+  if ( std::signbit( weight_ ) != std::signbit( Wmax_ ) )
   {
     throw BadProperty( "Weight and Wmax must have same sign." );
   }

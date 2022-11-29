@@ -30,8 +30,8 @@ nest::pool::pool()
   , instantiations( 0 )
   , total( 0 )
   , capacity( 0 )
-  , chunks( 0 )
-  , head( 0 )
+  , chunks( nullptr )
+  , head( nullptr )
   , initialized_( false )
 {
 }
@@ -44,8 +44,8 @@ nest::pool::pool( const nest::pool& p )
   , instantiations( 0 )
   , total( 0 )
   , capacity( 0 )
-  , chunks( 0 )
-  , head( 0 )
+  , chunks( nullptr )
+  , head( nullptr )
   , initialized_( false )
 {
 }
@@ -59,8 +59,8 @@ nest::pool::pool( size_t n, size_t initial, size_t growth )
   , instantiations( 0 )
   , total( 0 )
   , capacity( 0 )
-  , chunks( 0 )
-  , head( 0 )
+  , chunks( nullptr )
+  , head( nullptr )
   , initialized_( true )
 {
 }
@@ -79,8 +79,8 @@ nest::pool::init( size_t n, size_t initial, size_t growth )
   instantiations = 0;
   total = 0;
   capacity = 0;
-  chunks = 0;
-  head = 0;
+  chunks = nullptr;
+  head = nullptr;
 }
 
 nest::pool::~pool()
@@ -108,8 +108,8 @@ nest::pool::operator=( const nest::pool& p )
   el_size = p.el_size;
   instantiations = 0;
   total = 0;
-  chunks = 0;
-  head = 0;
+  chunks = nullptr;
+  head = nullptr;
   initialized_ = false;
 
   return *this;

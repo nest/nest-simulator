@@ -30,9 +30,6 @@
 #include "connector_model.h"
 #include "event.h"
 
-// Includes from sli:
-#include "dictdatum.h"
-
 namespace nest
 {
 //
@@ -141,12 +138,12 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::get_status( dictionary& d 
   d[ names::driver_readout_time ] = driver_readout_time_;
   d[ names::readout_cycle_duration ] = readout_cycle_duration_;
 
-  d[ names::lookuptable_0 ] = IntVectorDatum( new std::vector< long >( lookuptable_0_ ) );
-  d[ names::lookuptable_1 ] = IntVectorDatum( new std::vector< long >( lookuptable_1_ ) );
-  d[ names::lookuptable_2 ] = IntVectorDatum( new std::vector< long >( lookuptable_2_ ) );
-  d[ names::configbit_0 ] = IntVectorDatum( new std::vector< long >( configbit_0_ ) );
-  d[ names::configbit_1 ] = IntVectorDatum( new std::vector< long >( configbit_1_ ) );
-  d[ names::reset_pattern ] = IntVectorDatum( new std::vector< long >( reset_pattern_ ) );
+  d[ names::lookuptable_0 ] = lookuptable_0_;
+  d[ names::lookuptable_1 ] = lookuptable_1_;
+  d[ names::lookuptable_2 ] = lookuptable_2_;
+  d[ names::configbit_0 ] = configbit_0_;
+  d[ names::configbit_1 ] = configbit_1_;
+  d[ names::reset_pattern ] = reset_pattern_;
 }
 
 template < typename targetidentifierT >
@@ -192,7 +189,7 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status( const dictiona
     // are look-up table entries out of bounds?
     for ( size_t i = 0; i < size_t( lookuptable_0_.size() ); ++i )
     {
-      if ( ( lookuptable_0_[ i ] < 0 ) || ( lookuptable_0_[ i ] > 15 ) )
+      if ( lookuptable_0_[ i ] < 0 or lookuptable_0_[ i ] > 15 )
       {
         throw BadProperty( "Look-up table entries must be integers in [0,15]" );
       }
@@ -211,7 +208,7 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status( const dictiona
     // are look-up table entries out of bounds?
     for ( size_t i = 0; i < size_t( lookuptable_1_.size() ); ++i )
     {
-      if ( ( lookuptable_1_[ i ] < 0 ) || ( lookuptable_1_[ i ] > 15 ) )
+      if ( lookuptable_1_[ i ] < 0 or lookuptable_1_[ i ] > 15 )
       {
         throw BadProperty( "Look-up table entries must be integers in [0,15]" );
       }
@@ -230,7 +227,7 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status( const dictiona
     // are look-up table entries out of bounds?
     for ( size_t i = 0; i < size_t( lookuptable_2_.size() ); ++i )
     {
-      if ( ( lookuptable_2_[ i ] < 0 ) || ( lookuptable_2_[ i ] > 15 ) )
+      if ( lookuptable_2_[ i ] < 0 or lookuptable_2_[ i ] > 15 )
       {
         throw BadProperty( "Look-up table entries must be integers in [0,15]" );
       }

@@ -67,7 +67,7 @@ Current-based adaptive exponential integrate-and-fire neuron model with delta sy
 Description
 +++++++++++
 
-aeif_psc_delta is the adaptive exponential integrate and fire neuron
+``aeif_psc_delta`` is the adaptive exponential integrate and fire neuron
 according to Brette and Gerstner (2005), with postsynaptic currents
 in the form of delta spikes.
 
@@ -78,25 +78,27 @@ The membrane potential is given by the following differential equation:
 
 .. math::
 
- C dV/dt= -g_L(V-E_L)+g_L*\Delta_T*\exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e) \\
+ C dV/dt= -g_L(V-E_L)+g_L\cdot\Delta_T\cdot\exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e) \\
                                                      -g_i(t)(V-E_i)-w +I_e
 
 and
 
 .. math::
 
- \tau_w * dw/dt= a(V-E_L) -W
+ \tau_w \cdot dw/dt= a(V-E_L) -W
 
 .. math::
 
  I(t) = J \sum_k \delta(t - t^k).
 
-Here delta is the dirac delta function and k indexes incoming
-spikes. This is implemented such that V_m will be incremented/decremented by
-the value of J after a spike.
+Here delta is the dirac delta function and `k` indexes incoming
+spikes. This is implemented such that ``V_m`` will be incremented/decremented by
+the value of `J` after a spike.
 
 For implementation details see the
 `aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
+
+See also [1]_.
 
 Parameters
 ++++++++++
@@ -172,7 +174,7 @@ class aeif_psc_delta : public ArchivingNode
 public:
   aeif_psc_delta();
   aeif_psc_delta( const aeif_psc_delta& );
-  ~aeif_psc_delta();
+  ~aeif_psc_delta() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -182,23 +184,23 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
-  void update( const Time&, const long, const long );
+  void init_buffers_() override;
+  void pre_run_hook() override;
+  void update( const Time&, const long, const long ) override;
 
   // END Boilerplate function declarations ----------------------------
 
@@ -225,7 +227,7 @@ private:
     double g_L;     //!< Leak Conductance in nS
     double C_m;     //!< Membrane Capacitance in pF
     double E_L;     //!< Leak reversal Potential (aka resting potential) in mV
-    double Delta_T; //!< Slope factor in ms
+    double Delta_T; //!< Slope factor in mV
     double tau_w;   //!< Adaptation time-constant in ms
     double a;       //!< Subthreshold adaptation in nS
     double b;       //!< Spike-triggered adaptation in pA

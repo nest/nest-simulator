@@ -50,36 +50,36 @@ presynaptic-centered nearest-neighbour spike pairing scheme
 Description
 +++++++++++
 
-stdp_nn_pre_centered_synapse is a connector to create synapses with spike
-time dependent plasticity with the presynaptic-centered nearest-neighbour
+``stdp_nn_pre_centered_synapse`` is a connector to create synapses with spike
+time dependent plasticity with the ``presynaptic``-centered nearest-neighbour
 spike pairing scheme, as described in [1]_.
 
 Each presynaptic spike is taken into account in the STDP weight change rule
 with the nearest preceding postsynaptic one and the nearest succeeding
-postsynaptic one (instead of pairing with all spikes, like in stdp_synapse).
+postsynaptic one (instead of pairing with all spikes, like in ``stdp_synapse``).
 So, when a presynaptic spike occurs, it is accounted in the depression rule
 with the nearest preceding postsynaptic one; and when a postsynaptic spike
 occurs, it is accounted in the facilitation rule with all preceding
 presynaptic spikes that were not earlier than the previous postsynaptic
 spike. For a clear illustration of this scheme see fig. 7B in [2]_.
 
-The pairs exactly coinciding (so that presynaptic_spike == postsynaptic_spike
-+ dendritic_delay), leading to zero delta_t, are discarded. In this case the
+The pairs exactly coinciding (so that ``presynaptic_spike == postsynaptic_spike
++ dendritic_delay``), leading to zero ``delta_t``, are discarded. In this case the
 concerned pre/postsynaptic spike is paired with the second latest preceding
-post/presynaptic one (for example, pre=={10 ms; 20 ms} and post=={20 ms} will
+post/presynaptic one (for example, ``pre=={10 ms; 20 ms}`` and ``post=={20 ms}`` will
 result in a potentiation pair 20-to-10).
 
 The implementation involves two additional variables - presynaptic and
 postsynaptic traces [2]_. The presynaptic trace decays exponentially over
-time with the time constant tau_plus, increases by 1 on a pre-spike
+time with the time constant ``tau_plus``, increases by 1 on a pre-spike
 occurrence, and is reset to 0 on a post-spike occurrence. The postsynaptic
 trace (implemented on the postsynaptic neuron side) decays with the time
-constant tau_minus and increases to 1 on a post-spike occurrence.
+constant ``tau_minus`` and increases to 1 on a post-spike occurrence.
 
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
@@ -142,6 +142,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   stdp_nn_pre_centered_synapse( const stdp_nn_pre_centered_synapse& ) = default;
+  stdp_nn_pre_centered_synapse& operator=( const stdp_nn_pre_centered_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -177,9 +178,9 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 

@@ -24,11 +24,7 @@
 
 // C++ includes:
 #include <algorithm> // rotate
-#include <iostream>
-#include <numeric> // accumulate
-
-// Includes from libnestutil:
-#include "logging.h"
+#include <numeric>   // accumulate
 
 // Includes from nestkernel:
 #include "connection_manager.h"
@@ -114,6 +110,13 @@ EventDeliveryManager::finalize()
   recv_buffer_spike_data_.clear();
   send_buffer_off_grid_spike_data_.clear();
   recv_buffer_off_grid_spike_data_.clear();
+}
+
+void
+EventDeliveryManager::change_number_of_threads()
+{
+  finalize();
+  initialize();
 }
 
 void
@@ -241,7 +244,7 @@ EventDeliveryManager::update_moduli()
    * Note that for updating the modulos, it is sufficient
    * to rotate the buffer to the left.
    */
-  assert( moduli_.size() == ( index )( min_delay + max_delay ) );
+  assert( moduli_.size() == ( index ) ( min_delay + max_delay ) );
   std::rotate( moduli_.begin(), moduli_.begin() + min_delay, moduli_.end() );
 
   /*
@@ -336,7 +339,10 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
   const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
 
   // Assume a single gather round
-  decrease_buffer_size_spike_data_ = true;
+#pragma omp single
+  {
+    decrease_buffer_size_spike_data_ = true;
+  }
 
   while ( gather_completed_checker_.any_false() )
   {
@@ -423,10 +429,6 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
     const bool deliver_completed = deliver_events_( tid, recv_buffer );
     gather_completed_checker_[ tid ].logical_and( deliver_completed );
 
-// Exit gather loop if all local threads and remote processes are
-// done.
-#pragma omp barrier
-
 #ifdef TIMER_DETAILED
     if ( tid == 0 )
     {
@@ -443,7 +445,6 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
         decrease_buffer_size_spike_data_ = false;
       }
     }
-#pragma omp barrier
 
   } // of while
 
@@ -582,7 +583,7 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
 {
   const unsigned int send_recv_count_spike_data_per_rank =
     kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
-  const std::vector< ConnectorModel* >& cm = kernel().model_manager.get_synapse_prototypes( tid );
+  const std::vector< ConnectorModel* >& cm = kernel().model_manager.get_connection_models( tid );
 
   bool are_others_completed = true;
 
@@ -626,9 +627,10 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
         {
           const index syn_id = spike_data.get_syn_id();
           const index lcid = spike_data.get_lcid();
-          const index source_node_id = kernel().connection_manager.get_source_node_id( tid, syn_id, lcid );
-          se.set_sender_node_id( source_node_id );
 
+          // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
+          // only if needed, as this is computationally costly
+          se.set_sender_node_id_info( tid, syn_id, lcid );
           kernel().connection_manager.send( tid, syn_id, lcid, cm, se );
         }
       }
@@ -645,9 +647,10 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
           if ( it->get_tid() == tid )
           {
             const index lcid = it->get_lcid();
-            const index source_node_id = kernel().connection_manager.get_source_node_id( tid, syn_id, lcid );
-            se.set_sender_node_id( source_node_id );
 
+            // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
+            // only if needed, as this is computationally costly
+            se.set_sender_node_id_info( tid, syn_id, lcid );
             kernel().connection_manager.send( tid, syn_id, lcid, cm, se );
           }
         }
@@ -703,7 +706,6 @@ EventDeliveryManager::gather_target_data( const thread tid )
     if ( gather_completed_checker_.all_true() )
     {
       set_complete_marker_target_data_( assigned_ranks, send_buffer_position );
-#pragma omp barrier
     }
     kernel().connection_manager.save_source_table_entry_point( tid );
 #pragma omp barrier
@@ -723,7 +725,6 @@ EventDeliveryManager::gather_target_data( const thread tid )
 
     const bool distribute_completed = distribute_target_data_buffers_( tid );
     gather_completed_checker_[ tid ].logical_and( distribute_completed );
-#pragma omp barrier
 
     // resize mpi buffers, if necessary and allowed
     if ( gather_completed_checker_.any_false() and kernel().mpi_manager.adaptive_target_buffers() )
@@ -733,7 +734,6 @@ EventDeliveryManager::gather_target_data( const thread tid )
         buffer_size_target_data_has_changed_ = kernel().mpi_manager.increase_buffer_size_target_data();
       }
     }
-#pragma omp barrier
   } // of while
 
   kernel().connection_manager.clear_source_table( tid );

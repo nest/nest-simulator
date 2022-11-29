@@ -44,7 +44,7 @@ protected:
 
 private:
   Datum*
-  clone( void ) const
+  clone() const override
   {
     return new BoolDatum( *this );
   }
@@ -58,7 +58,8 @@ public:
   {
   }
 
-  BoolDatum( const BoolDatum& val ) = default;
+  BoolDatum( const BoolDatum& ) = default;
+  BoolDatum& operator=( const BoolDatum& ) = default;
 
   BoolDatum( bool val )
     : GenericDatum< bool, &SLIInterpreter::Booltype >( val )
@@ -75,9 +76,9 @@ public:
 
   operator std::string() const;
 
-  void input_form( std::ostream& ) const;
-  void print( std::ostream& ) const;
-  void pprint( std::ostream& ) const;
+  void input_form( std::ostream& ) const override;
+  void print( std::ostream& ) const override;
+  void pprint( std::ostream& ) const override;
 
   static void* operator new( size_t size );
 

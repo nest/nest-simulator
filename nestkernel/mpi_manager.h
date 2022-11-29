@@ -59,15 +59,15 @@ public:
   class OffGridSpike;
 
   MPIManager();
-  ~MPIManager()
+  ~MPIManager() override
   {
   }
 
-  virtual void initialize();
-  virtual void finalize();
+  void initialize() override;
+  void finalize() override;
 
-  virtual void set_status( const dictionary& );
-  virtual void get_status( dictionary& );
+  virtual void set_status( const dictionary& ) override;
+  virtual void get_status( dictionary& ) override;
 
   void init_mpi( int* argc, char** argv[] );
 #ifdef HAVE_MPI

@@ -1,4 +1,4 @@
-# examples/CMakeLists.txt
+# CMakeLists.txt
 #
 # This file is part of NEST.
 #
@@ -16,6 +16,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 install( FILES run_examples.sh
     DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )
@@ -23,4 +24,8 @@ install( FILES run_examples.sh
 install( DIRECTORY nest/
     DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples
     USE_SOURCE_PERMISSIONS
+    )
+
+install( FILES EditorSupport/vim/syntax/sli.vim
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}/EditorSupport/vim/syntax
     )

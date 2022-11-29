@@ -23,7 +23,6 @@
 #ifndef CONNECTION_LABEL_H
 #define CONNECTION_LABEL_H
 
-
 #include "nest_names.h"
 
 namespace nest

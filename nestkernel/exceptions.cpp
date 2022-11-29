@@ -33,126 +33,130 @@ std::string
 nest::UnknownModelName::compose_msg_( const std::string& model_name ) const
 {
   std::ostringstream msg;
-  msg << model_name + " is not a known model name. "
-    "Please check the modeldict for a list of available models.";
+  msg << model_name << " is not a known model name.";
 #ifndef HAVE_GSL
-  msg << " A frequent cause for this error is that NEST was compiled "
-         "without the GNU Scientific Library, which is required for "
-         "the conductance-based neuron models.";
+  msg << " A frequent cause for this error is that NEST was compiled"
+         " without the GNU Scientific Library, which is required for"
+         " the conductance-based neuron models.";
 #endif
   return msg.str();
 }
 
-const char*
-nest::NewModelNameExists::what() const noexcept
+std::string
+nest::UnknownComponent::compose_msg_( const std::string& component_name ) const
 {
   std::ostringstream msg;
-  msg << "/" << model_name_ + " is the name of an existing model and cannot be re-used.";
-  return msg.str().c_str();
+  msg << component_name << " is not a known component.";
+#ifndef HAVE_GSL
+  msg << " A frequent cause for this error is that NEST was compiled"
+         " without the GNU Scientific Library, which is required for"
+         " the conductance-based neuron models.";
+#endif
+  return msg.str();
 }
 
-const char*
-nest::UnknownModelID::what() const noexcept
+std::string
+nest::NewModelNameExists::compose_msg_( const std::string& model_name ) const
 {
-  std::ostringstream msg;
+  std::string msg  = "Model " + model_name + " is the name of an existing model and cannot be re-used.";
+  return msg;
+}
 
-  msg << id_ << " is an invalid model ID. Probably modeldict is corrupted.";
-  return msg.str().c_str();
+std::string
+nest::ModelInUse::compose_msg_( const std::string& model_name ) const
+{
+  std::string msg = "Model " + model_name + " is in use and cannot be unloaded/uninstalled.";
+  return msg;
 }
 
 std::string
 nest::UnknownSynapseType::compose_msg_( const int id ) const
 {
-  return std::string( "Synapse with id " ) + std::to_string( id ) + std::string( " does not exist." );
+  std::ostringstream msg;
+  msg << "Synapse with id " << id << " does not exist.";
+  return msg.str();
 }
 
 std::string
 nest::UnknownSynapseType::compose_msg_( const std::string& name ) const
 {
-  return std::string( "Synapse with name " ) + name + std::string( " does not exist." );
+  std::ostringstream msg;
+  msg << "Synapse with name " << name << " does not exist.";
+  return msg.str();
 }
 
-const char*
-nest::UnknownSynapseType::what() const noexcept
-{
-  std::cerr << __FILE__ << ":" << __LINE__ << "\n";
-
-  // std::stringstream out;
-  std::string msg;
-  if ( synapsename_.empty() )
-  {
-    // out << "Synapse with id " << synapseid_ << " does not exist.";
-    msg = std::string( "Synapse with id " ) + std::to_string( synapseid_ ) + std::string( " does not exist." );
-  }
-  else
-  {
-    msg = std::string( "Synapse with name " ) + synapsename_ + std::string( " does not exist." );
-  }
-  // std::cerr << "[out]: " << out.str().c_str() << "\n";
-  // return out.str().c_str();
-  // return "TEST";
-  return msg_.c_str();
-  // return msg_.c_str();
-}
-
-const char*
-nest::UnknownNode::what() const noexcept
+std::string
+nest::UnknownNode::compose_msg_( const int id ) const
 {
   std::ostringstream out;
-
-  if ( id_ >= 0 )
-  {
-    out << "Node with id " << id_ << " doesn't exist.";
-  }
-  else
-  {
-    // Empty message
-  }
-
-  return out.str().c_str();
+  out << "Node with id " << id << " doesn't exist.";
+  return out.str();
 }
 
-const char*
-nest::NoThreadSiblingsAvailable::what() const noexcept
+std::string
+nest::NoThreadSiblingsAvailable::compose_msg_( const int id ) const
 {
   std::ostringstream out;
-
-  if ( id_ >= 0 )
-  {
-    out << "Node with id " << id_ << " does not have thread siblings.";
-  }
-  else
-  {
-    // Empty message
-  }
-
-  return out.str().c_str();
+  out << "Node with id " << id << " does not have thread siblings.";
+  return out.str();
 }
 
-const char*
-nest::UnknownReceptorType::what() const noexcept
+std::string
+nest::LocalNodeExpected::compose_msg_( const int id ) const
+{
+  std::ostringstream out;
+  out << "Node with id " << id << " is not a local node.";
+  return out.str();
+}
+
+std::string
+nest::NodeWithProxiesExpected::compose_msg_( const int id ) const
+{
+  std::ostringstream out;
+  out << "A node with proxies (usually a neuron) is expected, but the node with id "
+      << id << " is a node without proxies (usually a device).";
+  return out.str();
+}
+
+std::string
+nest::UnknownCompartment::compose_msg_( const long compartment_idx, const std::string info ) const
 {
   std::ostringstream msg;
-
-  msg << "Receptor type " << receptor_type_ << " is not available in " << name_ << ".";
-  return msg.str().c_str();
+  msg << "Compartment " << compartment_idx << " " << info << ".";
+  return msg.str();
 }
 
-const char*
-nest::IncompatibleReceptorType::what() const noexcept
+
+std::string
+nest::UnknownReceptorType::compose_msg_( const long receptor_type, const std::string name ) const
 {
   std::ostringstream msg;
-
-  msg << "Receptor type " << receptor_type_ << " in " << name_ << " does not accept " << event_type_ << ".";
-  return msg.str().c_str();
+  msg << "Receptor type " << receptor_type << " is not available in " << name << ".";
+  return msg.str();
 }
 
-const char*
-nest::UnknownPort::what() const noexcept
+std::string
+nest::IncompatibleReceptorType::compose_msg( const long receptor_type, const std::string name, const std::string event_type)
+{
+  std::ostringstream msg;
+  msg << "Receptor type " << receptor_type << " in " << name << " does not accept " << event_type << ".";
+  return msg.str();
+}
+
+std::string
+nest::UnknownPort::compose_msg_( const int id ) const
 {
   std::ostringstream out;
-  out << "Port with id " << id_ << " does not exist.";
-  return out.str().c_str();
+  out << "Port with id " << id << " does not exist.";
+  return out.str();
+}
+
+std::string
+nest::UnknownPort::compose_msg_( const int id, const std::string msg ) const
+{
+  std::ostringstream out;
+  out << "Port with id " << id << " does not exist. " << msg;
+  return out.str();
 }
 
 const char*
@@ -182,6 +186,14 @@ nest::InexistentConnection::what() const noexcept
 }
 
 const char*
+nest::UnknownThread::what() const noexcept
+{
+  std::ostringstream out;
+  out << "Thread with id " << id_ << " is outside of range.";
+  return out.str().c_str();
+}
+
+const char*
 nest::BadDelay::what() const noexcept
 {
   std::ostringstream out;
@@ -207,6 +219,13 @@ nest::UnexpectedEvent::what() const noexcept
   {
     return ( "UnexpectedEvent: " + msg_ ).c_str();
   }
+}
+
+std::string
+nest::UnsupportedEvent::compose_msg_() const
+{
+  return "The current synapse type does not support the event type of the sender.\n"
+    "    A common cause for this is a plastic synapse between a device and a neuron.";
 }
 
 const char*
@@ -279,6 +298,42 @@ nest::TimeMultipleRequired::what() const noexcept
   msg << "In model " << model_ << ", the time property " << prop_a_ << " = " << val_a_
       << " must be multiple of time property " << prop_b_ << " = " << val_b_ << '.';
   return msg.str().c_str();
+}
+
+const char*
+nest::GSLSolverFailure::what() const noexcept
+{
+  std::ostringstream msg;
+  msg << "In model " << model_ << ", the GSL solver "
+      << "returned with exit status " << status_ << ".\n"
+      << "Please make sure you have installed a recent "
+      << "GSL version (> gsl-1.10).";
+  return msg.str().c_str();
+}
+
+const char*
+nest::NumericalInstability::what() const noexcept
+{
+  std::ostringstream msg;
+  msg << "NEST detected a numerical instability while "
+      << "updating " << model_ << ".";
+  return msg.str().c_str();
+}
+
+const char*
+nest::KeyError::what() const noexcept
+{
+  std::ostringstream msg;
+  msg << "Key '" << key_ << "' not found in map."
+      << "Error encountered with map type: '" << map_type_ << "'"
+      << " when applying operation: '" << map_op_ << "'";
+  return msg.str().c_str();
+}
+
+const char*
+nest::InternalError::what() const noexcept
+{
+  return msg_.c_str();
 }
 
 #ifdef HAVE_MUSIC
@@ -356,22 +411,12 @@ nest::MPIPortsFileUnknown::what() const noexcept
 #endif
 
 const char*
-nest::GSLSolverFailure::what() const noexcept
+nest::UnmatchedSteps::what() const noexcept
 {
   std::ostringstream msg;
-  msg << "In model " << model_ << ", the GSL solver "
-      << "returned with exit status " << status_ << ".\n"
-      << "Please make sure you have installed a recent "
-      << "GSL version (> gsl-1.10).";
-  return msg.str().c_str();
-}
-
-const char*
-nest::NumericalInstability::what() const noexcept
-{
-  std::ostringstream msg;
-  msg << "NEST detected a numerical instability while "
-      << "updating " << model_ << ".";
+  msg << "Steps for backend device don't match NEST steps: "
+      << "steps expected: " << total_steps_ << " "
+      << "steps executed: " << current_step_ << ".";
   return msg.str().c_str();
 }
 
@@ -384,21 +429,12 @@ nest::BackendPrepared::what() const noexcept
 }
 
 const char*
-nest::KeyError::what() const noexcept
+nest::BackendNotPrepared::what() const noexcept
 {
   std::ostringstream msg;
-  msg << "Key '" << key_ << "' not found in map."
-      << "Error encountered with map type: '" << map_type_ << "'"
-      << " when applying operation: '" << map_op_ << "'";
+  msg << "Backend " << backend_ << " may not be cleanup()'d without preparation (multiple cleanups?).";
   return msg.str().c_str();
 }
-
-const char*
-nest::InternalError::what() const noexcept
-{
-  return msg_.c_str();
-}
-
 
 const char*
 nest::UndefinedName::what() const noexcept

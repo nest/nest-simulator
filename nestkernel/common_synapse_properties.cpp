@@ -37,7 +37,7 @@ namespace nest
  */
 
 CommonSynapseProperties::CommonSynapseProperties()
-  : weight_recorder_()
+  : weight_recorder_( new NodeCollectionPrimitive() )
   , wr_node_id_( 0 )
 {
 }
@@ -77,7 +77,7 @@ CommonSynapseProperties::set_status( const dictionary& d, ConnectorModel& )
 Node*
 CommonSynapseProperties::get_node()
 {
-  return 0;
+  return nullptr;
 }
 
 void

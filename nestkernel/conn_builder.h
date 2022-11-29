@@ -37,7 +37,6 @@
 
 // Includes from nestkernel:
 #include "conn_parameter.h"
-#include "exceptions.h"
 #include "nest_time.h"
 #include "node_collection.h"
 #include "parameter.h"
@@ -264,22 +263,22 @@ public:
     const std::vector< dictionary >& syn_specs );
 
   bool
-  supports_symmetric() const
+  supports_symmetric() const override
   {
     return true;
   }
 
   bool
-  requires_proxies() const
+  requires_proxies() const override
   {
     return false;
   }
 
 protected:
-  void connect_();
-  void sp_connect_();
-  void disconnect_();
-  void sp_disconnect_();
+  void connect_() override;
+  void sp_connect_() override;
+  void disconnect_() override;
+  void sp_disconnect_() override;
 };
 
 class AllToAllBuilder : public ConnBuilder
@@ -294,22 +293,22 @@ public:
   }
 
   bool
-  is_symmetric() const
+  is_symmetric() const override
   {
     return sources_ == targets_ and all_parameters_scalar_();
   }
 
   bool
-  requires_proxies() const
+  requires_proxies() const override
   {
     return false;
   }
 
 protected:
-  void connect_();
-  void sp_connect_();
-  void disconnect_();
-  void sp_disconnect_();
+  void connect_() override;
+  void sp_connect_() override;
+  void disconnect_() override;
+  void sp_disconnect_() override;
 
 private:
   void inner_connect_( const int, RngPtr, Node*, index, bool );
@@ -322,11 +321,11 @@ public:
   FixedInDegreeBuilder( NodeCollectionPTR, NodeCollectionPTR, const dictionary&, const std::vector< dictionary >& );
 
 protected:
-  void connect_();
+  void connect_() override;
 
 private:
   void inner_connect_( const int, RngPtr, Node*, index, bool, long );
-  ParameterDatum indegree_;
+  ParameterPTR indegree_;
 };
 
 class FixedOutDegreeBuilder : public ConnBuilder
@@ -335,10 +334,10 @@ public:
   FixedOutDegreeBuilder( NodeCollectionPTR, NodeCollectionPTR, const dictionary&, const std::vector< dictionary >& );
 
 protected:
-  void connect_();
+  void connect_() override;
 
 private:
-  ParameterDatum outdegree_;
+  ParameterPTR outdegree_;
 };
 
 class FixedTotalNumberBuilder : public ConnBuilder
@@ -347,7 +346,7 @@ public:
   FixedTotalNumberBuilder( NodeCollectionPTR, NodeCollectionPTR, const dictionary&, const std::vector< dictionary >& );
 
 protected:
-  void connect_();
+  void connect_() override;
 
 private:
   long N_;
@@ -359,11 +358,11 @@ public:
   BernoulliBuilder( NodeCollectionPTR, NodeCollectionPTR, const dictionary&, const std::vector< dictionary >& );
 
 protected:
-  void connect_();
+  void connect_() override;
 
 private:
   void inner_connect_( const int, RngPtr, Node*, index );
-  ParameterDatum p_; //!< connection probability
+  ParameterPTR p_; //!< connection probability
 };
 
 class SymmetricBernoulliBuilder : public ConnBuilder
@@ -375,13 +374,13 @@ public:
     const std::vector< dictionary >& );
 
   bool
-  supports_symmetric() const
+  supports_symmetric() const override
   {
     return true;
   }
 
 protected:
-  void connect_();
+  void connect_() override;
 
 private:
   double p_; //!< connection probability
@@ -420,7 +419,7 @@ public:
 
 protected:
   using ConnBuilder::connect_;
-  void connect_();
+  void connect_() override;
   void connect_( NodeCollectionPTR sources, NodeCollectionPTR targets );
 
   /**

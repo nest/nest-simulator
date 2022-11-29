@@ -45,7 +45,7 @@ Leaky integrate-and-fire neuron model
 Description
 +++++++++++
 
-iaf_psc_alpha is an implementation of a leaky integrate-and-fire model
+``iaf_psc_alpha`` is an implementation of a leaky integrate-and-fire model
 with alpha-function shaped synaptic currents. Thus, synaptic currents
 and the resulting postsynaptic potentials have a finite rise time.
 
@@ -66,14 +66,15 @@ neuron like dynamics interacting by point events is described in
 
 Critical tests for the formulation of the neuron model are the
 comparisons of simulation results for different computation step
-sizes. sli/testsuite/nest contains a number of such tests.
+sizes and the testsuite contains a number of such tests.
 
-The iaf_psc_alpha is the standard model used to check the consistency
+The ``iaf_psc_alpha`` is the standard model used to check the consistency
 of the nest simulation kernel because it is at the same time complex
 enough to exhibit non-trivial dynamics and simple enough compute
 relevant measures analytically.
 
 .. note::
+
    The present implementation uses individual variables for the
    components of the state vector and the non-zero matrix elements of
    the propagator. Because the propagator is a lower triangular matrix,
@@ -89,12 +90,14 @@ relevant measures analytically.
 
 .. note::
 
-   If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
-   will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
-   `tau_syn_in`, respectively, to avoid numerical instabilities.
+   If ``tau_m`` is very close to ``tau_syn_ex`` or ``tau_syn_in``, the model
+   will numerically behave as if ``tau_m`` is equal to ``tau_syn_ex`` or
+   ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
    For implementation details see the
    `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+
+See also [3]_.
 
 Parameters
 ++++++++++
@@ -163,24 +166,24 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< iaf_psc_alpha >;

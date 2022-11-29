@@ -41,13 +41,13 @@ Static synapse with stochastic transmission
 Description
 +++++++++++
 
-Spikes are transmitted by bernoulli_synapse following a Bernoulli
-trial with success probability p_transmit. This synaptic mechanism was
+Spikes are transmitted by ``bernoulli_synapse`` following a Bernoulli
+trial with success probability ``p_transmit``. This synaptic mechanism was
 inspired by the results described in [1]_ of greater transmission
 probability for stronger excitatory connections and it was previously
-applied in [2]_ and [3].
+applied in [2]_ and [3]_.
 
-bernoulli_synapse does not support any kind of plasticity. It simply
+``bernoulli_synapse`` does not support any kind of plasticity. It simply
 stores the parameters target, weight, transmission probability, delay
 and receiver port for each connection.
 
@@ -112,6 +112,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   bernoulli_synapse( const bernoulli_synapse& rhs ) = default;
+  bernoulli_synapse& operator=( const bernoulli_synapse& rhs ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -129,9 +130,9 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
@@ -205,7 +206,7 @@ bernoulli_synapse< targetidentifierT >::set_status( const dictionary& d, Connect
   d.update_value( names::weight, weight_ );
   d.update_value( names::p_transmit, p_transmit_ );
 
-  if ( p_transmit_ < 0 || p_transmit_ > 1 )
+  if ( p_transmit_ < 0 or p_transmit_ > 1 )
   {
     throw BadProperty( "Spike transmission probability must be in [0, 1]." );
   }

@@ -51,19 +51,17 @@ spike train to each of its target neurons. By connecting one
 a group of neurons, all target neurons will receive the same poisson
 spike train.
 
-Remarks
-.......
-
-- Weights of connections *to* the ``parrot_neuron`` are ignored.
-- Weights on connections *from* the ``parrot_neuron`` are handled as usual.
-- Delays are honored on incoming and outgoing connections.
+Please note that weights of connections *to* the ``parrot_neuron``
+are ignored, while weights on connections *from* the ``parrot_neuron``
+to the target are handled as usual. Delays are honored on both
+incoming and outgoing connections.
 
 Only spikes arriving on connections to port 0 will be repeated.
 Connections onto port 1 will be accepted, but spikes incoming
 through port 1 will be ignored. This allows setting exact pre-
 and postsynaptic spike times for STDP protocols by connecting
-two parrot neurons spiking at desired times by, e.g., a
-`stdp_synapse` onto port 1 on the postsynaptic parrot neuron.
+two parrot neurons spiking at desired times by, for example, a
+``stdp_synapse`` onto port 1 on the postsynaptic parrot neuron.
 
 Receives
 ++++++++
@@ -93,24 +91,24 @@ public:
   using Node::receives_signal;
   using Node::sends_signal;
 
-  port send_test_event( Node&, rport, synindex, bool );
-  SignalType sends_signal() const;
-  SignalType receives_signal() const;
+  port send_test_event( Node&, rport, synindex, bool ) override;
+  SignalType sends_signal() const override;
+  SignalType receives_signal() const override;
 
-  void handle( SpikeEvent& );
-  port handles_test_event( SpikeEvent&, rport );
+  void handle( SpikeEvent& ) override;
+  port handles_test_event( SpikeEvent&, rport ) override;
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
-  void init_buffers_();
+  void init_buffers_() override;
   void
-  calibrate()
+  pre_run_hook() override
   {
   } // no variables
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   /**
      Buffers and accumulates the number of incoming spikes per time step;

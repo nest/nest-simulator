@@ -51,11 +51,10 @@ poisson_generator to a parrot_neuron and then that parrot_neuron to
 a group of neurons, all target neurons will receive the same poisson
 spike train.
 
-Remarks:
-
-- Weights on connection to the parrot_neuron are ignored.
-- Weights on connections from the parrot_neuron are handled as usual.
-- Delays are honored on incoming and outgoing connections.
+Please note that weights of connections *to* the ``parrot_neuron``
+are ignored, while weights on connections *from* the ``parrot_neuron``
+to the target are handled as usual. Delays are honored on both
+incoming and outgoing connections.
 
 Only spikes arriving on connections to port 0 will be repeated.
 Connections onto port 1 will be accepted, but spikes incoming
@@ -92,28 +91,28 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  void handle( SpikeEvent& );
-  port send_test_event( Node&, rport, synindex, bool );
-  port handles_test_event( SpikeEvent&, rport );
+  void handle( SpikeEvent& ) override;
+  port send_test_event( Node&, rport, synindex, bool ) override;
+  port handles_test_event( SpikeEvent&, rport ) override;
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
   bool
-  is_off_grid() const
+  is_off_grid() const override
   {
     return true;
   }
 
 private:
-  void init_buffers_();
+  void init_buffers_() override;
 
   void
-  calibrate()
+  pre_run_hook() override
   {
   } // no variables
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   /** Queue for incoming events. */
   struct Buffers_

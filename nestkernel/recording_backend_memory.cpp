@@ -219,11 +219,7 @@ nest::RecordingBackendMemory::DeviceData::get_status( dictionary& d ) const
 {
   dictionary events;
 
-  if ( not d.known( names::events ) )
-  {
-    d[ names::events ] = events;
-  }
-  else
+  if ( d.known( names::events ) )
   {
     events = d.get< dictionary >( names::events );
   }
@@ -272,6 +268,7 @@ nest::RecordingBackendMemory::DeviceData::get_status( dictionary& d ) const
     long_name.insert( long_name.end(), long_values_[ i ].begin(), long_values_[ i ].end() );
   }
 
+  d[ names::events ] = events;
   d[ names::time_in_steps ] = time_in_steps_;
 }
 

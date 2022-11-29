@@ -88,12 +88,12 @@ public:
     bool
     operator==( const masked_iterator& other ) const
     {
-      return ( other.layer_.get_metadata() == layer_.get_metadata() ) && ( other.node_ == node_ );
+      return ( other.layer_.get_metadata() == layer_.get_metadata() ) and ( other.node_ == node_ );
     }
     bool
     operator!=( const masked_iterator& other ) const
     {
-      return ( other.layer_.get_metadata() != layer_.get_metadata() ) || ( other.node_ != node_ );
+      return ( other.layer_.get_metadata() != layer_.get_metadata() ) or ( other.node_ != node_ );
     }
 
   protected:
@@ -242,9 +242,9 @@ GridLayer< D >::gridpos_to_position( Position< D, int > gridpos ) const
 
 template < int D >
 Position< D >
-GridLayer< D >::get_position( index sind ) const
+GridLayer< D >::get_position( index lid ) const
 {
-  return lid_to_position( sind );
+  return lid_to_position( lid );
 }
 
 template < int D >
@@ -280,14 +280,10 @@ template < class Ins >
 void
 GridLayer< D >::insert_global_positions_( Ins iter, NodeCollectionPTR node_collection )
 {
-  index i = 0;
-  index lid_end = node_collection->size();
-
-  NodeCollection::const_iterator gi = node_collection->begin();
-
-  for ( ; ( gi < node_collection->end() ) && ( i < lid_end ); ++gi, ++i )
+  for ( auto gi = node_collection->begin(); gi < node_collection->end(); ++gi )
   {
-    *iter++ = std::pair< Position< D >, index >( lid_to_position( i ), ( *gi ).node_id );
+    const auto triple = *gi;
+    *iter++ = std::pair< Position< D >, index >( lid_to_position( triple.lid ), triple.node_id );
   }
 }
 
@@ -374,7 +370,8 @@ GridLayer< D >::masked_iterator::masked_iterator( const GridLayer< D >& layer,
 }
 
 template < int D >
-inline std::pair< Position< D >, index > GridLayer< D >::masked_iterator::operator*()
+inline std::pair< Position< D >, index >
+GridLayer< D >::masked_iterator::operator*()
 {
   return std::pair< Position< D >, index >(
     layer_.gridpos_to_position( node_ ), layer_.node_collection_->operator[]( layer_.gridpos_to_lid( node_ ) ) );

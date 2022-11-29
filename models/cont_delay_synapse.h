@@ -43,23 +43,21 @@ Synapse type for continuous delays
 Description
 +++++++++++
 
-cont_delay_synapse relaxes the condition that NEST only implements delays
-which are an integer multiple of the time step h. A continuous delay is
-decomposed into an integer part (delay_) and a double (delay_offset_) so
-that the actual delay is given by  delay_*h - delay_offset_. This can be
+``cont_delay_synapse`` relaxes the condition that NEST only implements delays
+which are an integer multiple of the time step `h`. A continuous delay is
+decomposed into an integer part (``delay_``) and a double (``delay_offset_``) so
+that the actual delay is given by  ``delay_*h - delay_offset_``. This can be
 combined with off-grid spike times.
 
-Remarks:
+All delays set by the normal NEST Connect function will be rounded, even
+when using cont_delay_synapse. To set non-grid delays, you must either
 
-All delays set by the normal NEST Connect function will be rounded, even when
-using cont_delay_synapse. To set non-grid delays, you must either
+1. set the delay as model default using :py:func:`.SetDefaults`, which
+   is very efficient, but results in a situation where all synapses then
+   will have the same delay.
 
-1) set the delay as synapse default, as in the example above
-2) set the delay for each synapse after the connections have been created,
-
-Alternative 1) is much more efficient, but all synapses then will have the
-               same delay.
-Alternative 2) is slower, but allows individual delay values.
+2. set the delay for each synapse after the connections have been
+   created, which is slower, but allows individual delay values.
 
 Continuous delays cannot be shorter than the simulation resolution.
 
@@ -147,44 +145,44 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( RateEvent&, rport )
+    handles_test_event( RateEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( DataLoggingRequest&, rport )
+    handles_test_event( DataLoggingRequest&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( CurrentEvent&, rport )
+    handles_test_event( CurrentEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( ConductanceEvent&, rport )
+    handles_test_event( ConductanceEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( DoubleDataEvent&, rport )
+    handles_test_event( DoubleDataEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( DSSpikeEvent&, rport )
+    handles_test_event( DSSpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( DSCurrentEvent&, rport )
+    handles_test_event( DSCurrentEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 

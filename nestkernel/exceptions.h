@@ -35,14 +35,20 @@ class Event;
 
 /**
  * @addtogroup Exceptions Exception classes
- * Exception classes that are thrown to indicate
- * an error.
+ *
+ * Exception classes that are thrown to indicate a user error.
+ *
+ * Programmatic errors or deviations from the expected behavior of
+ * internal API conventions should never be handles by using
+ * exceptions, but C++ `assert`s should be used for such cases.
  */
 
 /**
  * @defgroup KernelExceptions NEST kernel exception classes
+ *
  * Exception classes that are thrown by the NEST kernel to indicate
- * an error.
+ * a user error.
+ *
  * @ingroup Exceptions
  */
 
@@ -66,7 +72,7 @@ public:
 };
 
 /**
- * Throw if a feature is unavailable.
+ * Exception to be thrown if a feature is unavailable.
  * @ingroup KernelExceptions
  */
 class NotImplemented : public KernelException
@@ -79,8 +85,7 @@ public:
 };
 
 /**
- * Exception to be thrown if a given SLI type does not match the
- * expected type.
+ * Exception to be thrown if a given type does not match the expected type.
  * @ingroup KernelExceptions
  */
 
@@ -93,13 +98,13 @@ public:
   {
   }
 
-  explicit TypeMismatch( const std::string& expectedType )
-    : KernelException( "Expected datatype: " + expectedType )
+  explicit TypeMismatch( const std::string& expected )
+    : KernelException( "Expected datatype: " + expected )
   {
   }
 
-  explicit TypeMismatch( const std::string& expectedType, const std::string& providedType )
-    : KernelException( "Expected datatype: " + expectedType + ", provided datatype: " + providedType )
+  explicit TypeMismatch( const std::string& expected, const std::string& provided )
+    : KernelException( "Expected datatype: " + expected + ", provided datatype: " + provided )
   {
   }
 };
@@ -133,8 +138,7 @@ class UnaccessedDictionaryEntry : public KernelException
 {
 public:
   UnaccessedDictionaryEntry( const std::string& what, const std::string& where, const std::string& missed )
-    : KernelException( std::string( "unaccessed elements in " ) + what + std::string( ", in function " ) + where
-      + std::string( ": " ) + missed )
+    : KernelException( "unaccessed elements in " + what + ", in function " + where + ": " + missed )
   {
   }
 };
@@ -142,7 +146,7 @@ public:
 /**
  * Exception to be thrown if a model with the the specified name
  * does not exist.
- * @see UnknownModelID
+ * @see UnknownComponent
  * @ingroup KernelExceptions
  */
 class UnknownModelName : public KernelException
@@ -157,43 +161,54 @@ public:
 };
 
 /**
+ * Exception to be thrown if a component with the the specified name
+ * does not exist.
+ * @see UnknownModelName
+ * @ingroup KernelExceptions
+ */
+class UnknownComponent : public KernelException
+{
+  std::string compose_msg_( const std::string& model_name ) const;
+
+public:
+  explicit UnknownComponent( const std::string& component_name )
+    : KernelException( compose_msg_( component_name ) )
+  {
+  }
+};
+
+/**
  * Exception to be thrown if a name requested for a user-defined
  * model exist already.
  * @ingroup KernelExceptions
  */
 class NewModelNameExists : public KernelException
 {
-  const std::string model_name_;
+  std::string compose_msg_( const std::string& model_name ) const;
 
 public:
   NewModelNameExists( const std::string& model_name )
-    : KernelException( "NewModelNameExists" )
-    , model_name_( model_name )
+    : KernelException( compose_msg_( model_name ) )
   {
   }
-
-  const char* what() const noexcept override;
 };
 
 /**
- * Exception to be thrown if a model with the the specified ID
- * does not exist.
- * This exception can occur if modeldict has corrupt entries.
- * @see UnknownModelID
+ * Exception to be thrown if a (neuron/synapse) model with the the specified ID
+ * is used within the network and the providing module hence cannot be
+ * uninstalled. This exception can occur if the user tries to uninstall a
+ * module.
  * @ingroup KernelExceptions
  */
-class UnknownModelID : public KernelException
+class ModelInUse : public KernelException
 {
-  const long id_;
+  std::string compose_msg_( const std::string& model_name ) const;
 
 public:
-  UnknownModelID( long id )
-    : KernelException( "UnknownModelID" )
-    , id_( id )
+  ModelInUse( const std::string& model_name )
+    : KernelException( compose_msg_( model_name ) )
   {
   }
-
-  const char* what() const noexcept override;
 };
 
 /**
@@ -206,29 +221,16 @@ class UnknownSynapseType : public KernelException
   std::string compose_msg_( const int id ) const;
   std::string compose_msg_( const std::string& name ) const;
 
-  int synapseid_;
-  std::string synapsename_;
-
-  std::string msg_;
-
 public:
   UnknownSynapseType( int id )
-    : KernelException( "UnknownSynapseType id" )
-    , synapseid_( id )
-    , synapsename_()
-    , msg_( compose_msg_( id ) )
+    : KernelException( compose_msg_( id ) )
   {
   }
 
   UnknownSynapseType( std::string name )
-    : KernelException( "UnknownSynapseType name" )
-    , synapseid_( -1 )
-    , synapsename_( name )
-    , msg_( compose_msg_( name ) )
+    : KernelException( compose_msg_( name ) )
   {
   }
-
-  const char* what() const noexcept override;
 };
 
 /**
@@ -242,21 +244,18 @@ public:
 
 class UnknownNode : public KernelException
 {
-  int id_;
+  std::string compose_msg_( const int id ) const;
 
 public:
   UnknownNode()
     : KernelException( "UnknownNode" )
-    , id_( -1 )
-  {
-  }
-  UnknownNode( int id )
-    : KernelException( "UnknownNode" )
-    , id_( id )
   {
   }
 
-  const char* what() const noexcept override;
+  UnknownNode( int id )
+    : KernelException( compose_msg_( id ) )
+  {
+  }
 };
 
 /**
@@ -270,23 +269,56 @@ public:
 
 class NoThreadSiblingsAvailable : public KernelException
 {
-  int id_;
+  std::string compose_msg_( const int id ) const;
 
 public:
   NoThreadSiblingsAvailable()
     : KernelException( "UnknownNode" )
-    , id_( -1 )
-  {
-  }
-  NoThreadSiblingsAvailable( int id )
-    : KernelException( "UnknownNode" )
-    , id_( id )
   {
   }
 
-  const char* what() const noexcept override;
+  NoThreadSiblingsAvailable( int id )
+    : KernelException( compose_msg_( id ) )
+  {
+  }
 };
 
+class LocalNodeExpected : public KernelException
+{
+  std::string compose_msg_( const int id ) const;
+
+public:
+  LocalNodeExpected( int id )
+    : KernelException( compose_msg_( id ) )
+  {
+  }
+};
+
+class NodeWithProxiesExpected : public KernelException
+{
+  std::string compose_msg_( const int id ) const;
+
+public:
+  NodeWithProxiesExpected( int id )
+    : KernelException( compose_msg_( id ) )
+  {
+  }
+};
+
+/*
+ * Exception to be thrown if the parent
+ * compartment does not exist
+ */
+class UnknownCompartment : public KernelException
+{
+  std::string compose_msg_( const long compartment_idx, const std::string info ) const;
+
+public:
+  UnknownCompartment( long compartment_idx, std::string info )
+    : KernelException( compose_msg_( compartment_idx, info ) )
+  {
+  }
+};
 
 /**
  * Exception to be thrown if the specified
@@ -295,18 +327,13 @@ public:
 
 class UnknownReceptorType : public KernelException
 {
-  long receptor_type_;
-  std::string name_;
+  std::string compose_msg_( const long receptor_type, const std::string name ) const;
 
 public:
   UnknownReceptorType( long receptor_type, std::string name )
-    : KernelException( "UnknownReceptorType" )
-    , receptor_type_( receptor_type )
-    , name_( name )
+    : KernelException( compose_msg_( receptor_type, name ) )
   {
   }
-
-  const char* what() const noexcept override;
 };
 
 /**
@@ -316,20 +343,13 @@ public:
 
 class IncompatibleReceptorType : public KernelException
 {
-  long receptor_type_;
-  std::string name_;
-  std::string event_type_;
+  std::string compose_msg( const long receptor_type, const std::string name, const std::string event);
 
 public:
-  IncompatibleReceptorType( long receptor_type, std::string name, std::string event )
-    : KernelException( "IncompatibleReceptorType" )
-    , receptor_type_( receptor_type )
-    , name_( name )
-    , event_type_( event )
+  IncompatibleReceptorType( long receptor_type, std::string name, std::string event_type )
+    : KernelException( compose_msg( receptor_type, name, event_type ) )
   {
   }
-
-  const char* what() const noexcept override;
 };
 
 /**
@@ -340,16 +360,19 @@ public:
  */
 class UnknownPort : public KernelException
 {
-  int id_;
-
+  std::string compose_msg_( const int id ) const;
+  std::string compose_msg_( const int id, const std::string msg ) const;
+  
 public:
   UnknownPort( int id )
-    : KernelException( "UnknownPort" )
-    , id_( id )
+    : KernelException( compose_msg_( id ) )
   {
   }
 
-  const char* what() const noexcept override;
+  UnknownPort( int id, std::string msg )
+    : KernelException( compose_msg_( id, msg ) )
+  {
+  }
 };
 
 /**
@@ -408,6 +431,24 @@ private:
 };
 
 /**
+ * Exception to be thrown if a thread id outside the range encountered.
+ * @ingroup KernelExceptions
+ */
+class UnknownThread : public KernelException
+{
+  int id_;
+
+public:
+  UnknownThread( int id )
+    : KernelException( "UnknownThread" )
+    , id_( id )
+  {
+  }
+
+  const char* what() const noexcept override;
+};
+
+/**
  * Exception to be thrown if an invalid delay is used in a
  * connection.
  * @ingroup KernelExceptions
@@ -454,6 +495,23 @@ private:
   std::string msg_;
 };
 
+
+/**
+ * Exception to be thrown by a Connection object if
+ * a connection with an unsupported event type is
+ * attempted
+ * @ingroup KernelExceptions
+ */
+class UnsupportedEvent : public KernelException
+{
+  std::string compose_msg_() const;
+  
+public:
+  UnsupportedEvent()
+    : KernelException( compose_msg_() )
+  {
+  }
+};
 
 /**
  * Exception to be thrown if a status parameter
@@ -573,7 +631,21 @@ public:
   {
   }
 
-  const char* what() const noexcept override;
+ const char* what() const noexcept override;
+};
+
+/**
+ * Exception to be thrown if a problem with the
+ * distribution of elements is encountered
+ * @ingroup KernelExceptions
+ */
+class DistributionError : public KernelException
+{
+public:
+  DistributionError()
+    : KernelException( "DistributionError" )
+  {
+  }
 };
 
 /**
@@ -789,7 +861,7 @@ public:
 };
 
 /**
- * Exception to be thrown if an internal error occures.
+ * Exception to be thrown if an internal error occurs.
  * @ingroup KernelExceptions
  */
 class InternalError : public KernelException
@@ -1019,6 +1091,22 @@ private:
 };
 #endif
 
+class UnmatchedSteps : public KernelException
+{
+public:
+  UnmatchedSteps( int steps_left, int total_steps )
+    : current_step_( total_steps - steps_left )
+    , total_steps_( total_steps )
+  {
+  }
+
+  const char* what() const noexcept override;
+
+private:
+  const int current_step_;
+  const int total_steps_;
+};
+
 class BackendPrepared : public KernelException
 {
 public:
@@ -1038,6 +1126,24 @@ private:
   const std::string backend_;
 };
 
+class BackendNotPrepared : public KernelException
+{
+public:
+  BackendNotPrepared( const std::string& backend )
+    : backend_( backend )
+  {
+  }
+
+  BackendNotPrepared( std::string&& backend )
+    : backend_( std::move( backend ) )
+  {
+  }
+
+  const char* what() const noexcept override;
+
+private:
+  const std::string backend_;
+};
 
 class LayerExpected : public KernelException
 {
@@ -1048,6 +1154,14 @@ public:
   }
 };
 
+class LayerNodeExpected : public KernelException
+{
+public:
+  LayerNodeExpected()
+    : KernelException( "LayerNodeExpected" )
+  {
+  }
+};
 
 class UndefinedName : public KernelException
 {
@@ -1062,7 +1176,6 @@ public:
 
   const char* what() const noexcept override;
 };
-
 
 } // namespace nest
 

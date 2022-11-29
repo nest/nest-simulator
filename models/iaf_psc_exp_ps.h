@@ -54,7 +54,7 @@ threshold crossing
 Description
 +++++++++++
 
-iaf_psc_exp_ps is the "canonical" implementation of the leaky
+``iaf_psc_exp_ps`` is the "canonical" implementation of the leaky
 integrate-and-fire model neuron with exponential postsynaptic currents
 that uses the regula falsi method to approximate the timing of a threshold
 crossing. This is the most exact implementation available.
@@ -75,27 +75,6 @@ superior overall performance given an accuracy goal; see [1]_ [2]_ for
 details. Subthreshold dynamics are integrated using exact integration
 between events [3]_.
 
-Parameters
-++++++++++
-
-The following parameters can be set in the status dictionary.
-
-==========  =====  ==========================================================
-E_L         mV     Resting membrane potential
-C_m         pF     Capacitance of the membrane
-tau_m       ms     Membrane time constant
-tau_syn_ex  ms     Excitatory synaptic time constant
-tau_syn_in  ms     Inhibitory synaptic time constant
-t_ref       ms     Duration of refractory period
-V_th        mV     Spike threshold
-I_e         pA     Constant input current
-V_min       mV     Absolute lower value for the membrane potential
-V_reset     mV     Reset value for the membrane potential
-==========  =====  ==========================================================
-
-Remarks
-+++++++
-
 Please note that this node is capable of sending precise spike times
 to target nodes (on-grid spike time and offset).
 
@@ -113,7 +92,25 @@ can only change at on-grid times.
   `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
 
 For details about exact subthreshold integration, please see
-:doc:`../guides/exact-integration`.
+:doc:`../neurons/exact-integration`.
+
+Parameters
+++++++++++
+
+The following parameters can be set in the status dictionary.
+
+==========  =====  ==========================================================
+E_L         mV     Resting membrane potential
+C_m         pF     Capacitance of the membrane
+tau_m       ms     Membrane time constant
+tau_syn_ex  ms     Excitatory synaptic time constant
+tau_syn_in  ms     Inhibitory synaptic time constant
+t_ref       ms     Duration of refractory period
+V_th        mV     Spike threshold
+I_e         pA     Constant input current
+V_min       mV     Absolute lower value for the membrane potential
+V_reset     mV     Reset value for the membrane potential
+==========  =====  ==========================================================
 
 References
 ++++++++++
@@ -154,7 +151,7 @@ public:
   iaf_psc_exp_ps();
 
   /** Copy constructor.
-      GenericModel::allocate_() uses the copy constructor to clone
+      GenericModel::create_() uses the copy constructor to clone
       actual model instances from the prototype instance.
 
       @note The copy constructor MUST NOT be used to create nodes based
@@ -170,24 +167,24 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
   bool
-  is_off_grid() const
+  is_off_grid() const override
   {
     return true;
   }
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
   /**
    * Based on the current state, compute the value of the membrane potential
@@ -206,8 +203,8 @@ private:
    * only through a Node*.
    */
   //@{
-  void init_buffers_();
-  void calibrate();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
   /**
    * Time Evolution Operator.
@@ -226,7 +223,7 @@ private:
    * While the neuron is refractory, membrane potential (y2_) is
    * clamped to U_reset_.
    */
-  void update( Time const& origin, const long from, const long to );
+  void update( Time const& origin, const long from, const long to ) override;
   //@}
 
   // The next two classes need to be friends to access the State_ class/member
@@ -372,7 +369,7 @@ private:
   {
     double h_ms_;           //!< Time resolution [ms]
     long refractory_steps_; //!< Refractory time in steps
-    double exp_tau_m_;      //!< exp(-h/tau_m)
+    double expm1_tau_m_;    //!< expm1(-h/tau_m)
     double exp_tau_ex_;     //!< exp(-h/tau_ex)
     double exp_tau_in_;     //!< exp(-h/tau_in)
     double P20_;            //!< Progagator matrix element, 2nd row

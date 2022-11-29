@@ -65,7 +65,7 @@ public:
    * requested at the exact same time that the neuron emits a spike, the trace
    * value as it was just before the spike is returned.
    */
-  double get_K_value( double t );
+  double get_K_value( double t ) override;
 
   /**
    * \fn void get_K_values( double t,
@@ -80,7 +80,7 @@ public:
    * values at t (in ms) to the provided locations.
    * @throws UnexpectedEvent
    */
-  void get_K_values( double t, double& Kminus, double& nearest_neighbor_Kminus, double& Kminus_triplet );
+  void get_K_values( double t, double& Kminus, double& nearest_neighbor_Kminus, double& Kminus_triplet ) override;
 
   /**
    * \fn void get_K_values( double t,
@@ -113,7 +113,7 @@ public:
   void get_history( double t1,
     double t2,
     std::deque< histentry >::iterator* start,
-    std::deque< histentry >::iterator* finish );
+    std::deque< histentry >::iterator* finish ) override;
 
   /**
    * Register a new incoming STDP connection.
@@ -121,10 +121,10 @@ public:
    * t_first_read: The newly registered synapse will read the history entries
    * with t > t_first_read.
    */
-  void register_stdp_connection( double t_first_read, double delay );
+  void register_stdp_connection( double t_first_read, double delay ) override;
 
-  void get_status( dictionary& d ) const;
-  void set_status( const dictionary& d );
+  void get_status( dictionary& d ) const override;
+  void set_status( const dictionary& d ) override;
 
 protected:
   /**

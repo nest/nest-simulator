@@ -22,9 +22,6 @@
 
 #include "gif_psc_exp_multisynapse.h"
 
-// C++ includes:
-#include <limits>
-
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "numerics.h"
@@ -119,20 +116,11 @@ nest::gif_psc_exp_multisynapse::Parameters_::get( dictionary& d ) const
   d[ names::n_receptors ] = n_receptors_();
   d[ names::has_connections ] = has_connections_;
 
-  ArrayDatum tau_syn_ad( tau_syn_ );
-  d[ names::tau_syn ] = tau_syn_ad;
-
-  ArrayDatum tau_sfa_list_ad( tau_sfa_ );
-  d[ names::tau_sfa ] = tau_sfa_list_ad;
-
-  ArrayDatum q_sfa_list_ad( q_sfa_ );
-  d[ names::q_sfa ] = q_sfa_list_ad;
-
-  ArrayDatum tau_stc_list_ad( tau_stc_ );
-  d[ names::tau_stc ] = tau_stc_list_ad;
-
-  ArrayDatum q_stc_list_ad( q_stc_ );
-  d[ names::q_stc ] = q_stc_list_ad;
+  d[ names::tau_syn ] = tau_syn_;
+  d[ names::tau_sfa ] = tau_sfa_;
+  d[ names::q_sfa ] = q_sfa_;
+  d[ names::tau_stc ] = tau_stc_;
+  d[ names::q_stc ] = q_stc_;
 }
 
 void
@@ -215,7 +203,7 @@ nest::gif_psc_exp_multisynapse::Parameters_::set( const dictionary& d, Node* nod
   std::vector< double > tau_tmp;
   if ( d.update_value( names::tau_syn, tau_tmp ) )
   {
-    if ( has_connections_ && tau_tmp.size() < tau_syn_.size() )
+    if ( has_connections_ and tau_tmp.size() < tau_syn_.size() )
     {
       throw BadProperty(
         "The neuron has connections, "
@@ -293,7 +281,7 @@ nest::gif_psc_exp_multisynapse::init_buffers_()
 }
 
 void
-nest::gif_psc_exp_multisynapse::calibrate()
+nest::gif_psc_exp_multisynapse::pre_run_hook()
 {
   B_.logger_.init();
 
@@ -348,7 +336,7 @@ void
 nest::gif_psc_exp_multisynapse::update( Time const& origin, const long from, const long to )
 {
 
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
@@ -431,7 +419,7 @@ void
 gif_psc_exp_multisynapse::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
-  assert( ( e.get_rport() > 0 ) && ( ( size_t ) e.get_rport() <= P_.n_receptors_() ) );
+  assert( ( e.get_rport() > 0 ) and ( ( size_t ) e.get_rport() <= P_.n_receptors_() ) );
 
   B_.spikes_[ e.get_rport() - 1 ].add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );

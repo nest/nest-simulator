@@ -388,7 +388,7 @@ def optimize(func, mu, sigma, learning_rate_mu=None, learning_rate_sigma=None,
             s = np.vstack([s, -s])
 
         # evaluate fitness for every individual in population
-        fitness = np.fromiter((func(*zi) for zi in z), np.float)
+        fitness = np.fromiter((func(*zi) for zi in z), float)
 
         # print status if enabled
         if verbosity > 0:

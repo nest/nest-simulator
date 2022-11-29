@@ -78,15 +78,18 @@ Here :math:`xi_j(t)` denotes a Gaussian white noise.
 
 This template class needs to be instantiated with a class
 containing the following functions:
- - input (nonlinearity that is applied to the input, either psi or phi)
- - mult_coupling_ex (factor of multiplicative coupling for excitatory input)
- - mult_coupling_in (factor of multiplicative coupling for inhibitory input)
 
-The boolean parameter linear_summation determines whether the input function
+- ``input`` (nonlinearity that is applied to the input, either psi or phi)
+- ``mult_coupling_ex`` (factor of multiplicative coupling for excitatory input)
+- ``mult_coupling_in`` (factor of multiplicative coupling for inhibitory input)
+
+The boolean parameter ``linear_summation`` determines whether the input function
 is applied to the summed up incoming connections (True, default value, input
 represents phi) or to each input individually (False, input represents psi).
 In case of multiplicative coupling the nonlinearity is applied separately
-to the summed excitatory and inhibitory inputs if linear_summation=True.
+to the summed excitatory and inhibitory inputs if ``linear_summation=True``.
+
+See also  [1]_.
 
 References
 ++++++++++
@@ -122,29 +125,29 @@ public:
   using Node::handles_test_event;
   using Node::sends_secondary_event;
 
-  void handle( InstantaneousRateConnectionEvent& );
-  void handle( DelayedRateConnectionEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( InstantaneousRateConnectionEvent& ) override;
+  void handle( DelayedRateConnectionEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( InstantaneousRateConnectionEvent&, rport );
-  port handles_test_event( DelayedRateConnectionEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( InstantaneousRateConnectionEvent&, rport ) override;
+  port handles_test_event( DelayedRateConnectionEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
   void
-  sends_secondary_event( InstantaneousRateConnectionEvent& )
+  sends_secondary_event( InstantaneousRateConnectionEvent& ) override
   {
   }
   void
-  sends_secondary_event( DelayedRateConnectionEvent& )
+  sends_secondary_event( DelayedRateConnectionEvent& ) override
   {
   }
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
   TNonlinearities nonlinearities_;
 
@@ -153,8 +156,8 @@ private:
    */
   bool update_( Time const&, const long, const long, const bool );
 
-  void update( Time const&, const long, const long );
-  bool wfr_update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
+  bool wfr_update( Time const&, const long, const long ) override;
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< rate_neuron_opn< TNonlinearities > >;

@@ -61,7 +61,7 @@ const SpecialFunctionsModule::LambertWm1Function lambertwm1function;
 
 // GSL independent code
 const std::string
-SpecialFunctionsModule::name( void ) const
+SpecialFunctionsModule::name() const
 {
   return std::string( "SpecialFunctionsModule" ); // Return name of the module
 }
@@ -275,7 +275,7 @@ SpecialFunctionsModule::ErfcFunction::execute( SLIInterpreter* i ) const
 gsl_function SpecialFunctionsModule::GaussDiskConvFunction::F_;
 
 
-SpecialFunctionsModule::GaussDiskConvFunction::GaussDiskConvFunction( void )
+SpecialFunctionsModule::GaussDiskConvFunction::GaussDiskConvFunction()
 {
   // allocate integration workspace
   w_ = gsl_integration_workspace_alloc( MAX_QUAD_SIZE );
@@ -284,7 +284,7 @@ SpecialFunctionsModule::GaussDiskConvFunction::GaussDiskConvFunction( void )
   F_.function = SpecialFunctionsModule::GaussDiskConvFunction::f_;
 }
 
-SpecialFunctionsModule::GaussDiskConvFunction::~GaussDiskConvFunction( void )
+SpecialFunctionsModule::GaussDiskConvFunction::~GaussDiskConvFunction()
 {
   // free integration workspace
   gsl_integration_workspace_free( w_ );
@@ -341,7 +341,7 @@ SpecialFunctionsModule::GaussDiskConvFunction::execute( SLIInterpreter* i ) cons
   { /* Gaussian in disk */
     result = 1.0;
   }
-  else if ( y > 1 && r0 > R + sqrt( -log( GSL_DBL_EPSILON / y ) ) )
+  else if ( y > 1 and r0 > R + sqrt( -log( GSL_DBL_EPSILON / y ) ) )
   { /* tail */
     result = 0.25 * R / r0 * ( std::exp( -( r0 - R ) * ( r0 - R ) ) - std::exp( -( r0 + R ) * ( r0 + R ) ) );
   }

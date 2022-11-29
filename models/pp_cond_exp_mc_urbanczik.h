@@ -66,9 +66,9 @@ extern "C" int pp_cond_exp_mc_urbanczik_dynamics( double, const double*, double*
 Name: pp_cond_exp_mc_urbanczik_parameters - Helper class for pp_cond_exp_mc_urbanczik
 
 Description:
-pp_cond_exp_mc_urbanczik_parameters is a helper class for the pp_cond_exp_mc_urbanczik neuron model
+``pp_cond_exp_mc_urbanczik_parameters`` is a helper class for the ``pp_cond_exp_mc_urbanczik`` neuron model
 that contains all parameters of the model that are needed to compute the weight changes of a
-connected urbanczik_synapse in the base class UrbanczikArchivingNode.
+connected ``urbanczik_synapse`` in the base class UrbanczikArchivingNode.
 
 Author: Jonas Stapmanns, David Dahmen, Jan Hahne
 
@@ -92,8 +92,8 @@ private:
   double rate_slope; //!< Parameter of the rate function
   double beta;       //!< Parameter of the rate function
   double theta;      //!< Parameter of the rate function
-  double phi( double u );
-  double h( double u );
+  double phi( double u ) const;
+  double h( double u ) const;
 
 public:
   // The Urbanczik parameters need to be public within this class as they are passed to the GSL solver
@@ -157,7 +157,7 @@ delay specified in the synapse model does *not* account for any delay that might
 be associated with information traveling through the explicitly modeled
 dendritic compartments.
 
-In the :ref:`Urbanczik synapse <urbanczik_synapse>`, the change of the synaptic
+In the :doc:`Urbanczik synapse <urbanczik_synapse>`, the change of the synaptic
 weight is driven by an error signal, which is the difference between the firing
 rate of the soma (derived from the somatic spike train :math:`S_{post}`) and the
 dendritic prediction of the firing rate of the soma (derived from the dendritic
@@ -169,7 +169,7 @@ synaptic delay :math:`d`, the synapse combines a delayed version of the error
 signal with the presynaptic spike train (:math:`S_{pre}`), see :ref:`panel c)
 <fig-multicompartment>`.
 
-.. _fig-multicompartment::
+.. _fig-multicompartment:
 
 .. figure:: ../static/img/multicompartment.png
    :width: 75 %
@@ -186,6 +186,7 @@ signal with the presynaptic spike train (:math:`S_{pre}`), see :ref:`panel c)
    quantities; the dendritic membrane potential (middle) and the somatic spike
    train (bottom).
 
+See :doc:`../auto_examples/urbanczik_synapse_example` to learn more.
 
 Parameters
 ++++++++++
@@ -210,14 +211,13 @@ these parameters are marked with an asterisk.
  t_ref          ms      Duration of refractory period
 ============   =====   =====================================================
 
-See :doc:`../auto_examples/urbanczik_synapse_example` to learn more.
+.. note::
 
-Remarks:
-
-The neuron model uses standard units of NEST instead of the unitless quantities
-used in [1]_.
+   The neuron model uses standard units of NEST instead of the unitless quantities
+   used in [1]_.
 
 .. note::
+
    All parameters that occur for both compartments are stored as C arrays, with
    index 0 being soma.
 
@@ -252,7 +252,7 @@ class pp_cond_exp_mc_urbanczik : public UrbanczikArchivingNode< pp_cond_exp_mc_u
 public:
   pp_cond_exp_mc_urbanczik();
   pp_cond_exp_mc_urbanczik( const pp_cond_exp_mc_urbanczik& );
-  ~pp_cond_exp_mc_urbanczik();
+  ~pp_cond_exp_mc_urbanczik() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -262,23 +262,23 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
-  void update( Time const&, const long, const long );
+  void init_buffers_() override;
+  void pre_run_hook() override;
+  void update( Time const&, const long, const long ) override;
 
   // Enumerations and constants specifying structure and properties ----
 
@@ -523,8 +523,7 @@ private:
   //! Table of compartment names
   static std::vector< std::string > comp_names_;
 
-  //! Dictionary of receptor types, leads to seg fault on exit, see #328
-  // static DictionaryDatum receptor_dict_;
+  // Dictionary of receptor types, leads to seg fault on exit, see #328
 
   //! Mapping of recordables names to access functions
   static RecordablesMap< pp_cond_exp_mc_urbanczik > recordablesMap_;
@@ -533,13 +532,13 @@ private:
 
 // Inline functions of pp_cond_exp_mc_urbanczik_parameters
 inline double
-pp_cond_exp_mc_urbanczik_parameters::phi( double u )
+pp_cond_exp_mc_urbanczik_parameters::phi( double u ) const
 {
   return phi_max / ( 1.0 + rate_slope * exp( beta * ( theta - u ) ) );
 }
 
 inline double
-pp_cond_exp_mc_urbanczik_parameters::h( double u )
+pp_cond_exp_mc_urbanczik_parameters::h( double u ) const
 {
   return 15.0 * beta / ( 1.0 + ( 1.0 / rate_slope ) * exp( -beta * ( theta - u ) ) );
 }
@@ -557,9 +556,9 @@ pp_cond_exp_mc_urbanczik::send_test_event( Node& target, rport receptor_type, sy
 inline port
 pp_cond_exp_mc_urbanczik::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type < MIN_SPIKE_RECEPTOR || receptor_type >= SUP_SPIKE_RECEPTOR )
+  if ( receptor_type < MIN_SPIKE_RECEPTOR or receptor_type >= SUP_SPIKE_RECEPTOR )
   {
-    if ( receptor_type < 0 || receptor_type >= SUP_CURR_RECEPTOR )
+    if ( receptor_type < 0 or receptor_type >= SUP_CURR_RECEPTOR )
     {
       throw UnknownReceptorType( receptor_type, get_name() );
     }
@@ -574,9 +573,9 @@ pp_cond_exp_mc_urbanczik::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 pp_cond_exp_mc_urbanczik::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type < MIN_CURR_RECEPTOR || receptor_type >= SUP_CURR_RECEPTOR )
+  if ( receptor_type < MIN_CURR_RECEPTOR or receptor_type >= SUP_CURR_RECEPTOR )
   {
-    if ( receptor_type >= 0 && receptor_type < MIN_CURR_RECEPTOR )
+    if ( receptor_type >= 0 and receptor_type < MIN_CURR_RECEPTOR )
     {
       throw IncompatibleReceptorType( receptor_type, get_name(), "CurrentEvent" );
     }
@@ -593,7 +592,7 @@ pp_cond_exp_mc_urbanczik::handles_test_event( DataLoggingRequest& dlr, rport rec
 {
   if ( receptor_type != 0 )
   {
-    if ( receptor_type < 0 || receptor_type >= SUP_CURR_RECEPTOR )
+    if ( receptor_type < 0 or receptor_type >= SUP_CURR_RECEPTOR )
     {
       throw UnknownReceptorType( receptor_type, get_name() );
     }
@@ -620,13 +619,13 @@ pp_cond_exp_mc_urbanczik::get_status( dictionary& d ) const
    * a seg fault on exit, see #328
    */
   dictionary receptor_dict_;
-  receptor_dict_[ names::soma_exc ] = SOMA_EXC;
-  receptor_dict_[ names::soma_inh ] = SOMA_INH;
-  receptor_dict_[ names::soma_curr ] = I_SOMA;
+  receptor_dict_[ names::soma_exc ] = static_cast< long >(SOMA_EXC);
+  receptor_dict_[ names::soma_inh ] = static_cast< long >(SOMA_INH);
+  receptor_dict_[ names::soma_curr ] = static_cast< long >(I_SOMA);
 
-  receptor_dict_[ names::dendritic_exc ] = DEND_EXC;
-  receptor_dict_[ names::dendritic_inh ] = DEND_INH;
-  receptor_dict_[ names::dendritic_curr ] = I_DEND;
+  receptor_dict_[ names::dendritic_exc ] = static_cast< long >(DEND_EXC);
+  receptor_dict_[ names::dendritic_inh ] = static_cast< long >(DEND_INH);
+  receptor_dict_[ names::dendritic_curr ] = static_cast< long >(I_DEND);
 
   d[ names::receptor_types ] = receptor_dict_;
 }

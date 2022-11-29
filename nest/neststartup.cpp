@@ -22,29 +22,21 @@
 
 #include "neststartup.h"
 
-// C++ includes:
-#include <fstream>
 
 // Generated includes:
 #include "config.h"
-// #include "static_modules.h"
+//#include "static_modules.h"
 
 // Includes from libnestutil:
-#include "logging.h"
 #include "logging_event.h"
 
 // Includes from nestkernel:
 // #include "dynamicloader.h"
-#include "exceptions.h"
-#include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 #include "nest.h"
 #include "nestmodule.h"
 
 // Includes from sli:
-#include "dict.h"
-#include "dictdatum.h"
 #include "filesystem.h"
 #include "interpret.h"
 #include "oosupport.h"
@@ -134,27 +126,23 @@ neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string module
  * The following section concerns shared user modules and is thus only
  * included if we built with libtool and libltdl.
  *
- * On BlueGene, we need to link user modules statically, but for convenience
+ * One may want to link user modules statically, but for convenience
  * they still register themselves with the DyamicLoadModule during static
- * initialization. On BlueGene, we then need to prevent that the modules are
- * loaded a second time, therefore the guard below. At the same time, we
- * need to create the DynamicLoaderModule, since the compiler might otherwise
- * optimize DynamicLoaderModule::registerLinkedModule() away.
+ * initialization. At the same time, we need to create the DynamicLoaderModule,
+ * since the compiler might otherwise optimize DynamicLoaderModule::registerLinkedModule() away.
  */
 #ifdef HAVE_LIBLTDL
-// dynamic loader module for managing linked and dynamically loaded extension
-// modules
-// nest::DynamicLoaderModule* pDynLoader = new nest::DynamicLoaderModule( engine );
+  // dynamic loader module for managing linked and dynamically loaded extension
+  // modules
+  // PYNEST-NG  nest::DynamicLoaderModule* pDynLoader = new nest::DynamicLoaderModule( engine );
 
-// initialize all modules that were linked into at compile time
-// these modules have registered via calling DynamicLoader::registerLinkedModule
-// from their constructor
-#ifndef IS_BLUEGENE
-// pDynLoader->initLinkedModules( engine );
+  // initialize all modules that were linked at compile time.
+  // These modules were registered via DynamicLoader::registerLinkedModule
+  // from their constructor
+  // pDynLoader->initLinkedModules( engine );
 
-// interpreter will delete module on destruction
-// engine.addmodule( pDynLoader );
-#endif
+  // interpreter will delete module on destruction
+  //engine.addmodule( pDynLoader );
 #endif
 
   // #ifdef _IS_PYNEST

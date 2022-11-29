@@ -197,7 +197,7 @@ protected:
   friend Time operator-( const Time& t1, const Time& t2 );
   friend Time operator*( const long factor, const Time& t );
   friend Time operator*( const Time& t, long factor );
-  friend std::ostream&( ::operator<<)( std::ostream&, const Time& );
+  friend std::ostream&( ::operator<< )( std::ostream&, const Time& );
 
   /////////////////////////////////////////////////////////////
   // Limits for time, including infinity definitions
@@ -286,7 +286,7 @@ public:
   /////////////////////////////////////////////////////////////
 
 protected:
-  explicit Time( tic_t tics )
+  Time( tic_t tics )
     : tics( tics )
   {
   } // This doesn't check ranges.
@@ -302,19 +302,23 @@ public:
   // Time(const Time& t);
 
   Time( tic t )
-    : tics( ( time_abs( t.t ) < LIM_MAX.tics ) ? t.t : ( t.t < 0 ) ? LIM_NEG_INF.tics : LIM_POS_INF.tics )
+    : tics( ( time_abs( t.t ) < LIM_MAX.tics ) ? t.t
+        : ( t.t < 0 )                          ? LIM_NEG_INF.tics
+                                               : LIM_POS_INF.tics )
   {
   }
 
   Time( step t )
     : tics( ( time_abs( t.t ) < LIM_MAX.steps ) ? t.t * Range::TICS_PER_STEP
-                                                : ( t.t < 0 ) ? LIM_NEG_INF.tics : LIM_POS_INF.tics )
+        : ( t.t < 0 )                           ? LIM_NEG_INF.tics
+                                                : LIM_POS_INF.tics )
   {
   }
 
   Time( ms t )
     : tics( ( time_abs( t.t ) < LIM_MAX.ms ) ? static_cast< tic_t >( t.t * Range::TICS_PER_MS + 0.5 )
-                                             : ( t.t < 0 ) ? LIM_NEG_INF.tics : LIM_POS_INF.tics )
+        : ( t.t < 0 )                        ? LIM_NEG_INF.tics
+                                             : LIM_POS_INF.tics )
   {
   }
 
@@ -615,7 +619,8 @@ operator-( const Time& t1, const Time& t2 )
   return Time::tic( t1.tics - t2.tics ); // check range
 }
 
-inline Time operator*( const long factor, const Time& t )
+inline Time
+operator*( const long factor, const Time& t )
 {
   const tic_t n = factor * t.tics;
   // if no overflow:
@@ -633,7 +638,8 @@ inline Time operator*( const long factor, const Time& t )
   }
 }
 
-inline Time operator*( const Time& t, long factor )
+inline Time
+operator*( const Time& t, long factor )
 {
   return factor * t;
 }

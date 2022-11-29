@@ -30,7 +30,6 @@
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 from libcpp.deque cimport deque
-from libcpp.memory cimport shared_ptr
 
 from cython.operator cimport dereference as deref
 from cython.operator cimport preincrement as inc
@@ -39,7 +38,9 @@ import nest
 from nest.lib.hl_api_exceptions import NESTErrors
 
 import numpy
+cimport numpy
 
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 
 cdef class NodeCollectionObject:
 
@@ -57,7 +58,7 @@ cdef class ConnectionObject:
     cdef ConnectionID thisobj
 
     def __repr__(self):
-        return "<ConnectionIDObject>"
+        return "<ConnectionObject>"
 
     cdef _set_connection_id(self, ConnectionID conn_id):
         self.thisobj = conn_id
@@ -65,12 +66,12 @@ cdef class ConnectionObject:
 
 cdef class ParameterObject:
 
-    cdef shared_ptr[Parameter] thisptr
+    cdef ParameterPTR thisptr
 
     def __repr__(self):
         return "<ParameterObject>"
 
-    cdef _set_parameter(self, shared_ptr[Parameter] parameter_ptr):
+    cdef _set_parameter(self, ParameterPTR parameter_ptr):
         self.thisptr = parameter_ptr
 
 
@@ -82,6 +83,13 @@ cdef object any_vector_to_list(vector[any] cvec):
         inc(it)
     return tmp
 
+cdef object dict_vector_to_list(vector[dictionary] cvec):
+    cdef tmp = []
+    cdef vector[dictionary].iterator it = cvec.begin()
+    while it != cvec.end():
+        tmp.append(dictionary_to_pydict(deref(it)))
+        inc(it)
+    return tmp
 
 cdef object any_to_pyobj(any operand):
     if is_type[int](operand):
@@ -107,11 +115,19 @@ cdef object any_to_pyobj(any operand):
     if is_type[vector[vector[double]]](operand):
         return any_cast[vector[vector[double]]](operand)
     if is_type[vector[string]](operand):
-        return any_cast[vector[string]](operand)
+        # PYNEST-NG: Do we want to have this or are bytestrings fine?
+        # return any_cast[vector[string]](operand)
+        return list(map(lambda x: x.decode("utf-8"), any_cast[vector[string]](operand)))
+    if is_type[vector[dictionary]](operand):
+        return dict_vector_to_list(any_cast[vector[dictionary]](operand))
     if is_type[vector[any]](operand):
         return tuple(any_vector_to_list(any_cast[vector[any]](operand)))
     if is_type[dictionary](operand):
         return dictionary_to_pydict(any_cast[dictionary](operand))
+    if is_type[NodeCollectionPTR](operand):
+        obj = NodeCollectionObject()
+        obj._set_nc(any_cast[NodeCollectionPTR](operand))
+        return nest.NodeCollection(obj)
 
 cdef object dictionary_to_pydict(dictionary cdict):
     cdef tmp = {}
@@ -126,17 +142,38 @@ cdef object dictionary_to_pydict(dictionary cdict):
         inc(it)
     return tmp
 
+cdef is_list_tuple_ndarray_of_float(v):
+    list_of_float = type(v) is list and type(v[0]) is float
+    tuple_of_float = type(v) is tuple and type(v[0]) is float
+    ndarray_of_float = isinstance(v, numpy.ndarray) and numpy.issubdtype(v.dtype, numpy.floating)
+    return list_of_float or tuple_of_float or ndarray_of_float
+
+cdef is_list_tuple_ndarray_of_int(v):
+    list_of_float = type(v) is list and type(v[0]) is int
+    tuple_of_float = type(v) is tuple and type(v[0]) is int
+    ndarray_of_float = isinstance(v, numpy.ndarray) and numpy.issubdtype(v.dtype, numpy.integer)
+    return list_of_float or tuple_of_float or ndarray_of_float
+
+
 cdef dictionary pydict_to_dictionary(object py_dict) except *:  # Adding "except *" makes cython propagate the error if it is raised.
     cdef dictionary cdict = dictionary()
     for key, value in py_dict.items():
-        if type(value) is int:
+        if type(value) is int or isinstance(value, numpy.integer):
             cdict[pystr_to_string(key)] = <long>value
-        elif type(value) is float:
+        elif type(value) is float or isinstance(value, numpy.floating):
             cdict[pystr_to_string(key)] = <double>value
         elif type(value) is bool:
             cdict[pystr_to_string(key)] = <cbool>value
         elif type(value) is str:
             cdict[pystr_to_string(key)] = <string>pystr_to_string(value)
+        elif is_list_tuple_ndarray_of_float(value):
+            cdict[pystr_to_string(key)] = pylist_or_ndarray_to_doublevec(value)
+        elif is_list_tuple_ndarray_of_int(value):
+            cdict[pystr_to_string(key)] = pylist_to_intvec(value)
+        elif type(value) is list and type(value[0]) is list:
+            cdict[pystr_to_string(key)] = list_of_list_to_doublevec(value)
+        elif type(value) is list and type(value[0]) is str:
+            cdict[pystr_to_string(key)] = pylist_to_stringvec(value)
         elif type(value) is dict:
             cdict[pystr_to_string(key)] = pydict_to_dictionary(value)
         elif type(value) is nest.NodeCollection:
@@ -159,8 +196,33 @@ cdef object vec_of_dict_to_list(vector[dictionary] cvec):
 
 cdef vector[dictionary] list_of_dict_to_vec(object pylist):
     cdef vector[dictionary] vec
+    # PYNEST-NG: reserve the correct size and use index-based
+    # assignments instead of pushing back
     for pydict in pylist:
         vec.push_back(pydict_to_dictionary(pydict))
+    return vec
+
+cdef vector[vector[double]] list_of_list_to_doublevec(object pylist):
+    cdef vector[vector[double]] vec
+    for val in pylist:
+        vec.push_back(val)
+    return vec
+
+cdef vector[long] pylist_to_intvec(object pylist):
+    cdef vector[long] vec
+    for val in pylist:
+        vec.push_back(val)
+    return vec
+
+cdef vector[double] pylist_or_ndarray_to_doublevec(object pylist):
+    cdef vector[double] vec
+    vec = pylist
+    return vec
+
+cdef vector[string] pylist_to_stringvec(object pylist):
+    cdef vector[string] vec
+    for val in pylist:
+        vec.push_back(<string>pystr_to_string(val))
     return vec
 
 cdef object string_to_pystr(string s):
@@ -197,6 +259,29 @@ def llapi_create_spatial(object layer_params):
     return nest.NodeCollection(obj)
 
 @catch_cpp_error
+def llapi_get_position(NodeCollectionObject layer):
+    cdef vector[vector[double]] result = get_position(layer.thisptr)
+    if nc_size(layer.thisptr) == 1:
+        return result[0]
+    else:
+        return result
+
+@catch_cpp_error
+def llapi_distance(object conn):  # PYNEST-NG: should there be a SynapseCollectionObject?
+    cdef vector[ConnectionID] conn_vec
+    for c in conn:
+        conn_vec.push_back((<ConnectionObject>(c)).thisobj)
+    cdef vector[double] result = distance(conn_vec)
+    return result
+
+# PYNEST-NG:
+#
+# inside
+# or (aka union_mask)
+# and (aka intersect_mask)
+# sub (aka minus_mask)
+
+@catch_cpp_error
 def llapi_make_nodecollection(object node_ids):
     cdef NodeCollectionPTR gids
     # node_ids list is automatically converted to an std::vector
@@ -207,6 +292,16 @@ def llapi_make_nodecollection(object node_ids):
 
 @catch_cpp_error
 def llapi_connect(NodeCollectionObject pre, NodeCollectionObject post, object conn_params, object synapse_params):
+
+    conn_params = conn_params if conn_params is not None else {}
+    synapse_params = synapse_params if synapse_params is not None else {}
+    
+    if ("rule" in conn_params and conn_params["rule"] is None) or "rule" not in conn_params:
+        conn_params["rule"] = "all_to_all"
+    
+    if "synapse_model" not in synapse_params:
+        synapse_params["synapse_model"] = "static_synapse"
+    
     cdef vector[dictionary] syn_param_vec
     if synapse_params is not None:
         syn_param_vec.push_back(pydict_to_dictionary(synapse_params))
@@ -215,6 +310,10 @@ def llapi_connect(NodeCollectionObject pre, NodeCollectionObject post, object co
             pydict_to_dictionary(conn_params),
             syn_param_vec)
 
+def llapi_connect_layers(NodeCollectionObject pre, NodeCollectionObject post, object projections):
+    print("### 9", projections)
+    connect_layers(pre.thisptr, post.thisptr, pydict_to_dictionary(projections))
+    
 @catch_cpp_error
 def llapi_slice(NodeCollectionObject nc, long start, long stop, long step):
     cdef NodeCollectionPTR nc_ptr
@@ -243,21 +342,6 @@ def llapi_to_string(NodeCollectionObject nc):
     return string_to_pystr(pprint_to_string(nc.thisptr))
 
 @catch_cpp_error
-def llapi_get_modeldict():
-    cdef dictionary cdict = get_modeldict()
-    return dictionary_to_pydict(cdict)
-
-@catch_cpp_error
-def llapi_get_synapsedict():
-    cdef dictionary cdict = get_synapsedict()
-    return dictionary_to_pydict(cdict)
-
-@catch_cpp_error
-def llapi_get_connruledict():
-    cdef dictionary cdict = get_connruledict()
-    return dictionary_to_pydict(cdict)
-
-@catch_cpp_error
 def llapi_get_kernel_status():
     cdef dictionary cdict = get_kernel_status()
     return dictionary_to_pydict(cdict)
@@ -265,6 +349,10 @@ def llapi_get_kernel_status():
 @catch_cpp_error
 def llapi_get_defaults(object model_name):
     return dictionary_to_pydict(get_model_defaults(pystr_to_string(model_name)))
+
+@catch_cpp_error
+def llapi_set_defaults(object model_name, object params):
+    set_model_defaults(pystr_to_string(model_name), pydict_to_dictionary(params))
 
 @catch_cpp_error
 def llapi_get_nodes(object params, cbool local_only):
@@ -312,9 +400,9 @@ def llapi_get_nc_status(NodeCollectionObject nc, object key=None):
         raise TypeError(f'key must be a string, got {type(key)}')
 
 @catch_cpp_error
-def llapi_set_nc_status(NodeCollectionObject nc, object params):
-    cdef dictionary params_dict = pydict_to_dictionary(params)
-    set_nc_status(nc.thisptr, params_dict)
+def llapi_set_nc_status(NodeCollectionObject nc, object params_list):
+    cdef vector[dictionary] params = list_of_dict_to_vec(params_list)
+    set_nc_status(nc.thisptr, params)
 
 @catch_cpp_error
 def llapi_join_nc(NodeCollectionObject lhs, NodeCollectionObject rhs):
@@ -375,7 +463,7 @@ def llapi_take_array_index(NodeCollectionObject node_collection, object array):
 @catch_cpp_error
 def llapi_create_parameter(object specs):
     cdef dictionary specs_dictionary = pydict_to_dictionary(specs)
-    cdef shared_ptr[Parameter] parameter
+    cdef ParameterPTR parameter
     parameter = create_parameter(specs_dictionary)
     obj = ParameterObject()
     obj._set_parameter(parameter)
@@ -389,9 +477,18 @@ def llapi_get_param_value(ParameterObject parameter):
 def llapi_param_is_spatial(ParameterObject parameter):
     return is_spatial(parameter.thisptr)
 
+
+@catch_cpp_error
+def llapi_apply_parameter(ParameterObject parameter, object pos_or_nc):
+    if type(pos_or_nc) is nest.NodeCollection:
+        return tuple(apply(parameter.thisptr, (<NodeCollectionObject>(pos_or_nc._datum)).thisptr))
+    else:
+        return tuple(apply(parameter.thisptr, pydict_to_dictionary(pos_or_nc)))
+    
+
 @catch_cpp_error
 def llapi_multiply_parameter(ParameterObject first, ParameterObject second):
-    cdef shared_ptr[Parameter] new_parameter
+    cdef ParameterPTR new_parameter
     new_parameter = multiply_parameter(first.thisptr, second.thisptr)
     obj = ParameterObject()
     obj._set_parameter(new_parameter)
@@ -399,7 +496,7 @@ def llapi_multiply_parameter(ParameterObject first, ParameterObject second):
 
 @catch_cpp_error
 def llapi_divide_parameter(ParameterObject first, ParameterObject second):
-    cdef shared_ptr[Parameter] new_parameter
+    cdef ParameterPTR new_parameter
     new_parameter = divide_parameter(first.thisptr, second.thisptr)
     obj = ParameterObject()
     obj._set_parameter(new_parameter)
@@ -407,7 +504,7 @@ def llapi_divide_parameter(ParameterObject first, ParameterObject second):
 
 @catch_cpp_error
 def llapi_add_parameter(ParameterObject first, ParameterObject second):
-    cdef shared_ptr[Parameter] new_parameter
+    cdef ParameterPTR new_parameter
     new_parameter = add_parameter(first.thisptr, second.thisptr)
     obj = ParameterObject()
     obj._set_parameter(new_parameter)
@@ -415,7 +512,7 @@ def llapi_add_parameter(ParameterObject first, ParameterObject second):
 
 @catch_cpp_error
 def llapi_subtract_parameter(ParameterObject first, ParameterObject second):
-    cdef shared_ptr[Parameter] new_parameter
+    cdef ParameterPTR new_parameter
     new_parameter = subtract_parameter(first.thisptr, second.thisptr)
     obj = ParameterObject()
     obj._set_parameter(new_parameter)
@@ -423,7 +520,7 @@ def llapi_subtract_parameter(ParameterObject first, ParameterObject second):
 
 @catch_cpp_error
 def llapi_compare_parameter(ParameterObject first, ParameterObject second, object pydict):
-    cdef shared_ptr[Parameter] new_parameter
+    cdef ParameterPTR new_parameter
     cdef dictionary cdict = pydict_to_dictionary(pydict)
     new_parameter = compare_parameter(first.thisptr, second.thisptr, cdict)
     obj = ParameterObject()
@@ -432,7 +529,7 @@ def llapi_compare_parameter(ParameterObject first, ParameterObject second, objec
 
 @catch_cpp_error
 def llapi_conditional_parameter(ParameterObject condition, ParameterObject if_true, ParameterObject if_false):
-    cdef shared_ptr[Parameter] new_parameter
+    cdef ParameterPTR new_parameter
     new_parameter = conditional_parameter(condition.thisptr, if_true.thisptr, if_false.thisptr)
     obj = ParameterObject()
     obj._set_parameter(new_parameter)
@@ -440,7 +537,7 @@ def llapi_conditional_parameter(ParameterObject condition, ParameterObject if_tr
 
 @catch_cpp_error
 def llapi_min_parameter(ParameterObject parameter, double other_value):
-    cdef shared_ptr[Parameter] new_parameter
+    cdef ParameterPTR new_parameter
     new_parameter = min_parameter(parameter.thisptr, other_value)
     obj = ParameterObject()
     obj._set_parameter(new_parameter)
@@ -448,7 +545,7 @@ def llapi_min_parameter(ParameterObject parameter, double other_value):
 
 @catch_cpp_error
 def llapi_max_parameter(ParameterObject parameter, double other_value):
-    cdef shared_ptr[Parameter] new_parameter
+    cdef ParameterPTR new_parameter
     new_parameter = max_parameter(parameter.thisptr, other_value)
     obj = ParameterObject()
     obj._set_parameter(new_parameter)
@@ -456,7 +553,7 @@ def llapi_max_parameter(ParameterObject parameter, double other_value):
 
 @catch_cpp_error
 def llapi_redraw_parameter(ParameterObject parameter, double min_value, double max_value):
-    cdef shared_ptr[Parameter] new_parameter
+    cdef ParameterPTR new_parameter
     new_parameter = redraw_parameter(parameter.thisptr, min_value, max_value)
     obj = ParameterObject()
     obj._set_parameter(new_parameter)
@@ -464,7 +561,7 @@ def llapi_redraw_parameter(ParameterObject parameter, double min_value, double m
 
 @catch_cpp_error
 def llapi_exp_parameter(ParameterObject parameter):
-    cdef shared_ptr[Parameter] new_parameter
+    cdef ParameterPTR new_parameter
     new_parameter = exp_parameter(parameter.thisptr)
     obj = ParameterObject()
     obj._set_parameter(new_parameter)
@@ -472,7 +569,7 @@ def llapi_exp_parameter(ParameterObject parameter):
 
 @catch_cpp_error
 def llapi_sin_parameter(ParameterObject parameter):
-    cdef shared_ptr[Parameter] new_parameter
+    cdef ParameterPTR new_parameter
     new_parameter = sin_parameter(parameter.thisptr)
     obj = ParameterObject()
     obj._set_parameter(new_parameter)
@@ -480,7 +577,7 @@ def llapi_sin_parameter(ParameterObject parameter):
 
 @catch_cpp_error
 def llapi_cos_parameter(ParameterObject parameter):
-    cdef shared_ptr[Parameter] new_parameter
+    cdef ParameterPTR new_parameter
     new_parameter = cos_parameter(parameter.thisptr)
     obj = ParameterObject()
     obj._set_parameter(new_parameter)
@@ -488,7 +585,7 @@ def llapi_cos_parameter(ParameterObject parameter):
 
 @catch_cpp_error
 def llapi_pow_parameter(ParameterObject parameter, double exponent):
-    cdef shared_ptr[Parameter] new_parameter
+    cdef ParameterPTR new_parameter
     new_parameter = pow_parameter(parameter.thisptr, exponent)
     obj = ParameterObject()
     obj._set_parameter(new_parameter)
@@ -496,7 +593,7 @@ def llapi_pow_parameter(ParameterObject parameter, double exponent):
 
 @catch_cpp_error
 def llapi_dimension_parameter(object list_of_pos_params):
-    cdef shared_ptr[Parameter] dim_parameter
+    cdef ParameterPTR dim_parameter
     cdef ParameterObject x, y, z
     if len(list_of_pos_params) == 2:
         x, y = list_of_pos_params
@@ -550,7 +647,7 @@ def llapi_set_connection_status(object conns, object params):
     # params can be a dictionary or a list of dictionaries
     if isinstance(params, dict):
         set_connection_status(conn_deque, pydict_to_dictionary(params))
-    elif isinstance(params, list):
+    elif isinstance(params, (list, tuple)):
         if len(params) != len(conns):
             raise ValueError('params list length must be equal to number of connections')
         set_connection_status(conn_deque, list_of_dict_to_vec(params))

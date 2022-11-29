@@ -47,11 +47,11 @@ class SimulationManager : public ManagerInterface
 public:
   SimulationManager();
 
-  virtual void initialize();
-  virtual void finalize();
+  void initialize() override;
+  void finalize() override;
 
-  virtual void set_status( const dictionary& );
-  virtual void get_status( dictionary& );
+  void set_status( const dictionary& ) override;
+  void get_status( dictionary& ) override;
 
   /**
       check for errors in time before run
@@ -66,22 +66,24 @@ public:
   */
 
   /**
-     Initialize simulation for a set of run calls.
-     Must be called before a sequence of runs, and again after cleanup.
-  */
-  void prepare();
+   * Initialize simulation for a set of run calls.
+   * Must be called before a sequence of runs, and again after cleanup.
+   */
+  void prepare() override;
+
   /**
-     Run a simulation for another `Time`. Can be repeated ad infinitum with
-     calls to get_status(), but any changes to the network are undefined,
-     leading serious risk of incorrect results.
-  */
+   * Run a simulation for another `Time`. Can be repeated ad infinitum with
+   * calls to get_status(), but any changes to the network are undefined,
+   * leading serious risk of incorrect results.
+   */
   void run( Time const& );
+
   /**
-     Closes a set of runs, doing finalizations such as file closures.
-     After cleanup() is called, no more run()s can be called before another
-     prepare() call.
-  */
-  void cleanup();
+   * Closes a set of runs, doing finalizations such as file closures.
+   * After cleanup() is called, no more run()s can be called before another
+   * prepare() call.
+   */
+  void cleanup() override;
 
   /**
    * Returns true if waveform relaxation is used.

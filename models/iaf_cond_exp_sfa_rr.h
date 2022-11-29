@@ -67,7 +67,7 @@ adaptation and relative refractory mechanisms
 Description
 +++++++++++
 
-iaf_cond_exp_sfa_rr is an implementation of a spiking neuron using
+``iaf_cond_exp_sfa_rr`` is an implementation of a spiking neuron using
 integrate-and-fire dynamics with conductance-based synapses, with additional
 spike-frequency adaptation and relative refractory mechanisms as described in
 [2]_, page 166.
@@ -77,8 +77,10 @@ an exponential function. The exponential function is normalized such that an
 event of weight 1.0 results in a peak current of 1 nS.
 
 Outgoing spike events induce a change of the adaptation and relative refractory
-conductances by q_sfa and q_rr, respectively. Otherwise these conductances
-decay exponentially with time constants tau_sfa and tau_rr, respectively.
+conductances by ``q_sfa`` and ``q_rr``, respectively. Otherwise these conductances
+decay exponentially with time constants ``tau_sfa`` and ``tau_rr``, respectively.
+
+See also [1]_.
 
 Parameters
 ++++++++++
@@ -149,7 +151,7 @@ class iaf_cond_exp_sfa_rr : public ArchivingNode
 public:
   iaf_cond_exp_sfa_rr();
   iaf_cond_exp_sfa_rr( const iaf_cond_exp_sfa_rr& );
-  ~iaf_cond_exp_sfa_rr();
+  ~iaf_cond_exp_sfa_rr() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -159,23 +161,23 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
-  void update( Time const&, const long, const long );
+  void init_buffers_() override;
+  void pre_run_hook() override;
+  void update( Time const&, const long, const long ) override;
 
   // END Boilerplate function declarations ----------------------------
 

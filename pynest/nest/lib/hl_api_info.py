@@ -28,8 +28,7 @@ import os
 import textwrap
 import webbrowser
 
-from ..ll_api import *
-from .hl_api_helper import *
+from .hl_api_helper import broadcast, is_iterable, load_help, show_help_with_pager
 from .hl_api_types import to_json
 from .. import nestkernel_api as nestkernel
 import nest
@@ -48,7 +47,6 @@ __all__ = [
 ]
 
 
-@check_stack
 def sysinfo():
     """Print information on the platform on which NEST was compiled.
 
@@ -57,7 +55,6 @@ def sysinfo():
     sr("sysinfo")
 
 
-@check_stack
 def authors():
     """Print the authors of NEST.
 
@@ -66,7 +63,6 @@ def authors():
     sr("authors")
 
 
-@check_stack
 def helpdesk():
     """Open the NEST documentation index in a browser.
 
@@ -75,7 +71,7 @@ def helpdesk():
 
     Please note that the help pages will only be available if you ran
     ``make html`` prior to installing NEST. For more details, see
-    :ref:`documentation_workflow`.
+    :ref:`doc_workflow`.
 
     """
 
@@ -90,7 +86,6 @@ def helpdesk():
     webbrowser.open_new(f"file://{help_fname}")
 
 
-@check_stack
 def help(obj=None, return_text=False):
     """Display the help page for the given object in a pager.
 
@@ -129,7 +124,6 @@ def help(obj=None, return_text=False):
         print(nest.__doc__)
 
 
-@check_stack
 def get_argv():
     """Return argv as seen by NEST.
 
@@ -148,7 +142,6 @@ def get_argv():
     return statusdict['argv']
 
 
-@check_stack
 def message(level, sender, text):
     """Print a message using message system of NEST.
 
@@ -169,7 +162,6 @@ def message(level, sender, text):
     sr('message')
 
 
-@check_stack
 def get_verbosity():
     """Return verbosity level of NEST's messages.
 
@@ -190,7 +182,6 @@ def get_verbosity():
     return spp()
 
 
-@check_stack
 def set_verbosity(level):
     """Change verbosity level for NEST's messages.
 
@@ -201,6 +192,12 @@ def set_verbosity(level):
     - M_ERROR=30, display error messages and above
     - M_FATAL=40, display failure messages and above
 
+    .. note::
+
+       To suppress the usual output when NEST starts up (e.g., the welcome message and
+       version information), you can run ``export PYNEST_QUIET=1`` on the command
+       line before executing your simulation script.
+
     Parameters
     ----------
     level : str, default: 'M_INFO'
@@ -208,13 +205,14 @@ def set_verbosity(level):
         'M_INFO' or 'M_ALL'.
     """
 
-    # TODO-PYNEST-NG: There are no SLI messages anymore, so verbosity is now irrelevant and should be replaced
-    #                 when a replacement for message() exists.
+    # TODO-PYNEST-NG: There are no SLI messages anymore, so verbosity
+    #                 is now irrelevant and should be replaced when a
+    #                 replacement for message() exists.
+    
     # sr("{} setverbosity".format(level))
     pass
 
 
-@check_stack
 def SetStatus(nodes, params, val=None):
     """Set parameters of nodes or connections.
 
@@ -233,7 +231,7 @@ def SetStatus(nodes, params, val=None):
         Dictionary of parameters (either lists or single values) or list of dictionaries of parameters
         of same length as `nodes`. If `val` is given, this has to be a string giving
         the name of a model property.
-    val : int, list, optional
+    val : int, float, list of int, list of float, optional
         If given, params has to be the name of a model property.
 
     Raises
@@ -242,6 +240,28 @@ def SetStatus(nodes, params, val=None):
         If `nodes` is not a NodeCollection of nodes, a SynapseCollection of synapses, or if the
         number of parameters don't match the number of nodes or
         synapses.
+
+    Examples
+    --------
+    >>>    nodes = nest.Create("iaf_psc_alpha", 3)
+
+           # Set V_m of all nodes to -55.0
+           nest.SetStatus(nodes, {"V_m": -55.0})
+
+           # Same as above
+           nest.SetStatus(nodes, "V_m", -55.0)
+
+           # Set V_m of the nodes individually to the given values
+           nest.SetStatus(nodes, {"V_m": [-55.0, -66.0, -77.0]})
+
+           # Same as above
+           nest.SetStatus(nodes, "V_m", [-55.0, -66.0, -77.0])
+
+           # Same as above
+           nest.SetStatus(nodes, [{"V_m": -55.0}, {"V_m": -66.0}, {"V_m": -77.0}])
+
+           # Set V_m of all nodes to-55.0 and I_e individually to the given values
+           nest.SetStatus(nodes, {"V_m": -55.0, "I_e": [0.0, 100.0, 500.0]})
 
     See Also
     -------
@@ -253,60 +273,16 @@ def SetStatus(nodes, params, val=None):
 
     if not isinstance(nodes, (nest.NodeCollection, nest.SynapseCollection)):
         raise TypeError("'nodes' must be NodeCollection or a SynapseCollection.")
+    
+    if isinstance(params, str) and val is not None:
+        params = {params: val}
 
-    # This was added to ensure that the function is a nop (instead of,
-    # for instance, raising an exception) when applied to an empty
-    # list, which is an artifact of the API operating on lists, rather
-    # than relying on language idioms, such as comprehensions
-    if len(nodes) == 0:
-        return
-
-    params_is_dict = isinstance(params, dict)
-    set_status_nodes = isinstance(nodes, nest.NodeCollection)
-    if set_status_nodes:
-        local_nodes = [nodes.local] if len(nodes) == 1 else nodes.local
-        set_status_nodes = set_status_nodes and all(local_nodes)
-
-    if (params_is_dict and set_status_nodes):
-
-        node_params = nodes[0].get()
-        contains_list = [is_iterable(vals) and key in node_params and not is_iterable(node_params[key]) for
-                         key, vals in params.items()]
-
-        if any(contains_list):
-            temp_param = [{} for _ in range(len(nodes))]
-
-            for key, vals in params.items():
-                if not is_iterable(vals):
-                    for temp_dict in temp_param:
-                        temp_dict[key] = vals
-                else:
-                    for i, temp_dict in enumerate(temp_param):
-                        temp_dict[key] = vals[i]
-            params = temp_param
-
-    if val is not None and is_literal(params):
-        if is_iterable(val) and not isinstance(val, (uni_str, dict)):
-            params = [{params: x} for x in val]
-        else:
-            params = {params: val}
-
-    if isinstance(params, (list, tuple)) and len(nodes) != len(params):
-        raise TypeError("status dict must be a dict, or a list of dicts of length {}".format(len(nodes)))
-
-    if isinstance(nodes, nest.SynapseCollection):
-        params = broadcast(params, len(nodes), (dict,), "params")
-
-        sps(nodes)
-        sps(params)
-
-        sr('2 arraystore')
-        sr('Transpose { arrayload pop SetStatus } forall')
-    else:
-        nodes.set(params)
+    print("### 4", params)
 
 
-@check_stack
+    nodes.set(params)
+
+
 def GetStatus(nodes, keys=None, output=''):
     """Return the parameter dictionaries of nodes or connections.
 
@@ -414,7 +390,7 @@ def GetStatus(nodes, keys=None, output=''):
 
     if keys is None:
         result = nodes.get()
-    elif is_literal(keys) or is_iterable(keys):
+    elif isinstance(keys, str) or is_iterable(keys):
         result = nodes.get(keys)
     else:
         raise TypeError("keys should be either a string or an iterable")

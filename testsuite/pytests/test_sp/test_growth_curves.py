@@ -31,7 +31,7 @@ import sys
 HAVE_OPENMP = nest.GetKernelStatus("build_info")["threading"] != "no"
 
 
-class SynapticElementIntegrator(object):
+class SynapticElementIntegrator:
     """
     Generic class which describes how to compute the number of
     Synaptic Element based on Ca value

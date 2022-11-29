@@ -29,12 +29,11 @@
 
 // Includes from nestkernel:
 #include "connection_id.h"
-#include "node_collection.h"
-
 #include "event.h"
 #include "exceptions.h"
 #include "generic_factory.h"
 #include "nestmodule.h"
+#include "node_collection.h"
 #include "ntree.h"
 #include "parameter.h"
 #include "position.h"
@@ -50,11 +49,6 @@ typedef sharedPtrDatum< nest::NodeCollection, &nest::NestModule::NodeCollectionT
 typedef sharedPtrDatum< nest::nc_const_iterator, &nest::NestModule::NodeCollectionIteratorType >
   NodeCollectionIteratorDatum;
 typedef sharedPtrDatum< nest::Parameter, &nest::NestModule::ParameterType > ParameterDatum;
-
-// #ifndef HAVE_STATIC_TEMPLATE_DECLARATION_FAILS
-// template <>
-// nest::pool ConnectionDatum::memory;
-// #endif
 
 template <>
 void ConnectionDatum::print( std::ostream& ) const;

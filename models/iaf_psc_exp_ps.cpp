@@ -37,10 +37,7 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -178,7 +175,7 @@ nest::iaf_psc_exp_ps::Parameters_::set( const dictionary& d, Node* node )
   {
     throw BadProperty( "Refractory time must be at least one time step." );
   }
-  if ( tau_m_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 )
+  if ( tau_m_ <= 0 or tau_ex_ <= 0 or tau_in_ <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -247,14 +244,14 @@ nest::iaf_psc_exp_ps::init_buffers_()
 }
 
 void
-nest::iaf_psc_exp_ps::calibrate()
+nest::iaf_psc_exp_ps::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
   V_.h_ms_ = Time::get_resolution().get_ms();
 
-  V_.exp_tau_m_ = std::exp( -V_.h_ms_ / P_.tau_m_ );
+  V_.expm1_tau_m_ = std::expm1( -V_.h_ms_ / P_.tau_m_ );
   V_.exp_tau_ex_ = std::exp( -V_.h_ms_ / P_.tau_ex_ );
   V_.exp_tau_in_ = std::exp( -V_.h_ms_ / P_.tau_in_ );
   V_.P20_ = -P_.tau_m_ / P_.c_m_ * numerics::expm1( -V_.h_ms_ / P_.tau_m_ );
@@ -301,7 +298,7 @@ nest::iaf_psc_exp_ps::update( const Time& origin, const long from, const long to
 
     // if neuron returns from refractoriness during this step, place
     // pseudo-event in queue to mark end of refractory period
-    if ( S_.is_refractory_ && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
+    if ( S_.is_refractory_ and T + 1 - S_.last_spike_step_ == V_.refractory_steps_ )
     {
       B_.events_.add_refractory( T, S_.last_spike_offset_ );
     }
@@ -326,8 +323,11 @@ nest::iaf_psc_exp_ps::update( const Time& origin, const long from, const long to
       // update membrane potential
       if ( not S_.is_refractory_ )
       {
-        S_.y2_ =
-          V_.P20_ * ( P_.I_e_ + S_.y0_ ) + V_.P21_ex_ * S_.y1_ex_ + V_.P21_in_ * S_.y1_in_ + S_.y2_ * V_.exp_tau_m_;
+        // If we use S_.y2_ * std::exp( -V_.h_ms_ / P_.tau_m_ ) instead of
+        // V_.expm1_tau_m_ * S_.y2_ + S_.y2_ here, the accuracy decreases,
+        // see test_iaf_ps_dc_t_accuracy.sli for details.
+        S_.y2_ = V_.P20_ * ( P_.I_e_ + S_.y0_ ) + V_.P21_ex_ * S_.y1_ex_ + V_.P21_in_ * S_.y1_in_
+          + V_.expm1_tau_m_ * S_.y2_ + S_.y2_;
 
         // lower bound of membrane potential
         S_.y2_ = ( S_.y2_ < P_.U_min_ ? P_.U_min_ : S_.y2_ );

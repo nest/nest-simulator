@@ -34,7 +34,6 @@
 #include "manager_interface.h"
 
 // Includes from nestkernel:
-
 #include "nest_types.h"
 #include "random_generators.h"
 
@@ -51,16 +50,16 @@ class RandomManager : public ManagerInterface
 {
 public:
   RandomManager();
-  ~RandomManager();
+  ~RandomManager() override;
 
   /**
    * Register available RNG types, set default RNG type and create RNGs.
    */
-  virtual void initialize();
-  virtual void finalize();
-
-  virtual void set_status( const dictionary& );
-  virtual void get_status( dictionary& );
+  void initialize() override;
+  void finalize() override;
+  void change_number_of_threads() override;
+  void set_status( const dictionary& ) override;
+  void get_status( dictionary& ) override;
 
   /**
    * Get rank-synchronized random number generator.

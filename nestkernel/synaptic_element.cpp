@@ -33,6 +33,8 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 
+// Includes from sli:
+#include "dictutils.h"
 
 /* ----------------------------------------------------------------
  * SynapticElement
@@ -59,7 +61,7 @@ nest::SynapticElement::SynapticElement( const SynapticElement& se )
   , tau_vacant_( se.tau_vacant_ )
 {
   growth_curve_ = kernel().sp_manager.new_growth_curve( se.growth_curve_->get_name() );
-  assert( growth_curve_ != 0 );
+  assert( growth_curve_ );
   dictionary nc_parameters;
   se.get( nc_parameters );
   // TODO-PYNEST-NG: fix growth curve with dictionary

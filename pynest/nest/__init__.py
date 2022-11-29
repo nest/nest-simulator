@@ -25,18 +25,26 @@ r"""PyNEST - Python interface for the NEST simulator
 
 * ``nest.__version__`` displays the NEST version.
 
-* ``nest.Models()`` shows all available neuron, device and synapse models.
+* ``nest.node_models`` shows all available neuron and device models.
 
-* ``nest.help('model_name') displays help for the given model, e.g., ``nest.help('iaf_psc_exp')``
+* ``nest.synapse_models`` shows all available synapse models.
 
-* To get help on functions in the ``nest`` package, use Python's ``help()`` function
-  or IPython's ``?``, e.g.
+* ``nest.help("model_name") displays help for the given model, e.g.,
+  ``nest.help("iaf_psc_exp")``
 
+* To get help on functions in the ``nest`` package, use Python's
+  ``help()`` function or IPython's ``?``, e.g.
      - ``help(nest.Create)``
      - ``nest.Connect?``
 
 For more information visit https://www.nest-simulator.org.
 """
+
+# WARNING: This file is only used to create the `NestModule` below and then
+# ignored. If you'd like to make changes to the root `nest` module, they need to
+# be made to the `NestModule` class/instance instead.
+
+################
 
 # Store interpreter-given module attributes to copy into replacement module
 # instance later on. Use `.copy()` to prevent pollution with other variables
@@ -46,6 +54,7 @@ from .ll_api import KernelAttribute  # noqa
 import sys                           # noqa
 import types                         # noqa
 import importlib                     # noqa
+import builtins                      # noqa
 
 try:
     import versionchecker
@@ -53,59 +62,67 @@ except ImportError:
     pass
 
 
-def _rel_import_star(module, import_module_name):
-    """Emulates `from X import *` into `module`"""
-
-    imported = importlib.import_module(import_module_name, __name__)
-    imp_iter = vars(imported).items()
-    if hasattr(module, "__all__"):
-        # If a public api is defined using the `__all__` attribute, copy that.
-        module.update(kv for kv in imp_iter if kv[0] in imported.__all__)
-    else:
-        # Otherwise follow "underscore is private" convention.
-        module.update(kv for kv in imp_iter if not kv[0].startswith("_"))
-
-
-def _lazy_module_property(module_name):
-    """
-    Returns a property that lazy loads a module and substitutes itself with it.
-    The class variable name must match given `module_name`::
-
-      class ModuleClass(types.ModuleType):
-          lazy_module_xy = _lazy_module_property("lazy_module_xy")
-    """
-    def lazy_loader(self):
-        cls = type(self)
-        delattr(cls, module_name)
-        module = importlib.import_module("." + module_name, __name__)
-        setattr(cls, module_name, module)
-        return module
-
-    return property(lazy_loader)
-
-
 class NestModule(types.ModuleType):
     """
     A module class for the `nest` root module to control the dynamic generation
-    of module level attributes such as the KernelAttributes and lazy loading
-    some submodules.
-
+    of module level attributes such as the KernelAttributes, lazy loading
+    some submodules and importing the public APIs of the `lib` submodules.
     """
+
     from . import ll_api                             # noqa
-    from .ll_api import set_communicator             # noqa
-
     from . import pynestkernel as kernel             # noqa
-
     from . import random                             # noqa
     from . import math                               # noqa
     from . import spatial_distributions              # noqa
     from . import logic                              # noqa
+    from .ll_api import set_communicator
 
-    # __version__ = ll_api.sli_func("statusdict /version get")
-    __version__ = "NO SLI"
+    def __init__(self, name):
+        super().__init__(name)
+        # Copy over the original module attributes to preserve all interpreter-given
+        # magic attributes such as `__name__`, `__path__`, `__package__`, ...
+        self.__dict__.update(_original_module_attrs)
 
-    # Lazy load the `spatial` module to avoid circular imports.
-    spatial = _lazy_module_property("spatial")
+        # Import public APIs of submodules into the `nest.` namespace
+        _rel_import_star(self, ".lib.hl_api_connections")
+        _rel_import_star(self, ".lib.hl_api_exceptions")
+        _rel_import_star(self, ".lib.hl_api_info")
+        _rel_import_star(self, ".lib.hl_api_models")
+        _rel_import_star(self, ".lib.hl_api_nodes")
+        _rel_import_star(self, ".lib.hl_api_parallel_computing")
+        _rel_import_star(self, ".lib.hl_api_simulation")
+        _rel_import_star(self, ".lib.hl_api_spatial")
+        _rel_import_star(self, ".lib.hl_api_types")
+
+        # Lazy loaded modules. They are descriptors, so add them to the type object
+        type(self).raster_plot = _lazy_module_property("raster_plot")
+        type(self).server = _lazy_module_property("server")
+        type(self).spatial = _lazy_module_property("spatial")
+        type(self).visualization = _lazy_module_property("visualization")
+        type(self).voltage_trace = _lazy_module_property("voltage_trace")
+
+        self.__version__ = "PYNEST-NG"
+        # Finalize the nest module with a public API.
+        _api = list(k for k in self.__dict__ if not k.startswith("_"))
+        _api.extend(k for k in dir(type(self)) if not k.startswith("_"))
+        self.__all__ = list(set(_api))
+
+        # Block setting of unknown attributes
+        type(self).__setattr__ = _setattr_error
+
+    def set(self, **kwargs):
+        return self.SetKernelStatus(kwargs)
+
+    def get(self, *args):
+        if len(args) == 0:
+            return self.GetKernelStatus()
+        if len(args) == 1:
+            return self.GetKernelStatus(args[0])
+        else:
+            return self.GetKernelStatus(args)
+
+    def __dir__(self):
+        return list(set(vars(self).keys()) | set(self.__all__))
 
     # Define the kernel attributes.
     #
@@ -124,6 +141,9 @@ class NestModule(types.ModuleType):
     )
     biological_time = KernelAttribute(
         "float", "The current simulation time (in ms)"
+    )
+    build_info = KernelAttribute(
+        "dict", "Build and compile time information for NEST", readonly=True
     )
     to_do = KernelAttribute(
         "int", "The number of steps yet to be simulated", readonly=True
@@ -191,10 +211,18 @@ class NestModule(types.ModuleType):
         "Whether MPI buffers for communication of connections resize on the fly",
         default=True,
     )
-    buffer_size_secondary_events = KernelAttribute(
+    send_buffer_size_secondary_events = KernelAttribute(
         "int",
         (
-            "Size of MPI buffers for communicating secondary events "
+            "Size of MPI send buffers for communicating secondary events "
+            + "(in bytes, per MPI rank, for developers)"
+        ),
+        readonly=True,
+    )
+    recv_buffer_size_secondary_events = KernelAttribute(
+        "int",
+        (
+            "Size of MPI recv buffers for communicating secondary events "
             + "(in bytes, per MPI rank, for developers)"
         ),
         readonly=True,
@@ -289,6 +317,11 @@ class NestModule(types.ModuleType):
         ),
         default=10000.0,
     )
+    growth_curves = KernelAttribute(
+        "list[str]",
+        "The list of the available structural plasticity growth curves",
+        readonly=True,
+    )
     use_compressed_spikes = KernelAttribute(
         "bool",
         (
@@ -322,6 +355,21 @@ class NestModule(types.ModuleType):
         readonly=True,
         localonly=True,
     )
+    connection_rules = KernelAttribute(
+        "list[str]",
+        "The list of available connection rules",
+        readonly=True,
+    )
+    node_models = KernelAttribute(
+        "list[str]",
+        "The list of the available node (i.e., neuron or device) models",
+        readonly=True,
+    )
+    synapse_models = KernelAttribute(
+        "list[str]",
+        "The list of the available synapse models",
+        readonly=True,
+    )
     local_spike_counter = KernelAttribute(
         "int",
         (
@@ -333,23 +381,14 @@ class NestModule(types.ModuleType):
         readonly=True,
     )
     recording_backends = KernelAttribute(
-        "dict[str, dict]",
-        (
-            "Dict of backends for recording devices. Each recording backend can"
-            + " have a set of global parameters that can be modified through"
-            + " this attribute by passing a dictionary with the name of the"
-            + " recording backend as key and a dictionary with the global"
-            + " parameters to be overwritten as value.\n\n"
-            + "Example\n"
-            + "~~~~~~~\n\n"
-            + "Please note that NEST must be compiled with SionLIB for the"
-            + " ``sionlib`` backend to be available.\n\n"
-            + ".. code-block:: python\n\n"
-            + "  nest.recording_backends = dict(sionlib=dict(buffer_size=1024))"
-            + "\n\n"
-            + ".. seealso:: The valid global parameters are listed in the"
-            + " documentation of each recording backend"
-        ),
+        "list[str]",
+        "List of available backends for recording devices",
+        readonly=True,
+    )
+    stimulation_backends = KernelAttribute(
+        "list[str]",
+        "List of available backends for stimulation devices",
+        readonly=True,
     )
     dict_miss_is_error = KernelAttribute(
         "bool",
@@ -382,54 +421,100 @@ class NestModule(types.ModuleType):
         default=float("+inf"),
     )
 
-    _kernel_attr_names = set(
+    # Kernel attribute indices, used for fast lookup in `ll_api.py`
+    _kernel_attr_names = builtins.set(
         k for k, v in vars().items() if isinstance(v, KernelAttribute)
     )
-    _readonly_kernel_attrs = set(
+    _readonly_kernel_attrs = builtins.set(
         k for k, v in vars().items() if isinstance(v, KernelAttribute) and v._readonly
     )
 
-    def set(self, **kwargs):
-        return self.SetKernelStatus(kwargs)
 
-    def get(self, *args):
-        if len(args) == 0:
-            return self.GetKernelStatus()
-        if len(args) == 1:
-            return self.GetKernelStatus(args[0])
+def _setattr_error(self, attr, val):
+    """
+    When attributes on the `nest` module instance are set, check if it exists on the
+    module type and try to call `__set__` on them. Without this explicit check `nest`s
+    `__setattr__` shadows class attributes and descriptors (such as `KernelAttribute`s).
+
+    Once this function exists on the `nest` module, new attributes can only be added using
+    `__dict__` manipulation. It is added onto the module at the end of `__init__`,
+    "freezing" the module.
+    """
+    if isinstance(val, types.ModuleType):
+        # Allow import machinery to set imported modules on `nest`
+        self.__dict__[attr] = val
+    else:
+        err = AttributeError(f"Cannot set attribute '{attr}' on module 'nest'")
+        try:
+            cls_attr = getattr(type(self), attr)
+        except AttributeError:
+            raise err from None
         else:
-            return self.GetKernelStatus(args)
+            if hasattr(cls_attr, "__set__"):
+                cls_attr.__set__(self, val)
+            else:
+                raise err from None
 
-    def __dir__(self):
-        return list(set(vars(self).keys()) | set(self.__all__))
+
+def _rel_import_star(module, import_module_name):
+    """Emulates `from X import *` into `module`"""
+
+    imported = importlib.import_module(import_module_name, __name__)
+    imp_iter = imported.__dict__.items()
+    _dict = module.__dict__
+    if hasattr(imported, "__all__"):
+        # If a public api is defined using the `__all__` attribute, copy that.
+        _dict.update(kv for kv in imp_iter if kv[0] in imported.__all__)
+    else:
+        # Otherwise follow "underscore is private" convention.
+        _dict.update(kv for kv in imp_iter if not kv[0].startswith("_"))
+
+
+def _lazy_module_property(module_name, optional=False, optional_hint=""):
+    """
+    Returns a property that lazy loads a module and substitutes itself with it.
+    The class variable name must match given `module_name`::
+
+      class ModuleClass(types.ModuleType):
+          lazy_module_xy = _lazy_module_property("lazy_module_xy")
+
+    :param module_name: Name of the lazy loadable module.
+    :type module_name: str
+    :param optional: Optional modules raise more descriptive errors.
+    :type optional: bool
+    :param optional_hint: Message appended in case of import errors, to help
+      users install missing optional modules
+    :type optional_hint: str
+    """
+    def lazy_loader(self):
+        cls = type(self)
+        delattr(cls, module_name)
+        try:
+            module = importlib.import_module("." + module_name, __name__)
+        except ImportError as e:
+            if optional:
+                raise ImportError(
+                    f"This functionality requires the optional module "
+                    + module_name + ". " + optional_hint
+                ) from None
+            else:
+                raise e from None
+        setattr(cls, module_name, module)
+        return module
+
+    return property(lazy_loader)
 
 
 # Instantiate a NestModule to replace the nest Python module. Based on
 # https://mail.python.org/pipermail/python-ideas/2012-May/014969.html
 _module = NestModule(__name__)
-# We manipulate the nest module instance through its `__dict__` (= vars())
-_module_dict = vars(_module)
-# Copy over the original module attributes to preverse all interpreter given
-# magic attributes such as `__name__`, `__path__`, `__package__`, ...
-_module_dict.update(_original_module_attrs)
-
-# Import public API of `.hl_api` into the nest module instance
-_rel_import_star(_module_dict, ".hl_api")
-
-# Finalize the nest module instance by generating its public API.
-_api = list(k for k in _module_dict if not k.startswith("_"))
-_api.extend(k for k in dir(NestModule) if not k.startswith("_"))
-_module.__all__ = list(set(_api))
-
 # Set the nest module object as the return value of `import nest` using sys
 sys.modules[__name__] = _module
-
 # Some compiled/binary components (`pynestkernel.pyx` for example) of NEST
 # obtain a reference to this file's original module object instead of what's in
 # `sys.modules`. For these edge cases we make available all attributes of the
 # nest module instance to this file's module object.
-globals().update(_module_dict)
+globals().update(_module.__dict__)
 
 # Clean up obsolete references
-del _rel_import_star, _lazy_module_property, _module, _module_dict, \
-    _original_module_attrs
+del _rel_import_star, _lazy_module_property, _module, _original_module_attrs

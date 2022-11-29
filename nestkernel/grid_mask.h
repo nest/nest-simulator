@@ -51,14 +51,14 @@ public:
   GridMask( const dictionary& d );
 
   bool
-  inside( const std::vector< double >& ) const
+  inside( const std::vector< double >& ) const override
   {
     throw KernelException( "Grid mask must be applied to a grid layer." );
   }
 
   void set_anchor( const Position< D, int >& );
 
-  dictionary get_dict() const;
+  dictionary get_dict() const override;
 
   GridMask< D >*
   clone() const
@@ -69,22 +69,22 @@ public:
   /**
    * @returns the name of this mask type.
    */
-  static Name get_name();
+  static std::string get_name();
 
   AbstractMask*
-  intersect_mask( const AbstractMask& ) const
+  intersect_mask( const AbstractMask& ) const override
   {
     throw KernelException( "Grid masks can not be combined." );
   }
 
   AbstractMask*
-  union_mask( const AbstractMask& ) const
+  union_mask( const AbstractMask& ) const override
   {
     throw KernelException( "Grid masks can not be combined." );
   }
 
   AbstractMask*
-  minus_mask( const AbstractMask& ) const
+  minus_mask( const AbstractMask& ) const override
   {
     throw KernelException( "Grid masks can not be combined." );
   }
@@ -126,14 +126,14 @@ GridMask< D >::GridMask( const dictionary& d )
 }
 
 template <>
-inline Name
+inline std::string
 GridMask< 2 >::get_name()
 {
   return names::grid;
 }
 
 template <>
-inline Name
+inline std::string
 GridMask< 3 >::get_name()
 {
   return names::grid3d;
@@ -145,7 +145,7 @@ GridMask< D >::get_dict() const
 {
   dictionary d;
   dictionary maskd;
-  d[ get_name().toString() ] = maskd;
+  d[ get_name() ] = maskd;
 
   long shape_x = lower_right_[ 0 ] - upper_left_[ 0 ];
   long shape_y = lower_right_[ 1 ] - upper_left_[ 1 ];

@@ -67,7 +67,7 @@ Current-based exponential integrate-and-fire neuron model
 Description
 +++++++++++
 
-aeif_psc_exp is the adaptive exponential integrate and fire neuron
+``aeif_psc_exp`` is the adaptive exponential integrate and fire neuron
 according to Brette and Gerstner (2005), with postsynaptic currents
 in the form of truncated exponentials.
 
@@ -78,22 +78,24 @@ The membrane potential is given by the following differential equation:
 
 .. math::
 
- C dV/dt= -g_L(V-E_L)+g_L*\Delta_T*\exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e) \\
+ C dV/dt= -g_L(V-E_L)+g_L\cdot\Delta_T\cdot\exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e) \\
                                                      -g_i(t)(V-E_i)-w +I_e
 
 and
 
 .. math::
 
- \tau_w * dw/dt= a(V-E_L) -W
+ \tau_w \cdot dw/dt= a(V-E_L) -W
 
 
-Note that the spike detection threshold V_peak is automatically set to
+Note that the spike detection threshold ``V_peak`` is automatically set to
 :math:`V_th+10` mV to avoid numerical instabilites that may result from
-setting V_peak too high.
+setting ``V_peak`` too high.
 
 For implementation details see the
 `aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
+
+See also [1]_.
 
 Parameters
 ++++++++++
@@ -127,7 +129,7 @@ The following parameters can be set in the status dictionary.
  b       pA      Spike-triggered adaptation
  Delta_T mV      Slope factor
  tau_w   ms      Adaptation time constant
- V_t     mV      Spike initiation threshold
+ V_th    mV      Spike initiation threshold
  V_peak  mV      Spike detection threshold
 ======== ======= ==================================
 
@@ -179,7 +181,7 @@ class aeif_psc_exp : public ArchivingNode
 public:
   aeif_psc_exp();
   aeif_psc_exp( const aeif_psc_exp& );
-  ~aeif_psc_exp();
+  ~aeif_psc_exp() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -189,23 +191,23 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
-  void update( const Time&, const long, const long );
+  void init_buffers_() override;
+  void pre_run_hook() override;
+  void update( const Time&, const long, const long ) override;
 
   // END Boilerplate function declarations ----------------------------
 
@@ -231,7 +233,7 @@ private:
     double g_L;        //!< Leak Conductance in nS
     double C_m;        //!< Membrane Capacitance in pF
     double E_L;        //!< Leak reversal Potential (aka resting potential) in mV
-    double Delta_T;    //!< Slope factor in ms
+    double Delta_T;    //!< Slope factor in mV
     double tau_w;      //!< Adaptation time-constant in ms
     double a;          //!< Subthreshold adaptation in nS
     double b;          //!< Spike-triggered adaptation in pA

@@ -23,6 +23,7 @@
 #include "spatial.h"
 
 // C++ includes:
+#include <memory>
 #include <ostream>
 #include <string>
 
@@ -50,48 +51,6 @@ LayerMetadata::LayerMetadata( AbstractLayerPTR layer )
   , first_node_id_( 0 )
 {
 }
-
-void
-LayerMetadata::slice( size_t start, size_t stop, size_t step, NodeCollectionPTR node_collection )
-{
-  // Get positions of current layer, sliced in start-stop. Because the implementation of NodeCollections sliced
-  // with step internally keeps the "skipped" nodes, positions must include the "skipped" nodes as well, so that
-  // the node indices match the position indices.
-  std::vector< std::vector< double > > new_positions;
-  for ( size_t lid = start; lid < stop; ++lid )
-  {
-    new_positions.emplace_back( layer_->get_position_vector( lid ) );
-  }
-
-  // Create new free layer with sliced positions
-  int D = layer_->get_position_vector( start ).size();
-  assert( D == 2 or D == 3 );
-  AbstractLayer* layer_local = nullptr;
-  if ( D == 2 )
-  {
-    layer_local = new FreeLayer< 2 >();
-  }
-  else if ( D == 3 )
-  {
-    layer_local = new FreeLayer< 3 >();
-  }
-  // Wrap the layer as the usual pointer types.
-  std::shared_ptr< AbstractLayer > layer_safe( layer_local );
-  NodeCollectionMetadataPTR layer_meta( new LayerMetadata( layer_safe ) );
-
-  // Set the relationship with the NodeCollection.
-  node_collection->set_metadata( layer_meta );
-  layer_safe->set_node_collection( node_collection );
-  layer_meta->set_first_node_id( node_collection->operator[]( 0 ) );
-
-  // Inherit status from current layer, but with new positions.
-  dictionary layer_dict;
-  layer_->get_status( layer_dict );
-  layer_dict[ names::positions ] = new_positions;
-  layer_dict[ names::step ] = step;
-  layer_local->set_status( layer_dict );
-}
-
 
 AbstractLayerPTR
 get_layer( NodeCollectionPTR nc )
@@ -265,6 +224,11 @@ displacement( NodeCollectionPTR layer_nc, const std::vector< std::vector< double
 std::vector< double >
 distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
 {
+  if ( layer_to_nc->size() != 1 and layer_from_nc->size() != 1 and not( layer_to_nc->size() == layer_from_nc->size() ) )
+  {
+    throw BadProperty( "NodeCollections must have equal length or one must have size 1." );
+  }
+
   auto layer_to_positions = get_position( layer_to_nc );
 
   AbstractLayerPTR layer_from = get_layer( layer_from_nc );
@@ -354,7 +318,7 @@ distance( NodeCollectionPTR layer_nc, const std::vector< std::vector< double > >
 }
 
 std::vector< double >
-distance( const std::vector< ConnectionDatum >& conns )
+distance( const std::vector< ConnectionID >& conns )
 {
   std::vector< double > result;
 
@@ -363,10 +327,10 @@ distance( const std::vector< ConnectionDatum >& conns )
 
   for ( auto& conn_id : conns )
   {
-    index src = conn_id->get_source_node_id();
+    index src = conn_id.get_source_node_id();
     auto src_position = get_position( src );
 
-    index trgt = conn_id->get_target_node_id();
+    index trgt = conn_id.get_target_node_id();
 
     if ( not kernel().node_manager.is_local_node_id( trgt ) )
     {
@@ -395,12 +359,118 @@ distance( const std::vector< ConnectionDatum >& conns )
   return result;
 }
 
-MaskDatum
+MaskPTR
 create_mask( const dictionary& mask_dict )
 {
   mask_dict.init_access_flags();
 
-  MaskDatum datum( NestModule::create_mask( mask_dict ) );
+  // TODO-PYNEST-NG: move and convert to use dictionary
+  // // t can be either an existing MaskPTR, or a Dictionary containing
+  // // mask parameters
+  // MaskPTR* maskd = dynamic_cast< MaskPTR* >( t.datum() );
+  // if ( maskd )
+  // {
+  //   return *maskd;
+  // }
+  // else
+  // {
+
+  //   DictionaryPTR* dd = dynamic_cast< DictionaryPTR* >( t.datum() );
+  //   if ( dd == 0 )
+  //   {
+  //     throw BadProperty( "Mask must be masktype or dictionary." );
+  //   }
+
+  //   // The dictionary should contain one key which is the name of the
+  //   // mask type, and optionally the key 'anchor'. To find the unknown
+  //   // mask type key, we must loop through all keys. The value for the
+  //   // anchor key will be stored in the anchor_token variable.
+  //   Token anchor_token;
+  //   bool has_anchor = false;
+  //   AbstractMask* mask = 0;
+
+  //   for ( Dictionary::iterator dit = ( *dd )->begin(); dit != ( *dd )->end(); ++dit )
+  //   {
+
+  //     if ( dit->first == names::anchor )
+  //     {
+
+  //       anchor_token = dit->second;
+  //       has_anchor = true;
+  //     }
+  //     else
+  //     {
+
+  //       if ( mask )
+  //       { // mask has already been defined
+  //         throw BadProperty( "Mask definition dictionary contains extraneous items." );
+  //       }
+  //       mask = create_mask( dit->first, getValue< DictionaryPTR >( dit->second ) );
+  //     }
+  //   }
+
+  //   if ( has_anchor )
+  //   {
+
+  //     // The anchor may be an array of doubles (a spatial position).
+  //     // For grid layers only, it is also possible to provide an array of longs.
+  //     try
+  //     {
+  //       std::vector< long > anchor = getValue< std::vector< long > >( anchor_token );
+
+  //       switch ( anchor.size() )
+  //       {
+  //       case 2:
+  //         try
+  //         {
+  //           GridMask< 2 >& grid_mask_2d = dynamic_cast< GridMask< 2 >& >( *mask );
+  //           grid_mask_2d.set_anchor( Position< 2, int >( anchor[ 0 ], anchor[ 1 ] ) );
+  //         }
+  //         catch ( std::bad_cast& e )
+  //         {
+  //           throw BadProperty( "Mask must be 2-dimensional grid mask." );
+  //         }
+  //         break;
+  //       case 3:
+  //         try
+  //         {
+  //           GridMask< 3 >& grid_mask_3d = dynamic_cast< GridMask< 3 >& >( *mask );
+  //           grid_mask_3d.set_anchor( Position< 3, int >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
+  //         }
+  //         catch ( std::bad_cast& e )
+  //         {
+  //           throw BadProperty( "Mask must be 3-dimensional grid mask." );
+  //         }
+  //         break;
+  //       }
+  //     }
+  //     catch ( TypeMismatch& e )
+  //     {
+  //       std::vector< double > anchor = getValue< std::vector< double > >( anchor_token );
+  //       AbstractMask* amask;
+
+  //       switch ( anchor.size() )
+  //       {
+  //       case 2:
+  //         amask = new AnchoredMask< 2 >( dynamic_cast< Mask< 2 >& >( *mask ), anchor );
+  //         break;
+  //       case 3:
+  //         amask = new AnchoredMask< 3 >( dynamic_cast< Mask< 3 >& >( *mask ), anchor );
+  //         break;
+  //       default:
+  //         throw BadProperty( "Anchor must be 2- or 3-dimensional." );
+  //       }
+
+  //       delete mask;
+  //       mask = amask;
+  //     }
+  //   }
+
+  //   return mask;
+  // }
+
+  
+  MaskPTR datum;
 
   mask_dict.all_entries_accessed( "CreateMask", "params" );
 
@@ -408,27 +478,27 @@ create_mask( const dictionary& mask_dict )
 }
 
 bool
-inside( const std::vector< double >& point, const MaskDatum& mask )
+inside( const std::vector< double >& point, const MaskPTR mask )
 {
   return mask->inside( point );
 }
 
-MaskDatum
-intersect_mask( const MaskDatum& mask1, const MaskDatum& mask2 )
+MaskPTR
+intersect_mask( const MaskPTR mask1, const MaskPTR mask2 )
 {
-  return mask1->intersect_mask( *mask2 );
+  return MaskPTR( mask1->intersect_mask( *mask2 ) );
 }
 
-MaskDatum
-union_mask( const MaskDatum& mask1, const MaskDatum& mask2 )
+MaskPTR
+union_mask( const MaskPTR mask1, const MaskPTR mask2 )
 {
-  return mask1->union_mask( *mask2 );
+  return MaskPTR( mask1->union_mask( *mask2 ) );
 }
 
-MaskDatum
-minus_mask( const MaskDatum& mask1, const MaskDatum& mask2 )
+MaskPTR
+minus_mask( const MaskPTR mask1, const MaskPTR mask2 )
 {
-  return mask1->minus_mask( *mask2 );
+  return MaskPTR( mask1->minus_mask( *mask2 ) );
 }
 
 void
@@ -443,8 +513,10 @@ connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const 
 
   // Set flag before calling source->connect() in case exception is thrown after some connections have been created.
   kernel().connection_manager.set_connections_have_changed();
-
+  std::cout << "### 10" << std::endl;
+  
   source->connect( source_nc, target, target_nc, connector );
+  std::cout << "### 11" << std::endl;
 }
 
 void
@@ -473,9 +545,10 @@ dump_layer_connections( const Token& syn_model,
   }
 }
 
-dictionary get_layer_status( NodeCollectionPTR )
+dictionary
+get_layer_status( NodeCollectionPTR )
 {
-  assert( false && "not implemented" );
+  assert( false and "not implemented" );
 
   return {};
 }

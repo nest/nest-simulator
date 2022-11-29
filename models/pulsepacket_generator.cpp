@@ -34,11 +34,6 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and variables
@@ -66,7 +61,7 @@ nest::pulsepacket_generator::Variables_::Variables_()
 void
 nest::pulsepacket_generator::Parameters_::get( dictionary& d ) const
 {
-  d[ names::pulse_times ] = DoubleVectorDatum( new std::vector< double >( pulse_times_ ) );
+  d[ names::pulse_times ] = pulse_times_;
   d[ names::activity ] = a_;
   d[ names::sdev ] = sdev_;
 }
@@ -129,9 +124,9 @@ nest::pulsepacket_generator::init_buffers_()
 }
 
 void
-nest::pulsepacket_generator::calibrate()
+nest::pulsepacket_generator::pre_run_hook()
 {
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
   assert( V_.start_center_idx_ <= V_.stop_center_idx_ );
 
   if ( P_.sdev_ > 0.0 )
@@ -249,11 +244,11 @@ nest::pulsepacket_generator::set_data_from_stimulation_backend( std::vector< dou
         "[activity, sdev, all the pulse times]." );
     }
     dictionary d;
-    ( new Dictionary );
-    d[ names::activity ] = DoubleDatum( input_param[ 0 ] );
-    d[ names::sdev ] = DoubleDatum( input_param[ 1 ] );
+
+    d[ names::activity ] = input_param[ 0 ];
+    d[ names::sdev ] = input_param[ 1 ];
     input_param.erase( input_param.begin(), input_param.begin() + 2 );
-    d[ names::pulse_times ] = DoubleVectorDatum( input_param );
+    d[ names::pulse_times ] = input_param;
     ptmp.set( d, *this, this );
   }
 

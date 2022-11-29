@@ -32,7 +32,6 @@
 
 // Includes from nestkernel:
 #include "conn_builder.h"
-#include "nest_datums.h"
 
 namespace nest
 {
@@ -55,7 +54,7 @@ protected:
   void cg_get_ranges( RangeSet& ranges, const NodeCollectionPTR nodes );
 
 private:
-  ConnectionGeneratorDatum cg_;
+  std::shared_ptr< ConnectionGenerator > cg_;
   dictionary params_map_;
 };
 

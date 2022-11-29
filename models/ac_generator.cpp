@@ -34,12 +34,6 @@
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
-
 namespace nest
 {
 RecordablesMap< ac_generator > ac_generator::recordablesMap_;
@@ -175,11 +169,11 @@ nest::ac_generator::init_buffers_()
 }
 
 void
-nest::ac_generator::calibrate()
+nest::ac_generator::pre_run_hook()
 {
   B_.logger_.init();
 
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
 
   const double h = Time::get_resolution().get_ms();
   const double t = kernel().simulation_manager.get_time().get_ms();
@@ -202,7 +196,7 @@ nest::ac_generator::calibrate()
 void
 nest::ac_generator::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   long start = origin.get_steps();
@@ -251,10 +245,10 @@ nest::ac_generator::set_data_from_stimulation_backend( std::vector< double >& in
         "The size of the data for the ac_generator needs to be 4 [amplitude, offset, frequency, phase]." );
     }
     dictionary d;
-    d[ names::amplitude ] = DoubleDatum( input_param[ 0 ] );
-    d[ names::offset ] = DoubleDatum( input_param[ 1 ] );
-    d[ names::frequency ] = DoubleDatum( input_param[ 2 ] );
-    d[ names::phase ] = DoubleDatum( input_param[ 3 ] );
+    d[ names::amplitude ] = input_param[ 0 ];
+    d[ names::offset ] = input_param[ 1 ];
+    d[ names::frequency ] = input_param[ 2 ];
+    d[ names::phase ] = input_param[ 3 ];
     ptmp.set( d, this );
   }
 

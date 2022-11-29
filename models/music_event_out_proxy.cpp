@@ -70,7 +70,7 @@ void
 nest::music_event_out_proxy::Parameters_::set( const dictionary& d, State_& s )
 {
   // TODO: This is not possible, as P_ does not know about get_name()
-  //  if(d->known(names::port_name) && s.published_)
+  //  if(d->known(names::port_name) and s.published_)
   //    throw MUSICPortAlreadyPublished(get_name(), P_.port_name_);
 
   if ( not s.published_ )
@@ -125,7 +125,7 @@ nest::music_event_out_proxy::init_buffers_()
 }
 
 void
-nest::music_event_out_proxy::calibrate()
+nest::music_event_out_proxy::pre_run_hook()
 {
   // only publish the output port once,
   if ( not S_.published_ )
@@ -183,11 +183,11 @@ nest::music_event_out_proxy::get_status( dictionary& d ) const
   d[ names::connection_count ] = V_.index_map_.size();
 
   // make a copy, since MUSIC uses int instead of long int
-  std::vector< long >* pInd_map_long = new std::vector< long >( V_.index_map_.size() );
+  std::vector< long > pInd_map_long( V_.index_map_.size() );
   std::copy< std::vector< MUSIC::GlobalIndex >::const_iterator, std::vector< long >::iterator >(
-    V_.index_map_.begin(), V_.index_map_.end(), pInd_map_long->begin() );
+    V_.index_map_.begin(), V_.index_map_.end(), pInd_map_long.begin() );
 
-  d[ names::index_map ] = IntVectorDatum( pInd_map_long );
+  d[ names::index_map ] = pInd_map_long;
 }
 
 void

@@ -46,7 +46,7 @@ Non-resetting leaky integrate-and-fire neuron model with exponential PSCs and ad
 Description
 +++++++++++
 
-mat2_psc_exp is an implementation of a leaky integrate-and-fire model
+``mat2_psc_exp`` is an implementation of a leaky integrate-and-fire model
 with exponential shaped postsynaptic currents (PSCs). Thus, postsynaptic
 currents have an infinitely short rise time.
 
@@ -70,14 +70,16 @@ The general framework for the consistent formulation of systems with
 neuron like dynamics interacting by point events is described in
 [1]_. A flow chart can be found in [2]_.
 
-Remarks:
+The current implementation requires tau_m != tau_syn_{ex,in} to avoid
+a degenerate case of the ODE describing the model [1]_. For very
+similar values, numerics will be unstable.
 
-The present implementation uses individual variables for the
-components of the state vector and the non-zero matrix elements of
-the propagator. Because the propagator is a lower triangular matrix,
-no full matrix multiplication needs to be carried out and the
-computation can be done "in place", i.e. no temporary state vector
-object is required.
+The following state variables can be read out with the multimeter device:
+
+====== ====  =================================
+ V_m   mV    Non-resetting membrane potential
+ V_th  mV    Two-timescale adaptive threshold
+====== ====  =================================
 
 Parameters
 ++++++++++
@@ -143,6 +145,15 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 
 EndUserDocs */
 
+/**
+ * The present implementation uses individual variables for the
+ * components of the state vector and the non-zero matrix elements of
+ * the propagator. Because the propagator is a lower triangular matrix,
+ * no full matrix multiplication needs to be carried out and the
+ * computation can be done "in place", i.e. no temporary state vector
+ * object is required.
+ */
+
 class mat2_psc_exp : public ArchivingNode
 {
 
@@ -158,23 +169,23 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
-  void update( Time const&, const long, const long );
+  void init_buffers_() override;
+  void pre_run_hook() override;
+  void update( Time const&, const long, const long ) override;
 
   // The next two classes need to be friends to access private members
   friend class RecordablesMap< mat2_psc_exp >;

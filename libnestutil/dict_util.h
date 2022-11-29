@@ -25,14 +25,9 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
-#include "nest_datums.h"
 #include "vp_manager_impl.h"
 
 #include "dictionary.h"
-
-// Includes from sli:
-#include "dictdatum.h"
-#include "dictutils.h"
 
 namespace nest
 {
@@ -78,7 +73,7 @@ update_value_param( dictionary const& d, const std::string& key, T& value, nest:
     {
       throw BadParameter( "Cannot use Parameter with this model." );
     }
-    auto param = d.get< std::shared_ptr< Parameter > >( key );
+    auto param = d.get< ParameterPTR >( key );
     const auto vp = kernel().vp_manager.node_id_to_vp( node->get_node_id() );
     const auto tid = kernel().vp_manager.vp_to_thread( vp );
     const auto rng = get_vp_specific_rng( tid );

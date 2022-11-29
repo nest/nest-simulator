@@ -55,7 +55,7 @@ Description
 
 .. versionadded:: 2.18
 
-iaf_psc_alpha_ps is the "canonical" implementation of the leaky
+``iaf_psc_alpha_ps`` is the "canonical" implementation of the leaky
 integrate-and-fire model neuron with alpha-shaped postsynaptic
 currents in the sense of [1]_. This is the most exact implementation
 available.
@@ -77,28 +77,6 @@ application, the canonical application may provide superior overall
 performance given an accuracy goal; see [1]_ for details. Subthreshold
 dynamics are integrated using exact integration between events [2]_.
 
-Parameters
-++++++++++
-
-The following parameters can be set in the status dictionary.
-
-===========  ======  ==========================================================
- V_m         mV      Membrane potential
- E_L         mV      Resting membrane potential
- V_min       mV      Absolute lower value for the membrane potential
- C_m         pF      Capacity of the membrane
- tau_m       ms      Membrane time constant
- t_ref       ms      Duration of refractory period
- V_th        mV      Spike threshold
- V_reset     mV      Reset potential of the membrane
- tau_syn_ex  ms      Rise time of the excitatory synaptic function
- tau_syn_in  ms      Rise time of the inhibitory synaptic function
- I_e         pA      Constant external input current
-===========  ======  ==========================================================
-
-Remarks
-+++++++
-
 This model transmits precise spike times to target nodes (on-grid spike
 time and offset). If this node is connected to a spike_recorder, the
 property "precise_times" of the spike_recorder has to be set to true in
@@ -118,7 +96,26 @@ can only change at on-grid times.
   `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
 
 For details about exact subthreshold integration, please see
-:doc:`../guides/exact-integration`.
+:doc:`../neurons/exact-integration`.
+
+Parameters
+++++++++++
+
+The following parameters can be set in the status dictionary.
+
+===========  ======  ==========================================================
+ V_m         mV      Membrane potential
+ E_L         mV      Resting membrane potential
+ V_min       mV      Absolute lower value for the membrane potential
+ C_m         pF      Capacity of the membrane
+ tau_m       ms      Membrane time constant
+ t_ref       ms      Duration of refractory period
+ V_th        mV      Spike threshold
+ V_reset     mV      Reset potential of the membrane
+ tau_syn_ex  ms      Rise time of the excitatory synaptic function
+ tau_syn_in  ms      Rise time of the inhibitory synaptic function
+ I_e         pA      Constant external input current
+===========  ======  ==========================================================
 
 References
 ++++++++++
@@ -160,7 +157,7 @@ public:
   iaf_psc_alpha_ps();
 
   /** Copy constructor.
-      GenericModel::allocate_() uses the copy constructor to clone
+      GenericModel::create_() uses the copy constructor to clone
       actual model instances from the prototype instance.
 
       @note The copy constructor MUST NOT be used to create nodes based
@@ -176,24 +173,24 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
   bool
-  is_off_grid() const
+  is_off_grid() const override
   {
     return true;
   } // uses off_grid events
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
   /**
    * Based on the current state, compute the value of the membrane potential
@@ -212,8 +209,8 @@ private:
    * only through a Node*.
    */
   //@{
-  void init_buffers_();
-  void calibrate();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
   bool get_next_event_( const long T, double& ev_offset, double& ev_weight, bool& end_of_refract );
 
@@ -234,7 +231,7 @@ private:
    * While the neuron is refractory, membrane potential (y3_) is
    * clamped to U_reset_.
    */
-  void update( Time const& origin, const long from, const long to );
+  void update( Time const& origin, const long from, const long to ) override;
 
   //@}
 
@@ -320,7 +317,7 @@ private:
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const dictionary& );
+    double set( const dictionary&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -349,7 +346,7 @@ private:
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const dictionary&, const Parameters_&, double );
+    void set( const dictionary&, const Parameters_&, double, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -507,10 +504,10 @@ iaf_psc_alpha_ps::get_status( dictionary& d ) const
 inline void
 iaf_psc_alpha_ps::set_status( const dictionary& d )
 {
-  Parameters_ ptmp = P_;                 // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d ); // throws if BadProperty
-  State_ stmp = S_;                      // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL );         // throws if BadProperty
+  Parameters_ ptmp = P_;                       // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
+  State_ stmp = S_;                            // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

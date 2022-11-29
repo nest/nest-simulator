@@ -55,7 +55,7 @@ be obtained if all n release sites are activated.
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
@@ -118,6 +118,7 @@ public:
    * Copy constructor to propagate common properties.
    */
   quantal_stp_synapse( const quantal_stp_synapse& ) = default;
+  quantal_stp_synapse& operator=( const quantal_stp_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -153,9 +154,9 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 

@@ -176,28 +176,69 @@ class TestNodeCollection(unittest.TestCase):
 
         n_slice_negative_start_end = n[-7:-4]
         n_list_negative_start_end = n_slice_negative_start_end.tolist()
+
         self.assertEqual(n_list_negative_start_end, [4, 5, 6])
 
-        n_slice_start_outside = n[-15:]
-        n_list_start_outside = n_slice_start_outside.tolist()
-        self.assertEqual(n_list_start_outside, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+        with self.assertRaises(IndexError):
+            n[-15:]
 
-        n_slice_stop_outside = n[:15]
-        n_list_stop_outside = n_slice_stop_outside.tolist()
-        self.assertEqual(n_list_stop_outside, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+        with self.assertRaises(IndexError):
+            n[:15]
 
-        n_slice_start_stop_outside = n[-13:17]
-        n_list_start_stop_outside = n_slice_start_stop_outside.tolist()
-        self.assertEqual(n_list_start_stop_outside, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+        with self.assertRaises(IndexError):
+            n[-13:17]
 
         with self.assertRaises(IndexError):
             n[::-3]
+
+        primitive = n
+        composite = n + nest.Create('iaf_psc_exp')
+        for nodes in [primitive, composite]:
+            n_list = nodes.tolist()
+            # With slice without arguments
+            self.assertEqual(nodes[:].tolist(), n_list[:])
+            self.assertEqual(nodes[::].tolist(), n_list[::])
+
+            # With start values
+            for start in range(-len(nodes), len(nodes)):
+                self.assertEqual(nodes[start:].tolist(), n_list[start:], f'with [{start}:]')
+
+            # With stop values
+            for stop in range(-len(nodes) + 1, len(nodes) + 1):
+                if stop == 0:
+                    continue  # Slicing an empty NodeCollection is not allowed.
+                self.assertEqual(nodes[:stop].tolist(), n_list[:stop], f'with [:{stop}]')
+
+            # With step values
+            for step in range(1, len(nodes)):
+                self.assertEqual(nodes[::step].tolist(), n_list[::step], f'with [::{step}]')
+
+            # With start and step values
+            for start in range(-len(nodes), len(nodes)):
+                for step in range(1, len(nodes)):
+                    self.assertEqual(nodes[start::step].tolist(), n_list[start::step], f'with [{start}::{step}]')
+
+            # With stop and step values
+            for stop in range(-len(nodes) + 1, len(nodes) + 1):
+                if stop == 0:
+                    continue  # Slicing an empty NodeCollection is not allowed.
+                for step in range(1, len(nodes)):
+                    self.assertEqual(nodes[:stop:step].tolist(), n_list[:stop:step], f'with [:{stop}:{step}]')
+
+            # With start, stop, and step values
+            for start in range(-len(nodes), len(nodes)):
+                for stop in range(start+1, len(nodes) + 1):
+                    if stop == 0 or (start < 0 and start+len(nodes) >= stop):
+                        continue  # Cannot slice an empty NodeCollection, or use stop <= start.
+                    for step in range(1, len(nodes)):
+                        self.assertEqual(nodes[start:stop:step].tolist(), n_list[start:stop:step],
+                                         f'with [{start}:{stop}:{step}]')
 
     def test_correct_index(self):
         """Multiple NodeCollection calls give right indexing"""
         compare_begin = 1
         compare_end = 11
-        for model in nest.Models(mtype='nodes'):
+        for model in nest.node_models:
             n = nest.Create(model, 10)
             n_list = n.tolist()
             compare = list(range(compare_begin, compare_end))
@@ -251,7 +292,7 @@ class TestNodeCollection(unittest.TestCase):
 
         n_list = []
         n_models = 0
-        for model in nest.Models(mtype='nodes'):
+        for model in nest.node_models:
             n = nest.Create(model, 10)
             n_list += n.tolist()
             n_models += 1
@@ -273,9 +314,9 @@ class TestNodeCollection(unittest.TestCase):
         def check_membership(nc, reference, inverse_ref):
             """Checks that all node IDs in reference are in nc, and that elements in inverse_ref are not in the nc."""
             for i in reference:
-                self.assertTrue(i in nc, 'i={}'.format(i))
+                self.assertTrue(i in nc, f'{i} in {nc.tolist()}')
             for j in inverse_ref:
-                self.assertFalse(j in nc)
+                self.assertFalse(j in nc, f'{j} not in {nc.tolist()}')
 
             self.assertFalse(reference[-1] + 1 in nc)
             self.assertFalse(0 in nc)
@@ -467,17 +508,12 @@ class TestNodeCollection(unittest.TestCase):
 
         n = nest.Create('iaf_psc_alpha')
 
-        nest.ll_api.sli_run("modeldict")
-        model_dict = nest.ll_api.sli_pop()
-
-        models = model_dict.keys()
-
-        for model in models:
+        for model in nest.node_models:
             n += nest.Create(model)
 
         self.assertTrue(len(n) > 0)
 
-        models = ['iaf_psc_alpha'] + list(models)
+        models = ['iaf_psc_alpha'] + list(nest.node_models)
         for count, nc in enumerate(n):
             self.assertEqual(nc.get('model'), models[count])
 
@@ -514,7 +550,7 @@ class TestNodeCollection(unittest.TestCase):
         for i in range(num_nodes):
             self.assertEqual(nest.GetStatus(n, 'V_m')[i], V_m[i])
 
-        with self.assertRaises(TypeError):
+        with self.assertRaises(nest.kernel.NESTError):
             nest.SetStatus(n, [{'V_m': 34.}, {'V_m': -5.}])
 
         nest.ResetKernel()
@@ -543,15 +579,15 @@ class TestNodeCollection(unittest.TestCase):
         get_conn_all = nest.GetConnections(n, n)
         get_conn_some = nest.GetConnections(n[::2])
 
-        self.assertEqual(get_conn_all, get_conn)
+        self.assertEqual(get_conn_all.get('source'), get_conn.get('source'))
+        self.assertEqual(get_conn_all.get('target'), get_conn.get('target'))
 
-        compare_source = [1, 1, 1, 3, 3, 3]
-        compare_target = [1, 2, 3, 1, 2, 3]
+        compare_source = (1, 1, 1, 3, 3, 3)
+        compare_target = (1, 2, 3, 1, 2, 3)
         self.assertEqual(get_conn_some.get('source'), compare_source)
         self.assertEqual(get_conn_some.get('target'), compare_target)
 
-        expected_syn_model = 'static_synapse'
-        expected_syn_id = nest.ll_api.sli_func('synapsedict')[expected_syn_model]
+        expected_syn_id = nest.GetDefaults("static_synapse", "synapse_modelid")
 
         compare_list = [3, 1, 0, expected_syn_id, 6]
         conn = [get_conn_some.get('source')[3],
@@ -584,7 +620,7 @@ class TestNodeCollection(unittest.TestCase):
 
         conns = nest.GetConnections(nodes[1:9:3])
         source = conns.get('source')
-        source_ref = [2] * 11 + [5] * 11 + [8] * 11
+        source_ref = tuple([2] * 11 + [5] * 11 + [8] * 11)
 
         self.assertEqual(source_ref, source)
 
@@ -607,25 +643,19 @@ class TestNodeCollection(unittest.TestCase):
         wr = nest.Create('weight_recorder')
         pre = nest.Create("parrot_neuron", 5)
         post = nest.Create("parrot_neuron", 5)
-
+        
         # Senders and targets lists empty
-        self.assertFalse(nest.GetStatus(wr, "senders")[0])
-        self.assertFalse(nest.GetStatus(wr, "targets")[0])
-
+        self.assertFalse(nest.GetStatus(wr, "senders"))
+        self.assertFalse(nest.GetStatus(wr, "targets"))
+        
         nest.SetStatus(wr, {"senders": pre[1:3], "targets": post[3:]})
-
-        gss = nest.GetStatus(wr, "senders")[0]
-        gst = nest.GetStatus(wr, "targets")[0]
-
+        
+        gss = nest.GetStatus(wr, "senders")
+        gst = nest.GetStatus(wr, "targets")
+        
         self.assertEqual(gss.tolist(), [3, 4])
         self.assertEqual(gst.tolist(), [10, 11])
-
-        nest.SetStatus(wr, {"senders": [2, 6], "targets": [8, 9]})
-        gss = nest.GetStatus(wr, "senders")[0]
-        gst = nest.GetStatus(wr, "targets")[0]
-        self.assertEqual(gss.tolist(), [2, 6])
-        self.assertEqual(gst.tolist(), [8, 9])
-
+        
     def test_apply(self):
         """
         NodeCollection apply
@@ -633,6 +663,10 @@ class TestNodeCollection(unittest.TestCase):
         n = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid([2, 2]))
         param = nest.spatial.pos.x
         ref_positions = np.array(nest.GetPosition(n))
+
+        # PYNEST-NG: the conversion of ref_position to lists here and
+        # further down is needed due our inability to handle numpy
+        # arrays in the new nestkernel_api.
         self.assertEqual(param.apply(n), tuple(ref_positions[:, 0]))
         self.assertEqual(param.apply(n[0]), (ref_positions[0, 0],))
         self.assertEqual(param.apply(n[::2]), tuple(ref_positions[::2, 0]))
@@ -647,7 +681,7 @@ class TestNodeCollection(unittest.TestCase):
         n = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid([2, 2]))
         param = nest.spatial.distance
         # Single target position
-        target = [[1., 2.], ]
+        target = [[1., 2.]]
         for source in n:
             source_x, source_y = nest.GetPosition(source)
             target_x, target_y = (target[0][0], target[0][1])
@@ -659,7 +693,7 @@ class TestNodeCollection(unittest.TestCase):
         for source in n:
             source_x, source_y = nest.GetPosition(source)
             ref_distances = np.sqrt((targets[:, 0] - source_x)**2 + (targets[:, 1] - source_y)**2)
-            self.assertEqual(param.apply(source, list(targets)), tuple(ref_distances))
+            self.assertEqual(param.apply(source, targets.tolist()), tuple(ref_distances))
 
         # Raises when passing source with multiple node IDs
         with self.assertRaises(ValueError):
@@ -668,12 +702,11 @@ class TestNodeCollection(unittest.TestCase):
         # Erroneous position specification
         source = n[0]
         with self.assertRaises(nest.kernel.NESTError):
-            param.apply(source, [[1., 2., 3.], ])  # Too many dimensions
+            param.apply(source, [[1., 2., 3.]])            # Too many dimensions
         with self.assertRaises(TypeError):
-            param.apply(source, [1., 2.])  # Not a list of lists
+            param.apply(source, [1., 2.])                  # Not a list of lists
         with self.assertRaises(ValueError):
-            # Not consistent dimensions
-            param.apply(source, [[1., 2.], [1., 2., 3.]])
+            param.apply(source, [[1., 2.], [1., 2., 3.]])  # Inconsistent dimensions
 
     def test_Create_accepts_empty_params_dict(self):
         """
@@ -743,13 +776,13 @@ class TestNodeCollection(unittest.TestCase):
 
         for empty_nc in [nest.NodeCollection(), nest.NodeCollection([])]:
 
-            with self.assertRaises(nest.kernel.NESTErrors.IllegalConnection):
+            with self.assertRaises(nest.kernel.NESTError):
                 nest.Connect(nodes, empty_nc)
 
-            with self.assertRaises(nest.kernel.NESTErrors.IllegalConnection):
+            with self.assertRaises(nest.kernel.NESTError):
                 nest.Connect(empty_nc, nodes)
 
-            with self.assertRaises(nest.kernel.NESTErrors.IllegalConnection):
+            with self.assertRaises(nest.kernel.NESTError):
                 nest.Connect(empty_nc, empty_nc)
 
             with self.assertRaises(ValueError):

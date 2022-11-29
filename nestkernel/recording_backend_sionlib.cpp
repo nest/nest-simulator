@@ -126,12 +126,12 @@ nest::RecordingBackendSIONlib::set_value_names( const RecordingDevice& device,
     info.double_value_names.reserve( double_value_names.size() );
     for ( auto& val : double_value_names )
     {
-      info.double_value_names.push_back( val.toString() );
+      info.double_value_names.push_back( val );
     }
     info.long_value_names.reserve( long_value_names.size() );
     for ( auto& val : long_value_names )
     {
-      info.long_value_names.push_back( val.toString() );
+      info.long_value_names.push_back( val );
     }
   }
 }
@@ -144,7 +144,7 @@ nest::RecordingBackendSIONlib::pre_run_hook()
 void
 nest::RecordingBackendSIONlib::open_files_()
 {
-  if ( files_opened_ or ( num_enrolled_devices_ == 0 ) )
+  if ( files_opened_ or num_enrolled_devices_ == 0 )
   {
     return;
   }
@@ -276,7 +276,7 @@ nest::RecordingBackendSIONlib::close_files_()
     const thread t = kernel().vp_manager.get_thread_id();
     const thread task = kernel().vp_manager.thread_to_vp( t );
 
-    assert( ( files_.find( task ) != files_.end() ) && "initialize() was not called before calling cleanup()" );
+    assert( ( files_.find( task ) != files_.end() ) and "initialize() was not called before calling cleanup()" );
 
     FileEntry& file = files_[ task ];
     SIONBuffer& buffer = file.buffer;

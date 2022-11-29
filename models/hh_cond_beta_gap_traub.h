@@ -69,7 +69,7 @@ Hodgkin-Huxley neuron with gap junction support and beta function synaptic condu
 Description
 +++++++++++
 
-hh_cond_beta_gap_traub is an implementation of a modified Hodgkin-Huxley model
+``hh_cond_beta_gap_traub`` is an implementation of a modified Hodgkin-Huxley model
 that also supports gap junctions.
 
 This model was specifically developed for a major review of simulators [1]_,
@@ -77,7 +77,7 @@ based on a model of hippocampal pyramidal cells by Traub and Miles [2]_.
 The key differences between the current model and the model in [2]_ are:
 
 - This model is a point neuron, not a compartmental model.
-- This model includes only I_Na and I_K, with simpler I_K dynamics than
+- This model includes only ``I_Na`` and ``I_K``, with simpler ``I_K`` dynamics than
   in [2]_, so it has only three instead of eight gating variables;
   in particular, all Ca dynamics have been removed.
 - Incoming spikes induce an instantaneous conductance change followed by
@@ -180,7 +180,7 @@ public:
 
   hh_cond_beta_gap_traub();
   hh_cond_beta_gap_traub( const hh_cond_beta_gap_traub& );
-  ~hh_cond_beta_gap_traub();
+  ~hh_cond_beta_gap_traub() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -191,38 +191,38 @@ public:
   using Node::handles_test_event;
   using Node::sends_secondary_event;
 
-  port send_test_event( Node& target, rport receptor_type, synindex, bool );
+  port send_test_event( Node& target, rport receptor_type, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
-  void handle( GapJunctionEvent& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
+  void handle( GapJunctionEvent& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
-  port handles_test_event( GapJunctionEvent&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
+  port handles_test_event( GapJunctionEvent&, rport ) override;
 
   void
-  sends_secondary_event( GapJunctionEvent& )
+  sends_secondary_event( GapJunctionEvent& ) override
   {
   }
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
-  void init_buffers_();
+  void init_buffers_() override;
   double get_normalisation_factor( double, double );
-  void calibrate();
+  void pre_run_hook() override;
 
   /** This is the actual update function. The additional boolean parameter
    * determines if the function is called by update (false) or wfr_update (true)
    */
   bool update_( Time const&, const long, const long, const bool );
 
-  void update( Time const&, const long, const long );
-  bool wfr_update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
+  bool wfr_update( Time const&, const long, const long ) override;
 
   // END Boilerplate function declarations ----------------------------
 
@@ -262,8 +262,8 @@ private:
 
     Parameters_();
 
-    void get( dictionary& ) const; //!< Store current values in dictionary
-    void set( const dictionary& ); //!< Set values from dicitonary
+    void get( dictionary& ) const;        //!< Store current values in dictionary
+    void set( const dictionary&, Node* ); //!< Set values from dicitonary
   };
 
 public:
@@ -299,7 +299,7 @@ public:
     State_& operator=( const State_& );
 
     void get( dictionary& ) const;
-    void set( const dictionary&, const Parameters_& );
+    void set( const dictionary&, const Parameters_&, Node* );
   };
 
   // Variables class -------------------------------------------------------
@@ -480,10 +480,10 @@ hh_cond_beta_gap_traub::get_status( dictionary& d ) const
 inline void
 hh_cond_beta_gap_traub::set_status( const dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, ptmp );   // throws if BadProperty
+  Parameters_ ptmp = P_;     // temporary copy in case of errors
+  ptmp.set( d, this );       // throws if BadProperty
+  State_ stmp = S_;          // temporary copy in case of errors
+  stmp.set( d, ptmp, this ); // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -495,7 +495,7 @@ hh_cond_beta_gap_traub::set_status( const dictionary& d )
   P_ = ptmp;
   S_ = stmp;
 
-  calibrate();
+  pre_run_hook();
 }
 
 } // namespace

@@ -30,12 +30,8 @@
 #include "connector_model.h"
 #include "nest_names.h"
 
-// Includes from sli:
-#include "dictutils.h"
-
 namespace nest
 {
-
 
 /* Polymorphic version of update_value.
  * This code will take either an int or a double and convert it to an
@@ -65,7 +61,7 @@ update_value_int( const dictionary& d, std::string propname, int& prop )
 
   return false;
 }
-
+  
 template < typename targetidentifierT >
 quantal_stp_synapse< targetidentifierT >::quantal_stp_synapse()
   : ConnectionBase()

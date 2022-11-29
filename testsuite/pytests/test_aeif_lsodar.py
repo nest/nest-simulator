@@ -33,7 +33,7 @@ import nest
 """
 Comparing the new implementations the aeif models to the reference solution
 obrained using the LSODAR solver (see
-``doc/userdoc/model_details/aeif_models_implementation.ipynb``). Also asserting that
+``doc/htmldoc/model_details/aeif_models_implementation.ipynb``). Also asserting that
 the ``Delta_T == 0.`` solution works by comparing the non-adaptive aeif to the
 iaf model.
 
@@ -55,7 +55,7 @@ Details:
   recorded variables and the reference is smaller than a given tolerance.
 """
 
-HAVE_GSL = nest.GetKernelStatus("build_info")["have_gsl"]
+HAVE_GSL = nest.build_info["have_gsl"]
 path = os.path.abspath(os.path.dirname(__file__))
 
 # --------------------------------------------------------------------------- #
@@ -279,6 +279,9 @@ class AEIFTestCase(unittest.TestCase):
 
         # relative differences: interpolate LSODAR to match NEST times
         mm0 = next(iter(multimeters.values()))
+
+        print(mm0.get())
+        
         nest_times = nest.GetStatus(mm0, "events")[0]["times"]
         reference = {'V_m': V_interp(nest_times), 'w': w_interp(nest_times)}
 

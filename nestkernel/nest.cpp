@@ -32,9 +32,51 @@
 #include "parameter.h"
 
 #include "connector_model_impl.h"
+
+#include "ac_generator.h"
+#include "dc_generator.h"
+#include "spike_generator.h"
+#include "spike_recorder.h"
+#include "poisson_generator.h"
+#include "poisson_generator_ps.h"
+#include "multimeter.h"
+#include "noise_generator.h"
+#include "aeif_cond_alpha.h"
+#include "aeif_cond_alpha_multisynapse.h"
+#include "aeif_cond_beta_multisynapse.h"
+#include "aeif_psc_delta_clopath.h"
+#include "cm_default.h"
+#include "erfc_neuron.h"
+#include "glif_cond.h"
+#include "glif_psc.h"
+#include "hh_psc_alpha_gap.h"
+#include "ht_neuron.h"
+#include "iaf_cond_alpha_mc.h"
+#include "pp_psc_delta.h"
+#include "lin_rate.h"
+#include "tanh_rate.h"
+#include "iaf_cond_alpha.h"
+
+#include "parrot_neuron_ps.h"
+#include "step_rate_generator.h"
+#include "step_current_generator.h"
+#include "hh_psc_alpha_clopath.h"
+#include "iaf_cond_exp.h"
+#include "aeif_cond_exp.h"
+
+#include "aeif_psc_alpha.h"
+#include "aeif_psc_delta.h"
+#include "aeif_psc_exp.h"
+#include "threshold_lin_rate.h"
+
 #include "iaf_psc_alpha.h"
 #include "iaf_psc_delta.h"
 #include "iaf_psc_exp.h"
+#include "iaf_psc_exp_multisynapse.h"
+
+#include "spin_detector.h"
+#include "pp_cond_exp_mc_urbanczik.h"
+
 #include "parrot_neuron.h"
 
 #include "bernoulli_synapse.h"
@@ -52,24 +94,24 @@
 #include "rate_connection_instantaneous.h"
 #include "static_synapse.h"
 #include "static_synapse_hom_w.h"
-// #include "stdp_dopamine_synapse.h"
+#include "stdp_dopamine_synapse.h"
 #include "stdp_nn_pre_centered_synapse.h"
 #include "stdp_nn_restr_synapse.h"
 #include "stdp_nn_symm_synapse.h"
-// #include "stdp_pl_synapse_hom.h"
+#include "stdp_pl_synapse_hom.h"
 #include "stdp_synapse.h"
 #include "stdp_synapse_facetshw_hom.h"
 #include "stdp_synapse_facetshw_hom_impl.h"
-// #include "stdp_synapse_hom.h"
+#include "stdp_synapse_hom.h"
 #include "stdp_triplet_synapse.h"
 #include "tsodyks2_synapse.h"
 #include "tsodyks_synapse.h"
-// #include "tsodyks_synapse_hom.h"
+#include "tsodyks_synapse_hom.h"
 #include "urbanczik_synapse.h"
 #include "vogels_sprekeler_synapse.h"
 
 #include "weight_recorder.h"
-// #include "volume_transmitter.h"
+#include "volume_transmitter.h"
 
 #include "spatial.h"
 
@@ -92,13 +134,56 @@ init_nest( int* argc, char** argv[] )
   kernel().mpi_manager.init_mpi( argc, argv );
   kernel().initialize();
 
+
+  kernel().model_manager.register_node_model< ac_generator >( "ac_generator" );
+  kernel().model_manager.register_node_model< dc_generator >( "dc_generator" );
+  kernel().model_manager.register_node_model< spike_generator >( "spike_generator" );
+  kernel().model_manager.register_node_model< spike_recorder >( "spike_recorder" );
+  kernel().model_manager.register_node_model< poisson_generator >( "poisson_generator" );
+  kernel().model_manager.register_node_model< poisson_generator_ps >( "poisson_generator_ps" );
+  kernel().model_manager.register_node_model< voltmeter >( "voltmeter" );
+  kernel().model_manager.register_node_model< multimeter >( "multimeter" );
+  kernel().model_manager.register_node_model< noise_generator >( "noise_generator" );
+  kernel().model_manager.register_node_model< aeif_cond_alpha >( "aeif_cond_alpha" );
+  kernel().model_manager.register_node_model< aeif_cond_alpha_multisynapse >( "aeif_cond_alpha_multisynapse" );
+  kernel().model_manager.register_node_model< aeif_cond_beta_multisynapse >( "aeif_cond_beta_multisynapse" );
+  kernel().model_manager.register_node_model< aeif_psc_delta_clopath >( "aeif_psc_delta_clopath" );
+  kernel().model_manager.register_node_model< cm_default >( "cm_default" );
+  kernel().model_manager.register_node_model< erfc_neuron >( "erfc_neuron" );
+  kernel().model_manager.register_node_model< glif_cond >( "glif_cond" );
+  kernel().model_manager.register_node_model< glif_psc >( "glif_psc" );
+  kernel().model_manager.register_node_model< hh_psc_alpha_gap >( "hh_psc_alpha_gap" );
+  kernel().model_manager.register_node_model< ht_neuron >( "ht_neuron" );
+  kernel().model_manager.register_node_model< iaf_cond_alpha_mc >( "iaf_cond_alpha_mc" );
+  kernel().model_manager.register_node_model< pp_psc_delta >( "pp_psc_delta" );
+  kernel().model_manager.register_node_model< lin_rate_ipn >( "lin_rate_ipn" );
+  kernel().model_manager.register_node_model< iaf_cond_alpha >( "iaf_cond_alpha" );
+
+  kernel().model_manager.register_node_model< tanh_rate_ipn >( "tanh_rate_ipn" );
+  kernel().model_manager.register_node_model< lin_rate_opn >( "lin_rate_opn" );
+  kernel().model_manager.register_node_model< parrot_neuron_ps >( "parrot_neuron_ps" );
+  kernel().model_manager.register_node_model< step_rate_generator >( "step_rate_generator" );
+  kernel().model_manager.register_node_model< step_current_generator >( "step_current_generator" );
+  kernel().model_manager.register_node_model< hh_psc_alpha_clopath >( "hh_psc_alpha_clopath" );
+  kernel().model_manager.register_node_model< iaf_cond_exp >( "iaf_cond_exp" );
+  kernel().model_manager.register_node_model< aeif_cond_exp >( "aeif_cond_exp" );
+
+  kernel().model_manager.register_node_model< aeif_psc_alpha >( "aeif_psc_alpha" );
+  kernel().model_manager.register_node_model< aeif_psc_delta >( "aeif_psc_delta" );
+  kernel().model_manager.register_node_model< aeif_psc_exp >( "aeif_psc_exp" );
+  kernel().model_manager.register_node_model< threshold_lin_rate_ipn >( "threshold_lin_rate_ipn" );
+  
   kernel().model_manager.register_node_model< iaf_psc_alpha >( "iaf_psc_alpha" );
   kernel().model_manager.register_node_model< iaf_psc_delta >( "iaf_psc_delta" );
   kernel().model_manager.register_node_model< iaf_psc_exp >( "iaf_psc_exp" );
+  kernel().model_manager.register_node_model< iaf_psc_exp_multisynapse >( "iaf_psc_exp_multisynapse" );
   kernel().model_manager.register_node_model< parrot_neuron >( "parrot_neuron" );
 
+  kernel().model_manager.register_node_model< spin_detector >( "spin_detector" );
+kernel().model_manager.register_node_model< pp_cond_exp_mc_urbanczik >( "pp_cond_exp_mc_urbanczik" );
+ 
   kernel().model_manager.register_node_model< weight_recorder >( "weight_recorder" );
-  // kernel().model_manager.register_node_model< volume_transmitter >( "volume_transmitter" );
+  kernel().model_manager.register_node_model< volume_transmitter >( "volume_transmitter" );
 
   kernel().model_manager.register_connection_model< bernoulli_synapse >( "bernoulli_synapse" );
   kernel().model_manager.register_connection_model< clopath_synapse >(
@@ -110,16 +195,16 @@ init_nest( int* argc, char** argv[] )
   kernel().model_manager.register_connection_model< static_synapse >( "static_synapse" );
   kernel().model_manager.register_connection_model< static_synapse_hom_w >( "static_synapse_hom_w" );
   kernel().model_manager.register_connection_model< stdp_synapse >( "stdp_synapse" );
-  // kernel().model_manager.register_connection_model< stdp_synapse_hom >( "stdp_synapse_hom" );
-  // kernel().model_manager.register_connection_model< stdp_dopamine_synapse >( "stdp_dopamine_synapse" );
+  kernel().model_manager.register_connection_model< stdp_synapse_hom >( "stdp_synapse_hom" );
+  kernel().model_manager.register_connection_model< stdp_dopamine_synapse >( "stdp_dopamine_synapse" );
   kernel().model_manager.register_connection_model< stdp_facetshw_synapse_hom >( "stdp_facetshw_synapse_hom" );
   kernel().model_manager.register_connection_model< stdp_nn_restr_synapse >( "stdp_nn_restr_synapse" );
   kernel().model_manager.register_connection_model< stdp_nn_symm_synapse >( "stdp_nn_symm_synapse" );
   kernel().model_manager.register_connection_model< stdp_nn_pre_centered_synapse >( "stdp_nn_pre_centered_synapse" );
-  // kernel().model_manager.register_connection_model< stdp_pl_synapse_hom >( "stdp_pl_synapse_hom" );
+  kernel().model_manager.register_connection_model< stdp_pl_synapse_hom >( "stdp_pl_synapse_hom" );
   kernel().model_manager.register_connection_model< stdp_triplet_synapse >( "stdp_triplet_synapse" );
   kernel().model_manager.register_connection_model< tsodyks_synapse >( "tsodyks_synapse" );
-  // kernel().model_manager.register_connection_model< tsodyks_synapse_hom >( "tsodyks_synapse_hom" );
+  kernel().model_manager.register_connection_model< tsodyks_synapse_hom >( "tsodyks_synapse_hom" );
   kernel().model_manager.register_connection_model< tsodyks2_synapse >( "tsodyks2_synapse" );
   kernel().model_manager.register_connection_model< urbanczik_synapse >(
     "urbanczik_synapse", default_connection_model_flags | RegisterConnectionModelFlags::REQUIRES_URBANCZIK_ARCHIVING );
@@ -203,14 +288,24 @@ print_nodes_to_string()
 std::string
 pprint_to_string( NodeCollectionPTR nc )
 {
-  std::stringstream stream;
-  nc->print_me( stream );
-  return stream.str();
+  if (nc)
+  {
+    std::stringstream stream;
+    nc->print_me( stream );
+    return stream.str();
+  }
+  else
+  {
+    //PYNEST-ng: added this, not sure why this can happen now, but could not previously
+    std::cout << "pprint_to_string: nc is not assigned" << std::endl;
+    return "";
+  }
 }
 
 size_t
 nc_size( NodeCollectionPTR nc )
 {
+  assert(nc && "NodeCollectionPTR must be initialized.");
   return nc->size();
 }
 
@@ -234,10 +329,10 @@ get_kernel_status()
 }
 
 dictionary
-get_nc_status( NodeCollectionPTR node_collection )
+get_nc_status( NodeCollectionPTR nc )
 {
   dictionary result;
-  for ( NodeCollection::const_iterator it = node_collection->begin(); it < node_collection->end(); ++it )
+  for ( NodeCollection::const_iterator it = nc->begin(); it < nc->end(); ++it )
   {
     const auto node_status = get_node_status( ( *it ).node_id );
     for ( auto& kv_pair : node_status )
@@ -261,14 +356,35 @@ get_nc_status( NodeCollectionPTR node_collection )
 }
 
 void
-set_nc_status( NodeCollectionPTR nc, dictionary& params )
+set_nc_status( NodeCollectionPTR nc, std::vector< dictionary >& params )
 {
-  params.init_access_flags();
-  for ( auto it = nc->begin(); it < nc->end(); ++it )
+  if ( params.size() == 1 )
   {
-    kernel().node_manager.set_status( ( *it ).node_id, params );
+    params[0].init_access_flags();
+    for ( auto it = nc->begin(); it < nc->end(); ++it )
+    {
+      kernel().node_manager.set_status( ( *it ).node_id, params[0] );
+    }
+    params[0].all_entries_accessed( "NodeCollection.set()", "params" );
   }
-  params.all_entries_accessed( "NodeCollection.set()", "params" );
+  else if (nc->size() == params.size())
+  {
+    for ( auto it = nc->begin(); it < nc->end(); ++it )
+    {
+      size_t i = ( *it ).lid;
+      params[ i ].init_access_flags();
+      kernel().node_manager.set_status( ( *it ).node_id, params[ i ] );
+      params[ i ].all_entries_accessed( "NodeCollection.set()", "params" );
+    }
+  }
+  else
+  {
+    std::string msg =
+      String::compose( "List of dictionaries must be the same size as the NodeCollection (%1), %2 given.",
+        nc->size(),
+	params.size() );
+    throw BadParameter( msg );
+  }
 }
 
 void
@@ -284,6 +400,31 @@ set_connection_status( const std::deque< ConnectionID >& conns, const dictionary
       dict );
   }
 }
+
+//// void
+//// set_connection_status( const std::deque< ConnectionID >& conn, const dictionary& dict )
+//// {
+////   // TODO_PYNEST-NG: Get ConnectionDatum dict
+////   // dictionary conn_dict = conn.get_dict();
+////   dictionary conn_dict;
+////   const index source_node_id = conn_dict.get< long >( nest::names::source );
+////   const index target_node_id = conn_dict.get< long >( nest::names::target );
+////   const thread tid = conn_dict.get< long >( nest::names::target_thread );
+////   const synindex syn_id = conn_dict.get< long >( nest::names::synapse_modelid );
+////   const port p = conn_dict.get< long >( nest::names::port );
+//// 
+////   // TODO_PYNEST-NG: Access flags
+////   // dict->clear_access_flags();
+//// 
+////   kernel().connection_manager.set_synapse_status( source_node_id, target_node_id, tid, syn_id, p, dict );
+//// 
+////   // ALL_ENTRIES_ACCESSED2( *dict,
+////   //   "SetStatus",
+////   //   "Unread dictionary entries: ",
+////   //   "Maybe you tried to set common synapse properties through an individual "
+////   //   "synapse?" );
+//// }
+
 
 void
 set_connection_status( const std::deque< ConnectionID >& conns, const std::vector< dictionary >& dicts )
@@ -336,38 +477,14 @@ get_node_status( const index node_id )
   return kernel().node_manager.get_status( node_id );
 }
 
-void
-set_connection_status( const ConnectionDatum& conn, const dictionary& dict )
-{
-  // TODO_PYNEST-NG: Get ConnectionDatum dict
-  // dictionary conn_dict = conn.get_dict();
-  dictionary conn_dict;
-  const index source_node_id = conn_dict.get< long >( nest::names::source );
-  const index target_node_id = conn_dict.get< long >( nest::names::target );
-  const thread tid = conn_dict.get< long >( nest::names::target_thread );
-  const synindex syn_id = conn_dict.get< long >( nest::names::synapse_modelid );
-  const port p = conn_dict.get< long >( nest::names::port );
-
-  // TODO_PYNEST-NG: Access flags
-  // dict->clear_access_flags();
-
-  kernel().connection_manager.set_synapse_status( source_node_id, target_node_id, tid, syn_id, p, dict );
-
-  // ALL_ENTRIES_ACCESSED2( *dict,
-  //   "SetStatus",
-  //   "Unread dictionary entries: ",
-  //   "Maybe you tried to set common synapse properties through an individual "
-  //   "synapse?" );
-}
-
 dictionary
-get_connection_status( const ConnectionDatum& conn )
+get_connection_status( const ConnectionID& conn )
 {
-  return kernel().connection_manager.get_synapse_status( conn->get_source_node_id(),
-    conn->get_target_node_id(),
-    conn->get_target_thread(),
-    conn->get_synapse_model_id(),
-    conn->get_port() );
+  return kernel().connection_manager.get_synapse_status( conn.get_source_node_id(),
+    conn.get_target_node_id(),
+    conn.get_target_thread(),
+    conn.get_synapse_model_id(),
+    conn.get_port() );
 }
 
 NodeCollectionPTR
@@ -411,15 +528,7 @@ create( const std::string model_name, const index n_nodes )
     throw RangeCheck();
   }
 
-  if ( not kernel().model_manager.get_modeldict().known( model_name ) )
-  {
-    std::cerr << "model name: " << model_name << "\n";
-    throw UnknownModelName( model_name );
-  }
-
-  // create
-  const index model_id = static_cast< index >( kernel().model_manager.get_modeldict().get< index >( model_name ) );
-
+  const index model_id = kernel().model_manager.get_node_model_id( model_name );
   return kernel().node_manager.add_node( model_id, n_nodes );
 }
 
@@ -428,6 +537,14 @@ create_spatial( const dictionary& layer_dict )
 {
   return create_layer( layer_dict );
 }
+
+//std::vector< std::vector< double > >
+//get_position( NodeCollectionPTR layer_nc )
+//{
+//  return get_position( layer );  // PYNEST-NG: is this call creating a copy?
+//}
+
+
 
 NodeCollectionPTR
 make_nodecollection( const std::vector< index > node_ids )
@@ -557,36 +674,56 @@ copy_model( const std::string& oldmodname, const std::string& newmodname, const 
 }
 
 void
-set_model_defaults( const std::string& modelname, const dictionary& dict )
+set_model_defaults( const std::string& component, const dictionary& dict )
 {
-  kernel().model_manager.set_model_defaults( modelname, dict );
+  if ( kernel().model_manager.set_model_defaults( component, dict ) )
+  {
+    return;
+  }
+
+  if ( kernel().io_manager.is_valid_recording_backend( component ) )
+  {
+    kernel().io_manager.set_recording_backend_status( component, dict );
+    return;
+  }
+
+  throw UnknownComponent( component );
 }
 
 dictionary
-get_model_defaults( const std::string& modelname )
+get_model_defaults( const std::string& component )
 {
-  dictionary dict;
-
-  if ( kernel().model_manager.get_modeldict().known( modelname ) )
+  try
   {
-    const auto model_id = kernel().model_manager.get_modeldict().get< index >( modelname );
-    const auto model = kernel().model_manager.get_model( model_id );
-    dict = model->get_status();
+    const index model_id = kernel().model_manager.get_node_model_id( component );
+    return kernel().model_manager.get_node_model( model_id )->get_status();
   }
-  else if ( kernel().model_manager.get_synapsedict().known( modelname ) )
+  catch ( UnknownModelName& )
   {
-    const auto synapse_id = kernel().model_manager.get_synapsedict().get< index >( modelname );
-    dict = kernel().model_manager.get_connector_defaults( synapse_id );
-  }
-  else
-  {
-    throw UnknownModelName( modelname );
+    // ignore errors; throw at the end of the function if that's reached
   }
 
-  return dict;
+  try
+  {
+    const index synapse_model_id = kernel().model_manager.get_synapse_model_id( component );
+    const auto ret =  kernel().model_manager.get_connector_defaults( synapse_model_id );
+    return ret;
+  }
+  catch ( UnknownSynapseType& )
+  {
+    // ignore errors; throw at the end of the function if that's reached
+  }
+
+  if ( kernel().io_manager.is_valid_recording_backend( component ) )
+  {
+    return kernel().io_manager.get_recording_backend_status( component );
+  }
+
+  throw UnknownComponent( component );
+  return dictionary(); // supress missing return value warning; never reached
 }
 
-std::shared_ptr< Parameter >
+ParameterPTR
 create_parameter( const boost::any& value )
 {
   if ( is_type< double >( value ) )
@@ -601,35 +738,35 @@ create_parameter( const boost::any& value )
   {
     return create_parameter( boost::any_cast< dictionary >( value ) );
   }
-  else if ( is_type< std::shared_ptr< nest::Parameter > >( value ) )
+  else if ( is_type< ParameterPTR >( value ) )
   {
-    return create_parameter( boost::any_cast< std::shared_ptr< Parameter > >( value ) );
+    return create_parameter( boost::any_cast< ParameterPTR >( value ) );
   }
   throw BadProperty( "Parameter must be parametertype, constant or dictionary." );
 }
 
-std::shared_ptr< Parameter >
-create_parameter( const std::shared_ptr< Parameter > param )
+ParameterPTR
+create_parameter( const ParameterPTR param )
 {
   // TODO-PYNEST-NG: do we need this function?
   return param;
 }
 
-std::shared_ptr< Parameter >
+ParameterPTR
 create_parameter( const double value )
 {
   const auto param = new ConstantParameter( value );
-  return std::shared_ptr< Parameter >( param );
+  return ParameterPTR( param );
 }
 
-std::shared_ptr< Parameter >
+ParameterPTR
 create_parameter( const int value )
 {
   const auto param = new ConstantParameter( value );
-  return std::shared_ptr< Parameter >( param );
+  return ParameterPTR( param );
 }
 
-std::shared_ptr< Parameter >
+ParameterPTR
 create_parameter( const dictionary& param_dict )
 {
   // The dictionary should only have a single key, which is the name of
@@ -647,11 +784,11 @@ create_parameter( const dictionary& param_dict )
   return parameter;
 }
 
-std::shared_ptr< Parameter >
+ParameterPTR
 create_parameter( const std::string& name, const dictionary& d )
 {
   // The parameter factory will create the parameter
-  return std::shared_ptr< Parameter >( parameter_factory_().create( name, d ) );
+  return ParameterPTR( parameter_factory_().create( name, d ) );
 }
 
 ParameterFactory&
@@ -663,20 +800,20 @@ parameter_factory_( void )
 
 
 double
-get_value( const ParameterDatum& param )
+get_value( const ParameterPTR param )
 {
   RngPtr rng = get_rank_synced_rng();
   return param->value( rng, nullptr );
 }
 
 bool
-is_spatial( const ParameterDatum& param )
+is_spatial( const ParameterPTR param )
 {
   return param->is_spatial();
 }
 
 std::vector< double >
-apply( const ParameterDatum& param, const NodeCollectionDatum& nc )
+apply( const ParameterPTR param, const NodeCollectionPTR nc )
 {
   std::vector< double > result;
   result.reserve( nc->size() );
@@ -690,37 +827,35 @@ apply( const ParameterDatum& param, const NodeCollectionDatum& nc )
 }
 
 std::vector< double >
-apply( const ParameterDatum& param, const dictionary& positions )
+apply( const ParameterPTR param, const dictionary& positions )
 {
   auto source_nc = positions.get< NodeCollectionPTR >( names::source );
-  auto targets = positions.get< std::vector< int > >( names::targets );
-  // TODO-PYNEST-NG: fix Parameter::apply()
-  // return param->apply( source_nc, targets );
-  return {};
+  auto targets = positions.get< std::vector< std::vector< double > > >( names::targets );
+  return param->apply( source_nc, targets );
 }
 
 NodeCollectionPTR
-node_collection_array_index( NodeCollectionPTR node_collection, const long* array, unsigned long n )
+node_collection_array_index( NodeCollectionPTR nc, const long* array, unsigned long n )
 {
-  assert( node_collection->size() >= n );
+  assert( nc->size() >= n );
   std::vector< index > node_ids;
   node_ids.reserve( n );
 
   for ( auto node_ptr = array; node_ptr != array + n; ++node_ptr )
   {
-    node_ids.push_back( node_collection->operator[]( *node_ptr ) );
+    node_ids.push_back( nc->operator[]( *node_ptr ) );
   }
   return NodeCollection::create( node_ids );
 }
 
 NodeCollectionPTR
-node_collection_array_index( NodeCollectionPTR node_collection, const bool* array, unsigned long n )
+node_collection_array_index( NodeCollectionPTR nc, const bool* array, unsigned long n )
 {
-  assert( node_collection->size() == n );
+  assert( nc->size() == n );
   std::vector< index > node_ids;
   node_ids.reserve( n );
 
-  auto nc_it = node_collection->begin();
+  auto nc_it = nc->begin();
   for ( auto node_ptr = array; node_ptr != array + n; ++node_ptr, ++nc_it )
   {
     if ( *node_ptr )
@@ -731,22 +866,32 @@ node_collection_array_index( NodeCollectionPTR node_collection, const bool* arra
   return NodeCollection::create( node_ids );
 }
 
-dictionary
-get_modeldict()
+void
+slice_positions_if_sliced_nc( dictionary& dict, const NodeCollectionPTR nc )
 {
-  return kernel().model_manager.get_modeldict();
+  // If metadata contains node positions and the NodeCollection is sliced, get only positions of the sliced nodes.
+  if ( dict.known( names::positions ) )
+  {
+    //PyNEST-NG: Check if TokenArray is the correct type here
+    const auto positions = dict.get< TokenArray >( names::positions );
+    if ( nc->size() != positions.size() )
+    {
+      TokenArray sliced_points;
+      // Iterate only local nodes
+      NodeCollection::const_iterator nc_begin = nc->has_proxies() ? nc->MPI_local_begin() : nc->begin();
+      NodeCollection::const_iterator nc_end = nc->end();
+      for ( auto node = nc_begin; node < nc_end; ++node )
+      {
+        // Because the local ID also includes non-local nodes, it must be adapted to represent
+        // the index for the local node position.
+        const auto index =
+          static_cast< size_t >( std::floor( ( *node ).lid / kernel().mpi_manager.get_num_processes() ) );
+        sliced_points.push_back( positions[ index ] );
+      }
+      dict[ names::positions ] = sliced_points;
+    }
+  }
 }
 
-dictionary
-get_synapsedict()
-{
-  return kernel().model_manager.get_synapsedict();
-}
-
-dictionary
-get_connruledict()
-{
-  return kernel().connection_manager.get_connruledict();
-}
 
 } // namespace nest

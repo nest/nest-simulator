@@ -50,22 +50,24 @@ Synapse type for voltage-based STDP after Clopath
 Description
 +++++++++++
 
-clopath_synapse is a connector to create Clopath synapses as defined
+``clopath_synapse`` is a connector to create Clopath synapses as defined
 in [1]_. In contrast to usual STDP, the change of the synaptic weight does
 not only depend on the pre- and postsynaptic spike timing but also on the
 postsynaptic membrane potential.
 
 Clopath synapses require archiving of continuous quantities. Therefore Clopath
 synapses can only be connected to neuron models that are capable of doing this
-archiving. So far, compatible models are aeif_psc_delta_clopath and
-hh_psc_alpha_clopath.
+archiving. So far, compatible models are ``aeif_psc_delta_clopath`` and
+``hh_psc_alpha_clopath``.
 
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
+
+See also [2]_, [3]_.
 
 Parameters
 ++++++++++
@@ -126,6 +128,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   clopath_synapse( const clopath_synapse& ) = default;
+  clopath_synapse& operator=( const clopath_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -161,9 +164,9 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 

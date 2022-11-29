@@ -30,7 +30,7 @@ from .. import pynestkernel as kernel
 from .. import nestkernel_api as nestkernel
 
 from ..ll_api import *
-from .hl_api_helper import *
+from .hl_api_helper import is_iterable
 from .hl_api_parallel_computing import Rank
 
 __all__ = [
@@ -215,7 +215,7 @@ def SetKernelStatus(params):
     """
     # We need the nest module to be fully initialized in order to access the
     # _kernel_attr_names and _readonly_kernel_attrs. As hl_api_simulation is
-    # imported via hl_api during initialization, we can't put the import on
+    # imported during nest module initialization, we can't put the import on
     # the module level, but have to have it on the function level.
     import nest    # noqa
     # TODO-PYNEST-NG: Enable again when KernelAttribute works
@@ -281,7 +281,7 @@ def GetKernelStatus(keys=None):
 
     if keys is None:
         return status_root
-    elif is_literal(keys):
+    elif isinstance(keys, str):
         return status_root[keys]
     elif is_iterable(keys):
         return tuple(status_root[k] for k in keys)

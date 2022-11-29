@@ -29,10 +29,28 @@
 
 #include "dictionary.h"
 #include "kernel_manager.h"
-#include "nest_datums.h"
 #include "parameter.h"
-#include "streamers.h"
 
+/**
+ * General vector streamer.
+ * This templated operator streams all elements of a std::vector<>.
+ */
+template < typename T >
+std::ostream& operator<<( std::ostream& os, const std::vector< T >& vec )
+{
+  os << "vector[";
+  bool first = true;
+  for ( const auto& element : vec )
+  {
+    if ( not first )
+    {
+      os << ", ";
+    }
+    os << element;
+    first = false;
+  }
+  return os << "]";
+}
 
 // debug
 std::string
@@ -137,11 +155,6 @@ operator<<( std::ostream& os, const dictionary& dict )
     {
       type = "parameter";
       value_stream << "parameter" << '\n';
-    }
-    else if ( is_type< NodeCollectionDatum >( kv.second ) )
-    {
-      type = "NodeCollection";
-      value_stream << "NodeCollection" << '\n';
     }
     else
     {

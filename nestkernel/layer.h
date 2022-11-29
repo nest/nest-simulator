@@ -55,7 +55,7 @@ public:
    * Constructor.
    */
   AbstractLayer()
-    : node_collection_( NodeCollectionPTR( 0 ) )
+    : node_collection_( NodeCollectionPTR( nullptr ) )
   {
   }
 
@@ -140,7 +140,7 @@ public:
    * @param node_collection NodeCollection of the layer
    * @returns nodes in layer inside mask.
    */
-  virtual std::vector< index > get_global_nodes( const MaskDatum& mask,
+  virtual std::vector< index > get_global_nodes( const MaskPTR mask,
     const std::vector< double >& anchor,
     bool allow_oversized,
     NodeCollectionPTR node_collection ) = 0;
@@ -169,6 +169,7 @@ public:
     const Token& syn_model ) = 0;
 
   void set_node_collection( NodeCollectionPTR );
+  NodeCollectionPTR get_node_collection();
 
 protected:
   /**
@@ -225,24 +226,24 @@ public:
   /**
    * Virtual destructor
    */
-  ~Layer();
+  ~Layer() override;
 
   /**
    * Change properties of the layer according to the
    * entries in the dictionary.
    * @param d Dictionary with named parameter settings.
    */
-  void set_status( const dictionary& );
+  void set_status( const dictionary& ) override;
 
   /**
    * Export properties of the layer by setting
    * entries in the status dictionary.
    * @param d Dictionary.
    */
-  void get_status( dictionary& ) const;
+  void get_status( dictionary& ) const override;
 
   unsigned int
-  get_num_dimensions() const
+  get_num_dimensions() const override
   {
     return D;
   }
@@ -294,7 +295,7 @@ public:
    * @param sind index of node
    * @returns position of node as std::vector
    */
-  std::vector< double > get_position_vector( const index sind ) const;
+  std::vector< double > get_position_vector( const index sind ) const override;
 
   /**
    * Returns displacement of a position from another position. When using
@@ -303,10 +304,10 @@ public:
    * @param to_pos    position to which displacement is to be computed
    * @returns vector pointing from from_pos to to_pos
    */
-  virtual Position< D > compute_displacement( const Position< D >& from_pos, const Position< D >& to_pos ) const;
-  virtual double compute_displacement( const std::vector< double >& from_pos,
+  Position< D > compute_displacement( const Position< D >& from_pos, const Position< D >& to_pos ) const;
+  double compute_displacement( const std::vector< double >& from_pos,
     const std::vector< double >& to_pos,
-    const unsigned int dimension ) const;
+    const unsigned int dimension ) const override;
 
   /**
    * Returns displacement of node from given position. When using periodic
@@ -317,7 +318,7 @@ public:
    */
   Position< D > compute_displacement( const Position< D >& from_pos, const index to ) const;
 
-  std::vector< double > compute_displacement( const std::vector< double >& from_pos, const index to ) const;
+  std::vector< double > compute_displacement( const std::vector< double >& from_pos, const index to ) const override;
 
   /**
    * Returns distance to node from given position. When using periodic
@@ -328,9 +329,9 @@ public:
    */
   double compute_distance( const Position< D >& from_pos, const index lid ) const;
 
-  double compute_distance( const std::vector< double >& from_pos, const index lid ) const;
+  double compute_distance( const std::vector< double >& from_pos, const index lid ) const override;
 
-  double compute_distance( const std::vector< double >& from_pos, const std::vector< double >& to_pos ) const;
+  double compute_distance( const std::vector< double >& from_pos, const std::vector< double >& to_pos ) const override;
 
 
   /**
@@ -355,7 +356,7 @@ public:
 
   std::vector< std::pair< Position< D >, index > >* get_global_positions_vector( NodeCollectionPTR node_collection );
 
-  virtual std::vector< std::pair< Position< D >, index > > get_global_positions_vector( const MaskDatum& mask,
+  virtual std::vector< std::pair< Position< D >, index > > get_global_positions_vector( const MaskPTR mask,
     const Position< D >& anchor,
     bool allow_oversized,
     NodeCollectionPTR node_collection );
@@ -363,10 +364,10 @@ public:
   /**
    * Return a vector with the node IDs of the nodes inside the mask.
    */
-  std::vector< index > get_global_nodes( const MaskDatum& mask,
+  std::vector< index > get_global_nodes( const MaskPTR mask,
     const std::vector< double >& anchor,
     bool allow_oversized,
-    NodeCollectionPTR node_collection );
+    NodeCollectionPTR node_collection ) override;
 
   /**
    * Connect this layer to the given target layer. The actual connections
@@ -380,7 +381,7 @@ public:
   void connect( NodeCollectionPTR source_nc,
     AbstractLayerPTR target,
     NodeCollectionPTR target_nc,
-    ConnectionCreator& connector );
+    ConnectionCreator& connector ) override;
 
   /**
    * Write layer data to stream.
@@ -388,7 +389,7 @@ public:
    * node ID x-position y-position [z-position]
    * @param os     output stream
    */
-  void dump_nodes( std::ostream& os ) const;
+  void dump_nodes( std::ostream& os ) const override;
 
   /**
    * Dumps information about all connections of the given type having their
@@ -403,18 +404,18 @@ public:
   void dump_connections( std::ostream& out,
     NodeCollectionPTR node_collection,
     AbstractLayerPTR target_layer,
-    const Token& syn_model );
+    const Token& syn_model ) override;
 
 protected:
   /**
    * Clear the cache for global position information
    */
-  void clear_ntree_cache_() const;
+  void clear_ntree_cache_() const override;
 
   /**
    * Clear the cache for global position information
    */
-  void clear_vector_cache_() const;
+  void clear_vector_cache_() const override;
 
   std::shared_ptr< Ntree< D, index > > do_get_global_positions_ntree_( NodeCollectionPTR node_collection );
 
@@ -459,7 +460,7 @@ public:
    *                        periodic b.c.
    * @param node_collection NodeCollection of the layer
    */
-  MaskedLayer( Layer< D >& layer, const MaskDatum& mask, bool allow_oversized, NodeCollectionPTR node_collection );
+  MaskedLayer( Layer< D >& layer, const MaskPTR mask, bool allow_oversized, NodeCollectionPTR node_collection );
 
   /**
    * Constructor for applying "converse" mask to layer. To be used for
@@ -473,7 +474,7 @@ public:
    * @param node_collection NodeCollection of the layer
    */
   MaskedLayer( Layer< D >& layer,
-    const MaskDatum& mask,
+    const MaskPTR mask,
     bool allow_oversized,
     Layer< D >& target,
     NodeCollectionPTR node_collection );
@@ -507,7 +508,7 @@ protected:
   void check_mask_( Layer< D >& layer, bool allow_oversized );
 
   std::shared_ptr< Ntree< D, index > > ntree_;
-  MaskDatum mask_;
+  MaskPTR mask_;
 };
 
 inline void
@@ -516,9 +517,16 @@ AbstractLayer::set_node_collection( NodeCollectionPTR node_collection )
   node_collection_ = node_collection;
 }
 
+
+inline NodeCollectionPTR
+AbstractLayer::get_node_collection()
+{
+  return node_collection_;
+}
+
 template < int D >
 inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
-  const MaskDatum& maskd,
+  const MaskPTR maskd,
   bool allow_oversized,
   NodeCollectionPTR node_collection )
   : mask_( maskd )
@@ -530,7 +538,7 @@ inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
 
 template < int D >
 inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
-  const MaskDatum& maskd,
+  const MaskPTR maskd,
   bool allow_oversized,
   Layer< D >& target,
   NodeCollectionPTR node_collection )
@@ -540,7 +548,7 @@ inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
     target.get_periodic_mask(), target.get_lower_left(), target.get_extent(), node_collection );
 
   check_mask_( target, allow_oversized );
-  mask_ = new ConverseMask< D >( dynamic_cast< const Mask< D >& >( *mask_ ) );
+  mask_ = MaskPTR( new ConverseMask< D >( dynamic_cast< const Mask< D >& >( *mask_ ) ) );
 }
 
 template < int D >
@@ -656,7 +664,7 @@ inline void
 Layer< D >::clear_ntree_cache_() const
 {
   cached_ntree_ = std::shared_ptr< Ntree< D, index > >();
-  cached_ntree_md_ = NodeCollectionMetadataPTR( 0 );
+  cached_ntree_md_ = NodeCollectionMetadataPTR( nullptr );
 }
 
 template < int D >
@@ -668,7 +676,7 @@ Layer< D >::clear_vector_cache_() const
     delete cached_vector_;
   }
   cached_vector_ = 0;
-  cached_vector_md_ = NodeCollectionMetadataPTR( 0 );
+  cached_vector_md_ = NodeCollectionMetadataPTR( nullptr );
 }
 
 } // namespace nest

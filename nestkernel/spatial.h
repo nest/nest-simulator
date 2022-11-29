@@ -46,14 +46,14 @@ class LayerMetadata : public NodeCollectionMetadata
 {
 public:
   LayerMetadata( AbstractLayerPTR );
-  ~LayerMetadata()
+  ~LayerMetadata() override
   {
   }
 
-  void set_status( const dictionary&, bool ) {};
+  void set_status( const dictionary&, bool ) override {};
 
   void
-  get_status( dictionary& d ) const
+  get_status( dictionary& d ) const override
   {
     layer_->get_status( d );
   }
@@ -67,29 +67,28 @@ public:
 
   // Using string as enum would make stuff more complicated
   std::string
-  get_type() const
+  get_type() const override
   {
     return "spatial";
   }
 
   void
-  set_first_node_id( index node_id )
+  set_first_node_id( index node_id ) override
   {
     first_node_id_ = node_id;
   }
+
   index
-  get_first_node_id() const
+  get_first_node_id() const override
   {
     return first_node_id_;
   }
 
-  void slice( size_t start, size_t stop, size_t step, NodeCollectionPTR node_collection );
-
   bool
-  operator==( const NodeCollectionMetadataPTR rhs ) const
+  operator==( const NodeCollectionMetadataPTR rhs ) const override
   {
     const auto rhs_layer_metadata = dynamic_cast< LayerMetadata* >( rhs.get() );
-    if ( rhs_layer_metadata == nullptr )
+    if ( not rhs_layer_metadata )
     {
       return false;
     }
@@ -114,12 +113,12 @@ std::vector< std::vector< double > > displacement( NodeCollectionPTR layer_to_nc
 std::vector< std::vector< double > > displacement( NodeCollectionPTR layer_nc, const std::vector< double > point );
 std::vector< double > distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc );
 std::vector< double > distance( NodeCollectionPTR layer_nc, const std::vector< std::vector< double > >& point );
-std::vector< double > distance( const std::vector< ConnectionDatum >& conns );
-MaskDatum create_mask( const dictionary& mask_dict );
-bool inside( const std::vector< double >& point, const MaskDatum& mask );
-MaskDatum intersect_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
-MaskDatum union_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
-MaskDatum minus_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
+std::vector< double > distance( const std::vector< ConnectionID >& conns );
+MaskPTR create_mask( const dictionary& mask_dict );
+bool inside( const std::vector< double >& point, const MaskPTR mask );
+MaskPTR intersect_mask( const MaskPTR mask1, const MaskPTR mask2 );
+MaskPTR union_mask( const MaskPTR mask1, const MaskPTR mask2 );
+MaskPTR minus_mask( const MaskPTR mask1, const MaskPTR mask2 );
 void connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const dictionary& dict );
 void dump_layer_nodes( NodeCollectionPTR layer_nc, std::ostream& out );
 void dump_layer_connections( const Token& syn_model,

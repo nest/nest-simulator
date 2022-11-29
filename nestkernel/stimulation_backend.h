@@ -26,7 +26,6 @@
 // C++ includes:
 #include <vector>
 
-// Includes from nestkernel:
 #include "stimulation_device.h"
 
 namespace nest

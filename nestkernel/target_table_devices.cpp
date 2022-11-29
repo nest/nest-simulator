@@ -46,29 +46,27 @@ nest::TargetTableDevices::initialize()
 void
 nest::TargetTableDevices::finalize()
 {
-#pragma omp parallel
+  for ( size_t tid = 0; tid < target_to_devices_.size(); ++tid )
   {
-    const thread tid = kernel().vp_manager.get_thread_id();
-    for ( std::vector< std::vector< ConnectorBase* > >::iterator iit = target_to_devices_[ tid ].begin();
-          iit != target_to_devices_[ tid ].end();
-          ++iit )
+    for ( auto iit = target_to_devices_[ tid ].begin(); iit != target_to_devices_[ tid ].end(); ++iit )
     {
       for ( std::vector< ConnectorBase* >::iterator iiit = iit->begin(); iiit != iit->end(); ++iiit )
       {
         delete *iiit;
       }
     }
+  }
 
-    for ( std::vector< std::vector< ConnectorBase* > >::iterator iit = target_from_devices_[ tid ].begin();
-          iit != target_from_devices_[ tid ].end();
-          ++iit )
+  for ( size_t tid = 0; tid < target_from_devices_.size(); ++tid )
+  {
+    for ( auto iit = target_from_devices_[ tid ].begin(); iit != target_from_devices_[ tid ].end(); ++iit )
     {
       for ( std::vector< ConnectorBase* >::iterator iiit = iit->begin(); iiit != iit->end(); ++iiit )
       {
         delete *iiit;
       }
     }
-  } // end omp parallel
+  }
 
   std::vector< std::vector< std::vector< ConnectorBase* > > >().swap( target_to_devices_ );
   std::vector< std::vector< std::vector< ConnectorBase* > > >().swap( target_from_devices_ );
@@ -96,12 +94,12 @@ nest::TargetTableDevices::resize_to_number_of_synapse_types()
     for ( index lid = 0; lid < target_to_devices_[ tid ].size(); ++lid )
     {
       // make sure this device has support for all synapse types
-      target_to_devices_[ tid ][ lid ].resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
+      target_to_devices_[ tid ][ lid ].resize( kernel().model_manager.get_num_connection_models(), nullptr );
     }
     for ( index ldid = 0; ldid < target_from_devices_[ tid ].size(); ++ldid )
     {
       // make sure this device has support for all synapse types
-      target_from_devices_[ tid ][ ldid ].resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
+      target_from_devices_[ tid ][ ldid ].resize( kernel().model_manager.get_num_connection_models(), nullptr );
     }
   } // end omp parallel
 }
@@ -144,7 +142,7 @@ nest::TargetTableDevices::get_connections_to_device_for_lid_( const index lid,
   {
     const index source_node_id = kernel().vp_manager.lid_to_node_id( lid );
     // not the valid connector
-    if ( source_node_id > 0 and target_to_devices_[ tid ][ lid ][ syn_id ] != NULL )
+    if ( source_node_id > 0 and target_to_devices_[ tid ][ lid ][ syn_id ] )
     {
       target_to_devices_[ tid ][ lid ][ syn_id ]->get_all_connections(
         source_node_id, requested_target_node_id, tid, synapse_label, conns );
@@ -173,7 +171,7 @@ nest::TargetTableDevices::get_connections_from_devices_( const index requested_s
       if ( target_from_devices_[ tid ][ ldid ].size() > 0 )
       {
         // not the valid connector
-        if ( target_from_devices_[ tid ][ ldid ][ syn_id ] != NULL )
+        if ( target_from_devices_[ tid ][ ldid ][ syn_id ] )
         {
           target_from_devices_[ tid ][ ldid ][ syn_id ]->get_all_connections(
             source_node_id, requested_target_node_id, tid, synapse_label, conns );

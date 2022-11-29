@@ -60,10 +60,10 @@ class SLIType
   SLIType( const SLIType& );
 
 public:
-  SLIType( void )
+  SLIType()
     : count( 0 )
-    , name( NULL )
-    , defaultaction( NULL )
+    , name( nullptr )
+    , defaultaction( nullptr )
   {
   }
   ~SLIType()
@@ -71,10 +71,10 @@ public:
   }
 
   void settypename( const std::string& s );
-  void deletetypename( void );
+  void deletetypename();
 
   const Name&
-  gettypename( void ) const
+  gettypename() const
   {
     //      assert( name !=NULL);
     return *name;
@@ -84,7 +84,7 @@ public:
 
 
   SLIFunction*
-  getaction( void ) const
+  getaction() const
   {
     // assert(defaultaction != NULL);
     // If this fails, we have created a datum before the types were initialised.

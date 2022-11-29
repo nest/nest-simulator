@@ -54,33 +54,27 @@ Model::set_threads_( thread t )
 {
   for ( size_t i = 0; i < memory_.size(); ++i )
   {
-    if ( memory_[ i ].get_instantiations() > 0 )
+    if ( memory_[ i ].size() > 0 )
     {
       throw KernelException();
     }
   }
 
-  std::vector< pool > tmp( t );
-  memory_.swap( tmp );
-
-  for ( size_t i = 0; i < memory_.size(); ++i )
-  {
-    init_memory_( memory_[ i ] );
-  }
+  memory_.resize( t );
+  memory_.shrink_to_fit();
 }
 
 void
-Model::reserve_additional( thread t, size_t s )
+Model::reserve_additional( thread t, size_t n )
 {
   assert( ( size_t ) t < memory_.size() );
-  memory_[ t ].reserve_additional( s );
+  memory_[ t ].reserve( n );
 }
 
 void
 Model::clear()
 {
-  std::vector< pool > mem;
-  memory_.swap( mem );
+  memory_.clear();
   set_threads_( 1 );
 }
 
@@ -90,7 +84,7 @@ Model::mem_available()
   size_t result = 0;
   for ( size_t t = 0; t < memory_.size(); ++t )
   {
-    result += memory_[ t ].available();
+    result += memory_[ t ].capacity() - memory_[ t ].size();
   }
 
   return result;
@@ -102,7 +96,7 @@ Model::mem_capacity()
   size_t result = 0;
   for ( size_t t = 0; t < memory_.size(); ++t )
   {
-    result += memory_[ t ].get_total();
+    result += memory_[ t ].capacity();
   }
 
   return result;
@@ -122,29 +116,29 @@ Model::set_status( dictionary d )
 }
 
 dictionary
-Model::get_status( void )
+Model::get_status()
 {
   dictionary d = get_status_();
 
   std::vector< long > tmp( memory_.size() );
   for ( size_t t = 0; t < tmp.size(); ++t )
   {
-    tmp[ t ] = memory_[ t ].get_instantiations();
+    tmp[ t ] = memory_[ t ].size();
   }
 
   d[ names::instantiations ] = tmp;
-  d[ names::type_id ] = kernel().model_manager.get_model( type_id_ )->get_name();
+  d[ names::type_id ] = kernel().model_manager.get_node_model( type_id_ )->get_name();
 
   for ( size_t t = 0; t < tmp.size(); ++t )
   {
-    tmp[ t ] = memory_[ t ].get_total();
+    tmp[ t ] = memory_[ t ].capacity();
   }
 
   d[ names::capacity ] = tmp;
 
   for ( size_t t = 0; t < tmp.size(); ++t )
   {
-    tmp[ t ] = memory_[ t ].available();
+    tmp[ t ] = memory_[ t ].capacity() - memory_[ t ].size();
   }
 
   d[ names::available ] = tmp;

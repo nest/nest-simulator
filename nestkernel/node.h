@@ -32,14 +32,14 @@
 #include <vector>
 
 // Includes from nestkernel:
+#include "deprecation_warning.h"
 #include "event.h"
 #include "histentry.h"
 #include "nest_names.h"
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node_collection.h"
-
-#include "deprecation_warning.h"
+#include "secondary_event.h"
 
 
 /** @file node.h
@@ -123,7 +123,7 @@ public:
   virtual Node*
   clone() const
   {
-    return 0;
+    return nullptr;
   }
 
   /**
@@ -252,7 +252,7 @@ public:
    * for spike handling or updating the node.
    *
    */
-  virtual void calibrate() = 0;
+  virtual void pre_run_hook() = 0;
 
   /**
    * Re-calculate time-based properties of the node.
@@ -586,7 +586,8 @@ public:
    * Return 0.0 if not overridden
    * @ingroup SP_functions
    */
-  virtual double get_synaptic_elements( std::string ) const
+  virtual double
+  get_synaptic_elements( std::string ) const
   {
     return 0.0;
   }
@@ -596,7 +597,8 @@ public:
    * Return 0 if not overridden
    * @ingroup SP_functions
    */
-  virtual int get_synaptic_elements_vacant( std::string ) const
+  virtual int
+  get_synaptic_elements_vacant( std::string ) const
   {
     return 0;
   }
@@ -606,7 +608,8 @@ public:
    * Return 0 if not overridden
    * @ingroup SP_functions
    */
-  virtual int get_synaptic_elements_connected( std::string ) const
+  virtual int
+  get_synaptic_elements_connected( std::string ) const
   {
     return 0;
   }
@@ -1003,7 +1006,7 @@ Node::set_model_id( int i )
 inline bool
 Node::is_model_prototype() const
 {
-  return vp_ == invalid_thread_;
+  return vp_ == invalid_thread;
 }
 
 inline void

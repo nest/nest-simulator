@@ -63,7 +63,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   skip_syn_params_ = {
     names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
   };
-
+  
   default_weight_.resize( syn_specs.size() );
   default_delay_.resize( syn_specs.size() );
   default_weight_and_delay_.resize( syn_specs.size() );
@@ -71,8 +71,13 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   delays_.resize( syn_specs.size() );
   synapse_params_.resize( syn_specs.size() );
   synapse_model_id_.resize( syn_specs.size() );
-  synapse_model_id_[ 0 ] = kernel().model_manager.get_synapsedict().get< synindex >( "static_synapse" );
+  //PYNEST-NG: There is no safety net here. If the list of syn_specs
+  //is sent empty from the Python level, this will segfault. Maybe
+  //defaults should be filled here on the C++ level in case they are
+  //not given?
+  synapse_model_id_[ 0 ] = kernel().model_manager.get_synapse_model_id( "static_synapse" );
   param_dicts_.resize( syn_specs.size() );
+
 
   // loop through vector of synapse dictionaries, and set synapse parameters
   for ( size_t synapse_indx = 0; synapse_indx < syn_specs.size(); ++synapse_indx )
@@ -428,26 +433,16 @@ nest::ConnBuilder::set_synapse_model_( const dictionary& syn_params, const size_
 {
   if ( not syn_params.known( names::synapse_model ) )
   {
-    std::cerr << "synapse_model key: " << names::synapse_model << "\n";
-    std::cerr << "keys: "
-              << "\n";
-    for ( auto& kv_pair : syn_params )
-    {
-      std::cerr << kv_pair.first << " \n";
-    }
     throw BadProperty( "Synapse spec must contain synapse model." );
   }
   const std::string syn_name = syn_params.get< std::string >( names::synapse_model );
-  if ( not kernel().model_manager.get_synapsedict().known( syn_name ) )
-  {
-    throw UnknownSynapseType( syn_name );
-  }
 
-  index synapse_model_id = kernel().model_manager.get_synapsedict().get< synindex >( syn_name );
+  // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
+  const index synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
   synapse_model_id_[ synapse_indx ] = synapse_model_id;
 
   // We need to make sure that Connect can process all synapse parameters specified.
-  const ConnectorModel& synapse_model = kernel().model_manager.get_synapse_prototype( synapse_model_id );
+  const ConnectorModel& synapse_model = kernel().model_manager.get_connection_model( synapse_model_id );
   synapse_model.check_synapse_params( syn_params );
 }
 
@@ -1091,14 +1086,14 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
   auto indegree = conn_spec.at( names::indegree );
   if ( is_type< std::shared_ptr< nest::Parameter > >( indegree ) )
   {
+    indegree_ = boost::any_cast< ParameterPTR >( indegree );
     // TODO: Checks of parameter range
-    indegree_ = boost::any_cast< Parameter* >( indegree );
   }
   else
   {
     // Assume indegree is a scalar
     const long value = conn_spec.get< long >( names::indegree );
-    indegree_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
+    indegree_ = ParameterPTR( new ConstantParameter( value ) );
 
     // verify that indegree is not larger than source population if multapses are disabled
     if ( not allow_multapses_ )
@@ -1255,14 +1250,14 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
   auto outdegree = conn_spec.at( names::outdegree );
   if ( is_type< std::shared_ptr< nest::Parameter > >( outdegree ) )
   {
+    outdegree_ = boost::any_cast< ParameterPTR >( outdegree );
     // TODO: Checks of parameter range
-    outdegree_ = boost::any_cast< Parameter* >( outdegree );
   }
   else
   {
     // Assume outdegree is a scalar
     const long value = conn_spec.get< long >( names::outdegree );
-    outdegree_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
+    outdegree_ = ParameterPTR( new ConstantParameter( value ) );
 
     // verify that outdegree is not larger than target population if multapses
     // are disabled
@@ -1548,7 +1543,7 @@ nest::BernoulliBuilder::BernoulliBuilder( NodeCollectionPTR sources,
   auto p = conn_spec.at( names::p );
   if ( is_type< std::shared_ptr< nest::Parameter > >( p ) )
   {
-    p_ = boost::any_cast< Parameter* >( p );
+    p_ = boost::any_cast< ParameterPTR >( p );
     // TODO: Checks of parameter range
   }
   else
@@ -1559,7 +1554,7 @@ nest::BernoulliBuilder::BernoulliBuilder( NodeCollectionPTR sources,
     {
       throw BadProperty( "Connection probability 0 <= p <= 1 required." );
     }
-    p_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
+    p_ = ParameterPTR( new ConstantParameter( value ) );
   }
 }
 
@@ -1725,7 +1720,7 @@ nest::SymmetricBernoulliBuilder::connect_()
         // check whether the target is on this thread
         if ( target->is_proxy() )
         {
-          target_thread = invalid_thread_;
+          target_thread = invalid_thread;
         }
 
         previous_snode_ids.clear();
@@ -1750,20 +1745,20 @@ nest::SymmetricBernoulliBuilder::connect_()
 
           if ( source->is_proxy() )
           {
-            source_thread = invalid_thread_;
+            source_thread = invalid_thread;
           }
 
           // if target is local: connect
           if ( target_thread == tid )
           {
-            assert( target != NULL );
+            assert( target );
             single_connect_( snode_id, *target, target_thread, synced_rng );
           }
 
           // if source is local: connect
           if ( source_thread == tid )
           {
-            assert( source != NULL );
+            assert( source );
             single_connect_( ( *tnode_id ).node_id, *source, source_thread, synced_rng );
           }
 
@@ -1838,7 +1833,8 @@ nest::SPBuilder::connect_()
 /**
  * In charge of dynamically creating the new synapses
  */
-void nest::SPBuilder::connect_( NodeCollectionPTR, NodeCollectionPTR )
+void
+nest::SPBuilder::connect_( NodeCollectionPTR, NodeCollectionPTR )
 {
   throw NotImplemented( "Connection without structural plasticity is not possible for this connection builder." );
 }

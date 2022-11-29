@@ -49,18 +49,20 @@ Device for measuring the covariance matrix from several inputs
 Description
 +++++++++++
 
-The correlomatrix_detector is a recording device. It is used to
-record spikes from several pools of spike inputs and calculates the
-covariance matrix of inter-spike intervals (raw auto and cross correlation)
-binned to bins of duration delta_tau. The histogram is only recorded for
+The ``correlomatrix_detector`` is a device that receives spikes from several pools
+of spike inputs and calculates the covariance matrix of inter-spike intervals
+(raw auto and cross correlation) binned to bins of duration ``delta_tau``, which
+defaults to 5 times the simulation resolution. The histogram is only recorded for
 non-negative time lags. The negative part can be obtained by the symmetry of
-the covariance matrix
- :math:` C(t) = C^T(-t)`.
-The result can be obtained via GetStatus under the key /count_covariance.
+the covariance matrix :math:` C(t) = C^T(-t)`.
+
+The result can be obtained from the node's status dictionary under the key
+``count_covariance``.
+
 In parallel it records a weighted histogram, where the connection weight are
-used to weight every count, which is available under the key /covariance.
-Both are matrices of size N_channels x N_channels, with each entry C_ij being
-a vector of size tau_max/delta_tau + 1 containing the (weighted) histogram
+used to weight every count, which is available under the key ``/covariance``.
+Both are matrices of size ``N_channels x N_channels``, with each entry :math:`C_{ij}` being
+a vector of size :math:`\tau_{max}/\delta_\tau + 1` containing the (weighted) histogram
 for non-negative time lags.
 
 The bins are centered around the time difference they represent, and are
@@ -70,34 +72,18 @@ right-closed. This ensures proper counting of events at the border of bins,
 allowing consistent integration of a histogram over negative and positive
 time lags by stacking two parts of the histogram
 
+.. math::
+
     (C(t)=[C[i][j][::-1],C[j][i][1:]]).
 
-In this case one needs to exclude C[j][i][0] to avoid counting the zero-lag
+In this case one needs to exclude :math:`C[j][i][0]` to avoid counting the zero-lag
 bin twice.
 
-The correlomatrix_detector has a variable number of inputs which can be set
-via SetStatus under the key N_channels. All incoming connections to a
+The ``correlomatrix_detector`` has a variable number of inputs which can be set
+via ``SetStatus`` under the key ``N_channels``. All incoming connections to a
 specified receptor will be pooled.
 
-Remarks:
-
-This recorder does not record to file, screen or memory in the usual
-sense.
-
-@note Correlomatrix detectors IGNORE any connection delays.
-
-@note Correlomatrix detector breaks with the persistence scheme as
- follows: the internal buffers for storing spikes are part
- of State_, but are initialized by init_buffers_().
-
- @todo The correlation detector could be made more efficient as follows
- (HEP 2008-07-01):
- - incoming_ is vector of two deques
- - let handle() push_back() entries in incoming_ and do nothing else
- - keep index to last "old spike" in each incoming_; cannot
-   be iterator since that may change
- - update() deletes all entries before now-tau_max, sorts the new
-   entries, then registers new entries in histogram
+Correlomatrix detectors ignore any connection delays.
 
 Parameters
 ++++++++++
@@ -112,12 +98,14 @@ Tstop            real      Time when to stop counting events. This time should
                            effects of the correlation counts.
 delta_tau        ms        Bin width. This has to be an odd multiple of
                            the resolution, to allow the symmetry between
-                           positive and negative time-lags.
+                           positive and negative time-lags. Defaults to 5 times
+                           the simulation resolution.
 tau_max          ms        One-sided width. In the lower triagnular part
                            events with differences in [0, tau_max+delta_tau/2)
                            are counted. On the diagonal and in the upper
                            triangular part events with differences in
-                           (0, tau_max+delta_tau/2].
+                           (0, tau_max+delta_tau/2]. Defaults to 10 times the
+                           value of delta_tau.
 N_channels       integer   The number of pools. This defines the range of
                            receptor_type. Default is 1.
                            Setting N_channels clears count_covariance,
@@ -144,6 +132,21 @@ correlation_detector, spike_recorder
 
 EndUserDocs */
 
+/**
+ * @note Correlomatrix detector breaks with the persistence scheme as
+ *  follows: the internal buffers for storing spikes are part
+ *  of State_, but are initialized by init_buffers_().
+ *
+ *  @todo The correlation detector could be made more efficient as follows
+ *  (HEP 2008-07-01):
+ *  - incoming_ is vector of two deques
+ *  - let handle() push_back() entries in incoming_ and do nothing else
+ *  - keep index to last "old spike" in each incoming_; cannot
+ *    be iterator since that may change
+ *  - update() deletes all entries before now-tau_max, sorts the new
+ *    entries, then registers new entries in histogram
+ */
+
 class correlomatrix_detector : public Node
 {
 
@@ -156,13 +159,13 @@ public:
    * spikes also from sources which live on other threads.
    */
   bool
-  has_proxies() const
+  has_proxies() const override
   {
     return true;
   }
 
   std::string
-  get_element_type() const
+  get_element_type() const override
   {
     return names::recorder;
   }
@@ -175,21 +178,21 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  void handle( SpikeEvent& );
+  void handle( SpikeEvent& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
-  void calibrate_time( const TimeConverter& tc );
+  void calibrate_time( const TimeConverter& tc ) override;
 
 private:
-  void init_state_();
-  void init_buffers_();
-  void calibrate();
+  void init_state_() override;
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   // ------------------------------------------------------------
 
@@ -247,6 +250,8 @@ private:
      *          binwidth or tau_max.
      */
     bool set( const dictionary&, const correlomatrix_detector&, Node* node );
+
+    Time get_default_delta_tau();
   };
 
   // ------------------------------------------------------------
@@ -295,7 +300,7 @@ private:
 inline port
 correlomatrix_detector::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type < 0 || receptor_type > P_.N_channels_ - 1 )
+  if ( receptor_type < 0 or receptor_type > P_.N_channels_ - 1 )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
@@ -318,19 +323,16 @@ nest::correlomatrix_detector::set_status( const dictionary& d )
 
   device_.set_status( d );
   P_ = ptmp;
-  if ( reset_required == true )
+  if ( reset_required )
   {
     S_.reset( P_ );
   }
 }
 
-inline void
-nest::correlomatrix_detector::calibrate_time( const TimeConverter& tc )
+inline Time
+correlomatrix_detector::Parameters_::get_default_delta_tau()
 {
-  P_.delta_tau_ = tc.from_old_tics( P_.delta_tau_.get_tics() );
-  P_.tau_max_ = tc.from_old_tics( P_.tau_max_.get_tics() );
-  P_.Tstart_ = tc.from_old_tics( P_.Tstart_.get_tics() );
-  P_.Tstop_ = tc.from_old_tics( P_.Tstop_.get_tics() );
+  return 5 * Time::get_resolution();
 }
 
 } // namespace

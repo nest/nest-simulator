@@ -40,16 +40,17 @@ Synapse type with spike-timing dependent plasticity (triplets)
 Description
 +++++++++++
 
-stdp_triplet_synapse is a connection with spike time dependent
+``stdp_triplet_synapse`` is a connection with spike time dependent
 plasticity accounting for spike triplet effects (as defined in [1]_).
 
 Notes:
-- Presynaptic traces r_1 and r_2 of [1]_ are stored in the connection as
-  Kplus and Kplus_triplet and decay with time-constants tau_plus and
-  tau_plus_triplet, respectively.
-- Postsynaptic traces o_1 and o_2 of [1]_ are acquired from the postsynaptic
-  neuron states Kminus_ and triplet_Kminus_ which decay on time-constants
-  tau_minus and tau_minus_triplet, respectively. These two time-constants
+
+- Presynaptic traces ``r_1`` and ``r_2`` of [1]_ are stored in the connection as
+  ``Kplus`` and ``Kplus_triplet`` and decay with time-constants ``tau_plus`` and
+  ``tau_plus_triplet``, respectively.
+- Postsynaptic traces ``o_1`` and ``o_2`` of [1]_ are acquired from the postsynaptic
+  neuron states ``Kminus_`` and ``triplet_Kminus_`` which decay on time-constants
+  ``tau_minus`` and ``tau_minus_triplet``, respectively. These two time-constants
   can be set as properties of the postsynaptic neuron.
 - This version implements the 'all-to-all' spike interaction of [1]_. The
   'nearest-spike' interaction of [1]_ can currently not be implemented
@@ -59,7 +60,7 @@ Notes:
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
@@ -131,6 +132,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   stdp_triplet_synapse( const stdp_triplet_synapse& ) = default;
+  stdp_triplet_synapse& operator=( const stdp_triplet_synapse& ) = default;
 
   /**
    * Default Destructor.
@@ -172,9 +174,9 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
@@ -356,7 +358,7 @@ stdp_triplet_synapse< targetidentifierT >::set_status( const dictionary& d, Conn
     throw BadProperty( "State Kplus must be positive." );
   }
 
-  if ( not( Kplus_triplet_ >= 0 ) )
+  if ( Kplus_triplet_ < 0 )
   {
     throw BadProperty( "State Kplus_triplet must be positive." );
   }

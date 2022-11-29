@@ -250,6 +250,30 @@ class TestConnectArrays(unittest.TestCase):
             self.assertEqual(c.alpha, a)
             self.assertEqual(c.tau, tau)
 
+    def test_connect_arrays_syn_lbl(self):
+        """Connecting NumPy arrays with synapse label"""
+        n = 10
+        nest.Create('iaf_psc_alpha', n)
+        sources = np.arange(1, n+1, dtype=np.uint64)
+        targets = self.non_unique
+        weights = np.ones(len(sources))
+        delays = np.ones(len(sources))
+        syn_model = 'static_synapse_lbl'
+        syn_label = 2
+
+        nest.Connect(sources, targets, conn_spec='one_to_one',
+                     syn_spec={'weight': weights, 'delay': delays, 'synapse_model': syn_model,
+                               'synapse_label': syn_label})
+
+        conns = nest.GetConnections()
+
+        for s, t, w, d, lbl, c in zip(sources, targets, weights, delays, len(conns)*[syn_label], conns):
+            self.assertEqual(c.source, s)
+            self.assertEqual(c.target, t)
+            self.assertEqual(c.weight, w)
+            self.assertEqual(c.delay, d)
+            self.assertEqual(c.synapse_label, lbl)
+
     def test_connect_arrays_float_rtype(self):
         """Raises exception when not using integer value for receptor_type"""
         n = 10

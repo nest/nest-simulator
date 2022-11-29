@@ -129,9 +129,9 @@ public:
   RecordingDevice();
   RecordingDevice( const RecordingDevice& );
 
-  using Device::calibrate;
-  using Node::calibrate;
-  void calibrate( const std::vector< std::string >&, const std::vector< std::string >& );
+  using Device::pre_run_hook;
+  using Node::pre_run_hook;
+  void pre_run_hook( const std::vector< std::string >&, const std::vector< std::string >& );
 
   bool is_active( Time const& T ) const override;
 

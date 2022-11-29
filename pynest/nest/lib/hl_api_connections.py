@@ -25,14 +25,13 @@ Functions for connection handling
 
 import numpy
 
-from ..ll_api import *
+from ..ll_api import connect_arrays
 from .. import pynestkernel as kernel
 from .. import nestkernel_api as nestkernel
 
 from .hl_api_connection_helpers import (_process_input_nodes, _connect_layers_needed,
                                         _connect_spatial, _process_conn_spec,
                                         _process_spatial_projections, _process_syn_spec)
-from .hl_api_helper import *
 from .hl_api_info import GetStatus
 from .hl_api_nodes import Create
 from .hl_api_parallel_computing import NumProcesses
@@ -45,7 +44,6 @@ __all__ = [
 ]
 
 
-@check_stack
 def GetConnections(source=None, target=None, synapse_model=None,
                    synapse_label=None):
     """Return a `SynapseCollection` representing the connection identifiers.
@@ -97,7 +95,7 @@ def GetConnections(source=None, target=None, synapse_model=None,
             raise TypeError("target must be NodeCollection.")
 
     if synapse_model is not None:
-        params['synapse_model'] = kernel.SLILiteral(synapse_model)
+        params['synapse_model'] = synapse_model
 
     if synapse_label is not None:
         params['synapse_label'] = synapse_label
@@ -107,7 +105,6 @@ def GetConnections(source=None, target=None, synapse_model=None,
     return conns
 
 
-@check_stack
 def Connect(pre, post, conn_spec=None, syn_spec=None,
             return_synapsecollection=False):
     """
@@ -116,6 +113,9 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     Nodes in `pre` and `post` are connected using the specified connectivity
     (`all-to-all` by default) and synapse type (:cpp:class:`static_synapse <nest::static_synapse>` by default).
     Details depend on the connectivity rule.
+
+    Lists of synapse models and connection rules are available as
+    ``nest.synapse_models`` and ``nest.connection_rules``, respectively.
 
     Parameters
     ----------
@@ -247,11 +247,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
             syn_param_values = None
 
         connect_arrays(pre, post, weights, delays, synapse_model, syn_param_keys, syn_param_values)
-
         return
-
-    # sps(pre)
-    # sps(post)
 
     if not isinstance(pre, NodeCollection):
         raise TypeError("Not implemented, presynaptic nodes must be a NodeCollection")
@@ -267,21 +263,15 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
             raise TypeError("Presynaptic NodeCollection must have spatial information")
 
         # Create the projection dictionary
-        spatial_projections = _process_spatial_projections(
-            processed_conn_spec, processed_syn_spec)
-
-        # Connect using ConnectLayers
-        _connect_spatial(pre, post, spatial_projections)
+        spatial_projections = _process_spatial_projections(processed_conn_spec, processed_syn_spec)
+        _connect_spatial(pre._datum, post._datum, spatial_projections)
     else:
-        # sps(processed_conn_spec)
         nestkernel.llapi_connect(pre._datum, post._datum, processed_conn_spec, processed_syn_spec)
-        # sr('Connect')
 
     if return_synapsecollection:
         return GetConnections(pre, post)
 
 
-@check_stack
 def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
     """Disconnect `pre` neurons from `post` neurons.
 
@@ -314,16 +304,16 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
 
     **syn_spec**
 
-    The synapse model and its properties can be inserted either as a
-    string describing one synapse model (synapse models are listed in the
-    synapsedict) or as a dictionary as described below.
+    The synapse model and its properties can be specified either as a string naming
+    a synapse model (the list of all available synapse models can be gotten via
+    ``nest.synapse_models``) or as a dictionary as described below.
 
     Note that only the synapse type is checked when we disconnect and that if
-    `syn_spec` is given as a non-empty dictionary, the 'synapse_model' parameter must be
-    present.
+    `syn_spec` is given as a non-empty dictionary, the 'synapse_model' parameter must
+    be present.
 
-    If no synapse model is specified the default model :cpp:class:`static_synapse <nest::static_synapse>`
-    will be used.
+    If no synapse model is specified the default model
+    :cpp:class:`static_synapse <nest::static_synapse>` will be used.
 
     Available keys in the synapse dictionary are:
     ::
@@ -342,14 +332,15 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
     Notes
     -----
     `Disconnect` only disconnects explicitly specified nodes.
+
     """
 
     sps(pre)
     sps(post)
 
-    if is_string(conn_spec):
+    if isinstance(conn_spec, str):
         conn_spec = {'rule': conn_spec}
-    if is_string(syn_spec):
+    if isinstance(syn_spec, str):
         syn_spec = {'synapse_model': syn_spec}
 
     sps(conn_spec)

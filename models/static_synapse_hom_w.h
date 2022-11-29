@@ -40,15 +40,13 @@ Synapse type for static connections with homogeneous weight
 Description
 +++++++++++
 
-static_synapse_hom_w does not support any kind of plasticity. It simply
+``static_synapse_hom_w`` does not support any kind of plasticity. It simply
 stores the parameters delay, target, and receiver port for each connection
 and uses a common weight for all connections.
 
-Remarks:
-
 The common weight for all connections of this model must be set by
-SetDefaults on the model. If you create copies of this model using
-CopyModel, each derived model can have a different weight.
+``SetDefaults`` on the model. If you create copies of this model using
+``CopyModel``, each derived model can have a different weight.
 
 Transmits
 +++++++++
@@ -87,44 +85,44 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( RateEvent&, rport )
+    handles_test_event( RateEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( DataLoggingRequest&, rport )
+    handles_test_event( DataLoggingRequest&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( CurrentEvent&, rport )
+    handles_test_event( CurrentEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( ConductanceEvent&, rport )
+    handles_test_event( ConductanceEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( DoubleDataEvent&, rport )
+    handles_test_event( DoubleDataEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( DSSpikeEvent&, rport )
+    handles_test_event( DSSpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( DSCurrentEvent&, rport )
+    handles_test_event( DSCurrentEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 

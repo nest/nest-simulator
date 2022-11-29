@@ -36,7 +36,6 @@
 #include "integerdatum.h"
 #include "namedatum.h"
 #include "stringdatum.h"
-#include "symboldatum.h"
 
 /*************************************************************************/
 /** Scanner   (implemented as a DFA)                                     */
@@ -539,19 +538,16 @@ Scanner::operator()( Token& t )
   unsigned char sgc = '\0';
 
   long lng = 0L;
-  double d = 0.0;
   int sg = 1;
   int e = 0;
   int parenth = 0; // to handle PS parenthesis in strings
-  double p = 1.;
-
 
   t.clear();
 
   do
   {
 
-    if ( not in->eof() && not in->good() )
+    if ( not in->eof() and not in->good() )
     {
       std::cout << "I/O Error in scanner input stream." << std::endl;
       state = error;
@@ -568,7 +564,7 @@ Scanner::operator()( Token& t )
       ++line;
     }
 
-    if ( c == '\0' || in->bad() )
+    if ( c == '\0' or in->bad() )
     {
       c = endof;
     }
@@ -607,7 +603,7 @@ Scanner::operator()( Token& t )
     {
       IntegerDatum id( lng );
       t = id;
-      if ( c != endoln && c != endof )
+      if ( c != endoln and c != endof )
       {
         in->unget();
         --col;
@@ -624,13 +620,11 @@ Scanner::operator()( Token& t )
       break;
 
     case intexpst:
-      d = ( double ) lng;
       ds.push_back( 'e' );
       state = expntlst;
       break;
 
     case decpointst:
-      d = ( double ) lng;
       ds.push_back( '.' );
       break;
 
@@ -643,8 +637,6 @@ Scanner::operator()( Token& t )
       state = fracdgtst;
     /* no break */
     case fracdgtst:
-      p /= base;
-      d += sg * p * digval( c );
       ds.push_back( c );
       break;
 
@@ -661,7 +653,7 @@ Scanner::operator()( Token& t )
       ds.clear();
 
       t.move( doubletoken );
-      if ( c != endoln && c != endof )
+      if ( c != endoln and c != endof )
       {
         in->unget();
         --col;
@@ -712,7 +704,7 @@ Scanner::operator()( Token& t )
       state = alphast;
       break;
     case sgalphast:
-      assert( sgc == '+' || sgc == '-' );
+      assert( sgc == '+' or sgc == '-' );
       s.append( 1, sgc );
       state = alphast;
     /* no break */
@@ -746,7 +738,7 @@ Scanner::operator()( Token& t )
     /* no break */
     case aheadalphst:
     {
-      if ( c != endoln && c != endof )
+      if ( c != endoln and c != endof )
       {
         in->unget();
         --col;
@@ -759,7 +751,7 @@ Scanner::operator()( Token& t )
 
     case aheadlitst:
     {
-      if ( c != endoln && c != endof )
+      if ( c != endoln and c != endof )
       {
         in->unget();
         --col;
@@ -811,7 +803,7 @@ Scanner::operator()( Token& t )
     default:
       break;
     }
-  } while ( ( state != error ) && ( state != end ) );
+  } while ( ( state != error ) and ( state != end ) );
   return ( state == end );
 }
 

@@ -24,9 +24,9 @@
 #define VOLUME_TRANSMITTER_H
 
 // Includes from nestkernel:
-#include "archiving_node.h"
 #include "event.h"
 #include "nest_types.h"
+#include "node.h"
 #include "ring_buffer.h"
 #include "spikecounter.h"
 
@@ -103,7 +103,7 @@ EndUserDocs */
 
 class ConnectorBase;
 
-class volume_transmitter : public ArchivingNode
+class volume_transmitter : public Node
 {
 
 public:
@@ -111,19 +111,19 @@ public:
   volume_transmitter( const volume_transmitter& );
 
   bool
-  has_proxies() const
+  has_proxies() const override
   {
     return false;
   }
 
   bool
-  local_receiver() const
+  local_receiver() const override
   {
     return false;
   }
 
   std::string
-  get_element_type() const
+  get_element_type() const override
   {
     return names::other;
   }
@@ -136,28 +136,28 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  void handle( SpikeEvent& );
+  void handle( SpikeEvent& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
 
-  void get_status( dictionary& d ) const;
-  void set_status( const dictionary& d );
+  void get_status( dictionary& d ) const override;
+  void set_status( const dictionary& d ) override;
 
   /**
    * Since volume transmitters are duplicated on each thread, and are
    * hence treated just as devices during node creation, we need to
    * define the corresponding setter and getter for local_device_id.
    **/
-  void set_local_device_id( const index ldid );
-  index get_local_device_id() const;
+  void set_local_device_id( const index ldid ) override;
+  index get_local_device_id() const override;
 
   const std::vector< spikecounter >& deliver_spikes();
 
 private:
-  void init_buffers_();
-  void calibrate();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
-  void update( const Time&, const long, const long );
+  void update( const Time&, const long, const long ) override;
 
   // --------------------------------------------
 
@@ -201,7 +201,6 @@ inline void
 volume_transmitter::get_status( dictionary& d ) const
 {
   P_.get( d );
-  ArchivingNode::get_status( d );
 }
 
 inline void
@@ -209,12 +208,6 @@ volume_transmitter::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d, this );   // throws if BadProperty
-
-  // We now know that (ptmp, stmp) are consistent. We do not
-  // write them back to (P_, S_) before we are also sure that
-  // the properties to be set in the parent class are internally
-  // consistent.
-  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

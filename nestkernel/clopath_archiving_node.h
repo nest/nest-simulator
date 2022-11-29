@@ -62,7 +62,7 @@ public:
    * \fn double get_LTD_value(long t)
    * Returns value in LTD history at time t
    */
-  double get_LTD_value( double t );
+  double get_LTD_value( double t ) override;
 
   /**
    * \fn void get_LTP_history(long t1, long t2,
@@ -74,7 +74,7 @@ public:
   void get_LTP_history( double t1,
     double t2,
     std::deque< histentry_extended >::iterator* start,
-    std::deque< histentry_extended >::iterator* finish );
+    std::deque< histentry_extended >::iterator* finish ) override;
 
   /**
    * \fn double get_theta_plus()
@@ -115,8 +115,8 @@ protected:
   void write_clopath_history( Time const& t_sp, double u, double u_bar_plus, double u_bar_minus, double u_bar_bar );
 
   void init_clopath_buffers();
-  void get_status( dictionary& d ) const;
-  void set_status( const dictionary& d );
+  void get_status( dictionary& d ) const override;
+  void set_status( const dictionary& d ) override;
 
 private:
   std::vector< histentry_extended > ltd_history_;

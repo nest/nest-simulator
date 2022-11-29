@@ -58,7 +58,7 @@ Description
    This model is deprecated and will be removed in NEST 3.
    Please use ``iaf_psc_alpha_ps`` instead.
 
-iaf_psc_alpha_canon is the "canonical" implementatoin of the leaky
+``iaf_psc_alpha_canon`` is the "canonical" implementatoin of the leaky
 integrate-and-fire model neuron with alpha-shaped postsynaptic
 currents in the sense of [1]_. This is the most exact implementation
 available.
@@ -73,7 +73,7 @@ spikes is determined by interpolation once a threshold crossing has
 been detected. Return from refractoriness occurs precisly at spike
 time plus refractory period.
 
-This implementation is more complex than the plain iaf_psc_alpha
+This implementation is more complex than the plain ``iaf_psc_alpha``
 neuron, but achieves much higher precision. In particular, it does not
 suffer any binning of spike times to grid points. Depending on your
 application, the canonical application may provide superior overall
@@ -86,16 +86,29 @@ dynamics are integrated using exact integration between events [2]_.
    times to target nodes (on-grid spike time plus offset).
 
    A further improvement of precise simulation is implemented in
-   iaf_psc_exp_ps based on [3]_.
+   ``iaf_psc_exp_ps`` based on [3]_.
 
 .. note::
 
-   If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
-   will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
-   `tau_syn_in`, respectively, to avoid numerical instabilities.
+
+   If ``tau_m`` is very close to ``tau_syn_ex`` or ``tau_syn_in``, the model
+   will numerically behave as if ``tau_m`` is equal to ``tau_syn_ex`` or
+   ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
    For implementation details see the
    `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+
+This model transmits precise spike times to target nodes (on-grid spike
+time and offset). If this node is connected to a ``spike_recorder``, the
+property "precise_times" of the ``spike_recorder`` has to be set to true in
+order to record the offsets in addition to the on-grid spike times.
+
+The ``iaf_psc_delta_ps`` neuron accepts connections transmitting
+``CurrentEvents``. These events transmit stepwise-constant currents which
+can only change at on-grid times.
+
+For details about exact subthreshold integration, please see
+:doc:`../neurons/exact-integration`.
 
 Parameters
 ++++++++++
@@ -116,22 +129,6 @@ The following parameters can be set in the status dictionary.
  Interpol_Order  (int)   Interpolation order for spike time:
                          0-none, 1-linear, 2-quadratic, 3-cubic
 ===============  ======  ==========================================================
-
-Remarks
-+++++++
-
-This model transmits precise spike times to target nodes (on-grid spike
-time and offset). If this node is connected to a spike_recorder, the
-property "precise_times" of the spike_recorder has to be set to true in
-order to record the offsets in addition to the on-grid spike times.
-
-The iaf_psc_delta_ps neuron accepts connections transmitting
-CurrentEvents. These events transmit stepwise-constant currents which
-can only change at on-grid times.
-
-For details about exact subthreshold integration, please see
-:doc:`../guides/exact-integration`.
-
 
 References
 ++++++++++
@@ -173,7 +170,7 @@ public:
   iaf_psc_alpha_canon();
 
   /** Copy constructor.
-      GenericModel::allocate_() uses the copy constructor to clone
+      GenericModel::create_() uses the copy constructor to clone
       actual model instances from the prototype instance.
 
       @note The copy constructor MUST NOT be used to create nodes based
@@ -189,24 +186,24 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
   bool
-  is_off_grid() const
+  is_off_grid() const override
   {
     return true;
   } // uses off_grid events
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
   /** @name Interface functions
@@ -214,8 +211,8 @@ private:
    * only through a Node*.
    */
   //@{
-  void init_buffers_();
-  void calibrate();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
   /**
    * Time Evolution Operator.
@@ -234,7 +231,7 @@ private:
    * While the neuron is refractory, membrane potential (y3_) is
    * clamped to U_reset_.
    */
-  void update( Time const& origin, const long from, const long to );
+  void update( Time const& origin, const long from, const long to ) override;
 
   //@}
 
@@ -354,7 +351,7 @@ private:
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const dictionary& );
+    double set( const dictionary&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -381,7 +378,7 @@ private:
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const dictionary&, const Parameters_&, double );
+    void set( const dictionary&, const Parameters_&, double, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -520,10 +517,10 @@ iaf_psc_alpha_canon::get_status( dictionary& d ) const
 inline void
 iaf_psc_alpha_canon::set_status( const dictionary& d )
 {
-  Parameters_ ptmp = P_;                 // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d ); // throws if BadProperty
-  State_ stmp = S_;                      // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL );         // throws if BadProperty
+  Parameters_ ptmp = P_;                       // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
+  State_ stmp = S_;                            // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

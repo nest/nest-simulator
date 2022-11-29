@@ -50,7 +50,6 @@
 #include "recording_backend_sionlib.h"
 #endif
 
-
 #include <string>
 
 namespace nest
@@ -82,7 +81,7 @@ IOManager::set_data_path_prefix_( const dictionary& dict )
   if ( dict.update_value( names::data_path, tmp ) )
   {
     DIR* testdir = opendir( tmp.c_str() );
-    if ( testdir != NULL )
+    if ( testdir )
     {
       data_path_ = tmp;    // absolute path & directory exists
       closedir( testdir ); // we only opened it to check it exists
@@ -164,7 +163,8 @@ IOManager::finalize()
   }
 }
 
-void IOManager::change_num_threads( thread )
+void
+IOManager::change_number_of_threads()
 {
   for ( const auto& it : recording_backends_ )
   {
@@ -179,24 +179,26 @@ void IOManager::change_num_threads( thread )
 }
 
 void
+IOManager::set_recording_backend_status( std::string recording_backend, const dictionary& d )
+{
+  recording_backends_[ recording_backend ]->set_status( d );
+}
+
+void
 IOManager::set_status( const dictionary& d )
 {
   set_data_path_prefix_( d );
 
   d.update_value( names::overwrite_files, overwrite_files_ );
+}
 
-  dictionary recording_backends;
-  if ( d.update_value( names::recording_backends, recording_backends ) )
-  {
-    for ( const auto& it : recording_backends_ )
-    {
-      dictionary recording_backend_status;
-      if ( recording_backends.update_value( it.first, recording_backend_status ) )
-      {
-        it.second->set_status( recording_backend_status );
-      }
-    }
-  }
+dictionary
+IOManager::get_recording_backend_status( std::string recording_backend )
+{
+  dictionary status;
+  recording_backends_[ recording_backend ]->get_status( status );
+  status[ names::element_type ] = "recording_backend";
+  return status;
 }
 
 void
@@ -206,14 +208,19 @@ IOManager::get_status( dictionary& d )
   d[ names::data_prefix ] = data_prefix_;
   d[ names::overwrite_files ] = overwrite_files_;
 
-  dictionary recording_backends;
+  std::vector< std::string > recording_backends;
   for ( const auto& it : recording_backends_ )
   {
-    dictionary recording_backend_status;
-    it.second->get_status( recording_backend_status );
-    recording_backends[ it.first ] = recording_backend_status;
+    recording_backends.push_back( it.first );
   }
   d[ names::recording_backends ] = recording_backends;
+
+  std::vector< std::string > stimulation_backends;
+  for ( const auto& it : stimulation_backends_ )
+  {
+    stimulation_backends.push_back( it.first );
+  }
+  d[ names::stimulation_backends ] = stimulation_backends;
 }
 
 void

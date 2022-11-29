@@ -35,12 +35,6 @@
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
-
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
@@ -131,9 +125,7 @@ iaf_psc_alpha_multisynapse::Parameters_::get( dictionary& d ) const
   d[ names::V_min ] = LowerBound_ + E_L_;
   d[ names::n_synapses ] = n_receptors_();
   d[ names::has_connections ] = has_connections_;
-
-  ArrayDatum tau_syn_ad( tau_syn_ );
-  d[ names::tau_syn ] = tau_syn_ad;
+  d[ names::tau_syn ] = tau_syn_;
 }
 
 double
@@ -185,7 +177,7 @@ iaf_psc_alpha_multisynapse::Parameters_::set( const dictionary& d, Node* node )
   const size_t old_n_receptors = this->n_receptors_();
   if ( d.update_value( "tau_syn", tau_syn_ ) )
   {
-    if ( this->n_receptors_() != old_n_receptors && has_connections_ == true )
+    if ( this->n_receptors_() != old_n_receptors and has_connections_ == true )
     {
       throw BadProperty(
         "The neuron has connections, therefore the number of ports cannot be "
@@ -283,7 +275,7 @@ iaf_psc_alpha_multisynapse::init_buffers_()
 }
 
 void
-iaf_psc_alpha_multisynapse::calibrate()
+iaf_psc_alpha_multisynapse::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -325,7 +317,7 @@ iaf_psc_alpha_multisynapse::calibrate()
 void
 iaf_psc_alpha_multisynapse::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
@@ -385,7 +377,7 @@ iaf_psc_alpha_multisynapse::update( Time const& origin, const long from, const l
 port
 iaf_psc_alpha_multisynapse::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type <= 0 || receptor_type > static_cast< port >( P_.n_receptors_() ) )
+  if ( receptor_type <= 0 or receptor_type > static_cast< port >( P_.n_receptors_() ) )
   {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }

@@ -67,7 +67,7 @@ Hodgkin-Huxley neuron model
 Description
 +++++++++++
 
-hh_psc_alpha is an implementation of a spiking neuron using the Hodgkin-Huxley
+``hh_psc_alpha`` is an implementation of a spiking neuron using the Hodgkin-Huxley
 formalism.
 
 1. Postsynaptic currents
@@ -80,6 +80,8 @@ weight 1.0 results in a peak current of 1 pA.
 Spike detection is done by a combined threshold-and-local-maximum search: if
 there is a local maximum above a certain threshold of the membrane potential,
 it is considered a spike.
+
+See also [1]_, [2]_, [3]_.
 
 Parameters
 ++++++++++
@@ -146,7 +148,7 @@ class hh_psc_alpha : public ArchivingNode
 public:
   hh_psc_alpha();
   hh_psc_alpha( const hh_psc_alpha& );
-  ~hh_psc_alpha();
+  ~hh_psc_alpha() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -156,23 +158,23 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
-  void update( Time const&, const long, const long );
+  void init_buffers_() override;
+  void pre_run_hook() override;
+  void update( Time const&, const long, const long ) override;
 
   // END Boilerplate function declarations ----------------------------
 

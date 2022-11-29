@@ -71,7 +71,7 @@ public:
   {
   }
 
-  virtual ~SLIException() throw() {};
+  ~SLIException() throw() override {};
 
   /**
    * Returns the SLI error name, used by raiseerror.
@@ -90,8 +90,8 @@ public:
    *@note The catch clause must be terminated with a return
    *statement, if raiseerror was called.
    */
-  virtual const char*
-  what() const throw()
+  const char*
+  what() const throw() override
   {
     return what_.c_str();
   }
@@ -110,7 +110,7 @@ public:
 class InterpreterError : public SLIException
 {
 public:
-  virtual ~InterpreterError() throw()
+  ~InterpreterError() throw() override
   {
   }
 
@@ -131,11 +131,11 @@ class WrappedThreadException : public SLIException
 {
 public:
   WrappedThreadException( const std::exception& );
-  virtual ~WrappedThreadException() throw()
+  ~WrappedThreadException() throw() override
   {
   }
   std::string
-  message() const
+  message() const override
   {
     return message_;
   }
@@ -147,7 +147,7 @@ private:
 class DivisionByZero : public SLIException
 {
 public:
-  virtual ~DivisionByZero() throw()
+  ~DivisionByZero() throw() override
   {
   }
 
@@ -155,7 +155,7 @@ public:
     : SLIException( "DivisionByZero" )
   {
   }
-  std::string message() const;
+  std::string message() const override;
 };
 
 // -------------------- Type Mismatch -------------------------
@@ -171,7 +171,7 @@ class TypeMismatch : public InterpreterError // SLIException
   std::string provided_;
 
 public:
-  ~TypeMismatch() throw()
+  ~TypeMismatch() throw() override
   {
   }
 
@@ -193,7 +193,7 @@ public:
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 class SystemSignal : public InterpreterError
@@ -201,7 +201,7 @@ class SystemSignal : public InterpreterError
   int signal_;
 
 public:
-  ~SystemSignal() throw()
+  ~SystemSignal() throw() override
   {
   }
   SystemSignal( int s )
@@ -210,7 +210,7 @@ public:
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 // -------------------- Array Size Mismatch -------------------------
@@ -223,7 +223,7 @@ class RangeCheck : public InterpreterError
   int size_;
 
 public:
-  ~RangeCheck() throw()
+  ~RangeCheck() throw() override
   {
   }
 
@@ -233,7 +233,7 @@ public:
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 class ArgumentType : public InterpreterError
@@ -246,7 +246,7 @@ public:
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 /**
@@ -271,11 +271,11 @@ public:
   {
   }
 
-  ~BadParameterValue() throw()
+  ~BadParameterValue() throw() override
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 // -------------------- Dict Error -------------------------
@@ -286,7 +286,7 @@ public:
 class DictError : public InterpreterError
 {
 public:
-  virtual ~DictError() throw()
+  ~DictError() throw() override
   {
   }
 
@@ -307,7 +307,7 @@ class UndefinedName : public DictError // was UnknownName
   std::string name_;
 
 public:
-  ~UndefinedName() throw()
+  ~UndefinedName() throw() override
   {
   }
   UndefinedName( const std::string& name )
@@ -316,7 +316,7 @@ public:
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 // -------------------- Entry Type Mismatch -------------------------
@@ -331,7 +331,7 @@ class EntryTypeMismatch : public DictError
   std::string provided_;
 
 public:
-  ~EntryTypeMismatch() throw()
+  ~EntryTypeMismatch() throw() override
   {
   }
   EntryTypeMismatch( const std::string& expectedType, const std::string& providedType )
@@ -341,7 +341,7 @@ public:
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 // -------------------- Stack Error -------------------------
@@ -360,7 +360,7 @@ public:
     , needed( n )
     , given( g ) {};
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 
@@ -372,7 +372,7 @@ public:
 class IOError : public SLIException
 {
 public:
-  ~IOError() throw()
+  ~IOError() throw() override
   {
   }
   IOError()
@@ -380,7 +380,7 @@ public:
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 /**
@@ -391,7 +391,7 @@ class UnaccessedDictionaryEntry : public DictError
   std::string msg_;
 
 public:
-  ~UnaccessedDictionaryEntry() throw()
+  ~UnaccessedDictionaryEntry() throw() override
   {
   }
   // input: string with names of not accessed
@@ -401,7 +401,7 @@ public:
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 
@@ -418,7 +418,7 @@ class DynamicModuleManagementError : public SLIException
   std::string msg_;
 
 public:
-  ~DynamicModuleManagementError() throw()
+  ~DynamicModuleManagementError() throw() override
   {
   }
 
@@ -434,7 +434,7 @@ public:
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 /**
@@ -448,7 +448,7 @@ class NamingConflict : public SLIException
   std::string msg_;
 
 public:
-  ~NamingConflict() throw()
+  ~NamingConflict() throw() override
   {
   }
   NamingConflict( const std::string& m )
@@ -457,7 +457,7 @@ public:
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 /**
@@ -469,7 +469,7 @@ class NotImplemented : public SLIException
   std::string msg_;
 
 public:
-  ~NotImplemented() throw()
+  ~NotImplemented() throw() override
   {
   }
   NotImplemented( const std::string& m )
@@ -478,7 +478,7 @@ public:
   {
   }
 
-  std::string message() const;
+  std::string message() const override;
 };
 
 #endif

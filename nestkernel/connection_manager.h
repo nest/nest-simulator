@@ -72,15 +72,15 @@ public:
   };
 
   ConnectionManager();
-  virtual ~ConnectionManager();
+  ~ConnectionManager() override;
 
-  virtual void initialize();
-  virtual void finalize();
+  void initialize() override;
+  void finalize() override;
+  void change_number_of_threads() override;
+  void set_status( const dictionary& ) override;
+  void get_status( dictionary& ) override;
 
-  virtual void set_status( const dictionary& );
-  virtual void get_status( dictionary& );
-
-  dictionary& get_connruledict();
+  bool valid_connection_rule( std::string );
 
   void compute_target_data_buffer_size();
   void compute_compressed_secondary_recv_buffer_positions( const thread tid );
@@ -103,6 +103,8 @@ public:
    * Create connections.
    */
   void connect( NodeCollectionPTR, NodeCollectionPTR, const dictionary&, const std::vector< dictionary >& );
+
+  void connect( std::vector< index >, std::vector< index >, const dictionary& );
 
   /**
    * Connect two nodes. The source node is defined by its global ID.
@@ -578,17 +580,6 @@ private:
    */
   std::vector< std::vector< size_t > > num_connections_;
 
-  /**
-   * @BeginDocumentation
-   * Name: connruledict - dictionary containing all connectivity rules
-   *
-   * Description:
-   * This dictionary provides the connection rules that can be used
-   * in Connect.
-   * 'connruledict info' shows the contents of the dictionary.
-   *
-   * SeeAlso: Connect
-   */
   dictionary connruledict_; //!< Dictionary for connection rules.
 
   //! ConnBuilder factories, indexed by connruledict_ elements.
@@ -636,10 +627,10 @@ private:
   double stdp_eps_;
 };
 
-inline dictionary&
-ConnectionManager::get_connruledict()
+inline bool
+ConnectionManager::valid_connection_rule( std::string rule_name )
 {
-  return connruledict_;
+  return connruledict_.known( rule_name );
 }
 
 inline delay

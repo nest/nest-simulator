@@ -27,10 +27,6 @@
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "booldatum.h"
-#include "dict.h"
-#include "dictutils.h"
 
 namespace nest
 {
@@ -103,15 +99,15 @@ nest::step_rate_generator::Buffers_::Buffers_( const Buffers_&, step_rate_genera
 void
 nest::step_rate_generator::Parameters_::get( dictionary& d ) const
 {
-  std::vector< double >* times_ms = new std::vector< double >();
-  times_ms->reserve( amp_time_stamps_.size() );
+  std::vector< double > times_ms;
+  times_ms.reserve( amp_time_stamps_.size() );
   for ( auto amp_time_stamp : amp_time_stamps_ )
   {
-    times_ms->push_back( amp_time_stamp.get_ms() );
+    times_ms.push_back( amp_time_stamp.get_ms() );
   }
-  d[ names::amplitude_times ] = DoubleVectorDatum( times_ms );
-  d[ names::amplitude_values ] = DoubleVectorDatum( new std::vector< double >( amp_values_ ) );
-  d[ names::allow_offgrid_times ] = BoolDatum( allow_offgrid_amp_times_ );
+  d[ names::amplitude_times ] = times_ms;
+  d[ names::amplitude_values ] = amp_values_;
+  d[ names::allow_offgrid_times ] = allow_offgrid_amp_times_;
 }
 
 nest::Time
@@ -258,11 +254,11 @@ nest::step_rate_generator::init_buffers_()
 }
 
 void
-nest::step_rate_generator::calibrate()
+nest::step_rate_generator::pre_run_hook()
 {
   B_.logger_.init();
 
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
 }
 
 
@@ -273,7 +269,7 @@ nest::step_rate_generator::calibrate()
 void
 nest::step_rate_generator::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   assert( P_.amp_time_stamps_.size() == P_.amp_values_.size() );
@@ -287,7 +283,7 @@ nest::step_rate_generator::update( Time const& origin, const long from, const lo
   // Skip any times in the past. Since we must send events proactively,
   // idx_ must point to times in the future.
   const long first = t0 + from;
-  while ( B_.idx_ < P_.amp_time_stamps_.size() && P_.amp_time_stamps_[ B_.idx_ ].get_steps() <= first )
+  while ( B_.idx_ < P_.amp_time_stamps_.size() and P_.amp_time_stamps_[ B_.idx_ ].get_steps() <= first )
   {
     ++B_.idx_;
   }
@@ -302,7 +298,7 @@ nest::step_rate_generator::update( Time const& origin, const long from, const lo
     // Keep the amplitude up-to-date at all times.
     // We need to change the amplitude one step ahead of time, see comment
     // on class SimulatingDevice.
-    if ( B_.idx_ < P_.amp_time_stamps_.size() && curr_time + 1 == P_.amp_time_stamps_[ B_.idx_ ].get_steps() )
+    if ( B_.idx_ < P_.amp_time_stamps_.size() and curr_time + 1 == P_.amp_time_stamps_[ B_.idx_ ].get_steps() )
     {
       B_.amp_ = P_.amp_values_[ B_.idx_ ];
       B_.idx_++;
@@ -368,8 +364,8 @@ nest::step_rate_generator::set_data_from_stimulation_backend( std::vector< doubl
       times_ms.push_back( time_amplitude[ n * 2 ] );
       amplitudes_Hz.push_back( time_amplitude[ n * 2 + 1 ] );
     }
-    d[ names::amplitude_times ] = DoubleVectorDatum( times_ms );
-    d[ names::amplitude_values ] = DoubleVectorDatum( amplitudes_Hz );
+    d[ names::amplitude_times ] = times_ms;
+    d[ names::amplitude_values ] = amplitudes_Hz;
 
     ptmp.set( d, B_, this );
   }

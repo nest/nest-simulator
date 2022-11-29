@@ -24,7 +24,6 @@
 
 // C++ includes:
 #include <iostream>
-#include <sstream>
 
 // Includes from libnestutil:
 #include "logging.h"
@@ -56,7 +55,6 @@
 #include "arraydatum.h"
 #include "booldatum.h"
 #include "doubledatum.h"
-#include "integerdatum.h"
 #include "interpret.h"
 #include "sliexceptions.h"
 #include "stringdatum.h"
@@ -95,13 +93,13 @@ NestModule::~NestModule()
 // The following concerns the new module:
 
 const std::string
-NestModule::name( void ) const
+NestModule::name() const
 {
   return std::string( "NEST Kernel 2" ); // Return name of the module
 }
 
 const std::string
-NestModule::commandstring( void ) const
+NestModule::commandstring() const
 {
   return std::string( "(nest-init) run" );
 }
@@ -156,7 +154,7 @@ NestModule::commandstring( void ) const
 // }
 
 GenericFactory< Parameter >&
-NestModule::parameter_factory_( void )
+NestModule::parameter_factory_()
 {
   static GenericFactory< Parameter > factory;
   return factory;
@@ -164,7 +162,7 @@ NestModule::parameter_factory_( void )
 
 
 GenericFactory< AbstractMask >&
-NestModule::mask_factory_( void )
+NestModule::mask_factory_()
 {
   static GenericFactory< AbstractMask > factory;
   return factory;
@@ -184,6 +182,7 @@ NestModule::create_mask( const dictionary& params )
   // else
   // {
 
+<<<<<<< HEAD
   //   DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( t.datum() );
   //   if ( dd == 0 )
   //   {
@@ -197,6 +196,21 @@ NestModule::create_mask( const dictionary& params )
   //   Token anchor_token;
   //   bool has_anchor = false;
   //   AbstractMask* mask = 0;
+=======
+    DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( t.datum() );
+    if ( not dd )
+    {
+      throw BadProperty( "Mask must be masktype or dictionary." );
+    }
+
+    // The dictionary should contain one key which is the name of the
+    // mask type, and optionally the key 'anchor'. To find the unknown
+    // mask type key, we must loop through all keys. The value for the
+    // anchor key will be stored in the anchor_token variable.
+    Token anchor_token;
+    bool has_anchor = false;
+    AbstractMask* mask = nullptr;
+>>>>>>> 7bdb9963b658708f2d82bb1d9eafe2acb95bbe1f
 
   //   for ( Dictionary::iterator dit = ( *dd )->begin(); dit != ( *dd )->end(); ++dit )
   //   {
@@ -210,6 +224,7 @@ NestModule::create_mask( const dictionary& params )
   //     else
   //     {
 
+<<<<<<< HEAD
   //       if ( mask != 0 )
   //       { // mask has already been defined
   //         throw BadProperty( "Mask definition dictionary contains extraneous items." );
@@ -217,6 +232,15 @@ NestModule::create_mask( const dictionary& params )
   //       mask = create_mask( dit->first, getValue< DictionaryDatum >( dit->second ) );
   //     }
   //   }
+=======
+        if ( mask )
+        { // mask has already been defined
+          throw BadProperty( "Mask definition dictionary contains extraneous items." );
+        }
+        mask = create_mask( dit->first, getValue< DictionaryDatum >( dit->second ) );
+      }
+    }
+>>>>>>> 7bdb9963b658708f2d82bb1d9eafe2acb95bbe1f
 
   //   if ( has_anchor )
   //   {
@@ -328,7 +352,7 @@ NestModule::create_mask( const dictionary& params )
 
    Author: docu by Sirko Straube
 
-   SeeAlso: ShowStatus, GetStatus, GetKernelStatus, info, modeldict, Set, SetStatus_dict
+   SeeAlso: ShowStatus, GetStatus, GetKernelStatus, info, Set, SetStatus_dict
 */
 void
 NestModule::SetStatus_idFunction::execute( SLIInterpreter* i ) const
@@ -586,7 +610,12 @@ NestModule::GetMetadata_gFunction::execute( SLIInterpreter* i ) const
   // return empty dict if NC does not have metadata
   if ( meta.get() )
   {
+<<<<<<< HEAD
     // meta->get_status( dict );
+=======
+    meta->get_status( dict );
+    slice_positions_if_sliced_nc( dict, nc );
+>>>>>>> 7bdb9963b658708f2d82bb1d9eafe2acb95bbe1f
 
     // dict[ names::network_size ] = nc->size();
   }
@@ -617,10 +646,17 @@ NestModule::SetDefaults_l_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
+<<<<<<< HEAD
   const Name name = getValue< Name >( i->OStack.pick( 1 ) );
   // DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // kernel().model_manager.set_model_defaults( name, params );
+=======
+  const std::string name = getValue< std::string >( i->OStack.pick( 1 ) );
+  DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+
+  set_model_defaults( name, params );
+>>>>>>> 7bdb9963b658708f2d82bb1d9eafe2acb95bbe1f
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -638,7 +674,11 @@ NestModule::GetDefaults_lFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
+<<<<<<< HEAD
   // const Name modelname = getValue< Name >( i->OStack.pick( 0 ) );
+=======
+  const std::string modelname = getValue< std::string >( i->OStack.pick( 0 ) );
+>>>>>>> 7bdb9963b658708f2d82bb1d9eafe2acb95bbe1f
 
   // DictionaryDatum dict = get_model_defaults( modelname );
 
@@ -770,14 +810,11 @@ NestModule::CleanupFunction::execute( SLIInterpreter* i ) const
    /model /new_model            -> -
    Parameters:
    /model      - literal naming an existing model
-   /new_model  - literal giving the name of the copy to create, must not
-                 exist in modeldict or synapsedict before
+   /new_model  - literal name of the copy to create, must not exist before
    /param_dict - parameters to set in the new_model
    Description:
-   A copy of model is created and registered in modeldict or synapsedict
-   under the name new_model. If a parameter dictionary is given, the parameters
-   are set in new_model.
-   Warning: It is impossible to unload modules after use of CopyModel.
+   A copy of model is created and registered under the name new_model.
+   If a parameter dictionary is given, the parameters are set in new_model.
  */
 void
 NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
@@ -805,7 +842,7 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
    /model n params Create -> NodeCollection
 
    Parameters:
-   /model - literal naming the modeltype (entry in modeldict)
+   /model - literal naming the modeltype
    n      - the desired number of nodes
    params - parameters for the newly created node(s)
 
@@ -816,8 +853,6 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
    Create generates n new network objects of the supplied model
    type. If n is not given, a single node is created. params is a
    dictionary with parameters for the new nodes.
-
-   SeeAlso: modeldict
 */
 void
 NestModule::Create_l_iFunction::execute( SLIInterpreter* i ) const
@@ -1560,6 +1595,22 @@ NestModule::Get_g_iFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
+/** @BeginDocumentation
+  Name: nest::Take_g_a - slice a NodeCollection
+
+  Synopsis:
+  nc array Take_g_a -> NodeCollection
+
+  Parameters:
+  nc - NodeCollection to be sliced
+  array - array of the form [start stop step]
+
+  Description:
+  Slice a `NodeCollection` using pythonic slicing conventions:
+  - Include elements from and including `start` to but excluding `stop`.
+  - `step` is the step length in the slice and must be positive.
+  - Negative values for `start` and `stop` count from the end of the `NodeCollection`,  i.e., -1 is the last element.
+*/
 void
 NestModule::Take_g_aFunction::execute( SLIInterpreter* i ) const
 {
@@ -1582,23 +1633,16 @@ NestModule::Take_g_aFunction::execute( SLIInterpreter* i ) const
     throw BadParameter( "Slicing step must be strictly positive." );
   }
 
-  if ( start >= 0 )
+  // If start or stop are counted backwards from the end with negative keys, they must be adjusted.
+  if ( start < 0 )
   {
-    start -= 1; // adjust from 1-based to 0-based indexing
-  }
-  else
-  {
-    start += g_size; // automatically correct for 0-based indexing
+    start += g_size;
+    stop = stop == 0 ? g_size : stop;
   }
 
-  if ( stop >= 0 )
+  if ( stop < 0 )
   {
-    // no adjustment necessary: adjustment from 1- to 0- based indexing
-    // and adjustment from last- to stop-based logic cancel
-  }
-  else
-  {
-    stop += g_size + 1; // adjust from 0- to 1- based indexin
+    stop += g_size;
   }
 
   NodeCollectionDatum sliced_nc = nodecollection->slice( start, stop, step );
@@ -1988,7 +2032,13 @@ NestModule::Apply_P_DFunction::execute( SLIInterpreter* i ) const
   // auto positions = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
   auto param = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
 
+<<<<<<< HEAD
   // auto result = apply( param, positions );
+=======
+  // ADL requires explicit namespace qualification to avoid confusion with std::apply() in C++17
+  // See https://github.com/llvm/llvm-project/issues/53084#issuecomment-1007969489
+  auto result = nest::apply( param, positions );
+>>>>>>> 7bdb9963b658708f2d82bb1d9eafe2acb95bbe1f
 
   i->OStack.pop( 2 );
   // i->OStack.push( result );
@@ -2003,7 +2053,9 @@ NestModule::Apply_P_gFunction::execute( SLIInterpreter* i ) const
   NodeCollectionDatum nc = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
   ParameterDatum param = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
 
-  auto result = apply( param, nc );
+  // ADL requires explicit namespace qualification to avoid confusion with std::apply() in C++17
+  // See https://github.com/llvm/llvm-project/issues/53084#issuecomment-1007969489
+  auto result = nest::apply( param, nc );
 
   i->OStack.pop( 2 );
   i->OStack.push( result );
@@ -2735,7 +2787,7 @@ NestModule::GetLayerStatus_gFunction::execute( SLIInterpreter* i ) const
 
   Author: Kittel Austvoll, Hans Ekkehard Plesser
 
-  SeeAlso: nest::DumpLayerConnections, setprecision, modeldict
+  SeeAlso: nest::DumpLayerConnections, setprecision
 */
 void
 NestModule::DumpLayerNodes_os_gFunction::execute( SLIInterpreter* i ) const

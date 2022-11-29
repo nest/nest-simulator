@@ -40,17 +40,17 @@ Synapse type for symmetric spike-timing dependent plasticity with constant depre
 Description
 +++++++++++
 
-vogels_sprekeler_synapse is a connector to create synapses with symmetric
+``vogels_sprekeler_synapse`` is a connector to create synapses with symmetric
 spike time dependent plasticity and constant depression (as defined in [1]_).
-The learning rule is symmetric, i.e., the synapse is strengthened
+The learning rule is symmetric, that is, the synapse is strengthened
 irrespective of the order of the pre- and postsynaptic spikes. Each
 pre-synaptic spike also causes a constant depression of the synaptic weight
-which differentiates this rule from other classical stdp rules.
+which differentiates this rule from other classical STDP rules.
 
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
@@ -103,6 +103,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   vogels_sprekeler_synapse( const vogels_sprekeler_synapse& ) = default;
+  vogels_sprekeler_synapse& operator=( const vogels_sprekeler_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase.
@@ -141,9 +142,9 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 

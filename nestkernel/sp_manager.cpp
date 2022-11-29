@@ -60,8 +60,8 @@ SPManager::SPManager()
   , structural_plasticity_update_interval_( 10000. )
   , structural_plasticity_enabled_( false )
   , sp_conn_builders_()
-  , growthcurvedict_()
   , growthcurve_factories_()
+  , growthcurvedict_()
 {
 }
 
@@ -101,7 +101,7 @@ SPManager::get_status( dictionary& d )
     sp_synapse[ names::pre_synaptic_element ] = ( *i )->get_pre_synaptic_element_name();
     sp_synapse[ names::post_synaptic_element ] = ( *i )->get_post_synaptic_element_name();
     sp_synapse[ names::synapse_model ] =
-      kernel().model_manager.get_synapse_prototype( ( *i )->get_synapse_model(), 0 ).get_name();
+      kernel().model_manager.get_connection_model( ( *i )->get_synapse_model(), 0 ).get_name();
     std::stringstream syn_name;
     syn_name << "syn" << ( sp_conn_builders_.end() - i );
     sp_synapses[ syn_name.str() ] = sp_synapse;
@@ -109,6 +109,13 @@ SPManager::get_status( dictionary& d )
 
   d[ names::structural_plasticity_synapses ] = sp_synapses;
   d[ names::structural_plasticity_update_interval ] = structural_plasticity_update_interval_;
+
+  std::vector< std::string > growth_curves;
+  for ( auto const& element : growthcurvedict_ )
+  {
+    growth_curves.push_back( element.first );
+  }
+  d[ names::growth_curves ] = growth_curves;
 }
 
 /**
@@ -126,10 +133,8 @@ SPManager::set_status( const dictionary& d )
   if ( not d.known( names::structural_plasticity_synapses ) )
   {
     return;
-  } /*
-     * Configure synapses model updated during the simulation.
-     */
-  Token synmodel;
+  }
+
   dictionary syn_specs;
   dictionary syn_spec;
   dictionary conn_spec;
@@ -261,13 +266,6 @@ SPManager::disconnect( NodeCollectionPTR sources,
 {
   if ( kernel().connection_manager.connections_have_changed() )
   {
-    if ( kernel().connection_manager.secondary_connections_exist() )
-    {
-      kernel().model_manager.create_secondary_events_prototypes(); // necessary before
-                                                                   // updating
-                                                                   // connection
-                                                                   // infrastructure
-    }
 #pragma omp parallel
     {
       const thread tid = kernel().vp_manager.get_thread_id();
@@ -275,7 +273,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
     }
   }
 
-  ConnBuilder* cb = NULL;
+  ConnBuilder* cb = nullptr;
   conn_spec.init_access_flags();
   syn_spec.init_access_flags();
 
@@ -285,7 +283,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
   }
   const std::string rule_name = conn_spec.get< std::string >( names::rule );
 
-  if ( not kernel().connection_manager.get_connruledict().known( rule_name ) )
+  if ( not kernel().connection_manager.valid_connection_rule( rule_name ) )
   {
     throw BadProperty( "Unknown connectivity rule: " + rule_name );
   }
@@ -295,9 +293,8 @@ SPManager::disconnect( NodeCollectionPTR sources,
 
     for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin(); i != sp_conn_builders_.end(); i++ )
     {
-      std::string synModel = syn_spec.get< std::string >( names::synapse_model );
-      if ( ( *i )->get_synapse_model()
-        == ( index )( kernel().model_manager.get_synapsedict().get< synindex >( synModel ) ) )
+      std::string syn_model = syn_spec.get< std::string >( names::synapse_model );
+      if ( ( *i )->get_synapse_model() == kernel().model_manager.get_synapse_model_id( syn_model ) )
       {
         cb = kernel().connection_manager.get_conn_builder( rule_name, sources, targets, conn_spec, { syn_spec } );
         cb->set_post_synaptic_element_name( ( *i )->get_post_synaptic_element_name() );
@@ -309,7 +306,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
   {
     cb = kernel().connection_manager.get_conn_builder( rule_name, sources, targets, conn_spec, { syn_spec } );
   }
-  assert( cb != 0 );
+  assert( cb );
 
   // at this point, all entries in conn_spec and syn_spec have been checked
   conn_spec.all_entries_accessed( "Disconnect", "conn_spec" );

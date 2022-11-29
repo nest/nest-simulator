@@ -49,7 +49,7 @@ postsynaptic currents - precise spike timing version
 Description
 +++++++++++
 
-iaf_psc_delta_ps is an implementation of a leaky integrate-and-fire model
+``iaf_psc_delta_ps`` is an implementation of a leaky integrate-and-fire model
 where the potential jumps on each spike arrival.
 
 The threshold crossing is followed by an absolute refractory period
@@ -85,12 +85,22 @@ neuron like dynamics interacting by point events is described in
 
 Critical tests for the formulation of the neuron model are the
 comparisons of simulation results for different computation step
-sizes. sli/testsuite/nest contains a number of such tests.
+sizes and the testsuite contains a number of such tests.
 
-The iaf_psc_delta_ps is the standard model used to check the consistency
+The ``iaf_psc_delta_ps`` is the standard model used to check the consistency
 of the nest simulation kernel because it is at the same time complex
 enough to exhibit non-trivial dynamics and simple enough compute
 relevant measures analytically.
+
+Please note that this node is capable of sending precise spike times
+to target nodes (on-grid spike time plus offset).
+
+The ``af_psc_delta_ps`` neuron accepts connections transmitting
+``CurrentEvents``. These events transmit stepwise-constant currents which
+can only change at on-grid times.
+
+For details about exact subthreshold integration, please see
+:doc:`../neurons/exact-integration`.
 
 Parameters
 ++++++++++
@@ -109,19 +119,6 @@ The following parameters can be set in the status dictionary.
  V_min             mV      Absolute lower value for the membrane potential
  refractory_input  (bool)  If true, keep input during refractory period (default: false)
 =================  ======  ==============================================================
-
-Remarks
-+++++++
-
-Please note that this node is capable of sending precise spike times
-to target nodes (on-grid spike time plus offset).
-
-The iaf_psc_delta_ps neuron accepts connections transmitting
-CurrentEvents. These events transmit stepwise-constant currents which
-can only change at on-grid times.
-
-For details about exact subthreshold integration, please see
-:doc:`../guides/exact-integration`.
 
 References
 ++++++++++
@@ -167,7 +164,7 @@ public:
   iaf_psc_delta_ps();
 
   /** Copy constructor.
-      GenericModel::allocate_() uses the copy constructor to clone
+      GenericModel::create_() uses the copy constructor to clone
       actual model instances from the prototype instance.
 
       @note The copy constructor MUST NOT be used to create nodes based
@@ -183,24 +180,24 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
   bool
-  is_off_grid() const
+  is_off_grid() const override
   {
     return true;
   } // uses off_grid events
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
   /** @name Interface functions
@@ -208,10 +205,10 @@ private:
    * only through a Node*.
    */
   //@{
-  void init_buffers_();
+  void init_buffers_() override;
 
-  void calibrate();
-  void update( Time const&, const long, const long );
+  void pre_run_hook() override;
+  void update( Time const&, const long, const long ) override;
 
   /**
    * Calculate the precise spike time, emit the spike and reset the
@@ -285,7 +282,7 @@ private:
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const dictionary& );
+    double set( const dictionary&, Node* );
   };
 
 
@@ -322,7 +319,7 @@ private:
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const dictionary&, const Parameters_&, double );
+    void set( const dictionary&, const Parameters_&, double, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -452,10 +449,10 @@ iaf_psc_delta_ps::get_status( dictionary& d ) const
 inline void
 iaf_psc_delta_ps::set_status( const dictionary& d )
 {
-  Parameters_ ptmp = P_;                 // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d ); // throws if BadProperty
-  State_ stmp = S_;                      // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL );         // throws if BadProperty
+  Parameters_ ptmp = P_;                       // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
+  State_ stmp = S_;                            // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

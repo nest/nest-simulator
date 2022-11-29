@@ -67,7 +67,7 @@ Hodgkin-Huxley neuron model with support for Clopath plasticity
 Description
 +++++++++++
 
-hh_psc_alpha_clopath is an implementation of a spiking neuron using the
+``hh_psc_alpha_clopath`` is an implementation of a spiking neuron using the
 Hodgkin-Huxley formalism and that is capable of connecting to a Clopath
 synapse.
 
@@ -81,6 +81,8 @@ weight 1.0 results in a peak current of 1 pA.
 Spike detection is done by a combined threshold-and-local-maximum search: if
 there is a local maximum above a certain threshold of the membrane potential,
 it is considered a spike.
+
+See also [1]_, [2]_, [3]_, [4]_, [5]_, [6]_.
 
 Parameters
 ++++++++++
@@ -184,7 +186,7 @@ class hh_psc_alpha_clopath : public ClopathArchivingNode
 public:
   hh_psc_alpha_clopath();
   hh_psc_alpha_clopath( const hh_psc_alpha_clopath& );
-  ~hh_psc_alpha_clopath();
+  ~hh_psc_alpha_clopath() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -194,23 +196,23 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
-  void update( Time const&, const long, const long );
+  void init_buffers_() override;
+  void pre_run_hook() override;
+  void update( Time const&, const long, const long ) override;
 
   // END Boilerplate function declarations ----------------------------
 
@@ -229,20 +231,20 @@ private:
   //! Independent parameters
   struct Parameters_
   {
-    double t_ref_;      //!< refractory time in ms
-    double g_Na;        //!< Sodium Conductance in nS
-    double g_K;         //!< Potassium Conductance in nS
-    double g_L;         //!< Leak Conductance in nS
-    double C_m;         //!< Membrane Capacitance in pF
-    double E_Na;        //!< Sodium Reversal Potential in mV
-    double E_K;         //!< Potassium Reversal Potential in mV
-    double E_L;         //!< Leak reversal Potential (aka resting potential) in mV
-    double tau_synE;    //!< Synaptic Time Constant Excitatory Synapse in ms
-    double tau_synI;    //!< Synaptic Time Constant for Inhibitory Synapse in ms
-    double I_e;         //!< Constant Current in pA
-    double tau_plus;    //!< time constant of u_bar_plus in ms
-    double tau_minus;   //!< time constant of u_bar_minus in ms
-    double tau_bar_bar; //!< time constant of u_bar_bar in ms
+    double t_ref_;          //!< refractory time in ms
+    double g_Na;            //!< Sodium Conductance in nS
+    double g_K;             //!< Potassium Conductance in nS
+    double g_L;             //!< Leak Conductance in nS
+    double C_m;             //!< Membrane Capacitance in pF
+    double E_Na;            //!< Sodium Reversal Potential in mV
+    double E_K;             //!< Potassium Reversal Potential in mV
+    double E_L;             //!< Leak reversal Potential (aka resting potential) in mV
+    double tau_synE;        //!< Synaptic Time Constant Excitatory Synapse in ms
+    double tau_synI;        //!< Synaptic Time Constant for Inhibitory Synapse in ms
+    double I_e;             //!< Constant Current in pA
+    double tau_u_bar_plus;  //!< time constant of u_bar_plus in ms
+    double tau_u_bar_minus; //!< time constant of u_bar_minus in ms
+    double tau_u_bar_bar;   //!< time constant of u_bar_bar in ms
 
     Parameters_(); //!< Sets default parameter values
 

@@ -38,7 +38,7 @@ ConnectionCreator::ConnectionCreator( dictionary dict )
   , weight_()
   , delay_()
 {
-  Name connection_type;
+  std::string connection_type;
   long number_of_connections( -1 ); // overwritten by dict entry
 
   dict.update_value( names::connection_type, connection_type );
@@ -93,10 +93,12 @@ ConnectionCreator::ConnectionCreator( dictionary dict )
   extract_params_( dict, param_dicts_[ 0 ] );
   // }
 
+  dict.all_entries_accessed("ConnectionCreator", "dict" );
+
   // Set default synapse_model, weight and delay if not given explicitly
   if ( synapse_model_.empty() )
   {
-    synapse_model_ = { kernel().model_manager.get_synapsedict().get< synindex >( "static_synapse" ) };
+    synapse_model_ = { kernel().model_manager.get_synapse_model_id( "static_synapse" ) };
   }
   dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_[ 0 ] );
   if ( weight_.empty() )
@@ -150,15 +152,12 @@ ConnectionCreator::extract_params_( dictionary& dict_datum, std::vector< diction
 {
   if ( not dict_datum.known( names::synapse_model ) )
   {
-    dict_datum[ names::synapse_model ] = "static_synapse";
+    dict_datum[ names::synapse_model ] = std::string("static_synapse");
   }
   const std::string syn_name = dict_datum.get< std::string >( names::synapse_model );
 
-  if ( not kernel().model_manager.get_synapsedict().known( syn_name ) )
-  {
-    throw UnknownSynapseType( syn_name );
-  }
-  index synapse_model_id = kernel().model_manager.get_synapsedict().get< synindex >( syn_name );
+  // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
+  const index synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
   synapse_model_.push_back( synapse_model_id );
 
   dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );

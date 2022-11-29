@@ -36,7 +36,6 @@ class EventsTestCase(unittest.TestCase):
 
         nest.ResetKernel()
 
-        nest.ll_api.sr('20 setverbosity')
         n = nest.Create('iaf_psc_alpha')
         vm = nest.Create('voltmeter', params={'interval': 1.})
 
@@ -52,8 +51,6 @@ class EventsTestCase(unittest.TestCase):
 
         nest.ResetKernel()
 
-        nest.ll_api.sr('20 setverbosity')
-
         n = nest.Create('iaf_psc_alpha', params={'I_e': 1000.})
         sr = nest.Create('spike_recorder')
 
@@ -62,7 +59,7 @@ class EventsTestCase(unittest.TestCase):
 
         d = nest.GetStatus(sr, 'events')[0]
 
-        self.assert_(len(d['times']) > 0)
+        self.assertGreater(len(d['times']), 0)
 
 
 def suite():

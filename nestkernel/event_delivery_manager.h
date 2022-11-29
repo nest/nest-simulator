@@ -39,6 +39,7 @@
 #include "nest_types.h"
 #include "node.h"
 #include "per_thread_bool_indicator.h"
+#include "secondary_event.h"
 #include "spike_data.h"
 #include "target_table.h"
 #include "vp_manager.h"
@@ -55,13 +56,13 @@ class EventDeliveryManager : public ManagerInterface
 {
 public:
   EventDeliveryManager();
-  virtual ~EventDeliveryManager();
+  ~EventDeliveryManager() override;
 
-  virtual void initialize();
-  virtual void finalize();
-
-  virtual void set_status( const dictionary& );
-  virtual void get_status( dictionary& );
+  void initialize() override;
+  void finalize() override;
+  void change_number_of_threads() override;
+  void set_status( const dictionary& ) override;
+  void get_status( dictionary& ) override;
 
   /**
    * Standard routine for sending events. This method decides if

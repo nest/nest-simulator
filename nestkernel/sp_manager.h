@@ -60,15 +60,13 @@ class SPManager : public ManagerInterface
 
 public:
   SPManager();
-  virtual ~SPManager();
+  ~SPManager() override;
 
-  virtual void initialize();
-  virtual void finalize();
+  void initialize() override;
+  void finalize() override;
 
-  virtual void get_status( dictionary& );
-  virtual void set_status( const dictionary& );
-
-  dictionary& get_growthcurvedict();
+  void get_status( dictionary& ) override;
+  void set_status( const dictionary& ) override;
 
   /**
    * Create a new Growth Curve object using the GrowthCurve Factory
@@ -187,26 +185,13 @@ private:
   bool structural_plasticity_enabled_;
   std::vector< SPBuilder* > sp_conn_builders_;
 
-  /** @BeginDocumentation
-
-   Name: growthcurvedict - growth curves for Model of Structural Plasticity
-
-   Description:
-   This dictionary provides indexes for the growth curve factory
-   */
-  dictionary growthcurvedict_; //!< Dictionary for growth rules.
-
   /**
    * GrowthCurve factories, indexed by growthcurvedict_ elements.
    */
   std::vector< GenericGrowthCurveFactory* > growthcurve_factories_;
-};
 
-inline dictionary&
-SPManager::get_growthcurvedict()
-{
-  return growthcurvedict_;
-}
+  dictionary growthcurvedict_; //!< Dictionary for growth rules.
+};
 
 inline GrowthCurve*
 SPManager::new_growth_curve( std::string name )
@@ -226,5 +211,7 @@ SPManager::get_structural_plasticity_update_interval() const
 {
   return structural_plasticity_update_interval_;
 }
-}
-#endif /* SP_MANAGER_H */
+
+} // namespace nest
+
+#endif /* #ifndef SP_MANAGER_H */

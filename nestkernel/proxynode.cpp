@@ -42,33 +42,32 @@ proxynode::proxynode( index node_id, index model_id, index vp )
 port
 proxynode::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
-  return kernel()
-    .model_manager.get_model( get_model_id() )
-    ->send_test_event( target, receptor_type, syn_id, dummy_target );
+  Model* model = kernel().model_manager.get_node_model( get_model_id() );
+  return model->send_test_event( target, receptor_type, syn_id, dummy_target );
 }
 
 void
 proxynode::sends_secondary_event( GapJunctionEvent& ge )
 {
-  kernel().model_manager.get_model( get_model_id() )->sends_secondary_event( ge );
+  kernel().model_manager.get_node_model( get_model_id() )->sends_secondary_event( ge );
 }
 
 void
 proxynode::sends_secondary_event( InstantaneousRateConnectionEvent& re )
 {
-  kernel().model_manager.get_model( get_model_id() )->sends_secondary_event( re );
+  kernel().model_manager.get_node_model( get_model_id() )->sends_secondary_event( re );
 }
 
 void
 proxynode::sends_secondary_event( DiffusionConnectionEvent& de )
 {
-  kernel().model_manager.get_model( get_model_id() )->sends_secondary_event( de );
+  kernel().model_manager.get_node_model( get_model_id() )->sends_secondary_event( de );
 }
 
 void
 proxynode::sends_secondary_event( DelayedRateConnectionEvent& re )
 {
-  kernel().model_manager.get_model( get_model_id() )->sends_secondary_event( re );
+  kernel().model_manager.get_node_model( get_model_id() )->sends_secondary_event( re );
 }
 
 /**
@@ -80,13 +79,13 @@ proxynode::sends_secondary_event( DelayedRateConnectionEvent& re )
 nest::SignalType
 proxynode::sends_signal() const
 {
-  return kernel().model_manager.get_model( get_model_id() )->sends_signal();
+  return kernel().model_manager.get_node_model( get_model_id() )->sends_signal();
 }
 
 void
 proxynode::get_status( dictionary& d ) const
 {
-  const Model* model = kernel().model_manager.get_model( model_id_ );
+  const Model* model = kernel().model_manager.get_node_model( model_id_ );
   const Name element_type = model->get_prototype().get_element_type();
   d[ names::element_type ] = element_type.toString();
 }

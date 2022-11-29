@@ -41,8 +41,8 @@
 namespace nest
 {
 
-NodeCollectionMetadataPTR AbstractLayer::cached_ntree_md_ = NodeCollectionMetadataPTR( 0 );
-NodeCollectionMetadataPTR AbstractLayer::cached_vector_md_ = NodeCollectionMetadataPTR( 0 );
+NodeCollectionMetadataPTR AbstractLayer::cached_ntree_md_ = NodeCollectionMetadataPTR( nullptr );
+NodeCollectionMetadataPTR AbstractLayer::cached_vector_md_ = NodeCollectionMetadataPTR( nullptr );
 
 AbstractLayer::~AbstractLayer()
 {
@@ -52,16 +52,10 @@ NodeCollectionPTR
 AbstractLayer::create_layer( const dictionary& layer_dict )
 {
   index length = 0;
-  AbstractLayer* layer_local = 0;
+  AbstractLayer* layer_local = nullptr;
 
   auto element_name = layer_dict.get< std::string >( names::elements );
-
-  if ( not kernel().model_manager.get_modeldict().known( element_name ) )
-  {
-    throw UnknownModelName( element_name );
-  }
-  auto element_model = kernel().model_manager.get_modeldict().get< index >( element_name );
-  auto element_id = static_cast< long >( element_model );
+  auto element_id = kernel().model_manager.get_node_model_id( element_name );
 
   if ( layer_dict.known( names::positions ) )
   {
@@ -80,7 +74,7 @@ AbstractLayer::create_layer( const dictionary& layer_dict )
     }
     else if ( is_type< std::shared_ptr< nest::Parameter > >( positions ) )
     {
-      auto pd = layer_dict.get< std::shared_ptr< Parameter > >( names::positions );
+      auto pd = layer_dict.get< ParameterPTR >( names::positions );
       auto pos = dynamic_cast< DimensionParameter* >( pd.get() );
       // To avoid nasty segfaults, we check that the parameter is indeed a DimensionParameter.
       if ( not std::is_same< std::remove_reference< decltype( *pos ) >::type, DimensionParameter >::value )

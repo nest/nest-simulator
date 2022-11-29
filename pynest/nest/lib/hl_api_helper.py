@@ -38,23 +38,21 @@ import pydoc
 
 from string import Template
 
-from ..ll_api import *
+#### from ..ll_api import check_stack, sli_func, sps, sr, spp
 from .. import pynestkernel as kernel
 from .. import nestkernel_api as nestkernel
+import nest
 
 __all__ = [
     'broadcast',
     'deprecated',
     'get_parameters',
     'get_parameters_hierarchical_addressing',
-    'get_unistring_type',
     'get_wrapped_text',
     'is_coercible_to_sli_array',
     'is_iterable',
-    'is_literal',
     'is_sequence_of_connections',
     'is_sequence_of_node_ids',
-    'is_string',
     'load_help',
     'model_deprecation_warning',
     'restructure_data',
@@ -158,56 +156,6 @@ def deprecated(alt_func_name, text=None):
         return new_func
 
     return deprecated_decorator
-
-
-def get_unistring_type():
-    """Returns string type dependent on python version.
-
-    Returns
-    -------
-    str or basestring:
-        Depending on Python version
-
-    """
-    import sys
-    if sys.version_info[0] < 3:
-        return basestring
-    return str
-
-
-uni_str = get_unistring_type()
-
-
-def is_literal(obj):
-    """Check whether obj is a "literal": a unicode string or SLI literal
-
-    Parameters
-    ----------
-    obj : object
-        Object to check
-
-    Returns
-    -------
-    bool:
-        True if obj is a "literal"
-    """
-    return isinstance(obj, (uni_str, kernel.SLILiteral))
-
-
-def is_string(obj):
-    """Check whether obj is a unicode string
-
-    Parameters
-    ----------
-    obj : object
-        Object to check
-
-    Returns
-    -------
-    bool:
-        True if obj is a unicode string
-    """
-    return isinstance(obj, uni_str)
 
 
 def is_iterable(seq):
@@ -479,7 +427,8 @@ def restructure_data(result, keys):
     -------
     int, list or dict
     """
-    if is_literal(keys):
+
+    if isinstance(keys, str):
         if len(result) != 1:
             all_keys = sorted({key for result_dict in result for key in result_dict})
             final_result = []
@@ -489,6 +438,7 @@ def restructure_data(result, keys):
                     final_result.append(result_dict[keys])
                 elif keys in all_keys:
                     final_result.append(None)
+            final_result = tuple(final_result)
         else:
             final_result = result[0][keys]
 
@@ -536,7 +486,8 @@ def get_parameters(nc, param):
         param is a list of string so a dictionary is returned
     """
     # param is single literal
-    if is_literal(param):
+    if isinstance(param, str):
+        print("### 6", param)
         result = nestkernel.llapi_get_nc_status(nc._datum, param)
     elif is_iterable(param):
         result = {param_name: get_parameters(nc, param_name) for param_name in param}
@@ -573,7 +524,7 @@ def get_parameters_hierarchical_addressing(nc, params):
     # Right now, NEST only allows get(arg0, arg1) for hierarchical
     # addressing, where arg0 must be a string and arg1 can be string
     # or list of strings.
-    if is_literal(params[0]):
+    if isinstance(params[0], str):
         value_list = nc.get(params[0])
         if type(value_list) != tuple:
             value_list = (value_list,)
@@ -582,14 +533,14 @@ def get_parameters_hierarchical_addressing(nc, params):
 
     result = restructure_data(value_list, None)
 
-    if is_literal(params[-1]):
+    if isinstance(params[-1], str):
         result = result[params[-1]]
     else:
         result = {key: result[key] for key in params[-1]}
     return result
 
 
-class SuppressedDeprecationWarning(object):
+class SuppressedDeprecationWarning:
     """
     Context manager turning off deprecation warnings for given methods.
 
@@ -607,8 +558,7 @@ class SuppressedDeprecationWarning(object):
                       for which to suppress deprecation warnings
         """
 
-        self._no_dep_funcs = (no_dep_funcs if not is_string(no_dep_funcs)
-                              else (no_dep_funcs, ))
+        self._no_dep_funcs = (no_dep_funcs if not isinstance(no_dep_funcs, str) else (no_dep_funcs, ))
         self._deprecation_status = {}
         sr('verbosity')  # Use sli-version as we cannon import from info because of cirular inclusion problem
         self._verbosity_level = spp()

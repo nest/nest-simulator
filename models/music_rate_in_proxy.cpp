@@ -24,13 +24,6 @@
 
 #ifdef HAVE_MUSIC
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
-
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "logging.h"
@@ -68,7 +61,7 @@ void
 nest::music_rate_in_proxy::Parameters_::set( const dictionary& d, State_& s )
 {
   // TODO: This is not possible, as P_ does not know about get_name()
-  //  if(d->known(names::port_name) && s.registered_)
+  //  if(d->known(names::port_name) and s.registered_)
   //    throw MUSICPortAlreadyPublished(get_name(), P_.port_name_);
 
   if ( not s.registered_ )
@@ -120,7 +113,7 @@ nest::music_rate_in_proxy::init_buffers_()
 }
 
 void
-nest::music_rate_in_proxy::calibrate()
+nest::music_rate_in_proxy::pre_run_hook()
 {
   // only publish the port once
   if ( not S_.registered_ )
@@ -136,7 +129,7 @@ nest::music_rate_in_proxy::get_status( dictionary& d ) const
   P_.get( d );
   S_.get( d );
 
-  d[ names::data ] = DoubleVectorDatum( new std::vector< double >( 1, B_.data_ ) );
+  d[ names::data ] = B_.data_;
 }
 
 void

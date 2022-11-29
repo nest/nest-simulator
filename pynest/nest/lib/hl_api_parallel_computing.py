@@ -26,7 +26,6 @@ Functions for parallel computing
 from ..ll_api import *
 from .. import pynestkernel as kernel
 from .. import nestkernel_api as nestkernel
-from .hl_api_helper import *
 
 __all__ = [
     'NumProcesses',

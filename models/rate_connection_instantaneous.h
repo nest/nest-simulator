@@ -39,12 +39,14 @@ Synapse type for instantaneous rate connections
 Description
 +++++++++++
 
-rate_connection_instantaneous is a connector to create
+``rate_connection_instantaneous`` is a connector to create
 instantaneous connections between rate model neurons.
 
 The value of the parameter delay is ignored for connections of
 this type. To create rate connections with delay please use
-the synapse type rate_connection_delayed.
+the synapse type ``rate_connection_delayed``.
+
+See also [1]_.
 
 Transmits
 +++++++++

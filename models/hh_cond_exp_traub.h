@@ -65,14 +65,14 @@ Hodgkin-Huxley model for Brette et al (2007) review
 Description
 +++++++++++
 
-hh_cond_exp_traub is an implementation of a modified Hodgkin-Huxley model.
+``hh_cond_exp_traub`` is an implementation of a modified Hodgkin-Huxley model.
 
 This model was specifically developed for a major review of simulators [1]_,
 based on a model of hippocampal pyramidal cells by Traub and Miles [2]_.
 The key differences between the current model and the model in [2]_ are:
 
 - This model is a point neuron, not a compartmental model.
-- This model includes only I_Na and I_K, with simpler I_K dynamics than
+- This model includes only ``I_Na`` and ``I_K``, with simpler ``I_K`` dynamics than
   in [2]_, so it has only three instead of eight gating variables;
   in particular, all Ca dynamics have been removed.
 - Incoming spikes induce an instantaneous conductance change followed by
@@ -152,7 +152,7 @@ class hh_cond_exp_traub : public ArchivingNode
 public:
   hh_cond_exp_traub();
   hh_cond_exp_traub( const hh_cond_exp_traub& );
-  ~hh_cond_exp_traub();
+  ~hh_cond_exp_traub() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -162,24 +162,24 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   // END Boilerplate function declarations ----------------------------
 
@@ -399,7 +399,7 @@ hh_cond_exp_traub::set_status( const dictionary& d )
   P_ = ptmp;
   S_ = stmp;
 
-  calibrate();
+  pre_run_hook();
 }
 
 } // namespace

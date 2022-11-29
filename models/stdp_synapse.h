@@ -49,16 +49,18 @@ Synapse type for spike-timing dependent plasticity
 Description
 +++++++++++
 
-stdp_synapse is a connector to create synapses with spike time
+``stdp_synapse`` is a connector to create synapses with spike time
 dependent plasticity (as defined in [1]_). Here the weight dependence
 exponent can be set separately for potentiation and depression.
 
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
+
+See also [2]_, [3]_, [4]_.
 
 Parameters
 ++++++++++
@@ -127,6 +129,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   stdp_synapse( const stdp_synapse& ) = default;
+  stdp_synapse& operator=( const stdp_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -162,9 +165,9 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 

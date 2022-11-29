@@ -38,7 +38,7 @@ Synapse type for gap-junction connections
 Description
 +++++++++++
 
-gap_junction is a connector to create gap junctions between pairs of
+``gap_junction`` is a connector to create gap junctions between pairs of
 neurons. Gap junctions are bidirectional connections.  In order to
 create one accurate gap-junction connection between neurons i and j
 two NEST connections are required: For each created connection a
@@ -46,8 +46,10 @@ second connection with the exact same parameters in the opposite
 direction is required. NEST provides the possibility to create both
 connections with a single call to Connect via the make_symmetric flag.
 
-The value of the parameter "delay" is ignored for connections of
-type gap_junction.
+The value of the parameter ``delay`` is ignored for connections of
+type ``gap_junction``.
+
+See also [1]_, [2]_.
 
 Sends
 +++++

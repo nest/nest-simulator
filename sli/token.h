@@ -168,11 +168,11 @@ public:
     {
       p->removeReference();
     }
-    p = 0;
+    p = nullptr;
   }
 
   Token( const Token& c_s )
-    : p( NULL )
+    : p( nullptr )
   {
     if ( c_s.p )
     {
@@ -184,7 +184,7 @@ public:
   /**
    * use existing pointer to datum, token takes responsibility of the pointer.
    */
-  Token( Datum* p_s = NULL )
+  Token( Datum* p_s = nullptr )
     : p( p_s )
   {
   }
@@ -208,17 +208,11 @@ public:
   Token( const std::vector< double >& );
   Token( const std::vector< long >& );
   Token( const std::vector< size_t >& );
-  Token( const std::ostream& );
-  Token( const std::istream& );
-  operator Datum*() const;
   operator size_t() const;
   operator long() const;
   operator double() const;
-  operator float() const;
   operator bool() const;
   operator std::string() const;
-  //  operator vector<double> const;
-  //  operator vector<long> const;
 
   /**
    * If the contained datum has more than one reference, clone it, so it can
@@ -242,7 +236,7 @@ public:
       p->removeReference();
     }
     p = c.p;
-    c.p = NULL;
+    c.p = nullptr;
   }
 
 
@@ -257,7 +251,7 @@ public:
   init_move( Token& rhs )
   {
     p = rhs.p;
-    rhs.p = NULL;
+    rhs.p = nullptr;
   }
 
   /**
@@ -318,7 +312,7 @@ public:
   void
   assign_by_pointer( Datum* rhs )
   {
-    assert( rhs != NULL );
+    assert( rhs );
     rhs->addReference();
     if ( p )
     {
@@ -335,34 +329,35 @@ public:
   }
 
   void
-  clear( void )
+  clear()
   {
     if ( p )
     {
       p->removeReference();
     }
-    p = NULL;
+    p = nullptr;
   }
 
   bool
   contains( const Datum& d ) const
   {
-    return ( p != NULL ) ? p->equals( &d ) : false;
+    return p and p->equals( &d );
   }
 
   bool
-  empty( void ) const
+  empty() const
   {
-    return p == NULL;
+    return not p;
   }
 
-  bool operator not( void ) const
+  bool
+  operator not() const
   {
-    return p == NULL;
+    return not p;
   }
 
   Datum*
-  datum( void ) const
+  datum() const
   {
     accessed_ = true;
     return p;
@@ -375,14 +370,16 @@ public:
     return not empty();
   }
 
-  Datum* operator->() const
+  Datum*
+  operator->() const
   {
     //      assert(p!= NULL);
     return p;
   }
 
 
-  Datum& operator*() const
+  Datum&
+  operator*() const
   {
     //      assert(p != NULL);
     return *p;
@@ -390,7 +387,7 @@ public:
 
 
   const std::type_info&
-  type( void ) const
+  type() const
   {
     return typeid( *p );
   }
@@ -404,7 +401,7 @@ public:
       return *this;
     }
 
-    if ( c_s.p == NULL )
+    if ( not c_s.p )
     {
       clear();
       return *this;

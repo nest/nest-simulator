@@ -43,12 +43,16 @@ namespace nest
 class IOManager : public ManagerInterface
 {
 public:
-  void initialize() override; // called from meta-manager to construct
-  void finalize() override;   // called from meta-manger to reinit
-  void change_num_threads( thread ) override;
+  void initialize() override;
+  void finalize() override;
 
-  void set_status( const dictionary& ) override; // set parameters
-  void get_status( dictionary& ) override;       // get parameters
+  void change_number_of_threads() override;
+
+  void set_status( const dictionary& ) override;
+  void get_status( dictionary& ) override;
+
+  void set_recording_backend_status( std::string, const dictionary& );
+  dictionary get_recording_backend_status( std::string );
 
   IOManager(); // Construct only by meta-manager
   ~IOManager() override;
@@ -134,6 +138,7 @@ private:
    * A mapping from names to registered recording backends.
    */
   std::map< std::string, RecordingBackend* > recording_backends_;
+
   /**
    * A mapping from names to registered stimulation backends
    */

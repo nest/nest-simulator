@@ -199,7 +199,7 @@ SpatialDistanceParameter::value( RngPtr,
   }
 }
 
-RedrawParameter::RedrawParameter( const std::shared_ptr< Parameter > p, const double min, const double max )
+RedrawParameter::RedrawParameter( const ParameterPTR p, const double min, const double max )
   : Parameter( p->is_spatial() )
   , p_( p )
   , min_( min )
@@ -256,7 +256,7 @@ RedrawParameter::value( RngPtr rng,
 
 ExpDistParameter::ExpDistParameter( const dictionary& d )
   : Parameter( true )
-  , p_( d.get< ParameterDatum >( "x" ) )
+  , p_( d.get< ParameterPTR >( "x" ) )
   , inv_beta_( 1.0 / d.get< double >( "beta" ) )
 {
   const auto beta = d.get< double >( "beta" );
@@ -278,7 +278,7 @@ ExpDistParameter::value( RngPtr rng,
 
 GaussianParameter::GaussianParameter( const dictionary& d )
   : Parameter( true )
-  , p_( d.get< ParameterDatum >( "x" ) )
+  , p_( d.get< ParameterPTR >( "x" ) )
   , mean_( d.get< double >( "mean" ) )
   , inv_two_std2_( 1.0 / ( 2 * d.get< double >( "std" ) * d.get< double >( "std" ) ) )
 {
@@ -303,8 +303,8 @@ GaussianParameter::value( RngPtr rng,
 
 Gaussian2DParameter::Gaussian2DParameter( const dictionary& d )
   : Parameter( true )
-  , px_( d.get< ParameterDatum >( "x" ) )
-  , py_( d.get< ParameterDatum >( "y" ) )
+  , px_( d.get< ParameterPTR >( "x" ) )
+  , py_( d.get< ParameterPTR >( "y" ) )
   , mean_x_( d.get< double >( "mean_x" ) )
   , mean_y_( d.get< double >( "mean_y" ) )
   , x_term_const_( 1.
@@ -352,7 +352,7 @@ Gaussian2DParameter::value( RngPtr rng,
 
 GammaParameter::GammaParameter( const dictionary& d )
   : Parameter( true )
-  , p_( d.get< ParameterDatum >( "x" ) )
+  , p_( d.get< ParameterPTR >( "x" ) )
   , kappa_( d.get< double >( "kappa" ) )
   , inv_theta_( 1.0 / d.get< double >( "theta" ) )
   , delta_( std::pow( inv_theta_, kappa_ ) / std::tgamma( kappa_ ) )
@@ -380,100 +380,100 @@ GammaParameter::value( RngPtr rng,
 }
 
 
-std::shared_ptr< Parameter >
-multiply_parameter( const std::shared_ptr< Parameter > first, const std::shared_ptr< Parameter > second )
+ParameterPTR
+multiply_parameter( const ParameterPTR first, const ParameterPTR second )
 {
-  return std::shared_ptr< Parameter >( new ProductParameter( first, second ) );
+  return ParameterPTR( new ProductParameter( first, second ) );
 }
 
-std::shared_ptr< Parameter >
-divide_parameter( const std::shared_ptr< Parameter > first, const std::shared_ptr< Parameter > second )
+ParameterPTR
+divide_parameter( const ParameterPTR first, const ParameterPTR second )
 {
-  return std::shared_ptr< Parameter >( new QuotientParameter( first, second ) );
+  return ParameterPTR( new QuotientParameter( first, second ) );
 }
 
-std::shared_ptr< Parameter >
-add_parameter( const std::shared_ptr< Parameter > first, const std::shared_ptr< Parameter > second )
+ParameterPTR
+add_parameter( const ParameterPTR first, const ParameterPTR second )
 {
-  return std::shared_ptr< Parameter >( new SumParameter( first, second ) );
+  return ParameterPTR( new SumParameter( first, second ) );
 }
 
-std::shared_ptr< Parameter >
-subtract_parameter( const std::shared_ptr< Parameter > first, const std::shared_ptr< Parameter > second )
+ParameterPTR
+subtract_parameter( const ParameterPTR first, const ParameterPTR second )
 {
-  return std::shared_ptr< Parameter >( new DifferenceParameter( first, second ) );
+  return ParameterPTR( new DifferenceParameter( first, second ) );
 }
 
-std::shared_ptr< Parameter >
-compare_parameter( const std::shared_ptr< Parameter > first,
-  const std::shared_ptr< Parameter > second,
+ParameterPTR
+compare_parameter( const ParameterPTR first,
+  const ParameterPTR second,
   const dictionary& d )
 {
-  return std::shared_ptr< Parameter >( new ComparingParameter( first, second, d ) );
+  return ParameterPTR( new ComparingParameter( first, second, d ) );
 }
 
-std::shared_ptr< Parameter >
-conditional_parameter( const std::shared_ptr< Parameter > condition,
-  const std::shared_ptr< Parameter > if_true,
-  const std::shared_ptr< Parameter > if_false )
+ParameterPTR
+conditional_parameter( const ParameterPTR condition,
+  const ParameterPTR if_true,
+  const ParameterPTR if_false )
 {
-  return std::shared_ptr< Parameter >( new ConditionalParameter( condition, if_true, if_false ) );
+  return ParameterPTR( new ConditionalParameter( condition, if_true, if_false ) );
 }
 
-std::shared_ptr< Parameter >
-min_parameter( const std::shared_ptr< Parameter > parameter, const double other )
+ParameterPTR
+min_parameter( const ParameterPTR parameter, const double other )
 {
-  return std::shared_ptr< Parameter >( new MinParameter( parameter, other ) );
+  return ParameterPTR( new MinParameter( parameter, other ) );
 }
 
-std::shared_ptr< Parameter >
-max_parameter( const std::shared_ptr< Parameter > parameter, const double other )
+ParameterPTR
+max_parameter( const ParameterPTR parameter, const double other )
 {
-  return std::shared_ptr< Parameter >( new MaxParameter( parameter, other ) );
+  return ParameterPTR( new MaxParameter( parameter, other ) );
 }
 
-std::shared_ptr< Parameter >
-redraw_parameter( const std::shared_ptr< Parameter > parameter, const double min, const double max )
+ParameterPTR
+redraw_parameter( const ParameterPTR parameter, const double min, const double max )
 {
-  return std::shared_ptr< Parameter >( new RedrawParameter( parameter, min, max ) );
+  return ParameterPTR( new RedrawParameter( parameter, min, max ) );
 }
 
-std::shared_ptr< Parameter >
-exp_parameter( const std::shared_ptr< Parameter > parameter )
+ParameterPTR
+exp_parameter( const ParameterPTR parameter )
 {
-  return std::shared_ptr< Parameter >( new ExpParameter( parameter ) );
+  return ParameterPTR( new ExpParameter( parameter ) );
 }
 
-std::shared_ptr< Parameter >
-sin_parameter( const std::shared_ptr< Parameter > parameter )
+ParameterPTR
+sin_parameter( const ParameterPTR parameter )
 {
-  return std::shared_ptr< Parameter >( new SinParameter( parameter ) );
+  return ParameterPTR( new SinParameter( parameter ) );
 }
 
-std::shared_ptr< Parameter >
-cos_parameter( const std::shared_ptr< Parameter > parameter )
+ParameterPTR
+cos_parameter( const ParameterPTR parameter )
 {
-  return std::shared_ptr< Parameter >( new CosParameter( parameter ) );
+  return ParameterPTR( new CosParameter( parameter ) );
 }
 
-std::shared_ptr< Parameter >
-pow_parameter( const std::shared_ptr< Parameter > parameter, const double exponent )
+ParameterPTR
+pow_parameter( const ParameterPTR parameter, const double exponent )
 {
-  return std::shared_ptr< Parameter >( new PowParameter( parameter, exponent ) );
+  return ParameterPTR( new PowParameter( parameter, exponent ) );
 }
 
-std::shared_ptr< Parameter >
-dimension_parameter( const std::shared_ptr< Parameter > x_parameter, const std::shared_ptr< Parameter > y_parameter )
+ParameterPTR
+dimension_parameter( const ParameterPTR x_parameter, const ParameterPTR y_parameter )
 {
-  return std::shared_ptr< Parameter >( new DimensionParameter( x_parameter, y_parameter ) );
+  return ParameterPTR( new DimensionParameter( x_parameter, y_parameter ) );
 }
 
-std::shared_ptr< Parameter >
-dimension_parameter( const std::shared_ptr< Parameter > x_parameter,
-  const std::shared_ptr< Parameter > y_parameter,
-  const std::shared_ptr< Parameter > z_parameter )
+ParameterPTR
+dimension_parameter( const ParameterPTR x_parameter,
+  const ParameterPTR y_parameter,
+  const ParameterPTR z_parameter )
 {
-  return std::shared_ptr< Parameter >( new DimensionParameter( x_parameter, y_parameter, z_parameter ) );
+  return ParameterPTR( new DimensionParameter( x_parameter, y_parameter, z_parameter ) );
 }
 
 } /* namespace nest */

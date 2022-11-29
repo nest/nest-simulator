@@ -65,27 +65,27 @@ class ConnectorModel;
 class ConnTestDummyNodeBase : public Node
 {
   void
-  calibrate()
+  pre_run_hook() override
   {
   }
   void
-  update( const nest::Time&, long, long )
+  update( const nest::Time&, long, long ) override
   {
   }
   void
-  set_status( const dictionary& )
+  set_status( const dictionary& ) override
   {
   }
   void
-  get_status( dictionary& ) const
+  get_status( dictionary& ) const override
   {
   }
   void
-  init_state_()
+  init_state_() override
   {
   }
   void
-  init_buffers_()
+  init_buffers_() override
   {
   }
 };
@@ -121,6 +121,7 @@ public:
   }
 
   Connection( const Connection< targetidentifierT >& rhs ) = default;
+  Connection& operator=( const Connection< targetidentifierT >& rhs ) = default;
 
   /**
    * Get all properties of this connection and put them into a dictionary.
@@ -281,8 +282,7 @@ public:
 protected:
   /**
    * This function calls check_connection() on the sender to check if the
-   * receiver
-   * accepts the event type and receptor type requested by the sender.
+   * receiver accepts the event type and receptor type requested by the sender.
    * \param s The source node
    * \param r The target node
    * \param receptor The ID of the requested receptor type

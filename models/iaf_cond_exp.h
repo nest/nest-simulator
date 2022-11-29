@@ -66,11 +66,13 @@ Simple conductance based leaky integrate-and-fire neuron model
 Description
 +++++++++++
 
-iaf_cond_exp is an implementation of a spiking neuron using IAF dynamics with
+``iaf_cond_exp`` is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses. Incoming spike events induce a postsynaptic change
 of conductance modelled by an exponential function. The exponential function
 is normalized such that an event of weight 1.0 results in a peak conductance of
 1 nS.
+
+See also [1]_.
 
 Parameters
 ++++++++++
@@ -126,7 +128,7 @@ class iaf_cond_exp : public ArchivingNode
 public:
   iaf_cond_exp();
   iaf_cond_exp( const iaf_cond_exp& );
-  ~iaf_cond_exp();
+  ~iaf_cond_exp() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -136,23 +138,23 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
-  void update( Time const&, const long, const long );
+  void init_buffers_() override;
+  void pre_run_hook() override;
+  void update( Time const&, const long, const long ) override;
 
   // END Boilerplate function declarations ----------------------------
 

@@ -26,6 +26,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 #include "propagator_stability.h"
 #include "regula_falsi.h"
@@ -36,10 +37,7 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -115,22 +113,22 @@ nest::iaf_psc_alpha_ps::Parameters_::get( dictionary& d ) const
 }
 
 double
-nest::iaf_psc_alpha_ps::Parameters_::set( const dictionary& d )
+nest::iaf_psc_alpha_ps::Parameters_::set( const dictionary& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
   const double ELold = E_L_;
-  d.update_value( names::E_L, E_L_ );
+  update_value_param( d, names::E_L, E_L_, node );
   const double delta_EL = E_L_ - ELold;
 
-  d.update_value( names::tau_m, tau_m_ );
-  d.update_value( names::tau_syn_ex, tau_syn_ex_ );
-  d.update_value( names::tau_syn_in, tau_syn_in_ );
-  d.update_value( names::C_m, c_m_ );
-  d.update_value( names::t_ref, t_ref_ );
-  d.update_value( names::I_e, I_e_ );
+  update_value_param( d, names::tau_m, tau_m_, node );
+  update_value_param( d, names::tau_syn_ex, tau_syn_ex_, node );
+  update_value_param( d, names::tau_syn_in, tau_syn_in_, node );
+  update_value_param( d, names::C_m, c_m_, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::I_e, I_e_, node );
 
-  if ( d.update_value( names::V_th, U_th_ ) )
+  if ( update_value_param( d, names::V_th, U_th_, node ) )
   {
     U_th_ -= E_L_;
   }
@@ -139,7 +137,7 @@ nest::iaf_psc_alpha_ps::Parameters_::set( const dictionary& d )
     U_th_ -= delta_EL;
   }
 
-  if ( d.update_value( names::V_min, U_min_ ) )
+  if ( update_value_param( d, names::V_min, U_min_, node ) )
   {
     U_min_ -= E_L_;
   }
@@ -148,7 +146,7 @@ nest::iaf_psc_alpha_ps::Parameters_::set( const dictionary& d )
     U_min_ -= delta_EL;
   }
 
-  if ( d.update_value( names::V_reset, U_reset_ ) )
+  if ( update_value_param( d, names::V_reset, U_reset_, node ) )
   {
     U_reset_ -= E_L_;
   }
@@ -177,7 +175,7 @@ nest::iaf_psc_alpha_ps::Parameters_::set( const dictionary& d )
     throw BadProperty( "Refractory time must be at least one time step." );
   }
 
-  if ( tau_m_ <= 0 || tau_syn_ex_ <= 0 || tau_syn_in_ <= 0 )
+  if ( tau_m_ <= 0 or tau_syn_ex_ <= 0 or tau_syn_in_ <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -197,9 +195,9 @@ nest::iaf_psc_alpha_ps::State_::get( dictionary& d, const Parameters_& p ) const
 }
 
 void
-nest::iaf_psc_alpha_ps::State_::set( const dictionary& d, const Parameters_& p, double delta_EL )
+nest::iaf_psc_alpha_ps::State_::set( const dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  if ( d.update_value( names::V_m, V_m_ ) )
+  if ( update_value_param( d, names::V_m, V_m_, node ) )
   {
     V_m_ -= p.E_L_;
   }
@@ -257,7 +255,7 @@ nest::iaf_psc_alpha_ps::init_buffers_()
 }
 
 void
-nest::iaf_psc_alpha_ps::calibrate()
+nest::iaf_psc_alpha_ps::pre_run_hook()
 {
   B_.logger_.init();
 
@@ -325,7 +323,7 @@ nest::iaf_psc_alpha_ps::update( Time const& origin, const long from, const long 
     const long T = origin.get_steps() + lag;
     // if neuron returns from refractoriness during this step, place
     // pseudo-event in queue to mark end of refractory period
-    if ( S_.is_refractory_ && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
+    if ( S_.is_refractory_ and T + 1 - S_.last_spike_step_ == V_.refractory_steps_ )
     {
       B_.events_.add_refractory( T, S_.last_spike_offset_ );
     }
@@ -353,7 +351,7 @@ nest::iaf_psc_alpha_ps::update( Time const& origin, const long from, const long 
       if ( not S_.is_refractory_ )
       {
         // If we use S_.V_m_ * std::exp( -V_.h_ms_ / P_.tau_m_ ) instead of
-        // V_.expm1_tau_m_ * S_.V_m_ + S_.V_m_ here, the accuracy decrease,
+        // V_.expm1_tau_m_ * S_.V_m_ + S_.V_m_ here, the accuracy decreases,
         // see test_iaf_ps_dc_t_accuracy.sli for details.
         S_.V_m_ = V_.P30_ * ( P_.I_e_ + S_.y_input_ ) + V_.P31_ex_ * S_.dI_ex_ + V_.P32_ex_ * S_.I_ex_
           + V_.P31_in_ * S_.dI_in_ + V_.P32_in_ * S_.I_in_ + V_.expm1_tau_m_ * S_.V_m_ + S_.V_m_;

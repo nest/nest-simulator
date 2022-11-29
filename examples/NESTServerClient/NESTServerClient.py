@@ -35,7 +35,7 @@ def encode(response):
         raise BadRequest(response.text)
 
 
-class NESTServerClient(object):
+class NESTServerClient:
 
     def __init__(self, host='localhost', port=5000):
         self.url = 'http://{}:{}/'.format(host, port)

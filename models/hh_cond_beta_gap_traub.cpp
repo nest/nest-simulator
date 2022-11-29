@@ -28,17 +28,14 @@
 // C++ includes:
 #include <cmath> // in case we need isnan() // fabs
 #include <cstdio>
-#include <iomanip>
 #include <iostream>
-#include <limits>
 
 // External includes:
 #include <gsl/gsl_errno.h>
-#include <gsl/gsl_matrix.h>
-#include <gsl/gsl_sf_exp.h>
 
 // Includes from libnestutil:
 #include "beta_normalization_factor.h"
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -49,8 +46,6 @@
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 nest::RecordablesMap< nest::hh_cond_beta_gap_traub > nest::hh_cond_beta_gap_traub::recordablesMap_;
 
@@ -249,7 +244,7 @@ nest::hh_cond_beta_gap_traub::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::hh_cond_beta_gap_traub::Parameters_::set( const dictionary& d )
+nest::hh_cond_beta_gap_traub::Parameters_::set( const dictionary& d, Node* node)
 {
   d.update_value( names::g_Na, g_Na );
   d.update_value( names::g_K, g_K );
@@ -278,12 +273,12 @@ nest::hh_cond_beta_gap_traub::Parameters_::set( const dictionary& d )
     throw BadProperty( "Refractory time cannot be negative." );
   }
 
-  if ( tau_rise_ex <= 0 || tau_decay_ex <= 0 || tau_rise_in <= 0 || tau_decay_in <= 0 )
+  if ( tau_rise_ex <= 0 or tau_decay_ex <= 0 or tau_rise_in <= 0 or tau_decay_in <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
 
-  if ( g_K < 0 || g_Na < 0 || g_L < 0 )
+  if ( g_K < 0 or g_Na < 0 or g_L < 0 )
   {
     throw BadProperty( "All conductances must be non-negative." );
   }
@@ -299,13 +294,13 @@ nest::hh_cond_beta_gap_traub::State_::get( dictionary& d ) const
 }
 
 void
-nest::hh_cond_beta_gap_traub::State_::set( const dictionary& d, const Parameters_& )
+nest::hh_cond_beta_gap_traub::State_::set( const dictionary& d, const Parameters_&, Node* node )
 {
-  d.update_value( names::V_m, y_[ V_M ] );
-  d.update_value( names::Act_m, y_[ HH_M ] );
-  d.update_value( names::Inact_h, y_[ HH_H ] );
-  d.update_value( names::Act_n, y_[ HH_N ] );
-  if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 )
+  update_value_param( d, names::V_m, y_[ V_M ], node );
+  update_value_param( d, names::Act_m, y_[ HH_M ], node );
+  update_value_param( d, names::Inact_h, y_[ HH_H ], node );
+  update_value_param( d, names::Act_n, y_[ HH_N ], node );
+  if ( y_[ HH_M ] < 0 or y_[ HH_H ] < 0 or y_[ HH_N ] < 0 )
   {
     throw BadProperty( "All (in)activation variables must be non-negative." );
   }
@@ -313,9 +308,9 @@ nest::hh_cond_beta_gap_traub::State_::set( const dictionary& d, const Parameters
 
 nest::hh_cond_beta_gap_traub::Buffers_::Buffers_( hh_cond_beta_gap_traub& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -323,9 +318,9 @@ nest::hh_cond_beta_gap_traub::Buffers_::Buffers_( hh_cond_beta_gap_traub& n )
 
 nest::hh_cond_beta_gap_traub::Buffers_::Buffers_( const Buffers_&, hh_cond_beta_gap_traub& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -408,7 +403,7 @@ nest::hh_cond_beta_gap_traub::init_buffers_()
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ = B_.step_;
 
-  if ( B_.s_ == 0 )
+  if ( not B_.s_ )
   {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
@@ -417,7 +412,7 @@ nest::hh_cond_beta_gap_traub::init_buffers_()
     gsl_odeiv_step_reset( B_.s_ );
   }
 
-  if ( B_.c_ == 0 )
+  if ( not B_.c_ )
   {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
   }
@@ -426,7 +421,7 @@ nest::hh_cond_beta_gap_traub::init_buffers_()
     gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
   }
 
-  if ( B_.e_ == 0 )
+  if ( not B_.e_ )
   {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }
@@ -436,7 +431,7 @@ nest::hh_cond_beta_gap_traub::init_buffers_()
   }
 
   B_.sys_.function = hh_cond_beta_gap_traub_dynamics;
-  B_.sys_.jacobian = 0;
+  B_.sys_.jacobian = nullptr;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
 
@@ -450,7 +445,7 @@ nest::hh_cond_beta_gap_traub::get_normalisation_factor( double tau_rise, double 
 }
 
 void
-nest::hh_cond_beta_gap_traub::calibrate()
+nest::hh_cond_beta_gap_traub::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -476,7 +471,7 @@ nest::hh_cond_beta_gap_traub::update_( Time const& origin,
   const bool called_from_wfr_update )
 {
 
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   const size_t interpolation_order = kernel().simulation_manager.get_wfr_interpolation_order();
@@ -551,9 +546,7 @@ nest::hh_cond_beta_gap_traub::update_( Time const& origin,
       {
         --S_.r_;
       }
-      else
-        // (    threshold    &&     maximum       )
-        if ( S_.y_[ State_::V_M ] >= P_.V_T + 30. && U_old > S_.y_[ State_::V_M ] )
+      else if ( S_.y_[ State_::V_M ] >= P_.V_T + 30. and U_old > S_.y_[ State_::V_M ] ) // ( threshold and maximum )
       {
         S_.r_ = V_.refractory_counts_;
 

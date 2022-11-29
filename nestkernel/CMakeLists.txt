@@ -34,7 +34,6 @@ set ( nestkernel_sources
       deprecation_warning.h deprecation_warning.cpp
       device.h device.cpp
       device_node.h
-      # dynamicloader.h dynamicloader.cpp
       event.h event.cpp
       exceptions.h exceptions.cpp
       genericmodel.h genericmodel_impl.h
@@ -44,9 +43,7 @@ set ( nestkernel_sources
       model.h model.cpp
       model_manager.h model_manager_impl.h model_manager.cpp
       nest_types.h
-      nest_datums.h nest_datums.cpp
       nest_names.h
-      nestmodule.h nestmodule.cpp
       nest_time.h nest_time.cpp
       nest_timeconverter.h nest_timeconverter.cpp
       modelrange.h modelrange.cpp
@@ -59,6 +56,7 @@ set ( nestkernel_sources
       recording_device.h recording_device.cpp
       pseudo_recording_device.h
       ring_buffer.h ring_buffer_impl.h ring_buffer.cpp
+      secondary_event.h
       slice_ring_buffer.cpp slice_ring_buffer.h
       spikecounter.h spikecounter.cpp
       stimulation_device.h stimulation_device.cpp
@@ -75,8 +73,52 @@ set ( nestkernel_sources
       ../models/iaf_psc_alpha.h ../models/iaf_psc_alpha.cpp
       ../models/iaf_psc_delta.h ../models/iaf_psc_delta.cpp
       ../models/iaf_psc_exp.h ../models/iaf_psc_exp.cpp
+      ../models/iaf_psc_exp_multisynapse.h ../models/iaf_psc_exp_multisynapse.cpp
       ../models/parrot_neuron.h ../models/parrot_neuron.cpp
       ../models/weight_recorder.h ../models/weight_recorder.cpp
+      ../models/stdp_pl_synapse_hom.h ../models/stdp_pl_synapse_hom.cpp
+      ../models/stdp_dopamine_synapse.h ../models/stdp_dopamine_synapse.cpp
+      ../models/stdp_synapse_hom.h ../models/stdp_synapse_hom.cpp
+      ../models/volume_transmitter.h ../models/volume_transmitter.cpp
+      ../models/tsodyks_synapse_hom.h ../models/tsodyks_synapse_hom.cpp
+      ../models/ac_generator.h ../models/ac_generator.cpp
+      ../models/dc_generator.h ../models/dc_generator.cpp
+      ../models/spike_generator.h ../models/spike_generator.cpp
+      ../models/spike_recorder.h ../models/spike_recorder.cpp
+      ../models/poisson_generator.h ../models/poisson_generator.cpp
+      ../models/poisson_generator_ps.h ../models/poisson_generator_ps.cpp
+      ../models/multimeter.h ../models/multimeter.cpp
+      ../models/noise_generator.h ../models/noise_generator.cpp
+      ../models/aeif_cond_alpha.h ../models/aeif_cond_alpha.cpp
+      ../models/aeif_cond_alpha_multisynapse.h ../models/aeif_cond_alpha_multisynapse.cpp
+      ../models/aeif_cond_beta_multisynapse.h ../models/aeif_cond_beta_multisynapse.cpp
+      ../models/aeif_psc_delta_clopath.h ../models/aeif_psc_delta_clopath.cpp
+      ../models/cm_default.h ../models/cm_default.cpp
+      ../models/cm_tree.h ../models/cm_tree.cpp
+      ../models/cm_compartmentcurrents.h ../models/cm_compartmentcurrents.cpp
+      ../models/erfc_neuron.h ../models/erfc_neuron.cpp
+      ../models/glif_cond.h ../models/glif_cond.cpp
+      ../models/glif_psc.h ../models/glif_psc.cpp
+      ../models/hh_psc_alpha_gap.h ../models/hh_psc_alpha_gap.cpp
+      ../models/ht_neuron.h ../models/ht_neuron.cpp
+      ../models/iaf_cond_alpha_mc.h ../models/iaf_cond_alpha_mc.cpp
+      ../models/pp_psc_delta.h ../models/pp_psc_delta.cpp
+      ../models/lin_rate.h ../models/lin_rate.cpp
+      ../models/tanh_rate.h ../models/tanh_rate.cpp
+      ../models/threshold_lin_rate.h ../models/threshold_lin_rate.cpp
+      ../models/iaf_cond_alpha.h ../models/iaf_cond_alpha.cpp
+      ../models/parrot_neuron_ps.h ../models/parrot_neuron_ps.cpp
+      ../models/step_rate_generator.h ../models/step_rate_generator.cpp
+      ../models/step_current_generator.h ../models/step_current_generator.cpp
+      ../models/hh_psc_alpha_clopath.h ../models/hh_psc_alpha_clopath.cpp
+      ../models/iaf_cond_exp.h ../models/iaf_cond_exp.cpp
+      ../models/aeif_cond_exp.h ../models/aeif_cond_exp.cpp
+      ../models/aeif_psc_alpha.h ../models/aeif_psc_alpha.cpp
+      ../models/aeif_psc_delta.h ../models/aeif_psc_delta.cpp
+      ../models/aeif_psc_exp.h ../models/aeif_psc_exp.cpp
+      ../models/spin_detector.h ../models/spin_detector.cpp
+      ../models/pp_cond_exp_mc_urbanczik.h ../models/pp_cond_exp_mc_urbanczik.cpp
+      
       synaptic_element.h synaptic_element.cpp
       growth_curve.h growth_curve.cpp
       growth_curve_factory.h
@@ -136,7 +178,16 @@ if ( HAVE_MPI )
 endif ()
 
 
+# Prevent problems with Conda path substitution (see #2348) 
+set_source_files_properties( dynamicloader.cpp PROPERTIES COMPILE_OPTIONS "-O0" )
+
+
 add_library( nestkernel ${nestkernel_sources} )
+set_target_properties( nestkernel
+    PROPERTIES
+    VERSION ${NEST_VERSION}
+    SOVERSION 3
+    )
 target_link_libraries( nestkernel
     nestutil sli_lib
     ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES}

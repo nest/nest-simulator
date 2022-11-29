@@ -29,9 +29,9 @@ import nest
 from ..ll_api import *
 from .. import pynestkernel as kernel
 from .. import nestkernel_api as nestkernel
-from .hl_api_helper import *
+from .hl_api_helper import is_iterable, model_deprecation_warning
+from .hl_api_info import SetStatus
 from .hl_api_types import NodeCollection, Parameter
-from .hl_api_parallel_computing import Rank, NumProcesses
 
 __all__ = [
     'Create',
@@ -41,13 +41,19 @@ __all__ = [
 ]
 
 
-@check_stack
 def Create(model, n=1, params=None, positions=None):
     """Create one or more nodes.
 
     Generates `n` new network objects of the supplied model type. If `n` is not
     given, a single node is created. Note that if setting parameters of the
     nodes fail, the nodes will still have been created.
+
+    Note
+    ----
+    During network construction, create all nodes representing model neurons first, then all nodes
+    representing devices (generators, recorders, or detectors), or all devices first and then all neurons.
+    Otherwise, network connection can be slow, especially in parallel simulations of networks
+    with many devices.
 
     Parameters
     ----------
@@ -83,6 +89,15 @@ def Create(model, n=1, params=None, positions=None):
 
     model_deprecation_warning(model)
 
+    # If any of the elements in the parameter dictionary is either an array-like object,
+    # or a NEST parameter, we create the nodes first, then set the given values. If not,
+    # we can pass the parameter specification to SLI when the nodes are created.
+    iterable_or_parameter_in_params = True
+
+    #PYNEST-NG: can we support the usecase above by passing the dict into ll_create?
+    if isinstance(params, dict) and params:  # if params is a dict and not empty
+        iterable_or_parameter_in_params = any(is_iterable(v) or isinstance(v, Parameter) for k, v in params.items())
+
     if positions is not None:
         # Explicitly retrieve lazy loaded spatial property from the module class.
         # This is needed because the automatic lookup fails. See #2135.
@@ -93,7 +108,7 @@ def Create(model, n=1, params=None, positions=None):
         layer_specs = {'elements': model}
         layer_specs['edge_wrap'] = positions.edge_wrap
         if isinstance(positions, spatial.free):
-            layer_specs['positions'] = positions.pos._datum
+            layer_specs['positions'] = positions.pos
             # If the positions are based on a parameter object, the number of nodes must be specified.
             if isinstance(positions.pos, Parameter):
                 layer_specs['n'] = n
@@ -106,40 +121,28 @@ def Create(model, n=1, params=None, positions=None):
                 layer_specs['center'] = positions.center
         if positions.extent is not None:
             layer_specs['extent'] = positions.extent
-        # For compatibility with SLI.
-        if params is None:
-            params = {}
+            
         layer = nestkernel.llapi_create_spatial(layer_specs)
-        layer.set(params)
+        layer.set(params if params else {})
         return layer
-
-    # If any of the elements in the parameter dictionary is either an array-like object,
-    # or a NEST parameter, we create the nodes first, then set the given values. If not,
-    # we can pass the parameter specification to SLI when the nodes are created.
-    iterable_or_parameter_in_params = True
-    if isinstance(params, dict) and params:  # if params is a dict and not empty
-        iterable_or_parameter_in_params = any(is_iterable(v) or isinstance(v, Parameter) for k, v in params.items())
 
     node_ids = nestkernel.llapi_create(model, n)
 
-    if params is not None and iterable_or_parameter_in_params:
+    if isinstance(params, dict) and params:  # if params is a dict and not empty
         try:
             node_ids.set(params)
         except Exception:
-            warnings.warn(
-                "SetStatus() call failed, but nodes have already been " +
-                "created! The node IDs of the new nodes are: {0}.".format(node_ids))
+            warnings.warn("SetStatus() call failed, but nodes have already been " +
+                          f"created! The node IDs of the new nodes are: {node_ids}.")
             raise
 
     return node_ids
 
 
-@check_stack
 def PrintNodes():
     """Print the `node ID` ranges and `model names` of all the nodes in the network."""
 
-    string = nestkernel.llapi_print_nodes()
-    print(string)
+    print(nestkernel.llapi_print_nodes())
 
 
 def GetNodes(properties={}, local_only=False):
@@ -165,10 +168,10 @@ def GetNodes(properties={}, local_only=False):
     NodeCollection:
         `NodeCollection` of nodes
     """
+
     return nestkernel.llapi_get_nodes(properties, local_only)
 
 
-@check_stack
 def GetLocalNodeCollection(nc):
     """Get local nodes of a `NodeCollection` as a new `NodeCollection`.
 

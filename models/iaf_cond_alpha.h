@@ -66,17 +66,18 @@ Simple conductance based leaky integrate-and-fire neuron model
 Description
 +++++++++++
 
-iaf_cond_alpha is an implementation of a spiking neuron using IAF dynamics with
+``iaf_cond_alpha`` is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses. Incoming spike events induce a postsynaptic change
 of conductance modelled by an alpha function. The alpha function
 is normalized such that an event of weight 1.0 results in a peak current of 1 nS
 at :math:`t = \tau_{syn}`.
 
+See also [1]_, [2]_, [3]_.
+
 Parameters
 ++++++++++
 
 The following parameters can be set in the status dictionary.
-
 
 =========== ======= ===========================================================
  V_m        mV      Membrane potential
@@ -93,7 +94,6 @@ The following parameters can be set in the status dictionary.
  I_e        pA      Constant input current
 =========== ======= ===========================================================
 
-
 Sends
 +++++
 
@@ -103,16 +103,6 @@ Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
-
-Remarks:
-
- @note Per 2009-04-17, this class has been revised to our newest
-        insights into class design. Please use THIS CLASS as a reference
-        when designing your own models with nonlinear dynamics.
-        One weakness of this class is that it distinguishes between
-        inputs to the two synapses by the sign of the synaptic weight.
-        It would be better to use receptor_types, cf iaf_cond_alpha_mc.
-
 
 References
 ++++++++++
@@ -147,7 +137,7 @@ class iaf_cond_alpha : public ArchivingNode
 public:
   iaf_cond_alpha();
   iaf_cond_alpha( const iaf_cond_alpha& );
-  ~iaf_cond_alpha();
+  ~iaf_cond_alpha() override;
 
   /*
    * Import all overloaded virtual functions that we
@@ -158,23 +148,23 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node& tagret, rport receptor_type, synindex, bool );
+  port send_test_event( Node& tagret, rport receptor_type, synindex, bool ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
-  void update( Time const&, const long, const long );
+  void init_buffers_() override;
+  void pre_run_hook() override;
+  void update( Time const&, const long, const long ) override;
 
   // END Boilerplate function declarations ----------------------------
 

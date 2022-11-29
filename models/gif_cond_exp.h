@@ -40,6 +40,8 @@
 
 #include "universal_data_logger.h"
 
+#include "nest.h"
+
 
 namespace nest
 {
@@ -51,12 +53,12 @@ extern "C" int gif_cond_exp_dynamics( double, const double*, double*, void* );
 Short description
 +++++++++++++++++
 
-Conductance-based generalized integrate-and-fire neuron model
+Conductance-based generalized integrate-and-fire neuron (GIF) model (from the Gerstner lab)
 
 Description
 +++++++++++
 
-gif_psc_exp is the generalized integrate-and-fire neuron according to
+``gif_psc_exp`` is the generalized integrate-and-fire neuron according to
 Mensi et al. (2012) [1]_ and Pozzorini et al. (2015) [2]_, with postsynaptic
 conductances in the form of truncated exponentials.
 
@@ -66,7 +68,7 @@ differential equation:
 
 .. math::
 
- C*dV(t)/dt = -g_L*(V(t)-E_L) - \eta_1(t) - \eta_2(t) - \ldots
+ C*dV(t)/dt = -g_L\cdot(V(t)-E_L) - \eta_1(t) - \eta_2(t) - \ldots
     - \eta_n(t) + I(t)
 
 where each :math:`\eta_i` is a spike-triggered current (stc), and the neuron
@@ -75,7 +77,7 @@ Dynamic of each :math:`\eta_i` is described by:
 
 .. math::
 
- \tau_\eta{_i}*d{\eta_i}/dt = -\eta_i
+ \tau_\eta{_i}\cdot d{\eta_i}/dt = -\eta_i
 
 and in case of spike emission, its value increased by a constant (which can be
 positive or negative):
@@ -89,7 +91,7 @@ firing intensity:
 
 .. math::
 
- \lambda(t) = \lambda_0 * \exp (V(t)-V_T(t)) / \Delta_V
+ \lambda(t) = \lambda_0 \cdot \exp (V(t)-V_T(t)) / \Delta_V
 
 where :math:`V_T(t)` is a time-dependent firing threshold:
 
@@ -103,7 +105,7 @@ Dynamic of each :math:`\gamma_i` is described by:
 
 .. math::
 
-   \tau_{\gamma_i}*d\gamma_i/dt = -\gamma_i
+   \tau_{\gamma_i} \cdot d\gamma_i/dt = -\gamma_i
 
 and in case of spike emission, its value increased by a constant (which can be
 positive or negative):
@@ -125,7 +127,7 @@ easily convert between :math:`q_\eta/\gamma` of these two approaches:
 
 .. math::
 
-  q{_\eta}_{giftoolbox} = q_{\eta_{NEST}} * (1 - \exp( -\tau_{ref} /
+  q{_\eta}_{giftoolbox} = q_{\eta_{NEST}} \cdot (1 - \exp( -\tau_{ref} /
    \tau_\eta ))
 
 The same formula applies for :math:`q_{\gamma}`.
@@ -219,7 +221,7 @@ class gif_cond_exp : public ArchivingNode
 public:
   gif_cond_exp();
   gif_cond_exp( const gif_cond_exp& );
-  ~gif_cond_exp();
+  ~gif_cond_exp() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -229,25 +231,25 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   // make dynamics function quasi-member
   friend int gif_cond_exp_dynamics( double, const double*, double*, void* );

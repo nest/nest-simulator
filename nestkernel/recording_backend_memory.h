@@ -113,7 +113,7 @@ class RecordingBackendMemory : public RecordingBackend
 {
 public:
   RecordingBackendMemory();
-  ~RecordingBackendMemory() throw();
+  ~RecordingBackendMemory() throw() override;
 
   void initialize() override;
   void finalize() override;

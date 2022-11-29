@@ -23,31 +23,24 @@
 Classes defining the different PyNEST types
 """
 
-import numpy
-from math import floor, log
-import json
 from ..ll_api import *
 from .. import pynestkernel as kernel
 from .. import nestkernel_api as nestkernel
-from .hl_api_helper import *
+from .hl_api_helper import (
+    get_parameters,
+    get_parameters_hierarchical_addressing,
+    is_iterable,
+    restructure_data,
+)
 from .hl_api_simulation import GetKernelStatus
 
 
 def sli_func(*args, **kwargs):
     raise RuntimeError(f'Called sli_func with\nargs: {args}\nkwargs: {kwargs}')
 
-
-def sli_run(*args, **kwargs):
-    raise RuntimeError(f'Called sli_run with\nargs: {args}\nkwargs: {kwargs}')
-
-
-def sps(*args, **kwargs):
-    raise RuntimeError(f'Called sps with\nargs: {args}\nkwargs: {kwargs}')
-
-
-def sr(*args, **kwargs):
-    raise RuntimeError(f'Called sr with\nargs: {args}\nkwargs: {kwargs}')
-
+import numpy
+import json
+from math import floor, log
 
 try:
     import pandas
@@ -94,8 +87,8 @@ def CreateParameter(parametertype, specs):
 
     **Parameter types**
 
-    Some available parameter types (`parametertype` parameter), their function and
-    acceptable keys for their corresponding specification dictionaries
+    Examples of available parameter types (`parametertype` parameter), with their function and
+    acceptable keys for their corresponding specification dictionaries:
 
     * Constant
         ::
@@ -110,26 +103,20 @@ def CreateParameter(parametertype, specs):
                 {'min' : float, # minimum value, default: 0.0
                  'max' : float} # maximum value, default: 1.0
 
-            # random parameter with normal distribution, optionally truncated
-            # to [min,max)
+            # random parameter with normal distribution
             'normal':
                 {'mean' : float, # mean value, default: 0.0
-                 'sigma': float, # standard deviation, default: 1.0
-                 'min'  : float, # minimum value, default: -inf
-                 'max'  : float} # maximum value, default: +inf
+                 'std'  : float} # standard deviation, default: 1.0
 
-            # random parameter with lognormal distribution,
-            # optionally truncated to [min,max)
+            # random parameter with lognormal distribution
             'lognormal' :
-                {'mu'   : float, # mean value of logarithm, default: 0.0
-                 'sigma': float, # standard deviation of log, default: 1.0
-                 'min'  : float, # minimum value, default: -inf
-                 'max'  : float} # maximum value, default: +inf
+                {'mean' : float, # mean value of logarithm, default: 0.0
+                 'std'  : float} # standard deviation of log, default: 1.0
     """
     return nestkernel.llapi_create_parameter({parametertype: specs})
 
 
-class NodeCollectionIterator(object):
+class NodeCollectionIterator:
     """
     Iterator class for `NodeCollection`.
 
@@ -156,7 +143,7 @@ class NodeCollectionIterator(object):
         return val
 
 
-class NodeCollection(object):
+class NodeCollection:
     """
     Class for `NodeCollection`.
 
@@ -170,6 +157,10 @@ class NodeCollection(object):
     list of nodes to a `NodeCollection` with ``nest.NodeCollection(list)``.
 
     If your nodes have spatial extent, use the member parameter ``spatial`` to get the spatial information.
+
+    Slicing a NodeCollection follows standard Python slicing syntax: nc[start:stop:step], where start and stop
+    gives the zero-indexed right-open range of nodes, and step gives the step length between nodes. The step must
+    be strictly positive.
 
     Example
     -------
@@ -224,7 +215,7 @@ class NodeCollection(object):
         return nestkernel.llapi_join_nc(self._datum, other._datum)
 
     def __getitem__(self, key):
-        if isinstance(key, slice):
+        if isinstance(key, slice):            
             if key.start is None:
                 start = 1
             else:
@@ -234,7 +225,7 @@ class NodeCollection(object):
             if key.stop is None:
                 stop = self.__len__()
             else:
-                stop = min(key.stop, self.__len__()) if key.stop >= 0 else key.stop - 1
+                stop = min(key.stop, self.__len__()) if key.stop > 0 else key.stop - 1
                 if abs(stop) > self.__len__():
                     raise IndexError('slice stop value outside of the NodeCollection')
             step = 1 if key.step is None else key.step
@@ -244,7 +235,7 @@ class NodeCollection(object):
             return nestkernel.llapi_slice(self._datum, start, stop, step)
         elif isinstance(key, (int, numpy.integer)):
             if abs(key + (key >= 0)) > self.__len__():
-                raise IndexError('index value outside of the NodeCollection')
+                raise IndexError('index value outside of the NodeCollection')            
             return self[key:key + 1:1]
         elif isinstance(key, (list, tuple)):
             if len(key) == 0:
@@ -253,7 +244,7 @@ class NodeCollection(object):
             if all(isinstance(x, bool) for x in key):
                 if len(key) != len(self):
                     raise IndexError('Bool index array must be the same length as NodeCollection')
-                np_key = numpy.array(key, dtype=numpy.bool)
+                np_key = numpy.array(key, dtype=bool)
             # Checking that elements are not instances of bool too, because bool inherits from int
             elif all(isinstance(x, int) and not isinstance(x, bool) for x in key):
                 np_key = numpy.array(key, dtype=numpy.uint64)
@@ -399,14 +390,15 @@ class NodeCollection(object):
             result = get_parameters(self, params[0])
         else:
             # Hierarchical addressing
+            # TODO-PYNEST-NG: Drop this? Not sure anyone ever used it... 
             result = get_parameters_hierarchical_addressing(self, params)
 
         if pandas_output:
             index = self.get('global_id')
-            if len(params) == 1 and is_literal(params[0]):
+            if len(params) == 1 and isinstance(params[0], str):
                 # params is a string
                 result = {params[0]: result}
-            elif len(params) > 1 and is_literal(params[1]):
+            elif len(params) > 1 and isinstance(params[1], str):
                 # hierarchical, single string
                 result = {params[1]: result}
             if len(self) == 1:
@@ -416,6 +408,16 @@ class NodeCollection(object):
         elif output == 'json':
             result = to_json(result)
 
+        print("### 7", result)
+            
+        if isinstance(result, dict) and len(self) == 1:
+            new_result = {}
+            for k,v in result.items():                
+                new_result[k] = v[0] if is_iterable(v) and len(v) == 1 else v
+            result = new_result
+
+        print("### 8", result)
+            
         return result
 
     def set(self, params=None, **kwargs):
@@ -458,12 +460,14 @@ class NodeCollection(object):
 
         local_nodes = [self.local] if len(self) == 1 else self.local
 
+        print("### 1", params)
+
         if isinstance(params, dict) and all(local_nodes):
 
             node_params = self[0].get()
-            contains_list = [is_iterable(vals) and key in node_params and not is_iterable(node_params[key]) for
-                             key, vals in params.items()]
-
+            iterable_node_param = lambda key: key in node_params and not is_iterable(node_params[key])
+            contains_list = [is_iterable(vals) and iterable_node_param(key) for key, vals in params.items()]            
+            
             if any(contains_list):
                 temp_param = [{} for _ in range(self.__len__())]
 
@@ -476,8 +480,10 @@ class NodeCollection(object):
                             temp_dict[key] = vals[i]
                 params = temp_param
 
-        if (isinstance(params, (list, tuple)) and self.__len__() != len(params)):
-            raise TypeError("status dict must be a dict, or a list of dicts of length {} ".format(self.__len__()))
+        if isinstance(params, dict):
+            params = [params]
+
+        print("### 2", params)
 
         nestkernel.llapi_set_nc_status(self._datum, params)
 
@@ -548,7 +554,7 @@ class NodeCollection(object):
             self.set({attr: value})
 
 
-class SynapseCollectionIterator(object):
+class SynapseCollectionIterator:
     """
     Iterator class for SynapseCollection.
     """
@@ -563,7 +569,7 @@ class SynapseCollectionIterator(object):
         return SynapseCollection(next(self._iter))
 
 
-class SynapseCollection(object):
+class SynapseCollection:
     """
     Class for Connections.
 
@@ -709,7 +715,7 @@ class SynapseCollection(object):
 
     def __getattr__(self, attr):
         if attr == 'distance':
-            dist = sli_func('Distance', self._datum)
+            dist = nestkernel.llapi_distance(self._datum)
             super().__setattr__(attr, dist)
             return self.distance
 
@@ -718,7 +724,7 @@ class SynapseCollection(object):
     def __setattr__(self, attr, value):
         # `_datum` is the only property of SynapseCollection that should not be
         # interpreted as a property of the model
-        if attr == '_datum' or 'print_full':
+        if attr == '_datum' or attr == 'print_full':
             super().__setattr__(attr, value)
         else:
             self.set({attr: value})
@@ -798,27 +804,29 @@ class SynapseCollection(object):
         if pandas_output and not HAVE_PANDAS:
             raise ImportError('Pandas could not be imported')
 
-        # Return empty tuple if we have no connections or if we have done a nest.ResetKernel()
-        if self.__len__() == 0 or GetKernelStatus('num_connections') == 0:
-            return ()
+        # Return empty dictionary if we have no connections or if we have done a nest.ResetKernel()
+        num_conns = GetKernelStatus('num_connections')  # Has to be called first because it involves MPI communication.
+        if self.__len__() == 0 or num_conns == 0:
+            # Return empty tuple if get is called with an argument
+            return {} if keys is None else ()
 
         if keys is None:
             result = nestkernel.llapi_get_connection_status(self._datum)
-        elif is_literal(keys):
+        elif isinstance(keys, str):
             #  Extracting the correct values will be done in restructure_data below
             result = nestkernel.llapi_get_connection_status(self._datum)
         elif is_iterable(keys):
             result = [[d[key] for key in keys] for d in nestkernel.llapi_get_connection_status(self._datum)]
         else:
             raise TypeError("keys should be either a string or an iterable")
-
+        
         # Need to restructure the data.
         final_result = restructure_data(result, keys)
 
         if pandas_output:
             index = (self.get('source') if self.__len__() > 1 else
                      (self.get('source'),))
-            if is_literal(keys):
+            if isinstance(keys, str):
                 final_result = {keys: final_result}
             final_result = pandas.DataFrame(final_result, index=index)
         elif output == 'json':
@@ -890,7 +898,7 @@ class SynapseCollection(object):
         nestkernel.llapi_set_connection_status(self._datum, params)
 
 
-class CollocatedSynapses(object):
+class CollocatedSynapses:
     """
     Class for collocated synapse specifications.
 
@@ -920,7 +928,7 @@ class CollocatedSynapses(object):
         return len(self.syn_specs)
 
 
-class Mask(object):
+class Mask:
     """
     Class for spatial masks.
 
@@ -972,7 +980,7 @@ class Mask(object):
 
 
 # TODO-PYNEST-NG: We may consider moving the entire (or most of) Parameter class to the cython level.
-class Parameter(object):
+class Parameter:
     """
     Class for parameters
 
@@ -1067,7 +1075,7 @@ class Parameter(object):
                 import nest
 
                 # normal distribution parameter
-                P = nest.CreateParameter('normal', {'mean': 0.0, 'sigma': 1.0})
+                P = nest.CreateParameter('normal', {'mean': 0.0, 'std': 1.0})
 
                 # get out value
                 P.GetValue()
@@ -1079,7 +1087,7 @@ class Parameter(object):
 
     def apply(self, spatial_nc, positions=None):
         if positions is None:
-            return sli_func('Apply', self._datum, spatial_nc)
+            return nestkernel.llapi_apply_parameter(self._datum, spatial_nc)
         else:
             if len(spatial_nc) != 1:
                 raise ValueError('The NodeCollection must contain a single node ID only')
@@ -1090,7 +1098,7 @@ class Parameter(object):
                     raise TypeError('Each position must be a list or tuple')
                 if len(pos) != len(positions[0]):
                     raise ValueError('All positions must have the same number of dimensions')
-            return sli_func('Apply', self._datum, {'source': spatial_nc, 'targets': positions})
+            return nestkernel.llapi_apply_parameter(self._datum, {'source': spatial_nc, 'targets': positions})
 
 
 def serializable(data):
@@ -1111,9 +1119,6 @@ def serializable(data):
     if isinstance(data, SynapseCollection):
         # Get full information from SynapseCollection
         return serializable(data.get())
-    if isinstance(data, kernel.SLILiteral):
-        # Get name of SLILiteral.
-        return data.name
     if isinstance(data, (list, tuple)):
         return [serializable(d) for d in data]
     if isinstance(data, dict):

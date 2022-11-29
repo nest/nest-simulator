@@ -30,6 +30,9 @@ set( models_sources
     amat2_psc_exp.h amat2_psc_exp.cpp
     bernoulli_synapse.h
     binary_neuron.h
+    cm_default.h cm_default.cpp
+    cm_tree.h cm_tree.cpp
+    cm_compartmentcurrents.h cm_compartmentcurrents.cpp
     clopath_synapse.h
     cont_delay_synapse.h cont_delay_synapse_impl.h
     correlation_detector.h correlation_detector.cpp
@@ -140,6 +143,11 @@ set( models_sources
     )
 
 add_library( models ${models_sources} )
+set_target_properties( models
+    PROPERTIES
+    VERSION ${NEST_VERSION}
+    SOVERSION 3
+    )
 target_link_libraries( models nestutil sli_lib nestkernel )
 
 target_include_directories( models PRIVATE

@@ -26,9 +26,6 @@
 
 // C++ includes:
 #include <cstdio>
-#include <iomanip>
-#include <iostream>
-#include <limits>
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -43,8 +40,6 @@
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 
 namespace nest
@@ -81,19 +76,24 @@ nest::gif_cond_exp_dynamics( double, const double y[], double f[], void* pnode )
   assert( pnode );
   const nest::gif_cond_exp& node = *( reinterpret_cast< nest::gif_cond_exp* >( pnode ) );
 
+  const bool is_refractory = node.S_.r_ref_ > 0;
+
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
 
   // The following code is verbose for the sake of clarity. We assume that a
   // good compiler will optimize the verbosity away ...
 
-  const double I_syn_exc = y[ S::G_EXC ] * ( y[ S::V_M ] - node.P_.E_ex_ );
-  const double I_syn_inh = y[ S::G_INH ] * ( y[ S::V_M ] - node.P_.E_in_ );
-  const double I_L = node.P_.g_L_ * ( y[ S::V_M ] - node.P_.E_L_ );
+  // Clamp membrane potential to V_reset while refractory.
+  const double V = is_refractory ? node.P_.V_reset_ : y[ S::V_M ];
+
+  const double I_syn_exc = y[ S::G_EXC ] * ( V - node.P_.E_ex_ );
+  const double I_syn_inh = y[ S::G_INH ] * ( V - node.P_.E_in_ );
+  const double I_L = node.P_.g_L_ * ( V - node.P_.E_L_ );
   const double stc = node.S_.stc_;
 
   // V dot
-  f[ 0 ] = ( -I_L + node.S_.I_stim_ + node.P_.I_e_ - I_syn_exc - I_syn_inh - stc ) / node.P_.c_m_;
+  f[ 0 ] = is_refractory ? 0.0 : ( -I_L + node.S_.I_stim_ + node.P_.I_e_ - I_syn_exc - I_syn_inh - stc ) / node.P_.c_m_;
 
   f[ 1 ] = -y[ S::G_EXC ] / node.P_.tau_synE_;
   f[ 2 ] = -y[ S::G_INH ] / node.P_.tau_synI_;
@@ -211,18 +211,10 @@ nest::gif_cond_exp::Parameters_::get( dictionary& d ) const
   d[ names::E_ex ] = E_ex_;
   d[ names::E_in ] = E_in_;
   d[ names::gsl_error_tol ] = gsl_error_tol;
-
-  ArrayDatum tau_sfa_list_ad( tau_sfa_ );
-  d[ names::tau_sfa ] = tau_sfa_list_ad;
-
-  ArrayDatum q_sfa_list_ad( q_sfa_ );
-  d[ names::q_sfa ] = q_sfa_list_ad;
-
-  ArrayDatum tau_stc_list_ad( tau_stc_ );
-  d[ names::tau_stc ] = tau_stc_list_ad;
-
-  ArrayDatum q_stc_list_ad( q_stc_ );
-  d[ names::q_stc ] = q_stc_list_ad;
+  d[ names::tau_sfa ] = tau_sfa_;
+  d[ names::q_sfa ] = q_sfa_;
+  d[ names::tau_stc ] = tau_stc_;
+  d[ names::q_stc ] = q_stc_;
 }
 
 void
@@ -333,9 +325,9 @@ nest::gif_cond_exp::State_::set( const dictionary& d, const Parameters_&, Node* 
 
 nest::gif_cond_exp::Buffers_::Buffers_( gif_cond_exp& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -343,9 +335,9 @@ nest::gif_cond_exp::Buffers_::Buffers_( gif_cond_exp& n )
 
 nest::gif_cond_exp::Buffers_::Buffers_( const Buffers_&, gif_cond_exp& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -405,7 +397,7 @@ nest::gif_cond_exp::init_buffers_()
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ = B_.step_;
 
-  if ( B_.s_ == 0 )
+  if ( not B_.s_ )
   {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
@@ -414,7 +406,7 @@ nest::gif_cond_exp::init_buffers_()
     gsl_odeiv_step_reset( B_.s_ );
   }
 
-  if ( B_.c_ == 0 )
+  if ( not B_.c_ )
   {
     B_.c_ = gsl_odeiv_control_y_new( P_.gsl_error_tol, 0.0 );
   }
@@ -423,7 +415,7 @@ nest::gif_cond_exp::init_buffers_()
     gsl_odeiv_control_init( B_.c_, P_.gsl_error_tol, 0.0, 1.0, 0.0 );
   }
 
-  if ( B_.e_ == 0 )
+  if ( not B_.e_ )
   {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }
@@ -433,13 +425,13 @@ nest::gif_cond_exp::init_buffers_()
   }
 
   B_.sys_.function = gif_cond_exp_dynamics;
-  B_.sys_.jacobian = NULL;
+  B_.sys_.jacobian = nullptr;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
 }
 
 void
-nest::gif_cond_exp::calibrate()
+nest::gif_cond_exp::pre_run_hook()
 {
   B_.logger_.init();
 
@@ -473,7 +465,7 @@ void
 nest::gif_cond_exp::update( Time const& origin, const long from, const long to )
 {
 
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )

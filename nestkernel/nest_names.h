@@ -23,10 +23,14 @@
 #ifndef NEST_NAMES_H
 #define NEST_NAMES_H
 
-#include <string>
-
 // Generated includes:
 #include "config.h"
+
+// C++ includes:
+#include <string>
+
+// Includes from sli:
+#include "name.h"
 
 namespace nest
 {
@@ -107,10 +111,13 @@ const std::string capacity( "capacity" );
 const std::string center( "center" );
 const std::string circular( "circular" );
 const std::string clear( "clear" );
+const std::string comp_idx( "comp_idx" );
 const std::string comparator( "comparator" );
+const std::string compartments( "compartments" );
 const std::string configbit_0( "configbit_0" );
 const std::string configbit_1( "configbit_1" );
 const std::string connection_count( "connection_count" );
+const std::string connection_rules( "connection_rules" );
 const std::string connection_type( "connection_type" );
 const std::string consistent_integration( "consistent_integration" );
 const std::string continuous( "continuous" );
@@ -159,6 +166,7 @@ const std::string E_Na( "E_Na" );
 const std::string E_ahp( "E_ahp" );
 const std::string E_ex( "E_ex" );
 const std::string E_in( "E_in" );
+const std::string e_L( "e_L" );
 const std::string E_rev( "E_rev" );
 const std::string E_rev_AMPA( "E_rev_AMPA" );
 const std::string E_rev_GABA_A( "E_rev_GABA_A" );
@@ -192,6 +200,7 @@ const std::string GABA_A( "GABA_A" );
 const std::string GABA_B( "GABA_B" );
 const std::string g( "g" );
 const std::string g_AMPA( "g_AMPA" );
+const std::string g_C( "g_C" );
 const std::string g_GABA_A( "g_GABA_A" );
 const std::string g_GABA_B( "g_GABA_B" );
 const std::string g_K( "g_K" );
@@ -225,6 +234,7 @@ const std::string global_id( "global_id" );
 const std::string grid( "grid" );
 const std::string grid3d( "grid3d" );
 const std::string growth_curve( "growth_curve" );
+const std::string growth_curves( "growth_curves" );
 const std::string growth_factor_buffer_spike_data( "growth_factor_buffer_spike_data" );
 const std::string growth_factor_buffer_target_data( "growth_factor_buffer_target_data" );
 const std::string growth_rate( "growth_rate" );
@@ -274,6 +284,7 @@ const std::string linear( "linear" );
 const std::string linear_summation( "linear_summation" );
 const std::string local( "local" );
 const std::string local_num_threads( "local_num_threads" );
+const std::string local_num_virtual_procs( "local_num_virtual_procsx" );
 const std::string local_spike_counter( "local_spike_counter" );
 const std::string lookuptable_0( "lookuptable_0" );
 const std::string lookuptable_1( "lookuptable_1" );
@@ -298,6 +309,7 @@ const std::string min_delay( "min_delay" );
 const std::string min_update_time( "min_update_time" );
 const std::string minor_axis( "minor_axis" );
 const std::string model( "model" );
+const std::string model_id( "model_id" );
 const std::string ms_per_tic( "ms_per_tic" );
 const std::string mu( "mu" );
 const std::string mu_minus( "mu_minus" );
@@ -319,6 +331,7 @@ const std::string n_synapses( "n_synapses" );
 const std::string network_size( "network_size" );
 const std::string neuron( "neuron" );
 const std::string next_readout_time( "next_readout_time" );
+const std::string node_models( "node_models" );
 const std::string no_synapses( "no_synapses" );
 const std::string node_uses_wfr( "node_uses_wfr" );
 const std::string noise( "noise" );
@@ -344,6 +357,8 @@ const std::string p_copy( "p_copy" );
 const std::string p_transmit( "p_transmit" );
 const std::string pairwise_bernoulli_on_source( "pairwise_bernoulli_on_source" );
 const std::string pairwise_bernoulli_on_target( "pairwise_bernoulli_on_target" );
+const std::string params( "params" );
+const std::string parent_idx( "parent_idx" );
 const std::string phase( "phase" );
 const std::string phi_max( "phi_max" );
 const std::string polar_angle( "polar_angle" );
@@ -358,6 +373,7 @@ const std::string post_trace( "post_trace" );
 const std::string pre_synaptic_element( "pre_synaptic_element" );
 const std::string precise_times( "precise_times" );
 const std::string precision( "precision" );
+const std::string prepared( "prepared" );
 const std::string print_time( "print_time" );
 const std::string proximal_curr( "proximal_curr" );
 const std::string proximal_exc( "proximal_exc" );
@@ -376,6 +392,7 @@ const std::string rate_slope( "rate_slope" );
 const std::string rate_times( "rate_times" );
 const std::string rate_values( "rate_values" );
 const std::string readout_cycle_duration( "readout_cycle_duration" );
+const std::string receptor_idx( "receptor_idx" );
 const std::string receptor_type( "receptor_type" );
 const std::string receptor_types( "receptor_types" );
 const std::string receptors( "receptors" );
@@ -430,15 +447,16 @@ const std::string start( "start" );
 const std::string state( "state" );
 const std::string std( "std" );
 const std::string std_mod( "std_mod" );
+const std::string stimulation_backends( "stimulation_backends" );
 const std::string stimulator( "stimulator" );
 const std::string stimulus_source( "stimulus_source" );
-const std::string step( "step" );
 const std::string stop( "stop" );
 const std::string structural_plasticity_synapses( "structural_plasticity_synapses" );
 const std::string structural_plasticity_update_interval( "structural_plasticity_update_interval" );
 const std::string synapse_id( "synapse_id" );
 const std::string synapse_label( "synapse_label" );
 const std::string synapse_model( "synapse_model" );
+const std::string synapse_models( "synapse_models" );
 const std::string synapse_modelid( "synapse_modelid" );
 const std::string synapse_parameters( "synapse_parameters" );
 const std::string synapses_per_driver( "synapses_per_driver" );
@@ -508,6 +526,9 @@ const std::string tau_syn( "tau_syn" );
 const std::string tau_syn_ex( "tau_syn_ex" );
 const std::string tau_syn_in( "tau_syn_in" );
 const std::string tau_theta( "tau_theta" );
+const std::string tau_u_bar_bar( "tau_u_bar_bar" );
+const std::string tau_u_bar_minus( "tau_u_bar_minus" );
+const std::string tau_u_bar_plus( "tau_u_bar_plus" );
 const std::string tau_v( "tau_v" );
 const std::string tau_vacant( "tau_vacant" );
 const std::string tau_w( "tau_w" );
@@ -608,6 +629,7 @@ const std::string y_1( "y_1" );
 
 const std::string z( "z" );
 const std::string z_connected( "z_connected" );
+
 } // namespace names
 
 } // namespace nest

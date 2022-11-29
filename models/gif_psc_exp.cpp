@@ -22,24 +22,14 @@
 
 #include "gif_psc_exp.h"
 
-// C++ includes:
-#include <limits>
-
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from libnestutil:
-#include "dict_util.h"
-
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
-
 #include "compose.hpp"
+#include "dict_util.h"
 #include "numerics.h"
 #include "propagator_stability.h"
 
@@ -120,18 +110,10 @@ nest::gif_psc_exp::Parameters_::get( dictionary& d ) const
   d[ names::t_ref ] = t_ref_;
   d[ names::tau_syn_ex ] = tau_ex_;
   d[ names::tau_syn_in ] = tau_in_;
-
-  ArrayDatum tau_sfa_list_ad( tau_sfa_ );
-  d[ names::tau_sfa ] = tau_sfa_list_ad;
-
-  ArrayDatum q_sfa_list_ad( q_sfa_ );
-  d[ names::q_sfa ] = q_sfa_list_ad;
-
-  ArrayDatum tau_stc_list_ad( tau_stc_ );
-  d[ names::tau_stc ] = tau_stc_list_ad;
-
-  ArrayDatum q_stc_list_ad( q_stc_ );
-  d[ names::q_stc ] = q_stc_list_ad;
+  d[ names::tau_sfa ] = tau_sfa_;
+  d[ names::q_sfa ] = q_sfa_;
+  d[ names::tau_stc ] = tau_stc_;
+  d[ names::q_stc ] = q_stc_;
 }
 
 void
@@ -213,7 +195,7 @@ nest::gif_psc_exp::Parameters_::set( const dictionary& d, Node* node )
       throw BadProperty( "All time constants must be strictly positive." );
     }
   }
-  if ( tau_ex_ <= 0 || tau_in_ <= 0 )
+  if ( tau_ex_ <= 0 or tau_in_ <= 0 )
   {
     throw BadProperty( "Synapse time constants must be strictly positive." );
   }
@@ -279,7 +261,7 @@ nest::gif_psc_exp::init_buffers_()
 }
 
 void
-nest::gif_psc_exp::calibrate()
+nest::gif_psc_exp::pre_run_hook()
 {
   B_.logger_.init();
 
@@ -326,7 +308,7 @@ void
 nest::gif_psc_exp::update( Time const& origin, const long from, const long to )
 {
 
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )

@@ -22,8 +22,6 @@
 
 #include "iaf_psc_exp.h"
 
-// C++ includes:
-#include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -31,17 +29,13 @@
 #include "propagator_stability.h"
 
 // Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "ring_buffer_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -154,7 +148,7 @@ nest::iaf_psc_exp::Parameters_::set( const dictionary& d, Node* node )
   {
     throw BadProperty( "Capacitance must be strictly positive." );
   }
-  if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 )
+  if ( Tau_ <= 0 or tau_ex_ <= 0 or tau_in_ <= 0 )
   {
     throw BadProperty( "Membrane and synapse time constants must be strictly positive." );
   }
@@ -241,37 +235,24 @@ nest::iaf_psc_exp::init_buffers_()
 }
 
 void
-nest::iaf_psc_exp::calibrate()
+nest::iaf_psc_exp::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
   const double h = Time::get_resolution().get_ms();
 
-  // numbering of state vaiables: i_0 = 0, i_syn_ = 1, V_m_ = 2
-
-  // commented out propagators: forward Euler
-  // needed to exactly reproduce Tsodyks network
-
   // these P are independent
   V_.P11ex_ = std::exp( -h / P_.tau_ex_ );
-  // P11ex_ = 1.0-h/tau_ex_;
-
   V_.P11in_ = std::exp( -h / P_.tau_in_ );
-  // P11in_ = 1.0-h/tau_in_;
 
   V_.P22_ = std::exp( -h / P_.Tau_ );
-  // P22_ = 1.0-h/Tau_;
 
   // these are determined according to a numeric stability criterion
   V_.P21ex_ = propagator_32( P_.tau_ex_, P_.Tau_, P_.C_, h );
   V_.P21in_ = propagator_32( P_.tau_in_, P_.Tau_, P_.C_, h );
 
-  // P21ex_ = h/C_;
-  // P21in_ = h/C_;
-
   V_.P20_ = P_.Tau_ / P_.C_ * ( 1.0 - V_.P22_ );
-  // P20_ = h/C_;
 
   // t_ref_ specifies the length of the absolute refractory period as
   // a double in ms. The grid based iaf_psc_exp can only handle refractory
@@ -300,7 +281,7 @@ nest::iaf_psc_exp::calibrate()
 void
 nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   const double h = Time::get_resolution().get_ms();
@@ -388,7 +369,6 @@ nest::iaf_psc_exp::handle( CurrentEvent& e )
   const index input_buffer_slot = kernel().event_delivery_manager.get_modulo(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
 
-  // add weighted current; HEP 2002-10-04
   if ( 0 == e.get_rport() )
   {
     B_.input_buffer_.add_value( input_buffer_slot, Buffers_::I0, w * c );

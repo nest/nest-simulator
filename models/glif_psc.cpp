@@ -27,21 +27,14 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 #include "propagator_stability.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "name.h"
 #include "universal_data_logger_impl.h"
-
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
-#include "lockptrdatum.h"
 
 using namespace nest;
 
@@ -139,8 +132,7 @@ nest::glif_psc::Parameters_::get( dictionary& d ) const
   d[ names::asc_decay ] = asc_decay_;
   d[ names::asc_amps ] = asc_amps_;
   d[ names::asc_r ] = asc_r_;
-  ArrayDatum tau_syn_ad( tau_syn_ );
-  d[ names::tau_syn ] = tau_syn_ad;
+  d[ names::tau_syn ] = tau_syn_;
   d[ names::has_connections ] = has_connections_;
   d[ names::spike_dependent_threshold ] = has_theta_spike_;
   d[ names::after_spike_currents ] = has_asc_;
@@ -148,15 +140,15 @@ nest::glif_psc::Parameters_::get( dictionary& d ) const
 }
 
 double
-nest::glif_psc::Parameters_::set( const dictionary& d )
+nest::glif_psc::Parameters_::set( const dictionary& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
   const double ELold = E_L_;
-  d.update_value( names::E_L, E_L_ );
+  update_value_param( d, names::E_L, E_L_, node );
   const double delta_EL = E_L_ - ELold;
 
-  if ( d.update_value( names::V_reset, V_reset_ ) )
+  if ( update_value_param( d, names::V_reset, V_reset_, node ) )
   {
     V_reset_ -= E_L_;
   }
@@ -165,7 +157,7 @@ nest::glif_psc::Parameters_::set( const dictionary& d )
     V_reset_ -= delta_EL;
   }
 
-  if ( d.update_value( names::V_th, th_inf_ ) )
+  if ( update_value_param( d, names::V_th, th_inf_, node ) )
   {
     th_inf_ -= E_L_;
   }
@@ -174,17 +166,17 @@ nest::glif_psc::Parameters_::set( const dictionary& d )
     th_inf_ -= delta_EL;
   }
 
-  d.update_value( names::g, G_ );
-  d.update_value( names::C_m, C_m_ );
-  d.update_value( names::t_ref, t_ref_ );
+  update_value_param( d, names::g, G_, node );
+  update_value_param( d, names::C_m, C_m_, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
 
-  d.update_value( names::th_spike_add, th_spike_add_ );
-  d.update_value( names::th_spike_decay, th_spike_decay_ );
-  d.update_value( names::voltage_reset_fraction, voltage_reset_fraction_ );
-  d.update_value( names::voltage_reset_add, voltage_reset_add_ );
+  update_value_param( d, names::th_spike_add, th_spike_add_, node );
+  update_value_param( d, names::th_spike_decay, th_spike_decay_, node );
+  update_value_param( d, names::voltage_reset_fraction, voltage_reset_fraction_, node );
+  update_value_param( d, names::voltage_reset_add, voltage_reset_add_, node );
 
-  d.update_value( names::th_voltage_index, th_voltage_index_ );
-  d.update_value( names::th_voltage_decay, th_voltage_decay_ );
+  update_value_param( d, names::th_voltage_index, th_voltage_index_, node );
+  update_value_param( d, names::th_voltage_decay, th_voltage_decay_, node );
 
   d.update_value( names::asc_init, asc_init_ );
   d.update_value( names::asc_decay, asc_decay_ );
@@ -192,9 +184,9 @@ nest::glif_psc::Parameters_::set( const dictionary& d )
   d.update_value( names::asc_r, asc_r_ );
 
   // set model mechanisms
-  d.update_value( names::spike_dependent_threshold, has_theta_spike_ );
-  d.update_value( names::after_spike_currents, has_asc_ );
-  d.update_value( names::adapting_threshold, has_theta_voltage_ );
+  update_value_param( d, names::spike_dependent_threshold, has_theta_spike_, node );
+  update_value_param( d, names::after_spike_currents, has_asc_, node );
+  update_value_param( d, names::adapting_threshold, has_theta_voltage_, node );
 
   // check model mechanisms parameter
   if ( not( ( not has_theta_spike_ and not has_asc_ and not has_theta_voltage_ ) or // glif1
@@ -283,7 +275,7 @@ nest::glif_psc::Parameters_::set( const dictionary& d )
   const size_t old_n_receptors = this->n_receptors_();
   if ( d.update_value( names::tau_syn, tau_syn_ ) )
   {
-    if ( this->n_receptors_() != old_n_receptors && has_connections_ == true )
+    if ( this->n_receptors_() != old_n_receptors and has_connections_ )
     {
       throw BadProperty(
         "The neuron has connections, therefore the number of ports cannot be "
@@ -311,7 +303,7 @@ nest::glif_psc::State_::get( dictionary& d, const Parameters_& p ) const
 }
 
 void
-nest::glif_psc::State_::set( const dictionary& d, const Parameters_& p, double delta_EL )
+nest::glif_psc::State_::set( const dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
   if ( d.update_value( names::V_m, U_ ) )
   {
@@ -393,7 +385,7 @@ nest::glif_psc::init_buffers_()
 }
 
 void
-nest::glif_psc::calibrate()
+nest::glif_psc::pre_run_hook()
 {
   B_.logger_.init();
 
@@ -601,7 +593,7 @@ nest::glif_psc::update( Time const& origin, const long from, const long to )
 nest::port
 nest::glif_psc::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type <= 0 || receptor_type > static_cast< port >( P_.n_receptors_() ) )
+  if ( receptor_type <= 0 or receptor_type > static_cast< port >( P_.n_receptors_() ) )
   {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }

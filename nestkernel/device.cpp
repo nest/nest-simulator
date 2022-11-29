@@ -108,9 +108,23 @@ nest::Device::Parameters_::update_( const dictionary& d, const std::string& name
 void
 nest::Device::Parameters_::set( const dictionary& d )
 {
-  d.update_value( names::origin, origin_ );
-  d.update_value( names::start, start_ );
-  d.update_value( names::stop, stop_ );
+  double origin;
+  if (d.update_value( names::origin, origin ) )
+  {
+    origin_ = Time::ms( origin );
+  }
+
+  double start;
+  if (d.update_value( names::start, start ) )
+  {
+    start_ = Time::ms( start );
+  }
+
+  double stop;
+  if (d.update_value( names::stop, stop ) )
+  {
+    stop_ = Time::ms( stop );
+  }
 
   if ( stop_ < start_ )
   {
@@ -139,7 +153,7 @@ nest::Device::Device( const Device& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::Device::calibrate()
+nest::Device::pre_run_hook()
 {
   // We do not need to recalibrate time objects, since they are
   // recalibrated on instance construction and resolution cannot

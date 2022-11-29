@@ -47,16 +47,16 @@ Description
 +++++++++++
 
 The membrane potential is the sum of stereotyped events: the postsynaptic
-potentials (V_syn), waveforms that include a spike and the subsequent
-after-hyperpolarization (V_spike) and Gaussian-distributed white noise.
+potentials (``V_syn``), waveforms that include a spike and the subsequent
+after-hyperpolarization (``V_spike``) and Gaussian-distributed white noise.
 
 The postsynaptic potential is described by alpha function where
-U_epsp is the maximal amplitude of the EPSP and tau_epsp is the time to
+``U_epsp`` is the maximal amplitude of the EPSP and ``tau_epsp`` is the time to
 peak of the EPSP.
 
 The spike waveform is described as a delta peak followed by a membrane
-potential reset and exponential decay. U_reset is the magnitude of the
-reset/after-hyperpolarization and tau_reset is the time constant of
+potential reset and exponential decay. ``U_reset`` is the magnitude of the
+reset/after-hyperpolarization and ``tau_reset`` is the time constant of
 recovery from this hyperpolarization.
 
 The linear subthreshold dynamics is integrated by the Exact
@@ -64,11 +64,14 @@ Integration scheme [1]_. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.
 
-Remarks:
-The way the noise term was implemented in the original model makes it
-unsuitable for simulation in NEST. The workaround was to prepare the
-noise signal externally prior to simulation. The noise signal,
-if present, has to be at least as long as the simulation.
+.. note::
+
+   The way the noise term was implemented in the original model makes
+   it unsuitable for simulation in NEST. The workaround was to prepare
+   the noise signal externally prior to simulation. The noise signal,
+   if present, has to be at least as long as the simulation.
+
+See also [2]_.
 
 Parameters
 ++++++++++
@@ -122,22 +125,22 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
-  void update( const Time&, const long, const long );
+  void update( const Time&, const long, const long ) override;
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< iaf_chs_2007 >;

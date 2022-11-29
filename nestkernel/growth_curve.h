@@ -23,19 +23,13 @@
 #ifndef GROWTH_CURVE_H
 #define GROWTH_CURVE_H
 
-/**
- * \file growth_curve.h
- *
- * \author Mikael Naveau
- * \date July 2013
- */
 
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "nest_types.h"
 
+// Includes from libnestutil:
 #include "dictionary.h"
-
 
 namespace nest
 {
@@ -131,8 +125,9 @@ class GrowthCurveLinear : public GrowthCurve
 {
 public:
   GrowthCurveLinear();
-  void get( dictionary& d ) const;
-  void set( const dictionary& d );
+  void get( dictionary& d ) const override;
+  void set( const dictionary& d ) override;
+
   double update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const;
 
 private:
@@ -220,7 +215,9 @@ public:
   GrowthCurveGaussian();
   void get( dictionary& d ) const;
   void set( const dictionary& d );
-  double update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const;
+
+  double
+  update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const;
 
 private:
   double eta_;
@@ -290,9 +287,11 @@ class GrowthCurveSigmoid : public GrowthCurve
 {
 public:
   GrowthCurveSigmoid();
-  void get( dictionary& d ) const;
-  void set( const dictionary& d );
-  double update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const;
+  void get( dictionary& d ) const override;
+  void set( const dictionary& d ) override;
+
+  double
+  update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const override;
 
 private:
   double eps_;

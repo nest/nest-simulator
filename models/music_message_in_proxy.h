@@ -45,9 +45,6 @@
 #include "device_node.h"
 #include "nest_types.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dictutils.h"
 
 namespace nest
 {
@@ -61,15 +58,15 @@ A device which receives message strings from MUSIC
 Description
 +++++++++++
 
-A music_message_in_proxy can be used to receive message strings from
+A ``music_message_in_proxy`` can be used to receive message strings from
 remote MUSIC applications in NEST.
 
 It uses the MUSIC library to receive message strings from other
-applications. The music_message_in_proxy represents an input port to
-which MUSIC can connect a message source. The music_message_in_proxy
+applications. The ``music_message_in_proxy`` represents an input port to
+which MUSIC can connect a message source. The ``music_message_in_proxy``
 can queried using GetStatus to retrieve the messages.
 
-To clear the data array, the parameter *n_messages* can be set to 0.
+To clear the data array, the parameter ``n_messages`` can be set to 0.
 
 This model is only available if NEST was compiled with MUSIC.
 
@@ -100,8 +97,8 @@ EndUserDocs */
 
 class MsgHandler : public MUSIC::MessageHandler
 {
-  ArrayDatum messages;                 //!< The buffer for incoming message
-  std::vector< double > message_times; //!< The buffer for incoming message
+  std::vector< std::string > messages;  //!< The buffer for incoming message
+  std::vector< double > message_times;  //!< The times for incoming message
 
   void
   operator()( double t, void* msg, size_t size )
@@ -157,7 +154,7 @@ public:
 
 private:
   void init_buffers_();
-  void calibrate();
+  void pre_run_hook();
 
   void
   update( Time const&, const long, const long )

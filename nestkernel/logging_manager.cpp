@@ -64,7 +64,7 @@ nest::LoggingManager::get_status( dictionary& dict )
 void
 nest::LoggingManager::register_logging_client( const deliver_logging_event_ptr callback )
 {
-  assert( callback != 0 );
+  assert( callback );
 
   client_callbacks_.push_back( callback );
 }

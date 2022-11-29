@@ -67,24 +67,26 @@ cdef extern from "node_collection.h":
         NodeCollectionIteratorDatum(const NodeCollectionIteratorDatum&)
 
 cdef extern from "parameter.h" namespace "nest":
+    cppclass ParameterPTR:
+        ParameterPTR()
     cppclass Parameter:
         Parameter()
-    shared_ptr[Parameter] multiply_parameter(const shared_ptr[Parameter] first, const shared_ptr[Parameter] second) except +
-    shared_ptr[Parameter] divide_parameter(const shared_ptr[Parameter] first, const shared_ptr[Parameter] second) except +
-    shared_ptr[Parameter] add_parameter(const shared_ptr[Parameter] first, const shared_ptr[Parameter] second) except +
-    shared_ptr[Parameter] subtract_parameter(const shared_ptr[Parameter] first, const shared_ptr[Parameter] second) except +
-    shared_ptr[Parameter] compare_parameter(const shared_ptr[Parameter] first, const shared_ptr[Parameter] second, const dictionary& d) except +
-    shared_ptr[Parameter] conditional_parameter(const shared_ptr[Parameter] condition, const shared_ptr[Parameter] if_true, const shared_ptr[Parameter] if_false) except +
-    shared_ptr[Parameter] min_parameter(const shared_ptr[Parameter] parameter, const double other) except +
-    shared_ptr[Parameter] max_parameter(const shared_ptr[Parameter] parameter, const double other) except +
-    shared_ptr[Parameter] redraw_parameter(const shared_ptr[Parameter] parameter, const double min, const double max) except +
-    shared_ptr[Parameter] exp_parameter(const shared_ptr[Parameter] parameter) except +
-    shared_ptr[Parameter] sin_parameter(const shared_ptr[Parameter] parameter) except +
-    shared_ptr[Parameter] cos_parameter(const shared_ptr[Parameter] parameter) except +
-    shared_ptr[Parameter] pow_parameter(const shared_ptr[Parameter] parameter, const double exponent) except +
+    ParameterPTR multiply_parameter(const ParameterPTR first, const ParameterPTR second) except +
+    ParameterPTR divide_parameter(const ParameterPTR first, const ParameterPTR second) except +
+    ParameterPTR add_parameter(const ParameterPTR first, const ParameterPTR second) except +
+    ParameterPTR subtract_parameter(const ParameterPTR first, const ParameterPTR second) except +
+    ParameterPTR compare_parameter(const ParameterPTR first, const ParameterPTR second, const dictionary& d) except +
+    ParameterPTR conditional_parameter(const ParameterPTR condition, const ParameterPTR if_true, const ParameterPTR if_false) except +
+    ParameterPTR min_parameter(const ParameterPTR parameter, const double other) except +
+    ParameterPTR max_parameter(const ParameterPTR parameter, const double other) except +
+    ParameterPTR redraw_parameter(const ParameterPTR parameter, const double min, const double max) except +
+    ParameterPTR exp_parameter(const ParameterPTR parameter) except +
+    ParameterPTR sin_parameter(const ParameterPTR parameter) except +
+    ParameterPTR cos_parameter(const ParameterPTR parameter) except +
+    ParameterPTR pow_parameter(const ParameterPTR parameter, const double exponent) except +
 
-    shared_ptr[Parameter] dimension_parameter(const shared_ptr[Parameter] x, const shared_ptr[Parameter] y) except +
-    shared_ptr[Parameter] dimension_parameter(const shared_ptr[Parameter] x, const shared_ptr[Parameter] y, const shared_ptr[Parameter] z) except +
+    ParameterPTR dimension_parameter(const ParameterPTR x, const ParameterPTR y) except +
+    ParameterPTR dimension_parameter(const ParameterPTR x, const ParameterPTR y, const ParameterPTR z) except +
 
 cdef extern from "nest.h" namespace "nest":
     void init_nest( int* argc, char** argv[] )
@@ -109,16 +111,14 @@ cdef extern from "nest.h" namespace "nest":
     string print_nodes_to_string()
     string pprint_to_string( NodeCollectionPTR nc ) except +
     size_t nc_size( NodeCollectionPTR nc ) except +
-    dictionary get_modeldict() except +
-    dictionary get_synapsedict() except +
-    dictionary get_connruledict() except +
     dictionary get_kernel_status() except +
     dictionary get_model_defaults( const string& ) except +
+    void set_model_defaults( const string&, const dictionary& ) except +
     NodeCollectionPTR get_nodes( const dictionary& params, const cbool local_only ) except +
     deque[ConnectionID] get_connections( const dictionary& dict ) except +
     void set_kernel_status( const dictionary& ) except +
     dictionary get_nc_status( NodeCollectionPTR nc ) except +
-    void set_nc_status( NodeCollectionPTR nc, dictionary& params ) except +
+    void set_nc_status( NodeCollectionPTR nc, vector[dictionary]& params ) except +
     vector[dictionary] get_connection_status(const deque[ConnectionID]&) except +
     void set_connection_status(const deque[ConnectionID]&, const dictionary&) except +
     void set_connection_status(const deque[ConnectionID]&, const vector[dictionary]&) except +
@@ -126,11 +126,19 @@ cdef extern from "nest.h" namespace "nest":
     void prepare() except +
     void run( const double& t ) except +
     void cleanup() except +
-    void copy_model( const string&, const string&, const dictionary& )
-    shared_ptr[Parameter] create_parameter( const dictionary& param_dict ) except +
-    double get_value( const shared_ptr[Parameter]& param ) except +
-    cbool is_spatial( const shared_ptr[Parameter]& param ) except +
-
+    void copy_model( const string&, const string&, const dictionary& ) except +
+    ParameterPTR create_parameter( const dictionary& param_dict ) except +
+    double get_value( const ParameterPTR param ) except +
+    cbool is_spatial( const ParameterPTR param ) except +
     NodeCollectionPTR node_collection_array_index(NodeCollectionPTR node_collection, const long* array, unsigned long n) except +
     NodeCollectionPTR node_collection_array_index(NodeCollectionPTR node_collection, const cbool* array, unsigned long n) except +
     void connect_arrays( long* sources, long* targets, double* weights, double* delays, vector[string]& p_keys, double* p_values, size_t n, string syn_model ) except +
+    vector[double] apply( const ParameterPTR param, const NodeCollectionPTR nc ) except +
+    vector[double] apply( const ParameterPTR param, const dictionary& positions ) except +
+
+
+# PYNEST-NG: Move these global functions to nest.h?
+cdef extern from "spatial.h" namespace "nest":
+    vector[vector[double]] get_position( NodeCollectionPTR layer_nc ) except +
+    vector[double] distance( const vector[ConnectionID]& conns ) except +
+    void connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const dictionary& dict ) except +

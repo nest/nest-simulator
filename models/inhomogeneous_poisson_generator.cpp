@@ -24,10 +24,8 @@
 
 // C++ includes:
 #include <cmath>
-#include <limits>
 
 // Includes from libnestutil:
-#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -35,14 +33,6 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
-
-// Includes from sli:
-#include "arraydatum.h"
-#include "booldatum.h"
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 
 /* ----------------------------------------------------------------
@@ -65,16 +55,16 @@ void
 nest::inhomogeneous_poisson_generator::Parameters_::get( dictionary& d ) const
 {
   const size_t n_rates = rate_times_.size();
-  std::vector< double >* times_ms = new std::vector< double >();
-  times_ms->reserve( n_rates );
+  std::vector< double > times_ms;
+  times_ms.reserve( n_rates );
   for ( size_t n = 0; n < n_rates; ++n )
   {
-    times_ms->push_back( rate_times_[ n ].get_ms() );
+    times_ms.push_back( rate_times_[ n ].get_ms() );
   }
 
-  d[ names::rate_times ] = DoubleVectorDatum( times_ms );
-  d[ names::rate_values ] = DoubleVectorDatum( new std::vector< double >( rate_values_ ) );
-  d[ names::allow_offgrid_times ] = BoolDatum( allow_offgrid_times_ );
+  d[ names::rate_times ] = times_ms;
+  d[ names::rate_values ] = rate_values_;
+  d[ names::allow_offgrid_times ] = allow_offgrid_times_;
 }
 
 void
@@ -227,9 +217,9 @@ nest::inhomogeneous_poisson_generator::init_buffers_()
 }
 
 void
-nest::inhomogeneous_poisson_generator::calibrate()
+nest::inhomogeneous_poisson_generator::pre_run_hook()
 {
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
   V_.h_ = Time::get_resolution().get_ms();
 }
 
@@ -320,8 +310,8 @@ nest::inhomogeneous_poisson_generator::set_data_from_stimulation_backend( std::v
       times_ms.push_back( rate_time_update[ n * 2 ] );
       rate_values.push_back( rate_time_update[ n * 2 + 1 ] );
     }
-    d[ names::rate_times ] = DoubleVectorDatum( times_ms );
-    d[ names::rate_values ] = DoubleVectorDatum( rate_values );
+    d[ names::rate_times ] = times_ms;
+    d[ names::rate_values ] = rate_values;
 
     ptmp.set( d, B_, this );
   }

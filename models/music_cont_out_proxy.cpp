@@ -31,17 +31,10 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
-#include "nest_datums.h"
 
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "logging.h"
-
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -99,15 +92,15 @@ nest::music_cont_out_proxy::Parameters_::get( dictionary& d ) const
   d[ names::port_name ] = port_name_;
   d[ names::interval ] = interval_.get_ms();
 
-  std::vector< std::string > ad_record_from;
+///  std::vector< std::string > record_from;
+///
+///  for ( size_t j = 0; j < record_from_.size(); ++j )
+///  {
+///    record_from.push_back( record_from_[ j ] );
+///  }
 
-  for ( size_t j = 0; j < record_from_.size(); ++j )
-  {
-    ad_record_from.push_back( record_from_[ j ] );
-  }
-
-  d[ names::record_from ] = ad_record_from;
-  d[ names::targets ] = new NodeCollectionDatum( targets_ );
+  d[ names::record_from ] = record_from_;
+  d[ names::targets ] = targets_;
 }
 
 void
@@ -122,7 +115,7 @@ nest::music_cont_out_proxy::Parameters_::set( const dictionary& d,
     d.update_value( names::port_name, port_name_ );
   }
 
-  if ( buffers.has_targets_ && ( d.known( names::interval ) || d.known( names::record_from ) ) )
+  if ( buffers.has_targets_ and ( d.known( names::interval ) || d.known( names::record_from ) ) )
   {
     throw BadProperty(
       "The recording interval and the list of properties to record "
@@ -148,17 +141,8 @@ nest::music_cont_out_proxy::Parameters_::set( const dictionary& d,
         "the simulation resolution" );
     }
   }
-  // extract data
-  if ( d.known( names::record_from ) )
-  {
-    record_from_.clear();
 
-    ArrayDatum ad = d.get< ArrayDatum >( names::record_from );
-    for ( Token* t = ad.begin(); t != ad.end(); ++t )
-    {
-      record_from_.push_back( getValue< std::string >( *t ) );
-    }
-  }
+  d.update_value( names::record_from, record_from_ );
 
   if ( d.known( names::targets ) )
   {
@@ -223,7 +207,7 @@ nest::music_cont_out_proxy::send_test_event( Node& target, rport receptor_type, 
   DataLoggingRequest e( P_.interval_, P_.record_from_ );
   e.set_sender( *this );
   port p = target.handles_test_event( e, receptor_type );
-  if ( p != invalid_port_ and not is_model_prototype() )
+  if ( p != invalid_port and not is_model_prototype() )
   {
     B_.has_targets_ = true;
   }
@@ -232,12 +216,12 @@ nest::music_cont_out_proxy::send_test_event( Node& target, rport receptor_type, 
 }
 
 void
-nest::music_cont_out_proxy::calibrate()
+nest::music_cont_out_proxy::pre_run_hook()
 {
   // only publish the output port once,
   if ( S_.published_ == false )
   {
-    assert( synmodel.known( "static_synapse" ) && "synapse 'static_synapse' not available" );
+    assert( synmodel.known( "static_synapse" ) and "synapse 'static_synapse' not available" );
 
     const index synmodel_id = synmodel.get< synindex >( "static_synapse" );
     std::vector< MUSIC::GlobalIndex > music_index_map;
@@ -301,7 +285,7 @@ nest::music_cont_out_proxy::calibrate()
 
     std::string msg =
       String::compose( "Mapping MUSIC continuous output port '%1' with width=%2.", P_.port_name_, S_.port_width_ );
-    LOG( M_INFO, "music_cont_out_proxy::calibrate()", msg.c_str() );
+    LOG( M_INFO, "music_cont_out_proxy::pre_run_hook()", msg.c_str() );
   }
 }
 
@@ -343,7 +327,7 @@ nest::music_cont_out_proxy::update( Time const& origin, const long from, const l
      the previous slice if we are called at the beginning of the
      slice. Otherwise, we do nothing.
    */
-  if ( origin.get_steps() == 0 || from != 0 )
+  if ( origin.get_steps() == 0 or from != 0 )
   {
     return;
   }

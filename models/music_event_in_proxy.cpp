@@ -121,7 +121,7 @@ nest::music_event_in_proxy::init_buffers_()
 }
 
 void
-nest::music_event_in_proxy::calibrate()
+nest::music_event_in_proxy::pre_run_hook()
 {
   // register my port and my channel at the scheduler
   if ( not S_.registered_ )

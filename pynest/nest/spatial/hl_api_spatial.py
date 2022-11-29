@@ -91,6 +91,7 @@ class DistanceParameter(Parameter):
 def __getattr__(name):
     if name == "distance":
         return DistanceParameter()
+    raise AttributeError(f"module {__name__} has no attribute {name}")
 
 
 class pos:

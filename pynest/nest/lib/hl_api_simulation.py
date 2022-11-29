@@ -48,6 +48,7 @@ __all__ = [
 @check_stack
 def Simulate(t):
     """Simulate the network for `t` milliseconds.
+
     `Simulate` triggers `Prepare`, `Run`, and `Cleanup` following this formula:
 
     Simulate(t): t' = t/m; Prepare(); for _ in range(m): Run(t'); Cleanup()
@@ -110,13 +111,13 @@ def Run(t):
 @check_stack
 def Prepare():
     """Calibrate the system before a `Run` call.
+
     `Prepare` is automatically triggered at beginning of call to `Simulate`:
 
     Simulate(t): t' = t/m; Prepare(); for _ in range(m): Run(t'); Cleanup()
 
     Call before the first `Run` call, or before calling `Run` after changing
     the system, calling `SetStatus` or `Cleanup`.
-
 
     See Also
     --------
@@ -130,13 +131,13 @@ def Prepare():
 @check_stack
 def Cleanup():
     """Cleans up resources after a `Run` call.
+
     `Cleanup` is automatically triggered at the end of call to `Simulate`:
 
     Simulate(t): t' = t/m; Prepare(); for _ in range(m): Run(t'); Cleanup()
 
     Closes state for a series of runs, such as flushing and closing files.
     A `Prepare` is needed after a `Cleanup` before any more calls to `Run`.
-
 
     See Also
     --------

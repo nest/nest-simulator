@@ -106,14 +106,12 @@ IAFPropagatorAlpha::evaluate( double h ) const
     const double P31 = gamma_ * exp_h_tau_syn * ( beta_ * expm1_h_tau - h );
     return std::make_tuple( P31, P32 );
   }
-  else
+
+  if ( std::isnan( exp_h_tau ) )
   {
-    if ( std::isnan( exp_h_tau ) )
-    {
-      // compute locally if not provided by evaluate_P32_()
-      exp_h_tau = std::exp( -h * inv_tau_m_ );
-    }
-    const double P31_singular = 0.5 * h * h * inv_c_m_ * exp_h_tau;
-    return std::make_tuple( P31_singular, P32 );
+    // compute locally if not provided by evaluate_P32_()
+    exp_h_tau = std::exp( -h * inv_tau_m_ );
   }
+  const double P31_singular = 0.5 * h * h * inv_c_m_ * exp_h_tau;
+  return std::make_tuple( P31_singular, P32 );
 }

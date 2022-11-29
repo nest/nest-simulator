@@ -22,4 +22,4 @@
 from .hl_api_spatial import *  # noqa
 
 # retrieve the DistanceParameter from the distance function
-distance = distance()
+#distance = distance()

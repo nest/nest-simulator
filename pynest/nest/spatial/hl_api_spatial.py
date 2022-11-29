@@ -22,6 +22,7 @@
 import numpy as np
 from ..lib.hl_api_types import CreateParameter, Parameter
 from ..ll_api import sli_func
+import functools
 
 __all__ = [
     'distance',
@@ -33,21 +34,22 @@ __all__ = [
 ]
 
 
+# Type annotation to hint at dynamic singleton of DistanceParameter()
+distance: "DistanceParameter"
+"""
+Object representing the distance between two nodes in space.
+
+If used alone, the DistanceObject represents simply the Euclidean
+distance between two nodes.
+
+Alternatively the distance in a single dimension may be chosen. Three
+properties are defined, x, y, and z, which represent the distance in
+their respective dimensions. Note that the distance parameter can only
+be used in contexts with two nodes, e.g. when connecting.
+"""
+
+
 class DistanceParameter(Parameter):
-    """
-    Object representing the distance between two nodes in space.
-
-    If used alone, the DistanceObject represents simply the Euclidean
-    distance between two nodes.
-
-    Alternatively the distance in a single dimension may be chosen. Three
-    properties are defined, x, y, and z, which represent the distance in
-    their respective dimensions. Note that the distance parameter can only
-    be used in contexts with two nodes, e.g. when connecting.
-    """
-
-    __distanceParam = None
-
     def __init__(self):
         distance_parameter = CreateParameter('distance', {})
         super().__init__(distance_parameter._datum)
@@ -84,17 +86,11 @@ class DistanceParameter(Parameter):
         """
         return CreateParameter('distance', {'dimension': dimension})
 
-    @staticmethod
-    def getInstance():
-        if DistanceParameter.__distanceParam:
-            return DistanceParameter.__distanceParam
-        else:
-            DistanceParameter.__distanceParam = DistanceParameter()
-            return DistanceParameter.__distanceParam
 
-
-def distance():
-    return DistanceParameter.getInstance()
+@functools.cache
+def __getattr__(name):
+    if name == "distance":
+        return DistanceParameter()
 
 
 class pos:

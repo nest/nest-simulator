@@ -183,15 +183,15 @@ void
 nest::MPIManager::initialize()
 {
 #ifndef HAVE_MPI
-  char* pmix_rank_set = std::getenv( "PMIX_RANK" );  // set by OpenMPI's launcher
-  char* pmi_rank_set = std::getenv( "PMI_RANK" );    // set by MPICH's launcher
+  char* pmix_rank_set = std::getenv( "PMIX_RANK" ); // set by OpenMPI's launcher
+  char* pmi_rank_set = std::getenv( "PMI_RANK" );   // set by MPICH's launcher
   if ( pmix_rank_set or pmi_rank_set )
   {
     LOG( M_FATAL,
       "MPIManager::initialize()",
       "You seem to be using NEST via an MPI launcher like mpirun, mpiexec or srun "
       "although NEST was not compiled with MPI support. Please see the NEST "
-      "documentation about parallel and distributed computing. Exiting.");
+      "documentation about parallel and distributed computing. Exiting." );
     std::exit( 127 );
   }
 #endif

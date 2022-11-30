@@ -625,6 +625,17 @@ get_connections( const dictionary& dict )
 }
 
 void
+disconnect( const std::deque< ConnectionID >& conns )
+{
+  for ( auto& conn : conns )
+  {
+    const auto target_node = kernel().node_manager.get_node_or_proxy( conn.get_target_node_id() );
+    kernel().sp_manager.disconnect(
+      conn.get_source_node_id(), target_node, conn.get_target_thread(), conn.get_synapse_model_id() );
+  }
+}
+
+void
 simulate( const double& t )
 {
   prepare();

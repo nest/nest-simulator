@@ -123,9 +123,16 @@ NestModule::commandstring() const
 //     return new ConstantParameter( *dd );
 //   }
 
-//   DictionaryDatum* dictd = dynamic_cast< DictionaryDatum* >( t.datum() );
-//   if ( dictd )
-//   {
+//  // If t is a IntegerDatum, create a ConstantParameter with this value
+//  IntegerDatum* id = dynamic_cast< IntegerDatum* >( t.datum() );
+//  if ( id )
+//  {
+//    return new ConstantParameter( static_cast< double >( *id ) );
+//  }
+//
+//  DictionaryDatum* dictd = dynamic_cast< DictionaryDatum* >( t.datum() );
+//  if ( dictd )
+//  {
 
 //     // The dictionary should only have a single key, which is the name of
 //     // the parameter type to create.
@@ -182,35 +189,19 @@ NestModule::create_mask( const dictionary& params )
   // else
   // {
 
-<<<<<<< HEAD
   //   DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( t.datum() );
-  //   if ( dd == 0 )
+  //   if ( not dd )
   //   {
   //     throw BadProperty( "Mask must be masktype or dictionary." );
   //   }
-
+  //
   //   // The dictionary should contain one key which is the name of the
   //   // mask type, and optionally the key 'anchor'. To find the unknown
   //   // mask type key, we must loop through all keys. The value for the
   //   // anchor key will be stored in the anchor_token variable.
   //   Token anchor_token;
   //   bool has_anchor = false;
-  //   AbstractMask* mask = 0;
-=======
-    DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( t.datum() );
-    if ( not dd )
-    {
-      throw BadProperty( "Mask must be masktype or dictionary." );
-    }
-
-    // The dictionary should contain one key which is the name of the
-    // mask type, and optionally the key 'anchor'. To find the unknown
-    // mask type key, we must loop through all keys. The value for the
-    // anchor key will be stored in the anchor_token variable.
-    Token anchor_token;
-    bool has_anchor = false;
-    AbstractMask* mask = nullptr;
->>>>>>> 7bdb9963b658708f2d82bb1d9eafe2acb95bbe1f
+  //   AbstractMask* mask = nullptr;
 
   //   for ( Dictionary::iterator dit = ( *dd )->begin(); dit != ( *dd )->end(); ++dit )
   //   {
@@ -224,23 +215,13 @@ NestModule::create_mask( const dictionary& params )
   //     else
   //     {
 
-<<<<<<< HEAD
-  //       if ( mask != 0 )
+  //       if ( mask )
   //       { // mask has already been defined
   //         throw BadProperty( "Mask definition dictionary contains extraneous items." );
   //       }
   //       mask = create_mask( dit->first, getValue< DictionaryDatum >( dit->second ) );
   //     }
   //   }
-=======
-        if ( mask )
-        { // mask has already been defined
-          throw BadProperty( "Mask definition dictionary contains extraneous items." );
-        }
-        mask = create_mask( dit->first, getValue< DictionaryDatum >( dit->second ) );
-      }
-    }
->>>>>>> 7bdb9963b658708f2d82bb1d9eafe2acb95bbe1f
 
   //   if ( has_anchor )
   //   {
@@ -610,12 +591,8 @@ NestModule::GetMetadata_gFunction::execute( SLIInterpreter* i ) const
   // return empty dict if NC does not have metadata
   if ( meta.get() )
   {
-<<<<<<< HEAD
     // meta->get_status( dict );
-=======
-    meta->get_status( dict );
-    slice_positions_if_sliced_nc( dict, nc );
->>>>>>> 7bdb9963b658708f2d82bb1d9eafe2acb95bbe1f
+    // slice_positions_if_sliced_nc( dict, nc );
 
     // dict[ names::network_size ] = nc->size();
   }
@@ -646,17 +623,10 @@ NestModule::SetDefaults_l_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-<<<<<<< HEAD
-  const Name name = getValue< Name >( i->OStack.pick( 1 ) );
+  // const std::string name = getValue< std::string >( i->OStack.pick( 1 ) );
   // DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
-
-  // kernel().model_manager.set_model_defaults( name, params );
-=======
-  const std::string name = getValue< std::string >( i->OStack.pick( 1 ) );
-  DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
-
-  set_model_defaults( name, params );
->>>>>>> 7bdb9963b658708f2d82bb1d9eafe2acb95bbe1f
+  // 
+  // set_model_defaults( name, params );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -674,11 +644,7 @@ NestModule::GetDefaults_lFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-<<<<<<< HEAD
-  // const Name modelname = getValue< Name >( i->OStack.pick( 0 ) );
-=======
-  const std::string modelname = getValue< std::string >( i->OStack.pick( 0 ) );
->>>>>>> 7bdb9963b658708f2d82bb1d9eafe2acb95bbe1f
+  // const std::string modelname = getValue< std::string >( i->OStack.pick( 0 ) );
 
   // DictionaryDatum dict = get_model_defaults( modelname );
 
@@ -934,6 +900,20 @@ NestModule::Disconnect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
   // kernel().sp_manager.disconnect( sources, targets, connectivity, synapse_params );
 
   i->OStack.pop( 4 );
+  i->EStack.pop();
+}
+
+// Disconnect for arraydatum
+void
+NestModule::Disconnect_aFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+
+  const ArrayDatum conns = getValue< ArrayDatum >( i->OStack.pick( 0 ) );
+
+  disconnect( conns );
+
+  i->OStack.pop( 1 );
   i->EStack.pop();
 }
 
@@ -2032,13 +2012,9 @@ NestModule::Apply_P_DFunction::execute( SLIInterpreter* i ) const
   // auto positions = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
   auto param = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
 
-<<<<<<< HEAD
-  // auto result = apply( param, positions );
-=======
   // ADL requires explicit namespace qualification to avoid confusion with std::apply() in C++17
   // See https://github.com/llvm/llvm-project/issues/53084#issuecomment-1007969489
   auto result = nest::apply( param, positions );
->>>>>>> 7bdb9963b658708f2d82bb1d9eafe2acb95bbe1f
 
   i->OStack.pop( 2 );
   // i->OStack.push( result );
@@ -3059,6 +3035,7 @@ NestModule::init( SLIInterpreter* i )
   //   i->createcommand( "EnableStructuralPlasticity", &enablestructuralplasticity_function );
   //   i->createcommand( "DisableStructuralPlasticity", &disablestructuralplasticity_function );
   //   i->createcommand( "Disconnect_g_g_D_D", &disconnect_g_g_D_Dfunction );
+  //   i->createcommand( "Disconnect_a", &disconnect_afunction );
 
   //   i->createcommand( "SetStdpEps", &setstdpeps_dfunction );
 

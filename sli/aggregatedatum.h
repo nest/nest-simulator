@@ -96,7 +96,7 @@ public:
     // to work.
 
     const AggregateDatum< C, slt >* ddc = dynamic_cast< AggregateDatum< C, slt >* >( const_cast< Datum* >( dat ) );
-    if ( ddc == NULL )
+    if ( not ddc )
     {
       return false;
     }

@@ -167,7 +167,6 @@ TypeTrie::getalternative( TypeTrie::TypeNode* pos, const Name& type )
   if ( pos->type == empty )
   {
     pos->type = type;
-    //    assert(pos->next == NULL);
     return pos;
   }
 
@@ -180,10 +179,8 @@ TypeTrie::getalternative( TypeTrie::TypeNode* pos, const Name& type )
 
     if ( pos->type == sli::any )
     {
-      // any must have been the tail and the previous
-      // if must have added an extra Node, thus the following
-      // assertion must hold:
-      // assert(pos->alt->alt == NULL);
+      // When entering this if, the previous if added an extra Node,
+      // thus pos->alt->alt will not be defined yet (nullptr)
 
       TypeNode* new_tail = pos->alt;
 
@@ -253,9 +250,9 @@ TypeTrie::insert_move( const TypeArray& a, Token& f )
   }
 
   /* Error conditions:
-     1. If pos->next!=NULL, the parameter list overlaps with
+     1. If pos->next != nullptr, the parameter list overlaps with
      an existing function definition.
-     2. If pos->alt != NULL, something undefined must have happened.
+     2. If pos->alt != nullptr, something undefined must have happened.
      This should be impossible.
   */
   if ( not pos->next )

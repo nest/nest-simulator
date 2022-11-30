@@ -47,10 +47,10 @@ class TestChangingTicBase(unittest.TestCase):
         # be the same after a change of those. We therefore exclude
         # them from the checks below.
         ignored_params = {
-          "correlation_detector": ["delta_tau"],
-          "correlomatrix_detector": ["delta_tau"],
-          "correlospinmatrix_detector": ["delta_tau"],
-          "noise_generator":  ["dt"],
+            "correlation_detector": ["delta_tau"],
+            "correlomatrix_detector": ["delta_tau"],
+            "correlospinmatrix_detector": ["delta_tau"],
+            "noise_generator": ["dt"],
         }
 
         # Generate a dictionary of reference values for each model.

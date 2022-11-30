@@ -39,7 +39,6 @@ ConnectionCreator::ConnectionCreator( dictionary dict )
   , delay_()
 {
   std::string connection_type;
-  long number_of_connections( -1 ); // overwritten by dict entry
 
   dict.update_value( names::connection_type, connection_type );
   dict.update_value( names::allow_autapses, allow_autapses_ );
@@ -47,14 +46,23 @@ ConnectionCreator::ConnectionCreator( dictionary dict )
   dict.update_value( names::allow_oversized_mask, allow_oversized_ );
 
   // Need to store number of connections in a temporary variable to be able to detect negative values.
-  if ( dict.update_value( names::number_of_connections, number_of_connections ) )
+  if ( dict.known( names::number_of_connections ) )
   {
-    if ( number_of_connections < 0 )
+    auto num_conn = dict.get< ParameterPTR >( names::number_of_connections );
+    if ( num_conn )
     {
-      throw BadProperty( "Number of connections cannot be less than zero." );
+      number_of_connections_ = num_conn;
     }
-    // We are sure that number of connections isn't negative, so it is safe to store it in a size_t.
-    number_of_connections_ = number_of_connections;
+    else
+    {
+      // Assume indegree is a scalar.
+      const long value = dict.get< long >( names::number_of_connections );
+      if ( value < 0 )
+      {
+        throw BadProperty( "Number of connections cannot be less than zero." );
+      }
+      number_of_connections_ = ParameterPTR( new ConstantParameter( value ) );
+    }
   }
   // TODO-PYNEST-NG: implement mask with dictionary
   // if ( dict.known( names::mask ) )
@@ -119,8 +127,7 @@ ConnectionCreator::ConnectionCreator( dictionary dict )
 
   if ( connection_type == names::pairwise_bernoulli_on_source )
   {
-
-    if ( number_of_connections >= 0 )
+    if ( dict.known( names::number_of_connections ) )
     {
       type_ = Fixed_indegree;
     }
@@ -131,8 +138,7 @@ ConnectionCreator::ConnectionCreator( dictionary dict )
   }
   else if ( connection_type == names::pairwise_bernoulli_on_target )
   {
-
-    if ( number_of_connections >= 0 )
+    if ( dict.known( names::number_of_connections ) )
     {
       type_ = Fixed_outdegree;
     }
@@ -148,31 +154,31 @@ ConnectionCreator::ConnectionCreator( dictionary dict )
 }
 
 void
-ConnectionCreator::extract_params_( dictionary& dict_datum, std::vector< dictionary >& params )
+ConnectionCreator::extract_params_( dictionary& dict, std::vector< dictionary >& params )
 {
-  if ( not dict_datum.known( names::synapse_model ) )
+  if ( not dict.known( names::synapse_model ) )
   {
-    dict_datum[ names::synapse_model ] = std::string("static_synapse");
+    dict[ names::synapse_model ] = std::string("static_synapse");
   }
-  const std::string syn_name = dict_datum.get< std::string >( names::synapse_model );
+  const std::string syn_name = dict.get< std::string >( names::synapse_model );
 
   // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
   const index synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
   synapse_model_.push_back( synapse_model_id );
 
   dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
-  if ( dict_datum.known( names::weight ) )
+  if ( dict.known( names::weight ) )
   {
-    weight_.push_back( create_parameter( dict_datum[ names::weight ] ) );
+    weight_.push_back( create_parameter( dict[ names::weight ] ) );
   }
   else
   {
     weight_.push_back( create_parameter( syn_defaults[ names::weight ] ) );
   }
 
-  if ( dict_datum.known( names::delay ) )
+  if ( dict.known( names::delay ) )
   {
-    delay_.push_back( create_parameter( dict_datum[ names::delay ] ) );
+    delay_.push_back( create_parameter( dict[ names::delay ] ) );
   }
   else
   {
@@ -189,10 +195,10 @@ ConnectionCreator::extract_params_( dictionary& dict_datum, std::vector< diction
   dictionary syn_dict;
   // Using a lambda function here instead of updateValue because updateValue causes
   // problems when setting a value to a dictionary-entry in syn_dict.
-  auto copy_long_if_known = [&syn_dict, &dict_datum]( const std::string& name ) -> void {
-    if ( dict_datum.known( name ) )
+  auto copy_long_if_known = [&syn_dict, &dict]( const std::string& name ) -> void {
+    if ( dict.known( name ) )
     {
-      syn_dict[ name ] = dict_datum.get< long >( name );
+      syn_dict[ name ] = dict.get< long >( name );
     }
   };
   copy_long_if_known( names::synapse_label );

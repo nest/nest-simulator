@@ -96,11 +96,6 @@ set( CMAKE_INSTALL_DATADIR "share/${PROJECT_NAME}" CACHE STRING "Relative direct
 ##################           Find utility programs            ##################
 ################################################################################
 
-# needed for pynest test suite
-if ( ${with-python} STREQUAL "ON" )
-  find_program( NOSETESTS NAMES nosetests )
-endif ()
-
 # needed for target doc and fulldoc
 find_package( Doxygen )
 find_program( SED NAMES sed gsed )

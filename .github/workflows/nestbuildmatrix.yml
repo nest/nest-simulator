@@ -296,7 +296,7 @@ jobs:
             build/userdoc/html/
 
   static_checks:
-    if: ${{ never() }}
+    if: false
     env:
       xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
     runs-on: "ubuntu-20.04"
@@ -578,7 +578,7 @@ jobs:
             build/reports/**
 
   build_wheel:
-    if: ${{ never() }}
+    if: false
     runs-on: "ubuntu-20.04"
     needs: [pytest]
     steps:
@@ -588,7 +588,7 @@ jobs:
           fetch-depth: 0
 
   build_conda:
-    if: ${{ never() }}
+    if: false
     uses: conda-forge/nest-simulator-feedstock/.github/workflows/nest_trigger.yml@f9a89c898b4481931fe6b587c05547b42e758e46
     with:
       # see https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
@@ -596,7 +596,7 @@ jobs:
       commit_hash: ${{ github.sha }}
 
   build_docker:
-    if: ${{ never() }}
+    if: false
     runs-on: "ubuntu-20.04"
     needs: [build_wheel, sphinx-rtd]
     steps:

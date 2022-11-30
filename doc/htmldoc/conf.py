@@ -354,7 +354,7 @@ try:
     urlretrieve(patch_url, patch_file)
     print(f"apply {patch_file}")
     patch = subprocess.run('patch -p3', stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    (stdout, stderr) = patch.communicate(open(patch_file, 'r')))
+    (stdout, stderr) = patch.communicate(open(patch_file, 'r'))
 
     print("patch result:")
     print(result)

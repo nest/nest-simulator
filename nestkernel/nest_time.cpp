@@ -134,25 +134,6 @@ Time::reset_resolution()
   LIM_MIN = -max;
 }
 
-// double
-// Time::ms::fromtoken( const Token& t )
-// {
-//   IntegerDatum* idat = dynamic_cast< IntegerDatum* >( t.datum() );
-//   if ( idat )
-//   {
-//     return static_cast< double >( idat->get() );
-//   }
-
-//   DoubleDatum* ddat = dynamic_cast< DoubleDatum* >( t.datum() );
-//   if ( ddat )
-//   {
-//     return ddat->get();
-//   }
-
-//   throw TypeMismatch( IntegerDatum().gettypename().toString() + " or " + DoubleDatum().gettypename().toString(),
-//     t.datum()->gettypename().toString() );
-// }
-
 tic_t
 Time::fromstamp( Time::ms_stamp t )
 {

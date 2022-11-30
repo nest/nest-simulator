@@ -315,7 +315,6 @@ nest::sinusoidal_poisson_generator::set_data_from_stimulation_backend( std::vect
         "[rate, frequency, phase, amplitude, individual_spike_trains]." );
     }
     dictionary d;
-    ( new Dictionary );
     d[ names::rate ] = input_param[ 0 ];
     d[ names::frequency ] = input_param[ 1 ];
     d[ names::phase ] = input_param[ 2 ];

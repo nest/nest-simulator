@@ -43,9 +43,6 @@
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
 
 nest::RecordablesMap< nest::hh_cond_beta_gap_traub > nest::hh_cond_beta_gap_traub::recordablesMap_;
 

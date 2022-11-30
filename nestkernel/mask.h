@@ -23,15 +23,17 @@
 #ifndef MASK_H
 #define MASK_H
 
+// C++ includes:
+#include <memory>
+
 // Includes from libnestutil:
+#include "dictionary.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "nest_names.h"
 #include "nest_types.h"
-#include "nestmodule.h"
-
 
 // Includes from spatial:
 #include "position.h"
@@ -251,7 +253,7 @@ public:
   /**
    * @returns the name of this mask type.
    */
-  static Name get_name();
+  static std::string get_name();
 
 protected:
   /**
@@ -352,7 +354,7 @@ public:
   /**
    * @returns the name of this mask type.
    */
-  static Name get_name();
+  static std::string get_name();
 
 protected:
   Position< D > center_;
@@ -457,7 +459,7 @@ public:
   /**
    * @returns the name of this mask type.
    */
-  static Name get_name();
+  static std::string get_name();
 
 private:
   void create_bbox_();
@@ -728,14 +730,14 @@ protected:
 };
 
 template <>
-inline Name
+inline std::string
 BoxMask< 2 >::get_name()
 {
   return names::rectangular;
 }
 
 template <>
-inline Name
+inline std::string
 BoxMask< 3 >::get_name()
 {
   return names::box;
@@ -889,14 +891,14 @@ inline BoxMask< D >::BoxMask( const Position< D >& lower_left,
 }
 
 template <>
-inline Name
+inline std::string
 BallMask< 2 >::get_name()
 {
   return names::circular;
 }
 
 template <>
-inline Name
+inline std::string
 BallMask< 3 >::get_name()
 {
   return names::spherical;
@@ -920,14 +922,14 @@ BallMask< D >::BallMask( const dictionary& d )
 }
 
 template <>
-inline Name
+inline std::string
 EllipseMask< 2 >::get_name()
 {
   return names::elliptical;
 }
 
 template <>
-inline Name
+inline std::string
 EllipseMask< 3 >::get_name()
 {
   return names::ellipsoidal;

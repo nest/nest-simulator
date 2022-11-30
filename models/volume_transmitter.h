@@ -30,9 +30,6 @@
 #include "ring_buffer.h"
 #include "spikecounter.h"
 
-// Includes from sli:
-#include "namedatum.h"
-
 
 namespace nest
 {

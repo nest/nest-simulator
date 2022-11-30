@@ -23,22 +23,16 @@
 #include "gif_psc_exp_multisynapse.h"
 
 // Includes from libnestutil:
+#include "compose.hpp"
 #include "dict_util.h"
 #include "numerics.h"
+#include "propagator_stability.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
-
-#include "compose.hpp"
-#include "propagator_stability.h"
 
 namespace nest
 {

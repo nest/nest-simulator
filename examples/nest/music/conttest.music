@@ -1,9 +1,0 @@
-stoptime=1.0
-[from]
-  np=1
-  binary=constsource
-[to]
-  np=1
-  binary=./conttest.py
-
-from.contdata -> to.contdata [10]

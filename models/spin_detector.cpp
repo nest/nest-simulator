@@ -30,9 +30,6 @@
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
 
 nest::spin_detector::spin_detector()
   : last_in_node_id_( 0 )

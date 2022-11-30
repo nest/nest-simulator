@@ -166,7 +166,7 @@ public:
   virtual void dump_connections( std::ostream& out,
     NodeCollectionPTR node_collection,
     AbstractLayerPTR target_layer,
-    const Token& syn_model ) = 0;
+    const std::string& syn_model ) = 0;
 
   void set_node_collection( NodeCollectionPTR );
   NodeCollectionPTR get_node_collection();
@@ -404,7 +404,7 @@ public:
   void dump_connections( std::ostream& out,
     NodeCollectionPTR node_collection,
     AbstractLayerPTR target_layer,
-    const Token& syn_model ) override;
+    const std::string& syn_model ) override;
 
 protected:
   /**

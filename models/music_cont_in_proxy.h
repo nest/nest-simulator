@@ -41,8 +41,6 @@
 #include "device_node.h"
 #include "nest_types.h"
 
-// Includes from sli:
-#include "arraydatum.h"
 
 namespace nest
 {

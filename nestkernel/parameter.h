@@ -28,9 +28,10 @@
 #include <limits>
 
 // Includes from nestkernel:
+#include "generic_factory.h"
 #include "nest_names.h"
 #include "nest_types.h"
-#include "nestmodule.h"
+#include "node.h"
 #include "node_collection.h"
 #include "random_generators.h"
 

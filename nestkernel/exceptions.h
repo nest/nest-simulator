@@ -838,6 +838,61 @@ private:
 };
 
 /**
+ * Throw if an existing name is attempted to be redefined.
+ * This is relevant mainly when a newly loaded module attempts to
+ * redefine a model, synapse or function name.
+ * @ingroup KernelExceptions
+ */
+class NamingConflict : public KernelException
+{
+public:
+  NamingConflict( const std::string& msg )
+    : KernelException( "NamingConflict" )
+    , msg_( msg )
+  {
+  }
+
+  const char* what() const noexcept override;
+
+private:
+  std::string msg_;
+};
+
+/**
+ * Exception to be thrown if a given array has the wrong size.
+ * @ingroup KernelExceptions
+ */
+class RangeCheck : public KernelException
+{
+public:
+  RangeCheck( int size = 0 )
+    : KernelException( "RangeCheck" )
+    , size_( size )
+  {
+  }
+
+  const char* what() const noexcept override;
+
+private:
+  int size_;
+};
+
+/**
+ * Exception to be thrown if an error occured in an I/O operation.
+ * @ingroup KernelExceptions
+ */
+class IOError : public KernelException
+{
+public:
+  IOError()
+    : KernelException( "IOError" )
+  {
+  }
+
+  const char* what() const noexcept override;
+};
+
+/**
  * Exception to be thrown if when trying to delete an entry from
  * DynamicRecordablesMap that does not exist.
  * @ingroup KernelExceptions

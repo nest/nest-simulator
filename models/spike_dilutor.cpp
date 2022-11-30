@@ -30,9 +30,6 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter

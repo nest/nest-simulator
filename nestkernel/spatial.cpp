@@ -34,7 +34,6 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "nest.h"
-#include "nestmodule.h"
 #include "node.h"
 
 // Includes from spatial:
@@ -531,7 +530,7 @@ dump_layer_nodes( NodeCollectionPTR layer_nc, std::ostream& out )
 }
 
 void
-dump_layer_connections( const Token& syn_model,
+dump_layer_connections( const std::string& syn_model,
   NodeCollectionPTR source_layer_nc,
   NodeCollectionPTR target_layer_nc,
   std::ostream& out )

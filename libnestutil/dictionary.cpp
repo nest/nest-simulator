@@ -23,11 +23,13 @@
 #include <algorithm>
 #include <boost/any.hpp>
 #include <iostream>
+#include <iomanip>
 #include <map>
 #include <string>
 #include <vector>
 
 #include "dictionary.h"
+
 #include "kernel_manager.h"
 #include "parameter.h"
 
@@ -158,7 +160,7 @@ operator<<( std::ostream& os, const dictionary& dict )
     }
     else
     {
-      throw TypeMismatch( "Type is not known" );
+      throw nest::TypeMismatch( "Type is not known" );
     }
     const auto s = value_stream.str();
     const auto post_padding = max_key_length - kv.first.length() + 5;

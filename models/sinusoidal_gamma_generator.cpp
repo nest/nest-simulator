@@ -378,7 +378,6 @@ nest::sinusoidal_gamma_generator::set_data_from_stimulation_backend( std::vector
         "[frequency, phase, order, rate, amplitude, individual_spike_trains]." );
     }
     dictionary d;
-    ( new Dictionary );
     d[ names::frequency ] = input_param[ 0 ];
     d[ names::phase ] = input_param[ 1 ];
     d[ names::order ] = input_param[ 2 ];

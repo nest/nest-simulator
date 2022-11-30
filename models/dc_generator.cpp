@@ -30,11 +30,6 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-
 namespace nest
 {
 RecordablesMap< dc_generator > dc_generator::recordablesMap_;

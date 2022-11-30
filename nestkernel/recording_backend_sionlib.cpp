@@ -32,9 +32,6 @@
 // Includes from libnestutil:
 #include "compose.hpp"
 
-// Includes from nest:
-#include "../nest/neststartup.h"
-
 // Includes from nestkernel:
 #include "recording_device.h"
 #include "vp_manager_impl.h"

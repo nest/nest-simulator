@@ -37,8 +37,6 @@
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {

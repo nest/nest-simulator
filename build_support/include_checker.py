@@ -55,9 +55,6 @@ If something is wrong, it will print the suggestion:
 
     // Generated includes:
     #include "config.h"
-
-    // Includes from sli:
-    #include "datum.h"
 """
 
 # We would like to have files that are not actually provided by

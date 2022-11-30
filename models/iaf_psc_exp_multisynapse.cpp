@@ -17,11 +17,9 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 #include "iaf_psc_exp_multisynapse.h"
-
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -33,9 +31,6 @@
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
 
 /* ----------------------------------------------------------------
  * Recordables map

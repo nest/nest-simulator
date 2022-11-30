@@ -28,11 +28,9 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
-#include "nest_names.h"
-#include "nestmodule.h"
-
-// Includes from spatial:
 #include "mask.h"
+#include "nest_names.h"
+#include "ntree.h"
 #include "position.h"
 
 namespace nest

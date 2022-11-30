@@ -27,6 +27,7 @@
 
 // C++ includes:
 #include <limits>
+#include <iomanip>
 #include <vector>
 
 // Includes from libnestutil:

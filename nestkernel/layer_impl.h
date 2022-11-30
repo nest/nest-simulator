@@ -298,7 +298,7 @@ void
 Layer< D >::dump_connections( std::ostream& out,
   NodeCollectionPTR node_collection,
   AbstractLayerPTR target_layer,
-  const Token& syn_model )
+  const std::string& syn_model )
 {
   std::vector< std::pair< Position< D >, index > >* src_vec = get_global_positions_vector( node_collection );
 

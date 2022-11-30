@@ -222,11 +222,8 @@ add_subdirectory( doc )
 add_subdirectory( bin )
 add_subdirectory( examples )
 add_subdirectory( build_support )
-add_subdirectory( lib )
 add_subdirectory( libnestutil )
 add_subdirectory( models )
-add_subdirectory( sli )
-add_subdirectory( nest )
 add_subdirectory( nestkernel )
 add_subdirectory( thirdparty )
 add_subdirectory( testsuite )
@@ -274,7 +271,6 @@ endforeach ()
 # libraries required to link extension modules
 set( MODULE_LINK_LIBS
   "-lnestutil"
-  "-lsli"
   "-lnestkernel"
   "${OpenMP_CXX_FLAGS}"
   "${LTDL_LIBRARIES}"

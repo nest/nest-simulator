@@ -36,8 +36,6 @@
 #include "ring_buffer_impl.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 nest::RecordablesMap< nest::iaf_psc_alpha > nest::iaf_psc_alpha::recordablesMap_;
 

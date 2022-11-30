@@ -24,6 +24,7 @@
 
 // C++ includes:
 #include <set>
+#include <iomanip>
 
 // Includes from libnestutil:
 #include "compose.hpp"

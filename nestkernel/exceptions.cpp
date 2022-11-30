@@ -321,6 +321,35 @@ nest::NumericalInstability::what() const noexcept
 }
 
 const char*
+nest::NamingConflict::what() const noexcept
+{
+  return msg_.c_str();
+}
+
+const char*
+nest::RangeCheck::what() const noexcept
+{
+  if ( size_ > 0 )
+  {
+    std::ostringstream out;
+    out << "Array with length " << size_ << " expected.";
+    return out.str().c_str();
+  }
+  else
+  {
+    // TODO-PYNEST-NG: Fix usage, the comment below has been there already
+    // Empty message. Added due to incorrect use of RangeCheck in nest.cpp
+    return "";
+  }
+}
+
+const char*
+nest::IOError::what() const noexcept
+{
+  return std::string().c_str();
+}
+
+const char*
 nest::KeyError::what() const noexcept
 {
   std::ostringstream msg;

@@ -29,9 +29,6 @@
 // C++ includes:
 #include <string>
 
-// Includes from sli:
-#include "name.h"
-
 namespace nest
 {
 

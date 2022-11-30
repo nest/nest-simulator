@@ -45,9 +45,6 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-// Includes from sli:
-#include "dictdatum.h"
-#include "name.h"
 
 namespace nest
 {

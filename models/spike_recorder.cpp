@@ -30,9 +30,6 @@
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
 
 nest::spike_recorder::spike_recorder()
   : RecordingDevice()

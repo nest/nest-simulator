@@ -39,8 +39,7 @@
 #include "nest_types.h"
 #include "node.h"
 
-// Includes from sli:
-#include "arraydatum.h"
+
 
 /* BeginUserDocs: device, rate, MUSIC
 

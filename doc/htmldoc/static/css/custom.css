@@ -76,15 +76,6 @@ section#kernel-attributes dl.py.class dd dl.py.attribute dd dl.field-list.simple
   display: none;
 }
 
-.md-search__input {
-	width: 100%;
-	height: 1.8rem;
-	padding-left: 2.2rem;
-	transition: background-color .25s cubic-bezier(.1,.7,.1,1),color .25s cubic-bezier(.1,.7,.1,1);
-	background-color: rgba(156, 101, 101, 0.26);
-	color: inherit;
-	font-size: .8rem;
-}
 
 /**************************************************************************************
  Settings for overriding material design theme 

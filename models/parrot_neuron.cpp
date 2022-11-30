@@ -23,9 +23,6 @@
 
 #include "parrot_neuron.h"
 
-// C++ includes:
-#include <limits>
-
 // Includes from libnestutil:
 #include "numerics.h"
 
@@ -35,10 +32,7 @@
 #include "kernel_manager.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 namespace nest
 {

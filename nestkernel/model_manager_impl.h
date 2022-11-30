@@ -67,8 +67,7 @@ ModelManager::register_connection_model( const std::string& name, const Register
     enumFlagSet( flags, RegisterConnectionModelFlags::REQUIRES_URBANCZIK_ARCHIVING ) );
   register_connection_model_( cf );
 
-  // register the "hpc" version with the same parameters but a different target
-  // identifier
+  // register the "hpc" version with the same parameters but a different target identifier
   if ( enumFlagSet( flags, RegisterConnectionModelFlags::REGISTER_HPC ) )
   {
     cf = new GenericConnectorModel< ConnectionT< TargetIdentifierIndex > >( name + "_hpc",
@@ -81,8 +80,7 @@ ModelManager::register_connection_model( const std::string& name, const Register
     register_connection_model_( cf );
   }
 
-  // register the "lbl" (labeled) version with the same parameters but a
-  // different connection type
+  // register the "lbl" (labeled) version with the same parameters but a different connection type
   if ( enumFlagSet( flags, RegisterConnectionModelFlags::REGISTER_LBL ) )
   {
     cf = new GenericConnectorModel< ConnectionLabel< ConnectionT< TargetIdentifierPtrRport > > >( name + "_lbl",
@@ -108,19 +106,7 @@ ModelManager::register_secondary_connection_model( const std::string& name, cons
     enumFlagSet( flags, RegisterConnectionModelFlags::REQUIRES_SYMMETRIC ),
     enumFlagSet( flags, RegisterConnectionModelFlags::SUPPORTS_WFR ) );
 
-  synindex syn_id = register_connection_model_( cm );
-
-  // idea: save *cm in data structure
-  // otherwise when number of threads is increased no way to get further
-  // elements
-  if ( secondary_connector_models_.size() < syn_id + ( unsigned int ) 1 )
-  {
-    secondary_connector_models_.resize( syn_id + 1, nullptr );
-  }
-
-  secondary_connector_models_[ syn_id ] = cm;
-
-  ConnectionT< TargetIdentifierPtrRport >::EventType::set_syn_id( syn_id );
+  register_connection_model_( cm );
 
   // create labeled secondary event connection model
   cm = new GenericSecondaryConnectorModel< ConnectionLabel< ConnectionT< TargetIdentifierPtrRport > > >( name + "_lbl",
@@ -128,19 +114,7 @@ ModelManager::register_secondary_connection_model( const std::string& name, cons
     enumFlagSet( flags, RegisterConnectionModelFlags::REQUIRES_SYMMETRIC ),
     enumFlagSet( flags, RegisterConnectionModelFlags::SUPPORTS_WFR ) );
 
-  syn_id = register_connection_model_( cm );
-
-  // idea: save *cm in data structure
-  // otherwise when number of threads is increased no way to get further
-  // elements
-  if ( secondary_connector_models_.size() < syn_id + ( unsigned int ) 1 )
-  {
-    secondary_connector_models_.resize( syn_id + 1, nullptr );
-  }
-
-  secondary_connector_models_[ syn_id ] = cm;
-
-  ConnectionT< TargetIdentifierPtrRport >::EventType::set_syn_id( syn_id );
+  register_connection_model_( cm );
 }
 
 inline Node*

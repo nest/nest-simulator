@@ -29,6 +29,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -40,9 +41,6 @@
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
-#include "lockptrdatum.h"
 
 using namespace nest;
 
@@ -224,7 +222,7 @@ nest::glif_cond::Parameters_::get( DictionaryDatum& d ) const
 }
 
 double
-nest::glif_cond::Parameters_::set( const DictionaryDatum& d )
+nest::glif_cond::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
@@ -232,7 +230,7 @@ nest::glif_cond::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::E_L, E_L_ );
   const double delta_EL = E_L_ - ELold;
 
-  if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
+  if ( updateValueParam< double >( d, names::V_reset, V_reset_, node ) )
   {
     V_reset_ -= E_L_;
   }
@@ -241,7 +239,7 @@ nest::glif_cond::Parameters_::set( const DictionaryDatum& d )
     V_reset_ -= delta_EL;
   }
 
-  if ( updateValue< double >( d, names::V_th, th_inf_ ) )
+  if ( updateValueParam< double >( d, names::V_th, th_inf_, node ) )
   {
     th_inf_ -= E_L_;
   }
@@ -250,17 +248,17 @@ nest::glif_cond::Parameters_::set( const DictionaryDatum& d )
     th_inf_ -= delta_EL;
   }
 
-  updateValue< double >( d, names::g_m, G_ );
-  updateValue< double >( d, names::C_m, C_m_ );
-  updateValue< double >( d, names::t_ref, t_ref_ );
+  updateValueParam< double >( d, names::g_m, G_, node );
+  updateValueParam< double >( d, names::C_m, C_m_, node );
+  updateValueParam< double >( d, names::t_ref, t_ref_, node );
 
-  updateValue< double >( d, names::th_spike_add, th_spike_add_ );
-  updateValue< double >( d, names::th_spike_decay, th_spike_decay_ );
-  updateValue< double >( d, names::voltage_reset_fraction, voltage_reset_fraction_ );
-  updateValue< double >( d, names::voltage_reset_add, voltage_reset_add_ );
+  updateValueParam< double >( d, names::th_spike_add, th_spike_add_, node );
+  updateValueParam< double >( d, names::th_spike_decay, th_spike_decay_, node );
+  updateValueParam< double >( d, names::voltage_reset_fraction, voltage_reset_fraction_, node );
+  updateValueParam< double >( d, names::voltage_reset_add, voltage_reset_add_, node );
 
-  updateValue< double >( d, names::th_voltage_index, th_voltage_index_ );
-  updateValue< double >( d, names::th_voltage_decay, th_voltage_decay_ );
+  updateValueParam< double >( d, names::th_voltage_index, th_voltage_index_, node );
+  updateValueParam< double >( d, names::th_voltage_decay, th_voltage_decay_, node );
 
   updateValue< std::vector< double > >( d, names::asc_init, asc_init_ );
   updateValue< std::vector< double > >( d, names::asc_decay, asc_decay_ );
@@ -415,9 +413,9 @@ nest::glif_cond::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 }
 
 void
-nest::glif_cond::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
+nest::glif_cond::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  if ( updateValue< double >( d, names::V_m, y_[ V_M ] ) )
+  if ( updateValueParam< double >( d, names::V_m, y_[ V_M ], node ) )
   {
     y_[ V_M ] -= p.E_L_;
   }
@@ -442,12 +440,13 @@ nest::glif_cond::State_::set( const DictionaryDatum& d, const Parameters_& p, do
     }
   }
 
-  if ( updateValue< double >( d, names::threshold_spike, threshold_spike_ ) and not p.has_theta_spike_ )
+  if ( updateValueParam< double >( d, names::threshold_spike, threshold_spike_, node ) and not p.has_theta_spike_ )
   {
     throw BadProperty( "Threshold spike component is not supported or settable in the current model mechanisms." );
   }
 
-  if ( updateValue< double >( d, names::threshold_voltage, threshold_voltage_ ) and not p.has_theta_voltage_ )
+  if ( updateValueParam< double >( d, names::threshold_voltage, threshold_voltage_, node )
+    and not p.has_theta_voltage_ )
   {
     throw BadProperty( "Threshold voltage component is not supported or settable in the current model mechanisms." );
   }

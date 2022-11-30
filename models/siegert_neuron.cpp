@@ -27,9 +27,6 @@
 // C++ includes:
 #include <cmath> // in case we need isnan() // fabs
 #include <cstdio>
-#include <iomanip>
-#include <iostream>
-#include <limits>
 #include <string>
 
 // Includes from libnestutil:
@@ -44,8 +41,6 @@
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 struct my_params
 {

@@ -329,6 +329,12 @@ public:
     void execute( SLIInterpreter* ) const override;
   } disconnect_g_g_D_Dfunction;
 
+  class Disconnect_aFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } disconnect_afunction;
+
   class Connect_g_g_D_DFunction : public SLIFunction
   {
   public:

@@ -38,7 +38,6 @@
 #include "integerdatum.h"
 #include "namedatum.h"
 #include "stringdatum.h"
-#include "tokenutils.h"
 
 /** @BeginDocumentation
 Name: allocations - Return the number of array reallocations.

@@ -28,7 +28,6 @@
 
 // C includes:
 #include <sys/resource.h>
-#include <sys/time.h>
 #include <sys/times.h>
 #include <time.h>
 #include <unistd.h>
@@ -47,7 +46,6 @@
 #include "arraydatum.h"
 #include "booldatum.h"
 #include "dictstack.h"
-#include "doubledatum.h"
 #include "functiondatum.h"
 #include "integerdatum.h"
 #include "iostreamdatum.h"
@@ -1429,8 +1427,8 @@ SwitchdefaultFunction::execute( SLIInterpreter* i ) const
     throw TypeMismatch( "At least 1 argument.", "Nothing." );
   }
 
-  if ( depth > 1 and i->OStack.pick( 1 ) != mark_token // default action
-    and i->OStack.pick( 0 ) != mark_token )            // is not the only one
+  // default action is not the only one
+  if ( depth > 1 and i->OStack.pick( 1 ) != mark_token and i->OStack.pick( 0 ) != mark_token )
   {
     i->OStack.pop(); // thus pop it!
   }

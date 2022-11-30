@@ -26,8 +26,6 @@
 
 #include "slidict.h"
 
-// C++ includes:
-#include <typeinfo>
 
 // Includes from sli:
 #include "arraydatum.h"

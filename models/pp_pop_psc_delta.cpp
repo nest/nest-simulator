@@ -23,7 +23,6 @@
 #include "pp_pop_psc_delta.h"
 
 // C++ includes:
-#include <algorithm>
 #include <limits>
 
 // Includes from libnestutil:
@@ -39,8 +38,6 @@
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 namespace nest
 {

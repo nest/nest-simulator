@@ -27,25 +27,19 @@
 #include "sli_io.h"
 
 // C++ includes:
-#include <cstdio>
-#include <fstream>
 #include <iomanip>
 #include <iostream>
-#include <typeinfo>
 
 // Generated includes:
 #include "config.h"
 
 // Includes from sli:
-#include "arraydatum.h"
 #include "dictstack.h"
 #include "doubledatum.h"
 #include "fdstream.h"
 #include "integerdatum.h"
 #include "iostreamdatum.h"
-#include "namedatum.h"
 #include "stringdatum.h"
-#include "tokenutils.h"
 
 // sstream has functions std::?stringstream
 // strstream has functions std::?strstream
@@ -469,7 +463,7 @@ OstrstreamFunction::execute( SLIInterpreter* i ) const
 #else
   std::ostrstream* out = new std::ostrstream();
 #endif
-  assert( out != NULL );
+  assert( out );
 
   if ( out->good() )
   {
@@ -498,7 +492,7 @@ StrFunction::execute( SLIInterpreter* i ) const
 
   OstreamDatum* ostreamdatum = dynamic_cast< OstreamDatum* >( i->OStack.top().datum() );
 
-  if ( ostreamdatum == NULL )
+  if ( not ostreamdatum )
   {
     OstreamDatum const d;
     Token t = i->OStack.top();
@@ -510,10 +504,10 @@ StrFunction::execute( SLIInterpreter* i ) const
 #else
   std::ostrstream* out = dynamic_cast< std::ostrstream* >( ostreamdatum->get() );
 #endif
-  assert( out != NULL );
+  assert( out );
   ostreamdatum->unlock();
 
-  if ( out != NULL )
+  if ( out )
   {
     if ( out->good() )
     {

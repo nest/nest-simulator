@@ -30,9 +30,6 @@
 #include <cmath>
 #include <vector>
 
-// Generated includes:
-#include "config.h"
-
 // Includes from libnestutil:
 #include "numerics.h"
 
@@ -1613,26 +1610,21 @@ void
 SLIArrayModule::IMapThreadFunction::execute( SLIInterpreter* i ) const
 {
   ProcedureDatum* procd = static_cast< ProcedureDatum* >( i->EStack.pick( 1 ).datum() );
-  //    assert(procd != NULL);
 
   size_t proclimit = procd->size();
 
   IntegerDatum* argcountd = static_cast< IntegerDatum* >( i->EStack.pick( 2 ).datum() );
-  //  assert(argcountd != NULL);
 
   size_t argcount = argcountd->get();
 
   IntegerDatum* proccountd = static_cast< IntegerDatum* >( i->EStack.pick( 3 ).datum() );
-  // assert(proccountd != NULL);
+
   size_t proccount = proccountd->get();
 
   ArrayDatum* sarray = static_cast< ArrayDatum* >( i->EStack.pick( 4 ).datum() );
-  // assert(sarray != NULL);
   ArrayDatum* tarray = static_cast< ArrayDatum* >( i->EStack.pick( 5 ).datum() );
-  // assert(tarray != NULL);
 
   IntegerDatum* limitd = static_cast< IntegerDatum* >( i->EStack.pick( 6 ).datum() );
-  // assert(limitd != NULL);
 
   size_t args = sarray->size(); // number of argument arrays
   size_t limit = limitd->get(); // number of arguments per array
@@ -2073,7 +2065,7 @@ SLIArrayModule::AreaFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* a_y_d = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   IntegerDatum* a_x_d = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
-  //   if(s_h_d == NULL)
+  //   if(not s_h_d)
   //   {
   //     i->raiseerror(i->ArgumentTypeError);
   //     return;
@@ -2337,12 +2329,12 @@ SLIArrayModule::Area2Function::execute( SLIInterpreter* i ) const
   IntegerDatum* a_y_d = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   IntegerDatum* a_x_d = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
-  //   if(s_h_d == NULL)
+  //   if(not s_h_d)
   //   {
   //     i->raiseerror(i->ArgumentTypeError);
   //     return;
   //   }
-  //   if(s_w_d == NULL)
+  //   if(not s_w_d)
   //   {
   //     i->raiseerror(i->ArgumentTypeError);
   //     return;

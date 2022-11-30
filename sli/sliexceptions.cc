@@ -25,9 +25,6 @@
 // C++ includes:
 #include <sstream>
 
-// Generated includes:
-#include "config.h"
-
 // Includes from sli:
 #include "interpret.h"
 

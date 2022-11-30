@@ -77,7 +77,7 @@ class WeightRecorderTestCase(unittest.TestCase):
         wr_weights = wr.events["weights"]
 
         self.addTypeEqualityFunc(type(wr_weights), self.is_subset)
-        self.assertEqual(wr_weights, weights)
+        self.assertEqual(wr_weights, list(weights))
 
     def testMultipleThreads(self):
         """Weight Recorder Multi Threaded"""
@@ -107,7 +107,7 @@ class WeightRecorderTestCase(unittest.TestCase):
         wr_weights = wr.events["weights"]
 
         self.addTypeEqualityFunc(type(wr_weights), self.is_subset)
-        self.assertEqual(wr_weights, weights)
+        self.assertEqual(wr_weights, list(weights))
 
     def testDefinedSenders(self):
         """Weight Recorder Defined Subset Of Senders"""
@@ -138,7 +138,7 @@ class WeightRecorderTestCase(unittest.TestCase):
         wr_senders = wr.events["senders"]
 
         self.addTypeEqualityFunc(type(wr_senders), self.is_subset)
-        self.assertEqual(wr_senders, senders)
+        self.assertEqual(wr_senders, list(senders))
 
     def testDefinedTargets(self):
         """Weight Recorder Defined Subset Of Targets"""
@@ -169,7 +169,7 @@ class WeightRecorderTestCase(unittest.TestCase):
         wr_targets = wr.events["targets"]
 
         self.addTypeEqualityFunc(type(wr_targets), self.is_subset)
-        self.assertEqual(wr_targets, targets)
+        self.assertEqual(wr_targets, list(targets))
 
     def testDefinedTargetsAndSenders(self):
         """Weight Recorder Defined Subset Of Targets and Senders"""
@@ -204,7 +204,7 @@ class WeightRecorderTestCase(unittest.TestCase):
         wr_targets = wr.events["targets"]
 
         self.addTypeEqualityFunc(type(wr_targets), self.is_subset)
-        self.assertEqual(wr_targets, targets)
+        self.assertEqual(wr_targets, list(targets))
 
     def testMultapses(self):
         """Weight Recorder Multapses"""

@@ -217,17 +217,17 @@ class NodeCollection:
         return nestkernel.llapi_join_nc(self._datum, other._datum)
 
     def __getitem__(self, key):
-        if isinstance(key, slice):            
+        if isinstance(key, slice):
             if key.start is None:
                 start = 1
             else:
-                start = key.start + 1 if key.start >= 0 else max(key.start, -1 * self.__len__())
-                if start > self.__len__():
+                start = key.start + 1 if key.start >= 0 else key.start
+                if abs(start) > self.__len__():
                     raise IndexError('slice start value outside of the NodeCollection')
             if key.stop is None:
                 stop = self.__len__()
             else:
-                stop = min(key.stop, self.__len__()) if key.stop > 0 else key.stop - 1
+                stop = key.stop if key.stop > 0 else key.stop - 1
                 if abs(stop) > self.__len__():
                     raise IndexError('slice stop value outside of the NodeCollection')
             step = 1 if key.step is None else key.step
@@ -237,7 +237,7 @@ class NodeCollection:
             return nestkernel.llapi_slice(self._datum, start, stop, step)
         elif isinstance(key, (int, numpy.integer)):
             if abs(key + (key >= 0)) > self.__len__():
-                raise IndexError('index value outside of the NodeCollection')            
+                raise IndexError('index value outside of the NodeCollection')
             return self[key:key + 1:1]
         elif isinstance(key, (list, tuple)):
             if len(key) == 0:
@@ -394,8 +394,14 @@ class NodeCollection:
                 result = Receptors(self, result)
         else:
             # Hierarchical addressing
-            # TODO-PYNEST-NG: Drop this? Not sure anyone ever used it... 
+            # TODO-PYNEST-NG: Drop this? Not sure anyone ever used it...
             result = get_parameters_hierarchical_addressing(self, params)
+
+        if isinstance(result, dict) and len(self) == 1:
+            new_result = {}
+            for k, v in result.items():
+                new_result[k] = v[0] if is_iterable(v) and len(v) == 1 else v
+            result = new_result
 
         if pandas_output:
             index = self.get('global_id')
@@ -412,12 +418,6 @@ class NodeCollection:
         elif output == 'json':
             result = to_json(result)
 
-        if isinstance(result, dict) and len(self) == 1:
-            new_result = {}
-            for k,v in result.items():                
-                new_result[k] = v[0] if is_iterable(v) and len(v) == 1 else v
-            result = new_result
-            
         return result
 
     def set(self, params=None, **kwargs):
@@ -474,8 +474,8 @@ class NodeCollection:
 
             node_params = self[0].get()
             iterable_node_param = lambda key: key in node_params and not is_iterable(node_params[key])
-            contains_list = [is_iterable(vals) and iterable_node_param(key) for key, vals in params.items()]            
-            
+            contains_list = [is_iterable(vals) and iterable_node_param(key) for key, vals in params.items()]
+
             if any(contains_list):
                 temp_param = [{} for _ in range(self.__len__())]
 
@@ -825,7 +825,7 @@ class SynapseCollection:
             result = [[d[key] for key in keys] for d in nestkernel.llapi_get_connection_status(self._datum)]
         else:
             raise TypeError("keys should be either a string or an iterable")
-        
+
         # Need to restructure the data.
         final_result = restructure_data(result, keys)
 

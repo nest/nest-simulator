@@ -468,7 +468,7 @@ create_mask( const dictionary& mask_dict )
   //   return mask;
   // }
 
-  
+
   MaskPTR datum;
 
   mask_dict.all_entries_accessed( "CreateMask", "params" );
@@ -508,12 +508,12 @@ connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const 
 
   connection_dict.init_access_flags();
   ConnectionCreator connector( connection_dict );
-  connection_dict.all_entries_accessed( "CreateLayers", "params" );
+  connection_dict.all_entries_accessed( "ConnectLayers", "connection_dict" );
 
   // Set flag before calling source->connect() in case exception is thrown after some connections have been created.
   kernel().connection_manager.set_connections_have_changed();
   std::cout << "### 10" << std::endl;
-  
+
   source->connect( source_nc, target, target_nc, connector );
   std::cout << "### 11" << std::endl;
 }

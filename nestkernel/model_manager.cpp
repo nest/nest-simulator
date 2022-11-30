@@ -95,7 +95,7 @@ ModelManager::initialize()
     builtin_node_models_[ i ]->set_threads();
     std::string name = builtin_node_models_[ i ]->get_name();
     node_models_.push_back( builtin_node_models_[ i ]->clone( name ) );
-    modeldict_[ name] = i;
+    modeldict_[ name ] = i;
   }
 
   // Create proxy nodes, one for each thread and model
@@ -279,7 +279,7 @@ ModelManager::copy_synapse_model_( index old_id, std::string new_name )
     connection_models_[ t ].push_back( get_connection_model( old_id ).clone( new_name, new_id ) );
   }
 
-  //PYNEST-NG: Can't new_id be a synindex from the start?
+  // PYNEST-NG: Can't new_id be a synindex from the start?
   synapsedict_[ new_name ] = static_cast< synindex >( new_id );
 
   kernel().connection_manager.resize_connections();
@@ -379,7 +379,7 @@ ModelManager::get_synapse_model_id( std::string model_name )
   {
     return synapsedict_.get< synindex >( model_name );
   }
-  
+
   throw UnknownSynapseType( model_name );
 }
 
@@ -398,7 +398,7 @@ ModelManager::get_connector_defaults( synindex syn_id ) const
   }
 
   dict[ names::num_connections ] = kernel().connection_manager.get_num_connections( syn_id );
-  dict[ names::element_type ] = std::string("synapse");
+  dict[ names::element_type ] = std::string( "synapse" );
 
   return dict;
 }

@@ -93,7 +93,10 @@ def Create(model, n=1, params=None, positions=None):
     # we can pass the parameter specification to SLI when the nodes are created.
     iterable_or_parameter_in_params = True
 
-    #PYNEST-NG: can we support the usecase above by passing the dict into ll_create?
+    if not isinstance(n, int):
+        raise TypeError('n must be an integer')
+
+    # PYNEST-NG: can we support the usecase above by passing the dict into ll_create?
     if isinstance(params, dict) and params:  # if params is a dict and not empty
         iterable_or_parameter_in_params = any(is_iterable(v) or isinstance(v, Parameter) for k, v in params.items())
 
@@ -120,7 +123,7 @@ def Create(model, n=1, params=None, positions=None):
                 layer_specs['center'] = positions.center
         if positions.extent is not None:
             layer_specs['extent'] = positions.extent
-            
+
         layer = nestkernel.llapi_create_spatial(layer_specs)
         layer.set(params if params else {})
         return layer

@@ -89,7 +89,7 @@ public:
    *   be defined by a dictionary, parametertype, or double.
    * @param dict dictionary containing properties for the connections.
    */
-  ConnectionCreator( dictionary dict );
+  ConnectionCreator( const dictionary& dict );
 
   /**
    * Connect two layers.
@@ -128,7 +128,7 @@ private:
     std::vector< std::pair< Position< D >, index > >* positions_;
   };
 
-  void extract_params_( dictionary&, std::vector< dictionary >& );
+  void extract_params_( const dictionary&, std::vector< dictionary >& );
 
   template < typename Iterator, int D >
   void connect_to_target_( Iterator from,

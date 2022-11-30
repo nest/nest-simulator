@@ -33,35 +33,6 @@
 namespace nest
 {
 
-/* Polymorphic version of update_value.
- * This code will take either an int or a double and convert it to an
- * int.
- */
-bool
-update_value_int( const dictionary& d, std::string propname, int& prop )
-{
-  if ( d.known( propname ) )
-  {
-    const auto value = d.at( propname );
-    if ( is_type< int >( value ) )
-    {
-      prop = boost::any_cast< int >( value );
-      return true;
-    }
-    else if ( is_type< double >( value ) )
-    {
-      prop = static_cast< int >( boost::any_cast< double >( value ) );
-      return true;
-    }
-    else
-    {
-      throw TypeMismatch();
-    }
-  }
-
-  return false;
-}
-  
 template < typename targetidentifierT >
 quantal_stp_synapse< targetidentifierT >::quantal_stp_synapse()
   : ConnectionBase()
@@ -102,8 +73,8 @@ quantal_stp_synapse< targetidentifierT >::set_status( const dictionary& d, Conne
   d.update_value( names::u, u_ );
   d.update_value( names::tau_rec, tau_rec_ );
   d.update_value( names::tau_fac, tau_fac_ );
-  update_value_int( d, names::n, n_ );
-  update_value_int( d, names::a, a_ );
+  d.update_integer_value( names::n, n_ );
+  d.update_integer_value( names::a, a_ );
 }
 
 } // of namespace nest

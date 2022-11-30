@@ -45,6 +45,7 @@ cdef extern from "dictionary.h":
             bint operator!=(const const_iterator&)
         const_iterator begin()
         const_iterator end()
+        cbool known(const string&)
     string debug_type(const any&)
     string debug_dict_types(const dictionary&)
     cbool is_type[T](const any&)

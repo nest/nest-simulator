@@ -233,14 +233,16 @@ class AEIFTestCase(unittest.TestCase):
         for model, mm in iter(multimeters.items()):
             dmm = mm.events
             for record in recordables:
+                reference_record = np.array(reference[record])
+                dmm_record = np.array(dmm[record])
                 # ignore places where a divide by zero would occur
-                rds = np.abs(reference[record] - dmm[record])
-                nonzero = np.where(~np.isclose(reference[record], 0.))[0]
+                rds = np.abs(np.array(reference_record) - np.array(dmm_record))
+                nonzero = np.where(~np.isclose(reference_record, 0.))[0]
                 if np.any(nonzero):
-                    rds = rds[nonzero] / np.abs(reference[record][nonzero])
+                    rds = rds[nonzero] / np.abs(reference_record[nonzero])
                 # ignore events around spike times for V if it diverges
                 if record == "V_m" and params["Delta_T"] > 0.:
-                    spiking = (dmm[record] > V_lim)
+                    spiking = (dmm_record > V_lim)
                     rds = rds[~spiking]
                 rel_diff[model][record] = np.average(rds)
         return rel_diff

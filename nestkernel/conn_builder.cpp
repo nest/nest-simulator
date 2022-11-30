@@ -63,7 +63,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   skip_syn_params_ = {
     names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
   };
-  
+
   default_weight_.resize( syn_specs.size() );
   default_delay_.resize( syn_specs.size() );
   default_weight_and_delay_.resize( syn_specs.size() );
@@ -71,10 +71,10 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   delays_.resize( syn_specs.size() );
   synapse_params_.resize( syn_specs.size() );
   synapse_model_id_.resize( syn_specs.size() );
-  //PYNEST-NG: There is no safety net here. If the list of syn_specs
-  //is sent empty from the Python level, this will segfault. Maybe
-  //defaults should be filled here on the C++ level in case they are
-  //not given?
+  // PYNEST-NG: There is no safety net here. If the list of syn_specs
+  // is sent empty from the Python level, this will segfault. Maybe
+  // defaults should be filled here on the C++ level in case they are
+  // not given?
   synapse_model_id_[ 0 ] = kernel().model_manager.get_synapse_model_id( "static_synapse" );
   param_dicts_.resize( syn_specs.size() );
 
@@ -431,11 +431,9 @@ nest::ConnBuilder::loop_over_targets_() const
 void
 nest::ConnBuilder::set_synapse_model_( const dictionary& syn_params, const size_t synapse_indx )
 {
-  if ( not syn_params.known( names::synapse_model ) )
-  {
-    throw BadProperty( "Synapse spec must contain synapse model." );
-  }
-  const std::string syn_name = syn_params.get< std::string >( names::synapse_model );
+  const std::string syn_name = syn_params.known( names::synapse_model )
+    ? syn_params.get< std::string >( names::synapse_model )
+    : std::string( "static_synapse" );
 
   // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
   const index synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );

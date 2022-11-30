@@ -38,7 +38,7 @@ import nest
 from nest.lib.hl_api_exceptions import NESTErrors
 
 import numpy
-cimport numpy
+# cimport numpy
 
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 
@@ -110,6 +110,8 @@ cdef object any_to_pyobj(any operand):
         return any_cast[vector[int]](operand)
     if is_type[vector[long]](operand):
         return any_cast[vector[long]](operand)
+    if is_type[vector[size_t]](operand):
+        return any_cast[vector[size_t]](operand)
     if is_type[vector[double]](operand):
         return any_cast[vector[double]](operand)
     if is_type[vector[vector[double]]](operand):
@@ -158,6 +160,8 @@ cdef is_list_tuple_ndarray_of_int(v):
 cdef dictionary pydict_to_dictionary(object py_dict) except *:  # Adding "except *" makes cython propagate the error if it is raised.
     cdef dictionary cdict = dictionary()
     for key, value in py_dict.items():
+        if type(value) is tuple:
+            value = list(value)
         if type(value) is int or isinstance(value, numpy.integer):
             cdict[pystr_to_string(key)] = <long>value
         elif type(value) is float or isinstance(value, numpy.floating):
@@ -174,11 +178,13 @@ cdef dictionary pydict_to_dictionary(object py_dict) except *:  # Adding "except
             cdict[pystr_to_string(key)] = list_of_list_to_doublevec(value)
         elif type(value) is list and type(value[0]) is str:
             cdict[pystr_to_string(key)] = pylist_to_stringvec(value)
+        elif type(value) is list and type(value[0]) is dict:
+            cdict[pystr_to_string(key)] = pylist_to_dictvec(value)
         elif type(value) is dict:
             cdict[pystr_to_string(key)] = pydict_to_dictionary(value)
         elif type(value) is nest.NodeCollection:
             cdict[pystr_to_string(key)] = (<NodeCollectionObject>(value._datum)).thisptr
-        elif type(value) is nest.Parameter:
+        elif isinstance(value, nest.Parameter):
             cdict[pystr_to_string(key)] = (<ParameterObject>(value._datum)).thisptr
         elif type(value) is ParameterObject:
             cdict[pystr_to_string(key)] = (<ParameterObject>value).thisptr
@@ -223,6 +229,12 @@ cdef vector[string] pylist_to_stringvec(object pylist):
     cdef vector[string] vec
     for val in pylist:
         vec.push_back(<string>pystr_to_string(val))
+    return vec
+
+cdef vector[dictionary] pylist_to_dictvec(object pylist):
+    cdef vector[dictionary] vec
+    for val in pylist:
+        vec.push_back(pydict_to_dictionary(val))
     return vec
 
 cdef object string_to_pystr(string s):
@@ -292,18 +304,24 @@ def llapi_make_nodecollection(object node_ids):
 
 @catch_cpp_error
 def llapi_connect(NodeCollectionObject pre, NodeCollectionObject post, object conn_params, object synapse_params):
-
+    print("aaaaaaaaa", conn_params)
+    print("bbbbbbbbb", synapse_params)
     conn_params = conn_params if conn_params is not None else {}
     synapse_params = synapse_params if synapse_params is not None else {}
-    
+
+    print(type(synapse_params))
+
     if ("rule" in conn_params and conn_params["rule"] is None) or "rule" not in conn_params:
         conn_params["rule"] = "all_to_all"
-    
-    if "synapse_model" not in synapse_params:
+
+    if synapse_params is dict and "synapse_model" not in synapse_params:
         synapse_params["synapse_model"] = "static_synapse"
-    
+
     cdef vector[dictionary] syn_param_vec
-    if synapse_params is not None:
+    if isinstance(synapse_params, nest.CollocatedSynapses):
+        print(synapse_params.syn_specs)
+        syn_param_vec = pylist_to_dictvec(synapse_params.syn_specs)
+    elif synapse_params is not None:
         syn_param_vec.push_back(pydict_to_dictionary(synapse_params))
 
     connect(pre.thisptr, post.thisptr,
@@ -313,7 +331,7 @@ def llapi_connect(NodeCollectionObject pre, NodeCollectionObject post, object co
 def llapi_connect_layers(NodeCollectionObject pre, NodeCollectionObject post, object projections):
     print("### 9", projections)
     connect_layers(pre.thisptr, post.thisptr, pydict_to_dictionary(projections))
-    
+
 @catch_cpp_error
 def llapi_slice(NodeCollectionObject nc, long start, long stop, long step):
     cdef NodeCollectionPTR nc_ptr
@@ -394,6 +412,8 @@ def llapi_get_nc_status(NodeCollectionObject nc, object key=None):
     if key is None:
         return dictionary_to_pydict(statuses)
     elif isinstance(key, str):
+        if not statuses.known(pystr_to_string(key)):
+            raise KeyError(key)
         value = any_to_pyobj(statuses[pystr_to_string(key)])
         return value[0] if len(value) == 1 else value
     else:
@@ -484,7 +504,7 @@ def llapi_apply_parameter(ParameterObject parameter, object pos_or_nc):
         return tuple(apply(parameter.thisptr, (<NodeCollectionObject>(pos_or_nc._datum)).thisptr))
     else:
         return tuple(apply(parameter.thisptr, pydict_to_dictionary(pos_or_nc)))
-    
+
 
 @catch_cpp_error
 def llapi_multiply_parameter(ParameterObject first, ParameterObject second):

@@ -27,7 +27,7 @@
 namespace nest
 {
 
-ConnectionCreator::ConnectionCreator( dictionary dict )
+ConnectionCreator::ConnectionCreator( const dictionary& dict )
   : allow_autapses_( true )
   , allow_multapses_( true )
   , allow_oversized_( false )
@@ -71,37 +71,39 @@ ConnectionCreator::ConnectionCreator( dictionary dict )
   // }
   if ( dict.known( names::kernel ) )
   {
-    kernel_ = create_parameter( dict[ names::kernel ] );
+    kernel_ = create_parameter( dict.at( names::kernel ) );
   }
+
   // TODO-PYNEST-NG: collocated synapses
-  // if ( dict.known( names::synapse_parameters ) )
-  // {
-  //   // If synapse_parameters exists, we have collocated synapses.
-  //   ArrayDatum* syn_params_dvd =
-  //     dynamic_cast< ArrayDatum* >( ( *dict )[ names::synapse_parameters ].datum() );
-  //   if ( not syn_params_dvd )
-  //   {
-  //     throw BadProperty( "synapse_parameters must be list of dictionaries" );
-  //   }
+  if ( dict.known( names::synapse_parameters ) )
+  {
+    // If synapse_parameters exists, we have collocated synapses.
+    std::vector< dictionary > syn_params_dvd;
+    // ArrayDatum* syn_params_dvd =
+    //   dynamic_cast< ArrayDatum* >( ( *dict )[ names::synapse_parameters ].datum() );
+    if ( not dict.update_value( names::synapse_parameters, syn_params_dvd ) )
+    {
+      throw BadProperty( "synapse_parameters must be list of dictionaries" );
+    }
 
-  //   param_dicts_.resize( syn_params_dvd->size() );
-  //   auto param_dict = param_dicts_.begin();
-  //   for ( auto synapse_datum = syn_params_dvd->begin(); synapse_datum < syn_params_dvd->end();
-  //         ++synapse_datum, ++param_dict )
-  //   {
-  //     auto syn_param = dynamic_cast< dictionary* >( synapse_datum->datum() );
-  //     extract_params_( *syn_param, *param_dict );
-  //   }
-  // }
-  // else
-  // {
-  // If not, we have single synapses.
-  param_dicts_.resize( 1 );
-  param_dicts_[ 0 ].resize( kernel().vp_manager.get_num_threads() );
-  extract_params_( dict, param_dicts_[ 0 ] );
-  // }
+    param_dicts_.resize( syn_params_dvd.size() );
+    auto param_dict = param_dicts_.begin();
+    for ( auto syn_param_it = syn_params_dvd.begin(); syn_param_it < syn_params_dvd.end();
+          ++syn_param_it, ++param_dict )
+    {
+      // auto syn_param = dynamic_cast< dictionary* >( synapse_datum->datum() );
+      extract_params_( *syn_param_it, *param_dict );
+    }
+  }
+  else
+  {
+    // If not, we have single synapses.
+    param_dicts_.resize( 1 );
+    param_dicts_[ 0 ].resize( kernel().vp_manager.get_num_threads() );
+    extract_params_( dict, param_dicts_[ 0 ] );
+  }
 
-  dict.all_entries_accessed("ConnectionCreator", "dict" );
+  // dict.all_entries_accessed( "ConnectionCreator", "dict" );
 
   // Set default synapse_model, weight and delay if not given explicitly
   if ( synapse_model_.empty() )
@@ -154,13 +156,11 @@ ConnectionCreator::ConnectionCreator( dictionary dict )
 }
 
 void
-ConnectionCreator::extract_params_( dictionary& dict, std::vector< dictionary >& params )
+ConnectionCreator::extract_params_( const dictionary& dict, std::vector< dictionary >& params )
 {
-  if ( not dict.known( names::synapse_model ) )
-  {
-    dict[ names::synapse_model ] = std::string("static_synapse");
-  }
-  const std::string syn_name = dict.get< std::string >( names::synapse_model );
+  const std::string syn_name = dict.known( names::synapse_model )
+    ? dict.get< std::string >( names::synapse_model )
+    : std::string( "static_synapse" );
 
   // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
   const index synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
@@ -169,7 +169,7 @@ ConnectionCreator::extract_params_( dictionary& dict, std::vector< dictionary >&
   dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
   if ( dict.known( names::weight ) )
   {
-    weight_.push_back( create_parameter( dict[ names::weight ] ) );
+    weight_.push_back( create_parameter( dict.at( names::weight ) ) );
   }
   else
   {
@@ -178,7 +178,7 @@ ConnectionCreator::extract_params_( dictionary& dict, std::vector< dictionary >&
 
   if ( dict.known( names::delay ) )
   {
-    delay_.push_back( create_parameter( dict[ names::delay ] ) );
+    delay_.push_back( create_parameter( dict.at( names::delay ) ) );
   }
   else
   {
@@ -195,7 +195,8 @@ ConnectionCreator::extract_params_( dictionary& dict, std::vector< dictionary >&
   dictionary syn_dict;
   // Using a lambda function here instead of updateValue because updateValue causes
   // problems when setting a value to a dictionary-entry in syn_dict.
-  auto copy_long_if_known = [&syn_dict, &dict]( const std::string& name ) -> void {
+  auto copy_long_if_known = [ &syn_dict, &dict ]( const std::string& name ) -> void
+  {
     if ( dict.known( name ) )
     {
       syn_dict[ name ] = dict.get< long >( name );

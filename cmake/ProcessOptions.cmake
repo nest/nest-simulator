@@ -25,10 +25,23 @@ function( NEST_PROCESS_WITH_OPTIMIZE )
     if ( with-optimize STREQUAL "ON" )
       set( with-optimize "-O2" )
     endif ()
+    set(OPTIMIZATION_FLAGS "")
     foreach ( flag ${with-optimize} )
-      set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${flag}" PARENT_SCOPE )
-      set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}" PARENT_SCOPE )
+      list(APPEND OPTIMIZATION_FLAGS "${flag}")
     endforeach ()
+
+    list(JOIN OPTIMIZATION_FLAGS " " OPTIMIZATION_FLAGS)
+
+    list(APPEND CMAKE_C_FLAGS "${OPTIMIZATION_FLAGS}" )
+    list(APPEND CMAKE_CXX_FLAGS "${OPTIMIZATION_FLAGS}" )
+
+    list(JOIN CMAKE_C_FLAGS " " CMAKE_C_FLAGS)
+    list(JOIN CMAKE_CXX_FLAGS " " CMAKE_CXX_FLAGS)
+
+    set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS}" PARENT_SCOPE )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}" PARENT_SCOPE )
+    
+    
   endif ()
 endfunction()
 

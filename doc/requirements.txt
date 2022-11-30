@@ -12,7 +12,6 @@ mock
 nbsphinx
 numpy
 numpydoc
-patch
 path.py
 pytest
 recommonmark

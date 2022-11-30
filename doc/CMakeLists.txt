@@ -66,9 +66,6 @@ else ()
   set( OUT_OF_TREE_BUILD "True" )
 endif ()
 
-# Determine doc paths
-set( DOC_BUILD_DIR "${PROJECT_BINARY_DIR}/doc/htmldoc" )
-set( DOC_SOURCE_DIR "${PROJECT_SOURCE_DIR}/doc/htmldoc" )
 
 if ( BUILD_SPHINX_DOCS )
   # Configure the Sphinx documentation.
@@ -83,18 +80,23 @@ if ( BUILD_SPHINX_DOCS )
   # 5. To make Python's `help` results more useful, `include` directives are inlined using
   #    `resolve_includes.py`
   # 6. This assembled Sphinx folder is marked to be installed, together with the logos.
+
+  message( STATUS "Configuring Sphinx documentation" )
+  set( _SPHINX_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/htmldoc" )
+  # This can take a while on slow IO, so use check/pass to indicate ongoing-ness
+  message( CHECK_START "Copying Sphinx source tree" )
+  file( COPY htmldoc DESTINATION . )
+  message( CHECK_PASS "copied" )
   add_custom_target( sphinxdocs
-    COMMAND [ "${OUT_OF_TREE_BUILD}" = "True" ] && rm -rf "${DOC_BUILD_DIR}" || true
-    COMMAND [ "${OUT_OF_TREE_BUILD}" = "True" ] && cp -r "${DOC_SOURCE_DIR}" "${DOC_BUILD_DIR}" || true
-    COMMAND NESTSRCDIR=${PROJECT_SOURCE_DIR} ${SPHINX_EXECUTABLE} -b html
-    "${DOC_BUILD_DIR}"
-    "${DOC_BUILD_DIR}/html"
-    COMMAND cp "${DOC_BUILD_DIR}/models/*.rst" "${DOC_BUILD_DIR}/html/models"
-    COMMAND ${PYTHON_EXECUTABLE} "${DOC_BUILD_DIR}/resolve_includes.py" "${DOC_BUILD_DIR}/html/models"
+    WORKING_DIRECTORY ${_SPHINX_BUILD_DIR}
+    COMMAND NESTSRCDIR=${PROJECT_SOURCE_DIR} ${SPHINX_EXECUTABLE} -b html . _build
+    #COMMAND cp "${DOC_BUILD_DIR}/models/*.rst" "${DOC_BUILD_DIR}/html/models"
+    #COMMAND ${PYTHON_EXECUTABLE} "${DOC_BUILD_DIR}/resolve_includes.py"
+    #"${DOC_BUILD_DIR}/html/models"
   )
   add_dependencies( docs sphinxdocs )
 
-  install( DIRECTORY "${DOC_BUILD_DIR}/html"
+  install( DIRECTORY "${DOC_BUILD_DIR}/_build/html"
     DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}"
     OPTIONAL
     )

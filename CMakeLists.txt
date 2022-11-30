@@ -83,7 +83,7 @@ set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1' [default=
 set( with-version-suffix "" CACHE STRING "Set a user defined version suffix [default='']." )
 
 # documentation build configuration
-set( with-userdoc ON CACHE STRING "Build user documentation [default=ON]")
+set( with-userdoc OFF CACHE STRING "Build user documentation [default=OFF]")
 set( with-devdoc OFF CACHE STRING "Build developer documentation [default=OFF]")
 
 ################################################################################

@@ -34,7 +34,6 @@
 /**
  * Exact integration voltage propagator for leaky integrate-and-fire models.
  *
- * This base class provides properties common to different synaptic time courses.
  * This base class and its derived classes provide the propagator matrix elements
  * connecting synaptic current to membrane potential. They handle the singularity
  * at `tau_m == tau_syn_*` properly.

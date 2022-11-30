@@ -29,10 +29,11 @@
 // Generated includes:
 #include "config.h"
 
-// Includes from nestkernel:
+// Includes from libnestutil:
 #include "archiving_node.h"
 #include "connection.h"
 #include "event.h"
+#include "iaf_propagator.h"
 #include "nest_types.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
@@ -259,6 +260,10 @@ private:
    * @param spike_offset  Time offset for spike
    */
   void emit_instant_spike_( const Time& origin, const long lag, const double spike_offset );
+
+  /** Propagator object for updating synaptic components */
+  IAFPropagatorExp propagator_ex_;
+  IAFPropagatorExp propagator_in_;
 
   // ----------------------------------------------------------------
 

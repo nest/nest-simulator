@@ -33,57 +33,13 @@ import json
 from subprocess import check_output, CalledProcessError
 from mock import Mock as MagicMock
 
-
-source_dir = os.environ.get('NESTSRCDIR', False)
-if source_dir:
-    source_dir = Path(source_dir)
-else:
-    source_dir = Path(__file__).resolve().parent.parent.parent.resolve()
-
-
-if os.environ.get("READTHEDOCS") == "True":
-    doc_build_dir = source_dir / "doc/htmldoc"
-else:
-    doc_build_dir = Path(os.environ["OLDPWD"]) / "doc/htmldoc"
-
-sys.path.append(os.path.abspath("./_ext"))
+extension_module_dir = os.path.abspath("./_ext")
+pynest_source_dir = os.path.join("..", "..", "pynest", "nest")
+sys.path.append(extension_module_dir)
+sys.path.append(pynest_source_dir)
 
 source_suffix = '.rst'
 master_doc = 'index'
-
-# Create the mockfile for extracting the PyNEST
-
-excfile = source_dir / "pynest/nest/lib/hl_api_exceptions.py"
-infile = source_dir / "pynest/pynestkernel.pyx"
-outfile = doc_build_dir / "pynestkernel_mock.py"
-
-sys.path.insert(0, str(source_dir))
-sys.path.insert(0, str(source_dir / 'doc'))
-sys.path.insert(0, str(source_dir / 'pynest'))
-sys.path.insert(0, str(source_dir / 'pynest/nest'))
-sys.path.insert(0, str(doc_build_dir))
-
-from mock_kernel import convert  # noqa
-
-with open(excfile, 'r') as fexc, open(infile, 'r') as fin, open(outfile, 'w') as fout:
-    mockedmodule = fexc.read() + "\n\n"
-    mockedmodule += "from mock import MagicMock\n\n"
-    mockedmodule += convert(fin)
-
-    fout.write(mockedmodule)
-
-import pynestkernel_mock  # noqa
-
-sys.modules["nest.pynestkernel"] = pynestkernel_mock
-sys.modules["nest.kernel"] = pynestkernel_mock
-
-# For the doc build, explicitly import `nest` here so that it isn't
-# `MagicMock`ed later on and expose `nest.NestModule` as `sphinx` does not seem
-# to autodoc properties the way the `autoclass` directive would. We can then
-# autoclass `nest.NestModule` to generate the documentation of the properties
-import nest  # noqa
-
-vars(nest)["NestModule"] = type(nest)        # direct write to nest.NestModule is suppressed as unknown attribute
 
 # -- General configuration ------------------------------------------------
 extensions = [
@@ -100,6 +56,7 @@ extensions = [
     'VersionSyncRole',
 ]
 
+autodoc_mock_imports = ["nest.pynestkernel"]
 mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa
 panels_add_bootstrap_css = False
 # Add any paths that contain templates here, relative to this directory.
@@ -156,7 +113,7 @@ numfig_format = {'figure': 'Figure %s', 'table': 'Table %s',
 #
 html_theme = 'sphinx_material'
 html_title = 'NEST simulator documentation'
-html_logo = str(doc_build_dir / 'static/img/nest_logo.png')
+html_logo = 'static/img/nest_logo.png'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -192,7 +149,7 @@ html_theme_options = {
     'globaltoc_includehidden': True,
     }
 
-html_static_path = [str(doc_build_dir / 'static')]
+html_static_path = ['static']
 html_additional_pages = {'index': 'index.html'}
 html_sidebars = {
     "**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]
@@ -223,14 +180,16 @@ intersphinx_mapping = {
     'extmod': ('https://nest-extension-module.readthedocs.io/en/latest/', None),
 }
 
-from doc.extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
+from extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
 
 
 def config_inited_handler(app, config):
+    models_build_dir = os.path.abspath("models")
+    repo_root_dir = os.path.abspath("../..")
     ExtractUserDocs(
-        listoffiles=relative_glob("models/*.h", "nestkernel/*.h", basedir=source_dir),
-        basedir=source_dir,
-        outdir=str(doc_build_dir / "models")
+        listoffiles=relative_glob("models/*.h", "nestkernel/*.h", basedir=repo_root_dir),
+        basedir=repo_root_dir,
+        outdir=models_build_dir,
     )
 
 
@@ -319,19 +278,19 @@ texinfo_documents = [
 ]
 
 
-def copy_example_file(src):
-    copyfile(src, doc_build_dir / "examples" / src.parts[-1])
-
-
-def copy_acknowledgments_file(src):
-    copyfile(src, doc_build_dir / src.parts[-1])
-
-
-# -- Copy Acknowledgments file ----------------------------
-copy_acknowledgments_file(source_dir / "ACKNOWLEDGMENTS.md")
-# -- Copy documentation for Microcircuit Model ----------------------------
-copy_example_file(source_dir / "pynest/examples/Potjans_2014/box_plot.png")
-copy_example_file(source_dir / "pynest/examples/Potjans_2014/raster_plot.png")
-copy_example_file(source_dir / "pynest/examples/Potjans_2014/microcircuit.png")
-copy_example_file(source_dir / "pynest/examples/Potjans_2014/README.rst")
-copy_example_file(source_dir / "pynest/examples/hpc_benchmark_connectivity.svg")
+# def copy_example_file(src):
+#     copyfile(src, doc_build_dir / "examples" / src.parts[-1])
+#
+#
+# def copy_acknowledgments_file(src):
+#     copyfile(src, doc_build_dir / src.parts[-1])
+#
+#
+# # -- Copy Acknowledgments file ----------------------------
+# copy_acknowledgments_file(source_dir / "ACKNOWLEDGMENTS.md")
+# # -- Copy documentation for Microcircuit Model ----------------------------
+# copy_example_file(source_dir / "pynest/examples/Potjans_2014/box_plot.png")
+# copy_example_file(source_dir / "pynest/examples/Potjans_2014/raster_plot.png")
+# copy_example_file(source_dir / "pynest/examples/Potjans_2014/microcircuit.png")
+# copy_example_file(source_dir / "pynest/examples/Potjans_2014/README.rst")
+# copy_example_file(source_dir / "pynest/examples/hpc_benchmark_connectivity.svg")

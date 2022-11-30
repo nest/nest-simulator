@@ -22,13 +22,7 @@
 import re
 from tqdm import tqdm
 from pprint import pformat
-try:
-    from math import comb   # breaks in Python < 3.8
-except ImportError:
-    from math import factorial as fac
-
-    def comb(n, k):
-        return fac(n) / (fac(k) * fac(n - k))
+from math import comb
 
 import os
 import glob
@@ -42,9 +36,10 @@ log = logging.getLogger()
 
 def relative_glob(*pattern, basedir=os.curdir, **kwargs):
     tobase = os.path.relpath(basedir, os.curdir)
-    tohere = os.path.relpath(os.curdir, basedir)
     # prefix all patterns with basedir and expand
-    names = chain(*[glob.glob(os.path.join(tobase, pat), **kwargs) for pat in pattern])
+    names = chain.from_iterable(
+        glob.glob(os.path.join(tobase, pat), **kwargs) for pat in pattern
+    )
     # remove prefix from all expanded names
     return [name[len(tobase)+1:] for name in names]
 

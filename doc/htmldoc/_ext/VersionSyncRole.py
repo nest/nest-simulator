@@ -20,9 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
+from pathlib import Path
 from docutils import nodes
-
-from conf import doc_build_dir
 
 
 def version_role(pattern):
@@ -54,7 +53,7 @@ def version_role(pattern):
         else:
             level = "min"
 
-        with open(str(doc_build_dir) + '/_ext/versions.json') as fp:
+        with open(Path(__file__).parent.join('versions.json')) as fp:
             data = json.load(fp)
 
         try:

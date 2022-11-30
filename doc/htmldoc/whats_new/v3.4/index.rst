@@ -23,6 +23,12 @@ layout, our wide range of docs can be discovered more easily.
 The table of contents is simplified and the content is grouped based on topic (neurons, synapses etc)
 rather than type of documentation (e.g., 'guides').
 
+Query spatially structured networks from target neuron perspective
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+PyNEST now provides functions  :py:func:`.GetSourceNodes`, :py:func:`.GetSourcePositions`, and 
+:py:func:`.PlotSources` which allow you to query or plot the source neurons of a given target neuron.
+
 
 Changes in NEST behavior
 ~~~~~~~~~~~~~~~~~~~~~~~~

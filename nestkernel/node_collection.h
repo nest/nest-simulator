@@ -488,7 +488,7 @@ public:
    * the last element in this primitive, and they both have the same model ID.
    * Otherwise false.
    */
-  bool is_contiguous_ascending( NodeCollectionPrimitive& other );
+  bool is_contiguous_ascending( NodeCollectionPrimitive& other ) const;
 
   /**
    * Checks if node IDs of another primitive is overlapping node IDs of this primitive
@@ -883,7 +883,7 @@ NodeCollectionComposite::operator==( NodeCollectionPTR rhs ) const
 
   // Checking if rhs_ptr is invalid first, to avoid segfaults. If rhs is a NodeCollectionPrimitive,
   // rhs_ptr will be a null pointer.
-  if ( rhs_ptr == nullptr or size_ != rhs_ptr->size() or parts_.size() != rhs_ptr->parts_.size() )
+  if ( not rhs_ptr or size_ != rhs_ptr->size() or parts_.size() != rhs_ptr->parts_.size() )
   {
     return false;
   }

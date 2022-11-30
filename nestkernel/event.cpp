@@ -40,8 +40,8 @@ Event::Event()
                          // node ID 0 is network, can never send an event, so
                          // this is safe
   , sender_spike_data_()
-  , sender_( NULL )
-  , receiver_( NULL )
+  , sender_( nullptr )
+  , receiver_( nullptr )
   , p_( -1 )
   , rp_( 0 )
   , d_( 1 )

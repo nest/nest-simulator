@@ -163,24 +163,24 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  port handles_test_event( SpikeEvent&, port );
-  port handles_test_event( CurrentEvent&, port );
-  port handles_test_event( DataLoggingRequest&, port );
+  port handles_test_event( SpikeEvent&, port ) override;
+  port handles_test_event( CurrentEvent&, port ) override;
+  port handles_test_event( DataLoggingRequest&, port ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
   bool
-  is_off_grid() const // uses off_grid events
+  is_off_grid() const override // uses off_grid events
   {
     return true;
   }
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
   /**
    * Based on the current state, compute the value of the membrane potential
@@ -199,8 +199,8 @@ private:
    * only through a Node*.
    */
   //@{
-  void init_buffers_();
-  void pre_run_hook();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
   /**
    * Time Evolution Operator.
@@ -219,7 +219,7 @@ private:
    * While the neuron is refractory, membrane potential (y2_) is
    * clamped to U_reset_.
    */
-  void update( Time const& origin, const long from, const long to );
+  void update( Time const& origin, const long from, const long to ) override;
   //@}
 
   // The next two classes need to be friends to access the State_ class/member

@@ -142,7 +142,7 @@ public:
   siegert_neuron();
   siegert_neuron( const siegert_neuron& );
 
-  ~siegert_neuron();
+  ~siegert_neuron() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -153,31 +153,31 @@ public:
   using Node::handles_test_event;
   using Node::sends_secondary_event;
 
-  void handle( DiffusionConnectionEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( DiffusionConnectionEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( DiffusionConnectionEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( DiffusionConnectionEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
   void
-  sends_secondary_event( DiffusionConnectionEvent& )
+  sends_secondary_event( DiffusionConnectionEvent& ) override
   {
   }
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
-  void pre_run_hook();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
   /** This is the actual update function. The additional boolean parameter
    * determines if the function is called by update (false) or wfr_update (true)
    */
   bool update_( Time const&, const long, const long, const bool );
 
-  void update( Time const&, const long, const long );
-  bool wfr_update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
+  bool wfr_update( Time const&, const long, const long ) override;
 
   // siegert function
   double siegert( double, double );

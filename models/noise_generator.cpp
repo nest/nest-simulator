@@ -37,7 +37,6 @@
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
-#include "integerdatum.h"
 
 namespace nest
 {
@@ -289,7 +288,7 @@ nest::noise_generator::send_test_event( Node& target, rport receptor_type, synin
 void
 nest::noise_generator::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   const long start = origin.get_steps();
@@ -347,7 +346,7 @@ nest::noise_generator::event_hook( DSCurrentEvent& e )
   const port prt = e.get_port();
 
   // we handle only one port here, get reference to vector elem
-  assert( 0 <= prt && static_cast< size_t >( prt ) < B_.amps_.size() );
+  assert( 0 <= prt and static_cast< size_t >( prt ) < B_.amps_.size() );
 
   e.set_current( B_.amps_[ prt ] );
   e.get_receiver().handle( e );

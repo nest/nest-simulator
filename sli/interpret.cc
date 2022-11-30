@@ -31,19 +31,14 @@
 #include <ctime>
 #include <exception>
 #include <fstream>
-#include <functional>
 #include <sstream>
 #include <string>
-
-// Generated includes:
-#include "config.h"
 
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "numerics.h"
 
 // Includes from sli:
-#include "booldatum.h"
 #include "dictdatum.h"
 #include "dictstack.h"
 #include "dictutils.h"
@@ -54,9 +49,7 @@
 #include "iostreamdatum.h"
 #include "namedatum.h"
 #include "parser.h"
-#include "scanner.h"
 #include "stringdatum.h"
-#include "tokenutils.h"
 #include "triedatum.h"
 
 // This function is the only interface to the driver program
@@ -140,7 +133,7 @@ const IforallindexedstringFunction SLIInterpreter::iforallindexedstringfunction;
 const IforallstringFunction SLIInterpreter::iforallstringfunction;
 
 void
-SLIInterpreter::inittypes( void )
+SLIInterpreter::inittypes()
 {
   Integertype.settypename( "integertype" );
   Integertype.setdefaultaction( datatypefunction );
@@ -183,12 +176,12 @@ SLIInterpreter::inittypes( void )
 }
 
 void
-SLIInterpreter::initdictionaries( void )
+SLIInterpreter::initdictionaries()
 {
-  assert( DStack == NULL );
+  assert( not DStack );
 
   DStack = new DictionaryStack();
-  assert( DStack != NULL );
+  assert( DStack );
 
   errordict = new Dictionary();
   DictionaryDatum sysdict( new Dictionary() );
@@ -204,7 +197,7 @@ SLIInterpreter::initdictionaries( void )
 }
 
 void
-SLIInterpreter::initbuiltins( void )
+SLIInterpreter::initbuiltins()
 {
 
   createcommand( ilookup_name, &SLIInterpreter::ilookupfunction );
@@ -224,7 +217,7 @@ SLIInterpreter::initbuiltins( void )
 }
 
 void
-SLIInterpreter::initexternals( void )
+SLIInterpreter::initexternals()
 {
   init_slidict( this );
   init_slicontrol( this );
@@ -249,13 +242,13 @@ SLIInterpreter::initexternals( void )
 ****************************************/
 
 FunctionDatum*
-SLIInterpreter::Ilookup( void ) const
+SLIInterpreter::Ilookup() const
 {
   return new FunctionDatum( ilookup_name, &SLIInterpreter::ilookupfunction, "" );
 }
 
 FunctionDatum*
-SLIInterpreter::Iiterate( void ) const
+SLIInterpreter::Iiterate() const
 {
   return new FunctionDatum( iiterate_name, &SLIInterpreter::iiteratefunction, "" );
 }
@@ -362,7 +355,7 @@ SLIInterpreter::basedef_move( Name const& n, Token& t )
   DStack->basedef_move( n, t );
 }
 
-SLIInterpreter::SLIInterpreter( void )
+SLIInterpreter::SLIInterpreter()
   : debug_mode_( false )
   , show_stack_( false )
   , show_backtrace_( false )
@@ -374,10 +367,10 @@ SLIInterpreter::SLIInterpreter( void )
   , cycle_guard( false )
   , cycle_restriction( 0 )
   , verbositylevel( M_INFO )
-  , statusdict( 0 )
-  , errordict( 0 )
-  , DStack( 0 )
-  , parse( 0 )
+  , statusdict( nullptr )
+  , errordict( nullptr )
+  , DStack( nullptr )
+  , parse( nullptr )
   , ilookup_name( "::lookup" )
   , ipop_name( "::pop" )
   , isetcallback_name( "::setcallback" )
@@ -528,7 +521,7 @@ SLIInterpreter::addmodule( SLIModule* m )
   if ( not( m->commandstring().empty() ) )
   {
     ArrayDatum* ad = dynamic_cast< ArrayDatum* >( baselookup( commandstring_name ).datum() );
-    assert( ad != NULL );
+    assert( ad );
     ad->push_back( new StringDatum( m->commandstring() ) );
   }
 }
@@ -543,7 +536,7 @@ SLIInterpreter::addlinkedusermodule( SLIModule* m )
   if ( not( m->commandstring().empty() ) )
   {
     ArrayDatum* ad = dynamic_cast< ArrayDatum* >( baselookup( commandstring_name ).datum() );
-    assert( ad != NULL );
+    assert( ad );
     ad->push_back( new StringDatum( m->commandstring() ) );
   }
 }
@@ -596,7 +589,7 @@ SLIInterpreter::raiseerror( std::exception& err )
 {
   Name caller = getcurrentname();
 
-  assert( errordict != NULL );
+  assert( errordict );
   errordict->insert( "command", EStack.top() ); // store the func/trie that caused the error.
 
   // SLIException provide addtional information
@@ -623,7 +616,7 @@ SLIInterpreter::raiseerror( Name cmd, Name err )
   // All error related symbols are now in their correct dictionary,
   // the error dictionary $errordict ( see Bug #4)
 
-  assert( errordict != NULL );
+  assert( errordict );
 
   if ( errordict->lookup( newerror_name ) == baselookup( false_name ) )
   {
@@ -699,14 +692,14 @@ SLIInterpreter::print_error( Token cmd )
 
       // Command information is only printed if the
       // command is of trietype
-      if ( command.datum() != NULL )
+      if ( command.datum() )
       {
         if ( command->gettypename() == Name( "trietype" ) )
         {
           msg << "\n\nCandidates for " << command << " are:\n";
 
           TrieDatum* trie = dynamic_cast< TrieDatum* >( command.datum() );
-          assert( trie != NULL );
+          assert( trie );
 
           trie->get().info( msg );
         }
@@ -722,9 +715,9 @@ SLIInterpreter::print_error( Token cmd )
 }
 
 void
-SLIInterpreter::raiseagain( void )
+SLIInterpreter::raiseagain()
 {
-  assert( errordict != NULL );
+  assert( errordict );
 
   if ( errordict->known( commandname_name ) )
   {
@@ -757,7 +750,7 @@ SLIInterpreter::verbosity( int level )
 }
 
 int
-SLIInterpreter::verbosity( void ) const
+SLIInterpreter::verbosity() const
 {
   return verbositylevel;
 }
@@ -839,7 +832,7 @@ SLIInterpreter::message( std::ostream& out,
 {
   const unsigned buflen = 30;
   char timestring[ buflen + 1 ] = "";
-  const time_t tm = std::time( NULL );
+  const time_t tm = std::time( nullptr );
 
   std::strftime( timestring, buflen, "%b %d %H:%M:%S", std::localtime( &tm ) );
 
@@ -882,7 +875,7 @@ SLIInterpreter::message( std::ostream& out,
 
   for ( size_t i = 0; i < text_str.size(); ++i )
   {
-    if ( text_str.at( i ) == '\n' && i != text_str.size() - 1 )
+    if ( text_str.at( i ) == '\n' and i != text_str.size() - 1 )
     {
       // Print a lineshift followed by an indented whitespace
       // Manually inserted lineshift at the end of the message
@@ -906,8 +899,8 @@ SLIInterpreter::message( std::ostream& out,
       // Start on a new line if the next word is longer than the
       // space available (as long as the word is shorter than the
       // total width of the printout).
-      if ( i != 0 && text_str.at( i - 1 ) == ' '
-        && static_cast< int >( space - i ) > static_cast< int >( width - pos ) )
+      if ( i != 0 and text_str.at( i - 1 ) == ' '
+        and static_cast< int >( space - i ) > static_cast< int >( width - pos ) )
       {
         out << std::endl << std::string( indent, ' ' );
         pos = 0;
@@ -915,7 +908,7 @@ SLIInterpreter::message( std::ostream& out,
 
       // Only print character if we're not at the end of the
       // line and the last character is a space.
-      if ( not( width - pos == 0 && text_str.at( i ) == ' ' ) )
+      if ( not( width - pos == 0 and text_str.at( i ) == ' ' ) )
       {
         // Print the actual character.
         out << text_str.at( i );
@@ -928,15 +921,15 @@ SLIInterpreter::message( std::ostream& out,
 }
 
 Name
-SLIInterpreter::getcurrentname( void ) const
+SLIInterpreter::getcurrentname() const
 {
   FunctionDatum* func = dynamic_cast< FunctionDatum* >( EStack.top().datum() );
-  if ( func != NULL )
+  if ( func )
   {
     return ( func->getname() );
   }
   TrieDatum* trie = dynamic_cast< TrieDatum* >( EStack.top().datum() );
-  if ( trie != NULL )
+  if ( trie )
   {
     return ( trie->getname() );
   }
@@ -951,7 +944,7 @@ SLIInterpreter::setcycleguard( Index c )
 }
 
 void
-SLIInterpreter::removecycleguard( void )
+SLIInterpreter::removecycleguard()
 {
   cycle_guard = false;
 }
@@ -1000,13 +993,13 @@ SLIInterpreter::stack_backtrace( int n )
     }
 
     FunctionDatum* fd = dynamic_cast< FunctionDatum* >( EStack.pick( p ).datum() );
-    if ( fd != 0 )
+    if ( fd )
     {
       fd->backtrace( this, p );
       continue;
     }
     NameDatum* nd = dynamic_cast< NameDatum* >( EStack.pick( p ).datum() );
-    if ( nd != 0 )
+    if ( nd )
     {
       std::cerr << "While executing: ";
       nd->print( std::cerr );
@@ -1014,7 +1007,7 @@ SLIInterpreter::stack_backtrace( int n )
       continue;
     }
     TrieDatum* td = dynamic_cast< TrieDatum* >( EStack.pick( p ).datum() );
-    if ( td != 0 )
+    if ( td )
     {
       std::cerr << "While executing: ";
       td->print( std::cerr );
@@ -1099,7 +1092,7 @@ SLIInterpreter::debug_commandline( Token& next )
       {
         stack_backtrace( EStack.load() );
       }
-      else if ( arg == "next" || arg == "n" )
+      else if ( arg == "next" or arg == "n" )
       {
         std::cerr << "Next token: ";
         next.pprint( std::cerr );
@@ -1129,13 +1122,13 @@ SLIInterpreter::debug_commandline( Token& next )
         catch_errors_ = not catch_errors_;
         std::cerr << "Catch error mode is now " << ( catch_errors_ ? " On." : "Off." ) << std::endl;
       }
-      else if ( arg == "tailrecursion" || arg == "tail" )
+      else if ( arg == "tailrecursion" or arg == "tail" )
       {
         opt_tailrecursion_ = not opt_tailrecursion_;
         std::cerr << "Tail-recursion optimization is now " << ( opt_tailrecursion_ ? " On." : "Off." ) << std::endl;
       }
     }
-    else if ( command == "list" || command == "l" )
+    else if ( command == "list" or command == "l" )
     {
       c = 'l';
       break;
@@ -1151,11 +1144,11 @@ SLIInterpreter::debug_commandline( Token& next )
       catch_errors_ = true;
       std::cerr << "Catch error mode is now " << ( catch_errors_ ? " On." : "Off." ) << std::endl;
     }
-    else if ( command == "where" || command == "w" )
+    else if ( command == "where" or command == "w" )
     {
       stack_backtrace( EStack.load() );
     }
-    else if ( command == "edit" || command == "break" || command == "e" )
+    else if ( command == "edit" or command == "break" or command == "e" )
     {
       debug_mode_off();
       std::cerr << "Type 'continue', to exit interactive mode." << std::endl;
@@ -1174,15 +1167,15 @@ SLIInterpreter::debug_commandline( Token& next )
     {
       EStack.dump( std::cerr );
     }
-    else if ( command == "help" || command == "?" || command == "h" )
+    else if ( command == "help" or command == "?" or command == "h" )
     {
       debug_options();
     }
-    else if ( command == "next" || command == "n" )
+    else if ( command == "next" or command == "n" )
     {
       break;
     }
-    else if ( command == "continue" || command == "cont" || command == "c" )
+    else if ( command == "continue" or command == "cont" or command == "c" )
     {
       max_call_depth_ = call_depth_; // will show lower levels only
     }
@@ -1190,7 +1183,7 @@ SLIInterpreter::debug_commandline( Token& next )
     {
       max_call_depth_ = call_depth_ + 1; // will this level and lower.
     }
-    else if ( command == "quit" || command == "q" )
+    else if ( command == "quit" or command == "q" )
     {
       debug_mode_ = false;
       break;
@@ -1210,7 +1203,7 @@ SLIInterpreter::startup()
   static bool is_initialized = false;
   int exitcode = EXIT_SUCCESS;
 
-  if ( not is_initialized && EStack.load() > 0 )
+  if ( not is_initialized and EStack.load() > 0 )
   {
     exitcode = execute_(); // run the interpreter
     is_initialized = true;

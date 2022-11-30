@@ -47,6 +47,19 @@ Finding the optimal parameters for your script may require some trial and error.
 
 ----
 
+Here are some additional settings that may be useful in your Slurm script.
+
+.. list-table:: Additional Slurm settings
+   :header-rows: 1
+
+   * - Setting
+     - Description
+   * - `export CPU_AFFINITY=True`
+     - Bind to a specific processor
+   * - `--exclusive`
+     - Prevents other processes or jobs from doing work on the same node
+
+
 
 Let's break this script down line by line.
 
@@ -101,7 +114,7 @@ trying to increase the speed of the simulation.
 
 How much memory does your simulation need? To get a rough estimate of the memory requirements for your simulation, you can
 use the number of synapses.  One synapse is roughly equivalent to X.
-For example: The microcircuit model requires around 16 GB of memory and the multi-area-model requires 1.4 TB.
+For example: The :ref:`microcircuit model <toc_microcircuit>` requires around 16 GB of memory and the `multi-area-model <https://github.com/INM-6/multi-area-model>`_ requires 1.4 TB.
 If a node has 128 GB of memory then one node is more than sufficient for the microcircuit model but the multi-area model
 will need 12 nodes to run.
 
@@ -208,16 +221,6 @@ Don't forget to set ``local_num_threads`` in your script!
 
 
 
-
-.. list-table:: Additional Slurm settings
-   :header-rows: 1
-
-   * - Setting
-     - Description
-   * - `export CPU_AFFINITY=True`
-     - make stuff do something
-   * - `--exclusive`
-     - Prevents other processes or jobs from doing work on the same node
 
 
 

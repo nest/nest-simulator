@@ -3,10 +3,6 @@
 Overview of various hardware and software components
 ====================================================
 
-An unfortunate aspect of computing is that a single component may be called something different by different
-organizations, manufacturers, and companies. We also have overlapping terms, such as nodes, that have one meaning
-in computational neuroscience, and another in computer hardware.
-
 To optimize NEST performance, it's important to understand the system you are using and its components.
 Here we try to provide a brief description of the generic setup of hardware and corresponding software.
 Note that these are not terms used specifically for NEST, but are common in HPC organizations.
@@ -15,6 +11,12 @@ Note that these are not terms used specifically for NEST, but are common in HPC 
 
   This is just one configuration for hardware setup. A particular system may use other components, but for our needs
   nodes and cores are the most important terms to know.
+
+  Also note, a single component may be called something different by different
+  organizations, manufacturers, and companies. We also have overlapping terms, such as nodes, that have one meaning
+  in computational neuroscience, and another in computer hardware. Here we try to use the most common terms, but
+  always check the terminology used in your system.
+
 
 
 .. seealso::

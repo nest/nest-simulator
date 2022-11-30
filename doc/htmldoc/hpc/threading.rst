@@ -65,11 +65,14 @@ Sequential pinning scheme
 
    Setting to use for this case: ``export OMP_PROC_BIND = close``
 
-- Possible disadvantage
-   - This scheme could be slower: threads need to fight for resources
-- Possible advantages
-   - You might save enrergy: shut off unused processors
-   - This scheme may allow sharing of memory prefetching
+   .. list-table::
+      :header-rows: 1
+
+      * - Possible disadvantage
+        - Possible advantage
+      * - This scheme could be slower: threads need to fight for resources
+        - You might save energy: shut  off unused processors
+          This scheme may allow sharing of memory prefetching
 
 Distant pinning scheme
 ``````````````````````
@@ -82,10 +85,14 @@ Distant pinning scheme
 
    Setting to use for this case: ``export OMP_PROC_BIND = spread``
 
-- Possible disadvantage
-   - This scheme could increase energy usage, as multiple processors are used
-- Possible advantage
-   - It could be faster: resources available for each thread
+   .. list-table::
+      :header-rows: 1
+
+      * - Possible disadvantage
+        - Possible advantage
+      * - This scheme could increase energy usage, as multiple processors are used
+        - It could be faster: resources available for each thread
+
 
 
 References

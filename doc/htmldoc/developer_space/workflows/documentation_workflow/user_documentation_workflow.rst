@@ -13,7 +13,7 @@ documentation. To learn more about the syntax, check out this `quick
 reference
 <https://thomas-cokelaer.info/tutorials/sphinx/rest_syntax.html>`_.
 
-The NEST simulator documentation lives alongside its code. It is
+The NEST Simulator documentation lives alongside its code. It is
 contained in the ``doc/htmldoc`` directory within the `NEST source
 code repository <https://github.com/nest/nest-simulator>`_ on GitHub.
 
@@ -127,7 +127,7 @@ sphinx/rest_syntax.html>`_ files or to create new ones, follow the steps below:
 
 2. If you create a new page, open ``index.rst`` in the ``doc/htmldoc`` directory
    and add the file name under ``.. toctree::``. This will ensure it appears on
-   the NEST simulator documentation's table of contents.
+   the NEST Simulator documentation's table of contents.
 
 3. If you rename or move a file, please make sure you update all the
    corresponding cross-references.
@@ -164,7 +164,7 @@ Docs.
    import-guide.html#building-your-documentation>`_ your documentation.
 
 This allows you to preview your work on your Read the Docs account. In order
-to see the changes on the official NEST simulator documentation, please submit
+to see the changes on the official NEST Simulator documentation, please submit
 a pull request.
 
 Creating pull request

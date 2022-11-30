@@ -588,13 +588,13 @@ MEDIAQUERIES
  {
   background-image: linear-gradient(to bottom, rgba(255, 102, 51, 0.63), rgba(255, 102, 51, 0.1), rgba(255, 102, 51, 0.73)), url('../img/background-particles-flattened.png');
   background-color: #ff6633;
-  height: 350px;
+  height: 240px;
  }
 
 header{
   background-color: var(--nest-orange);
   padding:15px 0;
-  height: 350px;
+  height: 240px;
  }
 .tsparticles-canvas-el {
     margin-top: -275px;
@@ -607,13 +607,13 @@ header{
  {
   background-image: linear-gradient(to bottom, rgba(255, 102, 51, 0.63), rgba(255, 102, 51, 0.1), rgba(255, 102, 51, 0.73)), url('../img/background-particles-flattened.png');
   background-color: #ff6633;
-  height: 250px;
+  height: 210px;
 
  }
 header{
   background-color: var(--nest-orange);
   padding:0 0;
-  height: 250px;
+  height: 210px;
 }
  #banner{
    padding-top: 50px;
@@ -745,7 +745,7 @@ ul.srt-menu li li li.sfHover ul {
 /*** DEMO2 SKIN ***/
 #topnav, .srt-menu {
 	float:right;
-	margin: 125px 100px 0 0;
+	margin: 85px 100px 0 0;
 }
 .srt-menu a {
 	text-decoration:none;

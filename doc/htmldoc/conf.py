@@ -33,16 +33,6 @@ import json
 from subprocess import check_output, CalledProcessError
 from mock import Mock as MagicMock
 
-# PATCH THE DOCUMENTATION
-import patch
-from urllib import request
-remote_url = 'https://www.nest-simulator.org/patches_sg/34_doc.patch'
-patch_file = '34_doc.patch'
-# download
-request.urlretrieve(remote_url, patch_file)
-# patch
-pset = patch.fromfile(patch_file)
-pset.apply()
 
 source_dir = os.environ.get('NESTSRCDIR', False)
 if source_dir:
@@ -342,10 +332,22 @@ def copy_acknowledgments_file(src):
 
 
 # -- Copy Acknowledgments file ----------------------------
-copy_acknowledgments_file(source_dir / "ACKNOWLEDGMENTS.md")
+copy_acknowledgments_file(source_dir / "ACKNOWLEDGMENTS.md")# PATCH THE DOCUMENTATION
+# TEST
+import patch
+from urllib import request
+remote_url = 'https://www.nest-simulator.org/patches_sg/34_doc.patch'
+patch_file = '34_doc.patch'
+# download
+request.urlretrieve(remote_url, patch_file)
+# patch
+pset = patch.fromfile(patch_file)
+pset.apply()
 # -- Copy documentation for Microcircuit Model ----------------------------
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/box_plot.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/raster_plot.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/microcircuit.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/README.rst")
 copy_example_file(source_dir / "pynest/examples/hpc_benchmark_connectivity.svg")
+
+

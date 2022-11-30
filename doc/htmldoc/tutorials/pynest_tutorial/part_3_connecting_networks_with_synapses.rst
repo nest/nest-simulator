@@ -179,7 +179,7 @@ as above, or in any conjunction:
 will return all the connections that the neurons in ``epop1`` have to
 neurons in ``epop2`` of type :hxt_ref:`stdp_synapse`. Note that all these
 querying commands will only return the local connections, i.e. those
-represented on that particular :hxt_ref:`MPI`process in a distributed simulation.
+represented on that particular :hxt_ref:`MPI` process in a distributed simulation.
 
 Once we have the SynapseCollection of connections, we can extract data from it using
 :py:meth:`~.SynapseCollection.get`. In the simplest case, this returns a dictionary of lists,
@@ -396,5 +396,5 @@ Querying Synapses
    is represented by the following five
    entries: source-node_id, target-node_id, target-thread, synapse-id, port
 
-   *Note:* Only connections with targets on the :hxt_ref:`MPI`process executing
+   *Note:* Only connections with targets on the :hxt_ref:`MPI` process executing
    the command are returned.

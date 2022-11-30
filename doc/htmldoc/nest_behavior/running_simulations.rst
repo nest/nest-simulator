@@ -61,7 +61,7 @@ Two major optimizations in NEST are built on this decoupling:
    always for *dmin* time in one go, as to keep neurons in cache as long
    as possible.
 
-2. :hxt_ref:`MPI`processes only communicate in intervals of *dmin* as to minimize
+2. :hxt_ref:`MPI` processes only communicate in intervals of *dmin* as to minimize
    communication costs.
 
 These optimizations mean that the sizes of spike buffers in nodes and

@@ -24,7 +24,7 @@ that were supported in NEST 2.x. Depending on the features selected
 during the configuration of NEST, additional backend become available:
 Support for `SIONlib <http://www.fz-juelich.de/jsc/sionlib>`_ leads to
 the inclusion of a backend for writing binary files in parallel on
-large clusters and supercomputers. If :hxt_ref:`MPI`is enabled, a special data
+large clusters and supercomputers. If :hxt_ref:`MPI` is enabled, a special data
 exchange backend is built, which is useful in co-simulation scenarios.
 
 .. seealso::

@@ -80,6 +80,7 @@
 #include "iaf_psc_exp_multisynapse.h"
 #include "iaf_psc_exp_ps.h"
 #include "iaf_psc_exp_ps_lossless.h"
+#include "iaf_tsodyks.h"
 #include "izhikevich.h"
 #include "lin_rate.h"
 #include "mat2_psc_exp.h"
@@ -224,6 +225,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< iaf_psc_exp >( "iaf_psc_exp" );
   kernel().model_manager.register_node_model< iaf_psc_exp_htum >( "iaf_psc_exp_htum" );
   kernel().model_manager.register_node_model< iaf_psc_exp_multisynapse >( "iaf_psc_exp_multisynapse" );
+  kernel().model_manager.register_node_model< iaf_tsodyks >( "iaf_tsodyks" );
 
   kernel().model_manager.register_node_model< iaf_psc_exp_ps >( "iaf_psc_exp_ps" );
   kernel().model_manager.register_node_model< iaf_psc_exp_ps_lossless >( "iaf_psc_exp_ps_lossless" );

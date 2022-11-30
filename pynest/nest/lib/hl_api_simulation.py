@@ -49,9 +49,7 @@ __all__ = [
 def Simulate(t):
     """Simulate the network for `t` milliseconds.
 
-    `Simulate` triggers `Prepare`, `Run`, and `Cleanup` following this formula:
-
-    Simulate(t): t' = t/m; Prepare(); for _ in range(m): Run(t'); Cleanup()
+    `Simulate(t)` runs `Prepare()`, `Run(t)`, and `Cleanup()` in this order.
 
     Parameters
     ----------
@@ -81,10 +79,7 @@ def Run(t):
     ------
 
     Call between `Prepare` and `Cleanup` calls, or within a
-    ``with RunManager`` clause.
-    `Run` is automatically triggered during call to `Simulate`:
-
-    Simulate(t): t' = t/m; Prepare(); for _ in range(m): Run(t'); Cleanup()
+    ``with RunManager`` clause.  `Run(t)` is called once by each call to `Simulate(t)`.
 
     `Prepare` must be called before `Run` to calibrate the system, and
     `Cleanup` must be called after `Run` to close files, cleanup handles, and
@@ -112,9 +107,7 @@ def Run(t):
 def Prepare():
     """Calibrate the system before a `Run` call.
 
-    `Prepare` is automatically triggered at beginning of call to `Simulate`:
-
-    Simulate(t): t' = t/m; Prepare(); for _ in range(m): Run(t'); Cleanup()
+    `Prepare` is automatically called by `Simulate` and `RunManager`.
 
     Call before the first `Run` call, or before calling `Run` after changing
     the system, calling `SetStatus` or `Cleanup`.
@@ -130,11 +123,9 @@ def Prepare():
 
 @check_stack
 def Cleanup():
-    """Cleans up resources after a `Run` call.
+    """Cleans up resources after a `Run` calls.
 
-    `Cleanup` is automatically triggered at the end of call to `Simulate`:
-
-    Simulate(t): t' = t/m; Prepare(); for _ in range(m): Run(t'); Cleanup()
+    `Cleanup` is automatically called by `Simulate` and `RunManager` .
 
     Closes state for a series of runs, such as flushing and closing files.
     A `Prepare` is needed after a `Cleanup` before any more calls to `Run`.

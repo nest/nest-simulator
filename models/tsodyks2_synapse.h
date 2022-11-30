@@ -129,6 +129,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   tsodyks2_synapse( const tsodyks2_synapse& ) = default;
+  tsodyks2_synapse& operator=( const tsodyks2_synapse& ) = default;
 
   /**
    * Default Destructor.
@@ -171,9 +172,9 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
@@ -269,13 +270,13 @@ tsodyks2_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Con
   updateValue< double >( d, names::weight, weight_ );
 
   updateValue< double >( d, names::dU, U_ );
-  if ( U_ > 1.0 || U_ < 0.0 )
+  if ( U_ > 1.0 or U_ < 0.0 )
   {
     throw BadProperty( "U must be in [0,1]." );
   }
 
   updateValue< double >( d, names::u, u_ );
-  if ( u_ > 1.0 || u_ < 0.0 )
+  if ( u_ > 1.0 or u_ < 0.0 )
   {
     throw BadProperty( "u must be in [0,1]." );
   }

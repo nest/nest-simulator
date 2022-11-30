@@ -175,7 +175,7 @@ public:
 inline long
 STDPDopaCommonProperties::get_vt_node_id() const
 {
-  if ( vt_ != 0 )
+  if ( vt_ )
   {
     return vt_->get_node_id();
   }
@@ -208,6 +208,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   stdp_dopamine_synapse( const stdp_dopamine_synapse& ) = default;
+  stdp_dopamine_synapse& operator=( const stdp_dopamine_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -255,9 +256,9 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
@@ -279,7 +280,7 @@ public:
   void
   check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& cp )
   {
-    if ( cp.vt_ == 0 )
+    if ( not cp.vt_ )
     {
       throw BadProperty( "No volume transmitter has been assigned to the dopamine synapse." );
     }
@@ -457,7 +458,7 @@ stdp_dopamine_synapse< targetidentifierT >::process_dopa_spikes_( const std::vec
   // process dopa spikes in (t0, t1]
   // propagate weight from t0 to t1
   if ( ( dopa_spikes.size() > dopa_spikes_idx_ + 1 )
-    && ( t1 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_ > -1.0 * kernel().connection_manager.get_stdp_eps() ) )
+    and ( t1 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_ > -1.0 * kernel().connection_manager.get_stdp_eps() ) )
   {
     // there is at least 1 dopa spike in (t0, t1]
     // propagate weight up to first dopa spike and update dopamine trace
@@ -471,7 +472,7 @@ stdp_dopamine_synapse< targetidentifierT >::process_dopa_spikes_( const std::vec
     // process remaining dopa spikes in (t0, t1]
     double cd;
     while ( ( dopa_spikes.size() > dopa_spikes_idx_ + 1 )
-      && ( t1 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_ > -1.0 * kernel().connection_manager.get_stdp_eps() ) )
+      and ( t1 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_ > -1.0 * kernel().connection_manager.get_stdp_eps() ) )
     {
       // propagate weight up to next dopa spike and update dopamine trace
       // weight and dopamine trace n are at time of last dopa spike td but

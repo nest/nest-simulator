@@ -46,13 +46,13 @@ class ModelManager : public ManagerInterface
 {
 public:
   ModelManager();
-  ~ModelManager();
+  ~ModelManager() override;
 
-  virtual void initialize() override;
-  virtual void finalize() override;
-  virtual void change_number_of_threads() override;
-  virtual void set_status( const DictionaryDatum& ) override;
-  virtual void get_status( DictionaryDatum& ) override;
+  void initialize() override;
+  void finalize() override;
+  void change_number_of_threads() override;
+  void set_status( const DictionaryDatum& ) override;
+  void get_status( DictionaryDatum& ) override;
 
   /**
    * Resize the structures for the Connector objects if necessary.
@@ -190,11 +190,7 @@ public:
    */
   void memory_info() const;
 
-  void create_secondary_events_prototypes();
-
-  void delete_secondary_events_prototypes();
-
-  SecondaryEvent& get_secondary_event_prototype( const synindex syn_id, const thread tid ) const;
+  SecondaryEvent& get_secondary_event_prototype( const synindex syn_id, const thread tid );
 
 private:
   void clear_node_models_();
@@ -272,9 +268,6 @@ private:
    */
   std::vector< std::vector< ConnectorModel* > > connection_models_;
 
-  std::vector< ConnectorModel* > secondary_connector_models_;
-  std::vector< std::map< synindex, SecondaryEvent* > > secondary_events_prototypes_;
-
   DictionaryDatum modeldict_;   //!< Dictionary of all node models
   DictionaryDatum synapsedict_; //!< Dictionary of all synapse models
 
@@ -325,32 +318,17 @@ ModelManager::get_num_connection_models() const
 inline void
 ModelManager::assert_valid_syn_id( synindex syn_id, thread t ) const
 {
-  if ( syn_id >= connection_models_[ t ].size() or connection_models_[ t ][ syn_id ] == 0 )
+  if ( syn_id >= connection_models_[ t ].size() or not connection_models_[ t ][ syn_id ] )
   {
     throw UnknownSynapseType( syn_id );
   }
 }
 
-inline void
-ModelManager::delete_secondary_events_prototypes()
-{
-  for ( auto it = secondary_events_prototypes_.begin(); it != secondary_events_prototypes_.end(); ++it )
-  {
-    for ( std::map< synindex, SecondaryEvent* >::iterator iit = it->begin(); iit != it->end(); ++iit )
-    {
-      ( *iit->second ).reset_supported_syn_ids();
-      delete iit->second;
-    }
-  }
-  secondary_events_prototypes_.clear();
-}
-
 inline SecondaryEvent&
-ModelManager::get_secondary_event_prototype( const synindex syn_id, const thread tid ) const
+ModelManager::get_secondary_event_prototype( const synindex syn_id, const thread tid )
 {
   assert_valid_syn_id( syn_id );
-  // Using .at() because operator[] does not guarantee constness.
-  return *( secondary_events_prototypes_[ tid ].at( syn_id ) );
+  return *get_connection_model( syn_id, tid ).get_event();
 }
 
 } // namespace nest

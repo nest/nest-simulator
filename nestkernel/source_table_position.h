@@ -45,6 +45,7 @@ struct SourceTablePosition
   SourceTablePosition();
   SourceTablePosition( const long tid, const long syn_id, const long lcid );
   SourceTablePosition( const SourceTablePosition& rhs ) = default;
+  SourceTablePosition& operator=( const SourceTablePosition& rhs ) = default;
 
   /**
    * Decreases indices until a valid entry is found.
@@ -138,7 +139,7 @@ SourceTablePosition::decrease()
 inline bool
 operator==( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
 {
-  return ( ( lhs.tid == rhs.tid ) and ( lhs.syn_id == rhs.syn_id ) and ( lhs.lcid == rhs.lcid ) );
+  return ( lhs.tid == rhs.tid and lhs.syn_id == rhs.syn_id and lhs.lcid == rhs.lcid );
 }
 
 inline bool

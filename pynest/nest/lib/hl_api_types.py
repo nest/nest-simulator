@@ -47,10 +47,12 @@ except ImportError:
 
 __all__ = [
     'CollocatedSynapses',
+    'Compartments',
     'CreateParameter',
     'Mask',
     'NodeCollection',
     'Parameter',
+    'Receptors',
     'serializable',
     'SynapseCollection',
     'to_json',
@@ -84,8 +86,8 @@ def CreateParameter(parametertype, specs):
 
     **Parameter types**
 
-    Some available parameter types (`parametertype` parameter), their function and
-    acceptable keys for their corresponding specification dictionaries
+    Examples of available parameter types (`parametertype` parameter), with their function and
+    acceptable keys for their corresponding specification dictionaries:
 
     * Constant
         ::
@@ -100,21 +102,15 @@ def CreateParameter(parametertype, specs):
                 {'min' : float, # minimum value, default: 0.0
                  'max' : float} # maximum value, default: 1.0
 
-            # random parameter with normal distribution, optionally truncated
-            # to [min,max)
+            # random parameter with normal distribution
             'normal':
                 {'mean' : float, # mean value, default: 0.0
-                 'sigma': float, # standard deviation, default: 1.0
-                 'min'  : float, # minimum value, default: -inf
-                 'max'  : float} # maximum value, default: +inf
+                 'std'  : float} # standard deviation, default: 1.0
 
-            # random parameter with lognormal distribution,
-            # optionally truncated to [min,max)
+            # random parameter with lognormal distribution
             'lognormal' :
-                {'mu'   : float, # mean value of logarithm, default: 0.0
-                 'sigma': float, # standard deviation of log, default: 1.0
-                 'min'  : float, # minimum value, default: -inf
-                 'max'  : float} # maximum value, default: +inf
+                {'mean' : float, # mean value of logarithm, default: 0.0
+                 'std'  : float} # standard deviation of log, default: 1.0
     """
     return sli_func('CreateParameter', {parametertype: specs})
 
@@ -392,6 +388,10 @@ class NodeCollection:
         elif len(params) == 1:
             # params is a tuple with a string or list of strings
             result = get_parameters(self, params[0])
+            if params[0] == 'compartments':
+                result = Compartments(self, result)
+            elif params[0] == 'receptors':
+                result = Receptors(self, result)
         else:
             # Hierarchical addressing
             result = get_parameters_hierarchical_addressing(self, params)
@@ -452,6 +452,20 @@ class NodeCollection:
             raise TypeError("must either provide params or kwargs, but not both.")
 
         local_nodes = [self.local] if len(self) == 1 else self.local
+
+        if isinstance(params, dict) and 'compartments' in params:
+            if isinstance(params['compartments'], Compartments):
+                params['compartments'] = params['compartments'].get_tuple()
+            elif params['compartments'] is None:
+                # Adding compartments has been handled by the += operator, so we can remove the entry.
+                params.pop('compartments')
+
+        if isinstance(params, dict) and 'receptors' in params:
+            if isinstance(params['receptors'], Receptors):
+                params['receptors'] = params['receptors'].get_tuple()
+            elif params['receptors'] is None:
+                # Adding receptors has been handled by the += operator, so we can remove the entry.
+                params.pop('receptors')
 
         if isinstance(params, dict) and all(local_nodes):
 
@@ -795,10 +809,11 @@ class SynapseCollection:
         if pandas_output and not HAVE_PANDAS:
             raise ImportError('Pandas could not be imported')
 
-        # Return empty tuple if we have no connections or if we have done a nest.ResetKernel()
+        # Return empty dictionary if we have no connections or if we have done a nest.ResetKernel()
         num_conns = GetKernelStatus('num_connections')  # Has to be called first because it involves MPI communication.
         if self.__len__() == 0 or num_conns == 0:
-            return ()
+            # Return empty tuple if get is called with an argument
+            return {} if keys is None else ()
 
         if keys is None:
             cmd = 'GetStatus'
@@ -897,6 +912,13 @@ class SynapseCollection:
 
         sr('2 arraystore')
         sr('Transpose { arrayload pop SetStatus } forall')
+
+    def disconnect(self):
+        """
+        Disconnect the connections in the `SynapseCollection`.
+        """
+        sps(self._datum)
+        sr('Disconnect_a')
 
 
 class CollocatedSynapses:
@@ -1079,7 +1101,7 @@ class Parameter:
                 import nest
 
                 # normal distribution parameter
-                P = nest.CreateParameter('normal', {'mean': 0.0, 'sigma': 1.0})
+                P = nest.CreateParameter('normal', {'mean': 0.0, 'std': 1.0})
 
                 # get out value
                 P.GetValue()
@@ -1103,6 +1125,70 @@ class Parameter:
                 if len(pos) != len(positions[0]):
                     raise ValueError('All positions must have the same number of dimensions')
             return sli_func('Apply', self._datum, {'source': spatial_nc, 'targets': positions})
+
+
+class CmBase:
+
+    def __init__(self, node_collection, elements):
+        if not isinstance(node_collection, NodeCollection):
+            raise TypeError(f'node_collection must be a NodeCollection, got {type(node_collection)}')
+        if not isinstance(elements, tuple):
+            raise TypeError(f'elements must be a tuple of dicts, got {type(elements)}')
+        self._elements = elements
+        self._node_collection = node_collection
+
+    def __add__(self, other):
+        new_elements = list(self._elements)
+        if isinstance(other, dict):
+            new_elements += [other]
+        elif isinstance(other, (tuple, list)):
+            if not all(isinstance(d, dict) for d in other):
+                raise TypeError(
+                    f'{self.__class__.__name__} can only be added with dicts, lists of dicts, '
+                    f'or other {self.__class__.__name__}')
+            new_elements += list(other)
+        elif isinstance(other, self.__class__):
+            new_elements += list(other._elements)
+        else:
+            raise NotImplementedError(f'{self.__class__.__name__} can only be added with dicts, lists of dicts,'
+                                      f' or other {self.__class__.__name__}, got {type(other)}')
+
+        return self.__class__(self._node_collection, tuple(new_elements))
+
+    def __iadd__(self, other):
+        if isinstance(other, dict):
+            new_elements = [other]
+        elif isinstance(other, (tuple, list)):
+            if not all(isinstance(d, dict) for d in other):
+                raise TypeError(f'{self.__class__.__name__} can only be added with dicts, lists of dicts, '
+                                f'or other {self.__class__.__name__}')
+            new_elements = list(other)
+        elif isinstance(other, self.__class__):
+            new_elements = list(other._elements)
+        else:
+            raise NotImplementedError(f'{self.__class__.__name__} can only be added with dicts, lists of dicts,'
+                                      f' or other {self.__class__.__name__}, got {type(other)}')
+        self._node_collection.set({f'add_{self.__class__.__name__.lower()}': new_elements})
+        return None  # Flagging elements as added by returning None
+
+    def __getitem__(self, key):
+        return self._elements[key]
+
+    def __str__(self):
+        return str(self._elements)
+
+    def get_tuple(self):
+        return self._elements
+
+
+class Compartments(CmBase):
+    # No specialization here because all is done in the base class based on the class name.
+    pass
+
+
+class Receptors(CmBase):
+    # No specialization here because all is done in the base class based on the class name.
+    pass
 
 
 def serializable(data):

@@ -112,6 +112,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   bernoulli_synapse( const bernoulli_synapse& rhs ) = default;
+  bernoulli_synapse& operator=( const bernoulli_synapse& rhs ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -129,9 +130,9 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
@@ -205,7 +206,7 @@ bernoulli_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Co
   updateValue< double >( d, names::weight, weight_ );
   updateValue< double >( d, names::p_transmit, p_transmit_ );
 
-  if ( p_transmit_ < 0 || p_transmit_ > 1 )
+  if ( p_transmit_ < 0 or p_transmit_ > 1 )
   {
     throw BadProperty( "Spike transmission probability must be in [0, 1]." );
   }

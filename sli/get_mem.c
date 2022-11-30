@@ -20,9 +20,6 @@
  *
  */
 
-// Generated includes:
-#include "config.h"
-
 // C includes:
 #include <assert.h>
 

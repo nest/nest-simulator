@@ -129,6 +129,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   stdp_synapse( const stdp_synapse& ) = default;
+  stdp_synapse& operator=( const stdp_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -164,9 +165,9 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 

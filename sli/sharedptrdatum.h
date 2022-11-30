@@ -35,7 +35,7 @@ template < class D, SLIType* slt >
 class sharedPtrDatum : public std::shared_ptr< D >, public TypedDatum< slt >
 {
   Datum*
-  clone( void ) const
+  clone() const
   {
     return new sharedPtrDatum< D, slt >( *this );
   }
@@ -91,7 +91,7 @@ public:
   equals( const Datum* other ) const
   {
     const sharedPtrDatum< D, slt >* other_dc = dynamic_cast< const sharedPtrDatum< D, slt >* >( other );
-    return other_dc && *this == *other_dc;
+    return other_dc and *this == *other_dc;
   }
 };
 

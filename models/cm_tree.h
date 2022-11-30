@@ -94,7 +94,7 @@ public:
   ~Compartment() {};
 
   // initialization
-  void calibrate();
+  void pre_run_hook();
   std::map< Name, double* > get_recordables();
 
   // matrix construction
@@ -174,7 +174,7 @@ public:
   void add_compartment( const long parent_index );
   void add_compartment( const long parent_index, const DictionaryDatum& compartment_params );
   void add_compartment( Compartment* compartment, const long parent_index );
-  void calibrate();
+  void pre_run_hook();
   void init_pointers();
   void set_syn_buffers( std::vector< RingBuffer >& syn_buffers );
   std::map< Name, double* > get_recordables();

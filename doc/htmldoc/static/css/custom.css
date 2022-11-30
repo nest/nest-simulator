@@ -1,0 +1,893 @@
+/* 
+ * Customize css to define NEST specific colors, style and format
+ *
+   primary styles, for custom index.html and layout.html pages (see templates/ folder)
+   Author: www.prowebdesign.ro
+   Simple Responsive Template v 1.2
+   Add your own styles to customize the project.
+
+   Sphinx theme: sphinx-material
+   https://bashtage.github.io/sphinx-material/index.html
+   Sphinx material theme properties use 'md' in variable names 
+   Extesion for grid / cards in reStructured Text see sphinx-design
+   https://sphinx-design.readthedocs.io/
+   Sphinx design properties use the sd in variable names
+ */
+/* Define colors*/
+:root {
+    --nest-orange: #ff6633;
+    --nest-blue: #1281B3;
+    --nest-green: #36B34F;
+    --sd-color-primary: var(--nest-orange);
+    --sd-color-primary-highlight: #e05a2d;
+    --sd-color-info: var(--nest-blue);
+    --sd-color-success: var(--nest-green);
+    --sd-color-card-border-hover: var(--nest-blue);
+}
+/* Define base font color and style */
+body{
+	background:#fff;
+	color:#666;
+	font-family: 'Droid Sans', Arial, Helvetica, sans-serif;
+	/*font-size: medium;
+	line-height:1.5em;
+	font-weight:normal;*/
+}
+h1, h2, h3, h4, h5, h6{
+  /*font-size: 1.5em;*/
+	font-weight:600;
+	font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+	/*line-height:1.5em;
+	margin:.45em 0;
+	padding:0;*/
+}
+
+/* Box sizing. Awesome thing. Read about it here: http://www.w3schools.com/cssref/css3_pr_box-sizing.asp */
+*{	box-sizing:border-box;
+	-moz-box-sizing:border-box;}
+
+/* links */
+a {color: var(--nest-orange);}
+a:visited,
+a:active {color:var(--nest-orange);}
+a:hover{color:var(--nest-orange); text-decoration:underline;}
+
+/* set api function and class names style */
+.sig.sig-object.py {
+   font-weight: bold;
+	 background-color: #ffd1c1;
+   font-family: "Roboto Mono","Courier New",Courier,monospace;
+ }
+ /* set the kernelattributes in api  positioning to one line */
+dl.py.attribute dd  {
+ display: flex;
+ align-items: first baseline;
+ flex-wrap: wrap;
+ gap: 10px;
+ margin-left: 0.4em;
+
+}
+section#kernel-attributes dl.py.class dd dl.py.attribute dd dl.field-list.simple {
+	display: flex;
+	align-items: baseline;
+}
+
+.sig-prename.descclassname{
+  display: none;
+}
+
+/**************************************************************************************
+ Settings for overriding material design theme 
+ Setting nest colors to override sphinx material "orange" and other default colors
+
+**************************************************************************************/
+/* To ensure the headings in the theme have same weight as custom index page*/
+
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3,
+.md-typeset h4,
+.md-typeset h5,
+.md-typeset h6 {
+   font-weight: 600;
+}
+
+[data-md-color-primary=orange] .md-tabs {
+  background-color: var(--nest-orange);
+ }
+
+[data-md-color-primary="orange"] .md-header, [data-md-color-primary="orange"] .md-hero {
+  background-color: var(--nest-orange);
+}
+[data-md-color-primary="orange"] .md-nav__link--active, [data-md-color-primary="orange"] .md-nav__link:active {
+	color: var(--nest-orange);
+}
+[data-md-color-primary="orange"] .md-typeset a {
+  color: var(--nest-orange);
+}
+.md-typeset details {
+   background-color: white;
+}
+.md-typeset summary::after {
+  display: none;
+}
+.md-typeset details > summary::before {
+  display: none;
+}
+
+/* settings for icons */
+.md-typeset .sd-card-title img {
+  border: none;
+  opacity: 0.75;
+  width: 64px;
+  height: auto;
+  margin-right: 0.7em;
+}
+div.sd-card-title.sd-font-weight-bold.sd-d-flex-row.docutils a.reference.internal img {
+ margin-right: 2em;
+ margin-bottom: 0.5em;
+ 
+}
+
+.md-typeset .admonition {
+  background-color: var(--nest-blue);
+  border-left: .2rem solid var(--nest-blue);
+  border-radius: 5px;
+}
+
+.md-typeset .admonition > .admonition-title::before, .md-typeset .admonition.important > .admonition-title::before {
+  color: #fff;
+}
+.md-typeset .admonition > .admonition-title{
+  background-color: var(--nest-blue);
+  color: #fff;
+}
+.md-typeset .admonition {
+   background-color: #fff;
+   box-shadow: 0 .125rem .25rem var(--sd-color-shadow);
+   margin-left: 17px;
+   margin-right: 15px;
+}
+.md-typeset .admonition.seealso > .admonition-title, .md-typeset .admonition.important > .admonition-title {
+   background-color: var(--nest-green);
+}
+.md-typeset .admonition.seealso, .md-typeset .admonition.important {
+  border-left: .2rem solid var(--nest-green);
+}
+.md-typeset .admonition.warning {
+   border-left-color: #be1717;
+} 
+.md-typeset .admonition.warning > .admonition-title {
+   background-color: #be1717;
+}
+.md-typeset .admonition.danger > .admonition-title {
+   background-color: black;
+}
+/* add admonition warning / info (?) */
+.md-nav__extra_link{
+  color: var(--nest-orange);
+}
+div.admonition .md-typeset a > code {
+	color: white;
+}
+.md-nav__link, .md-nav__link:focus, .md-nav__link:hover {
+	color: var(--nest-orange);
+}
+
+ul.md-tabs__list li.md-tabs__item a.md-tabs__link {
+ color: #fff;
+ opacity:0.9;
+}
+a.md-tabs__link, a.md-source {
+  color: #fff;
+}
+div.md-header-nav__source a.md-source div.md-source__repository, div.md-source__icon{
+  color: #fff;
+}
+
+/*remove logo from header */
+.md-header-nav__button {
+  display: none;
+}
+/* remove space between the md_tabs bar and the header section */
+.md-container {
+ padding-top: 0px;
+}
+
+
+/***********************************
+ * Adjust settings for sphinx design
+ * *********************************/
+.sd-card-header .sd-card-text {
+  color: white;
+  text-align: center;
+}
+#pynest-examples img.sd-card-img-top {
+  width: auto;
+  height: max-content;
+}
+
+.sd-card-body {
+   padding: 0.6rem;
+}
+.sd-btn {
+	font-size: 1em;
+	padding: .375em .75em;
+}
+.sd-container-fluid {
+  padding-left: 0;
+  padding-right: 0;
+}
+.sd-container, .sd-container-fluid, .sd-container-lg, .sd-container-md, .sd-container-sm, .sd-container-xl {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+/* ************************************
+ * Define styles for custom index.html
+ * ***********************************/
+/* structure */
+.wrapper{
+	width: 100%;
+	margin: 0 auto;
+	padding: 0 50px;
+}
+#logo img {
+ max-width: 70%;
+ height: auto;
+ padding-top: 20px;
+
+}
+
+#pulse span{
+	width: 31px;
+	border-radius: 50%;
+	background: #000;
+	color: #fff;
+  text-align: center;
+  width: 31px;
+  padding: 5px 0px;
+ }
+header.wrapper{
+	padding: 0;
+}
+
+.wrapper-92{
+	width: 92%;
+	margin: 0 auto;
+}
+
+header{
+  background-color: var(--nest-orange);
+  padding:15px 0;
+}
+
+#banner{
+    text-align:center;
+    position: absolute;
+}
+#hero,
+#page-header{
+	background:#f3f3f3;
+	border-top:1px solid #e2e2e2;
+	border-bottom:1px solid #e2e2e2;
+	padding:20px 0;
+}
+#page-header h1{
+	margin:0;
+}
+.flexslider{
+	display:none;
+}
+/*#content,
+aside,
+.vertical-padding{
+	padding:40px 0;
+}*/
+
+p{ margin:0 0 1.5em;}
+
+#particles{
+   width: 100%;
+   margin: 0;
+
+}
+
+/*MAIN MENU not displayed with sphinx material*/
+.menu-toggle{
+	display:none;
+	padding:10px;
+	margin:20px 0 0;
+	background:#666;
+	color:#fff;
+	cursor:pointer;
+	text-transform:uppercase;
+	font-size:20px;
+}
+.menu-toggle.toggled-on{
+	background:var(--nest-orange);
+}
+.srt-menu{
+	display:none;
+}
+.srt-menu.toggled-on{
+	display:block;
+	position:relative;
+	z-index:10;
+}
+
+.srt-menu{
+	clear:both;
+	margin-bottom:60px;
+
+}
+.srt-menu li a {
+	color:#666;
+	background:#dadada;
+	display:block;
+	margin:1px 0;
+	padding:10px;
+	text-decoration:none;
+	font-size: medium;
+}
+.srt-menu li a:hover{
+	background:var(--nest-orange);
+	color:#fff;
+}
+.srt-menu li li a {
+	background:#e8e8e8;
+	padding-left:40px;
+}
+.srt-menu li li li a {
+	background:#efefef;
+	padding-left:80px;
+}
+
+/*SPACE GRID ELEMENTS VERTICALLY, SINCE THEY ARE ONE UNDER ANOTHER SO FAR*/
+.grid_1,
+.grid_2,
+.grid_3,
+.grid_4,
+.grid_5,
+.grid_6,
+.grid_7,
+.grid_8,
+.grid_9,
+.grid_10,
+.grid_11,
+.grid_12 {
+	margin-bottom:40px;
+	/*positioning and padding*/
+	position: relative;
+    min-height: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+.grid_3, .grid_6{
+
+  margin-top: auto;
+}
+/*FOOTER*/
+footer{
+	background:#333;
+	color:#ccc;
+	padding:20px 0;
+}
+footer ul{
+	margin:0 0 0 8%;
+	padding:0;
+}
+
+footer a, footer a:visited, footer a:active{
+    color:#777;
+    text-decoration: none;
+}
+
+footer a:hover{
+    color:#888;
+    text-decoration: underline;
+}
+
+
+
+/*Some more colored elements*/
+a.buttonlink{
+	background:var(--nest-orange);
+	border-radius:7px;
+	color:#fff;
+	display:block;
+	float:left;
+	margin:10px 15px 10px 0;
+	padding:20px;
+	text-decoration:none;
+}
+a.buttonlink:hover{
+	background:#36B34F;
+  color: #fff;
+  text-decoration: underline;
+}
+.orangeelement{
+	background:var(--nest-orange);
+	color:#fff;
+}
+.blueelement{
+	background:var(--nest-blue);
+	color:#fff;
+  padding-bottom: 30px;
+}
+
+.greenelement{
+    background: var(--nest-green);
+    color:#fff;
+}
+
+/* Contain floats*/
+.clearfix:before,
+.clearfix:after,
+.row:before,
+.row:after {
+  content: " ";
+  display: table;
+}
+.clearfix:after,
+.container:after,
+.row:after{
+  clear: both;
+}
+
+.green {
+   color: var(--nest-green);
+}
+
+.darkgreen {
+   color: #15471F;
+}
+
+.button-container {
+    width: 520px;
+    overflow-y: auto;
+}
+
+.icon {
+    margin: 0 auto;
+    height: 95px;
+    display: block;
+}
+
+hr {
+    margin: 25px auto;
+}
+
+#topics {
+    width: 80%;
+    margin: 0 auto;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+#gototop {
+    display: none;
+}
+
+#gototop img {
+    position: fixed;
+    width: 75px;
+    height: 75px;
+    bottom: 25px;
+    right: 25px;
+    z-index: 100;
+    opacity: 0.6;
+}
+
+.narrow {
+    text-align: justify;
+    padding: 0 5%;
+}
+
+#intro .accordion pre {
+    width: 65%;
+    margin: 0 auto;
+    background-color: #eee;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    padding: 0;
+    color: #666;
+    cursor: pointer;
+}
+
+
+#intro .accordion pre:first-of-type {
+    background: #ccc;
+    border-top: 1px solid #ccc;
+    border-radius: 10px 10px 0 0;
+}
+
+#intro .accordion pre:first-of-type code {
+    border-radius: 10px 10px 0 0;
+}
+
+#intro .accordion pre:last-of-type {
+    background: #ccc;
+    border-radius: 0 0 10px 10px;
+}
+
+#intro .accordion pre:last-of-type code {
+    border-radius: 0 0 10px 10px;
+}
+
+#intro.vertical-padding div#main.blueelement.wrapper.clearfix ul li a {
+  color: #fff;
+
+}
+#backmatter.greenelement.vertical-padding div.wrapper.clearfix p a {
+	color: #fff;
+	background-color: none;
+	font-weight: bold;
+}
+
+#intro .accordion div {
+    display: none;
+    background-color: #f63;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    width: 65%;
+    margin: 0 auto;
+    padding: 1em;
+    box-shadow: inset 0 15px 15px -15px #444;
+}
+
+.flexslider {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+
+.flexslider img {
+    border-radius: 10px;
+}
+
+.flex-control-nav {
+    bottom: -40px;
+}
+
+.flexslider li span {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    color: white;
+    padding: 15px;
+    position:absolute;
+    z-index:1;
+    border-radius: 0 0 10px 10px;
+    transition: all 0.5s ease;
+}
+
+.flexslider li span h3 {
+    font-weight: bold;
+    background-size: 26px;
+}
+/****************************************
+*****************************************
+MEDIAQUERIES
+*****************************************
+****************************************/
+
+@media only screen and (min-width: 2048px) {
+
+.md-typeset .sd-card-title img {
+ width: 128px;
+ height: auto;
+  }
+}
+@media only screen and (min-width: 1024px) {
+
+.particle-img
+ {
+  background-image: linear-gradient(to bottom, rgba(255, 102, 51, 0.63), rgba(255, 102, 51, 0.1), rgba(255, 102, 51, 0.73)), url('../img/background-particles-flattened.png');
+  background-color: #ff6633;
+  height: 350px;
+ }
+
+header{
+  background-color: var(--nest-orange);
+  padding:15px 0;
+  height: 350px;
+ }
+.tsparticles-canvas-el {
+    margin-top: -275px;
+}
+
+}
+
+@media only screen and (max-width: 1023px) {
+ .particle-img
+ {
+  background-image: linear-gradient(to bottom, rgba(255, 102, 51, 0.63), rgba(255, 102, 51, 0.1), rgba(255, 102, 51, 0.73)), url('../img/background-particles-flattened.png');
+  background-color: #ff6633;
+  height: 250px;
+
+ }
+header{
+  background-color: var(--nest-orange);
+  padding:0 0;
+  height: 250px;
+}
+ #banner{
+   padding-top: 50px;
+ }
+}
+
+
+
+
+/*
+LARGER MOBILE DEVICES
+This is for mobile devices with a bit larger screens.
+*/
+@media only screen and (min-width: 481px) {
+#banner{
+	float:left;
+	text-align:left;
+	margin: px 0 0 50px;
+}
+
+.menu-toggle{/*make menu float right, instead of sitting under the logo*/
+	margin-top:10px; /*this depends on the height of the logo*/
+	float:right;
+  display: None;
+
+}
+
+}
+
+/*
+TABLET & SMALLER LAPTOPS
+The average viewing window and preferred media query for those is 768px.
+But I think that some more breathing space is good:)
+*/
+@media only screen and (min-width: 920px) {
+
+
+header{
+	padding:0;
+}
+#banner{
+	float:left;
+	text-align:left;
+	margin: 55px 0 0 50px;
+}
+#hero{
+	padding:13px 0;
+}
+
+#content {
+	float:left;
+	width:65%;
+}
+#content.wide-content{
+	float:none;
+	width:100%;
+}
+
+.flexslider{
+	display:block;
+/*demo 1 slider theme*/
+margin: 0;
+}
+.flex-control-nav {bottom: 5px;}
+
+
+aside {
+	float:right;
+	width:30%;
+}
+
+/*** MAIN MENU - ESSENTIAL STYLES ***/
+.menu-toggle{display:none;}
+#menu-main-navigation{display:block;}
+
+.srt-menu, .srt-menu * {
+	margin:			0;
+	padding:		0;
+	list-style:		none;
+}
+.srt-menu ul {
+	position:		absolute;
+	display:none;
+	width:			12em; /* left offset of submenus need to match (see below) */
+}
+.srt-menu ul li {
+	width:			100%;
+}
+.srt-menu li:hover {
+	visibility:		inherit; /* fixes IE7 'sticky bug' */
+}
+.srt-menu li {
+	float:			left;
+	position:		relative;
+	margin-left:1px;
+	height:25px;
+}
+.srt-menu li li {
+	margin-left:0px;
+	height:auto;
+}
+.srt-menu a {
+	display:		block;
+	position:		relative;
+}
+.srt-menu li:hover ul,
+.srt-menu li.sfHover ul {
+	display:block;
+	left:			0;
+	top:			42px; /* match top ul list item height */
+	z-index:		99;
+	-webkit-box-shadow:  2px 3px 2px 0px rgba(00, 00, 00, .3);
+    box-shadow:  2px 3px 2px 0px rgba(00, 00, 00, .3);
+}
+ul.srt-menu li:hover li ul,
+ul.srt-menu li.sfHover li ul {
+	top:			-999em;
+}
+ul.srt-menu li li:hover ul,
+ul.srt-menu li li.sfHover ul {
+	left:			12em; /* match ul width */
+	top:			0;
+}
+ul.srt-menu li li:hover li ul,
+ul.srt-menu li li.sfHover li ul {
+	top:			-999em;
+}
+ul.srt-menu li li li:hover ul,
+ul.srt-menu li li li.sfHover ul {
+	left:			10em; /* match ul width */
+	top:			0;
+}
+
+/*** DEMO2 SKIN ***/
+#topnav, .srt-menu {
+	float:right;
+	margin: 125px 100px 0 0;
+}
+.srt-menu a {
+	text-decoration:none;
+}
+.srt-menu li a{
+    background:#fff;
+    border-radius: 10px;
+	margin:5px;
+	padding:10px 20px;
+}
+.srt-menu a, .srt-menu a:visited  { /* visited pseudo selector so IE6 applies text colour*/
+	color:			#666;
+}
+.srt-menu li li a {
+		border-top:		1px solid rgba(255,255,255,.2);
+		background:		#333; /*fallback for old IE*/
+		background:rgba(0,0,0,.6);
+		color:	#fff;
+		padding-left:20px;
+}
+.srt-menu li li a:visited{color:#fff;}
+.srt-menu li li li a,
+.srt-menu li.current * li a{
+	padding-left:20px;
+	background:rgba(0,0,0,.6);
+}
+
+.srt-menu li:hover > a,
+.srt-menu li.current a{
+	color:#fff;
+	background:#1281B3;
+}
+.srt-menu li li:hover > a{
+	color:#fff;
+	background:#1281B3;
+}
+
+
+
+/*GRID*/
+/*
+ & Columns : 12
+ */
+ .row{
+	 margin-left: -15px;
+     margin-right: -15px;
+}
+
+.grid_1 { width: 8.33333333%; }
+.grid_2 { width: 16.66666667%; }
+.grid_3 { width: 25%; }
+.grid_4 { width: 33.33333333%; }
+.grid_5 { width: 41.66666667%; }
+.grid_6 { width: 50%; }
+.grid_7 { width: 58.33333333%; }
+.grid_8 { width: 66.66666667%; }
+.grid_9 { width: 75%; }
+.grid_10 { width: 83.33333333%; }
+.grid_11 { width: 91.66666667%; }
+.grid_12 { width: 100%; }
+
+.grid_1,
+.grid_2,
+.grid_3,
+.grid_4,
+.grid_5,
+.grid_6,
+.grid_7,
+.grid_8,
+.grid_9,
+.grid_10,
+.grid_11,
+.grid_12 {
+	float: left;
+	display: block;
+}
+
+.rightfloat{float:right;}
+/* @notation inspired by tinyGrid, .row and percentage by Twitter Bootstrap
+ */
+
+#hero .grid_8 {
+	margin:40px 0 -13px;
+}
+
+}
+
+/*
+DESKTOP
+This is the average viewing window. So Desktops, Laptops, and
+in general anyone not viewing on a mobile device. Here's where
+you can add resource intensive styles.
+*/
+@media only screen and (min-width: 1024px) {
+#hero h1{ font-size:1.4em;}
+}
+
+/*
+LARGE VIEWING SIZE
+This is for the larger monitors and possibly full screen viewers.
+*/
+@media only screen and (min-width: 1240px) {
+#hero h1{ font-size:2em;}
+}
+
+/*
+RETINA (2x RESOLUTION DEVICES)
+This applies to the retina iPhone (4s) and iPad (2,3) along with
+other displays with a 2x resolution.
+*/
+@media only screen and (-webkit-min-device-pixel-ratio: 1.5),
+       only screen and (min--moz-device-pixel-ratio: 1.5),
+       only screen and (min-device-pixel-ratio: 1.5) {
+
+
+}
+
+/*
+iPHONE 5 MEDIA QUERY
+iPhone 5 or iPod Touch 5th generation styles (you can include your own file if you want)
+*/
+@media (device-height: 568px) and (-webkit-min-device-pixel-ratio: 2) {
+
+}
+
+@media only screen and (max-width: 76.1875em) {
+ html [data-md-color-primary="orange"] .md-nav--primary .md-nav__title--site {
+ 	background-color: #fff;
+ }
+ [data-md-color-primary="orange"] .md-nav__source {
+ 	background-color: #000;
+ }
+ html .md-nav--primary .md-nav__title {
+ 	white-space: initial;
+ }
+/* Make hamburger menu on small devices visible */
+ .md-icon.md-icon--menu.md-header-nav__button{
+  	display: flex;
+ }
+}

@@ -198,6 +198,22 @@ class ConnectLayersTestCase(unittest.TestCase):
         }
         self._check_connections(conn_spec, 20)
 
+    def test_connect_layers_indegree_parameter(self):
+        """Connecting layers with fixed_indegree and parameter as indegree."""
+        # Parameter will give numbers close to 5. With std=0.1 they should all be rounded to an indegree of exactly 5.
+        mean = 5.
+        param = nest.random.normal(mean=mean, std=0.1)
+        conn_spec = {'rule': 'fixed_indegree', 'indegree': param, 'p': 1.0, 'allow_multapses': True}
+        self._check_connections(conn_spec, int(mean) * 20)
+
+    def test_connect_layers_outdegree_parameter(self):
+        """Connecting layers with fixed_indegree and parameter as indegree."""
+        # Parameter will give numbers close to 5. With std=0.1 they should all be rounded to an outdegree of exactly 5.
+        mean = 5.
+        param = nest.random.normal(mean=mean, std=0.1)
+        conn_spec = {'rule': 'fixed_outdegree', 'outdegree': param, 'p': 1.0, 'allow_multapses': True}
+        self._check_connections(conn_spec, int(mean) * 20)
+
     def test_connect_layers_outdegree_mask(self):
         """Connecting layers with fixed_outdegree and mask"""
         conn_spec = {
@@ -451,6 +467,27 @@ class ConnectLayersTestCase(unittest.TestCase):
         nest.Connect(multisyn_layer, multisyn_layer, conn_spec, syn_spec)
         conns = nest.GetConnections()
         self.assertEqual(conns.get('receptor'), [receptor_type]*len(multisyn_layer)*indegree)
+
+    def test_connect_integer_param(self):
+        # weight and delay are intentionally integers for this test.
+        weight = 2
+        delay = 2
+        multisyn_layer = nest.Create(
+            'iaf_psc_exp',
+            positions=nest.spatial.grid(self.dim, extent=self.extent))
+        indegree = 10
+        # Combination of fixed_indegree and connection probability (kernel) to trigger ConnectLayers.
+        conn_spec = {
+            'rule': 'fixed_indegree',
+            'indegree': indegree,
+            'p': 1.0
+        }
+        syn_spec = {'weight': weight, 'delay': delay}
+
+        nest.Connect(multisyn_layer, multisyn_layer, conn_spec, syn_spec)
+        conns = nest.GetConnections()
+        self.assertEqual(conns.weight, [weight] * len(multisyn_layer) * indegree)
+        self.assertEqual(conns.delay, [delay] * len(multisyn_layer) * indegree)
 
 
 def suite():

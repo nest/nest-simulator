@@ -25,6 +25,7 @@ import os
 import re
 import pip
 import subprocess
+from urllib.request import urlretrieve
 
 from pathlib import Path
 from shutil import copyfile
@@ -332,17 +333,8 @@ def copy_acknowledgments_file(src):
 
 
 # -- Copy Acknowledgments file ----------------------------
-copy_acknowledgments_file(source_dir / "ACKNOWLEDGMENTS.md")# PATCH THE DOCUMENTATION
-# TEST
-import patch
-from urllib import request
-remote_url = 'https://www.nest-simulator.org/patches_sg/34_doc.patch'
-patch_file = '34_doc.patch'
-# download
-request.urlretrieve(remote_url, patch_file)
-# patch
-pset = patch.fromfile(patch_file)
-pset.apply()
+copy_acknowledgments_file(source_dir / "ACKNOWLEDGMENTS.md")
+
 # -- Copy documentation for Microcircuit Model ----------------------------
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/box_plot.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/raster_plot.png")
@@ -351,3 +343,23 @@ copy_example_file(source_dir / "pynest/examples/Potjans_2014/README.rst")
 copy_example_file(source_dir / "pynest/examples/hpc_benchmark_connectivity.svg")
 
 
+# -- Optionally patch the documentation for hotfix back-ports ----------------------------
+print("preparing patch...")
+#current_hash = os.environ['GIT_HASH']
+# or
+current_hash = check_output("git rev-parse HEAD", shell=True)
+print(f"  current git hash: {current_hash}")
+patch_file = f'{current_hash}_doc.patch'
+patch_url = f'{os.environ["patch_url"]}/{patch_file}'
+try:
+    print(f"  retrieving {patch_url}")
+    urlretrieve(patch_url, patch_file)
+    print(f"apply {patch_file}")
+    patch = subprocess.run('patch -p3', stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    (stdout, stderr) = patch.communicate(open(patch_file, 'r')))
+
+    print("patch result:")
+    print(result)
+except Exception as exc:
+    print("no patch applied:")
+    print(exc)

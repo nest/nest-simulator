@@ -61,8 +61,9 @@ nest::weight_recorder::Parameters_::get( dictionary& d ) const
 void
 nest::weight_recorder::Parameters_::set( const dictionary& d )
 {
-  auto get_or_create_nc = [&d]( NodeCollectionPTR& nc, const std::string& key ) {
-    if ( not d.empty() and d.known( key) )
+  auto get_or_create_nc = [ &d ]( NodeCollectionPTR& nc, const std::string& key )
+  {
+    if ( not d.empty() and d.known( key ) )
     {
       const auto value = d.at( key );
       if ( is_type< NodeCollectionPTR >( value ) )
@@ -71,7 +72,7 @@ nest::weight_recorder::Parameters_::set( const dictionary& d )
       }
       else
       {
-	throw TypeMismatch("NodeCollection", debug_type( d.at( key ) ) );
+        throw TypeMismatch( "NodeCollection", debug_type( d.at( key ) ) );
       }
     }
   };
@@ -143,8 +144,8 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
   {
     // P_senders_ is defined and sender is not in it
     // or P_targets_ is defined and receiver is not in it
-    if ( ( P_.senders_.get() and not P_.senders_->contains( e.get_sender_node_id() ) )
-      or ( P_.targets_.get() and not P_.targets_->contains( e.get_receiver_node_id() ) ) )
+    if ( ( P_.senders_->size() != 0 and not P_.senders_->contains( e.get_sender_node_id() ) )
+      or ( P_.targets_->size() != 0 and not P_.targets_->contains( e.get_receiver_node_id() ) ) )
     {
       return;
     }

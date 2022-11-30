@@ -72,22 +72,16 @@ class RateNeuronTestCase(unittest.TestCase):
         nest.Simulate(self.simtime)
 
         # get noise from rate neurons
-        events = nest.GetStatus(self.multimeter)[0]["events"]
+        events = self.multimeter.events
         senders = events['senders']
-        senders_ipn = np.where(
-            senders == self.rate_neuron_ipn.get('global_id'))[0]
-        senders_opn = np.where(
-            senders == self.rate_neuron_opn.get('global_id'))[0]
+        senders_ipn = np.where(senders == self.rate_neuron_ipn.get('global_id'))[0]
+        senders_opn = np.where(senders == self.rate_neuron_opn.get('global_id'))[0]
 
         mean_rate_ipn = np.mean(events['rate'][senders_ipn])
         mean_rate_opn = np.mean(events['rate'][senders_opn])
 
-        self.assertTrue(
-            np.isclose(mean_rate_ipn, self.neuron_params['mu'],
-                       rtol=self.rtol))
-        self.assertTrue(
-            np.isclose(mean_rate_opn, self.neuron_params['mu'],
-                       rtol=self.rtol))
+        self.assertTrue(np.isclose(mean_rate_ipn, self.neuron_params['mu'], rtol=self.rtol))
+        self.assertTrue(np.isclose(mean_rate_opn, self.neuron_params['mu'], rtol=self.rtol))
 
     def test_RateNeuronNoise(self):
         """Check noise of the rate_neurons"""
@@ -96,24 +90,18 @@ class RateNeuronTestCase(unittest.TestCase):
         nest.Simulate(self.simtime)
 
         # get noise from rate neurons
-        events = nest.GetStatus(self.multimeter)[0]["events"]
+        events = self.multimeter.events
         senders = events['senders']
-        senders_ipn = np.where(
-            senders == self.rate_neuron_ipn.get('global_id'))[0]
-        senders_opn = np.where(
-            senders == self.rate_neuron_opn.get('global_id'))[0]
+        senders_ipn = np.where(senders == self.rate_neuron_ipn.get('global_id'))[0]
+        senders_opn = np.where(senders == self.rate_neuron_opn.get('global_id'))[0]
 
         noise_ipn = events['noise'][senders_ipn]
         std_noise_ipn = np.std(noise_ipn)
         noise_opn = events['noise'][senders_opn]
         std_noise_opn = np.std(noise_opn)
 
-        self.assertTrue(
-            np.isclose(std_noise_ipn, self.neuron_params['sigma'],
-                       rtol=self.rtol))
-        self.assertTrue(
-            np.isclose(std_noise_opn, self.neuron_params['sigma'],
-                       rtol=self.rtol))
+        self.assertTrue(np.isclose(std_noise_ipn, self.neuron_params['sigma'], rtol=self.rtol))
+        self.assertTrue(np.isclose(std_noise_opn, self.neuron_params['sigma'], rtol=self.rtol))
 
     def test_RateNeuronVariance(self):
         """Check the variance of the rate of the rate_neuron for input noise"""
@@ -122,10 +110,9 @@ class RateNeuronTestCase(unittest.TestCase):
         nest.Simulate(self.simtime)
 
         # get variance of the rate
-        events = nest.GetStatus(self.multimeter)[0]["events"]
+        events = self.multimeter.events
         senders = events['senders']
-        senders_ipn = np.where(
-            senders == self.rate_neuron_ipn.get('global_id'))[0]
+        senders_ipn = np.where(senders == self.rate_neuron_ipn.get('global_id'))[0]
 
         rate = events['rate'][senders_ipn]
         var_rate = np.var(rate)

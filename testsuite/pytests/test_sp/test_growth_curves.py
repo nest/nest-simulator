@@ -292,8 +292,7 @@ class TestGrowthCurve(unittest.TestCase):
         self.pop = nest.Create('iaf_psc_alpha', 10)
         self.spike_recorder = nest.Create('spike_recorder')
         nest.Connect(self.pop, self.spike_recorder, 'all_to_all')
-        noise = nest.Create('poisson_generator')
-        nest.SetStatus(noise, {"rate": 800000.0})
+        noise = nest.Create('poisson_generator', params={"rate": 800000.0})
         nest.Connect(noise, self.pop, 'all_to_all')
 
     def simulate(self):
@@ -309,12 +308,11 @@ class TestGrowthCurve(unittest.TestCase):
 
         for t_i, t in enumerate(self.sim_steps):
             for n_i in range(len(self.pop)):
-                self.ca_nest[n_i][t_i], synaptic_elements = nest.GetStatus(
-                    self.pop[n_i], ('Ca', 'synaptic_elements'))[0]
+                self.ca_nest[n_i][t_i], synaptic_elements = self.pop[n_i].get(['Ca', 'synaptic_elements'])
                 self.se_nest[n_i][t_i] = synaptic_elements['se']['z']
             nest.Simulate(self.sim_step)
 
-        tmp = nest.GetStatus(self.spike_recorder, 'events')[0]
+        tmp = self.spike_recorder.events
         spikes_all = tmp['times']
         senders_all = tmp['senders']
         for n_i, n in enumerate(self.pop):
@@ -339,21 +337,18 @@ class TestGrowthCurve(unittest.TestCase):
         tau_ca = 10000.0
         growth_rate = 0.0001
         eps = 0.10
-        nest.SetStatus(
-            self.pop,
-            {
-                'beta_Ca': beta_ca,
-                'tau_Ca': tau_ca,
-                'synaptic_elements': {
-                    'se': {
-                        'growth_curve': 'linear',
-                        'growth_rate': growth_rate,
-                        'eps': eps,
-                        'z': 0.0
-                    }
+        self.pop.set({
+            'beta_Ca': beta_ca,
+            'tau_Ca': tau_ca,
+            'synaptic_elements': {
+                'se': {
+                    'growth_curve': 'linear',
+                    'growth_rate': growth_rate,
+                    'eps': eps,
+                    'z': 0.0
                 }
             }
-        )
+        })
         self.se_integrator.append(LinearExactSEI(
             tau_ca=tau_ca, beta_ca=beta_ca, eps=eps, growth_rate=growth_rate))
         self.se_integrator.append(LinearNumericSEI(
@@ -381,20 +376,17 @@ class TestGrowthCurve(unittest.TestCase):
         growth_rate = 0.0001
         eta = 0.05
         eps = 0.10
-        nest.SetStatus(
-            self.pop,
-            {
-                'beta_Ca': beta_ca,
-                'tau_Ca': tau_ca,
-                'synaptic_elements': {
-                    'se': {
-                        'growth_curve': 'gaussian',
-                        'growth_rate': growth_rate,
-                        'eta': eta, 'eps': eps, 'z': 0.0
-                    }
+        self.pop.set({
+            'beta_Ca': beta_ca,
+            'tau_Ca': tau_ca,
+            'synaptic_elements': {
+                'se': {
+                    'growth_curve': 'gaussian',
+                    'growth_rate': growth_rate,
+                    'eta': eta, 'eps': eps, 'z': 0.0
                 }
             }
-        )
+        })
         self.se_integrator.append(
             GaussianNumericSEI(tau_ca=tau_ca, beta_ca=beta_ca,
                                eta=eta, eps=eps, growth_rate=growth_rate))

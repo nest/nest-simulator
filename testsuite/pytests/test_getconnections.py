@@ -48,10 +48,8 @@ class GetConnectionsTestCase(unittest.TestCase):
         d1 = tuple({"weight": w} for w in weights)
 
         c3 = nest.GetConnections(a, a)
-        nest.SetStatus(c3, d1)
-        
-        s1 = nest.GetStatus(c3, "weight")
-        self.assertEqual(s1, weights)
+        c3.set(d1)
+        self.assertEqual(c3.weight, weights)
 
         c4 = nest.GetConnections()
         self.assertEqual(c1, c4)
@@ -61,8 +59,7 @@ class GetConnectionsTestCase(unittest.TestCase):
 
         c5 = nest.GetConnections(a, a)
         c5.set(d1)
-        s2 = c5.get('weight')
-        self.assertEqual(s2, weights)
+        self.assertEqual(c5.get('weight'), weights)
 
         c6 = nest.GetConnections()
         self.assertEqual(c1, c6)

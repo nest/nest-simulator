@@ -182,7 +182,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         read out devices
         '''
         # multimeter
-        rec = nest.GetStatus(mm)[0]['events']
+        rec = mm.events
         t = rec['times']
         V_w = rec['V_m.p']
 
@@ -193,14 +193,14 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         V_w_star = (g_L*E_L + g_D*V_w) / (g_L + g_D)
 
         # weight recorder
-        data = nest.GetStatus(wr)
+        data = wr.get()
         senders = data[0]['events']['senders']
         targets = data[0]['events']['targets']
         weights = data[0]['events']['weights']
         times = data[0]['events']['times']
 
         # spike recorder
-        data = nest.GetStatus(sr_soma)[0]['events']
+        data = sr_soma.events
         spike_times_soma = data['times']
 
         # compute predicted rate

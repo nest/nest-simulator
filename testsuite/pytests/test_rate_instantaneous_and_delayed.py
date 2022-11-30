@@ -84,15 +84,12 @@ class RateInstantaneousAndDelayedTestCase(unittest.TestCase):
         nest.Simulate(simtime)
 
         # make sure shifted rates are identical
-        events = nest.GetStatus(multimeter)[0]['events']
+        events = multimeter.events
         senders = events['senders']
 
-        rate_1 = np.array(events['rate'][
-            np.where(senders == rate_neuron_1.get('global_id'))])
-        times_2 = np.array(events['times'][
-            np.where(senders == rate_neuron_2.get('global_id'))])
-        rate_2 = np.array(events['rate'][
-            np.where(senders == rate_neuron_2.get('global_id'))])
+        rate_1 = np.array(events['rate'][np.where(senders == rate_neuron_1.get('global_id'))])
+        times_2 = np.array(events['times'][np.where(senders == rate_neuron_2.get('global_id'))])
+        rate_2 = np.array(events['rate'][np.where(senders == rate_neuron_2.get('global_id'))])
 
         # get shifted rate_2
         rate_2 = rate_2[times_2 > delay]

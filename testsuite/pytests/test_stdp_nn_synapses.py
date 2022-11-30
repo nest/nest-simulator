@@ -149,10 +149,10 @@ class TestSTDPNNSynapses:
 
         nest.Simulate(self.simulation_duration)
 
-        all_spikes = nest.GetStatus(spike_recorder, keys='events')[0]
+        all_spikes = spike_recorder.events
         pre_spikes = all_spikes['times'][all_spikes['senders'] == presynaptic_neuron.tolist()[0]]
         post_spikes = all_spikes['times'][all_spikes['senders'] == postsynaptic_neuron.tolist()[0]]
-        weight = nest.GetStatus(plastic_synapse_of_interest, keys='weight')[0]
+        weight = plastic_synapse_of_interest.weight
         return (pre_spikes, post_spikes, weight)
 
     def reproduce_weight_drift(self, _pre_spikes, _post_spikes,

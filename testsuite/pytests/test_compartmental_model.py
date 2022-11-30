@@ -221,8 +221,7 @@ def create_tdend_4comp(dt=0.1):
     # create nest model with two compartments
     nest.ResetKernel()
     nest.SetKernelStatus(dict(resolution=dt))
-    n_neat = nest.Create('cm_default')
-    nest.SetStatus(n_neat, {'V_th': 100.})
+    n_neat = nest.Create('cm_default', params={'V_th': 100.})
 
     n_neat.V_th = 100.
     n_neat.compartments = [
@@ -464,8 +463,8 @@ class NEASTTestCase(unittest.TestCase):
             bb[ii] += i_amp
 
         # run the NEST model for 2 timesteps (input arrives only on second step)
-        nest.Simulate(3.*dt)
-        events_neat = nest.GetStatus(m_neat, 'events')[0]
+        nest.Simulate(3. * dt)
+        events_neat = m_neat.events
         v_neat = np.array([events_neat['v_comp%d' % ii][-1] for ii in range(n_comp)])
 
         # construct numpy solution
@@ -504,8 +503,8 @@ class NEASTTestCase(unittest.TestCase):
             bb[ii] += i_amp
 
         # run the NEST model for 1 timestep
-        nest.Simulate(2.*dt)
-        events_neat = nest.GetStatus(m_neat, 'events')[0]
+        nest.Simulate(2. * dt)
+        events_neat = m_neat.events
         v_neat = np.array([events_neat['v_comp%d' % ii][0] for ii in range(n_comp)])
 
         # construct numpy solution
@@ -532,7 +531,7 @@ class NEASTTestCase(unittest.TestCase):
 
             # run the NEST model
             nest.Simulate(t_max)
-            events_neat = nest.GetStatus(m_neat, 'events')[0]
+            events_neat = m_neat.events
             v_neat = np.array([events_neat['v_comp%d' % ii][-1] -
                                events_neat['v_comp%d' % ii][int(t_max/(2.*dt))-1]
                                for ii in range(n_comp)])
@@ -566,7 +565,7 @@ class NEASTTestCase(unittest.TestCase):
 
         # run the NEST model
         nest.Simulate(t_max)
-        events_neat = nest.GetStatus(m_neat, 'events')[0]
+        events_neat = m_neat.events
         v_neat = np.array([events_neat['v_comp%d' % ii][-1] for ii in range(n_comp)])
 
         # explicit solution for steady state voltage
@@ -615,7 +614,7 @@ class NEASTTestCase(unittest.TestCase):
 
         # run the NEST model
         nest.Simulate(t_max)
-        events_neat = nest.GetStatus(m_neat, 'events')[0]
+        events_neat = m_neat.events
         v_neat = np.array([events_neat['v_comp%d' % ii][-1] for ii in range(n_comp)])
 
         # explicit solution for steady state voltage
@@ -643,12 +642,12 @@ class NEASTTestCase(unittest.TestCase):
             'e_L': -70.0,
         }
 
-        n_neat_0 = nest.Create('cm_default')
-        nest.SetStatus(n_neat_0, {"compartments": {"parent_idx": -1, "params": soma_params}})
+        n_neat_0 = nest.Create('cm_default', params={"compartments": {"parent_idx": -1, "params": soma_params}})
 
-        n_neat_1 = nest.Create('cm_default')
-        nest.SetStatus(n_neat_1, {"compartments": {"parent_idx": -1, "params": soma_params}})
-        nest.SetStatus(n_neat_1, {"receptors": {"comp_idx": 0, "receptor_type": "AMPA"}})
+        n_neat_1 = nest.Create('cm_default', params={
+            "compartments": {"parent_idx": -1, "params": soma_params},
+            "receptors": {"comp_idx": 0, "receptor_type": "AMPA"}
+        })
         syn_idx = 0
 
         nest.Connect(n_neat_0, n_neat_1, syn_spec={'synapse_model': 'static_synapse', 'weight': .1,
@@ -666,13 +665,13 @@ class NEASTTestCase(unittest.TestCase):
 
         nest.Simulate(100.)
 
-        events_neat_0 = nest.GetStatus(m_neat_0, 'events')[0]
-        events_neat_1 = nest.GetStatus(m_neat_1, 'events')[0]
+        events_neat_0 = m_neat_0.events
+        events_neat_1 = m_neat_1.events
 
         self.assertTrue(np.any(events_neat_0['v_comp0'] != soma_params['e_L']))
         self.assertTrue(np.any(events_neat_1['v_comp0'] != soma_params['e_L']))
 
-    def test_setstatus_combinations(self, dt=0.1):
+    def test_set_combinations(self, dt=0.1):
 
         sg_01 = nest.Create('spike_generator', 1, {'spike_times': [10.]})
         sg_02 = nest.Create('spike_generator', 1, {'spike_times': [15.]})
@@ -695,11 +694,12 @@ class NEASTTestCase(unittest.TestCase):
         nest.Connect(sg_02, n_neat_0, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 1})
 
         # set status with single call
-        n_neat_1 = nest.Create('cm_default')
-        nest.SetStatus(n_neat_1, {"compartments": [{"parent_idx": -1, "params": SP},
-                                                   {"parent_idx": 0, "params": DP[0]}],
-                                  "receptors": [{"comp_idx": 0, "receptor_type": "GABA"},
-                                                {"comp_idx": 1, "receptor_type": "AMPA"}]})
+        n_neat_1 = nest.Create('cm_default', params={
+            "compartments": [{"parent_idx": -1, "params": SP},
+                             {"parent_idx": 0, "params": DP[0]}],
+            "receptors": [{"comp_idx": 0, "receptor_type": "GABA"},
+                          {"comp_idx": 1, "receptor_type": "AMPA"}]
+        })
 
         nest.Connect(sg_11, n_neat_1, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 0})
         nest.Connect(sg_12, n_neat_1, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 1})
@@ -712,12 +712,12 @@ class NEASTTestCase(unittest.TestCase):
 
         nest.Simulate(100.)
 
-        events_neat_0 = nest.GetStatus(m_neat_0, 'events')[0]
-        events_neat_1 = nest.GetStatus(m_neat_1, 'events')[0]
+        events_neat_0 = m_neat_0.events
+        events_neat_1 = m_neat_1.events
 
         self.assertTrue(np.allclose(events_neat_0['v_comp0'], events_neat_1['v_comp0']))
 
-    def test_getstatus(self):
+    def test_get(self):
         n_neat = nest.Create('cm_default')
         n_neat.compartments = [
             {"parent_idx": -1, "params": SP},
@@ -860,11 +860,12 @@ class NEASTTestCase(unittest.TestCase):
         nest.ResetKernel()
         nest.SetKernelStatus(dict(resolution=dt))
 
-        n_neat = nest.Create('cm_default')
-        nest.SetStatus(n_neat, {"compartments": [{"parent_idx": -1, "params": SP},
-                                                 {"parent_idx": 0, "params": DP[0]}],
-                                "receptors": [{"comp_idx": 0, "receptor_type": "GABA"},
-                                              {"comp_idx": 1, "receptor_type": "AMPA"}]})
+        n_neat = nest.Create('cm_default', params={
+            "compartments": [{"parent_idx": -1, "params": SP},
+                             {"parent_idx": 0, "params": DP[0]}],
+            "receptors": [{"comp_idx": 0, "receptor_type": "GABA"},
+                          {"comp_idx": 1, "receptor_type": "AMPA"}]
+        })
 
         sg_1 = nest.Create('spike_generator', 1, {'spike_times': [10.]})
         sg_2 = nest.Create('spike_generator', 1, {'spike_times': [15.]})
@@ -877,17 +878,18 @@ class NEASTTestCase(unittest.TestCase):
 
         nest.Simulate(100.)
 
-        events_neat_0 = nest.GetStatus(m_neat, 'events')[0]
+        events_neat_0 = m_neat.events
 
         # case 2: two nest.Simulate() calls
         nest.ResetKernel()
         nest.SetKernelStatus(dict(resolution=dt))
 
-        n_neat = nest.Create('cm_default')
-        nest.SetStatus(n_neat, {"compartments": [{"parent_idx": -1, "params": SP},
-                                                 {"parent_idx": 0, "params": DP[0]}],
-                                "receptors": [{"comp_idx": 0, "receptor_type": "GABA"},
-                                              {"comp_idx": 1, "receptor_type": "AMPA"}]})
+        n_neat = nest.Create('cm_default', params={
+            "compartments": [{"parent_idx": -1, "params": SP},
+                             {"parent_idx": 0, "params": DP[0]}],
+            "receptors": [{"comp_idx": 0, "receptor_type": "GABA"},
+                          {"comp_idx": 1, "receptor_type": "AMPA"}]
+        })
 
         sg_1 = nest.Create('spike_generator', 1, {'spike_times': [10.]})
         sg_2 = nest.Create('spike_generator', 1, {'spike_times': [15.]})
@@ -900,7 +902,7 @@ class NEASTTestCase(unittest.TestCase):
 
         nest.Simulate(12.)
         nest.Simulate(88.)
-        events_neat_1 = nest.GetStatus(m_neat, 'events')[0]
+        events_neat_1 = m_neat.events
 
         for key in recordables:
             assert np.allclose(events_neat_0[key], events_neat_1[key])

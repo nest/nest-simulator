@@ -132,23 +132,23 @@ class CurrentRecordingGeneratorTestCase(unittest.TestCase):
         nest.Simulate(50)
 
         # retrieve vectors
-        events_Vm = nest.GetStatus(m_Vm)[0]['events']
+        events_Vm = m_Vm.events
         t_Vm = events_Vm['times']
         v_Vm = events_Vm['V_m']
 
-        events_ac = nest.GetStatus(m_ac)[0]['events']
+        events_ac = m_ac.events
         t_ac = events_ac['times']
         i_ac = events_ac['I']
 
-        events_dc = nest.GetStatus(m_dc)[0]['events']
+        events_dc = m_dc.events
         t_dc = events_dc['times']
         i_dc = events_dc['I']
 
-        events_step = nest.GetStatus(m_step)[0]['events']
+        events_step = m_step.events
         t_step = events_step['times']
         i_step = events_step['I']
 
-        events_noise = nest.GetStatus(m_noise)[0]['events']
+        events_noise = m_noise.events
         t_noise = events_noise['times']
         i_noise = events_noise['I']
 

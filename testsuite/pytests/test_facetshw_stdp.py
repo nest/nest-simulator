@@ -80,10 +80,9 @@ class FacetsTestCase(unittest.TestCase):
                        'a_thresh_tl': lut_th_acausal}
 
         # build network
-        stim = nest.Create('spike_generator')
+        stim = nest.Create('spike_generator', params={'spike_times': spikesIn})
         neuronA = nest.Create('parrot_neuron')
         neuronB = nest.Create('parrot_neuron')
-        nest.SetStatus(stim, {'spike_times': spikesIn})
 
         nest.SetDefaults(modelName, synapseDict)
 

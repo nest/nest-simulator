@@ -41,7 +41,7 @@ class TestSPBuilder(unittest.TestCase):
             }
         })
         nest.Connect(neurons, neurons, "one_to_one", syn_dict)
-        status_list = nest.GetStatus(neurons, 'synaptic_elements')
+        status_list = neurons.synaptic_elements
         for status in status_list:
             self.assertEqual(1, status['SE1']['z_connected'])
             self.assertEqual(1, status['SE2']['z_connected'])

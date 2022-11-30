@@ -42,7 +42,7 @@ class EventsTestCase(unittest.TestCase):
         nest.Connect(vm, n)
         nest.Simulate(10)
 
-        d = nest.GetStatus(vm, 'events')[0]
+        d = vm.events
 
         self.assertEqual(len(d['V_m']), 9)
 
@@ -57,7 +57,7 @@ class EventsTestCase(unittest.TestCase):
         nest.Connect(n, sr)
         nest.Simulate(1000)
 
-        d = nest.GetStatus(sr, 'events')[0]
+        d = sr.events
 
         self.assertGreater(len(d['times']), 0)
 

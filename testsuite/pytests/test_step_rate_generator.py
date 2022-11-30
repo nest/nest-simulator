@@ -49,8 +49,7 @@ class StepRateGeneratorTestCase(unittest.TestCase):
                          'record_from': ['rate'], 'interval': 100.0})
 
         # configure srg
-        nest.SetStatus(srg, {"amplitude_times": [
-                       10.0, 110.0, 210.0], "amplitude_values": rates})
+        srg.set({"amplitude_times": [10.0, 110.0, 210.0], "amplitude_values": rates})
 
         # connect srg to neuron
         nest.Connect(srg, neuron, "one_to_one",
@@ -63,7 +62,7 @@ class StepRateGeneratorTestCase(unittest.TestCase):
         nest.Simulate(301.)
 
         # read data from multimeter
-        data = nest.GetStatus(mm)[0]['events']
+        data = mm.events
         rates_neuron = np.array(
             data['rate'][np.where(data['senders'] == neuron.get('global_id'))])
         rates_srg = np.array(data['rate'][

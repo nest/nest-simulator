@@ -88,11 +88,7 @@ class GLIFCONDTestCase(unittest.TestCase):
 
         nest.Simulate(1000.)
 
-        times = nest.GetStatus(mm, 'events')[0]['times']
-        V_m = nest.GetStatus(mm, 'events')[0]['V_m']
-        spikes = nest.GetStatus(sr, 'events')[0]['times']
-
-        return times, V_m, spikes
+        return mm.events['times'], mm.events['V_m'], sr.events['times']
 
     def ks_assert_spikes(self, spikes, reference_spikes):
         """Runs a two-sided Kolmogorov-Smirnov statistic test on a set of

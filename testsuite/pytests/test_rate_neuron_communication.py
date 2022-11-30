@@ -132,7 +132,7 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
         nest.Simulate(self.simtime)
 
         # get noise from rate neuron
-        events = nest.GetStatus(self.multimeter)[0]["events"]
+        events = self.multimeter.events
         senders = events['senders']
 
         rate_neuron_1_node_id = self.rate_neuron_1.get('global_id')
@@ -154,7 +154,7 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
         nest.Simulate(self.simtime)
 
         # get noise from rate neuron
-        events = nest.GetStatus(self.multimeter)[0]["events"]
+        events = self.multimeter.events
         senders = events['senders']
 
         rate_neuron_1_node_id = self.rate_neuron_1.get('global_id')
@@ -172,13 +172,13 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
 
         for g, ls in zip(gs, lin_sums):
 
-            nest.SetStatus(self.neurons, {'g': g, 'linear_summation': ls})
+            self.neurons.set({'g': g, 'linear_summation': ls})
 
             # simulate
             nest.Simulate(self.simtime)
 
             # get noise from rate neuron
-            events = nest.GetStatus(self.multimeter)[0]["events"]
+            events = self.multimeter.events
             senders = events['senders']
 
             rate_neuron_1_node_id = self.rate_neuron_1.get('global_id')
@@ -196,9 +196,8 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
             rates = np.array([rate_1, rate_2, rate_3, rate_4])
 
             # for multiplicative coupling
-            a = g * self.drive * self.weight * \
-                nest.GetStatus(self.rate_neuron_4)[0]['g_ex']
-            theta = nest.GetStatus(self.rate_neuron_4)[0]['theta_ex']
+            a = g * self.drive * self.weight * self.rate_neuron_4.g_ex
+            theta = self.rate_neuron_4.theta_ex
 
             if ls:
 
@@ -224,7 +223,7 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
         nest.Simulate(self.simtime)
 
         # get activity from rate neuron
-        events = nest.GetStatus(self.multimeter)[0]["events"]
+        events = self.multimeter.events
         senders = events['senders']
 
         rate_neuron_5_node_id = self.rate_neuron_5.get('global_id')
@@ -237,22 +236,21 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
     def test_ParrotRateNeuron(self):
         """Check the parrot rate neuron with sigm non-linearity"""
 
-        nest.SetStatus(self.parrot_neuron, {'g': 0.1})
+        self.parrot_neuron.g = 0.1
 
         # simulate
         nest.Simulate(self.simtime)
 
         # get activity from rate neuron
-        events = nest.GetStatus(self.multimeter)[0]["events"]
+        events = self.multimeter.events
         senders = events['senders']
 
         parrot_node_id = self.parrot_neuron.get('global_id')
         parrot_rate = events['rate'][np.where(senders == parrot_node_id)]
 
         value = parrot_rate[-1]
-        g = nest.GetStatus(self.parrot_neuron)[0]['g']
-        value_test = (g * self.weight * self.drive)**4 / \
-            (0.1**4 + (g * self.weight * self.drive)**4)
+        g = self.parrot_neuron.g
+        value_test = (g * self.weight * self.drive)**4 / (0.1**4 + (g * self.weight * self.drive)**4)
         self.assertTrue(np.isclose(value, value_test))
 
 

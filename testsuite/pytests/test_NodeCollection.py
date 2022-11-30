@@ -534,38 +534,37 @@ class TestNodeCollection(unittest.TestCase):
         nest.Connect(n[0], n[1])
         self.assertEqual(nest.num_connections, 1)
 
-    def test_SetStatus_and_GetStatus(self):
+    def test_get_set(self):
         """
-        Test that SetStatus and GetStatus works as expected with
-        NodeCollection
+        Test that get() and set() work as expected with NodeCollection
         """
 
         num_nodes = 10
         n = nest.Create('iaf_psc_alpha', num_nodes)
-        nest.SetStatus(n, {'V_m': 3.5})
-        self.assertEqual(nest.GetStatus(n, 'V_m')[0], 3.5)
+        n.set({'V_m': 3.5})
+        self.assertEqual(n.get('V_m')[0], 3.5)
 
         V_m = [1., 2., 3., 4., 5., 6., 7., 8., 9., 10.]
-        nest.SetStatus(n, 'V_m', V_m)
+        n.set({'V_m': V_m})
         for i in range(num_nodes):
-            self.assertEqual(nest.GetStatus(n, 'V_m')[i], V_m[i])
+            self.assertEqual(n.get('V_m')[i], V_m[i])
 
         with self.assertRaises(nest.kernel.NESTError):
-            nest.SetStatus(n, [{'V_m': 34.}, {'V_m': -5.}])
+            n.set([{'V_m': 34.}, {'V_m': -5.}])
 
         nest.ResetKernel()
 
         nc = nest.Create('iaf_psc_exp', 5)
 
         with self.assertRaises(nest.kernel.NESTError):
-            nest.SetStatus(n, {'V_m': -40.})
+            n.set({'V_m': -40.})
         with self.assertRaises(nest.kernel.NESTError):
-            nest.GetStatus(n)
+            n.get()
 
         nest.ResetKernel()
         n = nest.Create('iaf_psc_alpha', 3)
-        nest.SetStatus(n, [{'V_m': 10.}, {'V_m': -10.}, {'V_m': -20.}])
-        self.assertEqual(nest.GetStatus(n, 'V_m'), (10., -10., -20.))
+        n.set([{'V_m': 10.}, {'V_m': -10.}, {'V_m': -20.}])
+        self.assertEqual(n.get('V_m'), (10., -10., -20.))
 
     def test_GetConnections(self):
         """
@@ -645,13 +644,13 @@ class TestNodeCollection(unittest.TestCase):
         post = nest.Create("parrot_neuron", 5)
         
         # Senders and targets lists empty
-        self.assertFalse(nest.GetStatus(wr, "senders"))
-        self.assertFalse(nest.GetStatus(wr, "targets"))
+        self.assertFalse(wr.senders)
+        self.assertFalse(wr.targets)
         
-        nest.SetStatus(wr, {"senders": pre[1:3], "targets": post[3:]})
+        wr.set({"senders": pre[1:3], "targets": post[3:]})
         
-        gss = nest.GetStatus(wr, "senders")
-        gst = nest.GetStatus(wr, "targets")
+        gss = wr.senders
+        gst = wr.targets
         
         self.assertEqual(gss.tolist(), [3, 4])
         self.assertEqual(gst.tolist(), [10, 11])

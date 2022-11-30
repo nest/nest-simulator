@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_layer_GetStatus_SetStatus.py
+# test_layer_get_set.py
 #
 # This file is part of NEST.
 #
@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Tests for GetStatus, SetStatus, get and set calls for layer NodeCollections.
+Tests for get and set calls for layer NodeCollections.
 """
 
 import unittest
@@ -32,23 +32,21 @@ class GetSetTestCase(unittest.TestCase):
     def setUp(self):
         nest.ResetKernel()
 
-    def test_LayerSetStatus(self):
-        """Test SetStatus on layer NodeCollection."""
+    def test_LayerSet(self):
+        """Test Set on layer NodeCollection."""
 
-        layer = nest.Create('iaf_psc_alpha',
-                            positions=nest.spatial.grid(
-                                shape=[3, 3],
-                                extent=[2., 2.],
-                                edge_wrap=True))
+        layer_shape = [3, 3]
+        layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(
+            shape=layer_shape,
+            extent=[2., 2.],
+            edge_wrap=True
+        ))
 
         with self.assertRaises(nest.kernel.NESTErrors.DictError):
-            nest.SetStatus(layer, {'center': [1., 1.]})
+            layer.center = [1., 1.]
 
-        nest.SetStatus(layer, 'V_m', -50.)
-
-        self.assertEqual(nest.GetStatus(layer, 'V_m'),
-                         (-50., -50., -50., -50., -50.,
-                          -50., -50., -50., -50.))
+        layer.V_m = -50.
+        self.assertEqual(layer.V_m, (-50.,) * layer_shape[0] * layer_shape[1])
 
     def test_LayerSpatial(self):
         """Test spatial parameter on layer NodeCollection."""

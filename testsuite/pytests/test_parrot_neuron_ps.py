@@ -65,9 +65,8 @@ class ParrotNeuronPSTestCase(unittest.TestCase):
         nest.Simulate(_round_up(self.spike_time + 2 * self.delay))
 
         # get spike from parrot neuron
-        events = nest.GetStatus(self.spikes)[0]["events"]
-        post_time = events['times'][
-            events['senders'] == self.parrot[0].get('global_id')]
+        events = self.spikes.events
+        post_time = events['times'][events['senders'] == self.parrot[0].get('global_id')]
 
         # assert spike was repeated at correct time
         assert post_time, "Parrot neuron failed to repeat spike."
@@ -83,9 +82,8 @@ class ParrotNeuronPSTestCase(unittest.TestCase):
         nest.Simulate(_round_up(self.spike_time + 2. * self.delay))
 
         # get spike from parrot neuron, assert it was ignored
-        events = nest.GetStatus(self.spikes)[0]["events"]
-        post_time = events['times'][
-            events['senders'] == self.parrot.get('global_id')]
+        events = self.spikes.events
+        post_time = events['times'][events['senders'] == self.parrot.get('global_id')]
         assert len(post_time) == 0, \
             "Parrot neuron failed to ignore spike arriving on port 1"
 
@@ -103,9 +101,8 @@ class ParrotNeuronPSTestCase(unittest.TestCase):
         nest.Simulate(_round_up(self.spike_time + 2. * self.delay))
 
         # get spikes from parrot neuron, assert two were transmitted
-        events = nest.GetStatus(self.spikes)[0]["events"]
-        post_times = events['times'][
-            events['senders'] == self.parrot.get('global_id')]
+        events = self.spikes.events
+        post_times = events['times'][events['senders'] == self.parrot.get('global_id')]
         assert len(post_times) == 2 and post_times[0] == post_times[1], \
             "Parrot neuron failed to correctly repeat multiple spikes."
 
@@ -160,11 +157,9 @@ class ParrotNeuronPSPoissonTestCase(unittest.TestCase):
 
         nest.Simulate(_round_up(t_sim))
 
-        n_spikes = nest.GetStatus(spike_rec)[0]['n_events']
-        assert n_spikes > spikes_expected - 3 * spikes_std, \
-            "parrot_neuron loses spikes."
-        assert n_spikes < spikes_expected + 3 * spikes_std, \
-            "parrot_neuron adds spikes."
+        n_spikes = spike_rec.n_events
+        assert n_spikes > spikes_expected - 3 * spikes_std, "parrot_neuron loses spikes."
+        assert n_spikes < spikes_expected + 3 * spikes_std, "parrot_neuron adds spikes."
 
 
 @nest.ll_api.check_stack

@@ -22,38 +22,34 @@
 import nest
 import unittest
 
-__author__ = 'naveau'
-
 
 class TestSynapticElements(unittest.TestCase):
 
     def setUp(self):
         nest.ResetKernel()
 
-    def test_set_status(self):
+    def test_set(self):
         synaptic_element_dict = {
             u'SE': {u'z': 15.0, u'growth_curve': u'linear'}}
 
         neuron = nest.Create('iaf_psc_alpha', 1)
-        nest.SetStatus(neuron, {'synaptic_elements': synaptic_element_dict})
-        neuron_synaptic_elements = nest.GetStatus(
-            neuron, 'synaptic_elements')[0]
+        neuron.set({'synaptic_elements': synaptic_element_dict})
+        neuron_synaptic_elements = neuron.synaptic_elements
         self.assertIn('SE', neuron_synaptic_elements)
         self.assertDictContainsSubset(
             synaptic_element_dict[u'SE'], neuron_synaptic_elements[u'SE'])
 
-    def test_set_status_overwrite(self):
+    def test_set_overwrite(self):
         synaptic_element_dict1 = {
             u'SE1': {u'z': 15.0, u'growth_curve': u'linear'}}
         synaptic_element_dict2 = {
             u'SE2': {u'z': 10.0, u'growth_curve': u'gaussian'}}
 
         neuron = nest.Create('iaf_psc_alpha', 1)
-        nest.SetStatus(neuron, {'synaptic_elements': synaptic_element_dict1})
-        nest.SetStatus(neuron, {'synaptic_elements': synaptic_element_dict2})
+        neuron({'synaptic_elements': synaptic_element_dict1})
+        neuron({'synaptic_elements': synaptic_element_dict2})
 
-        neuron_synaptic_elements = nest.GetStatus(
-            neuron, 'synaptic_elements')[0]
+        neuron_synaptic_elements = neuron.synaptic_elements
         self.assertNotIn('SE1', neuron_synaptic_elements)
         self.assertIn('SE2', neuron_synaptic_elements)
         self.assertDictContainsSubset(
@@ -66,8 +62,7 @@ class TestSynapticElements(unittest.TestCase):
         nest.SetDefaults(
             'iaf_psc_alpha', {'synaptic_elements': synaptic_element_dict})
         neuron = nest.Create('iaf_psc_alpha', 1)
-        neuron_synaptic_elements = nest.GetStatus(
-            neuron, 'synaptic_elements')[0]
+        neuron_synaptic_elements = neuron.synaptic_elements
         self.assertIn('SE', neuron_synaptic_elements)
         self.assertDictContainsSubset(
             synaptic_element_dict[u'SE'], neuron_synaptic_elements[u'SE'])
@@ -84,8 +79,7 @@ class TestSynapticElements(unittest.TestCase):
             'iaf_psc_alpha', {'synaptic_elements': synaptic_element_dict2})
         neuron = nest.Create('iaf_psc_alpha', 1)
 
-        neuron_synaptic_elements = nest.GetStatus(
-            neuron, 'synaptic_elements')[0]
+        neuron_synaptic_elements = neuron.synaptic_elements
         self.assertNotIn('SE1', neuron_synaptic_elements)
         self.assertIn('SE2', neuron_synaptic_elements)
         self.assertDictContainsSubset(

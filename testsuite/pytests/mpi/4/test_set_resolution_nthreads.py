@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_set_status_resolution_nthreads.py
+# test_set_resolution_nthreads.py
 #
 # This file is part of NEST.
 #
@@ -28,7 +28,7 @@ def reset():
     nest.ResetKernel()
 
 
-def testSetStatus_resolution_before_nthreads(reset):
+def test_set_resolution_before_nthreads(reset):
     """Test if resolution can be set before number of threads."""
 
     nest.resolution = 0.5
@@ -38,7 +38,7 @@ def testSetStatus_resolution_before_nthreads(reset):
     assert(nest.local_num_threads == 4)
 
 
-def testSetStatus_nthreads_before_resolution(reset):
+def test_set_nthreads_before_resolution(reset):
     """Test if number of threads can be set before resolution."""
 
     nest.local_num_threads = 4

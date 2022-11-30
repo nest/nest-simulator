@@ -54,10 +54,8 @@ class TestUpdateSynapticElements(unittest.TestCase):
             'Axon': new_growth_curve_axonal
         }
 
-        neuron = nest.Create('iaf_psc_alpha', 1)
-        nest.SetStatus(neuron, {'synaptic_elements': structural_p_elements})
-        neuron_synaptic_elements = nest.GetStatus(
-            neuron, 'synaptic_elements')[0]
+        neuron = nest.Create('iaf_psc_alpha', 1, {'synaptic_elements': structural_p_elements})
+        neuron_synaptic_elements = neuron.synaptic_elements
         self.assertIn('Den_ex', neuron_synaptic_elements)
         self.assertIn('Axon', neuron_synaptic_elements)
 
@@ -69,9 +67,8 @@ class TestUpdateSynapticElements(unittest.TestCase):
             neuron_synaptic_elements[u'Den_ex'])
 
         # Update Axon elements
-        nest.SetStatus(neuron, 'synaptic_elements_param', elements_to_update)
-        neuron_synaptic_elements = nest.GetStatus(
-            neuron, 'synaptic_elements')[0]
+        neuron.synaptic_elements_param = elements_to_update
+        neuron_synaptic_elements = neuron.synaptic_elements
         self.assertIn('Den_ex', neuron_synaptic_elements)
         self.assertIn('Axon', neuron_synaptic_elements)
 

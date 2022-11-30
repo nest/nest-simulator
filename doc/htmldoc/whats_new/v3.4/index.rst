@@ -22,12 +22,11 @@ The changes aim to improve findability and access of content. With a more modern
 layout, our wide range of docs can be discovered more easily. 
 The table of contents is simplified and the content is grouped based on topic (neurons, synapses etc) rather than type of documentation (e.g., 'guides').
 
-New functionality for source neurons in spatially-structured networks
+Query spatially structured networks from target neuron perspective
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-NEST previously had functions only describing target neurons given source neurons in spatially-structured networks.
-Now we provide functions to get information on source neurons given target neurons.
-Three new functions have been added to the PyNEST API: :py:func:`.GetSourceNodes`, :py:func:`.GetSourcePositions`, and :py:func:`.PlotSources`.
+PyNEST now provides functions  :py:func:`.GetSourceNodes`, :py:func:`.GetSourcePositions`, and 
+:py:func:`.PlotSources` which allow you to query or plot the source neurons of a given target neuron.
 
 
 Renaming ``calibrate`` to  ``pre_run_hook``

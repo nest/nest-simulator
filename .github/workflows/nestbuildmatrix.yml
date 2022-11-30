@@ -198,7 +198,7 @@ jobs:
 
       - name: "Run pylint..."
         run: |
-          pylint --jobs=$(nproc) pynest/ testsuite/pytests/*.py testsuite/regressiontests/*.py doc/userdoc/*.py
+          pylint --jobs=$(nproc) pynest/ testsuite/pytests/*.py testsuite/regressiontests/*.py
 
   flake8:
     runs-on: "ubuntu-20.04"

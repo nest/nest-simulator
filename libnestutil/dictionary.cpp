@@ -36,7 +36,8 @@
  * This templated operator streams all elements of a std::vector<>.
  */
 template < typename T >
-std::ostream& operator<<( std::ostream& os, const std::vector< T >& vec )
+std::ostream&
+operator<<( std::ostream& os, const std::vector< T >& vec )
 {
   os << "vector[";
   bool first = true;
@@ -75,8 +76,9 @@ debug_dict_types( const dictionary& dict )
 std::ostream&
 operator<<( std::ostream& os, const dictionary& dict )
 {
-  const auto max_key_length = std::max_element(
-    dict.begin(), dict.end(), []( const dictionary::value_type s1, const dictionary::value_type s2 ) {
+  const auto max_key_length = std::max_element( dict.begin(),
+    dict.end(),
+    []( const dictionary::value_type s1, const dictionary::value_type s2 ) {
       return s1.first.length() < s2.first.length();
     } )->first.length();
   const std::string pre_padding = "    ";
@@ -155,6 +157,13 @@ operator<<( std::ostream& os, const dictionary& dict )
     {
       type = "parameter";
       value_stream << "parameter" << '\n';
+    }
+    else if ( is_type< std::shared_ptr< nest::NodeCollection > >( kv.second ) )
+    {
+      type = "NodeCollection";
+      const auto nc = boost::any_cast< std::shared_ptr< nest::NodeCollection > >( kv.second );
+      nc->print_me( value_stream );
+      value_stream << "\n";
     }
     else
     {
@@ -363,13 +372,15 @@ dictionary::operator==( const dictionary& other ) const
 }
 
 
-boost::any& dictionary::operator[]( const std::string& key )
+boost::any&
+dictionary::operator[]( const std::string& key )
 {
   nest::kernel().get_dict_access_flag_manager().register_access( *this, key );
   return maptype_::operator[]( key );
 }
 
-boost::any& dictionary::operator[]( std::string&& key )
+boost::any&
+dictionary::operator[]( std::string&& key )
 {
   nest::kernel().get_dict_access_flag_manager().register_access( *this, key );
   return maptype_::operator[]( key );

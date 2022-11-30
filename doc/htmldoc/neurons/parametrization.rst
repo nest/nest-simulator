@@ -351,6 +351,8 @@ The ``nest.math.min()`` and ``nest.math.max()`` functions are used to clip
 a parameter. Essentially they work like the standard ``min()`` and
 ``max()`` functions, ``nest.math.min()`` yielding the smaller of two
 values, and ``nest.math.max()`` yielding the larger of two values.
+Note that the order of inputs matter, meaning that the first argument
+must be a parameter, and the second argument must be a threshold value.
 
 ::
 

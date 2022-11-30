@@ -67,9 +67,9 @@ nest::music_cont_in_proxy::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::music_cont_in_proxy::Parameters_::set( const DictionaryDatum& d, State_& s, Node* node )
 {
-  if( d->known(names::port_name) and s.published_ )
+  if ( d->known( names::port_name ) and s.published_ )
   {
-    throw MUSICPortAlreadyPublished(node->get_name(), port_name_);
+    throw MUSICPortAlreadyPublished( node->get_name(), port_name_ );
   }
 
   if ( not s.published_ )
@@ -168,11 +168,11 @@ nest::music_cont_in_proxy::get_status( DictionaryDatum& d ) const
 void
 nest::music_cont_in_proxy::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_;    // temporary copy in case of errors
-  ptmp.set( d, S_, this );  // throws if BadProperty
+  Parameters_ ptmp = P_;   // temporary copy in case of errors
+  ptmp.set( d, S_, this ); // throws if BadProperty
 
   State_ stmp = S_;
-  stmp.set( d, P_ );  // throws if BadProperty
+  stmp.set( d, P_ ); // throws if BadProperty
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

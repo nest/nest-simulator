@@ -258,6 +258,11 @@ private:
     /** Width of threshold region in mV. **/
     double delta_;
 
+    double tau_fac_;
+    double tau_psc_;
+    double tau_rec_;
+    double U_;
+
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
@@ -283,6 +288,10 @@ private:
     double i_syn_in_; //!< Postsynaptic current for inhibitory inputs
     double V_m_;      //!< Membrane potential
     int r_ref_;       //!< Absolute refractory counter (no membrane potential propagation)
+
+    double x_;
+    double y_;
+    double u_;
 
     State_(); //!< Default initialization
 

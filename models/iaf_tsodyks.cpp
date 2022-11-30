@@ -74,6 +74,11 @@ nest::iaf_tsodyks::Parameters_::Parameters_()
   , tau_in_( 2.0 )           // in ms
   , rho_( 0.01 )             // in 1/s
   , delta_( 0.0 )            // in mV
+  , tau_fac_( 1000.0 )       // in ms
+  , tau_psc_( 3.0 )          // in ms
+  , tau_rec_( 400.0 )        // in ms
+  , U_( 0.5 )
+
 {
 }
 
@@ -84,6 +89,9 @@ nest::iaf_tsodyks::State_::State_()
   , i_syn_in_( 0.0 )
   , V_m_( 0.0 )
   , r_ref_( 0 )
+  , x_( 0.0 )
+  , y_( 0.0 )
+  , u_( 0.0 )
 {
 }
 
@@ -286,6 +294,7 @@ nest::iaf_tsodyks::update( const Time& origin, const long from, const long to )
 
   const double h = Time::get_resolution().get_ms();
 
+
   // evolve from timestep 'from' to timestep 'to' with steps of h each
   for ( long lag = from; lag < to; ++lag )
   {
@@ -326,12 +335,51 @@ nest::iaf_tsodyks::update( const Time& origin, const long from, const long to )
       S_.r_ref_ = V_.RefractoryCounts_;
       S_.V_m_ = P_.V_reset_;
 
-      set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+      // The initial value of ArchivingNode's last_spike_ is -1, but we need the initial value to be 0
+      // TODO: A smarter solution than an if-test inside this loop should be sought. Note that we do not
+      // want to create an actual spike at timestep 0.
+      double t_lastspike = get_spiketime_ms();
+      if ( t_lastspike < 0.0 )
+      {
+        t_lastspike = 0.0;
+      }
+
+      const double t_spike = origin.get_steps() + lag + 1;
+      const double h_tsodyks = t_spike - t_lastspike;
+      set_spiketime( Time::step( t_spike ) );
+
+      // propagator
+      // TODO: use expm1 here instead, where applicable
+      double Puu = ( P_.tau_fac_ == 0.0 ) ? 0.0 : std::exp( -h_tsodyks / P_.tau_fac_ );
+      double Pyy = std::exp( -h_tsodyks / P_.tau_psc_ );
+      double Pzz = std::exp( -h_tsodyks / P_.tau_rec_ );
+
+      double Pxy = ( ( Pzz - 1.0 ) * P_.tau_rec_ - ( Pyy - 1.0 ) * P_.tau_psc_ ) / ( P_.tau_psc_ - P_.tau_rec_ );
+      double Pxz = 1.0 - Pzz;
+
+      const double z = 1.0 - S_.x_ - S_.y_;
+
+      // propagation t_lastspike_ -> t_spike
+      // don't change the order !
+
+      S_.u_ *= Puu;
+      S_.x_ += Pxy * S_.y_ + Pxz * z;
+      S_.y_ *= Pyy;
+
+      // delta function u
+      S_.u_ += P_.U_ * ( 1.0 - S_.u_ );
+
+      // postsynaptic current step caused by incoming spike
+      double delta_y_tsp = S_.u_ * S_.x_;
+
+      // delta function x, y
+      S_.x_ -= delta_y_tsp;
+      S_.y_ += delta_y_tsp;
+
 
       // send spike with datafield
       SpikeEvent se;
-      double value = 1.0;
-      se.set_offset( value );
+      se.set_offset( delta_y_tsp );
       kernel().event_delivery_manager.send( *this, se, lag );
     }
 
@@ -356,7 +404,6 @@ nest::iaf_tsodyks::handle( SpikeEvent& e )
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
 
   // Multiply with datafield from SpikeEvent
-  // TODO: where to sum?
   const double s = e.get_weight() * e.get_offset() * e.get_multiplicity();
 
   // separate buffer channels for excitatory and inhibitory inputs

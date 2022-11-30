@@ -353,8 +353,7 @@ try:
     print(f"  retrieving {patch_url}")
     urlretrieve(patch_url, patch_file)
     print(f"apply {patch_file}")
-    check_output('patch -p3', stdin=open(patch_file, 'r'), shell=True)
-
+    result = check_output('patch -p3', stdin=open(patch_file, 'r'), stderr=subprocess.STDOUT, shell=True)
     print("patch result:")
     print(result)
 except Exception as exc:

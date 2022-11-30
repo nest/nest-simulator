@@ -58,7 +58,7 @@ def Simulate(t):
 
     See Also
     --------
-    RunManager
+    RunManager, Prepare, Run, Cleanup
 
     """
 
@@ -114,7 +114,7 @@ def Prepare():
 
     See Also
     --------
-    Run, Cleanup
+    Run, Cleanup, Simulate, RunManager
 
     """
 
@@ -132,7 +132,7 @@ def Cleanup():
 
     See Also
     --------
-    Run, Prepare
+    Run, Prepare, Simulate, RunManager
 
     """
     sr('Cleanup')

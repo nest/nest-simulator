@@ -34,35 +34,35 @@
 #include "connector_model_impl.h"
 
 #include "ac_generator.h"
-#include "dc_generator.h"
-#include "spike_generator.h"
-#include "spike_recorder.h"
-#include "poisson_generator.h"
-#include "poisson_generator_ps.h"
-#include "multimeter.h"
-#include "noise_generator.h"
 #include "aeif_cond_alpha.h"
 #include "aeif_cond_alpha_multisynapse.h"
 #include "aeif_cond_beta_multisynapse.h"
 #include "aeif_psc_delta_clopath.h"
 #include "cm_default.h"
+#include "dc_generator.h"
 #include "erfc_neuron.h"
 #include "glif_cond.h"
 #include "glif_psc.h"
 #include "hh_psc_alpha_gap.h"
 #include "ht_neuron.h"
-#include "iaf_cond_alpha_mc.h"
-#include "pp_psc_delta.h"
-#include "lin_rate.h"
-#include "tanh_rate.h"
 #include "iaf_cond_alpha.h"
+#include "iaf_cond_alpha_mc.h"
+#include "lin_rate.h"
+#include "multimeter.h"
+#include "noise_generator.h"
+#include "poisson_generator.h"
+#include "poisson_generator_ps.h"
+#include "pp_psc_delta.h"
+#include "spike_generator.h"
+#include "spike_recorder.h"
+#include "tanh_rate.h"
 
-#include "parrot_neuron_ps.h"
-#include "step_rate_generator.h"
-#include "step_current_generator.h"
+#include "aeif_cond_exp.h"
 #include "hh_psc_alpha_clopath.h"
 #include "iaf_cond_exp.h"
-#include "aeif_cond_exp.h"
+#include "parrot_neuron_ps.h"
+#include "step_current_generator.h"
+#include "step_rate_generator.h"
 
 #include "aeif_psc_alpha.h"
 #include "aeif_psc_delta.h"
@@ -74,8 +74,8 @@
 #include "iaf_psc_exp.h"
 #include "iaf_psc_exp_multisynapse.h"
 
-#include "spin_detector.h"
 #include "pp_cond_exp_mc_urbanczik.h"
+#include "spin_detector.h"
 
 #include "parrot_neuron.h"
 
@@ -110,8 +110,8 @@
 #include "urbanczik_synapse.h"
 #include "vogels_sprekeler_synapse.h"
 
-#include "weight_recorder.h"
 #include "volume_transmitter.h"
+#include "weight_recorder.h"
 
 #include "spatial.h"
 
@@ -172,7 +172,7 @@ init_nest( int* argc, char** argv[] )
   kernel().model_manager.register_node_model< aeif_psc_delta >( "aeif_psc_delta" );
   kernel().model_manager.register_node_model< aeif_psc_exp >( "aeif_psc_exp" );
   kernel().model_manager.register_node_model< threshold_lin_rate_ipn >( "threshold_lin_rate_ipn" );
-  
+
   kernel().model_manager.register_node_model< iaf_psc_alpha >( "iaf_psc_alpha" );
   kernel().model_manager.register_node_model< iaf_psc_delta >( "iaf_psc_delta" );
   kernel().model_manager.register_node_model< iaf_psc_exp >( "iaf_psc_exp" );
@@ -180,8 +180,8 @@ init_nest( int* argc, char** argv[] )
   kernel().model_manager.register_node_model< parrot_neuron >( "parrot_neuron" );
 
   kernel().model_manager.register_node_model< spin_detector >( "spin_detector" );
-kernel().model_manager.register_node_model< pp_cond_exp_mc_urbanczik >( "pp_cond_exp_mc_urbanczik" );
- 
+  kernel().model_manager.register_node_model< pp_cond_exp_mc_urbanczik >( "pp_cond_exp_mc_urbanczik" );
+
   kernel().model_manager.register_node_model< weight_recorder >( "weight_recorder" );
   kernel().model_manager.register_node_model< volume_transmitter >( "volume_transmitter" );
 
@@ -288,7 +288,7 @@ print_nodes_to_string()
 std::string
 pprint_to_string( NodeCollectionPTR nc )
 {
-  if (nc)
+  if ( nc )
   {
     std::stringstream stream;
     nc->print_me( stream );
@@ -296,7 +296,7 @@ pprint_to_string( NodeCollectionPTR nc )
   }
   else
   {
-    //PYNEST-ng: added this, not sure why this can happen now, but could not previously
+    // PYNEST-ng: added this, not sure why this can happen now, but could not previously
     std::cout << "pprint_to_string: nc is not assigned" << std::endl;
     return "";
   }
@@ -305,7 +305,7 @@ pprint_to_string( NodeCollectionPTR nc )
 size_t
 nc_size( NodeCollectionPTR nc )
 {
-  assert(nc && "NodeCollectionPTR must be initialized.");
+  assert( nc && "NodeCollectionPTR must be initialized." );
   return nc->size();
 }
 
@@ -332,7 +332,8 @@ dictionary
 get_nc_status( NodeCollectionPTR nc )
 {
   dictionary result;
-  for ( NodeCollection::const_iterator it = nc->begin(); it < nc->end(); ++it )
+  size_t node_index = 0;
+  for ( NodeCollection::const_iterator it = nc->begin(); it < nc->end(); ++it, ++node_index )
   {
     const auto node_status = get_node_status( ( *it ).node_id );
     for ( auto& kv_pair : node_status )
@@ -342,13 +343,14 @@ get_nc_status( NodeCollectionPTR nc )
       {
         // key exists
         auto& v = boost::any_cast< std::vector< boost::any >& >( p->second );
-        v.push_back( kv_pair.second );
-        // *p = v;
+        v[ node_index ] = kv_pair.second;
       }
       else
       {
         // key does not exist yet
-        result[ kv_pair.first ] = std::vector< boost::any > { kv_pair.second };
+        auto new_entry = std::vector< boost::any >( nc->size(), nullptr );
+        new_entry[ node_index ] = kv_pair.second;
+        result[ kv_pair.first ] = new_entry;
       }
     }
   }
@@ -360,14 +362,14 @@ set_nc_status( NodeCollectionPTR nc, std::vector< dictionary >& params )
 {
   if ( params.size() == 1 )
   {
-    params[0].init_access_flags();
+    params[ 0 ].init_access_flags();
     for ( auto it = nc->begin(); it < nc->end(); ++it )
     {
-      kernel().node_manager.set_status( ( *it ).node_id, params[0] );
+      kernel().node_manager.set_status( ( *it ).node_id, params[ 0 ] );
     }
-    params[0].all_entries_accessed( "NodeCollection.set()", "params" );
+    params[ 0 ].all_entries_accessed( "NodeCollection.set()", "params" );
   }
-  else if (nc->size() == params.size())
+  else if ( nc->size() == params.size() )
   {
     for ( auto it = nc->begin(); it < nc->end(); ++it )
     {
@@ -379,10 +381,8 @@ set_nc_status( NodeCollectionPTR nc, std::vector< dictionary >& params )
   }
   else
   {
-    std::string msg =
-      String::compose( "List of dictionaries must be the same size as the NodeCollection (%1), %2 given.",
-        nc->size(),
-	params.size() );
+    std::string msg = String::compose(
+      "List of dictionaries must be the same size as the NodeCollection (%1), %2 given.", nc->size(), params.size() );
     throw BadParameter( msg );
   }
 }
@@ -412,12 +412,12 @@ set_connection_status( const std::deque< ConnectionID >& conns, const dictionary
 ////   const thread tid = conn_dict.get< long >( nest::names::target_thread );
 ////   const synindex syn_id = conn_dict.get< long >( nest::names::synapse_modelid );
 ////   const port p = conn_dict.get< long >( nest::names::port );
-//// 
+////
 ////   // TODO_PYNEST-NG: Access flags
 ////   // dict->clear_access_flags();
-//// 
+////
 ////   kernel().connection_manager.set_synapse_status( source_node_id, target_node_id, tid, syn_id, p, dict );
-//// 
+////
 ////   // ALL_ENTRIES_ACCESSED2( *dict,
 ////   //   "SetStatus",
 ////   //   "Unread dictionary entries: ",
@@ -538,12 +538,11 @@ create_spatial( const dictionary& layer_dict )
   return create_layer( layer_dict );
 }
 
-//std::vector< std::vector< double > >
-//get_position( NodeCollectionPTR layer_nc )
+// std::vector< std::vector< double > >
+// get_position( NodeCollectionPTR layer_nc )
 //{
-//  return get_position( layer );  // PYNEST-NG: is this call creating a copy?
-//}
-
+//   return get_position( layer );  // PYNEST-NG: is this call creating a copy?
+// }
 
 
 NodeCollectionPTR
@@ -706,7 +705,7 @@ get_model_defaults( const std::string& component )
   try
   {
     const index synapse_model_id = kernel().model_manager.get_synapse_model_id( component );
-    const auto ret =  kernel().model_manager.get_connector_defaults( synapse_model_id );
+    const auto ret = kernel().model_manager.get_connector_defaults( synapse_model_id );
     return ret;
   }
   catch ( UnknownSynapseType& )
@@ -872,7 +871,7 @@ slice_positions_if_sliced_nc( dictionary& dict, const NodeCollectionPTR nc )
   // If metadata contains node positions and the NodeCollection is sliced, get only positions of the sliced nodes.
   if ( dict.known( names::positions ) )
   {
-    //PyNEST-NG: Check if TokenArray is the correct type here
+    // PyNEST-NG: Check if TokenArray is the correct type here
     const auto positions = dict.get< TokenArray >( names::positions );
     if ( nc->size() != positions.size() )
     {

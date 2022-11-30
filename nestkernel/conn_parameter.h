@@ -73,7 +73,8 @@ public:
    */
   virtual double value_double( thread, RngPtr, index, Node* ) const = 0;
   virtual long value_int( thread, RngPtr, index, Node* ) const = 0;
-  virtual void skip( thread, size_t ) const
+  virtual void
+  skip( thread, size_t ) const
   {
   }
   virtual bool is_array() const = 0;
@@ -235,15 +236,15 @@ class ArrayDoubleParameter : public ConnParameter
 {
 public:
   ArrayDoubleParameter( const std::vector< double >& values, const size_t nthreads )
-    : values_( &values )
-    , next_( nthreads, values_->begin() )
+    : values_( values )
+    , next_( nthreads, values_.begin() )
   {
   }
 
   void
   skip( thread tid, size_t n_skip ) const override
   {
-    if ( next_[ tid ] < values_->end() )
+    if ( next_[ tid ] < values_.end() )
     {
       next_[ tid ] += n_skip;
     }
@@ -256,13 +257,13 @@ public:
   size_t
   number_of_values() const override
   {
-    return values_->size();
+    return values_.size();
   }
 
   double
   value_double( thread tid, RngPtr, index, Node* ) const override
   {
-    if ( next_[ tid ] != values_->end() )
+    if ( next_[ tid ] != values_.end() )
     {
       return *next_[ tid ]++;
     }
@@ -289,12 +290,12 @@ public:
   {
     for ( std::vector< std::vector< double >::const_iterator >::iterator it = next_.begin(); it != next_.end(); ++it )
     {
-      *it = values_->begin();
+      *it = values_.begin();
     }
   }
 
 private:
-  const std::vector< double >* values_;
+  const std::vector< double > values_;
   mutable std::vector< std::vector< double >::const_iterator > next_;
 };
 
@@ -313,19 +314,19 @@ private:
  *   throws an error.
  */
 
-class ArrayIntegerParameter : public ConnParameter
+class ArrayLongParameter : public ConnParameter
 {
 public:
-  ArrayIntegerParameter( const std::vector< int >& values, const size_t nthreads )
-    : values_( &values )
-    , next_( nthreads, values_->begin() )
+  ArrayLongParameter( const std::vector< long >& values, const size_t nthreads )
+    : values_( values )
+    , next_( nthreads, values_.begin() )
   {
   }
 
   void
   skip( thread tid, size_t n_skip ) const override
   {
-    if ( next_[ tid ] < values_->end() )
+    if ( next_[ tid ] < values_.end() )
     {
       next_[ tid ] += n_skip;
     }
@@ -338,13 +339,13 @@ public:
   size_t
   number_of_values() const override
   {
-    return values_->size();
+    return values_.size();
   }
 
   long
   value_int( thread tid, RngPtr, index, Node* ) const override
   {
-    if ( next_[ tid ] != values_->end() )
+    if ( next_[ tid ] != values_.end() )
     {
       return *next_[ tid ]++;
     }
@@ -357,7 +358,7 @@ public:
   double
   value_double( thread tid, RngPtr, index, Node* ) const override
   {
-    if ( next_[ tid ] != values_->end() )
+    if ( next_[ tid ] != values_.end() )
     {
       return static_cast< double >( *next_[ tid ]++ );
     }
@@ -382,15 +383,15 @@ public:
   void
   reset() const override
   {
-    for ( std::vector< std::vector< int >::const_iterator >::iterator it = next_.begin(); it != next_.end(); ++it )
+    for ( std::vector< std::vector< long >::const_iterator >::iterator it = next_.begin(); it != next_.end(); ++it )
     {
-      *it = values_->begin();
+      *it = values_.begin();
     }
   }
 
 private:
-  const std::vector< int >* values_;
-  mutable std::vector< std::vector< int >::const_iterator > next_;
+  const std::vector< long > values_;
+  mutable std::vector< std::vector< long >::const_iterator > next_;
 };
 
 class ParameterConnParameterWrapper : public ConnParameter

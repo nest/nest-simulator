@@ -54,10 +54,10 @@ nest::ConnParameter::create( const boost::any& value, const size_t nthreads )
     return new ParameterConnParameterWrapper( boost::any_cast< ParameterPTR >( value ), nthreads );
   }
 
-  // array of integer
-  if ( is_type< std::vector< int > >( value ) )
+  // array of longs
+  if ( is_type< std::vector< long > >( value ) )
   {
-    return new ArrayIntegerParameter( boost::any_cast< std::vector< int > >( value ), nthreads );
+    return new ArrayLongParameter( boost::any_cast< std::vector< long > >( value ), nthreads );
   }
 
   throw BadProperty( std::string( "Cannot handle parameter type. Received " ) + value.type().name() );

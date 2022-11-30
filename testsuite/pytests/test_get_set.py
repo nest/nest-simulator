@@ -335,7 +335,7 @@ class TestNodeCollectionGetSet(unittest.TestCase):
 
         # With data in events
         nodes = nest.Create('iaf_psc_alpha', 10)
-        pg = nest.Create('poisson_generator', {'rate': 70000.0})
+        pg = nest.Create('poisson_generator', params={'rate': 70000.0})
         nest.Connect(pg, nodes)
         nest.Connect(nodes, single_sr)
         nest.Connect(nodes, multi_sr, 'one_to_one')
@@ -418,7 +418,7 @@ class TestNodeCollectionGetSet(unittest.TestCase):
 
         # With data in events
         nodes = nest.Create('iaf_psc_alpha', 10)
-        pg = nest.Create('poisson_generator', {'rate': 70000.0})
+        pg = nest.Create('poisson_generator', params={'rate': 70000.0})
         nest.Connect(pg, nodes)
         nest.Connect(nodes, single_sr)
         nest.Connect(nodes, multi_sr, 'one_to_one')
@@ -532,10 +532,10 @@ class TestNodeCollectionGetSet(unittest.TestCase):
         spatial_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid([2, 2]))
         self.assertIsNotNone(spatial_nodes.spatial)
         spatial_reference = {'network_size': 4,
-                             'center': (0.0, 0.0),
+                             'center': [0.0, 0.0],
                              'edge_wrap': False,
-                             'extent': (1.0, 1.0),
-                             'shape': (2, 2)}
+                             'extent': [1.0, 1.0],
+                             'shape': [2, 2]}
         self.assertEqual(spatial_nodes.spatial, spatial_reference)
 
     def test_set_attribute(self):

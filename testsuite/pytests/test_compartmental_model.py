@@ -456,7 +456,7 @@ class NEASTTestCase(unittest.TestCase):
 
         for ii, i_amp in enumerate(i_in):
             # add current
-            nest.Connect(nest.Create('dc_generator', {'amplitude': i_amp}), n_neat,
+            nest.Connect(nest.Create('dc_generator', params={'amplitude': i_amp}), n_neat,
                          syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
                                    'delay': dt, 'receptor_type': ii}
                          )
@@ -496,7 +496,7 @@ class NEASTTestCase(unittest.TestCase):
 
         for ii, i_amp in enumerate(i_in):
             # add current
-            nest.Connect(nest.Create('dc_generator', {'amplitude': i_amp}), n_neat,
+            nest.Connect(nest.Create('dc_generator', params={'amplitude': i_amp}), n_neat,
                          syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
                                    'delay': dt, 'receptor_type': ii}
                          )
@@ -506,7 +506,7 @@ class NEASTTestCase(unittest.TestCase):
         # run the NEST model for 1 timestep
         nest.Simulate(2.*dt)
         events_neat = nest.GetStatus(m_neat, 'events')[0]
-        v_neat = np.array([events_neat['v_comp%d' % ii][0] for ii in range(n_comp)])
+        v_neat = np.array([events_neat['v_comp%d' % ii] for ii in range(n_comp)])
 
         # construct numpy solution
         v_sol = np.linalg.solve(aa, bb)
@@ -526,7 +526,7 @@ class NEASTTestCase(unittest.TestCase):
         for ii in range(n_comp):
             (n_neat, m_neat), _, gg = eval('create_%s(dt=dt)' % model_name)
             # add current
-            nest.Connect(nest.Create('dc_generator', {'amplitude': i_amp}), n_neat,
+            nest.Connect(nest.Create('dc_generator', params={'amplitude': i_amp}), n_neat,
                          syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
                                    'delay': t_max/2., 'receptor_type': ii})
 
@@ -560,7 +560,7 @@ class NEASTTestCase(unittest.TestCase):
         el = np.array([SP['e_L']] + [DP[ii]['e_L'] for ii in range(n_comp-1)])
 
         # add current
-        nest.Connect(nest.Create('dc_generator', {'amplitude': 0.}), n_neat,
+        nest.Connect(nest.Create('dc_generator', params={'amplitude': 0.}), n_neat,
                      syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
                                'delay': .1, 'receptor_type': 0})
 
@@ -654,7 +654,7 @@ class NEASTTestCase(unittest.TestCase):
         nest.Connect(n_neat_0, n_neat_1, syn_spec={'synapse_model': 'static_synapse', 'weight': .1,
                                                    'receptor_type': syn_idx})
 
-        dc = nest.Create('dc_generator', {'amplitude': 2.0})
+        dc = nest.Create('dc_generator', params={'amplitude': 2.0})
         nest.Connect(dc, n_neat_0, syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
                                              'receptor_type': 0})
 
@@ -799,7 +799,7 @@ class NEASTTestCase(unittest.TestCase):
             {"parent_idx": -1, "params": SP},
             {"parent_idx": 0, "params": SP}
         ]
-        dc = nest.Create('dc_generator', {'amplitude': 2.0})
+        dc = nest.Create('dc_generator', params={'amplitude': 2.0})
 
         with self.assertRaisesRegex(nest.kernel.NESTError,
                                     r"UnknownPort in SLI function Connect_g_g_D_D: "

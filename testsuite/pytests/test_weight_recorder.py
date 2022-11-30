@@ -75,9 +75,10 @@ class WeightRecorderTestCase(unittest.TestCase):
             weights = np.append(weights, connections.get("weight"))
 
         wr_weights = nest.GetStatus(wr, "events")[0]["weights"]
+        print(wr.get())
 
         self.addTypeEqualityFunc(type(wr_weights), self.is_subset)
-        self.assertEqual(wr_weights, weights)
+        self.assertEqual(wr_weights, list(weights))
 
     def testMultipleThreads(self):
         """Weight Recorder Multi Threaded"""
@@ -107,7 +108,7 @@ class WeightRecorderTestCase(unittest.TestCase):
         wr_weights = nest.GetStatus(wr, "events")[0]["weights"]
 
         self.addTypeEqualityFunc(type(wr_weights), self.is_subset)
-        self.assertEqual(wr_weights, weights)
+        self.assertEqual(wr_weights, list(weights))
 
     def testDefinedSenders(self):
         """Weight Recorder Defined Subset Of Senders"""
@@ -138,7 +139,7 @@ class WeightRecorderTestCase(unittest.TestCase):
         wr_senders = nest.GetStatus(wr, "events")[0]["senders"]
 
         self.addTypeEqualityFunc(type(wr_senders), self.is_subset)
-        self.assertEqual(wr_senders, senders)
+        self.assertEqual(wr_senders, list(senders))
 
     def testDefinedTargets(self):
         """Weight Recorder Defined Subset Of Targets"""
@@ -169,7 +170,7 @@ class WeightRecorderTestCase(unittest.TestCase):
         wr_targets = nest.GetStatus(wr, "events")[0]["targets"]
 
         self.addTypeEqualityFunc(type(wr_targets), self.is_subset)
-        self.assertEqual(wr_targets, targets)
+        self.assertEqual(wr_targets, list(targets))
 
     def testDefinedTargetsAndSenders(self):
         """Weight Recorder Defined Subset Of Targets and Senders"""
@@ -204,7 +205,7 @@ class WeightRecorderTestCase(unittest.TestCase):
         wr_targets = nest.GetStatus(wr, "events")[0]["targets"]
 
         self.addTypeEqualityFunc(type(wr_targets), self.is_subset)
-        self.assertEqual(wr_targets, targets)
+        self.assertEqual(wr_targets, list(targets))
 
     def testMultapses(self):
         """Weight Recorder Multapses"""

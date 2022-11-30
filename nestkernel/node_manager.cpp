@@ -96,7 +96,7 @@ NodeManager::get_status( index idx )
 {
   Node* target = get_mpi_local_node_or_device_head( idx );
 
-  assert( target != 0 );
+  assert( target );
 
   DictionaryDatum d = target->get_status_base();
 
@@ -115,8 +115,7 @@ NodeManager::add_node( index model_id, long n )
     throw BadProperty();
   }
   Model* model = kernel().model_manager.get_node_model( model_id );
-
-  assert( model != 0 );
+  assert( model );
   model->deprecation_warning( "Create" );
 
   const index min_node_id = local_nodes_.at( 0 ).get_max_node_id() + 1;
@@ -457,7 +456,7 @@ NodeManager::get_node_or_proxy( index node_id, thread t )
   // assert( 0 < node_id and node_id <= local_nodes_[ t ].size() );
 
   Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
-  if ( node == 0 )
+  if ( not node )
   {
     return kernel().model_manager.get_proxy_node( t, node_id );
   }
@@ -478,7 +477,7 @@ NodeManager::get_node_or_proxy( index node_id )
 
   thread t = kernel().vp_manager.vp_to_thread( vp );
   Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
-  if ( node == 0 )
+  if ( not node )
   {
     return kernel().model_manager.get_proxy_node( t, node_id );
   }
@@ -493,7 +492,7 @@ NodeManager::get_mpi_local_node_or_device_head( index node_id )
 
   Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
 
-  if ( node == 0 )
+  if ( not node )
   {
     return kernel().model_manager.get_proxy_node( t, node_id );
   }
@@ -513,7 +512,7 @@ NodeManager::get_thread_siblings( index node_id ) const
   for ( size_t t = 0; t < num_threads; ++t )
   {
     Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
-    if ( node == 0 )
+    if ( not node )
     {
       throw NoThreadSiblingsAvailable( node_id );
     }
@@ -600,19 +599,14 @@ NodeManager::destruct_nodes_()
 {
 #pragma omp parallel
   {
-    index t = kernel().vp_manager.get_thread_id();
-    SparseNodeArray::const_iterator n;
-    for ( n = local_nodes_[ t ].begin(); n != local_nodes_[ t ].end(); ++n )
+    const index tid = kernel().vp_manager.get_thread_id();
+    for ( auto node : local_nodes_[ tid ] )
     {
-      // We call the destructor for each node excplicitly. This
-      // destroys the objects without releasing their memory. Since
-      // the Memory is owned by the Model objects, we must not call
-      // delete on the Node objects!
-      n->get_node()->~Node();
+      delete node.get_node();
     }
 
-    local_nodes_[ t ].clear();
-    vectorized_nodes[ t ].clear();
+    vectorized_nodes[ tid ].clear();
+    local_nodes_[ tid ].clear();
   } // omp parallel
 }
 
@@ -790,7 +784,7 @@ NodeManager::set_status( index node_id, const DictionaryDatum& d )
   for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
     Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
-    if ( node != 0 )
+    if ( node )
     {
       set_status_single_node_( *node, d );
     }

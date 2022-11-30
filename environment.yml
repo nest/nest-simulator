@@ -64,6 +64,7 @@ dependencies:
 
   # Building NEST documentation
   - PyYAML>=4.2b1
+  - assimulo
   - breathe
   - csvkit
   - docutils
@@ -91,10 +92,12 @@ dependencies:
   - pip:
     # For testsuite
     - junitparser >= 2
-    - clang-format == 9.0.0
+    - clang-format == 13.0
     # For documentation
     - example
     - Image
     - sphinx_autobuild
     - sphinx_gallery
     - sphinx-tabs
+    - sphinx_design
+    - sphinx-material

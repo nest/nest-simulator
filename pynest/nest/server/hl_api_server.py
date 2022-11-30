@@ -354,7 +354,7 @@ def set_mpi_comm(comm):
     mpi_comm = comm
 
 
-def run_mpi_app(host="127.0.0.1", port=5000):
+def run_mpi_app(host="127.0.0.1", port=52425):
     # NEST crashes with a segmentation fault if the number of threads
     # is changed from the outside. Calling run() with threaded=False
     # prevents Flask from performing such changes.

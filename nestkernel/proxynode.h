@@ -77,20 +77,20 @@ public:
   using Node::handle;
   using Node::sends_signal;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void sends_secondary_event( GapJunctionEvent& );
+  void sends_secondary_event( GapJunctionEvent& ) override;
 
-  SignalType sends_signal() const;
+  SignalType sends_signal() const override;
 
-  void sends_secondary_event( InstantaneousRateConnectionEvent& );
+  void sends_secondary_event( InstantaneousRateConnectionEvent& ) override;
 
-  void sends_secondary_event( DiffusionConnectionEvent& );
+  void sends_secondary_event( DiffusionConnectionEvent& ) override;
 
-  void sends_secondary_event( DelayedRateConnectionEvent& );
+  void sends_secondary_event( DelayedRateConnectionEvent& ) override;
 
   void
-  handle( SpikeEvent& )
+  handle( SpikeEvent& ) override
   {
   }
 
@@ -98,7 +98,7 @@ public:
 
   void clone_container( std::shared_ptr< VectorizedNode > container );
 
-  void get_status( DictionaryDatum& ) const;
+  void get_status( DictionaryDatum& ) const override;
 
   /**
    * Proxy nodes have no properties.
@@ -108,12 +108,12 @@ public:
    * problems with dictionary entry checking
    */
   void
-  set_status( const DictionaryDatum& )
+  set_status( const DictionaryDatum& ) override
   {
     assert( false );
   }
 
-  bool is_proxy() const;
+  bool is_proxy() const override;
 
   thread
   get_thread() const
@@ -123,19 +123,19 @@ public:
 
 private:
   void
-  init_state_()
+  init_state_() override
   {
   }
   void
-  init_buffers_()
+  init_buffers_() override
   {
   }
   void
-  pre_run_hook()
+  pre_run_hook() override
   {
   }
   void
-  update( Time const&, const long, const long )
+  update( Time const&, const long, const long ) override
   {
   }
 };

@@ -182,7 +182,7 @@ port
 VectorizedNode::handles_test_event( GapJunctionEvent&, rport, index )
 {
   throw IllegalConnection( "The target node or synapse model does not support gap junction input." );
-  return invalid_port_;
+  return invalid_port;
 }
 
 void
@@ -201,7 +201,7 @@ port
 VectorizedNode::handles_test_event( InstantaneousRateConnectionEvent&, rport, index )
 {
   throw IllegalConnection( "The target node or synapse model does not support instantaneous rate input." );
-  return invalid_port_;
+  return invalid_port;
 }
 
 void
@@ -301,7 +301,8 @@ VectorizedNode::get_g_L( int, index )
   throw UnexpectedEvent();
 }
 
-double VectorizedNode::get_tau_Ca( index ) const
+double
+VectorizedNode::get_tau_Ca( index ) const
 {
   throw UnexpectedEvent();
 }
@@ -351,12 +352,14 @@ VectorizedNode::size() const
   return global_ids.size();
 }
 
-void VectorizedNode::set_initialized_( index )
+void
+VectorizedNode::set_initialized_( index )
 {
   // does nothing the base implementation
 }
 
-void VectorizedNode::resize( index, index )
+void
+VectorizedNode::resize( index, index )
 {
   // index current_size = global_ids.size();
   index total_space = global_ids.size();

@@ -32,15 +32,14 @@
 #include <vector>
 
 // Includes from nestkernel:
+#include "deprecation_warning.h"
 #include "event.h"
 #include "histentry.h"
 #include "nest_names.h"
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node_collection.h"
-
-
-#include "deprecation_warning.h"
+#include "secondary_event.h"
 
 // Includes from sli:
 #include "dictdatum.h"
@@ -126,7 +125,7 @@ public:
   virtual Node*
   clone() const
   {
-    return 0;
+    return nullptr;
   }
 
   virtual void
@@ -142,7 +141,8 @@ public:
   }
 
 
-  virtual void clone_container( std::shared_ptr< VectorizedNode > )
+  virtual void
+  clone_container( std::shared_ptr< VectorizedNode > )
   {
   }
 
@@ -231,7 +231,7 @@ public:
   };
 
   virtual double
-  get_state_element( size_t  ) const
+  get_state_element( size_t ) const
   {
     assert( false );
     return -1;
@@ -390,12 +390,14 @@ public:
    */
   virtual void get_status( DictionaryDatum& ) const = 0;
 
-  virtual void set_container( std::shared_ptr< VectorizedNode > )
+  virtual void
+  set_container( std::shared_ptr< VectorizedNode > )
   {
   }
 
 
-  virtual Node* get_wrapper( index = -1 )
+  virtual Node*
+  get_wrapper( index = -1 )
   {
     return this;
   }
@@ -638,7 +640,8 @@ public:
    * Return 0.0 if not overridden
    * @ingroup SP_functions
    */
-  virtual double get_synaptic_elements( Name ) const
+  virtual double
+  get_synaptic_elements( Name ) const
   {
     return 0.0;
   }
@@ -648,7 +651,8 @@ public:
    * Return 0 if not overridden
    * @ingroup SP_functions
    */
-  virtual int get_synaptic_elements_vacant( Name ) const
+  virtual int
+  get_synaptic_elements_vacant( Name ) const
   {
     return 0;
   }
@@ -658,7 +662,8 @@ public:
    * Return 0 if not overridden
    * @ingroup SP_functions
    */
-  virtual int get_synaptic_elements_connected( Name ) const
+  virtual int
+  get_synaptic_elements_connected( Name ) const
   {
     return 0;
   }
@@ -1052,7 +1057,7 @@ Node::set_model_id( int i )
 inline bool
 Node::is_model_prototype() const
 {
-  return vp_ == invalid_thread_;
+  return vp_ == invalid_thread;
 }
 
 inline void

@@ -40,6 +40,7 @@ nest.Connect(nrn_tsodyks, nrn_tsodyks, syn_spec="syn_static")
 nest.Connect(spikegen, nrn_tsodyks)
 nest.Connect(m_tsodyks, nrn_tsodyks)
 
+
 # iaf_psc_exp with tsodyks_synapse
 nrn_exp = nest.Create("iaf_psc_exp", 2)
 m_exp = nest.Create('multimeter', 1)
@@ -66,6 +67,7 @@ r_exp = nest.GetStatus(m_exp, "events")[0]
 
 print("iaf_tsodyks with static synapse:")
 pprint(r_tsodyks)
+
 
 print("\n iaf_psc_exp with tsodyks_synapse:")
 pprint(r_exp)

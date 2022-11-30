@@ -106,13 +106,11 @@ panels_add_bootstrap_css = False
 templates_path = ['templates']
 
 sphinx_gallery_conf = {
-     # 'doc_module': ('sphinx_gallery', 'numpy'),
-     # path to your examples scripts
-     'examples_dirs': str(source_dir / 'pynest/examples'),
-     # path where to save gallery generated examples
-     'gallery_dirs': str(doc_build_dir / 'auto_examples'),
-     # 'backreferences_dir': False
-     'plot_gallery': 'False'
+    # path to your examples scripts
+    'examples_dirs': '../../pynest/examples',
+    # path where to save gallery generated examples
+    'gallery_dirs': 'auto_examples',
+    'plot_gallery': 'False',
 }
 
 # General information about the project.

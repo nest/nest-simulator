@@ -539,6 +539,7 @@ public:
   virtual int get_synaptic_elements_connected( Name, index ) const
   {
     return 0;
+
   }
 
   /**

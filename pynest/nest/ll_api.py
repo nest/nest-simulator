@@ -278,6 +278,7 @@ class KernelAttribute:
     """
     Descriptor that dispatches attribute access to the nest kernel.
     """
+
     def __init__(self, typehint, description, readonly=False, default=None, localonly=False):
         self._readonly = readonly
         self._localonly = localonly
@@ -313,8 +314,8 @@ class KernelAttribute:
                 return status_root[self._name]
             except:
                 import warnings
-                warnings.warn(
-                    f"nestkernel doesn't have the requested key:'{self._name}'. The returned Object is set to a to the key name")
+                warning_msg = f"nestkernel doesn't have the requested key:'{self._name}'. The returned Object is set to a to the key name"
+                warnings.warn(warning_msg)
                 return self._name
 
     @stack_checker

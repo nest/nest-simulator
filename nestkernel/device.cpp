@@ -109,19 +109,19 @@ void
 nest::Device::Parameters_::set( const dictionary& d )
 {
   double origin;
-  if (d.update_value( names::origin, origin ) )
+  if ( d.update_value( names::origin, origin ) )
   {
     origin_ = Time::ms( origin );
   }
 
   double start;
-  if (d.update_value( names::start, start ) )
+  if ( d.update_value( names::start, start ) )
   {
     start_ = Time::ms( start );
   }
 
   double stop;
-  if (d.update_value( names::stop, stop ) )
+  if ( d.update_value( names::stop, stop ) )
   {
     stop_ = Time::ms( stop );
   }

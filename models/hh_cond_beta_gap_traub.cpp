@@ -241,7 +241,7 @@ nest::hh_cond_beta_gap_traub::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::hh_cond_beta_gap_traub::Parameters_::set( const dictionary& d, Node* node)
+nest::hh_cond_beta_gap_traub::Parameters_::set( const dictionary& d, Node* node )
 {
   d.update_value( names::g_Na, g_Na );
   d.update_value( names::g_K, g_K );

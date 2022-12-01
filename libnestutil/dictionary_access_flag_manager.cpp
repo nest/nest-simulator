@@ -39,8 +39,8 @@ DictionaryAccessFlagManager::all_accessed( const dictionary& dict,
   std::vector< dictionary::value_type > not_accessed_kv_pairs;
 
   const auto& access_set = access_flags_.at( &dict );
-  const auto comparator = [&access_set](
-                            dictionary::value_type kv ) { return access_set.find( kv.first ) == access_set.end(); };
+  const auto comparator = [ &access_set ]( dictionary::value_type kv )
+  { return access_set.find( kv.first ) == access_set.end(); };
 
   std::copy_if( dict.begin(), dict.end(), std::back_inserter( not_accessed_kv_pairs ), comparator );
 

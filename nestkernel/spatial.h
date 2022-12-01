@@ -121,7 +121,7 @@ MaskPTR union_mask( const MaskPTR mask1, const MaskPTR mask2 );
 MaskPTR minus_mask( const MaskPTR mask1, const MaskPTR mask2 );
 void connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const dictionary& dict );
 void dump_layer_nodes( NodeCollectionPTR layer_nc, std::ostream& out );
-  void dump_layer_connections( const std::string& syn_model,
+void dump_layer_connections( const std::string& syn_model,
   NodeCollectionPTR source_layer_nc,
   NodeCollectionPTR target_layer_nc,
   std::ostream& out_file );

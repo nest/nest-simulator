@@ -396,7 +396,7 @@ MaskedLayer< D >::check_mask_( Layer< D >& layer, bool allow_oversized )
     lower_left[ 1 ] = -upper_right[ 1 ];
     upper_right[ 1 ] = -y;
 
-    mask_ = MaskPTR (new BoxMask< D >( lower_left, upper_right ) );
+    mask_ = MaskPTR( new BoxMask< D >( lower_left, upper_right ) );
   }
   catch ( std::bad_cast& )
   {

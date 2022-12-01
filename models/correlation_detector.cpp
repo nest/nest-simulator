@@ -106,7 +106,7 @@ nest::correlation_detector::Parameters_::get( dictionary& d ) const
 void
 nest::correlation_detector::State_::get( dictionary& d ) const
 {
-  d[ names::n_events ] = n_events_ ;
+  d[ names::n_events ] = n_events_;
   d[ names::histogram ] = histogram_;
   d[ names::histogram_correction ] = histogram_correction_;
   d[ names::count_histogram ] = count_histogram_;

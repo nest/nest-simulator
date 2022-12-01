@@ -216,8 +216,7 @@ public:
   void get( dictionary& d ) const;
   void set( const dictionary& d );
 
-  double
-  update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const;
+  double update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const;
 
 private:
   double eta_;

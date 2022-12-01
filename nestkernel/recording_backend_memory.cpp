@@ -224,14 +224,16 @@ nest::RecordingBackendMemory::DeviceData::get_status( dictionary& d ) const
     events = d.get< dictionary >( names::events );
   }
 
-  auto init_intvector = [&events]( std::string key ) -> std::vector< int >& {
+  auto init_intvector = [ &events ]( std::string key ) -> std::vector< int >&
+  {
     if ( not events.known( key ) )
     {
       events[ key ] = std::vector< int >();
     }
     return boost::any_cast< std::vector< int >& >( events[ key ] );
   };
-  auto init_doublevector = [&events]( std::string key ) -> std::vector< double >& {
+  auto init_doublevector = [ &events ]( std::string key ) -> std::vector< double >&
+  {
     if ( not events.known( key ) )
     {
       events[ key ] = std::vector< double >();

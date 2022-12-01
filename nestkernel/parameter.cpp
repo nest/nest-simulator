@@ -405,17 +405,13 @@ subtract_parameter( const ParameterPTR first, const ParameterPTR second )
 }
 
 ParameterPTR
-compare_parameter( const ParameterPTR first,
-  const ParameterPTR second,
-  const dictionary& d )
+compare_parameter( const ParameterPTR first, const ParameterPTR second, const dictionary& d )
 {
   return ParameterPTR( new ComparingParameter( first, second, d ) );
 }
 
 ParameterPTR
-conditional_parameter( const ParameterPTR condition,
-  const ParameterPTR if_true,
-  const ParameterPTR if_false )
+conditional_parameter( const ParameterPTR condition, const ParameterPTR if_true, const ParameterPTR if_false )
 {
   return ParameterPTR( new ConditionalParameter( condition, if_true, if_false ) );
 }
@@ -469,9 +465,7 @@ dimension_parameter( const ParameterPTR x_parameter, const ParameterPTR y_parame
 }
 
 ParameterPTR
-dimension_parameter( const ParameterPTR x_parameter,
-  const ParameterPTR y_parameter,
-  const ParameterPTR z_parameter )
+dimension_parameter( const ParameterPTR x_parameter, const ParameterPTR y_parameter, const ParameterPTR z_parameter )
 {
   return ParameterPTR( new DimensionParameter( x_parameter, y_parameter, z_parameter ) );
 }

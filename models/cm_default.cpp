@@ -133,7 +133,7 @@ nest::cm_default::set_status( const dictionary& statusdict )
     else if ( is_type< dictionary >( compartment_data ) )
     {
       // A single compartment is provided, we add add it to the tree
-      add_compartment_( boost::any_cast< dictionary& >( compartment_data )  );
+      add_compartment_( boost::any_cast< dictionary& >( compartment_data ) );
     }
     else
     {
@@ -216,8 +216,7 @@ nest::cm_default::add_receptor_( dictionary& dd )
   Compartment* compartment = c_tree_.get_compartment( compartment_idx );
   if ( dd.known( names::params ) )
   {
-    compartment->compartment_currents.add_synapse(
-      receptor_type, syn_idx, dd.get< dictionary >( names::params ) );
+    compartment->compartment_currents.add_synapse( receptor_type, syn_idx, dd.get< dictionary >( names::params ) );
   }
   else
   {
@@ -234,7 +233,7 @@ nest::cm_default::init_recordables_pointers_()
    *     voltage (e.g. "v_comp1") or by the synapse index for receptor currents
    * --> values are pointers to the specific state variables
    */
-  std::map< std::string , double* > recordables = c_tree_.get_recordables();
+  std::map< std::string, double* > recordables = c_tree_.get_recordables();
 
   for ( auto rec_it = recordables.begin(); rec_it != recordables.end(); rec_it++ )
   {

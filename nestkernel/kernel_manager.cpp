@@ -68,8 +68,8 @@ nest::KernelManager::get_build_info_()
   build_info[ "mpiexec" ] = std::string( MPIEXEC );
   build_info[ "mpiexec_numproc_flag" ] = std::string( MPIEXEC_NUMPROC_FLAG );
   build_info[ "mpiexec_max_numprocs" ] = std::string( MPIEXEC_MAX_NUMPROCS );
-  build_info[ "mpiexec_preflags"] = std::string( MPIEXEC_PREFLAGS );
-  build_info[ "mpiexec_postflags"] = std::string( MPIEXEC_POSTFLAGS );
+  build_info[ "mpiexec_preflags" ] = std::string( MPIEXEC_PREFLAGS );
+  build_info[ "mpiexec_postflags" ] = std::string( MPIEXEC_POSTFLAGS );
 #else
   build_info[ "have_mpi" ] = false;
 #endif

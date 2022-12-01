@@ -343,7 +343,7 @@ public:
 
 class IncompatibleReceptorType : public KernelException
 {
-  std::string compose_msg( const long receptor_type, const std::string name, const std::string event);
+  std::string compose_msg( const long receptor_type, const std::string name, const std::string event );
 
 public:
   IncompatibleReceptorType( long receptor_type, std::string name, std::string event_type )
@@ -362,7 +362,7 @@ class UnknownPort : public KernelException
 {
   std::string compose_msg_( const int id ) const;
   std::string compose_msg_( const int id, const std::string msg ) const;
-  
+
 public:
   UnknownPort( int id )
     : KernelException( compose_msg_( id ) )
@@ -505,7 +505,7 @@ private:
 class UnsupportedEvent : public KernelException
 {
   std::string compose_msg_() const;
-  
+
 public:
   UnsupportedEvent()
     : KernelException( compose_msg_() )
@@ -631,7 +631,7 @@ public:
   {
   }
 
- const char* what() const noexcept override;
+  const char* what() const noexcept override;
 };
 
 /**

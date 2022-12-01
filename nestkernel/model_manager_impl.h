@@ -30,8 +30,8 @@
 #include "string_utils.h"
 
 // Includes from nestkernel:
-#include "exceptions.h"
 #include "connection_label.h"
+#include "exceptions.h"
 #include "kernel_manager.h"
 #include "nest.h"
 #include "target_identifier.h"

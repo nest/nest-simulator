@@ -139,7 +139,7 @@ FreeLayer< D >::set_status( const dictionary& d )
       positions_.reserve( num_local_nodes_ );
 
       auto nc_it = this->node_collection_->begin();
-      const auto pos = boost::any_cast< std::vector< std::vector< double > > >(positions);
+      const auto pos = boost::any_cast< std::vector< std::vector< double > > >( positions );
       for ( auto it = pos.begin(); it != pos.end(); ++it, ++nc_it )
       {
         assert( nc_it != this->node_collection_->end() );

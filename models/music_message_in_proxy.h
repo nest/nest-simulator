@@ -97,8 +97,8 @@ EndUserDocs */
 
 class MsgHandler : public MUSIC::MessageHandler
 {
-  std::vector< std::string > messages;  //!< The buffer for incoming message
-  std::vector< double > message_times;  //!< The times for incoming message
+  std::vector< std::string > messages; //!< The buffer for incoming message
+  std::vector< double > message_times; //!< The times for incoming message
 
   void
   operator()( double t, void* msg, size_t size )

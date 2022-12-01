@@ -58,7 +58,7 @@ nest::UnknownComponent::compose_msg_( const std::string& component_name ) const
 std::string
 nest::NewModelNameExists::compose_msg_( const std::string& model_name ) const
 {
-  std::string msg  = "Model " + model_name + " is the name of an existing model and cannot be re-used.";
+  std::string msg = "Model " + model_name + " is the name of an existing model and cannot be re-used.";
   return msg;
 }
 
@@ -113,8 +113,8 @@ std::string
 nest::NodeWithProxiesExpected::compose_msg_( const int id ) const
 {
   std::ostringstream out;
-  out << "A node with proxies (usually a neuron) is expected, but the node with id "
-      << id << " is a node without proxies (usually a device).";
+  out << "A node with proxies (usually a neuron) is expected, but the node with id " << id
+      << " is a node without proxies (usually a device).";
   return out.str();
 }
 
@@ -136,7 +136,9 @@ nest::UnknownReceptorType::compose_msg_( const long receptor_type, const std::st
 }
 
 std::string
-nest::IncompatibleReceptorType::compose_msg( const long receptor_type, const std::string name, const std::string event_type)
+nest::IncompatibleReceptorType::compose_msg( const long receptor_type,
+  const std::string name,
+  const std::string event_type )
 {
   std::ostringstream msg;
   msg << "Receptor type " << receptor_type << " in " << name << " does not accept " << event_type << ".";
@@ -225,7 +227,7 @@ std::string
 nest::UnsupportedEvent::compose_msg_() const
 {
   return "The current synapse type does not support the event type of the sender.\n"
-    "    A common cause for this is a plastic synapse between a device and a neuron.";
+         "    A common cause for this is a plastic synapse between a device and a neuron.";
 }
 
 const char*

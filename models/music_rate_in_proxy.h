@@ -40,7 +40,6 @@
 #include "node.h"
 
 
-
 /* BeginUserDocs: device, rate, MUSIC
 
 Short description

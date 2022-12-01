@@ -40,7 +40,7 @@ namespace nest
 {
 class Parameter;
 using ParameterPTR = std::shared_ptr< Parameter >;
-  
+
 class AbstractLayer;
 
 /**
@@ -761,9 +761,7 @@ public:
    * Construct the choice of two given parameters, based on a third.
    * Copies are made of the supplied Parameter objects.
    */
-  ConditionalParameter( ParameterPTR condition,
-    ParameterPTR if_true,
-    ParameterPTR if_false )
+  ConditionalParameter( ParameterPTR condition, ParameterPTR if_true, ParameterPTR if_false )
     : Parameter( condition->is_spatial() or if_true->is_spatial() or if_false->is_spatial(),
       if_true->returns_int_only() and if_false->returns_int_only() )
     , condition_( condition )
@@ -1191,9 +1189,7 @@ public:
   {
   }
 
-  DimensionParameter( ParameterPTR px,
-    ParameterPTR py,
-    ParameterPTR pz )
+  DimensionParameter( ParameterPTR px, ParameterPTR py, ParameterPTR pz )
     : Parameter( true )
     , num_dimensions_( 3 )
     , px_( px )
@@ -1486,37 +1482,31 @@ Parameter::value_is_integer_( const double value ) const
  * Create the product of one parameter with another.
  * @returns a new dynamically allocated parameter.
  */
-ParameterPTR multiply_parameter( const ParameterPTR first,
-  const ParameterPTR second );
+ParameterPTR multiply_parameter( const ParameterPTR first, const ParameterPTR second );
 
 /**
  * Create the quotient of one parameter with another.
  * @returns a new dynamically allocated parameter.
  */
-ParameterPTR divide_parameter( const ParameterPTR first,
-  const ParameterPTR second );
+ParameterPTR divide_parameter( const ParameterPTR first, const ParameterPTR second );
 
 /**
  * Create the sum of one parameter with another.
  * @returns a new dynamically allocated parameter.
  */
-ParameterPTR add_parameter( const ParameterPTR first,
-  const ParameterPTR second );
+ParameterPTR add_parameter( const ParameterPTR first, const ParameterPTR second );
 
 /**
  * Create the difference between one parameter and another.
  * @returns a new dynamically allocated parameter.
  */
-ParameterPTR subtract_parameter( const ParameterPTR first,
-  const ParameterPTR second );
+ParameterPTR subtract_parameter( const ParameterPTR first, const ParameterPTR second );
 
 /**
  * Create comparison of one parameter with another.
  * @returns a new dynamically allocated parameter.
  */
-ParameterPTR compare_parameter( const ParameterPTR first,
-  const ParameterPTR second,
-  const dictionary& d );
+ParameterPTR compare_parameter( const ParameterPTR first, const ParameterPTR second, const dictionary& d );
 
 /**
  * Create a parameter that chooses between two other parameters,
@@ -1525,9 +1515,8 @@ ParameterPTR compare_parameter( const ParameterPTR first,
  * evaluate as true.
  * @returns a new dynamically allocated parameter.
  */
-ParameterPTR conditional_parameter( const ParameterPTR condition,
-  const ParameterPTR if_true,
-  const ParameterPTR if_false );
+ParameterPTR
+conditional_parameter( const ParameterPTR condition, const ParameterPTR if_true, const ParameterPTR if_false );
 
 /**
  * Create parameter whose value is the minimum of a given parameter's value and the given value.
@@ -1575,12 +1564,10 @@ ParameterPTR pow_parameter( const ParameterPTR parameter, const double exponent 
  * Create a parameter that can generate position vectors from a given set of parameters.
  * @returns a new dynamically allocated parameter.
  */
-ParameterPTR dimension_parameter( const ParameterPTR x_parameter,
-  const ParameterPTR y_parameter );
+ParameterPTR dimension_parameter( const ParameterPTR x_parameter, const ParameterPTR y_parameter );
 
-ParameterPTR dimension_parameter( const ParameterPTR x_parameter,
-  const ParameterPTR y_parameter,
-  const ParameterPTR z_parameter );
+ParameterPTR
+dimension_parameter( const ParameterPTR x_parameter, const ParameterPTR y_parameter, const ParameterPTR z_parameter );
 
 
 } // namespace nest

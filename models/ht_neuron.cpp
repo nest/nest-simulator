@@ -735,10 +735,10 @@ nest::ht_neuron::get_status( dictionary& d ) const
 
   dictionary receptor_type;
 
-  receptor_type[ names::AMPA ] = static_cast< long >(AMPA);
-  receptor_type[ names::NMDA ] = static_cast< long >(NMDA);
-  receptor_type[ names::GABA_A ] = static_cast< long >(GABA_A);
-  receptor_type[ names::GABA_B ] = static_cast< long >(GABA_B);
+  receptor_type[ names::AMPA ] = static_cast< long >( AMPA );
+  receptor_type[ names::NMDA ] = static_cast< long >( NMDA );
+  receptor_type[ names::GABA_A ] = static_cast< long >( GABA_A );
+  receptor_type[ names::GABA_B ] = static_cast< long >( GABA_B );
 
   d[ names::receptor_types ] = receptor_type;
   d[ names::recordables ] = recordablesMap_.get_list();

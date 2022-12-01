@@ -23,8 +23,8 @@
 #include "node_manager.h"
 
 // C++ includes:
-#include <set>
 #include <iomanip>
+#include <set>
 
 // Includes from libnestutil:
 #include "compose.hpp"

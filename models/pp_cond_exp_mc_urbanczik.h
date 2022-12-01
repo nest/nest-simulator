@@ -616,13 +616,13 @@ pp_cond_exp_mc_urbanczik::get_status( dictionary& d ) const
    * a seg fault on exit, see #328
    */
   dictionary receptor_dict_;
-  receptor_dict_[ names::soma_exc ] = static_cast< long >(SOMA_EXC);
-  receptor_dict_[ names::soma_inh ] = static_cast< long >(SOMA_INH);
-  receptor_dict_[ names::soma_curr ] = static_cast< long >(I_SOMA);
+  receptor_dict_[ names::soma_exc ] = static_cast< long >( SOMA_EXC );
+  receptor_dict_[ names::soma_inh ] = static_cast< long >( SOMA_INH );
+  receptor_dict_[ names::soma_curr ] = static_cast< long >( I_SOMA );
 
-  receptor_dict_[ names::dendritic_exc ] = static_cast< long >(DEND_EXC);
-  receptor_dict_[ names::dendritic_inh ] = static_cast< long >(DEND_INH);
-  receptor_dict_[ names::dendritic_curr ] = static_cast< long >(I_DEND);
+  receptor_dict_[ names::dendritic_exc ] = static_cast< long >( DEND_EXC );
+  receptor_dict_[ names::dendritic_inh ] = static_cast< long >( DEND_INH );
+  receptor_dict_[ names::dendritic_curr ] = static_cast< long >( I_DEND );
 
   d[ names::receptor_types ] = receptor_dict_;
 }

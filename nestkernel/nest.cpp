@@ -882,11 +882,11 @@ slice_positions_if_sliced_nc( dictionary& dict, const NodeCollectionPTR nc )
   // If metadata contains node positions and the NodeCollection is sliced, get only positions of the sliced nodes.
   if ( dict.known( names::positions ) )
   {
-    //PyNEST-NG: Check if TokenArray is the correct type here
-    const auto positions = dict.get< std::vector < std::vector < double > > >( names::positions );
+    // PyNEST-NG: Check if TokenArray is the correct type here
+    const auto positions = dict.get< std::vector< std::vector< double > > >( names::positions );
     if ( nc->size() != positions.size() )
     {
-      std::vector < std::vector < double > > sliced_points;
+      std::vector< std::vector< double > > sliced_points;
       // Iterate only local nodes
       NodeCollection::const_iterator nc_begin = nc->has_proxies() ? nc->MPI_local_begin() : nc->begin();
       NodeCollection::const_iterator nc_end = nc->end();

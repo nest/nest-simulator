@@ -536,17 +536,17 @@ iaf_cond_alpha_mc::get_status( dictionary& d ) const
    * a seg fault on exit, see #328
    */
   dictionary receptor_dict_;
-  receptor_dict_[ names::soma_exc ] = static_cast< long >(SOMA_EXC);
-  receptor_dict_[ names::soma_inh ] = static_cast< long >(SOMA_INH);
-  receptor_dict_[ names::soma_curr ] = static_cast< long >(I_SOMA);
+  receptor_dict_[ names::soma_exc ] = static_cast< long >( SOMA_EXC );
+  receptor_dict_[ names::soma_inh ] = static_cast< long >( SOMA_INH );
+  receptor_dict_[ names::soma_curr ] = static_cast< long >( I_SOMA );
 
-  receptor_dict_[ names::proximal_exc ] = static_cast< long >(PROX_EXC);
-  receptor_dict_[ names::proximal_inh ] = static_cast< long >(PROX_INH);
-  receptor_dict_[ names::proximal_curr ] = static_cast< long >(I_PROX);
+  receptor_dict_[ names::proximal_exc ] = static_cast< long >( PROX_EXC );
+  receptor_dict_[ names::proximal_inh ] = static_cast< long >( PROX_INH );
+  receptor_dict_[ names::proximal_curr ] = static_cast< long >( I_PROX );
 
-  receptor_dict_[ names::distal_exc ] = static_cast< long >(DIST_EXC);
-  receptor_dict_[ names::distal_inh ] = static_cast< long >(DIST_INH);
-  receptor_dict_[ names::distal_curr ] = static_cast< long >(I_DIST);
+  receptor_dict_[ names::distal_exc ] = static_cast< long >( DIST_EXC );
+  receptor_dict_[ names::distal_inh ] = static_cast< long >( DIST_INH );
+  receptor_dict_[ names::distal_curr ] = static_cast< long >( I_DIST );
 
   d[ names::receptor_types ] = receptor_dict_;
 }

@@ -68,7 +68,7 @@ DictionaryAccessFlagManager::init_access_flags( const dictionary& dict )
 {
 #pragma omp critical( init_access_flags )
   {
-    access_flags_[&dict ] = {};
+    access_flags_[ &dict ] = {};
   }
 }
 
@@ -77,7 +77,7 @@ DictionaryAccessFlagManager::register_access( const dictionary& dict, const key_
 {
 #pragma omp critical( register_access )
   {
-    access_flags_[&dict ].insert( key );
+    access_flags_[ &dict ].insert( key );
   }
 }
 

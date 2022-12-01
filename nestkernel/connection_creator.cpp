@@ -158,9 +158,8 @@ ConnectionCreator::ConnectionCreator( const dictionary& dict )
 void
 ConnectionCreator::extract_params_( const dictionary& dict, std::vector< dictionary >& params )
 {
-  const std::string syn_name = dict.known( names::synapse_model )
-    ? dict.get< std::string >( names::synapse_model )
-    : std::string( "static_synapse" );
+  const std::string syn_name = dict.known( names::synapse_model ) ? dict.get< std::string >( names::synapse_model )
+                                                                  : std::string( "static_synapse" );
 
   // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
   const index synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );

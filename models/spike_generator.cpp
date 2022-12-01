@@ -66,14 +66,14 @@ nest::spike_generator::Parameters_::get( dictionary& d ) const
 
   std::vector< double > times_ms( n_spikes );
   for ( size_t n = 0; n < n_spikes; ++n )
-  {    
+  {
     times_ms[ n ] = spike_stamps_[ n ].get_ms();
     if ( precise_times_ )
     {
       times_ms[ n ] -= spike_offsets_[ n ];
     }
   }
-  
+
   d[ names::spike_times ] = times_ms;
   d[ names::spike_weights ] = spike_weights_;
   d[ names::spike_multiplicities ] = spike_multiplicities_;
@@ -126,7 +126,7 @@ nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double 
   // when we get here, we know that the spike time is valid and
   // t_spike is the correct time stamp given the chosen options
   spike_stamps_.push_back( t_spike );
-  
+
   if ( precise_times_ )
   {
     // t_spike is created with ms_stamp() that aligns the time to the next

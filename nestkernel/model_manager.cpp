@@ -24,8 +24,8 @@
 
 // C++ includes:
 #include <algorithm>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 #include <vector>
 
 // Includes from libnestutil:

@@ -344,7 +344,8 @@ template < typename value_type_ >
 inline BlockVector< value_type_ >::~BlockVector() = default;
 
 template < typename value_type_ >
-inline value_type_& BlockVector< value_type_ >::operator[]( const size_t pos )
+inline value_type_&
+BlockVector< value_type_ >::operator[]( const size_t pos )
 {
   // Using bitwise operations to efficiently map the index to the
   // right block and element.
@@ -354,7 +355,8 @@ inline value_type_& BlockVector< value_type_ >::operator[]( const size_t pos )
 }
 
 template < typename value_type_ >
-inline const value_type_& BlockVector< value_type_ >::operator[]( const size_t pos ) const
+inline const value_type_&
+BlockVector< value_type_ >::operator[]( const size_t pos ) const
 {
   // Using bitwise operations to efficiently map the index to the
   // right block and element.
@@ -593,7 +595,8 @@ inline bv_iterator< value_type_, ref_, ptr_ >::bv_iterator( const BlockVector< v
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
-inline bv_iterator< value_type_, ref_, ptr_ >& bv_iterator< value_type_, ref_, ptr_ >::operator++()
+inline bv_iterator< value_type_, ref_, ptr_ >&
+bv_iterator< value_type_, ref_, ptr_ >::operator++()
 {
   ++block_it_;
   if ( block_it_ == current_block_end_ )
@@ -613,7 +616,8 @@ inline bv_iterator< value_type_, ref_, ptr_ >& bv_iterator< value_type_, ref_, p
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
-inline bv_iterator< value_type_, ref_, ptr_ >& bv_iterator< value_type_, ref_, ptr_ >::operator--()
+inline bv_iterator< value_type_, ref_, ptr_ >&
+bv_iterator< value_type_, ref_, ptr_ >::operator--()
 {
   // If we are still within the block, we can just decrement the block iterator.
   // If not, we need to switch to the previous block.
@@ -639,7 +643,8 @@ inline bv_iterator< value_type_, ref_, ptr_ >& bv_iterator< value_type_, ref_, p
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
-inline bv_iterator< value_type_, ref_, ptr_ >& bv_iterator< value_type_, ref_, ptr_ >::operator+=( difference_type val )
+inline bv_iterator< value_type_, ref_, ptr_ >&
+bv_iterator< value_type_, ref_, ptr_ >::operator+=( difference_type val )
 {
   if ( val < 0 )
   {
@@ -653,7 +658,8 @@ inline bv_iterator< value_type_, ref_, ptr_ >& bv_iterator< value_type_, ref_, p
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
-inline bv_iterator< value_type_, ref_, ptr_ >& bv_iterator< value_type_, ref_, ptr_ >::operator-=( difference_type val )
+inline bv_iterator< value_type_, ref_, ptr_ >&
+bv_iterator< value_type_, ref_, ptr_ >::operator-=( difference_type val )
 {
   if ( val < 0 )
   {

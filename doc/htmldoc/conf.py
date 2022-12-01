@@ -185,12 +185,11 @@ intersphinx_mapping = {
 
 
 def config_inited_handler(app, config):
-    models_build_dir = os.path.abspath("models")
-    repo_root_dir = os.path.abspath("../..")
+    models_rst_dir = os.path.abspath("models")
     ExtractUserDocs(
         listoffiles=relative_glob("models/*.h", "nestkernel/*.h", basedir=repo_root_dir),
         basedir=repo_root_dir,
-        outdir=models_build_dir,
+        outdir=models_rst_dir,
     )
 
 

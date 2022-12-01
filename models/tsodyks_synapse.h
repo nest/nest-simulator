@@ -266,9 +266,6 @@ tsodyks_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSyna
   // postsynaptic current step caused by incoming spike
   double delta_y_tsp = u_ * x_;
 
-  std::cerr << "TSODYKS SYN u: " << u_ << "\n";
-  std::cerr << "TSODYKS SYN x: " << x_ << "\n";
-
   // delta function x, y
   x_ -= delta_y_tsp;
   y_ += delta_y_tsp;

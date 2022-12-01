@@ -84,7 +84,7 @@ and
 
 .. math::
 
- \tau_w \cdot dw/dt= a(V-E_L) -W
+ \tau_w \cdot dw/dt= a(V-E_L) - w
 
 .. math::
 

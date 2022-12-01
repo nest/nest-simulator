@@ -21,28 +21,44 @@
 
 import nest
 from pprint import pprint
+import matplotlib.pyplot as plt
+import numpy as np
 
 nest.ResetKernel()
-
 
 weight = 250.0
 delay = 0.1
 
+nest.SetDefaults('iaf_tsodyks', {'I_e': 0.})
+
 spikegen = nest.Create('spike_generator', 1)
-nest.SetStatus(spikegen, {"spike_times": [1., 3., 5., 6., ]})
+nest.SetStatus(spikegen, {"spike_times": [1.]})
 
 # iaf_tsodyks with static synapse
-nrn_tsodyks = nest.Create("iaf_tsodyks", 2)
+nrn_tsodyks_pre = nest.Create("iaf_tsodyks", 1)
+nrn_tsodyks_post = nest.Create("iaf_tsodyks", 1)
+
+
+### Set huge synaptic weight, control spike releases by refractory period
+nest.SetStatus(nrn_tsodyks_pre, {'t_ref': 10000.})
+
 m_tsodyks = nest.Create('multimeter', 1)
 nest.SetStatus(m_tsodyks, {"record_from": ["V_m", "I_syn_ex"]})
+
 nest.CopyModel("static_synapse", "syn_static", {"weight": weight, "delay": delay})
-nest.Connect(nrn_tsodyks, nrn_tsodyks, syn_spec="syn_static")
-nest.Connect(spikegen, nrn_tsodyks)
-nest.Connect(m_tsodyks, nrn_tsodyks)
+nest.CopyModel("static_synapse", "spike_forcing_syn", {"weight": 10000000., "delay": delay})
+
+nest.Connect(spikegen, nrn_tsodyks_pre, syn_spec="spike_forcing_syn")
+nest.Connect(nrn_tsodyks_pre, nrn_tsodyks_post, syn_spec="syn_static")
+
+nest.Connect(m_tsodyks, nrn_tsodyks_post)
 
 
 # iaf_psc_exp with tsodyks_synapse
-nrn_exp = nest.Create("iaf_psc_exp", 2)
+nrn_exp_pre = nest.Create("iaf_psc_exp", 1)
+nrn_exp_post = nest.Create("iaf_psc_exp", 1)
+nest.SetStatus(nrn_exp_pre, {'t_ref': 10000.})
+
 m_exp = nest.Create('multimeter', 1)
 nest.SetStatus(m_exp, {"record_from": ["V_m", "I_syn_ex"]})
 syn_param = {"tau_psc": 3.0,
@@ -53,12 +69,12 @@ syn_param = {"tau_psc": 3.0,
              "weight": weight,
              "u": 0.0,
              "x": 0.0,
-             "y": 0.0
+             "y": 0.0,
              }
 nest.CopyModel("tsodyks_synapse", "syn_tsodyks", syn_param)
-nest.Connect(nrn_exp, nrn_exp, syn_spec="syn_tsodyks")
-nest.Connect(spikegen, nrn_exp)
-nest.Connect(m_exp, nrn_exp)
+nest.Connect(spikegen, nrn_exp_pre, syn_spec="spike_forcing_syn")
+nest.Connect(nrn_exp_pre, nrn_exp_post, syn_spec="syn_tsodyks")
+nest.Connect(m_exp, nrn_exp_post)
 
 nest.Simulate(10.0)
 
@@ -71,3 +87,12 @@ pprint(r_tsodyks)
 
 print("\n iaf_psc_exp with tsodyks_synapse:")
 pprint(r_exp)
+
+plt.plot(r_tsodyks['V_m'])
+plt.twinx()
+plt.plot(r_exp['V_m'], '--', c='C1')
+plt.figure()
+plt.plot(r_tsodyks['I_syn_ex'])
+plt.twinx()
+plt.plot(r_exp['I_syn_ex'], '--', c='C1')
+plt.show()

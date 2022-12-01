@@ -325,11 +325,12 @@ nest::iaf_tsodyks::update( const Time& origin, const long from, const long to )
 
     V_.weighted_spikes_ex_ = input[ Buffers_::SYN_EX ];
     V_.weighted_spikes_in_ = input[ Buffers_::SYN_IN ];
+    // std::cerr << " NEURON weighted_spikes_ex " << V_.weighted_spikes_ex_ << "\n";
 
     S_.i_syn_ex_ += V_.weighted_spikes_ex_;
     S_.i_syn_in_ += V_.weighted_spikes_in_;
 
-    std::cerr << "V_.weighted_spikes_ex_ :" << V_.weighted_spikes_ex_ << "\n";
+    // std::cerr << "V_.weighted_spikes_ex_ :" << V_.weighted_spikes_ex_ << "\n";
 
     if ( ( P_.delta_ < 1e-10 and S_.V_m_ >= P_.Theta_ )                   // deterministic threshold crossing
       or ( P_.delta_ > 1e-10 and V_.rng_->drand() < phi_() * h * 1e-3 ) ) // stochastic threshold crossing
@@ -372,8 +373,8 @@ nest::iaf_tsodyks::update( const Time& origin, const long from, const long to )
       S_.u_ += P_.U_ * ( 1.0 - S_.u_ );
 
       // postsynaptic current step caused by incoming spike
-      std::cerr << "S_.u_: " << S_.u_ << "\n";
-      std::cerr << "S_.x_: " << S_.x_ << "\n";
+      // std::cerr << "S_.u_: " << S_.u_ << "\n";
+      // std::cerr << "S_.x_: " << S_.x_ << "\n";
       double delta_y_tsp = S_.u_ * S_.x_;
 
       // delta function x, y
@@ -383,7 +384,11 @@ nest::iaf_tsodyks::update( const Time& origin, const long from, const long to )
 
       // send spike with datafield
       SpikeEvent se;
-      se.set_offset( delta_y_tsp );
+      se.set_weight( 13.0 );
+      se.set_offset( 100.0 );
+      std::cerr << "OFFSET PRESYNAPTIC: " << se.get_offset() << "\n";
+      std::cerr << "WEIGHT PRESYNAPTIC: " << se.get_weight() << "\n";
+
       kernel().event_delivery_manager.send( *this, se, lag );
     }
 
@@ -409,15 +414,20 @@ nest::iaf_tsodyks::handle( SpikeEvent& e )
 
   // Multiply with datafield from SpikeEvent
   double s = e.get_weight() * e.get_multiplicity();
+  // std::cerr << "s: " << s << "\n";
+
   const auto offset = e.get_offset();
+  std::cerr << "OFFSET POSTSYNAPTIC: " << e.get_offset()   << "\n";
+  std::cerr << "WEIGHT POSTSYNAPTIC: " << e.get_weight()   << "\n";
+
   if ( offset != 0.0 )
   {
     s *= offset;
   }
-  std::cerr << "e.get_weight(): " << e.get_weight() << "\n";
-  std::cerr << "e.get_offset(): " << e.get_offset() << "\n";
-  std::cerr << "e.get_multiplicity(): " << e.get_multiplicity() << "\n";
-  std::cerr << "s: " << s << "\n";
+  //std::cerr << "e.get_weight(): " << e.get_weight() << "\n";
+  //std::cerr << "e.get_offset(): " << e.get_offset() << "\n";
+  //std::cerr << "e.get_multiplicity(): " << e.get_multiplicity() << "\n";
+  //std::cerr << "s: " << s << "\n";
 
   // separate buffer channels for excitatory and inhibitory inputs
   B_.input_buffer_.add_value( input_buffer_slot, s > 0 ? Buffers_::SYN_EX : Buffers_::SYN_IN, s );

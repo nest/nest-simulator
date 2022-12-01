@@ -140,10 +140,6 @@ NodeManager::add_node( index model_id, long n )
   {
     add_neurons_( *model, min_node_id, max_node_id, nc_ptr );
   }
-  else if ( model->shared_device() )
-  {
-    add_shared_devices_( *model, min_node_id, max_node_id, nc_ptr );
-  }
   else if ( not model->one_node_per_process() )
   {
     add_devices_( *model, min_node_id, max_node_id, nc_ptr );

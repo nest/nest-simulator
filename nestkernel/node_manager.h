@@ -278,17 +278,6 @@ private:
   void add_devices_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr );
 
   /**
-   * Add shared device nodes.
-   *
-   * For device nodes that are shared between threads on a process.
-   *
-   * @param model Model of neuron to create.
-   * @param min_node_id node ID of first neuron to create.
-   * @param max_node_id node ID of last neuron to create (inclusive).
-   */
-  void add_shared_devices_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr );
-
-  /**
    * Add MUSIC nodes.
    *
    * Nodes for MUSIC communication are added once per MPI process and are

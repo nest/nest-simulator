@@ -113,6 +113,10 @@ nest::iaf_tsodyks::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::t_ref, t_ref_ );
   def< double >( d, names::rho, rho_ );
   def< double >( d, names::delta, delta_ );
+  def< double >( d, names::tau_fac, tau_fac_ );
+  def< double >( d, names::tau_psc, tau_psc_ );
+  def< double >( d, names::tau_rec, tau_rec_ );
+  def< double >( d, names::U, U_ );
 }
 
 double
@@ -148,6 +152,10 @@ nest::iaf_tsodyks::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::tau_syn_ex, tau_ex_, node );
   updateValueParam< double >( d, names::tau_syn_in, tau_in_, node );
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
+  updateValueParam< double >( d, names::tau_fac, tau_fac_, node );
+  updateValueParam< double >( d, names::tau_psc, tau_psc_, node );
+  updateValueParam< double >( d, names::tau_rec, tau_rec_, node );
+  updateValueParam< double >( d, names::U, U_, node );
   if ( V_reset_ >= Theta_ )
   {
     throw BadProperty( "Reset potential must be smaller than threshold." );
@@ -156,13 +164,17 @@ nest::iaf_tsodyks::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Capacitance must be strictly positive." );
   }
-  if ( Tau_ <= 0 or tau_ex_ <= 0 or tau_in_ <= 0 )
+  if ( Tau_ <= 0 or tau_ex_ <= 0 or tau_in_ <= 0 or tau_fac_ <= 0 or tau_psc_ <= 0 or tau_rec_ <= 0 )
   {
     throw BadProperty( "Membrane and synapse time constants must be strictly positive." );
   }
   if ( t_ref_ < 0 )
   {
     throw BadProperty( "Refractory time must not be negative." );
+  }
+  if ( U_ > 1.0 or U_ < 0.0 )
+  {
+    throw BadProperty( "U must be in [0,1]." );
   }
 
   updateValue< double >( d, "rho", rho_ );
@@ -184,11 +196,31 @@ void
 nest::iaf_tsodyks::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
   def< double >( d, names::V_m, V_m_ + p.E_L_ ); // Membrane potential
+  def< double >( d, names::x, x_ );
+  def< double >( d, names::y, y_ );
+  def< double >( d, names::u, u_ );
 }
 
 void
 nest::iaf_tsodyks::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
+
+  double x = x_;
+  double y = y_;
+  updateValue< double >( d, names::x, x );
+  updateValue< double >( d, names::y, y );
+
+  if ( x + y > 1.0 )
+  {
+    throw BadProperty( "x + y must be <= 1.0." );
+  }
+
+  x_ = x;
+  y_ = y;
+
+  updateValueParam< double >( d, names::u, u_, node );
+
+
   if ( updateValueParam< double >( d, names::V_m, V_m_, node ) )
   {
     V_m_ -= p.E_L_;

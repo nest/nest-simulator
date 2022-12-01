@@ -345,8 +345,7 @@ copy_example_file(source_dir / "pynest/examples/hpc_benchmark_connectivity.svg")
 
 # -- Optionally patch the documentation for hotfix back-ports ----------------------------
 print("preparing patch...")
-#current_hash = os.environ['GIT_HASH']
-# or
+
 try:
     current_hash = check_output("git rev-parse HEAD", shell=True, encoding='utf8').strip()
     print(f"  current git hash: {current_hash}")

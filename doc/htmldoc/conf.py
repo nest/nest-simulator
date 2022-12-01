@@ -22,26 +22,29 @@
 
 import sys
 import os
-import re
-import pip
-import subprocess
 
 from pathlib import Path
-from shutil import copyfile
+from shutil import copyfile, rmtree
 import json
 
-from subprocess import check_output, CalledProcessError
-from mock import Mock as MagicMock
-
+# Clean the build dir
+rmtree("_build", ignore_errors=True)
+# Add the extension modules to the path
 extension_module_dir = os.path.abspath("./_ext")
-pynest_source_dir = os.path.join("..", "..", "pynest", "nest")
 sys.path.append(extension_module_dir)
-sys.path.append(pynest_source_dir)
+
+from extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
+
+repo_root_dir = os.path.abspath("../..")
+pynest_dir = os.path.join(repo_root_dir, "pynest")
+# Add the NEST Python module to the path (just the py files, the binaries are mocked)
+sys.path.append(pynest_dir)
+
+
+# -- General configuration ------------------------------------------------
 
 source_suffix = '.rst'
 master_doc = 'index'
-
-# -- General configuration ------------------------------------------------
 extensions = [
     'sphinx_gallery.gen_gallery',
     'sphinx.ext.autodoc',

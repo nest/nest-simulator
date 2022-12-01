@@ -50,11 +50,11 @@ For more information visit https://www.nest-simulator.org.
 # instance later on. Use `.copy()` to prevent pollution with other variables
 _original_module_attrs = globals().copy()
 
-from .ll_api import KernelAttribute  # noqa
-import sys                           # noqa
-import types                         # noqa
-import importlib                     # noqa
-import builtins                      # noqa
+from .ll_api_ka import KernelAttribute  # noqa
+import sys                              # noqa
+import types                            # noqa
+import importlib                        # noqa
+import builtins                         # noqa
 
 try:
     import versionchecker

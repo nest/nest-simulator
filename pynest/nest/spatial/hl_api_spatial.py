@@ -22,10 +22,8 @@
 import numpy as np
 from ..lib.hl_api_types import CreateParameter, Parameter
 from ..ll_api import sli_func
-import functools
 
 __all__ = [
-    'distance',
     'grid',
     'free',
     'pos',
@@ -34,19 +32,7 @@ __all__ = [
 ]
 
 
-# Type annotation to hint at dynamic singleton of DistanceParameter()
-distance: "DistanceParameter"
-"""
-A singleton instance representing the distance between two nodes in space.
 
-If used alone, the DistanceObject represents simply the Euclidean
-distance between two nodes.
-
-Alternatively the distance in a single dimension may be chosen. Three
-properties are defined, x, y, and z, which represent the distance in
-their respective dimensions. Note that the distance parameter can only
-be used in contexts with two nodes, e.g. when connecting.
-"""
 
 
 class DistanceParameter(Parameter):
@@ -86,12 +72,6 @@ class DistanceParameter(Parameter):
         """
         return CreateParameter('distance', {'dimension': dimension})
 
-
-@functools.cache
-def __getattr__(name):
-    if name == "distance":
-        return DistanceParameter()
-    raise AttributeError(f"module {__name__} has no attribute {name}")
 
 
 class pos:

@@ -258,6 +258,7 @@ extern const Name I_T;
 extern const Name I_ahp;
 extern const Name I_e;
 extern const Name I_h;
+extern const Name I_soma_max;
 extern const Name I_sp;
 extern const Name I_stc;
 extern const Name I_syn;

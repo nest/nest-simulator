@@ -89,15 +89,20 @@ hh_cond_exp_traub_dynamics( double, const double y[], double f[], void* pnode )
   const double I_syn_inh = y[ S::G_INH ] * ( y[ S::V_M ] - node.P_.E_in );
 
   // membrane potential
-  f[ S::V_M ] = ( -I_Na - I_K - I_L - I_syn_exc - I_syn_inh + node.B_.I_stim_ + node.P_.I_e ) / node.P_.C_m;
+  const double I_soma = -I_Na - I_K - I_L - I_syn_exc - I_syn_inh + node.B_.I_stim_ + node.P_.I_e;
+  if ( node.P_.I_soma_max > 0 and abs(I_soma) > node.P_.I_soma_max)
+  {
+    throw NumericalInstability( "Maximum somatic current exceeded in hh_cond_exp_traub" );
+  }
+  f[ S::V_M ] = I_soma / node.P_.C_m;
 
   // channel dynamics
   const double V = y[ S::V_M ] - node.P_.V_T;
 
-  const double alpha_n = 0.032 * ( 15. - V ) / ( std::exp( ( 15. - V ) / 5. ) - 1. );
+  const double alpha_n = 0.032 * ( 15. - V ) / std::expm1( ( 15. - V ) / 5. );
   const double beta_n = 0.5 * std::exp( ( 10. - V ) / 40. );
-  const double alpha_m = 0.32 * ( 13. - V ) / ( std::exp( ( 13. - V ) / 4. ) - 1. );
-  const double beta_m = 0.28 * ( V - 40. ) / ( std::exp( ( V - 40. ) / 5. ) - 1. );
+  const double alpha_m = 0.32 * ( 13. - V ) / std::expm1( ( 13. - V ) / 4. );
+  const double beta_m = 0.28 * ( V - 40. ) / std::expm1( ( V - 40. ) / 5. );
   const double alpha_h = 0.128 * std::exp( ( 17. - V ) / 18. );
   const double beta_h = 4. / ( 1. + std::exp( ( 40. - V ) / 5. ) );
 
@@ -127,10 +132,11 @@ nest::hh_cond_exp_traub::Parameters_::Parameters_()
   , V_T( -63.0 ) // adjusts threshold to around -50 mV
   , E_ex( 0.0 )
   , E_in( -80.0 )
-  , tau_synE( 5.0 )  // Synaptic Time Constant Excitatory Synapse (ms)
-  , tau_synI( 10.0 ) // Synaptic Time Constant Excitatory Synapse (ms)
-  , t_ref_( 2.0 )    // Refractory time in ms
-  , I_e( 0.0 )       // Stimulus Current (pA)
+  , tau_synE( 5.0 )   // Synaptic Time Constant Excitatory Synapse (ms)
+  , tau_synI( 10.0 )  // Synaptic Time Constant Excitatory Synapse (ms)
+  , t_ref_( 2.0 )     // Refractory time in ms
+  , I_e( 0.0 )        // Stimulus Current (pA)
+  , I_soma_max( 0.0 ) // Maximum somatic current (pA)
 {
 }
 
@@ -144,10 +150,10 @@ nest::hh_cond_exp_traub::State_::State_( const Parameters_& p )
   }
 
   // equilibrium values for (in)activation variables
-  const double alpha_n = 0.032 * ( 15. - y_[ 0 ] ) / ( std::exp( ( 15. - y_[ 0 ] ) / 5. ) - 1. );
+  const double alpha_n = 0.032 * ( 15. - y_[ 0 ] ) / std::expm1( ( 15. - y_[ 0 ] ) / 5. );
   const double beta_n = 0.5 * std::exp( ( 10. - y_[ 0 ] ) / 40. );
-  const double alpha_m = 0.32 * ( 13. - y_[ 0 ] ) / ( std::exp( ( 13. - y_[ 0 ] ) / 4. ) - 1. );
-  const double beta_m = 0.28 * ( y_[ 0 ] - 40. ) / ( std::exp( ( y_[ 0 ] - 40. ) / 5. ) - 1. );
+  const double alpha_m = 0.32 * ( 13. - y_[ 0 ] ) / std::expm1( ( 13. - y_[ 0 ] ) / 4. );
+  const double beta_m = 0.28 * ( y_[ 0 ] - 40. ) / std::expm1( ( y_[ 0 ] - 40. ) / 5. );
   const double alpha_h = 0.128 * std::exp( ( 17. - y_[ 0 ] ) / 18. );
   const double beta_h = 4. / ( 1. + std::exp( ( 40. - y_[ 0 ] ) / 5. ) );
 
@@ -197,6 +203,7 @@ nest::hh_cond_exp_traub::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_syn_in, tau_synI );
   def< double >( d, names::t_ref, t_ref_ );
   def< double >( d, names::I_e, I_e );
+  def< double >( d, names::I_soma_max, I_soma_max );
 }
 
 void
@@ -216,6 +223,7 @@ nest::hh_cond_exp_traub::Parameters_::set( const DictionaryDatum& d, Node* node 
   updateValueParam< double >( d, names::tau_syn_in, tau_synI, node );
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
   updateValueParam< double >( d, names::I_e, I_e, node );
+  updateValueParam< double >( d, names::I_soma_max, I_soma_max, node );
 
   if ( C_m <= 0 )
   {
@@ -230,6 +238,11 @@ nest::hh_cond_exp_traub::Parameters_::set( const DictionaryDatum& d, Node* node 
   if ( t_ref_ < 0 )
   {
     throw BadProperty( "Refractory time cannot be negative." );
+  }
+
+  if ( I_soma_max < 0 )
+  {
+    throw BadProperty( "Maximum somatic current cannot be negative." );
   }
 }
 

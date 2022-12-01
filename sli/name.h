@@ -74,29 +74,32 @@ public:
   }
 
   Name( const Name& n ) = default;
+  Name& operator=( const Name& n ) = default;
 
   /**
    * Return string represented by Name.
    */
-  const std::string& toString( void ) const;
+  const std::string& toString() const;
 
   /**
    * Return table index for Name object.
    */
   handle_t
-  toIndex( void ) const
+  toIndex() const
   {
     return handle_;
   }
 
-  bool operator==( const Name& n ) const
+  bool
+  operator==( const Name& n ) const
   {
     return handle_ == n.handle_;
   }
 
-  bool operator!=( const Name& n ) const
+  bool
+  operator!=( const Name& n ) const
   {
-    return not( handle_ == n.handle_ );
+    return handle_ != n.handle_;
   }
 
   /**
@@ -105,7 +108,8 @@ public:
    * on string comparison would be very slow. We thus compare based on
    * table indices.
    */
-  bool operator<( const Name& n ) const
+  bool
+  operator<( const Name& n ) const
   {
     return handle_ < n.handle_;
   }

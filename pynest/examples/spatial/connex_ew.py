@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-NEST spatial example
---------------------
+Circular mask and flat probablility, with edge wrap
+---------------------------------------------------
 
 Create two populations of iaf_psc_alpha neurons on a 30x30 grid with edge_wrap,
 connect with circular mask, flat probability,

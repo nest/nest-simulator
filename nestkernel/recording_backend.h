@@ -64,7 +64,7 @@ class Event;
  * the cleanup() function of all backends.
  *
  * @ingroup NESTio
-*/
+ */
 
 class RecordingBackend
 {
@@ -173,16 +173,16 @@ public:
   virtual void prepare() = 0;
 
   /**
-  * Clean up the backend at the end of a user level call to the NEST Simulate
-  * function.
-  *
-  * This function is called by `SimulationManager::cleanup()` and allows the
-  * backend to close open files or network connections or take similar action.
-  *
-  * @see prepare()
-  *
-  * @ingroup NESTio
-  */
+   * Clean up the backend at the end of a user level call to the NEST Simulate
+   * function.
+   *
+   * This function is called by `SimulationManager::cleanup()` and allows the
+   * backend to close open files or network connections or take similar action.
+   *
+   * @see prepare()
+   *
+   * @ingroup NESTio
+   */
   virtual void cleanup() = 0;
 
   /**

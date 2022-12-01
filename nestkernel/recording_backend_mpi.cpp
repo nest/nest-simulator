@@ -25,9 +25,9 @@
 
 
 // Includes from nestkernel:
-#include "recording_device.h"
-#include "recording_backend_mpi.h"
 #include "exceptions.h"
+#include "recording_backend_mpi.h"
+#include "recording_device.h"
 
 nest::RecordingBackendMPI::RecordingBackendMPI()
   : enrolled_( false )
@@ -330,7 +330,7 @@ nest::RecordingBackendMPI::write( const RecordingDevice& device,
   auto it_devices = devices_[ thread_id ].find( recorder );
   if ( it_devices != devices_[ thread_id ].end() )
   {
-    std::array< double, 3 > data{ double( recorder ), double( sender ), stamp.get_ms() };
+    std::array< double, 3 > data { double( recorder ), double( sender ), stamp.get_ms() };
     buffer_[ thread_id ][ std::get< 0 >( it_devices->second ) ].push_back( data );
   }
   else

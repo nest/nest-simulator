@@ -22,17 +22,13 @@
 
 #include <cmath>
 
-#include "node_collection.h"
 #include "node.h"
+#include "node_collection.h"
 #include "spatial.h"
 #include "vp_manager_impl.h"
 
-// includes from sli
-#include "sharedptrdatum.h"
-
 #include "parameter.h"
 
-template class sharedPtrDatum< nest::Parameter, &nest::NestModule::ParameterType >;
 
 namespace nest
 {
@@ -196,10 +192,10 @@ SpatialDistanceParameter::value( RngPtr,
     }
     return std::abs( layer.compute_displacement( source_pos, target_pos, dimension_ - 1 ) );
   default:
-    throw KernelException( String::compose(
-      "SpatialDistanceParameter dimension must be either 0 for unspecified,"
-      " or 1-3 for x-z. Got ",
-      dimension_ ) );
+    throw KernelException(
+      String::compose( "SpatialDistanceParameter dimension must be either 0 for unspecified,"
+                       " or 1-3 for x-z. Got ",
+        dimension_ ) );
     break;
   }
 }
@@ -312,13 +308,15 @@ Gaussian2DParameter::Gaussian2DParameter( const DictionaryDatum& d )
   , py_( getValue< ParameterDatum >( d, "y" ) )
   , mean_x_( getValue< double >( d, "mean_x" ) )
   , mean_y_( getValue< double >( d, "mean_y" ) )
-  , x_term_const_( 1. / ( 2. * ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) )
-                          * getValue< double >( d, "std_x" ) * getValue< double >( d, "std_x" ) ) )
-  , y_term_const_( 1. / ( 2. * ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) )
-                          * getValue< double >( d, "std_y" ) * getValue< double >( d, "std_y" ) ) )
-  , xy_term_const_(
-      getValue< double >( d, "rho" ) / ( ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) )
-                                         * getValue< double >( d, "std_x" ) * getValue< double >( d, "std_y" ) ) )
+  , x_term_const_( 1.
+      / ( 2. * ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) )
+        * getValue< double >( d, "std_x" ) * getValue< double >( d, "std_x" ) ) )
+  , y_term_const_( 1.
+      / ( 2. * ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) )
+        * getValue< double >( d, "std_y" ) * getValue< double >( d, "std_y" ) ) )
+  , xy_term_const_( getValue< double >( d, "rho" )
+      / ( ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) ) * getValue< double >( d, "std_x" )
+        * getValue< double >( d, "std_y" ) ) )
 {
   const auto rho = getValue< double >( d, "rho" );
   const auto std_x = getValue< double >( d, "std_x" );

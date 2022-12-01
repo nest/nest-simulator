@@ -39,11 +39,13 @@ Synapse type for rate connections with delay
 Description
 +++++++++++
 
-rate_connection_delayed is a connector to create connections with delay
+``rate_connection_delayed`` is a connector to create connections with delay
 between rate model neurons.
 
 To create instantaneous rate connections please use
-the synapse type rate_connection_instantaneous.
+the synapse type ``rate_connection_instantaneous``.
+
+See also [1]_.
 
 Transmits
 +++++++++

@@ -81,7 +81,7 @@ skip_if_not_threaded
 [1 2 4]
 {
   % run test only if generator is known, otherwise, leave empty dict
-  modeldict /sinusoidal_gamma_generator known
+  GetKernelStatus /node_models get /sinusoidal_gamma_generator MemberQ
   {
     /sr true spg_tester def
 

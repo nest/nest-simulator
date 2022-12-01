@@ -46,6 +46,7 @@ struct SynIdDelay
   }
 
   SynIdDelay( const SynIdDelay& s ) = default;
+  SynIdDelay& operator=( const SynIdDelay& s ) = default;
 
   /**
    * Return the delay of the connection in ms

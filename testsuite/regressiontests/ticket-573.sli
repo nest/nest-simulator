@@ -22,7 +22,7 @@
 
 /** @BeginDocumentation
 
-Name: testsuite::ticket-573 - Maximum number of synapse types reached in copy_synapse_prototype without error message 
+Name: testsuite::ticket-573 - Maximum number of synapse types reached in copy_connection_model without error message
 
 Synopsis: (ticket-573) run -> NEST exits if test fails
 

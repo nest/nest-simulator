@@ -17,6 +17,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+install( DIRECTORY slihelp_generator
+    DESTINATION ${CMAKE_INSTALL_DATADIR}
+    )
 
 if ( NOT CMAKE_CROSSCOMPILING )
 
@@ -32,7 +35,7 @@ if ( NOT CMAKE_CROSSCOMPILING )
     install( CODE
       "execute_process(
          COMMAND ${Python_EXECUTABLE} -B generate_help.py \"${PROJECT_SOURCE_DIR}\" \"${PROJECT_BINARY_DIR}\"
-         WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/extras/help_generator\"
+         WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/doc/slihelp_generator\"
          )"
       )
 
@@ -48,7 +51,7 @@ if ( NOT CMAKE_CROSSCOMPILING )
     install( CODE
       "execute_process(
          COMMAND ${Python_EXECUTABLE} -B generate_helpindex.py \"${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}\"
-         WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/extras/help_generator\"
+         WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/doc/slihelp_generator\"
          )"
       )
 
@@ -87,8 +90,8 @@ else ()
   set( OUT_OF_TREE_BUILD "True" )
 endif ()
 
-set( DOC_BUILD_DIR "${PROJECT_BINARY_DIR}/doc/userdoc" )
-set( DOC_SOURCE_DIR "${PROJECT_SOURCE_DIR}/doc/userdoc" )
+set( DOC_BUILD_DIR "${PROJECT_BINARY_DIR}/doc/htmldoc" )
+set( DOC_SOURCE_DIR "${PROJECT_SOURCE_DIR}/doc/htmldoc" )
 
 add_custom_target( html
   COMMAND [ "${OUT_OF_TREE_BUILD}" = "True" ] && rm -rf "${DOC_BUILD_DIR}" || true
@@ -102,3 +105,7 @@ install( DIRECTORY "${DOC_BUILD_DIR}/html"
   DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}"
   OPTIONAL
 )
+
+install( DIRECTORY logos
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}
+    )

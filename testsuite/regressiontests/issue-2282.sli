@@ -1,0 +1,71 @@
+/*
+ *  issue-2282.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/** @BeginDocumentation
+
+Name: testsuite::issue-2282 Ensure multimeter-recording from noise_generator is prohibited if multithreaded
+
+Synopsis: (issue-2282) run -> NEST exits if test fails
+
+Description:
+This ticket ensures that the multimeter cannot be connected to a noise_generator if
+NEST runs with multiple threads.
+
+Author: Hans Ekkehard Plesser
+*/
+
+(unittest) run
+/unittest using
+
+skip_if_not_threaded
+
+M_ERROR setverbosity
+
+/test_sim
+{
+  /N 3 def
+  /neurons /iaf_psc_alpha N Create def
+  /noise /noise_generator N << /mean 1000.0 /std 1.0 /dt 0.1 >> Create def
+  /mm /multimeter << /record_from [ /I ] /interval 0.1 >> Create def
+  
+  noise neurons /one_to_one << /delay 0.1 >> Connect
+  mm noise Connect
+  
+  2.0 Simulate
+}
+def
+
+% Test all works in single-threaded mode (should get only non-zero values)
+{
+  << /local_num_threads 1 >> SetKernelStatus
+  test_sim
+  mm GetStatus 0 get /events get /I get
+  true exch { 0 gt and } Fold
+} 
+assert_or_die
+
+% Test that an error is emitted in multi-threaded mode
+{
+  << /local_num_threads 2 >> SetKernelStatus
+  test_sim
+}
+fail_or_die

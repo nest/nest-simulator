@@ -47,27 +47,41 @@ M_ERROR setverbosity
 /run_test
 {
   /model Set
+
   model GetDefaults dup
   /recordables known
   {
-     /recordables get /recs Set
-     /n model Create def
-     /mm /multimeter << /record_from recs >> Create def
-     mm n Connect
-     10.0 Simulate
-     mm /events get [ recs ] get { cva length 9 eq } Map
-     true exch { and } Fold
+    /recordables get /recs Set
+    /n model Create def
+
+    % if the model is a compartmental model,
+    % we need to add at least a root compartment
+    model GetDefaults dup
+    /compartments known
+    {
+      n
+      <<
+        /compartments << /parent_idx -1  >>
+      >> SetStatus
+    }
+    if
+
+    /mm /multimeter << /record_from recs >> Create def
+    mm n Connect
+    10.0 Simulate
+    mm /events get [ recs ] get { cva length 9 eq } Map
+    true exch { and } Fold
   }
   {
     pop
     true
   }
   ifelse
-} 
+}
 def
 
 {
-  modeldict keys { run_test } Map
+  GetKernelStatus /node_models get { run_test } Map
   true exch { and } Fold
 }
 assert_or_die

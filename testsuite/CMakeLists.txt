@@ -41,8 +41,15 @@ install( DIRECTORY ${TESTSUBDIRS}
     DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
     )
 
-install( PROGRAMS do_tests.sh
+install( PROGRAMS
+    do_tests.sh
     DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
+    )
+
+install( PROGRAMS
+    nest_indirect
+    nest_serial
+    DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 
 install( FILES junit_xml.sh run_test.sh summarize_tests.py

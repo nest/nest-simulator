@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+
+<head>
+  <title>NEST documentation index </title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="description" content="This is the documentation index for the NEST, a simulator for spiking neuronal networks.">
+  <meta name="keywords" content="">
+  <link rel="stylesheet" href="_static/css/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="_static/css/normalize.css">
+  <link rel="stylesheet" href="_static/css/default.min.css">
+  <script src="_static/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="_static/js/flexslider/flexslider.css">
+  <link rel="stylesheet" href="_static/css/custom.css">
+  <script src="_static/js/modernizr-2.6.2.min.js"></script>
+    </head>
+<body id="home">
+
+  <a href="#" id="gototop"><img src="{{ pathto('_static/img/arrow-up-circle.svg',1) }}"/></a>
+  <header id="header" class="wrapper clearfix">
+    <div id="banner">
+      <div id="logo">
+	<img src="_static/img/nest_docs.png" alt="logo" width="100%">
+      </div>
+  </div>
+
+    <nav id="topnav" role="navigation">
+      <div class="menu-toggle">Menu</div>
+    <ul class="srt-menu" id="menu-main-navigation">
+ <li><a href="#intro">Get started</a></li>
+	<li><a href="#topics">Learn NEST</a></li>
+	<li><a href="#backmatter">Ecosystem</a></li>
+      </ul>
+    </nav>
+  </header>
+  <script src="_static/js/tsparticles.min.js"></script>
+  <script src="_static/js/particles-app.js"></script>
+  <section id="hero" class="clearfix">
+    <div class="wrapper">
+      <div class="row">
+        <div class="grid_3">
+          <h1>Welcome to the NEST simulator documentation!</h1>
+        <a href="installation/index.html" class="buttonlink">Install NEST</a>
+
+        </div>
+        <div class="grid_6">
+        <a href="get-started_index.html" class="buttonlink">Tutorials and examples</a>
+        <a href="ref_material/pynest_apis.html" class="buttonlink">PyNEST API</a>
+        <a href="models/index.html" class="buttonlink">Built-in Models</a>
+        <a href="https://nestml.readthedocs.io" class="buttonlink">Custom models</a>
+        <a href="understand_index.html" class="buttonlink">Further topics</a>
+        </div>
+        <div class="grid_3">
+          <a href="community.html" class="buttonlink" style="float: right;">Contact us</a>
+        </div>
+     </section>
+  <section id="intro" class="vertical-padding">
+    <div id="main" class="blueelement wrapper clearfix">
+      <div class="row vertical-padding">
+      <div class="grid_12">
+         <h2 id="nest-sample"> Here is a sample NEST script. Click each section and discover related topics!</h2>
+      </div>
+
+
+<div class="accordion"> <img id="pulse" src="_static/img/pulse.svg" style="position:relative" />
+    <pre><code class="language-python">
+            import nest
+    </code></pre>
+    <div>
+       <ul>
+        <li><a href="installation/index.html">Get and install NEST</a></li>
+        <li><a href="ref_material/pynest_apis.html">Access PyNEST APIs</a></li>
+        <li><a href= "release_notes/v3.0/refguide_nest2_nest3.html">Convert script from NEST 2.x to 3.x</a></li>
+	     </ul>
+    </div>
+
+
+        <pre><code class="language-python">
+            neurons = nest.Create("iaf_psc_alpha", 10000, {
+                "V_m": nest.random.normal(-5.0),
+                "I_e": 1000.0
+            })
+    </code></pre>
+
+        <div>
+	  <ul>
+            <li><a href="neurons/node_handles.html">Learn about creating neurons</a></li>
+            <li><a href= "neurons/parametrization.html">Discover parameterization possibilities</a></li>
+            <li><a href="models/index_neuron.html">Want a different neuron model? Find them all here!</a></li>
+            <li><a href="nest_behavior/random_numbers.html">Learn how we do randomness in NEST</a></li>
+            <li><a href="ref_material/pynest_apis.html#module-nest.lib.hl_api_nodes">Get API docs for Create</a></li>
+	  </ul>
+        </div>
+        <pre><code class="language-python">
+            input = nest.Create("noise_generator", params={
+                "amplitude": 500.0
+            })
+            nest.Connect(input, neurons, syn_spec={'synapse_model': 'stdp_synapse'})
+        </code></pre>
+        <div>
+	  <ul>
+            <li><a href="devices/stimulate_the_network.html">Learn about stimulating the network</a></li>
+            <li><a href="models/index_generator.html">Explore the stimulators in our model directory</a></li>
+            <li><a href="synapses/handling_connections.html">Find out more about synapse creation in NEST</a></li>
+            <li><a href="synapses/connection_management.html">Find out how to manage connections in NEST</a></li>
+	  </ul>
+        </div>
+
+        <pre><code class="language-python">
+            spikes = nest.Create("spike_recorder", params={
+                'record_to': 'ascii',
+                'label': 'excitatory_spikes'
+            })
+            nest.Connect(neurons, spikes)
+        </code></pre>
+        <div>
+	  <ul>
+            <li><a href="devices/record_from_simulations.html">Get more info on recording from simulations</a></li>
+            <li><a href="models/index_recorder.html">See our recording devices in our model directory</a></li>
+            <li><a href="ref_material/pynest_apis.html#module-nest.lib.hl_api_connections">Get API docs for Connect</a></li>
+	  </ul>
+        </div>
+
+        <pre><code class="language-python">
+            nest.Simulate(100.0)
+            nest.raster_plot.from_device(spikes, hist=True)
+            plt.show()
+        </code></pre>
+        <div>
+	  <ul>
+            <li><a href="nest_behavior/running_simulations.html">Check out our guide how to run simulations</a></li>
+            <li><a href="ref_material/pynest_apis.html#nest.lib.hl_api_simulation.Simulate">Get API docs for Simulate</a></li>
+	  </ul>
+        </div>
+      </div>
+      </div>
+
+  </section>
+
+  <section id="topics" class="vertical-padding">
+    <div class="wrapper clearfix">
+      <div class="row">
+        <div class="grid_12"><h1>Tutorials and guides</h1></div>
+        <div class="grid_2">
+          <img class="icon" src="_static/img/GPS-Settings-256_nest.png" />
+        </div>
+        <div class="grid_10">
+          If you're new to NEST, check out <a href="tutorials/index.html">our PyNEST tutorials</a>, where you can
+          learn about the NEST interface and how to build networks. <br>
+          We also provide an in depth look at <a href="network/spatially_structured_networks/spatially_structured_networks.html">spatially structured networks.</a><br>
+          Need to convert scripts written for NEST 2.x into NEST 3.x and beyond? Take a look at <a href="release_notes/v3.0/refguide_nest2_nest3.html">our reference guide</a>.
+        </div>
+      </div>
+       <hr>
+      <div class="row">
+        <div class="grid_12"><h1>Learning from example</h1></div>
+        <div class="grid_2">
+          <img class="icon" src="_static/img/Documents-02-256_nest.png" />
+        </div>
+        <div class="grid_10">
+          Our <a href="examples/index.html">extensive list of example scripts</a> showcase the many models
+          and methods you can use for your project. <br>
+          We also have network models of varyinig scales like the <a href="examples/cortical_microcircuit_index.html">microcircuit model</a> 
+          and the <a href="https://inm-6.github.io/multi-area-model/">multi-area model</a>.
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="grid_12"><h1>API documentation</h1></div>
+        <div class="grid_2">
+          <img class="icon" src="_static/img/Gear-256_nest.png" />
+        </div>
+        <div class="grid_10">
+          Need to look up a command for NEST? Browse all <a href="ref_material/pynest_apis.html">our available functions.</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="backmatter" class="greenelement vertical-padding">
+    <div class="wrapper clearfix">
+      <h1>Related projects</h1>
+      <p>
+        NEST is one among a set of awesome tools and resources for
+        researchers in neuroscience, robotics, and beyond.
+        If you're looking for ways to analyze your results, compare with
+        other simulators, or want to use a graphical user interface, we 
+        have some ideas for you.
+        <a href="related_projects.html">See our list of related projects.</a>
+      </p>
+      <h1>Cite NEST</h1>
+      <p>
+      Did you use NEST in your research? Please <a href="citing-nest.html">cite us!</a>
+      You can also access logo for <a href="https://github.com/nest/nest-simulator/tree/master/doc/logos">posters and presentations here</a>.
+      </p>
+      <h1>Developer space</h1>
+      <p>
+        All model implementations and simulation algorithms in
+        NEST are thoroughly tested and highly optimized. We
+        employ a modern development process, continuous
+        integration, and code reviews to ensure that the NEST
+        code is rock solid at all times. If you want the gritty details
+        and find out how it's done
+        come to the dark side! See our <a href="developer_space/index.html">developer facing documentation.</a>
+              </p>
+    </div>
+  </section>
+  <footer>
+    <div id="colophon" class="wrapper clearfix">
+        <div class="grid_4 narrow">
+          <img class="icon" src="_static/img/3_HBP + EBRAINS logo_Color+White.png" />
+        </div>
+        <div class="grid_4 narrow">
+          <img class="icon" src="_static/img/eu_logo.png" />
+        </div>
+        <div class="grid_4 narrow">
+          <h2><a href="https://github.com/nest/nest-simulator/blob/master/ACKNOWLEDGMENTS.md">Acknowledgments</a></h2>
+          <p>NEST is grateful for the support from numerous organizations and individuals.</p> <br>
+        </div>
+  </div>
+    <div id="attribution" class="wrapper-92 clearfix" style="color:#666;">
+      Site built with ♥ using <a href="http://www.prowebdesign.ro/simple-responsive-template/" target="_blank">Simple Responsive Template</a>
+      by <a href="http://www.prowebdesign.ro/" target="_blank" title="www.prowebdesign.ro">Prowebdesign.ro</a>,
+      <a href="attribution-list.html">Free Amateur Icons</a> and <a href="https://particles.js.org/">tsParticles.js</a>.
+    </div>
+  </footer>
+  <script src="_static/js/jquery-3.6.0.min.js"></script>
+  <script src="_static/js/jquery-ui.min.js"></script>
+  <script defer src="_static/js/flexslider/jquery.flexslider-min.js"></script>
+  <script src="_static/js/bootstrap/bootstrap.min.js"></script>
+  <script src="_static/js/custom.js"></script>
+  <script src="_static/js/main.js"></script>
+</body>
+</html>
+

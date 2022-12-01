@@ -133,7 +133,8 @@ class TestAllToAll(connect_test_base.ConnectTestBase):
         M = connect_test_base.gather_data(M)
         if M is not None:
             M = M.flatten()
-            frequencies = scipy.stats.itemfreq(M)
+            unique, counts = np.unique(M, return_counts=True)
+            frequencies = np.asarray((unique, counts)).T
             self.assertTrue(np.array_equal(frequencies[:, 0], np.arange(
                 1, n_rport + 1)), 'Missing or invalid rports')
             chi, p = scipy.stats.chisquare(frequencies[:, 1])

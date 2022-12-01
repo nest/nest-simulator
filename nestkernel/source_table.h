@@ -353,8 +353,8 @@ SourceTable::save_entry_point( const thread tid )
       // contain non-processed entry (see reject_last_target_data()) or
       // store maximal value for lcid.
       saved_positions_[ tid ].lcid = std::min( current_positions_[ tid ].lcid + 1,
-        static_cast< long >( sources_[ current_positions_[ tid ].tid ][ current_positions_[ tid ].syn_id ].size()
-                                                 - 1 ) );
+        static_cast< long >(
+          sources_[ current_positions_[ tid ].tid ][ current_positions_[ tid ].syn_id ].size() - 1 ) );
     }
     else
     {

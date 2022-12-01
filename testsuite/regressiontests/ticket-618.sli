@@ -47,7 +47,7 @@ Author: Hans Ekkehard Plesser, 2012-12-11
 M_ERROR setverbosity
 
 {
-  modeldict keys 
+  GetKernelStatus /node_models get
   {
     ResetKernel
 
@@ -110,7 +110,7 @@ M_ERROR setverbosity
     dup not { model == } if
 
   }  
-  Map   % modeldict keys
+  Map
 
   true exch { and } Fold
   

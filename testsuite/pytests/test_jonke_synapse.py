@@ -23,13 +23,12 @@
 Test functionality of the Tetzlaff stdp synapse
 """
 
-import unittest
 import nest
 import numpy as np
 
 
 @nest.ll_api.check_stack
-class JonkeSynapseTest(unittest.TestCase):
+class TestJonkeSynapse:
     """
     Test the weight change by STDP.
     The test is performed by generating two Poisson spike trains,
@@ -73,12 +72,12 @@ class JonkeSynapseTest(unittest.TestCase):
         weight_reproduced_independently = self.reproduce_weight_drift(
             pre_spikes, post_spikes,
             self.synapse_parameters["weight"])
-        self.assertAlmostEqual(
+        np.testing.assert_almost_equal(
             weight_reproduced_independently,
             weight_by_nest,
-            msg=f"{self.synapse_parameters['synapse_model']} test:\n" +
-                f"Resulting synaptic weight {weight_by_nest} " +
-                f"differs from expected {weight_reproduced_independently}")
+            err_msg=f"{self.synapse_parameters['synapse_model']} test:\n" +
+                    f"Resulting synaptic weight {weight_by_nest} " +
+                    f"differs from expected {weight_reproduced_independently}")
 
     def do_the_nest_simulation(self):
         """
@@ -111,7 +110,7 @@ class JonkeSynapseTest(unittest.TestCase):
         # reveal small differences in the weight change between NEST
         # and ours, some low-probability events (say, coinciding
         # spikes) can well not have occurred. To generate and
-        # test every possible combination of pre/post precedence, we
+        # test every possible combination of pre/post order, we
         # append some hardcoded spike sequences:
         # pre: 1       5 6 7   9    11 12 13
         # post:  2 3 4       8 9 10    12
@@ -244,17 +243,3 @@ class JonkeSynapseTest(unittest.TestCase):
         if weight < 0:
             weight = 0
         return weight
-
-
-def suite():
-    suite = unittest.TestLoader().loadTestsFromTestCase(JonkeSynapseTest)
-    return unittest.TestSuite([suite])
-
-
-def run():
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suite())
-
-
-if __name__ == "__main__":
-    run()

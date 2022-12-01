@@ -56,7 +56,8 @@ swap( boost::tuple< T&, U& > a, boost::tuple< T&, U& > b ) noexcept
  * first values of the tuples.
  */
 template < class T1, class T2, class S1, class S2 >
-inline bool operator<( const cons< T1, T2 >& lhs, const cons< S1, S2 >& rhs )
+inline bool
+operator<( const cons< T1, T2 >& lhs, const cons< S1, S2 >& rhs )
 {
   // check that tuple lengths are equal
   BOOST_STATIC_ASSERT( length< T2 >::value == length< S2 >::value );
@@ -162,13 +163,15 @@ make_iterator_pair( sort_iter_type_ sort_iter, perm_iter_type_ perm_iter )
 struct rightshift_iterator_pair
 {
   template < typename T >
-  inline int operator()( boost::tuples::tuple< int&, T& > s, unsigned offset )
+  inline int
+  operator()( boost::tuples::tuple< int&, T& > s, unsigned offset )
   {
     return boost::get< 0 >( s ) >> offset;
   }
 
   template < typename T >
-  inline int operator()( boost::tuples::tuple< nest::Source&, T& > s, unsigned offset )
+  inline int
+  operator()( boost::tuples::tuple< nest::Source&, T& > s, unsigned offset )
   {
     return boost::get< 0 >( s ).get_node_id() >> offset;
   }

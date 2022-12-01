@@ -86,12 +86,14 @@ M_ERROR setverbosity
 [ % time [ms]   tolerated error [mV]
   [    5.0           1e-13 ]       
   [  500.0           1e-9  ]  % error larger because of accumulation
-] /Tlist Set                 % at very small computation step sizes
+] /Tlist Set                  % at very small computation step sizes
 
 % Models to be tested by this test
 [
   /iaf_psc_alpha_ps 
   /iaf_psc_delta_ps
+  /iaf_psc_exp_ps
+  /iaf_psc_exp_ps_lossless
   % other precise models should be added to this list
 ]
  /models Set
@@ -167,23 +169,23 @@ params begin userdict begin
   (Exact value of membrane potential after ) <-
   T <- ( ms is ) <- V <- ( mV.) <- endl endl
 
-  (                 log_2 h) <-
+  (             log_2 h) <-
   models
   {
-    exch (      ) <- exch <- ( [mV]) <-
-    (               error [mV]) <-
+    exch (  ) <- exch <- ( [mV]) <-
+    (           error [mV]) <-
   } forall
   endl
 
   models length 2 mul 1 add
   {
-    (--------------------------) <-
+    (----------------------) <-
   } repeat
   endl
 
   exch
   {
-    { exch 24 setw exch <- (  ) <- } forall endl
+    { exch 20 setw exch <- (  ) <- } forall endl
   }
   forall 
   ;

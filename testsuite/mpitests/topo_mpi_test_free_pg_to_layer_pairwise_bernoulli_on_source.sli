@@ -45,6 +45,7 @@ skip_if_not_threaded
   /layer_spec_a
   <<
     /positions [[0.0 0.0]]
+    /extent [1.0 1.0]
     /edge_wrap false
     /elements /poisson_generator
   >> def
@@ -75,4 +76,3 @@ skip_if_not_threaded
 {
   << /connection_type /pairwise_bernoulli_on_source /number_of_connections 10 >> test_connection
 } distributed_process_invariant_collect_assert_or_die
-

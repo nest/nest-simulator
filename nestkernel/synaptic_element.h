@@ -112,46 +112,46 @@ class SynapticElement
 
 public:
   /**
-  * \fn SynapticElement()
-  * Constructor.
-  */
+   * \fn SynapticElement()
+   * Constructor.
+   */
   SynapticElement();
 
   /**
-  * \fn SynapticElement(const SynapticElement& se)
-  * Copy Constructor.
-  * @param se SynapticElement
-  */
+   * \fn SynapticElement(const SynapticElement& se)
+   * Copy Constructor.
+   * @param se SynapticElement
+   */
   SynapticElement( const SynapticElement& se );
 
   /**
-  * \fn SynapticElement(const SynapticElement& se)
-  * copy assignment operator.
-  * @param other SynapticElement
-  */
+   * \fn SynapticElement(const SynapticElement& se)
+   * copy assignment operator.
+   * @param other SynapticElement
+   */
   SynapticElement& operator=( const SynapticElement& other );
 
   /**
-  * \fn SynapticElement()
-  * Destructor.
-  */
+   * \fn SynapticElement()
+   * Destructor.
+   */
   ~SynapticElement()
   {
     delete growth_curve_;
   }
 
   /**
-  * \fn void get(DictionaryDatum&) const
-  * Store current values in a dictionary.
-  * @param d to write data
-  */
+   * \fn void get(DictionaryDatum&) const
+   * Store current values in a dictionary.
+   * @param d to write data
+   */
   void get( DictionaryDatum& d ) const;
 
   /**
-  * \fn void set(const DictionaryDatum&)
-  * Set values from a dictionary.
-  * @param d to take data from
-  */
+   * \fn void set(const DictionaryDatum&)
+   * Set values from a dictionary.
+   * @param d to take data from
+   */
   void set( const DictionaryDatum& d );
 
 
@@ -166,13 +166,13 @@ public:
   void update( double t, double t_minus, double Ca_minus, double tau_Ca );
 
   /**
-  * \fn double get_z_value(ArchivingNode const *a, double t) const
-  * Get the number of synaptic_element at the time t (in ms)
-  * Returns a negative number when synaptic elements must be deleted
-  * during the next update
-  * @param a node of this synaptic_element
-  * @param t Current time (in ms)
-  */
+   * \fn double get_z_value(ArchivingNode const *a, double t) const
+   * Get the number of synaptic_element at the time t (in ms)
+   * Returns a negative number when synaptic elements must be deleted
+   * during the next update
+   * @param a node of this synaptic_element
+   * @param t Current time (in ms)
+   */
   int
   get_z_vacant() const
   {

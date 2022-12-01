@@ -29,7 +29,6 @@ these values in weight matrices for further analysis and visualization.
 
 All connection types between these populations are considered, i.e.,
 four weight matrices are created and plotted.
-
 """
 
 ###############################################################################
@@ -55,6 +54,29 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 # As a matter of convention in computational neuroscience, we refer to the
 # connection from inhibitory to excitatory neurons (I->E) as EI (post-pre) and
 # connections from excitatory to inhibitory neurons (E->I) as IE (post-pre).
+#
+# The script iterates through the list of all connections of each type.
+# To populate the corresponding weight matrix, we identify the source-node_id
+# and the target-node_id.
+# For each `node_id`, we subtract the minimum `node_id` within the corresponding
+# population, to assure the matrix indices range from 0 to the size of the
+# population.
+#
+# After determining the matrix indices `[i, j]`, for each connection object, the
+# corresponding weight is added to the entry `W[i,j]`. The procedure is then
+# repeated for all the different connection types.
+#
+# We then plot the figure, specifying the properties we want. For example, we
+# can display all the weight matrices in a single figure, which requires us to
+# use ``GridSpec`` to specify the spatial arrangement of the axes.
+# A subplot is subsequently created for each connection type. Using ``imshow``,
+# we can visualize the weight matrix in the corresponding axis. We can also
+# specify the colormap for this image.
+# Using the ``axis_divider`` module from ``mpl_toolkits``, we can allocate a small
+# extra space on the right of the current axis, which we reserve for a
+# colorbar.
+# We can set the title of each axis and adjust the axis subplot parameters.
+# Finally, the last three steps are repeated for each synapse type.
 
 
 def plot_weight_matrices(E_neurons, I_neurons):
@@ -66,8 +88,7 @@ def plot_weight_matrices(E_neurons, I_neurons):
 
     a_EE = nest.GetConnections(E_neurons, E_neurons)
 
-    # Using `get`, we can extract the value of the connection weight,
-    # for all the connections between these populations
+    # We extract the value of the connection weight for all the connections between these populations
     c_EE = a_EE.weight
 
     # Repeat the two previous steps for all other connection types
@@ -97,21 +118,20 @@ def plot_weight_matrices(E_neurons, I_neurons):
     a_II_src = a_II.source
     a_II_trg = a_II.target
 
+    min_E = min(E_neurons.tolist())
+    min_I = min(I_neurons.tolist())
+
     for idx in range(len(a_EE)):
-        W_EE[a_EE_src[idx] - min(E_neurons),
-             a_EE_trg[idx] - min(E_neurons)] += c_EE[idx]
+        W_EE[a_EE_src[idx] - min_E, a_EE_trg[idx] - min_E] += c_EE[idx]
     for idx in range(len(a_EI)):
-        W_EI[a_EI_src[idx] - min(I_neurons),
-             a_EI_trg[idx] - min(E_neurons)] += c_EI[idx]
+        W_EI[a_EI_src[idx] - min_I, a_EI_trg[idx] - min_E] += c_EI[idx]
     for idx in range(len(a_IE)):
-        W_IE[a_IE_src[idx] - min(E_neurons),
-             a_IE_trg[idx] - min(I_neurons)] += c_IE[idx]
+        W_IE[a_IE_src[idx] - min_E, a_IE_trg[idx] - min_I] += c_IE[idx]
     for idx in range(len(a_II)):
-        W_II[a_II_src[idx] - min(I_neurons),
-             a_II_trg[idx] - min(I_neurons)] += c_II[idx]
+        W_II[a_II_src[idx] - min_I, a_II_trg[idx] - min_I] += c_II[idx]
 
     fig = plt.figure()
-    fig.subtitle('Weight matrices', fontsize=14)
+    fig.suptitle('Weight matrices', fontsize=14)
     gs = gridspec.GridSpec(4, 4)
     ax1 = plt.subplot(gs[:-1, :-1])
     ax2 = plt.subplot(gs[:-1, -1])
@@ -124,7 +144,7 @@ def plot_weight_matrices(E_neurons, I_neurons):
     cax = divider.append_axes("right", "5%", pad="3%")
     plt.colorbar(plt1, cax=cax)
 
-    ax1.set_title('W_{EE}')
+    ax1.set_title('$W_{EE}$')
     plt.tight_layout()
 
     plt2 = ax2.imshow(W_IE)
@@ -132,7 +152,7 @@ def plot_weight_matrices(E_neurons, I_neurons):
     divider = make_axes_locatable(ax2)
     cax = divider.append_axes("right", "5%", pad="3%")
     plt.colorbar(plt2, cax=cax)
-    ax2.set_title('W_{EI}')
+    ax2.set_title('$W_{EI}$')
     plt.tight_layout()
 
     plt3 = ax3.imshow(W_EI)
@@ -140,7 +160,7 @@ def plot_weight_matrices(E_neurons, I_neurons):
     divider = make_axes_locatable(ax3)
     cax = divider.append_axes("right", "5%", pad="3%")
     plt.colorbar(plt3, cax=cax)
-    ax3.set_title('W_{IE}')
+    ax3.set_title('$W_{IE}$')
     plt.tight_layout()
 
     plt4 = ax4.imshow(W_II)
@@ -148,30 +168,44 @@ def plot_weight_matrices(E_neurons, I_neurons):
     divider = make_axes_locatable(ax4)
     cax = divider.append_axes("right", "5%", pad="3%")
     plt.colorbar(plt4, cax=cax)
-    ax4.set_title('W_{II}')
+    ax4.set_title('$W_{II}$')
     plt.tight_layout()
 
+
 #################################################################################
-# The script iterates through the list of all connections of each type.
-# To populate the corresponding weight matrix, we identify the source-node_id
-# (first element of each connection object, `n[0]`) and the target-node_id (second
-# element of each connection object, `n[1]`).
-# For each `node_id`, we subtract the minimum `node_id` within the corresponding
-# population, to assure the matrix indices range from 0 to the size of the
-# population.
+# Create a simple population to demonstrate the plotting function.
 #
-# After determining the matrix indices `[i, j]`, for each connection object, the
-# corresponding weight is added to the entry `W[i,j]`. The procedure is then
-# repeated for all the different connection types.
-#
-# We then plot the figure, specifying the properties we want. For example, we
-# can display all the weight matrices in a single figure, which requires us to
-# use ``GridSpec`` to specify the spatial arrangement of the axes.
-# A subplot is subsequently created for each connection type. Using ``imshow``,
-# we can visualize the weight matrix in the corresponding axis. We can also
-# specify the colormap for this image.
-# Using the ``axis_divider`` module from ``mpl_toolkits``, we can allocate a small
-# extra space on the right of the current axis, which we reserve for a
-# colorbar.
-# We can set the title of each axis and adjust the axis subplot parameters.
-# Finally, the last three steps are repeated for each synapse type.
+# Two populations are created, one with excitatory neurons and one with
+# inhibitory ones. Excitatory connections are created with synaptic weights
+# distributed with a normal distribution with a mean of 20. The inhibitory
+# connections have a synaptic weight proportional to the excitatory weights.
+
+# Create populations
+NE = 100  # number of excitatory neurons
+NI = 25   # number of inhibitory neurons
+E_neurons = nest.Create('iaf_psc_alpha', NE)
+I_neurons = nest.Create('iaf_psc_alpha', NI)
+
+# Definition of connectivity parameters
+CE = int(0.1 * NE)  # number of excitatory synapses per neuron
+CI = int(0.1 * NI)  # number of inhibitory synapses per neuron
+
+delay = 1.5  # synaptic delay in ms
+g = 5.0      # ratio inhibitory weight/excitatory weight
+
+w_ex = nest.random.normal(20, 0.5)
+w_in = -g * w_ex
+
+# Create connections
+nest.Connect(E_neurons, E_neurons + I_neurons,
+             conn_spec={'rule': 'fixed_indegree', 'indegree': CE},
+             syn_spec={'synapse_model': 'static_synapse', 'weight': w_ex, 'delay': delay})
+
+nest.Connect(I_neurons, E_neurons + I_neurons,
+             conn_spec={'rule': 'fixed_indegree', 'indegree': CI},
+             syn_spec={'synapse_model': 'static_synapse', 'weight': w_in, 'delay': delay})
+
+# Use plotting function
+plot_weight_matrices(E_neurons, I_neurons)
+
+plt.show()

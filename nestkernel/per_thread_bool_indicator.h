@@ -102,7 +102,7 @@ BoolIndicatorUInt64::logical_and( const bool status )
 class PerThreadBoolIndicator
 {
 public:
-  PerThreadBoolIndicator(){};
+  PerThreadBoolIndicator() {};
 
   BoolIndicatorUInt64& operator[]( const thread tid );
 

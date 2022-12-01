@@ -85,7 +85,7 @@ public:
   {
   }
 
-  ~RecordingBackendScreen() throw()
+  ~RecordingBackendScreen() throw() override
   {
   }
 

@@ -156,16 +156,6 @@ Examples:
    ..your code..
  endusing
 
- % the following makes the models in modeldict available to the current scope:
- modeldict using
-   ..your code..
- endusing
-
- % alternatively, you can also use the literal name:
- /modeldict using
-   ..your code..
- endusing
-
 Diagnostics:
 If the name is not known,  UndefinedNameError is raised.
 If the name is not bound to a dictionary, TypeMismatchError is raised.

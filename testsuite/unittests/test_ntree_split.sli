@@ -72,6 +72,7 @@ M_PROGRESS setverbosity
   <<
     /positions [ [ 1.0 0.0 0.0 ] ]
     /elements /iaf_psc_alpha
+    /extent [1.0 1.0 1.0]
     /edge_wrap true
   >>
   CreateLayer /post Set

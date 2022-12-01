@@ -27,7 +27,7 @@ Name: testsuite::test_set_Vm - test if setting V_m work via SetModelStatus and S
 Synopsis: (test_set_Vm) run -> dies if assertion fails
 
 Description:
-This test goes through all models in modeldict for which V_m can be
+This test goes through all registered node models for which V_m can be
 set, and attempts to set V_m via SetModelStatus and SetStatus. It then
 compares results. If both ways of setting V_m give different results,
 something is wtong with state initialization.
@@ -56,7 +56,7 @@ FirstVersion: July 2008
 } def
 
 {
-  modeldict keys
+  GetKernelStatus /node_models get
   {
     /model Set
     /res false def

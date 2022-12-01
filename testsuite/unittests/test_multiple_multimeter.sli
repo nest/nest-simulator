@@ -28,11 +28,11 @@ Synopsis: (test_multiple_multimeter.sli) run -> dies if assertion fails
 
 Description:
 This script tests support for multiple multimeters:
-- Connections created must have receptor != 0 
+- Connections created must have receptor != 0
   (this test is crucial to find models that have not been modified from
 
   inline
-  port aeif_cond_alpha::connect_sender(DataLoggingRequest& dlr, 
+  port aeif_cond_alpha::connect_sender(DataLoggingRequest& dlr,
 				      port receptor_type)
   {
     if (receptor_type != 0)
@@ -44,7 +44,7 @@ This script tests support for multiple multimeters:
   to
 
   inline
-  port aeif_cond_alpha::connect_sender(DataLoggingRequest& dlr, 
+  port aeif_cond_alpha::connect_sender(DataLoggingRequest& dlr,
 				      port receptor_type)
   {
     if (receptor_type != 0)
@@ -72,7 +72,7 @@ M_ERROR setverbosity
 /skip_list [ ] def
 
 /clear_error
-{ 
+{
   counttomark npop % pop all but mark
   errordict begin /newerror false def end
 } def
@@ -81,52 +81,52 @@ M_ERROR setverbosity
 % first test:
 % check that we can connect one multimeter once
 {
-  ResetKernel  
+  ResetKernel
   << >> begin
     /mm /multimeter Create def
     /n /iaf_psc_alpha Create def
-    mm n Connect 
+    mm n Connect
   end
 } pass_or_die
 
 % second test:
 % check that we cannot connect one multimeter twice
 {
-  ResetKernel  
+  ResetKernel
   << >> begin
     /mm /multimeter Create def
     /n /iaf_psc_alpha Create def
-    mm n Connect 
-    mm n Connect 
+    mm n Connect
+    mm n Connect
   end
 } fail_or_die
 
 
 % third test:
-% check that connections from two multimeters get 
+% check that connections from two multimeters get
 % receptors 1 and 2 for all models with recordables
 {
   << >> begin
-    modeldict keys 
+    GetKernelStatus /node_models get
     {
-      ResetKernel  
+      ResetKernel
       /model Set
       model GetDefaults /recordables known
       {
 	/n model Create def
         /mmd << /record_from n /recordables get >> def
-        /mm1 /multimeter mmd Create def	
-        /mm2 /multimeter mmd Create def	
+        /mm1 /multimeter mmd Create def
+        /mm2 /multimeter mmd Create def
         mm1 n Connect
         mm2 n Connect
         [mm1 mm2] { /m Set << /source m >> GetConnections
                     arrayload 1 eq assert /receptor get } Map
         [1 2] eq
       }
-      { true } 
+      { true }
       ifelse
     } Map
-  
+
     true exch { and } Fold
 } assert_or_die
 
@@ -137,8 +137,8 @@ M_ERROR setverbosity
   << >> begin
     /recvars [ /V_m ] def
     /n /iaf_psc_alpha Create def
-    /mm1 /multimeter << /record_from recvars >> Create def	
-    /mm2 /multimeter << /record_from recvars >> Create def	
+    /mm1 /multimeter << /record_from recvars >> Create def
+    /mm2 /multimeter << /record_from recvars >> Create def
     mm1 n Connect
     mm2 n Connect
     /pge /poisson_generator << /rate 10000. >> Create def

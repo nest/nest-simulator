@@ -178,26 +178,66 @@ class TestNodeCollection(unittest.TestCase):
         n_list_negative_start_end = n_slice_negative_start_end.tolist()
         self.assertEqual(n_list_negative_start_end, [4, 5, 6])
 
-        n_slice_start_outside = n[-15:]
-        n_list_start_outside = n_slice_start_outside.tolist()
-        self.assertEqual(n_list_start_outside, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+        with self.assertRaises(IndexError):
+            n[-15:]
 
-        n_slice_stop_outside = n[:15]
-        n_list_stop_outside = n_slice_stop_outside.tolist()
-        self.assertEqual(n_list_stop_outside, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+        with self.assertRaises(IndexError):
+            n[:15]
 
-        n_slice_start_stop_outside = n[-13:17]
-        n_list_start_stop_outside = n_slice_start_stop_outside.tolist()
-        self.assertEqual(n_list_start_stop_outside, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+        with self.assertRaises(IndexError):
+            n[-13:17]
 
         with self.assertRaises(IndexError):
             n[::-3]
+
+        primitive = n
+        composite = n + nest.Create('iaf_psc_exp')
+        for nodes in [primitive, composite]:
+            n_list = nodes.tolist()
+            # With slice without arguments
+            self.assertEqual(nodes[:].tolist(), n_list[:])
+            self.assertEqual(nodes[::].tolist(), n_list[::])
+
+            # With start values
+            for start in range(-len(nodes), len(nodes)):
+                self.assertEqual(nodes[start:].tolist(), n_list[start:], f'with [{start}:]')
+
+            # With stop values
+            for stop in range(-len(nodes) + 1, len(nodes) + 1):
+                if stop == 0:
+                    continue  # Slicing an empty NodeCollection is not allowed.
+                self.assertEqual(nodes[:stop].tolist(), n_list[:stop], f'with [:{stop}]')
+
+            # With step values
+            for step in range(1, len(nodes)):
+                self.assertEqual(nodes[::step].tolist(), n_list[::step], f'with [::{step}]')
+
+            # With start and step values
+            for start in range(-len(nodes), len(nodes)):
+                for step in range(1, len(nodes)):
+                    self.assertEqual(nodes[start::step].tolist(), n_list[start::step], f'with [{start}::{step}]')
+
+            # With stop and step values
+            for stop in range(-len(nodes) + 1, len(nodes) + 1):
+                if stop == 0:
+                    continue  # Slicing an empty NodeCollection is not allowed.
+                for step in range(1, len(nodes)):
+                    self.assertEqual(nodes[:stop:step].tolist(), n_list[:stop:step], f'with [:{stop}:{step}]')
+
+            # With start, stop, and step values
+            for start in range(-len(nodes), len(nodes)):
+                for stop in range(start+1, len(nodes) + 1):
+                    if stop == 0 or (start < 0 and start+len(nodes) >= stop):
+                        continue  # Cannot slice an empty NodeCollection, or use stop <= start.
+                    for step in range(1, len(nodes)):
+                        self.assertEqual(nodes[start:stop:step].tolist(), n_list[start:stop:step],
+                                         f'with [{start}:{stop}:{step}]')
 
     def test_correct_index(self):
         """Multiple NodeCollection calls give right indexing"""
         compare_begin = 1
         compare_end = 11
-        for model in nest.Models(mtype='nodes'):
+        for model in nest.node_models:
             n = nest.Create(model, 10)
             n_list = n.tolist()
             compare = list(range(compare_begin, compare_end))
@@ -251,7 +291,7 @@ class TestNodeCollection(unittest.TestCase):
 
         n_list = []
         n_models = 0
-        for model in nest.Models(mtype='nodes'):
+        for model in nest.node_models:
             n = nest.Create(model, 10)
             n_list += n.tolist()
             n_models += 1
@@ -273,9 +313,9 @@ class TestNodeCollection(unittest.TestCase):
         def check_membership(nc, reference, inverse_ref):
             """Checks that all node IDs in reference are in nc, and that elements in inverse_ref are not in the nc."""
             for i in reference:
-                self.assertTrue(i in nc, 'i={}'.format(i))
+                self.assertTrue(i in nc, f'{i} in {nc.tolist()}')
             for j in inverse_ref:
-                self.assertFalse(j in nc)
+                self.assertFalse(j in nc, f'{j} not in {nc.tolist()}')
 
             self.assertFalse(reference[-1] + 1 in nc)
             self.assertFalse(0 in nc)
@@ -467,17 +507,12 @@ class TestNodeCollection(unittest.TestCase):
 
         n = nest.Create('iaf_psc_alpha')
 
-        nest.ll_api.sli_run("modeldict")
-        model_dict = nest.ll_api.sli_pop()
-
-        models = model_dict.keys()
-
-        for model in models:
+        for model in nest.node_models:
             n += nest.Create(model)
 
         self.assertTrue(len(n) > 0)
 
-        models = ['iaf_psc_alpha'] + list(models)
+        models = ['iaf_psc_alpha'] + list(nest.node_models)
         for count, nc in enumerate(n):
             self.assertEqual(nc.get('model'), models[count])
 
@@ -550,8 +585,7 @@ class TestNodeCollection(unittest.TestCase):
         self.assertEqual(get_conn_some.get('source'), compare_source)
         self.assertEqual(get_conn_some.get('target'), compare_target)
 
-        expected_syn_model = 'static_synapse'
-        expected_syn_id = nest.ll_api.sli_func('synapsedict')[expected_syn_model]
+        expected_syn_id = nest.GetDefaults("static_synapse", "synapse_modelid")
 
         compare_list = [3, 1, 0, expected_syn_id, 6]
         conn = [get_conn_some.get('source')[3],

@@ -1,0 +1,38 @@
+{% extends "!sphinx_material/layout.html" %}
+
+{%- block extrahead %}
+  <title>NEST documentation index </title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="This is the documentation index for the NEST, a simulator for spiking neuronal networks.">
+  <meta name="keywords" content="">
+  <link rel="stylesheet" href="_static/css/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="_static/css/custom.css">
+  {{ super() }}
+{% endblock %}
+
+<div role="main">
+  {% block content %}
+  <a href="#" id="gototop"><img src="{{ pathto('_static/img/arrow-up-circle.svg',1) }}"/></a>
+  <header id="header" class="wrapper clearfix">
+    <div id="background" class="particle-img">
+     <div id="banner">
+      <div id="logo">
+        <img src="{{ pathto('_static/img/nest_docs.png',1) }}" alt="logo"/>
+      </div>
+    </div>
+    <nav id="topnav" role="navigation">
+      <div class="menu-toggle">Menu</div>
+      <ul class="srt-menu" id="menu-main-navigation">
+	<li><a href="https://www.nest-simulator.org">NEST Homepage</a></li>
+  <li><a href="{{pathto('related_projects')}}">Related projects</a></li>
+  <li><a href="{{pathto('community')}}">Contact us</a></li>
+      </ul>
+    </nav>
+   </div>
+  </header>
+  {{ super() }}
+  {% endblock %}
+</div>
+

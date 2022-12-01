@@ -28,7 +28,6 @@
 
 // C includes:
 #include <sys/resource.h>
-#include <sys/time.h>
 #include <sys/times.h>
 #include <time.h>
 #include <unistd.h>
@@ -47,7 +46,6 @@
 #include "arraydatum.h"
 #include "booldatum.h"
 #include "dictstack.h"
-#include "doubledatum.h"
 #include "functiondatum.h"
 #include "integerdatum.h"
 #include "iostreamdatum.h"
@@ -182,7 +180,7 @@ ExitFunction::execute( SLIInterpreter* i ) const
 
   size_t n = 1;
   size_t load = i->EStack.load();
-  while ( ( load > n ) && not( i->EStack.pick( n++ ) == mark ) )
+  while ( load > n and not( i->EStack.pick( n++ ) == mark ) )
   {
     // do nothing
   }
@@ -343,7 +341,7 @@ RepeatFunction::execute( SLIInterpreter* i ) const
     if ( proc )
     {
       IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-      if ( id == 0 )
+      if ( not id )
       {
         throw ArgumentType( 1 );
       }
@@ -443,19 +441,19 @@ StopFunction::execute( SLIInterpreter* i ) const
   bool found = false;
   size_t n = 1;
 
-  while ( ( load > n ) && not( found ) )
+  while ( load > n and not( found ) )
   {
     found = i->EStack.pick( n++ ).contains( istopped );
   }
 
-  if ( i->catch_errors() && not found )
+  if ( i->catch_errors() and not found )
   {
     i->debug_mode_on();
   }
 
-  if ( i->get_debug_mode() || i->show_backtrace() )
+  if ( i->get_debug_mode() or i->show_backtrace() )
   {
-    if ( i->show_backtrace() || not found )
+    if ( i->show_backtrace() or not found )
     {
       i->stack_backtrace( load - 1 );
     }
@@ -507,19 +505,19 @@ CloseinputFunction::execute( SLIInterpreter* i ) const
   bool found = false;
   size_t n = 1;
 
-  while ( ( load > n ) && not( found ) )
+  while ( load > n and not( found ) )
   {
     found = i->EStack.pick( n++ )->isoftype( SLIInterpreter::XIstreamtype );
   }
 
-  if ( i->catch_errors() || not found )
+  if ( i->catch_errors() or not found )
   {
     i->debug_mode_on();
   }
 
-  if ( i->get_debug_mode() || i->show_backtrace() )
+  if ( i->get_debug_mode() or i->show_backtrace() )
   {
-    if ( i->show_backtrace() || not found )
+    if ( i->show_backtrace() or not found )
     {
       i->stack_backtrace( n );
     }
@@ -601,7 +599,7 @@ CurrentnameFunction::execute( SLIInterpreter* i ) const
 
   bool found = false;
 
-  while ( ( load > n ) && not found )
+  while ( load > n and not found )
   {
     found = i->EStack.pick( n++ ) == i->baselookup( i->ilookup_name );
   }
@@ -1170,7 +1168,7 @@ RaiseerrorFunction::execute( SLIInterpreter* i ) const
 
   Name* errorname = dynamic_cast< Name* >( err.datum() );
   Name* cmdname = dynamic_cast< Name* >( cmd.datum() );
-  if ( ( not errorname ) || ( not cmdname ) )
+  if ( not errorname or not cmdname )
   {
     i->message( SLIInterpreter::M_ERROR, "raiseerror", "Usage: /command /errorname raiserror" );
     i->raiseerror( "ArgumentType" );
@@ -1389,7 +1387,7 @@ SwitchFunction::execute( SLIInterpreter* i ) const
 
   bool found = ( i->OStack.pick( pos ) == mark_token );
 
-  while ( ( pos < depth ) && not found )
+  while ( pos < depth and not found )
   {
     i->EStack.push_move( i->OStack.pick( pos ) );
     found = ( i->OStack.pick( ++pos ) == mark_token );
@@ -1429,8 +1427,8 @@ SwitchdefaultFunction::execute( SLIInterpreter* i ) const
     throw TypeMismatch( "At least 1 argument.", "Nothing." );
   }
 
-  if ( depth > 1 && i->OStack.pick( 1 ) != mark_token // default action
-    && i->OStack.pick( 0 ) != mark_token )            // is not the only one
+  // default action is not the only one
+  if ( depth > 1 and i->OStack.pick( 1 ) != mark_token and i->OStack.pick( 0 ) != mark_token )
   {
     i->OStack.pop(); // thus pop it!
   }
@@ -1438,7 +1436,7 @@ SwitchdefaultFunction::execute( SLIInterpreter* i ) const
   bool found = ( i->OStack.pick( pos ) == mark_token );
 
 
-  while ( ( pos < depth ) && not found )
+  while ( pos < depth and not found )
   {
     i->EStack.push_move( i->OStack.pick( pos ) );
     found = ( i->OStack.pick( ++pos ) == mark_token );
@@ -1495,7 +1493,7 @@ CounttomarkFunction::execute( SLIInterpreter* i ) const
 
   bool found = false;
 
-  while ( ( pos < depth ) && not found )
+  while ( pos < depth and not found )
   {
     found = ( i->OStack.pick( pos ) == mark_token );
     ++pos;
@@ -1706,7 +1704,7 @@ PgetrusageFunction::getinfo_( int who, DictionaryDatum& dict ) const
 void
 TimeFunction::execute( SLIInterpreter* i ) const
 {
-  long secs = time( 0 );
+  long secs = time( nullptr );
   Token tmp( new IntegerDatum( secs ) );
   i->EStack.pop();
   i->OStack.push_move( tmp );

@@ -103,4 +103,4 @@ BOOST_AUTO_TEST_CASE( test_enum_bitfield_ops )
 BOOST_AUTO_TEST_SUITE_END()
 }
 
-#endif /* TEST_SORT_H */
+#endif /* TEST_ENUM_BITFIELD_H */

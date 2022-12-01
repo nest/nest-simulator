@@ -1,0 +1,15 @@
+on: [push]
+
+jobs:
+  trigger_externals:
+    if: ${{ github.repository_owner == 'nest' && github.ref_name == 'master' }}
+    name: "Trigger downstream repos"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger nest/nest-extension-module CI
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.NEST_EXTENSION_MODULE_TRIGGER_TOKEN }}
+          repository: 'nest/nest-extension-module'
+          event-type: dispatch-event_nest-update
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'

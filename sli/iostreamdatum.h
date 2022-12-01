@@ -39,7 +39,5 @@
 typedef lockPTRDatum< std::istream, &SLIInterpreter::Istreamtype > IstreamDatum;
 typedef lockPTRDatum< std::istream, &SLIInterpreter::XIstreamtype > XIstreamDatum;
 typedef lockPTRDatum< std::ostream, &SLIInterpreter::Ostreamtype > OstreamDatum;
-// typedef lockPTRDatum<std::iostream,&SLIInterpreter::IOstreamtype>
-// IOstreamDatum;
 
 #endif

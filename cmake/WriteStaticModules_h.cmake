@@ -59,14 +59,14 @@ function( NEST_WRITE_STATIC_MODULE_HEADER filename )
       # get namespace:
       file( STRINGS "${mod_header}" module_namespace_string REGEX "^namespace.*" )
       if ( NOT module_namespace_string )
-        message( FATAL_ERROR "Could not find namespace in '${mod_header}'." )
+        printError( "Could not find namespace in '${mod_header}'." )
       endif ()
       string( REGEX REPLACE "namespace ([a-zA-Z0-9_]+)" "\\1" module_namespace ${module_namespace_string} )
 
       # get class name
       file( STRINGS "${mod_header}" module_class_string REGEX "^class.*: public SLIModule" )
       if ( NOT module_class_string )
-        message( FATAL_ERROR "Could not find class that extends SLIModule in '${mod_header}'." )
+        printError( "Could not find class that extends SLIModule in '${mod_header}'." )
       endif ()
       string( REGEX REPLACE "class ([a-zA-Z0-9_]+) : public SLIModule" "\\1" module_class ${module_class_string} )
       file( APPEND "${filename}" "  engine.addmodule( new ${module_namespace}::${module_class}() );\n" )

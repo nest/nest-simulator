@@ -47,7 +47,7 @@ M_ERROR setverbosity
 /amp 123.456 def
 /res [] def  % array to collect bool results
 
-modeldict keys{
+GetKernelStatus /node_models get {
 
   /model Set
 
@@ -123,7 +123,7 @@ modeldict keys{
     } if % skip models that don't support current event
   }
   if % recordable_VM has_IE and
-} forall % modeldict keys
+} forall
 
 % combine results, one bool left on stack
 res First res Rest { and } Fold

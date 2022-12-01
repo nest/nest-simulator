@@ -29,8 +29,8 @@
 
 // Includes from nestkernel:
 #include "connection_id.h"
-#include "node_collection.h"
 #include "nestmodule.h"
+#include "node_collection.h"
 
 // Includes from sli:
 #include "aggregatedatum.h"

@@ -59,8 +59,9 @@ class Dictionary;
 class FunctionDatum;
 class BoolDatum;
 
-extern "C" {
-void SLIthrowsignal( int s );
+extern "C"
+{
+  void SLIthrowsignal( int s );
 }
 
 class SLIInterpreter
@@ -85,10 +86,10 @@ class SLIInterpreter
 
 
   int verbositylevel;
-  void inittypes( void );
-  void initdictionaries( void );
-  void initbuiltins( void );
-  void initexternals( void );
+  void inittypes();
+  void initdictionaries();
+  void initbuiltins();
+  void initexternals();
 
 public:
   unsigned long code_accessed; // for code coverage analysis.
@@ -250,7 +251,7 @@ public:
   TokenStack EStack;
 
   // public member functions:
-  SLIInterpreter( void );
+  SLIInterpreter();
   ~SLIInterpreter();
 
   //! Initialise the interpreter by reading in the startup files.
@@ -339,7 +340,7 @@ public:
   void basedef_move( const Name& n, Token& t );
 
   void setcycleguard( Index );
-  void removecycleguard( void );
+  void removecycleguard();
 
 
   /**
@@ -434,7 +435,7 @@ public:
   bool
   step_mode() const
   {
-    return debug_mode_ && ( call_depth_ < max_call_depth_ );
+    return debug_mode_ and ( call_depth_ < max_call_depth_ );
   }
 
   /**
@@ -751,7 +752,7 @@ public:
    *  @see raiseerror(const char*), raiseerror(Name),
    *  raiseerror(Name,Name)
    */
-  void raiseagain( void );
+  void raiseagain();
 
   /** TO BE DOCUMENTED.
    *  @todo Document this function.
@@ -797,7 +798,7 @@ public:
    *  error(), fatal()
    *  @ingroup SLIMessaging
    */
-  int verbosity( void ) const;
+  int verbosity() const;
 
   /** Display a message.
    *  @param level  The error level that shall be associated with the
@@ -844,17 +845,17 @@ public:
   void terminate( int returnvalue = -1 );
 
   //*******************************************************
-  Name getcurrentname( void ) const;
+  Name getcurrentname() const;
 
   unsigned long
-  cycles( void ) const
+  cycles() const
   {
     return cycle_count;
   }
 
 
   template < class T >
-  void addmodule( void );
+  void addmodule();
   void addmodule( SLIModule* );
 
   /*
@@ -865,8 +866,8 @@ public:
    */
   void addlinkedusermodule( SLIModule* );
 
-  FunctionDatum* Ilookup( void ) const;
-  FunctionDatum* Iiterate( void ) const;
+  FunctionDatum* Ilookup() const;
+  FunctionDatum* Iiterate() const;
 
   /**
    * Throw StackUnderflow exception if too few elements on stack.
@@ -892,7 +893,7 @@ addmodule( SLIInterpreter& i )
 
 template < class T >
 void
-SLIInterpreter::addmodule( void )
+SLIInterpreter::addmodule()
 {
   SLIModule* m = new T();
 

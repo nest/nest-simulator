@@ -22,13 +22,6 @@ set( nest_sources
     )
 
 add_executable( nest main.cpp ${nest_sources} )
-if ( IS_BLUEGENE AND static-libraries )
-    set_target_properties( nest
-        PROPERTIES
-        LINK_SEARCH_END_STATIC TRUE
-        LINK_SEARCH_START_STATIC TRUE
-        )
-endif ()
 
 if ( NOT APPLE )
     set_target_properties( nest
@@ -54,6 +47,12 @@ else ()
         LINK_FLAGS "-Wl,-undefined -Wl,dynamic_lookup"
         )
 endif ()
+
+set_target_properties( nest_lib
+    PROPERTIES
+    VERSION ${NEST_VERSION}
+    SOVERSION 3
+    )
 
 target_link_libraries( nest
     nestutil nestkernel sli_lib sli_readline

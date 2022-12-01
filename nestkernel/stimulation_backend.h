@@ -28,8 +28,8 @@
 
 // Includes from sli:
 #include "dictdatum.h"
-#include "name.h"
 #include "dictutils.h"
+#include "name.h"
 #include "stimulation_device.h"
 
 namespace nest
@@ -67,7 +67,7 @@ namespace nest
  * @author Sandra Diaz
  *
  * @ingroup NESTio
-*/
+ */
 
 class StimulationBackend
 {
@@ -77,40 +77,40 @@ public:
   virtual ~StimulationBackend() noexcept = default;
 
   /**
-  * Enroll a `StimulationDevice` with the `StimulationBackend`.
-  *
-  * When this function is called by a `StimulationDevice` @p device,
-  * the `StimulationBackend` can set up per-device data structures and
-  * properties. Individual device instances can be identified using
-  * the `thread` and `node_id` of the @p device.
-  *
-  * This function is called from the set_initialized_() function of
-  * the @p device and their set_status() function.
-  *
-  * A backend needs to be able to cope with multiple calls to this
-  * function, as multiple calls to set_status() may occur on the @p
-  * device. For already enrolled devices this usually means that only
-  * the parameters in @p params have to be set, but no further
-  * actions are needed.
-  *
-  * Each stimulation backend must ensure that enrollment (including all
-  * settings made by the user) is persistent over multiple calls to
-  * Prepare, while the enrollment of all devices should end with a
-  * call to finalize().
-  *
-  * A common implementation of this function will create an entry in
-  * a thread-local map, associating the device's node ID with the
-  * device-specific backend properties and an input facility of some
-  * kind.
-  *
-  * @param device the StimulationDevice to be enrolled
-  * @param params device-specific backend parameters
-  *
-  * @see disenroll()
-  *
-  * @ingroup NESTio
-  */
-  virtual void enroll( StimulationDevice&, const DictionaryDatum& ){};
+   * Enroll a `StimulationDevice` with the `StimulationBackend`.
+   *
+   * When this function is called by a `StimulationDevice` @p device,
+   * the `StimulationBackend` can set up per-device data structures and
+   * properties. Individual device instances can be identified using
+   * the `thread` and `node_id` of the @p device.
+   *
+   * This function is called from the set_initialized_() function of
+   * the @p device and their set_status() function.
+   *
+   * A backend needs to be able to cope with multiple calls to this
+   * function, as multiple calls to set_status() may occur on the @p
+   * device. For already enrolled devices this usually means that only
+   * the parameters in @p params have to be set, but no further
+   * actions are needed.
+   *
+   * Each stimulation backend must ensure that enrollment (including all
+   * settings made by the user) is persistent over multiple calls to
+   * Prepare, while the enrollment of all devices should end with a
+   * call to finalize().
+   *
+   * A common implementation of this function will create an entry in
+   * a thread-local map, associating the device's node ID with the
+   * device-specific backend properties and an input facility of some
+   * kind.
+   *
+   * @param device the StimulationDevice to be enrolled
+   * @param params device-specific backend parameters
+   *
+   * @see disenroll()
+   *
+   * @ingroup NESTio
+   */
+  virtual void enroll( StimulationDevice&, const DictionaryDatum& ) {};
 
   /**
    * Disenroll a `StimulationDevice` from the `StimulationBackend`.
@@ -128,7 +128,7 @@ public:
    *
    * @ingroup NESTio
    */
-  virtual void disenroll( StimulationDevice& ){};
+  virtual void disenroll( StimulationDevice& ) {};
 
   /**
    * Initialize global backend-specific data structures.
@@ -181,19 +181,19 @@ public:
   virtual void prepare() = 0;
 
   /**
-  * Clean up the backend at the end of a user level call to the NEST Simulate
-  * function.
-  *
-  * This function is called by `SimulationManager::cleanup()` and allows the
-  * backend to close open files, close network connections, etc.
-  *
-  * @see prepare()
-  *
-  * @ingroup NESTio
-  */
+   * Clean up the backend at the end of a user level call to the NEST Simulate
+   * function.
+   *
+   * This function is called by `SimulationManager::cleanup()` and allows the
+   * backend to close open files, close network connections, etc.
+   *
+   * @see prepare()
+   *
+   * @ingroup NESTio
+   */
   virtual void cleanup() = 0;
 
-  void clear( const StimulationDevice& ){};
+  void clear( const StimulationDevice& ) {};
 };
 
 } // namespace

@@ -46,11 +46,11 @@ Rate neuron model with sigmoidal gain function
 Description
 +++++++++++
 
-sigmoid_rate is an implementation of a nonlinear rate model with input
-function :math:`input(h) = g / ( 1. + \exp( -\beta * ( h - \theta ) ) )`.
+``sigmoid_rate`` is an implementation of a nonlinear rate model with input
+function :math:`input(h) = g / ( 1. + \exp( -\beta \cdot ( h - \theta ) ) )`.
 
-It either models a rate neuron with input noise (see rate_neuron_ipn)
-or a rate transformer (see rate_transformer_node).
+It either models a rate neuron with input noise (see ``rate_neuron_ipn``)
+or a rate transformer (see ``rate_transformer_node``).
 
 Input transformation can either be applied to individual inputs
 or to the sum of all inputs.
@@ -62,9 +62,10 @@ the gap-junction framework.
 The following parameters can be set in the status dictionary.
 
 Nonlinear rate neurons can be created by typing
-nest.Create('sigmoid_rate_ipn'). Nonlinear rate transformers can be
-created by typing nest.Create('rate_transformer_sigmoid').
+``nest.Create('sigmoid_rate_ipn')``. Nonlinear rate transformers can be
+created by typing ``nest.Create('rate_transformer_sigmoid')``.
 
+See also [1]_, [2]_.
 
 Parameters
 ++++++++++

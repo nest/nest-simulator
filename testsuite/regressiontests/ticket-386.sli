@@ -50,21 +50,35 @@ M_ERROR setverbosity
   ResetKernel
   << /resolution resolution >> SetKernelStatus
   /model Set
+
   model GetDefaults dup
   /recordables known
   {
-     /recordables get /recs Set
-     /n model Create def
-     /mm /multimeter << /record_from recs /interval resolution >> Create def
-     mm n Connect
-     10.0 Simulate
+    /recordables get /recs Set
+    /n model Create def
+
+    % if the model is a compartmental model,
+    % we need to add at least a root compartment
+    model GetDefaults dup
+    /compartments known
+    {
+      n
+      <<
+        /compartments << /parent_idx -1  >>
+      >> SetStatus
+    }
+    if
+
+    /mm /multimeter << /record_from recs /interval resolution >> Create def
+    mm n Connect
+    10.0 Simulate
   }
   if
-} 
+}
 def
 
 {
-  modeldict keys { run_test } forall
+  GetKernelStatus /node_models get { run_test } forall
 }
 pass_or_die
 

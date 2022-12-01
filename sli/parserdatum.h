@@ -31,12 +31,12 @@
 class ParserDatum : public AggregateDatum< Parser, &SLIInterpreter::Parsertype >
 {
   Datum*
-  clone( void ) const
+  clone() const
   {
     return new ParserDatum( *this );
   }
 
-  ParserDatum( void )
+  ParserDatum()
   {
     set_executable();
   }

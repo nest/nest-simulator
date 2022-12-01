@@ -180,7 +180,6 @@ class NESTErrors(metaclass=NESTMappedException):
         'UnaccessedDictionaryEntry': 'DictError',
         'UnknownModelName': 'KernelException',
         'NewModelNameExists': 'KernelException',
-        'UnknownModelID': 'KernelException',
         'ModelInUse': 'KernelException',
         'UnknownSynapseType': 'KernelException',
         'UnknownNode': 'KernelException',

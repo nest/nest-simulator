@@ -70,7 +70,7 @@ void
 nest::music_event_out_proxy::Parameters_::set( const DictionaryDatum& d, State_& s )
 {
   // TODO: This is not possible, as P_ does not know about get_name()
-  //  if(d->known(names::port_name) && s.published_)
+  //  if(d->known(names::port_name) and s.published_)
   //    throw MUSICPortAlreadyPublished(get_name(), P_.port_name_);
 
   if ( not s.published_ )
@@ -125,7 +125,7 @@ nest::music_event_out_proxy::init_buffers_()
 }
 
 void
-nest::music_event_out_proxy::calibrate()
+nest::music_event_out_proxy::pre_run_hook()
 {
   // only publish the output port once,
   if ( not S_.published_ )

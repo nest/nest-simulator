@@ -20,8 +20,10 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Create 12 freely placed iaf_psc_alpha neurons
------------------------------------------------
+Freely placed neurons
+----------------------
+
+Create 12 freely placed iaf_psc_alpha neurons.
 
 BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB

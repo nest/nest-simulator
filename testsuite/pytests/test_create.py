@@ -38,7 +38,7 @@ class CreateTestCase(unittest.TestCase):
     def test_ModelCreate(self):
         """Model Creation"""
 
-        for model in nest.Models(mtype='nodes'):
+        for model in nest.node_models:
             node = nest.Create(model)
             self.assertGreater(node.get('global_id'), 0)
 
@@ -46,7 +46,7 @@ class CreateTestCase(unittest.TestCase):
         """Model Creation with N"""
 
         num_nodes = 10
-        for model in nest.Models(mtype='nodes'):
+        for model in nest.node_models:
             nodes = nest.Create(model, num_nodes)
             self.assertEqual(len(nodes), num_nodes)
 
@@ -83,26 +83,6 @@ class CreateTestCase(unittest.TestCase):
         n = nest.Create('iaf_psc_alpha', num_nodes, [{'V_m': v} for v in V_m])
 
         self.assertEqual(nest.GetStatus(n, 'V_m'), V_m)
-
-    def test_CopyModel(self):
-        """CopyModel"""
-
-        nest.CopyModel('iaf_psc_alpha', 'new_neuron', {'V_m': 10.0})
-        vm = nest.GetDefaults('new_neuron')['V_m']
-        self.assertEqual(vm, 10.0)
-
-        n = nest.Create('new_neuron', 10)
-        vm = nest.GetStatus(n[0])[0]['V_m']
-        self.assertEqual(vm, 10.0)
-
-        nest.CopyModel('static_synapse', 'new_synapse', {'weight': 10.})
-        nest.Connect(n[0], n[1], syn_spec='new_synapse')
-        w = nest.GetDefaults('new_synapse')['weight']
-        self.assertEqual(w, 10.0)
-
-        self.assertRaisesRegex(
-            nest.kernel.NESTError, "NewModelNameExists",
-            nest.CopyModel, 'iaf_psc_alpha', 'new_neuron')
 
 
 def suite():

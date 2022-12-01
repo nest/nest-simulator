@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Create two populations of pyramidal cells and two populations of interneurons
------------------------------------------------------------------------------
+Pyramidal cells and interneurons
+--------------------------------
 
 Create two populations of pyramidal cells and two populations of interneurons
 on a 30x30 grid. Connect with two projections, one pyr->pyr, one pyr->in, and

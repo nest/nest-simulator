@@ -1,1 +1,0 @@
-.. include:: ../../pynest/README.rst

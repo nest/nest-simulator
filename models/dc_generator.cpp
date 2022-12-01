@@ -34,7 +34,6 @@
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
-#include "integerdatum.h"
 
 namespace nest
 {
@@ -62,7 +61,8 @@ nest::dc_generator::Parameters_::Parameters_( const Parameters_& p )
 {
 }
 
-nest::dc_generator::Parameters_& nest::dc_generator::Parameters_::operator=( const Parameters_& p )
+nest::dc_generator::Parameters_&
+nest::dc_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
   {
@@ -146,11 +146,11 @@ nest::dc_generator::init_buffers_()
 }
 
 void
-nest::dc_generator::calibrate()
+nest::dc_generator::pre_run_hook()
 {
   B_.logger_.init();
 
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
 }
 
 
@@ -161,7 +161,7 @@ nest::dc_generator::calibrate()
 void
 nest::dc_generator::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   long start = origin.get_steps();

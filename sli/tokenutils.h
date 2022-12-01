@@ -152,7 +152,7 @@ FT
 getValue( const Token& t )
 {
   FT* value = dynamic_cast< FT* >( t.datum() );
-  if ( value == NULL )
+  if ( not value )
   {
     throw TypeMismatch();
   }
@@ -177,7 +177,7 @@ void
 setValue( const Token& t, FT const& value )
 {
   FT* old = dynamic_cast< FT* >( t.datum() );
-  if ( old == NULL )
+  if ( not old )
   {
     throw TypeMismatch();
   }

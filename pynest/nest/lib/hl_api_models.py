@@ -23,9 +23,10 @@
 Functions for model handling
 """
 
-from ..ll_api import *
-from .hl_api_helper import *
+from ..ll_api import check_stack, sps, sr, spp
+from .hl_api_helper import deprecated, is_iterable, is_literal, model_deprecation_warning
 from .hl_api_types import to_json
+from .hl_api_simulation import GetKernelStatus
 
 __all__ = [
     'ConnectionRules',
@@ -36,25 +37,23 @@ __all__ = [
 ]
 
 
+@deprecated("nest.node_models or nest.synapse_models")
 @check_stack
 def Models(mtype="all", sel=None):
-    """Return a tuple of model names, sorted by name.
-
-    All available models are neurons, devices and synapses.
+    """Return a tuple of neuron, device, or synapse model names.
 
     Parameters
     ----------
     mtype : str, optional
-        Use ``'mtype='nodes'`` to only see neuron and device models,
-        or ``'type='synapses'`` to only see synapse models.
+        Use ``mtype='nodes'`` to only get neuron and device models,
+        or ``mtype='synapses'`` to only get synapse models.
     sel : str, optional
-        String used to filter the result list and only return models
-        containing it.
+        Filter results and only return models containing ``sel``.
 
     Returns
     -------
     tuple
-        Available model names
+        Available model names, sorted by name
 
     Raises
     ------
@@ -63,54 +62,51 @@ def Models(mtype="all", sel=None):
 
     Notes
     -----
-    - Synapse model names ending with ``'_hpc'`` provide minimal memory
-      requirements by using thread-local target neuron IDs and fixing
-      the ``'rport'`` to 0.
-    - Synapse model names ending with ``'_lbl'`` allow to assign an individual
-      integer label (``'synapse_label'``) to created synapses at the cost
-      of increased memory requirements.
+    - Synapse model names ending in ``_hpc`` require less memory because of
+      thread-local indices for target neuron IDs and fixed ``rport``s of 0.
+    - Synapse model names ending in ``_lbl`` allow to assign an integer label
+      (``synapse_label``) to each individual synapse, at the cost of increased
+      memory requirements.
 
     """
 
     if mtype not in ("all", "nodes", "synapses"):
-        raise ValueError("type has to be one of 'all', 'nodes' or 'synapses'")
+        raise ValueError("mtype has to be one of 'all', 'nodes', or 'synapses'")
 
     models = []
 
     if mtype in ("all", "nodes"):
-        sr("modeldict")
-        models += spp().keys()
+        models += GetKernelStatus('node_models')
 
     if mtype in ("all", "synapses"):
-        sr("synapsedict")
-        models += spp().keys()
+        models += GetKernelStatus('synapse_models')
 
     if sel is not None:
-        models = [x for x in models if x.find(sel) >= 0]
+        models = [x for x in models if sel in x]
 
     models.sort()
 
     return tuple(models)
 
 
+@deprecated("nest.connection_rules")
 @check_stack
 def ConnectionRules():
-    """Return a typle of all available connection rules, sorted by name.
+    """Return a tuple of all available connection rules, sorted by name.
 
     Returns
     -------
     tuple
-        Available connection rules
+        Available connection rules, sorted by name
 
     """
 
-    sr('connruledict')
-    return tuple(sorted(spp().keys()))
+    return tuple(sorted(GetKernelStatus('connection_rules')))
 
 
 @check_stack
 def SetDefaults(model, params, val=None):
-    """Set the default parameter values of the given model.
+    """Set defaults for the given model or recording backend.
 
     New default values are used for all subsequently created instances
     of the model.
@@ -118,11 +114,11 @@ def SetDefaults(model, params, val=None):
     Parameters
     ----------
     model : str
-        Name of the model
+        Name of the model or recording backend
     params : str or dict
         Dictionary of new default parameter values
     val : str, optional
-        If given, `params` has to be the name of a model property.
+        If given, ``params`` has to be the name of a parameter.
 
     """
 
@@ -136,12 +132,12 @@ def SetDefaults(model, params, val=None):
 
 @check_stack
 def GetDefaults(model, keys=None, output=''):
-    """Return default parameters of the given model, specified by a string.
+    """Return defaults of the given model or recording backend.
 
     Parameters
     ----------
     model : str
-        Name of the model
+        Name of the model or recording backend
     keys : str or list, optional
         String or a list of strings naming model properties. `GetDefaults` then
         returns a single value or a list of values belonging to the keys

@@ -28,8 +28,8 @@ import os
 import textwrap
 import webbrowser
 
-from ..ll_api import *
-from .hl_api_helper import *
+from ..ll_api import check_stack, sli_func, sps, sr, spp
+from .hl_api_helper import broadcast, is_iterable, is_literal, load_help, show_help_with_pager, uni_str
 from .hl_api_types import to_json
 import nest
 
@@ -74,7 +74,7 @@ def helpdesk():
 
     Please note that the help pages will only be available if you ran
     ``make html`` prior to installing NEST. For more details, see
-    :ref:`documentation_workflow`.
+    :ref:`doc_workflow`.
 
     """
 
@@ -199,6 +199,12 @@ def set_verbosity(level):
     - M_WARNING=20, display warning messages and above
     - M_ERROR=30, display error messages and above
     - M_FATAL=40, display failure messages and above
+
+    .. note::
+
+       To suppress the usual output when NEST starts up (e.g., the welcome message and
+       version information), you can run ``export PYNEST_QUIET=1`` on the command
+       line before executing your simulation script.
 
     Parameters
     ----------

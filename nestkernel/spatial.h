@@ -27,8 +27,8 @@
 #include <vector>
 
 // Includes from nestkernel:
-#include "node_collection.h"
 #include "nest_types.h"
+#include "node_collection.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -38,8 +38,8 @@
 #include "token.h"
 
 // Includes from spatial:
-#include "layer.h"
 #include "free_layer.h"
+#include "layer.h"
 #include "mask.h"
 
 
@@ -53,14 +53,14 @@ class LayerMetadata : public NodeCollectionMetadata
 {
 public:
   LayerMetadata( AbstractLayerPTR );
-  ~LayerMetadata()
+  ~LayerMetadata() override
   {
   }
 
-  void set_status( const DictionaryDatum&, bool ){};
+  void set_status( const DictionaryDatum&, bool ) override {};
 
   void
-  get_status( DictionaryDatum& d ) const
+  get_status( DictionaryDatum& d ) const override
   {
     layer_->get_status( d );
   }
@@ -74,28 +74,28 @@ public:
 
   // Using string as enum would make stuff more complicated
   std::string
-  get_type() const
+  get_type() const override
   {
     return "spatial";
   }
 
   void
-  set_first_node_id( index node_id )
+  set_first_node_id( index node_id ) override
   {
     first_node_id_ = node_id;
   }
+
   index
-  get_first_node_id() const
+  get_first_node_id() const override
   {
     return first_node_id_;
   }
 
-  void slice( size_t start, size_t stop, size_t step, NodeCollectionPTR node_collection );
-
-  bool operator==( const NodeCollectionMetadataPTR rhs ) const
+  bool
+  operator==( const NodeCollectionMetadataPTR rhs ) const override
   {
     const auto rhs_layer_metadata = dynamic_cast< LayerMetadata* >( rhs.get() );
-    if ( rhs_layer_metadata == nullptr )
+    if ( not rhs_layer_metadata )
     {
       return false;
     }

@@ -28,12 +28,12 @@
 #include <vector>
 
 // Includes from nestkernel:
-#include "node.h"
 #include "device.h"
 #include "device_node.h"
-#include "recording_backend.h"
-#include "nest_types.h"
 #include "kernel_manager.h"
+#include "nest_types.h"
+#include "node.h"
+#include "recording_backend.h"
 
 // Includes from sli:
 #include "dictdatum.h"
@@ -132,9 +132,9 @@ public:
   RecordingDevice();
   RecordingDevice( const RecordingDevice& );
 
-  using Device::calibrate;
-  using Node::calibrate;
-  void calibrate( const std::vector< Name >&, const std::vector< Name >& );
+  using Device::pre_run_hook;
+  using Node::pre_run_hook;
+  void pre_run_hook( const std::vector< Name >&, const std::vector< Name >& );
 
   bool is_active( Time const& T ) const override;
 
@@ -165,6 +165,7 @@ private:
 
     Parameters_();
     Parameters_( const Parameters_& ) = default;
+    Parameters_& operator=( const Parameters_& ) = default;
     void get( DictionaryDatum& ) const;
     void set( const DictionaryDatum& );
   } P_;

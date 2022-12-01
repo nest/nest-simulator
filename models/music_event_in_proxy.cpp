@@ -39,8 +39,8 @@
 #include "logging.h"
 
 // Includes from nestkernel:
-#include "kernel_manager.h"
 #include "event_delivery_manager_impl.h"
+#include "kernel_manager.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -121,7 +121,7 @@ nest::music_event_in_proxy::init_buffers_()
 }
 
 void
-nest::music_event_in_proxy::calibrate()
+nest::music_event_in_proxy::pre_run_hook()
 {
   // register my port and my channel at the scheduler
   if ( not S_.registered_ )

@@ -163,8 +163,8 @@ pass_or_die
 % fifth test: assert that all models that have /receptor_types reject
 % connections with plain static_synapse
 {
-  ResetKernel % need clean modeldict
-  modeldict keys
+  ResetKernel
+  GetKernelStatus /node_models get
   {
     /mod Set
     mod GetDefaults /dflts Set

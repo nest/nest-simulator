@@ -45,6 +45,7 @@ each update point the total synaptic input h into the neuron is
 summed up, passed through a Heaviside gain function :math:`g(h) = H(h-\theta)`,
 whose output is either 1 (if input is above) or 0 (if input is below
 threshold theta).
+
 The time constant :math:`\tau_m` is defined as the
 mean inter-update-interval that is drawn from an exponential
 distribution with this parameter. Using this neuron to reproduce
@@ -61,6 +62,7 @@ the gain function and to decide upon a transition.  In order to
 obtain delayed coupling with delay :math:`d`, the user has to specify the
 delay :math:`d+h` upon connection, where :math:`h` is the simulation time step.
 
+See also [2]_.
 
 Parameters
 ++++++++++
@@ -138,7 +140,8 @@ public:
   bool operator()( RngPtr, double h );
 };
 
-inline bool gainfunction_mcculloch_pitts::operator()( RngPtr, double h )
+inline bool
+gainfunction_mcculloch_pitts::operator()( RngPtr, double h )
 {
   return h > theta_;
 }

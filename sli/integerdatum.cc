@@ -22,15 +22,6 @@
 
 #include "integerdatum.h"
 
-// Includes from sli:
-#include "numericdatum_impl.h"
-
-// explicit template instantiation needed
-// because otherwise methods defined in
-// numericdatum_impl.h will not be instantiated
-// Moritz, 2007-04-16
-template class NumericDatum< long, &SLIInterpreter::Integertype >;
-
 // initialization of static members requires template<>
 // see Stroustrup C.13.1 --- HEP 2001-08-09
 template <>

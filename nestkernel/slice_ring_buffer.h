@@ -181,7 +181,7 @@ SliceRingBuffer::get_next_spike( const long req_stamp,
   bool& end_of_refract )
 {
   end_of_refract = false;
-  if ( deliver_->empty() || refract_ <= deliver_->back() )
+  if ( deliver_->empty() or refract_ <= deliver_->back() )
   {
     if ( refract_.stamp_ == req_stamp )
     { // if relies on stamp_==long::max() if not refractory
@@ -234,17 +234,20 @@ inline SliceRingBuffer::SpikeInfo::SpikeInfo( long stamp, double ps_offset, doub
 {
 }
 
-inline bool SliceRingBuffer::SpikeInfo::operator<( const SpikeInfo& b ) const
+inline bool
+SliceRingBuffer::SpikeInfo::operator<( const SpikeInfo& b ) const
 {
   return stamp_ == b.stamp_ ? ps_offset_ > b.ps_offset_ : stamp_ < b.stamp_;
 }
 
-inline bool SliceRingBuffer::SpikeInfo::operator<=( const SpikeInfo& b ) const
+inline bool
+SliceRingBuffer::SpikeInfo::operator<=( const SpikeInfo& b ) const
 {
   return not( *this > b );
 }
 
-inline bool SliceRingBuffer::SpikeInfo::operator>( const SpikeInfo& b ) const
+inline bool
+SliceRingBuffer::SpikeInfo::operator>( const SpikeInfo& b ) const
 {
   return stamp_ == b.stamp_ ? ps_offset_ < b.ps_offset_ : stamp_ > b.stamp_;
 }

@@ -1,0 +1,25 @@
+name: Mirror to JSC
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  sync_to_jsc:
+    runs-on: ubuntu-latest
+    if: ${{ github.repository_owner == 'nest' }}
+    steps:
+      - name: sycnmaster
+        uses: wei/git-sync@v3
+        with:
+          source_repo: "nest/nest-simulator"
+          source_branch: "master"
+          destination_repo: "https://ghpusher:${{ secrets.JSC_GITLAB_TOKEN }}@gitlab.jsc.fz-juelich.de/nest/nest-simulator.git"
+          destination_branch: "master"
+      - name: synctags
+        uses: wei/git-sync@v3
+        with:
+          source_repo: "nest/nest-simulator"
+          source_branch: "refs/tags/v*"
+          destination_repo: "https://ghpusher:${{ secrets.JSC_GITLAB_TOKEN }}@gitlab.jsc.fz-juelich.de/nest/nest-simulator.git"
+          destination_branch: "refs/tags/v*"

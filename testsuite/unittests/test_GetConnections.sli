@@ -27,8 +27,9 @@
 
    Description:
 
-   This test generates 100 iaf_psc_alpha neurons and connects
-   them with different synapses.
+   This test generates 100 iaf_psc_alpha neurons and connects them
+   with different synapses. It then retrieves the parameters of those
+   connections and checks them against a known good reference.
 
    SeeAlso: GetConnections
 
@@ -67,15 +68,14 @@
     ResetKernel
     build_net
 
-    /conns << /synapse_model /static_synapse >> GetConnections { cva } Map def
-    /csrc conns { 0 get } Map def
-    /ctgt conns { 1 get } Map def
-    /cstp conns { 3 get } Map def  % synapse type
-    /syn_id synapsedict /static_synapse get def
+    /conns << /synapse_model /static_synapse >> GetConnections GetStatus def
+    /csrc conns { /source get } Map def
+    /ctgt conns { /target get } Map def
+    /cstp conns { /synapse_model get } Map def
 
     csrc static_sources eq
     ctgt static_targets eq and
-    cstp { syn_id eq and } Fold  % all synapses must have static type
+    cstp { /static_synapse eq and } Fold
   end
 } assert_or_die
 
@@ -88,17 +88,19 @@
     ResetKernel
     build_net
 
-    /conns << /synapse_model /stdp_synapse >> GetConnections { cva } Map def
-    /csrc conns { 0 get } Map def
-    /ctgt conns { 1 get } Map def
-    /cstp conns { 3 get } Map def  % synapse type
-    /syn_id synapsedict /stdp_synapse get def
+    /conns << /synapse_model /stdp_synapse >> GetConnections GetStatus def
+    /csrc conns { /source get } Map def
+    /ctgt conns { /target get } Map def
+    /cstp conns { /synapse_model get } Map def
 
     csrc stdp_sources eq
     ctgt stdp_targets eq and
-    cstp { syn_id eq and } Fold  % all synapses must have static type
+    cstp { /stdp_synapse eq and } Fold
   end
 } assert_or_die
+
+(SECOND TEST PASSED) ==
+
 
 % third test: retrieve all connections --- static will come first
 {
@@ -106,14 +108,17 @@
     ResetKernel
     build_net
 
-    /conns << >> GetConnections { cva } Map def
-    /csrc conns { 0 get } Map def
-    /ctgt conns { 1 get } Map def
+    /conns << >> GetConnections GetStatus def
+    /csrc conns { /source get } Map def
+    /ctgt conns { /target get } Map def
 
     csrc static_sources stdp_sources join eq
     ctgt static_targets stdp_targets join eq and
   end
 } assert_or_die
+
+(THIRD TEST PASSED) ==
+
 
 % fourth test: retrieve connections for some sources
 {
@@ -127,14 +132,17 @@
     /stgt_stdp stdp_targets -3 Take def     % those with static+stdp
     /ssrc_all ssrc_static ssrc_stdp join def
     /stgt_all stgt_static stgt_stdp join def
-    /conns << /source ssrc_all cvnodecollection >> GetConnections { cva } Map def
-    /csrc conns { 0 get } Map def
-    /ctgt conns { 1 get } Map def
+    /conns << /source ssrc_all cvnodecollection >> GetConnections GetStatus def
+    /csrc conns { /source get } Map def
+    /ctgt conns { /target get } Map def
 
     csrc ssrc_all eq
     ctgt stgt_all eq and
   end
 } assert_or_die
+
+(FOURTH TEST PASSED) ==
+
 
 % fifth test: retrieve connections for some targets
 {
@@ -148,14 +156,17 @@
     /stgt_stdp stdp_targets -3 Take def     % those with static+stdp
     /ssrc_all ssrc_static ssrc_stdp join def
     /stgt_all stgt_static stgt_stdp join def
-    /conns << /target stgt_all cvnodecollection >> GetConnections { cva } Map def
-    /csrc conns { 0 get } Map def
-    /ctgt conns { 1 get } Map def
+    /conns << /target stgt_all cvnodecollection >> GetConnections GetStatus def
+    /csrc conns { /source get } Map def
+    /ctgt conns { /target get } Map def
 
     csrc ssrc_all eq
     ctgt stgt_all eq and
   end
 } assert_or_die
+
+(FIFTH TEST PASSED) ==
+
 
 % sixth test: retrieve connections for specific sources and targets
 {
@@ -170,14 +181,17 @@
     /stgt_stdp stdp_targets [-3 -1] Take def     % those with static+stdp
     /ssrc_all ssrc_static ssrc_stdp join def
     /stgt_all stgt_static stgt_stdp join def
-    /conns << /source ssrc_all cvnodecollection /target stgt_all cvnodecollection >> GetConnections { cva } Map def
-    /csrc conns { 0 get } Map def
-    /ctgt conns { 1 get } Map def
+    /conns << /source ssrc_all cvnodecollection /target stgt_all cvnodecollection >> GetConnections GetStatus def
+    /csrc conns { /source get } Map def
+    /ctgt conns { /target get } Map def
 
     csrc ssrc_static -2 Take ssrc_stdp -2 Take join eq
     ctgt stgt_static  2 Take stgt_stdp  2 Take join eq and
   end
 } assert_or_die
+
+(SIXTH TEST PASSED) ==
+
 
 % seventh test: same as sixth, but select static synapses
 {
@@ -194,15 +208,18 @@
     /stgt_all stgt_static stgt_stdp join def
     /conns
       << /source ssrc_all cvnodecollection /target stgt_all cvnodecollection /synapse_model /static_synapse >>
-      GetConnections { cva } Map
+      GetConnections GetStatus
     def
-    /csrc conns { 0 get } Map def
-    /ctgt conns { 1 get } Map def
+    /csrc conns { /source get } Map def
+    /ctgt conns { /target get } Map def
 
     csrc ssrc_static -2 Take eq
     ctgt stgt_static  2 Take eq and
   end
 } assert_or_die
+
+(SEVENTH TEST PASSED) ==
+
 
 % eighth test: check static synapses on four threads
 {
@@ -212,13 +229,13 @@
     build_net
 
     % NB: relative ordering of data from threads is random under OpenMP
-    /conns << /synapse_model /static_synapse >> GetConnections { cva } Map def
+    /conns << /synapse_model /static_synapse >> GetConnections GetStatus def
 
     % SLI Sort can only sort numbers or strings.
     % To sort source-target pairs, we convert them to large numbers
     /conns_as_nums
        conns
-       { dup 0 get 1000 mul exch 1 get add } Map
+       { dup /source get 1000 mul exch /target get add } Map
     def
     /expect_as_nums
        [ static_sources static_targets ]
@@ -228,5 +245,8 @@
     conns_as_nums Sort expect_as_nums Sort eq
 end
 } assert_or_die
+
+(EIGHT TEST PASSED) ==
+
 
 endusing

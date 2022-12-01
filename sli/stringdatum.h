@@ -84,7 +84,7 @@ public:
   ToUppercase_sFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class ToLowercase_sFunction : public SLIFunction
@@ -93,7 +93,7 @@ public:
   ToLowercase_sFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 #endif

@@ -23,9 +23,16 @@
 Classes defining the different PyNEST types
 """
 
-from ..ll_api import *
+from ..ll_api import check_stack, sli_func, sps, sr, spp, take_array_index
 from .. import pynestkernel as kernel
-from .hl_api_helper import *
+from .hl_api_helper import (
+    broadcast,
+    get_parameters,
+    get_parameters_hierarchical_addressing,
+    is_iterable,
+    is_literal,
+    restructure_data,
+)
 from .hl_api_simulation import GetKernelStatus
 
 import numpy
@@ -40,10 +47,12 @@ except ImportError:
 
 __all__ = [
     'CollocatedSynapses',
+    'Compartments',
     'CreateParameter',
     'Mask',
     'NodeCollection',
     'Parameter',
+    'Receptors',
     'serializable',
     'SynapseCollection',
     'to_json',
@@ -77,8 +86,8 @@ def CreateParameter(parametertype, specs):
 
     **Parameter types**
 
-    Some available parameter types (`parametertype` parameter), their function and
-    acceptable keys for their corresponding specification dictionaries
+    Examples of available parameter types (`parametertype` parameter), with their function and
+    acceptable keys for their corresponding specification dictionaries:
 
     * Constant
         ::
@@ -93,26 +102,20 @@ def CreateParameter(parametertype, specs):
                 {'min' : float, # minimum value, default: 0.0
                  'max' : float} # maximum value, default: 1.0
 
-            # random parameter with normal distribution, optionally truncated
-            # to [min,max)
+            # random parameter with normal distribution
             'normal':
                 {'mean' : float, # mean value, default: 0.0
-                 'sigma': float, # standard deviation, default: 1.0
-                 'min'  : float, # minimum value, default: -inf
-                 'max'  : float} # maximum value, default: +inf
+                 'std'  : float} # standard deviation, default: 1.0
 
-            # random parameter with lognormal distribution,
-            # optionally truncated to [min,max)
+            # random parameter with lognormal distribution
             'lognormal' :
-                {'mu'   : float, # mean value of logarithm, default: 0.0
-                 'sigma': float, # standard deviation of log, default: 1.0
-                 'min'  : float, # minimum value, default: -inf
-                 'max'  : float} # maximum value, default: +inf
+                {'mean' : float, # mean value of logarithm, default: 0.0
+                 'std'  : float} # standard deviation of log, default: 1.0
     """
     return sli_func('CreateParameter', {parametertype: specs})
 
 
-class NodeCollectionIterator(object):
+class NodeCollectionIterator:
     """
     Iterator class for `NodeCollection`.
 
@@ -133,12 +136,12 @@ class NodeCollectionIterator(object):
         if self._increment > len(self._nc) - 1:
             raise StopIteration
 
-        val = sli_func('Take', self._nc._datum, [self._increment + (self._increment >= 0)])
+        val = sli_func('Take_g_a', self._nc._datum, [self._increment, self._increment + 1, 1])
         self._increment += 1
         return val
 
 
-class NodeCollection(object):
+class NodeCollection:
     """
     Class for `NodeCollection`.
 
@@ -152,6 +155,10 @@ class NodeCollection(object):
     list of nodes to a `NodeCollection` with ``nest.NodeCollection(list)``.
 
     If your nodes have spatial extent, use the member parameter ``spatial`` to get the spatial information.
+
+    Slicing a NodeCollection follows standard Python slicing syntax: nc[start:stop:step], where start and stop
+    gives the zero-indexed right-open range of nodes, and step gives the step length between nodes. The step must
+    be strictly positive.
 
     Example
     -------
@@ -210,26 +217,26 @@ class NodeCollection(object):
     def __getitem__(self, key):
         if isinstance(key, slice):
             if key.start is None:
-                start = 1
+                start = 0
             else:
-                start = key.start + 1 if key.start >= 0 else max(key.start, -1 * self.__len__())
-                if start > self.__len__():
+                start = key.start
+                if abs(start) > self.__len__():
                     raise IndexError('slice start value outside of the NodeCollection')
             if key.stop is None:
                 stop = self.__len__()
             else:
-                stop = min(key.stop, self.__len__()) if key.stop >= 0 else key.stop - 1
+                stop = key.stop
                 if abs(stop) > self.__len__():
                     raise IndexError('slice stop value outside of the NodeCollection')
             step = 1 if key.step is None else key.step
             if step < 1:
                 raise IndexError('slicing step for NodeCollection must be strictly positive')
 
-            return sli_func('Take', self._datum, [start, stop, step])
+            return sli_func('Take_g_a', self._datum, [start, stop, step])
         elif isinstance(key, (int, numpy.integer)):
-            if abs(key + (key >= 0)) > self.__len__():
+            if key >= self.__len__() or key + self.__len__() < 0:
                 raise IndexError('index value outside of the NodeCollection')
-            return sli_func('Take', self._datum, [key + (key >= 0)])
+            return sli_func('Take_g_a', self._datum, [key, key + 1, 1])
         elif isinstance(key, (list, tuple)):
             if len(key) == 0:
                 return NodeCollection([])
@@ -237,7 +244,7 @@ class NodeCollection(object):
             if all(isinstance(x, bool) for x in key):
                 if len(key) != len(self):
                     raise IndexError('Bool index array must be the same length as NodeCollection')
-                np_key = numpy.array(key, dtype=numpy.bool)
+                np_key = numpy.array(key, dtype=bool)
             # Checking that elements are not instances of bool too, because bool inherits from int
             elif all(isinstance(x, int) and not isinstance(x, bool) for x in key):
                 np_key = numpy.array(key, dtype=numpy.uint64)
@@ -263,7 +270,7 @@ class NodeCollection(object):
             raise IndexError('only integers, slices, lists, tuples, and numpy arrays are valid indices')
 
     def __contains__(self, node_id):
-        return sli_func('MemberQ', self._datum, node_id)
+        return sli_func('InCollection', self._datum, node_id)
 
     def __eq__(self, other):
         if not isinstance(other, NodeCollection):
@@ -381,6 +388,10 @@ class NodeCollection(object):
         elif len(params) == 1:
             # params is a tuple with a string or list of strings
             result = get_parameters(self, params[0])
+            if params[0] == 'compartments':
+                result = Compartments(self, result)
+            elif params[0] == 'receptors':
+                result = Receptors(self, result)
         else:
             # Hierarchical addressing
             result = get_parameters_hierarchical_addressing(self, params)
@@ -441,6 +452,20 @@ class NodeCollection(object):
             raise TypeError("must either provide params or kwargs, but not both.")
 
         local_nodes = [self.local] if len(self) == 1 else self.local
+
+        if isinstance(params, dict) and 'compartments' in params:
+            if isinstance(params['compartments'], Compartments):
+                params['compartments'] = params['compartments'].get_tuple()
+            elif params['compartments'] is None:
+                # Adding compartments has been handled by the += operator, so we can remove the entry.
+                params.pop('compartments')
+
+        if isinstance(params, dict) and 'receptors' in params:
+            if isinstance(params['receptors'], Receptors):
+                params['receptors'] = params['receptors'].get_tuple()
+            elif params['receptors'] is None:
+                # Adding receptors has been handled by the += operator, so we can remove the entry.
+                params.pop('receptors')
 
         if isinstance(params, dict) and all(local_nodes):
 
@@ -532,7 +557,7 @@ class NodeCollection(object):
             self.set({attr: value})
 
 
-class SynapseCollectionIterator(object):
+class SynapseCollectionIterator:
     """
     Iterator class for SynapseCollection.
     """
@@ -547,7 +572,7 @@ class SynapseCollectionIterator(object):
         return SynapseCollection(next(self._iter))
 
 
-class SynapseCollection(object):
+class SynapseCollection:
     """
     Class for Connections.
 
@@ -704,7 +729,7 @@ class SynapseCollection(object):
     def __setattr__(self, attr, value):
         # `_datum` is the only property of SynapseCollection that should not be
         # interpreted as a property of the model
-        if attr == '_datum' or 'print_full':
+        if attr == '_datum' or attr == 'print_full':
             super().__setattr__(attr, value)
         else:
             self.set({attr: value})
@@ -784,9 +809,11 @@ class SynapseCollection(object):
         if pandas_output and not HAVE_PANDAS:
             raise ImportError('Pandas could not be imported')
 
-        # Return empty tuple if we have no connections or if we have done a nest.ResetKernel()
-        if self.__len__() == 0 or GetKernelStatus('num_connections') == 0:
-            return ()
+        # Return empty dictionary if we have no connections or if we have done a nest.ResetKernel()
+        num_conns = GetKernelStatus('num_connections')  # Has to be called first because it involves MPI communication.
+        if self.__len__() == 0 or num_conns == 0:
+            # Return empty tuple if get is called with an argument
+            return {} if keys is None else ()
 
         if keys is None:
             cmd = 'GetStatus'
@@ -886,8 +913,15 @@ class SynapseCollection(object):
         sr('2 arraystore')
         sr('Transpose { arrayload pop SetStatus } forall')
 
+    def disconnect(self):
+        """
+        Disconnect the connections in the `SynapseCollection`.
+        """
+        sps(self._datum)
+        sr('Disconnect_a')
 
-class CollocatedSynapses(object):
+
+class CollocatedSynapses:
     """
     Class for collocated synapse specifications.
 
@@ -917,7 +951,7 @@ class CollocatedSynapses(object):
         return len(self.syn_specs)
 
 
-class Mask(object):
+class Mask:
     """
     Class for spatial masks.
 
@@ -968,7 +1002,7 @@ class Mask(object):
         return sli_func("Inside", point, self._datum)
 
 
-class Parameter(object):
+class Parameter:
     """
     Class for parameters
 
@@ -1067,7 +1101,7 @@ class Parameter(object):
                 import nest
 
                 # normal distribution parameter
-                P = nest.CreateParameter('normal', {'mean': 0.0, 'sigma': 1.0})
+                P = nest.CreateParameter('normal', {'mean': 0.0, 'std': 1.0})
 
                 # get out value
                 P.GetValue()
@@ -1091,6 +1125,70 @@ class Parameter(object):
                 if len(pos) != len(positions[0]):
                     raise ValueError('All positions must have the same number of dimensions')
             return sli_func('Apply', self._datum, {'source': spatial_nc, 'targets': positions})
+
+
+class CmBase:
+
+    def __init__(self, node_collection, elements):
+        if not isinstance(node_collection, NodeCollection):
+            raise TypeError(f'node_collection must be a NodeCollection, got {type(node_collection)}')
+        if not isinstance(elements, tuple):
+            raise TypeError(f'elements must be a tuple of dicts, got {type(elements)}')
+        self._elements = elements
+        self._node_collection = node_collection
+
+    def __add__(self, other):
+        new_elements = list(self._elements)
+        if isinstance(other, dict):
+            new_elements += [other]
+        elif isinstance(other, (tuple, list)):
+            if not all(isinstance(d, dict) for d in other):
+                raise TypeError(
+                    f'{self.__class__.__name__} can only be added with dicts, lists of dicts, '
+                    f'or other {self.__class__.__name__}')
+            new_elements += list(other)
+        elif isinstance(other, self.__class__):
+            new_elements += list(other._elements)
+        else:
+            raise NotImplementedError(f'{self.__class__.__name__} can only be added with dicts, lists of dicts,'
+                                      f' or other {self.__class__.__name__}, got {type(other)}')
+
+        return self.__class__(self._node_collection, tuple(new_elements))
+
+    def __iadd__(self, other):
+        if isinstance(other, dict):
+            new_elements = [other]
+        elif isinstance(other, (tuple, list)):
+            if not all(isinstance(d, dict) for d in other):
+                raise TypeError(f'{self.__class__.__name__} can only be added with dicts, lists of dicts, '
+                                f'or other {self.__class__.__name__}')
+            new_elements = list(other)
+        elif isinstance(other, self.__class__):
+            new_elements = list(other._elements)
+        else:
+            raise NotImplementedError(f'{self.__class__.__name__} can only be added with dicts, lists of dicts,'
+                                      f' or other {self.__class__.__name__}, got {type(other)}')
+        self._node_collection.set({f'add_{self.__class__.__name__.lower()}': new_elements})
+        return None  # Flagging elements as added by returning None
+
+    def __getitem__(self, key):
+        return self._elements[key]
+
+    def __str__(self):
+        return str(self._elements)
+
+    def get_tuple(self):
+        return self._elements
+
+
+class Compartments(CmBase):
+    # No specialization here because all is done in the base class based on the class name.
+    pass
+
+
+class Receptors(CmBase):
+    # No specialization here because all is done in the base class based on the class name.
+    pass
 
 
 def serializable(data):

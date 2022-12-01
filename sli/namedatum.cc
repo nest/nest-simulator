@@ -28,11 +28,3 @@ template <>
 sli::pool AggregateDatum< Name, &SLIInterpreter::Nametype >::memory( sizeof( NameDatum ), 10240, 1 );
 template <>
 sli::pool AggregateDatum< Name, &SLIInterpreter::Literaltype >::memory( sizeof( LiteralDatum ), 10240, 1 );
-
-
-// explicit template instantiation needed
-// because otherwise methods defined in
-// numericdatum_impl.h will not be instantiated
-// Moritz, 2007-04-16
-template class AggregateDatum< Name, &SLIInterpreter::Nametype >;
-template class AggregateDatum< Name, &SLIInterpreter::Literaltype >;

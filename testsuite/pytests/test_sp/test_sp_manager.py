@@ -21,9 +21,12 @@
 
 import nest
 import unittest
-from utils import extract_dict_a_from_b
 
 __author__ = 'naveau'
+
+
+def extract_dict_a_from_b(a, b):
+    return dict((k, b[k]) for k in a.keys() if k in b.keys())
 
 
 class TestStructuralPlasticityManager(unittest.TestCase):
@@ -47,7 +50,7 @@ class TestStructuralPlasticityManager(unittest.TestCase):
         ]
 
     def test_register_synapses(self):
-        for syn_model in nest.Models('synapses'):
+        for syn_model in nest.synapse_models:
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
                 nest.SetDefaults(syn_model, {'delay': 0.5})
@@ -60,9 +63,8 @@ class TestStructuralPlasticityManager(unittest.TestCase):
                 nest.set(min_delay=0.1, max_delay=1.0)
                 nest.structural_plasticity_synapses = {'syn1': syn_dict}
                 kernel_status = nest.structural_plasticity_synapses
-                self.assertIn('syn1', kernel_status)
-                self.assertEqual(kernel_status['syn1'], extract_dict_a_from_b(
-                    kernel_status['syn1'], syn_dict))
+                assert 'syn1' in kernel_status
+                assert kernel_status['syn1'] == extract_dict_a_from_b(kernel_status['syn1'], syn_dict)
 
     def test_min_max_delay_using_default_delay(self):
         nest.ResetKernel()
@@ -75,8 +77,8 @@ class TestStructuralPlasticityManager(unittest.TestCase):
                 'post_synaptic_element': 'SE2',
             }
         }
-        self.assertLessEqual(nest.min_delay, delay)
-        self.assertGreaterEqual(nest.max_delay, delay)
+        assert nest.min_delay <= delay
+        assert nest.max_delay >= delay
 
     def test_getting_kernel_status(self):
         neuron_model = 'iaf_psc_alpha'
@@ -113,15 +115,15 @@ class TestStructuralPlasticityManager(unittest.TestCase):
                             )
 
         sp_synapses = nest.structural_plasticity_synapses['syn1']
-        assert ('pre_synaptic_element' in sp_synapses)
-        assert ('post_synaptic_element' in sp_synapses)
-        assert (sp_synapses['pre_synaptic_element'] == 'Axon_ex')
-        assert (sp_synapses['post_synaptic_element'] == 'Den_ex')
+        assert 'pre_synaptic_element' in sp_synapses
+        assert 'post_synaptic_element' in sp_synapses
+        assert sp_synapses['pre_synaptic_element'] == 'Axon_ex'
+        assert sp_synapses['post_synaptic_element'] == 'Den_ex'
 
-        assert (nest.structural_plasticity_update_interval == 10000.)
+        assert nest.structural_plasticity_update_interval == 10000.0
 
     def test_synapse_creation(self):
-        for syn_model in nest.Models('synapses'):
+        for syn_model in nest.synapse_models:
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
                 syn_dict = {
@@ -140,11 +142,10 @@ class TestStructuralPlasticityManager(unittest.TestCase):
                 nest.Simulate(10.0)
                 status = nest.GetStatus(neurons, 'synaptic_elements')
                 for st_neuron in status:
-                    self.assertEqual(10, st_neuron['SE1']['z_connected'])
-                    self.assertEqual(10, st_neuron['SE2']['z_connected'])
+                    assert st_neuron['SE1']['z_connected'] == 10
+                    assert st_neuron['SE2']['z_connected'] == 10
 
-                self.assertEqual(
-                    20, len(nest.GetConnections(neurons, neurons, syn_model)))
+                assert len(nest.GetConnections(neurons, neurons, syn_model)) == 20
                 break
 
 

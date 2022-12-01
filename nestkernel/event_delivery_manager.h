@@ -39,8 +39,9 @@
 #include "nest_types.h"
 #include "node.h"
 #include "per_thread_bool_indicator.h"
-#include "target_table.h"
+#include "secondary_event.h"
 #include "spike_data.h"
+#include "target_table.h"
 #include "vp_manager.h"
 
 // Includes from sli:
@@ -57,13 +58,13 @@ class EventDeliveryManager : public ManagerInterface
 {
 public:
   EventDeliveryManager();
-  virtual ~EventDeliveryManager();
+  ~EventDeliveryManager() override;
 
-  virtual void initialize();
-  virtual void finalize();
-
-  virtual void set_status( const DictionaryDatum& );
-  virtual void get_status( DictionaryDatum& );
+  void initialize() override;
+  void finalize() override;
+  void change_number_of_threads() override;
+  void set_status( const DictionaryDatum& ) override;
+  void get_status( DictionaryDatum& ) override;
 
   /**
    * Standard routine for sending events. This method decides if
@@ -456,10 +457,10 @@ EventDeliveryManager::reset_spike_register_( const thread tid )
     }
   }
 
-  for (
-    std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it = off_grid_spike_register_[ tid ].begin();
-    it < off_grid_spike_register_[ tid ].end();
-    ++it )
+  for ( std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it =
+          off_grid_spike_register_[ tid ].begin();
+        it < off_grid_spike_register_[ tid ].end();
+        ++it )
   {
     for ( std::vector< std::vector< OffGridTarget > >::iterator iit = it->begin(); iit < it->end(); ++iit )
     {
@@ -487,10 +488,10 @@ EventDeliveryManager::clean_spike_register_( const thread tid )
       iit->erase( new_end, iit->end() );
     }
   }
-  for (
-    std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it = off_grid_spike_register_[ tid ].begin();
-    it < off_grid_spike_register_[ tid ].end();
-    ++it )
+  for ( std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it =
+          off_grid_spike_register_[ tid ].begin();
+        it < off_grid_spike_register_[ tid ].end();
+        ++it )
   {
     for ( std::vector< std::vector< OffGridTarget > >::iterator iit = it->begin(); iit < it->end(); ++iit )
     {

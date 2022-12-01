@@ -83,7 +83,7 @@ M_ERROR setverbosity
 
 % find all hpc synapses with non-hpc counterparts that can be used without
 % additional setup
-/synmodels synapsedict keys def
+/synmodels GetKernelStatus /synapse_models get def
 /hpcsyns synmodels { cvs -4 Take (_hpc) eq } Select def
 /hpcwithpartner hpcsyns { dup hpctoplain synmodels exch MemberQ exch synapse_works and } Select def
 

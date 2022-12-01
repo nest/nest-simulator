@@ -23,12 +23,14 @@
 # and stdp_nn_restr_synapse in NEST.
 
 import nest
-import unittest
+import numpy as np
+import pytest
+
 from math import exp
 
 
 @nest.ll_api.check_stack
-class STDPNNSynapsesTest(unittest.TestCase):
+class TestSTDPNNSynapses:
     """
     Test the weight change by STDP
     with three nearest-neighbour spike pairing schemes.
@@ -43,12 +45,12 @@ class STDPNNSynapsesTest(unittest.TestCase):
     Instead, it directly iterates through the spike history.
     """
 
+    @pytest.fixture(autouse=True)
     def setUp(self):
         self.resolution = 0.1  # [ms]
         self.presynaptic_firing_rate = 20.0  # [Hz]
         self.postsynaptic_firing_rate = 20.0  # [Hz]
         self.simulation_duration = 1e+4  # [ms]
-        self.hardcoded_trains_length = 15.  # [ms]
         self.synapse_parameters = {
             "receptor_type": 1,
             "delay": self.resolution,
@@ -66,6 +68,18 @@ class STDPNNSynapsesTest(unittest.TestCase):
             "tau_minus": 33.7
         }
 
+        # While the random sequences, fairly long, would supposedly
+        # reveal small differences in the weight change between NEST
+        # and ours, some low-probability events (say, coinciding
+        # spikes) can well not have occured. To generate and
+        # test every possible combination of pre/post order, we
+        # append some hardcoded spike sequences:
+        # pre: 1       5 6 7   9    11 12 13
+        # post:  2 3 4       8 9 10    12
+        self.hardcoded_pre_times = np.array([1, 5, 6, 7, 9, 11, 12, 13], dtype=float)
+        self.hardcoded_post_times = np.array([2, 3, 4, 8, 9, 10, 12], dtype=float)
+        self.hardcoded_trains_length = 2. + max(np.amax(self.hardcoded_pre_times), np.amax(self.hardcoded_post_times))
+
     def do_nest_simulation_and_compare_to_reproduced_weight(self,
                                                             pairing_scheme):
         synapse_model = "stdp_" + pairing_scheme + "_synapse"
@@ -75,13 +89,13 @@ class STDPNNSynapsesTest(unittest.TestCase):
         weight_reproduced_independently = self.reproduce_weight_drift(
             pre_spikes, post_spikes,
             self.synapse_parameters["weight"])
-        self.assertAlmostEqual(
+        np.testing.assert_almost_equal(
             weight_reproduced_independently,
             weight_by_nest,
-            msg=synapse_model + " test: "
-                                "Resulting synaptic weight %e "
-                                "differs from expected %e" % (
-                                    weight_by_nest, weight_reproduced_independently))
+            err_msg=synapse_model + " test: "
+                                    "Resulting synaptic weight %e "
+                                    "differs from expected %e" % (
+                                       weight_by_nest, weight_reproduced_independently))
 
     def do_the_nest_simulation(self):
         """
@@ -93,12 +107,10 @@ class STDPNNSynapsesTest(unittest.TestCase):
         nest.ResetKernel()
         nest.resolution = self.resolution
 
-        neurons = nest.Create(
+        presynaptic_neuron, postsynaptic_neuron = nest.Create(
             "parrot_neuron",
             2,
             params=self.neuron_parameters)
-        presynaptic_neuron = neurons[0]
-        postsynaptic_neuron = neurons[1]
 
         generators = nest.Create(
             "poisson_generator",
@@ -110,32 +122,13 @@ class STDPNNSynapsesTest(unittest.TestCase):
         presynaptic_generator = generators[0]
         postsynaptic_generator = generators[1]
 
-        # While the random sequences, fairly long, would supposedly
-        # reveal small differences in the weight change between NEST
-        # and ours, some low-probability events (say, coinciding
-        # spikes) can well not have occured. To generate and
-        # test every possible combination of pre/post precedence, we
-        # append some hardcoded spike sequences:
-        # pre: 1       5 6 7   9    11 12 13
-        # post:  2 3 4       8 9 10    12
-        (
-            hardcoded_pre_times,
-            hardcoded_post_times
-        ) = [
-            [
-                self.simulation_duration - self.hardcoded_trains_length + t
-                for t in train
-            ] for train in (
-                (1, 5, 6, 7, 9, 11, 12, 13),
-                (2, 3, 4, 8, 9, 10, 12)
-            )
-        ]
-
         spike_senders = nest.Create(
             "spike_generator",
             2,
-            params=({"spike_times": hardcoded_pre_times},
-                    {"spike_times": hardcoded_post_times})
+            params=({"spike_times": self.hardcoded_pre_times
+                    + self.simulation_duration - self.hardcoded_trains_length},
+                    {"spike_times": self.hardcoded_post_times
+                    + self.simulation_duration - self.hardcoded_trains_length})
         )
         pre_spike_generator = spike_senders[0]
         post_spike_generator = spike_senders[1]
@@ -285,20 +278,3 @@ class STDPNNSynapsesTest(unittest.TestCase):
 
     def test_nn_restr_synapse(self):
         self.do_nest_simulation_and_compare_to_reproduced_weight("nn_restr")
-
-
-def suite():
-
-    # makeSuite is sort of obsolete http://bugs.python.org/issue2721
-    # using loadTestsFromTestCase instead.
-    suite = unittest.TestLoader().loadTestsFromTestCase(STDPNNSynapsesTest)
-    return unittest.TestSuite([suite])
-
-
-def run():
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suite())
-
-
-if __name__ == "__main__":
-    run()

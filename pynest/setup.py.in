@@ -30,7 +30,7 @@ setup(
     license = 'GPLv2+',
     packages = ['nest', 'nest.lib'],
     install_requires = ['numpy', 'scipy'],
-    extras_require = {'test': ['junitparser', 'matplotlib', 'nose']},
+    extras_require = {'test': ['junitparser', 'matplotlib', 'pytest']},
     classifiers = [
         'Development Status :: 6 - Mature',
         'Programming Language :: Python :: 3.8',

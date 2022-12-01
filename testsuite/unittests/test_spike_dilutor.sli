@@ -30,6 +30,9 @@ Description:
 100 spikes are given to spike_dilutor and it has to repeat 20% of them (20 spikes) to 10 different spike recorders.
 If the average number of spikes detected by spike recorders is within 5% relative to the expected value, the dilutor works fine.
 
+Note:
+spike_dilutor is deprecated. Use bernoulli_synapse instead.
+
 Author: Hesam Setareh, April 2015
  */
 

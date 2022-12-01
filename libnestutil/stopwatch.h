@@ -158,7 +158,7 @@ private:
 inline bool
 Stopwatch::correct_timeunit( timeunit_t t )
 {
-  return t == MICROSEC || t == MILLISEC || t == SECONDS || t == MINUTES || t == HOURS || t == DAYS;
+  return t == MICROSEC or t == MILLISEC or t == SECONDS or t == MINUTES or t == HOURS or t == DAYS;
 }
 
 inline void
@@ -281,7 +281,7 @@ nest::Stopwatch::get_timestamp()
   // * JuQueen (BG/Q)
   // * MacOS 10.9
   struct timeval now;
-  gettimeofday( &now, ( struct timezone* ) 0 );
+  gettimeofday( &now, static_cast< struct timezone* >( nullptr ) );
   return ( nest::Stopwatch::timestamp_t ) now.tv_usec
     + ( nest::Stopwatch::timestamp_t ) now.tv_sec * nest::Stopwatch::SECONDS;
 }

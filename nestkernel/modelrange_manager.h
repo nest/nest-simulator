@@ -41,21 +41,14 @@ class ModelRangeManager : public ManagerInterface
 {
 public:
   ModelRangeManager();
-  ~ModelRangeManager()
+  ~ModelRangeManager() override
   {
   }
 
-  virtual void initialize();
-  virtual void finalize();
-
-  virtual void
-  set_status( const DictionaryDatum& )
-  {
-  }
-  virtual void
-  get_status( DictionaryDatum& )
-  {
-  }
+  void initialize() override;
+  void finalize() override;
+  void set_status( const DictionaryDatum& ) override;
+  void get_status( DictionaryDatum& ) override;
 
   /**
    * Assign a range of node IDs for the given model
@@ -78,11 +71,6 @@ public:
   Model* get_model_of_node_id( index );
 
   /**
-   * Check whether this model ID has any node IDs assigned to it
-   */
-  bool model_in_use( index i ) const;
-
-  /**
    * Return the contiguous range of IDs of nodes assigned to the same model
    * as the node with the given node ID.
    */
@@ -98,11 +86,20 @@ private:
   index last_node_id_;
 };
 
+inline void
+nest::ModelRangeManager::set_status( const DictionaryDatum& )
+{
+}
+
+inline void
+nest::ModelRangeManager::get_status( DictionaryDatum& )
+{
+}
 
 inline bool
 nest::ModelRangeManager::is_in_range( index node_id ) const
 {
-  return ( ( node_id <= last_node_id_ ) and ( node_id >= first_node_id_ ) );
+  return ( node_id <= last_node_id_ and node_id >= first_node_id_ );
 }
 
 inline std::vector< modelrange >::const_iterator

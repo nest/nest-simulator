@@ -1,0 +1,52 @@
+/*
+ *  test_rate_proxy_receiver.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+(unittest) run
+/unittest using
+
+skip_if_without_music
+
+M_ERROR setverbosity
+
+{
+    /simtime 500 def
+    /mm_starttime 400. def  % To let receiving neuron reach equilibrium
+
+    /music_rate_in_proxy Create /mrip Set
+    /lin_rate_ipn Create /neuron Set
+    /multimeter Create /mm Set
+
+    mrip << /port_name (rate_in) /music_channel 0 >> SetStatus
+    neuron << /sigma 0.0 >> SetStatus
+    mm << /interval 0.1 /record_from [ /rate ] /start mm_starttime >> SetStatus
+
+    mrip neuron /one_to_one << /synapse_model /rate_connection_instantaneous >> Connect
+    mm neuron Connect
+
+    simtime Simulate
+
+    mm GetStatus 0 get /events get /rate get /rates Set
+
+    % Test that all rates are equal to the drive rate, 1.5, in the sender
+    rates Max rates Min eq
+    rates Max 1.5 eq and
+} assert_or_die

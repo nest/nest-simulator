@@ -98,12 +98,11 @@ class VogelsSprekelerConnectionTestCase(unittest.TestCase):
         def setupProperty(property):
             bad_syn_spec = self.syn_spec.copy()
             bad_syn_spec.update(property)
-            nest.Connect(self.pre_neuron, self.post_neuron,
-                         syn_spec=bad_syn_spec)
+            nest.Connect(self.pre_neuron, self.post_neuron, syn_spec=bad_syn_spec)
 
         def badPropertyWith(content, parameters):
-            self.assertRaisesRegexp(nest.kernel.NESTError, "BadProperty(.+)" +
-                                    content, setupProperty, parameters)
+            msg = "BadProperty(.+)" + content
+            self.assertRaisesRegex(nest.kernel.NESTError, msg, setupProperty, parameters)
 
         badPropertyWith("Kplus", {"Kplus": -1.0})
 

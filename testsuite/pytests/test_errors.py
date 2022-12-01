@@ -86,22 +86,12 @@ class ErrorTestCase(unittest.TestCase):
         def slice_test_composite():
             return nc_c[8:9]
 
-        self.assertRaisesRegexp(
-            nest.kernel.NESTError, "InvalidNodeCollection", add_test_primitive)
-
-        self.assertRaisesRegexp(
-            nest.kernel.NESTError, "InvalidNodeCollection", add_test_composite)
-
-        self.assertRaisesRegexp(
-            nest.kernel.NESTError, "InvalidNodeCollection", add_test_pc)
-
-        self.assertRaisesRegexp(nest.kernel.NESTError,
-                                "InvalidNodeCollection",
-                                slice_test_primitive)
-
-        self.assertRaisesRegexp(nest.kernel.NESTError,
-                                "InvalidNodeCollection",
-                                slice_test_composite)
+        msg = "InvalidNodeCollection"
+        self.assertRaisesRegex(nest.kernel.NESTError, msg, add_test_primitive)
+        self.assertRaisesRegex(nest.kernel.NESTError, msg, add_test_composite)
+        self.assertRaisesRegex(nest.kernel.NESTError, msg, add_test_pc)
+        self.assertRaisesRegex(nest.kernel.NESTError, msg, slice_test_primitive)
+        self.assertRaisesRegex(nest.kernel.NESTError, msg, slice_test_composite)
 
     def test_UnknownNode(self):
         """Unknown node"""
@@ -111,16 +101,16 @@ class ErrorTestCase(unittest.TestCase):
         nc = nest.Create('iaf_psc_alpha', 10)
         nest.ResetKernel()
 
-        self.assertRaisesRegexp(
-            nest.kernel.NESTError, "UnknownNode", nest.NodeCollection, [99])
+        msg = "UnknownNode"
+        self.assertRaisesRegex(nest.kernel.NESTError, msg, nest.NodeCollection, [99])
 
     def test_UnknownModel(self):
         """Unknown model name"""
 
         nest.ResetKernel()
 
-        self.assertRaisesRegex(
-            nest.kernel.NESTError, "UnknownModelName", nest.Create, -1)
+        msg = "UnknownModelName"
+        self.assertRaisesRegex(nest.kernel.NESTError, msg, nest.Create, -1)
 
 
 def suite():

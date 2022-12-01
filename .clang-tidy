@@ -1,0 +1,1 @@
+Checks: '-*,modernize-use-nullptr,modernize-use-override,bugprone,modernize-redundant-void-arg'

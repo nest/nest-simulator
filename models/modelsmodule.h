@@ -36,8 +36,7 @@
 namespace nest
 {
 /**
- * Module supplying all models that are included in the NEST release. Sets up
- * the modeldict with all models included with the NEST distribution.
+ * Module supplying all models that are included in the NEST release.
  *
  * First Version: June 2006
  *
@@ -47,15 +46,15 @@ class ModelsModule : public SLIModule
 {
 public:
   ModelsModule();
-  ~ModelsModule();
+  ~ModelsModule() override;
 
   /**
    * Initialize module by registering models with the network.
    * @param SLIInterpreter* SLI interpreter
    */
-  void init( SLIInterpreter* );
+  void init( SLIInterpreter* ) override;
 
-  const std::string name( void ) const;
+  const std::string name() const override;
 };
 
 

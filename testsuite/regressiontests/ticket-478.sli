@@ -33,7 +33,7 @@ Ensure that NEST throws an exception if one tries to connect poisson_generator
 
 spike_generator slips through this test, since it usually sends SpikeEvent. But it
 is no danger if it sends DSSpikeEvents for weighted spikes, since it sends precisely
-one DSSpikeEvent per spike. 
+one DSSpikeEvent per spike.
 
 Author: Hans Ekkehard Plesser, 2010-10-22
  */
@@ -58,32 +58,32 @@ def
 def
 
 /static_syn_models
-  synapsedict keys
+  GetKernelStatus /synapse_models get
   { excluded_synapses exch MemberQ not } Select
   { GetDefaults keys { cvs } Map Sort static_defaults eq } Select
   { GetDefaults keys { cvs } Map Sort static_lbl_defaults eq } Select
 def
 
 /plastic_syn_models
-  synapsedict keys
+  GetKernelStatus /synapse_models get
   { excluded_synapses exch MemberQ not } Select
   { GetDefaults keys { cvs } Map Sort static_defaults neq } Select
   { GetDefaults keys { cvs } Map Sort static_lbl_defaults neq } Select
 def
 
 % We perform the tests first for all relevant generators
-/ds_models 
-  [/gamma_sup_generator /mip_generator /noise_generator /poisson_generator 
-   /ppd_sup_generator /sinusoidal_gamma_generator /poisson_generator_ps] 
-  { modeldict exch known } Select   
+/ds_models
+  [/gamma_sup_generator /mip_generator /noise_generator /poisson_generator
+   /ppd_sup_generator /sinusoidal_gamma_generator /poisson_generator_ps]
+  { GetKernelStatus /node_models get exch MemberQ } Select
 def
-            
+
 ResetKernel
 {
   static_syn_models
-  { /st Set 
+  { /st Set
     % create new nodes for each connection to avoid any issues with prohibited multiple connections
-    ds_models 
+    ds_models
     { Create /iaf_psc_alpha Create st Connect } forall
   } forall
 } pass_or_die
@@ -97,17 +97,17 @@ plastic_syn_models
       /d Set
       { d Create /iaf_psc_alpha Create st Connect } fail_or_die
     } forall
-} forall 
+} forall
 
  % Now we test the multimeter. Since it uses non-zero rports, it must also fail on HPC synapses
- % We can currently only distinguish them by name. 
+ % We can currently only distinguish them by name.
  /static_non_hpc_models static_syn_models { cvs -4 Take (_hpc) neq } Select def
  /models_to_fail plastic_syn_models  static_syn_models { cvs -4 Take (_hpc) eq } Select join def
- 
+
 ResetKernel
 {
   static_non_hpc_models
-  { /st Set 
+  { /st Set
     % create new nodes for each connection to avoid any issues with prohibited multiple connections
     /multimeter Create /iaf_psc_alpha Create st Connect
   } forall
@@ -118,6 +118,6 @@ models_to_fail
 {
     /st Set
     /multimeter Create /iaf_psc_alpha Create { st Connect } fail_or_die
-} forall 
-  
+} forall
+
 endusing

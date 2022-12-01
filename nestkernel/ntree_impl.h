@@ -57,8 +57,8 @@ Ntree< D, T, max_capacity, max_depth >::iterator::iterator( Ntree& q )
 }
 
 template < int D, class T, int max_capacity, int max_depth >
-typename Ntree< D, T, max_capacity, max_depth >::iterator& Ntree< D, T, max_capacity, max_depth >::iterator::
-operator++()
+typename Ntree< D, T, max_capacity, max_depth >::iterator&
+Ntree< D, T, max_capacity, max_depth >::iterator::operator++()
 {
   node_++;
 
@@ -83,7 +83,7 @@ Ntree< D, T, max_capacity, max_depth >::iterator::next_leaf_()
 {
 
   // If we are on the last subntree, move up
-  while ( ntree_ && ( ntree_ != top_ ) && ( ntree_->my_subquad_ == N - 1 ) )
+  while ( ntree_ and ( ntree_ != top_ ) and ntree_->my_subquad_ == N - 1 )
   {
     ntree_ = ntree_->parent_;
   }
@@ -142,8 +142,9 @@ Ntree< D, T, max_capacity, max_depth >::masked_iterator::masked_iterator( Ntree<
     {
       if ( ntree_->periodic_[ i ] )
       {
-        anchor_[ i ] = nest::mod( anchor_[ i ] + mask_bb.lower_left[ i ] - ntree_->lower_left_[ i ],
-                         ntree_->extent_[ i ] ) - mask_bb.lower_left[ i ] + ntree_->lower_left_[ i ];
+        anchor_[ i ] =
+          nest::mod( anchor_[ i ] + mask_bb.lower_left[ i ] - ntree_->lower_left_[ i ], ntree_->extent_[ i ] )
+          - mask_bb.lower_left[ i ] + ntree_->lower_left_[ i ];
       }
     }
     anchors_.push_back( anchor_ );
@@ -202,7 +203,7 @@ Ntree< D, T, max_capacity, max_depth >::masked_iterator::init_()
       first_leaf_();
     }
 
-    if ( ntree_->nodes_.empty() || ( not mask_->inside( ntree_->nodes_[ node_ ].first - anchor_ ) ) )
+    if ( ntree_->nodes_.empty() or ( not mask_->inside( ntree_->nodes_[ node_ ].first - anchor_ ) ) )
     {
       ++( *this );
     }
@@ -249,7 +250,7 @@ Ntree< D, T, max_capacity, max_depth >::masked_iterator::next_leaf_()
     // state: all in
 
     // If we are on the last subtree, move up
-    while ( ntree_ && ( ntree_ != allin_top_ ) && ( ntree_->my_subquad_ == N - 1 ) )
+    while ( ntree_ and ( ntree_ != allin_top_ ) and ntree_->my_subquad_ == N - 1 )
     {
       ntree_ = ntree_->parent_;
     }
@@ -282,7 +283,7 @@ Ntree< D, T, max_capacity, max_depth >::masked_iterator::next_leaf_()
   {
 
     // If we are on the last subtree, move up
-    while ( ntree_ && ( ntree_ != top_ ) && ( ntree_->my_subquad_ == N - 1 ) )
+    while ( ntree_ and ( ntree_ != top_ ) and ntree_->my_subquad_ == N - 1 )
     {
       ntree_ = ntree_->parent_;
     }
@@ -349,15 +350,14 @@ Ntree< D, T, max_capacity, max_depth >::masked_iterator::first_leaf_inside_()
 
 template < int D, class T, int max_capacity, int max_depth >
 typename Ntree< D, T, max_capacity, max_depth >::masked_iterator&
-  Ntree< D, T, max_capacity, max_depth >::masked_iterator::
-  operator++()
+Ntree< D, T, max_capacity, max_depth >::masked_iterator::operator++()
 {
   ++node_;
 
   if ( allin_top_ == 0 )
   {
     while (
-      ( node_ < ntree_->nodes_.size() ) && ( not anchored_position_inside_mask( ntree_->nodes_[ node_ ].first ) ) )
+      ( node_ < ntree_->nodes_.size() ) and ( not anchored_position_inside_mask( ntree_->nodes_[ node_ ].first ) ) )
     {
       ++node_;
     }
@@ -376,7 +376,7 @@ typename Ntree< D, T, max_capacity, max_depth >::masked_iterator&
     if ( allin_top_ == 0 )
     {
       while (
-        ( node_ < ntree_->nodes_.size() ) && ( not anchored_position_inside_mask( ntree_->nodes_[ node_ ].first ) ) )
+        ( node_ < ntree_->nodes_.size() ) and ( not anchored_position_inside_mask( ntree_->nodes_[ node_ ].first ) ) )
       {
         ++node_;
       }
@@ -478,7 +478,7 @@ Ntree< D, T, max_capacity, max_depth >::insert( Position< D > pos, const T& node
     }
   }
 
-  if ( leaf_ && ( nodes_.size() >= max_capacity ) && ( my_depth_ < max_depth ) )
+  if ( leaf_ and ( nodes_.size() >= max_capacity ) and my_depth_ < max_depth )
   {
     split_();
   }

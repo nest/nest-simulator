@@ -47,7 +47,6 @@ Connector< ConnectionT >::send_weight_event( const thread tid,
     wr_e.set_port( e.get_port() );
     wr_e.set_rport( e.get_rport() );
     wr_e.set_stamp( e.get_stamp() );
-    wr_e.set_offset( e.get_offset() );
     wr_e.set_sender( e.get_sender() );
     wr_e.set_sender_node_id( kernel().connection_manager.get_source_node_id( tid, syn_id_, lcid ) );
     wr_e.set_weight( e.get_weight() );

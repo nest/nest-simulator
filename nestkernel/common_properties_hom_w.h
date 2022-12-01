@@ -33,7 +33,7 @@
 
    Author: Moritz Helias, Susanne Kunkel
 
-   SeeAlso: synapsedict, static_synapse
+   SeeAlso: static_synapse
 */
 
 // Includes from nestkernel:

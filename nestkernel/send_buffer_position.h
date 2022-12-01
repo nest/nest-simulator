@@ -25,8 +25,8 @@
 
 // C++ includes:
 #include <cassert>
-#include <vector>
 #include <limits>
+#include <vector>
 
 // Includes from nestkernel:
 #include "vp_manager.h"

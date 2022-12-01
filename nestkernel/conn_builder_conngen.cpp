@@ -82,7 +82,7 @@ ConnectionGeneratorBuilder::connect_()
   if ( num_parameters == 0 )
   {
     // connect source to target
-    while ( cg_->next( source, target, NULL ) )
+    while ( cg_->next( source, target, nullptr ) )
     {
       // No need to check for locality of the target, as the mask
       // created by cg_set_masks() only contains local nodes.
@@ -101,8 +101,8 @@ ConnectionGeneratorBuilder::connect_()
     const size_t d_idx = ( *params_map_ )[ names::delay ];
     const size_t w_idx = ( *params_map_ )[ names::weight ];
 
-    const bool d_idx_is_0_or_1 = ( d_idx == 0 ) or ( d_idx == 1 );
-    const bool w_idx_is_0_or_1 = ( w_idx == 0 ) or ( w_idx == 1 );
+    const bool d_idx_is_0_or_1 = d_idx == 0 or ( d_idx == 1 );
+    const bool w_idx_is_0_or_1 = w_idx == 0 or ( w_idx == 1 );
     const bool indices_differ = ( w_idx != d_idx );
     if ( not( d_idx_is_0_or_1 and w_idx_is_0_or_1 and indices_differ ) )
     {

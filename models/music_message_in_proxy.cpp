@@ -119,7 +119,7 @@ nest::music_message_in_proxy::init_buffers_()
 }
 
 void
-nest::music_message_in_proxy::calibrate()
+nest::music_message_in_proxy::pre_run_hook()
 {
   // only publish the port once,
   if ( not S_.published_ )
@@ -156,7 +156,7 @@ nest::music_message_in_proxy::calibrate()
       P_.port_name_,
       S_.port_width_,
       P_.acceptable_latency_ );
-    LOG( M_INFO, "music_message_in_proxy::calibrate()", msg.c_str() );
+    LOG( M_INFO, "music_message_in_proxy::pre_run_hook()", msg.c_str() );
   }
 }
 

@@ -57,13 +57,13 @@ typedef std::vector< SLIModule* > vecLinkedModules;
 class DynamicLoaderModule : public SLIModule
 {
 public:
-  DynamicLoaderModule( SLIInterpreter& interpreter );
-  ~DynamicLoaderModule();
+  explicit DynamicLoaderModule( SLIInterpreter& interpreter );
+  ~DynamicLoaderModule() override;
 
-  void init( SLIInterpreter* );
+  void init( SLIInterpreter* ) override;
 
-  const std::string commandstring( void ) const;
-  const std::string name( void ) const;
+  const std::string commandstring() const override;
+  const std::string name() const override;
 
 
   /**
@@ -78,23 +78,6 @@ public:
 
   void initLinkedModules( SLIInterpreter& );
 
-public:
-  class LoadModuleFunction : public SLIFunction
-  {
-  public:
-    LoadModuleFunction( vecDynModules& dyn_modules );
-
-  private:
-    void execute( SLIInterpreter* ) const;
-
-  private:
-    vecDynModules& dyn_modules_;
-  };
-
-  /** @} */
-
-  LoadModuleFunction loadmodule_function;
-
 private:
   /**
    * Provide access to the list of linked modules managed DynamicLoader.
@@ -104,11 +87,28 @@ private:
    */
   static vecLinkedModules& getLinkedModules();
 
-  // vector to store handles and pointers to dynamic modules
+  //! Vector to store handles and pointers to dynamic modules
   vecDynModules dyn_modules;
 
   //! Dictionary for dynamically loaded modules.
   static Dictionary* moduledict_;
+
+public:
+  class LoadModuleFunction : public SLIFunction
+  {
+  public:
+    explicit LoadModuleFunction( vecDynModules& dyn_modules );
+
+  private:
+    void execute( SLIInterpreter* ) const override;
+
+  private:
+    vecDynModules& dyn_modules_;
+  };
+
+  /** @} */
+
+  LoadModuleFunction loadmodule_function;
 };
 
 } // namespace

@@ -29,10 +29,11 @@
 // Generated includes:
 #include "config.h"
 
-// Includes from nestkernel:
+// Includes from libnestutil:
 #include "archiving_node.h"
 #include "connection.h"
 #include "event.h"
+#include "iaf_propagator.h"
 #include "nest_types.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
@@ -55,7 +56,7 @@ state space analysis
 Description
 +++++++++++
 
-iaf_psc_exp_ps_lossless is the precise state space implementation of the leaky
+``iaf_psc_exp_ps_lossless`` is the precise state space implementation of the leaky
 integrate-and-fire model neuron with exponential postsynaptic currents
 that uses time reversal to detect spikes [1]_. This is the most exact
 implementation available.
@@ -69,12 +70,30 @@ meets the threshold.
 
 .. note::
 
-  If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
-  will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
-  `tau_syn_in`, respectively, to avoid numerical instabilities.
+   If ``tau_m`` is very close to ``tau_syn_ex`` or ``tau_syn_in``, the model
+   will numerically behave as if ``tau_m`` is equal to ``tau_syn_ex`` or
+   ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
   For implementation details see the
   `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+
+This model transmits precise spike times to target nodes (on-grid spike
+time and offset). If this node is connected to a spike_recorder, the
+property "precise_times" of the spike_recorder has to be set to true in
+order to record the offsets in addition to the on-grid spike times.
+
+The iaf_psc_delta_ps neuron accepts connections transmitting
+CurrentEvents. These events transmit stepwise-constant currents which
+can only change at on-grid times.
+
+In the current implementation, tau_syn_ex and tau_syn_in must be equal.
+This is because the state space would be 3-dimensional otherwise, which
+makes the detection of threshold crossing more difficult [1]_.
+Support for different time constants may be added in the future,
+see issue #921.
+
+For details about exact subthreshold integration, please see
+:doc:`../neurons/exact-integration`.
 
 Parameters
 ++++++++++
@@ -93,27 +112,6 @@ The following parameters can be set in the status dictionary.
  V_min       mV        Absolute lower value for the membrane potential.
  V_reset     mV        Reset value for the membrane potential.
 ===========  ========  ==========================================================
-
-Remarks
-+++++++
-
-This model transmits precise spike times to target nodes (on-grid spike
-time and offset). If this node is connected to a spike_recorder, the
-property "precise_times" of the spike_recorder has to be set to true in
-order to record the offsets in addition to the on-grid spike times.
-
-The iaf_psc_delta_ps neuron accepts connections transmitting
-CurrentEvents. These events transmit stepwise-constant currents which
-can only change at on-grid times.
-
-In the current implementation, tau_syn_ex and tau_syn_in must be equal.
-This is because the state space would be 3-dimensional otherwise, which
-makes the detection of threshold crossing more difficult [1].
-Support for different time constants may be added in the future,
-see issue #921.
-
-For details about exact subthreshold integration, please see
-:doc:`../guides/exact-integration`.
 
 References
 ++++++++++
@@ -150,7 +148,7 @@ public:
   iaf_psc_exp_ps_lossless();
 
   /** Copy constructor.
-      GenericModel::allocate_() uses the copy constructor to clone
+      GenericModel::create_() uses the copy constructor to clone
       actual model instances from the prototype instance.
 
       @note The copy constructor MUST NOT be used to create nodes based
@@ -166,23 +164,24 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  port handles_test_event( SpikeEvent&, port );
-  port handles_test_event( CurrentEvent&, port );
-  port handles_test_event( DataLoggingRequest&, port );
+  port handles_test_event( SpikeEvent&, port ) override;
+  port handles_test_event( CurrentEvent&, port ) override;
+  port handles_test_event( DataLoggingRequest&, port ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  bool is_off_grid() const // uses off_grid events
+  bool
+  is_off_grid() const override // uses off_grid events
   {
     return true;
   }
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
   /**
    * Based on the current state, compute the value of the membrane potential
@@ -201,8 +200,8 @@ private:
    * only through a Node*.
    */
   //@{
-  void init_buffers_();
-  void calibrate();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
   /**
    * Time Evolution Operator.
@@ -221,7 +220,7 @@ private:
    * While the neuron is refractory, membrane potential (y2_) is
    * clamped to U_reset_.
    */
-  void update( Time const& origin, const long from, const long to );
+  void update( Time const& origin, const long from, const long to ) override;
   //@}
 
   // The next two classes need to be friends to access the State_ class/member
@@ -272,6 +271,10 @@ private:
    * @returns time interval in which threshold was crossed, or nan.
    */
   double is_spike_( const double );
+
+  /** Propagator object for updating synaptic components */
+  IAFPropagatorExp propagator_ex_;
+  IAFPropagatorExp propagator_in_;
 
   // ----------------------------------------------------------------
 
@@ -372,7 +375,7 @@ private:
   {
     double h_ms_;            //!< Time resolution [ms]
     long refractory_steps_;  //!< Refractory time in steps
-    double exp_tau_m_;       //!< exp(-h/tau_m)
+    double expm1_tau_m_;     //!< expm1(-h/tau_m)
     double exp_tau_ex_;      //!< exp(-h/tau_ex)
     double exp_tau_in_;      //!< exp(-h/tau_in)
     double P20_;             //!< Progagator matrix element, 2nd row
@@ -501,6 +504,8 @@ iaf_psc_exp_ps_lossless::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
+  ArchivingNode::get_status( d );
+
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
@@ -511,6 +516,12 @@ iaf_psc_exp_ps_lossless::set_status( const DictionaryDatum& d )
   double delta_EL = ptmp.set( d, this ); // throws if BadProperty
   State_ stmp = S_;                      // temporary copy in case of errors
   stmp.set( d, ptmp, delta_EL, this );   // throws if BadProperty
+
+  // We now know that (ptmp, stmp) are consistent. We do not
+  // write them back to (P_, S_) before we are also sure that
+  // the properties to be set in the parent class are internally
+  // consistent.
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

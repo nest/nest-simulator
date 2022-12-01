@@ -27,7 +27,7 @@ Connect function.
 import copy
 import numpy as np
 
-from ..ll_api import *
+from ..ll_api import sps, sr, spp
 from .. import pynestkernel as kernel
 from .hl_api_types import CollocatedSynapses, Mask, NodeCollection, Parameter
 from .hl_api_exceptions import NESTErrors
@@ -64,14 +64,18 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, use_connect_ar
         # for use_connect_arrays, return "static_synapse" by default
         if use_connect_arrays:
             return {"synapse_model": "static_synapse"}
-
         return syn_spec
 
-    rule = conn_spec['rule']
+    if isinstance(syn_spec, CollocatedSynapses):
+        return syn_spec
 
     if isinstance(syn_spec, str):
         return {"synapse_model": syn_spec}
-    elif isinstance(syn_spec, dict):
+
+    rule = conn_spec['rule']
+    if isinstance(syn_spec, dict):
+        if "synapse_model" in syn_spec and not isinstance(syn_spec["synapse_model"], str):
+            raise kernel.NESTError("'synapse_model' must be a string")
         for key, value in syn_spec.items():
             # if value is a list, it is converted to a numpy array
             if isinstance(value, (list, tuple)):
@@ -138,10 +142,9 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, use_connect_ar
             syn_spec["synapse_model"] = "static_synapse"
 
         return syn_spec
-    elif isinstance(syn_spec, CollocatedSynapses):
-        return syn_spec
 
-    raise TypeError("syn_spec must be a string or dict")
+    # If we get here, syn_spec is of illegal type.
+    raise TypeError("syn_spec must be a string, dict or CollocatedSynapses object")
 
 
 def _process_spatial_projections(conn_spec, syn_spec):

@@ -25,9 +25,9 @@
 
 // C++ includes:
 #include <bitset>
+#include <iterator>
 #include <utility>
 #include <vector>
-#include <iterator>
 
 // Includes from spatial:
 #include "position.h"
@@ -81,7 +81,7 @@ public:
      * Initialize an iterator to point to the first node in the first
      * non-empty leaf within the tree below this Ntree.
      */
-    iterator( Ntree& q );
+    explicit iterator( Ntree& q );
 
     /**
      * Initialize an iterator to point to the nth node in this Ntree,
@@ -90,11 +90,13 @@ public:
      */
     iterator( Ntree& q, index n );
 
-    value_type& operator*()
+    value_type&
+    operator*()
     {
       return ntree_->nodes_[ node_ ];
     }
-    value_type* operator->()
+    value_type*
+    operator->()
     {
       return &ntree_->nodes_[ node_ ];
     }
@@ -108,7 +110,8 @@ public:
     /**
      * Postfix increment operator.
      */
-    iterator operator++( int )
+    iterator
+    operator++( int )
     {
       iterator tmp = *this;
       ++*this;
@@ -119,20 +122,22 @@ public:
      * Iterators are equal if they point to the same node in the same
      * ntree.
      */
-    bool operator==( const iterator& other ) const
+    bool
+    operator==( const iterator& other ) const
     {
-      return ( other.ntree_ == ntree_ ) && ( other.node_ == node_ );
+      return other.ntree_ == ntree_ and ( other.node_ == node_ );
     }
-    bool operator!=( const iterator& other ) const
+    bool
+    operator!=( const iterator& other ) const
     {
-      return ( other.ntree_ != ntree_ ) || ( other.node_ != node_ );
+      return ( other.ntree_ != ntree_ ) or ( other.node_ != node_ );
     }
 
   protected:
     /**
      * Move to the next leaf quadrant, or set ntree_ to 0 if there are no
      * more leaves.
-    */
+     */
     void next_leaf_();
 
     Ntree* ntree_;
@@ -169,11 +174,13 @@ public:
      */
     masked_iterator( Ntree& q, const Mask< D >& mask, const Position< D >& anchor );
 
-    value_type& operator*()
+    value_type&
+    operator*()
     {
       return ntree_->nodes_[ node_ ];
     }
-    value_type* operator->()
+    value_type*
+    operator->()
     {
       return &ntree_->nodes_[ node_ ];
     }
@@ -188,7 +195,8 @@ public:
     /**
      * Postfix increment operator.
      */
-    masked_iterator operator++( int )
+    masked_iterator
+    operator++( int )
     {
       masked_iterator tmp = *this;
       ++*this;
@@ -199,13 +207,15 @@ public:
      * Iterators are equal if they point to the same node in the same
      * ntree.
      */
-    bool operator==( const masked_iterator& other ) const
+    bool
+    operator==( const masked_iterator& other ) const
     {
-      return ( other.ntree_ == ntree_ ) && ( other.node_ == node_ );
+      return other.ntree_ == ntree_ and ( other.node_ == node_ );
     }
-    bool operator!=( const masked_iterator& other ) const
+    bool
+    operator!=( const masked_iterator& other ) const
     {
-      return ( other.ntree_ != ntree_ ) || ( other.node_ != node_ );
+      return ( other.ntree_ != ntree_ ) or ( other.node_ != node_ );
     }
 
   protected:

@@ -44,11 +44,11 @@ Create spike trains as described by the MIP model
 Description
 +++++++++++
 
-The mip_generator generates correlated spike trains using an Multiple
+The ``mip_generator`` generates correlated spike trains using an Multiple
 Interaction Process (MIP) as described in [1]_. Underlying principle is a
 Poisson parent process with rate r, the spikes of which are copied into the
 child processes with a certain probability p. Every node the mip_generator is
-connected to receives a distinct child process as input, whose rate is p*r.
+connected to receives a distinct child process as input, whose rate is `p*r`.
 The value of the pairwise correlation coefficient of two child processes
 created by a MIP process equals p.
 
@@ -128,7 +128,7 @@ public:
 private:
   void init_state_() override;
   void init_buffers_() override;
-  void calibrate() override;
+  void pre_run_hook() override;
 
   void update( Time const&, const long, const long ) override;
 

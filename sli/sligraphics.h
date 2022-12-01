@@ -47,13 +47,13 @@ class SLIgraphics : public SLIModule
     void readImage( std::istream*, char[ 2 ], std::vector< long >&, int, int, int ) const; //!< reads the image
 
   public:
-    virtual void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const override;
   };
 
   class WritePGMFunction : public SLIFunction
   {
   public:
-    virtual void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const override;
   };
 
   ReadPGMFunction readpgmfunction;
@@ -64,9 +64,9 @@ public:
   {
   }
 
-  void init( SLIInterpreter* );
-  const std::string name( void ) const;
-  const std::string commandstring( void ) const;
+  void init( SLIInterpreter* ) override;
+  const std::string name() const override;
+  const std::string commandstring() const override;
 };
 
 

@@ -40,7 +40,6 @@ class ClopathSynapseTestCase(unittest.TestCase):
 
         nest.set_verbosity('M_WARNING')
 
-        # Specify supported models
         supported_models = [
             'aeif_psc_delta_clopath',
             'hh_psc_alpha_clopath',
@@ -55,12 +54,8 @@ class ClopathSynapseTestCase(unittest.TestCase):
             nest.Connect(n, n, {"rule": "all_to_all"},
                          {"synapse_model": "clopath_synapse"})
 
-        # Compute not supported models
-        not_supported_models = [n for n in nest.Models(mtype='nodes')
-                                if n not in supported_models]
-
         # Ensure that connecting not supported models fails
-        for nm in not_supported_models:
+        for nm in [n for n in nest.node_models if n not in supported_models]:
             nest.ResetKernel()
 
             n = nest.Create(nm, 2)
@@ -106,8 +101,8 @@ class ClopathSynapseTestCase(unittest.TestCase):
                               'theta_plus': -45.3,
                               'A_LTD': 14.0e-5,
                               'A_LTP': 8.0e-5,
-                              'tau_minus': 10.0,
-                              'tau_plus': 7.0,
+                              'tau_u_bar_minus': 10.0,
+                              'tau_u_bar_plus': 7.0,
                               'delay_u_bars': 4.0,
                               'a': 4.0,
                               'b': 0.0805,
@@ -124,8 +119,8 @@ class ClopathSynapseTestCase(unittest.TestCase):
                               'theta_plus': -35.0,
                               'A_LTD': 14.0e-5,
                               'A_LTP': 8.0e-5,
-                              'tau_minus': 10.0,
-                              'tau_plus': 114.0,
+                              'tau_u_bar_minus': 10.0,
+                              'tau_u_bar_plus': 114.0,
                               'delay_u_bars': 5.0,
                               }
             syn_weights = []

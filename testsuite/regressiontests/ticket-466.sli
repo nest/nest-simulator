@@ -36,7 +36,7 @@ FirstVersion: 2010-10-05
 (unittest) run
 /unittest using
 
-modeldict /mirollo_strogatz_ps known not
+GetKernelStatus /node_models get /mirollo_strogatz_ps MemberQ not
 {
   /skipped exit_test_gracefully
 } if

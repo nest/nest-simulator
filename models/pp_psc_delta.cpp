@@ -27,12 +27,10 @@
 
 #include "pp_psc_delta.h"
 
-// C++ includes:
-#include <limits>
 
 // Includes from libnestutil:
-#include "dict_util.h"
 #include "compose.hpp"
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -43,8 +41,6 @@
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 namespace nest
 {
@@ -177,11 +173,11 @@ nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
 
   if ( tau_sfa_.size() != q_sfa_.size() )
   {
-    throw BadProperty( String::compose(
-      "'tau_sfa' and 'q_sfa' need to have the same dimension.\nSize of "
-      "tau_sfa: %1\nSize of q_sfa: %2",
-      tau_sfa_.size(),
-      q_sfa_.size() ) );
+    throw BadProperty(
+      String::compose( "'tau_sfa' and 'q_sfa' need to have the same dimension.\nSize of "
+                       "tau_sfa: %1\nSize of q_sfa: %2",
+        tau_sfa_.size(),
+        q_sfa_.size() ) );
   }
 
   if ( c_m_ <= 0 )
@@ -290,7 +286,7 @@ nest::pp_psc_delta::init_buffers_()
 }
 
 void
-nest::pp_psc_delta::calibrate()
+nest::pp_psc_delta::pre_run_hook()
 {
 
   B_.logger_.init();
@@ -301,7 +297,7 @@ nest::pp_psc_delta::calibrate()
   V_.P33_ = std::exp( -V_.h_ / P_.tau_m_ );
   V_.P30_ = 1 / P_.c_m_ * ( 1 - V_.P33_ ) * P_.tau_m_;
 
-  if ( P_.dead_time_ != 0 && P_.dead_time_ < V_.h_ )
+  if ( P_.dead_time_ != 0 and P_.dead_time_ < V_.h_ )
   {
     P_.dead_time_ = V_.h_;
   }
@@ -361,7 +357,7 @@ void
 nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
 {
 
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )

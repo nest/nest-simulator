@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-IAF neuron example
-------------------
+IAF neuron example with current generator
+-----------------------------------------
 
 A DC current is injected into the neuron using a current generator
 device. The membrane potential as well as the spiking activity are

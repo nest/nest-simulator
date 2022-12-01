@@ -34,6 +34,7 @@
 #include "event.h"
 #include "nest_time.h"
 #include "nest_types.h"
+#include "secondary_event.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -85,7 +86,7 @@ public:
     const double delay = NAN,
     const double weight = NAN ) = 0;
 
-  virtual ConnectorModel* clone( std::string ) const = 0;
+  virtual ConnectorModel* clone( std::string, synindex syn_id ) const = 0;
 
   virtual void calibrate( const TimeConverter& tc ) = 0;
 
@@ -103,7 +104,7 @@ public:
 
   virtual void set_syn_id( synindex syn_id ) = 0;
 
-  virtual std::vector< SecondaryEvent* > create_event( size_t n ) const = 0;
+  virtual SecondaryEvent* create_event() const = 0;
 
   std::string
   get_name() const
@@ -188,12 +189,12 @@ public:
     bool requires_clopath_archiving,
     bool requires_urbanczik_archiving )
     : ConnectorModel( name,
-        is_primary,
-        has_delay,
-        requires_symmetric,
-        supports_wfr,
-        requires_clopath_archiving,
-        requires_urbanczik_archiving )
+      is_primary,
+      has_delay,
+      requires_symmetric,
+      supports_wfr,
+      requires_clopath_archiving,
+      requires_urbanczik_archiving )
     , receptor_type_( 0 )
   {
   }
@@ -213,31 +214,31 @@ public:
     const synindex syn_id,
     const DictionaryDatum& d,
     const double delay,
-    const double weight );
+    const double weight ) override;
 
-  ConnectorModel* clone( std::string ) const;
+  ConnectorModel* clone( std::string, synindex ) const override;
 
-  void calibrate( const TimeConverter& tc );
+  void calibrate( const TimeConverter& tc ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
   void
-  check_synapse_params( const DictionaryDatum& syn_spec ) const
+  check_synapse_params( const DictionaryDatum& syn_spec ) const override
   {
     default_connection_.check_synapse_params( syn_spec );
   }
 
   typename ConnectionT::CommonPropertiesType const&
-  get_common_properties() const
+  get_common_properties() const override
   {
     return cp_;
   }
 
-  void set_syn_id( synindex syn_id );
+  void set_syn_id( synindex syn_id ) override;
 
-  virtual typename ConnectionT::EventType*
-  get_event() const
+  typename ConnectionT::EventType*
+  get_event() const override
   {
     assert( false );
     return 0;
@@ -249,13 +250,13 @@ public:
     return default_connection_;
   }
 
-  virtual std::vector< SecondaryEvent* > create_event( size_t ) const
+  SecondaryEvent*
+  create_event() const override
   {
-    // Should not be called for a ConnectorModel belonging to a primary
+    // Must not be called for a ConnectorModel belonging to a primary
     // connection. Only required for secondary connection types.
     assert( false );
-    std::vector< SecondaryEvent* > prototype_events;
-    return prototype_events;
+    return nullptr; // make the compiler happy
   }
 
 private:
@@ -283,12 +284,12 @@ public:
     const bool requires_symmetric,
     const bool supports_wfr )
     : GenericConnectorModel< ConnectionT >( name,
-        /*is _primary=*/false,
-        has_delay,
-        requires_symmetric,
-        supports_wfr,
-        /*requires_clopath_archiving=*/false,
-        /*requires_urbanczik_archiving=*/false )
+      /*is _primary=*/false,
+      has_delay,
+      requires_symmetric,
+      supports_wfr,
+      /*requires_clopath_archiving=*/false,
+      /*requires_urbanczik_archiving=*/false )
     , pev_( 0 )
   {
     pev_ = new typename ConnectionT::EventType();
@@ -302,21 +303,23 @@ public:
 
 
   ConnectorModel*
-  clone( std::string name ) const
+  clone( std::string name, synindex syn_id ) const
   {
-    return new GenericSecondaryConnectorModel( *this, name ); // calls copy construtor
-  }
+    ConnectorModel* new_cm = new GenericSecondaryConnectorModel( *this, name ); // calls copy construtor
+    new_cm->set_syn_id( syn_id );
 
-  std::vector< SecondaryEvent* >
-  create_event( size_t n ) const
-  {
-    std::vector< SecondaryEvent* > prototype_events( n, NULL );
-    for ( size_t i = 0; i < n; i++ )
+    if ( not new_cm->is_primary() )
     {
-      prototype_events[ i ] = new typename ConnectionT::EventType();
+      new_cm->get_event()->add_syn_id( syn_id );
     }
 
-    return prototype_events;
+    return new_cm;
+  }
+
+  SecondaryEvent*
+  create_event() const
+  {
+    return new typename ConnectionT::EventType();
   }
 
 

@@ -48,8 +48,8 @@ public:
   {
   }
 
-  void set_local_device_id( const index ldid );
-  index get_local_device_id() const;
+  void set_local_device_id( const index ldid ) override;
+  index get_local_device_id() const override;
 
 protected:
   index local_device_id_;

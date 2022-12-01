@@ -49,7 +49,6 @@ template <>
 sli::pool NumericDatum< double, &SLIInterpreter::Doubletype >::memory;
 #endif
 
-
 template <>
 void NumericDatum< double, &SLIInterpreter::Doubletype >::input_form( std::ostream& ) const;
 template <>

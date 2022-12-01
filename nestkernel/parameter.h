@@ -24,8 +24,8 @@
 #define PARAMETER_H_
 
 // C++ includes:
-#include <limits>
 #include <cmath>
+#include <limits>
 
 // Includes from nestkernel:
 #include "nest_names.h"
@@ -62,7 +62,7 @@ public:
   /**
    * Copy constructor
    */
-  Parameter( const Parameter& p ) = default;
+  explicit Parameter( const Parameter& p ) = default;
 
   /**
    * Virtual destructor
@@ -115,8 +115,8 @@ public:
   bool returns_int_only() const;
 
 protected:
-  bool is_spatial_{ false };
-  bool returns_int_only_{ false };
+  bool is_spatial_ { false };
+  bool returns_int_only_ { false };
 
   bool value_is_integer_( const double value ) const;
 };
@@ -133,9 +133,10 @@ public:
    * Creates a ConstantParameter with a specified value.
    * @param value parameter value
    */
-  ConstantParameter( double value )
+  explicit ConstantParameter( double value )
     : value_( value )
   {
+    returns_int_only_ = value_is_integer_( value_ );
   }
 
   /**
@@ -375,7 +376,7 @@ public:
     {
       throw BadParameterValue( "Source or target position parameter can only be used when connecting." );
     }
-    if ( node == nullptr )
+    if ( not node )
     {
       throw KernelException( "Node position parameter can only be used when connecting spatially distributed nodes." );
     }
@@ -763,7 +764,7 @@ public:
     std::shared_ptr< Parameter > if_true,
     std::shared_ptr< Parameter > if_false )
     : Parameter( condition->is_spatial() or if_true->is_spatial() or if_false->is_spatial(),
-        if_true->returns_int_only() and if_false->returns_int_only() )
+      if_true->returns_int_only() and if_false->returns_int_only() )
     , condition_( condition )
     , if_true_( if_true )
     , if_false_( if_false )

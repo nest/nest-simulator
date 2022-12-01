@@ -43,7 +43,7 @@ public:
   Get_aFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Get_a_aFunction : public SLIFunction
@@ -52,7 +52,7 @@ public:
   Get_a_aFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Allocations_aFunction : public SLIFunction
@@ -61,7 +61,7 @@ public:
   Allocations_aFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Get_pFunction : public SLIFunction
@@ -70,7 +70,7 @@ public:
   Get_pFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Get_lpFunction : public SLIFunction
@@ -79,7 +79,7 @@ public:
   Get_lpFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Append_aFunction : public SLIFunction
@@ -88,7 +88,7 @@ public:
   Append_aFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Append_pFunction : public SLIFunction
@@ -97,7 +97,7 @@ public:
   Append_pFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Append_sFunction : public SLIFunction
@@ -106,7 +106,7 @@ public:
   Append_sFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Prepend_aFunction : public SLIFunction
@@ -115,7 +115,7 @@ public:
   Prepend_aFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Prepend_pFunction : public SLIFunction
@@ -124,7 +124,7 @@ public:
   Prepend_pFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Prepend_sFunction : public SLIFunction
@@ -133,7 +133,7 @@ public:
   Prepend_sFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Join_sFunction : public SLIFunction
@@ -142,7 +142,7 @@ public:
   Join_sFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Join_aFunction : public SLIFunction
@@ -151,7 +151,7 @@ public:
   Join_aFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Join_pFunction : public SLIFunction
@@ -160,7 +160,7 @@ public:
   Join_pFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Insert_sFunction : public SLIFunction
@@ -169,7 +169,7 @@ public:
   Insert_sFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Insert_aFunction : public SLIFunction
@@ -178,7 +178,7 @@ public:
   Insert_aFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class InsertElement_sFunction : public SLIFunction
@@ -187,7 +187,7 @@ public:
   InsertElement_sFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class InsertElement_aFunction : public SLIFunction
@@ -196,7 +196,7 @@ public:
   InsertElement_aFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Replace_sFunction : public SLIFunction
@@ -205,7 +205,7 @@ public:
   Replace_sFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Replace_aFunction : public SLIFunction
@@ -214,7 +214,7 @@ public:
   Replace_aFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Erase_sFunction : public SLIFunction
@@ -223,7 +223,7 @@ public:
   Erase_sFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Erase_aFunction : public SLIFunction
@@ -232,7 +232,7 @@ public:
   Erase_aFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Erase_pFunction : public SLIFunction
@@ -241,7 +241,7 @@ public:
   Erase_pFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 
@@ -251,7 +251,7 @@ public:
   Length_sFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Length_aFunction : public SLIFunction
@@ -260,7 +260,7 @@ public:
   Length_aFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Length_pFunction : public SLIFunction
@@ -269,7 +269,7 @@ public:
   Length_pFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Length_lpFunction : public SLIFunction
@@ -278,7 +278,7 @@ public:
   Length_lpFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Capacity_aFunction : public SLIFunction
@@ -287,7 +287,7 @@ public:
   Capacity_aFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Size_aFunction : public SLIFunction
@@ -296,7 +296,7 @@ public:
   Size_aFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Reserve_aFunction : public SLIFunction
@@ -305,7 +305,7 @@ public:
   Reserve_aFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Resize_aFunction : public SLIFunction
@@ -314,7 +314,7 @@ public:
   Resize_aFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Empty_aFunction : public SLIFunction
@@ -323,7 +323,7 @@ public:
   Empty_aFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class References_aFunction : public SLIFunction
@@ -332,7 +332,7 @@ public:
   References_aFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Shrink_aFunction : public SLIFunction
@@ -342,7 +342,7 @@ public:
   {
   }
 
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Capacity_sFunction : public SLIFunction
@@ -351,7 +351,7 @@ public:
   Capacity_sFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Size_sFunction : public SLIFunction
@@ -360,7 +360,7 @@ public:
   Size_sFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Reserve_sFunction : public SLIFunction
@@ -369,7 +369,7 @@ public:
   Reserve_sFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Resize_sFunction : public SLIFunction
@@ -378,7 +378,7 @@ public:
   Resize_sFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Empty_sFunction : public SLIFunction
@@ -387,7 +387,7 @@ public:
   Empty_sFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Getinterval_sFunction : public SLIFunction
@@ -396,7 +396,7 @@ public:
   Getinterval_sFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Getinterval_aFunction : public SLIFunction
@@ -405,7 +405,7 @@ public:
   Getinterval_aFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Cvx_aFunction : public SLIFunction
@@ -414,7 +414,7 @@ public:
   Cvx_aFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Cvlit_nFunction : public SLIFunction
@@ -423,7 +423,7 @@ public:
   Cvlit_nFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Cvlit_pFunction : public SLIFunction
@@ -432,7 +432,7 @@ public:
   Cvlit_pFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Cvlp_pFunction : public SLIFunction
@@ -441,7 +441,7 @@ public:
   Cvlp_pFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Cvn_sFunction : public SLIFunction
@@ -450,7 +450,7 @@ public:
   Cvn_sFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Cvn_lFunction : public SLIFunction
@@ -459,7 +459,7 @@ public:
   Cvn_lFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 //---------------------------------------------------------------------------------
@@ -494,7 +494,7 @@ public:
   Cvi_sFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 //---------------------------------------------------------------------------------
@@ -530,7 +530,7 @@ public:
   Cvd_sFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Get_sFunction : public SLIFunction
@@ -539,7 +539,7 @@ public:
   Get_sFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Put_sFunction : public SLIFunction
@@ -548,7 +548,7 @@ public:
   Put_sFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Put_aFunction : public SLIFunction
@@ -557,7 +557,7 @@ public:
   Put_aFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Put_pFunction : public SLIFunction
@@ -566,7 +566,7 @@ public:
   Put_pFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Put_lpFunction : public SLIFunction
@@ -575,7 +575,7 @@ public:
   Put_lpFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Search_sFunction : public SLIFunction
@@ -584,7 +584,7 @@ public:
   Search_sFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Search_aFunction : public SLIFunction
@@ -593,7 +593,7 @@ public:
   Search_aFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 // This function is not implemented
@@ -612,7 +612,7 @@ public:
   IrepeatanyFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class RepeatanyFunction : public SLIFunction
@@ -621,7 +621,7 @@ public:
   RepeatanyFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 

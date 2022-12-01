@@ -47,12 +47,12 @@ Rate model with threshold-linear gain function
 Description
 +++++++++++
 
-threshold_lin_rate is an implementation of a nonlinear rate model with
-input function :math:`input(h) = min( max( g * ( h - \theta ), 0 ),
+``threshold_lin_rate`` is an implementation of a nonlinear rate model with
+input function :math:`input(h) = min( max( g \cdot ( h - \theta ), 0 ),
 \alpha )`.  It either models a rate neuron with input noise (see
-rate_neuron_ipn), a rate neuron with output noise (see
-rate_neuron_opn) or a rate transformer (see
-rate_transformer_node). Input transformation can either be applied to
+``rate_neuron_ipn``), a rate neuron with output noise (see
+``rate_neuron_opn``) or a rate transformer (see
+``rate_transformer_node``). Input transformation can either be applied to
 individual inputs or to the sum of all inputs.
 
 The model supports connections to other rate models with either zero
@@ -70,6 +70,8 @@ type ``threshold_lin_rate_ipn`` for input noise or of type
 ``threshold_lin_rate_opn`` output noise. Nonlinear rate transformers
 can be obtained by creating models of type
 ``rate_transformer_threshold_lin``.
+
+See also [1]_ [2]_.
 
 Parameters
 ++++++++++

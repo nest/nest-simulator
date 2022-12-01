@@ -63,6 +63,8 @@ public:
   SpikeData( const SpikeData& rhs );
   SpikeData( const thread tid, const synindex syn_id, const index lcid, const unsigned int lag );
 
+  SpikeData& operator=( const SpikeData& rhs );
+
   void set( const thread tid, const synindex syn_id, const index lcid, const unsigned int lag, const double offset );
 
   /**
@@ -154,6 +156,17 @@ inline SpikeData::SpikeData( const thread tid, const synindex syn_id, const inde
   , tid_( tid )
   , syn_id_( syn_id )
 {
+}
+
+inline SpikeData&
+SpikeData::operator=( const SpikeData& rhs )
+{
+  lcid_ = rhs.lcid_;
+  marker_ = SPIKE_DATA_ID_DEFAULT;
+  lag_ = rhs.lag_;
+  tid_ = rhs.tid_;
+  syn_id_ = rhs.syn_id_;
+  return *this;
 }
 
 inline void

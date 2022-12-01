@@ -30,23 +30,21 @@
 // Includes from sli:
 #include "filesystem.h"
 #include "gnureadline.h"
-#include "integerdatum.h"
 #include "interpret.h"
 #include "oosupport.h"
 #include "processes.h"
 #include "sliarray.h"
 #include "sliregexp.h"
 #include "slistartup.h"
-#include "tokenutils.h"
 
 int
 main( int argc, char* argv[] )
 {
-/**
-  We disable synchronization between stdio and istd::ostreams
-  this has to be done before any in- or output has been
-  done.
-*/
+  /**
+    We disable synchronization between stdio and istd::ostreams
+    this has to be done before any in- or output has been
+    done.
+  */
 
 #ifdef __GNUC__
 #if __GNUC__ < 3 || ( __GNUC__ == 3 && __GNUC_MINOR__ < 1 )

@@ -36,7 +36,7 @@ public:
   bool
   is_in_range( index node_id ) const
   {
-    return ( ( node_id >= first_node_id_ ) and ( node_id <= last_node_id_ ) );
+    return ( node_id >= first_node_id_ and node_id <= last_node_id_ );
   }
   index
   get_model_id() const

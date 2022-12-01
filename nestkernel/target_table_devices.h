@@ -239,7 +239,7 @@ TargetTableDevices::send_from_device( const thread tid,
         it != target_from_devices_[ tid ][ ldid ].end();
         ++it )
   {
-    if ( *it != NULL )
+    if ( *it )
     {
       ( *it )->send_to_all( tid, cm, e );
     }
@@ -251,7 +251,7 @@ TargetTableDevices::is_device_connected( const thread tid, const index lcid ) co
 {
   for ( auto& synapse : target_from_devices_[ tid ][ lcid ] )
   {
-    if ( synapse != nullptr )
+    if ( synapse )
     {
       std::deque< ConnectionID > conns;
       synapse->get_all_connections( lcid, 0, tid, UNLABELED_CONNECTION, conns );

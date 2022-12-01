@@ -38,7 +38,7 @@ class GenericDatum : public TypedDatum< slt >
 {
 
   virtual Datum*
-  clone( void ) const
+  clone() const
   {
     return new GenericDatum< D, slt >( *this );
   }
@@ -63,20 +63,21 @@ public:
 
   GenericDatum( const GenericDatum< D, slt >& gd ) = default;
 
-  const D& operator=( const D& d_s )
+  const D&
+  operator=( const D& d_s )
   {
     d = d_s;
     return d;
   }
 
   const D&
-  get( void ) const
+  get() const
   {
     return d;
   }
 
   D&
-  get( void )
+  get()
   {
     return d;
   }
@@ -113,7 +114,7 @@ public:
 
     //    std::cerr << "d = " << d << " ddc = " << ddc << " dat = " << dat <<
     //    std::endl;
-    if ( ddc == NULL )
+    if ( not ddc )
     {
       return false;
     }

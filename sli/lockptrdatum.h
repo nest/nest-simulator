@@ -43,7 +43,7 @@ template < class D, SLIType* slt >
 class lockPTRDatum : public lockPTR< D >, public TypedDatum< slt >
 {
   Datum*
-  clone( void ) const
+  clone() const
   {
     return new lockPTRDatum< D, slt >( *this );
   }
@@ -100,14 +100,6 @@ public:
   // It is defined as identity of the underly D, i.e. &this->D == &other->D
   bool equals( const Datum* ) const;
 
-  /* operator=
-    The assignment operator is defaulted.
-    Therefore, lockPTR<D>::operator= is called, and
-    TypedDatum<slt>::operator= is called.
-    The TypedDatum = is simply return *this.
-  */
-  // lockPTRDatum<D, sli>& operator=(const lockPTRDatum<D, sli>&)
-
   /* operator==
     lockPTRDatum should only use the equals method for equality testing.
     Thus, the inherited lockPTR<D>::operator== is made private.  No
@@ -117,7 +109,45 @@ private:
   bool operator==( lockPTR< D >& );
 };
 
+/* equals(const Datum* datum)
+   returns: true if *this and Datum *dat are both lockptr references
+   to the same underlying object.
 
-/******************************************/
+   The definition of the equals method assumes that no further
+   distinguishing data is added by derivation.  Aka, the template
+   class is never inherited from, and therefore type equality is
+   guaranteed by template parameter equality.
+*/
+template < class D, SLIType* slt >
+bool
+lockPTRDatum< D, slt >::equals( const Datum* dat ) const
+{
+  const lockPTRDatum< D, slt >* ddc = dynamic_cast< const lockPTRDatum< D, slt >* >( dat );
+  return ddc and lockPTR< D >::operator==( *ddc );
+}
+
+template < class D, SLIType* slt >
+void
+lockPTRDatum< D, slt >::pprint( std::ostream& out ) const
+{
+  out << "<lockPTR[" << this->references() << "]->" << this->gettypename() << '(' << static_cast< void* >( this->get() )
+      << ")>";
+  this->unlock();
+}
+
+template < class D, SLIType* slt >
+void
+lockPTRDatum< D, slt >::print( std::ostream& out ) const
+{
+  out << '<' << this->gettypename() << '>';
+}
+
+template < class D, SLIType* slt >
+void
+lockPTRDatum< D, slt >::info( std::ostream& out ) const
+{
+  //  out << *dynamic_cast<C *>(const_cast<lockPTR<C,slt> *>(this));
+  pprint( out );
+}
 
 #endif

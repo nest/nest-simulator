@@ -61,15 +61,14 @@ public:
   class OffGridSpike;
 
   MPIManager();
-  ~MPIManager()
+  ~MPIManager() override
   {
   }
 
-  virtual void initialize();
-  virtual void finalize();
-
-  virtual void set_status( const DictionaryDatum& );
-  virtual void get_status( DictionaryDatum& );
+  void initialize() override;
+  void finalize() override;
+  void set_status( const DictionaryDatum& ) override;
+  void get_status( DictionaryDatum& ) override;
 
   void init_mpi( int* argc, char** argv[] );
 #ifdef HAVE_MPI
@@ -162,21 +161,13 @@ public:
   void communicate_Allreduce_sum( std::vector< double >& send_buffer, std::vector< double >& recv_buffer );
 
   /**
-   * Minimum across all ranks.
+   * Equal across all ranks.
    *
    * @param value value on calling rank
-   * @return minimum value across all ranks
+   * @return true if values across all ranks are equal, false otherwise or if
+   *         any rank passes -inf as value
    */
-  double min_cross_ranks( double value );
-
-  /**
-   * Maximum across all ranks.
-   *
-   * @param value value on calling rank
-   * @return maximum value across all ranks
-   */
-  double max_cross_ranks( double value );
-
+  bool equal_cross_ranks( const double value );
 
   std::string get_processor_name();
 
@@ -370,8 +361,8 @@ private:
   //!< rank will be written
 
   std::vector< int > send_displacements_secondary_events_in_int_per_rank_; //!< offset in the MPI send buffer (in ints)
-//!< from which elements send to each rank will
-//!< be read
+  //!< from which elements send to each rank will
+  //!< be read
 
 #ifdef HAVE_MPI
   //! array containing communication partner for each step.
@@ -569,16 +560,16 @@ MPIManager::get_send_recv_count_spike_data_per_rank() const
 inline size_t
 MPIManager::get_send_buffer_size_secondary_events_in_int() const
 {
-  return send_displacements_secondary_events_in_int_per_rank_[ send_displacements_secondary_events_in_int_per_rank_
-                                                                 .size() - 1 ]
+  return send_displacements_secondary_events_in_int_per_rank_
+           [ send_displacements_secondary_events_in_int_per_rank_.size() - 1 ]
     + send_counts_secondary_events_in_int_per_rank_[ send_counts_secondary_events_in_int_per_rank_.size() - 1 ];
 }
 
 inline size_t
 MPIManager::get_recv_buffer_size_secondary_events_in_int() const
 {
-  return recv_displacements_secondary_events_in_int_per_rank_[ recv_displacements_secondary_events_in_int_per_rank_
-                                                                 .size() - 1 ]
+  return recv_displacements_secondary_events_in_int_per_rank_
+           [ recv_displacements_secondary_events_in_int_per_rank_.size() - 1 ]
     + recv_counts_secondary_events_in_int_per_rank_[ recv_counts_secondary_events_in_int_per_rank_.size() - 1 ];
 }
 

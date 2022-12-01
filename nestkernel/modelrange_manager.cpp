@@ -112,24 +112,7 @@ ModelRangeManager::get_model_id( index node_id ) const
 nest::Model*
 nest::ModelRangeManager::get_model_of_node_id( index node_id )
 {
-  return kernel().model_manager.get_model( get_model_id( node_id ) );
-}
-
-bool
-ModelRangeManager::model_in_use( index i ) const
-{
-  bool found = false;
-
-  for ( std::vector< modelrange >::const_iterator it = modelranges_.begin(); it != modelranges_.end(); ++it )
-  {
-    if ( it->get_model_id() == i )
-    {
-      found = true;
-      break;
-    }
-  }
-
-  return found;
+  return kernel().model_manager.get_node_model( get_model_id( node_id ) );
 }
 
 const modelrange&

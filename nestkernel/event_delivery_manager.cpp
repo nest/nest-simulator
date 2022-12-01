@@ -477,19 +477,19 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
   bool is_spike_register_empty = true;
 
   // First dimension: loop over writing thread
-  for ( auto& it : spike_register )
+  for ( auto& spikes : spike_register )
   {
-    // Second dimension: Set the reading thread to current running thread
+    // Second dimension: Set the reading thread to the current running thread
 
     // Third dimension: loop over lags
-    for ( unsigned int lag = 0; lag < ( it )[ tid ].size(); ++lag )
+    for ( unsigned int lag = 0; lag < ( spikes )[ tid ].size(); ++lag )
     {
       // Fourth dimension: loop over entries
-      for ( auto& spike : ( it )[ tid ][ lag ] )
+      for ( auto& emitted_spike : ( spikes )[ tid ][ lag ] )
       {
-        assert( not spike.is_processed() );
+        assert( not emitted_spike.is_processed() );
 
-        const thread rank = spike.get_rank();
+        const thread rank = emitted_spike.get_rank();
 
         if ( send_buffer_position.is_chunk_filled( rank ) )
         {
@@ -501,8 +501,9 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
         }
         else
         {
-          send_buffer[ send_buffer_position.idx( rank ) ].set( spike, lag );
-          spike.mark_for_removal();
+          SpikeDataT& spike_to_send = send_buffer.at( send_buffer_position.idx( rank ) );
+          spike_to_send.set( emitted_spike, lag );
+          emitted_spike.mark_for_removal();
           send_buffer_position.increase( rank );
         }
       }

@@ -23,7 +23,7 @@
 function( NEST_PROCESS_WITH_OPTIMIZE )
   if ( with-optimize )
   string(TOUPPER "${with-optimize}" WITHOPTIMIZE)
-    if ( WITHOPTIMIZE-optimize STREQUAL "ON" )
+    if ( WITHOPTIMIZE STREQUAL "ON" )
       set( with-optimize "-O2" )
     endif ()
     set(OPTIMIZATION_FLAGS "")

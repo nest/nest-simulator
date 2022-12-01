@@ -117,7 +117,7 @@ sphinx_gallery_conf = {
 }
 
 # General information about the project.
-project = u'NEST simulator user documentation'
+project = u'NEST Simulator user documentation'
 copyright = u'2004, nest-simulator'
 author = u'nest-simulator'
 
@@ -158,7 +158,7 @@ numfig_format = {'figure': 'Figure %s', 'table': 'Table %s',
 # a list of builtin themes.
 #
 html_theme = 'sphinx_material'
-html_title = 'NEST simulator documentation'
+html_title = 'NEST Simulator Documentation'
 html_logo = str(doc_build_dir / 'static/img/nest_logo.png')
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -183,7 +183,7 @@ html_theme_options = {
     'master_doc': True,
     # Set the repo location to get a badge with stats
     'repo_url': 'https://github.com/nest/nest-simulator/',
-    'repo_name': 'NEST simulator',
+    'repo_name': 'NEST Simulator',
     # "nav_links": [
     #     {"href": "index", "internal": True, "title": "NEST docs home"}
     #     ],
@@ -305,7 +305,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'nestsimulator', u'NEST simulator Documentation',
+    (master_doc, 'nestsimulator', u'NEST Simulator Documentation',
      [author], 1)
 ]
 
@@ -316,7 +316,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'NESTsimulator', u'NEST simulator Documentation',
+    (master_doc, 'NESTsimulator', u'NEST Simulator Documentation',
      author, 'NESTsimulator', 'One line description of project.',
      'Miscellaneous'),
 ]

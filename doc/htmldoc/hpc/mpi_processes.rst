@@ -27,8 +27,9 @@ It's usually unclear whether MPI :ref:`pins threads to cores <pinning_threads>`.
 After allocation of resources on which one wants to run the MPI processes, you also need to export environment
 variables related the implementation of the multiprocessing API.
 
-* OpenMPI
-   * boost > 2.26(?) automatically contains an MPI implementation that can interfere
+.. note::
+
+   * OpenMPI: boost > 2.26(?) automatically contains an MPI implementation that can interfere with ???
 
 .. list-table:: OpenMPI settings
    :header-rows: 1

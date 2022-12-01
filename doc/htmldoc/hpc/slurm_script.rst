@@ -112,11 +112,15 @@ This is also known as wall time, which is the time allocated to your job.
 The number of nodes needed for your job (see :ref:`figure here <overview_hardware>`). The number of nodes will depend on your memory needs and if you're
 trying to increase the speed of the simulation.
 
-How much memory does your simulation need? To get a rough estimate of the memory requirements for your simulation, you can
-use the number of synapses.  One synapse is roughly equivalent to X.
-For example: The :ref:`microcircuit model <toc_microcircuit>` requires around 16 GB of memory and the `multi-area-model <https://github.com/INM-6/multi-area-model>`_ requires 1.4 TB.
-If a node has 128 GB of memory then one node is more than sufficient for the microcircuit model but the multi-area model
-will need 12 nodes to run.
+.. note::
+
+   How much memory does your simulation need?
+
+   To get a rough estimate of the memory requirements for your simulation, you can ???
+
+   For example: The :ref:`microcircuit model <toc_microcircuit>` requires around 16 GB of memory and the `multi-area-model <https://github.com/INM-6/multi-area-model>`_ requires 1.4 TB.
+   If a node has 128 GB of memory then one node is more than sufficient for the microcircuit model but the multi-area model
+   will need 12 nodes to run.
 
 |
 

@@ -23,11 +23,13 @@ import functools as _functools
 from .hl_api_spatial import *  # noqa
 from .hl_api_spatial import DistanceParameter as _DistanceParameter
 
+
 @_functools.cache
 def __getattr__(name):
     if name == "distance":
         return _DistanceParameter()
     raise AttributeError(f"module {__name__} has no attribute {name}")
+
 
 # Type annotation to hint at dynamic singleton of DistanceParameter()
 distance: _DistanceParameter

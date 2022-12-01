@@ -37,5 +37,7 @@ Model information
 
 .. code-block:: python
 
+   # Only works if the documentation has been built as well.
    nest.help('model_name')
+
 

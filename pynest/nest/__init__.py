@@ -31,6 +31,7 @@ r"""PyNEST - Python interface for the NEST Simulator
 
 * ``nest.help("model_name") displays help for the given model, e.g.,
   ``nest.help("iaf_psc_exp")``
+  Only works if the documentation has been built as well.
 
 * To get help on functions in the ``nest`` package, use Python's
   ``help()`` function or IPython's ``?``, e.g.

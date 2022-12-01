@@ -32,9 +32,6 @@ __all__ = [
 ]
 
 
-
-
-
 class DistanceParameter(Parameter):
     def __init__(self):
         distance_parameter = CreateParameter('distance', {})
@@ -71,7 +68,6 @@ class DistanceParameter(Parameter):
             Object yielding the distance in the given dimension.
         """
         return CreateParameter('distance', {'dimension': dimension})
-
 
 
 class pos:

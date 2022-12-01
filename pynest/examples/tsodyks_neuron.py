@@ -39,7 +39,7 @@ nrn_tsodyks_pre = nest.Create("iaf_tsodyks", 1)
 nrn_tsodyks_post = nest.Create("iaf_tsodyks", 1)
 
 
-### Set huge synaptic weight, control spike releases by refractory period
+# Set huge synaptic weight, control spike releases by refractory period
 nest.SetStatus(nrn_tsodyks_pre, {'t_ref': 10000.})
 
 m_tsodyks = nest.Create('multimeter', 1)
@@ -79,20 +79,25 @@ nest.Connect(m_exp, nrn_exp_post)
 nest.Simulate(10.0)
 
 r_tsodyks = nest.GetStatus(m_tsodyks, "events")[0]
-r_exp = nest.GetStatus(m_exp, "events")[0]
-
 print("iaf_tsodyks with static synapse:")
 pprint(r_tsodyks)
 
 
+r_exp = nest.GetStatus(m_exp, "events")[0]
 print("\n iaf_psc_exp with tsodyks_synapse:")
 pprint(r_exp)
 
-plt.plot(r_tsodyks['V_m'])
-plt.twinx()
-plt.plot(r_exp['V_m'], '--', c='C1')
-plt.figure()
-plt.plot(r_tsodyks['I_syn_ex'])
-plt.twinx()
-plt.plot(r_exp['I_syn_ex'], '--', c='C1')
+fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(8, 6), tight_layout=True)
+
+axes[0].plot(r_tsodyks['V_m'], label='iaf_tsodyks / static_syn')
+axes[0].plot(r_exp['V_m'], label='iaf_psc_exp / tsodyks_syn')
+axes[0].set(xlabel='time', ylabel='V_m')
+axes[0].legend(loc='upper right')
+
+axes[1].plot(r_tsodyks['I_syn_ex'], label='iaf_tsodyks / static_syn')
+axes[1].plot(r_exp['I_syn_ex'], label='iaf_psc_exp / tsodyks_syn')
+axes[1].set(xlabel='time', ylabel='I_syn_ex')
+axes[1].legend(loc='upper right')
+
+
 plt.show()

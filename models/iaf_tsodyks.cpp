@@ -377,6 +377,9 @@ nest::iaf_tsodyks::update( const Time& origin, const long from, const long to )
       // std::cerr << "S_.x_: " << S_.x_ << "\n";
       double delta_y_tsp = S_.u_ * S_.x_;
 
+      std::cerr << "TSODYKS NRN u: " << S_.u_ << "\n";
+      std::cerr << "TSODYKS NRN x: " << S_.x_ << "\n";
+
       // delta function x, y
       S_.x_ -= delta_y_tsp;
       S_.y_ += delta_y_tsp;
@@ -384,11 +387,11 @@ nest::iaf_tsodyks::update( const Time& origin, const long from, const long to )
 
       // send spike with datafield
       SpikeEvent se;
-      se.set_weight( 13.0 );
-      se.set_offset( 100.0 );
-      std::cerr << "OFFSET PRESYNAPTIC: " << se.get_offset() << "\n";
-      std::cerr << "WEIGHT PRESYNAPTIC: " << se.get_weight() << "\n";
+      se.set_offset( delta_y_tsp );
+      std::cerr << "PRESYN delta_y_tsp: " << delta_y_tsp << "\n";
+      std::cerr << "GET OFFSET PRESYNAPTIC: " << se.get_offset() << "\n";
 
+      std::cerr << &se << "\n";
       kernel().event_delivery_manager.send( *this, se, lag );
     }
 
@@ -409,6 +412,11 @@ nest::iaf_tsodyks::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
+  // auto sender = e.get_sender();
+  // std::cerr << *(sender) << "\n";
+  std::cerr << &e << "\n";
+
+
   const index input_buffer_slot = kernel().event_delivery_manager.get_modulo(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
 
@@ -417,17 +425,16 @@ nest::iaf_tsodyks::handle( SpikeEvent& e )
   // std::cerr << "s: " << s << "\n";
 
   const auto offset = e.get_offset();
-  std::cerr << "OFFSET POSTSYNAPTIC: " << e.get_offset()   << "\n";
-  std::cerr << "WEIGHT POSTSYNAPTIC: " << e.get_weight()   << "\n";
+  std::cerr << "OFFSET POSTSYNAPTIC: " << offset << "\n";
 
   if ( offset != 0.0 )
   {
     s *= offset;
   }
-  //std::cerr << "e.get_weight(): " << e.get_weight() << "\n";
-  //std::cerr << "e.get_offset(): " << e.get_offset() << "\n";
-  //std::cerr << "e.get_multiplicity(): " << e.get_multiplicity() << "\n";
-  //std::cerr << "s: " << s << "\n";
+  // std::cerr << "e.get_weight(): " << e.get_weight() << "\n";
+  // std::cerr << "e.get_offset(): " << e.get_offset() << "\n";
+  // std::cerr << "e.get_multiplicity(): " << e.get_multiplicity() << "\n";
+  // std::cerr << "s: " << s << "\n";
 
   // separate buffer channels for excitatory and inhibitory inputs
   B_.input_buffer_.add_value( input_buffer_slot, s > 0 ? Buffers_::SYN_EX : Buffers_::SYN_IN, s );

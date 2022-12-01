@@ -98,17 +98,17 @@ commands.
 
 2. Add `-Dwith-userdoc=ON` to your regular CMake command:
 
-.. code-black:: bash
+.. code-block:: bash
 
    cmake -Dwith-userdoc=ON
 
-2. Build the docs:
+3. Build the docs:
 
 .. code-block:: bash
 
    make docs
 
-3. Preview files. They are located in ``doc/htmldoc/_build/html``
+4. Preview files. They are located in ``doc/htmldoc/_build/html``
 
 .. code-block:: bash
 
@@ -116,8 +116,8 @@ commands.
 
 .. note::
 
-   If you are planning to install NEST, `make docs` is included
-   in `make install` as long as you toggle on the userdoc or devdoc
+   If you are planning to install NEST, ``make docs`` is included
+   in ``make install`` as long as you toggle on the userdoc or devdoc
 
    After installation the files are located in
    ``<nest_install_dir>/share/doc/nest/html/index.html``

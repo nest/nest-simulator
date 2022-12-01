@@ -277,16 +277,15 @@ texinfo_documents = [
 ]
 
 
-def copy_static(src):
-    os.makedirs(os.path.join("static", Path(src).parent), exist_ok=True)
-    copyfile(os.path.join(pynest_dir, src), os.path.join("static", src))
+def copy_example_file(src):
+    copyfile(os.path.join(pynest_dir, src), Path("examples") / Path(src).parts[-1])
 
 
 # -- Copy documentation for Microcircuit Model ----------------------------
-copy_static("examples/Potjans_2014/box_plot.png")
-copy_static("examples/Potjans_2014/raster_plot.png")
-copy_static("examples/Potjans_2014/microcircuit.png")
-copy_static("examples/hpc_benchmark_connectivity.svg")
+copy_example_file("examples/Potjans_2014/box_plot.png")
+copy_example_file("examples/Potjans_2014/raster_plot.png")
+copy_example_file("examples/Potjans_2014/microcircuit.png")
+copy_example_file("examples/hpc_benchmark_connectivity.svg")
 copyfile(
     os.path.join(pynest_dir, "examples/Potjans_2014/README.rst"),
     "examples/README.rst",

@@ -505,6 +505,8 @@ def _lazy_module_property(module_name, optional=False, optional_hint=""):
 # Instantiate a NestModule to replace the nest Python module. Based on
 # https://mail.python.org/pipermail/python-ideas/2012-May/014969.html
 _module = NestModule(__name__)
+# A reference to the class of the module is required for the documentation.
+_module.__dict__["NestModule"] = NestModule
 # Set the nest module object as the return value of `import nest` using sys
 sys.modules[__name__] = _module
 # Some compiled/binary components (`pynestkernel.pyx` for example) of NEST

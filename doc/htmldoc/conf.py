@@ -40,7 +40,6 @@ pynest_dir = os.path.join(repo_root_dir, "pynest")
 # Add the NEST Python module to the path (just the py files, the binaries are mocked)
 sys.path.append(pynest_dir)
 
-
 # -- General configuration ------------------------------------------------
 
 source_suffix = '.rst'

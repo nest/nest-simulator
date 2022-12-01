@@ -4,7 +4,7 @@ MPI process
 ===========
 
 
-An MPI process is a set of data and instructions with its own memory that must be explictly shared between processes (also known as CPUs).
+An MPI process is process of a computer program that is being executed by one or many threads and employs a Message Passing Interface (MPI) to communicate its data with the other processes.
 
 We typically use the standard Message Passing Interface (MPI) to instruct how processes work in parallel (See e.g.,
 `OpenMPI <https://www.open-mpi.org/>`_).

@@ -59,7 +59,7 @@ extensions = [
     'VersionSyncRole',
 ]
 
-autodoc_mock_imports = ["nest.pynestkernel"]
+autodoc_mock_imports = ["nest.pynestkernel", "nest.ll_api"]
 mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa
 panels_add_bootstrap_css = False
 # Add any paths that contain templates here, relative to this directory.

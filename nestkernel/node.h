@@ -157,6 +157,14 @@ public:
   virtual bool one_node_per_process() const;
 
   /**
+   * Returns true if the node is shared between threads on each process.
+   * This is used for memory efficiency when devices do not strictly need
+   * to be spawned at each thread.
+   *
+   */
+  virtual bool shared_device() const;
+
+  /**
    * Returns true if the node sends/receives off-grid events. This is
    * used to discriminate between different types of nodes when adding
    * new nodes to the network.

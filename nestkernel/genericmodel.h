@@ -58,6 +58,7 @@ public:
 
   bool has_proxies() override;
   bool one_node_per_process() override;
+  bool shared_device() override;
   bool is_off_grid() override;
   void calibrate_time( const TimeConverter& tc ) override;
   /**
@@ -169,6 +170,13 @@ inline bool
 GenericModel< ElementT >::one_node_per_process()
 {
   return proto_.one_node_per_process();
+}
+
+template < typename ElementT >
+inline bool
+GenericModel< ElementT >::shared_device()
+{
+  return proto_.shared_device();
 }
 
 template < typename ElementT >

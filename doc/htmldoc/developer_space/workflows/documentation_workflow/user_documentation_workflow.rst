@@ -71,6 +71,12 @@ documentation and avoid using Conda, you can use pip:
 
     pip3 install -r <nest_source_dir>/doc/requirements.txt
 
+If you use pip, install ``pandoc`` from your platform's package manager (e.g. apt):
+
+.. code-block:: bash
+
+    sudo apt-get install pandoc
+
 
 Generating documentation with Sphinx
 ++++++++++++++++++++++++++++++++++++
@@ -84,37 +90,37 @@ Rendering HTML
 You can build and preview the documentation locally by running the following
 commands.
 
-1. Go to the :ref:`build directory <dev_install>` of NEST (i.e., the
-directory where you ran ``cmake``)
+1. Go to the :ref:`build directory <dev_install>` of NEST:
 
 .. code-block:: bash
 
    cd nest-simulator-x.y.z-build
 
-2. Generate HTML files
+2. Add `-Dwith-userdoc=ON` to your regular CMake command:
 
 .. code-block:: bash
 
-   make html
+   cmake -Dwith-userdoc=ON
 
-3. Preview files. They are located in ``doc/htmldoc/html``
-
-.. code-block:: bash
-
-   browser doc/htmldoc/html/index.html
-
-To install the documentation under ``<nest_install_dir>`` along with
-the rest of NEST, the ``make html`` command can be followed by
+3. Build the docs:
 
 .. code-block:: bash
 
-   make install
+   make docs
 
-If you want to view the files after installation, you can run
+4. Preview files. They are located in ``doc/htmldoc/_build/html``
 
 .. code-block:: bash
 
-   browser <nest_install_dir>/share/doc/nest/html/index.html
+   browser doc/htmldoc/_build/html/index.html
+
+.. note::
+
+   If you are planning to install NEST, ``make docs`` is included
+   in ``make install`` as long as you toggle on the userdoc or devdoc
+
+   After installation the files are located in
+   ``<nest_install_dir>/share/doc/nest/html/index.html``
 
 Editing and creating pages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

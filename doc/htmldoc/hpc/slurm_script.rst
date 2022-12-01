@@ -36,10 +36,11 @@ Finding the optimal parameters for your script may require some trial and error.
    export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
    export OMP_PROC_BIND=TRUE
 
-   # For one MPI process (ntasks-per-node)
+
+   # On some systems, MPI is run by default
    srun python3 my_nest_simulation.py
 
-   # For > 1 MPI process (ntasks-per-node)
+   # On other systems, you must explicitly call MPI:
    module load openmpi
    mpirun -n <num_of_processes> python3 my_nest_simulation.py
 
@@ -149,6 +150,10 @@ varies depending on what HPC system you are using).
 In this example, we are assuming there are 64 cores in a node. We are using 1 MPI process (``ntasks-per-node``) and 64 threads
 (``cpus-per-task``). We can increase the ``ntasks-per-node``
 to 2, but then we would need to decrease the ``cpus-per-task`` to 32 (because we want the total to be 64).
+
+When using more thant 1 MPI process, *if possible* on the system you are using, we recommend using ``mpirun`` explicity. It should ensure each process represents a subset of your entire
+script. For example, if you have 4 processes (``ntasks-per-node = 4``) and use ``mpirun -n 4``, your script,
+``my_nest_simulation.py``, will be divided up into the 4 processes. 
 
 |
 

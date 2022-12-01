@@ -68,39 +68,20 @@ endif ()
 
 
 if ( BUILD_SPHINX_DOCS )
-  # Configure the Sphinx documentation.
-  # 1. In out-of-tree builds, we need to copy over the source doc dir to the build dir,
-  #    exact reasons currently unknown.
-  # 2. The NEST source directory is passed to Sphinx by setting env:NESTSRCDIR, so that
-  #    Sphinx can rewrite the source `pynestkernel.pyx` into a mocked `pynestkernel.py`
-  # 3. Sphinx builds the documentation into the build directory, which then later gets
-  #    installed into the target docdir.
-  # 4. Sphinx generates the models RST documentation from the models/*.h files. But we
-  #    need to copy them into a deeper directory.
-  # 5. To make Python's `help` results more useful, `include` directives are inlined using
-  #    `resolve_includes.py`
-  # 6. This assembled Sphinx folder is marked to be installed, together with the logos.
-
   message( STATUS "Configuring Sphinx documentation" )
-  set( _SPHINX_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/htmldoc" )
-  # This can take a while on slow IO, so use check/pass to indicate ongoing-ness
-  message( CHECK_START "Copying Sphinx source tree" )
-  file( COPY htmldoc DESTINATION . )
-  message( CHECK_PASS "copied" )
+  set( _SPHINX_SOURCE_DIR "${PROJECT_SOURCE_DIR}/doc/htmldoc" )
+  set( _SPHINX_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/_build/html" )
   add_custom_target( sphinxdocs
-    WORKING_DIRECTORY ${_SPHINX_BUILD_DIR}
-    COMMAND NESTSRCDIR=${PROJECT_SOURCE_DIR} ${SPHINX_EXECUTABLE} -b html . _build
-    #COMMAND cp "${DOC_BUILD_DIR}/models/*.rst" "${DOC_BUILD_DIR}/html/models"
-    #COMMAND ${PYTHON_EXECUTABLE} "${DOC_BUILD_DIR}/resolve_includes.py"
-    #"${DOC_BUILD_DIR}/html/models"
+    WORKING_DIRECTORY ${_SPHINX_SOURCE_DIR}
+    COMMAND ${SPHINX_EXECUTABLE} -b html . ${_SPHINX_BUILD_DIR}
+    COMMAND ${PYTHON_EXECUTABLE} resolve_includes.py
   )
   add_dependencies( docs sphinxdocs )
 
-  install( DIRECTORY "${DOC_BUILD_DIR}/_build/html"
-    DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}"
+  install( DIRECTORY ${_SPHINX_BUILD_DIR}
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}
     OPTIONAL
     )
-
   install( DIRECTORY logos
       DESTINATION ${CMAKE_INSTALL_DOCDIR}
       )

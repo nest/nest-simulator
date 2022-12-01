@@ -149,7 +149,8 @@ public:
    * SimulationManager::run() returns. Typical use-cases are devices
    * that need to flush buffers.
    */
-  virtual void post_run_cleanup( index )
+  virtual void
+  post_run_cleanup( index )
   {
   }
   /**
@@ -158,7 +159,8 @@ public:
    * full simulation, i.e., a cycle of Prepare, Run, Cleanup. Typical
    * use-cases are devices that need to close files.
    */
-  virtual void finalize( index )
+  virtual void
+  finalize( index )
   {
   }
 
@@ -414,7 +416,8 @@ public:
    */
 
 
-  virtual double get_Ca_minus( index ) const
+  virtual double
+  get_Ca_minus( index ) const
   {
     return 0.0;
   }
@@ -491,7 +494,8 @@ public:
    * used in check_connection to only connect neurons which send / receive
    * compatible information
    */
-  virtual SignalType sends_signal( index ) const
+  virtual SignalType
+  sends_signal( index ) const
   {
     return SPIKE;
   }
@@ -501,7 +505,8 @@ public:
    * used in check_connection to only connect neurons which send / receive
    * compatible information
    */
-  virtual SignalType receives_signal( index ) const
+  virtual SignalType
+  receives_signal( index ) const
   {
     return SPIKE;
   }
@@ -514,7 +519,8 @@ public:
    * value
    * @param local_id position of node in the vector
    */
-  virtual double get_synaptic_elements( Name, index ) const
+  virtual double
+  get_synaptic_elements( Name, index ) const
   {
     return 0.0;
   };
@@ -525,7 +531,8 @@ public:
    * for new synapse creation
    * @param local_id position of node in the vector
    */
-  virtual int get_synaptic_elements_vacant( Name, index ) const
+  virtual int
+  get_synaptic_elements_vacant( Name, index ) const
   {
     return 0;
   }
@@ -536,10 +543,10 @@ public:
    * connected
    * @param local_id position of node in the vector
    */
-  virtual int get_synaptic_elements_connected( Name, index ) const
+  virtual int
+  get_synaptic_elements_connected( Name, index ) const
   {
     return 0;
-
   }
 
   /**
@@ -547,7 +554,8 @@ public:
    * get the number of all synaptic elements for the current Node
    * @param local_id position of node in the vector
    */
-  virtual std::map< Name, double > get_synaptic_elements( index ) const
+  virtual std::map< Name, double >
+  get_synaptic_elements( index ) const
   {
     return std::map< Name, double >();
   }

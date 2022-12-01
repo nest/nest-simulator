@@ -173,17 +173,15 @@ github_doc_root = ''
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'nestml': ('https://nestml.readthedocs.io/en/latest/', None),
-    'pynn': ('http://neuralensemble.org/docs/PyNN/', None),
+    'pynn': ('https://neuralensemble.org/docs/PyNN/', None),
     'elephant': ('https://elephant.readthedocs.io/en/latest/', None),
     'desktop': ('https://nest-desktop.readthedocs.io/en/latest/', None),
     'gpu': ('https://nest-gpu.readthedocs.io/en/latest/', None),
     'neuromorph': ('https://electronicvisions.github.io/hbp-sp9-guidebook/', None),
-    'arbor': ('https://docs.arbor-sim.org/en/latest/objects.inv', None),
-    'tvb': ('http://docs.thevirtualbrain.org/', None),
+    'arbor': ('https://docs.arbor-sim.org/en/latest/', None),
+    'tvb': ('https://docs.thevirtualbrain.org/', None),
     'extmod': ('https://nest-extension-module.readthedocs.io/en/latest/', None),
 }
-
-from extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
 
 
 def config_inited_handler(app, config):

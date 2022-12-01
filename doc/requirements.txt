@@ -12,6 +12,7 @@ mock
 nbsphinx
 numpy
 numpydoc
+pandoc
 path.py
 pytest
 recommonmark
@@ -25,4 +26,3 @@ sphinx-material
 statsmodels
 tqdm
 yamllint
-pandoc

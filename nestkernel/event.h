@@ -181,6 +181,12 @@ public:
   Time const& get_stamp() const;
 
   /**
+   * Return time stamp of the event.
+   * The stamp denotes the time when the event was created.
+   */
+  Time& get_stamp();
+
+  /**
    * Set the time stamp of the event.
    * The time stamp refers to the time when the event
    * was created.
@@ -907,6 +913,12 @@ Event::set_weight( weight w )
 
 inline Time const&
 Event::get_stamp() const
+{
+  return stamp_;
+}
+
+inline Time&
+Event::get_stamp()
 {
   return stamp_;
 }

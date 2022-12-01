@@ -22,13 +22,11 @@
 
 import sys
 import os
-
-from pathlib import Path
-from shutil import copyfile, rmtree
 import json
 
-# Clean the build dir
-rmtree("_build", ignore_errors=True)
+from pathlib import Path
+from shutil import copyfile
+
 # Add the extension modules to the path
 extension_module_dir = os.path.abspath("./_ext")
 sys.path.append(extension_module_dir)

@@ -92,6 +92,14 @@ spike, it is essential to chose a sufficiently long refractory period.
 Traub and Miles used  :math:`t_{ref} = 3` ms ([2]_, p 118), while we used
 :math:`t_{ref} = 2` ms in [2]_.
 
+.. admonition::
+
+   Under some conditions, the exponential functions inside the numeric solver
+   routine for this model can cause a numerical instability. If the parameter
+   ``I_soma_max`` is set to a non-zero value, the total somatic current will
+   be evaluated at each solver timestep and a NumericalInstability exception
+   will be thrown if the value is exceeded.
+
 Parameters
 ++++++++++
 
@@ -117,6 +125,7 @@ g_Na         nS     Sodium peak conductance
 E_K          mV     Potassium reversal potential
 g_K          nS     Potassium peak conductance
 I_e          pA     External input current
+I_soma_max   pA     Maximum somatic current
 =========== ======  =========================================================
 
 References
@@ -212,12 +221,13 @@ private:
     //! Voltage offset for dynamics (adjusts threshold to around -50 mV)
     double V_T;
 
-    double E_ex;     //!< Excitatory reversal Potential in mV
-    double E_in;     //!< Inhibitory reversal Potential in mV
-    double tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
-    double tau_synI; //!< Synaptic Time Constant Inhibitory Synapse in ms
-    double t_ref_;   //!< Refractory time in ms
-    double I_e;      //!< External Current in pA
+    double E_ex;       //!< Excitatory reversal Potential in mV
+    double E_in;       //!< Inhibitory reversal Potential in mV
+    double tau_synE;   //!< Synaptic Time Constant Excitatory Synapse in ms
+    double tau_synI;   //!< Synaptic Time Constant Inhibitory Synapse in ms
+    double t_ref_;     //!< Refractory time in ms
+    double I_e;        //!< External Current in pA
+    double I_soma_max; //!< Maximum somatic current in pA
 
     Parameters_();
 

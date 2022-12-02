@@ -277,7 +277,7 @@ jobs:
     # as close as possible to the Readthedocs setup (system install cmake, pip install -r doc/requirements.txt)
     runs-on: "ubuntu-20.04"
     #if: ${{ always() }}
-    needs: [pydocstyle]
+    needs: [pydocstyle, rstcheck, vale]
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v2
@@ -427,7 +427,7 @@ jobs:
   test_linux:
     if: ${{ always() && !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [clang-format, cppcheck, mypy, copyright_headers, unused_names, forbidden_types]
+    needs: [clang-format, cppcheck, mypy, copyright_headers, unused_names, forbidden_types, pylint, flake8]
     env:
       CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
     strategy:
@@ -629,16 +629,6 @@ jobs:
             install_manifest.txt
             **.log
             build/reports/**
-
-  build_wheel:
-    if: false
-    runs-on: "ubuntu-20.04"
-    needs: [pytest]
-    steps:
-      - name: "Checkout repository content"
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
 
   build_conda:
     if: false

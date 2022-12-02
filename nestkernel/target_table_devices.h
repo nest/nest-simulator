@@ -239,7 +239,7 @@ TargetTableDevices::send_from_device( const thread tid,
         it != target_from_devices_[ tid ][ ldid ].end();
         ++it )
   {
-    if ( *it != NULL )
+    if ( *it )
     {
       ( *it )->send_to_all( tid, cm, e );
     }

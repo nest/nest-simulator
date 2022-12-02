@@ -251,7 +251,7 @@ nest::RecordingBackendASCII::DeviceData::open_file()
   std::string filename = compute_filename_();
 
   std::ifstream test( filename.c_str() );
-  if ( test.good() && not kernel().io_manager.overwrite_files() )
+  if ( test.good() and not kernel().io_manager.overwrite_files() )
   {
     std::string msg = String::compose(
       "The file '%1' already exists and overwriting files is disabled. To overwrite files, set "

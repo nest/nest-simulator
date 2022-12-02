@@ -456,7 +456,7 @@ template < class TGainfunction >
 void
 binary_neuron< TGainfunction >::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
@@ -536,7 +536,7 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
   if ( m == 1 )
   { // multiplicity == 1, either a single 1->0 event or the first or second of a
     // pair of 0->1 events
-    if ( node_id == S_.last_in_node_id_ && t_spike == S_.t_last_in_spike_ )
+    if ( node_id == S_.last_in_node_id_ and t_spike == S_.t_last_in_spike_ )
     {
       // received twice the same node ID, so transition 0->1
       // take double weight to compensate for subtracting first event

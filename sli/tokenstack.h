@@ -160,7 +160,7 @@ public:
   void
   roll( size_t n, long k )
   {
-    if ( n < 2 || k == 0 )
+    if ( n < 2 or k == 0 )
     {
       return; // nothing to do
     }

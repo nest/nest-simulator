@@ -22,27 +22,31 @@
 import nest
 import pytest
 
+HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
+
 
 @pytest.fixture
 def reset():
     nest.ResetKernel()
 
 
+@pytest.mark.skipif(not HAVE_OPENMP, reason='NEST was compiled without multi-threading')
 def testSetStatus_resolution_before_nthreads(reset):
     """Test if resolution can be set before number of threads."""
 
     nest.resolution = 0.5
     nest.local_num_threads = 4
     nest.Simulate(100)
-    assert(nest.resolution == 0.5)
-    assert(nest.local_num_threads == 4)
+    assert nest.resolution == 0.5
+    assert nest.local_num_threads == 4
 
 
+@pytest.mark.skipif(not HAVE_OPENMP, reason='NEST was compiled without multi-threading')
 def testSetStatus_nthreads_before_resolution(reset):
     """Test if number of threads can be set before resolution."""
 
     nest.local_num_threads = 4
     nest.resolution = 0.5
     nest.Simulate(100)
-    assert(nest.resolution == 0.5)
-    assert(nest.local_num_threads == 4)
+    assert nest.resolution == 0.5
+    assert nest.local_num_threads == 4

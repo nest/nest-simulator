@@ -237,7 +237,7 @@ nest::iaf_cond_beta::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Refractory time cannot be negative." );
   }
-  if ( tau_rise_ex <= 0 || tau_decay_ex <= 0 || tau_rise_in <= 0 || tau_decay_in <= 0 )
+  if ( tau_rise_ex <= 0 or tau_decay_ex <= 0 or tau_rise_in <= 0 or tau_decay_in <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -383,7 +383,7 @@ void
 nest::iaf_cond_beta::update( Time const& origin, const long from, const long to )
 {
 
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )

@@ -25,12 +25,14 @@
 
 // Includes from libnestutil:
 #include "dict_util.h"
+#include "iaf_propagator.h"
 #include "numerics.h"
-#include "propagator_stability.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "iaf_propagator.h"
 #include "kernel_manager.h"
+#include "numerics.h"
 #include "ring_buffer_impl.h"
 #include "universal_data_logger_impl.h"
 
@@ -148,7 +150,7 @@ nest::iaf_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Capacitance must be strictly positive." );
   }
-  if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 )
+  if ( Tau_ <= 0 or tau_ex_ <= 0 or tau_in_ <= 0 )
   {
     throw BadProperty( "Membrane and synapse time constants must be strictly positive." );
   }
@@ -249,8 +251,8 @@ nest::iaf_psc_exp::pre_run_hook()
   V_.P22_ = std::exp( -h / P_.Tau_ );
 
   // these are determined according to a numeric stability criterion
-  V_.P21ex_ = propagator_32( P_.tau_ex_, P_.Tau_, P_.C_, h );
-  V_.P21in_ = propagator_32( P_.tau_in_, P_.Tau_, P_.C_, h );
+  V_.P21ex_ = IAFPropagatorExp( P_.tau_ex_, P_.Tau_, P_.C_ ).evaluate( h );
+  V_.P21in_ = IAFPropagatorExp( P_.tau_in_, P_.Tau_, P_.C_ ).evaluate( h );
 
   V_.P20_ = P_.Tau_ / P_.C_ * ( 1.0 - V_.P22_ );
 
@@ -281,7 +283,7 @@ nest::iaf_psc_exp::pre_run_hook()
 void
 nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   const double h = Time::get_resolution().get_ms();

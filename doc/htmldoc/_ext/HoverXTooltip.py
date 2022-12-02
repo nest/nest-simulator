@@ -242,7 +242,7 @@ def setup(app):
         TYPE: Description
     """
     # add external css/js files
-    app.add_js_file('js/bootstrap/bootstrap.min.js')
+    app.add_js_file('js/bootstrap/bootstrap.bundle.min.js')
     app.add_css_file('css/bootstrap/bootstrap.min.css')
 
     # add custom css file

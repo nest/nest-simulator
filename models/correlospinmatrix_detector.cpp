@@ -25,7 +25,6 @@
 // C++ includes:
 #include <cmath>
 #include <functional>
-#include <numeric>
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -305,7 +304,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
 
   // If this assertion breaks, the sender does not honor the
   // receiver port during connection or sending.
-  assert( 0 <= curr_i && curr_i <= P_.N_channels_ - 1 );
+  assert( 0 <= curr_i and curr_i <= P_.N_channels_ - 1 );
 
   // accept spikes only if detector was active when spike was emitted
   Time const stamp = e.get_stamp();
@@ -329,7 +328,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
     { // multiplicity == 1, either a single 1->0 event or the first or second of
       // a pair of 0->1
       // events
-      if ( curr_i == S_.last_i_ && stamp == S_.t_last_in_spike_ )
+      if ( curr_i == S_.last_i_ and stamp == S_.t_last_in_spike_ )
       {
         // received twice the same node ID, so transition 0->1
         // revise the last event written to the buffer
@@ -398,7 +397,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
       const double tau_edge = P_.tau_max_.get_steps() + P_.delta_tau_.get_steps();
 
       const delay min_delay = kernel().connection_manager.get_min_delay();
-      while ( not otherPulses.empty() && ( t_min_on - otherPulses.front().t_off_ ) >= tau_edge + min_delay )
+      while ( not otherPulses.empty() and ( t_min_on - otherPulses.front().t_off_ ) >= tau_edge + min_delay )
       {
         otherPulses.pop_front();
       }

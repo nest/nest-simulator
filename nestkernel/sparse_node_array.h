@@ -263,7 +263,7 @@ nest::SparseNodeArray::is_consistent_() const
 inline nest::Node*
 nest::SparseNodeArray::NodeEntry::get_node() const
 {
-  assert( node_ != nullptr );
+  assert( node_ );
   return node_;
 }
 

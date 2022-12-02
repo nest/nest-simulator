@@ -75,12 +75,11 @@ section#kernel-attributes dl.py.class dd dl.py.attribute dd dl.field-list.simple
 .sig-prename.descclassname{
   display: none;
 }
-article.md-content__inner.md-typeset section#spatially-structured-networks img {
-   width: auto;
-}
 
 /**************************************************************************************
+ Settings for overriding material design theme 
  Setting nest colors to override sphinx material "orange" and other default colors
+
 **************************************************************************************/
 /* To ensure the headings in the theme have same weight as custom index page*/
 
@@ -115,8 +114,9 @@ article.md-content__inner.md-typeset section#spatially-structured-networks img {
 .md-typeset details > summary::before {
   display: none;
 }
+
 /* settings for icons */
-.md-typeset img {
+.md-typeset .sd-card-title img {
   border: none;
   opacity: 0.75;
   width: 64px;
@@ -128,6 +128,7 @@ div.sd-card-title.sd-font-weight-bold.sd-d-flex-row.docutils a.reference.interna
  margin-bottom: 0.5em;
  
 }
+
 .md-typeset .admonition {
   background-color: var(--nest-blue);
   border-left: .2rem solid var(--nest-blue);
@@ -576,7 +577,7 @@ MEDIAQUERIES
 
 @media only screen and (min-width: 2048px) {
 
-.md-typeset img {
+.md-typeset .sd-card-title img {
  width: 128px;
  height: auto;
   }

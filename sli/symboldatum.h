@@ -51,7 +51,7 @@ sli::pool AggregateDatum< Name, &SLIInterpreter::Symboltype >::memory;
 class SymbolDatum : public AggregateDatum< Name, &SLIInterpreter::Symboltype >
 {
   Datum*
-  clone( void ) const
+  clone() const override
   {
     return new SymbolDatum( *this );
   }
@@ -65,7 +65,7 @@ public:
     : AggregateDatum< Name, &SLIInterpreter::Symboltype >( n )
   {
   }
-  ~SymbolDatum()
+  ~SymbolDatum() override
   {
   }
 };

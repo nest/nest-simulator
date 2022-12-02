@@ -72,7 +72,7 @@ set( target-bits-split "standard" CACHE STRING "Split of the 64-bit target neuro
 
 # generic build configuration
 option( static-libraries "Build static executable and libraries [default=OFF]" OFF )
-set( with-optimize ON CACHE STRING "Enable user defined optimizations [default=OFF (uses '-O2')]. When ON, '-O3' is used. Separate multiple flags by ';'." )
+set( with-optimize ON CACHE STRING "Enable user defined optimizations [default=ON (uses '-O2')]. When OFF, no '-O' flag is passed to the compiler. Explicit compiler flags can be given; separate multiple flags by ';'." )
 set( with-warning ON CACHE STRING "Enable user defined warnings [default=ON (uses '-Wall')]. Separate  multiple flags by ';'." )
 set( with-debug OFF CACHE STRING "Enable user defined debug flags [default=OFF]. When ON, '-g' is used. Separate  multiple flags by ';'." )
 set( with-cpp-std "c++11" CACHE STRING "C++ standard to use for compilation [default='c++11']." )
@@ -95,11 +95,6 @@ set( CMAKE_INSTALL_DATADIR "share/${PROJECT_NAME}" CACHE STRING "Relative direct
 ################################################################################
 ##################           Find utility programs            ##################
 ################################################################################
-
-# needed for pynest test suite
-if ( ${with-python} STREQUAL "ON" )
-  find_program( NOSETESTS NAMES nosetests )
-endif ()
 
 # needed for target doc and fulldoc
 find_package( Doxygen )
@@ -276,10 +271,9 @@ foreach ( def ${SIONLIB_DEFINES} )
     set( ALL_CXXFLAGS "${ALL_CXXFLAGS} ${def}" )
 endforeach ()
 
-# all libraries
-set( ALL_LIBS
+# libraries required to link extension modules
+set( MODULE_LINK_LIBS
   "-lnestutil"
-  "-lnest"
   "-lsli"
   "-lnestkernel"
   "${OpenMP_CXX_FLAGS}"
@@ -293,9 +287,15 @@ set( ALL_LIBS
   "${BOOST_LIBRARIES}" )
 
 if ( with-libraries )
-  set( ALL_LIBS "${ALL_LIBS};${with-libraries}" )
+  set( MODULE_LINK_LIBS "${MODULE_LINK_LIBS};${with-libraries}" )
 endif ()
-string( REPLACE ";" " " ALL_LIBS "${ALL_LIBS}" )
+string( REPLACE ";" " " MODULE_LINK_LIBS "${MODULE_LINK_LIBS}" )
+
+# libraries requied to link NEST
+set( ALL_LIBS
+  "-lnest"
+  ${MODULE_LINK_LIBS} )
+
 
 # all includes
 set( ALL_INCLUDES_tmp
@@ -364,7 +364,7 @@ install( FILES LICENSE README.md
     )
 
 add_custom_target( install-nodoc
-  COMMAND make NEST_INSTALL_NODOC=true install
+  COMMAND $(MAKE) NEST_INSTALL_NODOC=true install
 )
 
 nest_print_config_summary()

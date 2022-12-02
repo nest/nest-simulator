@@ -107,7 +107,7 @@ if test "${PYTHON}"; then
         echo "Error: PyNEST testing requested, but 'pytest' cannot be run."
         echo "       Testing also requires the 'pytest-xdist' and 'pytest-timeout' extensions."
         exit 1
-        }
+    }
       PYTEST_VERSION="$(echo "${PYTEST_VERSION}" | cut -d' ' -f2)"
 fi
 
@@ -408,6 +408,10 @@ if test "${MUSIC}"; then
         sh_file="${TESTDIR}/$(basename ${music_file} .music).sh"
         if test ! -f "${sh_file}"; then sh_file=""; fi
 
+        # Check if there is an accompanying input data file
+        input_file="${TESTDIR}/$(basename ${music_file} .music)0.dat"
+        if test ! -f "${input_file}"; then input_file=""; fi
+
         # Calculate the total number of processes from the '.music' file.
         np=$(($(sed -n 's/np=//p' ${music_file} | paste -sd'+' -)))
         test_command="$(sli -c "${np} (${MUSIC}) (${test_name}) mpirun =only")"
@@ -420,7 +424,7 @@ if test "${MUSIC}"; then
         # Copy everything to 'tmpdir'.
         # Variables might also be empty. To prevent 'cp' from terminating in such a case,
         # the exit code is suppressed.
-        cp -vf ${music_file} ${sh_file} ${sli_files} ${tmpdir} 2>/dev/null || true
+        cp ${music_file} ${sh_file} ${input_file} ${sli_files} ${tmpdir} 2>/dev/null || true
 
         # Create the runner script in 'tmpdir'.
         cd "${tmpdir}"
@@ -435,8 +439,9 @@ if test "${MUSIC}"; then
         echo "echo \$? > exit_code ; exit 0" >> runner.sh
 
         # Run the script and measure execution time. Copy the output to the logfile.
+        music_path=$(dirname ${MUSIC})
         chmod 755 runner.sh
-        TIME_ELAPSED=$( time_cmd ./runner.sh )
+        TIME_ELAPSED=$(PATH=$PATH:${music_path} time_cmd ./runner.sh )
         TIME_TOTAL=$(( ${TIME_TOTAL:-0} + ${TIME_ELAPSED} ))
         sed -e 's/^/   > /g' ${TEST_OUTFILE} >> "${TEST_LOGFILE}"
 
@@ -494,16 +499,20 @@ if test "${PYTHON}"; then
 
     # Run all tests except those in the mpi* subdirectories because they cannot be run concurrently
     XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
+    set +e
     "${PYTHON}" -m pytest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" --numprocesses=1 \
           --ignore="${PYNEST_TEST_DIR}/mpi" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}"
-
+    set -e
+    
     # Run tests in the mpi* subdirectories, grouped by number of processes
     if test "${HAVE_MPI}" = "true"; then
         if test "${MPI_LAUNCHER}"; then
             for numproc in $(cd ${PYNEST_TEST_DIR}/mpi/; ls -d */ | tr -d '/'); do
                 XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
                 PYTEST_ARGS="--verbose --timeout $TIME_LIMIT --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
+		set +e
                 $(sli -c "${numproc} (${PYTHON} -m pytest) (${PYTEST_ARGS}) mpirun =only") 2>&1 | tee -a "${TEST_LOGFILE}"
+		set -e
             done
         fi
     fi
@@ -518,7 +527,9 @@ echo "Phase 8: Running C++ tests (experimental)"
 echo "-----------------------------------------"
 
 if command -v run_all_cpptests >/dev/null 2>&1; then
+  set +e
   CPP_TEST_OUTPUT=$( run_all_cpptests --logger=JUNIT,error,"${REPORTDIR}/08_cpptests.xml":HRF,error,stdout 2>&1 )
+  set -e
   echo "${CPP_TEST_OUTPUT}" | tail -2
 else
   echo "  Not running C++ tests because NEST was compiled without Boost."

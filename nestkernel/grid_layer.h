@@ -88,12 +88,12 @@ public:
     bool
     operator==( const masked_iterator& other ) const
     {
-      return ( other.layer_.get_metadata() == layer_.get_metadata() ) && ( other.node_ == node_ );
+      return ( other.layer_.get_metadata() == layer_.get_metadata() ) and ( other.node_ == node_ );
     }
     bool
     operator!=( const masked_iterator& other ) const
     {
-      return ( other.layer_.get_metadata() != layer_.get_metadata() ) || ( other.node_ != node_ );
+      return ( other.layer_.get_metadata() != layer_.get_metadata() ) or ( other.node_ != node_ );
     }
 
   protected:

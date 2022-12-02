@@ -93,7 +93,8 @@ DynamicLoaderModule::getLinkedModules()
   the following SLI datastructures: Name, Dictionary.
 */
 DynamicLoaderModule::DynamicLoaderModule( SLIInterpreter& interpreter )
-  : loadmodule_function( dyn_modules )
+  : dyn_modules()
+  , loadmodule_function( dyn_modules )
 {
   interpreter.def( "moduledict", new DictionaryDatum( moduledict_ ) );
 }
@@ -103,10 +104,10 @@ DynamicLoaderModule::~DynamicLoaderModule()
   // unload all loaded modules
   for ( vecDynModules::iterator it = dyn_modules.begin(); it != dyn_modules.end(); ++it )
   {
-    if ( it->handle != NULL )
+    if ( it->handle )
     {
       lt_dlclose( it->handle );
-      it->handle = NULL;
+      it->handle = nullptr;
     }
   }
 
@@ -116,13 +117,13 @@ DynamicLoaderModule::~DynamicLoaderModule()
 // The following concerns the new module: -----------------------
 
 const std::string
-DynamicLoaderModule::name( void ) const
+DynamicLoaderModule::name() const
 {
   return std::string( "NEST-Dynamic Loader" ); // Return name of the module
 }
 
 const std::string
-DynamicLoaderModule::commandstring( void ) const
+DynamicLoaderModule::commandstring() const
 {
   return std::string( "" ); // Run associated SLI startup script
 }
@@ -284,7 +285,7 @@ DynamicLoaderModule::init( SLIInterpreter* i )
 int
 DynamicLoaderModule::registerLinkedModule( SLIModule* pModule )
 {
-  assert( pModule != 0 );
+  assert( pModule );
   getLinkedModules().push_back( pModule );
   return getLinkedModules().size();
 }

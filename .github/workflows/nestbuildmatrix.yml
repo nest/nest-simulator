@@ -113,6 +113,60 @@ jobs:
           ./vale -v
           ./vale doc
 
+  copyright_headers:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: "Install dependencies"
+        run: |
+          pip install pydocstyle
+
+      - name: "Check copyright headers..."
+        run: |
+          python build_support/check_copyright_headers.py
+
+  unused_names:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: "Install dependencies"
+        run: |
+          pip install pydocstyle
+
+      - name: "Check for unused nest::names..."
+        run: |
+          python build_support/check_unused_names.py
+
+  forbidden_types:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: "Check for forbidden types..."
+        run: |
+          ./build_support/check_forbidden_types.sh
+
   pydocstyle:
     runs-on: "ubuntu-20.04"
     steps:

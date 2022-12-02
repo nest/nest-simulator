@@ -10,7 +10,7 @@ For developer documentation, we use `Doxygen <http://doxygen.org/>`__
 comments extensively throughout NEST.
 
 After installing NEST, you can extract comments from the source code
-with ``make doc``. A ``doxygen`` folder with HTML files will be
+with ``make docs``. A ``doxygen`` folder with HTML files will be
 generated in the ``doc`` folder in your source directory.
 
 .. note::
@@ -22,36 +22,34 @@ generated in the ``doc`` folder in your source directory.
 Instructions
 ++++++++++++
 
-Make sure you have already :ref:`installed NEST
-<install_nest>` and created your ``build`` and ``install``
-directories. Your ``CMake`` version needs to be up-to-date.
-
-1. Install Doxygen.
+1. Install Doxygen and graphviz.
 
 If you are a Linux user, type:
 
 .. code-block::
    :name: Linux
 
-   sudo apt install doxygen
+   sudo apt install doxygen graphviz
 
 For macOS, please use `Homebrew <https://brew.sh/>`_:
 
 .. code-block::
 
-   brew install doxygen
+   brew install doxygen graphviz
 
-2. Go to your build directory:
+2. Navigate to, or create a ``build`` directory. See :ref:`install_nest`.
+
+3. Add the ``-Dwith-devdoc=ON`` flag to your regular CMake command:
 
 .. code-block::
 
-   cd </path/to/nest-build>
+   cmake -Dwith-devdoc=ON
 
 3. Generate HTML:
 
 .. code-block::
 
-   make doc
+   make docs
 
 4. Preview documentation:
 

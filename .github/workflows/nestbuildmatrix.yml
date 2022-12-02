@@ -2,12 +2,9 @@
 # detailed syntax defined in
 # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions
 #
-name: "NEST matrix jobs"
-env:
-  CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
-#  PYTHONPATH: ${{ github.workspace }}/build/python
-on: [push, pull_request]
+name: "Test suite"
 
+on: [push, pull_request]
 
 jobs:
   clang-format:
@@ -279,7 +276,7 @@ jobs:
   sphinx-rtd:
     # as close as possible to the Readthedocs setup (system install cmake, pip install -r doc/requirements.txt)
     runs-on: "ubuntu-20.04"
-    if: ${{ always() }}
+    #if: ${{ always() }}
     needs: [pydocstyle]
     steps:
       - name: "Checkout repository content"
@@ -430,7 +427,9 @@ jobs:
   test_linux:
     if: ${{ always() && !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [clang-format, cppcheck, mypy]
+    needs: [clang-format, cppcheck, mypy, copyright_headers, unused_names, forbidden_types]
+    env:
+      CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
     strategy:
       fail-fast: false
       matrix:
@@ -450,7 +449,6 @@ jobs:
           - xNEST_BUILD_TYPE: "FULL"
             cpp_compiler: "clang"
             os: "ubuntu-20.04"
-
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v2
@@ -560,14 +558,15 @@ jobs:
   test_macos:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [clang-format, cppcheck, mypy]
+    needs: [clang-format, cppcheck, mypy, copyright_headers, unused_names, forbidden_types, test_linux]
+    env:
+      CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
     strategy:
       fail-fast: false
       matrix:
         os: [macos-latest]
         cpp_compiler: ["clang"]
         xNEST_BUILD_TYPE: ["FULL_MACOS"]
-
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v2
@@ -643,28 +642,10 @@ jobs:
 
   build_conda:
     if: false
+    needs: [test_linux]
     uses: conda-forge/nest-simulator-feedstock/.github/workflows/nest_trigger.yml@f9a89c898b4481931fe6b587c05547b42e758e46
     with:
       # see https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
       commit_name: ${{ github.ref }}
       commit_hash: ${{ github.sha }}
 
-  build_docker:
-    if: false
-    runs-on: "ubuntu-20.04"
-    needs: [build_wheel, sphinx-rtd]
-    steps:
-      - name: "Checkout repository content"
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-  deploy_docs:
-    if: false
-    runs-on: "ubuntu-20.04"
-    needs: [sphinx-rtd]
-    steps:
-      - name: "Checkout repository content"
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0

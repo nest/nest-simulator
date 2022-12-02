@@ -138,7 +138,7 @@ def hxt_role_ref(pattern):
         term = pattern % (text,)
         desc = get_desc_from_glossary(term)
 
-        term_conv = term.replace(" ","-")
+        term_conv = term.replace(" ", "-")
         base_url = inliner.document.attributes['source']
 
         # for rtd builds

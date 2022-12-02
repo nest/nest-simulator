@@ -55,7 +55,7 @@ class SynapseCollectionDistance(unittest.TestCase):
             ref_dist = math.sqrt(x_ref * x_ref + y_ref * y_ref + z_ref * z_ref)
             ref_distance.append(ref_dist)
 
-        return tuple(ref_distance)
+        return ref_distance
 
     def test_SynapseCollection_distance_simple(self):
         """Test distance on SynapseCollection where source and target are equal"""

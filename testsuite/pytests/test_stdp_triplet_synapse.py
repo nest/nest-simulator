@@ -119,7 +119,7 @@ class STDPTripletSynapseTestCase(unittest.TestCase):
             nest.Connect(self.pre_neuron, self.post_neuron, syn_spec=bad_syn_spec)
 
         def badPropertyWith(content, parameters):
-            msg = "BadProperty(.+)" + content
+            msg = content
             self.assertRaisesRegex(nest.kernel.NESTError, msg, setupProperty, parameters)
 
         badPropertyWith("Kplus", {"Kplus": -1.0})

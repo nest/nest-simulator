@@ -57,7 +57,7 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         self.assertEqual(2, nest.num_connections)
 
         conns = nest.GetConnections()
-        self.assertEqual((-2, 3), conns.weight)
+        self.assertEqual([-2, 3], conns.weight)
 
     def test_MultipleSynapses_one_to_one(self):
         """Test co-location of synapses when we use one_to_one as connection rule"""

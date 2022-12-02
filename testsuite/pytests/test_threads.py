@@ -101,8 +101,8 @@ class ThreadTestCase(unittest.TestCase):
 
             nest.Simulate(Simtime)
 
-            n_events_sr.append(nest.GetStatus(sr, 'n_events')[0])
-            n_events_vm.append(nest.GetStatus(vm, 'n_events')[0])
+            n_events_sr.append(nest.GetStatus(sr, 'n_events'))
+            n_events_vm.append(nest.GetStatus(vm, 'n_events'))
 
         ref_vm = N * (Simtime - 1)
         ref_sr = n_events_sr[0]

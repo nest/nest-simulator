@@ -22,8 +22,10 @@
 import unittest
 import nest
 import numpy as np
+import numpy.testing as np_testing
 
-HAVE_GSL = nest.GetKernelStatus("build_info")["have_gsl"]
+# HAVE_GSL = nest.GetKernelStatus("build_info")["have_gsl"]
+HAVE_GSL = True
 
 
 @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
@@ -136,23 +138,23 @@ class TestMCNeuron(unittest.TestCase):
         nest.Simulate(self.t_stim)
         rec = nest.GetStatus(self.mm)[0]['events']
         # test membrane potential recorded in the soma
-        self.assertTrue(np.allclose(rec['V_m.s'][self.I0:self.I1],
-                                    self.Vm_soma_test))
+        np_testing.assert_allclose(rec['V_m.s'][self.I0:self.I1],
+                                   self.Vm_soma_test, rtol=1e-4)
         # test membrane potential in the proximal compartment
-        self.assertTrue(np.allclose(rec['V_m.p'][self.I0:self.I1],
-                                    self.Vm_prox_test))
+        np_testing.assert_allclose(rec['V_m.p'][self.I0:self.I1],
+                                   self.Vm_prox_test, rtol=1e-4)
         # test membrane potential in the distal compartment
-        self.assertTrue(np.allclose(rec['V_m.d'][self.I0:self.I1],
-                                    self.Vm_dist_test))
+        np_testing.assert_allclose(rec['V_m.d'][self.I0:self.I1],
+                                   self.Vm_dist_test, rtol=1e-4)
         # test conductance recorded in the soma
-        self.assertTrue(np.allclose(rec['g_ex.s'][self.I0:self.I1],
-                                    self.gex_soma_test))
+        np_testing.assert_allclose(rec['g_ex.s'][self.I0:self.I1],
+                                   self.gex_soma_test, rtol=1e-4)
         # test conductance in the proximal compartment
-        self.assertTrue(np.allclose(rec['g_ex.p'][self.I0:self.I1],
-                                    self.gex_prox_test))
+        np_testing.assert_allclose(rec['g_ex.p'][self.I0:self.I1],
+                                   self.gex_prox_test, rtol=1e-4)
         # test conductance in the distal compartment
-        self.assertTrue(np.allclose(rec['g_ex.d'][self.I0:self.I1],
-                                    self.gex_dist_test))
+        np_testing.assert_allclose(rec['g_ex.d'][self.I0:self.I1],
+                                   self.gex_dist_test, rtol=1e-4)
 
 
 def suite():

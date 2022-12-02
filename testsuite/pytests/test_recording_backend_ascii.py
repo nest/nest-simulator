@@ -46,7 +46,7 @@ class TestRecordingBackendASCII(unittest.TestCase):
         mm = nest.Create("multimeter", params=mm_params)
         nest.Connect(mm, nest.Create("iaf_psc_alpha"))
 
-        with self.assertRaises(nest.kernel.NESTErrors.IOError):
+        with self.assertRaises(nest.kernel.NESTError):
             nest.Simulate(100)
 
         nest.Cleanup()
@@ -76,7 +76,7 @@ class TestRecordingBackendASCII(unittest.TestCase):
             "record_from": ["V_m"],
             "file_extension": file_extension,
         }
-        mm = nest.Create("multimeter", mm_params)
+        mm = nest.Create("multimeter", params=mm_params)
         fname = mm.get("filenames")[0]
 
         self.assertTrue(data_path in fname)
@@ -95,7 +95,7 @@ class TestRecordingBackendASCII(unittest.TestCase):
             "record_from": ["V_m"],
             "label": label,
         }
-        mm = nest.Create("multimeter", mm_params)
+        mm = nest.Create("multimeter", params=mm_params)
         fname = mm.get("filenames")[0]
 
         self.assertTrue(label in fname)
@@ -174,7 +174,7 @@ class TestRecordingBackendASCII(unittest.TestCase):
         nest.Simulate(15)
 
         # Check that an error is raised when setting n_events to a number != 0
-        with self.assertRaises(nest.kernel.NESTErrors.BadProperty):
+        with self.assertRaises(nest.kernel.NESTError):
             mm.n_events = 10
 
         # Check that the event counter was indeed not changed

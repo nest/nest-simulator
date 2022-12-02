@@ -44,19 +44,19 @@ class GetConnectionsTestCase(unittest.TestCase):
         c2 = nest.GetConnections(a, synapse_model="static_synapse")
         self.assertEqual(c1, c2)
 
-        weights = (2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0)
+        weights = [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
         d1 = tuple({"weight": w} for w in weights)
 
         c3 = nest.GetConnections(a, a)
         nest.SetStatus(c3, d1)
-        
+
         s1 = nest.GetStatus(c3, "weight")
         self.assertEqual(s1, weights)
 
         c4 = nest.GetConnections()
         self.assertEqual(c1, c4)
 
-        weights = (11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0)
+        weights = [11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0]
         d1 = tuple({"weight": w} for w in weights)
 
         c5 = nest.GetConnections(a, a)
@@ -136,17 +136,17 @@ class GetConnectionsTestCase(unittest.TestCase):
                 reference_list += ['static_synapse']
 
             conns = nest.GetConnections(synapse_model=synapse_model)
-            self.assertEqual(tuple(reference_list), conns.synapse_model)
+            self.assertEqual(reference_list, conns.synapse_model)
 
             # Also test that it works if we specify source/target and synapse_model
             conns = nest.GetConnections(source=src, target=tgt, synapse_model=synapse_model)
-            self.assertEqual(tuple(reference_list), conns.synapse_model)
+            self.assertEqual(reference_list, conns.synapse_model)
 
             conns = nest.GetConnections(source=src, synapse_model=synapse_model)
-            self.assertEqual(tuple(reference_list), conns.synapse_model)
+            self.assertEqual(reference_list, conns.synapse_model)
 
             conns = nest.GetConnections(target=tgt, synapse_model=synapse_model)
-            self.assertEqual(tuple(reference_list), conns.synapse_model)
+            self.assertEqual(reference_list, conns.synapse_model)
 
     def test_GetConnectionsSynapseLabel(self):
         """GetConnections using synapse_label as argument"""
@@ -178,18 +178,18 @@ class GetConnectionsTestCase(unittest.TestCase):
             # corresponding model are returned
             conns = nest.GetConnections(synapse_label=label)
 
-            self.assertEqual(tuple(reference_list), conns.synapse_model)
-            self.assertEqual(tuple(label_list), conns.synapse_label)
+            self.assertEqual(reference_list, conns.synapse_model)
+            self.assertEqual(label_list, conns.synapse_label)
 
             # Also test that it works if we specify source/target and synapse_label
             conns = nest.GetConnections(source=src, target=tgt, synapse_label=label)
-            self.assertEqual(tuple(reference_list), conns.synapse_model)
+            self.assertEqual(reference_list, conns.synapse_model)
 
             conns = nest.GetConnections(source=src, synapse_label=label)
-            self.assertEqual(tuple(reference_list), conns.synapse_model)
+            self.assertEqual(reference_list, conns.synapse_model)
 
             conns = nest.GetConnections(target=tgt, synapse_label=label)
-            self.assertEqual(tuple(reference_list), conns.synapse_model)
+            self.assertEqual(reference_list, conns.synapse_model)
 
 
 def suite():

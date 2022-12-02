@@ -73,14 +73,15 @@ class RateNeuronTestCase(unittest.TestCase):
 
         # get noise from rate neurons
         events = nest.GetStatus(self.multimeter)[0]["events"]
-        senders = events['senders']
+        senders = np.array(events['senders'])
+        rate = np.array(events['rate'])
         senders_ipn = np.where(
             senders == self.rate_neuron_ipn.get('global_id'))[0]
         senders_opn = np.where(
             senders == self.rate_neuron_opn.get('global_id'))[0]
 
-        mean_rate_ipn = np.mean(events['rate'][senders_ipn])
-        mean_rate_opn = np.mean(events['rate'][senders_opn])
+        mean_rate_ipn = np.mean(rate[senders_ipn])
+        mean_rate_opn = np.mean(rate[senders_opn])
 
         self.assertTrue(
             np.isclose(mean_rate_ipn, self.neuron_params['mu'],
@@ -97,15 +98,16 @@ class RateNeuronTestCase(unittest.TestCase):
 
         # get noise from rate neurons
         events = nest.GetStatus(self.multimeter)[0]["events"]
-        senders = events['senders']
+        senders = np.array(events['senders'])
+        noise = np.array(events['noise'])
         senders_ipn = np.where(
             senders == self.rate_neuron_ipn.get('global_id'))[0]
         senders_opn = np.where(
             senders == self.rate_neuron_opn.get('global_id'))[0]
 
-        noise_ipn = events['noise'][senders_ipn]
+        noise_ipn = noise[senders_ipn]
         std_noise_ipn = np.std(noise_ipn)
-        noise_opn = events['noise'][senders_opn]
+        noise_opn = noise[senders_opn]
         std_noise_opn = np.std(noise_opn)
 
         self.assertTrue(
@@ -123,11 +125,12 @@ class RateNeuronTestCase(unittest.TestCase):
 
         # get variance of the rate
         events = nest.GetStatus(self.multimeter)[0]["events"]
-        senders = events['senders']
+        senders = np.array(events['senders'])
+        rate = np.array(events['rate'])
         senders_ipn = np.where(
             senders == self.rate_neuron_ipn.get('global_id'))[0]
 
-        rate = events['rate'][senders_ipn]
+        rate = rate[senders_ipn]
         var_rate = np.var(rate)
 
         # expected variance

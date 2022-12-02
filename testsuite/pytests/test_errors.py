@@ -85,7 +85,7 @@ class ErrorTestCase(unittest.TestCase):
         nc = nest.Create('iaf_psc_alpha', 10)
         nest.ResetKernel()
 
-        msg = "UnknownNode"
+        msg = "99 doesn't exist"
         self.assertRaisesRegex(nest.kernel.NESTError, msg, nest.NodeCollection, [99])
 
     def test_UnknownModel(self):
@@ -93,7 +93,7 @@ class ErrorTestCase(unittest.TestCase):
 
         nest.ResetKernel()
 
-        msg = "UnknownNode"
+        msg = "not a known model name"
         self.assertRaisesRegex(nest.kernel.NESTError, msg, nest.Create, "unknown_model")
 
 

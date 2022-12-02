@@ -133,24 +133,24 @@ class CurrentRecordingGeneratorTestCase(unittest.TestCase):
 
         # retrieve vectors
         events_Vm = nest.GetStatus(m_Vm)[0]['events']
-        t_Vm = events_Vm['times']
-        v_Vm = events_Vm['V_m']
+        t_Vm = numpy.array(events_Vm['times'])
+        v_Vm = numpy.array(events_Vm['V_m'])
 
         events_ac = nest.GetStatus(m_ac)[0]['events']
-        t_ac = events_ac['times']
-        i_ac = events_ac['I']
+        t_ac = numpy.array(events_ac['times'])
+        i_ac = numpy.array(events_ac['I'])
 
         events_dc = nest.GetStatus(m_dc)[0]['events']
-        t_dc = events_dc['times']
-        i_dc = events_dc['I']
+        t_dc = numpy.array(events_dc['times'])
+        i_dc = numpy.array(events_dc['I'])
 
         events_step = nest.GetStatus(m_step)[0]['events']
-        t_step = events_step['times']
-        i_step = events_step['I']
+        t_step = numpy.array(events_step['times'])
+        i_step = numpy.array(events_step['I'])
 
         events_noise = nest.GetStatus(m_noise)[0]['events']
-        t_noise = events_noise['times']
-        i_noise = events_noise['I']
+        t_noise = numpy.array(events_noise['times'])
+        i_noise = numpy.array(events_noise['I'])
 
         # test the length of current vectors
         assert len(i_ac) == len(v_Vm), \

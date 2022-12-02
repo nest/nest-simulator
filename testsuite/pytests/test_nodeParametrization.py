@@ -189,8 +189,8 @@ class TestNodeParametrization(unittest.TestCase):
     def test_SetStatus_with_dict_with_single_element_lists(self):
         """Test SetStatus with dict with single element lists"""
         node = nest.Create('iaf_psc_alpha')
-        Vm_ref = (-13.,)
-        Cm_ref = (222.,)
+        Vm_ref = -13.
+        Cm_ref = 222.
         nest.SetStatus(node, {'V_m': [-13.], 'C_m': [222.]})
 
         self.assertAlmostEqual(nest.GetStatus(node, 'V_m'), Vm_ref)

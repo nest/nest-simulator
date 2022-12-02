@@ -220,8 +220,8 @@ class ClopathSynapseTestCase(unittest.TestCase):
 
         # Evaluation
         data = nest.GetStatus(mm)
-        senders = data[0]['events']['senders']
-        voltages = data[0]['events']['V_m']
+        senders = np.array(data[0]['events']['senders'])
+        voltages = np.array(data[0]['events']['V_m'])
 
         vm1 = voltages[np.where(senders == 1)]
         vm2 = voltages[np.where(senders == 2)]

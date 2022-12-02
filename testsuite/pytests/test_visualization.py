@@ -126,7 +126,7 @@ class TestVisualization:
 
     def spike_recorder_data_setup(self, to_file=False):
         nest.ResetKernel()
-        pg = nest.Create('poisson_generator', {'rate': 1000.})
+        pg = nest.Create('poisson_generator', params={'rate': 1000.})
         sr = nest.Create('spike_recorder')
         if to_file:
             parrot = nest.Create('parrot_neuron')
@@ -158,7 +158,7 @@ class TestVisualization:
 
         sr, sr_to_file = self.spike_recorder_data_setup(to_file=True)
         spikes = sr.get('events')
-        sr_ref = spikes['times']
+        sr_ref = np.array(spikes['times'])
 
         # Test from_device
         nest.raster_plot.from_device(sr)

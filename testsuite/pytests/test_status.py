@@ -82,7 +82,7 @@ class StatusTestCase(unittest.TestCase):
             self.assertIsInstance(model_status, dict)
             self.assertGreater(len(model_status), 1)
 
-            self.assertRaises(TypeError, nest.GetDefaults, model, 42)
+            self.assertRaises(KeyError, nest.GetDefaults, model, 42)
 
             if "V_m" in model_status:
                 test_value = nest.GetDefaults(model, "V_m")
@@ -108,7 +108,7 @@ class StatusTestCase(unittest.TestCase):
                 self.assertEqual(nest.GetDefaults(model, 'V_m'), v_m)
 
                 self.assertRaisesRegex(
-                    nest.kernel.NESTError, "DictError",
+                    nest.kernel.NESTError, "unaccessed",
                     nest.SetDefaults, model, 'nonexistent_status_key', 0)
 
     def test_GetStatus(self):
@@ -126,18 +126,13 @@ class StatusTestCase(unittest.TestCase):
                 self.assertGreater(len(d[0]), 1)
 
                 v1 = nest.GetStatus(n)[0]['V_m']
-                v2 = nest.GetStatus(n, 'V_m')[0]
+                v2 = nest.GetStatus(n, 'V_m')
                 self.assertEqual(v1, v2)
 
                 n = nest.Create(model, 10)
                 d = nest.GetStatus(n, 'V_m')
                 self.assertEqual(len(d), len(n))
                 self.assertIsInstance(d[0], float)
-
-                test_keys = ("V_m", ) * 3
-                d = nest.GetStatus(n, test_keys)
-                self.assertEqual(len(d), len(n))
-                self.assertEqual(len(d[0]), len(test_keys))
 
     def test_SetStatus(self):
         """SetStatus with dict"""
@@ -147,7 +142,7 @@ class StatusTestCase(unittest.TestCase):
                 nest.ResetKernel()
                 n = nest.Create(model)
                 nest.SetStatus(n, {'V_m': 1.})
-                self.assertEqual(nest.GetStatus(n, 'V_m')[0], 1.)
+                self.assertEqual(nest.GetStatus(n, 'V_m'), 1.)
 
     def test_SetStatusList(self):
         """SetStatus with list"""
@@ -157,7 +152,7 @@ class StatusTestCase(unittest.TestCase):
                 nest.ResetKernel()
                 n = nest.Create(model)
                 nest.SetStatus(n, [{'V_m': 2.}])
-                self.assertEqual(nest.GetStatus(n, 'V_m')[0], 2.)
+                self.assertEqual(nest.GetStatus(n, 'V_m'), 2.)
 
     def test_SetStatusParam(self):
         """SetStatus with parameter"""
@@ -167,7 +162,7 @@ class StatusTestCase(unittest.TestCase):
                 nest.ResetKernel()
                 n = nest.Create(model)
                 nest.SetStatus(n, 'V_m', 3.)
-                self.assertEqual(nest.GetStatus(n, 'V_m')[0], 3.)
+                self.assertEqual(nest.GetStatus(n, 'V_m'), 3.)
 
     def test_SetStatusVth_E_L(self):
         """SetStatus of reversal and threshold potential """
@@ -208,7 +203,7 @@ class StatusTestCase(unittest.TestCase):
 
                 # should raise exception
                 self.assertRaisesRegex(
-                    nest.kernel.NESTError, "BadProperty",
+                    nest.kernel.NESTError, "Setting status",
                     nest.SetStatus, neuron,
                     {'V_reset': 10., 'V_th': 0.}
                 )

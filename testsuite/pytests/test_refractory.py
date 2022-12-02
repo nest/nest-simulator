@@ -149,8 +149,8 @@ class TestRefractoryCase(unittest.TestCase):
         elif model in neurons_interspike_ps:
             return spike_times[1]-spike_times[0]
         else:
-            Vr = nest.GetStatus(neuron, "V_reset")[0]
-            times = nest.GetStatus(vm, "events")[0]["times"]
+            Vr = nest.GetStatus(neuron, "V_reset")
+            times = np.array(nest.GetStatus(vm, "events")[0]["times"])
 
             # Index of the 2nd spike
             idx_max = np.argwhere(times == spike_times[1])[0][0]
@@ -211,7 +211,7 @@ class TestRefractoryCase(unittest.TestCase):
             t_ref_sim = self.compute_reftime(model, sr, vm, neuron)
 
             if model in neurons_with_clamping:
-                t_ref_sim = t_ref_sim - nest.GetStatus(neuron, "t_clamp")[0]
+                t_ref_sim = t_ref_sim - nest.GetStatus(neuron, "t_clamp")
 
             # Approximate result for precise spikes (interpolation error)
             if model in neurons_interspike_ps:

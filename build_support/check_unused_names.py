@@ -61,6 +61,8 @@ EXIT_UNUSED_NAME = 31
 EXIT_NO_SOURCE = 126
 
 try:
+    if 'NEST_SOURCE' not in os.environ and all([name in os.listdir() for name in "nest nestkernel build_support".split()]):
+        os.environ['NEST_SOURCE'] = '.'
     source_dir = os.environ['NEST_SOURCE']
 except KeyError:
     eprint("Please make NEST_SOURCE environment variable to point to " +

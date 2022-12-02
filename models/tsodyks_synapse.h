@@ -23,7 +23,6 @@
 #ifndef TSODYKS_SYNAPSE_H
 #define TSODYKS_SYNAPSE_H
 
-
 // C++ includes:
 #include <cmath>
 
@@ -110,6 +109,7 @@ The following parameters can be set in the status dictionary:
                   releasable pool [0,1]
  y        real    Initial fraction of synaptic vesicles in the synaptic
                   cleft [0,1]
+ u        real    Initial release probability of synaptic vesicles [0,1]
 ========  ======  ========================================================
 
 References
@@ -127,7 +127,7 @@ SpikeEvent
 See also
 ++++++++
 
-stdp_synapse, static_synapse, iaf_psc_exp, iaf_tum_2000
+iaf_tsodyks, stdp_synapse, static_synapse, iaf_psc_exp, iaf_tum_2000
 
 EndUserDocs */
 
@@ -301,7 +301,6 @@ tsodyks_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
-
   def< double >( d, names::U, U_ );
   def< double >( d, names::tau_psc, tau_psc_ );
   def< double >( d, names::tau_rec, tau_rec_ );

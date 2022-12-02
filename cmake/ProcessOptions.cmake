@@ -22,7 +22,8 @@
 # add custom warnings and optimizations
 function( NEST_PROCESS_WITH_OPTIMIZE )
   if ( with-optimize )
-    if ( with-optimize STREQUAL "ON" )
+  string(TOUPPER "${with-optimize}" WITHOPTIMIZE)
+    if ( WITHOPTIMIZE STREQUAL "ON" )
       set( with-optimize "-O2" )
     endif ()
     set(OPTIMIZATION_FLAGS "")

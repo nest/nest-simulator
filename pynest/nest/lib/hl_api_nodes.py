@@ -70,7 +70,7 @@ def Create(model, n=1, params=None, positions=None):
             - A list with n dictionaries, one dictionary for each node.
         Values may be :py:class:`.Parameter` objects. If omitted,
         the model's defaults are used.
-    positions: :py:class:`.spatial.grid` or :py:class:`.spatial.free` object, optional
+    positions: :py:class:`.grid` or :py:class:`.free` object, optional
         Object describing spatial positions of the nodes. If omitted, the nodes have no spatial attachment.
 
     Returns

@@ -192,7 +192,7 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status( const Dictiona
     // are look-up table entries out of bounds?
     for ( size_t i = 0; i < size_t( lookuptable_0_.size() ); ++i )
     {
-      if ( ( lookuptable_0_[ i ] < 0 ) || ( lookuptable_0_[ i ] > 15 ) )
+      if ( lookuptable_0_[ i ] < 0 or lookuptable_0_[ i ] > 15 )
       {
         throw BadProperty( "Look-up table entries must be integers in [0,15]" );
       }
@@ -211,7 +211,7 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status( const Dictiona
     // are look-up table entries out of bounds?
     for ( size_t i = 0; i < size_t( lookuptable_1_.size() ); ++i )
     {
-      if ( ( lookuptable_1_[ i ] < 0 ) || ( lookuptable_1_[ i ] > 15 ) )
+      if ( lookuptable_1_[ i ] < 0 or lookuptable_1_[ i ] > 15 )
       {
         throw BadProperty( "Look-up table entries must be integers in [0,15]" );
       }
@@ -230,7 +230,7 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status( const Dictiona
     // are look-up table entries out of bounds?
     for ( size_t i = 0; i < size_t( lookuptable_2_.size() ); ++i )
     {
-      if ( ( lookuptable_2_[ i ] < 0 ) || ( lookuptable_2_[ i ] > 15 ) )
+      if ( lookuptable_2_[ i ] < 0 or lookuptable_2_[ i ] > 15 )
       {
         throw BadProperty( "Look-up table entries must be integers in [0,15]" );
       }

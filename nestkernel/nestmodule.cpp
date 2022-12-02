@@ -123,6 +123,13 @@ NestModule::create_parameter( const Token& t )
     return new ConstantParameter( *dd );
   }
 
+  // If t is a IntegerDatum, create a ConstantParameter with this value
+  IntegerDatum* id = dynamic_cast< IntegerDatum* >( t.datum() );
+  if ( id )
+  {
+    return new ConstantParameter( static_cast< double >( *id ) );
+  }
+
   DictionaryDatum* dictd = dynamic_cast< DictionaryDatum* >( t.datum() );
   if ( dictd )
   {
@@ -892,6 +899,20 @@ NestModule::Disconnect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
   kernel().sp_manager.disconnect( sources, targets, connectivity, synapse_params );
 
   i->OStack.pop( 4 );
+  i->EStack.pop();
+}
+
+// Disconnect for arraydatum
+void
+NestModule::Disconnect_aFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+
+  const ArrayDatum conns = getValue< ArrayDatum >( i->OStack.pick( 0 ) );
+
+  disconnect( conns );
+
+  i->OStack.pop( 1 );
   i->EStack.pop();
 }
 
@@ -3012,6 +3033,7 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "EnableStructuralPlasticity", &enablestructuralplasticity_function );
   i->createcommand( "DisableStructuralPlasticity", &disablestructuralplasticity_function );
   i->createcommand( "Disconnect_g_g_D_D", &disconnect_g_g_D_Dfunction );
+  i->createcommand( "Disconnect_a", &disconnect_afunction );
 
   i->createcommand( "SetStdpEps", &setstdpeps_dfunction );
 

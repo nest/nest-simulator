@@ -60,10 +60,10 @@ or
 
 .. code-block:: bash
 
-      docker run -it --rm -e NEST_CONTAINER_MODE=nest-server -p 5000:5000 /
+      docker run -it --rm -e NEST_CONTAINER_MODE=nest-server -p 52425:52425 /
            docker-registry.ebrains.eu/nest/nest-simulator:<version>
 
-Starts the NEST API server container and opens the corresponding port 5000. Test it with `curl localhost:5000/api`.
+Starts the NEST API server container and opens the corresponding port 52425. Test it with `curl localhost:52425/api`.
 See the :ref:`nest_server` documentation for more details.
 
 - NEST desktop
@@ -76,7 +76,7 @@ or
 
 .. code-block:: bash
 
-      docker run -it --rm -e NEST_CONTAINER_MODE=nest-server -p 5000:5000 /
+      docker run -it --rm -e NEST_CONTAINER_MODE=nest-server -p 52425:52425 /
           docker-registry.ebrains.eu/nest/nest-simulator:<version>
       docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -p 8000:8000  /
           -e NEST_CONTAINER_MODE=nest-desktop docker-registry.ebrains.eu/nest/nest-simulator:<version>
@@ -191,5 +191,3 @@ For more information, you can checkout the `nest-docker repository <https://gith
 
 .. |windows| image:: ../static/img/windows.png
    :scale: 15%
-
-

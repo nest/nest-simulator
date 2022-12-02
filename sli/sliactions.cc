@@ -106,7 +106,6 @@ FunctiontypeFunction::execute( SLIInterpreter* i ) const
 void
 TrietypeFunction::execute( SLIInterpreter* i ) const
 {
-
   TrieDatum* tried = static_cast< TrieDatum* >( i->EStack.top().datum() );
   i->EStack.top().assign_by_ref( tried->lookup( i->OStack ) );
 }
@@ -114,17 +113,14 @@ TrietypeFunction::execute( SLIInterpreter* i ) const
 void
 CallbacktypeFunction::execute( SLIInterpreter* i ) const
 {
-  //    assert(i->ct.datum() != NULL); // we wouldn't be here otherwise
-
   CallbackDatum* cb = static_cast< CallbackDatum* >( i->ct.datum() );
 
   // Note, although cb is a pointer to a class derived from Datum,
   // it also has the properties of a token, since it is derived from both.
 
-
   i->EStack.push_move( i->ct );
   // This moves the complete callback datum to the EStack.
-  // Now, the pointer in ct is set to NULL !!
+  // Now, the pointer in ct is set to nullptr !!
 
   // Now push command to restore the callback, once the action has
   // been finished

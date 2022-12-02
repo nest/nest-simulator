@@ -416,7 +416,7 @@ MaskedLayer< D >::check_mask_( Layer< D >& layer, bool allow_oversized )
         for ( int i = 0; i < D; ++i )
         {
           oversize |=
-            layer.get_periodic_mask()[ i ] and ( bb.upper_right[ i ] - bb.lower_left[ i ] ) > layer.get_extent()[ i ];
+            layer.get_periodic_mask()[ i ] and bb.upper_right[ i ] - bb.lower_left[ i ] > layer.get_extent()[ i ];
         }
         if ( oversize )
         {

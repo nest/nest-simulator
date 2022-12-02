@@ -103,7 +103,7 @@ command that can either be run directly::
 or supplied to the execution command line for running the Docker
 container::
 
-  docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -p 5000:5000 nestsim/nest:latest nest-server start
+  docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -p 52425:52425 nestsim/nest:latest nest-server start
 
 The generic invocation command line for the ``nest-server`` command
 looks as follows::
@@ -120,7 +120,7 @@ of the other arguments is as follows:
 -h <host>
     Use hostname/IP address <host> for the server instance [default: 127.0.0.1]
 -p <port>
-    Use port <port> for opening the socket [default: 5000]
+    Use port <port> for opening the socket [default: 52425]
 
 Run with MPI
 ~~~~~~~~~~~~
@@ -299,22 +299,22 @@ NEST Server Client API
 REST API overview
 -----------------
 
-localhost:5000
+localhost:52425
     Get the version of NEST used by NEST Server
 
-localhost:5000/api
+localhost:52425/api
     List all available functions
 
-localhost:5000/api/<call>
+localhost:52425/api/<call>
     Execute the function `<call>`
 
-localhost:5000/api/<call>?inspect=getdoc
+localhost:52425/api/<call>?inspect=getdoc
     Get the documentation for the function `<call>`
 
-localhost:5000/api/<call>?inspect=getsource
+localhost:52425/api/<call>?inspect=getsource
     Get the source code of the function `<call>`
 
-localhost:5000/exec
+localhost:52425/exec
     Execute a Python script. This requires JSON data in the form
 
     .. code-block:: JSON
@@ -330,7 +330,7 @@ website <https://curl.se/>`_.
 
 To obtain basic information about the running server, run::
 
-  curl localhost:5000
+  curl localhost:52425
 
 NEST Server responds to this by sending data in JSON format::
 
@@ -338,15 +338,15 @@ NEST Server responds to this by sending data in JSON format::
 
 You can retrieve data about the callable functions of NEST by running::
 
-  curl localhost:5000/api
+  curl localhost:52425/api
 
 Retrieve the current kernel status dict from NEST::
 
-  curl localhost:5000/api/GetKernelStatus
+  curl localhost:52425/api/GetKernelStatus
 
 Send API request with function arguments in JSON format::
 
-  curl -H "Content-Type: application/json" -d '{"model": "iaf_psc_alpha"}' localhost:5000/api/GetDefaults
+  curl -H "Content-Type: application/json" -d '{"model": "iaf_psc_alpha"}' localhost:52425/api/GetDefaults
 
 .. note::
 
@@ -354,7 +354,7 @@ Send API request with function arguments in JSON format::
     ``curl`` through the JSON processor ``jq``. A sample command line
     to display the available functions in this way looks like this::
 
-      curl -s localhost:5000/api | jq -r .
+      curl -s localhost:52425/api | jq -r .
 
     For more information, check the `documentation on jq
     <https://stedolan.github.io/jq/>`_.
@@ -373,23 +373,23 @@ Sending a simple request to the NEST Server using Python works as
 follows::
 
   import requests
-  requests.get('http://localhost:5000').json()
+  requests.get('http://localhost:52425').json()
 
 To display a list of callable functions, use::
 
-  requests.get('http://localhost:5000/api').json()
+  requests.get('http://localhost:52425/api').json()
 
 Reset the NEST simulation kernel (no response)::
 
-  requests.get('http://localhost:5000/api/ResetKernel').json()
+  requests.get('http://localhost:52425/api/ResetKernel').json()
 
 Sending an API request in JSON format::
 
-  requests.post('http://localhost:5000/api/GetDefaults', json={'model': 'iaf_psc_alpha'}).json()
+  requests.post('http://localhost:52425/api/GetDefaults', json={'model': 'iaf_psc_alpha'}).json()
 
 Create neurons in NEST and return a list of IDs for the new nodes::
 
-  neurons = requests.post('http://localhost:5000/api/Create', json={"model": "iaf_psc_alpha", "n": 100}).json()
+  neurons = requests.post('http://localhost:52425/api/Create', json={"model": "iaf_psc_alpha", "n": 100}).json()
   print(neurons)
 
 .. _nest_server_security:
@@ -463,7 +463,7 @@ Run scripts in NEST Server using `curl`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As shown above, you can send custom simulation code to
-``localhost:5000/exec``. On the command line, this approach might be a
+``localhost:52425/exec``. On the command line, this approach might be a
 bit more challenging in the case your script does not fit on a single
 line. For such situations, we recommend using a JSON file as input for
 ``curl``:
@@ -481,7 +481,7 @@ command:
 
 .. code-block:: sh
 
-    curl -H "Content-Type: application/json" -d @simulation_script.json http://localhost:5000/exec
+    curl -H "Content-Type: application/json" -d @simulation_script.json http://localhost:52425/exec
 
 
 Interact with NEST Server using JavaScript
@@ -508,7 +508,7 @@ box. Here is a small example showing the basic idea:
             <body>
               <script>
                 const xhr = new XMLHttpRequest();
-                xhr.open("GET", "http://localhost:5000");
+                xhr.open("GET", "http://localhost:52425");
                 xhr.addEventListener("readystatechange", () => {
                   if (xhr.readyState === 4) {  // request done
                     console.log(xhr.responseText);
@@ -531,7 +531,7 @@ box. Here is a small example showing the basic idea:
                   }
               });
               // send to api route of NEST Server
-              xhr.open("GET", "http://localhost:5000/api/" + call);
+              xhr.open("GET", "http://localhost:52425/api/" + call);
               xhr.send(null);
           }
 
@@ -555,7 +555,7 @@ with a callback for POST requests:
             }
         });
         // send to api route of NEST Server
-        xhr.open("POST", "http://localhost:5000/api/" + call);
+        xhr.open("POST", "http://localhost:52425/api/" + call);
         xhr.setRequestHeader('Access-Control-Allow-Headers', 'Content-Type');
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify(data));  // serialize data
@@ -584,7 +584,7 @@ callback for POST requests to execute a script:
             }
         });
         // send to exec route of NEST Server
-        xhr.open("POST", "http://localhost:5000/exec");
+        xhr.open("POST", "http://localhost:52425/exec");
         xhr.setRequestHeader('Access-Control-Allow-Headers', 'Content-Type');
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify(data));  // serialize data
@@ -612,7 +612,7 @@ For POST requests to the NEST API Server, we recommend to use a Bash function:
 .. code-block:: sh
 
     #!/bin/bash
-    NEST_API=localhost:5000/api
+    NEST_API=localhost:52425/api
 
     nest-server-api() {
         if [ $# -eq 2 ]

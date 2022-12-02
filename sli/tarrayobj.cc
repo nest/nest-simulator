@@ -89,7 +89,7 @@ TokenArrayObj::allocate( size_t new_s, size_t new_c, size_t new_a, const Token& 
   assert( new_a != 0 );
 
   Token* h = new Token[ new_c ];
-  assert( h != NULL );
+  assert( h );
 
   if ( t != Token() )
   {
@@ -123,7 +123,7 @@ TokenArrayObj::allocate( size_t new_s, size_t new_c, size_t new_a, const Token& 
     delete[] p;
   }
   p = h;
-  assert( p != NULL );
+  assert( p );
 
   ++allocations;
 }
@@ -133,7 +133,7 @@ TokenArrayObj::resize( size_t s, size_t alloc, const Token& t )
 {
   alloc_block_size = ( alloc == 0 ) ? alloc_block_size : alloc;
 
-  if ( ( s != size() && ( s != 0 ) ) || ( size() == 0 && alloc_block_size != 0 ) )
+  if ( ( s != size() and ( s != 0 ) ) or ( size() == 0 and alloc_block_size != 0 ) )
   {
     allocate( s, s + alloc_block_size, alloc_block_size, t );
   }
@@ -240,7 +240,7 @@ TokenArrayObj::rotate( Token* first, Token* middle, Token* last )
 {
 
   // This algorithm is taken from the HP STL implementation.
-  if ( ( first < middle ) && ( middle < last ) )
+  if ( first < middle and middle < last )
   {
     for ( Token* i = middle;; )
     {
@@ -278,7 +278,7 @@ TokenArrayObj::erase( Token* first, Token* last )
   {
     if ( to->p )
     {
-      // deleting NULL pointer is safe in ISO C++
+      // deleting nullptr pointer is safe in ISO C++
       to->p->removeReference();
     }
     to->p = from->p;   // move
@@ -399,7 +399,7 @@ TokenArrayObj::insert( size_t i, size_t n, const Token& t )
     to->p = from->p;   // move
     from->p = nullptr; // knowing that to->p is
     --from;
-    --to; // NULL before
+    --to; // nullptr before
   }
 
   for ( size_t i = 0; i < n; ++i ) // insert n copies of Token t;
@@ -426,7 +426,7 @@ TokenArrayObj::insert_move( size_t i, TokenArrayObj& a )
     to->p = from->p;   // move
     from->p = nullptr; // knowing that to->p is
     --from;
-    --to; // NULL before
+    --to; // nullptr before
   }
 
   from = a.p;
@@ -498,7 +498,7 @@ TokenArrayObj::insert_move( size_t i, Token& t )
     to->p = from->p;   // move
     from->p = nullptr; // knowing that to->p is
     --from;
-    --to; // NULL before
+    --to; // nullptr before
   }
 
   ( p + i )->p = t.p; // move contens of t
@@ -549,7 +549,7 @@ TokenArrayObj::replace_move( size_t i, size_t n, TokenArrayObj& a )
     {
       if ( to->p )
       {
-        // deleting NULL pointer is safe in ISO C++
+        // deleting nullptr pointer is safe in ISO C++
         to->p->removeReference();
       }
       to->p = from->p;   // move
@@ -586,7 +586,7 @@ TokenArrayObj::replace_move( size_t i, size_t n, TokenArrayObj& a )
       to->p->removeReference();
     }
     to->p = from->p;   // movement, it is typically
-    from->p = nullptr; // not the NULL pointer
+    from->p = nullptr; // not the nullptr pointer
     ++from;
     ++to;
   }
@@ -603,7 +603,7 @@ TokenArrayObj::append_move( TokenArrayObj& a )
 
   while ( from < a.end() ) // move
   {                        // knowing that to->p is
-    to->p = from->p;       // NULL before
+    to->p = from->p;       // nullptr before
     from->p = nullptr;
     ++from;
     ++to;
@@ -617,21 +617,10 @@ TokenArrayObj::append_move( TokenArrayObj& a )
 bool
 TokenArrayObj::operator==( const TokenArrayObj& a ) const
 {
-
-  // std::cout << "comparison of TokenArrayObj" << std::endl;
-  // std::cout << "p:   " << p << std::endl;
-  // std::cout << "a.p: " << a.p << std::endl;
-
   if ( p == a.p )
   {
     return true;
   }
-
-  // experimentally replaced by line below 090120, Diesmann
-  // because [] cvx has non NULL p
-  //
-  //    if( p == NULL || a.p == NULL || size() != a.size())
-  //    return false;
 
   if ( size() != a.size() )
   {

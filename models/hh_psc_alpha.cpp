@@ -221,11 +221,11 @@ nest::hh_psc_alpha::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Refractory time cannot be negative." );
   }
-  if ( tau_synE <= 0 || tau_synI <= 0 )
+  if ( tau_synE <= 0 or tau_synI <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
-  if ( g_K < 0 || g_Na < 0 || g_L < 0 )
+  if ( g_K < 0 or g_Na < 0 or g_L < 0 )
   {
     throw BadProperty( "All conductances must be non-negative." );
   }
@@ -247,7 +247,7 @@ nest::hh_psc_alpha::State_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::Act_m, y_[ HH_M ], node );
   updateValueParam< double >( d, names::Inact_h, y_[ HH_H ], node );
   updateValueParam< double >( d, names::Act_n, y_[ HH_N ], node );
-  if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 )
+  if ( y_[ HH_M ] < 0 or y_[ HH_H ] < 0 or y_[ HH_N ] < 0 )
   {
     throw BadProperty( "All (in)activation variables must be non-negative." );
   }
@@ -384,7 +384,7 @@ void
 nest::hh_psc_alpha::update( Time const& origin, const long from, const long to )
 {
 
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
@@ -430,17 +430,15 @@ nest::hh_psc_alpha::update( Time const& origin, const long from, const long to )
     {
       --S_.r_;
     }
-    else
-      // (    threshold    &&     maximum       )
-      if ( S_.y_[ State_::V_M ] >= 0 && U_old > S_.y_[ State_::V_M ] )
-      {
-        S_.r_ = V_.RefractoryCounts_;
+    else if ( S_.y_[ State_::V_M ] >= 0 and U_old > S_.y_[ State_::V_M ] ) // ( threshold and maximum )
+    {
+      S_.r_ = V_.RefractoryCounts_;
 
-        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+      set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
-        SpikeEvent se;
-        kernel().event_delivery_manager.send( *this, se, lag );
-      }
+      SpikeEvent se;
+      kernel().event_delivery_manager.send( *this, se, lag );
+    }
 
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );

@@ -32,7 +32,7 @@ delay = 0.1
 nest.SetDefaults('iaf_tsodyks', {'I_e': 0.})
 
 spikegen = nest.Create('spike_generator', 1)
-nest.SetStatus(spikegen, {"spike_times": [1.]})
+nest.SetStatus(spikegen, {"spike_times": [1., 5.]})
 
 # iaf_tsodyks with static synapse
 nrn_tsodyks_pre = nest.Create("iaf_tsodyks", 1)
@@ -40,7 +40,7 @@ nrn_tsodyks_post = nest.Create("iaf_tsodyks", 1)
 
 
 # Set huge synaptic weight, control spike releases by refractory period
-nest.SetStatus(nrn_tsodyks_pre, {'t_ref': 10000.})
+#nest.SetStatus(nrn_tsodyks_pre, {'t_ref': 10000.})
 
 m_tsodyks = nest.Create('multimeter', 1)
 nest.SetStatus(m_tsodyks, {"record_from": ["V_m", "I_syn_ex"]})
@@ -57,7 +57,7 @@ nest.Connect(m_tsodyks, nrn_tsodyks_post)
 # iaf_psc_exp with tsodyks_synapse
 nrn_exp_pre = nest.Create("iaf_psc_exp", 1)
 nrn_exp_post = nest.Create("iaf_psc_exp", 1)
-nest.SetStatus(nrn_exp_pre, {'t_ref': 10000.})
+#nest.SetStatus(nrn_exp_pre, {'t_ref': 10000.})
 
 m_exp = nest.Create('multimeter', 1)
 nest.SetStatus(m_exp, {"record_from": ["V_m", "I_syn_ex"]})

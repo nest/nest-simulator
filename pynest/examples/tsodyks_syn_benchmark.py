@@ -72,7 +72,7 @@ def brunel_tsodyks_network(
     # the product changes the units from spikes per ms to spikes per second.
     ext_stim = nest.Create("poisson_generator",
                            1,
-                           params={"rate": nu_ext * model_params["CE"] * 1000.}
+                           params={"rate": 25000.}  # {"rate": nu_ext * model_params["CE"] * 1000.}
                            )
 
     # Create excitatory spike recorder
@@ -95,7 +95,6 @@ def brunel_tsodyks_network(
                                          "tau_psc": model_params['tau_psc'],
                                          "tau_rec": model_params['tau_rec'],
                                          "tau_fac": model_params['tau_fac'],
-                                         "U": model_params['U'],
                                          "u": model_params['u'],
                                          "x": model_params['x'],
                                          "y": model_params['y'],
@@ -110,13 +109,13 @@ def brunel_tsodyks_network(
 
     nest.CopyModel("tsodyks_synapse",
                    "tso_syn_exc",
-                   params={"weight": JE}
+                   params={"weight": JE, "U": model_params["U_ex"]}
                    )
 
     # Inhibitory synapse model
     nest.CopyModel("tsodyks_synapse",
                    "tso_syn_inh",
-                   params={"weight": JI}
+                   params={"weight": JI, "U": model_params["U_in"]}
                    )
 
     # CONNECT NETWORK ELEMENTS
@@ -217,7 +216,7 @@ if __name__ == "__main__":
 
     # Set network size
     order = int(1e4)
-    epsilon = 0.1
+    epsilon = 0.2
     NE = 4 * order                   # no. of excitatory neurons
     NI = 1 * order                   # no. of inhibitory neurons
     CE = int(epsilon * NE)           # no. of excitatory synapses per neuron
@@ -248,15 +247,6 @@ if __name__ == "__main__":
         'print_time': True,
     }
 
-    syn_param = {"tau_psc": 3.0,
-                 "tau_rec": 400.0,
-                 "tau_fac": 1000.0,
-                 "U": 0.5,
-                 "u": 0.0,
-                 "x": 0.0,
-                 "y": 0.0,
-                 }
-
     model_params = {
         "NE": NE,            # number of excitatory neurons
         'NI': NI,             # number of inhibitory neurons
@@ -277,11 +267,12 @@ if __name__ == "__main__":
         "eta": 2.,
         "g": 4.5,
         "D": 1.5,                 # synaptic delay, all connections [ms]
-        "JE": 0.2,                # peak of EPSP [mV]
+        "JE": 5.0,                # peak of EPSP [mV]
         "tau_psc": 2.0,
-        "tau_rec": 400.0,
-        "tau_fac": 1000.0,
-        "U": 0.5,
+        "tau_rec": 100.0,
+        "tau_fac": 400.0,
+        "U_ex": 0.5,
+        "U_in": 0.05,
         "u": 0.0,
         "x": 0.0,
         "y": 0.0,
@@ -315,6 +306,6 @@ if __name__ == "__main__":
     print(f"[Rank {nest.Rank()}] total simulation time: {sim_params['T_sim'] + sim_params['T_presim']} ms")
     print(f"[Rank {nest.Rank()}] number of neurons: {nest.GetKernelStatus('network_size'):,}")
     print(f"[Rank {nest.Rank()}] number of connections: {nest.GetKernelStatus('num_connections'):,}")
-    print(f'[Rank {nest.Rank()}] number of spikes: {nest.GetKernelStatus("local_spike_counter")}')
+    print(f'[Rank {nest.Rank()}] number of spikes: {nest.GetKernelStatus("local_spike_counter"):,}')
     print(f"[Rank {nest.Rank()}] elapsed wall time: {end_time} s")
     print(f"[Rank {nest.Rank()}] total memory usage: {mem_sim - mem_ini} GB")

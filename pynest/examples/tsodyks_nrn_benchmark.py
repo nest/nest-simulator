@@ -38,7 +38,8 @@ def brunel_tsodyks_network(
 
     # Unpack a few variables for convenience
     JE = model_params['JE']
-    neuron_params = model_params['neuron_params']
+    neuron_params_ex = model_params['neuron_params_ex']
+    neuron_params_in = model_params['neuron_params_in']
     T_presim = sim_params['T_presim']
 
     # COMPUTE DEPENDENT VARIABLES
@@ -46,8 +47,8 @@ def brunel_tsodyks_network(
 
     # Threshold rate; the external rate needed for a neuron to reach
     # threshold in absence of feedback]
-    nu_thresh = neuron_params['V_th'] / \
-        (JE * model_params['CE'] * neuron_params['tau_m'])
+    nu_thresh = neuron_params_ex['V_th'] / \
+        (JE * model_params['CE'] * neuron_params_ex['tau_m'])
 
     # External firing rate; firing rate of a neuron in the external
     # population
@@ -57,13 +58,13 @@ def brunel_tsodyks_network(
     # Create excitatory nodes
     nodes_exc = nest.Create('iaf_tsodyks',
                             model_params['NE'],
-                            params=neuron_params
+                            params=neuron_params_ex
                             )
 
     # Create inhibitory nodes
     nodes_inh = nest.Create('iaf_tsodyks',
                             model_params['NI'],
-                            params=neuron_params
+                            params=neuron_params_in
                             )
 
     # Create Poisson generator; the excitatory stimuli from the external
@@ -72,7 +73,7 @@ def brunel_tsodyks_network(
     # the product changes the units from spikes per ms to spikes per second.
     ext_stim = nest.Create("poisson_generator",
                            1,
-                           params={"rate": nu_ext * model_params["CE"] * 1000.}
+                           params={"rate": 25000.}  # {"rate": nu_ext * model_params["CE"] * 1000.}
                            )
 
     # Create excitatory spike recorder
@@ -192,6 +193,7 @@ if __name__ == "__main__":
     import platform
     import sys
     import time
+    from pprint import pprint
 
     n_procs = 1
     n_threads = 8
@@ -200,7 +202,7 @@ if __name__ == "__main__":
 
     # Set network size
     order = int(1e4)
-    epsilon = 0.1
+    epsilon = 0.2
     NE = 4 * order                   # no. of excitatory neurons
     NI = 1 * order                   # no. of inhibitory neurons
     CE = int(epsilon * NE)           # no. of excitatory synapses per neuron
@@ -231,22 +233,13 @@ if __name__ == "__main__":
         'print_time': True,
     }
 
-    syn_param = {"tau_psc": 3.0,
-                 "tau_rec": 400.0,
-                 "tau_fac": 1000.0,
-                 "U": 0.5,
-                 "u": 0.0,
-                 "x": 0.0,
-                 "y": 0.0,
-                 }
-
     model_params = {
         "NE": NE,            # number of excitatory neurons
         'NI': NI,             # number of inhibitory neurons
         "CE": CE,              # number of excitatory synapses per neuron
         "CI": CI,                # number of inhibitory synapses per neuron
 
-        "neuron_params": {        # Set parameters for iaf_psc_delta
+        "neuron_params_ex": {        # Set parameters for excitatory iaf_tsodyks
             "tau_m": 20,          # membrance time constant [ms]
             "t_ref": 2.0,         # refractory period [ms]
             "C_m": 250.0,         # membrane capacitance [pF]
@@ -255,9 +248,26 @@ if __name__ == "__main__":
             "V_reset": 0.0,       # reset potential [mV]
             "V_m": 9.5,           # mean membrane potential [mV]
             "tau_psc": 2.0,
-            "tau_rec": 400.0,
-            "tau_fac": 1000.0,
+            "tau_rec": 100.0,
+            "tau_fac": 400.0,
             "U": 0.5,
+            "u": 0.0,
+            "x": 0.0,
+            "y": 0.0,
+        },
+
+        "neuron_params_in": {        # Set parameters for excitatory iaf_tsodyks
+            "tau_m": 20,          # membrance time constant [ms]
+            "t_ref": 2.0,         # refractory period [ms]
+            "C_m": 250.0,         # membrane capacitance [pF]
+            "E_L": 0.0,           # resting membrane potential [mV]
+            "V_th": 20.0,         # threshold potential [mV]
+            "V_reset": 0.0,       # reset potential [mV]
+            "V_m": 9.5,           # mean membrane potential [mV]
+            "tau_psc": 2.0,
+            "tau_rec": 100.0,
+            "tau_fac": 400.0,
+            "U": 0.05,
             "u": 0.0,
             "x": 0.0,
             "y": 0.0,
@@ -267,7 +277,7 @@ if __name__ == "__main__":
         "eta": 2.,
         "g": 4.5,
         "D": 1.5,                 # synaptic delay, all connections [ms]
-        "JE": 0.2,                # peak of EPSP [mV]
+        "JE": 5.0,                # peak of EPSP [mV]
 
         # initial membrane potentials are drawn from a normal distribution with:
         "mean_potential": 9.5,    # [mV]
@@ -298,6 +308,20 @@ if __name__ == "__main__":
     print(f"[Rank {nest.Rank()}] total simulation time: {sim_params['T_sim'] + sim_params['T_presim']} ms")
     print(f"[Rank {nest.Rank()}] number of neurons: {nest.GetKernelStatus('network_size'):,}")
     print(f"[Rank {nest.Rank()}] number of connections: {nest.GetKernelStatus('num_connections'):,}")
-    print(f'[Rank {nest.Rank()}] number of spikes: {nest.GetKernelStatus("local_spike_counter")}')
+    print(f'[Rank {nest.Rank()}] number of spikes: {nest.GetKernelStatus("local_spike_counter"):,}')
     print(f"[Rank {nest.Rank()}] elapsed wall time: {end_time} s")
     print(f"[Rank {nest.Rank()}] total memory usage: {mem_sim - mem_ini} GB")
+
+    ''' 
+    sts_exc_count = {}
+    for i, st_exc in enumerate(sts_exc):
+        sts_exc_count[f"node {i+1}"] = len(st_exc)
+
+    sts_inh_count = {}
+    for i, st_inh in enumerate(sts_inh):
+        sts_inh_count[f"node {i+1}"] = len(st_inh)
+    print("STS_EXC")
+    pprint(sts_exc_count)
+    print("\nSTS_INH")
+    pprint(sts_inh_count)
+    '''

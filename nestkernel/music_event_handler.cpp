@@ -164,8 +164,8 @@ MusicEventHandler::update( Time const& origin, const long from, const long to )
           and T <= origin + Time::step( from + to ) )
         {
           nest::SpikeEvent se;
-          se.get_stamp().set_offset( Time( Time::step( T.get_steps() ) ).get_ms() - T.get_ms() );
-          se.get_stamp().set_stamp( T );
+          T.set_offset( Time( Time::step( T.get_steps() ) ).get_ms() - T.get_ms() ); // XXX: this needs some more thought
+          se.set_stamp( T );
 
           // deliver to the proxy for this channel
           channelmap_[ channel ]->handle( se );

@@ -291,6 +291,7 @@ echo "MSGBLD0236: $(pwd)\$ cmake \
     -DCMAKE_CXX_FLAGS=\"$CXX_FLAGS\" \
     -Dwith-optimize=ON \
     -Dwith-warning=ON \
+    -Dwith-userdoc=OFF \
     $CONFIGURE_BOOST \
     $CONFIGURE_OPENMP \
     $CONFIGURE_MPI \

@@ -46,7 +46,7 @@ When you add another function :math:`g` to the right hand side of our linear dif
 this is now a non-homogeneous differential equation. Things (can) become more complicated.
 
 Solving it with variation of constants
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This kind of differential equation is usually solved with "variation of constants" which gives us the following solution:
 

@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-r"""PyNEST - Python interface for the NEST simulator
+r"""PyNEST - Python interface for the NEST Simulator
 
 * ``nest.helpdesk()`` opens the NEST documentation in your browser.
 

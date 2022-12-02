@@ -31,8 +31,6 @@ cmake_install.cmake
 CMakeDoxygenDefaults.cmake
 
 # generated files
-doc/fulldoc.conf
-doc/normaldoc.conf
 bin/nest-config
 bin/nest_vars.sh
 libnestutil/config.h

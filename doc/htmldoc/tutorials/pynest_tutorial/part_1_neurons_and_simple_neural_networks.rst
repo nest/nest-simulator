@@ -31,7 +31,7 @@ Networks <pynest_examples>`, or
 have a look at at the source directory of your NEST installation in the
 subdirectory: ``pynest/examples/``.
 
-PyNEST - an interface to the NEST simulator
+PyNEST - an interface to the NEST Simulator
 -------------------------------------------
 
 .. _Python-Interface:
@@ -42,7 +42,7 @@ PyNEST - an interface to the NEST simulator
 
    Python Interface Figure.
    The Python interpreter imports NEST as a module and
-   dynamically loads the NEST simulator kernel (``pynestkernel.so``).
+   dynamically loads the NEST Simulator kernel (``pynestkernel.so``).
    A simulation script of
    the user (``mysimulation.py``) uses functions defined in this high-level
    API. These functions generate code in SLI (Simulation Language
@@ -54,7 +54,7 @@ is designed for the simulation of large heterogeneous networks of point
 neurons. It is open source software released under the GPL licence. The
 simulator comes with an interface to Python [2]_. :numref:`Python-Interface`
 illustrates the interaction between the user's simulation script
-(``mysimulation.py``) and the NEST simulator. Eppler et al. [3]_
+(``mysimulation.py``) and the NEST Simulator. Eppler et al. [3]_
 contains a technically detailed description of the implementation of this
 interface and parts of this text are based on this reference. The
 simulation kernel is written in C++ to obtain the highest possible performance
@@ -568,7 +568,7 @@ References
 .. [2] Python Software Foundation. The Python programming language,
    2008. http://www.python.org.
 
-.. [3] Eppler JM et al. 2009 PyNEST: A convenient interface to the NEST simulator.
+.. [3] Eppler JM et al. 2009 PyNEST: A convenient interface to the NEST Simulator.
    2:12. 10.3389/neuro.11.012.2008.
 
 .. [4] Hunter JD. 2007 Matplotlib: A 2d graphics environment.

@@ -91,6 +91,13 @@ section#kernel-attributes dl.py.class dd dl.py.attribute dd dl.field-list.simple
 .md-typeset h6 {
    font-weight: 600;
 }
+.md-typeset h1[id]:before,
+.md-typeset h2[id]:before, 
+.md-typeset h3[id]:before,
+.md-typeset h4[id]:before {
+   margin-top: -3.4rem;
+  padding-top: 3.4rem;
+}
 
 [data-md-color-primary=orange] .md-tabs {
   background-color: var(--nest-orange);

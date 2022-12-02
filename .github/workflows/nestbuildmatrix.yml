@@ -207,10 +207,31 @@ jobs:
         run: |
           mypy pynest/
 
-  pytest:
+  pytest-linux:
     runs-on: "ubuntu-20.04"
-    if: false
-    needs: [test_macos, test_linux]
+    needs: [test_linux]
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: "Install dependencies"
+        run: |
+          pip install pytest pytest-cov pytest-doctestplus
+
+      - name: "Run pytest..."
+        run: |
+          pytest pynest/
+
+  pytest-mac:
+    runs-on: "macos-latest"
+    needs: [test_macos]
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v2

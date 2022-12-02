@@ -22,7 +22,6 @@
 
 #include "iaf_tsodyks.h"
 
-
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "numerics.h"
@@ -47,6 +46,7 @@ namespace nest
 {
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
+// TODO: Should state variables (x, y, u) also be recordable?
 template <>
 void
 RecordablesMap< iaf_tsodyks >::create()
@@ -75,9 +75,9 @@ nest::iaf_tsodyks::Parameters_::Parameters_()
   , rho_( 0.01 )             // in 1/s
   , delta_( 0.0 )            // in mV
   , tau_fac_( 1000.0 )       // in ms
-  , tau_psc_( 3.0 )          // in ms
+  , tau_psc_( 2.0 )          // in ms
   , tau_rec_( 400.0 )        // in ms
-  , U_( 0.5 )
+  , U_( 0.5 )                // dimensionless
 
 {
 }

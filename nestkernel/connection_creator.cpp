@@ -23,6 +23,7 @@
 #include "connection_creator.h"
 
 #include "nest.h"
+#include "spatial.h"
 
 namespace nest
 {
@@ -57,10 +58,10 @@ ConnectionCreator::ConnectionCreator( const dictionary& dict )
     number_of_connections_ = number_of_connections;
   }
   // TODO-PYNEST-NG: implement mask with dictionary
-  // if ( dict.known( names::mask ) )
-  // {
-  //   mask_ = NestModule::create_mask( ( *dict )[ names::mask ] );
-  // }
+  if ( dict.known( names::mask ) )
+  {
+    mask_ = create_mask( dict.get< dictionary >( names::mask ) );
+  }
   if ( dict.known( names::kernel ) )
   {
     kernel_ = create_parameter( dict.at( names::kernel ) );

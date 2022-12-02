@@ -481,7 +481,6 @@ class NodeCollection:
 
         print("### 2", params)
 
-        print(params)
         nestkernel.llapi_set_nc_status(self._datum, params)
 
     def tolist(self):
@@ -1032,7 +1031,7 @@ class Parameter:
         return nestkernel.llapi_divide_parameter(self._datum, self._arg_as_parameter(other)._datum)
 
     def __pow__(self, exponent):
-        return nestkernel.llapi_pow_parameter(self._datum, self._arg_as_parameter(float(exponent))._datum)
+        return nestkernel.llapi_pow_parameter(self._datum, float(exponent))
 
     def __lt__(self, other):
         return nestkernel.llapi_compare_parameter(self._datum, self._arg_as_parameter(other)._datum, {'comparator': 0})

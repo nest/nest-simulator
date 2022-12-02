@@ -101,6 +101,13 @@ def Create(model, n=1, params=None, positions=None):
     if isinstance(params, dict) and params:  # if params is a dict and not empty
         iterable_or_parameter_in_params = any(is_iterable(v) or isinstance(v, Parameter) for k, v in params.items())
 
+    if isinstance(params, (list, tuple)) and len(params) != n:
+        raise TypeError('list of params must have one dictionary per node')
+
+    if params is not None and not (isinstance(params, dict) or (isinstance(params, (list, tuple))
+                                                                and all(isinstance(e, dict) for e in params))):
+        raise TypeError('params must be either a dict of parameters or a list or tuple of dicts')
+
     if positions is not None:
         # Explicitly retrieve lazy loaded spatial property from the module class.
         # This is needed because the automatic lookup fails. See #2135.
@@ -121,9 +128,9 @@ def Create(model, n=1, params=None, positions=None):
                 raise kernel.NESTError('Cannot specify number of nodes with grid positions')
             layer_specs['shape'] = positions.shape
             if positions.center is not None:
-                layer_specs['center'] = positions.center
+                layer_specs['center'] = [float(v) for v in positions.center]
         if positions.extent is not None:
-            layer_specs['extent'] = positions.extent
+            layer_specs['extent'] = [float(v) for v in positions.extent]
 
         layer = nestkernel.llapi_create_spatial(layer_specs)
         layer.set(params if params else {})
@@ -131,7 +138,8 @@ def Create(model, n=1, params=None, positions=None):
 
     node_ids = nestkernel.llapi_create(model, n)
 
-    if isinstance(params, dict) and params:  # if params is a dict and not empty
+    if (isinstance(params, dict) and params) or isinstance(params, (list, tuple)):
+        # if params is a dict and not empty or a list of dicts
         try:
             node_ids.set(params)
         except Exception:

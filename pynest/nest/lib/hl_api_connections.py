@@ -25,8 +25,6 @@ Functions for connection handling
 
 import numpy
 
-from ..ll_api import connect_arrays
-from .. import pynestkernel as kernel
 from .. import nestkernel_api as nestkernel
 
 from .hl_api_connection_helpers import (_process_input_nodes, _connect_layers_needed,
@@ -246,7 +244,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
             syn_param_keys = None
             syn_param_values = None
 
-        connect_arrays(pre, post, weights, delays, synapse_model, syn_param_keys, syn_param_values)
+        nestkernel.ll_api_connect_arrays(pre, post, weights, delays, synapse_model, syn_param_keys, syn_param_values)
         return
 
     if not isinstance(pre, NodeCollection):
@@ -335,15 +333,9 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
 
     """
 
-    sps(pre)
-    sps(post)
-
     if isinstance(conn_spec, str):
         conn_spec = {'rule': conn_spec}
     if isinstance(syn_spec, str):
         syn_spec = {'synapse_model': syn_spec}
 
-    sps(conn_spec)
-    sps(syn_spec)
-
-    sr('Disconnect_g_g_D_D')
+    nestkernel.llapi_disconnect(pre._datum, post._datum, conn_spec, syn_spec)

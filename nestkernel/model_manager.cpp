@@ -317,6 +317,7 @@ ModelManager::set_node_defaults_( index model_id, const dictionary& params )
   get_node_model( model_id )->set_status( params );
 
   params.all_entries_accessed( "ModelManager::set_node_defaults_", "params" );
+  model_defaults_modified_ = true;
 }
 
 void

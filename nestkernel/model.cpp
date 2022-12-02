@@ -103,7 +103,7 @@ Model::mem_capacity()
 }
 
 void
-Model::set_status( dictionary d )
+Model::set_status( const dictionary& d )
 {
   try
   {

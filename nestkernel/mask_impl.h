@@ -133,7 +133,7 @@ BoxMask< D >::get_dict() const
 {
   dictionary d;
   dictionary maskd;
-  d[ get_name().toString() ] = maskd;
+  d[ get_name() ] = maskd;
   maskd[ names::lower_left ] = lower_left_.get_vector();
   maskd[ names::upper_right ] = upper_right_.get_vector();
   maskd[ names::azimuth_angle ] = azimuth_angle_;
@@ -209,9 +209,9 @@ BallMask< D >::get_dict() const
 {
   dictionary d;
   dictionary maskd;
-  d[ get_name().toString() ] = maskd;
   maskd[ names::radius ] = radius_;
   maskd[ names::anchor ] = center_.get_vector();
+  d[ get_name() ] = maskd;
   return d;
 }
 
@@ -287,13 +287,13 @@ EllipseMask< D >::get_dict() const
 {
   dictionary d;
   dictionary maskd;
-  d[ get_name().toString() ] = maskd;
   maskd[ names::major_axis ] = major_axis_;
   maskd[ names::minor_axis ] = minor_axis_;
   maskd[ names::polar_axis ] = polar_axis_;
   maskd[ names::anchor ] = center_.get_vector();
   maskd[ names::azimuth_angle ] = azimuth_angle_;
   maskd[ names::polar_angle ] = polar_angle_;
+  d[ get_name() ] = maskd;
   return d;
 }
 

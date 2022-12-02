@@ -174,7 +174,10 @@ cdef dictionary pydict_to_dictionary(object py_dict) except *:  # Adding "except
             cdict[pystr_to_string(key)] = pylist_or_ndarray_to_doublevec(value)
         elif is_list_tuple_ndarray_of_int(value):
             cdict[pystr_to_string(key)] = pylist_to_intvec(value)
-        elif type(value) is list and type(value[0]) is list:
+        elif type(value) is list and isinstance(value[0], (list, tuple)):
+            cdict[pystr_to_string(key)] = list_of_list_to_doublevec(value)
+        elif type(value) is list and isinstance(value[0], numpy.ndarray):
+            print("list of np arrays")
             cdict[pystr_to_string(key)] = list_of_list_to_doublevec(value)
         elif type(value) is list and type(value[0]) is str:
             cdict[pystr_to_string(key)] = pylist_to_stringvec(value)
@@ -189,6 +192,8 @@ cdef dictionary pydict_to_dictionary(object py_dict) except *:  # Adding "except
         elif type(value) is ParameterObject:
             cdict[pystr_to_string(key)] = (<ParameterObject>value).thisptr
         else:
+            if type(value) is list:
+                print("list of ", type(value[0]))
             raise AttributeError(f'when converting Python dictionary: value of key ({key}) is not a known type, got {type(value)}')
     return cdict
 
@@ -279,6 +284,28 @@ def llapi_get_position(NodeCollectionObject layer):
         return result
 
 @catch_cpp_error
+def llapi_spatial_distance(object from_arg, to_arg):
+    cdef vector[vector[double]] from_vec
+    if isinstance(from_arg, nest.NodeCollection):
+        return distance((<NodeCollectionObject>(to_arg._datum)).thisptr, (<NodeCollectionObject>(from_arg._datum)).thisptr)
+    elif isinstance(from_arg, (list, tuple)):
+        from_vec = from_arg
+        return distance((<NodeCollectionObject>(to_arg._datum)).thisptr, from_vec)
+    else:
+        raise TypeError("from_arg must be either a NodeCollection or a list/tuple of positions")
+
+@catch_cpp_error
+def llapi_displacement(object from_arg, to_arg):
+    cdef vector[vector[double]] from_vec
+    if isinstance(from_arg, nest.NodeCollection):
+        return displacement((<NodeCollectionObject>(to_arg._datum)).thisptr, (<NodeCollectionObject>(from_arg._datum)).thisptr)
+    elif isinstance(from_arg, (list, tuple)):
+        from_vec = from_arg
+        return displacement((<NodeCollectionObject>(to_arg._datum)).thisptr, from_vec)
+    else:
+        raise TypeError("from_arg must be either a NodeCollection or a list/tuple of positions")
+
+@catch_cpp_error
 def llapi_distance(object conn):  # PYNEST-NG: should there be a SynapseCollectionObject?
     cdef vector[ConnectionID] conn_vec
     for c in conn:
@@ -304,12 +331,8 @@ def llapi_make_nodecollection(object node_ids):
 
 @catch_cpp_error
 def llapi_connect(NodeCollectionObject pre, NodeCollectionObject post, object conn_params, object synapse_params):
-    print("aaaaaaaaa", conn_params)
-    print("bbbbbbbbb", synapse_params)
     conn_params = conn_params if conn_params is not None else {}
     synapse_params = synapse_params if synapse_params is not None else {}
-
-    print(type(synapse_params))
 
     if ("rule" in conn_params and conn_params["rule"] is None) or "rule" not in conn_params:
         conn_params["rule"] = "all_to_all"
@@ -319,7 +342,6 @@ def llapi_connect(NodeCollectionObject pre, NodeCollectionObject post, object co
 
     cdef vector[dictionary] syn_param_vec
     if isinstance(synapse_params, nest.CollocatedSynapses):
-        print(synapse_params.syn_specs)
         syn_param_vec = pylist_to_dictvec(synapse_params.syn_specs)
     elif synapse_params is not None:
         syn_param_vec.push_back(pydict_to_dictionary(synapse_params))
@@ -328,6 +350,22 @@ def llapi_connect(NodeCollectionObject pre, NodeCollectionObject post, object co
             pydict_to_dictionary(conn_params),
             syn_param_vec)
 
+@catch_cpp_error
+def llapi_disconnect(NodeCollectionObject pre, NodeCollectionObject post, object conn_params, object synapse_params):
+    conn_params = conn_params if conn_params is not None else {}
+    synapse_params = synapse_params if synapse_params is not None else {}
+
+    if ("rule" in conn_params and conn_params["rule"] is None) or "rule" not in conn_params:
+        conn_params["rule"] = "all_to_all"
+
+    if synapse_params is dict and "synapse_model" not in synapse_params:
+        synapse_params["synapse_model"] = "static_synapse"
+
+    disconnect(pre.thisptr, post.thisptr,
+            pydict_to_dictionary(conn_params),
+            pydict_to_dictionary(synapse_params))
+
+@catch_cpp_error
 def llapi_connect_layers(NodeCollectionObject pre, NodeCollectionObject post, object projections):
     print("### 9", projections)
     connect_layers(pre.thisptr, post.thisptr, pydict_to_dictionary(projections))
@@ -673,3 +711,71 @@ def llapi_set_connection_status(object conns, object params):
         set_connection_status(conn_deque, list_of_dict_to_vec(params))
     else:
         raise TypeError('params must be a dict or a list of dicts')
+
+
+@catch_cpp_error
+def ll_api_connect_arrays(sources, targets, weights, delays, synapse_model, syn_param_keys, syn_param_values):
+    """Calls connect_arrays function, bypassing SLI to expose pointers to the NumPy arrays"""
+
+    if not (isinstance(sources, numpy.ndarray) and sources.ndim == 1) or not numpy.issubdtype(sources.dtype, numpy.integer):
+        raise TypeError('sources must be a 1-dimensional NumPy array of integers')
+    if not (isinstance(targets, numpy.ndarray) and targets.ndim == 1) or not numpy.issubdtype(targets.dtype, numpy.integer):
+        raise TypeError('targets must be a 1-dimensional NumPy array of integers')
+    if weights is not None and not (isinstance(weights, numpy.ndarray) and weights.ndim == 1):
+        raise TypeError('weights must be a 1-dimensional NumPy array')
+    if delays is not None and  not (isinstance(delays, numpy.ndarray) and delays.ndim == 1):
+        raise TypeError('delays must be a 1-dimensional NumPy array')
+    if syn_param_keys is not None and not ((isinstance(syn_param_keys, numpy.ndarray) and syn_param_keys.ndim == 1) and
+                                            numpy.issubdtype(syn_param_keys.dtype, numpy.string_)):
+        raise TypeError('syn_param_keys must be a 1-dimensional NumPy array of strings')
+    if syn_param_values is not None and not ((isinstance(syn_param_values, numpy.ndarray) and syn_param_values.ndim == 2)):
+        raise TypeError('syn_param_values must be a 2-dimensional NumPy array')
+
+    if not len(sources) == len(targets):
+        raise ValueError('Sources and targets must be arrays of the same length.')
+    if weights is not None:
+        if not len(sources) == len(weights):
+            raise ValueError('weights must be an array of the same length as sources and targets.')
+    if delays is not None:
+        if not len(sources) == len(delays):
+            raise ValueError('delays must be an array of the same length as sources and targets.')
+    if syn_param_values is not None:
+        if not len(syn_param_keys) == syn_param_values.shape[0]:
+            raise ValueError('syn_param_values must be a matrix with one array per key in syn_param_keys.')
+        if not len(sources) == syn_param_values.shape[1]:
+            raise ValueError('syn_param_values must be a matrix with arrays of the same length as sources and targets.')
+
+    # Get pointers to the first element in each NumPy array
+    cdef long[::1] sources_mv = numpy.ascontiguousarray(sources, dtype=numpy.int64)
+    cdef long* sources_ptr = &sources_mv[0]
+
+    cdef long[::1] targets_mv = numpy.ascontiguousarray(targets, dtype=numpy.int64)
+    cdef long* targets_ptr = &targets_mv[0]
+
+    cdef double[::1] weights_mv
+    cdef double* weights_ptr = NULL
+    if weights is not None:
+        weights_mv = numpy.ascontiguousarray(weights, dtype=numpy.double)
+        weights_ptr = &weights_mv[0]
+
+    cdef double[::1] delays_mv
+    cdef double* delays_ptr = NULL
+    if delays is not None:
+        delays_mv = numpy.ascontiguousarray(delays, dtype=numpy.double)
+        delays_ptr = &delays_mv[0]
+
+    # Storing parameter keys in a vector of strings
+    cdef vector[string] param_keys_ptr
+    if syn_param_keys is not None:
+        for i, key in enumerate(syn_param_keys):
+            param_keys_ptr.push_back(key)
+
+    cdef double[:, ::1] param_values_mv
+    cdef double* param_values_ptr = NULL
+    if syn_param_values is not None:
+        param_values_mv = numpy.ascontiguousarray(syn_param_values, dtype=numpy.double)
+        param_values_ptr = &param_values_mv[0][0]
+
+    cdef string syn_model_string = synapse_model.encode('UTF-8')
+
+    connect_arrays( sources_ptr, targets_ptr, weights_ptr, delays_ptr, param_keys_ptr, param_values_ptr, len(sources), syn_model_string )

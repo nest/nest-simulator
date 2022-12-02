@@ -93,7 +93,7 @@ cdef extern from "nest.h" namespace "nest":
     void init_nest( int* argc, char** argv[] )
     void reset_kernel()
     NodeCollectionPTR create( const string model_name, const long n ) except +
-    NodeCollectionPTR create_spatial( const dictionary& )
+    NodeCollectionPTR create_spatial( const dictionary& ) except +
 
     NodeCollectionPTR make_nodecollection( const vector[size_t] node_ids ) except +
 
@@ -107,6 +107,10 @@ cdef extern from "nest.h" namespace "nest":
                  NodeCollectionPTR targets,
                  const dictionary& connectivity,
                  const vector[dictionary]& synapse_params ) except +
+    void disconnect(NodeCollectionPTR sources,
+                 NodeCollectionPTR targets,
+                 const dictionary& connectivity,
+                 const dictionary& synapse_params) except +
     int get_rank() except +
     int get_num_mpi_processes() except +
     string print_nodes_to_string()
@@ -141,5 +145,10 @@ cdef extern from "nest.h" namespace "nest":
 # PYNEST-NG: Move these global functions to nest.h?
 cdef extern from "spatial.h" namespace "nest":
     vector[vector[double]] get_position( NodeCollectionPTR layer_nc ) except +
+    vector[double] distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc ) except +
+    vector[double] distance( NodeCollectionPTR layer_nc, const vector[vector[double]]& point ) except +
     vector[double] distance( const vector[ConnectionID]& conns ) except +
+    vector[vector[double]] displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc ) except +
+    vector[vector[double]] displacement( NodeCollectionPTR layer_nc, const vector[vector[double]]& point ) except +
+
     void connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const dictionary& dict ) except +

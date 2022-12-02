@@ -364,117 +364,89 @@ create_mask( const dictionary& mask_dict )
 {
   mask_dict.init_access_flags();
 
-  // TODO-PYNEST-NG: move and convert to use dictionary
-  // // t can be either an existing MaskPTR, or a Dictionary containing
-  // // mask parameters
-  // MaskPTR* maskd = dynamic_cast< MaskPTR* >( t.datum() );
-  // if ( maskd )
-  // {
-  //   return *maskd;
-  // }
-  // else
-  // {
-
-  //   DictionaryPTR* dd = dynamic_cast< DictionaryPTR* >( t.datum() );
-  //   if ( dd == 0 )
-  //   {
-  //     throw BadProperty( "Mask must be masktype or dictionary." );
-  //   }
+  // TODO-PYNEST-NG: move
 
   //   // The dictionary should contain one key which is the name of the
   //   // mask type, and optionally the key 'anchor'. To find the unknown
   //   // mask type key, we must loop through all keys. The value for the
   //   // anchor key will be stored in the anchor_token variable.
-  //   Token anchor_token;
-  //   bool has_anchor = false;
-  //   AbstractMask* mask = 0;
+  std::vector< long > anchor;
+  bool has_anchor = false;
+  MaskPTR mask;
 
-  //   for ( Dictionary::iterator dit = ( *dd )->begin(); dit != ( *dd )->end(); ++dit )
-  //   {
+  for ( auto& kv : mask_dict )
+  {
+    if ( kv.first == names::anchor )
+    {
+      anchor = mask_dict.get< std::vector< long > >( kv.first );
+      has_anchor = true;
+    }
+    else
+    {
+      mask = create_mask( kv.first, mask_dict.get< dictionary >( kv.first ) );
+    }
+  }
 
-  //     if ( dit->first == names::anchor )
-  //     {
+  if ( has_anchor )
+  {
 
-  //       anchor_token = dit->second;
-  //       has_anchor = true;
-  //     }
-  //     else
-  //     {
+    // The anchor may be an array of doubles (a spatial position).
+    // For grid layers only, it is also possible to provide an array of longs.
+    try
+    {
+      switch ( anchor.size() )
+      {
+      case 2:
+        try
+        {
+          auto grid_mask_2d = dynamic_cast< GridMask< 2 >& >( *mask );
+          grid_mask_2d.set_anchor( Position< 2, int >( anchor[ 0 ], anchor[ 1 ] ) );
+        }
+        catch ( std::bad_cast& e )
+        {
+          throw BadProperty( "Mask must be 2-dimensional grid mask." );
+        }
+        break;
+      case 3:
+        try
+        {
+          auto grid_mask_3d = dynamic_cast< GridMask< 3 >& >( *mask );
+          grid_mask_3d.set_anchor( Position< 3, int >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
+        }
+        catch ( std::bad_cast& e )
+        {
+          throw BadProperty( "Mask must be 3-dimensional grid mask." );
+        }
+        break;
+      default:
+        throw BadProperty( "Anchor must be 2- or 3-dimensional." );
+      }
+    }
+    catch ( TypeMismatch& e )
+    {
+      std::vector< double > double_anchor = mask_dict.get< std::vector< double > >( names::anchor );
+      std::shared_ptr< AbstractMask > amask;
 
-  //       if ( mask )
-  //       { // mask has already been defined
-  //         throw BadProperty( "Mask definition dictionary contains extraneous items." );
-  //       }
-  //       mask = create_mask( dit->first, getValue< DictionaryPTR >( dit->second ) );
-  //     }
-  //   }
+      switch ( anchor.size() )
+      {
+      case 2:
+        amask = std::shared_ptr< AbstractMask >(
+          new AnchoredMask< 2 >( dynamic_cast< Mask< 2 >& >( *mask ), double_anchor ) );
+        break;
+      case 3:
+        amask = std::shared_ptr< AbstractMask >(
+          new AnchoredMask< 3 >( dynamic_cast< Mask< 3 >& >( *mask ), double_anchor ) );
+        break;
+      default:
+        throw BadProperty( "Anchor must be 2- or 3-dimensional." );
+      }
 
-  //   if ( has_anchor )
-  //   {
+      mask = amask;
+    }
+  }
+  mask_dict.all_entries_accessed( "CreateMask", "mask_dict" );
 
-  //     // The anchor may be an array of doubles (a spatial position).
-  //     // For grid layers only, it is also possible to provide an array of longs.
-  //     try
-  //     {
-  //       std::vector< long > anchor = getValue< std::vector< long > >( anchor_token );
-
-  //       switch ( anchor.size() )
-  //       {
-  //       case 2:
-  //         try
-  //         {
-  //           GridMask< 2 >& grid_mask_2d = dynamic_cast< GridMask< 2 >& >( *mask );
-  //           grid_mask_2d.set_anchor( Position< 2, int >( anchor[ 0 ], anchor[ 1 ] ) );
-  //         }
-  //         catch ( std::bad_cast& e )
-  //         {
-  //           throw BadProperty( "Mask must be 2-dimensional grid mask." );
-  //         }
-  //         break;
-  //       case 3:
-  //         try
-  //         {
-  //           GridMask< 3 >& grid_mask_3d = dynamic_cast< GridMask< 3 >& >( *mask );
-  //           grid_mask_3d.set_anchor( Position< 3, int >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
-  //         }
-  //         catch ( std::bad_cast& e )
-  //         {
-  //           throw BadProperty( "Mask must be 3-dimensional grid mask." );
-  //         }
-  //         break;
-  //       }
-  //     }
-  //     catch ( TypeMismatch& e )
-  //     {
-  //       std::vector< double > anchor = getValue< std::vector< double > >( anchor_token );
-  //       AbstractMask* amask;
-
-  //       switch ( anchor.size() )
-  //       {
-  //       case 2:
-  //         amask = new AnchoredMask< 2 >( dynamic_cast< Mask< 2 >& >( *mask ), anchor );
-  //         break;
-  //       case 3:
-  //         amask = new AnchoredMask< 3 >( dynamic_cast< Mask< 3 >& >( *mask ), anchor );
-  //         break;
-  //       default:
-  //         throw BadProperty( "Anchor must be 2- or 3-dimensional." );
-  //       }
-
-  //       delete mask;
-  //       mask = amask;
-  //     }
-  //   }
-
-  //   return mask;
-  // }
-
-
-  MaskPTR datum;
-
-  mask_dict.all_entries_accessed( "CreateMask", "params" );
-
-  return datum;
+  return mask;
 }
 
 bool

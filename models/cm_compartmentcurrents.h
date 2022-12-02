@@ -477,7 +477,7 @@ public:
       dictionary dd;
       dd[ names::receptor_idx ] = syn_it->get_syn_idx();
       dd[ names::comp_idx ] = compartment_index;
-      dd[ names::receptor_type] = "AMPA";
+      dd[ names::receptor_type ] = std::string( "AMPA" );
       info.push_back( dd );
     }
     // receptor info for GABA synapses
@@ -485,8 +485,8 @@ public:
     {
       dictionary dd;
       dd[ names::receptor_idx ] = syn_it->get_syn_idx();
-      dd[ names::comp_idx] = compartment_index;
-      dd[ names::receptor_type] = "GABA";
+      dd[ names::comp_idx ] = compartment_index;
+      dd[ names::receptor_type ] = std::string( "GABA" );
       info.push_back( dd );
     }
     // receptor info for NMDA synapses
@@ -495,7 +495,7 @@ public:
       dictionary dd;
       dd[ names::receptor_idx ] = syn_it->get_syn_idx();
       dd[ names::comp_idx ] = compartment_index;
-      dd[ names::receptor_type ] = "NMDA";
+      dd[ names::receptor_type ] = std::string( "NMDA" );
       info.push_back( dd );
     }
     // receptor info for AMPA_NMDA synapses
@@ -504,7 +504,7 @@ public:
       dictionary dd;
       dd[ names::receptor_idx ] = syn_it->get_syn_idx();
       dd[ names::comp_idx ] = compartment_index;
-      dd[ names::receptor_type ] = "AMPA_NMDA";
+      dd[ names::receptor_type ] = std::string( "AMPA_NMDA" );
       info.push_back( dd );
     }
   };

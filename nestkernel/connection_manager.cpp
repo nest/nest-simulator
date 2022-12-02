@@ -404,7 +404,7 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
 
   const std::string rule_name = conn_spec.get< std::string >( names::rule );
 
-  
+
   if ( not connruledict_.known( rule_name ) )
   {
     throw BadProperty( String::compose( "Unknown connectivity rule: %1", rule_name ) );
@@ -413,7 +413,7 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   const auto rule_id = connruledict_.get< int >( rule_name );
   ConnBuilder* cb = connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_specs );
   assert( cb );
-  
+
   // at this point, all entries in conn_spec and syn_spec have been checked
   conn_spec.all_entries_accessed( "Connect", "conn_spec" );
   for ( auto& syn_param : syn_specs )
@@ -430,7 +430,9 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
 
 // PYNEST-NG: This needs conversion
 void
-nest::ConnectionManager::connect( std::vector< index > sources, std::vector< index > targets, const dictionary& syn_spec )
+nest::ConnectionManager::connect( std::vector< index > sources,
+  std::vector< index > targets,
+  const dictionary& syn_spec )
 {
   size_t syn_id = 0; // Use "static_synapse" (which has id 0) if no model is given
 
@@ -607,9 +609,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
       }
 
       // If the default value is an integer, the synapse parameter must also be an integer.
-      if ( boost::any_cast< bool >( syn_model_default_it->second ) )  //PyNEST-NG? Was:
-      // if ( dynamic_cast< IntegerDatum* >( syn_model_default_it->second.datum() ) )
-      // or:      if ( Name( param_keys ) == names::receptor_type )
+      if ( is_type< long >( syn_model_default_it->second ) )
       {
         param_pointers[ param_key ].second = true;
         param_dicts[ i ][ param_key ] = 0;
@@ -690,8 +690,8 @@ nest::ConnectionManager::connect_arrays( long* sources,
           auto* param = param_pointer + index_counter;
 
           // PyNEST-NG had
-          //Receptor type must be an integer.
-          //if ( param_pointer_pair.first == names::receptor_type )
+          // Receptor type must be an integer.
+          // if ( param_pointer_pair.first == names::receptor_type )
 
           // Integer parameters are stored as IntegerDatums.
           if ( is_int )
@@ -700,8 +700,8 @@ nest::ConnectionManager::connect_arrays( long* sources,
 
             if ( *param > 1L << 31 or std::abs( *param - rtype_as_long ) > 0 ) // To avoid rounding errors
             {
-              const auto msg = std::string( "Expected integer value for " ) + param_pointer_pair.first
-                + ", but got double.";
+              const auto msg =
+                std::string( "Expected integer value for " ) + param_pointer_pair.first + ", but got double.";
               throw BadParameter( msg );
             }
 

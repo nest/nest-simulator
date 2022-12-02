@@ -95,7 +95,7 @@ public:
   void deprecation_warning( const std::string& ) override;
 
 private:
-  void set_status_( dictionary ) override;
+  void set_status_( const dictionary& ) override;
   dictionary get_status_() override;
 
   size_t get_element_size() const override;
@@ -229,7 +229,7 @@ GenericModel< ElementT >::sends_signal() const
 
 template < typename ElementT >
 void
-GenericModel< ElementT >::set_status_( dictionary d )
+GenericModel< ElementT >::set_status_( const dictionary& d )
 {
   proto_.set_status( d );
 }

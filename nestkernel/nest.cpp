@@ -113,6 +113,7 @@
 #include "volume_transmitter.h"
 #include "weight_recorder.h"
 
+#include "grid_mask.h"
 #include "spatial.h"
 
 #include "connection_manager_impl.h"
@@ -126,6 +127,9 @@
 
 namespace nest
 {
+
+
+AbstractMask* create_doughnut( const dictionary& d );
 
 void
 init_nest( int* argc, char** argv[] )
@@ -235,6 +239,15 @@ init_nest( int* argc, char** argv[] )
   register_parameter< Gaussian2DParameter >( "gaussian2d" );
   register_parameter< GammaParameter >( "gamma" );
   register_parameter< ExpDistParameter >( "exp_distribution" );
+
+  register_mask< BallMask< 2 > >();
+  register_mask< BallMask< 3 > >();
+  register_mask< EllipseMask< 2 > >();
+  register_mask< EllipseMask< 3 > >();
+  register_mask< BoxMask< 2 > >();
+  register_mask< BoxMask< 3 > >();
+  register_mask( "doughnut", create_doughnut );
+  register_mask< GridMask< 2 > >();
 }
 
 void
@@ -390,6 +403,7 @@ set_nc_status( NodeCollectionPTR nc, std::vector< dictionary >& params )
 void
 set_connection_status( const std::deque< ConnectionID >& conns, const dictionary& dict )
 {
+  dict.init_access_flags();
   for ( auto& conn : conns )
   {
     kernel().connection_manager.set_synapse_status( conn.get_source_node_id(),
@@ -399,6 +413,7 @@ set_connection_status( const std::deque< ConnectionID >& conns, const dictionary
       conn.get_port(),
       dict );
   }
+  dict.all_entries_accessed( "connection.set()", "params" );
 }
 
 //// void
@@ -584,6 +599,7 @@ get_metadata( const NodeCollectionPTR nc )
   if ( meta.get() )
   {
     meta->get_status( status_dict );
+    slice_positions_if_sliced_nc( status_dict, nc );
     status_dict[ names::network_size ] = nc->size();
   }
   return status_dict;
@@ -597,6 +613,16 @@ connect( NodeCollectionPTR sources,
 {
   kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
 }
+
+void
+disconnect( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  const dictionary& connectivity,
+  const dictionary& synapse_params )
+{
+  kernel().sp_manager.disconnect( sources, targets, connectivity, synapse_params );
+}
+
 
 void
 connect_arrays( long* sources,
@@ -797,6 +823,12 @@ parameter_factory_( void )
   return factory;
 }
 
+MaskFactory&
+mask_factory_( void )
+{
+  static MaskFactory factory;
+  return factory;
+}
 
 double
 get_value( const ParameterPTR param )
@@ -872,10 +904,10 @@ slice_positions_if_sliced_nc( dictionary& dict, const NodeCollectionPTR nc )
   if ( dict.known( names::positions ) )
   {
     // PyNEST-NG: Check if TokenArray is the correct type here
-    const auto positions = dict.get< TokenArray >( names::positions );
+    const auto positions = dict.get< std::vector< std::vector< double > > >( names::positions );
     if ( nc->size() != positions.size() )
     {
-      TokenArray sliced_points;
+      std::vector< std::vector< double > > sliced_points;
       // Iterate only local nodes
       NodeCollection::const_iterator nc_begin = nc->has_proxies() ? nc->MPI_local_begin() : nc->begin();
       NodeCollection::const_iterator nc_end = nc->end();
@@ -890,6 +922,31 @@ slice_positions_if_sliced_nc( dictionary& dict, const NodeCollectionPTR nc )
       dict[ names::positions ] = sliced_points;
     }
   }
+}
+
+AbstractMask*
+create_doughnut( const dictionary& d )
+{
+  // The doughnut (actually an annulus) is created using a DifferenceMask
+  Position< 2 > center( 0, 0 );
+  if ( d.known( names::anchor ) )
+  {
+    center = d.get< std::vector< double > >( names::anchor );
+  }
+
+  const double outer = d.get< double >( names::outer_radius );
+  const double inner = d.get< double >( names::inner_radius );
+  if ( inner >= outer )
+  {
+    throw BadProperty(
+      "nest::create_doughnut: "
+      "inner_radius < outer_radius required." );
+  }
+
+  BallMask< 2 > outer_circle( center, outer );
+  BallMask< 2 > inner_circle( center, inner );
+
+  return new DifferenceMask< 2 >( outer_circle, inner_circle );
 }
 
 

@@ -252,7 +252,7 @@ private:
     bool dead_time_random_;
 
     /** Shape parameter of random dead time gamma distribution. */
-    unsigned long dead_time_shape_;
+    long dead_time_shape_;
 
     /** Do we reset the membrane potential after each spike? */
     bool with_reset_;

@@ -133,7 +133,7 @@ public:
    * @param d Dictionary with named parameter settings.
    * @ingroup status_interface
    */
-  void set_status( dictionary );
+  void set_status( const dictionary& );
 
   /**
    * Export properties of the prototype node by setting
@@ -201,7 +201,7 @@ public:
   }
 
 private:
-  virtual void set_status_( dictionary ) = 0;
+  virtual void set_status_( const dictionary& ) = 0;
 
   virtual dictionary get_status_() = 0;
 

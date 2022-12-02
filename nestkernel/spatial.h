@@ -110,7 +110,8 @@ NodeCollectionPTR create_layer( const dictionary& layer_dict );
 std::vector< std::vector< double > > get_position( NodeCollectionPTR layer_nc );
 std::vector< double > get_position( const index node_id );
 std::vector< std::vector< double > > displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc );
-std::vector< std::vector< double > > displacement( NodeCollectionPTR layer_nc, const std::vector< double > point );
+std::vector< std::vector< double > > displacement( NodeCollectionPTR layer_nc,
+  const std::vector< std::vector< double > >& point );
 std::vector< double > distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc );
 std::vector< double > distance( NodeCollectionPTR layer_nc, const std::vector< std::vector< double > >& point );
 std::vector< double > distance( const std::vector< ConnectionID >& conns );

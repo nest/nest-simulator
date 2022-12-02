@@ -153,9 +153,7 @@ EndUserDocs */
  * This model uses a new algorithm to directly simulate the population activity
  * (sum of all spikes) of the population of neurons, without explicitly
  * representing each single neuron. The computational cost is largely
- * independent of the number N of neurons represented. The algorithm used
- * here is fundamentally different from and likely much faster than the one
- * used in the previously added population model pp_pop_psc_delta.
+ * independent of the number N of neurons represented.
  */
 class gif_pop_psc_exp : public Node
 {

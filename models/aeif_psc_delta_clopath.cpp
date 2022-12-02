@@ -214,9 +214,9 @@ nest::aeif_psc_delta_clopath::Parameters_::get( dictionary& d ) const
   d[ names::Delta_T ] = Delta_T;
   d[ names::tau_w ] = tau_w;
   d[ names::tau_z ] = tau_z;
-  d[ names::tau_plus ] = tau_u_bar_plus;
-  d[ names::tau_minus ] = tau_u_bar_minus;
-  d[ names::tau_bar_bar ] = tau_u_bar_bar;
+  d[ names::tau_u_bar_plus ] = tau_u_bar_plus;
+  d[ names::tau_u_bar_minus ] = tau_u_bar_minus;
+  d[ names::tau_u_bar_bar ] = tau_u_bar_bar;
   d[ names::I_e ] = I_e;
   d[ names::V_peak ] = V_peak_;
   d[ names::gsl_error_tol ] = gsl_error_tol;

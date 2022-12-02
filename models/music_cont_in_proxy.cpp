@@ -58,10 +58,12 @@ nest::music_cont_in_proxy::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::music_cont_in_proxy::Parameters_::set( const dictionary& d, State_& s )
+nest::music_cont_in_proxy::Parameters_::set( const dictionary& d, State_& s, Node* node )
 {
-  //  if(d->known(names::port_name) and s.published_)
-  //    throw MUSICPortAlreadyPublished(get_name(), P_.port_name_);
+  if ( d.known( names::port_name ) and s.published_ )
+  {
+    throw MUSICPortAlreadyPublished( node->get_name(), port_name_ );
+  }
 
   if ( not s.published_ )
   {
@@ -159,8 +161,8 @@ nest::music_cont_in_proxy::get_status( dictionary& d ) const
 void
 nest::music_cont_in_proxy::set_status( const dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, S_ );     // throws if BadProperty
+  Parameters_ ptmp = P_;   // temporary copy in case of errors
+  ptmp.set( d, S_, this ); // throws if BadProperty
 
   State_ stmp = S_;
   stmp.set( d, P_ ); // throws if BadProperty

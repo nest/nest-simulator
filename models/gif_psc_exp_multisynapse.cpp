@@ -25,8 +25,8 @@
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "dict_util.h"
+#include "iaf_propagator.h"
 #include "numerics.h"
-#include "propagator_stability.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -316,7 +316,8 @@ nest::gif_psc_exp_multisynapse::pre_run_hook()
   for ( size_t i = 0; i < P_.n_receptors_(); i++ )
   {
     V_.P11_syn_[ i ] = std::exp( -h / P_.tau_syn_[ i ] );
-    V_.P21_syn_[ i ] = propagator_32( P_.tau_syn_[ i ], tau_m, P_.c_m_, h );
+
+    V_.P21_syn_[ i ] = IAFPropagatorExp( P_.tau_syn_[ i ], tau_m, P_.c_m_ ).evaluate( h );
 
     B_.spikes_[ i ].resize();
   }

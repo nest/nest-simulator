@@ -207,13 +207,12 @@ class STDPSynapseTest(unittest.TestCase):
 
         def update_weight(w, c, n, h):
 
-
             taus = (self.synapse_parameters["tau_c"] + self.synapse_parameters["tau_n"]) / \
-                   (self.synapse_parameters["tau_c"] * self.synapse_parameters["tau_n"])
+                    (self.synapse_parameters["tau_c"] * self.synapse_parameters["tau_n"])
 
             w = w - c * (n / taus * np.expm1(-taus * h)
-                          - self.synapse_parameters["b"] * self.synapse_parameters["tau_c"]
-                          * np.expm1(-h / self.synapse_parameters["tau_c"]))
+                         - self.synapse_parameters["b"] * self.synapse_parameters["tau_c"]
+                         * np.expm1(-h / self.synapse_parameters["tau_c"]))
 
             w = max(0., w)
 
@@ -247,7 +246,6 @@ class STDPSynapseTest(unittest.TestCase):
         post_spikes_delayed = post_spikes + self.dendritic_delay
         pre_spikes_delayed = pre_spikes
         # post_spikes_delayed = post_spikes
-        # TODO check whether there is a delay for dopa spikes
         dopa_spikes_delayed = dopa_spikes + self.dendritic_delay
 
         print('post', post_spikes_delayed)
@@ -255,23 +253,22 @@ class STDPSynapseTest(unittest.TestCase):
         print('dopa', dopa_spikes_delayed)
 
         while t < self.sim_dura:
-            #print('############################################')
             # idx_next_pre_spike = -1
             t_next_pre_spike = np.inf
-            if np.where(abs(pre_spikes_delayed - t)<e)[0].size > 0:
-                idx_next_pre_spike = np.where(abs(pre_spikes_delayed - t)<e)[0][0]
+            if np.where(abs(pre_spikes_delayed - t) < e)[0].size > 0:
+                idx_next_pre_spike = np.where(abs(pre_spikes_delayed - t) < e)[0][0]
                 t_next_pre_spike = pre_spikes_delayed[idx_next_pre_spike]
 
             # idx_next_post_spike = -1
             t_next_post_spike = np.inf
-            if np.where(abs(post_spikes_delayed - t)<e)[0].size > 0:
-                idx_next_post_spike = np.where(abs(post_spikes_delayed - t)<e)[0][0]
+            if np.where(abs(post_spikes_delayed - t) < e)[0].size > 0:
+                idx_next_post_spike = np.where(abs(post_spikes_delayed - t) < e)[0][0]
                 t_next_post_spike = post_spikes_delayed[idx_next_post_spike]
 
             # idx_next_dopa_spike = -1
             t_next_dopa_spike = np.inf
-            if np.where(abs(dopa_spikes_delayed - t)<e)[0].size > 0:
-                idx_next_dopa_spike = np.where(abs(dopa_spikes_delayed - t)<e)[0][0]
+            if np.where(abs(dopa_spikes_delayed - t) < e)[0].size > 0:
+                idx_next_dopa_spike = np.where(abs(dopa_spikes_delayed - t) < e)[0][0]
                 t_next_dopa_spike = dopa_spikes_delayed[idx_next_dopa_spike]
 
             handle_dopa_spike = False
@@ -286,7 +283,7 @@ class STDPSynapseTest(unittest.TestCase):
                     handle_post_spike = True
                 if t_next == t_next_pre_spike:
                     handle_pre_spike = True
-            
+
             # update weight
             weight = update_weight(weight, c, n, self.resolution)
 
@@ -305,7 +302,7 @@ class STDPSynapseTest(unittest.TestCase):
 
             # compute c
             if handle_post_spike:
-                Kpost += 1. 
+                Kpost += 1.
                 c = facilitate(c, Kpre)
                 print('handle_post_spike c=%f, n=%f, weight=%f' % (c, n, weight))
                 print('t_next', t_next)
@@ -323,9 +320,9 @@ class STDPSynapseTest(unittest.TestCase):
 
             t += self.resolution
 
-        #Kpost_log = [Kpost_at_time(t - self.dendritic_delay, post_spikes) for t in t_log]
         if DEBUG_PLOTS:
-            self.plot_weight_evolution(pre_spikes, post_spikes, dopa_spikes, t_log, w_log, fname_snip=fname_snip, title_snip="reference")
+            self.plot_weight_evolution(pre_spikes, post_spikes, dopa_spikes, t_log, w_log,
+                                       fname_snip=fname_snip, title_snip="reference")
 
         return t_log, w_log
 

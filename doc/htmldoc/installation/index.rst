@@ -34,7 +34,7 @@ Install NEST
     .. grid-item-card:: |nestml| Install NEST with NESTML
        :class-title: sd-d-flex-row sd-align-minor-center
 
-       I'm a user who wants to :doc:`create or customize models <nestml:installation>`
+       I'm a user who wants to :doc:`create or customize models <nestml:installation>`.
 
 |
 

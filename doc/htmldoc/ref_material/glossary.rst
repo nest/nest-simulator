@@ -14,7 +14,7 @@ Units of measure
 
 
  time
-   Milliseconds (ms).
+   Time in milliseconds (ms).
 
  tau_m
    Membrane time constant in milliseconds (ms).
@@ -86,7 +86,7 @@ Units of measure
    Sodium reversal potential in Millivolts (mV).
 
  E_K
-   Potassium reversal potential in Millivolts (mV).
+   Potassium reversal potential in millivolts (mV).
 
 .. _model_terms:
 
@@ -97,13 +97,13 @@ Terms for models in NEST
  :sorted:
 
  iaf
-   Integrate and fire. Also known in other sources as `IF`.
+   Integrate-and-fire. Also known in other sources as `IF`.
 
  gif
-   Generalized integrate and fire. From Gersnter lab.
+   Generalized integrate-and-fire. From the Gerstner lab.
 
  glif
-   Generalized leaky integrate and fire. From Allen institute.
+   Generalized leaky integrate-and-fire. From the Allen institute.
 
  cond
    Conductance-based. Also known in other sources as `COBA`.
@@ -115,7 +115,7 @@ Terms for models in NEST
    Hodgkin Huxley.
 
  aeif
-   Adaptive exponential integrate and fire. Also known in other sources as `AdEx`.
+   Adaptive exponential integrate-and-fire. Also known in other sources as `AdEx`.
 
  ht
    Hill and Tononi.
@@ -130,10 +130,10 @@ Terms for models in NEST
    Excitatory.
 
  stdp
-   Spike-timing dependent plasticity synapse.
+   Spike-timing dependent plasticity.
 
  st
-   Short term plasticity.
+   Short-term plasticity.
 
  psp
    Post-synaptic potential.
@@ -142,7 +142,7 @@ Terms for models in NEST
    Spike-frequency adaptation.
 
  cm
-   compartmental model.
+   Compartmental model.
 
 Other abbreviations
 -------------------
@@ -289,7 +289,7 @@ Commonly used terms in NEST
    Cell body of the neuron.
 
  absolute refractory
-   An interval after a neuron fires a spike to prevent it from firing a spike again.
+   Interval directly following a spike emission in which the sender neuron cannot fire again.
 
  indegree
    Amount of connections to post-synaptic cells.

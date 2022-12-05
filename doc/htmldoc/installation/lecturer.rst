@@ -18,7 +18,7 @@ Docker install
 ~~~~~~~~~~~~~~
 
 We provide a docker container for NEST that also includes NESTML. You can select from options
-to also include NEST-Desktop, Jupyter notebooks, or Jupyterlab.
+to also include NEST-Desktop, Jupyter Notebooks, or JupyterLab.
 
 
 See :ref:`instructions for docker here <docker>`.

@@ -89,6 +89,11 @@ cdef extern from "parameter.h" namespace "nest":
     ParameterPTR dimension_parameter(const ParameterPTR x, const ParameterPTR y) except +
     ParameterPTR dimension_parameter(const ParameterPTR x, const ParameterPTR y, const ParameterPTR z) except +
 
+
+cdef extern from "mask.h" namespace "nest":
+    cppclass MaskPTR:
+        MaskPTR()
+
 cdef extern from "nest.h" namespace "nest":
     void init_nest( int* argc, char** argv[] )
     void reset_kernel()
@@ -152,3 +157,6 @@ cdef extern from "spatial.h" namespace "nest":
     vector[vector[double]] displacement( NodeCollectionPTR layer_nc, const vector[vector[double]]& point ) except +
 
     void connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const dictionary& dict ) except +
+    MaskPTR create_mask( const dictionary& mask_dict )
+    NodeCollectionPTR select_nodes_by_mask( const NodeCollectionPTR layer_nc, const vector[double]& anchor, const MaskPTR mask ) except +
+    cbool inside(const vector[double]& point, const MaskPTR mask ) except +

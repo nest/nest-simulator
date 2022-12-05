@@ -937,12 +937,13 @@ class Mask:
     _datum = None
 
     # The constructor should not be called by the user
-    def __init__(self, datum):
+    def __init__(self, data):
         """Masks must be created using the CreateMask command."""
-        if not isinstance(datum, kernel.SLIDatum) or datum.dtype != "masktype":
-            raise TypeError("expected mask Datum")
-        self._datum = datum
+        if (not isinstance(data, nestkernel.MaskObject)):
+            raise TypeError("Expected MaskObject.")
+        self._datum = data
 
+    # TODO-PYNEST-NG: Convert operators
     # Generic binary operation
     def _binop(self, op, other):
         if not isinstance(other, Mask):
@@ -972,7 +973,7 @@ class Mask:
         out : bool
             True if the point is inside the mask, False otherwise
         """
-        return sli_func("Inside", point, self._datum)
+        return nestkernel.llapi_inside_mask(point, self._datum)
 
 
 # TODO-PYNEST-NG: We may consider moving the entire (or most of) Parameter class to the cython level.

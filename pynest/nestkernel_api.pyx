@@ -75,6 +75,17 @@ cdef class ParameterObject:
         self.thisptr = parameter_ptr
 
 
+cdef class MaskObject:
+
+    cdef MaskPTR thisptr
+
+    def __repr__(self):
+        return "<MaskObject>"
+
+    cdef _set_mask(self, MaskPTR mask_ptr):
+        self.thisptr = mask_ptr
+
+
 cdef object any_vector_to_list(vector[any] cvec):
     cdef tmp = []
     cdef vector[any].iterator it = cvec.begin()
@@ -369,6 +380,26 @@ def llapi_disconnect(NodeCollectionObject pre, NodeCollectionObject post, object
 def llapi_connect_layers(NodeCollectionObject pre, NodeCollectionObject post, object projections):
     print("### 9", projections)
     connect_layers(pre.thisptr, post.thisptr, pydict_to_dictionary(projections))
+
+@catch_cpp_error
+def llapi_create_mask(object specs):
+    cdef dictionary specs_dictionary = pydict_to_dictionary(specs)
+    cdef MaskPTR mask
+    mask = create_mask(specs_dictionary)
+    obj = MaskObject()
+    obj._set_mask(mask)
+    return nest.Mask(obj)
+
+@catch_cpp_error
+def llapi_select_nodes_by_mask(NodeCollectionObject layer, vector[double] anchor, MaskObject mask_datum):
+    nodes = select_nodes_by_mask(layer.thisptr, anchor, mask_datum.thisptr)
+    obj = NodeCollectionObject()
+    obj._set_nc(nodes)
+    return nest.NodeCollection(obj)
+
+@catch_cpp_error
+def llapi_inside_mask(vector[double] point, MaskObject mask):
+    return inside(point, mask.thisptr)
 
 @catch_cpp_error
 def llapi_slice(NodeCollectionObject nc, long start, long stop, long step):

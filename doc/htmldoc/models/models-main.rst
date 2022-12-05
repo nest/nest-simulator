@@ -32,13 +32,6 @@ Check out :doc:`NESTML <nestml:index>`, a domain-specific language for neuron an
 NESTML enables fast prototyping of new models using an easy to understand, yet powerful syntax, and combines
 this with high simulation performance through the automated generation of C++ code, suitable for use in NEST Simulator.
 
-NESTML combines:
-
-* fast prototyping
-* an easy to understand, yet powerful syntax
-* a flexible processing toolchain, written in Python
-* good simulation performance by means of code generation (C++ for NEST Simulator)
-
 .. seealso::
 
   See the :doc:`NESTML docs for installation details <nestml:index>`.

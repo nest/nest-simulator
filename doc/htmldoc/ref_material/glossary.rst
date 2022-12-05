@@ -288,7 +288,7 @@ Commonly used terms in NEST
  soma
    Cell body of the neuron.
 
- absolute refractory
+ absolute refractory period
    Interval directly following a spike emission in which the sender neuron cannot fire again.
 
  indegree

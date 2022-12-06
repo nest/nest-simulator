@@ -29,8 +29,8 @@ Create and customize models with NESTML
 ---------------------------------------
 
 Check out :doc:`NESTML <nestml:index>`, a domain-specific language for neuron and synapse models.
-NESTML enables fast prototyping of new models using an easy to understand, yet powerful syntax, and combines
-this with high simulation performance through the automated generation of C++ code, suitable for use in NEST Simulator.
+NESTML enables fast prototyping of new models using an easy to understand, yet powerful syntax. This is achieved by a combination of a flexible processing toolchain
+written in Python with high simulation performance through the automated generation of C++ code, suitable for use in NEST Simulator.
 
 .. seealso::
 

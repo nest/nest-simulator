@@ -69,7 +69,7 @@ public:
   create( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs ) const
+    const std::vector< DictionaryDatum >& syn_specs ) const override
   {
     return new ConnBuilderType( sources, targets, conn_spec, syn_specs );
   }

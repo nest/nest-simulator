@@ -55,6 +55,12 @@ EXIT_BAD_HEADER = 20
 EXIT_NO_SOURCE = 126
 
 try:
+    heuristic_folders = "nest nestkernel build_support models .git"
+    if 'NEST_SOURCE' not in os.environ:
+        if all([name in os.listdir() for name in heuristic_folders.split()]):
+            os.environ['NEST_SOURCE'] = '.'
+        else:
+            print("Call does not seem to be done from the NEST repository root.")
     source_dir = os.environ['NEST_SOURCE']
 except KeyError:
     print("Please make NEST_SOURCE environment variable to point to " +
@@ -77,7 +83,6 @@ exclude_file_regex = [re.compile(pattern) for pattern in exclude_file_patterns]
 exclude_files = [
     'doc/copyright_header.cpp',
     'doc/copyright_header.py',
-    'nestrc.sli',
     'nest/static_modules.h',
     'pynest/pynestkernel.cpp',
     'get-pip.py'

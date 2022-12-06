@@ -45,7 +45,7 @@ public:
   IlookupFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class IsetcallbackFunction : public SLIFunction
@@ -54,7 +54,7 @@ public:
   IsetcallbackFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class IiterateFunction : public SLIFunction
@@ -63,8 +63,8 @@ public:
   IiterateFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
-  void backtrace( SLIInterpreter*, int ) const;
+  void execute( SLIInterpreter* ) const override;
+  void backtrace( SLIInterpreter*, int ) const override;
 };
 
 class IloopFunction : public SLIFunction
@@ -73,8 +73,8 @@ public:
   IloopFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
-  void backtrace( SLIInterpreter*, int ) const;
+  void execute( SLIInterpreter* ) const override;
+  void backtrace( SLIInterpreter*, int ) const override;
 };
 
 class IrepeatFunction : public SLIFunction
@@ -83,8 +83,8 @@ public:
   IrepeatFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
-  void backtrace( SLIInterpreter*, int ) const;
+  void execute( SLIInterpreter* ) const override;
+  void backtrace( SLIInterpreter*, int ) const override;
 };
 
 class IforFunction : public SLIFunction
@@ -93,8 +93,8 @@ public:
   IforFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
-  void backtrace( SLIInterpreter*, int ) const;
+  void execute( SLIInterpreter* ) const override;
+  void backtrace( SLIInterpreter*, int ) const override;
 };
 
 class IforallarrayFunction : public SLIFunction
@@ -103,8 +103,8 @@ public:
   IforallarrayFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
-  void backtrace( SLIInterpreter*, int ) const;
+  void execute( SLIInterpreter* ) const override;
+  void backtrace( SLIInterpreter*, int ) const override;
 };
 
 class IforallindexedarrayFunction : public SLIFunction
@@ -113,8 +113,8 @@ public:
   IforallindexedarrayFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
-  void backtrace( SLIInterpreter*, int ) const;
+  void execute( SLIInterpreter* ) const override;
+  void backtrace( SLIInterpreter*, int ) const override;
 };
 
 class IforallindexedstringFunction : public SLIFunction
@@ -123,8 +123,8 @@ public:
   IforallindexedstringFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
-  void backtrace( SLIInterpreter*, int ) const;
+  void execute( SLIInterpreter* ) const override;
+  void backtrace( SLIInterpreter*, int ) const override;
 };
 
 class IforallstringFunction : public SLIFunction
@@ -133,8 +133,8 @@ public:
   IforallstringFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
-  void backtrace( SLIInterpreter*, int ) const;
+  void execute( SLIInterpreter* ) const override;
+  void backtrace( SLIInterpreter*, int ) const override;
 };
 
 

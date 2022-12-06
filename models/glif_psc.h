@@ -37,7 +37,7 @@
 Short description
 +++++++++++++++++
 
-Current-based generalized leaky integrate-and-fire models
+Current-based generalized leaky integrate-and-fire (GLIF) models (from the Allen Institute)
 
 Description
 +++++++++++
@@ -201,28 +201,28 @@ public:
   using nest::Node::handle;
   using nest::Node::handles_test_event;
 
-  nest::port send_test_event( nest::Node&, nest::port, nest::synindex, bool );
+  nest::port send_test_event( nest::Node&, nest::port, nest::synindex, bool ) override;
 
-  void handle( nest::SpikeEvent& );
-  void handle( nest::CurrentEvent& );
-  void handle( nest::DataLoggingRequest& );
+  void handle( nest::SpikeEvent& ) override;
+  void handle( nest::CurrentEvent& ) override;
+  void handle( nest::DataLoggingRequest& ) override;
 
-  nest::port handles_test_event( nest::SpikeEvent&, nest::port );
-  nest::port handles_test_event( nest::CurrentEvent&, nest::port );
-  nest::port handles_test_event( nest::DataLoggingRequest&, nest::port );
+  nest::port handles_test_event( nest::SpikeEvent&, nest::port ) override;
+  nest::port handles_test_event( nest::CurrentEvent&, nest::port ) override;
+  nest::port handles_test_event( nest::DataLoggingRequest&, nest::port ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
   //! Reset internal buffers of neuron.
-  void init_buffers_();
+  void init_buffers_() override;
 
   //! Initialize auxiliary quantities, leave parameters and state untouched.
-  void calibrate();
+  void pre_run_hook() override;
 
   //! Take neuron through given time interval
-  void update( nest::Time const&, const long, const long );
+  void update( nest::Time const&, const long, const long ) override;
 
   // The next two classes need to be friends to access the State_ class/member
   friend class nest::RecordablesMap< glif_psc >;
@@ -267,7 +267,7 @@ private:
     Parameters_();
 
     void get( DictionaryDatum& ) const;
-    double set( const DictionaryDatum& );
+    double set( const DictionaryDatum&, Node* );
   };
 
   struct State_
@@ -287,7 +287,7 @@ private:
     State_( const Parameters_& );
 
     void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, double );
+    void set( const DictionaryDatum&, const Parameters_&, double, Node* );
   };
 
 
@@ -433,10 +433,10 @@ glif_psc::get_status( DictionaryDatum& d ) const
 inline void
 glif_psc::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_;                 // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d ); // throws if BadProperty
-  State_ stmp = S_;                      // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL );         // throws if BadProperty
+  Parameters_ ptmp = P_;                       // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
+  State_ stmp = S_;                            // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
 
   ArchivingNode::set_status( d );
 

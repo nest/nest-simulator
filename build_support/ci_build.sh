@@ -45,7 +45,7 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
     echo "+               S T A T I C   C O D E   A N A L Y S I S                       +"
     echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
 
-    echo "MSGBLD0010: Initializing VERA++ static code analysis."
+    echo "MSGBLD0010: Initializing static code analysis."
     export PYTHON_EXECUTABLE="$(which python3)"
     export PYTHON_INCLUDE_DIR="`python3 -c "import sysconfig; print(sysconfig.get_path('include'))"`"
     export PYLIB_BASE="lib`basename $PYTHON_INCLUDE_DIR`"
@@ -54,9 +54,6 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
     echo "--> Detected PYTHON_LIBRARY=$PYTHON_LIBRARY"
     echo "--> Detected PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
     CONFIGURE_PYTHON="-DPYTHON_EXECUTABLE=$PYTHON_EXECUTABLE -DPYTHON_LIBRARY=$PYTHON_LIBRARY -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
-    # Add the NEST profile to the VERA++ profiles.
-    sudo cp build_support/vera++.profile /usr/lib/vera++/profiles/nest
-    echo "MSGBLD0020: VERA++ initialization completed."
     if [ ! -f "$HOME/.cache/bin/cppcheck" ]; then
         echo "MSGBLD0030: Installing CPPCHECK version 1.69."
         # Build cppcheck version 1.69
@@ -92,21 +89,18 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
     # Set the command line arguments for the static code analysis script and execute it.
 
     # The names of the static code analysis tools executables.
-    VERA=vera++
     CPPCHECK=cppcheck
-    CLANG_FORMAT=clang-format-9
+    CLANG_FORMAT=clang-format
     PEP8=pycodestyle
     PYCODESTYLE_IGNORES="E121,E123,E126,E226,E24,E704,W503,W504"
 
     # Perform or skip a certain analysis.
-    PERFORM_VERA=true
     PERFORM_CPPCHECK=true
     PERFORM_CLANG_FORMAT=true
     PERFORM_PEP8=true
 
     # The following command line parameters indicate whether static code analysis error messages
     # will cause the CI build to fail or are ignored.
-    IGNORE_MSG_VERA=false
     IGNORE_MSG_CPPCHECK=true
     IGNORE_MSG_CLANG_FORMAT=false
     IGNORE_MSG_PYCODESTYLE=false
@@ -117,9 +111,9 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
 
     chmod +x build_support/static_code_analysis.sh
     ./build_support/static_code_analysis.sh "$RUNS_ON_CI" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
-    "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
-    "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
-    "$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PYCODESTYLE" \
+    "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
+    "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
+    "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PYCODESTYLE" \
     "$PYCODESTYLE_IGNORES"
 
     exit $?
@@ -177,17 +171,21 @@ if [ "$xNEST_BUILD_TYPE" = "FULL" ]; then
     CXX_FLAGS="-pedantic -Wextra -D_GLIBCXX_ASSERTIONS"
 fi
 
-if [ "$xNEST_BUILD_TYPE" = "FULL_NO_EXTERNAL_FEATURES" ]; then
+if [ "$xNEST_BUILD_TYPE" = "FULL_MACOS" ]; then
     xGSL=1
     xLIBBOOST=1
     xLIBNEUROSIM=0
     xLTDL=1
-    xMPI=0
+    xMPI=1
     xMUSIC=0
-    xOPENMP=1
+    xOPENMP=0
     xPYTHON=1
     xREADLINE=1
     xSIONLIB=0
+    # Do not use -pedantic because it triggers warnings from pynestkernel
+    # that are difficult to filter automatically when parsing the log. 
+    # See also https://github.com/cython/cython/pull/4687.
+    CXX_FLAGS="-Wextra -Wno-unknown-pragmas -D_GLIBCXX_ASSERTIONS"
 fi
 
 echo "MSGBLD0232: Setting configuration variables."
@@ -209,13 +207,16 @@ else
 fi
 
 if [ "$xPYTHON" = "1" ] ; then
+    export PYTHON_EXECUTABLE="$(which python3)"
+    export PYTHON_ROOT="$(dirname $PYTHON_EXECUTABLE | sed s%/bin%%)"
     export PYTHON_INCLUDE_DIR=`python3 -c "import sysconfig; print(sysconfig.get_path('include'))"`
     export PYLIB_BASE=lib`basename $PYTHON_INCLUDE_DIR`
     export PYLIB_DIR=$(dirname `sed 's/include/lib/' <<< $PYTHON_INCLUDE_DIR`)
     export PYTHON_LIBRARY=`find $PYLIB_DIR \( -name $PYLIB_BASE.so -o -name $PYLIB_BASE.dylib \) -print -quit`
+    echo "--> Detected PYTHON_ROOT=$PYTHON_ROOT"
     echo "--> Detected PYTHON_LIBRARY=$PYTHON_LIBRARY"
     echo "--> Detected PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
-    CONFIGURE_PYTHON="-DPYTHON_LIBRARY=$PYTHON_LIBRARY -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
+    CONFIGURE_PYTHON="-DPython_ROOT=$PYTHON_ROOT -DPYTHON_LIBRARY=$PYTHON_LIBRARY -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
     mkdir -p $HOME/.matplotlib
     echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
 else
@@ -245,10 +246,7 @@ else
     CONFIGURE_READLINE="-Dwith-readline=OFF"
 fi
 if [ "$xLIBBOOST" = "1" ] ; then
-    #CONFIGURE_BOOST="-Dwith-boost=$HOME/.cache/boost_1_72_0.install"
-    CONFIGURE_BOOST="-Dwith-boost=$HOME/.cache/boost_1_71_0.install"
-    chmod +x build_support/install_libboost.sh
-    ./build_support/install_libboost.sh
+    CONFIGURE_BOOST="-Dwith-boost=ON"
 else
     CONFIGURE_BOOST="-Dwith-boost=OFF"
 fi
@@ -273,13 +271,6 @@ if [ "$xLIBNEUROSIM" = "1" ] ; then
 else
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=OFF"
 fi
-cp examples/sli/nestrc.sli ~/.nestrc
-# Explicitly allow MPI oversubscription. This is required by Open MPI versions > 3.0.
-# Not having this in place leads to a "not enough slots available" error.
-#if [[ "$OSTYPE" = darwin* ]] ; then
-    #sed -i -e 's/mpirun -np/mpirun --oversubscribe -np/g' ~/.nestrc
-#fi
-sed -i -e 's/mpirun -np/mpirun --oversubscribe -np/g' ~/.nestrc
 NEST_RESULT=result
 if [ "$(uname -s)" = 'Linux' ]; then
     NEST_RESULT=$(readlink -f $NEST_RESULT)
@@ -294,6 +285,7 @@ echo "MSGBLD0236: $(pwd)\$ cmake \
     -DCMAKE_CXX_FLAGS=\"$CXX_FLAGS\" \
     -Dwith-optimize=ON \
     -Dwith-warning=ON \
+    -Dwith-userdoc=OFF \
     $CONFIGURE_BOOST \
     $CONFIGURE_OPENMP \
     $CONFIGURE_MPI \
@@ -322,6 +314,7 @@ cmake \
     $CONFIGURE_SIONLIB \
     $CONFIGURE_LIBNEUROSIM \
     ..
+    
 echo "MSGBLD0240: CMake configure completed."
 echo
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
@@ -342,6 +335,6 @@ echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
 echo "+               R U N   N E S T   T E S T S U I T E                           +"
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
 echo "MSGBLD0290: Running make installcheck."
-make installcheck
+make VERBOSE=1 installcheck
 echo "MSGBLD0300: Make installcheck completed."
 echo "MSGBLD0340: Build completed."

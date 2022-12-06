@@ -87,8 +87,8 @@ public:
   void add_target( const thread tid, const thread target_rank, const TargetData& target_data );
 
   /**
-   * Returns all targets of a neuron. Used to fill
-   * EventDeliveryManager::spike_register_.
+   * Returns all targets of a neuron. Used for filling
+   * EventDeliveryManager::emitted_spikes_register_.
    */
   const std::vector< Target >& get_targets( const thread tid, const index lid ) const;
 

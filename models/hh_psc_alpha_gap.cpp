@@ -28,9 +28,7 @@
 // C++ includes:
 #include <cmath> // in case we need isnan() // fabs
 #include <cstdio>
-#include <iomanip>
 #include <iostream>
-#include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -44,8 +42,6 @@
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 nest::RecordablesMap< nest::hh_psc_alpha_gap > nest::hh_psc_alpha_gap::recordablesMap_;
 
@@ -267,11 +263,11 @@ nest::hh_psc_alpha_gap::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Refractory time cannot be negative." );
   }
-  if ( tau_synE <= 0 || tau_synI <= 0 )
+  if ( tau_synE <= 0 or tau_synI <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
-  if ( g_Kv1 < 0 || g_Kv3 < 0 || g_Na < 0 || g_L < 0 )
+  if ( g_Kv1 < 0 or g_Kv3 < 0 or g_Na < 0 or g_L < 0 )
   {
     throw BadProperty( "All conductances must be non-negative." );
   }
@@ -295,7 +291,7 @@ nest::hh_psc_alpha_gap::State_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::Inact_h, y_[ HH_H ], node );
   updateValueParam< double >( d, names::Act_n, y_[ HH_N ], node );
   updateValueParam< double >( d, names::Inact_p, y_[ HH_P ], node );
-  if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 || y_[ HH_P ] < 0 )
+  if ( y_[ HH_M ] < 0 or y_[ HH_H ] < 0 or y_[ HH_N ] < 0 or y_[ HH_P ] < 0 )
   {
     throw BadProperty( "All (in)activation variables must be non-negative." );
   }
@@ -303,9 +299,9 @@ nest::hh_psc_alpha_gap::State_::set( const DictionaryDatum& d, Node* node )
 
 nest::hh_psc_alpha_gap::Buffers_::Buffers_( hh_psc_alpha_gap& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -313,9 +309,9 @@ nest::hh_psc_alpha_gap::Buffers_::Buffers_( hh_psc_alpha_gap& n )
 
 nest::hh_psc_alpha_gap::Buffers_::Buffers_( const Buffers_&, hh_psc_alpha_gap& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -398,7 +394,7 @@ nest::hh_psc_alpha_gap::init_buffers_()
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ = B_.step_;
 
-  if ( B_.s_ == 0 )
+  if ( not B_.s_ )
   {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
@@ -407,7 +403,7 @@ nest::hh_psc_alpha_gap::init_buffers_()
     gsl_odeiv_step_reset( B_.s_ );
   }
 
-  if ( B_.c_ == 0 )
+  if ( not B_.c_ )
   {
     B_.c_ = gsl_odeiv_control_y_new( 1e-6, 0.0 );
   }
@@ -416,7 +412,7 @@ nest::hh_psc_alpha_gap::init_buffers_()
     gsl_odeiv_control_init( B_.c_, 1e-6, 0.0, 1.0, 0.0 );
   }
 
-  if ( B_.e_ == 0 )
+  if ( not B_.e_ )
   {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }
@@ -426,7 +422,7 @@ nest::hh_psc_alpha_gap::init_buffers_()
   }
 
   B_.sys_.function = hh_psc_alpha_gap_dynamics;
-  B_.sys_.jacobian = NULL;
+  B_.sys_.jacobian = nullptr;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
 
@@ -434,7 +430,7 @@ nest::hh_psc_alpha_gap::init_buffers_()
 }
 
 void
-nest::hh_psc_alpha_gap::calibrate()
+nest::hh_psc_alpha_gap::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -454,7 +450,7 @@ bool
 nest::hh_psc_alpha_gap::update_( Time const& origin, const long from, const long to, const bool called_from_wfr_update )
 {
 
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   const size_t interpolation_order = kernel().simulation_manager.get_wfr_interpolation_order();
@@ -530,16 +526,16 @@ nest::hh_psc_alpha_gap::update_( Time const& origin, const long from, const long
         --S_.r_;
       }
       else
-        // (    threshold    &&     maximum       )
-        if ( S_.y_[ State_::V_M ] >= 0 && U_old > S_.y_[ State_::V_M ] )
-      {
-        S_.r_ = V_.RefractoryCounts_;
+        // (    threshold    and     maximum       )
+        if ( S_.y_[ State_::V_M ] >= 0 and U_old > S_.y_[ State_::V_M ] )
+        {
+          S_.r_ = V_.RefractoryCounts_;
 
-        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+          set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
-        SpikeEvent se;
-        kernel().event_delivery_manager.send( *this, se, lag );
-      }
+          SpikeEvent se;
+          kernel().event_delivery_manager.send( *this, se, lag );
+        }
 
       // log state data
       B_.logger_.record_data( origin.get_steps() + lag );

@@ -27,7 +27,6 @@
 // C++ includes:
 #include <cmath>
 #include <cstdio>
-#include <iomanip>
 #include <iostream>
 #include <limits>
 
@@ -42,10 +41,7 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -260,7 +256,7 @@ nest::aeif_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
     throw BadProperty( "Refractory time cannot be negative." );
   }
 
-  if ( tau_syn_ex <= 0 || tau_syn_in <= 0 || tau_w <= 0 )
+  if ( tau_syn_ex <= 0 or tau_syn_in <= 0 or tau_w <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -287,7 +283,7 @@ nest::aeif_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_&, N
   updateValueParam< double >( d, names::I_syn_ex, y_[ I_EXC ], node );
   updateValueParam< double >( d, names::I_syn_in, y_[ I_INH ], node );
   updateValueParam< double >( d, names::w, y_[ W ], node );
-  if ( y_[ I_EXC ] < 0 || y_[ I_INH ] < 0 )
+  if ( y_[ I_EXC ] < 0 or y_[ I_INH ] < 0 )
   {
     throw BadProperty( "Conductances must not be negative." );
   }
@@ -295,9 +291,9 @@ nest::aeif_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_&, N
 
 nest::aeif_psc_exp::Buffers_::Buffers_( aeif_psc_exp& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -305,9 +301,9 @@ nest::aeif_psc_exp::Buffers_::Buffers_( aeif_psc_exp& n )
 
 nest::aeif_psc_exp::Buffers_::Buffers_( const Buffers_&, aeif_psc_exp& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -370,7 +366,7 @@ nest::aeif_psc_exp::init_buffers_()
   // We must integrate this model with high-precision to obtain decent results
   B_.IntegrationStep_ = std::min( 0.01, B_.step_ );
 
-  if ( B_.s_ == 0 )
+  if ( not B_.s_ )
   {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
@@ -379,7 +375,7 @@ nest::aeif_psc_exp::init_buffers_()
     gsl_odeiv_step_reset( B_.s_ );
   }
 
-  if ( B_.c_ == 0 )
+  if ( not B_.c_ )
   {
     B_.c_ = gsl_odeiv_control_yp_new( P_.gsl_error_tol, P_.gsl_error_tol );
   }
@@ -388,7 +384,7 @@ nest::aeif_psc_exp::init_buffers_()
     gsl_odeiv_control_init( B_.c_, P_.gsl_error_tol, P_.gsl_error_tol, 0.0, 1.0 );
   }
 
-  if ( B_.e_ == 0 )
+  if ( not B_.e_ )
   {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }
@@ -397,7 +393,7 @@ nest::aeif_psc_exp::init_buffers_()
     gsl_odeiv_evolve_reset( B_.e_ );
   }
 
-  B_.sys_.jacobian = NULL;
+  B_.sys_.jacobian = nullptr;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
   B_.sys_.function = aeif_psc_exp_dynamics;
@@ -406,7 +402,7 @@ nest::aeif_psc_exp::init_buffers_()
 }
 
 void
-nest::aeif_psc_exp::calibrate()
+nest::aeif_psc_exp::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -431,7 +427,7 @@ nest::aeif_psc_exp::calibrate()
 void
 nest::aeif_psc_exp::update( const Time& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 
@@ -465,7 +461,7 @@ nest::aeif_psc_exp::update( const Time& origin, const long from, const long to )
       }
 
       // check for unreasonable values; we allow V_M to explode
-      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6 || S_.y_[ State_::W ] > 1e6 )
+      if ( S_.y_[ State_::V_M ] < -1e3 or S_.y_[ State_::W ] < -1e6 or S_.y_[ State_::W ] > 1e6 )
       {
         throw NumericalInstability( get_name() );
       }

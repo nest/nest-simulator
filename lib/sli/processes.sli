@@ -1208,15 +1208,12 @@ Name: nest_serial  - Returns a non-distributed call of nest as a string
 Synopsis:  (sli-filename) nest_serial -> (string with shell command)
 
 Description:
-If nest was compiled with MPI it may be unsafe to directly call the binary to
-obtain a non-distributed version. The command nest_serial looks up the appropriate 
-way to call nest and returns a suitable command as a string. The algorithm is as
-follows:
-  1. if nest is not compiled with MPI, return "nest"
-  2. if sli command /mpirun is defined, return this with
-     the -np 1 equivalent
-  3. issue and error with the message that nest was compiled with MPI 
-     but no method to call nest has been specified. 
+If NEST was compiled with MPI it may be unsafe to directly call the
+binary to obtain a non-distributed version. The command nest_serial
+looks up the appropriate way to call nest and returns a suitable
+command as a string. If NEST was not compiled with MPI, it just
+returns the absolute path to the "nest" executable, else it returns
+the "mpirun" command with the -np 1 equivalent.
 
 Diagnostics:
 This function issues an error if NEST was compiled with MPI but is not aware of 
@@ -1236,22 +1233,9 @@ SeeAlso: nest_indirect
 {
  statusdict/have_mpi :: 
  {
-  /mpirun lookup   
-  {
-   pop
-   1 exch
-   (') statusdict/prefix :: (/bin/nest' ) join join exch
-   mpirun
-  } 
-  {
-   M_FATAL (nest_serial) (Command nest may fail because NEST was compiled with )
-                         (MPI but ~/.nestrc does not specify a corresponding method ) join
-                         (to call nest. This is required even if you intend to run ) join
-                         (a serial job although with some MPI implementations you can ) join
-                         (execute the nest binary directly. Please consult ~/.nestrc ) join
-                         (to learn how to provide NEST with the command /mpirun.) join message
-   statusdict/exitcodes/fatal :: quit_i
-  } ifelse
+  1 exch
+  (') statusdict/prefix :: (/bin/nest' ) join join exch
+  mpirun
  }
  {
   (') statusdict /prefix get (/bin/nest' ) join join
@@ -1272,17 +1256,13 @@ numbers of processors NEST needs to be compiled with support for distributed
 computing and be aware of the corresponding method to start itself. However,
 some libraries for distributed computing do not support the nested call of 
 further processes. Therefore, nest_indirect provides a serial environment 
-for the preparation of the distributed simulations.
-The algorithm is as follows:
- 1. if nest is not compiled with MPI, quit with fatal error
- 2. if sli command /mpirun is not defined, quit with fatal error
- 3. return "sli" 
+for the preparation of the distributed simulations. If NEST was not compiled
+with MPI, this function quits with fatal error, else it returns "sli".
 
 
 Diagnostics:
 This function quits nest with a fatal error if there is no support for 
-distributed computing or NEST does not know how to start a distributed version
-of itself.
+distributed computing.
 
 Examples:
  (hello.sli) nest_indirect -> (/home/dummy/nest/bin/sli hello.sli)
@@ -1303,55 +1283,7 @@ SeeAlso: nest_serial
   statusdict/exitcodes/fatal :: quit_i
  } if
 
- /mpirun lookup   
- {
-  pop
-  (') statusdict /prefix get (/bin/sli' ) join join
-  exch (') exch (') join join join
- } 
- {
-  M_FATAL (nest_indirect) (NEST was compiled with MPI but ~/.nestrc does not specify) message
-  M_FATAL (nest_indirect) (a corresponding method to call nest. Therefore NEST does) message
-  M_FATAL (nest_indirect) (not know how to start itself in a distributed manner.) message
-  M_FATAL (nest_indirect) (Please consult ~/.nestrc to learn how to provide NEST with) message
-  M_FATAL (nest_indirect) (the command /mpirun.) message
-  statusdict/exitcodes/fatal :: quit_i
- } ifelse
+ (') statusdict /prefix get (/bin/sli' ) join join
+ exch (') exch (') join join join
 } def
 
-
-
-
-
-
-%----------------------------------------------------------------------------
-/* Begin(LOESCHMISCH!)Documentation
-
-Name:
-
-Synopsis: 
-
-Description: 
-
-Parameters: In :
-            Out:
-
-Examples:
-
-Diagnostics:
-
-Bugs: 
-
-Author: 
-
-FirstVersion: 
-
-Remarks: 
-
-References: 
-
-Variants: 
-
-SeeAlso: 
-
-*/

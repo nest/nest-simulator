@@ -165,7 +165,7 @@ nest::rate_transformer_node< TNonlinearities >::init_buffers_()
 
 template < class TNonlinearities >
 void
-nest::rate_transformer_node< TNonlinearities >::calibrate()
+nest::rate_transformer_node< TNonlinearities >::pre_run_hook()
 {
   B_.logger_.init(); // ensures initialization in case mm connected after Simulate
 }
@@ -181,7 +181,7 @@ nest::rate_transformer_node< TNonlinearities >::update_( Time const& origin,
   const long to,
   const bool called_from_wfr_update )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   const size_t buffer_size = kernel().connection_manager.get_min_delay();

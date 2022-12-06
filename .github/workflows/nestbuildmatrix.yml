@@ -473,10 +473,11 @@ jobs:
         # openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning, userdoc, music
         include:
         - os: "ubuntu-20.04"
-          use: "openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning"  # no userdoc, music
-        - os: "ubuntu-20.04"
-          use: "boost, optimize, warning"  # no userdoc, music
-
+          use:
+          - "boost, optimize, warning"  # formerly "minimal"
+          - "openmp, python, gsl, ltdl, boost, optimize, warning"  # formerly "openmp_only"
+          - "mpi, python, gsl, ltdl, boost, optimize, warning"  # formerly "mpi_only"
+          - "openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning"  # formerly "full"
 
     steps:
       - name: "Checkout repository content"
@@ -553,20 +554,20 @@ jobs:
           python -c "import pytest; print('package location:', pytest.__file__)"
           pip list
 
-      - name: Install MUSIC
-        if: "${{ matrix.music }} == 'ON'"
+      - name: "Install MUSIC"
+        if: "${{ contains(matrix.use, 'music') }}"
         run: |
           chmod +x build_support/install_music.sh
           ./build_support/install_music.sh
 
-      - name: Install SIONlib
-        if: "${{ matrix.sionlib }} == 'ON'"
+      - name: "Install SIONlib"
+        if: "${{ contains(matrix.use, 'sionlib') }}"
         run: |
           chmod +x build_support/install_sionlib.sh
           ./build_support/install_sionlib.sh
 
-      - name: Install LibNeurosim – WARNING WARNING NO PROPER PYTHON INSTALL!
-        if: "${{ matrix.libneurosim }} == 'ON'"
+      - name: "Install LibNeurosim – WARNING WARNING NO PROPER PYTHON INSTALL!"
+        if: "${{ contains(matrix.use, 'libneurosim') }}"
         run: |
           chmod +x build_support/install_csa-libneurosim.sh
           PYLIB_DIR="$(python3 -c "import sysconfig; print(sysconfig.get_path('include'))" | sed 's/include/lib/')"
@@ -679,7 +680,8 @@ jobs:
             result/**
 
   build_linux_oldscript:
-    if: ${{ always() && !contains(github.event.head_commit.message, 'ci skip') }}
+    #if: ${{ always() && !contains(github.event.head_commit.message, 'ci skip') }}
+    if: false
     runs-on: ${{ matrix.os }}
     needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, flake8]
     env:

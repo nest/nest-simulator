@@ -141,7 +141,7 @@ neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string module
 #ifdef _IS_PYNEST
   // add the init-script to the list of module initializers
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( engine.baselookup( engine.commandstring_name ).datum() );
-  assert( ad != NULL );
+  assert( ad );
   ad->push_back( new StringDatum( "(" + modulepath + "/pynest-init.sli) run" ) );
 #endif
 
@@ -160,11 +160,11 @@ nestshutdown( int exitcode )
 Datum*
 CYTHON_unpackConnectionGeneratorDatum( PyObject* obj )
 {
-  Datum* ret = NULL;
-  ConnectionGenerator* cg = NULL;
+  Datum* ret = nullptr;
+  ConnectionGenerator* cg = nullptr;
 
   cg = PNS::unpackConnectionGenerator( obj );
-  if ( cg != NULL )
+  if ( cg )
   {
     ret = static_cast< Datum* >( new ConnectionGeneratorDatum( cg ) );
   }

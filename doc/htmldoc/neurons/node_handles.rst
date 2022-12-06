@@ -248,7 +248,7 @@ This returns a dictionary with tuples. If the NodeCollection is a single-element
 To get specific parameters in the collection, use
 ``get([parameter_name_1, parameter_name_2, ... , parameter_name_n])``.
 
-Get the parameters ``V_m`` and ``V_reset`` of all nodes
+Get the parameters :hxt_ref:`V_m` and :hxt_ref:`V_reset` of all nodes
 
 >>>    nodes = nest.Create('iaf_psc_alpha', 10, {'V_m': -55.})
 >>>    nodes.get(['V_m', 'V_reset'])

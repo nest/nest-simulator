@@ -212,7 +212,8 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
           "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}/nest"
           # for libraries (except pynestkernel)
           "\$ORIGIN/../../${CMAKE_INSTALL_LIBDIR}/nest"
-          # for pynestkernel: origin at <prefix>/lib/python3.x/site-packages/nest
+          # for pynestkernel: origin at <prefix>/lib(64)/python3.x/site-packages/nest
+          # while libs are at the root of that at <prefix>/lib(64)/nest
           "\$ORIGIN/../../../nest"
           PARENT_SCOPE )
     endif ()
@@ -637,5 +638,25 @@ function( NEST_PROCESS_WITH_MPI4PY )
       include_directories( "${PY_MPI4PY}/include" )
     endif ()
 
+  endif ()
+endfunction ()
+
+function( NEST_PROCESS_USERDOC )
+  if ( with-userdoc )
+    message( STATUS "Configuring user documentation" )
+    find_package( Sphinx REQUIRED)
+    find_package( Pandoc REQUIRED)
+    set( BUILD_SLI_DOCS ON PARENT_SCOPE )
+    set( BUILD_SPHINX_DOCS ON PARENT_SCOPE )
+    set( BUILD_DOCS ON PARENT_SCOPE )
+  endif ()
+endfunction ()
+
+function( NEST_PROCESS_DEVDOC )
+  if ( with-devdoc )
+    message( STATUS "Configuring developer documentation" )
+    find_package( Doxygen REQUIRED dot )
+    set( BUILD_DOXYGEN_DOCS ON PARENT_SCOPE )
+    set( BUILD_DOCS ON PARENT_SCOPE )
   endif ()
 endfunction ()

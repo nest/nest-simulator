@@ -213,6 +213,18 @@ get_connections( const DictionaryDatum& dict )
 }
 
 void
+disconnect( const ArrayDatum& conns )
+{
+  for ( size_t conn_index = 0; conn_index < conns.size(); ++conn_index )
+  {
+    const auto conn_datum = getValue< ConnectionDatum >( conns.get( conn_index ) );
+    const auto target_node = kernel().node_manager.get_node_or_proxy( conn_datum.get_target_node_id() );
+    kernel().sp_manager.disconnect(
+      conn_datum.get_source_node_id(), target_node, conn_datum.get_target_thread(), conn_datum.get_synapse_model_id() );
+  }
+}
+
+void
 simulate( const double& t )
 {
   prepare();

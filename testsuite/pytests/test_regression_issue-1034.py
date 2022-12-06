@@ -19,10 +19,6 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# Please see `doc/htmldoc/model_details/test_post_trace.ipynb` for a version of this
-# test that includes more documentation and plotting.
-
-
 import nest
 import numpy as np
 import scipy as sp
@@ -35,7 +31,7 @@ class PostTraceTester:
     with reference values generated in Python.
 
     For more information, please see the Jupyter notebook in
-    `doc/htmldoc/model_details/test_post_trace.ipynb`.
+    `doc/htmldoc/model_details/post_trace_computation.ipynb`.
     '''
 
     def __init__(self, pre_spike_times, post_spike_times, delay, resolution,

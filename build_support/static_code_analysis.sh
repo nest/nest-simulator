@@ -36,19 +36,16 @@ RUNS_ON_CI=${1}               # true or false, indicating whether the script is 
 INCREMENTAL=${2}              # true or false, user needs to confirm before checking a source file.
 FILE_NAMES=${3}               # The list of files or a single file to be checked.
 NEST_VPATH=${4}               # The high level NEST build path.
-VERA=${5}                     # Name of the VERA++ executable.
-CPPCHECK=${6}                 # Name of the CPPCHECK executable.
-CLANG_FORMAT=${7}             # Name of the CLANG-FORMAT executable.
-PEP8=${8}                     # Name of the PEP8 executable.
-PERFORM_VERA=${9}             # true or false, indicating whether VERA++ analysis is performed or not.
-PERFORM_CPPCHECK=${10}        # true or false, indicating whether CPPCHECK analysis is performed or not.
-PERFORM_CLANG_FORMAT=${11}    # true or false, indicating whether CLANG-FORMAT analysis is performed or not.
-PERFORM_PEP8=${12}            # true or false, indicating whether PEP8 analysis is performed or not.
-IGNORE_MSG_VERA=${13}         # true or false, indicating whether VERA++ messages should accout for the build result.
-IGNORE_MSG_CPPCHECK=${14}     # true or false, indicating whether CPPCHECK messages should accout for the build result.
-IGNORE_MSG_CLANG_FORMAT=${15} # true or false, indicating whether CLANG-FORMAT messages should accout for the build result.
-IGNORE_MSG_PYCODESTYLE=${16}  # true or false, indicating whether pycodestyle messages should accout for the build result.
-PYCODESTYLE_IGNORES=${17}     # The list of pycodestyle error and warning codes to ignore.
+CPPCHECK=${5}                 # Name of the CPPCHECK executable.
+CLANG_FORMAT=${6}             # Name of the CLANG-FORMAT executable.
+PEP8=${7}                     # Name of the PEP8 executable.
+PERFORM_CPPCHECK=${8}         # true or false, indicating whether CPPCHECK analysis is performed or not.
+PERFORM_CLANG_FORMAT=${9}     # true or false, indicating whether CLANG-FORMAT analysis is performed or not.
+PERFORM_PEP8=${10}            # true or false, indicating whether PEP8 analysis is performed or not.
+IGNORE_MSG_CPPCHECK=${11}     # true or false, indicating whether CPPCHECK messages should accout for the build result.
+IGNORE_MSG_CLANG_FORMAT=${12} # true or false, indicating whether CLANG-FORMAT messages should accout for the build result.
+IGNORE_MSG_PYCODESTYLE=${13}  # true or false, indicating whether pycodestyle messages should accout for the build result.
+PYCODESTYLE_IGNORES=${14}     # The list of pycodestyle error and warning codes to ignore.
 
 # PYCODESTYLE rules to ignore.
 PYCODESTYLE_IGNORES_EXAMPLES="${PYCODESTYLE_IGNORES},E402"
@@ -78,14 +75,6 @@ print_msg() {
 # Print version information.
 print_msg "MSGBLD0105: " "Following tools are in use:"
 print_msg "MSGBLD0105: " "---------------------------"
-if $PERFORM_VERA; then
-  if ! command -v $VERA; then
-    print_msg "MSGBLD0105:" "Could not find $VERA!"
-    exit 1
-  fi
-  VERA_VERS=`$VERA --version`
-  print_msg "MSGBLD0105: " "VERA++       : $VERA_VERS"
-fi
 if $PERFORM_CPPCHECK; then
   if ! command -v $CPPCHECK; then
     print_msg "MSGBLD0105:" "Could not find $CPPCHECK!"
@@ -116,9 +105,6 @@ print_msg "" ""
 # The following messages report on the command line arguments IGNORE_MSG_xxx which indicate whether
 # static code analysis error messages will cause the CI build to fail or are ignored.
 if $RUNS_ON_CI; then
-  if $IGNORE_MSG_VERA; then
-    print_msg "MSGBLD1010: " "IGNORE_MSG_VERA is set. VERA++ messages will not cause the build to fail."
-  fi
   if $IGNORE_MSG_CPPCHECK; then
     print_msg "MSGBLD1020: " "IGNORE_MSG_CPPCHECK is set. CPPCHECK messages will not cause the build to fail."
   fi
@@ -165,7 +151,6 @@ for f in $FILE_NAMES; do
 
   case $f in
     *.h | *.c | *.cc | *.hpp | *.cpp )
-      vera_failed=false
       cppcheck_failed=false
       clang_format_failed=false
 
@@ -173,23 +158,6 @@ for f in $FILE_NAMES; do
         f_base=$NEST_VPATH/reports/`basename $f`
       else
         f_base=`basename $f`
-      fi
-
-      # VERA++
-      if $PERFORM_VERA; then
-        print_msg "MSGBLD0130: " "Running VERA++ .....: $f"
-        $VERA --profile nest $f > ${f_base}_vera.txt 2>&1
-        if [ -s "${f_base}_vera.txt" ]; then
-          vera_failed=true
-          cat ${f_base}_vera.txt | while read line
-          do
-            print_msg "MSGBLD0135: " "[VERA] $line"
-          done
-        fi
-        rm ${f_base}_vera.txt
-        if $RUNS_ON_CI; then
-          print_msg "MSGBLD0140: " "VERA++ for file $f completed."
-        fi
       fi
 
       # CPPCHECK
@@ -242,7 +210,7 @@ for f in $FILE_NAMES; do
       fi
 
       # Add the file to the list of files with format errors.
-      if (! $IGNORE_MSG_VERA && $vera_failed) || (! $IGNORE_MSG_CPPCHECK && $cppcheck_failed) || (! $IGNORE_MSG_CLANG_FORMAT && $clang_format_failed); then
+      if (! $IGNORE_MSG_CPPCHECK && $cppcheck_failed) || (! $IGNORE_MSG_CLANG_FORMAT && $clang_format_failed); then
         c_files_with_errors="$c_files_with_errors $f"
       fi
       ;;
@@ -344,7 +312,7 @@ if [ $nlines_copyright_check \> 1 ] || \
 
   if ! $RUNS_ON_CI; then
       print_msg "" "For detailed problem descriptions, consult the tagged messages above."
-      print_msg "" "Tags may be [VERA], [CPPC], [DIFF], [COPY], [NAME] and [PEP8]."
+      print_msg "" "Tags may be [CPPC], [DIFF], [COPY], [NAME] and [PEP8]."
   fi
   exit 1
 else

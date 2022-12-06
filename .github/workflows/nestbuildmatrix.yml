@@ -471,13 +471,15 @@ jobs:
 
         # available use flags (all default to "OFF"):
         # openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning, userdoc, music
-        include:
-        - os: "ubuntu-20.04"
-          use:
+        use:
           - "boost, optimize, warning"  # formerly "minimal"
           - "openmp, python, gsl, ltdl, boost, optimize, warning"  # formerly "openmp_only"
           - "mpi, python, gsl, ltdl, boost, optimize, warning"  # formerly "mpi_only"
           - "openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning"  # formerly "full"
+        include:
+        - os: ubuntu-22.04
+          cpp_compiler: gcc
+          use: "openmp, python, gsl, ltdl, boost, optimize, warning"
 
     steps:
       - name: "Checkout repository content"
@@ -822,7 +824,8 @@ jobs:
             result/**
 
   build_macos:
-    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    #if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    if: false
     runs-on: ${{ matrix.os }}
     needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, flake8]
     env:

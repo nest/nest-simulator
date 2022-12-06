@@ -31,6 +31,9 @@
 #include "mpi_manager_impl.h"
 #include "parameter.h"
 
+#include "sp_manager.h"
+#include "sp_manager_impl.h"
+
 #include "connector_model_impl.h"
 
 #include "ac_generator.h"
@@ -248,6 +251,10 @@ init_nest( int* argc, char** argv[] )
   register_mask< BoxMask< 3 > >();
   register_mask( "doughnut", create_doughnut );
   register_mask< GridMask< 2 > >();
+
+  kernel().sp_manager.register_growth_curve< GrowthCurveSigmoid >( "sigmoid" );
+  kernel().sp_manager.register_growth_curve< GrowthCurveGaussian >( "gaussian" );
+  kernel().sp_manager.register_growth_curve< GrowthCurveLinear >( "linear" );
 }
 
 void

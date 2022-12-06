@@ -64,8 +64,7 @@ nest::SynapticElement::SynapticElement( const SynapticElement& se )
   assert( growth_curve_ );
   dictionary nc_parameters;
   se.get( nc_parameters );
-  // TODO-PYNEST-NG: fix growth curve with dictionary
-  // growth_curve_->set( nc_parameters );
+  growth_curve_->set( nc_parameters );
 }
 
 nest::SynapticElement&
@@ -78,8 +77,7 @@ nest::SynapticElement::operator=( const SynapticElement& other )
     dictionary nc_parameters;
 
     other.get( nc_parameters );
-    // TODO-PYNEST-NG: fix growth curve with dictionary
-    // new_nc->set( nc_parameters );
+    new_nc->set( nc_parameters );
 
     delete growth_curve_;
     growth_curve_ = new_nc;
@@ -108,8 +106,7 @@ nest::SynapticElement::get( dictionary& d ) const
   d[ names::z_connected ] = z_connected_;
 
   // Store growth curve
-  // TODO-PYNEST-NG: fix growth curve with dictionary
-  // growth_curve_->get( d );
+  growth_curve_->get( d );
 }
 
 /* ----------------------------------------------------------------
@@ -134,8 +131,7 @@ nest::SynapticElement::set( const dictionary& d )
       growth_curve_ = kernel().sp_manager.new_growth_curve( growth_curve_name );
     }
   }
-  // TODO-PYNEST-NG: fix growth curve with dictionary
-  // growth_curve_->set( d );
+  growth_curve_->set( d );
 
   if ( new_tau_vacant <= 0.0 )
   {

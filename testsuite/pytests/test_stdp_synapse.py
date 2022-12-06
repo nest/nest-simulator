@@ -251,9 +251,6 @@ class TestSTDPSynapse:
             else:
                 t_next_post_spike = post_spikes_delayed[idx_next_post_spike]
 
-            if t_next_post_spike == -1:
-                a = 1
-
             if t_next_post_spike >= 0 and (
                     t_next_post_spike + eps < t_next_pre_spike or t_next_pre_spike < 0):
                 handle_pre_spike = False
@@ -322,8 +319,8 @@ class TestSTDPSynapse:
                                  t in pre_spike_times]
 
     def plot_weight_evolution(self, pre_spikes, post_spikes, t_log, w_log,
-                              Kpre_log=None, Kpost_log=None,
-                              fname_snip="", title_snip=""):
+                              Kpre_log=None, Kpost_log=None, fname_snip="",
+                              title_snip=""):
         fig, ax = plt.subplots(nrows=3)
 
         n_spikes = len(pre_spikes)

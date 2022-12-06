@@ -460,7 +460,7 @@ jobs:
   build_linux:
     if: ${{ always() && !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [clang-format, cppcheck, mypy, copyright_headers, unused_names, forbidden_types, pylint, flake8]
+    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, flake8]
     env:
       CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
     strategy:
@@ -681,7 +681,7 @@ jobs:
   build_linux_oldscript:
     if: ${{ always() && !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [clang-format, cppcheck, mypy, copyright_headers, unused_names, forbidden_types, pylint, flake8]
+    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, flake8]
     env:
       CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
     strategy:
@@ -822,7 +822,7 @@ jobs:
   build_macos:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [clang-format, cppcheck, mypy, copyright_headers, unused_names, forbidden_types, build_linux]
+    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, flake8]
     env:
       CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
     strategy:

@@ -612,18 +612,18 @@ jobs:
           cmake \
               -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
               -DCMAKE_CXX_FLAGS="$CXX_FLAGS" \
-              -Dwith-optimize=${{ contains(matrix.use, "optimize") && "ON" || "OFF" }} \
-              -Dwith-warning=${{ contains(matrix.use, "warning") && "ON" || "OFF" }} \
-              -Dwith-boost=${{ contains(matrix.use, "boost") && "ON" || "OFF" }} \
-              -Dwith-openmp=${{ contains(matrix.use, "openmp") && "ON" || "OFF" }} \
-              -Dwith-mpi=${{ contains(matrix.use, "mpi") && "ON" || "OFF" }} \
-              -Dwith-python=${{ contains(matrix.use, "python") && "ON" || "OFF" }} \
-              -Dwith-python=${{ contains(matrix.use, "music") && "$HOME/.cache/music.install" || "OFF" }} \
-              -Dwith-gsl=${{ contains(matrix.use, "gsl") && "ON" || "OFF" }} \
-              -Dwith-ltdl=${{ contains(matrix.use, "ltdl") && "ON" || "OFF" }} \
-              -Dwith-readline=${{ contains(matrix.use, "readline") && "ON" || "OFF" }} \
-              -Dwith-sionlib=${{ contains(matrix.use, "sionlib") && "$HOME/.cache/sionlib.install" || "OFF" }} \
-              -Dwith-libneurosim=${{ contains(matrix.use, "libneurosim") && "$HOME/.cache/libneurosim.install" || "OFF" }} \
+              -Dwith-optimize=${{ contains(matrix.use, 'optimize') && 'ON' || 'OFF' }} \
+              -Dwith-warning=${{ contains(matrix.use, 'warning') && 'ON' || 'OFF' }} \
+              -Dwith-boost=${{ contains(matrix.use, 'boost') && 'ON' || 'OFF' }} \
+              -Dwith-openmp=${{ contains(matrix.use, 'openmp') && 'ON' || 'OFF' }} \
+              -Dwith-mpi=${{ contains(matrix.use, 'mpi') && 'ON' || 'OFF' }} \
+              -Dwith-python=${{ contains(matrix.use, 'python') && 'ON' || 'OFF' }} \
+              -Dwith-python=${{ contains(matrix.use, 'music') && '$HOME/.cache/music.install' || 'OFF' }} \
+              -Dwith-gsl=${{ contains(matrix.use, 'gsl') && 'ON' || 'OFF' }} \
+              -Dwith-ltdl=${{ contains(matrix.use, 'ltdl') && 'ON' || 'OFF' }} \
+              -Dwith-readline=${{ contains(matrix.use, 'readline') && 'ON' || 'OFF' }} \
+              -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && '$HOME/.cache/sionlib.install' || 'OFF' }} \
+              -Dwith-libneurosim=${{ contains(matrix.use, 'libneurosim') && '$HOME/.cache/libneurosim.install' || 'OFF' }} \
               ..
 
           echo "MSGBLD0240: CMake configure completed."

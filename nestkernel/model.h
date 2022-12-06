@@ -246,7 +246,7 @@ Model::create( thread t )
 {
   assert( ( size_t ) t < memory_.size() );
   Node* n = create_();
-  memory_[ t ].push_back( n );
+  memory_[ t ].emplace_back( n );
   return n;
 }
 

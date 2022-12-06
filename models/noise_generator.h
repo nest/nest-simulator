@@ -78,8 +78,8 @@ For a leaky integrate-and-fire neuron with time constant :math:`\tau_m` and capa
 
         \Sigma^2 = \frac{\delta \tau_m \sigma^2}{2 C_m^2}
 
-for :math:`\delta \ll \tau_m`. For details, see the `noise_generator notebook
-<../neurons/model_details/noise_generator.ipynb>`_ included in the NEST source code.
+for :math:`\delta \ll \tau_m`. For details, see the `noise generator notebook
+<../model_details/noise_generator.ipynb>`_.
 
 All targets of a noise generator receive different currents, but the currents for all
 targets change at the same points in time. The interval :math:`\delta` between

@@ -433,7 +433,7 @@ stdp_facetshw_synapse_hom< targetidentifierT >::send( Event& e,
     bool eval_1 = eval_function_( a_causal_, a_acausal_, a_thresh_th_, a_thresh_tl_, cp.configbit_1_ );
 
     // select LUT, update weight and reset capacitors
-    if ( eval_0 == true && eval_1 == false )
+    if ( eval_0 == true and eval_1 == false )
     {
       discrete_weight_ = lookup_( discrete_weight_, cp.lookuptable_0_ );
       if ( cp.reset_pattern_[ 0 ] )
@@ -445,7 +445,7 @@ stdp_facetshw_synapse_hom< targetidentifierT >::send( Event& e,
         a_acausal_ = 0;
       }
     }
-    else if ( eval_0 == false && eval_1 == true )
+    else if ( eval_0 == false and eval_1 == true )
     {
       discrete_weight_ = lookup_( discrete_weight_, cp.lookuptable_1_ );
       if ( cp.reset_pattern_[ 2 ] )
@@ -457,7 +457,7 @@ stdp_facetshw_synapse_hom< targetidentifierT >::send( Event& e,
         a_acausal_ = 0;
       }
     }
-    else if ( eval_0 == true && eval_1 == true )
+    else if ( eval_0 == true and eval_1 == true )
     {
       discrete_weight_ = lookup_( discrete_weight_, cp.lookuptable_2_ );
       if ( cp.reset_pattern_[ 4 ] )

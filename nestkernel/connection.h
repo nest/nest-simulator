@@ -288,8 +288,7 @@ public:
 protected:
   /**
    * This function calls check_connection() on the sender to check if the
-   * receiver
-   * accepts the event type and receptor type requested by the sender.
+   * receiver accepts the event type and receptor type requested by the sender.
    * \param s The source node
    * \param r The target node
    * \param receptor The ID of the requested receptor type
@@ -307,7 +306,7 @@ protected:
      connection
   */
   targetidentifierT target_;
-  //! syn_id (char) and delay (24 bit) in timesteps of this connection
+  //! syn_id (9 bit), delay (21 bit) in timesteps of this connection and more_targets and disabled flags (each 1 bit)
   SynIdDelay syn_id_delay_;
 };
 

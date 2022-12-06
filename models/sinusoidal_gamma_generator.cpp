@@ -144,7 +144,7 @@ nest::sinusoidal_gamma_generator::Parameters_::set( const DictionaryDatum& d,
   const sinusoidal_gamma_generator& n,
   Node* node )
 {
-  if ( not n.is_model_prototype() && d->known( names::individual_spike_trains ) )
+  if ( not n.is_model_prototype() and d->known( names::individual_spike_trains ) )
   {
     throw BadProperty(
       "The individual_spike_trains property can only be set as"
@@ -259,7 +259,7 @@ nest::sinusoidal_gamma_generator::deltaLambda_( const Parameters_& p, double t_a
   }
 
   double deltaLambda = p.order_ * p.rate_ * ( t_b - t_a );
-  if ( std::abs( p.amplitude_ ) > 0 && std::abs( p.om_ ) > 0 )
+  if ( std::abs( p.amplitude_ ) > 0 and std::abs( p.om_ ) > 0 )
   {
     deltaLambda +=
       -p.order_ * p.amplitude_ / p.om_ * ( std::cos( p.om_ * t_b + p.phi_ ) - std::cos( p.om_ * t_a + p.phi_ ) );
@@ -309,7 +309,7 @@ nest::sinusoidal_gamma_generator::hazard_( port tgt_idx ) const
 void
 nest::sinusoidal_gamma_generator::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
@@ -348,7 +348,7 @@ nest::sinusoidal_gamma_generator::event_hook( DSSpikeEvent& e )
 {
   // get port number --- see #737
   const port tgt_idx = e.get_port();
-  assert( 0 <= tgt_idx && static_cast< size_t >( tgt_idx ) < B_.t0_ms_.size() );
+  assert( 0 <= tgt_idx and static_cast< size_t >( tgt_idx ) < B_.t0_ms_.size() );
 
   if ( V_.rng_->drand() < hazard_( tgt_idx ) )
   {

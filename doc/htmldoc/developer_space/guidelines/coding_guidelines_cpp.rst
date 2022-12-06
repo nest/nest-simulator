@@ -192,7 +192,7 @@ Variables and class members
 ***************************
 
 In general, use meaningful, non-abbreviated names or follow naming conventions
-from the neuroscience field, e.g. the membrane potential is ``V_m``. Use the
+from the neuroscience field, e.g. the membrane potential is :hxt_ref:`V_m`. Use the
 ``lower_case_under_lined`` notation. Private member variables should end with an
 underscore (``name_``). If applicable, the general rule is use is to use the
 same notation for biophysical quantities as is used in `Dayan&Abbot, 2001
@@ -223,7 +223,7 @@ Functions and class methods
 ***************************
 
 In general, use meaningful, non-abbreviated names or follow naming conventions
-from the neuroscience field, e.g. the membrane potential is ``V_m``. Use the
+from the neuroscience field, e.g. the membrane potential is :hxt_ref:`V_m`. Use the
 ``lower_case_under_lined`` notation.
 
 There should be a line-break after the method's return type (implementation

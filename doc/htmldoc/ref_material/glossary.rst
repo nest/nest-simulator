@@ -9,9 +9,9 @@ Glossary
 
 Units of measure
 ---------------
+
 .. glossary::
  :sorted:
-
 
  time
    Time in milliseconds (ms).
@@ -70,7 +70,7 @@ Units of measure
  V_th
    Spike threshold in Millivolts (mV).
 
- V_reset double
+ V_reset 
    Reset potential of the membrane in Millivolts (mV).
 
  V_min

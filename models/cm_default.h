@@ -300,7 +300,7 @@ nest::cm_default::send_test_event( Node& target, rport receptor_type, synindex, 
 inline port
 cm_default::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( ( receptor_type < 0 ) or ( receptor_type >= static_cast< port >( syn_buffers_.size() ) ) )
+  if ( receptor_type < 0 or ( receptor_type >= static_cast< port >( syn_buffers_.size() ) ) )
   {
     std::ostringstream msg;
     msg << "Valid spike receptor ports for " << get_name() << " are in ";

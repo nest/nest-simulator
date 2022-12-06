@@ -77,7 +77,7 @@ FULLY TESTED. USE AT YOUR OWN PERIL!
 
 ``iaf_cond_alpha_mc`` is an implementation of a multi-compartment spiking
 neuron using IAF dynamics with conductance-based synapses. It serves
-mainly to illustrate the implementation of ref:`multicompartment models
+mainly to illustrate the implementation of :ref:`multicompartment models
 <multicompartment-models>` in NEST.
 
 The model has three compartments: soma, proximal and distal dendrite,
@@ -477,9 +477,9 @@ iaf_cond_alpha_mc::send_test_event( Node& target, rport receptor_type, synindex,
 inline port
 iaf_cond_alpha_mc::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type < MIN_SPIKE_RECEPTOR || receptor_type >= SUP_SPIKE_RECEPTOR )
+  if ( receptor_type < MIN_SPIKE_RECEPTOR or receptor_type >= SUP_SPIKE_RECEPTOR )
   {
-    if ( receptor_type < 0 || receptor_type >= SUP_CURR_RECEPTOR )
+    if ( receptor_type < 0 or receptor_type >= SUP_CURR_RECEPTOR )
     {
       throw UnknownReceptorType( receptor_type, get_name() );
     }
@@ -494,9 +494,9 @@ iaf_cond_alpha_mc::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 iaf_cond_alpha_mc::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type < MIN_CURR_RECEPTOR || receptor_type >= SUP_CURR_RECEPTOR )
+  if ( receptor_type < MIN_CURR_RECEPTOR or receptor_type >= SUP_CURR_RECEPTOR )
   {
-    if ( receptor_type >= 0 && receptor_type < MIN_CURR_RECEPTOR )
+    if ( receptor_type >= 0 and receptor_type < MIN_CURR_RECEPTOR )
     {
       throw IncompatibleReceptorType( receptor_type, get_name(), "CurrentEvent" );
     }
@@ -513,7 +513,7 @@ iaf_cond_alpha_mc::handles_test_event( DataLoggingRequest& dlr, rport receptor_t
 {
   if ( receptor_type != 0 )
   {
-    if ( receptor_type < 0 || receptor_type >= SUP_CURR_RECEPTOR )
+    if ( receptor_type < 0 or receptor_type >= SUP_CURR_RECEPTOR )
     {
       throw UnknownReceptorType( receptor_type, get_name() );
     }

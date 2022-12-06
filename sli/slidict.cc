@@ -26,8 +26,6 @@
 
 #include "slidict.h"
 
-// C++ includes:
-#include <typeinfo>
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -645,7 +643,7 @@ DictconstructFunction::execute( SLIInterpreter* i ) const
   static Token mark = i->baselookup( i->mark_name );
 
   size_t n = 0; //!< pick(1) is the first literal, then we count in steps of 2
-  while ( ( n < load ) && not( i->OStack.pick( n ) == mark ) )
+  while ( n < load and not( i->OStack.pick( n ) == mark ) )
   {
     Token& val = ( i->OStack.pick( n ) );
     key = dynamic_cast< LiteralDatum* >( i->OStack.pick( n + 1 ).datum() );

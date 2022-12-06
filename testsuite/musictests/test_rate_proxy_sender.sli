@@ -1,0 +1,44 @@
+/*
+ *  test_rate_proxy_sender.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+(unittest) run
+/unittest using
+
+skip_if_without_music
+
+M_ERROR setverbosity
+
+<< /overwrite_files true >> SetKernelStatus
+
+/drive 1.5 def
+/simtime 500 def
+
+/lin_rate_ipn Create /rate_neuron Set
+/music_rate_out_proxy Create /mrop Set
+
+rate_neuron << /rate drive /mu drive /sigma 0. >> SetStatus
+mrop << /port_name (rate_out) >> SetStatus
+
+rate_neuron mrop /one_to_one << /synapse_model /rate_connection_instantaneous
+                                /music_channel 0
+                             >> Connect
+simtime Simulate

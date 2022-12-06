@@ -24,7 +24,6 @@
 
 // C++ includes:
 #include <algorithm>
-#include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -35,10 +34,8 @@
 #include "kernel_manager.h"
 
 // Includes from sli:
-#include "datum.h"
 #include "dict.h"
 #include "doubledatum.h"
-#include "integerdatum.h"
 
 
 /* ----------------------------------------------------------------
@@ -77,8 +74,8 @@ nest::gamma_sup_generator::Internal_states_::update( double transition_prob, Rng
        n >= 100 and np <= 10. Source:
        http://en.wikipedia.org/wiki/Binomial_distribution#Poisson_approximation
        */
-      if ( ( occ_[ i ] >= 100 && transition_prob <= 0.01 )
-        || ( occ_[ i ] >= 500 && transition_prob * occ_[ i ] <= 0.1 ) )
+      if ( ( occ_[ i ] >= 100 and transition_prob <= 0.01 )
+        or ( occ_[ i ] >= 500 and transition_prob * occ_[ i ] <= 0.1 ) )
       {
         poisson_distribution::param_type param( transition_prob * occ_[ i ] );
         n_trans[ i ] = poisson_dist_( rng, param );
@@ -232,10 +229,10 @@ nest::gamma_sup_generator::pre_run_hook()
 void
 nest::gamma_sup_generator::update( Time const& T, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  if ( P_.rate_ <= 0 || P_.num_targets_ == 0 )
+  if ( P_.rate_ <= 0 or P_.num_targets_ == 0 )
   {
     return;
   }
@@ -262,7 +259,7 @@ nest::gamma_sup_generator::event_hook( DSSpikeEvent& e )
   const port prt = e.get_port();
 
   // we handle only one port here, get reference to vector elem
-  assert( 0 <= prt && static_cast< size_t >( prt ) < B_.internal_states_.size() );
+  assert( 0 <= prt and static_cast< size_t >( prt ) < B_.internal_states_.size() );
 
   // age_distribution object propagates one time step and returns number of spikes
   unsigned long n_spikes =

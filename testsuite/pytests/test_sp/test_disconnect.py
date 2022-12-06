@@ -104,6 +104,57 @@ class TestDisconnectSingle(unittest.TestCase):
                 with self.assertRaises(nest.NESTErrors.NESTError):
                     nest.Disconnect(neurons[0], neurons[1], syn_spec=syn_dict)
 
+    def test_disconnect_synapsecollection(self):
+        def get_conns(pre, post, syn_model):
+            conns = nest.GetConnections(pre, post, syn_model)
+            if test_with_mpi:
+                conns = self.comm.allgather(conns.get('source'))
+                conns = list(filter(None, conns))
+            return conns
+
+        neurons = nest.Create('iaf_psc_alpha', 4)
+        syn_model = 'static_synapse'
+        syn_dict = {'synapse_model': syn_model}
+
+        nest.Connect(neurons[0], neurons[2], "one_to_one", syn_dict)
+        nest.Connect(neurons[1], neurons[3], "one_to_one", syn_dict)
+
+        orig_num_conns = 2
+        self.assertEqual(nest.GetKernelStatus('num_connections'), orig_num_conns)
+
+        # Delete existent connection with nest.Disconnect()
+        conns = get_conns(neurons[0], neurons[2], syn_model)
+        self.assertEqual(len(conns), 1)
+        nest.Disconnect(conns)
+
+        self.assertEqual(nest.GetKernelStatus('num_connections'), orig_num_conns - 1)
+        conns = get_conns(neurons[0], neurons[2], syn_model)
+        self.assertEqual(len(conns), 0)
+
+        # Delete existent connection with SynapseCollection.disconnect()
+        conns = get_conns(neurons[1], neurons[3], syn_model)
+        conns.disconnect()
+        self.assertEqual(nest.GetKernelStatus('num_connections'), orig_num_conns - 2)
+
+    def test_disconnect_synapsecollection_raises(self):
+        pre, post = nest.Create('iaf_psc_alpha', 2)
+        nest.Connect(pre, post, 'one_to_one')
+        conns = nest.GetConnections()
+
+        # Wrong type as SynapseCollection
+        with self.assertRaises(TypeError):
+            nest.Disconnect([1])
+
+        # Passing specifications with SynapseCollection
+        with self.assertRaises(ValueError):
+            nest.Disconnect(conns, conn_spec='one_to_one')
+        with self.assertRaises(ValueError):
+            nest.Disconnect(conns, syn_spec='static_synapse')
+
+        # Too many arguments
+        with self.assertRaises(TypeError):
+            nest.Disconnect(pre, post, conns)
+
 
 def suite():
     test_suite = unittest.makeSuite(TestDisconnectSingle, 'test')

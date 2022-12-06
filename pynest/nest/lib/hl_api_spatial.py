@@ -533,10 +533,7 @@ def DumpLayerNodes(layer, outname):
     if not isinstance(layer, NodeCollection):
         raise TypeError("layer must be a NodeCollection")
 
-    sli_func("""
-             (w) file exch DumpLayerNodes close
-             """,
-             layer, _rank_specific_filename(outname))
+    nestkernel.llapi_dump_layer_nodes(layer._datum, outname)
 
 
 def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
@@ -601,16 +598,7 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
     if not isinstance(target_layer, NodeCollection):
         raise TypeError("target_layer must be a NodeCollection")
 
-    sli_func("""
-             /oname  Set
-             cvlit /synmod Set
-             /lyr_target Set
-             /lyr_source Set
-             oname (w) file lyr_source lyr_target synmod
-             DumpLayerConnections close
-             """,
-             source_layer, target_layer, synapse_model,
-             _rank_specific_filename(outname))
+    nestkernel.llapi_dump_layer_connections(source_layer._datum, target_layer._datum, synapse_model, outname)
 
 
 def FindCenterElement(layer):

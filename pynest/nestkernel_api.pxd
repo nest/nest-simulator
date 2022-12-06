@@ -157,6 +157,12 @@ cdef extern from "spatial.h" namespace "nest":
     vector[vector[double]] displacement( NodeCollectionPTR layer_nc, const vector[vector[double]]& point ) except +
 
     void connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const dictionary& dict ) except +
-    MaskPTR create_mask( const dictionary& mask_dict )
+    MaskPTR create_mask( const dictionary& mask_dict ) except +
     NodeCollectionPTR select_nodes_by_mask( const NodeCollectionPTR layer_nc, const vector[double]& anchor, const MaskPTR mask ) except +
     cbool inside(const vector[double]& point, const MaskPTR mask ) except +
+
+    void dump_layer_nodes(const NodeCollectionPTR layer_nc, const string& filename)
+    void dump_layer_connections(const NodeCollectionPTR source_layer,
+                                const NodeCollectionPTR target_layer,
+                                const string& synapse_model,
+                                const string& filename) except +

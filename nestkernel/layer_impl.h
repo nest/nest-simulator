@@ -298,9 +298,9 @@ void
 Layer< D >::dump_connections( std::ostream& out,
   NodeCollectionPTR node_collection,
   AbstractLayerPTR target_layer,
-  const Token& syn_model )
+  const std::string& syn_model )
 {
-  std::vector< std::pair< Position< D >, index > >* src_vec = get_global_positions_vector( node_collection );
+  auto src_vec = get_global_positions_vector( node_collection );
 
   // Dictionary with parameters for get_connections()
   dictionary ncdict;
@@ -309,36 +309,33 @@ Layer< D >::dump_connections( std::ostream& out,
   // Avoid setting up new array for each iteration of the loop
   std::vector< index > source_array( 1 );
 
-  for ( typename std::vector< std::pair< Position< D >, index > >::iterator src_iter = src_vec->begin();
-        src_iter != src_vec->end();
-        ++src_iter )
+  for ( auto src_iter = src_vec->begin(); src_iter != src_vec->end(); ++src_iter )
   {
-
     const index source_node_id = src_iter->second;
     const Position< D > source_pos = src_iter->first;
 
     source_array[ 0 ] = source_node_id;
     ncdict[ names::source ] = NodeCollectionPTR( NodeCollection::create( source_array ) );
-    auto connectome = kernel().connection_manager.get_connections( ncdict );
+    const auto connectome = kernel().connection_manager.get_connections( ncdict );
 
     // Print information about all local connections for current source
     for ( size_t i = 0; i < connectome.size(); ++i )
     {
-      auto con_id = connectome[ i ];
-      dictionary result_dict = kernel().connection_manager.get_synapse_status( con_id.get_source_node_id(),
+      const auto& con_id = connectome[ i ];
+      const dictionary result_dict = kernel().connection_manager.get_synapse_status( con_id.get_source_node_id(),
         con_id.get_target_node_id(),
         con_id.get_target_thread(),
         con_id.get_synapse_model_id(),
         con_id.get_port() );
 
-      long target_node_id = result_dict.get< long >( names::target );
-      double weight = result_dict.get< double >( names::weight );
-      double delay = result_dict.get< double >( names::delay );
+      const auto target_node_id = result_dict.get< size_t >( names::target );
+      const auto weight = result_dict.get< double >( names::weight );
+      const auto delay = result_dict.get< double >( names::delay );
 
       // Print source, target, weight, delay, rports
       out << source_node_id << ' ' << target_node_id << ' ' << weight << ' ' << delay;
 
-      Layer< D >* tgt_layer = dynamic_cast< Layer< D >* >( target_layer.get() );
+      const auto tgt_layer = dynamic_cast< Layer< D >* >( target_layer.get() );
 
       out << ' ';
       const index tnode_id = tgt_layer->node_collection_->find( target_node_id );
@@ -396,7 +393,7 @@ MaskedLayer< D >::check_mask_( Layer< D >& layer, bool allow_oversized )
     lower_left[ 1 ] = -upper_right[ 1 ];
     upper_right[ 1 ] = -y;
 
-    mask_ = MaskPTR (new BoxMask< D >( lower_left, upper_right ) );
+    mask_ = MaskPTR( new BoxMask< D >( lower_left, upper_right ) );
   }
   catch ( std::bad_cast& )
   {

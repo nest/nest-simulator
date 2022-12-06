@@ -123,11 +123,11 @@ MaskPTR intersect_mask( const MaskPTR mask1, const MaskPTR mask2 );
 MaskPTR union_mask( const MaskPTR mask1, const MaskPTR mask2 );
 MaskPTR minus_mask( const MaskPTR mask1, const MaskPTR mask2 );
 void connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const dictionary& dict );
-void dump_layer_nodes( NodeCollectionPTR layer_nc, std::ostream& out );
-void dump_layer_connections( const Token& syn_model,
-  NodeCollectionPTR source_layer_nc,
-  NodeCollectionPTR target_layer_nc,
-  std::ostream& out_file );
+void dump_layer_nodes( NodeCollectionPTR layer_nc, const std::string& filename );
+void dump_layer_connections( const NodeCollectionPTR source_layer,
+  const NodeCollectionPTR target_layer,
+  const std::string& synapse_model,
+  const std::string& filename );
 dictionary get_layer_status( NodeCollectionPTR layer_nc );
 }
 

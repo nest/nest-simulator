@@ -112,7 +112,7 @@ class TestLayerNodeCollection(unittest.TestCase):
 
         spatial = nodes.spatial  # Extract spatial information
         self.assertEqual(spatial["center"], spatial["positions"][0])  # Center will be at the position of the only node
-        self.assertEqual(spatial["extent"], tuple(extent))
+        self.assertEqual(spatial["extent"], extent)
 
 
 def suite():

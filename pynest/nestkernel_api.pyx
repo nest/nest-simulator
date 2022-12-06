@@ -402,6 +402,14 @@ def llapi_inside_mask(vector[double] point, MaskObject mask):
     return inside(point, mask.thisptr)
 
 @catch_cpp_error
+def llapi_dump_layer_nodes(NodeCollectionObject layer, object filename):
+    dump_layer_nodes(layer.thisptr, pystr_to_string(filename))
+
+@catch_cpp_error
+def llapi_dump_layer_connections(NodeCollectionObject source_layer, NodeCollectionObject target_layer, synapse_model, filename):
+    dump_layer_connections(source_layer.thisptr, target_layer.thisptr, pystr_to_string(synapse_model), pystr_to_string(filename))
+
+@catch_cpp_error
 def llapi_slice(NodeCollectionObject nc, long start, long stop, long step):
     cdef NodeCollectionPTR nc_ptr
     nc_ptr = slice_nc(nc.thisptr, start, stop, step)

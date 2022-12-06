@@ -46,8 +46,8 @@ EventDeliveryManager::EventDeliveryManager()
   : off_grid_spiking_( false )
   , moduli_()
   , slice_moduli_()
-  , spike_register_()
-  , off_grid_spike_register_()
+  , emitted_spikes_register_()
+  , off_grid_emitted_spike_register_()
   , send_buffer_secondary_events_()
   , recv_buffer_secondary_events_()
   , local_spike_counter_()
@@ -78,8 +78,8 @@ EventDeliveryManager::initialize()
   reset_counters();
   reset_timers_for_preparation();
   reset_timers_for_dynamics();
-  spike_register_.resize( num_threads );
-  off_grid_spike_register_.resize( num_threads );
+  emitted_spikes_register_.resize( num_threads );
+  off_grid_emitted_spike_register_.resize( num_threads );
   gather_completed_checker_.initialize( num_threads, false );
   // Ensures that ResetKernel resets off_grid_spiking_
   off_grid_spiking_ = false;
@@ -90,10 +90,10 @@ EventDeliveryManager::initialize()
 #pragma omp parallel
   {
     const thread tid = kernel().vp_manager.get_thread_id();
-    spike_register_[ tid ].resize( num_threads,
+    emitted_spikes_register_[ tid ].resize( num_threads,
       std::vector< std::vector< Target > >( kernel().connection_manager.get_min_delay(), std::vector< Target >() ) );
 
-    off_grid_spike_register_[ tid ].resize( num_threads,
+    off_grid_emitted_spike_register_[ tid ].resize( num_threads,
       std::vector< std::vector< OffGridTarget > >(
         kernel().connection_manager.get_min_delay(), std::vector< OffGridTarget >() ) );
   } // of omp parallel
@@ -103,8 +103,8 @@ void
 EventDeliveryManager::finalize()
 {
   // clear the spike buffers
-  std::vector< std::vector< std::vector< std::vector< Target > > > >().swap( spike_register_ );
-  std::vector< std::vector< std::vector< std::vector< OffGridTarget > > > >().swap( off_grid_spike_register_ );
+  std::vector< std::vector< std::vector< std::vector< Target > > > >().swap( emitted_spikes_register_ );
+  std::vector< std::vector< std::vector< std::vector< OffGridTarget > > > >().swap( off_grid_emitted_spike_register_ );
 
   send_buffer_secondary_events_.clear();
   recv_buffer_secondary_events_.clear();
@@ -265,10 +265,9 @@ EventDeliveryManager::update_moduli()
 void
 EventDeliveryManager::reset_counters()
 {
-  for ( std::vector< unsigned long >::iterator it = local_spike_counter_.begin(); it != local_spike_counter_.end();
-        ++it )
+  for ( auto& spike_counter : local_spike_counter_ )
   {
-    ( *it ) = 0;
+    spike_counter = 0;
   }
 }
 
@@ -374,13 +373,13 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 
     // Collocate spikes to send buffer
     const bool collocate_completed =
-      collocate_spike_data_buffers_( tid, assigned_ranks, send_buffer_position, spike_register_, send_buffer );
+      collocate_spike_data_buffers_( tid, assigned_ranks, send_buffer_position, emitted_spikes_register_, send_buffer );
     gather_completed_checker_[ tid ].logical_and( collocate_completed );
 
     if ( off_grid_spiking_ )
     {
       const bool collocate_completed_off_grid = collocate_spike_data_buffers_(
-        tid, assigned_ranks, send_buffer_position, off_grid_spike_register_, send_buffer );
+        tid, assigned_ranks, send_buffer_position, off_grid_emitted_spike_register_, send_buffer );
       gather_completed_checker_[ tid ].logical_and( collocate_completed_off_grid );
     }
 
@@ -587,7 +586,7 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
 
   // prepare Time objects for every possible time stamp within min_delay_
   std::vector< Time > prepared_timestamps( kernel().connection_manager.get_min_delay() );
-  for ( size_t lag = 0; lag < ( size_t ) kernel().connection_manager.get_min_delay(); ++lag )
+  for ( size_t lag = 0; lag < static_cast< size_t >( kernel().connection_manager.get_min_delay() ); ++lag )
   {
     prepared_timestamps[ lag ] = kernel().simulation_manager.get_clock() + Time::step( lag + 1 );
   }
@@ -866,19 +865,15 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid )
 void
 EventDeliveryManager::resize_spike_register_( const thread tid )
 {
-  for ( std::vector< std::vector< std::vector< Target > > >::iterator it = spike_register_[ tid ].begin();
-        it != spike_register_[ tid ].end();
-        ++it )
+  for ( auto& emitted_spikes_for_current_thread : emitted_spikes_register_[ tid ] )
   {
-    it->resize( kernel().connection_manager.get_min_delay(), std::vector< Target >() );
+    emitted_spikes_for_current_thread.resize( kernel().connection_manager.get_min_delay(), std::vector< Target >() );
   }
 
-  for ( std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it =
-          off_grid_spike_register_[ tid ].begin();
-        it != off_grid_spike_register_[ tid ].end();
-        ++it )
+  for ( auto& off_grid_emitted_spike_for_current_thread : off_grid_emitted_spike_register_[ tid ] )
   {
-    it->resize( kernel().connection_manager.get_min_delay(), std::vector< OffGridTarget >() );
+    off_grid_emitted_spike_for_current_thread.resize(
+      kernel().connection_manager.get_min_delay(), std::vector< OffGridTarget >() );
   }
 }
 

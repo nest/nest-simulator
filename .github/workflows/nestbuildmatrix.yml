@@ -467,22 +467,16 @@ jobs:
       fail-fast: false
       matrix:
         os: ["ubuntu-20.04"]
-        cpp_compiler: ["gcc", "clang"]
+        cpp_compiler: ["gcc"]   #, "clang"]
 
-        # NEST Config matrix
-        openmp: ["ON", "OFF"]
-        mpi: ["ON", "OFF"]
-        python: ["ON"]        # , "OFF"]
-        music: ["OFF"]        # , "ON"]
-        gsl: ["ON"]           # , "OFF"]
-        ltdl: ["ON"]          # , "OFF"]
-        readline: ["ON"]      # , "OFF"]
-        boost: ["ON"]         # , "OFF"]
-        sionlib: ["ON"]       # , "OFF"]
-        libneurosim: ["ON"]   # , "OFF"]
-        optimize: ["ON"]
-        warning: ["ON"]
-        userdoc: ["OFF"]
+        # available use flags (all default to "OFF"):
+        # openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning, userdoc, music
+        include:
+        - os: "ubuntu-20.04"
+          use: "openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning"  # no userdoc, music
+        - os: "ubuntu-20.04"
+          use: "boost, optimize, warning"  # no userdoc, music
+
 
     steps:
       - name: "Checkout repository content"
@@ -613,41 +607,23 @@ jobs:
           NEST_RESULT="result"
           mkdir -p "$NEST_VPATH/reports" "$NEST_RESULT"
 
-          if "${{ matrix.music }}" == "ON" ; then
-            CONFIGURE_MUSIC="-Dwith-music=$HOME/.cache/music.install"
-          else
-            CONFIGURE_MUSIC="-Dwith-music=${{ matrix.music }}"
-          fi
-
-          if "${{ matrix.sionlib }}" == "ON" ; then
-            CONFIGURE_SIONLIB="-Dwith-sionlib=$HOME/.cache/sionlib.install"
-          else
-            CONFIGURE_SIONLIB="-Dwith-sionlib=${{ matrix.sionlib }}"
-          fi
-
-          if "${{ matrix.libneurosim }} == "ON" ; then
-            CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=$HOME/.cache/libneurosim.install"
-          else
-            CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=${{ matrix.libneurosim }}"
-          fi
-
           echo "MSGBLD0235: Running CMake."
           cd "$NEST_VPATH"
           cmake \
               -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
               -DCMAKE_CXX_FLAGS="$CXX_FLAGS" \
-              -Dwith-optimize=${{ matrix.optimize }} \
-              -Dwith-warning=${{ matrix.warning }} \
-              -Dwith-boost=${{ matrix.boost }} \
-              -Dwith-openmp=${{ matrix.openmp }} \
-              -Dwith-mpi=${{ matrix.mpi }} \
-              -Dwith-python=${{ matrix.python }} \
-              $CONFIGURE_MUSIC \
-              -Dwith-gsl=${{ matrix.gsl }} \
-              -Dwith-ltdl=${{ matrix.ltdl }} \
-              -Dwith-readline=${{ matrix.readline }} \
-              -Dwith-sionlib=${{ matrix.sionlib }} \
-              -Dwith-libneurosim=${{ matrix.libneurosim }} \
+              -Dwith-optimize=${{ contains(matrix.use, "optimize") && "ON" || "OFF" }} \
+              -Dwith-warning=${{ contains(matrix.use, "warning") && "ON" || "OFF" }} \
+              -Dwith-boost=${{ contains(matrix.use, "boost") && "ON" || "OFF" }} \
+              -Dwith-openmp=${{ contains(matrix.use, "openmp") && "ON" || "OFF" }} \
+              -Dwith-mpi=${{ contains(matrix.use, "mpi") && "ON" || "OFF" }} \
+              -Dwith-python=${{ contains(matrix.use, "python") && "ON" || "OFF" }} \
+              -Dwith-python=${{ contains(matrix.use, "music") && "$HOME/.cache/music.install" || "OFF" }} \
+              -Dwith-gsl=${{ contains(matrix.use, "gsl") && "ON" || "OFF" }} \
+              -Dwith-ltdl=${{ contains(matrix.use, "ltdl") && "ON" || "OFF" }} \
+              -Dwith-readline=${{ contains(matrix.use, "readline") && "ON" || "OFF" }} \
+              -Dwith-sionlib=${{ contains(matrix.use, "sionlib") && "$HOME/.cache/sionlib.install" || "OFF" }} \
+              -Dwith-libneurosim=${{ contains(matrix.use, "libneurosim") && "$HOME/.cache/libneurosim.install" || "OFF" }} \
               ..
 
           echo "MSGBLD0240: CMake configure completed."
@@ -686,7 +662,7 @@ jobs:
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: "${{ matrix.NEST_BUILD_TYPE }}-build-logs-${{ matrix.os }}-${{ matrix.cpp_compiler }}"
+          name: "build-logs-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
           path: |
             ci_build.sh.log
             install_manifest.txt
@@ -695,9 +671,9 @@ jobs:
 
       - name: "Upload binary artifacts"
         uses: actions/upload-artifact@v3
-        if: '${{ matrix.NEST_BUILD_TYPE }} == "FULL"'
+        #if: '${{ matrix.NEST_BUILD_TYPE }} == "FULL"'
         with:
-          name: "${{ matrix.NEST_BUILD_TYPE }}-build-${{ matrix.os }}-${{ matrix.cpp_compiler }}"
+          name: "build-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
           path: |
             build/**
             result/**

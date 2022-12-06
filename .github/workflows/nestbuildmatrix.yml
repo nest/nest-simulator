@@ -476,10 +476,10 @@ jobs:
           - "openmp, python, gsl, ltdl, boost, optimize, warning"  # formerly "openmp_only"
           - "mpi, python, gsl, ltdl, boost, optimize, warning"  # formerly "mpi_only"
           - "openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning"  # formerly "full"
-        include:
-        - os: ubuntu-22.04
-          cpp_compiler: gcc
-          use: "openmp, python, gsl, ltdl, boost, optimize, warning"
+        #include:
+        #- os: ubuntu-22.04
+        #  cpp_compiler: gcc
+        #  use: "openmp, python, gsl, ltdl, boost, optimize, warning"
 
     steps:
       - name: "Checkout repository content"

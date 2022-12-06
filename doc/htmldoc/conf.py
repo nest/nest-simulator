@@ -100,7 +100,10 @@ extensions = [
     'VersionSyncRole',
 ]
 
-mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa
+mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+# "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+# "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa
+
 panels_add_bootstrap_css = False
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['templates']
@@ -131,7 +134,7 @@ author = u'nest-simulator'
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -249,7 +252,6 @@ def setup(app):
     app.connect("source-read", toc_customizer)
     app.add_css_file('css/custom.css')
     app.add_css_file('css/pygments.css')
-    app.add_js_file("js/copybutton.js")
     app.add_js_file("js/custom.js")
 
     # for events see

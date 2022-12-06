@@ -501,7 +501,7 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
         }
         else
         {
-          send_buffer[ send_buffer_position.idx( rank ) ].set(emitted_spike, lag);
+          send_buffer[ send_buffer_position.idx( rank ) ].set( emitted_spike, lag );
           emitted_spike.mark_for_removal();
           send_buffer_position.increase( rank );
         }

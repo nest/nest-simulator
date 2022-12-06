@@ -209,12 +209,23 @@ jobs:
 
   pytest-linux:
     runs-on: "ubuntu-20.04"
-    needs: [test_linux]
+    needs: [build_linux]
+    strategy:
+      fail-fast: true
+      matrix:
+        os: ["ubuntu-20.04"]
+        cpp_compiler: ["gcc"]
+        NEST_BUILD_TYPE: ["FULL"]
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+
+      - name: Download last build...
+        uses: actions/download-artifact@v3
+        with:
+          name: "${{ matrix.NEST_BUILD_TYPE }}-build-${{ matrix.os }}-${{ matrix.cpp_compiler }}"
 
       - name: "Set up Python 3.x"
         uses: actions/setup-python@v2
@@ -231,7 +242,7 @@ jobs:
 
   pytest-mac:
     runs-on: "macos-latest"
-    needs: [test_macos]
+    needs: [build_macos]
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v2
@@ -322,7 +333,7 @@ jobs:
           make html |& tee sphinx-output.log
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2.3.0
+        uses: actions/upload-artifact@v3
         with:
           path: |
             build/sphinx-output.log
@@ -361,7 +372,7 @@ jobs:
           make html |& tee sphinx-output.log
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2.3.0
+        uses: actions/upload-artifact@v3
         with:
           path: |
             build/sphinx-output.log
@@ -445,7 +456,7 @@ jobs:
           xNEST_BUILD_TYPE: 'STATIC_CODE_ANALYSIS'
           CHANGED_FILES: ${{ env.CHANGED_FILES }}
 
-  test_linux:
+  build_linux:
     if: ${{ always() && !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
     needs: [clang-format, cppcheck, mypy, copyright_headers, unused_names, forbidden_types, pylint, flake8]
@@ -456,18 +467,18 @@ jobs:
       matrix:
         os: ["ubuntu-20.04"]
         cpp_compiler: ["gcc", "clang"]
-        xNEST_BUILD_TYPE: ["MINIMAL", "MPI_ONLY", "OPENMP_ONLY", "FULL"]
+        NEST_BUILD_TYPE: ["MINIMAL", "MPI_ONLY", "OPENMP_ONLY", "FULL"]
         exclude:
-          - xNEST_BUILD_TYPE: "MINIMAL"
+          - NEST_BUILD_TYPE: "MINIMAL"
             cpp_compiler: "clang"
             os: "ubuntu-20.04"
-          - xNEST_BUILD_TYPE: "MPI_ONLY"
+          - NEST_BUILD_TYPE: "MPI_ONLY"
             cpp_compiler: "clang"
             os: "ubuntu-20.04"
-          - xNEST_BUILD_TYPE: "OPENMP_ONLY"
+          - NEST_BUILD_TYPE: "OPENMP_ONLY"
             cpp_compiler: "clang"
             os: "ubuntu-20.04"
-          - xNEST_BUILD_TYPE: "FULL"
+          - NEST_BUILD_TYPE: "FULL"
             cpp_compiler: "clang"
             os: "ubuntu-20.04"
     steps:
@@ -523,9 +534,9 @@ jobs:
             $HOME/.ccache
             .ccache
             /home/runner/.ccache
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ matrix.xNEST_BUILD_TYPE }}
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ matrix.NEST_BUILD_TYPE }}
           restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-${{ matrix.xNEST_BUILD_TYPE }}
+            ${{ runner.os }}-${{ env.cache-name }}-${{ matrix.NEST_BUILD_TYPE }}
             ${{ runner.os }}-${{ env.cache-name }}
             ${{ runner.os }}
 
@@ -559,27 +570,36 @@ jobs:
           python build_support/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
           ccache -s
         env:
-          xNEST_BUILD_TYPE: ${{ matrix.xNEST_BUILD_TYPE }}
+          xNEST_BUILD_TYPE: ${{ matrix.NEST_BUILD_TYPE }}
           CMAKE_C_COMPILER_LAUNCHER: ccache
           CMAKE_CXX_COMPILER_LAUNCHER: ccache
           CHANGED_FILES: ${{ env.CHANGED_FILES }}
           #get changed files: https://github.com/marketplace/actions/get-changed-files
 
       - name: "Upload install and test results"
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: "test_linux-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.xNEST_BUILD_TYPE }}-logs"
+          name: "${{ matrix.NEST_BUILD_TYPE }}-build-logs-${{ matrix.os }}-${{ matrix.cpp_compiler }}"
           path: |
             ci_build.sh.log
             install_manifest.txt
             **.log
             build/reports/**
 
-  test_macos:
+      - name: "Upload binary artifacts"
+        uses: actions/upload-artifact@v3
+        if: '${{ matrix.NEST_BUILD_TYPE }} == "FULL"'
+        with:
+          name: "${{ matrix.NEST_BUILD_TYPE }}-build-${{ matrix.os }}-${{ matrix.cpp_compiler }}"
+          path: |
+            build/**
+            result/**
+
+  build_macos:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [clang-format, cppcheck, mypy, copyright_headers, unused_names, forbidden_types, test_linux]
+    needs: [clang-format, cppcheck, mypy, copyright_headers, unused_names, forbidden_types, build_linux]
     env:
       CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
     strategy:
@@ -587,7 +607,7 @@ jobs:
       matrix:
         os: [macos-latest]
         cpp_compiler: ["clang"]
-        xNEST_BUILD_TYPE: ["FULL_MACOS"]
+        NEST_BUILD_TYPE: ["FULL_MACOS"]
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v2
@@ -627,7 +647,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip setuptools
           python -c "import setuptools; print('package location:', setuptools.__file__)"
-          python -m pip install --force-reinstall --upgrade scipy "junitparser>=2" numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc
+          python -m pip install --force-reinstall --upgrade scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc
           python -c "import pytest; print('package location:', pytest.__file__)"
           pip list
 
@@ -636,24 +656,33 @@ jobs:
           ./build_support/ci_build.sh 2>&1 | tee ci_build.sh.log
           python build_support/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
         env:
-          xNEST_BUILD_TYPE: ${{ matrix.xNEST_BUILD_TYPE }}
+          xNEST_BUILD_TYPE: ${{ matrix.NEST_BUILD_TYPE }}
           CHANGED_FILES: ${{ env.CHANGED_FILES }}
           #get changed files: https://github.com/marketplace/actions/get-changed-files
 
       - name: "Upload install and test results"
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: ${{ always() }}
         with:
-          name: "test_macos-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.xNEST_BUILD_TYPE }}-logs"
+          name: "${{ matrix.NEST_BUILD_TYPE }}-build-logs-${{ matrix.os }}-${{ matrix.cpp_compiler }}"
           path: |
             ci_build.sh.log
             install_manifest.txt
             **.log
             build/reports/**
 
+      - name: "Upload binary artifacts"
+        uses: actions/upload-artifact@v3
+        #if: '${{ matrix.NEST_BUILD_TYPE }} == "FULL"'
+        with:
+          name: "${{ matrix.NEST_BUILD_TYPE }}-build-${{ matrix.os }}-${{ matrix.cpp_compiler }}"
+          path: |
+            build/**
+            result/**
+
   build_conda:
     if: false
-    needs: [test_linux]
+    needs: [build_linux]
     uses: conda-forge/nest-simulator-feedstock/.github/workflows/nest_trigger.yml@f9a89c898b4481931fe6b587c05547b42e758e46
     with:
       # see https://docs.github.com/en/actions/learn-github-actions/contexts#github-context

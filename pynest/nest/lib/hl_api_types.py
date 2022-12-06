@@ -1169,7 +1169,7 @@ class CmBase:
             raise NotImplementedError(f'{self.__class__.__name__} can only be added with dicts, lists of dicts,'
                                       f' or other {self.__class__.__name__}, got {type(other)}')
         self._node_collection.set({f'add_{self.__class__.__name__.lower()}': new_elements})
-        return None  # Flagging elements as added by returning None
+        # implicit `return None` to flag elements as added by returning None
 
     def __getitem__(self, key):
         return self._elements[key]

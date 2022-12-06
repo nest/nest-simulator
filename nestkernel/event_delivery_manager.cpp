@@ -467,7 +467,7 @@ bool
 EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
   const AssignedRanks& assigned_ranks,
   SendBufferPosition& send_buffer_position,
-  std::vector< std::vector< std::vector< std::vector< TargetT > > > >& spike_register,
+  std::vector< std::vector< std::vector< std::vector< TargetT > > > >& emitted_spikes_register,
   std::vector< SpikeDataT >& send_buffer )
 {
   reset_complete_marker_spike_data_( assigned_ranks, send_buffer_position, send_buffer );
@@ -477,15 +477,15 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
   bool is_spike_register_empty = true;
 
   // First dimension: loop over writing thread
-  for ( auto& spikes : spike_register )
+  for ( auto& emitted_spikes_per_thread : emitted_spikes_register )
   {
     // Second dimension: Set the reading thread to the current running thread
 
     // Third dimension: loop over lags
-    for ( unsigned int lag = 0; lag < ( spikes )[ tid ].size(); ++lag )
+    for ( unsigned int lag = 0; lag < ( emitted_spikes_per_thread )[ tid ].size(); ++lag )
     {
       // Fourth dimension: loop over entries
-      for ( auto& emitted_spike : ( spikes )[ tid ][ lag ] )
+      for ( auto& emitted_spike : ( emitted_spikes_per_thread )[ tid ][ lag ] )
       {
         assert( not emitted_spike.is_processed() );
 

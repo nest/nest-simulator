@@ -343,7 +343,7 @@ jobs:
     # as close as possible to the suggested user docs build in the documentation
     runs-on: "ubuntu-20.04"
     if: ${{ always() }}
-    needs: [pydocstyle]
+    needs: [pydocstyle, rstcheck, vale]
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v2
@@ -575,14 +575,31 @@ jobs:
           PYLIB_DIR="$(python3 -c "import sysconfig; print(sysconfig.get_path('include'))" | sed 's/include/lib/')"
           ./build_support/install_csa-libneurosim.sh $PYLIB_DIR
 
-      - name: "Build NEST"
+      - name: "Initialize Matplotlibrc"
         run: |
+          # initialize matplotlib backend
+          mkdir -p $HOME/.matplotlib
+          echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
+
+      - name: "Configure NEST build"
+        env:
+          CMAKE_C_COMPILER_LAUNCHER: ccache
+          CMAKE_CXX_COMPILER_LAUNCHER: ccache
+        run: |
+          # BEGIN formerly ./build_support/ci_build.sh 2>&1 | tee ci_build.sh.log
+          echo "------ Ccache statistics -----"
           ccache -p
           ccache -s
           ccache -z
 
-          # BEGIN formerly ./build_support/ci_build.sh 2>&1 | tee ci_build.sh.log
-          env
+          echo
+          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+          echo "+               C O N F I G U R E   N E S T   B U I L D                       +"
+          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+          echo "------ Prepare build environment ------"
+          mkdir -p "$NEST_VPATH/reports" "$NEST_RESULT"
+
+          echo "MSGBLD0232: Setting configuration variables."
           if [ "$xNEST_BUILD_COMPILER" = "CLANG" ]; then
               export CC=clang-11
               export CXX=clang++-11
@@ -592,23 +609,12 @@ jobs:
           #export CXX_FLAGS="-pedantic -Wextra -D_GLIBCXX_ASSERTIONS"  # if "OPENMP_ONLY"
 
           # Do not use -pedantic because it triggers warnings from pynestkernel
-          # that are difficult to filter automatically when parsing the log. 
+          # that are difficult to filter automatically when parsing the log.
           # See also https://github.com/cython/cython/pull/4687.
           #export CXX_FLAGS="-Wextra -Wno-unknown-pragmas -D_GLIBCXX_ASSERTIONS"  # if "FULL_MACOS"
 
-          # initialize matplotlib backend
-          mkdir -p $HOME/.matplotlib
-          echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
-
-          echo
-          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-          echo "+               C O N F I G U R E   N E S T   B U I L D                       +"
-          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-          echo "MSGBLD0232: Setting configuration variables."
-
-          NEST_VPATH="build"
-          NEST_RESULT="result"
-          mkdir -p "$NEST_VPATH/reports" "$NEST_RESULT"
+          echo "----- Current environment -----"
+          env
 
           echo "MSGBLD0235: Running CMake."
           cd "$NEST_VPATH"
@@ -630,7 +636,10 @@ jobs:
               ..
 
           echo "MSGBLD0240: CMake configure completed."
-          echo
+
+      - name: "Build NEST"
+        run: |
+          cd "$NEST_VPATH"
           echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
           echo "+               B U I L D   N E S T                                           +"
           echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
@@ -638,28 +647,32 @@ jobs:
           make VERBOSE=1
           echo "MSGBLD0260: Make completed."
           echo
+          echo "------ Ccache Statistics -----"
+          ccache -s
+
+      - name: "Install NEST"
+        run: |
+          cd "$NEST_VPATH"
           echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
           echo "+               I N S T A L L   N E S T                                       +"
           echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
           echo "MSGBLD0270: Running make install."
           make install
           echo "MSGBLD0280: Make install completed."
-          echo
+
+      - name: "Run NEST testsuite"
+        run: |
+          cd "$NEST_VPATH"
           echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
           echo "+               R U N   N E S T   T E S T S U I T E                           +"
           echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
           echo "MSGBLD0290: Running make installcheck."
           make VERBOSE=1 installcheck
           echo "MSGBLD0300: Make installcheck completed."
-          echo "MSGBLD0340: Build completed."
 
           # END formerly ./build_support/ci_build.sh 2>&1 | tee ci_build.sh.log
           #
           #python build_support/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
-          ccache -s   # show ccache statistics
-        env:
-          CMAKE_C_COMPILER_LAUNCHER: ccache
-          CMAKE_CXX_COMPILER_LAUNCHER: ccache
 
       - name: "Upload install and test results"
         uses: actions/upload-artifact@v3
@@ -685,9 +698,12 @@ jobs:
     #if: ${{ always() && !contains(github.event.head_commit.message, 'ci skip') }}
     if: false
     runs-on: ${{ matrix.os }}
-    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, flake8]
+    needs: [static_checks]   # clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, flake8]
     env:
       CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
+      NEST_VPATH: "build"
+      NEST_RESULT: "result"
+
     strategy:
       fail-fast: false
       matrix:

@@ -463,6 +463,9 @@ jobs:
     needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, flake8]
     env:
       CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
+      NEST_VPATH: "build"
+      NEST_RESULT: "result"
+
     strategy:
       fail-fast: false
       matrix:

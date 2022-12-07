@@ -127,7 +127,7 @@ Run with MPI
 
 If NEST was compiled with support for :ref:`distributed computing via
 MPI <distributed_computing>`, it will usually execute the exact same
-simulation script on each of the MPI processes. With NEST Server, this
+simulation script on each of the :hxt_ref:`MPI` processes. With NEST Server, this
 would normally mean that one NEST Server instance would be spawned for
 each rank in a multi-process NEST simulation. To prevent this from
 happening, we provide a special version of the NEST Server command for
@@ -136,7 +136,7 @@ use with MPI. It can be run as follows::
   mpirun -np N nest-server-mpi [--host HOST] [--port PORT]
 
 If run like this, the RESTful API of the NEST Server will only be
-served by the MPI process with rank 0 (called the `master`), while all
+served by the :hxt_ref:`MPI` process with rank 0 (called the `master`), while all
 other N-1 ranks will start the NEST Server in `worker` mode. Upon
 receiving a request, the master relays all commands to the workers,
 which execute them, collect all result data, and send it back to the

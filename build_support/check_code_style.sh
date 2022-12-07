@@ -28,13 +28,11 @@ unset FILE_TO_BE_CHECKED
 GIT_START_SHA=master             # If 'file=' is not specified all changed files in the commit range
 GIT_END_SHA=HEAD                 # '<master>..<HEAD>' are processed.
 
-VERA=vera++                      # The names of the static code analysis tools executables.
 CPPCHECK=cppcheck                # CPPCHECK version 1.69 or later is required!
 CLANG_FORMAT=clang-format        # CLANG-FORMAT version 13 is required!
 PEP8=pycodestyle
 PYCODESTYLE_IGNORES="E121,E123,E126,E226,E24,E704,W503,W504"
 
-PERFORM_VERA=true                # Perform VERA++ analysis.
 PERFORM_CPPCHECK=false           # Skip CPPCHECK analysis.
 PERFORM_CLANG_FORMAT=true        # Perform CLANG-FORMAT analysis.
 PERFORM_PEP8=true                # Perform PEP8 analysis.
@@ -103,9 +101,6 @@ Options:
     --git-end=Git_SHA_value          Hash value (Git SHA) at which Git ends the diff.
                                      Default: --git-start=HEAD
 
-    --vera++=exe                     The name of the VERA++ executable.
-                                     Default: --vera++=vera++
-
     --cppcheck=exe                   The name of the CPPCHECK executable.
                                      Default: --cppcheck=cppcheck
                                      Note: CPPCHECK version 1.69 or later is required.
@@ -118,9 +113,6 @@ Options:
 
     --pep8=exe                       The name of the PEP8 executable.
                                      Default: --pep8=pycodestyle
-
-    --perform-vera=on/off            Turn on/off VERA++ analysis.
-                                     Default: --perform-vera=on
 
     --perform-cppcheck=on/off        Turn on/off CPPCHECK analysis.
                                      Default: --perform-cppcheck=off
@@ -164,9 +156,6 @@ while test $# -gt 0 ; do
       --git-end=*)
           GIT_END_SHA="$( echo "$1" | sed 's/^--git-end=//' )"
           ;;
-      --vera++=*)
-          VERA="$( echo "$1" | sed 's/^--vera++=//' )"
-          ;;
       --cppcheck=*)
           CPPCHECK="$( echo "$1" | sed 's/^--cppcheck=//' )"
           ;;
@@ -175,20 +164,6 @@ while test $# -gt 0 ; do
           ;;
       --pep8=*)
           PEP8="$( echo "$1" | sed 's/^--pep8=//' )"
-          ;;
-      --perform-vera=*)
-          value="$( echo "$1" | sed 's/^--perform-vera=//' )"
-          case "$value" in
-            on)
-                PERFORM_VERA=true
-            ;;
-            off)
-                PERFORM_VERA=false
-            ;;
-            *)
-                error_unknown_option "$1"
-            ;;
-          esac
           ;;
       --perform-cppcheck=*)
           value="$( echo "$1" | sed 's/^--perform-cppcheck=//' )"
@@ -239,7 +214,7 @@ while test $# -gt 0 ; do
   shift
 done
 
-if ! $PERFORM_VERA && ! $PERFORM_CPPCHECK && ! $PERFORM_CLANG_FORMAT && ! $PERFORM_PEP8; then
+if ! $PERFORM_CPPCHECK && ! $PERFORM_CLANG_FORMAT && ! $PERFORM_PEP8; then
   error_no_analysis
 fi
 
@@ -247,13 +222,6 @@ fi
 # The sed syntax for extended regular expressions differs for the operating systems: BSD: -E  other: -r
 EXTENDED_REGEX_PARAM=r
 /bin/sh -c "echo 'hello' | sed -${EXTENDED_REGEX_PARAM} 's/[aeou]/_/g' "  >/dev/null 2>&1 || EXTENDED_REGEX_PARAM=E
-
-# Verify the VERA++ installation.
-if $PERFORM_VERA; then
-  $VERA ./nest/main.cpp >/dev/null 2>&1 || error_exit "Failed to verify the VERA++ installation. Executable: $VERA"
-  $VERA --profile nest ./nest/main.cpp >/dev/null 2>&1 || error_exit \
-  "Failed to verify the VERA++ installation. The profile 'nest' could not be found. See https://nest-simulator.readthedocs.io/en/latest/contribute/coding_guidelines_cpp.html#vera-profile-nest"
-fi
 
 # Verify the CPPCHECK installation. CPPCHECK version 1.69 or later is required.
 # Previous versions of CPPCHECK halted on sli/tokenutils.cc (see https://github.com/nest/nest-simulator/pull/79)
@@ -303,15 +271,14 @@ fi
 RUNS_ON_CI=false
 
 unset NEST_VPATH               # These command line arguments are placeholders and not required here.
-IGNORE_MSG_VERA=false          # They are needed when running the static code analysis script within
 IGNORE_MSG_CPPCHECK=false      # the CI build environment.
 IGNORE_MSG_CLANG_FORMAT=false
 IGNORE_MSG_PYCODESTYLE=false
 
 ./build_support/static_code_analysis.sh "$RUNS_ON_CI" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
-"$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
-"$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
-"$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PYCODESTYLE" \
+"$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
+"$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
+"$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PYCODESTYLE" \
 "$PYCODESTYLE_IGNORES"
 if [ $? -gt 0 ]; then
     exit $?

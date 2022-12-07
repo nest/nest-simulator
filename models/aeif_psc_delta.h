@@ -78,20 +78,19 @@ The membrane potential is given by the following differential equation:
 
 .. math::
 
- C dV/dt= -g_L(V-E_L)+g_L\cdot\Delta_T\cdot\exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e) \\
-                                                     -g_i(t)(V-E_i)-w +I_e
+ C dV/dt= -g_L(V-E_L)+g_L\cdot\Delta_T\cdot\exp((V-V_T)/\Delta_T) - w(t) + I_{syn}(t) + I_e
 
 and
 
 .. math::
 
- \tau_w \cdot dw/dt= a(V-E_L) -W
+ \tau_w \cdot dw/dt= a(V-E_L) - w
 
 .. math::
 
- I(t) = J \sum_k \delta(t - t^k).
+ I_{syn}(t) = J \sum_k \delta(t - t^k).
 
-Here delta is the dirac delta function and `k` indexes incoming
+Here delta is the Dirac delta function and `k` indexes incoming
 spikes. This is implemented such that ``V_m`` will be incremented/decremented by
 the value of `J` after a spike.
 

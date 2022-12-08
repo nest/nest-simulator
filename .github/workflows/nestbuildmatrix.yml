@@ -468,7 +468,7 @@ jobs:
 
     strategy:
       fail-fast: false
-      matrix:
+      matrix: &buildmatrix
         os: ["ubuntu-20.04"]
         cpp_compiler: ["gcc"]   #, "clang"]
 
@@ -679,7 +679,7 @@ test_linux:
     strategy:
       fail-fast: false
       # see https://github.com/orgs/community/discussions/26639#discussioncomment-3949595
-      matrix: "${{ needs.build_linux.strategy.matrix.* }}"
+      matrix: *buildmatrix
         #os: ["ubuntu-20.04"]
         #cpp_compiler: ["gcc"]   #, "clang"]
 
@@ -690,10 +690,10 @@ test_linux:
         #  - "openmp, python, gsl, ltdl, boost, optimize, warning"  # formerly "openmp_only"
         #  - "mpi, python, gsl, ltdl, boost, optimize, warning"  # formerly "mpi_only"
         #  - "openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning"  # formerly "full"
-        #include:
-        #- os: ubuntu-22.04
-        #  cpp_compiler: gcc
-        #  use: "openmp, python, gsl, ltdl, boost, optimize, warning"
+        ##include:
+        ##- os: ubuntu-22.04
+        ##  cpp_compiler: gcc
+        ##  use: "openmp, python, gsl, ltdl, boost, optimize, warning"
 
     steps:
       - name: "Checkout repository content"

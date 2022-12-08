@@ -679,7 +679,7 @@ test_linux:
     strategy:
       fail-fast: false
       # see https://github.com/orgs/community/discussions/26639#discussioncomment-3949595
-      matrix: ${{ needs.build_linux.strategy.matrix.* }}
+      matrix: "${{ needs.build_linux.strategy.matrix.* }}"
         #os: ["ubuntu-20.04"]
         #cpp_compiler: ["gcc"]   #, "clang"]
 

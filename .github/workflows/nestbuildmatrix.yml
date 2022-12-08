@@ -212,20 +212,31 @@ jobs:
     needs: [build_linux]
     strategy:
       fail-fast: true
-      matrix:
+      # see https://github.com/orgs/community/discussions/26639#discussioncomment-3949595
+      matrix: # *buildmatrix 
         os: ["ubuntu-20.04"]
-        cpp_compiler: ["gcc"]
-        NEST_BUILD_TYPE: ["FULL"]
+        cpp_compiler: ["gcc"]   #, "clang"]
+
+        # available use flags (all default to "OFF"):
+        # openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning, userdoc, music
+        use:
+          - "boost, optimize, warning"  # formerly "minimal"
+        #  - "openmp, python, gsl, ltdl, boost, optimize, warning"  # formerly "openmp_only"
+        #  - "mpi, python, gsl, ltdl, boost, optimize, warning"  # formerly "mpi_only"
+          - "openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning"  # formerly "full"
+
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Download last build...
+      - name: "Download binary artifacts"
         uses: actions/download-artifact@v3
+        #if: '${{ matrix.NEST_BUILD_TYPE }} == "FULL"'
         with:
-          name: "${{ matrix.NEST_BUILD_TYPE }}-build-${{ matrix.os }}-${{ matrix.cpp_compiler }}"
+          name: "build-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
+#####
 
       - name: "Set up Python 3.x"
         uses: actions/setup-python@v4
@@ -468,7 +479,7 @@ jobs:
 
     strategy:
       fail-fast: false
-      matrix:  #&buildmatrix
+      matrix: &buildmatrix
         os: ["ubuntu-20.04"]
         cpp_compiler: ["gcc"]   #, "clang"]
 
@@ -666,8 +677,8 @@ jobs:
             build/**
             result/**
 
-##################
-  test_linux:
+
+  installcheck_linux:
     if: ${{ always() && !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
     needs: [build_linux]
@@ -765,6 +776,12 @@ jobs:
       - name: "Run NEST testsuite"
         run: |
           cd "$NEST_VPATH"
+          ls -lisa "${NEST_VPATH}"
+          echo "-- testsuite/ --"
+          ls -lisa "${NEST_RESULT}/share/nest/testsuite/"
+          echo "-- do_tests executable --"
+          chmod -v u+x ${NEST_RESULT}/share/nest/testsuite/do_tests.sh
+          echo
           echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
           echo "+               R U N   N E S T   T E S T S U I T E                           +"
           echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
@@ -1020,7 +1037,7 @@ jobs:
 
   build_conda:
     if: false
-    needs: [test_linux, pytest-mac]
+    needs: [installcheck_linux, pytest-mac]
     uses: conda-forge/nest-simulator-feedstock/.github/workflows/nest_trigger.yml@f9a89c898b4481931fe6b587c05547b42e758e46
     with:
       # see https://docs.github.com/en/actions/learn-github-actions/contexts#github-context

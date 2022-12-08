@@ -213,7 +213,7 @@ jobs:
     strategy:
       fail-fast: true
       # see https://github.com/orgs/community/discussions/26639#discussioncomment-3949595
-      matrix: # *buildmatrix 
+      matrix: # *buildmatrix
         os: ["ubuntu-20.04"]
         cpp_compiler: ["gcc"]   #, "clang"]
 
@@ -479,7 +479,7 @@ jobs:
 
     strategy:
       fail-fast: false
-      matrix: &buildmatrix
+      matrix: # &buildmatrix   # when enabled raises WorkflowError: Anchors are not currently supported. Remove the anchor 'buildmatrix'
         os: ["ubuntu-20.04"]
         cpp_compiler: ["gcc"]   #, "clang"]
 

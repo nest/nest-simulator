@@ -34,4 +34,4 @@ Model information
    nest.synapse_models
 
 * To get details on the model equations and parameters,
-  please check our documentation at https://nest-simulator.readthedocs.io/.
+  please check out our :doc:`model documentation <models/index>`.

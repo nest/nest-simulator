@@ -54,7 +54,7 @@ import matplotlib.pyplot as plt
 # Reset kernel
 
 nest.ResetKernel()
-nest.set(local_num_threads=4)
+# nest.set(local_num_threads=8)
 
 ###############################################################################
 # Assigning the current time to a variable in order to determine the build
@@ -64,86 +64,70 @@ startbuild = time.time()
 
 ###############################################################################
 # Neuron model used
+
 neuron_model = "aeif_cond_alpha_astro"
 
 ###############################################################################
 # Assigning the simulation parameters to variables.
 
 dt = 0.1    # the resolution in ms
-simtime = 1000.0  # Simulation time in ms
+simtime = 3000.0  # Simulation time in ms
 delay = dt    # synaptic delay in ms
 
 ###############################################################################
-# Definition of the parameters crucial for asynchronous irregular firing of
-# the neurons.
+# Parameters for neuron-neuron connections
 
-epsilon = 0.02  # connection probability
-J_ex = 6.0  # amplitude of excitatory synaptic weight in nS
-J_in = -67.0  # amplitude of inhibitory synaptic weight in nS
+p_neuron = 0.02  # connection probability for neurons
+J_ex = 6.0  # excitatory synaptic weight in nS
+J_in = -67.0  # inhibitory synaptic weight in nS
 
 ###############################################################################
-# Definition of the number of neurons in the network and the number of neurons
-# recorded from
+# Parameters for astrocytes
+
+p_synapse_astrocyte = 1.0
+max_astro_per_target = 3
+
+###############################################################################
+# Definition of the number of neurons and astrocytes in the network and the
+# number of neurons recorded from.
 
 order = 400
 NE = 4 * order  # number of excitatory neurons
 NI = 1 * order  # number of inhibitory neurons
-N_neurons = NE + NI   # number of neurons in total
-N_rec = 100      # record from 50 neurons
-
-###############################################################################
-# Definition of connectivity parameters
-
-CE = int(epsilon * NE)  # number of excitatory synapses per neuron
-CI = int(epsilon * NI)  # number of inhibitory synapses per neuron
-C_tot = int(CI + CE)      # total number of synapses per neuron
+N_astro = 400  # number of astrocytes
+N_rec = 100  # record from 100 neurons
 
 ###############################################################################
 # Initialization of the parameters of the integrate and fire neuron and the
-# synapses. The parameters of the neuron are stored in a dictionary. The
-# synaptic currents are normalized such that the amplitude of the PSP is J.
+# synapses. The parameters of the neuron are stored in a dictionary.
 
-tau_syn_ex = 5.0  # excitatory synaptic time constant in ms
-tau_syn_in = 10.0  # inhibitory synaptic time constant in ms
-C_m = 200.0  # capacitance of membrane in pF
-E_L = -60.0  # leak reverse potential in mV
-g_L = 10.0  # leak conductance in nS
-t_ref = 2.5  # duration of refractory period in ms
-tau_w = 600.0  # adaptation time constant in ms
-V_reset = -60.0  # reset value for V_m in mV
-a = 1.0  # subthreshold adaptation in nS
-b_ex = 40.0  # spike-triggered adaptation in pA (excitatory neurons)
-b_in = 0.0  # spike-triggered adaptation in pA (inhibitory neurons)
-E_ex = 0.0  # excitatory reversal potential in mV
-E_in = -80.0  # inhibitory reversal potential in mV
-Delta_T = 2.5  # slope factor in mV
-V_th = -50.0  # spike initiation threshold in mV
-V_peak = -50.0 # spike detection threshold in mV
-
-neuron_params_ex = {"C_m": C_m,
-                 "tau_syn_ex": tau_syn_in,
-                 "tau_syn_in": tau_syn_in,
-                 "t_ref": t_ref,
-                 "E_L": E_L,
-                 "g_L": g_L,
-                 "V_reset": V_reset,
-                 "V_m": E_L,
-                 "V_th": V_th,
-                 "tau_w": tau_w,
-                 "a": a,
-                 "b": b_ex,
-                 "E_ex": E_ex,
-                 "E_in": E_in,
-                 "Delta_T": Delta_T,
-                 "V_peak": V_peak,
+tau_syn_ex = 5.0
+tau_syn_in = 10.0
+neuron_params_ex = {
+                 "V_m": -60.0, # membrane potential in mV
+                 "C_m": 200.0, # capacitance of membrane in pF
+                 "t_ref": 2.5, # duration of refractory period in ms
+                 "V_reset": -60.0,  # reset value for V_m in mV
+                 "E_L": -60.0, # leak reverse potential in mV
+                 "g_L": 10.0, # leak conductance in nS
+                 "a": 1.0, # subthreshold adaptation in nS
+                 "b": 40.0, # spike-triggered adaptation in pA
+                 "Delta_T": 2.5, # slope factor in mV
+                 "tau_w": 600.0, # adaptation time constant in ms
+                 "V_th": -50.0, # spike initiation threshold in mV
+                 "V_peak": -50.0, # spike detection threshold in mV
+                 "E_ex": 0.0, # excitatory reversal potential in mV
+                 "E_in": -80.0, # inhibitory reversal potential in mV
+                 "tau_syn_ex": tau_syn_ex, # excitatory synaptic time constant in ms
+                 "tau_syn_in": tau_syn_in, # inhibitory synaptic time constant in ms
                  }
 neuron_params_in = copy.deepcopy(neuron_params_ex)
-neuron_params_in['b'] = b_in
+neuron_params_in["b"] = 0.0 # spike-triggered adaptation for inhibitory neurons
 
 ###############################################################################
 # Poisson generator rate
 
-p_rate = 200.0
+poisson_rate = 200.0
 
 ################################################################################
 # Configuration of the simulation kernel by the previously defined time
@@ -155,18 +139,15 @@ nest.resolution = dt
 nest.print_time = True
 nest.overwrite_files = True
 
-print("Building network")
-
 ###############################################################################
 # Creation of the nodes using ``Create``. We store the returned handles in
-# variables for later reference. Here the excitatory and inhibitory, as well
-# as the poisson generator and two spike recorders. The spike recorders will
-# later be used to record excitatory and inhibitory spikes. Properties of the
-# nodes are specified via ``params``, which expects a dictionary.
+# variables for later reference.
 
+print("Building network")
 nodes_ex = nest.Create(neuron_model, NE, params=neuron_params_ex)
 nodes_in = nest.Create(neuron_model, NI, params=neuron_params_in)
-noise = nest.Create("poisson_generator", params={"rate": p_rate, "start": 0.0, "stop": 50.0})
+nodes_astro = nest.Create("astrocyte", N_astro)
+noise = nest.Create("poisson_generator", params={"rate": poisson_rate, "start": 0.0, "stop": 50.0})
 espikes = nest.Create("spike_recorder")
 ispikes = nest.Create("spike_recorder")
 
@@ -179,31 +160,17 @@ ispikes = nest.Create("spike_recorder")
 espikes.set(label="brunel-py-ex", record_to="ascii")
 ispikes.set(label="brunel-py-in", record_to="ascii")
 
-print("Connecting devices")
-
-###############################################################################
-# Definition of a synapse using ``CopyModel``, which expects the model name of
-# a pre-defined synapse, the name of the customary synapse and an optional
-# parameter dictionary. The parameters defined in the dictionary will be the
-# default parameter for the customary synapse. Here we define one synapse for
-# the excitatory and one for the inhibitory connections giving the
-# previously defined weights and equal delays.
-
-nest.CopyModel("static_synapse", "excitatory",
-               {"weight": J_ex, "delay": delay})
-nest.CopyModel("static_synapse", "inhibitory",
-               {"weight": J_in, "delay": delay})
-
 #################################################################################
 # Connecting the previously defined poisson generator to the excitatory and
-# inhibitory neurons using the excitatory synapse. Since the poisson
-# generator is connected to all neurons in the population the default rule
-# (``all_to_all``) of ``Connect`` is used. The synaptic properties are inserted
-# via ``syn_spec`` which expects a dictionary when defining multiple variables or
-# a string when simply using a pre-defined synapse.
+# inhibitory neurons using the excitatory synapse. 
 
-nest.Connect(noise, nodes_ex[:int(len(nodes_ex)/50)], syn_spec="excitatory")
-nest.Connect(noise, nodes_in[:int(len(nodes_in)/50)], syn_spec="excitatory")
+print("Connecting devices")
+noise_prob = 0.02 # connection probability with poisson generator
+conn_spec_noise_ex = {"rule": "fixed_outdegree", "outdegree": int(len(nodes_ex)*noise_prob)}
+conn_spec_noise_in = {"rule": "fixed_outdegree", "outdegree": int(len(nodes_in)*noise_prob)}
+syn_params_noise = {"synapse_model": "static_synapse", "weight": J_ex, "delay": delay}
+nest.Connect(noise, nodes_ex, conn_spec=conn_spec_noise_ex, syn_spec=syn_params_noise)
+nest.Connect(noise, nodes_in, conn_spec=conn_spec_noise_in, syn_spec=syn_params_noise)
 
 ###############################################################################
 # Connecting the first ``N_rec`` nodes of the excitatory and inhibitory
@@ -211,34 +178,48 @@ nest.Connect(noise, nodes_in[:int(len(nodes_in)/50)], syn_spec="excitatory")
 # Here the same shortcut for the specification of the synapse as defined
 # above is used.
 
-nest.Connect(nodes_ex[:N_rec], espikes, syn_spec="excitatory")
-nest.Connect(nodes_in[:N_rec], ispikes, syn_spec="excitatory")
+nest.Connect(nodes_ex[:N_rec], espikes)
+nest.Connect(nodes_in[:N_rec], ispikes)
+
+###############################################################################
+# Connecting the excitatory population to all neurons. The connections are
+# paired with astrocytes with the "pairwise_bernoulli_astro" rule.
 
 print("Connecting network")
-
 print("Excitatory connections")
+conn_params_astro = {
+                  "rule": "pairwise_bernoulli_astro",
+                  "astrocyte": nodes_astro,
+                  "p": p_neuron,
+                  "p_syn_astro": p_synapse_astrocyte,
+                  "max_astro_per_target": max_astro_per_target
+                  }
+syn_params_astro = {
+                 "synapse_model": "tsodyks_synapse",
+                 "weight": J_ex,
+                 "delay": delay,
+                 "U": 0.5,
+                 "tau_psc": tau_syn_ex,
+                 "tau_fac": 0.0,
+                 "tau_rec": 800.0
+                 }
+nest.Connect(nodes_ex, nodes_ex + nodes_in, conn_params_astro, syn_params_astro)
 
 ###############################################################################
-# Connecting the excitatory population to all neurons using the pre-defined
-# excitatory synapse. Beforehand, the connection parameter are defined in a
-# dictionary. Here we use the connection rule ``fixed_indegree``,
-# which requires the definition of the indegree. Since the synapse
-# specification is reduced to assigning the pre-defined excitatory synapse it
-# suffices to insert a string.
-
-conn_params_ex = {'rule': 'fixed_indegree', 'indegree': CE}
-nest.Connect(nodes_ex, nodes_ex + nodes_in, conn_params_ex, "excitatory")
+# Connecting the inhibitory population to all neurons.
 
 print("Inhibitory connections")
-
-###############################################################################
-# Connecting the inhibitory population to all neurons using the pre-defined
-# inhibitory synapse. The connection parameter as well as the synapse
-# parameter are defined analogously to the connection from the excitatory
-# population defined above.
-
-conn_params_in = {'rule': 'fixed_indegree', 'indegree': CI}
-nest.Connect(nodes_in, nodes_ex + nodes_in, conn_params_in, "inhibitory")
+conn_params_in = {"rule": "pairwise_bernoulli", "p": p_neuron}
+syn_params_in = {
+              "synapse_model": "tsodyks_synapse",
+              "weight": J_in,
+              "delay": delay,
+              "U": 0.04,
+              "tau_psc": tau_syn_in,
+              "tau_fac": 1000.0,
+              "tau_rec": 100.0
+              }
+nest.Connect(nodes_in, nodes_ex + nodes_in, conn_params_in, syn_params_in)
 
 ###############################################################################
 # Storage of the time point after the buildup of the network in a variable.
@@ -274,15 +255,6 @@ rate_ex = events_ex / simtime * 1000.0 / N_rec
 rate_in = events_in / simtime * 1000.0 / N_rec
 
 ###############################################################################
-# Reading out the number of connections established using the excitatory and
-# inhibitory synapse model. The numbers are summed up resulting in the total
-# number of synapses.
-
-num_synapses_ex = nest.GetDefaults("excitatory")["num_connections"]
-num_synapses_in = nest.GetDefaults("inhibitory")["num_connections"]
-num_synapses = num_synapses_ex + num_synapses_in
-
-###############################################################################
 # Establishing the time it took to build and simulate the network by taking
 # the difference of the pre-defined time variables.
 
@@ -293,10 +265,6 @@ sim_time = endsimulate - endbuild
 # Printing the network properties, firing rates and building times.
 
 print("Brunel network simulation (Python)")
-print(f"Number of neurons : {N_neurons}")
-print(f"Number of synapses: {num_synapses}")
-print(f"       Excitatory : {num_synapses_ex}")
-print(f"       Inhibitory : {num_synapses_in}")
 print(f"Excitatory rate   : {rate_ex:.2f} Hz")
 print(f"Inhibitory rate   : {rate_in:.2f} Hz")
 print(f"Building time     : {build_time:.2f} s")

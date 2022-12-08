@@ -670,7 +670,7 @@ jobs:
   test_linux:
     if: ${{ always() && !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    #needs: [build_linux]
+    needs: [build_linux]
     env:
       CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
       NEST_VPATH: "build"
@@ -1020,7 +1020,7 @@ jobs:
 
   build_conda:
     if: false
-    needs: [build_linux]
+    needs: [test_linux, pytest-mac]
     uses: conda-forge/nest-simulator-feedstock/.github/workflows/nest_trigger.yml@f9a89c898b4481931fe6b587c05547b42e758e46
     with:
       # see https://docs.github.com/en/actions/learn-github-actions/contexts#github-context

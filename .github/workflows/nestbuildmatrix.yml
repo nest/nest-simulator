@@ -223,20 +223,19 @@ jobs:
           - "boost, optimize, warning"  # formerly "minimal"
         #  - "openmp, python, gsl, ltdl, boost, optimize, warning"  # formerly "openmp_only"
         #  - "mpi, python, gsl, ltdl, boost, optimize, warning"  # formerly "mpi_only"
-          - "openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning"  # formerly "full"
+        #  - "openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning"  # formerly "full"
 
     steps:
-      - name: "Checkout repository content"
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+      #- name: "Checkout repository content"
+      #  uses: actions/checkout@v3
+      #  with:
+      #    fetch-depth: 0
 
       - name: "Download binary artifacts"
         uses: actions/download-artifact@v3
         #if: '${{ matrix.NEST_BUILD_TYPE }} == "FULL"'
         with:
           name: "build-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
-#####
 
       - name: "Set up Python 3.x"
         uses: actions/setup-python@v4
@@ -249,6 +248,9 @@ jobs:
 
       - name: "Run pytest..."
         run: |
+          pwd
+          ls -lisa
+          cd "$NEST_VPATH"
           pytest pynest/
 
   pytest-mac:
@@ -487,9 +489,9 @@ jobs:
         # openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning, userdoc, music
         use:
           - "boost, optimize, warning"  # formerly "minimal"
-          - "openmp, python, gsl, ltdl, boost, optimize, warning"  # formerly "openmp_only"
-          - "mpi, python, gsl, ltdl, boost, optimize, warning"  # formerly "mpi_only"
-          - "openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning"  # formerly "full"
+        #  - "openmp, python, gsl, ltdl, boost, optimize, warning"  # formerly "openmp_only"
+        #  - "mpi, python, gsl, ltdl, boost, optimize, warning"  # formerly "mpi_only"
+        #  - "openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning"  # formerly "full"
         #include:
         #- os: ubuntu-22.04
         #  cpp_compiler: gcc
@@ -698,25 +700,40 @@ jobs:
         # openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning, userdoc, music
         use:
           - "boost, optimize, warning"  # formerly "minimal"
-          - "openmp, python, gsl, ltdl, boost, optimize, warning"  # formerly "openmp_only"
-          - "mpi, python, gsl, ltdl, boost, optimize, warning"  # formerly "mpi_only"
-          - "openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning"  # formerly "full"
+        #  - "openmp, python, gsl, ltdl, boost, optimize, warning"  # formerly "openmp_only"
+        #  - "mpi, python, gsl, ltdl, boost, optimize, warning"  # formerly "mpi_only"
+        #  - "openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning"  # formerly "full"
         ##include:
         ##- os: ubuntu-22.04
         ##  cpp_compiler: gcc
         ##  use: "openmp, python, gsl, ltdl, boost, optimize, warning"
 
     steps:
+      - name: "Debug job transition"
+        run: |
+          pwd
+          ls -lsia
+
       - name: "Checkout repository content"
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - name: "Debug job transition"
+        run: |
+          pwd
+          ls -lsia
 
       - name: "Download binary artifacts"
         uses: actions/download-artifact@v3
         #if: '${{ matrix.NEST_BUILD_TYPE }} == "FULL"'
         with:
           name: "build-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
+
+      - name: "Debug job transition"
+        run: |
+          pwd
+          ls -lsia
 
       - name: "Set up Python 3.x"
         uses: actions/setup-python@v4
@@ -775,6 +792,7 @@ jobs:
 
       - name: "Run NEST testsuite"
         run: |
+
           cd "$NEST_VPATH"
           ls -lisa "${NEST_VPATH}"
           echo "-- testsuite/ --"

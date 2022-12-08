@@ -30,7 +30,7 @@ r"""PyNEST - Python interface for the NEST Simulator
 * ``nest.synapse_models`` shows all available synapse models.
 
 * To get details on the model equations and parameters,
-  please check our documentation at https://nest-simulator.readthedocs.io/.
+  please check out our model documentation at https://nest-simulator.readthedocs.io/en/stable/models/index.html.
 
 * To get help on functions in the ``nest`` package, use Python's
   ``help()`` function or IPython's ``?``, e.g.

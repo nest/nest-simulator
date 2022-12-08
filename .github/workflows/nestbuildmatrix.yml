@@ -667,125 +667,125 @@ jobs:
             result/**
 
 ##################
-test_linux:
-    if: ${{ always() && !contains(github.event.head_commit.message, 'ci skip') }}
-    runs-on: ${{ matrix.os }}
-    #needs: [build_linux]
-    env:
-      CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
-      NEST_VPATH: "build"
-      NEST_RESULT: "result"
-
-    strategy:
-      fail-fast: false
-      # see https://github.com/orgs/community/discussions/26639#discussioncomment-3949595
-      matrix: #*buildmatrix
-        os: ["ubuntu-20.04"]
-        cpp_compiler: ["gcc"]   #, "clang"]
-
-        # available use flags (all default to "OFF"):
-        # openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning, userdoc, music
-        use:
-          - "boost, optimize, warning"  # formerly "minimal"
-          - "openmp, python, gsl, ltdl, boost, optimize, warning"  # formerly "openmp_only"
-          - "mpi, python, gsl, ltdl, boost, optimize, warning"  # formerly "mpi_only"
-          - "openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning"  # formerly "full"
-        ##include:
-        ##- os: ubuntu-22.04
-        ##  cpp_compiler: gcc
-        ##  use: "openmp, python, gsl, ltdl, boost, optimize, warning"
-
-    steps:
-      - name: "Checkout repository content"
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: "Download binary artifacts"
-        uses: actions/download-artifact@v3
-        #if: '${{ matrix.NEST_BUILD_TYPE }} == "FULL"'
-        with:
-          name: "build-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
-
-      - name: "Set up Python 3.x"
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.9
-
-      - name: "Restore apt cache"
-        uses: actions/cache@v3
-        env:
-          cache-name: "apt-cache"
-        with:
-          path: |
-            !/var/cache/apt/archives/lock
-            !/var/cache/apt/archives/partial
-            /var/cache/apt
-          key: ${{ runner.os }}-system-${{ env.cache-name }}-${{ hashFiles('**/environment.yml') }}
-          restore-keys: |
-            ${{ runner.os }}-system-${{ env.cache-name }}-
-            ${{ runner.os }}-system-
-
-      - name: "Install Linux system dependencies"
-        run: |
-          sudo apt-get update
-          # https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
-          sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq libpcre3 libpcre3-dev libboost-all-dev
-          sudo apt-get install openmpi-bin libopenmpi-dev libgsl0-dev tcl8.6 tcl8.6-dev tk8.6-dev
-          sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev
-
-      - name: "Restore pip cache"
-        env:
-          cache-name: "pip-cache"
-        uses: actions/cache@v3
-        with:
-          path: |
-            /opt/hostedtoolcache/Python/**/site-packages/*
-            $HOME/.cache/pip
-          key: ${{ runner.os }}-python-${{ env.cache-name }}-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-python-${{ env.cache-name }}-
-            ${{ runner.os }}-python-
-
-      - name: "Install Python dependencies"
-        run: |
-          python -m pip install --upgrade pip setuptools
-          python -c "import setuptools; print('package location:', setuptools.__file__)"
-          python -m pip install --force-reinstall --upgrade scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc pandas
-          test \! -e "=2"   # assert junitparser is correctly quoted and '>' is not interpreted as shell redirect
-          python -c "import pytest; print('package location:', pytest.__file__)"
-          pip list
-
-      - name: "Initialize Matplotlibrc"
-        run: |
-          # initialize matplotlib backend
-          mkdir -p $HOME/.matplotlib
-          echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
-
-      - name: "Run NEST testsuite"
-        run: |
-          cd "$NEST_VPATH"
-          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-          echo "+               R U N   N E S T   T E S T S U I T E                           +"
-          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-          echo "MSGBLD0290: Running make installcheck."
-          make VERBOSE=1 installcheck
-          echo "MSGBLD0300: Make installcheck completed."
-
-          # END formerly ./build_support/ci_build.sh 2>&1 | tee ci_build.sh.log
-          #
-          #python build_support/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
-
-      - name: "Upload install and test results"
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: "build-logs-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
-          path: |
-            ci_build.sh.log
-            install_manifest.txt
-            **.log
-            build/reports/**
+#test_linux:
+#    if: ${{ always() && !contains(github.event.head_commit.message, 'ci skip') }}
+#    runs-on: ${{ matrix.os }}
+#    #needs: [build_linux]
+#    env:
+#      CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
+#      NEST_VPATH: "build"
+#      NEST_RESULT: "result"
+#
+#    strategy:
+#      fail-fast: false
+#      # see https://github.com/orgs/community/discussions/26639#discussioncomment-3949595
+#      matrix: #*buildmatrix
+#        os: ["ubuntu-20.04"]
+#        cpp_compiler: ["gcc"]   #, "clang"]
+#
+#        # available use flags (all default to "OFF"):
+#        # openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning, userdoc, music
+#        use:
+#          - "boost, optimize, warning"  # formerly "minimal"
+#          - "openmp, python, gsl, ltdl, boost, optimize, warning"  # formerly "openmp_only"
+#          - "mpi, python, gsl, ltdl, boost, optimize, warning"  # formerly "mpi_only"
+#          - "openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning"  # formerly "full"
+#        ##include:
+#        ##- os: ubuntu-22.04
+#        ##  cpp_compiler: gcc
+#        ##  use: "openmp, python, gsl, ltdl, boost, optimize, warning"
+#
+#    steps:
+#      - name: "Checkout repository content"
+#        uses: actions/checkout@v3
+#        with:
+#          fetch-depth: 0
+#
+#      - name: "Download binary artifacts"
+#        uses: actions/download-artifact@v3
+#        #if: '${{ matrix.NEST_BUILD_TYPE }} == "FULL"'
+#        with:
+#          name: "build-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
+#
+#      - name: "Set up Python 3.x"
+#        uses: actions/setup-python@v4
+#        with:
+#          python-version: 3.9
+#
+#      - name: "Restore apt cache"
+#        uses: actions/cache@v3
+#        env:
+#          cache-name: "apt-cache"
+#        with:
+#          path: |
+#            !/var/cache/apt/archives/lock
+#            !/var/cache/apt/archives/partial
+#            /var/cache/apt
+#          key: ${{ runner.os }}-system-${{ env.cache-name }}-${{ hashFiles('**/environment.yml') }}
+#          restore-keys: |
+#            ${{ runner.os }}-system-${{ env.cache-name }}-
+#            ${{ runner.os }}-system-
+#
+#      - name: "Install Linux system dependencies"
+#        run: |
+#          sudo apt-get update
+#          # https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
+#          sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq libpcre3 libpcre3-dev libboost-all-dev
+#          sudo apt-get install openmpi-bin libopenmpi-dev libgsl0-dev tcl8.6 tcl8.6-dev tk8.6-dev
+#          sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev
+#
+#      - name: "Restore pip cache"
+#        env:
+#          cache-name: "pip-cache"
+#        uses: actions/cache@v3
+#        with:
+#          path: |
+#            /opt/hostedtoolcache/Python/**/site-packages/*
+#            $HOME/.cache/pip
+#          key: ${{ runner.os }}-python-${{ env.cache-name }}-${{ hashFiles('**/requirements.txt') }}
+#          restore-keys: |
+#            ${{ runner.os }}-python-${{ env.cache-name }}-
+#            ${{ runner.os }}-python-
+#
+#      - name: "Install Python dependencies"
+#        run: |
+#          python -m pip install --upgrade pip setuptools
+#          python -c "import setuptools; print('package location:', setuptools.__file__)"
+#          python -m pip install --force-reinstall --upgrade scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc pandas
+#          test \! -e "=2"   # assert junitparser is correctly quoted and '>' is not interpreted as shell redirect
+#          python -c "import pytest; print('package location:', pytest.__file__)"
+#          pip list
+#
+#      - name: "Initialize Matplotlibrc"
+#        run: |
+#          # initialize matplotlib backend
+#          mkdir -p $HOME/.matplotlib
+#          echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
+#
+#      - name: "Run NEST testsuite"
+#        run: |
+#          cd "$NEST_VPATH"
+#          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+#          echo "+               R U N   N E S T   T E S T S U I T E                           +"
+#          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+#          echo "MSGBLD0290: Running make installcheck."
+#          make VERBOSE=1 installcheck
+#          echo "MSGBLD0300: Make installcheck completed."
+#
+#          # END formerly ./build_support/ci_build.sh 2>&1 | tee ci_build.sh.log
+#          #
+#          #python build_support/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
+#
+#      - name: "Upload install and test results"
+#        uses: actions/upload-artifact@v3
+#        if: always()
+#        with:
+#          name: "build-logs-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
+#          path: |
+#            ci_build.sh.log
+#            install_manifest.txt
+#            **.log
+#            build/reports/**
   build_linux_oldscript:
     #if: ${{ always() && !contains(github.event.head_commit.message, 'ci skip') }}
     if: false

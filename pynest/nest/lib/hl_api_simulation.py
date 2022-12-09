@@ -329,7 +329,7 @@ def EnableStructuralPlasticity():
 
     """
 
-    sr('EnableStructuralPlasticity')
+    nestkernel.llapi_enable_structural_plasticity()
 
 
 @check_stack
@@ -341,4 +341,4 @@ def DisableStructuralPlasticity():
     EnableStructuralPlasticity
 
     """
-    sr('DisableStructuralPlasticity')
+    nestkernel.llapi_disable_structural_plasticity()

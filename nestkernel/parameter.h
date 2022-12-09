@@ -39,7 +39,7 @@ namespace nest
 {
 class Parameter;
 using ParameterPTR = std::shared_ptr< Parameter >;
-  
+
 class AbstractLayer;
 
 /**
@@ -421,7 +421,7 @@ public:
     : Parameter( true )
     , dimension_( 0 )
   {
-    d.update_value( names::dimension, dimension_ );
+    d.update_integer_value( names::dimension, dimension_ );
     if ( dimension_ < 0 )
     {
       throw BadParameterValue( "Spatial distance parameter dimension cannot be negative." );

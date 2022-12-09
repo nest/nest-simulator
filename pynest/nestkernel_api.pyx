@@ -271,6 +271,14 @@ def llapi_reset_kernel():
     reset_kernel()
 
 @catch_cpp_error
+def llapi_enable_structural_plasticity():
+    enable_structural_plasticity()
+
+@catch_cpp_error
+def llapi_disable_structural_plasticity():
+    disable_structural_plasticity()
+
+@catch_cpp_error
 def llapi_create(model, long n):
     cdef NodeCollectionPTR gids
     gids = create(pystr_to_string(model), n)

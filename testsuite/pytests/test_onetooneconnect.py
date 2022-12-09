@@ -94,8 +94,8 @@ class OneToOneConnectTestCase(unittest.TestCase):
         vm = nest.Create('voltmeter')
         sr = nest.Create('spike_recorder')
 
-        self.assertRaisesRegex(nest.kernel.NESTError, "IllegalConnection", nest.Connect, n, vm)
-        self.assertRaisesRegex(nest.kernel.NESTError, "IllegalConnection", nest.Connect, sr, n)
+        self.assertRaisesRegex(nest.kernel.NESTError, "Creation of connection is not possible", nest.Connect, n, vm)
+        self.assertRaisesRegex(nest.kernel.NESTError, "Creation of connection is not possible", nest.Connect, sr, n)
 
 
 def suite():

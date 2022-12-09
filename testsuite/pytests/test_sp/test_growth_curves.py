@@ -309,14 +309,14 @@ class TestGrowthCurve(unittest.TestCase):
 
         for t_i, t in enumerate(self.sim_steps):
             for n_i in range(len(self.pop)):
-                self.ca_nest[n_i][t_i], synaptic_elements = nest.GetStatus(
-                    self.pop[n_i], ('Ca', 'synaptic_elements'))[0]
+                pop_status = nest.GetStatus(self.pop[n_i], (['Ca', 'synaptic_elements']))[0]
+                self.ca_nest[n_i][t_i], synaptic_elements = [pop_status[k] for k in ('Ca', 'synaptic_elements')]
                 self.se_nest[n_i][t_i] = synaptic_elements['se']['z']
             nest.Simulate(self.sim_step)
 
         tmp = nest.GetStatus(self.spike_recorder, 'events')[0]
-        spikes_all = tmp['times']
-        senders_all = tmp['senders']
+        spikes_all = numpy.array(tmp['times'])
+        senders_all = numpy.array(tmp['senders'])
         for n_i, n in enumerate(self.pop):
             spikes = spikes_all[senders_all == n.get('global_id')]
             [sei.reset() for sei in self.se_integrator]

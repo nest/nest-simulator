@@ -832,7 +832,7 @@ class NEASTTestCase(unittest.TestCase):
 
         with self.assertRaisesRegex(nest.kernel.NESTError,
                                     "in llapi_connect: "
-                                    "Creation of connection is not possible because:"
+                                    "Creation of connection is not possible because:\n"
                                     "Cannot connect with unknown recordable v_comp1"):
             nest.Connect(mm, n_neat)
 

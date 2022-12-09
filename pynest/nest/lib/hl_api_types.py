@@ -396,7 +396,7 @@ class NodeCollection:
         if isinstance(result, dict) and len(self) == 1:
             new_result = {}
             for k, v in result.items():
-                new_result[k] = v[0] if is_iterable(v) and len(v) == 1 else v
+                new_result[k] = v[0] if is_iterable(v) and len(v) == 1 and type(v) is not dict else v
             result = new_result
 
         if pandas_output:

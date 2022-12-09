@@ -295,6 +295,19 @@ enable_dryrun_mode( const index n_procs )
 }
 
 void
+enable_structural_plasticity()
+{
+  kernel().sp_manager.enable_structural_plasticity();
+}
+
+
+void
+disable_structural_plasticity()
+{
+  kernel().sp_manager.disable_structural_plasticity();
+}
+
+void
 register_logger_client( const deliver_logging_event_ptr client_callback )
 {
   kernel().logging_manager.register_logging_client( client_callback );

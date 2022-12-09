@@ -97,6 +97,10 @@ cdef extern from "mask.h" namespace "nest":
 cdef extern from "nest.h" namespace "nest":
     void init_nest( int* argc, char** argv[] )
     void reset_kernel()
+
+    void enable_structural_plasticity() except +
+    void disable_structural_plasticity() except +
+
     NodeCollectionPTR create( const string model_name, const long n ) except +
     NodeCollectionPTR create_spatial( const dictionary& ) except +
 

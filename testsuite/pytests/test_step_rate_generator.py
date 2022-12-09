@@ -64,12 +64,9 @@ class StepRateGeneratorTestCase(unittest.TestCase):
 
         # read data from multimeter
         data = nest.GetStatus(mm)[0]['events']
-        rates_neuron = np.array(
-            data['rate'][np.where(data['senders'] == neuron.get('global_id'))])
-        rates_srg = np.array(data['rate'][
-            np.where(data['senders'] == srg.get('global_id'))])
-        times = np.array(data['times'][
-            np.where(data['senders'] == neuron.get('global_id'))])
+        senders = np.array(data['senders'])
+        rates_neuron = np.array(data['rate'])[senders == neuron.get('global_id')]
+        rates_srg = np.array(data['rate'])[np.where(senders == srg.get('global_id'))]
 
         # make sure that srg produces the desired rates
         assert(np.array_equal(rates, rates_srg))

@@ -94,7 +94,6 @@ private:
     {
       std::string msg = std::string( "Failed to cast '" ) + key + "' from " + debug_type( value ) + " to type "
         + std::string( boost::core::demangle( typeid( T ).name() ) );
-      std::cerr << msg << "\n";
       throw nest::TypeMismatch( msg );
     }
   }
@@ -125,7 +124,6 @@ private:
     // Not an integer type
     std::string msg =
       std::string( "Failed to cast '" ) + key + "' from " + debug_type( at( key ) ) + " to an integer type ";
-    std::cerr << msg << "\n";
     throw nest::TypeMismatch( msg );
   }
 
@@ -249,7 +247,7 @@ public:
    * @param what Which parameter triggers the error.
    * @throws UnaccessedDictionaryEntry if there are unaccessed dictionary entries.
    */
-  void all_entries_accessed( const std::string where, const std::string what ) const;
+  void all_entries_accessed( const std::string& where, const std::string& what ) const;
 
   // Wrappers for access flags
   boost::any& operator[]( const std::string& key );

@@ -486,7 +486,6 @@ def get_parameters(nc, param):
     """
     # param is single literal
     if isinstance(param, str):
-        print("### 6", param)
         result = nestkernel.llapi_get_nc_status(nc._datum, param)
     elif is_iterable(param):
         result = {param_name: get_parameters(nc, param_name) for param_name in param}

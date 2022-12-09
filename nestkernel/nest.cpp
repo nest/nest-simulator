@@ -66,6 +66,8 @@
 #include "parrot_neuron_ps.h"
 #include "step_current_generator.h"
 #include "step_rate_generator.h"
+#include "siegert_neuron.h"
+#include "sigmoid_rate_gg_1998.h"
 
 #include "aeif_psc_alpha.h"
 #include "aeif_psc_delta.h"
@@ -88,6 +90,7 @@
 #include "cont_delay_synapse.h"
 #include "cont_delay_synapse_impl.h"
 #include "diffusion_connection.h"
+#include "rate_connection_delayed.h"
 #include "gap_junction.h"
 #include "ht_synapse.h"
 #include "jonke_synapse.h"
@@ -165,6 +168,7 @@ init_nest( int* argc, char** argv[] )
   kernel().model_manager.register_node_model< pp_psc_delta >( "pp_psc_delta" );
   kernel().model_manager.register_node_model< lin_rate_ipn >( "lin_rate_ipn" );
   kernel().model_manager.register_node_model< iaf_cond_alpha >( "iaf_cond_alpha" );
+  kernel().model_manager.register_node_model< rate_transformer_sigmoid_gg_1998 >( "rate_transformer_sigmoid_gg_1998" );
 
   kernel().model_manager.register_node_model< tanh_rate_ipn >( "tanh_rate_ipn" );
   kernel().model_manager.register_node_model< lin_rate_opn >( "lin_rate_opn" );
@@ -174,6 +178,7 @@ init_nest( int* argc, char** argv[] )
   kernel().model_manager.register_node_model< hh_psc_alpha_clopath >( "hh_psc_alpha_clopath" );
   kernel().model_manager.register_node_model< iaf_cond_exp >( "iaf_cond_exp" );
   kernel().model_manager.register_node_model< aeif_cond_exp >( "aeif_cond_exp" );
+  kernel().model_manager.register_node_model< siegert_neuron >( "siegert_neuron" );
 
   kernel().model_manager.register_node_model< aeif_psc_alpha >( "aeif_psc_alpha" );
   kernel().model_manager.register_node_model< aeif_psc_delta >( "aeif_psc_delta" );
@@ -216,6 +221,16 @@ init_nest( int* argc, char** argv[] )
   kernel().model_manager.register_connection_model< urbanczik_synapse >(
     "urbanczik_synapse", default_connection_model_flags | RegisterConnectionModelFlags::REQUIRES_URBANCZIK_ARCHIVING );
   kernel().model_manager.register_connection_model< vogels_sprekeler_synapse >( "vogels_sprekeler_synapse" );
+
+  // register secondary connection models
+  kernel().model_manager.register_secondary_connection_model< GapJunction >(
+    "gap_junction", RegisterConnectionModelFlags::REQUIRES_SYMMETRIC | RegisterConnectionModelFlags::SUPPORTS_WFR );
+  kernel().model_manager.register_secondary_connection_model< RateConnectionInstantaneous >(
+    "rate_connection_instantaneous", RegisterConnectionModelFlags::SUPPORTS_WFR );
+  kernel().model_manager.register_secondary_connection_model< RateConnectionDelayed >(
+    "rate_connection_delayed", RegisterConnectionModelFlags::HAS_DELAY );
+  kernel().model_manager.register_secondary_connection_model< DiffusionConnection >(
+    "diffusion_connection", RegisterConnectionModelFlags::SUPPORTS_WFR );
 
 
   // Add connection rules

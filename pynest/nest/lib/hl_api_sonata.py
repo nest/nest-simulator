@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Class for creating networks from SONATA files
+Class for building and simulating networks specified by the SONATA data format
 """
 
 import os
@@ -49,7 +49,7 @@ __all__ = [
 ]
 
 
-class SonataConnector(object):
+class SonataConnector():
     """ Class for creating networks from SONATA files.
 
     The nodes are created on Python level by iterating the SONATA node files and corresponding CSV parameter
@@ -76,6 +76,7 @@ class SonataConnector(object):
         self.node_collections = {}
         self.local_node_collections = {}
         self.edge_types = []
+        self._chunk_size_default = 1048576  # 2^20
 
         if not have_hdf5:
             raise kernel.NESTError("Cannot use SonataConnector because NEST was compiled without HDF5 support")
@@ -183,10 +184,6 @@ class SonataConnector(object):
                         self.node_collections[population_name] = nodes
             else:
                 raise NotImplementedError("More than one NEST model per csv file currently not implemented")
-
-        # local NC
-        for population_name, nc in self.node_collections.items():
-            self.local_node_collections[population_name] = GetLocalNodeCollection(nc)
 
     def is_unique_(self, col):
         """Check if all values in column are unique.
@@ -338,17 +335,25 @@ class SonataConnector(object):
 
             self.edge_types.append(edge_dict)
 
-    def Connect(self):
+    def Connect(self, chunk_size=None):
         """Connect nodes in SONATA edge files.
 
         NEST kernel will iterate the list in `edge_types` containing dictionaries with the edge files and synapse
         dictionaries, and use the `NodeCollection`s given in `node_collections` to create the connections.
         """
+
+        if chunk_size is None:
+            chunk_size = self._chunk_size_default
+
+        if not isinstance(chunk_size, int):
+            raise TypeError("chunk_size must be passed as int")
+        if chunk_size <= 0:
+            raise ValueError("chunk_size must be strictly positive")
+
         self.create_edge_dict_()
 
         sonata_dynamics = {'nodes': self.node_collections,
-                           'edges': self.edge_types,
-                           'local_nodes': self.local_node_collections}
+                           'edges': self.edge_types}
         # Check if HDF5 files exists and are not blocked.
         for d in self.edge_types:
             try:
@@ -359,9 +364,10 @@ class SonataConnector(object):
 
         # print(sonata_dynamics)
         sps(sonata_dynamics)
+        sps(chunk_size)
         sr('Connect_sonata')
 
-    def CreateSonataNetwork(self, simulate=False):
+    def CreateSonataNetwork(self, chunk_size=None, simulate=False):
         """ Create network defined in SONATA files.
 
         Convenience function for creating networks in NEST from SONATA files.
@@ -371,6 +377,12 @@ class SonataConnector(object):
         simulate bool (optional)
             Whether or not to simulate
         """
+
+        if chunk_size is not None:
+            if not isinstance(chunk_size, int):
+                raise TypeError("chunk_size must be passed as int")
+            if chunk_size <= 0:
+                raise ValueError("chunk_size must be strictly positive")
 
         if self.config['target_simulator'] != 'NEST':
             raise NotImplementedError('Only `target_simulator` of type NEST is supported.')
@@ -382,7 +394,7 @@ class SonataConnector(object):
 
         # Create network
         self.Create()
-        self.Connect()
+        self.Connect(chunk_size=chunk_size)
 
         if simulate:
             simtime = 0

@@ -951,13 +951,14 @@ NestModule::ConnectSonata_D_Function::execute( SLIInterpreter* i ) const
 {
   kernel().connection_manager.sw_construction_connect.start();
 
-  i->assert_stack_load( 1 );
+  i->assert_stack_load( 2 );
 
-  DictionaryDatum dynamics = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  DictionaryDatum sonata_dynamics = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
+  const long chunk_size = getValue< long >( i->OStack.pick( 0 ) );
 
-  kernel().connection_manager.connect_sonata( dynamics );
+  kernel().connection_manager.connect_sonata( sonata_dynamics, chunk_size );
 
-  i->OStack.pop( 1 );
+  i->OStack.pop( 2 );
   i->EStack.pop();
 
   kernel().connection_manager.sw_construction_connect.stop();

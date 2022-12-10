@@ -1081,7 +1081,7 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/Connect_sonata [/dictionarytype]
+/Connect_sonata [/dictionarytype /integertype]
 {
   ConnectSonata_D
 } def

@@ -615,7 +615,8 @@ nest::ConnectionManager::connect_arrays( long* sources,
   const index synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_model );
 
   // Increments pointers to weight and delay, if they are specified.
-  auto increment_wd = [weights, delays]( decltype( weights ) & w, decltype( delays ) & d ) {
+  auto increment_wd = [ weights, delays ]( decltype( weights ) & w, decltype( delays ) & d )
+  {
     if ( weights != nullptr )
     {
       ++w;
@@ -726,10 +727,10 @@ nest::ConnectionManager::connect_arrays( long* sources,
 }
 
 void
-nest::ConnectionManager::connect_sonata( const DictionaryDatum& sonata_dynamics )
+nest::ConnectionManager::connect_sonata( const DictionaryDatum& sonata_dynamics, const long chunk_size )
 {
 #ifdef HAVE_HDF5
-  SonataConnector sonata_connector( sonata_dynamics );
+  SonataConnector sonata_connector( sonata_dynamics, chunk_size );
 
   // Set flag before calling sonata_connector.connect() in case exception is thrown after some connections have been
   // created.

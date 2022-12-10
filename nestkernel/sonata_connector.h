@@ -61,7 +61,7 @@ class SonataConnector
 {
 
 public:
-  SonataConnector( const DictionaryDatum& sonata_dynamics );
+  SonataConnector( const DictionaryDatum& sonata_dynamics, const long chunk_size );
   ~SonataConnector();
 
   /**
@@ -195,14 +195,6 @@ private:
     hsize_t chunk_size,
     hsize_t offset );
 
-  /*
-  void read_subset_int_( const H5::DataSet& dataset, std::vector< int >& data_buf, hsize_t chunk_size, hsize_t offset );
-
-  void read_subset_double_( const H5::DataSet& dataset,
-    std::vector< double >& data_buf,
-    hsize_t chunk_size,
-    hsize_t offset );
-  */
 
   double get_syn_property_( const DictionaryDatum& syn_spec,
     hsize_t index,
@@ -210,7 +202,7 @@ private:
     std::vector< double >& data,
     const Name& name );
 
-  void create_connections_in_chunks_( hsize_t num_conn, hsize_t chunk_size );
+  void create_connections_in_chunks_();
 
   void connect_subset_( const hsize_t chunk_size, const hsize_t offset );
 
@@ -222,8 +214,6 @@ private:
 
   hsize_t get_num_connections_();
 
-  hsize_t get_chunk_size_( hsize_t num_conn );
-
   hsize_t get_nrows_( H5::DataSet dataset, int ndim );
 
 
@@ -234,6 +224,9 @@ private:
 
   //! Dictionary containing SONATA dynamics
   DictionaryDatum sonata_dynamics_;
+
+  //! Size of chunk
+  hsize_t chunk_size_;
 
   //! Indicates whether weights are given as dataset in SONATA file
   bool weight_dataset_exist_;

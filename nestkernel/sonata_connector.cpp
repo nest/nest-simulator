@@ -50,15 +50,9 @@ extern "C" herr_t get_member_names_callback_( hid_t loc_id, const char* name, co
 namespace nest
 {
 
-// constexpr hsize_t CHUNK_SIZE = 10000;      // 1e4
-// constexpr hsize_t CHUNK_SIZE = 100000;     // 1e5
-// constexpr hsize_t CHUNK_SIZE = 1000000; // 1e6
-// constexpr hsize_t CHUNK_SIZE = 10000000; // 1e7
-// constexpr hsize_t CHUNK_SIZE = 100000000; // 1e8
-constexpr hsize_t CHUNK_SIZE = 1000000000; // 1e9
-
-SonataConnector::SonataConnector( const DictionaryDatum& sonata_dynamics )
+SonataConnector::SonataConnector( const DictionaryDatum& sonata_dynamics, const long chunk_size )
   : sonata_dynamics_( sonata_dynamics )
+  , chunk_size_( chunk_size )
   , weight_dataset_exist_( false )
   , delay_dataset_exist_( false )
 {
@@ -109,6 +103,8 @@ SonataConnector::connect()
   // - range_to_edge_id has the expected shape after tallying the ranges from node_id_to_range
   // - target_node_id has the expected shape after tallying the number of connections from range_to_edge_id;
   // the remaining datasets then have to be of correct shape because of the above checks
+
+  std::cerr << "chunk size: " << chunk_size_ << "\n";
 
   // TODO: remove debug file
   const auto this_rank = kernel().mpi_manager.get_rank(); // for debugging
@@ -175,9 +171,7 @@ SonataConnector::connect()
       get_attributes_( target_attribute_value_, tgt_node_id_dset_, "node_population" );
 
       // Read datasets and connect sequentially in chunks
-      const auto num_conn = get_num_connections_();
-      const auto chunk_size = get_chunk_size_( num_conn );
-      create_connections_in_chunks_( num_conn, chunk_size );
+      create_connections_in_chunks_();
 
       // Close datasets
       close_dsets_();
@@ -371,12 +365,20 @@ SonataConnector::close_dsets_()
 
 
 void
-SonataConnector::create_connections_in_chunks_( hsize_t num_conn, hsize_t chunk_size )
+SonataConnector::create_connections_in_chunks_()
 {
 
+  // Retrieve number of connections described by datasets
+  auto num_conn = get_num_connections_();
+
+  //  Adjust if chunk_size is too large
+  if ( num_conn < chunk_size_ )
+  {
+    chunk_size_ = num_conn;
+  }
+
   // organize chunks; dv.quot = integral quotient, dv.rem = reaminder
-  // https://learn.microsoft.com/en-us/cpp/c-language/cpp-integer-limits?view=msvc-170
-  auto dv = std::div( static_cast< long long >( num_conn ), static_cast< long long >( chunk_size ) );
+  auto dv = std::div( static_cast< long long >( num_conn ), static_cast< long long >( chunk_size_ ) );
 
   // Iterate chunks
   hsize_t offset = 0; // start coordinates of data selection
@@ -386,9 +388,9 @@ SonataConnector::create_connections_in_chunks_( hsize_t num_conn, hsize_t chunk_
   for ( size_t i = 0; i < dv.quot; i++ )
   {
     // create connections
-    connect_subset_( chunk_size, offset );
+    connect_subset_( chunk_size_, offset );
     // increment offset
-    offset += chunk_size;
+    offset += chunk_size_;
   } // end chunk loop
 
   // Handle remainder
@@ -581,21 +583,6 @@ SonataConnector::get_num_connections_()
   }
 
   return tgt_array_size;
-}
-
-hsize_t
-SonataConnector::get_chunk_size_( hsize_t num_conn )
-{
-  // Set chunk size
-  hsize_t chunk_size = CHUNK_SIZE;
-
-  // adjust if chunk_size is too large
-  if ( num_conn < chunk_size )
-  {
-    chunk_size = num_conn;
-  }
-
-  return chunk_size;
 }
 
 

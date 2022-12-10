@@ -22,14 +22,15 @@
 
 #include "sonata_connector.h"
 
+// TODO: remove duplicate includes? (see header file)
+
 #include "config.h"
 
 #ifdef HAVE_HDF5
 
-#include <cstdlib>
+#include <cstdlib> // for div()
 
 // Includes from nestkernel:
-#include "conn_parameter.h"
 #include "kernel_manager.h"
 #include "vp_manager_impl.h"
 
@@ -41,9 +42,7 @@
 #include <iostream> // for debugging
 #include <stdio.h>  // for debugging
 
-//#define PROFILE_ENABLED false // for profiling
-
-#include "H5Cpp.h" // HDF5 C++ API header file
+#include "H5Cpp.h" // HDF5 C++ API
 
 extern "C" herr_t get_member_names_callback_( hid_t loc_id, const char* name, const H5L_info_t* linfo, void* opdata );
 
@@ -99,29 +98,14 @@ SonataConnector::connect()
   */
   // clang-format on
 
-  // TODO: Consistency checks For indices approach we can ensure that:
-  // - range_to_edge_id has the expected shape after tallying the ranges from node_id_to_range
-  // - target_node_id has the expected shape after tallying the number of connections from range_to_edge_id;
-  // the remaining datasets then have to be of correct shape because of the above checks
-
-  std::cerr << "chunk size: " << chunk_size_ << "\n";
-
-  // TODO: remove debug file
-  const auto this_rank = kernel().mpi_manager.get_rank(); // for debugging
-  const std::string dbg_filename = "dbg_" + std::to_string( this_rank ) + ".txt";
-  std::ofstream dbg_file( dbg_filename );
-
-  auto edges = getValue< ArrayDatum >( sonata_dynamics_->lookup( "edges" ) );
+  auto edges_container = getValue< ArrayDatum >( sonata_dynamics_->lookup( "edges" ) );
 
   // Iterate edge files
-  for ( auto edge_dictionary_datum : edges )
+  for ( auto key_edge_dict : edges_container )
   {
 
-    const auto edge_dict = getValue< DictionaryDatum >( edge_dictionary_datum );
+    const auto edge_dict = getValue< DictionaryDatum >( key_edge_dict );
     fname_ = getValue< std::string >( edge_dict->lookup( "edges_file" ) );
-
-    dbg_file << "Edge file: " << fname_ << "\n";
-    std::cerr << "[Rank " << this_rank << "] Edge file: " << fname_ << "\n";
 
     // Create map of edge type ids to NEST synapse_model ids
     edge_params_ = getValue< DictionaryDatum >( edge_dict->lookup( "edge_synapse" ) );
@@ -148,8 +132,6 @@ SonataConnector::connect()
       std::vector< std::string > edge_id_grp_names;
       const auto num_edge_id_groups = find_edge_id_groups_( pop_grp, edge_id_grp_names );
 
-      // std::cerr << "num_edge_id_groups: " << num_edge_id_groups << "\n";
-
       // Currently only SONATA edge files with one edge id group is supported
       // TODO: Handle more than one edge id group. Check with Allen whether we
       // can require numeric keys, i.e. 0, 1, 2, ..., for edge id groups
@@ -167,8 +149,8 @@ SonataConnector::connect()
       try_open_edge_group_id_dsets_( edge_id_grp );
 
       // Retrieve source and target attributes to find which node population to map to
-      get_attributes_( source_attribute_value_, src_node_id_dset_, "node_population" );
-      get_attributes_( target_attribute_value_, tgt_node_id_dset_, "node_population" );
+      get_attribute_( source_attribute_value_, src_node_id_dset_, "node_population" );
+      get_attribute_( target_attribute_value_, tgt_node_id_dset_, "node_population" );
 
       // Read datasets and connect sequentially in chunks
       create_connections_in_chunks_();
@@ -328,7 +310,7 @@ SonataConnector::is_weight_and_delay_from_dataset_( const H5::Group* group )
 }
 
 void
-SonataConnector::get_attributes_( std::string& attribute_value,
+SonataConnector::get_attribute_( std::string& attribute_value,
   const H5::DataSet& dataset,
   const std::string& attribute_name )
 {
@@ -363,13 +345,11 @@ SonataConnector::close_dsets_()
   }
 }
 
-
 void
 SonataConnector::create_connections_in_chunks_()
 {
-
   // Retrieve number of connections described by datasets
-  auto num_conn = get_num_connections_();
+  const auto num_conn = get_nrows_( tgt_node_id_dset_, 1 );
 
   //  Adjust if chunk_size is too large
   if ( num_conn < chunk_size_ )
@@ -388,7 +368,7 @@ SonataConnector::create_connections_in_chunks_()
   for ( size_t i = 0; i < dv.quot; i++ )
   {
     // create connections
-    connect_subset_( chunk_size_, offset );
+    connect_chunk_( chunk_size_, offset );
     // increment offset
     offset += chunk_size_;
   } // end chunk loop
@@ -396,33 +376,33 @@ SonataConnector::create_connections_in_chunks_()
   // Handle remainder
   if ( dv.rem > 0 )
   {
-    connect_subset_( dv.rem, offset );
+    connect_chunk_( dv.rem, offset );
   }
 }
 
 void
-SonataConnector::connect_subset_( const hsize_t chunk_size, const hsize_t offset )
+SonataConnector::connect_chunk_( const hsize_t chunk_size, const hsize_t offset )
 {
 
   // Read subsets
-  std::vector< int > src_node_id_data_subset( chunk_size );
-  std::vector< int > tgt_node_id_data_subset( chunk_size );
-  std::vector< int > edge_type_id_data_subset( chunk_size );
-  std::vector< double > syn_weight_data_subset( chunk_size );
-  std::vector< double > delay_data_subset( chunk_size );
+  std::vector< unsigned long > src_node_id_data_subset( chunk_size );
+  std::vector< unsigned long > tgt_node_id_data_subset( chunk_size );
+  std::vector< unsigned long > edge_type_id_data_subset( chunk_size );
+  std::vector< double > syn_weight_data_subset;
+  std::vector< double > delay_data_subset;
 
-  read_subset_( src_node_id_dset_, src_node_id_data_subset, H5::PredType::NATIVE_INT, chunk_size, offset );
-  read_subset_( tgt_node_id_dset_, tgt_node_id_data_subset, H5::PredType::NATIVE_INT, chunk_size, offset );
-  read_subset_( edge_type_id_dset_, edge_type_id_data_subset, H5::PredType::NATIVE_INT, chunk_size, offset );
+  read_subset_( src_node_id_dset_, src_node_id_data_subset, H5::PredType::NATIVE_LONG, chunk_size, offset );
+  read_subset_( tgt_node_id_dset_, tgt_node_id_data_subset, H5::PredType::NATIVE_LONG, chunk_size, offset );
+  read_subset_( edge_type_id_dset_, edge_type_id_data_subset, H5::PredType::NATIVE_LONG, chunk_size, offset );
 
   if ( weight_dataset_exist_ )
   {
-    // syn_weight_data_subset.reserve( chunk_size );
+    syn_weight_data_subset.resize( chunk_size );
     read_subset_( syn_weight_dset_, syn_weight_data_subset, H5::PredType::NATIVE_DOUBLE, chunk_size, offset );
   }
   if ( delay_dataset_exist_ )
   {
-    // delay_data_subset.reserve( chunk_size );
+    delay_data_subset.resize( chunk_size );
     read_subset_( delay_dset_, delay_data_subset, H5::PredType::NATIVE_DOUBLE, chunk_size, offset );
   }
 
@@ -430,36 +410,32 @@ SonataConnector::connect_subset_( const hsize_t chunk_size, const hsize_t offset
 
   // Retrieve the correct NodeCollections
   const auto nest_nodes = getValue< DictionaryDatum >( sonata_dynamics_->lookup( "nodes" ) );
-  const auto current_source_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( source_attribute_value_ ) );
-  const auto current_target_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( target_attribute_value_ ) );
-  const auto snode_begin = current_source_nc->begin();
-  const auto tnode_begin = current_target_nc->begin();
+  const auto src_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( source_attribute_value_ ) );
+  const auto tgt_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( target_attribute_value_ ) );
+  const auto snode_begin = src_nc->begin();
+  const auto tnode_begin = tgt_nc->begin();
 
 #pragma omp parallel
   {
     const auto tid = kernel().vp_manager.get_thread_id();
-    const auto this_vp = kernel().vp_manager.thread_to_vp( tid );
     RngPtr rng = get_vp_specific_rng( tid );
 
     try
     {
-
       // Iterate the datasets and create the connections
       for ( hsize_t i = 0; i < chunk_size; ++i )
       {
 
-        const auto sonata_target_id = tgt_node_id_data_subset[ i ];
-        const index tnode_id = ( *( tnode_begin + sonata_target_id ) ).node_id;
+        const auto sonata_tgt_id = tgt_node_id_data_subset[ i ];
+        const index tnode_id = ( *( tnode_begin + sonata_tgt_id ) ).node_id;
 
-        thread tgt_vp = kernel().vp_manager.node_id_to_vp( tnode_id );
-
-        if ( tgt_vp != this_vp )
+        if ( not kernel().vp_manager.is_node_id_vp_local( tnode_id ) )
         {
           continue;
         }
 
-        const auto sonata_source_id = src_node_id_data_subset[ i ];
-        const index snode_id = ( *( snode_begin + sonata_source_id ) ).node_id;
+        const auto sonata_src_id = src_node_id_data_subset[ i ];
+        const index snode_id = ( *( snode_begin + sonata_src_id ) ).node_id;
 
         Node* target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
         const thread target_thread = target->get_thread();
@@ -475,9 +451,9 @@ SonataConnector::connect_subset_( const hsize_t chunk_size, const hsize_t offset
         kernel().connection_manager.connect( snode_id,
           target,
           target_thread,
-          type_id_2_syn_model_.at( edge_type_id ),             // static synapse
-          type_id_2_param_dicts_.at( edge_type_id ).at( tid ), // send empty param dict
-          delay,                                               // fixed as 1
+          type_id_2_syn_model_.at( edge_type_id ),
+          type_id_2_param_dicts_.at( edge_type_id ).at( tid ),
+          delay,
           weight );
 
       } // end for
@@ -485,14 +461,13 @@ SonataConnector::connect_subset_( const hsize_t chunk_size, const hsize_t offset
 
     catch ( std::exception& err )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
+      // We must create a new exception here, err's lifetime ends at the end of the catch block.
       exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
 
   } // end parallel region
 
-  // check if any exceptions have been raised
+  // Check if any exceptions have been raised
   for ( thread thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
   {
     if ( exceptions_raised_.at( thr ).get() )
@@ -506,29 +481,14 @@ hsize_t
 SonataConnector::get_nrows_( H5::DataSet dataset, int ndim )
 {
 
-  H5::DataSpace dataspace = dataset.getSpace();
+  H5::DataSpace dspace = dataset.getSpace();
   hsize_t dims_out[ ndim ];
-  dataspace.getSimpleExtentDims( dims_out, NULL );
-  dataspace.close();
+  dspace.getSimpleExtentDims( dims_out, NULL );
+  dspace.close();
 
   return dims_out[ 0 ];
 }
 
-
-hsize_t
-SonataConnector::get_num_elements_( const H5::DataSet& dataset )
-{
-
-  // TODO: Remove this function
-
-  // std::cerr << "get_num_elements_...\n";
-  H5::DataSpace dataspace = dataset.getSpace();
-  hsize_t dims_out[ 1 ];
-  dataspace.getSimpleExtentDims( dims_out, NULL );
-  // std::cerr << "dims_out: " << *dims_out << "\n";
-  dataspace.close();
-  return *dims_out;
-}
 
 void
 SonataConnector::get_member_names_( hid_t loc_id, std::vector< std::string >& names )
@@ -553,6 +513,7 @@ SonataConnector::find_edge_id_groups_( H5::Group* pop_grp, std::vector< std::str
 
   for ( const auto& name : population_group_dset_and_subgroup_names )
   {
+    // TODO: The below bool is convoluted, try to write it cleaner
     is_edge_id_name = ( name.find_first_not_of( "0123456789" ) == std::string::npos );
 
     if ( is_edge_id_name )
@@ -566,26 +527,6 @@ SonataConnector::find_edge_id_groups_( H5::Group* pop_grp, std::vector< std::str
 }
 
 
-hsize_t
-SonataConnector::get_num_connections_()
-{
-
-  // const auto src_array_size = get_num_elements_( src_node_id_dset_ );
-  // const auto tgt_array_size = get_num_elements_( tgt_node_id_dset_ );
-
-  const auto src_array_size = get_nrows_( src_node_id_dset_, 1 );
-  const auto tgt_array_size = get_nrows_( tgt_node_id_dset_, 1 );
-
-  // make sure that target and source population have the same size
-  if ( src_array_size != tgt_array_size )
-  {
-    throw DimensionMismatch( "Source and Target population must be of the same size." );
-  }
-
-  return tgt_array_size;
-}
-
-
 template < typename T >
 void
 SonataConnector::read_subset_( const H5::DataSet& dataset,
@@ -595,23 +536,28 @@ SonataConnector::read_subset_( const H5::DataSet& dataset,
   hsize_t offset )
 {
 
-  // Define Memory Dataspace. Get file dataspace and select
-  // hyperslab from the file dataspace. In call for selecting
-  // hyperslab 'stride' and 'block' are implicitly given as NULL.
-  // H5S_SELECT_SET replaces any existing selection with the parameters
-  // from this call
-  H5::DataSpace dataspace = dataset.getSpace();
-  // Get the number of dimensions in the dataspace.
-  int array_dim = dataspace.getSimpleExtentNdims(); // should maybe assert if array_dim == 1
-  dataspace.selectHyperslab( H5S_SELECT_SET, &chunk_size, &offset );
-  H5::DataSpace memspace( array_dim, &chunk_size, NULL );
+  try
+  {
+    // Get dataspace
+    H5::DataSpace dspace = dataset.getSpace();
 
-  // Read subset
-  dataset.read( data_buf.data(), datatype, memspace, dataspace );
+    // Select hyperslab. H5S_SELECT_SET replaces any existing selection with this call
+    dspace.selectHyperslab( H5S_SELECT_SET, &chunk_size, &offset );
 
-  // Close dataspaces
-  dataspace.close();
-  memspace.close();
+    // Set memoryspace
+    H5::DataSpace mspace( 1, &chunk_size, NULL );
+
+    // Read dataset
+    dataset.read( data_buf.data(), datatype, mspace, dspace );
+
+    // Close memory- and dataspace
+    dspace.close();
+    mspace.close();
+  }
+  catch ( const H5::Exception& e )
+  {
+    throw KernelException( "Unable to read datasets in " + fname_ + ": " + e.getDetailMsg() );
+  }
 }
 
 void
@@ -622,14 +568,11 @@ SonataConnector::create_type_id_2_syn_spec_( DictionaryDatum edge_params )
     const auto type_id = std::stoi( it->first.toString() );
     auto d = getValue< DictionaryDatum >( it->second );
     const auto syn_name = getValue< std::string >( ( *d )[ "synapse_model" ] );
-    // std::cerr << "type_id=" << type_id << " syn_name=" << syn_name << "\n";
 
     // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
     const index synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
-    // std::cerr << "synapse_model_id=" << synapse_model_id << "\n";
 
     set_synapse_params( d, synapse_model_id, type_id );
-    // std::cerr << "synapse_model_id=" << synapse_model_id << "\n";
     type_id_2_syn_model_[ type_id ] = synapse_model_id;
   }
 }
@@ -637,7 +580,6 @@ SonataConnector::create_type_id_2_syn_spec_( DictionaryDatum edge_params )
 void
 SonataConnector::set_synapse_params( DictionaryDatum syn_dict, index synapse_model_id, int type_id )
 {
-  // std::cerr << "set_synapse_params...\n";
   DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
   std::set< Name > skip_syn_params_ = {
     names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
@@ -664,21 +606,17 @@ SonataConnector::set_synapse_params( DictionaryDatum syn_dict, index synapse_mod
   // create it here once to avoid re-creating the object over and over again.
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    // std::cerr << "type_id_2_syn_spec_.at...\n";
     type_id_2_syn_spec_[ type_id ].push_back( synapse_params ); // DO WE NEED TO DEFINE THIS PER THREAD???
-    // std::cerr << "type_id_2_param_dicts_.at...\n";
     type_id_2_param_dicts_[ type_id ].push_back( new Dictionary );
 
     for ( auto param : synapse_params )
     {
       if ( param.second->provides_long() )
       {
-        // std::cerr << "int type_id_2_param_dicts_.at...\n";
         ( *type_id_2_param_dicts_.at( type_id ).at( tid ) )[ param.first ] = Token( new IntegerDatum( 0 ) );
       }
       else
       {
-        // std::cerr << "double type_id_2_param_dicts_.at...\n";
         ( *type_id_2_param_dicts_.at( type_id ).at( tid ) )[ param.first ] = Token( new DoubleDatum( 0.0 ) );
       }
     }
@@ -756,8 +694,7 @@ get_member_names_callback_( hid_t loc_id, const char* name, const H5L_info_t*, v
   herr_t status = H5Gget_objinfo( loc_id, name, 0, NULL );
   if ( status != 0 )
   {
-    // Group doesn't exist, or some error occurred.
-    return 0; // TODO: is this a dataset?
+    throw nest::KernelException( "Could not get HDF5 object info" );
   }
 
   auto group_names = reinterpret_cast< std::vector< std::string >* >( opdata );

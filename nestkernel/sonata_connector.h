@@ -107,34 +107,21 @@ private:
    * Open datasets required by the SONATA format
    *
    * @param pop_grp population group pointer
-   * @param edge_id_grp edge id group pointer
    */
   void open_required_dsets_( const H5::Group* pop_grp );
 
+  /**
+   * Try to open optional edge group id datasets
+   *
+   * @param edge_id_grp edge id group pointer
+   */
   void try_open_edge_group_id_dsets_( const H5::Group* edge_id_grp );
 
-
   /**
-   * Get number of elements in a dataset
+   * Close all open datasets
    *
-   * @param dataset dataset for which to get number of elements
-   *
-   * @return number of elements
    */
-  hsize_t get_num_elements_( const H5::DataSet& dataset );
-
-  /**
-   * Read data in a dataset
-   *
-   * @param dataset dataset to read
-   * @param num_elements number of elements in dataset
-   *
-   * @returns pointer object to data in dataset
-   */
-  int* read_data_( const H5::DataSet& dataset, hsize_t num_elements );
-
-  // TODO: remove, only used once
-  int* get_data_( const H5::Group& group, const std::string& name );
+  void close_dsets_();
 
   /**
    * Get attribute of dataset
@@ -143,16 +130,12 @@ private:
    * @param dataset dataset to get attribute from
    * @param attribute_name name of attribute
    */
-  void get_attributes_( std::string& attribute_value, const H5::DataSet& dataset, const std::string& attribute_name );
+  void get_attribute_( std::string& attribute_value, const H5::DataSet& dataset, const std::string& attribute_name );
 
   /**
    * Check if weight or delay are given as datasets
    *
-   * If weight or delay are given as datasets, the respective weight_dataset_ and delay_dataset_ are updated.
-   *
-   * TODO: change name to weight_or_delay_from_dataset
-   *
-   * @param group H5 group for which to check if weight or delay exists
+   * @param edge_id_grp edge id group pointer
    */
   void is_weight_and_delay_from_dataset_( const H5::Group* edge_id_grp );
 
@@ -188,6 +171,49 @@ private:
    */
   void get_synapse_params_( index snode_id, Node& target, thread target_thread, RngPtr rng, int edge_type_id );
 
+  /**
+   * Get synapse property
+   *
+   * The synapse property, i.e., synaptic weight or delay, is either set from a HDF5 dataset or CSV entry.
+   * Default value is NaN
+   *
+   * @param syn_spec
+   * @param index
+   * @param dataset
+   * @param data
+   * @param name
+   * @return double
+   */
+  double get_syn_property_( const DictionaryDatum& syn_spec,
+    hsize_t index,
+    const bool dataset,
+    std::vector< double >& data,
+    const Name& name );
+
+  /**
+   * @brief Create connections in chunks
+   *
+   */
+  void create_connections_in_chunks_();
+
+  /**
+   * @brief
+   *
+   * @param chunk_size
+   * @param offset
+   */
+  void connect_chunk_( const hsize_t chunk_size, const hsize_t offset );
+
+  /**
+   * @brief
+   *
+   * @tparam T
+   * @param dataset
+   * @param data_buf
+   * @param datatype
+   * @param chunk_size
+   * @param offset
+   */
   template < typename T >
   void read_subset_( const H5::DataSet& dataset,
     std::vector< T >& data_buf,
@@ -195,27 +221,31 @@ private:
     hsize_t chunk_size,
     hsize_t offset );
 
-
-  double get_syn_property_( const DictionaryDatum& syn_spec,
-    hsize_t index,
-    const bool dataset,
-    std::vector< double >& data,
-    const Name& name );
-
-  void create_connections_in_chunks_();
-
-  void connect_subset_( const hsize_t chunk_size, const hsize_t offset );
-
+  /**
+   * @brief Get the member names object
+   *
+   * @param loc_id
+   * @param names
+   */
   void get_member_names_( hid_t loc_id, std::vector< std::string >& names );
 
+  /**
+   * @brief
+   *
+   * @param pop_grp
+   * @param edge_id_grp_names
+   * @return hsize_t
+   */
   hsize_t find_edge_id_groups_( H5::Group* pop_grp, std::vector< std::string >& edge_id_grp_names );
 
-  void close_dsets_();
-
-  hsize_t get_num_connections_();
-
+  /**
+   * @brief Get the nrows object
+   *
+   * @param dataset
+   * @param ndim
+   * @return hsize_t
+   */
   hsize_t get_nrows_( H5::DataSet dataset, int ndim );
-
 
   /**
    * Reset all parameters

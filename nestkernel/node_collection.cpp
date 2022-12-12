@@ -209,56 +209,6 @@ NodeCollection::create( const std::vector< index >& node_ids_vector )
 }
 
 NodeCollectionPTR
-NodeCollection::create_test_collection( const std::vector< index >& node_ids )
-{
-
-  if ( node_ids.empty() )
-  {
-    return NodeCollectionPTR( new NodeCollectionPrimitive() );
-  }
-
-  index current_first = node_ids[ 0 ];
-  index current_last = current_first;
-
-  std::vector< NodeCollectionPrimitive > parts;
-
-  index old_node_id = current_first;
-  for ( auto node_id = ++( node_ids.begin() ); node_id != node_ids.end(); ++node_id )
-  {
-    if ( *node_id == old_node_id )
-    {
-      throw BadProperty( "All node IDs in a NodeCollection have to be unique" );
-    }
-    old_node_id = *node_id;
-    if ( *node_id == ( current_last + 1 ) )
-    {
-      // node goes in Primitive
-      ++current_last;
-    }
-    else
-    {
-      // store Primitive; node goes in new Primitive
-      parts.emplace_back( current_first, current_last, invalid_index, true );
-      current_first = *node_id;
-      current_last = current_first;
-    }
-  }
-
-  // now push last section we opened
-  parts.emplace_back( current_first, current_last, invalid_index, true );
-
-  if ( parts.size() == 1 )
-  {
-    const auto part = parts[ 0 ];
-    return NodeCollectionPTR( new NodeCollectionPrimitive( part[ 0 ], part[ part.size() - 1 ], invalid_index, true ) );
-  }
-  else
-  {
-    return NodeCollectionPTR( new NodeCollectionComposite( parts ) );
-  }
-}
-
-NodeCollectionPTR
 NodeCollection::create_()
 {
   return NodeCollectionPTR( new NodeCollectionPrimitive() );
@@ -333,21 +283,14 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( index first,
   assert( first_ <= last_ );
 }
 
-NodeCollectionPrimitive::NodeCollectionPrimitive( index first, index last, index model_id, bool for_testing )
+NodeCollectionPrimitive::NodeCollectionPrimitive( index first, index last, index model_id )
   : first_( first )
   , last_( last )
   , model_id_( model_id )
   , metadata_( nullptr )
+  , nodes_have_no_proxies_( not kernel().model_manager.get_node_model( model_id_ )->has_proxies() )
 {
   assert( first_ <= last_ );
-  if ( for_testing )
-  {
-    nodes_have_no_proxies_ = false;
-  }
-  else
-  {
-    nodes_have_no_proxies_ = not kernel().model_manager.get_node_model( model_id_ )->has_proxies();
-  }
 }
 
 NodeCollectionPrimitive::NodeCollectionPrimitive( index first, index last )

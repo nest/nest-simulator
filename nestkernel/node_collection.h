@@ -219,19 +219,6 @@ public:
   static NodeCollectionPTR create( const std::vector< index >& node_ids );
 
   /**
-   * @brief Create a NodeCollection from an array of node IDs without requiring
-   * instantiation of a node model and associated managers. Intended to simplify
-   * C++ test programs where just a NodeCollection is needed. Since the fingerprint
-   * of the NodeCollection superclass require a kernel instance, a kernel must be
-   * instantiated, i.e., by KernelManager::create_kernel_manager(), before this
-   * creator can be used.
-   *
-   * @param node_ids Array of node IDs from which to create the NodeCollection
-   * @return a NodeCollection pointer to the created NodeCollection
-   */
-  static NodeCollectionPTR create_test_collection( const std::vector< index >& node_ids );
-
-  /**
    * Check to see if the fingerprint of the NodeCollection matches that of the
    * kernel.
    *
@@ -433,10 +420,8 @@ public:
    * @param first The first node ID in the primitive
    * @param last  The last node ID in the primitive
    * @param model_id Model ID of the node IDs
-   * @param for_testing Whether the NodeCollection is intended for C++ test programs.
-   * Defaults to false if not specified.
    */
-  NodeCollectionPrimitive( index first, index last, index model_id, bool for_testing = false );
+  NodeCollectionPrimitive( index first, index last, index model_id );
 
   /**
    * Create a primitive from a range of node IDs. The model ID has to be found by

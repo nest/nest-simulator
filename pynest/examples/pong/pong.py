@@ -75,7 +75,7 @@ class GameObject:
         return self.x_pos, self.y_pos
 
     def update_cell(self):
-        """Update the cell in the game grid based on position.
+        """Updates the cell in the game grid based on position.
         """
         x_cell = int(np.floor(
             (self.x_pos / self.game.x_length) * self.game.x_grid))
@@ -146,7 +146,7 @@ class GameOfPong(object):
         self.result = 0
 
     def reset_ball(self, towards_left=False):
-        """Reset the ball position to the center of the field after a goal.
+        """Resets the ball position to the center of the field after a goal.
 
         Args:
             towards_left (bool, optional): if True, ball direction is
@@ -163,8 +163,8 @@ class GameOfPong(object):
         self.ball.y_pos = np.random.random() * self.y_length
 
     def update_ball_direction(self):
-        """In case of a collision, update the direction of the ball. Also
-        determine if the ball is in either player's net.
+        """In case of a collision, updates the direction of the ball. Also
+        determines if the ball is in either player's net.
 
         Returns:
             Either GAME_CONTINUES, LEFT_SCORE or RIGHT_SCORE depending on ball
@@ -194,7 +194,7 @@ class GameOfPong(object):
         return GAME_CONTINUES
 
     def propagate_ball_and_paddles(self):
-        """Update ball and paddle coordinates based on direction and velocity.
+        """Updates ball and paddle coordinates based on direction and velocity.
         """
         for paddle in [self.r_paddle, self.l_paddle]:
             paddle.y_pos += paddle.direction * paddle.velocity
@@ -211,7 +211,7 @@ class GameOfPong(object):
         return self.ball.get_cell()
 
     def step(self):
-        """Perform one game step by handling collisions, propagating all game
+        """Performs one game step by handling collisions, propagating all game
         objects and returning the new game state.
 
         Returns:

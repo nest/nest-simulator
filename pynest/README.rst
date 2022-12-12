@@ -36,9 +36,9 @@ References
 ----------
 
 .. [1] Zaytsev YV and Morrison A (2014) CyNEST: a maintainable
-       Cython-based interface for the NEST simulator. Front.
+       Cython-based interface for the NEST Simulator. Front.
        Neuroinform. 8:23. http://dx.doi.org/10.3389/fninf.2014.00023
 
 .. [2] Eppler JM, Helias M, Muller E, Diesmann M and Gewaltig M-O PyNEST
-       (2009) A convenient interface to the NEST simulator. Front.
+       (2009) A convenient interface to the NEST Simulator. Front.
        Neuroinform. 2:12. http://dx.doi.org/10.3389/neuro.11.012.2008

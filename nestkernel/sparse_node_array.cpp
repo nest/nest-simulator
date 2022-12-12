@@ -49,6 +49,7 @@ nest::SparseNodeArray::SparseNodeArray()
 {
 }
 
+
 void
 nest::SparseNodeArray::clear()
 {

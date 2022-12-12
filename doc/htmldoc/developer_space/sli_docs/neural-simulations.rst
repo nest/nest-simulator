@@ -187,7 +187,7 @@ the time step from 1.1 ms to 1.2 ms.
 During the time step from 10.9 ms to 11.0 ms, the membrane potential
 crosses the threshold value -55.0 mV. Thus, the neuron emits an output
 spike at 11.0 ms and the membrane potential is then reset to -70.0 mV
-and clamped to the resting value for 2 ms, the refractory period of the
+and clamped to the resting value for 2 ms, the :hxt_ref:`refractory period` of the
 neuron. After the refractory period, the membrane continues to
 depolarize due to the continuing input current.
 
@@ -286,7 +286,7 @@ layer we have created above:
 
 Using the command ``SetStatus``, it is possible to change the entries of
 this so called *status dictionary*. The following lines of code change
-the threshold value ``V_th`` to -60 mV:
+the threshold value :hxt_ref:`V_th` to -60 mV:
 
 ::
 
@@ -464,7 +464,7 @@ Recording devices
 ~~~~~~~~~~~~~~~~~
 
 All devices which are used to observe the state of other network nodes
-are called recording devices. Examples are ``multimeter`` and
+are called recording devices. Examples are :hxt_ref:`multimeter` and
 ``spike_recorder``.
 
 Recording devices have properties which control the amount, the
@@ -484,7 +484,7 @@ A list of node models including all available device models can be retrieved by 
 ``GetKernelStatus /node_models get`. The most important devices are:
 
 * ``voltmeter`` Device to observe membrane potentials.
-* ``multimeter`` Device to observe arbitrary analog quantities.
+* :hxt_ref:`multimeter` Device to observe arbitrary analog quantities.
 * ``spike_recorder`` Device to observe spike times.
 
 Please note that the connection direction for analog recorders (all

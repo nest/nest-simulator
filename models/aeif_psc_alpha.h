@@ -78,14 +78,19 @@ The membrane potential is given by the following differential equation:
 
 .. math::
 
- C dV/dt= -g_L(V-E_L)+g_L\cdot\Delta_T\cdot\exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e) \\
-                                                     -g_i(t)(V-E_i)-w +I_e
+ C dV/dt= -g_L(V-E_L)+g_L\cdot\Delta_T\cdot\exp((V-V_T)/\Delta_T) - w(t) + I_syn(t) + I_e
 
 and
 
 .. math::
 
- \tau_w \cdot dw/dt= a(V-E_L) -W
+ \tau_w \cdot dw/dt= a(V-E_L) - w
+
+.. math::
+
+ I_{syn}(t) ~ \sum_k (t-t^k) \exp((t-t^k)/\tau_{syn})H(t - t^k) .
+
+Here :math:`H(t)` is the Heaviside step function and `k` indexes incoming spikes.
 
 For implementation details see the
 `aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.

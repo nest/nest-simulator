@@ -225,6 +225,7 @@ public:
   port send_test_event( Node&, rport, synindex, bool ) override;
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
+  bool has_proxies() const override;
 
   StimulationDevice::Type get_type() const override;
   void set_data_from_stimulation_backend( std::vector< double >& input_spikes ) override;
@@ -374,6 +375,12 @@ inline StimulationDevice::Type
 spike_generator::get_type() const
 {
   return StimulationDevice::Type::SPIKE_GENERATOR;
+}
+
+inline bool
+spike_generator::has_proxies() const
+{
+  return true;
 }
 
 } // namespace nest

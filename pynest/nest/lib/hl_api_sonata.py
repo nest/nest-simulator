@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Class for building and simulating networks specified by the SONATA data format
+Class for building and simulating networks specified by the SONATA format
 """
 
 import os
@@ -49,7 +49,9 @@ __all__ = [
 ]
 
 
-class SonataConnector():
+# TODO: make method and variable names more pythonic
+
+class SonataNetwork():
     """ Class for creating networks from SONATA files.
 
     The nodes are created on Python level by iterating the SONATA node files and corresponding CSV parameter
@@ -71,23 +73,24 @@ class SonataConnector():
     """
 
     def __init__(self, base_path, config, sim_config=None):
-        self.base_path = base_path
-        self.config = {}
-        self.node_collections = {}
-        self.local_node_collections = {}
-        self.edge_types = []
-        self._chunk_size_default = 1048576  # 2^20
+
+        # s prefix -> sonata, n prefix -> nest
+        self._base_path = base_path
+        self._config = {}
+        self._n_node_collections = {}
+        self._s_edge_types = []
+        self._chunk_size_default = 2**20
 
         if not have_hdf5:
             raise kernel.NESTError("Cannot use SonataConnector because NEST was compiled without HDF5 support")
         if not have_h5py:
             raise kernel.NESTError("Cannot use SonataConnector because h5py is not installed or could not be imported")
 
-        self.convert_config_(config)
+        self._parse_config(config)
         if sim_config:
-            self.convert_config_(sim_config)
+            self._parse_config(sim_config)
 
-    def convert_config_(self, json_config):
+    def _parse_config(self, json_config):
         """Convert SONATA config files to dictionary containing absolute paths and simulation parameters.
 
         Parameters
@@ -121,6 +124,7 @@ class SonataConnector():
                     return obj[1:]
                 else:
                     return obj
+
         self.config.update(do_substitutions(config))
 
     def Create(self):
@@ -141,6 +145,8 @@ class SonataConnector():
             If the model type given in the CSV files do not match a NEST type, or if more than one NEST model is
             given per CSV file.
         """
+
+        # TODO: use node_type_id dset as basis for creating nodes
 
         # Iterate node files in config file
         for nodes in self.config['networks']['nodes']:
@@ -181,7 +187,7 @@ class SonataConnector():
                                 indx = np.where(node_type_ids[:] == node_type)[0]
                                 nodes[indx].set(node_type_map[node_type])
 
-                        self.node_collections[population_name] = nodes
+                        self._node_collections[population_name] = nodes
             else:
                 raise NotImplementedError("More than one NEST model per csv file currently not implemented")
 
@@ -225,6 +231,7 @@ class SonataConnector():
         if have_dynamics:
             for ind in node_types.index:
                 dynamics = {}
+                # TODO: use pathlib
                 with open(self.config['components']['point_neuron_models_dir'] + '/' +
                           node_types['dynamics_params'][ind]) as dynamics_file:
                     dynamics.update(json.load(dynamics_file))
@@ -301,6 +308,8 @@ class SonataConnector():
                       {..}
                      ]
         """
+
+        # TODO: can pandas be used instead -> check if pandas is required by NEST install and performance
 
         for edges in self.config['networks']['edges']:
             edge_dict = {}
@@ -404,3 +413,9 @@ class SonataConnector():
                 simtime = self.config['run']['duration']
 
             Simulate(simtime)
+
+    @property
+    def node_colletions(self):
+        return self._node_collections
+
+# TODO: NC getter

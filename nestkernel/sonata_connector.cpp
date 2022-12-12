@@ -159,7 +159,7 @@ SonataConnector::connect()
       close_dsets_();
 
       // Reset all parameters
-      reset_params();
+      reset_params_();
 
     } // end iteration over population groups
 
@@ -300,14 +300,6 @@ SonataConnector::try_open_edge_group_id_dsets_( const H5::Group* edge_id_grp )
   // are multiple edge id groups
 }
 
-
-void
-SonataConnector::is_weight_and_delay_from_dataset_( const H5::Group* group )
-{
-  // TODO: Can be removed as checks have been moved to try_open_edge_group_id_dsets_()
-  weight_dataset_exist_ = H5Lexists( group->getId(), "syn_weight", H5P_DEFAULT ) > 0;
-  delay_dataset_exist_ = H5Lexists( group->getId(), "delay", H5P_DEFAULT ) > 0;
-}
 
 void
 SonataConnector::get_attribute_( std::string& attribute_value,
@@ -572,13 +564,13 @@ SonataConnector::create_type_id_2_syn_spec_( DictionaryDatum edge_params )
     // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
     const index synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
 
-    set_synapse_params( d, synapse_model_id, type_id );
+    set_synapse_params_( d, synapse_model_id, type_id );
     type_id_2_syn_model_[ type_id ] = synapse_model_id;
   }
 }
 
 void
-SonataConnector::set_synapse_params( DictionaryDatum syn_dict, index synapse_model_id, int type_id )
+SonataConnector::set_synapse_params_( DictionaryDatum syn_dict, index synapse_model_id, int type_id )
 {
   DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
   std::set< Name > skip_syn_params_ = {
@@ -668,7 +660,7 @@ SonataConnector::get_syn_property_( const DictionaryDatum& syn_spec,
 }
 
 void
-SonataConnector::reset_params()
+SonataConnector::reset_params_()
 {
   type_id_2_syn_model_.clear();
   for ( auto params_vec_map : type_id_2_syn_spec_ )

@@ -132,12 +132,6 @@ private:
    */
   void get_attribute_( std::string& attribute_value, const H5::DataSet& dataset, const std::string& attribute_name );
 
-  /**
-   * Check if weight or delay are given as datasets
-   *
-   * @param edge_id_grp edge id group pointer
-   */
-  void is_weight_and_delay_from_dataset_( const H5::Group* edge_id_grp );
 
   /**
    * Create map between type id and syn_spec given in edge_dict
@@ -158,7 +152,7 @@ private:
    * @param synapse_model_id model id of synapse
    * @param type_id SONATA edge type id for mapping synapse parameters
    */
-  void set_synapse_params( DictionaryDatum syn_dict, index synapse_model_id, int type_id );
+  void set_synapse_params_( DictionaryDatum syn_dict, index synapse_model_id, int type_id );
 
   /**
    * Get synapse parameters and convert them to correct datums for connecting
@@ -250,7 +244,7 @@ private:
   /**
    * Reset all parameters
    */
-  void reset_params();
+  void reset_params_();
 
   //! Dictionary containing SONATA dynamics
   DictionaryDatum sonata_dynamics_;

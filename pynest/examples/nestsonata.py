@@ -88,7 +88,7 @@ else:
              total_num_virtual_procs=NUM_PROCESSES * NUM_THREADS)
 
     print("kernel number of processes:", nest.GetKernelStatus('num_processes'))
-    print("kernel number of threads:", nest.GetKernelStatus('local_num_threads'), '\n')
+    print("kernel number of threads:", nest.GetKernelStatus('local_num_threads'))
 
     mem_ini = memory_thisjob()
     start_time_create = time.time()
@@ -101,7 +101,7 @@ else:
 
     #print(f"Sonata NC (rank {nest.Rank()}):", sonata_connector.node_collections)
 
-    print(f"Sonata Local NC (rank {nest.Rank()}):", sonata_connector.local_node_collections)
+    #print(f"Sonata Local NC (rank {nest.Rank()}):", sonata_connector.local_node_collections)
 
     # Connect
     start_time_connect = time.time()

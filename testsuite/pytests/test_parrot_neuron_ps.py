@@ -37,7 +37,6 @@ def _round_up(simtime):
     return res * math.ceil(float(simtime) / float(res))
 
 
-@nest.ll_api.check_stack
 class ParrotNeuronPSTestCase(unittest.TestCase):
     """Check parrot_neuron spike repetition properties"""
 
@@ -117,7 +116,6 @@ class ParrotNeuronPSTestCase(unittest.TestCase):
             "Parrot neuron failed to correctly repeat multiple spikes."
 
 
-@nest.ll_api.check_stack
 class ParrotNeuronPSPoissonTestCase(unittest.TestCase):
     """Check parrot_neuron spike repetition properties"""
 
@@ -174,7 +172,6 @@ class ParrotNeuronPSPoissonTestCase(unittest.TestCase):
             "parrot_neuron adds spikes."
 
 
-@nest.ll_api.check_stack
 class ParrotNeuronPSSTDPTestCase(unittest.TestCase):
     """
     Check STDP protocol between two parrot_neurons_ps connected by a

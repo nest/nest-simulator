@@ -244,24 +244,24 @@ nest::hh_cond_beta_gap_traub::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::hh_cond_beta_gap_traub::Parameters_::set( const dictionary& d, Node* node)
+nest::hh_cond_beta_gap_traub::Parameters_::set( const dictionary& d, Node* node )
 {
-  d.update_value( names::g_Na, g_Na );
-  d.update_value( names::g_K, g_K );
-  d.update_value( names::g_L, g_L );
-  d.update_value( names::C_m, C_m );
-  d.update_value( names::E_Na, E_Na );
-  d.update_value( names::E_K, E_K );
-  d.update_value( names::E_L, E_L );
-  d.update_value( names::V_T, V_T );
-  d.update_value( names::E_ex, E_ex );
-  d.update_value( names::E_in, E_in );
-  d.update_value( names::tau_rise_ex, tau_rise_ex );
-  d.update_value( names::tau_decay_ex, tau_decay_ex );
-  d.update_value( names::tau_rise_in, tau_rise_in );
-  d.update_value( names::tau_decay_in, tau_decay_in );
-  d.update_value( names::t_ref, t_ref_ );
-  d.update_value( names::I_e, I_e );
+  update_value_param( d, names::g_Na, g_Na, node );
+  update_value_param( d, names::g_K, g_K, node );
+  update_value_param( d, names::g_L, g_L, node );
+  update_value_param( d, names::C_m, C_m, node );
+  update_value_param( d, names::E_Na, E_Na, node );
+  update_value_param( d, names::E_K, E_K, node );
+  update_value_param( d, names::E_L, E_L, node );
+  update_value_param( d, names::V_T, V_T, node );
+  update_value_param( d, names::E_ex, E_ex, node );
+  update_value_param( d, names::E_in, E_in, node );
+  update_value_param( d, names::tau_rise_ex, tau_rise_ex, node );
+  update_value_param( d, names::tau_decay_ex, tau_decay_ex, node );
+  update_value_param( d, names::tau_rise_in, tau_rise_in, node );
+  update_value_param( d, names::tau_decay_in, tau_decay_in, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::I_e, I_e, node );
 
   if ( C_m <= 0 )
   {

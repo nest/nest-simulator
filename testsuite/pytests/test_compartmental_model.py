@@ -441,7 +441,6 @@ def create_2tdend_4comp(dt=0.1):
     return (n_neat, m_neat), (aa, bb), ss
 
 
-@nest.ll_api.check_stack
 class NEASTTestCase(unittest.TestCase):
     """ tests for compartmental NEST models """
 

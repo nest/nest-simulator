@@ -26,7 +26,6 @@ import numpy
 import unittest
 
 
-@nest.ll_api.check_stack
 class QuantalSTPSynapseTestCase(unittest.TestCase):
     """Compare quantal_stp_synapse with its deterministic equivalent."""
 

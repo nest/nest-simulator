@@ -27,9 +27,7 @@ import connect_test_base
 import nest
 
 
-@nest.ll_api.check_stack
 class TestAllToAll(connect_test_base.ConnectTestBase):
-
     # specify connection pattern
     rule = 'all_to_all'
     conn_dict = {'rule': rule}

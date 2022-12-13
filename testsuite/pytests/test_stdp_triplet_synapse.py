@@ -27,7 +27,6 @@ from math import exp
 import numpy as np
 
 
-@nest.ll_api.check_stack
 class STDPTripletSynapseTestCase(unittest.TestCase):
     """Check stdp_triplet_synapse model properties."""
 
@@ -293,9 +292,7 @@ class STDPTripletSynapseTestCase(unittest.TestCase):
             "weight"), "weight should have been limited")
 
 
-@nest.ll_api.check_stack
 class STDPTripletInhTestCase(STDPTripletSynapseTestCase):
-
     def setUp(self):
         nest.set_verbosity('M_WARNING')
         nest.ResetKernel()

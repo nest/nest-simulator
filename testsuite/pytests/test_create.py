@@ -28,7 +28,6 @@ import warnings
 import nest
 
 
-@nest.ll_api.check_stack
 class CreateTestCase(unittest.TestCase):
     """Creation tests"""
 

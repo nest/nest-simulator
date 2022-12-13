@@ -117,51 +117,6 @@ nest::LoggingManager::publish_log( const nest::severity_t s,
 }
 
 void
-nest::LoggingManager::all_entries_accessed( const dictionary& d,
-  const std::string& where,
-  const std::string& msg,
-  const std::string& file,
-  const size_t line ) const
-{
-  // TODO-PYNEST-NG: Access flags (function never used?)
-  // std::string missed;
-  // if ( not d.all_accessed( missed ) )
-  // {
-  //   if ( dict_miss_is_error_ )
-  //   {
-  //     throw UnaccessedDictionaryEntry( missed );
-  //   }
-  //   else
-  //   {
-  //     publish_log( M_WARNING, where, msg + missed, file, line );
-  //   }
-  // }
-}
-
-void
-nest::LoggingManager::all_entries_accessed( const dictionary& d,
-  const std::string& where,
-  const std::string& msg1,
-  const std::string& msg2,
-  const std::string& file,
-  const size_t line ) const
-{
-  // TODO-PYNEST-NG: Access flags (function never used?)
-  // std::string missed;
-  // if ( not d.all_accessed( missed ) )
-  // {
-  //   if ( dict_miss_is_error_ )
-  //   {
-  //     throw UnaccessedDictionaryEntry( missed + "\n" + msg2 );
-  //   }
-  //   else
-  //   {
-  //     publish_log( M_WARNING, where, msg1 + missed + "\n" + msg2, file, line );
-  //   }
-  // }
-}
-
-void
 nest::LoggingManager::set_logging_level( const nest::severity_t level )
 {
   assert( level >= M_ALL );

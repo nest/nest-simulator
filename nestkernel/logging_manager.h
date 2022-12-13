@@ -85,22 +85,6 @@ public:
    */
   void publish_log( const severity_t, const std::string&, const std::string&, const std::string&, const size_t ) const;
 
-  /**
-   * Implements standard behaviour for dictionary entry misses. Use with define
-   * ALL_ENTRIES_ACCESSED.
-   */
-  void all_entries_accessed( const dictionary&,
-    const std::string&,
-    const std::string&,
-    const std::string&,
-    const size_t ) const;
-
-  void all_entries_accessed( const dictionary&,
-    const std::string&,
-    const std::string&,
-    const std::string&,
-    const std::string&,
-    const size_t ) const;
 
 private:
   /**

@@ -32,9 +32,7 @@ def H(x):
     return 0.5 * (np.sign(x) + 1.)
 
 
-@nest.ll_api.check_stack
 class RateNeuronCommunicationTestCase(unittest.TestCase):
-
     """Check rate_neuron"""
 
     def setUp(self):

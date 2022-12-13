@@ -27,9 +27,7 @@ import unittest
 import nest
 
 
-@nest.ll_api.check_stack
 class MultipleSynapsesTestCase(unittest.TestCase):
-
     def setUp(self):
         nest.ResetKernel()
 

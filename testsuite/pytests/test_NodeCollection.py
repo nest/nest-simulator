@@ -33,7 +33,6 @@ except ImportError:
     HAVE_NUMPY = False
 
 
-@nest.ll_api.check_stack
 class TestNodeCollection(unittest.TestCase):
     """NodeCollection tests"""
 

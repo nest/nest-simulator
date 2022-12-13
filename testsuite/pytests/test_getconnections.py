@@ -29,7 +29,6 @@ import nest
 nest.set_verbosity('M_ERROR')
 
 
-@nest.ll_api.check_stack
 class GetConnectionsTestCase(unittest.TestCase):
     """Find connections and test if values can be set."""
 

@@ -352,8 +352,6 @@ value_equal( const boost::any first, const boost::any second )
   }
   else
   {
-    // TODO-PYNEST-NG: raise error
-    assert( false );
     std::string msg = std::string( "Unsupported type in dictionary::value_equal(): " ) + debug_type( first );
     throw nest::TypeMismatch( msg );
   }

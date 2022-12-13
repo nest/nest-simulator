@@ -28,7 +28,6 @@ import nest
 import pytest
 
 
-@nest.ll_api.check_stack
 class TestCopyModel:
     """nest.CopyModel Test"""
 

@@ -33,7 +33,6 @@ except ImportError:
     HAVE_PANDAS = False
 
 
-@nest.ll_api.check_stack
 class TestSynapseCollection(unittest.TestCase):
     """SynapseCollection tests"""
 

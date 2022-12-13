@@ -27,7 +27,6 @@ import nest
 import numpy as np
 
 
-@nest.ll_api.check_stack
 class TestJonkeSynapse:
     """
     Test the weight change by STDP.

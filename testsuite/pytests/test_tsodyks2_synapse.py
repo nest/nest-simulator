@@ -24,7 +24,6 @@ import nest
 import unittest
 
 
-@nest.ll_api.check_stack
 class Tsodyks2SynapseTest(unittest.TestCase):
     """
     Functional test for the "tsodyks2" synapse: compare NEST implementation to

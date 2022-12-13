@@ -171,7 +171,6 @@ NestModule::mask_factory_()
 MaskDatum
 NestModule::create_mask( const dictionary& params )
 {
-  // TODO-PYNEST-NG: move and convert to use dictionary
   // // t can be either an existing MaskDatum, or a Dictionary containing
   // // mask parameters
   // MaskDatum* maskd = dynamic_cast< MaskDatum* >( t.datum() );

@@ -34,7 +34,6 @@ except Exception:
     DEBUG_PLOTS = False
 
 
-@nest.ll_api.check_stack
 class TestStdpSpikeMultiplicity:
     """
     Test correct handling of spike multiplicity in STDP.

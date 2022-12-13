@@ -29,7 +29,6 @@ import nest
 HAVE_GSL = nest.GetKernelStatus("build_info")["have_gsl"]
 
 
-@nest.ll_api.check_stack
 @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
 class LabeledSynapsesTestCase(unittest.TestCase):
     """Test labeled synapses"""

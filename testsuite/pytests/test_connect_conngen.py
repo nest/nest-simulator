@@ -41,7 +41,6 @@ except ImportError:
 HAVE_LIBNEUROSIM = nest.GetKernelStatus("build_info")["have_libneurosim"]
 
 
-@nest.ll_api.check_stack
 @unittest.skipIf(not HAVE_CSA, 'Python CSA package is not available')
 @unittest.skipIf(
     not HAVE_LIBNEUROSIM,

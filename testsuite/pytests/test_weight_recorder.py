@@ -30,7 +30,6 @@ import numpy as np
 HAVE_GSL = nest.GetKernelStatus("build_info")["have_gsl"]
 
 
-@nest.ll_api.check_stack
 class WeightRecorderTestCase(unittest.TestCase):
     """Tests for the Weight Recorder"""
 

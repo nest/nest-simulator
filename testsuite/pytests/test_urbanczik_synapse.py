@@ -30,7 +30,6 @@ import numpy as np
 HAVE_GSL = nest.GetKernelStatus("build_info")["have_gsl"]
 
 
-@nest.ll_api.check_stack
 @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
 class UrbanczikSynapseTestCase(unittest.TestCase):
     """Test Urbanczik synapse"""

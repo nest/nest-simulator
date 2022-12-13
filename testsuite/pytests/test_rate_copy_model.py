@@ -24,9 +24,7 @@ import unittest
 import numpy as np
 
 
-@nest.ll_api.check_stack
 class RateCopyModelTestCase(unittest.TestCase):
-
     '''
     Test whether a rate connection created by copy model behaves
     identical to the original version

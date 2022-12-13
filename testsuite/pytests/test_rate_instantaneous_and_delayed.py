@@ -24,9 +24,7 @@ import unittest
 import numpy as np
 
 
-@nest.ll_api.check_stack
 class RateInstantaneousAndDelayedTestCase(unittest.TestCase):
-
     '''
     Test whether delayed rate connections have same properties as
     instantaneous connections but with the correct delay

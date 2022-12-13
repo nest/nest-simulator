@@ -27,7 +27,6 @@ import unittest
 import nest
 
 
-@nest.ll_api.check_stack
 class StatusTestCase(unittest.TestCase):
     """Tests of Get/SetStatus, Get/SetDefaults, and Get/SetKernelStatus via get/set"""
 

@@ -29,7 +29,6 @@ import pytest
 from math import exp
 
 
-@nest.ll_api.check_stack
 class TestSTDPNNSynapses:
     """
     Test the weight change by STDP
@@ -95,7 +94,7 @@ class TestSTDPNNSynapses:
             err_msg=synapse_model + " test: "
                                     "Resulting synaptic weight %e "
                                     "differs from expected %e" % (
-                                       weight_by_nest, weight_reproduced_independently))
+                                        weight_by_nest, weight_reproduced_independently))
 
     def do_the_nest_simulation(self):
         """

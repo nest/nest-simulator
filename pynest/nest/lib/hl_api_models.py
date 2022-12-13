@@ -38,7 +38,6 @@ __all__ = [
 
 
 @deprecated("nest.node_models or nest.synapse_models")
-@check_stack
 def Models(mtype="all", sel=None):
     """Return a tuple of neuron, device, or synapse model names.
 
@@ -90,7 +89,6 @@ def Models(mtype="all", sel=None):
 
 
 @deprecated("nest.connection_rules")
-@check_stack
 def ConnectionRules():
     """Return a tuple of all available connection rules, sorted by name.
 
@@ -104,7 +102,6 @@ def ConnectionRules():
     return tuple(sorted(GetKernelStatus('connection_rules')))
 
 
-@check_stack
 def SetDefaults(model, params, val=None):
     """Set defaults for the given model or recording backend.
 
@@ -129,7 +126,6 @@ def SetDefaults(model, params, val=None):
     nestkernel.llapi_set_defaults(model, params)
 
 
-@check_stack
 def GetDefaults(model, keys=None, output=''):
     """Return defaults of the given model or recording backend.
 
@@ -177,7 +173,6 @@ def GetDefaults(model, keys=None, output=''):
     return result
 
 
-@check_stack
 def CopyModel(existing, new, params=None):
     """Create a new model by copying an existing one.
 

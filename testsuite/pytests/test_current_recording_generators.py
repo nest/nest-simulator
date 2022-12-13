@@ -28,7 +28,6 @@ import unittest
 import nest
 
 
-@nest.ll_api.check_stack
 class CurrentRecordingGeneratorTestCase(unittest.TestCase):
     """
     Test if currents from generators are recorded properly. Specifically:

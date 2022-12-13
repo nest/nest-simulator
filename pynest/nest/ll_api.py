@@ -52,7 +52,6 @@ from . import pynestkernel as kernel        # noqa
 from . import nestkernel_api as nestkernel  # noqa
 
 __all__ = [
-    'check_stack',
     'set_communicator',
     # 'take_array_index',
     'KernelAttribute',
@@ -61,15 +60,8 @@ __all__ = [
 
 engine = kernel.NESTEngine()
 
-# take_array_index = engine.take_array_index
-# connect_arrays = engine.connect_arrays
-
 
 initialized = False
-
-
-def check_stack(thing):  # # TODO-PYNEST-NG: remove
-    return thing
 
 
 def set_communicator(comm):

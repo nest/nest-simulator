@@ -29,7 +29,6 @@ import nest
 import numpy
 
 
-@nest.ll_api.check_stack
 class ConnectArrayFixedIndegreeTestCase(unittest.TestCase):
     """Tests of connections with fixed indegree and parameter arrays"""
 

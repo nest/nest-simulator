@@ -41,7 +41,6 @@ except ImportError:
     HAVE_PANDAS = False
 
 
-@nest.ll_api.check_stack
 class TestNestGetSet(unittest.TestCase):
     """nest module get/set tests"""
 
@@ -89,7 +88,6 @@ class TestNestGetSet(unittest.TestCase):
             nest.get = 5
 
 
-@nest.ll_api.check_stack
 class TestNodeCollectionGetSet(unittest.TestCase):
     """NodeCollection get/set tests"""
 

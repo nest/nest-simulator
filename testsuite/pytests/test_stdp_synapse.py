@@ -32,7 +32,6 @@ except Exception:
     DEBUG_PLOTS = False
 
 
-@nest.ll_api.check_stack
 class TestSTDPSynapse:
     """
     Compare the STDP synaptic plasticity model against a self-contained Python reference.

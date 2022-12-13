@@ -27,7 +27,6 @@ import unittest
 import nest
 
 
-@nest.ll_api.check_stack
 class ErrorTestCase(unittest.TestCase):
     """Tests if errors are handled correctly"""
 

@@ -95,7 +95,7 @@ EventDeliveryManager::initialize()
     {
       emitted_spikes_register_[ tid ] = new std::vector< std::vector< Target > >();
     }
-    emitted_spikes_register_[ tid ]->resize( num_threads, std::vector< Target >() );
+    emitted_spikes_register_[ tid ]->resize(  kernel().connection_manager.get_min_delay(), std::vector< Target >() );
 
     off_grid_emitted_spike_register_[ tid ].resize( num_threads,
       std::vector< std::vector< OffGridTarget > >(
@@ -1034,10 +1034,7 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid )
 void
 EventDeliveryManager::resize_spike_register_( const thread tid )
 {
-  for ( auto& emitted_spikes_for_current_thread : *( emitted_spikes_register_[ tid ] ) )
-  {
-    emitted_spikes_for_current_thread.resize( kernel().connection_manager.get_min_delay(), Target() );
-  }
+  emitted_spikes_register_[ tid ]->resize( kernel().connection_manager.get_min_delay(), std::vector<Target>() );
 
   for ( auto& off_grid_emitted_spike_for_current_thread : off_grid_emitted_spike_register_[ tid ] )
   {

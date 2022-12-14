@@ -49,8 +49,8 @@ extern "C" herr_t get_member_names_callback_( hid_t loc_id, const char* name, co
 namespace nest
 {
 
-SonataConnector::SonataConnector( const DictionaryDatum& sonata_dynamics, const long chunk_size )
-  : sonata_dynamics_( sonata_dynamics )
+SonataConnector::SonataConnector( const DictionaryDatum& graph_specs, const long chunk_size )
+  : graph_specs_( graph_specs )
   , chunk_size_( chunk_size )
   , weight_dataset_exist_( false )
   , delay_dataset_exist_( false )
@@ -98,33 +98,29 @@ SonataConnector::connect()
   */
   // clang-format on
 
-  auto edges_container = getValue< ArrayDatum >( sonata_dynamics_->lookup( "edges" ) );
+  auto edges_container = getValue< ArrayDatum >( graph_specs_->lookup( "edges" ) );
 
   // Iterate edge files
-  for ( auto key_edge_dict : edges_container )
+  for ( auto edge_dict_datum : edges_container )
   {
 
-    const auto edge_dict = getValue< DictionaryDatum >( key_edge_dict );
-    fname_ = getValue< std::string >( edge_dict->lookup( "edges_file" ) );
+    const auto edge_dict = getValue< DictionaryDatum >( edge_dict_datum );
+    cur_fname_ = getValue< std::string >( edge_dict->lookup( "edges_file" ) );
+    const auto file = open_file_( cur_fname_ );
+    const auto edges_grp = open_group_( file, "edges" );
 
     // Create map of edge type ids to NEST synapse_model ids
-    edge_params_ = getValue< DictionaryDatum >( edge_dict->lookup( "edge_synapse" ) );
-    create_type_id_2_syn_spec_( edge_params_ );
-
-    // Open edge file
-    const auto file = open_file_();
-
-    // Open top-level group (always one group named 'edges')
-    const auto edges_grp = open_group_( file, "edges" );
+    cur_edge_params_ = getValue< DictionaryDatum >( edge_dict->lookup( "edge_synapse" ) );
+    create_type_id_2_syn_spec_( cur_edge_params_ );
 
     // Get names of population groups (usually just one population group)
     std::vector< std::string > pop_names;
-    get_member_names_( edges_grp->getId(), pop_names );
+    H5Literate( edges_grp->getId(), H5_INDEX_NAME, H5_ITER_INC, NULL, get_member_names_callback_, &pop_names );
 
     // Iterate the population groups
     for ( const auto& pop_name : pop_names )
     {
-      // Open population group
+
       const auto pop_grp = open_group_( edges_grp, pop_name );
 
       // Find the number of edge id groups and edge id group names
@@ -141,10 +137,8 @@ SonataConnector::connect()
           "Connecting with SONATA files with more than one edge id group is currently not implemented" );
       }
 
-      // Open edge id group
       const auto edge_id_grp = open_group_( pop_grp, edge_id_grp_names[ 0 ] );
 
-      // Open datasets
       open_required_dsets_( pop_grp );
       try_open_edge_group_id_dsets_( edge_id_grp );
 
@@ -152,13 +146,10 @@ SonataConnector::connect()
       get_attribute_( source_attribute_value_, src_node_id_dset_, "node_population" );
       get_attribute_( target_attribute_value_, tgt_node_id_dset_, "node_population" );
 
-      // Read datasets and connect sequentially in chunks
+      // Read datasets sequentially in chunks and connect
       create_connections_in_chunks_();
 
-      // Close datasets
       close_dsets_();
-
-      // Reset all parameters
       reset_params_();
 
     } // end iteration over population groups
@@ -172,16 +163,16 @@ SonataConnector::connect()
 
 
 H5::H5File*
-SonataConnector::open_file_()
+SonataConnector::open_file_( std::string& fname )
 {
   H5::H5File* file = nullptr;
   try
   {
-    file = new H5::H5File( fname_, H5F_ACC_RDONLY );
+    file = new H5::H5File( fname, H5F_ACC_RDONLY );
   }
   catch ( const H5::Exception& e )
   {
-    throw KernelException( "Could not open HDF5 file " + fname_ + ": " + e.getDetailMsg() );
+    throw KernelException( "Could not open HDF5 file " + fname + ": " + e.getDetailMsg() );
   }
   return file;
 }
@@ -196,7 +187,7 @@ SonataConnector::open_group_( const H5::H5File* file, const std::string& grp_nam
   }
   catch ( const H5::Exception& e )
   {
-    throw KernelException( "Could not open HDF5 group " + grp_name + " in " + fname_ + ": " + e.getDetailMsg() );
+    throw KernelException( "Could not open HDF5 group " + grp_name + " in " + cur_fname_ + ": " + e.getDetailMsg() );
   }
   return group;
 }
@@ -211,7 +202,7 @@ SonataConnector::open_group_( const H5::Group* group, const std::string& grp_nam
   }
   catch ( const H5::Exception& e )
   {
-    throw KernelException( "Could not open HDF5 group " + grp_name + " in " + fname_ + ": " + e.getDetailMsg() );
+    throw KernelException( "Could not open HDF5 group " + grp_name + " in " + cur_fname_ + ": " + e.getDetailMsg() );
   }
   return subgroup;
 }
@@ -226,7 +217,7 @@ SonataConnector::open_required_dsets_( const H5::Group* pop_grp )
   }
   catch ( const H5::Exception& e )
   {
-    throw KernelException( "Could not open source_node_id dataset in " + fname_ + ": " + e.getDetailMsg() );
+    throw KernelException( "Could not open source_node_id dataset in " + cur_fname_ + ": " + e.getDetailMsg() );
   }
 
   try
@@ -235,7 +226,7 @@ SonataConnector::open_required_dsets_( const H5::Group* pop_grp )
   }
   catch ( const H5::Exception& e )
   {
-    throw KernelException( "Could not open target_node_id dataset in " + fname_ + ": " + e.getDetailMsg() );
+    throw KernelException( "Could not open target_node_id dataset in " + cur_fname_ + ": " + e.getDetailMsg() );
   }
 
   try
@@ -244,7 +235,7 @@ SonataConnector::open_required_dsets_( const H5::Group* pop_grp )
   }
   catch ( const H5::Exception& e )
   {
-    throw KernelException( "Could not open edge_type_id dataset in " + fname_ + ": " + e.getDetailMsg() );
+    throw KernelException( "Could not open edge_type_id dataset in " + cur_fname_ + ": " + e.getDetailMsg() );
   }
 
   // Consistency checks
@@ -253,13 +244,14 @@ SonataConnector::open_required_dsets_( const H5::Group* pop_grp )
   // Ensure that target and source population have the same size
   if ( num_tgt_node_ids != get_nrows_( src_node_id_dset_, 1 ) )
   {
-    throw KernelException( "target_node_id and source_node_id datasets in " + fname_ + " must be of the same size" );
+    throw KernelException(
+      "target_node_id and source_node_id datasets in " + cur_fname_ + " must be of the same size" );
   }
 
   // Ensure that edge_type_id dataset size is consistent with the number of target node ids
   if ( num_tgt_node_ids != get_nrows_( edge_type_id_dset_, 1 ) )
   {
-    throw KernelException( "target_node_id and edge_type_id datasets in " + fname_ + " must be of the same size" );
+    throw KernelException( "target_node_id and edge_type_id datasets in " + cur_fname_ + " must be of the same size" );
   }
 }
 
@@ -268,7 +260,6 @@ SonataConnector::try_open_edge_group_id_dsets_( const H5::Group* edge_id_grp )
 {
   // TODO: Currently only works if the edge file has a single edge id group
 
-  // Try to open synaptic weight and delay datasets
   weight_dataset_exist_ = H5Lexists( edge_id_grp->getId(), "syn_weight", H5P_DEFAULT ) > 0;
   delay_dataset_exist_ = H5Lexists( edge_id_grp->getId(), "delay", H5P_DEFAULT ) > 0;
 
@@ -280,7 +271,7 @@ SonataConnector::try_open_edge_group_id_dsets_( const H5::Group* edge_id_grp )
     }
     catch ( const H5::Exception& e )
     {
-      throw KernelException( "Could not open syn_weight dataset in " + fname_ + ": " + e.getDetailMsg() );
+      throw KernelException( "Could not open syn_weight dataset in " + cur_fname_ + ": " + e.getDetailMsg() );
     }
   }
 
@@ -292,7 +283,7 @@ SonataConnector::try_open_edge_group_id_dsets_( const H5::Group* edge_id_grp )
     }
     catch ( const H5::Exception& e )
     {
-      throw KernelException( "Could not open delay dataset in " + fname_ + ": " + e.getDetailMsg() );
+      throw KernelException( "Could not open delay dataset in " + cur_fname_ + ": " + e.getDetailMsg() );
     }
   }
 
@@ -315,7 +306,7 @@ SonataConnector::get_attribute_( std::string& attribute_value,
   catch ( const H5::Exception& e )
   {
     throw KernelException(
-      "Unable to read attribute of source_node_id or target_node_id in " + fname_ + ": " + e.getDetailMsg() );
+      "Unable to read attribute of source_node_id or target_node_id in " + cur_fname_ + ": " + e.getDetailMsg() );
   }
 }
 
@@ -354,16 +345,12 @@ SonataConnector::create_connections_in_chunks_()
 
   // Iterate chunks
   hsize_t offset = 0; // start coordinates of data selection
-
   // TODO: should iterator also be hsize_t, and should then dv.quot & dv.rem be cast to hsize_t?
-
   for ( size_t i = 0; i < dv.quot; i++ )
   {
-    // create connections
     connect_chunk_( chunk_size_, offset );
-    // increment offset
     offset += chunk_size_;
-  } // end chunk loop
+  }
 
   // Handle remainder
   if ( dv.rem > 0 )
@@ -401,7 +388,7 @@ SonataConnector::connect_chunk_( const hsize_t chunk_size, const hsize_t offset 
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
 
   // Retrieve the correct NodeCollections
-  const auto nest_nodes = getValue< DictionaryDatum >( sonata_dynamics_->lookup( "nodes" ) );
+  const auto nest_nodes = getValue< DictionaryDatum >( graph_specs_->lookup( "nodes" ) );
   const auto src_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( source_attribute_value_ ) );
   const auto tgt_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( target_attribute_value_ ) );
   const auto snode_begin = src_nc->begin();
@@ -433,7 +420,7 @@ SonataConnector::connect_chunk_( const hsize_t chunk_size, const hsize_t offset 
         const thread target_thread = target->get_thread();
 
         const auto edge_type_id = edge_type_id_data_subset[ i ];
-        const auto syn_spec = getValue< DictionaryDatum >( edge_params_->lookup( std::to_string( edge_type_id ) ) );
+        const auto syn_spec = getValue< DictionaryDatum >( cur_edge_params_->lookup( std::to_string( edge_type_id ) ) );
         const double weight =
           get_syn_property_( syn_spec, i, weight_dataset_exist_, syn_weight_data_subset, names::weight );
         const double delay = get_syn_property_( syn_spec, i, delay_dataset_exist_, delay_data_subset, names::delay );
@@ -482,13 +469,6 @@ SonataConnector::get_nrows_( H5::DataSet dataset, int ndim )
 }
 
 
-void
-SonataConnector::get_member_names_( hid_t loc_id, std::vector< std::string >& names )
-{
-  H5Literate( loc_id, H5_INDEX_NAME, H5_ITER_INC, NULL, get_member_names_callback_, &names );
-}
-
-
 hsize_t
 SonataConnector::find_edge_id_groups_( H5::Group* pop_grp, std::vector< std::string >& edge_id_grp_names )
 {
@@ -497,13 +477,14 @@ SonataConnector::find_edge_id_groups_( H5::Group* pop_grp, std::vector< std::str
   // Note we assume edge ids are contiguous starting from zero, which is the
   // SONATA default. Edge id keys can also be custom (not handled here)
 
-  std::vector< std::string > population_group_dset_and_subgroup_names;
-  get_member_names_( pop_grp->getId(), population_group_dset_and_subgroup_names );
+  // Retrieve names of all first level datasets and groups of the population group
+  std::vector< std::string > member_names;
+  H5Literate( pop_grp->getId(), H5_INDEX_NAME, H5_ITER_INC, NULL, get_member_names_callback_, &member_names );
 
   size_t num_edge_id_groups { 0 };
   bool is_edge_id_name;
 
-  for ( const auto& name : population_group_dset_and_subgroup_names )
+  for ( const auto& name : member_names )
   {
     // TODO: The below bool is convoluted, try to write it cleaner
     is_edge_id_name = ( name.find_first_not_of( "0123456789" ) == std::string::npos );
@@ -527,28 +508,19 @@ SonataConnector::read_subset_( const H5::DataSet& dataset,
   hsize_t chunk_size,
   hsize_t offset )
 {
-
   try
   {
-    // Get dataspace
+    H5::DataSpace mspace( 1, &chunk_size, NULL );
     H5::DataSpace dspace = dataset.getSpace();
-
     // Select hyperslab. H5S_SELECT_SET replaces any existing selection with this call
     dspace.selectHyperslab( H5S_SELECT_SET, &chunk_size, &offset );
-
-    // Set memoryspace
-    H5::DataSpace mspace( 1, &chunk_size, NULL );
-
-    // Read dataset
     dataset.read( data_buf.data(), datatype, mspace, dspace );
-
-    // Close memory- and dataspace
-    dspace.close();
     mspace.close();
+    dspace.close();
   }
   catch ( const H5::Exception& e )
   {
-    throw KernelException( "Unable to read datasets in " + fname_ + ": " + e.getDetailMsg() );
+    throw KernelException( "Unable to read datasets in " + cur_fname_ + ": " + e.getDetailMsg() );
   }
 }
 

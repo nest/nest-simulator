@@ -46,7 +46,7 @@ namespace nest
  *
  * This class provides an interface for connecting nodes provided in SONTATA files.
  * The nodes have to first be created through the SonataConnector PyNEST class, and
- * provided through the `sonata_dynamics` dictionary, along with an array providing
+ * provided through the `graph_specs` dictionary, along with an array providing
  * connection parameters for the different SONATA files.
  *
  * The connections are created through the `SonataConnector::connect()` function,
@@ -59,9 +59,8 @@ namespace nest
 
 class SonataConnector
 {
-
 public:
-  SonataConnector( const DictionaryDatum& sonata_dynamics, const long chunk_size );
+  SonataConnector( const DictionaryDatum& graph_specs, const long chunk_size );
   ~SonataConnector();
 
   /**
@@ -81,7 +80,7 @@ private:
    *
    * @return H5File pointer
    */
-  H5::H5File* open_file_();
+  H5::H5File* open_file_( std::string& fname );
 
   /**
    * Open an HDF5 edge file group
@@ -215,13 +214,6 @@ private:
     hsize_t chunk_size,
     hsize_t offset );
 
-  /**
-   * @brief Get the member names object
-   *
-   * @param loc_id
-   * @param names
-   */
-  void get_member_names_( hid_t loc_id, std::vector< std::string >& names );
 
   /**
    * @brief
@@ -247,7 +239,7 @@ private:
   void reset_params_();
 
   //! Dictionary containing SONATA dynamics
-  DictionaryDatum sonata_dynamics_;
+  DictionaryDatum graph_specs_;
 
   //! Size of chunk
   hsize_t chunk_size_;
@@ -265,7 +257,7 @@ private:
   std::string target_attribute_value_;
 
   //! Edge parameters
-  DictionaryDatum edge_params_;
+  DictionaryDatum cur_edge_params_;
 
   //! Map from type id (in SONATA file) to synapse model
   std::map< int, index > type_id_2_syn_model_;
@@ -277,7 +269,7 @@ private:
   std::map< int, std::vector< DictionaryDatum > > type_id_2_param_dicts_;
 
   //! Datasets
-  std::string fname_;
+  std::string cur_fname_;
   H5::DataSet src_node_id_dset_;
   H5::DataSet tgt_node_id_dset_;
   H5::DataSet edge_type_id_dset_;

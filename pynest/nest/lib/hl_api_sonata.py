@@ -28,6 +28,7 @@ import csv
 import json
 import numpy as np
 import pandas as pd
+from pprint import pprint
 
 from .. import pynestkernel as kernel
 from ..ll_api import sps, sr, sli_func
@@ -45,7 +46,7 @@ except ImportError:
 have_hdf5 = sli_func("statusdict/have_hdf5 ::")
 
 __all__ = [
-    'SonataConnector'
+    'SonataNetwork'
 ]
 
 
@@ -74,6 +75,11 @@ class SonataNetwork():
 
     def __init__(self, base_path, config, sim_config=None):
 
+        if not have_hdf5:
+            raise kernel.NESTError("Cannot use SonataNetwork because NEST was compiled without HDF5 support")
+        if not have_h5py:
+            raise kernel.NESTError("Cannot use SonataNetwork because h5py is not installed or could not be imported")
+
         # s prefix -> sonata, n prefix -> nest
         self._base_path = base_path
         self._config = {}
@@ -81,14 +87,10 @@ class SonataNetwork():
         self._s_edge_types = []
         self._chunk_size_default = 2**20
 
-        if not have_hdf5:
-            raise kernel.NESTError("Cannot use SonataConnector because NEST was compiled without HDF5 support")
-        if not have_h5py:
-            raise kernel.NESTError("Cannot use SonataConnector because h5py is not installed or could not be imported")
-
         self._parse_config(config)
         if sim_config:
             self._parse_config(sim_config)
+        pprint(self._config)
 
     def _parse_config(self, json_config):
         """Convert SONATA config files to dictionary containing absolute paths and simulation parameters.
@@ -99,14 +101,14 @@ class SonataNetwork():
             json file containing all SONATA paths and parameters.
         """
 
-        with open(os.path.join(self.base_path, json_config)) as fp:
+        with open(os.path.join(self._base_path, json_config)) as fp:
             config = json.load(fp)
 
         subs = {}
         for dir, path in config["manifest"].items():
             if dir.startswith('$'):
                 dir = dir[1:]
-            subs[dir] = os.path.join(self.base_path, path)
+            subs[dir] = os.path.join(self._base_path, path)
         for dir, path in subs.items():
             if '$BASE_DIR' in path:
                 subs[dir] = path.replace('$BASE_DIR', '.')
@@ -125,7 +127,7 @@ class SonataNetwork():
                 else:
                     return obj
 
-        self.config.update(do_substitutions(config))
+        self._config.update(do_substitutions(config))
 
     def Create(self):
         """Create nodes from SONATA files.
@@ -187,7 +189,7 @@ class SonataNetwork():
                                 indx = np.where(node_type_ids[:] == node_type)[0]
                                 nodes[indx].set(node_type_map[node_type])
 
-                        self._node_collections[population_name] = nodes
+                        self._n_node_collections[population_name] = nodes
             else:
                 raise NotImplementedError("More than one NEST model per csv file currently not implemented")
 
@@ -342,7 +344,7 @@ class SonataNetwork():
                     edge_params[d['edge_type_id']] = synapse_dict
             edge_dict['edge_synapse'] = edge_params
 
-            self.edge_types.append(edge_dict)
+            self._s_edge_types.append(edge_dict)
 
     def Connect(self, chunk_size=None):
         """Connect nodes in SONATA edge files.
@@ -361,18 +363,17 @@ class SonataNetwork():
 
         self.create_edge_dict_()
 
-        sonata_dynamics = {'nodes': self.node_collections,
-                           'edges': self.edge_types}
+        graph_specs = {'nodes': self._n_node_collections,
+                       'edges': self._s_edge_types}
         # Check if HDF5 files exists and are not blocked.
-        for d in self.edge_types:
+        for d in self._s_edge_types:
             try:
                 f = h5py.File(d['edges_file'], 'r')
                 f.close()
             except BlockingIOError as err:
                 raise BlockingIOError(f'{err.strerror} for {os.path.realpath(d["edges_file"])}') from None
 
-        # print(sonata_dynamics)
-        sps(sonata_dynamics)
+        sps(graph_specs)
         sps(chunk_size)
         sr('Connect_sonata')
 
@@ -416,6 +417,10 @@ class SonataNetwork():
 
     @property
     def node_colletions(self):
-        return self._node_collections
+        return self._n_node_collections
+
+    @property
+    def config(self):
+        return self._config
 
 # TODO: NC getter

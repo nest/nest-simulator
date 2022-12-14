@@ -403,6 +403,12 @@ function( NEST_PROCESS_WITH_PYTHON )
       set( Python_INCLUDE_DIRS "${Python_INCLUDE_DIRS}" PARENT_SCOPE )
       set( Python_LIBRARIES "${Python_LIBRARIES}" PARENT_SCOPE )
 
+      if ( ${with-python-deps} STREQUAL "OFF" )
+        set( INSTALL_PYTHON_DEPS OFF PARENT_SCOPE )
+      else ()
+        set( INSTALL_PYTHON_DEPS ON PARENT_SCOPE )
+      endif ()
+
       if ( cythonize-pynest )
         # Need updated Cython because of a change in the C api in Python 3.7
         find_package( Cython 0.28.3 REQUIRED )

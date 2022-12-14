@@ -150,13 +150,12 @@ set_target_properties( models
     VERSION ${NEST_VERSION}
     SOVERSION 3
     )
-target_link_libraries( models nestutil sli_lib nestkernel )
+target_link_libraries( models nestutil nestkernel )
 
 target_include_directories( models PRIVATE
     ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
-    ${PROJECT_SOURCE_DIR}/sli
     ${PROJECT_SOURCE_DIR}/nestkernel
     )
 

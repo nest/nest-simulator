@@ -133,7 +133,7 @@ class ConngenTestCase(unittest.TestCase):
 
         pop = nest.Create("iaf_psc_alpha", n_neurons)
 
-        self.assertRaisesRegex(nest.kernel.NESTError, "UnknownSynapseType",
+        self.assertRaisesRegex(nest.NESTError, "UnknownSynapseType",
                                nest.Connect, pop, pop, connspec, synspec)
 
     def test_Conngen_error_collocated_synapses(self):
@@ -150,7 +150,7 @@ class ConngenTestCase(unittest.TestCase):
 
         pop = nest.Create('iaf_psc_alpha', 3)
 
-        self.assertRaisesRegex(nest.kernel.NESTError, "BadProperty",
+        self.assertRaisesRegex(nest.NESTError, "BadProperty",
                                nest.Connect, pop, pop, connspec, synspec)
 
     def test_Conngen_error_weight_and_delay_in_synspec_and_conngen(self):
@@ -172,13 +172,13 @@ class ConngenTestCase(unittest.TestCase):
 
         pop = nest.Create("iaf_psc_alpha", n_neurons)
 
-        self.assertRaisesRegex(nest.kernel.NESTError, "BadProperty",
+        self.assertRaisesRegex(nest.NESTError, "BadProperty",
                                nest.Connect, pop, pop, connspec, synspec_w)
 
-        self.assertRaisesRegex(nest.kernel.NESTError, "BadProperty",
+        self.assertRaisesRegex(nest.NESTError, "BadProperty",
                                nest.Connect, pop, pop, connspec, synspec_d)
 
-        self.assertRaisesRegex(nest.kernel.NESTError, "BadProperty",
+        self.assertRaisesRegex(nest.NESTError, "BadProperty",
                                nest.Connect, pop, pop, connspec, synspec_wd)
 
 

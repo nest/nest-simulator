@@ -59,7 +59,7 @@ class TestChangingTicBase(unittest.TestCase):
                 continue
             try:
                 reference[model] = nest.GetDefaults(model)
-            except nest.kernel.NESTError:
+            except nest.NESTError:
                 # If we can't get the defaults, we ignore the model.
                 pass
 
@@ -106,7 +106,7 @@ class TestChangingTicBase(unittest.TestCase):
 
     def _assert_ticbase_change_raises_and_reset(self, after_call):
         """Assert that changing tic-base raises a NESTError, and reset the kernel"""
-        with self.assertRaises(nest.kernel.NESTError, msg=f'after calling "{after_call}"'):
+        with self.assertRaises(nest.NESTError, msg=f'after calling "{after_call}"'):
             # For co-dependent properties, we use `set()` instead of kernel attributes
             nest.set(resolution=0.5, tics_per_ms=1500.0)
         nest.ResetKernel()

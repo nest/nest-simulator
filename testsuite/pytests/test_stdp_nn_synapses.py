@@ -94,7 +94,7 @@ class TestSTDPNNSynapses:
             err_msg=synapse_model + " test: "
                                     "Resulting synaptic weight %e "
                                     "differs from expected %e" % (
-                                        weight_by_nest, weight_reproduced_independently))
+                                       weight_by_nest, weight_reproduced_independently))
 
     def do_the_nest_simulation(self):
         """
@@ -148,12 +148,12 @@ class TestSTDPNNSynapses:
 
         nest.Simulate(self.simulation_duration)
 
-        all_spikes = nest.GetStatus(spike_recorder, keys='events')[0]
+        all_spikes = spike_recorder.events
         times = np.array(all_spikes['times'])
         senders = np.array(all_spikes['senders'])
         pre_spikes = times[senders == presynaptic_neuron.tolist()[0]]
         post_spikes = times[senders == postsynaptic_neuron.tolist()[0]]
-        weight = nest.GetStatus(plastic_synapse_of_interest, keys='weight')
+        weight = plastic_synapse_of_interest.weight
         return (pre_spikes, post_spikes, weight)
 
     def reproduce_weight_drift(self, _pre_spikes, _post_spikes,

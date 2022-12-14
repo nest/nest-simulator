@@ -44,8 +44,6 @@
 #include "nest_types.h"
 #include "node_collection.h"
 
-// Includes from sli:
-#include "arraydatum.h"
 
 namespace nest
 {

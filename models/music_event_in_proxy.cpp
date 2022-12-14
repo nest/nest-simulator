@@ -27,13 +27,6 @@
 // External includes:
 #include <music.hh>
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
-
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "logging.h"

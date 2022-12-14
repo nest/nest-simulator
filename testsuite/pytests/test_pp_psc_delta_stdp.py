@@ -53,8 +53,7 @@ class PpPscDeltaSTDPTestCase(unittest.TestCase):
         print(conn2)
 
         sg_pre = nest.Create('spike_generator')
-        nest.SetStatus(sg_pre,
-                       {'spike_times': np.arange(Dt, nsteps * Dt, 10. * Dt)})
+        sg_pre.spike_times = np.arange(Dt, nsteps * Dt, 10. * Dt)
         nest.Connect(sg_pre, nrn_pre)
 
         w1 = np.zeros(nsteps+1)

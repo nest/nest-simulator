@@ -296,7 +296,6 @@ nest::inhomogeneous_poisson_generator::set_data_from_stimulation_backend( std::v
         "The size of the data for the inhomogeneous_poisson_generator needs to be even [(time,rate) pairs]" );
     }
     dictionary d;
-    ( new Dictionary );
     std::vector< double > times_ms;
     std::vector< double > rate_values;
     const size_t n_spikes = P_.rate_times_.size();

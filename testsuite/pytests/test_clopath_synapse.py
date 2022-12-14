@@ -60,7 +60,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
             n = nest.Create(nm, 2)
 
             # try to connect with clopath_rule
-            with self.assertRaises(nest.kernel.NESTError):
+            with self.assertRaises(nest.NESTError):
                 nest.Connect(n, n, {"rule": "all_to_all"},
                              {"synapse_model": "clopath_synapse"})
 
@@ -167,7 +167,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
                 nest.Simulate(simulation_time)
 
                 # Evaluation
-                w_events = nest.GetStatus(wr)[0]["events"]
+                w_events = wr.events
                 weights = w_events["weights"]
                 syn_weights.append(weights[-1])
 
@@ -218,9 +218,9 @@ class ClopathSynapseTestCase(unittest.TestCase):
         nest.Simulate(20.)
 
         # Evaluation
-        data = nest.GetStatus(mm)
-        senders = np.array(data[0]['events']['senders'])
-        voltages = np.array(data[0]['events']['V_m'])
+        data = mm.events
+        senders = np.array(data['senders'])
+        voltages = np.array(data['V_m'])
 
         vm1 = voltages[np.where(senders == 1)]
         vm2 = voltages[np.where(senders == 2)]

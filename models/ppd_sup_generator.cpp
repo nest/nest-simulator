@@ -301,7 +301,6 @@ nest::ppd_sup_generator::set_data_from_stimulation_backend( std::vector< double 
         "[dead_time, rate, n_proc, frequency, relative_amplitude]." );
     }
     dictionary d;
-    ( new Dictionary );
     d[ names::dead_time ] = input_param[ 0 ];
     d[ names::rate ] = input_param[ 1 ];
     d[ names::n_proc ] = input_param[ 2 ];

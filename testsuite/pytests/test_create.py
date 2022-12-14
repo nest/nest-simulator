@@ -56,14 +56,14 @@ class CreateTestCase(unittest.TestCase):
         voltage = 12.0
         n = nest.Create('iaf_psc_alpha', num_nodes, {'V_m': voltage})
 
-        self.assertEqual(nest.GetStatus(n, 'V_m'), (voltage, ) * num_nodes)
+        self.assertEqual(n.V_m, (voltage, ) * num_nodes)
 
     def test_erroneous_param_to_create(self):
         """Erroneous param to Create raises exception"""
         num_nodes = 3
         params = [(tuple(), TypeError, False),
                   ({'V_m': [-50]}, IndexError, True),
-                  ({'V_mm': num_nodes*[-50.]}, nest.kernel.NESTError, True),
+                  ({'V_mm': num_nodes*[-50.]}, nest.NESTError, True),
                   ]
 
         for p, err, expects_warning in params:
@@ -81,7 +81,7 @@ class CreateTestCase(unittest.TestCase):
         V_m = (0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0)
         n = nest.Create('iaf_psc_alpha', num_nodes, [{'V_m': v} for v in V_m])
 
-        self.assertEqual(nest.GetStatus(n, 'V_m'), V_m)
+        self.assertEqual(n.V_m, V_m)
 
 
 def suite():

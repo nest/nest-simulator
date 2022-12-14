@@ -69,7 +69,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
             n = nest.Create(nm, 2)
 
             # try to connect with urbanczik synapse
-            with self.assertRaises(nest.kernel.NESTError):
+            with self.assertRaises(nest.NESTError):
                 nest.Connect(n, n, {"rule": "all_to_all"},
                              {"synapse_model": "urbanczik_synapse", "receptor_type": r_type})
 
@@ -181,7 +181,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         read out devices
         '''
         # multimeter
-        rec = nest.GetStatus(mm)[0]['events']
+        rec = mm.events
         t = np.array(rec['times'])
         V_w = np.array(rec['V_m.p'])
 
@@ -192,14 +192,14 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         V_w_star = (g_L*E_L + g_D*V_w) / (g_L + g_D)
 
         # weight recorder
-        data = nest.GetStatus(wr)
-        senders = data[0]['events']['senders']
-        targets = data[0]['events']['targets']
-        weights = data[0]['events']['weights']
-        times = data[0]['events']['times']
+        data = wr.get()
+        senders = data['events']['senders']
+        targets = data['events']['targets']
+        weights = data['events']['weights']
+        times = data['events']['times']
 
         # spike recorder
-        data = nest.GetStatus(sr_soma)[0]['events']
+        data = sr_soma.events
         spike_times_soma = np.array(data['times'])
 
         # compute predicted rate

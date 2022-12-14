@@ -60,7 +60,7 @@ cm.compartments = [
 
 ###############################################################################
 # spike threshold
-nest.SetStatus(cm, {'V_th': -50.})
+cm.V_th = -50.
 
 ###############################################################################
 # - GABA receptor in compartment 0 (soma)
@@ -106,7 +106,7 @@ mm = nest.Create('multimeter', 1, {'record_from': ['v_comp0', 'v_comp1', 'v_comp
 nest.Connect(mm, cm)
 
 nest.Simulate(400.)
-res = nest.GetStatus(mm, 'events')[0]
+res = mm.events
 
 plt.plot(res['times'], res['v_comp0'], c='b', label='v_comp0')
 plt.plot(res['times'], res['v_comp1'], c='r', label='v_comp1')

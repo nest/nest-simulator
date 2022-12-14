@@ -37,9 +37,6 @@
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
 
 std::vector< std::string > nest::pp_cond_exp_mc_urbanczik::comp_names_( NCOMP );
 nest::RecordablesMap< nest::pp_cond_exp_mc_urbanczik > nest::pp_cond_exp_mc_urbanczik::recordablesMap_;

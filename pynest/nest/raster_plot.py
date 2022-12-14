@@ -97,7 +97,7 @@ def from_data(data, sel=None, **kwargs):
         Parameters passed to _make_plot
     """
     if len(data) == 0:
-        raise nest.kernel.NESTError("No data to plot.")
+        raise nest.NESTError("No data to plot.")
     ts = data[:, 1]
     d = extract_events(data, sel=sel)
     ts1 = d[:, 1]
@@ -176,19 +176,19 @@ def from_device(detec, **kwargs):
 
     Raises
     ------
-    nest.kernel.NESTError
+    nest.NESTError
     """
 
     type_id = nest.GetDefaults(detec.get('model'), 'type_id')
     if not type_id == "spike_recorder":
-        raise nest.kernel.NESTError("Please provide a spike_recorder.")
+        raise nest.NESTError("Please provide a spike_recorder.")
 
     if detec.get('record_to') == "memory":
 
         ts, node_ids = _from_memory(detec)
 
         if not len(ts):
-            raise nest.kernel.NESTError("No events recorded!")
+            raise nest.NESTError("No events recorded!")
 
         if "title" not in kwargs:
             kwargs["title"] = "Raster plot from device '%i'" % detec.get('global_id')
@@ -205,7 +205,7 @@ def from_device(detec, **kwargs):
         return from_file(fname, **kwargs)
 
     else:
-        raise nest.kernel.NESTError("No data to plot. Make sure that \
+        raise nest.NESTError("No data to plot. Make sure that \
             record_to is set to either 'ascii' or 'memory'.")
 
 

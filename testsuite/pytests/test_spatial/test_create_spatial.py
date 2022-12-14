@@ -93,7 +93,7 @@ class CreateLayer(unittest.TestCase):
         """Test Create free layer with too small extent."""
         pos = ((1., 1.), (2., 2.), (3., 3.))
         extent = (1.5, 3.)
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.Create('iaf_psc_alpha',
                         positions=nest.spatial.free(pos, extent=extent))
 

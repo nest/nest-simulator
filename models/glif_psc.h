@@ -30,8 +30,6 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-#include "dictdatum.h"
-
 /* BeginUserDocs: integrate-and-fire, current-based
 
 Short description

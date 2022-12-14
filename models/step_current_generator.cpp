@@ -335,7 +335,6 @@ nest::step_current_generator::set_data_from_stimulation_backend( std::vector< do
         "The size of the data for the step_current_generator needs to be even [(time,amplitude) pairs] " );
     }
     dictionary d;
-    ( new Dictionary );
     std::vector< double > times_ms;
     std::vector< double > amplitudes_pA;
     const size_t n_step = P_.amp_time_stamps_.size();

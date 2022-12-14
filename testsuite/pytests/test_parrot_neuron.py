@@ -55,7 +55,7 @@ class ParrotNeuronTestCase(unittest.TestCase):
         nest.Simulate(self.spike_time + 2 * self.delay)
 
         # get spike from parrot neuron
-        events = nest.GetStatus(self.spikes)[0]["events"]
+        events = self.spikes.events
         times = np.array(events['times'])
         senders = np.array(events['senders'])
         post_time = times[senders == self.parrot[0].get('global_id')]
@@ -74,7 +74,7 @@ class ParrotNeuronTestCase(unittest.TestCase):
         nest.Simulate(self.spike_time + 2. * self.delay)
 
         # get spike from parrot neuron, assert it was ignored
-        events = nest.GetStatus(self.spikes)[0]["events"]
+        events = self.spikes.events
         times = np.array(events['times'])
         senders = np.array(events['senders'])
         post_time = times[senders == self.parrot.get('global_id')]
@@ -95,7 +95,7 @@ class ParrotNeuronTestCase(unittest.TestCase):
         nest.Simulate(self.spike_time + 2. * self.delay)
 
         # get spikes from parrot neuron, assert two were transmitted
-        events = nest.GetStatus(self.spikes)[0]["events"]
+        events = self.spikes.events
         post_times = np.array(events['times'])[
             np.array(events['senders']) == self.parrot.get('global_id')]
         assert len(post_times) == 2 and post_times[0] == post_times[1], \
@@ -148,11 +148,9 @@ class ParrotNeuronPoissonTestCase(unittest.TestCase):
 
         nest.Simulate(t_sim)
 
-        n_spikes = nest.GetStatus(spike_rec)[0]['n_events']
-        assert n_spikes > spikes_expected - 3 * spikes_std, \
-            "parrot_neuron loses spikes."
-        assert n_spikes < spikes_expected + 3 * spikes_std, \
-            "parrot_neuron adds spikes."
+        n_spikes = spike_rec.n_events
+        assert n_spikes > spikes_expected - 3 * spikes_std, "parrot_neuron loses spikes."
+        assert n_spikes < spikes_expected + 3 * spikes_std, "parrot_neuron adds spikes."
 
 
 class ParrotNeuronSTDPTestCase(unittest.TestCase):
@@ -209,12 +207,10 @@ class ParrotNeuronSTDPTestCase(unittest.TestCase):
         conn_spec = {
             "rule": "one_to_one",
         }
-        nest.Connect(pre_parrot, post_parrot,
-                     syn_spec=syn_spec, conn_spec=conn_spec)
+        nest.Connect(pre_parrot, post_parrot,syn_spec=syn_spec, conn_spec=conn_spec)
 
         # get STDP synapse and weight before protocol
-        syn = nest.GetConnections(
-            source=pre_parrot, synapse_model="stdp_synapse")
+        syn = nest.GetConnections(source=pre_parrot, synapse_model="stdp_synapse")
         w_pre = syn.get('weight')
 
         last_time = max(pre_times[-1], post_times[-1])

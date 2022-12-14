@@ -35,7 +35,6 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "nest.h"
-#include "nestmodule.h"
 #include "node.h"
 
 // Includes from spatial:

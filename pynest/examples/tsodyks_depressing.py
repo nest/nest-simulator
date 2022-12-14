@@ -112,8 +112,7 @@ volts = nest.Create("voltmeter")
 
 ################################################################################
 # Fifth, the ``iaf_psc_exp`` neurons, the ``dc_generator`` and the ``voltmeter``
-# are configured using ``SetStatus``, which expects a list of node handles and
-# a parameter dictionary or a list of parameter dictionaries.
+# are configured.
 
 neurons.set(neuron_param)
 dc_gen.set(amplitude=I0, start=TIstart, stop=TIend)

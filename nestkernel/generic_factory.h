@@ -30,6 +30,9 @@
 #include "generic_factory.h"
 #include "nest_types.h"
 
+// Includes from nestutil:
+#include "dictionary.h"
+
 
 namespace nest
 {

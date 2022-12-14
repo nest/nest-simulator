@@ -33,10 +33,6 @@
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "doubledatum.h"
-
 
 /* ----------------------------------------------------------------
  * Constructor of internal states class

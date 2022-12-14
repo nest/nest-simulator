@@ -17,48 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-install( DIRECTORY slihelp_generator
-    DESTINATION ${CMAKE_INSTALL_DATADIR}
-    )
-
-if ( NOT CMAKE_CROSSCOMPILING )
-
-  # Python is needed to generate the help. If Python does not exist,
-  # there are problems with the following.
-  # See https://github.com/nest/nest-simulator/issues/678.
-  find_package( PythonInterp )
-  if ( Python_FOUND )
-
-    # Extract help from all source files in the source code, put
-    # them in doc/help and generate a local help index in the
-    # build directory containing links to the help files.
-    install( CODE
-      "execute_process(
-         COMMAND ${Python_EXECUTABLE} -B generate_help.py \"${PROJECT_SOURCE_DIR}\" \"${PROJECT_BINARY_DIR}\"
-         WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/doc/slihelp_generator\"
-         )"
-      )
-
-    # Copy the local doc/help directory to the global installation
-    # directory for documentation.
-    install( DIRECTORY "${PROJECT_BINARY_DIR}/doc/help"
-      DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}"
-      OPTIONAL
-      )
-
-    # Update the global help index to include all help files in
-    # the global installation directory for documentation.
-    install( CODE
-      "execute_process(
-         COMMAND ${Python_EXECUTABLE} -B generate_helpindex.py \"${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}\"
-         WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/doc/slihelp_generator\"
-         )"
-      )
-
-  endif ()
-
-endif ()
-
 if ( DOXYGEN_FOUND )
   add_custom_target( doc
       COMMAND ${DOXYGEN_EXECUTABLE} "${CMAKE_CURRENT_BINARY_DIR}/normaldoc.conf"

@@ -55,14 +55,14 @@ def plot_network(nodes, filename, ext_conns=False,
 
     Raises
     ------
-    nest.kernel.NESTError
+    nest.NESTError
     """
 
     if len(nodes) == 0:
-        nest.kernel.NESTError("nodes must at least contain one node")
+        nest.NESTError("nodes must at least contain one node")
 
     if not isinstance(nodes, nest.NodeCollection):
-        raise nest.kernel.NESTError("nodes must be a NodeCollection")
+        raise nest.NESTError("nodes must be a NodeCollection")
 
     if ext_conns:
         raise NotImplementedError('ext_conns')
@@ -81,4 +81,4 @@ def plot_network(nodes, filename, ext_conns=False,
     elif filetype == "png":
         graph.write_png(filename)
     else:
-        raise nest.kernel.NESTError("Filename must end in '.png' or '.pdf'.")
+        raise nest.NESTError("Filename must end in '.png' or '.pdf'.")

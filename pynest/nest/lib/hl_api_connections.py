@@ -30,7 +30,6 @@ from .. import nestkernel_api as nestkernel
 from .hl_api_connection_helpers import (_process_input_nodes, _connect_layers_needed,
                                         _connect_spatial, _process_conn_spec,
                                         _process_spatial_projections, _process_syn_spec)
-from .hl_api_info import GetStatus
 from .hl_api_nodes import Create
 from .hl_api_parallel_computing import NumProcesses
 from .hl_api_types import NodeCollection, SynapseCollection, Mask, Parameter
@@ -270,23 +269,21 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
         return GetConnections(pre, post)
 
 
-def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
-    """Disconnect `pre` neurons from `post` neurons.
+def Disconnect(*args, conn_spec=None, syn_spec=None):
+    """Disconnect connections in a SynnapseCollection, or `pre` neurons from `post` neurons.
 
-    Neurons in `pre` and `post` are disconnected using the specified disconnection
+    When specifying `pre` and `post` nodes, they are disconnected using the specified disconnection
     rule (one-to-one by default) and synapse type (:cpp:class:`static_synapse <nest::static_synapse>` by default).
     Details depend on the disconnection rule.
 
     Parameters
     ----------
-    pre : NodeCollection
-        Presynaptic nodes, given as `NodeCollection`
-    post : NodeCollection
-        Postsynaptic nodes, given as `NodeCollection`
+    args : SynapseCollection or NodeCollections
+        Either a collection of connections to disconnect, or pre- and postsynaptic nodes given as `NodeCollection`s
     conn_spec : str or dict
-        Disconnection rule, see below
+        Disconnection rule when specifying pre- and postsynaptic nodes, see below
     syn_spec : str or dict
-        Synapse specifications, see below
+        Synapse specifications when specifying pre- and postsynaptic nodes, see below
 
     Notes
     -------
@@ -333,9 +330,20 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
 
     """
 
-    if isinstance(conn_spec, str):
-        conn_spec = {'rule': conn_spec}
-    if isinstance(syn_spec, str):
-        syn_spec = {'synapse_model': syn_spec}
+    if len(args) == 1:
+        synapsecollection = args[0]
+        if not isinstance(synapsecollection, SynapseCollection):
+            raise TypeError('Arguments must be either a SynapseCollection or two NodeCollections')
+        if conn_spec is not None or syn_spec is not None:
+            raise ValueError('When disconnecting with a SynapseCollection, conn_spec and syn_spec cannot be specified')
+        synapsecollection.disconnect()
+    elif len(args) == 2:
+        # Fill default values
+        conn_spec = 'one_to_one' if conn_spec is None else conn_spec
+        syn_spec = 'static_synapse' if syn_spec is None else syn_spec
+        if is_string(conn_spec):
+            conn_spec = {'rule': conn_spec}
+        if is_string(syn_spec):
+            syn_spec = {'synapse_model': syn_spec}
 
     nestkernel.llapi_disconnect(pre._datum, post._datum, conn_spec, syn_spec)

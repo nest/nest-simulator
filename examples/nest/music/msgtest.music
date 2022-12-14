@@ -1,9 +1,0 @@
-stoptime=1.0
-np=1
-[from]
-  binary=messagesource
-  args=messages
-[to]
-  binary=./msgtest.py
-
-from.out -> to.msgdata [0]

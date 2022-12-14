@@ -26,7 +26,6 @@ Functions for simulation control
 from contextlib import contextmanager
 import warnings
 
-from .. import pynestkernel as kernel
 from .. import nestkernel_api as nestkernel
 
 from ..ll_api import *
@@ -88,10 +87,12 @@ def Run(t):
 
     Be careful about modifying the network or neurons between `Prepare` and `Cleanup`
     calls. In particular, do not call `Create`, `Connect`, or `SetKernelStatus`.
-    Calling `SetStatus` to change membrane potential `V_m` of neurons or synaptic
-    weights (but not delays!) will in most cases work as expected, while changing
-    membrane or synaptic times constants will not work correctly. If in doubt, assume
-    that changes may cause undefined behavior and check these thoroughly.
+    Changing the membrane potential `V_m` of neurons or synaptic weights (but not delays!)
+    will in most cases work as expected, while changing membrane or synaptic times
+    constants will not work correctly. If in doubt, assume that changes may cause
+    undefined behavior and check these thoroughly.
+
+    Also note that `local_spike_counter` is reset each time you call `Run`.
 
     See Also
     --------
@@ -103,9 +104,6 @@ def Run(t):
 
 def Prepare():
     """Calibrate the system before a `Run` call. Not needed for `Simulate`.
-
-    Call before the first `Run` call, or before calling `Run` after changing
-    the system, calling `SetStatus` or `Cleanup`.
 
     See Also
     --------
@@ -135,7 +133,7 @@ def RunManager():
 
     Calls `Prepare` before a series of `Run` calls, and calls `Cleanup` at end.
 
-    E.g.:
+    For example:
 
     ::
 
@@ -146,10 +144,9 @@ def RunManager():
 
     Notes
     -----
-
-    Be careful about modifying the network or neurons inside the `RunManager` context.
-    In particular, do not call `Create`, `Connect`, or `SetKernelStatus`. Calling `SetStatus`
-    to change membrane potential `V_m` of neurons or synaptic weights (but not delays!)
+    Be careful about modifying the network or neurons between `Prepare` and `Cleanup`
+    calls. In particular, do not call `Create`, `Connect`, or `SetKernelStatus`.
+    Changing the membrane potential `V_m` of neurons or synaptic weights (but not delays!)
     will in most cases work as expected, while changing membrane or synaptic times
     constants will not work correctly. If in doubt, assume that changes may cause
     undefined behavior and check these thoroughly.

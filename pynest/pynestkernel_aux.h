@@ -34,9 +34,6 @@
 // Includes from conngen:
 #include "conngenmodule.h"
 
-// Includes from sli:
-#include "datum.h"
-
 #define CYTHON_isConnectionGenerator( x ) PNS::isConnectionGenerator( x )
 
 Datum*

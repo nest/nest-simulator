@@ -21,7 +21,6 @@ if ( HAVE_BOOST )
   include_directories( ${BOOST_INCLUDE_DIR} )
 
   add_executable( run_all_cpptests run_all.cpp )
-  add_dependencies( run_all_cpptests nest )
 
   target_link_libraries( run_all_cpptests ${BOOST_LIBRARIES} nestkernel models )
 
@@ -30,7 +29,6 @@ if ( HAVE_BOOST )
     ${PROJECT_BINARY_DIR}/libnestutil
     ${PROJECT_SOURCE_DIR}/models
     ${PROJECT_SOURCE_DIR}/nestkernel
-    ${PROJECT_SOURCE_DIR}/sli
     ${PROJECT_SOURCE_DIR}/thirdparty
     )
 

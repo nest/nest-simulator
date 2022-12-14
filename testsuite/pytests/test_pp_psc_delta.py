@@ -55,13 +55,13 @@ class PpPscDeltaTestCase(unittest.TestCase):
                   't_ref_remaining': 0.0
                   }
 
-        nest.SetStatus(nrn, params)
+        nrn.set(params)
 
         sr = nest.Create('spike_recorder')
         nest.Connect(nrn, sr)
         nest.Simulate(T)
 
-        spikes = nest.GetStatus(sr)[0]['events']['times']
+        spikes = sr.events['times']
         rate_sim = len(spikes) / (T * 1e-3)
         rate_ana = 1. / (1. / lam + d * 1e-3)
         ratio = rate_sim / rate_ana
@@ -103,13 +103,13 @@ class PpPscDeltaTestCase(unittest.TestCase):
                   't_ref_remaining': 0.0
                   }
 
-        nest.SetStatus(nrn, params)
+        nrn.set(params)
 
         sr = nest.Create('spike_recorder')
         nest.Connect(nrn, sr)
         nest.Simulate(T)
 
-        spikes = nest.GetStatus(sr)[0]['events']['times']
+        spikes = sr.events['times']
         rate_sim = len(spikes) / (T * 1e-3)
         rate_ana = 1. / (1. / lam + d * 1e-3)
         ratio = rate_sim / rate_ana
@@ -162,13 +162,13 @@ class PpPscDeltaTestCase(unittest.TestCase):
                   't_ref_remaining': 0.0
                   }
 
-        nest.SetStatus(nrn, params)
+        nrn.set(params)
 
         sr = nest.Create('spike_recorder')
         nest.Connect(nrn, sr)
         nest.Simulate(T)
 
-        spikes = nest.GetStatus(sr)[0]['events']['times']
+        spikes = sr.events['times']
 
         # This could fail due to bad luck. However, if it passes once,
         # then it should always do so, since the random numbers are

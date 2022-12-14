@@ -107,23 +107,22 @@ class SiegertNeuronTestCase(unittest.TestCase):
         dt_scaling = np.sqrt((1 + exp_dt) / (1 - exp_dt))
         mean = mV_to_pA * mu
         std = mV_to_pA * sigma * dt_scaling / np.sqrt(2)
-        nest.SetStatus(self.noise_generator, {"mean": mean, "std": std})
+        self.noise_generator.set({"mean": mean, "std": std})
 
         # set initial membrane voltage distribution with stationary statistics
-        nest.SetStatus(self.iaf_psc_delta, {"V_m":
-                       nest.random.normal(mean=mu, std=sigma/np.sqrt(2))})
+        self.iaf_psc_delta.V_m = nest.random.normal(mean=mu, std=sigma/np.sqrt(2))
 
         # simulate
         nest.Simulate(self.simtime)
 
         # get rate prediction from Siegert neuron
-        events = nest.GetStatus(self.multimeter)[0]["events"]
-        senders = events["senders"]
+        events = self.multimeter.events
+        senders = np.array(events["senders"])
         rate_mask = np.where(senders == self.siegert_neuron.get("global_id"))
-        rate_prediction = events["rate"][rate_mask][-1]
+        rate_prediction = np.array(events["rate"])[rate_mask][-1]
 
         # get rate of integrate-and-fire neuron
-        n_spikes = nest.GetStatus(self.spike_recorder)[0]["n_events"]
+        n_spikes = self.spike_recorder.n_events
         rate_iaf = n_spikes / ((self.simtime - self.start) * 1e-3) / self.N
 
         return rate_prediction, rate_iaf

@@ -31,11 +31,6 @@
 #include "dict_util.h"
 #include "logging.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dict.h"
-#include "dictutils.h"
-
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state

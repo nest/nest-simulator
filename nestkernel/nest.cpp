@@ -64,10 +64,10 @@
 #include "hh_psc_alpha_clopath.h"
 #include "iaf_cond_exp.h"
 #include "parrot_neuron_ps.h"
-#include "step_current_generator.h"
-#include "step_rate_generator.h"
 #include "siegert_neuron.h"
 #include "sigmoid_rate_gg_1998.h"
+#include "step_current_generator.h"
+#include "step_rate_generator.h"
 
 #include "aeif_psc_alpha.h"
 #include "aeif_psc_delta.h"
@@ -90,7 +90,6 @@
 #include "cont_delay_synapse.h"
 #include "cont_delay_synapse_impl.h"
 #include "diffusion_connection.h"
-#include "rate_connection_delayed.h"
 #include "gap_junction.h"
 #include "ht_synapse.h"
 #include "jonke_synapse.h"
@@ -685,6 +684,17 @@ get_connections( const dictionary& dict )
 }
 
 void
+disconnect( const std::deque< ConnectionID >& conns )
+{
+  for ( auto& conn : conns )
+  {
+    const auto target_node = kernel().node_manager.get_node_or_proxy( conn.get_target_node_id() );
+    kernel().sp_manager.disconnect(
+      conn.get_source_node_id(), target_node, conn.get_target_thread(), conn.get_synapse_model_id() );
+  }
+}
+
+void
 simulate( const double& t )
 {
   prepare();
@@ -794,6 +804,10 @@ create_parameter( const boost::any& value )
   {
     return create_parameter( boost::any_cast< int >( value ) );
   }
+  else if ( is_type< long >( value ) )
+  {
+    return create_parameter( static_cast< int >( boost::any_cast< long >( value ) ) );
+  }
   else if ( is_type< dictionary >( value ) )
   {
     return create_parameter( boost::any_cast< dictionary >( value ) );
@@ -802,7 +816,8 @@ create_parameter( const boost::any& value )
   {
     return create_parameter( boost::any_cast< ParameterPTR >( value ) );
   }
-  throw BadProperty( "Parameter must be parametertype, constant or dictionary." );
+  throw BadProperty(
+    std::string( "Parameter must be parametertype, constant or dictionary, got " ) + debug_type( value ) );
 }
 
 ParameterPTR

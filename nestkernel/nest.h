@@ -189,6 +189,8 @@ void connect_arrays( long* sources,
 
 std::deque< ConnectionID > get_connections( const dictionary& dict );
 
+void disconnect( const std::deque< ConnectionID >& conns );
+
 void simulate( const double& t );
 
 /**

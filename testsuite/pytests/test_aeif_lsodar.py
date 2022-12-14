@@ -231,7 +231,7 @@ class AEIFTestCase(unittest.TestCase):
         V_lim = (params["V_th"] + params["V_peak"]) / 2.
 
         for model, mm in iter(multimeters.items()):
-            dmm = nest.GetStatus(mm, "events")[0]
+            dmm = mm.events
             for record in recordables:
                 reference_record = np.array(reference[record])
                 dmm_record = np.array(dmm[record])
@@ -274,17 +274,14 @@ class AEIFTestCase(unittest.TestCase):
         multimeters = {model: nest.Create("multimeter") for model in models}
         # connect them and simulate
         for model, mm in iter(multimeters.items()):
-            nest.SetStatus(mm, {"interval": nest.resolution,
-                                "record_from": ["V_m", "w"]})
+            mm.set({"interval": nest.resolution, "record_from": ["V_m", "w"]})
             nest.Connect(mm, neurons[model])
         nest.Simulate(simtime)
 
         # relative differences: interpolate LSODAR to match NEST times
         mm0 = next(iter(multimeters.values()))
 
-        print(mm0.get())
-
-        nest_times = nest.GetStatus(mm0, "events")[0]["times"]
+        nest_times = mm0.events["times"]
         reference = {'V_m': V_interp(nest_times), 'w': w_interp(nest_times)}
 
         rel_diff = self.compute_difference(multimeters, aeif_param, reference,
@@ -317,15 +314,13 @@ class AEIFTestCase(unittest.TestCase):
         for model, mm in iter(multimeters.items()):
             syn_type = di_syn_types[model]
             key = syn_type[:syn_type.index('_')]
-            nest.SetStatus(mm, {"interval": nest.resolution,
-                                "record_from": recordables[syn_type]})
+            mm.set({"interval": nest.resolution, "record_from": recordables[syn_type]})
             nest.Connect(mm, neurons[model])
             weight = 80. if key == "psc" else 1.
             nest.Connect(pn, neurons[model], syn_spec={'weight': weight})
         for syn_type, mm in iter(ref_mm.items()):
             key = syn_type[:syn_type.index('_')]
-            nest.SetStatus(mm, {"interval": nest.resolution,
-                                "record_from": recordables[syn_type]})
+            mm.set({"interval": nest.resolution, "record_from": recordables[syn_type]})
             nest.Connect(mm, refs[syn_type])
             weight = 80. if key == "psc" else 1.
             nest.Connect(pn, refs[syn_type], syn_spec={'weight': weight})
@@ -334,7 +329,7 @@ class AEIFTestCase(unittest.TestCase):
         # compute the relative differences and assert tolerance
         for model in neurons:
             syn_type = di_syn_types[model]
-            ref_data = nest.GetStatus(ref_mm[syn_type], "events")[0]
+            ref_data = ref_mm[syn_type].events
             key = syn_type[:syn_type.index('_')]
             rel_diff = self.compute_difference(
                 {model: multimeters[model]},
@@ -363,13 +358,11 @@ class AEIFTestCase(unittest.TestCase):
         # connect them and simulate
         for model, mm in iter(multimeters.items()):
             syn_type = di_syn_types[model]
-            nest.SetStatus(mm, {"interval": nest.resolution,
-                                "record_from": ["V_m"]})
+            mm.set({"interval": nest.resolution, "record_from": ["V_m"]})
             nest.Connect(mm, neurons[model])
             nest.Connect(dcg, neurons[model])
         for syn_type, mm in iter(ref_mm.items()):
-            nest.SetStatus(mm, {"interval": nest.resolution,
-                                "record_from": ["V_m"]})
+            mm.set({"interval": nest.resolution, "record_from": ["V_m"]})
             nest.Connect(mm, refs[syn_type])
             nest.Connect(dcg, refs[syn_type])
         nest.Simulate(simtime)
@@ -377,7 +370,7 @@ class AEIFTestCase(unittest.TestCase):
         # compute the relative differences and assert tolerance
         for model in neurons:
             syn_type = di_syn_types[model]
-            ref_data = nest.GetStatus(ref_mm[syn_type], "events")[0]
+            ref_data = ref_mm[syn_type].events
             rel_diff = self.compute_difference(
                 {model: multimeters[model]},
                 aeif_DT0,

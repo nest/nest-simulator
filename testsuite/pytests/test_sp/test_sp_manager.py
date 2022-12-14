@@ -140,7 +140,7 @@ class TestStructuralPlasticityManager(unittest.TestCase):
                 })
                 nest.EnableStructuralPlasticity()
                 nest.Simulate(10.0)
-                status = nest.GetStatus(neurons, 'synaptic_elements')
+                status = neurons.synaptic_elements
                 for st_neuron in status:
                     assert st_neuron['SE1']['z_connected'] == 10
                     assert st_neuron['SE2']['z_connected'] == 10

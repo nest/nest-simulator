@@ -39,7 +39,7 @@ class TestNodeParametrization(unittest.TestCase):
         Vm_ref = [-11., -12., -13.]
         nodes = nest.Create('iaf_psc_alpha', 3, {'V_m': Vm_ref})
 
-        self.assertAlmostEqual(list(nest.GetStatus(nodes, 'V_m')), Vm_ref)
+        self.assertAlmostEqual(list(nodes.V_m), Vm_ref)
 
     def test_create_with_several_lists(self):
         """Test Create with several lists as parameters"""
@@ -47,21 +47,19 @@ class TestNodeParametrization(unittest.TestCase):
         Cm_ref = 124.
         Vmin_ref = [-1., -2., -3.]
 
-        nodes = nest.Create('iaf_psc_alpha', 3, {'V_m': Vm_ref,
-                                                 'C_m': Cm_ref,
-                                                 'V_min': Vmin_ref})
+        params = {'V_m': Vm_ref, 'C_m': Cm_ref, 'V_min': Vmin_ref}
+        nodes = nest.Create('iaf_psc_alpha', 3, params)
 
-        self.assertAlmostEqual(list(nest.GetStatus(nodes, 'V_m')), Vm_ref)
-        self.assertAlmostEqual(nest.GetStatus(nodes, 'C_m'),
-                               (Cm_ref, Cm_ref, Cm_ref))
-        self.assertAlmostEqual(list(nest.GetStatus(nodes, 'V_min')), Vmin_ref)
+        self.assertAlmostEqual(list(nodes.V_m), Vm_ref)
+        self.assertAlmostEqual(list(nodes.C_m), [Cm_ref, Cm_ref, Cm_ref])
+        self.assertAlmostEqual(list(nodes.V_min), Vmin_ref)
 
     def test_create_with_spike_generator(self):
         """Test Create with list that should not be split"""
         spike_times = [10., 20., 30.]
         sg = nest.Create('spike_generator', 2, {'spike_times': spike_times})
 
-        st = nest.GetStatus(sg, 'spike_times')
+        st = sg.spike_times
 
         self.assertAlmostEqual(list(st[0]), spike_times)
         self.assertAlmostEqual(list(st[1]), spike_times)
@@ -71,7 +69,7 @@ class TestNodeParametrization(unittest.TestCase):
         Vm_ref = [-80., -90., -100.]
         nodes = nest.Create('iaf_psc_alpha', 3, {'V_m': np.array(Vm_ref)})
 
-        self.assertAlmostEqual(list(nest.GetStatus(nodes, 'V_m')), Vm_ref)
+        self.assertAlmostEqual(list(nodes.V_m), Vm_ref)
 
     def test_create_uniform(self):
         """Test Create with random.uniform as parameter"""
@@ -134,117 +132,6 @@ class TestNodeParametrization(unittest.TestCase):
         for vm in nodes.get('V_m'):
             self.assertGreaterEqual(vm, -45.)
             self.assertLessEqual(vm, -25.)
-
-    def test_SetStatus_with_dict(self):
-        """Test SetStatus with dict"""
-        nodes = nest.Create('iaf_psc_alpha', 3)
-        Vm_ref = (-60., -60., -60.)
-        nest.SetStatus(nodes, {'V_m': -60.})
-
-        self.assertAlmostEqual(nest.GetStatus(nodes, 'V_m'), Vm_ref)
-
-    def test_SetStatus_with_dict_several(self):
-        """Test SetStatus with multivalue dict"""
-        nodes = nest.Create('iaf_psc_alpha', 3)
-        Vm_ref = (-27., -27., -27.)
-        Cm_ref = (111., 111., 111.)
-        nest.SetStatus(nodes, {'V_m': -27., 'C_m': 111.})
-
-        self.assertAlmostEqual(nest.GetStatus(nodes, 'V_m'), Vm_ref)
-        self.assertAlmostEqual(nest.GetStatus(nodes, 'C_m'), Cm_ref)
-
-    def test_SetStatus_with_list_with_dicts(self):
-        """Test SetStatus with list of dicts"""
-        nodes = nest.Create('iaf_psc_alpha', 3)
-        Vm_ref = (-70., -20., -88.)
-        nest.SetStatus(nodes, [{'V_m': -70.}, {'V_m': -20.}, {'V_m': -88.}])
-
-        self.assertAlmostEqual(nest.GetStatus(nodes, 'V_m'), Vm_ref)
-
-    def test_SetStatus_with_dict_with_single_list(self):
-        """Test SetStatus with dict with list"""
-
-        nodes = nest.Create('iaf_psc_alpha', 3)
-        Vm_ref = [-30., -40., -50.]
-        nest.SetStatus(nodes, {'V_m': Vm_ref})
-
-        self.assertAlmostEqual(list(nest.GetStatus(nodes, 'V_m')), Vm_ref)
-
-    def test_SetStatus_with_dict_with_lists(self):
-        """Test SetStatus with dict with lists"""
-        nodes = nest.Create('iaf_psc_alpha', 3)
-        Vm_ref = [-11., -12., -13.]
-        Cm_ref = 177.
-        tau_minus_ref = [22., 24., 26.]
-        nest.SetStatus(nodes, {'V_m': Vm_ref,
-                               'C_m': Cm_ref,
-                               'tau_minus': tau_minus_ref})
-
-        self.assertAlmostEqual(list(nest.GetStatus(nodes, 'V_m')), Vm_ref)
-        self.assertAlmostEqual(nest.GetStatus(nodes, 'C_m'),
-                               (Cm_ref, Cm_ref, Cm_ref))
-        self.assertAlmostEqual(list(nest.GetStatus(nodes, 'tau_minus')),
-                               tau_minus_ref)
-
-    def test_SetStatus_with_dict_with_single_element_lists(self):
-        """Test SetStatus with dict with single element lists"""
-        node = nest.Create('iaf_psc_alpha')
-        Vm_ref = -13.
-        Cm_ref = 222.
-        nest.SetStatus(node, {'V_m': [-13.], 'C_m': [222.]})
-
-        self.assertAlmostEqual(nest.GetStatus(node, 'V_m'), Vm_ref)
-        self.assertAlmostEqual(nest.GetStatus(node, 'C_m'), Cm_ref)
-
-    def test_SetStatus_with_dict_with_bool(self):
-        """Test SetStatus with dict with bool"""
-        nodes = nest.Create('spike_recorder', 3)
-        withport_ref = (True, True, True)
-        nest.SetStatus(nodes, {'time_in_steps': True})
-
-        self.assertEqual(nest.GetStatus(nodes, 'time_in_steps'), withport_ref)
-
-    def test_SetStatus_with_dict_with_list_with_bools(self):
-        """Test SetStatus with dict with list of bools"""
-        nodes = nest.Create('spike_recorder', 3)
-        withport_ref = (True, False, True)
-        nest.SetStatus(nodes, {'time_in_steps': [True, False, True]})
-
-        self.assertEqual(nest.GetStatus(nodes, 'time_in_steps'), withport_ref)
-
-    def test_SetStatus_on_spike_generator(self):
-        """Test SetStatus with dict with list that is not to be split"""
-        sg = nest.Create('spike_generator')
-        nest.SetStatus(sg, {'spike_times': [1., 2., 3.]})
-
-        self.assertEqual(sg.spike_times, [1., 2., 3.])
-
-    def test_SetStatus_with_dict_with_numpy(self):
-        """Test SetStatus with dict with numpy"""
-        nodes = nest.Create('iaf_psc_alpha', 3)
-
-        Vm_ref = np.array([-22., -33., -44.])
-        nest.SetStatus(nodes, {'V_m': Vm_ref})
-
-        self.assertAlmostEqual(list(nest.GetStatus(nodes, 'V_m')), list(Vm_ref))
-
-    def test_SetStatus_with_random(self):
-        """Test SetStatus with dict with random.uniform"""
-        nodes = nest.Create('iaf_psc_alpha', 3)
-        nest.SetStatus(nodes, {'V_m': nest.random.uniform(-75., -55.)})
-
-        for vm in nodes.get('V_m'):
-            self.assertGreater(vm, -75.)
-            self.assertLess(vm, -55.)
-
-    def test_SetStatus_with_random_as_val(self):
-        """Test SetStatus with val as random.uniform"""
-        nodes = nest.Create('iaf_psc_alpha', 3)
-        nest.SetStatus(nodes, 'V_m', nest.random.uniform(-75., -55.))
-
-        for vm in nodes.get('V_m'):
-            self.assertGreater(vm, -75.)
-            self.assertLess(vm, -55.)
 
     def test_set_with_dict_with_single_list(self):
         """Test set with dict with list"""
@@ -369,10 +256,10 @@ class TestNodeParametrization(unittest.TestCase):
         layer = nest.Create('iaf_psc_alpha',
                             positions=nest.spatial.free(positions))
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             layer.set({'V_m': nest.spatial.pos.n(-1)})
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             layer.set({'V_m': nest.spatial.pos.z})
 
     def test_conn_distance_parameter(self):
@@ -438,12 +325,12 @@ class TestNodeParametrization(unittest.TestCase):
         layer = nest.Create('iaf_psc_alpha',
                             positions=nest.spatial.free(positions))
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.Connect(layer, layer,
                          syn_spec={'weight':
                                    nest.spatial.distance.z})
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.Connect(layer, layer,
                          syn_spec={'weight':
                                    nest.spatial.distance.n(-1)})
@@ -486,19 +373,19 @@ class TestNodeParametrization(unittest.TestCase):
         layer = nest.Create('iaf_psc_alpha',
                             positions=nest.spatial.free(positions))
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.Connect(layer, layer, syn_spec={
                 'weight': nest.spatial.source_pos.z})
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.Connect(layer, layer, syn_spec={
                 'weight': nest.spatial.source_pos.n(-1)})
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.Connect(layer, layer, syn_spec={
                 'weight': nest.spatial.target_pos.z})
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.Connect(layer, layer, syn_spec={
                 'weight': nest.spatial.target_pos.n(-1)})
 
@@ -568,7 +455,7 @@ class TestNodeParametrization(unittest.TestCase):
         min_value = 1.5
         max_value = 1.0
         p = nest.random.normal()
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.math.redraw(p, min_value, max_value)
 
     def test_redraw_value_impossible(self):
@@ -577,7 +464,7 @@ class TestNodeParametrization(unittest.TestCase):
         min_value = 1.5
         max_value = 2.0
         p = nest.random.uniform(min=0.0, max=1.0)
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.math.redraw(p, min_value, max_value).GetValue()
 
     def test_parameter_comparison(self):

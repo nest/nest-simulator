@@ -23,15 +23,17 @@
 #ifndef MASK_H
 #define MASK_H
 
+// C++ includes:
+#include <memory>
+
 // Includes from libnestutil:
+#include "dictionary.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "nest_names.h"
 #include "nest_types.h"
-#include "nestmodule.h"
-
 
 // Includes from spatial:
 #include "position.h"

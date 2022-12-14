@@ -79,7 +79,7 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
 
         for t in range(n_trials):
             t_net = nest.biological_time
-            nest.SetStatus(source, {"origin": t_net})
+            source.origin = t_net
             nest.Simulate(t_tot)
 
         nest.Simulate(.1)  # flush the last voltmeter events from the queue

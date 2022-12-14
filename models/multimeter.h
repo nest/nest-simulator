@@ -34,10 +34,6 @@
 #include "nest_timeconverter.h"
 #include "recording_device.h"
 
-// Includes from sli:
-#include "dictutils.h"
-#include "name.h"
-
 /* BeginUserDocs: device, recorder
 
 Short description

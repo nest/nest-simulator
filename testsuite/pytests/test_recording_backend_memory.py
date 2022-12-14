@@ -80,7 +80,7 @@ class TestRecordingBackendMemory(unittest.TestCase):
         nest.Simulate(15)
 
         # Check that an error is raised when setting n_events to a number != 0
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             mm.n_events = 10
 
         # Check that the event counter was indeed not changed and the
@@ -115,7 +115,7 @@ class TestRecordingBackendMemory(unittest.TestCase):
         # Check that time_in_steps cannot be set after Simulate has
         # been called.
         nest.Simulate(10)
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             mm.time_in_steps = False
 
 

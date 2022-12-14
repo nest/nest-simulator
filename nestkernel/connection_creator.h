@@ -28,11 +28,9 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
-#include "nest_names.h"
-#include "nestmodule.h"
-
-// Includes from spatial:
 #include "mask.h"
+#include "nest_names.h"
+#include "ntree.h"
 #include "position.h"
 
 namespace nest
@@ -164,7 +162,7 @@ private:
   bool allow_autapses_;
   bool allow_multapses_;
   bool allow_oversized_;
-  index number_of_connections_;
+  ParameterPTR number_of_connections_;
   MaskPTR mask_;
   ParameterPTR kernel_;
   std::vector< index > synapse_model_;

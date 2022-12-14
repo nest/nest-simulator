@@ -20,12 +20,3 @@
 install( FILES run_examples.sh
     DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )
-
-install( DIRECTORY nest/
-    DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples
-    USE_SOURCE_PERMISSIONS
-    )
-
-install( FILES EditorSupport/vim/syntax/sli.vim
-    DESTINATION ${CMAKE_INSTALL_DOCDIR}/EditorSupport/vim/syntax
-    )

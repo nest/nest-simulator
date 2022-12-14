@@ -34,10 +34,6 @@
 #include "propagator_stability.h"
 #include "regula_falsi.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-
 
 /* ----------------------------------------------------------------
  * Recordables map

@@ -106,7 +106,7 @@ class PostTraceTester:
         trace_nest_t = []
         t = nest.biological_time
         trace_nest_t.append(t)
-        post_tr = nest.GetStatus(post_parrot_ps)[0]['post_trace']
+        post_tr = post_parrot_ps.post_trace
         trace_nest.append(post_tr)
         for step in range(n_steps):
             print("\n[py] simulating for " + str(self.delay_) + " ms")
@@ -116,7 +116,7 @@ class PostTraceTester:
                 np.abs(t - np.array(self.pre_spike_times_) - self.delay_) < self.resolution_ / 2.)
             if show_all_nest_trace_samples or nearby_pre_spike:
                 trace_nest_t.append(t)
-                post_tr = nest.GetStatus(post_parrot_ps)[0]['post_trace']
+                post_tr = post_parrot_ps.post_trace
                 trace_nest.append(post_tr)
                 print("[py] Received NEST trace: " +
                       str(post_tr) + " at time t = " + str(t))

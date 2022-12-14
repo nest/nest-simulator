@@ -32,8 +32,6 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 /* ----------------------------------------------------------------
  * Default constructor defining default parameters

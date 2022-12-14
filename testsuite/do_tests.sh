@@ -107,7 +107,7 @@ if test "${PYTHON}"; then
         echo "Error: PyNEST testing requested, but 'pytest' cannot be run."
         echo "       Testing also requires the 'pytest-xdist' and 'pytest-timeout' extensions."
         exit 1
-        }
+    }
       PYTEST_VERSION="$(echo "${PYTEST_VERSION}" | cut -d' ' -f2)"
 fi
 
@@ -213,96 +213,96 @@ echo >> "${TEST_LOGFILE}" "Running tests from ${TEST_BASEDIR}"
 #  ' 203 Skipped (Threading required),'\
 #  ' 204 Skipped (GSL required),'\
 #  ' 205 Skipped (MUSIC required),'
-#
+#  
 #  echo
 #  echo 'Phase 1: Testing if SLI can execute scripts and report errors'
 #  echo '-------------------------------------------------------------'
-#
+#  
 #  junit_open '01_basetests'
-#
+#  
 #  CODES_SUCCESS=' 0 Success'
 #  CODES_FAILURE=
 #  for test_name in test_pass.sli test_goodhandler.sli test_lazyhandler.sli ; do
 #      run_test "selftests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
 #  done
-#
+#  
 #  CODES_SUCCESS=' 126 Success'
 #  CODES_FAILURE=
 #  for test_name in test_fail.sli test_stop.sli test_badhandler.sli ; do
 #      run_test "selftests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
 #  done
-#
+#  
 #  junit_close
-#
+#  
 #  # At this point, we are sure that
 #  #
 #  #  * NEST will return 0 after finishing a script
 #  #  * NEST will return 126 when a script raises an unhandled error
 #  #  * Error handling in stopped contexts works
-#
+#  
 #  echo
 #  echo "Phase 2: Testing SLI's unittest library"
 #  echo "---------------------------------------"
-#
+#  
 #  junit_open '02_selftests'
-#
+#  
 #  # assert_or_die uses pass_or_die, so pass_or_die should be tested first.
-#
+#  
 #  CODES_SUCCESS=' 2 Success'
 #  CODES_FAILURE=' 126 Failed: error in test script'
-#
+#  
 #  run_test selftests/test_pass_or_die.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
-#
+#  
 #  CODES_SUCCESS=' 1 Success'
 #  CODES_FAILURE=\
 #  ' 2 Failed: error in tested code block,'\
 #  ' 126 Failed: error in test script,'
-#
+#  
 #  run_test selftests/test_assert_or_die_b.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
 #  run_test selftests/test_assert_or_die_p.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
-#
+#  
 #  CODES_SUCCESS=' 3 Success'
 #  CODES_FAILURE=\
 #  ' 1 Failed: missed assertion,'\
 #  ' 2 Failed: error in tested code block,'\
 #  ' 126 Failed: error in test script,'
-#
+#  
 #  run_test selftests/test_fail_or_die.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
-#
+#  
 #  CODES_SUCCESS=' 3 Success'
 #  CODES_FAILURE=\
 #  ' 1 Failed: missed assertion,'\
 #  ' 2 Failed: error in tested code block,'\
 #  ' 126 Failed: error in test script,'
-#
+#  
 #  run_test selftests/test_crash_or_die.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
-#
+#  
 #  CODES_SUCCESS=' 3 Success'
 #  CODES_FAILURE=\
 #  ' 1 Failed: missed assertion,'\
 #  ' 2 Failed: error in tested code block,'\
 #  ' 126 Failed: error in test script,'
-#
+#  
 #  run_test selftests/test_failbutnocrash_or_die_crash.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
 #  run_test selftests/test_failbutnocrash_or_die_pass.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
-#
+#  
 #  CODES_SUCCESS=' 3 Success'
 #  CODES_FAILURE=\
 #  ' 1 Failed: missed assertion,'\
 #  ' 2 Failed: error in tested code block,'\
 #  ' 126 Failed: error in test script,'
-#
+#  
 #  run_test selftests/test_passorfailbutnocrash_or_die.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
-#
+#  
 #  junit_close
-#
+#  
 #  # At this point, we are sure that
 #  #
 #  #  * unittest::pass_or_die works
 #  #  * unittest::assert_or_die works
 #  #  * unittest::fail_or_die works
 #  #  * unittest::crash_or_die works
-#
+#  
 #  # These are the default exit codes and their explanations
 #  CODES_SUCCESS=' 0 Success'
 #  CODES_FAILURE=\
@@ -319,13 +319,13 @@ echo >> "${TEST_LOGFILE}" "Running tests from ${TEST_BASEDIR}"
 #  ' 127 Failed: fatal error,'\
 #  ' 134 Failed: missed C++ assertion,'\
 #  ' 139 Failed: segmentation fault,'
-#
+#  
 #  echo
 #  echo "Phase 3: Running NEST unit tests"
 #  echo "--------------------------------"
-#
+#  
 #  junit_open '03_unittests'
-#
+#  
 #  tests_collect=sli
 #  if test "${PYTHON}"; then
 #    tests_collect="$tests_collect py"
@@ -335,34 +335,34 @@ echo >> "${TEST_LOGFILE}" "Running tests from ${TEST_BASEDIR}"
 #            run_test "unittests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
 #        done
 #  done
-#
+#  
 #  junit_close
-#
+#  
 #  echo
 #  echo "Phase 4: Running regression tests"
 #  echo "---------------------------------"
-#
+#  
 #  junit_open '04_regressiontests'
-#
+#  
 #  for test_ext in ${tests_collect} ; do
 #      for test_name in $(ls "${TEST_BASEDIR}/regressiontests/" | grep ".*\.${test_ext}$") ; do
 #          run_test "regressiontests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
 #      done
 #  done
-#
+#  
 #  junit_close
-#
+#  
 #  echo
 #  echo "Phase 5: Running MPI tests"
 #  echo "--------------------------"
-#  if test "${HAVE_MPI}" = "True"; then
+#  if test "${HAVE_MPI}" = "true"; then
 #      junit_open '05_mpitests'
-#
+#  
 #      NEST="nest_indirect"
 #      for test_name in $(ls "${TEST_BASEDIR}/mpi_selftests/pass" | grep '.*\.sli$'); do
 #          run_test "mpi_selftests/pass/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
 #      done
-#
+#  
 #      # tests meant to fail
 #      SAVE_CODES_SUCCESS=${CODES_SUCCESS}
 #      SAVE_CODES_FAILURE=${CODES_FAILURE}
@@ -373,55 +373,59 @@ echo >> "${TEST_LOGFILE}" "Running tests from ${TEST_BASEDIR}"
 #      done
 #      CODES_SUCCESS=${SAVE_CODES_SUCCESS}
 #      CODES_FAILURE=${SAVE_CODES_FAILURE}
-#
+#  
 #      for test_name in $(ls "${TEST_BASEDIR}/mpitests/" | grep '.*\.sli$'); do
 #          run_test "mpitests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
 #      done
-#
+#  
 #      junit_close
 #  else
 #    echo "  Not running MPI tests because NEST was compiled without support"
 #    echo "  for distributed computing."
 #  fi
-#
+#  
 #  echo
 #  echo "Phase 6: Running MUSIC tests"
 #  echo "----------------------------"
 #  if test "${MUSIC}"; then
 #      junit_open '06_musictests'
-#
+#  
 #      # Create a temporary directory with a unique name.
 #      BASEDIR="$PWD"
 #      tmpdir="$(mktemp -d)"
-#
+#  
 #      TESTDIR="${TEST_BASEDIR}/musictests/"
-#
+#  
 #      for test_name in $(ls ${TESTDIR} | grep '.*\.music$') ; do
 #          music_file="${TESTDIR}/${test_name}"
-#
+#  
 #          # Collect the list of SLI files from the '.music' file.
 #          sli_files=$(grep '\.sli' ${music_file} | sed -e "s#args=#${TESTDIR}#g")
 #          sli_files=$(for f in ${sli_files}; do if test -f ${f}; then echo ${f}; fi; done)
 #          sli_files=${sli_files//$'\n'/ }
-#
+#  
 #          # Check if there is an accompanying shell script for the test.
 #          sh_file="${TESTDIR}/$(basename ${music_file} .music).sh"
 #          if test ! -f "${sh_file}"; then sh_file=""; fi
-#
+#  
+#          # Check if there is an accompanying input data file
+#          input_file="${TESTDIR}/$(basename ${music_file} .music)0.dat"
+#          if test ! -f "${input_file}"; then input_file=""; fi
+#  
 #          # Calculate the total number of processes from the '.music' file.
 #          np=$(($(sed -n 's/np=//p' ${music_file} | paste -sd'+' -)))
-#          test_command="${MPI_LAUNCHER_CMDLINE} ${np} ${MUSIC} ${test_name}"
-#
+#          test_command="$(sli -c "${np} (${MUSIC}) (${test_name}) mpirun =only")"
+#  
 #          proc_txt="processes"
 #          if test $np -eq 1; then proc_txt="process"; fi
 #          echo          "Running test '${test_name}' with $np $proc_txt... " >> "${TEST_LOGFILE}"
 #          printf '%s' "  Running test '${test_name}' with $np $proc_txt... "
-#
+#  
 #          # Copy everything to 'tmpdir'.
 #          # Variables might also be empty. To prevent 'cp' from terminating in such a case,
 #          # the exit code is suppressed.
-#          cp -vf ${music_file} ${sh_file} ${sli_files} ${tmpdir} 2>/dev/null || true
-#
+#          cp ${music_file} ${sh_file} ${input_file} ${sli_files} ${tmpdir} 2>/dev/null || true
+#  
 #          # Create the runner script in 'tmpdir'.
 #          cd "${tmpdir}"
 #          echo "#!/bin/sh" >  runner.sh
@@ -433,17 +437,18 @@ echo >> "${TEST_LOGFILE}" "Running tests from ${TEST_BASEDIR}"
 #              echo "./$(basename "${sh_file}")" >> runner.sh
 #          fi
 #          echo "echo \$? > exit_code ; exit 0" >> runner.sh
-#
+#  
 #          # Run the script and measure execution time. Copy the output to the logfile.
+#          music_path=$(dirname ${MUSIC})
 #          chmod 755 runner.sh
-#          TIME_ELAPSED=$( time_cmd ./runner.sh )
+#          TIME_ELAPSED=$(PATH=$PATH:${music_path} time_cmd ./runner.sh )
 #          TIME_TOTAL=$(( ${TIME_TOTAL:-0} + ${TIME_ELAPSED} ))
 #          sed -e 's/^/   > /g' ${TEST_OUTFILE} >> "${TEST_LOGFILE}"
-#
+#  
 #          # Retrieve the exit code. This is either the one of the mpirun call
 #          # or of the accompanying shell script if present.
 #          exit_code=$(cat exit_code)
-#
+#  
 #          # Count the total number of tests, the tests skipped, and the tests with error.
 #          # The values will be stored in the XML report at 'junit_close'.
 #          # Test failures and diagnostic information are also stored in the xml-report file
@@ -472,12 +477,12 @@ echo >> "${TEST_LOGFILE}" "Running tests from ${TEST_BASEDIR}"
 #                  junit_write "musictests" "${test_name}" "failure" "$(cat "${TEST_OUTFILE}")"
 #              fi
 #          fi
-#
+#  
 #          cd "${BASEDIR}"
 #      done
-#
+#  
 #      rm -rf "$tmpdir"
-#
+#  
 #      junit_close
 #  else
 #    echo "  Not running MUSIC tests because NEST was compiled without support"

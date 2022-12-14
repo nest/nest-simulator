@@ -29,8 +29,6 @@
 // Includes from nestkernel:
 #include "nest_impl.h"
 
-// Includes from sli:
-#include "slimodule.h"
 
 namespace nest
 {

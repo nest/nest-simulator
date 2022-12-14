@@ -28,10 +28,9 @@ import copy
 import numpy as np
 
 from ..ll_api import *
-from .. import pynestkernel as kernel
 from .. import nestkernel_api as nestkernel
 from .hl_api_types import CollocatedSynapses, Mask, NodeCollection, Parameter
-from .hl_api_exceptions import NESTErrors
+from .hl_api_exceptions import NESTErrors, NESTError
 
 __all__ = [
     '_connect_layers_needed',
@@ -196,8 +195,8 @@ def _process_spatial_projections(conn_spec, syn_spec):
             if 'use_on_source' in projections:
                 projections.pop('use_on_source')
     else:
-        raise kernel.NESTError("When using kernel or mask, the only possible connection rules are "
-                               "'pairwise_bernoulli', 'fixed_indegree', or 'fixed_outdegree'")
+        raise NESTError("When using kernel or mask, the only possible connection rules are "
+                        "'pairwise_bernoulli', 'fixed_indegree', or 'fixed_outdegree'")
     projections.pop('rule')
     return projections
 
@@ -236,8 +235,6 @@ def _connect_spatial(pre, post, projections):
             elif isinstance(v, Mask) or isinstance(v, Parameter):
                 d[k] = v._datum
         return d
-
-    print("### 7", fixdict(projections))
 
     nestkernel.llapi_connect_layers(pre, post, fixdict(projections))
 

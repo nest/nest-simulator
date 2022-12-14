@@ -24,7 +24,7 @@
 
 # import cython
 
-# from libc.stdlib cimport malloc, free
+from libc.stdlib cimport malloc, free
 # from libc.string cimport memcpy
 
 from libcpp.string cimport string
@@ -266,6 +266,45 @@ def catch_cpp_error(func):
         except RuntimeError as e:
             raise NESTErrors.NESTError(f'in {func.__name__}: {e}') from None
     return wrapper_catch_cpp_error
+
+def llapi_init_nest(argv):
+    cdef int argc = len(argv)
+    if argc <= 0:
+        raise NESTErrors.PyNESTError("argv can't be empty")
+
+
+    # Create c-style argv arguments from sys.argv
+    cdef char** argv_chars = <char**> malloc((argc+1) * sizeof(char*))
+    if argv_chars is NULL:
+        raise NESTErrors.PyNESTError("couldn't allocate argv_char")
+    try:
+        # argv must be null terminated. openmpi depends on this
+        argv_chars[argc] = NULL
+
+        # Need to keep a reference to encoded bytes issue #377
+        # argv_bytes = [byte...] which internally holds a reference
+        # to the c string in argv_char = [c-string... NULL]
+        # the `byte` is the utf-8 encoding of sys.argv[...]
+        argv_bytes = [argvi.encode() for argvi in argv]
+        for i, argvi in enumerate(argv_bytes):
+            argv_chars[i] = argvi # c-string ref extracted
+
+        init_nest(&argc, &argv_chars)
+
+        # TODO-PYNEST-NG
+        # nest::kernel().model_manager.get_modeldict()
+        # nest::kernel().model_manager.get_synapsedict()
+        # nest::kernel().connection_manager.get_connruledict()
+        # nest::kernel().sp_manager.get_growthcurvedict()
+
+        # If using MPI, argv might now have changed, so rebuild it
+        del argv[:]
+        # Convert back from utf8 char* to utf8 str
+        argv.extend(str(argvi.decode()) for argvi in argv_chars[:argc])
+    finally:
+        free(argv_chars)
+
+    return True
 
 def llapi_reset_kernel():
     reset_kernel()

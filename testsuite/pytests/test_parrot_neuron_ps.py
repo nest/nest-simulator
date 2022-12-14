@@ -65,7 +65,7 @@ class ParrotNeuronPSTestCase(unittest.TestCase):
         nest.Simulate(_round_up(self.spike_time + 2 * self.delay))
 
         # get spike from parrot neuron
-        events = nest.GetStatus(self.spikes)[0]["events"]
+        events = self.spikes.events
         times = np.array(events['times'])
         senders = np.array(events['senders'])
         post_time = times[
@@ -85,7 +85,7 @@ class ParrotNeuronPSTestCase(unittest.TestCase):
         nest.Simulate(_round_up(self.spike_time + 2. * self.delay))
 
         # get spike from parrot neuron, assert it was ignored
-        events = nest.GetStatus(self.spikes)[0]["events"]
+        events = self.spikes.events
         times = np.array(events['times'])
         senders = np.array(events['senders'])
         post_time = times[
@@ -107,7 +107,7 @@ class ParrotNeuronPSTestCase(unittest.TestCase):
         nest.Simulate(_round_up(self.spike_time + 2. * self.delay))
 
         # get spikes from parrot neuron, assert two were transmitted
-        events = nest.GetStatus(self.spikes)[0]["events"]
+        events = self.spikes.events
         times = np.array(events['times'])
         senders = np.array(events['senders'])
         post_times = times[
@@ -165,11 +165,9 @@ class ParrotNeuronPSPoissonTestCase(unittest.TestCase):
 
         nest.Simulate(_round_up(t_sim))
 
-        n_spikes = nest.GetStatus(spike_rec)[0]['n_events']
-        assert n_spikes > spikes_expected - 3 * spikes_std, \
-            "parrot_neuron loses spikes."
-        assert n_spikes < spikes_expected + 3 * spikes_std, \
-            "parrot_neuron adds spikes."
+        n_spikes = spike_rec.n_events
+        assert n_spikes > spikes_expected - 3 * spikes_std, "parrot_neuron loses spikes."
+        assert n_spikes < spikes_expected + 3 * spikes_std, "parrot_neuron adds spikes."
 
 
 class ParrotNeuronPSSTDPTestCase(unittest.TestCase):

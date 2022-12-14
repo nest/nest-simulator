@@ -39,9 +39,9 @@ class TestLayerNodeCollection(unittest.TestCase):
         layer = nest.Create('iaf_psc_alpha',
                             positions=nest.spatial.grid(shape=[5, 5]))
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             c = nodes + layer
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             d = layer + nodes
 
     def test_addTwoLayers(self):
@@ -51,7 +51,7 @@ class TestLayerNodeCollection(unittest.TestCase):
         layer2 = nest.Create('iaf_psc_alpha',
                              positions=nest.spatial.grid(shape=[5, 5]))
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             c = layer1 + layer2
 
     def test_extent_center_mask(self):
@@ -103,7 +103,7 @@ class TestLayerNodeCollection(unittest.TestCase):
         param = nest.random.uniform(-r, r)
         free_positions = nest.spatial.free(param, num_dimensions=2, edge_wrap=True)
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.Create('iaf_psc_alpha', positions=free_positions)
 
         extent = [2 * r, 2 * r]

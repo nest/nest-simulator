@@ -24,8 +24,7 @@ import nest
 import numpy as np
 import numpy.testing as np_testing
 
-# HAVE_GSL = nest.GetKernelStatus("build_info")["have_gsl"]
-HAVE_GSL = True
+HAVE_GSL = nest.GetKernelStatus("build_info")["have_gsl"]
 
 
 @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
@@ -106,16 +105,14 @@ class TestMCNeuron(unittest.TestCase):
         self.mm = nest.Create('multimeter', params={'record_from': rqs,
                                                     'interval': 0.1})
         self.cgs = nest.Create('dc_generator', 3)
-        nest.SetStatus(self.cgs, [self.rec_dic_dc_soma,
-                                  self.rec_dic_dc_proximal,
-                                  self.rec_dic_dc_distal])
+        self.cgs.set([self.rec_dic_dc_soma, self.rec_dic_dc_proximal, self.rec_dic_dc_distal])
+
         self.sgs = nest.Create('spike_generator', 6)
-        nest.SetStatus(self.sgs, [{'spike_times': self.rec_sp_soma_ex},
-                                  {'spike_times': self.rec_sp_soma_in},
-                                  {'spike_times': self.rec_sp_prox_ex},
-                                  {'spike_times': self.rec_sp_prox_in},
-                                  {'spike_times': self.rec_sp_dist_ex},
-                                  {'spike_times': self.rec_sp_dist_in}])
+        self.sgs.set([
+            {'spike_times': self.rec_sp_soma_ex}, {'spike_times': self.rec_sp_soma_in},
+            {'spike_times': self.rec_sp_prox_ex}, {'spike_times': self.rec_sp_prox_in},
+            {'spike_times': self.rec_sp_dist_ex}, {'spike_times': self.rec_sp_dist_in}
+        ])
 
     def setUpNetwork(self):
         syns = nest.GetDefaults('iaf_cond_alpha_mc')['receptor_types']
@@ -124,19 +121,17 @@ class TestMCNeuron(unittest.TestCase):
                  'distal_inh']
         nest.Connect(self.mm, self.n)
         for i, l in enumerate(label[:3]):
-            nest.Connect(self.cgs[i], self.n,
-                         syn_spec={'receptor_type': syns[l]})
+            nest.Connect(self.cgs[i], self.n, syn_spec={'receptor_type': syns[l]})
         for i, l in enumerate(label[3:]):
-            nest.Connect(self.sgs[i], self.n,
-                         syn_spec={'receptor_type': syns[l]})
+            nest.Connect(self.sgs[i], self.n, syn_spec={'receptor_type': syns[l]})
 
     def testNeuron(self):
         self.setUpNodes()
         self.setUpNetwork()
         nest.Simulate(self.t0)
-        nest.SetStatus(self.n, {'soma': {'I_e': self.I_e}})
+        self.n.soma = {'I_e': self.I_e}
         nest.Simulate(self.t_stim)
-        rec = nest.GetStatus(self.mm)[0]['events']
+        rec = self.mm.events
         # test membrane potential recorded in the soma
         np_testing.assert_allclose(rec['V_m.s'][self.I0:self.I1],
                                    self.Vm_soma_test, rtol=1e-4)

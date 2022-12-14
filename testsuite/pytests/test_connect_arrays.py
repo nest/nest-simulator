@@ -285,10 +285,10 @@ class TestConnectArrays(unittest.TestCase):
         syn_model = 'vogels_sprekeler_synapse'
         receptor_type = 1.5*np.ones(len(sources))
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.Connect(sources, targets, conn_spec='one_to_one',
-                            syn_spec={'weight': weights, 'delay': delays, 'synapse_model': syn_model,
-                                    'receptor_type': receptor_type})
+                         syn_spec={'weight': weights, 'delay': delays, 'synapse_model': syn_model,
+                                   'receptor_type': receptor_type})
 
     def test_connect_arrays_wrong_dtype(self):
         """Raises exception when connecting NumPy arrays with wrong dtype"""
@@ -300,7 +300,7 @@ class TestConnectArrays(unittest.TestCase):
         delays = np.ones(n)
         syn_model = 'static_synapse'
 
-        with self.assertRaises(nest.kernel.NESTErrors.ArgumentType):
+        with self.assertRaises(nest.NESTErrors.ArgumentType):
             nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays},
                          conn_spec='one_to_one')
 
@@ -314,7 +314,7 @@ class TestConnectArrays(unittest.TestCase):
         delays = np.ones(len(sources))
         syn_model = 'static_synapse'
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays,
                                                      'synapse_model': syn_model})
 

@@ -20,6 +20,12 @@
  *
  */
 
+
+#include "recording_backend_ascii.h"
+
+// C++ includes:
+#include <iomanip>
+
 // Includes from libnestutil:
 #include "compose.hpp"
 
@@ -27,8 +33,6 @@
 #include "recording_device.h"
 #include "vp_manager_impl.h"
 
-
-#include "recording_backend_ascii.h"
 
 const unsigned int nest::RecordingBackendASCII::ASCII_REC_BACKEND_VERSION = 2;
 

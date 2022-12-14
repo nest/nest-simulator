@@ -109,7 +109,7 @@ class TestCopyModel:
             org_name = nest.GetDefaults(org_model)['synapse_model']
 
         # TODO-PYNEST-NG
-        with pytest.raises(nest.kernel.NESTError, match='is the name of an existing model and cannot be'):
+        with pytest.raises(nest.NESTError, match='is the name of an existing model and cannot be'):
             nest.CopyModel(org_model, org_model)
 
     @pytest.mark.parametrize('org_model', [nest.node_models[0],
@@ -122,5 +122,5 @@ class TestCopyModel:
         new_model = f"{org_model}_copy"
         nest.CopyModel(org_model, new_model)
         # TODO-PYNEST-NG
-        with pytest.raises(nest.kernel.NESTError, match='is the name of an existing model and cannot be'):
+        with pytest.raises(nest.NESTError, match='is the name of an existing model and cannot be'):
             nest.CopyModel(org_model, new_model)

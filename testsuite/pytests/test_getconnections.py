@@ -47,10 +47,8 @@ class GetConnectionsTestCase(unittest.TestCase):
         d1 = tuple({"weight": w} for w in weights)
 
         c3 = nest.GetConnections(a, a)
-        nest.SetStatus(c3, d1)
-
-        s1 = nest.GetStatus(c3, "weight")
-        self.assertEqual(s1, weights)
+        c3.set(d1)
+        self.assertEqual(c3.weight, weights)
 
         c4 = nest.GetConnections()
         self.assertEqual(c1, c4)
@@ -60,8 +58,7 @@ class GetConnectionsTestCase(unittest.TestCase):
 
         c5 = nest.GetConnections(a, a)
         c5.set(d1)
-        s2 = c5.get('weight')
-        self.assertEqual(s2, weights)
+        self.assertEqual(c5.get('weight'), weights)
 
         c6 = nest.GetConnections()
         self.assertEqual(c1, c6)
@@ -74,7 +71,7 @@ class GetConnectionsTestCase(unittest.TestCase):
             try:
                 other = nest.Create(model)
                 nest.Connect(alpha, other)
-            except nest.kernel.NESTError:
+            except nest.NESTError:
                 # If we can't create a node with this model, or connect
                 # to a node of this model, we ignore it.
                 continue
@@ -95,7 +92,7 @@ class GetConnectionsTestCase(unittest.TestCase):
             try:
                 other = nest.Create(model)
                 nest.Connect(other, alpha)
-            except nest.kernel.NESTError:
+            except nest.NESTError:
                 # If we can't create a node with this model, or connect
                 # to a node of this model, we ignore it.
                 continue
@@ -126,7 +123,7 @@ class GetConnectionsTestCase(unittest.TestCase):
             try:
                 # Connect with specified synapse
                 nest.Connect(src, tgt, syn_spec={'synapse_model': synapse_model})
-            except nest.kernel.NESTError:
+            except nest.NESTError:
                 # If we can't connect iaf_psc_alpha with the given synapse_model, we ignore it.
                 continue
 
@@ -166,7 +163,7 @@ class GetConnectionsTestCase(unittest.TestCase):
             try:
                 # Connect with specified synapse
                 nest.Connect(src, tgt, syn_spec={'synapse_model': synapse_model, "synapse_label": label})
-            except nest.kernel.NESTError:
+            except nest.NESTError:
                 # If we can't connect iaf_psc_alpha with the given synapse_model, we ignore it.
                 continue
 

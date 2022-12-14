@@ -29,9 +29,6 @@
 // C++ includes:
 #include <string>
 
-// Includes from sli:
-#include "name.h"
-
 namespace nest
 {
 
@@ -71,6 +68,8 @@ const std::string activity( "activity" );
 const std::string adapting_threshold( "adapting_threshold" );
 const std::string adaptive_spike_buffers( "adaptive_spike_buffers" );
 const std::string adaptive_target_buffers( "adaptive_target_buffers" );
+const std::string add_compartments( "add_compartments" );
+const std::string add_receptors( "add_receptors" );
 const std::string after_spike_currents( "after_spike_currents" );
 const std::string ahp_bug( "ahp_bug" );
 const std::string allow_autapses( "allow_autapses" );

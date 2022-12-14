@@ -53,7 +53,7 @@ class TestFixedTotalNumber(connect_test_base.ConnectTestBase):
         conn_params['N'] = self.N1 * self.N2 + 1
         try:
             self.setUpNetwork(conn_params)
-        except nest.kernel.NESTError:
+        except nest.NESTError:
             got_error = True
         self.assertTrue(got_error)
 

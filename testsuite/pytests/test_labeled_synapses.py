@@ -111,8 +111,8 @@ class LabeledSynapsesTestCase(unittest.TestCase):
                 all([x == 123 for x in c.get('synapse_label')])
             )
 
-    def test_SetLabelToSynapseSetStatus(self):
-        """Set a label to a labeled synapse on SetStatus."""
+    def test_SetLabelToSynapseSet(self):
+        """Set a label to a labeled synapse using set()."""
 
         for syn in [s for s in nest.synapse_models if s.endswith("_lbl")]:
             a, r_type = self.default_network(syn)
@@ -188,11 +188,11 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             symm = nest.GetDefaults(syn, 'requires_symmetric')
 
             # try set a label during SetDefaults
-            with self.assertRaises(nest.kernel.NESTError):
+            with self.assertRaises(nest.NESTError):
                 nest.SetDefaults(syn, {'synapse_label': 123})
 
             # try set on connect
-            with self.assertRaises(nest.kernel.NESTError):
+            with self.assertRaises(nest.NESTError):
                 nest.Connect(a, a, {"rule": "one_to_one",
                                     "make_symmetric": symm},
                              {"synapse_model": syn, "synapse_label": 123})
@@ -200,10 +200,9 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             # plain connection
             nest.Connect(a, a, {"rule": "one_to_one", "make_symmetric": symm},
                          {"synapse_model": syn, "receptor_type": r_type})
-            # try set on SetStatus
             c = nest.GetConnections(a, a)
 
-            with self.assertRaises(nest.kernel.NESTError):
+            with self.assertRaises(nest.NESTError):
                 c.set({'synapse_label': 123})
 
 

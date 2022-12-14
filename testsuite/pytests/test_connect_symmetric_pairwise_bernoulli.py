@@ -71,7 +71,7 @@ class TestSymmetricPairwiseBernoulli(connect_test_base.ConnectTestBase):
 
         # test that autapses are not permitted
         pop = nest.Create('iaf_psc_alpha', N)
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.Connect(pop, pop, conn_params)
 
     def testAutapsesFalse(self):
@@ -94,7 +94,7 @@ class TestSymmetricPairwiseBernoulli(connect_test_base.ConnectTestBase):
         # test that multapses must be permitted
         nest.ResetKernel()
         pop = nest.Create('iaf_psc_alpha', N)
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.Connect(pop, pop, conn_params)
 
         # test that multapses can only arise from symmetric
@@ -119,7 +119,7 @@ class TestSymmetricPairwiseBernoulli(connect_test_base.ConnectTestBase):
         conn_params['make_symmetric'] = False
         nest.ResetKernel()
         pop = nest.Create('iaf_psc_alpha', N)
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.Connect(pop, pop, conn_params)
 
     def testMakeSymmetric(self):

@@ -221,8 +221,7 @@ def create_tdend_4comp(dt=0.1):
     # create nest model with two compartments
     nest.ResetKernel()
     nest.SetKernelStatus(dict(resolution=dt))
-    n_neat = nest.Create('cm_default')
-    nest.SetStatus(n_neat, {'V_th': 100.})
+    n_neat = nest.Create('cm_default', params={'V_th': 100.})
 
     n_neat.V_th = 100.
     n_neat.compartments = [
@@ -441,7 +440,7 @@ def create_2tdend_4comp(dt=0.1):
     return (n_neat, m_neat), (aa, bb), ss
 
 
-class NEASTTestCase(unittest.TestCase):
+class CompartmentsTestCase(unittest.TestCase):
     """ tests for compartmental NEST models """
 
     def test_inversion(self, dt=0.1, model_name='1dend_1comp'):
@@ -464,7 +463,7 @@ class NEASTTestCase(unittest.TestCase):
 
         # run the NEST model for 2 timesteps (input arrives only on second step)
         nest.Simulate(3.*dt)
-        events_neat = nest.GetStatus(m_neat, 'events')[0]
+        events_neat = m_neat.events
         v_neat = np.array([events_neat['v_comp%d' % ii][-1] for ii in range(n_comp)])
 
         # construct numpy solution
@@ -504,7 +503,7 @@ class NEASTTestCase(unittest.TestCase):
 
         # run the NEST model for 1 timestep
         nest.Simulate(2.*dt)
-        events_neat = nest.GetStatus(m_neat, 'events')[0]
+        events_neat = m_neat.events
         v_neat = np.array([events_neat['v_comp%d' % ii] for ii in range(n_comp)])
 
         # construct numpy solution
@@ -531,7 +530,7 @@ class NEASTTestCase(unittest.TestCase):
 
             # run the NEST model
             nest.Simulate(t_max)
-            events_neat = nest.GetStatus(m_neat, 'events')[0]
+            events_neat = m_neat.events
             v_neat = np.array([events_neat['v_comp%d' % ii][-1] -
                                events_neat['v_comp%d' % ii][int(t_max/(2.*dt))-1]
                                for ii in range(n_comp)])
@@ -565,7 +564,7 @@ class NEASTTestCase(unittest.TestCase):
 
         # run the NEST model
         nest.Simulate(t_max)
-        events_neat = nest.GetStatus(m_neat, 'events')[0]
+        events_neat = m_neat.events
         v_neat = np.array([events_neat['v_comp%d' % ii][-1] for ii in range(n_comp)])
 
         # explicit solution for steady state voltage
@@ -614,7 +613,7 @@ class NEASTTestCase(unittest.TestCase):
 
         # run the NEST model
         nest.Simulate(t_max)
-        events_neat = nest.GetStatus(m_neat, 'events')[0]
+        events_neat = m_neat.events
         v_neat = np.array([events_neat['v_comp%d' % ii][-1] for ii in range(n_comp)])
 
         # explicit solution for steady state voltage
@@ -642,12 +641,12 @@ class NEASTTestCase(unittest.TestCase):
             'e_L': -70.0,
         }
 
-        n_neat_0 = nest.Create('cm_default')
-        nest.SetStatus(n_neat_0, {"compartments": {"parent_idx": -1, "params": soma_params}})
+        n_neat_0 = nest.Create('cm_default', params={"compartments": {"parent_idx": -1, "params": soma_params}})
 
-        n_neat_1 = nest.Create('cm_default')
-        nest.SetStatus(n_neat_1, {"compartments": {"parent_idx": -1, "params": soma_params}})
-        nest.SetStatus(n_neat_1, {"receptors": {"comp_idx": 0, "receptor_type": "AMPA"}})
+        n_neat_1 = nest.Create('cm_default', params={
+            "compartments": {"parent_idx": -1, "params": soma_params},
+            "receptors": {"comp_idx": 0, "receptor_type": "AMPA"}
+        })
         syn_idx = 0
 
         nest.Connect(n_neat_0, n_neat_1, syn_spec={'synapse_model': 'static_synapse', 'weight': .1,
@@ -665,13 +664,13 @@ class NEASTTestCase(unittest.TestCase):
 
         nest.Simulate(100.)
 
-        events_neat_0 = nest.GetStatus(m_neat_0, 'events')[0]
-        events_neat_1 = nest.GetStatus(m_neat_1, 'events')[0]
+        events_neat_0 = m_neat_0.events
+        events_neat_1 = m_neat_1.events
 
         self.assertTrue(np.any(events_neat_0['v_comp0'] != soma_params['e_L']))
         self.assertTrue(np.any(events_neat_1['v_comp0'] != soma_params['e_L']))
 
-    def test_setstatus_combinations(self, dt=0.1):
+    def test_set_combinations(self, dt=0.1):
 
         sg_01 = nest.Create('spike_generator', 1, {'spike_times': [10.]})
         sg_02 = nest.Create('spike_generator', 1, {'spike_times': [15.]})
@@ -694,11 +693,12 @@ class NEASTTestCase(unittest.TestCase):
         nest.Connect(sg_02, n_neat_0, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 1})
 
         # set status with single call
-        n_neat_1 = nest.Create('cm_default')
-        nest.SetStatus(n_neat_1, {"compartments": [{"parent_idx": -1, "params": SP},
-                                                   {"parent_idx": 0, "params": DP[0]}],
-                                  "receptors": [{"comp_idx": 0, "receptor_type": "GABA"},
-                                                {"comp_idx": 1, "receptor_type": "AMPA"}]})
+        n_neat_1 = nest.Create('cm_default', params={
+            "compartments": [{"parent_idx": -1, "params": SP},
+                             {"parent_idx": 0, "params": DP[0]}],
+            "receptors": [{"comp_idx": 0, "receptor_type": "GABA"},
+                          {"comp_idx": 1, "receptor_type": "AMPA"}]
+        })
 
         nest.Connect(sg_11, n_neat_1, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 0})
         nest.Connect(sg_12, n_neat_1, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 1})
@@ -711,12 +711,12 @@ class NEASTTestCase(unittest.TestCase):
 
         nest.Simulate(100.)
 
-        events_neat_0 = nest.GetStatus(m_neat_0, 'events')[0]
-        events_neat_1 = nest.GetStatus(m_neat_1, 'events')[0]
+        events_neat_0 = m_neat_0.events
+        events_neat_1 = m_neat_1.events
 
         self.assertTrue(np.allclose(events_neat_0['v_comp0'], events_neat_1['v_comp0']))
 
-    def test_getstatus(self):
+    def test_get(self):
         n_neat = nest.Create('cm_default')
         n_neat.compartments = [
             {"parent_idx": -1, "params": SP},
@@ -753,7 +753,7 @@ class NEASTTestCase(unittest.TestCase):
         # test double root
         n_neat = nest.Create('cm_default')
 
-        with self.assertRaisesRegex(nest.kernel.NESTError,
+        with self.assertRaisesRegex(nest.NESTError,
                                     "in llapi_set_nc_status: "
                                     "Compartment 0 , the root, "
                                     "has already been instantiated."):
@@ -765,7 +765,7 @@ class NEASTTestCase(unittest.TestCase):
         # test undefined parent compartment
         n_neat = nest.Create('cm_default')
 
-        with self.assertRaisesRegex(nest.kernel.NESTError,
+        with self.assertRaisesRegex(nest.NESTError,
                                     "in llapi_set_nc_status: "
                                     "Compartment 15 does not exist in tree, "
                                     "but was specified as a parent."):
@@ -778,7 +778,7 @@ class NEASTTestCase(unittest.TestCase):
         n_neat = nest.Create('cm_default')
         n_neat.compartments = {"parent_idx": -1, "params": SP}
 
-        with self.assertRaisesRegex(nest.kernel.NESTError,
+        with self.assertRaisesRegex(nest.NESTError,
                                     "in llapi_set_nc_status: "
                                     "Compartment 12 does not exist in tree."):
             n_neat.receptors = {"comp_idx": 12, "receptor_type": "GABA"}
@@ -786,7 +786,7 @@ class NEASTTestCase(unittest.TestCase):
         # test simulate without adding compartments
         n_neat = nest.Create('cm_default')
 
-        with self.assertRaisesRegex(nest.kernel.NESTError,
+        with self.assertRaisesRegex(nest.NESTError,
                                     "in llapi_simulate: "
                                     "Compartment 0 does not exist in tree, "
                                     "meaning that no compartments have been added."):
@@ -800,7 +800,7 @@ class NEASTTestCase(unittest.TestCase):
         ]
         dc = nest.Create('dc_generator', params={'amplitude': 2.0})
 
-        with self.assertRaisesRegex(nest.kernel.NESTError,
+        with self.assertRaisesRegex(nest.NESTError,
                                     r"in llapi_connect: "
                                     r"Port with id 3 does not exist. Valid current "
                                     r"receptor ports for cm_default are in \[0, 2\["):
@@ -817,7 +817,7 @@ class NEASTTestCase(unittest.TestCase):
         ]
         sg = nest.Create('spike_generator', 1, {'spike_times': [10.]})
 
-        with self.assertRaisesRegex(nest.kernel.NESTError,
+        with self.assertRaisesRegex(nest.NESTError,
                                     r"in llapi_connect: "
                                     r"Port with id 3 does not exist. Valid spike "
                                     r"receptor ports for cm_default are in \[0, 3\["):
@@ -829,7 +829,7 @@ class NEASTTestCase(unittest.TestCase):
         n_neat.compartments = {"parent_idx": -1, "params": SP}
         mm = nest.Create('multimeter', 1, {'record_from': ['v_comp1'], 'interval': 1.})
 
-        with self.assertRaisesRegex(nest.kernel.NESTError,
+        with self.assertRaisesRegex(nest.NESTError,
                                     "in llapi_connect: "
                                     "Creation of connection is not possible because:\n"
                                     "Cannot connect with unknown recordable v_comp1"):
@@ -840,13 +840,18 @@ class NEASTTestCase(unittest.TestCase):
         n_neat.compartments = {"parent_idx": -1, "params": SP}
         n_neat.receptors = {"comp_idx": 0, "receptor_type": "GABA"}
 
-        with self.assertRaisesRegex(nest.kernel.NESTError,
+        with self.assertRaisesRegex(nest.NESTError,
                                     "\'compartments\' is already defined for this model"):
             n_neat.compartments = {"parent_idx": 0, "params": SP}
 
-        with self.assertRaisesRegex(nest.kernel.NESTError,
+        with self.assertRaisesRegex(nest.NESTError,
                                     "\'receptors\' is already defined for this model"):
             n_neat.receptors = {"comp_idx": 0, "receptor_type": "GABA"}
+
+        n_neat = nest.Create('cm_default')
+        n_neat.compartments = {"parent_idx": -1, "params": SP}
+        with self.assertRaises(nest.NESTError):
+            n_neat.compartments = {"parent_idx": 0, "params": SP}
 
     def test_continuerun(self, dt=0.1):
         recordables = [
@@ -859,11 +864,12 @@ class NEASTTestCase(unittest.TestCase):
         nest.ResetKernel()
         nest.SetKernelStatus(dict(resolution=dt))
 
-        n_neat = nest.Create('cm_default')
-        nest.SetStatus(n_neat, {"compartments": [{"parent_idx": -1, "params": SP},
-                                                 {"parent_idx": 0, "params": DP[0]}],
-                                "receptors": [{"comp_idx": 0, "receptor_type": "GABA"},
-                                              {"comp_idx": 1, "receptor_type": "AMPA"}]})
+        n_neat = nest.Create('cm_default', params={
+            "compartments": [{"parent_idx": -1, "params": SP},
+                             {"parent_idx": 0, "params": DP[0]}],
+            "receptors": [{"comp_idx": 0, "receptor_type": "GABA"},
+                          {"comp_idx": 1, "receptor_type": "AMPA"}]
+        })
 
         sg_1 = nest.Create('spike_generator', 1, {'spike_times': [10.]})
         sg_2 = nest.Create('spike_generator', 1, {'spike_times': [15.]})
@@ -876,17 +882,18 @@ class NEASTTestCase(unittest.TestCase):
 
         nest.Simulate(100.)
 
-        events_neat_0 = nest.GetStatus(m_neat, 'events')[0]
+        events_neat_0 = m_neat.events
 
         # case 2: two nest.Simulate() calls
         nest.ResetKernel()
         nest.SetKernelStatus(dict(resolution=dt))
 
-        n_neat = nest.Create('cm_default')
-        nest.SetStatus(n_neat, {"compartments": [{"parent_idx": -1, "params": SP},
-                                                 {"parent_idx": 0, "params": DP[0]}],
-                                "receptors": [{"comp_idx": 0, "receptor_type": "GABA"},
-                                              {"comp_idx": 1, "receptor_type": "AMPA"}]})
+        n_neat = nest.Create('cm_default', params={
+            "compartments": [{"parent_idx": -1, "params": SP},
+                             {"parent_idx": 0, "params": DP[0]}],
+            "receptors": [{"comp_idx": 0, "receptor_type": "GABA"},
+                          {"comp_idx": 1, "receptor_type": "AMPA"}]
+        })
 
         sg_1 = nest.Create('spike_generator', 1, {'spike_times': [10.]})
         sg_2 = nest.Create('spike_generator', 1, {'spike_times': [15.]})
@@ -899,16 +906,69 @@ class NEASTTestCase(unittest.TestCase):
 
         nest.Simulate(12.)
         nest.Simulate(88.)
-        events_neat_1 = nest.GetStatus(m_neat, 'events')[0]
+        events_neat_1 = m_neat.events
 
         for key in recordables:
             assert np.allclose(events_neat_0[key], events_neat_1[key])
+
+    def test_compartments_wrapper(self):
+        cm = nest.Create('cm_default')
+        cm.compartments = [{"parent_idx": -1, "params": SP}]
+        compartment_a = cm.compartments.get_tuple()[0]
+        compartment_b = {"parent_idx": 0, "params": DP[0]}
+
+        for rhs in (compartment_b, [compartment_b], (compartment_b), nest.Compartments(cm, (compartment_b,))):
+            compartments = cm.compartments + rhs
+            self.assertEqual(compartments.get_tuple(), (compartment_a, compartment_b))
+
+        with self.assertRaises(TypeError):
+            # Raises error because argument must be a tuple
+            nest.Compartments(cm, compartment_a)
+
+        not_compartment = ''
+        for rhs in ([compartment_b, not_compartment],
+                    (compartment_b, not_compartment)):
+            with self.assertRaises(TypeError):
+                # Raises because all elements in rhs must be a dict
+                _ = cm.compartments + rhs
+
+    def test_add_assign(self):
+        cm = nest.Create('cm_default')
+        cm.compartments = {"parent_idx": -1, "params": SP}
+        cm.compartments += {"parent_idx": 0, "params": DP[0]}
+        cm.receptors = {"comp_idx": 0, "receptor_type": "GABA"}
+        cm.receptors += {"comp_idx": 1, "receptor_type": "AMPA"}
+
+        compartments = cm.compartments
+        self.assertEqual(compartments[0]["comp_idx"], 0)
+        self.assertEqual(compartments[0]["parent_idx"], -1)
+        self.assertEqual(compartments[1]["comp_idx"], 1)
+        self.assertEqual(compartments[1]["parent_idx"], 0)
+        receptors = cm.receptors
+        self.assertEqual(receptors[0]["receptor_idx"], 0)
+        self.assertEqual(receptors[0]["receptor_type"], 'GABA')
+        self.assertEqual(receptors[1]["receptor_idx"], 1)
+        self.assertEqual(receptors[1]["receptor_type"], 'AMPA')
+
+        cm2 = nest.Create('cm_default')
+        cm2.compartments = {"parent_idx": -1, "params": SP}
+        cm2.compartments += [{"parent_idx": 0, "params": DP[0]}, {"parent_idx": 0, "params": DP[0]}]
+        self.assertEqual(len(list(cm2.compartments)), 3)
+
+        cm3 = nest.Create('cm_default')
+        cm3.compartments = [{"parent_idx": -1, "params": SP}, {"parent_idx": 0, "params": DP[0]}]
+        cm3.compartments += {"parent_idx": 1, "params": DP[0]}
+        self.assertEqual(len(list(cm3.compartments)), 3)
+
+        cm2.receptors = {"comp_idx": 0, "receptor_type": "GABA"}
+        cm2.receptors += [{"comp_idx": 1, "receptor_type": "AMPA"}, {"comp_idx": 2, "receptor_type": "GABA"}]
+        self.assertEqual(len(list(cm2.receptors)), 3)
 
 
 def suite():
     # makeSuite is sort of obsolete http://bugs.python.org/issue2721
     # using loadTestsFromTestCase instead.
-    suite = unittest.TestLoader().loadTestsFromTestCase(NEASTTestCase)
+    suite = unittest.TestLoader().loadTestsFromTestCase(CompartmentsTestCase)
     return unittest.TestSuite([suite])
 
 

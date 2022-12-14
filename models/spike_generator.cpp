@@ -30,12 +30,6 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "booldatum.h"
-#include "dict.h"
-#include "dictutils.h"
-
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -411,7 +405,6 @@ nest::spike_generator::set_data_from_stimulation_backend( std::vector< double >&
   {
 
     dictionary d;
-    ( new Dictionary );
     std::vector< double > times_ms;
     const size_t n_spikes = P_.spike_stamps_.size();
     times_ms.reserve( n_spikes + input_spikes.size() );

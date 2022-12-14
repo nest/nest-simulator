@@ -86,7 +86,7 @@ class TestSynapseCollection(unittest.TestCase):
         self.assertEqual(delay, [11.0, 11.0, 11.0, 11.0])
         self.assertEqual(weight, [6.0, 6.0, 6.0, 6.0])
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             get_conns.set(source=2)
 
         nest.ResetKernel()

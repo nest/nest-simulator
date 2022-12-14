@@ -195,7 +195,7 @@ set_target_properties( nestkernel
     SOVERSION 3
     )
 target_link_libraries( nestkernel
-    nestutil sli_lib
+    nestutil
     ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES}
     )
 
@@ -203,7 +203,6 @@ target_include_directories( nestkernel PRIVATE
     ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
-    ${PROJECT_SOURCE_DIR}/sli
     ${PROJECT_SOURCE_DIR}/nestkernel
     ${PROJECT_SOURCE_DIR}/nestkernel/spatial
     ${PROJECT_SOURCE_DIR}/models

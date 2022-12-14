@@ -47,9 +47,6 @@
 #include "urbanczik_archiving_node.h"
 #include "urbanczik_archiving_node_impl.h"
 
-// Includes from sli:
-#include "dictdatum.h"
-#include "name.h"
 
 namespace nest
 {

@@ -486,7 +486,7 @@ class TestNodeCollectionGetSet(unittest.TestCase):
         self.assertEqual(g['tau_minus'], (42.0, 42.0, 42.0, 42.0, 42.0,
                                           42.0, 42.0, 42.0, 42.0, 42.0))
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nodes.set({'vp': 2})
 
     def test_set_composite(self):
@@ -549,7 +549,7 @@ class TestNodeCollectionGetSet(unittest.TestCase):
         with self.assertRaises(IndexError):
             nodes.V_reset = [-85., -82., -80., -77., -75.]
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nodes.nonexistent_attribute = 1.
 
 

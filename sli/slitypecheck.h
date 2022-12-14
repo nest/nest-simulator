@@ -35,7 +35,7 @@ public:
   TrieFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class TrieInfoFunction : public SLIFunction
@@ -44,7 +44,7 @@ public:
   TrieInfoFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class AddtotrieFunction : public SLIFunction
@@ -53,7 +53,7 @@ public:
   AddtotrieFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Cva_tFunction : public SLIFunction
@@ -62,7 +62,7 @@ public:
   Cva_tFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Cvt_aFunction : public SLIFunction
@@ -71,7 +71,7 @@ public:
   Cvt_aFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class TypeFunction : public SLIFunction
@@ -80,7 +80,7 @@ public:
   TypeFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 

@@ -139,7 +139,7 @@ SourceTablePosition::decrease()
 inline bool
 operator==( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
 {
-  return ( ( lhs.tid == rhs.tid ) and ( lhs.syn_id == rhs.syn_id ) and ( lhs.lcid == rhs.lcid ) );
+  return ( lhs.tid == rhs.tid and lhs.syn_id == rhs.syn_id and lhs.lcid == rhs.lcid );
 }
 
 inline bool

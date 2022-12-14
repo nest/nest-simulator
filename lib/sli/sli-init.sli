@@ -1593,25 +1593,17 @@ Author: Marc-Oliver Gewaltig
 
 /** @BeginDocumentation
 Name: exithook - Procedure executed if the executive mode is left.
-Description: 
 
-The task of exithook is to handle accidental exits from the 
-interactive executive session. The most common reason is
-the use of 'exit' when the user wants to quit the interpreter.
+Description:
+The task of exithook is to handle accidental exits from the
+interactive executive session. The most common reason is the use of
+'exit' when the user wants to quit the interpreter.
 
-By default, exithook will issue a message and restart the executive
-mode.
+By default, exithook will quit the interpreter. For debugging it is
+often useful to be able to access the fallback input which has no
+prompt. For doing this, replace the exithook function in sli-init.sli
+by the following code: /exithook {} def
 
-If you would like to quit the interpreter, put the following code 
-into your .nestrc file
-
-/exithook {quit} def
-
-For debugging it is often useful to be able to access the fallback
-input which has no prompt. For this, put the following code to your
-.nestrc file
-
-/exithook {} def
 SeeAlso: quit, exit, executive
 */
  
@@ -1716,15 +1708,9 @@ systemdict /GNUreadline known
 /** @BeginDocumentation
 Name: welcome - Print SLI welcome message
 
-Description: After the startup process of the interpreter is
-             finished, welcome is called to print the familiar
-             greeting message.
-            
-             The contents of this message can be personalized by
-             changing the welcome procedure in the personal
-             startup file .nestrc
-
-SeeAlso: nestrc
+Description:
+After the startup process of the interpreter is finished, welcome is
+called to print the familiar greeting message.
 */
 
 /:warnings {} def % little helper to display warnings AFTER the welcome message.
@@ -2155,123 +2141,6 @@ moduleinitializers
 } def
 
 
-/** @BeginDocumentation
-Name: nestrc - Personal interpreter initialization file
-
-Description: During startup, the NEST searches
-             for a personal resource file. 
-             The name (and PATH) 
-             of this resource file can be specified by the 
-             environment variable NESTRCFILENAME.
-
-             If this variable is not set sli executes
-             the file $HOME/.nestrc.
-     
-	     If this file does not exist, it is created from a template.
-        
-             The resource file is executed 
-             before the welcome messsage is printed.
-
-SeeAlso: welcome
-*/
-
-/:createdefaultrcfile
-{ 
-  << >>
-  begin
-
-    (HOME) getenv pop     % get home directory (we alrady know that $HOME is set)
-
-    (/.slirc)       % Check if a legacy file is present
-    join
-    ifstream       
-    {% $HOME/.slirc is present
-      close
-      {
-        M_WARNING (evalrcfile) (The name of NEST's resource file has changed to .nestrc) message
-        M_WARNING (evalrcfile) (You seem to have a legacy .slirc file in your $HOME directory.) message
-        M_WARNING (evalrcfile) (If this is so, please check and rename it to .nestrc,) message
-        M_WARNING (evalrcfile) (or create a file with the name .nestrc in your $HOME directory.) message
-      } :addwarnings 
-    }
-    {% $HOME/.slirc is not present
-      (HOME) getenv pop % get home directory (we alrady know that $HOME is set)
-      (/.nestrc) join /outfile Set
-      statusdict /prgdocdir get (/examples/sli/nestrc.sli) join /infile Set
-
-      infile outfile CopyFile 
-      {
-        M_WARNING (evalrcfile) (NEST has created its configuration file $HOME/.nestrc) message
-        M_WARNING (evalrcfile) (If this troubles you, type '/nestrc help' at the prompt to learn more.) message
-      } :addwarnings 
-    } ifelse
-
-  end
-} def
-
-/evalrcfile
-{
-  {
-    (NESTRCFILENAME) getenv
-    {
-      dup
-      ifstream
-      {
-        exch pop
-        cvx exec  % execute curstom rc file
-      }
-      {
-        (Could not open file ) exch join
-        { M_ERROR (evalrcfile) (In environment variable NESTRCFILENAME) message 
-          M_ERROR (evalrcfile)
-        } exch append { message } join
-        :addwarnings
-      } ifelse
-    } 
-    {
-      (HOME) getenv      % get home directory
-      {
-	(/.nestrc)       % Use default rc-filename
-	join
-	ifstream         % check if rc file is present
-	{
-	  cvx exec       % if so, execute it.
-	}
-        {
-          :createdefaultrcfile % if not, create one.
-        } ifelse
-      }
-      {
-        {
-          M_ERROR (evalrcfile) (NEST was unable to locate its configuration file, because your $HOME environment variable is not set.) message
-        } :addwarnings
-      } ifelse
-    } ifelse
-  } stopped
-  %% This is a modfified version of handleerror.
-  {
-    errordict begin
-      newerror                         % check error state
-      {
-	errorname /SystemError eq      % Was the reason for the error a failed system call?
-	{%yes, a system error
-	  (System Error in NEST resource file: ) =only sys_errname ==only ( in ) =only =
-	}
-	{%no, "ordinary" error
-	  (Error in nest resource file: ) =only errorname  ==only ( in ) =only =
-	}	ifelse
-	% Re-set error state
-	/newerror false def            % this is NOW IMPORTANT!
-      }
-      {                                % this catches extra stops
-	(\n Software Interrupt \n) =   % issued by the user
-      } ifelse                         % or a user function
-    end 
-  } if
-} def
-
-
-
 /* Private function, no user documentation
 
 Name: ::evalstring - execute SLI code given as string in stopped context
@@ -2305,8 +2174,6 @@ end % systemdict
 
 (SLIUSER) :pathlist path setpath % prepend user directories    
 (.) path setpath                % prepend current directory
-
-evalrcfile
 
 
 /** @BeginDocumentation
@@ -2378,3 +2245,19 @@ SeeAlso: exit_test_gracefully
 /skip_if_without_gsl { statusdict/have_gsl :: not { /skipped_no_gsl exit_test_gracefully } if } def
 /skip_if_without_music { statusdict/have_music :: not { /skipped_no_music exit_test_gracefully } if } def
 
+
+/mpirun
+[/integertype /stringtype /stringtype]
+[/numproc     /executable /scriptfile]
+{
+ () [
+  statusdict/mpiexec :: ( )
+  statusdict/mpiexec_numproc_flag :: ( )
+  numproc cvs ( )
+  (SLI_MPIEXEC_PREFLAGS) getenv not {()} if ( )
+  statusdict/mpiexec_preflags :: ( )
+  executable ( )
+  statusdict/mpiexec_postflags :: ( )
+  scriptfile
+ ] {join} Fold
+} Function def

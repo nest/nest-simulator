@@ -235,27 +235,27 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
   void add_compartment_( DictionaryDatum& dd );
   void add_receptor_( DictionaryDatum& dd );
 
   void init_recordables_pointers_();
-  void calibrate();
+  void pre_run_hook() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   CompTree c_tree_;
   std::vector< RingBuffer > syn_buffers_;
@@ -300,7 +300,7 @@ nest::cm_default::send_test_event( Node& target, rport receptor_type, synindex, 
 inline port
 cm_default::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( ( receptor_type < 0 ) or ( receptor_type >= static_cast< port >( syn_buffers_.size() ) ) )
+  if ( receptor_type < 0 or ( receptor_type >= static_cast< port >( syn_buffers_.size() ) ) )
   {
     std::ostringstream msg;
     msg << "Valid spike receptor ports for " << get_name() << " are in ";

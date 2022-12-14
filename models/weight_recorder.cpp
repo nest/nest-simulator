@@ -22,13 +22,9 @@
 
 #include "weight_recorder.h"
 
-// C++ includes:
-#include <numeric>
 
 // Includes from libnestutil:
 #include "compose.hpp"
-#include "dict_util.h"
-#include "logging.h"
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
@@ -40,8 +36,6 @@
 #include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 // record time, node ID, weight and receiver node ID
 nest::weight_recorder::weight_recorder()
@@ -134,9 +128,9 @@ nest::weight_recorder::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::weight_recorder::calibrate()
+nest::weight_recorder::pre_run_hook()
 {
-  RecordingDevice::calibrate(
+  RecordingDevice::pre_run_hook(
     { nest::names::weights }, { nest::names::targets, nest::names::receptors, nest::names::ports } );
 }
 

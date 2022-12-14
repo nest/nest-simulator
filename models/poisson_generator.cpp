@@ -100,9 +100,9 @@ nest::poisson_generator::init_buffers_()
 }
 
 void
-nest::poisson_generator::calibrate()
+nest::poisson_generator::pre_run_hook()
 {
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
 
   // rate_ is in Hz, dt in ms, so we have to convert from s to ms
   poisson_distribution::param_type param( Time::get_resolution().get_ms() * P_.rate_ * 1e-3 );
@@ -117,7 +117,7 @@ nest::poisson_generator::calibrate()
 void
 nest::poisson_generator::update( Time const& T, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   if ( P_.rate_ <= 0 )

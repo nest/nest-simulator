@@ -435,7 +435,7 @@ close
 			% fill the delay dictionary for Connect and insert it into the synapse dictionary
                         syn_dict /delay
                         << /normal << /mean delays source_pop get /std delays_sd source_pop get abs >> >> CreateParameter
-                        0.1 (inf) cvd redraw
+                        0.05 (inf) cvd redraw
                         put
 
 			% fill the connectivity dictionary with the number of synapses to be used
@@ -478,7 +478,7 @@ close
                     % insert the delay dictionary into the synapse dictionary
                     syn_dict /delay
                     << /normal << /mean delay_th /std delay_th_sd abs >> >> CreateParameter
-                    0.1 (inf) cvd redraw
+                    0.05 (inf) cvd redraw
                     put
 
 		    % fill the connectivity dictionary with the number of synapses to be used

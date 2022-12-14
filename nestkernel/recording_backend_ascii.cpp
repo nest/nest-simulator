@@ -156,8 +156,8 @@ nest::RecordingBackendASCII::write( const RecordingDevice& device,
 const std::string
 nest::RecordingBackendASCII::compute_vp_node_id_string_( const RecordingDevice& device ) const
 {
-  const float num_vps = kernel().vp_manager.get_num_virtual_processes();
-  const float num_nodes = kernel().node_manager.size();
+  const double num_vps = kernel().vp_manager.get_num_virtual_processes();
+  const double num_nodes = kernel().node_manager.size();
   const int vp_digits = static_cast< int >( std::floor( std::log10( num_vps ) ) + 1 );
   const int node_id_digits = static_cast< int >( std::floor( std::log10( num_nodes ) ) + 1 );
 
@@ -251,7 +251,7 @@ nest::RecordingBackendASCII::DeviceData::open_file()
   std::string filename = compute_filename_();
 
   std::ifstream test( filename.c_str() );
-  if ( test.good() && not kernel().io_manager.overwrite_files() )
+  if ( test.good() and not kernel().io_manager.overwrite_files() )
   {
     std::string msg = String::compose(
       "The file '%1' already exists and overwriting files is disabled. To overwrite files, set "

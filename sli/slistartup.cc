@@ -40,7 +40,6 @@
 #include "integerdatum.h"
 #include "interpret.h"
 #include "iostreamdatum.h"
-#include "namedatum.h"
 #include "stringdatum.h"
 
 // Access to environement variables.
@@ -116,10 +115,10 @@ SLIStartup::GetenvFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
-  assert( sd != NULL );
+  assert( sd );
   const char* s = ::getenv( sd->c_str() );
   i->OStack.pop();
-  if ( s != NULL )
+  if ( s )
   {
     Token t( new StringDatum( s ) );
     i->OStack.push_move( t );
@@ -173,6 +172,11 @@ SLIStartup::SLIStartup( int argc, char** argv )
   , have_libneurosim_name( "have_libneurosim" )
   , have_sionlib_name( "have_sionlib" )
   , ndebug_name( "ndebug" )
+  , mpiexec_name( "mpiexec" )
+  , mpiexec_numproc_flag_name( "mpiexec_numproc_flag" )
+  , mpiexec_max_numprocs_name( "mpiexec_max_numprocs" )
+  , mpiexec_preflags_name( "mpiexec_preflags" )
+  , mpiexec_postflags_name( "mpiexec_postflags" )
   , exitcodes_name( "exitcodes" )
   , exitcode_success_name( "success" )
   , exitcode_skipped_name( "skipped" )
@@ -203,7 +207,7 @@ SLIStartup::SLIStartup( int argc, char** argv )
     StringDatum* sd = new StringDatum( argv[ i ] );
     args_array.push_back( Token( sd ) );
 
-    if ( *sd == "-d" || *sd == "--debug" )
+    if ( *sd == "-d" or *sd == "--debug" )
     {
       debug_ = true;
       verbosity_ = SLIInterpreter::M_ALL; // make the interpreter verbose.
@@ -293,6 +297,11 @@ SLIStartup::init( SLIInterpreter* i )
 
 #ifdef HAVE_MPI
   statusdict->insert( have_mpi_name, Token( new BoolDatum( true ) ) );
+  statusdict->insert( mpiexec_name, Token( new StringDatum( MPIEXEC ) ) );
+  statusdict->insert( mpiexec_numproc_flag_name, Token( new StringDatum( MPIEXEC_NUMPROC_FLAG ) ) );
+  statusdict->insert( mpiexec_max_numprocs_name, Token( new StringDatum( MPIEXEC_MAX_NUMPROCS ) ) );
+  statusdict->insert( mpiexec_preflags_name, Token( new StringDatum( MPIEXEC_PREFLAGS ) ) );
+  statusdict->insert( mpiexec_postflags_name, Token( new StringDatum( MPIEXEC_POSTFLAGS ) ) );
 #else
   statusdict->insert( have_mpi_name, Token( new BoolDatum( false ) ) );
 #endif

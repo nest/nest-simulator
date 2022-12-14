@@ -345,6 +345,53 @@ class BasicsTestCase(unittest.TestCase):
         self.assertEqual(len(t), 1)
         self.assertEqual(t[0], nest.NodeCollection([1, 3, 7, 9]))
 
+    def test_GetSourceNodes(self):
+        """Interface check for finding source"""
+
+        cdict = {'rule': 'pairwise_bernoulli',
+                 'p': 1.,
+                 'mask': {'grid': {'shape': [2, 2]}}}
+        sdict = {'synapse_model': 'stdp_synapse'}
+        nest.ResetKernel()
+        # For co-dependent properties, we use `set()` instead of kernel attributes
+        nest.set(use_compressed_spikes=False, sort_connections_by_source=False)
+
+        layer = nest.Create('iaf_psc_alpha',
+                            positions=nest.spatial.grid(shape=[3, 3],
+                                                        extent=(2., 2.),
+                                                        edge_wrap=True))
+
+        # connect layer -> layer
+        nest.Connect(layer, layer, cdict, sdict)
+
+        s = nest.GetSourceNodes(layer, layer[0])
+        self.assertEqual(len(s), 1)
+
+        s = nest.GetSourceNodes(layer, layer)
+        self.assertEqual(len(s), len(layer))
+        # 2x2 mask -> each nodes has four sources
+        self.assertTrue(all([len(g) == 4 for g in s]))
+
+        s = nest.GetSourceNodes(layer, layer, syn_model='static_synapse')
+        self.assertEqual(len(s), len(layer))
+        self.assertTrue(all([len(g) == 0 for g in s]))  # no static syns
+
+        s = nest.GetSourceNodes(layer, layer, syn_model='stdp_synapse')
+        self.assertEqual(len(s), len(layer))
+        self.assertTrue(all([len(g) == 4 for g in s]))  # 2x2 mask  -> four sources
+
+        s = nest.GetSourceNodes(layer, layer[0])
+        self.assertEqual(len(s), 1)
+        self.assertEqual(s[0], nest.NodeCollection([1, 3, 7, 9]))
+
+        s = nest.GetSourceNodes(layer, layer[4])
+        self.assertEqual(len(s), 1)
+        self.assertEqual(s[0], nest.NodeCollection([1, 2, 4, 5]))
+
+        s = nest.GetSourceNodes(layer, layer[8])
+        self.assertEqual(len(s), 1)
+        self.assertEqual(s[0], nest.NodeCollection([5, 6, 8, 9]))
+
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_GetTargetPositions(self):
         """Test that GetTargetPosition works as expected"""
@@ -420,6 +467,91 @@ class BasicsTestCase(unittest.TestCase):
         for indx in range(len(p[0])):
             self.assertAlmostEqual(positions[indx][0], p[0][indx][0])
             self.assertAlmostEqual(positions[indx][1], p[0][indx][1])
+
+    @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
+    def test_GetSourcePositions(self):
+        """Test that GetSourcePosition works as expected"""
+
+        cdict = {'rule': 'pairwise_bernoulli',
+                 'p': 1.}
+        sdict = {'synapse_model': 'stdp_synapse'}
+
+        # For co-dependent properties, we use `set()` instead of kernel attributes
+        nest.set(use_compressed_spikes=False, sort_connections_by_source=False)
+
+        layer = nest.Create('iaf_psc_alpha',
+                            positions=nest.spatial.grid(shape=[1, 1],
+                                                        extent=(1., 1.),
+                                                        edge_wrap=False))
+        nest.Connect(layer, layer, cdict, sdict)
+
+        # Simple test with one node ID in the layer, should be placed in the origin
+        p = nest.GetSourcePositions(layer, layer)
+        self.assertTrue(p, [[(0.0, 0.0)]])
+
+        # Test positions on a grid, we can calculate what they should be
+        nest.ResetKernel()
+        # For co-dependent properties, we use `set()` instead of kernel attributes
+        nest.set(use_compressed_spikes=False, sort_connections_by_source=False)
+
+        x_extent = 1.
+        y_extent = 1.
+        shape = [3, 3]
+
+        layer = nest.Create('iaf_psc_alpha',
+                            positions=nest.spatial.grid(shape=shape,
+                                                        extent=[x_extent, y_extent],
+                                                        edge_wrap=False))
+        nest.Connect(layer, layer, cdict, sdict)
+
+        p = nest.GetSourcePositions(layer, layer[:1])
+        self.assertEqual(len(p), 1)
+        self.assertTrue(all([len(pp) == 2 for pp in p[0]]))
+
+        p = nest.GetSourcePositions(layer, layer)
+        self.assertEqual(len(p), len(layer))
+
+        dx = x_extent / shape[0]
+        dy = y_extent / shape[1]
+
+        x = [-dx, -dx, -dx, 0.0, 0.0, 0.0, dx, dx, dx]
+        y = [dy, 0.0, -dy, dy, 0.0, -dy, dy, 0.0, -dy]
+
+        pos = [(x[i], y[i]) for i in range(len(x))]
+
+        for indx in range(len(pos)):
+            # 4 chosen randomly, they should all be the same, as all node IDs in
+            # the layer are connected
+            self.assertAlmostEqual(p[4][indx][0], pos[indx][0])
+            self.assertAlmostEqual(p[4][indx][1], pos[indx][1])
+
+        # Test that we get correct positions when we send in a positions array
+        # when creating the layer
+        nest.ResetKernel()
+        # For co-dependent properties, we use `set()` instead of kernel attributes
+        nest.set(use_compressed_spikes=False, sort_connections_by_source=False)
+
+        positions = [(np.random.uniform(-0.5, 0.5),
+                      np.random.uniform(-0.5, 0.5)) for _ in range(50)]
+        layer = nest.Create('iaf_psc_alpha',
+                            positions=nest.spatial.free(positions,
+                                                        edge_wrap=False))
+        nest.Connect(layer, layer, cdict, sdict)
+
+        p = nest.GetSourcePositions(layer, layer[:1])
+
+        for indx in range(len(p[0])):
+            self.assertAlmostEqual(positions[indx][0], p[0][indx][0])
+            self.assertAlmostEqual(positions[indx][1], p[0][indx][1])
+
+    def testSlicedPositions(self):
+        """Correct positions from spatial attribute of sliced NodeCollection"""
+        nest.ResetKernel()
+        positions = nest.spatial.free(nest.random.uniform(min=-1, max=1), num_dimensions=2)
+        nodes = nest.Create('iaf_psc_alpha', 10, positions=positions)
+        all_positions = sum([list(nodes[i].spatial['positions']) for i in range(len(nodes))], start=[])
+        self.assertEqual(tuple(all_positions), nodes.spatial['positions'])
+        self.assertEqual(tuple(nodes[::2].spatial['positions']), nodes.spatial['positions'][::2])
 
 
 def suite():

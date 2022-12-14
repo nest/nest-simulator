@@ -369,7 +369,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   long interp_order;
   if ( updateValue< long >( d, names::wfr_interpolation_order, interp_order ) )
   {
-    if ( ( interp_order < 0 ) or ( interp_order == 2 ) or ( interp_order > 3 ) )
+    if ( interp_order < 0 or interp_order == 2 or interp_order > 3 )
     {
       LOG( M_ERROR, "SimulationManager::set_status", "Interpolation order must be 0, 1, or 3." );
       throw KernelException();
@@ -408,6 +408,8 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< double >( d, names::biological_time, get_time().get_ms() );
   def< long >( d, names::to_do, to_do_ );
   def< bool >( d, names::print_time, print_time_ );
+
+  def< bool >( d, names::prepared, prepared_ );
 
   def< bool >( d, names::use_wfr, use_wfr_ );
   def< double >( d, names::wfr_comm_interval, wfr_comm_interval_ );
@@ -468,8 +470,6 @@ nest::SimulationManager::prepare()
 
   kernel().node_manager.ensure_valid_thread_local_ids();
   kernel().node_manager.prepare_nodes();
-
-  kernel().model_manager.create_secondary_events_prototypes();
 
   // we have to do enter_runtime after prepare_nodes, since we use
   // calibrate to map the ports of MUSIC devices, which has to be done
@@ -569,16 +569,8 @@ nest::SimulationManager::run( Time const& t )
   // of a simulation, it has been reset properly elsewhere.  If
   // a simulation was ended and is now continued, from_step_ will
   // have the proper value.  to_step_ is set as in advance_time().
+  to_step_ = std::min( from_step_ + to_do_, kernel().connection_manager.get_min_delay() );
 
-  delay end_sim = from_step_ + to_do_;
-  if ( kernel().connection_manager.get_min_delay() < end_sim )
-  {
-    to_step_ = kernel().connection_manager.get_min_delay(); // update to end of time slice
-  }
-  else
-  {
-    to_step_ = end_sim; // update to end of simulation time
-  }
 
   // Warn about possible inconsistencies, see #504.
   // This test cannot come any earlier, because we first need to compute
@@ -796,7 +788,7 @@ nest::SimulationManager::update_()
     {
       if ( print_time_ )
       {
-        gettimeofday( &t_slice_begin_, NULL );
+        gettimeofday( &t_slice_begin_, nullptr );
       }
 
       if ( kernel().sp_manager.is_structural_plasticity_enabled()
@@ -1042,7 +1034,7 @@ nest::SimulationManager::update_()
 
         if ( print_time_ )
         {
-          gettimeofday( &t_slice_end_, NULL );
+          gettimeofday( &t_slice_end_, nullptr );
           print_progress_();
         }
 
@@ -1153,7 +1145,7 @@ nest::SimulationManager::print_progress_()
     rt_factor = t_real_acc / t_sim_acc;
   }
 
-  int percentage = ( 100 - int( float( to_do_ ) / to_do_total_ * 100 ) );
+  int percentage = ( 100 - static_cast< int >( static_cast< double >( to_do_ ) / to_do_total_ * 100 ) );
 
   std::cout << "\r[ " << std::setw( 3 ) << std::right << percentage << "% ] "
             << "Model time: " << std::fixed << std::setprecision( 1 ) << clock_.get_ms() << " ms, "

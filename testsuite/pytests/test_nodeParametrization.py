@@ -26,6 +26,7 @@ Node Parametrization tests
 import nest
 import numpy as np
 import unittest
+import warnings
 
 
 class TestNodeParametrization(unittest.TestCase):
@@ -38,7 +39,7 @@ class TestNodeParametrization(unittest.TestCase):
         Vm_ref = [-11., -12., -13.]
         nodes = nest.Create('iaf_psc_alpha', 3, {'V_m': Vm_ref})
 
-        self.assertEqual(list(nest.GetStatus(nodes, 'V_m')), Vm_ref)
+        self.assertAlmostEqual(list(nest.GetStatus(nodes, 'V_m')), Vm_ref)
 
     def test_create_with_several_lists(self):
         """Test Create with several lists as parameters"""
@@ -50,10 +51,10 @@ class TestNodeParametrization(unittest.TestCase):
                                                  'C_m': Cm_ref,
                                                  'V_min': Vmin_ref})
 
-        self.assertEqual(list(nest.GetStatus(nodes, 'V_m')), Vm_ref)
-        self.assertEqual(nest.GetStatus(nodes, 'C_m'),
-                         (Cm_ref, Cm_ref, Cm_ref))
-        self.assertEqual(list(nest.GetStatus(nodes, 'V_min')), Vmin_ref)
+        self.assertAlmostEqual(list(nest.GetStatus(nodes, 'V_m')), Vm_ref)
+        self.assertAlmostEqual(nest.GetStatus(nodes, 'C_m'),
+                               (Cm_ref, Cm_ref, Cm_ref))
+        self.assertAlmostEqual(list(nest.GetStatus(nodes, 'V_min')), Vmin_ref)
 
     def test_create_with_spike_generator(self):
         """Test Create with list that should not be split"""
@@ -62,15 +63,15 @@ class TestNodeParametrization(unittest.TestCase):
 
         st = nest.GetStatus(sg, 'spike_times')
 
-        self.assertEqual(list(st[0]), spike_times)
-        self.assertEqual(list(st[1]), spike_times)
+        self.assertAlmostEqual(list(st[0]), spike_times)
+        self.assertAlmostEqual(list(st[1]), spike_times)
 
     def test_create_with_numpy(self):
         """Test Create with numpy array as parameter"""
         Vm_ref = [-80., -90., -100.]
         nodes = nest.Create('iaf_psc_alpha', 3, {'V_m': np.array(Vm_ref)})
 
-        self.assertEqual(list(nest.GetStatus(nodes, 'V_m')), Vm_ref)
+        self.assertAlmostEqual(list(nest.GetStatus(nodes, 'V_m')), Vm_ref)
 
     def test_create_uniform(self):
         """Test Create with random.uniform as parameter"""
@@ -140,7 +141,7 @@ class TestNodeParametrization(unittest.TestCase):
         Vm_ref = (-60., -60., -60.)
         nest.SetStatus(nodes, {'V_m': -60.})
 
-        self.assertEqual(nest.GetStatus(nodes, 'V_m'), Vm_ref)
+        self.assertAlmostEqual(nest.GetStatus(nodes, 'V_m'), Vm_ref)
 
     def test_SetStatus_with_dict_several(self):
         """Test SetStatus with multivalue dict"""
@@ -149,8 +150,8 @@ class TestNodeParametrization(unittest.TestCase):
         Cm_ref = (111., 111., 111.)
         nest.SetStatus(nodes, {'V_m': -27., 'C_m': 111.})
 
-        self.assertEqual(nest.GetStatus(nodes, 'V_m'), Vm_ref)
-        self.assertEqual(nest.GetStatus(nodes, 'C_m'), Cm_ref)
+        self.assertAlmostEqual(nest.GetStatus(nodes, 'V_m'), Vm_ref)
+        self.assertAlmostEqual(nest.GetStatus(nodes, 'C_m'), Cm_ref)
 
     def test_SetStatus_with_list_with_dicts(self):
         """Test SetStatus with list of dicts"""
@@ -158,7 +159,7 @@ class TestNodeParametrization(unittest.TestCase):
         Vm_ref = (-70., -20., -88.)
         nest.SetStatus(nodes, [{'V_m': -70.}, {'V_m': -20.}, {'V_m': -88.}])
 
-        self.assertEqual(nest.GetStatus(nodes, 'V_m'), Vm_ref)
+        self.assertAlmostEqual(nest.GetStatus(nodes, 'V_m'), Vm_ref)
 
     def test_SetStatus_with_dict_with_single_list(self):
         """Test SetStatus with dict with list"""
@@ -167,7 +168,7 @@ class TestNodeParametrization(unittest.TestCase):
         Vm_ref = [-30., -40., -50.]
         nest.SetStatus(nodes, {'V_m': Vm_ref})
 
-        self.assertEqual(list(nest.GetStatus(nodes, 'V_m')), Vm_ref)
+        self.assertAlmostEqual(list(nest.GetStatus(nodes, 'V_m')), Vm_ref)
 
     def test_SetStatus_with_dict_with_lists(self):
         """Test SetStatus with dict with lists"""
@@ -179,11 +180,11 @@ class TestNodeParametrization(unittest.TestCase):
                                'C_m': Cm_ref,
                                'tau_minus': tau_minus_ref})
 
-        self.assertEqual(list(nest.GetStatus(nodes, 'V_m')), Vm_ref)
-        self.assertEqual(nest.GetStatus(nodes, 'C_m'),
-                         (Cm_ref, Cm_ref, Cm_ref))
-        self.assertEqual(list(nest.GetStatus(nodes, 'tau_minus')),
-                         tau_minus_ref)
+        self.assertAlmostEqual(list(nest.GetStatus(nodes, 'V_m')), Vm_ref)
+        self.assertAlmostEqual(nest.GetStatus(nodes, 'C_m'),
+                               (Cm_ref, Cm_ref, Cm_ref))
+        self.assertAlmostEqual(list(nest.GetStatus(nodes, 'tau_minus')),
+                               tau_minus_ref)
 
     def test_SetStatus_with_dict_with_single_element_lists(self):
         """Test SetStatus with dict with single element lists"""
@@ -192,8 +193,8 @@ class TestNodeParametrization(unittest.TestCase):
         Cm_ref = (222.,)
         nest.SetStatus(node, {'V_m': [-13.], 'C_m': [222.]})
 
-        self.assertEqual(nest.GetStatus(node, 'V_m'), Vm_ref)
-        self.assertEqual(nest.GetStatus(node, 'C_m'), Cm_ref)
+        self.assertAlmostEqual(nest.GetStatus(node, 'V_m'), Vm_ref)
+        self.assertAlmostEqual(nest.GetStatus(node, 'C_m'), Cm_ref)
 
     def test_SetStatus_with_dict_with_bool(self):
         """Test SetStatus with dict with bool"""
@@ -226,7 +227,7 @@ class TestNodeParametrization(unittest.TestCase):
         Vm_ref = np.array([-22., -33., -44.])
         nest.SetStatus(nodes, {'V_m': Vm_ref})
 
-        self.assertEqual(list(nest.GetStatus(nodes, 'V_m')), list(Vm_ref))
+        self.assertAlmostEqual(list(nest.GetStatus(nodes, 'V_m')), list(Vm_ref))
 
     def test_SetStatus_with_random(self):
         """Test SetStatus with dict with random.uniform"""
@@ -252,7 +253,7 @@ class TestNodeParametrization(unittest.TestCase):
         Vm_ref = [-30., -40., -50.]
         nodes.set({'V_m': Vm_ref})
 
-        self.assertEqual(list(nodes.get('V_m')), Vm_ref)
+        self.assertAlmostEqual(list(nodes.get('V_m')), Vm_ref)
 
     def test_set_with_dict_with_lists(self):
         """Test set with dict with lists"""
@@ -264,9 +265,9 @@ class TestNodeParametrization(unittest.TestCase):
                    'C_m': Cm_ref,
                    'tau_minus': tau_minus_ref})
 
-        self.assertEqual(list(nodes.get('V_m')), Vm_ref)
-        self.assertEqual(nodes.get('C_m'), (Cm_ref, Cm_ref, Cm_ref))
-        self.assertEqual(list(nodes.get('tau_minus')), tau_minus_ref)
+        self.assertAlmostEqual(list(nodes.get('V_m')), Vm_ref)
+        self.assertAlmostEqual(nodes.get('C_m'), (Cm_ref, Cm_ref, Cm_ref))
+        self.assertAlmostEqual(list(nodes.get('tau_minus')), tau_minus_ref)
 
     def test_set_with_dict_with_single_element_lists(self):
         """Test set with dict with single element lists"""
@@ -275,8 +276,8 @@ class TestNodeParametrization(unittest.TestCase):
         Cm_ref = 222.
         node.set({'V_m': [Vm_ref], 'C_m': [Cm_ref]})
 
-        self.assertEqual(node.get('V_m'), Vm_ref)
-        self.assertEqual(node.get('C_m'), Cm_ref)
+        self.assertAlmostEqual(node.get('V_m'), Vm_ref)
+        self.assertAlmostEqual(node.get('C_m'), Cm_ref)
 
     def test_set_with_dict_with_list_with_bools(self):
         """Test set with dict with list with bool"""
@@ -315,10 +316,10 @@ class TestNodeParametrization(unittest.TestCase):
         """Test parameter arithmetic"""
         p1 = nest.CreateParameter('constant', {'value': 3.0})
         p2 = nest.CreateParameter('constant', {'value': 2.0})
-        self.assertEqual((p1 + p2).GetValue(), 5.0)
-        self.assertEqual((p1 - p2).GetValue(), 1.0)
-        self.assertEqual((p1 / p2).GetValue(), 1.5)
-        self.assertEqual((p1 * p2).GetValue(), 6.0)
+        self.assertAlmostEqual((p1 + p2).GetValue(), 5.0)
+        self.assertAlmostEqual((p1 - p2).GetValue(), 1.0)
+        self.assertAlmostEqual((p1 / p2).GetValue(), 1.5)
+        self.assertAlmostEqual((p1 * p2).GetValue(), 6.0)
 
     def test_syn_spec_parameter(self):
         """Test parameter in syn_spec"""
@@ -328,7 +329,7 @@ class TestNodeParametrization(unittest.TestCase):
         conns = nest.GetConnections()
         weights = conns.get('weight')
         for w in weights:
-            self.assertEqual(w, 2.0)
+            self.assertAlmostEqual(w, 2.0)
 
     def test_conn_spec_parameter(self):
         """Test parameter in conn_spec"""
@@ -358,10 +359,10 @@ class TestNodeParametrization(unittest.TestCase):
         layer.set({'C_m': nest.spatial.pos.z})
 
         status = layer.get()
-        self.assertEqual(status['V_m'], tuple(np.linspace(0, 0.5, 5)))
-        self.assertEqual(status['E_L'], tuple(np.linspace(0, 0.5*0.5, 5)))
-        self.assertEqual(status['C_m'],
-                         tuple([0.1 + 0.2*x for x in np.linspace(0, 0.5, 5)]))
+        self.assertAlmostEqual(status['V_m'], tuple(np.linspace(0, 0.5, 5)))
+        self.assertAlmostEqual(status['E_L'], tuple(np.linspace(0, 0.5*0.5, 5)))
+        self.assertAlmostEqual(status['C_m'],
+                               tuple([0.1 + 0.2*x for x in np.linspace(0, 0.5, 5)]))
 
     def test_node_pos_parameter_wrong_dimension(self):
         """Test node-position parameter with wrong dimension"""
@@ -403,7 +404,7 @@ class TestNodeParametrization(unittest.TestCase):
             tz = t_pos[2]
 
             dist = np.sqrt((tx-sx)**2 + (ty-sy)**2 + (tz-sz)**2)
-            self.assertEqual(w, dist)
+            self.assertAlmostEqual(w, dist)
 
     def test_conn_dimension_distance_parameter(self):
         """Test dimension specific connection distance parameter"""
@@ -430,7 +431,7 @@ class TestNodeParametrization(unittest.TestCase):
                 tn = t_pos[0]
 
                 n_dist = np.abs(tn-sn)
-                self.assertEqual(w, n_dist)
+                self.assertAlmostEqual(w, n_dist)
 
     def test_conn_distance_parameter_wrong_dimension(self):
         """Test connection distance parameter with wrong dimension"""
@@ -506,7 +507,7 @@ class TestNodeParametrization(unittest.TestCase):
         """Test exponential of a parameter"""
         for value in np.linspace(-5.0, 5.0, 15):
             p = nest.CreateParameter('constant', {'value': value})
-            self.assertEqual(nest.math.exp(p).GetValue(), np.exp(value))
+            self.assertAlmostEqual(nest.math.exp(p).GetValue(), np.exp(value))
 
     def test_cos_parameter(self):
         """Test cosine of a parameter"""
@@ -527,31 +528,31 @@ class TestNodeParametrization(unittest.TestCase):
             p = nest.CreateParameter('constant', {'value': value})
             # Exponents must be integers
             for exponent in range(-15, 15):
-                self.assertEqual((p**exponent).GetValue(),
-                                 value**exponent)
+                self.assertAlmostEqual((p**exponent).GetValue(),
+                                       value**exponent)
 
         # Positive values
         for value in np.linspace(0.0, 5.0, 15):
             p = nest.CreateParameter('constant', {'value': value})
             for exponent in np.linspace(-5.0, 5.0, 15):
-                self.assertEqual((p**exponent).GetValue(),
-                                 value**exponent)
+                self.assertAlmostEqual((p**exponent).GetValue(),
+                                       value**exponent)
 
     def test_min_parameter(self):
         """Test min of parameter"""
         reference_value = 2.0
         for value in np.linspace(-5.0, 5.0, 21):
             p = nest.CreateParameter('constant', {'value': value})
-            self.assertEqual(nest.math.min(p, reference_value).GetValue(),
-                             np.minimum(value, reference_value))
+            self.assertAlmostEqual(nest.math.min(p, reference_value).GetValue(),
+                                   np.minimum(value, reference_value))
 
     def test_max_parameter(self):
         """Test max of parameter"""
         reference_value = 2.0
         for value in np.linspace(-5.0, 5.0, 21):
             p = nest.CreateParameter('constant', {'value': value})
-            self.assertEqual(nest.math.max(p, reference_value).GetValue(),
-                             np.maximum(value, reference_value))
+            self.assertAlmostEqual(nest.math.max(p, reference_value).GetValue(),
+                                   np.maximum(value, reference_value))
 
     def test_redraw_parameter(self):
         """Test redraw of parameter"""
@@ -691,12 +692,12 @@ class TestNodeParametrization(unittest.TestCase):
         layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.free(positions))
 
         # Spatial nc only
-        self.assertEqual(tuple(position_array[:, 0]), nest.spatial.pos.x.apply(layer))
-        self.assertEqual(tuple(position_array[:, 1]), nest.spatial.pos.y.apply(layer))
+        self.assertAlmostEqual(tuple(position_array[:, 0]), nest.spatial.pos.x.apply(layer))
+        self.assertAlmostEqual(tuple(position_array[:, 1]), nest.spatial.pos.y.apply(layer))
 
         # Spatial nc with a single node_id, and list of positions
         distance_reference = tuple(np.sqrt(position_array[:, 0]**2 + position_array[:, 1]**2))
-        self.assertEqual(distance_reference, nest.spatial.distance.apply(layer[0], positions))
+        self.assertAlmostEqual(distance_reference, nest.spatial.distance.apply(layer[0], positions))
 
 
 def suite():

@@ -38,49 +38,49 @@ class FilesystemModule : public SLIModule
   class FileNamesFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const override;
   };
 
   class SetDirectoryFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const override;
   };
 
   class DirectoryFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const override;
   };
 
   class MoveFileFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const override;
   };
 
   class CopyFileFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const override;
   };
 
   class DeleteFileFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const override;
   };
 
   class MakeDirectoryFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const override;
   };
 
   class RemoveDirectoryFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const override;
   };
 
   class TmpNamFunction : public SLIFunction
@@ -89,7 +89,7 @@ class FilesystemModule : public SLIModule
     TmpNamFunction()
     {
     }
-    void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const override;
   };
 
   class CompareFilesFunction : public SLIFunction
@@ -98,7 +98,7 @@ class FilesystemModule : public SLIModule
     CompareFilesFunction()
     {
     }
-    void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const override;
   };
 
 public:
@@ -113,12 +113,12 @@ public:
   TmpNamFunction tmpnamfunction;
   CompareFilesFunction comparefilesfunction;
 
-  FilesystemModule( void ) {};
-  ~FilesystemModule() {};
+  FilesystemModule() {};
+  ~FilesystemModule() override {};
 
-  void init( SLIInterpreter* );
-  const std::string name( void ) const;
-  const std::string commandstring( void ) const;
+  void init( SLIInterpreter* ) override;
+  const std::string name() const override;
+  const std::string commandstring() const override;
 };
 
 #endif

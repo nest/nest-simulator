@@ -57,7 +57,7 @@ public:
    * Constructor.
    */
   AbstractLayer()
-    : node_collection_( NodeCollectionPTR( 0 ) )
+    : node_collection_( NodeCollectionPTR( nullptr ) )
   {
   }
 
@@ -228,24 +228,24 @@ public:
   /**
    * Virtual destructor
    */
-  ~Layer();
+  ~Layer() override;
 
   /**
    * Change properties of the layer according to the
    * entries in the dictionary.
    * @param d Dictionary with named parameter settings.
    */
-  void set_status( const DictionaryDatum& );
+  void set_status( const DictionaryDatum& ) override;
 
   /**
    * Export properties of the layer by setting
    * entries in the status dictionary.
    * @param d Dictionary.
    */
-  void get_status( DictionaryDatum& ) const;
+  void get_status( DictionaryDatum& ) const override;
 
   unsigned int
-  get_num_dimensions() const
+  get_num_dimensions() const override
   {
     return D;
   }
@@ -297,7 +297,7 @@ public:
    * @param sind index of node
    * @returns position of node as std::vector
    */
-  std::vector< double > get_position_vector( const index sind ) const;
+  std::vector< double > get_position_vector( const index sind ) const override;
 
   /**
    * Returns displacement of a position from another position. When using
@@ -306,10 +306,10 @@ public:
    * @param to_pos    position to which displacement is to be computed
    * @returns vector pointing from from_pos to to_pos
    */
-  virtual Position< D > compute_displacement( const Position< D >& from_pos, const Position< D >& to_pos ) const;
-  virtual double compute_displacement( const std::vector< double >& from_pos,
+  Position< D > compute_displacement( const Position< D >& from_pos, const Position< D >& to_pos ) const;
+  double compute_displacement( const std::vector< double >& from_pos,
     const std::vector< double >& to_pos,
-    const unsigned int dimension ) const;
+    const unsigned int dimension ) const override;
 
   /**
    * Returns displacement of node from given position. When using periodic
@@ -320,7 +320,7 @@ public:
    */
   Position< D > compute_displacement( const Position< D >& from_pos, const index to ) const;
 
-  std::vector< double > compute_displacement( const std::vector< double >& from_pos, const index to ) const;
+  std::vector< double > compute_displacement( const std::vector< double >& from_pos, const index to ) const override;
 
   /**
    * Returns distance to node from given position. When using periodic
@@ -331,9 +331,9 @@ public:
    */
   double compute_distance( const Position< D >& from_pos, const index lid ) const;
 
-  double compute_distance( const std::vector< double >& from_pos, const index lid ) const;
+  double compute_distance( const std::vector< double >& from_pos, const index lid ) const override;
 
-  double compute_distance( const std::vector< double >& from_pos, const std::vector< double >& to_pos ) const;
+  double compute_distance( const std::vector< double >& from_pos, const std::vector< double >& to_pos ) const override;
 
 
   /**
@@ -369,7 +369,7 @@ public:
   std::vector< index > get_global_nodes( const MaskDatum& mask,
     const std::vector< double >& anchor,
     bool allow_oversized,
-    NodeCollectionPTR node_collection );
+    NodeCollectionPTR node_collection ) override;
 
   /**
    * Connect this layer to the given target layer. The actual connections
@@ -383,7 +383,7 @@ public:
   void connect( NodeCollectionPTR source_nc,
     AbstractLayerPTR target,
     NodeCollectionPTR target_nc,
-    ConnectionCreator& connector );
+    ConnectionCreator& connector ) override;
 
   /**
    * Write layer data to stream.
@@ -391,7 +391,7 @@ public:
    * node ID x-position y-position [z-position]
    * @param os     output stream
    */
-  void dump_nodes( std::ostream& os ) const;
+  void dump_nodes( std::ostream& os ) const override;
 
   /**
    * Dumps information about all connections of the given type having their
@@ -406,18 +406,18 @@ public:
   void dump_connections( std::ostream& out,
     NodeCollectionPTR node_collection,
     AbstractLayerPTR target_layer,
-    const Token& syn_model );
+    const Token& syn_model ) override;
 
 protected:
   /**
    * Clear the cache for global position information
    */
-  void clear_ntree_cache_() const;
+  void clear_ntree_cache_() const override;
 
   /**
    * Clear the cache for global position information
    */
-  void clear_vector_cache_() const;
+  void clear_vector_cache_() const override;
 
   std::shared_ptr< Ntree< D, index > > do_get_global_positions_ntree_( NodeCollectionPTR node_collection );
 
@@ -666,7 +666,7 @@ inline void
 Layer< D >::clear_ntree_cache_() const
 {
   cached_ntree_ = std::shared_ptr< Ntree< D, index > >();
-  cached_ntree_md_ = NodeCollectionMetadataPTR( 0 );
+  cached_ntree_md_ = NodeCollectionMetadataPTR( nullptr );
 }
 
 template < int D >
@@ -678,7 +678,7 @@ Layer< D >::clear_vector_cache_() const
     delete cached_vector_;
   }
   cached_vector_ = 0;
-  cached_vector_md_ = NodeCollectionMetadataPTR( 0 );
+  cached_vector_md_ = NodeCollectionMetadataPTR( nullptr );
 }
 
 } // namespace nest

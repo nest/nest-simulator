@@ -32,7 +32,6 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 #include "name.h"
-#include "namedatum.h"
 #include "stringdatum.h"
 #include "tokenarray.h"
 #include "tokenutils.h"
@@ -202,5 +201,4 @@ Token::matches_as_string( const Token& rhs ) const
   {
     return false;
   }
-  return false;
 }

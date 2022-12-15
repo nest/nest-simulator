@@ -59,12 +59,6 @@ void register_logger_client( const deliver_logging_event_ptr client_callback );
 template < template < typename > class ConnectorModelT >
 void register_connection_model( const std::string& name );
 
-/**
- * Register secondary connection models (e.g. gap junctions, rate-based models).
- */
-template < template < typename > class ConnectorModelT >
-void register_secondary_connection_model( const std::string& name );
-
 void print_nodes_to_stream( std::ostream& out = std::cout );
 
 RngPtr get_rank_synced_rng();

@@ -469,7 +469,7 @@ ModelManager::clear_connection_models_()
       {
         if ( not connection_model->is_primary() )
         {
-          connection_model->get_event()->reset_supported_syn_ids();
+          connection_model->get_secondary_event()->reset_supported_syn_ids();
         }
         delete connection_model;
       }

@@ -76,22 +76,6 @@ ModelManager::register_connection_model( const std::string& name )
   }
 }
 
-/**
- * Register a synape with default Connector and without any common properties.
- */
-template < template < typename targetidentifierT > class ConnectionT >
-void
-ModelManager::register_secondary_connection_model( const std::string& name )
-{
-  ConnectorModel* cm = new GenericSecondaryConnectorModel< ConnectionT< TargetIdentifierPtrRport > >( name );
-  register_connection_model_( cm );
-
-  // create labeled secondary event connection model
-  cm =
-    new GenericSecondaryConnectorModel< ConnectionLabel< ConnectionT< TargetIdentifierPtrRport > > >( name + "_lbl" );
-  register_connection_model_( cm );
-}
-
 inline Node*
 ModelManager::get_proxy_node( thread tid, index node_id )
 {

@@ -80,9 +80,8 @@ public:
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
-  typedef InstantaneousRateConnectionEvent EventType;
 
-  static constexpr ConnectionModelProperties secondaryProperties = ConnectionModelProperties::SUPPORTS_WFR;
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::SUPPORTS_WFR;
 
   /**
    * Default Constructor.
@@ -93,6 +92,9 @@ public:
     , weight_( 1.0 )
   {
   }
+
+  SecondaryEvent*
+  get_secondary_event();
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase.
@@ -107,7 +109,7 @@ public:
   void
   check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
-    EventType ge;
+    InstantaneousRateConnectionEvent ge;
 
     s.sends_secondary_event( ge );
     ge.set_sender( s );
@@ -151,7 +153,8 @@ private:
   double weight_; //!< connection weight
 };
 
-template < typename targetidentifierT > constexpr ConnectionModelProperties RateConnectionInstantaneous< targetidentifierT >::secondaryProperties;
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties RateConnectionInstantaneous< targetidentifierT >::properties;
 
 template < typename targetidentifierT >
 void
@@ -176,6 +179,13 @@ RateConnectionInstantaneous< targetidentifierT >::set_status( const DictionaryDa
 
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
+}
+
+template < typename targetidentifierT >
+SecondaryEvent*
+RateConnectionInstantaneous< targetidentifierT >::get_secondary_event()
+{
+  return new InstantaneousRateConnectionEvent();
 }
 
 } // namespace

@@ -35,10 +35,4 @@ register_connection_model( const std::string& name )
   kernel().model_manager.register_connection_model< ConnectorModelT >( name );
 }
 
-template < template < typename > class ConnectorModelT >
-void
-register_secondary_connection_model( const std::string& name )
-{
-  kernel().model_manager.register_secondary_connection_model< ConnectorModelT >( name );
-}
 }

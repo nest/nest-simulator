@@ -91,9 +91,8 @@ public:
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
-  typedef DiffusionConnectionEvent EventType;
 
-  static constexpr ConnectionModelProperties secondaryProperties = ConnectionModelProperties::SUPPORTS_WFR;
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::SUPPORTS_WFR;
 
   /**
    * Default Constructor.
@@ -105,6 +104,9 @@ public:
     , diffusion_factor_( 1.0 )
   {
   }
+
+  SecondaryEvent*
+  get_secondary_event();
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase.
@@ -119,7 +121,7 @@ public:
   void
   check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
-    EventType ge;
+    DiffusionConnectionEvent ge;
 
     s.sends_secondary_event( ge );
     ge.set_sender( s );
@@ -167,7 +169,7 @@ private:
 };
 
 template < typename targetidentifierT >
-constexpr ConnectionModelProperties DiffusionConnection< targetidentifierT >::secondaryProperties;
+constexpr ConnectionModelProperties DiffusionConnection< targetidentifierT >::properties;
 
 template < typename targetidentifierT >
 void
@@ -200,6 +202,14 @@ DiffusionConnection< targetidentifierT >::set_status( const DictionaryDatum& d, 
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::drift_factor, drift_factor_ );
   updateValue< double >( d, names::diffusion_factor, diffusion_factor_ );
+}
+
+
+template < typename targetidentifierT >
+SecondaryEvent*
+DiffusionConnection< targetidentifierT >::get_secondary_event()
+{
+  return new DiffusionConnectionEvent();
 }
 
 } // namespace

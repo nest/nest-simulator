@@ -78,6 +78,12 @@ public:
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
+  static constexpr ConnectionModelProperties properties =
+    ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY
+    | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
+
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
   public:
@@ -125,7 +131,6 @@ public:
       return invalid_port;
     }
   };
-
 
   void get_status( DictionaryDatum& d ) const;
 
@@ -176,6 +181,8 @@ public:
   }
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties static_synapse_hom_w< targetidentifierT >::properties;
 
 template < typename targetidentifierT >
 void

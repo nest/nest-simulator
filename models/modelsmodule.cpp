@@ -337,10 +337,10 @@ ModelsModule::init( SLIInterpreter* )
   register_connection_model< vogels_sprekeler_synapse >( "vogels_sprekeler_synapse" );
 
   // register secondary connection models
-  register_secondary_connection_model< GapJunction >( "gap_junction" );
-  register_secondary_connection_model< RateConnectionInstantaneous >( "rate_connection_instantaneous" );
-  register_secondary_connection_model< RateConnectionDelayed >( "rate_connection_delayed" );
-  register_secondary_connection_model< DiffusionConnection >( "diffusion_connection" );
+  register_connection_model< GapJunction >( "gap_junction" );
+  register_connection_model< RateConnectionInstantaneous >( "rate_connection_instantaneous" );
+  register_connection_model< RateConnectionDelayed >( "rate_connection_delayed" );
+  register_connection_model< DiffusionConnection >( "diffusion_connection" );
 }
 
 } // namespace nest

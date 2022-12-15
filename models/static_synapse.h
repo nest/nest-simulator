@@ -63,8 +63,13 @@ class static_synapse : public Connection< targetidentifierT >
 public:
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
-
   typedef Connection< targetidentifierT > ConnectionBase;
+
+  static constexpr ConnectionModelProperties properties =
+    ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY
+    | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
 
   /**
    * Default Constructor.
@@ -167,6 +172,9 @@ public:
     weight_ = w;
   }
 };
+
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties static_synapse< targetidentifierT >::properties;
 
 template < typename targetidentifierT >
 void

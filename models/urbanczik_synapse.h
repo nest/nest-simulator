@@ -112,7 +112,12 @@ public:
   typedef Connection< targetidentifierT > ConnectionBase;
 
   static constexpr ConnectionModelProperties properties =
-    default_connection_model_properties | ConnectionModelProperties::REQUIRES_URBANCZIK_ARCHIVING;
+    ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY
+    | ConnectionModelProperties::REQUIRES_URBANCZIK_ARCHIVING
+    | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL
+    | ConnectionModelProperties::SUPPORTS_WFR;
 
   /**
    * Default Constructor.

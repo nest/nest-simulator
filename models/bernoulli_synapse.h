@@ -96,6 +96,12 @@ public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  static constexpr ConnectionModelProperties properties =
+    ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY
+    | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
@@ -187,6 +193,9 @@ private:
   double weight_;
   double p_transmit_;
 };
+
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties bernoulli_synapse< targetidentifierT >::properties;
 
 template < typename targetidentifierT >
 void

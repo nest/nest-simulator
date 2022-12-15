@@ -127,6 +127,12 @@ public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  static constexpr ConnectionModelProperties properties =
+    ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY
+    | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
@@ -224,6 +230,8 @@ private:
   double t_lastspike_;
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties stdp_nn_symm_synapse< targetidentifierT >::properties;
 
 /**
  * Send an event to the receiver of this connection.

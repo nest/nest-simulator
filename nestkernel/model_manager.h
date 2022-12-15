@@ -135,9 +135,6 @@ public:
   template < template < typename targetidentifierT > class ConnectionT >
   void register_connection_model( const std::string& name );
 
-  template < template < typename targetidentifierT > class ConnectionT >
-  void register_secondary_connection_model( const std::string& name );
-
   /**
    * @return The model ID for a Model with a given name
    * @throws UnknownModelName if the model is not available
@@ -327,7 +324,7 @@ inline SecondaryEvent&
 ModelManager::get_secondary_event_prototype( const synindex syn_id, const thread tid )
 {
   assert_valid_syn_id( syn_id );
-  return *get_connection_model( syn_id, tid ).get_event();
+  return *get_connection_model( syn_id, tid ).get_secondary_event();
 }
 
 } // namespace nest

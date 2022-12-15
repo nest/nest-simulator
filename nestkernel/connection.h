@@ -115,14 +115,8 @@ class Connection
 {
 
 public:
-  // this typedef may be overwritten in the derived connection classes in order
-  // to attach a specific event type to this connection type, used in secondary
-  // connections not used in primary connectors
-  typedef SecondaryEvent EventType;
-
   // properties used when registering a connection with the ModelManager
-  static constexpr ConnectionModelProperties properties = default_connection_model_properties;
-  static constexpr ConnectionModelProperties secondaryProperties = default_secondary_connection_model_properties;
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::NONE;
 
   Connection()
     : target_()
@@ -132,6 +126,11 @@ public:
 
   Connection( const Connection< targetidentifierT >& rhs ) = default;
   Connection& operator=( const Connection< targetidentifierT >& rhs ) = default;
+
+  /**
+   * Get a pointer to an instance of a SecondaryEvent if this connection supports secondary events.
+   */
+  SecondaryEvent* get_secondary_event();
 
   /**
    * Get all properties of this connection and put them into a dictionary.
@@ -313,8 +312,6 @@ protected:
 
 template < typename targetidentifierT >
 constexpr ConnectionModelProperties Connection< targetidentifierT >::properties;
-template < typename targetidentifierT >
-constexpr ConnectionModelProperties Connection< targetidentifierT >::secondaryProperties;
 
 template < typename targetidentifierT >
 inline void
@@ -395,6 +392,13 @@ Connection< targetidentifierT >::trigger_update_weight( const thread,
   const CommonSynapseProperties& )
 {
   throw IllegalConnection( "Connection does not support updates that are triggered by a volume transmitter." );
+}
+
+template < typename targetidentifierT >
+SecondaryEvent*
+Connection< targetidentifierT >::get_secondary_event()
+{
+  assert( false );
 }
 
 } // namespace nest

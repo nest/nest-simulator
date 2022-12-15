@@ -205,18 +205,24 @@ public:
   typedef JonkeCommonProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  static constexpr ConnectionModelProperties properties =
+    ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY
+    | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
   jonke_synapse();
 
-
   /**
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
   jonke_synapse( const jonke_synapse& ) = default;
+
   jonke_synapse& operator=( const jonke_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
@@ -323,6 +329,8 @@ private:
   double t_lastspike_;
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties jonke_synapse< targetidentifierT >::properties;
 
 /**
  * Send an event to the receiver of this connection.

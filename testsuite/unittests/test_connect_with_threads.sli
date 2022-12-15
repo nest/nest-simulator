@@ -168,7 +168,7 @@ forall
 
   net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
 
-  % Check to see if we have currect number of connections
+  % Check to see if we have correct number of connections
   /num_conn GetKernelStatus /num_connections get def
   5 num_conn eq assert_or_die
 }

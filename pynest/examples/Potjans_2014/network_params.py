@@ -70,7 +70,7 @@ net_dict = {
     # mean rates of the different populations in the non-scaled version of the
     # microcircuit (in spikes/s; same order as in 'populations');
     # necessary for the scaling of the network.
-    # The values were optained by running this PyNEST microcircuit without MPI,
+    # The values were obtained by running this PyNEST microcircuit without MPI,
     # 'local_num_threads' 4 and both 'N_scaling' and 'K_scaling' set to 1.
     'full_mean_rates':
         np.array([0.903, 2.965, 4.414, 5.876, 7.569, 8.633, 1.105, 7.829]),

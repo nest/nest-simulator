@@ -195,7 +195,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     will be used.
 
     Distributed parameters can be defined through NEST's different parametertypes. NEST has various
-    random parameters, spatial parameters and distributions (only accesseable for nodes with spatial positions),
+    random parameters, spatial parameters and distributions (only accessible for nodes with spatial positions),
     logical expressions and mathematical expressions, which can be used to define node and connection parameters.
 
     To see all available parameters, see documentation defined in distributions, logic, math,
@@ -292,7 +292,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
 
 @check_stack
 def Disconnect(*args, conn_spec=None, syn_spec=None):
-    """Disconnect connections in a SynnapseCollection, or `pre` neurons from `post` neurons.
+    """Disconnect connections in a SynapseCollection, or `pre` neurons from `post` neurons.
 
     When specifying `pre` and `post` nodes, they are disconnected using the specified disconnection
     rule (one-to-one by default) and synapse type (:cpp:class:`static_synapse <nest::static_synapse>` by default).

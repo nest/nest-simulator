@@ -160,7 +160,7 @@ nest::CompTree::CompTree()
 
 /**
  * Add a compartment to the tree structure via the python interface
- * root shoud have -1 as parent index. Add root compartment first.
+ * root should have -1 as parent index. Add root compartment first.
  * Assumes parent of compartment is already added
  */
 void

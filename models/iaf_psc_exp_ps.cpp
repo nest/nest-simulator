@@ -53,7 +53,7 @@ template <>
 void
 RecordablesMap< iaf_psc_exp_ps >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &iaf_psc_exp_ps::get_V_m_ );
 }
 }

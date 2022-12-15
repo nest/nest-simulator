@@ -262,7 +262,7 @@ private:
     Parameters_();
 
     void get( DictionaryDatum& ) const;        //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, Node* ); //!< Set values from dictionary
   };
 
 public:
@@ -351,7 +351,7 @@ public:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
     double step_;            //!< step size in ms

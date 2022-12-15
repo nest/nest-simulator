@@ -41,7 +41,7 @@ Installation
    which compiler was used. Then re-build NEST with the same compiler
    version.
 
-6. **I get a segmentation fault wher I use SciPy in the same script
+6. **I get a segmentation fault where I use SciPy in the same script
    together with PyNEST**. We recently observed that if PyNEST is used
    with some versions of SciPy, a segmentation fault is caused. A
    workaround for the problem is to import SciPy before PyNEST. See

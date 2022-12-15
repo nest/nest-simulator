@@ -99,7 +99,7 @@ and
  \tau_w \cdot dw/dt= a(V-E_L) -W
 
 Note that the spike detection threshold V_peak is automatically set to
-:math:`V_th+10 mV` to avoid numerical instabilites that may result from
+:math:`V_th+10 mV` to avoid numerical instabilities that may result from
 setting V_peak too high.
 
 For implementation details see the
@@ -262,7 +262,7 @@ private:
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
 public:
@@ -326,7 +326,7 @@ public:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing the GSL system
 
-    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
     double step_;            //!< step size in ms

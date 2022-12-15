@@ -92,7 +92,7 @@ The following parameters can be set in the status dictionary.
  V_th             mV      Spike threshold
  V_reset          mV      Reset potential of the membrane
  I_e              pA      Constant input current
- V_min            mV      Absolute lower value for the membrane potenial
+ V_min            mV      Absolute lower value for the membrane potential
  refractory_input boolean If true, do not discard input during
                           refractory period. Default: false
 ================= ======= ======================================================

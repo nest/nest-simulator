@@ -163,7 +163,7 @@ typedef int thread;
 /**
  * Value for invalid connection port number.
  */
-const thread invalid_thread_ = -1;
+const thread invalid_thread = -1;
 
 /**
  * Connection port number to distinguish incoming connections,
@@ -175,7 +175,7 @@ const thread invalid_thread_ = -1;
 typedef long rport;
 
 /**
- * Connection port number to distinguis outgoing connections.
+ * Connection port number to distinguish outgoing connections.
  * Connections between Nodes are assigned port numbers.
  * Valid port numbers start at zero (0).
  * The value -1 is used for invalid or unassigned ports.
@@ -185,7 +185,7 @@ typedef long port;
 /**
  * Value for invalid connection port number.
  */
-const rport invalid_port_ = -1;
+const rport invalid_port = -1;
 
 /**
  * Weight of a connection.

@@ -25,7 +25,6 @@
 // C++ includes:
 #include <cmath>
 #include <functional>
-#include <numeric>
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -281,9 +280,9 @@ nest::correlospinmatrix_detector::init_buffers_()
 }
 
 void
-nest::correlospinmatrix_detector::calibrate()
+nest::correlospinmatrix_detector::pre_run_hook()
 {
-  device_.calibrate();
+  device_.pre_run_hook();
 }
 
 
@@ -305,7 +304,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
 
   // If this assertion breaks, the sender does not honor the
   // receiver port during connection or sending.
-  assert( 0 <= curr_i && curr_i <= P_.N_channels_ - 1 );
+  assert( 0 <= curr_i and curr_i <= P_.N_channels_ - 1 );
 
   // accept spikes only if detector was active when spike was emitted
   Time const stamp = e.get_stamp();
@@ -329,7 +328,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
     { // multiplicity == 1, either a single 1->0 event or the first or second of
       // a pair of 0->1
       // events
-      if ( curr_i == S_.last_i_ && stamp == S_.t_last_in_spike_ )
+      if ( curr_i == S_.last_i_ and stamp == S_.t_last_in_spike_ )
       {
         // received twice the same node ID, so transition 0->1
         // revise the last event written to the buffer
@@ -354,20 +353,20 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
     }
     else // multiplicity != 1
       if ( m == 2 )
-    {
-      S_.curr_state_[ curr_i ] = true;
-
-      if ( S_.tentative_down_ ) // really was a down transition, because we now
-                                // have another double event
       {
-        down_transition = true;
-      }
+        S_.curr_state_[ curr_i ] = true;
 
-      S_.curr_state_[ S_.last_i_ ] = false;
-      S_.last_change_[ curr_i ] = stamp.get_steps();
-      // previous event was first event of two, so no down transition
-      S_.tentative_down_ = false;
-    }
+        if ( S_.tentative_down_ ) // really was a down transition, because we now
+                                  // have another double event
+        {
+          down_transition = true;
+        }
+
+        S_.curr_state_[ S_.last_i_ ] = false;
+        S_.last_change_[ curr_i ] = stamp.get_steps();
+        // previous event was first event of two, so no down transition
+        S_.tentative_down_ = false;
+      }
 
     if ( down_transition ) // only do something on the downtransitions
     {
@@ -398,7 +397,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
       const double tau_edge = P_.tau_max_.get_steps() + P_.delta_tau_.get_steps();
 
       const delay min_delay = kernel().connection_manager.get_min_delay();
-      while ( not otherPulses.empty() && ( t_min_on - otherPulses.front().t_off_ ) >= tau_edge + min_delay )
+      while ( not otherPulses.empty() and ( t_min_on - otherPulses.front().t_off_ ) >= tau_edge + min_delay )
       {
         otherPulses.pop_front();
       }

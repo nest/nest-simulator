@@ -24,11 +24,7 @@
 
 // C++ includes:
 #include <algorithm> // rotate
-#include <iostream>
-#include <numeric> // accumulate
-
-// Includes from libnestutil:
-#include "logging.h"
+#include <numeric>   // accumulate
 
 // Includes from nestkernel:
 #include "connection_manager.h"
@@ -50,8 +46,8 @@ EventDeliveryManager::EventDeliveryManager()
   : off_grid_spiking_( false )
   , moduli_()
   , slice_moduli_()
-  , spike_register_()
-  , off_grid_spike_register_()
+  , emitted_spikes_register_()
+  , off_grid_emitted_spike_register_()
   , send_buffer_secondary_events_()
   , recv_buffer_secondary_events_()
   , local_spike_counter_()
@@ -82,8 +78,8 @@ EventDeliveryManager::initialize()
   reset_counters();
   reset_timers_for_preparation();
   reset_timers_for_dynamics();
-  spike_register_.resize( num_threads );
-  off_grid_spike_register_.resize( num_threads );
+  emitted_spikes_register_.resize( num_threads );
+  off_grid_emitted_spike_register_.resize( num_threads );
   gather_completed_checker_.initialize( num_threads, false );
   // Ensures that ResetKernel resets off_grid_spiking_
   off_grid_spiking_ = false;
@@ -95,13 +91,13 @@ EventDeliveryManager::initialize()
   {
     const thread tid = kernel().vp_manager.get_thread_id();
 
-    if ( spike_register_[ tid ] == NULL )
+    if ( not emitted_spikes_register_[ tid ] )
     {
-      spike_register_[ tid ] = new std::vector< std::vector< Target > >();
+      emitted_spikes_register_[ tid ] = new std::vector< std::vector< Target > >();
     }
-    spike_register_[ tid ]->resize( kernel().connection_manager.get_min_delay(), std::vector< Target >() );
+    emitted_spikes_register_[ tid ]->resize(  kernel().connection_manager.get_min_delay(), std::vector< Target >() );
 
-    off_grid_spike_register_[ tid ].resize( num_threads,
+    off_grid_emitted_spike_register_[ tid ].resize( num_threads,
       std::vector< std::vector< OffGridTarget > >(
         kernel().connection_manager.get_min_delay(), std::vector< OffGridTarget >() ) );
   } // of omp parallel
@@ -111,13 +107,15 @@ void
 EventDeliveryManager::finalize()
 {
   // clear the spike buffers
-  for ( auto it = spike_register_.begin(); it < spike_register_.end(); ++it )
+  for ( auto it = emitted_spikes_register_.begin(); it < emitted_spikes_register_.end(); ++it )
   {
     ( *it )->clear();
     delete ( *it );
   }
-  spike_register_.clear();
-  std::vector< std::vector< std::vector< std::vector< OffGridTarget > > > >().swap( off_grid_spike_register_ );
+  emitted_spikes_register_.clear();
+
+
+  std::vector< std::vector< std::vector< std::vector< OffGridTarget > > > >().swap( off_grid_emitted_spike_register_ );
 
   send_buffer_secondary_events_.clear();
   recv_buffer_secondary_events_.clear();
@@ -261,7 +259,7 @@ EventDeliveryManager::update_moduli()
    * Note that for updating the modulos, it is sufficient
    * to rotate the buffer to the left.
    */
-  assert( moduli_.size() == ( index )( min_delay + max_delay ) );
+  assert( moduli_.size() == ( index ) ( min_delay + max_delay ) );
   std::rotate( moduli_.begin(), moduli_.begin() + min_delay, moduli_.end() );
 
   /*
@@ -279,10 +277,9 @@ EventDeliveryManager::update_moduli()
 void
 EventDeliveryManager::reset_counters()
 {
-  for ( std::vector< unsigned long >::iterator it = local_spike_counter_.begin(); it != local_spike_counter_.end();
-        ++it )
+  for ( auto& spike_counter : local_spike_counter_ )
   {
-    ( *it ) = 0;
+    spike_counter = 0;
   }
 }
 
@@ -372,7 +369,8 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
    *
    * NOTE: Due to limited test matrix, developers **must run testsuite locally**.
    */
-  kernel().mpi_manager.set_buffer_size_spike_data( 8388608 ); // for testsuite use 65536 instead
+  // long buffer_size = 8388608
+  kernel().mpi_manager.set_buffer_size_spike_data( 65536 ); // for testsuite use 65536 instead
   resize_send_recv_buffers_spike_data_();
 
   // Need to get new positions in case buffer size has changed
@@ -386,7 +384,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 #endif
 
   // Collocate spikes to send buffer
-  collocate_spike_data_buffers_( tid, assigned_ranks, send_buffer_position, spike_register_, send_buffer );
+  collocate_spike_data_buffers_( tid, assigned_ranks, send_buffer_position, emitted_spikes_register_, send_buffer );
 
   // Set markers to signal end of valid spikes, and remove spikes
   // from register that have been collected in send buffer.
@@ -417,7 +415,7 @@ bool
 EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
   const AssignedRanks& assigned_ranks,
   SendBufferPosition& send_buffer_position,
-  std::vector< std::vector< std::vector< TargetT > >* >& spike_register,
+  std::vector< std::vector< std::vector< TargetT > >* >& emitted_spikes_register,
   std::vector< SpikeDataT >& send_buffer )
 {
   reset_complete_marker_spike_data_( assigned_ranks, send_buffer_position, send_buffer );
@@ -427,35 +425,39 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
   bool is_spike_register_empty = true;
 
   // First dimension: loop over writing thread
-  for ( typename std::vector< std::vector< std::vector< TargetT > >* >::const_iterator it = spike_register.begin();
-        it != spike_register.end();
-        ++it )
+  for ( auto& emitted_spikes_per_thread : emitted_spikes_register )
   {
-    // Second dimension: fixed reading thread --> REMOVE in this branch for testing // TODO: That removal is in *( *it) below, not looking up by assigned tid
 
     // Third dimension: loop over lags
-    const size_t sz = ( *it )->size();
-    for ( unsigned int lag = 0; lag < sz; ++lag )
+    for ( unsigned int lag = 0; lag < emitted_spikes_per_thread->size(); ++lag )
     {
       // Fourth dimension: loop over entries
-      for ( typename std::vector< TargetT >::iterator iiit = ( *( *it ) )[ lag ].begin();
-            iiit < ( *( *it ) )[ lag ].end();
-            ++iiit )
+      for ( auto& emitted_spike : ( *emitted_spikes_per_thread )[ lag ] )
       {
-        assert( not iiit->is_processed() );
+        assert( not emitted_spike.is_processed() );
 
-        const thread rank = iiit->get_rank();
+        const thread rank = emitted_spike.get_rank();
 
-          send_buffer[ send_buffer_position.idx( rank ) ].set(
-                                                              ( *iiit ).get_tid(), ( *iiit ).get_syn_id(), ( *iiit ).get_lcid(), lag, ( *iiit ).get_offset() );
-          ( *iiit ).set_status( TARGET_ID_PROCESSED ); // mark entry for removal
+        if ( send_buffer_position.is_chunk_filled( rank ) )
+        {
+          is_spike_register_empty = false;
+          if ( send_buffer_position.are_all_chunks_filled() )
+          {
+            return is_spike_register_empty;
+          }
+        }
+        else
+        {
+          send_buffer[ send_buffer_position.idx( rank ) ].set( emitted_spike, lag );
+          emitted_spike.mark_for_removal();
           send_buffer_position.increase( rank );
+        }
       }
     }
   }
-
   return is_spike_register_empty;
 }
+
 
 template < typename SpikeDataT >
 void
@@ -563,7 +565,7 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
 
   // prepare Time objects for every possible time stamp within min_delay_
   std::vector< Time > prepared_timestamps( kernel().connection_manager.get_min_delay() );
-  for ( size_t lag = 0; lag < ( size_t ) kernel().connection_manager.get_min_delay(); ++lag )
+  for ( size_t lag = 0; lag < static_cast< size_t >( kernel().connection_manager.get_min_delay() ); ++lag )
   {
     prepared_timestamps[ lag ] =
       kernel().simulation_manager.get_clock() + Time::step( lag + 1 - kernel().connection_manager.get_min_delay() );
@@ -828,10 +830,11 @@ EventDeliveryManager::gather_target_data_compressed( const thread tid )
     } // of omp single; implicit barrier
 
     SendBufferPosition send_buffer_position(
-          assigned_ranks, kernel().mpi_manager.get_send_recv_count_target_data_per_rank() );
+      assigned_ranks, kernel().mpi_manager.get_send_recv_count_target_data_per_rank() );
 
-    const bool gather_completed = collocate_target_data_buffers_compressed_( tid, assigned_ranks, send_buffer_position );
-    
+    const bool gather_completed =
+      collocate_target_data_buffers_compressed_( tid, assigned_ranks, send_buffer_position );
+
     gather_completed_checker_[ tid ].logical_and( gather_completed );
 
     if ( gather_completed_checker_.all_true() )
@@ -971,9 +974,8 @@ EventDeliveryManager::collocate_target_data_buffers_compressed_( const thread ti
   }
 
   const bool is_source_table_read = kernel().connection_manager.fill_target_buffer(
-                                              tid, assigned_ranks.begin, assigned_ranks.end,
-                                              send_buffer_target_data_, send_buffer_position );
-  
+    tid, assigned_ranks.begin, assigned_ranks.end, send_buffer_target_data_, send_buffer_position );
+
   return is_source_table_read;
 }
 
@@ -1032,18 +1034,12 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid )
 void
 EventDeliveryManager::resize_spike_register_( const thread tid )
 {
-  if ( spike_register_[ tid ] == NULL )
-  {
-    spike_register_[ tid ] = new std::vector< std::vector< Target > >();
-  }
-  spike_register_[ tid ]->resize( kernel().connection_manager.get_min_delay(), std::vector< Target >() );
+  emitted_spikes_register_[ tid ]->resize( kernel().connection_manager.get_min_delay(), std::vector<Target>() );
 
-  for ( std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it =
-          off_grid_spike_register_[ tid ].begin();
-        it != off_grid_spike_register_[ tid ].end();
-        ++it )
+  for ( auto& off_grid_emitted_spike_for_current_thread : off_grid_emitted_spike_register_[ tid ] )
   {
-    it->resize( kernel().connection_manager.get_min_delay(), std::vector< OffGridTarget >() );
+    off_grid_emitted_spike_for_current_thread.resize(
+      kernel().connection_manager.get_min_delay(), std::vector< OffGridTarget >() );
   }
 }
 

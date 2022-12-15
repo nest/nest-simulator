@@ -62,8 +62,8 @@ public:
   explicit Na( const DictionaryDatum& channel_params );
   ~Na() {};
 
-  // calibrate initialization
-  void calibrate() {};
+  // pre_run_hook initialization
+  void pre_run_hook() {};
   void append_recordables( std::map< Name, double* >* recordables, const long compartment_idx );
 
   // numerical integration step
@@ -98,8 +98,8 @@ public:
   explicit K( const DictionaryDatum& channel_params );
   ~K() {};
 
-  // calibrate initialization
-  void calibrate() {};
+  // pre_run_hook initialization
+  void pre_run_hook() {};
   void append_recordables( std::map< Name, double* >* recordables, const long compartment_idx );
 
   // numerical integration step
@@ -143,7 +143,7 @@ public:
 
   // calibrateialization of the state variables
   void
-  calibrate()
+  pre_run_hook()
   {
     const double dt = Time::get_resolution().get_ms();
     // construct propagators
@@ -200,7 +200,7 @@ public:
 
   // calibrate state variables
   void
-  calibrate()
+  pre_run_hook()
   {
     const double dt = Time::get_resolution().get_ms();
     // construct propagators
@@ -257,7 +257,7 @@ public:
 
   // calibrate state variables
   void
-  calibrate()
+  pre_run_hook()
   {
     const double dt = Time::get_resolution().get_ms();
     // construct propagators
@@ -329,7 +329,7 @@ public:
 
   // calibrate state variables
   void
-  calibrate()
+  pre_run_hook()
   {
     const double dt = Time::get_resolution().get_ms();
     prop_r_AMPA_ = std::exp( -dt / tau_r_AMPA_ );
@@ -383,31 +383,31 @@ public:
   ~CompartmentCurrents() {};
 
   void
-  calibrate()
+  pre_run_hook()
   {
     // calibrate ion channels
-    Na_chan_.calibrate();
-    K_chan_.calibrate();
+    Na_chan_.pre_run_hook();
+    K_chan_.pre_run_hook();
 
     // calibrate AMPA synapses
     for ( auto syn_it = AMPA_syns_.begin(); syn_it != AMPA_syns_.end(); ++syn_it )
     {
-      syn_it->calibrate();
+      syn_it->pre_run_hook();
     }
     // calibrate GABA synapses
     for ( auto syn_it = GABA_syns_.begin(); syn_it != GABA_syns_.end(); ++syn_it )
     {
-      syn_it->calibrate();
+      syn_it->pre_run_hook();
     }
     // calibrate NMDA synapses
     for ( auto syn_it = NMDA_syns_.begin(); syn_it != NMDA_syns_.end(); ++syn_it )
     {
-      syn_it->calibrate();
+      syn_it->pre_run_hook();
     }
     // calibrateialization of AMPA_NMDA synapses
     for ( auto syn_it = AMPA_NMDA_syns_.begin(); syn_it != AMPA_NMDA_syns_.end(); ++syn_it )
     {
-      syn_it->calibrate();
+      syn_it->pre_run_hook();
     }
   }
 

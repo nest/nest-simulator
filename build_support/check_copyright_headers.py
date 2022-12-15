@@ -77,7 +77,6 @@ exclude_file_regex = [re.compile(pattern) for pattern in exclude_file_patterns]
 exclude_files = [
     'doc/copyright_header.cpp',
     'doc/copyright_header.py',
-    'nestrc.sli',
     'nest/static_modules.h',
     'pynest/pynestkernel.cpp',
     'get-pip.py'

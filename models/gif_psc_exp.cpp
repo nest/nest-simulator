@@ -22,9 +22,6 @@
 
 #include "gif_psc_exp.h"
 
-// C++ includes:
-#include <limits>
-
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
@@ -32,16 +29,14 @@
 
 // Includes from libnestutil:
 #include "dict_util.h"
+#include "iaf_propagator.h"
 
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 #include "compose.hpp"
 #include "numerics.h"
-#include "propagator_stability.h"
 
 namespace nest
 {
@@ -213,7 +208,7 @@ nest::gif_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
       throw BadProperty( "All time constants must be strictly positive." );
     }
   }
-  if ( tau_ex_ <= 0 || tau_in_ <= 0 )
+  if ( tau_ex_ <= 0 or tau_in_ <= 0 )
   {
     throw BadProperty( "Synapse time constants must be strictly positive." );
   }
@@ -279,7 +274,7 @@ nest::gif_psc_exp::init_buffers_()
 }
 
 void
-nest::gif_psc_exp::calibrate()
+nest::gif_psc_exp::pre_run_hook()
 {
   B_.logger_.init();
 
@@ -292,8 +287,8 @@ nest::gif_psc_exp::calibrate()
   const double tau_m = P_.c_m_ / P_.g_L_;
 
   // these are determined according to a numeric stability criterion
-  V_.P21ex_ = propagator_32( P_.tau_ex_, tau_m, P_.c_m_, h );
-  V_.P21in_ = propagator_32( P_.tau_in_, tau_m, P_.c_m_, h );
+  V_.P21ex_ = IAFPropagatorExp( P_.tau_ex_, tau_m, P_.c_m_ ).evaluate( h );
+  V_.P21in_ = IAFPropagatorExp( P_.tau_in_, tau_m, P_.c_m_ ).evaluate( h );
 
   V_.P33_ = std::exp( -h / tau_m );
   V_.P30_ = -1 / P_.c_m_ * numerics::expm1( -h / tau_m ) * tau_m;
@@ -326,7 +321,7 @@ void
 nest::gif_psc_exp::update( Time const& origin, const long from, const long to )
 {
 
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )

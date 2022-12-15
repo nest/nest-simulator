@@ -49,7 +49,7 @@ ModelManager::ModelManager()
   , connection_models_()
   , modeldict_( new Dictionary )
   , synapsedict_( new Dictionary )
-  , proxynode_model_( 0 )
+  , proxynode_model_( nullptr )
   , proxy_nodes_()
   , model_defaults_modified_( false )
 {
@@ -60,7 +60,7 @@ ModelManager::~ModelManager()
   clear_connection_models_();
   for ( auto&& connection_model : builtin_connection_models_ )
   {
-    if ( connection_model != nullptr )
+    if ( connection_model )
     {
       delete connection_model;
     }
@@ -69,7 +69,7 @@ ModelManager::~ModelManager()
   clear_node_models_();
   for ( auto&& node_model : builtin_node_models_ )
   {
-    if ( node_model != nullptr )
+    if ( node_model )
     {
       delete node_model;
     }
@@ -79,7 +79,7 @@ ModelManager::~ModelManager()
 void
 ModelManager::initialize()
 {
-  if ( proxynode_model_ == 0 )
+  if ( not proxynode_model_ )
   {
     proxynode_model_ = new GenericModel< proxynode >( "proxynode", "" );
     proxynode_model_->set_type_id( 1 );
@@ -120,14 +120,17 @@ ModelManager::initialize()
   // (re-)append all synapse prototypes
   for ( auto&& connection_model : builtin_connection_models_ )
   {
-    if ( connection_model != nullptr )
+    if ( connection_model )
     {
       std::string name = connection_model->get_name();
+      const synindex syn_id = connection_models_[ 0 ].size();
+
       for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
       {
-        connection_models_[ t ].push_back( connection_model->clone( name ) );
+        connection_models_[ t ].push_back( connection_model->clone( name, syn_id ) );
       }
-      synapsedict_->insert( name, connection_models_[ 0 ].size() - 1 );
+
+      synapsedict_->insert( name, syn_id );
     }
   }
 }
@@ -137,7 +140,6 @@ ModelManager::finalize()
 {
   clear_node_models_();
   clear_connection_models_();
-  delete_secondary_events_prototypes();
 
   // We free all Node memory
   for ( auto& node_model : builtin_node_models_ )
@@ -216,26 +218,23 @@ index
 ModelManager::register_node_model_( Model* model )
 {
   const index id = node_models_.size();
+  const std::string name = model->get_name();
+
   model->set_model_id( id );
   model->set_type_id( id );
-
-  std::string name = model->get_name();
-
   builtin_node_models_.push_back( model );
 
   Model* cloned_model = model->clone( name );
   cloned_model->set_model_id( id );
-
   node_models_.push_back( cloned_model );
+
+  modeldict_->insert( name, id );
 
 #pragma omp parallel
   {
     const thread t = kernel().vp_manager.get_thread_id();
-    const int model_id = model->get_model_id();
-    proxy_nodes_[ t ].push_back( create_proxynode_( t, model_id ) );
+    proxy_nodes_[ t ].push_back( create_proxynode_( t, id ) );
   }
-
-  modeldict_->insert( name, id );
 
   return id;
 }
@@ -247,16 +246,16 @@ ModelManager::copy_node_model_( index old_id, Name new_name )
   old_model->deprecation_warning( "CopyModel" );
 
   Model* new_model = old_model->clone( new_name.toString() );
-  node_models_.push_back( new_model );
+  const index new_id = node_models_.size();
+  new_model->set_model_id( new_id );
 
-  index new_id = node_models_.size() - 1;
+  node_models_.push_back( new_model );
   modeldict_->insert( new_name, new_id );
 
 #pragma omp parallel
   {
     const thread t = kernel().vp_manager.get_thread_id();
-    const int model_id = new_model->get_model_id();
-    proxy_nodes_[ t ].push_back( create_proxynode_( t, model_id ) );
+    proxy_nodes_[ t ].push_back( create_proxynode_( t, new_id ) );
   }
 
   return new_id;
@@ -267,29 +266,18 @@ ModelManager::copy_connection_model_( index old_id, Name new_name )
 {
   size_t new_id = connection_models_[ 0 ].size();
 
-  if ( new_id == invalid_synindex ) // we wrapped around (=63), maximal id of
-                                    // connection_model = 62, see nest_types.h
+  if ( new_id == invalid_synindex )
   {
-    const std::string msg =
-      "CopyModel cannot generate another synapse. Maximal synapse model count "
-      "of "
-      + std::to_string( MAX_SYN_ID ) + " exceeded.";
+    const std::string msg = String::compose(
+      "CopyModel cannot generate another synapse. Maximal synapse model count of %1 exceeded.", MAX_SYN_ID );
     LOG( M_ERROR, "ModelManager::copy_connection_model_", msg );
     throw KernelException( "Synapse model count exceeded" );
   }
   assert( new_id != invalid_synindex );
 
-  // if the copied synapse is a secondary connector model the synid of the copy
-  // has to be mapped to the corresponding secondary event type
-  if ( not get_connection_model( old_id ).is_primary() )
-  {
-    ( get_connection_model( old_id ).get_event() )->add_syn_id( new_id );
-  }
-
   for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
   {
-    connection_models_[ t ].push_back( get_connection_model( old_id ).clone( new_name.toString() ) );
-    connection_models_[ t ][ new_id ]->set_syn_id( new_id );
+    connection_models_[ t ].push_back( get_connection_model( old_id ).clone( new_name.toString(), new_id ) );
   }
 
   synapsedict_->insert( new_name, new_id );
@@ -380,7 +368,7 @@ ModelManager::get_node_model_id( const Name name ) const
   const Name model_name( name );
   for ( int i = 0; i < ( int ) node_models_.size(); ++i )
   {
-    assert( node_models_[ i ] != 0 );
+    assert( node_models_[ i ] );
     if ( model_name == node_models_[ i ]->get_name() )
     {
       return i;
@@ -416,6 +404,7 @@ ModelManager::get_connector_defaults( synindex syn_id ) const
   }
 
   ( *dict )[ names::num_connections ] = kernel().connection_manager.get_num_connections( syn_id );
+  ( *dict )[ names::element_type ] = "synapse";
 
   return dict;
 }
@@ -452,14 +441,14 @@ ModelManager::clear_node_models_()
   // init()
   for ( auto&& node_model : node_models_ )
   {
-    if ( node_model != 0 )
+    if ( node_model )
     {
       delete node_model;
     }
   }
 
   delete proxynode_model_;
-  proxynode_model_ = 0;
+  proxynode_model_ = nullptr;
 
   node_models_.clear();
   proxy_nodes_.clear();
@@ -476,8 +465,12 @@ ModelManager::clear_connection_models_()
   {
     for ( auto&& connection_model : connection_models_[ t ] )
     {
-      if ( connection_model != 0 )
+      if ( connection_model )
       {
+        if ( not connection_model->is_primary() )
+        {
+          connection_model->get_event()->reset_supported_syn_ids();
+        }
         delete connection_model;
       }
     }
@@ -497,7 +490,7 @@ ModelManager::calibrate( const TimeConverter& tc )
   {
     for ( auto&& connection_model : connection_models_[ t ] )
     {
-      if ( connection_model != 0 )
+      if ( connection_model )
       {
         connection_model->calibrate( tc );
       }
@@ -549,48 +542,23 @@ ModelManager::memory_info() const
   std::cout.unsetf( std::ios::left );
 }
 
-void
-ModelManager::create_secondary_events_prototypes()
-{
-  delete_secondary_events_prototypes();
-  secondary_events_prototypes_.resize( kernel().vp_manager.get_num_threads() );
-
-  for ( thread tid = 0; tid < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++tid )
-  {
-    secondary_events_prototypes_[ tid ].clear();
-    for ( synindex syn_id = 0; syn_id < connection_models_[ tid ].size(); ++syn_id )
-    {
-      if ( not connection_models_[ tid ][ syn_id ]->is_primary() )
-      {
-        secondary_events_prototypes_[ tid ].insert(
-          std::pair< synindex, SecondaryEvent* >( syn_id, connection_models_[ tid ][ syn_id ]->create_event() ) );
-      }
-    }
-  }
-}
-
 synindex
 ModelManager::register_connection_model_( ConnectorModel* cf )
 {
   if ( synapsedict_->known( cf->get_name() ) )
   {
+    std::string msg =
+      String::compose( "A synapse type called '%1' already exists.\nPlease choose a different name!", cf->get_name() );
     delete cf;
-    std::string msg = String::compose(
-      "A synapse type called '%1' already exists.\n"
-      "Please choose a different name!",
-      cf->get_name() );
     throw NamingConflict( msg );
   }
 
   builtin_connection_models_.push_back( cf );
 
   const synindex syn_id = connection_models_[ 0 ].size();
-  builtin_connection_models_[ syn_id ]->set_syn_id( syn_id );
-
   for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
   {
-    connection_models_[ t ].push_back( cf->clone( cf->get_name() ) );
-    connection_models_[ t ][ syn_id ]->set_syn_id( syn_id );
+    connection_models_[ t ].push_back( cf->clone( cf->get_name(), syn_id ) );
   }
 
   synapsedict_->insert( cf->get_name(), syn_id );

@@ -452,7 +452,7 @@ class Network:
                                 mean=self.net_dict['delay_matrix_mean'][i][j],
                                 std=(self.net_dict['delay_matrix_mean'][i][j] *
                                      self.net_dict['delay_rel_std'])),
-                            min=nest.resolution,
+                            min=nest.resolution - 0.5 * nest.resolution,
                             max=np.Inf)}
 
                     nest.Connect(
@@ -515,7 +515,7 @@ class Network:
                         mean=self.stim_dict['delay_th_mean'],
                         std=(self.stim_dict['delay_th_mean'] *
                              self.stim_dict['delay_th_rel_std'])),
-                    min=nest.resolution,
+                    min=nest.resolution - 0.5 * nest.resolution,
                     max=np.Inf)}
 
             nest.Connect(

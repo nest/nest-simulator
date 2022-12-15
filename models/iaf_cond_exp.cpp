@@ -26,9 +26,7 @@
 
 // C++ includes:
 #include <cstdio>
-#include <iomanip>
 #include <iostream>
-#include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -41,10 +39,7 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -199,7 +194,7 @@ nest::iaf_cond_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Refractory time cannot be negative." );
   }
-  if ( tau_synE <= 0 || tau_synI <= 0 )
+  if ( tau_synE <= 0 or tau_synI <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -223,9 +218,9 @@ nest::iaf_cond_exp::State_::set( const DictionaryDatum& d, const Parameters_&, N
 
 nest::iaf_cond_exp::Buffers_::Buffers_( iaf_cond_exp& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -233,9 +228,9 @@ nest::iaf_cond_exp::Buffers_::Buffers_( iaf_cond_exp& n )
 
 nest::iaf_cond_exp::Buffers_::Buffers_( const Buffers_&, iaf_cond_exp& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -296,7 +291,7 @@ nest::iaf_cond_exp::init_buffers_()
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ = B_.step_;
 
-  if ( B_.s_ == 0 )
+  if ( not B_.s_ )
   {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
@@ -305,7 +300,7 @@ nest::iaf_cond_exp::init_buffers_()
     gsl_odeiv_step_reset( B_.s_ );
   }
 
-  if ( B_.c_ == 0 )
+  if ( not B_.c_ )
   {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
   }
@@ -314,7 +309,7 @@ nest::iaf_cond_exp::init_buffers_()
     gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
   }
 
-  if ( B_.e_ == 0 )
+  if ( not B_.e_ )
   {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }
@@ -324,7 +319,7 @@ nest::iaf_cond_exp::init_buffers_()
   }
 
   B_.sys_.function = iaf_cond_exp_dynamics;
-  B_.sys_.jacobian = NULL;
+  B_.sys_.jacobian = nullptr;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
 
@@ -332,7 +327,7 @@ nest::iaf_cond_exp::init_buffers_()
 }
 
 void
-nest::iaf_cond_exp::calibrate()
+nest::iaf_cond_exp::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -350,7 +345,7 @@ void
 nest::iaf_cond_exp::update( Time const& origin, const long from, const long to )
 {
 
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
@@ -398,15 +393,15 @@ nest::iaf_cond_exp::update( Time const& origin, const long from, const long to )
     else
       // neuron is not absolute refractory
       if ( S_.y_[ State_::V_M ] >= P_.V_th_ )
-    {
-      S_.r_ = V_.RefractoryCounts_;
-      S_.y_[ State_::V_M ] = P_.V_reset_;
+      {
+        S_.r_ = V_.RefractoryCounts_;
+        S_.y_[ State_::V_M ] = P_.V_reset_;
 
-      set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
-      SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
-    }
+        SpikeEvent se;
+        kernel().event_delivery_manager.send( *this, se, lag );
+      }
 
     // set new input current
     B_.I_stim_ = B_.currents_.get_value( lag );

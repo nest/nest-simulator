@@ -408,8 +408,6 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 
     if ( not all_spikes_transmitted )
     {
-      std::cerr << "Going for second round! Old size: " << kernel().mpi_manager.get_buffer_size_spike_data() << ", New size: "
-      << kernel().mpi_manager.get_num_processes() * max_per_thread_max_spikes_per_rank << std::endl;
       kernel().mpi_manager.set_buffer_size_spike_data(
         kernel().mpi_manager.get_num_processes() * max_per_thread_max_spikes_per_rank );
       resize_send_recv_buffers_spike_data_();
@@ -637,7 +635,8 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
       const SpikeDataT& spike_data = recv_buffer[ rank * send_recv_count_spike_data_per_rank + i ];
 
       // break if this was the last valid entry from this rank
-      if ( spike_data.is_end_marker() )
+      // TODO: why complete marker not relevant here earlier?
+      if ( spike_data.is_end_marker() or spike_data.is_complete_marker() )
       {
         num_valid_entries = i + 1;
         break;

@@ -70,7 +70,6 @@
 #include "iaf_cond_exp.h"
 #include "iaf_cond_exp_sfa_rr.h"
 #include "iaf_psc_alpha.h"
-#include "iaf_psc_alpha_canon.h"
 #include "iaf_psc_alpha_multisynapse.h"
 #include "iaf_psc_alpha_ps.h"
 #include "iaf_psc_delta.h"
@@ -87,7 +86,6 @@
 #include "parrot_neuron.h"
 #include "parrot_neuron_ps.h"
 #include "pp_cond_exp_mc_urbanczik.h"
-#include "pp_pop_psc_delta.h"
 #include "pp_psc_delta.h"
 #include "siegert_neuron.h"
 #include "sigmoid_rate.h"
@@ -215,8 +213,6 @@ ModelsModule::init( SLIInterpreter* )
 
   kernel().model_manager.register_node_model< iaf_chs_2007 >( "iaf_chs_2007" );
   kernel().model_manager.register_node_model< iaf_psc_alpha >( "iaf_psc_alpha" );
-  kernel().model_manager.register_node_model< iaf_psc_alpha_canon >(
-    "iaf_psc_alpha_canon", /*deprecation_info*/ "a future version of NEST" );
   kernel().model_manager.register_node_model< iaf_psc_alpha_multisynapse >( "iaf_psc_alpha_multisynapse" );
   kernel().model_manager.register_node_model< iaf_psc_alpha_ps >( "iaf_psc_alpha_ps" );
   kernel().model_manager.register_node_model< iaf_psc_delta >( "iaf_psc_delta" );
@@ -233,8 +229,6 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< parrot_neuron >( "parrot_neuron" );
   kernel().model_manager.register_node_model< parrot_neuron_ps >( "parrot_neuron_ps" );
   kernel().model_manager.register_node_model< pp_psc_delta >( "pp_psc_delta" );
-  kernel().model_manager.register_node_model< pp_pop_psc_delta >(
-    "pp_pop_psc_delta", /*deprecation_info*/ "a future version of NEST" );
   kernel().model_manager.register_node_model< gif_psc_exp >( "gif_psc_exp" );
   kernel().model_manager.register_node_model< gif_psc_exp_multisynapse >( "gif_psc_exp_multisynapse" );
   kernel().model_manager.register_node_model< glif_psc >( "glif_psc" );

@@ -17,7 +17,7 @@ kernel attribute:
     nest.resolution = 0.1
 
 Even though a neuron model can use smaller time steps internally, the
-membrane potential will only be visible to a ``multimeter`` on the
+membrane potential will only be visible to a :hxt_ref:`multimeter` on the
 outside at time points that are multiples of the simulation resolution.
 
 In contrast to the update of nodes, an event-driven approach is used for
@@ -35,7 +35,7 @@ following figure shows the basic loop that is run upon a call to
    Simulation Loop
 
 The simulation loop. Light gray boxes denote thread parallel parts, dark
-gray boxes denote MPI parallel parts. U(St) is the update operator that
+gray boxes denote :hxt_ref:`MPI` parallel parts. U(St) is the update operator that
 propagates the internal state of a neuron or device.
 
 .. _simulation_resolution:
@@ -61,7 +61,7 @@ Two major optimizations in NEST are built on this decoupling:
    always for *dmin* time in one go, as to keep neurons in cache as long
    as possible.
 
-2. MPI processes only communicate in intervals of *dmin* as to minimize
+2. :hxt_ref:`MPI` processes only communicate in intervals of *dmin* as to minimize
    communication costs.
 
 These optimizations mean that the sizes of spike buffers in nodes and
@@ -251,7 +251,7 @@ instances in parallel; don't forget to use different
 :ref:`random seeds <random_numbers>`!
 
 The following example performs simulations of a single neuron driven by
-a Poisson spike train using different seeds and output files for each run:
+a Poisson :hxt_ref:`spike train` using different seeds and output files for each run:
 
 ::
 

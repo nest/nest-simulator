@@ -306,7 +306,7 @@ protected:
      SynIdDelay syn_id_delay_;        //!< syn_id (char) and delay (24 bit) in timesteps of this connection
   */
   targetidentifierT target_;
-  //! syn_id (char) and delay (24 bit) in timesteps of this connection
+  //! syn_id (9 bit), delay (21 bit) in timesteps of this connection and more_targets and disabled flags (each 1 bit)
   SynIdDelay syn_id_delay_;
 };
 

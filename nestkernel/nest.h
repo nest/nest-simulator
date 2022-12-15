@@ -110,6 +110,8 @@ void connect_arrays( long* sources,
 
 ArrayDatum get_connections( const DictionaryDatum& dict );
 
+void disconnect( const ArrayDatum& conns );
+
 void simulate( const double& t );
 
 /**

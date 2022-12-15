@@ -45,41 +45,59 @@ namespace nest
 class Node;
 
 /**
- * Encapsulates information which is sent between Nodes.
+ * Encapsulate information sent between nodes.
  *
- * For each type of information there has to be a specialized event
- * class.
+ * Event is the base class for transmitting information between nodes in NEST,
+ * with different subclasses for transmitting different types of information. Event
+ * types come in three categories
+ * -# SpikeEvent can be transmitted between MPI processes
+ * -# SecondaryEvent subclasses can also be transmitted between MPI processes, but need to be transmitted via secondary
+ connections. They can transport data.
+ * -# All other Event subclasses can only be transmitted within an MPI process
  *
- * Events are used for two tasks. During connection, they are used as
- * polymorphic connect objects. During simulation they are used to
- * transport basic event information from one node to the other.
+ * Events are used for two tasks:
+ * -# Creating connections
+ * -# Sending signals between nodes during simulation
  *
- * A connection between two elements is physically established in two
- * steps: First, create an event with the two envolved elements.
- * Second, call the connect method of the event.
+ * ## Events during connection
  *
- * An event object contains only administrative information which is
- * needed to successfully deliver the event. Thus, event objects
- * cannot direcly contain custom data: events are not messages. If a
- * node receives an event, arbitrary abounts of data may be exchanged
- * between the participating nodes.
-
- * With this restriction it is possible to implement a comparatively
- * efficient event handling scheme. 5-6 function calls per event may
- * seem a long time, but this is cheap if we consider that event
- * handling makes update and communication succeptible to parallel
- * execution.
+ * Node::send_test_event() creates an Event instance of the type of event
+ * emitted by that node type, and calls Node::handles_test_event() on the
+ * target node. During this call, the event will contain a pointer to a sender
+ * node, which is not necessarily the actual sender (which may reside on a
+ * different MPI rank), but usually a proxy node. The sender node id is not set.
+ * The essential task of this handshake is to ensure that the target can handle
+ * the connection and requested receptor type, and to return `rport` information.
+ *
+ * ## Events during simulation
+ *
+ * Events transmit information during simulation. SpikeEvent and SecondaryEvent types are first stored
+ * in buffers on the sending VP, then serialized for transmission to destination VPs and finally deserialized
+ * for delivery. In this process, for the sake of efficiency, NEST creates one Event object and updates its
+ * properties for each single event to be delivered. In this case, no pointer to the source node is stored
+ * in the Event (as it may be on a different MPI rank), but the correct sender node id is provided.
+ *
+ * Other Event types are delivered directly on the VP on which they are generated and can, for example, be used
+ * for call backs or request-reply sequences.
  *
  * @see Node
  * @see SpikeEvent
+ * @see DSSpikeEvent
  * @see RateEvent
  * @see CurrentEvent
- * @see CurrentEvent
+ * @see DSCurrentEvent
  * @see ConductanceEvent
- * @see GapJunctionEvent
- * @see InstantaneousRateConnectionEvent
+ * @see WeightRecorderEvent
+ * @see DataLoggingRequest
+ * @see DataLoggingReply
+ * @see DataEvent
+ * @see DoubleDataEvent
+ * @see SecondaryEvent
  * @see DelayedRateConnectionEvent
  * @see DiffusionConnectionEvent
+ * @see GapJunctionEvent
+ * @see InstantaneousRateConnectionEvent
+
  * @ingroup event_interface
  */
 
@@ -123,6 +141,8 @@ public:
 
   /**
    * Return reference to sending Node.
+   *
+   * @note This will cause a segmentation fault if sender has not been set via set_sender().
    */
   Node& get_sender() const;
 
@@ -133,6 +153,8 @@ public:
 
   /**
    * Sender is local. Return node ID of sending Node.
+   *
+   * @note This will trigger an assertion if sender node id has not been set.
    */
   index get_sender_node_id() const;
 
@@ -299,10 +321,10 @@ protected:
    * members, however, in order to avoid the reference of reference
    * problem, we store sender and receiver as pointers and use
    * references in the interface.
-   * Thus, we can still ensure that the pointers are never NULL.
+   * Thus, we can still ensure that the pointers are never nullptr.
    */
-  Node* sender_;   //!< Pointer to sender or NULL.
-  Node* receiver_; //!< Pointer to receiver or NULL.
+  Node* sender_;   //!< Pointer to sender or nullptr.
+  Node* receiver_; //!< Pointer to receiver or nullptr.
 
 
   /**
@@ -620,7 +642,7 @@ private:
   Time recording_offset_;
   /**
    * Names of properties to record from.
-   * @note This pointer shall be NULL unless the event is sent by a connection
+   * @note This pointer shall be nullptr unless the event is sent by a connection
    * routine.
    */
   std::vector< Name > const* const record_from_;

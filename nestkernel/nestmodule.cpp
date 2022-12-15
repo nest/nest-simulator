@@ -902,6 +902,20 @@ NestModule::Disconnect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
+// Disconnect for arraydatum
+void
+NestModule::Disconnect_aFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+
+  const ArrayDatum conns = getValue< ArrayDatum >( i->OStack.pick( 0 ) );
+
+  disconnect( conns );
+
+  i->OStack.pop( 1 );
+  i->EStack.pop();
+}
+
 // Connect for nodecollection nodecollection conn_spec syn_spec
 // See lib/sli/nest-init.sli for details
 void
@@ -3019,6 +3033,7 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "EnableStructuralPlasticity", &enablestructuralplasticity_function );
   i->createcommand( "DisableStructuralPlasticity", &disablestructuralplasticity_function );
   i->createcommand( "Disconnect_g_g_D_D", &disconnect_g_g_D_Dfunction );
+  i->createcommand( "Disconnect_a", &disconnect_afunction );
 
   i->createcommand( "SetStdpEps", &setstdpeps_dfunction );
 

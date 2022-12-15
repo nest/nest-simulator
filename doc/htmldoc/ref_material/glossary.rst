@@ -5,62 +5,16 @@
 Glossary
 ========
 
+.. _units_measure:
+
+Units of measure
+---------------
+
 .. glossary::
  :sorted:
 
- iaf
-   Integrate and fire.
-
- gif
-   Generalized integrate and fire.
-
- cond
-   Conductance-based.
-
- psc
-   Post-synaptic current (current-based).
-
- hh
-   Hodgkin huxley.
-
- rng
-   Random number generator.
-
- wfr
-   Waveform relaxation method.
-
- aeif
-   Adaptive exponential integrate and fire.
-
- ht
-   Hill and tononi.
-
- pp
-   Point process.
-
- in
-   Inhibitory.
-
- ex
-   Excitatory.
-
- MAM
-   Multi-area model.
-
- mpi
-   Message passing interface.
-
- stdp
-   Spike-timing dependent plasticity synapse.
-
- st
-   Short term plasticity.
-
- vp
-   Virtual process.
-
  time
-   Milliseconds (ms).
+   Time in milliseconds (ms).
 
  tau_m
    Membrane time constant in milliseconds (ms).
@@ -116,7 +70,7 @@ Glossary
  V_th
    Spike threshold in Millivolts (mV).
 
- V_reset double
+ V_reset 
    Reset potential of the membrane in Millivolts (mV).
 
  V_min
@@ -132,7 +86,91 @@ Glossary
    Sodium reversal potential in Millivolts (mV).
 
  E_K
-   Potassium reversal potential in Millivolts (mV).
+   Potassium reversal potential in millivolts (mV).
+
+.. _model_terms:
+
+Terms for models in NEST
+------------------------
+
+.. glossary::
+ :sorted:
+
+ iaf
+   Integrate-and-fire. Also known in other sources as `IF`.
+
+ gif
+   Generalized integrate-and-fire. From the Gerstner lab.
+
+ glif
+   Generalized leaky integrate-and-fire. From the Allen institute.
+
+ cond
+   Conductance-based. Also known in other sources as `COBA`.
+
+ psc
+   Post-synaptic current (current-based). Also known in other sources as `CUBA`.
+
+ hh
+   Hodgkin Huxley.
+
+ aeif
+   Adaptive exponential integrate-and-fire. Also known in other sources as `AdEx`.
+
+ ht
+   Hill and Tononi.
+
+ pp
+   Point process.
+
+ in
+   Inhibitory.
+
+ ex
+   Excitatory.
+
+ stdp
+   Spike-timing dependent plasticity.
+
+ st
+   Short-term plasticity.
+
+ psp
+   Post-synaptic potential.
+
+ sfa
+   Spike-frequency adaptation.
+
+ cm
+   Compartmental model.
+
+Other abbreviations
+-------------------
+
+.. glossary::
+ :sorted:
+
+
+ rng
+   Random number generator.
+
+ wfr
+   Waveform relaxation method.
+
+ MAM
+   Multi-area model.
+
+ mpi
+   Message passing interface.
+
+ vp
+   Virtual process.
+
+Commonly used terms in NEST
+----------------------------
+
+.. glossary::
+ :sorted:
 
  subthreshold dynamics
    Non-spiking backgound activity of the synapses.
@@ -196,9 +234,6 @@ Glossary
  Gaussian white noise
    A random process with a mean of zero.
 
- sfa
-   Spike-frequency adaptation.
-
  point neuron
    A simple neuron model where its soma along with the membrane potential dynamics are modeled as a resistance–capacitance circuit.
 
@@ -238,11 +273,8 @@ Glossary
  renewal process
    Spike-time statistical analysis.
 
-  spike-frequency adaptation
+ spike-frequency adaptation
    After stimulation, neurons show a reduction in the firing frequency of their spike response following an initial increase.
-
- GIF
-   Generalized integrate-and-fire model.
 
  coefficient of variation
    Standard deviation divided by the mean.
@@ -256,14 +288,8 @@ Glossary
  soma
    Cell body of the neuron.
 
- psp
-   Post-synaptic potential.
-
- PSC
-   Post-synatpic current.
-
- absolute refractory
-   An interval after a neuron fires a spike to prevent it from firing a spike again.
+ absolute refractory period
+   Interval directly following a spike emission in which the sender neuron cannot fire again.
 
  indegree
    Amount of connections to post-synaptic cells.

@@ -29,9 +29,6 @@ Note that the script generates the images individually, storing
 them to disk first, assembling them into a GIF and then,
 by default, deleting the images and folder.
 
-For creating the individual images, PIL is used. Because the GIF creation
-tool in PIL is faulty, imageio is required for that step.
-
 See Also
 ~~~~~~~~
 
@@ -45,13 +42,28 @@ import os
 import pickle
 import imageio
 from glob import glob
-from helpers import plot_field
+import numpy as np
 import sys
+import helpers
+import matplotlib.pyplot as plt
 
-in_file = "350Hz_puzzle_4.pkl"  # Name of the .pkl file to read from
+
+def get_progress(puzzle, solution):
+    valid, boxes, rows, cols = helpers.validate_solution(puzzle, solution)
+    if valid:
+        return 1.0
+    return (boxes.sum() + rows.sum() + cols.sum()) / 27
+
+
+# Name of the .pkl files to read from.
+in_files = ["350Hz_puzzle_4.pkl"]
 temp_dir = "tmp"                # Name of directory for temporary files
 out_file = "sudoku.gif"         # Name of the output GIF
 keep_temps = False              # If True, temporary files will not be deleted
+
+px = 1 / plt.rcParams['figure.dpi']
+plt.subplots(figsize=(600 * px, 400 * px))
+
 
 if os.path.exists(out_file):
     print(f"Target file ({out_file}) already exists! Aborting.")
@@ -63,46 +75,82 @@ except FileExistsError:
     print(f"temporary file folder ({temp_dir}) already exists! Aborting.")
     sys.exit()
 
-with open(in_file, "rb") as f:
-    simulation_data = pickle.load(f)
-
-solution_states = simulation_data["solution_states"]
 
 image_count = 0
+# store datapoints for multiple files in a single list
+lines = []
+for file in in_files:
+    with open(file, "rb") as f:
+        sim_data = pickle.load(f)
 
+    solution_states = sim_data["solution_states"]
+    puzzle = sim_data["puzzle"]
 
-field = plot_field(simulation_data['puzzle'], simulation_data['puzzle'], False)
+    x_data = np.arange(0, sim_data["max_sim_time"], sim_data["sim_time"])
+    solution_progress = []
 
+    lines.append([[], [], f"{sim_data['noise_rate']}Hz"])
 
-for i in range(len(solution_states)):
-    current_state = solution_states[i]
+    n_iterations = len(solution_states)
 
-    if i == 0:
-        # repeat the (colorless) starting configuration several times
-        image_repeat = 8
-    else:
-        field = plot_field(simulation_data['puzzle'], current_state, True)
-        image_repeat = 1
+    for i in range(n_iterations):
+        solution_progress.append(get_progress(puzzle, solution_states[i]))
 
-    if i == len(solution_states) - 1:
-        # repeat the final solution a few more times to make it observable
-        # before the gif loops again
-        image_repeat = 15
+    for i in range(n_iterations):
+        current_state = solution_states[i]
 
-    for j in range(image_repeat):
-        field.save(os.path.join(temp_dir, f"{str(image_count).zfill(4)}.png"))
-        image_count += 1
+        lines[-1][0] = x_data[:i + 1]
+        lines[-1][1] = solution_progress[:i + 1]
+        progress = plt.subplot2grid((3, 3), (1, 0), rowspan=2, colspan=1)
+        progress.set_ylim(0, 1)
+        progress.set_xlim(0, 10000)
+        progress.set_xlabel("simulation time (ms)")
+        progress.set_ylabel("performance")
+        for x, y, label in lines:
+            progress.plot(x, y, label=label)
+        progress.legend()
+
+        stats = plt.subplot2grid((3, 3), (0, 0), 1, 1)
+        stats.axis("off")
+        stats.text(0, 1, 'Time progressed:',
+                   horizontalalignment='left', verticalalignment='center', fontsize=16)
+        stats.text(0, 0.7, f'{i * sim_data["sim_time"]}ms\n', horizontalalignment='left', verticalalignment='center',
+                   fontsize=12, color='gray')
+        stats.text(0, 0.5, 'Noise rate:', horizontalalignment='left',
+                   verticalalignment='center', fontsize=16)
+        stats.text(0, 0.2, f'{sim_data["noise_rate"]}Hz\n', horizontalalignment='left', verticalalignment='center',
+                   fontsize=12, color='gray')
+
+        ax = plt.subplot2grid((3, 3), (0, 1), rowspan=3, colspan=2)
+        if i == 0:
+            # repeat the (colorless) starting configuration several times
+            helpers.plot_field(sim_data['puzzle'], sim_data['puzzle'], ax, False)
+            image_repeat = 8
+        else:
+            helpers.plot_field(puzzle, current_state, ax, True)
+            image_repeat = 1
+
+        if i == len(solution_states) - 1:
+            # repeat the final solution a few more times to make it observable
+            # before the gif loops again
+            image_repeat = 15
+
+        plt.subplots_adjust(wspace=0, hspace=0, left=0.1, right=1.05)
+        for j in range(image_repeat):
+            plt.savefig(os.path.join(temp_dir, f"{str(image_count).zfill(4)}.png"))
+            image_count += 1
 
 filenames = sorted(glob(os.path.join(temp_dir, "*.png")))
 
-with imageio.get_writer(out_file, mode='I', fps=4) as writer:
-    for filename in filenames:
-        image = imageio.imread(filename)
-        writer.append_data(image)
+images = []
+for filename in filenames:
+    images.append(imageio.imread(filename))
+
+imageio.mimsave(out_file, images, fps=4)
 print(f"gif created under: {out_file}")
 
 if not keep_temps:
     print("deleting temporary image files...")
-    for in_file in filenames:
-        os.unlink(in_file)
+    for in_files in filenames:
+        os.unlink(in_files)
     os.rmdir(temp_dir)

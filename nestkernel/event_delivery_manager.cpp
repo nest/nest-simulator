@@ -358,22 +358,6 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
   assigned_ranks.end = kernel().mpi_manager.get_num_processes();
   assigned_ranks.size = assigned_ranks.end - assigned_ranks.begin;
   assigned_ranks.max_size = assigned_ranks.size;
-
-  /* NOTE:
-   * For experimentation, the next two lines set MPI buffers to a fixed, large size
-   * This temporarily replaces multi-round collocation with adjustable buffer size.
-   *  As a side-effect, NEST compiled with MPI may see massive slow-down; reduce buffer
-   * size to run tests with MPI.
-   *
-   * TODO: Re-instate proper handling of MPI buffers
-   *
-   * TODO: Re-instate standard test matrix
-   *
-   * NOTE: Due to limited test matrix, developers **must run testsuite locally**.
-   */
-  // long buffer_size = 8388608
-  kernel().mpi_manager.set_buffer_size_spike_data( 64 ); // for testsuite use 65536 instead
-  resize_send_recv_buffers_spike_data_();
   
   bool all_spikes_transmitted = false;
   do
@@ -424,6 +408,8 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 
     if ( not all_spikes_transmitted )
     {
+      std::cerr << "Going for second round! Old size: " << kernel().mpi_manager.get_buffer_size_spike_data() << ", New size: "
+      << kernel().mpi_manager.get_num_processes() * max_per_thread_max_spikes_per_rank << std::endl;
       kernel().mpi_manager.set_buffer_size_spike_data(
         kernel().mpi_manager.get_num_processes() * max_per_thread_max_spikes_per_rank );
       resize_send_recv_buffers_spike_data_();
@@ -452,10 +438,6 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
 
   std::vector< size_t > num_spikes_per_rank( kernel().mpi_manager.get_num_processes(), 0 );
 
-  // Assume register is empty, will change to false if any entry can
-  // not be fit into the MPI buffer.
-  bool is_spike_register_empty = true;
-
   // First dimension: loop over writing thread
   for ( auto& emitted_spikes_per_thread : emitted_spikes_register )
   {
@@ -466,15 +448,12 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
       // Fourth dimension: loop over entries
       for ( auto& emitted_spike : ( *emitted_spikes_per_thread )[ lag ] )
       {
-        assert( not emitted_spike.is_processed() );
-
         const thread rank = emitted_spike.get_rank();
         ++num_spikes_per_rank[ rank ];
 
         if ( not send_buffer_position.is_chunk_filled( rank ) )
         {
           send_buffer[ send_buffer_position.idx( rank ) ].set( emitted_spike, lag );
-          emitted_spike.mark_for_removal();
           send_buffer_position.increase( rank );
         }
       }

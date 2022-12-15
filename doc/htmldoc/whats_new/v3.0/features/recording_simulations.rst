@@ -24,7 +24,7 @@ that were supported in NEST 2.x. Depending on the features selected
 during the configuration of NEST, additional backend become available:
 Support for `SIONlib <http://www.fz-juelich.de/jsc/sionlib>`_ leads to
 the inclusion of a backend for writing binary files in parallel on
-large clusters and supercomputers. If MPI is enabled, a special data
+large clusters and supercomputers. If :hxt_ref:`MPI` is enabled, a special data
 exchange backend is built, which is useful in co-simulation scenarios.
 
 .. seealso::
@@ -46,7 +46,7 @@ Individual devices have to be created and configured if this
 functionality is needed.
 
 The following examples assume that the variable `mm` points to a
-``multimeter`` instance, i.e.,  ``mm = nest.Create('multimeter')``
+:hxt_ref:`multimeter` instance, i.e.,  ``mm = nest.Create('multimeter')``
 was executed.
 
 
@@ -93,7 +93,7 @@ always writes all available data. In addition, most backends now write
 the name of the recorded variable for each column as a descriptive
 meta-data header prior to writing any data.
 
-The `accumulator_mode` of the ``multimeter`` has been dropped, as it
+The `accumulator_mode` of the :hxt_ref:`multimeter` has been dropped, as it
 was not used by anyone to the best of our knowledge and supporting it
 made the code more complex and prone to errors. In case of high user
 demand, the functionality will be re-added in form of a recording

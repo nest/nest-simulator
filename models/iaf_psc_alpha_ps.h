@@ -29,10 +29,11 @@
 // Generated includes:
 #include "config.h"
 
-// Includes from nestkernel:
+// Includes from libnestutil:
 #include "archiving_node.h"
 #include "connection.h"
 #include "event.h"
+#include "iaf_propagator.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
 #include "slice_ring_buffer.h"
@@ -264,6 +265,10 @@ private:
    * @param spike_offset  Time offset for spike
    */
   void emit_instant_spike_( Time const& origin, const long lag, const double spike_offset );
+
+  /** Propagator object for updating synaptic components */
+  IAFPropagatorAlpha propagator_ex_;
+  IAFPropagatorAlpha propagator_in_;
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< iaf_psc_alpha_ps >;

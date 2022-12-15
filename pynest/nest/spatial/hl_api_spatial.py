@@ -25,7 +25,6 @@ from .. import nestkernel_api as nestkernel
 
 
 __all__ = [
-    'distance',
     'grid',
     'free',
     'pos',
@@ -35,18 +34,6 @@ __all__ = [
 
 
 class DistanceParameter(Parameter):
-    """
-    Object representing the distance between two nodes in space.
-
-    If used alone, the DistanceObject represents simply the Euclidean
-    distance between two nodes.
-
-    Alternatively the distance in a single dimension may be chosen. Three
-    properties are defined, x, y, and z, which represent the distance in
-    their respective dimensions. Note that the distance parameter can only
-    be used in contexts with two nodes, e.g. when connecting.
-    """
-
     def __init__(self):
         distance_parameter = CreateParameter('distance', {})
         super().__init__(distance_parameter._datum)
@@ -82,9 +69,6 @@ class DistanceParameter(Parameter):
             Object yielding the distance in the given dimension.
         """
         return CreateParameter('distance', {'dimension': dimension})
-
-
-distance = DistanceParameter()
 
 
 class pos:

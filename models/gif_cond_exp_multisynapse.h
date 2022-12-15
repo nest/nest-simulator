@@ -113,28 +113,31 @@ positive or negative):
  \gamma_i = \gamma_i + q_{\gamma_i} \text{ (in case of spike emission).}
 
 
-Note:
+.. note::
 
-In the current implementation of the model,
-the values of :math:`\eta_i` and :math:`\gamma_i` are affected immediately
-after spike emission. However, `GIF toolbox <http://wiki.epfl.ch/giftoolbox>`_,
-which fits the model using experimental data, requires a different set of
-:math:`\eta_i` and :math:`\gamma_i`. It applies the jump of :math:`\eta_i` and
-:math:`\gamma_i` after the refractory period. One can easily convert between
-:math:`q_{\eta/\gamma}` of these two approaches:
+   In the current implementation of the model,
+   the values of :math:`\eta_i` and :math:`\gamma_i` are affected immediately
+   after spike emission. However, `GIF toolbox <http://wiki.epfl.ch/giftoolbox>`_,
+   which fits the model using experimental data, requires a different set of
+   :math:`\eta_i` and :math:`\gamma_i`. It applies the jump of :math:`\eta_i` and
+   :math:`\gamma_i` after the refractory period. One can easily convert between
+   :math:`q_{\eta/\gamma}` with these two approaches:
 
-.. math::
+   .. math::
 
-   q_{\eta,giftoolbox} = q_{\eta,NEST} \cdot (1 - \exp( -\tau_{ref} / \tau_\eta ))
+      q_{\eta,giftoolbox} = q_{\eta,NEST} \cdot (1 - \exp( -\tau_{ref} / \tau_\eta ))
 
-The same formula applies for :math:`q_\gamma`.
+   The same formula applies for :math:`q_\gamma`.
 
-On the postsynaptic side, there can be arbitrarily many synaptic time constants
-(gif_psc_exp has exactly two: ``tau_syn_ex`` and ``tau_syn_in``). This can be reached
-by specifying separate receptor ports, each for a different time constant. The
-port number has to match the respective ``receptor_type`` in the connectors.
+On the postsynaptic side, there can be arbitrarily many synaptic time
+constants (gif_psc_exp has exactly two: ``tau_syn_ex`` and
+``tau_syn_in``). This can be reached by specifying separate receptor
+ports, each for a different time constant. The port number has to
+match the respective ``receptor_type`` in the connectors. The shape of
+synaptic conductance is exponential.
 
-The shape of synaptic conductance is exponential.
+When connecting to conductance-based multisynapse models, all synaptic weights
+must be non-negative.
 
 Parameters
 ++++++++++

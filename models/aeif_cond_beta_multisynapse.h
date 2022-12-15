@@ -83,6 +83,9 @@ reversal potentials are supplied by the array ``E_rev``. The port numbers
 are automatically assigned in the range from 1 to n_receptors.
 During connection, the ports are selected with the property ``receptor_type``.
 
+When connecting to conductance-based multisynapse models, all synaptic weights
+must be non-negative.
+
 The membrane potential is given by the following differential equation:
 
 .. math::

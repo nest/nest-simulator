@@ -227,8 +227,8 @@ as the ``syn_spec`` argument of :py:func:`.Connect`, instead of the usual syn_sp
   conns = nest.GetConnections()
   print(conns.alpha)
 
-This will create 9 connections: 3 using ``static_synapse`` with a ``weight`` of `4` and ``delay`` of `1.5`, and 6 using
-the ``stdp_synapse``. Of the 6 using ``stdp_synapse``, 3 will have the default alpha value, and 3 will have an alpha of
+This will create 9 connections: 3 using :hxt_ref:`static_synapse` with a ``weight`` of `4` and ``delay`` of `1.5`, and 6 using
+the :hxt_ref:`stdp_synapse`. Of the 6 using ``stdp_synapse``, 3 will have the default alpha value, and 3 will have an alpha of
 `3.0`.
 
   >>> print(nest.GetKernelStatus('num_connections'))

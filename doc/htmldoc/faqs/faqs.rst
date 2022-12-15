@@ -6,9 +6,9 @@ Frequently asked questions
 Installation
 ------------
 
-1. **If I compile NEST with MPI support, I get errors about
+1. **If I compile NEST with :hxt_ref:`MPI` support, I get errors about
    ``SEEK_SET``, ``SEEK_CUR`` and ``SEEK_END`` being defined** This is a
-   known issue in some MPI implementations. A solution is to add
+   known issue in some :hxt_ref:`MPI` implementations. A solution is to add
    --with-debug="-DMPICH\_IGNORE\_CXX\_SEEK" to the configure command
    line. More details about this problem can be found
    `here <http://www-unix.mcs.anl.gov/mpi/mpich/faq.htm#cxxseek>`__

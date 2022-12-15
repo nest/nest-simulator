@@ -60,7 +60,7 @@ between the same pair of neurons are allowed or not.
    were set to `False` in each individual call.
 
 The synapse specification ``syn_spec`` defaults to the synapse model
-``static_synapse``. By using the keyword variant (``Connect(pre, post,
+:hxt_ref:`static_synapse`. By using the keyword variant (``Connect(pre, post,
 syn_spec=syn_spec_dict)``), ``conn_spec`` can be omitted in the call
 to :py:func:`.Connect` and will just take on the default value.
 
@@ -162,7 +162,7 @@ fixed indegree
      :align: center
 
 The nodes in ``A`` are randomly connected with the nodes in ``B`` such
-that each node in ``B`` has a fixed ``indegree`` of ``N``.
+that each node in ``B`` has a fixed :hxt_ref:`indegree` of ``N``.
 
 ::
 
@@ -180,7 +180,7 @@ fixed outdegree
      :align: center
 
 The nodes in ``A`` are randomly connected with the nodes in ``B`` such
-that each node in ``A`` has a fixed ``outdegree`` of ``N``.
+that each node in ``A`` has a fixed :hxt_ref:`outdegree` of ``N``.
 
 ::
 
@@ -340,7 +340,7 @@ fixed indegree
 
 For rule ``fixed_indegree`` the array has to be a two-dimensional
 NumPy array or Python list with shape ``(len(B), indegree)``, where
-``indegree`` is the number of incoming connections per target neuron.
+:hxt_ref:`indegree` is the number of incoming connections per target neuron.
 This means that the rows describe the target, while the columns
 represent the connections converging on the target neuron, regardless
 of the identity of the source neurons.
@@ -358,7 +358,7 @@ fixed outdegree
 
 For rule ``fixed_outdegree`` the array has to be a two-dimensional
 NumPy array or Python list with shape ``(len(pre), outdegree)``, where
-``outdegree`` is the number of outgoing connections per source
+:hxt_ref:`outdegree` is the number of outgoing connections per source
 neuron. This means that the rows describe the source, while the
 columns represent the connections starting from the source neuron
 regardless of the identity of the target neuron.
@@ -437,7 +437,7 @@ different :ref:`PyNEST APIs <pynest_api>`.
     nest.Connect(A, B, syn_spec=syn_spec_dict)
 
 In this example, the default connection rule ``all_to_all`` is used
-and connections will be using synapse model ``stdp_synapse``. All synapses
+and connections will be using synapse model :hxt_ref:`stdp_synapse`. All synapses
 are created with a static weight of 2.5 and a delay that is uniformly
 distributed in [0.8, 2.5]. The parameter ``alpha`` is drawn from a
 normal distribution with mean 5.0 and standard deviation 1.0;
@@ -508,9 +508,9 @@ object, and the connection rule ``one_to_one`` is used.
 
 In more detail, the connections have the following properties:
 
-* 3 are of type ``static_synapse`` with `weight` 4.0 and `delay` 1.5
-* 3 are of type ``stdp_synapse`` with the default value for `alpha`
-* 3 are of type ``stdp_synapse`` with an `alpha` of 3.0.
+* 3 are of type :hxt_ref:`static_synapse` with `weight` 4.0 and `delay` 1.5
+* 3 are of type :hxt_ref:`stdp_synapse` with the default value for `alpha`
+* 3 are of type :hxt_ref:`stdp_synapse` with an `alpha` of 3.0.
 
 If you want to connect with different :ref:`receptor types
 <receptor-types>`, you can do the following:
@@ -686,7 +686,7 @@ Synapse Types
 -------------
 
 NEST provides a number of built-in synapse models that can be used
-during connection setup. The default model is the ``static_synapse``,
+during connection setup. The default model is the :hxt_ref:`static_synapse`,
 whose only parameters ``weight`` and ``delay`` do not change over
 time. Other synapse models implement learning and adaptation in the
 form of long-term or short-term plasticity. A list of available

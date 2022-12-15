@@ -68,7 +68,6 @@ set( models_sources
     iaf_cond_exp.h iaf_cond_exp.cpp
     iaf_cond_exp_sfa_rr.h iaf_cond_exp_sfa_rr.cpp
     iaf_psc_alpha.h iaf_psc_alpha.cpp
-    iaf_psc_alpha_canon.cpp iaf_psc_alpha_canon.cpp
     iaf_psc_alpha_multisynapse.h iaf_psc_alpha_multisynapse.cpp
     iaf_psc_alpha_ps.cpp iaf_psc_alpha_ps.h
     iaf_psc_delta.h iaf_psc_delta.cpp
@@ -100,7 +99,6 @@ set( models_sources
     poisson_generator.h poisson_generator.cpp
     poisson_generator_ps.cpp poisson_generator_ps.h
     pp_psc_delta.h pp_psc_delta.cpp
-    pp_pop_psc_delta.h pp_pop_psc_delta.cpp
     pp_cond_exp_mc_urbanczik.h pp_cond_exp_mc_urbanczik.cpp
     ppd_sup_generator.h ppd_sup_generator.cpp
     pulsepacket_generator.h pulsepacket_generator.cpp

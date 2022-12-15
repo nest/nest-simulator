@@ -45,7 +45,7 @@ Here you can dive into various topics about NEST.
 
    .. grid-item-card:: |math| Models in NEST
        :class-title: sd-d-flex-row sd-align-minor-center
-       :link:  models_contents
+       :link:  modelsmain
        :link-type: ref
 
 .. grid:: 1 1 2 3
@@ -102,7 +102,7 @@ Here you can dive into various topics about NEST.
    Synapses and connections <synapses/index>
    Devices  <devices/index>
    Spatially-structured networks <networks/spatially_structured_networks>
-   NEST models <models/index>
+   NEST models <models/models-main>
    Simulation behavior <nest_behavior/running_simulations>
    Randomness in NEST <nest_behavior/random_numbers>
    Built-in timers <nest_behavior/built-in_timers>

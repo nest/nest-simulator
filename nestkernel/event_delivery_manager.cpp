@@ -350,7 +350,9 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
   //       Since AssignedRanks are used deeply in send_buffer_position, we fix the rank assignment
   //       manually here.
   // const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
+
   assert( tid == 0 );
+  
   AssignedRanks assigned_ranks;
   assigned_ranks.begin = 0;
   assigned_ranks.end = kernel().mpi_manager.get_num_processes();
@@ -370,48 +372,76 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
    * NOTE: Due to limited test matrix, developers **must run testsuite locally**.
    */
   // long buffer_size = 8388608
-  kernel().mpi_manager.set_buffer_size_spike_data( 65536 ); // for testsuite use 65536 instead
+  kernel().mpi_manager.set_buffer_size_spike_data( 64 ); // for testsuite use 65536 instead
   resize_send_recv_buffers_spike_data_();
+  
+  bool all_spikes_transmitted = false;
+  do
+  {
+    // Need to get new positions in case buffer size has changed
+    SendBufferPosition send_buffer_position(
+                                            assigned_ranks, kernel().mpi_manager.get_send_recv_count_spike_data_per_rank() );
+    
+#ifdef TIMER_DETAILED
+    {
+      sw_collocate_spike_data_.start();
+    }
+#endif
+    
+    // Collocate spikes to send buffer
+    const size_t per_thread_max_spikes_per_rank = collocate_spike_data_buffers_( tid, assigned_ranks, send_buffer_position, emitted_spikes_register_, send_buffer );
+    const bool collocate_completed =
+      per_thread_max_spikes_per_rank <= kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
 
-  // Need to get new positions in case buffer size has changed
-  SendBufferPosition send_buffer_position(
-    assigned_ranks, kernel().mpi_manager.get_send_recv_count_spike_data_per_rank() );
+    // Set markers to signal end of valid spikes, and remove spikes
+    // from register that have been collected in send buffer.
+    set_end_and_invalid_markers_( assigned_ranks, send_buffer_position, send_buffer );
+
+    if ( collocate_completed )
+     {
+       // Needs to be called /after/ set_end_and_invalid_markers_.
+       set_complete_marker_spike_data_( assigned_ranks, send_buffer_position, send_buffer );
+     }
+     else
+     {
+       set_max_spikes_per_rank_(
+         assigned_ranks, send_buffer_position, send_buffer, per_thread_max_spikes_per_rank );
+     }
+ 
 
 #ifdef TIMER_DETAILED
-  {
-    sw_collocate_spike_data_.start();
-  }
+    {
+      sw_collocate_spike_data_.stop();
+      sw_communicate_spike_data_.start();
+    }
 #endif
+    
+    kernel().mpi_manager.communicate_spike_data_Alltoall( send_buffer, recv_buffer );
 
-  // Collocate spikes to send buffer
-  collocate_spike_data_buffers_( tid, assigned_ranks, send_buffer_position, emitted_spikes_register_, send_buffer );
+    const auto max_per_thread_max_spikes_per_rank = get_max_spike_data_per_thread_( assigned_ranks, send_buffer_position,
+                                                                                   recv_buffer );
+    all_spikes_transmitted = max_per_thread_max_spikes_per_rank == 0;
 
-  // Set markers to signal end of valid spikes, and remove spikes
-  // from register that have been collected in send buffer.
-  set_end_and_invalid_markers_( assigned_ranks, send_buffer_position, send_buffer );
-
-  // If we do not have any spikes left, set corresponding marker in
-  // send buffer.
-  set_complete_marker_spike_data_( assigned_ranks, send_buffer_position, send_buffer );
-
+    if ( not all_spikes_transmitted )
+    {
+      kernel().mpi_manager.set_buffer_size_spike_data(
+        kernel().mpi_manager.get_num_processes() * max_per_thread_max_spikes_per_rank );
+      resize_send_recv_buffers_spike_data_();
+    }
+    
 #ifdef TIMER_DETAILED
-  {
-    sw_collocate_spike_data_.stop();
-    sw_communicate_spike_data_.start();
-  }
+    {
+      sw_communicate_spike_data_.stop();
+    }
 #endif
-
-  kernel().mpi_manager.communicate_spike_data_Alltoall( send_buffer, recv_buffer );
-
-#ifdef TIMER_DETAILED
-  {
-    sw_communicate_spike_data_.stop();
-  }
-#endif
+    } while ( not all_spikes_transmitted );
+  
+  // TODO: need to clear spike register
+  // TODO: consider reduce size of buffers again
 }
 
 template < typename TargetT, typename SpikeDataT >
-bool
+size_t
 EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
   const AssignedRanks& assigned_ranks,
   SendBufferPosition& send_buffer_position,
@@ -419,6 +449,8 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
   std::vector< SpikeDataT >& send_buffer )
 {
   reset_complete_marker_spike_data_( assigned_ranks, send_buffer_position, send_buffer );
+
+  std::vector< size_t > num_spikes_per_rank( kernel().mpi_manager.get_num_processes(), 0 );
 
   // Assume register is empty, will change to false if any entry can
   // not be fit into the MPI buffer.
@@ -437,16 +469,9 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
         assert( not emitted_spike.is_processed() );
 
         const thread rank = emitted_spike.get_rank();
+        ++num_spikes_per_rank[ rank ];
 
-        if ( send_buffer_position.is_chunk_filled( rank ) )
-        {
-          is_spike_register_empty = false;
-          if ( send_buffer_position.are_all_chunks_filled() )
-          {
-            return is_spike_register_empty;
-          }
-        }
-        else
+        if ( not send_buffer_position.is_chunk_filled( rank ) )
         {
           send_buffer[ send_buffer_position.idx( rank ) ].set( emitted_spike, lag );
           emitted_spike.mark_for_removal();
@@ -455,7 +480,7 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
       }
     }
   }
-  return is_spike_register_empty;
+  return *std::max_element( num_spikes_per_rank.begin(), num_spikes_per_rank.end() );
 }
 
 
@@ -516,6 +541,47 @@ EventDeliveryManager::set_complete_marker_spike_data_( const AssignedRanks& assi
     send_buffer[ idx ].set_complete_marker();
   }
 }
+
+template < typename SpikeDataT >
+void
+EventDeliveryManager::set_max_spikes_per_rank_( const AssignedRanks& assigned_ranks,
+  const SendBufferPosition& send_buffer_position,
+  std::vector< SpikeDataT >& send_buffer,
+  const size_t max_per_thread_max_spikes_per_rank_ ) const
+{
+  // TODO: send_buffer_position not needed here, only used to get endpoint of each per-rank section of buffer
+  for ( thread target_rank = assigned_ranks.begin; target_rank < assigned_ranks.end; ++target_rank )
+  {
+    const thread idx = send_buffer_position.end( target_rank ) - 1;
+    SpikeDataT dummy;
+    dummy.set_lcid( max_per_thread_max_spikes_per_rank_ );
+    send_buffer[ idx ] = dummy;
+  }
+}
+
+
+template < typename SpikeDataT >
+size_t
+EventDeliveryManager::get_max_spike_data_per_thread_( const AssignedRanks& assigned_ranks,
+  const SendBufferPosition& send_buffer_position,
+  std::vector< SpikeDataT >& recv_buffer ) const
+{
+  // TODO: send_buffer_position not needed here, only used to get endpoint of each per-rank section of buffer
+  
+  size_t maximum = 0;
+  for ( thread target_rank = assigned_ranks.begin; target_rank < assigned_ranks.end; ++target_rank )
+  {
+    const thread idx = send_buffer_position.end( target_rank ) - 1;
+    if ( not recv_buffer[ idx ].is_complete_marker() )
+    {
+      const auto max_per_thread_max_spikes_per_rank = recv_buffer[ idx ].get_lcid();
+      maximum = std::max( max_per_thread_max_spikes_per_rank, maximum );
+    }
+  }
+  return maximum;
+}
+
+
 
 void
 EventDeliveryManager::deliver_events( const thread tid )

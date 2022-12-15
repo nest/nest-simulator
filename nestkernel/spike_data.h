@@ -76,6 +76,11 @@ public:
   index get_lcid() const;
 
   /**
+   * Sets lcid value, only for communication of max buffer size
+   */
+  void set_lcid( size_t );
+  
+  /**
    * Returns lag in min-delay interval.
    */
   unsigned int get_lag() const;
@@ -189,6 +194,8 @@ SpikeData::set( const thread tid, const synindex syn_id, const index lcid, const
 }
 
 
+
+
 template < class TargetT >
 inline void
 SpikeData::set( const TargetT& target, const unsigned int lag )
@@ -206,6 +213,13 @@ inline index
 SpikeData::get_lcid() const
 {
   return lcid_;
+}
+
+inline void
+SpikeData::set_lcid( size_t value )
+{
+  assert( value < MAX_LCID );
+  lcid_ = value;
 }
 
 inline unsigned int

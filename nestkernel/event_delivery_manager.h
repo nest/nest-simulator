@@ -266,9 +266,11 @@ private:
   /**
    * Moves spikes from on grid and off grid spike registers to correct
    * locations in MPI buffers.
+   *
+   * @returns max number of spikes to be sent to any rank.
    */
   template < typename TargetT, typename SpikeDataT >
-  bool collocate_spike_data_buffers_( const thread tid,
+  size_t collocate_spike_data_buffers_( const thread tid,
     const AssignedRanks& assigned_ranks,
     SendBufferPosition& send_buffer_position,
     std::vector< std::vector< std::vector< TargetT > >* >& spike_register,
@@ -301,6 +303,29 @@ private:
     const SendBufferPosition& send_buffer_position,
     std::vector< SpikeDataT >& send_buffer ) const;
 
+
+  /**
+      * Put required buffer size into send buffer on all ranks.
+   */
+  template < typename SpikeDataT >
+  void
+  set_max_spikes_per_rank_( const AssignedRanks& assigned_ranks,
+    const SendBufferPosition& send_buffer_position,
+    std::vector< SpikeDataT >& send_buffer,
+                           const size_t max_per_thread_max_spikes_per_rank_ ) const;
+
+  /**
+      * Get required buffer size.
+   *
+   * @returns maximum over required buffer sizes communicated by all ranks
+   */
+  template < typename SpikeDataT >
+  size_t
+  get_max_spike_data_per_thread_( const AssignedRanks& assigned_ranks,
+    const SendBufferPosition& send_buffer_position,
+                                 std::vector< SpikeDataT >& recv_buffer ) const;
+
+  
   /**
    * Reads spikes from MPI buffers and delivers them to ringbuffer of
    * nodes.

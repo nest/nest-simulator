@@ -199,7 +199,7 @@ public:
    * Collocates spikes from register to MPI buffers, communicates via
    * MPI and delivers events to targets.
    */
-  void gather_spike_data( const thread tid );
+  void gather_spike_data( const thread tid, const size_t max_spikes_per_rank );
 
   /**
    * Collocates presynaptic connection information, communicates via
@@ -213,7 +213,7 @@ public:
   /**
    * Delivers events to targets.
    */
-  void deliver_events( const thread tid );
+  size_t deliver_events( const thread tid );
 
   /**
    * Collocates presynaptic connection information for secondary events (MPI
@@ -259,7 +259,8 @@ private:
   template < typename SpikeDataT >
   void gather_spike_data_( const thread tid,
     std::vector< SpikeDataT >& send_buffer,
-    std::vector< SpikeDataT >& recv_buffer );
+    std::vector< SpikeDataT >& recv_buffer,
+                           const size_t max_spikes_per_rank );
 
   void resize_send_recv_buffers_spike_data_();
 
@@ -331,7 +332,7 @@ private:
    * nodes.
    */
   template < typename SpikeDataT >
-  bool deliver_events_( const thread tid, const std::vector< SpikeDataT >& recv_buffer );
+  size_t deliver_events_( const thread tid, const std::vector< SpikeDataT >& recv_buffer );
 
   /**
    * Deletes all spikes from spike registers and resets spike
@@ -472,10 +473,12 @@ private:
   bool buffer_size_spike_data_has_changed_;
   //! whether size of MPI buffer for communication of spikes can be decreased
   bool decrease_buffer_size_spike_data_;
-
-  //! Maximum number of spikes received from any rank, per thread
-  std::vector< size_t > max_spikes_received_per_rank_;
   
+  size_t buffer_shrink_count_;
+  size_t buffer_shrink_delta_;
+  size_t buffer_grow_count_;
+  size_t buffer_grow_delta_;
+
   PerThreadBoolIndicator gather_completed_checker_;
 
 #ifdef TIMER_DETAILED

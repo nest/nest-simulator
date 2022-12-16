@@ -15,7 +15,7 @@ environment.
 
 .. note::
 
-  If you want to specify an alternative install location, use  
+  If you want to specify an alternative install location, use
   ``-DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir>``. It needs to be
   writable by the user running the install command.
 
@@ -44,6 +44,8 @@ Use Python to build PyNEST
 
 +-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dwith-python=[OFF|ON]``                    | Build PyNEST [default=ON].                                     |
++-----------------------------------------------+----------------------------------------------------------------+
+| ``-Dwith-python-deps=[OFF|ON]``               | Install Python dependencies [default=ON].                      |
 +-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dcythonize-pynest=[OFF|ON]``               | Use Cython to cythonize pynestkernel.pyx [default=ON]. If OFF, |
 |                                               | PyNEST has to be build from a pre-cythonized pynestkernel.pyx. |

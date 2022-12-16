@@ -1,107 +1,37 @@
-{% extends "!sphinx_material/layout.html" %}
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 
-{%- block extrahead %}
-  <title>NEST documentation index </title>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <meta name="description" content="This is the documentation index for the NEST, a simulator for spiking neuronal networks.">
-  <meta name="keywords" content="">
-  <link rel="stylesheet" href="_static/css/bootstrap/bootstrap.min.css">
-  <link rel="stylesheet" href="_static/css/normalize.css">
-  <link rel="stylesheet" href="_static/css/default.min.css">
-  <script src="_static/js/highlight.min.js"></script>
-  <script>hljs.highlightAll();</script>
-  <link rel="stylesheet" href="_static/js/flexslider/flexslider.css">
-  <link rel="stylesheet" href="_static/css/custom.css">
-  <script src="_static/js/modernizr-2.6.2.min.js"></script>
-  {{ super() }}
-{% endblock %}
+ <title>NEST documentation index </title>
+ <meta charset="utf-8">
+ <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta name="description" content="This is the documentation index for the NEST, a simulator for spiking neuronal networks.">
+ <meta name="keywords" content="">
+ <link rel="stylesheet" href="_static/stylesheets/application.css">
+ <link rel="stylesheet" href="_static/css/bootstrap/bootstrap.min.css">
+ <link rel="stylesheet" href="_static/css/normalize.css">
+ <link rel="stylesheet" href="_static/css/default.min.css">
+ <script src="_static/js/highlight.min.js"></script>
+ <script>hljs.highlightAll();</script>
+ <link rel="stylesheet" href="_static/js/flexslider/flexslider.css">
+ <link rel="stylesheet" href="_static/css/custom.css">
+ <script src="_static/js/modernizr-2.6.2.min.js"></script>
 
-{% block content %}
-<body id="home">
+<div role="main">
+
+{% include "sphinx_material/header.html" %}
 
   <a href="#" id="gototop"><img src="{{ pathto('_static/img/arrow-up-circle.svg',1) }}"/></a>
   <header id="header" class="wrapper clearfix">
-    <div id="banner">
+    <div id="background" class="particle-img">
+     <div id="banner">
       <div id="logo">
-	<img src="_static/img/nest_docs.png" alt="logo" width="100%">
-      </div>
-  </div>
-
-   <header class="md-header" data-md-component="header">
-  <nav class="md-header-nav md-grid">
-    <div class="md-flex navheader">
-      <div class="md-flex__cell md-flex__cell--shrink">
-        <a href="index.html" title="NEST simulator documentation" class="md-header-nav__button md-logo">
-          
-              <img src="_static/nest_logo.png" alt="NEST simulator documentation logo" height="26">
-          
-        </a>
-      </div>
-      <div class="md-flex__cell md-flex__cell--shrink">
-        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
-      </div>
-      <div class="md-flex__cell md-flex__cell--stretch">
-        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
-          <span class="md-header-nav__topic" style="width: 1040px;">NEST simulator documentation</span>
-        </div>
-      </div>
-      <div class="md-flex__cell md-flex__cell--shrink">
-        <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
-        
-<div class="md-search" data-md-component="search" role="dialog">
-  <label class="md-search__overlay" for="__search"></label>
-  <div class="md-search__inner" role="search">
-    <form class="md-search__form" action="search.html" method="get" name="search">
-      <input type="text" class="md-search__input" name="q" placeholder="Search" autocapitalize="none" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
-      <label class="md-icon md-search__icon" for="__search"></label>
-      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
-        
-      </button>
-    </form>
-    <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix="">
-        <div class="md-search-result" data-md-component="result">
-          <div class="md-search-result__meta">
-            Type to start searching
-          </div>
-          <ol class="md-search-result__list"></ol>
-        </div>
+        <img src="{{ pathto('_static/img/nest_docs.png',1) }}" alt="logo"/>
       </div>
     </div>
-  </div>
-</div>
-
-      </div>
-
-        <div class="md-flex__cell md-flex__cell--shrink">
-          <div class="md-header-nav__source">
-            <a href="https://github.com/nest/nest-simulator/" title="Go to repository" class="md-source" data-md-source="github" data-md-state="done">
-
-    <div class="md-source__icon">
-      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width="28" height="28">
-        <use xlink:href="#__github" width="24" height="24"></use>
-      </svg>
-    </div>
-
-  <div class="md-source__repository">
-    NEST simulator
-  <ul class="md-source__facts"><li class="md-source__fact">449 Stars</li><li class="md-source__fact">324 Forks</li></ul></div>
-</a>
-          </div>
-        </div>
-      
-    </div>
-  </nav>
-</header>
-
-
 <nav id="topnav" role="navigation">
  <div class="menu-toggle">Menu</div>
     <ul class="srt-menu" id="menu-main-navigation">
@@ -113,6 +43,7 @@
   </header>
   <script src="_static/js/tsparticles.min.js"></script>
   <script src="_static/js/particles-app.js"></script>
+
   <section id="hero" class="clearfix">
     <div class="wrapper">
       <div class="row">
@@ -132,7 +63,9 @@
           <a href="community.html" class="buttonlink" style="float: right;">Contact us</a>
         </div>
      </section>
-  <section id="intro" class="vertical-padding">
+
+</div>
+ <section id="intro" class="vertical-padding">
     <div id="main" class="blueelement wrapper clearfix">
       <div class="row vertical-padding">
       <div class="grid_12">
@@ -299,16 +232,14 @@
       Site built with ♥ using <a href="http://www.prowebdesign.ro/simple-responsive-template/" target="_blank">Simple Responsive Template</a>
       by <a href="http://www.prowebdesign.ro/" target="_blank" title="www.prowebdesign.ro">Prowebdesign.ro</a>,
       <a href="attribution-list.html">Free Amateur Icons</a> and <a href="https://particles.js.org/">tsParticles.js</a>.
-    </div>
   </footer>
-  {% endblock %}
-  <script src="_static/js/jquery-3.6.0.min.js"></script>
-  <script src="_static/js/jquery-ui.min.js"></script>
-  <script defer src="_static/js/flexslider/jquery.flexslider-min.js"></script>
-  <script src="_static/js/bootstrap/bootstrap.bundle.min.js"></script>
-  <script src="_static/js/custom.js"></script>
-  <script src="_static/js/main.js"></script>
-</body>
-</html>
+    </div>
+ <script src="_static/js/jquery-3.6.0.min.js"></script>
+ <script src="_static/js/jquery-ui.min.js"></script>
+ <script defer src="_static/js/flexslider/jquery.flexslider-min.js"></script>
+ <script src="_static/js/bootstrap/bootstrap.bundle.min.js"></script>
+ <script src="_static/js/custom.js"></script>
+ <script src="_static/js/main.js"></script>
 
+</html>
 

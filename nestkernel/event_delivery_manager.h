@@ -466,13 +466,16 @@ private:
 
   std::vector< TargetData > send_buffer_target_data_;
   std::vector< TargetData > recv_buffer_target_data_;
-  //!< whether size of MPI buffer for communication of connections was changed
+  //! whether size of MPI buffer for communication of connections was changed
   bool buffer_size_target_data_has_changed_;
-  //!< whether size of MPI buffer for communication of spikes was changed
+  //! whether size of MPI buffer for communication of spikes was changed
   bool buffer_size_spike_data_has_changed_;
-  //!< whether size of MPI buffer for communication of spikes can be decreased
+  //! whether size of MPI buffer for communication of spikes can be decreased
   bool decrease_buffer_size_spike_data_;
 
+  //! Maximum number of spikes received from any rank, per thread
+  std::vector< size_t > max_spikes_received_per_rank_;
+  
   PerThreadBoolIndicator gather_completed_checker_;
 
 #ifdef TIMER_DETAILED

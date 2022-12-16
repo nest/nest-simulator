@@ -60,6 +60,7 @@ EventDeliveryManager::EventDeliveryManager()
   , buffer_size_target_data_has_changed_( false )
   , buffer_size_spike_data_has_changed_( false )
   , decrease_buffer_size_spike_data_( true )
+  , max_spikes_received_per_rank_()
   , gather_completed_checker_()
 {
 }
@@ -86,7 +87,8 @@ EventDeliveryManager::initialize()
   buffer_size_target_data_has_changed_ = false;
   buffer_size_spike_data_has_changed_ = false;
   decrease_buffer_size_spike_data_ = true;
-
+  max_spikes_received_per_rank_.resize( num_threads, 0 );
+  
 #pragma omp parallel
   {
     const thread tid = kernel().vp_manager.get_thread_id();
@@ -359,6 +361,21 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
   assigned_ranks.size = assigned_ranks.end - assigned_ranks.begin;
   assigned_ranks.max_size = assigned_ranks.size;
   
+  const double SHRINK_LIMIT = 0.8;
+  const size_t SHRINK_FACTOR = 2;
+  const size_t old_buff_size_per_rank = kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
+  const size_t max_spikes_per_rank_prev_round = *std::max_element( max_spikes_received_per_rank_.begin(), max_spikes_received_per_rank_.end() );
+  if ( max_spikes_per_rank_prev_round > 0 and max_spikes_per_rank_prev_round < SHRINK_LIMIT * old_buff_size_per_rank )
+  {
+    const auto unused_buffer_entries_per_rank = old_buff_size_per_rank - max_spikes_per_rank_prev_round;
+    const size_t new_buff_size_per_rank = std::max( 2UL, max_spikes_per_rank_prev_round + unused_buffer_entries_per_rank / SHRINK_FACTOR );
+    //std::cerr << "Shrinking buffers. Old: " << old_buff_size_per_rank << ", New: " << new_buff_size_per_rank
+    //          << ", Max count: " << max_spikes_per_rank_prev_round << std::endl;
+    kernel().mpi_manager.set_buffer_size_spike_data(
+      kernel().mpi_manager.get_num_processes() * new_buff_size_per_rank );
+    resize_send_recv_buffers_spike_data_();
+  }
+  
   /* The following do-while loop is executed
    * - once if all spikes fit into current send buffers on all ranks
    * - twice if send buffer size needs to be increased to fit in all spikes
@@ -412,6 +429,9 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 
     if ( not all_spikes_transmitted )
     {
+      //std::cerr << "Growing buffers.   Old: " << kernel().mpi_manager.get_send_recv_count_spike_data_per_rank()
+      //  << ", New: " << max_per_thread_max_spikes_per_rank << std::endl;
+
       kernel().mpi_manager.set_buffer_size_spike_data(
         kernel().mpi_manager.get_num_processes() * max_per_thread_max_spikes_per_rank );
       resize_send_recv_buffers_spike_data_();
@@ -621,6 +641,7 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
       kernel().simulation_manager.get_clock() + Time::step( lag + 1 - kernel().connection_manager.get_min_delay() );
   }
 
+  max_spikes_received_per_rank_[tid] = 0;
   for ( thread rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
   {
     // check last entry for completed marker; needs to be done before
@@ -649,7 +670,8 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
         break;
       }
     }
-
+    max_spikes_received_per_rank_[tid] = std::max( num_valid_entries, max_spikes_received_per_rank_[tid] );
+    
     const unsigned int num_batches = num_valid_entries / BATCH_SIZE;
     const unsigned int num_remaining_entries = num_valid_entries - num_batches * BATCH_SIZE;
 

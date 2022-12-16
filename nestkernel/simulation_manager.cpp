@@ -878,7 +878,7 @@ nest::SimulationManager::update_()
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
 #endif
-      }
+      }  // if from_step == 0
 
       // preliminary update of nodes that use waveform relaxtion, only
       // necessary if secondary connections exist and any node uses

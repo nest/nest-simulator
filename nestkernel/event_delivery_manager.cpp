@@ -359,6 +359,10 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
   assigned_ranks.size = assigned_ranks.end - assigned_ranks.begin;
   assigned_ranks.max_size = assigned_ranks.size;
   
+  /* The following do-while loop is executed
+   * - once if all spikes fit into current send buffers on all ranks
+   * - twice if send buffer size needs to be increased to fit in all spikes
+   */
   bool all_spikes_transmitted = false;
   do
   {
@@ -420,7 +424,10 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 #endif
     } while ( not all_spikes_transmitted );
   
-  // TODO: need to clear spike register
+  /* emitted_spike_register is cleared by deliver_events in a thread-parallel context.
+     We could in principle clear it here, but since it can conveniently be done thread-parallel,
+     it is best to postpone.
+   */
   // TODO: consider reduce size of buffers again
 }
 

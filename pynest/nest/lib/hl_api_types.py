@@ -901,8 +901,7 @@ class SynapseCollection:
         """
         Disconnect the connections in the `SynapseCollection`.
         """
-        sps(self._datum)
-        sr('Disconnect_a')
+        nestkernel.llapi_disconnect_syncoll(self._datum)
 
 
 class CollocatedSynapses:

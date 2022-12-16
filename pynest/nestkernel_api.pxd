@@ -120,6 +120,7 @@ cdef extern from "nest.h" namespace "nest":
                  NodeCollectionPTR targets,
                  const dictionary& connectivity,
                  const dictionary& synapse_params) except +
+    void disconnect( const deque[ConnectionID]& conns ) except +
     int get_rank() except +
     int get_num_mpi_processes() except +
     string print_nodes_to_string()

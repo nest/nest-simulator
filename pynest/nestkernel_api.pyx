@@ -424,6 +424,15 @@ def llapi_disconnect(NodeCollectionObject pre, NodeCollectionObject post, object
             pydict_to_dictionary(synapse_params))
 
 @catch_cpp_error
+def llapi_disconnect_syncoll(object conns):
+    cdef deque[ConnectionID] conn_deque
+    cdef ConnectionObject conn_object
+    for conn_object in conns:
+        conn_deque.push_back(conn_object.thisobj)
+
+    disconnect(conn_deque)
+
+@catch_cpp_error
 def llapi_connect_layers(NodeCollectionObject pre, NodeCollectionObject post, object projections):
     print("### 9", projections)
     connect_layers(pre.thisptr, post.thisptr, pydict_to_dictionary(projections))

@@ -341,9 +341,13 @@ def Disconnect(*args, conn_spec=None, syn_spec=None):
         # Fill default values
         conn_spec = 'one_to_one' if conn_spec is None else conn_spec
         syn_spec = 'static_synapse' if syn_spec is None else syn_spec
-        if is_string(conn_spec):
+        if isinstance(conn_spec, str):
             conn_spec = {'rule': conn_spec}
-        if is_string(syn_spec):
+        if isinstance(syn_spec, str):
             syn_spec = {'synapse_model': syn_spec}
-
-    nestkernel.llapi_disconnect(pre._datum, post._datum, conn_spec, syn_spec)
+        pre, post = args
+        if not isinstance(pre, NodeCollection) or not isinstance(post, NodeCollection):
+            raise TypeError('Arguments must be either a SynapseCollection or two NodeCollections')
+        nestkernel.llapi_disconnect(pre._datum, post._datum, conn_spec, syn_spec)
+    else:
+        raise TypeError('Arguments must be either a SynapseCollection or two NodeCollections')

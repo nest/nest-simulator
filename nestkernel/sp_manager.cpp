@@ -273,9 +273,13 @@ SPManager::disconnect( NodeCollectionPTR sources,
     }
   }
 
+  // The ConnBuilder expects synapse specifications in a vector. We have to define
+  // the vector here to keep track of access flags.
+  const std::vector< dictionary > syn_spec_vec = { syn_spec };
+
   ConnBuilder* cb = nullptr;
   conn_spec.init_access_flags();
-  syn_spec.init_access_flags();
+  syn_spec_vec[ 0 ].init_access_flags();
 
   if ( not conn_spec.known( names::rule ) )
   {
@@ -293,10 +297,10 @@ SPManager::disconnect( NodeCollectionPTR sources,
 
     for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin(); i != sp_conn_builders_.end(); i++ )
     {
-      std::string syn_model = syn_spec.get< std::string >( names::synapse_model );
+      std::string syn_model = syn_spec_vec[ 0 ].get< std::string >( names::synapse_model );
       if ( ( *i )->get_synapse_model() == kernel().model_manager.get_synapse_model_id( syn_model ) )
       {
-        cb = kernel().connection_manager.get_conn_builder( rule_name, sources, targets, conn_spec, { syn_spec } );
+        cb = kernel().connection_manager.get_conn_builder( rule_name, sources, targets, conn_spec, syn_spec_vec );
         cb->set_post_synaptic_element_name( ( *i )->get_post_synaptic_element_name() );
         cb->set_pre_synaptic_element_name( ( *i )->get_pre_synaptic_element_name() );
       }
@@ -304,13 +308,13 @@ SPManager::disconnect( NodeCollectionPTR sources,
   }
   else
   {
-    cb = kernel().connection_manager.get_conn_builder( rule_name, sources, targets, conn_spec, { syn_spec } );
+    cb = kernel().connection_manager.get_conn_builder( rule_name, sources, targets, conn_spec, syn_spec_vec );
   }
   assert( cb );
 
   // at this point, all entries in conn_spec and syn_spec have been checked
   conn_spec.all_entries_accessed( "Disconnect", "conn_spec" );
-  syn_spec.all_entries_accessed( "Disconnect", "syn_spec" );
+  syn_spec_vec[ 0 ].all_entries_accessed( "Disconnect", "syn_spec" );
 
   // Set flag before calling cb->disconnect() in case exception is thrown after some connections have been removed.
   kernel().connection_manager.set_connections_have_changed();

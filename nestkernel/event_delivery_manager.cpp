@@ -435,6 +435,12 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
     
     kernel().mpi_manager.communicate_spike_data_Alltoall( send_buffer, recv_buffer );
 
+#ifdef TIMER_DETAILED
+    {
+      sw_communicate_spike_data_.stop();
+    }
+#endif
+
     const auto max_per_thread_max_spikes_per_rank = get_max_spike_data_per_thread_( assigned_ranks, send_buffer_position,
                                                                                    recv_buffer );
     all_spikes_transmitted = max_per_thread_max_spikes_per_rank == 0;
@@ -452,11 +458,6 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
       resize_send_recv_buffers_spike_data_();
     }
     
-#ifdef TIMER_DETAILED
-    {
-      sw_communicate_spike_data_.stop();
-    }
-#endif
     } while ( not all_spikes_transmitted );
   
   /* emitted_spike_register is cleared by deliver_events in a thread-parallel context.

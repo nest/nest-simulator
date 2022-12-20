@@ -268,14 +268,14 @@ cdef class NESTEngine:
         cdef Datum* nc_datum = python_object_to_datum(node_collection)
 
         try:
-            if array.dtype == numpy.bool:
+            if array.dtype == numpy.bool_:
                 # Boolean C-type arrays are not supported in NumPy, so we use an 8-bit integer array
                 array_bool_mv = numpy.ascontiguousarray(array, dtype=numpy.uint8)
                 array_bool_ptr = &array_bool_mv[0]
                 new_nc_datum = node_collection_array_index(nc_datum, array_bool_ptr, len(array))
                 return sli_datum_to_object(new_nc_datum)
             elif numpy.issubdtype(array.dtype, numpy.integer):
-                array_long_mv = numpy.ascontiguousarray(array, dtype=numpy.long)
+                array_long_mv = numpy.ascontiguousarray(array, dtype=numpy.int_)
                 array_long_ptr = &array_long_mv[0]
                 new_nc_datum = node_collection_array_index(nc_datum, array_long_ptr, len(array))
                 return sli_datum_to_object(new_nc_datum)
@@ -321,10 +321,10 @@ cdef class NESTEngine:
                 raise ValueError('syn_param_values must be a matrix with arrays of the same length as sources and targets.')
 
         # Get pointers to the first element in each NumPy array
-        cdef long[::1] sources_mv = numpy.ascontiguousarray(sources, dtype=numpy.long)
+        cdef long[::1] sources_mv = numpy.ascontiguousarray(sources, dtype=numpy.int_)
         cdef long* sources_ptr = &sources_mv[0]
 
-        cdef long[::1] targets_mv = numpy.ascontiguousarray(targets, dtype=numpy.long)
+        cdef long[::1] targets_mv = numpy.ascontiguousarray(targets, dtype=numpy.int_)
         cdef long* targets_ptr = &targets_mv[0]
 
         cdef double[::1] weights_mv

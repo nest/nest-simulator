@@ -94,6 +94,7 @@ extensions = [
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
     'sphinx.ext.mathjax',
+    'IPython.sphinxext.ipython_console_highlighting',
     'nbsphinx',
     'sphinx_design',
     'HoverXTooltip',
@@ -139,7 +140,7 @@ language = 'en'
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = ['Thumbs.db', '.DS_Store', 'nest_by_example', 'README.md']
+exclude_patterns = ['Thumbs.db', '.DS_Store', 'nest_by_example', 'README.md', '**.ipynb_checkpoints', 'auto_examples/**.ipynb']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'manni'

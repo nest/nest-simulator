@@ -232,9 +232,16 @@ PyNEST examples
            * :doc:`../auto_examples/csa_spatial_example`
 
 .. toctree::
-   :maxdepth: 1
    :hidden:
 
+   ../auto_examples/index
+   ../examples/README.rst
+   ../auto_examples/sudoku/index
+   ../auto_examples/pong/index
+   ../auto_examples/spatial/index
+   ../auto_examples/music_cont_out_proxy_example/index
+   ../auto_examples/compartmental_model/index
+   ../auto_examples/Potjans_2014/index
    ../auto_examples/one_neuron
    ../auto_examples/one_neuron_with_noise
    ../auto_examples/twoneurons

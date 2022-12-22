@@ -71,7 +71,7 @@ PyNEST examples
     .. grid-item-card:: Cortical microcircuit (Potjans)
            :img-top: ../static/img/pynest/raster_plot.png
 
-           * :doc:`cortical_microcircuit_index`
+           * :doc:`../auto_examples/Potjans_2014/index`
 
     .. grid-item-card:: GLIF (from Allen institute)
            :img-top: ../static/img/pynest/glif_cond.png
@@ -323,6 +323,7 @@ PyNEST examples
 
 .. toctree::
    :hidden:
+
    ../auto_examples/pong/run_simulations
    ../auto_examples/pong/pong
    ../auto_examples/pong/generate_gif

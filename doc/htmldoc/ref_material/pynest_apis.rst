@@ -95,15 +95,18 @@ Functions related to randomization
 
 .. automodule:: nest.random.hl_api_random
     :members:
+    :noindex:
 
 Functions related to spatial distributions
 ------------------------------------------
 
 .. automodule:: nest.spatial
     :members: distance
+    :noindex:
 
 .. automodule:: nest.spatial
-    :members: 
+    :members:
+    :noindex:
 
 .. automodule:: nest.spatial_distributions.hl_api_spatial_distributions
     :members:

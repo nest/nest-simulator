@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# helpers.py
+# helpers-sudoku.py
 #
 # This file is part of NEST.
 #

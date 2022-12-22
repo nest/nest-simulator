@@ -22,7 +22,7 @@
 r"""Classes for running simulations of the classic game Pong
 ----------------------------------------------------------------
 The Class GameOfPong contains all necessary functionality for running simple
-simulations of Pong games.
+simulations of Pong games. See [1]_ for details.
 
 See Also
 ---------

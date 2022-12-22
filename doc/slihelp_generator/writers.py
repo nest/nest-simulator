@@ -31,7 +31,7 @@ import io
 import os
 import re
 import textwrap
-from helpers import cut_it
+from helpers_sli import cut_it
 from string import Template
 
 

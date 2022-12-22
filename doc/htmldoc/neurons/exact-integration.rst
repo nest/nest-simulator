@@ -182,7 +182,7 @@ where
 
 as the linearity of the system permits the initial conditions for all spikes arriving at a given grid point to be lumped together in the term :math:`x_{t+h}`. :math:`S_{t+h}` is the set of indices :math:`k\in 1,....,K` of synapses that deliver a spike to the neuron at time :math:`t+h`.
 
-The matrix :math:`e^{Ah}` in the C++ implementation of the model in NEST is constructed `here <https://github.com/nest/nest-simulator/blob/b3fc263e073f46f0732c10efb34fcc90f3b6771c/models/iaf_psc_alpha.cpp#L243>`_.
+The matrix :math:`e^{Ah}` in the C++ implementation of the model in NEST is constructed `in the iaf_psc_alpha model <https://github.com/nest/nest-simulator/blob/b3fc263e073f46f0732c10efb34fcc90f3b6771c/models/iaf_psc_alpha.cpp#L243>`_.
 
 Every matrix entry is calculated twice. For inhibitory postsynaptic inputs (with a time constant :math:`\tau_{syn_{in}}`) and excitatory postsynaptic inputs (with a time constant :math:`\tau_{syn_{ex}}`).
 

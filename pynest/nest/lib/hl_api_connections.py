@@ -315,9 +315,9 @@ def Disconnect(*args, conn_spec=None, syn_spec=None):
     Apply the same rules as for connectivity specs in the :py:func:`.Connect` method
 
     Possible choices of the conn_spec are
-    ::
-     - 'one_to_one'
-     - 'all_to_all'
+
+    - 'one_to_one'
+    - 'all_to_all'
 
     **syn_spec**
 

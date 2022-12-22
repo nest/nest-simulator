@@ -38,6 +38,7 @@ Here the solution is given by :math:`f(t)=e^{at}`.
 
 Solving a non-homogeneous linear differential equation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 When you add another function :math:`g` to the right hand side of our linear differential equation,
 
 .. math::
@@ -189,9 +190,12 @@ The update is performed `here <https://github.com/nest/nest-simulator/blob/b3fc2
 
 If synaptic and membrane time constants become very close, :math:`\tau_m\approx \tau_{syn}`, the matrix :math:`e^{Ah}` becomes numerically unstable. NEST handles this gracefully as described in the `IAF Integration Singularity notebook <model_details/IAF_Integration_Singularity.ipynb>`_.
 
+
+For more information see [1]_.
+
 References
 ~~~~~~~~~~
 
-.. [1] RotterV S & Diesmann M (1999) Exact simulation of time-invariant linear
-    systems with applications to neuronal modeling. Biologial Cybernetics
-    81:381-402. DOI: https://doi.org/10.1007/s004220050570
+.. [1] Rotter V S, Diesmann M (1999). Exact simulation of time-invariant linear
+       systems with applications to neuronal modeling. Biologial Cybernetics
+       81:381-402. DOI: https://doi.org/10.1007/s004220050570

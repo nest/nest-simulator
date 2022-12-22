@@ -202,7 +202,7 @@ Consider the following case:
     nest.resolution = 0.1
     n = nest.Create('iaf_psc_alpha', 100)
     nest.Connect(n, n, syn_spec={'delay': nest.random.uniform(min=1, max=2)})
-    
+
 This will create 10000 connections in total with delay values 1.0, 1.1, ..., 2.0. But while
 the interior delay values 1.1, ..., 1.9 will occur approximately 1000 times each, the first and last
 cases, 1.0 and 2.0, will occur only approximately 500 times each. This happens because NEST
@@ -224,7 +224,7 @@ this is slightly more cumbersome:
 ::
 
     nest.Connect(n, n, syn_spec={'delay': 1 + 0.1 * nest.random.uniform_int(11)})
-    
+
 An in-depth analysis of delay rounding is available in a
 `master thesis <https://hdl.handle.net/11250/3012689>`_.
 
@@ -438,19 +438,19 @@ different seeds will overlap is given by
 
 We have
 
-.. math ::
+.. math::
 
    s = N_{\text{vp}} = 10^7 \sim 2^{23}\quad\text{and}\quad l = 10^{11} \sim 2^{37}\;,
 
 so assuming an :hxt_ref:`RNG` period of :math:`r = 2^{128}` we obtain
 
-.. math ::
+.. math::
 
    p_{\text{overlap}} \sim \left(2^{23}\right)^2 \times 2^{37} / 2^{128} = 2^{-45} \sim 3 \times 10^{-14}
 
 while for a period of :math:`r = 2^{256}` we obtain
 
-.. math ::
+.. math::
 
    p_{\text{overlap}} \sim 2^{-173} \sim 10^{-52}\; .
 

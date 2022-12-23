@@ -148,14 +148,6 @@ syn_params = {
     }
 
 ###############################################################################
-# Nodes
-
-nodes_ex = None
-nodes_in = None
-nodes_astro = None
-noise = None
-
-###############################################################################
 # Build functions
 
 def build_create(scale, poisson_time):
@@ -170,11 +162,12 @@ def build_create(scale, poisson_time):
         "poisson_generator",
         params={
             "rate": network_params["poisson_rate"],
-            "start": 0.0, "stop": time
+            "start": 0.0, "stop": poisson_time
             }
         )
+    return nodes_ex, nodes_in, nodes_astro, noise
 
-def build_connect():
+def build_connect(nodes_ex, nodes_in, nodes_astro, noise):
     print("Connecting poisson")
     # note: result of fixed outdegree is less synchronou than one-to-all
     conn_spec_ne = {
@@ -265,16 +258,16 @@ def run_simulation():
 
     # create and connect nodes
     total_time = sim_params["pre_sim_time"] + sim_params["sim_time"]
-    build_create(scale=1, poisson_time=total_time)
-    build_connect()
+    e, i, a, n = build_create(scale=1, poisson_time=total_time)
+    build_connect(e, i, a, n)
 
     # create spike recorder
     espikes = nest.Create("spike_recorder")
     ispikes = nest.Create("spike_recorder")
     espikes.set(label="astro-ex", record_to="ascii")
     ispikes.set(label="astro-in", record_to="ascii")
-    nest.Connect(nodes_ex_[:sim_params["N_rec"]], espikes)
-    nest.Connect(nodes_in_[:sim_params["N_rec"]], ispikes)
+    nest.Connect(e[:sim_params["N_rec"]], espikes)
+    nest.Connect(i[:sim_params["N_rec"]], ispikes)
 
     # time after building
     endbuild = time.time()
@@ -310,4 +303,3 @@ def run_simulation():
 
 if __name__ == "__main__":
     run_simulation()
-

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# brunel_astro.py
+# astrocyte_brunel.py
 #
 # This file is part of NEST.
 #
@@ -20,19 +20,11 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Random balanced network (alpha synapses) with astrocytes
+Random balanced network with astrocytes
 ------------------------------------------------------------
 
 This script simulates a network with excitatory and inhibitory neurons and
-astrocytes on the basis of the network used in [1]_.
-
-References
-~~~~~~~~~~
-
-.. [1] Destexhe, A. (2009). Self-sustained asynchronous irregular states and
-       up–down states in thalamic, cortical and thalamocortical networks of
-       nonlinear integrate-and-fire neurons. Journal of computational 
-       neuroscience, 27(3), 493-506.
+astrocytes.
 
 """
 
@@ -40,238 +32,282 @@ References
 # Import all necessary modules for simulation, analysis and plotting. Scipy
 # should be imported before nest.
 
-import copy
 import time
-import numpy as np
-import scipy.special as sp
+import multiprocessing as mp
 
 import nest
 import nest.raster_plot
 import matplotlib.pyplot as plt
 
+###############################################################################
+# Simulation parameters
+
+sim_params = {
+    "dt": 0.2, # simulation resolution
+    "pre_sim_time": 200.0, # time before simulation
+    "sim_time": 1000.0, # simulation time
+    "N_rec": 100, # number of neurons recorded
+    }
 
 ###############################################################################
-# Reset kernel
+# Network parameters
 
-nest.ResetKernel()
-# nest.set(local_num_threads=8)
+network_params = {
+    "N_ex": 8000, # number of excitatory neurons
+    "N_in": 2000, # number of inhibitory neurons
+    "N_astro": 10000, # number of astrocytes
+    "p": 0.1, # neuron-neuron connection probability.
+    "p_syn_astro": 1.0, # synapse-astrocyte pairing probability
+    "max_astro_per_target": 1, # Max number of astrocytes per target neuron
+    "poisson_rate": 500, # rate of poisson input
+    "poisson_prob": 1, # connection probability of poisson input
+    }
 
 ###############################################################################
-# Assigning the current time to a variable in order to determine the build
-# time of the network.
+# Astrocyte parameters
 
-startbuild = time.time()
+astro_params = {
+    'Ca_tot_astro': 2.0, # Total free astrocytic calcium concentration in uM
+    'IP3_0_astro': 0.16, # Baseline value of the astrocytic IP3 concentration in uM
+    'K_act_astro': 0.08234, # Astrocytic IP3R dissociation constant of calcium (activation) in uM
+    'K_inh_astro': 1.049, # Astrocytic IP3R dissociation constant of calcium (inhibition) in uM
+    'K_IP3_1_astro': 0.13, # Astrocytic IP3R dissociation constant of IP3 in uM
+    'K_IP3_2_astro': 0.9434, # Astrocytic IP3R dissociation constant of IP3 in uM
+    'K_SERCA_astro': 0.1, # Activation constant of astrocytic SERCA pump in uM
+    'r_ER_cyt_astro': 0.185, # Ratio between astrocytic ER and cytosol volumes
+    'r_IP3_astro': 0.1, # Rate constant of astrocytic IP3 production in uM/ms
+    'r_IP3R_astro': 0.001, # Astrocytic IP3R binding constant for calcium inhibition in 1/(uM*ms)
+    'r_L_astro': 0.00011, # Rate constant for calcium leak from the astrocytic ER to cytosol in 1/ms
+    'tau_IP3_astro': 300.0, # Time constant of astrocytic IP3 degradation
+    'v_IP3R_astro': 0.006, # Maximum rate of calcium release via astrocytic IP3R in 1/ms
+    'v_SERCA_astro': 0.0009, # Maximum rate of calcium uptake by astrocytic IP3R in uM/ms
+    }
 
 ###############################################################################
-# Neuron model used
+# Neuron parameters
 
 neuron_model = "aeif_cond_alpha_astro"
+tau_syn_ex = 2.0
+tau_syn_in = 5.0
 
-###############################################################################
-# Assigning the simulation parameters to variables.
-
-dt = 0.1    # the resolution in ms
-simtime = 3000.0  # Simulation time in ms
-delay = dt    # synaptic delay in ms
-
-###############################################################################
-# Parameters for neuron-neuron connections
-
-p_neuron = 0.02  # connection probability for neurons
-J_ex = 6.0  # excitatory synaptic weight in nS
-J_in = -67.0  # inhibitory synaptic weight in nS
-
-###############################################################################
-# Parameters for astrocytes
-
-p_synapse_astrocyte = 1.0
-max_astro_per_target = 3
-
-###############################################################################
-# Definition of the number of neurons and astrocytes in the network and the
-# number of neurons recorded from.
-
-order = 400
-NE = 4 * order  # number of excitatory neurons
-NI = 1 * order  # number of inhibitory neurons
-N_astro = 400  # number of astrocytes
-N_rec = 100  # record from 100 neurons
-
-###############################################################################
-# Initialization of the parameters of the integrate and fire neuron and the
-# synapses. The parameters of the neuron are stored in a dictionary.
-
-tau_syn_ex = 5.0
-tau_syn_in = 10.0
 neuron_params_ex = {
-                 "V_m": -60.0, # membrane potential in mV
-                 "C_m": 200.0, # capacitance of membrane in pF
-                 "t_ref": 2.5, # duration of refractory period in ms
-                 "V_reset": -60.0,  # reset value for V_m in mV
-                 "E_L": -60.0, # leak reverse potential in mV
-                 "g_L": 10.0, # leak conductance in nS
-                 "a": 1.0, # subthreshold adaptation in nS
-                 "b": 40.0, # spike-triggered adaptation in pA
-                 "Delta_T": 2.5, # slope factor in mV
-                 "tau_w": 600.0, # adaptation time constant in ms
-                 "V_th": -50.0, # spike initiation threshold in mV
-                 "V_peak": -50.0, # spike detection threshold in mV
-                 "E_ex": 0.0, # excitatory reversal potential in mV
-                 "E_in": -80.0, # inhibitory reversal potential in mV
-                 "tau_syn_ex": tau_syn_ex, # excitatory synaptic time constant in ms
-                 "tau_syn_in": tau_syn_in, # inhibitory synaptic time constant in ms
-                 }
-neuron_params_in = copy.deepcopy(neuron_params_ex)
-neuron_params_in["b"] = 0.0 # spike-triggered adaptation for inhibitory neurons
+    "V_m": -70.0, # membrane potential in mV
+    "C_m": 100.0, # capacitance of membrane in pF
+    "t_ref": 2.5, # duration of refractory period in ms
+    "V_reset": -61.0,  # reset value for V_m in mV
+    "E_L": -70.0, # leak reverse potential in mV
+    "g_L": 10.0, # leak conductance in nS
+    "a": 0.254, # subthreshold adaptation in nS
+    "b": 1.38, # spike-triggered adaptation in pA
+    "Delta_T": 2.0, # slope factor in mV
+    "tau_w": 115.51, # adaptation time constant in ms
+    "V_th": -40.0, # spike initiation threshold in mV
+    "V_peak": 0.0, # spike detection threshold in mV
+    "E_ex": 0.0, # excitatory reversal potential in mV
+    "E_in": -80.0, # inhibitory reversal potential in mV
+    "tau_syn_ex": tau_syn_ex, # excitatory synaptic time constant in ms
+    "tau_syn_in": tau_syn_in, # inhibitory synaptic time constant in ms
+    }
+
+neuron_params_in = {
+    "V_m": -70.0, # membrane potential in mV
+    "C_m": 100.0, # capacitance of membrane in pF
+    "t_ref": 2.5, # duration of refractory period in ms
+    "V_reset": -47.21,  # reset value for V_m in mV
+    "E_L": -70.0, # leak reverse potential in mV
+    "g_L": 10.0, # leak conductance in nS
+    "a": 0.254, # subthreshold adaptation in nS
+    "b": 1.481, # spike-triggered adaptation in pA
+    "Delta_T": 2.0, # slope factor in mV
+    "tau_w": 202.386, # adaptation time constant in ms
+    "V_th": -40.0, # spike initiation threshold in mV
+    "V_peak": 0.0, # spike detection threshold in mV
+    "E_ex": 0.0, # excitatory reversal potential in mV
+    "E_in": -80.0, # inhibitory reversal potential in mV
+    "tau_syn_ex": tau_syn_ex, # excitatory synaptic time constant in ms
+    "tau_syn_in": tau_syn_in, # inhibitory synaptic time constant in ms
+    }
+
+syn_params = {
+    "J_ee": 2.67436, # excitatory-to-excitatory synaptic weight in nS
+    "J_ei": 1.05594, # excitatory-to-inhibitory synaptic weight in nS
+    "J_ie": -5.96457, # inhibitory-to-excitatory synaptic weight in nS
+    "J_ii": -3.58881, # inhibitory-to-inhibitory synaptic weight in nS
+    "tau_rec_ee": 2882.9445, # excitatory-to-excitatory depression time constant in ms
+    "tau_rec_ei": 5317.747, # excitatory-to-inhibitory depression time constant in ms
+    "tau_rec_ie": 226.859, # inhibitory-to-excitatory depression time constant in ms
+    "tau_rec_ii": 2542.207,  # inhibitory-to-inhibitory depression time constant in ms
+    "tau_fac_ee": 0.0, # excitatory-to-excitatory facilitation time constant in ms
+    "tau_fac_ei": 0.0, # excitatory-to-inhibitory facilitation time constant in ms
+    "tau_fac_ie": 0.0, # inhibitory-to-excitatory facilitation time constant in ms
+    "tau_fac_ii": 0.0,  # inhibitory-to-inhibitory facilitation time constant in ms
+    "U_ee": 0.928, # excitatory-to-excitatory release probability parameter
+    "U_ei": 0.264, # excitatory-to-inhibitory release probability parameter
+    "U_ie": 0.541, # inhibitory-to-excitatory release probability parameter
+    "U_ii": 0.189, # inhibitory-to-inhibitory release probability parameter
+    }
 
 ###############################################################################
-# Poisson generator rate
+# Nodes
 
-poisson_rate = 200.0
-
-################################################################################
-# Configuration of the simulation kernel by the previously defined time
-# resolution used in the simulation. Setting ``print_time`` to `True` prints the
-# already processed simulation time as well as its percentage of the total
-# simulation time.
-
-nest.resolution = dt
-nest.print_time = True
-nest.overwrite_files = True
+nodes_ex = None
+nodes_in = None
+nodes_astro = None
+noise = None
 
 ###############################################################################
-# Creation of the nodes using ``Create``. We store the returned handles in
-# variables for later reference.
+# Build functions
 
-print("Building network")
-nodes_ex = nest.Create(neuron_model, NE, params=neuron_params_ex)
-nodes_in = nest.Create(neuron_model, NI, params=neuron_params_in)
-nodes_astro = nest.Create("astrocyte", N_astro)
-noise = nest.Create("poisson_generator", params={"rate": poisson_rate, "start": 0.0, "stop": 50.0})
-espikes = nest.Create("spike_recorder")
-ispikes = nest.Create("spike_recorder")
+def build_create(scale, poisson_time):
+    print("Creating nodes")
+    nodes_ex = nest.Create(
+        neuron_model, network_params["N_ex"]*scale, params=neuron_params_ex)
+    nodes_in = nest.Create(
+        neuron_model, network_params["N_in"]*scale, params=neuron_params_in)
+    nodes_astro = nest.Create(
+        "astrocyte", network_params["N_astro"]*scale, params=astro_params)
+    noise = nest.Create(
+        "poisson_generator",
+        params={
+            "rate": network_params["poisson_rate"],
+            "start": 0.0, "stop": time
+            }
+        )
 
-###############################################################################
-# Configuration of the spike recorders recording excitatory and inhibitory
-# spikes by sending parameter dictionaries to ``set``. Setting the property
-# `record_to` to *"ascii"* ensures that the spikes will be recorded to a file,
-# whose name starts with the string assigned to the property `label`.
+def build_connect():
+    print("Connecting poisson")
+    # note: result of fixed outdegree is less synchronou than one-to-all
+    conn_spec_ne = {
+        "rule": "fixed_outdegree",
+        "outdegree": int(len(nodes_ex)*network_params["poisson_prob"])
+        }
+    conn_spec_ni = {
+        "rule": "fixed_outdegree",
+        "outdegree": int(len(nodes_in)*network_params["poisson_prob"])
+        }
+    syn_params_ne = {
+        "synapse_model": "static_synapse", "weight": syn_params["J_ee"]
+        }
+    syn_params_ni = {
+        "synapse_model": "static_synapse", "weight": syn_params["J_ei"]
+        }
+    nest.Connect(
+        noise, nodes_ex, conn_spec=conn_spec_ne, syn_spec=syn_params_ne
+        )
+    nest.Connect(
+        noise, nodes_in, conn_spec=conn_spec_ni, syn_spec=syn_params_ni
+        )
 
-espikes.set(label="brunel-py-ex", record_to="ascii")
-ispikes.set(label="brunel-py-in", record_to="ascii")
+    print("Connecting excitatory")
+    conn_params_ex = {
+        "rule": "pairwise_bernoulli_astro",
+        "astrocyte": nodes_astro,
+        "p": network_params["p"],
+        "p_syn_astro": network_params["p_syn_astro"],
+        "max_astro_per_target": network_params["max_astro_per_target"],
+        "astro_pool_per_target_det": False
+        }
+    syn_params_ee = {
+        "synapse_model": "tsodyks_synapse",
+        "weight": syn_params["J_ee"],
+        "U": syn_params["U_ee"],
+        "tau_psc": tau_syn_ex,
+        "tau_fac": syn_params["tau_fac_ee"],
+        "tau_rec": syn_params["tau_rec_ee"],
+        }
+    syn_params_ei = {
+        "synapse_model": "tsodyks_synapse",
+        "weight": syn_params["J_ei"],
+        "U": syn_params["U_ei"],
+        "tau_psc": tau_syn_ex,
+        "tau_fac": syn_params["tau_fac_ei"],
+        "tau_rec": syn_params["tau_rec_ei"],
+        }
+    nest.Connect(nodes_ex, nodes_ex, conn_params_ex, syn_params_ee)
+    nest.Connect(nodes_ex, nodes_in, conn_params_ex, syn_params_ei)
 
-#################################################################################
-# Connecting the previously defined poisson generator to the excitatory and
-# inhibitory neurons using the excitatory synapse. 
-
-print("Connecting devices")
-noise_prob = 0.02 # connection probability with poisson generator
-conn_spec_noise_ex = {"rule": "fixed_outdegree", "outdegree": int(len(nodes_ex)*noise_prob)}
-conn_spec_noise_in = {"rule": "fixed_outdegree", "outdegree": int(len(nodes_in)*noise_prob)}
-syn_params_noise = {"synapse_model": "static_synapse", "weight": J_ex, "delay": delay}
-nest.Connect(noise, nodes_ex, conn_spec=conn_spec_noise_ex, syn_spec=syn_params_noise)
-nest.Connect(noise, nodes_in, conn_spec=conn_spec_noise_in, syn_spec=syn_params_noise)
-
-###############################################################################
-# Connecting the first ``N_rec`` nodes of the excitatory and inhibitory
-# population to the associated spike recorders using excitatory synapses.
-# Here the same shortcut for the specification of the synapse as defined
-# above is used.
-
-nest.Connect(nodes_ex[:N_rec], espikes)
-nest.Connect(nodes_in[:N_rec], ispikes)
-
-###############################################################################
-# Connecting the excitatory population to all neurons. The connections are
-# paired with astrocytes with the "pairwise_bernoulli_astro" rule.
-
-print("Connecting network")
-print("Excitatory connections")
-conn_params_astro = {
-                  "rule": "pairwise_bernoulli_astro",
-                  "astrocyte": nodes_astro,
-                  "p": p_neuron,
-                  "p_syn_astro": p_synapse_astrocyte,
-                  "max_astro_per_target": max_astro_per_target
-                  }
-syn_params_astro = {
-                 "synapse_model": "tsodyks_synapse",
-                 "weight": J_ex,
-                 "delay": delay,
-                 "U": 0.5,
-                 "tau_psc": tau_syn_ex,
-                 "tau_fac": 0.0,
-                 "tau_rec": 800.0
-                 }
-nest.Connect(nodes_ex, nodes_ex + nodes_in, conn_params_astro, syn_params_astro)
-
-###############################################################################
-# Connecting the inhibitory population to all neurons.
-
-print("Inhibitory connections")
-conn_params_in = {"rule": "pairwise_bernoulli", "p": p_neuron}
-syn_params_in = {
-              "synapse_model": "tsodyks_synapse",
-              "weight": J_in,
-              "delay": delay,
-              "U": 0.04,
-              "tau_psc": tau_syn_in,
-              "tau_fac": 1000.0,
-              "tau_rec": 100.0
-              }
-nest.Connect(nodes_in, nodes_ex + nodes_in, conn_params_in, syn_params_in)
-
-###############################################################################
-# Storage of the time point after the buildup of the network in a variable.
-
-endbuild = time.time()
-
-###############################################################################
-# Simulation of the network.
-
-print("Simulating")
-
-nest.Simulate(simtime)
+    print("Connecting inhibitory")
+    conn_params_in = {"rule": "pairwise_bernoulli", "p": network_params["p"]}
+    syn_params_ie = {
+        "synapse_model": "tsodyks_synapse",
+        "weight": syn_params["J_ie"],
+        "U": syn_params["U_ie"],
+        "tau_psc": tau_syn_in,
+        "tau_fac": syn_params["tau_fac_ie"],
+        "tau_rec": syn_params["tau_rec_ie"],
+        }
+    syn_params_ii = {
+        "synapse_model": "tsodyks_synapse",
+        "weight": syn_params["J_ii"],
+        "U": syn_params["U_ii"],
+        "tau_psc": tau_syn_in,
+        "tau_fac": syn_params["tau_fac_ii"],
+        "tau_rec": syn_params["tau_rec_ii"],
+        }
+    nest.Connect(nodes_in, nodes_ex, conn_params_in, syn_params_ie)
+    nest.Connect(nodes_in, nodes_in, conn_params_in, syn_params_ii)
 
 ###############################################################################
-# Storage of the time point after the simulation of the network in a variable.
+# Main function for running simulation.
 
-endsimulate = time.time()
+def run_simulation():
+    # reset kernel
+    nest.ResetKernel()
+    nest.SetKernelStatus({'total_num_virtual_procs': int(mp.cpu_count()/2)})
 
-###############################################################################
-# Reading out the total number of spikes received from the spike recorder
-# connected to the excitatory population and the inhibitory population.
+    # time before building
+    startbuild = time.time()
 
-events_ex = espikes.n_events
-events_in = ispikes.n_events
+    # NEST configuration
+    nest.resolution = sim_params["dt"]
+    nest.print_time = True
+    nest.overwrite_files = True
 
-###############################################################################
-# Calculation of the average firing rate of the excitatory and the inhibitory
-# neurons by dividing the total number of recorded spikes by the number of
-# neurons recorded from and the simulation time. The multiplication by 1000.0
-# converts the unit 1/ms to 1/s=Hz.
+    # create and connect nodes
+    total_time = sim_params["pre_sim_time"] + sim_params["sim_time"]
+    build_create(scale=1, poisson_time=total_time)
+    build_connect()
 
-rate_ex = events_ex / simtime * 1000.0 / N_rec
-rate_in = events_in / simtime * 1000.0 / N_rec
+    # create spike recorder
+    espikes = nest.Create("spike_recorder")
+    ispikes = nest.Create("spike_recorder")
+    espikes.set(label="astro-ex", record_to="ascii")
+    ispikes.set(label="astro-in", record_to="ascii")
+    nest.Connect(nodes_ex_[:sim_params["N_rec"]], espikes)
+    nest.Connect(nodes_in_[:sim_params["N_rec"]], ispikes)
 
-###############################################################################
-# Establishing the time it took to build and simulate the network by taking
-# the difference of the pre-defined time variables.
+    # time after building
+    endbuild = time.time()
 
-build_time = endbuild - startbuild
-sim_time = endsimulate - endbuild
+    # simulation
+    print("Simulating")
+    nest.Simulate(sim_params["pre_sim_time"])
+    nest.Simulate(sim_params["sim_time"])
 
-###############################################################################
-# Printing the network properties, firing rates and building times.
+    # time after simulation
+    endsimulate = time.time()
 
-print("Brunel network simulation (Python)")
-print(f"Excitatory rate   : {rate_ex:.2f} Hz")
-print(f"Inhibitory rate   : {rate_in:.2f} Hz")
-print(f"Building time     : {build_time:.2f} s")
-print(f"Simulation time   : {sim_time:.2f} s")
+    # read out spikes and calculate firing rates
+    events_ex = espikes.n_events
+    events_in = ispikes.n_events
+    rate_ex = events_ex / sim_params["sim_time"] * 1000.0 / sim_params["N_rec"]
+    rate_in = events_in / sim_params["sim_time"] * 1000.0 / sim_params["N_rec"]
 
-###############################################################################
-# Plot a raster of the excitatory neurons and a histogram.
+    # calculate building and running time
+    build_time = endbuild - startbuild
+    run_time = endsimulate - endbuild
 
-nest.raster_plot.from_device(espikes, hist=True)
-plt.show()
+    # print firing rates and building and running time
+    print("Brunel network with astrocytes")
+    print(f"Excitatory rate   : {rate_ex:.2f} Hz")
+    print(f"Inhibitory rate   : {rate_in:.2f} Hz")
+    print(f"Building time     : {build_time:.2f} s")
+    print(f"Simulation time   : {run_time:.2f} s")
+
+    # plot a raster of the excitatory neurons and a histogram
+    nest.raster_plot.from_device(espikes, hist=True)
+    plt.savefig("astrocyte_brunel.png")
+
+if __name__ == "__main__":
+    run_simulation()
+

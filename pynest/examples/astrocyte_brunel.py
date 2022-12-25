@@ -33,6 +33,7 @@ astrocytes.
 # should be imported before nest.
 
 import time
+import numpy as np
 import multiprocessing as mp
 
 import nest
@@ -43,8 +44,8 @@ import matplotlib.pyplot as plt
 # Simulation parameters
 
 sim_params = {
-    "dt": 0.2, # simulation resolution
-    "pre_sim_time": 200.0, # time before simulation
+    "dt": 0.1, # simulation resolution
+    "pre_sim_time": 50.0, # time before simulation
     "sim_time": 1000.0, # simulation time
     "N_rec": 100, # number of neurons recorded
     }
@@ -55,7 +56,7 @@ sim_params = {
 network_params = {
     "N_ex": 8000, # number of excitatory neurons
     "N_in": 2000, # number of inhibitory neurons
-    "N_astro": 10000, # number of astrocytes
+    "N_astro": 1000, # number of astrocytes
     "p": 0.1, # neuron-neuron connection probability.
     "p_syn_astro": 1.0, # synapse-astrocyte pairing probability
     "max_astro_per_target": 1, # Max number of astrocytes per target neuron
@@ -258,16 +259,20 @@ def run_simulation():
 
     # create and connect nodes
     total_time = sim_params["pre_sim_time"] + sim_params["sim_time"]
-    e, i, a, n = build_create(scale=1, poisson_time=total_time)
-    build_connect(e, i, a, n)
+    enodes, inodes, anodes, noise = \
+        build_create(scale=1, poisson_time=total_time)
+    build_connect(enodes, inodes, anodes, noise)
 
-    # create spike recorder
+    # create recorders
     espikes = nest.Create("spike_recorder")
     ispikes = nest.Create("spike_recorder")
     espikes.set(label="astro-ex", record_to="ascii")
     ispikes.set(label="astro-in", record_to="ascii")
-    nest.Connect(e[:sim_params["N_rec"]], espikes)
-    nest.Connect(i[:sim_params["N_rec"]], ispikes)
+    nest.Connect(enodes[:sim_params["N_rec"]], espikes)
+    nest.Connect(inodes[:sim_params["N_rec"]], ispikes)
+    mm_astro = nest.Create(
+        "multimeter", params={"record_from": ["IP3_astro", "Ca_astro"]})
+    nest.Connect(mm_astro, anodes)
 
     # time after building
     endbuild = time.time()
@@ -280,11 +285,12 @@ def run_simulation():
     # time after simulation
     endsimulate = time.time()
 
-    # read out spikes and calculate firing rates
+    # read out recordings and calculate firing rates
     events_ex = espikes.n_events
     events_in = ispikes.n_events
     rate_ex = events_ex / sim_params["sim_time"] * 1000.0 / sim_params["N_rec"]
     rate_in = events_in / sim_params["sim_time"] * 1000.0 / sim_params["N_rec"]
+    astro_data = mm_astro.events
 
     # calculate building and running time
     build_time = endbuild - startbuild
@@ -299,7 +305,30 @@ def run_simulation():
 
     # plot a raster of the excitatory neurons and a histogram
     nest.raster_plot.from_device(espikes, hist=True)
-    plt.savefig("astrocyte_brunel.png")
+    plt.title(f"n={sim_params['N_rec']}")
+    plt.savefig("astrocyte_brunel_neurons.png")
+    plt.close()
+
+    # plot astrocyte data (multimeter default resolution = 1 ms)
+    d = astro_data
+    keys = list(d.keys())
+    means = np.array([[np.mean(d[k][d["times"]==t]) for t in set(d["times"])] for k in d.keys()])
+    stds = np.array([[np.std(d[k][d["times"]==t]) for t in set(d["times"])] for k in d.keys()])
+    times = means[keys.index("times")]
+    fig, axes = plt.subplots(2, 1, sharex=True)
+    axes[0].set_title(f"n={network_params['N_astro']}")
+    ylabels = [r'IP$_{3}$ ($\mu$M)', r'Ca$^{2+}$ ($\mu$M)']
+    for i, key in enumerate(["IP3_astro", "Ca_astro"]):
+        m = means[keys.index(key)]
+        s = stds[keys.index(key)]
+        axes[i].fill_between(
+            times, m+s, m-s, alpha=0.3, color="#1f77b4", edgecolor=None)
+        axes[i].plot(times, m, linewidth=2, color="#1f77b4")
+        axes[i].set_ylabel(ylabels[i])
+    plt.xlabel("Time (ms)")
+    plt.savefig("astrocyte_brunel_astrocytes.png")
+    plt.close()
 
 if __name__ == "__main__":
     run_simulation()
+

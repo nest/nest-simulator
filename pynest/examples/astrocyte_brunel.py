@@ -45,7 +45,7 @@ import matplotlib.pyplot as plt
 
 sim_params = {
     "dt": 0.1, # simulation resolution
-    "pre_sim_time": 50.0, # time before simulation
+    "pre_sim_time": 200.0, # time before simulation
     "sim_time": 1000.0, # simulation time
     "N_rec": 100, # number of neurons recorded
     }
@@ -242,6 +242,29 @@ def build_connect(nodes_ex, nodes_in, nodes_astro, noise):
     nest.Connect(nodes_in, nodes_in, conn_params_in, syn_params_ii)
 
 ###############################################################################
+# Function for calculating correlation
+
+def get_corr(hlist):
+    """Calculate pairwise correlation coefficients for a list of histograms."""
+
+    coef_list = []
+    n_pass = 0
+    n_fail = 0
+    for i, hist1 in enumerate(hlist):
+        idxs = list(range(i + 1, len(hlist)))
+        for j in idxs:
+            hist2 = hlist[j]
+            if np.sum(hist1) != 0 and np.sum(hist2) != 0:
+                coef = np.corrcoef(hist1, hist2)[0, 1]
+                coef_list.append(coef)
+                n_pass += 1
+            else:
+                n_fail += 1
+    print(f"get_corr(): n of pairs included/excluded = {n_pass}/{n_fail}")
+
+    return coef_list
+
+###############################################################################
 # Main function for running simulation.
 
 def run_simulation():
@@ -266,8 +289,8 @@ def run_simulation():
     # create recorders
     espikes = nest.Create("spike_recorder")
     ispikes = nest.Create("spike_recorder")
-    espikes.set(label="astro-ex", record_to="ascii")
-    ispikes.set(label="astro-in", record_to="ascii")
+    # espikes.set(label="astro-ex", record_to="ascii")
+    # ispikes.set(label="astro-in", record_to="ascii")
     nest.Connect(enodes[:sim_params["N_rec"]], espikes)
     nest.Connect(inodes[:sim_params["N_rec"]], ispikes)
     mm_astro = nest.Create(
@@ -286,10 +309,10 @@ def run_simulation():
     endsimulate = time.time()
 
     # read out recordings and calculate firing rates
-    events_ex = espikes.n_events
-    events_in = ispikes.n_events
-    rate_ex = events_ex / sim_params["sim_time"] * 1000.0 / sim_params["N_rec"]
-    rate_in = events_in / sim_params["sim_time"] * 1000.0 / sim_params["N_rec"]
+    rate_ex = espikes.n_events / sim_params["sim_time"] * 1000.0 / sim_params["N_rec"]
+    rate_in = ispikes.n_events / sim_params["sim_time"] * 1000.0 / sim_params["N_rec"]
+    neuron_data_ex = espikes.events
+    neuron_data_in = ispikes.events
     astro_data = mm_astro.events
 
     # calculate building and running time
@@ -308,6 +331,14 @@ def run_simulation():
     plt.title(f"n={sim_params['N_rec']}")
     plt.savefig("astrocyte_brunel_neurons.png")
     plt.close()
+
+    # local synchrony
+    senders = np.concatenate((neuron_data_ex["senders"], neuron_data_in["senders"]))
+    times = np.concatenate((neuron_data_ex["times"], neuron_data_in["times"]))
+    bins = np.arange(sim_params["pre_sim_time"], sim_params["pre_sim_time"]+sim_params["pre_sim_time"]+0.1, 10)
+    hists = [np.histogram(times[senders==x], bins)[0].tolist() for x in set(senders)]
+    coefs = get_corr(hists)
+    print(f"pairwise spike count correlation (mean, s.d.) = {np.mean(coefs):3f}, {np.std(coefs):3f}")
 
     # plot astrocyte data (multimeter default resolution = 1 ms)
     d = astro_data
@@ -331,4 +362,3 @@ def run_simulation():
 
 if __name__ == "__main__":
     run_simulation()
-

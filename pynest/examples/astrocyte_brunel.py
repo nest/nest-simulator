@@ -286,8 +286,7 @@ def run_simulation():
     build_connect(enodes, inodes, anodes, noise)
 
     # create recorders
-    espikes = nest.Create("spike_recorder")
-    ispikes = nest.Create("spike_recorder")
+    sr_neuron = nest.Create("spike_recorder")
     mm_astro = nest.Create(
         "multimeter", params={"record_from": ["IP3_astro", "Ca_astro"]})
     nest.Connect(mm_astro, anodes)
@@ -298,18 +297,15 @@ def run_simulation():
     # simulation
     print("Simulating")
     nest.Simulate(sim_params["pre_sim_time"])
-    nest.Connect(enodes[:sim_params["N_rec"]], espikes)
-    nest.Connect(inodes[:sim_params["N_rec"]], ispikes)
+    nest.Connect((enodes + inodes)[:sim_params["N_rec"]], sr_neuron)
     nest.Simulate(sim_params["sim_time"])
 
     # time after simulation
     endsimulate = time.time()
 
     # read out recordings and calculate firing rates
-    rate_ex = espikes.n_events / sim_params["sim_time"] * 1000.0 / sim_params["N_rec"]
-    rate_in = ispikes.n_events / sim_params["sim_time"] * 1000.0 / sim_params["N_rec"]
-    neuron_data_ex = espikes.events
-    neuron_data_in = ispikes.events
+    rate = sr_neuron.n_events / sim_params["sim_time"] * 1000.0 / sim_params["N_rec"]
+    neuron_data = sr_neuron.events
     astro_data = mm_astro.events
 
     # calculate building and running time
@@ -318,13 +314,12 @@ def run_simulation():
 
     # print firing rates and building and running time
     print("Brunel network with astrocytes")
-    print(f"Excitatory rate   : {rate_ex:.2f} Hz")
-    print(f"Inhibitory rate   : {rate_in:.2f} Hz")
-    print(f"Building time     : {build_time:.2f} s")
-    print(f"Simulation time   : {run_time:.2f} s")
+    print(f"Firing rate (sampled n={sim_params['N_rec']}) = {rate:.2f} Hz")
+    print(f"Building time = {build_time:.2f} s")
+    print(f"Simulation time = {run_time:.2f} s")
 
     # plot a raster of the excitatory neurons and a histogram
-    nest.raster_plot.from_device(espikes, hist=True)
+    nest.raster_plot.from_device(sr_neuron, hist=True)
     plt.title(f"n={sim_params['N_rec']}")
     plt.savefig("astrocyte_brunel_neurons.png")
     plt.close()
@@ -332,11 +327,9 @@ def run_simulation():
     # neuronal local synchrony
     print("Calculating neuronal local synchrony ...")
     start = sim_params["pre_sim_time"]
-    end = sim_params["pre_sim_time"]+sim_params["pre_sim_time"]
-    senders = np.concatenate((neuron_data_ex["senders"], neuron_data_in["senders"]))
-    times = np.concatenate((neuron_data_ex["times"], neuron_data_in["times"]))
-    senders = senders[times>start]
-    times = times[times>start]
+    end = sim_params["pre_sim_time"]+sim_params["sim_time"]
+    senders = neuron_data["senders"][neuron_data["times"]>start]
+    times = neuron_data["times"][neuron_data["times"]>start]
     bins = np.arange(start, end+0.1, 10)
     hists = [np.histogram(times[senders==x], bins)[0].tolist() for x in set(senders)]
     coefs, n_pass_, n_fail_ = get_corr(hists)
@@ -345,8 +338,8 @@ def run_simulation():
     plt.xlabel("Pairwise spike count correlation (Pearson's r)")
     plt.ylabel("n of pairs")
     plt.savefig("astrocyte_brunel_correlation.png")
-    print(f"n of spiking neurons = {len(hists)}")
-    print(f"n of pairs included/excluded = {n_pass_}/{n_fail_}")
+    print(f"n of spiking/sampled neurons = {len(hists)}/{sim_params['N_rec']}")
+    print(f"n of neuron pairs included/excluded = {n_pass_}/{n_fail_}")
     print(f"pairwise spike count correlation mean, s.d. = {np.mean(coefs):.3f}, {np.std(coefs):.3f}")
 
     # plot astrocyte data (multimeter default resolution = 1 ms)
@@ -363,8 +356,8 @@ def run_simulation():
         m = means[keys.index(key)]
         s = stds[keys.index(key)]
         axes[i].fill_between(
-            times, m+s, m-s, alpha=0.3, color="b", edgecolor=None)
-        axes[i].plot(times, m, linewidth=2, color="b")
+            times, m+s, m-s, alpha=0.3, edgecolor=None)
+        axes[i].plot(times, m, linewidth=2)
         axes[i].set_ylabel(ylabels[i])
     plt.xlabel("Time (ms)")
     plt.savefig("astrocyte_brunel_astrocytes.png")

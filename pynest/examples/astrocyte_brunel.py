@@ -45,7 +45,7 @@ import matplotlib.pyplot as plt
 
 sim_params = {
     "dt": 0.1, # simulation resolution
-    "pre_sim_time": 200.0, # time before simulation
+    "pre_sim_time": 100.0, # time before simulation
     "sim_time": 1000.0, # simulation time
     "N_rec": 100, # number of neurons recorded
     }
@@ -260,9 +260,8 @@ def get_corr(hlist):
                 n_pass += 1
             else:
                 n_fail += 1
-    print(f"get_corr(): n of pairs included/excluded = {n_pass}/{n_fail}")
 
-    return coef_list
+    return coef_list, n_pass, n_fail
 
 ###############################################################################
 # Main function for running simulation.
@@ -270,7 +269,7 @@ def get_corr(hlist):
 def run_simulation():
     # reset kernel
     nest.ResetKernel()
-    nest.SetKernelStatus({'total_num_virtual_procs': int(mp.cpu_count()/2)})
+    nest.SetKernelStatus({'total_num_virtual_procs': int(mp.cpu_count())})
 
     # time before building
     startbuild = time.time()
@@ -289,10 +288,6 @@ def run_simulation():
     # create recorders
     espikes = nest.Create("spike_recorder")
     ispikes = nest.Create("spike_recorder")
-    # espikes.set(label="astro-ex", record_to="ascii")
-    # ispikes.set(label="astro-in", record_to="ascii")
-    nest.Connect(enodes[:sim_params["N_rec"]], espikes)
-    nest.Connect(inodes[:sim_params["N_rec"]], ispikes)
     mm_astro = nest.Create(
         "multimeter", params={"record_from": ["IP3_astro", "Ca_astro"]})
     nest.Connect(mm_astro, anodes)
@@ -303,6 +298,8 @@ def run_simulation():
     # simulation
     print("Simulating")
     nest.Simulate(sim_params["pre_sim_time"])
+    nest.Connect(enodes[:sim_params["N_rec"]], espikes)
+    nest.Connect(inodes[:sim_params["N_rec"]], ispikes)
     nest.Simulate(sim_params["sim_time"])
 
     # time after simulation
@@ -332,15 +329,28 @@ def run_simulation():
     plt.savefig("astrocyte_brunel_neurons.png")
     plt.close()
 
-    # local synchrony
+    # neuronal local synchrony
+    print("Calculating neuronal local synchrony ...")
+    start = sim_params["pre_sim_time"]
+    end = sim_params["pre_sim_time"]+sim_params["pre_sim_time"]
     senders = np.concatenate((neuron_data_ex["senders"], neuron_data_in["senders"]))
     times = np.concatenate((neuron_data_ex["times"], neuron_data_in["times"]))
-    bins = np.arange(sim_params["pre_sim_time"], sim_params["pre_sim_time"]+sim_params["pre_sim_time"]+0.1, 10)
+    senders = senders[times>start]
+    times = times[times>start]
+    bins = np.arange(start, end+0.1, 10)
     hists = [np.histogram(times[senders==x], bins)[0].tolist() for x in set(senders)]
-    coefs = get_corr(hists)
-    print(f"pairwise spike count correlation (mean, s.d.) = {np.mean(coefs):3f}, {np.std(coefs):3f}")
+    coefs, n_pass_, n_fail_ = get_corr(hists)
+    plt.hist(coefs)
+    plt.title(f"Mean={np.mean(coefs):.3f}, s.d.={np.std(coefs):.3f}, total n={n_pass_}")
+    plt.xlabel("Pairwise spike count correlation (Pearson's r)")
+    plt.ylabel("n of pairs")
+    plt.savefig("astrocyte_brunel_correlation.png")
+    print(f"n of spiking neurons = {len(hists)}")
+    print(f"n of pairs included/excluded = {n_pass_}/{n_fail_}")
+    print(f"pairwise spike count correlation mean, s.d. = {np.mean(coefs):.3f}, {np.std(coefs):.3f}")
 
     # plot astrocyte data (multimeter default resolution = 1 ms)
+    print("Plotting astrocyte dynamics ...")
     d = astro_data
     keys = list(d.keys())
     means = np.array([[np.mean(d[k][d["times"]==t]) for t in set(d["times"])] for k in d.keys()])
@@ -353,12 +363,13 @@ def run_simulation():
         m = means[keys.index(key)]
         s = stds[keys.index(key)]
         axes[i].fill_between(
-            times, m+s, m-s, alpha=0.3, color="#1f77b4", edgecolor=None)
-        axes[i].plot(times, m, linewidth=2, color="#1f77b4")
+            times, m+s, m-s, alpha=0.3, color="b", edgecolor=None)
+        axes[i].plot(times, m, linewidth=2, color="b")
         axes[i].set_ylabel(ylabels[i])
     plt.xlabel("Time (ms)")
     plt.savefig("astrocyte_brunel_astrocytes.png")
     plt.close()
+    print("Done!")
 
 if __name__ == "__main__":
     run_simulation()

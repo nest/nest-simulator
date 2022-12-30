@@ -35,6 +35,7 @@ astrocytes.
 import time
 import numpy as np
 import multiprocessing as mp
+import random
 
 import nest
 import nest.raster_plot
@@ -47,7 +48,8 @@ sim_params = {
     "dt": 0.1, # simulation resolution
     "pre_sim_time": 100.0, # time before simulation
     "sim_time": 1000.0, # simulation time
-    "N_rec": 100, # number of neurons recorded
+    "N_rec": 10000, # number of neurons recorded
+    "N_sample": 100, # number of neurons sampled for analysis
     }
 
 ###############################################################################
@@ -267,22 +269,20 @@ def get_corr(hlist):
 # Main function for running simulation.
 
 def run_simulation():
-    # reset kernel
+    # Configuration
     nest.ResetKernel()
-    nest.SetKernelStatus({'total_num_virtual_procs': int(mp.cpu_count())})
+    nest.resolution = sim_params["dt"]
+    nest.print_time = True
+    nest.local_num_threads = 8
+    pre_sim_time = sim_params["pre_sim_time"]
+    sim_time = sim_params["sim_time"]
 
     # time before building
     startbuild = time.time()
 
-    # NEST configuration
-    nest.resolution = sim_params["dt"]
-    nest.print_time = True
-    nest.overwrite_files = True
-
     # create and connect nodes
-    total_time = sim_params["pre_sim_time"] + sim_params["sim_time"]
     enodes, inodes, anodes, noise = \
-        build_create(scale=1, poisson_time=total_time)
+        build_create(scale=1, poisson_time=pre_sim_time+sim_time)
     build_connect(enodes, inodes, anodes, noise)
 
     # create recorders
@@ -296,15 +296,15 @@ def run_simulation():
 
     # simulation
     print("Simulating")
-    nest.Simulate(sim_params["pre_sim_time"])
+    nest.Simulate(pre_sim_time)
     nest.Connect((enodes + inodes)[:sim_params["N_rec"]], sr_neuron)
-    nest.Simulate(sim_params["sim_time"])
+    nest.Simulate(sim_time)
 
     # time after simulation
     endsimulate = time.time()
 
     # read out recordings and calculate firing rates
-    rate = sr_neuron.n_events / sim_params["sim_time"] * 1000.0 / sim_params["N_rec"]
+    rate = sr_neuron.n_events / sim_time * 1000.0 / sim_params["N_rec"]
     neuron_data = sr_neuron.events
     astro_data = mm_astro.events
 
@@ -314,23 +314,29 @@ def run_simulation():
 
     # print firing rates and building and running time
     print("Brunel network with astrocytes")
-    print(f"Firing rate (sampled n={sim_params['N_rec']}) = {rate:.2f} Hz")
+    print(f"n of neurons recorded = {sim_params['N_rec']}")
+    print(f"Firing rate = {rate:.2f} spikes/s (n={sim_params['N_rec']})")
     print(f"Building time = {build_time:.2f} s")
     print(f"Simulation time = {run_time:.2f} s")
 
-    # plot a raster of the excitatory neurons and a histogram
+    # plot a raster and a histogram of the neurons recorded
     nest.raster_plot.from_device(sr_neuron, hist=True)
     plt.title(f"n={sim_params['N_rec']}")
     plt.savefig("astrocyte_brunel_neurons.png")
     plt.close()
 
+    # sampling neurons for analysis
+    print("Sampling neurons for analysis ...")
+    senders = neuron_data["senders"][neuron_data["times"]>pre_sim_time]
+    times = neuron_data["times"][neuron_data["times"]>pre_sim_time]
+    n_sample = np.minimum(len(set(senders)), sim_params["N_sample"])
+    sampled = random.sample(list(set(senders)), n_sample)
+    times = times[np.isin(senders, sampled)]
+    senders = senders[np.isin(senders, sampled)]
+
     # neuronal local synchrony
     print("Calculating neuronal local synchrony ...")
-    start = sim_params["pre_sim_time"]
-    end = sim_params["pre_sim_time"]+sim_params["sim_time"]
-    senders = neuron_data["senders"][neuron_data["times"]>start]
-    times = neuron_data["times"][neuron_data["times"]>start]
-    bins = np.arange(start, end+0.1, 10)
+    bins = np.arange(pre_sim_time,pre_sim_time+sim_time+0.1, 10)
     hists = [np.histogram(times[senders==x], bins)[0].tolist() for x in set(senders)]
     coefs, n_pass_, n_fail_ = get_corr(hists)
     plt.hist(coefs)
@@ -338,9 +344,9 @@ def run_simulation():
     plt.xlabel("Pairwise spike count correlation (Pearson's r)")
     plt.ylabel("n of pairs")
     plt.savefig("astrocyte_brunel_correlation.png")
-    print(f"n of spiking/sampled neurons = {len(hists)}/{sim_params['N_rec']}")
+    print(f"n of neurons sampled = {len(hists)}")
     print(f"n of neuron pairs included/excluded = {n_pass_}/{n_fail_}")
-    print(f"pairwise spike count correlation mean, s.d. = {np.mean(coefs):.3f}, {np.std(coefs):.3f}")
+    print(f"Pairwise spike count correlation mean, s.d. = {np.mean(coefs):.3f}, {np.std(coefs):.3f}")
 
     # plot astrocyte data (multimeter default resolution = 1 ms)
     print("Plotting astrocyte dynamics ...")

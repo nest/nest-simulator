@@ -72,7 +72,7 @@ const Name asc_decay( "asc_decay" );
 const Name asc_init( "asc_init" );
 const Name asc_r( "asc_r" );
 const Name astrocyte( "astrocyte" );
-const Name astro_pool_per_target_det( "astro_pool_per_target_det" );
+const Name astro_pool_by_index( "astro_pool_by_index" );
 const Name available( "available" );
 const Name azimuth_angle( "azimuth_angle" );
 

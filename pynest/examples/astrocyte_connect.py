@@ -61,7 +61,7 @@ nest.Connect(
         'astrocyte': astrocytes,
         'p': 1.,
         'p_syn_astro': 1.,
-        'astro_pool_per_target_det': True,
+        'astro_pool_by_index': True,
         'max_astro_per_target': 3,
     }
 )

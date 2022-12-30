@@ -1637,13 +1637,13 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   }
 
   // Deterministic or probabilistic selection of astrocyte pool for a target neuron
-  if ( conn_spec->known( names::astro_pool_per_target_det ) )
+  if ( conn_spec->known( names::astro_pool_by_index ) )
   {
-    astro_pool_per_target_det_ = ( *conn_spec )[ names::astro_pool_per_target_det ];
+    astro_pool_by_index_ = ( *conn_spec )[ names::astro_pool_by_index ];
   }
   else
   {
-    astro_pool_per_target_det_ = true;
+    astro_pool_by_index_ = true;
   }
 
   // Maximum number of astrocytes for a target neuron
@@ -1817,7 +1817,7 @@ nest::BernoulliAstroBuilder::connect_()
         }
         // Determine starting astrocyte
         // "Deterministic"
-        if ( astro_pool_per_target_det_ == true )
+        if ( astro_pool_by_index_ == true )
         {
           if ( max_astro_per_target_ > 0 )
           {

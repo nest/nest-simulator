@@ -201,7 +201,7 @@ def build_connect(nodes_ex, nodes_in, nodes_astro, noise):
         "p": network_params["p"],
         "p_syn_astro": network_params["p_syn_astro"],
         "max_astro_per_target": network_params["max_astro_per_target"],
-        "astro_pool_per_target_det": False
+        "astro_pool_by_index": False
         }
     syn_params_ee = {
         "synapse_model": "tsodyks_synapse",

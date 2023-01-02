@@ -803,7 +803,7 @@ nest::SimulationManager::structural_plasticity_update_phase( size_t tid )
  * MUSIC *before* MUSIC time is advanced
  */
 void
-nest::SimulationManager::music_context_update_phase( size_t tid )
+nest::SimulationManager::music_context_update_phase()
 {
 #ifdef HAVE_MUSIC
 
@@ -828,7 +828,7 @@ nest::SimulationManager::music_context_update_phase( size_t tid )
       kernel().music_manager.update_music_event_handlers( clock_, from_step_, to_step_ );
     }
   }
-//#pragma omp barrier
+#pragma omp barrier
 #endif
 }
 
@@ -1060,7 +1060,7 @@ nest::SimulationManager::update_()
       structural_plasticity_update_phase( tid );
 
 #ifdef HAVE_MUSIC
-      music_context_update_phase( tid );
+      music_context_update_phase();
 #endif
 
 

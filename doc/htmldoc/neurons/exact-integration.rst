@@ -11,7 +11,7 @@ For the simple integrate-and-fire model the voltage :math:`V` is given as a solu
 .. math::
     C\frac{dV}{dt}=I.
 
-This is just the derivate of the law of capacitance :math:`Q=CV`. When an input current is applied, the membrane voltage increases with time until it reaches a constant threshold :math:`V_{\text{th}}`, at which point a delta function spike occurs.
+This is just the derivative of the law of capacitance :math:`Q=CV`. When an input current is applied, the membrane voltage increases with time until it reaches a constant threshold :math:`V_{\text{th}}`, at which point a delta function spike occurs.
 
 A shortcoming of the simple integrate-and-fire model is that it implements no time-dependent memory. If the model receives a below-threshold signal at some time, it will retain that voltage boost until it fires again. This characteristic is not in line with observed neuronal behavior.
 

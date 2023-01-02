@@ -30,7 +30,7 @@ The example demonstrate the usage of the multisynapse neuron
 model. Each spike arriving at the neuron triggers an exponential
 PSP. The time constant associated with the PSP is defined in the
 receptor type array tau_syn of each neuron. The receptor types of all
-connections are uniformally distributed, resulting in uniformally
+connections are uniformly distributed, resulting in uniformly
 distributed time constants of the PSPs.
 
 When connecting the network, customary synapse models are used, which
@@ -189,7 +189,7 @@ nest.CopyModel("static_synapse", "inhibitory",
 # generator is connected to all neurons in the population the default rule
 # (# ``all_to_all``) of ``Connect`` is used. The synaptic properties are
 # pre-defined # in a dictionary and inserted via ``syn_spec``. As synaptic model
-# the pre-defined synapses "excitatory" and "inhibitory" are choosen,
+# the pre-defined synapses "excitatory" and "inhibitory" are chosen,
 # thus setting ``weight`` and ``delay``. The receptor type is drawn from a
 # distribution for each connection, which is specified in the synapse
 # properties by assigning a dictionary to the keyword ``receptor_type``,

@@ -42,9 +42,9 @@ PEP8=${7}                     # Name of the PEP8 executable.
 PERFORM_CPPCHECK=${8}         # true or false, indicating whether CPPCHECK analysis is performed or not.
 PERFORM_CLANG_FORMAT=${9}     # true or false, indicating whether CLANG-FORMAT analysis is performed or not.
 PERFORM_PEP8=${10}            # true or false, indicating whether PEP8 analysis is performed or not.
-IGNORE_MSG_CPPCHECK=${11}     # true or false, indicating whether CPPCHECK messages should accout for the build result.
-IGNORE_MSG_CLANG_FORMAT=${12} # true or false, indicating whether CLANG-FORMAT messages should accout for the build result.
-IGNORE_MSG_PYCODESTYLE=${13}  # true or false, indicating whether pycodestyle messages should accout for the build result.
+IGNORE_MSG_CPPCHECK=${11}     # true or false, indicating whether CPPCHECK messages should account for the build result.
+IGNORE_MSG_CLANG_FORMAT=${12} # true or false, indicating whether CLANG-FORMAT messages should account for the build result.
+IGNORE_MSG_PYCODESTYLE=${13}  # true or false, indicating whether pycodestyle messages should account for the build result.
 PYCODESTYLE_IGNORES=${14}     # The list of pycodestyle error and warning codes to ignore.
 
 # PYCODESTYLE rules to ignore.

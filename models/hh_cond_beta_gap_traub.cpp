@@ -57,7 +57,7 @@ template <>
 void
 RecordablesMap< hh_cond_beta_gap_traub >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &hh_cond_beta_gap_traub::get_y_elem_< hh_cond_beta_gap_traub::State_::V_M > );
   insert_( names::g_ex, &hh_cond_beta_gap_traub::get_y_elem_< hh_cond_beta_gap_traub::State_::G_EXC > );
   insert_( names::g_in, &hh_cond_beta_gap_traub::get_y_elem_< hh_cond_beta_gap_traub::State_::G_INH > );

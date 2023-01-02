@@ -497,7 +497,7 @@ SLIInterpreter::addmodule( SLIModule* m )
   }
   catch ( SLIException& e )
   {
-    message( M_ERROR, "SLIInterpreter", ( "An error occured while loading module " + m->name() ).c_str() );
+    message( M_ERROR, "SLIInterpreter", ( "An error occurred while loading module " + m->name() ).c_str() );
     message( M_ERROR, "SLIInterpreter", e.what() );
     message( M_ERROR, "SLIInterpreter", e.message().c_str() );
     return;
@@ -505,14 +505,14 @@ SLIInterpreter::addmodule( SLIModule* m )
   catch ( std::exception& e )
   {
     message(
-      M_ERROR, "SLIInterpreter", ( "A C++ library exception occured while loading module " + m->name() ).c_str() );
+      M_ERROR, "SLIInterpreter", ( "A C++ library exception occurred while loading module " + m->name() ).c_str() );
     message( M_ERROR, "SLIInterpreter", e.what() );
     return;
   }
   catch ( ... )
   {
     message(
-      M_ERROR, "SLIInterpreter", ( "An unspecified exception occured while loading module " + m->name() ).c_str() );
+      M_ERROR, "SLIInterpreter", ( "An unspecified exception occurred while loading module " + m->name() ).c_str() );
     return;
   }
 
@@ -1283,7 +1283,7 @@ SLIInterpreter::execute_debug_( size_t exitlevel )
   }
   catch ( std::exception& e )
   {
-    message( M_FATAL, "SLIInterpreter", "A C++ library exception occured." );
+    message( M_FATAL, "SLIInterpreter", "A C++ library exception occurred." );
     OStack.dump( std::cerr );
     EStack.dump( std::cerr );
     message( M_FATAL, "SLIInterpreter", e.what() );
@@ -1292,7 +1292,7 @@ SLIInterpreter::execute_debug_( size_t exitlevel )
   }
   catch ( ... )
   {
-    message( M_FATAL, "SLIInterpreter", "An unknown c++ exception occured." );
+    message( M_FATAL, "SLIInterpreter", "An unknown c++ exception occurred." );
     OStack.dump( std::cerr );
     EStack.dump( std::cerr );
     exitcode = getValue< long >( *exitcodes, "exception" );
@@ -1336,7 +1336,7 @@ SLIInterpreter::execute_( size_t exitlevel )
   }
   catch ( std::exception& e )
   {
-    message( M_FATAL, "SLIInterpreter", "A C++ library exception occured." );
+    message( M_FATAL, "SLIInterpreter", "A C++ library exception occurred." );
     OStack.dump( std::cerr );
     EStack.dump( std::cerr );
     message( M_FATAL, "SLIInterpreter", e.what() );
@@ -1345,7 +1345,7 @@ SLIInterpreter::execute_( size_t exitlevel )
   }
   catch ( ... )
   {
-    message( M_FATAL, "SLIInterpreter", "An unknown c++ exception occured." );
+    message( M_FATAL, "SLIInterpreter", "An unknown c++ exception occurred." );
     OStack.dump( std::cerr );
     EStack.dump( std::cerr );
     exitcode = getValue< long >( *exitcodes, "exception" );

@@ -44,7 +44,7 @@ Description:
 
   See [1] for details on why the DC generator specification is
   consistent with a grid based integration scheme of systems of
-  differential equations.  In this scheme DC currents are represeted
+  differential equations.  In this scheme DC currents are represented
   by the differential equation d/dt I = 0.
 
   The resulting SLI code is independent of the resolution and
@@ -87,7 +87,7 @@ dc_on dc_duration add /dc_off Set
 
 
 dc_delay /max_delay Set
-                     % the maximal delay tolereated by the 
+                     % the maximal delay tolerated by the
                      % simulation kernel (in ms) needs to be
                      % larger or equal to the maximal delay
                      % used in this script

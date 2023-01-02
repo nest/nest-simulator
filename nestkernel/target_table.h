@@ -61,7 +61,7 @@ private:
    *   - first dim: threads
    *   - second dim: local neurons
    *   - third dim: synapse types
-   *   - forth dim: MPI send buffer positions
+   *   - fourth dim: MPI send buffer positions
    */
   std::vector< std::vector< std::vector< std::vector< size_t > > > > secondary_send_buffer_pos_;
 

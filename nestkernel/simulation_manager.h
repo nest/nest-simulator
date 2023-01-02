@@ -192,7 +192,7 @@ private:
 
   inline void structural_plasticity_update_phase( size_t tid );
 
-  inline void music_context_update_phase( size_t tid );
+  inline void music_context_update_phase();
 
   inline void
   waveform_relaxtion_update_phase( size_t tid, bool& done_all, delay& old_to_step, std::vector< bool >& done );

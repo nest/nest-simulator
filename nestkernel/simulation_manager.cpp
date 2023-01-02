@@ -803,7 +803,7 @@ nest::SimulationManager::structural_plasticity_update_phase( size_t tid )
  * MUSIC *before* MUSIC time is advanced
  */
 void
-nest::SimulationManager::music_context_update_phase( size_t tid )
+nest::SimulationManager::music_context_update_phase()
 {
 #ifdef HAVE_MUSIC
 

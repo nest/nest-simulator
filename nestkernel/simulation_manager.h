@@ -190,6 +190,25 @@ private:
   void advance_time_();   //!< Update time to next time step
   void print_progress_(); //!< TODO: Remove, replace by logging!
 
+  inline void structural_plasticity_update_phase( size_t tid );
+
+  inline void music_context_update_phase( size_t tid );
+
+  inline void
+  waveform_relaxtion_update_phase( size_t tid, bool& done_all, delay& old_to_step, std::vector< bool >& done );
+
+  inline void local_nodes_update_phase( size_t tid, std::shared_ptr< WrappedThreadException >& exp );
+
+  inline void gather_and_deliver_phase( size_t tid );
+
+  inline void time_update_phase( bool& update_time_limit_exceeded, double& start_current_update );
+
+  inline void synaptic_elements_update_phase( size_t tid );
+
+  inline void check_raised_exceptions( std::vector< std::shared_ptr< WrappedThreadException > >& exceptions_raised );
+
+  inline void check_time_limit( double& start_current_update );
+
   Time clock_;                     //!< SimulationManager clock, updated once per slice
   delay slice_;                    //!< current update slice
   delay to_do_;                    //!< number of pending steps

@@ -58,106 +58,78 @@ start_time = time.time()
 nest.ResetKernel()
 
 if example == '300_pointneurons':
-    base_path = '/Users/nicolai/github/sonata/examples/300_pointneurons/'
-    config = 'circuit_config.json'
-    sim_config = 'simulation_config.json'
+    config = '/Users/nicolai/github/sonata/examples/300_pointneurons/circuit_config.json'
+    sim_config = '/Users/nicolai/github/sonata/examples/300_pointneurons/simulation_config.json'
     population_to_plot = 'internal'
 elif example == 'GLIF':
-    base_path = '/Users/nicolai/github/nest_dev/nest_sonata/glif_nest_220/'
-    config = 'config.json'
+    #config = '/Users/nicolai/github/nest_dev/nest_sonata/glif_nest_220/config.json'
+    config = '../../nest_sonata/glif_nest_220/config.json'
     sim_config = None
     population_to_plot = 'v1'
 
 
-sonata_connector = nest.SonataConnector(base_path, config, sim_config)
+sonata_net = nest.SonataNetwork(config, sim_config)
 
-if create_sonata_network:
-    nest.set(total_num_virtual_procs=NUM_PROCESSES * NUM_THREADS)
-    sonata_connector.CreateSonataNetwork(simulate=True)
 
-    if plot:
-        s_rec = nest.Create('spike_recorder')
-        s_rec.record_to = 'ascii'
-        nest.Connect(sonata_connector.node_collections[population_to_plot], s_rec)
-else:
-    if not sonata_connector.config['target_simulator'] == 'NEST':
-        raise NotImplementedError('Only `target_simulator` of type NEST is supported.')
+nest.set(overwrite_files=True,
+         total_num_virtual_procs=NUM_PROCESSES * NUM_THREADS)
 
-    nest.set(resolution=sonata_connector.config['run']['dt'],
-             overwrite_files=True,
-             total_num_virtual_procs=NUM_PROCESSES * NUM_THREADS)
+print("kernel number of processes:", nest.GetKernelStatus('num_processes'))
+print("kernel number of threads:", nest.GetKernelStatus('local_num_threads'))
 
-    print("kernel number of processes:", nest.GetKernelStatus('num_processes'))
-    print("kernel number of threads:", nest.GetKernelStatus('local_num_threads'))
+mem_ini = memory_thisjob()
+start_time_create = time.time()
 
-    mem_ini = memory_thisjob()
-    start_time_create = time.time()
+# Create nodes
+sonata_net.Create()
 
-    # Create nodes
-    sonata_connector.Create()
+end_time_create = time.time() - start_time_create
+mem_create = memory_thisjob()
 
-    end_time_create = time.time() - start_time_create
-    mem_create = memory_thisjob()
+#print(f"Sonata NC (rank {nest.Rank()}):", sonata_connector.node_collections)
 
-    #print(f"Sonata NC (rank {nest.Rank()}):", sonata_connector.node_collections)
+#print(f"Sonata Local NC (rank {nest.Rank()}):", sonata_connector.local_node_collections)
 
-    #print(f"Sonata Local NC (rank {nest.Rank()}):", sonata_connector.local_node_collections)
+# Connect
+start_time_connect = time.time()
 
-    # Connect
-    start_time_connect = time.time()
+sonata_net.Connect()
+#print("done connecting")
 
-    sonata_connector.Connect()
-    #print("done connecting")
+end_time_connect = time.time() - start_time_connect
+mem_connect = memory_thisjob()
 
-    end_time_connect = time.time() - start_time_connect
-    mem_connect = memory_thisjob()
+print(f"number of connections: {nest.GetKernelStatus('num_connections'):,}")
+print(f"number of neurons: {nest.GetKernelStatus('network_size'):,}")
 
-    print(f"number of connections: {nest.GetKernelStatus('num_connections'):,}")
-    print(f"number of neurons: {nest.GetKernelStatus('network_size'):,}")
+if plot:
+    s_rec = nest.Create('spike_recorder')
+    s_rec.record_to = 'memory'
+    nest.Connect(sonata_net.node_collections[population_to_plot], s_rec)
 
-    # Simulate
+if simulate:
+    print('simulating')
+
+    start_time_sim = time.time()
+    sonata_net.Simulate()
+    end_time_sim = time.time() - start_time_sim
+
+end_time = time.time() - start_time
+
+if verbose_print:
+    print(f"creation took: {end_time_create} s")
+    print(f"connection took: {end_time_connect} s")
     if simulate:
-        print("pre-simulation")
-        start_time_presim = time.time()
-        nest.Simulate(pre_sim_time)
-        end_time_presim = time.time() - start_time_presim
-
-    if plot:
-        s_rec = nest.Create('spike_recorder')
-        s_rec.record_to = 'memory'
-        nest.Connect(sonata_connector.node_collections[population_to_plot], s_rec)
-
+        print(f"Pre-simulation (10 ms) took: {end_time_presim} s")
+        print(f"simulation took: {end_time_sim} s")
+    print(f"all took: {end_time} s")
+    print(f'initial memory: {mem_ini} GB')
+    print(f'memory create: {mem_create} GB')
+    print(f'memory connect: {mem_connect} GB')
     if simulate:
-        print('simulating')
-
-        start_time_sim = time.time()
-
-        simtime = 0
-        if 'tstop' in sonata_connector.config['run']:
-            simtime = sonata_connector.config['run']['tstop']
-        else:
-            simtime = sonata_connector.config['run']['duration']
-
-        nest.Simulate(simtime)
-
-        end_time_sim = time.time() - start_time_sim
-
-    end_time = time.time() - start_time
-
-    if verbose_print:
-        print(f"creation took: {end_time_create} s")
-        print(f"connection took: {end_time_connect} s")
-        if simulate:
-            print(f"Pre-simulation (10 ms) took: {end_time_presim} s")
-            print(f"simulation took: {end_time_sim} s")
-        print(f"all took: {end_time} s")
-        print(f'initial memory: {mem_ini} GB')
-        print(f'memory create: {mem_create} GB')
-        print(f'memory connect: {mem_connect} GB')
-        if simulate:
-            print(f'number of spikes: {nest.GetKernelStatus("local_spike_counter"):,}')
-        # pprint(nest.GetKernelStatus())
-        # print(nest.GetConnections())
+        print(f'number of spikes: {nest.GetKernelStatus("local_spike_counter"):,}')
+    # pprint(nest.GetKernelStatus())
+    # print(nest.GetConnections())
 
 
 if plot:

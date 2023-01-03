@@ -187,7 +187,7 @@ nest::RecordingBackendMemory::DeviceData::set_value_names( const std::vector< Na
 }
 
 void
-nest::RecordingBackendMemory::DeviceData::  push_back( const Event& event,
+nest::RecordingBackendMemory::DeviceData::push_back( const Event& event,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )
 {

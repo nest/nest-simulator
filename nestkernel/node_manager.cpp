@@ -183,6 +183,10 @@ NodeManager::add_node( index model_id, long n )
   return nc_ptr;
 }
 
+void NodeManager::add_vectorized_neurons_(Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr)
+{
+  
+}
 
 void
 NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr )

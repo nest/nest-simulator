@@ -44,7 +44,7 @@ Node::Node()
   , thread_lid_( invalid_index )
   , model_id_( -1 )
   , thread_( 0 )
-  , vp_( invalid_thread_ )
+  , vp_( invalid_thread )
   , frozen_( false )
   , initialized_( false )
   , node_uses_wfr_( false )
@@ -131,13 +131,14 @@ Node::get_status_dict_()
 void
 Node::set_local_device_id( const index )
 {
-  assert( false && "set_local_device_id() called on a non-device node of type" );
+  assert( false and "set_local_device_id() called on a non-device node of type" );
 }
 
 index
 Node::get_local_device_id() const
 {
-  assert( false && "set_local_device_id() called on a non-device node." );
+  assert( false and "get_local_device_id() called on a non-device node." );
+  return invalid_index;
 }
 
 DictionaryDatum
@@ -335,7 +336,6 @@ port
 Node::handles_test_event( GapJunctionEvent&, rport )
 {
   throw IllegalConnection( "The target node or synapse model does not support gap junction input." );
-  return invalid_port_;
 }
 
 void
@@ -354,7 +354,6 @@ port
 Node::handles_test_event( InstantaneousRateConnectionEvent&, rport )
 {
   throw IllegalConnection( "The target node or synapse model does not support instantaneous rate input." );
-  return invalid_port_;
 }
 
 void
@@ -373,7 +372,6 @@ port
 Node::handles_test_event( DiffusionConnectionEvent&, rport )
 {
   throw IllegalConnection( "The target node or synapse model does not support diffusion input." );
-  return invalid_port_;
 }
 
 void
@@ -392,7 +390,6 @@ port
 Node::handles_test_event( DelayedRateConnectionEvent&, rport )
 {
   throw IllegalConnection( "The target node or synapse model does not support delayed rate input." );
-  return invalid_port_;
 }
 
 void

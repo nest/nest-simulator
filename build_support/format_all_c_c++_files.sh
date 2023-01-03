@@ -3,10 +3,10 @@
 # With this script you can easily format all C/C++ files contained in
 # any (sub)directory of NEST. Internally it uses clang-format to do
 # the actual formatting. You can give a different clang-format command,
-# e.g. by executing `CLANG_FORMAT=clang-format-10 ./format_all_c_c++_files.sh`.
+# e.g. by executing `CLANG_FORMAT=clang-format-14 ./format_all_c_c++_files.sh`.
 # By default the script starts at the current working directory ($PWD), but
 # supply a different starting directory as the first argument to the command.
-CLANG_FORMAT=${CLANG_FORMAT:-clang-format-9}
+CLANG_FORMAT=${CLANG_FORMAT:-clang-format}
 CLANG_FORMAT_FILE=${CLANG_FORMAT_FILE:-.clang-format}
 
 # Drop files that should not be checked
@@ -55,8 +55,8 @@ function process_dir {
 }
 
 function help_output {
-  echo "The $CLANG_FORMAT_FILE requires clang-format version 9 or later."
-  echo "Use like: [CLANG_FORMAT=<clang-format-9>] ./build_support/`basename $0` [start folder, defaults to '$PWD']"
+  echo "The $CLANG_FORMAT_FILE requires clang-format version 13 or later."
+  echo "Use like: [CLANG_FORMAT=<clang-format>] ./build_support/`basename $0` [start folder, defaults to '$PWD']"
   exit 0
 }
 

@@ -134,7 +134,7 @@ double
 nest::ClopathArchivingNode::get_LTD_value( double t )
 {
   std::vector< histentry_extended >::iterator runner;
-  if ( ltd_history_.empty() || t < 0.0 )
+  if ( ltd_history_.empty() or t < 0.0 )
   {
     return 0.0;
   }
@@ -173,12 +173,12 @@ nest::ClopathArchivingNode::get_LTP_history( double t1,
     // To have a well defined discretization of the integral, we make sure
     // that we exclude the entry at t1 but include the one at t2 by subtracting
     // a small number so that runner->t_ is never equal to t1 or t2.
-    while ( ( runner != ltp_history_.end() ) && ( runner->t_ - 1.0e-6 < t1 ) )
+    while ( ( runner != ltp_history_.end() ) and runner->t_ - 1.0e-6 < t1 )
     {
       ++runner;
     }
     *start = runner;
-    while ( ( runner != ltp_history_.end() ) && ( runner->t_ - 1.0e-6 < t2 ) )
+    while ( ( runner != ltp_history_.end() ) and runner->t_ - 1.0e-6 < t2 )
     {
       ( runner->access_counter_ )++;
       ++runner;
@@ -209,7 +209,7 @@ nest::ClopathArchivingNode::write_clopath_history( Time const& t_sp,
   double del_u_bar_minus = delayed_u_bar_minus_[ delayed_u_bars_idx_ ];
 
   // save data for Clopath STDP if necessary
-  if ( ( u > theta_plus_ ) && ( del_u_bar_plus > theta_minus_ ) )
+  if ( u > theta_plus_ and del_u_bar_plus > theta_minus_ )
   {
     write_LTP_history( t_ms, u, del_u_bar_plus );
   }

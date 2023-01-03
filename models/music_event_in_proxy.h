@@ -121,7 +121,7 @@ public:
 
 private:
   void init_buffers_();
-  void calibrate();
+  void pre_run_hook();
 
   void
   update( Time const&, const long, const long )
@@ -141,7 +141,7 @@ private:
     void get( DictionaryDatum& ) const;
 
     /**
-     * Set values from dicitonary.
+     * Set values from dictionary.
      */
     void set( const DictionaryDatum&, State_& );
   };

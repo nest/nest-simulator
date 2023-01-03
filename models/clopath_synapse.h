@@ -79,7 +79,7 @@ Wmin     real    Minimum allowed weight
 =======  ======  ==========================================================
 
 Other parameters like the amplitudes for long-term potentiation (LTP) and
-depression (LTD) are stored in in the neuron models that are compatible with the
+depression (LTD) are stored in the neuron models that are compatible with the
 Clopath synapse.
 
 Transmits
@@ -164,9 +164,9 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 

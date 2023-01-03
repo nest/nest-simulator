@@ -67,6 +67,9 @@ synaptic reversal potentials are supplied by the array ``E_rev``. Port numbers
 are automatically assigned in the range from 1 to n_receptors.
 During connection, the ports are selected with the property ``receptor_type``.
 
+When connecting to conductance-based multisynapse models, all synaptic weights
+must be non-negative.
+
 The membrane potential is given by the following differential equation:
 
 .. math::
@@ -153,7 +156,7 @@ Receives
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
 See also
-+++++++
+++++++++
 
 aeif_cond_alpha_multisynapse
 
@@ -179,7 +182,7 @@ class aeif_cond_alpha_multisynapse : public ArchivingNode
 public:
   aeif_cond_alpha_multisynapse();
   aeif_cond_alpha_multisynapse( const aeif_cond_alpha_multisynapse& );
-  virtual ~aeif_cond_alpha_multisynapse();
+  ~aeif_cond_alpha_multisynapse() override;
 
   friend int aeif_cond_alpha_multisynapse_dynamics( double, const double*, double*, void* );
 
@@ -191,23 +194,23 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
-  void update( Time const&, const long, const long );
+  void init_buffers_() override;
+  void pre_run_hook() override;
+  void update( Time const&, const long, const long ) override;
 
   // The next three classes need to be friends to access the State_ class/member
   friend class DynamicRecordablesMap< aeif_cond_alpha_multisynapse >;
@@ -228,7 +231,7 @@ private:
     double g_L;     //!< Leak Conductance in nS
     double C_m;     //!< Membrane Capacitance in pF
     double E_L;     //!< Leak reversal Potential (aka resting potential) in mV
-    double Delta_T; //!< Slope factor in ms
+    double Delta_T; //!< Slope factor in mV
     double tau_w;   //!< Adaptation time-constant in ms
     double a;       //!< Subthreshold adaptation in nS
     double b;       //!< Spike-triggered adaptation in pA
@@ -318,7 +321,7 @@ private:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
     double step_;            //!< simulation step size in ms

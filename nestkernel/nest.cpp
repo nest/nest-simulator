@@ -213,6 +213,18 @@ get_connections( const DictionaryDatum& dict )
 }
 
 void
+disconnect( const ArrayDatum& conns )
+{
+  for ( size_t conn_index = 0; conn_index < conns.size(); ++conn_index )
+  {
+    const auto conn_datum = getValue< ConnectionDatum >( conns.get( conn_index ) );
+    const auto target_node = kernel().node_manager.get_node_or_proxy( conn_datum.get_target_node_id() );
+    kernel().sp_manager.disconnect(
+      conn_datum.get_source_node_id(), target_node, conn_datum.get_target_thread(), conn_datum.get_synapse_model_id() );
+  }
+}
+
+void
 simulate( const double& t )
 {
   prepare();
@@ -393,5 +405,32 @@ node_collection_array_index( const Datum* datum, const bool* array, unsigned lon
   }
   return new NodeCollectionDatum( NodeCollection::create( node_ids ) );
 }
+
+void
+slice_positions_if_sliced_nc( DictionaryDatum& dict, const NodeCollectionDatum& nc )
+{
+  // If metadata contains node positions and the NodeCollection is sliced, get only positions of the sliced nodes.
+  if ( dict->known( names::positions ) )
+  {
+    const auto positions = getValue< TokenArray >( dict, names::positions );
+    if ( nc->size() != positions.size() )
+    {
+      TokenArray sliced_points;
+      // Iterate only local nodes
+      NodeCollection::const_iterator nc_begin = nc->has_proxies() ? nc->MPI_local_begin() : nc->begin();
+      NodeCollection::const_iterator nc_end = nc->end();
+      for ( auto node = nc_begin; node < nc_end; ++node )
+      {
+        // Because the local ID also includes non-local nodes, it must be adapted to represent
+        // the index for the local node position.
+        const auto index =
+          static_cast< size_t >( std::floor( ( *node ).lid / kernel().mpi_manager.get_num_processes() ) );
+        sliced_points.push_back( positions[ index ] );
+      }
+      def2< TokenArray, ArrayDatum >( dict, names::positions, sliced_points );
+    }
+  }
+}
+
 
 } // namespace nest

@@ -60,49 +60,58 @@ def plotMatrix(srcs, tgts, weights, title, pos):
     plt.colorbar(fraction=0.046, pad=0.04)
 
 
-"""
-Start with a simple, one_to_one example.
-We create the neurons, connect them, and get the connections. From this we can
-get the connected sources, targets, and weights. The corresponding matrix will
-be the identity matrix, as we have a one_to_one connection.
-"""
+#################################################################################
+# Start with a simple, one_to_one example.
+# We create the neurons, connect them, and get the connections. From this we can
+# get the connected sources, targets, and weights. The corresponding matrix will
+# be the identity matrix, as we have a one_to_one connection.
+
 nest.ResetKernel()
 
 nrns = nest.Create('iaf_psc_alpha', 10)
 
 nest.Connect(nrns, nrns, 'one_to_one')
 conns = nest.GetConnections(nrns, nrns)  # This returns a SynapseCollection
+
+#################################################################################
 # We can get desired information of the SynapseCollection with simple get() call.
+
 g = conns.get(['source', 'target', 'weight'])
 srcs = g['source']
 tgts = g['target']
 weights = g['weight']
 
+#################################################################################
 # Plot the matrix consisting of the weights between the sources and targets
+
 plt.figure(figsize=(12, 10))
 plotMatrix(srcs, tgts, weights, 'Uniform weight', 121)
 
-"""
-Add some weights to the connections, and plot the updated weight matrix.
-"""
+#################################################################################
+# Add some weights to the connections, and plot the updated weight matrix.
+
+#################################################################################
 # We can set data of the connections with a simple set() call.
+
 w = [{'weight': x * 1.0} for x in range(1, 11)]
 conns.set(w)
 weights = conns.weight
 
 plotMatrix(srcs, tgts, weights, 'Set weight', 122)
 
-"""
-We can also plot an all_to_all connection, with uniformly distributed weights,
-and different number of sources and targets.
-"""
+#################################################################################
+# We can also plot an all_to_all connection, with uniformly distributed weights,
+# and different number of sources and targets.
+
 nest.ResetKernel()
 
 pre = nest.Create('iaf_psc_alpha', 10)
 post = nest.Create('iaf_psc_delta', 5)
 nest.Connect(pre, post, syn_spec={'weight': nest.random.uniform(min=0.5, max=4.5)})
 
+#################################################################################
 # Get a SynapseCollection with all connections
+
 conns = nest.GetConnections()
 srcs = conns.source
 tgts = conns.target
@@ -111,11 +120,11 @@ weights = conns.weight
 plt.figure(figsize=(12, 10))
 plotMatrix(srcs, tgts, weights, 'All to all connection', 111)
 
-"""
-Lastly, we'll do an exmple that is a bit more complex. We connect different
-neurons with different rules, synapse models and weight distributions, and get
-different SynapseCollections by calling GetConnections with different inputs.
-"""
+#################################################################################
+# Lastly, we'll do an exmple that is a bit more complex. We connect different
+# neurons with different rules, synapse models and weight distributions, and get
+# different SynapseCollections by calling GetConnections with different inputs.
+
 nest.ResetKernel()
 
 nrns = nest.Create('iaf_psc_alpha', 15)
@@ -134,7 +143,9 @@ nest.Connect(nrns[10:], nrns[:12],
 nest.Connect(nrns, nrns[12:],
              {'rule': 'fixed_indegree', 'indegree': 3})
 
+#################################################################################
 # First get a SynapseCollection consisting of all the connections
+
 conns = nest.GetConnections()
 srcs = conns.source
 tgts = conns.target
@@ -143,7 +154,9 @@ weights = conns.weight
 plt.figure(figsize=(14, 12))
 plotMatrix(list(srcs), list(tgts), weights, 'All connections', 221)
 
+#################################################################################
 # Get SynapseCollection consisting of a subset of connections
+
 conns = nest.GetConnections(nrns[:10], nrns[:10])
 g = conns.get(['source', 'target', 'weight'])
 srcs = g['source']
@@ -152,7 +165,9 @@ weights = g['weight']
 
 plotMatrix(srcs, tgts, weights, 'Connections of the first ten neurons', 222)
 
+#################################################################################
 # Get SynapseCollection consisting of just the stdp_synapses
+
 conns = nest.GetConnections(synapse_model='stdp_synapse')
 g = conns.get(['source', 'target', 'weight'])
 srcs = g['source']
@@ -161,8 +176,10 @@ weights = g['weight']
 
 plotMatrix(srcs, tgts, weights, 'Connections with stdp_synapse', 223)
 
+#################################################################################
 # Get SynapseCollection consisting of the fixed_total_number connections, but set
 # weight before plotting
+
 conns = nest.GetConnections(nrns[5:10], nrns[:5])
 w = [{'weight': x * 1.0} for x in range(1, 6)]
 conns.set(w)

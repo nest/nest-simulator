@@ -47,7 +47,7 @@ jobs:
           sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq pycodestyle libpcre3 libpcre3-dev libboost-all-dev
           sudo apt-get install openmpi-bin libopenmpi-dev libgsl0-dev tcl8.6 tcl8.6-dev tk8.6-dev
           sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev
-          sudo apt-get install vera++ clang-format-9
+          sudo apt-get install vera++
           sudo ldconfig
           g++ --version
 
@@ -67,15 +67,17 @@ jobs:
       - name: "Install Python dependencies"
         run: |
           python -m pip install --upgrade pip setuptools
+          # --force-reinstall required to ensure executable is linked from bin dir in PATH
+          python -m pip install --force-reinstall clang-format==13.0
           python -c "import setuptools; print('package location:', setuptools.__file__)"
-          python -m pip install --force-reinstall --upgrade scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc
+          python -m pip install --force-reinstall --upgrade scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc pandas
           python -c "import pytest; print('package location:', pytest.__file__)"
           pip list
 
       - name: "Find changed files"
         run: |
           echo "CHANGED_FILES<<EOF" >> $GITHUB_ENV
-          echo "$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})" >> $GITHUB_ENV
+          echo "$(git diff --name-only ${{ github.event.pull_request.base.sha }}..${{ github.event.after }})" >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
           echo "GITHUB_ENV = $GITHUB_ENV"
           cat $GITHUB_ENV
@@ -169,7 +171,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip setuptools
           python -c "import setuptools; print('package location:', setuptools.__file__)"
-          python -m pip install --force-reinstall --upgrade scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc
+          python -m pip install --force-reinstall --upgrade scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc pandas
           python -c "import pytest; print('package location:', pytest.__file__)"
           pip list
 
@@ -202,7 +204,7 @@ jobs:
       matrix:
         os: [macos-latest]
         cpp_compiler: ["clang"]
-        xNEST_BUILD_TYPE: ["MINIMAL"]
+        xNEST_BUILD_TYPE: ["FULL_MACOS"]
 
     steps:
       - name: "Checkout repository content"
@@ -223,7 +225,7 @@ jobs:
 
       - name: "Install MacOS system dependencies"
         run: |
-          brew install coreutils gsl open-mpi automake autoconf libtool
+          brew install coreutils gsl open-mpi libomp automake autoconf libtool boost
           brew info python
 
       - name: "Restore pip cache"
@@ -243,7 +245,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip setuptools
           python -c "import setuptools; print('package location:', setuptools.__file__)"
-          python -m pip install --force-reinstall --upgrade scipy "junitparser>=2" numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc
+          python -m pip install --force-reinstall --upgrade scipy "junitparser>=2" numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc pandas
           python -c "import pytest; print('package location:', pytest.__file__)"
           pip list
 

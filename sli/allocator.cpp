@@ -30,8 +30,8 @@ sli::pool::pool()
   , instantiations( 0 )
   , total( 0 )
   , capacity( 0 )
-  , chunks( 0 )
-  , head( 0 )
+  , chunks( nullptr )
+  , head( nullptr )
   , initialized_( false )
 {
 }
@@ -44,8 +44,8 @@ sli::pool::pool( const sli::pool& p )
   , instantiations( 0 )
   , total( 0 )
   , capacity( 0 )
-  , chunks( 0 )
-  , head( 0 )
+  , chunks( nullptr )
+  , head( nullptr )
   , initialized_( false )
 {
 }
@@ -59,8 +59,8 @@ sli::pool::pool( size_t n, size_t initial, size_t growth )
   , instantiations( 0 )
   , total( 0 )
   , capacity( 0 )
-  , chunks( 0 )
-  , head( 0 )
+  , chunks( nullptr )
+  , head( nullptr )
   , initialized_( true )
 {
 }
@@ -79,8 +79,8 @@ sli::pool::init( size_t n, size_t initial, size_t growth )
   instantiations = 0;
   total = 0;
   capacity = 0;
-  chunks = 0;
-  head = 0;
+  chunks = nullptr;
+  head = nullptr;
 }
 
 sli::pool::~pool()
@@ -108,8 +108,8 @@ sli::pool::operator=( const sli::pool& p )
   el_size = p.el_size;
   instantiations = 0;
   total = 0;
-  chunks = 0;
-  head = 0;
+  chunks = nullptr;
+  head = nullptr;
   initialized_ = false;
 
   return *this;
@@ -129,12 +129,12 @@ sli::pool::grow( size_t nelements )
   {
     reinterpret_cast< link* >( p )->next = reinterpret_cast< link* >( p + el_size );
   }
-  reinterpret_cast< link* >( last )->next = NULL;
+  reinterpret_cast< link* >( last )->next = nullptr;
   head = reinterpret_cast< link* >( start );
 }
 
 void
-sli::pool::grow( void )
+sli::pool::grow()
 {
   grow( block_size );
   block_size *= growth_factor;

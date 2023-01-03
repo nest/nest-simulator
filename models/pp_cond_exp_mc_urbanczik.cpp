@@ -27,9 +27,7 @@
 
 // C++ includes:
 #include <cstdio>
-#include <iomanip>
 #include <iostream>
-#include <limits>
 
 // Includes from libnestutil:
 #include "numerics.h"
@@ -42,8 +40,6 @@
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Compartment name list
@@ -305,9 +301,9 @@ nest::pp_cond_exp_mc_urbanczik::State_::operator=( const State_& s )
 
 nest::pp_cond_exp_mc_urbanczik::Buffers_::Buffers_( pp_cond_exp_mc_urbanczik& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -315,9 +311,9 @@ nest::pp_cond_exp_mc_urbanczik::Buffers_::Buffers_( pp_cond_exp_mc_urbanczik& n 
 
 nest::pp_cond_exp_mc_urbanczik::Buffers_::Buffers_( const Buffers_&, pp_cond_exp_mc_urbanczik& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -410,7 +406,7 @@ nest::pp_cond_exp_mc_urbanczik::Parameters_::set( const DictionaryDatum& d )
       throw BadProperty( "Capacitance (" + comp_names_[ n ].toString() + ") must be strictly positive." );
     }
 
-    if ( urbanczik_params.tau_syn_ex[ n ] <= 0 || urbanczik_params.tau_syn_in[ n ] <= 0 )
+    if ( urbanczik_params.tau_syn_ex[ n ] <= 0 or urbanczik_params.tau_syn_in[ n ] <= 0 )
     {
       throw BadProperty( "All time constants must be strictly positive." );
     }
@@ -516,7 +512,7 @@ nest::pp_cond_exp_mc_urbanczik::init_buffers_()
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ = B_.step_;
 
-  if ( B_.s_ == 0 )
+  if ( not B_.s_ )
   {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
@@ -525,7 +521,7 @@ nest::pp_cond_exp_mc_urbanczik::init_buffers_()
     gsl_odeiv_step_reset( B_.s_ );
   }
 
-  if ( B_.c_ == 0 )
+  if ( not B_.c_ )
   {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
   }
@@ -534,7 +530,7 @@ nest::pp_cond_exp_mc_urbanczik::init_buffers_()
     gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
   }
 
-  if ( B_.e_ == 0 )
+  if ( not B_.e_ )
   {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }
@@ -544,7 +540,7 @@ nest::pp_cond_exp_mc_urbanczik::init_buffers_()
   }
 
   B_.sys_.function = pp_cond_exp_mc_urbanczik_dynamics;
-  B_.sys_.jacobian = NULL;
+  B_.sys_.jacobian = nullptr;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
   for ( size_t n = 0; n < NCOMP; ++n )
@@ -554,7 +550,7 @@ nest::pp_cond_exp_mc_urbanczik::init_buffers_()
 }
 
 void
-nest::pp_cond_exp_mc_urbanczik::calibrate()
+nest::pp_cond_exp_mc_urbanczik::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -578,7 +574,7 @@ void
 nest::pp_cond_exp_mc_urbanczik::update( Time const& origin, const long from, const long to )
 {
 
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
@@ -699,7 +695,7 @@ void
 nest::pp_cond_exp_mc_urbanczik::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
-  assert( 0 <= e.get_rport() && e.get_rport() < 2 * NCOMP );
+  assert( 0 <= e.get_rport() and e.get_rport() < 2 * NCOMP );
 
   B_.spikes_[ e.get_rport() ].add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
@@ -710,7 +706,7 @@ nest::pp_cond_exp_mc_urbanczik::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
   // not 100% clean, should look at MIN, SUP
-  assert( 0 <= e.get_rport() && e.get_rport() < NCOMP );
+  assert( 0 <= e.get_rport() and e.get_rport() < NCOMP );
 
   // add weighted current; HEP 2002-10-04
   B_.currents_[ e.get_rport() ].add_value(

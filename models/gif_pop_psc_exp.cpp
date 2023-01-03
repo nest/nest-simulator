@@ -55,7 +55,7 @@ template <>
 void
 RecordablesMap< gif_pop_psc_exp >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &gif_pop_psc_exp::get_V_m_ );
   insert_( names::n_events, &gif_pop_psc_exp::get_n_events_ );
   insert_( names::E_sfa, &gif_pop_psc_exp::get_E_sfa_ );
@@ -272,7 +272,7 @@ nest::gif_pop_psc_exp::init_buffers_()
 
 
 void
-nest::gif_pop_psc_exp::calibrate()
+nest::gif_pop_psc_exp::pre_run_hook()
 {
   if ( P_.tau_sfa_.size() == 0 )
   {
@@ -473,7 +473,7 @@ nest::gif_pop_psc_exp::get_history_size()
 
   int k = tmax / V_.h_;
   int kmin = 5 * P_.tau_m_ / V_.h_;
-  while ( ( adaptation_kernel( k ) / P_.Delta_V_ < 0.1 ) and ( k > kmin ) )
+  while ( ( adaptation_kernel( k ) / P_.Delta_V_ < 0.1 ) and k > kmin )
   {
     k--;
   }

@@ -114,7 +114,7 @@ EventDeliveryManager::send_remote( thread tid, SpikeEvent& e, const long lag )
     // Unroll spike multiplicity as plastic synapses only handle individual spikes.
     for ( int i = 0; i < e.get_multiplicity(); ++i )
     {
-      spike_register_[ tid ][ assigned_tid ][ lag ].push_back( *it );
+      emitted_spikes_register_[ tid ][ assigned_tid ][ lag ].push_back( *it );
     }
   }
 }
@@ -133,7 +133,7 @@ EventDeliveryManager::send_off_grid_remote( thread tid, SpikeEvent& e, const lon
     // Unroll spike multiplicity as plastic synapses only handle individual spikes.
     for ( int i = 0; i < e.get_multiplicity(); ++i )
     {
-      off_grid_spike_register_[ tid ][ assigned_tid ][ lag ].push_back( OffGridTarget( *it, e.get_offset() ) );
+      off_grid_emitted_spike_register_[ tid ][ assigned_tid ][ lag ].push_back( OffGridTarget( *it, e.get_offset() ) );
     }
   }
 }
@@ -151,12 +151,11 @@ EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
     // We need to consider every synapse type this event supports to
     // make sure also labeled and connection created by CopyModel are
     // considered.
-    const std::vector< synindex >& supported_syn_ids = e.get_supported_syn_ids();
-    for ( std::vector< synindex >::const_iterator cit = supported_syn_ids.begin(); cit != supported_syn_ids.end();
-          ++cit )
+    const std::set< synindex >& supported_syn_ids = e.get_supported_syn_ids();
+    for ( const auto& syn_id : supported_syn_ids )
     {
       const std::vector< size_t >& positions =
-        kernel().connection_manager.get_secondary_send_buffer_positions( tid, lid, *cit );
+        kernel().connection_manager.get_secondary_send_buffer_positions( tid, lid, syn_id );
 
       for ( size_t i = 0; i < positions.size(); ++i )
       {

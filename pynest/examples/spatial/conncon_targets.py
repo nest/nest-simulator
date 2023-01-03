@@ -20,10 +20,12 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Connect two populations with convergent projection and rectangular mask, visualize connections from source perspective
------------------------------------------------------------------------------------------------------------------------
+Convergent projection and rectangular mask, from source perspective
+--------------------------------------------------------------------
 
 Create two populations of iaf_psc_alpha neurons on a 30x30 grid
+Connect the two populations with convergent projection and rectangular mask, and
+visualize connections from source perspective
 
 BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB

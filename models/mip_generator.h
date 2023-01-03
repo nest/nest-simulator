@@ -128,7 +128,7 @@ public:
 private:
   void init_state_() override;
   void init_buffers_() override;
-  void calibrate() override;
+  void pre_run_hook() override;
 
   void update( Time const&, const long, const long ) override;
 
@@ -150,7 +150,7 @@ private:
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------

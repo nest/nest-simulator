@@ -41,14 +41,14 @@ class ModelRangeManager : public ManagerInterface
 {
 public:
   ModelRangeManager();
-  ~ModelRangeManager()
+  ~ModelRangeManager() override
   {
   }
 
-  virtual void initialize() override;
-  virtual void finalize() override;
-  virtual void set_status( const DictionaryDatum& ) override;
-  virtual void get_status( DictionaryDatum& ) override;
+  void initialize() override;
+  void finalize() override;
+  void set_status( const DictionaryDatum& ) override;
+  void get_status( DictionaryDatum& ) override;
 
   /**
    * Assign a range of node IDs for the given model
@@ -99,7 +99,7 @@ nest::ModelRangeManager::get_status( DictionaryDatum& )
 inline bool
 nest::ModelRangeManager::is_in_range( index node_id ) const
 {
-  return ( ( node_id <= last_node_id_ ) and ( node_id >= first_node_id_ ) );
+  return ( node_id <= last_node_id_ and node_id >= first_node_id_ );
 }
 
 inline std::vector< modelrange >::const_iterator

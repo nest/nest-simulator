@@ -186,7 +186,7 @@ class hh_psc_alpha_clopath : public ClopathArchivingNode
 public:
   hh_psc_alpha_clopath();
   hh_psc_alpha_clopath( const hh_psc_alpha_clopath& );
-  ~hh_psc_alpha_clopath();
+  ~hh_psc_alpha_clopath() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -196,23 +196,23 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
-  void update( Time const&, const long, const long );
+  void init_buffers_() override;
+  void pre_run_hook() override;
+  void update( Time const&, const long, const long ) override;
 
   // END Boilerplate function declarations ----------------------------
 
@@ -231,25 +231,25 @@ private:
   //! Independent parameters
   struct Parameters_
   {
-    double t_ref_;           //!< refractory time in ms
-    double g_Na;             //!< Sodium Conductance in nS
-    double g_K;              //!< Potassium Conductance in nS
-    double g_L;              //!< Leak Conductance in nS
-    double C_m;              //!< Membrane Capacitance in pF
-    double E_Na;             //!< Sodium Reversal Potential in mV
-    double E_K;              //!< Potassium Reversal Potential in mV
-    double E_L;              //!< Leak reversal Potential (aka resting potential) in mV
-    double tau_synE;         //!< Synaptic Time Constant Excitatory Synapse in ms
-    double tau_synI;         //!< Synaptic Time Constant for Inhibitory Synapse in ms
-    double I_e;              //!< Constant Current in pA
-    double tau_u_bar_plus;   //!< time constant of u_bar_plus in ms
-    double tau_u_bar_minus;  //!< time constant of u_bar_minus in ms
-    double tau_u_bar_bar;    //!< time constant of u_bar_bar in ms
+    double t_ref_;          //!< refractory time in ms
+    double g_Na;            //!< Sodium Conductance in nS
+    double g_K;             //!< Potassium Conductance in nS
+    double g_L;             //!< Leak Conductance in nS
+    double C_m;             //!< Membrane Capacitance in pF
+    double E_Na;            //!< Sodium Reversal Potential in mV
+    double E_K;             //!< Potassium Reversal Potential in mV
+    double E_L;             //!< Leak reversal Potential (aka resting potential) in mV
+    double tau_synE;        //!< Synaptic Time Constant Excitatory Synapse in ms
+    double tau_synI;        //!< Synaptic Time Constant for Inhibitory Synapse in ms
+    double I_e;             //!< Constant Current in pA
+    double tau_u_bar_plus;  //!< time constant of u_bar_plus in ms
+    double tau_u_bar_minus; //!< time constant of u_bar_minus in ms
+    double tau_u_bar_bar;   //!< time constant of u_bar_bar in ms
 
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
 public:
@@ -322,7 +322,7 @@ private:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
     double step_;            //!< step size in ms

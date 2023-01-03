@@ -110,7 +110,7 @@ SonataConnector::connect()
     const auto edges_grp = open_group_( file, "edges" );
 
     // Create map of edge type ids to NEST synapse_model ids
-    cur_edge_params_ = getValue< DictionaryDatum >( edge_dict->lookup( "edge_synapse" ) );
+    cur_edge_params_ = getValue< DictionaryDatum >( edge_dict->lookup( "syn_specs" ) );
     create_type_id_2_syn_spec_( cur_edge_params_ );
 
     // Get names of population groups (usually just one population group)
@@ -454,6 +454,7 @@ SonataConnector::connect_chunk_( const hsize_t chunk_size, const hsize_t offset 
       throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
     }
   }
+
 } // end create_connections_()
 
 hsize_t

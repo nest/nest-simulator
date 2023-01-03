@@ -1,0 +1,3 @@
+edge_type_id target_query source_query dynamics_params model_template
+100 ei=='e' * ExcToExc.json static_synapse
+101 ei=='i' * ExcToInh.json static_synapse

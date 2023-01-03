@@ -120,7 +120,6 @@ if verbose_print:
     print(f"creation took: {end_time_create} s")
     print(f"connection took: {end_time_connect} s")
     if simulate:
-        print(f"Pre-simulation (10 ms) took: {end_time_presim} s")
         print(f"simulation took: {end_time_sim} s")
     print(f"all took: {end_time} s")
     print(f'initial memory: {mem_ini} GB')

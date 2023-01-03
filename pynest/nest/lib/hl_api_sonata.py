@@ -127,6 +127,13 @@ class SonataNetwork():
             msg = "'target_simulator' in configuration file must be 'NEST'."
             raise ValueError(msg)
 
+        if not "dt" in self._conf["run"]:
+            msg = ("Time resolution 'dt' must be specified in configuration "
+                   "file")
+            raise ValueError(msg)
+
+        SetKernelStatus({"resolution": self._conf["run"]["dt"]})
+
     def _parse_config(self, config):
         """Parse JSON configuration file.
 
@@ -574,21 +581,11 @@ class SonataNetwork():
 
         return node_collections
 
-    def Simulate(self, **kwargs):
+    def Simulate(self):
         """Simulate the SONATA network.
 
-        The simulation time and resolution is expected to be provided in the
-        JSON configuration file. Additional kernel attributes can be passed as
-        as arbitrary keyword arguments (`kwargs`). See the documentation of
-        :ref:`sec:kernel_attributes` for a valid list of kernel attributes.
-
-        Note that the number of threads and MPI processes should be set in
-        advance of *building* the network.
-
-        Parameters
-        ----------
-        kwargs:
-            kwargs are passed to SetKernelStatus [REF].
+        The simulation time and resolution are expected to be provided in the
+        JSON configuration file. 
         """
 
         # Verify that network is built
@@ -596,15 +593,6 @@ class SonataNetwork():
             msg = ("The SONATA network must be built before a simulation "
                    "can be done")
             raise kernel.NESTError(msg)
-
-        SetKernelStatus(**kwargs)
-
-        if not "dt" in self._conf["run"]:
-            msg = ("Time resolution 'dt' must be specified in configuration "
-                   "file")
-            raise ValueError(msg)
-
-        SetKernelStatus({"resolution": self._conf["run"]["dt"]})
 
         if "tstop" in self._conf["run"]:
             T_sim = self._conf["run"]["tstop"]

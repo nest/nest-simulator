@@ -91,6 +91,13 @@ section#kernel-attributes dl.py.class dd dl.py.attribute dd dl.field-list.simple
 .md-typeset h6 {
    font-weight: 600;
 }
+.md-typeset h1[id]:before,
+.md-typeset h2[id]:before, 
+.md-typeset h3[id]:before,
+.md-typeset h4[id]:before {
+   margin-top: -3.4rem;
+  padding-top: 3.4rem;
+}
 
 [data-md-color-primary=orange] .md-tabs {
   background-color: var(--nest-orange);
@@ -130,7 +137,6 @@ div.sd-card-title.sd-font-weight-bold.sd-d-flex-row.docutils a.reference.interna
 }
 
 .md-typeset .admonition {
-  background-color: var(--nest-blue);
   border-left: .2rem solid var(--nest-blue);
   border-radius: 5px;
 }
@@ -588,13 +594,13 @@ MEDIAQUERIES
  {
   background-image: linear-gradient(to bottom, rgba(255, 102, 51, 0.63), rgba(255, 102, 51, 0.1), rgba(255, 102, 51, 0.73)), url('../img/background-particles-flattened.png');
   background-color: #ff6633;
-  height: 350px;
+  height: 240px;
  }
 
 header{
   background-color: var(--nest-orange);
   padding:15px 0;
-  height: 350px;
+  height: 240px;
  }
 .tsparticles-canvas-el {
     margin-top: -275px;
@@ -607,13 +613,13 @@ header{
  {
   background-image: linear-gradient(to bottom, rgba(255, 102, 51, 0.63), rgba(255, 102, 51, 0.1), rgba(255, 102, 51, 0.73)), url('../img/background-particles-flattened.png');
   background-color: #ff6633;
-  height: 250px;
+  height: 210px;
 
  }
 header{
   background-color: var(--nest-orange);
   padding:0 0;
-  height: 250px;
+  height: 210px;
 }
  #banner{
    padding-top: 50px;
@@ -680,11 +686,6 @@ margin: 0;
 .flex-control-nav {bottom: 5px;}
 
 
-aside {
-	float:right;
-	width:30%;
-}
-
 /*** MAIN MENU - ESSENTIAL STYLES ***/
 .menu-toggle{display:none;}
 #menu-main-navigation{display:block;}
@@ -750,7 +751,7 @@ ul.srt-menu li li li.sfHover ul {
 /*** DEMO2 SKIN ***/
 #topnav, .srt-menu {
 	float:right;
-	margin: 125px 100px 0 0;
+	margin: 85px 100px 0 0;
 }
 .srt-menu a {
 	text-decoration:none;

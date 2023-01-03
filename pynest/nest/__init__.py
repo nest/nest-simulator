@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-r"""PyNEST - Python interface for the NEST simulator
+r"""PyNEST - Python interface for the NEST Simulator
 
 * ``nest.helpdesk()`` opens the NEST documentation in your browser.
 
@@ -29,8 +29,8 @@ r"""PyNEST - Python interface for the NEST simulator
 
 * ``nest.synapse_models`` shows all available synapse models.
 
-* ``nest.help("model_name") displays help for the given model, e.g.,
-  ``nest.help("iaf_psc_exp")``
+* To get details on the model equations and parameters,
+  please check out our model documentation at https://nest-simulator.readthedocs.io/en/stable/models/index.html.
 
 * To get help on functions in the ``nest`` package, use Python's
   ``help()`` function or IPython's ``?``, e.g.

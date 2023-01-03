@@ -138,7 +138,7 @@ private:
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 
     /**
-     * Set values from dicitonary.
+     * Set values from dictionary.
      * @note Buffer is passed so that the position etc can be reset
      *       parameters have been changed.
      */

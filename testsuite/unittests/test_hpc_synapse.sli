@@ -59,7 +59,7 @@ M_ERROR setverbosity
 } bind def
 
 
-% Test if synapse can be used without additional setup; stdp_dopamine_synpase does not
+% Test if synapse can be used without additional setup; stdp_dopamine_synapse does not
 /synapse_works  % expects lit specifying hpc synapse
 {
   /syn Set

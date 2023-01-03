@@ -23,6 +23,12 @@ layout, our wide range of docs can be discovered more easily.
 The table of contents is simplified and the content is grouped based on topic (neurons, synapses etc)
 rather than type of documentation (e.g., 'guides').
 
+Query spatially structured networks from target neuron perspective
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+PyNEST now provides functions  :py:func:`.GetSourceNodes`, :py:func:`.GetSourcePositions`, and 
+:py:func:`.PlotSources` which allow you to query or plot the source neurons of a given target neuron.
+
 
 Changes in NEST behavior
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -48,9 +54,18 @@ obtained by calling ``GetConnections()``. The ``SynapseCollection`` can either b
 ``nest.disconnect()``, or one may call the member function ``disconnect()`` of the ``SynapseCollection``.
 
 
+Removal of deprecated models
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The models ``iaf_psc_alpha_canon`` and ``pp_pop_psc_delta`` have long
+been deprecated and were now removed from NEST. In case you depend on
+them, you will find similar functionality in the replacement models
+``iaf_psc_alpha_ps`` and ``gif_pop_psc_exp``, respectively.
+
+
 Deprecation information
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-* Model ``spike_dilutor`` is now deprecated and can only be used
-  in single-threaded mode. To implement connections which transmit
-  spikes with fixed probability, use ``bernoulli_synapse`` instead.
+Model ``spike_dilutor`` is now deprecated and can only be used in
+single-threaded mode. To implement connections which transmit spikes
+with fixed probability, use ``bernoulli_synapse`` instead.

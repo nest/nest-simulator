@@ -90,7 +90,7 @@ dc_visible dc_delay sub /dc_on Set
                      % the neuron at the desired time
 
 dc_delay /max_delay Set
-                     % the maximal delay tolereated by the 
+                     % the maximal delay tolerated by the
                      % simulation kernel (in ms) needs to be
                      % larger or equal to the maximal delay
                      % used in this script

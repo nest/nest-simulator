@@ -45,7 +45,7 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
     echo "+               S T A T I C   C O D E   A N A L Y S I S                       +"
     echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
 
-    echo "MSGBLD0010: Initializing VERA++ static code analysis."
+    echo "MSGBLD0010: Initializing static code analysis."
     export PYTHON_EXECUTABLE="$(which python3)"
     export PYTHON_INCLUDE_DIR="`python3 -c "import sysconfig; print(sysconfig.get_path('include'))"`"
     export PYLIB_BASE="lib`basename $PYTHON_INCLUDE_DIR`"
@@ -54,9 +54,6 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
     echo "--> Detected PYTHON_LIBRARY=$PYTHON_LIBRARY"
     echo "--> Detected PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
     CONFIGURE_PYTHON="-DPYTHON_EXECUTABLE=$PYTHON_EXECUTABLE -DPYTHON_LIBRARY=$PYTHON_LIBRARY -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
-    # Add the NEST profile to the VERA++ profiles.
-    sudo cp build_support/vera++.profile /usr/lib/vera++/profiles/nest
-    echo "MSGBLD0020: VERA++ initialization completed."
     if [ ! -f "$HOME/.cache/bin/cppcheck" ]; then
         echo "MSGBLD0030: Installing CPPCHECK version 1.69."
         # Build cppcheck version 1.69
@@ -92,21 +89,18 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
     # Set the command line arguments for the static code analysis script and execute it.
 
     # The names of the static code analysis tools executables.
-    VERA=vera++
     CPPCHECK=cppcheck
     CLANG_FORMAT=clang-format
     PEP8=pycodestyle
     PYCODESTYLE_IGNORES="E121,E123,E126,E226,E24,E704,W503,W504"
 
     # Perform or skip a certain analysis.
-    PERFORM_VERA=true
     PERFORM_CPPCHECK=true
     PERFORM_CLANG_FORMAT=true
     PERFORM_PEP8=true
 
     # The following command line parameters indicate whether static code analysis error messages
     # will cause the CI build to fail or are ignored.
-    IGNORE_MSG_VERA=false
     IGNORE_MSG_CPPCHECK=true
     IGNORE_MSG_CLANG_FORMAT=false
     IGNORE_MSG_PYCODESTYLE=false
@@ -117,9 +111,9 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
 
     chmod +x build_support/static_code_analysis.sh
     ./build_support/static_code_analysis.sh "$RUNS_ON_CI" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
-    "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
-    "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
-    "$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PYCODESTYLE" \
+    "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
+    "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
+    "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PYCODESTYLE" \
     "$PYCODESTYLE_IGNORES"
 
     exit $?
@@ -291,6 +285,7 @@ echo "MSGBLD0236: $(pwd)\$ cmake \
     -DCMAKE_CXX_FLAGS=\"$CXX_FLAGS\" \
     -Dwith-optimize=ON \
     -Dwith-warning=ON \
+    -Dwith-userdoc=OFF \
     $CONFIGURE_BOOST \
     $CONFIGURE_OPENMP \
     $CONFIGURE_MPI \

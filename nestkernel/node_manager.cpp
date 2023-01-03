@@ -139,7 +139,14 @@ NodeManager::add_node( index model_id, long n )
 
   if ( model->has_proxies() )
   {
-    add_neurons_( *model, min_node_id, max_node_id, nc_ptr );
+    if ( model->get_uses_vectors() )
+    {
+      add_vectorized_neurons_( model, min_node_id, max_node_id, nc_ptr );
+    }
+    else
+    {
+      add_neurons_( *model, min_node_id, max_node_id, nc_ptr );
+    }
   }
   else if ( not model->one_node_per_process() )
   {
@@ -184,8 +191,30 @@ NodeManager::add_node( index model_id, long n )
 }
 
 void
-NodeManager::add_vectorized_neurons_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr )
+NodeManager::add_vectorized_neurons_( Model* model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr )
 {
+  const size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
+
+#pragma omp parallel
+  {
+    const size_t tid = kernel().vp_manager.get_thread_id();
+
+    const size_t vp = kernel().vp_manager.thread_to_vp( tid );
+    const size_t min_node_id_vp = kernel().vp_manager.node_id_to_vp( min_node_id );
+
+    size_t start_id = min_node_id + ( vp - min_node_id_vp ) % num_vps;
+
+    if ( start_id <= max_node_id )
+    {
+
+      std::shared_ptr< VectorizedNode > t_container = get_container( model, tid );
+      size_t diff = max_node_id - start_id;
+      bool has_more_than_one = diff % num_vps == 0;
+      size_t number_of_elements_to_add = has_more_than_one ? diff / num_vps + 1 : 1;
+
+      t_container->resize( number_of_elements_to_add, tid );
+    }
+  }
 }
 
 void
@@ -203,38 +232,18 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
     const index t = kernel().vp_manager.get_thread_id();
     try
     {
-      std::shared_ptr< VectorizedNode > t_container;
       model.reserve_additional( t, max_new_per_thread );
-      if ( model.get_uses_vectors() )
-      {
-        if ( model.has_thread_assigned( t ) )
-        {
-          index t_container_pos = model.get_node_pos_in_thread( t );
-          t_container = vectorized_nodes.at( t ).at( t_container_pos );
-        }
-        else
-        {
-          t_container = model.get_container()->clone();
-          t_container->set_thread( t );
-          vectorized_nodes.at( t ).push_back( t_container );
-          index t_container_pos = vectorized_nodes.at( t ).size() - 1;
-          model.add_thread_node_pair( t, t_container_pos );
-        }
-      }
-
       // Need to find smallest node ID with:
       //   - node ID local to this vp
       //   - node_id >= min_node_id
       const size_t vp = kernel().vp_manager.thread_to_vp( t );
       const size_t min_node_id_vp = kernel().vp_manager.node_id_to_vp( min_node_id );
+      size_t node_id = min_node_id + ( vp - min_node_id_vp ) % num_vps;
 
-      size_t node_id = min_node_id + ( num_vps + vp - min_node_id_vp ) % num_vps;
-      bool has_at_leat_one_node = false;
       while ( node_id <= max_node_id )
       {
         Node* node = model.create( t );
 
-        node->set_container( t_container );
         node->set_node_id_( node_id );
         node->set_nc_( nc_ptr );
         node->set_model_id( model.get_model_id() );
@@ -243,16 +252,10 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
         node->set_initialized();
 
         local_nodes_[ t ].add_local_node( *node );
-
         node_id += num_vps;
-        has_at_leat_one_node = true;
       }
 
       local_nodes_[ t ].set_max_node_id( max_node_id );
-      if ( t_container and has_at_leat_one_node )
-      {
-        t_container->resize( max_new_per_thread, t );
-      }
     }
     catch ( std::exception& err )
     {
@@ -806,4 +809,27 @@ void
 NodeManager::set_status( const DictionaryDatum& )
 {
 }
+
+
+std::shared_ptr< nest::VectorizedNode >
+NodeManager::get_container( Model* model, size_t tid )
+{
+
+  index t_container_pos;
+  if ( model->has_thread_assigned( tid ) )
+  {
+    t_container_pos = model->get_node_pos_in_thread( tid );
+  }
+  else
+  {
+    std::shared_ptr< nest::VectorizedNode > t_container = model->get_container()->clone();
+    t_container->set_thread( tid );
+    vectorized_nodes.at( tid ).push_back( t_container );
+    t_container_pos = vectorized_nodes.at( tid ).size() - 1;
+    model->add_thread_node_pair( tid, t_container_pos );
+  }
+  return vectorized_nodes.at( tid ).at( t_container_pos );
+}
+
+
 }

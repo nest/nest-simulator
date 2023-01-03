@@ -267,6 +267,9 @@ private:
    */
   void add_neurons_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr );
 
+  void add_vectorized_neurons_( Model* model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr );
+
+
   /**
    * Add device nodes.
    *
@@ -291,6 +294,8 @@ private:
   void add_music_nodes_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr );
 
 private:
+  std::shared_ptr< nest::VectorizedNode > get_container( Model* model, size_t tid );
+
   /**
    * The network as sparse array of local nodes. One entry per thread,
    * which contains only the thread-local nodes.

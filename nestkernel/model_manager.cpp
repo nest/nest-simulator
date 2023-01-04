@@ -256,7 +256,6 @@ ModelManager::copy_node_model_( index old_id, Name new_name )
     new_model->clone_container( old_model->get_container() );
     new_model->set_uses_vecotrs( true );
   }
-  node_models_.push_back( new_model );
 
   const index new_id = node_models_.size();
   new_model->set_model_id( new_id );

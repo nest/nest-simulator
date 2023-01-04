@@ -60,7 +60,7 @@ Node::Node( const Node& n )
   , vp_( n.vp_ )
   , frozen_( n.frozen_ )
   // copy must always initialized its own buffers
-  , initialized_(false)
+  , initialized_( false )
   , node_uses_wfr_( n.node_uses_wfr_ )
 {
 }

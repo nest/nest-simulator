@@ -37,7 +37,7 @@ class TestDisconnectSingle(unittest.TestCase):
 
     def setUp(self):
         nest.ResetKernel()
-        nest.set_verbosity('M_ERROR')
+        nest.set_verbosity(nest.verbosity.M_ERROR)
         if test_with_mpi:
             self.comm = MPI.COMM_WORLD
             self.rank = self.comm.Get_rank()

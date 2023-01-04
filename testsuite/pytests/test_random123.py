@@ -37,7 +37,7 @@ try:
 except ImportError:
     HAVE_SCIPY = False
 
-nest.set_verbosity('M_WARNING')
+nest.set_verbosity(nest.verbosity.M_WARNING)
 
 
 class BaseTestCases:

@@ -53,7 +53,7 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
         self.simtime = 100.
         self.dt = 0.1
 
-        nest.set_verbosity('M_WARNING')
+        nest.set_verbosity(nest.verbosity.M_WARNING)
         nest.ResetKernel()
         nest.resolution = self.dt
         nest.use_wfr = True

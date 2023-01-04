@@ -37,7 +37,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
     def test_ConnectNeuronsWithUrbanczikSynapse(self):
         """Ensures that the restriction to supported neuron models works."""
 
-        nest.set_verbosity('M_WARNING')
+        nest.set_verbosity(nest.verbosity.M_WARNING)
 
         mc_models = ["iaf_cond_alpha_mc", "pp_cond_exp_mc_urbanczik"]  # Multi-compartment models
         supported_models = ["pp_cond_exp_mc_urbanczik"]
@@ -76,7 +76,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
     def test_SynapseDepressionFacilitation(self):
         """Ensure that depression and facilitation work correctly"""
 
-        nest.set_verbosity('M_WARNING')
+        nest.set_verbosity(nest.verbosity.M_WARNING)
         nest.ResetKernel()
 
         resolution = 0.1

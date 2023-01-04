@@ -272,7 +272,7 @@ class TestGrowthCurve(unittest.TestCase):
 
     def setUp(self):
         nest.ResetKernel()
-        nest.set_verbosity('M_ERROR')
+        nest.set_verbosity(nest.verbosity.M_ERROR)
         nest.total_num_virtual_procs = 4
         nest.rng_seed = 1
 

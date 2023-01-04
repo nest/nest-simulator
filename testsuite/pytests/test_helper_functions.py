@@ -27,23 +27,13 @@ class TestHelperFunctions(unittest.TestCase):
 
     def test_get_verbosity(self):
         verbosity = nest.get_verbosity()
-        self.assertTrue(isinstance(verbosity, int))
+        self.assertTrue(isinstance(verbosity, nest.verbosity))
 
     def test_set_verbosity(self):
-        levels = [('M_ALL', 0),
-                  ('M_DEBUG', 5),
-                  ('M_STATUS', 7),
-                  ('M_INFO', 10),
-                  ('M_DEPRECATED', 18),
-                  ('M_WARNING', 20),
-                  ('M_ERROR', 30),
-                  ('M_FATAL', 40),
-                  ('M_QUIET', 100)
-                  ]
-        for level, code in levels:
+        for level in nest.verbosity:
             nest.set_verbosity(level)
             verbosity = nest.get_verbosity()
-            self.assertEqual(verbosity, code)
+            self.assertEqual(verbosity, level)
 
 
 def suite():

@@ -94,7 +94,7 @@ class TestSTDPNNSynapses:
             err_msg=synapse_model + " test: "
                                     "Resulting synaptic weight %e "
                                     "differs from expected %e" % (
-                                       weight_by_nest, weight_reproduced_independently))
+                                        weight_by_nest, weight_reproduced_independently))
 
     def do_the_nest_simulation(self):
         """
@@ -102,7 +102,7 @@ class TestSTDPNNSynapses:
         Returns the generated pre- and post spike sequences
         and the resulting weight established by STDP.
         """
-        nest.set_verbosity('M_WARNING')
+        nest.set_verbosity(nest.verbosity.M_WARNING)
         nest.ResetKernel()
         nest.resolution = self.resolution
 

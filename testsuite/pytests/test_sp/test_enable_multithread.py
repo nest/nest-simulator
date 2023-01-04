@@ -38,7 +38,7 @@ class TestEnableMultithread(unittest.TestCase):
 
     def setUp(self):
         nest.ResetKernel()
-        nest.set_verbosity('M_ERROR')
+        nest.set_verbosity(nest.verbosity.M_ERROR)
 
     def test_enable_multithread(self):
 

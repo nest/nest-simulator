@@ -41,7 +41,7 @@ class RateCopyModelTestCase(unittest.TestCase):
         simtime = 100.
         dt = 0.001
 
-        nest.set_verbosity('M_WARNING')
+        nest.set_verbosity(nest.verbosity.M_WARNING)
         nest.ResetKernel()
         nest.resolution = dt
         nest.use_wfr = True

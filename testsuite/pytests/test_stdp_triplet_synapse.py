@@ -31,7 +31,7 @@ class STDPTripletSynapseTestCase(unittest.TestCase):
     """Check stdp_triplet_synapse model properties."""
 
     def setUp(self):
-        nest.set_verbosity('M_WARNING')
+        nest.set_verbosity(nest.verbosity.M_WARNING)
         nest.ResetKernel()
 
         # settings
@@ -294,7 +294,7 @@ class STDPTripletSynapseTestCase(unittest.TestCase):
 
 class STDPTripletInhTestCase(STDPTripletSynapseTestCase):
     def setUp(self):
-        nest.set_verbosity('M_WARNING')
+        nest.set_verbosity(nest.verbosity.M_WARNING)
         nest.ResetKernel()
 
         # settings

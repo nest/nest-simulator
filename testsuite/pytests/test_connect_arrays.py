@@ -24,7 +24,7 @@ import numpy as np
 
 import nest
 
-nest.set_verbosity('M_WARNING')
+nest.set_verbosity(nest.verbosity.M_WARNING)
 
 HAVE_OPENMP = nest.GetKernelStatus("build_info")["threading"] != "no"
 

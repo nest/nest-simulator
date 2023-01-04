@@ -64,7 +64,7 @@ class Tsodyks2SynapseTest(unittest.TestCase):
         Returns the generated pre- and post spike sequences
         and the resulting weight established by the tsodyks2 synapse.
         """
-        nest.set_verbosity("M_WARNING")
+        nest.set_verbosity(nest.verbosity.M_WARNING)
         nest.ResetKernel()
         nest.resolution = self.resolution
 

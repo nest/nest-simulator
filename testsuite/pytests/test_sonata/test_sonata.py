@@ -46,63 +46,62 @@ EXPECTED_NUM_SPIKES = 18794
 NUM_THREADS = [1, 2, 4]
 
 # TODO:
-# make more concise tests
-# use 300_pointneurons from pynest/examples dir
-# (300_pointneurons in testsuite is also with typo in hdf5 dsets)
 # test sending the config paths as str, pathlib.Path and pathlib.PurePath
 # test setting of chunk size
 
 
 @pytest.fixture
 def reset():
+    # TODO: is importskip needed when skipif decorator is used?
     pytest.importorskip('h5py')  # Skip test if h5py is not found
     nest.ResetKernel()
 
 
-@pytest.fixture
-def sonata_network_fixture():
-    sonata_net = nest.SonataNetwork(config, sim_config)
-    return sonata_net
-
-
 @skip_if_no_hdf5
-def testSonataConnector(reset, sonata_network_fixture):
-    """Correct positions used in Connect with free positions"""
-    sonata_net = sonata_network_fixture
+def testSonataNetwork(reset):
+    sonata_net = nest.SonataNetwork(config, sim_config)
     assert (sonata_net.config['target_simulator'] == 'NEST')
 
 
 @skip_if_no_hdf5
 @pytest.mark.parametrize("num_threads", NUM_THREADS)
-def testCreate(reset, sonata_network_fixture, num_threads):
-    sonata_net = sonata_network_fixture
+def testCreate(reset, num_threads):
     nest.set(overwrite_files=True, total_num_virtual_procs=num_threads)
+    sonata_net = nest.SonataNetwork(config, sim_config)
     sonata_net.Create()
-
     num_nodes = nest.GetKernelStatus('network_size')
     assert (num_nodes == EXPECTED_NUM_NODES)
 
 
 @skip_if_no_hdf5
 @pytest.mark.parametrize("num_threads", NUM_THREADS)
-def testConnect(reset, sonata_network_fixture, num_threads):
-    sonata_net = sonata_network_fixture
+def testConnect(reset, num_threads):
     nest.set(overwrite_files=True, total_num_virtual_procs=num_threads)
+    sonata_net = nest.SonataNetwork(config, sim_config)
     sonata_net.Create()
     sonata_net.Connect()
-
     num_connections = nest.GetKernelStatus('num_connections')
     assert (num_connections == EXPECTED_NUM_CONNECTIONS)
 
 
 @skip_if_no_hdf5
 @pytest.mark.parametrize("num_threads", NUM_THREADS)
-def testSimulate(reset, sonata_network_fixture, num_threads):
-    sonata_net = sonata_network_fixture
+def testBuildNetwork(reset, num_threads):
     nest.set(overwrite_files=True, total_num_virtual_procs=num_threads)
+    sonata_net = nest.SonataNetwork(config, sim_config)
+    sonata_net.BuildNetwork()
+    kernel_status = nest.GetKernelStatus()
+    assert (kernel_status['network_size'] == EXPECTED_NUM_NODES)
+    assert (kernel_status['num_connections'] == EXPECTED_NUM_CONNECTIONS)
+
+
+@skip_if_no_hdf5
+@pytest.mark.parametrize("num_threads", NUM_THREADS)
+def testSimulate(reset, num_threads):
+    nest.set(overwrite_files=True, total_num_virtual_procs=num_threads)
+    sonata_net = nest.SonataNetwork(config, sim_config)
     sonata_net.BuildNetwork()
     sonata_net.Simulate()
-
     kernel_status = nest.GetKernelStatus()
     assert (kernel_status['network_size'] == EXPECTED_NUM_NODES)
     assert (kernel_status['num_connections'] == EXPECTED_NUM_CONNECTIONS)

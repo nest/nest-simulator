@@ -43,6 +43,7 @@ dependencies:
   - gsl >= 1.11
   - libtool
   - readline
+  - hdf5
 
   # Testing NEST ------------
   - pytest
@@ -52,6 +53,7 @@ dependencies:
   - pandas
   - scipy
   - mpi4py
+  - h5py
   - terminaltables
   - pycodestyle
   - cppcheck

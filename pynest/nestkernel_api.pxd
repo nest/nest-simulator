@@ -50,6 +50,19 @@ cdef extern from "dictionary.h":
     string debug_dict_types(const dictionary&)
     cbool is_type[T](const any&)
 
+cdef extern from "logging.h" namespace "nest":
+    cpdef enum severity_t:
+        M_ALL,
+        M_DEBUG,
+        M_STATUS,
+        M_INFO,
+        M_PROGRESS,
+        M_DEPRECATED,
+        M_WARNING,
+        M_ERROR,
+        M_FATAL,
+        M_QUIET
+
 cdef extern from "connection_id.h" namespace "nest":
     cppclass ConnectionID:
         ConnectionID()
@@ -97,6 +110,9 @@ cdef extern from "mask.h" namespace "nest":
 cdef extern from "nest.h" namespace "nest":
     void init_nest( int* argc, char** argv[] )
     void reset_kernel()
+
+    severity_t get_verbosity()
+    void set_verbosity( severity_t )
 
     void enable_structural_plasticity() except +
     void disable_structural_plasticity() except +

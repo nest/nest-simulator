@@ -310,6 +310,14 @@ def llapi_reset_kernel():
     reset_kernel()
 
 @catch_cpp_error
+def llapi_get_verbosity():
+    return severity_t(get_verbosity())
+
+@catch_cpp_error
+def llapi_set_verbosity(severity_t s):
+    set_verbosity(s)
+
+@catch_cpp_error
 def llapi_enable_structural_plasticity():
     enable_structural_plasticity()
 

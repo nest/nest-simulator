@@ -287,6 +287,18 @@ reset_kernel()
   kernel().reset();
 }
 
+severity_t
+get_verbosity()
+{
+  return kernel().logging_manager.get_logging_level();
+}
+
+void
+set_verbosity( severity_t s )
+{
+  kernel().logging_manager.set_logging_level( s );
+}
+
 void
 enable_dryrun_mode( const index n_procs )
 {

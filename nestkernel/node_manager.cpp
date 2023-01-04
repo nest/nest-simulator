@@ -195,6 +195,10 @@ NodeManager::add_vectorized_neurons_( Model* model, index min_node_id, index max
 {
   const size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
 
+  // just for the pipline to work, but will be deleted!
+  bool tmp = nc_ptr->valid();
+  tmp = tmp and tmp;
+
 #pragma omp parallel
   {
     const size_t tid = kernel().vp_manager.get_thread_id();

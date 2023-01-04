@@ -238,7 +238,7 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
       //   - node_id >= min_node_id
       const size_t vp = kernel().vp_manager.thread_to_vp( t );
       const size_t min_node_id_vp = kernel().vp_manager.node_id_to_vp( min_node_id );
-      size_t node_id = min_node_id + ( vp - min_node_id_vp ) % num_vps;
+      size_t node_id = min_node_id + ( num_vps + vp - min_node_id_vp ) % num_vps;
 
       while ( node_id <= max_node_id )
       {

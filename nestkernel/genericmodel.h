@@ -96,12 +96,12 @@ public:
 
 
   std::shared_ptr< VectorizedNode >
-  get_container()
+  get_container() override
   {
     return proto_.get_container();
   }
-  virtual void
-  clone_container( std::shared_ptr< VectorizedNode > container )
+  void
+  clone_container( std::shared_ptr< VectorizedNode > container ) override
   {
     proto_.clone_container( container );
   }

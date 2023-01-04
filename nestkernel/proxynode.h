@@ -94,9 +94,9 @@ public:
   {
   }
 
-  std::shared_ptr< VectorizedNode > get_container();
+  std::shared_ptr< VectorizedNode > get_container() override;
 
-  void clone_container( std::shared_ptr< VectorizedNode > container );
+  void clone_container( std::shared_ptr< VectorizedNode > container ) override;
 
   void get_status( DictionaryDatum& ) const override;
 

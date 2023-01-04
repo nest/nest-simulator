@@ -68,12 +68,13 @@ class SonataNetwork():
 
     Parameters
     ----------
-    config : str
-        String describing the path to the JSON configuration file.
-    sim_config : str, optional
-        String describing the path to a JSON configuration file containing
-        simulation parameters. This is only needed if simulation parameters
-        are given in a separate configuration file.
+    config : {str, pathlib.Path, pathlib.PurePath}
+        String or pathlib object describing the path to the JSON 
+        configuration file.
+    sim_config : {str, pathlib.Path, pathlib.PurePath}, optional
+        String or pathlib object describing the path to a JSON configuration 
+        file containing simulation parameters. This is only needed if simulation 
+        parameters are given in a separate configuration file.
 
     Example
     -------
@@ -151,8 +152,9 @@ class SonataNetwork():
             SONATA config as dictionary
         """
 
-        if not isinstance(config, str):
-            msg = "Path to JSON configuration file must be passed as str"
+        if not isinstance(config, (str, PurePath, Path)):
+            msg = ("Path to JSON configuration file must be passed as str, "
+                   "pathlib.PurePath or pathlib.Path")
             raise TypeError(msg)
 
         # Get absolute path

@@ -227,7 +227,7 @@ def simulate(parameters):
     p_rate = 1000.0 * nu_ex * CE
 
     nest.ResetKernel()
-    nest.set_verbosity('M_FATAL')
+    nest.set_verbosity(nest.verbosity.M_FATAL)
 
     nest.rng_seed = parameters['seed']
     nest.resolution = parameters['dt']

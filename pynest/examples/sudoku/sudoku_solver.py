@@ -65,7 +65,7 @@ from helpers import get_puzzle, validate_solution, plot_field
 import matplotlib.pyplot as plt
 
 nest.SetKernelStatus({'local_num_threads': 8})
-nest.set_verbosity("M_WARNING")
+nest.set_verbosity(nest.verbosity.M_WARNING)
 logging.basicConfig(level=logging.INFO)
 
 puzzle_index = 4

@@ -239,17 +239,17 @@ SonataConnector::open_required_dsets_( const H5::Group* pop_grp )
   }
 
   // Consistency checks
-  const auto num_tgt_node_ids = get_nrows_( tgt_node_id_dset_, 1 );
+  const auto num_tgt_node_ids = get_nrows_( tgt_node_id_dset_ );
 
   // Ensure that target and source population have the same size
-  if ( num_tgt_node_ids != get_nrows_( src_node_id_dset_, 1 ) )
+  if ( num_tgt_node_ids != get_nrows_( src_node_id_dset_ ) )
   {
     throw KernelException(
       "target_node_id and source_node_id datasets in " + cur_fname_ + " must be of the same size" );
   }
 
   // Ensure that edge_type_id dataset size is consistent with the number of target node ids
-  if ( num_tgt_node_ids != get_nrows_( edge_type_id_dset_, 1 ) )
+  if ( num_tgt_node_ids != get_nrows_( edge_type_id_dset_ ) )
   {
     throw KernelException( "target_node_id and edge_type_id datasets in " + cur_fname_ + " must be of the same size" );
   }
@@ -332,7 +332,7 @@ void
 SonataConnector::create_connections_in_chunks_()
 {
   // Retrieve number of connections described by datasets
-  const auto num_conn = get_nrows_( tgt_node_id_dset_, 1 );
+  const auto num_conn = get_nrows_( tgt_node_id_dset_ );
 
   //  Adjust if chunk_size is too large
   if ( num_conn < chunk_size_ )
@@ -346,7 +346,7 @@ SonataConnector::create_connections_in_chunks_()
   // Iterate chunks
   hsize_t offset = 0; // start coordinates of data selection
   // TODO: should iterator also be hsize_t, and should then dv.quot & dv.rem be cast to hsize_t?
-  for ( size_t i = 0; i < dv.quot; i++ )
+  for ( long long i = 0; i < dv.quot; i++ )
   {
     connect_chunk_( chunk_size_, offset );
     offset += chunk_size_;
@@ -458,11 +458,11 @@ SonataConnector::connect_chunk_( const hsize_t chunk_size, const hsize_t offset 
 } // end create_connections_()
 
 hsize_t
-SonataConnector::get_nrows_( H5::DataSet dataset, int ndim )
+SonataConnector::get_nrows_( H5::DataSet dataset )
 {
 
   H5::DataSpace dspace = dataset.getSpace();
-  hsize_t dims_out[ ndim ];
+  hsize_t dims_out[ 1 ];
   dspace.getSimpleExtentDims( dims_out, NULL );
   dspace.close();
 

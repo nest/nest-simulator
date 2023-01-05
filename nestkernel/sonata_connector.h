@@ -228,10 +228,9 @@ private:
    * @brief Get the nrows object
    *
    * @param dataset
-   * @param ndim
    * @return hsize_t
    */
-  hsize_t get_nrows_( H5::DataSet dataset, int ndim );
+  hsize_t get_nrows_( H5::DataSet dataset );
 
   /**
    * Reset all parameters

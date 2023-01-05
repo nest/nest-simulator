@@ -48,7 +48,7 @@ sim_params = {
     "dt": 0.1, # simulation resolution
     "pre_sim_time": 100.0, # time before simulation
     "sim_time": 1000.0, # simulation time
-    "N_rec": 10000, # number of neurons recorded
+    "N_rec": 1000, # number of neurons recorded
     "N_sample": 100, # number of neurons sampled for analysis
     }
 
@@ -62,8 +62,29 @@ network_params = {
     "p": 0.1, # neuron-neuron connection probability.
     "p_syn_astro": 1.0, # synapse-astrocyte pairing probability
     "max_astro_per_target": 1, # Max number of astrocytes per target neuron
-    "poisson_rate": 500, # rate of poisson input
+    "astro_pool_by_index": False, # Astrocyte pool selection by index
+    "poisson_rate": 100, # rate of poisson input
     "poisson_prob": 1, # connection probability of poisson input
+    }
+
+syn_params = {
+    "J_ee": 2.67436, # excitatory-to-excitatory synaptic weight in nS
+    "J_ei": 1.05594, # excitatory-to-inhibitory synaptic weight in nS
+    "J_ie": -5.96457, # inhibitory-to-excitatory synaptic weight in nS
+    "J_ii": -3.58881, # inhibitory-to-inhibitory synaptic weight in nS
+    "tau_rec_ee": 2882.9445, # excitatory-to-excitatory depression time constant in ms
+    "tau_rec_ei": 5317.747, # excitatory-to-inhibitory depression time constant in ms
+    "tau_rec_ie": 226.859, # inhibitory-to-excitatory depression time constant in ms
+    "tau_rec_ii": 2542.207,  # inhibitory-to-inhibitory depression time constant in ms
+    "tau_fac_ee": 0.0, # excitatory-to-excitatory facilitation time constant in ms
+    "tau_fac_ei": 0.0, # excitatory-to-inhibitory facilitation time constant in ms
+    "tau_fac_ie": 0.0, # inhibitory-to-excitatory facilitation time constant in ms
+    "tau_fac_ii": 0.0,  # inhibitory-to-inhibitory facilitation time constant in ms
+    "U_ee": 0.928, # excitatory-to-excitatory release probability parameter
+    "U_ei": 0.264, # excitatory-to-inhibitory release probability parameter
+    "U_ie": 0.541, # inhibitory-to-excitatory release probability parameter
+    "U_ii": 0.189, # inhibitory-to-inhibitory release probability parameter
+    "weight_sic": 0.5,
     }
 
 ###############################################################################
@@ -131,48 +152,30 @@ neuron_params_in = {
     "tau_syn_in": tau_syn_in, # inhibitory synaptic time constant in ms
     }
 
-syn_params = {
-    "J_ee": 2.67436, # excitatory-to-excitatory synaptic weight in nS
-    "J_ei": 1.05594, # excitatory-to-inhibitory synaptic weight in nS
-    "J_ie": -5.96457, # inhibitory-to-excitatory synaptic weight in nS
-    "J_ii": -3.58881, # inhibitory-to-inhibitory synaptic weight in nS
-    "tau_rec_ee": 2882.9445, # excitatory-to-excitatory depression time constant in ms
-    "tau_rec_ei": 5317.747, # excitatory-to-inhibitory depression time constant in ms
-    "tau_rec_ie": 226.859, # inhibitory-to-excitatory depression time constant in ms
-    "tau_rec_ii": 2542.207,  # inhibitory-to-inhibitory depression time constant in ms
-    "tau_fac_ee": 0.0, # excitatory-to-excitatory facilitation time constant in ms
-    "tau_fac_ei": 0.0, # excitatory-to-inhibitory facilitation time constant in ms
-    "tau_fac_ie": 0.0, # inhibitory-to-excitatory facilitation time constant in ms
-    "tau_fac_ii": 0.0,  # inhibitory-to-inhibitory facilitation time constant in ms
-    "U_ee": 0.928, # excitatory-to-excitatory release probability parameter
-    "U_ei": 0.264, # excitatory-to-inhibitory release probability parameter
-    "U_ie": 0.541, # inhibitory-to-excitatory release probability parameter
-    "U_ii": 0.189, # inhibitory-to-inhibitory release probability parameter
-    }
-
 ###############################################################################
-# Build functions
+# Function for network building
 
-def build_create(scale, poisson_time):
+def build_astro(scale, poisson_time):
+    """Build a Brunel network with astrocytes."""
+
     print("Creating nodes")
     nodes_ex = nest.Create(
-        neuron_model, network_params["N_ex"]*scale, params=neuron_params_ex)
+        neuron_model, int(network_params["N_ex"]*scale), params=neuron_params_ex)
     nodes_in = nest.Create(
-        neuron_model, network_params["N_in"]*scale, params=neuron_params_in)
+        neuron_model, int(network_params["N_in"]*scale), params=neuron_params_in)
     nodes_astro = nest.Create(
-        "astrocyte", network_params["N_astro"]*scale, params=astro_params)
-    noise = nest.Create(
+        "astrocyte", int(network_params["N_astro"]*scale), params=astro_params)
+    nodes_noise = nest.Create(
         "poisson_generator",
         params={
             "rate": network_params["poisson_rate"],
             "start": 0.0, "stop": poisson_time
             }
         )
-    return nodes_ex, nodes_in, nodes_astro, noise
 
-def build_connect(nodes_ex, nodes_in, nodes_astro, noise):
-    print("Connecting poisson")
-    # note: result of fixed outdegree is less synchronou than one-to-all
+    # Make connections with Poisson generator (noise)
+    # Use fixed-outdegree connections
+    print("Connecting Poisson generator")
     conn_spec_ne = {
         "rule": "fixed_outdegree",
         "outdegree": int(len(nodes_ex)*network_params["poisson_prob"])
@@ -188,21 +191,24 @@ def build_connect(nodes_ex, nodes_in, nodes_astro, noise):
         "synapse_model": "static_synapse", "weight": syn_params["J_ei"]
         }
     nest.Connect(
-        noise, nodes_ex, conn_spec=conn_spec_ne, syn_spec=syn_params_ne
+        nodes_noise, nodes_ex, conn_spec=conn_spec_ne, syn_spec=syn_params_ne
         )
     nest.Connect(
-        noise, nodes_in, conn_spec=conn_spec_ni, syn_spec=syn_params_ni
+        nodes_noise, nodes_in, conn_spec=conn_spec_ni, syn_spec=syn_params_ni
         )
 
-    print("Connecting excitatory")
-    conn_params_ex = {
+    # Make excitatory and inhibitory connections
+    # Astrocytes are paired with excitatory-to-excitatory connections
+    conn_params_astro = {
         "rule": "pairwise_bernoulli_astro",
         "astrocyte": nodes_astro,
         "p": network_params["p"],
         "p_syn_astro": network_params["p_syn_astro"],
         "max_astro_per_target": network_params["max_astro_per_target"],
-        "astro_pool_by_index": False
+        "astro_pool_by_index": network_params["astro_pool_by_index"],
         }
+    conn_params_neuro = {"rule": "pairwise_bernoulli", "p": network_params["p"]}
+    print("Connecting excitatory and inhibitory neurons")
     syn_params_ee = {
         "synapse_model": "tsodyks_synapse",
         "weight": syn_params["J_ee"],
@@ -210,6 +216,7 @@ def build_connect(nodes_ex, nodes_in, nodes_astro, noise):
         "tau_psc": tau_syn_ex,
         "tau_fac": syn_params["tau_fac_ee"],
         "tau_rec": syn_params["tau_rec_ee"],
+        "weight_sic": syn_params["weight_sic"],
         }
     syn_params_ei = {
         "synapse_model": "tsodyks_synapse",
@@ -219,11 +226,8 @@ def build_connect(nodes_ex, nodes_in, nodes_astro, noise):
         "tau_fac": syn_params["tau_fac_ei"],
         "tau_rec": syn_params["tau_rec_ei"],
         }
-    nest.Connect(nodes_ex, nodes_ex, conn_params_ex, syn_params_ee)
-    nest.Connect(nodes_ex, nodes_in, conn_params_ex, syn_params_ei)
-
-    print("Connecting inhibitory")
-    conn_params_in = {"rule": "pairwise_bernoulli", "p": network_params["p"]}
+    nest.Connect(nodes_ex, nodes_ex, conn_params_astro, syn_params_ee)
+    nest.Connect(nodes_ex, nodes_in, conn_params_neuro, syn_params_ei)
     syn_params_ie = {
         "synapse_model": "tsodyks_synapse",
         "weight": syn_params["J_ie"],
@@ -240,8 +244,10 @@ def build_connect(nodes_ex, nodes_in, nodes_astro, noise):
         "tau_fac": syn_params["tau_fac_ii"],
         "tau_rec": syn_params["tau_rec_ii"],
         }
-    nest.Connect(nodes_in, nodes_ex, conn_params_in, syn_params_ie)
-    nest.Connect(nodes_in, nodes_in, conn_params_in, syn_params_ii)
+    nest.Connect(nodes_in, nodes_ex, conn_params_neuro, syn_params_ie)
+    nest.Connect(nodes_in, nodes_in, conn_params_neuro, syn_params_ii)
+
+    return nodes_ex, nodes_in, nodes_astro, nodes_noise
 
 ###############################################################################
 # Function for calculating correlation
@@ -266,7 +272,7 @@ def get_corr(hlist):
     return coef_list, n_pass, n_fail
 
 ###############################################################################
-# Main function for running simulation.
+# Main function for simulation.
 
 def run_simulation():
     # Configuration
@@ -281,15 +287,14 @@ def run_simulation():
     startbuild = time.time()
 
     # create and connect nodes
-    enodes, inodes, anodes, noise = \
-        build_create(scale=1, poisson_time=pre_sim_time+sim_time)
-    build_connect(enodes, inodes, anodes, noise)
+    exc, inh, astro, noise = \
+        build_astro(scale=1, poisson_time=pre_sim_time+sim_time)
 
     # create recorders
     sr_neuron = nest.Create("spike_recorder")
     mm_astro = nest.Create(
         "multimeter", params={"record_from": ["IP3_astro", "Ca_astro"]})
-    nest.Connect(mm_astro, anodes)
+    nest.Connect(mm_astro, astro)
 
     # time after building
     endbuild = time.time()
@@ -297,7 +302,7 @@ def run_simulation():
     # simulation
     print("Simulating")
     nest.Simulate(pre_sim_time)
-    nest.Connect((enodes + inodes)[:sim_params["N_rec"]], sr_neuron)
+    nest.Connect((exc + inh)[:sim_params["N_rec"]], sr_neuron)
     nest.Simulate(sim_time)
 
     # time after simulation
@@ -321,34 +326,39 @@ def run_simulation():
 
     # plot a raster and a histogram of the neurons recorded
     nest.raster_plot.from_device(sr_neuron, hist=True)
-    plt.title(f"n={sim_params['N_rec']}")
+    plt.title(f"n of neurons={sim_params['N_rec']}")
     plt.savefig("astrocyte_brunel_neurons.png")
     plt.close()
 
-    # sampling neurons for analysis
-    print("Sampling neurons for analysis ...")
+    # sample neurons and prepare data for analysis
+    print("Sampling neurons and prepare data for analysis ...")
     senders = neuron_data["senders"][neuron_data["times"]>pre_sim_time]
     times = neuron_data["times"][neuron_data["times"]>pre_sim_time]
     n_sample = np.minimum(len(set(senders)), sim_params["N_sample"])
-    sampled = random.sample(list(set(senders)), n_sample)
-    times = times[np.isin(senders, sampled)]
-    senders = senders[np.isin(senders, sampled)]
+    sampled = random.sample(list(set(senders)), n_sample) # sample neurons
+    times = times[np.isin(senders, sampled)] # spiking times
+    senders = senders[np.isin(senders, sampled)] # neuron IDs
+    bins = np.arange(pre_sim_time,pre_sim_time+sim_time+0.1, 10) # time bins
+    hists = [np.histogram(times[senders==x], bins)[0].tolist() for x in set(senders)] # spiking histograms of individual neurons
+    hist_global = (np.histogram(times, bins)[0]/len(set(senders))).tolist() # spiking histogram of all neurons sampled
 
-    # neuronal local synchrony
-    print("Calculating neuronal local synchrony ...")
-    bins = np.arange(pre_sim_time,pre_sim_time+sim_time+0.1, 10)
-    hists = [np.histogram(times[senders==x], bins)[0].tolist() for x in set(senders)]
-    coefs, n_pass_, n_fail_ = get_corr(hists)
+    # neuronal local and global synchrony
+    print("Calculating neuronal local and global synchrony ...")    
+    coefs, n_pass_, n_fail_ = get_corr(hists) # local (spike count correlation)
+    lsync_mu, lsync_sd = np.mean(coefs), np.std(coefs)
+    gsync = np.var(hist_global)/np.mean(np.var(hists, axis=1)) # global (variance of all/variance of individual)
     plt.hist(coefs)
-    plt.title(f"Mean={np.mean(coefs):.3f}, s.d.={np.std(coefs):.3f}, total n={n_pass_}")
+    plt.title(f"Local synchrony={lsync_mu:.3f} (s.d.={np.std(coefs):.3f}), total n={n_pass_}\nGlobal synchrony={gsync:.3f}, firing rate={rate:.2f} spikes/s\n")
     plt.xlabel("Pairwise spike count correlation (Pearson's r)")
     plt.ylabel("n of pairs")
+    plt.tight_layout()
     plt.savefig("astrocyte_brunel_correlation.png")
     print(f"n of neurons sampled = {len(hists)}")
     print(f"n of neuron pairs included/excluded = {n_pass_}/{n_fail_}")
-    print(f"Pairwise spike count correlation mean, s.d. = {np.mean(coefs):.3f}, {np.std(coefs):.3f}")
+    print(f"Local and global synchrony = {lsync_mu:.3f} (s.d.={lsync_sd:.3f}) and {gsync:.3f}")
 
-    # plot astrocyte data (multimeter default resolution = 1 ms)
+    # plot astrocyte data 
+    # multimeter default resolution = 1 ms
     print("Plotting astrocyte dynamics ...")
     d = astro_data
     keys = list(d.keys())
@@ -356,7 +366,7 @@ def run_simulation():
     stds = np.array([[np.std(d[k][d["times"]==t]) for t in set(d["times"])] for k in d.keys()])
     times = means[keys.index("times")]
     fig, axes = plt.subplots(2, 1, sharex=True)
-    axes[0].set_title(f"n={network_params['N_astro']}")
+    axes[0].set_title(f"n of astrocytes={network_params['N_astro']}")
     ylabels = [r'IP$_{3}$ ($\mu$M)', r'Ca$^{2+}$ ($\mu$M)']
     for i, key in enumerate(["IP3_astro", "Ca_astro"]):
         m = means[keys.index(key)]
@@ -366,9 +376,11 @@ def run_simulation():
         axes[i].plot(times, m, linewidth=2)
         axes[i].set_ylabel(ylabels[i])
     plt.xlabel("Time (ms)")
+    plt.tight_layout()
     plt.savefig("astrocyte_brunel_astrocytes.png")
     plt.close()
     print("Done!")
 
 if __name__ == "__main__":
+    plt.rcParams.update({'font.size': 12})
     run_simulation()

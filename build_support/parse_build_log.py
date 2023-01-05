@@ -342,6 +342,16 @@ def makebuild_summary(log_filename, msg_make_section_start,
          '(const r123::Engine<r123::Philox4x32_R<10> >&)’ is deprecated [-Wdeprecated-copy]'),
         (f'{build_dir}/nestkernel/connection_creator_impl.h:121:37: warning: ISO C++ requires the name'
          ' after \'::~\' to be found in the same scope as the name before \'::~\' [-Wdtor-name]'),
+        (f'{build_dir}/nestkernel/sonata_connector.cpp:216:64: warning: implicitly-declared)'
+         ' ‘H5::DataSet& H5::DataSet::operator=(const H5::DataSet&)’ is deprecated [-Wdeprecated-copy]'),
+        (f'{build_dir}/nestkernel/sonata_connector.cpp:225:64: warning: implicitly-declared)'
+         ' ‘H5::DataSet& H5::DataSet::operator=(const H5::DataSet&)’ is deprecated [-Wdeprecated-copy]'),
+        (f'{build_dir}/nestkernel/sonata_connector.cpp:234:63: warning: implicitly-declared)'
+         ' ‘H5::DataSet& H5::DataSet::operator=(const H5::DataSet&)’ is deprecated [-Wdeprecated-copy]'),
+        (f'{build_dir}/nestkernel/sonata_connector.cpp:270:65: warning: implicitly-declared)'
+         ' ‘H5::DataSet& H5::DataSet::operator=(const H5::DataSet&)’ is deprecated [-Wdeprecated-copy]'),
+        (f'{build_dir}/nestkernel/sonata_connector.cpp:282:55: warning: implicitly-declared)'
+         ' ‘H5::DataSet& H5::DataSet::operator=(const H5::DataSet&)’ is deprecated [-Wdeprecated-copy]'),
     ]
 
     with open(log_filename) as fh:

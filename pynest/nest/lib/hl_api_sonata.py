@@ -143,8 +143,9 @@ class SonataNetwork():
 
         Parameters
         ----------
-        config : str
-            String describing the path to the JSON config file.
+        config : {str, pathlib.Path, pathlib.PurePath}
+            String or pathlib object describing the path to the JSON 
+            configuration file.
 
         Returns
         -------
@@ -200,8 +201,8 @@ class SonataNetwork():
         node type.
 
         Please note that it is assumed that all relevant node
-        properties are stored in the node types CSV file. For neuron nodes
-        relevant properties  are model type, model template and reference to a
+        properties are stored in the node types CSV file. For neuron nodes, the
+        relevant properties are model type, model template and reference to a
         JSON file describing the parametrization.
 
         Returns

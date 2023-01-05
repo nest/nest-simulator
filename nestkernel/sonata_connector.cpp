@@ -147,7 +147,7 @@ SonataConnector::connect()
       get_attribute_( target_attribute_value_, tgt_node_id_dset_, "node_population" );
 
       // Read datasets sequentially in chunks and connect
-      create_connections_in_chunks_();
+      sequential_chunkwise_connector_();
 
       close_dsets_();
       reset_params_();
@@ -329,7 +329,7 @@ SonataConnector::close_dsets_()
 }
 
 void
-SonataConnector::create_connections_in_chunks_()
+SonataConnector::sequential_chunkwise_connector_()
 {
   // Retrieve number of connections described by datasets
   const auto num_conn = get_nrows_( tgt_node_id_dset_ );
@@ -345,7 +345,6 @@ SonataConnector::create_connections_in_chunks_()
 
   // Iterate chunks
   hsize_t offset = 0; // start coordinates of data selection
-  // TODO: should iterator also be hsize_t, and should then dv.quot & dv.rem be cast to hsize_t?
   for ( long long i = 0; i < dv.quot; i++ )
   {
     connect_chunk_( chunk_size_, offset );

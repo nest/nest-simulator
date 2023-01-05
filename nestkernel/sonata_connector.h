@@ -170,42 +170,42 @@ private:
    * The synapse property, i.e., synaptic weight or delay, is either set from a HDF5 dataset or CSV entry.
    * Default value is NaN
    *
-   * @param syn_spec
-   * @param index
-   * @param dataset
-   * @param data
-   * @param name
+   * @param syn_spec synapse specification dictionary
+   * @param index the index to access in data
+   * @param dataset_exists bool indicating whether dataset exists
+   * @param data data from synaptic property HDF5 dataset
+   * @param name name of the synaptic property
    * @return double
    */
   double get_syn_property_( const DictionaryDatum& syn_spec,
     hsize_t index,
-    const bool dataset,
+    const bool dataset_exists,
     std::vector< double >& data,
     const Name& name );
 
   /**
-   * @brief Create connections in chunks
+   * Manage the sequential chunkwise connections to be made
    *
    */
-  void create_connections_in_chunks_();
+  void sequential_chunkwise_connector_();
 
   /**
-   * @brief
+   * Create connections in chunks
    *
-   * @param chunk_size
-   * @param offset
+   * @param chunk_size size of chunk to be read from datasets
+   * @param offset offset from start coordinate of data selection
    */
   void connect_chunk_( const hsize_t chunk_size, const hsize_t offset );
 
   /**
-   * @brief
+   * Read subset of dataset into memory
    *
    * @tparam T
-   * @param dataset
-   * @param data_buf
-   * @param datatype
-   * @param chunk_size
-   * @param offset
+   * @param dataset HDF5 dataset to read
+   * @param data_buf buffer to store data in memory
+   * @param datatype type of data in dataset
+   * @param chunk_size size of chunk to be read from dataset
+   * @param offset offset from start coordinate of data selection
    */
   template < typename T >
   void read_subset_( const H5::DataSet& dataset,
@@ -216,16 +216,19 @@ private:
 
 
   /**
-   * @brief
+   * Find the number of edge id groups
    *
-   * @param pop_grp
-   * @param edge_id_grp_names
+   * @param pop_grp population group pointer
+   * @param edge_id_grp_names buffer to store edge id group names
    * @return hsize_t
    */
   hsize_t find_edge_id_groups_( H5::Group* pop_grp, std::vector< std::string >& edge_id_grp_names );
 
   /**
-   * @brief Get the nrows object
+   * Get the number of rows (elements) in dataset
+   *
+   * It is assumed that the dataset is one dimensional, which is the standard
+   * SONATA format
    *
    * @param dataset
    * @return hsize_t

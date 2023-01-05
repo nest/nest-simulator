@@ -21,7 +21,8 @@
 
 import nest
 import matplotlib.pyplot as plt
-
+import os
+from pathlib import Path
 
 nest.ResetKernel()
 
@@ -30,17 +31,17 @@ n_threads = 1
 nest.set(total_num_virtual_procs=n_procs * n_threads,
          print_time=True)
 
-# Specify path to the SONATA .json configuration file
-net_config = "./300_pointneurons/circuit_config.json"
-sim_config = "./300_pointneurons/simulation_config.json"
+# Specify path to the SONATA .json configuration file(s)
+root_path = Path(__file__).resolve().parent
+sonata_path = root_path.joinpath("300_pointneurons")
+net_config = sonata_path.joinpath("circuit_config.json")
+sim_config = sonata_path.joinpath("simulation_config.json")
+
 # Instantiate SonataNetwork
 sonata_net = nest.SonataNetwork(net_config, sim_config=sim_config)
 
 # Create and connect nodes
 node_collections = sonata_net.BuildNetwork(chunk_size=2**20)
-
-print(f"number of connections: {nest.GetKernelStatus('num_connections'):,}")
-print(f"number of neurons: {nest.GetKernelStatus('network_size'):,}")
 
 # Connect spike recorder to a population
 s_rec = nest.Create("spike_recorder")
@@ -49,6 +50,12 @@ nest.Connect(node_collections[pop_name], s_rec)
 
 # Simulate the network
 sonata_net.Simulate()
+
+# Results from the built and simulated network
+kernel_status = nest.GetKernelStatus()
+print(f"number of nodes: {kernel_status['network_size']:,}")
+print(f"number of connections: {kernel_status['num_connections']:,}")
+print(f"number of spikes: {kernel_status['local_spike_counter']:,}")
 
 nest.raster_plot.from_device(s_rec)
 plt.show()

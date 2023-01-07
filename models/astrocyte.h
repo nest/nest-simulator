@@ -342,6 +342,12 @@ private:
   {
     return S_.y_[ elem ];
   }
+  double sic_ = 0.0;
+  double
+  get_sic_() const
+  {
+    return sic_;
+  }
 
   // ----------------------------------------------------------------
 

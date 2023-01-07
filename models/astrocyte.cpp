@@ -60,6 +60,7 @@ RecordablesMap< astrocyte >::create()
   insert_( names::IP3_astro, &astrocyte::get_y_elem_< astrocyte::State_::IP3_astro > );
   insert_( names::Ca_astro, &astrocyte::get_y_elem_< astrocyte::State_::Ca_astro > );
   insert_( names::f_IP3R_astro, &astrocyte::get_y_elem_< astrocyte::State_::f_IP3R_astro > );
+  insert_( names::SIC, &astrocyte::get_sic_ );
 }
 
 extern "C" int
@@ -614,6 +615,7 @@ nest::astrocyte::update_( Time const& origin, const long from, const long to, co
   SICEvent sic;
   sic.set_coeffarray( sic_values );
   kernel().event_delivery_manager.send_secondary( *this, sic );
+  sic_ = sic_values[0];
 
   // Reset variables
   B_.sumj_g_ij_ = 0.0;

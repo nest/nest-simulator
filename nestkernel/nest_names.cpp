@@ -421,6 +421,7 @@ const Name receptor_idx( "receptor_idx" );
 
 const Name S( "S" );
 const Name S_act_NMDA( "S_act_NMDA" );
+const Name SIC( "SIC" );
 const Name sdev( "sdev" );
 const Name send_buffer_size_secondary_events( "send_buffer_size_secondary_events" );
 const Name senders( "senders" );

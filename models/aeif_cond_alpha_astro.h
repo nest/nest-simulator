@@ -367,6 +367,13 @@ public:
     return S_.y_[ elem ];
   }
 
+  // Read out SIC current
+  double
+  get_I_sic_() const
+  {
+    return B_.I_sic_;
+  }
+
   // ----------------------------------------------------------------
 
   Parameters_ P_;

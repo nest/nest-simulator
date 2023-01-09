@@ -226,6 +226,7 @@ public:
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
   bool has_proxies() const override;
+  bool is_off_grid() const override;
 
   StimulationDevice::Type get_type() const override;
   void set_data_from_stimulation_backend( std::vector< double >& input_spikes ) override;
@@ -381,6 +382,12 @@ inline bool
 spike_generator::has_proxies() const
 {
   return true;
+}
+
+inline bool
+spike_generator::is_off_grid() const
+{
+  return P_.precise_times_;
 }
 
 } // namespace nest

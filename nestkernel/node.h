@@ -308,22 +308,6 @@ public:
    * implement storage and retrieval of named parameter sets.
    */
 
-  /**
-   * Change properties of the node according to the
-   * entries in the dictionary.
-   * @param d Dictionary with named parameter settings.
-   * @ingroup status_interface
-   */
-  virtual void set_status( const DictionaryDatum& ) = 0;
-
-  /**
-   * Export properties of the node by setting
-   * entries in the status dictionary.
-   * @param d Dictionary.
-   * @ingroup status_interface
-   */
-  virtual void get_status( DictionaryDatum& ) const = 0;
-
 public:
   /**
    * @defgroup event_interface Communication.
@@ -924,6 +908,7 @@ Node::get_element_type() const
 {
   return names::neuron;
 }
+
 } // namespace
 
 #endif

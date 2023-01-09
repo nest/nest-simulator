@@ -924,7 +924,7 @@ nest::SimulationManager::waveform_relaxtion_update_phase( size_t tid,
 
 
 void
-nest::SimulationManager::local_nodes_update_phase( size_t tid, std::shared_ptr< WrappedThreadException >& exp )
+nest::SimulationManager::local_nodes_update_phase( size_t tid, std::shared_ptr< WrappedThreadException > exp )
 {
   const SparseNodeArray& thread_local_nodes = kernel().node_manager.get_local_nodes( tid );
 

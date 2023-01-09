@@ -197,7 +197,7 @@ private:
   inline void
   waveform_relaxtion_update_phase( size_t tid, bool& done_all, delay& old_to_step, std::vector< bool >& done );
 
-  inline void local_nodes_update_phase( size_t tid, std::shared_ptr< WrappedThreadException >& exp );
+  inline void local_nodes_update_phase( size_t tid, std::shared_ptr< WrappedThreadException > exp );
 
   inline void gather_and_deliver_phase( size_t tid );
 

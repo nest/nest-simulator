@@ -32,6 +32,7 @@
 #include <vector>
 
 // Includes from nestkernel:
+#include "CommonInterface.h"
 #include "deprecation_warning.h"
 #include "event.h"
 #include "histentry.h"
@@ -52,7 +53,6 @@ namespace nest
 {
 class Model;
 class ArchivingNode;
-class TimeConverter;
 
 
 /**
@@ -100,7 +100,7 @@ class TimeConverter;
    SeeAlso: GetStatus, SetStatus, elementstates
  */
 
-class Node
+class Node : public CommonInterface
 {
   friend class NodeManager;
   friend class ModelManager;
@@ -128,13 +128,10 @@ public:
     return nullptr;
   }
 
-  /**
-   * Returns true if the node has proxies on remote threads. This is
-   * used to discriminate between different types of nodes, when adding
-   * new nodes to the network.
-   */
-  virtual bool has_proxies() const;
-
+  void
+  populate_data() override
+  {
+  }
   /**
    * Returns true if the node supports the Urbanczik-Senn plasticity rule
    */
@@ -146,22 +143,6 @@ public:
    */
   virtual bool local_receiver() const;
 
-  /**
-   * Returns true if the node exists only once per process, but does
-   * not have proxies on remote threads. This is used to
-   * discriminate between different types of nodes, when adding new
-   * nodes to the network.
-   *
-   * TODO: Is this true for *any* model at all? Maybe MUSIC related?
-   */
-  virtual bool one_node_per_process() const;
-
-  /**
-   * Returns true if the node sends/receives off-grid events. This is
-   * used to discriminate between different types of nodes when adding
-   * new nodes to the network.
-   */
-  virtual bool is_off_grid() const;
 
   /**
    * Returns true if the node is a proxy node. This is implemented because
@@ -175,7 +156,7 @@ public:
    * This name is identical to the name that is used to identify
    * the model in the interpreter's model dictionary.
    */
-  std::string get_name() const;
+  std::string get_name() const override;
 
   /**
    * Return the element type of the node.
@@ -210,7 +191,7 @@ public:
    * @note The model ID is not stored in the model prototype instance.
    *       It is only set when actual nodes are created from a prototype.
    */
-  int get_model_id() const;
+  int get_model_id() const override;
 
   /**
    * Prints out one line of the tree view of the network.
@@ -256,14 +237,6 @@ public:
    */
   virtual void pre_run_hook() = 0;
 
-  /**
-   * Re-calculate time-based properties of the node.
-   * This function is called after a change in resolution.
-   */
-  virtual void
-  calibrate_time( const TimeConverter& )
-  {
-  }
 
   /**
    * Cleanup node after Run. Override this function if a node needs to
@@ -365,88 +338,6 @@ public:
    * @see Event
    */
 
-  /**
-   * Send an event to the receiving_node passed as an argument.
-   * This is required during the connection handshaking to test,
-   * if the receiving_node can handle the event type and receptor_type sent
-   * by the source node.
-   *
-   * If dummy_target is true, this indicates that receiving_node is derived from
-   * ConnTestDummyNodeBase and used in the first call to send_test_event().
-   * This can be ignored in most cases, but Nodes sending DS*Events to their
-   * own event hooks and then *Events to their proper targets must send
-   * DS*Events when called with the dummy target, and *Events when called with
-   * the real target, see #478.
-   */
-  virtual port send_test_event( Node& receiving_node, rport receptor_type, synindex syn_id, bool dummy_target );
-
-  /**
-   * Check if the node can handle a particular event and receptor type.
-   * This function is called upon connection setup by send_test_event().
-   *
-   * handles_test_event() function is used to verify that the receiver
-   * can handle the event. It can also be used by the receiver to
-   * return information to the sender in form of the returned port.
-   * The default implementation throws an IllegalConnection
-   * exception.  Any node class should define handles_test_event()
-   * functions for all those event types it can handle.
-   *
-   * See Kunkel et al, Front Neuroinform 8:78 (2014), Sec 3.
-   *
-   * @note The semantics of all other handles_test_event() functions is
-   * identical.
-   * @ingroup event_interface
-   * @throws IllegalConnection
-   */
-  virtual port handles_test_event( SpikeEvent&, rport receptor_type );
-  virtual port handles_test_event( WeightRecorderEvent&, rport receptor_type );
-  virtual port handles_test_event( RateEvent&, rport receptor_type );
-  virtual port handles_test_event( DataLoggingRequest&, rport receptor_type );
-  virtual port handles_test_event( CurrentEvent&, rport receptor_type );
-  virtual port handles_test_event( ConductanceEvent&, rport receptor_type );
-  virtual port handles_test_event( DoubleDataEvent&, rport receptor_type );
-  virtual port handles_test_event( DSSpikeEvent&, rport receptor_type );
-  virtual port handles_test_event( DSCurrentEvent&, rport receptor_type );
-  virtual port handles_test_event( GapJunctionEvent&, rport receptor_type );
-  virtual port handles_test_event( InstantaneousRateConnectionEvent&, rport receptor_type );
-  virtual port handles_test_event( DiffusionConnectionEvent&, rport receptor_type );
-  virtual port handles_test_event( DelayedRateConnectionEvent&, rport receptor_type );
-
-  /**
-   * Required to check, if source neuron may send a SecondaryEvent.
-   * This base class implementation throws IllegalConnection
-   * and needs to be overwritten in the derived class.
-   * @ingroup event_interface
-   * @throws IllegalConnection
-   */
-  virtual void sends_secondary_event( GapJunctionEvent& ge );
-
-  /**
-   * Required to check, if source neuron may send a SecondaryEvent.
-   * This base class implementation throws IllegalConnection
-   * and needs to be overwritten in the derived class.
-   * @ingroup event_interface
-   * @throws IllegalConnection
-   */
-  virtual void sends_secondary_event( InstantaneousRateConnectionEvent& re );
-
-  /**
-   * Required to check, if source neuron may send a SecondaryEvent.
-   * This base class implementation throws IllegalConnection
-   * and needs to be overwritten in the derived class.
-   * @ingroup event_interface
-   * @throws IllegalConnection
-   */
-  virtual void sends_secondary_event( DiffusionConnectionEvent& de );
-
-  /**
-   * Required to check, if source neuron may send a SecondaryEvent.
-   * This base class implementation throws IllegalConnection
-   * and needs to be overwritten in the derived class.
-   * @ingroup event_interface
-   * @throws IllegalConnection
-   */
-  virtual void sends_secondary_event( DelayedRateConnectionEvent& re );
 
   /**
    * Register a STDP connection
@@ -831,14 +722,6 @@ private:
 
   void set_nc_( NodeCollectionPTR );
 
-  /** Return a new dictionary datum .
-   *
-   * This function is called by get_status_base() and returns a new
-   * empty dictionary by default.  Some nodes may contain a
-   * permanent status dictionary which is then returned by
-   * get_status_dict_().
-   */
-  virtual DictionaryDatum get_status_dict_();
 
 protected:
   /**
@@ -932,11 +815,6 @@ Node::set_node_uses_wfr( const bool uwfr )
   node_uses_wfr_ = uwfr;
 }
 
-inline bool
-Node::has_proxies() const
-{
-  return true;
-}
 
 inline bool
 Node::local_receiver() const
@@ -944,17 +822,6 @@ Node::local_receiver() const
   return false;
 }
 
-inline bool
-Node::one_node_per_process() const
-{
-  return false;
-}
-
-inline bool
-Node::is_off_grid() const
-{
-  return false;
-}
 
 inline bool
 Node::is_proxy() const
@@ -962,11 +829,6 @@ Node::is_proxy() const
   return false;
 }
 
-inline Name
-Node::get_element_type() const
-{
-  return names::neuron;
-}
 
 inline index
 Node::get_node_id() const
@@ -993,11 +855,6 @@ Node::set_nc_( NodeCollectionPTR nc_ptr )
   nc_ptr_ = nc_ptr;
 }
 
-inline int
-Node::get_model_id() const
-{
-  return model_id_;
-}
 
 inline void
 Node::set_model_id( int i )
@@ -1056,6 +913,17 @@ Node::get_thread_lid() const
   return thread_lid_;
 }
 
+inline int
+Node::get_model_id() const
+{
+  return model_id_;
+}
+
+inline Name
+Node::get_element_type() const
+{
+  return names::neuron;
+}
 } // namespace
 
 #endif

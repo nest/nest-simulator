@@ -113,6 +113,7 @@ set ( nestkernel_sources
       position.h
       spatial.h spatial.cpp
       stimulation_backend.h
+      CommonInterface.h CommonInterface.cpp
       )
 
 

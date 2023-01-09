@@ -246,7 +246,8 @@ nest::UniversalDataLogger< HostNode >::connect_logging_device( const DataLogging
 
   auto item = std::find_if( data_loggers_.begin(),
     data_loggers_.end(),
-    [&mm_node_id ]( const DataLogger_& dl ) { return dl.get_mm_node_id() == mm_node_id; } );
+    [ &mm_node_id ]( const DataLogger_& dl ) { return dl.get_mm_node_id() == mm_node_id; } );
+
   if ( item != data_loggers_.end() )
   {
     throw IllegalConnection( "Each multimeter can only be connected once to a given node." );

@@ -531,6 +531,7 @@ private:
   size_t start_offset_;                          //!< Element to start at, set when slicing
   size_t end_part_;                              //!< Primitive or one past the primitive to end at, set when slicing
   size_t end_offset_;                            //!< One past the element to end at, set when slicing
+  bool is_sliced_;                               //!< Whether the NodeCollectionComposite is sliced or not
 
   /**
    * Goes through the vector of primitives, merging as much as possible.
@@ -801,7 +802,7 @@ NodeCollectionComposite::begin( NodeCollectionPTR cp ) const
 inline NodeCollectionComposite::const_iterator
 NodeCollectionComposite::end( NodeCollectionPTR cp ) const
 {
-  if ( end_part_ != 0 or end_offset_ != 0 )
+  if ( is_sliced_ )
   {
     return const_iterator( cp, *this, end_part_, end_offset_, step_ );
   }

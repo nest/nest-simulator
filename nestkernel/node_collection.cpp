@@ -109,8 +109,9 @@ nc_const_iterator::composite_update_indices_()
   }
   // If we went past the end of the composite, we need to adjust the
   // position of the iterator.
-  if ( composite_collection_->end_offset_ != 0 or composite_collection_->end_part_ != 0 )
+  if ( composite_collection_->is_sliced_ )
   {
+    assert( composite_collection_->end_offset_ != 0 or composite_collection_->end_part_ != 0 );
     if ( part_idx_ >= composite_collection_->end_part_ and element_idx_ >= composite_collection_->end_offset_ )
     {
       part_idx_ = composite_collection_->end_part_;
@@ -150,19 +151,11 @@ nc_const_iterator::operator*() const
   {
     // for efficiency we check each value instead of simply checking against
     // composite_collection->end()
-    if ( composite_collection_->end_offset_ != 0 or composite_collection_->end_part_ != 0 )
+    if ( not( part_idx_ < composite_collection_->end_part_
+           or ( part_idx_ == composite_collection_->end_part_
+             and element_idx_ < composite_collection_->end_offset_ ) ) )
     {
-      if ( not( part_idx_ < composite_collection_->end_part_
-             or ( part_idx_ == composite_collection_->end_part_
-               and element_idx_ < composite_collection_->end_offset_ ) ) )
-      {
-        throw KernelException( "Invalid NodeCollection iterator (composite element beyond specified end element)" );
-      }
-    }
-    else if ( part_idx_ >= composite_collection_->parts_.size()
-      or element_idx_ >= composite_collection_->parts_[ part_idx_ ].size() )
-    {
-      throw KernelException( "Invalid NodeCollection iterator (composite element beyond last composite element)" );
+      throw KernelException( "Invalid NodeCollection iterator (composite element beyond specified end element)" );
     }
 
     // Add to local placement from NodeCollectionPrimitives that comes before the
@@ -620,6 +613,7 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionPrimitive&
   // for consistency with iterator comparisons.
   , end_part_( end == primitive.size() ? 1 : 0 )
   , end_offset_( end == primitive.size() ? 0 : end )
+  , is_sliced_( start != 0 or end != primitive.size() or step > 1 )
 {
   parts_.push_back( primitive );
 }
@@ -640,8 +634,9 @@ NodeCollectionComposite::NodeCollectionComposite( const std::vector< NodeCollect
   , step_( 1 )
   , start_part_( 0 )
   , start_offset_( 0 )
-  , end_part_( 0 )
+  , end_part_( parts.size() )
   , end_offset_( 0 )
+  , is_sliced_( false )
 {
   if ( parts.size() < 1 )
   {
@@ -673,6 +668,7 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite&
   , start_offset_( 0 )
   , end_part_( composite.parts_.size() )
   , end_offset_( 0 )
+  , is_sliced_( true )
 {
   if ( end - start < 1 )
   {
@@ -683,8 +679,9 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite&
     throw BadProperty( "Index out of range." );
   }
 
-  if ( composite.step_ > 1 or composite.end_part_ != 0 or composite.end_offset_ != 0 )
+  if ( composite.is_sliced_ )
   {
+    assert( composite.step_ > 1 or composite.end_part_ != 0 or composite.end_offset_ != 0 );
     // The NodeCollection is sliced
     if ( size_ > 1 )
     {
@@ -736,8 +733,9 @@ NodeCollectionComposite::operator+( NodeCollectionPTR rhs ) const
     throw KernelException(
       "InvalidNodeCollection: note that ResetKernel invalidates all previously created NodeCollections." );
   }
-  if ( step_ > 1 or end_part_ != 0 or end_offset_ != 0 )
+  if ( is_sliced_ )
   {
+    assert( step_ > 1 or end_part_ != 0 or end_offset_ != 0 );
     throw BadProperty( "Cannot add NodeCollection to a sliced composite." );
   }
   auto const* const rhs_ptr = dynamic_cast< NodeCollectionPrimitive const* >( rhs.get() );
@@ -756,8 +754,10 @@ NodeCollectionComposite::operator+( NodeCollectionPTR rhs ) const
   else // rhs is Composite
   {
     auto const* const rhs_ptr = dynamic_cast< NodeCollectionComposite const* >( rhs.get() );
-    if ( rhs_ptr->step_ > 1 or rhs_ptr->end_part_ != 0 or rhs_ptr->end_offset_ != 0 )
+    assert( rhs_ptr );
+    if ( rhs_ptr->is_sliced_ )
     {
+      assert( rhs_ptr->step_ > 1 or rhs_ptr->end_part_ != 0 or rhs_ptr->end_offset_ != 0 );
       throw BadProperty( "Cannot add NodeCollection to a sliced composite." );
     }
 
@@ -839,8 +839,9 @@ NodeCollectionComposite::operator+( const NodeCollectionPrimitive& rhs ) const
 index
 NodeCollectionComposite::operator[]( const size_t i ) const
 {
-  if ( step_ > 1 or start_part_ > 0 or start_offset_ > 0 or end_part_ != parts_.size() or end_offset_ > 0 )
+  if ( is_sliced_ )
   {
+    assert( step_ > 1 or start_part_ > 0 or start_offset_ > 0 or end_part_ != parts_.size() or end_offset_ > 0 );
     // Composite is sliced, we use iterator arithmetic.
     return ( *( begin() + i ) ).node_id;
   }
@@ -1028,8 +1029,9 @@ NodeCollectionComposite::contains( index node_id ) const
     }
     else
     {
-      if ( start_offset_ != 0 or start_part_ != 0 or end_part_ != 0 or end_offset_ != 0 or step_ > 1 )
+      if ( is_sliced_ )
       {
+        assert( start_offset_ != 0 or start_part_ != 0 or end_part_ != 0 or end_offset_ != 0 or step_ > 1 );
         // NodeCollection is sliced
         if ( middle < start_part_ or end_part_ < middle )
         {
@@ -1062,9 +1064,10 @@ NodeCollectionComposite::contains( index node_id ) const
 long
 NodeCollectionComposite::find( const index node_id ) const
 {
-  if ( step_ > 1 or start_part_ > 0 or start_offset_ > 0 or ( end_part_ > 0 and end_part_ != parts_.size() )
-    or end_offset_ > 0 )
+  if ( is_sliced_ )
   {
+    assert( step_ > 1 or start_part_ > 0 or start_offset_ > 0 or ( end_part_ > 0 and end_part_ != parts_.size() )
+      or end_offset_ > 0 );
     // Composite is sliced, we must iterate to find the index.
     auto it = begin();
     long index = 0;
@@ -1119,8 +1122,9 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
   std::string nc = "NodeCollection(";
   std::string space( nc.size(), ' ' );
 
-  if ( step_ > 1 or ( end_part_ != 0 or end_offset_ != 0 ) )
+  if ( is_sliced_ )
   {
+    assert( step_ > 1 or ( end_part_ != 0 or end_offset_ != 0 ) );
     // Sliced composite NodeCollection
 
     size_t current_part = 0;

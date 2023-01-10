@@ -275,7 +275,7 @@ cdef class NESTEngine:
                 new_nc_datum = node_collection_array_index(nc_datum, array_bool_ptr, len(array))
                 return sli_datum_to_object(new_nc_datum)
             elif numpy.issubdtype(array.dtype, numpy.integer):
-                array_long_mv = numpy.ascontiguousarray(array, dtype=int)
+                array_long_mv = numpy.ascontiguousarray(array, dtype=int32)
                 array_long_ptr = &array_long_mv[0]
                 new_nc_datum = node_collection_array_index(nc_datum, array_long_ptr, len(array))
                 return sli_datum_to_object(new_nc_datum)

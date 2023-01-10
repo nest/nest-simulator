@@ -42,8 +42,12 @@
 #include "node_collection.h"
 #include "secondary_event.h"
 
+
+#include <boost/numeric/conversion/cast.hpp>
+
 // Includes from sli:
 #include "dictdatum.h"
+
 
 /** @file node.h
  * Declarations for base class Node
@@ -814,12 +818,7 @@ Node::is_proxy() const
 }
 
 
-inline index
-Node::get_node_id() const
-{
-  boost::any node_id_ = data.at( 0 ).at( "node_id_" );
-  return boost::any_cast< int >( node_id_ );
-}
+
 
 inline NodeCollectionPTR
 Node::get_nc() const

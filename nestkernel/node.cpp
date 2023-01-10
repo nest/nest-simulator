@@ -29,6 +29,7 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "logging.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -49,7 +50,7 @@ Node::Node( const Node& n )
 {
   std::map< std::string, boost::any > n_base_data = n.data.at( 0 );
 
-  n_base_data[ "node_id_" ] = 0;
+  n_base_data[ "node_id_" ] = size_t( 0 );
   // copy must always initialized its own buffers
   n_base_data[ "initialized_" ] = false;
   n_base_data[ "nc_ptr_" ] = nullptr;
@@ -70,14 +71,18 @@ Node::~Node()
 void
 Node::populate_data()
 {
-  // data at level 0 is the node information about the node' data
+
   std::map< std::string, boost::any > base_data;
 
+  index zero_index_instance = 0;
+  thread zero_thread_instance = 0;
+
   base_data[ "deprecation_warning" ] = DeprecationWarning();
-  base_data[ "node_id_" ] = 0;
-  base_data[ "thread_lid_" ] = invalid_index;
+
+  base_data[ "node_id_" ] = zero_index_instance;
+  base_data[ "thread_lid_" ] = zero_index_instance;
   base_data[ "model_id_" ] = -1;
-  base_data[ "thread_" ] = 0;
+  base_data[ "thread_" ] = zero_thread_instance;
   base_data[ "vp_" ] = invalid_thread;
   base_data[ "frozen_" ] = false;
   base_data[ "initialized_" ] = false;
@@ -86,6 +91,25 @@ Node::populate_data()
 
   data.push_back( base_data );
 }
+
+
+index
+Node::get_node_id() const
+{
+  index res = invalid_index;
+  boost::any node_id_ = data.at( 0 ).at( "node_id_" );
+  try
+  {
+    node_id_ = res = boost::any_cast< index >( node_id_ );
+  }
+  catch ( const boost::bad_any_cast& e )
+  {
+    LOG( M_ERROR, "Node::get_node_id", e.what() );
+    assert( node_id_.type() == typeid( index ) );
+  }
+  return res;
+}
+
 
 void
 Node::init_state_()
@@ -199,8 +223,9 @@ Node::set_status_base( const DictionaryDatum& dict )
     throw BadProperty(
       String::compose( "Setting status of a '%1' with node ID %2: %3", get_name(), get_node_id(), e.message() ) );
   }
-  bool frozen_ = boost::any_cast< bool >( this->data.at( 0 ).at( "frozen_" ) );
-  updateValue< bool >( dict, names::frozen, frozen_ );
+
+  boost::any& frozen = this->data.at( 0 ).at( "frozen_" );
+  updateValue< bool >( dict, names::frozen, frozen );
 }
 
 /**

@@ -540,6 +540,11 @@ private:
    */
   void merge_parts_( std::vector< NodeCollectionPrimitive >& parts ) const;
 
+  const_iterator local_begin_( const NodeCollectionPTR cp,
+    const size_t num_vp_elements,
+    const size_t current_vp_element,
+    const size_t vp_element_first_node ) const;
+
 public:
   /**
    * Create a composite from a primitive, with boundaries and step length.

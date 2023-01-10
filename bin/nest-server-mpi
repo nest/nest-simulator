@@ -25,6 +25,8 @@ import sys
 import nest
 import nest.server
 
+HOST="${NEST_SERVER_HOST:-127.0.0.1}"
+PORT="${NEST_SERVER_PORT:-52425}"
 
 comm = MPI.COMM_WORLD.Clone()
 rank = comm.Get_rank()
@@ -38,7 +40,7 @@ def log(call_name, msg):
 if rank == 0:
     print("==> Starting NEST Server Master on rank 0", flush=True)
     nest.server.set_mpi_comm(comm)
-    nest.server.run_mpi_app(host=opt.get('--host', '127.0.0.1'), port=opt.get('--port', 52425))
+    nest.server.run_mpi_app(host=opt.get('--host', HOST), port=opt.get('--port', PORT))
 
 else:
     print(f"==> Starting NEST Server Worker on rank {rank}", flush=True)

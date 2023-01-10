@@ -818,8 +818,6 @@ Node::is_proxy() const
 }
 
 
-
-
 inline NodeCollectionPTR
 Node::get_nc() const
 {

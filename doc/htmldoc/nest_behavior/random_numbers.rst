@@ -140,7 +140,7 @@ practice and :ref:`some details on randomizing delays <random_delays>`.
 
 .. automodule:: nest.random.hl_api_random
     :members:
-
+    :noindex:
 
 .. _random_examples:
 

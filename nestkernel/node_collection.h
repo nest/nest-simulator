@@ -538,7 +538,7 @@ private:
    *
    * @param parts Vector of primitives to be merged.
    */
-  void merge_parts( std::vector< NodeCollectionPrimitive >& parts ) const;
+  void merge_parts_( std::vector< NodeCollectionPrimitive >& parts ) const;
 
 public:
   /**

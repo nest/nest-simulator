@@ -763,7 +763,7 @@ NodeCollectionComposite::operator+( NodeCollectionPTR rhs ) const
     new_parts.reserve( new_parts.size() + rhs_ptr->parts_.size() );
     new_parts.insert( new_parts.end(), rhs_ptr->parts_.begin(), rhs_ptr->parts_.end() );
     std::sort( new_parts.begin(), new_parts.end(), primitiveSort );
-    merge_parts( new_parts );
+    merge_parts_( new_parts );
     if ( new_parts.size() == 1 )
     {
       // If there is only a single primitive in the composite, we extract it.
@@ -796,7 +796,7 @@ NodeCollectionComposite::operator+( const NodeCollectionPrimitive& rhs ) const
   std::vector< NodeCollectionPrimitive > new_parts = parts_;
   new_parts.push_back( rhs );
   std::sort( new_parts.begin(), new_parts.end(), primitiveSort );
-  merge_parts( new_parts );
+  merge_parts_( new_parts );
   if ( new_parts.size() == 1 )
   {
     return std::make_shared< NodeCollectionPrimitive >( new_parts[ 0 ] );
@@ -955,7 +955,7 @@ NodeCollectionComposite::slice( size_t start, size_t end, size_t step ) const
 }
 
 void
-NodeCollectionComposite::merge_parts( std::vector< NodeCollectionPrimitive >& parts ) const
+NodeCollectionComposite::merge_parts_( std::vector< NodeCollectionPrimitive >& parts ) const
 {
   bool did_merge = true; // initialize to enter the while loop
   size_t last_i = 0;

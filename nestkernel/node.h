@@ -114,6 +114,7 @@ class Node : public CommonInterface
 public:
   Node();
   Node( Node const& );
+  Node( std::map< std::string, boost::any > );
   virtual ~Node();
 
   /**
@@ -128,10 +129,7 @@ public:
     return nullptr;
   }
 
-  void
-  populate_data() override
-  {
-  }
+  void populate_data() override;
   /**
    * Returns true if the node supports the Urbanczik-Senn plasticity rule
    */
@@ -733,7 +731,7 @@ protected:
   void
   set_frozen_( bool frozen )
   {
-    frozen_ = frozen;
+    data.at( 0 )[ "frozen_" ] = frozen;
   }
 
   /**
@@ -746,45 +744,47 @@ protected:
   const ConcreteNode& downcast( const Node& );
 
 private:
-  /**
-   * Global Element ID (node ID).
-   *
-   * The node ID is unique within the network. The smallest valid node ID is 1.
-   */
-  index node_id_;
+  // /**
+  //  * Global Element ID (node ID).
+  //  *
+  //  * The node ID is unique within the network. The smallest valid node ID is 1.
+  //  */
+  // index node_id_;
 
-  /**
-   * Local id of this node in the thread-local vector of nodes.
-   */
-  index thread_lid_;
+  // /**
+  //  * Local id of this node in the thread-local vector of nodes.
+  //  */
+  // index thread_lid_;
 
-  /**
-   * Model ID.
-   * It is only set for actual node instances, not for instances of class Node
-   * representing model prototypes. Model prototypes always have model_id_==-1.
-   * @see get_model_id(), set_model_id()
-   */
-  int model_id_;
+  // /**
+  //  * Model ID.
+  //  * It is only set for actual node instances, not for instances of class Node
+  //  * representing model prototypes. Model prototypes always have model_id_==-1.
+  //  * @see get_model_id(), set_model_id()
+  //  */
+  // int model_id_;
 
-  thread thread_;      //!< thread node is assigned to
-  thread vp_;          //!< virtual process node is assigned to
-  bool frozen_;        //!< node shall not be updated if true
-  bool initialized_;   //!< state and buffers have been initialized
-  bool node_uses_wfr_; //!< node uses waveform relaxation method
+  // thread thread_;      //!< thread node is assigned to
+  // thread vp_;          //!< virtual process node is assigned to
+  // bool frozen_;        //!< node shall not be updated if true
+  // bool initialized_;   //!< state and buffers have been initialized
+  // bool node_uses_wfr_; //!< node uses waveform relaxation method
 
-  NodeCollectionPTR nc_ptr_;
+  // NodeCollectionPTR nc_ptr_;
 };
 
 inline bool
 Node::is_frozen() const
 {
-  return frozen_;
+  boost::any frozen_ = data.at( 0 ).at( "frozen_" );
+  return boost::any_cast< bool >( frozen_ );
 }
 
 inline bool
 Node::node_uses_wfr() const
 {
-  return node_uses_wfr_;
+  boost::any node_uses_wfr_ = data.at( 0 ).at( "node_uses_wfr_" );
+  return boost::any_cast< bool >( node_uses_wfr_ );
 }
 
 inline bool
@@ -796,7 +796,7 @@ Node::supports_urbanczik_archiving() const
 inline void
 Node::set_node_uses_wfr( const bool uwfr )
 {
-  node_uses_wfr_ = uwfr;
+  this->data.at( 0 )[ "node_uses_wfr_" ] = uwfr;
 }
 
 
@@ -817,63 +817,69 @@ Node::is_proxy() const
 inline index
 Node::get_node_id() const
 {
-  return node_id_;
+  boost::any node_id_ = data.at( 0 ).at( "node_id_" );
+  return boost::any_cast< int >( node_id_ );
 }
 
 inline NodeCollectionPTR
 Node::get_nc() const
 {
-  return nc_ptr_;
+  boost::any nc_ptr_ = data.at( 0 ).at( "nc_ptr_" );
+  return boost::any_cast< NodeCollectionPTR >( nc_ptr_ );
 }
 
 inline void
 Node::set_node_id_( index i )
 {
-  node_id_ = i;
+  this->data.at( 0 )[ "node_id_" ] = i;
 }
 
 
 inline void
 Node::set_nc_( NodeCollectionPTR nc_ptr )
 {
-  nc_ptr_ = nc_ptr;
+  this->data.at( 0 )[ "nc_ptr_" ] = nc_ptr;
 }
 
 
 inline void
 Node::set_model_id( int i )
 {
-  model_id_ = i;
+  this->data.at( 0 )[ "model_id_" ] = i;
 }
 
 inline bool
 Node::is_model_prototype() const
 {
-  return vp_ == invalid_thread;
+
+  boost::any vp_ = this->data.at( 0 ).at( "vp_" );
+  return boost::any_cast< thread >( vp_ ) == invalid_thread;
 }
 
 inline void
 Node::set_thread( thread t )
 {
-  thread_ = t;
+  this->data.at( 0 )[ "thread_" ] = t;
 }
 
 inline thread
 Node::get_thread() const
 {
-  return thread_;
+  boost::any thread_ = this->data.at( 0 ).at( "thread_" );
+  return boost::any_cast< thread >( thread_ );
 }
 
 inline void
 Node::set_vp( thread vp )
 {
-  vp_ = vp;
+  this->data.at( 0 )[ "vp_" ] = vp;
 }
 
 inline thread
 Node::get_vp() const
 {
-  return vp_;
+  boost::any vp_ = this->data.at( 0 ).at( "vp_" );
+  return boost::any_cast< thread >( vp_ );
 }
 
 template < typename ConcreteNode >
@@ -888,19 +894,21 @@ Node::downcast( const Node& n )
 inline void
 Node::set_thread_lid( const index tlid )
 {
-  thread_lid_ = tlid;
+  this->data.at( 0 )[ "thread_lid_" ] = tlid;
 }
 
 inline index
 Node::get_thread_lid() const
 {
-  return thread_lid_;
+  boost::any thread_lid_ = this->data.at( 0 ).at( "thread_lid_" );
+  return boost::any_cast< index >( thread_lid_ );
 }
 
 inline int
 Node::get_model_id() const
 {
-  return model_id_;
+  boost::any model_id_ = this->data.at( 0 ).at( "model_id_" );
+  return boost::any_cast< int >( model_id_ );
 }
 
 inline Name

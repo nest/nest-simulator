@@ -40,35 +40,51 @@ namespace nest
 
 Node::Node()
   : CommonInterface()
-  , deprecation_warning()
-  , node_id_( 0 )
-  , thread_lid_( invalid_index )
-  , model_id_( -1 )
-  , thread_( 0 )
-  , vp_( invalid_thread )
-  , frozen_( false )
-  , initialized_( false )
-  , node_uses_wfr_( false )
 {
+  populate_data();
 }
 
 Node::Node( const Node& n )
   : CommonInterface( n )
-  , deprecation_warning( n.deprecation_warning )
-  , node_id_( 0 )
-  , thread_lid_( n.thread_lid_ )
-  , model_id_( n.model_id_ )
-  , thread_( n.thread_ )
-  , vp_( n.vp_ )
-  , frozen_( n.frozen_ )
-  // copy must always initialized its own buffers
-  , initialized_( false )
-  , node_uses_wfr_( n.node_uses_wfr_ )
 {
+  std::map< std::string, boost::any > n_base_data = n.data.at( 0 );
+
+  n_base_data[ "node_id_" ] = 0;
+  // copy must always initialized its own buffers
+  n_base_data[ "initialized_" ] = false;
+  n_base_data[ "nc_ptr_" ] = nullptr;
+
+  data.push_back( n_base_data );
+}
+
+Node::Node( std::map< std::string, boost::any > base_data )
+  : CommonInterface()
+{
+  data.push_back( base_data );
 }
 
 Node::~Node()
 {
+}
+
+void
+Node::populate_data()
+{
+  // data at level 0 is the node information about the node' data
+  std::map< std::string, boost::any > base_data;
+
+  base_data[ "deprecation_warning" ] = DeprecationWarning();
+  base_data[ "node_id_" ] = 0;
+  base_data[ "thread_lid_" ] = invalid_index;
+  base_data[ "model_id_" ] = -1;
+  base_data[ "thread_" ] = 0;
+  base_data[ "vp_" ] = invalid_thread;
+  base_data[ "frozen_" ] = false;
+  base_data[ "initialized_" ] = false;
+  base_data[ "node_uses_wfr_" ] = false;
+  base_data[ "nc_ptr_" ] = nullptr;
+
+  data.push_back( base_data );
 }
 
 void
@@ -79,6 +95,8 @@ Node::init_state_()
 void
 Node::init()
 {
+  boost::any& initialized_ref = this->data.at( 0 ).at( "initialized_" );
+  bool initialized_ = boost::any_cast< bool >( initialized_ref );
   if ( initialized_ )
   {
     return;
@@ -87,7 +105,7 @@ Node::init()
   init_state_();
   init_buffers_();
 
-  initialized_ = true;
+  initialized_ref = true;
 }
 
 void
@@ -109,6 +127,7 @@ Node::set_initialized_()
 std::string
 Node::get_name() const
 {
+  int model_id_ = boost::any_cast< int >( this->data.at( 0 ).at( "model_id_" ) );
   if ( model_id_ < 0 )
   {
     return std::string( "UnknownNode" );
@@ -120,6 +139,8 @@ Node::get_name() const
 Model&
 Node::get_model_() const
 {
+
+  int model_id_ = boost::any_cast< int >( this->data.at( 0 ).at( "model_id_" ) );
   assert( model_id_ >= 0 );
   return *kernel().model_manager.get_node_model( model_id_ );
 }
@@ -178,7 +199,7 @@ Node::set_status_base( const DictionaryDatum& dict )
     throw BadProperty(
       String::compose( "Setting status of a '%1' with node ID %2: %3", get_name(), get_node_id(), e.message() ) );
   }
-
+  bool frozen_ = boost::any_cast< bool >( this->data.at( 0 ).at( "frozen_" ) );
   updateValue< bool >( dict, names::frozen, frozen_ );
 }
 

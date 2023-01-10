@@ -27,9 +27,15 @@ namespace nest
 {
 
 CommonInterface::CommonInterface()
+  : data( 0 )
 {
 }
 
+
+CommonInterface::CommonInterface( CommonInterface const& )
+  : data( 0 )
+{
+}
 /**
  * Default implementation of check_connection just throws IllegalConnection
  */

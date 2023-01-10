@@ -528,7 +528,7 @@ NodeManager::ensure_valid_thread_local_ids()
 
         const size_t num_thread_local_wfr_nodes = std::count_if( local_nodes_[ tid ].begin(),
           local_nodes_[ tid ].end(),
-          []( const SparseNodeArray::NodeEntry& elem ) { return elem.get_node()->node_uses_wfr_; } );
+          []( const SparseNodeArray::NodeEntry& elem ) { return elem.get_node()->node_uses_wfr(); } );
         wfr_nodes_vec_[ tid ].reserve( num_thread_local_wfr_nodes );
 
         auto node_it = local_nodes_[ tid ].begin();
@@ -537,7 +537,7 @@ NodeManager::ensure_valid_thread_local_ids()
         {
           auto node = node_it->get_node();
           node->set_thread_lid( idx );
-          if ( node->node_uses_wfr_ )
+          if ( node->node_uses_wfr() )
           {
             wfr_nodes_vec_[ tid ].push_back( node );
           }

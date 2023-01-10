@@ -52,9 +52,7 @@ class CommonInterface
 {
 public:
   CommonInterface();
-  CommonInterface( CommonInterface const& )
-  {
-  }
+  CommonInterface( CommonInterface const& );
   virtual ~CommonInterface()
   {
   }
@@ -235,6 +233,12 @@ public:
    */
   void set_model_id( int );
 
+  inline virtual size_t
+  access_level() const
+  {
+    return 0;
+  }
+
 
 protected:
   virtual void populate_data() = 0;
@@ -248,8 +252,7 @@ protected:
    */
   virtual DictionaryDatum get_status_dict_() const;
 
-private:
-  std::map< std::string, boost::any > data;
+  std::vector< std::map< std::string, boost::any > > data;
 };
 
 inline bool

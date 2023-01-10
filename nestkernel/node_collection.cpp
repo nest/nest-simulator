@@ -35,16 +35,10 @@ namespace nest
 {
 
 // function object for sorting a vector of NodeCollectionPrimitives
-struct PrimitiveSortObject
+const struct PrimitiveSortObject
 {
   bool
-  operator()( NodeCollectionPrimitive& primitive_lhs, NodeCollectionPrimitive& primitive_rhs )
-  {
-    return primitive_lhs[ 0 ] < primitive_rhs[ 0 ];
-  }
-
-  bool
-  operator()( const NodeCollectionPrimitive& primitive_lhs, const NodeCollectionPrimitive& primitive_rhs )
+  operator()( const NodeCollectionPrimitive& primitive_lhs, const NodeCollectionPrimitive& primitive_rhs ) const
   {
     return primitive_lhs[ 0 ] < primitive_rhs[ 0 ];
   }
@@ -212,16 +206,16 @@ NodeCollection::NodeCollection()
 NodeCollectionPTR
 NodeCollection::create( const IntVectorDatum& node_idsdatum )
 {
-  if ( node_idsdatum->size() == 0 )
+  if ( node_idsdatum->empty() )
   {
     return NodeCollection::create_();
   }
 
   std::vector< index > node_ids;
   node_ids.reserve( node_idsdatum->size() );
-  for ( std::vector< long >::const_iterator it = node_idsdatum->begin(); it != node_idsdatum->end(); ++it )
+  for ( const auto& datum : *node_idsdatum )
   {
-    node_ids.push_back( static_cast< index >( getValue< long >( *it ) ) );
+    node_ids.push_back( static_cast< index >( getValue< long >( datum ) ) );
   }
 
   if ( not std::is_sorted( node_ids.begin(), node_ids.end() ) )
@@ -234,7 +228,7 @@ NodeCollection::create( const IntVectorDatum& node_idsdatum )
 NodeCollectionPTR
 NodeCollection::create( const TokenArray& node_idsarray )
 {
-  if ( node_idsarray.size() == 0 )
+  if ( node_idsarray.empty() )
   {
     return NodeCollection::create_();
   }
@@ -263,7 +257,7 @@ NodeCollection::create( const index node_id )
 NodeCollectionPTR
 NodeCollection::create( const std::vector< index >& node_ids_vector )
 {
-  if ( node_ids_vector.size() == 0 )
+  if ( node_ids_vector.empty() )
   {
     return NodeCollection::create_();
   }
@@ -277,7 +271,7 @@ NodeCollection::create( const std::vector< index >& node_ids_vector )
 NodeCollectionPTR
 NodeCollection::create_()
 {
-  return NodeCollectionPTR( new NodeCollectionPrimitive() );
+  return std::make_shared< NodeCollectionPrimitive >();
 }
 
 NodeCollectionPTR
@@ -320,11 +314,11 @@ NodeCollection::create_( const std::vector< index >& node_ids )
 
   if ( parts.size() == 1 )
   {
-    return NodeCollectionPTR( new NodeCollectionPrimitive( parts[ 0 ] ) );
+    return std::make_shared< NodeCollectionPrimitive >( parts[ 0 ] );
   }
   else
   {
-    return NodeCollectionPTR( new NodeCollectionComposite( parts ) );
+    return std::make_shared< NodeCollectionComposite >( parts );
   }
 }
 
@@ -368,10 +362,10 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( index first, index last )
   assert( first_ <= last_ );
 
   // find the model_id
-  const int first_model_id = kernel().modelrange_manager.get_model_id( first );
+  const auto first_model_id = kernel().modelrange_manager.get_model_id( first );
   for ( index node_id = ++first; node_id <= last; ++node_id )
   {
-    const int model_id = kernel().modelrange_manager.get_model_id( node_id );
+    const auto model_id = kernel().modelrange_manager.get_model_id( node_id );
     if ( model_id != first_model_id )
     {
       throw BadProperty( "model ids does not match" );
@@ -412,7 +406,7 @@ NodeCollectionPrimitive::operator+( NodeCollectionPTR rhs ) const
   }
   if ( rhs->empty() )
   {
-    return NodeCollectionPTR( new NodeCollectionPrimitive( *this ) );
+    return std::make_shared< NodeCollectionPrimitive >( *this );
   }
   if ( empty() )
   {
@@ -446,11 +440,11 @@ NodeCollectionPrimitive::operator+( NodeCollectionPTR rhs ) const
     if ( ( last_ + 1 ) == rhs_ptr->first_ and model_id_ == rhs_ptr->model_id_ )
     // if contiguous and homogeneous
     {
-      return NodeCollectionPTR( new NodeCollectionPrimitive( first_, rhs_ptr->last_, model_id_, metadata_ ) );
+      return std::make_shared< NodeCollectionPrimitive >( first_, rhs_ptr->last_, model_id_, metadata_ );
     }
     else if ( ( rhs_ptr->last_ + 1 ) == first_ and model_id_ == rhs_ptr->model_id_ )
     {
-      return NodeCollectionPTR( new NodeCollectionPrimitive( rhs_ptr->first_, last_, model_id_, metadata_ ) );
+      return std::make_shared< NodeCollectionPrimitive >( rhs_ptr->first_, last_, model_id_, metadata_ );
     }
     else // not contiguous and homogeneous
     {
@@ -458,12 +452,12 @@ NodeCollectionPrimitive::operator+( NodeCollectionPTR rhs ) const
       primitives.reserve( 2 );
       primitives.push_back( *this );
       primitives.push_back( *rhs_ptr );
-      return NodeCollectionPTR( new NodeCollectionComposite( primitives ) );
+      return std::make_shared< NodeCollectionComposite >( primitives );
     }
   }
   else // if rhs is not Primitive, i.e. Composite
   {
-    auto* rhs_ptr = dynamic_cast< NodeCollectionComposite* >( rhs.get() );
+    auto const* const rhs_ptr = dynamic_cast< NodeCollectionComposite* >( rhs.get() );
     assert( rhs_ptr );
     return rhs_ptr->operator+( *this ); // use Composite operator+
   }
@@ -618,17 +612,6 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionPrimitive&
   parts_.push_back( primitive );
 }
 
-NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite& comp )
-  : parts_( comp.parts_ )
-  , size_( comp.size_ )
-  , step_( comp.step_ )
-  , start_part_( comp.start_part_ )
-  , start_offset_( comp.start_offset_ )
-  , end_part_( comp.end_part_ )
-  , end_offset_( comp.end_offset_ )
-{
-}
-
 NodeCollectionComposite::NodeCollectionComposite( const std::vector< NodeCollectionPrimitive >& parts )
   : size_( 0 )
   , step_( 1 )
@@ -722,7 +705,7 @@ NodeCollectionComposite::operator+( NodeCollectionPTR rhs ) const
 {
   if ( rhs->empty() )
   {
-    return NodeCollectionPTR( new NodeCollectionComposite( *this ) );
+    return std::make_shared< NodeCollectionComposite >( *this );
   }
   if ( get_metadata().get() and not( get_metadata() == rhs->get_metadata() ) )
   {
@@ -762,45 +745,33 @@ NodeCollectionComposite::operator+( NodeCollectionPTR rhs ) const
     }
 
     // check overlap between the two composites
-    const NodeCollectionComposite *shortest, *longest;
-    if ( size() < rhs_ptr->size() )
+    const auto shortest_longest_nc = std::minmax( *this,
+      *rhs_ptr,
+      []( const NodeCollectionComposite& a, const NodeCollectionComposite& b ) { return a.size() < b.size(); } );
+    const auto& shortest = shortest_longest_nc.first;
+    const auto& longest = shortest_longest_nc.second;
+
+    for ( auto short_it = shortest.begin(); short_it < shortest.end(); ++short_it )
     {
-      shortest = this;
-      longest = rhs_ptr;
-    }
-    else
-    {
-      shortest = rhs_ptr;
-      longest = this;
-    }
-    for ( NodeCollectionComposite::const_iterator short_it = shortest->begin(); short_it < shortest->end(); ++short_it )
-    {
-      if ( longest->contains( ( *short_it ).node_id ) )
+      if ( longest.contains( ( *short_it ).node_id ) )
       {
         throw BadProperty( "Cannot join overlapping NodeCollections." );
       }
     }
 
-    auto* new_composite = new NodeCollectionComposite( *this );
-    new_composite->parts_.reserve( new_composite->parts_.size() + rhs_ptr->parts_.size() );
-    for ( const auto& part : rhs_ptr->parts_ )
+    auto new_parts = parts_;
+    new_parts.reserve( new_parts.size() + rhs_ptr->parts_.size() );
+    new_parts.insert( new_parts.end(), rhs_ptr->parts_.begin(), rhs_ptr->parts_.end() );
+    std::sort( new_parts.begin(), new_parts.end(), primitiveSort );
+    merge_parts( new_parts );
+    if ( new_parts.size() == 1 )
     {
-      new_composite->parts_.push_back( part );
-      new_composite->size_ += part.size();
-    }
-    std::sort( new_composite->parts_.begin(), new_composite->parts_.end(), primitiveSort );
-    merge_parts( new_composite->parts_ );
-    if ( new_composite->parts_.size() == 1 )
-    {
-      // If there is only a single primitive in the composite, we extract it,
-      // ensuring that the composite is deleted from memory.
-      NodeCollectionPrimitive new_primitive = new_composite->parts_[ 0 ];
-      delete new_composite;
-      return NodeCollectionPTR( new NodeCollectionPrimitive( new_primitive ) );
+      // If there is only a single primitive in the composite, we extract it.
+      return std::make_shared< NodeCollectionPrimitive >( new_parts[ 0 ] );
     }
     else
     {
-      return NodeCollectionPTR( new_composite );
+      return std::make_shared< NodeCollectionComposite >( new_parts );
     }
   }
 }
@@ -828,11 +799,11 @@ NodeCollectionComposite::operator+( const NodeCollectionPrimitive& rhs ) const
   merge_parts( new_parts );
   if ( new_parts.size() == 1 )
   {
-    return NodeCollectionPTR( new NodeCollectionPrimitive( new_parts[ 0 ] ) );
+    return std::make_shared< NodeCollectionPrimitive >( new_parts[ 0 ] );
   }
   else
   {
-    return NodeCollectionPTR( new NodeCollectionComposite( new_parts ) );
+    return std::make_shared< NodeCollectionComposite >( new_parts );
   }
 }
 
@@ -906,7 +877,7 @@ NodeCollectionComposite::local_begin( NodeCollectionPTR cp ) const
   if ( offset )
   {
     // First create an iterator at the start position.
-    const_iterator tmp_it = const_iterator( cp, *this, start_part_, start_offset_, step_ );
+    auto tmp_it = const_iterator( cp, *this, start_part_, start_offset_, step_ );
     tmp_it += offset; // Go forward to the offset.
     // Get current position.
     tmp_it.get_current_part_offset( current_part, current_offset );
@@ -934,7 +905,7 @@ NodeCollectionComposite::MPI_local_begin( NodeCollectionPTR cp ) const
   if ( offset )
   {
     // First create an iterator at the start position.
-    const_iterator tmp_it = const_iterator( cp, *this, start_part_, start_offset_, step_ );
+    auto tmp_it = const_iterator( cp, *this, start_part_, start_offset_, step_ );
     tmp_it += offset; // Go forward to the offset.
     // Get current position.
     tmp_it.get_current_part_offset( current_part, current_offset );
@@ -948,7 +919,7 @@ NodeCollectionComposite::to_array() const
 {
   ArrayDatum node_ids;
   node_ids.reserve( size() );
-  for ( const_iterator it = begin(); it < end(); ++it )
+  for ( auto it = begin(); it < end(); ++it )
   {
     node_ids.push_back( ( *it ).node_id );
   }
@@ -980,7 +951,7 @@ NodeCollectionComposite::slice( size_t start, size_t end, size_t step ) const
     return new_composite.parts_[ new_composite.start_part_ ].slice(
       new_composite.start_offset_, new_composite.end_offset_ );
   }
-  return NodeCollectionPTR( new NodeCollectionComposite( new_composite ) );
+  return std::make_shared< NodeCollectionComposite >( new_composite );
 }
 
 void
@@ -1017,7 +988,7 @@ NodeCollectionComposite::contains( index node_id ) const
   long upper = parts_.size() - 1;
   while ( lower <= upper )
   {
-    size_t middle = std::floor( ( lower + upper ) / 2.0 );
+    const size_t middle = std::floor( ( lower + upper ) / 2.0 );
 
     if ( ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).node_id < node_id )
     {
@@ -1042,7 +1013,7 @@ NodeCollectionComposite::contains( index node_id ) const
         const auto num_prev_nodes = std::accumulate( parts_.begin(),
           parts_.begin() + middle,
           static_cast< size_t >( 0 ), // casting 0 to size_t to make std::accumulate return a size_t
-          []( size_t a, NodeCollectionPrimitive primitive ) { return a + primitive.size(); } );
+          []( const size_t a, const NodeCollectionPrimitive& primitive ) { return a + primitive.size(); } );
         if ( start_part_ < middle and middle < end_part_ )
         {
           // middle is after the first part and before the last part
@@ -1069,9 +1040,8 @@ NodeCollectionComposite::find( const index node_id ) const
     assert( step_ > 1 or start_part_ > 0 or start_offset_ > 0 or ( end_part_ > 0 and end_part_ != parts_.size() )
       or end_offset_ > 0 );
     // Composite is sliced, we must iterate to find the index.
-    auto it = begin();
     long index = 0;
-    for ( const_iterator it = begin(); it < end(); ++it, ++index )
+    for ( auto it = begin(); it < end(); ++it, ++index )
     {
       if ( ( *it ).node_id == node_id )
       {
@@ -1087,7 +1057,7 @@ NodeCollectionComposite::find( const index node_id ) const
     long upper = parts_.size() - 1;
     while ( lower <= upper )
     {
-      long middle = std::floor( ( lower + upper ) / 2.0 );
+      const size_t middle = std::floor( ( lower + upper ) / 2.0 );
 
       if ( ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).node_id < node_id )
       {
@@ -1099,7 +1069,7 @@ NodeCollectionComposite::find( const index node_id ) const
       }
       else
       {
-        auto size_accu = []( long a, const NodeCollectionPrimitive& b ) { return a + b.size(); };
+        auto size_accu = []( const long a, const NodeCollectionPrimitive& b ) { return a + b.size(); };
         long sum_pre = std::accumulate( parts_.begin(), parts_.begin() + middle, ( long ) 0, size_accu );
         return sum_pre + parts_[ middle ].find( node_id );
       }

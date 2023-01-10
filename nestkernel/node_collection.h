@@ -144,7 +144,7 @@ private:
 
 public:
   nc_const_iterator( const nc_const_iterator& nci ) = default;
-  void get_current_part_offset( size_t&, size_t& );
+  void get_current_part_offset( size_t&, size_t& ) const;
 
   NodeIDTriple operator*() const;
   bool operator!=( const nc_const_iterator& rhs ) const;
@@ -556,7 +556,7 @@ public:
    *
    * @param comp Composite to be copied.
    */
-  NodeCollectionComposite( const NodeCollectionComposite& );
+  NodeCollectionComposite( const NodeCollectionComposite& ) = default;
 
   /**
    * Creates a new composite from another, with boundaries and step length.
@@ -574,7 +574,7 @@ public:
    *
    * @param parts Vector of primitives.
    */
-  NodeCollectionComposite( const std::vector< NodeCollectionPrimitive >& );
+  explicit NodeCollectionComposite( const std::vector< NodeCollectionPrimitive >& );
 
   void print_me( std::ostream& ) const override;
 
@@ -672,7 +672,7 @@ nc_const_iterator::operator<=( const nc_const_iterator& rhs ) const
 }
 
 inline void
-nc_const_iterator::get_current_part_offset( size_t& part, size_t& offset )
+nc_const_iterator::get_current_part_offset( size_t& part, size_t& offset ) const
 {
   part = part_idx_;
   offset = element_idx_;

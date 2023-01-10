@@ -77,6 +77,8 @@ class NestModule(types.ModuleType):
     from . import logic                              # noqa
     from .ll_api import set_communicator
 
+    userdict = {}
+
     def __init__(self, name):
         super().__init__(name)
         # Copy over the original module attributes to preserve all interpreter-given

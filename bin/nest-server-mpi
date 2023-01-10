@@ -40,7 +40,7 @@ def log(call_name, msg):
 if rank == 0:
     print("==> Starting NEST Server Master on rank 0", flush=True)
     nest.server.set_mpi_comm(comm)
-    nest.server.run_mpi_app(host=opt.get('--host', HOST), port=opt.get('--port', PORT))
+    nest.server.run_mpi_app(host=opt.get('--host', $HOST), port=opt.get('--port', $PORT))
 
 else:
     print(f"==> Starting NEST Server Worker on rank {rank}", flush=True)

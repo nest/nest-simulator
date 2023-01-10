@@ -141,7 +141,7 @@ language = 'en'
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
 exclude_patterns = ['Thumbs.db', '.DS_Store', 'nest_by_example', 'README.md', '**.ipynb_checkpoints',
-                    'auto_examples/**.ipynb']
+                    'auto_examples/**.ipynb', 'auto_examples/index.rst']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'manni'

@@ -234,8 +234,6 @@ PyNEST examples
 .. toctree::
    :hidden:
 
-   ../auto_examples/index
-   ../examples/README.rst
    ../auto_examples/sudoku/index
    ../auto_examples/pong/index
    ../auto_examples/spatial/index

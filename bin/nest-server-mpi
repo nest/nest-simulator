@@ -9,7 +9,7 @@ Usage:
 Options:
   -h --help     display usage information and exit
   --host HOST   use hostname/IP address HOST for server [default: 127.0.0.1]
-  --port PORT   use port PORT for opening the socket [default: 5000]
+  --port PORT   use port PORT for opening the socket [default: 52425]
 
 """
 
@@ -38,7 +38,7 @@ def log(call_name, msg):
 if rank == 0:
     print("==> Starting NEST Server Master on rank 0", flush=True)
     nest.server.set_mpi_comm(comm)
-    nest.server.run_mpi_app(host=opt['--host'], port=opt['--port'])
+    nest.server.run_mpi_app(host=opt.get('--host', '127.0.0.1'), port=opt.get('--port', 52425))
 
 else:
     print(f"==> Starting NEST Server Worker on rank {rank}", flush=True)

@@ -46,7 +46,16 @@ Description
 
 The `mpi` recording backend sends collected data to a remote process
 using MPI.
+There are two ways to set the MPI port (if both are set, option A has precedence):
 
+A)
+The label of the recording device has the pattern:
+
+::
+
+   endpoint_address:port_name
+
+B)
 The name of the MPI port to send data to is read from a file for each
 device configured to use this backend. The file needs to be named
 according to the following pattern:

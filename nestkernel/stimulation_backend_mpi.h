@@ -47,6 +47,15 @@ The `mpi` stimulation backend collects data from MPI channels and
 updates stimulation devices just before each run. This is useful for
 co-simulation or for receiving stimuli from external software.
 
+There are two ways to set the MPI port (if both are set, option A has precedence):
+
+A)
+The label of the recording device has the pattern:
+
+::
+   endpoint_address:port_name
+
+B)
 The name of the MPI port to receive data on is read from a file for
 each device configured to use this backend.  The file needs to be
 named according to the following pattern:

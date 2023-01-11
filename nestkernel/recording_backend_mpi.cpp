@@ -358,15 +358,24 @@ void
 nest::RecordingBackendMPI::get_port( const RecordingDevice* device, std::string* port_name )
 {
   const std::string& label = device->get_label();
-  std::size_t address_starts_at;
+  std::size_t colon_position;
+
+  // The MPI address can be provided by two different means:
+  // a) the address is given by the label in the format: endpoint_address:address
+  // b) the file is provided via a file: {data_path}/{data_prefix}{label}/{node_id}.txt
+
   // Case a: label is the endpoint address in the following format:
   // endpoint_address:address string
-  if ((address_starts_at = label.find(":",0)) != std::string::npos) {
-    *port_name = label.substr(address_starts_at+1);
-  }
+  colon_position = label.find( ":", 0 );
 
-  // Case b: label is part of the path to a file that contains endpoint address
-  else {
+  // check if string start with "endpoint_address:" and a colon is found
+  if ( label.find( "endpoint_address:" ) == 0 )
+  {
+    *port_name = label.substr( colon_position + 1 );
+  }
+  // Case b: fallback to get_port implementation that reads the address from file
+  else
+  {
     get_port( device->get_node_id(), label, port_name );
   }
 }
@@ -400,7 +409,6 @@ nest::RecordingBackendMPI::get_port( const index index_node, const std::string& 
   {
     getline( file, *port_name );
   }
-  
   file.close();
 }
 

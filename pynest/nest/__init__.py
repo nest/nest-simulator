@@ -77,8 +77,6 @@ class NestModule(types.ModuleType):
     from . import logic                              # noqa
     from .ll_api import set_communicator
 
-    userdict = {}
-
     def __init__(self, name):
         super().__init__(name)
         # Copy over the original module attributes to preserve all interpreter-given
@@ -427,6 +425,8 @@ class NestModule(types.ModuleType):
     _readonly_kernel_attrs = builtins.set(
         k for k, v in vars().items() if isinstance(v, KernelAttribute) and v._readonly
     )
+
+    userdict = {}
 
 
 def _setattr_error(self, attr, val):

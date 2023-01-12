@@ -354,10 +354,7 @@ value_equal( const boost::any first, const boost::any second )
   }
   else
   {
-    // TODO-PYNEST-NG: raise error
-    assert( false );
     std::string msg = std::string( "Unsupported type in dictionary::value_equal(): " ) + debug_type( first );
-    std::cerr << msg << "\n";
     throw nest::TypeMismatch( msg );
   }
   return true;
@@ -440,7 +437,7 @@ dictionary::init_access_flags() const
 }
 
 void
-dictionary::all_entries_accessed( const std::string where, const std::string what ) const
+dictionary::all_entries_accessed( const std::string& where, const std::string& what ) const
 {
   nest::kernel().get_dict_access_flag_manager().all_accessed( *this, where, what );
 }

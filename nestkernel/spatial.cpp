@@ -23,6 +23,7 @@
 #include "spatial.h"
 
 // C++ includes:
+#include <fstream>
 #include <memory>
 #include <ostream>
 #include <string>
@@ -448,6 +449,58 @@ create_mask( const dictionary& mask_dict )
   return mask;
 }
 
+NodeCollectionPTR
+select_nodes_by_mask( const NodeCollectionPTR layer_nc, const std::vector< double >& anchor, const MaskPTR mask )
+{
+  std::vector< index > mask_node_ids;
+
+  const auto dim = anchor.size();
+
+  if ( dim != 2 and dim != 3 )
+  {
+    throw BadProperty( "Center must be 2- or 3-dimensional." );
+  }
+
+  AbstractLayerPTR abstract_layer = get_layer( layer_nc );
+
+  if ( dim == 2 )
+  {
+    auto layer = dynamic_cast< Layer< 2 >* >( abstract_layer.get() );
+    if ( not layer )
+    {
+      throw TypeMismatch( "2D layer", "other type" );
+    }
+
+    auto ml = MaskedLayer< 2 >( *layer, mask, false, layer_nc );
+
+    for ( Ntree< 2, index >::masked_iterator it = ml.begin( Position< 2 >( anchor[ 0 ], anchor[ 1 ] ) ); it != ml.end();
+          ++it )
+    {
+      mask_node_ids.push_back( it->second );
+    }
+  }
+  else
+  {
+    auto layer = dynamic_cast< Layer< 3 >* >( abstract_layer.get() );
+    if ( not layer )
+    {
+      throw TypeMismatch( "3D layer", "other type" );
+    }
+
+    auto ml = MaskedLayer< 3 >( *layer, mask, false, layer_nc );
+
+    for ( Ntree< 3, index >::masked_iterator it = ml.begin( Position< 3 >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
+          it != ml.end();
+          ++it )
+    {
+      mask_node_ids.push_back( it->second );
+    }
+  }
+  // Nodes must be sorted when creating a NodeCollection
+  std::sort( mask_node_ids.begin(), mask_node_ids.end() );
+  return NodeCollection::create( mask_node_ids );
+}
+
 bool
 inside( const std::vector< double >& point, const MaskPTR mask )
 {
@@ -491,29 +544,33 @@ connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const 
 }
 
 void
-dump_layer_nodes( NodeCollectionPTR layer_nc, std::ostream& out )
+dump_layer_nodes( const NodeCollectionPTR layer_nc, const std::string& filename )
 {
   AbstractLayerPTR layer = get_layer( layer_nc );
 
+  std::ofstream out( filename );
   if ( out.good() )
   {
     layer->dump_nodes( out );
   }
+  out.close();
 }
 
 void
-dump_layer_connections( const std::string& syn_model,
-  NodeCollectionPTR source_layer_nc,
-  NodeCollectionPTR target_layer_nc,
-  std::ostream& out )
+dump_layer_connections( const NodeCollectionPTR source_layer_nc,
+  const NodeCollectionPTR target_layer_nc,
+  const std::string& syn_model,
+  const std::string& filename )
 {
   AbstractLayerPTR source_layer = get_layer( source_layer_nc );
   AbstractLayerPTR target_layer = get_layer( target_layer_nc );
 
+  std::ofstream out( filename );
   if ( out.good() )
   {
     source_layer->dump_connections( out, source_layer_nc, target_layer, syn_model );
   }
+  out.close();
 }
 
 dictionary

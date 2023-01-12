@@ -88,7 +88,13 @@ void install_module( const std::string& module_name );
 
 void reset_kernel();
 
+severity_t get_verbosity();
+void set_verbosity( severity_t s );
+
 void enable_dryrun_mode( const index n_procs );
+
+void enable_structural_plasticity();
+void disable_structural_plasticity();
 
 void register_logger_client( const deliver_logging_event_ptr client_callback );
 

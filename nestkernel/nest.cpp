@@ -31,6 +31,9 @@
 #include "mpi_manager_impl.h"
 #include "parameter.h"
 
+#include "sp_manager.h"
+#include "sp_manager_impl.h"
+
 #include "connector_model_impl.h"
 
 #include "ac_generator.h"
@@ -61,6 +64,8 @@
 #include "hh_psc_alpha_clopath.h"
 #include "iaf_cond_exp.h"
 #include "parrot_neuron_ps.h"
+#include "siegert_neuron.h"
+#include "sigmoid_rate_gg_1998.h"
 #include "step_current_generator.h"
 #include "step_rate_generator.h"
 
@@ -162,6 +167,7 @@ init_nest( int* argc, char** argv[] )
   kernel().model_manager.register_node_model< pp_psc_delta >( "pp_psc_delta" );
   kernel().model_manager.register_node_model< lin_rate_ipn >( "lin_rate_ipn" );
   kernel().model_manager.register_node_model< iaf_cond_alpha >( "iaf_cond_alpha" );
+  kernel().model_manager.register_node_model< rate_transformer_sigmoid_gg_1998 >( "rate_transformer_sigmoid_gg_1998" );
 
   kernel().model_manager.register_node_model< tanh_rate_ipn >( "tanh_rate_ipn" );
   kernel().model_manager.register_node_model< lin_rate_opn >( "lin_rate_opn" );
@@ -171,6 +177,7 @@ init_nest( int* argc, char** argv[] )
   kernel().model_manager.register_node_model< hh_psc_alpha_clopath >( "hh_psc_alpha_clopath" );
   kernel().model_manager.register_node_model< iaf_cond_exp >( "iaf_cond_exp" );
   kernel().model_manager.register_node_model< aeif_cond_exp >( "aeif_cond_exp" );
+  kernel().model_manager.register_node_model< siegert_neuron >( "siegert_neuron" );
 
   kernel().model_manager.register_node_model< aeif_psc_alpha >( "aeif_psc_alpha" );
   kernel().model_manager.register_node_model< aeif_psc_delta >( "aeif_psc_delta" );
@@ -214,6 +221,16 @@ init_nest( int* argc, char** argv[] )
     "urbanczik_synapse", default_connection_model_flags | RegisterConnectionModelFlags::REQUIRES_URBANCZIK_ARCHIVING );
   kernel().model_manager.register_connection_model< vogels_sprekeler_synapse >( "vogels_sprekeler_synapse" );
 
+  // register secondary connection models
+  kernel().model_manager.register_secondary_connection_model< GapJunction >(
+    "gap_junction", RegisterConnectionModelFlags::REQUIRES_SYMMETRIC | RegisterConnectionModelFlags::SUPPORTS_WFR );
+  kernel().model_manager.register_secondary_connection_model< RateConnectionInstantaneous >(
+    "rate_connection_instantaneous", RegisterConnectionModelFlags::SUPPORTS_WFR );
+  kernel().model_manager.register_secondary_connection_model< RateConnectionDelayed >(
+    "rate_connection_delayed", RegisterConnectionModelFlags::HAS_DELAY );
+  kernel().model_manager.register_secondary_connection_model< DiffusionConnection >(
+    "diffusion_connection", RegisterConnectionModelFlags::SUPPORTS_WFR );
+
 
   // Add connection rules
   kernel().connection_manager.register_conn_builder< OneToOneBuilder >( "one_to_one" );
@@ -248,6 +265,10 @@ init_nest( int* argc, char** argv[] )
   register_mask< BoxMask< 3 > >();
   register_mask( "doughnut", create_doughnut );
   register_mask< GridMask< 2 > >();
+
+  kernel().sp_manager.register_growth_curve< GrowthCurveSigmoid >( "sigmoid" );
+  kernel().sp_manager.register_growth_curve< GrowthCurveGaussian >( "gaussian" );
+  kernel().sp_manager.register_growth_curve< GrowthCurveLinear >( "linear" );
 }
 
 void
@@ -266,10 +287,35 @@ reset_kernel()
   kernel().reset();
 }
 
+severity_t
+get_verbosity()
+{
+  return kernel().logging_manager.get_logging_level();
+}
+
+void
+set_verbosity( severity_t s )
+{
+  kernel().logging_manager.set_logging_level( s );
+}
+
 void
 enable_dryrun_mode( const index n_procs )
 {
   kernel().mpi_manager.set_num_processes( n_procs );
+}
+
+void
+enable_structural_plasticity()
+{
+  kernel().sp_manager.enable_structural_plasticity();
+}
+
+
+void
+disable_structural_plasticity()
+{
+  kernel().sp_manager.disable_structural_plasticity();
 }
 
 void
@@ -770,6 +816,10 @@ create_parameter( const boost::any& value )
   {
     return create_parameter( boost::any_cast< int >( value ) );
   }
+  else if ( is_type< long >( value ) )
+  {
+    return create_parameter( static_cast< int >( boost::any_cast< long >( value ) ) );
+  }
   else if ( is_type< dictionary >( value ) )
   {
     return create_parameter( boost::any_cast< dictionary >( value ) );
@@ -778,7 +828,8 @@ create_parameter( const boost::any& value )
   {
     return create_parameter( boost::any_cast< ParameterPTR >( value ) );
   }
-  throw BadProperty( "Parameter must be parametertype, constant or dictionary." );
+  throw BadProperty(
+    std::string( "Parameter must be parametertype, constant or dictionary, got " ) + debug_type( value ) );
 }
 
 ParameterPTR

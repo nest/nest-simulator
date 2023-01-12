@@ -30,9 +30,7 @@ import unittest
 import numpy as np
 
 
-@nest.ll_api.check_stack
 class RateNeuronTestCase(unittest.TestCase):
-
     """Check rate_neuron"""
 
     def setUp(self):
@@ -47,7 +45,7 @@ class RateNeuronTestCase(unittest.TestCase):
         self.dt = 0.1
         self.tstart = 10. * self.neuron_params['tau']
 
-        nest.set_verbosity('M_WARNING')
+        nest.set_verbosity(nest.verbosity.M_WARNING)
         nest.ResetKernel()
         nest.resolution = self.dt
         nest.use_wfr = False

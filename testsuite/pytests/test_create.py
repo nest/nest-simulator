@@ -28,7 +28,6 @@ import warnings
 import nest
 
 
-@nest.ll_api.check_stack
 class CreateTestCase(unittest.TestCase):
     """Creation tests"""
 
@@ -64,7 +63,7 @@ class CreateTestCase(unittest.TestCase):
         num_nodes = 3
         params = [(tuple(), TypeError, False),
                   ({'V_m': [-50]}, IndexError, True),
-                  ({'V_mm': num_nodes*[-50.]}, nest.kernel.NESTError, True),
+                  ({'V_mm': num_nodes*[-50.]}, nest.NESTError, True),
                   ]
 
         for p, err, expects_warning in params:

@@ -57,7 +57,7 @@ class TestSPBuilder(unittest.TestCase):
             }
         })
         nest.Connect(neurons, neurons, "all_to_all", syn_dict)
-        status_list = nest.GetStatus(neurons, 'synaptic_elements')
+        status_list = neurons.synaptic_elements
         for status in status_list:
             self.assertEqual(2, status['SE1']['z_connected'])
             self.assertEqual(2, status['SE2']['z_connected'])
@@ -80,7 +80,7 @@ class TestSPBuilder(unittest.TestCase):
         ]:
             try:
                 nest.Connect(neurons, neurons, conn_dict, syn_dict)
-            except nest.kernel.NESTError as e:
+            except nest.NESTError as e:
                 msg = 'This connection rule is not implemented for structural plasticity'
                 self.assertRegex(str(e), msg)
 

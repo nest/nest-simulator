@@ -440,7 +440,6 @@ def create_2tdend_4comp(dt=0.1):
     return (n_neat, m_neat), (aa, bb), ss
 
 
-@nest.ll_api.check_stack
 class CompartmentsTestCase(unittest.TestCase):
     """ tests for compartmental NEST models """
 
@@ -463,7 +462,7 @@ class CompartmentsTestCase(unittest.TestCase):
             bb[ii] += i_amp
 
         # run the NEST model for 2 timesteps (input arrives only on second step)
-        nest.Simulate(3. * dt)
+        nest.Simulate(3.*dt)
         events_neat = m_neat.events
         v_neat = np.array([events_neat['v_comp%d' % ii][-1] for ii in range(n_comp)])
 
@@ -503,7 +502,7 @@ class CompartmentsTestCase(unittest.TestCase):
             bb[ii] += i_amp
 
         # run the NEST model for 1 timestep
-        nest.Simulate(2. * dt)
+        nest.Simulate(2.*dt)
         events_neat = m_neat.events
         v_neat = np.array([events_neat['v_comp%d' % ii] for ii in range(n_comp)])
 
@@ -754,7 +753,7 @@ class CompartmentsTestCase(unittest.TestCase):
         # test double root
         n_neat = nest.Create('cm_default')
 
-        with self.assertRaisesRegex(nest.kernel.NESTError,
+        with self.assertRaisesRegex(nest.NESTError,
                                     "in llapi_set_nc_status: "
                                     "Compartment 0 , the root, "
                                     "has already been instantiated."):
@@ -766,7 +765,7 @@ class CompartmentsTestCase(unittest.TestCase):
         # test undefined parent compartment
         n_neat = nest.Create('cm_default')
 
-        with self.assertRaisesRegex(nest.kernel.NESTError,
+        with self.assertRaisesRegex(nest.NESTError,
                                     "in llapi_set_nc_status: "
                                     "Compartment 15 does not exist in tree, "
                                     "but was specified as a parent."):
@@ -779,7 +778,7 @@ class CompartmentsTestCase(unittest.TestCase):
         n_neat = nest.Create('cm_default')
         n_neat.compartments = {"parent_idx": -1, "params": SP}
 
-        with self.assertRaisesRegex(nest.kernel.NESTError,
+        with self.assertRaisesRegex(nest.NESTError,
                                     "in llapi_set_nc_status: "
                                     "Compartment 12 does not exist in tree."):
             n_neat.receptors = {"comp_idx": 12, "receptor_type": "GABA"}
@@ -787,7 +786,7 @@ class CompartmentsTestCase(unittest.TestCase):
         # test simulate without adding compartments
         n_neat = nest.Create('cm_default')
 
-        with self.assertRaisesRegex(nest.kernel.NESTError,
+        with self.assertRaisesRegex(nest.NESTError,
                                     "in llapi_simulate: "
                                     "Compartment 0 does not exist in tree, "
                                     "meaning that no compartments have been added."):
@@ -801,7 +800,7 @@ class CompartmentsTestCase(unittest.TestCase):
         ]
         dc = nest.Create('dc_generator', params={'amplitude': 2.0})
 
-        with self.assertRaisesRegex(nest.kernel.NESTError,
+        with self.assertRaisesRegex(nest.NESTError,
                                     r"in llapi_connect: "
                                     r"Port with id 3 does not exist. Valid current "
                                     r"receptor ports for cm_default are in \[0, 2\["):
@@ -818,7 +817,7 @@ class CompartmentsTestCase(unittest.TestCase):
         ]
         sg = nest.Create('spike_generator', 1, {'spike_times': [10.]})
 
-        with self.assertRaisesRegex(nest.kernel.NESTError,
+        with self.assertRaisesRegex(nest.NESTError,
                                     r"in llapi_connect: "
                                     r"Port with id 3 does not exist. Valid spike "
                                     r"receptor ports for cm_default are in \[0, 3\["):
@@ -830,9 +829,9 @@ class CompartmentsTestCase(unittest.TestCase):
         n_neat.compartments = {"parent_idx": -1, "params": SP}
         mm = nest.Create('multimeter', 1, {'record_from': ['v_comp1'], 'interval': 1.})
 
-        with self.assertRaisesRegex(nest.kernel.NESTError,
+        with self.assertRaisesRegex(nest.NESTError,
                                     "in llapi_connect: "
-                                    "Creation of connection is not possible because:"
+                                    "Creation of connection is not possible because:\n"
                                     "Cannot connect with unknown recordable v_comp1"):
             nest.Connect(mm, n_neat)
 
@@ -841,17 +840,17 @@ class CompartmentsTestCase(unittest.TestCase):
         n_neat.compartments = {"parent_idx": -1, "params": SP}
         n_neat.receptors = {"comp_idx": 0, "receptor_type": "GABA"}
 
-        with self.assertRaisesRegex(nest.kernel.NESTError,
+        with self.assertRaisesRegex(nest.NESTError,
                                     "\'compartments\' is already defined for this model"):
             n_neat.compartments = {"parent_idx": 0, "params": SP}
 
-        with self.assertRaisesRegex(nest.kernel.NESTError,
+        with self.assertRaisesRegex(nest.NESTError,
                                     "\'receptors\' is already defined for this model"):
             n_neat.receptors = {"comp_idx": 0, "receptor_type": "GABA"}
 
         n_neat = nest.Create('cm_default')
         n_neat.compartments = {"parent_idx": -1, "params": SP}
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             n_neat.compartments = {"parent_idx": 0, "params": SP}
 
     def test_continuerun(self, dt=0.1):

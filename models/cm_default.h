@@ -249,8 +249,8 @@ public:
   void set_status( const dictionary& ) override;
 
 private:
-  void add_compartment_( dictionary& dd );
-  void add_receptor_( dictionary& dd );
+  void add_compartment_( const dictionary& dd );
+  void add_receptor_( const dictionary& dd );
 
   void init_recordables_pointers_();
   void pre_run_hook() override;

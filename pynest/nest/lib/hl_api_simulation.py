@@ -47,7 +47,6 @@ __all__ = [
 ]
 
 
-@check_stack
 def Simulate(t):
     """Simulate the network for `t` milliseconds.
 
@@ -67,7 +66,6 @@ def Simulate(t):
     nestkernel.llapi_simulate(t)
 
 
-@check_stack
 def Run(t):
     """Simulate the network for `t` milliseconds.
 
@@ -104,7 +102,6 @@ def Run(t):
     nestkernel.llapi_run(t)
 
 
-@check_stack
 def Prepare():
     """Calibrate the system before a `Run` call.
 
@@ -118,7 +115,6 @@ def Prepare():
     nestkernel.llapi_prepare()
 
 
-@check_stack
 def Cleanup():
     """Cleans up resources after a `Run` calls.
 
@@ -172,7 +168,6 @@ def RunManager():
         Cleanup()
 
 
-@check_stack
 def ResetKernel():
     """Reset the simulation kernel.
 
@@ -195,7 +190,6 @@ def ResetKernel():
     nestkernel.llapi_reset_kernel()
 
 
-@check_stack
 def SetKernelStatus(params):
     """Set parameters for the simulation kernel.
 
@@ -219,7 +213,6 @@ def SetKernelStatus(params):
     # imported during nest module initialization, we can't put the import on
     # the module level, but have to have it on the function level.
     import nest    # noqa
-    # TODO-PYNEST-NG: Enable again when KernelAttribute works
     raise_errors = params.get('dict_miss_is_error', nest.dict_miss_is_error)
     valids = nest._kernel_attr_names
     readonly = nest._readonly_kernel_attrs
@@ -242,7 +235,6 @@ def SetKernelStatus(params):
     nestkernel.llapi_set_kernel_status(params)
 
 
-@check_stack
 def GetKernelStatus(keys=None):
     """Obtain parameters of the simulation kernel.
 
@@ -290,7 +282,6 @@ def GetKernelStatus(keys=None):
         raise TypeError("keys should be either a string or an iterable")
 
 
-@check_stack
 def Install(module_name):
     """Load a dynamically linked NEST module.
 
@@ -320,7 +311,6 @@ def Install(module_name):
     return sr("(%s) Install" % module_name)
 
 
-@check_stack
 def EnableStructuralPlasticity():
     """Enable structural plasticity for the network simulation
 
@@ -330,10 +320,9 @@ def EnableStructuralPlasticity():
 
     """
 
-    sr('EnableStructuralPlasticity')
+    nestkernel.llapi_enable_structural_plasticity()
 
 
-@check_stack
 def DisableStructuralPlasticity():
     """Disable structural plasticity for the network simulation
 
@@ -342,4 +331,4 @@ def DisableStructuralPlasticity():
     EnableStructuralPlasticity
 
     """
-    sr('DisableStructuralPlasticity')
+    nestkernel.llapi_disable_structural_plasticity()

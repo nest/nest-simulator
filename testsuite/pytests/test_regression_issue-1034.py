@@ -52,7 +52,7 @@ class PostTraceTester:
     def run_post_trace_test_nest_(self,
                                   show_all_nest_trace_samples=False):
 
-        nest.set_verbosity("M_WARNING")
+        nest.set_verbosity(nest.verbosity.M_WARNING)
 
         nest.ResetKernel()
         nest.resolution = self.resolution_

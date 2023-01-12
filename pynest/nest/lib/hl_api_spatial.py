@@ -187,10 +187,9 @@ def CreateMask(masktype, specs, anchor=None):
             nest.Connect(l, l, conndict)
     """
     if anchor is None:
-        return sli_func('CreateMask', {masktype: specs})
+        return nestkernel.llapi_create_mask({masktype: specs})
     else:
-        return sli_func('CreateMask',
-                        {masktype: specs, 'anchor': anchor})
+        return nestkernel.llapi_create_mask({masktype: specs, 'anchor': anchor})
 
 
 def GetPosition(nodes):
@@ -534,10 +533,7 @@ def DumpLayerNodes(layer, outname):
     if not isinstance(layer, NodeCollection):
         raise TypeError("layer must be a NodeCollection")
 
-    sli_func("""
-             (w) file exch DumpLayerNodes close
-             """,
-             layer, _rank_specific_filename(outname))
+    nestkernel.llapi_dump_layer_nodes(layer._datum, outname)
 
 
 def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
@@ -602,16 +598,7 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
     if not isinstance(target_layer, NodeCollection):
         raise TypeError("target_layer must be a NodeCollection")
 
-    sli_func("""
-             /oname  Set
-             cvlit /synmod Set
-             /lyr_target Set
-             /lyr_source Set
-             oname (w) file lyr_source lyr_target synmod
-             DumpLayerConnections close
-             """,
-             source_layer, target_layer, synapse_model,
-             _rank_specific_filename(outname))
+    nestkernel.llapi_dump_layer_connections(source_layer._datum, target_layer._datum, synapse_model, outname)
 
 
 def FindCenterElement(layer):
@@ -996,11 +983,7 @@ def SelectNodesByMask(layer, anchor, mask_obj):
 
     mask_datum = mask_obj._datum
 
-    node_id_list = sli_func('SelectNodesByMask',
-                            layer, anchor, mask_datum)
-
-    # When creating a NodeCollection, the input list of nodes IDs must be sorted.
-    return NodeCollection(sorted(node_id_list))
+    return nestkernel.llapi_select_nodes_by_mask(layer._datum, anchor, mask_datum)
 
 
 def _draw_extent(ax, xctr, yctr, xext, yext):

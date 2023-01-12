@@ -41,7 +41,7 @@ import nest
 import nest.voltage_trace
 import matplotlib.pyplot as plt
 
-nest.set_verbosity("M_WARNING")
+nest.set_verbosity(nest.verbosity.M_WARNING)
 nest.ResetKernel()
 
 ###############################################################################

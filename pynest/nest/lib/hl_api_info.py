@@ -42,7 +42,10 @@ __all__ = [
     'message',
     'set_verbosity',
     'sysinfo',
+    'verbosity',
 ]
+
+verbosity = nestkernel.severity_t
 
 
 def sysinfo():
@@ -172,13 +175,11 @@ def get_verbosity():
 
     Returns
     -------
-    int:
+    severity_t:
         The current verbosity level
     """
 
-    #sr('verbosity')
-    #return spp()
-    pass  # TODO-PYNEST-NG: See set_verbosity
+    return nestkernel.llapi_get_verbosity()
 
 
 def set_verbosity(level):
@@ -199,14 +200,11 @@ def set_verbosity(level):
 
     Parameters
     ----------
-    level : str, default: 'M_INFO'
-        Can be one of 'M_FATAL', 'M_ERROR', 'M_WARNING', 'M_DEPRECATED',
-        'M_INFO' or 'M_ALL'.
+    level : severity_t, default: 'M_ALL'
+        Can be one of the values of the nest.verbosity enum.
     """
 
-    # TODO-PYNEST-NG: There are no SLI messages anymore, so verbosity
-    #                 is now irrelevant and should be replaced when a
-    #                 replacement for message() exists.
+    if type(level) is not verbosity:
+        raise TypeError('"level" must be a value of the nest.verbosity enum.')
 
-    # sr("{} setverbosity".format(level))
-    pass
+    nestkernel.llapi_set_verbosity(level)

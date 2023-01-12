@@ -281,7 +281,6 @@ const std::string linear( "linear" );
 const std::string linear_summation( "linear_summation" );
 const std::string local( "local" );
 const std::string local_num_threads( "local_num_threads" );
-const std::string local_num_virtual_procs( "local_num_virtual_procsx" );
 const std::string local_spike_counter( "local_spike_counter" );
 const std::string lookuptable_0( "lookuptable_0" );
 const std::string lookuptable_1( "lookuptable_1" );

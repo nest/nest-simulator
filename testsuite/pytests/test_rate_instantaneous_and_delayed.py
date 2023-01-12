@@ -24,9 +24,7 @@ import unittest
 import numpy as np
 
 
-@nest.ll_api.check_stack
 class RateInstantaneousAndDelayedTestCase(unittest.TestCase):
-
     '''
     Test whether delayed rate connections have same properties as
     instantaneous connections but with the correct delay
@@ -44,7 +42,7 @@ class RateInstantaneousAndDelayedTestCase(unittest.TestCase):
         simtime = 100.
         dt = 0.001
 
-        nest.set_verbosity('M_WARNING')
+        nest.set_verbosity(nest.verbosity.M_WARNING)
         nest.ResetKernel()
         nest.resolution = dt
         nest.use_wfr = True
@@ -85,11 +83,14 @@ class RateInstantaneousAndDelayedTestCase(unittest.TestCase):
 
         # make sure shifted rates are identical
         events = multimeter.events
-        senders = events['senders']
+        senders = np.array(events['senders'])
 
-        rate_1 = np.array(events['rate'][np.where(senders == rate_neuron_1.get('global_id'))])
-        times_2 = np.array(events['times'][np.where(senders == rate_neuron_2.get('global_id'))])
-        rate_2 = np.array(events['rate'][np.where(senders == rate_neuron_2.get('global_id'))])
+        rate_1 = np.array(events['rate'])[
+            np.where(senders == rate_neuron_1.get('global_id'))]
+        times_2 = np.array(events['times'])[
+            np.where(senders == rate_neuron_2.get('global_id'))]
+        rate_2 = np.array(events['rate'])[
+            np.where(senders == rate_neuron_2.get('global_id'))]
 
         # get shifted rate_2
         rate_2 = rate_2[times_2 > delay]

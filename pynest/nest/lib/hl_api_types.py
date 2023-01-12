@@ -364,9 +364,6 @@ class NodeCollection:
                array([...], dtype=int64)
         """
 
-        if not self:
-            raise ValueError('Cannot get parameter of empty NodeCollection')
-
         # ------------------------- #
         #      Checks of input      #
         # ------------------------- #
@@ -399,7 +396,7 @@ class NodeCollection:
         if isinstance(result, dict) and len(self) == 1:
             new_result = {}
             for k, v in result.items():
-                new_result[k] = v[0] if is_iterable(v) and len(v) == 1 else v
+                new_result[k] = v[0] if is_iterable(v) and len(v) == 1 and type(v) is not dict else v
             result = new_result
 
         if pandas_output:
@@ -904,8 +901,7 @@ class SynapseCollection:
         """
         Disconnect the connections in the `SynapseCollection`.
         """
-        sps(self._datum)
-        sr('Disconnect_a')
+        nestkernel.llapi_disconnect_syncoll(self._datum)
 
 
 class CollocatedSynapses:
@@ -951,12 +947,13 @@ class Mask:
     _datum = None
 
     # The constructor should not be called by the user
-    def __init__(self, datum):
+    def __init__(self, data):
         """Masks must be created using the CreateMask command."""
-        if not isinstance(datum, kernel.SLIDatum) or datum.dtype != "masktype":
-            raise TypeError("expected mask Datum")
-        self._datum = datum
+        if (not isinstance(data, nestkernel.MaskObject)):
+            raise TypeError("Expected MaskObject.")
+        self._datum = data
 
+    # TODO-PYNEST-NG: Convert operators
     # Generic binary operation
     def _binop(self, op, other):
         if not isinstance(other, Mask):
@@ -986,7 +983,7 @@ class Mask:
         out : bool
             True if the point is inside the mask, False otherwise
         """
-        return sli_func("Inside", point, self._datum)
+        return nestkernel.llapi_inside_mask(point, self._datum)
 
 
 # TODO-PYNEST-NG: We may consider moving the entire (or most of) Parameter class to the cython level.
@@ -1116,6 +1113,8 @@ class CmBase:
     def __init__(self, node_collection, elements):
         if not isinstance(node_collection, NodeCollection):
             raise TypeError(f'node_collection must be a NodeCollection, got {type(node_collection)}')
+        if isinstance(elements, list):
+            elements = tuple(elements)
         if not isinstance(elements, tuple):
             raise TypeError(f'elements must be a tuple of dicts, got {type(elements)}')
         self._elements = elements

@@ -31,7 +31,7 @@ def reset():
 
 @pytest.mark.parametrize("model", [m for m in nest.node_models if 'V_m' in nest.GetDefaults(m)])
 def test_set_vm(model):
-    nest.set_verbosity('M_FATAL')
+    nest.set_verbosity(nest.verbosity.M_FATAL)
     warnings.simplefilter('ignore')  # Suppress warnings
     n = nest.Create(model)
 

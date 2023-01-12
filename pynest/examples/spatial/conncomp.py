@@ -36,7 +36,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 nest.ResetKernel()
-nest.set_verbosity('M_WARNING')
+nest.set_verbosity(nest.verbosity.M_WARNING)
 
 nest.CopyModel('iaf_psc_alpha', 'pyr')
 nest.CopyModel('iaf_psc_alpha', 'in')

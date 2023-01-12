@@ -162,19 +162,6 @@ nest::UnknownPort::compose_msg_( const int id, const std::string msg ) const
 }
 
 const char*
-nest::IllegalConnection::what() const noexcept
-{
-  if ( msg_.empty() )
-  {
-    return "Creation of connection is not possible.";
-  }
-  else
-  {
-    return ( "Creation of connection is not possible because:\n" + msg_ ).c_str();
-  }
-}
-
-const char*
 nest::InexistentConnection::what() const noexcept
 {
   if ( msg_.empty() )
@@ -348,7 +335,7 @@ nest::RangeCheck::what() const noexcept
 const char*
 nest::IOError::what() const noexcept
 {
-  return std::string().c_str();
+  return "";
 }
 
 const char*

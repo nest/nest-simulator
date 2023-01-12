@@ -29,7 +29,6 @@ import pytest
 from math import exp
 
 
-@nest.ll_api.check_stack
 class TestSTDPNNSynapses:
     """
     Test the weight change by STDP
@@ -95,7 +94,7 @@ class TestSTDPNNSynapses:
             err_msg=synapse_model + " test: "
                                     "Resulting synaptic weight %e "
                                     "differs from expected %e" % (
-                                       weight_by_nest, weight_reproduced_independently))
+                                        weight_by_nest, weight_reproduced_independently))
 
     def do_the_nest_simulation(self):
         """
@@ -103,7 +102,7 @@ class TestSTDPNNSynapses:
         Returns the generated pre- and post spike sequences
         and the resulting weight established by STDP.
         """
-        nest.set_verbosity('M_WARNING')
+        nest.set_verbosity(nest.verbosity.M_WARNING)
         nest.ResetKernel()
         nest.resolution = self.resolution
 
@@ -154,7 +153,7 @@ class TestSTDPNNSynapses:
         senders = np.array(all_spikes['senders'])
         pre_spikes = times[senders == presynaptic_neuron.tolist()[0]]
         post_spikes = times[senders == postsynaptic_neuron.tolist()[0]]
-        weight = plastic_synapse_of_interest.weight[0]
+        weight = plastic_synapse_of_interest.weight
         return (pre_spikes, post_spikes, weight)
 
     def reproduce_weight_drift(self, _pre_spikes, _post_spikes,

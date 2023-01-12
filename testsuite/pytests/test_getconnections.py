@@ -26,10 +26,9 @@ GetConnections
 import unittest
 import nest
 
-nest.set_verbosity('M_ERROR')
+nest.set_verbosity(nest.verbosity.M_ERROR)
 
 
-@nest.ll_api.check_stack
 class GetConnectionsTestCase(unittest.TestCase):
     """Find connections and test if values can be set."""
 
@@ -72,7 +71,7 @@ class GetConnectionsTestCase(unittest.TestCase):
             try:
                 other = nest.Create(model)
                 nest.Connect(alpha, other)
-            except nest.kernel.NESTError:
+            except nest.NESTError:
                 # If we can't create a node with this model, or connect
                 # to a node of this model, we ignore it.
                 continue
@@ -93,7 +92,7 @@ class GetConnectionsTestCase(unittest.TestCase):
             try:
                 other = nest.Create(model)
                 nest.Connect(other, alpha)
-            except nest.kernel.NESTError:
+            except nest.NESTError:
                 # If we can't create a node with this model, or connect
                 # to a node of this model, we ignore it.
                 continue
@@ -124,7 +123,7 @@ class GetConnectionsTestCase(unittest.TestCase):
             try:
                 # Connect with specified synapse
                 nest.Connect(src, tgt, syn_spec={'synapse_model': synapse_model})
-            except nest.kernel.NESTError:
+            except nest.NESTError:
                 # If we can't connect iaf_psc_alpha with the given synapse_model, we ignore it.
                 continue
 
@@ -164,7 +163,7 @@ class GetConnectionsTestCase(unittest.TestCase):
             try:
                 # Connect with specified synapse
                 nest.Connect(src, tgt, syn_spec={'synapse_model': synapse_model, "synapse_label": label})
-            except nest.kernel.NESTError:
+            except nest.NESTError:
                 # If we can't connect iaf_psc_alpha with the given synapse_model, we ignore it.
                 continue
 

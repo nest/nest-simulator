@@ -149,7 +149,7 @@ class StructralPlasticityExample:
 
     def prepare_simulation(self):
         nest.ResetKernel()
-        nest.set_verbosity('M_ERROR')
+        nest.set_verbosity(nest.verbosity.M_ERROR)
 
 
 ####################################################################################

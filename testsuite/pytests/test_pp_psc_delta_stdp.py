@@ -52,18 +52,19 @@ class PpPscDeltaSTDPTestCase(unittest.TestCase):
         print(conn1)
         print(conn2)
 
-        sg_pre = nest.Create('spike_generator', params={'spike_times': np.arange(Dt, nsteps * Dt, 10. * Dt)})
+        sg_pre = nest.Create('spike_generator')
+        sg_pre.spike_times = np.arange(Dt, nsteps * Dt, 10. * Dt)
         nest.Connect(sg_pre, nrn_pre)
 
         w1 = np.zeros(nsteps+1)
         w2 = np.zeros(nsteps+1)
-        w1[0] = conn1.weight[0]
-        w2[0] = conn2.weight[0]
+        w1[0] = conn1.weight
+        w2[0] = conn2.weight
 
         for i in range(nsteps):
             nest.Simulate(Dt)
-            w1[i+1] = conn1.weight[0]
-            w2[i+1] = conn2.weight[0]
+            w1[i+1] = conn1.weight
+            w2[i+1] = conn2.weight
 
         self.assertEqual(list(w1), list(w2))
 

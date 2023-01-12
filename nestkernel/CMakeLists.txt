@@ -118,7 +118,13 @@ set ( nestkernel_sources
       ../models/aeif_psc_exp.h ../models/aeif_psc_exp.cpp
       ../models/spin_detector.h ../models/spin_detector.cpp
       ../models/pp_cond_exp_mc_urbanczik.h ../models/pp_cond_exp_mc_urbanczik.cpp
-      
+      ../models/siegert_neuron.h ../models/siegert_neuron.cpp
+      ../models/sigmoid_rate_gg_1998.h ../models/sigmoid_rate_gg_1998.cpp
+      ../models/gap_junction.h
+      ../models/rate_connection_instantaneous.h
+      ../models/rate_connection_delayed.h
+      ../models/diffusion_connection.h
+
       synaptic_element.h synaptic_element.cpp
       growth_curve.h growth_curve.cpp
       growth_curve_factory.h
@@ -178,7 +184,7 @@ if ( HAVE_MPI )
 endif ()
 
 
-# Prevent problems with Conda path substitution (see #2348) 
+# Prevent problems with Conda path substitution (see #2348)
 set_source_files_properties( dynamicloader.cpp PROPERTIES COMPILE_OPTIONS "-O0" )
 
 

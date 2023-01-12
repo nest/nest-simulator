@@ -28,7 +28,6 @@ import numpy as np
 HAVE_GSL = nest.GetKernelStatus("build_info")["have_gsl"]
 
 
-@nest.ll_api.check_stack
 @unittest.skipIf(not HAVE_GSL, "GSL is not available")
 class SiegertNeuronTestCase(unittest.TestCase):
     """
@@ -60,7 +59,7 @@ class SiegertNeuronTestCase(unittest.TestCase):
         self.start = 100.
 
         # reset kernel
-        nest.set_verbosity("M_WARNING")
+        nest.set_verbosity(nest.verbosity.M_WARNING)
         nest.ResetKernel()
         nest.resolution = self.dt
         nest.use_wfr = False
@@ -118,9 +117,9 @@ class SiegertNeuronTestCase(unittest.TestCase):
 
         # get rate prediction from Siegert neuron
         events = self.multimeter.events
-        senders = events["senders"]
+        senders = np.array(events["senders"])
         rate_mask = np.where(senders == self.siegert_neuron.get("global_id"))
-        rate_prediction = events["rate"][rate_mask][-1]
+        rate_prediction = np.array(events["rate"])[rate_mask][-1]
 
         # get rate of integrate-and-fire neuron
         n_spikes = self.spike_recorder.n_events

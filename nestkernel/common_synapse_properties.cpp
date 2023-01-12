@@ -55,7 +55,7 @@ CommonSynapseProperties::get_status( dictionary& d ) const
   }
   else
   {
-    const auto nc = NodeCollectionPTR(); // TODO-PYNEST-NG: check that this gives an empty NC
+    const auto nc = NodeCollectionPTR( NodeCollection::create( std::vector< index >() ) );
     d[ names::weight_recorder ] = nc;
   }
 }

@@ -50,18 +50,16 @@ sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
 
 from . import nestkernel_api as nestkernel  # noqa
 
+from .lib.hl_api_exceptions import NESTError, NESTErrors
+
 __all__ = [
-    'check_stack',
     'set_communicator',
     # 'take_array_index',
     'KernelAttribute',
 ]
 
+
 initialized = False
-
-
-def check_stack(thing):  # # TODO-PYNEST-NG: remove
-    return thing
 
 
 def set_communicator(comm):
@@ -77,10 +75,10 @@ def set_communicator(comm):
     """
 
     if "mpi4py" not in sys.modules:
-        raise _kernel.NESTError("set_communicator: "
+        raise NESTError("set_communicator: "
                                 "mpi4py not loaded.")
 
-    # TODO-PYNEST-NG
+    # TODO-PYNEST-NG: set_communicator
     # engine.set_communicator(comm)
 
 
@@ -148,7 +146,7 @@ def init(argv):
     global initialized
 
     if initialized:
-        raise kernel.NESTErrors.PyNESTError("NEST already initialized.")
+        raise NESTErrors.PyNESTError("NEST already initialized.")
 
     # Some commandline arguments of NEST and Python have the same
     # name, but different meaning. To avoid unintended behavior, we
@@ -171,7 +169,7 @@ def init(argv):
 
     path = os.path.dirname(__file__)
     nestkernel.init(nest_argv)
-    
+
     if not quiet:
         print('NEST initialized successfully!')
 

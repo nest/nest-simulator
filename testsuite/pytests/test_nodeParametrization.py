@@ -47,11 +47,11 @@ class TestNodeParametrization(unittest.TestCase):
         Cm_ref = 124.
         Vmin_ref = [-1., -2., -3.]
 
-        params =  {'V_m': Vm_ref, 'C_m': Cm_ref, 'V_min': Vmin_ref}
+        params = {'V_m': Vm_ref, 'C_m': Cm_ref, 'V_min': Vmin_ref}
         nodes = nest.Create('iaf_psc_alpha', 3, params)
 
         self.assertAlmostEqual(list(nodes.V_m), Vm_ref)
-        self.assertAlmostEqual(list(nodes.C_m), (Cm_ref, Cm_ref, Cm_ref))
+        self.assertAlmostEqual(list(nodes.C_m), [Cm_ref, Cm_ref, Cm_ref])
         self.assertAlmostEqual(list(nodes.V_min), Vmin_ref)
 
     def test_create_with_spike_generator(self):
@@ -256,10 +256,10 @@ class TestNodeParametrization(unittest.TestCase):
         layer = nest.Create('iaf_psc_alpha',
                             positions=nest.spatial.free(positions))
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             layer.set({'V_m': nest.spatial.pos.n(-1)})
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             layer.set({'V_m': nest.spatial.pos.z})
 
     def test_conn_distance_parameter(self):
@@ -325,12 +325,12 @@ class TestNodeParametrization(unittest.TestCase):
         layer = nest.Create('iaf_psc_alpha',
                             positions=nest.spatial.free(positions))
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.Connect(layer, layer,
                          syn_spec={'weight':
                                    nest.spatial.distance.z})
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.Connect(layer, layer,
                          syn_spec={'weight':
                                    nest.spatial.distance.n(-1)})
@@ -373,19 +373,19 @@ class TestNodeParametrization(unittest.TestCase):
         layer = nest.Create('iaf_psc_alpha',
                             positions=nest.spatial.free(positions))
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.Connect(layer, layer, syn_spec={
                 'weight': nest.spatial.source_pos.z})
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.Connect(layer, layer, syn_spec={
                 'weight': nest.spatial.source_pos.n(-1)})
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.Connect(layer, layer, syn_spec={
                 'weight': nest.spatial.target_pos.z})
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.Connect(layer, layer, syn_spec={
                 'weight': nest.spatial.target_pos.n(-1)})
 
@@ -455,7 +455,7 @@ class TestNodeParametrization(unittest.TestCase):
         min_value = 1.5
         max_value = 1.0
         p = nest.random.normal()
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.math.redraw(p, min_value, max_value)
 
     def test_redraw_value_impossible(self):
@@ -464,7 +464,7 @@ class TestNodeParametrization(unittest.TestCase):
         min_value = 1.5
         max_value = 2.0
         p = nest.random.uniform(min=0.0, max=1.0)
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.math.redraw(p, min_value, max_value).GetValue()
 
     def test_parameter_comparison(self):

@@ -110,30 +110,21 @@ nest::cm_default::set_status( const dictionary& statusdict )
    * single compartment or multiple compartments, depending on whether the
    * entry was a list of dicts or a single dict
    */
-  if ( statusdict.known( names::compartments ) )
+  const auto add_compartments_list_or_dict = [ this, &statusdict ]( const std::string name )
   {
-    /**
-     * Until an operator to explicititly append compartments is added to the
-     * API, we disable this functionality
-     */
-    if ( c_tree_.get_size() > 0 )
+    if ( is_type< std::vector< dictionary > >( statusdict.at( name ) ) )
     {
-      throw BadProperty( "\'compartments\' is already defined for this model" );
-    }
-
-    auto compartment_data = statusdict.at( names::compartments );
-    if ( is_type< std::vector< dictionary > >( compartment_data ) )
-    {
+      const auto compartments = statusdict.get< std::vector< dictionary > >( name );
       // A list of compartments is provided, we add them all to the tree
-      for ( auto compartment : boost::any_cast< std::vector< dictionary > >( compartment_data ) )
+      for ( const auto& compartment_dict : compartments )
       {
-        add_compartment_( compartment );
+        add_compartment_( compartment_dict );
       }
     }
-    else if ( is_type< dictionary >( compartment_data ) )
+    else if ( is_type< dictionary >( statusdict.at( name ) ) )
     {
       // A single compartment is provided, we add add it to the tree
-      add_compartment_( boost::any_cast< dictionary& >( compartment_data ) );
+      add_compartment_( statusdict.get< dictionary >( name ) );
     }
     else
     {
@@ -141,7 +132,7 @@ nest::cm_default::set_status( const dictionary& statusdict )
         "\'compartments\' entry could not be identified, provide "
         "list of parameter dicts for multiple compartments" );
     }
-  }
+  };
 
   /**
    * Add a receptor (or receptors) to the tree, so that the new receptor
@@ -150,28 +141,19 @@ nest::cm_default::set_status( const dictionary& statusdict )
    * single receptor or multiple receptors, depending on whether the
    * entry was a list of dicts or a single dict
    */
-  if ( statusdict.known( names::receptors ) )
+  const auto add_receptors_list_or_dict = [ this, &statusdict ]( const std::string name )
   {
-    /**
-     * Until an operator to explicititly append receptors is added to the
-     * API, we disable this functionality
-     */
-    if ( long( syn_buffers_.size() ) > 0 )
+    if ( is_type< std::vector< dictionary > >( statusdict.at( name ) ) )
     {
-      throw BadProperty( "\'receptors\' is already defined for this model" );
-    }
-
-    auto receptor_data = statusdict.at( names::receptors );
-    if ( is_type< std::vector< dictionary > >( receptor_data ) )
-    {
-      for ( auto receptor : boost::any_cast< std::vector< dictionary > >( receptor_data ) )
+      const auto receptors = statusdict.get< std::vector< dictionary > >( name );
+      for ( const auto& receptor_dict : receptors )
       {
-        add_receptor_( receptor );
+        add_receptor_( receptor_dict );
       }
     }
-    else if ( is_type< dictionary >( receptor_data ) )
+    else if ( is_type< dictionary >( statusdict.at( name ) ) )
     {
-      add_receptor_( boost::any_cast< dictionary& >( receptor_data ) );
+      add_receptor_( statusdict.get< dictionary >( name ) );
     }
     else
     {
@@ -179,7 +161,39 @@ nest::cm_default::set_status( const dictionary& statusdict )
         "\'receptors\' entry could not be identified, provide "
         "list of parameter dicts for multiple receptors" );
     }
+  };
+
+  if ( statusdict.known( names::compartments ) )
+  {
+    // Compartments can only be set on a newly created compartment model.
+    // To add additional compartments, add_compartments should be used.
+    if ( c_tree_.get_size() > 0 )
+    {
+      throw BadProperty( "\'compartments\' is already defined for this model" );
+    }
+    add_compartments_list_or_dict( names::compartments );
   }
+
+  if ( statusdict.known( names::add_compartments ) )
+  {
+    add_compartments_list_or_dict( names::add_compartments );
+  }
+
+  if ( statusdict.known( names::receptors ) )
+  {
+    // Receptors can only be set on a newly created compartment model.
+    // To add additional receptors, add_receptors should be used.
+    if ( syn_buffers_.size() > 0 )
+    {
+      throw BadProperty( "\'receptors\' is already defined for this model" );
+    }
+    add_receptors_list_or_dict( names::receptors );
+  }
+  if ( statusdict.known( names::add_receptors ) )
+  {
+    add_receptors_list_or_dict( names::add_receptors );
+  }
+
   /**
    * we need to initialize the recordables pointers to guarantee that the
    * recordables of the new compartments and/or receptors will be in the
@@ -188,7 +202,7 @@ nest::cm_default::set_status( const dictionary& statusdict )
   init_recordables_pointers_();
 }
 void
-nest::cm_default::add_compartment_( dictionary& dd )
+nest::cm_default::add_compartment_( const dictionary& dd )
 {
   if ( dd.known( names::params ) )
   {
@@ -200,7 +214,7 @@ nest::cm_default::add_compartment_( dictionary& dd )
   }
 }
 void
-nest::cm_default::add_receptor_( dictionary& dd )
+nest::cm_default::add_receptor_( const dictionary& dd )
 {
   const long compartment_idx = dd.get< long >( names::comp_idx );
   const std::string receptor_type = dd.get< std::string >( names::receptor_type );

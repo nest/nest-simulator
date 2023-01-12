@@ -50,6 +50,19 @@ cdef extern from "dictionary.h":
     string debug_dict_types(const dictionary&)
     cbool is_type[T](const any&)
 
+cdef extern from "logging.h" namespace "nest":
+    cpdef enum severity_t:
+        M_ALL,
+        M_DEBUG,
+        M_STATUS,
+        M_INFO,
+        M_PROGRESS,
+        M_DEPRECATED,
+        M_WARNING,
+        M_ERROR,
+        M_FATAL,
+        M_QUIET
+
 cdef extern from "connection_id.h" namespace "nest":
     cppclass ConnectionID:
         ConnectionID()
@@ -89,9 +102,21 @@ cdef extern from "parameter.h" namespace "nest":
     ParameterPTR dimension_parameter(const ParameterPTR x, const ParameterPTR y) except +
     ParameterPTR dimension_parameter(const ParameterPTR x, const ParameterPTR y, const ParameterPTR z) except +
 
+
+cdef extern from "mask.h" namespace "nest":
+    cppclass MaskPTR:
+        MaskPTR()
+
 cdef extern from "nest.h" namespace "nest":
     void init_nest( int* argc, char** argv[] )
     void reset_kernel()
+
+    severity_t get_verbosity()
+    void set_verbosity( severity_t )
+
+    void enable_structural_plasticity() except +
+    void disable_structural_plasticity() except +
+
     NodeCollectionPTR create( const string model_name, const long n ) except +
     NodeCollectionPTR create_spatial( const dictionary& ) except +
 
@@ -111,6 +136,7 @@ cdef extern from "nest.h" namespace "nest":
                  NodeCollectionPTR targets,
                  const dictionary& connectivity,
                  const dictionary& synapse_params) except +
+    void disconnect( const deque[ConnectionID]& conns ) except +
     int get_rank() except +
     int get_num_mpi_processes() except +
     string print_nodes_to_string()
@@ -152,3 +178,12 @@ cdef extern from "spatial.h" namespace "nest":
     vector[vector[double]] displacement( NodeCollectionPTR layer_nc, const vector[vector[double]]& point ) except +
 
     void connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const dictionary& dict ) except +
+    MaskPTR create_mask( const dictionary& mask_dict ) except +
+    NodeCollectionPTR select_nodes_by_mask( const NodeCollectionPTR layer_nc, const vector[double]& anchor, const MaskPTR mask ) except +
+    cbool inside(const vector[double]& point, const MaskPTR mask ) except +
+
+    void dump_layer_nodes(const NodeCollectionPTR layer_nc, const string& filename)
+    void dump_layer_connections(const NodeCollectionPTR source_layer,
+                                const NodeCollectionPTR target_layer,
+                                const string& synapse_model,
+                                const string& filename) except +

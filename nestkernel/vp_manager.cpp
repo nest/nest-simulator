@@ -71,7 +71,7 @@ nest::VPManager::set_status( const dictionary& d )
   long n_vps = get_num_virtual_processes();
 
   bool n_threads_updated = d.update_value( names::local_num_threads, n_threads );
-  bool n_vps_updated = d.update_value( names::local_num_virtual_procs, n_vps );
+  bool n_vps_updated = d.update_value( names::total_num_virtual_procs, n_vps );
 
   if ( n_vps_updated )
   {

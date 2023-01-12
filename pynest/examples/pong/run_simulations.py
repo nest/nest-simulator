@@ -195,7 +195,7 @@ class AIPong:
 
 
 if __name__ == "__main__":
-    nest.set_verbosity("M_WARNING")
+    nest.set_verbosity(nest.verbosity.M_WARNING)
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--runs",

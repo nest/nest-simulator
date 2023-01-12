@@ -49,10 +49,9 @@ ConnectionCreator::ConnectionCreator( const dictionary& dict )
   // Need to store number of connections in a temporary variable to be able to detect negative values.
   if ( dict.known( names::number_of_connections ) )
   {
-    auto num_conn = dict.get< ParameterPTR >( names::number_of_connections );
-    if ( num_conn )
+    if ( is_type< ParameterPTR >( dict.at( names::number_of_connections ) ) )
     {
-      number_of_connections_ = num_conn;
+      dict.update_value< ParameterPTR >( names::number_of_connections, number_of_connections_ );
     }
     else
     {
@@ -65,7 +64,6 @@ ConnectionCreator::ConnectionCreator( const dictionary& dict )
       number_of_connections_ = ParameterPTR( new ConstantParameter( value ) );
     }
   }
-  // TODO-PYNEST-NG: implement mask with dictionary
   if ( dict.known( names::mask ) )
   {
     mask_ = create_mask( dict.get< dictionary >( names::mask ) );
@@ -75,15 +73,18 @@ ConnectionCreator::ConnectionCreator( const dictionary& dict )
     kernel_ = create_parameter( dict.at( names::kernel ) );
   }
 
-  // TODO-PYNEST-NG: collocated synapses
   if ( dict.known( names::synapse_parameters ) )
   {
     // If synapse_parameters exists, we have collocated synapses.
     std::vector< dictionary > syn_params_dvd;
-    // ArrayDatum* syn_params_dvd =
-    //   dynamic_cast< ArrayDatum* >( ( *dict )[ names::synapse_parameters ].datum() );
-    if ( not dict.update_value( names::synapse_parameters, syn_params_dvd ) )
+
+    try
     {
+      dict.update_value( names::synapse_parameters, syn_params_dvd );
+    }
+    catch ( const nest::TypeMismatch& )
+    {
+      // Give a more helpful message if the provided type is wrong.
       throw BadProperty( "synapse_parameters must be list of dictionaries" );
     }
 
@@ -92,7 +93,6 @@ ConnectionCreator::ConnectionCreator( const dictionary& dict )
     for ( auto syn_param_it = syn_params_dvd.begin(); syn_param_it < syn_params_dvd.end();
           ++syn_param_it, ++param_dict )
     {
-      // auto syn_param = dynamic_cast< dictionary* >( synapse_datum->datum() );
       extract_params_( *syn_param_it, *param_dict );
     }
   }
@@ -103,8 +103,6 @@ ConnectionCreator::ConnectionCreator( const dictionary& dict )
     param_dicts_[ 0 ].resize( kernel().vp_manager.get_num_threads() );
     extract_params_( dict, param_dicts_[ 0 ] );
   }
-
-  // dict.all_entries_accessed( "ConnectionCreator", "dict" );
 
   // Set default synapse_model, weight and delay if not given explicitly
   if ( synapse_model_.empty() )

@@ -42,7 +42,7 @@ class GetSetTestCase(unittest.TestCase):
             edge_wrap=True
         ))
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTErrors.DictError):
             layer.center = [1., 1.]
 
         layer.V_m = -50.
@@ -111,7 +111,7 @@ class GetSetTestCase(unittest.TestCase):
         layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(
             shape=[3, 3], extent=[2., 2.], edge_wrap=True))
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             layer.set({'center': [1., 1.]})
 
         layer.set(V_m=-50.)

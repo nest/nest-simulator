@@ -27,7 +27,6 @@ import unittest
 import nest
 
 
-@nest.ll_api.check_stack
 class ThreadTestCase(unittest.TestCase):
     """Tests for multi-threading"""
 

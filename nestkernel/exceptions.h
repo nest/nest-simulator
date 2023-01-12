@@ -385,21 +385,14 @@ class IllegalConnection : public KernelException
 {
 public:
   IllegalConnection()
-    : KernelException( "IllegalConnection" )
-    , msg_()
+    : KernelException( "Creation of connection is not possible." )
   {
   }
 
   IllegalConnection( std::string msg )
-    : KernelException( "IllegalConnection" )
-    , msg_( msg )
+    : KernelException( "Creation of connection is not possible because:\n" + msg )
   {
   }
-
-  const char* what() const noexcept override;
-
-private:
-  std::string msg_;
 };
 
 /**

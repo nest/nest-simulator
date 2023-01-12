@@ -28,7 +28,6 @@ import unittest
 import nest
 
 
-@nest.ll_api.check_stack
 class CurrentRecordingGeneratorTestCase(unittest.TestCase):
     """
     Test if currents from generators are recorded properly. Specifically:
@@ -39,7 +38,7 @@ class CurrentRecordingGeneratorTestCase(unittest.TestCase):
     """
 
     def setUp(self):
-        nest.set_verbosity('M_WARNING')
+        nest.set_verbosity(nest.verbosity.M_WARNING)
         nest.ResetKernel()
 
         # setting up the neuron and the generators

@@ -51,15 +51,12 @@ DictionaryAccessFlagManager::all_accessed( const dictionary& dict,
       key_type_(),
       []( const key_type_& a, const dictionary::value_type& b ) { return a + " " + b.first; } );
 
-    // TODO-PYNEST-NG: special case for blank <what> ("unaccessed elements in function <where>")?
-
     throw nest::UnaccessedDictionaryEntry( what, where, missed );
   }
-  // TODO-PYNEST-NG: clear access_flags_[ &dict ] to reclaim memory?
 }
 
 bool
-DictionaryAccessFlagManager::accessed( const dictionary& dict, const key_type_& key )
+DictionaryAccessFlagManager::accessed( const dictionary& dict, const key_type_& key ) const
 {
   return access_flags_.at( &dict ).count( key ) > 0;
 }

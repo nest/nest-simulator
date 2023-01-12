@@ -30,7 +30,6 @@ import numpy as np
 HAVE_GSL = nest.GetKernelStatus("build_info")["have_gsl"]
 
 
-@nest.ll_api.check_stack
 @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
 class ClopathSynapseTestCase(unittest.TestCase):
     """Test Clopath synapse"""
@@ -38,7 +37,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
     def test_ConnectNeuronsWithClopathSynapse(self):
         """Ensures that the restriction to supported neuron models works."""
 
-        nest.set_verbosity('M_WARNING')
+        nest.set_verbosity(nest.verbosity.M_WARNING)
 
         supported_models = [
             'aeif_psc_delta_clopath',
@@ -61,14 +60,14 @@ class ClopathSynapseTestCase(unittest.TestCase):
             n = nest.Create(nm, 2)
 
             # try to connect with clopath_rule
-            with self.assertRaises(nest.kernel.NESTError):
+            with self.assertRaises(nest.NESTError):
                 nest.Connect(n, n, {"rule": "all_to_all"},
                              {"synapse_model": "clopath_synapse"})
 
     def test_SynapseDepressionFacilitation(self):
         """Ensure that depression and facilitation work correctly"""
 
-        nest.set_verbosity('M_WARNING')
+        nest.set_verbosity(nest.verbosity.M_WARNING)
 
         # This is done using the spike pairing experiment of
         # Clopath et al. 2010. First we specify the parameters
@@ -188,7 +187,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
     def test_SynapseFunctionWithAeifModel(self):
         """Ensure that spikes are properly processed"""
 
-        nest.set_verbosity('M_WARNING')
+        nest.set_verbosity(nest.verbosity.M_WARNING)
         nest.ResetKernel()
 
         # Create neurons and devices
@@ -198,8 +197,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
         spike_times = [10.0]
         sg = nest.Create('spike_generator', 1, {'spike_times': spike_times})
 
-        mm = nest.Create('multimeter', params={
-                         'record_from': ['V_m'], 'interval': 1.0})
+        mm = nest.Create('multimeter', params={'record_from': ['V_m'], 'interval': 1.0})
 
         nest.Connect(sg, prrt_nrn)
         nest.Connect(mm, nrns)
@@ -220,8 +218,8 @@ class ClopathSynapseTestCase(unittest.TestCase):
 
         # Evaluation
         data = mm.events[0]
-        senders = data['senders']
-        voltages = data['V_m']
+        senders = np.array(data['senders'])
+        voltages = np.array(data['V_m'])
 
         vm1 = voltages[np.where(senders == 1)]
         vm2 = voltages[np.where(senders == 2)]

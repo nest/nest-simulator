@@ -33,7 +33,7 @@ try:
 except ImportError:
     HAVE_SCIPY = False
 
-nest.set_verbosity('M_ERROR')
+nest.set_verbosity(nest.verbosity.M_ERROR)
 
 
 class ConnectLayersTestCase(unittest.TestCase):
@@ -337,7 +337,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             }
         }
         for conn_spec in [conn_spec_kernel, conn_spec_mask]:
-            with self.assertRaises(nest.kernel.NESTError):
+            with self.assertRaises(nest.NESTError):
                 nest.Connect(self.layer, self.layer, conn_spec)
 
     def test_connect_oversized_mask(self):
@@ -345,7 +345,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         free_layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.free(
             [[0., 0.]], edge_wrap=True, extent=[1., 1.]))
         conn_spec = {'rule': 'pairwise_bernoulli', 'p': 1.0, 'mask': {'circular': {'radius': 2.}}}
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.Connect(free_layer, free_layer, conn_spec)
         self.assertEqual(nest.num_connections, 0)
         conn_spec['allow_oversized_mask'] = True

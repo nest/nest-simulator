@@ -27,7 +27,6 @@ import unittest
 import nest
 
 
-@nest.ll_api.check_stack
 class StatusTestCase(unittest.TestCase):
     """Tests of data in JSON format"""
 
@@ -50,7 +49,7 @@ class StatusTestCase(unittest.TestCase):
         self.assertIsInstance(d_json, str)
 
     def test_get_JSON(self):
-        """JSON data of GetStatus"""
+        """JSON data of node status"""
 
         for model in nest.node_models:
             nest.ResetKernel()
@@ -62,7 +61,7 @@ class StatusTestCase(unittest.TestCase):
         n = nest.NodeCollection()
         d_json = n.get(output='json')
         self.assertIsInstance(d_json, str)
-        self.assertEqual(d_json, '[]')
+        self.assertEqual(d_json, '{}')
 
 
 def suite():

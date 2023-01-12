@@ -29,7 +29,6 @@ import nest
 HAVE_GSL = nest.GetKernelStatus("build_info")["have_gsl"]
 
 
-@nest.ll_api.check_stack
 @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
 class LabeledSynapsesTestCase(unittest.TestCase):
     """Test labeled synapses"""
@@ -189,11 +188,11 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             symm = nest.GetDefaults(syn, 'requires_symmetric')
 
             # try set a label during SetDefaults
-            with self.assertRaises(nest.kernel.NESTError):
+            with self.assertRaises(nest.NESTError):
                 nest.SetDefaults(syn, {'synapse_label': 123})
 
             # try set on connect
-            with self.assertRaises(nest.kernel.NESTError):
+            with self.assertRaises(nest.NESTError):
                 nest.Connect(a, a, {"rule": "one_to_one",
                                     "make_symmetric": symm},
                              {"synapse_model": syn, "synapse_label": 123})
@@ -203,7 +202,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
                          {"synapse_model": syn, "receptor_type": r_type})
             c = nest.GetConnections(a, a)
 
-            with self.assertRaises(nest.kernel.NESTError):
+            with self.assertRaises(nest.NESTError):
                 c.set({'synapse_label': 123})
 
 

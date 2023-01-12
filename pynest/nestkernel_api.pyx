@@ -24,7 +24,7 @@
 
 # import cython
 
-# from libc.stdlib cimport malloc, free
+from libc.stdlib cimport malloc, free
 # from libc.string cimport memcpy
 
 from libcpp.string cimport string
@@ -95,6 +95,17 @@ cdef class ParameterObject:
 
     cdef _set_parameter(self, ParameterPTR parameter_ptr):
         self.thisptr = parameter_ptr
+
+
+cdef class MaskObject:
+
+    cdef MaskPTR thisptr
+
+    def __repr__(self):
+        return "<MaskObject>"
+
+    cdef _set_mask(self, MaskPTR mask_ptr):
+        self.thisptr = mask_ptr
 
 
 cdef object any_vector_to_list(vector[any] cvec):
@@ -278,8 +289,63 @@ def catch_cpp_error(func):
             raise NESTErrors.NESTError(f'in {func.__name__}: {e}') from None
     return wrapper_catch_cpp_error
 
+def llapi_init_nest(argv):
+    cdef int argc = len(argv)
+    if argc <= 0:
+        raise NESTErrors.PyNESTError("argv can't be empty")
+
+
+    # Create c-style argv arguments from sys.argv
+    cdef char** argv_chars = <char**> malloc((argc+1) * sizeof(char*))
+    if argv_chars is NULL:
+        raise NESTErrors.PyNESTError("couldn't allocate argv_char")
+    try:
+        # argv must be null terminated. openmpi depends on this
+        argv_chars[argc] = NULL
+
+        # Need to keep a reference to encoded bytes issue #377
+        # argv_bytes = [byte...] which internally holds a reference
+        # to the c string in argv_char = [c-string... NULL]
+        # the `byte` is the utf-8 encoding of sys.argv[...]
+        argv_bytes = [argvi.encode() for argvi in argv]
+        for i, argvi in enumerate(argv_bytes):
+            argv_chars[i] = argvi # c-string ref extracted
+
+        init_nest(&argc, &argv_chars)
+
+        # TODO-PYNEST-NG
+        # nest::kernel().model_manager.get_modeldict()
+        # nest::kernel().model_manager.get_synapsedict()
+        # nest::kernel().connection_manager.get_connruledict()
+        # nest::kernel().sp_manager.get_growthcurvedict()
+
+        # If using MPI, argv might now have changed, so rebuild it
+        del argv[:]
+        # Convert back from utf8 char* to utf8 str
+        argv.extend(str(argvi.decode()) for argvi in argv_chars[:argc])
+    finally:
+        free(argv_chars)
+
+    return True
+
 def llapi_reset_kernel():
     reset_kernel()
+
+@catch_cpp_error
+def llapi_get_verbosity():
+    return severity_t(get_verbosity())
+
+@catch_cpp_error
+def llapi_set_verbosity(severity_t s):
+    set_verbosity(s)
+
+@catch_cpp_error
+def llapi_enable_structural_plasticity():
+    enable_structural_plasticity()
+
+@catch_cpp_error
+def llapi_disable_structural_plasticity():
+    disable_structural_plasticity()
 
 @catch_cpp_error
 def llapi_create(model, long n):
@@ -388,9 +454,46 @@ def llapi_disconnect(NodeCollectionObject pre, NodeCollectionObject post, object
             pydict_to_dictionary(synapse_params))
 
 @catch_cpp_error
+def llapi_disconnect_syncoll(object conns):
+    cdef deque[ConnectionID] conn_deque
+    cdef ConnectionObject conn_object
+    for conn_object in conns:
+        conn_deque.push_back(conn_object.thisobj)
+
+    disconnect(conn_deque)
+
+@catch_cpp_error
 def llapi_connect_layers(NodeCollectionObject pre, NodeCollectionObject post, object projections):
     print("### 9", projections)
     connect_layers(pre.thisptr, post.thisptr, pydict_to_dictionary(projections))
+
+@catch_cpp_error
+def llapi_create_mask(object specs):
+    cdef dictionary specs_dictionary = pydict_to_dictionary(specs)
+    cdef MaskPTR mask
+    mask = create_mask(specs_dictionary)
+    obj = MaskObject()
+    obj._set_mask(mask)
+    return nest.Mask(obj)
+
+@catch_cpp_error
+def llapi_select_nodes_by_mask(NodeCollectionObject layer, vector[double] anchor, MaskObject mask_datum):
+    nodes = select_nodes_by_mask(layer.thisptr, anchor, mask_datum.thisptr)
+    obj = NodeCollectionObject()
+    obj._set_nc(nodes)
+    return nest.NodeCollection(obj)
+
+@catch_cpp_error
+def llapi_inside_mask(vector[double] point, MaskObject mask):
+    return inside(point, mask.thisptr)
+
+@catch_cpp_error
+def llapi_dump_layer_nodes(NodeCollectionObject layer, object filename):
+    dump_layer_nodes(layer.thisptr, pystr_to_string(filename))
+
+@catch_cpp_error
+def llapi_dump_layer_connections(NodeCollectionObject source_layer, NodeCollectionObject target_layer, synapse_model, filename):
+    dump_layer_connections(source_layer.thisptr, target_layer.thisptr, pystr_to_string(synapse_model), pystr_to_string(filename))
 
 @catch_cpp_error
 def llapi_slice(NodeCollectionObject nc, long start, long stop, long step):

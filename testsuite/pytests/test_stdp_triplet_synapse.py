@@ -27,12 +27,11 @@ from math import exp
 import numpy as np
 
 
-@nest.ll_api.check_stack
 class STDPTripletSynapseTestCase(unittest.TestCase):
     """Check stdp_triplet_synapse model properties."""
 
     def setUp(self):
-        nest.set_verbosity('M_WARNING')
+        nest.set_verbosity(nest.verbosity.M_WARNING)
         nest.ResetKernel()
 
         # settings
@@ -120,7 +119,7 @@ class STDPTripletSynapseTestCase(unittest.TestCase):
 
         def badPropertyWith(content, parameters):
             msg = content
-            self.assertRaisesRegex(nest.kernel.NESTError, msg, setupProperty, parameters)
+            self.assertRaisesRegex(nest.NESTError, msg, setupProperty, parameters)
 
         badPropertyWith("Kplus", {"Kplus": -1.0})
         badPropertyWith("Kplus_triplet", {"Kplus_triplet": -1.0})
@@ -293,11 +292,9 @@ class STDPTripletSynapseTestCase(unittest.TestCase):
             "weight"), "weight should have been limited")
 
 
-@nest.ll_api.check_stack
 class STDPTripletInhTestCase(STDPTripletSynapseTestCase):
-
     def setUp(self):
-        nest.set_verbosity('M_WARNING')
+        nest.set_verbosity(nest.verbosity.M_WARNING)
         nest.ResetKernel()
 
         # settings

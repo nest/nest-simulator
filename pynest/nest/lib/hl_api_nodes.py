@@ -31,6 +31,7 @@ from .. import nestkernel_api as nestkernel
 from .hl_api_helper import is_iterable, model_deprecation_warning
 from .hl_api_types import NodeCollection, Parameter
 from .hl_api_exceptions import NESTErrors
+from .hl_api_parallel_computing import Rank, NumProcesses
 
 __all__ = [
     'Create',

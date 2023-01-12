@@ -33,7 +33,6 @@ except ImportError:
     HAVE_NUMPY = False
 
 
-@nest.ll_api.check_stack
 class TestNodeCollection(unittest.TestCase):
     """NodeCollection tests"""
 
@@ -53,7 +52,7 @@ class TestNodeCollection(unittest.TestCase):
 
         # Creating NodeCollection from list without creating the nodes first
         node_ids_in = [5, 10, 15, 20]
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nc = nest.NodeCollection(node_ids_in)
 
         # Creating composite NodeCollection from list
@@ -306,7 +305,7 @@ class TestNodeCollection(unittest.TestCase):
         nc_b = nest.Create('iaf_psc_exp', 7)
         nc_c = nest.NodeCollection([6, 8, 10, 12, 14])
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nc_sum = nc_a + nc_b + nc_c
 
     def test_NodeCollection_membership(self):
@@ -419,31 +418,31 @@ class TestNodeCollection(unittest.TestCase):
         """Non-unique nodes in NodeCollection raises error"""
         n = nest.Create('iaf_psc_alpha', 10)
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             n[1:3] + n[2:5]
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.NodeCollection([2, 2])
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.NodeCollection([2]) + nest.NodeCollection([1, 2])
 
     def test_from_list_unsorted_raises(self):
         """Creating NodeCollection from unsorted list raises error"""
         nest.Create('iaf_psc_alpha', 10)
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.NodeCollection([5, 4, 6])
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.NodeCollection([5, 6, 4])
 
     def test_slice_with_unsorted_raises(self):
         """Slicing NodeCollection with unsorted list raises error"""
         n = nest.Create('iaf_psc_alpha', 10)
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             n[[6, 5, 4]]
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             n[[5, 4, 6]]
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             n[[5, 6, 4]]
 
     def test_composite_NodeCollection(self):
@@ -500,7 +499,7 @@ class TestNodeCollection(unittest.TestCase):
         d = c[::2]
         e = nest.Create('iaf_psc_delta', 13)
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             f = d + e
 
     def test_model(self):
@@ -549,16 +548,16 @@ class TestNodeCollection(unittest.TestCase):
         for i in range(num_nodes):
             self.assertEqual(n.get('V_m')[i], V_m[i])
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             n.set([{'V_m': 34.}, {'V_m': -5.}])
 
         nest.ResetKernel()
 
         nc = nest.Create('iaf_psc_exp', 5)
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             n.set({'V_m': -40.})
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             n.get()
 
         nest.ResetKernel()
@@ -646,12 +645,12 @@ class TestNodeCollection(unittest.TestCase):
         # Senders and targets lists empty
         self.assertFalse(wr.senders)
         self.assertFalse(wr.targets)
-        
+
         wr.set({"senders": pre[1:3], "targets": post[3:]})
-        
+
         gss = wr.senders
         gst = wr.targets
-        
+
         self.assertEqual(gss.tolist(), [3, 4])
         self.assertEqual(gst.tolist(), [10, 11])
 
@@ -670,7 +669,7 @@ class TestNodeCollection(unittest.TestCase):
         self.assertEqual(param.apply(n[0]), (ref_positions[0, 0],))
         self.assertEqual(param.apply(n[::2]), tuple(ref_positions[::2, 0]))
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.spatial.pos.z.apply(n)
 
     def test_apply_positions(self):
@@ -700,7 +699,7 @@ class TestNodeCollection(unittest.TestCase):
 
         # Erroneous position specification
         source = n[0]
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             param.apply(source, [[1., 2., 3.]])            # Too many dimensions
         with self.assertRaises(TypeError):
             param.apply(source, [1., 2.])                  # Not a list of lists
@@ -775,17 +774,14 @@ class TestNodeCollection(unittest.TestCase):
 
         for empty_nc in [nest.NodeCollection(), nest.NodeCollection([])]:
 
-            with self.assertRaises(nest.kernel.NESTError):
+            with self.assertRaises(nest.NESTError):
                 nest.Connect(nodes, empty_nc)
 
-            with self.assertRaises(nest.kernel.NESTError):
+            with self.assertRaises(nest.NESTError):
                 nest.Connect(empty_nc, nodes)
 
-            with self.assertRaises(nest.kernel.NESTError):
+            with self.assertRaises(nest.NESTError):
                 nest.Connect(empty_nc, empty_nc)
-
-            with self.assertRaises(ValueError):
-                empty_nc.get()
 
             with self.assertRaises(AttributeError):
                 empty_nc.V_m

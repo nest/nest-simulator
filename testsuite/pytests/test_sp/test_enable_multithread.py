@@ -38,7 +38,7 @@ class TestEnableMultithread(unittest.TestCase):
 
     def setUp(self):
         nest.ResetKernel()
-        nest.set_verbosity('M_ERROR')
+        nest.set_verbosity(nest.verbosity.M_ERROR)
 
     def test_enable_multithread(self):
 
@@ -46,7 +46,7 @@ class TestEnableMultithread(unittest.TestCase):
         nest.EnableStructuralPlasticity()
         # Setting multiple threads when structural plasticity is enabled should
         # throw an exception
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.local_num_threads = 2
 
     def test_multithread_enable(self):
@@ -54,7 +54,7 @@ class TestEnableMultithread(unittest.TestCase):
         nest.local_num_threads = 2
         # Setting multiple threads when structural plasticity is enabled should
         # throw an exception
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.EnableStructuralPlasticity()
 
 

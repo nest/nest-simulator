@@ -36,7 +36,6 @@ __all__ = [
 ]
 
 
-@check_stack
 def Rank():
     """Return the MPI rank of the local process.
 
@@ -59,7 +58,6 @@ def Rank():
     return nestkernel.llapi_get_rank()
 
 
-@check_stack
 def NumProcesses():
     """Return the overall number of MPI processes.
 
@@ -72,7 +70,6 @@ def NumProcesses():
     return nestkernel.llapi_get_num_mpi_processes()
 
 
-@check_stack
 def SetAcceptableLatency(port_name, latency):
     """Set the acceptable `latency` (in ms) for a MUSIC port.
 
@@ -91,7 +88,6 @@ def SetAcceptableLatency(port_name, latency):
     pass
 
 
-@check_stack
 def SetMaxBuffered(port_name, size):
     """Set the maximum buffer size for a MUSIC port.
 
@@ -110,7 +106,6 @@ def SetMaxBuffered(port_name, size):
     pass
 
 
-@check_stack
 def SyncProcesses():
     """Synchronize all MPI processes.
     """
@@ -120,7 +115,6 @@ def SyncProcesses():
     pass
 
 
-@check_stack
 def GetLocalVPs():
     """Return iterable representing the VPs local to the MPI rank.
     """

@@ -27,7 +27,6 @@ import nest
 import numpy as np
 
 
-@nest.ll_api.check_stack
 class TestJonkeSynapse:
     """
     Test the weight change by STDP.
@@ -85,7 +84,7 @@ class TestJonkeSynapse:
         Returns the generated pre- and post spike sequences
         and the resulting weight established by STDP.
         """
-        nest.set_verbosity('M_WARNING')
+        nest.set_verbosity(nest.verbosity.M_WARNING)
         nest.ResetKernel()
         nest.resolution = self.resolution
 

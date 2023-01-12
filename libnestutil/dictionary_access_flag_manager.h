@@ -29,6 +29,13 @@
 
 #include "dictionary.h"
 
+/**
+ * @brief Access flag manager for the dictionary class
+ *
+ * Manages access flags for dictionary keys and can check if all keys
+ * in a dictionary has been accessed. Key access is not integrated into
+ * the dictionary class to be able to keep the dictionary const.
+ */
 class DictionaryAccessFlagManager
 {
 private:
@@ -60,7 +67,7 @@ public:
    * @return true if key has been accessed
    * @return false if key has not been accessed
    */
-  bool accessed( const dictionary& dict, const key_type_& key );
+  bool accessed( const dictionary& dict, const key_type_& key ) const;
 };
 
 inline void

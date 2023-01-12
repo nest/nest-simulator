@@ -30,7 +30,6 @@ import numpy as np
 HAVE_GSL = nest.GetKernelStatus("build_info")["have_gsl"]
 
 
-@nest.ll_api.check_stack
 @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
 class UrbanczikSynapseTestCase(unittest.TestCase):
     """Test Urbanczik synapse"""
@@ -38,7 +37,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
     def test_ConnectNeuronsWithUrbanczikSynapse(self):
         """Ensures that the restriction to supported neuron models works."""
 
-        nest.set_verbosity('M_WARNING')
+        nest.set_verbosity(nest.verbosity.M_WARNING)
 
         mc_models = ["iaf_cond_alpha_mc", "pp_cond_exp_mc_urbanczik"]  # Multi-compartment models
         supported_models = ["pp_cond_exp_mc_urbanczik"]
@@ -70,14 +69,14 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
             n = nest.Create(nm, 2)
 
             # try to connect with urbanczik synapse
-            with self.assertRaises(nest.kernel.NESTError):
+            with self.assertRaises(nest.NESTError):
                 nest.Connect(n, n, {"rule": "all_to_all"},
                              {"synapse_model": "urbanczik_synapse", "receptor_type": r_type})
 
     def test_SynapseDepressionFacilitation(self):
         """Ensure that depression and facilitation work correctly"""
 
-        nest.set_verbosity('M_WARNING')
+        nest.set_verbosity(nest.verbosity.M_WARNING)
         nest.ResetKernel()
 
         resolution = 0.1
@@ -194,10 +193,10 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
 
         # weight recorder
         data = wr.get()
-        senders = data[0]['events']['senders']
-        targets = data[0]['events']['targets']
-        weights = data[0]['events']['weights']
-        times = data[0]['events']['times']
+        senders = data['events']['senders']
+        targets = data['events']['targets']
+        weights = data['events']['weights']
+        times = data['events']['times']
 
         # spike recorder
         data = sr_soma.events[0]

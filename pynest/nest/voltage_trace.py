@@ -145,25 +145,25 @@ def from_device(detec, neurons=None, title=None, grayscale=False,
 
     Raises
     ------
-    nest.kernel.NESTError
+    nest.NESTError
         Description
     """
     import matplotlib.pyplot as plt
 
     if len(detec) > 1:
-        raise nest.kernel.NESTError("Please provide a single voltmeter.")
+        raise nest.NESTError("Please provide a single voltmeter.")
 
     type_id = nest.GetDefaults(detec.get('model'), 'type_id')
     if type_id not in ('voltmeter', 'multimeter'):
-        raise nest.kernel.NESTError("Please provide a voltmeter or a \
+        raise nest.NESTError("Please provide a voltmeter or a \
             multimeter measuring V_m.")
     elif type_id == 'multimeter':
         if "V_m" not in detec.get("record_from"):
-            raise nest.kernel.NESTError("Please provide a multimeter \
+            raise nest.NESTError("Please provide a multimeter \
                 measuring V_m.")
         elif (not detec.get("record_to") == "memory" and
               len(detec.get("record_from")) > 1):
-            raise nest.kernel.NESTError("Please provide a multimeter \
+            raise nest.NESTError("Please provide a multimeter \
                 measuring only V_m or record to memory!")
 
     if detec.get("record_to") == "memory":
@@ -220,7 +220,7 @@ def from_device(detec, neurons=None, title=None, grayscale=False,
         fname = detec.get("filenames")
         return from_file(fname, title, grayscale)
     else:
-        raise nest.kernel.NESTError("Provided devices neither record to \
+        raise nest.NESTError("Provided devices neither record to \
             ascii file, nor to memory.")
 
 

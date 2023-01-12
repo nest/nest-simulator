@@ -46,8 +46,8 @@ class TestSynapticElements(unittest.TestCase):
             u'SE2': {u'z': 10.0, u'growth_curve': u'gaussian'}}
 
         neuron = nest.Create('iaf_psc_alpha', 1)
-        neuron({'synaptic_elements': synaptic_element_dict1})
-        neuron({'synaptic_elements': synaptic_element_dict2})
+        neuron.set({'synaptic_elements': synaptic_element_dict1})
+        neuron.set({'synaptic_elements': synaptic_element_dict2})
 
         neuron_synaptic_elements = neuron.synaptic_elements
         self.assertNotIn('SE1', neuron_synaptic_elements)

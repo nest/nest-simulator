@@ -116,16 +116,18 @@ std::vector< double > distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR
 std::vector< double > distance( NodeCollectionPTR layer_nc, const std::vector< std::vector< double > >& point );
 std::vector< double > distance( const std::vector< ConnectionID >& conns );
 MaskPTR create_mask( const dictionary& mask_dict );
+NodeCollectionPTR
+select_nodes_by_mask( const NodeCollectionPTR layer_nc, const std::vector< double >& anchor, const MaskPTR mask );
 bool inside( const std::vector< double >& point, const MaskPTR mask );
 MaskPTR intersect_mask( const MaskPTR mask1, const MaskPTR mask2 );
 MaskPTR union_mask( const MaskPTR mask1, const MaskPTR mask2 );
 MaskPTR minus_mask( const MaskPTR mask1, const MaskPTR mask2 );
 void connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const dictionary& dict );
-void dump_layer_nodes( NodeCollectionPTR layer_nc, std::ostream& out );
-void dump_layer_connections( const std::string& syn_model,
-  NodeCollectionPTR source_layer_nc,
-  NodeCollectionPTR target_layer_nc,
-  std::ostream& out_file );
+void dump_layer_nodes( NodeCollectionPTR layer_nc, const std::string& filename );
+void dump_layer_connections( const NodeCollectionPTR source_layer,
+  const NodeCollectionPTR target_layer,
+  const std::string& synapse_model,
+  const std::string& filename );
 dictionary get_layer_status( NodeCollectionPTR layer_nc );
 }
 

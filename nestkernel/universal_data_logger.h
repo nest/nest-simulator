@@ -27,7 +27,6 @@
 #include <algorithm>
 #include <vector>
 
-
 // Includes from nestkernel:
 #include "event.h"
 #include "nest_time.h"
@@ -246,7 +245,7 @@ nest::UniversalDataLogger< HostNode >::connect_logging_device( const DataLogging
 
   auto item = std::find_if( data_loggers_.begin(),
     data_loggers_.end(),
-    [ &mm_node_id ]( const DataLogger_& dl ) { return dl.get_mm_node_id() == mm_node_id; } );
+    [ & ]( const DataLogger_& dl ) { return dl.get_mm_node_id() == mm_node_id; } );
 
   if ( item != data_loggers_.end() )
   {

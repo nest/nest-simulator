@@ -1,11 +1,12 @@
-Image
-PyYAML>=4.2b1
 cmake
 csvkit
 cython
 docutils
 example
+flask_cors
+flask
 ipykernel
+Image
 jupyter
 matplotlib
 mock
@@ -14,8 +15,11 @@ numpy
 numpydoc
 pandoc
 path.py
+pydot
 pytest
+PyYAML>=4.2b1
 recommonmark
+RestrictedPython
 scipy
 seaborn
 sphinx>=4.0.2

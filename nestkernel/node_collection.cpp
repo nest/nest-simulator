@@ -35,14 +35,14 @@ namespace nest
 {
 
 // function object for sorting a vector of NodeCollectionPrimitives
-const struct PrimitiveSortObject
+const struct PrimitiveSortOp
 {
   bool
   operator()( const NodeCollectionPrimitive& primitive_lhs, const NodeCollectionPrimitive& primitive_rhs ) const
   {
     return primitive_lhs[ 0 ] < primitive_rhs[ 0 ];
   }
-} primitiveSort;
+} primitive_sort_op;
 
 
 nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
@@ -640,7 +640,7 @@ NodeCollectionComposite::NodeCollectionComposite( const std::vector< NodeCollect
     parts_.push_back( part );
     size_ += part.size();
   }
-  std::sort( parts_.begin(), parts_.end(), primitiveSort );
+  std::sort( parts_.begin(), parts_.end(), primitive_sort_op );
 }
 
 NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite& composite,
@@ -754,7 +754,7 @@ NodeCollectionComposite::operator+( NodeCollectionPTR rhs ) const
     auto new_parts = parts_;
     new_parts.reserve( new_parts.size() + rhs_ptr->parts_.size() );
     new_parts.insert( new_parts.end(), rhs_ptr->parts_.begin(), rhs_ptr->parts_.end() );
-    std::sort( new_parts.begin(), new_parts.end(), primitiveSort );
+    std::sort( new_parts.begin(), new_parts.end(), primitive_sort_op );
     merge_parts_( new_parts );
     if ( new_parts.size() == 1 )
     {
@@ -787,7 +787,7 @@ NodeCollectionComposite::operator+( const NodeCollectionPrimitive& rhs ) const
 
   std::vector< NodeCollectionPrimitive > new_parts = parts_;
   new_parts.push_back( rhs );
-  std::sort( new_parts.begin(), new_parts.end(), primitiveSort );
+  std::sort( new_parts.begin(), new_parts.end(), primitive_sort_op );
   merge_parts_( new_parts );
   if ( new_parts.size() == 1 )
   {

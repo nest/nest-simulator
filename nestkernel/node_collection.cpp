@@ -967,98 +967,71 @@ NodeCollectionComposite::merge_parts_( std::vector< NodeCollectionPrimitive >& p
 bool
 NodeCollectionComposite::contains( index node_id ) const
 {
-  long lower = 0;
-  long upper = parts_.size() - 1;
-  while ( lower <= upper )
-  {
-    const size_t middle = std::floor( ( lower + upper ) / 2.0 );
-
-    if ( ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).node_id < node_id )
-    {
-      lower = middle + 1;
-    }
-    else if ( node_id < ( *( parts_[ middle ].begin() ) ).node_id )
-    {
-      upper = middle - 1;
-    }
-    else
-    {
-      if ( is_sliced_ )
-      {
-        assert( start_offset_ != 0 or start_part_ != 0 or end_part_ != 0 or end_offset_ != 0 or step_ > 1 );
-        // NodeCollection is sliced
-        if ( middle < start_part_ or end_part_ < middle )
-        {
-          // middle is outside of the sliced area
-          return false;
-        }
-        // Need to find number of nodes in previous parts to know if the the step hits the node_id.
-        const auto num_prev_nodes = std::accumulate( parts_.begin(),
-          parts_.begin() + middle,
-          static_cast< size_t >( 0 ), // casting 0 to size_t to make std::accumulate return a size_t
-          []( const size_t a, const NodeCollectionPrimitive& primitive ) { return a + primitive.size(); } );
-        if ( start_part_ < middle and middle < end_part_ )
-        {
-          // middle is after the first part and before the last part
-          return ( ( num_prev_nodes + node_id - parts_[ middle ][ 0 ] ) % step_ ) == 0;
-        }
-        // The first or the last node is somewhere in the middle part.
-        index start_node_id = start_part_ == middle ? parts_[ middle ][ start_offset_ ] : parts_[ middle ][ 0 ];
-        index end_node_id =
-          end_part_ == middle ? parts_[ middle ][ end_offset_ - 1 ] : parts_[ middle ][ parts_[ middle ].size() - 1 ];
-        return node_id >= start_node_id and ( ( num_prev_nodes + node_id - start_node_id ) % step_ ) == 0
-          and node_id <= end_node_id;
-      }
-      return true;
-    }
-  }
-  return false;
+  return find( node_id ) != -1;
 }
 
 long
 NodeCollectionComposite::find( const index node_id ) const
 {
-  if ( is_sliced_ )
-  {
-    assert( step_ > 1 or start_part_ > 0 or start_offset_ > 0 or ( end_part_ > 0 and end_part_ != parts_.size() )
-      or end_offset_ > 0 );
-    // Composite is sliced, we must iterate to find the index.
-    long index = 0;
-    for ( auto it = begin(); it < end(); ++it, ++index )
-    {
-      if ( ( *it ).node_id == node_id )
-      {
-        return index;
-      }
-    }
-    return -1;
-  }
-  else
-  {
-    // using the same algorithm as contains(), but returns the node ID if found.
-    long lower = 0;
-    long upper = parts_.size() - 1;
-    while ( lower <= upper )
-    {
-      const size_t middle = std::floor( ( lower + upper ) / 2.0 );
+  const auto add_size_op = []( const long a, const NodeCollectionPrimitive& b ) { return a + b.size(); };
 
-      if ( ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).node_id < node_id )
+  long lower = 0;
+  long upper = parts_.size() - 1;
+  while ( lower <= upper )
+  {
+    const size_t middle = ( lower + upper ) / 2;
+
+    if ( parts_[ middle ][ parts_[ middle ].size() - 1 ] < node_id )
+    {
+      lower = middle + 1;
+    }
+    else if ( node_id < ( parts_[ middle ][ 0 ] ) )
+    {
+      upper = middle - 1;
+    }
+    else
+    {
+      // At this point we know that node_id is in parts_[middle].
+      if ( is_sliced_ )
       {
-        lower = middle + 1;
-      }
-      else if ( node_id < ( *( parts_[ middle ].begin() ) ).node_id )
-      {
-        upper = middle - 1;
+        assert( start_offset_ != 0 or start_part_ != 0 or end_part_ != 0 or end_offset_ != 0 or step_ > 1 );
+
+        if ( middle < start_part_ or end_part_ < middle )
+        {
+          // middle is outside of the sliced area
+          return -1;
+        }
+        // Need to find number of nodes in previous parts to know if the the step hits the node_id.
+        const auto num_prev_nodes =
+          std::accumulate( parts_.begin(), parts_.begin() + middle, static_cast< size_t >( 0 ), add_size_op );
+        const auto absolute_pos = num_prev_nodes + parts_[ middle ].find( node_id );
+
+        // The first or the last node can be somewhere in the middle part.
+        const auto absolute_part_start = start_part_ == middle ? start_offset_ : 0;
+        const auto absolute_part_end = end_part_ == middle ? end_offset_ : parts_[ middle ].size();
+
+        // Is node_id in the sliced NC?
+        const auto node_id_before_start = node_id < parts_[ middle ][ absolute_part_start ];
+        const auto node_id_after_end = parts_[ middle ][ absolute_part_end - 1 ] < node_id;
+        const auto node_id_missed_by_step = ( ( absolute_pos - start_offset_ ) % step_ ) != 0;
+        if ( node_id_before_start or node_id_after_end or node_id_missed_by_step )
+        {
+          return -1;
+        }
+
+        // Return the calculated local ID of node_id.
+        return ( absolute_pos - start_offset_ ) / step_;
       }
       else
       {
-        auto size_accu = []( const long a, const NodeCollectionPrimitive& b ) { return a + b.size(); };
-        long sum_pre = std::accumulate( parts_.begin(), parts_.begin() + middle, ( long ) 0, size_accu );
+        // Since NC is not sliced, we can just calculate and return the local ID.
+        const auto sum_pre =
+          std::accumulate( parts_.begin(), parts_.begin() + middle, static_cast< size_t >( 0 ), add_size_op );
         return sum_pre + parts_[ middle ].find( node_id );
       }
     }
-    return -1;
   }
+  return -1;
 }
 
 bool

@@ -141,7 +141,7 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::init()
 
 template < typename HostNode >
 void
-nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::record_data( const HostNode&, long step )
+nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::record_data( const HostNode& hostnode, long step )
 {
   if ( num_vars_ < 1 or step < next_rec_step_ )
   {
@@ -170,7 +170,8 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::record_data( const Ho
   // obtain data through access functions, calling via pointer-to-member
   for ( size_t j = 0; j < num_vars_; ++j )
   {
-    dest.data[ j ] = ( *( node_access_[ j ] ) )();
+    const typename DynamicRecordablesMap< HostNode >::DataAccessFct* access_func = node_access_[ j ];
+    dest.data[ j ] = ( *( access_func ) )( hostnode.get_node_local_id() );
   }
 
   next_rec_step_ += rec_int_steps_;

@@ -545,6 +545,7 @@ nest::SimulationManager::run( Time const& t )
   kernel().random_manager.check_rng_synchrony();
   kernel().io_manager.pre_run_hook();
 
+
   if ( not prepared_ )
   {
     std::string msg = "Run called without calling Prepare.";
@@ -591,6 +592,7 @@ nest::SimulationManager::run( Time const& t )
   call_update_();
 
   kernel().io_manager.post_run_hook();
+
   kernel().random_manager.check_rng_synchrony();
 
   sw_simulate_.stop();
@@ -658,7 +660,10 @@ nest::SimulationManager::call_update_()
   simulating_ = true;
   simulated_ = true;
 
+  std::cout << "update start\n";
   update_();
+  std::cout << "update end\n";
+
 
   simulating_ = false;
 
@@ -814,6 +819,7 @@ nest::SimulationManager::update_()
         // complete removal of presynaptic part and reconstruction
         // from postsynaptic data
         update_connection_infrastructure( tid );
+
 
       } // of structural plasticity
 
@@ -977,6 +983,7 @@ nest::SimulationManager::update_()
       {
         if ( kernel().connection_manager.has_primary_connections() )
         {
+
           kernel().event_delivery_manager.gather_spike_data( tid );
         }
         if ( kernel().connection_manager.secondary_connections_exist() )

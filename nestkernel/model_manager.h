@@ -83,6 +83,10 @@ public:
 
   const std::vector< ConnectorModel* >& get_connection_models( thread tid );
 
+
+  template < class ModelT >
+  index register_node_model_vectorized( const Name& name, std::string deprecation_info = std::string() );
+
   /**
    * Register a node-model prototype.
    * This function must be called exactly once for each model class to make

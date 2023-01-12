@@ -103,7 +103,11 @@ void
 Node::set_initialized_()
 {
 }
-
+index
+Node::get_node_id() const
+{
+  return node_id_;
+}
 std::string
 Node::get_name() const
 {
@@ -152,6 +156,7 @@ Node::get_status_base()
   ( *dict )[ names::model_id ] = get_model_id();
   ( *dict )[ names::global_id ] = get_node_id();
   ( *dict )[ names::vp ] = get_vp();
+  ( *dict )[ Name( "is_vectorized" ) ] = false;
   ( *dict )[ names::element_type ] = LiteralDatum( get_element_type() );
 
   // add information available only for local nodes

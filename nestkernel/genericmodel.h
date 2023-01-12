@@ -94,6 +94,19 @@ public:
 
   void deprecation_warning( const std::string& ) override;
 
+
+  std::shared_ptr< VectorizedNode >
+  get_container() override
+  {
+    return proto_.get_container();
+  }
+  void
+  clone_container( std::shared_ptr< VectorizedNode > container ) override
+  {
+    proto_.clone_container( container );
+  }
+
+
 private:
   void set_status_( DictionaryDatum ) override;
   DictionaryDatum get_status_() override;
@@ -109,6 +122,7 @@ private:
    * Prototype node from which all instances are constructed.
    */
   ElementT proto_;
+
 
   /**
    * String containing deprecation information; empty if model not deprecated.

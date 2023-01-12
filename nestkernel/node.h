@@ -53,7 +53,7 @@ namespace nest
 class Model;
 class ArchivingNode;
 class TimeConverter;
-
+class VectorizedNode;
 
 /**
  * @defgroup user_interface Model developer interface.
@@ -83,22 +83,22 @@ class TimeConverter;
 
 /** @BeginDocumentation
 
-   Name: Node - General properties of all nodes.
+  Name: Node - General properties of all nodes.
 
-   Parameters:
-   frozen     booltype    - Whether the node is updated during simulation
-   global_id  integertype - The node ID of the node (cf. local_id)
-   local      booltype    - Whether the node is available on the local process
-   model      literaltype - The model type the node was created from
-   state      integertype - The state of the node (see the help on elementstates
-                            for details)
-   thread     integertype - The id of the thread the node is assigned to (valid
-                            locally)
-   vp         integertype - The id of the virtual process the node is assigned
-                            to (valid globally)
+  Parameters:
+  frozen     booltype    - Whether the node is updated during simulation
+  global_id  integertype - The node ID of the node (cf. local_id)
+  local      booltype    - Whether the node is available on the local process
+  model      literaltype - The model type the node was created from
+  state      integertype - The state of the node (see the help on elementstates
+                           for details)
+  thread     integertype - The id of the thread the node is assigned to (valid
+                           locally)
+  vp         integertype - The id of the virtual process the node is assigned
+                           to (valid globally)
 
-   SeeAlso: GetStatus, SetStatus, elementstates
- */
+  SeeAlso: GetStatus, SetStatus, elementstates
+*/
 
 class Node
 {
@@ -127,6 +127,25 @@ public:
   {
     return nullptr;
   }
+
+  virtual void
+  reset_node()
+  {
+  }
+
+
+  virtual std::shared_ptr< VectorizedNode >
+  get_container()
+  {
+    return 0;
+  }
+
+
+  virtual void
+  clone_container( std::shared_ptr< VectorizedNode > )
+  {
+  }
+
 
   /**
    * Returns true if the node has proxies on remote threads. This is
@@ -196,7 +215,27 @@ public:
    *
    * The smallest valid node ID is 1.
    */
-  index get_node_id() const;
+  virtual index get_node_id() const;
+
+  virtual index
+  get_node_local_id() const
+  {
+    return get_node_id();
+  }
+
+  virtual std::map< std::string, const std::vector< double >& >
+  get_recordables() const
+  {
+
+    return std::map< std::string, const std::vector< double >& >();
+  };
+
+  virtual double
+  get_state_element( size_t ) const
+  {
+    assert( false );
+    return -1;
+  }
 
   /**
    * Return lockpointer to the NodeCollection that created this node.
@@ -224,7 +263,7 @@ public:
   /**
    * Returns true if node is frozen, i.e., shall not be updated.
    */
-  bool is_frozen() const;
+  virtual bool is_frozen() const;
 
   /**
    * Returns true if the node uses the waveform relaxation method
@@ -245,7 +284,7 @@ public:
    * called on a given node, otherwise it returns immediately. init() calls
    * virtual functions init_state_() and init_buffers_().
    */
-  void init();
+  virtual void init();
 
   /**
    * Re-calculate dependent parameters of the node.
@@ -350,6 +389,19 @@ public:
    * @ingroup status_interface
    */
   virtual void get_status( DictionaryDatum& ) const = 0;
+
+  virtual void
+  set_container( std::shared_ptr< VectorizedNode > )
+  {
+  }
+
+
+  virtual Node*
+  get_wrapper( index = -1 )
+  {
+    return this;
+  }
+
 
 public:
   /**
@@ -788,7 +840,7 @@ public:
    * Forwards to set_status() of the derived class.
    * @internal
    */
-  void set_status_base( const DictionaryDatum& );
+  virtual void set_status_base( const DictionaryDatum& );
 
   /**
    * Returns true if node is model prototype.
@@ -827,7 +879,7 @@ public:
   DeprecationWarning deprecation_warning;
 
 private:
-  void set_node_id_( index ); //!< Set global node id
+  virtual void set_node_id_( index ); //!< Set global node id
 
   void set_nc_( NodeCollectionPTR );
 
@@ -863,7 +915,7 @@ protected:
   Model& get_model_() const;
 
   //! Mark node as frozen.
-  void
+  virtual void
   set_frozen_( bool frozen )
   {
     frozen_ = frozen;
@@ -914,11 +966,13 @@ Node::is_frozen() const
   return frozen_;
 }
 
+
 inline bool
 Node::node_uses_wfr() const
 {
   return node_uses_wfr_;
 }
+
 
 inline bool
 Node::supports_urbanczik_archiving() const
@@ -968,11 +1022,6 @@ Node::get_element_type() const
   return names::neuron;
 }
 
-inline index
-Node::get_node_id() const
-{
-  return node_id_;
-}
 
 inline NodeCollectionPTR
 Node::get_nc() const
@@ -1057,5 +1106,4 @@ Node::get_thread_lid() const
 }
 
 } // namespace
-
 #endif

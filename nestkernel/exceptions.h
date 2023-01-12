@@ -414,6 +414,23 @@ public:
   std::string message() const override;
 };
 
+class VectorizedExpected : public KernelException
+{
+
+public:
+  VectorizedExpected()
+    : KernelException( "VectorizedExpected" )
+  {
+  }
+
+  ~VectorizedExpected() throw()
+  {
+  }
+
+  std::string message() const;
+};
+
+
 /**
  * To be thrown if a connection is not possible.
  * This exception is e.g. thrown if a connection was attempted with

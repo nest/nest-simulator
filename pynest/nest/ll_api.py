@@ -278,6 +278,7 @@ class KernelAttribute:
     """
     Descriptor that dispatches attribute access to the nest kernel.
     """
+
     def __init__(self, typehint, description, readonly=False, default=None, localonly=False):
         self._readonly = readonly
         self._localonly = localonly

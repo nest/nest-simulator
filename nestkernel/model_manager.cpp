@@ -92,7 +92,9 @@ ModelManager::initialize()
     // set the number of threads for the number of sli pools
     builtin_node_models_[ i ]->set_threads();
     std::string name = builtin_node_models_[ i ]->get_name();
-    node_models_.push_back( builtin_node_models_[ i ]->clone( name ) );
+    Model* cloned_model = builtin_node_models_[ i ]->clone( name );
+    cloned_model->set_uses_vecotrs( builtin_node_models_[ i ]->get_uses_vectors() );
+    node_models_.push_back( cloned_model );
     modeldict_->insert( name, i );
   }
 
@@ -222,10 +224,13 @@ ModelManager::register_node_model_( Model* model )
 
   model->set_model_id( id );
   model->set_type_id( id );
+
   builtin_node_models_.push_back( model );
 
   Model* cloned_model = model->clone( name );
   cloned_model->set_model_id( id );
+  cloned_model->set_uses_vecotrs( model->get_uses_vectors() );
+
   node_models_.push_back( cloned_model );
 
   modeldict_->insert( name, id );
@@ -246,6 +251,12 @@ ModelManager::copy_node_model_( index old_id, Name new_name )
   old_model->deprecation_warning( "CopyModel" );
 
   Model* new_model = old_model->clone( new_name.toString() );
+  if ( old_model->get_uses_vectors() )
+  {
+    new_model->clone_container( old_model->get_container() );
+    new_model->set_uses_vecotrs( true );
+  }
+
   const index new_id = node_models_.size();
   new_model->set_model_id( new_id );
 

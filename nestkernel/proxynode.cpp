@@ -85,6 +85,17 @@ proxynode::sends_signal() const
   return kernel().model_manager.get_node_model( get_model_id() )->sends_signal();
 }
 
+std::shared_ptr< VectorizedNode >
+proxynode::get_container()
+{
+  return kernel().model_manager.get_node_model( get_model_id() )->get_container();
+}
+void
+proxynode::clone_container( std::shared_ptr< VectorizedNode > container )
+{
+  kernel().model_manager.get_node_model( get_model_id() )->clone_container( container );
+}
+
 void
 proxynode::get_status( DictionaryDatum& d ) const
 {

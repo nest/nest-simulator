@@ -42,9 +42,19 @@ Model::Model( const std::string& name )
   : name_( name )
   , type_id_( 0 )
   , memory_()
+  , uses_vectors( false )
+  , thread_to_node( kernel().vp_manager.get_num_threads() )
 {
 }
 
+Model::Model( const Model& m )
+  : name_( m.name_ )
+  , type_id_( m.type_id_ )
+  , memory_( m.memory_ )
+  , uses_vectors( m.uses_vectors )
+  , thread_to_node( kernel().vp_manager.get_num_threads() )
+{
+}
 void
 Model::set_threads()
 {

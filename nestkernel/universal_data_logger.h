@@ -117,6 +117,8 @@ public:
    */
   UniversalDataLogger( HostNode& );
 
+  UniversalDataLogger( UniversalDataLogger&& ) = default;
+
   /**
    * Notify data logger that the node is recorded from.
    *
@@ -375,6 +377,9 @@ public:
    */
   DynamicUniversalDataLogger( HostNode& );
 
+  DynamicUniversalDataLogger( DynamicUniversalDataLogger&& ) = default;
+
+
   /**
    * Notify data logger that the node is recorded from.
    *
@@ -400,6 +405,7 @@ public:
    * @param DataLoggingRequest Request to be handled.
    */
   void handle( const DataLoggingRequest& );
+
 
   /**
    * Record data using predefined access functions.

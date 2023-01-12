@@ -35,6 +35,7 @@
 #include "nest_types.h"
 #include "node_collection.h"
 #include "sparse_node_array.h"
+#include "vectorized_node.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -266,6 +267,9 @@ private:
    */
   void add_neurons_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr );
 
+  void add_vectorized_neurons_( Model* model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr );
+
+
   /**
    * Add device nodes.
    *
@@ -290,11 +294,14 @@ private:
   void add_music_nodes_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr );
 
 private:
+  std::shared_ptr< nest::VectorizedNode > get_container( Model* model, size_t tid );
+
   /**
    * The network as sparse array of local nodes. One entry per thread,
    * which contains only the thread-local nodes.
    */
   std::vector< SparseNodeArray > local_nodes_;
+  std::vector< std::vector< std::shared_ptr< VectorizedNode > > > vectorized_nodes;
 
   std::vector< std::vector< Node* > > wfr_nodes_vec_; //!< Nodelists for unfrozen nodes that
                                                       //!< use the waveform relaxation method

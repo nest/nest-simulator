@@ -680,23 +680,12 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite&
   else
   {
     // The NodeCollection is not sliced
+    // Update start and stop positions.
+    const const_iterator start_it = composite.begin() + start;
+    start_it.get_current_part_offset( start_part_, start_offset_ );
 
-    // Iterate through the composite to find where to start and stop.
-    // TODO: There is some room for improvement here. Can go through parts instead, similar to in find().
-    size_t global_index = 0;
-    for ( const_iterator it = composite.begin(); it < composite.end(); ++it )
-    {
-      if ( global_index == start )
-      {
-        it.get_current_part_offset( start_part_, start_offset_ );
-      }
-      else if ( global_index == end )
-      {
-        it.get_current_part_offset( end_part_, end_offset_ );
-        break;
-      }
-      ++global_index;
-    }
+    const const_iterator end_it = composite.begin() + end;
+    end_it.get_current_part_offset( end_part_, end_offset_ );
   }
 }
 

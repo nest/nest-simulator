@@ -153,9 +153,10 @@ nest_process_target_bits_split()
 nest_process_version_suffix()
 nest_process_userdoc()
 nest_process_devdoc()
-# IMPORTANT: Please try to keep these two function calls to be the last functions to call in this Process step.
-#            Adding wrong keywords to the "-Dwith-optmize" flag might cause wrong errors, and therefore to avoid that
-#            the step for processing the optmization phase and the debug phase must be the last steps.
+
+# These two function calls must come last, as to prevent unwanted interactions of the newly set flags
+# with detection/compilation operations carried out in earlier functions. The optimize/debug flags set
+# using these functions should only apply to the compilation of NEST.
 nest_process_with_optimize()
 nest_process_with_debug()
 

@@ -318,7 +318,7 @@ public:
    * @param node_id node ID to see if exists in the NodeCollection
    * @return true if the NodeCollection contains the node ID, false otherwise
    */
-  virtual bool contains( index node_id ) const = 0;
+  virtual bool contains( const index node_id ) const = 0;
 
   /**
    * Slices the NodeCollection to the boundaries, with an optional step
@@ -398,7 +398,7 @@ private:
    *
    * @param model_id Expected model id.
    */
-  void assert_consistent_model_ids_( index ) const;
+  void assert_consistent_model_ids_( const index ) const;
 
 public:
   using const_iterator = nc_const_iterator;
@@ -475,7 +475,7 @@ public:
   //! Returns the step between node IDs in the primitive.
   size_t step() const override;
 
-  bool contains( index node_id ) const override;
+  bool contains( const index node_id ) const override;
   NodeCollectionPTR slice( size_t start, size_t end, size_t step = 1 ) const override;
 
   void set_metadata( NodeCollectionMetadataPTR ) override;
@@ -498,7 +498,7 @@ public:
    * the last element in this primitive, and they both have the same model ID.
    * Otherwise false.
    */
-  bool is_contiguous_ascending( NodeCollectionPrimitive& other ) const;
+  bool is_contiguous_ascending( const NodeCollectionPrimitive& other ) const;
 
   /**
    * Checks if node IDs of another primitive is overlapping node IDs of this primitive
@@ -613,7 +613,7 @@ public:
   //! Returns the step between node IDs in the composite.
   size_t step() const override;
 
-  bool contains( index node_id ) const override;
+  bool contains( const index node_id ) const override;
   NodeCollectionPTR slice( size_t start, size_t end, size_t step = 1 ) const override;
 
   void set_metadata( NodeCollectionMetadataPTR ) override;
@@ -750,7 +750,7 @@ NodeCollectionPrimitive::step() const
 }
 
 inline bool
-NodeCollectionPrimitive::contains( index node_id ) const
+NodeCollectionPrimitive::contains( const index node_id ) const
 {
   return first_ <= node_id and node_id <= last_;
 }

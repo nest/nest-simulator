@@ -292,7 +292,7 @@ NodeCollection::create_( const std::vector< index >& node_ids )
     }
     old_node_id = *node_id;
 
-    index next_model = kernel().modelrange_manager.get_model_id( *node_id );
+    const index next_model = kernel().modelrange_manager.get_model_id( *node_id );
 
     if ( next_model == current_model and *node_id == ( current_last + 1 ) )
     {
@@ -466,10 +466,10 @@ NodeCollectionPrimitive::operator+( NodeCollectionPTR rhs ) const
 NodeCollectionPrimitive::const_iterator
 NodeCollectionPrimitive::local_begin( NodeCollectionPTR cp ) const
 {
-  size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
-  size_t current_vp = kernel().vp_manager.thread_to_vp( kernel().vp_manager.get_thread_id() );
-  size_t vp_first_node = kernel().vp_manager.node_id_to_vp( first_ );
-  size_t offset = ( current_vp - vp_first_node + num_vps ) % num_vps;
+  const size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
+  const size_t current_vp = kernel().vp_manager.thread_to_vp( kernel().vp_manager.get_thread_id() );
+  const size_t vp_first_node = kernel().vp_manager.node_id_to_vp( first_ );
+  const size_t offset = ( current_vp - vp_first_node + num_vps ) % num_vps;
 
   if ( offset >= size() ) // Too few node IDs to be shared among all vps.
   {
@@ -484,10 +484,12 @@ NodeCollectionPrimitive::local_begin( NodeCollectionPTR cp ) const
 NodeCollectionPrimitive::const_iterator
 NodeCollectionPrimitive::MPI_local_begin( NodeCollectionPTR cp ) const
 {
-  size_t num_processes = kernel().mpi_manager.get_num_processes();
-  size_t rank = kernel().mpi_manager.get_rank();
-  size_t rank_first_node = kernel().mpi_manager.get_process_id_of_vp( kernel().vp_manager.node_id_to_vp( first_ ) );
-  size_t offset = ( rank - rank_first_node + num_processes ) % num_processes;
+  const size_t num_processes = kernel().mpi_manager.get_num_processes();
+  const size_t rank = kernel().mpi_manager.get_rank();
+  const size_t rank_first_node =
+    kernel().mpi_manager.get_process_id_of_vp( kernel().vp_manager.node_id_to_vp( first_ ) );
+  const size_t offset = ( rank - rank_first_node + num_processes ) % num_processes;
+
   if ( offset > size() ) // Too few node IDs to be shared among all MPI processes.
   {
     return const_iterator( cp, *this, size() );
@@ -550,7 +552,7 @@ NodeCollectionPrimitive::print_me( std::ostream& out ) const
 void
 NodeCollectionPrimitive::print_primitive( std::ostream& out ) const
 {
-  std::string model =
+  const std::string model =
     model_id_ != invalid_index ? kernel().model_manager.get_node_model( model_id_ )->get_name() : "none";
 
   out << "model=" << model << ", size=" << size();
@@ -566,7 +568,7 @@ NodeCollectionPrimitive::print_primitive( std::ostream& out ) const
 }
 
 bool
-NodeCollectionPrimitive::is_contiguous_ascending( NodeCollectionPrimitive& other ) const
+NodeCollectionPrimitive::is_contiguous_ascending( const NodeCollectionPrimitive& other ) const
 {
   return ( ( last_ + 1 ) == other.first_ ) and ( model_id_ == other.model_id_ );
 }
@@ -578,7 +580,7 @@ NodeCollectionPrimitive::overlapping( const NodeCollectionPrimitive& rhs ) const
 }
 
 void
-NodeCollectionPrimitive::assert_consistent_model_ids_( index expected_model_id ) const
+NodeCollectionPrimitive::assert_consistent_model_ids_( const index expected_model_id ) const
 {
   for ( index node_id = first_; node_id <= last_; ++node_id )
   {
@@ -672,7 +674,7 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite&
       throw BadProperty( "Cannot slice a sliced composite NodeCollection." );
     }
     // we have a single single node ID, must just find where it is.
-    const_iterator it = composite.begin() + start;
+    const const_iterator it = composite.begin() + start;
     it.get_current_part_offset( start_part_, start_offset_ );
     end_part_ = start_part_;
     end_offset_ = start_offset_ + 1;
@@ -876,7 +878,7 @@ NodeCollectionComposite::local_begin_( const NodeCollectionPTR cp,
   const size_t current_vp_element,
   const size_t vp_element_first_node ) const
 {
-  size_t offset = ( current_vp_element - vp_element_first_node ) % num_vp_elements;
+  const size_t offset = ( current_vp_element - vp_element_first_node ) % num_vp_elements;
 
   if ( ( current_vp_element - vp_element_first_node ) % step_ != 0 )
   { // There are no local nodes in the NodeCollection.
@@ -926,7 +928,7 @@ NodeCollectionComposite::slice( size_t start, size_t end, size_t step ) const
       "InvalidNodeCollection: note that ResetKernel invalidates all previously created NodeCollections." );
   }
 
-  auto new_composite = NodeCollectionComposite( *this, start, end, step );
+  const auto new_composite = NodeCollectionComposite( *this, start, end, step );
 
   if ( step == 1 and new_composite.start_part_ == new_composite.end_part_ )
   {
@@ -965,7 +967,7 @@ NodeCollectionComposite::merge_parts_( std::vector< NodeCollectionPrimitive >& p
 }
 
 bool
-NodeCollectionComposite::contains( index node_id ) const
+NodeCollectionComposite::contains( const index node_id ) const
 {
   return find( node_id ) != -1;
 }

@@ -24,7 +24,6 @@ Classes defining the different PyNEST types
 """
 
 from ..ll_api import *
-from .. import pynestkernel as kernel
 from .. import nestkernel_api as nestkernel
 from .hl_api_helper import (
     get_parameters,

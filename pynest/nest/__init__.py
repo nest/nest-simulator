@@ -29,8 +29,8 @@ r"""PyNEST - Python interface for the NEST Simulator
 
 * ``nest.synapse_models`` shows all available synapse models.
 
-* ``nest.help("model_name") displays help for the given model, e.g.,
-  ``nest.help("iaf_psc_exp")``
+* To get details on the model equations and parameters,
+  please check out our model documentation at https://nest-simulator.readthedocs.io/en/stable/models/index.html.
 
 * To get help on functions in the ``nest`` package, use Python's
   ``help()`` function or IPython's ``?``, e.g.
@@ -70,7 +70,6 @@ class NestModule(types.ModuleType):
     """
 
     from . import ll_api                             # noqa
-    from . import pynestkernel as kernel             # noqa
     from . import random                             # noqa
     from . import math                               # noqa
     from . import spatial_distributions              # noqa
@@ -510,7 +509,7 @@ def _lazy_module_property(module_name, optional=False, optional_hint=""):
 _module = NestModule(__name__)
 # Set the nest module object as the return value of `import nest` using sys
 sys.modules[__name__] = _module
-# Some compiled/binary components (`pynestkernel.pyx` for example) of NEST
+# Some compiled/binary components (`nestkernel_api.pyx` for example) of NEST
 # obtain a reference to this file's original module object instead of what's in
 # `sys.modules`. For these edge cases we make available all attributes of the
 # nest module instance to this file's module object.

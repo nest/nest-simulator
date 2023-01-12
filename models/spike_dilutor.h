@@ -137,7 +137,7 @@ private:
     Parameters_& operator=( const Parameters_& ) = default;
 
     void get( dictionary& ) const;             //!< Store current values in dictionary
-    void set( const dictionary&, Node* node ); //!< Set values from dicitonary
+    void set( const dictionary&, Node* node ); //!< Set values from dictionary
   };
 
   struct Buffers_

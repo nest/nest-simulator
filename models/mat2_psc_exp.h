@@ -240,7 +240,7 @@ private:
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const dictionary&, Node* node ); //!< Set values from dicitonary
+    double set( const dictionary&, Node* node );
   };
 
   // ----------------------------------------------------------------

@@ -42,6 +42,28 @@ import numpy
 
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 
+
+
+from libc.stdlib cimport malloc, free
+
+
+def init(args):
+    cdef int argc = len(args)
+
+    cdef char** c_argv = <char**>malloc(sizeof(char*) * argc)
+    try:
+        for idx, s in enumerate([pystr_to_string(x) for x in args]):
+            c_argv[idx] = s
+        init_nest(&argc, &c_argv)
+    finally:
+        free(c_argv)
+
+    
+#
+#    cdef vector[char*] argv = pylist_to_stringvec(pyargs)
+##    cdef const char* argv = argv_sv[0].c_str()
+#    init_nest(&argc, &argv)
+
 cdef class NodeCollectionObject:
 
     cdef NodeCollectionPTR thisptr

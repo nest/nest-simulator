@@ -38,7 +38,6 @@ import pydoc
 
 from string import Template
 
-from .. import pynestkernel as kernel
 from .. import nestkernel_api as nestkernel
 import nest
 
@@ -50,7 +49,6 @@ __all__ = [
     'get_wrapped_text',
     'is_coercible_to_sli_array',
     'is_iterable',
-    'is_sequence_of_connections',
     'is_sequence_of_node_ids',
     'load_help',
     'model_deprecation_warning',
@@ -195,31 +193,6 @@ def is_coercible_to_sli_array(seq):
         return isinstance(seq, (tuple, list, range))
     else:
         return isinstance(seq, (tuple, list, xrange))
-
-
-def is_sequence_of_connections(seq):
-    """Checks whether low-level API accepts seq as a sequence of
-    connections.
-
-    Parameters
-    ----------
-    seq : object
-        Object to check
-
-    Returns
-    -------
-    bool:
-        True if object is an iterable of dictionaries or
-        subscriptables of CONN_LEN
-    """
-
-    try:
-        cnn = next(iter(seq))
-        return isinstance(cnn, dict) or len(cnn) == kernel.CONN_LEN
-    except TypeError:
-        pass
-
-    return False
 
 
 def is_sequence_of_node_ids(seq):

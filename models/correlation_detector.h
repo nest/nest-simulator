@@ -278,7 +278,7 @@ private:
     void get( dictionary& ) const; //!< Store current values in dictionary
 
     /**
-     * Set values from dicitonary.
+     * Set values from dictionary.
      * @returns true if the state needs to be reset after a change of
      *          binwidth or tau_max.
      */

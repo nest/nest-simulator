@@ -172,7 +172,7 @@ private:
     Parameters_(); //!< Sets default parameter values
 
     void get( dictionary& ) const;             //!< Store current values in dictionary
-    void set( const dictionary&, Node* node ); //!< Set values from dicitonary
+    void set( const dictionary&, Node* node ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------

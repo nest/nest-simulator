@@ -24,7 +24,6 @@ Functions for parallel computing
 """
 
 from ..ll_api import *
-from .. import pynestkernel as kernel
 from .. import nestkernel_api as nestkernel
 
 __all__ = [
@@ -85,9 +84,11 @@ def SetAcceptableLatency(port_name, latency):
         Latency in ms
     """
 
-    sps(kernel.SLILiteral(port_name))
-    sps(latency)
-    sr("SetAcceptableLatency")
+    # PYNEST-NG
+    # sps(kernel.SLILiteral(port_name))
+    # sps(latency)
+    # sr("SetAcceptableLatency")
+    pass
 
 
 @check_stack
@@ -102,9 +103,11 @@ def SetMaxBuffered(port_name, size):
         Buffer size
     """
 
-    sps(kernel.SLILiteral(port_name))
-    sps(size)
-    sr("SetMaxBuffered")
+    # PYNEST-NG
+    # sps(kernel.SLILiteral(port_name))
+    # sps(size)
+    # sr("SetMaxBuffered")
+    pass
 
 
 @check_stack
@@ -112,7 +115,9 @@ def SyncProcesses():
     """Synchronize all MPI processes.
     """
 
-    sr("SyncProcesses")
+    # PYNEST-NG
+    # sr("SyncProcesses")
+    pass
 
 
 @check_stack
@@ -123,5 +128,8 @@ def GetLocalVPs():
     # Compute local VPs as range based on round-robin logic in
     # VPManager::get_vp(). mpitest_get_local_vps ensures this is in
     # sync with the kernel.
-    n_vp = sli_func("GetKernelStatus /total_num_virtual_procs get")
+    
+    # PYNEST-NG
+    # n_vp = sli_func("GetKernelStatus /total_num_virtual_procs get")
+    n_vp = 1
     return range(Rank(), n_vp, NumProcesses())

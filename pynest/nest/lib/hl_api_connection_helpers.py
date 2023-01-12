@@ -28,7 +28,6 @@ import copy
 import numpy as np
 
 from ..ll_api import *
-from .. import pynestkernel as kernel
 from .. import nestkernel_api as nestkernel
 from .hl_api_types import CollocatedSynapses, Mask, NodeCollection, Parameter
 from .hl_api_exceptions import NESTErrors
@@ -75,7 +74,7 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, use_connect_ar
     rule = conn_spec['rule']
     if isinstance(syn_spec, dict):
         if "synapse_model" in syn_spec and not isinstance(syn_spec["synapse_model"], str):
-            raise kernel.NESTError("'synapse_model' must be a string")
+            raise NESTErrors.NESTError("'synapse_model' must be a string")
         for key, value in syn_spec.items():
             # if value is a list, it is converted to a numpy array
             if isinstance(value, (list, tuple)):
@@ -86,30 +85,30 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, use_connect_ar
                     if rule == 'one_to_one':
                         if value.shape[0] != prelength:
                             if use_connect_arrays:
-                                raise kernel.NESTError(
+                                raise NESTErrors.NESTError(
                                     "'{}' has to be an array of dimension {}.".format(key, prelength))
                             else:
-                                raise kernel.NESTError(
+                                raise NESTErrors.NESTError(
                                     "'{}' has to be an array of dimension {}, a scalar or a dictionary.".format(
                                         key, prelength))
                         else:
                             syn_spec[key] = value
                     elif rule == 'fixed_total_number':
                         if ('N' in conn_spec and value.shape[0] != conn_spec['N']):
-                            raise kernel.NESTError(
+                            raise NESTErrors.NESTError(
                                 "'{}' has to be an array of dimension {}, a scalar or a dictionary".format(
                                     key, conn_spec['N']))
                         else:
                             syn_spec[key] = value
                     else:
-                        raise kernel.NESTError(
+                        raise NESTErrors.NESTError(
                             "'{}' has the wrong type. One-dimensional parameter arrays can only be used in "
                             "conjunction with rule 'one_to_one' or 'fixed_total_number'.".format(key))
 
                 elif len(value.shape) == 2:
                     if rule == 'all_to_all':
                         if value.shape[0] != postlength or value.shape[1] != prelength:
-                            raise kernel.NESTError(
+                            raise NESTErrors.NESTError(
                                 "'{}' has to be an array of dimension {}x{} (n_target x n_sources), a scalar "
                                 "or a dictionary.".format(key, postlength, prelength))
                         else:
@@ -118,7 +117,7 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, use_connect_ar
                         indegree = conn_spec['indegree']
                         if value.shape[0] != postlength or \
                                 value.shape[1] != indegree:
-                            raise kernel.NESTError(
+                            raise NESTErrors.NESTError(
                                 "'{}' has to be an array of dimension {}x{} (n_target x indegree), a scalar "
                                 "or a dictionary.".format(key, postlength, indegree))
                         else:
@@ -127,13 +126,13 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, use_connect_ar
                         outdegree = conn_spec['outdegree']
                         if value.shape[0] != prelength or \
                                 value.shape[1] != outdegree:
-                            raise kernel.NESTError(
+                            raise NESTErrors.NESTError(
                                 "'{}' has to be an array of dimension {}x{} (n_sources x outdegree), a scalar "
                                 "or a dictionary.".format(key, prelength, outdegree))
                         else:
                             syn_spec[key] = value.flatten()
                     else:
-                        raise kernel.NESTError(
+                        raise NESTErrors.NESTError(
                             "'{}' has the wrong type. Two-dimensional parameter arrays can only be used in "
                             "conjunction with rules 'all_to_all', 'fixed_indegree' or fixed_outdegree'.".format(key))
 
@@ -196,7 +195,7 @@ def _process_spatial_projections(conn_spec, syn_spec):
             if 'use_on_source' in projections:
                 projections.pop('use_on_source')
     else:
-        raise kernel.NESTError("When using kernel or mask, the only possible connection rules are "
+        raise NESTErrors.NESTError("When using kernel or mask, the only possible connection rules are "
                                "'pairwise_bernoulli', 'fixed_indegree', or 'fixed_outdegree'")
     projections.pop('rule')
     return projections

@@ -155,7 +155,7 @@ public:
     if ( rprt != 0 )
     {
       throw IllegalConnection(
-        "Only rport==0 allowed for HPC synpases. Use normal synapse models "
+        "Only rport==0 allowed for HPC synapses. Use normal synapse models "
         "instead. See Kunkel et al, Front Neuroinform 8:78 (2014), Sec "
         "3.3.2." );
     }

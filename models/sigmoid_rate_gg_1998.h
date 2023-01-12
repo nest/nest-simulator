@@ -139,7 +139,7 @@ public:
   }
 
   void get( dictionary& ) const;             //!< Store current values in dictionary
-  void set( const dictionary&, Node* node ); //!< Set values from dicitonary
+  void set( const dictionary&, Node* node ); //!< Set values from dictionary
 
   double input( double h );               // non-linearity on input
   double mult_coupling_ex( double rate ); // factor of multiplicative coupling

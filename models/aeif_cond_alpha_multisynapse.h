@@ -321,7 +321,7 @@ private:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
     double step_;            //!< simulation step size in ms

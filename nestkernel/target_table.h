@@ -61,7 +61,7 @@ private:
    *   - first dim: threads
    *   - second dim: local neurons
    *   - third dim: synapse types
-   *   - forth dim: MPI send buffer positions
+   *   - fourth dim: MPI send buffer positions
    */
   std::vector< std::vector< std::vector< std::vector< size_t > > > > secondary_send_buffer_pos_;
 
@@ -87,8 +87,8 @@ public:
   void add_target( const thread tid, const thread target_rank, const TargetData& target_data );
 
   /**
-   * Returns all targets of a neuron. Used to fill
-   * EventDeliveryManager::spike_register_.
+   * Returns all targets of a neuron. Used for filling
+   * EventDeliveryManager::emitted_spikes_register_.
    */
   const std::vector< Target >& get_targets( const thread tid, const index lid ) const;
 

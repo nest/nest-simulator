@@ -174,7 +174,7 @@ private:
     void get( dictionary& ) const;
 
     /**
-     * Set values from dicitonary.
+     * Set values from dictionary.
      */
     void set( const dictionary&, State_&, Node* );
   };

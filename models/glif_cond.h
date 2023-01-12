@@ -340,7 +340,7 @@ private:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // IntergrationStep_ should be reset with the neuron on ResetNetwork,
+    // IntegrationStep_ should be reset with the neuron on ResetNetwork,
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.

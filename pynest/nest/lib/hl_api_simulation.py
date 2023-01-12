@@ -26,7 +26,6 @@ Functions for simulation control
 from contextlib import contextmanager
 import warnings
 
-from .. import pynestkernel as kernel
 from .. import nestkernel_api as nestkernel
 
 from ..ll_api import *

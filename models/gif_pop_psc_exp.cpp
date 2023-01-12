@@ -55,7 +55,7 @@ template <>
 void
 RecordablesMap< gif_pop_psc_exp >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &gif_pop_psc_exp::get_V_m_ );
   insert_( names::n_events, &gif_pop_psc_exp::get_n_events_ );
   insert_( names::E_sfa, &gif_pop_psc_exp::get_E_sfa_ );

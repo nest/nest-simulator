@@ -48,7 +48,6 @@ except ImportError:
 # yet other libraries.
 sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
 
-from . import pynestkernel as kernel        # noqa
 from . import nestkernel_api as nestkernel  # noqa
 
 __all__ = [
@@ -57,13 +56,6 @@ __all__ = [
     # 'take_array_index',
     'KernelAttribute',
 ]
-
-
-engine = kernel.NESTEngine()
-
-# take_array_index = engine.take_array_index
-# connect_arrays = engine.connect_arrays
-
 
 initialized = False
 
@@ -88,7 +80,8 @@ def set_communicator(comm):
         raise _kernel.NESTError("set_communicator: "
                                 "mpi4py not loaded.")
 
-    engine.set_communicator(comm)
+    # TODO-PYNEST-NG
+    # engine.set_communicator(comm)
 
 
 class KernelAttribute:
@@ -177,33 +170,27 @@ def init(argv):
         nest_argv.append("--debug")
 
     path = os.path.dirname(__file__)
-    initialized = engine.init(nest_argv)
+    nestkernel.init(nest_argv)
+    
+    if not quiet:
+        print('NEST initialized successfully!')
 
-    if initialized:
-        if not quiet:
-            print('NEST initialized successfully!')  # TODO-PYNEST-NG: Implement welcome in Python
-            # engine.run("pywelcome")
-
-        # Dirty hack to get tab-completion for models in IPython.
-        try:
-            __IPYTHON__
-        except NameError:
-            pass
-        else:
-            from .lib.hl_api_simulation import GetKernelStatus  # noqa
-            keyword_lists = (
-                "connection_rules",
-                "node_models",
-                "recording_backends",
-                "rng_types",
-                "stimulation_backends",
-                "synapse_models",
-            )
-            for kwl in keyword_lists:
-                keyword.kwlist += GetKernelStatus(kwl)
-
+    # Dirty hack to get tab-completion for models in IPython.
+    try:
+        __IPYTHON__
+    except NameError:
+        pass
     else:
-        raise kernel.NESTErrors.PyNESTError("Initialization of NEST failed.")
-
+        from .lib.hl_api_simulation import GetKernelStatus  # noqa
+        keyword_lists = (
+            "connection_rules",
+            "node_models",
+            "recording_backends",
+            "rng_types",
+            "stimulation_backends",
+            "synapse_models",
+        )
+        for kwl in keyword_lists:
+            keyword.kwlist += GetKernelStatus(kwl)
 
 init(sys.argv)

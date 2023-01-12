@@ -363,7 +363,8 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( index first, index last )
 
   // find the model_id
   const auto first_model_id = kernel().modelrange_manager.get_model_id( first );
-  for ( index node_id = ++first; node_id <= last; ++node_id )
+  const auto init_index = first + 1;
+  for ( index node_id = init_index; node_id <= last; ++node_id )
   {
     const auto model_id = kernel().modelrange_manager.get_model_id( node_id );
     if ( model_id != first_model_id )
@@ -389,7 +390,7 @@ NodeCollectionPrimitive::to_array() const
 {
   ArrayDatum node_ids;
   node_ids.reserve( size() );
-  for ( const_iterator it = begin(); it < end(); ++it )
+  for ( auto it = begin(); it < end(); ++it )
   {
     node_ids.push_back( ( *it ).node_id );
   }

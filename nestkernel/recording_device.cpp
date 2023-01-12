@@ -109,7 +109,8 @@ nest::RecordingDevice::State_::get( dictionary& d ) const
 void
 nest::RecordingDevice::State_::set( const dictionary& d )
 {
-  size_t n_events = 0;
+  long n_events = 0;
+
   if ( d.update_value( names::n_events, n_events ) )
   {
     if ( n_events != 0 )

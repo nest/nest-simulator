@@ -22,6 +22,7 @@
 
 #include <algorithm>
 #include <boost/any.hpp>
+#include <boost/core/demangle.hpp>
 #include <iomanip>
 #include <iostream>
 #include <map>
@@ -59,7 +60,7 @@ operator<<( std::ostream& os, const std::vector< T >& vec )
 std::string
 debug_type( const boost::any& operand )
 {
-  return operand.type().name();
+  return boost::core::demangle( operand.type().name() );
 }
 
 std::string
@@ -312,6 +313,19 @@ value_equal( const boost::any first, const boost::any second )
       return false;
     }
   }
+  else if ( is_type< std::vector< size_t > >( first ) )
+  {
+    if ( not is_type< std::vector< size_t > >( second ) )
+    {
+      return false;
+    }
+    const auto this_value = boost::any_cast< std::vector< size_t > >( first );
+    const auto other_value = boost::any_cast< std::vector< size_t > >( second );
+    if ( this_value != other_value )
+    {
+      return false;
+    }
+  }
   else if ( is_type< dictionary >( first ) )
   {
     if ( not is_type< dictionary >( second ) )
@@ -342,6 +356,9 @@ value_equal( const boost::any first, const boost::any second )
   {
     // TODO-PYNEST-NG: raise error
     assert( false );
+    std::string msg = std::string( "Unsupported type in dictionary::value_equal(): " ) + debug_type( first );
+    std::cerr << msg << "\n";
+    throw nest::TypeMismatch( msg );
   }
   return true;
 }

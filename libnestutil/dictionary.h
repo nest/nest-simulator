@@ -93,7 +93,7 @@ private:
     catch ( const boost::bad_any_cast& )
     {
       std::string msg = std::string( "Failed to cast '" ) + key + "' from " + debug_type( value ) + " to type "
-        + std::string( typeid( T ).name() );
+        + std::string( boost::core::demangle( typeid( T ).name() ) );
       std::cerr << msg << "\n";
       throw nest::TypeMismatch( msg );
     }

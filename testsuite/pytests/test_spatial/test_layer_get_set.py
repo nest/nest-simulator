@@ -42,7 +42,7 @@ class GetSetTestCase(unittest.TestCase):
             edge_wrap=True
         ))
 
-        with self.assertRaises(nest.kernel.NESTErrors.DictError):
+        with self.assertRaises(nest.kernel.NESTError):
             layer.center = [1., 1.]
 
         layer.V_m = -50.
@@ -61,10 +61,10 @@ class GetSetTestCase(unittest.TestCase):
         network_size = layer.spatial['network_size']
         shape_y = layer.spatial['shape'][1]
 
-        self.assertEqual(center, (0.0, 0.0))
+        self.assertEqual(center, [0.0, 0.0])
         self.assertEqual(shape_x, 3)
         self.assertTrue(edge_wrap)
-        self.assertEqual(extent, (2., 2.))
+        self.assertEqual(extent, [2., 2.])
         self.assertEqual(network_size, 9)
         self.assertEqual(shape_y, 3)
 
@@ -75,10 +75,10 @@ class GetSetTestCase(unittest.TestCase):
         # Test get all values
         all_values = layer.spatial
         self.assertEqual(len(all_values.keys()), 5)
-        self.assertEqual(all_values['center'], (0.0, 0.0))
+        self.assertEqual(all_values['center'], [0.0, 0.0])
         self.assertEqual(all_values['shape'][0], 3)
         self.assertTrue(all_values['edge_wrap'])
-        self.assertEqual(all_values['extent'], (2., 2.))
+        self.assertEqual(all_values['extent'], [2., 2.])
         self.assertEqual(all_values['network_size'], 9)
         self.assertEqual(all_values['shape'][1], 3)
 
@@ -93,9 +93,9 @@ class GetSetTestCase(unittest.TestCase):
         columns = layer.spatial['shape'][0]
         all_values = layer.spatial
 
-        self.assertEqual(center, (0., 0.))
+        self.assertEqual(center, [0., 0.])
         self.assertEqual(columns, 1)
-        self.assertEqual(all_values['center'], (0.0, 0.0))
+        self.assertEqual(all_values['center'], [0.0, 0.0])
 
     def test_LayerGet(self):
         """Test get function on layer NodeCollection"""
@@ -111,7 +111,7 @@ class GetSetTestCase(unittest.TestCase):
         layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(
             shape=[3, 3], extent=[2., 2.], edge_wrap=True))
 
-        with self.assertRaises(nest.kernel.NESTErrors.DictError):
+        with self.assertRaises(nest.kernel.NESTError):
             layer.set({'center': [1., 1.]})
 
         layer.set(V_m=-50.)

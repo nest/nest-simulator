@@ -609,9 +609,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
       }
 
       // If the default value is an integer, the synapse parameter must also be an integer.
-      if ( boost::any_cast< bool >( syn_model_default_it->second ) ) // PyNEST-NG? Was:
-      // if ( dynamic_cast< IntegerDatum* >( syn_model_default_it->second.datum() ) )
-      // or:      if ( Name( param_keys ) == names::receptor_type )
+      if ( is_type< long >( syn_model_default_it->second ) )
       {
         param_pointers[ param_key ].second = true;
         param_dicts[ i ][ param_key ] = 0;

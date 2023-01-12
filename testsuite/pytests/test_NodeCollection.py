@@ -581,8 +581,8 @@ class TestNodeCollection(unittest.TestCase):
         self.assertEqual(get_conn_all.get('source'), get_conn.get('source'))
         self.assertEqual(get_conn_all.get('target'), get_conn.get('target'))
 
-        compare_source = (1, 1, 1, 3, 3, 3)
-        compare_target = (1, 2, 3, 1, 2, 3)
+        compare_source = [1, 1, 1, 3, 3, 3]
+        compare_target = [1, 2, 3, 1, 2, 3]
         self.assertEqual(get_conn_some.get('source'), compare_source)
         self.assertEqual(get_conn_some.get('target'), compare_target)
 
@@ -619,7 +619,7 @@ class TestNodeCollection(unittest.TestCase):
 
         conns = nest.GetConnections(nodes[1:9:3])
         source = conns.get('source')
-        source_ref = tuple([2] * 11 + [5] * 11 + [8] * 11)
+        source_ref = [2] * 11 + [5] * 11 + [8] * 11
 
         self.assertEqual(source_ref, source)
 
@@ -642,7 +642,7 @@ class TestNodeCollection(unittest.TestCase):
         wr = nest.Create('weight_recorder')
         pre = nest.Create("parrot_neuron", 5)
         post = nest.Create("parrot_neuron", 5)
-        
+
         # Senders and targets lists empty
         self.assertFalse(wr.senders)
         self.assertFalse(wr.targets)
@@ -654,7 +654,7 @@ class TestNodeCollection(unittest.TestCase):
         
         self.assertEqual(gss.tolist(), [3, 4])
         self.assertEqual(gst.tolist(), [10, 11])
-        
+
     def test_apply(self):
         """
         NodeCollection apply

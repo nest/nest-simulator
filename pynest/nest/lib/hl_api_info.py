@@ -176,8 +176,9 @@ def get_verbosity():
         The current verbosity level
     """
 
-    sr('verbosity')
-    return spp()
+    #sr('verbosity')
+    #return spp()
+    pass  # TODO-PYNEST-NG: See set_verbosity
 
 
 def set_verbosity(level):
@@ -206,6 +207,6 @@ def set_verbosity(level):
     # TODO-PYNEST-NG: There are no SLI messages anymore, so verbosity
     #                 is now irrelevant and should be replaced when a
     #                 replacement for message() exists.
-    
+
     # sr("{} setverbosity".format(level))
     pass

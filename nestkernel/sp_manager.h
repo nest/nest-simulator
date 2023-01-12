@@ -90,7 +90,7 @@ public:
    * \param connectivityParams connectivity Dictionary
    * \param synapseParams synapse parameters Dictionary
    */
-  void disconnect( NodeCollectionPTR, NodeCollectionPTR, dictionary&, dictionary& );
+  void disconnect( NodeCollectionPTR, NodeCollectionPTR, const dictionary&, const dictionary& );
 
   /**
    * Disconnect two nodes.

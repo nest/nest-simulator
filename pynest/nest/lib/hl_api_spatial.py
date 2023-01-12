@@ -26,7 +26,6 @@ Functions relating to spatial properties of nodes
 
 import numpy as np
 
-from .. import pynestkernel as kernel
 from .. import nestkernel_api as nestkernel
 from .hl_api_helper import is_iterable
 from .hl_api_connections import GetConnections
@@ -312,7 +311,7 @@ def Displacement(from_arg, to_arg):
             len(from_arg) == len(to_arg)):
         raise ValueError("to_arg and from_arg must have same size unless one have size 1.")
 
-    return sli_func('Displacement', from_arg, to_arg)
+    return nestkernel.llapi_displacement(from_arg, to_arg)
 
 
 def Distance(from_arg, to_arg):
@@ -380,7 +379,7 @@ def Distance(from_arg, to_arg):
             len(from_arg) == len(to_arg)):
         raise ValueError("to_arg and from_arg must have same size unless one have size 1.")
 
-    return sli_func('Distance', from_arg, to_arg)
+    return nestkernel.llapi_spatial_distance(from_arg, to_arg)
 
 
 def FindNearestElement(layer, locations, find_all=False):

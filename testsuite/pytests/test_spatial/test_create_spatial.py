@@ -46,7 +46,7 @@ class CreateLayer(unittest.TestCase):
                             positions=nest.spatial.grid(shape=[3, 4, 5]))
 
         self.assertEqual(len(layer), 60)
-        self.assertEqual(layer.spatial['shape'], (3, 4, 5))
+        self.assertEqual(layer.spatial['shape'], [3, 4, 5])
 
     def test_Create_grid_with_extent(self):
         """Test Create simple grid with extent."""
@@ -54,7 +54,7 @@ class CreateLayer(unittest.TestCase):
                             positions=nest.spatial.grid(shape=[3, 3],
                                                         extent=[2., 2.]))
 
-        self.assertEqual(layer.spatial['extent'], (2., 2.))
+        self.assertEqual(layer.spatial['extent'], [2., 2.])
 
     def test_Create_grid_with_nodeParams(self):
         """Test Create grid layer with node parameters."""
@@ -69,7 +69,7 @@ class CreateLayer(unittest.TestCase):
 
     def test_Create_free_layer(self):
         """Test Create simple free layer."""
-        pos = ((1., 1.), (2., 2.), (3., 3.))
+        pos = [[1., 1.], [2., 2.], [3., 3.]]
         layer = nest.Create('iaf_psc_alpha',
                             positions=nest.spatial.free(pos))
 
@@ -80,8 +80,8 @@ class CreateLayer(unittest.TestCase):
 
     def test_Create_free_layer_with_extent(self):
         """Test Create free layer with extent."""
-        pos = ((1., 1.), (2., 2.), (3., 3.))
-        extent = (5., 3.)
+        pos = [[1., 1.], [2., 2.], [3., 3.]]
+        extent = [5., 3.]
         layer = nest.Create('iaf_psc_alpha',
                             positions=nest.spatial.free(pos, extent=extent))
 

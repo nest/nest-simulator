@@ -101,11 +101,11 @@ class ThreadTestCase(unittest.TestCase):
 
             nest.Simulate(Simtime)
 
-            n_events_sr.append(sr.n_events)
-            n_events_vm.append(vm.n_events)
+            n_events_sr.append(sr.n_events[0])
+            n_events_vm.append(vm.n_events[0])
 
         ref_vm = N * (Simtime - 1)
-        ref_sr = n_events_sr[0]
+        ref_sr = n_events_sr
 
         # could be done more elegantly with any(), ravel(),
         # but we dont want to be dependent on numpy et al

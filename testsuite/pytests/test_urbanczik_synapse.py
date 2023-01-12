@@ -182,9 +182,9 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         read out devices
         '''
         # multimeter
-        rec = mm.events
-        t = rec['times']
-        V_w = rec['V_m.p']
+        rec = mm.events[0]
+        t = np.array(rec['times'])
+        V_w = np.array(rec['V_m.p'])
 
         # compute dendritic prediction of somatic membrane potential
         g_D = nrn_params['g_sp']
@@ -200,8 +200,8 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         times = data[0]['events']['times']
 
         # spike recorder
-        data = sr_soma.events
-        spike_times_soma = data['times']
+        data = sr_soma.events[0]
+        spike_times_soma = np.array(ndata['times'])
 
         # compute predicted rate
         phi_max = nrn_params['phi_max']

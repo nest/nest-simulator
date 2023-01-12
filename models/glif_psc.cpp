@@ -302,7 +302,7 @@ nest::glif_psc::State_::get( dictionary& d, const Parameters_& p ) const
 void
 nest::glif_psc::State_::set( const dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  if ( d.update_value( names::V_m, U_ ) )
+  if ( update_value_param( d, names::V_m, U_, node ) )
   {
     U_ -= p.E_L_;
   }
@@ -327,12 +327,12 @@ nest::glif_psc::State_::set( const dictionary& d, const Parameters_& p, double d
     }
   }
 
-  if ( d.update_value( names::threshold_spike, threshold_spike_ ) and not p.has_theta_spike_ )
+  if ( update_value_param( d, names::threshold_spike, threshold_spike_, node ) and not p.has_theta_spike_ )
   {
     throw BadProperty( "Threshold spike component is not supported or settable in the current model mechanisms." );
   }
 
-  if ( d.update_value( names::threshold_voltage, threshold_voltage_ ) and not p.has_theta_voltage_ )
+  if ( update_value_param( d, names::threshold_voltage, threshold_voltage_, node ) and not p.has_theta_voltage_ )
   {
     throw BadProperty( "Threshold voltage component is not supported or settable in the current model mechanisms." );
   }

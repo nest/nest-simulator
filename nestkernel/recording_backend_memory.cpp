@@ -288,7 +288,7 @@ nest::RecordingBackendMemory::DeviceData::set_status( const dictionary& d )
     time_in_steps_ = time_in_steps;
   }
 
-  size_t n_events = 1;
+  long n_events = 1;
   if ( d.update_value( names::n_events, n_events ) and n_events == 0 )
   {
     clear();

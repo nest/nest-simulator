@@ -29,7 +29,7 @@ import numpy as np
 class TestPgRateChange(unittest.TestCase):
 
     def _kstest_first_spiketimes(self, sr, start_t, expon_scale, resolution, p_value_lim):
-        events = sr.events
+        events = sr.events[0]
         senders = events['senders']
         times = events['times']
         min_times = [np.min(times[np.where(senders == s)])

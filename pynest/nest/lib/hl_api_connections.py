@@ -25,8 +25,6 @@ Functions for connection handling
 
 import numpy
 
-from ..ll_api import connect_arrays
-from .. import pynestkernel as kernel
 from .. import nestkernel_api as nestkernel
 
 from .hl_api_connection_helpers import (_process_input_nodes, _connect_layers_needed,
@@ -245,7 +243,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
             syn_param_keys = None
             syn_param_values = None
 
-        connect_arrays(pre, post, weights, delays, synapse_model, syn_param_keys, syn_param_values)
+        nestkernel.ll_api_connect_arrays(pre, post, weights, delays, synapse_model, syn_param_keys, syn_param_values)
         return
 
     if not isinstance(pre, NodeCollection):
@@ -332,28 +330,9 @@ def Disconnect(*args, conn_spec=None, syn_spec=None):
 
     """
 
-    if len(args) == 1:
-        synapsecollection = args[0]
-        if not isinstance(synapsecollection, SynapseCollection):
-            raise TypeError('Arguments must be either a SynapseCollection or two NodeCollections')
-        if conn_spec is not None or syn_spec is not None:
-            raise ValueError('When disconnecting with a SynapseCollection, conn_spec and syn_spec cannot be specified')
-        synapsecollection.disconnect()
-    elif len(args) == 2:
-        # Fill default values
-        conn_spec = 'one_to_one' if conn_spec is None else conn_spec
-        syn_spec = 'static_synapse' if syn_spec is None else syn_spec
-        if is_string(conn_spec):
-            conn_spec = {'rule': conn_spec}
-        if is_string(syn_spec):
-            syn_spec = {'synapse_model': syn_spec}
-        pre, post = args
-        if not isinstance(pre, NodeCollection) or not isinstance(post, NodeCollection):
-            raise TypeError('Arguments must be either a SynapseCollection or two NodeCollections')
-        sps(pre)
-        sps(post)
-        sps(conn_spec)
-        sps(syn_spec)
-        sr('Disconnect_g_g_D_D')
-    else:
-        raise TypeError('Arguments must be either a SynapseCollection or two NodeCollections')
+    if isinstance(conn_spec, str):
+        conn_spec = {'rule': conn_spec}
+    if isinstance(syn_spec, str):
+        syn_spec = {'synapse_model': syn_spec}
+
+    nestkernel.llapi_disconnect(pre._datum, post._datum, conn_spec, syn_spec)

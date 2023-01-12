@@ -261,8 +261,8 @@ SPManager::disconnect( const index snode_id, Node* target, thread target_thread,
 void
 SPManager::disconnect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
-  dictionary& conn_spec,
-  dictionary& syn_spec )
+  const dictionary& conn_spec,
+  const dictionary& syn_spec )
 {
   if ( kernel().connection_manager.connections_have_changed() )
   {

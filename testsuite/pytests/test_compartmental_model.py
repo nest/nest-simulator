@@ -755,7 +755,7 @@ class CompartmentsTestCase(unittest.TestCase):
         n_neat = nest.Create('cm_default')
 
         with self.assertRaisesRegex(nest.kernel.NESTError,
-                                    "UnknownCompartment in SLI function SetStatus_id: "
+                                    "in llapi_set_nc_status: "
                                     "Compartment 0 , the root, "
                                     "has already been instantiated."):
             n_neat.compartments = [
@@ -767,7 +767,7 @@ class CompartmentsTestCase(unittest.TestCase):
         n_neat = nest.Create('cm_default')
 
         with self.assertRaisesRegex(nest.kernel.NESTError,
-                                    "UnknownCompartment in SLI function SetStatus_id: "
+                                    "in llapi_set_nc_status: "
                                     "Compartment 15 does not exist in tree, "
                                     "but was specified as a parent."):
             n_neat.compartments = [
@@ -780,7 +780,7 @@ class CompartmentsTestCase(unittest.TestCase):
         n_neat.compartments = {"parent_idx": -1, "params": SP}
 
         with self.assertRaisesRegex(nest.kernel.NESTError,
-                                    "UnknownCompartment in SLI function SetStatus_id: "
+                                    "in llapi_set_nc_status: "
                                     "Compartment 12 does not exist in tree."):
             n_neat.receptors = {"comp_idx": 12, "receptor_type": "GABA"}
 
@@ -788,7 +788,7 @@ class CompartmentsTestCase(unittest.TestCase):
         n_neat = nest.Create('cm_default')
 
         with self.assertRaisesRegex(nest.kernel.NESTError,
-                                    "UnknownCompartment in SLI function Simulate_d: "
+                                    "in llapi_simulate: "
                                     "Compartment 0 does not exist in tree, "
                                     "meaning that no compartments have been added."):
             nest.Simulate(10.)
@@ -802,9 +802,9 @@ class CompartmentsTestCase(unittest.TestCase):
         dc = nest.Create('dc_generator', params={'amplitude': 2.0})
 
         with self.assertRaisesRegex(nest.kernel.NESTError,
-                                    r"UnknownPort in SLI function Connect_g_g_D_D: "
+                                    r"in llapi_connect: "
                                     r"Port with id 3 does not exist. Valid current "
-                                    r"receptor ports for cm_default are in \[0, 2\[."):
+                                    r"receptor ports for cm_default are in \[0, 2\["):
             nest.Connect(dc, n_neat, syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
                                                'receptor_type': 3})
 
@@ -819,9 +819,9 @@ class CompartmentsTestCase(unittest.TestCase):
         sg = nest.Create('spike_generator', 1, {'spike_times': [10.]})
 
         with self.assertRaisesRegex(nest.kernel.NESTError,
-                                    r"UnknownPort in SLI function Connect_g_g_D_D: "
+                                    r"in llapi_connect: "
                                     r"Port with id 3 does not exist. Valid spike "
-                                    r"receptor ports for cm_default are in \[0, 3\[."):
+                                    r"receptor ports for cm_default are in \[0, 3\["):
             nest.Connect(sg, n_neat, syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
                                                'receptor_type': 3})
 
@@ -831,8 +831,8 @@ class CompartmentsTestCase(unittest.TestCase):
         mm = nest.Create('multimeter', 1, {'record_from': ['v_comp1'], 'interval': 1.})
 
         with self.assertRaisesRegex(nest.kernel.NESTError,
-                                    "IllegalConnection in SLI function Connect_g_g_D_D: "
-                                    "Creation of connection is not possible because:\n"
+                                    "in llapi_connect: "
+                                    "Creation of connection is not possible because:"
                                     "Cannot connect with unknown recordable v_comp1"):
             nest.Connect(mm, n_neat)
 

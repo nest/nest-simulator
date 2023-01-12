@@ -55,7 +55,7 @@ class BasicsTestCase(unittest.TestCase):
 
     def test_GetPosition(self):
         """Check if GetPosition returns proper positions."""
-        pos = ((1.0, 0.0), (0.0, 1.0), (3.5, 1.5))
+        pos = [[1.0, 0.0], [0.0, 1.0], [3.5, 1.5]]
         nest.ResetKernel()
         layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.free(pos))
 
@@ -79,7 +79,7 @@ class BasicsTestCase(unittest.TestCase):
 
         # GetPosition on some of the node IDs
         nodepos_exp = nest.GetPosition(layer[:2])
-        self.assertEqual(nodepos_exp, (pos[0], pos[1]))
+        self.assertEqual(nodepos_exp, [pos[0], pos[1]])
 
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_Displacement(self):
@@ -92,7 +92,7 @@ class BasicsTestCase(unittest.TestCase):
         # node IDs -> node IDs, all displacements must be zero here
         d = nest.Displacement(layer, layer)
         self.assertEqual(len(d), len(layer))
-        self.assertTrue(all(dd == (0., 0.) for dd in d))
+        self.assertTrue(all(dd == [0., 0.] for dd in d))
 
         # single node ID -> node IDs
         d = nest.Displacement(layer[:1], layer)
@@ -550,8 +550,8 @@ class BasicsTestCase(unittest.TestCase):
         positions = nest.spatial.free(nest.random.uniform(min=-1, max=1), num_dimensions=2)
         nodes = nest.Create('iaf_psc_alpha', 10, positions=positions)
         all_positions = sum([list(nodes[i].spatial['positions']) for i in range(len(nodes))], start=[])
-        self.assertEqual(tuple(all_positions), nodes.spatial['positions'])
-        self.assertEqual(tuple(nodes[::2].spatial['positions']), nodes.spatial['positions'][::2])
+        self.assertEqual(all_positions, nodes.spatial['positions'])
+        self.assertEqual(nodes[::2].spatial['positions'], nodes.spatial['positions'][::2])
 
 
 def suite():

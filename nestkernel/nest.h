@@ -33,6 +33,8 @@
 
 // Includes from nestkernel:
 #include "connection_id.h"
+#include "mask.h"
+#include "mask_impl.h"
 #include "nest_time.h"
 #include "nest_types.h"
 #include "parameter.h"
@@ -152,6 +154,11 @@ void connect( NodeCollectionPTR sources,
   const dictionary& connectivity,
   const std::vector< dictionary >& synapse_params );
 
+void disconnect( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  const dictionary& connectivity,
+  const dictionary& synapse_params );
+
 /**
  * @brief Connect arrays of node IDs one-to-one
  *
@@ -225,6 +232,14 @@ void prepare();
  */
 void cleanup();
 
+/**
+ * Create a new Mask object using the mask factory.
+ * @param name Mask type to create.
+ * @param d    Dictionary with parameters specific for this mask type.
+ * @returns dynamically allocated new Mask object.
+ */
+static MaskPTR create_mask( const std::string& name, const dictionary& d );
+
 void copy_model( const std::string& oldmodname, const std::string& newmodname, const dictionary& dict );
 
 void set_model_defaults( const std::string& model_name, const dictionary& );
@@ -239,8 +254,12 @@ ParameterPTR create_parameter( const dictionary& param_dict );
 ParameterPTR create_parameter( const std::string& name, const dictionary& d );
 
 using ParameterFactory = GenericFactory< Parameter >;
+using MaskFactory = GenericFactory< AbstractMask >;
+using MaskCreatorFunction = MaskFactory::CreatorFunction;
+
 
 ParameterFactory& parameter_factory_();
+MaskFactory& mask_factory_();
 
 
 double get_value( const ParameterPTR param );
@@ -258,6 +277,13 @@ register_parameter( const std::string& name )
   return parameter_factory_().register_subtype< T >( name );
 }
 
+template < class T >
+inline bool
+register_mask()
+{
+  return mask_factory_().register_subtype< T >( T::get_name() );
+}
+
 /**
  * @brief Get only positions of the sliced nodes if metadata contains node positions and the NodeCollection is sliced.
  *
@@ -267,6 +293,19 @@ register_parameter( const std::string& name )
  * NodeCollection.
  */
 void slice_positions_if_sliced_nc( dictionary& dict, const NodeCollectionPTR node_collection );
+
+inline bool
+register_mask( const std::string& name, MaskCreatorFunction creator )
+{
+  return mask_factory_().register_subtype( name, creator );
+}
+
+inline static MaskPTR
+create_mask( const std::string& name, const dictionary& d )
+{
+  return MaskPTR( mask_factory_().create( name, d ) );
+}
+
 }
 
 

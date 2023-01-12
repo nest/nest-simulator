@@ -97,6 +97,7 @@ class TestSTDPSynapse:
         # contains the weight at pre *and* post times: check that weights are equal only for pre spike times
         assert len(weight_by_nest) > 0
         for idx_pre_spike_nest, t_pre_spike_nest in enumerate(t_weight_by_nest):
+            print(t_pre_spike_nest, t_weight_reproduced_independently)
             idx_pre_spike_reproduced_independently = \
                 np.argmin((t_pre_spike_nest - t_weight_reproduced_independently)**2)
             np.testing.assert_allclose(t_pre_spike_nest,
@@ -158,12 +159,14 @@ class TestSTDPSynapse:
 
         nest.Simulate(self.simulation_duration)
 
-        all_spikes = spike_recorder.events
-        pre_spikes = all_spikes['times'][all_spikes['senders'] == presynaptic_neuron.tolist()[0]]
-        post_spikes = all_spikes['times'][all_spikes['senders'] == postsynaptic_neuron.tolist()[0]]
+        all_spikes = spike_recorder.events[0]
+        times = np.array(all_spikes['times'])
+        senders = np.array(all_spikes['senders'])
+        pre_spikes = times[senders == presynaptic_neuron.tolist()[0]]
+        post_spikes = times[senders == postsynaptic_neuron.tolist()[0]]
 
-        t_hist = wr.events["times"]
-        weight = wr.events["weights"]
+        t_hist = np.array(wr.events["times"][0])
+        weight = np.array(wr.events["weights"][0])
 
         return pre_spikes, post_spikes, t_hist, weight
 

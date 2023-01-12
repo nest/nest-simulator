@@ -433,7 +433,6 @@ def restructure_data(result, keys):
                     final_result.append(result_dict[keys])
                 elif keys in all_keys:
                     final_result.append(None)
-            final_result = tuple(final_result)
         else:
             final_result = result[0][keys]
 
@@ -571,7 +570,7 @@ class SuppressedDeprecationWarning:
     def __exit__(self, *args):
 
         # Reset the verbosity level and deprecation warning status
-        sr("{} setverbosity".format((self._verbosity_level)))
+        #sr("{} setverbosity".format((self._verbosity_level)))
 
         for func_name, deprec_dict in self._deprecation_status.items():
             _deprecation_warning[func_name]['deprecation_issued'] = (

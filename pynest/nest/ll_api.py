@@ -53,7 +53,6 @@ from . import nestkernel_api as nestkernel  # noqa
 
 __all__ = [
     'check_stack',
-    'connect_arrays',
     'set_communicator',
     # 'take_array_index',
     'KernelAttribute',
@@ -63,7 +62,7 @@ __all__ = [
 engine = kernel.NESTEngine()
 
 # take_array_index = engine.take_array_index
-connect_arrays = engine.connect_arrays
+# connect_arrays = engine.connect_arrays
 
 
 initialized = False

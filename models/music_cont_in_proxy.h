@@ -128,8 +128,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( dictionary& ) const;                  //!< Store current values in dictionary
-    void set( const dictionary&, State_&, Node* );  //!< Set values from dictionary
+    void get( dictionary& ) const;                 //!< Store current values in dictionary
+    void set( const dictionary&, State_&, Node* ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------

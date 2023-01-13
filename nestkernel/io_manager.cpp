@@ -197,7 +197,7 @@ IOManager::get_recording_backend_status( std::string recording_backend )
 {
   dictionary status;
   recording_backends_[ recording_backend ]->get_status( status );
-  status[ names::element_type ] = std::string("recording_backend");
+  status[ names::element_type ] = std::string( "recording_backend" );
   return status;
 }
 

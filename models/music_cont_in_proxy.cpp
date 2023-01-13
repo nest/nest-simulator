@@ -161,7 +161,7 @@ nest::music_cont_in_proxy::get_status( dictionary& d ) const
 void
 nest::music_cont_in_proxy::set_status( const dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;   // temporary copy in case of errors
   ptmp.set( d, S_, this ); // throws if BadProperty
 
   State_ stmp = S_;

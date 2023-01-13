@@ -148,7 +148,7 @@ class TestSTDPNNSynapses:
 
         nest.Simulate(self.simulation_duration)
 
-        all_spikes = spike_recorder.events[0]
+        all_spikes = spike_recorder.events
         times = np.array(all_spikes['times'])
         senders = np.array(all_spikes['senders'])
         pre_spikes = times[senders == presynaptic_neuron.tolist()[0]]

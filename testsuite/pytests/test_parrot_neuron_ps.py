@@ -65,10 +65,10 @@ class ParrotNeuronPSTestCase(unittest.TestCase):
         nest.Simulate(_round_up(self.spike_time + 2 * self.delay))
 
         # get spike from parrot neuron
-        events = self.spikes.events[0]
+        events = self.spikes.events
         times = np.array(events['times'])
         senders = np.array(events['senders'])
-        post_time = times[senders == self.parrot.global_id[0]]
+        post_time = times[senders == self.parrot.global_id]
 
         # assert spike was repeated at correct time
         assert post_time, "Parrot neuron failed to repeat spike."
@@ -84,10 +84,10 @@ class ParrotNeuronPSTestCase(unittest.TestCase):
         nest.Simulate(_round_up(self.spike_time + 2. * self.delay))
 
         # get spike from parrot neuron, assert it was ignored
-        events = self.spikes.events[0]
+        events = self.spikes.events
         times = np.array(events['times'])
         senders = np.array(events['senders'])
-        post_time = times[senders == self.parrot.global_id[0]]
+        post_time = times[senders == self.parrot.global_id]
         assert len(post_time) == 0, \
             "Parrot neuron failed to ignore spike arriving on port 1"
 
@@ -105,10 +105,10 @@ class ParrotNeuronPSTestCase(unittest.TestCase):
         nest.Simulate(_round_up(self.spike_time + 2. * self.delay))
 
         # get spikes from parrot neuron, assert two were transmitted
-        events = self.spikes.events[0]
+        events = self.spikes.events
         times = np.array(events['times'])
         senders = np.array(events['senders'])
-        post_times = times[senders == self.parrot.global_id[0]]
+        post_times = times[senders == self.parrot.global_id]
         assert len(post_times) == 2 and post_times[0] == post_times[1], \
             "Parrot neuron failed to correctly repeat multiple spikes."
 

@@ -29,11 +29,10 @@ import numpy as np
 class TestPgRateChange(unittest.TestCase):
 
     def _kstest_first_spiketimes(self, sr, start_t, expon_scale, resolution, p_value_lim):
-        events = sr.events[0]
-        senders = events['senders']
-        times = events['times']
-        min_times = [np.min(times[np.where(senders == s)])
-                     for s in np.unique(senders)]
+        events = sr.events
+        senders = np.array(events['senders'])
+        times = np.array(events['times'])
+        min_times = [np.min(times[np.where(senders == s)]) for s in np.unique(senders)]
         d, p_val = scipy.stats.kstest(
             min_times, 'expon', args=(start_t + resolution, expon_scale))
         print('p_value =', p_val)
@@ -52,8 +51,7 @@ class TestPgRateChange(unittest.TestCase):
         rate = 100.
         pg = nest.Create('poisson_generator_ps', params={'rate': rate})
         parrots = nest.Create('parrot_neuron_ps', n_parrots)
-        sr = nest.Create('spike_recorder',
-                         params={'start': 0., 'stop': float(sim_time)})
+        sr = nest.Create('spike_recorder', params={'start': 0., 'stop': float(sim_time)})
         nest.Connect(pg, parrots, syn_spec={'delay': resolution})
         nest.Connect(parrots, sr, syn_spec={'delay': resolution})
 

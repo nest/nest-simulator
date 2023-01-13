@@ -217,7 +217,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
         nest.Simulate(20.)
 
         # Evaluation
-        data = mm.events[0]
+        data = mm.events
         senders = np.array(data['senders'])
         voltages = np.array(data['V_m'])
 

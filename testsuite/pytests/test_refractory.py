@@ -144,12 +144,12 @@ class TestRefractoryCase(unittest.TestCase):
 
         if model in neurons_interspike:
             # Spike emitted at next timestep so substract resolution
-            return spike_times[1]-spike_times[0]-resolution
+            return spike_times[1] - spike_times[0] - resolution
         elif model in neurons_interspike_ps:
-            return spike_times[1]-spike_times[0]
+            return spike_times[1] - spike_times[0]
         else:
-            Vr = neuron.V_reset[0]
-            times = np.array(vm.events[0]["times"])
+            Vr = neuron.V_reset
+            times = np.array(vm.events["times"])
 
             # Index of the 2nd spike
             idx_max = np.argwhere(times == spike_times[1])[0][0]
@@ -210,7 +210,7 @@ class TestRefractoryCase(unittest.TestCase):
             t_ref_sim = self.compute_reftime(model, sr, vm, neuron)
 
             if model in neurons_with_clamping:
-                t_ref_sim = t_ref_sim - neuron.t_clamp[0]
+                t_ref_sim = t_ref_sim - neuron.t_clamp
 
             # Approximate result for precise spikes (interpolation error)
             if model in neurons_interspike_ps:

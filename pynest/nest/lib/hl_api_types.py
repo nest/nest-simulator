@@ -376,8 +376,6 @@ class NodeCollection:
         else:
             raise TypeError('Got unexpected keyword argument')
 
-        pandas_output = output == 'pandas'
-
         if len(params) == 0:
             # get() is called without arguments
             result = nestkernel.llapi_get_nc_status(self._datum)
@@ -393,13 +391,15 @@ class NodeCollection:
             # TODO-PYNEST-NG: Drop this? Not sure anyone ever used it...
             result = get_parameters_hierarchical_addressing(self, params)
 
+        # TODO-PYNEST-NG: Decide if the behavior should be the same
+        # for single-node node collections or different. 
         if isinstance(result, dict) and len(self) == 1:
             new_result = {}
             for k, v in result.items():
                 new_result[k] = v[0] if is_iterable(v) and len(v) == 1 and type(v) is not dict else v
             result = new_result
 
-        if pandas_output:
+        if output == 'pandas':
             index = self.get('global_id')
             if len(params) == 1 and isinstance(params[0], str):
                 # params is a string

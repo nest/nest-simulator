@@ -346,14 +346,14 @@ nest::iaf_cond_alpha_mc::Parameters_::set( const dictionary& d, Node* node )
     {
       auto dd = d.get< dictionary >( comp_names_[ n ] );
 
-      update_value_param( d, names::E_L, E_L[ n ], node );
-      update_value_param( d, names::E_ex, E_ex[ n ], node );
-      update_value_param( d, names::E_in, E_in[ n ], node );
-      update_value_param( d, names::C_m, C_m[ n ], node );
-      update_value_param( d, names::g_L, g_L[ n ], node );
-      update_value_param( d, names::tau_syn_ex, tau_synE[ n ], node );
-      update_value_param( d, names::tau_syn_in, tau_synI[ n ], node );
-      update_value_param( d, names::I_e, I_e[ n ], node );
+      update_value_param( dd, names::E_L, E_L[ n ], node );
+      update_value_param( dd, names::E_ex, E_ex[ n ], node );
+      update_value_param( dd, names::E_in, E_in[ n ], node );
+      update_value_param( dd, names::C_m, C_m[ n ], node );
+      update_value_param( dd, names::g_L, g_L[ n ], node );
+      update_value_param( dd, names::tau_syn_ex, tau_synE[ n ], node );
+      update_value_param( dd, names::tau_syn_in, tau_synI[ n ], node );
+      update_value_param( dd, names::I_e, I_e[ n ], node );
     }
   }
   if ( V_reset >= V_th )
@@ -402,7 +402,7 @@ nest::iaf_cond_alpha_mc::State_::set( const dictionary& d, const Parameters_&, N
     if ( d.known( comp_names_[ n ] ) )
     {
       auto dd = d.get< dictionary >( comp_names_[ n ] );
-      update_value_param( d, names::V_m, y_[ idx( n, V_M ) ], node );
+      update_value_param( dd, names::V_m, y_[ idx( n, V_M ) ], node );
     }
   }
 }

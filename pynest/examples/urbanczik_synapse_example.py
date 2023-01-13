@@ -266,17 +266,15 @@ wr = nest.Create('weight_recorder')
 # for recording the spiking of the soma
 sr_soma = nest.Create('spike_recorder')
 
-
 # create connections
 nest.Connect(sg_prox, prrt_nrns, {'rule': 'one_to_one'})
-nest.CopyModel('urbanczik_synapse', 'urbanczik_synapse_wr',
-               {'weight_recorder': wr[0]})
+nest.CopyModel('urbanczik_synapse', 'urbanczik_synapse_wr', {'weight_recorder': wr})
 nest.Connect(prrt_nrns, nrn, syn_spec=syn_params)
 nest.Connect(mm, nrn, syn_spec={'delay': 0.1})
-nest.Connect(sg_soma_exc, nrn,
-             syn_spec={'receptor_type': syns['soma_exc'], 'weight': 10.0 * resolution, 'delay': resolution})
-nest.Connect(sg_soma_inh, nrn,
-             syn_spec={'receptor_type': syns['soma_inh'], 'weight': 10.0 * resolution, 'delay': resolution})
+syn_spec_exc = {'receptor_type': syns['soma_exc'], 'weight': 10.0 * resolution, 'delay': resolution}
+nest.Connect(sg_soma_exc, nrn, syn_spec=syn_spec_exc)
+syn_spec_inh = {'receptor_type': syns['soma_inh'], 'weight': 10.0 * resolution, 'delay': resolution}
+nest.Connect(sg_soma_inh, nrn, syn_spec=syn_spec_inh)
 nest.Connect(nrn, sr_soma)
 
 # simulation divided into intervals of the pattern duration

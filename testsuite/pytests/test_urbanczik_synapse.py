@@ -140,19 +140,17 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
 
         # excitatory input to the dendrite
         pre_syn_spike_times = np.array([1.0, 98.0])
-        sg_prox = nest.Create('spike_generator', params={
-                              'spike_times': pre_syn_spike_times})
+        sg_prox = nest.Create('spike_generator', params={'spike_times': pre_syn_spike_times})
 
         # excitatory input to the soma
         spike_times_soma_inp = np.arange(10.0, 50.0, resolution)
         spike_weights_soma = 10.0*np.ones_like(spike_times_soma_inp)
-        sg_soma_exc = nest.Create('spike_generator',
-                                  params={'spike_times': spike_times_soma_inp, 'spike_weights': spike_weights_soma})
+        sg_params = {'spike_times': spike_times_soma_inp, 'spike_weights': spike_weights_soma}
+        sg_soma_exc = nest.Create('spike_generator', params=sg_params)
 
         # for recording all parameters of the Urbanczik neuron
         rqs = nest.GetDefaults(nrn_model)['recordables']
-        mm = nest.Create('multimeter', params={
-                         'record_from': rqs, 'interval': 0.1})
+        mm = nest.Create('multimeter', params={'record_from': rqs, 'interval': 0.1})
 
         # for recoding the synaptic weights of the Urbanczik synapses
         wr = nest.Create('weight_recorder')
@@ -164,11 +162,10 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         create connections
         '''
         nest.Connect(sg_prox, prrt_nrn, syn_spec={'delay': resolution})
-        nest.CopyModel('urbanczik_synapse', 'urbanczik_synapse_wr',
-                       {'weight_recorder': wr[0]})
+        nest.CopyModel('urbanczik_synapse', 'urbanczik_synapse_wr', {'weight_recorder': wr})
         nest.Connect(prrt_nrn, nrn, syn_spec=syn_params)
-        nest.Connect(sg_soma_exc, nrn,
-                     syn_spec={'receptor_type': syns['soma_exc'], 'weight': 10.0*resolution, 'delay': resolution})
+        syn_spec_exc = {'receptor_type': syns['soma_exc'], 'weight': 10.0*resolution, 'delay': resolution}
+        nest.Connect(sg_soma_exc, nrn, syn_spec=syn_spec_exc)
         nest.Connect(mm, nrn, syn_spec={'delay': resolution})
         nest.Connect(nrn, sr_soma, syn_spec={'delay': resolution})
 
@@ -181,7 +178,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         read out devices
         '''
         # multimeter
-        rec = mm.events[0]
+        rec = mm.events
         t = np.array(rec['times'])
         V_w = np.array(rec['V_m.p'])
 
@@ -199,8 +196,8 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         times = data['events']['times']
 
         # spike recorder
-        data = sr_soma.events[0]
-        spike_times_soma = np.array(ndata['times'])
+        data = sr_soma.events
+        spike_times_soma = np.array(data['times'])
 
         # compute predicted rate
         phi_max = nrn_params['phi_max']
@@ -219,7 +216,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         tau_L = C_m_prox / g_L_prox
         E_L_prox = nrn_params['dendritic']['E_L']
         t0 = 1.2
-        alpha_response = (np.heaviside(t - t0, 0.5)*tau_s*(np.exp(-(t - t0) / tau_L) - np.exp(-(t - t0) / tau_s)) /
+        alpha_response = (np.heaviside(t - t0, 0.5) * tau_s * (np.exp(-(t - t0) / tau_L) - np.exp(-(t - t0) / tau_s)) /
                           (g_L_prox*(tau_L - tau_s)))
 
         # compute PI(t)
@@ -229,14 +226,14 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
             idx = np.nonzero(np.in1d(t, spike_times_soma))[0]
             rate[idx] -= 1.0 / resolution
 
-        w_change_raw = -15.0*C_m_prox*rate*h*alpha_response
+        w_change_raw = -15.0 * C_m_prox * rate * h * alpha_response
 
         # compute low pass filtered version of PI
         tau_Delta = syn_params['tau_Delta']
         eta = syn_params['eta']
-        w_change_low_pass = eta * np.exp(-t / tau_Delta)*np.cumsum(
-            np.exp(t / tau_Delta)*w_change_raw)*resolution / tau_Delta
-        integrated_w_change = np.cumsum(w_change_low_pass)*resolution
+        w_change_low_pass = eta * np.exp(-t / tau_Delta) * np.cumsum(
+            np.exp(t / tau_Delta) * w_change_raw) * resolution / tau_Delta
+        integrated_w_change = np.cumsum(w_change_low_pass) * resolution
         syn_weight_comp = init_w + integrated_w_change
 
         '''
@@ -245,9 +242,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         # extract the weight computed in python at the times of the presynaptic spikes
         idx = np.nonzero(np.in1d(np.around(t, 4), np.around(pre_syn_spike_times + resolution, 4)))[0]
         syn_w_comp_at_spike_times = syn_weight_comp[idx]
-        realtive_error = (
-            (weights[-1] - syn_w_comp_at_spike_times[-1]) / (weights[-1] - init_w))
-
+        realtive_error = ((weights[-1] - syn_w_comp_at_spike_times[-1]) / (weights[-1] - init_w))
         self.assertTrue(abs(realtive_error) < 0.001)
 
 

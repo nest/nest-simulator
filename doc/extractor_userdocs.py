@@ -446,13 +446,6 @@ def CreateTagIndices(tags, outdir="userdocs/"):
             log.debug("index %s is empyt!", str(current_tags))
             continue
         nfiles = len(set.union(*chain([set(subtag) for subtag in hier.values()])))
-        # Removing this code to prevent warnings in Sphinx that it cannot find file. The index pages
-        # that are skipeed inthe code below
-        # are actually listed in the index.rst. So Sphinx expects them to exist.
-        #
-        # if nfiles < 2:
-        #    log.warning("skipping index for %s, as it links only to %d distinct file(s)", set(hier.keys()), nfiles)
-        #    continue
         log.debug("generating index for %s...", str(current_tags))
         indextext = rst_index(hier, current_tags)
         with open(os.path.join(outdir, indexname), 'w') as outfile:

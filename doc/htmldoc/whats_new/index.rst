@@ -25,6 +25,3 @@ the new versions.
    v3.1/*
    v3.0/*
 
-
-
-

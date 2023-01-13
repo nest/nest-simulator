@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# ll_api.pyx
+# nestkernel_api.pyx
 #
 # This file is part of NEST.
 #

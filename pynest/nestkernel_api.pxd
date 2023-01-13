@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# ll_api.pxd
+# nestkernel_api.pxd
 #
 # This file is part of NEST.
 #

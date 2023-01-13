@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 r"""Classes for running simulations of the classic game Pong
-----------------------------------------------------------------
+--------------------------------------------------------
 The Class GameOfPong contains all necessary functionality for running simple
 simulations of Pong games. See [1]_ for details.
 

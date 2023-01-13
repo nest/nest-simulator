@@ -344,7 +344,7 @@ def rst_index(hierarchy, current_tags=[], underlines='=-~', top=True):
 
     output = list()
     if top:
-        # Adding ophan role so Sphinx does not expect them in a toctree / Prevent warnings
+        # Prevent warnings by adding an orphan role so Sphinx does not expect it in toctrees
         orphan_text = ":orphan:" + "\n\n"
         page_title = "Model directory"
         description = """

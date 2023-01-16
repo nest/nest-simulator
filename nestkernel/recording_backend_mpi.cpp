@@ -361,10 +361,10 @@ nest::RecordingBackendMPI::get_port( const RecordingDevice* device, std::string*
   std::size_t colon_position;
 
   // The MPI address can be provided by two different means:
-  // a) the address is given by the label in the format: endpoint_address:address
-  // b) the file is provided via a file: {data_path}/{data_prefix}{label}/{node_id}.txt
+  // a) the address is taken from the device's label, which then has to be in the format: endpoint_address:address
+  // b) the address is provided via a file: {data_path}/{data_prefix}{device_label}/{node_id}.txt
 
-  // Case a: label is the endpoint address in the following format:
+  // Case a: device label is the endpoint address in the following format:
   // endpoint_address:address string
   colon_position = label.find( ":", 0 );
 

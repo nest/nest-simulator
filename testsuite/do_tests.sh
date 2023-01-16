@@ -177,12 +177,10 @@ echo
 NEST_VERSION="$(sli -c "statusdict/version :: =only")"
 echo "  NEST executable .... $NEST (version $NEST_VERSION)"
 echo "  PREFIX ............. $PREFIX"
-
 if test -n "${MUSIC}"; then
     MUSIC_VERSION="$("${MUSIC}" --version | head -n1 | cut -d' ' -f2)"
     echo "  MUSIC executable ... $MUSIC (version $MUSIC_VERSION)"
 fi
-
 if test -n "${PYTHON}"; then
     PYTHON_VERSION="$("${PYTHON}" --version | cut -d' ' -f2)"
     echo "  Python executable .. $PYTHON (version $PYTHON_VERSION)"

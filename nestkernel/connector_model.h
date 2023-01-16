@@ -114,7 +114,7 @@ public:
    */
   virtual void check_synapse_params( const DictionaryDatum& ) const = 0;
 
-  virtual SecondaryEvent* get_secondary_event() const = 0;
+  virtual SecondaryEvent* get_secondary_event() = 0;
 
   virtual void set_syn_id( synindex syn_id ) = 0;
 
@@ -243,9 +243,9 @@ public:
   void set_syn_id( synindex syn_id ) override;
 
   SecondaryEvent*
-  get_secondary_event() const override
+  get_secondary_event() override
   {
-    assert( false );
+    return default_connection_.get_secondary_event();
   }
 
   ConnectionT const&

@@ -93,8 +93,7 @@ public:
   {
   }
 
-  SecondaryEvent*
-  get_secondary_event();
+  SecondaryEvent* get_secondary_event();
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase.

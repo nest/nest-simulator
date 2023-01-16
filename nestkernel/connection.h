@@ -307,7 +307,7 @@ protected:
    * Please leave unchanged as:
    *   targetidentifierT target_;
    *   SynIdDelay syn_id_delay_;
-  */
+   */
   targetidentifierT target_;
   //! syn_id (9 bit), delay (21 bit) in timesteps of this connection and more_targets and disabled flags (each 1 bit)
   SynIdDelay syn_id_delay_;

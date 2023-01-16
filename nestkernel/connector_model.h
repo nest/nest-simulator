@@ -173,10 +173,10 @@ public:
   }
 
 protected:
-  std::string name_;                      //!< name of the ConnectorModel
-  bool default_delay_needs_check_;        //!< indicates whether the default delay must be checked
-  ConnectionModelProperties properties_;  //!< connection properties
-}; // ConnectorModel
+  std::string name_;                     //!< name of the ConnectorModel
+  bool default_delay_needs_check_;       //!< indicates whether the default delay must be checked
+  ConnectionModelProperties properties_; //!< connection properties
+};
 
 
 template < typename ConnectionT >

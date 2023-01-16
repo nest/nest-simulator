@@ -131,10 +131,8 @@ public:
   typedef STDPPLHomCommonProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
-  static constexpr ConnectionModelProperties properties =
-    ConnectionModelProperties::HAS_DELAY
-    | ConnectionModelProperties::IS_PRIMARY
-    | ConnectionModelProperties::SUPPORTS_HPC
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
     | ConnectionModelProperties::SUPPORTS_LBL;
 
   /**

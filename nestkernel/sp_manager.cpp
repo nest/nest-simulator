@@ -287,7 +287,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
 
   if ( not kernel().connection_manager.valid_connection_rule( rule_name ) )
   {
-    throw BadProperty( "Unknown connectivty rule: " + rule_name );
+    throw BadProperty( "Unknown connectivity rule: " + rule_name );
   }
 
   if ( not sp_conn_builders_.empty() )

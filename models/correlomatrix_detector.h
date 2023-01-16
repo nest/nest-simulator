@@ -245,7 +245,7 @@ private:
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 
     /**
-     * Set values from dicitonary.
+     * Set values from dictionary.
      * @returns true if the state needs to be reset after a change of
      *          binwidth or tau_max.
      */
@@ -270,7 +270,7 @@ private:
     std::vector< long > n_events_; //!< spike counters
     SpikelistType incoming_;       //!< incoming spikes, sorted
                                    /** Weighted covariance matrix.
-                                    *  @note Data type is double to accomodate weights.
+                                    *  @note Data type is double to accommodate weights.
                                     */
     std::vector< std::vector< std::vector< double > > > covariance_;
 

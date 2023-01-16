@@ -597,7 +597,7 @@ For example, the ``stopwatch.h`` file could look like:
       }
       else
       {
-        // stopped before, get time of current measurment + last measurments
+        // stopped before, get time of current measurement + last measurements
         return _end - _beg + _prev_elapsed;
       }
     #else
@@ -611,7 +611,7 @@ For example, the ``stopwatch.h`` file could look like:
     #ifndef DISABLE_TIMING
       _beg = 0; // invariant: _end >= _beg
       _end = 0;
-      _prev_elapsed = 0; // erase all prev. measurments
+      _prev_elapsed = 0; // erase all prev. measurements
       _running = false;  // of course not running.
     #endif
     }

@@ -1178,7 +1178,7 @@ def
                 effect, the element keeps its state intact as if it was "frozen".
 		This is the only state which can directly be set by the user.
    buffers_initialized - the buffers of the node have been initialized
-   err        - some unspecified error condition has occured.
+   err        - some unspecified error condition has occurred.
 
    Examples: elementstates info
 

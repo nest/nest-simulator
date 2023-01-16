@@ -29,7 +29,7 @@ Synopsis: (issue-1100) run -> NEST exits if test fails
 Description:
 Creates a parrot neuron, which receives one spike with multiplicity two from a
 spike generator. The parrot neuron should then emit a spike with multiplicity
-two, which should be counted as two spikes by the local spike counter.
+two, which should be counted as two spikes by the spike recorder.
 
 Author: Stine Brekke Vennemo
 FirstVersion: January 2019
@@ -53,8 +53,8 @@ M_ERROR setverbosity
 
   10.0 Simulate
 
-  GetKernelStatus /local_spike_counter get
-  2 eq
+  sr [/events /times] get cva size
+  2 eq 
 } assert_or_die
 
 endusing

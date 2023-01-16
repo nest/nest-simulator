@@ -172,14 +172,10 @@ public:
     return properties_;
   }
 
-
 protected:
-  //! name of the ConnectorModel
-  std::string name_;
-  //! indicates whether the default delay must be checked
-  bool default_delay_needs_check_;
-  //! connection properties
-  ConnectionModelProperties properties_;
+  std::string name_;                      //!< name of the ConnectorModel
+  bool default_delay_needs_check_;        //!< indicates whether the default delay must be checked
+  ConnectionModelProperties properties_;  //!< connection properties
 }; // ConnectorModel
 
 

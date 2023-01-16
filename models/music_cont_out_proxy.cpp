@@ -221,9 +221,7 @@ nest::music_cont_out_proxy::pre_run_hook()
   // only publish the output port once,
   if ( S_.published_ == false )
   {
-    assert( synmodel.known( "static_synapse" ) and "synapse 'static_synapse' not available" );
-
-    const index synmodel_id = synmodel.get< synindex >( "static_synapse" );
+    const index synmodel_id = kernel().model_manager.get_synapse_model_id( "static_synapse" );
     std::vector< MUSIC::GlobalIndex > music_index_map;
 
     dictionary dummy_params;

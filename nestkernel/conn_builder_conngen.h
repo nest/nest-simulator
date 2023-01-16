@@ -26,6 +26,9 @@
 #include "config.h"
 #ifdef HAVE_LIBNEUROSIM
 
+// External includes:
+#include <neurosim/connection_generator.h>
+
 // C++ includes:
 #include <map>
 #include <vector>

@@ -118,6 +118,8 @@
 #include "volume_transmitter.h"
 #include "weight_recorder.h"
 
+#include "conn_builder_conngen.h"
+
 #include "grid_mask.h"
 #include "spatial.h"
 

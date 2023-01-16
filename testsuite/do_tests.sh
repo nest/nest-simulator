@@ -195,7 +195,6 @@ if test "${HAVE_MPI}" = "true"; then
 else
     echo "  Running MPI tests .. no (compiled without MPI support)"
 fi
-
 echo "  TEST_BASEDIR ....... $TEST_BASEDIR"
 echo "  REPORTDIR .......... $REPORTDIR"
 echo "  PATH ............... `print_paths ${PATH}`"

@@ -280,6 +280,8 @@ jobs:
           pwd
           ls -lisa
           cd "$NEST_VPATH"
+          pwd
+          ls -lisa
           pytest pynest/
 
   pytest-mac:

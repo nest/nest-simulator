@@ -40,7 +40,7 @@
     Please see the file README.txt for details.
 */
 
-% CheckParameters - This function perfoms a (non-exhaustive) check of
+% CheckParameters - This function performs a (non-exhaustive) check of
 % parameter dimensions and values.
 %
 % In particular, the following is checked:

@@ -114,7 +114,7 @@ public:
    */
   virtual void check_synapse_params( const DictionaryDatum& ) const = 0;
 
-  virtual SecondaryEvent* get_secondary_event() const = 0;
+  virtual SecondaryEvent* get_secondary_event() = 0;
 
   virtual void set_syn_id( synindex syn_id ) = 0;
 
@@ -172,15 +172,11 @@ public:
     return properties_;
   }
 
-
 protected:
-  //! name of the ConnectorModel
-  std::string name_;
-  //! indicates whether the default delay must be checked
-  bool default_delay_needs_check_;
-  //! connection properties
-  ConnectionModelProperties properties_;
-}; // ConnectorModel
+  std::string name_;                     //!< name of the ConnectorModel
+  bool default_delay_needs_check_;       //!< indicates whether the default delay must be checked
+  ConnectionModelProperties properties_; //!< connection properties
+};
 
 
 template < typename ConnectionT >
@@ -243,9 +239,9 @@ public:
   void set_syn_id( synindex syn_id ) override;
 
   SecondaryEvent*
-  get_secondary_event() const override
+  get_secondary_event() override
   {
-    assert( false );
+    return default_connection_.get_secondary_event();
   }
 
   ConnectionT const&

@@ -29,7 +29,7 @@ Networks <pynest_examples>`, or
 have a look at at the source directory of your NEST installation in the
 subdirectory: ``pynest/examples/``.
 
-Parameterising synapse models
+Parametrizing synapse models
 -----------------------------
 
 NEST provides a variety of different synapse models. You can see the
@@ -74,7 +74,7 @@ as follows:
 
     nest.Create("iaf_psc_alpha", params={"tau_minus": 30.0})
 
-or by using any of the other methods of parameterising neurons
+or by using any of the other methods of parametrizing neurons
 demonstrated in the first two parts of this introduction.
 
 Connecting with synapse models

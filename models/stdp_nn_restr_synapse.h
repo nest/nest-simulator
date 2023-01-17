@@ -56,10 +56,10 @@ pairing scheme (fig. 7C in [1]_).
 
 When a presynaptic spike occurs, it is taken into account in the depression
 part of the STDP weight change rule with the nearest preceding postsynaptic
-one, but only if the latter occured not earlier than the previous presynaptic
+one, but only if the latter occurred not earlier than the previous presynaptic
 one. When a postsynaptic spike occurs, it is accounted in the facilitation
 rule with the nearest preceding presynaptic one, but only if the latter
-occured not earlier than the previous postsynaptic one. So, a spike can
+occurred not earlier than the previous postsynaptic one. So, a spike can
 participate neither in two depression pairs nor in two potentiation pairs.
 
 The pairs exactly coinciding (so that ``presynaptic_spike == postsynaptic_spike
@@ -125,10 +125,8 @@ public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
-  static constexpr ConnectionModelProperties properties =
-    ConnectionModelProperties::HAS_DELAY
-    | ConnectionModelProperties::IS_PRIMARY
-    | ConnectionModelProperties::SUPPORTS_HPC
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
     | ConnectionModelProperties::SUPPORTS_LBL;
 
   /**

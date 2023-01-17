@@ -156,7 +156,7 @@ class TestRefractoryCase(unittest.TestCase):
             name_Vm = "V_m.s" if model in mc_models else "V_m"
             Vs = nest.GetStatus(vm, "events")[0][name_Vm]
 
-            # Get the index at which the spike occured
+            # Get the index at which the spike occurred
             idx_spike = np.argwhere(times == spike_times[0])[0][0]
 
             # Find end of refractory period between 1st and 2nd spike

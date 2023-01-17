@@ -111,12 +111,9 @@ public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
-  static constexpr ConnectionModelProperties properties =
-    ConnectionModelProperties::HAS_DELAY
-    | ConnectionModelProperties::IS_PRIMARY
-    | ConnectionModelProperties::REQUIRES_URBANCZIK_ARCHIVING
-    | ConnectionModelProperties::SUPPORTS_HPC
-    | ConnectionModelProperties::SUPPORTS_LBL
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::REQUIRES_URBANCZIK_ARCHIVING
+    | ConnectionModelProperties::SUPPORTS_HPC | ConnectionModelProperties::SUPPORTS_LBL
     | ConnectionModelProperties::SUPPORTS_WFR;
 
   /**

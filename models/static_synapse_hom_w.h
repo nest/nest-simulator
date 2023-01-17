@@ -78,10 +78,8 @@ public:
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
-  static constexpr ConnectionModelProperties properties =
-    ConnectionModelProperties::HAS_DELAY
-    | ConnectionModelProperties::IS_PRIMARY
-    | ConnectionModelProperties::SUPPORTS_HPC
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
     | ConnectionModelProperties::SUPPORTS_LBL;
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase

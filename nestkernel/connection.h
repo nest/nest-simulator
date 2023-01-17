@@ -129,6 +129,9 @@ public:
 
   /**
    * Get a pointer to an instance of a SecondaryEvent if this connection supports secondary events.
+   *
+   * To prevent erronous calls of this function on primary connections, the base class implementation
+   * below just contains `assert(false)`.
    */
   SecondaryEvent* get_secondary_event();
 
@@ -300,11 +303,11 @@ protected:
    */
   void check_connection_( Node& dummy_target, Node& source, Node& target, const rport receptor_type );
 
-  /* the order of the members below is critical as it influcences the size of the object. Please leave unchanged as:
-
-     targetidentifierT target_;
-     SynIdDelay syn_id_delay_;        //!< syn_id (char) and delay (24 bit) in timesteps of this connection
-  */
+  /* the order of the members below is critical as it influcences the size of the object.
+   * Please leave unchanged as:
+   *   targetidentifierT target_;
+   *   SynIdDelay syn_id_delay_;
+   */
   targetidentifierT target_;
   //! syn_id (9 bit), delay (21 bit) in timesteps of this connection and more_targets and disabled flags (each 1 bit)
   SynIdDelay syn_id_delay_;

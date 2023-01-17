@@ -167,6 +167,11 @@ jobs:
   lychee:
     runs-on: "ubuntu-20.04"
     steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+        
       - name: "Install dependencies"
         run: |
           #sudo apt install python3-docutils

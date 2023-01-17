@@ -204,16 +204,16 @@ NodeCollection::NodeCollection()
 }
 
 NodeCollectionPTR
-NodeCollection::create( const IntVectorDatum& node_idsdatum )
+NodeCollection::create( const IntVectorDatum& node_ids_datum )
 {
-  if ( node_idsdatum->empty() )
+  if ( node_ids_datum->empty() )
   {
     return NodeCollection::create_();
   }
 
   std::vector< index > node_ids;
-  node_ids.reserve( node_idsdatum->size() );
-  for ( const auto& datum : *node_idsdatum )
+  node_ids.reserve( node_ids_datum->size() );
+  for ( const auto& datum : *node_ids_datum )
   {
     node_ids.push_back( static_cast< index >( getValue< long >( datum ) ) );
   }

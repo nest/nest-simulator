@@ -282,7 +282,7 @@ jobs:
           cd "$NEST_VPATH"
           pwd
           ls -lisa
-          pytest pynest/
+          pytest testsuite/pytests/
 
   pytest-mac:
     runs-on: "macos-latest"

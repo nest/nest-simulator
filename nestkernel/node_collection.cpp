@@ -226,16 +226,16 @@ NodeCollection::create( const IntVectorDatum& node_ids_datum )
 }
 
 NodeCollectionPTR
-NodeCollection::create( const TokenArray& node_idsarray )
+NodeCollection::create( const TokenArray& node_ids_array )
 {
-  if ( node_idsarray.empty() )
+  if ( node_ids_array.empty() )
   {
     return NodeCollection::create_();
   }
 
   std::vector< index > node_ids;
-  node_ids.reserve( node_idsarray.size() );
-  for ( const auto& node_id_token : node_idsarray )
+  node_ids.reserve( node_ids_array.size() );
+  for ( const auto& node_id_token : node_ids_array )
   {
     node_ids.push_back( static_cast< index >( getValue< long >( node_id_token ) ) );
   }

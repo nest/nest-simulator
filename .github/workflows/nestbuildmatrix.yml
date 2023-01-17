@@ -175,7 +175,7 @@ jobs:
           tar -xzf 'lychee-v0.8.2-x86_64-unknown-linux-gnu.tar.gz'
 
       - name: "Run lychee..."
-        run: "./lychee build_support/ doc/{*.txt,*.md,htmldoc} examples/ lib* models/ nest* pynest/ testsuite/ *.md"
+        run: "pwd; ls -l; ./lychee build_support/ doc/{*.txt,*.md,htmldoc} examples/ lib* models/ nest* pynest/ testsuite/ *.md"
         # TODO: doc/auto_examples and doc/models need to be added here, but exists only after a `make html`
         env:
           # Required, set by GitHub actions automatically:

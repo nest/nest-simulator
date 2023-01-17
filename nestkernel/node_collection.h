@@ -531,7 +531,7 @@ private:
   size_t start_offset_;                          //!< Element to start at, set when slicing
   size_t end_part_;                              //!< Primitive or one past the primitive to end at, set when slicing
   size_t end_offset_;                            //!< One past the element to end at, set when slicing
-  bool is_sliced_;                               //!< Whether the NodeCollectionComposite is sliced or not
+  bool is_sliced_;                               //!< Whether the NodeCollectionComposite is sliced
 
   /**
    * Goes through the vector of primitives, merging as much as possible.

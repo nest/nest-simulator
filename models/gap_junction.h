@@ -85,9 +85,8 @@ public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
-  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::SUPPORTS_HPC
-    | ConnectionModelProperties::SUPPORTS_LBL | ConnectionModelProperties::HAS_DELAY
-    | ConnectionModelProperties::REQUIRES_SYMMETRIC | ConnectionModelProperties::SUPPORTS_WFR;
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::REQUIRES_SYMMETRIC
+    | ConnectionModelProperties::SUPPORTS_WFR;
 
   /**
    * Default Constructor.

@@ -35,7 +35,7 @@ ConnectorModel::ConnectorModel( const std::string name, const ConnectionModelPro
 ConnectorModel::ConnectorModel( const ConnectorModel& cm, const std::string name )
   : name_( name )
   , default_delay_needs_check_( true )
-  , properties_( cm.get_properties() )
+  , properties_( cm.properties_ )
 {
 }
 

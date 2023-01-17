@@ -243,7 +243,7 @@ nest::UniversalDataLogger< HostNode >::connect_logging_device( const DataLogging
   // ensure that we have not connected this multimeter before
   const index mm_node_id = req.get_sender().get_node_id();
 
-  auto item = std::find_if( data_loggers_.begin(),
+  const auto item = std::find_if( data_loggers_.begin(),
     data_loggers_.end(),
     [ & ]( const DataLogger_& dl ) { return dl.get_mm_node_id() == mm_node_id; } );
 

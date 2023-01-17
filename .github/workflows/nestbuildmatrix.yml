@@ -235,6 +235,10 @@ jobs:
   pytest-linux:
     runs-on: "ubuntu-20.04"
     needs: [build_linux]
+    env:
+      NEST_VPATH: "build"
+      NEST_RESULT: "result"
+
     strategy:
       fail-fast: true
       # see https://github.com/orgs/community/discussions/26639#discussioncomment-3949595

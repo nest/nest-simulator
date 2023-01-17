@@ -29,16 +29,16 @@ namespace nest
 /**
  * These methods support type-safe bitfields using C++'s enum classes.
  *
- * Define the bitfield properties as follows:
+ * Define the bitfield flags as follows:
  *
  * .. code-block:: C++
  *
- *    enum class MyProperties : unsigned
+ *    enum class MyFlags : unsigned
  *    {
- *        FIRST_PROPERTY = 1 << 0,
- *        SECOND_PROPERTY = 1 << 1,
- *        THIRD_PROPERTY = 1 << 2,
- *        FOURTH_PROPERTY = 1 << 3
+ *        FIRST_FLAG = 1 << 0,
+ *        SECOND_FLAG = 1 << 1,
+ *        THIRD_FLAG = 1 << 2,
+ *        FOURTH_FLAG = 1 << 3
  *    };
  *
  * To prevent template substitution from enabling bitfield operators on *every* enum class, we use the enable_if
@@ -47,17 +47,17 @@ namespace nest
  * A templated struct `EnableBitMaskOperators` is defined, that, regardless of the template type, contains a single
  * static constant member `enable`, set to false. This is the "default", as the template may be specialised with any
  * type. However, we can override this behaviour by explicitly providing a template specialisation of
- * `EnableBitMaskOperators` for a particular type--namely, our bitfield enum class `MyProperties`--with a static
+ * `EnableBitMaskOperators` for a particular type--namely, our bitfield enum class `MyFlags`--with a static
  * constant member by the same name but with value set to true. If we then want to ask during function definition of
  * bitmask operations whether they should be defined for an arbitrary type `T`, all we have to do is specalise
  * `EnableBitMaskOperators` by this type `T`, and check the value of its `enable` member using `enable_if`.
  *
- * To enable the bitfield operators for our `MyProperties` class, we thus specialise the template:
+ * To enable the bitfield operators for our `MyFlags` class, we thus specialise the template:
  *
  * .. code-block:: C++
  *
  *    template <>
- *    struct EnableBitMaskOperators< MyProperties >
+ *    struct EnableBitMaskOperators< MyFlags >
  *    {
  *        static const bool enable = true;
  *    };
@@ -66,9 +66,9 @@ namespace nest
  *
  * .. code-block:: C++
  *
- *    MyProperties my_properties = MyProperties::FIRST_PROPERTY | MyProperties::FOURTH_PROPERTY;
- *    my_properties |= MyProperties::THIRD_PROPERTY;
- *    if ( has_property( my_properties, MyProperties::FOURTH_PROPERTY ) )
+ *    MyFlags my_flags = MyFlags::FIRST_FLAG | MyFlags::FOURTH_FLAG;
+ *    my_flags |= MyFlags::THIRD_FLAG;
+ *    if ( flag_is_set( my_flags, MyFlags::FOURTH_FLAG ) )
  *    {
  *        std::cout << "Fourth flag is set!" << std::endl;
  *    }
@@ -133,10 +133,10 @@ operator^=( Enum& lhs, Enum rhs )
 
 template < typename Enum >
 bool
-has_property( const Enum en, const Enum property )
+flag_is_set( const Enum en, const Enum flag )
 {
   using underlying = typename std::underlying_type< Enum >::type;
-  return static_cast< underlying >( en & property ) != 0;
+  return static_cast< underlying >( en & flag ) != 0;
 }
 }
 

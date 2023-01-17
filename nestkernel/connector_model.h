@@ -125,45 +125,9 @@ public:
   }
 
   bool
-  is_primary() const
+  has_property( const ConnectionModelProperties& property ) const
   {
-    return has_property( properties_, ConnectionModelProperties::IS_PRIMARY );
-  }
-
-  bool
-  has_delay() const
-  {
-    return has_property( properties_, ConnectionModelProperties::HAS_DELAY );
-  }
-
-  bool
-  requires_symmetric() const
-  {
-    return has_property( properties_, ConnectionModelProperties::REQUIRES_SYMMETRIC );
-  }
-
-  bool
-  requires_clopath_archiving() const
-  {
-    return has_property( properties_, ConnectionModelProperties::REQUIRES_CLOPATH_ARCHIVING );
-  }
-
-  bool
-  requires_urbanczik_archiving() const
-  {
-    return has_property( properties_, ConnectionModelProperties::REQUIRES_URBANCZIK_ARCHIVING );
-  }
-
-  bool
-  supports_wfr() const
-  {
-    return has_property( properties_, ConnectionModelProperties::SUPPORTS_WFR );
-  }
-
-  bool
-  has_flag_set( const ConnectionModelProperties& flag )
-  {
-    return has_property( properties_, flag );
+    return flag_is_set( properties_, property );
   }
 
   ConnectionModelProperties

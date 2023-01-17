@@ -409,30 +409,6 @@ ModelManager::get_connector_defaults( synindex syn_id ) const
   return dict;
 }
 
-bool
-ModelManager::connector_requires_symmetric( const synindex syn_id ) const
-{
-  assert_valid_syn_id( syn_id );
-
-  return connection_models_[ 0 ][ syn_id ]->requires_symmetric();
-}
-
-bool
-ModelManager::connector_requires_clopath_archiving( const synindex syn_id ) const
-{
-  assert_valid_syn_id( syn_id );
-
-  return connection_models_[ 0 ][ syn_id ]->requires_clopath_archiving();
-}
-
-bool
-ModelManager::connector_requires_urbanczik_archiving( const synindex syn_id ) const
-{
-  assert_valid_syn_id( syn_id );
-
-  return connection_models_[ 0 ][ syn_id ]->requires_urbanczik_archiving();
-}
-
 void
 ModelManager::clear_node_models_()
 {
@@ -467,7 +443,9 @@ ModelManager::clear_connection_models_()
     {
       if ( connection_model )
       {
-        if ( not connection_model->is_primary() )
+        const bool is_primary = connection_model->has_property( ConnectionModelProperties::IS_PRIMARY );
+
+        if ( not is_primary )
         {
           connection_model->get_secondary_event()->reset_supported_syn_ids();
         }

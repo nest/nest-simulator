@@ -68,7 +68,8 @@ GenericConnectorModel< ConnectionT >::clone( std::string name, synindex syn_id )
   ConnectorModel* new_cm = new GenericConnectorModel( *this, name ); // calls copy construtor
   new_cm->set_syn_id( syn_id );
 
-  if ( not new_cm->is_primary() )
+  const bool is_primary = new_cm->has_property( ConnectionModelProperties::IS_PRIMARY );
+  if ( not is_primary )
   {
     new_cm->get_secondary_event()->add_syn_id( syn_id );
   }
@@ -104,8 +105,8 @@ GenericConnectorModel< ConnectionT >::get_status( DictionaryDatum& d ) const
   ( *d )[ names::receptor_type ] = receptor_type_;
   ( *d )[ names::synapse_model ] = LiteralDatum( name_ );
   ( *d )[ names::synapse_modelid ] = kernel().model_manager.get_synapse_model_id( name_ );
-  ( *d )[ names::requires_symmetric ] = has_property( properties_, ConnectionModelProperties::REQUIRES_SYMMETRIC );
-  ( *d )[ names::has_delay ] = has_property( properties_, ConnectionModelProperties::HAS_DELAY );
+  ( *d )[ names::requires_symmetric ] = has_property( ConnectionModelProperties::REQUIRES_SYMMETRIC );
+  ( *d )[ names::has_delay ] = has_property( ConnectionModelProperties::HAS_DELAY );
 }
 
 template < typename ConnectionT >
@@ -149,7 +150,7 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
   {
     try
     {
-      if ( has_property( properties_, ConnectionModelProperties::HAS_DELAY ) )
+      if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
       {
         const double d = default_connection_.get_delay();
         kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( d );
@@ -198,7 +199,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 {
   if ( not numerics::is_nan( delay ) )
   {
-    if ( has_property( properties_, ConnectionModelProperties::HAS_DELAY ) )
+    if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
     {
       kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
     }
@@ -217,7 +218,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 
     if ( updateValue< double >( p, names::delay, delay ) )
     {
-      if ( has_property( properties_, ConnectionModelProperties::HAS_DELAY ) )
+      if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
       {
         kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
       }

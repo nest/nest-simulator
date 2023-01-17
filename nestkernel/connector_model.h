@@ -189,12 +189,6 @@ private:
   rport receptor_type_;
 
 public:
-  bool
-  has_flag_set( const ConnectionModelProperties& flag )
-  {
-    return has_property( properties_, flag );
-  }
-
   GenericConnectorModel( const std::string name )
     : ConnectorModel( name, ConnectionT::properties )
     , receptor_type_( 0 )

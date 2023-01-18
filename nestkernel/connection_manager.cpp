@@ -1467,7 +1467,12 @@ nest::ConnectionManager::connection_required( Node*& source, Node*& target, thre
   // currently prohibit connections from devices to global receivers.
   else
   {
-    if ( source->has_proxies() )
+
+    const index spike_gen_id = kernel().model_manager.get_node_model_id( "spike_generator" );
+    const index src_model_id = kernel().model_manager.get_node_model_id( source->get_name() );
+    const auto source_is_spike_gen = spike_gen_id == src_model_id;
+
+    if ( source->has_proxies() and not source_is_spike_gen )
     {
       target = kernel().node_manager.get_node_or_proxy( target->get_node_id(), tid );
       return CONNECT;

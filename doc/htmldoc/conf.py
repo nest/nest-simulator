@@ -46,11 +46,11 @@ else:
 
 
 if os.environ.get("READTHEDOCS") == "True":
-    doc_build_dir = source_dir / "doc/htmldoc"
-    for filename in glob.glob(os.path.join(source_dir / "pynest/examples/notebooks", "*.ipynb*")):
-        copy(filename, doc_build_dir / "pynest-examples")
+     doc_build_dir = source_dir / "doc/htmldoc"
+#     for filename in glob.glob(os.path.join(source_dir / "pynest/examples/notebooks", "*.ipynb*")):
+#         copy(filename, doc_build_dir / "pynest-examples")
 else:
-    doc_build_dir = Path(os.environ["OLDPWD"]) / "doc/htmldoc"
+     doc_build_dir = Path(os.environ["OLDPWD"]) / "doc/htmldoc"
 
 sys.path.append(os.path.abspath("./_ext"))
 

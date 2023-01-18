@@ -3,6 +3,9 @@
 PyNEST examples
 ===============
 
+Explore all examples NEST has to offer. You can run every example as a Jupyter notebook. Click on the `Try it on EBRAINS` button to launch
+Jupyter lab on EBRAINS. For more information see :ref:`our guide on running notebooks <run_jupyter>`.
+
 .. grid:: 1 1 2 3
 
     .. grid-item-card:: Simple networks
@@ -45,27 +48,27 @@ PyNEST examples
     .. grid-item-card:: NEST Sudoku solver
            :img-top: ../static/img/sudoku_solution.gif
 
-           * :doc:`../auto_examples/sudoku/sudoku_net`
-           * :doc:`../auto_examples/sudoku/sudoku_solver`
-           * :doc:`../auto_examples/sudoku/plot_progress`
+           * :doc:`../pynest-examples/sudoku/sudoku_net`
+           * :doc:`../pynest-examples/sudoku/sudoku_solver`
+           * :doc:`../pynest-examples/sudoku/plot_progress`
 
     .. grid-item-card:: NEST Pong game
            :img-top: ../static/img/pong_sim.gif
 
-           * :doc:`../auto_examples/pong/run_simulations`
-           * :doc:`../auto_examples/pong/pong`
-           * :doc:`../auto_examples/pong/generate_gif`
+           * :doc:`../pynest-examples/pong/run_simulations`
+           * :doc:`../pynest-examples/pong/pong`
+           * :doc:`../pynest-examples/pong/generate_gif`
 
 .. grid:: 1 1 2 3
 
     .. grid-item-card:: Random balanced networks (Brunel)
            :img-top: ../static/img/pynest/brunel_alpha.png
 
-           * :doc:`../auto_examples/brunel_alpha_nest`
-           * :doc:`../auto_examples/brunel_delta_nest`
-           * :doc:`../auto_examples/brunel_siegert_nest`
-           * :doc:`../auto_examples/brunel_exp_multisynapse_nest`
-           * :doc:`../auto_examples/brunel_alpha_evolution_strategies`
+           * :doc:`../pynest-examples/brunel_alpha_nest`
+           * :doc:`../pynest-examples/brunel_delta_nest`
+           * :doc:`../pynest-examples/brunel_siegert_nest`
+           * :doc:`../pynest-examples/brunel_exp_multisynapse_nest`
+           * :doc:`../pynest-examples/brunel_alpha_evolution_strategies`
 
 
     .. grid-item-card:: Cortical microcircuit (Potjans)
@@ -76,8 +79,8 @@ PyNEST examples
     .. grid-item-card:: GLIF (from Allen institute)
            :img-top: ../static/img/pynest/glif_cond.png
 
-           * :doc:`../auto_examples/glif_cond_neuron`
-           * :doc:`../auto_examples/glif_psc_neuron`
+           * :doc:`../pynest-examples/glif_cond_neuron`
+           * :doc:`../pynest-examples/glif_psc_neuron`
 
 
 .. grid:: 1 1 2 3
@@ -115,14 +118,14 @@ PyNEST examples
            :img-top: ../static/img/nest_logo-faded.png
 
 
-         * :doc:`../auto_examples/BrodyHopfield`
+         * :doc:`../pynest-examples/BrodyHopfield`
 
     .. grid-item-card:: Brette and Gerstner
            :img-top: ../static/img/pynest/brette_gerstner2c.png
 
 
-           * :doc:`../auto_examples/brette_gerstner_fig_2c`
-           * :doc:`../auto_examples/brette_gerstner_fig_3d`
+           * :doc:`../pynest-examples/brette_gerstner_fig_2c`
+           * :doc:`../pynest-examples/brette_gerstner_fig_3d`
 
 .. grid:: 1 1 2 3
 
@@ -229,4 +232,5 @@ PyNEST examples
    :hidden:
    :glob:
 
-   ../auto_examples/*
+   running_notebooks
+   ../pynest-examples/*

@@ -83,6 +83,7 @@ g5 r4 << >> << /weight 1. >> Connect
 % neuron-globally receiving device (volume transmitter)
 n1 v6 Connect
 n2 v6 Connect
+
 /conn << >> GetConnections def
 % expected connections with expected threads
 /target_conn <[1 3 1] [2 3 1] [2 1 1] [3 1 1] [2 1 1] % neuron-neuron

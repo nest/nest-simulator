@@ -44,8 +44,8 @@
 namespace nest
 {
 
-NodeCollectionMetadataPTR AbstractLayer::cached_ntree_md_ = NodeCollectionMetadataPTR( 0 );
-NodeCollectionMetadataPTR AbstractLayer::cached_vector_md_ = NodeCollectionMetadataPTR( 0 );
+NodeCollectionMetadataPTR AbstractLayer::cached_ntree_md_ = NodeCollectionMetadataPTR( nullptr );
+NodeCollectionMetadataPTR AbstractLayer::cached_vector_md_ = NodeCollectionMetadataPTR( nullptr );
 
 AbstractLayer::~AbstractLayer()
 {
@@ -55,7 +55,7 @@ NodeCollectionPTR
 AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
 {
   index length = 0;
-  AbstractLayer* layer_local = 0;
+  AbstractLayer* layer_local = nullptr;
 
   auto element_name = getValue< std::string >( layer_dict, names::elements );
   auto element_id = kernel().model_manager.get_node_model_id( element_name );

@@ -178,7 +178,7 @@ Options
 /** @BeginDocumentation
 Name: SaveDictionary - Save contents of a dictionary to a file.
 Synopsis: dict (fname) SaveDictionary -> -
-Description: SaveDictionary tries to save the contents of the dicitonary
+Description: SaveDictionary tries to save the contents of the dictionary
  to a file. For this, it reproduces the input syntax of the dictionary.
  Thus, the resulting file is a readable ASCII-file. 
  
@@ -236,7 +236,7 @@ SeeAlso: RestoreDictionary, MergeDictionary
 %/_:out load def
 
 /** @BeginDocumentation
-Name: MergeDictionary - Merge all definitions of a dictionary with the current dicitonary.
+Name: MergeDictionary - Merge all definitions of a dictionary with the current dictionary.
 Synopsis: dict MergeDictionary -> -
 SeeAlso: SaveDictionary, RestoreDictionary
 */

@@ -61,7 +61,7 @@ class ConnectTestBase(unittest.TestCase):
     # number of threads
     nr_threads = 2
 
-    # for now only tests if a multi-thread connect is successfull, not whether
+    # for now only tests if a multi-thread connect is successful, not whether
     # the the threading is actually used
     def setUp(self):
         nest.ResetKernel()
@@ -130,7 +130,7 @@ class ConnectTestBase(unittest.TestCase):
         self.assertTrue(all_equal(syns))
         self.assertTrue(syns[0] == syn_params['synapse_model'])
 
-    # tested on each mpi process separatly
+    # tested on each mpi process separately
     def testDefaultParams(self):
         self.setUpNetwork(self.conn_dict)
         conns = nest.GetConnections(self.pop1, self.pop2)

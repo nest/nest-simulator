@@ -57,8 +57,8 @@ divided into a setup phase and a runtime phase. You can see the setup below.
     }
 
 At lines 5-6 we initialize MUSIC and MPI. The communicator is common to
-all processes running under MUSIC, and you'd use it instead of
-``COMM_WORLD`` for your MPI processing.
+all processes running under MUSIC, and you’d use it instead of
+``COMM_WORLD`` for your :hxt_ref:`MPI` processing.
 
 Lines 7 and 8 illustrate something we haven't discussed so far. We can
 set and read free parameters in the MUSIC configuration file. We can for
@@ -150,7 +150,7 @@ simulation time exceeds the end time.
 time according to MUSIC. In lines 8-10 we loop through the channel
 indexes corresponding to our own rank (that we calculated during setup),
 and call a function defined from line 20 onwards that generates a
-poisson spike train with the rate we request.
+poisson :hxt_ref:`spike train` with the rate we request.
 
 The actual event insertion happens on line 24, and we give it the time
 and the global index of the channel we target. The loop on line 8 loops

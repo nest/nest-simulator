@@ -306,6 +306,13 @@ public:
   virtual size_t size() const = 0;
 
   /**
+   * Get the step of the NodeCollection.
+   *
+   * @return step between node IDs in the NodeCollection
+   */
+  virtual size_t step() const = 0;
+
+  /**
    * Check if the NodeCollection contains a specified node ID
    *
    * @param node_id node ID to see if exists in the NodeCollection
@@ -465,6 +472,9 @@ public:
   //! Returns total number of node IDs in the primitive.
   size_t size() const override;
 
+  //! Returns the step between node IDs in the primitive.
+  size_t step() const override;
+
   bool contains( index node_id ) const override;
   NodeCollectionPTR slice( size_t start, size_t end, size_t step = 1 ) const override;
 
@@ -488,7 +498,7 @@ public:
    * the last element in this primitive, and they both have the same model ID.
    * Otherwise false.
    */
-  bool is_contiguous_ascending( NodeCollectionPrimitive& other );
+  bool is_contiguous_ascending( NodeCollectionPrimitive& other ) const;
 
   /**
    * Checks if node IDs of another primitive is overlapping node IDs of this primitive
@@ -593,6 +603,9 @@ public:
 
   //! Returns total number of node IDs in the composite.
   size_t size() const override;
+
+  //! Returns the step between node IDs in the composite.
+  size_t step() const override;
 
   bool contains( index node_id ) const override;
   NodeCollectionPTR slice( size_t start, size_t end, size_t step = 1 ) const override;
@@ -797,6 +810,12 @@ NodeCollectionPrimitive::size() const
   return std::min( last_, last_ - first_ + 1 );
 }
 
+inline size_t
+NodeCollectionPrimitive::step() const
+{
+  return 1;
+}
+
 inline bool
 NodeCollectionPrimitive::contains( index node_id ) const
 {
@@ -883,7 +902,7 @@ NodeCollectionComposite::operator==( NodeCollectionPTR rhs ) const
 
   // Checking if rhs_ptr is invalid first, to avoid segfaults. If rhs is a NodeCollectionPrimitive,
   // rhs_ptr will be a null pointer.
-  if ( rhs_ptr == nullptr or size_ != rhs_ptr->size() or parts_.size() != rhs_ptr->parts_.size() )
+  if ( not rhs_ptr or size_ != rhs_ptr->size() or parts_.size() != rhs_ptr->parts_.size() )
   {
     return false;
   }
@@ -921,6 +940,12 @@ inline size_t
 NodeCollectionComposite::size() const
 {
   return size_;
+}
+
+inline size_t
+NodeCollectionComposite::step() const
+{
+  return step_;
 }
 
 inline void

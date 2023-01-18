@@ -51,12 +51,12 @@ public:
   /**
    * Return name of the module.
    */
-  virtual const std::string name( void ) const = 0;
+  virtual const std::string name() const = 0;
 
   /**
    * Return sli command sequence to be executed for initialization.
    */
-  virtual const std::string commandstring( void ) const;
+  virtual const std::string commandstring() const;
 
   /**
    * Print installation message via interpreter message command.

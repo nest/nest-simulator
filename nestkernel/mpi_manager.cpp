@@ -23,12 +23,9 @@
 #include "mpi_manager.h"
 
 // C++ includes:
-#include <limits>
-#include <numeric>
+#include <cstdlib>
 
 // Includes from libnestutil:
-#include "compose.hpp"
-#include "logging.h"
 #include "stopwatch.h"
 
 // Includes from nestkernel:
@@ -185,6 +182,19 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
 void
 nest::MPIManager::initialize()
 {
+#ifndef HAVE_MPI
+  char* pmix_rank_set = std::getenv( "PMIX_RANK" ); // set by OpenMPI's launcher
+  char* pmi_rank_set = std::getenv( "PMI_RANK" );   // set by MPICH's launcher
+  if ( pmix_rank_set or pmi_rank_set )
+  {
+    LOG( M_FATAL,
+      "MPIManager::initialize()",
+      "You seem to be using NEST via an MPI launcher like mpirun, mpiexec or srun "
+      "although NEST was not compiled with MPI support. Please see the NEST "
+      "documentation about parallel and distributed computing. Exiting." );
+    std::exit( 127 );
+  }
+#endif
 }
 
 void
@@ -719,18 +729,15 @@ nest::MPIManager::communicate_Allreduce_sum( std::vector< double >& send_buffer,
   MPI_Allreduce( &send_buffer[ 0 ], &recv_buffer[ 0 ], send_buffer.size(), MPI_Type< double >::type, MPI_SUM, comm );
 }
 
-double
-nest::MPIManager::min_cross_ranks( double value )
+bool
+nest::MPIManager::equal_cross_ranks( const double value )
 {
-  MPI_Allreduce( MPI_IN_PLACE, &value, 1, MPI_DOUBLE, MPI_MIN, comm );
-  return value;
-}
-
-double
-nest::MPIManager::max_cross_ranks( double value )
-{
-  MPI_Allreduce( MPI_IN_PLACE, &value, 1, MPI_DOUBLE, MPI_MAX, comm );
-  return value;
+  // Flipping the sign of one argument to check both min and max values.
+  double values[ 2 ];
+  values[ 0 ] = -value;
+  values[ 1 ] = value;
+  MPI_Allreduce( MPI_IN_PLACE, &values, 2, MPI_DOUBLE, MPI_MIN, comm );
+  return values[ 0 ] == -values[ 1 ] and values[ 1 ] != -std::numeric_limits< double >::infinity();
 }
 
 void
@@ -799,21 +806,10 @@ nest::MPIManager::any_true( const bool my_bool )
     return my_bool;
   }
 
-  // since there is no MPI_BOOL we first convert to int
-  int my_int = my_bool;
-
-  std::vector< int > all_int( get_num_processes() );
-  MPI_Allgather( &my_int, 1, MPI_INT, &all_int[ 0 ], 1, MPI_INT, comm );
-  // check if any MPI process sent a "true"
-  for ( unsigned int i = 0; i < all_int.size(); ++i )
-  {
-    if ( all_int[ i ] != 0 )
-    {
-      return true;
-    }
-  }
-
-  return false;
+  const int my_int = my_bool;
+  int global_int;
+  MPI_Allreduce( &my_int, &global_int, 1, MPI_INT, MPI_LOR, comm );
+  return global_int == 1;
 }
 
 // average communication time for a packet size of num_bytes using Allgather
@@ -1087,16 +1083,10 @@ nest::MPIManager::communicate_Allreduce_sum( std::vector< double >& send_buffer,
   recv_buffer.swap( send_buffer );
 }
 
-double
-nest::MPIManager::min_cross_ranks( double value )
+bool
+nest::MPIManager::equal_cross_ranks( const double )
 {
-  return value;
-}
-
-double
-nest::MPIManager::max_cross_ranks( double value )
-{
-  return value;
+  return true;
 }
 
 void

@@ -64,13 +64,13 @@ class SPManager : public ManagerInterface
 
 public:
   SPManager();
-  virtual ~SPManager();
+  ~SPManager() override;
 
-  virtual void initialize();
-  virtual void finalize();
+  void initialize() override;
+  void finalize() override;
 
-  virtual void get_status( DictionaryDatum& );
-  virtual void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) override;
+  void set_status( const DictionaryDatum& ) override;
 
   /**
    * Create a new Growth Curve object using the GrowthCurve Factory

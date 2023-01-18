@@ -131,9 +131,10 @@ class GrowthCurveLinear : public GrowthCurve
 {
 public:
   GrowthCurveLinear();
-  void get( DictionaryDatum& d ) const;
-  void set( const DictionaryDatum& d );
-  double update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const;
+  void get( DictionaryDatum& d ) const override;
+  void set( const DictionaryDatum& d ) override;
+  double
+  update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const override;
 
 private:
   double eps_;
@@ -218,9 +219,10 @@ class GrowthCurveGaussian : public GrowthCurve
 {
 public:
   GrowthCurveGaussian();
-  void get( DictionaryDatum& d ) const;
-  void set( const DictionaryDatum& d );
-  double update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const;
+  void get( DictionaryDatum& d ) const override;
+  void set( const DictionaryDatum& d ) override;
+  double
+  update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const override;
 
 private:
   double eta_;
@@ -290,9 +292,10 @@ class GrowthCurveSigmoid : public GrowthCurve
 {
 public:
   GrowthCurveSigmoid();
-  void get( DictionaryDatum& d ) const;
-  void set( const DictionaryDatum& d );
-  double update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const;
+  void get( DictionaryDatum& d ) const override;
+  void set( const DictionaryDatum& d ) override;
+  double
+  update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const override;
 
 private:
   double eps_;

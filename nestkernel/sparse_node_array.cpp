@@ -49,6 +49,7 @@ nest::SparseNodeArray::SparseNodeArray()
 {
 }
 
+
 void
 nest::SparseNodeArray::clear()
 {
@@ -136,7 +137,7 @@ nest::SparseNodeArray::get_node_by_node_id( index node_id ) const
   // handle node_ids below or above range
   if ( node_id < local_min_node_id_ or local_max_node_id_ < node_id )
   {
-    return 0;
+    return nullptr;
   }
 
   /* Find base index and node ID for estimating location of desired node in array.
@@ -171,6 +172,6 @@ nest::SparseNodeArray::get_node_by_node_id( index node_id ) const
   }
   else
   {
-    return 0;
+    return nullptr;
   }
 }

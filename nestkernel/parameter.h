@@ -62,7 +62,7 @@ public:
   /**
    * Copy constructor
    */
-  Parameter( const Parameter& p ) = default;
+  explicit Parameter( const Parameter& p ) = default;
 
   /**
    * Virtual destructor
@@ -133,9 +133,10 @@ public:
    * Creates a ConstantParameter with a specified value.
    * @param value parameter value
    */
-  ConstantParameter( double value )
+  explicit ConstantParameter( double value )
     : value_( value )
   {
+    returns_int_only_ = value_is_integer_( value_ );
   }
 
   /**
@@ -375,7 +376,7 @@ public:
     {
       throw BadParameterValue( "Source or target position parameter can only be used when connecting." );
     }
-    if ( node == nullptr )
+    if ( not node )
     {
       throw KernelException( "Node position parameter can only be used when connecting spatially distributed nodes." );
     }

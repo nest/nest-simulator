@@ -77,7 +77,7 @@ FULLY TESTED. USE AT YOUR OWN PERIL!
 
 ``iaf_cond_alpha_mc`` is an implementation of a multi-compartment spiking
 neuron using IAF dynamics with conductance-based synapses. It serves
-mainly to illustrate the implementation of ref:`multicompartment models
+mainly to illustrate the implementation of :ref:`multicompartment models
 <multicompartment-models>` in NEST.
 
 The model has three compartments: soma, proximal and distal dendrite,
@@ -178,7 +178,7 @@ class iaf_cond_alpha_mc : public ArchivingNode
 public:
   iaf_cond_alpha_mc();
   iaf_cond_alpha_mc( const iaf_cond_alpha_mc& );
-  ~iaf_cond_alpha_mc();
+  ~iaf_cond_alpha_mc() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -188,23 +188,23 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
-  void pre_run_hook();
-  void update( Time const&, const long, const long );
+  void init_buffers_() override;
+  void pre_run_hook() override;
+  void update( Time const&, const long, const long ) override;
 
   // Enumerations and constants specifying structure and properties ----
 
@@ -312,7 +312,7 @@ private:
     Parameters_& operator=( const Parameters_& ); //!< needed to copy C-arrays
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
 
@@ -397,7 +397,7 @@ private:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
     double step_;            //!< step size in ms
@@ -477,9 +477,9 @@ iaf_cond_alpha_mc::send_test_event( Node& target, rport receptor_type, synindex,
 inline port
 iaf_cond_alpha_mc::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type < MIN_SPIKE_RECEPTOR || receptor_type >= SUP_SPIKE_RECEPTOR )
+  if ( receptor_type < MIN_SPIKE_RECEPTOR or receptor_type >= SUP_SPIKE_RECEPTOR )
   {
-    if ( receptor_type < 0 || receptor_type >= SUP_CURR_RECEPTOR )
+    if ( receptor_type < 0 or receptor_type >= SUP_CURR_RECEPTOR )
     {
       throw UnknownReceptorType( receptor_type, get_name() );
     }
@@ -494,9 +494,9 @@ iaf_cond_alpha_mc::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 iaf_cond_alpha_mc::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type < MIN_CURR_RECEPTOR || receptor_type >= SUP_CURR_RECEPTOR )
+  if ( receptor_type < MIN_CURR_RECEPTOR or receptor_type >= SUP_CURR_RECEPTOR )
   {
-    if ( receptor_type >= 0 && receptor_type < MIN_CURR_RECEPTOR )
+    if ( receptor_type >= 0 and receptor_type < MIN_CURR_RECEPTOR )
     {
       throw IncompatibleReceptorType( receptor_type, get_name(), "CurrentEvent" );
     }
@@ -513,7 +513,7 @@ iaf_cond_alpha_mc::handles_test_event( DataLoggingRequest& dlr, rport receptor_t
 {
   if ( receptor_type != 0 )
   {
-    if ( receptor_type < 0 || receptor_type >= SUP_CURR_RECEPTOR )
+    if ( receptor_type < 0 or receptor_type >= SUP_CURR_RECEPTOR )
     {
       throw UnknownReceptorType( receptor_type, get_name() );
     }

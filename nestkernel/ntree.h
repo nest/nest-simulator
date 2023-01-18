@@ -81,7 +81,7 @@ public:
      * Initialize an iterator to point to the first node in the first
      * non-empty leaf within the tree below this Ntree.
      */
-    iterator( Ntree& q );
+    explicit iterator( Ntree& q );
 
     /**
      * Initialize an iterator to point to the nth node in this Ntree,
@@ -125,12 +125,12 @@ public:
     bool
     operator==( const iterator& other ) const
     {
-      return ( other.ntree_ == ntree_ ) && ( other.node_ == node_ );
+      return other.ntree_ == ntree_ and ( other.node_ == node_ );
     }
     bool
     operator!=( const iterator& other ) const
     {
-      return ( other.ntree_ != ntree_ ) || ( other.node_ != node_ );
+      return ( other.ntree_ != ntree_ ) or ( other.node_ != node_ );
     }
 
   protected:
@@ -210,12 +210,12 @@ public:
     bool
     operator==( const masked_iterator& other ) const
     {
-      return ( other.ntree_ == ntree_ ) && ( other.node_ == node_ );
+      return other.ntree_ == ntree_ and ( other.node_ == node_ );
     }
     bool
     operator!=( const masked_iterator& other ) const
     {
-      return ( other.ntree_ != ntree_ ) || ( other.node_ != node_ );
+      return ( other.ntree_ != ntree_ ) or ( other.node_ != node_ );
     }
 
   protected:

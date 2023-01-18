@@ -24,6 +24,7 @@
 #define UNIVERSAL_DATA_LOGGER_H
 
 // C++ includes:
+#include <algorithm>
 #include <vector>
 
 // Includes from nestkernel:
@@ -241,13 +242,12 @@ nest::UniversalDataLogger< HostNode >::connect_logging_device( const DataLogging
 
   // ensure that we have not connected this multimeter before
   const index mm_node_id = req.get_sender().get_node_id();
-  const size_t n_loggers = data_loggers_.size();
-  size_t j = 0;
-  while ( j < n_loggers and data_loggers_[ j ].get_mm_node_id() != mm_node_id )
-  {
-    ++j;
-  }
-  if ( j < n_loggers )
+
+  const auto item = std::find_if( data_loggers_.begin(),
+    data_loggers_.end(),
+    [ & ]( const DataLogger_& dl ) { return dl.get_mm_node_id() == mm_node_id; } );
+
+  if ( item != data_loggers_.end() )
   {
     throw IllegalConnection( "Each multimeter can only be connected once to a given node." );
   }
@@ -502,7 +502,7 @@ nest::DynamicUniversalDataLogger< HostNode >::connect_logging_device( const Data
   const index mm_node_id = req.get_sender().get_node_id();
   const size_t n_loggers = data_loggers_.size();
   size_t j = 0;
-  while ( j < n_loggers && data_loggers_[ j ].get_mm_node_id() != mm_node_id )
+  while ( j < n_loggers and data_loggers_[ j ].get_mm_node_id() != mm_node_id )
   {
     ++j;
   }
@@ -552,7 +552,7 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const Da
 
   num_vars_ = node_access_.size();
 
-  if ( num_vars_ > 0 && req.get_recording_interval() < Time::step( 1 ) )
+  if ( num_vars_ > 0 and req.get_recording_interval() < Time::step( 1 ) )
   {
     throw IllegalConnection( "Recording interval must be >= resolution." );
   }

@@ -100,18 +100,18 @@ public:
   spin_detector( const spin_detector& );
 
   bool
-  has_proxies() const
+  has_proxies() const override
   {
     return false;
   }
   bool
-  local_receiver() const
+  local_receiver() const override
   {
     return true;
   }
 
   Name
-  get_element_type() const
+  get_element_type() const override
   {
     return names::recorder;
   }
@@ -125,21 +125,21 @@ public:
   using Node::handles_test_event;
   using Node::receives_signal;
 
-  void handle( SpikeEvent& );
+  void handle( SpikeEvent& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
 
-  Type get_type() const;
-  SignalType receives_signal() const;
+  Type get_type() const override;
+  SignalType receives_signal() const override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
-  void calibrate_time( const TimeConverter& tc );
+  void calibrate_time( const TimeConverter& tc ) override;
 
 private:
-  void init_buffers_();
-  void pre_run_hook();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
   /**
    * Update detector by recording spikes.
@@ -149,7 +149,7 @@ private:
    *
    * @see RecordingDevice
    */
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   index last_in_node_id_;
   SpikeEvent last_event_;

@@ -86,8 +86,6 @@ public:
   SLIFunction*
   getaction() const
   {
-    // assert(defaultaction != NULL);
-    // If this fails, we have created a datum before the types were initialised.
     return defaultaction;
   }
 };

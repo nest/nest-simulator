@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Circular mask and flat probablility, with edge wrap
+Circular mask and flat probability, with edge wrap
 ---------------------------------------------------
 
 Create two populations of iaf_psc_alpha neurons on a 30x30 grid with edge_wrap,

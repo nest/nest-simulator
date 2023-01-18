@@ -444,11 +444,11 @@ SpecialFunctionsModule::ErfcFunction::execute( SLIInterpreter* i ) const
 
 // ---------------------------------------------------------------
 
-SpecialFunctionsModule::GaussDiskConvFunction::GaussDiskConvFunction( void )
+SpecialFunctionsModule::GaussDiskConvFunction::GaussDiskConvFunction()
 {
 }
 
-SpecialFunctionsModule::GaussDiskConvFunction::~GaussDiskConvFunction( void )
+SpecialFunctionsModule::GaussDiskConvFunction::~GaussDiskConvFunction()
 {
 }
 

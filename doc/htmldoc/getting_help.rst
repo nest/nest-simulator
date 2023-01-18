@@ -33,9 +33,5 @@ Model information
 
    nest.synapse_models
 
-* To get details on model equations and parameters, use:
-
-.. code-block:: python
-
-   nest.help('model_name')
-
+* To get details on the model equations and parameters,
+  please check out our :doc:`model documentation <models/index>`.

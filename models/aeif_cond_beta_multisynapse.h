@@ -83,6 +83,9 @@ reversal potentials are supplied by the array ``E_rev``. The port numbers
 are automatically assigned in the range from 1 to n_receptors.
 During connection, the ports are selected with the property ``receptor_type``.
 
+When connecting to conductance-based multisynapse models, all synaptic weights
+must be non-negative.
+
 The membrane potential is given by the following differential equation:
 
 .. math::
@@ -321,7 +324,7 @@ private:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
     double step_;            //!< simulation step size in ms

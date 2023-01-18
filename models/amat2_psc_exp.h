@@ -114,7 +114,7 @@ The following parameters can be set in the status dictionary:
 
 .. note::
 
-   - The time constants in the model must fullfill the following conditions:
+   - The time constants in the model must fulfill the following conditions:
      - :math:`\tau_m != {\tau_{syn_{ex}}, \tau_{syn_{in}}}`
      - :math:`\tau_v != {\tau_{syn_{ex}}, \tau_{syn_{in}}}`
      - :math:`\tau_m != \tau_v`
@@ -252,7 +252,7 @@ private:
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    double set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // ----------------------------------------------------------------

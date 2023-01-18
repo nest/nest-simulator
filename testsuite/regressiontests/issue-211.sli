@@ -93,6 +93,6 @@ n2 v6 Connect
               [1 6 0] [1 6 1] [2 6 0] [2 6 1]> def    % neuron-globally receiving device
 
 conn {
-  target_conn exch cva [[1 2 3]] Part MemberQ assert 
+  target_conn exch cva [[1 2 3]] Part MemberQ assert
 } forall
 conn length_a target_conn length_a eq assert

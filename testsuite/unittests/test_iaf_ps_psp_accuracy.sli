@@ -78,7 +78,7 @@ M_ERROR setverbosity
 %
 % Parameters of simulation schedule.
 %
--14                         /min_exponent Set
+-12                         /min_exponent Set
 2.0                         /emission Set % in ms
 1.0                         /delay Set   % in ms 
 500.0                       /weight Set  % in pA

@@ -69,9 +69,18 @@ EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const lon
   const thread tid = source.get_thread();
   const index source_node_id = source.get_node_id();
   e.set_sender_node_id( source_node_id );
+
   if ( source.has_proxies() )
   {
-    local_spike_counter_[ tid ] += e.get_multiplicity();
+
+    const index spike_gen_id = kernel().model_manager.get_node_model_id( "spike_generator" );
+    const index src_model_id = kernel().model_manager.get_node_model_id( source.get_name() );
+    const auto source_is_spike_gen = spike_gen_id == src_model_id;
+
+    if ( not source_is_spike_gen )
+    {
+      local_spike_counter_[ tid ] += e.get_multiplicity();
+    }
 
     e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
     e.set_sender( source );

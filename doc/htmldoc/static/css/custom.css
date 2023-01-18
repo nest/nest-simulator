@@ -130,6 +130,13 @@ section#kernel-attributes dl.py.class dd dl.py.attribute dd dl.field-list.simple
   height: auto;
   margin-right: 0.7em;
 }
+
+.md-typeset blockquote {
+
+  margin-left: 5px;
+  border-left: none;
+}
+
 div.sd-card-title.sd-font-weight-bold.sd-d-flex-row.docutils a.reference.internal img {
  margin-right: 2em;
  margin-bottom: 0.5em;

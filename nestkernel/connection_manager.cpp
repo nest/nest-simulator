@@ -750,7 +750,6 @@ nest::ConnectionManager::connect_( Node& source,
   const double weight )
 {
   ConnectorModel& conn_model = kernel().model_manager.get_connection_model( syn_id, tid );
-  const bool is_primary = conn_model.has_property( ConnectionModelProperties::IS_PRIMARY );
 
   const bool clopath_archiving = conn_model.has_property( ConnectionModelProperties::REQUIRES_CLOPATH_ARCHIVING );
   if ( clopath_archiving and not dynamic_cast< ClopathArchivingNode* >( &target ) )
@@ -764,6 +763,7 @@ nest::ConnectionManager::connect_( Node& source,
     throw NotImplemented( "This synapse model is not supported by the neuron model of at least one  connection." );
   }
 
+  const bool is_primary = conn_model.has_property( ConnectionModelProperties::IS_PRIMARY );
   conn_model.add_connection( source, target, connections_[ tid ], syn_id, params, delay, weight );
   source_table_.add_source( tid, syn_id, s_node_id, is_primary );
 

@@ -168,14 +168,12 @@ GapJunction< targetidentifierT >::get_status( DictionaryDatum& d ) const
   def< long >( d, names::size_of, sizeof( *this ) );
 }
 
-
 template < typename targetidentifierT >
 SecondaryEvent*
 GapJunction< targetidentifierT >::get_secondary_event()
 {
   return new GapJunctionEvent();
 }
-
 
 template < typename targetidentifierT >
 void

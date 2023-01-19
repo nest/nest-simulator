@@ -38,6 +38,7 @@ import nbformat
 
 from nbconvert import PythonExporter
 
+
 source_dir = os.environ.get('NESTSRCDIR', False)
 if source_dir:
     source_dir = Path(source_dir)
@@ -225,6 +226,22 @@ intersphinx_mapping = {
     'extmod': ('https://nest-extension-module.readthedocs.io/en/latest/', None),
 }
 
+nbsphinx_prolog = """
+                  .. card:: Run this example as a Jupyter notebook
+                    :margin: auto
+                    :width: 50%
+                    :text-align: center
+
+                    .. image:: https://nest-simulator.org/TryItOnEBRAINS.png
+                         :target: https://lab.ebrains.eu/hub/user-redirect/git-pull?\
+                                  repo=https%3A%2F%2Fgithub.com%2Fjessica-mitchell%2F\
+                                  nest-simulator&urlpath=lab%2Ftree%2Fnest-simulator%2F\
+                                  doc%2Fhtmldoc%2F\
+                                  {{ env.doc2path(env.docname, base=None) | replace("/", "%2F" )}}\
+                                  &branch=ebrains-button
+
+                    For more informatioin see :ref:`run_jupyter`.
+                  """
 from doc.extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
 
 

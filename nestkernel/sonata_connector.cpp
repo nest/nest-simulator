@@ -21,9 +21,6 @@
  */
 
 #include "sonata_connector.h"
-
-// TODO: remove duplicate includes? (see header file)
-
 #include "config.h"
 
 #ifdef HAVE_HDF5

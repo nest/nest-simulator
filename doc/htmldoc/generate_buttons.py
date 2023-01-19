@@ -41,20 +41,8 @@ md_ebrains_button = "[![EBRAINS Notebook](https://nest-simulator.org/TryItOnEBRA
 
 python_button = "[![Download Python file](../../static/img/python-download.png)](pythonlink)\n"
 
-for filename in Path(filepath).rglob('*.ipynb'):
-    with open(filename, 'r') as checkfile:
-        content = checkfile.read()
-        if "EBRAINS Notebook" in content:
-            continue
+def make_link(filename, link_puller):
 
-# if filename pynest-examples/
-# filename contains path
-# name contains only file name
-# need to find pynest-examples/filename an dpynest-examples/something/filename
-
-# I need to replace the link puller with either the filename or the subdirectory + filename
-#
-############# Insert subdirectory (if exists) and filename into nblinknpuller link ###########
     # get the filename only from the path
     name = os.path.basename(filename)
     # get the path of file only
@@ -70,7 +58,25 @@ for filename in Path(filepath).rglob('*.ipynb'):
 
         links = link_puller.replace('one_neuron_with_noise.ipynb', name)
 
+    return links
+
+for filename in Path(filepath).rglob('*.ipynb'):
+    with open(filename, 'r') as checkfile:
+        content = checkfile.read()
+        if "EBRAINS Notebook" in content:
+            continue
+
+# if filename pynest-examples/
+# filename contains path
+# name contains only file name
+# need to find pynest-examples/filename an dpynest-examples/something/filename
+
+# I need to replace the link puller with either the filename or the subdirectory + filename
+#
+############# Insert subdirectory (if exists) and filename into nblinknpuller link ###########
+    links = make_link(filename, link_puller)
 ############## create ebrains link to the markdown styled button for the notebook ##############
+
     button = md_ebrains_button.replace('nblink', links)
 
 
@@ -88,7 +94,7 @@ for filename in Path(filepath).rglob('*.ipynb'):
     # create link for python button
     pybutton = python_button.replace('pythonlink', pyname)
 
-    with open(path2dir + '/' + pyname, 'w') as outfile:
+    with open(os.path.dirname(filename) + '/' + pyname, 'w') as outfile:
         outfile.write(source)
     # append the buttons for nblinkpuller, python download to each notebook
     nb = nbformat.read(filename, as_version=4)

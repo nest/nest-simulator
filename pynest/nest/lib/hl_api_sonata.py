@@ -55,11 +55,11 @@ class SonataNetwork():
 
     `SonataNetwork` provides native NEST support for building and simulating
     network models represented by the SONATA format. In the SONATA format,
-    information about nodes, edges and their respective properties are stored
-    in the table-based file formats HDF5 and CSV. Model metadata, such as path
-    relation between files on disk and simulation parameters, are stored in
-    JSON configuration files. See the NEST SONATA guide [LINK TO GUIDE] for
-    details on the NEST support of the SONATA format.
+    information about nodes, edges (synapses) and their respective properties 
+    are stored in the table-based file formats HDF5 and CSV. Model metadata, 
+    such as the path relation between files on disk and simulation parameters, 
+    are stored in JSON configuration files. See :ref:`nest_sonata` for details 
+    on the NEST support of the SONATA format.
 
     The constructor takes the JSON configuration file specifying the paths to
     the HDF5 and CSV files describing the network. In case simulation
@@ -208,8 +208,8 @@ class SonataNetwork():
         Returns
         -------
         node_collections : dict
-            A dictionary containing the created NodeCollections [REF]. The
-            population names are keys.
+            A dictionary containing the created :py:class:`.NodeCollection`s. 
+            The population names are keys.
         """
 
         # Iterate node config files
@@ -555,10 +555,12 @@ class SonataNetwork():
     def BuildNetwork(self, chunk_size=None):
         """Build SONATA network.
 
-        Convenience function for building the SONATA network. The function
-        first calls `Create` [REF] to create the network nodes and then
-        `Connect` [REF] to create their connections. For more details, see
-        Create [REF] and Connect [REF].
+        Convenience function for building the SONATA network. The function 
+        first calls the membership function :py:func:`Create()` to create the 
+        network nodes and then the membership function :py:func:`Connect()` 
+        to create their connections. 
+
+        For more details, see :py:func:`Create()` and :py:func:`Connect()`.
 
         Parameters
         ----------
@@ -570,8 +572,8 @@ class SonataNetwork():
         Returns
         -------
         node_collections : dict
-            A dictionary containing the created NodeCollections [REF]. The
-            population names are keys.
+            A dictionary containing the created :py:class:`.NodeCollection`s. 
+            The population names are keys.
         """
 
         if chunk_size is not None:

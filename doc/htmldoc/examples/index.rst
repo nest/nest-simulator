@@ -152,6 +152,7 @@ Jupyter lab on EBRAINS. For more information see :ref:`our guide on running note
     .. grid-item-card:: Structural plasticity
            :img-top: ../static/img/pynest/structuralplasticity.png
 
+           * :doc:`../pynest-examples/structural_plasticity`
 
     .. grid-item-card:: Synapse collection
            :img-top: ../static/img/pynest/synapsecollection.png

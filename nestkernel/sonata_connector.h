@@ -45,7 +45,7 @@ namespace nest
  * Create connections from SONATA files.
  *
  * This class provides an interface for connecting nodes provided in SONTATA files.
- * The nodes have to first be created through the SonataConnector PyNEST class, and
+ * The nodes have to first be created through the `SonataNetwork` PyNEST class, and
  * provided through the `graph_specs` dictionary, along with an array providing
  * connection parameters for the different SONATA files.
  *

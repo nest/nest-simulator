@@ -83,14 +83,14 @@ example of the Brette et al (2007) review. Default parameter values are chosen
 to match those used with NEST 1.9.10 when preparing data for [1]_. Code for all
 simulators covered is available from ModelDB [3]_.
 
-Note:
-In this model, a spike is emitted if :math:`V_m \geq V_T + 30` mV and :math:`V_m`
-has fallen during the current time step.
+.. note::
+   In this model, a spike is emitted if :math:`V_m \geq V_T + 30` mV and :math:`V_m`
+   has fallen during the current time step.
 
-To avoid that this leads to multiple spikes during the falling flank of a
-spike, it is essential to chose a sufficiently long refractory period.
-Traub and Miles used  :math:`t_{ref} = 3` ms ([2]_, p 118), while we used
-:math:`t_{ref} = 2` ms in [2]_.
+   To avoid multiple spikes from occurring during the falling flank of a
+   spike, it is essential to choose a sufficiently long refractory period.
+   Traub and Miles used  :math:`t_{ref} = 3` ms ([2]_, p 118), while we used
+   :math:`t_{ref} = 2` ms in [2]_.
 
 Parameters
 ++++++++++
@@ -222,7 +222,7 @@ private:
     Parameters_();
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
 public:
@@ -294,7 +294,7 @@ public:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
     double step_;            //!< step size in ms

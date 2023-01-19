@@ -442,7 +442,7 @@ def create_2tdend_4comp(dt=0.1):
 
 
 @nest.ll_api.check_stack
-class NEASTTestCase(unittest.TestCase):
+class CompartmentsTestCase(unittest.TestCase):
     """ tests for compartmental NEST models """
 
     def test_inversion(self, dt=0.1, model_name='1dend_1comp'):
@@ -849,6 +849,11 @@ class NEASTTestCase(unittest.TestCase):
                                     "\'receptors\' is already defined for this model"):
             n_neat.receptors = {"comp_idx": 0, "receptor_type": "GABA"}
 
+        n_neat = nest.Create('cm_default')
+        n_neat.compartments = {"parent_idx": -1, "params": SP}
+        with self.assertRaises(nest.kernel.NESTError):
+            n_neat.compartments = {"parent_idx": 0, "params": SP}
+
     def test_continuerun(self, dt=0.1):
         recordables = [
             'v_comp0', 'v_comp1',
@@ -905,11 +910,64 @@ class NEASTTestCase(unittest.TestCase):
         for key in recordables:
             assert np.allclose(events_neat_0[key], events_neat_1[key])
 
+    def test_compartments_wrapper(self):
+        cm = nest.Create('cm_default')
+        cm.compartments = [{"parent_idx": -1, "params": SP}]
+        compartment_a = cm.compartments.get_tuple()[0]
+        compartment_b = {"parent_idx": 0, "params": DP[0]}
+
+        for rhs in (compartment_b, [compartment_b], (compartment_b), nest.Compartments(cm, (compartment_b,))):
+            compartments = cm.compartments + rhs
+            self.assertEqual(compartments.get_tuple(), (compartment_a, compartment_b))
+
+        with self.assertRaises(TypeError):
+            # Raises error because argument must be a tuple
+            nest.Compartments(cm, compartment_a)
+
+        not_compartment = ''
+        for rhs in ([compartment_b, not_compartment],
+                    (compartment_b, not_compartment)):
+            with self.assertRaises(TypeError):
+                # Raises because all elements in rhs must be a dict
+                _ = cm.compartments + rhs
+
+    def test_add_assign(self):
+        cm = nest.Create('cm_default')
+        cm.compartments = {"parent_idx": -1, "params": SP}
+        cm.compartments += {"parent_idx": 0, "params": DP[0]}
+        cm.receptors = {"comp_idx": 0, "receptor_type": "GABA"}
+        cm.receptors += {"comp_idx": 1, "receptor_type": "AMPA"}
+
+        compartments = cm.compartments
+        self.assertEqual(compartments[0]["comp_idx"], 0)
+        self.assertEqual(compartments[0]["parent_idx"], -1)
+        self.assertEqual(compartments[1]["comp_idx"], 1)
+        self.assertEqual(compartments[1]["parent_idx"], 0)
+        receptors = cm.receptors
+        self.assertEqual(receptors[0]["receptor_idx"], 0)
+        self.assertEqual(receptors[0]["receptor_type"], 'GABA')
+        self.assertEqual(receptors[1]["receptor_idx"], 1)
+        self.assertEqual(receptors[1]["receptor_type"], 'AMPA')
+
+        cm2 = nest.Create('cm_default')
+        cm2.compartments = {"parent_idx": -1, "params": SP}
+        cm2.compartments += [{"parent_idx": 0, "params": DP[0]}, {"parent_idx": 0, "params": DP[0]}]
+        self.assertEqual(len(list(cm2.compartments)), 3)
+
+        cm3 = nest.Create('cm_default')
+        cm3.compartments = [{"parent_idx": -1, "params": SP}, {"parent_idx": 0, "params": DP[0]}]
+        cm3.compartments += {"parent_idx": 1, "params": DP[0]}
+        self.assertEqual(len(list(cm3.compartments)), 3)
+
+        cm2.receptors = {"comp_idx": 0, "receptor_type": "GABA"}
+        cm2.receptors += [{"comp_idx": 1, "receptor_type": "AMPA"}, {"comp_idx": 2, "receptor_type": "GABA"}]
+        self.assertEqual(len(list(cm2.receptors)), 3)
+
 
 def suite():
     # makeSuite is sort of obsolete http://bugs.python.org/issue2721
     # using loadTestsFromTestCase instead.
-    suite = unittest.TestLoader().loadTestsFromTestCase(NEASTTestCase)
+    suite = unittest.TestLoader().loadTestsFromTestCase(CompartmentsTestCase)
     return unittest.TestSuite([suite])
 
 

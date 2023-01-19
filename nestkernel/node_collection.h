@@ -306,6 +306,13 @@ public:
   virtual size_t size() const = 0;
 
   /**
+   * Get the step of the NodeCollection.
+   *
+   * @return step between node IDs in the NodeCollection
+   */
+  virtual size_t step() const = 0;
+
+  /**
    * Check if the NodeCollection contains a specified node ID
    *
    * @param node_id node ID to see if exists in the NodeCollection
@@ -465,6 +472,9 @@ public:
   //! Returns total number of node IDs in the primitive.
   size_t size() const override;
 
+  //! Returns the step between node IDs in the primitive.
+  size_t step() const override;
+
   bool contains( index node_id ) const override;
   NodeCollectionPTR slice( size_t start, size_t end, size_t step = 1 ) const override;
 
@@ -593,6 +603,9 @@ public:
 
   //! Returns total number of node IDs in the composite.
   size_t size() const override;
+
+  //! Returns the step between node IDs in the composite.
+  size_t step() const override;
 
   bool contains( index node_id ) const override;
   NodeCollectionPTR slice( size_t start, size_t end, size_t step = 1 ) const override;
@@ -797,6 +810,12 @@ NodeCollectionPrimitive::size() const
   return std::min( last_, last_ - first_ + 1 );
 }
 
+inline size_t
+NodeCollectionPrimitive::step() const
+{
+  return 1;
+}
+
 inline bool
 NodeCollectionPrimitive::contains( index node_id ) const
 {
@@ -921,6 +940,12 @@ inline size_t
 NodeCollectionComposite::size() const
 {
   return size_;
+}
+
+inline size_t
+NodeCollectionComposite::step() const
+{
+  return step_;
 }
 
 inline void

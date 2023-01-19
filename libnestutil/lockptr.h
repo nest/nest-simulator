@@ -97,7 +97,7 @@ class lockPTR
     PointerObject( PointerObject const& );
 
   public:
-    explicit PointerObject( D* p = NULL )
+    explicit PointerObject( D* p = nullptr )
       : pointee( p )
       , deletable( true )
       , locked( false )
@@ -114,7 +114,7 @@ class lockPTR
     ~PointerObject()
     {
       assert( not locked );
-      if ( ( pointee != NULL ) and deletable and not locked )
+      if ( pointee and deletable and not locked )
       {
         delete pointee;
       }
@@ -164,34 +164,34 @@ public:
   // object which must then be initialised, for example
   // by assignement.
 
-  explicit lockPTR( D* p = NULL )
+  explicit lockPTR( D* p = nullptr )
   {
     obj = std::make_shared< PointerObject >( p );
-    assert( obj != NULL );
+    assert( obj );
   }
 
   explicit lockPTR( D& p_o )
   {
     obj = std::make_shared< PointerObject >( p_o );
-    assert( obj != NULL );
+    assert( obj );
   }
 
   lockPTR( const lockPTR< D >& spd )
     : obj( spd.obj )
   {
-    assert( obj != NULL );
+    assert( obj );
   }
 
   virtual ~lockPTR()
   {
-    assert( obj != NULL );
+    assert( obj );
   }
 
   lockPTR< D >
   operator=( const lockPTR< D >& spd )
   {
-    assert( obj != NULL );
-    assert( spd.obj != NULL );
+    assert( obj );
+    assert( spd.obj );
 
     obj = spd.obj;
 
@@ -234,7 +234,7 @@ public:
   D*
   operator->() const
   {
-    assert( obj->get() != NULL );
+    assert( obj->get() );
 
     return obj->get();
   }
@@ -242,7 +242,7 @@ public:
   D*
   operator->()
   {
-    assert( obj->get() != NULL );
+    assert( obj->get() );
 
     return obj->get();
   }
@@ -250,7 +250,7 @@ public:
   D&
   operator*()
   {
-    assert( obj->get() != NULL );
+    assert( obj->get() );
 
     return *( obj->get() );
   }
@@ -258,17 +258,15 @@ public:
   const D&
   operator*() const
   {
-    assert( obj->get() != NULL );
+    assert( obj->get() );
     return *( obj->get() );
   }
 
 
   bool
-  operator not() const //!< returns true if and only if obj->pointee == NULL
+  operator not() const //!< returns true if and only if not obj->pointee
   {
-    // assert(obj != NULL);
-
-    return ( obj->get() == NULL );
+    return not obj->get();
   }
 
 
@@ -296,51 +294,51 @@ public:
 
 
   bool
-  valid() const //!< returns true if and only if obj->pointee != NULL
+  valid() const //!< returns true if and only if obj->pointee
   {
-    assert( obj != NULL );
-    return ( obj->get() != NULL );
+    assert( obj );
+    return ( obj->get() );
   }
 
   bool
   islocked() const
   {
-    assert( obj != NULL );
+    assert( obj );
     return ( obj->islocked() );
   }
 
   bool
   deletable() const
   {
-    assert( obj != NULL );
+    assert( obj );
     return ( obj->isdeletable() );
   }
 
   void
   lock() const
   {
-    assert( obj != NULL );
+    assert( obj );
     obj->lock();
   }
 
   void
   unlock() const
   {
-    assert( obj != NULL );
+    assert( obj );
     obj->unlock();
   }
 
   void
   unlock()
   {
-    assert( obj != NULL );
+    assert( obj );
     obj->unlock();
   }
 
   size_t
   references() const
   {
-    return ( obj == NULL ) ? 0 : obj.use_count();
+    return not obj ? 0 : obj.use_count();
   }
 };
 

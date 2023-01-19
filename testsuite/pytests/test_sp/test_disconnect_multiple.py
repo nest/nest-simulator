@@ -93,8 +93,8 @@ class TestDisconnect(unittest.TestCase):
                 nest.Disconnect(
                     src_neurons,
                     tgt_neurons,
-                    conndictionary,
-                    syndictionary
+                    conn_spec=conndictionary,
+                    syn_spec=syndictionary
                 )
                 status = nest.GetStatus(neurons, 'synaptic_elements')
                 for st_neuron in status[0:5]:
@@ -146,8 +146,8 @@ class TestDisconnect(unittest.TestCase):
                 nest.Disconnect(
                     src_neurons,
                     tgt_neurons,
-                    conndictionary,
-                    syndictionary
+                    conn_spec=conndictionary,
+                    syn_spec=syndictionary
                 )
                 status = nest.GetStatus(neurons, 'synaptic_elements')
                 for st_neuron in status[0:5]:
@@ -178,8 +178,8 @@ class TestDisconnect(unittest.TestCase):
                 nest.Disconnect(
                     src_neurons,
                     tgt_neurons,
-                    conndictionary,
-                    syndictionary
+                    conn_spec=conndictionary,
+                    syn_spec=syndictionary
                 )
 
                 conns = nest.GetConnections(src_neurons, tgt_neurons,
@@ -248,7 +248,7 @@ class TestDisconnect(unittest.TestCase):
 
         self.assertEqual(nest.num_connections, 25)
 
-        nest.Disconnect(nodes, nodes, 'all_to_all')
+        nest.Disconnect(nodes, nodes, conn_spec='all_to_all')
 
         self.assertEqual(nest.num_connections, 0)
 

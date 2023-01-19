@@ -547,9 +547,9 @@ NodeManager::ensure_valid_thread_local_ids()
       wfr_network_size_ = size();
 
       // wfr_is_used_ indicates, whether at least one
-      // of the threads has a neuron that uses waveform relaxtion
+      // of the threads has a neuron that uses waveform relaxation
       // all threads then need to perform a wfr_update
-      // step, because gather_events() has to be done in a
+      // step, because gather_events() has to be done in an
       // openmp single section
       wfr_is_used_ = false;
       for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
@@ -568,18 +568,12 @@ NodeManager::destruct_nodes_()
 {
 #pragma omp parallel
   {
-    index t = kernel().vp_manager.get_thread_id();
-    SparseNodeArray::const_iterator n;
-    for ( n = local_nodes_[ t ].begin(); n != local_nodes_[ t ].end(); ++n )
+    const index tid = kernel().vp_manager.get_thread_id();
+    for ( auto node : local_nodes_[ tid ] )
     {
-      // We call the destructor for each node excplicitly. This
-      // destroys the objects without releasing their memory. Since
-      // the Memory is owned by the Model objects, we must not call
-      // delete on the Node objects!
-      n->get_node()->~Node();
+      delete node.get_node();
     }
-
-    local_nodes_[ t ].clear();
+    local_nodes_[ tid ].clear();
   } // omp parallel
 }
 

@@ -198,6 +198,22 @@ class ConnectLayersTestCase(unittest.TestCase):
         }
         self._check_connections(conn_spec, 20)
 
+    def test_connect_layers_indegree_parameter(self):
+        """Connecting layers with fixed_indegree and parameter as indegree."""
+        # Parameter will give numbers close to 5. With std=0.1 they should all be rounded to an indegree of exactly 5.
+        mean = 5.
+        param = nest.random.normal(mean=mean, std=0.1)
+        conn_spec = {'rule': 'fixed_indegree', 'indegree': param, 'p': 1.0, 'allow_multapses': True}
+        self._check_connections(conn_spec, int(mean) * 20)
+
+    def test_connect_layers_outdegree_parameter(self):
+        """Connecting layers with fixed_indegree and parameter as indegree."""
+        # Parameter will give numbers close to 5. With std=0.1 they should all be rounded to an outdegree of exactly 5.
+        mean = 5.
+        param = nest.random.normal(mean=mean, std=0.1)
+        conn_spec = {'rule': 'fixed_outdegree', 'outdegree': param, 'p': 1.0, 'allow_multapses': True}
+        self._check_connections(conn_spec, int(mean) * 20)
+
     def test_connect_layers_outdegree_mask(self):
         """Connecting layers with fixed_outdegree and mask"""
         conn_spec = {

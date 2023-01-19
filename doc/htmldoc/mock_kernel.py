@@ -51,7 +51,7 @@ def convert(infile):
 
     cdef_in_classes_re = re.compile(r'    +cdef')
     cdef_class_re = re.compile(r'cdef class (.*)')
-    rmdatatype_re = re.compile(r'\bint\b|\bnew\b|\&(?=\w)|<[^>]+>')
+    rmdatatype_re = re.compile(r'\sint\s|\bnew\b|\&(?=\w)|<[^>]+>')
 
     inclass = False
 

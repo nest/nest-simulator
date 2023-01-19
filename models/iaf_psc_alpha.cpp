@@ -27,12 +27,10 @@
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
-#include "propagator_stability.h"
-
-// Includes from nestkernel:
 #include "exceptions.h"
+#include "iaf_propagator.h"
 #include "kernel_manager.h"
+#include "numerics.h"
 #include "ring_buffer_impl.h"
 #include "universal_data_logger_impl.h"
 
@@ -52,7 +50,7 @@ template <>
 void
 RecordablesMap< iaf_psc_alpha >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &iaf_psc_alpha::get_V_m_ );
   insert_( names::I_syn_ex, &iaf_psc_alpha::get_I_syn_ex_ );
   insert_( names::I_syn_in, &iaf_psc_alpha::get_I_syn_in_ );
@@ -263,10 +261,8 @@ iaf_psc_alpha::pre_run_hook()
   V_.P21_in_ = h * V_.P11_in_;
 
   // these are determined according to a numeric stability criterion
-  V_.P31_ex_ = propagator_31( P_.tau_ex_, P_.Tau_, P_.C_, h );
-  V_.P32_ex_ = propagator_32( P_.tau_ex_, P_.Tau_, P_.C_, h );
-  V_.P31_in_ = propagator_31( P_.tau_in_, P_.Tau_, P_.C_, h );
-  V_.P32_in_ = propagator_32( P_.tau_in_, P_.Tau_, P_.C_, h );
+  std::tie( V_.P31_ex_, V_.P32_ex_ ) = IAFPropagatorAlpha( P_.tau_ex_, P_.Tau_, P_.C_ ).evaluate( h );
+  std::tie( V_.P31_in_, V_.P32_in_ ) = IAFPropagatorAlpha( P_.tau_in_, P_.Tau_, P_.C_ ).evaluate( h );
 
   V_.EPSCInitialValue_ = 1.0 * numerics::e / P_.tau_ex_;
   V_.IPSCInitialValue_ = 1.0 * numerics::e / P_.tau_in_;

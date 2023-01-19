@@ -29,10 +29,11 @@
 // Generated includes:
 #include "config.h"
 
-// Includes from nestkernel:
+// Includes from libnestutil:
 #include "archiving_node.h"
 #include "connection.h"
 #include "event.h"
+#include "iaf_propagator.h"
 #include "nest_types.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
@@ -271,6 +272,10 @@ private:
    */
   double is_spike_( const double );
 
+  /** Propagator object for updating synaptic components */
+  IAFPropagatorExp propagator_ex_;
+  IAFPropagatorExp propagator_in_;
+
   // ----------------------------------------------------------------
 
   /**
@@ -315,7 +320,7 @@ private:
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const;               //!< Store current values in dictionary
-    double set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    double set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // ----------------------------------------------------------------

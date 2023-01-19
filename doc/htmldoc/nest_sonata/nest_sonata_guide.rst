@@ -3,9 +3,40 @@
 The NEST SONATA guide 
 =====================
 
-Native support for networks specified by the SONATA format [REF] was introduced in NEST 3.x. The SONATA format is 
+Native support for networks described by the SONATA format [1]_ was introduced in NEST 3.5. The SONATA format is 
 meant to support a variety of neural simulator software, and hence has soft restrictions on how a SONATA network is 
-specified.
+specified. This guide provides the details on the NEST support of the SONATA format. 
+
+
+.. _sec:sonata_overview:
+
+Overview of the SONATA format 
+-----------------------------
+
+
+.. _sec:sonata_nodes:
+
+Representation of network nodes 
+-------------------------------
+
+
+.. _sec:sonata_edges:
+
+Representation of network edges 
+-------------------------------
+
+
+.. _sec:sonata_edges:
+
+Representation of network edges 
+-------------------------------
+
+
+.. _sec:sonata_config:
+
+Configuration file
+------------------
+
 
 
 is hence lenient in . The NEST SONATA reader therefore .
@@ -89,3 +120,11 @@ node_type_id model_type pop_name ei location population
   For more details, see https://github.com/AllenInstitute/sonata/blob/master/docs/SONATA_DEVELOPER_GUIDE.md
 
   require numeric keys, i.e. 0, 1, 2, ..., for edge id groups
+
+
+References
+~~~~~~~~~~
+
+.. [1] Dai K, Hernando J, Billeh YN, Gratiy SL, Planas J, et al. (2020). 
+       The SONATA data format for efficient description of large-scale network models. 
+       PLOS Computational Biology 16(2): e1007696. https://doi.org/10.1371/journal.pcbi.1007696

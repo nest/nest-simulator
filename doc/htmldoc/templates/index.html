@@ -4,34 +4,38 @@
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 
-<head>
-  <title>NEST documentation index </title>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <meta name="description" content="This is the documentation index for the NEST, a simulator for spiking neuronal networks.">
-  <meta name="keywords" content="">
-  <link rel="stylesheet" href="_static/css/bootstrap/bootstrap.min.css">
-  <link rel="stylesheet" href="_static/css/normalize.css">
-  <link rel="stylesheet" href="_static/css/default.min.css">
-  <script src="_static/js/highlight.min.js"></script>
-  <script>hljs.highlightAll();</script>
-  <link rel="stylesheet" href="_static/js/flexslider/flexslider.css">
-  <link rel="stylesheet" href="_static/css/custom.css">
-  <script src="_static/js/modernizr-2.6.2.min.js"></script>
-    </head>
-<body id="home">
+ <title>NEST documentation index </title>
+ <meta charset="utf-8">
+ <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta name="description" content="This is the documentation index for the NEST, a simulator for spiking neuronal networks.">
+ <meta name="keywords" content="">
+ <link rel="stylesheet" href="_static/stylesheets/application.css">
+ <link rel="stylesheet" href="_static/fonts/material-icons.css">
+ <link rel="stylesheet" href="_static/css/bootstrap/bootstrap.min.css">
+ <link rel="stylesheet" href="_static/css/normalize.css">
+ <link rel="stylesheet" href="_static/css/default.min.css">
+ <script src="_static/js/highlight.min.js"></script>
+ <script>hljs.highlightAll();</script>
+ <link rel="stylesheet" href="_static/js/flexslider/flexslider.css">
+ <link rel="stylesheet" href="_static/css/custom.css">
+ <script src="_static/js/modernizr-2.6.2.min.js"></script>
+ <script src="_static/javascripts/application.js"></script>
+
+<div role="main">
+
+{% include "sphinx_material/header.html" %}
 
   <a href="#" id="gototop"><img src="{{ pathto('_static/img/arrow-up-circle.svg',1) }}"/></a>
   <header id="header" class="wrapper clearfix">
-    <div id="banner">
+    <div id="background" class="particle-img">
+     <div id="banner">
       <div id="logo">
-	<img src="_static/img/nest_docs.png" alt="logo" width="100%">
+        <img src="{{ pathto('_static/img/nest_docs.png',1) }}" alt="logo"/>
       </div>
-  </div>
-
-    <nav id="topnav" role="navigation">
-      <div class="menu-toggle">Menu</div>
+    </div>
+<nav id="topnav" role="navigation">
+ <div class="menu-toggle">Menu</div>
     <ul class="srt-menu" id="menu-main-navigation">
  <li><a href="#intro">Get started</a></li>
 	<li><a href="#topics">Learn NEST</a></li>
@@ -41,6 +45,7 @@
   </header>
   <script src="_static/js/tsparticles.min.js"></script>
   <script src="_static/js/particles-app.js"></script>
+
   <section id="hero" class="clearfix">
     <div class="wrapper">
       <div class="row">
@@ -60,7 +65,9 @@
           <a href="community.html" class="buttonlink" style="float: right;">Contact us</a>
         </div>
      </section>
-  <section id="intro" class="vertical-padding">
+
+</div>
+ <section id="intro" class="vertical-padding">
     <div id="main" class="blueelement wrapper clearfix">
       <div class="row vertical-padding">
       <div class="grid_12">
@@ -227,14 +234,14 @@
       Site built with ♥ using <a href="http://www.prowebdesign.ro/simple-responsive-template/" target="_blank">Simple Responsive Template</a>
       by <a href="http://www.prowebdesign.ro/" target="_blank" title="www.prowebdesign.ro">Prowebdesign.ro</a>,
       <a href="attribution-list.html">Free Amateur Icons</a> and <a href="https://particles.js.org/">tsParticles.js</a>.
-    </div>
   </footer>
-  <script src="_static/js/jquery-3.6.0.min.js"></script>
-  <script src="_static/js/jquery-ui.min.js"></script>
-  <script defer src="_static/js/flexslider/jquery.flexslider-min.js"></script>
-  <script src="_static/js/bootstrap/bootstrap.bundle.min.js"></script>
-  <script src="_static/js/custom.js"></script>
-  <script src="_static/js/main.js"></script>
-</body>
+    </div>
+ <script src="_static/js/jquery-3.6.0.min.js"></script>
+ <script src="_static/js/jquery-ui.min.js"></script>
+ <script defer src="_static/js/flexslider/jquery.flexslider-min.js"></script>
+ <script src="_static/js/bootstrap/bootstrap.bundle.min.js"></script>
+ <script src="_static/js/custom.js"></script>
+ <script src="_static/js/main.js"></script>
+
 </html>
 

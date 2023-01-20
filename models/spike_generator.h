@@ -85,7 +85,7 @@ If false, spike times will be rounded to the nearest step if they are
 less than tic/2 from the step, otherwise NEST reports an error.
 If true, spike times are rounded to the nearest step if within tic/2
 from the step, otherwise they are rounded up to the *end* of the step.
-Irrelevant if precise_times is true.
+This setting has no effect if precise_times is true.
 
     `shift_now_spikes`   default: false
 

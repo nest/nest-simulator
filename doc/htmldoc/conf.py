@@ -343,17 +343,29 @@ copy_example_file(source_dir / "pynest/examples/Potjans_2014/README.rst")
 copy_example_file(source_dir / "pynest/examples/hpc_benchmark_connectivity.svg")
 
 
-# -- Optionally patch the documentation for hotfix back-ports ----------------------------
+# -- Optionally patch the documentation for hotfix back-ports -------------
+
+# To fix documentation errors in releases, like broken links or spelling
+# errors, without having to create a new software release. It is also
+# possible to customise the look and feel of the NEST documentation
+# in individual installations.
+
 print("preparing patch...")
 
 try:
     current_hash = check_output("git rev-parse HEAD", shell=True, encoding='utf8').strip()
+    # Add the release hash to the log
     print(f"  current git hash: {current_hash}")
+    # User action: name the patch file `{current_hash}_doc.patch` and place it online
     patch_file = f'{current_hash}_doc.patch'
+    # User action: Create an environment variable `patch_url` in the administration
+    # console of the readthedocs project
     patch_url = f'{os.environ["patch_url"]}/{patch_file}'
     print(f"  retrieving {patch_url}")
+    # Download the patch
     urlretrieve(patch_url, patch_file)
     print(f"apply {patch_file}")
+    # Patch the documentation
     result = check_output('patch -p3', stdin=open(patch_file, 'r'), stderr=subprocess.STDOUT, shell=True)
     print("patch result:")
     print(result)

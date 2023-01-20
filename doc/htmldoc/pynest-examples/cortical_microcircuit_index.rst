@@ -6,7 +6,7 @@ Cortical microcircuit model
 Example script
 --------------
 
-Check out the :doc:`example script <../pynest-examples/Potjans_2014/run_microcircuit>`, which can be run
+Check out the :doc:`example script <Potjans_2014/run_microcircuit>`, which can be run
 on a laptop and scaled up by altering the parameters (see below).
 
 .. include:: README.rst

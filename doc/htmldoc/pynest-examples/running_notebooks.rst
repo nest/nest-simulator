@@ -27,19 +27,25 @@ Prerequisites
   .. image:: ../static/img/lab-execution-site-de.png
 
 4. JupyterHub will then try to clone the NEST repository and open the selected notebook.
-   The other notebooks will be available in Jupyter lab in the left column, as well.
+   The other notebooks will be available in JupyterHub in the left column, as well.
 
 Now you can run the notebook and change variables to test how it works!
 
   .. image:: ../static/img/running-jupyterlab.png
+
+
+.. important::
+
+   If you want to save any changes you made you need to move the file to either your shared folder in EBRAINS or
+   download it onto your computer.
 
 ----
 
 Troubleshooting
 ---------------
 
-Error: Command returned non zero-status 128 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Error: Command returned non-zero status 128
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 JupyterHub fails to clone the repository.
 
@@ -50,7 +56,9 @@ JupyterHub fails to clone the repository.
 
 * Stop the server - this may take several minutes.
 
-  .. warning::
+.. image:: ../static/img/stopserver-ebrains.png
+
+.. warning::
 
     If you stop the server, you will lose any changes you made during your session that
     have not been stored on your computer or in the shared folder.
@@ -58,11 +66,10 @@ JupyterHub fails to clone the repository.
 
     You can return to JupyterHub by clicking on JupyterHub icon on the Control Panel.
 
-.. image:: ../static/img/stopserver-ebrains.png
 
 * Once the server stops, you can retry running the notebook again.
 
- Alternatively, You can also try another execution site.
+ Alternatively, you can try another execution site.
 
 
 When trying to run the notebook:
@@ -82,9 +89,15 @@ When trying to run the notebook:
 
 * Check that the kernel version is correct (EBRAINS-22.10 and later should be compatible with NEST notebooks)
 
-* Before the import line add a new line ``!pip install module-name``
+* Before the import line in the notebook, insert a new cell.
 
 .. image:: ../static/img/insert_cell.png
+
+* Install the missing module with pip:
+
+  .. code-block::
+
+   !pip install module-name
 
 .. image:: ../static/img/notebook-pipinstall.png
 
@@ -95,6 +108,6 @@ If the module is installed successfully, you can try to rerun the notebook.
 Still not working?
 ~~~~~~~~~~~~~~~~~~
 
-`Create an issue on GitHub <https://github.com/nest/nest-simulator/issues/new/choose>`_. 
+`Create an issue on GitHub <https://github.com/nest/nest-simulator/issues/new/choose>`_.
 
 The developer team will look into issues as quickly as possible.

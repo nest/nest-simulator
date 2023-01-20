@@ -207,6 +207,7 @@ Jupyter lab on EBRAINS. For more information see :ref:`our guide on running note
 
            * :doc:`recording_demo`
            * :doc:`store_restore_network`
+           * :doc:`music_cont_out_proxy_example/nest_script`
 
 
 .. grid:: 1 1 2 3

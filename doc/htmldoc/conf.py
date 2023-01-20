@@ -240,7 +240,7 @@ nbsphinx_prolog = """
                                   {{ env.doc2path(env.docname, base=None) | replace("/", "%2F" )}}\
                                   &branch=ebrains-button
 
-                    For more informatioin see :ref:`run_jupyter`.
+                    For details and troubleshooting see :ref:`run_jupyter`.
                   """
 from doc.extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
 

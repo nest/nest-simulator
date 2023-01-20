@@ -23,9 +23,7 @@ sections of this tutorial:
 - :ref:`Part 3: Connecting networks with synapses <pynest_tutorial_3>`
 
 More advanced examples can be found at :ref:`Example
-Networks <pynest_examples>`, or
-have a look at the source directory of your NEST installation in the
-subdirectory: ``pynest/examples/``.
+Networks <pynest_examples>`.
 
 Incorporating structure in networks of point neurons
 ----------------------------------------------------

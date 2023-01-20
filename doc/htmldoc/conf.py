@@ -337,19 +337,10 @@ texinfo_documents = [
 ]
 
 
-def copy_example_file(src):
-    copyfile(src, doc_build_dir / "examples" / src.parts[-1])
-
-
 def copy_acknowledgments_file(src):
     copyfile(src, doc_build_dir / src.parts[-1])
 
 
 # -- Copy Acknowledgments file ----------------------------
 copy_acknowledgments_file(source_dir / "ACKNOWLEDGMENTS.md")
-# -- Copy documentation for Microcircuit Model ----------------------------
-copy_example_file(source_dir / "pynest/examples/Potjans_2014/box_plot.png")
-copy_example_file(source_dir / "pynest/examples/Potjans_2014/raster_plot.png")
-copy_example_file(source_dir / "pynest/examples/Potjans_2014/microcircuit.png")
-copy_example_file(source_dir / "pynest/examples/Potjans_2014/README.rst")
-copy_example_file(source_dir / "pynest/examples/hpc_benchmark_connectivity.svg")
+

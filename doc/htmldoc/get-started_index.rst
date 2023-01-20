@@ -6,7 +6,7 @@ Tutorials and examples
    :hidden:
 
    tutorials/index
-   PyNEST example scripts <examples/index>
+   PyNEST example scripts <pynest-examples/index>
 
 
 .. grid:: 1 1 2 2

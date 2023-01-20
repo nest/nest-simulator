@@ -25,9 +25,7 @@ sections of this primer:
    networks <pynest_tutorial_4>`
 
 More advanced examples can be found at :ref:`Example
-Networks <pynest_examples>`, or
-have a look at at the source directory of your NEST installation in the
-subdirectory: ``pynest/examples/``.
+Networks <pynest_examples>`.
 
 Parametrizing synapse models
 -----------------------------

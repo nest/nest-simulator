@@ -8,7 +8,7 @@ Using EBRAINS JupyterHub
 
 Prerequisites
 
-  * an EBRAINS account 
+  * an EBRAINS account
 
     If you do not have an account yet, you can sign up here: https://ebrains.eu/register.
 
@@ -72,28 +72,30 @@ JupyterHub fails to clone the repository.
  Alternatively, you can try another execution site.
 
 
-When trying to run the notebook:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ``ModuleNotFoundError``:  ``no module named nest``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* Check that the kernel version is correct (EBRAINS-22.10 and later should be compatible with NEST notebooks)
+The active notebook fails at importing ``nest`` module.
+
+* Check that the kernel version is correct (EBRAINS-22.10 and later should be compatible with NEST notebooks).
 
   .. image:: ../static/img/kernel-version-jupyter.png
 
 ``ModuleNotFoundError``: any other module besides ``nest``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The active notebook fails at importing one or several required modules or packages.
 
 .. image:: ../static/img/traceback-modulenotfound.png
 
-* Check that the kernel version is correct (EBRAINS-22.10 and later should be compatible with NEST notebooks)
+* Check that the kernel version is correct (EBRAINS-22.10 and later should be compatible with NEST notebooks).
 
 * Before the import line in the notebook, insert a new cell.
 
 .. image:: ../static/img/insert_cell.png
 
-* Install the missing module with pip:
+* Install the missing module with pip, note the exclamation mark before pip:
 
   .. code-block::
 

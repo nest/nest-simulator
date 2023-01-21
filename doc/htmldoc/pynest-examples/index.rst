@@ -48,7 +48,6 @@ Jupyter lab on EBRAINS. For more information see :ref:`our guide on running note
     .. grid-item-card:: NEST Sudoku solver
            :img-top: ../static/img/sudoku_solution.gif
 
-           * :doc:`sudoku/sudoku_net`
            * :doc:`sudoku/sudoku_solver`
            * :doc:`sudoku/plot_progress`
 
@@ -56,7 +55,6 @@ Jupyter lab on EBRAINS. For more information see :ref:`our guide on running note
            :img-top: ../static/img/pong_sim.gif
 
            * :doc:`pong/run_simulations`
-           * :doc:`pong/pong`
            * :doc:`pong/generate_gif`
 
 .. grid:: 1 1 2 3

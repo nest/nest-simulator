@@ -84,11 +84,11 @@ SonataConnector::connect()
   │  │  │  │  ├─ range_to_edge_id     Dataset {N_target_nodes x 2}
   │  │  ├─ <edge_id1>                 Group - required 
   │  │  │  ├─ delay                   Dataset {M_edges} - optional
-  │  │  │  ├─ syn_weights             Dataset {M_edges} - optional
+  │  │  │  ├─ syn_weight              Dataset {M_edges} - optional
   │  │  │  ├─ dynamics_params         Group - currently not supported
   │  │  ├─ <edge_id2>                 Group - optional - currently no support for more than one edge id group
   │  │  │  ├─ delay                   Dataset {K_edges} - optional
-  │  │  │  ├─ syn_weights             Dataset {K_edges} - optional
+  │  │  │  ├─ syn_weight              Dataset {K_edges} - optional
   │  │  │  ├─ dynamics_params         Group
 
   For more details, see https://github.com/AllenInstitute/sonata/blob/master/docs/SONATA_DEVELOPER_GUIDE.md

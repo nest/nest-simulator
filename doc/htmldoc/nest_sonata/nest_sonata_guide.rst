@@ -3,9 +3,8 @@
 The NEST SONATA guide 
 =====================
 
-Native support for networks described by the SONATA format [1]_ was introduced in NEST 3.5. The SONATA format is 
-meant to support a variety of neural simulator software, and hence has soft restrictions on how a SONATA network is 
-specified. This guide provides the details on the NEST support of the SONATA format. 
+NEST supports building and simulating networks of point neurons described by the SONATA format [1]_. 
+This guide provides the details about how a SONATA network must be specified to be supported natively by NEST. 
 
 
 .. _sec:sonata_overview:
@@ -13,58 +12,33 @@ specified. This guide provides the details on the NEST support of the SONATA for
 Overview of the SONATA format 
 -----------------------------
 
+The SONATA (Scalable Open Network Architecture TemplAte) format provides a framework for storage and exchange of 
+network models and simulation configurations. A network is considered as a graph made of nodes and edges. Nodes of a 
+network can be arranged into multiple populations. There are two categories of nodes: explicitly simulated nodes 
+(neurons) and virtual nodes (devices) that only provide inputs to the simulated system. Nodes within and between 
+populations are connected through edges (synapses). The SONATA format explicitly tabulates information about nodes 
+and edges in the table-based file formats HDF5 and CSV. 
+
+The cell and synapse properties of the nodes and edges, respectively, can be described either individually or for 
+whole subsets. Nodes that share a global set of properties constitute a node type. Similarly, a subset of edges 
+that share a global set of properties constitute an edge type. Whether a property is stored individually or on a 
+per-type basis is up to the modeller. The number of node or edge types in a network model is typically small compared 
+to the number of nodes or edges. Therefore, the node and edge type files are stored in the CSV format such that a 
+particular node or edge type can be easily accessed by its node or edge type id.
+
+Each node and edge in the network is explicitly tabulated in the binary format HDF5. Populations are hierarchically
+organized by utilizing HDF5 groups and datasets. The SONATA format requires certain HDF5 datasets, for instance 
+a dataset containing all the node ids and another containing all the corresponding node type ids. Properties that are 
+stored on a individual-basis, for instance synaptic weights, are also stored in HDF5 datasets. 
+
+Simulation parameters and the locations of the HDF5 and CSV files specifying the network are stored in JSON 
+configuration files. 
+
 
 .. _sec:sonata_nodes:
 
 Representation of network nodes 
 -------------------------------
-
-
-.. _sec:sonata_edges:
-
-Representation of network edges 
--------------------------------
-
-
-.. _sec:sonata_edges:
-
-Representation of network edges 
--------------------------------
-
-
-.. _sec:sonata_config:
-
-Configuration file
-------------------
-
-
-
-is hence lenient in . The NEST SONATA reader therefore .
-
-If you have a SONATA network specification that is not yet supported by NEST but you think should be, please contact the developers through the [mailing list](link).
-
-
-large that it can't be imported into memory
-
-HDF5 data is read  
-
-http://www.graphviz.org/
-
-Directory Structure
-Before running a simulation, we will need to create the runtime environment, including parameter files, run-script and configuration files.
-https://alleninstitute.github.io/bmtk/tutorial_pointnet_modeling.html
-
-
-The simulation time and resolution are expected to be provided in the
-JSON configuration file. Additional kernel attributes can be passed as
-as arbitrary keyword arguments (`kwargs`). See the documentation of
-:ref:`sec:kernel_attributes` for a valid list of kernel attributes.
-
-Note that the number of threads and MPI processes should be set in
-advance of *building* the network.
-
-For convenience and for compliance with SONATA format
-
 
 The network nodes are created on the Python level. In the SONATA format,
 node populations are serialized in node HD5 files. Each node in a
@@ -91,7 +65,12 @@ node_type_id model_type pop_name ei location population
 1 virtual sON_TF4 e LGN lgn
 
 
-  Structure of SONATA edge files:
+.. _sec:sonata_edges:
+
+Representation of network edges 
+-------------------------------
+
+  Structure of SONATA HDF5 edge files:
 
   <edge_file.h5>                      Filename
   ├─ edges                            Group - required
@@ -120,6 +99,31 @@ node_type_id model_type pop_name ei location population
   For more details, see https://github.com/AllenInstitute/sonata/blob/master/docs/SONATA_DEVELOPER_GUIDE.md
 
   require numeric keys, i.e. 0, 1, 2, ..., for edge id groups
+
+
+.. _sec:sonata_config:
+
+Configuration file
+------------------
+
+Simulation parameters 
+
+Target simulator 
+
+.. _sec:sonata_refs:
+
+More about SONATA 
+-----------------
+
+For full specification of the SONATA format, see [1]_ and the `SONATA GitHub page <https://github.com/AllenInstitute/sonata>`_.
+
+
+.. _sec:sonata_examples:
+
+NEST SONATA examples 
+--------------------
+
+link to example scripts 
 
 
 References

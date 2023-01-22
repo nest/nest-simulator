@@ -29,7 +29,7 @@ particular node or edge type can be easily accessed by its node or edge type id.
 Each node and edge in the network is explicitly tabulated in the binary format HDF5. Populations are hierarchically
 organized by utilizing HDF5 groups and datasets. The SONATA format requires certain HDF5 datasets, for instance 
 a dataset containing all the node ids and another containing all the corresponding node type ids. Properties that are 
-stored on a individual-basis, for instance synaptic weights, are also stored in HDF5 datasets. 
+stored on an individual-basis, for instance synaptic weights, are also stored in HDF5 datasets. 
 
 Simulation parameters and the locations of the HDF5 and CSV files specifying the network are stored in JSON 
 configuration files. 
@@ -37,32 +37,73 @@ configuration files.
 
 .. _sec:sonata_nodes:
 
-Representation of network nodes 
--------------------------------
+The NEST support of SONATA nodes 
+--------------------------------
 
-The network nodes are created on the Python level. In the SONATA format,
-node populations are serialized in node HD5 files. Each node in a
-population has a node type. Each node population has a single associated
-node types CSV file that assigns properties to all nodes with a given node
-type. Please note that it is assumed that all relevant node properties are
-stored in the node types CSV file. For neuron nodes relevant properties
-are model type, model name and reference to a JSON file describing the
-parametrization.
+In the SONATA format, node populations are serialized in nodes HDF5 files. Each node in a population has a node type 
+and each node population has a single associated node types CSV file that assigns properties to all nodes with a 
+given node type. 
 
-Each node population is NodeCollection
+NEST assumes the following structure of the nodes HDF5 files: 
 
-Iterates SONATA nodes files and creates nodes with parameters given in corresponding CSV files.
+:: 
 
+    <nodes_file.h5>                     Filename
+    ├─ nodes                            Group - required
+    │  ├─ <population_name>             Group - required - usually only one but can be more population groups per file
+    │  │  ├─ node_type_id               Dataset {N_total_nodes} - required
+
+Note that this structure means NEST assumes that the implicit row numbers in the `node_type_id` dataset correspond to the `node_id`s. 
+
+NEST supports the following SONATA node `model_type`s:
+
+* `point_neuron`
+* `point_process`
+* `virtual` 
+
+Both `point_neuron` and `point_process` means that the node is a neuron model (explicitly simulated) whereas `virtual` 
+means that the node only provide inputs to the simulated system. `virtual` nodes are modelled as `spike_generator`s 
+(see :doc:`../models/spike_generator`). NEST requires that only one `model_type` is present per node types CSV file. 
+
+The required headers for node types CSV files that describe neuron models are: 
+
+* `node_type_id`
+* `model_type`
+* `model_template`
+* `dynamics_params`
+
+For a given `node_type_id`, the `model_template` is the name of the NEST neuron model with prefix `nest:`. NEST does 
+not require the `model_template` entries to be the same, but the creation of the nodes described in the CSV file is 
+faster if the neuron models are the same. 
+
+For a given `node_type_id`, the `dynamics_params` entry is expected to be a reference to a JSON file that describes 
+the parametrization of the neuron model. An example JSON file describing the parametrization of a given node type: 
+
+.. code-block:: json
+
+    {
+        "I_e": 0.0,
+        "tau_m": 44.9,
+        "C_m": 239.0,
+        "t_ref": 3.0,
+        "E_L": -78.0,
+        "V_th": -43.0,
+        "V_reset": -55.0
+    }
+
+
+NEST does not support node properties stored on an individual-basis in HDF5 datasets. This restriction can easily be 
+circumvented by assigning a single node its own node type id. 
+
+An example node types CSV file for neuron nodes: 
 
 .. csv-table::
     :header: node_type_id, model_type, model_template, dynamics_params
     1, point_process, nest:iaf_psc_alpha, params_1.json
     2, point_process, nest:iaf_psc_alpha, params_2.json
 
-
-node_type_id model_type pop_name ei location population
-0 virtual sON_TF8 e LGN lgn
-1 virtual sON_TF4 e LGN lgn
+The only required CSV header for `virtual` nodes is `model_type`. The `spike_generator`s spike-times arrays are expected
+to be provided in HDF5 datasets with the configuration details specified in the JSON configuration file.  
 
 
 .. _sec:sonata_edges:
@@ -70,31 +111,34 @@ node_type_id model_type pop_name ei location population
 Representation of network edges 
 -------------------------------
 
-  Structure of SONATA HDF5 edge files:
+individual connections 
 
-  <edge_file.h5>                      Filename
-  ├─ edges                            Group - required
-  │  ├─ <population_name>             Group - required - usually only one but can be more population groups per file
-  │  │  ├─ source_node_id             Dataset {N_total_edges} - required - with attribute specifying source population name
-  │  │  ├─ edge_group_id              Dataset {N_total_edges} - required
-  │  │  ├─ edge_group_index           Dataset {N_total_edges} - required
-  │  │  ├─ target_node_id             Dataset {N_total_edges} - required - with attribute specifying target population name
-  │  │  ├─ edge_type_id               Dataset {N_total_edges} - required
-  │  │  ├─ indices                    Group - optional
-  │  │  │  ├─ source_to_target        Group
-  │  │  │  │  ├─ node_id_to_range     Dataset {N_source_nodes x 2}
-  │  │  │  │  ├─ range_to_edge_id     Dataset {N_source_nodes x 2}
-  │  │  │  ├─ target_to_source        Group
-  │  │  │  │  ├─ node_id_to_range     Dataset {N_target_nodes x 2}
-  │  │  │  │  ├─ range_to_edge_id     Dataset {N_target_nodes x 2}
-  │  │  ├─ <edge_id1>                 Group - required 
-  │  │  │  ├─ delay                   Dataset {M_edges} - optional
-  │  │  │  ├─ syn_weights             Dataset {M_edges} - optional
-  │  │  │  ├─ dynamics_params         Group - currently not supported
-  │  │  ├─ <edge_id2>                 Group - optional - currently no support for more than one edge id group
-  │  │  │  ├─ delay                   Dataset {K_edges} - optional
-  │  │  │  ├─ syn_weights             Dataset {K_edges} - optional
-  │  │  │  ├─ dynamics_params         Group
+
+Structure of SONATA HDF5 edge files:
+
+<edge_file.h5>                      Filename
+├─ edges                            Group - required
+│  ├─ <population_name>             Group - required - usually only one but can be more population groups per file
+│  │  ├─ source_node_id             Dataset {N_total_edges} - required - with attribute specifying source population name
+│  │  ├─ edge_group_id              Dataset {N_total_edges} - required
+│  │  ├─ edge_group_index           Dataset {N_total_edges} - required
+│  │  ├─ target_node_id             Dataset {N_total_edges} - required - with attribute specifying target population name
+│  │  ├─ edge_type_id               Dataset {N_total_edges} - required
+│  │  ├─ indices                    Group - optional - currently not utilized
+│  │  │  ├─ source_to_target        Group
+│  │  │  │  ├─ node_id_to_range     Dataset {N_source_nodes x 2}
+│  │  │  │  ├─ range_to_edge_id     Dataset {N_source_nodes x 2}
+│  │  │  ├─ target_to_source        Group
+│  │  │  │  ├─ node_id_to_range     Dataset {N_target_nodes x 2}
+│  │  │  │  ├─ range_to_edge_id     Dataset {N_target_nodes x 2}
+│  │  ├─ <edge_id1>                 Group - required 
+│  │  │  ├─ delay                   Dataset {M_edges} - optional
+│  │  │  ├─ syn_weights             Dataset {M_edges} - optional
+│  │  │  ├─ dynamics_params         Group - currently not supported
+│  │  ├─ <edge_id2>                 Group - optional - currently no support for more than one edge id group
+│  │  │  ├─ delay                   Dataset {K_edges} - optional
+│  │  │  ├─ syn_weights             Dataset {K_edges} - optional
+│  │  │  ├─ dynamics_params         Group
 
   For more details, see https://github.com/AllenInstitute/sonata/blob/master/docs/SONATA_DEVELOPER_GUIDE.md
 
@@ -115,7 +159,7 @@ Target simulator
 More about SONATA 
 -----------------
 
-For full specification of the SONATA format, see [1]_ and the `SONATA GitHub page <https://github.com/AllenInstitute/sonata>`_.
+For full specification of the SONATA format, see [1]_ and the `SONATA GitHub page<https://github.com/AllenInstitute/sonata>`_.
 
 
 .. _sec:sonata_examples:

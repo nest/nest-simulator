@@ -195,7 +195,7 @@ class SonataNetwork():
         """Create the SONATA network nodes.
 
         The network nodes are created on the Python level. In the SONATA format,
-        node populations are serialized in node HD5 files. Each node in a
+        node populations are serialized in node HDF5 files. Each node in a
         population has a node type. Each node population has a single associated
         node types CSV file that assigns properties to all nodes with a given
         node type.
@@ -223,8 +223,8 @@ class SonataNetwork():
             is_one_model_type = (model_types_arr[0] == model_types_arr).all()
 
             if not is_one_model_type:
-                msg = ("Only one model type per node CSV file is supported. "
-                       f"{csv_fn} contains more than one.")
+                msg = ("Only one model type per node types CSV file is "
+                       f"supported. {csv_fn} contains more than one.")
                 raise ValueError(msg)
 
             model_type = model_types_arr[0]

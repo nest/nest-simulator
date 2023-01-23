@@ -77,7 +77,8 @@ does not require the `model_template` entries to be the same, but the creation o
 types CSV file is faster if the neuron models are the same. 
 
 For a given `node_type_id`, the `dynamics_params` entry is expected to be a reference to a JSON file that describes 
-the parametrization of the neuron model. An example JSON file describing the parametrization of a given node type: 
+the parametrization of the neuron model. Below is an example of a JSON file describing the parametrization of a given 
+node type: 
 
 .. code-block:: json
 
@@ -92,10 +93,10 @@ the parametrization of the neuron model. An example JSON file describing the par
     }
 
 
-NEST does not support node properties stored on an individual-basis in HDF5 datasets. This restriction can easily be 
+NEST does not support node properties stored on an individual-basis in HDF5 datasets. This restriction can be 
 circumvented by assigning a single node its own node type id. 
 
-An example node types CSV file for neuron nodes: 
+Below is an example of a node types CSV file with the required headers for neuron nodes: 
 
 .. csv-table::
     :header: node_type_id, model_type, model_template, dynamics_params
@@ -155,6 +156,17 @@ NEST assumes the `edge_id`s are contiguous numeric keys starting from zero, i.e.
 and `syn_weight` datasets, given that they are provided. This means that only axonal delays and synaptic weights can 
 be stored on an individual-basis in the HDF5 format. Other synaptic properties must be given in the edge types 
 CSV file(s). 
+
+Below is an example of a edge types CSV file: 
+
+.. csv-table::
+    :header: edge_type_id, model_template, delay, dynamics_params
+    1, static_synapse, 2.0, params_1.json
+    2, static_synapse, 2.0, params_2.json
+
+
+**Note:** Only the synaptic properties `delay` and `syn_weight` can be provided as headers in the edge types CSV file. 
+Other synaptic properties must be given in the JSON file under `dynamics_params. 
 
 
 .. _sec:sonata_config:

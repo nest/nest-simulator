@@ -138,6 +138,10 @@ PyNEST examples
 
            * :doc:`../auto_examples/CampbellSiegert`
 
+    .. grid-item-card:: SONATA network
+           :img-top: ../static/img/300_pointneurons.png
+
+           * :doc:`../auto_examples/sonata_network`
 
 
 .. grid:: 1 1 2 3

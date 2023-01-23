@@ -460,4 +460,3 @@ class PongNetRSTDP(PongNet):
 
     def __repr__(self) -> str:
         return ("noisy " if self.apply_noise else "clean ") + "R-STDP"
-

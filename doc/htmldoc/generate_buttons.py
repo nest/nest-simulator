@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# conf.py
+# generate_buttons.py
 #
 # This file is part of NEST.
 #
@@ -32,14 +32,15 @@ from nbconvert import PythonExporter
 # This is using the branch ebrains-button (set as default on jessica-mitchell github).
 # This should use either stable or master once done
 link_puller = ("https://lab.ebrains.eu/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com"
-              "%2Fnest%2Fnest-simulator&urlpath=lab%2Ftree%2Fnest-simulator%2Fpynest"
-              "%2Fexamples%2Fnotebooks%2Fone_neuron_with_noise.ipynb&branch=v3.3")
+               "%2Fnest%2Fnest-simulator&urlpath=lab%2Ftree%2Fnest-simulator%2Fpynest"
+               "%2Fexamples%2Fnotebooks%2Fone_neuron_with_noise.ipynb&branch=v3.3")
 
 filepath = "pynest-examples/"
 # button syntax to insert into notebook
 md_ebrains_button = "[![EBRAINS Notebook](https://nest-simulator.org/TryItOnEBRAINS.png)](nblink)\n"
 
 python_button = "[![Download Python file](../../static/img/python-download.png)](pythonlink)\n"
+
 
 def make_link(filename, link_puller):
 
@@ -60,6 +61,7 @@ def make_link(filename, link_puller):
 
     return links
 
+
 for filename in Path(filepath).rglob('*.ipynb'):
     with open(filename, 'r') as checkfile:
         content = checkfile.read()
@@ -72,15 +74,15 @@ for filename in Path(filepath).rglob('*.ipynb'):
 # need to find pynest-examples/filename an dpynest-examples/something/filename
 
 # I need to replace the link puller with either the filename or the subdirectory + filename
-#
-############# Insert subdirectory (if exists) and filename into nblinknpuller link ###########
+
+# Insert subdirectory (if exists) and filename into nblinknpuller link
     links = make_link(filename, link_puller)
-############## create ebrains link to the markdown styled button for the notebook ##############
+# create ebrains link to the markdown styled button for the notebook
 
     button = md_ebrains_button.replace('nblink', links)
 
 
-########## convert ipynb to py ##############
+# convert ipynb to py ##############
     exporter = PythonExporter()
     (source, meta) = exporter.from_filename(filename)
     # cleanup python file: remove excess lines produced in python

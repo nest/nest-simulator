@@ -81,11 +81,11 @@ sonata_net = nest.SonataNetwork(net_config, sim_config=sim_config)
 
 ###############################################################################
 # Next, we build the network. The network nodes are created by the membership
-# function :py:meth:`~SonataNetwork.Create()` and their connections by the
-# membership function :py:meth:`~SonataNetwork.Connect()`. For convenience,
+# function :py:meth:`~.SonataNetwork.Create` and their connections by the
+# membership function :py:meth:`~.SonataNetwork.Connect`. For convenience,
 # we only need to call the membership function
-# :py:meth:`~SonataNetwork.BuildNetwork`() which internally calls
-# :py:meth:`~SonataNetwork.Create()` and :py:meth:`~SonataNetwork.Connect()`
+# :py:meth:`~.SonataNetwork.BuildNetwork` which internally calls
+# :py:meth:`~.SonataNetwork.Create` and :py:meth:`~.SonataNetwork.Connect`
 #
 # For large networks, the edges HDF5 files might not fit into memory in their
 # entirety. In the NEST kernel, the edges HDF5 datasets are therefore
@@ -93,8 +93,8 @@ sonata_net = nest.SonataNetwork(net_config, sim_config=sim_config)
 # keyword argument `chunk_size` so that the user is able to achieve a balance
 # between the number of read operations and memory overhead.
 #
-# :py:meth:`~SonataNetwork.BuildNetwork()` returns a dictionary containing
-# the created :py:class:`.NodeCollection`s. The population names are the
+# :py:meth:`~.SonataNetwork.BuildNetwork()` returns a dictionary containing
+# the created :py:class:`.NodeCollection` s. The population names are the
 # dictionary keys.
 
 node_collections = sonata_net.BuildNetwork(chunk_size=2**20)
@@ -109,14 +109,14 @@ print(f"number of connections: {kernel_status['num_connections']:,}")
 
 ###############################################################################
 # NEST does not currently support SONATA Spike Train Reports or utilize other
-# `output` components in the SONATA config. This means that recording devices
+# ``output`` components in the SONATA config. This means that recording devices
 # must be created and connected manually.
 #
 # Here, we create a `spike_recorder` to record the spiking events of neurons.
 # We wish to connect the spike recorder to the internal population and only
 # record from a subset of the neurons in the population. We extract the
-# internal population's `NodeCollection` from the `node_collections` dictionary
-# by using the internal population's name. Then we slice the `NodeCollection`
+# internal population's :py:class:`.NodeCollection` from the ``node_collections`` dictionary
+# by using the internal population's name. Then we slice the :py:class:`.NodeCollection`
 # with a list specifying the node ids of the neurons we wish to record from.
 
 s_rec = nest.Create("spike_recorder")
@@ -125,7 +125,7 @@ record_node_ids = [1, 80, 160, 240, 270]
 nest.Connect(node_collections[pop_name][record_node_ids], s_rec)
 
 ###############################################################################
-# Finally, we call the membership function :py:meth:`~SonataNetwork.Simulate()`
+# Finally, we call the membership function :py:meth:`~.SonataNetwork.Simulate`
 # to simulate the network. Note that the simulation time and resolution are
 # expected to be provided in the SONATA config.
 

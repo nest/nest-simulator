@@ -53,7 +53,7 @@ __all__ = [
 class SonataNetwork():
     """Class for network models represented by the SONATA format.
 
-    `SonataNetwork` provides native NEST support for building and simulating
+    ``SonataNetwork`` provides native NEST support for building and simulating
     network models represented by the SONATA format. In the SONATA format,
     information about nodes, edges (synapses) and their respective properties 
     are stored in the table-based file formats HDF5 and CSV. Model metadata, 
@@ -68,10 +68,10 @@ class SonataNetwork():
 
     Parameters
     ----------
-    config : {str, pathlib.Path, pathlib.PurePath}
+    config : [str | pathlib.Path | pathlib.PurePath]
         String or pathlib object describing the path to the JSON 
         configuration file.
-    sim_config : {str, pathlib.Path, pathlib.PurePath}, optional
+    sim_config : [str | pathlib.Path | pathlib.PurePath], optional
         String or pathlib object describing the path to a JSON configuration 
         file containing simulation parameters. This is only needed if simulation 
         parameters are given in a separate configuration file.
@@ -143,7 +143,7 @@ class SonataNetwork():
 
         Parameters
         ----------
-        config : {str, pathlib.Path, pathlib.PurePath}
+        config : [str | pathlib.Path | pathlib.PurePath]
             String or pathlib object describing the path to the JSON 
             configuration file.
 
@@ -208,7 +208,7 @@ class SonataNetwork():
         Returns
         -------
         node_collections : dict
-            A dictionary containing the created :py:class:`.NodeCollection`s. 
+            A dictionary containing the created :py:class:`.NodeCollection` s. 
             The population names are keys.
         """
 
@@ -431,7 +431,7 @@ class SonataNetwork():
         chunk_size : int, optional
             Size of the chunk to read in one read operation. The chunk size
             is applied to all HDF5 datasets that need to be read in order to
-            create the connections. Default: `2**20`.
+            create the connections. Default: ``2**20``.
         """
 
         if not self._is_nodes_created:
@@ -567,12 +567,12 @@ class SonataNetwork():
         chunk_size : int, optional
             Size of chunks from all relevant edge HDF5 datasets that are
             read into memory at once in order to create connections.
-            Default: `2**20`.
+            Default: ``2**20``.
 
         Returns
         -------
         node_collections : dict
-            A dictionary containing the created :py:class:`.NodeCollection`s. 
+            A dictionary containing the created :py:class:`.NodeCollection` s. 
             The population names are keys.
         """
 

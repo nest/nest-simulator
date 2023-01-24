@@ -23,7 +23,7 @@
 NEST SONATA network
 -------------------
 
-This script builds and simulates a network of point neurons described by
+This script builds and simulates a network of point neurons represented by
 the SONATA format [1]_. The network model consists of 300 internal nodes 
 (explicitly simulated) and 100 external nodes (only provide inputs to the 
 simulated system). The SONATA files can be found in the 
@@ -42,7 +42,7 @@ References
 """
 
 ###############################################################################
-# Import all necessary modules for simulation, analysis and plotting.
+# Import all necessary packages for simulation, analysis and plotting.
 
 import nest
 import matplotlib.pyplot as plt

@@ -98,8 +98,13 @@ circumvented by assigning a single node its own node type id.
 
 Below is an example of a node types CSV file with the required headers for neuron nodes: 
 
-.. csv-table::
-   :file: ./node_types_example.csv
++--------------+---------------+--------------------+-----------------+
+| node_type_id | model_type    | model_template     | dynamics_params | 
++==============+===============+====================+=================+
+| 1            | point_process | nest:iaf_psc_alpha | params_1.json   |
++--------------+---------------+--------------------+-----------------+
+| 2            | point_process | nest:iaf_psc_alpha | params_2.json   |
++--------------+---------------+--------------------+-----------------+
 
 The only required CSV header for ``virtual`` nodes is ``model_type``. The ``spike_generator``\s spike-times arrays are expected
 to be provided in HDF5 datasets with the configuration details specified in the JSON configuration file.  

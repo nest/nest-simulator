@@ -1,3 +1,0 @@
-node_type_id, model_type, model_template, dynamics_params
-1, point_process, nest:iaf_psc_alpha, params_1.json
-2, point_process, nest:iaf_psc_alpha, params_2.json

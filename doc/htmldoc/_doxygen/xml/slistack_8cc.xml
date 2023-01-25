@@ -1,0 +1,918 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="slistack_8cc" kind="file" language="C++">
+    <compoundname>slistack.cc</compoundname>
+    <includes refid="slistack_8h" local="yes">slistack.h</includes>
+    <includes refid="arraydatum_8h" local="yes">arraydatum.h</includes>
+    <includes refid="integerdatum_8h" local="yes">integerdatum.h</includes>
+    <incdepgraph>
+      <node id="33">
+        <label>lockptr.h</label>
+        <link refid="lockptr_8h"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>aggregatedatum.h</label>
+        <link refid="aggregatedatum_8h"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>allocator.h</label>
+        <link refid="allocator_8h"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>arraydatum.h</label>
+        <link refid="arraydatum_8h"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>datum.h</label>
+        <link refid="datum_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>genericdatum.h</label>
+        <link refid="genericdatum_8h"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>integerdatum.h</label>
+        <link refid="integerdatum_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>interpret.h</label>
+        <link refid="interpret_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>lockptrdatum.h</label>
+        <link refid="lockptrdatum_8h"/>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>name.h</label>
+        <link refid="name_8h"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>numericdatum.h</label>
+        <link refid="numericdatum_8h"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>sliactions.h</label>
+        <link refid="sliactions_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>slibuiltins.h</label>
+        <link refid="slibuiltins_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>sliexceptions.h</label>
+        <link refid="sliexceptions_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>slifunction.h</label>
+        <link refid="slifunction_8h"/>
+      </node>
+      <node id="9">
+        <label>slimodule.h</label>
+        <link refid="slimodule_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>slistack.cc</label>
+        <link refid="slistack_8cc"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>slistack.h</label>
+        <link refid="slistack_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>slitype.h</label>
+        <link refid="slitype_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>tarrayobj.h</label>
+        <link refid="tarrayobj_8h"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>token.h</label>
+        <link refid="token_8h"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>tokenarray.h</label>
+        <link refid="tokenarray_8h"/>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>tokenstack.h</label>
+        <link refid="tokenstack_8h"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>algorithm</label>
+      </node>
+      <node id="14">
+        <label>cassert</label>
+      </node>
+      <node id="20">
+        <label>config.h</label>
+      </node>
+      <node id="24">
+        <label>cstddef</label>
+      </node>
+      <node id="31">
+        <label>cstdlib</label>
+      </node>
+      <node id="15">
+        <label>deque</label>
+      </node>
+      <node id="18">
+        <label>iomanip</label>
+      </node>
+      <node id="10">
+        <label>iostream</label>
+      </node>
+      <node id="5">
+        <label>list</label>
+      </node>
+      <node id="16">
+        <label>map</label>
+      </node>
+      <node id="34">
+        <label>memory</label>
+      </node>
+      <node id="11">
+        <label>string</label>
+      </node>
+      <node id="3">
+        <label>typeinfo</label>
+      </node>
+      <node id="19">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="slistack_8cc_1a4846019609e4faaca892a45f9aaa5cdd" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classPopFunction" kindref="compound">PopFunction</ref></type>
+        <definition>const PopFunction popfunction</definition>
+        <argsstring></argsstring>
+        <name>popfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" line="453" column="19" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" bodystart="453" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1ab974b65d48100771a053e3328595da0c" compoundref="slistack_8cc" startline="474" endline="497">init_slistack</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slistack_8cc_1a16a0c48b3f730b7cd42c5ac8c155dca7" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classNpopFunction" kindref="compound">NpopFunction</ref></type>
+        <definition>const NpopFunction npopfunction</definition>
+        <argsstring></argsstring>
+        <name>npopfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" line="454" column="20" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" bodystart="454" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1ab974b65d48100771a053e3328595da0c" compoundref="slistack_8cc" startline="474" endline="497">init_slistack</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slistack_8cc_1a81fdbf5cff1541374fb72d6b0ede09ca" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classExchFunction" kindref="compound">ExchFunction</ref></type>
+        <definition>const ExchFunction exchfunction</definition>
+        <argsstring></argsstring>
+        <name>exchfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" line="455" column="20" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" bodystart="455" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1ab974b65d48100771a053e3328595da0c" compoundref="slistack_8cc" startline="474" endline="497">init_slistack</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slistack_8cc_1aa55f01e21d6976c04f2ad4a566ae3f2f" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classDupFunction" kindref="compound">DupFunction</ref></type>
+        <definition>const DupFunction dupfunction</definition>
+        <argsstring></argsstring>
+        <name>dupfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" line="456" column="19" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" bodystart="456" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1ab974b65d48100771a053e3328595da0c" compoundref="slistack_8cc" startline="474" endline="497">init_slistack</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slistack_8cc_1a7dc5d3de0c657a89a69a8fbf646796bb" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classIndexFunction" kindref="compound">IndexFunction</ref></type>
+        <definition>const IndexFunction indexfunction</definition>
+        <argsstring></argsstring>
+        <name>indexfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" line="457" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" bodystart="457" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1ab974b65d48100771a053e3328595da0c" compoundref="slistack_8cc" startline="474" endline="497">init_slistack</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slistack_8cc_1a95ac49e76b68cc50ccf2756e22efd283" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classCopyFunction" kindref="compound">CopyFunction</ref></type>
+        <definition>const CopyFunction copyfunction</definition>
+        <argsstring></argsstring>
+        <name>copyfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" line="458" column="20" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" bodystart="458" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1ab974b65d48100771a053e3328595da0c" compoundref="slistack_8cc" startline="474" endline="497">init_slistack</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slistack_8cc_1ad638654702840e08a629b5ca30d722a0" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classRollFunction" kindref="compound">RollFunction</ref></type>
+        <definition>const RollFunction rollfunction</definition>
+        <argsstring></argsstring>
+        <name>rollfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" line="459" column="20" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" bodystart="459" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1ab974b65d48100771a053e3328595da0c" compoundref="slistack_8cc" startline="474" endline="497">init_slistack</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slistack_8cc_1a9d97cb379c2e66c066660b0775d00405" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classCountFunction" kindref="compound">CountFunction</ref></type>
+        <definition>const CountFunction countfunction</definition>
+        <argsstring></argsstring>
+        <name>countfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" line="460" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" bodystart="460" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1ab974b65d48100771a053e3328595da0c" compoundref="slistack_8cc" startline="474" endline="497">init_slistack</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slistack_8cc_1aa420f5382d732cd6c80c4304b677ec2f" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classClearFunction" kindref="compound">ClearFunction</ref></type>
+        <definition>const ClearFunction clearfunction</definition>
+        <argsstring></argsstring>
+        <name>clearfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" line="461" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" bodystart="461" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1ab974b65d48100771a053e3328595da0c" compoundref="slistack_8cc" startline="474" endline="497">init_slistack</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slistack_8cc_1ad229c91e463679b871d30504d0ad4adb" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classRotFunction" kindref="compound">RotFunction</ref></type>
+        <definition>const RotFunction rotfunction</definition>
+        <argsstring></argsstring>
+        <name>rotfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" line="463" column="19" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" bodystart="463" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1ab974b65d48100771a053e3328595da0c" compoundref="slistack_8cc" startline="474" endline="497">init_slistack</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slistack_8cc_1a2df42bfea748ef921bfed85ab6150142" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classRolluFunction" kindref="compound">RolluFunction</ref></type>
+        <definition>const RolluFunction rollufunction</definition>
+        <argsstring></argsstring>
+        <name>rollufunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" line="464" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" bodystart="464" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1ab974b65d48100771a053e3328595da0c" compoundref="slistack_8cc" startline="474" endline="497">init_slistack</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slistack_8cc_1ac032492770184281a2e07107956e22f3" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classRolldFunction" kindref="compound">RolldFunction</ref></type>
+        <definition>const RolldFunction rolldfunction</definition>
+        <argsstring></argsstring>
+        <name>rolldfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" line="465" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" bodystart="465" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1ab974b65d48100771a053e3328595da0c" compoundref="slistack_8cc" startline="474" endline="497">init_slistack</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slistack_8cc_1aee254cb0bdc33fca43477034ba6f67a4" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classOverFunction" kindref="compound">OverFunction</ref></type>
+        <definition>const OverFunction overfunction</definition>
+        <argsstring></argsstring>
+        <name>overfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" line="466" column="20" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" bodystart="466" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1ab974b65d48100771a053e3328595da0c" compoundref="slistack_8cc" startline="474" endline="497">init_slistack</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slistack_8cc_1aacdb9c143ae0d89bb9547ff29eb7e883" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classExecstackFunction" kindref="compound">ExecstackFunction</ref></type>
+        <definition>const ExecstackFunction execstackfunction</definition>
+        <argsstring></argsstring>
+        <name>execstackfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" line="468" column="25" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" bodystart="468" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1ab974b65d48100771a053e3328595da0c" compoundref="slistack_8cc" startline="474" endline="497">init_slistack</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slistack_8cc_1ab889ef147b9c88d151b21a0201848df7" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classRestoreestackFunction" kindref="compound">RestoreestackFunction</ref></type>
+        <definition>const RestoreestackFunction restoreestackfunction</definition>
+        <argsstring></argsstring>
+        <name>restoreestackfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" line="469" column="29" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" bodystart="469" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1ab974b65d48100771a053e3328595da0c" compoundref="slistack_8cc" startline="474" endline="497">init_slistack</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slistack_8cc_1a93a2f8caae66336325bb5cbe52c312a0" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classRestoreostackFunction" kindref="compound">RestoreostackFunction</ref></type>
+        <definition>const RestoreostackFunction restoreostackfunction</definition>
+        <argsstring></argsstring>
+        <name>restoreostackfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" line="470" column="29" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" bodystart="470" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1ab974b65d48100771a053e3328595da0c" compoundref="slistack_8cc" startline="474" endline="497">init_slistack</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slistack_8cc_1a54390ba3586632eed41f3b6627ed3bc4" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classOperandstackFunction" kindref="compound">OperandstackFunction</ref></type>
+        <definition>const OperandstackFunction operandstackfunction</definition>
+        <argsstring></argsstring>
+        <name>operandstackfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" line="471" column="28" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" bodystart="471" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1ab974b65d48100771a053e3328595da0c" compoundref="slistack_8cc" startline="474" endline="497">init_slistack</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="slistack_8cc_1abca7a6451fff58c5bcfe43f2ee17fba1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void init_slistack</definition>
+        <argsstring>(SLIInterpreter *i)</argsstring>
+        <name>init_slistack</name>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" line="474" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" bodystart="474" bodyend="497"/>
+        <references refid="slistack_8cc_1aa420f5382d732cd6c80c4304b677ec2f" compoundref="slistack_8cc" startline="461">clearfunction</references>
+        <references refid="slistack_8cc_1a95ac49e76b68cc50ccf2756e22efd283" compoundref="slistack_8cc" startline="458">copyfunction</references>
+        <references refid="slistack_8cc_1a9d97cb379c2e66c066660b0775d00405" compoundref="slistack_8cc" startline="460">countfunction</references>
+        <references refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" compoundref="interpret_8cc" startline="271" endline="282">SLIInterpreter::createcommand</references>
+        <references refid="slistack_8cc_1aa55f01e21d6976c04f2ad4a566ae3f2f" compoundref="slistack_8cc" startline="456">dupfunction</references>
+        <references refid="slistack_8cc_1a81fdbf5cff1541374fb72d6b0ede09ca" compoundref="slistack_8cc" startline="455">exchfunction</references>
+        <references refid="slistack_8cc_1aacdb9c143ae0d89bb9547ff29eb7e883" compoundref="slistack_8cc" startline="468">execstackfunction</references>
+        <references refid="slistack_8cc_1a7dc5d3de0c657a89a69a8fbf646796bb" compoundref="slistack_8cc" startline="457">indexfunction</references>
+        <references refid="slistack_8cc_1a16a0c48b3f730b7cd42c5ac8c155dca7" compoundref="slistack_8cc" startline="454">npopfunction</references>
+        <references refid="slistack_8cc_1a54390ba3586632eed41f3b6627ed3bc4" compoundref="slistack_8cc" startline="471">operandstackfunction</references>
+        <references refid="slistack_8cc_1aee254cb0bdc33fca43477034ba6f67a4" compoundref="slistack_8cc" startline="466">overfunction</references>
+        <references refid="slistack_8cc_1a4846019609e4faaca892a45f9aaa5cdd" compoundref="slistack_8cc" startline="453">popfunction</references>
+        <references refid="slistack_8cc_1ab889ef147b9c88d151b21a0201848df7" compoundref="slistack_8cc" startline="469">restoreestackfunction</references>
+        <references refid="slistack_8cc_1a93a2f8caae66336325bb5cbe52c312a0" compoundref="slistack_8cc" startline="470">restoreostackfunction</references>
+        <references refid="slistack_8cc_1ac032492770184281a2e07107956e22f3" compoundref="slistack_8cc" startline="465">rolldfunction</references>
+        <references refid="slistack_8cc_1ad638654702840e08a629b5ca30d722a0" compoundref="slistack_8cc" startline="459">rollfunction</references>
+        <references refid="slistack_8cc_1a2df42bfea748ef921bfed85ab6150142" compoundref="slistack_8cc" startline="464">rollufunction</references>
+        <references refid="slistack_8cc_1ad229c91e463679b871d30504d0ad4adb" compoundref="slistack_8cc" startline="463">rotfunction</references>
+        <referencedby refid="classSLIInterpreter_1a3c2b1137a8836c59a8273cd3c0538287" compoundref="interpret_8cc" startline="220" endline="234">SLIInterpreter::initexternals</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/><sp/>slistack.cc</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/><sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>NEST.</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="6"><highlight class="comment"><sp/>*<sp/><sp/>Copyright<sp/>(C)<sp/>2004<sp/>The<sp/>NEST<sp/>Initiative</highlight></codeline>
+<codeline lineno="7"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="8"><highlight class="comment"><sp/>*<sp/><sp/>NEST<sp/>is<sp/>free<sp/>software:<sp/>you<sp/>can<sp/>redistribute<sp/>it<sp/>and/or<sp/>modify</highlight></codeline>
+<codeline lineno="9"><highlight class="comment"><sp/>*<sp/><sp/>it<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>the<sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>as<sp/>published<sp/>by</highlight></codeline>
+<codeline lineno="10"><highlight class="comment"><sp/>*<sp/><sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>either<sp/>version<sp/>2<sp/>of<sp/>the<sp/>License,<sp/>or</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*<sp/><sp/>(at<sp/>your<sp/>option)<sp/>any<sp/>later<sp/>version.</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="13"><highlight class="comment"><sp/>*<sp/><sp/>NEST<sp/>is<sp/>distributed<sp/>in<sp/>the<sp/>hope<sp/>that<sp/>it<sp/>will<sp/>be<sp/>useful,</highlight></codeline>
+<codeline lineno="14"><highlight class="comment"><sp/>*<sp/><sp/>but<sp/>WITHOUT<sp/>ANY<sp/>WARRANTY;<sp/>without<sp/>even<sp/>the<sp/>implied<sp/>warranty<sp/>of</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*<sp/><sp/>MERCHANTABILITY<sp/>or<sp/>FITNESS<sp/>FOR<sp/>A<sp/>PARTICULAR<sp/>PURPOSE.<sp/><sp/>See<sp/>the</highlight></codeline>
+<codeline lineno="16"><highlight class="comment"><sp/>*<sp/><sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>for<sp/>more<sp/>details.</highlight></codeline>
+<codeline lineno="17"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="18"><highlight class="comment"><sp/>*<sp/><sp/>You<sp/>should<sp/>have<sp/>received<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>GNU<sp/>General<sp/>Public<sp/>License</highlight></codeline>
+<codeline lineno="19"><highlight class="comment"><sp/>*<sp/><sp/>along<sp/>with<sp/>NEST.<sp/><sp/>If<sp/>not,<sp/>see<sp/>&lt;http://www.gnu.org/licenses/&gt;.</highlight></codeline>
+<codeline lineno="20"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="21"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="24"><highlight class="comment"><sp/><sp/><sp/><sp/>slistack.cc</highlight></codeline>
+<codeline lineno="25"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="slistack_8h" kindref="compound">slistack.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Includes<sp/>from<sp/>sli:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="arraydatum_8h" kindref="compound">arraydatum.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="integerdatum_8h" kindref="compound">integerdatum.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="comment">//*******************<sp/>Stack<sp/>Functions</highlight></codeline>
+<codeline lineno="45"><highlight class="comment"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="classPopFunction_1a3806832fc80382d1fa7e986e3b5554a0" refkind="member"><highlight class="normal"><ref refid="classPopFunction_1a3806832fc80382d1fa7e986e3b5554a0" kindref="member">PopFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="47"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>==<sp/>0<sp/>)</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1af98b93bb76491e6bc67e7636ca8e9ea9" kindref="member">StackUnderflowError</ref><sp/>);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="55"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66" refid="classNpopFunction_1a9408bc97e94fb191ee8f32ded1d5162a" refkind="member"><highlight class="normal"><ref refid="classNpopFunction_1a9408bc97e94fb191ee8f32ded1d5162a" kindref="member">NpopFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="67"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>==<sp/>0<sp/>)</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1af98b93bb76491e6bc67e7636ca8e9ea9" kindref="member">StackUnderflowError</ref><sp/>);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><ref refid="classNumericDatum" kindref="compound">IntegerDatum</ref>*<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classNumericDatum" kindref="compound">IntegerDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>().<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/>assert(<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n<sp/>=<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal">-&gt;get();</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>n<sp/>&lt;<sp/>i-&gt;OStack.load()<sp/>)</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>(<sp/>n<sp/>+<sp/>1<sp/>);<sp/></highlight><highlight class="comment">//<sp/>pop<sp/>one<sp/>more<sp/>and<sp/>also<sp/>remove<sp/>the<sp/>argument</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1af98b93bb76491e6bc67e7636ca8e9ea9" kindref="member">StackUnderflowError</ref><sp/>);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="86"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="98" refid="classDupFunction_1a799355ee1729f53e29afe771fcef4e2a" refkind="member"><highlight class="normal"><ref refid="classDupFunction_1a799355ee1729f53e29afe771fcef4e2a" kindref="member">DupFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="99"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>==<sp/>0<sp/>)</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1af98b93bb76491e6bc67e7636ca8e9ea9" kindref="member">StackUnderflowError</ref><sp/>);</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a1e5aeb05f729b6de59de3f75e8527862" kindref="member">index</ref>(<sp/>0<sp/>);</highlight></codeline>
+<codeline lineno="107"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119" refid="classOverFunction_1a818c2a0064f25fd4e0c8e7277e576ab9" refkind="member"><highlight class="normal"><ref refid="classOverFunction_1a818c2a0064f25fd4e0c8e7277e576ab9" kindref="member">OverFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="120"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>&lt;<sp/>2<sp/>)</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1af98b93bb76491e6bc67e7636ca8e9ea9" kindref="member">StackUnderflowError</ref><sp/>);</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a1e5aeb05f729b6de59de3f75e8527862" kindref="member">index</ref>(<sp/>1<sp/>);</highlight></codeline>
+<codeline lineno="128"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="139" refid="classExchFunction_1a3f2688d6e887659d328dc494f20b5087" refkind="member"><highlight class="normal"><ref refid="classExchFunction_1a3f2688d6e887659d328dc494f20b5087" kindref="member">ExchFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="140"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>&lt;<sp/>2<sp/>)</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1af98b93bb76491e6bc67e7636ca8e9ea9" kindref="member">StackUnderflowError</ref><sp/>);</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a0f58b17e8e9871f5679774bc9f8d1c51" kindref="member">swap</ref>();</highlight></codeline>
+<codeline lineno="148"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="158" refid="classIndexFunction_1a97e740d3b55a9f8f16252c7bd813c311" refkind="member"><highlight class="normal"><ref refid="classIndexFunction_1a97e740d3b55a9f8f16252c7bd813c311" kindref="member">IndexFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="159"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>==<sp/>0<sp/>)</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1af98b93bb76491e6bc67e7636ca8e9ea9" kindref="member">StackUnderflowError</ref><sp/>);</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><ref refid="classNumericDatum" kindref="compound">IntegerDatum</ref>*<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classNumericDatum" kindref="compound">IntegerDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>().<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/>assert(<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>pos<sp/>=<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal">-&gt;get();</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>pos<sp/>+<sp/>1<sp/>&lt;<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>)</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a1e5aeb05f729b6de59de3f75e8527862" kindref="member">index</ref>(<sp/>pos<sp/>);</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1af98b93bb76491e6bc67e7636ca8e9ea9" kindref="member">StackUnderflowError</ref><sp/>);</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="179"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="193" refid="classCopyFunction_1a71b4d78c5aaacdc99e2ee285b9bf5173" refkind="member"><highlight class="normal"><ref refid="classCopyFunction_1a71b4d78c5aaacdc99e2ee285b9bf5173" kindref="member">CopyFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="194"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>==<sp/>0<sp/>)</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1af98b93bb76491e6bc67e7636ca8e9ea9" kindref="member">StackUnderflowError</ref><sp/>);</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><ref refid="classNumericDatum" kindref="compound">IntegerDatum</ref>*<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classNumericDatum" kindref="compound">IntegerDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>().<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/>assert(<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n<sp/>=<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal">-&gt;get();</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>n<sp/>&lt;<sp/>i-&gt;OStack.load()<sp/>)</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>p<sp/>=<sp/>0;<sp/>p<sp/>&lt;<sp/>n;<sp/>++p<sp/>)</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>Since<sp/>the<sp/>stack<sp/>is<sp/>growing,<sp/>the<sp/>argument<sp/>to<sp/>index<sp/>is<sp/>constant.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a1e5aeb05f729b6de59de3f75e8527862" kindref="member">index</ref>(<sp/>n<sp/>-<sp/>1<sp/>);</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1af98b93bb76491e6bc67e7636ca8e9ea9" kindref="member">StackUnderflowError</ref><sp/>);</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="217"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"></highlight></codeline>
+<codeline lineno="243"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="244" refid="classRollFunction_1ab7b94aa99d7280f54b556c13da886475" refkind="member"><highlight class="normal"><ref refid="classRollFunction_1ab7b94aa99d7280f54b556c13da886475" kindref="member">RollFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="245"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>load<sp/>=<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>();</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>load<sp/>&lt;<sp/>2<sp/>)</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classStackUnderflow" kindref="compound">StackUnderflow</ref>(<sp/>2,<sp/>load<sp/>);</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"></highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/><ref refid="classNumericDatum" kindref="compound">IntegerDatum</ref>*<sp/>idn<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classNumericDatum" kindref="compound">IntegerDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1ac861cc2282484dd2a27dd1304aa719a4" kindref="member">pick</ref>(<sp/>1<sp/>).<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not<sp/>idn<sp/>)</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classArgumentType" kindref="compound">ArgumentType</ref>(<sp/>1<sp/>);</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"></highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><ref refid="classNumericDatum" kindref="compound">IntegerDatum</ref>*<sp/>idk<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classNumericDatum" kindref="compound">IntegerDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>().<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not<sp/>idk<sp/>)</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classArgumentType" kindref="compound">ArgumentType</ref>(<sp/>0<sp/>);</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"></highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">&amp;<sp/>n<sp/>=<sp/>idn-&gt;<ref refid="classGenericDatum_1a2204e0bfb80429863ebbd37005235c1e" kindref="member">get</ref>();</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>n<sp/>&lt;<sp/>0<sp/>)</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1a1970897d772161d63654a5476a22f09f" kindref="member">RangeCheckError</ref><sp/>);</highlight></codeline>
+<codeline lineno="268"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>n<sp/>+<sp/>2<sp/>)<sp/>&gt;<sp/>load<sp/>)</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1af98b93bb76491e6bc67e7636ca8e9ea9" kindref="member">StackUnderflowError</ref><sp/>);</highlight></codeline>
+<codeline lineno="273"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="275"><highlight class="normal"></highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>(<sp/>2<sp/>);</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"></highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1aff7181edbbbd1994ab6386d166d3a35b" kindref="member">roll</ref>(<sp/>n,<sp/>idk-&gt;<ref refid="classGenericDatum_1a2204e0bfb80429863ebbd37005235c1e" kindref="member">get</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="280"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"></highlight></codeline>
+<codeline lineno="290"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="291" refid="classRolluFunction_1a15ec29027aa32e484f0dc658b638bdbe" refkind="member"><highlight class="normal"><ref refid="classRolluFunction_1a15ec29027aa32e484f0dc658b638bdbe" kindref="member">RolluFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="292"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>&lt;<sp/>3<sp/>)</highlight></codeline>
+<codeline lineno="294"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="295"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1af98b93bb76491e6bc67e7636ca8e9ea9" kindref="member">StackUnderflowError</ref><sp/>);</highlight></codeline>
+<codeline lineno="296"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="297"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="298"><highlight class="normal"></highlight></codeline>
+<codeline lineno="299"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="300"><highlight class="normal"></highlight></codeline>
+<codeline lineno="301"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1aff7181edbbbd1994ab6386d166d3a35b" kindref="member">roll</ref>(<sp/>3,<sp/>1<sp/>);</highlight></codeline>
+<codeline lineno="302"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="303"><highlight class="normal"></highlight></codeline>
+<codeline lineno="312"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="313" refid="classRolldFunction_1aae044a8de48f461f8051762f34f3621b" refkind="member"><highlight class="normal"><ref refid="classRolldFunction_1aae044a8de48f461f8051762f34f3621b" kindref="member">RolldFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="314"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="315"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>&lt;<sp/>3<sp/>)</highlight></codeline>
+<codeline lineno="316"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="317"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1af98b93bb76491e6bc67e7636ca8e9ea9" kindref="member">StackUnderflowError</ref><sp/>);</highlight></codeline>
+<codeline lineno="318"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="319"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="320"><highlight class="normal"></highlight></codeline>
+<codeline lineno="321"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="322"><highlight class="normal"></highlight></codeline>
+<codeline lineno="323"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1aff7181edbbbd1994ab6386d166d3a35b" kindref="member">roll</ref>(<sp/>3,<sp/>-1<sp/>);</highlight></codeline>
+<codeline lineno="324"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="325"><highlight class="normal"></highlight></codeline>
+<codeline lineno="332"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="333" refid="classRotFunction_1a536f2b1a083f4bcf3d4dbb08bf5f03ae" refkind="member"><highlight class="normal"><ref refid="classRotFunction_1a536f2b1a083f4bcf3d4dbb08bf5f03ae" kindref="member">RotFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="334"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="335"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="336"><highlight class="normal"></highlight></codeline>
+<codeline lineno="337"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1aff7181edbbbd1994ab6386d166d3a35b" kindref="member">roll</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>(),<sp/>1<sp/>);</highlight></codeline>
+<codeline lineno="338"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="339"><highlight class="normal"></highlight></codeline>
+<codeline lineno="344"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="345" refid="classCountFunction_1a9f807cf837f565ef54b938ed52a7ec5c" refkind="member"><highlight class="normal"><ref refid="classCountFunction_1a9f807cf837f565ef54b938ed52a7ec5c" kindref="member">CountFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="346"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="347"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="348"><highlight class="normal"><sp/><sp/><ref refid="classToken" kindref="compound">Token</ref><sp/>load(<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="integerdatum_8h_1ae9e7b850583ee9d781126bd856458aec" kindref="member">IntegerDatum</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="349"><highlight class="normal"></highlight></codeline>
+<codeline lineno="350"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9d3b72926bfa2090389f0782cd2b6e76" kindref="member">push_move</ref>(<sp/>load<sp/>);</highlight></codeline>
+<codeline lineno="351"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="352"><highlight class="normal"></highlight></codeline>
+<codeline lineno="357"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="358" refid="classClearFunction_1ab0ecb815ae0893aa3bd51b0c8dddeee2" refkind="member"><highlight class="normal"><ref refid="classClearFunction_1ab0ecb815ae0893aa3bd51b0c8dddeee2" kindref="member">ClearFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="359"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="360"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="361"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a718dc49b82f89b99d9d8a59155adb97d" kindref="member">clear</ref>();</highlight></codeline>
+<codeline lineno="362"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="363"><highlight class="normal"></highlight></codeline>
+<codeline lineno="372"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="373" refid="classExecstackFunction_1a3a59510984ba513188cfee398080b51a" refkind="member"><highlight class="normal"><ref refid="classExecstackFunction_1a3a59510984ba513188cfee398080b51a" kindref="member">ExecstackFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="374"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="375"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="376"><highlight class="normal"></highlight></codeline>
+<codeline lineno="377"><highlight class="normal"><sp/><sp/><ref refid="classToken" kindref="compound">Token</ref><sp/>st(<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="arraydatum_8h_1ae28f9f22dee7553c3f044e7f48e4f314" kindref="member">ArrayDatum</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1af5f5f068333e1fec6c754e2d4edcc7af" kindref="member">toArray</ref>()<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="378"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9d3b72926bfa2090389f0782cd2b6e76" kindref="member">push_move</ref>(<sp/>st<sp/>);</highlight></codeline>
+<codeline lineno="379"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="380"><highlight class="normal"></highlight></codeline>
+<codeline lineno="394"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="395" refid="classRestoreestackFunction_1ab57f3dfe40346099a01e6c191ad934ea" refkind="member"><highlight class="normal"><ref refid="classRestoreestackFunction_1ab57f3dfe40346099a01e6c191ad934ea" kindref="member">RestoreestackFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="396"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="397"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>==<sp/>0<sp/>)</highlight></codeline>
+<codeline lineno="398"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="399"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1af98b93bb76491e6bc67e7636ca8e9ea9" kindref="member">StackUnderflowError</ref><sp/>);</highlight></codeline>
+<codeline lineno="400"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="401"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="402"><highlight class="normal"></highlight></codeline>
+<codeline lineno="403"><highlight class="normal"><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">ArrayDatum</ref>*<sp/>ad<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classAggregateDatum" kindref="compound">ArrayDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>().<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="404"><highlight class="normal"><sp/><sp/>assert(<sp/>ad<sp/>);</highlight></codeline>
+<codeline lineno="405"><highlight class="normal"><sp/><sp/><ref refid="classTokenArray" kindref="compound">TokenArray</ref><sp/>ta<sp/>=<sp/>*ad;</highlight></codeline>
+<codeline lineno="406"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="407"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref><sp/>=<sp/>ta;</highlight></codeline>
+<codeline lineno="408"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="409"><highlight class="normal"></highlight></codeline>
+<codeline lineno="422"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="423" refid="classRestoreostackFunction_1af9bdc7256f3e08450c360213c2803ec9" refkind="member"><highlight class="normal"><ref refid="classRestoreostackFunction_1af9bdc7256f3e08450c360213c2803ec9" kindref="member">RestoreostackFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="424"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="425"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>==<sp/>0<sp/>)</highlight></codeline>
+<codeline lineno="426"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="427"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1af98b93bb76491e6bc67e7636ca8e9ea9" kindref="member">StackUnderflowError</ref><sp/>);</highlight></codeline>
+<codeline lineno="428"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="429"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="430"><highlight class="normal"></highlight></codeline>
+<codeline lineno="431"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="432"><highlight class="normal"></highlight></codeline>
+<codeline lineno="433"><highlight class="normal"><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">ArrayDatum</ref>*<sp/>ad<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classAggregateDatum" kindref="compound">ArrayDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>().<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="434"><highlight class="normal"><sp/><sp/>assert(<sp/>ad<sp/>);</highlight></codeline>
+<codeline lineno="435"><highlight class="normal"><sp/><sp/><ref refid="classTokenArray" kindref="compound">TokenArray</ref><sp/>ta<sp/>=<sp/>*ad;</highlight></codeline>
+<codeline lineno="436"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref><sp/>=<sp/>ta;</highlight></codeline>
+<codeline lineno="437"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="438"><highlight class="normal"></highlight></codeline>
+<codeline lineno="444"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="445" refid="classOperandstackFunction_1abf63df21bc6ea4bfdb9a197323a0b829" refkind="member"><highlight class="normal"><ref refid="classOperandstackFunction_1abf63df21bc6ea4bfdb9a197323a0b829" kindref="member">OperandstackFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="446"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="447"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="448"><highlight class="normal"></highlight></codeline>
+<codeline lineno="449"><highlight class="normal"><sp/><sp/><ref refid="classToken" kindref="compound">Token</ref><sp/>st(<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="arraydatum_8h_1ae28f9f22dee7553c3f044e7f48e4f314" kindref="member">ArrayDatum</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1af5f5f068333e1fec6c754e2d4edcc7af" kindref="member">toArray</ref>()<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="450"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9d3b72926bfa2090389f0782cd2b6e76" kindref="member">push_move</ref>(<sp/>st<sp/>);</highlight></codeline>
+<codeline lineno="451"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="452"><highlight class="normal"></highlight></codeline>
+<codeline lineno="453" refid="slistack_8cc_1a4846019609e4faaca892a45f9aaa5cdd" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classPopFunction" kindref="compound">PopFunction</ref><sp/><ref refid="slistack_8cc_1a4846019609e4faaca892a45f9aaa5cdd" kindref="member">popfunction</ref>;</highlight></codeline>
+<codeline lineno="454" refid="slistack_8cc_1a16a0c48b3f730b7cd42c5ac8c155dca7" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classNpopFunction" kindref="compound">NpopFunction</ref><sp/><ref refid="slistack_8cc_1a16a0c48b3f730b7cd42c5ac8c155dca7" kindref="member">npopfunction</ref>;</highlight></codeline>
+<codeline lineno="455" refid="slistack_8cc_1a81fdbf5cff1541374fb72d6b0ede09ca" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classExchFunction" kindref="compound">ExchFunction</ref><sp/><ref refid="slistack_8cc_1a81fdbf5cff1541374fb72d6b0ede09ca" kindref="member">exchfunction</ref>;</highlight></codeline>
+<codeline lineno="456" refid="slistack_8cc_1aa55f01e21d6976c04f2ad4a566ae3f2f" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classDupFunction" kindref="compound">DupFunction</ref><sp/><ref refid="slistack_8cc_1aa55f01e21d6976c04f2ad4a566ae3f2f" kindref="member">dupfunction</ref>;</highlight></codeline>
+<codeline lineno="457" refid="slistack_8cc_1a7dc5d3de0c657a89a69a8fbf646796bb" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classIndexFunction" kindref="compound">IndexFunction</ref><sp/><ref refid="slistack_8cc_1a7dc5d3de0c657a89a69a8fbf646796bb" kindref="member">indexfunction</ref>;</highlight></codeline>
+<codeline lineno="458" refid="slistack_8cc_1a95ac49e76b68cc50ccf2756e22efd283" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classCopyFunction" kindref="compound">CopyFunction</ref><sp/><ref refid="slistack_8cc_1a95ac49e76b68cc50ccf2756e22efd283" kindref="member">copyfunction</ref>;</highlight></codeline>
+<codeline lineno="459" refid="slistack_8cc_1ad638654702840e08a629b5ca30d722a0" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classRollFunction" kindref="compound">RollFunction</ref><sp/><ref refid="slistack_8cc_1ad638654702840e08a629b5ca30d722a0" kindref="member">rollfunction</ref>;</highlight></codeline>
+<codeline lineno="460" refid="slistack_8cc_1a9d97cb379c2e66c066660b0775d00405" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classCountFunction" kindref="compound">CountFunction</ref><sp/><ref refid="slistack_8cc_1a9d97cb379c2e66c066660b0775d00405" kindref="member">countfunction</ref>;</highlight></codeline>
+<codeline lineno="461" refid="slistack_8cc_1aa420f5382d732cd6c80c4304b677ec2f" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classClearFunction" kindref="compound">ClearFunction</ref><sp/><ref refid="slistack_8cc_1aa420f5382d732cd6c80c4304b677ec2f" kindref="member">clearfunction</ref>;</highlight></codeline>
+<codeline lineno="462"><highlight class="normal"></highlight></codeline>
+<codeline lineno="463" refid="slistack_8cc_1ad229c91e463679b871d30504d0ad4adb" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classRotFunction" kindref="compound">RotFunction</ref><sp/><ref refid="slistack_8cc_1ad229c91e463679b871d30504d0ad4adb" kindref="member">rotfunction</ref>;</highlight></codeline>
+<codeline lineno="464" refid="slistack_8cc_1a2df42bfea748ef921bfed85ab6150142" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classRolluFunction" kindref="compound">RolluFunction</ref><sp/><ref refid="slistack_8cc_1a2df42bfea748ef921bfed85ab6150142" kindref="member">rollufunction</ref>;</highlight></codeline>
+<codeline lineno="465" refid="slistack_8cc_1ac032492770184281a2e07107956e22f3" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classRolldFunction" kindref="compound">RolldFunction</ref><sp/><ref refid="slistack_8cc_1ac032492770184281a2e07107956e22f3" kindref="member">rolldfunction</ref>;</highlight></codeline>
+<codeline lineno="466" refid="slistack_8cc_1aee254cb0bdc33fca43477034ba6f67a4" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classOverFunction" kindref="compound">OverFunction</ref><sp/><ref refid="slistack_8cc_1aee254cb0bdc33fca43477034ba6f67a4" kindref="member">overfunction</ref>;</highlight></codeline>
+<codeline lineno="467"><highlight class="normal"></highlight></codeline>
+<codeline lineno="468" refid="slistack_8cc_1aacdb9c143ae0d89bb9547ff29eb7e883" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classExecstackFunction" kindref="compound">ExecstackFunction</ref><sp/><ref refid="slistack_8cc_1aacdb9c143ae0d89bb9547ff29eb7e883" kindref="member">execstackfunction</ref>;</highlight></codeline>
+<codeline lineno="469" refid="slistack_8cc_1ab889ef147b9c88d151b21a0201848df7" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classRestoreestackFunction" kindref="compound">RestoreestackFunction</ref><sp/><ref refid="slistack_8cc_1ab889ef147b9c88d151b21a0201848df7" kindref="member">restoreestackfunction</ref>;</highlight></codeline>
+<codeline lineno="470" refid="slistack_8cc_1a93a2f8caae66336325bb5cbe52c312a0" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classRestoreostackFunction" kindref="compound">RestoreostackFunction</ref><sp/><ref refid="slistack_8cc_1a93a2f8caae66336325bb5cbe52c312a0" kindref="member">restoreostackfunction</ref>;</highlight></codeline>
+<codeline lineno="471" refid="slistack_8cc_1a54390ba3586632eed41f3b6627ed3bc4" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classOperandstackFunction" kindref="compound">OperandstackFunction</ref><sp/><ref refid="slistack_8cc_1a54390ba3586632eed41f3b6627ed3bc4" kindref="member">operandstackfunction</ref>;</highlight></codeline>
+<codeline lineno="472"><highlight class="normal"></highlight></codeline>
+<codeline lineno="473"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="474" refid="interpret_8cc_1ab974b65d48100771a053e3328595da0c" refkind="member"><highlight class="normal"><ref refid="slistack_8cc_1abca7a6451fff58c5bcfe43f2ee17fba1" kindref="member">init_slistack</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight></codeline>
+<codeline lineno="475"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="476"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Stack<sp/>routines</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="477"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;pop&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slistack_8cc_1a4846019609e4faaca892a45f9aaa5cdd" kindref="member">popfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="478"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;npop&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slistack_8cc_1a16a0c48b3f730b7cd42c5ac8c155dca7" kindref="member">npopfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="479"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;;&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slistack_8cc_1a4846019609e4faaca892a45f9aaa5cdd" kindref="member">popfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="480"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;dup&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slistack_8cc_1aa55f01e21d6976c04f2ad4a566ae3f2f" kindref="member">dupfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="481"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;exch&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slistack_8cc_1a81fdbf5cff1541374fb72d6b0ede09ca" kindref="member">exchfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="482"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;index&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slistack_8cc_1a7dc5d3de0c657a89a69a8fbf646796bb" kindref="member">indexfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="483"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;copy&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slistack_8cc_1a95ac49e76b68cc50ccf2756e22efd283" kindref="member">copyfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="484"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;roll&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slistack_8cc_1ad638654702840e08a629b5ca30d722a0" kindref="member">rollfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="485"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;count&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slistack_8cc_1a9d97cb379c2e66c066660b0775d00405" kindref="member">countfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="486"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;clear&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slistack_8cc_1aa420f5382d732cd6c80c4304b677ec2f" kindref="member">clearfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="487"><highlight class="normal"></highlight></codeline>
+<codeline lineno="488"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;rollu&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slistack_8cc_1a2df42bfea748ef921bfed85ab6150142" kindref="member">rollufunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="489"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;rolld&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slistack_8cc_1ac032492770184281a2e07107956e22f3" kindref="member">rolldfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="490"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;rot&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slistack_8cc_1ad229c91e463679b871d30504d0ad4adb" kindref="member">rotfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="491"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;over&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slistack_8cc_1aee254cb0bdc33fca43477034ba6f67a4" kindref="member">overfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="492"><highlight class="normal"></highlight></codeline>
+<codeline lineno="493"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;execstack&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slistack_8cc_1aacdb9c143ae0d89bb9547ff29eb7e883" kindref="member">execstackfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="494"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;restoreestack&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slistack_8cc_1ab889ef147b9c88d151b21a0201848df7" kindref="member">restoreestackfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="495"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;restoreostack&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slistack_8cc_1a93a2f8caae66336325bb5cbe52c312a0" kindref="member">restoreostackfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="496"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;operandstack&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slistack_8cc_1a54390ba3586632eed41f3b6627ed3bc4" kindref="member">operandstackfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="497"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc"/>
+  </compounddef>
+</doxygen>

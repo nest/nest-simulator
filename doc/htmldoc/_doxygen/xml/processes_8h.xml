@@ -1,0 +1,563 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="processes_8h" kind="file" language="C++">
+    <compoundname>processes.h</compoundname>
+    <includes local="no">sys/types.h</includes>
+    <includes local="no">cstdio</includes>
+    <includes local="no">cstdlib</includes>
+    <includes local="no">fstream</includes>
+    <includes local="no">string</includes>
+    <includes local="no">vector</includes>
+    <includes local="yes">config.h</includes>
+    <includes refid="name_8h" local="yes">name.h</includes>
+    <includes refid="slifunction_8h" local="yes">slifunction.h</includes>
+    <includes refid="slimodule_8h" local="yes">slimodule.h</includes>
+    <includedby refid="neststartup_8cpp" local="yes">neststartup.cpp</includedby>
+    <includedby refid="processes_8cc" local="yes">processes.cc</includedby>
+    <includedby refid="puresli_8cc" local="yes">puresli.cc</includedby>
+    <includedby refid="slicontrol_8cc" local="yes">slicontrol.cc</includedby>
+    <incdepgraph>
+      <node id="9">
+        <label>name.h</label>
+        <link refid="name_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>processes.h</label>
+        <link refid="processes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>slifunction.h</label>
+        <link refid="slifunction_8h"/>
+      </node>
+      <node id="15">
+        <label>slimodule.h</label>
+        <link refid="slimodule_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>cassert</label>
+      </node>
+      <node id="8">
+        <label>config.h</label>
+      </node>
+      <node id="3">
+        <label>cstdio</label>
+      </node>
+      <node id="4">
+        <label>cstdlib</label>
+      </node>
+      <node id="11">
+        <label>deque</label>
+      </node>
+      <node id="5">
+        <label>fstream</label>
+      </node>
+      <node id="12">
+        <label>iostream</label>
+      </node>
+      <node id="13">
+        <label>map</label>
+      </node>
+      <node id="6">
+        <label>string</label>
+      </node>
+      <node id="2">
+        <label>sys/types.h</label>
+      </node>
+      <node id="7">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>neststartup.cpp</label>
+        <link refid="neststartup_8cpp"/>
+      </node>
+      <node id="3">
+        <label>processes.cc</label>
+        <link refid="processes_8cc"/>
+      </node>
+      <node id="1">
+        <label>processes.h</label>
+        <link refid="processes_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>puresli.cc</label>
+        <link refid="puresli_8cc"/>
+      </node>
+      <node id="5">
+        <label>slicontrol.cc</label>
+        <link refid="slicontrol_8cc"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classProcesses" prot="public">Processes</innerclass>
+    <innerclass refid="classProcesses_1_1ForkFunction" prot="public">Processes::ForkFunction</innerclass>
+    <innerclass refid="classProcesses_1_1Sysexec__aFunction" prot="public">Processes::Sysexec_aFunction</innerclass>
+    <innerclass refid="classProcesses_1_1WaitPIDFunction" prot="public">Processes::WaitPIDFunction</innerclass>
+    <innerclass refid="classProcesses_1_1KillFunction" prot="public">Processes::KillFunction</innerclass>
+    <innerclass refid="classProcesses_1_1PipeFunction" prot="public">Processes::PipeFunction</innerclass>
+    <innerclass refid="classProcesses_1_1Dup2__is__isFunction" prot="public">Processes::Dup2_is_isFunction</innerclass>
+    <innerclass refid="classProcesses_1_1Dup2__os__osFunction" prot="public">Processes::Dup2_os_osFunction</innerclass>
+    <innerclass refid="classProcesses_1_1Dup2__is__osFunction" prot="public">Processes::Dup2_is_osFunction</innerclass>
+    <innerclass refid="classProcesses_1_1Dup2__os__isFunction" prot="public">Processes::Dup2_os_isFunction</innerclass>
+    <innerclass refid="classProcesses_1_1AvailableFunction" prot="public">Processes::AvailableFunction</innerclass>
+    <innerclass refid="classProcesses_1_1GetPIDFunction" prot="public">Processes::GetPIDFunction</innerclass>
+    <innerclass refid="classProcesses_1_1GetPPIDFunction" prot="public">Processes::GetPPIDFunction</innerclass>
+    <innerclass refid="classProcesses_1_1GetPGRPFunction" prot="public">Processes::GetPGRPFunction</innerclass>
+    <innerclass refid="classProcesses_1_1MkfifoFunction" prot="public">Processes::MkfifoFunction</innerclass>
+    <innerclass refid="classProcesses_1_1SetNonblockFunction" prot="public">Processes::SetNonblockFunction</innerclass>
+    <innerclass refid="classProcesses_1_1CtermidFunction" prot="public">Processes::CtermidFunction</innerclass>
+    <innerclass refid="classProcesses_1_1Isatty__isFunction" prot="public">Processes::Isatty_isFunction</innerclass>
+    <innerclass refid="classProcesses_1_1Isatty__osFunction" prot="public">Processes::Isatty_osFunction</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/><sp/>processes.h</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/><sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>NEST.</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="6"><highlight class="comment"><sp/>*<sp/><sp/>Copyright<sp/>(C)<sp/>2004<sp/>The<sp/>NEST<sp/>Initiative</highlight></codeline>
+<codeline lineno="7"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="8"><highlight class="comment"><sp/>*<sp/><sp/>NEST<sp/>is<sp/>free<sp/>software:<sp/>you<sp/>can<sp/>redistribute<sp/>it<sp/>and/or<sp/>modify</highlight></codeline>
+<codeline lineno="9"><highlight class="comment"><sp/>*<sp/><sp/>it<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>the<sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>as<sp/>published<sp/>by</highlight></codeline>
+<codeline lineno="10"><highlight class="comment"><sp/>*<sp/><sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>either<sp/>version<sp/>2<sp/>of<sp/>the<sp/>License,<sp/>or</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*<sp/><sp/>(at<sp/>your<sp/>option)<sp/>any<sp/>later<sp/>version.</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="13"><highlight class="comment"><sp/>*<sp/><sp/>NEST<sp/>is<sp/>distributed<sp/>in<sp/>the<sp/>hope<sp/>that<sp/>it<sp/>will<sp/>be<sp/>useful,</highlight></codeline>
+<codeline lineno="14"><highlight class="comment"><sp/>*<sp/><sp/>but<sp/>WITHOUT<sp/>ANY<sp/>WARRANTY;<sp/>without<sp/>even<sp/>the<sp/>implied<sp/>warranty<sp/>of</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*<sp/><sp/>MERCHANTABILITY<sp/>or<sp/>FITNESS<sp/>FOR<sp/>A<sp/>PARTICULAR<sp/>PURPOSE.<sp/><sp/>See<sp/>the</highlight></codeline>
+<codeline lineno="16"><highlight class="comment"><sp/>*<sp/><sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>for<sp/>more<sp/>details.</highlight></codeline>
+<codeline lineno="17"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="18"><highlight class="comment"><sp/>*<sp/><sp/>You<sp/>should<sp/>have<sp/>received<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>GNU<sp/>General<sp/>Public<sp/>License</highlight></codeline>
+<codeline lineno="19"><highlight class="comment"><sp/>*<sp/><sp/>along<sp/>with<sp/>NEST.<sp/><sp/>If<sp/>not,<sp/>see<sp/>&lt;http://www.gnu.org/licenses/&gt;.</highlight></codeline>
+<codeline lineno="20"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="21"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>PROCESSES_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PROCESSES_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="27"><highlight class="comment"><sp/><sp/><sp/><sp/>SLI&apos;s<sp/>basic<sp/>process<sp/>management<sp/>capabilities</highlight></codeline>
+<codeline lineno="28"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="comment">//<sp/>C<sp/>includes:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sys/types.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="comment">//<sp/>C++<sp/>includes:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;cstdio&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;cstdlib&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;fstream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Generated<sp/>includes:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;config.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Includes<sp/>from<sp/>sli:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="name_8h" kindref="compound">name.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="slifunction_8h" kindref="compound">slifunction.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="slimodule_8h" kindref="compound">slimodule.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="comment">//<sp/>A<sp/>new<sp/>SLI-Module:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="classProcesses" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classProcesses" kindref="compound">Processes</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classSLIModule" kindref="compound">SLIModule</ref></highlight></codeline>
+<codeline lineno="50"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>following<sp/>concernes<sp/>the<sp/>new<sp/>module:<sp/>-----------------------</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="classProcesses_1a2b77dd80a339131defa64a0d65dd42ee" kindref="member">systemerror</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>);<sp/></highlight><highlight class="comment">//<sp/>This<sp/>will<sp/>be<sp/>used<sp/>to<sp/>produce<sp/>systemerror-messages</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classProcesses_1a3f0b8694e7270b3ea23a1049c952f39b" kindref="member">fd</ref>(<sp/>std::istream*<sp/>s<sp/>);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classProcesses_1a3f0b8694e7270b3ea23a1049c952f39b" kindref="member">fd</ref>(<sp/>std::ostream*<sp/>s<sp/>);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59" refid="classProcesses_1a874924a64c0b5a739163ca8c89041b5b" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classProcesses_1a874924a64c0b5a739163ca8c89041b5b" kindref="member">fd</ref>(<sp/>std::ostream&amp;<sp/>s<sp/>)</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classProcesses_1a3f0b8694e7270b3ea23a1049c952f39b" kindref="member">fd</ref>(<sp/>&amp;s<sp/>);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="classProcesses_1a59154dfc66e7ec23179b5fb662d05f01" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classProcesses_1a59154dfc66e7ec23179b5fb662d05f01" kindref="member">fd</ref>(<sp/>std::istream&amp;<sp/>s<sp/>)</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classProcesses_1a3f0b8694e7270b3ea23a1049c952f39b" kindref="member">fd</ref>(<sp/>&amp;s<sp/>);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69" refid="classProcesses_1a6239da6e8635c20924ea0d7dbb11eb98" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>pid_t<sp/><ref refid="classProcesses_1a6239da6e8635c20924ea0d7dbb11eb98" kindref="member">children_group</ref>;<sp/></highlight><highlight class="comment">//<sp/>the<sp/>declaration<sp/>of<sp/>a<sp/>static<sp/>variable.<sp/>It<sp/>will</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>persist<sp/>as<sp/>long<sp/>as<sp/>the<sp/>instantiation<sp/>of<sp/>the<sp/>Processes<sp/>module<sp/>lives.<sp/>Never</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>confuse<sp/>declaration<sp/>and<sp/>definition<sp/>of<sp/>a<sp/>variable,<sp/>by<sp/>the<sp/>way...</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73" refid="classProcesses_1a1b182a1b3628e363e2b181490d2f671b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a1b182a1b3628e363e2b181490d2f671b" kindref="member">signaldict_name</ref>;<sp/></highlight><highlight class="comment">//<sp/>The<sp/>name<sp/>of<sp/>the<sp/>signal<sp/>dictionary</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>Names<sp/>of<sp/>the<sp/>signals<sp/>contained<sp/>in<sp/>signal<sp/>dictionary:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>These<sp/>are<sp/>the<sp/>signals<sp/>defined<sp/>by<sp/>the<sp/>POSIX<sp/>standard</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77" refid="classProcesses_1a7c5bbe5fc92ce58b6f2bb6e0e53cbc2b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a7c5bbe5fc92ce58b6f2bb6e0e53cbc2b" kindref="member">SIGABRT_name</ref>;</highlight></codeline>
+<codeline lineno="78" refid="classProcesses_1abe9ce7d2bf853291fe7c471ee50fe4dd" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1abe9ce7d2bf853291fe7c471ee50fe4dd" kindref="member">SIGALRM_name</ref>;</highlight></codeline>
+<codeline lineno="79" refid="classProcesses_1a29c939df60532f9a65d53772d9e6596a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a29c939df60532f9a65d53772d9e6596a" kindref="member">SIGFPE_name</ref>;</highlight></codeline>
+<codeline lineno="80" refid="classProcesses_1acd81fe28ff7ca13ab3ccd6ca64594954" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1acd81fe28ff7ca13ab3ccd6ca64594954" kindref="member">SIGHUP_name</ref>;</highlight></codeline>
+<codeline lineno="81" refid="classProcesses_1afeae6d9db44bfd77ed11aa34a51a00a2" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1afeae6d9db44bfd77ed11aa34a51a00a2" kindref="member">SIGILL_name</ref>;</highlight></codeline>
+<codeline lineno="82" refid="classProcesses_1a901cc65d8a7e397214064d47a7e42119" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a901cc65d8a7e397214064d47a7e42119" kindref="member">SIGINT_name</ref>;</highlight></codeline>
+<codeline lineno="83" refid="classProcesses_1a11e8c4a0143bf31000162badf29f1947" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a11e8c4a0143bf31000162badf29f1947" kindref="member">SIGKILL_name</ref>;</highlight></codeline>
+<codeline lineno="84" refid="classProcesses_1a4d6c0addcee91fd803e7a805766acb68" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a4d6c0addcee91fd803e7a805766acb68" kindref="member">SIGPIPE_name</ref>;</highlight></codeline>
+<codeline lineno="85" refid="classProcesses_1a971b9e15532d0adc117508e75432a425" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a971b9e15532d0adc117508e75432a425" kindref="member">SIGQUIT_name</ref>;</highlight></codeline>
+<codeline lineno="86" refid="classProcesses_1a5e65c3879755de5803b5580f1fe6dfc5" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a5e65c3879755de5803b5580f1fe6dfc5" kindref="member">SIGSEGV_name</ref>;</highlight></codeline>
+<codeline lineno="87" refid="classProcesses_1a75d38db4c76e2b5975d2f1eb738f15f2" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a75d38db4c76e2b5975d2f1eb738f15f2" kindref="member">SIGTERM_name</ref>;</highlight></codeline>
+<codeline lineno="88" refid="classProcesses_1aeceab325702fc2f8c638ab6c0f5a7bf6" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1aeceab325702fc2f8c638ab6c0f5a7bf6" kindref="member">SIGUSR1_name</ref>;</highlight></codeline>
+<codeline lineno="89" refid="classProcesses_1a919c9a9f163aea7d44cf1885587228e7" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a919c9a9f163aea7d44cf1885587228e7" kindref="member">SIGUSR2_name</ref>;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91" refid="classProcesses_1a74e30af9446c9b5ea82f4a7d7f71b23d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a74e30af9446c9b5ea82f4a7d7f71b23d" kindref="member">SIGCHLD_name</ref>;</highlight></codeline>
+<codeline lineno="92" refid="classProcesses_1a288cdb349b858cb8375434664b2c2535" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a288cdb349b858cb8375434664b2c2535" kindref="member">SIGCONT_name</ref>;</highlight></codeline>
+<codeline lineno="93" refid="classProcesses_1a6fc53a2480993603bd26f6f5ae89b846" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a6fc53a2480993603bd26f6f5ae89b846" kindref="member">SIGSTOP_name</ref>;</highlight></codeline>
+<codeline lineno="94" refid="classProcesses_1a75ef132af68e4461f55f7e6ea14a430e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a75ef132af68e4461f55f7e6ea14a430e" kindref="member">SIGTSTP_name</ref>;</highlight></codeline>
+<codeline lineno="95" refid="classProcesses_1a4f30e732193d61e4ebd9de7583decd72" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a4f30e732193d61e4ebd9de7583decd72" kindref="member">SIGTTIN_name</ref>;</highlight></codeline>
+<codeline lineno="96" refid="classProcesses_1aca0f23fd9ce9fdbf661332cc9072d703" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1aca0f23fd9ce9fdbf661332cc9072d703" kindref="member">SIGTTOU_name</ref>;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99" refid="classProcesses_1abe7ed0536b839938e74d0e5186285466" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1abe7ed0536b839938e74d0e5186285466" kindref="member">sys_errname</ref>;<sp/></highlight><highlight class="comment">//<sp/>The<sp/>name<sp/>of<sp/>the<sp/>variable<sp/>in<sp/>errordict,<sp/>in<sp/>which<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>name<sp/>of<sp/>a<sp/>system<sp/>error<sp/>will<sp/>be<sp/>stored</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101" refid="classProcesses_1ace431b6072bacc61653d79650049a3c9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1ace431b6072bacc61653d79650049a3c9" kindref="member">sys_errno</ref>;<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>corresponding<sp/>error-number</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>Names<sp/>of<sp/>the<sp/>system&apos;s<sp/>error-numbers<sp/>contained<sp/>in<sp/>errordict</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="104" refid="classProcesses_1a69bc73dd08f9ca7700934052e571504b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a69bc73dd08f9ca7700934052e571504b" kindref="member">E2BIG_name</ref>;</highlight></codeline>
+<codeline lineno="105" refid="classProcesses_1a447d8f6d4fe31b9a09becbba472e188d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a447d8f6d4fe31b9a09becbba472e188d" kindref="member">EACCES_name</ref>;</highlight></codeline>
+<codeline lineno="106" refid="classProcesses_1a5b854a944684a88ed74069cef235c738" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a5b854a944684a88ed74069cef235c738" kindref="member">EAGAIN_name</ref>;</highlight></codeline>
+<codeline lineno="107" refid="classProcesses_1a8f06b628428782c112090d357f6d242d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a8f06b628428782c112090d357f6d242d" kindref="member">EBADF_name</ref>;</highlight></codeline>
+<codeline lineno="108" refid="classProcesses_1a2b2e0a52f79ce5407351779f4d6b6131" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a2b2e0a52f79ce5407351779f4d6b6131" kindref="member">EBUSY_name</ref>;</highlight></codeline>
+<codeline lineno="109" refid="classProcesses_1aa69826fe496a0bf0c98b0f77b53d1bc4" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1aa69826fe496a0bf0c98b0f77b53d1bc4" kindref="member">ECHILD_name</ref>;</highlight></codeline>
+<codeline lineno="110" refid="classProcesses_1a4685eb726497fbae78ba372da27abf06" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a4685eb726497fbae78ba372da27abf06" kindref="member">EDEADLK_name</ref>;</highlight></codeline>
+<codeline lineno="111" refid="classProcesses_1a0fb2c3d64b1753dd599747c16436bd48" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a0fb2c3d64b1753dd599747c16436bd48" kindref="member">EDOM_name</ref>;</highlight></codeline>
+<codeline lineno="112" refid="classProcesses_1a97434054f5407c129e9d1722fcf94793" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a97434054f5407c129e9d1722fcf94793" kindref="member">EEXIST_name</ref>;</highlight></codeline>
+<codeline lineno="113" refid="classProcesses_1a936ca6133139159ebcdafd76072a5cf3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a936ca6133139159ebcdafd76072a5cf3" kindref="member">EFAULT_name</ref>;</highlight></codeline>
+<codeline lineno="114" refid="classProcesses_1a9b2d668dc7a8d787be944440d6c8c870" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a9b2d668dc7a8d787be944440d6c8c870" kindref="member">EFBIG_name</ref>;</highlight></codeline>
+<codeline lineno="115" refid="classProcesses_1a6c6a16d1cf261b236e288c89c59f53e9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a6c6a16d1cf261b236e288c89c59f53e9" kindref="member">EINTR_name</ref>;</highlight></codeline>
+<codeline lineno="116" refid="classProcesses_1a2d78cfa38cb5f738eb7cf4bcdbdfbe25" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a2d78cfa38cb5f738eb7cf4bcdbdfbe25" kindref="member">EINVAL_name</ref>;</highlight></codeline>
+<codeline lineno="117" refid="classProcesses_1a4191113bb42ad60b7b8fd2602175d3d1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a4191113bb42ad60b7b8fd2602175d3d1" kindref="member">EIO_name</ref>;</highlight></codeline>
+<codeline lineno="118" refid="classProcesses_1aa4bd35e98a991c885cd4443ed41677ad" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1aa4bd35e98a991c885cd4443ed41677ad" kindref="member">EISDIR_name</ref>;</highlight></codeline>
+<codeline lineno="119" refid="classProcesses_1a0529f3210454cbe571f2b6b3709f2006" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a0529f3210454cbe571f2b6b3709f2006" kindref="member">EMFILE_name</ref>;</highlight></codeline>
+<codeline lineno="120" refid="classProcesses_1aa7037c7f330ad85422fbc0723e9a9e92" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1aa7037c7f330ad85422fbc0723e9a9e92" kindref="member">EMLINK_name</ref>;</highlight></codeline>
+<codeline lineno="121" refid="classProcesses_1aef26b4ee16c5a74972db7e69b1aa7338" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1aef26b4ee16c5a74972db7e69b1aa7338" kindref="member">ENAMETOOLONG_name</ref>;</highlight></codeline>
+<codeline lineno="122" refid="classProcesses_1a0be6dd7f8f130795fab2f34a61d96391" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a0be6dd7f8f130795fab2f34a61d96391" kindref="member">ENFILE_name</ref>;</highlight></codeline>
+<codeline lineno="123" refid="classProcesses_1aaecf8a66e1715250e8fab8f8442ea1bc" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1aaecf8a66e1715250e8fab8f8442ea1bc" kindref="member">ENODEV_name</ref>;</highlight></codeline>
+<codeline lineno="124" refid="classProcesses_1a80bc9856aad7c15c076b938709e9d249" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a80bc9856aad7c15c076b938709e9d249" kindref="member">ENOENT_name</ref>;</highlight></codeline>
+<codeline lineno="125" refid="classProcesses_1a0a634c4a7a4caa678485ba06b75cc9e7" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a0a634c4a7a4caa678485ba06b75cc9e7" kindref="member">ENOEXEC_name</ref>;</highlight></codeline>
+<codeline lineno="126" refid="classProcesses_1a21f8fd91372ecc2c838ce2522430a76c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a21f8fd91372ecc2c838ce2522430a76c" kindref="member">ENOLCK_name</ref>;</highlight></codeline>
+<codeline lineno="127" refid="classProcesses_1a1be1bd9fd9d02851382a21387b16eb2b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a1be1bd9fd9d02851382a21387b16eb2b" kindref="member">ENOMEM_name</ref>;</highlight></codeline>
+<codeline lineno="128" refid="classProcesses_1a65c1ca4a6b269110494f0656972c5567" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a65c1ca4a6b269110494f0656972c5567" kindref="member">ENOSPC_name</ref>;</highlight></codeline>
+<codeline lineno="129" refid="classProcesses_1a66579b791907441c627723cb0d15d65e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a66579b791907441c627723cb0d15d65e" kindref="member">ENOSYS_name</ref>;</highlight></codeline>
+<codeline lineno="130" refid="classProcesses_1aae7a6893f66755fe289b5a90f3b7b058" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1aae7a6893f66755fe289b5a90f3b7b058" kindref="member">ENOTDIR_name</ref>;</highlight></codeline>
+<codeline lineno="131" refid="classProcesses_1ab04baa3c3faaf2d3eb33077aa99ab6eb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1ab04baa3c3faaf2d3eb33077aa99ab6eb" kindref="member">ENOTEMPTY_name</ref>;</highlight></codeline>
+<codeline lineno="132" refid="classProcesses_1ae692298ce3735ef30a2ecec94b976441" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1ae692298ce3735ef30a2ecec94b976441" kindref="member">ENOTTY_name</ref>;</highlight></codeline>
+<codeline lineno="133" refid="classProcesses_1ae5c1c603fafe00d5cb38542ac96e30d0" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1ae5c1c603fafe00d5cb38542ac96e30d0" kindref="member">ENXIO_name</ref>;</highlight></codeline>
+<codeline lineno="134" refid="classProcesses_1a739a0d84bb0fbf6102d0be0a54093fc4" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a739a0d84bb0fbf6102d0be0a54093fc4" kindref="member">EPERM_name</ref>;</highlight></codeline>
+<codeline lineno="135" refid="classProcesses_1a9a71f96efab95f4df67f58d4eb6b08c0" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a9a71f96efab95f4df67f58d4eb6b08c0" kindref="member">EPIPE_name</ref>;</highlight></codeline>
+<codeline lineno="136" refid="classProcesses_1ace026407934fe82922e0de59b74f1c1b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1ace026407934fe82922e0de59b74f1c1b" kindref="member">ERANGE_name</ref>;</highlight></codeline>
+<codeline lineno="137" refid="classProcesses_1ac95df607cb26854cf2380bd5504da106" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1ac95df607cb26854cf2380bd5504da106" kindref="member">EROFS_name</ref>;</highlight></codeline>
+<codeline lineno="138" refid="classProcesses_1a47dfd3e54fee9486cf484f44b2ae5a3b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1a47dfd3e54fee9486cf484f44b2ae5a3b" kindref="member">ESPIPE_name</ref>;</highlight></codeline>
+<codeline lineno="139" refid="classProcesses_1af227b8fe25d2d06610d019619730fa5a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1af227b8fe25d2d06610d019619730fa5a" kindref="member">ESRCH_name</ref>;</highlight></codeline>
+<codeline lineno="140" refid="classProcesses_1ab5afbf6bf7616547d7f94801abdb9258" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classProcesses_1ab5afbf6bf7616547d7f94801abdb9258" kindref="member">EXDEV_name</ref>;</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>constructor<sp/>and<sp/>destructor<sp/>for<sp/>our<sp/>module<sp/>object<sp/>(-if<sp/>we<sp/>need<sp/>them-):</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="143" refid="classProcesses_1a37400e7c876f04a18fbc056b658a6632" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classProcesses_1a37400e7c876f04a18fbc056b658a6632" kindref="member">Processes</ref>()</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/>:<sp/><ref refid="classProcesses_1a1b182a1b3628e363e2b181490d2f671b" kindref="member">signaldict_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;signaldict&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a7c5bbe5fc92ce58b6f2bb6e0e53cbc2b" kindref="member">SIGABRT_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;SIGABRT&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1abe9ce7d2bf853291fe7c471ee50fe4dd" kindref="member">SIGALRM_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;SIGALRM&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a29c939df60532f9a65d53772d9e6596a" kindref="member">SIGFPE_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;SIGFPE&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1acd81fe28ff7ca13ab3ccd6ca64594954" kindref="member">SIGHUP_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;SIGHUP&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1afeae6d9db44bfd77ed11aa34a51a00a2" kindref="member">SIGILL_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;SIGILL&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a901cc65d8a7e397214064d47a7e42119" kindref="member">SIGINT_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;SIGINT&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a11e8c4a0143bf31000162badf29f1947" kindref="member">SIGKILL_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;SIGKILL&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a4d6c0addcee91fd803e7a805766acb68" kindref="member">SIGPIPE_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;SIGPIPE&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a971b9e15532d0adc117508e75432a425" kindref="member">SIGQUIT_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;SIGQUIT&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a5e65c3879755de5803b5580f1fe6dfc5" kindref="member">SIGSEGV_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;SIGSEGV&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a75d38db4c76e2b5975d2f1eb738f15f2" kindref="member">SIGTERM_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;SIGTERM&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1aeceab325702fc2f8c638ab6c0f5a7bf6" kindref="member">SIGUSR1_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;SIGUSR1&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a919c9a9f163aea7d44cf1885587228e7" kindref="member">SIGUSR2_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;SIGUSR2&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a74e30af9446c9b5ea82f4a7d7f71b23d" kindref="member">SIGCHLD_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;SIGCHLD&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a288cdb349b858cb8375434664b2c2535" kindref="member">SIGCONT_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;SIGCONT&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a6fc53a2480993603bd26f6f5ae89b846" kindref="member">SIGSTOP_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;SIGSTOP&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a75ef132af68e4461f55f7e6ea14a430e" kindref="member">SIGTSTP_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;SIGTSTP&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a4f30e732193d61e4ebd9de7583decd72" kindref="member">SIGTTIN_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;SIGTTIN&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1aca0f23fd9ce9fdbf661332cc9072d703" kindref="member">SIGTTOU_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;SIGTTOU&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1abe7ed0536b839938e74d0e5186285466" kindref="member">sys_errname</ref>(<sp/></highlight><highlight class="stringliteral">&quot;sys_errname&quot;</highlight><highlight class="normal"><sp/>)<sp/></highlight><highlight class="comment">//<sp/>The<sp/>name<sp/>of<sp/>the<sp/>variable<sp/>in<sp/>errordict,<sp/>in</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>which<sp/>the<sp/>name<sp/>of<sp/>a<sp/>system<sp/>error<sp/>will<sp/>be</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>stored</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1ace431b6072bacc61653d79650049a3c9" kindref="member">sys_errno</ref>(<sp/></highlight><highlight class="stringliteral">&quot;sys_errno&quot;</highlight><highlight class="normal"><sp/>)<sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>corresponding<sp/>error-number</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>Names<sp/>of<sp/>the<sp/>system&apos;s<sp/>error-numbers<sp/>contained<sp/>in<sp/>errordict</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a69bc73dd08f9ca7700934052e571504b" kindref="member">E2BIG_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;E2BIG&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a447d8f6d4fe31b9a09becbba472e188d" kindref="member">EACCES_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;EACCES&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a5b854a944684a88ed74069cef235c738" kindref="member">EAGAIN_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;EAGAIN&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a8f06b628428782c112090d357f6d242d" kindref="member">EBADF_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;EBADF&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a2b2e0a52f79ce5407351779f4d6b6131" kindref="member">EBUSY_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;EBUSY&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1aa69826fe496a0bf0c98b0f77b53d1bc4" kindref="member">ECHILD_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;ECHILD&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a4685eb726497fbae78ba372da27abf06" kindref="member">EDEADLK_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;EDEADLK&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a0fb2c3d64b1753dd599747c16436bd48" kindref="member">EDOM_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;EDOM&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a97434054f5407c129e9d1722fcf94793" kindref="member">EEXIST_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;EEXIST&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a936ca6133139159ebcdafd76072a5cf3" kindref="member">EFAULT_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;EFAULT&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a9b2d668dc7a8d787be944440d6c8c870" kindref="member">EFBIG_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;EFBIG&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a6c6a16d1cf261b236e288c89c59f53e9" kindref="member">EINTR_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;EINTR&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a2d78cfa38cb5f738eb7cf4bcdbdfbe25" kindref="member">EINVAL_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;EINVAL&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a4191113bb42ad60b7b8fd2602175d3d1" kindref="member">EIO_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;EIO&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1aa4bd35e98a991c885cd4443ed41677ad" kindref="member">EISDIR_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;EISDIR&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a0529f3210454cbe571f2b6b3709f2006" kindref="member">EMFILE_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;EMFILE&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1aa7037c7f330ad85422fbc0723e9a9e92" kindref="member">EMLINK_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;EMLINK&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1aef26b4ee16c5a74972db7e69b1aa7338" kindref="member">ENAMETOOLONG_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;ENAMETOOLONG&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a0be6dd7f8f130795fab2f34a61d96391" kindref="member">ENFILE_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;ENFILE&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1aaecf8a66e1715250e8fab8f8442ea1bc" kindref="member">ENODEV_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;ENODEV&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a80bc9856aad7c15c076b938709e9d249" kindref="member">ENOENT_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;ENOENT&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a0a634c4a7a4caa678485ba06b75cc9e7" kindref="member">ENOEXEC_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;ENOEXEC&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a21f8fd91372ecc2c838ce2522430a76c" kindref="member">ENOLCK_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;ENOLCK&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a1be1bd9fd9d02851382a21387b16eb2b" kindref="member">ENOMEM_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;ENOMEM&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a65c1ca4a6b269110494f0656972c5567" kindref="member">ENOSPC_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;ENOSPC&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a66579b791907441c627723cb0d15d65e" kindref="member">ENOSYS_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;ENOSYS&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1aae7a6893f66755fe289b5a90f3b7b058" kindref="member">ENOTDIR_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;ENOTDIR&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1ab04baa3c3faaf2d3eb33077aa99ab6eb" kindref="member">ENOTEMPTY_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;ENOTEMPTY&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1ae692298ce3735ef30a2ecec94b976441" kindref="member">ENOTTY_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;ENOTTY&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1ae5c1c603fafe00d5cb38542ac96e30d0" kindref="member">ENXIO_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;ENXIO&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a739a0d84bb0fbf6102d0be0a54093fc4" kindref="member">EPERM_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;EPERM&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a9a71f96efab95f4df67f58d4eb6b08c0" kindref="member">EPIPE_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;EPIPE&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1ace026407934fe82922e0de59b74f1c1b" kindref="member">ERANGE_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;ERANGE&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1ac95df607cb26854cf2380bd5504da106" kindref="member">EROFS_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;EROFS&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1a47dfd3e54fee9486cf484f44b2ae5a3b" kindref="member">ESPIPE_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;ESPIPE&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1af227b8fe25d2d06610d019619730fa5a" kindref="member">ESRCH_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;ESRCH&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classProcesses_1ab5afbf6bf7616547d7f94801abdb9258" kindref="member">EXDEV_name</ref>(<sp/></highlight><highlight class="stringliteral">&quot;EXDEV&quot;</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/>}<sp/></highlight><highlight class="comment">//<sp/>Processes<sp/>constructor</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><ref refid="classProcesses_1af9e9711205d4c08f0571f1bb64fb717a" kindref="member">~Processes</ref>()<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>clean<sp/>up<sp/>dynmem<sp/>for<sp/>static<sp/>variables...</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>Module<sp/>is<sp/>registered<sp/>by<sp/>a<sp/>call<sp/>to<sp/>this<sp/>Function:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classProcesses_1a61d91f79c5cb92e4c0ce6aa4bc4eb412" kindref="member">init</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"></highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>This<sp/>function<sp/>will<sp/>return<sp/>the<sp/>name<sp/>of<sp/>our<sp/>module:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="classProcesses_1ac157b59fe05b200fdfcef2c7647714c5" kindref="member">name</ref>()<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>This<sp/>function<sp/>-may-<sp/>return<sp/>a<sp/>string<sp/>of<sp/>SLI-commands<sp/>to<sp/>be<sp/>executed<sp/>for</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>initialization</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="classProcesses_1a81aa324e1c5ffd02c4cfbf18babf81fa" kindref="member">commandstring</ref>()<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"></highlight></codeline>
+<codeline lineno="222"><highlight class="normal"></highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>---------------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="224"><highlight class="normal"></highlight></codeline>
+<codeline lineno="225"><highlight class="normal"></highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>following<sp/>concernes<sp/>the<sp/>new<sp/>command(s):<sp/>-------------------</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="227"><highlight class="normal"></highlight></codeline>
+<codeline lineno="228"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Module<sp/>contains<sp/>classes<sp/>defining<sp/>new<sp/>SLI-functions:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="230" refid="classProcesses_1_1ForkFunction" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classProcesses_1_1ForkFunction" kindref="compound">ForkFunction</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classSLIFunction" kindref="compound">SLIFunction</ref></highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classProcesses_1_1ForkFunction_1a823948bb729b7557d08eb7791ffbcf4e" kindref="member">execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>all<sp/>we<sp/>need.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="235" refid="classProcesses_1_1Sysexec__aFunction" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classProcesses_1_1Sysexec__aFunction" kindref="compound">Sysexec_aFunction</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classSLIFunction" kindref="compound">SLIFunction</ref></highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classProcesses_1_1Sysexec__aFunction_1a2626fd11344b924a14c41412c3522280" kindref="member">execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>all<sp/>we<sp/>need.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="240" refid="classProcesses_1_1WaitPIDFunction" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classProcesses_1_1WaitPIDFunction" kindref="compound">WaitPIDFunction</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classSLIFunction" kindref="compound">SLIFunction</ref></highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classProcesses_1_1WaitPIDFunction_1a92e4324861fe299280cd1a1410e66d08" kindref="member">execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>all<sp/>we<sp/>need.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="245" refid="classProcesses_1_1KillFunction" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classProcesses_1_1KillFunction" kindref="compound">KillFunction</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classSLIFunction" kindref="compound">SLIFunction</ref></highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classProcesses_1_1KillFunction_1ae89ebbe1ab8173610de30647823416e5" kindref="member">execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>all<sp/>we<sp/>need.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="250" refid="classProcesses_1_1PipeFunction" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classProcesses_1_1PipeFunction" kindref="compound">PipeFunction</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classSLIFunction" kindref="compound">SLIFunction</ref></highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classProcesses_1_1PipeFunction_1a0879aeaa3fcf5c3958f5bec40a205a8b" kindref="member">execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>all<sp/>we<sp/>need.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="255" refid="classProcesses_1_1Dup2__is__isFunction" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classProcesses_1_1Dup2__is__isFunction" kindref="compound">Dup2_is_isFunction</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classSLIFunction" kindref="compound">SLIFunction</ref></highlight></codeline>
+<codeline lineno="256"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classProcesses_1_1Dup2__is__isFunction_1a91699bdb35a66331dac59fd538bc06e7" kindref="member">execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>all<sp/>we<sp/>need.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="260" refid="classProcesses_1_1Dup2__os__osFunction" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classProcesses_1_1Dup2__os__osFunction" kindref="compound">Dup2_os_osFunction</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classSLIFunction" kindref="compound">SLIFunction</ref></highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classProcesses_1_1Dup2__os__osFunction_1a00f6041c263835bcfe825e1c4181b04f" kindref="member">execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>all<sp/>we<sp/>need.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="265" refid="classProcesses_1_1Dup2__is__osFunction" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classProcesses_1_1Dup2__is__osFunction" kindref="compound">Dup2_is_osFunction</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classSLIFunction" kindref="compound">SLIFunction</ref></highlight></codeline>
+<codeline lineno="266"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="268"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classProcesses_1_1Dup2__is__osFunction_1a274fbfca6798b6f8eadcd782489bc7da" kindref="member">execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>all<sp/>we<sp/>need.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="270" refid="classProcesses_1_1Dup2__os__isFunction" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classProcesses_1_1Dup2__os__isFunction" kindref="compound">Dup2_os_isFunction</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classSLIFunction" kindref="compound">SLIFunction</ref></highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="273"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classProcesses_1_1Dup2__os__isFunction_1a694c01127f6de3b098a47e7169fdc10d" kindref="member">execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>all<sp/>we<sp/>need.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="274"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="275" refid="classProcesses_1_1AvailableFunction" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classProcesses_1_1AvailableFunction" kindref="compound">AvailableFunction</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classSLIFunction" kindref="compound">SLIFunction</ref></highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classProcesses_1_1AvailableFunction_1a959990e5efbd5b6c04a3d99d3c58dc37" kindref="member">execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>all<sp/>we<sp/>need.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="280" refid="classProcesses_1_1GetPIDFunction" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classProcesses_1_1GetPIDFunction" kindref="compound">GetPIDFunction</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classSLIFunction" kindref="compound">SLIFunction</ref></highlight></codeline>
+<codeline lineno="281"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="283"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classProcesses_1_1GetPIDFunction_1a7dbcc40ef0574ca02d93d4906d5c169a" kindref="member">execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>all<sp/>we<sp/>need.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="284"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="285" refid="classProcesses_1_1GetPPIDFunction" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classProcesses_1_1GetPPIDFunction" kindref="compound">GetPPIDFunction</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classSLIFunction" kindref="compound">SLIFunction</ref></highlight></codeline>
+<codeline lineno="286"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classProcesses_1_1GetPPIDFunction_1aaca1a18c275bfd364ad26531a6d33d00" kindref="member">execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>all<sp/>we<sp/>need.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="289"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="290" refid="classProcesses_1_1GetPGRPFunction" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classProcesses_1_1GetPGRPFunction" kindref="compound">GetPGRPFunction</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classSLIFunction" kindref="compound">SLIFunction</ref></highlight></codeline>
+<codeline lineno="291"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="292"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classProcesses_1_1GetPGRPFunction_1a714b45aa666138b9b5353c91a6bac621" kindref="member">execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>all<sp/>we<sp/>need.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="294"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="295" refid="classProcesses_1_1MkfifoFunction" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classProcesses_1_1MkfifoFunction" kindref="compound">MkfifoFunction</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classSLIFunction" kindref="compound">SLIFunction</ref></highlight></codeline>
+<codeline lineno="296"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="297"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="298"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classProcesses_1_1MkfifoFunction_1a33838c7222fdbed1292e8200ee7d14f1" kindref="member">execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>all<sp/>we<sp/>need.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="299"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="300"><highlight class="normal"></highlight></codeline>
+<codeline lineno="301"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined<sp/>__APPLE__<sp/>&amp;&amp;<sp/>defined<sp/>HAVE_MACH_MACH_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="302"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">MemoryThisjobDarwinFunction<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classSLIFunction" kindref="compound">SLIFunction</ref></highlight></codeline>
+<codeline lineno="303"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="304"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>execute(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="305"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="306"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="307"><highlight class="normal"></highlight></codeline>
+<codeline lineno="308" refid="classProcesses_1_1SetNonblockFunction" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classProcesses_1_1SetNonblockFunction" kindref="compound">SetNonblockFunction</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classSLIFunction" kindref="compound">SLIFunction</ref></highlight></codeline>
+<codeline lineno="309"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="310"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="311"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classProcesses_1_1SetNonblockFunction_1a858f9ce60266d03a0259c91b47ae082b" kindref="member">execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>all<sp/>we<sp/>need.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="312"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="313" refid="classProcesses_1_1CtermidFunction" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classProcesses_1_1CtermidFunction" kindref="compound">CtermidFunction</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classSLIFunction" kindref="compound">SLIFunction</ref></highlight></codeline>
+<codeline lineno="314"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="315"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="316"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classProcesses_1_1CtermidFunction_1ae28487e759b10fb0e93df5756dcf0358" kindref="member">execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>all<sp/>we<sp/>need.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="317"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="318" refid="classProcesses_1_1Isatty__isFunction" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classProcesses_1_1Isatty__isFunction" kindref="compound">Isatty_isFunction</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classSLIFunction" kindref="compound">SLIFunction</ref></highlight></codeline>
+<codeline lineno="319"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="320"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="321"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classProcesses_1_1Isatty__isFunction_1a187cc02fd8b473b51588330edbcab137" kindref="member">execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>all<sp/>we<sp/>need.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="322"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="323" refid="classProcesses_1_1Isatty__osFunction" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classProcesses_1_1Isatty__osFunction" kindref="compound">Isatty_osFunction</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classSLIFunction" kindref="compound">SLIFunction</ref></highlight></codeline>
+<codeline lineno="324"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="325"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="326"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classProcesses_1_1Isatty__osFunction_1a59db8d41b20342d27929b437e754fc49" kindref="member">execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>all<sp/>we<sp/>need.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="327"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="328"><highlight class="normal"></highlight></codeline>
+<codeline lineno="329"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Module<sp/>contains<sp/>-one-<sp/>instantiation<sp/>of<sp/>each<sp/>new<sp/>function-class:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="330"><highlight class="normal"></highlight></codeline>
+<codeline lineno="331"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="332" refid="classProcesses_1a16bd8191180ccd2cc221bcb4ec31779a" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classProcesses_1_1ForkFunction" kindref="compound">ForkFunction</ref><sp/><ref refid="classProcesses_1a16bd8191180ccd2cc221bcb4ec31779a" kindref="member">forkfunction</ref>;</highlight></codeline>
+<codeline lineno="333" refid="classProcesses_1a7db2cb1f72bef35d6f507c94a311dd68" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classProcesses_1_1Sysexec__aFunction" kindref="compound">Sysexec_aFunction</ref><sp/><ref refid="classProcesses_1a7db2cb1f72bef35d6f507c94a311dd68" kindref="member">sysexec_afunction</ref>;</highlight></codeline>
+<codeline lineno="334" refid="classProcesses_1a4e1b90a5a692a7eb04adccf28aad6777" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classProcesses_1_1WaitPIDFunction" kindref="compound">WaitPIDFunction</ref><sp/><ref refid="classProcesses_1a4e1b90a5a692a7eb04adccf28aad6777" kindref="member">waitPIDfunction</ref>;</highlight></codeline>
+<codeline lineno="335" refid="classProcesses_1af8d5d106e20217e05daf5dab143c633d" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classProcesses_1_1KillFunction" kindref="compound">KillFunction</ref><sp/><ref refid="classProcesses_1af8d5d106e20217e05daf5dab143c633d" kindref="member">killfunction</ref>;</highlight></codeline>
+<codeline lineno="336" refid="classProcesses_1ad84defb3dd7e10bb5c006840ede925ca" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classProcesses_1_1PipeFunction" kindref="compound">PipeFunction</ref><sp/><ref refid="classProcesses_1ad84defb3dd7e10bb5c006840ede925ca" kindref="member">pipefunction</ref>;</highlight></codeline>
+<codeline lineno="337" refid="classProcesses_1ae3438da455f2e915a86ed44b0d52416d" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classProcesses_1_1Dup2__is__isFunction" kindref="compound">Dup2_is_isFunction</ref><sp/><ref refid="classProcesses_1ae3438da455f2e915a86ed44b0d52416d" kindref="member">dup2_is_isfunction</ref>;</highlight></codeline>
+<codeline lineno="338" refid="classProcesses_1aa126ae5cba05b62db01b9eed337aa6cd" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classProcesses_1_1Dup2__os__osFunction" kindref="compound">Dup2_os_osFunction</ref><sp/><ref refid="classProcesses_1aa126ae5cba05b62db01b9eed337aa6cd" kindref="member">dup2_os_osfunction</ref>;</highlight></codeline>
+<codeline lineno="339" refid="classProcesses_1a09c0d1a95e4bfa09cc32195e752c30ca" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classProcesses_1_1Dup2__is__osFunction" kindref="compound">Dup2_is_osFunction</ref><sp/><ref refid="classProcesses_1a09c0d1a95e4bfa09cc32195e752c30ca" kindref="member">dup2_is_osfunction</ref>;</highlight></codeline>
+<codeline lineno="340" refid="classProcesses_1ae253e63686e023933093141b98c6e9b5" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classProcesses_1_1Dup2__os__isFunction" kindref="compound">Dup2_os_isFunction</ref><sp/><ref refid="classProcesses_1ae253e63686e023933093141b98c6e9b5" kindref="member">dup2_os_isfunction</ref>;</highlight></codeline>
+<codeline lineno="341" refid="classProcesses_1a460af64273268e0cdd27ff12fe4230b1" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classProcesses_1_1AvailableFunction" kindref="compound">AvailableFunction</ref><sp/><ref refid="classProcesses_1a460af64273268e0cdd27ff12fe4230b1" kindref="member">availablefunction</ref>;</highlight></codeline>
+<codeline lineno="342" refid="classProcesses_1a41305d7ebfd119cbe655b70d93349f77" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classProcesses_1_1GetPIDFunction" kindref="compound">GetPIDFunction</ref><sp/><ref refid="classProcesses_1a41305d7ebfd119cbe655b70d93349f77" kindref="member">getpidfunction</ref>;</highlight></codeline>
+<codeline lineno="343" refid="classProcesses_1a3b7b200c10d0fc7aa8f1a4c2ab996053" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classProcesses_1_1GetPPIDFunction" kindref="compound">GetPPIDFunction</ref><sp/><ref refid="classProcesses_1a3b7b200c10d0fc7aa8f1a4c2ab996053" kindref="member">getppidfunction</ref>;</highlight></codeline>
+<codeline lineno="344" refid="classProcesses_1acb22d24fbc60556015c0dc1c9d878ee2" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classProcesses_1_1GetPGRPFunction" kindref="compound">GetPGRPFunction</ref><sp/><ref refid="classProcesses_1acb22d24fbc60556015c0dc1c9d878ee2" kindref="member">getpgrpfunction</ref>;</highlight></codeline>
+<codeline lineno="345" refid="classProcesses_1ab407c2924a193e968790aead902a3836" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classProcesses_1_1MkfifoFunction" kindref="compound">MkfifoFunction</ref><sp/><ref refid="classProcesses_1ab407c2924a193e968790aead902a3836" kindref="member">mkfifofunction</ref>;</highlight></codeline>
+<codeline lineno="346"><highlight class="normal"></highlight></codeline>
+<codeline lineno="347"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined<sp/>__APPLE__<sp/>&amp;&amp;<sp/>defined<sp/>HAVE_MACH_MACH_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="348"><highlight class="normal"><sp/><sp/>MemoryThisjobDarwinFunction<sp/>memorythisjobdarwinfunction;</highlight></codeline>
+<codeline lineno="349"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="350"><highlight class="normal"></highlight></codeline>
+<codeline lineno="351" refid="classProcesses_1a6e5dc57fa23fcb1e0d649ca8ac991c52" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classProcesses_1_1SetNonblockFunction" kindref="compound">SetNonblockFunction</ref><sp/><ref refid="classProcesses_1a6e5dc57fa23fcb1e0d649ca8ac991c52" kindref="member">setnonblockfunction</ref>;</highlight></codeline>
+<codeline lineno="352" refid="classProcesses_1aee55f40873a62eb473648ca7ce7c247c" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classProcesses_1_1CtermidFunction" kindref="compound">CtermidFunction</ref><sp/><ref refid="classProcesses_1aee55f40873a62eb473648ca7ce7c247c" kindref="member">ctermidfunction</ref>;</highlight></codeline>
+<codeline lineno="353" refid="classProcesses_1a11b9ce477ab03f9de3281ae5bea32341" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classProcesses_1_1Isatty__osFunction" kindref="compound">Isatty_osFunction</ref><sp/><ref refid="classProcesses_1a11b9ce477ab03f9de3281ae5bea32341" kindref="member">isatty_osfunction</ref>;</highlight></codeline>
+<codeline lineno="354" refid="classProcesses_1a8f22a20e2011ece4c67ab5d77695b30b" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classProcesses_1_1Isatty__isFunction" kindref="compound">Isatty_isFunction</ref><sp/><ref refid="classProcesses_1a8f22a20e2011ece4c67ab5d77695b30b" kindref="member">isatty_isfunction</ref>;</highlight></codeline>
+<codeline lineno="355"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="356"><highlight class="normal"></highlight></codeline>
+<codeline lineno="357"><highlight class="normal"></highlight></codeline>
+<codeline lineno="358"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Description<sp/>of<sp/>new<sp/>SLI-commands:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="359"><highlight class="normal"></highlight></codeline>
+<codeline lineno="360"><highlight class="normal"></highlight><highlight class="comment">//-----------------------------------------------------------------------------</highlight></codeline>
+<codeline lineno="400"><highlight class="comment"></highlight><highlight class="comment">//-----------------------------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="401"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Now<sp/>Documented<sp/>with<sp/>sysexec!</highlight></codeline>
+<codeline lineno="402"><highlight class="comment"></highlight></codeline>
+<codeline lineno="403"><highlight class="comment">Name:<sp/>sysexec_a<sp/>-<sp/>execute<sp/>a<sp/>UNIX<sp/>command</highlight></codeline>
+<codeline lineno="404"><highlight class="comment"></highlight></codeline>
+<codeline lineno="405"><highlight class="comment">Synopsis:<sp/>CommandArray<sp/><sp/>sysexec<sp/>-&gt;<sp/>-</highlight></codeline>
+<codeline lineno="406"><highlight class="comment"></highlight></codeline>
+<codeline lineno="407"><highlight class="comment">Description:<sp/>Transfer<sp/>control<sp/>to<sp/>a<sp/>UNIX-Command.</highlight></codeline>
+<codeline lineno="408"><highlight class="comment"></highlight></codeline>
+<codeline lineno="409"><highlight class="comment">Parameters:<sp/><sp/>In<sp/>:<sp/>CommandArray<sp/>(array<sp/>of<sp/>strings):</highlight></codeline>
+<codeline lineno="410"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>An<sp/>array<sp/>containing<sp/>the<sp/>command<sp/>to<sp/>execute.<sp/>The<sp/>first</highlight></codeline>
+<codeline lineno="411"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>element<sp/>is<sp/>interpreted<sp/>as<sp/>the<sp/>command,<sp/>the<sp/>remaining<sp/>elements</highlight></codeline>
+<codeline lineno="412"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>as<sp/>it&apos;s<sp/>parameters.</highlight></codeline>
+<codeline lineno="413"><highlight class="comment"></highlight></codeline>
+<codeline lineno="414"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Out:<sp/>-whatever<sp/>will<sp/>be<sp/>will<sp/>be-</highlight></codeline>
+<codeline lineno="415"><highlight class="comment"></highlight></codeline>
+<codeline lineno="416"><highlight class="comment">Examples:<sp/>-see<sp/>command<sp/>sysexec-</highlight></codeline>
+<codeline lineno="417"><highlight class="comment"></highlight></codeline>
+<codeline lineno="418"><highlight class="comment">Bugs:<sp/>-see<sp/>command<sp/>sysexec-</highlight></codeline>
+<codeline lineno="419"><highlight class="comment"></highlight></codeline>
+<codeline lineno="420"><highlight class="comment">Author:<sp/>R<sp/>Kupper</highlight></codeline>
+<codeline lineno="421"><highlight class="comment"></highlight></codeline>
+<codeline lineno="422"><highlight class="comment">FirstVersion:<sp/>Mar<sp/>1999</highlight></codeline>
+<codeline lineno="423"><highlight class="comment"></highlight></codeline>
+<codeline lineno="424"><highlight class="comment">Remarks:<sp/>There<sp/>is<sp/>a<sp/>SLI-wrapper<sp/>called<sp/>&quot;sysexec&quot;<sp/>to<sp/>this<sp/>function.</highlight></codeline>
+<codeline lineno="425"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-see<sp/>command<sp/>sysexec-</highlight></codeline>
+<codeline lineno="426"><highlight class="comment"></highlight></codeline>
+<codeline lineno="427"><highlight class="comment">SeeAlso:<sp/>sysexec,<sp/>fork,<sp/>spoon</highlight></codeline>
+<codeline lineno="428"><highlight class="comment"></highlight></codeline>
+<codeline lineno="429"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="430"><highlight class="normal"></highlight></codeline>
+<codeline lineno="431"><highlight class="normal"></highlight><highlight class="comment">//-----------------------------------------------------------------------------</highlight></codeline>
+<codeline lineno="511"><highlight class="comment"></highlight><highlight class="comment">//-----------------------------------------------------------------------------</highlight></codeline>
+<codeline lineno="587"><highlight class="comment"></highlight><highlight class="comment">//-----------------------------------------------------------------------------</highlight></codeline>
+<codeline lineno="623"><highlight class="comment"></highlight><highlight class="comment">//-----------------------------------------------------------------------------</highlight></codeline>
+<codeline lineno="691"><highlight class="comment"></highlight><highlight class="comment">//-----------------------------------------------------------------------------</highlight></codeline>
+<codeline lineno="770"><highlight class="comment"></highlight><highlight class="comment">//-----------------------------------------------------------------------------</highlight></codeline>
+<codeline lineno="794"><highlight class="comment"></highlight><highlight class="comment">//-----------------------------------------------------------------------------</highlight></codeline>
+<codeline lineno="816"><highlight class="comment"></highlight><highlight class="comment">//-----------------------------------------------------------------------------</highlight></codeline>
+<codeline lineno="840"><highlight class="comment"></highlight><highlight class="comment">//-----------------------------------------------------------------------------</highlight></codeline>
+<codeline lineno="893"><highlight class="comment"></highlight><highlight class="comment">//-----------------------------------------------------------------------------</highlight></codeline>
+<codeline lineno="963"><highlight class="comment"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/processes.h"/>
+  </compounddef>
+</doxygen>

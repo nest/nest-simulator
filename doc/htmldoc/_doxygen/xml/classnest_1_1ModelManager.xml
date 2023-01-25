@@ -1,0 +1,1632 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classnest_1_1ModelManager" kind="class" language="C++" prot="public">
+    <compoundname>nest::ModelManager</compoundname>
+    <basecompoundref refid="classnest_1_1ManagerInterface" prot="public" virt="non-virtual">nest::ManagerInterface</basecompoundref>
+    <includes refid="model__manager_8h" local="no">model_manager.h</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classnest_1_1ModelManager_1ad2d24c7fcdaca79e88599ac2ca853b65" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classnest_1_1Model" kindref="compound">Model</ref> * &gt;</type>
+        <definition>std::vector&lt; Model* &gt; nest::ModelManager::builtin_node_models_</definition>
+        <argsstring></argsstring>
+        <name>builtin_node_models_</name>
+        <qualifiedname>nest::ModelManager::builtin_node_models_</qualifiedname>
+        <briefdescription>
+<para>List of clean built-in node models. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="244" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" bodystart="244" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ModelManager_1a02895f199ad38d7bd3ac24f4ea799f44" compoundref="model__manager_8cpp" startline="139" endline="150">finalize</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1ae14b26efd9515b1596ecfeaf25b04e64" compoundref="model__manager_8cpp" startline="80" endline="136">initialize</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1aa9dd5b9db696ebef3355e4e31e184735" compoundref="model__manager_8cpp" startline="218" endline="240">register_node_model_</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a41c350e0207435ffc6891c93fe76d80e" compoundref="model__manager_8cpp" startline="58" endline="77">~ModelManager</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1ModelManager_1aa1c6fa63d5865f15c37a50adcccf8360" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classnest_1_1Model" kindref="compound">Model</ref> * &gt;</type>
+        <definition>std::vector&lt; Model* &gt; nest::ModelManager::node_models_</definition>
+        <argsstring></argsstring>
+        <name>node_models_</name>
+        <qualifiedname>nest::ModelManager::node_models_</qualifiedname>
+        <briefdescription>
+<para>List of usable node models. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This list is cleared and repopulated upon application startup and calls to ResetKernel. It contains copies of the built-in models, models registered from extension modules, and models created by calls to CopyModel(). The elements of this list also keep the user-modified defaults. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="253" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" bodystart="253" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ModelManager_1af51df51b09ebbf233be7af6bd39137b1" compoundref="model__manager_8cpp" startline="483">calibrate</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a37da25c5b419f0f74d17166f9acf7b71" compoundref="model__manager_8cpp" startline="437" endline="459">clear_node_models_</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a14ec157c17bfe589d51f82c206aba049" compoundref="model__manager_8cpp" startline="243" endline="262">copy_node_model_</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a8058f85d46bd4af4c2f726be59aa269b" compoundref="model__manager_8h" startline="286" endline="290">get_node_model</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a0206d78c642e0dc97def42aff26034b6" compoundref="model__manager_8cpp" startline="366" endline="380">get_node_model_id</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1ae14b26efd9515b1596ecfeaf25b04e64" compoundref="model__manager_8cpp" startline="80" endline="136">initialize</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a3ddc2ab6cebf94540774acea4730e004" compoundref="model__manager_8cpp" startline="510" endline="543">memory_info</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1aa9dd5b9db696ebef3355e4e31e184735" compoundref="model__manager_8cpp" startline="218" endline="240">register_node_model_</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1ModelManager_1a59cf58cc2e5682cd927996154b95ddf2" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classnest_1_1ConnectorModel" kindref="compound">ConnectorModel</ref> * &gt;</type>
+        <definition>std::vector&lt; ConnectorModel* &gt; nest::ModelManager::builtin_connection_models_</definition>
+        <argsstring></argsstring>
+        <name>builtin_connection_models_</name>
+        <qualifiedname>nest::ModelManager::builtin_connection_models_</qualifiedname>
+        <briefdescription>
+<para>List of built-in clean connection models. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="258" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" bodystart="258" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ModelManager_1ae14b26efd9515b1596ecfeaf25b04e64" compoundref="model__manager_8cpp" startline="80" endline="136">initialize</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1aa8a2fe6be154cbb0768bf71942387520" compoundref="model__manager_8cpp" startline="546" endline="571">register_connection_model_</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a41c350e0207435ffc6891c93fe76d80e" compoundref="model__manager_8cpp" startline="58" endline="77">~ModelManager</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1ModelManager_1a27d925f00d58fca37cf9dcfd6a81a3a0" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; std::vector&lt; <ref refid="classnest_1_1ConnectorModel" kindref="compound">ConnectorModel</ref> * &gt; &gt;</type>
+        <definition>std::vector&lt; std::vector&lt; ConnectorModel* &gt; &gt; nest::ModelManager::connection_models_</definition>
+        <argsstring></argsstring>
+        <name>connection_models_</name>
+        <qualifiedname>nest::ModelManager::connection_models_</qualifiedname>
+        <briefdescription>
+<para>The list of usable connection models. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The first dimension keeps one entry per thread, the second dimension has the actual models. This list is cleared and repopulated upon application startup and calls to ResetKernel. The inner list contains copies of the built-in models, models registered from extension modules, and models created by calls to CopyModel(). The elements of the list also keep the user-modified defaults. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="269" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" bodystart="269" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ModelManager_1ac0f410c34344596285d9d3e886a80148" compoundref="model__manager_8h" startline="319" endline="325">assert_valid_syn_id</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1af51df51b09ebbf233be7af6bd39137b1" compoundref="model__manager_8cpp" startline="483">calibrate</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a095a416070ca495514b51d4c3bd1af29" compoundref="model__manager_8cpp" startline="462" endline="480">clear_connection_models_</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1ac65a8ccf171c8e4fcbe96d214887389b" compoundref="model__manager_8cpp" startline="421" endline="426">connector_requires_clopath_archiving</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1ae4cf5547e9b2476fd9a3e55770bebbbf" compoundref="model__manager_8cpp" startline="413" endline="418">connector_requires_symmetric</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a9265877967e222222a0110c18544b98f" compoundref="model__manager_8cpp" startline="429" endline="434">connector_requires_urbanczik_archiving</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1afdca64fbdcc8897ed6e25a8e534b482e" compoundref="model__manager_8cpp" startline="265" endline="287">copy_connection_model_</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a328a98e2391f07ffdcd31a986982f826" compoundref="model__manager_8h" startline="299" endline="303">get_connection_model</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1aea052fc6150494e8e66ebdbe1127b876" compoundref="model__manager_8h" startline="306" endline="309">get_connection_models</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a4ee6b18a6bad6d272e07d838a2af7f1a" compoundref="model__manager_8cpp" startline="394" endline="410">get_connector_defaults</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a6b4dd572130a87b4819be5b8abd45bd9" compoundref="model__manager_8h" startline="312" endline="316">get_num_connection_models</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1ae14b26efd9515b1596ecfeaf25b04e64" compoundref="model__manager_8cpp" startline="80" endline="136">initialize</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1aa8a2fe6be154cbb0768bf71942387520" compoundref="model__manager_8cpp" startline="546" endline="571">register_connection_model_</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a9508db769f2e7c2b62743f5774872111" compoundref="model__manager_8cpp" startline="328" endline="363">set_synapse_defaults_</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1ModelManager_1a0f4652a7c93f5e8b9c36c05d54aa1be1" prot="private" static="no" mutable="no">
+        <type><ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref></type>
+        <definition>DictionaryDatum nest::ModelManager::modeldict_</definition>
+        <argsstring></argsstring>
+        <name>modeldict_</name>
+        <qualifiedname>nest::ModelManager::modeldict_</qualifiedname>
+        <briefdescription>
+<para><ref refid="classDictionary" kindref="compound">Dictionary</ref> of all node models. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="271" column="19" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" bodystart="271" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ModelManager_1a37da25c5b419f0f74d17166f9acf7b71" compoundref="model__manager_8cpp" startline="437" endline="459">clear_node_models_</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1ad5640bc6c249b00cf94e816b7d954318" compoundref="model__manager_8cpp" startline="186" endline="215">copy_model</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a14ec157c17bfe589d51f82c206aba049" compoundref="model__manager_8cpp" startline="243" endline="262">copy_node_model_</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a49632b3af5b4a82098707a82c6107a49" compoundref="model__manager_8cpp" startline="165" endline="183">get_status</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1ae14b26efd9515b1596ecfeaf25b04e64" compoundref="model__manager_8cpp" startline="80" endline="136">initialize</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1aed100533c2c7f259d03d9d10e10308cb" compoundref="model__manager__impl_8h" startline="44" endline="54">register_node_model</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1aa9dd5b9db696ebef3355e4e31e184735" compoundref="model__manager_8cpp" startline="218" endline="240">register_node_model_</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a1408ac5b290bdea20840104e19415a99" compoundref="model__manager_8cpp" startline="291" endline="313">set_model_defaults</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1ModelManager_1ab29f274daea3d4378c4cedd84d178021" prot="private" static="no" mutable="no">
+        <type><ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref></type>
+        <definition>DictionaryDatum nest::ModelManager::synapsedict_</definition>
+        <argsstring></argsstring>
+        <name>synapsedict_</name>
+        <qualifiedname>nest::ModelManager::synapsedict_</qualifiedname>
+        <briefdescription>
+<para><ref refid="classDictionary" kindref="compound">Dictionary</ref> of all synapse models. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="272" column="19" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" bodystart="272" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ModelManager_1afdca64fbdcc8897ed6e25a8e534b482e" compoundref="model__manager_8cpp" startline="265" endline="287">copy_connection_model_</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1ad5640bc6c249b00cf94e816b7d954318" compoundref="model__manager_8cpp" startline="186" endline="215">copy_model</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a49632b3af5b4a82098707a82c6107a49" compoundref="model__manager_8cpp" startline="165" endline="183">get_status</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a5da676347a1deaa1a434d3d6a95532d0" compoundref="model__manager_8cpp" startline="383" endline="391">get_synapse_model_id</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1ae14b26efd9515b1596ecfeaf25b04e64" compoundref="model__manager_8cpp" startline="80" endline="136">initialize</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1aa8a2fe6be154cbb0768bf71942387520" compoundref="model__manager_8cpp" startline="546" endline="571">register_connection_model_</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a1408ac5b290bdea20840104e19415a99" compoundref="model__manager_8cpp" startline="291" endline="313">set_model_defaults</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1ModelManager_1a4c30bd45e80b5e01e705b1a87734a35d" prot="private" static="no" mutable="no">
+        <type><ref refid="classnest_1_1Model" kindref="compound">Model</ref> *</type>
+        <definition>Model* nest::ModelManager::proxynode_model_</definition>
+        <argsstring></argsstring>
+        <name>proxynode_model_</name>
+        <qualifiedname>nest::ModelManager::proxynode_model_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="274" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" bodystart="274" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ModelManager_1a37da25c5b419f0f74d17166f9acf7b71" compoundref="model__manager_8cpp" startline="437" endline="459">clear_node_models_</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a0ad4bd5a087c2c6143ef01213e2b1aba" compoundref="model__manager_8cpp" startline="574" endline="579">create_proxynode_</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1ae14b26efd9515b1596ecfeaf25b04e64" compoundref="model__manager_8cpp" startline="80" endline="136">initialize</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1ModelManager_1aa255aec6ce5e727f30ad863c0a6854cf" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; std::vector&lt; <ref refid="classnest_1_1Node" kindref="compound">Node</ref> * &gt; &gt;</type>
+        <definition>std::vector&lt; std::vector&lt; Node* &gt; &gt; nest::ModelManager::proxy_nodes_</definition>
+        <argsstring></argsstring>
+        <name>proxy_nodes_</name>
+        <qualifiedname>nest::ModelManager::proxy_nodes_</qualifiedname>
+        <briefdescription>
+<para>Placeholders for remote nodes, one per thread. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="279" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" bodystart="279" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ModelManager_1a37da25c5b419f0f74d17166f9acf7b71" compoundref="model__manager_8cpp" startline="437" endline="459">clear_node_models_</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a14ec157c17bfe589d51f82c206aba049" compoundref="model__manager_8cpp" startline="243" endline="262">copy_node_model_</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1acc955f7172e28dd05d2d0496ecdf2423" compoundref="model__manager__impl_8h" startline="121" endline="128">get_proxy_node</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1ae14b26efd9515b1596ecfeaf25b04e64" compoundref="model__manager_8cpp" startline="80" endline="136">initialize</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1aa9dd5b9db696ebef3355e4e31e184735" compoundref="model__manager_8cpp" startline="218" endline="240">register_node_model_</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1ModelManager_1aaa45100f24b234abcfd9d0406b4b7d43" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::ModelManager::model_defaults_modified_</definition>
+        <argsstring></argsstring>
+        <name>model_defaults_modified_</name>
+        <qualifiedname>nest::ModelManager::model_defaults_modified_</qualifiedname>
+        <briefdescription>
+<para>True if any model defaults have been modified. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="281" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" bodystart="281" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ModelManager_1a60290fe12f0334e0fdc1ae9d2be79d1b" compoundref="model__manager_8h" startline="293" endline="296">are_model_defaults_modified</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a37da25c5b419f0f74d17166f9acf7b71" compoundref="model__manager_8cpp" startline="437" endline="459">clear_node_models_</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1ac6142dc3a2f6100aa1510e65dfb7b8e9" compoundref="model__manager_8cpp" startline="317" endline="325">set_node_defaults_</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a9508db769f2e7c2b62743f5774872111" compoundref="model__manager_8cpp" startline="328" endline="363">set_synapse_defaults_</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1ModelManager_1acdc9190132c0c7a0c2ef387d84f136f6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::ModelManager::ModelManager</definition>
+        <argsstring>()</argsstring>
+        <name>ModelManager</name>
+        <qualifiedname>nest::ModelManager::ModelManager</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="48" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="45" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1a41c350e0207435ffc6891c93fe76d80e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::ModelManager::~ModelManager</definition>
+        <argsstring>() override</argsstring>
+        <name>~ModelManager</name>
+        <qualifiedname>nest::ModelManager::~ModelManager</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="49" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="58" bodyend="77"/>
+        <references refid="classnest_1_1ModelManager_1a59cf58cc2e5682cd927996154b95ddf2" compoundref="model__manager_8h" startline="258">builtin_connection_models_</references>
+        <references refid="classnest_1_1ModelManager_1ad2d24c7fcdaca79e88599ac2ca853b65" compoundref="model__manager_8h" startline="244">builtin_node_models_</references>
+        <references refid="classnest_1_1ModelManager_1a095a416070ca495514b51d4c3bd1af29" compoundref="model__manager_8cpp" startline="462" endline="480">clear_connection_models_</references>
+        <references refid="classnest_1_1ModelManager_1a37da25c5b419f0f74d17166f9acf7b71" compoundref="model__manager_8cpp" startline="437" endline="459">clear_node_models_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1ae14b26efd9515b1596ecfeaf25b04e64" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::ModelManager::initialize</definition>
+        <argsstring>() override</argsstring>
+        <name>initialize</name>
+        <qualifiedname>nest::ModelManager::initialize</qualifiedname>
+        <reimplements refid="classnest_1_1ManagerInterface_1a43f881ab34500bff012a2514ad99ad79">initialize</reimplements>
+        <briefdescription>
+<para>Prepare manager for operation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>After this method has completed, the manager should be completely initialized and &quot;ready for action&quot;.</para>
+<para><simplesect kind="note"><para>Initialization of any given manager may depend on other managers having been initialized before. <ref refid="classnest_1_1KernelManager_1aa731562f03c98d8fa67f1d530056ede2" kindref="member">KernelManager::initialize()</ref> is responsible for calling the initialization routines on the specific managers in correct order.</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="classnest_1_1ModelManager_1a02895f199ad38d7bd3ac24f4ea799f44" kindref="member">finalize()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="51" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="80" bodyend="136"/>
+        <references refid="classnest_1_1ModelManager_1a59cf58cc2e5682cd927996154b95ddf2" compoundref="model__manager_8h" startline="258">builtin_connection_models_</references>
+        <references refid="classnest_1_1ModelManager_1ad2d24c7fcdaca79e88599ac2ca853b65" compoundref="model__manager_8h" startline="244">builtin_node_models_</references>
+        <references refid="classnest_1_1ModelManager_1a27d925f00d58fca37cf9dcfd6a81a3a0" compoundref="model__manager_8h" startline="269">connection_models_</references>
+        <references refid="classnest_1_1ModelManager_1a0ad4bd5a087c2c6143ef01213e2b1aba" compoundref="model__manager_8cpp" startline="574" endline="579">create_proxynode_</references>
+        <references refid="classnest_1_1VPManager_1a144a9ac1401713a125c8df3d31721b0c" compoundref="vp__manager_8h" startline="164" endline="171">nest::VPManager::get_thread_id</references>
+        <references refid="namespacenest_1a235f64c89ddf8992424ea32a13149a3e" compoundref="kernel__manager_8h" startline="272" endline="275">nest::kernel</references>
+        <references refid="classnest_1_1ModelManager_1a0f4652a7c93f5e8b9c36c05d54aa1be1" compoundref="model__manager_8h" startline="271">modeldict_</references>
+        <references refid="classnest_1_1ModelManager_1aa1c6fa63d5865f15c37a50adcccf8360" compoundref="model__manager_8h" startline="253">node_models_</references>
+        <references refid="classnest_1_1ModelManager_1aa255aec6ce5e727f30ad863c0a6854cf" compoundref="model__manager_8h" startline="279">proxy_nodes_</references>
+        <references refid="classnest_1_1ModelManager_1a4c30bd45e80b5e01e705b1a87734a35d" compoundref="model__manager_8h" startline="274">proxynode_model_</references>
+        <references refid="classnest_1_1Model_1a3680de567f35d5c8f902f9a1b8278230" compoundref="model_8cpp" startline="49" endline="52">nest::Model::set_threads</references>
+        <references refid="classnest_1_1Model_1a81d304c74b5f213778d397b91a9803dc" compoundref="model_8h" startline="194" endline="197">nest::Model::set_type_id</references>
+        <references refid="classnest_1_1ModelManager_1ab29f274daea3d4378c4cedd84d178021" compoundref="model__manager_8h" startline="272">synapsedict_</references>
+        <references refid="classnest_1_1KernelManager_1ae5288531d5c8bfa7d8c1f0bad6964fd2" compoundref="kernel__manager_8h" startline="243">nest::KernelManager::vp_manager</references>
+        <referencedby refid="classnest_1_1ModelManager_1af5afbb0c126b604d32806bcec62ab559" compoundref="model__manager_8cpp" startline="153" endline="157">change_number_of_threads</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1a02895f199ad38d7bd3ac24f4ea799f44" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::ModelManager::finalize</definition>
+        <argsstring>() override</argsstring>
+        <name>finalize</name>
+        <qualifiedname>nest::ModelManager::finalize</qualifiedname>
+        <reimplements refid="classnest_1_1ManagerInterface_1a329d00818a7c57d2c7f9e83dbed56606">finalize</reimplements>
+        <briefdescription>
+<para>Take down manager after operation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>After this method has completed, all dynamic data structures created by the manager shall be deallocated and containers emptied. Plain variables need not be reset.</para>
+<para><simplesect kind="note"><para>Finalization of any given manager may depend on other managers not having been finalized yet. <ref refid="classnest_1_1KernelManager_1a9e1cccd4670b1da1f68208afb5e6622f" kindref="member">KernelManager::finalize()</ref> is responsible for calling the initialization routines on the specific managers in correct order, i.e., the opposite order of <ref refid="classnest_1_1ModelManager_1ae14b26efd9515b1596ecfeaf25b04e64" kindref="member">initialize()</ref> calls.</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="classnest_1_1ModelManager_1ae14b26efd9515b1596ecfeaf25b04e64" kindref="member">initialize()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="52" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="139" bodyend="150"/>
+        <references refid="classnest_1_1ModelManager_1ad2d24c7fcdaca79e88599ac2ca853b65" compoundref="model__manager_8h" startline="244">builtin_node_models_</references>
+        <references refid="classnest_1_1ModelManager_1a095a416070ca495514b51d4c3bd1af29" compoundref="model__manager_8cpp" startline="462" endline="480">clear_connection_models_</references>
+        <references refid="classnest_1_1ModelManager_1a37da25c5b419f0f74d17166f9acf7b71" compoundref="model__manager_8cpp" startline="437" endline="459">clear_node_models_</references>
+        <referencedby refid="classnest_1_1ModelManager_1af5afbb0c126b604d32806bcec62ab559" compoundref="model__manager_8cpp" startline="153" endline="157">change_number_of_threads</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1af5afbb0c126b604d32806bcec62ab559" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::ModelManager::change_number_of_threads</definition>
+        <argsstring>() override</argsstring>
+        <name>change_number_of_threads</name>
+        <qualifiedname>nest::ModelManager::change_number_of_threads</qualifiedname>
+        <reimplements refid="classnest_1_1ManagerInterface_1aa88c28844a59b4791eab4b7930fc62b0">change_number_of_threads</reimplements>
+        <briefdescription>
+<para>Change the number of threads. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Many data structures within the different managers depend on the number of threads. This function is called on each manager upon a change of that number and allows the manager to re-allocate data structures accordingly. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="53" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="153" bodyend="157"/>
+        <references refid="classnest_1_1ModelManager_1a02895f199ad38d7bd3ac24f4ea799f44" compoundref="model__manager_8cpp" startline="139" endline="150">finalize</references>
+        <references refid="classnest_1_1ModelManager_1ae14b26efd9515b1596ecfeaf25b04e64" compoundref="model__manager_8cpp" startline="80" endline="136">initialize</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1a6d009316ac3aebeb02cf9813584ff101" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::ModelManager::set_status</definition>
+        <argsstring>(const DictionaryDatum &amp;) override</argsstring>
+        <name>set_status</name>
+        <qualifiedname>nest::ModelManager::set_status</qualifiedname>
+        <reimplements refid="classnest_1_1ManagerInterface_1ad940557204d456c167f541dd72c81193">set_status</reimplements>
+        <param>
+          <type>const <ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="54" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="160" bodyend="162"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1a49632b3af5b4a82098707a82c6107a49" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::ModelManager::get_status</definition>
+        <argsstring>(DictionaryDatum &amp;) override</argsstring>
+        <name>get_status</name>
+        <qualifiedname>nest::ModelManager::get_status</qualifiedname>
+        <reimplements refid="classnest_1_1ManagerInterface_1a0935d5415eafd0bc54d2c01294595a80">get_status</reimplements>
+        <param>
+          <type><ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+          <defname>dict</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="55" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="165" bodyend="183"/>
+        <references refid="namespacenest_1_1names_1a78559e8fade174add0a6be5579364ff5" compoundref="nest__names_8h" startline="304">nest::names::max_num_syn_models</references>
+        <references refid="namespacenest_1a3faf54a0eb31967ea982a6adadcfa3cf" compoundref="nest__types_8h" startline="103">nest::MAX_SYN_ID</references>
+        <references refid="classnest_1_1ModelManager_1a0f4652a7c93f5e8b9c36c05d54aa1be1" compoundref="model__manager_8h" startline="271">modeldict_</references>
+        <references refid="namespacenest_1_1names_1a975962211bf31616769799de837c898a" compoundref="nest__names_8h" startline="338">nest::names::node_models</references>
+        <references refid="namespacenest_1_1names_1a4a77f14b5c4b21973e4431920c01b8f3" compoundref="nest__names_8h" startline="461">nest::names::synapse_models</references>
+        <references refid="classnest_1_1ModelManager_1ab29f274daea3d4378c4cedd84d178021" compoundref="model__manager_8h" startline="272">synapsedict_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1af51df51b09ebbf233be7af6bd39137b1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::ModelManager::calibrate</definition>
+        <argsstring>(const TimeConverter &amp;)</argsstring>
+        <name>calibrate</name>
+        <qualifiedname>nest::ModelManager::calibrate</qualifiedname>
+        <param>
+          <type>const <ref refid="classnest_1_1TimeConverter" kindref="compound">TimeConverter</ref> &amp;</type>
+          <defname>tc</defname>
+        </param>
+        <briefdescription>
+<para>Resize the structures for the <ref refid="classnest_1_1Connector" kindref="compound">Connector</ref> objects if necessary. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Functor to compare Models by their name.</para>
+<para>This function should be called after number of threads, min_delay, max_delay, and time representation have been changed in the scheduler. The <ref refid="classnest_1_1TimeConverter" kindref="compound">TimeConverter</ref> is used to convert times from the old to the new representation. It is also forwarding the calibration request to all <ref refid="classnest_1_1ConnectorModel" kindref="compound">ConnectorModel</ref> objects. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="65" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="483" bodyend="-1"/>
+        <references refid="classnest_1_1ModelManager_1a27d925f00d58fca37cf9dcfd6a81a3a0" compoundref="model__manager_8h" startline="269">connection_models_</references>
+        <references refid="namespacenest_1a235f64c89ddf8992424ea32a13149a3e" compoundref="kernel__manager_8h" startline="272" endline="275">nest::kernel</references>
+        <references refid="classnest_1_1ModelManager_1aa1c6fa63d5865f15c37a50adcccf8360" compoundref="model__manager_8h" startline="253">node_models_</references>
+        <referencedby refid="classnest_1_1SimulationManager_1a8e68ef9b61dd3e17a09829333503b6ac" compoundref="simulation__manager_8cpp" startline="116" endline="395">nest::SimulationManager::set_status</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1acc955f7172e28dd05d2d0496ecdf2423" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classnest_1_1Node" kindref="compound">Node</ref> *</type>
+        <definition>Node * nest::ModelManager::get_proxy_node</definition>
+        <argsstring>(thread tid, index node_id)</argsstring>
+        <name>get_proxy_node</name>
+        <qualifiedname>nest::ModelManager::get_proxy_node</qualifiedname>
+        <param>
+          <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+          <declname>node_id</declname>
+        </param>
+        <briefdescription>
+<para>Return a proxynode configured for thread tid and the given node_id. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="72" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager_impl.h" bodystart="121" bodyend="128"/>
+        <references refid="classnest_1_1ModelRangeManager_1ad5380cf3321b38433a364b9dc87daaf7" compoundref="modelrange__manager_8cpp" startline="81" endline="110">nest::ModelRangeManager::get_model_id</references>
+        <references refid="namespacenest_1a235f64c89ddf8992424ea32a13149a3e" compoundref="kernel__manager_8h" startline="272" endline="275">nest::kernel</references>
+        <references refid="classnest_1_1KernelManager_1a81f62008f5752675d486a9d91ef05831" compoundref="kernel__manager_8h" startline="246">nest::KernelManager::modelrange_manager</references>
+        <references refid="classnest_1_1ModelManager_1aa255aec6ce5e727f30ad863c0a6854cf" compoundref="model__manager_8h" startline="279">proxy_nodes_</references>
+        <references refid="classnest_1_1Node_1a07451d06b3d812eae961d61397f5826c" compoundref="node_8h" startline="984" endline="987">nest::Node::set_node_id_</references>
+        <references refid="classnest_1_1Node_1a219e882ed608cca39c88b4863b037fbe" compoundref="node_8h" startline="1027" endline="1030">nest::Node::set_vp</references>
+        <referencedby refid="classnest_1_1NodeManager_1ad376a94a0b04bdbe90d6d2205f133aed" compoundref="node__manager_8cpp" startline="458" endline="474">nest::NodeManager::get_mpi_local_node_or_device_head</referencedby>
+        <referencedby refid="classnest_1_1NodeManager_1a166690647e1a88d96c67e83c4c72fa19" compoundref="node__manager_8cpp" startline="422" endline="434">nest::NodeManager::get_node_or_proxy</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1a328a98e2391f07ffdcd31a986982f826" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classnest_1_1ConnectorModel" kindref="compound">ConnectorModel</ref> &amp;</type>
+        <definition>ConnectorModel &amp; nest::ModelManager::get_connection_model</definition>
+        <argsstring>(synindex syn_id, thread t=0)</argsstring>
+        <name>get_connection_model</name>
+        <qualifiedname>nest::ModelManager::get_connection_model</qualifiedname>
+        <param>
+          <type><ref refid="namespacenest_1a2d283b4b36e5ee3b6f1d84b35c9ed475" kindref="member">synindex</ref></type>
+          <declname>syn_id</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>t</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return pointer to protoype for given synapse id. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1UnknownSynapseType" kindref="compound">UnknownSynapseType</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<xrefsect id="todo_1_todo000011"><xreftitle>Todo</xreftitle><xrefdescription><para>: make the return type const, after the increment of num_connections and the min_ and max_delay setting in <ref refid="classnest_1_1ConnectorBase" kindref="compound">ConnectorBase</ref> was moved out to the <ref refid="classnest_1_1ConnectionManager" kindref="compound">ConnectionManager</ref> </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="82" column="18" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" bodystart="299" bodyend="303"/>
+        <references refid="classnest_1_1ModelManager_1ac0f410c34344596285d9d3e886a80148" compoundref="model__manager_8h" startline="319" endline="325">assert_valid_syn_id</references>
+        <references refid="classnest_1_1ModelManager_1a27d925f00d58fca37cf9dcfd6a81a3a0" compoundref="model__manager_8h" startline="269">connection_models_</references>
+        <referencedby refid="classnest_1_1TargetTableDevices_1afd8f99f2e07b51408dcc72cc165e505e" compoundref="target__table__devices__impl_8h" startline="54" endline="73">nest::TargetTableDevices::add_connection_from_device</referencedby>
+        <referencedby refid="classnest_1_1TargetTableDevices_1a09f957d8ac14589929de4dbea0273abf" compoundref="target__table__devices__impl_8h" startline="35" endline="51">nest::TargetTableDevices::add_connection_to_device</referencedby>
+        <referencedby refid="classnest_1_1SourceTable_1a15e7c1635c267bf81b15d1b445252792" compoundref="source__table_8cpp" startline="202" endline="267">nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources</referencedby>
+        <referencedby refid="classnest_1_1ConnectionManager_1a199080ea2054e8a1f9282c6201eec278" compoundref="connection__manager_8cpp" startline="743" endline="786">nest::ConnectionManager::connect_</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1afdca64fbdcc8897ed6e25a8e534b482e" compoundref="model__manager_8cpp" startline="265" endline="287">copy_connection_model_</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a4de0bb9d981c92958e0d52b1ff3e7dea" compoundref="model__manager_8h" startline="328" endline="332">get_secondary_event_prototype</referencedby>
+        <referencedby refid="classnest_1_1ConnBuilder_1a9c2e48ef813d9123f9c61df2f40ef1ea" compoundref="conn__builder_8cpp" startline="436" endline="451">nest::ConnBuilder::set_synapse_model_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionManager_1a9b5dd166871f9902c15de576936dca8f" compoundref="connection__manager_8cpp" startline="260" endline="307">nest::ConnectionManager::set_synapse_status</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1aea052fc6150494e8e66ebdbe1127b876" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::vector&lt; <ref refid="classnest_1_1ConnectorModel" kindref="compound">ConnectorModel</ref> * &gt; &amp;</type>
+        <definition>const std::vector&lt; ConnectorModel * &gt; &amp; nest::ModelManager::get_connection_models</definition>
+        <argsstring>(thread tid)</argsstring>
+        <name>get_connection_models</name>
+        <qualifiedname>nest::ModelManager::get_connection_models</qualifiedname>
+        <param>
+          <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="84" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" bodystart="306" bodyend="309"/>
+        <references refid="classnest_1_1ModelManager_1a27d925f00d58fca37cf9dcfd6a81a3a0" compoundref="model__manager_8h" startline="269">connection_models_</references>
+        <referencedby refid="classnest_1_1EventDeliveryManager_1aba9898648e890ea2ac369891420259d9" compoundref="event__delivery__manager_8cpp" startline="574" endline="660">nest::EventDeliveryManager::deliver_events_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionManager_1a47d174cc3f78508f825c44806b4bf247" compoundref="connection__manager_8cpp" startline="1512" endline="1554">nest::ConnectionManager::deliver_secondary_events</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1aed100533c2c7f259d03d9d10e10308cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class ModelT</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+        <definition>index nest::ModelManager::register_node_model</definition>
+        <argsstring>(const Name &amp;name, std::string deprecation_info=std::string())</argsstring>
+        <name>register_node_model</name>
+        <qualifiedname>nest::ModelManager::register_node_model</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>deprecation_info</declname>
+          <defval>std::string()</defval>
+        </param>
+        <briefdescription>
+<para>Register a node-model prototype. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function must be called exactly once for each model class to make it known in the simulator. The natural place for a call to this function is in a *module.cpp file. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>of the new node model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>deprecation_info</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If non-empty string, deprecation warning will be issued for model with this info to user. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>ID of the new model object. </para>
+</simplesect>
+<simplesect kind="see"><para>register_prototype_connection </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="98" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager_impl.h" bodystart="44" bodyend="54"/>
+        <references refid="classnest_1_1ModelManager_1a0f4652a7c93f5e8b9c36c05d54aa1be1" compoundref="model__manager_8h" startline="271">modeldict_</references>
+        <references refid="classnest_1_1ModelManager_1aa9dd5b9db696ebef3355e4e31e184735" compoundref="model__manager_8cpp" startline="218" endline="240">register_node_model_</references>
+        <references refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" compoundref="name_8cc" startline="72" endline="75">Name::toString</references>
+        <referencedby refid="classnest_1_1ModelsModule_1aaecea44044f9fb427884a67aae5ebc46" compoundref="modelsmodule_8cpp" startline="189" endline="344">nest::ModelsModule::init</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1ad5640bc6c249b00cf94e816b7d954318" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+        <definition>index nest::ModelManager::copy_model</definition>
+        <argsstring>(Name old_name, Name new_name, DictionaryDatum params)</argsstring>
+        <name>copy_model</name>
+        <qualifiedname>nest::ModelManager::copy_model</qualifiedname>
+        <param>
+          <type><ref refid="className" kindref="compound">Name</ref></type>
+          <declname>old_name</declname>
+        </param>
+        <param>
+          <type><ref refid="className" kindref="compound">Name</ref></type>
+          <declname>new_name</declname>
+        </param>
+        <param>
+          <type><ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref></type>
+          <declname>params</declname>
+        </param>
+        <briefdescription>
+<para>Copy an existing model and register it as a new model. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function allows users to create their own, cloned models. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>old_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>name of existing model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>new_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>name of new model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>default parameters of new model. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>model ID of new <ref refid="classnest_1_1Model" kindref="compound">Model</ref> object. </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="classnest_1_1ModelManager_1a14ec157c17bfe589d51f82c206aba049" kindref="member">copy_node_model_</ref>, <ref refid="classnest_1_1ModelManager_1afdca64fbdcc8897ed6e25a8e534b482e" kindref="member">copy_connection_model_</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="109" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="186" bodyend="215"/>
+        <references refid="classnest_1_1ModelManager_1afdca64fbdcc8897ed6e25a8e534b482e" compoundref="model__manager_8cpp" startline="265" endline="287">copy_connection_model_</references>
+        <references refid="classnest_1_1ModelManager_1a14ec157c17bfe589d51f82c206aba049" compoundref="model__manager_8cpp" startline="243" endline="262">copy_node_model_</references>
+        <references refid="classToken_1a397db8062278fec3e786aa62f9d9baf8" compoundref="token_8h" startline="348" endline="351">Token::empty</references>
+        <references refid="classnest_1_1ModelManager_1a0f4652a7c93f5e8b9c36c05d54aa1be1" compoundref="model__manager_8h" startline="271">modeldict_</references>
+        <references refid="classnest_1_1ModelManager_1ac6142dc3a2f6100aa1510e65dfb7b8e9" compoundref="model__manager_8cpp" startline="317" endline="325">set_node_defaults_</references>
+        <references refid="classnest_1_1ModelManager_1a9508db769f2e7c2b62743f5774872111" compoundref="model__manager_8cpp" startline="328" endline="363">set_synapse_defaults_</references>
+        <references refid="classnest_1_1ModelManager_1ab29f274daea3d4378c4cedd84d178021" compoundref="model__manager_8h" startline="272">synapsedict_</references>
+        <referencedby refid="namespacenest_1af48027ba5206175b7540ff91ba3d07b2" compoundref="nest_8cpp" startline="271" endline="274">nest::copy_model</referencedby>
+        <referencedby refid="classnest_1_1NestModule_1_1CopyModel__l__l__DFunction_1a79f13278240061e8b4eeb21a97ae382d" compoundref="nestmodule_8cpp" startline="785" endline="798">nest::NestModule::CopyModel_l_l_DFunction::execute</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1a1408ac5b290bdea20840104e19415a99" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::ModelManager::set_model_defaults</definition>
+        <argsstring>(Name name, DictionaryDatum params)</argsstring>
+        <name>set_model_defaults</name>
+        <qualifiedname>nest::ModelManager::set_model_defaults</qualifiedname>
+        <param>
+          <type><ref refid="className" kindref="compound">Name</ref></type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type><ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref></type>
+          <declname>params</declname>
+        </param>
+        <briefdescription>
+<para>Set the default parameters of a model. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>of model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>default parameters to be set. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if the operation succeeded, else false </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="classnest_1_1ModelManager_1ac6142dc3a2f6100aa1510e65dfb7b8e9" kindref="member">set_node_defaults_</ref>, <ref refid="classnest_1_1ModelManager_1a9508db769f2e7c2b62743f5774872111" kindref="member">set_synapse_defaults_</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="118" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="291" bodyend="313"/>
+        <references refid="classToken_1a397db8062278fec3e786aa62f9d9baf8" compoundref="token_8h" startline="348" endline="351">Token::empty</references>
+        <references refid="classnest_1_1ModelManager_1a0f4652a7c93f5e8b9c36c05d54aa1be1" compoundref="model__manager_8h" startline="271">modeldict_</references>
+        <references refid="classnest_1_1ModelManager_1ac6142dc3a2f6100aa1510e65dfb7b8e9" compoundref="model__manager_8cpp" startline="317" endline="325">set_node_defaults_</references>
+        <references refid="classnest_1_1ModelManager_1a9508db769f2e7c2b62743f5774872111" compoundref="model__manager_8cpp" startline="328" endline="363">set_synapse_defaults_</references>
+        <references refid="classnest_1_1ModelManager_1ab29f274daea3d4378c4cedd84d178021" compoundref="model__manager_8h" startline="272">synapsedict_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1a647d0f754ac09d9a17ab7567fd05801f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>template&lt; typename targetidentifierT &gt; class</type>
+            <declname>ConnectionT</declname>
+            <defname>ConnectionT</defname>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void nest::ModelManager::register_connection_model</definition>
+        <argsstring>(const std::string &amp;name, const RegisterConnectionModelFlags flags=default_connection_model_flags)</argsstring>
+        <name>register_connection_model</name>
+        <qualifiedname>nest::ModelManager::register_connection_model</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacenest_1ac001f21a4824b6f148d72a1a7f1f8ac6" kindref="member">RegisterConnectionModelFlags</ref></type>
+          <declname>flags</declname>
+          <defval><ref refid="namespacenest_1aef4228724908932f9349113ea9543f2b" kindref="member">default_connection_model_flags</ref></defval>
+        </param>
+        <briefdescription>
+<para>Register a synape model with a custom <ref refid="classnest_1_1Connector" kindref="compound">Connector</ref> model and without any common properties. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>&quot;hpc synapses&quot; use <computeroutput><ref refid="classnest_1_1TargetIdentifierIndex" kindref="compound">TargetIdentifierIndex</ref></computeroutput> for <computeroutput>ConnectionT</computeroutput> and store the target neuron in form of a 2 Byte index instead of an 8 Byte pointer. This limits the number of thread local neurons to 65,536. No support for different receptor types. Otherwise identical to non-hpc version.</para>
+<para>When called, this function should be specialised by a class template, e.g. <computeroutput><ref refid="classnest_1_1bernoulli__synapse" kindref="compound">bernoulli_synapse</ref>&lt; targetidentifierT &gt;</computeroutput></para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name under which the <ref refid="classnest_1_1ConnectorModel" kindref="compound">ConnectorModel</ref> will be registered. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="135" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager_impl.h" bodystart="58" bodyend="95"/>
+        <references refid="namespacenest_1ad7d117022997d32ce4ae63a98b892dbe" compoundref="enum__bitfield_8h" startline="136" endline="140">nest::enumFlagSet</references>
+        <references refid="namespacenest_1ac001f21a4824b6f148d72a1a7f1f8ac6a122ce5b1aeb9e739c55b05197eb38429">nest::HAS_DELAY</references>
+        <references refid="namespacenest_1ac001f21a4824b6f148d72a1a7f1f8ac6a79cf97983e8d689411b370cb052d5af0">nest::IS_PRIMARY</references>
+        <references refid="classnest_1_1ModelManager_1aa8a2fe6be154cbb0768bf71942387520" compoundref="model__manager_8cpp" startline="546" endline="571">register_connection_model_</references>
+        <references refid="namespacenest_1ac001f21a4824b6f148d72a1a7f1f8ac6a229fa5663f5a80c1fbf237db33a10500">nest::REGISTER_HPC</references>
+        <references refid="namespacenest_1ac001f21a4824b6f148d72a1a7f1f8ac6a92b7533c87b239993d735cd5baf03f0d">nest::REGISTER_LBL</references>
+        <references refid="namespacenest_1ac001f21a4824b6f148d72a1a7f1f8ac6aa0d203a834ab7b335dfb264067e7fb5c">nest::REQUIRES_CLOPATH_ARCHIVING</references>
+        <references refid="namespacenest_1ac001f21a4824b6f148d72a1a7f1f8ac6a0d58de623e6d3803e7f1c01d03059abf">nest::REQUIRES_SYMMETRIC</references>
+        <references refid="namespacenest_1ac001f21a4824b6f148d72a1a7f1f8ac6a84bafb2453fed9e4d292c2f2c42f0147">nest::REQUIRES_URBANCZIK_ARCHIVING</references>
+        <references refid="namespacenest_1ac001f21a4824b6f148d72a1a7f1f8ac6aa36566bef01b1f104bea14c298d7e881">nest::SUPPORTS_WFR</references>
+        <referencedby refid="namespacenest_1a5a315cc6d8817d6c98c2b37ebd0cd817" compoundref="nest__impl_8h" startline="33" endline="36">nest::register_connection_model</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1a5377d2ef98724312850ab1613dc019f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>template&lt; typename targetidentifierT &gt; class</type>
+            <declname>ConnectionT</declname>
+            <defname>ConnectionT</defname>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void nest::ModelManager::register_secondary_connection_model</definition>
+        <argsstring>(const std::string &amp;name, const RegisterConnectionModelFlags flags=default_secondary_connection_model_flags)</argsstring>
+        <name>register_secondary_connection_model</name>
+        <qualifiedname>nest::ModelManager::register_secondary_connection_model</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacenest_1ac001f21a4824b6f148d72a1a7f1f8ac6" kindref="member">RegisterConnectionModelFlags</ref></type>
+          <declname>flags</declname>
+          <defval><ref refid="namespacenest_1a0a576490bb86915afd10578f9577721e" kindref="member">default_secondary_connection_model_flags</ref></defval>
+        </param>
+        <briefdescription>
+<para>Register a synape with default <ref refid="classnest_1_1Connector" kindref="compound">Connector</ref> and without any common properties. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="139" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager_impl.h" bodystart="102" bodyend="118"/>
+        <references refid="namespacenest_1ad7d117022997d32ce4ae63a98b892dbe" compoundref="enum__bitfield_8h" startline="136" endline="140">nest::enumFlagSet</references>
+        <references refid="namespacenest_1ac001f21a4824b6f148d72a1a7f1f8ac6a122ce5b1aeb9e739c55b05197eb38429">nest::HAS_DELAY</references>
+        <references refid="classnest_1_1ModelManager_1aa8a2fe6be154cbb0768bf71942387520" compoundref="model__manager_8cpp" startline="546" endline="571">register_connection_model_</references>
+        <references refid="namespacenest_1ac001f21a4824b6f148d72a1a7f1f8ac6a0d58de623e6d3803e7f1c01d03059abf">nest::REQUIRES_SYMMETRIC</references>
+        <references refid="namespacenest_1ac001f21a4824b6f148d72a1a7f1f8ac6aa36566bef01b1f104bea14c298d7e881">nest::SUPPORTS_WFR</references>
+        <referencedby refid="namespacenest_1a409b2c475d9c450fa0e9ff72b8dc81cc" compoundref="nest__impl_8h" startline="40" endline="43">nest::register_secondary_connection_model</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1a0206d78c642e0dc97def42aff26034b6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+        <definition>index nest::ModelManager::get_node_model_id</definition>
+        <argsstring>(const Name) const</argsstring>
+        <name>get_node_model_id</name>
+        <qualifiedname>nest::ModelManager::get_node_model_id</qualifiedname>
+        <param>
+          <type>const</type>
+          <declname>Name</declname>
+          <defname>name</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The model ID for a <ref refid="classnest_1_1Model" kindref="compound">Model</ref> with a given name </para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1UnknownModelName" kindref="compound">UnknownModelName</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the model is not available </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="146" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="366" bodyend="380"/>
+        <references refid="classnest_1_1ModelManager_1aa1c6fa63d5865f15c37a50adcccf8360" compoundref="model__manager_8h" startline="253">node_models_</references>
+        <referencedby refid="namespacenest_1aa2a77f5dfa38b2ed7837975a4ef39a7e" compoundref="nest_8cpp" startline="164" endline="173">nest::create</referencedby>
+        <referencedby refid="classnest_1_1AbstractLayer_1a268b14297e57188c5f29a44bad369990" compoundref="layer_8cpp" startline="55" endline="160">nest::AbstractLayer::create_layer</referencedby>
+        <referencedby refid="namespacenest_1aacef87bbf60279472b2642b3c460bcde" compoundref="nest_8cpp" startline="294" endline="323">nest::get_model_defaults</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1a8058f85d46bd4af4c2f726be59aa269b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classnest_1_1Model" kindref="compound">Model</ref> *</type>
+        <definition>Model * nest::ModelManager::get_node_model</definition>
+        <argsstring>(index) const</argsstring>
+        <name>get_node_model</name>
+        <qualifiedname>nest::ModelManager::get_node_model</qualifiedname>
+        <param>
+          <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+          <defname>m</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The <ref refid="classnest_1_1Model" kindref="compound">Model</ref> registered with the given model ID </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="151" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" bodystart="286" bodyend="290"/>
+        <references refid="classnest_1_1ModelManager_1aa1c6fa63d5865f15c37a50adcccf8360" compoundref="model__manager_8h" startline="253">node_models_</references>
+        <referencedby refid="classnest_1_1NodeManager_1a8e6c4a313d6bf3d30f0d0ef111567575" compoundref="node__manager_8cpp" startline="105" endline="183">nest::NodeManager::add_node</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1aa27ab465e73a0186b77d64d81ab306e5" compoundref="model__manager_8cpp" startline="503" endline="507">compare_model_by_id_</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a14ec157c17bfe589d51f82c206aba049" compoundref="model__manager_8cpp" startline="243" endline="262">copy_node_model_</referencedby>
+        <referencedby refid="classnest_1_1Node_1af3b1227782c1fc9e0934a73ee7bf15f4" compoundref="node_8cpp" startline="119" endline="123">nest::Node::get_model_</referencedby>
+        <referencedby refid="namespacenest_1aacef87bbf60279472b2642b3c460bcde" compoundref="nest_8cpp" startline="294" endline="323">nest::get_model_defaults</referencedby>
+        <referencedby refid="classnest_1_1ModelRangeManager_1ab2ea2aea12115408f37d8c0acc8460db" compoundref="modelrange__manager_8cpp" startline="113" endline="116">nest::ModelRangeManager::get_model_of_node_id</referencedby>
+        <referencedby refid="classnest_1_1Node_1a86602cc948413d6fbe10fe4fefaca0ef" compoundref="node_8cpp" startline="108" endline="116">nest::Node::get_name</referencedby>
+        <referencedby refid="classnest_1_1proxynode_1adca2ab6d0bee88577982522f07ea6649" compoundref="proxynode_8cpp" startline="89" endline="94">nest::proxynode::get_status</referencedby>
+        <referencedby refid="classnest_1_1NodeCollectionPrimitive_1a5c0aa51c68cd9bb66a46dd12d800d46b" compoundref="node__collection_8cpp" startline="296" endline="316">nest::NodeCollectionPrimitive::NodeCollectionPrimitive</referencedby>
+        <referencedby refid="classnest_1_1NodeManager_1a6c70952e62625a89a6b82a972d31e488" compoundref="node__manager_8cpp" startline="715" endline="742">nest::NodeManager::print</referencedby>
+        <referencedby refid="classnest_1_1NodeCollectionComposite_1a0e3adf6b5bc35aa1ce5331c23b6f0b1c" compoundref="node__collection_8cpp" startline="992" endline="1086">nest::NodeCollectionComposite::print_me</referencedby>
+        <referencedby refid="classnest_1_1NodeCollectionPrimitive_1a96a57ec68b93427ab0645e5643cacd59" compoundref="node__collection_8cpp" startline="491" endline="506">nest::NodeCollectionPrimitive::print_primitive</referencedby>
+        <referencedby refid="classnest_1_1proxynode_1a38ee31043d430d96132c5110e784e3a5" compoundref="proxynode_8cpp" startline="46" endline="50">nest::proxynode::send_test_event</referencedby>
+        <referencedby refid="classnest_1_1proxynode_1afdfb38f8d6bd5837527a75eb4c6ff76e" compoundref="proxynode_8cpp" startline="53" endline="56">nest::proxynode::sends_secondary_event</referencedby>
+        <referencedby refid="classnest_1_1proxynode_1a86ae0ceb13ec36aeaeaea6e0f1257ec0" compoundref="proxynode_8cpp" startline="83" endline="86">nest::proxynode::sends_signal</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1ac6142dc3a2f6100aa1510e65dfb7b8e9" compoundref="model__manager_8cpp" startline="317" endline="325">set_node_defaults_</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1a5da676347a1deaa1a434d3d6a95532d0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+        <definition>index nest::ModelManager::get_synapse_model_id</definition>
+        <argsstring>(std::string model_name)</argsstring>
+        <name>get_synapse_model_id</name>
+        <qualifiedname>nest::ModelManager::get_synapse_model_id</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <declname>model_name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The numeric ID of a given synapse model </para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1UnknownSynapseType" kindref="compound">UnknownSynapseType</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the model is not available </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="157" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="383" bodyend="391"/>
+        <references refid="classToken_1a397db8062278fec3e786aa62f9d9baf8" compoundref="token_8h" startline="348" endline="351">Token::empty</references>
+        <references refid="classnest_1_1ModelManager_1ab29f274daea3d4378c4cedd84d178021" compoundref="model__manager_8h" startline="272">synapsedict_</references>
+        <referencedby refid="classnest_1_1ConnBuilder_1a530074df95dbb090b6fda4e3538c0102" compoundref="conn__builder_8cpp" startline="42" endline="123">nest::ConnBuilder::ConnBuilder</referencedby>
+        <referencedby refid="classnest_1_1ConnectionManager_1a0594fd0c611ae17f9ebe921d0153e60a" compoundref="connection__manager_8cpp" startline="436" endline="458">nest::ConnectionManager::connect</referencedby>
+        <referencedby refid="classnest_1_1ConnectionManager_1a4f5d4769f422431b7560df35af23867a" compoundref="connection__manager_8cpp" startline="568" endline="740">nest::ConnectionManager::connect_arrays</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aba3b91642fb738809e096bb60678fb1f" compoundref="connection__creator_8cpp" startline="29" endline="154">nest::ConnectionCreator::ConnectionCreator</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1a4339600d1ec56c9e21506276f03f1764" compoundref="connection__creator_8cpp" startline="157" endline="213">nest::ConnectionCreator::extract_params_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionManager_1a42095f521521f147812163a8b98ee96f" compoundref="connection__manager_8cpp" startline="946" endline="1015">nest::ConnectionManager::get_connections</referencedby>
+        <referencedby refid="namespacenest_1aacef87bbf60279472b2642b3c460bcde" compoundref="nest_8cpp" startline="294" endline="323">nest::get_model_defaults</referencedby>
+        <referencedby refid="classnest_1_1GenericConnectorModel_1aa8c72dbdf47431532cab0e66946c9d27" compoundref="connector__model__impl_8h" startline="89" endline="103">nest::GenericConnectorModel&lt; ConnectionT &gt;::get_status</referencedby>
+        <referencedby refid="classnest_1_1ConnBuilder_1a9c2e48ef813d9123f9c61df2f40ef1ea" compoundref="conn__builder_8cpp" startline="436" endline="451">nest::ConnBuilder::set_synapse_model_</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1a4ee6b18a6bad6d272e07d838a2af7f1a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref></type>
+        <definition>DictionaryDatum nest::ModelManager::get_connector_defaults</definition>
+        <argsstring>(synindex syn_id) const</argsstring>
+        <name>get_connector_defaults</name>
+        <qualifiedname>nest::ModelManager::get_connector_defaults</qualifiedname>
+        <param>
+          <type><ref refid="namespacenest_1a2d283b4b36e5ee3b6f1d84b35c9ed475" kindref="member">synindex</ref></type>
+          <declname>syn_id</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="159" column="19" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="394" bodyend="410"/>
+        <references refid="classnest_1_1ModelManager_1ac0f410c34344596285d9d3e886a80148" compoundref="model__manager_8h" startline="319" endline="325">assert_valid_syn_id</references>
+        <references refid="classnest_1_1KernelManager_1a0e27508a351fe5c17f42aea52caedb3e" compoundref="kernel__manager_8h" startline="247">nest::KernelManager::connection_manager</references>
+        <references refid="classnest_1_1ModelManager_1a27d925f00d58fca37cf9dcfd6a81a3a0" compoundref="model__manager_8h" startline="269">connection_models_</references>
+        <references refid="namespacenest_1_1names_1ac1e5e69d82969d55a9e7111dfb40c95e" compoundref="nest__names_8h" startline="187">nest::names::element_type</references>
+        <references refid="classnest_1_1ConnectionManager_1a60a983ed4638ecc02e7e3f0c73474e94" compoundref="connection__manager_8cpp" startline="916" endline="928">nest::ConnectionManager::get_num_connections</references>
+        <references refid="namespacenest_1a235f64c89ddf8992424ea32a13149a3e" compoundref="kernel__manager_8h" startline="272" endline="275">nest::kernel</references>
+        <references refid="namespacenest_1_1names_1af98e8363d9517b835f0c1531b2132e1c" compoundref="nest__names_8h" startline="342">nest::names::num_connections</references>
+        <referencedby refid="classnest_1_1ConnBuilder_1a530074df95dbb090b6fda4e3538c0102" compoundref="conn__builder_8cpp" startline="42" endline="123">nest::ConnBuilder::ConnBuilder</referencedby>
+        <referencedby refid="classnest_1_1ConnectionManager_1a4f5d4769f422431b7560df35af23867a" compoundref="connection__manager_8cpp" startline="568" endline="740">nest::ConnectionManager::connect_arrays</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aba3b91642fb738809e096bb60678fb1f" compoundref="connection__creator_8cpp" startline="29" endline="154">nest::ConnectionCreator::ConnectionCreator</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1a4339600d1ec56c9e21506276f03f1764" compoundref="connection__creator_8cpp" startline="157" endline="213">nest::ConnectionCreator::extract_params_</referencedby>
+        <referencedby refid="namespacenest_1aacef87bbf60279472b2642b3c460bcde" compoundref="nest_8cpp" startline="294" endline="323">nest::get_model_defaults</referencedby>
+        <referencedby refid="classnest_1_1ConnBuilder_1ae0eb35bbf0f42c4139e0f1f562a4a0a3" compoundref="conn__builder_8cpp" startline="454" endline="487">nest::ConnBuilder::set_default_weight_or_delay_</referencedby>
+        <referencedby refid="classnest_1_1SPBuilder_1a6b2967497f66cc6c1a6ccf4a45e9c3e5" compoundref="conn__builder_8cpp" startline="1806" endline="1814">nest::SPBuilder::update_delay</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1ae4cf5547e9b2476fd9a3e55770bebbbf" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::ModelManager::connector_requires_symmetric</definition>
+        <argsstring>(const synindex syn_id) const</argsstring>
+        <name>connector_requires_symmetric</name>
+        <qualifiedname>nest::ModelManager::connector_requires_symmetric</qualifiedname>
+        <param>
+          <type>const <ref refid="namespacenest_1a2d283b4b36e5ee3b6f1d84b35c9ed475" kindref="member">synindex</ref></type>
+          <declname>syn_id</declname>
+        </param>
+        <briefdescription>
+<para>Checks, whether synapse type requires symmetric connections. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="164" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="413" bodyend="418"/>
+        <references refid="classnest_1_1ModelManager_1ac0f410c34344596285d9d3e886a80148" compoundref="model__manager_8h" startline="319" endline="325">assert_valid_syn_id</references>
+        <references refid="classnest_1_1ModelManager_1a27d925f00d58fca37cf9dcfd6a81a3a0" compoundref="model__manager_8h" startline="269">connection_models_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1ac65a8ccf171c8e4fcbe96d214887389b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::ModelManager::connector_requires_clopath_archiving</definition>
+        <argsstring>(const synindex syn_id) const</argsstring>
+        <name>connector_requires_clopath_archiving</name>
+        <qualifiedname>nest::ModelManager::connector_requires_clopath_archiving</qualifiedname>
+        <param>
+          <type>const <ref refid="namespacenest_1a2d283b4b36e5ee3b6f1d84b35c9ed475" kindref="member">synindex</ref></type>
+          <declname>syn_id</declname>
+        </param>
+        <briefdescription>
+<para>Checks, whether synapse type requires Clopath archiving. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="169" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="421" bodyend="426"/>
+        <references refid="classnest_1_1ModelManager_1ac0f410c34344596285d9d3e886a80148" compoundref="model__manager_8h" startline="319" endline="325">assert_valid_syn_id</references>
+        <references refid="classnest_1_1ModelManager_1a27d925f00d58fca37cf9dcfd6a81a3a0" compoundref="model__manager_8h" startline="269">connection_models_</references>
+        <referencedby refid="classnest_1_1ConnectionManager_1a199080ea2054e8a1f9282c6201eec278" compoundref="connection__manager_8cpp" startline="743" endline="786">nest::ConnectionManager::connect_</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1a9265877967e222222a0110c18544b98f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::ModelManager::connector_requires_urbanczik_archiving</definition>
+        <argsstring>(const synindex syn_id) const</argsstring>
+        <name>connector_requires_urbanczik_archiving</name>
+        <qualifiedname>nest::ModelManager::connector_requires_urbanczik_archiving</qualifiedname>
+        <param>
+          <type>const <ref refid="namespacenest_1a2d283b4b36e5ee3b6f1d84b35c9ed475" kindref="member">synindex</ref></type>
+          <declname>syn_id</declname>
+        </param>
+        <briefdescription>
+<para>Checks, whether synapse type requires Urbanczik archiving. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="174" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="429" bodyend="434"/>
+        <references refid="classnest_1_1ModelManager_1ac0f410c34344596285d9d3e886a80148" compoundref="model__manager_8h" startline="319" endline="325">assert_valid_syn_id</references>
+        <references refid="classnest_1_1ModelManager_1a27d925f00d58fca37cf9dcfd6a81a3a0" compoundref="model__manager_8h" startline="269">connection_models_</references>
+        <referencedby refid="classnest_1_1ConnectionManager_1a199080ea2054e8a1f9282c6201eec278" compoundref="connection__manager_8cpp" startline="743" endline="786">nest::ConnectionManager::connect_</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1abaf1dfc7e9fc787b46f99ffb79c19994" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::ModelManager::set_connector_defaults</definition>
+        <argsstring>(synindex syn_id, const DictionaryDatum &amp;d)</argsstring>
+        <name>set_connector_defaults</name>
+        <qualifiedname>nest::ModelManager::set_connector_defaults</qualifiedname>
+        <param>
+          <type><ref refid="namespacenest_1a2d283b4b36e5ee3b6f1d84b35c9ed475" kindref="member">synindex</ref></type>
+          <declname>syn_id</declname>
+        </param>
+        <param>
+          <type>const <ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="176" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1ac0f410c34344596285d9d3e886a80148" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::ModelManager::assert_valid_syn_id</definition>
+        <argsstring>(synindex syn_id, thread t=0) const</argsstring>
+        <name>assert_valid_syn_id</name>
+        <qualifiedname>nest::ModelManager::assert_valid_syn_id</qualifiedname>
+        <param>
+          <type><ref refid="namespacenest_1a2d283b4b36e5ee3b6f1d84b35c9ed475" kindref="member">synindex</ref></type>
+          <declname>syn_id</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>t</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Asserts validity of synapse index, otherwise throws exception. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1UnknownSynapseType" kindref="compound">UnknownSynapseType</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="182" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" bodystart="319" bodyend="325"/>
+        <references refid="classnest_1_1ModelManager_1a27d925f00d58fca37cf9dcfd6a81a3a0" compoundref="model__manager_8h" startline="269">connection_models_</references>
+        <referencedby refid="classnest_1_1ConnectionManager_1a246f15c815e9ef17e6f18e9e9c58a1fd" compoundref="connection__manager_8cpp" startline="495" endline="523">nest::ConnectionManager::connect</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1ac65a8ccf171c8e4fcbe96d214887389b" compoundref="model__manager_8cpp" startline="421" endline="426">connector_requires_clopath_archiving</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1ae4cf5547e9b2476fd9a3e55770bebbbf" compoundref="model__manager_8cpp" startline="413" endline="418">connector_requires_symmetric</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a9265877967e222222a0110c18544b98f" compoundref="model__manager_8cpp" startline="429" endline="434">connector_requires_urbanczik_archiving</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a328a98e2391f07ffdcd31a986982f826" compoundref="model__manager_8h" startline="299" endline="303">get_connection_model</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a4ee6b18a6bad6d272e07d838a2af7f1a" compoundref="model__manager_8cpp" startline="394" endline="410">get_connector_defaults</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a4de0bb9d981c92958e0d52b1ff3e7dea" compoundref="model__manager_8h" startline="328" endline="332">get_secondary_event_prototype</referencedby>
+        <referencedby refid="classnest_1_1ConnectionManager_1a1906487a726e8f4bb4e65fe5868e4825" compoundref="connection__manager_8cpp" startline="216" endline="257">nest::ConnectionManager::get_synapse_status</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a9508db769f2e7c2b62743f5774872111" compoundref="model__manager_8cpp" startline="328" endline="363">set_synapse_defaults_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionManager_1a9b5dd166871f9902c15de576936dca8f" compoundref="connection__manager_8cpp" startline="260" endline="307">nest::ConnectionManager::set_synapse_status</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1a60290fe12f0334e0fdc1ae9d2be79d1b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::ModelManager::are_model_defaults_modified</definition>
+        <argsstring>() const</argsstring>
+        <name>are_model_defaults_modified</name>
+        <qualifiedname>nest::ModelManager::are_model_defaults_modified</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="184" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" bodystart="293" bodyend="296"/>
+        <references refid="classnest_1_1ModelManager_1aaa45100f24b234abcfd9d0406b4b7d43" compoundref="model__manager_8h" startline="281">model_defaults_modified_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1a6b4dd572130a87b4819be5b8abd45bd9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t nest::ModelManager::get_num_connection_models</definition>
+        <argsstring>() const</argsstring>
+        <name>get_num_connection_models</name>
+        <qualifiedname>nest::ModelManager::get_num_connection_models</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="186" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" bodystart="312" bodyend="316"/>
+        <references refid="classnest_1_1ModelManager_1a27d925f00d58fca37cf9dcfd6a81a3a0" compoundref="model__manager_8h" startline="269">connection_models_</references>
+        <references refid="namespacenest_1a32bdd353a98ed7e8fc719f244afa157c" compoundref="nest__types_8h" startline="138">nest::invalid_synindex</references>
+        <referencedby refid="classnest_1_1SourceTable_1a199dd1f7d70ceb20323d7ec3812953e5" compoundref="source__table_8cpp" startline="487" endline="550">nest::SourceTable::fill_compressed_spike_data</referencedby>
+        <referencedby refid="classnest_1_1ConnectionManager_1a42095f521521f147812163a8b98ee96f" compoundref="connection__manager_8cpp" startline="946" endline="1015">nest::ConnectionManager::get_connections</referencedby>
+        <referencedby refid="classnest_1_1SourceTable_1a5883368d1ce3572f88b6cb04f0d051af" compoundref="source__table_8cpp" startline="452" endline="460">nest::SourceTable::resize_compressible_sources</referencedby>
+        <referencedby refid="classnest_1_1ConnectionManager_1ad424a6e28fe6a4b7f2b8c2363d38352e" compoundref="connection__manager_8cpp" startline="1583" endline="1597">nest::ConnectionManager::resize_connections</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1a3ddc2ab6cebf94540774acea4730e004" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::ModelManager::memory_info</definition>
+        <argsstring>() const</argsstring>
+        <name>memory_info</name>
+        <qualifiedname>nest::ModelManager::memory_info</qualifiedname>
+        <briefdescription>
+<para>Print out the memory information for each node model. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="191" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="510" bodyend="543"/>
+        <references refid="classnest_1_1ModelManager_1aa27ab465e73a0186b77d64d81ab306e5" compoundref="model__manager_8cpp" startline="503" endline="507">compare_model_by_id_</references>
+        <references refid="namespacenest_1a113f9049bd2e4bf0b496cb6e8625df45" compoundref="ntree__impl_8h" startline="113" endline="121">nest::mod</references>
+        <references refid="classnest_1_1ModelManager_1aa1c6fa63d5865f15c37a50adcccf8360" compoundref="model__manager_8h" startline="253">node_models_</references>
+        <referencedby refid="classnest_1_1NestModule_1_1MemoryInfoFunction_1ab0013609f96f0b49214ec5edced43244" compoundref="nestmodule_8cpp" startline="984" endline="988">nest::NestModule::MemoryInfoFunction::execute</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1a4de0bb9d981c92958e0d52b1ff3e7dea" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classnest_1_1SecondaryEvent" kindref="compound">SecondaryEvent</ref> &amp;</type>
+        <definition>SecondaryEvent &amp; nest::ModelManager::get_secondary_event_prototype</definition>
+        <argsstring>(const synindex syn_id, const thread tid)</argsstring>
+        <name>get_secondary_event_prototype</name>
+        <qualifiedname>nest::ModelManager::get_secondary_event_prototype</qualifiedname>
+        <param>
+          <type>const <ref refid="namespacenest_1a2d283b4b36e5ee3b6f1d84b35c9ed475" kindref="member">synindex</ref></type>
+          <declname>syn_id</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="193" column="18" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" bodystart="328" bodyend="332"/>
+        <references refid="classnest_1_1ModelManager_1ac0f410c34344596285d9d3e886a80148" compoundref="model__manager_8h" startline="319" endline="325">assert_valid_syn_id</references>
+        <references refid="classnest_1_1ModelManager_1a328a98e2391f07ffdcd31a986982f826" compoundref="model__manager_8h" startline="299" endline="303">get_connection_model</references>
+        <references refid="classnest_1_1ConnectorModel_1a8042f48a6d4718a3dbae8ca1e5ccedc2">nest::ConnectorModel::get_event</references>
+        <referencedby refid="classnest_1_1SourceTable_1a15e7c1635c267bf81b15d1b445252792" compoundref="source__table_8cpp" startline="202" endline="267">nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources</referencedby>
+        <referencedby refid="classnest_1_1ConnectionManager_1a47d174cc3f78508f825c44806b4bf247" compoundref="connection__manager_8cpp" startline="1512" endline="1554">nest::ConnectionManager::deliver_secondary_events</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classnest_1_1ModelManager_1a37da25c5b419f0f74d17166f9acf7b71" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::ModelManager::clear_node_models_</definition>
+        <argsstring>()</argsstring>
+        <name>clear_node_models_</name>
+        <qualifiedname>nest::ModelManager::clear_node_models_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="196" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="437" bodyend="459"/>
+        <references refid="classnest_1_1ModelManager_1aaa45100f24b234abcfd9d0406b4b7d43" compoundref="model__manager_8h" startline="281">model_defaults_modified_</references>
+        <references refid="classnest_1_1ModelManager_1a0f4652a7c93f5e8b9c36c05d54aa1be1" compoundref="model__manager_8h" startline="271">modeldict_</references>
+        <references refid="classnest_1_1ModelManager_1aa1c6fa63d5865f15c37a50adcccf8360" compoundref="model__manager_8h" startline="253">node_models_</references>
+        <references refid="classnest_1_1ModelManager_1aa255aec6ce5e727f30ad863c0a6854cf" compoundref="model__manager_8h" startline="279">proxy_nodes_</references>
+        <references refid="classnest_1_1ModelManager_1a4c30bd45e80b5e01e705b1a87734a35d" compoundref="model__manager_8h" startline="274">proxynode_model_</references>
+        <referencedby refid="classnest_1_1ModelManager_1a02895f199ad38d7bd3ac24f4ea799f44" compoundref="model__manager_8cpp" startline="139" endline="150">finalize</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a41c350e0207435ffc6891c93fe76d80e" compoundref="model__manager_8cpp" startline="58" endline="77">~ModelManager</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1a095a416070ca495514b51d4c3bd1af29" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::ModelManager::clear_connection_models_</definition>
+        <argsstring>()</argsstring>
+        <name>clear_connection_models_</name>
+        <qualifiedname>nest::ModelManager::clear_connection_models_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="198" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="462" bodyend="480"/>
+        <references refid="classnest_1_1ModelManager_1a27d925f00d58fca37cf9dcfd6a81a3a0" compoundref="model__manager_8h" startline="269">connection_models_</references>
+        <referencedby refid="classnest_1_1ModelManager_1a02895f199ad38d7bd3ac24f4ea799f44" compoundref="model__manager_8cpp" startline="139" endline="150">finalize</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a41c350e0207435ffc6891c93fe76d80e" compoundref="model__manager_8cpp" startline="58" endline="77">~ModelManager</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1aa9dd5b9db696ebef3355e4e31e184735" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+        <definition>index nest::ModelManager::register_node_model_</definition>
+        <argsstring>(Model *model)</argsstring>
+        <name>register_node_model_</name>
+        <qualifiedname>nest::ModelManager::register_node_model_</qualifiedname>
+        <param>
+          <type><ref refid="classnest_1_1Model" kindref="compound">Model</ref> *</type>
+          <declname>model</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="200" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="218" bodyend="240"/>
+        <references refid="classnest_1_1ModelManager_1ad2d24c7fcdaca79e88599ac2ca853b65" compoundref="model__manager_8h" startline="244">builtin_node_models_</references>
+        <references refid="classnest_1_1ModelManager_1a0ad4bd5a087c2c6143ef01213e2b1aba" compoundref="model__manager_8cpp" startline="574" endline="579">create_proxynode_</references>
+        <references refid="classnest_1_1VPManager_1a144a9ac1401713a125c8df3d31721b0c" compoundref="vp__manager_8h" startline="164" endline="171">nest::VPManager::get_thread_id</references>
+        <references refid="namespacenest_1a235f64c89ddf8992424ea32a13149a3e" compoundref="kernel__manager_8h" startline="272" endline="275">nest::kernel</references>
+        <references refid="classnest_1_1ModelManager_1a0f4652a7c93f5e8b9c36c05d54aa1be1" compoundref="model__manager_8h" startline="271">modeldict_</references>
+        <references refid="classnest_1_1ModelManager_1aa1c6fa63d5865f15c37a50adcccf8360" compoundref="model__manager_8h" startline="253">node_models_</references>
+        <references refid="classnest_1_1ModelManager_1aa255aec6ce5e727f30ad863c0a6854cf" compoundref="model__manager_8h" startline="279">proxy_nodes_</references>
+        <references refid="classnest_1_1Model_1a04633c49ed13bf0200288ee48872294d">nest::Model::set_model_id</references>
+        <references refid="classnest_1_1KernelManager_1ae5288531d5c8bfa7d8c1f0bad6964fd2" compoundref="kernel__manager_8h" startline="243">nest::KernelManager::vp_manager</references>
+        <referencedby refid="classnest_1_1ModelManager_1aed100533c2c7f259d03d9d10e10308cb" compoundref="model__manager__impl_8h" startline="44" endline="54">register_node_model</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1aa8a2fe6be154cbb0768bf71942387520" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespacenest_1a2d283b4b36e5ee3b6f1d84b35c9ed475" kindref="member">synindex</ref></type>
+        <definition>synindex nest::ModelManager::register_connection_model_</definition>
+        <argsstring>(ConnectorModel *)</argsstring>
+        <name>register_connection_model_</name>
+        <qualifiedname>nest::ModelManager::register_connection_model_</qualifiedname>
+        <param>
+          <type><ref refid="classnest_1_1ConnectorModel" kindref="compound">ConnectorModel</ref> *</type>
+          <defname>cf</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="202" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="546" bodyend="571"/>
+        <references refid="classnest_1_1ModelManager_1a59cf58cc2e5682cd927996154b95ddf2" compoundref="model__manager_8h" startline="258">builtin_connection_models_</references>
+        <references refid="classnest_1_1ConnectorModel_1a267534ad05679f2896ef502e127e3093">nest::ConnectorModel::clone</references>
+        <references refid="classnest_1_1KernelManager_1a0e27508a351fe5c17f42aea52caedb3e" compoundref="kernel__manager_8h" startline="247">nest::KernelManager::connection_manager</references>
+        <references refid="classnest_1_1ModelManager_1a27d925f00d58fca37cf9dcfd6a81a3a0" compoundref="model__manager_8h" startline="269">connection_models_</references>
+        <references refid="classnest_1_1ConnectorModel_1a697f7ef525ecca6e04c4d2c23ba7736f" compoundref="connector__model_8h" startline="110" endline="113">nest::ConnectorModel::get_name</references>
+        <references refid="namespacenest_1a235f64c89ddf8992424ea32a13149a3e" compoundref="kernel__manager_8h" startline="272" endline="275">nest::kernel</references>
+        <references refid="classnest_1_1ConnectionManager_1ad424a6e28fe6a4b7f2b8c2363d38352e" compoundref="connection__manager_8cpp" startline="1583" endline="1597">nest::ConnectionManager::resize_connections</references>
+        <references refid="classnest_1_1ModelManager_1ab29f274daea3d4378c4cedd84d178021" compoundref="model__manager_8h" startline="272">synapsedict_</references>
+        <referencedby refid="classnest_1_1ModelManager_1a647d0f754ac09d9a17ab7567fd05801f" compoundref="model__manager__impl_8h" startline="58" endline="95">register_connection_model</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a5377d2ef98724312850ab1613dc019f7" compoundref="model__manager__impl_8h" startline="102" endline="118">register_secondary_connection_model</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1a14ec157c17bfe589d51f82c206aba049" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+        <definition>index nest::ModelManager::copy_node_model_</definition>
+        <argsstring>(index old_id, Name new_name)</argsstring>
+        <name>copy_node_model_</name>
+        <qualifiedname>nest::ModelManager::copy_node_model_</qualifiedname>
+        <param>
+          <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+          <declname>old_id</declname>
+        </param>
+        <param>
+          <type><ref refid="className" kindref="compound">Name</ref></type>
+          <declname>new_name</declname>
+        </param>
+        <briefdescription>
+<para>Copy an existing node model and register it as a new model. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>old_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ID of existing model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>new_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>name of new model. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>model ID of new <ref refid="classnest_1_1Model" kindref="compound">Model</ref> object. </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="classnest_1_1ModelManager_1ad5640bc6c249b00cf94e816b7d954318" kindref="member">copy_model()</ref>, <ref refid="classnest_1_1ModelManager_1afdca64fbdcc8897ed6e25a8e534b482e" kindref="member">copy_connection_model_()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="211" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="243" bodyend="262"/>
+        <references refid="classnest_1_1Model_1a34a512feab634b0ab821bcd186cfcdea">nest::Model::clone</references>
+        <references refid="classnest_1_1ModelManager_1a0ad4bd5a087c2c6143ef01213e2b1aba" compoundref="model__manager_8cpp" startline="574" endline="579">create_proxynode_</references>
+        <references refid="classnest_1_1Model_1abf3f850cef6673cc3e252252ec14816a">nest::Model::deprecation_warning</references>
+        <references refid="classnest_1_1ModelManager_1a8058f85d46bd4af4c2f726be59aa269b" compoundref="model__manager_8h" startline="286" endline="290">get_node_model</references>
+        <references refid="classnest_1_1VPManager_1a144a9ac1401713a125c8df3d31721b0c" compoundref="vp__manager_8h" startline="164" endline="171">nest::VPManager::get_thread_id</references>
+        <references refid="namespacenest_1a235f64c89ddf8992424ea32a13149a3e" compoundref="kernel__manager_8h" startline="272" endline="275">nest::kernel</references>
+        <references refid="classnest_1_1ModelManager_1a0f4652a7c93f5e8b9c36c05d54aa1be1" compoundref="model__manager_8h" startline="271">modeldict_</references>
+        <references refid="classnest_1_1ModelManager_1aa1c6fa63d5865f15c37a50adcccf8360" compoundref="model__manager_8h" startline="253">node_models_</references>
+        <references refid="classnest_1_1ModelManager_1aa255aec6ce5e727f30ad863c0a6854cf" compoundref="model__manager_8h" startline="279">proxy_nodes_</references>
+        <references refid="classnest_1_1Model_1a04633c49ed13bf0200288ee48872294d">nest::Model::set_model_id</references>
+        <references refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" compoundref="name_8cc" startline="72" endline="75">Name::toString</references>
+        <references refid="classnest_1_1KernelManager_1ae5288531d5c8bfa7d8c1f0bad6964fd2" compoundref="kernel__manager_8h" startline="243">nest::KernelManager::vp_manager</references>
+        <referencedby refid="classnest_1_1ModelManager_1ad5640bc6c249b00cf94e816b7d954318" compoundref="model__manager_8cpp" startline="186" endline="215">copy_model</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1afdca64fbdcc8897ed6e25a8e534b482e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+        <definition>index nest::ModelManager::copy_connection_model_</definition>
+        <argsstring>(index old_id, Name new_name)</argsstring>
+        <name>copy_connection_model_</name>
+        <qualifiedname>nest::ModelManager::copy_connection_model_</qualifiedname>
+        <param>
+          <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+          <declname>old_id</declname>
+        </param>
+        <param>
+          <type><ref refid="className" kindref="compound">Name</ref></type>
+          <declname>new_name</declname>
+        </param>
+        <briefdescription>
+<para>Copy an existing synapse model and register it as a new model. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>old_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ID of existing model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>new_name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>name of new model. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>model ID of new <ref refid="classnest_1_1Model" kindref="compound">Model</ref> object. </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="classnest_1_1ModelManager_1ad5640bc6c249b00cf94e816b7d954318" kindref="member">copy_model()</ref>, <ref refid="classnest_1_1ModelManager_1a14ec157c17bfe589d51f82c206aba049" kindref="member">copy_node_model_()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="220" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="265" bodyend="287"/>
+        <references refid="classnest_1_1ConnectorModel_1a267534ad05679f2896ef502e127e3093">nest::ConnectorModel::clone</references>
+        <references refid="classnest_1_1KernelManager_1a0e27508a351fe5c17f42aea52caedb3e" compoundref="kernel__manager_8h" startline="247">nest::KernelManager::connection_manager</references>
+        <references refid="classnest_1_1ModelManager_1a27d925f00d58fca37cf9dcfd6a81a3a0" compoundref="model__manager_8h" startline="269">connection_models_</references>
+        <references refid="classnest_1_1ModelManager_1a328a98e2391f07ffdcd31a986982f826" compoundref="model__manager_8h" startline="299" endline="303">get_connection_model</references>
+        <references refid="namespacenest_1a32bdd353a98ed7e8fc719f244afa157c" compoundref="nest__types_8h" startline="138">nest::invalid_synindex</references>
+        <references refid="namespacenest_1a235f64c89ddf8992424ea32a13149a3e" compoundref="kernel__manager_8h" startline="272" endline="275">nest::kernel</references>
+        <references refid="logging_8h_1a4fb9f400c7eade44c47bea4b934d580f" compoundref="logging_8h" startline="29">LOG</references>
+        <references refid="namespacenest_1a17a14d5aa7e8d94ec67eefc2b148eb72adaf8dec0ca154ba4dd8045accef88b46" compoundref="logging_8h" startline="58">nest::M_ERROR</references>
+        <references refid="namespacenest_1a3faf54a0eb31967ea982a6adadcfa3cf" compoundref="nest__types_8h" startline="103">nest::MAX_SYN_ID</references>
+        <references refid="classnest_1_1ConnectionManager_1ad424a6e28fe6a4b7f2b8c2363d38352e" compoundref="connection__manager_8cpp" startline="1583" endline="1597">nest::ConnectionManager::resize_connections</references>
+        <references refid="classnest_1_1ModelManager_1ab29f274daea3d4378c4cedd84d178021" compoundref="model__manager_8h" startline="272">synapsedict_</references>
+        <references refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" compoundref="name_8cc" startline="72" endline="75">Name::toString</references>
+        <referencedby refid="classnest_1_1ModelManager_1ad5640bc6c249b00cf94e816b7d954318" compoundref="model__manager_8cpp" startline="186" endline="215">copy_model</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1ac6142dc3a2f6100aa1510e65dfb7b8e9" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::ModelManager::set_node_defaults_</definition>
+        <argsstring>(index model_id, const DictionaryDatum &amp;params)</argsstring>
+        <name>set_node_defaults_</name>
+        <qualifiedname>nest::ModelManager::set_node_defaults_</qualifiedname>
+        <param>
+          <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+          <declname>model_id</declname>
+        </param>
+        <param>
+          <type>const <ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+          <declname>params</declname>
+        </param>
+        <briefdescription>
+<para>Set the default parameters of a model. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>model_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>of model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>default parameters to be set. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="classnest_1_1ModelManager_1a1408ac5b290bdea20840104e19415a99" kindref="member">set_model_defaults</ref>, <ref refid="classnest_1_1ModelManager_1a9508db769f2e7c2b62743f5774872111" kindref="member">set_synapse_defaults_</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="228" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="317" bodyend="325"/>
+        <references refid="logging_8h_1a91f6a947f0219a1ffb76f912c65cba95" compoundref="logging_8h" startline="34">ALL_ENTRIES_ACCESSED</references>
+        <references refid="classnest_1_1ModelManager_1a8058f85d46bd4af4c2f726be59aa269b" compoundref="model__manager_8h" startline="286" endline="290">get_node_model</references>
+        <references refid="classnest_1_1ModelManager_1aaa45100f24b234abcfd9d0406b4b7d43" compoundref="model__manager_8h" startline="281">model_defaults_modified_</references>
+        <references refid="group__status__interface_1ga320b94046161025ff8a388eec127392f" compoundref="model_8cpp" startline="108" endline="118">nest::Model::set_status</references>
+        <referencedby refid="classnest_1_1ModelManager_1ad5640bc6c249b00cf94e816b7d954318" compoundref="model__manager_8cpp" startline="186" endline="215">copy_model</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a1408ac5b290bdea20840104e19415a99" compoundref="model__manager_8cpp" startline="291" endline="313">set_model_defaults</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1a9508db769f2e7c2b62743f5774872111" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::ModelManager::set_synapse_defaults_</definition>
+        <argsstring>(index model_id, const DictionaryDatum &amp;params)</argsstring>
+        <name>set_synapse_defaults_</name>
+        <qualifiedname>nest::ModelManager::set_synapse_defaults_</qualifiedname>
+        <param>
+          <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+          <declname>model_id</declname>
+        </param>
+        <param>
+          <type>const <ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+          <declname>params</declname>
+        </param>
+        <briefdescription>
+<para>Set the default parameters of a model. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>of model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>default parameters to be set. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="classnest_1_1ModelManager_1a1408ac5b290bdea20840104e19415a99" kindref="member">set_model_defaults</ref>, <ref refid="classnest_1_1ModelManager_1ac6142dc3a2f6100aa1510e65dfb7b8e9" kindref="member">set_node_defaults_</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="236" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="328" bodyend="363"/>
+        <references refid="logging_8h_1a91f6a947f0219a1ffb76f912c65cba95" compoundref="logging_8h" startline="34">ALL_ENTRIES_ACCESSED</references>
+        <references refid="classnest_1_1ModelManager_1ac0f410c34344596285d9d3e886a80148" compoundref="model__manager_8h" startline="319" endline="325">assert_valid_syn_id</references>
+        <references refid="classnest_1_1ModelManager_1a27d925f00d58fca37cf9dcfd6a81a3a0" compoundref="model__manager_8h" startline="269">connection_models_</references>
+        <references refid="classnest_1_1VPManager_1a1096a508aefc459782911e3f2a4b7480" compoundref="vp__manager_8h" startline="174" endline="177">nest::VPManager::get_num_threads</references>
+        <references refid="classnest_1_1VPManager_1a144a9ac1401713a125c8df3d31721b0c" compoundref="vp__manager_8h" startline="164" endline="171">nest::VPManager::get_thread_id</references>
+        <references refid="namespacenest_1a235f64c89ddf8992424ea32a13149a3e" compoundref="kernel__manager_8h" startline="272" endline="275">nest::kernel</references>
+        <references refid="classnest_1_1ModelManager_1aaa45100f24b234abcfd9d0406b4b7d43" compoundref="model__manager_8h" startline="281">model_defaults_modified_</references>
+        <references refid="classnest_1_1KernelManager_1ae5288531d5c8bfa7d8c1f0bad6964fd2" compoundref="kernel__manager_8h" startline="243">nest::KernelManager::vp_manager</references>
+        <referencedby refid="classnest_1_1ModelManager_1ad5640bc6c249b00cf94e816b7d954318" compoundref="model__manager_8cpp" startline="186" endline="215">copy_model</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a1408ac5b290bdea20840104e19415a99" compoundref="model__manager_8cpp" startline="291" endline="313">set_model_defaults</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ModelManager_1a0ad4bd5a087c2c6143ef01213e2b1aba" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classnest_1_1Node" kindref="compound">Node</ref> *</type>
+        <definition>Node * nest::ModelManager::create_proxynode_</definition>
+        <argsstring>(thread t, int model_id)</argsstring>
+        <name>create_proxynode_</name>
+        <qualifiedname>nest::ModelManager::create_proxynode_</qualifiedname>
+        <param>
+          <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>model_id</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="276" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="574" bodyend="579"/>
+        <references refid="classnest_1_1Model_1ac7ab9fb3c18ee5691918ea14672e6e33" compoundref="model_8h" startline="245" endline="251">nest::Model::create</references>
+        <references refid="classnest_1_1ModelManager_1a4c30bd45e80b5e01e705b1a87734a35d" compoundref="model__manager_8h" startline="274">proxynode_model_</references>
+        <references refid="classnest_1_1Node_1a8df5c7f9272bd5da51cb5de78db00161" compoundref="node_8h" startline="1003" endline="1006">nest::Node::set_model_id</references>
+        <referencedby refid="classnest_1_1ModelManager_1a14ec157c17bfe589d51f82c206aba049" compoundref="model__manager_8cpp" startline="243" endline="262">copy_node_model_</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1ae14b26efd9515b1596ecfeaf25b04e64" compoundref="model__manager_8cpp" startline="80" endline="136">initialize</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1aa9dd5b9db696ebef3355e4e31e184735" compoundref="model__manager_8cpp" startline="218" endline="240">register_node_model_</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classnest_1_1ModelManager_1aa27ab465e73a0186b77d64d81ab306e5" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::ModelManager::compare_model_by_id_</definition>
+        <argsstring>(const int a, const int b)</argsstring>
+        <name>compare_model_by_id_</name>
+        <qualifiedname>nest::ModelManager::compare_model_by_id_</qualifiedname>
+        <param>
+          <type>const int</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Compares model ids for sorting in memory_info. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="239" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.cpp" bodystart="503" bodyend="507"/>
+        <references refid="classnest_1_1Model_1a44497c5d485772c2c527fbc2cac1bfdd" compoundref="model_8h" startline="254" endline="257">nest::Model::get_name</references>
+        <references refid="classnest_1_1ModelManager_1a8058f85d46bd4af4c2f726be59aa269b" compoundref="model__manager_8h" startline="286" endline="290">get_node_model</references>
+        <references refid="namespacenest_1a235f64c89ddf8992424ea32a13149a3e" compoundref="kernel__manager_8h" startline="272" endline="275">nest::kernel</references>
+        <references refid="classnest_1_1KernelManager_1a3558ff4918f9a1a561a11f65ae757c76" compoundref="kernel__manager_8h" startline="250">nest::KernelManager::model_manager</references>
+        <referencedby refid="classnest_1_1ModelManager_1a3ddc2ab6cebf94540774acea4730e004" compoundref="model__manager_8cpp" startline="510" endline="543">memory_info</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>nest::ManagerInterface</label>
+        <link refid="classnest_1_1ManagerInterface"/>
+      </node>
+      <node id="1">
+        <label>nest::ModelManager</label>
+        <link refid="classnest_1_1ModelManager"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="6">
+        <label>Datum</label>
+        <link refid="classDatum"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>type</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>action</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>Name</label>
+        <link refid="className"/>
+      </node>
+      <node id="9">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="7">
+        <label>SLIType</label>
+        <link refid="classSLIType"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>defaultaction</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>TypedDatum&lt; slt &gt;</label>
+        <link refid="classTypedDatum"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>lockPTR&lt; D &gt;</label>
+        <link refid="classlockPTR"/>
+      </node>
+      <node id="4">
+        <label>lockPTR&lt; D &gt;</label>
+        <link refid="classlockPTR"/>
+      </node>
+      <node id="10">
+        <label>lockPTRDatum&lt; D, slt &gt;</label>
+        <link refid="classlockPTRDatum"/>
+        <childnode refid="11" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>lockPTRDatum&lt; Dictionary, &amp;SLIInterpreter::Dictionarytype &gt;</label>
+        <link refid="classlockPTRDatum"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="10" relation="template-instance">
+          <edgelabel>&lt; Dictionary, &amp;SLIInterpreter::Dictionarytype &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>nest::ManagerInterface</label>
+        <link refid="classnest_1_1ManagerInterface"/>
+      </node>
+      <node id="12">
+        <label>nest::Model</label>
+        <link refid="classnest_1_1Model"/>
+      </node>
+      <node id="1">
+        <label>nest::ModelManager</label>
+        <link refid="classnest_1_1ModelManager"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>modeldict_</edgelabel>
+          <edgelabel>synapsedict_</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>proxynode_model_</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" line="45" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager.h" bodystart="46" bodyend="282"/>
+    <listofallmembers>
+      <member refid="classnest_1_1ModelManager_1a60290fe12f0334e0fdc1ae9d2be79d1b" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>are_model_defaults_modified</name></member>
+      <member refid="classnest_1_1ModelManager_1ac0f410c34344596285d9d3e886a80148" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>assert_valid_syn_id</name></member>
+      <member refid="classnest_1_1ModelManager_1a59cf58cc2e5682cd927996154b95ddf2" prot="private" virt="non-virtual"><scope>nest::ModelManager</scope><name>builtin_connection_models_</name></member>
+      <member refid="classnest_1_1ModelManager_1ad2d24c7fcdaca79e88599ac2ca853b65" prot="private" virt="non-virtual"><scope>nest::ModelManager</scope><name>builtin_node_models_</name></member>
+      <member refid="classnest_1_1ModelManager_1af51df51b09ebbf233be7af6bd39137b1" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>calibrate</name></member>
+      <member refid="classnest_1_1ModelManager_1af5afbb0c126b604d32806bcec62ab559" prot="public" virt="virtual"><scope>nest::ModelManager</scope><name>change_number_of_threads</name></member>
+      <member refid="classnest_1_1ManagerInterface_1a883efc8a7266a9bc62d43e30cdd87147" prot="public" virt="virtual"><scope>nest::ModelManager</scope><name>cleanup</name></member>
+      <member refid="classnest_1_1ModelManager_1a095a416070ca495514b51d4c3bd1af29" prot="private" virt="non-virtual"><scope>nest::ModelManager</scope><name>clear_connection_models_</name></member>
+      <member refid="classnest_1_1ModelManager_1a37da25c5b419f0f74d17166f9acf7b71" prot="private" virt="non-virtual"><scope>nest::ModelManager</scope><name>clear_node_models_</name></member>
+      <member refid="classnest_1_1ModelManager_1aa27ab465e73a0186b77d64d81ab306e5" prot="private" virt="non-virtual"><scope>nest::ModelManager</scope><name>compare_model_by_id_</name></member>
+      <member refid="classnest_1_1ModelManager_1a27d925f00d58fca37cf9dcfd6a81a3a0" prot="private" virt="non-virtual"><scope>nest::ModelManager</scope><name>connection_models_</name></member>
+      <member refid="classnest_1_1ModelManager_1ac65a8ccf171c8e4fcbe96d214887389b" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>connector_requires_clopath_archiving</name></member>
+      <member refid="classnest_1_1ModelManager_1ae4cf5547e9b2476fd9a3e55770bebbbf" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>connector_requires_symmetric</name></member>
+      <member refid="classnest_1_1ModelManager_1a9265877967e222222a0110c18544b98f" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>connector_requires_urbanczik_archiving</name></member>
+      <member refid="classnest_1_1ModelManager_1afdca64fbdcc8897ed6e25a8e534b482e" prot="private" virt="non-virtual"><scope>nest::ModelManager</scope><name>copy_connection_model_</name></member>
+      <member refid="classnest_1_1ModelManager_1ad5640bc6c249b00cf94e816b7d954318" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>copy_model</name></member>
+      <member refid="classnest_1_1ModelManager_1a14ec157c17bfe589d51f82c206aba049" prot="private" virt="non-virtual"><scope>nest::ModelManager</scope><name>copy_node_model_</name></member>
+      <member refid="classnest_1_1ModelManager_1a0ad4bd5a087c2c6143ef01213e2b1aba" prot="private" virt="non-virtual"><scope>nest::ModelManager</scope><name>create_proxynode_</name></member>
+      <member refid="classnest_1_1ModelManager_1a02895f199ad38d7bd3ac24f4ea799f44" prot="public" virt="virtual"><scope>nest::ModelManager</scope><name>finalize</name></member>
+      <member refid="classnest_1_1ModelManager_1a328a98e2391f07ffdcd31a986982f826" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>get_connection_model</name></member>
+      <member refid="classnest_1_1ModelManager_1aea052fc6150494e8e66ebdbe1127b876" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>get_connection_models</name></member>
+      <member refid="classnest_1_1ModelManager_1a4ee6b18a6bad6d272e07d838a2af7f1a" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>get_connector_defaults</name></member>
+      <member refid="classnest_1_1ModelManager_1a8058f85d46bd4af4c2f726be59aa269b" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>get_node_model</name></member>
+      <member refid="classnest_1_1ModelManager_1a0206d78c642e0dc97def42aff26034b6" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>get_node_model_id</name></member>
+      <member refid="classnest_1_1ModelManager_1a6b4dd572130a87b4819be5b8abd45bd9" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>get_num_connection_models</name></member>
+      <member refid="classnest_1_1ModelManager_1acc955f7172e28dd05d2d0496ecdf2423" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>get_proxy_node</name></member>
+      <member refid="classnest_1_1ModelManager_1a4de0bb9d981c92958e0d52b1ff3e7dea" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>get_secondary_event_prototype</name></member>
+      <member refid="classnest_1_1ModelManager_1a49632b3af5b4a82098707a82c6107a49" prot="public" virt="virtual"><scope>nest::ModelManager</scope><name>get_status</name></member>
+      <member refid="classnest_1_1ModelManager_1a5da676347a1deaa1a434d3d6a95532d0" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>get_synapse_model_id</name></member>
+      <member refid="classnest_1_1ModelManager_1ae14b26efd9515b1596ecfeaf25b04e64" prot="public" virt="virtual"><scope>nest::ModelManager</scope><name>initialize</name></member>
+      <member refid="classnest_1_1ManagerInterface_1aeb056937c69d73ba501bab2fb371a56c" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>ManagerInterface</name></member>
+      <member refid="classnest_1_1ManagerInterface_1af07ff595521c144ddb81899fec66e251" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>ManagerInterface</name></member>
+      <member refid="classnest_1_1ModelManager_1a3ddc2ab6cebf94540774acea4730e004" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>memory_info</name></member>
+      <member refid="classnest_1_1ModelManager_1aaa45100f24b234abcfd9d0406b4b7d43" prot="private" virt="non-virtual"><scope>nest::ModelManager</scope><name>model_defaults_modified_</name></member>
+      <member refid="classnest_1_1ModelManager_1a0f4652a7c93f5e8b9c36c05d54aa1be1" prot="private" virt="non-virtual"><scope>nest::ModelManager</scope><name>modeldict_</name></member>
+      <member refid="classnest_1_1ModelManager_1acdc9190132c0c7a0c2ef387d84f136f6" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>ModelManager</name></member>
+      <member refid="classnest_1_1ModelManager_1aa1c6fa63d5865f15c37a50adcccf8360" prot="private" virt="non-virtual"><scope>nest::ModelManager</scope><name>node_models_</name></member>
+      <member refid="classnest_1_1ManagerInterface_1a9889d8ee2a6bd5f1799e86aed555db5e" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>operator=</name></member>
+      <member refid="classnest_1_1ManagerInterface_1a7a0e8989a48de50b52631e87ed3f2745" prot="public" virt="virtual"><scope>nest::ModelManager</scope><name>prepare</name></member>
+      <member refid="classnest_1_1ModelManager_1aa255aec6ce5e727f30ad863c0a6854cf" prot="private" virt="non-virtual"><scope>nest::ModelManager</scope><name>proxy_nodes_</name></member>
+      <member refid="classnest_1_1ModelManager_1a4c30bd45e80b5e01e705b1a87734a35d" prot="private" virt="non-virtual"><scope>nest::ModelManager</scope><name>proxynode_model_</name></member>
+      <member refid="classnest_1_1ModelManager_1a647d0f754ac09d9a17ab7567fd05801f" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>register_connection_model</name></member>
+      <member refid="classnest_1_1ModelManager_1aa8a2fe6be154cbb0768bf71942387520" prot="private" virt="non-virtual"><scope>nest::ModelManager</scope><name>register_connection_model_</name></member>
+      <member refid="classnest_1_1ModelManager_1aed100533c2c7f259d03d9d10e10308cb" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>register_node_model</name></member>
+      <member refid="classnest_1_1ModelManager_1aa9dd5b9db696ebef3355e4e31e184735" prot="private" virt="non-virtual"><scope>nest::ModelManager</scope><name>register_node_model_</name></member>
+      <member refid="classnest_1_1ModelManager_1a5377d2ef98724312850ab1613dc019f7" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>register_secondary_connection_model</name></member>
+      <member refid="classnest_1_1ModelManager_1abaf1dfc7e9fc787b46f99ffb79c19994" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>set_connector_defaults</name></member>
+      <member refid="classnest_1_1ModelManager_1a1408ac5b290bdea20840104e19415a99" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>set_model_defaults</name></member>
+      <member refid="classnest_1_1ModelManager_1ac6142dc3a2f6100aa1510e65dfb7b8e9" prot="private" virt="non-virtual"><scope>nest::ModelManager</scope><name>set_node_defaults_</name></member>
+      <member refid="classnest_1_1ModelManager_1a6d009316ac3aebeb02cf9813584ff101" prot="public" virt="virtual"><scope>nest::ModelManager</scope><name>set_status</name></member>
+      <member refid="classnest_1_1ModelManager_1a9508db769f2e7c2b62743f5774872111" prot="private" virt="non-virtual"><scope>nest::ModelManager</scope><name>set_synapse_defaults_</name></member>
+      <member refid="classnest_1_1ModelManager_1ab29f274daea3d4378c4cedd84d178021" prot="private" virt="non-virtual"><scope>nest::ModelManager</scope><name>synapsedict_</name></member>
+      <member refid="classnest_1_1ManagerInterface_1ac60a79d2ba0a48f1b039ab1f9d502ec4" prot="public" virt="virtual"><scope>nest::ModelManager</scope><name>~ManagerInterface</name></member>
+      <member refid="classnest_1_1ModelManager_1a41c350e0207435ffc6891c93fe76d80e" prot="public" virt="non-virtual"><scope>nest::ModelManager</scope><name>~ModelManager</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

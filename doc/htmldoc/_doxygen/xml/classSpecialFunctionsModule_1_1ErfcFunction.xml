@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classSpecialFunctionsModule_1_1ErfcFunction" kind="class" language="C++" prot="public">
+    <compoundname>SpecialFunctionsModule::ErfcFunction</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="specialfunctionsmodule_8h" local="no">specialfunctionsmodule.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classSpecialFunctionsModule_1_1ErfcFunction_1a59a5d9185ed2474f910cc7d1e217a036" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SpecialFunctionsModule::ErfcFunction::ErfcFunction</definition>
+        <argsstring>()</argsstring>
+        <name>ErfcFunction</name>
+        <qualifiedname>SpecialFunctionsModule::ErfcFunction::ErfcFunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/specialfunctionsmodule.h" line="112" column="5" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/specialfunctionsmodule.h" bodystart="112" bodyend="114"/>
+      </memberdef>
+      <memberdef kind="function" id="classSpecialFunctionsModule_1_1ErfcFunction_1a054ce4ab117ebf93116fd9eba3711c11" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void SpecialFunctionsModule::ErfcFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>SpecialFunctionsModule::ErfcFunction::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/specialfunctionsmodule.h" line="115" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/specialfunctionsmodule.cc" bodystart="440" bodyend="443"/>
+        <references refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" compoundref="interpret_8h" startline="635" endline="638">SLIInterpreter::raiseerror</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="1">
+        <label>SpecialFunctionsModule::ErfcFunction</label>
+        <link refid="classSpecialFunctionsModule_1_1ErfcFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="1">
+        <label>SpecialFunctionsModule::ErfcFunction</label>
+        <link refid="classSpecialFunctionsModule_1_1ErfcFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/specialfunctionsmodule.h" line="109" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/specialfunctionsmodule.h" bodystart="110" bodyend="116"/>
+    <listofallmembers>
+      <member refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba" prot="public" virt="virtual"><scope>SpecialFunctionsModule::ErfcFunction</scope><name>backtrace</name></member>
+      <member refid="classSpecialFunctionsModule_1_1ErfcFunction_1a59a5d9185ed2474f910cc7d1e217a036" prot="public" virt="non-virtual"><scope>SpecialFunctionsModule::ErfcFunction</scope><name>ErfcFunction</name></member>
+      <member refid="classSpecialFunctionsModule_1_1ErfcFunction_1a054ce4ab117ebf93116fd9eba3711c11" prot="public" virt="virtual"><scope>SpecialFunctionsModule::ErfcFunction</scope><name>execute</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>SpecialFunctionsModule::ErfcFunction</scope><name>SLIFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>SpecialFunctionsModule::ErfcFunction</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

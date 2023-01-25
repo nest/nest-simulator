@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classDictstackFunction" kind="class" language="C++" prot="public">
+    <compoundname>DictstackFunction</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="slidict_8h" local="no">slidict.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classDictstackFunction_1a32aa691736e841289791f5696a4975d6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>DictstackFunction::DictstackFunction</definition>
+        <argsstring>()</argsstring>
+        <name>DictstackFunction</name>
+        <qualifiedname>DictstackFunction::DictstackFunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.h" line="137" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.h" bodystart="137" bodyend="139"/>
+      </memberdef>
+      <memberdef kind="function" id="classDictstackFunction_1a943178800705ab762102bdcbe9a987f0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void DictstackFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>DictstackFunction::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+<para>@BeginDocumentation <ref refid="className" kindref="compound">Name</ref>: dictstack - return current dictionary stack as array </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Synopsis: dictstack -&gt; array</para>
+<para>Description: Returns an array whose entries are references to the dictionaries on the dictionary stack. The dictionaries are stored from bottom to top, such that the first array element refers to the bottom of the stack and the last array element to the top.</para>
+<para>SeeAlso: currentdict, countdictstack, cleardictstack, whos </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.h" line="140" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="326" bodyend="335"/>
+        <references refid="classSLIInterpreter_1a2aa452e3851567a438fe4abc34fcdaea" compoundref="interpret_8h" startline="102">SLIInterpreter::DStack</references>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" compoundref="interpret_8h" startline="250">SLIInterpreter::OStack</references>
+        <references refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" compoundref="tokenstack_8h" startline="96" endline="99">TokenStack::pop</references>
+        <references refid="classTokenStack_1a9d3b72926bfa2090389f0782cd2b6e76" compoundref="tokenstack_8h" startline="68" endline="71">TokenStack::push_move</references>
+        <references refid="classDictionaryStack_1a3e10c9a812a39de9cf03e57ab2a9d7ae" compoundref="dictstack_8cc" startline="136" endline="153">DictionaryStack::toArray</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>DictstackFunction</label>
+        <link refid="classDictstackFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>DictstackFunction</label>
+        <link refid="classDictstackFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.h" line="134" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.h" bodystart="135" bodyend="141"/>
+    <listofallmembers>
+      <member refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba" prot="public" virt="virtual"><scope>DictstackFunction</scope><name>backtrace</name></member>
+      <member refid="classDictstackFunction_1a32aa691736e841289791f5696a4975d6" prot="public" virt="non-virtual"><scope>DictstackFunction</scope><name>DictstackFunction</name></member>
+      <member refid="classDictstackFunction_1a943178800705ab762102bdcbe9a987f0" prot="public" virt="virtual"><scope>DictstackFunction</scope><name>execute</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>DictstackFunction</scope><name>SLIFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>DictstackFunction</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

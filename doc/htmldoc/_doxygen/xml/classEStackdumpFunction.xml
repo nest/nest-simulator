@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classEStackdumpFunction" kind="class" language="C++" prot="public">
+    <compoundname>EStackdumpFunction</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="slicontrol_8h" local="no">slicontrol.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classEStackdumpFunction_1aa503feddb2b274fd2b7f2f5960e3f65c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>EStackdumpFunction::EStackdumpFunction</definition>
+        <argsstring>()</argsstring>
+        <name>EStackdumpFunction</name>
+        <qualifiedname>EStackdumpFunction::EStackdumpFunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" line="70" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" bodystart="70" bodyend="72"/>
+      </memberdef>
+      <memberdef kind="function" id="classEStackdumpFunction_1a4b15f259f8d8ed0a86501b6875ce6a24" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void EStackdumpFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>EStackdumpFunction::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" line="73" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.cc" bodystart="122" bodyend="127"/>
+        <references refid="classTokenStack_1af045b79878ecca1701cc181d60f9c25e" compoundref="tokenstack_8cc" startline="30" endline="46">TokenStack::dump</references>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" compoundref="tokenstack_8h" startline="96" endline="99">TokenStack::pop</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>EStackdumpFunction</label>
+        <link refid="classEStackdumpFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>EStackdumpFunction</label>
+        <link refid="classEStackdumpFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" line="67" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" bodystart="68" bodyend="74"/>
+    <listofallmembers>
+      <member refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba" prot="public" virt="virtual"><scope>EStackdumpFunction</scope><name>backtrace</name></member>
+      <member refid="classEStackdumpFunction_1aa503feddb2b274fd2b7f2f5960e3f65c" prot="public" virt="non-virtual"><scope>EStackdumpFunction</scope><name>EStackdumpFunction</name></member>
+      <member refid="classEStackdumpFunction_1a4b15f259f8d8ed0a86501b6875ce6a24" prot="public" virt="virtual"><scope>EStackdumpFunction</scope><name>execute</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>EStackdumpFunction</scope><name>SLIFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>EStackdumpFunction</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

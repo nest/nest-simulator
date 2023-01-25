@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classSLIArrayModule_1_1TransposeFunction" kind="class" language="C++" prot="private">
+    <compoundname>SLIArrayModule::TransposeFunction</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classSLIArrayModule_1_1TransposeFunction_1ac93a9da1e845320bc9515615cc03d811" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void SLIArrayModule::TransposeFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>SLIArrayModule::TransposeFunction::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+<para>@BeginDocumentation <ref refid="className" kindref="compound">Name</ref>: Transpose - Transposes the first two levels of its argument </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Synopsis: array Transpose -&gt; array</para>
+<para>Description: Transpose gives the usual transpose of a matrix. Acting on a tensor Tijkl... Transpose gives the tensor Tjikl...</para>
+<para>Parameters:</para>
+<para>Examples: [ [3 4 5] [6 7 8] ] Transpose -&gt; [[3 6] [4 7] [5 8]]</para>
+<para>Bugs: protected for non-rectangular shapes by assert(). Transpose should raise /NonRectangularShapeError error and message &quot;The first two levels of the one-dimensional list cannot be transposed.&quot;</para>
+<para>Author: Markus Diesmann, July 9, 2000</para>
+<para>FirstVersion: June, 2000</para>
+<para>References: [1] The Mathematica Book V4.0 &quot;Transpose&quot;</para>
+<para>SeeAlso: Flatten, Partition </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="151" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.cc" bodystart="642" bodyend="709"/>
+        <references refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" compoundref="token_8h" startline="360" endline="364">Token::datum</references>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" compoundref="tokenstack_8h" startline="184" endline="187">TokenStack::load</references>
+        <references refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" compoundref="interpret_8h" startline="250">SLIInterpreter::OStack</references>
+        <references refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" compoundref="tokenstack_8h" startline="96" endline="99">TokenStack::pop</references>
+        <references refid="classTokenStack_1a9d3b72926bfa2090389f0782cd2b6e76" compoundref="tokenstack_8h" startline="68" endline="71">TokenStack::push_move</references>
+        <references refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" compoundref="tokenstack_8h" startline="116" endline="119">TokenStack::top</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>SLIArrayModule::TransposeFunction</label>
+        <link refid="classSLIArrayModule_1_1TransposeFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>SLIArrayModule::TransposeFunction</label>
+        <link refid="classSLIArrayModule_1_1TransposeFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="148" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="149" bodyend="152"/>
+    <listofallmembers>
+      <member refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba" prot="public" virt="virtual"><scope>SLIArrayModule::TransposeFunction</scope><name>backtrace</name></member>
+      <member refid="classSLIArrayModule_1_1TransposeFunction_1ac93a9da1e845320bc9515615cc03d811" prot="public" virt="virtual"><scope>SLIArrayModule::TransposeFunction</scope><name>execute</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>SLIArrayModule::TransposeFunction</scope><name>SLIFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>SLIArrayModule::TransposeFunction</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

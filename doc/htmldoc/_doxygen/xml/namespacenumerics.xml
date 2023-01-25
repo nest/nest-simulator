@@ -1,0 +1,154 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="namespacenumerics" kind="namespace" language="C++">
+    <compoundname>numerics</compoundname>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacenumerics_1acd42d3be907c55f5a5eabeb4c595b976" prot="public" static="no" mutable="no">
+        <type>const double</type>
+        <definition>const double numerics::e</definition>
+        <argsstring></argsstring>
+        <name>e</name>
+        <qualifiedname>numerics::e</qualifiedname>
+        <initializer>= 2.71828182845904523536028747135</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/libnestutil/numerics.h" line="47" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/libnestutil/numerics.cpp" bodystart="72" bodyend="-1" declfile="/home/mitchell/Work/repo/nest-simulator/libnestutil/numerics.h" declline="47" declcolumn="21"/>
+        <referencedby refid="namespacenest_1ab155f47315fb8cfd0561a05d175c6fc9" compoundref="beta__normalization__factor_8h" startline="74" endline="95">nest::beta_normalization_factor</referencedby>
+        <referencedby refid="classSLIInterpreter_1ac1f5c7fd0e3a9264d4285f3896cce76a" compoundref="interpret_8cc" startline="200" endline="217">SLIInterpreter::initbuiltins</referencedby>
+        <referencedby refid="classnest_1_1glif__psc_1a4eaed8679f965d893a31c93014353ed0" compoundref="glif__psc_8cpp" startline="391" endline="458">nest::glif_psc::pre_run_hook</referencedby>
+        <referencedby refid="classnest_1_1iaf__psc__alpha_1a72abd38a2c88ac9fe415924a0f60608f" compoundref="iaf__psc__alpha_8cpp" startline="243" endline="293">nest::iaf_psc_alpha::pre_run_hook</referencedby>
+        <referencedby refid="classnest_1_1iaf__psc__alpha__multisynapse_1aa149e3ab77ee62c93a39ab7fa8dadda2" compoundref="iaf__psc__alpha__multisynapse_8cpp" startline="285" endline="322">nest::iaf_psc_alpha_multisynapse::pre_run_hook</referencedby>
+        <referencedby refid="classnest_1_1iaf__psc__alpha__ps_1a42f939553c8a7daa6960cf2aece6bd09" compoundref="iaf__psc__alpha__ps_8cpp" startline="258" endline="286">nest::iaf_psc_alpha_ps::pre_run_hook</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="namespacenumerics_1a0effada298f73ccb99be98760ac8f8f0" prot="public" static="no" mutable="no">
+        <type>const double</type>
+        <definition>const double numerics::pi</definition>
+        <argsstring></argsstring>
+        <name>pi</name>
+        <qualifiedname>numerics::pi</qualifiedname>
+        <initializer>= 3.14159265358979323846264338328</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/libnestutil/numerics.h" line="48" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/libnestutil/numerics.cpp" bodystart="78" bodyend="-1" declfile="/home/mitchell/Work/repo/nest-simulator/libnestutil/numerics.h" declline="48" declcolumn="21"/>
+        <referencedby refid="classnest_1_1BoxMask_1a04c40ffa62333c05342e6a34eaf2766b" compoundref="mask_8h" startline="749" endline="830">nest::BoxMask&lt; D &gt;::BoxMask</referencedby>
+        <referencedby refid="classnest_1_1EllipseMask_1aefe4371e51e8153b3b5d1fe41eb4c170" compoundref="mask_8h" startline="941" endline="1021">nest::EllipseMask&lt; D &gt;::EllipseMask</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1GaborFunction_1ab2034e33aef653f08ec5999887c9e1ab" compoundref="sliarray_8cc" startline="2683" endline="2776">SLIArrayModule::GaborFunction::execute</referencedby>
+        <referencedby refid="structnest_1_1sinusoidal__poisson__generator_1_1Parameters___1a0857d05c951bde90a18afc0388991a16" compoundref="sinusoidal__poisson__generator_8cpp" startline="120" endline="127">nest::sinusoidal_poisson_generator::Parameters_::get</referencedby>
+        <referencedby refid="classSLIInterpreter_1ac1f5c7fd0e3a9264d4285f3896cce76a" compoundref="interpret_8cc" startline="200" endline="217">SLIInterpreter::initbuiltins</referencedby>
+        <referencedby refid="classnest_1_1ac__generator_1ad46b2ee10a45923c52c9ec2ba29b4de8" compoundref="ac__generator_8cpp" startline="177" endline="199">nest::ac_generator::pre_run_hook</referencedby>
+        <referencedby refid="classnest_1_1noise__generator_1a885126416c46cb6a12072bb918414837" compoundref="noise__generator_8cpp" startline="225" endline="254">nest::noise_generator::pre_run_hook</referencedby>
+        <referencedby refid="classnest_1_1ppd__sup__generator_1acafc670694a092e7beda61161e761546" compoundref="ppd__sup__generator_8cpp" startline="201" endline="224">nest::ppd_sup_generator::pre_run_hook</referencedby>
+        <referencedby refid="structnest_1_1sinusoidal__poisson__generator_1_1Parameters___1a112ec4587c343e11b61b569a36995ddf" compoundref="sinusoidal__poisson__generator_8cpp" startline="137" endline="169">nest::sinusoidal_poisson_generator::Parameters_::set</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="namespacenumerics_1a2022d0d7fddab66c66e86321c316aa11" prot="public" static="no" mutable="no">
+        <type>const double</type>
+        <definition>const double numerics::nan</definition>
+        <argsstring></argsstring>
+        <name>nan</name>
+        <qualifiedname>numerics::nan</qualifiedname>
+        <initializer>= 0.0 / 0.0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/libnestutil/numerics.h" line="49" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/libnestutil/numerics.cpp" bodystart="88" bodyend="-1" declfile="/home/mitchell/Work/repo/nest-simulator/libnestutil/numerics.h" declline="49" declcolumn="21"/>
+        <referencedby refid="classnest_1_1ConnectionManager_1a4f5d4769f422431b7560df35af23867a" compoundref="connection__manager_8cpp" startline="568" endline="740">nest::ConnectionManager::connect_arrays</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aba3b91642fb738809e096bb60678fb1f" compoundref="connection__creator_8cpp" startline="29" endline="154">nest::ConnectionCreator::ConnectionCreator</referencedby>
+        <referencedby refid="classIAFPropagator_1a7e3c80385122a58bc5c6972ac5bf5fb1" compoundref="iaf__propagator_8cpp" startline="57" endline="74">IAFPropagator::evaluate_P32_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1a4339600d1ec56c9e21506276f03f1764" compoundref="connection__creator_8cpp" startline="157" endline="213">nest::ConnectionCreator::extract_params_</referencedby>
+        <referencedby refid="classnest_1_1rate__neuron__ipn_1a24c8070cea942180acbad89588f0ce54" compoundref="rate__neuron__ipn__impl_8h" startline="216" endline="236">nest::rate_neuron_ipn&lt; TNonlinearities &gt;::init_buffers_</referencedby>
+        <referencedby refid="classnest_1_1rate__neuron__opn_1af361f439c50e86c8d8e291a515aa6eb4" compoundref="rate__neuron__opn__impl_8h" startline="200" endline="220">nest::rate_neuron_opn&lt; TNonlinearities &gt;::init_buffers_</referencedby>
+        <referencedby refid="classnest_1_1iaf__psc__exp__ps__lossless_1a23188e024163c776c2a395dce4a340cf" compoundref="iaf__psc__exp__ps__lossless_8cpp" startline="599" endline="653">nest::iaf_psc_exp_ps_lossless::is_spike_</referencedby>
+        <referencedby refid="classnest_1_1ConnBuilder_1a3edb34cd9b903094a46df238bb26cfb9" compoundref="conn__builder_8cpp" startline="319" endline="370">nest::ConnBuilder::single_connect_</referencedby>
+        <referencedby refid="classnest_1_1rate__neuron__ipn_1a2ba90a0d2806a0379cbd1e11388abd08" compoundref="rate__neuron__ipn__impl_8h" startline="268" endline="395">nest::rate_neuron_ipn&lt; TNonlinearities &gt;::update_</referencedby>
+        <referencedby refid="classnest_1_1rate__neuron__opn_1aa8f19c2d41620fedcbe60467f3300f04" compoundref="rate__neuron__opn__impl_8h" startline="244" endline="368">nest::rate_neuron_opn&lt; TNonlinearities &gt;::update_</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacenumerics_1a3cf41aab824fa7688404652067a60565" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double numerics::expm1</definition>
+        <argsstring>(double x)</argsstring>
+        <name>expm1</name>
+        <qualifiedname>numerics::expm1</qualifiedname>
+        <param>
+          <type>double</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+<para>Supply <ref refid="namespacenumerics_1a3cf41aab824fa7688404652067a60565" kindref="member">expm1()</ref> function independent of system. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Implemented inline for efficiency. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/libnestutil/numerics.h" line="55" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/libnestutil/numerics.h" bodystart="55" bodyend="86"/>
+        <referencedby refid="classIAFPropagator_1a7e3c80385122a58bc5c6972ac5bf5fb1" compoundref="iaf__propagator_8cpp" startline="57" endline="74">IAFPropagator::evaluate_P32_</referencedby>
+        <referencedby refid="classnest_1_1iaf__psc__exp__ps__lossless_1a23188e024163c776c2a395dce4a340cf" compoundref="iaf__psc__exp__ps__lossless_8cpp" startline="599" endline="653">nest::iaf_psc_exp_ps_lossless::is_spike_</referencedby>
+        <referencedby refid="classnest_1_1gif__psc__exp_1af400b7dc659129ea7cd13bcf7d2fa2a8" compoundref="gif__psc__exp_8cpp" startline="277" endline="314">nest::gif_psc_exp::pre_run_hook</referencedby>
+        <referencedby refid="classnest_1_1gif__psc__exp__multisynapse_1ab38d8fa73028186075e78399920d1587" compoundref="gif__psc__exp__multisynapse_8cpp" startline="291" endline="337">nest::gif_psc_exp_multisynapse::pre_run_hook</referencedby>
+        <referencedby refid="classnest_1_1iaf__psc__alpha_1a72abd38a2c88ac9fe415924a0f60608f" compoundref="iaf__psc__alpha_8cpp" startline="243" endline="293">nest::iaf_psc_alpha::pre_run_hook</referencedby>
+        <referencedby refid="classnest_1_1iaf__psc__alpha__ps_1a42f939553c8a7daa6960cf2aece6bd09" compoundref="iaf__psc__alpha__ps_8cpp" startline="258" endline="286">nest::iaf_psc_alpha_ps::pre_run_hook</referencedby>
+        <referencedby refid="classnest_1_1iaf__psc__delta__ps_1a68e3ba42b642047480e984a8aab543b7" compoundref="iaf__psc__delta__ps_8cpp" startline="239" endline="255">nest::iaf_psc_delta_ps::pre_run_hook</referencedby>
+        <referencedby refid="classnest_1_1iaf__psc__exp__ps_1a26cf4785020b121ebd9dd5aba4e17e95" compoundref="iaf__psc__exp__ps_8cpp" startline="247" endline="268">nest::iaf_psc_exp_ps::pre_run_hook</referencedby>
+        <referencedby refid="classnest_1_1iaf__psc__exp__ps__lossless_1afa50053c139d7867bfbca26997b448c5" compoundref="iaf__psc__exp__ps__lossless_8cpp" startline="272" endline="309">nest::iaf_psc_exp_ps_lossless::pre_run_hook</referencedby>
+        <referencedby refid="classnest_1_1rate__neuron__ipn_1aeacf4546d9ea0e2ea893ecba53d743a7" compoundref="rate__neuron__ipn__impl_8h" startline="240" endline="260">nest::rate_neuron_ipn&lt; TNonlinearities &gt;::pre_run_hook</referencedby>
+        <referencedby refid="classnest_1_1rate__neuron__opn_1ac3a8f9ac2113808e9d09c160cdfa591f" compoundref="rate__neuron__opn__impl_8h" startline="224" endline="236">nest::rate_neuron_opn&lt; TNonlinearities &gt;::pre_run_hook</referencedby>
+        <referencedby refid="classnest_1_1iaf__psc__alpha__ps_1a4cd2a8badc97495db2742ac06d1b332a" compoundref="iaf__psc__alpha__ps_8cpp" startline="495" endline="527">nest::iaf_psc_alpha_ps::propagate_</referencedby>
+        <referencedby refid="classnest_1_1iaf__psc__delta__ps_1a6f22396c682259c855bbae010d3ea152" compoundref="iaf__psc__delta__ps_8cpp" startline="449" endline="458">nest::iaf_psc_delta_ps::propagate_</referencedby>
+        <referencedby refid="classnest_1_1iaf__psc__exp__ps_1a8a9093ef098d07826e8d6253b5fd6b60" compoundref="iaf__psc__exp__ps_8cpp" startline="470" endline="492">nest::iaf_psc_exp_ps::propagate_</referencedby>
+        <referencedby refid="classnest_1_1iaf__psc__exp__ps__lossless_1ad33d7635310725ab16a8264bc04ee889" compoundref="iaf__psc__exp__ps__lossless_8cpp" startline="514" endline="536">nest::iaf_psc_exp_ps_lossless::propagate_</referencedby>
+        <referencedby refid="classnest_1_1iaf__psc__alpha__ps_1a98104173fadf5155ff380df212bd5a8c" compoundref="iaf__psc__alpha__ps_8cpp" startline="576" endline="594">nest::iaf_psc_alpha_ps::threshold_distance</referencedby>
+        <referencedby refid="classnest_1_1iaf__psc__exp__ps_1ac6a4052b62dc0e6ad728013d8806c25c" compoundref="iaf__psc__exp__ps_8cpp" startline="542" endline="553">nest::iaf_psc_exp_ps::threshold_distance</referencedby>
+        <referencedby refid="classnest_1_1iaf__psc__exp__ps__lossless_1acceedf45d9ddc3c08ba17cb36b27ac04" compoundref="iaf__psc__exp__ps__lossless_8cpp" startline="585" endline="596">nest::iaf_psc_exp_ps_lossless::threshold_distance</referencedby>
+        <referencedby refid="classnest_1_1gif__psc__exp_1aefdc2fabaee2469d8373c5d900724f81" compoundref="gif__psc__exp_8cpp" startline="321" endline="399">nest::gif_psc_exp::update</referencedby>
+        <referencedby refid="classnest_1_1gif__psc__exp__multisynapse_1a08a2d4d9e728e9b11ddec66354b92855" compoundref="gif__psc__exp__multisynapse_8cpp" startline="344" endline="423">nest::gif_psc_exp_multisynapse::update</referencedby>
+        <referencedby refid="classnest_1_1pp__psc__delta_1a2ea479d86c1470a335247ad32960ce47" compoundref="pp__psc__delta_8cpp" startline="357" endline="462">nest::pp_psc_delta::update</referencedby>
+        <referencedby refid="classnest_1_1stdp__dopamine__synapse_1a1068ba955c9fa4c6be5105cdc07f4023" compoundref="stdp__dopamine__synapse_8h" startline="430" endline="449">nest::stdp_dopamine_synapse&lt; targetidentifierT &gt;::update_weight_</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacenumerics_1a6284450115883be0110296a97232c289" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool numerics::is_nan</definition>
+        <argsstring>(T f)</argsstring>
+        <name>is_nan</name>
+        <qualifiedname>numerics::is_nan</qualifiedname>
+        <param>
+          <type>T</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/libnestutil/numerics.h" line="90" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/libnestutil/numerics.h" bodystart="90" bodyend="100"/>
+        <referencedby refid="classnest_1_1GenericConnectorModel_1a55662c78049406c5119cd0c81e6de812" compoundref="connector__model__impl_8h" startline="185" endline="256">nest::GenericConnectorModel&lt; ConnectionT &gt;::add_connection</referencedby>
+        <referencedby refid="classnest_1_1iaf__psc__exp__ps__lossless_1a2a10685c48e126fae2f936448c5f6f54" compoundref="iaf__psc__exp__ps__lossless_8cpp" startline="316" endline="473">nest::iaf_psc_exp_ps_lossless::update</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/mitchell/Work/repo/nest-simulator/libnestutil/numerics.h" line="44" column="1"/>
+  </compounddef>
+</doxygen>

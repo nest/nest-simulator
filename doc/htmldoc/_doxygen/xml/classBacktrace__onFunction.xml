@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classBacktrace__onFunction" kind="class" language="C++" prot="public">
+    <compoundname>Backtrace_onFunction</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="slicontrol_8h" local="no">slicontrol.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classBacktrace__onFunction_1a7a1c71dae618ebd28ef9eb87ba84fda8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Backtrace_onFunction::Backtrace_onFunction</definition>
+        <argsstring>()</argsstring>
+        <name>Backtrace_onFunction</name>
+        <qualifiedname>Backtrace_onFunction::Backtrace_onFunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" line="43" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" bodystart="43" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="classBacktrace__onFunction_1a5dc66dfc1f3ac8062be38fbe536497ec" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void Backtrace_onFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>Backtrace_onFunction::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+<para>@BeginDocumentation <ref refid="className" kindref="compound">Name</ref>: backtrace_on - enable stack backtrace on error. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Synopsis: backtrace_on -&gt; -</para>
+<para>Description:</para>
+<para>This functions enables a human readable backtrace of the execution stack. This is useful to locate where precisely an error occurred. Note that this function also disables the interpreter&apos;s tail recursion optimization and will therefore impose a small performance penalty. The command backtrace_off disables the stack backtrace and re-enables tail recursion optimization.</para>
+<para>Example:</para>
+<para>SeeAlso: backtrace_off </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" line="46" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.cc" bodystart="89" bodyend="93"/>
+        <references refid="classSLIInterpreter_1a1ef43a348dce9987282b41fda73dc86d" compoundref="interpret_8cc" startline="961" endline="967">SLIInterpreter::backtrace_on</references>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" compoundref="tokenstack_8h" startline="96" endline="99">TokenStack::pop</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>Backtrace_onFunction</label>
+        <link refid="classBacktrace__onFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>Backtrace_onFunction</label>
+        <link refid="classBacktrace__onFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" line="40" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" bodystart="41" bodyend="47"/>
+    <listofallmembers>
+      <member refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba" prot="public" virt="virtual"><scope>Backtrace_onFunction</scope><name>backtrace</name></member>
+      <member refid="classBacktrace__onFunction_1a7a1c71dae618ebd28ef9eb87ba84fda8" prot="public" virt="non-virtual"><scope>Backtrace_onFunction</scope><name>Backtrace_onFunction</name></member>
+      <member refid="classBacktrace__onFunction_1a5dc66dfc1f3ac8062be38fbe536497ec" prot="public" virt="virtual"><scope>Backtrace_onFunction</scope><name>execute</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>Backtrace_onFunction</scope><name>SLIFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>Backtrace_onFunction</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

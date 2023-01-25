@@ -1,0 +1,177 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="group__TokenUtils" kind="group">
+    <compoundname>TokenUtils</compoundname>
+    <title>How to access the value contained in a Token.</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__TokenUtils_1ga4aece43f7810964c322ab7d7219cbe63" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename FT</type>
+          </param>
+        </templateparamlist>
+        <type>FT</type>
+        <definition>FT getValue</definition>
+        <argsstring>(const Token &amp;t)</argsstring>
+        <name>getValue</name>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+<para>getValue provides easy read-access to a <ref refid="classToken" kindref="compound">Token</ref>&apos;s contents. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>getValue returns the value of the <ref refid="classDatum" kindref="compound">Datum</ref> contained inside the <ref refid="classToken" kindref="compound">Token</ref>.</para>
+<para>The general getValue function assumes that the datum was directly derived from a C++ type (most probably some container or stream). All other cases will be handled by specialization of this template.</para>
+<para>For example, <ref refid="classAggregateDatum" kindref="compound">AggregateDatum</ref> types are directly derived from a C++ type.</para>
+<para><verbatim>       SLI Datum          derived from C++ type
+      ------------------------------------------
+       BoolDatum          Name
+       HandleDatum        DatumHandle (whatever that might be...)
+       LiteralDatum       Name
+       NameDatum          Name
+       ParserDatum        Parser
+       StringDatum        string
+       SymbolDatum        Name
+
+       (What else?)
+</verbatim></para>
+<para>Hence, getValue may be used in the following ways:</para>
+<para><verbatim>    call                      can be used on Token containing SLI-type
+   --------------------------------------------------------------------
+    Name   getValue&lt;Name&gt;     {Bool|Literal|Name|Symbol}Datum
+    DatumHandle
+       getValue&lt;DatumHandle&gt;  HandleDatum
+    Parser getValue&lt;Parser&gt;   ParserDatum
+    string getValue&lt;string&gt;   StringDatum
+</verbatim></para>
+<para>The following specialized variants of <ref refid="group__TokenUtils_1ga4aece43f7810964c322ab7d7219cbe63" kindref="member">getValue()</ref> can be used in addition:</para>
+<para><verbatim>    call                            can be used on Token containing SLI-type
+   -------------------------------------------------------------------------
+    long             GetValue&lt;long&gt;              IntegerDatum
+    double           GetValue&lt;double&gt;            DoubleDatum
+    bool             GetValue&lt;bool&gt;              BoolDatum
+    string           GetValue&lt;string&gt;            NameDatum
+    string           GetValue&lt;string&gt;            LiteralDatum
+    string           GetValue&lt;string&gt;            SymbolDatum
+    vector&lt;long&gt;     GetValue&lt;vector&lt;long&gt; &gt;     ArrayDatum
+    vector&lt;double&gt;   GetValue&lt;vector&lt;double&gt; &gt;   ArrayDatum
+</verbatim></para>
+<para>What about the rest? (ElementFactoryDatum, el_prtdatum, <ref refid="classFunctionDatum" kindref="compound">FunctionDatum</ref>, <ref refid="classGenericDatum" kindref="compound">GenericDatum</ref>, <ref refid="classNumericDatum" kindref="compound">NumericDatum</ref>, <ref refid="classlockPTRDatum" kindref="compound">lockPTRDatum</ref>, ReferenceDatum, SmartPtrDatum, <ref refid="classTrieDatum" kindref="compound">TrieDatum</ref>)</para>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classTypeMismatch" kindref="compound">TypeMismatch</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The specified fundamental datatype does not match the <ref refid="classToken" kindref="compound">Token</ref>&apos;s contents, or a template specialization for this type is missing. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.h" line="152" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.h" bodystart="152" bodyend="160"/>
+        <references refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" compoundref="token_8h" startline="360" endline="364">Token::datum</references>
+      </memberdef>
+      <memberdef kind="function" id="group__TokenUtils_1ga483a6d2950979332f9caa22fbbcb416e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename FT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void setValue</definition>
+        <argsstring>(const Token &amp;t, FT const &amp;value)</argsstring>
+        <name>setValue</name>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>FT const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>setValue provides easy write-access to a <ref refid="classToken" kindref="compound">Token</ref>&apos;s contents. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>setValue updates the value of the <ref refid="classDatum" kindref="compound">Datum</ref> contained inside the <ref refid="classToken" kindref="compound">Token</ref>.</para>
+<para>setValue(Token, value) can be called on the same value/Datum pairs getValue handles. Note that the template parameter to setValue does not need to be specified explicitely, as it can be derived from the second argument.</para>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classTypeMismatch" kindref="compound">TypeMismatch</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The specified fundamental datatype does not match the <ref refid="classToken" kindref="compound">Token</ref>&apos;s contents, or a template specialization for this type is missing. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.h" line="177" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.h" bodystart="177" bodyend="186"/>
+        <references refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" compoundref="token_8h" startline="360" endline="364">Token::datum</references>
+      </memberdef>
+      <memberdef kind="function" id="group__TokenUtils_1ga981784c92bbed8a37f3218ad4e83333d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename FT</type>
+          </param>
+          <param>
+            <type>class D</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classToken" kindref="compound">Token</ref></type>
+        <definition>Token newToken2</definition>
+        <argsstring>(FT const &amp;value)</argsstring>
+        <name>newToken2</name>
+        <param>
+          <type>FT const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Create a new <ref refid="classToken" kindref="compound">Token</ref> from a fundamental data type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Specify the desired <ref refid="classDatum" kindref="compound">Datum</ref> type as the second template parameter! </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.h" line="194" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.h" bodystart="194" bodyend="202"/>
+      </memberdef>
+      <memberdef kind="function" id="group__TokenUtils_1gab3e75c03118452a571fbeea794b8baf5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename FT</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classToken" kindref="compound">Token</ref></type>
+        <definition>Token newToken</definition>
+        <argsstring>(FT const &amp;value)</argsstring>
+        <name>newToken</name>
+        <param>
+          <type>FT const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Create a new <ref refid="classToken" kindref="compound">Token</ref> from a fundamental data type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This template is specialized for the most fundamental types. If it does not work, use <ref refid="group__TokenUtils_1ga981784c92bbed8a37f3218ad4e83333d" kindref="member">newToken2()</ref> and specify the <ref refid="classDatum" kindref="compound">Datum</ref> type explicitely. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.h" line="212" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.h" bodystart="212" bodyend="215"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Class <ref refid="classToken" kindref="compound">Token</ref> defines the standard user interface for accessing SLI <ref refid="classDatum" kindref="compound">Datum</ref> types from tokens (see there). </para>
+    </briefdescription>
+    <detaileddescription>
+<para>However, this user interface returns objects of class <ref refid="classDatum" kindref="compound">Datum</ref>, from which the actual value would still need to be extracted. The utilitiy functions described in this group shortcut this step and provide direct access to the underlying fundamental values contained in a token. </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

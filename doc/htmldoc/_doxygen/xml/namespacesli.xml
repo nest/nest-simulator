@@ -1,0 +1,143 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="namespacesli" kind="namespace" language="C++">
+    <compoundname>sli</compoundname>
+    <innerclass refid="classsli_1_1pool" prot="public">sli::pool</innerclass>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacesli_1ab9a4380b334ceb97044ad963264037c8" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name sli::any</definition>
+        <argsstring></argsstring>
+        <name>any</name>
+        <qualifiedname>sli::any</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slinames.h" line="31" column="13" declfile="/home/mitchell/Work/repo/nest-simulator/sli/slinames.h" declline="31" declcolumn="13"/>
+        <referencedby refid="classTypeTrie_1a15d2130f6cdfe54d442abf42925b2448" compoundref="typechk_8h" startline="200" endline="203">TypeTrie::equals</referencedby>
+        <referencedby refid="classTypeTrie_1ab5a3623db41b0a42c07c9c21e1ba2ee8" compoundref="typechk_8cc" startline="160" endline="205">TypeTrie::getalternative</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesli_1a4fcea40a5a1b1949c4155f5bdfff1556" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name sli::object</definition>
+        <argsstring></argsstring>
+        <name>object</name>
+        <qualifiedname>sli::object</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slinames.h" line="32" column="13" declfile="/home/mitchell/Work/repo/nest-simulator/sli/slinames.h" declline="32" declcolumn="13"/>
+        <referencedby refid="classTypeTrie_1a004f4e995e02879d9dfde8e80ad897d7" compoundref="typechk_8cc" startline="208" endline="271">TypeTrie::insert_move</referencedby>
+        <referencedby refid="classTypeTrie_1a2cd6221bd50d0f4d9262edd4121bce23" compoundref="typechk_8h" startline="206" endline="257">TypeTrie::lookup</referencedby>
+        <referencedby refid="classTypeTrie_1ad35f33cb9ecd3f174b703e62c80a4696" compoundref="typechk_8cc" startline="119" endline="146">TypeTrie::newnode</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesli_1a653d13d55a986570e5dcc3a9b041b804" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name sli::imap</definition>
+        <argsstring></argsstring>
+        <name>imap</name>
+        <qualifiedname>sli::imap</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slinames.h" line="33" column="13" declfile="/home/mitchell/Work/repo/nest-simulator/sli/slinames.h" declline="33" declcolumn="13"/>
+        <referencedby refid="classSLIArrayModule_1_1MapFunction_1abcd9126b3d411d21fabe02dfc723bc50" compoundref="sliarray_8cc" startline="1384" endline="1419">SLIArrayModule::MapFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">SLIArrayModule::init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesli_1aafec88fc2fdd463275672770d715ae63" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name sli::imap_iv</definition>
+        <argsstring></argsstring>
+        <name>imap_iv</name>
+        <qualifiedname>sli::imap_iv</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slinames.h" line="34" column="13" declfile="/home/mitchell/Work/repo/nest-simulator/sli/slinames.h" declline="34" declcolumn="13"/>
+        <referencedby refid="classSLIArrayModule_1_1MapFunction_1abcd9126b3d411d21fabe02dfc723bc50" compoundref="sliarray_8cc" startline="1384" endline="1419">SLIArrayModule::MapFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">SLIArrayModule::init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesli_1a3dc8b5e974c7d743aba0dc5f8583f7a4" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name sli::imap_dv</definition>
+        <argsstring></argsstring>
+        <name>imap_dv</name>
+        <qualifiedname>sli::imap_dv</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slinames.h" line="35" column="13" declfile="/home/mitchell/Work/repo/nest-simulator/sli/slinames.h" declline="35" declcolumn="13"/>
+        <referencedby refid="classSLIArrayModule_1_1MapFunction_1abcd9126b3d411d21fabe02dfc723bc50" compoundref="sliarray_8cc" startline="1384" endline="1419">SLIArrayModule::MapFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">SLIArrayModule::init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesli_1a7dae79c29a2e85dd355b5d023cddd94b" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name sli::iforall_iv</definition>
+        <argsstring></argsstring>
+        <name>iforall_iv</name>
+        <qualifiedname>sli::iforall_iv</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slinames.h" line="36" column="13" declfile="/home/mitchell/Work/repo/nest-simulator/sli/slinames.h" declline="36" declcolumn="13"/>
+        <referencedby refid="classSLIArrayModule_1_1Forall__ivFunction_1a572ace205ee02c80ef4a22f6a8624465" compoundref="sliarray_8cc" startline="3932" endline="3949">SLIArrayModule::Forall_ivFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">SLIArrayModule::init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesli_1aef5c9d28f1214c4eb8f657641b188023" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name sli::iforall_dv</definition>
+        <argsstring></argsstring>
+        <name>iforall_dv</name>
+        <qualifiedname>sli::iforall_dv</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slinames.h" line="37" column="13" declfile="/home/mitchell/Work/repo/nest-simulator/sli/slinames.h" declline="37" declcolumn="13"/>
+        <referencedby refid="classSLIArrayModule_1_1Forall__dvFunction_1a5d01e9d33562d7c7ac581dfce17af1e1" compoundref="sliarray_8cc" startline="4007" endline="4024">SLIArrayModule::Forall_dvFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">SLIArrayModule::init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesli_1a4ceb60f1507407635dc353ba28647e36" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name sli::imapindexed</definition>
+        <argsstring></argsstring>
+        <name>imapindexed</name>
+        <qualifiedname>sli::imapindexed</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slinames.h" line="38" column="13" declfile="/home/mitchell/Work/repo/nest-simulator/sli/slinames.h" declline="38" declcolumn="13"/>
+        <referencedby refid="classSLIArrayModule_1_1MapIndexedFunction_1a824c8c7458c5c51d17bad41c0c4e385f" compoundref="sliarray_8cc" startline="1559" endline="1582">SLIArrayModule::MapIndexedFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">SLIArrayModule::init</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="34" column="1"/>
+  </compounddef>
+</doxygen>

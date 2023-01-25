@@ -1,0 +1,402 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="iostreamdatum_8h" kind="file" language="C++">
+    <compoundname>iostreamdatum.h</compoundname>
+    <includes local="no">iostream</includes>
+    <includes local="no">typeinfo</includes>
+    <includes refid="interpret_8h" local="yes">interpret.h</includes>
+    <includes refid="lockptrdatum_8h" local="yes">lockptrdatum.h</includes>
+    <includedby refid="interpret_8cc" local="yes">interpret.cc</includedby>
+    <includedby refid="processes_8cc" local="yes">processes.cc</includedby>
+    <includedby refid="sli__io_8cc" local="yes">sli_io.cc</includedby>
+    <includedby refid="slicontrol_8cc" local="yes">slicontrol.cc</includedby>
+    <includedby refid="slidict_8cc" local="yes">slidict.cc</includedby>
+    <includedby refid="slistartup_8cc" local="yes">slistartup.cc</includedby>
+    <includedby refid="slitypecheck_8cc" local="yes">slitypecheck.cc</includedby>
+    <includedby refid="spatial_8h" local="yes">spatial.h</includedby>
+    <incdepgraph>
+      <node id="28">
+        <label>lockptr.h</label>
+        <link refid="lockptr_8h"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>datum.h</label>
+        <link refid="datum_8h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>interpret.h</label>
+        <link refid="interpret_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>iostreamdatum.h</label>
+        <link refid="iostreamdatum_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>lockptrdatum.h</label>
+        <link refid="lockptrdatum_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>name.h</label>
+        <link refid="name_8h"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>sliactions.h</label>
+        <link refid="sliactions_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>slibuiltins.h</label>
+        <link refid="slibuiltins_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>sliexceptions.h</label>
+        <link refid="sliexceptions_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>slifunction.h</label>
+        <link refid="slifunction_8h"/>
+      </node>
+      <node id="9">
+        <label>slimodule.h</label>
+        <link refid="slimodule_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>slitype.h</label>
+        <link refid="slitype_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>tarrayobj.h</label>
+        <link refid="tarrayobj_8h"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>token.h</label>
+        <link refid="token_8h"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>tokenarray.h</label>
+        <link refid="tokenarray_8h"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>tokenstack.h</label>
+        <link refid="tokenstack_8h"/>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>algorithm</label>
+      </node>
+      <node id="13">
+        <label>cassert</label>
+      </node>
+      <node id="19">
+        <label>config.h</label>
+      </node>
+      <node id="23">
+        <label>cstddef</label>
+      </node>
+      <node id="14">
+        <label>deque</label>
+      </node>
+      <node id="17">
+        <label>iomanip</label>
+      </node>
+      <node id="2">
+        <label>iostream</label>
+      </node>
+      <node id="5">
+        <label>list</label>
+      </node>
+      <node id="15">
+        <label>map</label>
+      </node>
+      <node id="29">
+        <label>memory</label>
+      </node>
+      <node id="10">
+        <label>string</label>
+      </node>
+      <node id="3">
+        <label>typeinfo</label>
+      </node>
+      <node id="18">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="10">
+        <label>layer.cpp</label>
+        <link refid="layer_8cpp"/>
+      </node>
+      <node id="11">
+        <label>nestmodule.cpp</label>
+        <link refid="nestmodule_8cpp"/>
+      </node>
+      <node id="12">
+        <label>parameter.cpp</label>
+        <link refid="parameter_8cpp"/>
+      </node>
+      <node id="13">
+        <label>spatial.cpp</label>
+        <link refid="spatial_8cpp"/>
+      </node>
+      <node id="9">
+        <label>spatial.h</label>
+        <link refid="spatial_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>interpret.cc</label>
+        <link refid="interpret_8cc"/>
+      </node>
+      <node id="1">
+        <label>iostreamdatum.h</label>
+        <link refid="iostreamdatum_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>processes.cc</label>
+        <link refid="processes_8cc"/>
+      </node>
+      <node id="4">
+        <label>sli_io.cc</label>
+        <link refid="sli__io_8cc"/>
+      </node>
+      <node id="5">
+        <label>slicontrol.cc</label>
+        <link refid="slicontrol_8cc"/>
+      </node>
+      <node id="6">
+        <label>slidict.cc</label>
+        <link refid="slidict_8cc"/>
+      </node>
+      <node id="7">
+        <label>slistartup.cc</label>
+        <link refid="slistartup_8cc"/>
+      </node>
+      <node id="8">
+        <label>slitypecheck.cc</label>
+        <link refid="slitypecheck_8cc"/>
+      </node>
+    </invincdepgraph>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="iostreamdatum_8h_1aae9573ab4255b65f4fa4bcedf8757e64" prot="public" static="no">
+        <type><ref refid="classlockPTRDatum" kindref="compound">lockPTRDatum</ref>&lt; std::istream, &amp;<ref refid="classSLIInterpreter_1aeea9100b28092dabc12c85b1a5949dcb" kindref="member">SLIInterpreter::Istreamtype</ref> &gt;</type>
+        <definition>typedef lockPTRDatum&lt; std::istream, &amp;SLIInterpreter::Istreamtype &gt; IstreamDatum</definition>
+        <argsstring></argsstring>
+        <name>IstreamDatum</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/iostreamdatum.h" line="39" column="22" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/iostreamdatum.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="iostreamdatum_8h_1ae5eee7e20f5cac5278bc97c099a375a8" prot="public" static="no">
+        <type><ref refid="classlockPTRDatum" kindref="compound">lockPTRDatum</ref>&lt; std::istream, &amp;<ref refid="classSLIInterpreter_1a5d93e8c0d4e0a52e2aacb53d6b59f3ab" kindref="member">SLIInterpreter::XIstreamtype</ref> &gt;</type>
+        <definition>typedef lockPTRDatum&lt; std::istream, &amp;SLIInterpreter::XIstreamtype &gt; XIstreamDatum</definition>
+        <argsstring></argsstring>
+        <name>XIstreamDatum</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/iostreamdatum.h" line="40" column="22" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/iostreamdatum.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="iostreamdatum_8h_1a0afa48cd57405c982e9916b326544796" prot="public" static="no">
+        <type><ref refid="classlockPTRDatum" kindref="compound">lockPTRDatum</ref>&lt; std::ostream, &amp;<ref refid="classSLIInterpreter_1a2b3d5895081a2f336637e04384976d39" kindref="member">SLIInterpreter::Ostreamtype</ref> &gt;</type>
+        <definition>typedef lockPTRDatum&lt; std::ostream, &amp;SLIInterpreter::Ostreamtype &gt; OstreamDatum</definition>
+        <argsstring></argsstring>
+        <name>OstreamDatum</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/iostreamdatum.h" line="41" column="22" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/iostreamdatum.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/><sp/>iostreamdatum.h</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/><sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>NEST.</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="6"><highlight class="comment"><sp/>*<sp/><sp/>Copyright<sp/>(C)<sp/>2004<sp/>The<sp/>NEST<sp/>Initiative</highlight></codeline>
+<codeline lineno="7"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="8"><highlight class="comment"><sp/>*<sp/><sp/>NEST<sp/>is<sp/>free<sp/>software:<sp/>you<sp/>can<sp/>redistribute<sp/>it<sp/>and/or<sp/>modify</highlight></codeline>
+<codeline lineno="9"><highlight class="comment"><sp/>*<sp/><sp/>it<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>the<sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>as<sp/>published<sp/>by</highlight></codeline>
+<codeline lineno="10"><highlight class="comment"><sp/>*<sp/><sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>either<sp/>version<sp/>2<sp/>of<sp/>the<sp/>License,<sp/>or</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*<sp/><sp/>(at<sp/>your<sp/>option)<sp/>any<sp/>later<sp/>version.</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="13"><highlight class="comment"><sp/>*<sp/><sp/>NEST<sp/>is<sp/>distributed<sp/>in<sp/>the<sp/>hope<sp/>that<sp/>it<sp/>will<sp/>be<sp/>useful,</highlight></codeline>
+<codeline lineno="14"><highlight class="comment"><sp/>*<sp/><sp/>but<sp/>WITHOUT<sp/>ANY<sp/>WARRANTY;<sp/>without<sp/>even<sp/>the<sp/>implied<sp/>warranty<sp/>of</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*<sp/><sp/>MERCHANTABILITY<sp/>or<sp/>FITNESS<sp/>FOR<sp/>A<sp/>PARTICULAR<sp/>PURPOSE.<sp/><sp/>See<sp/>the</highlight></codeline>
+<codeline lineno="16"><highlight class="comment"><sp/>*<sp/><sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>for<sp/>more<sp/>details.</highlight></codeline>
+<codeline lineno="17"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="18"><highlight class="comment"><sp/>*<sp/><sp/>You<sp/>should<sp/>have<sp/>received<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>GNU<sp/>General<sp/>Public<sp/>License</highlight></codeline>
+<codeline lineno="19"><highlight class="comment"><sp/>*<sp/><sp/>along<sp/>with<sp/>NEST.<sp/><sp/>If<sp/>not,<sp/>see<sp/>&lt;http://www.gnu.org/licenses/&gt;.</highlight></codeline>
+<codeline lineno="20"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="21"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>IOSTREAMDATUM_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>IOSTREAMDATUM_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="26"><highlight class="comment"><sp/><sp/><sp/><sp/>Datum<sp/>classes<sp/>encapsulating<sp/>c++<sp/>streams</highlight></codeline>
+<codeline lineno="27"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>all<sp/>headers,<sp/>needed<sp/>to<sp/>use<sp/>token<sp/>and<sp/>datum<sp/>objects</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="comment">//<sp/>C++<sp/>includes:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iostream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;typeinfo&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Includes<sp/>from<sp/>sli:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="interpret_8h" kindref="compound">interpret.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="lockptrdatum_8h" kindref="compound">lockptrdatum.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="iostreamdatum_8h_1aae9573ab4255b65f4fa4bcedf8757e64" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="classlockPTRDatum" kindref="compound">lockPTRDatum&lt; std::istream, &amp;SLIInterpreter::Istreamtype &gt;</ref><sp/><ref refid="iostreamdatum_8h_1aae9573ab4255b65f4fa4bcedf8757e64" kindref="member">IstreamDatum</ref>;</highlight></codeline>
+<codeline lineno="40" refid="iostreamdatum_8h_1ae5eee7e20f5cac5278bc97c099a375a8" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="classlockPTRDatum" kindref="compound">lockPTRDatum&lt; std::istream, &amp;SLIInterpreter::XIstreamtype &gt;</ref><sp/><ref refid="iostreamdatum_8h_1ae5eee7e20f5cac5278bc97c099a375a8" kindref="member">XIstreamDatum</ref>;</highlight></codeline>
+<codeline lineno="41" refid="iostreamdatum_8h_1a0afa48cd57405c982e9916b326544796" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><ref refid="classlockPTRDatum" kindref="compound">lockPTRDatum&lt; std::ostream, &amp;SLIInterpreter::Ostreamtype &gt;</ref><sp/><ref refid="iostreamdatum_8h_1a0afa48cd57405c982e9916b326544796" kindref="member">OstreamDatum</ref>;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/iostreamdatum.h"/>
+  </compounddef>
+</doxygen>

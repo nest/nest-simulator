@@ -1,0 +1,564 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classGenericDatum" kind="class" language="C++" prot="public">
+    <compoundname>GenericDatum</compoundname>
+    <basecompoundref refid="classTypedDatum" prot="public" virt="non-virtual">TypedDatum&lt; slt &gt;</basecompoundref>
+    <derivedcompoundref refid="classNumericDatum" prot="public" virt="non-virtual">NumericDatum&lt; D, slt &gt;</derivedcompoundref>
+    <includes refid="genericdatum_8h" local="no">genericdatum.h</includes>
+    <templateparamlist>
+      <param>
+        <type>class D</type>
+      </param>
+      <param>
+        <type><ref refid="classSLIType" kindref="compound">SLIType</ref> *</type>
+        <declname>slt</declname>
+        <defname>slt</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classGenericDatum_1a05aae244bfe71c9a356d21c80065fc8a" prot="protected" static="no" mutable="no">
+        <type>D</type>
+        <definition>D GenericDatum&lt; D, slt &gt;::d</definition>
+        <argsstring></argsstring>
+        <name>d</name>
+        <qualifiedname>GenericDatum::d</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" line="47" column="5" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" bodystart="47" bodyend="-1"/>
+        <referencedby refid="classGenericDatum_1ac6c31d39409b207bf51723c2e7570652" compoundref="genericdatum_8h" startline="111" endline="123">GenericDatum&lt; D, slt &gt;::equals</referencedby>
+        <referencedby refid="classGenericDatum_1a2204e0bfb80429863ebbd37005235c1e" compoundref="genericdatum_8h" startline="74" endline="77">GenericDatum&lt; D, slt &gt;::get</referencedby>
+        <referencedby refid="classGenericDatum_1aebc8f100e1b14b92715c6b6902a96944" compoundref="genericdatum_8h" startline="86" endline="89">GenericDatum&lt; D, slt &gt;::get_lval</referencedby>
+        <referencedby refid="classGenericDatum_1ad67c32fc84eb3058c64ffde32d41f95f" compoundref="genericdatum_8h" startline="104" endline="108">GenericDatum&lt; D, slt &gt;::info</referencedby>
+        <referencedby refid="classNumericDatum_1a4dd5c20bfa4f9db5cb044471c9cdf0a7" compoundref="numericdatum_8h" startline="56" endline="59">NumericDatum&lt; D, slt &gt;::NumericDatum</referencedby>
+        <referencedby refid="classNumericDatum_1a6f3861fa6e37bb7c574ae941c21921dc" compoundref="numericdatum_8h" startline="68" endline="71">NumericDatum&lt; D, slt &gt;::operator D</referencedby>
+        <referencedby refid="classNumericDatum_1aae3c9bcc35c218ec874dbc33db855069" compoundref="numericdatum_8h" startline="73" endline="76">NumericDatum&lt; D, slt &gt;::operator D&amp;</referencedby>
+        <referencedby refid="classGenericDatum_1a4fed4a7d0a4f637a7261d1aaa8de1f94" compoundref="genericdatum_8h" startline="67" endline="71">GenericDatum&lt; D, slt &gt;::operator=</referencedby>
+        <referencedby refid="classGenericDatum_1abdc583f9de26553a2887d223856aa915" compoundref="genericdatum_8h" startline="98" endline="101">GenericDatum&lt; D, slt &gt;::pprint</referencedby>
+        <referencedby refid="classGenericDatum_1a5d346f30b92cb3d91d0eaea7e3e5a9c2" compoundref="genericdatum_8h" startline="92" endline="95">GenericDatum&lt; D, slt &gt;::print</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classGenericDatum_1ac6c2c44af7ca1548fb10fb2edc20bc2f" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="classDatum" kindref="compound">Datum</ref> *</type>
+        <definition>virtual Datum * GenericDatum&lt; D, slt &gt;::clone</definition>
+        <argsstring>() const</argsstring>
+        <name>clone</name>
+        <qualifiedname>GenericDatum::clone</qualifiedname>
+        <reimplements refid="classDatum_1ab06887e171572f71a041209053b1a0ff">clone</reimplements>
+        <reimplementedby refid="classNumericDatum_1a9d45f9b22263e5ccccc128227aaefe2c">clone</reimplementedby>
+        <reimplementedby refid="classBoolDatum_1af1b0f5ed4bc89fe34444bbe94c2bc5c2">clone</reimplementedby>
+        <briefdescription>
+<para>Virtual copy constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Use this function to lazily copy a datum. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" line="41" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" bodystart="41" bodyend="44"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classGenericDatum_1a45a92fd2f3a0237c4a6784011a9be0a6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>GenericDatum&lt; D, slt &gt;::GenericDatum</definition>
+        <argsstring>()</argsstring>
+        <name>GenericDatum</name>
+        <qualifiedname>GenericDatum::GenericDatum</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" line="50" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" bodystart="50" bodyend="53"/>
+        <references refid="classDatum_1ad1de5a550c726c5cc95e88ffd1e71ef9" compoundref="datum_8h" startline="134" endline="137">Datum::unset_executable</references>
+      </memberdef>
+      <memberdef kind="function" id="classGenericDatum_1aae4ad6c4faefad474c914e8199aaec0a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type></type>
+        <definition>virtual GenericDatum&lt; D, slt &gt;::~GenericDatum</definition>
+        <argsstring>()</argsstring>
+        <name>~GenericDatum</name>
+        <qualifiedname>GenericDatum::~GenericDatum</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" line="54" column="11" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" bodystart="54" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="classGenericDatum_1ae50b6763e3dd2d99ed522ddc674fa52c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>GenericDatum&lt; D, slt &gt;::GenericDatum</definition>
+        <argsstring>(const D &amp;d_s)</argsstring>
+        <name>GenericDatum</name>
+        <qualifiedname>GenericDatum::GenericDatum</qualifiedname>
+        <param>
+          <type>const D &amp;</type>
+          <declname>d_s</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" line="58" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" bodystart="58" bodyend="62"/>
+        <references refid="classDatum_1ad1de5a550c726c5cc95e88ffd1e71ef9" compoundref="datum_8h" startline="134" endline="137">Datum::unset_executable</references>
+      </memberdef>
+      <memberdef kind="function" id="classGenericDatum_1aa51ce5c1a9eb84f585c6734f87446570" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>GenericDatum&lt; D, slt &gt;::GenericDatum</definition>
+        <argsstring>(const GenericDatum&lt; D, slt &gt; &amp;gd)=default</argsstring>
+        <name>GenericDatum</name>
+        <qualifiedname>GenericDatum::GenericDatum</qualifiedname>
+        <param>
+          <type>const <ref refid="classGenericDatum" kindref="compound">GenericDatum</ref>&lt; D, slt &gt; &amp;</type>
+          <declname>gd</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" line="64" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classGenericDatum_1a4fed4a7d0a4f637a7261d1aaa8de1f94" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const D &amp;</type>
+        <definition>const D &amp; GenericDatum&lt; D, slt &gt;::operator=</definition>
+        <argsstring>(const D &amp;d_s)</argsstring>
+        <name>operator=</name>
+        <qualifiedname>GenericDatum::operator=</qualifiedname>
+        <param>
+          <type>const D &amp;</type>
+          <declname>d_s</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" line="67" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" bodystart="67" bodyend="71"/>
+        <references refid="classGenericDatum_1a05aae244bfe71c9a356d21c80065fc8a" compoundref="genericdatum_8h" startline="47">GenericDatum&lt; D, slt &gt;::d</references>
+      </memberdef>
+      <memberdef kind="function" id="classGenericDatum_1a2204e0bfb80429863ebbd37005235c1e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const D &amp;</type>
+        <definition>const D &amp; GenericDatum&lt; D, slt &gt;::get</definition>
+        <argsstring>() const</argsstring>
+        <name>get</name>
+        <qualifiedname>GenericDatum::get</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" line="74" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" bodystart="74" bodyend="77"/>
+        <references refid="classGenericDatum_1a05aae244bfe71c9a356d21c80065fc8a" compoundref="genericdatum_8h" startline="47">GenericDatum&lt; D, slt &gt;::d</references>
+        <referencedby refid="utils_8cc_1aedb90c379e27cf47d322950694303944" compoundref="utils_8cc" startline="29" endline="45">array2vector</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1IMapFunction_1acc8dffac98f526868409cb670d7cefc3" compoundref="sliarray_8cc" startline="935" endline="951">SLIArrayModule::IMapFunction::backtrace</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1IMap__ivFunction_1a78115ada84ec7863547ae2b0ec5d9988" compoundref="sliarray_8cc" startline="1055" endline="1071">SLIArrayModule::IMap_ivFunction::backtrace</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1IMap__dvFunction_1a4f11dde05e8d8b71b01876b4f38576e9" compoundref="sliarray_8cc" startline="1194" endline="1210">SLIArrayModule::IMap_dvFunction::backtrace</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1IMapThreadFunction_1a65ccab87b9eb07fbbb6bf9ebf3c55f45" compoundref="sliarray_8cc" startline="1585" endline="1602">SLIArrayModule::IMapThreadFunction::backtrace</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1IMapIndexedFunction_1a4f3cd79fe85fed0b8bf43b931cc53121" compoundref="sliarray_8cc" startline="1433" endline="1450">SLIArrayModule::IMapIndexedFunction::backtrace</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Iforall__ivFunction_1a5e582b640723e6b0b1b5e704abf54804" compoundref="sliarray_8cc" startline="3998" endline="4004">SLIArrayModule::Iforall_ivFunction::backtrace</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Iforall__dvFunction_1af1c35d434ddc42e7ba75d46ab02524c2" compoundref="sliarray_8cc" startline="4074" endline="4080">SLIArrayModule::Iforall_dvFunction::backtrace</referencedby>
+        <referencedby refid="classIiterateFunction_1a84adf90bdea7b6cdedee224a4a044e25" compoundref="slibuiltins_8cc" startline="54" endline="66">IiterateFunction::backtrace</referencedby>
+        <referencedby refid="classIloopFunction_1a330f92673b97cc9f533225a8c1bffd75" compoundref="slibuiltins_8cc" startline="133" endline="145">IloopFunction::backtrace</referencedby>
+        <referencedby refid="classIrepeatFunction_1ab040dbc11430bb923a36eb4bd17dbbd3" compoundref="slibuiltins_8cc" startline="185" endline="200">IrepeatFunction::backtrace</referencedby>
+        <referencedby refid="classIforFunction_1a1421554c9df020af5c2c4b3cf0f428e3" compoundref="slibuiltins_8cc" startline="252" endline="265">IforFunction::backtrace</referencedby>
+        <referencedby refid="classIforallarrayFunction_1a8fc3ddc63d2135eaf886288775b6d61f" compoundref="slibuiltins_8cc" startline="315" endline="321">IforallarrayFunction::backtrace</referencedby>
+        <referencedby refid="classIforallindexedarrayFunction_1a531456213b07ddafece59255bce630d2" compoundref="slibuiltins_8cc" startline="353" endline="359">IforallindexedarrayFunction::backtrace</referencedby>
+        <referencedby refid="classIforallindexedstringFunction_1aac3f5ffeb497842c98c6e59900a9adec" compoundref="slibuiltins_8cc" startline="362" endline="368">IforallindexedstringFunction::backtrace</referencedby>
+        <referencedby refid="classIforallstringFunction_1a455fa1dd605f8e6a83ff015cd7e9421a" compoundref="slibuiltins_8cc" startline="405" endline="411">IforallstringFunction::backtrace</referencedby>
+        <referencedby refid="classProcesses_1_1WaitPIDFunction_1a92e4324861fe299280cd1a1410e66d08" compoundref="processes_8cc" startline="376" endline="445">Processes::WaitPIDFunction::execute</referencedby>
+        <referencedby refid="classProcesses_1_1KillFunction_1ae89ebbe1ab8173610de30647823416e5" compoundref="processes_8cc" startline="449" endline="473">Processes::KillFunction::execute</referencedby>
+        <referencedby refid="classSetwFunction_1a639444f31137b44ccbc93777209dbc04" compoundref="sli__io_8cc" startline="844" endline="878">SetwFunction::execute</referencedby>
+        <referencedby refid="classSetprecisionFunction_1a484f49c8c368728b9a6ce79faa8ad559" compoundref="sli__io_8cc" startline="895" endline="929">SetprecisionFunction::execute</referencedby>
+        <referencedby refid="classCallbacktypeFunction_1a6aac8e93eaf8ed14ae0314dfe2d1b581" compoundref="sliactions_8cc" startline="114" endline="129">CallbacktypeFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1IMapFunction_1a6b9a79df67e27e005879279412c2667d" compoundref="sliarray_8cc" startline="959" endline="1053">SLIArrayModule::IMapFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1IMap__ivFunction_1a0dac376ff89c51870e22f1053fc88e28" compoundref="sliarray_8cc" startline="1079" endline="1191">SLIArrayModule::IMap_ivFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1IMap__dvFunction_1afad30d283cbf7574273f2b97281a21a0" compoundref="sliarray_8cc" startline="1213" endline="1326">SLIArrayModule::IMap_dvFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1IMapThreadFunction_1aa111b125a5651529df48b2ee1b810ff6" compoundref="sliarray_8cc" startline="1610" endline="1722">SLIArrayModule::IMapThreadFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1IMapIndexedFunction_1abf8d07c9abeede15fbb3d9f28cc84847" compoundref="sliarray_8cc" startline="1458" endline="1555">SLIArrayModule::IMapIndexedFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1RangeFunction_1a348849a5076cd31741c5b6b0ec52c127" compoundref="sliarray_8cc" startline="59" endline="228">SLIArrayModule::RangeFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1PartitionFunction_1a26ee831b00be9ba77b57957f3b52ac55" compoundref="sliarray_8cc" startline="713" endline="769">SLIArrayModule::PartitionFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Put__a__a__tFunction_1a8ef92650f869aefb264bd341104c2884" compoundref="sliarray_8cc" startline="1813" endline="1897">SLIArrayModule::Put_a_a_tFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1AreaFunction_1a3a06a665d8c098da30320769540ebd6c" compoundref="sliarray_8cc" startline="2041" endline="2137">SLIArrayModule::AreaFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Area2Function_1abae669ae9be29d1cfb2ddf9eb2b30763" compoundref="sliarray_8cc" startline="2305" endline="2402">SLIArrayModule::Area2Function::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Cv2dFunction_1a53214436a73b79f8756b441f48497194" compoundref="sliarray_8cc" startline="2498" endline="2536">SLIArrayModule::Cv2dFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1GetMaxFunction_1a12cfde41cb2810be41a7c9cc27afb72f" compoundref="sliarray_8cc" startline="2551" endline="2599">SLIArrayModule::GetMaxFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1GetMinFunction_1a03f1707a3e081dc14a0eed642bdbcf29" compoundref="sliarray_8cc" startline="2613" endline="2662">SLIArrayModule::GetMinFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Mul__d__ivFunction_1ac29d3d68b4e09bae96e16a3aa5ea8e0e" compoundref="sliarray_8cc" startline="3159" endline="3190">SLIArrayModule::Mul_d_ivFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Put__dv__i__dFunction_1af6403dde52bec5f9d22b664c2517c0e9" compoundref="sliarray_8cc" startline="3726" endline="3762">SLIArrayModule::Put_dv_i_dFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Put__iv__i__iFunction_1a4f832a1a91cba516cb54b6f9eb4e08ed" compoundref="sliarray_8cc" startline="3765" endline="3797">SLIArrayModule::Put_iv_i_iFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Zeros__ivFunction_1a62b047c7259ce7595e8aa0ec34472ff9" compoundref="sliarray_8cc" startline="3870" endline="3892">SLIArrayModule::Zeros_ivFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Zeros__dvFunction_1aa3be8ae73fe05d963bf462f6a0e9d14d" compoundref="sliarray_8cc" startline="3820" endline="3842">SLIArrayModule::Zeros_dvFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Ones__dvFunction_1a017e285c4e37517c3135380bb50b7488" compoundref="sliarray_8cc" startline="3845" endline="3867">SLIArrayModule::Ones_dvFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Ones__ivFunction_1a5d29138567ba47bcecd87a91d249cbbe" compoundref="sliarray_8cc" startline="3895" endline="3917">SLIArrayModule::Ones_ivFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1ArangeFunction_1af6470ccd164e5e09e3893495205a9563" compoundref="sliarray_8cc" startline="232" endline="411">SLIArrayModule::ArangeFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Iforall__ivFunction_1ae602e4241a67e74347349f38bd502ea1" compoundref="sliarray_8cc" startline="3956" endline="3994">SLIArrayModule::Iforall_ivFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Iforall__dvFunction_1a136f572ffc98f715236af13dd5fa2f02" compoundref="sliarray_8cc" startline="4032" endline="4070">SLIArrayModule::Iforall_dvFunction::execute</referencedby>
+        <referencedby refid="classIforFunction_1af3a1e1c855088b809ec5e81f7640b2ab" compoundref="slibuiltins_8cc" startline="208" endline="249">IforFunction::execute</referencedby>
+        <referencedby refid="classIforallarrayFunction_1af51a6e3cfb8ca6dd88b2f96e5010aa62" compoundref="slibuiltins_8cc" startline="273" endline="311">IforallarrayFunction::execute</referencedby>
+        <referencedby refid="classIforallindexedarrayFunction_1a606dc49afac697692b360121b1b1eb8f" compoundref="slibuiltins_8cc" startline="330" endline="350">IforallindexedarrayFunction::execute</referencedby>
+        <referencedby refid="classIforallindexedstringFunction_1af26a406c6024773901e8ce42c0fd8d65" compoundref="slibuiltins_8cc" startline="376" endline="402">IforallindexedstringFunction::execute</referencedby>
+        <referencedby refid="classIforallstringFunction_1a18c3246cb5b985e82b2ce7af6589224d" compoundref="slibuiltins_8cc" startline="418" endline="442">IforallstringFunction::execute</referencedby>
+        <referencedby refid="classIfelseFunction_1afdad3f2f84d8ef76d6e1f1717f1dd20d" compoundref="slicontrol_8cc" startline="268" endline="307">IfelseFunction::execute</referencedby>
+        <referencedby refid="classSetGuardFunction_1ad4e0723ec6968ad58fedb10623de38ae" compoundref="slicontrol_8cc" startline="1880" endline="1888">SetGuardFunction::execute</referencedby>
+        <referencedby refid="classMessageFunction_1a35c4bb1201f075b46b948141acd06fab" compoundref="slicontrol_8cc" startline="2076" endline="2092">MessageFunction::execute</referencedby>
+        <referencedby refid="classSetVerbosityFunction_1a3d35f5157556a0de39957d5aba34c849" compoundref="slicontrol_8cc" startline="2036" endline="2044">SetVerbosityFunction::execute</referencedby>
+        <referencedby refid="classGet__aFunction_1ab72dabcd68d607a41a839744fb566687" compoundref="slidata_8cc" startline="58" endline="80">Get_aFunction::execute</referencedby>
+        <referencedby refid="classGet__a__aFunction_1a32fd53efaba4706a8c842b9cf318015c" compoundref="slidata_8cc" startline="83" endline="147">Get_a_aFunction::execute</referencedby>
+        <referencedby refid="classGet__pFunction_1af9801475d06ac33c5c0f072d3136dccb" compoundref="slidata_8cc" startline="150" endline="172">Get_pFunction::execute</referencedby>
+        <referencedby refid="classGet__lpFunction_1aff9f8da214a91093ab1ef79a9a5a6b35" compoundref="slidata_8cc" startline="175" endline="196">Get_lpFunction::execute</referencedby>
+        <referencedby refid="classInsert__sFunction_1ab81c4e533fa3fb0f55242f3472dd3e9b" compoundref="slidata_8cc" startline="348" endline="369">Insert_sFunction::execute</referencedby>
+        <referencedby refid="classInsert__aFunction_1a8f4576e27c1c9e8fe7fc827fc1d4e129" compoundref="slidata_8cc" startline="440" endline="461">Insert_aFunction::execute</referencedby>
+        <referencedby refid="classInsertElement__sFunction_1a0ff1e08436fc151eeb313f576f94741f" compoundref="slidata_8cc" startline="384" endline="405">InsertElement_sFunction::execute</referencedby>
+        <referencedby refid="classInsertElement__aFunction_1a6aef5b3335eeb39d4a4be79385d5af5c" compoundref="slidata_8cc" startline="464" endline="484">InsertElement_aFunction::execute</referencedby>
+        <referencedby refid="classReplace__sFunction_1a5a96e4144667a33ddaf3422477e0383b" compoundref="slidata_8cc" startline="536" endline="565">Replace_sFunction::execute</referencedby>
+        <referencedby refid="classReplace__aFunction_1a15fcfc1caa39511ed24be5da4a4fe30b" compoundref="slidata_8cc" startline="568" endline="597">Replace_aFunction::execute</referencedby>
+        <referencedby refid="classErase__sFunction_1ab5f76080bc0e0aec6f320ea0d8116d43" compoundref="slidata_8cc" startline="614" endline="642">Erase_sFunction::execute</referencedby>
+        <referencedby refid="classErase__aFunction_1aca9f92e76bdedb8a913b2821c395cdb8" compoundref="slidata_8cc" startline="645" endline="673">Erase_aFunction::execute</referencedby>
+        <referencedby refid="classErase__pFunction_1a0bd107272ebdce78a87183d4fa926ae6" compoundref="slidata_8cc" startline="676" endline="704">Erase_pFunction::execute</referencedby>
+        <referencedby refid="classReserve__aFunction_1ae27d33adb67654437f80324e39c0cb99" compoundref="slidata_8cc" startline="977" endline="996">Reserve_aFunction::execute</referencedby>
+        <referencedby refid="classResize__aFunction_1ab3d3bb6094aab8c4e22c668ad45d4c58" compoundref="slidata_8cc" startline="1012" endline="1031">Resize_aFunction::execute</referencedby>
+        <referencedby refid="classReserve__sFunction_1adec0e7c67b3105018a91b697c9b20f26" compoundref="slidata_8cc" startline="1129" endline="1149">Reserve_sFunction::execute</referencedby>
+        <referencedby refid="classResize__sFunction_1a38ec46696152cb8a790647c439d5770b" compoundref="slidata_8cc" startline="1152" endline="1172">Resize_sFunction::execute</referencedby>
+        <referencedby refid="classGetinterval__sFunction_1a2f664c1725f2a9f623b7cd1d5fbfad91" compoundref="slidata_8cc" startline="1223" endline="1251">Getinterval_sFunction::execute</referencedby>
+        <referencedby refid="classGetinterval__aFunction_1ab0eedf36879d2c8d0b93d1e28b2e4fa4" compoundref="slidata_8cc" startline="1255" endline="1284">Getinterval_aFunction::execute</referencedby>
+        <referencedby refid="classGet__sFunction_1ad35c2fe3c47217904b98905094147d6c" compoundref="slidata_8cc" startline="1393" endline="1416">Get_sFunction::execute</referencedby>
+        <referencedby refid="classPut__sFunction_1a7159845d8b8b2d06b155fdf845605163" compoundref="slidata_8cc" startline="708" endline="729">Put_sFunction::execute</referencedby>
+        <referencedby refid="classPut__aFunction_1a3e1126cd8a259134a0a0da47b765b9fd" compoundref="slidata_8cc" startline="733" endline="753">Put_aFunction::execute</referencedby>
+        <referencedby refid="classPut__pFunction_1abcd8cb3da4e7f6ab7a8ac9a302fae5c3" compoundref="slidata_8cc" startline="757" endline="777">Put_pFunction::execute</referencedby>
+        <referencedby refid="classPut__lpFunction_1a23d24458374166a187457ecd6fb52445" compoundref="slidata_8cc" startline="781" endline="801">Put_lpFunction::execute</referencedby>
+        <referencedby refid="classIrepeatanyFunction_1a29162744029dd334e871466d25f9cc97" compoundref="slidata_8cc" startline="1507" endline="1521">IrepeatanyFunction::execute</referencedby>
+        <referencedby refid="classSLIgraphics_1_1WritePGMFunction_1a5df725032dbc769cd58f9a1031a9225e" compoundref="sligraphics_8cc" startline="261" endline="358">SLIgraphics::WritePGMFunction::execute</referencedby>
+        <referencedby refid="classAdd__diFunction_1adc62afb79a89fbb6d4bc00881b78708c" compoundref="slimath_8cc" startline="96" endline="107">Add_diFunction::execute</referencedby>
+        <referencedby refid="classAdd__iiFunction_1ac7f7102cef229bd5c768272693cfee50" compoundref="slimath_8cc" startline="70" endline="80">Add_iiFunction::execute</referencedby>
+        <referencedby refid="classAdd__idFunction_1a8a3562e4a94fa7c32966b1614f767fa7" compoundref="slimath_8cc" startline="110" endline="122">Add_idFunction::execute</referencedby>
+        <referencedby refid="classAdd__ddFunction_1a7878196d8bacb3ca68f3fad8f831fd3f" compoundref="slimath_8cc" startline="83" endline="93">Add_ddFunction::execute</referencedby>
+        <referencedby refid="classSub__diFunction_1a5d1242d6b59e9eedad38ccd1242af939" compoundref="slimath_8cc" startline="151" endline="161">Sub_diFunction::execute</referencedby>
+        <referencedby refid="classSub__iiFunction_1ab806b49fda226e2bd5b35448bc364ca8" compoundref="slimath_8cc" startline="125" endline="135">Sub_iiFunction::execute</referencedby>
+        <referencedby refid="classSub__idFunction_1ae99e13f3f8ff597e9a96ec8d88f3bc22" compoundref="slimath_8cc" startline="164" endline="175">Sub_idFunction::execute</referencedby>
+        <referencedby refid="classSub__ddFunction_1a2ee22c72d70d3ffc4650aa9444737448" compoundref="slimath_8cc" startline="138" endline="148">Sub_ddFunction::execute</referencedby>
+        <referencedby refid="classMul__diFunction_1a5f9f06582ee189889fa6f8ed0163b667" compoundref="slimath_8cc" startline="204" endline="214">Mul_diFunction::execute</referencedby>
+        <referencedby refid="classMul__iiFunction_1ab4868240a168126183652d955a397c1d" compoundref="slimath_8cc" startline="178" endline="188">Mul_iiFunction::execute</referencedby>
+        <referencedby refid="classMul__idFunction_1a5870d318fa39a22ed85eb9b3949aa64c" compoundref="slimath_8cc" startline="217" endline="228">Mul_idFunction::execute</referencedby>
+        <referencedby refid="classMul__ddFunction_1a9a71f82b7139462f6a59d2d4fa4c274e" compoundref="slimath_8cc" startline="191" endline="201">Mul_ddFunction::execute</referencedby>
+        <referencedby refid="classDiv__diFunction_1ad076751d8287b98805db1924ab99e4d1" compoundref="slimath_8cc" startline="308" endline="325">Div_diFunction::execute</referencedby>
+        <referencedby refid="classDiv__iiFunction_1a6add7a24f6908dbe4d1b192bc629cf1f" compoundref="slimath_8cc" startline="231" endline="248">Div_iiFunction::execute</referencedby>
+        <referencedby refid="classDiv__idFunction_1a798f8d1eb5b3462c3394ec3363677ff3" compoundref="slimath_8cc" startline="328" endline="346">Div_idFunction::execute</referencedby>
+        <referencedby refid="classDiv__ddFunction_1accc371b7bb3b7b4460352d9ce8cb3615" compoundref="slimath_8cc" startline="288" endline="305">Div_ddFunction::execute</referencedby>
+        <referencedby refid="classMod__iiFunction_1a3ba11e0a5bedbb08e32efb603c039d93" compoundref="slimath_8cc" startline="258" endline="285">Mod_iiFunction::execute</referencedby>
+        <referencedby refid="classSin__dFunction_1aae315b892f24a81fa5e871a2590adc4e" compoundref="slimath_8cc" startline="363" endline="372">Sin_dFunction::execute</referencedby>
+        <referencedby refid="classAsin__dFunction_1adc1230bfc4bb2fcb0615fa823d6136a6" compoundref="slimath_8cc" startline="389" endline="397">Asin_dFunction::execute</referencedby>
+        <referencedby refid="classCos__dFunction_1a7d9d4f60e5aef9fdea9b1d78d24729ad" compoundref="slimath_8cc" startline="415" endline="423">Cos_dFunction::execute</referencedby>
+        <referencedby refid="classAcos__dFunction_1a1bbe3b831b8b7273e0132455b7d99a82" compoundref="slimath_8cc" startline="440" endline="447">Acos_dFunction::execute</referencedby>
+        <referencedby refid="classExp__dFunction_1aa0425682a4917c78dcd8eed7c775584d" compoundref="slimath_8cc" startline="461" endline="469">Exp_dFunction::execute</referencedby>
+        <referencedby refid="classLn__dFunction_1a1182db4c7e6c2a80a9cf8366e9244005" compoundref="slimath_8cc" startline="507" endline="521">Ln_dFunction::execute</referencedby>
+        <referencedby refid="classLog__dFunction_1a701d41d1b7f3aa9016585ab08504785b" compoundref="slimath_8cc" startline="481" endline="495">Log_dFunction::execute</referencedby>
+        <referencedby refid="classSqr__dFunction_1a7ef59acf4e7a1c615ffdd7ee14238c7a" compoundref="slimath_8cc" startline="530" endline="537">Sqr_dFunction::execute</referencedby>
+        <referencedby refid="classSqrt__dFunction_1a4dd71783377ba895ea900422c41db37a" compoundref="slimath_8cc" startline="548" endline="562">Sqrt_dFunction::execute</referencedby>
+        <referencedby refid="classPow__ddFunction_1a79b08d73ee5fb7f57b6bf5f230c80969" compoundref="slimath_8cc" startline="575" endline="593">Pow_ddFunction::execute</referencedby>
+        <referencedby refid="classPow__diFunction_1ac0923f0015f3f1a6d76ed22e8203c12f" compoundref="slimath_8cc" startline="596" endline="616">Pow_diFunction::execute</referencedby>
+        <referencedby refid="classModf__dFunction_1a86b6147cdd3b982eb7abf303d5f749a5" compoundref="slimath_8cc" startline="632" endline="644">Modf_dFunction::execute</referencedby>
+        <referencedby refid="classFrexp__dFunction_1a0d05a546f1cdfbeca4e18ee091992de7" compoundref="slimath_8cc" startline="662" endline="674">Frexp_dFunction::execute</referencedby>
+        <referencedby refid="classLdexp__diFunction_1a075b3d4af975cfc4de084cee04c72997" compoundref="slimath_8cc" startline="694" endline="705">Ldexp_diFunction::execute</referencedby>
+        <referencedby refid="classDexp__iFunction_1a78fe12a604e5069c7f88cdd053e3267f" compoundref="slimath_8cc" startline="720" endline="730">Dexp_iFunction::execute</referencedby>
+        <referencedby refid="classAbs__iFunction_1a96951691f32ae94347230e044d67f584" compoundref="slimath_8cc" startline="754" endline="762">Abs_iFunction::execute</referencedby>
+        <referencedby refid="classAbs__dFunction_1ae932b226f4cc979a50a5a4ca462fced7" compoundref="slimath_8cc" startline="784" endline="792">Abs_dFunction::execute</referencedby>
+        <referencedby refid="classNeg__iFunction_1a90fa5411cd53e49662c30ef26d19219e" compoundref="slimath_8cc" startline="809" endline="817">Neg_iFunction::execute</referencedby>
+        <referencedby refid="classNeg__dFunction_1ad5f3d462d1120ce84d121c502b0eb9b4" compoundref="slimath_8cc" startline="833" endline="840">Neg_dFunction::execute</referencedby>
+        <referencedby refid="classInv__dFunction_1adf50634e78d24677de9c5e15040cafe2" compoundref="slimath_8cc" startline="849" endline="868">Inv_dFunction::execute</referencedby>
+        <referencedby refid="classAndFunction_1a5b453fbad707ae3fa2944be2462af3b6" compoundref="slimath_8cc" startline="1169" endline="1180">AndFunction::execute</referencedby>
+        <referencedby refid="classOrFunction_1a153979323cdee14d30dd0bdc9b9ad139" compoundref="slimath_8cc" startline="1112" endline="1124">OrFunction::execute</referencedby>
+        <referencedby refid="classAnd__iiFunction_1ab4438c8e2ec244e641616c429b0077bd" compoundref="slimath_8cc" startline="1183" endline="1193">And_iiFunction::execute</referencedby>
+        <referencedby refid="classOr__iiFunction_1a52cc897a4f1b6ae66c60e3776f4cf405" compoundref="slimath_8cc" startline="1196" endline="1206">Or_iiFunction::execute</referencedby>
+        <referencedby refid="classXorFunction_1a638b44a694a6b6fd8e644e5207c0b084" compoundref="slimath_8cc" startline="1141" endline="1152">XorFunction::execute</referencedby>
+        <referencedby refid="classNot__bFunction_1a85f9950a04b99ab37217911719646b46" compoundref="slimath_8cc" startline="1073" endline="1080">Not_bFunction::execute</referencedby>
+        <referencedby refid="classNot__iFunction_1a2980f824ff6be71c838c82d5fa22fc16" compoundref="slimath_8cc" startline="1084" endline="1091">Not_iFunction::execute</referencedby>
+        <referencedby refid="classGeq__iiFunction_1adb9567dd1162d015c350e4eecb0452c8" compoundref="slimath_8cc" startline="938" endline="949">Geq_iiFunction::execute</referencedby>
+        <referencedby refid="classGeq__idFunction_1abfa47735f4aca091e1f0ac05f7c86be7" compoundref="slimath_8cc" startline="952" endline="963">Geq_idFunction::execute</referencedby>
+        <referencedby refid="classGeq__diFunction_1aa061dfc9716c58eb0ca4f20810548560" compoundref="slimath_8cc" startline="966" endline="977">Geq_diFunction::execute</referencedby>
+        <referencedby refid="classGeq__ddFunction_1a88e689255e5d935374c340a35407616c" compoundref="slimath_8cc" startline="980" endline="991">Geq_ddFunction::execute</referencedby>
+        <referencedby refid="classLeq__iiFunction_1a970e655bab161b733c59de77ecf37b81" compoundref="slimath_8cc" startline="1005" endline="1016">Leq_iiFunction::execute</referencedby>
+        <referencedby refid="classLeq__idFunction_1a242478cba96a40147deb69044a4f5a71" compoundref="slimath_8cc" startline="1019" endline="1030">Leq_idFunction::execute</referencedby>
+        <referencedby refid="classLeq__diFunction_1a1b5a6dddcf5facc41323300222773772" compoundref="slimath_8cc" startline="1033" endline="1044">Leq_diFunction::execute</referencedby>
+        <referencedby refid="classLeq__ddFunction_1af4437962bb4626d5843ff4c51ed53db3" compoundref="slimath_8cc" startline="1047" endline="1058">Leq_ddFunction::execute</referencedby>
+        <referencedby refid="classGt__iiFunction_1a14581810c3f7baeaa4db209ee5c35f4e" compoundref="slimath_8cc" startline="1253" endline="1267">Gt_iiFunction::execute</referencedby>
+        <referencedby refid="classGt__ddFunction_1a060e8778be3d70a291f25b9dd99f544b" compoundref="slimath_8cc" startline="1270" endline="1284">Gt_ddFunction::execute</referencedby>
+        <referencedby refid="classLt__iiFunction_1a4d9f322d00a8f85473e9817664132ccc" compoundref="slimath_8cc" startline="1350" endline="1364">Lt_iiFunction::execute</referencedby>
+        <referencedby refid="classLt__ddFunction_1a499089d678af7233ac278af0fd3a622a" compoundref="slimath_8cc" startline="1367" endline="1381">Lt_ddFunction::execute</referencedby>
+        <referencedby refid="classLt__idFunction_1abc6c29e9330ffcd8d3eb80fecadd0dad" compoundref="slimath_8cc" startline="1315" endline="1329">Lt_idFunction::execute</referencedby>
+        <referencedby refid="classLt__diFunction_1a9c29f0fbac6667d2512ae3a49ce86383" compoundref="slimath_8cc" startline="1332" endline="1346">Lt_diFunction::execute</referencedby>
+        <referencedby refid="classIntegerFunction_1ae6379a2121330a09e1b1c0d1175ebf7a" compoundref="slimath_8cc" startline="41" endline="52">IntegerFunction::execute</referencedby>
+        <referencedby refid="classDoubleFunction_1a99ee2ffbdf972d9fb4307d64584f6ff0" compoundref="slimath_8cc" startline="55" endline="67">DoubleFunction::execute</referencedby>
+        <referencedby refid="classRound__dFunction_1af27685e891ef78c97ae95e6f818bbc40" compoundref="slimath_8cc" startline="1519" endline="1527">Round_dFunction::execute</referencedby>
+        <referencedby refid="classFloor__dFunction_1a3c010192ea5a0c0d9c9181a14e94f73a" compoundref="slimath_8cc" startline="1531" endline="1539">Floor_dFunction::execute</referencedby>
+        <referencedby refid="classCeil__dFunction_1a38d5f4e4fb116575eda31ea510aeae88" compoundref="slimath_8cc" startline="1543" endline="1551">Ceil_dFunction::execute</referencedby>
+        <referencedby refid="classMax__i__iFunction_1ad2d3f51c67c4d28b097a84d9673ff804" compoundref="slimath_8cc" startline="1556" endline="1570">Max_i_iFunction::execute</referencedby>
+        <referencedby refid="classMax__i__dFunction_1a8e1be6febab52033e2f6acb0c3f2627f" compoundref="slimath_8cc" startline="1572" endline="1586">Max_i_dFunction::execute</referencedby>
+        <referencedby refid="classMax__d__iFunction_1a65b5dfaaecc02bf6a193f009d5304286" compoundref="slimath_8cc" startline="1588" endline="1602">Max_d_iFunction::execute</referencedby>
+        <referencedby refid="classMax__d__dFunction_1a12a335f8b56dc403556908f9d5d21613" compoundref="slimath_8cc" startline="1604" endline="1618">Max_d_dFunction::execute</referencedby>
+        <referencedby refid="classMin__i__iFunction_1a091ef6965b8624bb1db8697d3290fd66" compoundref="slimath_8cc" startline="1623" endline="1637">Min_i_iFunction::execute</referencedby>
+        <referencedby refid="classMin__i__dFunction_1a7b7f2d597342e3d06d89a6eedbdefbb0" compoundref="slimath_8cc" startline="1639" endline="1653">Min_i_dFunction::execute</referencedby>
+        <referencedby refid="classMin__d__iFunction_1a99963c12a9af8f53e55987050d537901" compoundref="slimath_8cc" startline="1655" endline="1669">Min_d_iFunction::execute</referencedby>
+        <referencedby refid="classMin__d__dFunction_1a1dc138fde311c0dbff357616995be88f" compoundref="slimath_8cc" startline="1671" endline="1685">Min_d_dFunction::execute</referencedby>
+        <referencedby refid="classRegexpModule_1_1RegcompFunction_1a53639d7552193a3584196ca6ed941072" compoundref="sliregexp_8cc" startline="110" endline="139">RegexpModule::RegcompFunction::execute</referencedby>
+        <referencedby refid="classRegexpModule_1_1RegexecFunction_1a758ff72802b6e21876dddb2de99cf2f5" compoundref="sliregexp_8cc" startline="168" endline="214">RegexpModule::RegexecFunction::execute</referencedby>
+        <referencedby refid="classRegexpModule_1_1RegerrorFunction_1af18a480fa01f15cbf5331b922351f48f" compoundref="sliregexp_8cc" startline="142" endline="165">RegexpModule::RegerrorFunction::execute</referencedby>
+        <referencedby refid="classRollFunction_1ab7b94aa99d7280f54b556c13da886475" compoundref="slistack_8cc" startline="244" endline="280">RollFunction::execute</referencedby>
+        <referencedby refid="structnest_1_1Time_1_1ms_1ad8e170368ee978c428e0dcf47dd87cea" compoundref="nest__time_8cpp" startline="143" endline="159">nest::Time::ms::fromtoken</referencedby>
+        <referencedby refid="group__DictUtils_1ga46187a005b28a029032ae44cdfacd12f" compoundref="dictutils_8h" startline="88" endline="134">get_double_in_range</referencedby>
+        <referencedby refid="group__DictUtils_1ga2884b30013642c7ea26a1a6e64707f8c" compoundref="dictutils_8h" startline="152" endline="198">get_long_in_range</referencedby>
+        <referencedby refid="tokenutils_8cc_1aeb08d5341a6bafebc5f8513da1eccb2b" compoundref="tokenutils_8cc" startline="74" endline="91">getValue&lt; double &gt;</referencedby>
+        <referencedby refid="classTokenArray_1aefcff88c417f333a27f79b1c67e29334" compoundref="tokenarray_8cc" startline="76" endline="91">TokenArray::toVector</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classGenericDatum_1aa6ecf44c6f8e079fd19929317a470098" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>D &amp;</type>
+        <definition>D &amp; GenericDatum&lt; D, slt &gt;::get</definition>
+        <argsstring>()</argsstring>
+        <name>get</name>
+        <qualifiedname>GenericDatum::get</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" line="80" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" bodystart="80" bodyend="83"/>
+        <references refid="classGenericDatum_1a05aae244bfe71c9a356d21c80065fc8a" compoundref="genericdatum_8h" startline="47">GenericDatum&lt; D, slt &gt;::d</references>
+      </memberdef>
+      <memberdef kind="function" id="classGenericDatum_1aebc8f100e1b14b92715c6b6902a96944" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>D &amp;</type>
+        <definition>D &amp; GenericDatum&lt; D, slt &gt;::get_lval</definition>
+        <argsstring>()</argsstring>
+        <name>get_lval</name>
+        <qualifiedname>GenericDatum::get_lval</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" line="86" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" bodystart="86" bodyend="89"/>
+        <references refid="classGenericDatum_1a05aae244bfe71c9a356d21c80065fc8a" compoundref="genericdatum_8h" startline="47">GenericDatum&lt; D, slt &gt;::d</references>
+      </memberdef>
+      <memberdef kind="function" id="classGenericDatum_1a5d346f30b92cb3d91d0eaea7e3e5a9c2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>void GenericDatum&lt; D, slt &gt;::print</definition>
+        <argsstring>(std::ostream &amp;o) const</argsstring>
+        <name>print</name>
+        <qualifiedname>GenericDatum::print</qualifiedname>
+        <reimplements refid="classDatum_1a6a4be93b0173f6026edc7695683ec0c4">print</reimplements>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>o</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" line="92" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" bodystart="92" bodyend="95"/>
+        <references refid="classGenericDatum_1a05aae244bfe71c9a356d21c80065fc8a" compoundref="genericdatum_8h" startline="47">GenericDatum&lt; D, slt &gt;::d</references>
+        <referencedby refid="classNumericDatum_1a79a6ebae0cae0ec3290aa9fa055e1d58" compoundref="numericdatum_8h" startline="85" endline="88">NumericDatum&lt; D, slt &gt;::pprint</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classGenericDatum_1abdc583f9de26553a2887d223856aa915" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>void GenericDatum&lt; D, slt &gt;::pprint</definition>
+        <argsstring>(std::ostream &amp;o) const</argsstring>
+        <name>pprint</name>
+        <qualifiedname>GenericDatum::pprint</qualifiedname>
+        <reimplements refid="classDatum_1a9a0232698bafa153d6286a5f3534187a">pprint</reimplements>
+        <reimplementedby refid="classNumericDatum_1a297bdc4ea497f9e115fc9d16d8c2cfd4">pprint</reimplementedby>
+        <reimplementedby refid="classNumericDatum_1addc0642ea87c2c41291d86ebee8b07fa">pprint</reimplementedby>
+        <reimplementedby refid="classNumericDatum_1a79a6ebae0cae0ec3290aa9fa055e1d58">pprint</reimplementedby>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>o</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" line="98" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" bodystart="98" bodyend="101"/>
+        <references refid="classGenericDatum_1a05aae244bfe71c9a356d21c80065fc8a" compoundref="genericdatum_8h" startline="47">GenericDatum&lt; D, slt &gt;::d</references>
+      </memberdef>
+      <memberdef kind="function" id="classGenericDatum_1ad67c32fc84eb3058c64ffde32d41f95f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>void GenericDatum&lt; D, slt &gt;::info</definition>
+        <argsstring>(std::ostream &amp;out) const</argsstring>
+        <name>info</name>
+        <qualifiedname>GenericDatum::info</qualifiedname>
+        <reimplements refid="classDatum_1af7725a211bd45f39beae0f5771038c75">info</reimplements>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>out</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" line="104" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" bodystart="104" bodyend="108"/>
+        <references refid="classGenericDatum_1a05aae244bfe71c9a356d21c80065fc8a" compoundref="genericdatum_8h" startline="47">GenericDatum&lt; D, slt &gt;::d</references>
+      </memberdef>
+      <memberdef kind="function" id="classGenericDatum_1ac6c31d39409b207bf51723c2e7570652" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>bool</type>
+        <definition>bool GenericDatum&lt; D, slt &gt;::equals</definition>
+        <argsstring>(const Datum *dat) const</argsstring>
+        <name>equals</name>
+        <qualifiedname>GenericDatum::equals</qualifiedname>
+        <reimplements refid="classDatum_1a30302c3f9b5e9f86fc01021599011a7f">equals</reimplements>
+        <param>
+          <type>const <ref refid="classDatum" kindref="compound">Datum</ref> *</type>
+          <declname>dat</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" line="111" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" bodystart="111" bodyend="123"/>
+        <references refid="classGenericDatum_1a05aae244bfe71c9a356d21c80065fc8a" compoundref="genericdatum_8h" startline="47">GenericDatum&lt; D, slt &gt;::d</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="6">
+        <label>BoolDatum</label>
+        <link refid="classBoolDatum"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Datum</label>
+        <link refid="classDatum"/>
+      </node>
+      <node id="1">
+        <label>GenericDatum&lt; D, slt &gt;</label>
+        <link refid="classGenericDatum"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>GenericDatum&lt; bool, &amp;SLIInterpreter::Booltype &gt;</label>
+        <link refid="classGenericDatum"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; bool, &amp;SLIInterpreter::Booltype &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>NumericDatum&lt; D, slt &gt;</label>
+        <link refid="classNumericDatum"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>TypedDatum&lt; slt &gt;</label>
+        <link refid="classTypedDatum"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="3">
+        <label>Datum</label>
+        <link refid="classDatum"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>type</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>action</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>GenericDatum&lt; D, slt &gt;</label>
+        <link refid="classGenericDatum"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Name</label>
+        <link refid="className"/>
+      </node>
+      <node id="6">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="4">
+        <label>SLIType</label>
+        <link refid="classSLIType"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>defaultaction</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>TypedDatum&lt; slt &gt;</label>
+        <link refid="classTypedDatum"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" line="37" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/genericdatum.h" bodystart="38" bodyend="124"/>
+    <listofallmembers>
+      <member refid="classDatum_1aedcf75cc41ccd6a8247216941b10f719" prot="protected" virt="non-virtual"><scope>GenericDatum</scope><name>action</name></member>
+      <member refid="classDatum_1a8a547bad7564cd6e79fd9b1a245c9e8b" prot="public" virt="non-virtual"><scope>GenericDatum</scope><name>addReference</name></member>
+      <member refid="classGenericDatum_1ac6c2c44af7ca1548fb10fb2edc20bc2f" prot="private" virt="virtual"><scope>GenericDatum</scope><name>clone</name></member>
+      <member refid="classGenericDatum_1a05aae244bfe71c9a356d21c80065fc8a" prot="protected" virt="non-virtual"><scope>GenericDatum</scope><name>d</name></member>
+      <member refid="classDatum_1ae1880ae165f7a4aef90be6e8cfaa5ff5" prot="protected" virt="non-virtual"><scope>GenericDatum</scope><name>Datum</name></member>
+      <member refid="classDatum_1ac7e934059aa105e87e0de888c890bf3a" prot="protected" virt="non-virtual"><scope>GenericDatum</scope><name>Datum</name></member>
+      <member refid="classDatum_1a4ceb261c92a00bb5cfbdbb91104c25ff" prot="protected" virt="non-virtual"><scope>GenericDatum</scope><name>Datum</name></member>
+      <member refid="classGenericDatum_1ac6c31d39409b207bf51723c2e7570652" prot="public" virt="virtual"><scope>GenericDatum</scope><name>equals</name></member>
+      <member refid="classDatum_1aa8bccc352dca610a10b7daee4ca876f7" prot="protected" virt="non-virtual"><scope>GenericDatum</scope><name>executable_</name></member>
+      <member refid="classDatum_1a772aa172fff8b5035e1e243eb046ae13" prot="public" virt="virtual"><scope>GenericDatum</scope><name>execute</name></member>
+      <member refid="classGenericDatum_1a45a92fd2f3a0237c4a6784011a9be0a6" prot="public" virt="non-virtual"><scope>GenericDatum</scope><name>GenericDatum</name></member>
+      <member refid="classGenericDatum_1ae50b6763e3dd2d99ed522ddc674fa52c" prot="public" virt="non-virtual"><scope>GenericDatum</scope><name>GenericDatum</name></member>
+      <member refid="classGenericDatum_1aa51ce5c1a9eb84f585c6734f87446570" prot="public" virt="non-virtual"><scope>GenericDatum</scope><name>GenericDatum</name></member>
+      <member refid="classGenericDatum_1a2204e0bfb80429863ebbd37005235c1e" prot="public" virt="non-virtual"><scope>GenericDatum</scope><name>get</name></member>
+      <member refid="classGenericDatum_1aa6ecf44c6f8e079fd19929317a470098" prot="public" virt="non-virtual"><scope>GenericDatum</scope><name>get</name></member>
+      <member refid="classGenericDatum_1aebc8f100e1b14b92715c6b6902a96944" prot="public" virt="non-virtual"><scope>GenericDatum</scope><name>get_lval</name></member>
+      <member refid="classDatum_1af968bcf24fef60342dcc5d374b8cd54e" prot="private" virt="virtual"><scope>GenericDatum</scope><name>get_ptr</name></member>
+      <member refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" prot="public" virt="non-virtual"><scope>GenericDatum</scope><name>gettypename</name></member>
+      <member refid="classGenericDatum_1ad67c32fc84eb3058c64ffde32d41f95f" prot="public" virt="virtual"><scope>GenericDatum</scope><name>info</name></member>
+      <member refid="classDatum_1a90e482a3dc319a65759312da1f4f8b07" prot="public" virt="virtual"><scope>GenericDatum</scope><name>input_form</name></member>
+      <member refid="classDatum_1a08d7463e1c6fb42a75f7edf49f9e2e3d" prot="public" virt="non-virtual"><scope>GenericDatum</scope><name>is_executable</name></member>
+      <member refid="classDatum_1ad27263ba100f9c536085ddcad183ab07" prot="public" virt="non-virtual"><scope>GenericDatum</scope><name>isoftype</name></member>
+      <member refid="classDatum_1a0cc07c59ff578f522ba46b7bd0e33fb5" prot="public" virt="virtual"><scope>GenericDatum</scope><name>list</name></member>
+      <member refid="classDatum_1add98b474ddf98b8352c49052c026f42b" prot="public" virt="non-virtual"><scope>GenericDatum</scope><name>numReferences</name></member>
+      <member refid="classGenericDatum_1a4fed4a7d0a4f637a7261d1aaa8de1f94" prot="public" virt="non-virtual"><scope>GenericDatum</scope><name>operator=</name></member>
+      <member refid="classTypedDatum_1a5cc4fd0fc7b08a2b3e4c837082f63790" prot="protected" virt="non-virtual" ambiguityscope="TypedDatum::"><scope>GenericDatum</scope><name>operator=</name></member>
+      <member refid="classGenericDatum_1abdc583f9de26553a2887d223856aa915" prot="public" virt="virtual"><scope>GenericDatum</scope><name>pprint</name></member>
+      <member refid="classGenericDatum_1a5d346f30b92cb3d91d0eaea7e3e5a9c2" prot="public" virt="virtual"><scope>GenericDatum</scope><name>print</name></member>
+      <member refid="classDatum_1abd911b2048efc2b685900bb2561ffd2e" prot="protected" virt="non-virtual"><scope>GenericDatum</scope><name>reference_count_</name></member>
+      <member refid="classDatum_1a033ad3a3e54eab1bb9a6b47eeab0611e" prot="public" virt="non-virtual"><scope>GenericDatum</scope><name>removeReference</name></member>
+      <member refid="classDatum_1a46325ecc6d02cc01c26366b57423d9f4" prot="public" virt="non-virtual"><scope>GenericDatum</scope><name>set_executable</name></member>
+      <member refid="classDatum_1a0697b4f1572af02085906c0fcf0fc7b1" prot="protected" virt="non-virtual"><scope>GenericDatum</scope><name>type</name></member>
+      <member refid="classTypedDatum_1a9b89818e167d0110afcc09e5d75b738b" prot="public" virt="non-virtual"><scope>GenericDatum</scope><name>TypedDatum</name></member>
+      <member refid="classTypedDatum_1af95471a28fd63265bdd7a0a2cd2faadb" prot="protected" virt="non-virtual"><scope>GenericDatum</scope><name>TypedDatum</name></member>
+      <member refid="classDatum_1ad1de5a550c726c5cc95e88ffd1e71ef9" prot="public" virt="non-virtual"><scope>GenericDatum</scope><name>unset_executable</name></member>
+      <member refid="classDatum_1afbf982389b91a2b013be1de6bdf1483e" prot="public" virt="virtual"><scope>GenericDatum</scope><name>~Datum</name></member>
+      <member refid="classGenericDatum_1aae4ad6c4faefad474c914e8199aaec0a" prot="public" virt="virtual"><scope>GenericDatum</scope><name>~GenericDatum</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

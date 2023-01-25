@@ -1,0 +1,746 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classDictionary" kind="class" language="C++" prot="public">
+    <compoundname>Dictionary</compoundname>
+    <basecompoundref prot="private" virt="non-virtual">TokenMap</basecompoundref>
+    <includes refid="dict_8h" local="no">dict.h</includes>
+    <innerclass refid="classDictionary_1_1DictItemLexicalOrder" prot="private">Dictionary::DictItemLexicalOrder</innerclass>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classDictionary_1aecc5dd681aa96dd75d10d690b14d5ac9" prot="public" static="no">
+        <type>TokenMap::const_iterator</type>
+        <definition>typedef TokenMap::const_iterator Dictionary::const_iterator</definition>
+        <argsstring></argsstring>
+        <name>const_iterator</name>
+        <qualifiedname>Dictionary::const_iterator</qualifiedname>
+        <briefdescription>
+<para>Constant iterator for dictionary. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><ref refid="classDictionary" kindref="compound">Dictionary</ref> inherits privately from std::map to hide implementation details. To allow for inspection of all elements in a dictionary, we export the constant iterator type and begin() and end() methods. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="194" column="36" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" bodystart="194" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classDictionary_1aeae2c7a4f5ff9fae7abca41b1ea0042c" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int Dictionary::refs_on_dictstack_</definition>
+        <argsstring></argsstring>
+        <name>refs_on_dictstack_</name>
+        <qualifiedname>Dictionary::refs_on_dictstack_</qualifiedname>
+        <briefdescription>
+<para>Worker function checking whether all elements have been accessed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Checks nested dictionaries recursively. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>std::string&amp;</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>contains string with names of non-accessed entries </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>std::string</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>prefix for nested dictionary entries, built during recursion </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if all dictionary elements have been accessed </para>
+</simplesect>
+<simplesect kind="note"><para>this is just the worker for <ref refid="classDictionary_1af0bbd39cf217d6b51030f88eeac2705f" kindref="member">all_accessed()</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="classDictionary_1a0e7c9604b0bdb71c173e53f0bcccfe30" kindref="member">clear_access_flags()</ref>, <ref refid="classDictionary_1af0bbd39cf217d6b51030f88eeac2705f" kindref="member">all_accessed()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="241" column="7" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" bodystart="241" bodyend="-1"/>
+        <referencedby refid="classDictionary_1a035abf800f0d6db67a73b59c411e6ace" compoundref="dict_8h" startline="204" endline="207">add_dictstack_reference</referencedby>
+        <referencedby refid="classDictionary_1aa079d2adf35857bb225b478453e68906" compoundref="dict_8h" startline="223" endline="226">is_on_dictstack</referencedby>
+        <referencedby refid="classDictionary_1ab002288fb70b83c59be633ed57627775" compoundref="dict_8h" startline="214" endline="217">remove_dictstack_reference</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="classDictionary_1aae99e575d88591825abd532f39ce92c5" prot="private" static="yes" mutable="no">
+        <type>const <ref refid="classToken" kindref="compound">Token</ref></type>
+        <definition>const Token Dictionary::VoidToken</definition>
+        <argsstring></argsstring>
+        <name>VoidToken</name>
+        <qualifiedname>Dictionary::VoidToken</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="243" column="22" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" bodystart="243" bodyend="-1"/>
+        <referencedby refid="classDictionary_1a93d377a487a78812b2f626c843306695" compoundref="dict_8h" startline="247" endline="258">lookup</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classDictionary_1aee8d612bc9d323c38faba045ba384b8b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Dictionary::Dictionary</definition>
+        <argsstring>()</argsstring>
+        <name>Dictionary</name>
+        <qualifiedname>Dictionary::Dictionary</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="75" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" bodystart="75" bodyend="78"/>
+      </memberdef>
+      <memberdef kind="function" id="classDictionary_1a2488ccf03c1226ec191b2dac3fd252a4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Dictionary::Dictionary</definition>
+        <argsstring>(const Dictionary &amp;d)</argsstring>
+        <name>Dictionary</name>
+        <qualifiedname>Dictionary::Dictionary</qualifiedname>
+        <param>
+          <type>const <ref refid="classDictionary" kindref="compound">Dictionary</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="79" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" bodystart="79" bodyend="83"/>
+      </memberdef>
+      <memberdef kind="function" id="classDictionary_1aa36f24073d9c9001768517aa2322cb82" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Dictionary::~Dictionary</definition>
+        <argsstring>()</argsstring>
+        <name>~Dictionary</name>
+        <qualifiedname>Dictionary::~Dictionary</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="84" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.cc" bodystart="38" bodyend="40"/>
+      </memberdef>
+      <memberdef kind="function" id="classDictionary_1a2d54b74d14335da04ad9d64e49536d9a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Dictionary::clear</definition>
+        <argsstring>()</argsstring>
+        <name>clear</name>
+        <qualifiedname>Dictionary::clear</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="93" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.cc" bodystart="55" bodyend="74"/>
+      </memberdef>
+      <memberdef kind="function" id="classDictionary_1a93d377a487a78812b2f626c843306695" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+        <definition>const Token &amp; Dictionary::lookup</definition>
+        <argsstring>(const Name &amp;n) const</argsstring>
+        <name>lookup</name>
+        <qualifiedname>Dictionary::lookup</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+<para>Lookup and return <ref refid="classToken" kindref="compound">Token</ref> with given name in dictionary. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If the name is not found, an empty token is returned. This version of lookup is deprecated and will disappear in future versions. Please use <ref refid="classDictionary_1a68e415a454294d02eb41ca1e2c21b50b" kindref="member">lookup2()</ref> instead. <simplesect kind="note"><para>The token returned should <bold>always</bold> be stored as a <computeroutput>const &amp;</computeroutput>, so that the control flag for dictionary read-out is set on the <ref refid="classToken" kindref="compound">Token</ref> in the dictionary, not its copy. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="106" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" bodystart="247" bodyend="258"/>
+        <references refid="classDictionary_1aae99e575d88591825abd532f39ce92c5" compoundref="dict_8h" startline="243">VoidToken</references>
+        <referencedby refid="classSLIInterpreter_1a1f76b68c473ace082511ddaa9eca5733" compoundref="interpret_8cc" startline="651" endline="715">SLIInterpreter::print_error</referencedby>
+        <referencedby refid="group__SLIError_1gaf0e0e8a833e50337078b8dd48df80a53" compoundref="interpret_8cc" startline="718" endline="734">SLIInterpreter::raiseagain</referencedby>
+        <referencedby refid="group__SLIError_1ga098156501ff35f206a32d389bf262e05" compoundref="interpret_8cc" startline="613" endline="648">SLIInterpreter::raiseerror</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionary_1a68e415a454294d02eb41ca1e2c21b50b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+        <definition>const Token &amp; Dictionary::lookup2</definition>
+        <argsstring>(const Name &amp;n) const</argsstring>
+        <name>lookup2</name>
+        <qualifiedname>Dictionary::lookup2</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+<para>lookup a name in the dictionary. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If the name is not found an <ref refid="classUndefinedName" kindref="compound">UndefinedName</ref> exception is thrown. lookup2 is the preferred way to retrieve entries from the dictionary. <simplesect kind="note"><para>The token returned should <bold>always</bold> be stored as a <computeroutput>const &amp;</computeroutput>, so that the control flag for dictionary read-out is set on the <ref refid="classToken" kindref="compound">Token</ref> in the dictionary, not its copy. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="117" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" bodystart="261" bodyend="272"/>
+        <references refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" compoundref="name_8cc" startline="72" endline="75">Name::toString</references>
+      </memberdef>
+      <memberdef kind="function" id="classDictionary_1ae4575df896e8264944dd4d97e2fa4248" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Dictionary::known</definition>
+        <argsstring>(const Name &amp;) const</argsstring>
+        <name>known</name>
+        <qualifiedname>Dictionary::known</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <defname>n</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="118" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" bodystart="275" bodyend="286"/>
+        <referencedby refid="classSLIInterpreter_1a1d4268e9a4b8064b77e12fba24d15620" compoundref="interpret_8cc" startline="1313" endline="1363">SLIInterpreter::execute_</referencedby>
+        <referencedby refid="classSLIInterpreter_1a2e551e6c11e2e8158d163e2b5996c33d" compoundref="interpret_8cc" startline="1260" endline="1310">SLIInterpreter::execute_debug_</referencedby>
+        <referencedby refid="classSLIInterpreter_1a1f76b68c473ace082511ddaa9eca5733" compoundref="interpret_8cc" startline="651" endline="715">SLIInterpreter::print_error</referencedby>
+        <referencedby refid="group__SLIError_1gaf0e0e8a833e50337078b8dd48df80a53" compoundref="interpret_8cc" startline="718" endline="734">SLIInterpreter::raiseagain</referencedby>
+        <referencedby refid="classSLIInterpreter_1a46a16463860bc84385c4b242778e8caa" compoundref="interpret_8cc" startline="759" endline="771">SLIInterpreter::terminate</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionary_1a583a2f5e8b6457afe23e76193d82ae51" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Dictionary::known_but_not_accessed</definition>
+        <argsstring>(const Name &amp;) const</argsstring>
+        <name>known_but_not_accessed</name>
+        <qualifiedname>Dictionary::known_but_not_accessed</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <defname>n</defname>
+        </param>
+        <briefdescription>
+<para>Returns true if name is known but token has not been accessed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="121" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" bodystart="289" bodyend="300"/>
+      </memberdef>
+      <memberdef kind="function" id="classDictionary_1a94179a80d5b496321d68976e11dea85b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+        <definition>Token &amp; Dictionary::insert</definition>
+        <argsstring>(const Name &amp;n, const Token &amp;t)</argsstring>
+        <name>insert</name>
+        <qualifiedname>Dictionary::insert</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="123" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" bodystart="303" bodyend="306"/>
+        <referencedby refid="classSLIInterpreter_1a1d4268e9a4b8064b77e12fba24d15620" compoundref="interpret_8cc" startline="1313" endline="1363">SLIInterpreter::execute_</referencedby>
+        <referencedby refid="classSLIInterpreter_1a2e551e6c11e2e8158d163e2b5996c33d" compoundref="interpret_8cc" startline="1260" endline="1310">SLIInterpreter::execute_debug_</referencedby>
+        <referencedby refid="classProcesses_1a61d91f79c5cb92e4c0ce6aa4bc4eb412" compoundref="processes_8cc" startline="161" endline="264">Processes::init</referencedby>
+        <referencedby refid="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa" compoundref="sliregexp_8cc" startline="62" endline="93">RegexpModule::init</referencedby>
+        <referencedby refid="group__SLIError_1gaf0e0e8a833e50337078b8dd48df80a53" compoundref="interpret_8cc" startline="718" endline="734">SLIInterpreter::raiseagain</referencedby>
+        <referencedby refid="classSLIInterpreter_1a64a24809b92a555db7b56629b9b7267e" compoundref="interpret_8cc" startline="588" endline="610">SLIInterpreter::raiseerror</referencedby>
+        <referencedby refid="group__SLIError_1gab1f76ff8c7308acedfa1017ffe2c7de4" compoundref="interpret_8cc" startline="737" endline="744">SLIInterpreter::raisesignal</referencedby>
+        <referencedby refid="classSLIInterpreter_1ad5e9a77afa0308977e0b1f13b27f3d46" compoundref="interpret_8cc" startline="358" endline="488">SLIInterpreter::SLIInterpreter</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionary_1a9ce327c0a94abb3a166d805e74b8af57" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+        <definition>Token &amp; Dictionary::insert_move</definition>
+        <argsstring>(const Name &amp;, Token &amp;)</argsstring>
+        <name>insert_move</name>
+        <qualifiedname>Dictionary::insert_move</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <defname>n</defname>
+        </param>
+        <param>
+          <type><ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <defname>t</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="124" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" bodystart="331" bodyend="336"/>
+        <references refid="classToken_1a2f61f1702fa6214de27ccff368df11f5" compoundref="token_8h" startline="232" endline="240">Token::move</references>
+        <referencedby refid="group__SLIError_1ga098156501ff35f206a32d389bf262e05" compoundref="interpret_8cc" startline="613" endline="648">SLIInterpreter::raiseerror</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionary_1ac2e425e8074008a20138010e513023b7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Dictionary::remove</definition>
+        <argsstring>(const Name &amp;n)</argsstring>
+        <name>remove</name>
+        <qualifiedname>Dictionary::remove</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+<para>Remove entry from dictionary. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="127" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.cc" bodystart="129" bodyend="136"/>
+      </memberdef>
+      <memberdef kind="function" id="classDictionary_1a10f3c08248f5b078d4eb523aab2aabfd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+        <definition>const Token &amp; Dictionary::operator[]</definition>
+        <argsstring>(const Name &amp;) const</argsstring>
+        <name>operator[]</name>
+        <qualifiedname>Dictionary::operator[]</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <defname>n</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="129" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" bodystart="310" bodyend="321"/>
+        <references refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" compoundref="name_8cc" startline="72" endline="75">Name::toString</references>
+        <referencedby refid="classDictionary_1aa538d8a10cdf08e1a6e3604b497e6304" compoundref="dict_8cc" startline="43" endline="46">operator[]</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionary_1a95c46b8638f07bf47a2d3a6933acf197" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+        <definition>Token &amp; Dictionary::operator[]</definition>
+        <argsstring>(const Name &amp;)</argsstring>
+        <name>operator[]</name>
+        <qualifiedname>Dictionary::operator[]</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <defname>n</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="130" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" bodystart="325" bodyend="328"/>
+      </memberdef>
+      <memberdef kind="function" id="classDictionary_1aa538d8a10cdf08e1a6e3604b497e6304" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+        <definition>const Token &amp; Dictionary::operator[]</definition>
+        <argsstring>(const char *) const</argsstring>
+        <name>operator[]</name>
+        <qualifiedname>Dictionary::operator[]</qualifiedname>
+        <param>
+          <type>const char *</type>
+          <defname>n</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="131" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.cc" bodystart="43" bodyend="46"/>
+        <references refid="classDictionary_1a10f3c08248f5b078d4eb523aab2aabfd" compoundref="dict_8h" startline="310" endline="321">operator[]</references>
+      </memberdef>
+      <memberdef kind="function" id="classDictionary_1a27d1e3406daa9907edc2fbdd8dc01eb5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+        <definition>Token &amp; Dictionary::operator[]</definition>
+        <argsstring>(const char *)</argsstring>
+        <name>operator[]</name>
+        <qualifiedname>Dictionary::operator[]</qualifiedname>
+        <param>
+          <type>const char *</type>
+          <defname>n</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="132" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.cc" bodystart="49" bodyend="52"/>
+        <references refid="classDictionary_1a10f3c08248f5b078d4eb523aab2aabfd" compoundref="dict_8h" startline="310" endline="321">operator[]</references>
+      </memberdef>
+      <memberdef kind="function" id="classDictionary_1ab45dc9793957e562ccc104150fc7af8f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Dictionary::empty</definition>
+        <argsstring>() const</argsstring>
+        <name>empty</name>
+        <qualifiedname>Dictionary::empty</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="135" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" bodystart="135" bodyend="138"/>
+      </memberdef>
+      <memberdef kind="function" id="classDictionary_1ac07f711d1df82d8461e8a72fbf393d21" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Dictionary::info</definition>
+        <argsstring>(std::ostream &amp;) const</argsstring>
+        <name>info</name>
+        <qualifiedname>Dictionary::info</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <defname>out</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="140" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.cc" bodystart="77" bodyend="103"/>
+      </memberdef>
+      <memberdef kind="function" id="classDictionary_1ae5012aed84fd11da78a7fdaf514d4ed3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Dictionary::operator==</definition>
+        <argsstring>(const Dictionary &amp;d) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>Dictionary::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="classDictionary" kindref="compound">Dictionary</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="143" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" bodystart="143" bodyend="146"/>
+      </memberdef>
+      <memberdef kind="function" id="classDictionary_1a3c26795421861bc5ab7e14cab352a97d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Dictionary::add_dict</definition>
+        <argsstring>(const std::string &amp;, SLIInterpreter &amp;)</argsstring>
+        <name>add_dict</name>
+        <qualifiedname>Dictionary::add_dict</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <defname>target</defname>
+        </param>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> &amp;</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+<para>Add the contents of this dictionary to another. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The target dictionary is given by names and must be retrieved via the interpreter. <xrefsect id="todo_1_todo000016"><xreftitle>Todo</xreftitle><xrefdescription><para>Allow for free formatting of target dictionary entries via functor, and add traits to allow duplicates. </para>
+</xrefdescription></xrefsect><simplesect kind="see"><para><ref refid="classDictionary_1a906120ec1c4f9ecc2fe449c39647862e" kindref="member">remove_dict</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="156" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.cc" bodystart="106" bodyend="126"/>
+        <references refid="classSLIInterpreter_1a96c3eff127bf8a56860f05ff199cb6ff" compoundref="interpret_8cc" startline="311" endline="314">SLIInterpreter::baselookup</references>
+      </memberdef>
+      <memberdef kind="function" id="classDictionary_1a906120ec1c4f9ecc2fe449c39647862e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Dictionary::remove_dict</definition>
+        <argsstring>(const std::string &amp;, SLIInterpreter &amp;)</argsstring>
+        <name>remove_dict</name>
+        <qualifiedname>Dictionary::remove_dict</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <defname>target</defname>
+        </param>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> &amp;</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+<para>Remove entries found in another dictionary from this. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="classDictionary_1a3c26795421861bc5ab7e14cab352a97d" kindref="member">add_dict</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="162" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.cc" bodystart="139" bodyend="155"/>
+        <references refid="classSLIInterpreter_1a96c3eff127bf8a56860f05ff199cb6ff" compoundref="interpret_8cc" startline="311" endline="314">SLIInterpreter::baselookup</references>
+      </memberdef>
+      <memberdef kind="function" id="classDictionary_1a0e7c9604b0bdb71c173e53f0bcccfe30" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Dictionary::clear_access_flags</definition>
+        <argsstring>()</argsstring>
+        <name>clear_access_flags</name>
+        <qualifiedname>Dictionary::clear_access_flags</qualifiedname>
+        <briefdescription>
+<para>Clear access flags on all dictionary elements. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Flags for nested dictionaries are cleared recursively. <simplesect kind="see"><para><ref refid="classDictionary_1af0bbd39cf217d6b51030f88eeac2705f" kindref="member">all_accessed()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="169" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.cc" bodystart="158" bodyend="178"/>
+      </memberdef>
+      <memberdef kind="function" id="classDictionary_1af0bbd39cf217d6b51030f88eeac2705f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Dictionary::all_accessed</definition>
+        <argsstring>(std::string &amp;missed) const</argsstring>
+        <name>all_accessed</name>
+        <qualifiedname>Dictionary::all_accessed</qualifiedname>
+        <param>
+          <type>std::string &amp;</type>
+          <declname>missed</declname>
+        </param>
+        <briefdescription>
+<para>Check whether all elements have been accessed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Checks nested dictionaries recursively. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>std::string&amp;</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>contains string with names of non-accessed entries </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if all dictionary elements have been accessed </para>
+</simplesect>
+<simplesect kind="note"><para>this is just a wrapper, <ref refid="classDictionary_1a4cb97b1d48370996bab4a9c6817ec0fe" kindref="member">all_accessed_()</ref> does the work, hides recursion </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="classDictionary_1a0e7c9604b0bdb71c173e53f0bcccfe30" kindref="member">clear_access_flags()</ref>, <ref refid="classDictionary_1a4cb97b1d48370996bab4a9c6817ec0fe" kindref="member">all_accessed_()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="181" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" bodystart="181" bodyend="184"/>
+        <references refid="classDictionary_1a4cb97b1d48370996bab4a9c6817ec0fe" compoundref="dict_8cc" startline="181" endline="206">all_accessed_</references>
+      </memberdef>
+      <memberdef kind="function" id="classDictionary_1a035abf800f0d6db67a73b59c411e6ace" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Dictionary::add_dictstack_reference</definition>
+        <argsstring>()</argsstring>
+        <name>add_dictstack_reference</name>
+        <qualifiedname>Dictionary::add_dictstack_reference</qualifiedname>
+        <briefdescription>
+<para>This function is called when a dictionary is pushed to the dictionary stack. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The dictioray stack must keep track about which dictioraries are on the dictionary stack. If a dictionary is modified and it is on the dictionary stack, the cache of the dictionary stack must be adjusted. This is e.g. the case for the systemdict or the errordict. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="204" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" bodystart="204" bodyend="207"/>
+        <references refid="classDictionary_1aeae2c7a4f5ff9fae7abca41b1ea0042c" compoundref="dict_8h" startline="241">refs_on_dictstack_</references>
+      </memberdef>
+      <memberdef kind="function" id="classDictionary_1ab002288fb70b83c59be633ed57627775" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Dictionary::remove_dictstack_reference</definition>
+        <argsstring>()</argsstring>
+        <name>remove_dictstack_reference</name>
+        <qualifiedname>Dictionary::remove_dictstack_reference</qualifiedname>
+        <briefdescription>
+<para>This function is called when the dictionary is popped from the dictionary stack. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="214" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" bodystart="214" bodyend="217"/>
+        <references refid="classDictionary_1aeae2c7a4f5ff9fae7abca41b1ea0042c" compoundref="dict_8h" startline="241">refs_on_dictstack_</references>
+      </memberdef>
+      <memberdef kind="function" id="classDictionary_1aa079d2adf35857bb225b478453e68906" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Dictionary::is_on_dictstack</definition>
+        <argsstring>() const</argsstring>
+        <name>is_on_dictstack</name>
+        <qualifiedname>Dictionary::is_on_dictstack</qualifiedname>
+        <briefdescription>
+<para>Returns true, if the dictionary has references on the dictionary stack. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="223" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" bodystart="223" bodyend="226"/>
+        <references refid="classDictionary_1aeae2c7a4f5ff9fae7abca41b1ea0042c" compoundref="dict_8h" startline="241">refs_on_dictstack_</references>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="friend">
+      <memberdef kind="friend" id="classDictionary_1a91a9c8b357b797040eb0ea7581ab9881" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream &amp; operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;, const Dictionary &amp;)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <qualifiedname>Dictionary::operator&lt;&lt;</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <defname>out</defname>
+        </param>
+        <param>
+          <type>const <ref refid="classDictionary" kindref="compound">Dictionary</ref> &amp;</type>
+          <defname>d</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="186" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.cc" bodystart="209" bodyend="220"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classDictionary_1a4cb97b1d48370996bab4a9c6817ec0fe" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Dictionary::all_accessed_</definition>
+        <argsstring>(std::string &amp;, std::string prefix=std::string()) const</argsstring>
+        <name>all_accessed_</name>
+        <qualifiedname>Dictionary::all_accessed_</qualifiedname>
+        <param>
+          <type>std::string &amp;</type>
+          <defname>missed</defname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>prefix</declname>
+          <defval>std::string()</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="242" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.cc" bodystart="181" bodyend="206"/>
+        <referencedby refid="classDictionary_1af0bbd39cf217d6b51030f88eeac2705f" compoundref="dict_8h" startline="181" endline="184">all_accessed</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A class that associates names and tokens. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>Dictionary</label>
+        <link refid="classDictionary"/>
+        <childnode refid="2" relation="private-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>TokenMap</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="4">
+        <label>Datum</label>
+        <link refid="classDatum"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>type</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>action</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Dictionary</label>
+        <link refid="classDictionary"/>
+        <childnode refid="2" relation="private-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>VoidToken</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Name</label>
+        <link refid="className"/>
+      </node>
+      <node id="7">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="5">
+        <label>SLIType</label>
+        <link refid="classSLIType"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>defaultaction</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Token</label>
+        <link refid="classToken"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>p</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>TokenMap</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" line="48" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dict.h" bodystart="49" bodyend="244"/>
+    <listofallmembers>
+      <member refid="classDictionary_1a3c26795421861bc5ab7e14cab352a97d" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>add_dict</name></member>
+      <member refid="classDictionary_1a035abf800f0d6db67a73b59c411e6ace" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>add_dictstack_reference</name></member>
+      <member refid="classDictionary_1af0bbd39cf217d6b51030f88eeac2705f" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>all_accessed</name></member>
+      <member refid="classDictionary_1a4cb97b1d48370996bab4a9c6817ec0fe" prot="private" virt="non-virtual"><scope>Dictionary</scope><name>all_accessed_</name></member>
+      <member refid="classDictionary_1a2d54b74d14335da04ad9d64e49536d9a" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>clear</name></member>
+      <member refid="classDictionary_1a0e7c9604b0bdb71c173e53f0bcccfe30" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>clear_access_flags</name></member>
+      <member refid="classDictionary_1aecc5dd681aa96dd75d10d690b14d5ac9" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>const_iterator</name></member>
+      <member refid="classDictionary_1aee8d612bc9d323c38faba045ba384b8b" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>Dictionary</name></member>
+      <member refid="classDictionary_1a2488ccf03c1226ec191b2dac3fd252a4" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>Dictionary</name></member>
+      <member refid="classDictionary_1ab45dc9793957e562ccc104150fc7af8f" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>empty</name></member>
+      <member refid="classDictionary_1ac07f711d1df82d8461e8a72fbf393d21" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>info</name></member>
+      <member refid="classDictionary_1a94179a80d5b496321d68976e11dea85b" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>insert</name></member>
+      <member refid="classDictionary_1a9ce327c0a94abb3a166d805e74b8af57" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>insert_move</name></member>
+      <member refid="classDictionary_1aa079d2adf35857bb225b478453e68906" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>is_on_dictstack</name></member>
+      <member refid="classDictionary_1ae4575df896e8264944dd4d97e2fa4248" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>known</name></member>
+      <member refid="classDictionary_1a583a2f5e8b6457afe23e76193d82ae51" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>known_but_not_accessed</name></member>
+      <member refid="classDictionary_1a93d377a487a78812b2f626c843306695" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>lookup</name></member>
+      <member refid="classDictionary_1a68e415a454294d02eb41ca1e2c21b50b" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>lookup2</name></member>
+      <member refid="classDictionary_1a91a9c8b357b797040eb0ea7581ab9881" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>operator&lt;&lt;</name></member>
+      <member refid="classDictionary_1ae5012aed84fd11da78a7fdaf514d4ed3" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>operator==</name></member>
+      <member refid="classDictionary_1a10f3c08248f5b078d4eb523aab2aabfd" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>operator[]</name></member>
+      <member refid="classDictionary_1a95c46b8638f07bf47a2d3a6933acf197" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>operator[]</name></member>
+      <member refid="classDictionary_1aa538d8a10cdf08e1a6e3604b497e6304" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>operator[]</name></member>
+      <member refid="classDictionary_1a27d1e3406daa9907edc2fbdd8dc01eb5" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>operator[]</name></member>
+      <member refid="classDictionary_1aeae2c7a4f5ff9fae7abca41b1ea0042c" prot="private" virt="non-virtual"><scope>Dictionary</scope><name>refs_on_dictstack_</name></member>
+      <member refid="classDictionary_1ac2e425e8074008a20138010e513023b7" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>remove</name></member>
+      <member refid="classDictionary_1a906120ec1c4f9ecc2fe449c39647862e" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>remove_dict</name></member>
+      <member refid="classDictionary_1ab002288fb70b83c59be633ed57627775" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>remove_dictstack_reference</name></member>
+      <member refid="classDictionary_1aae99e575d88591825abd532f39ce92c5" prot="private" virt="non-virtual"><scope>Dictionary</scope><name>VoidToken</name></member>
+      <member refid="classDictionary_1aa36f24073d9c9001768517aa2322cb82" prot="public" virt="non-virtual"><scope>Dictionary</scope><name>~Dictionary</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

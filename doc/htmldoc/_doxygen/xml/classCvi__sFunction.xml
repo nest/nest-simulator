@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classCvi__sFunction" kind="class" language="C++" prot="public">
+    <compoundname>Cvi_sFunction</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="slidata_8h" local="no">slidata.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classCvi__sFunction_1a4216271c4155fbceba366ff4b9148e6a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Cvi_sFunction::Cvi_sFunction</definition>
+        <argsstring>()</argsstring>
+        <name>Cvi_sFunction</name>
+        <qualifiedname>Cvi_sFunction::Cvi_sFunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidata.h" line="494" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidata.h" bodystart="494" bodyend="496"/>
+      </memberdef>
+      <memberdef kind="function" id="classCvi__sFunction_1a9ae5d4fc2d8670968d34f8f72bc90aea" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void Cvi_sFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>Cvi_sFunction::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidata.h" line="497" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidata.cc" bodystart="1367" bodyend="1376"/>
+        <references refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" compoundref="token_8h" startline="360" endline="364">Token::datum</references>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" compoundref="tokenstack_8h" startline="184" endline="187">TokenStack::load</references>
+        <references refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" compoundref="interpret_8h" startline="250">SLIInterpreter::OStack</references>
+        <references refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" compoundref="tokenstack_8h" startline="96" endline="99">TokenStack::pop</references>
+        <references refid="classToken_1aa787cbbbbb9c31a2ccec9cf7c0421785" compoundref="token_8h" startline="326" endline="329">Token::swap</references>
+        <references refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" compoundref="tokenstack_8h" startline="116" endline="119">TokenStack::top</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>@BeginDocumentation <ref refid="className" kindref="compound">Name</ref>: cvi_s - convert string to integer </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Synopsis: string cvi_s -&gt; integer</para>
+<para>Description: This is a wrapper to the standard C &quot;atoi&quot;-routine. If cvi_s is executed with a string that contains letters 0 is returned.</para>
+<para>Examples: (23) cvi_s -&gt; 23 (23.5) cvi_s -&gt; 23 (NEST) cvi_s -&gt; 0</para>
+<para>Diagnostics: No errors are raised. In case of impossible conversion, zero is returned.</para>
+<para>Bugs: -</para>
+<para>Author: R Kupper</para>
+<para>FirstVersion: Nov 05 1999</para>
+<para>SeeAlso: cvi, cvd, cvs </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>Cvi_sFunction</label>
+        <link refid="classCvi__sFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>Cvi_sFunction</label>
+        <link refid="classCvi__sFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidata.h" line="491" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidata.h" bodystart="492" bodyend="498"/>
+    <listofallmembers>
+      <member refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba" prot="public" virt="virtual"><scope>Cvi_sFunction</scope><name>backtrace</name></member>
+      <member refid="classCvi__sFunction_1a4216271c4155fbceba366ff4b9148e6a" prot="public" virt="non-virtual"><scope>Cvi_sFunction</scope><name>Cvi_sFunction</name></member>
+      <member refid="classCvi__sFunction_1a9ae5d4fc2d8670968d34f8f72bc90aea" prot="public" virt="virtual"><scope>Cvi_sFunction</scope><name>execute</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>Cvi_sFunction</scope><name>SLIFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>Cvi_sFunction</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

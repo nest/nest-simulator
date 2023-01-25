@@ -1,0 +1,453 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="slistartup_8h" kind="file" language="C++">
+    <compoundname>slistartup.h</compoundname>
+    <includes local="no">string</includes>
+    <includes local="yes">config.h</includes>
+    <includes local="yes">dirent.h</includes>
+    <includes local="yes">errno.h</includes>
+    <includes local="yes">compose.hpp</includes>
+    <includes refid="name_8h" local="yes">name.h</includes>
+    <includes refid="slifunction_8h" local="yes">slifunction.h</includes>
+    <includes refid="slimodule_8h" local="yes">slimodule.h</includes>
+    <includes refid="token_8h" local="yes">token.h</includes>
+    <includedby refid="neststartup_8cpp" local="yes">neststartup.cpp</includedby>
+    <includedby refid="puresli_8cc" local="yes">puresli.cc</includedby>
+    <includedby refid="slistartup_8cc" local="yes">slistartup.cc</includedby>
+    <incdepgraph>
+      <node id="18">
+        <label>datum.h</label>
+        <link refid="datum_8h"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>name.h</label>
+        <link refid="name_8h"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>slifunction.h</label>
+        <link refid="slifunction_8h"/>
+      </node>
+      <node id="13">
+        <label>slimodule.h</label>
+        <link refid="slimodule_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>slistartup.h</label>
+        <link refid="slistartup_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>slitype.h</label>
+        <link refid="slitype_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>token.h</label>
+        <link refid="token_8h"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>cassert</label>
+      </node>
+      <node id="6">
+        <label>compose.hpp</label>
+      </node>
+      <node id="3">
+        <label>config.h</label>
+      </node>
+      <node id="9">
+        <label>deque</label>
+      </node>
+      <node id="4">
+        <label>dirent.h</label>
+      </node>
+      <node id="5">
+        <label>errno.h</label>
+      </node>
+      <node id="15">
+        <label>iomanip</label>
+      </node>
+      <node id="10">
+        <label>iostream</label>
+      </node>
+      <node id="11">
+        <label>map</label>
+      </node>
+      <node id="2">
+        <label>string</label>
+      </node>
+      <node id="16">
+        <label>typeinfo</label>
+      </node>
+      <node id="17">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>neststartup.cpp</label>
+        <link refid="neststartup_8cpp"/>
+      </node>
+      <node id="3">
+        <label>puresli.cc</label>
+        <link refid="puresli_8cc"/>
+      </node>
+      <node id="4">
+        <label>slistartup.cc</label>
+        <link refid="slistartup_8cc"/>
+      </node>
+      <node id="1">
+        <label>slistartup.h</label>
+        <link refid="slistartup_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classSLIStartup" prot="public">SLIStartup</innerclass>
+    <innerclass refid="classSLIStartup_1_1GetenvFunction" prot="public">SLIStartup::GetenvFunction</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="slistartup_8h_1a5dbdd8b9297384a8f8e884d21d50e660" prot="public" static="no">
+        <name>EXITCODE_UNKNOWN_ERROR</name>
+        <initializer>10</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="44" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="slistartup_8h_1ae1da049f30cedb81d73564c5c42f52f5" prot="public" static="no">
+        <name>EXITCODE_USERABORT</name>
+        <initializer>15</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="45" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="slistartup_8h_1abe78d3d8ad8a455cc14180513d76e58e" prot="public" static="no">
+        <name>EXITCODE_EXCEPTION</name>
+        <initializer>125</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="46" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="slistartup_8h_1ae76bdeeafe48a992baed47f9c5753946" prot="public" static="no">
+        <name>EXITCODE_SCRIPTERROR</name>
+        <initializer>126</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="47" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="slistartup_8h_1a0fb1b540205407734c38f39fa121e9ac" prot="public" static="no">
+        <name>EXITCODE_FATAL</name>
+        <initializer>127</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="48" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="slistartup_8h_1a3e2bd26394f1c95d27390aa1b4c8caab" prot="public" static="no">
+        <name>EXITCODE_SKIPPED</name>
+        <initializer>200</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="52" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="slistartup_8h_1a6b90117ebeb98e4245f5dd9e3d79a4ec" prot="public" static="no">
+        <name>EXITCODE_SKIPPED_NO_MPI</name>
+        <initializer>201</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="53" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="slistartup_8h_1a5ac746927f23a300c7a600b4608635f1" prot="public" static="no">
+        <name>EXITCODE_SKIPPED_HAVE_MPI</name>
+        <initializer>202</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="54" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="slistartup_8h_1ad30ab748bec503c449cbb01bba36feeb" prot="public" static="no">
+        <name>EXITCODE_SKIPPED_NO_THREADING</name>
+        <initializer>203</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="55" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="slistartup_8h_1ad49daac461500708544e91077e2f4a21" prot="public" static="no">
+        <name>EXITCODE_SKIPPED_NO_GSL</name>
+        <initializer>204</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="56" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="slistartup_8h_1a3fa2b2e3dc04ce652f698cd820eaa5c5" prot="public" static="no">
+        <name>EXITCODE_SKIPPED_NO_MUSIC</name>
+        <initializer>205</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="57" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/><sp/>slistartup.h</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/><sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>NEST.</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="6"><highlight class="comment"><sp/>*<sp/><sp/>Copyright<sp/>(C)<sp/>2004<sp/>The<sp/>NEST<sp/>Initiative</highlight></codeline>
+<codeline lineno="7"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="8"><highlight class="comment"><sp/>*<sp/><sp/>NEST<sp/>is<sp/>free<sp/>software:<sp/>you<sp/>can<sp/>redistribute<sp/>it<sp/>and/or<sp/>modify</highlight></codeline>
+<codeline lineno="9"><highlight class="comment"><sp/>*<sp/><sp/>it<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>the<sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>as<sp/>published<sp/>by</highlight></codeline>
+<codeline lineno="10"><highlight class="comment"><sp/>*<sp/><sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>either<sp/>version<sp/>2<sp/>of<sp/>the<sp/>License,<sp/>or</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*<sp/><sp/>(at<sp/>your<sp/>option)<sp/>any<sp/>later<sp/>version.</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="13"><highlight class="comment"><sp/>*<sp/><sp/>NEST<sp/>is<sp/>distributed<sp/>in<sp/>the<sp/>hope<sp/>that<sp/>it<sp/>will<sp/>be<sp/>useful,</highlight></codeline>
+<codeline lineno="14"><highlight class="comment"><sp/>*<sp/><sp/>but<sp/>WITHOUT<sp/>ANY<sp/>WARRANTY;<sp/>without<sp/>even<sp/>the<sp/>implied<sp/>warranty<sp/>of</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*<sp/><sp/>MERCHANTABILITY<sp/>or<sp/>FITNESS<sp/>FOR<sp/>A<sp/>PARTICULAR<sp/>PURPOSE.<sp/><sp/>See<sp/>the</highlight></codeline>
+<codeline lineno="16"><highlight class="comment"><sp/>*<sp/><sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>for<sp/>more<sp/>details.</highlight></codeline>
+<codeline lineno="17"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="18"><highlight class="comment"><sp/>*<sp/><sp/>You<sp/>should<sp/>have<sp/>received<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>GNU<sp/>General<sp/>Public<sp/>License</highlight></codeline>
+<codeline lineno="19"><highlight class="comment"><sp/>*<sp/><sp/>along<sp/>with<sp/>NEST.<sp/><sp/>If<sp/>not,<sp/>see<sp/>&lt;http://www.gnu.org/licenses/&gt;.</highlight></codeline>
+<codeline lineno="20"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="21"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>SLISTARTUP_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SLISTARTUP_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="comment">//<sp/>C++<sp/>includes:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Generated<sp/>includes:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;config.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;dirent.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;errno.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Includes<sp/>from<sp/>libnestutil:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;compose.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Includes<sp/>from<sp/>sli:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="name_8h" kindref="compound">name.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="slifunction_8h" kindref="compound">slifunction.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="slimodule_8h" kindref="compound">slimodule.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="token_8h" kindref="compound">token.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Exit<sp/>codes</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="slistartup_8h_1a5dbdd8b9297384a8f8e884d21d50e660" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>EXITCODE_UNKNOWN_ERROR<sp/>10</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="slistartup_8h_1ae1da049f30cedb81d73564c5c42f52f5" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>EXITCODE_USERABORT<sp/>15</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="slistartup_8h_1abe78d3d8ad8a455cc14180513d76e58e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>EXITCODE_EXCEPTION<sp/>125</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="slistartup_8h_1ae76bdeeafe48a992baed47f9c5753946" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>EXITCODE_SCRIPTERROR<sp/>126</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="slistartup_8h_1a0fb1b540205407734c38f39fa121e9ac" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>EXITCODE_FATAL<sp/>127</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="comment">//<sp/>The<sp/>range<sp/>200-215<sp/>is<sp/>reserved<sp/>for<sp/>test<sp/>skipping<sp/>exitcodes.<sp/>Any<sp/>new<sp/>codes<sp/>must</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight><highlight class="comment">//<sp/>also<sp/>be<sp/>added<sp/>to<sp/>testsuite/do_tests_sh.in.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="slistartup_8h_1a3e2bd26394f1c95d27390aa1b4c8caab" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>EXITCODE_SKIPPED<sp/>200</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="slistartup_8h_1a6b90117ebeb98e4245f5dd9e3d79a4ec" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>EXITCODE_SKIPPED_NO_MPI<sp/>201</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54" refid="slistartup_8h_1a5ac746927f23a300c7a600b4608635f1" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>EXITCODE_SKIPPED_HAVE_MPI<sp/>202</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="slistartup_8h_1ad30ab748bec503c449cbb01bba36feeb" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>EXITCODE_SKIPPED_NO_THREADING<sp/>203</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="slistartup_8h_1ad49daac461500708544e91077e2f4a21" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>EXITCODE_SKIPPED_NO_GSL<sp/>204</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="slistartup_8h_1a3fa2b2e3dc04ce652f698cd820eaa5c5" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>EXITCODE_SKIPPED_NO_MUSIC<sp/>205</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60" refid="classSLIStartup" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classSLIStartup" kindref="compound">SLIStartup</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classSLIModule" kindref="compound">SLIModule</ref></highlight></codeline>
+<codeline lineno="61"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="62" refid="classSLIStartup_1a1169d7801230bba24106627fd4127ac1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="classSLIStartup_1a1169d7801230bba24106627fd4127ac1" kindref="member">sliprefix</ref>;</highlight></codeline>
+<codeline lineno="63" refid="classSLIStartup_1ab2ee2d2cdbf43b74f59cd89cf6801b53" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="classSLIStartup_1ab2ee2d2cdbf43b74f59cd89cf6801b53" kindref="member">slilibdir</ref>;</highlight></codeline>
+<codeline lineno="64" refid="classSLIStartup_1a7576d07c2929b5d2f7e6a6a568c622e0" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="classSLIStartup_1a7576d07c2929b5d2f7e6a6a568c622e0" kindref="member">slidocdir</ref>;</highlight></codeline>
+<codeline lineno="65" refid="classSLIStartup_1ab3ac92ecd9a793b05f2948e6d20f451d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="classSLIStartup_1ab3ac92ecd9a793b05f2948e6d20f451d" kindref="member">startupfile</ref>;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="classSLIStartup_1a1cedf9540cea01910164e275dedc9f69" refkind="member"><highlight class="normal"><sp/><sp/>std::string<sp/><ref refid="classSLIStartup_1a1cedf9540cea01910164e275dedc9f69" kindref="member">find_startup_file</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/>std::string<sp/><ref refid="classSLIStartup_1a796ae44bba3b2305694058b1b7a2a696" kindref="member">getenv</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="classSLIStartup_1aadc910552230723ce33780901cbd0bb3" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classToken" kindref="compound">Token</ref><sp/><ref refid="classSLIStartup_1aadc910552230723ce33780901cbd0bb3" kindref="member">commandline_args_</ref>;</highlight></codeline>
+<codeline lineno="71" refid="classSLIStartup_1acdd68dd3527ac8af99436975a473b173" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classSLIStartup_1acdd68dd3527ac8af99436975a473b173" kindref="member">verbosity_</ref>;</highlight></codeline>
+<codeline lineno="72" refid="classSLIStartup_1a9db4914e583c79261d5c125a3c149fcf" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classSLIStartup_1a9db4914e583c79261d5c125a3c149fcf" kindref="member">debug_</ref>;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="75" refid="classSLIStartup_1a5952255add952ee2446b290c9e25e170" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a5952255add952ee2446b290c9e25e170" kindref="member">argv_name</ref>;</highlight></codeline>
+<codeline lineno="76" refid="classSLIStartup_1ad2318b1d297b31c191075ea50db1d66e" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1ad2318b1d297b31c191075ea50db1d66e" kindref="member">version_name</ref>;</highlight></codeline>
+<codeline lineno="77" refid="classSLIStartup_1ab7eace7f6ddac72671dc2bee5d7f7343" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1ab7eace7f6ddac72671dc2bee5d7f7343" kindref="member">exitcode_name</ref>;</highlight></codeline>
+<codeline lineno="78" refid="classSLIStartup_1a871b67b4516dcf1ce8107447700aa959" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a871b67b4516dcf1ce8107447700aa959" kindref="member">prgbuilt_name</ref>;</highlight></codeline>
+<codeline lineno="79" refid="classSLIStartup_1a4b67f32da2b0255649b626a6625bf919" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a4b67f32da2b0255649b626a6625bf919" kindref="member">prefix_name</ref>;</highlight></codeline>
+<codeline lineno="80" refid="classSLIStartup_1a7f6608161044c31fd13f7bae03497937" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a7f6608161044c31fd13f7bae03497937" kindref="member">prgdatadir_name</ref>;</highlight></codeline>
+<codeline lineno="81" refid="classSLIStartup_1a47381112131f550d24f4f3af33751512" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a47381112131f550d24f4f3af33751512" kindref="member">prgdocdir_name</ref>;</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83" refid="classSLIStartup_1a64e096849a6af99fc61a5089ffc85b53" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a64e096849a6af99fc61a5089ffc85b53" kindref="member">host_name</ref>;</highlight></codeline>
+<codeline lineno="84" refid="classSLIStartup_1a23d1acf325f26e32e3f78d411235f321" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a23d1acf325f26e32e3f78d411235f321" kindref="member">hostos_name</ref>;</highlight></codeline>
+<codeline lineno="85" refid="classSLIStartup_1a5e44d0cb720b95de72d0bb815a3ca9f6" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a5e44d0cb720b95de72d0bb815a3ca9f6" kindref="member">hostvendor_name</ref>;</highlight></codeline>
+<codeline lineno="86" refid="classSLIStartup_1a814f91d2ad2db69465b05cc21b061978" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a814f91d2ad2db69465b05cc21b061978" kindref="member">hostcpu_name</ref>;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="classSLIStartup_1a49dacb9532af24070940abd6fe6dca55" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a49dacb9532af24070940abd6fe6dca55" kindref="member">getenv_name</ref>;</highlight></codeline>
+<codeline lineno="89" refid="classSLIStartup_1a01f55b501cf429c79a2e9d50591f33b9" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a01f55b501cf429c79a2e9d50591f33b9" kindref="member">statusdict_name</ref>;</highlight></codeline>
+<codeline lineno="90" refid="classSLIStartup_1a59a1a5150dfa8b8da4a18f8b22ccff26" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a59a1a5150dfa8b8da4a18f8b22ccff26" kindref="member">start_name</ref>;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92" refid="classSLIStartup_1a252dbf82d4cb650bf7bc08731b68c97c" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a252dbf82d4cb650bf7bc08731b68c97c" kindref="member">intsize_name</ref>;</highlight></codeline>
+<codeline lineno="93" refid="classSLIStartup_1aeefccbaaf80c2b548231e8185ed5eb0b" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1aeefccbaaf80c2b548231e8185ed5eb0b" kindref="member">longsize_name</ref>;</highlight></codeline>
+<codeline lineno="94" refid="classSLIStartup_1aaba2511cde216b964a5cf73213b01b0a" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1aaba2511cde216b964a5cf73213b01b0a" kindref="member">havelonglong_name</ref>;</highlight></codeline>
+<codeline lineno="95" refid="classSLIStartup_1a4add1642ab3fcee2bb98f84f9a774c54" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a4add1642ab3fcee2bb98f84f9a774c54" kindref="member">longlongsize_name</ref>;</highlight></codeline>
+<codeline lineno="96" refid="classSLIStartup_1a482e9bc6bd70ee5fedc281696c0d1538" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a482e9bc6bd70ee5fedc281696c0d1538" kindref="member">doublesize_name</ref>;</highlight></codeline>
+<codeline lineno="97" refid="classSLIStartup_1a50e4c00f7b3d946afb7567219ec9c1cd" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a50e4c00f7b3d946afb7567219ec9c1cd" kindref="member">pointersize_name</ref>;</highlight></codeline>
+<codeline lineno="98" refid="classSLIStartup_1afe02015a9264ed3ea29067654bfc694d" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1afe02015a9264ed3ea29067654bfc694d" kindref="member">architecturedict_name</ref>;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100" refid="classSLIStartup_1ab1d1f5a46115dc1e703aac26ea27e008" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1ab1d1f5a46115dc1e703aac26ea27e008" kindref="member">platform_name</ref>;</highlight></codeline>
+<codeline lineno="101" refid="classSLIStartup_1a2f92a515487514b018f1855c3c125aa6" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a2f92a515487514b018f1855c3c125aa6" kindref="member">threading_name</ref>;</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103" refid="classSLIStartup_1a92d72063d3d36be7d07c1549693d3f09" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a92d72063d3d36be7d07c1549693d3f09" kindref="member">have_mpi_name</ref>;</highlight></codeline>
+<codeline lineno="104" refid="classSLIStartup_1a9a391cd219e870a955e2971c062bc092" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a9a391cd219e870a955e2971c062bc092" kindref="member">ismpi_name</ref>;</highlight></codeline>
+<codeline lineno="105" refid="classSLIStartup_1ad3a3c202e292408c3af32f0c7917dcbd" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1ad3a3c202e292408c3af32f0c7917dcbd" kindref="member">have_gsl_name</ref>;</highlight></codeline>
+<codeline lineno="106" refid="classSLIStartup_1a63506f5c4609616030e5344b6bc98982" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a63506f5c4609616030e5344b6bc98982" kindref="member">have_music_name</ref>;</highlight></codeline>
+<codeline lineno="107" refid="classSLIStartup_1a165cea3e05be2f8b5cf8670ae5de7dd3" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a165cea3e05be2f8b5cf8670ae5de7dd3" kindref="member">have_libneurosim_name</ref>;</highlight></codeline>
+<codeline lineno="108" refid="classSLIStartup_1a696c3d239552874bd5529b423afec8c5" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a696c3d239552874bd5529b423afec8c5" kindref="member">have_sionlib_name</ref>;</highlight></codeline>
+<codeline lineno="109" refid="classSLIStartup_1a9b3bdf988dd330a806ac21c157ef7daa" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a9b3bdf988dd330a806ac21c157ef7daa" kindref="member">ndebug_name</ref>;</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111" refid="classSLIStartup_1a0872bd341baccfda0214ecd7b659de65" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a0872bd341baccfda0214ecd7b659de65" kindref="member">mpiexec_name</ref>;</highlight></codeline>
+<codeline lineno="112" refid="classSLIStartup_1a18128b76484ac246c722506d11762f32" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a18128b76484ac246c722506d11762f32" kindref="member">mpiexec_numproc_flag_name</ref>;</highlight></codeline>
+<codeline lineno="113" refid="classSLIStartup_1a1fc4167ffec4bd30bd168e2a06cb977e" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a1fc4167ffec4bd30bd168e2a06cb977e" kindref="member">mpiexec_max_numprocs_name</ref>;</highlight></codeline>
+<codeline lineno="114" refid="classSLIStartup_1aa087299247ec481841f2db2edb75ac45" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1aa087299247ec481841f2db2edb75ac45" kindref="member">mpiexec_preflags_name</ref>;</highlight></codeline>
+<codeline lineno="115" refid="classSLIStartup_1a883e21d58eed66bac41e7683e3ce41d6" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a883e21d58eed66bac41e7683e3ce41d6" kindref="member">mpiexec_postflags_name</ref>;</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117" refid="classSLIStartup_1a610dc1a265f82dcd4d48238fff3b1e6f" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a610dc1a265f82dcd4d48238fff3b1e6f" kindref="member">exitcodes_name</ref>;</highlight></codeline>
+<codeline lineno="118" refid="classSLIStartup_1a9e1b55f76d23811e868a10be8d1ddad7" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a9e1b55f76d23811e868a10be8d1ddad7" kindref="member">exitcode_success_name</ref>;</highlight></codeline>
+<codeline lineno="119" refid="classSLIStartup_1ac8616bfe2908d75e783deee494516071" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1ac8616bfe2908d75e783deee494516071" kindref="member">exitcode_skipped_name</ref>;</highlight></codeline>
+<codeline lineno="120" refid="classSLIStartup_1af50ef49f72112deb6c240bc69c74e1b2" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1af50ef49f72112deb6c240bc69c74e1b2" kindref="member">exitcode_skipped_no_mpi_name</ref>;</highlight></codeline>
+<codeline lineno="121" refid="classSLIStartup_1ace87211637d6f87bd6f6f961c126fab4" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1ace87211637d6f87bd6f6f961c126fab4" kindref="member">exitcode_skipped_have_mpi_name</ref>;</highlight></codeline>
+<codeline lineno="122" refid="classSLIStartup_1a28e339f4009bfc87b19f2e46464ae17e" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a28e339f4009bfc87b19f2e46464ae17e" kindref="member">exitcode_skipped_no_threading_name</ref>;</highlight></codeline>
+<codeline lineno="123" refid="classSLIStartup_1aa5fca4328cd01ff7c3b3856f4fdd695e" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1aa5fca4328cd01ff7c3b3856f4fdd695e" kindref="member">exitcode_skipped_no_gsl_name</ref>;</highlight></codeline>
+<codeline lineno="124" refid="classSLIStartup_1a30e83b4b54aa825130d31a967f1808ee" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a30e83b4b54aa825130d31a967f1808ee" kindref="member">exitcode_skipped_no_music_name</ref>;</highlight></codeline>
+<codeline lineno="125" refid="classSLIStartup_1a7cb30a083b72b2bea7af9ed47c158255" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a7cb30a083b72b2bea7af9ed47c158255" kindref="member">exitcode_scripterror_name</ref>;</highlight></codeline>
+<codeline lineno="126" refid="classSLIStartup_1ab9cf112cd390426181a04a63f5c0b3f9" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1ab9cf112cd390426181a04a63f5c0b3f9" kindref="member">exitcode_abort_name</ref>;</highlight></codeline>
+<codeline lineno="127" refid="classSLIStartup_1a2683cec1197faa6904ef7281a5b8212a" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a2683cec1197faa6904ef7281a5b8212a" kindref="member">exitcode_userabort_name</ref>;</highlight></codeline>
+<codeline lineno="128" refid="classSLIStartup_1ae52e31e90ae4034f1b2aae27ba8d6048" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1ae52e31e90ae4034f1b2aae27ba8d6048" kindref="member">exitcode_segfault_name</ref>;</highlight></codeline>
+<codeline lineno="129" refid="classSLIStartup_1a996ad4e0b2eb4d7ab0d32afccb131e18" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a996ad4e0b2eb4d7ab0d32afccb131e18" kindref="member">exitcode_exception_name</ref>;</highlight></codeline>
+<codeline lineno="130" refid="classSLIStartup_1a23ad6b15459119b74eca605de822b0dc" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a23ad6b15459119b74eca605de822b0dc" kindref="member">exitcode_fatal_name</ref>;</highlight></codeline>
+<codeline lineno="131" refid="classSLIStartup_1a83f2583d432427b18d29a1c6dc6b4305" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1a83f2583d432427b18d29a1c6dc6b4305" kindref="member">exitcode_unknownerror_name</ref>;</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133" refid="classSLIStartup_1aec5eb1e3469c2d4d5cf2fcf621f9ed0c" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classSLIStartup_1aec5eb1e3469c2d4d5cf2fcf621f9ed0c" kindref="member">environment_name</ref>;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135" refid="classSLIStartup_1_1GetenvFunction" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classSLIStartup_1_1GetenvFunction" kindref="compound">GetenvFunction</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classSLIFunction" kindref="compound">SLIFunction</ref></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classSLIStartup_1_1GetenvFunction_1a5f82485ea399b2fbbaa149e01125f636" kindref="member">execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight></codeline>
+<codeline lineno="141" refid="classSLIStartup_1a6279591f04c16a5d467a039e131bfe18" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classSLIStartup_1_1GetenvFunction" kindref="compound">GetenvFunction</ref><sp/><ref refid="classSLIStartup_1a6279591f04c16a5d467a039e131bfe18" kindref="member">getenvfunction</ref>;</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><ref refid="classSLIStartup" kindref="compound">SLIStartup</ref>(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>);</highlight></codeline>
+<codeline lineno="144" refid="classSLIStartup_1ad8d5d86433b6bf3856e904e041d56f01" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classSLIStartup_1ad8d5d86433b6bf3856e904e041d56f01" kindref="member">~SLIStartup</ref>()</highlight><highlight class="keyword"><sp/>override</highlight></codeline>
+<codeline lineno="145"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" kindref="member">init</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string</highlight></codeline>
+<codeline lineno="151" refid="classSLIStartup_1a9afd5a12260b010e2ef13d9b3271d098" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classSLIStartup_1a9afd5a12260b010e2ef13d9b3271d098" kindref="member">name</ref>()</highlight><highlight class="keyword"><sp/>const<sp/>override</highlight></codeline>
+<codeline lineno="152"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;SLIStartup&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="155"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h"/>
+  </compounddef>
+</doxygen>

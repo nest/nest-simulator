@@ -1,0 +1,655 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classnest_1_1ConnectorModel" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>nest::ConnectorModel</compoundname>
+    <derivedcompoundref refid="classnest_1_1GenericConnectorModel" prot="public" virt="non-virtual">nest::GenericConnectorModel&lt; ConnectionT &gt;</derivedcompoundref>
+    <includes refid="connector__model_8h" local="no">connector_model.h</includes>
+      <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classnest_1_1ConnectorModel_1a42cc2d70a67df540eb6fb4aa04ec128d" prot="protected" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string nest::ConnectorModel::name_</definition>
+        <argsstring></argsstring>
+        <name>name_</name>
+        <qualifiedname>nest::ConnectorModel::name_</qualifiedname>
+        <briefdescription>
+<para>name of the <ref refid="classnest_1_1ConnectorModel" kindref="compound">ConnectorModel</ref> </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="153" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" bodystart="153" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ConnectorModel_1a697f7ef525ecca6e04c4d2c23ba7736f" compoundref="connector__model_8h" startline="110" endline="113">get_name</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1ConnectorModel_1ae7911aa0186184953e5b35033ee317f9" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::ConnectorModel::default_delay_needs_check_</definition>
+        <argsstring></argsstring>
+        <name>default_delay_needs_check_</name>
+        <qualifiedname>nest::ConnectorModel::default_delay_needs_check_</qualifiedname>
+        <briefdescription>
+<para>indicates whether the default delay must be checked </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="155" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" bodystart="155" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1ConnectorModel_1a2f26b5f18c9294d4dc4be257e00a184e" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::ConnectorModel::is_primary_</definition>
+        <argsstring></argsstring>
+        <name>is_primary_</name>
+        <qualifiedname>nest::ConnectorModel::is_primary_</qualifiedname>
+        <briefdescription>
+<para>indicates whether this <ref refid="classnest_1_1ConnectorModel" kindref="compound">ConnectorModel</ref> belongs to a primary connection </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="157" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" bodystart="157" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ConnectorModel_1a89c5c4799f7d82cabc071a3dbd16190a" compoundref="connector__model_8h" startline="116" endline="119">is_primary</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1ConnectorModel_1a2ad89edaf1088a735a3921ae0319248d" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::ConnectorModel::has_delay_</definition>
+        <argsstring></argsstring>
+        <name>has_delay_</name>
+        <qualifiedname>nest::ConnectorModel::has_delay_</qualifiedname>
+        <briefdescription>
+<para>indicates whether <ref refid="classnest_1_1ConnectorModel" kindref="compound">ConnectorModel</ref> has a delay </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="159" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" bodystart="159" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ConnectorModel_1ad2f8242253ebfdc77e436ca6ec395532" compoundref="connector__model_8h" startline="122" endline="125">has_delay</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1ConnectorModel_1a8e4639c750f3ef47daeea32e57ea4039" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::ConnectorModel::requires_symmetric_</definition>
+        <argsstring></argsstring>
+        <name>requires_symmetric_</name>
+        <qualifiedname>nest::ConnectorModel::requires_symmetric_</qualifiedname>
+        <briefdescription>
+<para>indicates that <ref refid="classnest_1_1ConnectorModel" kindref="compound">ConnectorModel</ref> requires symmetric connections </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="161" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" bodystart="161" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ConnectorModel_1a8b60378043cfd359fdd847aa900fd7b6" compoundref="connector__model_8h" startline="128" endline="131">requires_symmetric</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1ConnectorModel_1a58285ffe47b712d7d451b6795ba784f7" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::ConnectorModel::supports_wfr_</definition>
+        <argsstring></argsstring>
+        <name>supports_wfr_</name>
+        <qualifiedname>nest::ConnectorModel::supports_wfr_</qualifiedname>
+        <briefdescription>
+<para>indicates whether connection can be used during wfr update </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="163" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" bodystart="163" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ConnectorModel_1af0c532f7ac6ce31b54b914294daf580f" compoundref="connector__model_8h" startline="146" endline="149">supports_wfr</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1ConnectorModel_1ac871a941b48ca79f799c11716f27ff1b" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::ConnectorModel::requires_clopath_archiving_</definition>
+        <argsstring></argsstring>
+        <name>requires_clopath_archiving_</name>
+        <qualifiedname>nest::ConnectorModel::requires_clopath_archiving_</qualifiedname>
+        <briefdescription>
+<para>indicates that <ref refid="classnest_1_1ConnectorModel" kindref="compound">ConnectorModel</ref> requires Clopath archiving </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="165" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" bodystart="165" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ConnectorModel_1ac7cbf31918bf689a1603ab4494996dda" compoundref="connector__model_8h" startline="134" endline="137">requires_clopath_archiving</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1ConnectorModel_1a9c0e416745f9ecd7e955d36b25038e96" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::ConnectorModel::requires_urbanczik_archiving_</definition>
+        <argsstring></argsstring>
+        <name>requires_urbanczik_archiving_</name>
+        <qualifiedname>nest::ConnectorModel::requires_urbanczik_archiving_</qualifiedname>
+        <briefdescription>
+<para>indicates that <ref refid="classnest_1_1ConnectorModel" kindref="compound">ConnectorModel</ref> requires Urbanczik archiving </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="167" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" bodystart="167" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ConnectorModel_1a451935bde247cd67427fd408a2b8305b" compoundref="connector__model_8h" startline="140" endline="143">requires_urbanczik_archiving</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1ConnectorModel_1a7f255fe802affaaa97b3c8088c15ced2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::ConnectorModel::ConnectorModel</definition>
+        <argsstring>(const std::string, const bool is_primary, const bool has_delay, const bool requires_symmetric, const bool supports_wfr, const bool requires_clopath_archiving, const bool requires_urbanczik_archiving)</argsstring>
+        <name>ConnectorModel</name>
+        <qualifiedname>nest::ConnectorModel::ConnectorModel</qualifiedname>
+        <param>
+          <type>const std::string</type>
+          <defname>name</defname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>is_primary</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>has_delay</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>requires_symmetric</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>supports_wfr</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>requires_clopath_archiving</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>requires_urbanczik_archiving</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="53" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.cpp" bodystart="28" bodyend="44"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ConnectorModel_1a35e5eb9a749494f77250cfe1bf370fc3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::ConnectorModel::ConnectorModel</definition>
+        <argsstring>(const ConnectorModel &amp;, const std::string)</argsstring>
+        <name>ConnectorModel</name>
+        <qualifiedname>nest::ConnectorModel::ConnectorModel</qualifiedname>
+        <param>
+          <type>const <ref refid="classnest_1_1ConnectorModel" kindref="compound">ConnectorModel</ref> &amp;</type>
+          <defname>cm</defname>
+        </param>
+        <param>
+          <type>const std::string</type>
+          <defname>name</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="60" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.cpp" bodystart="46" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ConnectorModel_1a59234daf4de0418aaf86563f9b6ce192" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type></type>
+        <definition>virtual nest::ConnectorModel::~ConnectorModel</definition>
+        <argsstring>()</argsstring>
+        <name>~ConnectorModel</name>
+        <qualifiedname>nest::ConnectorModel::~ConnectorModel</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="61" column="11" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" bodystart="61" bodyend="63"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ConnectorModel_1a65b12da20ec1f2816b53b56dede7cc75" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void nest::ConnectorModel::add_connection</definition>
+        <argsstring>(Node &amp;src, Node &amp;tgt, std::vector&lt; ConnectorBase * &gt; &amp;hetconn, const synindex syn_id, const DictionaryDatum &amp;d, const double delay=NAN, const double weight=NAN)=0</argsstring>
+        <name>add_connection</name>
+        <qualifiedname>nest::ConnectorModel::add_connection</qualifiedname>
+        <reimplementedby refid="classnest_1_1GenericConnectorModel_1a55662c78049406c5119cd0c81e6de812">add_connection</reimplementedby>
+        <param>
+          <type><ref refid="classnest_1_1Node" kindref="compound">Node</ref> &amp;</type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1Node" kindref="compound">Node</ref> &amp;</type>
+          <declname>tgt</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; <ref refid="classnest_1_1ConnectorBase" kindref="compound">ConnectorBase</ref> * &gt; &amp;</type>
+          <declname>hetconn</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacenest_1a2d283b4b36e5ee3b6f1d84b35c9ed475" kindref="member">synindex</ref></type>
+          <declname>syn_id</declname>
+        </param>
+        <param>
+          <type>const <ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>delay</declname>
+          <defval>NAN</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>weight</declname>
+          <defval>NAN</defval>
+        </param>
+        <briefdescription>
+<para>Adds a connection. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>src</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classnest_1_1Source" kindref="compound">Source</ref> node </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>tgt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classnest_1_1Target" kindref="compound">Target</ref> node </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>hetconn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classnest_1_1Connector" kindref="compound">Connector</ref> vector </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>syn_id</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Synapse id </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>d</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classnest_1_1Parameter" kindref="compound">Parameter</ref> dictionary to configure the synapse </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>delay</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Delay of the connection </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>weight</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weight of the connection</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+Delay and weight have the default value NAN, a special value, which describes double values that are not a number. If delay or weight is omitted, NAN indicates this and weight/delay are set only if they are valid. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="81" column="16"/>
+        <referencedby refid="classnest_1_1TargetTableDevices_1afd8f99f2e07b51408dcc72cc165e505e" compoundref="target__table__devices__impl_8h" startline="54" endline="73">nest::TargetTableDevices::add_connection_from_device</referencedby>
+        <referencedby refid="classnest_1_1TargetTableDevices_1a09f957d8ac14589929de4dbea0273abf" compoundref="target__table__devices__impl_8h" startline="35" endline="51">nest::TargetTableDevices::add_connection_to_device</referencedby>
+        <referencedby refid="classnest_1_1ConnectionManager_1a199080ea2054e8a1f9282c6201eec278" compoundref="connection__manager_8cpp" startline="743" endline="786">nest::ConnectionManager::connect_</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ConnectorModel_1a267534ad05679f2896ef502e127e3093" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="classnest_1_1ConnectorModel" kindref="compound">ConnectorModel</ref> *</type>
+        <definition>virtual ConnectorModel * nest::ConnectorModel::clone</definition>
+        <argsstring>(std::string, synindex syn_id) const =0</argsstring>
+        <name>clone</name>
+        <qualifiedname>nest::ConnectorModel::clone</qualifiedname>
+        <reimplementedby refid="classnest_1_1GenericSecondaryConnectorModel_1a221eeee98b613a3f3c3492a24c583b66">clone</reimplementedby>
+        <reimplementedby refid="classnest_1_1GenericConnectorModel_1a9111ebca3dccccd7734b8e679b062766">clone</reimplementedby>
+        <param>
+          <type>std::string</type>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1a2d283b4b36e5ee3b6f1d84b35c9ed475" kindref="member">synindex</ref></type>
+          <declname>syn_id</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="89" column="26"/>
+        <referencedby refid="classnest_1_1ModelManager_1afdca64fbdcc8897ed6e25a8e534b482e" compoundref="model__manager_8cpp" startline="265" endline="287">nest::ModelManager::copy_connection_model_</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1aa8a2fe6be154cbb0768bf71942387520" compoundref="model__manager_8cpp" startline="546" endline="571">nest::ModelManager::register_connection_model_</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ConnectorModel_1a4d54fb6a6e2158edd92251f968a2029d" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void nest::ConnectorModel::calibrate</definition>
+        <argsstring>(const TimeConverter &amp;tc)=0</argsstring>
+        <name>calibrate</name>
+        <qualifiedname>nest::ConnectorModel::calibrate</qualifiedname>
+        <reimplementedby refid="classnest_1_1GenericConnectorModel_1a8b22d67222d48edbd71796d62b1c8310">calibrate</reimplementedby>
+        <param>
+          <type>const <ref refid="classnest_1_1TimeConverter" kindref="compound">TimeConverter</ref> &amp;</type>
+          <declname>tc</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="91" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ConnectorModel_1a23c940dfb164a14a57225497fd177fdc" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void nest::ConnectorModel::get_status</definition>
+        <argsstring>(DictionaryDatum &amp;) const =0</argsstring>
+        <name>get_status</name>
+        <qualifiedname>nest::ConnectorModel::get_status</qualifiedname>
+        <reimplementedby refid="classnest_1_1GenericConnectorModel_1aa8c72dbdf47431532cab0e66946c9d27">get_status</reimplementedby>
+        <param>
+          <type><ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="93" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ConnectorModel_1a4dc486d5b6d1537fb42bc0cd3d7169c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void nest::ConnectorModel::set_status</definition>
+        <argsstring>(const DictionaryDatum &amp;)=0</argsstring>
+        <name>set_status</name>
+        <qualifiedname>nest::ConnectorModel::set_status</qualifiedname>
+        <reimplementedby refid="classnest_1_1GenericConnectorModel_1aa02f22324265fc3bbb1447322c97aa9a">set_status</reimplementedby>
+        <param>
+          <type>const <ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="94" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ConnectorModel_1a6d07781b22c166565e18052169805fc8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>const <ref refid="classnest_1_1CommonSynapseProperties" kindref="compound">CommonSynapseProperties</ref> &amp;</type>
+        <definition>virtual const CommonSynapseProperties &amp; nest::ConnectorModel::get_common_properties</definition>
+        <argsstring>() const =0</argsstring>
+        <name>get_common_properties</name>
+        <qualifiedname>nest::ConnectorModel::get_common_properties</qualifiedname>
+        <reimplementedby refid="classnest_1_1GenericConnectorModel_1a6f3434036fe2eb3872087bd29dc32c56">get_common_properties</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="96" column="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ConnectorModel_1a74b340444e504bc961bb7583983f7a7d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void nest::ConnectorModel::check_synapse_params</definition>
+        <argsstring>(const DictionaryDatum &amp;) const =0</argsstring>
+        <name>check_synapse_params</name>
+        <qualifiedname>nest::ConnectorModel::check_synapse_params</qualifiedname>
+        <reimplementedby refid="classnest_1_1GenericConnectorModel_1a512860a2f499cf64b6857c3e13e23645">check_synapse_params</reimplementedby>
+        <param>
+          <type>const <ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+        </param>
+        <briefdescription>
+<para>Checks to see if illegal parameters are given in syn_spec. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="101" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ConnectorModel_1a8042f48a6d4718a3dbae8ca1e5ccedc2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="classnest_1_1SecondaryEvent" kindref="compound">SecondaryEvent</ref> *</type>
+        <definition>virtual SecondaryEvent * nest::ConnectorModel::get_event</definition>
+        <argsstring>() const =0</argsstring>
+        <name>get_event</name>
+        <qualifiedname>nest::ConnectorModel::get_event</qualifiedname>
+        <reimplementedby refid="classnest_1_1GenericSecondaryConnectorModel_1a5a7b8e5e3b633530f5a7e8f31e94922d">get_event</reimplementedby>
+        <reimplementedby refid="classnest_1_1GenericConnectorModel_1a2c9dd7f6de9f793e1c1e26fc42b7739c">get_event</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="103" column="26"/>
+        <referencedby refid="classnest_1_1GenericSecondaryConnectorModel_1a221eeee98b613a3f3c3492a24c583b66" compoundref="connector__model_8h" startline="306" endline="317">nest::GenericSecondaryConnectorModel&lt; ConnectionT &gt;::clone</referencedby>
+        <referencedby refid="classnest_1_1ModelManager_1a4de0bb9d981c92958e0d52b1ff3e7dea" compoundref="model__manager_8h" startline="328" endline="332">nest::ModelManager::get_secondary_event_prototype</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ConnectorModel_1a87685961db1b5547f2a30a8b7d4764e1" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void nest::ConnectorModel::set_syn_id</definition>
+        <argsstring>(synindex syn_id)=0</argsstring>
+        <name>set_syn_id</name>
+        <qualifiedname>nest::ConnectorModel::set_syn_id</qualifiedname>
+        <reimplementedby refid="classnest_1_1GenericConnectorModel_1a663e4289f1edcd9b4619edcaf8ef10d9">set_syn_id</reimplementedby>
+        <param>
+          <type><ref refid="namespacenest_1a2d283b4b36e5ee3b6f1d84b35c9ed475" kindref="member">synindex</ref></type>
+          <declname>syn_id</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="105" column="16"/>
+        <referencedby refid="classnest_1_1GenericSecondaryConnectorModel_1a221eeee98b613a3f3c3492a24c583b66" compoundref="connector__model_8h" startline="306" endline="317">nest::GenericSecondaryConnectorModel&lt; ConnectionT &gt;::clone</referencedby>
+        <referencedby refid="classnest_1_1GenericConnectorModel_1a9111ebca3dccccd7734b8e679b062766" compoundref="connector__model__impl_8h" startline="66" endline="71">nest::GenericConnectorModel&lt; ConnectionT &gt;::clone</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ConnectorModel_1a67d249c0d8a05a28ab1e5fc461eb9a6a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="classnest_1_1SecondaryEvent" kindref="compound">SecondaryEvent</ref> *</type>
+        <definition>virtual SecondaryEvent * nest::ConnectorModel::create_event</definition>
+        <argsstring>() const =0</argsstring>
+        <name>create_event</name>
+        <qualifiedname>nest::ConnectorModel::create_event</qualifiedname>
+        <reimplementedby refid="classnest_1_1GenericSecondaryConnectorModel_1a5e5848eac71fd4be14e48b12cda6439f">create_event</reimplementedby>
+        <reimplementedby refid="classnest_1_1GenericConnectorModel_1a40676f56d24124f9be12fc0e1e3f6100">create_event</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="107" column="26"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ConnectorModel_1a697f7ef525ecca6e04c4d2c23ba7736f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string nest::ConnectorModel::get_name</definition>
+        <argsstring>() const</argsstring>
+        <name>get_name</name>
+        <qualifiedname>nest::ConnectorModel::get_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="110" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" bodystart="110" bodyend="113"/>
+        <references refid="classnest_1_1ConnectorModel_1a42cc2d70a67df540eb6fb4aa04ec128d" compoundref="connector__model_8h" startline="153">name_</references>
+        <referencedby refid="classnest_1_1ModelManager_1aa8a2fe6be154cbb0768bf71942387520" compoundref="model__manager_8cpp" startline="546" endline="571">nest::ModelManager::register_connection_model_</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ConnectorModel_1a89c5c4799f7d82cabc071a3dbd16190a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::ConnectorModel::is_primary</definition>
+        <argsstring>() const</argsstring>
+        <name>is_primary</name>
+        <qualifiedname>nest::ConnectorModel::is_primary</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="116" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" bodystart="116" bodyend="119"/>
+        <references refid="classnest_1_1ConnectorModel_1a2f26b5f18c9294d4dc4be257e00a184e" compoundref="connector__model_8h" startline="157">is_primary_</references>
+        <referencedby refid="classnest_1_1GenericSecondaryConnectorModel_1a221eeee98b613a3f3c3492a24c583b66" compoundref="connector__model_8h" startline="306" endline="317">nest::GenericSecondaryConnectorModel&lt; ConnectionT &gt;::clone</referencedby>
+        <referencedby refid="classnest_1_1SourceTable_1a15e7c1635c267bf81b15d1b445252792" compoundref="source__table_8cpp" startline="202" endline="267">nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources</referencedby>
+        <referencedby refid="classnest_1_1ConnectionManager_1a199080ea2054e8a1f9282c6201eec278" compoundref="connection__manager_8cpp" startline="743" endline="786">nest::ConnectionManager::connect_</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ConnectorModel_1ad2f8242253ebfdc77e436ca6ec395532" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::ConnectorModel::has_delay</definition>
+        <argsstring>() const</argsstring>
+        <name>has_delay</name>
+        <qualifiedname>nest::ConnectorModel::has_delay</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="122" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" bodystart="122" bodyend="125"/>
+        <references refid="classnest_1_1ConnectorModel_1a2ad89edaf1088a735a3921ae0319248d" compoundref="connector__model_8h" startline="159">has_delay_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ConnectorModel_1a8b60378043cfd359fdd847aa900fd7b6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::ConnectorModel::requires_symmetric</definition>
+        <argsstring>() const</argsstring>
+        <name>requires_symmetric</name>
+        <qualifiedname>nest::ConnectorModel::requires_symmetric</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="128" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" bodystart="128" bodyend="131"/>
+        <references refid="classnest_1_1ConnectorModel_1a8e4639c750f3ef47daeea32e57ea4039" compoundref="connector__model_8h" startline="161">requires_symmetric_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ConnectorModel_1ac7cbf31918bf689a1603ab4494996dda" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::ConnectorModel::requires_clopath_archiving</definition>
+        <argsstring>() const</argsstring>
+        <name>requires_clopath_archiving</name>
+        <qualifiedname>nest::ConnectorModel::requires_clopath_archiving</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="134" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" bodystart="134" bodyend="137"/>
+        <references refid="classnest_1_1ConnectorModel_1ac871a941b48ca79f799c11716f27ff1b" compoundref="connector__model_8h" startline="165">requires_clopath_archiving_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ConnectorModel_1a451935bde247cd67427fd408a2b8305b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::ConnectorModel::requires_urbanczik_archiving</definition>
+        <argsstring>() const</argsstring>
+        <name>requires_urbanczik_archiving</name>
+        <qualifiedname>nest::ConnectorModel::requires_urbanczik_archiving</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="140" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" bodystart="140" bodyend="143"/>
+        <references refid="classnest_1_1ConnectorModel_1a9c0e416745f9ecd7e955d36b25038e96" compoundref="connector__model_8h" startline="167">requires_urbanczik_archiving_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ConnectorModel_1af0c532f7ac6ce31b54b914294daf580f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::ConnectorModel::supports_wfr</definition>
+        <argsstring>() const</argsstring>
+        <name>supports_wfr</name>
+        <qualifiedname>nest::ConnectorModel::supports_wfr</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="146" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" bodystart="146" bodyend="149"/>
+        <references refid="classnest_1_1ConnectorModel_1a58285ffe47b712d7d451b6795ba784f7" compoundref="connector__model_8h" startline="163">supports_wfr_</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>nest::ConnectorModel</label>
+        <link refid="classnest_1_1ConnectorModel"/>
+      </node>
+      <node id="2">
+        <label>nest::GenericConnectorModel&lt; ConnectionT &gt;</label>
+        <link refid="classnest_1_1GenericConnectorModel"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>nest::GenericSecondaryConnectorModel&lt; ConnectionT &gt;</label>
+        <link refid="classnest_1_1GenericSecondaryConnectorModel"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="49" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" bodystart="50" bodyend="169"/>
+    <listofallmembers>
+      <member refid="classnest_1_1ConnectorModel_1a65b12da20ec1f2816b53b56dede7cc75" prot="public" virt="pure-virtual"><scope>nest::ConnectorModel</scope><name>add_connection</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a4d54fb6a6e2158edd92251f968a2029d" prot="public" virt="pure-virtual"><scope>nest::ConnectorModel</scope><name>calibrate</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a74b340444e504bc961bb7583983f7a7d" prot="public" virt="pure-virtual"><scope>nest::ConnectorModel</scope><name>check_synapse_params</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a267534ad05679f2896ef502e127e3093" prot="public" virt="pure-virtual"><scope>nest::ConnectorModel</scope><name>clone</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a7f255fe802affaaa97b3c8088c15ced2" prot="public" virt="non-virtual"><scope>nest::ConnectorModel</scope><name>ConnectorModel</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a35e5eb9a749494f77250cfe1bf370fc3" prot="public" virt="non-virtual"><scope>nest::ConnectorModel</scope><name>ConnectorModel</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a67d249c0d8a05a28ab1e5fc461eb9a6a" prot="public" virt="pure-virtual"><scope>nest::ConnectorModel</scope><name>create_event</name></member>
+      <member refid="classnest_1_1ConnectorModel_1ae7911aa0186184953e5b35033ee317f9" prot="protected" virt="non-virtual"><scope>nest::ConnectorModel</scope><name>default_delay_needs_check_</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a6d07781b22c166565e18052169805fc8" prot="public" virt="pure-virtual"><scope>nest::ConnectorModel</scope><name>get_common_properties</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a8042f48a6d4718a3dbae8ca1e5ccedc2" prot="public" virt="pure-virtual"><scope>nest::ConnectorModel</scope><name>get_event</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a697f7ef525ecca6e04c4d2c23ba7736f" prot="public" virt="non-virtual"><scope>nest::ConnectorModel</scope><name>get_name</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a23c940dfb164a14a57225497fd177fdc" prot="public" virt="pure-virtual"><scope>nest::ConnectorModel</scope><name>get_status</name></member>
+      <member refid="classnest_1_1ConnectorModel_1ad2f8242253ebfdc77e436ca6ec395532" prot="public" virt="non-virtual"><scope>nest::ConnectorModel</scope><name>has_delay</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a2ad89edaf1088a735a3921ae0319248d" prot="protected" virt="non-virtual"><scope>nest::ConnectorModel</scope><name>has_delay_</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a89c5c4799f7d82cabc071a3dbd16190a" prot="public" virt="non-virtual"><scope>nest::ConnectorModel</scope><name>is_primary</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a2f26b5f18c9294d4dc4be257e00a184e" prot="protected" virt="non-virtual"><scope>nest::ConnectorModel</scope><name>is_primary_</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a42cc2d70a67df540eb6fb4aa04ec128d" prot="protected" virt="non-virtual"><scope>nest::ConnectorModel</scope><name>name_</name></member>
+      <member refid="classnest_1_1ConnectorModel_1ac7cbf31918bf689a1603ab4494996dda" prot="public" virt="non-virtual"><scope>nest::ConnectorModel</scope><name>requires_clopath_archiving</name></member>
+      <member refid="classnest_1_1ConnectorModel_1ac871a941b48ca79f799c11716f27ff1b" prot="protected" virt="non-virtual"><scope>nest::ConnectorModel</scope><name>requires_clopath_archiving_</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a8b60378043cfd359fdd847aa900fd7b6" prot="public" virt="non-virtual"><scope>nest::ConnectorModel</scope><name>requires_symmetric</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a8e4639c750f3ef47daeea32e57ea4039" prot="protected" virt="non-virtual"><scope>nest::ConnectorModel</scope><name>requires_symmetric_</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a451935bde247cd67427fd408a2b8305b" prot="public" virt="non-virtual"><scope>nest::ConnectorModel</scope><name>requires_urbanczik_archiving</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a9c0e416745f9ecd7e955d36b25038e96" prot="protected" virt="non-virtual"><scope>nest::ConnectorModel</scope><name>requires_urbanczik_archiving_</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a4dc486d5b6d1537fb42bc0cd3d7169c4" prot="public" virt="pure-virtual"><scope>nest::ConnectorModel</scope><name>set_status</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a87685961db1b5547f2a30a8b7d4764e1" prot="public" virt="pure-virtual"><scope>nest::ConnectorModel</scope><name>set_syn_id</name></member>
+      <member refid="classnest_1_1ConnectorModel_1af0c532f7ac6ce31b54b914294daf580f" prot="public" virt="non-virtual"><scope>nest::ConnectorModel</scope><name>supports_wfr</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a58285ffe47b712d7d451b6795ba784f7" prot="protected" virt="non-virtual"><scope>nest::ConnectorModel</scope><name>supports_wfr_</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a59234daf4de0418aaf86563f9b6ce192" prot="public" virt="virtual"><scope>nest::ConnectorModel</scope><name>~ConnectorModel</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

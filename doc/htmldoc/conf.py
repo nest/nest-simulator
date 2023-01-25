@@ -98,7 +98,65 @@ extensions = [
     'sphinx_design',
     'HoverXTooltip',
     'VersionSyncRole',
+    'breathe'
 ]
+
+
+
+# Setup the breathe extension
+breathe_projects = {
+    "NEST Simulator": "./_doxygen/xml"
+}
+breathe_default_project = "NEST Simulator"
+
+# Setup the exhale extension
+#exhale_args = {
+#    # These arguments are required
+#    "containmentFolder":     "./api",
+#    "rootFileName":          "library_root.rst",
+#    "doxygenStripFromPath":  "..",
+#    # Heavily encouraged optional argument (see docs)
+#    "rootFileTitle":         "Library API",
+#    # Suggested optional arguments
+#    "createTreeView":        True,
+#    # TIP: if using the sphinx-bootstrap-theme, you need
+#    "treeViewIsBootstrap": True,
+#    "exhaleExecutesDoxygen": True,
+#    #"exhaleUseDoxyfile": True,
+#    "exhaleDoxygenStdin":
+#        """
+#        INPUT = /home/mitchell/Work/repo/nest-simulator/lib \
+#    		/home/mitchell/Work/repo/nest-simulator/libnestutil \
+#    		/home/mitchell/Work/repo/nest-simulator/models\
+#    		/home/mitchell/Work/repo/nest-simulator/nest \
+#    		/home/mitchell/Work/repo/nest-simulator/nestkernel \
+#    		/home/mitchell/Work/repo/nest-simulator/testsuite
+#
+#        # So that only Doxygen does not trim paths, which affects the File hierarchy
+#        FULL_PATH_NAMES        = YES
+#        # Nested folders will be ignored without this.  You may not need it.
+#        RECURSIVE              = YES
+#        # Set to YES if you are debugging or want to compare.
+#        GENERATE_HTML          = NO
+#        # Unless you want it...
+#        GENERATE_LATEX         = NO
+#        # Both breathe and exhale need the xml.
+#        GENERATE_XML           = YES
+#        # Set to NO if you do not want the Doxygen program listing included.
+#        XML_PROGRAMLISTING     = YES
+#        # Allow for rst directives and advanced functions e.g. grid tables
+#        #ALIASES                = 'rst=\verbatim embed:rst:leading-asterisk'
+#        #ALIASES               += 'endrst=\endverbatim'
+#        # Enable preprocessing and related preprocessor necessities
+#        ENABLE_PREPROCESSING   = YES
+#        MACRO_EXPANSION        = YES
+#        EXPAND_ONLY_PREDEF     = NO
+#        SKIP_FUNCTION_MACROS   = NO
+#        # extra defs for to help with building the _right_ version of the docs
+#        FILE_PATTERNS         = *.cpp \
+#                                *.h
+#        """
+#            }
 
 mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
 # "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"

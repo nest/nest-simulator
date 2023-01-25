@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classnest_1_1gainfunction__erfc" kind="class" language="C++" prot="public">
+    <compoundname>nest::gainfunction_erfc</compoundname>
+    <includes refid="erfc__neuron_8h" local="no">erfc_neuron.h</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classnest_1_1gainfunction__erfc_1a528a7181fe353c1ca51f4db543db21a0" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::gainfunction_erfc::theta_</definition>
+        <argsstring></argsstring>
+        <name>theta_</name>
+        <qualifiedname>nest::gainfunction_erfc::theta_</qualifiedname>
+        <briefdescription>
+<para>threshold of activation function </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/erfc_neuron.h" line="133" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/erfc_neuron.h" bodystart="133" bodyend="-1"/>
+        <referencedby refid="classnest_1_1gainfunction__erfc_1ac8db89afeaeaca04f2c3ccf74cfe5b1d" compoundref="erfc__neuron_8cpp" startline="29" endline="33">get</referencedby>
+        <referencedby refid="classnest_1_1gainfunction__erfc_1af8068ac34b2bc2225287606bf66b68f7" compoundref="erfc__neuron_8h" startline="154" endline="157">operator()</referencedby>
+        <referencedby refid="classnest_1_1gainfunction__erfc_1aa0557007dab8b9f927633b3935215b5e" compoundref="erfc__neuron_8cpp" startline="36" endline="40">set</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1gainfunction__erfc_1ade8a5d04a0092fc9f1c40527800f6bec" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::gainfunction_erfc::sigma_</definition>
+        <argsstring></argsstring>
+        <name>sigma_</name>
+        <qualifiedname>nest::gainfunction_erfc::sigma_</qualifiedname>
+        <briefdescription>
+<para>1/sqrt(2pi) x inverse of the maximal slope of gain function </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/erfc_neuron.h" line="136" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/erfc_neuron.h" bodystart="136" bodyend="-1"/>
+        <referencedby refid="classnest_1_1gainfunction__erfc_1ac8db89afeaeaca04f2c3ccf74cfe5b1d" compoundref="erfc__neuron_8cpp" startline="29" endline="33">get</referencedby>
+        <referencedby refid="classnest_1_1gainfunction__erfc_1af8068ac34b2bc2225287606bf66b68f7" compoundref="erfc__neuron_8h" startline="154" endline="157">operator()</referencedby>
+        <referencedby refid="classnest_1_1gainfunction__erfc_1aa0557007dab8b9f927633b3935215b5e" compoundref="erfc__neuron_8cpp" startline="36" endline="40">set</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1gainfunction__erfc_1adefb498b67e8d52cbe67febfe6c24574" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>nest::gainfunction_erfc::gainfunction_erfc</definition>
+        <argsstring>()</argsstring>
+        <name>gainfunction_erfc</name>
+        <qualifiedname>nest::gainfunction_erfc::gainfunction_erfc</qualifiedname>
+        <briefdescription>
+<para>sets default parameters </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/erfc_neuron.h" line="141" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/erfc_neuron.h" bodystart="141" bodyend="145"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1gainfunction__erfc_1ac8db89afeaeaca04f2c3ccf74cfe5b1d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::gainfunction_erfc::get</definition>
+        <argsstring>(DictionaryDatum &amp;) const</argsstring>
+        <name>get</name>
+        <qualifiedname>nest::gainfunction_erfc::get</qualifiedname>
+        <param>
+          <type><ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+          <defname>d</defname>
+        </param>
+        <briefdescription>
+<para>Store current values in dictionary. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/erfc_neuron.h" line="147" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/erfc_neuron.cpp" bodystart="29" bodyend="33"/>
+        <references refid="namespacenest_1_1names_1a127c6d5d7daea4ae18b9f769ba7e5053" compoundref="nest__names_8h" startline="432">nest::names::sigma</references>
+        <references refid="classnest_1_1gainfunction__erfc_1ade8a5d04a0092fc9f1c40527800f6bec" compoundref="erfc__neuron_8h" startline="136">sigma_</references>
+        <references refid="namespacenest_1_1names_1a77d5b21699250145de1b1b61d398de14" compoundref="nest__names_8h" startline="541">nest::names::theta</references>
+        <references refid="classnest_1_1gainfunction__erfc_1a528a7181fe353c1ca51f4db543db21a0" compoundref="erfc__neuron_8h" startline="133">theta_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1gainfunction__erfc_1aa0557007dab8b9f927633b3935215b5e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::gainfunction_erfc::set</definition>
+        <argsstring>(const DictionaryDatum &amp;, Node *node)</argsstring>
+        <name>set</name>
+        <qualifiedname>nest::gainfunction_erfc::set</qualifiedname>
+        <param>
+          <type>const <ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+          <defname>d</defname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1Node" kindref="compound">Node</ref> *</type>
+          <declname>node</declname>
+        </param>
+        <briefdescription>
+<para>Set values from dictionary. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/erfc_neuron.h" line="148" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/erfc_neuron.cpp" bodystart="36" bodyend="40"/>
+        <references refid="namespacenest_1_1names_1a127c6d5d7daea4ae18b9f769ba7e5053" compoundref="nest__names_8h" startline="432">nest::names::sigma</references>
+        <references refid="classnest_1_1gainfunction__erfc_1ade8a5d04a0092fc9f1c40527800f6bec" compoundref="erfc__neuron_8h" startline="136">sigma_</references>
+        <references refid="namespacenest_1_1names_1a77d5b21699250145de1b1b61d398de14" compoundref="nest__names_8h" startline="541">nest::names::theta</references>
+        <references refid="classnest_1_1gainfunction__erfc_1a528a7181fe353c1ca51f4db543db21a0" compoundref="erfc__neuron_8h" startline="133">theta_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1gainfunction__erfc_1af8068ac34b2bc2225287606bf66b68f7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::gainfunction_erfc::operator()</definition>
+        <argsstring>(RngPtr rng, double h)</argsstring>
+        <name>operator()</name>
+        <qualifiedname>nest::gainfunction_erfc::operator()</qualifiedname>
+        <param>
+          <type><ref refid="namespacenest_1a5c7ff981ccfbf8793f4c09f650b48a0c" kindref="member">RngPtr</ref></type>
+          <declname>rng</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>h</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/erfc_neuron.h" line="150" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/erfc_neuron.h" bodystart="154" bodyend="157"/>
+        <references refid="classnest_1_1BaseRandomGenerator_1ac9f238412d989640ad55a82e8d9e3a45">nest::BaseRandomGenerator::drand</references>
+        <references refid="classnest_1_1gainfunction__erfc_1ade8a5d04a0092fc9f1c40527800f6bec" compoundref="erfc__neuron_8h" startline="136">sigma_</references>
+        <references refid="classnest_1_1gainfunction__erfc_1a528a7181fe353c1ca51f4db543db21a0" compoundref="erfc__neuron_8h" startline="133">theta_</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/mitchell/Work/repo/nest-simulator/models/erfc_neuron.h" line="129" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/erfc_neuron.h" bodystart="130" bodyend="151"/>
+    <listofallmembers>
+      <member refid="classnest_1_1gainfunction__erfc_1adefb498b67e8d52cbe67febfe6c24574" prot="public" virt="non-virtual"><scope>nest::gainfunction_erfc</scope><name>gainfunction_erfc</name></member>
+      <member refid="classnest_1_1gainfunction__erfc_1ac8db89afeaeaca04f2c3ccf74cfe5b1d" prot="public" virt="non-virtual"><scope>nest::gainfunction_erfc</scope><name>get</name></member>
+      <member refid="classnest_1_1gainfunction__erfc_1af8068ac34b2bc2225287606bf66b68f7" prot="public" virt="non-virtual"><scope>nest::gainfunction_erfc</scope><name>operator()</name></member>
+      <member refid="classnest_1_1gainfunction__erfc_1aa0557007dab8b9f927633b3935215b5e" prot="public" virt="non-virtual"><scope>nest::gainfunction_erfc</scope><name>set</name></member>
+      <member refid="classnest_1_1gainfunction__erfc_1ade8a5d04a0092fc9f1c40527800f6bec" prot="private" virt="non-virtual"><scope>nest::gainfunction_erfc</scope><name>sigma_</name></member>
+      <member refid="classnest_1_1gainfunction__erfc_1a528a7181fe353c1ca51f4db543db21a0" prot="private" virt="non-virtual"><scope>nest::gainfunction_erfc</scope><name>theta_</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="structnest_1_1PrimitiveSortObject" kind="struct" language="C++" prot="public">
+    <compoundname>nest::PrimitiveSortObject</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structnest_1_1PrimitiveSortObject_1a2fdf2865d071efc4557c9e7d99534f9a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::PrimitiveSortObject::operator()</definition>
+        <argsstring>(NodeCollectionPrimitive &amp;primitive_lhs, NodeCollectionPrimitive &amp;primitive_rhs)</argsstring>
+        <name>operator()</name>
+        <qualifiedname>nest::PrimitiveSortObject::operator()</qualifiedname>
+        <param>
+          <type><ref refid="classnest_1_1NodeCollectionPrimitive" kindref="compound">NodeCollectionPrimitive</ref> &amp;</type>
+          <declname>primitive_lhs</declname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1NodeCollectionPrimitive" kindref="compound">NodeCollectionPrimitive</ref> &amp;</type>
+          <declname>primitive_rhs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/node_collection.cpp" line="41" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/node_collection.cpp" bodystart="41" bodyend="44"/>
+      </memberdef>
+      <memberdef kind="function" id="structnest_1_1PrimitiveSortObject_1a772ff35061d186f067d4b30b2f1f32c6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::PrimitiveSortObject::operator()</definition>
+        <argsstring>(const NodeCollectionPrimitive &amp;primitive_lhs, const NodeCollectionPrimitive &amp;primitive_rhs)</argsstring>
+        <name>operator()</name>
+        <qualifiedname>nest::PrimitiveSortObject::operator()</qualifiedname>
+        <param>
+          <type>const <ref refid="classnest_1_1NodeCollectionPrimitive" kindref="compound">NodeCollectionPrimitive</ref> &amp;</type>
+          <declname>primitive_lhs</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classnest_1_1NodeCollectionPrimitive" kindref="compound">NodeCollectionPrimitive</ref> &amp;</type>
+          <declname>primitive_rhs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/node_collection.cpp" line="47" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/node_collection.cpp" bodystart="47" bodyend="50"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/node_collection.cpp" line="38" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/node_collection.cpp" bodystart="39" bodyend="51"/>
+    <listofallmembers>
+      <member refid="structnest_1_1PrimitiveSortObject_1a2fdf2865d071efc4557c9e7d99534f9a" prot="public" virt="non-virtual"><scope>nest::PrimitiveSortObject</scope><name>operator()</name></member>
+      <member refid="structnest_1_1PrimitiveSortObject_1a772ff35061d186f067d4b30b2f1f32c6" prot="public" virt="non-virtual"><scope>nest::PrimitiveSortObject</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

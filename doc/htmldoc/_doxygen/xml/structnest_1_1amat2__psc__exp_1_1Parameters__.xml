@@ -1,0 +1,337 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="structnest_1_1amat2__psc__exp_1_1Parameters__" kind="struct" language="C++" prot="private">
+    <compoundname>nest::amat2_psc_exp::Parameters_</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnest_1_1amat2__psc__exp_1_1Parameters___1aae623f17eccfdb288654079463d2ca3b" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::amat2_psc_exp::Parameters_::Tau_</definition>
+        <argsstring></argsstring>
+        <name>Tau_</name>
+        <qualifiedname>nest::amat2_psc_exp::Parameters_::Tau_</qualifiedname>
+        <briefdescription>
+<para>Membrane time constant in ms. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" line="208" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" bodystart="208" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1amat2__psc__exp_1_1Parameters___1a1baa9c0a3d7748d8343d5a785d274403" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::amat2_psc_exp::Parameters_::C_</definition>
+        <argsstring></argsstring>
+        <name>C_</name>
+        <qualifiedname>nest::amat2_psc_exp::Parameters_::C_</qualifiedname>
+        <briefdescription>
+<para>Membrane capacitance in pF. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" line="211" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" bodystart="211" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1amat2__psc__exp_1_1Parameters___1ae6ff76e101cd914ce407a336a96a9461" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::amat2_psc_exp::Parameters_::tau_ref_</definition>
+        <argsstring></argsstring>
+        <name>tau_ref_</name>
+        <qualifiedname>nest::amat2_psc_exp::Parameters_::tau_ref_</qualifiedname>
+        <briefdescription>
+<para>Refractory period in ms. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" line="214" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" bodystart="214" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1amat2__psc__exp_1_1Parameters___1a27dac3b7bf3de736ba75c3fcbbdab716" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::amat2_psc_exp::Parameters_::E_L_</definition>
+        <argsstring></argsstring>
+        <name>E_L_</name>
+        <qualifiedname>nest::amat2_psc_exp::Parameters_::E_L_</qualifiedname>
+        <briefdescription>
+<para>Resting potential in mV. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" line="217" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" bodystart="217" bodyend="-1"/>
+        <referencedby refid="classnest_1_1amat2__psc__exp_1a55627c6de132f351b0b1676b0de11c4d" compoundref="amat2__psc__exp_8h" startline="353" endline="356">nest::amat2_psc_exp::get_V_m_</referencedby>
+        <referencedby refid="classnest_1_1amat2__psc__exp_1a0d6bfc527a3a049809cb17d4c79a978f" compoundref="amat2__psc__exp_8h" startline="359" endline="362">nest::amat2_psc_exp::get_V_th_</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1amat2__psc__exp_1_1Parameters___1a759dee6267e622b8806b5965d6830d43" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::amat2_psc_exp::Parameters_::I_e_</definition>
+        <argsstring></argsstring>
+        <name>I_e_</name>
+        <qualifiedname>nest::amat2_psc_exp::Parameters_::I_e_</qualifiedname>
+        <briefdescription>
+<para>External current in pA. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" line="220" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" bodystart="220" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1amat2__psc__exp_1_1Parameters___1a13b04c40455274057462d50110501ff7" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::amat2_psc_exp::Parameters_::tau_ex_</definition>
+        <argsstring></argsstring>
+        <name>tau_ex_</name>
+        <qualifiedname>nest::amat2_psc_exp::Parameters_::tau_ex_</qualifiedname>
+        <briefdescription>
+<para><ref refid="classnest_1_1Time" kindref="compound">Time</ref> constant of excitatory synaptic current in ms. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" line="223" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" bodystart="223" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1amat2__psc__exp_1_1Parameters___1a30e36f0343e52b60448a6f76824f9a96" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::amat2_psc_exp::Parameters_::tau_in_</definition>
+        <argsstring></argsstring>
+        <name>tau_in_</name>
+        <qualifiedname>nest::amat2_psc_exp::Parameters_::tau_in_</qualifiedname>
+        <briefdescription>
+<para><ref refid="classnest_1_1Time" kindref="compound">Time</ref> constant of inhibitory synaptic current in ms. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" line="226" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" bodystart="226" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1amat2__psc__exp_1_1Parameters___1a2df881beff251a217ef7446e422c989e" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::amat2_psc_exp::Parameters_::tau_1_</definition>
+        <argsstring></argsstring>
+        <name>tau_1_</name>
+        <qualifiedname>nest::amat2_psc_exp::Parameters_::tau_1_</qualifiedname>
+        <briefdescription>
+<para>Short and long time constant of adaptive threshold in ms. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" line="229" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" bodystart="229" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1amat2__psc__exp_1_1Parameters___1ae765d4a1df52a9a1d49a1d454d79b0c6" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::amat2_psc_exp::Parameters_::tau_2_</definition>
+        <argsstring></argsstring>
+        <name>tau_2_</name>
+        <qualifiedname>nest::amat2_psc_exp::Parameters_::tau_2_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" line="230" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" bodystart="230" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1amat2__psc__exp_1_1Parameters___1aa5e62df0dd2256c0b2e6f5486748ba57" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::amat2_psc_exp::Parameters_::alpha_1_</definition>
+        <argsstring></argsstring>
+        <name>alpha_1_</name>
+        <qualifiedname>nest::amat2_psc_exp::Parameters_::alpha_1_</qualifiedname>
+        <briefdescription>
+<para>Amplitudes of threshold adaption in mV. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" line="233" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" bodystart="233" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1amat2__psc__exp_1_1Parameters___1a8113df341c9022f97aae48eb969e575d" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::amat2_psc_exp::Parameters_::alpha_2_</definition>
+        <argsstring></argsstring>
+        <name>alpha_2_</name>
+        <qualifiedname>nest::amat2_psc_exp::Parameters_::alpha_2_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" line="234" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" bodystart="234" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1amat2__psc__exp_1_1Parameters___1afce86c4733445b15ff73b9b50b168960" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::amat2_psc_exp::Parameters_::beta_</definition>
+        <argsstring></argsstring>
+        <name>beta_</name>
+        <qualifiedname>nest::amat2_psc_exp::Parameters_::beta_</qualifiedname>
+        <briefdescription>
+<para>Scaling coefficient for voltage-dependent threshold component in 1/ms. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" line="237" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" bodystart="237" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1amat2__psc__exp_1_1Parameters___1ac8e5668d9b079814231638cda60fbec1" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::amat2_psc_exp::Parameters_::tau_v_</definition>
+        <argsstring></argsstring>
+        <name>tau_v_</name>
+        <qualifiedname>nest::amat2_psc_exp::Parameters_::tau_v_</qualifiedname>
+        <briefdescription>
+<para>Time-constant for voltage-dependent threshold component in ms. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" line="240" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" bodystart="240" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1amat2__psc__exp_1_1Parameters___1a4ab0698a653567d09c99e8c3efa8b44a" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::amat2_psc_exp::Parameters_::omega_</definition>
+        <argsstring></argsstring>
+        <name>omega_</name>
+        <qualifiedname>nest::amat2_psc_exp::Parameters_::omega_</qualifiedname>
+        <briefdescription>
+<para>Resting threshold in mV (relative to resting potential). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The real resting threshold is (E_L_+omega_). Called omega in [3]_. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" line="246" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" bodystart="246" bodyend="-1"/>
+        <referencedby refid="classnest_1_1amat2__psc__exp_1a0d6bfc527a3a049809cb17d4c79a978f" compoundref="amat2__psc__exp_8h" startline="359" endline="362">nest::amat2_psc_exp::get_V_th_</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structnest_1_1amat2__psc__exp_1_1Parameters___1aac39a95dbfbe4885d9ae939ddf99cb9d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::amat2_psc_exp::Parameters_::Parameters_</definition>
+        <argsstring>()</argsstring>
+        <name>Parameters_</name>
+        <qualifiedname>nest::amat2_psc_exp::Parameters_::Parameters_</qualifiedname>
+        <briefdescription>
+<para>Sets default parameter values. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" line="248" column="5" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.cpp" bodystart="67" bodyend="85"/>
+      </memberdef>
+      <memberdef kind="function" id="structnest_1_1amat2__psc__exp_1_1Parameters___1aeef6e46503c69aa71bdd075a27f07b95" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::amat2_psc_exp::Parameters_::get</definition>
+        <argsstring>(DictionaryDatum &amp;) const</argsstring>
+        <name>get</name>
+        <qualifiedname>nest::amat2_psc_exp::Parameters_::get</qualifiedname>
+        <param>
+          <type><ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+          <defname>d</defname>
+        </param>
+        <briefdescription>
+<para>Store current values in dictionary. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" line="250" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.cpp" bodystart="105" bodyend="121"/>
+        <references refid="namespacenest_1_1names_1ac035263e923b8dd76d3b1c6638106995" compoundref="nest__names_8h" startline="87">nest::names::alpha_1</references>
+        <references refid="namespacenest_1_1names_1a4bb2cff3a460d3bd7bcb4f2a9d537cc4" compoundref="nest__names_8h" startline="88">nest::names::alpha_2</references>
+        <references refid="namespacenest_1_1names_1adf1fbc4cd86188c4752d22797704cb29" compoundref="nest__names_8h" startline="102">nest::names::beta</references>
+        <references refid="namespacenest_1_1names_1a87c37b74ee8ef5b94a8cf290a29adbde" compoundref="nest__names_8h" startline="110">nest::names::C_m</references>
+        <references refid="namespacenest_1_1names_1a8716ae8315df1d512b346b4243e2556d" compoundref="nest__names_8h" startline="169">nest::names::E_L</references>
+        <references refid="namespacenest_1_1names_1a17aa476db9e655c644567ffca7c7d797" compoundref="nest__names_8h" startline="259">nest::names::I_e</references>
+        <references refid="namespacenest_1_1names_1a9bb5cc447248325106b93ec67fe4f798" compoundref="nest__names_8h" startline="349">nest::names::omega</references>
+        <references refid="namespacenest_1_1names_1af1fb8d4c65ef19902f7afc8e18e1389e" compoundref="nest__names_8h" startline="474">nest::names::t_ref</references>
+        <references refid="namespacenest_1_1names_1a6b8a85f1c74205513ca726d8c2993181" compoundref="nest__names_8h" startline="483">nest::names::tau_1</references>
+        <references refid="namespacenest_1_1names_1a844402722db4b5be1a0a50f6285e9e48" compoundref="nest__names_8h" startline="484">nest::names::tau_2</references>
+        <references refid="namespacenest_1_1names_1a653273480a7aaf3e4ea7505c82740c02" compoundref="nest__names_8h" startline="503">nest::names::tau_m</references>
+        <references refid="namespacenest_1_1names_1ab5a781c8f1826513a5f819a0117eab12" compoundref="nest__names_8h" startline="526">nest::names::tau_syn_ex</references>
+        <references refid="namespacenest_1_1names_1aea360b5d2075a57b3a3eb724a991b935" compoundref="nest__names_8h" startline="527">nest::names::tau_syn_in</references>
+        <references refid="namespacenest_1_1names_1a0b55e6b0c9738517fa196a23b326418c" compoundref="nest__names_8h" startline="532">nest::names::tau_v</references>
+        <referencedby refid="classnest_1_1amat2__psc__exp_1a961da12900f91fac709dd9de5833ff60" compoundref="amat2__psc__exp_8h" startline="442" endline="449">nest::amat2_psc_exp::get_status</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="structnest_1_1amat2__psc__exp_1_1Parameters___1aa76980bc59925e5d15f94ce626256706" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double nest::amat2_psc_exp::Parameters_::set</definition>
+        <argsstring>(const DictionaryDatum &amp;, Node *node)</argsstring>
+        <name>set</name>
+        <qualifiedname>nest::amat2_psc_exp::Parameters_::set</qualifiedname>
+        <param>
+          <type>const <ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+          <defname>d</defname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1Node" kindref="compound">Node</ref> *</type>
+          <declname>node</declname>
+        </param>
+        <briefdescription>
+<para>Set values from dictionary. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Change in reversal potential E_L, to be passed to <ref refid="structnest_1_1amat2__psc__exp_1_1State___1aaa958827de7b9fa4e3f6e2b0dddec56f" kindref="member">State_::set()</ref> Set values from dictionary </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" line="255" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.cpp" bodystart="124" bodyend="176"/>
+        <references refid="namespacenest_1_1names_1ac035263e923b8dd76d3b1c6638106995" compoundref="nest__names_8h" startline="87">nest::names::alpha_1</references>
+        <references refid="namespacenest_1_1names_1a4bb2cff3a460d3bd7bcb4f2a9d537cc4" compoundref="nest__names_8h" startline="88">nest::names::alpha_2</references>
+        <references refid="namespacenest_1_1names_1adf1fbc4cd86188c4752d22797704cb29" compoundref="nest__names_8h" startline="102">nest::names::beta</references>
+        <references refid="namespacenest_1_1names_1a87c37b74ee8ef5b94a8cf290a29adbde" compoundref="nest__names_8h" startline="110">nest::names::C_m</references>
+        <references refid="namespacenest_1_1names_1a8716ae8315df1d512b346b4243e2556d" compoundref="nest__names_8h" startline="169">nest::names::E_L</references>
+        <references refid="namespacenest_1_1names_1a17aa476db9e655c644567ffca7c7d797" compoundref="nest__names_8h" startline="259">nest::names::I_e</references>
+        <references refid="namespacenest_1_1names_1a9bb5cc447248325106b93ec67fe4f798" compoundref="nest__names_8h" startline="349">nest::names::omega</references>
+        <references refid="namespacenest_1_1names_1af1fb8d4c65ef19902f7afc8e18e1389e" compoundref="nest__names_8h" startline="474">nest::names::t_ref</references>
+        <references refid="namespacenest_1_1names_1a6b8a85f1c74205513ca726d8c2993181" compoundref="nest__names_8h" startline="483">nest::names::tau_1</references>
+        <references refid="namespacenest_1_1names_1a844402722db4b5be1a0a50f6285e9e48" compoundref="nest__names_8h" startline="484">nest::names::tau_2</references>
+        <references refid="namespacenest_1_1names_1a653273480a7aaf3e4ea7505c82740c02" compoundref="nest__names_8h" startline="503">nest::names::tau_m</references>
+        <references refid="namespacenest_1_1names_1ab5a781c8f1826513a5f819a0117eab12" compoundref="nest__names_8h" startline="526">nest::names::tau_syn_ex</references>
+        <references refid="namespacenest_1_1names_1aea360b5d2075a57b3a3eb724a991b935" compoundref="nest__names_8h" startline="527">nest::names::tau_syn_in</references>
+        <references refid="namespacenest_1_1names_1a0b55e6b0c9738517fa196a23b326418c" compoundref="nest__names_8h" startline="532">nest::names::tau_v</references>
+        <referencedby refid="classnest_1_1amat2__psc__exp_1a561382d0c3e8ddfa54b067e60841dc8e" compoundref="amat2__psc__exp_8h" startline="452" endline="468">nest::amat2_psc_exp::set_status</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Independent parameters of the model. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" line="205" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/amat2_psc_exp.h" bodystart="206" bodyend="256"/>
+    <listofallmembers>
+      <member refid="structnest_1_1amat2__psc__exp_1_1Parameters___1aa5e62df0dd2256c0b2e6f5486748ba57" prot="public" virt="non-virtual"><scope>nest::amat2_psc_exp::Parameters_</scope><name>alpha_1_</name></member>
+      <member refid="structnest_1_1amat2__psc__exp_1_1Parameters___1a8113df341c9022f97aae48eb969e575d" prot="public" virt="non-virtual"><scope>nest::amat2_psc_exp::Parameters_</scope><name>alpha_2_</name></member>
+      <member refid="structnest_1_1amat2__psc__exp_1_1Parameters___1afce86c4733445b15ff73b9b50b168960" prot="public" virt="non-virtual"><scope>nest::amat2_psc_exp::Parameters_</scope><name>beta_</name></member>
+      <member refid="structnest_1_1amat2__psc__exp_1_1Parameters___1a1baa9c0a3d7748d8343d5a785d274403" prot="public" virt="non-virtual"><scope>nest::amat2_psc_exp::Parameters_</scope><name>C_</name></member>
+      <member refid="structnest_1_1amat2__psc__exp_1_1Parameters___1a27dac3b7bf3de736ba75c3fcbbdab716" prot="public" virt="non-virtual"><scope>nest::amat2_psc_exp::Parameters_</scope><name>E_L_</name></member>
+      <member refid="structnest_1_1amat2__psc__exp_1_1Parameters___1aeef6e46503c69aa71bdd075a27f07b95" prot="public" virt="non-virtual"><scope>nest::amat2_psc_exp::Parameters_</scope><name>get</name></member>
+      <member refid="structnest_1_1amat2__psc__exp_1_1Parameters___1a759dee6267e622b8806b5965d6830d43" prot="public" virt="non-virtual"><scope>nest::amat2_psc_exp::Parameters_</scope><name>I_e_</name></member>
+      <member refid="structnest_1_1amat2__psc__exp_1_1Parameters___1a4ab0698a653567d09c99e8c3efa8b44a" prot="public" virt="non-virtual"><scope>nest::amat2_psc_exp::Parameters_</scope><name>omega_</name></member>
+      <member refid="structnest_1_1amat2__psc__exp_1_1Parameters___1aac39a95dbfbe4885d9ae939ddf99cb9d" prot="public" virt="non-virtual"><scope>nest::amat2_psc_exp::Parameters_</scope><name>Parameters_</name></member>
+      <member refid="structnest_1_1amat2__psc__exp_1_1Parameters___1aa76980bc59925e5d15f94ce626256706" prot="public" virt="non-virtual"><scope>nest::amat2_psc_exp::Parameters_</scope><name>set</name></member>
+      <member refid="structnest_1_1amat2__psc__exp_1_1Parameters___1aae623f17eccfdb288654079463d2ca3b" prot="public" virt="non-virtual"><scope>nest::amat2_psc_exp::Parameters_</scope><name>Tau_</name></member>
+      <member refid="structnest_1_1amat2__psc__exp_1_1Parameters___1a2df881beff251a217ef7446e422c989e" prot="public" virt="non-virtual"><scope>nest::amat2_psc_exp::Parameters_</scope><name>tau_1_</name></member>
+      <member refid="structnest_1_1amat2__psc__exp_1_1Parameters___1ae765d4a1df52a9a1d49a1d454d79b0c6" prot="public" virt="non-virtual"><scope>nest::amat2_psc_exp::Parameters_</scope><name>tau_2_</name></member>
+      <member refid="structnest_1_1amat2__psc__exp_1_1Parameters___1a13b04c40455274057462d50110501ff7" prot="public" virt="non-virtual"><scope>nest::amat2_psc_exp::Parameters_</scope><name>tau_ex_</name></member>
+      <member refid="structnest_1_1amat2__psc__exp_1_1Parameters___1a30e36f0343e52b60448a6f76824f9a96" prot="public" virt="non-virtual"><scope>nest::amat2_psc_exp::Parameters_</scope><name>tau_in_</name></member>
+      <member refid="structnest_1_1amat2__psc__exp_1_1Parameters___1ae6ff76e101cd914ce407a336a96a9461" prot="public" virt="non-virtual"><scope>nest::amat2_psc_exp::Parameters_</scope><name>tau_ref_</name></member>
+      <member refid="structnest_1_1amat2__psc__exp_1_1Parameters___1ac8e5668d9b079814231638cda60fbec1" prot="public" virt="non-virtual"><scope>nest::amat2_psc_exp::Parameters_</scope><name>tau_v_</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

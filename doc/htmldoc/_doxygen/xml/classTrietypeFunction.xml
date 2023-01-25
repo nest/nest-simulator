@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classTrietypeFunction" kind="class" language="C++" prot="public">
+    <compoundname>TrietypeFunction</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="sliactions_8h" local="no">sliactions.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classTrietypeFunction_1a5caf3b50a8d6b6a9c860d703869b8753" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>TrietypeFunction::TrietypeFunction</definition>
+        <argsstring>()</argsstring>
+        <name>TrietypeFunction</name>
+        <qualifiedname>TrietypeFunction::TrietypeFunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliactions.h" line="107" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliactions.h" bodystart="107" bodyend="109"/>
+      </memberdef>
+      <memberdef kind="function" id="classTrietypeFunction_1aa617a18f82017e4d01bf5711029d6ad1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void TrietypeFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>TrietypeFunction::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliactions.h" line="110" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliactions.cc" bodystart="107" bodyend="111"/>
+        <references refid="classToken_1a0fb2d619ef8e12500e8eb9a546d8d49c" compoundref="token_8h" startline="299" endline="310">Token::assign_by_ref</references>
+        <references refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" compoundref="token_8h" startline="360" endline="364">Token::datum</references>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="classTrieDatum_1ae78ed217994201e2545df49e7ba8c6c3" compoundref="triedatum_8h" startline="125" endline="128">TrieDatum::lookup</references>
+        <references refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" compoundref="interpret_8h" startline="250">SLIInterpreter::OStack</references>
+        <references refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" compoundref="tokenstack_8h" startline="116" endline="119">TokenStack::top</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="1">
+        <label>TrietypeFunction</label>
+        <link refid="classTrietypeFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="1">
+        <label>TrietypeFunction</label>
+        <link refid="classTrietypeFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliactions.h" line="104" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliactions.h" bodystart="105" bodyend="111"/>
+    <listofallmembers>
+      <member refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba" prot="public" virt="virtual"><scope>TrietypeFunction</scope><name>backtrace</name></member>
+      <member refid="classTrietypeFunction_1aa617a18f82017e4d01bf5711029d6ad1" prot="public" virt="virtual"><scope>TrietypeFunction</scope><name>execute</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>TrietypeFunction</scope><name>SLIFunction</name></member>
+      <member refid="classTrietypeFunction_1a5caf3b50a8d6b6a9c860d703869b8753" prot="public" virt="non-virtual"><scope>TrietypeFunction</scope><name>TrietypeFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>TrietypeFunction</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

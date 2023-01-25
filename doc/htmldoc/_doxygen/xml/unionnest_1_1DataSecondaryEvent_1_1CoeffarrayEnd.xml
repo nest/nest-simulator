@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="unionnest_1_1DataSecondaryEvent_1_1CoeffarrayEnd" kind="union" language="C++" prot="private">
+    <compoundname>nest::DataSecondaryEvent::CoeffarrayEnd</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="unionnest_1_1DataSecondaryEvent_1_1CoeffarrayEnd_1aaecd442cc88bd2ff9ea92a31fd488ba6" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; unsignedint &gt;::iterator</type>
+        <definition>std::vector&lt;unsignedint&gt;::iterator nest::DataSecondaryEvent&lt; DataType, Subclass &gt;::CoeffarrayEnd::as_uint</definition>
+        <argsstring></argsstring>
+        <name>as_uint</name>
+        <qualifiedname>nest::DataSecondaryEvent::CoeffarrayEnd::as_uint</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/secondary_event.h" line="179" column="28" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/secondary_event.h" bodystart="179" bodyend="-1"/>
+        <referencedby refid="classnest_1_1DataSecondaryEvent_1ac0144c1d108dffd838f40c49002ae2bc" compoundref="secondary__event_8h" startline="294" endline="297">nest::DataSecondaryEvent&lt; DataType, Subclass &gt;::end</referencedby>
+        <referencedby refid="classnest_1_1DataSecondaryEvent_1ae36a23a1cfe4e628f2a280159c65fc2a" compoundref="secondary__event_8h" startline="244" endline="257">nest::DataSecondaryEvent&lt; DataType, Subclass &gt;::operator&lt;&lt;</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="unionnest_1_1DataSecondaryEvent_1_1CoeffarrayEnd_1aa367ff20460b325692523faeab2cc4c5" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; DataType &gt;::iterator</type>
+        <definition>std::vector&lt;DataType&gt;::iterator nest::DataSecondaryEvent&lt; DataType, Subclass &gt;::CoeffarrayEnd::as_DataType</definition>
+        <argsstring></argsstring>
+        <name>as_DataType</name>
+        <qualifiedname>nest::DataSecondaryEvent::CoeffarrayEnd::as_DataType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/secondary_event.h" line="180" column="37" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/secondary_event.h" bodystart="180" bodyend="-1"/>
+        <referencedby refid="classnest_1_1DataSecondaryEvent_1ad1214a5f2b6998ca31f5c63aae7a86ed" compoundref="secondary__event_8h" startline="266" endline="275">nest::DataSecondaryEvent&lt; DataType, Subclass &gt;::operator&gt;&gt;</referencedby>
+        <referencedby refid="classnest_1_1DataSecondaryEvent_1a74fb39a1de88a532ab1afa32403cf22b" compoundref="secondary__event_8h" startline="232" endline="237">nest::DataSecondaryEvent&lt; DataType, Subclass &gt;::set_coeffarray</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="unionnest_1_1DataSecondaryEvent_1_1CoeffarrayEnd_1a3586eadc9f24d42e8de3ab859f183e0a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>nest::DataSecondaryEvent&lt; DataType, Subclass &gt;::CoeffarrayEnd::CoeffarrayEnd</definition>
+        <argsstring>()</argsstring>
+        <name>CoeffarrayEnd</name>
+        <qualifiedname>nest::DataSecondaryEvent::CoeffarrayEnd::CoeffarrayEnd</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/secondary_event.h" line="182" column="5" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/secondary_event.h" bodystart="182" bodyend="182"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/secondary_event.h" line="177" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/secondary_event.h" bodystart="178" bodyend="184"/>
+    <listofallmembers>
+      <member refid="unionnest_1_1DataSecondaryEvent_1_1CoeffarrayEnd_1aa367ff20460b325692523faeab2cc4c5" prot="public" virt="non-virtual"><scope>nest::DataSecondaryEvent::CoeffarrayEnd</scope><name>as_DataType</name></member>
+      <member refid="unionnest_1_1DataSecondaryEvent_1_1CoeffarrayEnd_1aaecd442cc88bd2ff9ea92a31fd488ba6" prot="public" virt="non-virtual"><scope>nest::DataSecondaryEvent::CoeffarrayEnd</scope><name>as_uint</name></member>
+      <member refid="unionnest_1_1DataSecondaryEvent_1_1CoeffarrayEnd_1a3586eadc9f24d42e8de3ab859f183e0a" prot="public" virt="non-virtual"><scope>nest::DataSecondaryEvent::CoeffarrayEnd</scope><name>CoeffarrayEnd</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

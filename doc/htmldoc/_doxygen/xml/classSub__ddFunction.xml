@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classSub__ddFunction" kind="class" language="C++" prot="public">
+    <compoundname>Sub_ddFunction</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="slimath_8h" local="no">slimath.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classSub__ddFunction_1aaee01d6cfafc32ba6ceccc83d417f997" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Sub_ddFunction::Sub_ddFunction</definition>
+        <argsstring>()</argsstring>
+        <name>Sub_ddFunction</name>
+        <qualifiedname>Sub_ddFunction::Sub_ddFunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slimath.h" line="103" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slimath.h" bodystart="103" bodyend="105"/>
+      </memberdef>
+      <memberdef kind="function" id="classSub__ddFunction_1a2ee22c72d70d3ffc4650aa9444737448" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void Sub_ddFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>Sub_ddFunction::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slimath.h" line="107" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slimath.cc" bodystart="138" bodyend="148"/>
+        <references refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" compoundref="token_8h" startline="360" endline="364">Token::datum</references>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="classGenericDatum_1a2204e0bfb80429863ebbd37005235c1e" compoundref="genericdatum_8h" startline="74" endline="77">GenericDatum&lt; D, slt &gt;::get</references>
+        <references refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" compoundref="tokenstack_8h" startline="184" endline="187">TokenStack::load</references>
+        <references refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" compoundref="interpret_8h" startline="250">SLIInterpreter::OStack</references>
+        <references refid="classTokenStack_1ac861cc2282484dd2a27dd1304aa719a4" compoundref="tokenstack_8h" startline="127" endline="130">TokenStack::pick</references>
+        <references refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" compoundref="tokenstack_8h" startline="96" endline="99">TokenStack::pop</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="1">
+        <label>Sub_ddFunction</label>
+        <link refid="classSub__ddFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="1">
+        <label>Sub_ddFunction</label>
+        <link refid="classSub__ddFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/slimath.h" line="100" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slimath.h" bodystart="101" bodyend="108"/>
+    <listofallmembers>
+      <member refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba" prot="public" virt="virtual"><scope>Sub_ddFunction</scope><name>backtrace</name></member>
+      <member refid="classSub__ddFunction_1a2ee22c72d70d3ffc4650aa9444737448" prot="public" virt="virtual"><scope>Sub_ddFunction</scope><name>execute</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>Sub_ddFunction</scope><name>SLIFunction</name></member>
+      <member refid="classSub__ddFunction_1aaee01d6cfafc32ba6ceccc83d417f997" prot="public" virt="non-virtual"><scope>Sub_ddFunction</scope><name>Sub_ddFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>Sub_ddFunction</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,174 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classSLIgraphics" kind="class" language="C++" prot="public">
+    <compoundname>SLIgraphics</compoundname>
+    <basecompoundref refid="classSLIModule" prot="public" virt="non-virtual">SLIModule</basecompoundref>
+    <includes refid="sligraphics_8h" local="no">sligraphics.h</includes>
+    <innerclass refid="classSLIgraphics_1_1ReadPGMFunction" prot="private">SLIgraphics::ReadPGMFunction</innerclass>
+    <innerclass refid="classSLIgraphics_1_1WritePGMFunction" prot="private">SLIgraphics::WritePGMFunction</innerclass>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classSLIgraphics_1a495e904692824f9b73e741f3a20399a9" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIgraphics_1_1ReadPGMFunction" kindref="compound">ReadPGMFunction</ref></type>
+        <definition>ReadPGMFunction SLIgraphics::readpgmfunction</definition>
+        <argsstring></argsstring>
+        <name>readpgmfunction</name>
+        <qualifiedname>SLIgraphics::readpgmfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sligraphics.h" line="59" column="19" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sligraphics.h" bodystart="59" bodyend="-1"/>
+        <referencedby refid="classSLIgraphics_1a64f59a5d5a6292ce303e67279c32cb8e" compoundref="sligraphics_8cc" startline="362" endline="366">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIgraphics_1a775656c8cc4c037ba22cc9cf9ae716df" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIgraphics_1_1WritePGMFunction" kindref="compound">WritePGMFunction</ref></type>
+        <definition>WritePGMFunction SLIgraphics::writepgmfunction</definition>
+        <argsstring></argsstring>
+        <name>writepgmfunction</name>
+        <qualifiedname>SLIgraphics::writepgmfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sligraphics.h" line="60" column="20" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sligraphics.h" bodystart="60" bodyend="-1"/>
+        <referencedby refid="classSLIgraphics_1a64f59a5d5a6292ce303e67279c32cb8e" compoundref="sligraphics_8cc" startline="362" endline="366">init</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classSLIgraphics_1a9388184e262efb93367603a4390fcab3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SLIgraphics::SLIgraphics</definition>
+        <argsstring>()</argsstring>
+        <name>SLIgraphics</name>
+        <qualifiedname>SLIgraphics::SLIgraphics</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sligraphics.h" line="63" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sligraphics.h" bodystart="63" bodyend="65"/>
+      </memberdef>
+      <memberdef kind="function" id="classSLIgraphics_1a64f59a5d5a6292ce303e67279c32cb8e" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void SLIgraphics::init</definition>
+        <argsstring>(SLIInterpreter *) override</argsstring>
+        <name>init</name>
+        <qualifiedname>SLIgraphics::init</qualifiedname>
+        <reimplements refid="classSLIModule_1a4fb2ff87fa14e0caeeea009cf0761957">init</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+        </param>
+        <briefdescription>
+<para>Initialize the module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When this function is called, most of the interpreter&apos;s facilities are up and running. However, depending on where in the interpreter&apos;s bootstrap sequence the module is initialized, not all services may be available. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sligraphics.h" line="67" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sligraphics.cc" bodystart="362" bodyend="366"/>
+        <references refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" compoundref="interpret_8cc" startline="271" endline="282">SLIInterpreter::createcommand</references>
+        <references refid="classSLIgraphics_1a495e904692824f9b73e741f3a20399a9" compoundref="sligraphics_8h" startline="59">readpgmfunction</references>
+        <references refid="classSLIgraphics_1a775656c8cc4c037ba22cc9cf9ae716df" compoundref="sligraphics_8h" startline="60">writepgmfunction</references>
+      </memberdef>
+      <memberdef kind="function" id="classSLIgraphics_1affb41e822b153a61faa4fa7fad75b96b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>const std::string</type>
+        <definition>const std::string SLIgraphics::name</definition>
+        <argsstring>() const override</argsstring>
+        <name>name</name>
+        <qualifiedname>SLIgraphics::name</qualifiedname>
+        <reimplements refid="classSLIModule_1a2e0c93f5145eb879abd3a8fdcfcedf6c">name</reimplements>
+        <briefdescription>
+<para>Return name of the module. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sligraphics.h" line="68" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sligraphics.cc" bodystart="369" bodyend="372"/>
+      </memberdef>
+      <memberdef kind="function" id="classSLIgraphics_1a25d22f280d01d518199aa7304b0b991d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>const std::string</type>
+        <definition>const std::string SLIgraphics::commandstring</definition>
+        <argsstring>() const override</argsstring>
+        <name>commandstring</name>
+        <qualifiedname>SLIgraphics::commandstring</qualifiedname>
+        <reimplements refid="classSLIModule_1a05bb33e2c5494f406dfdda137a305ead">commandstring</reimplements>
+        <briefdescription>
+<para>Return sli command sequence to be executed for initialization. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sligraphics.h" line="69" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sligraphics.cc" bodystart="375" bodyend="378"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>SLIModule</label>
+        <link refid="classSLIModule"/>
+      </node>
+      <node id="1">
+        <label>SLIgraphics</label>
+        <link refid="classSLIgraphics"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="4">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="2">
+        <label>SLIModule</label>
+        <link refid="classSLIModule"/>
+      </node>
+      <node id="1">
+        <label>SLIgraphics</label>
+        <link refid="classSLIgraphics"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>readpgmfunction</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>writepgmfunction</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>SLIgraphics::ReadPGMFunction</label>
+        <link refid="classSLIgraphics_1_1ReadPGMFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>SLIgraphics::WritePGMFunction</label>
+        <link refid="classSLIgraphics_1_1WritePGMFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/sligraphics.h" line="38" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sligraphics.h" bodystart="39" bodyend="70"/>
+    <listofallmembers>
+      <member refid="classSLIgraphics_1a25d22f280d01d518199aa7304b0b991d" prot="public" virt="virtual"><scope>SLIgraphics</scope><name>commandstring</name></member>
+      <member refid="classSLIgraphics_1a64f59a5d5a6292ce303e67279c32cb8e" prot="public" virt="virtual"><scope>SLIgraphics</scope><name>init</name></member>
+      <member refid="classSLIModule_1ac32734c42e93e16aaf644a842de40bc2" prot="public" virt="non-virtual"><scope>SLIgraphics</scope><name>install</name></member>
+      <member refid="classSLIgraphics_1affb41e822b153a61faa4fa7fad75b96b" prot="public" virt="virtual"><scope>SLIgraphics</scope><name>name</name></member>
+      <member refid="classSLIgraphics_1a495e904692824f9b73e741f3a20399a9" prot="private" virt="non-virtual"><scope>SLIgraphics</scope><name>readpgmfunction</name></member>
+      <member refid="classSLIgraphics_1a9388184e262efb93367603a4390fcab3" prot="public" virt="non-virtual"><scope>SLIgraphics</scope><name>SLIgraphics</name></member>
+      <member refid="classSLIgraphics_1a775656c8cc4c037ba22cc9cf9ae716df" prot="private" virt="non-virtual"><scope>SLIgraphics</scope><name>writepgmfunction</name></member>
+      <member refid="classSLIModule_1a8e77a5438547cacc0eef34e5608591cb" prot="public" virt="virtual"><scope>SLIgraphics</scope><name>~SLIModule</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

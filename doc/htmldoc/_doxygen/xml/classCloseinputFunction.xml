@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classCloseinputFunction" kind="class" language="C++" prot="public">
+    <compoundname>CloseinputFunction</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="slicontrol_8h" local="no">slicontrol.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classCloseinputFunction_1a6501fc1ab0aff637c0842916da67a371" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>CloseinputFunction::CloseinputFunction</definition>
+        <argsstring>()</argsstring>
+        <name>CloseinputFunction</name>
+        <qualifiedname>CloseinputFunction::CloseinputFunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" line="133" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" bodystart="133" bodyend="135"/>
+      </memberdef>
+      <memberdef kind="function" id="classCloseinputFunction_1a17423afafe74f9c44c219840290a9c4e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void CloseinputFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>CloseinputFunction::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+<para>@BeginDocumentation </para>
+        </briefdescription>
+        <detaileddescription>
+<para><ref refid="className" kindref="compound">Name</ref>: closeinput - Close current input file.</para>
+<para>FirstVersion: 25 Jul 2005, Gewaltig </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" line="136" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.cc" bodystart="501" bodyend="553"/>
+        <references refid="classSLIInterpreter_1a96c3eff127bf8a56860f05ff199cb6ff" compoundref="interpret_8cc" startline="311" endline="314">SLIInterpreter::baselookup</references>
+        <references refid="classSLIInterpreter_1ae955a59aada4f5dec01bb77ff0400242" compoundref="interpret_8h" startline="576" endline="579">SLIInterpreter::catch_errors</references>
+        <references refid="classTokenStack_1a718dc49b82f89b99d9d8a59155adb97d" compoundref="tokenstack_8h" startline="55" endline="58">TokenStack::clear</references>
+        <references refid="classSLIInterpreter_1ab345ed039af59fb2b2b546f18f153eba" compoundref="interpret_8cc" startline="1048" endline="1198">SLIInterpreter::debug_commandline</references>
+        <references refid="classSLIInterpreter_1a00d437b4b61acb86f8cf6ee97fce8b80" compoundref="interpret_8h" startline="454" endline="457">SLIInterpreter::debug_mode_on</references>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="classSLIInterpreter_1a55d34ddea528b469d72f1cf367f44b6a" compoundref="interpret_8h" startline="445" endline="448">SLIInterpreter::get_debug_mode</references>
+        <references refid="classDatum_1ad27263ba100f9c536085ddcad183ab07" compoundref="datum_8h" startline="178" endline="182">Datum::isoftype</references>
+        <references refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" compoundref="tokenstack_8h" startline="184" endline="187">TokenStack::load</references>
+        <references refid="group__SLIMessaging_1gacbc035efd87bf843002900f7f1baf5b0" compoundref="interpret_8cc" startline="774" endline="824">SLIInterpreter::message</references>
+        <references refid="classTokenStack_1ac861cc2282484dd2a27dd1304aa719a4" compoundref="tokenstack_8h" startline="127" endline="130">TokenStack::pick</references>
+        <references refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" compoundref="tokenstack_8h" startline="96" endline="99">TokenStack::pop</references>
+        <references refid="classTokenStack_1a585f38fb0ed122da90489eccbfd7a187" compoundref="tokenstack_8h" startline="62" endline="65">TokenStack::push</references>
+        <references refid="classSLIInterpreter_1aaa48321bbd17de75ecf8283bf3d9f4ef" compoundref="interpret_8h" startline="542" endline="545">SLIInterpreter::show_backtrace</references>
+        <references refid="classSLIInterpreter_1a169f3eea32f5812fd3dd31bbd88647af" compoundref="interpret_8cc" startline="986" endline="1018">SLIInterpreter::stack_backtrace</references>
+        <references refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" compoundref="tokenstack_8h" startline="116" endline="119">TokenStack::top</references>
+        <references refid="classSLIInterpreter_1a5d93e8c0d4e0a52e2aacb53d6b59f3ab" compoundref="interpret_8h" startline="218">SLIInterpreter::XIstreamtype</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>CloseinputFunction</label>
+        <link refid="classCloseinputFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>CloseinputFunction</label>
+        <link refid="classCloseinputFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" line="130" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" bodystart="131" bodyend="137"/>
+    <listofallmembers>
+      <member refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba" prot="public" virt="virtual"><scope>CloseinputFunction</scope><name>backtrace</name></member>
+      <member refid="classCloseinputFunction_1a6501fc1ab0aff637c0842916da67a371" prot="public" virt="non-virtual"><scope>CloseinputFunction</scope><name>CloseinputFunction</name></member>
+      <member refid="classCloseinputFunction_1a17423afafe74f9c44c219840290a9c4e" prot="public" virt="virtual"><scope>CloseinputFunction</scope><name>execute</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>CloseinputFunction</scope><name>SLIFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>CloseinputFunction</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

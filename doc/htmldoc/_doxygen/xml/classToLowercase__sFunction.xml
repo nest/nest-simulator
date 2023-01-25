@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classToLowercase__sFunction" kind="class" language="C++" prot="public">
+    <compoundname>ToLowercase_sFunction</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="stringdatum_8h" local="no">stringdatum.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classToLowercase__sFunction_1a1ee32b3fcb404e049b50c2c20d01ee61" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>ToLowercase_sFunction::ToLowercase_sFunction</definition>
+        <argsstring>()</argsstring>
+        <name>ToLowercase_sFunction</name>
+        <qualifiedname>ToLowercase_sFunction::ToLowercase_sFunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/stringdatum.h" line="93" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/stringdatum.h" bodystart="93" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="classToLowercase__sFunction_1a5e520b23823110c35bacf7eab673df29" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void ToLowercase_sFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>ToLowercase_sFunction::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+<para>@BeginDocumentation <ref refid="className" kindref="compound">Name</ref>: ToLowercase - Convert a string to lower case. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Synopsis: (string) ToLowercase -&gt; (string) Description: ToLowercase converts a string to lower case. If no lower case representation of a letter exists, the letter is kept unchanged.</para>
+<para>Examples: SLI ] (MiXeD cAsE) ToLowercase (mixed case)</para>
+<para>Author: Jochen Martin Eppler SeeAlso: ToUppercase </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/stringdatum.h" line="96" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/stringdatum.cc" bodystart="97" bodyend="108"/>
+        <references refid="classSLIInterpreter_1a4bd843d0ad15faf88185a1ae885f8852" compoundref="interpret_8h" startline="905" endline="911">SLIInterpreter::assert_stack_load</references>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" compoundref="interpret_8h" startline="250">SLIInterpreter::OStack</references>
+        <references refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" compoundref="tokenstack_8h" startline="96" endline="99">TokenStack::pop</references>
+        <references refid="classTokenStack_1a585f38fb0ed122da90489eccbfd7a187" compoundref="tokenstack_8h" startline="62" endline="65">TokenStack::push</references>
+        <references refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" compoundref="tokenstack_8h" startline="116" endline="119">TokenStack::top</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="1">
+        <label>ToLowercase_sFunction</label>
+        <link refid="classToLowercase__sFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="1">
+        <label>ToLowercase_sFunction</label>
+        <link refid="classToLowercase__sFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/stringdatum.h" line="90" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/stringdatum.h" bodystart="91" bodyend="97"/>
+    <listofallmembers>
+      <member refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba" prot="public" virt="virtual"><scope>ToLowercase_sFunction</scope><name>backtrace</name></member>
+      <member refid="classToLowercase__sFunction_1a5e520b23823110c35bacf7eab673df29" prot="public" virt="virtual"><scope>ToLowercase_sFunction</scope><name>execute</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>ToLowercase_sFunction</scope><name>SLIFunction</name></member>
+      <member refid="classToLowercase__sFunction_1a1ee32b3fcb404e049b50c2c20d01ee61" prot="public" virt="non-virtual"><scope>ToLowercase_sFunction</scope><name>ToLowercase_sFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>ToLowercase_sFunction</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

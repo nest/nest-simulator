@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classOverFunction" kind="class" language="C++" prot="public">
+    <compoundname>OverFunction</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="slistack_8h" local="no">slistack.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classOverFunction_1ad648c4a178639ed9a0b77d9e449fa129" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>OverFunction::OverFunction</definition>
+        <argsstring>()</argsstring>
+        <name>OverFunction</name>
+        <qualifiedname>OverFunction::OverFunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistack.h" line="122" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistack.h" bodystart="122" bodyend="124"/>
+      </memberdef>
+      <memberdef kind="function" id="classOverFunction_1a818c2a0064f25fd4e0c8e7277e576ab9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void OverFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>OverFunction::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+<para>@BeginDocumentation <ref refid="className" kindref="compound">Name</ref>: over - Copy object at stack level 1 Synopsis: any obj over -&gt; any obj any Diagnostics: Raises <ref refid="classStackUnderflow" kindref="compound">StackUnderflow</ref> error if there are less than two objects on the stack. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Examples: 1 2 3 over -&gt; 2 1 2 3 4 5 over -&gt; 4 SeeAlso: dup, index, copy </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistack.h" line="125" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistack.cc" bodystart="119" bodyend="128"/>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="classTokenStack_1a1e5aeb05f729b6de59de3f75e8527862" compoundref="tokenstack_8h" startline="155" endline="158">TokenStack::index</references>
+        <references refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" compoundref="tokenstack_8h" startline="184" endline="187">TokenStack::load</references>
+        <references refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" compoundref="interpret_8h" startline="250">SLIInterpreter::OStack</references>
+        <references refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" compoundref="tokenstack_8h" startline="96" endline="99">TokenStack::pop</references>
+        <references refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" compoundref="interpret_8h" startline="635" endline="638">SLIInterpreter::raiseerror</references>
+        <references refid="classSLIInterpreter_1af98b93bb76491e6bc67e7636ca8e9ea9" compoundref="interpret_8h" startline="149">SLIInterpreter::StackUnderflowError</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>OverFunction</label>
+        <link refid="classOverFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>OverFunction</label>
+        <link refid="classOverFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistack.h" line="119" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistack.h" bodystart="120" bodyend="126"/>
+    <listofallmembers>
+      <member refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba" prot="public" virt="virtual"><scope>OverFunction</scope><name>backtrace</name></member>
+      <member refid="classOverFunction_1a818c2a0064f25fd4e0c8e7277e576ab9" prot="public" virt="virtual"><scope>OverFunction</scope><name>execute</name></member>
+      <member refid="classOverFunction_1ad648c4a178639ed9a0b77d9e449fa129" prot="public" virt="non-virtual"><scope>OverFunction</scope><name>OverFunction</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>OverFunction</scope><name>SLIFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>OverFunction</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,590 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classTrieDatum" kind="class" language="C++" prot="public">
+    <compoundname>TrieDatum</compoundname>
+    <basecompoundref refid="classTypedDatum" prot="public" virt="non-virtual">TypedDatum&lt; &amp;SLIInterpreter::Trietype &gt;</basecompoundref>
+    <includes refid="triedatum_8h" local="no">triedatum.h</includes>
+      <sectiondef kind="protected-static-attrib">
+      <memberdef kind="variable" id="classTrieDatum_1ac4d085002af53ba6250d2e5bd5d95aad" prot="protected" static="yes" mutable="no">
+        <type><ref refid="classsli_1_1pool" kindref="compound">sli::pool</ref></type>
+        <definition>sli::pool TrieDatum::memory</definition>
+        <argsstring></argsstring>
+        <name>memory</name>
+        <qualifiedname>TrieDatum::memory</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" line="41" column="20" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" bodystart="41" bodyend="-1"/>
+        <referencedby refid="classTrieDatum_1aaee616098599a6a0c3cc82a3522f95fa" compoundref="triedatum_8h" startline="147" endline="159">operator delete</referencedby>
+        <referencedby refid="classTrieDatum_1adae6ccd6f32ce3b707f8cae4ff42f7da" compoundref="triedatum_8h" startline="137" endline="144">operator new</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classTrieDatum_1af1c0acd0f0a581af2a55461544ac2e59" prot="private" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name TrieDatum::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <qualifiedname>TrieDatum::name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" line="44" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" bodystart="44" bodyend="-1"/>
+        <referencedby refid="classTrieDatum_1a1e7cf5785458357371422c106f041400" compoundref="triedatum_8h" startline="107" endline="110">getname</referencedby>
+        <referencedby refid="classTrieDatum_1a0499ff8322f331ccd6483bb1b4f8b7cc" compoundref="triedatum_8h" startline="85" endline="88">print</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classTrieDatum_1a384850e6cc8ef09f9bfaeae99f16a73e" prot="private" static="no" mutable="no">
+        <type><ref refid="classTypeTrie" kindref="compound">TypeTrie</ref></type>
+        <definition>TypeTrie TrieDatum::tree</definition>
+        <argsstring></argsstring>
+        <name>tree</name>
+        <qualifiedname>TrieDatum::tree</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" line="45" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" bodystart="45" bodyend="-1"/>
+        <referencedby refid="classTrieDatum_1adfc724b73d7d2558e483d5e47aae3114" compoundref="triedatum_8cc" startline="31" endline="40">equals</referencedby>
+        <referencedby refid="classTrieDatum_1a32d8bf015b07c8b0e24ca654116eaa9e" compoundref="triedatum_8h" startline="131" endline="134">get</referencedby>
+        <referencedby refid="classTrieDatum_1aa00fd5efe8d4ae354b1ac35328317c4d" compoundref="triedatum_8h" startline="97" endline="102">info</referencedby>
+        <referencedby refid="classTrieDatum_1af2774c67d12dfb76b542c7c85fd7749c" compoundref="triedatum_8h" startline="113" endline="116">insert</referencedby>
+        <referencedby refid="classTrieDatum_1a4434dacc3445e33c78cbfaf6b1d84bbd" compoundref="triedatum_8h" startline="119" endline="122">insert_move</referencedby>
+        <referencedby refid="classTrieDatum_1ae78ed217994201e2545df49e7ba8c6c3" compoundref="triedatum_8h" startline="125" endline="128">lookup</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classTrieDatum_1aaa24a09c3e4163a130bf932f8830c9e3" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="classDatum" kindref="compound">Datum</ref> *</type>
+        <definition>Datum * TrieDatum::clone</definition>
+        <argsstring>() const override</argsstring>
+        <name>clone</name>
+        <qualifiedname>TrieDatum::clone</qualifiedname>
+        <reimplements refid="classDatum_1ab06887e171572f71a041209053b1a0ff">clone</reimplements>
+        <briefdescription>
+<para>Virtual copy constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Use this function to lazily copy a datum. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" line="48" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" bodystart="48" bodyend="51"/>
+      </memberdef>
+      <memberdef kind="function" id="classTrieDatum_1a8de86b5c974afef36d15e8ae45503798" prot="private" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="classDatum" kindref="compound">Datum</ref> *</type>
+        <definition>Datum * TrieDatum::get_ptr</definition>
+        <argsstring>() override</argsstring>
+        <name>get_ptr</name>
+        <qualifiedname>TrieDatum::get_ptr</qualifiedname>
+        <reimplements refid="classDatum_1af968bcf24fef60342dcc5d374b8cd54e">get_ptr</reimplements>
+        <briefdescription>
+<para>Returns a reference counted pointer to the datum, or a new pointer, if the type does not support reference counting. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The prefix const indicates that the pointer should be trated as const because changes affect all other references as well. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" line="54" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" bodystart="54" bodyend="58"/>
+        <references refid="classDatum_1a8a547bad7564cd6e79fd9b1a245c9e8b" compoundref="datum_8h" startline="100" endline="103">Datum::addReference</references>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classTrieDatum_1ad80e2781b08dd70ac262429cee41cdd3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>TrieDatum::TrieDatum</definition>
+        <argsstring>(TrieDatum const &amp;fd)</argsstring>
+        <name>TrieDatum</name>
+        <qualifiedname>TrieDatum::TrieDatum</qualifiedname>
+        <param>
+          <type><ref refid="classTrieDatum" kindref="compound">TrieDatum</ref> const &amp;</type>
+          <declname>fd</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" line="61" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" bodystart="61" bodyend="67"/>
+        <references refid="classDatum_1a46325ecc6d02cc01c26366b57423d9f4" compoundref="datum_8h" startline="128" endline="131">Datum::set_executable</references>
+      </memberdef>
+      <memberdef kind="function" id="classTrieDatum_1a8c2772e320c9b2784cc64ec5495a5154" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>TrieDatum::TrieDatum</definition>
+        <argsstring>(Name const &amp;n)</argsstring>
+        <name>TrieDatum</name>
+        <qualifiedname>TrieDatum::TrieDatum</qualifiedname>
+        <param>
+          <type><ref refid="className" kindref="compound">Name</ref> const &amp;</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" line="69" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" bodystart="69" bodyend="74"/>
+        <references refid="classDatum_1a46325ecc6d02cc01c26366b57423d9f4" compoundref="datum_8h" startline="128" endline="131">Datum::set_executable</references>
+      </memberdef>
+      <memberdef kind="function" id="classTrieDatum_1a8431708f82da0e110b7f6bacfb75a8af" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>TrieDatum::TrieDatum</definition>
+        <argsstring>(Name const &amp;n, const TokenArray &amp;ta)</argsstring>
+        <name>TrieDatum</name>
+        <qualifiedname>TrieDatum::TrieDatum</qualifiedname>
+        <param>
+          <type><ref refid="className" kindref="compound">Name</ref> const &amp;</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classTokenArray" kindref="compound">TokenArray</ref> &amp;</type>
+          <declname>ta</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" line="76" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" bodystart="76" bodyend="81"/>
+        <references refid="classDatum_1a46325ecc6d02cc01c26366b57423d9f4" compoundref="datum_8h" startline="128" endline="131">Datum::set_executable</references>
+      </memberdef>
+      <memberdef kind="function" id="classTrieDatum_1a0499ff8322f331ccd6483bb1b4f8b7cc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>void TrieDatum::print</definition>
+        <argsstring>(std::ostream &amp;o) const override</argsstring>
+        <name>print</name>
+        <qualifiedname>TrieDatum::print</qualifiedname>
+        <reimplements refid="classDatum_1a6a4be93b0173f6026edc7695683ec0c4">print</reimplements>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>o</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" line="85" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" bodystart="85" bodyend="88"/>
+        <references refid="classTrieDatum_1af1c0acd0f0a581af2a55461544ac2e59" compoundref="triedatum_8h" startline="44">name</references>
+        <referencedby refid="classTrieDatum_1a4b5b21eed4f463d95d674aeb21cba7b3" compoundref="triedatum_8h" startline="91" endline="94">pprint</referencedby>
+        <referencedby refid="classSLIInterpreter_1a169f3eea32f5812fd3dd31bbd88647af" compoundref="interpret_8cc" startline="986" endline="1018">SLIInterpreter::stack_backtrace</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTrieDatum_1a4b5b21eed4f463d95d674aeb21cba7b3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>void TrieDatum::pprint</definition>
+        <argsstring>(std::ostream &amp;o) const override</argsstring>
+        <name>pprint</name>
+        <qualifiedname>TrieDatum::pprint</qualifiedname>
+        <reimplements refid="classDatum_1a9a0232698bafa153d6286a5f3534187a">pprint</reimplements>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>o</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" line="91" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" bodystart="91" bodyend="94"/>
+        <references refid="classTrieDatum_1a0499ff8322f331ccd6483bb1b4f8b7cc" compoundref="triedatum_8h" startline="85" endline="88">print</references>
+        <referencedby refid="classTrieDatum_1aa00fd5efe8d4ae354b1ac35328317c4d" compoundref="triedatum_8h" startline="97" endline="102">info</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTrieDatum_1aa00fd5efe8d4ae354b1ac35328317c4d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>void TrieDatum::info</definition>
+        <argsstring>(std::ostream &amp;out) const override</argsstring>
+        <name>info</name>
+        <qualifiedname>TrieDatum::info</qualifiedname>
+        <reimplements refid="classDatum_1af7725a211bd45f39beae0f5771038c75">info</reimplements>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>out</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" line="97" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" bodystart="97" bodyend="102"/>
+        <references refid="classTypeTrie_1af75874239a6274d6babfbcb64496da4a" compoundref="typechk_8cc" startline="287" endline="295">TypeTrie::info</references>
+        <references refid="classTrieDatum_1a4b5b21eed4f463d95d674aeb21cba7b3" compoundref="triedatum_8h" startline="91" endline="94">pprint</references>
+        <references refid="classTrieDatum_1a384850e6cc8ef09f9bfaeae99f16a73e" compoundref="triedatum_8h" startline="45">tree</references>
+      </memberdef>
+      <memberdef kind="function" id="classTrieDatum_1adfc724b73d7d2558e483d5e47aae3114" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool TrieDatum::equals</definition>
+        <argsstring>(Datum const *) const override</argsstring>
+        <name>equals</name>
+        <qualifiedname>TrieDatum::equals</qualifiedname>
+        <reimplements refid="classDatum_1a30302c3f9b5e9f86fc01021599011a7f">equals</reimplements>
+        <param>
+          <type><ref refid="classDatum" kindref="compound">Datum</ref> const *</type>
+          <defname>dat</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" line="104" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.cc" bodystart="31" bodyend="40"/>
+        <references refid="classTrieDatum_1a384850e6cc8ef09f9bfaeae99f16a73e" compoundref="triedatum_8h" startline="45">tree</references>
+      </memberdef>
+      <memberdef kind="function" id="classTrieDatum_1a1e7cf5785458357371422c106f041400" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+        <definition>const Name &amp; TrieDatum::getname</definition>
+        <argsstring>() const</argsstring>
+        <name>getname</name>
+        <qualifiedname>TrieDatum::getname</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" line="107" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" bodystart="107" bodyend="110"/>
+        <references refid="classTrieDatum_1af1c0acd0f0a581af2a55461544ac2e59" compoundref="triedatum_8h" startline="44">name</references>
+        <referencedby refid="classAddtotrieFunction_1a1cba5d0fe23d66917d4f2f841d727b92" compoundref="slitypecheck_8cc" startline="90" endline="149">AddtotrieFunction::execute</referencedby>
+        <referencedby refid="classCva__tFunction_1a7172118a9841754c5187150f57f4b9ef" compoundref="slitypecheck_8cc" startline="197" endline="215">Cva_tFunction::execute</referencedby>
+        <referencedby refid="classSLIInterpreter_1a0c294456daa938f75fe79c099ebc75ee" compoundref="interpret_8cc" startline="924" endline="937">SLIInterpreter::getcurrentname</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTrieDatum_1af2774c67d12dfb76b542c7c85fd7749c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void TrieDatum::insert</definition>
+        <argsstring>(const TypeArray &amp;a, const Token &amp;t)</argsstring>
+        <name>insert</name>
+        <qualifiedname>TrieDatum::insert</qualifiedname>
+        <param>
+          <type>const <ref refid="typearray_8h_1a6a6749dbe567b56ca734934e8418743e" kindref="member">TypeArray</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" line="113" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" bodystart="113" bodyend="116"/>
+        <references refid="classTypeTrie_1a806a7c6a546881ded4ddeebe6ef7bc51" compoundref="typechk_8h" startline="169" endline="175">TypeTrie::insert</references>
+        <references refid="classTrieDatum_1a384850e6cc8ef09f9bfaeae99f16a73e" compoundref="triedatum_8h" startline="45">tree</references>
+      </memberdef>
+      <memberdef kind="function" id="classTrieDatum_1a4434dacc3445e33c78cbfaf6b1d84bbd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void TrieDatum::insert_move</definition>
+        <argsstring>(const TypeArray &amp;a, Token &amp;t)</argsstring>
+        <name>insert_move</name>
+        <qualifiedname>TrieDatum::insert_move</qualifiedname>
+        <param>
+          <type>const <ref refid="typearray_8h_1a6a6749dbe567b56ca734934e8418743e" kindref="member">TypeArray</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" line="119" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" bodystart="119" bodyend="122"/>
+        <references refid="classTypeTrie_1a004f4e995e02879d9dfde8e80ad897d7" compoundref="typechk_8cc" startline="208" endline="271">TypeTrie::insert_move</references>
+        <references refid="classTrieDatum_1a384850e6cc8ef09f9bfaeae99f16a73e" compoundref="triedatum_8h" startline="45">tree</references>
+        <referencedby refid="classAddtotrieFunction_1a1cba5d0fe23d66917d4f2f841d727b92" compoundref="slitypecheck_8cc" startline="90" endline="149">AddtotrieFunction::execute</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTrieDatum_1ae78ed217994201e2545df49e7ba8c6c3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+        <definition>const Token &amp; TrieDatum::lookup</definition>
+        <argsstring>(const TokenStack &amp;s) const</argsstring>
+        <name>lookup</name>
+        <qualifiedname>TrieDatum::lookup</qualifiedname>
+        <param>
+          <type>const <ref refid="classTokenStack" kindref="compound">TokenStack</ref> &amp;</type>
+          <declname>s</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" line="125" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" bodystart="125" bodyend="128"/>
+        <references refid="classTypeTrie_1a2cd6221bd50d0f4d9262edd4121bce23" compoundref="typechk_8h" startline="206" endline="257">TypeTrie::lookup</references>
+        <references refid="classTrieDatum_1a384850e6cc8ef09f9bfaeae99f16a73e" compoundref="triedatum_8h" startline="45">tree</references>
+        <referencedby refid="classTrietypeFunction_1aa617a18f82017e4d01bf5711029d6ad1" compoundref="sliactions_8cc" startline="107" endline="111">TrietypeFunction::execute</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTrieDatum_1a32d8bf015b07c8b0e24ca654116eaa9e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classTypeTrie" kindref="compound">TypeTrie</ref> &amp;</type>
+        <definition>TypeTrie &amp; TrieDatum::get</definition>
+        <argsstring>()</argsstring>
+        <name>get</name>
+        <qualifiedname>TrieDatum::get</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" line="131" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" bodystart="131" bodyend="134"/>
+        <references refid="classTrieDatum_1a384850e6cc8ef09f9bfaeae99f16a73e" compoundref="triedatum_8h" startline="45">tree</references>
+        <referencedby refid="classTrieInfoFunction_1a2c49a8f1ced0a3098ff798d8dcbd2e45" compoundref="slitypecheck_8cc" startline="218" endline="235">TrieInfoFunction::execute</referencedby>
+        <referencedby refid="classCva__tFunction_1a7172118a9841754c5187150f57f4b9ef" compoundref="slitypecheck_8cc" startline="197" endline="215">Cva_tFunction::execute</referencedby>
+        <referencedby refid="classSLIInterpreter_1a1f76b68c473ace082511ddaa9eca5733" compoundref="interpret_8cc" startline="651" endline="715">SLIInterpreter::print_error</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classTrieDatum_1adae6ccd6f32ce3b707f8cae4ff42f7da" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void *</type>
+        <definition>static void * TrieDatum::operator new</definition>
+        <argsstring>(size_t size)</argsstring>
+        <name>operator new</name>
+        <qualifiedname>TrieDatum::operator new</qualifiedname>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" line="137" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" bodystart="137" bodyend="144"/>
+        <references refid="classsli_1_1pool_1aa4ec8f3aaccf68e6ac5eac14cf722f7f" compoundref="allocator_8h" startline="155" endline="170">sli::pool::alloc</references>
+        <references refid="classTrieDatum_1ac4d085002af53ba6250d2e5bd5d95aad" compoundref="triedatum_8h" startline="41">memory</references>
+        <references refid="classsli_1_1pool_1a908d0b93fdeee9823aa38d5f13bc56f5" compoundref="allocator_8h" startline="144" endline="147">sli::pool::size_of</references>
+      </memberdef>
+      <memberdef kind="function" id="classTrieDatum_1aaee616098599a6a0c3cc82a3522f95fa" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void TrieDatum::operator delete</definition>
+        <argsstring>(void *p, size_t size)</argsstring>
+        <name>operator delete</name>
+        <qualifiedname>TrieDatum::operator delete</qualifiedname>
+        <param>
+          <type>void *</type>
+          <declname>p</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" line="147" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" bodystart="147" bodyend="159"/>
+        <references refid="classsli_1_1pool_1ab7252655aaee55b020cc156ced585b6e" compoundref="allocator_8h" startline="173" endline="179">sli::pool::free</references>
+        <references refid="classTrieDatum_1ac4d085002af53ba6250d2e5bd5d95aad" compoundref="triedatum_8h" startline="41">memory</references>
+        <references refid="classsli_1_1pool_1a908d0b93fdeee9823aa38d5f13bc56f5" compoundref="allocator_8h" startline="144" endline="147">sli::pool::size_of</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="3">
+        <label>Datum</label>
+        <link refid="classDatum"/>
+      </node>
+      <node id="1">
+        <label>TrieDatum</label>
+        <link refid="classTrieDatum"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>TypedDatum&lt; slt &gt;</label>
+        <link refid="classTypedDatum"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>TypedDatum&lt; &amp;SLIInterpreter::Trietype &gt;</label>
+        <link refid="classTypedDatum"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="template-instance">
+          <edgelabel>&lt; &amp;SLIInterpreter::Trietype &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="3">
+        <label>Datum</label>
+        <link refid="classDatum"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>type</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>action</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Name</label>
+        <link refid="className"/>
+      </node>
+      <node id="6">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="4">
+        <label>SLIType</label>
+        <link refid="classSLIType"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>defaultaction</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>Token</label>
+        <link refid="classToken"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>p</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>TrieDatum</label>
+        <link refid="classTrieDatum"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>memory</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>tree</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>TypeTrie</label>
+        <link refid="classTypeTrie"/>
+        <childnode refid="12" relation="usage">
+          <edgelabel>root</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>TypeTrie::TypeNode</label>
+        <link refid="classTypeTrie_1_1TypeNode"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>type</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>func</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>alt</edgelabel>
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>TypedDatum&lt; slt &gt;</label>
+        <link refid="classTypedDatum"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>TypedDatum&lt; &amp;SLIInterpreter::Trietype &gt;</label>
+        <link refid="classTypedDatum"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="template-instance">
+          <edgelabel>&lt; &amp;SLIInterpreter::Trietype &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>sli::pool</label>
+        <link refid="classsli_1_1pool"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>chunks</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>head</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>sli::pool::chunk</label>
+        <link refid="classsli_1_1pool_1_1chunk"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>sli::pool::link</label>
+        <link refid="structsli_1_1pool_1_1link"/>
+        <childnode refid="10" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" line="38" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/triedatum.h" bodystart="39" bodyend="160"/>
+    <listofallmembers>
+      <member refid="classDatum_1aedcf75cc41ccd6a8247216941b10f719" prot="protected" virt="non-virtual"><scope>TrieDatum</scope><name>action</name></member>
+      <member refid="classDatum_1a8a547bad7564cd6e79fd9b1a245c9e8b" prot="public" virt="non-virtual"><scope>TrieDatum</scope><name>addReference</name></member>
+      <member refid="classTrieDatum_1aaa24a09c3e4163a130bf932f8830c9e3" prot="private" virt="virtual"><scope>TrieDatum</scope><name>clone</name></member>
+      <member refid="classDatum_1ae1880ae165f7a4aef90be6e8cfaa5ff5" prot="protected" virt="non-virtual"><scope>TrieDatum</scope><name>Datum</name></member>
+      <member refid="classDatum_1ac7e934059aa105e87e0de888c890bf3a" prot="protected" virt="non-virtual"><scope>TrieDatum</scope><name>Datum</name></member>
+      <member refid="classDatum_1a4ceb261c92a00bb5cfbdbb91104c25ff" prot="protected" virt="non-virtual"><scope>TrieDatum</scope><name>Datum</name></member>
+      <member refid="classTrieDatum_1adfc724b73d7d2558e483d5e47aae3114" prot="public" virt="virtual"><scope>TrieDatum</scope><name>equals</name></member>
+      <member refid="classDatum_1aa8bccc352dca610a10b7daee4ca876f7" prot="protected" virt="non-virtual"><scope>TrieDatum</scope><name>executable_</name></member>
+      <member refid="classDatum_1a772aa172fff8b5035e1e243eb046ae13" prot="public" virt="virtual"><scope>TrieDatum</scope><name>execute</name></member>
+      <member refid="classTrieDatum_1a32d8bf015b07c8b0e24ca654116eaa9e" prot="public" virt="non-virtual"><scope>TrieDatum</scope><name>get</name></member>
+      <member refid="classTrieDatum_1a8de86b5c974afef36d15e8ae45503798" prot="private" virt="virtual"><scope>TrieDatum</scope><name>get_ptr</name></member>
+      <member refid="classTrieDatum_1a1e7cf5785458357371422c106f041400" prot="public" virt="non-virtual"><scope>TrieDatum</scope><name>getname</name></member>
+      <member refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" prot="public" virt="non-virtual"><scope>TrieDatum</scope><name>gettypename</name></member>
+      <member refid="classTrieDatum_1aa00fd5efe8d4ae354b1ac35328317c4d" prot="public" virt="virtual"><scope>TrieDatum</scope><name>info</name></member>
+      <member refid="classDatum_1a90e482a3dc319a65759312da1f4f8b07" prot="public" virt="virtual"><scope>TrieDatum</scope><name>input_form</name></member>
+      <member refid="classTrieDatum_1af2774c67d12dfb76b542c7c85fd7749c" prot="public" virt="non-virtual"><scope>TrieDatum</scope><name>insert</name></member>
+      <member refid="classTrieDatum_1a4434dacc3445e33c78cbfaf6b1d84bbd" prot="public" virt="non-virtual"><scope>TrieDatum</scope><name>insert_move</name></member>
+      <member refid="classDatum_1a08d7463e1c6fb42a75f7edf49f9e2e3d" prot="public" virt="non-virtual"><scope>TrieDatum</scope><name>is_executable</name></member>
+      <member refid="classDatum_1ad27263ba100f9c536085ddcad183ab07" prot="public" virt="non-virtual"><scope>TrieDatum</scope><name>isoftype</name></member>
+      <member refid="classDatum_1a0cc07c59ff578f522ba46b7bd0e33fb5" prot="public" virt="virtual"><scope>TrieDatum</scope><name>list</name></member>
+      <member refid="classTrieDatum_1ae78ed217994201e2545df49e7ba8c6c3" prot="public" virt="non-virtual"><scope>TrieDatum</scope><name>lookup</name></member>
+      <member refid="classTrieDatum_1ac4d085002af53ba6250d2e5bd5d95aad" prot="protected" virt="non-virtual"><scope>TrieDatum</scope><name>memory</name></member>
+      <member refid="classTrieDatum_1af1c0acd0f0a581af2a55461544ac2e59" prot="private" virt="non-virtual"><scope>TrieDatum</scope><name>name</name></member>
+      <member refid="classDatum_1add98b474ddf98b8352c49052c026f42b" prot="public" virt="non-virtual"><scope>TrieDatum</scope><name>numReferences</name></member>
+      <member refid="classTrieDatum_1aaee616098599a6a0c3cc82a3522f95fa" prot="public" virt="non-virtual"><scope>TrieDatum</scope><name>operator delete</name></member>
+      <member refid="classTrieDatum_1adae6ccd6f32ce3b707f8cae4ff42f7da" prot="public" virt="non-virtual"><scope>TrieDatum</scope><name>operator new</name></member>
+      <member refid="classTypedDatum_1a5cc4fd0fc7b08a2b3e4c837082f63790" prot="protected" virt="non-virtual"><scope>TrieDatum</scope><name>operator=</name></member>
+      <member refid="classTrieDatum_1a4b5b21eed4f463d95d674aeb21cba7b3" prot="public" virt="virtual"><scope>TrieDatum</scope><name>pprint</name></member>
+      <member refid="classTrieDatum_1a0499ff8322f331ccd6483bb1b4f8b7cc" prot="public" virt="virtual"><scope>TrieDatum</scope><name>print</name></member>
+      <member refid="classDatum_1abd911b2048efc2b685900bb2561ffd2e" prot="protected" virt="non-virtual"><scope>TrieDatum</scope><name>reference_count_</name></member>
+      <member refid="classDatum_1a033ad3a3e54eab1bb9a6b47eeab0611e" prot="public" virt="non-virtual"><scope>TrieDatum</scope><name>removeReference</name></member>
+      <member refid="classDatum_1a46325ecc6d02cc01c26366b57423d9f4" prot="public" virt="non-virtual"><scope>TrieDatum</scope><name>set_executable</name></member>
+      <member refid="classTrieDatum_1a384850e6cc8ef09f9bfaeae99f16a73e" prot="private" virt="non-virtual"><scope>TrieDatum</scope><name>tree</name></member>
+      <member refid="classTrieDatum_1ad80e2781b08dd70ac262429cee41cdd3" prot="public" virt="non-virtual"><scope>TrieDatum</scope><name>TrieDatum</name></member>
+      <member refid="classTrieDatum_1a8c2772e320c9b2784cc64ec5495a5154" prot="public" virt="non-virtual"><scope>TrieDatum</scope><name>TrieDatum</name></member>
+      <member refid="classTrieDatum_1a8431708f82da0e110b7f6bacfb75a8af" prot="public" virt="non-virtual"><scope>TrieDatum</scope><name>TrieDatum</name></member>
+      <member refid="classDatum_1a0697b4f1572af02085906c0fcf0fc7b1" prot="protected" virt="non-virtual"><scope>TrieDatum</scope><name>type</name></member>
+      <member refid="classTypedDatum_1a9b89818e167d0110afcc09e5d75b738b" prot="public" virt="non-virtual"><scope>TrieDatum</scope><name>TypedDatum</name></member>
+      <member refid="classTypedDatum_1af95471a28fd63265bdd7a0a2cd2faadb" prot="protected" virt="non-virtual"><scope>TrieDatum</scope><name>TypedDatum</name></member>
+      <member refid="classDatum_1ad1de5a550c726c5cc95e88ffd1e71ef9" prot="public" virt="non-virtual"><scope>TrieDatum</scope><name>unset_executable</name></member>
+      <member refid="classDatum_1afbf982389b91a2b013be1de6bdf1483e" prot="public" virt="virtual"><scope>TrieDatum</scope><name>~Datum</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

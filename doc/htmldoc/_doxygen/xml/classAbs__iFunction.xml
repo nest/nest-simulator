@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classAbs__iFunction" kind="class" language="C++" prot="public">
+    <compoundname>Abs_iFunction</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="slimath_8h" local="no">slimath.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classAbs__iFunction_1a601671f10feeb8eb2ecf734eed67475c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Abs_iFunction::Abs_iFunction</definition>
+        <argsstring>()</argsstring>
+        <name>Abs_iFunction</name>
+        <qualifiedname>Abs_iFunction::Abs_iFunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slimath.h" line="361" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slimath.h" bodystart="361" bodyend="363"/>
+      </memberdef>
+      <memberdef kind="function" id="classAbs__iFunction_1a96951691f32ae94347230e044d67f584" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void Abs_iFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>Abs_iFunction::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+<para>@BeginDocumentation <ref refid="className" kindref="compound">Name</ref>: abs_i - absolute value of integer Synopsis: integer abs -&gt; integer </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Description: implemented by C/C++ long labs(long) and</para>
+<para>Examples: -3 abs_i -&gt; 3</para>
+<para>Remarks: If you are not sure, if the value is of type double or integer, use abs. If e.g. abs_d gets an integer as argument, NEST will exit throwing an assertion. Author: Diesmann FirstVersion: 27.4.1999 References: Stroustrup 3rd ed p 661 SeeAlso: abs </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slimath.h" line="365" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slimath.cc" bodystart="754" bodyend="762"/>
+        <references refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" compoundref="token_8h" startline="360" endline="364">Token::datum</references>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="classGenericDatum_1a2204e0bfb80429863ebbd37005235c1e" compoundref="genericdatum_8h" startline="74" endline="77">GenericDatum&lt; D, slt &gt;::get</references>
+        <references refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" compoundref="tokenstack_8h" startline="184" endline="187">TokenStack::load</references>
+        <references refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" compoundref="interpret_8h" startline="250">SLIInterpreter::OStack</references>
+        <references refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" compoundref="tokenstack_8h" startline="96" endline="99">TokenStack::pop</references>
+        <references refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" compoundref="tokenstack_8h" startline="116" endline="119">TokenStack::top</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>Abs_iFunction</label>
+        <link refid="classAbs__iFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>Abs_iFunction</label>
+        <link refid="classAbs__iFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/slimath.h" line="358" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slimath.h" bodystart="359" bodyend="366"/>
+    <listofallmembers>
+      <member refid="classAbs__iFunction_1a601671f10feeb8eb2ecf734eed67475c" prot="public" virt="non-virtual"><scope>Abs_iFunction</scope><name>Abs_iFunction</name></member>
+      <member refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba" prot="public" virt="virtual"><scope>Abs_iFunction</scope><name>backtrace</name></member>
+      <member refid="classAbs__iFunction_1a96951691f32ae94347230e044d67f584" prot="public" virt="virtual"><scope>Abs_iFunction</scope><name>execute</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>Abs_iFunction</scope><name>SLIFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>Abs_iFunction</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,309 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classTypeTrie_1_1TypeNode" kind="class" language="C++" prot="private">
+    <compoundname>TypeTrie::TypeNode</compoundname>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classTypeTrie_1_1TypeNode_1a3c226f19ccdea228c1ce95b28b5ce0da" prot="private" static="no" mutable="no">
+        <type>unsigned int</type>
+        <definition>unsigned int TypeTrie::TypeNode::refs</definition>
+        <argsstring></argsstring>
+        <name>refs</name>
+        <qualifiedname>TypeTrie::TypeNode::refs</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/typechk.h" line="79" column="18" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/typechk.h" bodystart="79" bodyend="-1"/>
+        <referencedby refid="classTypeTrie_1_1TypeNode_1accaa4790e41d5a03c8aaf3a9ec3e2a46" compoundref="typechk_8h" startline="90" endline="93">addreference</referencedby>
+        <referencedby refid="classTypeTrie_1_1TypeNode_1a1c7880afc4b1afb931e64681bfdbf26e" compoundref="typechk_8h" startline="96" endline="102">removereference</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classTypeTrie_1_1TypeNode_1a9a86d3e8f5d56838e8c4914af130316e" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name TypeTrie::TypeNode::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <qualifiedname>TypeTrie::TypeNode::type</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/typechk.h" line="82" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/typechk.h" bodystart="82" bodyend="-1"/>
+        <referencedby refid="classTypeTrie_1ab5a3623db41b0a42c07c9c21e1ba2ee8" compoundref="typechk_8cc" startline="160" endline="205">TypeTrie::getalternative</referencedby>
+        <referencedby refid="classTypeTrie_1a004f4e995e02879d9dfde8e80ad897d7" compoundref="typechk_8cc" startline="208" endline="271">TypeTrie::insert_move</referencedby>
+        <referencedby refid="classTypeTrie_1a2cd6221bd50d0f4d9262edd4121bce23" compoundref="typechk_8h" startline="206" endline="257">TypeTrie::lookup</referencedby>
+        <referencedby refid="classTypeTrie_1_1TypeNode_1af742917a541b937a4fa42120c18a9ac5" compoundref="typechk_8cc" startline="68" endline="90">toTokenArray</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classTypeTrie_1_1TypeNode_1a0d73c92d2756f2224beff0bc08f5a1bf" prot="public" static="no" mutable="no">
+        <type><ref refid="classToken" kindref="compound">Token</ref></type>
+        <definition>Token TypeTrie::TypeNode::func</definition>
+        <argsstring></argsstring>
+        <name>func</name>
+        <qualifiedname>TypeTrie::TypeNode::func</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/typechk.h" line="83" column="11" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/typechk.h" bodystart="83" bodyend="-1"/>
+        <referencedby refid="classTypeTrie_1ab5a3623db41b0a42c07c9c21e1ba2ee8" compoundref="typechk_8cc" startline="160" endline="205">TypeTrie::getalternative</referencedby>
+        <referencedby refid="classTypeTrie_1a004f4e995e02879d9dfde8e80ad897d7" compoundref="typechk_8cc" startline="208" endline="271">TypeTrie::insert_move</referencedby>
+        <referencedby refid="classTypeTrie_1a2cd6221bd50d0f4d9262edd4121bce23" compoundref="typechk_8h" startline="206" endline="257">TypeTrie::lookup</referencedby>
+        <referencedby refid="classTypeTrie_1_1TypeNode_1af742917a541b937a4fa42120c18a9ac5" compoundref="typechk_8cc" startline="68" endline="90">toTokenArray</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classTypeTrie_1_1TypeNode_1a9d968feddbc117b6d3659fe40f06150e" prot="public" static="no" mutable="no">
+        <type><ref refid="classTypeTrie_1_1TypeNode" kindref="compound">TypeNode</ref> *</type>
+        <definition>TypeNode* TypeTrie::TypeNode::alt</definition>
+        <argsstring></argsstring>
+        <name>alt</name>
+        <qualifiedname>TypeTrie::TypeNode::alt</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/typechk.h" line="85" column="14" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/typechk.h" bodystart="85" bodyend="-1"/>
+        <referencedby refid="classTypeTrie_1ab5a3623db41b0a42c07c9c21e1ba2ee8" compoundref="typechk_8cc" startline="160" endline="205">TypeTrie::getalternative</referencedby>
+        <referencedby refid="classTypeTrie_1a2cd6221bd50d0f4d9262edd4121bce23" compoundref="typechk_8h" startline="206" endline="257">TypeTrie::lookup</referencedby>
+        <referencedby refid="classTypeTrie_1_1TypeNode_1af742917a541b937a4fa42120c18a9ac5" compoundref="typechk_8cc" startline="68" endline="90">toTokenArray</referencedby>
+        <referencedby refid="classTypeTrie_1_1TypeNode_1a5324df3beb6a298e5c6069afc2a056c8" compoundref="typechk_8h" startline="122" endline="132">~TypeNode</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classTypeTrie_1_1TypeNode_1a85cf5bd90762997f56b3fbae770b0aa0" prot="public" static="no" mutable="no">
+        <type><ref refid="classTypeTrie_1_1TypeNode" kindref="compound">TypeNode</ref> *</type>
+        <definition>TypeNode* TypeTrie::TypeNode::next</definition>
+        <argsstring></argsstring>
+        <name>next</name>
+        <qualifiedname>TypeTrie::TypeNode::next</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/typechk.h" line="86" column="14" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/typechk.h" bodystart="86" bodyend="-1"/>
+        <referencedby refid="classTypeTrie_1ab5a3623db41b0a42c07c9c21e1ba2ee8" compoundref="typechk_8cc" startline="160" endline="205">TypeTrie::getalternative</referencedby>
+        <referencedby refid="classTypeTrie_1a004f4e995e02879d9dfde8e80ad897d7" compoundref="typechk_8cc" startline="208" endline="271">TypeTrie::insert_move</referencedby>
+        <referencedby refid="classTypeTrie_1a2cd6221bd50d0f4d9262edd4121bce23" compoundref="typechk_8h" startline="206" endline="257">TypeTrie::lookup</referencedby>
+        <referencedby refid="classTypeTrie_1_1TypeNode_1af742917a541b937a4fa42120c18a9ac5" compoundref="typechk_8cc" startline="68" endline="90">toTokenArray</referencedby>
+        <referencedby refid="classTypeTrie_1_1TypeNode_1a5324df3beb6a298e5c6069afc2a056c8" compoundref="typechk_8h" startline="122" endline="132">~TypeNode</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classTypeTrie_1_1TypeNode_1accaa4790e41d5a03c8aaf3a9ec3e2a46" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void TypeTrie::TypeNode::addreference</definition>
+        <argsstring>()</argsstring>
+        <name>addreference</name>
+        <qualifiedname>TypeTrie::TypeNode::addreference</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/typechk.h" line="90" column="5" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/typechk.h" bodystart="90" bodyend="93"/>
+        <references refid="classTypeTrie_1_1TypeNode_1a3c226f19ccdea228c1ce95b28b5ce0da" compoundref="typechk_8h" startline="79">refs</references>
+        <referencedby refid="classTypeTrie_1a8b5d1c7c2c3e273a84e9aadb58040ec1" compoundref="typechk_8h" startline="156" endline="163">TypeTrie::TypeTrie</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTypeTrie_1_1TypeNode_1a1c7880afc4b1afb931e64681bfdbf26e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void TypeTrie::TypeNode::removereference</definition>
+        <argsstring>()</argsstring>
+        <name>removereference</name>
+        <qualifiedname>TypeTrie::TypeNode::removereference</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/typechk.h" line="96" column="5" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/typechk.h" bodystart="96" bodyend="102"/>
+        <references refid="classTypeTrie_1_1TypeNode_1a3c226f19ccdea228c1ce95b28b5ce0da" compoundref="typechk_8h" startline="79">refs</references>
+        <referencedby refid="classTypeTrie_1_1TypeNode_1a5324df3beb6a298e5c6069afc2a056c8" compoundref="typechk_8h" startline="122" endline="132">~TypeNode</referencedby>
+        <referencedby refid="classTypeTrie_1ac2c99b9334436f7db4e278e8ab19381a" compoundref="typechk_8h" startline="186" endline="192">TypeTrie::~TypeTrie</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTypeTrie_1_1TypeNode_1a57adfabcbe5b03d8a253986d84971d67" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>TypeTrie::TypeNode::TypeNode</definition>
+        <argsstring>(const Name &amp;n)</argsstring>
+        <name>TypeNode</name>
+        <qualifiedname>TypeTrie::TypeNode::TypeNode</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/typechk.h" line="104" column="5" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/typechk.h" bodystart="104" bodyend="111"/>
+      </memberdef>
+      <memberdef kind="function" id="classTypeTrie_1_1TypeNode_1a2be6e91174afbb323393dce3022d5949" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>TypeTrie::TypeNode::TypeNode</definition>
+        <argsstring>(const Name &amp;n, Token f)</argsstring>
+        <name>TypeNode</name>
+        <qualifiedname>TypeTrie::TypeNode::TypeNode</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type><ref refid="classToken" kindref="compound">Token</ref></type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/typechk.h" line="113" column="5" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/typechk.h" bodystart="113" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="classTypeTrie_1_1TypeNode_1a5324df3beb6a298e5c6069afc2a056c8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>TypeTrie::TypeNode::~TypeNode</definition>
+        <argsstring>()</argsstring>
+        <name>~TypeNode</name>
+        <qualifiedname>TypeTrie::TypeNode::~TypeNode</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/typechk.h" line="122" column="5" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/typechk.h" bodystart="122" bodyend="132"/>
+        <references refid="classTypeTrie_1_1TypeNode_1a9d968feddbc117b6d3659fe40f06150e" compoundref="typechk_8h" startline="85">alt</references>
+        <references refid="classTypeTrie_1_1TypeNode_1a85cf5bd90762997f56b3fbae770b0aa0" compoundref="typechk_8h" startline="86">next</references>
+        <references refid="classTypeTrie_1_1TypeNode_1a1c7880afc4b1afb931e64681bfdbf26e" compoundref="typechk_8h" startline="96" endline="102">removereference</references>
+      </memberdef>
+      <memberdef kind="function" id="classTypeTrie_1_1TypeNode_1af742917a541b937a4fa42120c18a9ac5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TypeTrie::TypeNode::toTokenArray</definition>
+        <argsstring>(TokenArray &amp;) const</argsstring>
+        <name>toTokenArray</name>
+        <qualifiedname>TypeTrie::TypeNode::toTokenArray</qualifiedname>
+        <param>
+          <type><ref refid="classTokenArray" kindref="compound">TokenArray</ref> &amp;</type>
+          <defname>a</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/typechk.h" line="133" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/typechk.cc" bodystart="68" bodyend="90"/>
+        <references refid="classTypeTrie_1_1TypeNode_1a9d968feddbc117b6d3659fe40f06150e" compoundref="typechk_8h" startline="85">alt</references>
+        <references refid="classTypeTrie_1_1TypeNode_1a0d73c92d2756f2224beff0bc08f5a1bf" compoundref="typechk_8h" startline="83">func</references>
+        <references refid="classTypeTrie_1_1TypeNode_1a85cf5bd90762997f56b3fbae770b0aa0" compoundref="typechk_8h" startline="86">next</references>
+        <references refid="classTypeTrie_1_1TypeNode_1af742917a541b937a4fa42120c18a9ac5" compoundref="typechk_8cc" startline="68" endline="90">toTokenArray</references>
+        <references refid="classTypeTrie_1_1TypeNode_1a9a86d3e8f5d56838e8c4914af130316e" compoundref="typechk_8h" startline="82">type</references>
+        <referencedby refid="classTypeTrie_1_1TypeNode_1af742917a541b937a4fa42120c18a9ac5" compoundref="typechk_8cc" startline="68" endline="90">toTokenArray</referencedby>
+        <referencedby refid="classTypeTrie_1ab3054ff54c173e6f523b2103704b3967" compoundref="typechk_8cc" startline="277" endline="284">TypeTrie::toTokenArray</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTypeTrie_1_1TypeNode_1ad2e347ac48171be93d72ddd6ea46b254" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TypeTrie::TypeNode::info</definition>
+        <argsstring>(std::ostream &amp;, std::vector&lt; TypeNode const * &gt; &amp;) const</argsstring>
+        <name>info</name>
+        <qualifiedname>TypeTrie::TypeNode::info</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <defname>out</defname>
+        </param>
+        <param>
+          <type>std::vector&lt; <ref refid="classTypeTrie_1_1TypeNode" kindref="compound">TypeNode</ref> const * &gt; &amp;</type>
+          <defname>tl</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/typechk.h" line="134" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/typechk.cc" bodystart="93" bodyend="115"/>
+        <referencedby refid="classTypeTrie_1af75874239a6274d6babfbcb64496da4a" compoundref="typechk_8cc" startline="287" endline="295">TypeTrie::info</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>Datum</label>
+        <link refid="classDatum"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>type</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>action</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Name</label>
+        <link refid="className"/>
+      </node>
+      <node id="6">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="5">
+        <label>SLIType</label>
+        <link refid="classSLIType"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>defaultaction</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Token</label>
+        <link refid="classToken"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>p</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>TypeTrie::TypeNode</label>
+        <link refid="classTypeTrie_1_1TypeNode"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>type</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>func</edgelabel>
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>alt</edgelabel>
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/typechk.h" line="76" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/typechk.h" bodystart="77" bodyend="135"/>
+    <listofallmembers>
+      <member refid="classTypeTrie_1_1TypeNode_1accaa4790e41d5a03c8aaf3a9ec3e2a46" prot="public" virt="non-virtual"><scope>TypeTrie::TypeNode</scope><name>addreference</name></member>
+      <member refid="classTypeTrie_1_1TypeNode_1a9d968feddbc117b6d3659fe40f06150e" prot="public" virt="non-virtual"><scope>TypeTrie::TypeNode</scope><name>alt</name></member>
+      <member refid="classTypeTrie_1_1TypeNode_1a0d73c92d2756f2224beff0bc08f5a1bf" prot="public" virt="non-virtual"><scope>TypeTrie::TypeNode</scope><name>func</name></member>
+      <member refid="classTypeTrie_1_1TypeNode_1ad2e347ac48171be93d72ddd6ea46b254" prot="public" virt="non-virtual"><scope>TypeTrie::TypeNode</scope><name>info</name></member>
+      <member refid="classTypeTrie_1_1TypeNode_1a85cf5bd90762997f56b3fbae770b0aa0" prot="public" virt="non-virtual"><scope>TypeTrie::TypeNode</scope><name>next</name></member>
+      <member refid="classTypeTrie_1_1TypeNode_1a3c226f19ccdea228c1ce95b28b5ce0da" prot="private" virt="non-virtual"><scope>TypeTrie::TypeNode</scope><name>refs</name></member>
+      <member refid="classTypeTrie_1_1TypeNode_1a1c7880afc4b1afb931e64681bfdbf26e" prot="public" virt="non-virtual"><scope>TypeTrie::TypeNode</scope><name>removereference</name></member>
+      <member refid="classTypeTrie_1_1TypeNode_1af742917a541b937a4fa42120c18a9ac5" prot="public" virt="non-virtual"><scope>TypeTrie::TypeNode</scope><name>toTokenArray</name></member>
+      <member refid="classTypeTrie_1_1TypeNode_1a9a86d3e8f5d56838e8c4914af130316e" prot="public" virt="non-virtual"><scope>TypeTrie::TypeNode</scope><name>type</name></member>
+      <member refid="classTypeTrie_1_1TypeNode_1a57adfabcbe5b03d8a253986d84971d67" prot="public" virt="non-virtual"><scope>TypeTrie::TypeNode</scope><name>TypeNode</name></member>
+      <member refid="classTypeTrie_1_1TypeNode_1a2be6e91174afbb323393dce3022d5949" prot="public" virt="non-virtual"><scope>TypeTrie::TypeNode</scope><name>TypeNode</name></member>
+      <member refid="classTypeTrie_1_1TypeNode_1a5324df3beb6a298e5c6069afc2a056c8" prot="public" virt="non-virtual"><scope>TypeTrie::TypeNode</scope><name>~TypeNode</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

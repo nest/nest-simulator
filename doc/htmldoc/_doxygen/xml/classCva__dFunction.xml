@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classCva__dFunction" kind="class" language="C++" prot="public">
+    <compoundname>Cva_dFunction</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="slidict_8h" local="no">slidict.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classCva__dFunction_1a94c19ae3a09026aa91262d337852670d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Cva_dFunction::Cva_dFunction</definition>
+        <argsstring>()</argsstring>
+        <name>Cva_dFunction</name>
+        <qualifiedname>Cva_dFunction::Cva_dFunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.h" line="227" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.h" bodystart="227" bodyend="229"/>
+      </memberdef>
+      <memberdef kind="function" id="classCva__dFunction_1a7dece55010db0710d0ac6876417f4037" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void Cva_dFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>Cva_dFunction::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+<para>@BeginDocumentation <ref refid="className" kindref="compound">Name</ref>: cva_d - Convert dictionary to array </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Synopsis: dict cva_d -&gt; array</para>
+<para>Description: cda converts a given dictionary to an array. The contents of the dictionay is mapped to the array in a form which is similar to the construction of an array, namely &lt;&lt; key1 val1 ... keyn valn&gt;&gt; cva_d -&gt; [key1 val1 ... keyn valn]</para>
+<para>Parameters: dict is a dictionary which may be empty</para>
+<para>Examples: &lt;&lt; /a 1 /b 2&gt;&gt; cva_d -&gt; [/a 1 /b 2]</para>
+<para>Diagnostics: no errors are issued.</para>
+<para>Remarks: The name follows the convention of PostScript and stands for ConVert to Array.</para>
+<para>Implementation:</para>
+<para>Class TokenMap provides an iterator which allows to step through the elements stored in the TokenMap. Member function begin() returns an iterator which points to the &quot;first&quot; element in the TokenMap and end() to the &quot;last&quot; element. operator ++ moves the iterator from one element to the next. Note, the iteration process itself does not define any order of the elements, e.g. in terms of the comparison operators. The only guaranteed function is that during the iteration from begin() to end() all elements in the TokenMap are accessed. Operator * applied to the iterator returns a pair. Member first of the pair is the key and member second is the value of the element the iterator points to. See @Book{Musser96, author = &quot;Musser, David R. and Saini, Atul&quot;, title = &quot;STL Tutorial and Reference Guide: {C++} Programming
+                        with the Standard Template Library&quot;, publisher = &quot;Addison Wesley&quot;, year = 1996, isbn = &quot;0-201-63398-1&quot;, pages = 432, address = {Reading Massachusetts}, note = &quot;(hardcover)&quot; } for a discussion of the definition and use of iterators in combination with containers.</para>
+<para>Author: Marc-oliver Gewaltig</para>
+<para>SeeAlso: keys, values, &lt;&lt;&gt;&gt;, cva, cvdict </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.h" line="230" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="827" bodyend="844"/>
+        <references refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" compoundref="token_8h" startline="360" endline="364">Token::datum</references>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" compoundref="tokenstack_8h" startline="184" endline="187">TokenStack::load</references>
+        <references refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" compoundref="interpret_8h" startline="250">SLIInterpreter::OStack</references>
+        <references refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" compoundref="tokenstack_8h" startline="96" endline="99">TokenStack::pop</references>
+        <references refid="classTokenStack_1a585f38fb0ed122da90489eccbfd7a187" compoundref="tokenstack_8h" startline="62" endline="65">TokenStack::push</references>
+        <references refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" compoundref="tokenstack_8h" startline="116" endline="119">TokenStack::top</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>Cva_dFunction</label>
+        <link refid="classCva__dFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>Cva_dFunction</label>
+        <link refid="classCva__dFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.h" line="224" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.h" bodystart="225" bodyend="231"/>
+    <listofallmembers>
+      <member refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba" prot="public" virt="virtual"><scope>Cva_dFunction</scope><name>backtrace</name></member>
+      <member refid="classCva__dFunction_1a94c19ae3a09026aa91262d337852670d" prot="public" virt="non-virtual"><scope>Cva_dFunction</scope><name>Cva_dFunction</name></member>
+      <member refid="classCva__dFunction_1a7dece55010db0710d0ac6876417f4037" prot="public" virt="virtual"><scope>Cva_dFunction</scope><name>execute</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>Cva_dFunction</scope><name>SLIFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>Cva_dFunction</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classSpecialFunctionsModule_1_1LambertWm1Function" kind="class" language="C++" prot="public">
+    <compoundname>SpecialFunctionsModule::LambertWm1Function</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="specialfunctionsmodule_8h" local="no">specialfunctionsmodule.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classSpecialFunctionsModule_1_1LambertWm1Function_1aa63d42a6d4a7bd3b5e80901f7529f12e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SpecialFunctionsModule::LambertWm1Function::LambertWm1Function</definition>
+        <argsstring>()</argsstring>
+        <name>LambertWm1Function</name>
+        <qualifiedname>SpecialFunctionsModule::LambertWm1Function::LambertWm1Function</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/specialfunctionsmodule.h" line="94" column="5" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/specialfunctionsmodule.h" bodystart="94" bodyend="96"/>
+      </memberdef>
+      <memberdef kind="function" id="classSpecialFunctionsModule_1_1LambertWm1Function_1aea0ec210294dc3d704446b752658843e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void SpecialFunctionsModule::LambertWm1Function::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>SpecialFunctionsModule::LambertWm1Function::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/specialfunctionsmodule.h" line="97" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/specialfunctionsmodule.cc" bodystart="424" bodyend="427"/>
+        <references refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" compoundref="interpret_8h" startline="635" endline="638">SLIInterpreter::raiseerror</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="1">
+        <label>SpecialFunctionsModule::LambertWm1Function</label>
+        <link refid="classSpecialFunctionsModule_1_1LambertWm1Function"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="1">
+        <label>SpecialFunctionsModule::LambertWm1Function</label>
+        <link refid="classSpecialFunctionsModule_1_1LambertWm1Function"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/specialfunctionsmodule.h" line="91" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/specialfunctionsmodule.h" bodystart="92" bodyend="98"/>
+    <listofallmembers>
+      <member refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba" prot="public" virt="virtual"><scope>SpecialFunctionsModule::LambertWm1Function</scope><name>backtrace</name></member>
+      <member refid="classSpecialFunctionsModule_1_1LambertWm1Function_1aea0ec210294dc3d704446b752658843e" prot="public" virt="virtual"><scope>SpecialFunctionsModule::LambertWm1Function</scope><name>execute</name></member>
+      <member refid="classSpecialFunctionsModule_1_1LambertWm1Function_1aa63d42a6d4a7bd3b5e80901f7529f12e" prot="public" virt="non-virtual"><scope>SpecialFunctionsModule::LambertWm1Function</scope><name>LambertWm1Function</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>SpecialFunctionsModule::LambertWm1Function</scope><name>SLIFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>SpecialFunctionsModule::LambertWm1Function</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classWhoFunction" kind="class" language="C++" prot="public">
+    <compoundname>WhoFunction</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="slidict_8h" local="no">slidict.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classWhoFunction_1a5202fb6c48bff45a39a8224aed50a55b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>WhoFunction::WhoFunction</definition>
+        <argsstring>()</argsstring>
+        <name>WhoFunction</name>
+        <qualifiedname>WhoFunction::WhoFunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.h" line="119" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.h" bodystart="119" bodyend="121"/>
+      </memberdef>
+      <memberdef kind="function" id="classWhoFunction_1a04ed295d22dc88f6f39aa1287d8070fc" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void WhoFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>WhoFunction::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+<para>@BeginDocumentation <ref refid="className" kindref="compound">Name</ref>: info_ds - print contents of all dictionaries on the dictionary stack to stream </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Synopsis: ostream info_ds -&gt; -</para>
+<para>Description: info_ds prints the contents of all dictionaries on the dictionary stack to the supplied ostream. Dictionaries are printed from bottom to top.</para>
+<para>Parameters: ostream - a valid output stream</para>
+<para>SeeAlso: dictstack, info, topinfo_d, who, whos </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.h" line="122" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="421" bodyend="431"/>
+        <references refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" compoundref="token_8h" startline="360" endline="364">Token::datum</references>
+        <references refid="classSLIInterpreter_1a2aa452e3851567a438fe4abc34fcdaea" compoundref="interpret_8h" startline="102">SLIInterpreter::DStack</references>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="classDictionaryStack_1acfd66b8fe261db057215a9aae38192bf" compoundref="dictstack_8cc" startline="199" endline="212">DictionaryStack::info</references>
+        <references refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" compoundref="tokenstack_8h" startline="184" endline="187">TokenStack::load</references>
+        <references refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" compoundref="interpret_8h" startline="250">SLIInterpreter::OStack</references>
+        <references refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" compoundref="tokenstack_8h" startline="96" endline="99">TokenStack::pop</references>
+        <references refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" compoundref="tokenstack_8h" startline="116" endline="119">TokenStack::top</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="1">
+        <label>WhoFunction</label>
+        <link refid="classWhoFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="1">
+        <label>WhoFunction</label>
+        <link refid="classWhoFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.h" line="116" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.h" bodystart="117" bodyend="123"/>
+    <listofallmembers>
+      <member refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba" prot="public" virt="virtual"><scope>WhoFunction</scope><name>backtrace</name></member>
+      <member refid="classWhoFunction_1a04ed295d22dc88f6f39aa1287d8070fc" prot="public" virt="virtual"><scope>WhoFunction</scope><name>execute</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>WhoFunction</scope><name>SLIFunction</name></member>
+      <member refid="classWhoFunction_1a5202fb6c48bff45a39a8224aed50a55b" prot="public" virt="non-virtual"><scope>WhoFunction</scope><name>WhoFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>WhoFunction</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

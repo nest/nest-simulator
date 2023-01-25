@@ -1,0 +1,331 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classTypedDatum" kind="class" language="C++" prot="public">
+    <compoundname>TypedDatum</compoundname>
+    <basecompoundref refid="classDatum" prot="public" virt="non-virtual">Datum</basecompoundref>
+    <derivedcompoundref refid="classAggregateDatum" prot="public" virt="non-virtual">AggregateDatum&lt; Name, &amp;SLIInterpreter::Literaltype &gt;</derivedcompoundref>
+    <derivedcompoundref refid="classAggregateDatum" prot="public" virt="non-virtual">AggregateDatum&lt; Name, &amp;SLIInterpreter::Nametype &gt;</derivedcompoundref>
+    <derivedcompoundref refid="classAggregateDatum" prot="public" virt="non-virtual">AggregateDatum&lt; Parser, &amp;SLIInterpreter::Parsertype &gt;</derivedcompoundref>
+    <derivedcompoundref refid="classAggregateDatum" prot="public" virt="non-virtual">AggregateDatum&lt; Name, &amp;SLIInterpreter::Symboltype &gt;</derivedcompoundref>
+    <derivedcompoundref refid="classGenericDatum" prot="public" virt="non-virtual">GenericDatum&lt; bool, &amp;SLIInterpreter::Booltype &gt;</derivedcompoundref>
+    <derivedcompoundref refid="classlockPTRDatum" prot="public" virt="non-virtual">lockPTRDatum&lt; Dictionary, &amp;SLIInterpreter::Dictionarytype &gt;</derivedcompoundref>
+    <derivedcompoundref refid="classsharedPtrDatum" prot="public" virt="non-virtual">sharedPtrDatum&lt; nest::Parameter, &amp;nest::NestModule::ParameterType &gt;</derivedcompoundref>
+    <derivedcompoundref refid="classsharedPtrDatum" prot="public" virt="non-virtual">sharedPtrDatum&lt; nest::NodeCollection, &amp;nest::NestModule::NodeCollectionType &gt;</derivedcompoundref>
+    <derivedcompoundref refid="classsharedPtrDatum" prot="public" virt="non-virtual">sharedPtrDatum&lt; AbstractMask, &amp;NestModule::MaskType &gt;</derivedcompoundref>
+    <derivedcompoundref refid="classAggregateDatum" prot="public" virt="non-virtual">AggregateDatum&lt; C, slt &gt;</derivedcompoundref>
+    <derivedcompoundref refid="classGenericDatum" prot="public" virt="non-virtual">GenericDatum&lt; D, slt &gt;</derivedcompoundref>
+    <derivedcompoundref refid="classlockPTRDatum" prot="public" virt="non-virtual">lockPTRDatum&lt; D, slt &gt;</derivedcompoundref>
+    <derivedcompoundref refid="classsharedPtrDatum" prot="public" virt="non-virtual">sharedPtrDatum&lt; D, slt &gt;</derivedcompoundref>
+    <includes refid="datum_8h" local="no">datum.h</includes>
+    <templateparamlist>
+      <param>
+        <type><ref refid="classSLIType" kindref="compound">SLIType</ref> *</type>
+        <declname>slt</declname>
+        <defname>slt</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classTypedDatum_1a9b89818e167d0110afcc09e5d75b738b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>TypedDatum&lt; slt &gt;::TypedDatum</definition>
+        <argsstring>()</argsstring>
+        <name>TypedDatum</name>
+        <qualifiedname>TypedDatum::TypedDatum</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/datum.h" line="195" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/datum.h" bodystart="195" bodyend="198"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classTypedDatum_1af95471a28fd63265bdd7a0a2cd2faadb" prot="protected" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>TypedDatum&lt; slt &gt;::TypedDatum</definition>
+        <argsstring>(const TypedDatum&lt; slt &gt; &amp;d)</argsstring>
+        <name>TypedDatum</name>
+        <qualifiedname>TypedDatum::TypedDatum</qualifiedname>
+        <param>
+          <type>const <ref refid="classTypedDatum" kindref="compound">TypedDatum</ref>&lt; slt &gt; &amp;</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/datum.h" line="204" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/datum.h" bodystart="204" bodyend="207"/>
+      </memberdef>
+      <memberdef kind="function" id="classTypedDatum_1a5cc4fd0fc7b08a2b3e4c837082f63790" prot="protected" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classTypedDatum" kindref="compound">TypedDatum</ref>&lt; slt &gt; &amp;</type>
+        <definition>const TypedDatum&lt; slt &gt; &amp; TypedDatum&lt; slt &gt;::operator=</definition>
+        <argsstring>(const TypedDatum&lt; slt &gt; &amp;)</argsstring>
+        <name>operator=</name>
+        <qualifiedname>TypedDatum::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="classTypedDatum" kindref="compound">TypedDatum</ref>&lt; slt &gt; &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/datum.h" line="208" column="20" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/datum.h" bodystart="213" bodyend="217"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="3">
+        <label>AggregateDatum&lt; Name, &amp;SLIInterpreter::Literaltype &gt;</label>
+        <link refid="classAggregateDatum"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+        <childnode refid="17" relation="template-instance">
+          <edgelabel>&lt; Name, &amp;SLIInterpreter::Literaltype &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>AggregateDatum&lt; Name, &amp;SLIInterpreter::Nametype &gt;</label>
+        <link refid="classAggregateDatum"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+        <childnode refid="17" relation="template-instance">
+          <edgelabel>&lt; Name, &amp;SLIInterpreter::Nametype &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>AggregateDatum&lt; Name, &amp;SLIInterpreter::Symboltype &gt;</label>
+        <link refid="classAggregateDatum"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+        <childnode refid="17" relation="template-instance">
+          <edgelabel>&lt; Name, &amp;SLIInterpreter::Symboltype &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>AggregateDatum&lt; Parser, &amp;SLIInterpreter::Parsertype &gt;</label>
+        <link refid="classAggregateDatum"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+        <childnode refid="17" relation="template-instance">
+          <edgelabel>&lt; Parser, &amp;SLIInterpreter::Parsertype &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>AggregateDatum&lt; C, slt &gt;</label>
+        <link refid="classAggregateDatum"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>BoolDatum</label>
+        <link refid="classBoolDatum"/>
+        <childnode refid="11" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Datum</label>
+        <link refid="classDatum"/>
+      </node>
+      <node id="23">
+        <label>FunctionDatum</label>
+        <link refid="classFunctionDatum"/>
+        <childnode refid="22" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>GenericDatum&lt; bool, &amp;SLIInterpreter::Booltype &gt;</label>
+        <link refid="classGenericDatum"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+        <childnode refid="18" relation="template-instance">
+          <edgelabel>&lt; bool, &amp;SLIInterpreter::Booltype &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>GenericDatum&lt; D, slt &gt;</label>
+        <link refid="classGenericDatum"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>LiteralDatum</label>
+        <link refid="classLiteralDatum"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>NameDatum</label>
+        <link refid="classNameDatum"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>NumericDatum&lt; D, slt &gt;</label>
+        <link refid="classNumericDatum"/>
+        <childnode refid="18" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>ParserDatum</label>
+        <link refid="classParserDatum"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>SymbolDatum</label>
+        <link refid="classSymbolDatum"/>
+        <childnode refid="9" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>TrieDatum</label>
+        <link refid="classTrieDatum"/>
+        <childnode refid="24" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>TypedDatum&lt; &amp;SLIInterpreter::Functiontype &gt;</label>
+        <link refid="classTypedDatum"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; &amp;SLIInterpreter::Functiontype &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="24">
+        <label>TypedDatum&lt; &amp;SLIInterpreter::Trietype &gt;</label>
+        <link refid="classTypedDatum"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; &amp;SLIInterpreter::Trietype &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>TypedDatum&lt; slt &gt;</label>
+        <link refid="classTypedDatum"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>lockPTRDatum&lt; Dictionary, &amp;SLIInterpreter::Dictionarytype &gt;</label>
+        <link refid="classlockPTRDatum"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+        <childnode refid="20" relation="template-instance">
+          <edgelabel>&lt; Dictionary, &amp;SLIInterpreter::Dictionarytype &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="20">
+        <label>lockPTRDatum&lt; D, slt &gt;</label>
+        <link refid="classlockPTRDatum"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>sharedPtrDatum&lt; AbstractMask, &amp;NestModule::MaskType &gt;</label>
+        <link refid="classsharedPtrDatum"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+        <childnode refid="21" relation="template-instance">
+          <edgelabel>&lt; AbstractMask, &amp;NestModule::MaskType &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>sharedPtrDatum&lt; nest::NodeCollection, &amp;nest::NestModule::NodeCollectionType &gt;</label>
+        <link refid="classsharedPtrDatum"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+        <childnode refid="21" relation="template-instance">
+          <edgelabel>&lt; nest::NodeCollection, &amp;nest::NestModule::NodeCollectionType &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>sharedPtrDatum&lt; nest::Parameter, &amp;nest::NestModule::ParameterType &gt;</label>
+        <link refid="classsharedPtrDatum"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+        <childnode refid="21" relation="template-instance">
+          <edgelabel>&lt; nest::Parameter, &amp;nest::NestModule::ParameterType &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="21">
+        <label>sharedPtrDatum&lt; D, slt &gt;</label>
+        <link refid="classsharedPtrDatum"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>Datum</label>
+        <link refid="classDatum"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>type</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>action</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Name</label>
+        <link refid="className"/>
+      </node>
+      <node id="5">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="3">
+        <label>SLIType</label>
+        <link refid="classSLIType"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>defaultaction</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>TypedDatum&lt; slt &gt;</label>
+        <link refid="classTypedDatum"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/datum.h" line="192" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/datum.h" bodystart="193" bodyend="209"/>
+    <listofallmembers>
+      <member refid="classDatum_1aedcf75cc41ccd6a8247216941b10f719" prot="protected" virt="non-virtual"><scope>TypedDatum</scope><name>action</name></member>
+      <member refid="classDatum_1a8a547bad7564cd6e79fd9b1a245c9e8b" prot="public" virt="non-virtual"><scope>TypedDatum</scope><name>addReference</name></member>
+      <member refid="classDatum_1ab06887e171572f71a041209053b1a0ff" prot="private" virt="pure-virtual"><scope>TypedDatum</scope><name>clone</name></member>
+      <member refid="classDatum_1ae1880ae165f7a4aef90be6e8cfaa5ff5" prot="protected" virt="non-virtual"><scope>TypedDatum</scope><name>Datum</name></member>
+      <member refid="classDatum_1ac7e934059aa105e87e0de888c890bf3a" prot="protected" virt="non-virtual"><scope>TypedDatum</scope><name>Datum</name></member>
+      <member refid="classDatum_1a4ceb261c92a00bb5cfbdbb91104c25ff" prot="protected" virt="non-virtual"><scope>TypedDatum</scope><name>Datum</name></member>
+      <member refid="classDatum_1a30302c3f9b5e9f86fc01021599011a7f" prot="public" virt="virtual"><scope>TypedDatum</scope><name>equals</name></member>
+      <member refid="classDatum_1aa8bccc352dca610a10b7daee4ca876f7" prot="protected" virt="non-virtual"><scope>TypedDatum</scope><name>executable_</name></member>
+      <member refid="classDatum_1a772aa172fff8b5035e1e243eb046ae13" prot="public" virt="virtual"><scope>TypedDatum</scope><name>execute</name></member>
+      <member refid="classDatum_1af968bcf24fef60342dcc5d374b8cd54e" prot="private" virt="virtual"><scope>TypedDatum</scope><name>get_ptr</name></member>
+      <member refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" prot="public" virt="non-virtual"><scope>TypedDatum</scope><name>gettypename</name></member>
+      <member refid="classDatum_1af7725a211bd45f39beae0f5771038c75" prot="public" virt="virtual"><scope>TypedDatum</scope><name>info</name></member>
+      <member refid="classDatum_1a90e482a3dc319a65759312da1f4f8b07" prot="public" virt="virtual"><scope>TypedDatum</scope><name>input_form</name></member>
+      <member refid="classDatum_1a08d7463e1c6fb42a75f7edf49f9e2e3d" prot="public" virt="non-virtual"><scope>TypedDatum</scope><name>is_executable</name></member>
+      <member refid="classDatum_1ad27263ba100f9c536085ddcad183ab07" prot="public" virt="non-virtual"><scope>TypedDatum</scope><name>isoftype</name></member>
+      <member refid="classDatum_1a0cc07c59ff578f522ba46b7bd0e33fb5" prot="public" virt="virtual"><scope>TypedDatum</scope><name>list</name></member>
+      <member refid="classDatum_1add98b474ddf98b8352c49052c026f42b" prot="public" virt="non-virtual"><scope>TypedDatum</scope><name>numReferences</name></member>
+      <member refid="classTypedDatum_1a5cc4fd0fc7b08a2b3e4c837082f63790" prot="protected" virt="non-virtual"><scope>TypedDatum</scope><name>operator=</name></member>
+      <member refid="classDatum_1a9a0232698bafa153d6286a5f3534187a" prot="public" virt="pure-virtual"><scope>TypedDatum</scope><name>pprint</name></member>
+      <member refid="classDatum_1a6a4be93b0173f6026edc7695683ec0c4" prot="public" virt="pure-virtual"><scope>TypedDatum</scope><name>print</name></member>
+      <member refid="classDatum_1abd911b2048efc2b685900bb2561ffd2e" prot="protected" virt="non-virtual"><scope>TypedDatum</scope><name>reference_count_</name></member>
+      <member refid="classDatum_1a033ad3a3e54eab1bb9a6b47eeab0611e" prot="public" virt="non-virtual"><scope>TypedDatum</scope><name>removeReference</name></member>
+      <member refid="classDatum_1a46325ecc6d02cc01c26366b57423d9f4" prot="public" virt="non-virtual"><scope>TypedDatum</scope><name>set_executable</name></member>
+      <member refid="classDatum_1a0697b4f1572af02085906c0fcf0fc7b1" prot="protected" virt="non-virtual"><scope>TypedDatum</scope><name>type</name></member>
+      <member refid="classTypedDatum_1a9b89818e167d0110afcc09e5d75b738b" prot="public" virt="non-virtual"><scope>TypedDatum</scope><name>TypedDatum</name></member>
+      <member refid="classTypedDatum_1af95471a28fd63265bdd7a0a2cd2faadb" prot="protected" virt="non-virtual"><scope>TypedDatum</scope><name>TypedDatum</name></member>
+      <member refid="classDatum_1ad1de5a550c726c5cc95e88ffd1e71ef9" prot="public" virt="non-virtual"><scope>TypedDatum</scope><name>unset_executable</name></member>
+      <member refid="classDatum_1afbf982389b91a2b013be1de6bdf1483e" prot="public" virt="virtual"><scope>TypedDatum</scope><name>~Datum</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classSetGuardFunction" kind="class" language="C++" prot="public">
+    <compoundname>SetGuardFunction</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="slicontrol_8h" local="no">slicontrol.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classSetGuardFunction_1a852b11ca162a0a22fdd349606780e7e1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SetGuardFunction::SetGuardFunction</definition>
+        <argsstring>()</argsstring>
+        <name>SetGuardFunction</name>
+        <qualifiedname>SetGuardFunction::SetGuardFunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" line="578" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" bodystart="578" bodyend="580"/>
+      </memberdef>
+      <memberdef kind="function" id="classSetGuardFunction_1ad4e0723ec6968ad58fedb10623de38ae" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void SetGuardFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>SetGuardFunction::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+<para>@BeginDocumentation <ref refid="className" kindref="compound">Name</ref>: setguard - limit the number of interpreter cycles </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Synopsis: n setguard -&gt; <ndash/></para>
+<para>Description: This command forces the interpreter to stop after it has performed n cycles. setguard is useful for testing programs with long running loops.</para>
+<para>Parameters: n : an integer argument greater than zero</para>
+<para>Author: Gewaltig</para>
+<para>Remarks: not part of PostScript</para>
+<para>SeeAlso: removeguard </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" line="581" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.cc" bodystart="1880" bodyend="1888"/>
+        <references refid="classSLIInterpreter_1a4bd843d0ad15faf88185a1ae885f8852" compoundref="interpret_8h" startline="905" endline="911">SLIInterpreter::assert_stack_load</references>
+        <references refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" compoundref="token_8h" startline="360" endline="364">Token::datum</references>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="classGenericDatum_1a2204e0bfb80429863ebbd37005235c1e" compoundref="genericdatum_8h" startline="74" endline="77">GenericDatum&lt; D, slt &gt;::get</references>
+        <references refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" compoundref="interpret_8h" startline="250">SLIInterpreter::OStack</references>
+        <references refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" compoundref="tokenstack_8h" startline="96" endline="99">TokenStack::pop</references>
+        <references refid="classSLIInterpreter_1a7839dae2b4a2d5c28f85e24bf6be033c" compoundref="interpret_8cc" startline="940" endline="944">SLIInterpreter::setcycleguard</references>
+        <references refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" compoundref="tokenstack_8h" startline="116" endline="119">TokenStack::top</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="1">
+        <label>SetGuardFunction</label>
+        <link refid="classSetGuardFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="1">
+        <label>SetGuardFunction</label>
+        <link refid="classSetGuardFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" line="575" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" bodystart="576" bodyend="582"/>
+    <listofallmembers>
+      <member refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba" prot="public" virt="virtual"><scope>SetGuardFunction</scope><name>backtrace</name></member>
+      <member refid="classSetGuardFunction_1ad4e0723ec6968ad58fedb10623de38ae" prot="public" virt="virtual"><scope>SetGuardFunction</scope><name>execute</name></member>
+      <member refid="classSetGuardFunction_1a852b11ca162a0a22fdd349606780e7e1" prot="public" virt="non-virtual"><scope>SetGuardFunction</scope><name>SetGuardFunction</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>SetGuardFunction</scope><name>SLIFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>SetGuardFunction</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

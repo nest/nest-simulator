@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classDebugOnFunction" kind="class" language="C++" prot="public">
+    <compoundname>DebugOnFunction</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="slicontrol_8h" local="no">slicontrol.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classDebugOnFunction_1a85f272a02604b3afd544e234a0068daf" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>DebugOnFunction::DebugOnFunction</definition>
+        <argsstring>()</argsstring>
+        <name>DebugOnFunction</name>
+        <qualifiedname>DebugOnFunction::DebugOnFunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" line="633" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" bodystart="633" bodyend="635"/>
+      </memberdef>
+      <memberdef kind="function" id="classDebugOnFunction_1a522f61a02ddeef2853bf19b36def65cb" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void DebugOnFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>DebugOnFunction::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+<para>@BeginDocumentation <ref refid="className" kindref="compound">Name</ref>: debugon - Start SLI level debugger. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Description: The SLI Debug mode allows you to debug SLI programs by tracing the execution of the individual commands.</para>
+<para>In debug mode, each SLI instruction is stepped individually. After each instruction, the user can see the next command, the contents of the stack, the entire procedure being executed.</para>
+<para>It is also possible to set a breakpoint, so that variables and stacks in the procedure context can be examined and modified.</para>
+<para>The debug mode is controled by the debug level. Whenever execution enters a procedure or loop, the debug level is increased. If the procedure is left, the debug level is decreased. The user can specify a max debug level, beyond which the debug mode is suspended. This way, the user can skip over functions which are beyond a certain level.</para>
+<para>The following commands are available:</para>
+<para>next - Trace (execute) next command. continue - Continue this level without debugging step - Step over deeper levels. list - list current procedure or loop. where - show backtrace of execution stack. stack - show operand stack. estack - show execution stack. edit - enter interactive mode. stop - raise an exception. help - display this list. quit - quit debug mode. show next - show next command. show stack - show operand stack. show backtrace- same as &apos;where&apos;. show estack - show execution stack. toggle stack - toggle stack display. toggle catch - toggle debug on error. toggle backtrace - toggle stack backtrace on error. toggle tailrecursion - toggle tail-recursion optimisation.</para>
+<para>Note: This mode is still experimental.</para>
+<para>SeeAlso: debugoff, debug </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" line="636" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.cc" bodystart="1965" bodyend="1972"/>
+        <references refid="classSLIInterpreter_1a00d437b4b61acb86f8cf6ee97fce8b80" compoundref="interpret_8h" startline="454" endline="457">SLIInterpreter::debug_mode_on</references>
+        <references refid="classSLIInterpreter_1ac9dda32c2a2942049bc003556ec52bb6" compoundref="interpret_8cc" startline="1021" endline="1044">SLIInterpreter::debug_options</references>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="classSLIInterpreter_1a3fa7fc7f4e91c321c34182dcfc82d9c8" compoundref="interpret_8h" startline="397" endline="400">SLIInterpreter::get_call_depth</references>
+        <references refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" compoundref="tokenstack_8h" startline="96" endline="99">TokenStack::pop</references>
+        <references refid="classSLIInterpreter_1a4c8c0f81b911b4a55e4716d0141845a6" compoundref="interpret_8h" startline="411" endline="414">SLIInterpreter::set_max_call_depth</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>DebugOnFunction</label>
+        <link refid="classDebugOnFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>DebugOnFunction</label>
+        <link refid="classDebugOnFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" line="630" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" bodystart="631" bodyend="637"/>
+    <listofallmembers>
+      <member refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba" prot="public" virt="virtual"><scope>DebugOnFunction</scope><name>backtrace</name></member>
+      <member refid="classDebugOnFunction_1a85f272a02604b3afd544e234a0068daf" prot="public" virt="non-virtual"><scope>DebugOnFunction</scope><name>DebugOnFunction</name></member>
+      <member refid="classDebugOnFunction_1a522f61a02ddeef2853bf19b36def65cb" prot="public" virt="virtual"><scope>DebugOnFunction</scope><name>execute</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>DebugOnFunction</scope><name>SLIFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>DebugOnFunction</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,1965 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classSLIArrayModule" kind="class" language="C++" prot="public">
+    <compoundname>SLIArrayModule</compoundname>
+    <basecompoundref refid="classSLIModule" prot="public" virt="non-virtual">SLIModule</basecompoundref>
+    <includes refid="sliarray_8h" local="no">sliarray.h</includes>
+    <innerclass refid="classSLIArrayModule_1_1Add__d__dvFunction" prot="private">SLIArrayModule::Add_d_dvFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Add__dv__dvFunction" prot="private">SLIArrayModule::Add_dv_dvFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Add__i__ivFunction" prot="private">SLIArrayModule::Add_i_ivFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Add__iv__ivFunction" prot="private">SLIArrayModule::Add_iv_ivFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1ArangeFunction" prot="private">SLIArrayModule::ArangeFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Area2Function" prot="private">SLIArrayModule::Area2Function</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1AreaFunction" prot="private">SLIArrayModule::AreaFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Array2DoubleVectorFunction" prot="private">SLIArrayModule::Array2DoubleVectorFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Array2IntVectorFunction" prot="private">SLIArrayModule::Array2IntVectorFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1ArraycreateFunction" prot="private">SLIArrayModule::ArraycreateFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1ArrayloadFunction" prot="private">SLIArrayModule::ArrayloadFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1ArraystoreFunction" prot="private">SLIArrayModule::ArraystoreFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Cv1dFunction" prot="private">SLIArrayModule::Cv1dFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Cv2dFunction" prot="private">SLIArrayModule::Cv2dFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Div__dv__dvFunction" prot="private">SLIArrayModule::Div_dv_dvFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Div__iv__ivFunction" prot="private">SLIArrayModule::Div_iv_ivFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1DoubleVector2ArrayFunction" prot="private">SLIArrayModule::DoubleVector2ArrayFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Eq__dvFunction" prot="private">SLIArrayModule::Eq_dvFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Eq__ivFunction" prot="private">SLIArrayModule::Eq_ivFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1FiniteQ__dFunction" prot="private">SLIArrayModule::FiniteQ_dFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1FlattenFunction" prot="private">SLIArrayModule::FlattenFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Forall__dvFunction" prot="private">SLIArrayModule::Forall_dvFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Forall__ivFunction" prot="private">SLIArrayModule::Forall_ivFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1GaborFunction" prot="private">SLIArrayModule::GaborFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Gauss2dFunction" prot="private">SLIArrayModule::Gauss2dFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Get__dv__iFunction" prot="private">SLIArrayModule::Get_dv_iFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Get__dv__ivFunction" prot="private">SLIArrayModule::Get_dv_ivFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Get__iv__iFunction" prot="private">SLIArrayModule::Get_iv_iFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Get__iv__ivFunction" prot="private">SLIArrayModule::Get_iv_ivFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1GetMaxFunction" prot="private">SLIArrayModule::GetMaxFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1GetMinFunction" prot="private">SLIArrayModule::GetMinFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Iforall__dvFunction" prot="private">SLIArrayModule::Iforall_dvFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Iforall__ivFunction" prot="private">SLIArrayModule::Iforall_ivFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1IMap__dvFunction" prot="private">SLIArrayModule::IMap_dvFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1IMap__ivFunction" prot="private">SLIArrayModule::IMap_ivFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1IMapFunction" prot="private">SLIArrayModule::IMapFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1IMapIndexedFunction" prot="private">SLIArrayModule::IMapIndexedFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1IMapThreadFunction" prot="private">SLIArrayModule::IMapThreadFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1IntVector2ArrayFunction" prot="private">SLIArrayModule::IntVector2ArrayFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Inv__dvFunction" prot="private">SLIArrayModule::Inv_dvFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Length__dvFunction" prot="private">SLIArrayModule::Length_dvFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Length__ivFunction" prot="private">SLIArrayModule::Length_ivFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1MapFunction" prot="private">SLIArrayModule::MapFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1MapIndexedFunction" prot="private">SLIArrayModule::MapIndexedFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1MapThreadFunction" prot="private">SLIArrayModule::MapThreadFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Mul__d__dvFunction" prot="private">SLIArrayModule::Mul_d_dvFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Mul__d__ivFunction" prot="private">SLIArrayModule::Mul_d_ivFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Mul__dv__dvFunction" prot="private">SLIArrayModule::Mul_dv_dvFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Mul__i__ivFunction" prot="private">SLIArrayModule::Mul_i_ivFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Mul__iv__ivFunction" prot="private">SLIArrayModule::Mul_iv_ivFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Neg__dvFunction" prot="private">SLIArrayModule::Neg_dvFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Neg__ivFunction" prot="private">SLIArrayModule::Neg_ivFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Ones__dvFunction" prot="private">SLIArrayModule::Ones_dvFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Ones__ivFunction" prot="private">SLIArrayModule::Ones_ivFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1PartitionFunction" prot="private">SLIArrayModule::PartitionFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Put__a__a__tFunction" prot="private">SLIArrayModule::Put_a_a_tFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Put__dv__i__dFunction" prot="private">SLIArrayModule::Put_dv_i_dFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Put__iv__i__iFunction" prot="private">SLIArrayModule::Put_iv_i_iFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1RangeFunction" prot="private">SLIArrayModule::RangeFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1ReverseFunction" prot="private">SLIArrayModule::ReverseFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1RotateFunction" prot="private">SLIArrayModule::RotateFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1SortFunction" prot="private">SLIArrayModule::SortFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Sub__dv__dvFunction" prot="private">SLIArrayModule::Sub_dv_dvFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Sub__iv__ivFunction" prot="private">SLIArrayModule::Sub_iv_ivFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1TransposeFunction" prot="private">SLIArrayModule::TransposeFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1UniqueFunction" prot="private">SLIArrayModule::UniqueFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1ValidFunction" prot="private">SLIArrayModule::ValidFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Zeros__dvFunction" prot="private">SLIArrayModule::Zeros_dvFunction</innerclass>
+    <innerclass refid="classSLIArrayModule_1_1Zeros__ivFunction" prot="private">SLIArrayModule::Zeros_ivFunction</innerclass>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classSLIArrayModule_1a47562bf859e3e448c20feb3a17aa6569" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1RangeFunction" kindref="compound">RangeFunction</ref></type>
+        <definition>RangeFunction SLIArrayModule::rangefunction</definition>
+        <argsstring></argsstring>
+        <name>rangefunction</name>
+        <qualifiedname>SLIArrayModule::rangefunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="562" column="17" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="562" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a35e06bd5ebd8bae80d12888b3bb84bf3" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1ArraystoreFunction" kindref="compound">ArraystoreFunction</ref></type>
+        <definition>ArraystoreFunction SLIArrayModule::arraystorefunction</definition>
+        <argsstring></argsstring>
+        <name>arraystorefunction</name>
+        <qualifiedname>SLIArrayModule::arraystorefunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="563" column="22" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="563" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1acd64078b74e3c7840cbfc5404a0efa87" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1ArraycreateFunction" kindref="compound">ArraycreateFunction</ref></type>
+        <definition>ArraycreateFunction SLIArrayModule::arraycreatefunction</definition>
+        <argsstring></argsstring>
+        <name>arraycreatefunction</name>
+        <qualifiedname>SLIArrayModule::arraycreatefunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="564" column="23" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="564" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a69ff8952d5b4a2b5e1ea9df8c79f8411" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1ArrayloadFunction" kindref="compound">ArrayloadFunction</ref></type>
+        <definition>ArrayloadFunction SLIArrayModule::arrayloadfunction</definition>
+        <argsstring></argsstring>
+        <name>arrayloadfunction</name>
+        <qualifiedname>SLIArrayModule::arrayloadfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="565" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="565" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a173fa868581012c53de1f89b49a09835" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1ReverseFunction" kindref="compound">ReverseFunction</ref></type>
+        <definition>ReverseFunction SLIArrayModule::reversefunction</definition>
+        <argsstring></argsstring>
+        <name>reversefunction</name>
+        <qualifiedname>SLIArrayModule::reversefunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="566" column="19" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="566" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1ac73d7daf1b81ad823acf3c8a07ad7cca" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1RotateFunction" kindref="compound">RotateFunction</ref></type>
+        <definition>RotateFunction SLIArrayModule::rotatefunction</definition>
+        <argsstring></argsstring>
+        <name>rotatefunction</name>
+        <qualifiedname>SLIArrayModule::rotatefunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="567" column="18" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="567" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a418e1de17d06b0172795759762ab3ceb" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1FlattenFunction" kindref="compound">FlattenFunction</ref></type>
+        <definition>FlattenFunction SLIArrayModule::flattenfunction</definition>
+        <argsstring></argsstring>
+        <name>flattenfunction</name>
+        <qualifiedname>SLIArrayModule::flattenfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="568" column="19" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="568" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1af2fcbc8720a9d15ed37c01f14ab5953c" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1SortFunction" kindref="compound">SortFunction</ref></type>
+        <definition>SortFunction SLIArrayModule::sortfunction</definition>
+        <argsstring></argsstring>
+        <name>sortfunction</name>
+        <qualifiedname>SLIArrayModule::sortfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="569" column="16" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="569" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a7c4c00c2f055dd3a7f988393a3ae0f5c" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1TransposeFunction" kindref="compound">TransposeFunction</ref></type>
+        <definition>TransposeFunction SLIArrayModule::transposefunction</definition>
+        <argsstring></argsstring>
+        <name>transposefunction</name>
+        <qualifiedname>SLIArrayModule::transposefunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="570" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="570" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1ac675860cb4e631806c409feb2bd197a5" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1MapFunction" kindref="compound">MapFunction</ref></type>
+        <definition>MapFunction SLIArrayModule::mapfunction</definition>
+        <argsstring></argsstring>
+        <name>mapfunction</name>
+        <qualifiedname>SLIArrayModule::mapfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="571" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="571" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a2e8d25fa9c79caa6943de07e4ea3a1bb" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1IMapFunction" kindref="compound">IMapFunction</ref></type>
+        <definition>IMapFunction SLIArrayModule::imapfunction</definition>
+        <argsstring></argsstring>
+        <name>imapfunction</name>
+        <qualifiedname>SLIArrayModule::imapfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="572" column="16" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="572" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a7f1379e69ecb18a0ceee274076719b7f" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1IMap__ivFunction" kindref="compound">IMap_ivFunction</ref></type>
+        <definition>IMap_ivFunction SLIArrayModule::imap_ivfunction</definition>
+        <argsstring></argsstring>
+        <name>imap_ivfunction</name>
+        <qualifiedname>SLIArrayModule::imap_ivfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="573" column="19" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="573" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a7170d46280d28e2ed91ecf471ed449cb" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1IMap__dvFunction" kindref="compound">IMap_dvFunction</ref></type>
+        <definition>IMap_dvFunction SLIArrayModule::imap_dvfunction</definition>
+        <argsstring></argsstring>
+        <name>imap_dvfunction</name>
+        <qualifiedname>SLIArrayModule::imap_dvfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="574" column="19" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="574" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a08f0e4ce1c8333f240dc6a1f07262788" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1MapIndexedFunction" kindref="compound">MapIndexedFunction</ref></type>
+        <definition>MapIndexedFunction SLIArrayModule::mapindexedfunction</definition>
+        <argsstring></argsstring>
+        <name>mapindexedfunction</name>
+        <qualifiedname>SLIArrayModule::mapindexedfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="575" column="22" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="575" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a2d2d19ae08d6de8cc1c79ce8fcab98a8" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1IMapIndexedFunction" kindref="compound">IMapIndexedFunction</ref></type>
+        <definition>IMapIndexedFunction SLIArrayModule::imapindexedfunction</definition>
+        <argsstring></argsstring>
+        <name>imapindexedfunction</name>
+        <qualifiedname>SLIArrayModule::imapindexedfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="576" column="23" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="576" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a684c954661d96dfca5de45c7e6ff33db" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1MapThreadFunction" kindref="compound">MapThreadFunction</ref></type>
+        <definition>MapThreadFunction SLIArrayModule::mapthreadfunction</definition>
+        <argsstring></argsstring>
+        <name>mapthreadfunction</name>
+        <qualifiedname>SLIArrayModule::mapthreadfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="577" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="577" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a0267612f86cb8a00650c79901d534685" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1IMapThreadFunction" kindref="compound">IMapThreadFunction</ref></type>
+        <definition>IMapThreadFunction SLIArrayModule::imapthreadfunction</definition>
+        <argsstring></argsstring>
+        <name>imapthreadfunction</name>
+        <qualifiedname>SLIArrayModule::imapthreadfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="578" column="22" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="578" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1ac3dd6839d07a5a355e19f3f1525ef51a" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1PartitionFunction" kindref="compound">PartitionFunction</ref></type>
+        <definition>PartitionFunction SLIArrayModule::partitionfunction</definition>
+        <argsstring></argsstring>
+        <name>partitionfunction</name>
+        <qualifiedname>SLIArrayModule::partitionfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="579" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="579" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a727fc0d343189f7c755faa752e60a714" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1ValidFunction" kindref="compound">ValidFunction</ref></type>
+        <definition>ValidFunction SLIArrayModule::validfunction</definition>
+        <argsstring></argsstring>
+        <name>validfunction</name>
+        <qualifiedname>SLIArrayModule::validfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="580" column="17" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="580" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1ad3589031d9d789b880bc2c5a475b9268" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1AreaFunction" kindref="compound">AreaFunction</ref></type>
+        <definition>AreaFunction SLIArrayModule::areafunction</definition>
+        <argsstring></argsstring>
+        <name>areafunction</name>
+        <qualifiedname>SLIArrayModule::areafunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="581" column="16" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="581" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a0784d1f3a32d0b24d79cc61871e88de5" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Area2Function" kindref="compound">Area2Function</ref></type>
+        <definition>Area2Function SLIArrayModule::area2function</definition>
+        <argsstring></argsstring>
+        <name>area2function</name>
+        <qualifiedname>SLIArrayModule::area2function</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="582" column="17" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="582" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1aac5cb6a8f7d296b54f0cc4d2ef49fb60" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Cv1dFunction" kindref="compound">Cv1dFunction</ref></type>
+        <definition>Cv1dFunction SLIArrayModule::cv1dfunction</definition>
+        <argsstring></argsstring>
+        <name>cv1dfunction</name>
+        <qualifiedname>SLIArrayModule::cv1dfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="583" column="16" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="583" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a6edb5ff6e6830315c77774e239fb77e8" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Cv2dFunction" kindref="compound">Cv2dFunction</ref></type>
+        <definition>Cv2dFunction SLIArrayModule::cv2dfunction</definition>
+        <argsstring></argsstring>
+        <name>cv2dfunction</name>
+        <qualifiedname>SLIArrayModule::cv2dfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="584" column="16" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="584" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1ac6bedece2241ec7283d8c824836c3cf5" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1GetMaxFunction" kindref="compound">GetMaxFunction</ref></type>
+        <definition>GetMaxFunction SLIArrayModule::getmaxfunction</definition>
+        <argsstring></argsstring>
+        <name>getmaxfunction</name>
+        <qualifiedname>SLIArrayModule::getmaxfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="585" column="18" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="585" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a6d4dc0609469cceb5a3c19ba1b6ca411" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1GetMinFunction" kindref="compound">GetMinFunction</ref></type>
+        <definition>GetMinFunction SLIArrayModule::getminfunction</definition>
+        <argsstring></argsstring>
+        <name>getminfunction</name>
+        <qualifiedname>SLIArrayModule::getminfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="586" column="18" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="586" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1abb99e60c55c77beb02c2784fc365359e" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1GaborFunction" kindref="compound">GaborFunction</ref></type>
+        <definition>GaborFunction SLIArrayModule::gaborfunction</definition>
+        <argsstring></argsstring>
+        <name>gaborfunction</name>
+        <qualifiedname>SLIArrayModule::gaborfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="587" column="17" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="587" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a2f47ef706deca5c4e034d73379415ae4" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Gauss2dFunction" kindref="compound">Gauss2dFunction</ref></type>
+        <definition>Gauss2dFunction SLIArrayModule::gauss2dfunction</definition>
+        <argsstring></argsstring>
+        <name>gauss2dfunction</name>
+        <qualifiedname>SLIArrayModule::gauss2dfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="588" column="19" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="588" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a44e9fa76de0aa1d04e11caf8e1514e6a" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Put__a__a__tFunction" kindref="compound">Put_a_a_tFunction</ref></type>
+        <definition>Put_a_a_tFunction SLIArrayModule::put_a_a_tfunction</definition>
+        <argsstring></argsstring>
+        <name>put_a_a_tfunction</name>
+        <qualifiedname>SLIArrayModule::put_a_a_tfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="589" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="589" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a0a2525e4ba11ea3a7d7f296be6024333" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Array2IntVectorFunction" kindref="compound">Array2IntVectorFunction</ref></type>
+        <definition>Array2IntVectorFunction SLIArrayModule::array2intvectorfunction</definition>
+        <argsstring></argsstring>
+        <name>array2intvectorfunction</name>
+        <qualifiedname>SLIArrayModule::array2intvectorfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="590" column="27" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="590" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a686b3c0f48a87ceec6f3999b4c8c1a8a" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Array2DoubleVectorFunction" kindref="compound">Array2DoubleVectorFunction</ref></type>
+        <definition>Array2DoubleVectorFunction SLIArrayModule::array2doublevectorfunction</definition>
+        <argsstring></argsstring>
+        <name>array2doublevectorfunction</name>
+        <qualifiedname>SLIArrayModule::array2doublevectorfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="591" column="30" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="591" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a438bd28590aa92185eeed40d00178c45" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1IntVector2ArrayFunction" kindref="compound">IntVector2ArrayFunction</ref></type>
+        <definition>IntVector2ArrayFunction SLIArrayModule::intvector2arrayfunction</definition>
+        <argsstring></argsstring>
+        <name>intvector2arrayfunction</name>
+        <qualifiedname>SLIArrayModule::intvector2arrayfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="592" column="27" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="592" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1ac297340a9774ab5ac24bb9274853897e" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1DoubleVector2ArrayFunction" kindref="compound">DoubleVector2ArrayFunction</ref></type>
+        <definition>DoubleVector2ArrayFunction SLIArrayModule::doublevector2arrayfunction</definition>
+        <argsstring></argsstring>
+        <name>doublevector2arrayfunction</name>
+        <qualifiedname>SLIArrayModule::doublevector2arrayfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="593" column="30" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="593" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a925d3a56ba70990d634fa00286fe0798" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1FiniteQ__dFunction" kindref="compound">FiniteQ_dFunction</ref></type>
+        <definition>FiniteQ_dFunction SLIArrayModule::finiteq_dfunction</definition>
+        <argsstring></argsstring>
+        <name>finiteq_dfunction</name>
+        <qualifiedname>SLIArrayModule::finiteq_dfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="594" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="594" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a04b27dbff49d7c9a31939955143b243a" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Forall__ivFunction" kindref="compound">Forall_ivFunction</ref></type>
+        <definition>Forall_ivFunction SLIArrayModule::forall_ivfunction</definition>
+        <argsstring></argsstring>
+        <name>forall_ivfunction</name>
+        <qualifiedname>SLIArrayModule::forall_ivfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="595" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="595" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a67eedf3069ba10d110eb51ee7dabbfb1" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Iforall__ivFunction" kindref="compound">Iforall_ivFunction</ref></type>
+        <definition>Iforall_ivFunction SLIArrayModule::iforall_ivfunction</definition>
+        <argsstring></argsstring>
+        <name>iforall_ivfunction</name>
+        <qualifiedname>SLIArrayModule::iforall_ivfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="596" column="22" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="596" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a6fea2d86837c9b617586145c68e5a874" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Forall__dvFunction" kindref="compound">Forall_dvFunction</ref></type>
+        <definition>Forall_dvFunction SLIArrayModule::forall_dvfunction</definition>
+        <argsstring></argsstring>
+        <name>forall_dvfunction</name>
+        <qualifiedname>SLIArrayModule::forall_dvfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="597" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="597" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1ac776ae24823a49eb3a902974ea27d235" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Iforall__dvFunction" kindref="compound">Iforall_dvFunction</ref></type>
+        <definition>Iforall_dvFunction SLIArrayModule::iforall_dvfunction</definition>
+        <argsstring></argsstring>
+        <name>iforall_dvfunction</name>
+        <qualifiedname>SLIArrayModule::iforall_dvfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="598" column="22" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="598" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a20bfd8b4ca5aecf4c1544947e6168ac5" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Add__iv__ivFunction" kindref="compound">Add_iv_ivFunction</ref></type>
+        <definition>Add_iv_ivFunction SLIArrayModule::add_iv_ivfunction</definition>
+        <argsstring></argsstring>
+        <name>add_iv_ivfunction</name>
+        <qualifiedname>SLIArrayModule::add_iv_ivfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="601" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="601" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a2183fb80b513e63f45483ae80f5251bf" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Add__i__ivFunction" kindref="compound">Add_i_ivFunction</ref></type>
+        <definition>Add_i_ivFunction SLIArrayModule::add_i_ivfunction</definition>
+        <argsstring></argsstring>
+        <name>add_i_ivfunction</name>
+        <qualifiedname>SLIArrayModule::add_i_ivfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="602" column="20" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="602" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1aa32ad7ae75416fc58e7a2705910b181d" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Neg__ivFunction" kindref="compound">Neg_ivFunction</ref></type>
+        <definition>Neg_ivFunction SLIArrayModule::neg_ivfunction</definition>
+        <argsstring></argsstring>
+        <name>neg_ivfunction</name>
+        <qualifiedname>SLIArrayModule::neg_ivfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="603" column="18" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="603" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a31aa6ee8474d6ffb895b1cae4429fba4" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Sub__iv__ivFunction" kindref="compound">Sub_iv_ivFunction</ref></type>
+        <definition>Sub_iv_ivFunction SLIArrayModule::sub_iv_ivfunction</definition>
+        <argsstring></argsstring>
+        <name>sub_iv_ivfunction</name>
+        <qualifiedname>SLIArrayModule::sub_iv_ivfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="604" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="604" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a7b08f7736904d3d8196e58280f72434a" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Mul__iv__ivFunction" kindref="compound">Mul_iv_ivFunction</ref></type>
+        <definition>Mul_iv_ivFunction SLIArrayModule::mul_iv_ivfunction</definition>
+        <argsstring></argsstring>
+        <name>mul_iv_ivfunction</name>
+        <qualifiedname>SLIArrayModule::mul_iv_ivfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="605" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="605" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1abe02deb6e29aa56fd271eda95c45b189" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Mul__i__ivFunction" kindref="compound">Mul_i_ivFunction</ref></type>
+        <definition>Mul_i_ivFunction SLIArrayModule::mul_i_ivfunction</definition>
+        <argsstring></argsstring>
+        <name>mul_i_ivfunction</name>
+        <qualifiedname>SLIArrayModule::mul_i_ivfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="606" column="20" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="606" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a2150b8178158a5986a4273e9bd0a303d" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Mul__d__ivFunction" kindref="compound">Mul_d_ivFunction</ref></type>
+        <definition>Mul_d_ivFunction SLIArrayModule::mul_d_ivfunction</definition>
+        <argsstring></argsstring>
+        <name>mul_d_ivfunction</name>
+        <qualifiedname>SLIArrayModule::mul_d_ivfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="607" column="20" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="607" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a8ab5b79499e173784b96337b707648fe" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Div__iv__ivFunction" kindref="compound">Div_iv_ivFunction</ref></type>
+        <definition>Div_iv_ivFunction SLIArrayModule::div_iv_ivfunction</definition>
+        <argsstring></argsstring>
+        <name>div_iv_ivfunction</name>
+        <qualifiedname>SLIArrayModule::div_iv_ivfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="608" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="608" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a6eba644d76c7f7086cd644f438eb8d30" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Length__ivFunction" kindref="compound">Length_ivFunction</ref></type>
+        <definition>Length_ivFunction SLIArrayModule::length_ivfunction</definition>
+        <argsstring></argsstring>
+        <name>length_ivfunction</name>
+        <qualifiedname>SLIArrayModule::length_ivfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="609" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="609" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1ae221e2a28c952b7205b872eac4ec4830" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Add__dv__dvFunction" kindref="compound">Add_dv_dvFunction</ref></type>
+        <definition>Add_dv_dvFunction SLIArrayModule::add_dv_dvfunction</definition>
+        <argsstring></argsstring>
+        <name>add_dv_dvfunction</name>
+        <qualifiedname>SLIArrayModule::add_dv_dvfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="611" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="611" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a2ee3906e3e1cc2ae8a5c6589ad7629ca" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Add__d__dvFunction" kindref="compound">Add_d_dvFunction</ref></type>
+        <definition>Add_d_dvFunction SLIArrayModule::add_d_dvfunction</definition>
+        <argsstring></argsstring>
+        <name>add_d_dvfunction</name>
+        <qualifiedname>SLIArrayModule::add_d_dvfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="612" column="20" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="612" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1aa6362a59626ca6cbf63cf9dce874e7d3" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Sub__dv__dvFunction" kindref="compound">Sub_dv_dvFunction</ref></type>
+        <definition>Sub_dv_dvFunction SLIArrayModule::sub_dv_dvfunction</definition>
+        <argsstring></argsstring>
+        <name>sub_dv_dvfunction</name>
+        <qualifiedname>SLIArrayModule::sub_dv_dvfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="613" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="613" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1ae6bab2a6822c8939cceed4e5d5e0dfe6" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Mul__dv__dvFunction" kindref="compound">Mul_dv_dvFunction</ref></type>
+        <definition>Mul_dv_dvFunction SLIArrayModule::mul_dv_dvfunction</definition>
+        <argsstring></argsstring>
+        <name>mul_dv_dvfunction</name>
+        <qualifiedname>SLIArrayModule::mul_dv_dvfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="614" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="614" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a8e89f6d22d4004323fce4a32a5a69e46" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Mul__d__dvFunction" kindref="compound">Mul_d_dvFunction</ref></type>
+        <definition>Mul_d_dvFunction SLIArrayModule::mul_d_dvfunction</definition>
+        <argsstring></argsstring>
+        <name>mul_d_dvfunction</name>
+        <qualifiedname>SLIArrayModule::mul_d_dvfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="615" column="20" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="615" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1ad6592007c9f734a5ddd1e8a83228c8e7" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Div__dv__dvFunction" kindref="compound">Div_dv_dvFunction</ref></type>
+        <definition>Div_dv_dvFunction SLIArrayModule::div_dv_dvfunction</definition>
+        <argsstring></argsstring>
+        <name>div_dv_dvfunction</name>
+        <qualifiedname>SLIArrayModule::div_dv_dvfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="616" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="616" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a09e2ead042877d1501a63ea3c90998e9" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Neg__dvFunction" kindref="compound">Neg_dvFunction</ref></type>
+        <definition>Neg_dvFunction SLIArrayModule::neg_dvfunction</definition>
+        <argsstring></argsstring>
+        <name>neg_dvfunction</name>
+        <qualifiedname>SLIArrayModule::neg_dvfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="617" column="18" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="617" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1ad0498c343380f86b3b60343e475a61bf" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Inv__dvFunction" kindref="compound">Inv_dvFunction</ref></type>
+        <definition>Inv_dvFunction SLIArrayModule::inv_dvfunction</definition>
+        <argsstring></argsstring>
+        <name>inv_dvfunction</name>
+        <qualifiedname>SLIArrayModule::inv_dvfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="618" column="18" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="618" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a6e16f8a21568d12785c75b889c1c2a25" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Length__dvFunction" kindref="compound">Length_dvFunction</ref></type>
+        <definition>Length_dvFunction SLIArrayModule::length_dvfunction</definition>
+        <argsstring></argsstring>
+        <name>length_dvfunction</name>
+        <qualifiedname>SLIArrayModule::length_dvfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="619" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="619" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1ab0d5f466f80e1fa4bd4f6620e7626199" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Get__dv__iFunction" kindref="compound">Get_dv_iFunction</ref></type>
+        <definition>Get_dv_iFunction SLIArrayModule::get_dv_ifunction</definition>
+        <argsstring></argsstring>
+        <name>get_dv_ifunction</name>
+        <qualifiedname>SLIArrayModule::get_dv_ifunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="620" column="20" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="620" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1aca72c640422e58513dd00e3058cc6c57" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Get__dv__ivFunction" kindref="compound">Get_dv_ivFunction</ref></type>
+        <definition>Get_dv_ivFunction SLIArrayModule::get_dv_ivfunction</definition>
+        <argsstring></argsstring>
+        <name>get_dv_ivfunction</name>
+        <qualifiedname>SLIArrayModule::get_dv_ivfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="621" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="621" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1ad477339f30568846a283e3b7ddb33428" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Get__iv__iFunction" kindref="compound">Get_iv_iFunction</ref></type>
+        <definition>Get_iv_iFunction SLIArrayModule::get_iv_ifunction</definition>
+        <argsstring></argsstring>
+        <name>get_iv_ifunction</name>
+        <qualifiedname>SLIArrayModule::get_iv_ifunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="622" column="20" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="622" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a3bc04f0b8417419400099f3827ba3379" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Get__iv__ivFunction" kindref="compound">Get_iv_ivFunction</ref></type>
+        <definition>Get_iv_ivFunction SLIArrayModule::get_iv_ivfunction</definition>
+        <argsstring></argsstring>
+        <name>get_iv_ivfunction</name>
+        <qualifiedname>SLIArrayModule::get_iv_ivfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="623" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="623" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1aad3c36963402dfa7fbac11edca8c2866" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Put__iv__i__iFunction" kindref="compound">Put_iv_i_iFunction</ref></type>
+        <definition>Put_iv_i_iFunction SLIArrayModule::put_iv_i_ifunction</definition>
+        <argsstring></argsstring>
+        <name>put_iv_i_ifunction</name>
+        <qualifiedname>SLIArrayModule::put_iv_i_ifunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="624" column="22" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="624" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a2cecc14b31bff04d8338c53ea480a0fc" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Put__dv__i__dFunction" kindref="compound">Put_dv_i_dFunction</ref></type>
+        <definition>Put_dv_i_dFunction SLIArrayModule::put_dv_i_dfunction</definition>
+        <argsstring></argsstring>
+        <name>put_dv_i_dfunction</name>
+        <qualifiedname>SLIArrayModule::put_dv_i_dfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="625" column="22" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="625" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1ae148c9c27d98bc0f6314719dc4045cc5" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Zeros__dvFunction" kindref="compound">Zeros_dvFunction</ref></type>
+        <definition>Zeros_dvFunction SLIArrayModule::zeros_dvfunction</definition>
+        <argsstring></argsstring>
+        <name>zeros_dvfunction</name>
+        <qualifiedname>SLIArrayModule::zeros_dvfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="626" column="20" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="626" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1ace7ca07efe2b3b4b2f2e3fab40b01238" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Ones__dvFunction" kindref="compound">Ones_dvFunction</ref></type>
+        <definition>Ones_dvFunction SLIArrayModule::ones_dvfunction</definition>
+        <argsstring></argsstring>
+        <name>ones_dvfunction</name>
+        <qualifiedname>SLIArrayModule::ones_dvfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="627" column="19" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="627" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a0f2761c7f65014b52521cdd26c3c7017" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Eq__dvFunction" kindref="compound">Eq_dvFunction</ref></type>
+        <definition>Eq_dvFunction SLIArrayModule::eq_dvfunction</definition>
+        <argsstring></argsstring>
+        <name>eq_dvfunction</name>
+        <qualifiedname>SLIArrayModule::eq_dvfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="628" column="17" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="628" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a2f7e3a40c03f40210c92faef69a87326" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Eq__ivFunction" kindref="compound">Eq_ivFunction</ref></type>
+        <definition>Eq_ivFunction SLIArrayModule::eq_ivfunction</definition>
+        <argsstring></argsstring>
+        <name>eq_ivfunction</name>
+        <qualifiedname>SLIArrayModule::eq_ivfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="629" column="17" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="629" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a3c18a6ce6e33aeada35a90bc7c346da6" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Zeros__ivFunction" kindref="compound">Zeros_ivFunction</ref></type>
+        <definition>Zeros_ivFunction SLIArrayModule::zeros_ivfunction</definition>
+        <argsstring></argsstring>
+        <name>zeros_ivfunction</name>
+        <qualifiedname>SLIArrayModule::zeros_ivfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="630" column="20" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="630" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a4d86d12da25582cca1c87367fe02fc40" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1Ones__ivFunction" kindref="compound">Ones_ivFunction</ref></type>
+        <definition>Ones_ivFunction SLIArrayModule::ones_ivfunction</definition>
+        <argsstring></argsstring>
+        <name>ones_ivfunction</name>
+        <qualifiedname>SLIArrayModule::ones_ivfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="631" column="19" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="631" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIArrayModule_1a0800e7c82f06f0d36456b03857f2ab87" prot="private" static="no" mutable="no">
+        <type><ref refid="classSLIArrayModule_1_1ArangeFunction" kindref="compound">ArangeFunction</ref></type>
+        <definition>ArangeFunction SLIArrayModule::arangefunction</definition>
+        <argsstring></argsstring>
+        <name>arangefunction</name>
+        <qualifiedname>SLIArrayModule::arangefunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="632" column="18" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="632" bodyend="-1"/>
+        <referencedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" compoundref="sliarray_8cc" startline="4169" endline="4249">init</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classSLIArrayModule_1a5a82315096efb1d9aa32888a1850cb60" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SLIArrayModule::SLIArrayModule</definition>
+        <argsstring>()</argsstring>
+        <name>SLIArrayModule</name>
+        <qualifiedname>SLIArrayModule::SLIArrayModule</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="635" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="635" bodyend="637"/>
+      </memberdef>
+      <memberdef kind="function" id="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void SLIArrayModule::init</definition>
+        <argsstring>(SLIInterpreter *) override</argsstring>
+        <name>init</name>
+        <qualifiedname>SLIArrayModule::init</qualifiedname>
+        <reimplements refid="classSLIModule_1a4fb2ff87fa14e0caeeea009cf0761957">init</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+        </param>
+        <briefdescription>
+<para>Initialize the module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When this function is called, most of the interpreter&apos;s facilities are up and running. However, depending on where in the interpreter&apos;s bootstrap sequence the module is initialized, not all services may be available. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="639" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.cc" bodystart="4169" bodyend="4249"/>
+        <references refid="classSLIArrayModule_1a2ee3906e3e1cc2ae8a5c6589ad7629ca" compoundref="sliarray_8h" startline="612">add_d_dvfunction</references>
+        <references refid="classSLIArrayModule_1ae221e2a28c952b7205b872eac4ec4830" compoundref="sliarray_8h" startline="611">add_dv_dvfunction</references>
+        <references refid="classSLIArrayModule_1a2183fb80b513e63f45483ae80f5251bf" compoundref="sliarray_8h" startline="602">add_i_ivfunction</references>
+        <references refid="classSLIArrayModule_1a20bfd8b4ca5aecf4c1544947e6168ac5" compoundref="sliarray_8h" startline="601">add_iv_ivfunction</references>
+        <references refid="classSLIArrayModule_1a0800e7c82f06f0d36456b03857f2ab87" compoundref="sliarray_8h" startline="632">arangefunction</references>
+        <references refid="classSLIArrayModule_1a0784d1f3a32d0b24d79cc61871e88de5" compoundref="sliarray_8h" startline="582">area2function</references>
+        <references refid="classSLIArrayModule_1ad3589031d9d789b880bc2c5a475b9268" compoundref="sliarray_8h" startline="581">areafunction</references>
+        <references refid="classSLIArrayModule_1a686b3c0f48a87ceec6f3999b4c8c1a8a" compoundref="sliarray_8h" startline="591">array2doublevectorfunction</references>
+        <references refid="classSLIArrayModule_1a0a2525e4ba11ea3a7d7f296be6024333" compoundref="sliarray_8h" startline="590">array2intvectorfunction</references>
+        <references refid="classSLIArrayModule_1acd64078b74e3c7840cbfc5404a0efa87" compoundref="sliarray_8h" startline="564">arraycreatefunction</references>
+        <references refid="classSLIArrayModule_1a69ff8952d5b4a2b5e1ea9df8c79f8411" compoundref="sliarray_8h" startline="565">arrayloadfunction</references>
+        <references refid="classSLIArrayModule_1a35e06bd5ebd8bae80d12888b3bb84bf3" compoundref="sliarray_8h" startline="563">arraystorefunction</references>
+        <references refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" compoundref="interpret_8cc" startline="271" endline="282">SLIInterpreter::createcommand</references>
+        <references refid="classSLIArrayModule_1aac5cb6a8f7d296b54f0cc4d2ef49fb60" compoundref="sliarray_8h" startline="583">cv1dfunction</references>
+        <references refid="classSLIArrayModule_1a6edb5ff6e6830315c77774e239fb77e8" compoundref="sliarray_8h" startline="584">cv2dfunction</references>
+        <references refid="classSLIArrayModule_1ad6592007c9f734a5ddd1e8a83228c8e7" compoundref="sliarray_8h" startline="616">div_dv_dvfunction</references>
+        <references refid="classSLIArrayModule_1a8ab5b79499e173784b96337b707648fe" compoundref="sliarray_8h" startline="608">div_iv_ivfunction</references>
+        <references refid="classSLIArrayModule_1ac297340a9774ab5ac24bb9274853897e" compoundref="sliarray_8h" startline="593">doublevector2arrayfunction</references>
+        <references refid="classSLIArrayModule_1a0f2761c7f65014b52521cdd26c3c7017" compoundref="sliarray_8h" startline="628">eq_dvfunction</references>
+        <references refid="classSLIArrayModule_1a2f7e3a40c03f40210c92faef69a87326" compoundref="sliarray_8h" startline="629">eq_ivfunction</references>
+        <references refid="classSLIArrayModule_1a925d3a56ba70990d634fa00286fe0798" compoundref="sliarray_8h" startline="594">finiteq_dfunction</references>
+        <references refid="classSLIArrayModule_1a418e1de17d06b0172795759762ab3ceb" compoundref="sliarray_8h" startline="568">flattenfunction</references>
+        <references refid="classSLIArrayModule_1a6fea2d86837c9b617586145c68e5a874" compoundref="sliarray_8h" startline="597">forall_dvfunction</references>
+        <references refid="classSLIArrayModule_1a04b27dbff49d7c9a31939955143b243a" compoundref="sliarray_8h" startline="595">forall_ivfunction</references>
+        <references refid="classSLIArrayModule_1abb99e60c55c77beb02c2784fc365359e" compoundref="sliarray_8h" startline="587">gaborfunction</references>
+        <references refid="classSLIArrayModule_1a2f47ef706deca5c4e034d73379415ae4" compoundref="sliarray_8h" startline="588">gauss2dfunction</references>
+        <references refid="classSLIArrayModule_1ab0d5f466f80e1fa4bd4f6620e7626199" compoundref="sliarray_8h" startline="620">get_dv_ifunction</references>
+        <references refid="classSLIArrayModule_1aca72c640422e58513dd00e3058cc6c57" compoundref="sliarray_8h" startline="621">get_dv_ivfunction</references>
+        <references refid="classSLIArrayModule_1ad477339f30568846a283e3b7ddb33428" compoundref="sliarray_8h" startline="622">get_iv_ifunction</references>
+        <references refid="classSLIArrayModule_1a3bc04f0b8417419400099f3827ba3379" compoundref="sliarray_8h" startline="623">get_iv_ivfunction</references>
+        <references refid="classSLIArrayModule_1ac6bedece2241ec7283d8c824836c3cf5" compoundref="sliarray_8h" startline="585">getmaxfunction</references>
+        <references refid="classSLIArrayModule_1a6d4dc0609469cceb5a3c19ba1b6ca411" compoundref="sliarray_8h" startline="586">getminfunction</references>
+        <references refid="namespacesli_1aef5c9d28f1214c4eb8f657641b188023">sli::iforall_dv</references>
+        <references refid="classSLIArrayModule_1ac776ae24823a49eb3a902974ea27d235" compoundref="sliarray_8h" startline="598">iforall_dvfunction</references>
+        <references refid="namespacesli_1a7dae79c29a2e85dd355b5d023cddd94b">sli::iforall_iv</references>
+        <references refid="classSLIArrayModule_1a67eedf3069ba10d110eb51ee7dabbfb1" compoundref="sliarray_8h" startline="596">iforall_ivfunction</references>
+        <references refid="namespacesli_1a653d13d55a986570e5dcc3a9b041b804">sli::imap</references>
+        <references refid="namespacesli_1a3dc8b5e974c7d743aba0dc5f8583f7a4">sli::imap_dv</references>
+        <references refid="classSLIArrayModule_1a7170d46280d28e2ed91ecf471ed449cb" compoundref="sliarray_8h" startline="574">imap_dvfunction</references>
+        <references refid="namespacesli_1aafec88fc2fdd463275672770d715ae63">sli::imap_iv</references>
+        <references refid="classSLIArrayModule_1a7f1379e69ecb18a0ceee274076719b7f" compoundref="sliarray_8h" startline="573">imap_ivfunction</references>
+        <references refid="classSLIArrayModule_1a2e8d25fa9c79caa6943de07e4ea3a1bb" compoundref="sliarray_8h" startline="572">imapfunction</references>
+        <references refid="namespacesli_1a4ceb60f1507407635dc353ba28647e36">sli::imapindexed</references>
+        <references refid="classSLIArrayModule_1a2d2d19ae08d6de8cc1c79ce8fcab98a8" compoundref="sliarray_8h" startline="576">imapindexedfunction</references>
+        <references refid="classSLIArrayModule_1a0267612f86cb8a00650c79901d534685" compoundref="sliarray_8h" startline="578">imapthreadfunction</references>
+        <references refid="classSLIArrayModule_1a438bd28590aa92185eeed40d00178c45" compoundref="sliarray_8h" startline="592">intvector2arrayfunction</references>
+        <references refid="classSLIArrayModule_1ad0498c343380f86b3b60343e475a61bf" compoundref="sliarray_8h" startline="618">inv_dvfunction</references>
+        <references refid="classSLIArrayModule_1a6e16f8a21568d12785c75b889c1c2a25" compoundref="sliarray_8h" startline="619">length_dvfunction</references>
+        <references refid="classSLIArrayModule_1a6eba644d76c7f7086cd644f438eb8d30" compoundref="sliarray_8h" startline="609">length_ivfunction</references>
+        <references refid="classSLIArrayModule_1ac675860cb4e631806c409feb2bd197a5" compoundref="sliarray_8h" startline="571">mapfunction</references>
+        <references refid="classSLIArrayModule_1a08f0e4ce1c8333f240dc6a1f07262788" compoundref="sliarray_8h" startline="575">mapindexedfunction</references>
+        <references refid="classSLIArrayModule_1a684c954661d96dfca5de45c7e6ff33db" compoundref="sliarray_8h" startline="577">mapthreadfunction</references>
+        <references refid="classSLIArrayModule_1a8e89f6d22d4004323fce4a32a5a69e46" compoundref="sliarray_8h" startline="615">mul_d_dvfunction</references>
+        <references refid="classSLIArrayModule_1a2150b8178158a5986a4273e9bd0a303d" compoundref="sliarray_8h" startline="607">mul_d_ivfunction</references>
+        <references refid="classSLIArrayModule_1ae6bab2a6822c8939cceed4e5d5e0dfe6" compoundref="sliarray_8h" startline="614">mul_dv_dvfunction</references>
+        <references refid="classSLIArrayModule_1abe02deb6e29aa56fd271eda95c45b189" compoundref="sliarray_8h" startline="606">mul_i_ivfunction</references>
+        <references refid="classSLIArrayModule_1a7b08f7736904d3d8196e58280f72434a" compoundref="sliarray_8h" startline="605">mul_iv_ivfunction</references>
+        <references refid="classSLIArrayModule_1a09e2ead042877d1501a63ea3c90998e9" compoundref="sliarray_8h" startline="617">neg_dvfunction</references>
+        <references refid="classSLIArrayModule_1aa32ad7ae75416fc58e7a2705910b181d" compoundref="sliarray_8h" startline="603">neg_ivfunction</references>
+        <references refid="classSLIArrayModule_1ace7ca07efe2b3b4b2f2e3fab40b01238" compoundref="sliarray_8h" startline="627">ones_dvfunction</references>
+        <references refid="classSLIArrayModule_1a4d86d12da25582cca1c87367fe02fc40" compoundref="sliarray_8h" startline="631">ones_ivfunction</references>
+        <references refid="classSLIArrayModule_1ac3dd6839d07a5a355e19f3f1525ef51a" compoundref="sliarray_8h" startline="579">partitionfunction</references>
+        <references refid="classSLIArrayModule_1a44e9fa76de0aa1d04e11caf8e1514e6a" compoundref="sliarray_8h" startline="589">put_a_a_tfunction</references>
+        <references refid="classSLIArrayModule_1a2cecc14b31bff04d8338c53ea480a0fc" compoundref="sliarray_8h" startline="625">put_dv_i_dfunction</references>
+        <references refid="classSLIArrayModule_1aad3c36963402dfa7fbac11edca8c2866" compoundref="sliarray_8h" startline="624">put_iv_i_ifunction</references>
+        <references refid="classSLIArrayModule_1a47562bf859e3e448c20feb3a17aa6569" compoundref="sliarray_8h" startline="562">rangefunction</references>
+        <references refid="classSLIArrayModule_1a173fa868581012c53de1f89b49a09835" compoundref="sliarray_8h" startline="566">reversefunction</references>
+        <references refid="classSLIArrayModule_1ac73d7daf1b81ad823acf3c8a07ad7cca" compoundref="sliarray_8h" startline="567">rotatefunction</references>
+        <references refid="classSLIArrayModule_1af2fcbc8720a9d15ed37c01f14ab5953c" compoundref="sliarray_8h" startline="569">sortfunction</references>
+        <references refid="classSLIArrayModule_1aa6362a59626ca6cbf63cf9dce874e7d3" compoundref="sliarray_8h" startline="613">sub_dv_dvfunction</references>
+        <references refid="classSLIArrayModule_1a31aa6ee8474d6ffb895b1cae4429fba4" compoundref="sliarray_8h" startline="604">sub_iv_ivfunction</references>
+        <references refid="classSLIArrayModule_1a7c4c00c2f055dd3a7f988393a3ae0f5c" compoundref="sliarray_8h" startline="570">transposefunction</references>
+        <references refid="classSLIArrayModule_1a727fc0d343189f7c755faa752e60a714" compoundref="sliarray_8h" startline="580">validfunction</references>
+        <references refid="classSLIArrayModule_1ae148c9c27d98bc0f6314719dc4045cc5" compoundref="sliarray_8h" startline="626">zeros_dvfunction</references>
+        <references refid="classSLIArrayModule_1a3c18a6ce6e33aeada35a90bc7c346da6" compoundref="sliarray_8h" startline="630">zeros_ivfunction</references>
+      </memberdef>
+      <memberdef kind="function" id="classSLIArrayModule_1a4f1231a00b3b26d63b1053cbc675aca6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>const std::string</type>
+        <definition>const std::string SLIArrayModule::commandstring</definition>
+        <argsstring>() const override</argsstring>
+        <name>commandstring</name>
+        <qualifiedname>SLIArrayModule::commandstring</qualifiedname>
+        <reimplements refid="classSLIModule_1a05bb33e2c5494f406dfdda137a305ead">commandstring</reimplements>
+        <briefdescription>
+<para>Return sli command sequence to be executed for initialization. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="640" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.cc" bodystart="47" bodyend="50"/>
+      </memberdef>
+      <memberdef kind="function" id="classSLIArrayModule_1a137a89ac15bf4efed9c7fbb7b9fce0c3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>const std::string</type>
+        <definition>const std::string SLIArrayModule::name</definition>
+        <argsstring>() const override</argsstring>
+        <name>name</name>
+        <qualifiedname>SLIArrayModule::name</qualifiedname>
+        <reimplements refid="classSLIModule_1a2e0c93f5145eb879abd3a8fdcfcedf6c">name</reimplements>
+        <briefdescription>
+<para>Return name of the module. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="641" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.cc" bodystart="53" bodyend="56"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>SLI module defining array functions. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This class implements the SLI functions which operate on SLI arrays. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>SLIArrayModule</label>
+        <link refid="classSLIArrayModule"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIModule</label>
+        <link refid="classSLIModule"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>SLIArrayModule</label>
+        <link refid="classSLIArrayModule"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>rangefunction</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>arraystorefunction</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>arraycreatefunction</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>arrayloadfunction</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>reversefunction</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>rotatefunction</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>flattenfunction</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>sortfunction</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>transposefunction</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>mapfunction</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>imapfunction</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>imap_ivfunction</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>imap_dvfunction</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>mapindexedfunction</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>imapindexedfunction</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>mapthreadfunction</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>imapthreadfunction</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>partitionfunction</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>validfunction</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>areafunction</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>area2function</edgelabel>
+        </childnode>
+        <childnode refid="25" relation="usage">
+          <edgelabel>cv1dfunction</edgelabel>
+        </childnode>
+        <childnode refid="26" relation="usage">
+          <edgelabel>cv2dfunction</edgelabel>
+        </childnode>
+        <childnode refid="27" relation="usage">
+          <edgelabel>getmaxfunction</edgelabel>
+        </childnode>
+        <childnode refid="28" relation="usage">
+          <edgelabel>getminfunction</edgelabel>
+        </childnode>
+        <childnode refid="29" relation="usage">
+          <edgelabel>gaborfunction</edgelabel>
+        </childnode>
+        <childnode refid="30" relation="usage">
+          <edgelabel>gauss2dfunction</edgelabel>
+        </childnode>
+        <childnode refid="31" relation="usage">
+          <edgelabel>put_a_a_tfunction</edgelabel>
+        </childnode>
+        <childnode refid="32" relation="usage">
+          <edgelabel>array2intvectorfunction</edgelabel>
+        </childnode>
+        <childnode refid="33" relation="usage">
+          <edgelabel>array2doublevectorfunction</edgelabel>
+        </childnode>
+        <childnode refid="34" relation="usage">
+          <edgelabel>intvector2arrayfunction</edgelabel>
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>doublevector2arrayfunction</edgelabel>
+        </childnode>
+        <childnode refid="36" relation="usage">
+          <edgelabel>finiteq_dfunction</edgelabel>
+        </childnode>
+        <childnode refid="37" relation="usage">
+          <edgelabel>forall_ivfunction</edgelabel>
+        </childnode>
+        <childnode refid="38" relation="usage">
+          <edgelabel>iforall_ivfunction</edgelabel>
+        </childnode>
+        <childnode refid="39" relation="usage">
+          <edgelabel>forall_dvfunction</edgelabel>
+        </childnode>
+        <childnode refid="40" relation="usage">
+          <edgelabel>iforall_dvfunction</edgelabel>
+        </childnode>
+        <childnode refid="41" relation="usage">
+          <edgelabel>add_iv_ivfunction</edgelabel>
+        </childnode>
+        <childnode refid="42" relation="usage">
+          <edgelabel>add_i_ivfunction</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
+          <edgelabel>neg_ivfunction</edgelabel>
+        </childnode>
+        <childnode refid="44" relation="usage">
+          <edgelabel>sub_iv_ivfunction</edgelabel>
+        </childnode>
+        <childnode refid="45" relation="usage">
+          <edgelabel>mul_iv_ivfunction</edgelabel>
+        </childnode>
+        <childnode refid="46" relation="usage">
+          <edgelabel>mul_i_ivfunction</edgelabel>
+        </childnode>
+        <childnode refid="47" relation="usage">
+          <edgelabel>mul_d_ivfunction</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>div_iv_ivfunction</edgelabel>
+        </childnode>
+        <childnode refid="49" relation="usage">
+          <edgelabel>length_ivfunction</edgelabel>
+        </childnode>
+        <childnode refid="50" relation="usage">
+          <edgelabel>add_dv_dvfunction</edgelabel>
+        </childnode>
+        <childnode refid="51" relation="usage">
+          <edgelabel>add_d_dvfunction</edgelabel>
+        </childnode>
+        <childnode refid="52" relation="usage">
+          <edgelabel>sub_dv_dvfunction</edgelabel>
+        </childnode>
+        <childnode refid="53" relation="usage">
+          <edgelabel>mul_dv_dvfunction</edgelabel>
+        </childnode>
+        <childnode refid="54" relation="usage">
+          <edgelabel>mul_d_dvfunction</edgelabel>
+        </childnode>
+        <childnode refid="55" relation="usage">
+          <edgelabel>div_dv_dvfunction</edgelabel>
+        </childnode>
+        <childnode refid="56" relation="usage">
+          <edgelabel>neg_dvfunction</edgelabel>
+        </childnode>
+        <childnode refid="57" relation="usage">
+          <edgelabel>inv_dvfunction</edgelabel>
+        </childnode>
+        <childnode refid="58" relation="usage">
+          <edgelabel>length_dvfunction</edgelabel>
+        </childnode>
+        <childnode refid="59" relation="usage">
+          <edgelabel>get_dv_ifunction</edgelabel>
+        </childnode>
+        <childnode refid="60" relation="usage">
+          <edgelabel>get_dv_ivfunction</edgelabel>
+        </childnode>
+        <childnode refid="61" relation="usage">
+          <edgelabel>get_iv_ifunction</edgelabel>
+        </childnode>
+        <childnode refid="62" relation="usage">
+          <edgelabel>get_iv_ivfunction</edgelabel>
+        </childnode>
+        <childnode refid="63" relation="usage">
+          <edgelabel>put_iv_i_ifunction</edgelabel>
+        </childnode>
+        <childnode refid="64" relation="usage">
+          <edgelabel>put_dv_i_dfunction</edgelabel>
+        </childnode>
+        <childnode refid="65" relation="usage">
+          <edgelabel>zeros_dvfunction</edgelabel>
+        </childnode>
+        <childnode refid="66" relation="usage">
+          <edgelabel>ones_dvfunction</edgelabel>
+        </childnode>
+        <childnode refid="67" relation="usage">
+          <edgelabel>eq_dvfunction</edgelabel>
+        </childnode>
+        <childnode refid="68" relation="usage">
+          <edgelabel>eq_ivfunction</edgelabel>
+        </childnode>
+        <childnode refid="69" relation="usage">
+          <edgelabel>zeros_ivfunction</edgelabel>
+        </childnode>
+        <childnode refid="70" relation="usage">
+          <edgelabel>ones_ivfunction</edgelabel>
+        </childnode>
+        <childnode refid="71" relation="usage">
+          <edgelabel>arangefunction</edgelabel>
+        </childnode>
+      </node>
+      <node id="51">
+        <label>SLIArrayModule::Add_d_dvFunction</label>
+        <link refid="classSLIArrayModule_1_1Add__d__dvFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="50">
+        <label>SLIArrayModule::Add_dv_dvFunction</label>
+        <link refid="classSLIArrayModule_1_1Add__dv__dvFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="42">
+        <label>SLIArrayModule::Add_i_ivFunction</label>
+        <link refid="classSLIArrayModule_1_1Add__i__ivFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="41">
+        <label>SLIArrayModule::Add_iv_ivFunction</label>
+        <link refid="classSLIArrayModule_1_1Add__iv__ivFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="71">
+        <label>SLIArrayModule::ArangeFunction</label>
+        <link refid="classSLIArrayModule_1_1ArangeFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>SLIArrayModule::Area2Function</label>
+        <link refid="classSLIArrayModule_1_1Area2Function"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>SLIArrayModule::AreaFunction</label>
+        <link refid="classSLIArrayModule_1_1AreaFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>SLIArrayModule::Array2DoubleVectorFunction</label>
+        <link refid="classSLIArrayModule_1_1Array2DoubleVectorFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>SLIArrayModule::Array2IntVectorFunction</label>
+        <link refid="classSLIArrayModule_1_1Array2IntVectorFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>SLIArrayModule::ArraycreateFunction</label>
+        <link refid="classSLIArrayModule_1_1ArraycreateFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>SLIArrayModule::ArrayloadFunction</label>
+        <link refid="classSLIArrayModule_1_1ArrayloadFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>SLIArrayModule::ArraystoreFunction</label>
+        <link refid="classSLIArrayModule_1_1ArraystoreFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>SLIArrayModule::Cv1dFunction</label>
+        <link refid="classSLIArrayModule_1_1Cv1dFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>SLIArrayModule::Cv2dFunction</label>
+        <link refid="classSLIArrayModule_1_1Cv2dFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>SLIArrayModule::Div_dv_dvFunction</label>
+        <link refid="classSLIArrayModule_1_1Div__dv__dvFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>SLIArrayModule::Div_iv_ivFunction</label>
+        <link refid="classSLIArrayModule_1_1Div__iv__ivFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>SLIArrayModule::DoubleVector2ArrayFunction</label>
+        <link refid="classSLIArrayModule_1_1DoubleVector2ArrayFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="67">
+        <label>SLIArrayModule::Eq_dvFunction</label>
+        <link refid="classSLIArrayModule_1_1Eq__dvFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="68">
+        <label>SLIArrayModule::Eq_ivFunction</label>
+        <link refid="classSLIArrayModule_1_1Eq__ivFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>SLIArrayModule::FiniteQ_dFunction</label>
+        <link refid="classSLIArrayModule_1_1FiniteQ__dFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>SLIArrayModule::FlattenFunction</label>
+        <link refid="classSLIArrayModule_1_1FlattenFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>SLIArrayModule::Forall_dvFunction</label>
+        <link refid="classSLIArrayModule_1_1Forall__dvFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>SLIArrayModule::Forall_ivFunction</label>
+        <link refid="classSLIArrayModule_1_1Forall__ivFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>SLIArrayModule::GaborFunction</label>
+        <link refid="classSLIArrayModule_1_1GaborFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>SLIArrayModule::Gauss2dFunction</label>
+        <link refid="classSLIArrayModule_1_1Gauss2dFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>SLIArrayModule::GetMaxFunction</label>
+        <link refid="classSLIArrayModule_1_1GetMaxFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>SLIArrayModule::GetMinFunction</label>
+        <link refid="classSLIArrayModule_1_1GetMinFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="59">
+        <label>SLIArrayModule::Get_dv_iFunction</label>
+        <link refid="classSLIArrayModule_1_1Get__dv__iFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="60">
+        <label>SLIArrayModule::Get_dv_ivFunction</label>
+        <link refid="classSLIArrayModule_1_1Get__dv__ivFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="61">
+        <label>SLIArrayModule::Get_iv_iFunction</label>
+        <link refid="classSLIArrayModule_1_1Get__iv__iFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="62">
+        <label>SLIArrayModule::Get_iv_ivFunction</label>
+        <link refid="classSLIArrayModule_1_1Get__iv__ivFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>SLIArrayModule::IMapFunction</label>
+        <link refid="classSLIArrayModule_1_1IMapFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>SLIArrayModule::IMapIndexedFunction</label>
+        <link refid="classSLIArrayModule_1_1IMapIndexedFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>SLIArrayModule::IMapThreadFunction</label>
+        <link refid="classSLIArrayModule_1_1IMapThreadFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>SLIArrayModule::IMap_dvFunction</label>
+        <link refid="classSLIArrayModule_1_1IMap__dvFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>SLIArrayModule::IMap_ivFunction</label>
+        <link refid="classSLIArrayModule_1_1IMap__ivFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>SLIArrayModule::Iforall_dvFunction</label>
+        <link refid="classSLIArrayModule_1_1Iforall__dvFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>SLIArrayModule::Iforall_ivFunction</label>
+        <link refid="classSLIArrayModule_1_1Iforall__ivFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>SLIArrayModule::IntVector2ArrayFunction</label>
+        <link refid="classSLIArrayModule_1_1IntVector2ArrayFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="57">
+        <label>SLIArrayModule::Inv_dvFunction</label>
+        <link refid="classSLIArrayModule_1_1Inv__dvFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="58">
+        <label>SLIArrayModule::Length_dvFunction</label>
+        <link refid="classSLIArrayModule_1_1Length__dvFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="49">
+        <label>SLIArrayModule::Length_ivFunction</label>
+        <link refid="classSLIArrayModule_1_1Length__ivFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>SLIArrayModule::MapFunction</label>
+        <link refid="classSLIArrayModule_1_1MapFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>SLIArrayModule::MapIndexedFunction</label>
+        <link refid="classSLIArrayModule_1_1MapIndexedFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>SLIArrayModule::MapThreadFunction</label>
+        <link refid="classSLIArrayModule_1_1MapThreadFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="54">
+        <label>SLIArrayModule::Mul_d_dvFunction</label>
+        <link refid="classSLIArrayModule_1_1Mul__d__dvFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="47">
+        <label>SLIArrayModule::Mul_d_ivFunction</label>
+        <link refid="classSLIArrayModule_1_1Mul__d__ivFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="53">
+        <label>SLIArrayModule::Mul_dv_dvFunction</label>
+        <link refid="classSLIArrayModule_1_1Mul__dv__dvFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="46">
+        <label>SLIArrayModule::Mul_i_ivFunction</label>
+        <link refid="classSLIArrayModule_1_1Mul__i__ivFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>SLIArrayModule::Mul_iv_ivFunction</label>
+        <link refid="classSLIArrayModule_1_1Mul__iv__ivFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="56">
+        <label>SLIArrayModule::Neg_dvFunction</label>
+        <link refid="classSLIArrayModule_1_1Neg__dvFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>SLIArrayModule::Neg_ivFunction</label>
+        <link refid="classSLIArrayModule_1_1Neg__ivFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="66">
+        <label>SLIArrayModule::Ones_dvFunction</label>
+        <link refid="classSLIArrayModule_1_1Ones__dvFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="70">
+        <label>SLIArrayModule::Ones_ivFunction</label>
+        <link refid="classSLIArrayModule_1_1Ones__ivFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>SLIArrayModule::PartitionFunction</label>
+        <link refid="classSLIArrayModule_1_1PartitionFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>SLIArrayModule::Put_a_a_tFunction</label>
+        <link refid="classSLIArrayModule_1_1Put__a__a__tFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="64">
+        <label>SLIArrayModule::Put_dv_i_dFunction</label>
+        <link refid="classSLIArrayModule_1_1Put__dv__i__dFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="63">
+        <label>SLIArrayModule::Put_iv_i_iFunction</label>
+        <link refid="classSLIArrayModule_1_1Put__iv__i__iFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>SLIArrayModule::RangeFunction</label>
+        <link refid="classSLIArrayModule_1_1RangeFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>SLIArrayModule::ReverseFunction</label>
+        <link refid="classSLIArrayModule_1_1ReverseFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>SLIArrayModule::RotateFunction</label>
+        <link refid="classSLIArrayModule_1_1RotateFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>SLIArrayModule::SortFunction</label>
+        <link refid="classSLIArrayModule_1_1SortFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="52">
+        <label>SLIArrayModule::Sub_dv_dvFunction</label>
+        <link refid="classSLIArrayModule_1_1Sub__dv__dvFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>SLIArrayModule::Sub_iv_ivFunction</label>
+        <link refid="classSLIArrayModule_1_1Sub__iv__ivFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>SLIArrayModule::TransposeFunction</label>
+        <link refid="classSLIArrayModule_1_1TransposeFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>SLIArrayModule::ValidFunction</label>
+        <link refid="classSLIArrayModule_1_1ValidFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="65">
+        <label>SLIArrayModule::Zeros_dvFunction</label>
+        <link refid="classSLIArrayModule_1_1Zeros__dvFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="69">
+        <label>SLIArrayModule::Zeros_ivFunction</label>
+        <link refid="classSLIArrayModule_1_1Zeros__ivFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="2">
+        <label>SLIModule</label>
+        <link refid="classSLIModule"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="37" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="38" bodyend="642"/>
+    <listofallmembers>
+      <member refid="classSLIArrayModule_1a2ee3906e3e1cc2ae8a5c6589ad7629ca" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>add_d_dvfunction</name></member>
+      <member refid="classSLIArrayModule_1ae221e2a28c952b7205b872eac4ec4830" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>add_dv_dvfunction</name></member>
+      <member refid="classSLIArrayModule_1a2183fb80b513e63f45483ae80f5251bf" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>add_i_ivfunction</name></member>
+      <member refid="classSLIArrayModule_1a20bfd8b4ca5aecf4c1544947e6168ac5" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>add_iv_ivfunction</name></member>
+      <member refid="classSLIArrayModule_1a0800e7c82f06f0d36456b03857f2ab87" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>arangefunction</name></member>
+      <member refid="classSLIArrayModule_1a0784d1f3a32d0b24d79cc61871e88de5" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>area2function</name></member>
+      <member refid="classSLIArrayModule_1ad3589031d9d789b880bc2c5a475b9268" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>areafunction</name></member>
+      <member refid="classSLIArrayModule_1a686b3c0f48a87ceec6f3999b4c8c1a8a" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>array2doublevectorfunction</name></member>
+      <member refid="classSLIArrayModule_1a0a2525e4ba11ea3a7d7f296be6024333" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>array2intvectorfunction</name></member>
+      <member refid="classSLIArrayModule_1acd64078b74e3c7840cbfc5404a0efa87" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>arraycreatefunction</name></member>
+      <member refid="classSLIArrayModule_1a69ff8952d5b4a2b5e1ea9df8c79f8411" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>arrayloadfunction</name></member>
+      <member refid="classSLIArrayModule_1a35e06bd5ebd8bae80d12888b3bb84bf3" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>arraystorefunction</name></member>
+      <member refid="classSLIArrayModule_1a4f1231a00b3b26d63b1053cbc675aca6" prot="public" virt="virtual"><scope>SLIArrayModule</scope><name>commandstring</name></member>
+      <member refid="classSLIArrayModule_1aac5cb6a8f7d296b54f0cc4d2ef49fb60" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>cv1dfunction</name></member>
+      <member refid="classSLIArrayModule_1a6edb5ff6e6830315c77774e239fb77e8" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>cv2dfunction</name></member>
+      <member refid="classSLIArrayModule_1ad6592007c9f734a5ddd1e8a83228c8e7" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>div_dv_dvfunction</name></member>
+      <member refid="classSLIArrayModule_1a8ab5b79499e173784b96337b707648fe" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>div_iv_ivfunction</name></member>
+      <member refid="classSLIArrayModule_1ac297340a9774ab5ac24bb9274853897e" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>doublevector2arrayfunction</name></member>
+      <member refid="classSLIArrayModule_1a0f2761c7f65014b52521cdd26c3c7017" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>eq_dvfunction</name></member>
+      <member refid="classSLIArrayModule_1a2f7e3a40c03f40210c92faef69a87326" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>eq_ivfunction</name></member>
+      <member refid="classSLIArrayModule_1a925d3a56ba70990d634fa00286fe0798" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>finiteq_dfunction</name></member>
+      <member refid="classSLIArrayModule_1a418e1de17d06b0172795759762ab3ceb" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>flattenfunction</name></member>
+      <member refid="classSLIArrayModule_1a6fea2d86837c9b617586145c68e5a874" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>forall_dvfunction</name></member>
+      <member refid="classSLIArrayModule_1a04b27dbff49d7c9a31939955143b243a" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>forall_ivfunction</name></member>
+      <member refid="classSLIArrayModule_1abb99e60c55c77beb02c2784fc365359e" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>gaborfunction</name></member>
+      <member refid="classSLIArrayModule_1a2f47ef706deca5c4e034d73379415ae4" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>gauss2dfunction</name></member>
+      <member refid="classSLIArrayModule_1ab0d5f466f80e1fa4bd4f6620e7626199" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>get_dv_ifunction</name></member>
+      <member refid="classSLIArrayModule_1aca72c640422e58513dd00e3058cc6c57" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>get_dv_ivfunction</name></member>
+      <member refid="classSLIArrayModule_1ad477339f30568846a283e3b7ddb33428" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>get_iv_ifunction</name></member>
+      <member refid="classSLIArrayModule_1a3bc04f0b8417419400099f3827ba3379" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>get_iv_ivfunction</name></member>
+      <member refid="classSLIArrayModule_1ac6bedece2241ec7283d8c824836c3cf5" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>getmaxfunction</name></member>
+      <member refid="classSLIArrayModule_1a6d4dc0609469cceb5a3c19ba1b6ca411" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>getminfunction</name></member>
+      <member refid="classSLIArrayModule_1ac776ae24823a49eb3a902974ea27d235" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>iforall_dvfunction</name></member>
+      <member refid="classSLIArrayModule_1a67eedf3069ba10d110eb51ee7dabbfb1" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>iforall_ivfunction</name></member>
+      <member refid="classSLIArrayModule_1a7170d46280d28e2ed91ecf471ed449cb" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>imap_dvfunction</name></member>
+      <member refid="classSLIArrayModule_1a7f1379e69ecb18a0ceee274076719b7f" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>imap_ivfunction</name></member>
+      <member refid="classSLIArrayModule_1a2e8d25fa9c79caa6943de07e4ea3a1bb" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>imapfunction</name></member>
+      <member refid="classSLIArrayModule_1a2d2d19ae08d6de8cc1c79ce8fcab98a8" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>imapindexedfunction</name></member>
+      <member refid="classSLIArrayModule_1a0267612f86cb8a00650c79901d534685" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>imapthreadfunction</name></member>
+      <member refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d" prot="public" virt="virtual"><scope>SLIArrayModule</scope><name>init</name></member>
+      <member refid="classSLIModule_1ac32734c42e93e16aaf644a842de40bc2" prot="public" virt="non-virtual"><scope>SLIArrayModule</scope><name>install</name></member>
+      <member refid="classSLIArrayModule_1a438bd28590aa92185eeed40d00178c45" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>intvector2arrayfunction</name></member>
+      <member refid="classSLIArrayModule_1ad0498c343380f86b3b60343e475a61bf" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>inv_dvfunction</name></member>
+      <member refid="classSLIArrayModule_1a6e16f8a21568d12785c75b889c1c2a25" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>length_dvfunction</name></member>
+      <member refid="classSLIArrayModule_1a6eba644d76c7f7086cd644f438eb8d30" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>length_ivfunction</name></member>
+      <member refid="classSLIArrayModule_1ac675860cb4e631806c409feb2bd197a5" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>mapfunction</name></member>
+      <member refid="classSLIArrayModule_1a08f0e4ce1c8333f240dc6a1f07262788" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>mapindexedfunction</name></member>
+      <member refid="classSLIArrayModule_1a684c954661d96dfca5de45c7e6ff33db" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>mapthreadfunction</name></member>
+      <member refid="classSLIArrayModule_1a8e89f6d22d4004323fce4a32a5a69e46" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>mul_d_dvfunction</name></member>
+      <member refid="classSLIArrayModule_1a2150b8178158a5986a4273e9bd0a303d" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>mul_d_ivfunction</name></member>
+      <member refid="classSLIArrayModule_1ae6bab2a6822c8939cceed4e5d5e0dfe6" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>mul_dv_dvfunction</name></member>
+      <member refid="classSLIArrayModule_1abe02deb6e29aa56fd271eda95c45b189" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>mul_i_ivfunction</name></member>
+      <member refid="classSLIArrayModule_1a7b08f7736904d3d8196e58280f72434a" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>mul_iv_ivfunction</name></member>
+      <member refid="classSLIArrayModule_1a137a89ac15bf4efed9c7fbb7b9fce0c3" prot="public" virt="virtual"><scope>SLIArrayModule</scope><name>name</name></member>
+      <member refid="classSLIArrayModule_1a09e2ead042877d1501a63ea3c90998e9" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>neg_dvfunction</name></member>
+      <member refid="classSLIArrayModule_1aa32ad7ae75416fc58e7a2705910b181d" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>neg_ivfunction</name></member>
+      <member refid="classSLIArrayModule_1ace7ca07efe2b3b4b2f2e3fab40b01238" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>ones_dvfunction</name></member>
+      <member refid="classSLIArrayModule_1a4d86d12da25582cca1c87367fe02fc40" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>ones_ivfunction</name></member>
+      <member refid="classSLIArrayModule_1ac3dd6839d07a5a355e19f3f1525ef51a" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>partitionfunction</name></member>
+      <member refid="classSLIArrayModule_1a44e9fa76de0aa1d04e11caf8e1514e6a" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>put_a_a_tfunction</name></member>
+      <member refid="classSLIArrayModule_1a2cecc14b31bff04d8338c53ea480a0fc" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>put_dv_i_dfunction</name></member>
+      <member refid="classSLIArrayModule_1aad3c36963402dfa7fbac11edca8c2866" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>put_iv_i_ifunction</name></member>
+      <member refid="classSLIArrayModule_1a47562bf859e3e448c20feb3a17aa6569" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>rangefunction</name></member>
+      <member refid="classSLIArrayModule_1a173fa868581012c53de1f89b49a09835" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>reversefunction</name></member>
+      <member refid="classSLIArrayModule_1ac73d7daf1b81ad823acf3c8a07ad7cca" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>rotatefunction</name></member>
+      <member refid="classSLIArrayModule_1a5a82315096efb1d9aa32888a1850cb60" prot="public" virt="non-virtual"><scope>SLIArrayModule</scope><name>SLIArrayModule</name></member>
+      <member refid="classSLIArrayModule_1af2fcbc8720a9d15ed37c01f14ab5953c" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>sortfunction</name></member>
+      <member refid="classSLIArrayModule_1aa6362a59626ca6cbf63cf9dce874e7d3" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>sub_dv_dvfunction</name></member>
+      <member refid="classSLIArrayModule_1a31aa6ee8474d6ffb895b1cae4429fba4" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>sub_iv_ivfunction</name></member>
+      <member refid="classSLIArrayModule_1a7c4c00c2f055dd3a7f988393a3ae0f5c" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>transposefunction</name></member>
+      <member refid="classSLIArrayModule_1a727fc0d343189f7c755faa752e60a714" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>validfunction</name></member>
+      <member refid="classSLIArrayModule_1ae148c9c27d98bc0f6314719dc4045cc5" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>zeros_dvfunction</name></member>
+      <member refid="classSLIArrayModule_1a3c18a6ce6e33aeada35a90bc7c346da6" prot="private" virt="non-virtual"><scope>SLIArrayModule</scope><name>zeros_ivfunction</name></member>
+      <member refid="classSLIModule_1a8e77a5438547cacc0eef34e5608591cb" prot="public" virt="virtual"><scope>SLIArrayModule</scope><name>~SLIModule</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

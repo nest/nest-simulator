@@ -1,0 +1,786 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classnest_1_1ConnectionCreator" kind="class" language="C++" prot="public">
+    <compoundname>nest::ConnectionCreator</compoundname>
+    <includes refid="connection__creator_8h" local="no">connection_creator.h</includes>
+    <innerclass refid="classnest_1_1ConnectionCreator_1_1PoolWrapper__" prot="private">nest::ConnectionCreator::PoolWrapper_</innerclass>
+      <sectiondef kind="public-type">
+      <memberdef kind="enum" id="classnest_1_1ConnectionCreator_1a42a6a6e629fe27f72e85666caed5562b" prot="public" static="no" strong="no">
+        <type></type>
+        <name>ConnectionType</name>
+        <qualifiedname>nest::ConnectionCreator::ConnectionType</qualifiedname>
+        <enumvalue id="classnest_1_1ConnectionCreator_1a42a6a6e629fe27f72e85666caed5562ba043df91a89de8c001a28296bedf56db9" prot="public">
+          <name>Pairwise_bernoulli_on_source</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classnest_1_1ConnectionCreator_1a42a6a6e629fe27f72e85666caed5562ba5372f69f45b563184e73d5bcdd71e8b7" prot="public">
+          <name>Pairwise_bernoulli_on_target</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classnest_1_1ConnectionCreator_1a42a6a6e629fe27f72e85666caed5562baa422971588b17619cfd3b758137113ac" prot="public">
+          <name>Fixed_indegree</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classnest_1_1ConnectionCreator_1a42a6a6e629fe27f72e85666caed5562ba705b20a9b68f0bfb285897bf0a491617" prot="public">
+          <name>Fixed_outdegree</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" line="66" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" bodystart="67" bodyend="72"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classnest_1_1ConnectionCreator_1ae5be1aa5af32e39b72400f812892d898" prot="private" static="no" mutable="no">
+        <type><ref refid="classnest_1_1ConnectionCreator_1a42a6a6e629fe27f72e85666caed5562b" kindref="member">ConnectionType</ref></type>
+        <definition>ConnectionType nest::ConnectionCreator::type_</definition>
+        <argsstring></argsstring>
+        <name>type_</name>
+        <qualifiedname>nest::ConnectionCreator::type_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" line="163" column="18" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" bodystart="163" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ConnectionCreator_1ac829926e5b6ffd222a10d5bc5d2a1f34" compoundref="connection__creator__impl_8h" startline="39" endline="69">connect</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aba3b91642fb738809e096bb60678fb1f" compoundref="connection__creator_8cpp" startline="29" endline="154">ConnectionCreator</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1ConnectionCreator_1ab61e8102c8d7c6bdb140acb87900e368" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::ConnectionCreator::allow_autapses_</definition>
+        <argsstring></argsstring>
+        <name>allow_autapses_</name>
+        <qualifiedname>nest::ConnectionCreator::allow_autapses_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" line="164" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" bodystart="164" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ConnectionCreator_1a9406f2b55a5fdbb556a8c5642e150967" compoundref="connection__creator__impl_8h" startline="73" endline="111">connect_to_target_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aba3b91642fb738809e096bb60678fb1f" compoundref="connection__creator_8cpp" startline="29" endline="154">ConnectionCreator</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aa17ea21863e869441d8eb30ec68115f1" compoundref="connection__creator__impl_8h" startline="342" endline="635">fixed_indegree_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aed574cbd0e3449ff398d4679033fb0f5" compoundref="connection__creator__impl_8h" startline="640" endline="788">fixed_outdegree_</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1ConnectionCreator_1afa3e785d772ba0536dc4fba1ec4aa6e8" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::ConnectionCreator::allow_multapses_</definition>
+        <argsstring></argsstring>
+        <name>allow_multapses_</name>
+        <qualifiedname>nest::ConnectionCreator::allow_multapses_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" line="165" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" bodystart="165" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aba3b91642fb738809e096bb60678fb1f" compoundref="connection__creator_8cpp" startline="29" endline="154">ConnectionCreator</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aa17ea21863e869441d8eb30ec68115f1" compoundref="connection__creator__impl_8h" startline="342" endline="635">fixed_indegree_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aed574cbd0e3449ff398d4679033fb0f5" compoundref="connection__creator__impl_8h" startline="640" endline="788">fixed_outdegree_</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1ConnectionCreator_1ac388b9bf8e8a94cd5e933ad8875fe37c" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::ConnectionCreator::allow_oversized_</definition>
+        <argsstring></argsstring>
+        <name>allow_oversized_</name>
+        <qualifiedname>nest::ConnectionCreator::allow_oversized_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" line="166" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" bodystart="166" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aba3b91642fb738809e096bb60678fb1f" compoundref="connection__creator_8cpp" startline="29" endline="154">ConnectionCreator</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aa17ea21863e869441d8eb30ec68115f1" compoundref="connection__creator__impl_8h" startline="342" endline="635">fixed_indegree_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aed574cbd0e3449ff398d4679033fb0f5" compoundref="connection__creator__impl_8h" startline="640" endline="788">fixed_outdegree_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1a0c2f6361c8cd9f8667f4e033f51d0ba5" compoundref="connection__creator__impl_8h" startline="180" endline="250">pairwise_bernoulli_on_source_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1ac2924f703d2138beea75f9bdf5783efb" compoundref="connection__creator__impl_8h" startline="255" endline="338">pairwise_bernoulli_on_target_</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1ConnectionCreator_1a2ffe23ceffe3a5059c0bc40c3b3ae450" prot="private" static="no" mutable="no">
+        <type>std::shared_ptr&lt; <ref refid="classnest_1_1Parameter" kindref="compound">Parameter</ref> &gt;</type>
+        <definition>std::shared_ptr&lt; Parameter &gt; nest::ConnectionCreator::number_of_connections_</definition>
+        <argsstring></argsstring>
+        <name>number_of_connections_</name>
+        <qualifiedname>nest::ConnectionCreator::number_of_connections_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" line="167" column="19" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" bodystart="167" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aba3b91642fb738809e096bb60678fb1f" compoundref="connection__creator_8cpp" startline="29" endline="154">ConnectionCreator</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aa17ea21863e869441d8eb30ec68115f1" compoundref="connection__creator__impl_8h" startline="342" endline="635">fixed_indegree_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aed574cbd0e3449ff398d4679033fb0f5" compoundref="connection__creator__impl_8h" startline="640" endline="788">fixed_outdegree_</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1ConnectionCreator_1a9761a394bb424c42a639ab826f8a0bef" prot="private" static="no" mutable="no">
+        <type>std::shared_ptr&lt; <ref refid="classnest_1_1AbstractMask" kindref="compound">AbstractMask</ref> &gt;</type>
+        <definition>std::shared_ptr&lt; AbstractMask &gt; nest::ConnectionCreator::mask_</definition>
+        <argsstring></argsstring>
+        <name>mask_</name>
+        <qualifiedname>nest::ConnectionCreator::mask_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" line="168" column="19" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" bodystart="168" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aba3b91642fb738809e096bb60678fb1f" compoundref="connection__creator_8cpp" startline="29" endline="154">ConnectionCreator</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aa17ea21863e869441d8eb30ec68115f1" compoundref="connection__creator__impl_8h" startline="342" endline="635">fixed_indegree_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aed574cbd0e3449ff398d4679033fb0f5" compoundref="connection__creator__impl_8h" startline="640" endline="788">fixed_outdegree_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1a0c2f6361c8cd9f8667f4e033f51d0ba5" compoundref="connection__creator__impl_8h" startline="180" endline="250">pairwise_bernoulli_on_source_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1ac2924f703d2138beea75f9bdf5783efb" compoundref="connection__creator__impl_8h" startline="255" endline="338">pairwise_bernoulli_on_target_</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1ConnectionCreator_1a662abda591dcda871942329880ff13bf" prot="private" static="no" mutable="no">
+        <type>std::shared_ptr&lt; <ref refid="classnest_1_1Parameter" kindref="compound">Parameter</ref> &gt;</type>
+        <definition>std::shared_ptr&lt; Parameter &gt; nest::ConnectionCreator::kernel_</definition>
+        <argsstring></argsstring>
+        <name>kernel_</name>
+        <qualifiedname>nest::ConnectionCreator::kernel_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" line="169" column="19" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" bodystart="169" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ConnectionCreator_1a9406f2b55a5fdbb556a8c5642e150967" compoundref="connection__creator__impl_8h" startline="73" endline="111">connect_to_target_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aba3b91642fb738809e096bb60678fb1f" compoundref="connection__creator_8cpp" startline="29" endline="154">ConnectionCreator</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aa17ea21863e869441d8eb30ec68115f1" compoundref="connection__creator__impl_8h" startline="342" endline="635">fixed_indegree_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aed574cbd0e3449ff398d4679033fb0f5" compoundref="connection__creator__impl_8h" startline="640" endline="788">fixed_outdegree_</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1ConnectionCreator_1abd289de4e2fc6be36e8ce5269558ccc6" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref> &gt;</type>
+        <definition>std::vector&lt; index &gt; nest::ConnectionCreator::synapse_model_</definition>
+        <argsstring></argsstring>
+        <name>synapse_model_</name>
+        <qualifiedname>nest::ConnectionCreator::synapse_model_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" line="170" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" bodystart="170" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ConnectionCreator_1a9406f2b55a5fdbb556a8c5642e150967" compoundref="connection__creator__impl_8h" startline="73" endline="111">connect_to_target_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aba3b91642fb738809e096bb60678fb1f" compoundref="connection__creator_8cpp" startline="29" endline="154">ConnectionCreator</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1a4339600d1ec56c9e21506276f03f1764" compoundref="connection__creator_8cpp" startline="157" endline="213">extract_params_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aa17ea21863e869441d8eb30ec68115f1" compoundref="connection__creator__impl_8h" startline="342" endline="635">fixed_indegree_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aed574cbd0e3449ff398d4679033fb0f5" compoundref="connection__creator__impl_8h" startline="640" endline="788">fixed_outdegree_</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1ConnectionCreator_1aeed700893d1d5f301b60cc95854a758b" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; std::vector&lt; <ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &gt; &gt;</type>
+        <definition>std::vector&lt; std::vector&lt; DictionaryDatum &gt; &gt; nest::ConnectionCreator::param_dicts_</definition>
+        <argsstring></argsstring>
+        <name>param_dicts_</name>
+        <qualifiedname>nest::ConnectionCreator::param_dicts_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" line="171" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" bodystart="171" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ConnectionCreator_1a9406f2b55a5fdbb556a8c5642e150967" compoundref="connection__creator__impl_8h" startline="73" endline="111">connect_to_target_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aba3b91642fb738809e096bb60678fb1f" compoundref="connection__creator_8cpp" startline="29" endline="154">ConnectionCreator</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aa17ea21863e869441d8eb30ec68115f1" compoundref="connection__creator__impl_8h" startline="342" endline="635">fixed_indegree_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aed574cbd0e3449ff398d4679033fb0f5" compoundref="connection__creator__impl_8h" startline="640" endline="788">fixed_outdegree_</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1ConnectionCreator_1a8d21d03c219c81a10488aa2593010f76" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; std::shared_ptr&lt; <ref refid="classnest_1_1Parameter" kindref="compound">Parameter</ref> &gt; &gt;</type>
+        <definition>std::vector&lt; std::shared_ptr&lt; Parameter &gt; &gt; nest::ConnectionCreator::weight_</definition>
+        <argsstring></argsstring>
+        <name>weight_</name>
+        <qualifiedname>nest::ConnectionCreator::weight_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" line="172" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" bodystart="172" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ConnectionCreator_1a9406f2b55a5fdbb556a8c5642e150967" compoundref="connection__creator__impl_8h" startline="73" endline="111">connect_to_target_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aba3b91642fb738809e096bb60678fb1f" compoundref="connection__creator_8cpp" startline="29" endline="154">ConnectionCreator</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1a4339600d1ec56c9e21506276f03f1764" compoundref="connection__creator_8cpp" startline="157" endline="213">extract_params_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aa17ea21863e869441d8eb30ec68115f1" compoundref="connection__creator__impl_8h" startline="342" endline="635">fixed_indegree_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aed574cbd0e3449ff398d4679033fb0f5" compoundref="connection__creator__impl_8h" startline="640" endline="788">fixed_outdegree_</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1ConnectionCreator_1a7641f895097a16e0a800a18b44c66b27" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; std::shared_ptr&lt; <ref refid="classnest_1_1Parameter" kindref="compound">Parameter</ref> &gt; &gt;</type>
+        <definition>std::vector&lt; std::shared_ptr&lt; Parameter &gt; &gt; nest::ConnectionCreator::delay_</definition>
+        <argsstring></argsstring>
+        <name>delay_</name>
+        <qualifiedname>nest::ConnectionCreator::delay_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" line="173" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" bodystart="173" bodyend="-1"/>
+        <referencedby refid="classnest_1_1ConnectionCreator_1a9406f2b55a5fdbb556a8c5642e150967" compoundref="connection__creator__impl_8h" startline="73" endline="111">connect_to_target_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aba3b91642fb738809e096bb60678fb1f" compoundref="connection__creator_8cpp" startline="29" endline="154">ConnectionCreator</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1a4339600d1ec56c9e21506276f03f1764" compoundref="connection__creator_8cpp" startline="157" endline="213">extract_params_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aa17ea21863e869441d8eb30ec68115f1" compoundref="connection__creator__impl_8h" startline="342" endline="635">fixed_indegree_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aed574cbd0e3449ff398d4679033fb0f5" compoundref="connection__creator__impl_8h" startline="640" endline="788">fixed_outdegree_</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1ConnectionCreator_1aba3b91642fb738809e096bb60678fb1f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::ConnectionCreator::ConnectionCreator</definition>
+        <argsstring>(DictionaryDatum dict)</argsstring>
+        <name>ConnectionCreator</name>
+        <qualifiedname>nest::ConnectionCreator::ConnectionCreator</qualifiedname>
+        <param>
+          <type><ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref></type>
+          <declname>dict</declname>
+        </param>
+        <briefdescription>
+<para>Construct a <ref refid="classnest_1_1ConnectionCreator" kindref="compound">ConnectionCreator</ref> with the properties defined in the given dictionary. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Parameters for a <ref refid="classnest_1_1ConnectionCreator" kindref="compound">ConnectionCreator</ref> are:<itemizedlist>
+<listitem><para>&quot;connection_type&quot;: Either &quot;convergent&quot; or &quot;divergent&quot;.</para>
+</listitem><listitem><para>&quot;allow_autapses&quot;: Boolean, true if autapses are allowed.</para>
+</listitem><listitem><para>&quot;allow_multapses&quot;: Boolean, true if multapses are allowed.</para>
+</listitem><listitem><para>&quot;allow_oversized&quot;: Boolean, true if oversized masks are allowed.</para>
+</listitem><listitem><para>&quot;number_of_connections&quot;: Integer, number of connections to make for each source or target.</para>
+</listitem><listitem><para>&quot;mask&quot;: <ref refid="classnest_1_1Mask" kindref="compound">Mask</ref> definition (dictionary or masktype).</para>
+</listitem><listitem><para>&quot;kernel&quot;: Kernel definition (dictionary, parametertype, or double).</para>
+</listitem><listitem><para>&quot;synapse_model&quot;: The synapse model to use.</para>
+</listitem><listitem><para>&quot;targets&quot;: Which targets (model or lid) to select (dictionary).</para>
+</listitem><listitem><para>&quot;sources&quot;: Which targets (model or lid) to select (dictionary).</para>
+</listitem><listitem><para>&quot;weight&quot;: Synaptic weight (dictionary, parametertype, or double).</para>
+</listitem><listitem><para>&quot;delay&quot;: Synaptic delays (dictionary, parametertype, or double).</para>
+</listitem><listitem><para>other parameters are interpreted as synapse parameters, and may be defined by a dictionary, parametertype, or double. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dict</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>dictionary containing properties for the connections. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" line="94" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.cpp" bodystart="29" bodyend="154"/>
+        <references refid="logging_8h_1a91f6a947f0219a1ffb76f912c65cba95" compoundref="logging_8h" startline="34">ALL_ENTRIES_ACCESSED</references>
+        <references refid="namespacenest_1_1names_1a19837d9562e6d9ac069fc1924ba21090" compoundref="nest__names_8h" startline="82">nest::names::allow_autapses</references>
+        <references refid="classnest_1_1ConnectionCreator_1ab61e8102c8d7c6bdb140acb87900e368" compoundref="connection__creator_8h" startline="164">allow_autapses_</references>
+        <references refid="namespacenest_1_1names_1aeb36a3590d6f15eb0e1839257e6d28e0" compoundref="nest__names_8h" startline="83">nest::names::allow_multapses</references>
+        <references refid="classnest_1_1ConnectionCreator_1afa3e785d772ba0536dc4fba1ec4aa6e8" compoundref="connection__creator_8h" startline="165">allow_multapses_</references>
+        <references refid="classnest_1_1ConnectionCreator_1ac388b9bf8e8a94cd5e933ad8875fe37c" compoundref="connection__creator_8h" startline="166">allow_oversized_</references>
+        <references refid="namespacenest_1_1names_1a57e01ee768a5966354123410fab0c464" compoundref="nest__names_8h" startline="85">nest::names::allow_oversized_mask</references>
+        <references refid="namespacenest_1_1names_1a78063060cebec70997d368c85259531d" compoundref="nest__names_8h" startline="127">nest::names::connection_type</references>
+        <references refid="classnest_1_1NestModule_1abf42d4f1fe428138838c05157320e16d" compoundref="nestmodule_8cpp" startline="179" endline="284">nest::NestModule::create_mask</references>
+        <references refid="classnest_1_1NestModule_1a4c20345ebae75215125fb19fe97e363c" compoundref="nestmodule_8cpp" startline="108" endline="152">nest::NestModule::create_parameter</references>
+        <references refid="namespacenest_1_1names_1a8356f74d8c2f8042dee4e2e6a93cba5b" compoundref="nest__names_8h" startline="146">nest::names::delay</references>
+        <references refid="classnest_1_1ConnectionCreator_1a7641f895097a16e0a800a18b44c66b27" compoundref="connection__creator_8h" startline="173">delay_</references>
+        <references refid="classnest_1_1ConnectionCreator_1a4339600d1ec56c9e21506276f03f1764" compoundref="connection__creator_8cpp" startline="157" endline="213">extract_params_</references>
+        <references refid="classnest_1_1ConnectionCreator_1a42a6a6e629fe27f72e85666caed5562baa422971588b17619cfd3b758137113ac" compoundref="connection__creator_8h" startline="70">Fixed_indegree</references>
+        <references refid="classnest_1_1ConnectionCreator_1a42a6a6e629fe27f72e85666caed5562ba705b20a9b68f0bfb285897bf0a491617" compoundref="connection__creator_8h" startline="71">Fixed_outdegree</references>
+        <references refid="classnest_1_1ModelManager_1a4ee6b18a6bad6d272e07d838a2af7f1a" compoundref="model__manager_8cpp" startline="394" endline="410">nest::ModelManager::get_connector_defaults</references>
+        <references refid="classnest_1_1ModelManager_1a5da676347a1deaa1a434d3d6a95532d0" compoundref="model__manager_8cpp" startline="383" endline="391">nest::ModelManager::get_synapse_model_id</references>
+        <references refid="tokenutils_8cc_1a95ea4d0048b41f138634e4eca76292bf" compoundref="tokenutils_8cc" startline="115" endline="125">getValue&lt; bool &gt;</references>
+        <references refid="namespacenest_1_1names_1a3a40e3a33a13644af06fbc3b665a01d9" compoundref="nest__names_8h" startline="250">nest::names::has_delay</references>
+        <references refid="namespacenest_1_1names_1a10bb77aea4fd28a36ab8335ab5fbda45" compoundref="nest__names_8h" startline="281">nest::names::kernel</references>
+        <references refid="namespacenest_1a235f64c89ddf8992424ea32a13149a3e" compoundref="kernel__manager_8h" startline="272" endline="275">nest::kernel</references>
+        <references refid="classnest_1_1ConnectionCreator_1a662abda591dcda871942329880ff13bf" compoundref="connection__creator_8h" startline="169">kernel_</references>
+        <references refid="namespacenest_1_1names_1af4ca5a9e03de667b3016f35c8e34ce99" compoundref="nest__names_8h" startline="299">nest::names::mask</references>
+        <references refid="classnest_1_1ConnectionCreator_1a9761a394bb424c42a639ab826f8a0bef" compoundref="connection__creator_8h" startline="168">mask_</references>
+        <references refid="classnest_1_1KernelManager_1a3558ff4918f9a1a561a11f65ae757c76" compoundref="kernel__manager_8h" startline="250">nest::KernelManager::model_manager</references>
+        <references refid="namespacenumerics_1a2022d0d7fddab66c66e86321c316aa11" compoundref="numerics_8cpp" startline="88">numerics::nan</references>
+        <references refid="namespacenest_1_1names_1ac54fb01b61d6aa5f952cfd24a4aac3b9" compoundref="nest__names_8h" startline="344">nest::names::number_of_connections</references>
+        <references refid="classnest_1_1ConnectionCreator_1a2ffe23ceffe3a5059c0bc40c3b3ae450" compoundref="connection__creator_8h" startline="167">number_of_connections_</references>
+        <references refid="classnest_1_1ConnectionCreator_1a42a6a6e629fe27f72e85666caed5562ba043df91a89de8c001a28296bedf56db9" compoundref="connection__creator_8h" startline="68">Pairwise_bernoulli_on_source</references>
+        <references refid="namespacenest_1_1names_1a7508dc6297bf705602ce138ec50b6806" compoundref="nest__names_8h" startline="361">nest::names::pairwise_bernoulli_on_source</references>
+        <references refid="classnest_1_1ConnectionCreator_1a42a6a6e629fe27f72e85666caed5562ba5372f69f45b563184e73d5bcdd71e8b7" compoundref="connection__creator_8h" startline="69">Pairwise_bernoulli_on_target</references>
+        <references refid="namespacenest_1_1names_1ad88b9a91c6c70009fb8281227695993e" compoundref="nest__names_8h" startline="362">nest::names::pairwise_bernoulli_on_target</references>
+        <references refid="classnest_1_1ConnectionCreator_1aeed700893d1d5f301b60cc95854a758b" compoundref="connection__creator_8h" startline="171">param_dicts_</references>
+        <references refid="classnest_1_1ConnectionCreator_1abd289de4e2fc6be36e8ce5269558ccc6" compoundref="connection__creator_8h" startline="170">synapse_model_</references>
+        <references refid="namespacenest_1_1names_1a9049fe866adc4a5c8f14ae8fdf8c07b4" compoundref="nest__names_8h" startline="463">nest::names::synapse_parameters</references>
+        <references refid="classnest_1_1ConnectionCreator_1ae5be1aa5af32e39b72400f812892d898" compoundref="connection__creator_8h" startline="163">type_</references>
+        <references refid="namespacenest_1_1names_1a1bbc4b9af1e21cb33cd93dc3306ccdce" compoundref="nest__names_8h" startline="608">nest::names::weight</references>
+        <references refid="classnest_1_1ConnectionCreator_1a8d21d03c219c81a10488aa2593010f76" compoundref="connection__creator_8h" startline="172">weight_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ConnectionCreator_1ac829926e5b6ffd222a10d5bc5d2a1f34" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>int</type>
+            <declname>D</declname>
+            <defname>D</defname>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void nest::ConnectionCreator::connect</definition>
+        <argsstring>(Layer&lt; D &gt; &amp;source, NodeCollectionPTR source_nc, Layer&lt; D &gt; &amp;target, NodeCollectionPTR target_nc)</argsstring>
+        <name>connect</name>
+        <qualifiedname>nest::ConnectionCreator::connect</qualifiedname>
+        <param>
+          <type><ref refid="classnest_1_1Layer" kindref="compound">Layer</ref>&lt; D &gt; &amp;</type>
+          <declname>source</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1accbbbd2c49375cc6c2edd964cccda54e" kindref="member">NodeCollectionPTR</ref></type>
+          <declname>source_nc</declname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1Layer" kindref="compound">Layer</ref>&lt; D &gt; &amp;</type>
+          <declname>target</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1accbbbd2c49375cc6c2edd964cccda54e" kindref="member">NodeCollectionPTR</ref></type>
+          <declname>target_nc</declname>
+        </param>
+        <briefdescription>
+<para>Connect two layers. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>source</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>source layer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>source</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classnest_1_1NodeCollection" kindref="compound">NodeCollection</ref> of the source. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>target</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>target layer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>target</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classnest_1_1NodeCollection" kindref="compound">NodeCollection</ref> of the target. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" line="104" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator_impl.h" bodystart="39" bodyend="69"/>
+        <references refid="classnest_1_1ConnectionCreator_1a42a6a6e629fe27f72e85666caed5562baa422971588b17619cfd3b758137113ac" compoundref="connection__creator_8h" startline="70">Fixed_indegree</references>
+        <references refid="classnest_1_1ConnectionCreator_1aa17ea21863e869441d8eb30ec68115f1" compoundref="connection__creator__impl_8h" startline="342" endline="635">fixed_indegree_</references>
+        <references refid="classnest_1_1ConnectionCreator_1a42a6a6e629fe27f72e85666caed5562ba705b20a9b68f0bfb285897bf0a491617" compoundref="connection__creator_8h" startline="71">Fixed_outdegree</references>
+        <references refid="classnest_1_1ConnectionCreator_1aed574cbd0e3449ff398d4679033fb0f5" compoundref="connection__creator__impl_8h" startline="640" endline="788">fixed_outdegree_</references>
+        <references refid="classnest_1_1ConnectionCreator_1a42a6a6e629fe27f72e85666caed5562ba043df91a89de8c001a28296bedf56db9" compoundref="connection__creator_8h" startline="68">Pairwise_bernoulli_on_source</references>
+        <references refid="classnest_1_1ConnectionCreator_1a0c2f6361c8cd9f8667f4e033f51d0ba5" compoundref="connection__creator__impl_8h" startline="180" endline="250">pairwise_bernoulli_on_source_</references>
+        <references refid="classnest_1_1ConnectionCreator_1a42a6a6e629fe27f72e85666caed5562ba5372f69f45b563184e73d5bcdd71e8b7" compoundref="connection__creator_8h" startline="69">Pairwise_bernoulli_on_target</references>
+        <references refid="classnest_1_1ConnectionCreator_1ac2924f703d2138beea75f9bdf5783efb" compoundref="connection__creator__impl_8h" startline="255" endline="338">pairwise_bernoulli_on_target_</references>
+        <references refid="classnest_1_1ConnectionCreator_1ae5be1aa5af32e39b72400f812892d898" compoundref="connection__creator_8h" startline="163">type_</references>
+        <referencedby refid="classnest_1_1Layer_1a805e0bc30af5b8449cbb5ee09fbd71fb" compoundref="layer__impl_8h" startline="112" endline="131">nest::Layer&lt; D &gt;::connect</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classnest_1_1ConnectionCreator_1a4339600d1ec56c9e21506276f03f1764" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::ConnectionCreator::extract_params_</definition>
+        <argsstring>(const DictionaryDatum &amp;, std::vector&lt; DictionaryDatum &gt; &amp;)</argsstring>
+        <name>extract_params_</name>
+        <qualifiedname>nest::ConnectionCreator::extract_params_</qualifiedname>
+        <param>
+          <type>const <ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+          <defname>dict_datum</defname>
+        </param>
+        <param>
+          <type>std::vector&lt; <ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &gt; &amp;</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" line="133" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.cpp" bodystart="157" bodyend="213"/>
+        <references refid="classnest_1_1NestModule_1a4c20345ebae75215125fb19fe97e363c" compoundref="nestmodule_8cpp" startline="108" endline="152">nest::NestModule::create_parameter</references>
+        <references refid="namespacenest_1_1names_1a8356f74d8c2f8042dee4e2e6a93cba5b" compoundref="nest__names_8h" startline="146">nest::names::delay</references>
+        <references refid="classnest_1_1ConnectionCreator_1a7641f895097a16e0a800a18b44c66b27" compoundref="connection__creator_8h" startline="173">delay_</references>
+        <references refid="classnest_1_1ModelManager_1a4ee6b18a6bad6d272e07d838a2af7f1a" compoundref="model__manager_8cpp" startline="394" endline="410">nest::ModelManager::get_connector_defaults</references>
+        <references refid="classnest_1_1ModelManager_1a5da676347a1deaa1a434d3d6a95532d0" compoundref="model__manager_8cpp" startline="383" endline="391">nest::ModelManager::get_synapse_model_id</references>
+        <references refid="tokenutils_8cc_1a95ea4d0048b41f138634e4eca76292bf" compoundref="tokenutils_8cc" startline="115" endline="125">getValue&lt; bool &gt;</references>
+        <references refid="tokenutils_8cc_1a32eba92c5abb6cb955fad91324b7f076" compoundref="tokenutils_8cc" startline="41" endline="50">getValue&lt; long &gt;</references>
+        <references refid="namespacenest_1_1names_1a3a40e3a33a13644af06fbc3b665a01d9" compoundref="nest__names_8h" startline="250">nest::names::has_delay</references>
+        <references refid="namespacenest_1a235f64c89ddf8992424ea32a13149a3e" compoundref="kernel__manager_8h" startline="272" endline="275">nest::kernel</references>
+        <references refid="classnest_1_1KernelManager_1a3558ff4918f9a1a561a11f65ae757c76" compoundref="kernel__manager_8h" startline="250">nest::KernelManager::model_manager</references>
+        <references refid="namespacenumerics_1a2022d0d7fddab66c66e86321c316aa11" compoundref="numerics_8cpp" startline="88">numerics::nan</references>
+        <references refid="namespacenest_1_1names_1a1a3db5f8f8132d9450c58ae90c7fe89a" compoundref="nest__names_8h" startline="399">nest::names::receptor_type</references>
+        <references refid="namespacenest_1_1names_1ae563034004aea3f7d91553886c46b1f5" compoundref="nest__names_8h" startline="459">nest::names::synapse_label</references>
+        <references refid="namespacenest_1_1names_1a482b795ea4c2dce1771b281f0be8ea32" compoundref="nest__names_8h" startline="460">nest::names::synapse_model</references>
+        <references refid="classnest_1_1ConnectionCreator_1abd289de4e2fc6be36e8ce5269558ccc6" compoundref="connection__creator_8h" startline="170">synapse_model_</references>
+        <references refid="namespacenest_1_1names_1a1bbc4b9af1e21cb33cd93dc3306ccdce" compoundref="nest__names_8h" startline="608">nest::names::weight</references>
+        <references refid="classnest_1_1ConnectionCreator_1a8d21d03c219c81a10488aa2593010f76" compoundref="connection__creator_8h" startline="172">weight_</references>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aba3b91642fb738809e096bb60678fb1f" compoundref="connection__creator_8cpp" startline="29" endline="154">ConnectionCreator</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ConnectionCreator_1a9406f2b55a5fdbb556a8c5642e150967" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Iterator</type>
+          </param>
+          <param>
+            <type>int</type>
+            <declname>D</declname>
+            <defname>D</defname>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void nest::ConnectionCreator::connect_to_target_</definition>
+        <argsstring>(Iterator from, Iterator to, Node *tgt_ptr, const Position&lt; D &gt; &amp;tgt_pos, thread tgt_thread, const Layer&lt; D &gt; &amp;source)</argsstring>
+        <name>connect_to_target_</name>
+        <qualifiedname>nest::ConnectionCreator::connect_to_target_</qualifiedname>
+        <param>
+          <type>Iterator</type>
+          <declname>from</declname>
+        </param>
+        <param>
+          <type>Iterator</type>
+          <declname>to</declname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1Node" kindref="compound">Node</ref> *</type>
+          <declname>tgt_ptr</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classnest_1_1Position" kindref="compound">Position</ref>&lt; D &gt; &amp;</type>
+          <declname>tgt_pos</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tgt_thread</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classnest_1_1Layer" kindref="compound">Layer</ref>&lt; D &gt; &amp;</type>
+          <declname>source</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" line="136" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator_impl.h" bodystart="73" bodyend="111"/>
+        <references refid="classnest_1_1ConnectionCreator_1ab61e8102c8d7c6bdb140acb87900e368" compoundref="connection__creator_8h" startline="164">allow_autapses_</references>
+        <references refid="classnest_1_1ConnectionManager_1a719414132e35d4b6ffa6c2a636df92eb" compoundref="connection__manager_8cpp" startline="384" endline="433">nest::ConnectionManager::connect</references>
+        <references refid="classnest_1_1KernelManager_1a0e27508a351fe5c17f42aea52caedb3e" compoundref="kernel__manager_8h" startline="247">nest::KernelManager::connection_manager</references>
+        <references refid="classnest_1_1ConnectionCreator_1a7641f895097a16e0a800a18b44c66b27" compoundref="connection__creator_8h" startline="173">delay_</references>
+        <references refid="classnest_1_1BaseRandomGenerator_1ac9f238412d989640ad55a82e8d9e3a45">nest::BaseRandomGenerator::drand</references>
+        <references refid="classnest_1_1Node_1a18f2dc5591f7de1e64b62d0d53cb4351" compoundref="node_8h" startline="972" endline="975">nest::Node::get_node_id</references>
+        <references refid="classnest_1_1Position_1a695cc92b6b753a3a6ad0b2f16dc02cf6" compoundref="position_8h" startline="505" endline="508">nest::Position&lt; D, T &gt;::get_vector</references>
+        <references refid="namespacenest_1a0f1b44a02fc7b34260b4edea0fee204f" compoundref="nest_8cpp" startline="96" endline="99">nest::get_vp_specific_rng</references>
+        <references refid="namespacenest_1a235f64c89ddf8992424ea32a13149a3e" compoundref="kernel__manager_8h" startline="272" endline="275">nest::kernel</references>
+        <references refid="classnest_1_1ConnectionCreator_1a662abda591dcda871942329880ff13bf" compoundref="connection__creator_8h" startline="169">kernel_</references>
+        <references refid="classnest_1_1ConnectionCreator_1aeed700893d1d5f301b60cc95854a758b" compoundref="connection__creator_8h" startline="171">param_dicts_</references>
+        <references refid="classnest_1_1ConnectionCreator_1abd289de4e2fc6be36e8ce5269558ccc6" compoundref="connection__creator_8h" startline="170">synapse_model_</references>
+        <references refid="classnest_1_1ConnectionCreator_1a8d21d03c219c81a10488aa2593010f76" compoundref="connection__creator_8h" startline="172">weight_</references>
+        <referencedby refid="classnest_1_1ConnectionCreator_1a0c2f6361c8cd9f8667f4e033f51d0ba5" compoundref="connection__creator__impl_8h" startline="180" endline="250">pairwise_bernoulli_on_source_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1ac2924f703d2138beea75f9bdf5783efb" compoundref="connection__creator__impl_8h" startline="255" endline="338">pairwise_bernoulli_on_target_</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ConnectionCreator_1a0c2f6361c8cd9f8667f4e033f51d0ba5" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>int</type>
+            <declname>D</declname>
+            <defname>D</defname>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void nest::ConnectionCreator::pairwise_bernoulli_on_source_</definition>
+        <argsstring>(Layer&lt; D &gt; &amp;source, NodeCollectionPTR source_nc, Layer&lt; D &gt; &amp;target, NodeCollectionPTR target_nc)</argsstring>
+        <name>pairwise_bernoulli_on_source_</name>
+        <qualifiedname>nest::ConnectionCreator::pairwise_bernoulli_on_source_</qualifiedname>
+        <param>
+          <type><ref refid="classnest_1_1Layer" kindref="compound">Layer</ref>&lt; D &gt; &amp;</type>
+          <declname>source</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1accbbbd2c49375cc6c2edd964cccda54e" kindref="member">NodeCollectionPTR</ref></type>
+          <declname>source_nc</declname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1Layer" kindref="compound">Layer</ref>&lt; D &gt; &amp;</type>
+          <declname>target</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1accbbbd2c49375cc6c2edd964cccda54e" kindref="member">NodeCollectionPTR</ref></type>
+          <declname>target_nc</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" line="144" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator_impl.h" bodystart="180" bodyend="250"/>
+        <references refid="classnest_1_1ConnectionCreator_1ac388b9bf8e8a94cd5e933ad8875fe37c" compoundref="connection__creator_8h" startline="166">allow_oversized_</references>
+        <references refid="classnest_1_1ConnectionCreator_1_1PoolWrapper___1a7467904ab7c2e07d10665a0d9f303623" compoundref="connection__creator__impl_8h" startline="165" endline="168">nest::ConnectionCreator::PoolWrapper_&lt; D &gt;::begin</references>
+        <references refid="classnest_1_1ConnectionCreator_1a9406f2b55a5fdbb556a8c5642e150967" compoundref="connection__creator__impl_8h" startline="73" endline="111">connect_to_target_</references>
+        <references refid="classnest_1_1ConnectionCreator_1_1PoolWrapper___1a0036e6ba8d0bcd80f8adff93b08a2ee6" compoundref="connection__creator__impl_8h" startline="131" endline="137">nest::ConnectionCreator::PoolWrapper_&lt; D &gt;::define</references>
+        <references refid="classnest_1_1ConnectionCreator_1_1PoolWrapper___1a98f3ed3fda83fcfb922bb5542b835ffd" compoundref="connection__creator__impl_8h" startline="172" endline="175">nest::ConnectionCreator::PoolWrapper_&lt; D &gt;::end</references>
+        <references refid="classnest_1_1NodeManager_1a166690647e1a88d96c67e83c4c72fa19" compoundref="node__manager_8cpp" startline="422" endline="434">nest::NodeManager::get_node_or_proxy</references>
+        <references refid="classnest_1_1VPManager_1a1096a508aefc459782911e3f2a4b7480" compoundref="vp__manager_8h" startline="174" endline="177">nest::VPManager::get_num_threads</references>
+        <references refid="classnest_1_1VPManager_1a144a9ac1401713a125c8df3d31721b0c" compoundref="vp__manager_8h" startline="164" endline="171">nest::VPManager::get_thread_id</references>
+        <references refid="classnest_1_1Node_1a895a3c75963a7926b3c9cac2d62dece3" compoundref="node_8h" startline="960" endline="963">nest::Node::is_proxy</references>
+        <references refid="namespacenest_1a235f64c89ddf8992424ea32a13149a3e" compoundref="kernel__manager_8h" startline="272" endline="275">nest::kernel</references>
+        <references refid="classnest_1_1ConnectionCreator_1a9761a394bb424c42a639ab826f8a0bef" compoundref="connection__creator_8h" startline="168">mask_</references>
+        <references refid="classnest_1_1ConnectionCreator_1_1PoolWrapper___1a2d723a3a23a6ec9a9b4370b2b2876c3d" compoundref="connection__creator__impl_8h" startline="151" endline="154">nest::ConnectionCreator::PoolWrapper_&lt; D &gt;::masked_begin</references>
+        <references refid="classnest_1_1ConnectionCreator_1_1PoolWrapper___1a713ea62ca8c1883e5dfed2c5441c5530" compoundref="connection__creator__impl_8h" startline="158" endline="161">nest::ConnectionCreator::PoolWrapper_&lt; D &gt;::masked_end</references>
+        <references refid="classnest_1_1KernelManager_1a209742409c6552dbf3923b892a594db3" compoundref="kernel__manager_8h" startline="252">nest::KernelManager::node_manager</references>
+        <references refid="classnest_1_1KernelManager_1ae5288531d5c8bfa7d8c1f0bad6964fd2" compoundref="kernel__manager_8h" startline="243">nest::KernelManager::vp_manager</references>
+        <referencedby refid="classnest_1_1ConnectionCreator_1ac829926e5b6ffd222a10d5bc5d2a1f34" compoundref="connection__creator__impl_8h" startline="39" endline="69">connect</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ConnectionCreator_1ac2924f703d2138beea75f9bdf5783efb" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>int</type>
+            <declname>D</declname>
+            <defname>D</defname>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void nest::ConnectionCreator::pairwise_bernoulli_on_target_</definition>
+        <argsstring>(Layer&lt; D &gt; &amp;source, NodeCollectionPTR source_nc, Layer&lt; D &gt; &amp;target, NodeCollectionPTR target_nc)</argsstring>
+        <name>pairwise_bernoulli_on_target_</name>
+        <qualifiedname>nest::ConnectionCreator::pairwise_bernoulli_on_target_</qualifiedname>
+        <param>
+          <type><ref refid="classnest_1_1Layer" kindref="compound">Layer</ref>&lt; D &gt; &amp;</type>
+          <declname>source</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1accbbbd2c49375cc6c2edd964cccda54e" kindref="member">NodeCollectionPTR</ref></type>
+          <declname>source_nc</declname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1Layer" kindref="compound">Layer</ref>&lt; D &gt; &amp;</type>
+          <declname>target</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1accbbbd2c49375cc6c2edd964cccda54e" kindref="member">NodeCollectionPTR</ref></type>
+          <declname>target_nc</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" line="150" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator_impl.h" bodystart="255" bodyend="338"/>
+        <references refid="classnest_1_1ConnectionCreator_1ac388b9bf8e8a94cd5e933ad8875fe37c" compoundref="connection__creator_8h" startline="166">allow_oversized_</references>
+        <references refid="classnest_1_1ConnectionCreator_1_1PoolWrapper___1a7467904ab7c2e07d10665a0d9f303623" compoundref="connection__creator__impl_8h" startline="165" endline="168">nest::ConnectionCreator::PoolWrapper_&lt; D &gt;::begin</references>
+        <references refid="classnest_1_1ConnectionCreator_1a9406f2b55a5fdbb556a8c5642e150967" compoundref="connection__creator__impl_8h" startline="73" endline="111">connect_to_target_</references>
+        <references refid="classnest_1_1ConnectionCreator_1_1PoolWrapper___1a0036e6ba8d0bcd80f8adff93b08a2ee6" compoundref="connection__creator__impl_8h" startline="131" endline="137">nest::ConnectionCreator::PoolWrapper_&lt; D &gt;::define</references>
+        <references refid="classnest_1_1ConnectionCreator_1_1PoolWrapper___1a98f3ed3fda83fcfb922bb5542b835ffd" compoundref="connection__creator__impl_8h" startline="172" endline="175">nest::ConnectionCreator::PoolWrapper_&lt; D &gt;::end</references>
+        <references refid="classnest_1_1NodeManager_1a166690647e1a88d96c67e83c4c72fa19" compoundref="node__manager_8cpp" startline="422" endline="434">nest::NodeManager::get_node_or_proxy</references>
+        <references refid="classnest_1_1VPManager_1a1096a508aefc459782911e3f2a4b7480" compoundref="vp__manager_8h" startline="174" endline="177">nest::VPManager::get_num_threads</references>
+        <references refid="classnest_1_1VPManager_1a144a9ac1401713a125c8df3d31721b0c" compoundref="vp__manager_8h" startline="164" endline="171">nest::VPManager::get_thread_id</references>
+        <references refid="classnest_1_1Node_1a3cadfe2698c39c5fd327f5d70d0b8adf" compoundref="node_8h" startline="936" endline="939">nest::Node::has_proxies</references>
+        <references refid="classnest_1_1Node_1a895a3c75963a7926b3c9cac2d62dece3" compoundref="node_8h" startline="960" endline="963">nest::Node::is_proxy</references>
+        <references refid="namespacenest_1a235f64c89ddf8992424ea32a13149a3e" compoundref="kernel__manager_8h" startline="272" endline="275">nest::kernel</references>
+        <references refid="classnest_1_1ConnectionCreator_1a9761a394bb424c42a639ab826f8a0bef" compoundref="connection__creator_8h" startline="168">mask_</references>
+        <references refid="classnest_1_1ConnectionCreator_1_1PoolWrapper___1a2d723a3a23a6ec9a9b4370b2b2876c3d" compoundref="connection__creator__impl_8h" startline="151" endline="154">nest::ConnectionCreator::PoolWrapper_&lt; D &gt;::masked_begin</references>
+        <references refid="classnest_1_1ConnectionCreator_1_1PoolWrapper___1a713ea62ca8c1883e5dfed2c5441c5530" compoundref="connection__creator__impl_8h" startline="158" endline="161">nest::ConnectionCreator::PoolWrapper_&lt; D &gt;::masked_end</references>
+        <references refid="classnest_1_1KernelManager_1a209742409c6552dbf3923b892a594db3" compoundref="kernel__manager_8h" startline="252">nest::KernelManager::node_manager</references>
+        <references refid="classnest_1_1KernelManager_1ae5288531d5c8bfa7d8c1f0bad6964fd2" compoundref="kernel__manager_8h" startline="243">nest::KernelManager::vp_manager</references>
+        <referencedby refid="classnest_1_1ConnectionCreator_1ac829926e5b6ffd222a10d5bc5d2a1f34" compoundref="connection__creator__impl_8h" startline="39" endline="69">connect</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ConnectionCreator_1aa17ea21863e869441d8eb30ec68115f1" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>int</type>
+            <declname>D</declname>
+            <defname>D</defname>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void nest::ConnectionCreator::fixed_indegree_</definition>
+        <argsstring>(Layer&lt; D &gt; &amp;source, NodeCollectionPTR source_nc, Layer&lt; D &gt; &amp;target, NodeCollectionPTR target_nc)</argsstring>
+        <name>fixed_indegree_</name>
+        <qualifiedname>nest::ConnectionCreator::fixed_indegree_</qualifiedname>
+        <param>
+          <type><ref refid="classnest_1_1Layer" kindref="compound">Layer</ref>&lt; D &gt; &amp;</type>
+          <declname>source</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1accbbbd2c49375cc6c2edd964cccda54e" kindref="member">NodeCollectionPTR</ref></type>
+          <declname>source_nc</declname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1Layer" kindref="compound">Layer</ref>&lt; D &gt; &amp;</type>
+          <declname>target</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1accbbbd2c49375cc6c2edd964cccda54e" kindref="member">NodeCollectionPTR</ref></type>
+          <declname>target_nc</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" line="157" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator_impl.h" bodystart="342" bodyend="635"/>
+        <references refid="classnest_1_1ConnectionCreator_1ab61e8102c8d7c6bdb140acb87900e368" compoundref="connection__creator_8h" startline="164">allow_autapses_</references>
+        <references refid="classnest_1_1ConnectionCreator_1afa3e785d772ba0536dc4fba1ec4aa6e8" compoundref="connection__creator_8h" startline="165">allow_multapses_</references>
+        <references refid="classnest_1_1ConnectionCreator_1ac388b9bf8e8a94cd5e933ad8875fe37c" compoundref="connection__creator_8h" startline="166">allow_oversized_</references>
+        <references refid="classnest_1_1MaskedLayer_1a06928c2fd9c7667df8a2f886295ab707" compoundref="layer_8h" startline="563" endline="573">nest::MaskedLayer&lt; D &gt;::begin</references>
+        <references refid="classnest_1_1ConnectionManager_1a719414132e35d4b6ffa6c2a636df92eb" compoundref="connection__manager_8cpp" startline="384" endline="433">nest::ConnectionManager::connect</references>
+        <references refid="classnest_1_1KernelManager_1a0e27508a351fe5c17f42aea52caedb3e" compoundref="kernel__manager_8h" startline="247">nest::KernelManager::connection_manager</references>
+        <references refid="classnest_1_1ConnectionCreator_1a7641f895097a16e0a800a18b44c66b27" compoundref="connection__creator_8h" startline="173">delay_</references>
+        <references refid="classnest_1_1MaskedLayer_1af91d92bcafdc66d317f7ae1d3d39364c" compoundref="layer_8h" startline="577" endline="580">nest::MaskedLayer&lt; D &gt;::end</references>
+        <references refid="classnest_1_1NodeManager_1a166690647e1a88d96c67e83c4c72fa19" compoundref="node__manager_8cpp" startline="422" endline="434">nest::NodeManager::get_node_or_proxy</references>
+        <references refid="classnest_1_1Node_1ad578b3b25416a4a8c79d86e943a5c666" compoundref="node_8h" startline="1021" endline="1024">nest::Node::get_thread</references>
+        <references refid="classnest_1_1Position_1a695cc92b6b753a3a6ad0b2f16dc02cf6" compoundref="position_8h" startline="505" endline="508">nest::Position&lt; D, T &gt;::get_vector</references>
+        <references refid="namespacenest_1a0f1b44a02fc7b34260b4edea0fee204f" compoundref="nest_8cpp" startline="96" endline="99">nest::get_vp_specific_rng</references>
+        <references refid="classnest_1_1Node_1a3cadfe2698c39c5fd327f5d70d0b8adf" compoundref="node_8h" startline="936" endline="939">nest::Node::has_proxies</references>
+        <references refid="classnest_1_1Node_1a895a3c75963a7926b3c9cac2d62dece3" compoundref="node_8h" startline="960" endline="963">nest::Node::is_proxy</references>
+        <references refid="namespacenest_1a235f64c89ddf8992424ea32a13149a3e" compoundref="kernel__manager_8h" startline="272" endline="275">nest::kernel</references>
+        <references refid="classnest_1_1ConnectionCreator_1a662abda591dcda871942329880ff13bf" compoundref="connection__creator_8h" startline="169">kernel_</references>
+        <references refid="classnest_1_1ConnectionCreator_1a9761a394bb424c42a639ab826f8a0bef" compoundref="connection__creator_8h" startline="168">mask_</references>
+        <references refid="classnest_1_1KernelManager_1a209742409c6552dbf3923b892a594db3" compoundref="kernel__manager_8h" startline="252">nest::KernelManager::node_manager</references>
+        <references refid="classnest_1_1ConnectionCreator_1a2ffe23ceffe3a5059c0bc40c3b3ae450" compoundref="connection__creator_8h" startline="167">number_of_connections_</references>
+        <references refid="classnest_1_1RandomDistribution_1abe54aaf62865bf0bc1d5549c74b69a2a" compoundref="random__generators_8h" startline="357" endline="360">nest::RandomDistribution&lt; DistributionT &gt;::param</references>
+        <references refid="classnest_1_1ConnectionCreator_1aeed700893d1d5f301b60cc95854a758b" compoundref="connection__creator_8h" startline="171">param_dicts_</references>
+        <references refid="classnest_1_1ConnectionCreator_1abd289de4e2fc6be36e8ce5269558ccc6" compoundref="connection__creator_8h" startline="170">synapse_model_</references>
+        <references refid="classnest_1_1BaseRandomGenerator_1a3983c4b45417bf8fd09c592691f6c40e">nest::BaseRandomGenerator::ulrand</references>
+        <references refid="classnest_1_1ConnectionCreator_1a8d21d03c219c81a10488aa2593010f76" compoundref="connection__creator_8h" startline="172">weight_</references>
+        <referencedby refid="classnest_1_1ConnectionCreator_1ac829926e5b6ffd222a10d5bc5d2a1f34" compoundref="connection__creator__impl_8h" startline="39" endline="69">connect</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1ConnectionCreator_1aed574cbd0e3449ff398d4679033fb0f5" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>int</type>
+            <declname>D</declname>
+            <defname>D</defname>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void nest::ConnectionCreator::fixed_outdegree_</definition>
+        <argsstring>(Layer&lt; D &gt; &amp;source, NodeCollectionPTR source_nc, Layer&lt; D &gt; &amp;target, NodeCollectionPTR target_nc)</argsstring>
+        <name>fixed_outdegree_</name>
+        <qualifiedname>nest::ConnectionCreator::fixed_outdegree_</qualifiedname>
+        <param>
+          <type><ref refid="classnest_1_1Layer" kindref="compound">Layer</ref>&lt; D &gt; &amp;</type>
+          <declname>source</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1accbbbd2c49375cc6c2edd964cccda54e" kindref="member">NodeCollectionPTR</ref></type>
+          <declname>source_nc</declname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1Layer" kindref="compound">Layer</ref>&lt; D &gt; &amp;</type>
+          <declname>target</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1accbbbd2c49375cc6c2edd964cccda54e" kindref="member">NodeCollectionPTR</ref></type>
+          <declname>target_nc</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" line="161" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator_impl.h" bodystart="640" bodyend="788"/>
+        <references refid="classnest_1_1ConnectionCreator_1ab61e8102c8d7c6bdb140acb87900e368" compoundref="connection__creator_8h" startline="164">allow_autapses_</references>
+        <references refid="classnest_1_1ConnectionCreator_1afa3e785d772ba0536dc4fba1ec4aa6e8" compoundref="connection__creator_8h" startline="165">allow_multapses_</references>
+        <references refid="classnest_1_1ConnectionCreator_1ac388b9bf8e8a94cd5e933ad8875fe37c" compoundref="connection__creator_8h" startline="166">allow_oversized_</references>
+        <references refid="classnest_1_1MaskedLayer_1a06928c2fd9c7667df8a2f886295ab707" compoundref="layer_8h" startline="563" endline="573">nest::MaskedLayer&lt; D &gt;::begin</references>
+        <references refid="classnest_1_1ConnectionManager_1a719414132e35d4b6ffa6c2a636df92eb" compoundref="connection__manager_8cpp" startline="384" endline="433">nest::ConnectionManager::connect</references>
+        <references refid="classnest_1_1KernelManager_1a0e27508a351fe5c17f42aea52caedb3e" compoundref="kernel__manager_8h" startline="247">nest::KernelManager::connection_manager</references>
+        <references refid="classnest_1_1ConnectionCreator_1a7641f895097a16e0a800a18b44c66b27" compoundref="connection__creator_8h" startline="173">delay_</references>
+        <references refid="classnest_1_1MaskedLayer_1af91d92bcafdc66d317f7ae1d3d39364c" compoundref="layer_8h" startline="577" endline="580">nest::MaskedLayer&lt; D &gt;::end</references>
+        <references refid="classnest_1_1NodeManager_1a166690647e1a88d96c67e83c4c72fa19" compoundref="node__manager_8cpp" startline="422" endline="434">nest::NodeManager::get_node_or_proxy</references>
+        <references refid="namespacenest_1a16717a46436ebcc2eae54f5baf6ab33f" compoundref="nest_8cpp" startline="84" endline="87">nest::get_rank_synced_rng</references>
+        <references refid="classnest_1_1Node_1ad578b3b25416a4a8c79d86e943a5c666" compoundref="node_8h" startline="1021" endline="1024">nest::Node::get_thread</references>
+        <references refid="classnest_1_1Position_1a695cc92b6b753a3a6ad0b2f16dc02cf6" compoundref="position_8h" startline="505" endline="508">nest::Position&lt; D, T &gt;::get_vector</references>
+        <references refid="classnest_1_1Node_1a3cadfe2698c39c5fd327f5d70d0b8adf" compoundref="node_8h" startline="936" endline="939">nest::Node::has_proxies</references>
+        <references refid="classnest_1_1Node_1a895a3c75963a7926b3c9cac2d62dece3" compoundref="node_8h" startline="960" endline="963">nest::Node::is_proxy</references>
+        <references refid="namespacenest_1a235f64c89ddf8992424ea32a13149a3e" compoundref="kernel__manager_8h" startline="272" endline="275">nest::kernel</references>
+        <references refid="classnest_1_1ConnectionCreator_1a662abda591dcda871942329880ff13bf" compoundref="connection__creator_8h" startline="169">kernel_</references>
+        <references refid="classnest_1_1ConnectionCreator_1a9761a394bb424c42a639ab826f8a0bef" compoundref="connection__creator_8h" startline="168">mask_</references>
+        <references refid="classnest_1_1KernelManager_1a209742409c6552dbf3923b892a594db3" compoundref="kernel__manager_8h" startline="252">nest::KernelManager::node_manager</references>
+        <references refid="classnest_1_1ConnectionCreator_1a2ffe23ceffe3a5059c0bc40c3b3ae450" compoundref="connection__creator_8h" startline="167">number_of_connections_</references>
+        <references refid="classnest_1_1RandomDistribution_1abe54aaf62865bf0bc1d5549c74b69a2a" compoundref="random__generators_8h" startline="357" endline="360">nest::RandomDistribution&lt; DistributionT &gt;::param</references>
+        <references refid="classnest_1_1ConnectionCreator_1aeed700893d1d5f301b60cc95854a758b" compoundref="connection__creator_8h" startline="171">param_dicts_</references>
+        <references refid="classnest_1_1ConnectionCreator_1abd289de4e2fc6be36e8ce5269558ccc6" compoundref="connection__creator_8h" startline="170">synapse_model_</references>
+        <references refid="classnest_1_1ConnectionCreator_1a8d21d03c219c81a10488aa2593010f76" compoundref="connection__creator_8h" startline="172">weight_</references>
+        <referencedby refid="classnest_1_1ConnectionCreator_1ac829926e5b6ffd222a10d5bc5d2a1f34" compoundref="connection__creator__impl_8h" startline="39" endline="69">connect</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This class is a representation of the dictionary of connection properties given as an argument to the ConnectLayers function. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The connect method is responsible for generating the connection according to the given parameters. This method is templated with the dimension of the layers, and is called via the <ref refid="classnest_1_1Layer" kindref="compound">Layer</ref> connect call using a visitor pattern. The connect method relays to another method (e.g., fixed_indegree_) implementing the concrete connection algorithm. It would be more elegant if this was a base class for classes representing different connection algorithms with a virtual connect method, but it is not possible to have a virtual template method.</para>
+<para>The difference between the Pairwise_bernoulli_on_source and Pairwise_bernoulli_on_target connection types is which layer coordinates the mask and parameters are defined in. </para>
+    </detaileddescription>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" line="63" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection_creator.h" bodystart="64" bodyend="174"/>
+    <listofallmembers>
+      <member refid="classnest_1_1ConnectionCreator_1ab61e8102c8d7c6bdb140acb87900e368" prot="private" virt="non-virtual"><scope>nest::ConnectionCreator</scope><name>allow_autapses_</name></member>
+      <member refid="classnest_1_1ConnectionCreator_1afa3e785d772ba0536dc4fba1ec4aa6e8" prot="private" virt="non-virtual"><scope>nest::ConnectionCreator</scope><name>allow_multapses_</name></member>
+      <member refid="classnest_1_1ConnectionCreator_1ac388b9bf8e8a94cd5e933ad8875fe37c" prot="private" virt="non-virtual"><scope>nest::ConnectionCreator</scope><name>allow_oversized_</name></member>
+      <member refid="classnest_1_1ConnectionCreator_1ac829926e5b6ffd222a10d5bc5d2a1f34" prot="public" virt="non-virtual"><scope>nest::ConnectionCreator</scope><name>connect</name></member>
+      <member refid="classnest_1_1ConnectionCreator_1a9406f2b55a5fdbb556a8c5642e150967" prot="private" virt="non-virtual"><scope>nest::ConnectionCreator</scope><name>connect_to_target_</name></member>
+      <member refid="classnest_1_1ConnectionCreator_1aba3b91642fb738809e096bb60678fb1f" prot="public" virt="non-virtual"><scope>nest::ConnectionCreator</scope><name>ConnectionCreator</name></member>
+      <member refid="classnest_1_1ConnectionCreator_1a42a6a6e629fe27f72e85666caed5562b" prot="public" virt="non-virtual"><scope>nest::ConnectionCreator</scope><name>ConnectionType</name></member>
+      <member refid="classnest_1_1ConnectionCreator_1a7641f895097a16e0a800a18b44c66b27" prot="private" virt="non-virtual"><scope>nest::ConnectionCreator</scope><name>delay_</name></member>
+      <member refid="classnest_1_1ConnectionCreator_1a4339600d1ec56c9e21506276f03f1764" prot="private" virt="non-virtual"><scope>nest::ConnectionCreator</scope><name>extract_params_</name></member>
+      <member refid="classnest_1_1ConnectionCreator_1a42a6a6e629fe27f72e85666caed5562baa422971588b17619cfd3b758137113ac" prot="public" virt="non-virtual"><scope>nest::ConnectionCreator</scope><name>Fixed_indegree</name></member>
+      <member refid="classnest_1_1ConnectionCreator_1aa17ea21863e869441d8eb30ec68115f1" prot="private" virt="non-virtual"><scope>nest::ConnectionCreator</scope><name>fixed_indegree_</name></member>
+      <member refid="classnest_1_1ConnectionCreator_1a42a6a6e629fe27f72e85666caed5562ba705b20a9b68f0bfb285897bf0a491617" prot="public" virt="non-virtual"><scope>nest::ConnectionCreator</scope><name>Fixed_outdegree</name></member>
+      <member refid="classnest_1_1ConnectionCreator_1aed574cbd0e3449ff398d4679033fb0f5" prot="private" virt="non-virtual"><scope>nest::ConnectionCreator</scope><name>fixed_outdegree_</name></member>
+      <member refid="classnest_1_1ConnectionCreator_1a662abda591dcda871942329880ff13bf" prot="private" virt="non-virtual"><scope>nest::ConnectionCreator</scope><name>kernel_</name></member>
+      <member refid="classnest_1_1ConnectionCreator_1a9761a394bb424c42a639ab826f8a0bef" prot="private" virt="non-virtual"><scope>nest::ConnectionCreator</scope><name>mask_</name></member>
+      <member refid="classnest_1_1ConnectionCreator_1a2ffe23ceffe3a5059c0bc40c3b3ae450" prot="private" virt="non-virtual"><scope>nest::ConnectionCreator</scope><name>number_of_connections_</name></member>
+      <member refid="classnest_1_1ConnectionCreator_1a42a6a6e629fe27f72e85666caed5562ba043df91a89de8c001a28296bedf56db9" prot="public" virt="non-virtual"><scope>nest::ConnectionCreator</scope><name>Pairwise_bernoulli_on_source</name></member>
+      <member refid="classnest_1_1ConnectionCreator_1a0c2f6361c8cd9f8667f4e033f51d0ba5" prot="private" virt="non-virtual"><scope>nest::ConnectionCreator</scope><name>pairwise_bernoulli_on_source_</name></member>
+      <member refid="classnest_1_1ConnectionCreator_1a42a6a6e629fe27f72e85666caed5562ba5372f69f45b563184e73d5bcdd71e8b7" prot="public" virt="non-virtual"><scope>nest::ConnectionCreator</scope><name>Pairwise_bernoulli_on_target</name></member>
+      <member refid="classnest_1_1ConnectionCreator_1ac2924f703d2138beea75f9bdf5783efb" prot="private" virt="non-virtual"><scope>nest::ConnectionCreator</scope><name>pairwise_bernoulli_on_target_</name></member>
+      <member refid="classnest_1_1ConnectionCreator_1aeed700893d1d5f301b60cc95854a758b" prot="private" virt="non-virtual"><scope>nest::ConnectionCreator</scope><name>param_dicts_</name></member>
+      <member refid="classnest_1_1ConnectionCreator_1abd289de4e2fc6be36e8ce5269558ccc6" prot="private" virt="non-virtual"><scope>nest::ConnectionCreator</scope><name>synapse_model_</name></member>
+      <member refid="classnest_1_1ConnectionCreator_1ae5be1aa5af32e39b72400f812892d898" prot="private" virt="non-virtual"><scope>nest::ConnectionCreator</scope><name>type_</name></member>
+      <member refid="classnest_1_1ConnectionCreator_1a8d21d03c219c81a10488aa2593010f76" prot="private" virt="non-virtual"><scope>nest::ConnectionCreator</scope><name>weight_</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classIloopFunction" kind="class" language="C++" prot="public">
+    <compoundname>IloopFunction</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="slibuiltins_8h" local="no">slibuiltins.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classIloopFunction_1a00f46d2a9c852e3d3fa771b342f638dc" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>IloopFunction::IloopFunction</definition>
+        <argsstring>()</argsstring>
+        <name>IloopFunction</name>
+        <qualifiedname>IloopFunction::IloopFunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slibuiltins.h" line="73" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slibuiltins.h" bodystart="73" bodyend="75"/>
+      </memberdef>
+      <memberdef kind="function" id="classIloopFunction_1a4c2403bbde76dba6bfc36f5593371722" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void IloopFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>IloopFunction::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slibuiltins.h" line="76" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slibuiltins.cc" bodystart="108" bodyend="130"/>
+        <references refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" compoundref="token_8h" startline="360" endline="364">Token::datum</references>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="classDatum_1a08d7463e1c6fb42a75f7edf49f9e2e3d" compoundref="datum_8h" startline="122" endline="125">Datum::is_executable</references>
+        <references refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" compoundref="interpret_8h" startline="250">SLIInterpreter::OStack</references>
+        <references refid="classTokenStack_1ac861cc2282484dd2a27dd1304aa719a4" compoundref="tokenstack_8h" startline="127" endline="130">TokenStack::pick</references>
+        <references refid="classTokenStack_1a585f38fb0ed122da90489eccbfd7a187" compoundref="tokenstack_8h" startline="62" endline="65">TokenStack::push</references>
+      </memberdef>
+      <memberdef kind="function" id="classIloopFunction_1a330f92673b97cc9f533225a8c1bffd75" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void IloopFunction::backtrace</definition>
+        <argsstring>(SLIInterpreter *, int) const override</argsstring>
+        <name>backtrace</name>
+        <qualifiedname>IloopFunction::backtrace</qualifiedname>
+        <reimplements refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba">backtrace</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+        </param>
+        <param>
+          <type>int</type>
+        </param>
+        <briefdescription>
+<para>Show stack backtrace information on error. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function tries to extract and display useful information from the execution stack if an error occurs. This function should be implemented for all functions which store administrative information on the execution stack. Examples are: loops and procedure iterations. <ref refid="classIloopFunction_1a330f92673b97cc9f533225a8c1bffd75" kindref="member">backtrace()</ref> is only called, if the interpreter flag show_backtrace is set. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slibuiltins.h" line="77" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slibuiltins.cc" bodystart="133" bodyend="145"/>
+        <references refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" compoundref="token_8h" startline="360" endline="364">Token::datum</references>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="classGenericDatum_1a2204e0bfb80429863ebbd37005235c1e" compoundref="genericdatum_8h" startline="74" endline="77">GenericDatum&lt; D, slt &gt;::get</references>
+        <references refid="classAggregateDatum_1ad20c8dc74cd26b007f0ae37a2affa6f1" compoundref="aggregatedatum_8h" startline="165" endline="178">AggregateDatum&lt; C, slt &gt;::list</references>
+        <references refid="classTokenStack_1ac861cc2282484dd2a27dd1304aa719a4" compoundref="tokenstack_8h" startline="127" endline="130">TokenStack::pick</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>IloopFunction</label>
+        <link refid="classIloopFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>IloopFunction</label>
+        <link refid="classIloopFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/slibuiltins.h" line="70" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slibuiltins.h" bodystart="71" bodyend="78"/>
+    <listofallmembers>
+      <member refid="classIloopFunction_1a330f92673b97cc9f533225a8c1bffd75" prot="public" virt="virtual"><scope>IloopFunction</scope><name>backtrace</name></member>
+      <member refid="classIloopFunction_1a4c2403bbde76dba6bfc36f5593371722" prot="public" virt="virtual"><scope>IloopFunction</scope><name>execute</name></member>
+      <member refid="classIloopFunction_1a00f46d2a9c852e3d3fa771b342f638dc" prot="public" virt="non-virtual"><scope>IloopFunction</scope><name>IloopFunction</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>IloopFunction</scope><name>SLIFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>IloopFunction</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

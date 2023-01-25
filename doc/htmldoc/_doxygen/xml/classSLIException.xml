@@ -1,0 +1,543 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classSLIException" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>SLIException</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">std::exception</basecompoundref>
+    <derivedcompoundref refid="classBadParameterValue" prot="public" virt="non-virtual">BadParameterValue</derivedcompoundref>
+    <derivedcompoundref refid="classDivisionByZero" prot="public" virt="non-virtual">DivisionByZero</derivedcompoundref>
+    <derivedcompoundref refid="classDynamicModuleManagementError" prot="public" virt="non-virtual">DynamicModuleManagementError</derivedcompoundref>
+    <derivedcompoundref refid="classIOError" prot="public" virt="non-virtual">IOError</derivedcompoundref>
+    <derivedcompoundref refid="classInterpreterError" prot="public" virt="non-virtual">InterpreterError</derivedcompoundref>
+    <derivedcompoundref refid="classNamingConflict" prot="public" virt="non-virtual">NamingConflict</derivedcompoundref>
+    <derivedcompoundref refid="classNotImplemented" prot="public" virt="non-virtual">NotImplemented</derivedcompoundref>
+    <derivedcompoundref refid="classWrappedThreadException" prot="public" virt="non-virtual">WrappedThreadException</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1KernelException" prot="public" virt="non-virtual">nest::KernelException</derivedcompoundref>
+    <includes refid="sliexceptions_8h" local="no">sliexceptions.h</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classSLIException_1af0e8f12a5e346db4c028d23a2974f016" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string SLIException::what_</definition>
+        <argsstring></argsstring>
+        <name>what_</name>
+        <qualifiedname>SLIException::what_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" line="61" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" bodystart="61" bodyend="-1"/>
+        <referencedby refid="classSLIException_1a4ac56d362c7d86819a47c76571c9c031" compoundref="sliexceptions_8h" startline="94" endline="97">what</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classSLIException_1ace48f5938754e82931bab7f54471dd3f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SLIException::SLIException</definition>
+        <argsstring>(char const *const what)</argsstring>
+        <name>SLIException</name>
+        <qualifiedname>SLIException::SLIException</qualifiedname>
+        <param>
+          <type>char const *const</type>
+          <declname>what</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" line="64" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" bodystart="64" bodyend="67"/>
+      </memberdef>
+      <memberdef kind="function" id="classSLIException_1a5da1b6d493d134687d9ce01e9799b59d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SLIException::SLIException</definition>
+        <argsstring>(const std::string &amp;what)</argsstring>
+        <name>SLIException</name>
+        <qualifiedname>SLIException::SLIException</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>what</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" line="69" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" bodystart="69" bodyend="72"/>
+      </memberdef>
+      <memberdef kind="function" id="classSLIException_1a671677b69bcc3895df94a069067c0578" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SLIException::~SLIException</definition>
+        <argsstring>() override</argsstring>
+        <name>~SLIException</name>
+        <qualifiedname>SLIException::~SLIException</qualifiedname>
+        <exceptions> throw ()</exceptions>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" line="74" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" bodystart="74" bodyend="74"/>
+      </memberdef>
+      <memberdef kind="function" id="classSLIException_1a4ac56d362c7d86819a47c76571c9c031" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const char *</type>
+        <definition>const char * SLIException::what</definition>
+        <argsstring>() const override</argsstring>
+        <name>what</name>
+        <qualifiedname>SLIException::what</qualifiedname>
+        <exceptions> throw ()</exceptions>
+        <briefdescription>
+<para>Returns the SLI error name, used by raiseerror. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Return name of the exception as C-style string. Use this name to translate the exception to a SLI error. For example: <programlisting><codeline><highlight class="keywordflow">catch</highlight><highlight class="normal">(IllegalOperation<sp/>&amp;e)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>i-&gt;error(</highlight><highlight class="stringliteral">&quot;SetStatus&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;Nodes<sp/>must<sp/>be<sp/>a<sp/>NodeCollection<sp/>or<sp/>SynapseCollection.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>i-&gt;raiseerror(<ref refid="namespacenumerics_1acd42d3be907c55f5a5eabeb4c595b976" kindref="member">e</ref>.what());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> <simplesect kind="note"><para>The catch clause must be terminated with a return statement, if raiseerror was called. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" line="94" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" bodystart="94" bodyend="97"/>
+        <references refid="classSLIException_1af0e8f12a5e346db4c028d23a2974f016" compoundref="sliexceptions_8h" startline="61">what_</references>
+        <referencedby refid="classSLIInterpreter_1a64a24809b92a555db7b56629b9b7267e" compoundref="interpret_8cc" startline="588" endline="610">SLIInterpreter::raiseerror</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classSLIException_1a8f0a43c586456cc0e161d683ff316531" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>std::string</type>
+        <definition>virtual std::string SLIException::message</definition>
+        <argsstring>() const =0</argsstring>
+        <name>message</name>
+        <qualifiedname>SLIException::message</qualifiedname>
+        <reimplementedby refid="classnest_1_1KernelException_1a485c64ff3ea756a5eb6118799e0f1c74">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1UnknownModelName_1aa8d1e63c1c602435fb2dabffc80095bf">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1UnknownComponent_1a08f2f7b7b4abfb823d799639f4ce812a">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1NewModelNameExists_1a6b1ce335957e74fcf85c3e1f24239790">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1ModelInUse_1adc6db90992376f650b219ddb8f9781cf">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1UnknownSynapseType_1ab7de426cfefd0f3d7d93fef4c6542bcb">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1UnknownNode_1a5b96e64e8ff3075b6d642445ae00e343">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1NoThreadSiblingsAvailable_1a13012c75cfea50b56277aa2ea140c243">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1LocalNodeExpected_1a6a57c7ff485dc7c0b44f47535f0a7c97">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1NodeWithProxiesExpected_1ac1e1fbc718bf29d2d5c8a5536765db5d">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1UnknownCompartment_1afb27d0ab3d7b61ac87746b85411b3cb4">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1UnknownReceptorType_1a3f2d88df012763ad475a6fcfad0e79eb">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1IncompatibleReceptorType_1a7528ff4dc4e1748ece621dac0c0dad3c">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1UnknownPort_1ab885b5762eddb0165dbd8254f80c6d7c">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1IllegalConnection_1adfcc55c9658b07aea2a22c80fcc6c343">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1InexistentConnection_1a6fb1fe850b45319190f323943d4c783e">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1UnknownThread_1a925d66766e6ee256bd22e7fd6079fea7">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1BadDelay_1a6e42241ddd2421392fc9846ae73fa610">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1UnexpectedEvent_1aeed5616e8b5aed01945c2e257c2dd365">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1UnsupportedEvent_1af12f06a6ba7fbe0269e747a45ed69653">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1BadProperty_1abe4309d5cb2e22a686d713146fde94f5">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1BadParameter_1a18506647e28a03d3a1e30db7c43ea3ca">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1DimensionMismatch_1aaec8412c9c338479ab5db4fb94c768fb">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1DistributionError_1a4826225320404954b95490db6318514b">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1InvalidDefaultResolution_1a4c6c6097021cbc8109e925c3a35a88d7">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1InvalidTimeInModel_1ad5434eeeca9fb25901604a24c9a3900a">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1StepMultipleRequired_1a3c572fb163869a24ba1a21bff9a2295b">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1TimeMultipleRequired_1a1100b64c2f134c67b2f0432aeca42f4b">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1GSLSolverFailure_1a1d272bc22c2c477e779dba61cf011e08">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1NumericalInstability_1a30ffc393b9934eb202d0b2a71e51dc2d">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1KeyError_1a6ff244f2c6822c991863fd5ff2aebbc8">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1InternalError_1a40bc850a7a547cef26c3dc4b444975a9">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1UnmatchedSteps_1af55c847ec81dcf44df6e2332a17f3517">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1BackendPrepared_1a891939f60570d41d158daab2f13644af">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1BackendNotPrepared_1a7606761a3990a9072c0ef874e34baf1f">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1LayerExpected_1a8c16096a1b2047823c31fbea56778449">message</reimplementedby>
+        <reimplementedby refid="classnest_1_1LayerNodeExpected_1ac1921535e879eb5052f4355ea9e36810">message</reimplementedby>
+        <reimplementedby refid="classWrappedThreadException_1a746af7e87193947b1d082eab02d4be4c">message</reimplementedby>
+        <reimplementedby refid="classDivisionByZero_1af74ce9816842c41f76d5b8b866a131bd">message</reimplementedby>
+        <reimplementedby refid="classTypeMismatch_1afe7e60bef80f431a8a6170d7815347b5">message</reimplementedby>
+        <reimplementedby refid="classSystemSignal_1a41af2b7a0f4dd1739df96a1b0abbb0dd">message</reimplementedby>
+        <reimplementedby refid="classRangeCheck_1a4269cc6e031912c57d9083915922786b">message</reimplementedby>
+        <reimplementedby refid="classArgumentType_1abed7eaa921c3426e9ccc92bbf9eefae3">message</reimplementedby>
+        <reimplementedby refid="classBadParameterValue_1a66ec7ec6884d0a6315bdeebdbb2b0145">message</reimplementedby>
+        <reimplementedby refid="classUndefinedName_1a4fd980bbf267d2872767f3100f83c0b2">message</reimplementedby>
+        <reimplementedby refid="classEntryTypeMismatch_1a38b6b3cdb6c95abf25319147c8be7057">message</reimplementedby>
+        <reimplementedby refid="classStackUnderflow_1a8b3fd52c56445ed6a1ac8fb9abfd36f2">message</reimplementedby>
+        <reimplementedby refid="classIOError_1ac19bb3cdf2f6e170aece1696358f349a">message</reimplementedby>
+        <reimplementedby refid="classUnaccessedDictionaryEntry_1a708bf624c96d015d643d0256ea25cf94">message</reimplementedby>
+        <reimplementedby refid="classDynamicModuleManagementError_1adb9ade816cde03d29f0681521cb214e5">message</reimplementedby>
+        <reimplementedby refid="classNamingConflict_1a5073eab3a39ebf7754047f7bf9c23d4e">message</reimplementedby>
+        <reimplementedby refid="classNotImplemented_1a0b8d6545c2eab39074975f8d9152512d">message</reimplementedby>
+        <briefdescription>
+<para>Returns a diagnostic message or empty string. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" line="102" column="23"/>
+        <referencedby refid="classSLIInterpreter_1a64a24809b92a555db7b56629b9b7267e" compoundref="interpret_8cc" startline="588" endline="610">SLIInterpreter::raiseerror</referencedby>
+        <referencedby refid="classWrappedThreadException_1a813d27d1d68a1faef3373c5fdfb1c751" compoundref="sliexceptions_8cc" startline="31" endline="43">WrappedThreadException::WrappedThreadException</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Base class for all SLI exceptions. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="8">
+        <label>ArgumentType</label>
+        <link refid="classArgumentType"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>BadParameterValue</label>
+        <link refid="classBadParameterValue"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>DictError</label>
+        <link refid="classDictError"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>DivisionByZero</label>
+        <link refid="classDivisionByZero"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>DynamicModuleManagementError</label>
+        <link refid="classDynamicModuleManagementError"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>EntryTypeMismatch</label>
+        <link refid="classEntryTypeMismatch"/>
+        <childnode refid="9" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>IOError</label>
+        <link refid="classIOError"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>InterpreterError</label>
+        <link refid="classInterpreterError"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>NamingConflict</label>
+        <link refid="classNamingConflict"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>NotImplemented</label>
+        <link refid="classNotImplemented"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>RangeCheck</label>
+        <link refid="classRangeCheck"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>SLIException</label>
+        <link refid="classSLIException"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>StackUnderflow</label>
+        <link refid="classStackUnderflow"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>SystemSignal</label>
+        <link refid="classSystemSignal"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>TypeMismatch</label>
+        <link refid="classTypeMismatch"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>UnaccessedDictionaryEntry</label>
+        <link refid="classUnaccessedDictionaryEntry"/>
+        <childnode refid="9" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>UndefinedName</label>
+        <link refid="classUndefinedName"/>
+        <childnode refid="9" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>WrappedThreadException</label>
+        <link refid="classWrappedThreadException"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>nest::BackendNotPrepared</label>
+        <link refid="classnest_1_1BackendNotPrepared"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>nest::BackendPrepared</label>
+        <link refid="classnest_1_1BackendPrepared"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>nest::BadDelay</label>
+        <link refid="classnest_1_1BadDelay"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>nest::BadParameter</label>
+        <link refid="classnest_1_1BadParameter"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>nest::BadProperty</label>
+        <link refid="classnest_1_1BadProperty"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>nest::DimensionMismatch</label>
+        <link refid="classnest_1_1DimensionMismatch"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>nest::DistributionError</label>
+        <link refid="classnest_1_1DistributionError"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>nest::GSLSolverFailure</label>
+        <link refid="classnest_1_1GSLSolverFailure"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>nest::IllegalConnection</label>
+        <link refid="classnest_1_1IllegalConnection"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>nest::IncompatibleReceptorType</label>
+        <link refid="classnest_1_1IncompatibleReceptorType"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>nest::InexistentConnection</label>
+        <link refid="classnest_1_1InexistentConnection"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>nest::InternalError</label>
+        <link refid="classnest_1_1InternalError"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>nest::InvalidDefaultResolution</label>
+        <link refid="classnest_1_1InvalidDefaultResolution"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>nest::InvalidTimeInModel</label>
+        <link refid="classnest_1_1InvalidTimeInModel"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>nest::KernelException</label>
+        <link refid="classnest_1_1KernelException"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>nest::KeyError</label>
+        <link refid="classnest_1_1KeyError"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>nest::LayerExpected</label>
+        <link refid="classnest_1_1LayerExpected"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>nest::LayerNodeExpected</label>
+        <link refid="classnest_1_1LayerNodeExpected"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>nest::LocalNodeExpected</label>
+        <link refid="classnest_1_1LocalNodeExpected"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>nest::ModelInUse</label>
+        <link refid="classnest_1_1ModelInUse"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>nest::NewModelNameExists</label>
+        <link refid="classnest_1_1NewModelNameExists"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="41">
+        <label>nest::NoThreadSiblingsAvailable</label>
+        <link refid="classnest_1_1NoThreadSiblingsAvailable"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="42">
+        <label>nest::NodeWithProxiesExpected</label>
+        <link refid="classnest_1_1NodeWithProxiesExpected"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>nest::NumericalInstability</label>
+        <link refid="classnest_1_1NumericalInstability"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>nest::StepMultipleRequired</label>
+        <link refid="classnest_1_1StepMultipleRequired"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>nest::TimeMultipleRequired</label>
+        <link refid="classnest_1_1TimeMultipleRequired"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="46">
+        <label>nest::UnexpectedEvent</label>
+        <link refid="classnest_1_1UnexpectedEvent"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="47">
+        <label>nest::UnknownCompartment</label>
+        <link refid="classnest_1_1UnknownCompartment"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>nest::UnknownComponent</label>
+        <link refid="classnest_1_1UnknownComponent"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="49">
+        <label>nest::UnknownModelName</label>
+        <link refid="classnest_1_1UnknownModelName"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="50">
+        <label>nest::UnknownNode</label>
+        <link refid="classnest_1_1UnknownNode"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="51">
+        <label>nest::UnknownPort</label>
+        <link refid="classnest_1_1UnknownPort"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="52">
+        <label>nest::UnknownReceptorType</label>
+        <link refid="classnest_1_1UnknownReceptorType"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="53">
+        <label>nest::UnknownSynapseType</label>
+        <link refid="classnest_1_1UnknownSynapseType"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="54">
+        <label>nest::UnknownThread</label>
+        <link refid="classnest_1_1UnknownThread"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>nest::UnmatchedSteps</label>
+        <link refid="classnest_1_1UnmatchedSteps"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="56">
+        <label>nest::UnsupportedEvent</label>
+        <link refid="classnest_1_1UnsupportedEvent"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::exception</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>SLIException</label>
+        <link refid="classSLIException"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::exception</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" line="59" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" bodystart="60" bodyend="103"/>
+    <listofallmembers>
+      <member refid="classSLIException_1a8f0a43c586456cc0e161d683ff316531" prot="public" virt="pure-virtual"><scope>SLIException</scope><name>message</name></member>
+      <member refid="classSLIException_1ace48f5938754e82931bab7f54471dd3f" prot="public" virt="non-virtual"><scope>SLIException</scope><name>SLIException</name></member>
+      <member refid="classSLIException_1a5da1b6d493d134687d9ce01e9799b59d" prot="public" virt="non-virtual"><scope>SLIException</scope><name>SLIException</name></member>
+      <member refid="classSLIException_1a4ac56d362c7d86819a47c76571c9c031" prot="public" virt="non-virtual"><scope>SLIException</scope><name>what</name></member>
+      <member refid="classSLIException_1af0e8f12a5e346db4c028d23a2974f016" prot="private" virt="non-virtual"><scope>SLIException</scope><name>what_</name></member>
+      <member refid="classSLIException_1a671677b69bcc3895df94a069067c0578" prot="public" virt="non-virtual"><scope>SLIException</scope><name>~SLIException</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

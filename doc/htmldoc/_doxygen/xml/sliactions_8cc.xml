@@ -1,0 +1,590 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="sliactions_8cc" kind="file" language="C++">
+    <compoundname>sliactions.cc</compoundname>
+    <includes refid="sliactions_8h" local="yes">sliactions.h</includes>
+    <includes refid="arraydatum_8h" local="yes">arraydatum.h</includes>
+    <includes refid="callbackdatum_8h" local="yes">callbackdatum.h</includes>
+    <includes refid="dictstack_8h" local="yes">dictstack.h</includes>
+    <includes refid="functiondatum_8h" local="yes">functiondatum.h</includes>
+    <includes refid="integerdatum_8h" local="yes">integerdatum.h</includes>
+    <includes refid="interpret_8h" local="yes">interpret.h</includes>
+    <includes refid="namedatum_8h" local="yes">namedatum.h</includes>
+    <includes refid="triedatum_8h" local="yes">triedatum.h</includes>
+    <incdepgraph>
+      <node id="32">
+        <label>lockptr.h</label>
+        <link refid="lockptr_8h"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>aggregatedatum.h</label>
+        <link refid="aggregatedatum_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>allocator.h</label>
+        <link refid="allocator_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>arraydatum.h</label>
+        <link refid="arraydatum_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>callbackdatum.h</label>
+        <link refid="callbackdatum_8h"/>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>datum.h</label>
+        <link refid="datum_8h"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>dict.h</label>
+        <link refid="dict_8h"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>dictdatum.h</label>
+        <link refid="dictdatum_8h"/>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>dictstack.h</label>
+        <link refid="dictstack_8h"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>functiondatum.h</label>
+        <link refid="functiondatum_8h"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>genericdatum.h</label>
+        <link refid="genericdatum_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>integerdatum.h</label>
+        <link refid="integerdatum_8h"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>interpret.h</label>
+        <link refid="interpret_8h"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>lockptrdatum.h</label>
+        <link refid="lockptrdatum_8h"/>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>name.h</label>
+        <link refid="name_8h"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="42">
+        <label>namedatum.h</label>
+        <link refid="namedatum_8h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="41">
+        <label>numericdatum.h</label>
+        <link refid="numericdatum_8h"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>sliactions.cc</label>
+        <link refid="sliactions_8cc"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>sliactions.h</label>
+        <link refid="sliactions_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>slibuiltins.h</label>
+        <link refid="slibuiltins_8h"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>sliexceptions.h</label>
+        <link refid="sliexceptions_8h"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>slifunction.h</label>
+        <link refid="slifunction_8h"/>
+      </node>
+      <node id="22">
+        <label>slimodule.h</label>
+        <link refid="slimodule_8h"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>slinames.h</label>
+        <link refid="slinames_8h"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>slitype.h</label>
+        <link refid="slitype_8h"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>tarrayobj.h</label>
+        <link refid="tarrayobj_8h"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>token.h</label>
+        <link refid="token_8h"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>tokenarray.h</label>
+        <link refid="tokenarray_8h"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>tokenstack.h</label>
+        <link refid="tokenstack_8h"/>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>triedatum.h</label>
+        <link refid="triedatum_8h"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+      </node>
+      <node id="46">
+        <label>typearray.h</label>
+        <link refid="typearray_8h"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>typechk.h</label>
+        <link refid="typechk_8h"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>algorithm</label>
+      </node>
+      <node id="9">
+        <label>cassert</label>
+      </node>
+      <node id="7">
+        <label>config.h</label>
+      </node>
+      <node id="27">
+        <label>cstddef</label>
+      </node>
+      <node id="10">
+        <label>cstdlib</label>
+      </node>
+      <node id="17">
+        <label>deque</label>
+      </node>
+      <node id="24">
+        <label>iomanip</label>
+      </node>
+      <node id="14">
+        <label>iostream</label>
+      </node>
+      <node id="20">
+        <label>list</label>
+      </node>
+      <node id="18">
+        <label>map</label>
+      </node>
+      <node id="33">
+        <label>memory</label>
+      </node>
+      <node id="11">
+        <label>string</label>
+      </node>
+      <node id="15">
+        <label>typeinfo</label>
+      </node>
+      <node id="5">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="sliactions_8cc_1a08a6c39d166df3af2a5f5940c49ae1ba" prot="public" static="no">
+        <name>SLIDEBUG</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliactions.cc" line="39" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliactions.cc" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/><sp/>sliactions.cc</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/><sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>NEST.</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="6"><highlight class="comment"><sp/>*<sp/><sp/>Copyright<sp/>(C)<sp/>2004<sp/>The<sp/>NEST<sp/>Initiative</highlight></codeline>
+<codeline lineno="7"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="8"><highlight class="comment"><sp/>*<sp/><sp/>NEST<sp/>is<sp/>free<sp/>software:<sp/>you<sp/>can<sp/>redistribute<sp/>it<sp/>and/or<sp/>modify</highlight></codeline>
+<codeline lineno="9"><highlight class="comment"><sp/>*<sp/><sp/>it<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>the<sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>as<sp/>published<sp/>by</highlight></codeline>
+<codeline lineno="10"><highlight class="comment"><sp/>*<sp/><sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>either<sp/>version<sp/>2<sp/>of<sp/>the<sp/>License,<sp/>or</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*<sp/><sp/>(at<sp/>your<sp/>option)<sp/>any<sp/>later<sp/>version.</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="13"><highlight class="comment"><sp/>*<sp/><sp/>NEST<sp/>is<sp/>distributed<sp/>in<sp/>the<sp/>hope<sp/>that<sp/>it<sp/>will<sp/>be<sp/>useful,</highlight></codeline>
+<codeline lineno="14"><highlight class="comment"><sp/>*<sp/><sp/>but<sp/>WITHOUT<sp/>ANY<sp/>WARRANTY;<sp/>without<sp/>even<sp/>the<sp/>implied<sp/>warranty<sp/>of</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*<sp/><sp/>MERCHANTABILITY<sp/>or<sp/>FITNESS<sp/>FOR<sp/>A<sp/>PARTICULAR<sp/>PURPOSE.<sp/><sp/>See<sp/>the</highlight></codeline>
+<codeline lineno="16"><highlight class="comment"><sp/>*<sp/><sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>for<sp/>more<sp/>details.</highlight></codeline>
+<codeline lineno="17"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="18"><highlight class="comment"><sp/>*<sp/><sp/>You<sp/>should<sp/>have<sp/>received<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>GNU<sp/>General<sp/>Public<sp/>License</highlight></codeline>
+<codeline lineno="19"><highlight class="comment"><sp/>*<sp/><sp/>along<sp/>with<sp/>NEST.<sp/><sp/>If<sp/>not,<sp/>see<sp/>&lt;http://www.gnu.org/licenses/&gt;.</highlight></codeline>
+<codeline lineno="20"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="21"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="24"><highlight class="comment"><sp/><sp/><sp/><sp/>Actions<sp/>associated<sp/>with<sp/>SLI<sp/>types.</highlight></codeline>
+<codeline lineno="25"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sliactions_8h" kindref="compound">sliactions.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Includes<sp/>from<sp/>sli:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="arraydatum_8h" kindref="compound">arraydatum.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="callbackdatum_8h" kindref="compound">callbackdatum.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="dictstack_8h" kindref="compound">dictstack.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="functiondatum_8h" kindref="compound">functiondatum.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="integerdatum_8h" kindref="compound">integerdatum.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="interpret_8h" kindref="compound">interpret.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="namedatum_8h" kindref="compound">namedatum.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="triedatum_8h" kindref="compound">triedatum.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="sliactions_8cc_1a08a6c39d166df3af2a5f5940c49ae1ba" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SLIDEBUG<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="preprocessor">#undef<sp/>SLIDEBUG</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="comment">//<sp/>DatatypeFunction:<sp/>For<sp/>all<sp/>&apos;ordinary&apos;<sp/>data<sp/>objects<sp/>which<sp/>end<sp/>up<sp/>on</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="comment">//<sp/>the<sp/>operand<sp/>stack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="classDatatypeFunction_1a8ac3be45c0849eb4f7b5c8c0c4e82051" refkind="member"><highlight class="normal"><ref refid="classDatatypeFunction_1a8ac3be45c0849eb4f7b5c8c0c4e82051" kindref="member">DatatypeFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="45"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9d3b72926bfa2090389f0782cd2b6e76" kindref="member">push_move</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="48"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="classNametypeFunction_1a8685ee2f3b0d4b7161d5d0c25c794a09" refkind="member"><highlight class="normal"><ref refid="classNametypeFunction_1a8685ee2f3b0d4b7161d5d0c25c794a09" kindref="member">NametypeFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="52"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>()<sp/>=<sp/>i-&gt;<ref refid="classSLIInterpreter_1aa304291df80f1d715caf0a341bec7473" kindref="member">lookup2</ref>(<sp/>*</highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classNameDatum" kindref="compound">NameDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>().<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="54"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="classProceduretypeFunction_1abd98f13722933c2823a5514b7c3c4f49" refkind="member"><highlight class="normal"><ref refid="classProceduretypeFunction_1abd98f13722933c2823a5514b7c3c4f49" kindref="member">ProceduretypeFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="58"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>we<sp/>locally<sp/>cache<sp/>the<sp/>pointer<sp/>to<sp/>iiterate,<sp/>so<sp/>that</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>wen<sp/>don&apos;t<sp/>have<sp/>to<sp/>look<sp/>it<sp/>up<sp/>each<sp/>time.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classToken" kindref="compound">Token</ref><sp/>iiterate(<sp/>i-&gt;<ref refid="classSLIInterpreter_1aa40d5a2985fdb6563a4f923448bd5857" kindref="member">Iiterate</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a28b461fb4479c4ddc530feef4fef0ed4" kindref="member">code_accessed</ref><sp/>+=<sp/>(<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classAggregateDatum" kindref="compound">ProcedureDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>().<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>)<sp/>)-&gt;size();</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a75a8af662288b54a64d5185c90401dec" kindref="member">push_by_pointer</ref>(<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="integerdatum_8h_1ae9e7b850583ee9d781126bd856458aec" kindref="member">IntegerDatum</ref>(<sp/>0<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a93b45dc84823374ce277c972e41e8769" kindref="member">push_by_ref</ref>(<sp/>iiterate<sp/>);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a29a1dfe19e4620ae85beeeff6b4f6b87" kindref="member">inc_call_depth</ref>();</highlight></codeline>
+<codeline lineno="68"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71" refid="classLitproceduretypeFunction_1ac9b12ad35f83838960f76b3377577db6" refkind="member"><highlight class="normal"><ref refid="classLitproceduretypeFunction_1ac9b12ad35f83838960f76b3377577db6" kindref="member">LitproceduretypeFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="72"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Literal<sp/>procedures<sp/>are<sp/>procedures<sp/>which<sp/>come<sp/>straight<sp/>from<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>parser.<sp/>In<sp/>this<sp/>state<sp/>they<sp/>must<sp/>not<sp/>be<sp/>executed,<sp/>but<sp/>must<sp/>instead<sp/>be</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>moved<sp/>to<sp/>the<sp/>operand<sp/>stack.<sp/>After<sp/>this,<sp/>the<sp/>literal<sp/>procedure<sp/>becomes</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>an<sp/>executable<sp/>procedure<sp/>and<sp/>will<sp/>be<sp/>treated<sp/>as<sp/>such.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">LitprocedureDatum</ref>*<sp/>lpd<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classAggregateDatum" kindref="compound">LitprocedureDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>().<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a75a8af662288b54a64d5185c90401dec" kindref="member">push_by_pointer</ref>(<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="arraydatum_8h_1a843f6674b0655ba2bc33bdc6dc4e8b9f" kindref="member">ProcedureDatum</ref>(<sp/>*lpd<sp/>)<sp/>);<sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="81"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84" refid="classFunctiontypeFunction_1a71bde29dfe7a9ab9ac5e6b0c248851e5" refkind="member"><highlight class="normal"><ref refid="classFunctiontypeFunction_1a71bde29dfe7a9ab9ac5e6b0c248851e5" kindref="member">FunctiontypeFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="85"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><ref refid="classFunctionDatum" kindref="compound">FunctionDatum</ref>*<sp/>fd<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classFunctionDatum" kindref="compound">FunctionDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>().<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1afac5b8087d3218cfb36aff99fb7cadd6" kindref="member">step_mode</ref>()<sp/>)</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Calling<sp/>builtin<sp/>function:<sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>fd<sp/>)</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>fd-&gt;<ref refid="classFunctionDatum_1af3c4542edf2a937bbd78c1663f7e8cbb" kindref="member">pprint</ref>(<sp/>std::cerr<sp/>);</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;NULL&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/>fd-&gt;<ref refid="classFunctionDatum_1a7278334758fee3af962b54efe4576e1e" kindref="member">execute</ref>(<sp/>i<sp/>);</highlight></codeline>
+<codeline lineno="104"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="107" refid="classTrietypeFunction_1aa617a18f82017e4d01bf5711029d6ad1" refkind="member"><highlight class="normal"><ref refid="classTrietypeFunction_1aa617a18f82017e4d01bf5711029d6ad1" kindref="member">TrietypeFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="108"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><ref refid="classTrieDatum" kindref="compound">TrieDatum</ref>*<sp/>tried<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classTrieDatum" kindref="compound">TrieDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>().<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>().<ref refid="classToken_1a0fb2d619ef8e12500e8eb9a546d8d49c" kindref="member">assign_by_ref</ref>(<sp/>tried-&gt;<ref refid="classTrieDatum_1ae78ed217994201e2545df49e7ba8c6c3" kindref="member">lookup</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref><sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114" refid="classCallbacktypeFunction_1a6aac8e93eaf8ed14ae0314dfe2d1b581" refkind="member"><highlight class="normal"><ref refid="classCallbacktypeFunction_1a6aac8e93eaf8ed14ae0314dfe2d1b581" kindref="member">CallbacktypeFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="115"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><ref refid="classGenericDatum" kindref="compound">CallbackDatum</ref>*<sp/>cb<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classGenericDatum" kindref="compound">CallbackDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab2b27c4fd5359bbb3f439c4cf59f1c82" kindref="member">ct</ref>.<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Note,<sp/>although<sp/>cb<sp/>is<sp/>a<sp/>pointer<sp/>to<sp/>a<sp/>class<sp/>derived<sp/>from<sp/>Datum,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>it<sp/>also<sp/>has<sp/>the<sp/>properties<sp/>of<sp/>a<sp/>token,<sp/>since<sp/>it<sp/>is<sp/>derived<sp/>from<sp/>both.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a9d3b72926bfa2090389f0782cd2b6e76" kindref="member">push_move</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab2b27c4fd5359bbb3f439c4cf59f1c82" kindref="member">ct</ref><sp/>);</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>This<sp/>moves<sp/>the<sp/>complete<sp/>callback<sp/>datum<sp/>to<sp/>the<sp/>EStack.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Now,<sp/>the<sp/>pointer<sp/>in<sp/>ct<sp/>is<sp/>set<sp/>to<sp/>nullptr<sp/>!!</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Now<sp/>push<sp/>command<sp/>to<sp/>restore<sp/>the<sp/>callback,<sp/>once<sp/>the<sp/>action<sp/>has</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>been<sp/>finished</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a585f38fb0ed122da90489eccbfd7a187" kindref="member">push</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1a96c3eff127bf8a56860f05ff199cb6ff" kindref="member">baselookup</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1abb465fa1eefb1546c85a739b0aed6d37" kindref="member">isetcallback_name</ref><sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a585f38fb0ed122da90489eccbfd7a187" kindref="member">push</ref>(<sp/>*(<sp/>cb-&gt;<ref refid="classGenericDatum_1a2204e0bfb80429863ebbd37005235c1e" kindref="member">get</ref>()<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="129"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132" refid="classXIstreamtypeFunction_1a8534c2ef6749a3338bb69fdddf1f4ee7" refkind="member"><highlight class="normal"><ref refid="classXIstreamtypeFunction_1a8534c2ef6749a3338bb69fdddf1f4ee7" kindref="member">XIstreamtypeFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="133"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>EStack<sp/>contains<sp/>an<sp/>open<sp/>ifstream<sp/>object,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>which<sp/>can<sp/>be<sp/>executed<sp/>by<sp/>calling</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>::parse</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a585f38fb0ed122da90489eccbfd7a187" kindref="member">push</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1a96c3eff127bf8a56860f05ff199cb6ff" kindref="member">baselookup</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ad274563ba63af36ffefebc44070571eb" kindref="member">iparse_name</ref><sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="138"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141" refid="classXIfstreamtypeFunction_1a038a5196dfa6d7fab615661129a07c46" refkind="member"><highlight class="normal"><ref refid="classXIfstreamtypeFunction_1a038a5196dfa6d7fab615661129a07c46" kindref="member">XIfstreamtypeFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="142"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>EStack<sp/>contains<sp/>an<sp/>open<sp/>ifstream<sp/>object,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>which<sp/>can<sp/>be<sp/>executed<sp/>by<sp/>calling</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>::parse</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a585f38fb0ed122da90489eccbfd7a187" kindref="member">push</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1a96c3eff127bf8a56860f05ff199cb6ff" kindref="member">baselookup</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ad274563ba63af36ffefebc44070571eb" kindref="member">iparse_name</ref><sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="147"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliactions.cc"/>
+  </compounddef>
+</doxygen>

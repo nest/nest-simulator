@@ -1,0 +1,923 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classDictionaryStack" kind="class" language="C++" prot="public">
+    <compoundname>DictionaryStack</compoundname>
+    <includes refid="dictstack_8h" local="no">dictstack.h</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classDictionaryStack_1ad617373d228d2df82fdcffe8a526091f" prot="private" static="no" mutable="no">
+        <type>const <ref refid="classToken" kindref="compound">Token</ref></type>
+        <definition>const Token DictionaryStack::VoidToken</definition>
+        <argsstring></argsstring>
+        <name>VoidToken</name>
+        <qualifiedname>DictionaryStack::VoidToken</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="72" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" bodystart="72" bodyend="-1"/>
+        <referencedby refid="classDictionaryStack_1a8581db76ab8f676ec4677cf666e7cf91" compoundref="dictstack_8h" startline="212" endline="239">baselookup</referencedby>
+        <referencedby refid="classDictionaryStack_1a9647f3edd0f806cdef4e1452aaaac480" compoundref="dictstack_8h" startline="163" endline="173">lookup</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classDictionaryStack_1a6427e0a155882246e80120466784be7b" prot="private" static="no" mutable="no">
+        <type>std::list&lt; <ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &gt;</type>
+        <definition>std::list&lt; DictionaryDatum &gt; DictionaryStack::d</definition>
+        <argsstring></argsstring>
+        <name>d</name>
+        <qualifiedname>DictionaryStack::d</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="73" column="13" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" bodystart="73" bodyend="-1"/>
+        <referencedby refid="classDictionaryStack_1ad5af8e81a3d1d2d73ae5ddf007d173a3" compoundref="dictstack_8cc" startline="111" endline="117">clear</referencedby>
+        <referencedby refid="classDictionaryStack_1a892a08eff00f92879170fe0133848b89" compoundref="dictstack_8h" startline="137" endline="143">clear_dict_from_cache</referencedby>
+        <referencedby refid="classDictionaryStack_1a059fd306e6b5880bd7f292ccb18a60ce" compoundref="dictstack_8h" startline="372" endline="385">def</referencedby>
+        <referencedby refid="classDictionaryStack_1a337f9b52f8ab3049301b7647bdc3903f" compoundref="dictstack_8h" startline="388" endline="404">def_move</referencedby>
+        <referencedby refid="classDictionaryStack_1acfd66b8fe261db057215a9aae38192bf" compoundref="dictstack_8cc" startline="199" endline="212">info</referencedby>
+        <referencedby refid="classDictionaryStack_1a7d92859ff56dd8ff8bd6cc084142476c" compoundref="dictstack_8h" startline="244" endline="272">known</referencedby>
+        <referencedby refid="classDictionaryStack_1a4e80d9220ca602b773a2fd0855037c99" compoundref="dictstack_8h" startline="176" endline="205">lookup2</referencedby>
+        <referencedby refid="classDictionaryStack_1a720ff11c55b3df6502b739067051deb3" compoundref="dictstack_8cc" startline="221" endline="231">operator=</referencedby>
+        <referencedby refid="classDictionaryStack_1ad4eb8703d1963c570ae0607886d83275" compoundref="dictstack_8cc" startline="96" endline="108">pop</referencedby>
+        <referencedby refid="classDictionaryStack_1ab5dec846d4918ad71932a0b6ce312d19" compoundref="dictstack_8cc" startline="156" endline="161">push</referencedby>
+        <referencedby refid="classDictionaryStack_1a5baf5097495a26a297a62fa66b8fe93d" compoundref="dictstack_8cc" startline="182" endline="185">set_basedict</referencedby>
+        <referencedby refid="classDictionaryStack_1ab137abf2543962afa801918b55b32d6e" compoundref="dictstack_8cc" startline="188" endline="195">size</referencedby>
+        <referencedby refid="classDictionaryStack_1a3e10c9a812a39de9cf03e57ab2a9d7ae" compoundref="dictstack_8cc" startline="136" endline="153">toArray</referencedby>
+        <referencedby refid="classDictionaryStack_1aa29e38886d0158d4cd2254753b38d0f3" compoundref="dictstack_8cc" startline="121" endline="133">top</referencedby>
+        <referencedby refid="classDictionaryStack_1a026e89ff56b7e0e3da0421f65d86090b" compoundref="dictstack_8cc" startline="215" endline="218">top_info</referencedby>
+        <referencedby refid="classDictionaryStack_1ad1cb0f7217c63f0b5ef32f86a2903cfc" compoundref="dictstack_8cc" startline="47" endline="63">undef</referencedby>
+        <referencedby refid="classDictionaryStack_1abc2ff8614f82019ea906a62eb8d76ac1" compoundref="dictstack_8cc" startline="36" endline="44">~DictionaryStack</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classDictionaryStack_1a32bb9771f517b509cf88f8493d275abb" prot="private" static="no" mutable="no">
+        <type><ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref></type>
+        <definition>DictionaryDatum DictionaryStack::base_</definition>
+        <argsstring></argsstring>
+        <name>base_</name>
+        <qualifiedname>DictionaryStack::base_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="74" column="19" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" bodystart="74" bodyend="-1"/>
+        <referencedby refid="classDictionaryStack_1a07607d88ed5c9e539f4173fb6342be06" compoundref="dictstack_8cc" startline="66" endline="79">basedef</referencedby>
+        <referencedby refid="classDictionaryStack_1aafd0651e94ff35dfbf6862be6e87364e" compoundref="dictstack_8cc" startline="83" endline="92">basedef_move</referencedby>
+        <referencedby refid="classDictionaryStack_1a2788ee691c8872c2b586fbf98f3433ab" compoundref="dictstack_8h" startline="277" endline="300">baseknown</referencedby>
+        <referencedby refid="classDictionaryStack_1a8581db76ab8f676ec4677cf666e7cf91" compoundref="dictstack_8h" startline="212" endline="239">baselookup</referencedby>
+        <referencedby refid="classDictionaryStack_1a5baf5097495a26a297a62fa66b8fe93d" compoundref="dictstack_8cc" startline="182" endline="185">set_basedict</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classDictionaryStack_1a3e1e606f746a01e8711bfd5f821bd2c4" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; const <ref refid="classToken" kindref="compound">Token</ref> * &gt;</type>
+        <definition>std::vector&lt; const Token* &gt; DictionaryStack::cache_</definition>
+        <argsstring></argsstring>
+        <name>cache_</name>
+        <qualifiedname>DictionaryStack::cache_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="76" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" bodystart="76" bodyend="-1"/>
+        <referencedby refid="classDictionaryStack_1a75130c41081827606dd76b0901ed93f6" compoundref="dictstack_8h" startline="91" endline="99">cache_token</referencedby>
+        <referencedby refid="classDictionaryStack_1a0349130b1d40ec53973434a9f437ce5e" compoundref="dictstack_8h" startline="151" endline="158">clear_cache</referencedby>
+        <referencedby refid="classDictionaryStack_1ad60c536d820b6f24bbf9654ff1fdf52c" compoundref="dictstack_8h" startline="117" endline="124">clear_token_from_cache</referencedby>
+        <referencedby refid="classDictionaryStack_1a7d92859ff56dd8ff8bd6cc084142476c" compoundref="dictstack_8h" startline="244" endline="272">known</referencedby>
+        <referencedby refid="classDictionaryStack_1a4e80d9220ca602b773a2fd0855037c99" compoundref="dictstack_8h" startline="176" endline="205">lookup2</referencedby>
+        <referencedby refid="classDictionaryStack_1a720ff11c55b3df6502b739067051deb3" compoundref="dictstack_8cc" startline="221" endline="231">operator=</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classDictionaryStack_1a35b10bfe715de21c763d288dacdd1e5e" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; const <ref refid="classToken" kindref="compound">Token</ref> * &gt;</type>
+        <definition>std::vector&lt; const Token* &gt; DictionaryStack::basecache_</definition>
+        <argsstring></argsstring>
+        <name>basecache_</name>
+        <qualifiedname>DictionaryStack::basecache_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="77" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" bodystart="77" bodyend="-1"/>
+        <referencedby refid="classDictionaryStack_1a98ba69241d0a5acadf18948a7eb782c4" compoundref="dictstack_8h" startline="102" endline="110">basecache_token</referencedby>
+        <referencedby refid="classDictionaryStack_1a2788ee691c8872c2b586fbf98f3433ab" compoundref="dictstack_8h" startline="277" endline="300">baseknown</referencedby>
+        <referencedby refid="classDictionaryStack_1a8581db76ab8f676ec4677cf666e7cf91" compoundref="dictstack_8h" startline="212" endline="239">baselookup</referencedby>
+        <referencedby refid="classDictionaryStack_1a2b786bde0d5a369765cb7184d8b39fe0" compoundref="dictstack_8h" startline="127" endline="134">clear_token_from_basecache</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classDictionaryStack_1a33397786a7c6e4decd5cb87b2b8f8ac7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DictionaryStack::DictionaryStack</definition>
+        <argsstring>(const Token &amp;=Token())</argsstring>
+        <name>DictionaryStack</name>
+        <qualifiedname>DictionaryStack::DictionaryStack</qualifiedname>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <defname>t</defname>
+          <defval><ref refid="classToken" kindref="compound">Token</ref>()</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="81" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.cc" bodystart="25" bodyend="28"/>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1af38f50abb5fe2cba12beda850326c8d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DictionaryStack::DictionaryStack</definition>
+        <argsstring>(const DictionaryStack &amp;)</argsstring>
+        <name>DictionaryStack</name>
+        <qualifiedname>DictionaryStack::DictionaryStack</qualifiedname>
+        <param>
+          <type>const <ref refid="classDictionaryStack" kindref="compound">DictionaryStack</ref> &amp;</type>
+          <defname>ds</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="82" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.cc" bodystart="30" bodyend="34"/>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1abc2ff8614f82019ea906a62eb8d76ac1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DictionaryStack::~DictionaryStack</definition>
+        <argsstring>()</argsstring>
+        <name>~DictionaryStack</name>
+        <qualifiedname>DictionaryStack::~DictionaryStack</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="83" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.cc" bodystart="36" bodyend="44"/>
+        <references refid="classDictionaryStack_1a6427e0a155882246e80120466784be7b" compoundref="dictstack_8h" startline="73">d</references>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1a75130c41081827606dd76b0901ed93f6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DictionaryStack::cache_token</definition>
+        <argsstring>(const Name &amp;n, const Token *result)</argsstring>
+        <name>cache_token</name>
+        <qualifiedname>DictionaryStack::cache_token</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> *</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+<para>Add a token to the cache. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="91" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" bodystart="91" bodyend="99"/>
+        <references refid="classDictionaryStack_1a3e1e606f746a01e8711bfd5f821bd2c4" compoundref="dictstack_8h" startline="76">cache_</references>
+        <references refid="className_1a2666638a472f84ae7adc6ef78619c982" compoundref="name_8cc" startline="41" endline="44">Name::num_handles</references>
+        <references refid="className_1a7e3458f794f8a041d79172e2da29d6ce" compoundref="name_8h" startline="88" endline="91">Name::toIndex</references>
+        <referencedby refid="classDictionaryStack_1a2788ee691c8872c2b586fbf98f3433ab" compoundref="dictstack_8h" startline="277" endline="300">baseknown</referencedby>
+        <referencedby refid="classDictionaryStack_1a8581db76ab8f676ec4677cf666e7cf91" compoundref="dictstack_8h" startline="212" endline="239">baselookup</referencedby>
+        <referencedby refid="classDictionaryStack_1a059fd306e6b5880bd7f292ccb18a60ce" compoundref="dictstack_8h" startline="372" endline="385">def</referencedby>
+        <referencedby refid="classDictionaryStack_1a337f9b52f8ab3049301b7647bdc3903f" compoundref="dictstack_8h" startline="388" endline="404">def_move</referencedby>
+        <referencedby refid="classDictionaryStack_1a7d92859ff56dd8ff8bd6cc084142476c" compoundref="dictstack_8h" startline="244" endline="272">known</referencedby>
+        <referencedby refid="classDictionaryStack_1a4e80d9220ca602b773a2fd0855037c99" compoundref="dictstack_8h" startline="176" endline="205">lookup2</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1a98ba69241d0a5acadf18948a7eb782c4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DictionaryStack::basecache_token</definition>
+        <argsstring>(const Name &amp;n, const Token *result)</argsstring>
+        <name>basecache_token</name>
+        <qualifiedname>DictionaryStack::basecache_token</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> *</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="102" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" bodystart="102" bodyend="110"/>
+        <references refid="classDictionaryStack_1a35b10bfe715de21c763d288dacdd1e5e" compoundref="dictstack_8h" startline="77">basecache_</references>
+        <references refid="className_1a2666638a472f84ae7adc6ef78619c982" compoundref="name_8cc" startline="41" endline="44">Name::num_handles</references>
+        <references refid="className_1a7e3458f794f8a041d79172e2da29d6ce" compoundref="name_8h" startline="88" endline="91">Name::toIndex</references>
+        <referencedby refid="classDictionaryStack_1a07607d88ed5c9e539f4173fb6342be06" compoundref="dictstack_8cc" startline="66" endline="79">basedef</referencedby>
+        <referencedby refid="classDictionaryStack_1aafd0651e94ff35dfbf6862be6e87364e" compoundref="dictstack_8cc" startline="83" endline="92">basedef_move</referencedby>
+        <referencedby refid="classDictionaryStack_1a2788ee691c8872c2b586fbf98f3433ab" compoundref="dictstack_8h" startline="277" endline="300">baseknown</referencedby>
+        <referencedby refid="classDictionaryStack_1a8581db76ab8f676ec4677cf666e7cf91" compoundref="dictstack_8h" startline="212" endline="239">baselookup</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1ad60c536d820b6f24bbf9654ff1fdf52c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DictionaryStack::clear_token_from_cache</definition>
+        <argsstring>(const Name &amp;n)</argsstring>
+        <name>clear_token_from_cache</name>
+        <qualifiedname>DictionaryStack::clear_token_from_cache</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+<para>Clear a name from the cache. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function should be called in each def variant. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="117" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" bodystart="117" bodyend="124"/>
+        <references refid="classDictionaryStack_1a3e1e606f746a01e8711bfd5f821bd2c4" compoundref="dictstack_8h" startline="76">cache_</references>
+        <references refid="className_1a7e3458f794f8a041d79172e2da29d6ce" compoundref="name_8h" startline="88" endline="91">Name::toIndex</references>
+        <referencedby refid="classDictionaryStack_1a07607d88ed5c9e539f4173fb6342be06" compoundref="dictstack_8cc" startline="66" endline="79">basedef</referencedby>
+        <referencedby refid="classDictionaryStack_1aafd0651e94ff35dfbf6862be6e87364e" compoundref="dictstack_8cc" startline="83" endline="92">basedef_move</referencedby>
+        <referencedby refid="classDictionaryStack_1a892a08eff00f92879170fe0133848b89" compoundref="dictstack_8h" startline="137" endline="143">clear_dict_from_cache</referencedby>
+        <referencedby refid="classDictputFunction_1a3ea668cab2ee261c382d6775ef34b635" compoundref="slidict_8cc" startline="100" endline="136">DictputFunction::execute</referencedby>
+        <referencedby refid="classUndefFunction_1a1e1950db6e4003a73d5f5a0bab8d9a00" compoundref="slidict_8cc" startline="544" endline="581">UndefFunction::execute</referencedby>
+        <referencedby refid="classDictionaryStack_1ad1cb0f7217c63f0b5ef32f86a2903cfc" compoundref="dictstack_8cc" startline="47" endline="63">undef</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1a2b786bde0d5a369765cb7184d8b39fe0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DictionaryStack::clear_token_from_basecache</definition>
+        <argsstring>(const Name &amp;n)</argsstring>
+        <name>clear_token_from_basecache</name>
+        <qualifiedname>DictionaryStack::clear_token_from_basecache</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="127" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" bodystart="127" bodyend="134"/>
+        <references refid="classDictionaryStack_1a35b10bfe715de21c763d288dacdd1e5e" compoundref="dictstack_8h" startline="77">basecache_</references>
+        <references refid="className_1a7e3458f794f8a041d79172e2da29d6ce" compoundref="name_8h" startline="88" endline="91">Name::toIndex</references>
+        <referencedby refid="classDictionaryStack_1ad1cb0f7217c63f0b5ef32f86a2903cfc" compoundref="dictstack_8cc" startline="47" endline="63">undef</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1a892a08eff00f92879170fe0133848b89" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DictionaryStack::clear_dict_from_cache</definition>
+        <argsstring>(DictionaryDatum d)</argsstring>
+        <name>clear_dict_from_cache</name>
+        <qualifiedname>DictionaryStack::clear_dict_from_cache</qualifiedname>
+        <param>
+          <type><ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref></type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="137" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" bodystart="137" bodyend="143"/>
+        <references refid="classDictionaryStack_1ad60c536d820b6f24bbf9654ff1fdf52c" compoundref="dictstack_8h" startline="117" endline="124">clear_token_from_cache</references>
+        <references refid="classDictionaryStack_1a6427e0a155882246e80120466784be7b" compoundref="dictstack_8h" startline="73">d</references>
+        <referencedby refid="classCleardictFunction_1a3f46e75ae430cdd923fbfc827b514c53" compoundref="slidict_8cc" startline="719" endline="733">CleardictFunction::execute</referencedby>
+        <referencedby refid="classDictionaryStack_1ad4eb8703d1963c570ae0607886d83275" compoundref="dictstack_8cc" startline="96" endline="108">pop</referencedby>
+        <referencedby refid="classDictionaryStack_1aa5c86944e162f4d0c10319a81cbd564b" compoundref="dictstack_8cc" startline="164" endline="179">push</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1a0349130b1d40ec53973434a9f437ce5e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DictionaryStack::clear_cache</definition>
+        <argsstring>()</argsstring>
+        <name>clear_cache</name>
+        <qualifiedname>DictionaryStack::clear_cache</qualifiedname>
+        <briefdescription>
+<para>Clear the entire cache. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This should be called whenever a dictionary is pushed or poped. Alternative, one could just clear the names from the moved dictionary. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="151" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" bodystart="151" bodyend="158"/>
+        <references refid="classDictionaryStack_1a3e1e606f746a01e8711bfd5f821bd2c4" compoundref="dictstack_8h" startline="76">cache_</references>
+        <referencedby refid="classDictionaryStack_1ad5af8e81a3d1d2d73ae5ddf007d173a3" compoundref="dictstack_8cc" startline="111" endline="117">clear</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1a9647f3edd0f806cdef4e1452aaaac480" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+        <definition>const Token &amp; DictionaryStack::lookup</definition>
+        <argsstring>(const Name &amp;n)</argsstring>
+        <name>lookup</name>
+        <qualifiedname>DictionaryStack::lookup</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="163" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" bodystart="163" bodyend="173"/>
+        <references refid="classDictionaryStack_1a4e80d9220ca602b773a2fd0855037c99" compoundref="dictstack_8h" startline="176" endline="205">lookup2</references>
+        <references refid="classDictionaryStack_1ad617373d228d2df82fdcffe8a526091f" compoundref="dictstack_8h" startline="72">VoidToken</references>
+        <referencedby refid="classSLIInterpreter_1aee9369cf50fc0555440989c561613d66" compoundref="interpret_8cc" startline="299" endline="302">SLIInterpreter::lookup</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1a4e80d9220ca602b773a2fd0855037c99" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+        <definition>const Token &amp; DictionaryStack::lookup2</definition>
+        <argsstring>(const Name &amp;n)</argsstring>
+        <name>lookup2</name>
+        <qualifiedname>DictionaryStack::lookup2</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="176" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" bodystart="176" bodyend="205"/>
+        <references refid="classDictionaryStack_1a3e1e606f746a01e8711bfd5f821bd2c4" compoundref="dictstack_8h" startline="76">cache_</references>
+        <references refid="classDictionaryStack_1a75130c41081827606dd76b0901ed93f6" compoundref="dictstack_8h" startline="91" endline="99">cache_token</references>
+        <references refid="classDictionaryStack_1a6427e0a155882246e80120466784be7b" compoundref="dictstack_8h" startline="73">d</references>
+        <references refid="className_1a7e3458f794f8a041d79172e2da29d6ce" compoundref="name_8h" startline="88" endline="91">Name::toIndex</references>
+        <references refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" compoundref="name_8cc" startline="72" endline="75">Name::toString</references>
+        <referencedby refid="classDictionaryStack_1a9647f3edd0f806cdef4e1452aaaac480" compoundref="dictstack_8h" startline="163" endline="173">lookup</referencedby>
+        <referencedby refid="classSLIInterpreter_1aa304291df80f1d715caf0a341bec7473" compoundref="interpret_8cc" startline="305" endline="308">SLIInterpreter::lookup2</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1a8581db76ab8f676ec4677cf666e7cf91" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+        <definition>const Token &amp; DictionaryStack::baselookup</definition>
+        <argsstring>(const Name &amp;n)</argsstring>
+        <name>baselookup</name>
+        <qualifiedname>DictionaryStack::baselookup</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+<para>Lookup a name searching only the bottom level dictionary. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If the <ref refid="className" kindref="compound">Name</ref> is not found, <emphasis>VoidToken</emphasis> is returned. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="212" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" bodystart="212" bodyend="239"/>
+        <references refid="classDictionaryStack_1a32bb9771f517b509cf88f8493d275abb" compoundref="dictstack_8h" startline="74">base_</references>
+        <references refid="classDictionaryStack_1a35b10bfe715de21c763d288dacdd1e5e" compoundref="dictstack_8h" startline="77">basecache_</references>
+        <references refid="classDictionaryStack_1a98ba69241d0a5acadf18948a7eb782c4" compoundref="dictstack_8h" startline="102" endline="110">basecache_token</references>
+        <references refid="classDictionaryStack_1a75130c41081827606dd76b0901ed93f6" compoundref="dictstack_8h" startline="91" endline="99">cache_token</references>
+        <references refid="className_1a7e3458f794f8a041d79172e2da29d6ce" compoundref="name_8h" startline="88" endline="91">Name::toIndex</references>
+        <references refid="classDictionaryStack_1ad617373d228d2df82fdcffe8a526091f" compoundref="dictstack_8h" startline="72">VoidToken</references>
+        <referencedby refid="classSLIInterpreter_1a96c3eff127bf8a56860f05ff199cb6ff" compoundref="interpret_8cc" startline="311" endline="314">SLIInterpreter::baselookup</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1a7d92859ff56dd8ff8bd6cc084142476c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool DictionaryStack::known</definition>
+        <argsstring>(const Name &amp;n)</argsstring>
+        <name>known</name>
+        <qualifiedname>DictionaryStack::known</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+<para>Test for a name searching all dictionaries on the stack. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="244" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" bodystart="244" bodyend="272"/>
+        <references refid="classDictionaryStack_1a3e1e606f746a01e8711bfd5f821bd2c4" compoundref="dictstack_8h" startline="76">cache_</references>
+        <references refid="classDictionaryStack_1a75130c41081827606dd76b0901ed93f6" compoundref="dictstack_8h" startline="91" endline="99">cache_token</references>
+        <references refid="classDictionaryStack_1a6427e0a155882246e80120466784be7b" compoundref="dictstack_8h" startline="73">d</references>
+        <references refid="className_1a7e3458f794f8a041d79172e2da29d6ce" compoundref="name_8h" startline="88" endline="91">Name::toIndex</references>
+        <referencedby refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" compoundref="interpret_8cc" startline="271" endline="282">SLIInterpreter::createcommand</referencedby>
+        <referencedby refid="classSLIInterpreter_1a0a1fe916c3d8db47a60778e4f98c9f80" compoundref="interpret_8cc" startline="317" endline="320">SLIInterpreter::known</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1a2788ee691c8872c2b586fbf98f3433ab" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool DictionaryStack::baseknown</definition>
+        <argsstring>(const Name &amp;n)</argsstring>
+        <name>baseknown</name>
+        <qualifiedname>DictionaryStack::baseknown</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+<para>Test for a name in the bottom level dictionary. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="277" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" bodystart="277" bodyend="300"/>
+        <references refid="classDictionaryStack_1a32bb9771f517b509cf88f8493d275abb" compoundref="dictstack_8h" startline="74">base_</references>
+        <references refid="classDictionaryStack_1a35b10bfe715de21c763d288dacdd1e5e" compoundref="dictstack_8h" startline="77">basecache_</references>
+        <references refid="classDictionaryStack_1a98ba69241d0a5acadf18948a7eb782c4" compoundref="dictstack_8h" startline="102" endline="110">basecache_token</references>
+        <references refid="classDictionaryStack_1a75130c41081827606dd76b0901ed93f6" compoundref="dictstack_8h" startline="91" endline="99">cache_token</references>
+        <references refid="className_1a7e3458f794f8a041d79172e2da29d6ce" compoundref="name_8h" startline="88" endline="91">Name::toIndex</references>
+        <referencedby refid="classSLIInterpreter_1a419b7037fa664c19545195c3de5e85ad" compoundref="interpret_8cc" startline="323" endline="326">SLIInterpreter::baseknown</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1a059fd306e6b5880bd7f292ccb18a60ce" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DictionaryStack::def</definition>
+        <argsstring>(const Name &amp;, const Token &amp;)</argsstring>
+        <name>def</name>
+        <qualifiedname>DictionaryStack::def</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <defname>n</defname>
+        </param>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <defname>t</defname>
+        </param>
+        <briefdescription>
+<para>Bind a <ref refid="classToken" kindref="compound">Token</ref> to a <ref refid="className" kindref="compound">Name</ref> in the top level dictionary. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The <ref refid="classToken" kindref="compound">Token</ref> is copied. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="310" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" bodystart="372" bodyend="385"/>
+        <references refid="classDictionaryStack_1a75130c41081827606dd76b0901ed93f6" compoundref="dictstack_8h" startline="91" endline="99">cache_token</references>
+        <references refid="classDictionaryStack_1a6427e0a155882246e80120466784be7b" compoundref="dictstack_8h" startline="73">d</references>
+        <referencedby refid="classSLIInterpreter_1aa0717aebf8001f9be9cea57825e85f7e" compoundref="interpret_8cc" startline="329" endline="332">SLIInterpreter::def</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1ad1cb0f7217c63f0b5ef32f86a2903cfc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DictionaryStack::undef</definition>
+        <argsstring>(const Name &amp;)</argsstring>
+        <name>undef</name>
+        <qualifiedname>DictionaryStack::undef</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <defname>n</defname>
+        </param>
+        <briefdescription>
+<para>Unbind a previously defined <ref refid="className" kindref="compound">Name</ref> from its token. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Seach in all dictionaries. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="315" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.cc" bodystart="47" bodyend="63"/>
+        <references refid="classDictionaryStack_1a2b786bde0d5a369765cb7184d8b39fe0" compoundref="dictstack_8h" startline="127" endline="134">clear_token_from_basecache</references>
+        <references refid="classDictionaryStack_1ad60c536d820b6f24bbf9654ff1fdf52c" compoundref="dictstack_8h" startline="117" endline="124">clear_token_from_cache</references>
+        <references refid="classDictionaryStack_1a6427e0a155882246e80120466784be7b" compoundref="dictstack_8h" startline="73">d</references>
+        <references refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" compoundref="name_8cc" startline="72" endline="75">Name::toString</references>
+        <referencedby refid="classSLIInterpreter_1a83bc34f605734c406c504b34a6a1b346" compoundref="interpret_8cc" startline="335" endline="338">SLIInterpreter::undef</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1a07607d88ed5c9e539f4173fb6342be06" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DictionaryStack::basedef</definition>
+        <argsstring>(const Name &amp;n, const Token &amp;t)</argsstring>
+        <name>basedef</name>
+        <qualifiedname>DictionaryStack::basedef</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+<para>Bind a <ref refid="classToken" kindref="compound">Token</ref> to a <ref refid="className" kindref="compound">Name</ref> in the bottom level dictionary. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The <ref refid="classToken" kindref="compound">Token</ref> is copied. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="320" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.cc" bodystart="66" bodyend="79"/>
+        <references refid="classDictionaryStack_1a32bb9771f517b509cf88f8493d275abb" compoundref="dictstack_8h" startline="74">base_</references>
+        <references refid="classDictionaryStack_1a98ba69241d0a5acadf18948a7eb782c4" compoundref="dictstack_8h" startline="102" endline="110">basecache_token</references>
+        <references refid="classDictionaryStack_1ad60c536d820b6f24bbf9654ff1fdf52c" compoundref="dictstack_8h" startline="117" endline="124">clear_token_from_cache</references>
+        <referencedby refid="classSLIInterpreter_1a617b26a4730f414bfb2096411e1cecb7" compoundref="interpret_8cc" startline="341" endline="344">SLIInterpreter::basedef</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1a337f9b52f8ab3049301b7647bdc3903f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void DictionaryStack::def_move</definition>
+        <argsstring>(const Name &amp;, Token &amp;)</argsstring>
+        <name>def_move</name>
+        <qualifiedname>DictionaryStack::def_move</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <defname>n</defname>
+        </param>
+        <param>
+          <type><ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <defname>t</defname>
+        </param>
+        <briefdescription>
+<para>Bind a <ref refid="classToken" kindref="compound">Token</ref> to a <ref refid="className" kindref="compound">Name</ref> in the top level dictionary. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The <ref refid="classToken" kindref="compound">Token</ref> is moved. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="325" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" bodystart="388" bodyend="404"/>
+        <references refid="classDictionaryStack_1a75130c41081827606dd76b0901ed93f6" compoundref="dictstack_8h" startline="91" endline="99">cache_token</references>
+        <references refid="classDictionaryStack_1a6427e0a155882246e80120466784be7b" compoundref="dictstack_8h" startline="73">d</references>
+        <referencedby refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" compoundref="interpret_8cc" startline="271" endline="282">SLIInterpreter::createcommand</referencedby>
+        <referencedby refid="classSLIInterpreter_1a66bdd480ff4fda13852c5ddb0465eb0a" compoundref="interpret_8cc" startline="292" endline="296">SLIInterpreter::createconstant</referencedby>
+        <referencedby refid="classSLIInterpreter_1a683d2ea44b1e8ebcb8710094502d8041" compoundref="interpret_8cc" startline="257" endline="261">SLIInterpreter::createdouble</referencedby>
+        <referencedby refid="classSLIInterpreter_1a76a264883cecec44cfabc6f3c93a10cf" compoundref="interpret_8cc" startline="347" endline="350">SLIInterpreter::def_move</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1a5baf5097495a26a297a62fa66b8fe93d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DictionaryStack::set_basedict</definition>
+        <argsstring>()</argsstring>
+        <name>set_basedict</name>
+        <qualifiedname>DictionaryStack::set_basedict</qualifiedname>
+        <briefdescription>
+<para>This function must be called once to initialize the systemdict cache. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="330" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.cc" bodystart="182" bodyend="185"/>
+        <references refid="classDictionaryStack_1a32bb9771f517b509cf88f8493d275abb" compoundref="dictstack_8h" startline="74">base_</references>
+        <references refid="classDictionaryStack_1a6427e0a155882246e80120466784be7b" compoundref="dictstack_8h" startline="73">d</references>
+        <referencedby refid="classSLIInterpreter_1ac147fcca021c85ec616b9158d642b616" compoundref="interpret_8cc" startline="179" endline="197">SLIInterpreter::initdictionaries</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1aafd0651e94ff35dfbf6862be6e87364e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DictionaryStack::basedef_move</definition>
+        <argsstring>(const Name &amp;n, Token &amp;t)</argsstring>
+        <name>basedef_move</name>
+        <qualifiedname>DictionaryStack::basedef_move</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type><ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+<para>Bind a <ref refid="classToken" kindref="compound">Token</ref> to a <ref refid="className" kindref="compound">Name</ref> in the bottom level dictionary. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The <ref refid="classToken" kindref="compound">Token</ref> is moved. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="335" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.cc" bodystart="83" bodyend="92"/>
+        <references refid="classDictionaryStack_1a32bb9771f517b509cf88f8493d275abb" compoundref="dictstack_8h" startline="74">base_</references>
+        <references refid="classDictionaryStack_1a98ba69241d0a5acadf18948a7eb782c4" compoundref="dictstack_8h" startline="102" endline="110">basecache_token</references>
+        <references refid="classDictionaryStack_1ad60c536d820b6f24bbf9654ff1fdf52c" compoundref="dictstack_8h" startline="117" endline="124">clear_token_from_cache</references>
+        <referencedby refid="classSLIInterpreter_1adf3339ba91ce0a7e4b3af8ea519223ba" compoundref="interpret_8cc" startline="353" endline="356">SLIInterpreter::basedef_move</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1ad4eb8703d1963c570ae0607886d83275" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DictionaryStack::pop</definition>
+        <argsstring>()</argsstring>
+        <name>pop</name>
+        <qualifiedname>DictionaryStack::pop</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="337" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.cc" bodystart="96" bodyend="108"/>
+        <references refid="classDictionaryStack_1a892a08eff00f92879170fe0133848b89" compoundref="dictstack_8h" startline="137" endline="143">clear_dict_from_cache</references>
+        <references refid="classDictionaryStack_1a6427e0a155882246e80120466784be7b" compoundref="dictstack_8h" startline="73">d</references>
+        <referencedby refid="classDictendFunction_1a51bd4b50fd6b7bb45942595d1f51fb3b" compoundref="slidict_8cc" startline="492" endline="503">DictendFunction::execute</referencedby>
+        <referencedby refid="classCleardictstackFunction_1a01dcf7436ca32254d5bc20b0b4050993" compoundref="slidict_8cc" startline="368" endline="376">CleardictstackFunction::execute</referencedby>
+        <referencedby refid="classSLIInterpreter_1af44a5ac5a80872ca2577d183a044b136" compoundref="interpret_8cc" startline="545" endline="577">SLIInterpreter::~SLIInterpreter</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1aa29e38886d0158d4cd2254753b38d0f3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DictionaryStack::top</definition>
+        <argsstring>(Token &amp;) const</argsstring>
+        <name>top</name>
+        <qualifiedname>DictionaryStack::top</qualifiedname>
+        <param>
+          <type><ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <defname>t</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="343" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.cc" bodystart="121" bodyend="133"/>
+        <references refid="classDictionaryStack_1a6427e0a155882246e80120466784be7b" compoundref="dictstack_8h" startline="73">d</references>
+        <references refid="classToken_1a2f61f1702fa6214de27ccff368df11f5" compoundref="token_8h" startline="232" endline="240">Token::move</references>
+        <referencedby refid="classCurrentdictFunction_1aede7d701268eeef1d4397d396ff3f242" compoundref="slidict_8cc" startline="347" endline="355">CurrentdictFunction::execute</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1aa5c86944e162f4d0c10319a81cbd564b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DictionaryStack::push</definition>
+        <argsstring>(const DictionaryDatum &amp;)</argsstring>
+        <name>push</name>
+        <qualifiedname>DictionaryStack::push</qualifiedname>
+        <param>
+          <type>const <ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+          <defname>pd</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="344" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.cc" bodystart="164" bodyend="179"/>
+        <references refid="classDictionaryStack_1a892a08eff00f92879170fe0133848b89" compoundref="dictstack_8h" startline="137" endline="143">clear_dict_from_cache</references>
+        <references refid="classDictionaryStack_1a6427e0a155882246e80120466784be7b" compoundref="dictstack_8h" startline="73">d</references>
+        <referencedby refid="classOOSupportModule_1_1CallMemberFunction_1a1d8c0996a6bfc265a390e3cd7ee238c4" compoundref="oosupport_8cc" startline="53" endline="77">OOSupportModule::CallMemberFunction::execute</referencedby>
+        <referencedby refid="classDictbeginFunction_1a3fa95279ddb7e1dd1d93b40d1c648345" compoundref="slidict_8cc" startline="449" endline="472">DictbeginFunction::execute</referencedby>
+        <referencedby refid="classRestoredstackFunction_1a8eff6cb578d0ce1dbe608321e3c29197" compoundref="slidict_8cc" startline="945" endline="970">RestoredstackFunction::execute</referencedby>
+        <referencedby refid="classSLIInterpreter_1ac147fcca021c85ec616b9158d642b616" compoundref="interpret_8cc" startline="179" endline="197">SLIInterpreter::initdictionaries</referencedby>
+        <referencedby refid="classDictionaryStack_1ab5dec846d4918ad71932a0b6ce312d19" compoundref="dictstack_8cc" startline="156" endline="161">push</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1ab5dec846d4918ad71932a0b6ce312d19" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DictionaryStack::push</definition>
+        <argsstring>(Token &amp;)</argsstring>
+        <name>push</name>
+        <qualifiedname>DictionaryStack::push</qualifiedname>
+        <param>
+          <type><ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <defname>d</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="345" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.cc" bodystart="156" bodyend="161"/>
+        <references refid="classDictionaryStack_1a6427e0a155882246e80120466784be7b" compoundref="dictstack_8h" startline="73">d</references>
+        <references refid="classDictionaryStack_1aa5c86944e162f4d0c10319a81cbd564b" compoundref="dictstack_8cc" startline="164" endline="179">push</references>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1ad5af8e81a3d1d2d73ae5ddf007d173a3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DictionaryStack::clear</definition>
+        <argsstring>()</argsstring>
+        <name>clear</name>
+        <qualifiedname>DictionaryStack::clear</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="347" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.cc" bodystart="111" bodyend="117"/>
+        <references refid="classDictionaryStack_1a0349130b1d40ec53973434a9f437ce5e" compoundref="dictstack_8h" startline="151" endline="158">clear_cache</references>
+        <references refid="classDictionaryStack_1a6427e0a155882246e80120466784be7b" compoundref="dictstack_8h" startline="73">d</references>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1a3e10c9a812a39de9cf03e57ab2a9d7ae" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DictionaryStack::toArray</definition>
+        <argsstring>(TokenArray &amp;) const</argsstring>
+        <name>toArray</name>
+        <qualifiedname>DictionaryStack::toArray</qualifiedname>
+        <param>
+          <type><ref refid="classTokenArray" kindref="compound">TokenArray</ref> &amp;</type>
+          <defname>ta</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="348" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.cc" bodystart="136" bodyend="153"/>
+        <references refid="classDictionaryStack_1a6427e0a155882246e80120466784be7b" compoundref="dictstack_8h" startline="73">d</references>
+        <references refid="classTokenArray_1a7a37ecbd9269ae8eae313a78158a0415" compoundref="tokenarray_8h" startline="376" endline="382">TokenArray::erase</references>
+        <references refid="classTokenArray_1acbf2202157ead1bb583c43a8465b3876" compoundref="tokenarray_8h" startline="266" endline="270">TokenArray::push_back</references>
+        <referencedby refid="classDictstackFunction_1a943178800705ab762102bdcbe9a987f0" compoundref="slidict_8cc" startline="326" endline="335">DictstackFunction::execute</referencedby>
+        <referencedby refid="group__SLIError_1ga098156501ff35f206a32d389bf262e05" compoundref="interpret_8cc" startline="613" endline="648">SLIInterpreter::raiseerror</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1ab137abf2543962afa801918b55b32d6e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t DictionaryStack::size</definition>
+        <argsstring>() const</argsstring>
+        <name>size</name>
+        <qualifiedname>DictionaryStack::size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="359" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.cc" bodystart="188" bodyend="195"/>
+        <references refid="classDictionaryStack_1a6427e0a155882246e80120466784be7b" compoundref="dictstack_8h" startline="73">d</references>
+        <referencedby refid="classDictendFunction_1a51bd4b50fd6b7bb45942595d1f51fb3b" compoundref="slidict_8cc" startline="492" endline="503">DictendFunction::execute</referencedby>
+        <referencedby refid="classCountdictstackFunction_1ab7a6d7a916bc34312fec590c1f4a6b3b" compoundref="slidict_8cc" startline="304" endline="311">CountdictstackFunction::execute</referencedby>
+        <referencedby refid="classCleardictstackFunction_1a01dcf7436ca32254d5bc20b0b4050993" compoundref="slidict_8cc" startline="368" endline="376">CleardictstackFunction::execute</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1acfd66b8fe261db057215a9aae38192bf" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DictionaryStack::info</definition>
+        <argsstring>(std::ostream &amp;) const</argsstring>
+        <name>info</name>
+        <qualifiedname>DictionaryStack::info</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <defname>o</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="366" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.cc" bodystart="199" bodyend="212"/>
+        <references refid="classDictionaryStack_1a6427e0a155882246e80120466784be7b" compoundref="dictstack_8h" startline="73">d</references>
+        <referencedby refid="classWhoFunction_1a04ed295d22dc88f6f39aa1287d8070fc" compoundref="slidict_8cc" startline="421" endline="431">WhoFunction::execute</referencedby>
+        <referencedby refid="classDictionaryStack_1a026e89ff56b7e0e3da0421f65d86090b" compoundref="dictstack_8cc" startline="215" endline="218">top_info</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1a026e89ff56b7e0e3da0421f65d86090b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DictionaryStack::top_info</definition>
+        <argsstring>(std::ostream &amp;) const</argsstring>
+        <name>top_info</name>
+        <qualifiedname>DictionaryStack::top_info</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <defname>o</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="367" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.cc" bodystart="215" bodyend="218"/>
+        <references refid="classDictionaryStack_1a6427e0a155882246e80120466784be7b" compoundref="dictstack_8h" startline="73">d</references>
+        <references refid="classDictionaryStack_1acfd66b8fe261db057215a9aae38192bf" compoundref="dictstack_8cc" startline="199" endline="212">info</references>
+        <referencedby refid="classDicttopinfoFunction_1ad2ba8ae6f359feac029c196231ce1602" compoundref="slidict_8cc" startline="392" endline="402">DicttopinfoFunction::execute</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classDictionaryStack_1a720ff11c55b3df6502b739067051deb3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="classDictionaryStack" kindref="compound">DictionaryStack</ref> &amp;</type>
+        <definition>const DictionaryStack &amp; DictionaryStack::operator=</definition>
+        <argsstring>(const DictionaryStack &amp;)</argsstring>
+        <name>operator=</name>
+        <qualifiedname>DictionaryStack::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="classDictionaryStack" kindref="compound">DictionaryStack</ref> &amp;</type>
+          <defname>ds</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="368" column="25" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.cc" bodystart="221" bodyend="231"/>
+        <references refid="classDictionaryStack_1a3e1e606f746a01e8711bfd5f821bd2c4" compoundref="dictstack_8h" startline="76">cache_</references>
+        <references refid="classDictionaryStack_1a6427e0a155882246e80120466784be7b" compoundref="dictstack_8h" startline="73">d</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="3">
+        <label>Datum</label>
+        <link refid="classDatum"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>type</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>action</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>DictionaryStack</label>
+        <link refid="classDictionaryStack"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>VoidToken</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>base_</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Name</label>
+        <link refid="className"/>
+      </node>
+      <node id="6">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="4">
+        <label>SLIType</label>
+        <link refid="classSLIType"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>defaultaction</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Token</label>
+        <link refid="classToken"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>p</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>TypedDatum&lt; slt &gt;</label>
+        <link refid="classTypedDatum"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>lockPTR&lt; D &gt;</label>
+        <link refid="classlockPTR"/>
+      </node>
+      <node id="8">
+        <label>lockPTR&lt; D &gt;</label>
+        <link refid="classlockPTR"/>
+      </node>
+      <node id="10">
+        <label>lockPTRDatum&lt; D, slt &gt;</label>
+        <link refid="classlockPTRDatum"/>
+        <childnode refid="11" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>lockPTRDatum&lt; Dictionary, &amp;SLIInterpreter::Dictionarytype &gt;</label>
+        <link refid="classlockPTRDatum"/>
+        <childnode refid="8" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="public-inheritance">
+        </childnode>
+        <childnode refid="10" relation="template-instance">
+          <edgelabel>&lt; Dictionary, &amp;SLIInterpreter::Dictionarytype &gt;</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" line="69" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/dictstack.h" bodystart="70" bodyend="369"/>
+    <listofallmembers>
+      <member refid="classDictionaryStack_1a32bb9771f517b509cf88f8493d275abb" prot="private" virt="non-virtual"><scope>DictionaryStack</scope><name>base_</name></member>
+      <member refid="classDictionaryStack_1a35b10bfe715de21c763d288dacdd1e5e" prot="private" virt="non-virtual"><scope>DictionaryStack</scope><name>basecache_</name></member>
+      <member refid="classDictionaryStack_1a98ba69241d0a5acadf18948a7eb782c4" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>basecache_token</name></member>
+      <member refid="classDictionaryStack_1a07607d88ed5c9e539f4173fb6342be06" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>basedef</name></member>
+      <member refid="classDictionaryStack_1aafd0651e94ff35dfbf6862be6e87364e" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>basedef_move</name></member>
+      <member refid="classDictionaryStack_1a2788ee691c8872c2b586fbf98f3433ab" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>baseknown</name></member>
+      <member refid="classDictionaryStack_1a8581db76ab8f676ec4677cf666e7cf91" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>baselookup</name></member>
+      <member refid="classDictionaryStack_1a3e1e606f746a01e8711bfd5f821bd2c4" prot="private" virt="non-virtual"><scope>DictionaryStack</scope><name>cache_</name></member>
+      <member refid="classDictionaryStack_1a75130c41081827606dd76b0901ed93f6" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>cache_token</name></member>
+      <member refid="classDictionaryStack_1ad5af8e81a3d1d2d73ae5ddf007d173a3" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>clear</name></member>
+      <member refid="classDictionaryStack_1a0349130b1d40ec53973434a9f437ce5e" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>clear_cache</name></member>
+      <member refid="classDictionaryStack_1a892a08eff00f92879170fe0133848b89" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>clear_dict_from_cache</name></member>
+      <member refid="classDictionaryStack_1a2b786bde0d5a369765cb7184d8b39fe0" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>clear_token_from_basecache</name></member>
+      <member refid="classDictionaryStack_1ad60c536d820b6f24bbf9654ff1fdf52c" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>clear_token_from_cache</name></member>
+      <member refid="classDictionaryStack_1a6427e0a155882246e80120466784be7b" prot="private" virt="non-virtual"><scope>DictionaryStack</scope><name>d</name></member>
+      <member refid="classDictionaryStack_1a059fd306e6b5880bd7f292ccb18a60ce" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>def</name></member>
+      <member refid="classDictionaryStack_1a337f9b52f8ab3049301b7647bdc3903f" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>def_move</name></member>
+      <member refid="classDictionaryStack_1a33397786a7c6e4decd5cb87b2b8f8ac7" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>DictionaryStack</name></member>
+      <member refid="classDictionaryStack_1af38f50abb5fe2cba12beda850326c8d1" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>DictionaryStack</name></member>
+      <member refid="classDictionaryStack_1acfd66b8fe261db057215a9aae38192bf" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>info</name></member>
+      <member refid="classDictionaryStack_1a7d92859ff56dd8ff8bd6cc084142476c" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>known</name></member>
+      <member refid="classDictionaryStack_1a9647f3edd0f806cdef4e1452aaaac480" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>lookup</name></member>
+      <member refid="classDictionaryStack_1a4e80d9220ca602b773a2fd0855037c99" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>lookup2</name></member>
+      <member refid="classDictionaryStack_1a720ff11c55b3df6502b739067051deb3" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>operator=</name></member>
+      <member refid="classDictionaryStack_1ad4eb8703d1963c570ae0607886d83275" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>pop</name></member>
+      <member refid="classDictionaryStack_1aa5c86944e162f4d0c10319a81cbd564b" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>push</name></member>
+      <member refid="classDictionaryStack_1ab5dec846d4918ad71932a0b6ce312d19" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>push</name></member>
+      <member refid="classDictionaryStack_1a5baf5097495a26a297a62fa66b8fe93d" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>set_basedict</name></member>
+      <member refid="classDictionaryStack_1ab137abf2543962afa801918b55b32d6e" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>size</name></member>
+      <member refid="classDictionaryStack_1a3e10c9a812a39de9cf03e57ab2a9d7ae" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>toArray</name></member>
+      <member refid="classDictionaryStack_1aa29e38886d0158d4cd2254753b38d0f3" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>top</name></member>
+      <member refid="classDictionaryStack_1a026e89ff56b7e0e3da0421f65d86090b" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>top_info</name></member>
+      <member refid="classDictionaryStack_1ad1cb0f7217c63f0b5ef32f86a2903cfc" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>undef</name></member>
+      <member refid="classDictionaryStack_1ad617373d228d2df82fdcffe8a526091f" prot="private" virt="non-virtual"><scope>DictionaryStack</scope><name>VoidToken</name></member>
+      <member refid="classDictionaryStack_1abc2ff8614f82019ea906a62eb8d76ac1" prot="public" virt="non-virtual"><scope>DictionaryStack</scope><name>~DictionaryStack</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

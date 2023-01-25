@@ -1,0 +1,896 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classnest_1_1IOManager" kind="class" language="C++" prot="public">
+    <compoundname>nest::IOManager</compoundname>
+    <basecompoundref refid="classnest_1_1ManagerInterface" prot="public" virt="non-virtual">nest::ManagerInterface</basecompoundref>
+    <includes refid="io__manager_8h" local="no">io_manager.h</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classnest_1_1IOManager_1afd41792efb97d9e248a2bd16a112e686" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string nest::IOManager::data_path_</definition>
+        <argsstring></argsstring>
+        <name>data_path_</name>
+        <qualifiedname>nest::IOManager::data_path_</qualifiedname>
+        <briefdescription>
+<para>Path for all files written by devices. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="128" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" bodystart="128" bodyend="-1"/>
+        <referencedby refid="classnest_1_1IOManager_1a51e836794c1c8c93e91e3d7da09bc659" compoundref="io__manager_8h" startline="145" endline="148">get_data_path</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1ab9b64bde6b49a812f8bf79d2e751b92d" compoundref="io__manager_8cpp" startline="206" endline="225">get_status</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1a88d6a0d1c97fb4dd1c477a5fdd902ff8" compoundref="io__manager_8cpp" startline="80" endline="123">set_data_path_prefix_</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1IOManager_1abe8ff451d220ff8a568770a6fe652753" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string nest::IOManager::data_prefix_</definition>
+        <argsstring></argsstring>
+        <name>data_prefix_</name>
+        <qualifiedname>nest::IOManager::data_prefix_</qualifiedname>
+        <briefdescription>
+<para>Prefix for all files written by devices. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="129" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" bodystart="129" bodyend="-1"/>
+        <referencedby refid="classnest_1_1IOManager_1ab9b64bde6b49a812f8bf79d2e751b92d" compoundref="io__manager_8cpp" startline="206" endline="225">get_status</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1a88d6a0d1c97fb4dd1c477a5fdd902ff8" compoundref="io__manager_8cpp" startline="80" endline="123">set_data_path_prefix_</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1IOManager_1ad22af7e76e6b1c714a1c091a6cac7fad" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::IOManager::overwrite_files_</definition>
+        <argsstring></argsstring>
+        <name>overwrite_files_</name>
+        <qualifiedname>nest::IOManager::overwrite_files_</qualifiedname>
+        <briefdescription>
+<para>If true, overwrite existing data files. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="130" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" bodystart="130" bodyend="-1"/>
+        <referencedby refid="classnest_1_1IOManager_1ab9b64bde6b49a812f8bf79d2e751b92d" compoundref="io__manager_8cpp" startline="206" endline="225">get_status</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1a290ac3d72efc43aca30e9fee71a58e7d" compoundref="io__manager_8cpp" startline="126" endline="153">initialize</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1a33572c6b6c01fb2e171a7087689899fd" compoundref="io__manager_8cpp" startline="190" endline="194">set_status</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1IOManager_1a311bf44eae72b0da814da3f884b32c91" prot="private" static="no" mutable="no">
+        <type>std::map&lt; <ref refid="className" kindref="compound">Name</ref>, <ref refid="classnest_1_1RecordingBackend" kindref="compound">RecordingBackend</ref> * &gt;</type>
+        <definition>std::map&lt; Name, RecordingBackend* &gt; nest::IOManager::recording_backends_</definition>
+        <argsstring></argsstring>
+        <name>recording_backends_</name>
+        <qualifiedname>nest::IOManager::recording_backends_</qualifiedname>
+        <briefdescription>
+<para>A mapping from names to registered recording backends. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="135" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" bodystart="135" bodyend="-1"/>
+        <referencedby refid="classnest_1_1IOManager_1a19ecf96537dddb09b4041429ed2d3463" compoundref="io__manager_8cpp" startline="169" endline="181">change_number_of_threads</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1ac04383c7a2581aabcc4b1e898e5d593c" compoundref="io__manager_8cpp" startline="370" endline="373">check_recording_backend_device_status</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1a391dcdfc0fb7aa519ea04e5d9fdc16db" compoundref="io__manager_8cpp" startline="276" endline="286">cleanup</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1a20229fa881d26f044ec89d751a714ae2" compoundref="io__manager_8cpp" startline="314" endline="327">enroll_recorder</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1a3be125abfc84273887bd4ac2c5141117" compoundref="io__manager_8cpp" startline="156" endline="166">finalize</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1ab528b0dba859be13b97059a90b6a3213" compoundref="io__manager_8cpp" startline="376" endline="379">get_recording_backend_device_defaults</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1acbeeb7fae3d8fcfb4e03be1299cdf367" compoundref="io__manager_8cpp" startline="382" endline="387">get_recording_backend_device_status</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1ad533f89beed43cfe1a551294d3291e4c" compoundref="io__manager_8cpp" startline="197" endline="203">get_recording_backend_status</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1ab9b64bde6b49a812f8bf79d2e751b92d" compoundref="io__manager_8cpp" startline="206" endline="225">get_status</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1a290ac3d72efc43aca30e9fee71a58e7d" compoundref="io__manager_8cpp" startline="126" endline="153">initialize</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1a00f78c1c44db5a6cb8be1b988ff900ff" compoundref="io__manager_8cpp" startline="289" endline="294">is_valid_recording_backend</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1af7b3cc35bfd52864025b750eb379419f" compoundref="io__manager_8cpp" startline="241" endline="251">post_run_hook</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1a9a8ec95f6913114fbed606cf6801eaf8" compoundref="io__manager_8cpp" startline="254" endline="260">post_step_hook</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1a0afe64b47ac69a05d8fa168cc07b52b4" compoundref="io__manager_8cpp" startline="228" endline="238">pre_run_hook</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1ac227a02839b2cf4a54ba8887bff313d8" compoundref="io__manager_8cpp" startline="263" endline="273">prepare</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1a2a04dad75c5bccb594d51f5e0f746bca" compoundref="io__manager__impl_8h" startline="32" endline="38">register_recording_backend</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1a17054a622ef0c78d6571c8333694244a" compoundref="io__manager_8cpp" startline="390" endline="401">register_recording_backends_</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1a51667a7f223ca51e759864a82d80a39d" compoundref="io__manager_8cpp" startline="184" endline="187">set_recording_backend_status</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1a1ef52fd4acb86875a81785cae38f6e05" compoundref="io__manager_8cpp" startline="361" endline="367">set_recording_value_names</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1a299c37aadcda0eea42aaf7e1ada51305" compoundref="io__manager_8cpp" startline="304" endline="311">write</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1a1295fec5e17aa380f14b7f400034026e" compoundref="io__manager_8cpp" startline="67" endline="77">~IOManager</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1IOManager_1a421dcc38292af7f9bb829b1c8861a692" prot="private" static="no" mutable="no">
+        <type>std::map&lt; <ref refid="className" kindref="compound">Name</ref>, <ref refid="classnest_1_1StimulationBackend" kindref="compound">StimulationBackend</ref> * &gt;</type>
+        <definition>std::map&lt; Name, StimulationBackend* &gt; nest::IOManager::stimulation_backends_</definition>
+        <argsstring></argsstring>
+        <name>stimulation_backends_</name>
+        <qualifiedname>nest::IOManager::stimulation_backends_</qualifiedname>
+        <briefdescription>
+<para>A mapping from names to registered stimulation backends. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="139" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" bodystart="139" bodyend="-1"/>
+        <referencedby refid="classnest_1_1IOManager_1a19ecf96537dddb09b4041429ed2d3463" compoundref="io__manager_8cpp" startline="169" endline="181">change_number_of_threads</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1a391dcdfc0fb7aa519ea04e5d9fdc16db" compoundref="io__manager_8cpp" startline="276" endline="286">cleanup</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1a3be125abfc84273887bd4ac2c5141117" compoundref="io__manager_8cpp" startline="156" endline="166">finalize</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1ab9b64bde6b49a812f8bf79d2e751b92d" compoundref="io__manager_8cpp" startline="206" endline="225">get_status</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1a290ac3d72efc43aca30e9fee71a58e7d" compoundref="io__manager_8cpp" startline="126" endline="153">initialize</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1ae5aa386da71806194e6c922d139b4538" compoundref="io__manager_8cpp" startline="297" endline="301">is_valid_stimulation_backend</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1af7b3cc35bfd52864025b750eb379419f" compoundref="io__manager_8cpp" startline="241" endline="251">post_run_hook</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1a0afe64b47ac69a05d8fa168cc07b52b4" compoundref="io__manager_8cpp" startline="228" endline="238">pre_run_hook</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1ac227a02839b2cf4a54ba8887bff313d8" compoundref="io__manager_8cpp" startline="263" endline="273">prepare</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1a93fb34fff0478627fe5c3b9658416791" compoundref="io__manager__impl_8h" startline="42" endline="51">register_stimulation_backend</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1a25beba751c707edbb87a3e5cca90ad3d" compoundref="io__manager_8cpp" startline="404" endline="409">register_stimulation_backends_</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1a1295fec5e17aa380f14b7f400034026e" compoundref="io__manager_8cpp" startline="67" endline="77">~IOManager</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1IOManager_1a290ac3d72efc43aca30e9fee71a58e7d" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::IOManager::initialize</definition>
+        <argsstring>() override</argsstring>
+        <name>initialize</name>
+        <qualifiedname>nest::IOManager::initialize</qualifiedname>
+        <reimplements refid="classnest_1_1ManagerInterface_1a43f881ab34500bff012a2514ad99ad79">initialize</reimplements>
+        <briefdescription>
+<para>Prepare manager for operation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>After this method has completed, the manager should be completely initialized and &quot;ready for action&quot;.</para>
+<para><simplesect kind="note"><para>Initialization of any given manager may depend on other managers having been initialized before. <ref refid="classnest_1_1KernelManager_1aa731562f03c98d8fa67f1d530056ede2" kindref="member">KernelManager::initialize()</ref> is responsible for calling the initialization routines on the specific managers in correct order.</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="classnest_1_1IOManager_1a3be125abfc84273887bd4ac2c5141117" kindref="member">finalize()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="46" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.cpp" bodystart="126" bodyend="153"/>
+        <references refid="namespacenest_1_1names_1a2eecb32fca25fe32bf85d680484516a8" compoundref="nest__names_8h" startline="141">nest::names::data_path</references>
+        <references refid="namespacenest_1_1names_1a02512f7bac0b606bf73365ed900de54a" compoundref="nest__names_8h" startline="142">nest::names::data_prefix</references>
+        <references refid="classnest_1_1IOManager_1ad22af7e76e6b1c714a1c091a6cac7fad" compoundref="io__manager_8h" startline="130">overwrite_files_</references>
+        <references refid="classnest_1_1IOManager_1a311bf44eae72b0da814da3f884b32c91" compoundref="io__manager_8h" startline="135">recording_backends_</references>
+        <references refid="classnest_1_1IOManager_1a88d6a0d1c97fb4dd1c477a5fdd902ff8" compoundref="io__manager_8cpp" startline="80" endline="123">set_data_path_prefix_</references>
+        <references refid="classnest_1_1IOManager_1a421dcc38292af7f9bb829b1c8861a692" compoundref="io__manager_8h" startline="139">stimulation_backends_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1a3be125abfc84273887bd4ac2c5141117" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::IOManager::finalize</definition>
+        <argsstring>() override</argsstring>
+        <name>finalize</name>
+        <qualifiedname>nest::IOManager::finalize</qualifiedname>
+        <reimplements refid="classnest_1_1ManagerInterface_1a329d00818a7c57d2c7f9e83dbed56606">finalize</reimplements>
+        <briefdescription>
+<para>Take down manager after operation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>After this method has completed, all dynamic data structures created by the manager shall be deallocated and containers emptied. Plain variables need not be reset.</para>
+<para><simplesect kind="note"><para>Finalization of any given manager may depend on other managers not having been finalized yet. <ref refid="classnest_1_1KernelManager_1a9e1cccd4670b1da1f68208afb5e6622f" kindref="member">KernelManager::finalize()</ref> is responsible for calling the initialization routines on the specific managers in correct order, i.e., the opposite order of <ref refid="classnest_1_1IOManager_1a290ac3d72efc43aca30e9fee71a58e7d" kindref="member">initialize()</ref> calls.</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="classnest_1_1IOManager_1a290ac3d72efc43aca30e9fee71a58e7d" kindref="member">initialize()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="47" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.cpp" bodystart="156" bodyend="166"/>
+        <references refid="classnest_1_1IOManager_1a311bf44eae72b0da814da3f884b32c91" compoundref="io__manager_8h" startline="135">recording_backends_</references>
+        <references refid="classnest_1_1IOManager_1a421dcc38292af7f9bb829b1c8861a692" compoundref="io__manager_8h" startline="139">stimulation_backends_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1a19ecf96537dddb09b4041429ed2d3463" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::IOManager::change_number_of_threads</definition>
+        <argsstring>() override</argsstring>
+        <name>change_number_of_threads</name>
+        <qualifiedname>nest::IOManager::change_number_of_threads</qualifiedname>
+        <reimplements refid="classnest_1_1ManagerInterface_1aa88c28844a59b4791eab4b7930fc62b0">change_number_of_threads</reimplements>
+        <briefdescription>
+<para>Change the number of threads. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Many data structures within the different managers depend on the number of threads. This function is called on each manager upon a change of that number and allows the manager to re-allocate data structures accordingly. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="48" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.cpp" bodystart="169" bodyend="181"/>
+        <references refid="classnest_1_1IOManager_1a311bf44eae72b0da814da3f884b32c91" compoundref="io__manager_8h" startline="135">recording_backends_</references>
+        <references refid="classnest_1_1IOManager_1a421dcc38292af7f9bb829b1c8861a692" compoundref="io__manager_8h" startline="139">stimulation_backends_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1a33572c6b6c01fb2e171a7087689899fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::IOManager::set_status</definition>
+        <argsstring>(const DictionaryDatum &amp;) override</argsstring>
+        <name>set_status</name>
+        <qualifiedname>nest::IOManager::set_status</qualifiedname>
+        <reimplements refid="classnest_1_1ManagerInterface_1ad940557204d456c167f541dd72c81193">set_status</reimplements>
+        <param>
+          <type>const <ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+          <defname>d</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="49" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.cpp" bodystart="190" bodyend="194"/>
+        <references refid="namespacenest_1_1names_1af30b8a34ad7e357ad4b09266e9983c35" compoundref="nest__names_8h" startline="355">nest::names::overwrite_files</references>
+        <references refid="classnest_1_1IOManager_1ad22af7e76e6b1c714a1c091a6cac7fad" compoundref="io__manager_8h" startline="130">overwrite_files_</references>
+        <references refid="classnest_1_1IOManager_1a88d6a0d1c97fb4dd1c477a5fdd902ff8" compoundref="io__manager_8cpp" startline="80" endline="123">set_data_path_prefix_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1ab9b64bde6b49a812f8bf79d2e751b92d" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::IOManager::get_status</definition>
+        <argsstring>(DictionaryDatum &amp;) override</argsstring>
+        <name>get_status</name>
+        <qualifiedname>nest::IOManager::get_status</qualifiedname>
+        <reimplements refid="classnest_1_1ManagerInterface_1a0935d5415eafd0bc54d2c01294595a80">get_status</reimplements>
+        <param>
+          <type><ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+          <defname>d</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="50" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.cpp" bodystart="206" bodyend="225"/>
+        <references refid="namespacenest_1_1names_1a2eecb32fca25fe32bf85d680484516a8" compoundref="nest__names_8h" startline="141">nest::names::data_path</references>
+        <references refid="classnest_1_1IOManager_1afd41792efb97d9e248a2bd16a112e686" compoundref="io__manager_8h" startline="128">data_path_</references>
+        <references refid="namespacenest_1_1names_1a02512f7bac0b606bf73365ed900de54a" compoundref="nest__names_8h" startline="142">nest::names::data_prefix</references>
+        <references refid="classnest_1_1IOManager_1abe8ff451d220ff8a568770a6fe652753" compoundref="io__manager_8h" startline="129">data_prefix_</references>
+        <references refid="namespacenest_1_1names_1af30b8a34ad7e357ad4b09266e9983c35" compoundref="nest__names_8h" startline="355">nest::names::overwrite_files</references>
+        <references refid="classnest_1_1IOManager_1ad22af7e76e6b1c714a1c091a6cac7fad" compoundref="io__manager_8h" startline="130">overwrite_files_</references>
+        <references refid="namespacenest_1_1names_1a4893c6f4efc20e7c52659c0f6fdbaf25" compoundref="nest__names_8h" startline="406">nest::names::recording_backends</references>
+        <references refid="classnest_1_1IOManager_1a311bf44eae72b0da814da3f884b32c91" compoundref="io__manager_8h" startline="135">recording_backends_</references>
+        <references refid="namespacenest_1_1names_1a907bbb8c1673da415ca974f83c707646" compoundref="nest__names_8h" startline="452">nest::names::stimulation_backends</references>
+        <references refid="classnest_1_1IOManager_1a421dcc38292af7f9bb829b1c8861a692" compoundref="io__manager_8h" startline="139">stimulation_backends_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1a51667a7f223ca51e759864a82d80a39d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::IOManager::set_recording_backend_status</definition>
+        <argsstring>(std::string, const DictionaryDatum &amp;)</argsstring>
+        <name>set_recording_backend_status</name>
+        <qualifiedname>nest::IOManager::set_recording_backend_status</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <defname>recording_backend</defname>
+        </param>
+        <param>
+          <type>const <ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+          <defname>d</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="52" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.cpp" bodystart="184" bodyend="187"/>
+        <references refid="classnest_1_1IOManager_1a311bf44eae72b0da814da3f884b32c91" compoundref="io__manager_8h" startline="135">recording_backends_</references>
+        <referencedby refid="namespacenest_1af18c7cd06bb7de7b85883a470ec1238e" compoundref="nest_8cpp" startline="277" endline="291">nest::set_model_defaults</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1ad533f89beed43cfe1a551294d3291e4c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref></type>
+        <definition>DictionaryDatum nest::IOManager::get_recording_backend_status</definition>
+        <argsstring>(std::string)</argsstring>
+        <name>get_recording_backend_status</name>
+        <qualifiedname>nest::IOManager::get_recording_backend_status</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <defname>recording_backend</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="53" column="19" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.cpp" bodystart="197" bodyend="203"/>
+        <references refid="namespacenest_1_1names_1ac1e5e69d82969d55a9e7111dfb40c95e" compoundref="nest__names_8h" startline="187">nest::names::element_type</references>
+        <references refid="classnest_1_1IOManager_1a311bf44eae72b0da814da3f884b32c91" compoundref="io__manager_8h" startline="135">recording_backends_</references>
+        <referencedby refid="namespacenest_1aacef87bbf60279472b2642b3c460bcde" compoundref="nest_8cpp" startline="294" endline="323">nest::get_model_defaults</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1a6bf0e3020cc5034b21e54b8d08aaf07d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::IOManager::IOManager</definition>
+        <argsstring>()</argsstring>
+        <name>IOManager</name>
+        <qualifiedname>nest::IOManager::IOManager</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="55" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.cpp" bodystart="60" bodyend="65"/>
+        <references refid="classnest_1_1IOManager_1a17054a622ef0c78d6571c8333694244a" compoundref="io__manager_8cpp" startline="390" endline="401">register_recording_backends_</references>
+        <references refid="classnest_1_1IOManager_1a25beba751c707edbb87a3e5cca90ad3d" compoundref="io__manager_8cpp" startline="404" endline="409">register_stimulation_backends_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1a1295fec5e17aa380f14b7f400034026e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::IOManager::~IOManager</definition>
+        <argsstring>() override</argsstring>
+        <name>~IOManager</name>
+        <qualifiedname>nest::IOManager::~IOManager</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="56" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.cpp" bodystart="67" bodyend="77"/>
+        <references refid="classnest_1_1IOManager_1a311bf44eae72b0da814da3f884b32c91" compoundref="io__manager_8h" startline="135">recording_backends_</references>
+        <references refid="classnest_1_1IOManager_1a421dcc38292af7f9bb829b1c8861a692" compoundref="io__manager_8h" startline="139">stimulation_backends_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1a5eda33427b6d2c6f82a60522cfec712a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; nest::IOManager::get_data_prefix</definition>
+        <argsstring>() const</argsstring>
+        <name>get_data_prefix</name>
+        <qualifiedname>nest::IOManager::get_data_prefix</qualifiedname>
+        <briefdescription>
+<para>The prefix for files written by devices. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The prefix must not contain any part of a path. <simplesect kind="see"><para>get_data_dir(), <ref refid="classnest_1_1IOManager_1a9f49317b6a8eb0022ce1bb05ff2a6b45" kindref="member">overwrite_files()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="63" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" bodystart="151" bodyend="154"/>
+        <referencedby refid="classnest_1_1RecordingBackendSIONlib_1a25ab28334000db7babef6da0ad4b7135" compoundref="recording__backend__sionlib_8cpp" startline="521" endline="532">nest::RecordingBackendSIONlib::build_filename_</referencedby>
+        <referencedby refid="structnest_1_1RecordingBackendASCII_1_1DeviceData_1a367cd4c751a9e1206399f660899d1b8f" compoundref="recording__backend__ascii_8cpp" startline="357" endline="374">nest::RecordingBackendASCII::DeviceData::compute_filename_</referencedby>
+        <referencedby refid="classnest_1_1RecordingBackendMPI_1ab513bfa6fb5e91f64f5823081810949e" compoundref="recording__backend__mpi_8cpp" startline="364" endline="393">nest::RecordingBackendMPI::get_port</referencedby>
+        <referencedby refid="classnest_1_1StimulationBackendMPI_1ad9f07bc17e1b324c915eda7c7db6a8e6" compoundref="stimulation__backend__mpi_8cpp" startline="292" endline="325">nest::StimulationBackendMPI::get_port</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1a51e836794c1c8c93e91e3d7da09bc659" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::string &amp;</type>
+        <definition>const std::string &amp; nest::IOManager::get_data_path</definition>
+        <argsstring>() const</argsstring>
+        <name>get_data_path</name>
+        <qualifiedname>nest::IOManager::get_data_path</qualifiedname>
+        <briefdescription>
+<para>The path for files written by devices. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>It may be the empty string (use current directory). <simplesect kind="see"><para><ref refid="classnest_1_1IOManager_1a5eda33427b6d2c6f82a60522cfec712a" kindref="member">get_data_prefix()</ref>, <ref refid="classnest_1_1IOManager_1a9f49317b6a8eb0022ce1bb05ff2a6b45" kindref="member">overwrite_files()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="70" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" bodystart="145" bodyend="148"/>
+        <references refid="classnest_1_1IOManager_1afd41792efb97d9e248a2bd16a112e686" compoundref="io__manager_8h" startline="128">data_path_</references>
+        <referencedby refid="classnest_1_1RecordingBackendSIONlib_1a25ab28334000db7babef6da0ad4b7135" compoundref="recording__backend__sionlib_8cpp" startline="521" endline="532">nest::RecordingBackendSIONlib::build_filename_</referencedby>
+        <referencedby refid="structnest_1_1RecordingBackendASCII_1_1DeviceData_1a367cd4c751a9e1206399f660899d1b8f" compoundref="recording__backend__ascii_8cpp" startline="357" endline="374">nest::RecordingBackendASCII::DeviceData::compute_filename_</referencedby>
+        <referencedby refid="classnest_1_1RecordingBackendMPI_1ab513bfa6fb5e91f64f5823081810949e" compoundref="recording__backend__mpi_8cpp" startline="364" endline="393">nest::RecordingBackendMPI::get_port</referencedby>
+        <referencedby refid="classnest_1_1StimulationBackendMPI_1ad9f07bc17e1b324c915eda7c7db6a8e6" compoundref="stimulation__backend__mpi_8cpp" startline="292" endline="325">nest::StimulationBackendMPI::get_port</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1a9f49317b6a8eb0022ce1bb05ff2a6b45" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::IOManager::overwrite_files</definition>
+        <argsstring>() const</argsstring>
+        <name>overwrite_files</name>
+        <qualifiedname>nest::IOManager::overwrite_files</qualifiedname>
+        <briefdescription>
+<para>Indicate if existing data files should be overwritten. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>true if existing data files should be overwritten by devices. Default: false. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="77" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" bodystart="157" bodyend="160"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1af7b3cc35bfd52864025b750eb379419f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::IOManager::post_run_hook</definition>
+        <argsstring>()</argsstring>
+        <name>post_run_hook</name>
+        <qualifiedname>nest::IOManager::post_run_hook</qualifiedname>
+        <briefdescription>
+<para>Clean up in all registered recording backends after a single call to run by calling the backends&apos; <ref refid="classnest_1_1IOManager_1af7b3cc35bfd52864025b750eb379419f" kindref="member">post_run_hook()</ref> functions. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="83" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.cpp" bodystart="241" bodyend="251"/>
+        <references refid="classnest_1_1IOManager_1a311bf44eae72b0da814da3f884b32c91" compoundref="io__manager_8h" startline="135">recording_backends_</references>
+        <references refid="classnest_1_1IOManager_1a421dcc38292af7f9bb829b1c8861a692" compoundref="io__manager_8h" startline="139">stimulation_backends_</references>
+        <referencedby refid="classnest_1_1SimulationManager_1af942eab41c595fc8769f067dfb31c84b" compoundref="simulation__manager_8cpp" startline="541" endline="597">nest::SimulationManager::run</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1a0afe64b47ac69a05d8fa168cc07b52b4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::IOManager::pre_run_hook</definition>
+        <argsstring>()</argsstring>
+        <name>pre_run_hook</name>
+        <qualifiedname>nest::IOManager::pre_run_hook</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="84" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.cpp" bodystart="228" bodyend="238"/>
+        <references refid="classnest_1_1IOManager_1a311bf44eae72b0da814da3f884b32c91" compoundref="io__manager_8h" startline="135">recording_backends_</references>
+        <references refid="classnest_1_1IOManager_1a421dcc38292af7f9bb829b1c8861a692" compoundref="io__manager_8h" startline="139">stimulation_backends_</references>
+        <referencedby refid="classnest_1_1SimulationManager_1af942eab41c595fc8769f067dfb31c84b" compoundref="simulation__manager_8cpp" startline="541" endline="597">nest::SimulationManager::run</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1a9a8ec95f6913114fbed606cf6801eaf8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::IOManager::post_step_hook</definition>
+        <argsstring>()</argsstring>
+        <name>post_step_hook</name>
+        <qualifiedname>nest::IOManager::post_step_hook</qualifiedname>
+        <briefdescription>
+<para>Clean up in all registered recording backends after a single simulation step by calling the backends&apos; <ref refid="classnest_1_1IOManager_1a9a8ec95f6913114fbed606cf6801eaf8" kindref="member">post_step_hook()</ref> functions. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="90" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.cpp" bodystart="254" bodyend="260"/>
+        <references refid="classnest_1_1IOManager_1a311bf44eae72b0da814da3f884b32c91" compoundref="io__manager_8h" startline="135">recording_backends_</references>
+        <referencedby refid="classnest_1_1SimulationManager_1a4ad2ea77edb56fb13176de0932bac835" compoundref="simulation__manager_8cpp" startline="763" endline="1062">nest::SimulationManager::update_</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1a391dcdfc0fb7aa519ea04e5d9fdc16db" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::IOManager::cleanup</definition>
+        <argsstring>() override</argsstring>
+        <name>cleanup</name>
+        <qualifiedname>nest::IOManager::cleanup</qualifiedname>
+        <reimplements refid="classnest_1_1ManagerInterface_1a883efc8a7266a9bc62d43e30cdd87147">cleanup</reimplements>
+        <briefdescription>
+<para>Finalize all registered recording backends after a call to SimulationManager::simulate() or <ref refid="classnest_1_1SimulationManager_1af2d373b936e4d432a688a78af29be0ce" kindref="member">SimulationManager::cleanup()</ref> by calling the backends&apos; <ref refid="classnest_1_1IOManager_1a3be125abfc84273887bd4ac2c5141117" kindref="member">finalize()</ref> functions. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="97" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.cpp" bodystart="276" bodyend="286"/>
+        <references refid="classnest_1_1IOManager_1a311bf44eae72b0da814da3f884b32c91" compoundref="io__manager_8h" startline="135">recording_backends_</references>
+        <references refid="classnest_1_1IOManager_1a421dcc38292af7f9bb829b1c8861a692" compoundref="io__manager_8h" startline="139">stimulation_backends_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1ac227a02839b2cf4a54ba8887bff313d8" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::IOManager::prepare</definition>
+        <argsstring>() override</argsstring>
+        <name>prepare</name>
+        <qualifiedname>nest::IOManager::prepare</qualifiedname>
+        <reimplements refid="classnest_1_1ManagerInterface_1a7a0e8989a48de50b52631e87ed3f2745">prepare</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="98" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.cpp" bodystart="263" bodyend="273"/>
+        <references refid="classnest_1_1IOManager_1a311bf44eae72b0da814da3f884b32c91" compoundref="io__manager_8h" startline="135">recording_backends_</references>
+        <references refid="classnest_1_1IOManager_1a421dcc38292af7f9bb829b1c8861a692" compoundref="io__manager_8h" startline="139">stimulation_backends_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1a2a04dad75c5bccb594d51f5e0f746bca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class RBT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void nest::IOManager::register_recording_backend</definition>
+        <argsstring>(Name)</argsstring>
+        <name>register_recording_backend</name>
+        <qualifiedname>nest::IOManager::register_recording_backend</qualifiedname>
+        <param>
+          <type><ref refid="className" kindref="compound">Name</ref></type>
+          <defname>name</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="101" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager_impl.h" bodystart="32" bodyend="38"/>
+        <references refid="classnest_1_1IOManager_1a311bf44eae72b0da814da3f884b32c91" compoundref="io__manager_8h" startline="135">recording_backends_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1a93fb34fff0478627fe5c3b9658416791" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class RBT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void nest::IOManager::register_stimulation_backend</definition>
+        <argsstring>(Name)</argsstring>
+        <name>register_stimulation_backend</name>
+        <qualifiedname>nest::IOManager::register_stimulation_backend</qualifiedname>
+        <param>
+          <type><ref refid="className" kindref="compound">Name</ref></type>
+          <defname>name</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="103" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager_impl.h" bodystart="42" bodyend="51"/>
+        <references refid="classnest_1_1IOManager_1a421dcc38292af7f9bb829b1c8861a692" compoundref="io__manager_8h" startline="139">stimulation_backends_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1a00f78c1c44db5a6cb8be1b988ff900ff" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::IOManager::is_valid_recording_backend</definition>
+        <argsstring>(const Name &amp;) const</argsstring>
+        <name>is_valid_recording_backend</name>
+        <qualifiedname>nest::IOManager::is_valid_recording_backend</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <defname>backend_name</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="105" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.cpp" bodystart="289" bodyend="294"/>
+        <references refid="classnest_1_1IOManager_1a311bf44eae72b0da814da3f884b32c91" compoundref="io__manager_8h" startline="135">recording_backends_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1ae5aa386da71806194e6c922d139b4538" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::IOManager::is_valid_stimulation_backend</definition>
+        <argsstring>(const Name &amp;) const</argsstring>
+        <name>is_valid_stimulation_backend</name>
+        <qualifiedname>nest::IOManager::is_valid_stimulation_backend</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <defname>backend_name</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="106" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.cpp" bodystart="297" bodyend="301"/>
+        <references refid="classnest_1_1IOManager_1a421dcc38292af7f9bb829b1c8861a692" compoundref="io__manager_8h" startline="139">stimulation_backends_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1a299c37aadcda0eea42aaf7e1ada51305" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::IOManager::write</definition>
+        <argsstring>(const Name &amp;, const RecordingDevice &amp;, const Event &amp;, const std::vector&lt; double &gt; &amp;, const std::vector&lt; long &gt; &amp;)</argsstring>
+        <name>write</name>
+        <qualifiedname>nest::IOManager::write</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <defname>backend_name</defname>
+        </param>
+        <param>
+          <type>const <ref refid="classnest_1_1RecordingDevice" kindref="compound">RecordingDevice</ref> &amp;</type>
+          <defname>device</defname>
+        </param>
+        <param>
+          <type>const <ref refid="classnest_1_1Event" kindref="compound">Event</ref> &amp;</type>
+          <defname>event</defname>
+        </param>
+        <param>
+          <type>const std::vector&lt; double &gt; &amp;</type>
+          <defname>double_values</defname>
+        </param>
+        <param>
+          <type>const std::vector&lt; long &gt; &amp;</type>
+          <defname>long_values</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="109" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.cpp" bodystart="304" bodyend="311"/>
+        <references refid="classnest_1_1IOManager_1a311bf44eae72b0da814da3f884b32c91" compoundref="io__manager_8h" startline="135">recording_backends_</references>
+        <referencedby refid="classnest_1_1RecordingDevice_1a79b4d2540dc042282d81d1e7d41fdf81" compoundref="recording__device_8cpp" startline="212" endline="218">nest::RecordingDevice::write</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1a20229fa881d26f044ec89d751a714ae2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::IOManager::enroll_recorder</definition>
+        <argsstring>(const Name &amp;, const RecordingDevice &amp;, const DictionaryDatum &amp;)</argsstring>
+        <name>enroll_recorder</name>
+        <qualifiedname>nest::IOManager::enroll_recorder</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <defname>backend_name</defname>
+        </param>
+        <param>
+          <type>const <ref refid="classnest_1_1RecordingDevice" kindref="compound">RecordingDevice</ref> &amp;</type>
+          <defname>device</defname>
+        </param>
+        <param>
+          <type>const <ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="111" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.cpp" bodystart="314" bodyend="327"/>
+        <references refid="classnest_1_1IOManager_1a311bf44eae72b0da814da3f884b32c91" compoundref="io__manager_8h" startline="135">recording_backends_</references>
+        <referencedby refid="classnest_1_1RecordingDevice_1ab77a88eadcacbb992e706e55aa88627a" compoundref="recording__device_8cpp" startline="46" endline="49">nest::RecordingDevice::set_initialized_</referencedby>
+        <referencedby refid="classnest_1_1RecordingDevice_1a466c7b9ed8d05e9d42eed08009dc81e0" compoundref="recording__device_8cpp" startline="125" endline="174">nest::RecordingDevice::set_status</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1a93eb34572bc45de2fb2aa093756c6a43" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::IOManager::enroll_stimulator</definition>
+        <argsstring>(const Name &amp;, StimulationDevice &amp;, const DictionaryDatum &amp;)</argsstring>
+        <name>enroll_stimulator</name>
+        <qualifiedname>nest::IOManager::enroll_stimulator</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <defname>backend_name</defname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1StimulationDevice" kindref="compound">StimulationDevice</ref> &amp;</type>
+          <defname>device</defname>
+        </param>
+        <param>
+          <type>const <ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="112" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.cpp" bodystart="330" bodyend="358"/>
+        <references refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" compoundref="name_8cc" startline="72" endline="75">Name::toString</references>
+        <referencedby refid="classnest_1_1StimulationDevice_1ac67e5262a139223625a3eea557e7aa45" compoundref="stimulation__device_8cpp" startline="79" endline="82">nest::StimulationDevice::set_initialized_</referencedby>
+        <referencedby refid="classnest_1_1StimulationDevice_1a1ebf88604667e02e4070d73ffcc63845" compoundref="stimulation__device_8cpp" startline="123" endline="162">nest::StimulationDevice::set_status</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1a1ef52fd4acb86875a81785cae38f6e05" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::IOManager::set_recording_value_names</definition>
+        <argsstring>(const Name &amp;backend_name, const RecordingDevice &amp;device, const std::vector&lt; Name &gt; &amp;double_value_names, const std::vector&lt; Name &gt; &amp;long_value_names)</argsstring>
+        <name>set_recording_value_names</name>
+        <qualifiedname>nest::IOManager::set_recording_value_names</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <declname>backend_name</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classnest_1_1RecordingDevice" kindref="compound">RecordingDevice</ref> &amp;</type>
+          <declname>device</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; <ref refid="className" kindref="compound">Name</ref> &gt; &amp;</type>
+          <declname>double_value_names</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; <ref refid="className" kindref="compound">Name</ref> &gt; &amp;</type>
+          <declname>long_value_names</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="114" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.cpp" bodystart="361" bodyend="367"/>
+        <references refid="classnest_1_1IOManager_1a311bf44eae72b0da814da3f884b32c91" compoundref="io__manager_8h" startline="135">recording_backends_</references>
+        <referencedby refid="classnest_1_1RecordingDevice_1a2d1416e38bec46975b4b79ba2e042fed" compoundref="recording__device_8cpp" startline="52" endline="57">nest::RecordingDevice::pre_run_hook</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1ac04383c7a2581aabcc4b1e898e5d593c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::IOManager::check_recording_backend_device_status</definition>
+        <argsstring>(const Name &amp;, const DictionaryDatum &amp;)</argsstring>
+        <name>check_recording_backend_device_status</name>
+        <qualifiedname>nest::IOManager::check_recording_backend_device_status</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <defname>backend_name</defname>
+        </param>
+        <param>
+          <type>const <ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="119" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.cpp" bodystart="370" bodyend="373"/>
+        <references refid="classnest_1_1IOManager_1a311bf44eae72b0da814da3f884b32c91" compoundref="io__manager_8h" startline="135">recording_backends_</references>
+        <referencedby refid="classnest_1_1RecordingDevice_1a466c7b9ed8d05e9d42eed08009dc81e0" compoundref="recording__device_8cpp" startline="125" endline="174">nest::RecordingDevice::set_status</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1ab528b0dba859be13b97059a90b6a3213" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::IOManager::get_recording_backend_device_defaults</definition>
+        <argsstring>(const Name &amp;, DictionaryDatum &amp;)</argsstring>
+        <name>get_recording_backend_device_defaults</name>
+        <qualifiedname>nest::IOManager::get_recording_backend_device_defaults</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <defname>backend_name</defname>
+        </param>
+        <param>
+          <type><ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+          <defname>params</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="120" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.cpp" bodystart="376" bodyend="379"/>
+        <references refid="classnest_1_1IOManager_1a311bf44eae72b0da814da3f884b32c91" compoundref="io__manager_8h" startline="135">recording_backends_</references>
+        <referencedby refid="classnest_1_1RecordingDevice_1a60b60f1790b78bdaca10bf6d30ac3930" compoundref="recording__device_8cpp" startline="177" endline="201">nest::RecordingDevice::get_status</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1acbeeb7fae3d8fcfb4e03be1299cdf367" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::IOManager::get_recording_backend_device_status</definition>
+        <argsstring>(const Name &amp;, const RecordingDevice &amp;, DictionaryDatum &amp;)</argsstring>
+        <name>get_recording_backend_device_status</name>
+        <qualifiedname>nest::IOManager::get_recording_backend_device_status</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <defname>backend_name</defname>
+        </param>
+        <param>
+          <type>const <ref refid="classnest_1_1RecordingDevice" kindref="compound">RecordingDevice</ref> &amp;</type>
+          <defname>device</defname>
+        </param>
+        <param>
+          <type><ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+          <defname>d</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="121" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.cpp" bodystart="382" bodyend="387"/>
+        <references refid="classnest_1_1IOManager_1a311bf44eae72b0da814da3f884b32c91" compoundref="io__manager_8h" startline="135">recording_backends_</references>
+        <referencedby refid="classnest_1_1RecordingDevice_1a60b60f1790b78bdaca10bf6d30ac3930" compoundref="recording__device_8cpp" startline="177" endline="201">nest::RecordingDevice::get_status</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classnest_1_1IOManager_1a88d6a0d1c97fb4dd1c477a5fdd902ff8" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::IOManager::set_data_path_prefix_</definition>
+        <argsstring>(const DictionaryDatum &amp;)</argsstring>
+        <name>set_data_path_prefix_</name>
+        <qualifiedname>nest::IOManager::set_data_path_prefix_</qualifiedname>
+        <param>
+          <type>const <ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+          <defname>dict</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="124" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.cpp" bodystart="80" bodyend="123"/>
+        <references refid="namespacenest_1_1names_1a2eecb32fca25fe32bf85d680484516a8" compoundref="nest__names_8h" startline="141">nest::names::data_path</references>
+        <references refid="classnest_1_1IOManager_1afd41792efb97d9e248a2bd16a112e686" compoundref="io__manager_8h" startline="128">data_path_</references>
+        <references refid="namespacenest_1_1names_1a02512f7bac0b606bf73365ed900de54a" compoundref="nest__names_8h" startline="142">nest::names::data_prefix</references>
+        <references refid="classnest_1_1IOManager_1abe8ff451d220ff8a568770a6fe652753" compoundref="io__manager_8h" startline="129">data_prefix_</references>
+        <references refid="logging_8h_1a4fb9f400c7eade44c47bea4b934d580f" compoundref="logging_8h" startline="29">LOG</references>
+        <references refid="namespacenest_1a17a14d5aa7e8d94ec67eefc2b148eb72adaf8dec0ca154ba4dd8045accef88b46" compoundref="logging_8h" startline="58">nest::M_ERROR</references>
+        <referencedby refid="classnest_1_1IOManager_1a290ac3d72efc43aca30e9fee71a58e7d" compoundref="io__manager_8cpp" startline="126" endline="153">initialize</referencedby>
+        <referencedby refid="classnest_1_1IOManager_1a33572c6b6c01fb2e171a7087689899fd" compoundref="io__manager_8cpp" startline="190" endline="194">set_status</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1a17054a622ef0c78d6571c8333694244a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::IOManager::register_recording_backends_</definition>
+        <argsstring>()</argsstring>
+        <name>register_recording_backends_</name>
+        <qualifiedname>nest::IOManager::register_recording_backends_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="125" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.cpp" bodystart="390" bodyend="401"/>
+        <references refid="classnest_1_1IOManager_1a311bf44eae72b0da814da3f884b32c91" compoundref="io__manager_8h" startline="135">recording_backends_</references>
+        <referencedby refid="classnest_1_1IOManager_1a6bf0e3020cc5034b21e54b8d08aaf07d" compoundref="io__manager_8cpp" startline="60" endline="65">IOManager</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1IOManager_1a25beba751c707edbb87a3e5cca90ad3d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::IOManager::register_stimulation_backends_</definition>
+        <argsstring>()</argsstring>
+        <name>register_stimulation_backends_</name>
+        <qualifiedname>nest::IOManager::register_stimulation_backends_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="126" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.cpp" bodystart="404" bodyend="409"/>
+        <references refid="classnest_1_1IOManager_1a421dcc38292af7f9bb829b1c8861a692" compoundref="io__manager_8h" startline="139">stimulation_backends_</references>
+        <referencedby refid="classnest_1_1IOManager_1a6bf0e3020cc5034b21e54b8d08aaf07d" compoundref="io__manager_8cpp" startline="60" endline="65">IOManager</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>nest::IOManager</label>
+        <link refid="classnest_1_1IOManager"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>nest::ManagerInterface</label>
+        <link refid="classnest_1_1ManagerInterface"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>nest::IOManager</label>
+        <link refid="classnest_1_1IOManager"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>nest::ManagerInterface</label>
+        <link refid="classnest_1_1ManagerInterface"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" line="43" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/io_manager.h" bodystart="44" bodyend="140"/>
+    <listofallmembers>
+      <member refid="classnest_1_1IOManager_1a19ecf96537dddb09b4041429ed2d3463" prot="public" virt="virtual"><scope>nest::IOManager</scope><name>change_number_of_threads</name></member>
+      <member refid="classnest_1_1IOManager_1ac04383c7a2581aabcc4b1e898e5d593c" prot="public" virt="non-virtual"><scope>nest::IOManager</scope><name>check_recording_backend_device_status</name></member>
+      <member refid="classnest_1_1IOManager_1a391dcdfc0fb7aa519ea04e5d9fdc16db" prot="public" virt="virtual"><scope>nest::IOManager</scope><name>cleanup</name></member>
+      <member refid="classnest_1_1IOManager_1afd41792efb97d9e248a2bd16a112e686" prot="private" virt="non-virtual"><scope>nest::IOManager</scope><name>data_path_</name></member>
+      <member refid="classnest_1_1IOManager_1abe8ff451d220ff8a568770a6fe652753" prot="private" virt="non-virtual"><scope>nest::IOManager</scope><name>data_prefix_</name></member>
+      <member refid="classnest_1_1IOManager_1a20229fa881d26f044ec89d751a714ae2" prot="public" virt="non-virtual"><scope>nest::IOManager</scope><name>enroll_recorder</name></member>
+      <member refid="classnest_1_1IOManager_1a93eb34572bc45de2fb2aa093756c6a43" prot="public" virt="non-virtual"><scope>nest::IOManager</scope><name>enroll_stimulator</name></member>
+      <member refid="classnest_1_1IOManager_1a3be125abfc84273887bd4ac2c5141117" prot="public" virt="virtual"><scope>nest::IOManager</scope><name>finalize</name></member>
+      <member refid="classnest_1_1IOManager_1a51e836794c1c8c93e91e3d7da09bc659" prot="public" virt="non-virtual"><scope>nest::IOManager</scope><name>get_data_path</name></member>
+      <member refid="classnest_1_1IOManager_1a5eda33427b6d2c6f82a60522cfec712a" prot="public" virt="non-virtual"><scope>nest::IOManager</scope><name>get_data_prefix</name></member>
+      <member refid="classnest_1_1IOManager_1ab528b0dba859be13b97059a90b6a3213" prot="public" virt="non-virtual"><scope>nest::IOManager</scope><name>get_recording_backend_device_defaults</name></member>
+      <member refid="classnest_1_1IOManager_1acbeeb7fae3d8fcfb4e03be1299cdf367" prot="public" virt="non-virtual"><scope>nest::IOManager</scope><name>get_recording_backend_device_status</name></member>
+      <member refid="classnest_1_1IOManager_1ad533f89beed43cfe1a551294d3291e4c" prot="public" virt="non-virtual"><scope>nest::IOManager</scope><name>get_recording_backend_status</name></member>
+      <member refid="classnest_1_1IOManager_1ab9b64bde6b49a812f8bf79d2e751b92d" prot="public" virt="virtual"><scope>nest::IOManager</scope><name>get_status</name></member>
+      <member refid="classnest_1_1IOManager_1a290ac3d72efc43aca30e9fee71a58e7d" prot="public" virt="virtual"><scope>nest::IOManager</scope><name>initialize</name></member>
+      <member refid="classnest_1_1IOManager_1a6bf0e3020cc5034b21e54b8d08aaf07d" prot="public" virt="non-virtual"><scope>nest::IOManager</scope><name>IOManager</name></member>
+      <member refid="classnest_1_1IOManager_1a00f78c1c44db5a6cb8be1b988ff900ff" prot="public" virt="non-virtual"><scope>nest::IOManager</scope><name>is_valid_recording_backend</name></member>
+      <member refid="classnest_1_1IOManager_1ae5aa386da71806194e6c922d139b4538" prot="public" virt="non-virtual"><scope>nest::IOManager</scope><name>is_valid_stimulation_backend</name></member>
+      <member refid="classnest_1_1ManagerInterface_1aeb056937c69d73ba501bab2fb371a56c" prot="public" virt="non-virtual"><scope>nest::IOManager</scope><name>ManagerInterface</name></member>
+      <member refid="classnest_1_1ManagerInterface_1af07ff595521c144ddb81899fec66e251" prot="public" virt="non-virtual"><scope>nest::IOManager</scope><name>ManagerInterface</name></member>
+      <member refid="classnest_1_1ManagerInterface_1a9889d8ee2a6bd5f1799e86aed555db5e" prot="public" virt="non-virtual"><scope>nest::IOManager</scope><name>operator=</name></member>
+      <member refid="classnest_1_1IOManager_1a9f49317b6a8eb0022ce1bb05ff2a6b45" prot="public" virt="non-virtual"><scope>nest::IOManager</scope><name>overwrite_files</name></member>
+      <member refid="classnest_1_1IOManager_1ad22af7e76e6b1c714a1c091a6cac7fad" prot="private" virt="non-virtual"><scope>nest::IOManager</scope><name>overwrite_files_</name></member>
+      <member refid="classnest_1_1IOManager_1af7b3cc35bfd52864025b750eb379419f" prot="public" virt="non-virtual"><scope>nest::IOManager</scope><name>post_run_hook</name></member>
+      <member refid="classnest_1_1IOManager_1a9a8ec95f6913114fbed606cf6801eaf8" prot="public" virt="non-virtual"><scope>nest::IOManager</scope><name>post_step_hook</name></member>
+      <member refid="classnest_1_1IOManager_1a0afe64b47ac69a05d8fa168cc07b52b4" prot="public" virt="non-virtual"><scope>nest::IOManager</scope><name>pre_run_hook</name></member>
+      <member refid="classnest_1_1IOManager_1ac227a02839b2cf4a54ba8887bff313d8" prot="public" virt="virtual"><scope>nest::IOManager</scope><name>prepare</name></member>
+      <member refid="classnest_1_1IOManager_1a311bf44eae72b0da814da3f884b32c91" prot="private" virt="non-virtual"><scope>nest::IOManager</scope><name>recording_backends_</name></member>
+      <member refid="classnest_1_1IOManager_1a2a04dad75c5bccb594d51f5e0f746bca" prot="public" virt="non-virtual"><scope>nest::IOManager</scope><name>register_recording_backend</name></member>
+      <member refid="classnest_1_1IOManager_1a17054a622ef0c78d6571c8333694244a" prot="private" virt="non-virtual"><scope>nest::IOManager</scope><name>register_recording_backends_</name></member>
+      <member refid="classnest_1_1IOManager_1a93fb34fff0478627fe5c3b9658416791" prot="public" virt="non-virtual"><scope>nest::IOManager</scope><name>register_stimulation_backend</name></member>
+      <member refid="classnest_1_1IOManager_1a25beba751c707edbb87a3e5cca90ad3d" prot="private" virt="non-virtual"><scope>nest::IOManager</scope><name>register_stimulation_backends_</name></member>
+      <member refid="classnest_1_1IOManager_1a88d6a0d1c97fb4dd1c477a5fdd902ff8" prot="private" virt="non-virtual"><scope>nest::IOManager</scope><name>set_data_path_prefix_</name></member>
+      <member refid="classnest_1_1IOManager_1a51667a7f223ca51e759864a82d80a39d" prot="public" virt="non-virtual"><scope>nest::IOManager</scope><name>set_recording_backend_status</name></member>
+      <member refid="classnest_1_1IOManager_1a1ef52fd4acb86875a81785cae38f6e05" prot="public" virt="non-virtual"><scope>nest::IOManager</scope><name>set_recording_value_names</name></member>
+      <member refid="classnest_1_1IOManager_1a33572c6b6c01fb2e171a7087689899fd" prot="public" virt="virtual"><scope>nest::IOManager</scope><name>set_status</name></member>
+      <member refid="classnest_1_1IOManager_1a421dcc38292af7f9bb829b1c8861a692" prot="private" virt="non-virtual"><scope>nest::IOManager</scope><name>stimulation_backends_</name></member>
+      <member refid="classnest_1_1IOManager_1a299c37aadcda0eea42aaf7e1ada51305" prot="public" virt="non-virtual"><scope>nest::IOManager</scope><name>write</name></member>
+      <member refid="classnest_1_1IOManager_1a1295fec5e17aa380f14b7f400034026e" prot="public" virt="non-virtual"><scope>nest::IOManager</scope><name>~IOManager</name></member>
+      <member refid="classnest_1_1ManagerInterface_1ac60a79d2ba0a48f1b039ab1f9d502ec4" prot="public" virt="virtual"><scope>nest::IOManager</scope><name>~ManagerInterface</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

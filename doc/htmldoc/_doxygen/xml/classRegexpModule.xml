@@ -1,0 +1,596 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classRegexpModule" kind="class" language="C++" prot="public">
+    <compoundname>RegexpModule</compoundname>
+    <basecompoundref refid="classSLIModule" prot="public" virt="non-virtual">SLIModule</basecompoundref>
+    <includes refid="sliregexp_8h" local="no">sliregexp.h</includes>
+    <innerclass refid="classRegexpModule_1_1RegcompFunction" prot="private">RegexpModule::RegcompFunction</innerclass>
+    <innerclass refid="classRegexpModule_1_1RegerrorFunction" prot="private">RegexpModule::RegerrorFunction</innerclass>
+    <innerclass refid="classRegexpModule_1_1RegexecFunction" prot="private">RegexpModule::RegexecFunction</innerclass>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classRegexpModule_1af45d8d2bc136bf0dfc9cfe63a59e0e5d" prot="public" static="no" mutable="no">
+        <type><ref refid="classRegexpModule_1_1RegcompFunction" kindref="compound">RegcompFunction</ref></type>
+        <definition>RegcompFunction RegexpModule::regcompfunction</definition>
+        <argsstring></argsstring>
+        <name>regcompfunction</name>
+        <qualifiedname>RegexpModule::regcompfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="67" column="19" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="67" bodyend="-1"/>
+        <referencedby refid="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa" compoundref="sliregexp_8cc" startline="62" endline="93">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classRegexpModule_1a08227ad4ee82b151c3105202c637ba86" prot="public" static="no" mutable="no">
+        <type><ref refid="classRegexpModule_1_1RegexecFunction" kindref="compound">RegexecFunction</ref></type>
+        <definition>RegexecFunction RegexpModule::regexecfunction</definition>
+        <argsstring></argsstring>
+        <name>regexecfunction</name>
+        <qualifiedname>RegexpModule::regexecfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="68" column="19" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="68" bodyend="-1"/>
+        <referencedby refid="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa" compoundref="sliregexp_8cc" startline="62" endline="93">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classRegexpModule_1a8c48f37d99c0bfb12a192f5451307566" prot="public" static="no" mutable="no">
+        <type><ref refid="classRegexpModule_1_1RegerrorFunction" kindref="compound">RegerrorFunction</ref></type>
+        <definition>RegerrorFunction RegexpModule::regerrorfunction</definition>
+        <argsstring></argsstring>
+        <name>regerrorfunction</name>
+        <qualifiedname>RegexpModule::regerrorfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="69" column="20" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="69" bodyend="-1"/>
+        <referencedby refid="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa" compoundref="sliregexp_8cc" startline="62" endline="93">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classRegexpModule_1a3a320e54c79e2c4668a0e30a30e644e0" prot="public" static="no" mutable="no">
+        <type>const <ref refid="className" kindref="compound">Name</ref></type>
+        <definition>const Name RegexpModule::regexdict_name</definition>
+        <argsstring></argsstring>
+        <name>regexdict_name</name>
+        <qualifiedname>RegexpModule::regexdict_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="71" column="14" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="71" bodyend="-1"/>
+        <referencedby refid="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa" compoundref="sliregexp_8cc" startline="62" endline="93">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classRegexpModule_1a9a72ce5fff03abc800ef8e84f2211cdb" prot="public" static="no" mutable="no">
+        <type>const <ref refid="className" kindref="compound">Name</ref></type>
+        <definition>const Name RegexpModule::REG_NOTBOL_name</definition>
+        <argsstring></argsstring>
+        <name>REG_NOTBOL_name</name>
+        <qualifiedname>RegexpModule::REG_NOTBOL_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="73" column="14" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="73" bodyend="-1"/>
+        <referencedby refid="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa" compoundref="sliregexp_8cc" startline="62" endline="93">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classRegexpModule_1ab910b89633a9aa2550c23f5e02666a01" prot="public" static="no" mutable="no">
+        <type>const <ref refid="className" kindref="compound">Name</ref></type>
+        <definition>const Name RegexpModule::REG_NOTEOL_name</definition>
+        <argsstring></argsstring>
+        <name>REG_NOTEOL_name</name>
+        <qualifiedname>RegexpModule::REG_NOTEOL_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="74" column="14" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="74" bodyend="-1"/>
+        <referencedby refid="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa" compoundref="sliregexp_8cc" startline="62" endline="93">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classRegexpModule_1a9acd7b71f3f0ed0652f141c41564c009" prot="public" static="no" mutable="no">
+        <type>const <ref refid="className" kindref="compound">Name</ref></type>
+        <definition>const Name RegexpModule::REG_ESPACE_name</definition>
+        <argsstring></argsstring>
+        <name>REG_ESPACE_name</name>
+        <qualifiedname>RegexpModule::REG_ESPACE_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="75" column="14" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="75" bodyend="-1"/>
+        <referencedby refid="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa" compoundref="sliregexp_8cc" startline="62" endline="93">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classRegexpModule_1a5770d6a651730f4d4d5e6c39c800db84" prot="public" static="no" mutable="no">
+        <type>const <ref refid="className" kindref="compound">Name</ref></type>
+        <definition>const Name RegexpModule::REG_BADPAT_name</definition>
+        <argsstring></argsstring>
+        <name>REG_BADPAT_name</name>
+        <qualifiedname>RegexpModule::REG_BADPAT_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="76" column="14" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="76" bodyend="-1"/>
+        <referencedby refid="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa" compoundref="sliregexp_8cc" startline="62" endline="93">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classRegexpModule_1ae9af8b137be0c0013b4fcee3cbf755af" prot="public" static="no" mutable="no">
+        <type>const <ref refid="className" kindref="compound">Name</ref></type>
+        <definition>const Name RegexpModule::REG_EXTENDED_name</definition>
+        <argsstring></argsstring>
+        <name>REG_EXTENDED_name</name>
+        <qualifiedname>RegexpModule::REG_EXTENDED_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="77" column="14" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="77" bodyend="-1"/>
+        <referencedby refid="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa" compoundref="sliregexp_8cc" startline="62" endline="93">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classRegexpModule_1af7dab9511de9752f0404f1623f35b381" prot="public" static="no" mutable="no">
+        <type>const <ref refid="className" kindref="compound">Name</ref></type>
+        <definition>const Name RegexpModule::REG_ICASE_name</definition>
+        <argsstring></argsstring>
+        <name>REG_ICASE_name</name>
+        <qualifiedname>RegexpModule::REG_ICASE_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="78" column="14" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="78" bodyend="-1"/>
+        <referencedby refid="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa" compoundref="sliregexp_8cc" startline="62" endline="93">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classRegexpModule_1a49ed62edbb043cc20a7d4ecfbc220ca5" prot="public" static="no" mutable="no">
+        <type>const <ref refid="className" kindref="compound">Name</ref></type>
+        <definition>const Name RegexpModule::REG_NOSUB_name</definition>
+        <argsstring></argsstring>
+        <name>REG_NOSUB_name</name>
+        <qualifiedname>RegexpModule::REG_NOSUB_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="79" column="14" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="79" bodyend="-1"/>
+        <referencedby refid="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa" compoundref="sliregexp_8cc" startline="62" endline="93">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classRegexpModule_1a648b81b43282cbf13dc27a669c0406c4" prot="public" static="no" mutable="no">
+        <type>const <ref refid="className" kindref="compound">Name</ref></type>
+        <definition>const Name RegexpModule::REG_NEWLINE_name</definition>
+        <argsstring></argsstring>
+        <name>REG_NEWLINE_name</name>
+        <qualifiedname>RegexpModule::REG_NEWLINE_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="80" column="14" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="80" bodyend="-1"/>
+        <referencedby refid="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa" compoundref="sliregexp_8cc" startline="62" endline="93">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classRegexpModule_1a6ec2f52e75cd5f0380ee41708e5fe690" prot="public" static="no" mutable="no">
+        <type>const <ref refid="className" kindref="compound">Name</ref></type>
+        <definition>const Name RegexpModule::REG_ECOLLATE_name</definition>
+        <argsstring></argsstring>
+        <name>REG_ECOLLATE_name</name>
+        <qualifiedname>RegexpModule::REG_ECOLLATE_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="81" column="14" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="81" bodyend="-1"/>
+        <referencedby refid="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa" compoundref="sliregexp_8cc" startline="62" endline="93">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classRegexpModule_1a4e55a87b2fcc2fb582cf7b217eaa413d" prot="public" static="no" mutable="no">
+        <type>const <ref refid="className" kindref="compound">Name</ref></type>
+        <definition>const Name RegexpModule::REG_ECTYPE_name</definition>
+        <argsstring></argsstring>
+        <name>REG_ECTYPE_name</name>
+        <qualifiedname>RegexpModule::REG_ECTYPE_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="82" column="14" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="82" bodyend="-1"/>
+        <referencedby refid="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa" compoundref="sliregexp_8cc" startline="62" endline="93">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classRegexpModule_1ace3417847a6a265e3d636772c82dc240" prot="public" static="no" mutable="no">
+        <type>const <ref refid="className" kindref="compound">Name</ref></type>
+        <definition>const Name RegexpModule::REG_EESCAPE_name</definition>
+        <argsstring></argsstring>
+        <name>REG_EESCAPE_name</name>
+        <qualifiedname>RegexpModule::REG_EESCAPE_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="83" column="14" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="83" bodyend="-1"/>
+        <referencedby refid="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa" compoundref="sliregexp_8cc" startline="62" endline="93">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classRegexpModule_1a9ca25044aeaa5b5a7cc5ae12665ee08f" prot="public" static="no" mutable="no">
+        <type>const <ref refid="className" kindref="compound">Name</ref></type>
+        <definition>const Name RegexpModule::REG_ESUBREG_name</definition>
+        <argsstring></argsstring>
+        <name>REG_ESUBREG_name</name>
+        <qualifiedname>RegexpModule::REG_ESUBREG_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="84" column="14" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="84" bodyend="-1"/>
+        <referencedby refid="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa" compoundref="sliregexp_8cc" startline="62" endline="93">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classRegexpModule_1a55aba14786000d2069bc8e15fe36e4d0" prot="public" static="no" mutable="no">
+        <type>const <ref refid="className" kindref="compound">Name</ref></type>
+        <definition>const Name RegexpModule::REG_EBRACK_name</definition>
+        <argsstring></argsstring>
+        <name>REG_EBRACK_name</name>
+        <qualifiedname>RegexpModule::REG_EBRACK_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="85" column="14" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="85" bodyend="-1"/>
+        <referencedby refid="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa" compoundref="sliregexp_8cc" startline="62" endline="93">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classRegexpModule_1a50f9ede44ed47b296ee068c7e3a3bc66" prot="public" static="no" mutable="no">
+        <type>const <ref refid="className" kindref="compound">Name</ref></type>
+        <definition>const Name RegexpModule::REG_EPAREN_name</definition>
+        <argsstring></argsstring>
+        <name>REG_EPAREN_name</name>
+        <qualifiedname>RegexpModule::REG_EPAREN_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="86" column="14" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="86" bodyend="-1"/>
+        <referencedby refid="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa" compoundref="sliregexp_8cc" startline="62" endline="93">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classRegexpModule_1a76fa9c6054e57af221b5026a1b54cb88" prot="public" static="no" mutable="no">
+        <type>const <ref refid="className" kindref="compound">Name</ref></type>
+        <definition>const Name RegexpModule::REG_EBRACE_name</definition>
+        <argsstring></argsstring>
+        <name>REG_EBRACE_name</name>
+        <qualifiedname>RegexpModule::REG_EBRACE_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="87" column="14" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="87" bodyend="-1"/>
+        <referencedby refid="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa" compoundref="sliregexp_8cc" startline="62" endline="93">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classRegexpModule_1ab212a0ec960394c63364c6f550f533bd" prot="public" static="no" mutable="no">
+        <type>const <ref refid="className" kindref="compound">Name</ref></type>
+        <definition>const Name RegexpModule::REG_BADBR_name</definition>
+        <argsstring></argsstring>
+        <name>REG_BADBR_name</name>
+        <qualifiedname>RegexpModule::REG_BADBR_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="88" column="14" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="88" bodyend="-1"/>
+        <referencedby refid="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa" compoundref="sliregexp_8cc" startline="62" endline="93">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classRegexpModule_1ade07e7ac7564c550eb45942192a0ef2d" prot="public" static="no" mutable="no">
+        <type>const <ref refid="className" kindref="compound">Name</ref></type>
+        <definition>const Name RegexpModule::REG_ERANGE_name</definition>
+        <argsstring></argsstring>
+        <name>REG_ERANGE_name</name>
+        <qualifiedname>RegexpModule::REG_ERANGE_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="89" column="14" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="89" bodyend="-1"/>
+        <referencedby refid="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa" compoundref="sliregexp_8cc" startline="62" endline="93">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classRegexpModule_1a37ccb83267d6a845beeed37a1142fa09" prot="public" static="no" mutable="no">
+        <type>const <ref refid="className" kindref="compound">Name</ref></type>
+        <definition>const Name RegexpModule::REG_BADRPT_name</definition>
+        <argsstring></argsstring>
+        <name>REG_BADRPT_name</name>
+        <qualifiedname>RegexpModule::REG_BADRPT_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="90" column="14" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="90" bodyend="-1"/>
+        <referencedby refid="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa" compoundref="sliregexp_8cc" startline="62" endline="93">init</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classRegexpModule_1a7a96a32f0f3bd9c706a6bd90c64eb709" prot="public" static="yes" mutable="no">
+        <type><ref refid="classSLIType" kindref="compound">SLIType</ref></type>
+        <definition>SLIType RegexpModule::RegexType</definition>
+        <argsstring></argsstring>
+        <name>RegexType</name>
+        <qualifiedname>RegexpModule::RegexType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="92" column="18" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="92" bodyend="-1"/>
+        <referencedby refid="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa" compoundref="sliregexp_8cc" startline="62" endline="93">init</referencedby>
+        <referencedby refid="classRegexpModule_1aec58db7ebb7234f60725f78dd662e56d" compoundref="sliregexp_8cc" startline="56" endline="59">~RegexpModule</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classRegexpModule_1a0a514122bf47bd14292360ebe5772867" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>RegexpModule::RegexpModule</definition>
+        <argsstring>()</argsstring>
+        <name>RegexpModule</name>
+        <qualifiedname>RegexpModule::RegexpModule</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="94" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="94" bodyend="115"/>
+      </memberdef>
+      <memberdef kind="function" id="classRegexpModule_1aec58db7ebb7234f60725f78dd662e56d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>RegexpModule::~RegexpModule</definition>
+        <argsstring>() override</argsstring>
+        <name>~RegexpModule</name>
+        <qualifiedname>RegexpModule::~RegexpModule</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="117" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.cc" bodystart="56" bodyend="59"/>
+        <references refid="classSLIType_1addb0f5b030b0d9b863c9b7b4534909e1" compoundref="slitype_8cc" startline="48" endline="56">SLIType::deletetypename</references>
+        <references refid="classRegexpModule_1a7a96a32f0f3bd9c706a6bd90c64eb709" compoundref="sliregexp_8h" startline="92">RegexType</references>
+      </memberdef>
+      <memberdef kind="function" id="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void RegexpModule::init</definition>
+        <argsstring>(SLIInterpreter *) override</argsstring>
+        <name>init</name>
+        <qualifiedname>RegexpModule::init</qualifiedname>
+        <reimplements refid="classSLIModule_1a4fb2ff87fa14e0caeeea009cf0761957">init</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+        </param>
+        <briefdescription>
+<para>Initialize the module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When this function is called, most of the interpreter&apos;s facilities are up and running. However, depending on where in the interpreter&apos;s bootstrap sequence the module is initialized, not all services may be available. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="119" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.cc" bodystart="62" bodyend="93"/>
+        <references refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" compoundref="interpret_8cc" startline="271" endline="282">SLIInterpreter::createcommand</references>
+        <references refid="classSLIInterpreter_1acfb9676c76b64a974aab6d6e787081a5" compoundref="interpret_8h" startline="224">SLIInterpreter::datatypefunction</references>
+        <references refid="classSLIInterpreter_1aa0717aebf8001f9be9cea57825e85f7e" compoundref="interpret_8cc" startline="329" endline="332">SLIInterpreter::def</references>
+        <references refid="classDictionary_1a94179a80d5b496321d68976e11dea85b" compoundref="dict_8h" startline="303" endline="306">Dictionary::insert</references>
+        <references refid="classRegexpModule_1ab212a0ec960394c63364c6f550f533bd" compoundref="sliregexp_8h" startline="88">REG_BADBR_name</references>
+        <references refid="classRegexpModule_1a5770d6a651730f4d4d5e6c39c800db84" compoundref="sliregexp_8h" startline="76">REG_BADPAT_name</references>
+        <references refid="classRegexpModule_1a37ccb83267d6a845beeed37a1142fa09" compoundref="sliregexp_8h" startline="90">REG_BADRPT_name</references>
+        <references refid="classRegexpModule_1a76fa9c6054e57af221b5026a1b54cb88" compoundref="sliregexp_8h" startline="87">REG_EBRACE_name</references>
+        <references refid="classRegexpModule_1a55aba14786000d2069bc8e15fe36e4d0" compoundref="sliregexp_8h" startline="85">REG_EBRACK_name</references>
+        <references refid="classRegexpModule_1a6ec2f52e75cd5f0380ee41708e5fe690" compoundref="sliregexp_8h" startline="81">REG_ECOLLATE_name</references>
+        <references refid="classRegexpModule_1a4e55a87b2fcc2fb582cf7b217eaa413d" compoundref="sliregexp_8h" startline="82">REG_ECTYPE_name</references>
+        <references refid="classRegexpModule_1ace3417847a6a265e3d636772c82dc240" compoundref="sliregexp_8h" startline="83">REG_EESCAPE_name</references>
+        <references refid="classRegexpModule_1a50f9ede44ed47b296ee068c7e3a3bc66" compoundref="sliregexp_8h" startline="86">REG_EPAREN_name</references>
+        <references refid="classRegexpModule_1ade07e7ac7564c550eb45942192a0ef2d" compoundref="sliregexp_8h" startline="89">REG_ERANGE_name</references>
+        <references refid="classRegexpModule_1a9acd7b71f3f0ed0652f141c41564c009" compoundref="sliregexp_8h" startline="75">REG_ESPACE_name</references>
+        <references refid="classRegexpModule_1a9ca25044aeaa5b5a7cc5ae12665ee08f" compoundref="sliregexp_8h" startline="84">REG_ESUBREG_name</references>
+        <references refid="classRegexpModule_1ae9af8b137be0c0013b4fcee3cbf755af" compoundref="sliregexp_8h" startline="77">REG_EXTENDED_name</references>
+        <references refid="classRegexpModule_1af7dab9511de9752f0404f1623f35b381" compoundref="sliregexp_8h" startline="78">REG_ICASE_name</references>
+        <references refid="classRegexpModule_1a648b81b43282cbf13dc27a669c0406c4" compoundref="sliregexp_8h" startline="80">REG_NEWLINE_name</references>
+        <references refid="classRegexpModule_1a49ed62edbb043cc20a7d4ecfbc220ca5" compoundref="sliregexp_8h" startline="79">REG_NOSUB_name</references>
+        <references refid="classRegexpModule_1a9a72ce5fff03abc800ef8e84f2211cdb" compoundref="sliregexp_8h" startline="73">REG_NOTBOL_name</references>
+        <references refid="classRegexpModule_1ab910b89633a9aa2550c23f5e02666a01" compoundref="sliregexp_8h" startline="74">REG_NOTEOL_name</references>
+        <references refid="classRegexpModule_1af45d8d2bc136bf0dfc9cfe63a59e0e5d" compoundref="sliregexp_8h" startline="67">regcompfunction</references>
+        <references refid="classRegexpModule_1a8c48f37d99c0bfb12a192f5451307566" compoundref="sliregexp_8h" startline="69">regerrorfunction</references>
+        <references refid="classRegexpModule_1a3a320e54c79e2c4668a0e30a30e644e0" compoundref="sliregexp_8h" startline="71">regexdict_name</references>
+        <references refid="classRegexpModule_1a08227ad4ee82b151c3105202c637ba86" compoundref="sliregexp_8h" startline="68">regexecfunction</references>
+        <references refid="classRegexpModule_1a7a96a32f0f3bd9c706a6bd90c64eb709" compoundref="sliregexp_8h" startline="92">RegexType</references>
+        <references refid="classSLIType_1a7aed57c2d173c535fc762b0f8a8b3f0f" compoundref="slitype_8cc" startline="60" endline="70">SLIType::setdefaultaction</references>
+        <references refid="classSLIType_1a84a38693757fbedb2d4007f3a0108bae" compoundref="slitype_8cc" startline="33" endline="45">SLIType::settypename</references>
+      </memberdef>
+      <memberdef kind="function" id="classRegexpModule_1a08e22e5ad1f8498b8b71bfec84e9246c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>const std::string</type>
+        <definition>const std::string RegexpModule::name</definition>
+        <argsstring>() const override</argsstring>
+        <name>name</name>
+        <qualifiedname>RegexpModule::name</qualifiedname>
+        <reimplements refid="classSLIModule_1a2e0c93f5145eb879abd3a8fdcfcedf6c">name</reimplements>
+        <briefdescription>
+<para>Return name of the module. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="120" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.cc" bodystart="97" bodyend="100"/>
+      </memberdef>
+      <memberdef kind="function" id="classRegexpModule_1abaa12586d53576de0adcb8e23017a4fc" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>const std::string</type>
+        <definition>const std::string RegexpModule::commandstring</definition>
+        <argsstring>() const override</argsstring>
+        <name>commandstring</name>
+        <qualifiedname>RegexpModule::commandstring</qualifiedname>
+        <reimplements refid="classSLIModule_1a05bb33e2c5494f406dfdda137a305ead">commandstring</reimplements>
+        <briefdescription>
+<para>Return sli command sequence to be executed for initialization. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="121" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.cc" bodystart="103" bodyend="106"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>RegexpModule</label>
+        <link refid="classRegexpModule"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIModule</label>
+        <link refid="classSLIModule"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="7">
+        <label>Name</label>
+        <link refid="className"/>
+      </node>
+      <node id="1">
+        <label>RegexpModule</label>
+        <link refid="classRegexpModule"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>regcompfunction</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>regexecfunction</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>regerrorfunction</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>REG_BADBR_name</edgelabel>
+          <edgelabel>REG_BADPAT_name</edgelabel>
+          <edgelabel>REG_BADRPT_name</edgelabel>
+          <edgelabel>REG_EBRACE_name</edgelabel>
+          <edgelabel>REG_EBRACK_name</edgelabel>
+          <edgelabel>REG_ECOLLATE_name</edgelabel>
+          <edgelabel>REG_ECTYPE_name</edgelabel>
+          <edgelabel>REG_EESCAPE_name</edgelabel>
+          <edgelabel>REG_EPAREN_name</edgelabel>
+          <edgelabel>REG_ERANGE_name</edgelabel>
+          <edgelabel>...</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>RegexType</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>RegexpModule::RegcompFunction</label>
+        <link refid="classRegexpModule_1_1RegcompFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>RegexpModule::RegerrorFunction</label>
+        <link refid="classRegexpModule_1_1RegerrorFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>RegexpModule::RegexecFunction</label>
+        <link refid="classRegexpModule_1_1RegexecFunction"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="2">
+        <label>SLIModule</label>
+        <link refid="classSLIModule"/>
+      </node>
+      <node id="8">
+        <label>SLIType</label>
+        <link refid="classSLIType"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>defaultaction</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="48" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="49" bodyend="122"/>
+    <listofallmembers>
+      <member refid="classRegexpModule_1abaa12586d53576de0adcb8e23017a4fc" prot="public" virt="virtual"><scope>RegexpModule</scope><name>commandstring</name></member>
+      <member refid="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa" prot="public" virt="virtual"><scope>RegexpModule</scope><name>init</name></member>
+      <member refid="classSLIModule_1ac32734c42e93e16aaf644a842de40bc2" prot="public" virt="non-virtual"><scope>RegexpModule</scope><name>install</name></member>
+      <member refid="classRegexpModule_1a08e22e5ad1f8498b8b71bfec84e9246c" prot="public" virt="virtual"><scope>RegexpModule</scope><name>name</name></member>
+      <member refid="classRegexpModule_1ab212a0ec960394c63364c6f550f533bd" prot="public" virt="non-virtual"><scope>RegexpModule</scope><name>REG_BADBR_name</name></member>
+      <member refid="classRegexpModule_1a5770d6a651730f4d4d5e6c39c800db84" prot="public" virt="non-virtual"><scope>RegexpModule</scope><name>REG_BADPAT_name</name></member>
+      <member refid="classRegexpModule_1a37ccb83267d6a845beeed37a1142fa09" prot="public" virt="non-virtual"><scope>RegexpModule</scope><name>REG_BADRPT_name</name></member>
+      <member refid="classRegexpModule_1a76fa9c6054e57af221b5026a1b54cb88" prot="public" virt="non-virtual"><scope>RegexpModule</scope><name>REG_EBRACE_name</name></member>
+      <member refid="classRegexpModule_1a55aba14786000d2069bc8e15fe36e4d0" prot="public" virt="non-virtual"><scope>RegexpModule</scope><name>REG_EBRACK_name</name></member>
+      <member refid="classRegexpModule_1a6ec2f52e75cd5f0380ee41708e5fe690" prot="public" virt="non-virtual"><scope>RegexpModule</scope><name>REG_ECOLLATE_name</name></member>
+      <member refid="classRegexpModule_1a4e55a87b2fcc2fb582cf7b217eaa413d" prot="public" virt="non-virtual"><scope>RegexpModule</scope><name>REG_ECTYPE_name</name></member>
+      <member refid="classRegexpModule_1ace3417847a6a265e3d636772c82dc240" prot="public" virt="non-virtual"><scope>RegexpModule</scope><name>REG_EESCAPE_name</name></member>
+      <member refid="classRegexpModule_1a50f9ede44ed47b296ee068c7e3a3bc66" prot="public" virt="non-virtual"><scope>RegexpModule</scope><name>REG_EPAREN_name</name></member>
+      <member refid="classRegexpModule_1ade07e7ac7564c550eb45942192a0ef2d" prot="public" virt="non-virtual"><scope>RegexpModule</scope><name>REG_ERANGE_name</name></member>
+      <member refid="classRegexpModule_1a9acd7b71f3f0ed0652f141c41564c009" prot="public" virt="non-virtual"><scope>RegexpModule</scope><name>REG_ESPACE_name</name></member>
+      <member refid="classRegexpModule_1a9ca25044aeaa5b5a7cc5ae12665ee08f" prot="public" virt="non-virtual"><scope>RegexpModule</scope><name>REG_ESUBREG_name</name></member>
+      <member refid="classRegexpModule_1ae9af8b137be0c0013b4fcee3cbf755af" prot="public" virt="non-virtual"><scope>RegexpModule</scope><name>REG_EXTENDED_name</name></member>
+      <member refid="classRegexpModule_1af7dab9511de9752f0404f1623f35b381" prot="public" virt="non-virtual"><scope>RegexpModule</scope><name>REG_ICASE_name</name></member>
+      <member refid="classRegexpModule_1a648b81b43282cbf13dc27a669c0406c4" prot="public" virt="non-virtual"><scope>RegexpModule</scope><name>REG_NEWLINE_name</name></member>
+      <member refid="classRegexpModule_1a49ed62edbb043cc20a7d4ecfbc220ca5" prot="public" virt="non-virtual"><scope>RegexpModule</scope><name>REG_NOSUB_name</name></member>
+      <member refid="classRegexpModule_1a9a72ce5fff03abc800ef8e84f2211cdb" prot="public" virt="non-virtual"><scope>RegexpModule</scope><name>REG_NOTBOL_name</name></member>
+      <member refid="classRegexpModule_1ab910b89633a9aa2550c23f5e02666a01" prot="public" virt="non-virtual"><scope>RegexpModule</scope><name>REG_NOTEOL_name</name></member>
+      <member refid="classRegexpModule_1af45d8d2bc136bf0dfc9cfe63a59e0e5d" prot="public" virt="non-virtual"><scope>RegexpModule</scope><name>regcompfunction</name></member>
+      <member refid="classRegexpModule_1a8c48f37d99c0bfb12a192f5451307566" prot="public" virt="non-virtual"><scope>RegexpModule</scope><name>regerrorfunction</name></member>
+      <member refid="classRegexpModule_1a3a320e54c79e2c4668a0e30a30e644e0" prot="public" virt="non-virtual"><scope>RegexpModule</scope><name>regexdict_name</name></member>
+      <member refid="classRegexpModule_1a08227ad4ee82b151c3105202c637ba86" prot="public" virt="non-virtual"><scope>RegexpModule</scope><name>regexecfunction</name></member>
+      <member refid="classRegexpModule_1a0a514122bf47bd14292360ebe5772867" prot="public" virt="non-virtual"><scope>RegexpModule</scope><name>RegexpModule</name></member>
+      <member refid="classRegexpModule_1a7a96a32f0f3bd9c706a6bd90c64eb709" prot="public" virt="non-virtual"><scope>RegexpModule</scope><name>RegexType</name></member>
+      <member refid="classRegexpModule_1aec58db7ebb7234f60725f78dd662e56d" prot="public" virt="non-virtual"><scope>RegexpModule</scope><name>~RegexpModule</name></member>
+      <member refid="classSLIModule_1a8e77a5438547cacc0eef34e5608591cb" prot="public" virt="virtual"><scope>RegexpModule</scope><name>~SLIModule</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

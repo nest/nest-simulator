@@ -1,0 +1,1224 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="tokenutils_8cc" kind="file" language="C++">
+    <compoundname>tokenutils.cc</compoundname>
+    <includes refid="tokenutils_8h" local="yes">tokenutils.h</includes>
+    <includes local="no">cmath</includes>
+    <includes local="no">string</includes>
+    <includes refid="arraydatum_8h" local="yes">arraydatum.h</includes>
+    <includes refid="booldatum_8h" local="yes">booldatum.h</includes>
+    <includes refid="doubledatum_8h" local="yes">doubledatum.h</includes>
+    <includes refid="integerdatum_8h" local="yes">integerdatum.h</includes>
+    <includes refid="namedatum_8h" local="yes">namedatum.h</includes>
+    <includes refid="sliexceptions_8h" local="yes">sliexceptions.h</includes>
+    <includes refid="stringdatum_8h" local="yes">stringdatum.h</includes>
+    <includes refid="symboldatum_8h" local="yes">symboldatum.h</includes>
+    <incdepgraph>
+      <node id="35">
+        <label>lockptr.h</label>
+        <link refid="lockptr_8h"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>aggregatedatum.h</label>
+        <link refid="aggregatedatum_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>allocator.h</label>
+        <link refid="allocator_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>arraydatum.h</label>
+        <link refid="arraydatum_8h"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>booldatum.h</label>
+        <link refid="booldatum_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>datum.h</label>
+        <link refid="datum_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>doubledatum.h</label>
+        <link refid="doubledatum_8h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>genericdatum.h</label>
+        <link refid="genericdatum_8h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="41">
+        <label>integerdatum.h</label>
+        <link refid="integerdatum_8h"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>interpret.h</label>
+        <link refid="interpret_8h"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>lockptrdatum.h</label>
+        <link refid="lockptrdatum_8h"/>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>name.h</label>
+        <link refid="name_8h"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>namedatum.h</label>
+        <link refid="namedatum_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>numericdatum.h</label>
+        <link refid="numericdatum_8h"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>sliactions.h</label>
+        <link refid="sliactions_8h"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>slibuiltins.h</label>
+        <link refid="slibuiltins_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>sliexceptions.h</label>
+        <link refid="sliexceptions_8h"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>slifunction.h</label>
+        <link refid="slifunction_8h"/>
+      </node>
+      <node id="22">
+        <label>slimodule.h</label>
+        <link refid="slimodule_8h"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>slitype.h</label>
+        <link refid="slitype_8h"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="42">
+        <label>stringdatum.h</label>
+        <link refid="stringdatum_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>symboldatum.h</label>
+        <link refid="symboldatum_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>tarrayobj.h</label>
+        <link refid="tarrayobj_8h"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>token.h</label>
+        <link refid="token_8h"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>tokenarray.h</label>
+        <link refid="tokenarray_8h"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>tokenstack.h</label>
+        <link refid="tokenstack_8h"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>tokenutils.cc</label>
+        <link refid="tokenutils_8cc"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>tokenutils.h</label>
+        <link refid="tokenutils_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>algorithm</label>
+      </node>
+      <node id="9">
+        <label>cassert</label>
+      </node>
+      <node id="32">
+        <label>cmath</label>
+      </node>
+      <node id="4">
+        <label>config.h</label>
+      </node>
+      <node id="28">
+        <label>cstddef</label>
+      </node>
+      <node id="10">
+        <label>cstdlib</label>
+      </node>
+      <node id="15">
+        <label>deque</label>
+      </node>
+      <node id="24">
+        <label>iomanip</label>
+      </node>
+      <node id="13">
+        <label>iostream</label>
+      </node>
+      <node id="19">
+        <label>list</label>
+      </node>
+      <node id="16">
+        <label>map</label>
+      </node>
+      <node id="36">
+        <label>memory</label>
+      </node>
+      <node id="3">
+        <label>string</label>
+      </node>
+      <node id="6">
+        <label>typeinfo</label>
+      </node>
+      <node id="25">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="tokenutils_8cc_1a32eba92c5abb6cb955fad91324b7f076" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>long</type>
+        <definition>long getValue&lt; long &gt;</definition>
+        <argsstring>(const Token &amp;t)</argsstring>
+        <name>getValue&lt; long &gt;</name>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" line="40" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" bodystart="41" bodyend="50"/>
+        <references refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" compoundref="token_8h" startline="360" endline="364">Token::datum</references>
+        <references refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" compoundref="datum_8h" startline="172" endline="175">Datum::gettypename</references>
+        <references refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" compoundref="name_8cc" startline="72" endline="75">Name::toString</references>
+        <referencedby refid="classnest_1_1cm__default_1adac0a76ef0e60dd19a8ab183efdbb56c" compoundref="cm__default_8cpp" startline="215" endline="226">nest::cm_default::add_compartment_</referencedby>
+        <referencedby refid="classnest_1_1cm__default_1a35302cd9fdacbb227794dee7f7f536dc" compoundref="cm__default_8cpp" startline="228" endline="251">nest::cm_default::add_receptor_</referencedby>
+        <referencedby refid="classnest_1_1NodeCollection_1a932abae77aca0346af2c5a3981d4e16e" compoundref="node__collection_8cpp" startline="147" endline="166">nest::NodeCollection::create</referencedby>
+        <referencedby refid="classnest_1_1AbstractLayer_1a268b14297e57188c5f29a44bad369990" compoundref="layer_8cpp" startline="55" endline="160">nest::AbstractLayer::create_layer</referencedby>
+        <referencedby refid="classnest_1_1Layer_1ac1b9a1c8651f3eefae09c200e00974af" compoundref="layer__impl_8h" startline="300" endline="351">nest::Layer&lt; D &gt;::dump_connections</referencedby>
+        <referencedby refid="classnest_1_1NestModule_1_1GetStatus__iFunction_1adec4fa8a8fb1aba118aecce38aace0cd" compoundref="nestmodule_8cpp" startline="520" endline="530">nest::NestModule::GetStatus_iFunction::execute</referencedby>
+        <referencedby refid="classnest_1_1NestModule_1_1SetStatus__idFunction_1a6591dd8ec090461f3000aa2ed9f23c00" compoundref="nestmodule_8cpp" startline="338" endline="349">nest::NestModule::SetStatus_idFunction::execute</referencedby>
+        <referencedby refid="classnest_1_1NestModule_1_1Create__l__iFunction_1a8bd0a17b5924c6494aa4c7305df8f4ca" compoundref="nestmodule_8cpp" startline="823" endline="842">nest::NestModule::Create_l_iFunction::execute</referencedby>
+        <referencedby refid="classnest_1_1NestModule_1_1SetFakeNumProcesses__iFunction_1a02731945c7eb3d405558c70eb9baf34b" compoundref="nestmodule_8cpp" startline="1108" endline="1117">nest::NestModule::SetFakeNumProcesses_iFunction::execute</referencedby>
+        <referencedby refid="classnest_1_1NestModule_1_1TimeCommunication__i__i__bFunction_1abee220515992e6b7a9715a08a72f26a3" compoundref="nestmodule_8cpp" startline="1151" endline="1171">nest::NestModule::TimeCommunication_i_i_bFunction::execute</referencedby>
+        <referencedby refid="classnest_1_1NestModule_1_1TimeCommunicationv__i__iFunction_1a4e814e1f66f6f1ce3b620d3edbd2b2dc" compoundref="nestmodule_8cpp" startline="1186" endline="1200">nest::NestModule::TimeCommunicationv_i_iFunction::execute</referencedby>
+        <referencedby refid="classnest_1_1NestModule_1_1TimeCommunicationAlltoall__i__iFunction_1af733ee91b5dce28b5f0e6e9a42854da1" compoundref="nestmodule_8cpp" startline="1216" endline="1230">nest::NestModule::TimeCommunicationAlltoall_i_iFunction::execute</referencedby>
+        <referencedby refid="classnest_1_1NestModule_1_1TimeCommunicationAlltoallv__i__iFunction_1a00e83e520e49e571317dc94cd20a1982" compoundref="nestmodule_8cpp" startline="1247" endline="1261">nest::NestModule::TimeCommunicationAlltoallv_i_iFunction::execute</referencedby>
+        <referencedby refid="classnest_1_1NestModule_1_1Cvnodecollection__i__iFunction_1a8dedc688f59a4bf516870b10153637db" compoundref="nestmodule_8cpp" startline="1328" endline="1340">nest::NestModule::Cvnodecollection_i_iFunction::execute</referencedby>
+        <referencedby refid="classnest_1_1NestModule_1_1MemberQ__g__iFunction_1a430fd1bf3f70d01da498b2dec3602f23" compoundref="nestmodule_8cpp" startline="1418" endline="1428">nest::NestModule::MemberQ_g_iFunction::execute</referencedby>
+        <referencedby refid="classnest_1_1NestModule_1_1Find__g__iFunction_1a84905f84849e68500ff26d3c5cf062e0" compoundref="nestmodule_8cpp" startline="1431" endline="1441">nest::NestModule::Find_g_iFunction::execute</referencedby>
+        <referencedby refid="classnest_1_1NestModule_1_1Get__g__iFunction_1af308bee9452f4b8b033cfccafde0045b" compoundref="nestmodule_8cpp" startline="1554" endline="1575">nest::NestModule::Get_g_iFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1RotateFunction_1a255d720c6adb134c24a4e566234bf9db" compoundref="sliarray_8cc" startline="427" endline="438">SLIArrayModule::RotateFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1GaborFunction_1ab2034e33aef653f08ec5999887c9e1ab" compoundref="sliarray_8cc" startline="2683" endline="2776">SLIArrayModule::GaborFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Gauss2dFunction_1ad04d755826f2d699a068daa24e55230e" compoundref="sliarray_8cc" startline="2795" endline="2882">SLIArrayModule::Gauss2dFunction::execute</referencedby>
+        <referencedby refid="classSLIInterpreter_1a1d4268e9a4b8064b77e12fba24d15620" compoundref="interpret_8cc" startline="1313" endline="1363">SLIInterpreter::execute_</referencedby>
+        <referencedby refid="classSLIInterpreter_1a2e551e6c11e2e8158d163e2b5996c33d" compoundref="interpret_8cc" startline="1260" endline="1310">SLIInterpreter::execute_debug_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1a4339600d1ec56c9e21506276f03f1764" compoundref="connection__creator_8cpp" startline="157" endline="213">nest::ConnectionCreator::extract_params_</referencedby>
+        <referencedby refid="classToken_1a00f0e2b6140c987c0e49c1306f7fe354" compoundref="token_8cc" startline="120" endline="123">Token::operator long</referencedby>
+        <referencedby refid="classToken_1a0f93582914b0c3aaebd7ac0c0fb88795" compoundref="token_8cc" startline="125" endline="128">Token::operator size_t</referencedby>
+        <referencedby refid="namespacenest_1a66727cbf2db54d042cb6dac04cf2a816" compoundref="nest_8cpp" startline="133" endline="151">nest::set_connection_status</referencedby>
+        <referencedby refid="classSLIInterpreter_1a46a16463860bc84385c4b242778e8caa" compoundref="interpret_8cc" startline="759" endline="771">SLIInterpreter::terminate</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="tokenutils_8cc_1a76463d42ed8c9825c9ef11cd4b8cde13" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void setValue&lt; long &gt;</definition>
+        <argsstring>(const Token &amp;t, long const &amp;value)</argsstring>
+        <name>setValue&lt; long &gt;</name>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>long const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" line="52" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" bodystart="53" bodyend="62"/>
+        <references refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" compoundref="token_8h" startline="360" endline="364">Token::datum</references>
+        <references refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" compoundref="datum_8h" startline="172" endline="175">Datum::gettypename</references>
+        <references refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" compoundref="name_8cc" startline="72" endline="75">Name::toString</references>
+        <referencedby refid="tokenutils_8cc_1a4b46c710e11a1e69803a592fab43e8e7" compoundref="tokenutils_8cc" startline="332" endline="350">setValue&lt; std::vector&lt; long &gt; &gt;</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="tokenutils_8cc_1ad01760d55ce43d15a0f2ae0fb2dcb0ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type><ref refid="classToken" kindref="compound">Token</ref></type>
+        <definition>Token newToken&lt; long &gt;</definition>
+        <argsstring>(long const &amp;value)</argsstring>
+        <name>newToken&lt; long &gt;</name>
+        <param>
+          <type>long const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" line="65" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" bodystart="66" bodyend="69"/>
+      </memberdef>
+      <memberdef kind="function" id="tokenutils_8cc_1aeb08d5341a6bafebc5f8513da1eccb2b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double getValue&lt; double &gt;</definition>
+        <argsstring>(const Token &amp;t)</argsstring>
+        <name>getValue&lt; double &gt;</name>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" line="73" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" bodystart="74" bodyend="91"/>
+        <references refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" compoundref="token_8h" startline="360" endline="364">Token::datum</references>
+        <references refid="classGenericDatum_1a2204e0bfb80429863ebbd37005235c1e" compoundref="genericdatum_8h" startline="74" endline="77">GenericDatum&lt; D, slt &gt;::get</references>
+        <references refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" compoundref="datum_8h" startline="172" endline="175">Datum::gettypename</references>
+        <references refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" compoundref="name_8cc" startline="72" endline="75">Name::toString</references>
+        <referencedby refid="classnest_1_1AMPA_1a75f11ba3c7be2a659fbe8830a5e35711" compoundref="cm__compartmentcurrents_8cpp" startline="247" endline="274">nest::AMPA::AMPA</referencedby>
+        <referencedby refid="classnest_1_1AMPA__NMDA_1a5b3d13476806110cfa2ba729e121e55f" compoundref="cm__compartmentcurrents_8cpp" startline="493" endline="541">nest::AMPA_NMDA::AMPA_NMDA</referencedby>
+        <referencedby refid="classnest_1_1BallMask_1ad550364bc15fe3d900119fe74cfb971d" compoundref="mask_8h" startline="910" endline="924">nest::BallMask&lt; D &gt;::BallMask</referencedby>
+        <referencedby refid="classnest_1_1BoxMask_1a04c40ffa62333c05342e6a34eaf2766b" compoundref="mask_8h" startline="749" endline="830">nest::BoxMask&lt; D &gt;::BoxMask</referencedby>
+        <referencedby refid="classnest_1_1ConstantParameter_1a3f8c1963981cb7c4279be29cd6871b61" compoundref="parameter_8h" startline="149" endline="153">nest::ConstantParameter::ConstantParameter</referencedby>
+        <referencedby refid="namespacenest_1ac620aec28a3820569a2bbffe140dfad2" compoundref="nestmodule_8cpp" startline="287" endline="309">nest::create_doughnut</referencedby>
+        <referencedby refid="classnest_1_1Layer_1ac1b9a1c8651f3eefae09c200e00974af" compoundref="layer__impl_8h" startline="300" endline="351">nest::Layer&lt; D &gt;::dump_connections</referencedby>
+        <referencedby refid="classnest_1_1EllipseMask_1aefe4371e51e8153b3b5d1fe41eb4c170" compoundref="mask_8h" startline="941" endline="1021">nest::EllipseMask&lt; D &gt;::EllipseMask</referencedby>
+        <referencedby refid="classnest_1_1NestModule_1_1SetStdpEps__dFunction_1a6e26173d5f6015daf50cfdba893d846c" compoundref="nestmodule_8cpp" startline="1716" endline="1725">nest::NestModule::SetStdpEps_dFunction::execute</referencedby>
+        <referencedby refid="classnest_1_1NestModule_1_1Min__P__dFunction_1aa3fc6cde09e7c16604d14e6ec1722fea" compoundref="nestmodule_8cpp" startline="1896" endline="1908">nest::NestModule::Min_P_dFunction::execute</referencedby>
+        <referencedby refid="classnest_1_1NestModule_1_1Max__P__dFunction_1a275920fd70c09eaca8265d4cc6f141bb" compoundref="nestmodule_8cpp" startline="1911" endline="1923">nest::NestModule::Max_P_dFunction::execute</referencedby>
+        <referencedby refid="classnest_1_1NestModule_1_1Redraw__P__d__dFunction_1a641fc5776bc40bfe036b7ea79e01c6f8" compoundref="nestmodule_8cpp" startline="1926" endline="1939">nest::NestModule::Redraw_P_d_dFunction::execute</referencedby>
+        <referencedby refid="classnest_1_1NestModule_1_1Pow__P__dFunction_1a0a5de85176364485ba6a8f99e80f343e" compoundref="nestmodule_8cpp" startline="1832" endline="1844">nest::NestModule::Pow_P_dFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1GaborFunction_1ab2034e33aef653f08ec5999887c9e1ab" compoundref="sliarray_8cc" startline="2683" endline="2776">SLIArrayModule::GaborFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Gauss2dFunction_1ad04d755826f2d699a068daa24e55230e" compoundref="sliarray_8cc" startline="2795" endline="2882">SLIArrayModule::Gauss2dFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1FiniteQ__dFunction_1acaaa7fc375e3e4932bf31fc39203cbe7" compoundref="sliarray_8cc" startline="3920" endline="3928">SLIArrayModule::FiniteQ_dFunction::execute</referencedby>
+        <referencedby refid="classnest_1_1ExpDistParameter_1af214979073cc54fb50b6f03087b92b04" compoundref="parameter_8cpp" startline="258" endline="268">nest::ExpDistParameter::ExpDistParameter</referencedby>
+        <referencedby refid="classnest_1_1GABA_1ada0dc52445020a59c41fbd121588bda7" compoundref="cm__compartmentcurrents_8cpp" startline="325" endline="352">nest::GABA::GABA</referencedby>
+        <referencedby refid="classnest_1_1GammaParameter_1afcfda49e136a33557b6b02d27c29031b" compoundref="parameter_8cpp" startline="354" endline="370">nest::GammaParameter::GammaParameter</referencedby>
+        <referencedby refid="classnest_1_1Gaussian2DParameter_1aa1be030a3599c054df37a2d1366d80e8" compoundref="parameter_8cpp" startline="305" endline="339">nest::Gaussian2DParameter::Gaussian2DParameter</referencedby>
+        <referencedby refid="classnest_1_1GaussianParameter_1a05a46fc7c1ac5fca26f9cd797ef06399" compoundref="parameter_8cpp" startline="280" endline="291">nest::GaussianParameter::GaussianParameter</referencedby>
+        <referencedby refid="classnest_1_1K_1a04b699ea5b85707f8582fc125014daa3" compoundref="cm__compartmentcurrents_8cpp" startline="154" endline="170">nest::K::K</referencedby>
+        <referencedby refid="classnest_1_1Na_1ab40f3616a9dd8feeadc9d0d6fdef3a2a" compoundref="cm__compartmentcurrents_8cpp" startline="34" endline="51">nest::Na::Na</referencedby>
+        <referencedby refid="classnest_1_1NMDA_1a5fb5415da147a8b70057a4321d3cd55b" compoundref="cm__compartmentcurrents_8cpp" startline="403" endline="430">nest::NMDA::NMDA</referencedby>
+        <referencedby refid="classToken_1a9d9ecf295a7bb23922db6ea5b9e97833" compoundref="token_8cc" startline="130" endline="133">Token::operator double</referencedby>
+        <referencedby refid="classnest_1_1SPBuilder_1a6b2967497f66cc6c1a6ccf4a45e9c3e5" compoundref="conn__builder_8cpp" startline="1806" endline="1814">nest::SPBuilder::update_delay</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="tokenutils_8cc_1a6bca9eb7cda2a3fd18e97e6a986c85b4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void setValue&lt; double &gt;</definition>
+        <argsstring>(const Token &amp;t, double const &amp;value)</argsstring>
+        <name>setValue&lt; double &gt;</name>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>double const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" line="94" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" bodystart="95" bodyend="104"/>
+        <references refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" compoundref="token_8h" startline="360" endline="364">Token::datum</references>
+        <references refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" compoundref="datum_8h" startline="172" endline="175">Datum::gettypename</references>
+        <references refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" compoundref="name_8cc" startline="72" endline="75">Name::toString</references>
+        <referencedby refid="tokenutils_8cc_1ad5c32a8c3f543e57616751c33ff78a6c" compoundref="tokenutils_8cc" startline="275" endline="293">setValue&lt; std::vector&lt; double &gt; &gt;</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="tokenutils_8cc_1a50a6a93133d0429dbd5432bee9568487" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type><ref refid="classToken" kindref="compound">Token</ref></type>
+        <definition>Token newToken&lt; double &gt;</definition>
+        <argsstring>(double const &amp;value)</argsstring>
+        <name>newToken&lt; double &gt;</name>
+        <param>
+          <type>double const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" line="107" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" bodystart="108" bodyend="111"/>
+      </memberdef>
+      <memberdef kind="function" id="tokenutils_8cc_1a95ea4d0048b41f138634e4eca76292bf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool getValue&lt; bool &gt;</definition>
+        <argsstring>(const Token &amp;t)</argsstring>
+        <name>getValue&lt; bool &gt;</name>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" line="114" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" bodystart="115" bodyend="125"/>
+        <references refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" compoundref="token_8h" startline="360" endline="364">Token::datum</references>
+        <references refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" compoundref="datum_8h" startline="172" endline="175">Datum::gettypename</references>
+        <references refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" compoundref="name_8cc" startline="72" endline="75">Name::toString</references>
+        <referencedby refid="classnest_1_1ConnectionCreator_1aba3b91642fb738809e096bb60678fb1f" compoundref="connection__creator_8cpp" startline="29" endline="154">nest::ConnectionCreator::ConnectionCreator</referencedby>
+        <referencedby refid="classnest_1_1NestModule_1_1GetNodes__D__b_1a3879e16a5f66403ed4536f83301b482b" compoundref="nestmodule_8cpp" startline="845" endline="859">nest::NestModule::GetNodes_D_b::execute</referencedby>
+        <referencedby refid="classnest_1_1NestModule_1_1TimeCommunication__i__i__bFunction_1abee220515992e6b7a9715a08a72f26a3" compoundref="nestmodule_8cpp" startline="1151" endline="1171">nest::NestModule::TimeCommunication_i_i_bFunction::execute</referencedby>
+        <referencedby refid="classnest_1_1ConnectionCreator_1a4339600d1ec56c9e21506276f03f1764" compoundref="connection__creator_8cpp" startline="157" endline="213">nest::ConnectionCreator::extract_params_</referencedby>
+        <referencedby refid="classToken_1a34140d60656a12bbfcdfbcf85e985133" compoundref="token_8cc" startline="135" endline="138">Token::operator bool</referencedby>
+        <referencedby refid="classnest_1_1Layer_1a7e195bd64082ccf858d4419328b000d7" compoundref="layer__impl_8h" startline="82" endline="91">nest::Layer&lt; D &gt;::set_status</referencedby>
+        <referencedby refid="classnest_1_1SPManager_1a826cbcc83e2da5a24acf3345917e7921" compoundref="sp__manager_8cpp" startline="128" endline="177">nest::SPManager::set_status</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="tokenutils_8cc_1adecd0efa9c7a3b66e074715e97c54f5c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void setValue&lt; bool &gt;</definition>
+        <argsstring>(const Token &amp;t, bool const &amp;value)</argsstring>
+        <name>setValue&lt; bool &gt;</name>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>bool const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" line="127" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" bodystart="128" bodyend="138"/>
+        <references refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" compoundref="token_8h" startline="360" endline="364">Token::datum</references>
+        <references refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" compoundref="datum_8h" startline="172" endline="175">Datum::gettypename</references>
+        <references refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" compoundref="name_8cc" startline="72" endline="75">Name::toString</references>
+      </memberdef>
+      <memberdef kind="function" id="tokenutils_8cc_1a649bf22b74227b36f9badba0f5e44ebf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type><ref refid="classToken" kindref="compound">Token</ref></type>
+        <definition>Token newToken&lt; bool &gt;</definition>
+        <argsstring>(bool const &amp;value)</argsstring>
+        <name>newToken&lt; bool &gt;</name>
+        <param>
+          <type>bool const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" line="142" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" bodystart="143" bodyend="147"/>
+      </memberdef>
+      <memberdef kind="function" id="tokenutils_8cc_1ab4940c6a9d7f700ec063ad673ea35ca9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string getValue&lt; std::string &gt;</definition>
+        <argsstring>(const Token &amp;t)</argsstring>
+        <name>getValue&lt; std::string &gt;</name>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" line="153" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" bodystart="154" bodyend="184"/>
+        <references refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" compoundref="token_8h" startline="360" endline="364">Token::datum</references>
+        <references refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" compoundref="datum_8h" startline="172" endline="175">Datum::gettypename</references>
+        <references refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" compoundref="name_8cc" startline="72" endline="75">Name::toString</references>
+        <referencedby refid="classnest_1_1cm__default_1a35302cd9fdacbb227794dee7f7f536dc" compoundref="cm__default_8cpp" startline="228" endline="251">nest::cm_default::add_receptor_</referencedby>
+        <referencedby refid="classnest_1_1ConnectionManager_1a0594fd0c611ae17f9ebe921d0153e60a" compoundref="connection__manager_8cpp" startline="436" endline="458">nest::ConnectionManager::connect</referencedby>
+        <referencedby refid="classnest_1_1AbstractLayer_1a268b14297e57188c5f29a44bad369990" compoundref="layer_8cpp" startline="55" endline="160">nest::AbstractLayer::create_layer</referencedby>
+        <referencedby refid="classnest_1_1SPManager_1af9961e9c3f1968bb1ff558a540d53923" compoundref="sp__manager_8cpp" startline="264" endline="322">nest::SPManager::disconnect</referencedby>
+        <referencedby refid="classnest_1_1NestModule_1_1SetDefaults__l__DFunction_1a32942b6e9c6e4ebc1ceb78d4f8df18ae" compoundref="nestmodule_8cpp" startline="621" endline="632">nest::NestModule::SetDefaults_l_DFunction::execute</referencedby>
+        <referencedby refid="classnest_1_1NestModule_1_1GetDefaults__lFunction_1a3cc6cb0d13afd31d3d29337eebf01358" compoundref="nestmodule_8cpp" startline="642" endline="653">nest::NestModule::GetDefaults_lFunction::execute</referencedby>
+        <referencedby refid="classnest_1_1NestModule_1_1Create__l__iFunction_1a8bd0a17b5924c6494aa4c7305df8f4ca" compoundref="nestmodule_8cpp" startline="823" endline="842">nest::NestModule::Create_l_iFunction::execute</referencedby>
+        <referencedby refid="classnest_1_1ConnectionManager_1a42095f521521f147812163a8b98ee96f" compoundref="connection__manager_8cpp" startline="946" endline="1015">nest::ConnectionManager::get_connections</referencedby>
+        <referencedby refid="classToken_1a8f6de6fc2b2785c2fc7a32eab99e22a0" compoundref="token_8cc" startline="192" endline="204">Token::matches_as_string</referencedby>
+        <referencedby refid="classToken_1a37a03ca940a3abaec1491c9306bafa2a" compoundref="token_8cc" startline="140" endline="143">Token::operator std::string</referencedby>
+        <referencedby refid="structnest_1_1multimeter_1_1Parameters___1aa6546960275481e886bf7cc223e4a69d" compoundref="multimeter_8cpp" startline="107" endline="170">nest::multimeter::Parameters_::set</referencedby>
+        <referencedby refid="classnest_1_1SynapticElement_1a1d87050277d99ac2b2929fba12cb2f34" compoundref="synaptic__element_8cpp" startline="116" endline="141">nest::SynapticElement::set</referencedby>
+        <referencedby refid="classnest_1_1ConnBuilder_1a67a9c61ef70dbca8ff24722766b0faba" compoundref="conn__builder_8cpp" startline="529" endline="565">nest::ConnBuilder::set_structural_plasticity_parameters</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="tokenutils_8cc_1ad50a65570f12e32bb82dc42a893d4f28" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void setValue&lt; std::string &gt;</definition>
+        <argsstring>(const Token &amp;t, std::string const &amp;value)</argsstring>
+        <name>setValue&lt; std::string &gt;</name>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>std::string const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" line="186" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" bodystart="187" bodyend="234"/>
+        <references refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" compoundref="token_8h" startline="360" endline="364">Token::datum</references>
+        <references refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" compoundref="datum_8h" startline="172" endline="175">Datum::gettypename</references>
+        <references refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" compoundref="name_8cc" startline="72" endline="75">Name::toString</references>
+      </memberdef>
+      <memberdef kind="function" id="tokenutils_8cc_1aec887ed4389726d9733344ae1e264d7e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type><ref refid="classToken" kindref="compound">Token</ref></type>
+        <definition>Token newToken&lt; std::string &gt;</definition>
+        <argsstring>(std::string const &amp;value)</argsstring>
+        <name>newToken&lt; std::string &gt;</name>
+        <param>
+          <type>std::string const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" line="239" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" bodystart="240" bodyend="243"/>
+      </memberdef>
+      <memberdef kind="function" id="tokenutils_8cc_1a2936557f0b693b893ea3010b806c4515" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::vector&lt; double &gt;</type>
+        <definition>std::vector&lt; double &gt; getValue&lt; std::vector&lt; double &gt; &gt;</definition>
+        <argsstring>(const Token &amp;t)</argsstring>
+        <name>getValue&lt; std::vector&lt; double &gt; &gt;</name>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" line="239" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" bodystart="250" bodyend="271"/>
+      </memberdef>
+      <memberdef kind="function" id="tokenutils_8cc_1ad5c32a8c3f543e57616751c33ff78a6c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void setValue&lt; std::vector&lt; double &gt; &gt;</definition>
+        <argsstring>(const Token &amp;t, std::vector&lt; double &gt; const &amp;value)</argsstring>
+        <name>setValue&lt; std::vector&lt; double &gt; &gt;</name>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; double &gt; const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" line="274" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" bodystart="275" bodyend="293"/>
+        <references refid="tokenutils_8cc_1a6bca9eb7cda2a3fd18e97e6a986c85b4" compoundref="tokenutils_8cc" startline="95" endline="104">setValue&lt; double &gt;</references>
+        <references refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" compoundref="name_8cc" startline="72" endline="75">Name::toString</references>
+      </memberdef>
+      <memberdef kind="function" id="tokenutils_8cc_1a6d3a6fe6d19f30118a57d05fc8e816fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type><ref refid="classToken" kindref="compound">Token</ref></type>
+        <definition>Token newToken&lt; std::vector&lt; double &gt; &gt;</definition>
+        <argsstring>(std::vector&lt; double &gt; const &amp;value)</argsstring>
+        <name>newToken&lt; std::vector&lt; double &gt; &gt;</name>
+        <param>
+          <type>std::vector&lt; double &gt; const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" line="296" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" bodystart="297" bodyend="300"/>
+      </memberdef>
+      <memberdef kind="function" id="tokenutils_8cc_1a90533d37d6347a54016daf6a42dcf762" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::vector&lt; long &gt;</type>
+        <definition>std::vector&lt; long &gt; getValue&lt; std::vector&lt; long &gt; &gt;</definition>
+        <argsstring>(const Token &amp;t)</argsstring>
+        <name>getValue&lt; std::vector&lt; long &gt; &gt;</name>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" line="296" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" bodystart="307" bodyend="328"/>
+      </memberdef>
+      <memberdef kind="function" id="tokenutils_8cc_1a4b46c710e11a1e69803a592fab43e8e7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void setValue&lt; std::vector&lt; long &gt; &gt;</definition>
+        <argsstring>(const Token &amp;t, std::vector&lt; long &gt; const &amp;value)</argsstring>
+        <name>setValue&lt; std::vector&lt; long &gt; &gt;</name>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; long &gt; const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" line="331" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" bodystart="332" bodyend="350"/>
+        <references refid="tokenutils_8cc_1a76463d42ed8c9825c9ef11cd4b8cde13" compoundref="tokenutils_8cc" startline="53" endline="62">setValue&lt; long &gt;</references>
+        <references refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" compoundref="name_8cc" startline="72" endline="75">Name::toString</references>
+      </memberdef>
+      <memberdef kind="function" id="tokenutils_8cc_1aa808e4023473f40e6605798ef1a263b9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type><ref refid="classToken" kindref="compound">Token</ref></type>
+        <definition>Token newToken&lt; std::vector&lt; long &gt; &gt;</definition>
+        <argsstring>(std::vector&lt; long &gt; const &amp;value)</argsstring>
+        <name>newToken&lt; std::vector&lt; long &gt; &gt;</name>
+        <param>
+          <type>std::vector&lt; long &gt; const &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" line="353" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc" bodystart="354" bodyend="357"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/><sp/>tokenutils.cc</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/><sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>NEST.</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="6"><highlight class="comment"><sp/>*<sp/><sp/>Copyright<sp/>(C)<sp/>2004<sp/>The<sp/>NEST<sp/>Initiative</highlight></codeline>
+<codeline lineno="7"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="8"><highlight class="comment"><sp/>*<sp/><sp/>NEST<sp/>is<sp/>free<sp/>software:<sp/>you<sp/>can<sp/>redistribute<sp/>it<sp/>and/or<sp/>modify</highlight></codeline>
+<codeline lineno="9"><highlight class="comment"><sp/>*<sp/><sp/>it<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>the<sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>as<sp/>published<sp/>by</highlight></codeline>
+<codeline lineno="10"><highlight class="comment"><sp/>*<sp/><sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>either<sp/>version<sp/>2<sp/>of<sp/>the<sp/>License,<sp/>or</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*<sp/><sp/>(at<sp/>your<sp/>option)<sp/>any<sp/>later<sp/>version.</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="13"><highlight class="comment"><sp/>*<sp/><sp/>NEST<sp/>is<sp/>distributed<sp/>in<sp/>the<sp/>hope<sp/>that<sp/>it<sp/>will<sp/>be<sp/>useful,</highlight></codeline>
+<codeline lineno="14"><highlight class="comment"><sp/>*<sp/><sp/>but<sp/>WITHOUT<sp/>ANY<sp/>WARRANTY;<sp/>without<sp/>even<sp/>the<sp/>implied<sp/>warranty<sp/>of</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*<sp/><sp/>MERCHANTABILITY<sp/>or<sp/>FITNESS<sp/>FOR<sp/>A<sp/>PARTICULAR<sp/>PURPOSE.<sp/><sp/>See<sp/>the</highlight></codeline>
+<codeline lineno="16"><highlight class="comment"><sp/>*<sp/><sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>for<sp/>more<sp/>details.</highlight></codeline>
+<codeline lineno="17"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="18"><highlight class="comment"><sp/>*<sp/><sp/>You<sp/>should<sp/>have<sp/>received<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>GNU<sp/>General<sp/>Public<sp/>License</highlight></codeline>
+<codeline lineno="19"><highlight class="comment"><sp/>*<sp/><sp/>along<sp/>with<sp/>NEST.<sp/><sp/>If<sp/>not,<sp/>see<sp/>&lt;http://www.gnu.org/licenses/&gt;.</highlight></codeline>
+<codeline lineno="20"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="21"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="tokenutils_8h" kindref="compound">tokenutils.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="comment">//<sp/>C++<sp/>includes:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;cmath&gt;</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">//<sp/>for<sp/>sqrt()</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Includes<sp/>from<sp/>sli:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="arraydatum_8h" kindref="compound">arraydatum.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="booldatum_8h" kindref="compound">booldatum.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="doubledatum_8h" kindref="compound">doubledatum.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="integerdatum_8h" kindref="compound">integerdatum.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="namedatum_8h" kindref="compound">namedatum.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sliexceptions_8h" kindref="compound">sliexceptions.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="stringdatum_8h" kindref="compound">stringdatum.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="symboldatum_8h" kindref="compound">symboldatum.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="40" refid="tokenutils_8cc_1a32eba92c5abb6cb955fad91324b7f076" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><ref refid="tokenutils_8cc_1a32eba92c5abb6cb955fad91324b7f076" kindref="member">getValue&lt; long &gt;</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classToken" kindref="compound">Token</ref>&amp;<sp/>t<sp/>)</highlight></codeline>
+<codeline lineno="42"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classNumericDatum" kindref="compound">IntegerDatum</ref>*<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const<sp/></highlight><highlight class="normal"><ref refid="classNumericDatum" kindref="compound">IntegerDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>t.<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/>{<sp/></highlight><highlight class="comment">//<sp/>We<sp/>have<sp/>to<sp/>create<sp/>a<sp/>Datum<sp/>object<sp/>to<sp/>get<sp/>the<sp/>name...</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classNumericDatum" kindref="compound">IntegerDatum</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>d;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classTypeMismatch" kindref="compound">TypeMismatch</ref>(<sp/>d.gettypename().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>(),<sp/>t.<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()-&gt;<ref refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" kindref="member">gettypename</ref>().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal">-&gt;get();</highlight></codeline>
+<codeline lineno="50"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="52" refid="tokenutils_8cc_1a76463d42ed8c9825c9ef11cd4b8cde13" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><ref refid="tokenutils_8cc_1a76463d42ed8c9825c9ef11cd4b8cde13" kindref="member">setValue&lt; long &gt;</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classToken" kindref="compound">Token</ref>&amp;<sp/>t,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value<sp/>)</highlight></codeline>
+<codeline lineno="54"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><ref refid="classNumericDatum" kindref="compound">IntegerDatum</ref>*<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classNumericDatum" kindref="compound">IntegerDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>t.<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/>{<sp/></highlight><highlight class="comment">//<sp/>We<sp/>have<sp/>to<sp/>create<sp/>a<sp/>Datum<sp/>object<sp/>to<sp/>get<sp/>the<sp/>name...</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classNumericDatum" kindref="compound">IntegerDatum</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>d;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classTypeMismatch" kindref="compound">TypeMismatch</ref>(<sp/>d.gettypename().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>(),<sp/>t.<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()-&gt;<ref refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" kindref="member">gettypename</ref>().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/>(<sp/>*id<sp/>)<sp/>=<sp/>value;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="65" refid="tokenutils_8cc_1ad01760d55ce43d15a0f2ae0fb2dcb0ca" refkind="member"><highlight class="normal"><ref refid="classToken" kindref="compound">Token</ref></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><ref refid="tokenutils_8cc_1ad01760d55ce43d15a0f2ae0fb2dcb0ca" kindref="member">newToken&lt; long &gt;</ref>(<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value<sp/>)</highlight></codeline>
+<codeline lineno="67"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classToken" kindref="compound">Token</ref>(<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="integerdatum_8h_1ae9e7b850583ee9d781126bd856458aec" kindref="member">IntegerDatum</ref>(<sp/>value<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="73" refid="tokenutils_8cc_1aeb08d5341a6bafebc5f8513da1eccb2b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><ref refid="tokenutils_8cc_1aeb08d5341a6bafebc5f8513da1eccb2b" kindref="member">getValue&lt; double &gt;</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classToken" kindref="compound">Token</ref>&amp;<sp/>t<sp/>)</highlight></codeline>
+<codeline lineno="75"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><ref refid="classNumericDatum" kindref="compound">DoubleDatum</ref>*<sp/>dd<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classNumericDatum" kindref="compound">DoubleDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>t.<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>dd<sp/>)</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>dd-&gt;<ref refid="classGenericDatum_1a2204e0bfb80429863ebbd37005235c1e" kindref="member">get</ref>();</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><ref refid="classNumericDatum" kindref="compound">IntegerDatum</ref>*<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classNumericDatum" kindref="compound">IntegerDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>t.<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal">-&gt;get()<sp/>);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>have<sp/>to<sp/>create<sp/>a<sp/>Datum<sp/>object<sp/>to<sp/>get<sp/>the<sp/>name...</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><ref refid="classNumericDatum" kindref="compound">DoubleDatum</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>d;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classTypeMismatch" kindref="compound">TypeMismatch</ref>(<sp/>d.gettypename().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>(),<sp/>t.<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()-&gt;<ref refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" kindref="member">gettypename</ref>().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="94" refid="tokenutils_8cc_1a6bca9eb7cda2a3fd18e97e6a986c85b4" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><ref refid="tokenutils_8cc_1a6bca9eb7cda2a3fd18e97e6a986c85b4" kindref="member">setValue&lt; double &gt;</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classToken" kindref="compound">Token</ref>&amp;<sp/>t,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value<sp/>)</highlight></codeline>
+<codeline lineno="96"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><ref refid="classNumericDatum" kindref="compound">DoubleDatum</ref>*<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classNumericDatum" kindref="compound">DoubleDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>t.<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/>{<sp/></highlight><highlight class="comment">//<sp/>We<sp/>have<sp/>to<sp/>create<sp/>a<sp/>Datum<sp/>object<sp/>to<sp/>get<sp/>the<sp/>name...</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classNumericDatum" kindref="compound">DoubleDatum</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>d;</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classTypeMismatch" kindref="compound">TypeMismatch</ref>(<sp/>d.gettypename().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>(),<sp/>t.<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()-&gt;<ref refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" kindref="member">gettypename</ref>().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/>(<sp/>*id<sp/>)<sp/>=<sp/>value;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="107" refid="tokenutils_8cc_1a50a6a93133d0429dbd5432bee9568487" refkind="member"><highlight class="normal"><ref refid="classToken" kindref="compound">Token</ref></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><ref refid="tokenutils_8cc_1a50a6a93133d0429dbd5432bee9568487" kindref="member">newToken&lt; double &gt;</ref>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value<sp/>)</highlight></codeline>
+<codeline lineno="109"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classToken" kindref="compound">Token</ref>(<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="doubledatum_8h_1aeffda9ec736bcfbe0e05c3b3ea56a858" kindref="member">DoubleDatum</ref>(<sp/>value<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="114" refid="tokenutils_8cc_1a95ea4d0048b41f138634e4eca76292bf" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><ref refid="tokenutils_8cc_1a95ea4d0048b41f138634e4eca76292bf" kindref="member">getValue&lt; bool &gt;</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classToken" kindref="compound">Token</ref>&amp;<sp/>t<sp/>)</highlight></codeline>
+<codeline lineno="116"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><ref refid="classBoolDatum" kindref="compound">BoolDatum</ref>*<sp/>bd<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classBoolDatum" kindref="compound">BoolDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>t.<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not<sp/>bd<sp/>)</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/>{<sp/></highlight><highlight class="comment">//<sp/>We<sp/>have<sp/>to<sp/>create<sp/>a<sp/>Datum<sp/>object<sp/>to<sp/>get<sp/>the<sp/>name...</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classBoolDatum" kindref="compound">BoolDatum</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>d(<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classTypeMismatch" kindref="compound">TypeMismatch</ref>(<sp/>d.gettypename().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>(),<sp/>t.<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()-&gt;<ref refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" kindref="member">gettypename</ref>().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>*bd<sp/>);</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>should<sp/>have<sp/>used<sp/>i-&gt;true_name,<sp/>bit<sp/>we<sp/>don&apos;t<sp/>know<sp/>the<sp/>interpreter<sp/>here.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="127" refid="tokenutils_8cc_1adecd0efa9c7a3b66e074715e97c54f5c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><ref refid="tokenutils_8cc_1adecd0efa9c7a3b66e074715e97c54f5c" kindref="member">setValue&lt; bool &gt;</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classToken" kindref="compound">Token</ref>&amp;<sp/>t,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value<sp/>)</highlight></codeline>
+<codeline lineno="129"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><ref refid="classBoolDatum" kindref="compound">BoolDatum</ref>*<sp/>bd<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classBoolDatum" kindref="compound">BoolDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>t.<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not<sp/>bd<sp/>)</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/>{<sp/></highlight><highlight class="comment">//<sp/>We<sp/>have<sp/>to<sp/>create<sp/>a<sp/>Datum<sp/>object<sp/>to<sp/>get<sp/>the<sp/>name...</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classBoolDatum" kindref="compound">BoolDatum</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>d(<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classTypeMismatch" kindref="compound">TypeMismatch</ref>(<sp/>d.gettypename().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>(),<sp/>t.<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()-&gt;<ref refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" kindref="member">gettypename</ref>().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/>*bd<sp/>=<sp/><ref refid="classBoolDatum" kindref="compound">BoolDatum</ref>(<sp/>value<sp/>);</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>should<sp/>have<sp/>used<sp/>i-&gt;true_name,<sp/>bit<sp/>we<sp/>don&apos;t<sp/>know<sp/>the<sp/>interpreter<sp/>here.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="142" refid="tokenutils_8cc_1a649bf22b74227b36f9badba0f5e44ebf" refkind="member"><highlight class="normal"><ref refid="classToken" kindref="compound">Token</ref></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><ref refid="tokenutils_8cc_1a649bf22b74227b36f9badba0f5e44ebf" kindref="member">newToken&lt; bool &gt;</ref>(<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value<sp/>)</highlight></codeline>
+<codeline lineno="144"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classToken" kindref="compound">Token</ref>(<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="classBoolDatum" kindref="compound">BoolDatum</ref>(<sp/>value<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>should<sp/>have<sp/>used<sp/>i-&gt;true_name,<sp/>bit<sp/>we<sp/>don&apos;t<sp/>know<sp/>the<sp/>interpreter<sp/>here.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight><highlight class="comment">//<sp/>These<sp/>will<sp/>handle<sp/>StringDatum,<sp/>NameDatum,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight><highlight class="comment">//<sp/>LiteralDatum<sp/>and<sp/>SymbolDatum<sp/>tokens:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="153" refid="tokenutils_8cc_1ab4940c6a9d7f700ec063ad673ea35ca9" refkind="member"><highlight class="normal">std::string</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><ref refid="tokenutils_8cc_1ab4940c6a9d7f700ec063ad673ea35ca9" kindref="member">getValue&lt; std::string &gt;</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classToken" kindref="compound">Token</ref>&amp;<sp/>t<sp/>)</highlight></codeline>
+<codeline lineno="155"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>it<sp/>is<sp/>a<sp/>StringDatum,<sp/>it<sp/>can<sp/>be<sp/>casted<sp/>to<sp/>a<sp/>string:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/>std::string*<sp/>s<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/>std::string*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>t.<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>s<sp/>)</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>*s;</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>it<sp/>is<sp/>a<sp/>NameDatum,<sp/>LiteralDatum<sp/>or<sp/>SymbolDatum,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>(or<sp/>even<sp/>a<sp/>BoolDatum!)<sp/>it<sp/>can<sp/>be<sp/>casted<sp/>to<sp/>a<sp/>Name:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="className" kindref="compound">Name</ref>*<sp/>n<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>t.<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>n<sp/>)</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>n-&gt;<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>();</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>given<sp/>token<sp/>can<sp/>never<sp/>yield<sp/>a<sp/>string!</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>have<sp/>to<sp/>create<sp/>Datum<sp/>objects<sp/>to<sp/>get<sp/>the<sp/>expected<sp/>names...</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">StringDatum</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>d1;</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classNameDatum" kindref="compound">NameDatum</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>d2(<sp/></highlight><highlight class="stringliteral">&quot;dummy&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classLiteralDatum" kindref="compound">LiteralDatum</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>d3(<sp/></highlight><highlight class="stringliteral">&quot;dummy&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classSymbolDatum" kindref="compound">SymbolDatum</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>d4(<sp/></highlight><highlight class="stringliteral">&quot;dummy&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classTypeMismatch" kindref="compound">TypeMismatch</ref>(<sp/>d1.<ref refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" kindref="member">gettypename</ref>().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>()<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;,<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>d2.<ref refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" kindref="member">gettypename</ref>().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>()<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;,<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/>d3.<ref refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" kindref="member">gettypename</ref>().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>()<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;,<sp/>or<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>d4.<ref refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" kindref="member">gettypename</ref>().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>(),</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>t.<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()-&gt;<ref refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" kindref="member">gettypename</ref>().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="184"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="186" refid="tokenutils_8cc_1ad50a65570f12e32bb82dc42a893d4f28" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><ref refid="tokenutils_8cc_1ad50a65570f12e32bb82dc42a893d4f28" kindref="member">setValue&lt; std::string &gt;</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classToken" kindref="compound">Token</ref>&amp;<sp/>t,<sp/>std::string<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value<sp/>)</highlight></codeline>
+<codeline lineno="188"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>it<sp/>is<sp/>a<sp/>StringDatum,<sp/>it<sp/>can<sp/>be<sp/>casted<sp/>to<sp/>a<sp/>string:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/>std::string*<sp/>s<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/>std::string*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>t.<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>s<sp/>)</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/>*s<sp/>=<sp/>value;</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>it<sp/>is<sp/>a<sp/>BoolDatum,<sp/>it<sp/>-could-<sp/>be<sp/>set<sp/>from<sp/>a<sp/>string,<sp/>but</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>this<sp/>operation<sp/>shall<sp/>not<sp/>be<sp/>allowed!</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classBoolDatum" kindref="compound">BoolDatum</ref>*<sp/>b<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classBoolDatum" kindref="compound">BoolDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>t.<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>b<sp/>)</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>have<sp/>to<sp/>create<sp/>Datum<sp/>objects<sp/>to<sp/>get<sp/>the<sp/>expected<sp/>names...</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">StringDatum</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>d1;</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classNameDatum" kindref="compound">NameDatum</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>d2(<sp/></highlight><highlight class="stringliteral">&quot;dummy&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classLiteralDatum" kindref="compound">LiteralDatum</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>d3(<sp/></highlight><highlight class="stringliteral">&quot;dummy&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classSymbolDatum" kindref="compound">SymbolDatum</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>d4(<sp/></highlight><highlight class="stringliteral">&quot;dummy&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classTypeMismatch" kindref="compound">TypeMismatch</ref>(<sp/>d1.<ref refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" kindref="member">gettypename</ref>().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>()<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;,<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>d2.<ref refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" kindref="member">gettypename</ref>().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>()<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;,<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/>d3.<ref refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" kindref="member">gettypename</ref>().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>()<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;,<sp/>or<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>d4.<ref refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" kindref="member">gettypename</ref>().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>(),</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>t.<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()-&gt;<ref refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" kindref="member">gettypename</ref>().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>it<sp/>is<sp/>a<sp/>NameDatum,<sp/>LiteralDatum<sp/>or<sp/>SymbolDatum,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>it<sp/>can<sp/>be<sp/>casted<sp/>to<sp/>a<sp/>Name:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="className" kindref="compound">Name</ref>*<sp/>n<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>t.<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>n<sp/>)</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*n<sp/>=<sp/><ref refid="className" kindref="compound">Name</ref>(<sp/>value<sp/>);</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>given<sp/>token<sp/>can<sp/>never<sp/>hold<sp/>a<sp/>string!</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>have<sp/>to<sp/>create<sp/>Datum<sp/>objects<sp/>to<sp/>get<sp/>the<sp/>expected<sp/>names...</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">StringDatum</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>d1;</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classNameDatum" kindref="compound">NameDatum</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>d2(<sp/></highlight><highlight class="stringliteral">&quot;dummy&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classLiteralDatum" kindref="compound">LiteralDatum</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>d3(<sp/></highlight><highlight class="stringliteral">&quot;dummy&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classSymbolDatum" kindref="compound">SymbolDatum</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>d4(<sp/></highlight><highlight class="stringliteral">&quot;dummy&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classTypeMismatch" kindref="compound">TypeMismatch</ref>(<sp/>d1.<ref refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" kindref="member">gettypename</ref>().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>()<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;,<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>d2.<ref refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" kindref="member">gettypename</ref>().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>()<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;,<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/>d3.<ref refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" kindref="member">gettypename</ref>().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>()<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;,<sp/>or<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>d4.<ref refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" kindref="member">gettypename</ref>().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>(),</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>t.<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()-&gt;<ref refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" kindref="member">gettypename</ref>().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="234"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"></highlight></codeline>
+<codeline lineno="236"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>will<sp/>always<sp/>yield<sp/>StringDatum<sp/>tokens:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="237"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>HAVE_SPECIALIZATION_BUG</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="238"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="239" refid="tokenutils_8cc_1a2936557f0b693b893ea3010b806c4515" refkind="member"><highlight class="normal"><ref refid="classToken" kindref="compound">Token</ref></highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><ref refid="tokenutils_8cc_1aec887ed4389726d9733344ae1e264d7e" kindref="member">newToken&lt; std::string &gt;</ref>(<sp/>std::string<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value<sp/>)</highlight></codeline>
+<codeline lineno="241"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classToken" kindref="compound">Token</ref>(<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="stringdatum_8h_1a3a3be330a17a12978173328265c8ff78" kindref="member">StringDatum</ref>(<sp/>value<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="243"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="245"><highlight class="normal"></highlight></codeline>
+<codeline lineno="246"><highlight class="normal"></highlight></codeline>
+<codeline lineno="247"><highlight class="normal"></highlight><highlight class="comment">//<sp/>These<sp/>will<sp/>convert<sp/>homogeneous<sp/>double<sp/>arrays<sp/>to<sp/>vectors:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="248"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="249"><highlight class="normal">std::vector&lt;<sp/>double<sp/>&gt;</highlight></codeline>
+<codeline lineno="250"><highlight class="normal">getValue&lt;<sp/>std::vector&lt;<sp/>double<sp/>&gt;<sp/>&gt;(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classToken" kindref="compound">Token</ref>&amp;<sp/>t<sp/>)</highlight></codeline>
+<codeline lineno="251"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Try<sp/>DoubleVectorDatum<sp/>first</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/><ref refid="classlockPTRDatum" kindref="compound">DoubleVectorDatum</ref>*<sp/>dvd<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classlockPTRDatum" kindref="compound">DoubleVectorDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>t.datum()<sp/>);</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>dvd<sp/>)</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>**dvd;</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"></highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Ok,<sp/>try<sp/>ArrayDatum</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="260"><highlight class="normal"><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">ArrayDatum</ref>*<sp/>ad<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classAggregateDatum" kindref="compound">ArrayDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>t.datum()<sp/>);</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>ad<sp/>)</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;<sp/>double<sp/>&gt;<sp/><ref refid="namespacenest_1_1names_1a594f94237bfbd8d7c0e9d3df6dfe586e" kindref="member">data</ref>;</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/><sp/><sp/>ad-&gt;toVector(<sp/>data<sp/>);</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1_1names_1a594f94237bfbd8d7c0e9d3df6dfe586e" kindref="member">data</ref>;</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"></highlight></codeline>
+<codeline lineno="268"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Out<sp/>of<sp/>options</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classTypeMismatch" kindref="compound">TypeMismatch</ref>(<sp/><ref refid="arraydatum_8h_1a4017529a13c3554e5231690909cdce58" kindref="member">DoubleVectorDatum</ref>().gettypename().toString()<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;<sp/>or<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/><ref refid="arraydatum_8h_1ae28f9f22dee7553c3f044e7f48e4f314" kindref="member">ArrayDatum</ref>().gettypename().toString(),</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/><sp/><sp/><sp/>t.datum()-&gt;gettypename().toString()<sp/>);</highlight></codeline>
+<codeline lineno="271"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"></highlight></codeline>
+<codeline lineno="273"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="274" refid="tokenutils_8cc_1ad5c32a8c3f543e57616751c33ff78a6c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="275"><highlight class="normal">setValue&lt;<sp/>std::vector&lt;<sp/>double<sp/>&gt;<sp/>&gt;(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classToken" kindref="compound">Token</ref>&amp;<sp/>t,<sp/>std::vector&lt;<sp/>double<sp/>&gt;<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value<sp/>)</highlight></codeline>
+<codeline lineno="276"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">ArrayDatum</ref>*<sp/>ad<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classAggregateDatum" kindref="compound">ArrayDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>t.datum()<sp/>);</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not<sp/>ad<sp/>)</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/>{<sp/></highlight><highlight class="comment">//<sp/>We<sp/>have<sp/>to<sp/>create<sp/>a<sp/>Datum<sp/>object<sp/>to<sp/>get<sp/>the<sp/>name...</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">ArrayDatum</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>d;</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classTypeMismatch" kindref="compound">TypeMismatch</ref>(<sp/>d.gettypename().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>(),<sp/>t.datum()-&gt;gettypename().toString()<sp/>);</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="283"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>ArrayDatum<sp/>is<sp/>an<sp/>AggregateDatum,<sp/>which<sp/>means,<sp/>it<sp/>is<sp/>derived<sp/>from</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="284"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>TokenArray.<sp/>Hence,<sp/>we<sp/>can<sp/>use<sp/>ad<sp/>just<sp/>like<sp/>a<sp/>TokenArray:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="285"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>ad-&gt;size()<sp/>!=<sp/>value.size()<sp/>)</highlight></codeline>
+<codeline lineno="286"><highlight class="normal"><sp/><sp/>{<sp/></highlight><highlight class="comment">//<sp/>Arrays<sp/>have<sp/>incompatible<sp/>size</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="287"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classRangeCheck" kindref="compound">RangeCheck</ref>(<sp/>value.size()<sp/>);</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="289"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>ad-&gt;size();<sp/>++i<sp/>)</highlight></codeline>
+<codeline lineno="290"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="tokenutils_8cc_1a6bca9eb7cda2a3fd18e97e6a986c85b4" kindref="member">setValue&lt; double &gt;</ref>(<sp/>(<sp/>*ad<sp/>)[<sp/>i<sp/>],<sp/>value[<sp/>i<sp/>]<sp/>);</highlight></codeline>
+<codeline lineno="292"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="293"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="294"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>HAVE_SPECIALIZATION_BUG</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="295"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="296" refid="tokenutils_8cc_1a90533d37d6347a54016daf6a42dcf762" refkind="member"><highlight class="normal"><ref refid="classToken" kindref="compound">Token</ref></highlight></codeline>
+<codeline lineno="297"><highlight class="normal">newToken&lt;<sp/>std::vector&lt;<sp/>double<sp/>&gt;<sp/>&gt;(<sp/>std::vector&lt;<sp/>double<sp/>&gt;<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value<sp/>)</highlight></codeline>
+<codeline lineno="298"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="299"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classToken" kindref="compound">Token</ref>(<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="arraydatum_8h_1ae28f9f22dee7553c3f044e7f48e4f314" kindref="member">ArrayDatum</ref>(<sp/>value<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="300"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="301"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="302"><highlight class="normal"></highlight></codeline>
+<codeline lineno="303"><highlight class="normal"></highlight></codeline>
+<codeline lineno="304"><highlight class="normal"></highlight><highlight class="comment">//<sp/>These<sp/>will<sp/>convert<sp/>homogeneous<sp/>int<sp/>arrays<sp/>to<sp/>vectors:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="305"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="306"><highlight class="normal">std::vector&lt;<sp/>long<sp/>&gt;</highlight></codeline>
+<codeline lineno="307"><highlight class="normal">getValue&lt;<sp/>std::vector&lt;<sp/>long<sp/>&gt;<sp/>&gt;(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classToken" kindref="compound">Token</ref>&amp;<sp/>t<sp/>)</highlight></codeline>
+<codeline lineno="308"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="309"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Try<sp/>IntVectorDatum<sp/>first</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="310"><highlight class="normal"><sp/><sp/><ref refid="classlockPTRDatum" kindref="compound">IntVectorDatum</ref>*<sp/>ivd<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classlockPTRDatum" kindref="compound">IntVectorDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>t.datum()<sp/>);</highlight></codeline>
+<codeline lineno="311"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>ivd<sp/>)</highlight></codeline>
+<codeline lineno="312"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="313"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>**ivd;</highlight></codeline>
+<codeline lineno="314"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="315"><highlight class="normal"></highlight></codeline>
+<codeline lineno="316"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Ok,<sp/>try<sp/>ArrayDatum</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="317"><highlight class="normal"><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">ArrayDatum</ref>*<sp/>ad<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classAggregateDatum" kindref="compound">ArrayDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>t.datum()<sp/>);</highlight></codeline>
+<codeline lineno="318"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>ad<sp/>)</highlight></codeline>
+<codeline lineno="319"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="320"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;<sp/>long<sp/>&gt;<sp/><ref refid="namespacenest_1_1names_1a594f94237bfbd8d7c0e9d3df6dfe586e" kindref="member">data</ref>;</highlight></codeline>
+<codeline lineno="321"><highlight class="normal"><sp/><sp/><sp/><sp/>ad-&gt;toVector(<sp/>data<sp/>);</highlight></codeline>
+<codeline lineno="322"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1_1names_1a594f94237bfbd8d7c0e9d3df6dfe586e" kindref="member">data</ref>;</highlight></codeline>
+<codeline lineno="323"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="324"><highlight class="normal"></highlight></codeline>
+<codeline lineno="325"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Out<sp/>of<sp/>options</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="326"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classTypeMismatch" kindref="compound">TypeMismatch</ref>(<sp/><ref refid="arraydatum_8h_1aaf7f2a3a6a69044bbf0f475dbe0965f0" kindref="member">IntVectorDatum</ref>().gettypename().toString()<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;<sp/>or<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/><ref refid="arraydatum_8h_1ae28f9f22dee7553c3f044e7f48e4f314" kindref="member">ArrayDatum</ref>().gettypename().toString(),</highlight></codeline>
+<codeline lineno="327"><highlight class="normal"><sp/><sp/><sp/><sp/>t.datum()-&gt;gettypename().toString()<sp/>);</highlight></codeline>
+<codeline lineno="328"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="329"><highlight class="normal"></highlight></codeline>
+<codeline lineno="330"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="331" refid="tokenutils_8cc_1a4b46c710e11a1e69803a592fab43e8e7" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="332"><highlight class="normal">setValue&lt;<sp/>std::vector&lt;<sp/>long<sp/>&gt;<sp/>&gt;(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classToken" kindref="compound">Token</ref>&amp;<sp/>t,<sp/>std::vector&lt;<sp/>long<sp/>&gt;<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value<sp/>)</highlight></codeline>
+<codeline lineno="333"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="334"><highlight class="normal"><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">ArrayDatum</ref>*<sp/>ad<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classAggregateDatum" kindref="compound">ArrayDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>t.datum()<sp/>);</highlight></codeline>
+<codeline lineno="335"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not<sp/>ad<sp/>)</highlight></codeline>
+<codeline lineno="336"><highlight class="normal"><sp/><sp/>{<sp/></highlight><highlight class="comment">//<sp/>We<sp/>have<sp/>to<sp/>create<sp/>a<sp/>Datum<sp/>object<sp/>to<sp/>get<sp/>the<sp/>name...</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="337"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">ArrayDatum</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>d;</highlight></codeline>
+<codeline lineno="338"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classTypeMismatch" kindref="compound">TypeMismatch</ref>(<sp/>d.gettypename().<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>(),<sp/>t.datum()-&gt;gettypename().toString()<sp/>);</highlight></codeline>
+<codeline lineno="339"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="340"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>ArrayDatum<sp/>is<sp/>an<sp/>AggregateDatum,<sp/>which<sp/>means,<sp/>it<sp/>is<sp/>derived<sp/>from</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="341"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>TokenArray.<sp/>Hence,<sp/>we<sp/>can<sp/>use<sp/>ad<sp/>just<sp/>like<sp/>a<sp/>TokenArray:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="342"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>ad-&gt;size()<sp/>!=<sp/>value.size()<sp/>)</highlight></codeline>
+<codeline lineno="343"><highlight class="normal"><sp/><sp/>{<sp/></highlight><highlight class="comment">//<sp/>Arrays<sp/>have<sp/>incompatible<sp/>size</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="344"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classRangeCheck" kindref="compound">RangeCheck</ref>(<sp/>value.size()<sp/>);</highlight></codeline>
+<codeline lineno="345"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="346"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>ad-&gt;size();<sp/>++i<sp/>)</highlight></codeline>
+<codeline lineno="347"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="348"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="tokenutils_8cc_1a76463d42ed8c9825c9ef11cd4b8cde13" kindref="member">setValue&lt; long &gt;</ref>(<sp/>(<sp/>*ad<sp/>)[<sp/>i<sp/>],<sp/>value[<sp/>i<sp/>]<sp/>);</highlight></codeline>
+<codeline lineno="349"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="350"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="351"><highlight class="normal"></highlight></codeline>
+<codeline lineno="352"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
+<codeline lineno="353" refid="tokenutils_8cc_1aa808e4023473f40e6605798ef1a263b9" refkind="member"><highlight class="normal"><ref refid="classToken" kindref="compound">Token</ref></highlight></codeline>
+<codeline lineno="354"><highlight class="normal">newToken&lt;<sp/>std::vector&lt;<sp/>long<sp/>&gt;<sp/>&gt;(<sp/>std::vector&lt;<sp/>long<sp/>&gt;<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>value<sp/>)</highlight></codeline>
+<codeline lineno="355"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="356"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classToken" kindref="compound">Token</ref>(<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="arraydatum_8h_1ae28f9f22dee7553c3f044e7f48e4f314" kindref="member">ArrayDatum</ref>(<sp/>value<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="357"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/tokenutils.cc"/>
+  </compounddef>
+</doxygen>

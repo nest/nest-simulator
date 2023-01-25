@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classNotImplemented" kind="class" language="C++" prot="public">
+    <compoundname>NotImplemented</compoundname>
+    <basecompoundref refid="classSLIException" prot="public" virt="non-virtual">SLIException</basecompoundref>
+    <includes refid="sliexceptions_8h" local="no">sliexceptions.h</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classNotImplemented_1a8bc18e41768aed618f2f4e21cbca3468" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string NotImplemented::msg_</definition>
+        <argsstring></argsstring>
+        <name>msg_</name>
+        <qualifiedname>NotImplemented::msg_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" line="469" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" bodystart="469" bodyend="-1"/>
+        <referencedby refid="classNotImplemented_1a0b8d6545c2eab39074975f8d9152512d" compoundref="sliexceptions_8cc" startline="207" endline="210">message</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classNotImplemented_1acc29ae95c98968c61fe36469a8b4287a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>NotImplemented::~NotImplemented</definition>
+        <argsstring>() override</argsstring>
+        <name>~NotImplemented</name>
+        <qualifiedname>NotImplemented::~NotImplemented</qualifiedname>
+        <exceptions> throw ()</exceptions>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" line="472" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" bodystart="472" bodyend="474"/>
+      </memberdef>
+      <memberdef kind="function" id="classNotImplemented_1a799fc50b592ee1dae468aa0c69eda0fb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>NotImplemented::NotImplemented</definition>
+        <argsstring>(const std::string &amp;m)</argsstring>
+        <name>NotImplemented</name>
+        <qualifiedname>NotImplemented::NotImplemented</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" line="475" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" bodystart="475" bodyend="479"/>
+      </memberdef>
+      <memberdef kind="function" id="classNotImplemented_1a0b8d6545c2eab39074975f8d9152512d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>std::string</type>
+        <definition>std::string NotImplemented::message</definition>
+        <argsstring>() const override</argsstring>
+        <name>message</name>
+        <qualifiedname>NotImplemented::message</qualifiedname>
+        <reimplements refid="classSLIException_1a8f0a43c586456cc0e161d683ff316531">message</reimplements>
+        <briefdescription>
+<para>Returns a diagnostic message or empty string. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" line="481" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.cc" bodystart="207" bodyend="210"/>
+        <references refid="classNotImplemented_1a8bc18e41768aed618f2f4e21cbca3468" compoundref="sliexceptions_8h" startline="469">msg_</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Throw if an feature is unavailable. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>NotImplemented</label>
+        <link refid="classNotImplemented"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIException</label>
+        <link refid="classSLIException"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>std::exception</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>NotImplemented</label>
+        <link refid="classNotImplemented"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIException</label>
+        <link refid="classSLIException"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>std::exception</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" line="467" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" bodystart="468" bodyend="482"/>
+    <listofallmembers>
+      <member refid="classNotImplemented_1a0b8d6545c2eab39074975f8d9152512d" prot="public" virt="virtual"><scope>NotImplemented</scope><name>message</name></member>
+      <member refid="classNotImplemented_1a8bc18e41768aed618f2f4e21cbca3468" prot="private" virt="non-virtual"><scope>NotImplemented</scope><name>msg_</name></member>
+      <member refid="classNotImplemented_1a799fc50b592ee1dae468aa0c69eda0fb" prot="public" virt="non-virtual"><scope>NotImplemented</scope><name>NotImplemented</name></member>
+      <member refid="classSLIException_1ace48f5938754e82931bab7f54471dd3f" prot="public" virt="non-virtual"><scope>NotImplemented</scope><name>SLIException</name></member>
+      <member refid="classSLIException_1a5da1b6d493d134687d9ce01e9799b59d" prot="public" virt="non-virtual"><scope>NotImplemented</scope><name>SLIException</name></member>
+      <member refid="classSLIException_1a4ac56d362c7d86819a47c76571c9c031" prot="public" virt="non-virtual"><scope>NotImplemented</scope><name>what</name></member>
+      <member refid="classSLIException_1af0e8f12a5e346db4c028d23a2974f016" prot="private" virt="non-virtual"><scope>NotImplemented</scope><name>what_</name></member>
+      <member refid="classNotImplemented_1acc29ae95c98968c61fe36469a8b4287a" prot="public" virt="non-virtual"><scope>NotImplemented</scope><name>~NotImplemented</name></member>
+      <member refid="classSLIException_1a671677b69bcc3895df94a069067c0578" prot="public" virt="non-virtual"><scope>NotImplemented</scope><name>~SLIException</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

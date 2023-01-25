@@ -1,0 +1,372 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classnest_1_1GapJunction" kind="class" language="C++" prot="public">
+    <compoundname>nest::GapJunction</compoundname>
+    <basecompoundref refid="classnest_1_1Connection" prot="public" virt="non-virtual">nest::Connection&lt; targetidentifierT &gt;</basecompoundref>
+    <includes refid="gap__junction_8h" local="no">gap_junction.h</includes>
+    <templateparamlist>
+      <param>
+        <type>typename targetidentifierT</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classnest_1_1GapJunction_1a916934d7eacc66aa4e9c63d47227c350" prot="public" static="no">
+        <type><ref refid="classnest_1_1CommonSynapseProperties" kindref="compound">CommonSynapseProperties</ref></type>
+        <definition>typedef CommonSynapseProperties nest::GapJunction&lt; targetidentifierT &gt;::CommonPropertiesType</definition>
+        <argsstring></argsstring>
+        <name>CommonPropertiesType</name>
+        <qualifiedname>nest::GapJunction::CommonPropertiesType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" line="85" column="35" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classnest_1_1GapJunction_1a8bebd674c10cb01ff134be665cfe90f1" prot="public" static="no">
+        <type><ref refid="classnest_1_1Connection" kindref="compound">Connection</ref>&lt; targetidentifierT &gt;</type>
+        <definition>typedef Connection&lt; targetidentifierT &gt; nest::GapJunction&lt; targetidentifierT &gt;::ConnectionBase</definition>
+        <argsstring></argsstring>
+        <name>ConnectionBase</name>
+        <qualifiedname>nest::GapJunction::ConnectionBase</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" line="86" column="22" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classnest_1_1GapJunction_1ab6eff2e0b915b61180a4160fd0ad131b" prot="public" static="no">
+        <type><ref refid="classnest_1_1GapJunctionEvent" kindref="compound">GapJunctionEvent</ref></type>
+        <definition>typedef GapJunctionEvent nest::GapJunction&lt; targetidentifierT &gt;::EventType</definition>
+        <argsstring></argsstring>
+        <name>EventType</name>
+        <qualifiedname>nest::GapJunction::EventType</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" line="87" column="28" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classnest_1_1GapJunction_1a60976f3d3f60fb2f92c5f4712bbd5cf6" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::GapJunction&lt; targetidentifierT &gt;::weight_</definition>
+        <argsstring></argsstring>
+        <name>weight_</name>
+        <qualifiedname>nest::GapJunction::weight_</qualifiedname>
+        <briefdescription>
+<para>connection weight </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" line="149" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" bodystart="149" bodyend="-1"/>
+        <referencedby refid="classnest_1_1GapJunction_1a15a4964c8401d7c36624cddc214f69d8" compoundref="gap__junction_8h" startline="124" endline="130">nest::GapJunction&lt; targetidentifierT &gt;::send</referencedby>
+        <referencedby refid="classnest_1_1GapJunction_1a9ce29005406cde80d619a898d268df8d" compoundref="gap__junction_8h" startline="137" endline="140">nest::GapJunction&lt; targetidentifierT &gt;::set_weight</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1GapJunction_1a644656fba2311f82ee09172db9f631e2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>nest::GapJunction&lt; targetidentifierT &gt;::GapJunction</definition>
+        <argsstring>()</argsstring>
+        <name>GapJunction</name>
+        <qualifiedname>nest::GapJunction::GapJunction</qualifiedname>
+        <briefdescription>
+<para>Default Constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Sets default values for all parameters. Needed by <ref refid="classnest_1_1GenericConnectorModel" kindref="compound">GenericConnectorModel</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" line="93" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" bodystart="93" bodyend="97"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1GapJunction_1a9e333a60c5d7bcc5dac49cc19f8d17d2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::GapJunction&lt; targetidentifierT &gt;::check_connection</definition>
+        <argsstring>(Node &amp;s, Node &amp;t, rport receptor_type, const CommonPropertiesType &amp;)</argsstring>
+        <name>check_connection</name>
+        <qualifiedname>nest::GapJunction::check_connection</qualifiedname>
+        <param>
+          <type><ref refid="classnest_1_1Node" kindref="compound">Node</ref> &amp;</type>
+          <declname>s</declname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1Node" kindref="compound">Node</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1ac9ee368898d374e0f5df4fa748ccd79b" kindref="member">rport</ref></type>
+          <declname>receptor_type</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classnest_1_1GapJunction_1a916934d7eacc66aa4e9c63d47227c350" kindref="member">CommonPropertiesType</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" line="108" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" bodystart="108" bodyend="116"/>
+        <references refid="group__event__interface_1gaf65947fe5dfeaefe79ac3cdf86e5bb27" compoundref="node_8cpp" startline="232" endline="237">nest::Node::handles_test_event</references>
+        <references refid="group__event__interface_1ga8cc1e073626a9ffc843b2685474238de" compoundref="node_8cpp" startline="342" endline="345">nest::Node::sends_secondary_event</references>
+        <references refid="classnest_1_1Event_1a63cf602cb38d901021bbe9096f161850" compoundref="event_8h" startline="892" endline="895">nest::Event::set_sender</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1GapJunction_1a15a4964c8401d7c36624cddc214f69d8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::GapJunction&lt; targetidentifierT &gt;::send</definition>
+        <argsstring>(Event &amp;e, thread t, const CommonSynapseProperties &amp;)</argsstring>
+        <name>send</name>
+        <qualifiedname>nest::GapJunction::send</qualifiedname>
+        <param>
+          <type><ref refid="classnest_1_1Event" kindref="compound">Event</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classnest_1_1CommonSynapseProperties" kindref="compound">CommonSynapseProperties</ref> &amp;</type>
+        </param>
+        <briefdescription>
+<para>Send an event to the receiver of this connection. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>e</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The event to send </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>p</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The port under which this connection is stored in the <ref refid="classnest_1_1Connector" kindref="compound">Connector</ref>. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" line="124" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" bodystart="124" bodyend="130"/>
+        <references refid="classnest_1_1GapJunction_1a67a2fe2ff35ad8fc9ae258974545724c" compoundref="connection_8h" startline="237" endline="240">nest::GapJunction&lt; targetidentifierT &gt;::get_rport</references>
+        <references refid="classnest_1_1GapJunction_1ad1beea73d5b5a1f33bf08dd7d8aadbdb" compoundref="connection_8h" startline="232" endline="235">nest::GapJunction&lt; targetidentifierT &gt;::get_target</references>
+        <references refid="classnest_1_1GapJunction_1a60976f3d3f60fb2f92c5f4712bbd5cf6" compoundref="gap__junction_8h" startline="149">nest::GapJunction&lt; targetidentifierT &gt;::weight_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1GapJunction_1afbed3ac6e2012bbd304dd1685cbb8f75" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::GapJunction&lt; targetidentifierT &gt;::get_status</definition>
+        <argsstring>(DictionaryDatum &amp;d) const</argsstring>
+        <name>get_status</name>
+        <qualifiedname>nest::GapJunction::get_status</qualifiedname>
+        <param>
+          <type><ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" line="132" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" bodystart="154" bodyend="162"/>
+        <references refid="namespacenest_1_1names_1afb868eddb8599cce2bba3dd5790365b3" compoundref="nest__names_8h" startline="437">nest::names::size_of</references>
+        <references refid="namespacenest_1_1names_1a1bbc4b9af1e21cb33cd93dc3306ccdce" compoundref="nest__names_8h" startline="608">nest::names::weight</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1GapJunction_1a0cecca7d28ae1d2588c47609e60733e9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::GapJunction&lt; targetidentifierT &gt;::set_status</definition>
+        <argsstring>(const DictionaryDatum &amp;d, ConnectorModel &amp;cm)</argsstring>
+        <name>set_status</name>
+        <qualifiedname>nest::GapJunction::set_status</qualifiedname>
+        <param>
+          <type>const <ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1ConnectorModel" kindref="compound">ConnectorModel</ref> &amp;</type>
+          <declname>cm</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" line="134" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" bodystart="166" bodyend="176"/>
+        <references refid="namespacenest_1_1names_1a8356f74d8c2f8042dee4e2e6a93cba5b" compoundref="nest__names_8h" startline="146">nest::names::delay</references>
+        <references refid="namespacenest_1_1names_1a1bbc4b9af1e21cb33cd93dc3306ccdce" compoundref="nest__names_8h" startline="608">nest::names::weight</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1GapJunction_1a9ce29005406cde80d619a898d268df8d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::GapJunction&lt; targetidentifierT &gt;::set_weight</definition>
+        <argsstring>(double w)</argsstring>
+        <name>set_weight</name>
+        <qualifiedname>nest::GapJunction::set_weight</qualifiedname>
+        <param>
+          <type>double</type>
+          <declname>w</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" line="137" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" bodystart="137" bodyend="140"/>
+        <references refid="classnest_1_1GapJunction_1a60976f3d3f60fb2f92c5f4712bbd5cf6" compoundref="gap__junction_8h" startline="149">nest::GapJunction&lt; targetidentifierT &gt;::weight_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1GapJunction_1a8516206e8b948ebef73466662f6700a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::GapJunction&lt; targetidentifierT &gt;::set_delay</definition>
+        <argsstring>(double)</argsstring>
+        <name>set_delay</name>
+        <qualifiedname>nest::GapJunction::set_delay</qualifiedname>
+        <param>
+          <type>double</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" line="143" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" bodystart="143" bodyend="146"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1GapJunction_1a239230687eac7f8868b89c8a5e8fc56e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>long</type>
+        <definition>long nest::Connection&lt; targetidentifierT &gt;::get_delay_steps</definition>
+        <argsstring>() const</argsstring>
+        <name>get_delay_steps</name>
+        <qualifiedname>nest::GapJunction::get_delay_steps</qualifiedname>
+        <briefdescription>
+<para>Return the delay of the connection in steps. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" line="103" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection.h" bodystart="175" bodyend="178"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1GapJunction_1a67a2fe2ff35ad8fc9ae258974545724c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1ac9ee368898d374e0f5df4fa748ccd79b" kindref="member">rport</ref></type>
+        <definition>rport nest::Connection&lt; targetidentifierT &gt;::get_rport</definition>
+        <argsstring>() const</argsstring>
+        <name>get_rport</name>
+        <qualifiedname>nest::GapJunction::get_rport</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" line="104" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection.h" bodystart="237" bodyend="240"/>
+        <referencedby refid="classnest_1_1GapJunction_1a15a4964c8401d7c36624cddc214f69d8" compoundref="gap__junction_8h" startline="124" endline="130">nest::GapJunction&lt; targetidentifierT &gt;::send</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1GapJunction_1ad1beea73d5b5a1f33bf08dd7d8aadbdb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classnest_1_1Node" kindref="compound">Node</ref> *</type>
+        <definition>Node * nest::Connection&lt; targetidentifierT &gt;::get_target</definition>
+        <argsstring>(const thread tid) const</argsstring>
+        <name>get_target</name>
+        <qualifiedname>nest::GapJunction::get_target</qualifiedname>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" line="105" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connection.h" bodystart="232" bodyend="235"/>
+        <referencedby refid="classnest_1_1GapJunction_1a15a4964c8401d7c36624cddc214f69d8" compoundref="gap__junction_8h" startline="124" endline="130">nest::GapJunction&lt; targetidentifierT &gt;::send</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>nest::Connection&lt; targetidentifierT &gt;</label>
+        <link refid="classnest_1_1Connection"/>
+      </node>
+      <node id="1">
+        <label>nest::GapJunction&lt; targetidentifierT &gt;</label>
+        <link refid="classnest_1_1GapJunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>nest::Connection&lt; targetidentifierT &gt;</label>
+        <link refid="classnest_1_1Connection"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>syn_id_delay_</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>nest::GapJunction&lt; targetidentifierT &gt;</label>
+        <link refid="classnest_1_1GapJunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>nest::SynIdDelay</label>
+        <link refid="structnest_1_1SynIdDelay"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" line="80" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/gap_junction.h" bodystart="81" bodyend="150"/>
+    <listofallmembers>
+      <member refid="classnest_1_1Connection_1a98a2af4db1c9a34d011be0c89a731c9b" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>calibrate</name></member>
+      <member refid="classnest_1_1GapJunction_1a9e333a60c5d7bcc5dac49cc19f8d17d2" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>check_connection</name></member>
+      <member refid="classnest_1_1Connection_1ade845a0f52ecb9a6f93b0323b37380e0" prot="protected" virt="non-virtual"><scope>nest::GapJunction</scope><name>check_connection_</name></member>
+      <member refid="classnest_1_1Connection_1ae7698c05fc210ced5bbf31b02dd6e05b" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>check_synapse_params</name></member>
+      <member refid="classnest_1_1GapJunction_1a916934d7eacc66aa4e9c63d47227c350" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>CommonPropertiesType</name></member>
+      <member refid="classnest_1_1Connection_1acb7166410b78749a3c989e98868d1020" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>Connection</name></member>
+      <member refid="classnest_1_1Connection_1a9237d0912e8b9c7fbb5d32d4c7abcb8d" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>Connection</name></member>
+      <member refid="classnest_1_1GapJunction_1a8bebd674c10cb01ff134be665cfe90f1" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>ConnectionBase</name></member>
+      <member refid="classnest_1_1Connection_1a811dff4d6dbbca5a8cae4de925aa9faf" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>disable</name></member>
+      <member refid="classnest_1_1GapJunction_1ab6eff2e0b915b61180a4160fd0ad131b" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>EventType</name></member>
+      <member refid="classnest_1_1GapJunction_1a644656fba2311f82ee09172db9f631e2" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>GapJunction</name></member>
+      <member refid="classnest_1_1Connection_1a859a57c02d19389a8f6a15c626214c9b" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>get_delay</name></member>
+      <member refid="classnest_1_1GapJunction_1a239230687eac7f8868b89c8a5e8fc56e" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>get_delay_steps</name></member>
+      <member refid="classnest_1_1Connection_1a7c32524ac24f7d591bd14a5cc9219618" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>get_label</name></member>
+      <member refid="classnest_1_1GapJunction_1a67a2fe2ff35ad8fc9ae258974545724c" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>get_rport</name></member>
+      <member refid="classnest_1_1GapJunction_1afbed3ac6e2012bbd304dd1685cbb8f75" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>get_status</name></member>
+      <member refid="classnest_1_1Connection_1a2aca6e34443f8ef8576e23f097b199df" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>get_syn_id</name></member>
+      <member refid="classnest_1_1GapJunction_1ad1beea73d5b5a1f33bf08dd7d8aadbdb" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>get_target</name></member>
+      <member refid="classnest_1_1Connection_1af8930ce6e4fee3c867cccac967970bd2" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>is_disabled</name></member>
+      <member refid="classnest_1_1Connection_1a111070d4cbb64481c2e72cdd65e372db" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>operator=</name></member>
+      <member refid="classnest_1_1GapJunction_1a15a4964c8401d7c36624cddc214f69d8" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>send</name></member>
+      <member refid="classnest_1_1GapJunction_1a8516206e8b948ebef73466662f6700a5" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>set_delay</name></member>
+      <member refid="classnest_1_1Connection_1ab67c8cbeb4173f71fbc1a364d4e91785" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>set_delay_steps</name></member>
+      <member refid="classnest_1_1Connection_1adce5ef19844ee30d96e7d39b5fe1a7f1" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>set_source_has_more_targets</name></member>
+      <member refid="classnest_1_1GapJunction_1a0cecca7d28ae1d2588c47609e60733e9" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>set_status</name></member>
+      <member refid="classnest_1_1Connection_1a7abf9bd27ab16f395112be31001bae3c" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>set_syn_id</name></member>
+      <member refid="classnest_1_1GapJunction_1a9ce29005406cde80d619a898d268df8d" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>set_weight</name></member>
+      <member refid="classnest_1_1Connection_1a0007e829af9dc39e624c5f349259a8ca" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>source_has_more_targets</name></member>
+      <member refid="classnest_1_1Connection_1a27f971c956034918da99deb971949a26" prot="protected" virt="non-virtual"><scope>nest::GapJunction</scope><name>syn_id_delay_</name></member>
+      <member refid="classnest_1_1Connection_1af2b2773f69c67db7330eb1064a199af7" prot="protected" virt="non-virtual"><scope>nest::GapJunction</scope><name>target_</name></member>
+      <member refid="classnest_1_1Connection_1aa1e3449ea1e2ff5f7dd2338bbf3feafe" prot="public" virt="non-virtual"><scope>nest::GapJunction</scope><name>trigger_update_weight</name></member>
+      <member refid="classnest_1_1GapJunction_1a60976f3d3f60fb2f92c5f4712bbd5cf6" prot="private" virt="non-virtual"><scope>nest::GapJunction</scope><name>weight_</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,197 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classTypeMismatch" kind="class" language="C++" prot="public">
+    <compoundname>TypeMismatch</compoundname>
+    <basecompoundref refid="classInterpreterError" prot="public" virt="non-virtual">InterpreterError</basecompoundref>
+    <includes refid="sliexceptions_8h" local="no">sliexceptions.h</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classTypeMismatch_1a037b39a062c9105a446b96a94b7cc13c" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string TypeMismatch::expected_</definition>
+        <argsstring></argsstring>
+        <name>expected_</name>
+        <qualifiedname>TypeMismatch::expected_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" line="170" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" bodystart="170" bodyend="-1"/>
+        <referencedby refid="classTypeMismatch_1afe7e60bef80f431a8a6170d7815347b5" compoundref="sliexceptions_8cc" startline="52" endline="66">message</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classTypeMismatch_1a1f993a929111c8b84c0a907b14575c52" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string TypeMismatch::provided_</definition>
+        <argsstring></argsstring>
+        <name>provided_</name>
+        <qualifiedname>TypeMismatch::provided_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" line="171" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" bodystart="171" bodyend="-1"/>
+        <referencedby refid="classTypeMismatch_1afe7e60bef80f431a8a6170d7815347b5" compoundref="sliexceptions_8cc" startline="52" endline="66">message</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classTypeMismatch_1a14641a227504094704266178ee08fb3b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>TypeMismatch::~TypeMismatch</definition>
+        <argsstring>() override</argsstring>
+        <name>~TypeMismatch</name>
+        <qualifiedname>TypeMismatch::~TypeMismatch</qualifiedname>
+        <exceptions> throw ()</exceptions>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" line="174" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" bodystart="174" bodyend="176"/>
+      </memberdef>
+      <memberdef kind="function" id="classTypeMismatch_1a94359547fb6884901a848a41069d46d8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>TypeMismatch::TypeMismatch</definition>
+        <argsstring>()</argsstring>
+        <name>TypeMismatch</name>
+        <qualifiedname>TypeMismatch::TypeMismatch</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" line="178" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" bodystart="178" bodyend="181"/>
+      </memberdef>
+      <memberdef kind="function" id="classTypeMismatch_1a7f82b1fe54a8095f002c271529bc5d11" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>TypeMismatch::TypeMismatch</definition>
+        <argsstring>(const std::string &amp;expectedType)</argsstring>
+        <name>TypeMismatch</name>
+        <qualifiedname>TypeMismatch::TypeMismatch</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>expectedType</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" line="183" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" bodystart="183" bodyend="187"/>
+      </memberdef>
+      <memberdef kind="function" id="classTypeMismatch_1a7e95d407e6149b04ce8bcc8bde1246a0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>TypeMismatch::TypeMismatch</definition>
+        <argsstring>(const std::string &amp;expectedType, const std::string &amp;providedType)</argsstring>
+        <name>TypeMismatch</name>
+        <qualifiedname>TypeMismatch::TypeMismatch</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>expectedType</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>providedType</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" line="189" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" bodystart="189" bodyend="194"/>
+      </memberdef>
+      <memberdef kind="function" id="classTypeMismatch_1afe7e60bef80f431a8a6170d7815347b5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>std::string</type>
+        <definition>std::string TypeMismatch::message</definition>
+        <argsstring>() const override</argsstring>
+        <name>message</name>
+        <qualifiedname>TypeMismatch::message</qualifiedname>
+        <reimplements refid="classSLIException_1a8f0a43c586456cc0e161d683ff316531">message</reimplements>
+        <briefdescription>
+<para>Returns a diagnostic message or empty string. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" line="196" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.cc" bodystart="52" bodyend="66"/>
+        <references refid="classTypeMismatch_1a037b39a062c9105a446b96a94b7cc13c" compoundref="sliexceptions_8h" startline="170">expected_</references>
+        <references refid="classTypeMismatch_1a1f993a929111c8b84c0a907b14575c52" compoundref="sliexceptions_8h" startline="171">provided_</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Exception to be thrown if a given SLI type does not match the expected type. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>InterpreterError</label>
+        <link refid="classInterpreterError"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>SLIException</label>
+        <link refid="classSLIException"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>TypeMismatch</label>
+        <link refid="classTypeMismatch"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>std::exception</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>InterpreterError</label>
+        <link refid="classInterpreterError"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>SLIException</label>
+        <link refid="classSLIException"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>TypeMismatch</label>
+        <link refid="classTypeMismatch"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>std::exception</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" line="168" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" bodystart="169" bodyend="197"/>
+    <listofallmembers>
+      <member refid="classTypeMismatch_1a037b39a062c9105a446b96a94b7cc13c" prot="private" virt="non-virtual"><scope>TypeMismatch</scope><name>expected_</name></member>
+      <member refid="classInterpreterError_1a7aff0835ddacfa8f31829985f3257a1b" prot="public" virt="non-virtual"><scope>TypeMismatch</scope><name>InterpreterError</name></member>
+      <member refid="classTypeMismatch_1afe7e60bef80f431a8a6170d7815347b5" prot="public" virt="virtual"><scope>TypeMismatch</scope><name>message</name></member>
+      <member refid="classTypeMismatch_1a1f993a929111c8b84c0a907b14575c52" prot="private" virt="non-virtual"><scope>TypeMismatch</scope><name>provided_</name></member>
+      <member refid="classSLIException_1ace48f5938754e82931bab7f54471dd3f" prot="public" virt="non-virtual"><scope>TypeMismatch</scope><name>SLIException</name></member>
+      <member refid="classSLIException_1a5da1b6d493d134687d9ce01e9799b59d" prot="public" virt="non-virtual"><scope>TypeMismatch</scope><name>SLIException</name></member>
+      <member refid="classTypeMismatch_1a94359547fb6884901a848a41069d46d8" prot="public" virt="non-virtual"><scope>TypeMismatch</scope><name>TypeMismatch</name></member>
+      <member refid="classTypeMismatch_1a7f82b1fe54a8095f002c271529bc5d11" prot="public" virt="non-virtual"><scope>TypeMismatch</scope><name>TypeMismatch</name></member>
+      <member refid="classTypeMismatch_1a7e95d407e6149b04ce8bcc8bde1246a0" prot="public" virt="non-virtual"><scope>TypeMismatch</scope><name>TypeMismatch</name></member>
+      <member refid="classSLIException_1a4ac56d362c7d86819a47c76571c9c031" prot="public" virt="non-virtual"><scope>TypeMismatch</scope><name>what</name></member>
+      <member refid="classSLIException_1af0e8f12a5e346db4c028d23a2974f016" prot="private" virt="non-virtual"><scope>TypeMismatch</scope><name>what_</name></member>
+      <member refid="classInterpreterError_1af64d8c01a2f4ca1463de3a24c9e3a237" prot="public" virt="non-virtual"><scope>TypeMismatch</scope><name>~InterpreterError</name></member>
+      <member refid="classSLIException_1a671677b69bcc3895df94a069067c0578" prot="public" virt="non-virtual"><scope>TypeMismatch</scope><name>~SLIException</name></member>
+      <member refid="classTypeMismatch_1a14641a227504094704266178ee08fb3b" prot="public" virt="non-virtual"><scope>TypeMismatch</scope><name>~TypeMismatch</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

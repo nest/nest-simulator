@@ -1,0 +1,441 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="group__SLIError" kind="group">
+    <compoundname>SLIError</compoundname>
+    <title>Raising (and displaying) errors</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void SLIInterpreter::raiseerror</definition>
+        <argsstring>(const char *err)</argsstring>
+        <name>raiseerror</name>
+        <qualifiedname>SLIInterpreter::raiseerror</qualifiedname>
+        <param>
+          <type>const char *</type>
+          <declname>err</declname>
+        </param>
+        <briefdescription>
+<para>Cause the SLI interpreter to raise an error. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function is used by classes derived from <ref refid="classSLIFunction" kindref="compound">SLIFunction</ref> to raise an error. <linebreak/>
+<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror()</ref> is an interface to the SLI interpreter&apos;s error handling mechanism (see The Red Book for details). If an error is raised, the following actions are performed:<itemizedlist>
+<listitem><para>the value of errordict /newerror is set to true</para>
+</listitem><listitem><para>the value of errordict /command is set to the name of the command which raised the error</para>
+</listitem><listitem><para>If the value of errordict /recorstack is true, the state of the interpreter is saved:<itemizedlist>
+<listitem><para>the operand stack is copied to errordict /ostack</para>
+</listitem><listitem><para>the execution stack is copied to errordict /estack</para>
+</listitem><listitem><para>the dictionary stack is copied to errordict /dstack</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>the dictionary stack is cleared.</para>
+</listitem><listitem><para>stop is called. Stop then tries to find an enclosing stopped context and calls the associated function.</para>
+</listitem></itemizedlist>
+</para>
+<para>This mechanism is explained in detail in The PostScript Reference Manual. <linebreak/>
+If the user did not establish any stopped context, the default stopped context for the SLI interpreter will be executed, which includes display of an error message and stopping program execution. <linebreak/>
+Please note that before raiserror() is called, the state of the operand and execution stack shall be restored to their initial state.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The argument is the name of the error, specified as a string. The name of the currently active function will be used as the function name.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="group__SLIError_1ga5d57aa6fa36a18f55937701fd1a0627b" kindref="member">raiseerror(Name)</ref>, <ref refid="group__SLIError_1ga098156501ff35f206a32d389bf262e05" kindref="member">raiseerror(Name,Name)</ref>, <ref refid="group__SLIError_1gaf0e0e8a833e50337078b8dd48df80a53" kindref="member">raiseagain()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/interpret.h" line="635" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/interpret.h" bodystart="635" bodyend="638"/>
+        <references refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" compoundref="interpret_8h" startline="635" endline="638">SLIInterpreter::raiseerror</references>
+        <referencedby refid="sliarray_8cc_1ace077a477e0b9e4afdf1db8984ae8528" compoundref="sliarray_8cc" startline="4104" endline="4135">eq_execute</referencedby>
+        <referencedby refid="classStrFunction_1a06a7bd24eec85681ab4907ebb18ec909" compoundref="sli__io_8cc" startline="488" endline="532">StrFunction::execute</referencedby>
+        <referencedby refid="classFilesystemModule_1_1FileNamesFunction_1adbcab430dfe54063318d6936c7b2ad57" compoundref="filesystem_8cc" startline="75" endline="99">FilesystemModule::FileNamesFunction::execute</referencedby>
+        <referencedby refid="classFilesystemModule_1_1DirectoryFunction_1adf0c61082340943ff3593094af555c1d" compoundref="filesystem_8cc" startline="135" endline="156">FilesystemModule::DirectoryFunction::execute</referencedby>
+        <referencedby refid="classOOSupportModule_1_1CallMemberFunction_1a1d8c0996a6bfc265a390e3cd7ee238c4" compoundref="oosupport_8cc" startline="53" endline="77">OOSupportModule::CallMemberFunction::execute</referencedby>
+        <referencedby refid="classProcesses_1_1ForkFunction_1a823948bb729b7557d08eb7791ffbcf4e" compoundref="processes_8cc" startline="277" endline="327">Processes::ForkFunction::execute</referencedby>
+        <referencedby refid="classProcesses_1_1Sysexec__aFunction_1a2626fd11344b924a14c41412c3522280" compoundref="processes_8cc" startline="330" endline="373">Processes::Sysexec_aFunction::execute</referencedby>
+        <referencedby refid="classProcesses_1_1WaitPIDFunction_1a92e4324861fe299280cd1a1410e66d08" compoundref="processes_8cc" startline="376" endline="445">Processes::WaitPIDFunction::execute</referencedby>
+        <referencedby refid="classProcesses_1_1KillFunction_1ae89ebbe1ab8173610de30647823416e5" compoundref="processes_8cc" startline="449" endline="473">Processes::KillFunction::execute</referencedby>
+        <referencedby refid="classProcesses_1_1PipeFunction_1a0879aeaa3fcf5c3958f5bec40a205a8b" compoundref="processes_8cc" startline="477" endline="500">Processes::PipeFunction::execute</referencedby>
+        <referencedby refid="classProcesses_1_1Dup2__is__isFunction_1a91699bdb35a66331dac59fd538bc06e7" compoundref="processes_8cc" startline="504" endline="534">Processes::Dup2_is_isFunction::execute</referencedby>
+        <referencedby refid="classProcesses_1_1Dup2__os__osFunction_1a00f6041c263835bcfe825e1c4181b04f" compoundref="processes_8cc" startline="538" endline="562">Processes::Dup2_os_osFunction::execute</referencedby>
+        <referencedby refid="classProcesses_1_1Dup2__is__osFunction_1a274fbfca6798b6f8eadcd782489bc7da" compoundref="processes_8cc" startline="566" endline="596">Processes::Dup2_is_osFunction::execute</referencedby>
+        <referencedby refid="classProcesses_1_1Dup2__os__isFunction_1a694c01127f6de3b098a47e7169fdc10d" compoundref="processes_8cc" startline="600" endline="624">Processes::Dup2_os_isFunction::execute</referencedby>
+        <referencedby refid="classProcesses_1_1GetPIDFunction_1a7dbcc40ef0574ca02d93d4906d5c169a" compoundref="processes_8cc" startline="727" endline="745">Processes::GetPIDFunction::execute</referencedby>
+        <referencedby refid="classProcesses_1_1GetPPIDFunction_1aaca1a18c275bfd364ad26531a6d33d00" compoundref="processes_8cc" startline="748" endline="766">Processes::GetPPIDFunction::execute</referencedby>
+        <referencedby refid="classProcesses_1_1GetPGRPFunction_1a714b45aa666138b9b5353c91a6bac621" compoundref="processes_8cc" startline="770" endline="788">Processes::GetPGRPFunction::execute</referencedby>
+        <referencedby refid="classProcesses_1_1MkfifoFunction_1a33838c7222fdbed1292e8200ee7d14f1" compoundref="processes_8cc" startline="791" endline="816">Processes::MkfifoFunction::execute</referencedby>
+        <referencedby refid="classProcesses_1_1SetNonblockFunction_1a858f9ce60266d03a0259c91b47ae082b" compoundref="processes_8cc" startline="837" endline="885">Processes::SetNonblockFunction::execute</referencedby>
+        <referencedby refid="classOfsopenFunction_1a8eaa5c2d3e4e60f0736bf967f22f526f" compoundref="sli__io_8cc" startline="254" endline="306">OfsopenFunction::execute</referencedby>
+        <referencedby refid="classPrintFunction_1a07f2d0cea89be29ff4ed7d865be34932" compoundref="sli__io_8cc" startline="553" endline="580">PrintFunction::execute</referencedby>
+        <referencedby refid="classPrettyprintFunction_1ae14c18102851a38269b7beca0660b858" compoundref="sli__io_8cc" startline="599" endline="625">PrettyprintFunction::execute</referencedby>
+        <referencedby refid="classCloseistreamFunction_1afdc4747eb2c3320eb2d2d9b5588854b9" compoundref="sli__io_8cc" startline="755" endline="794">CloseistreamFunction::execute</referencedby>
+        <referencedby refid="classCloseostreamFunction_1a224914523097a41793a5ffc641df69a9" compoundref="sli__io_8cc" startline="798" endline="841">CloseostreamFunction::execute</referencedby>
+        <referencedby refid="classFlushFunction_1aaad54bad2651e4ba352fef4dbad61839" compoundref="sli__io_8cc" startline="632" endline="655">FlushFunction::execute</referencedby>
+        <referencedby refid="classEndlFunction_1a0719edbb131482b3ee284a0bc0813b42" compoundref="sli__io_8cc" startline="670" endline="695">EndlFunction::execute</referencedby>
+        <referencedby refid="classEndsFunction_1af7f52b0807266730c16d66d021ae15ae" compoundref="sli__io_8cc" startline="698" endline="723">EndsFunction::execute</referencedby>
+        <referencedby refid="classEatwhiteFunction_1af9c5236c74051eb1073d4c2c2922c22e" compoundref="sli__io_8cc" startline="726" endline="751">EatwhiteFunction::execute</referencedby>
+        <referencedby refid="classSetwFunction_1a639444f31137b44ccbc93777209dbc04" compoundref="sli__io_8cc" startline="844" endline="878">SetwFunction::execute</referencedby>
+        <referencedby refid="classSetprecisionFunction_1a484f49c8c368728b9a6ce79faa8ad559" compoundref="sli__io_8cc" startline="895" endline="929">SetprecisionFunction::execute</referencedby>
+        <referencedby refid="classIOSFixedFunction_1a0e62696df69769d63cfbf5e1764cb623" compoundref="sli__io_8cc" startline="932" endline="957">IOSFixedFunction::execute</referencedby>
+        <referencedby refid="classIOSScientificFunction_1a2c692edc9585a09f1c7c82d2046126ed" compoundref="sli__io_8cc" startline="960" endline="985">IOSScientificFunction::execute</referencedby>
+        <referencedby refid="classIOSDefaultFunction_1ac94c49cf89969dc55751d5e1f7504021" compoundref="sli__io_8cc" startline="988" endline="1013">IOSDefaultFunction::execute</referencedby>
+        <referencedby refid="classIOSShowpointFunction_1adf961a408799f7e7c54141d92b7d060d" compoundref="sli__io_8cc" startline="1016" endline="1040">IOSShowpointFunction::execute</referencedby>
+        <referencedby refid="classIOSNoshowpointFunction_1a3678277749e51e41ca2f5ed5a0242f11" compoundref="sli__io_8cc" startline="1043" endline="1067">IOSNoshowpointFunction::execute</referencedby>
+        <referencedby refid="classIOSShowbaseFunction_1a9fbf86437d23ed3b6e53badebe79af34" compoundref="sli__io_8cc" startline="1152" endline="1176">IOSShowbaseFunction::execute</referencedby>
+        <referencedby refid="classIOSNoshowbaseFunction_1a8313a3cd9219b554cfe797fad8861701" compoundref="sli__io_8cc" startline="1179" endline="1203">IOSNoshowbaseFunction::execute</referencedby>
+        <referencedby refid="classIOSDecFunction_1a91d1da26c1d6c9d29c509cd3836e25b4" compoundref="sli__io_8cc" startline="1125" endline="1149">IOSDecFunction::execute</referencedby>
+        <referencedby refid="classIOSHexFunction_1a28f05670f46b13ecae6772eac22d969a" compoundref="sli__io_8cc" startline="1098" endline="1122">IOSHexFunction::execute</referencedby>
+        <referencedby refid="classIOSOctFunction_1ab8338043115f277e44e3ccce57f69b47" compoundref="sli__io_8cc" startline="1071" endline="1095">IOSOctFunction::execute</referencedby>
+        <referencedby refid="classIOSLeftFunction_1afa121be648a22eb36e11bdfbc1c93f08" compoundref="sli__io_8cc" startline="1206" endline="1232">IOSLeftFunction::execute</referencedby>
+        <referencedby refid="classIOSRightFunction_1a644df4fd3ec022a3afb9aa3968672de2" compoundref="sli__io_8cc" startline="1235" endline="1261">IOSRightFunction::execute</referencedby>
+        <referencedby refid="classIOSInternalFunction_1a08e35b114543764590f42756af91d11d" compoundref="sli__io_8cc" startline="1264" endline="1290">IOSInternalFunction::execute</referencedby>
+        <referencedby refid="classGetcFunction_1aa41d75645dc805c050a16eb7bed8ec29" compoundref="sli__io_8cc" startline="1305" endline="1332">GetcFunction::execute</referencedby>
+        <referencedby refid="classGetsFunction_1a63741e5159275d306a2ef0a6ce879684" compoundref="sli__io_8cc" startline="1345" endline="1374">GetsFunction::execute</referencedby>
+        <referencedby refid="classReadDoubleFunction_1a521063b16d93a7f62e201d05b5366e0e" compoundref="sli__io_8cc" startline="1760" endline="1799">ReadDoubleFunction::execute</referencedby>
+        <referencedby refid="classReadIntFunction_1ad377d00c3a38ee868885f3dba639a68e" compoundref="sli__io_8cc" startline="1802" endline="1841">ReadIntFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1IMapFunction_1a6b9a79df67e27e005879279412c2667d" compoundref="sliarray_8cc" startline="959" endline="1053">SLIArrayModule::IMapFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1IMap__ivFunction_1a0dac376ff89c51870e22f1053fc88e28" compoundref="sliarray_8cc" startline="1079" endline="1191">SLIArrayModule::IMap_ivFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1IMap__dvFunction_1afad30d283cbf7574273f2b97281a21a0" compoundref="sliarray_8cc" startline="1213" endline="1326">SLIArrayModule::IMap_dvFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1MapThreadFunction_1a3378a7ab705dee12fe8e79da158382f7" compoundref="sliarray_8cc" startline="1747" endline="1808">SLIArrayModule::MapThreadFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1IMapThreadFunction_1aa111b125a5651529df48b2ee1b810ff6" compoundref="sliarray_8cc" startline="1610" endline="1722">SLIArrayModule::IMapThreadFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1IMapIndexedFunction_1abf8d07c9abeede15fbb3d9f28cc84847" compoundref="sliarray_8cc" startline="1458" endline="1555">SLIArrayModule::IMapIndexedFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1RangeFunction_1a348849a5076cd31741c5b6b0ec52c127" compoundref="sliarray_8cc" startline="59" endline="228">SLIArrayModule::RangeFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1ArraystoreFunction_1ae6c534234c0cd067341be3836846f05f" compoundref="sliarray_8cc" startline="855" endline="889">SLIArrayModule::ArraystoreFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1ArraycreateFunction_1a63f19d64b2c65e15b1082c34806f7d95" compoundref="sliarray_8cc" startline="892" endline="932">SLIArrayModule::ArraycreateFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1SortFunction_1afd28e1f5cbb9525546446bbe720febcb" compoundref="sliarray_8cc" startline="548" endline="607">SLIArrayModule::SortFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1PartitionFunction_1a26ee831b00be9ba77b57957f3b52ac55" compoundref="sliarray_8cc" startline="713" endline="769">SLIArrayModule::PartitionFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Put__a__a__tFunction_1a8ef92650f869aefb264bd341104c2884" compoundref="sliarray_8cc" startline="1813" endline="1897">SLIArrayModule::Put_a_a_tFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1AreaFunction_1a3a06a665d8c098da30320769540ebd6c" compoundref="sliarray_8cc" startline="2041" endline="2137">SLIArrayModule::AreaFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Area2Function_1abae669ae9be29d1cfb2ddf9eb2b30763" compoundref="sliarray_8cc" startline="2305" endline="2402">SLIArrayModule::Area2Function::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Cv1dFunction_1ae89a050ea858ee1da0e242a454818c9d" compoundref="sliarray_8cc" startline="2427" endline="2472">SLIArrayModule::Cv1dFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Cv2dFunction_1a53214436a73b79f8756b441f48497194" compoundref="sliarray_8cc" startline="2498" endline="2536">SLIArrayModule::Cv2dFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1GetMaxFunction_1a12cfde41cb2810be41a7c9cc27afb72f" compoundref="sliarray_8cc" startline="2551" endline="2599">SLIArrayModule::GetMaxFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1GetMinFunction_1a03f1707a3e081dc14a0eed642bdbcf29" compoundref="sliarray_8cc" startline="2613" endline="2662">SLIArrayModule::GetMinFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1GaborFunction_1ab2034e33aef653f08ec5999887c9e1ab" compoundref="sliarray_8cc" startline="2683" endline="2776">SLIArrayModule::GaborFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Gauss2dFunction_1ad04d755826f2d699a068daa24e55230e" compoundref="sliarray_8cc" startline="2795" endline="2882">SLIArrayModule::Gauss2dFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Array2IntVectorFunction_1a386ae8e5715f790973989e63b800fe14" compoundref="sliarray_8cc" startline="2885" endline="2904">SLIArrayModule::Array2IntVectorFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Array2DoubleVectorFunction_1a925484705807b74386c1dd4fc96a2122" compoundref="sliarray_8cc" startline="2907" endline="2926">SLIArrayModule::Array2DoubleVectorFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1DoubleVector2ArrayFunction_1a185951b1be4a3e38074b1d5354a1cf00" compoundref="sliarray_8cc" startline="3800" endline="3817">SLIArrayModule::DoubleVector2ArrayFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1IntVector2ArrayFunction_1ab9389783749f512c1be148ff37830d80" compoundref="sliarray_8cc" startline="2929" endline="2946">SLIArrayModule::IntVector2ArrayFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Add__iv__ivFunction_1a18d3df7edaa78762d90efcff93f40bf4" compoundref="sliarray_8cc" startline="2949" endline="2984">SLIArrayModule::Add_iv_ivFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Add__i__ivFunction_1abb1d8c2a987d6b4ed260cb9736c77909" compoundref="sliarray_8cc" startline="2987" endline="3018">SLIArrayModule::Add_i_ivFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Neg__ivFunction_1af39627c581fe5b5eeace2bbbb8551c29" compoundref="sliarray_8cc" startline="3021" endline="3045">SLIArrayModule::Neg_ivFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Sub__iv__ivFunction_1a8503a5b4e904de863d0637aee925d5b2" compoundref="sliarray_8cc" startline="3048" endline="3083">SLIArrayModule::Sub_iv_ivFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Mul__iv__ivFunction_1acb9078bfd4b7bf835104c46468df994c" compoundref="sliarray_8cc" startline="3086" endline="3121">SLIArrayModule::Mul_iv_ivFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Mul__i__ivFunction_1a3ba4905608939cfb5da34047807fbac9" compoundref="sliarray_8cc" startline="3125" endline="3156">SLIArrayModule::Mul_i_ivFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Mul__d__ivFunction_1ac29d3d68b4e09bae96e16a3aa5ea8e0e" compoundref="sliarray_8cc" startline="3159" endline="3190">SLIArrayModule::Mul_d_ivFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Div__iv__ivFunction_1a62ea47b8cd8b42d22166a43f88217967" compoundref="sliarray_8cc" startline="3193" endline="3236">SLIArrayModule::Div_iv_ivFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Add__dv__dvFunction_1ac14df1b76137565c1442470c40e03550" compoundref="sliarray_8cc" startline="3262" endline="3297">SLIArrayModule::Add_dv_dvFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Add__d__dvFunction_1a19cb9ed9a7372250986194164850fb67" compoundref="sliarray_8cc" startline="3338" endline="3370">SLIArrayModule::Add_d_dvFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Sub__dv__dvFunction_1a3f734a69a48b080dd6f2f8cea2130cff" compoundref="sliarray_8cc" startline="3300" endline="3335">SLIArrayModule::Sub_dv_dvFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Mul__dv__dvFunction_1accf09e7bf77df23d652e9a45460dc0e0" compoundref="sliarray_8cc" startline="3473" endline="3508">SLIArrayModule::Mul_dv_dvFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Mul__d__dvFunction_1a81c8731b7ecf55d38cab3404c5bb4f96" compoundref="sliarray_8cc" startline="3374" endline="3406">SLIArrayModule::Mul_d_dvFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Div__dv__dvFunction_1aa646c236981a12f71d5ecb98c6b82769" compoundref="sliarray_8cc" startline="3511" endline="3554">SLIArrayModule::Div_dv_dvFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Neg__dvFunction_1a0fb33979b9aa11dff76c2d9b7126681f" compoundref="sliarray_8cc" startline="3410" endline="3434">SLIArrayModule::Neg_dvFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Inv__dvFunction_1abcbcb2745ef331f9668d0948432751e7" compoundref="sliarray_8cc" startline="3438" endline="3469">SLIArrayModule::Inv_dvFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Length__dvFunction_1aca721faeeac77bd462a9d360cd53934d" compoundref="sliarray_8cc" startline="3557" endline="3576">SLIArrayModule::Length_dvFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Length__ivFunction_1a0c8a1a18c4192803e6052458f4c42215" compoundref="sliarray_8cc" startline="3239" endline="3258">SLIArrayModule::Length_ivFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Get__iv__iFunction_1ab366f5eb8812c57b42d0c823374535bf" compoundref="sliarray_8cc" startline="3612" endline="3642">SLIArrayModule::Get_iv_iFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Get__iv__ivFunction_1a710adf31700444f81ecab6aec9a13375" compoundref="sliarray_8cc" startline="3645" endline="3682">SLIArrayModule::Get_iv_ivFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Get__dv__ivFunction_1a4679ac9613c72676b87dc2a9c3f66f07" compoundref="sliarray_8cc" startline="3685" endline="3722">SLIArrayModule::Get_dv_ivFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Get__dv__iFunction_1a497f17488fdcf147f5b9ca33a90657b2" compoundref="sliarray_8cc" startline="3579" endline="3609">SLIArrayModule::Get_dv_iFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Put__dv__i__dFunction_1af6403dde52bec5f9d22b664c2517c0e9" compoundref="sliarray_8cc" startline="3726" endline="3762">SLIArrayModule::Put_dv_i_dFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Put__iv__i__iFunction_1a4f832a1a91cba516cb54b6f9eb4e08ed" compoundref="sliarray_8cc" startline="3765" endline="3797">SLIArrayModule::Put_iv_i_iFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Zeros__ivFunction_1a62b047c7259ce7595e8aa0ec34472ff9" compoundref="sliarray_8cc" startline="3870" endline="3892">SLIArrayModule::Zeros_ivFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Zeros__dvFunction_1aa3be8ae73fe05d963bf462f6a0e9d14d" compoundref="sliarray_8cc" startline="3820" endline="3842">SLIArrayModule::Zeros_dvFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Ones__dvFunction_1a017e285c4e37517c3135380bb50b7488" compoundref="sliarray_8cc" startline="3845" endline="3867">SLIArrayModule::Ones_dvFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Ones__ivFunction_1a5d29138567ba47bcecd87a91d249cbbe" compoundref="sliarray_8cc" startline="3895" endline="3917">SLIArrayModule::Ones_ivFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1ArangeFunction_1af6470ccd164e5e09e3893495205a9563" compoundref="sliarray_8cc" startline="232" endline="411">SLIArrayModule::ArangeFunction::execute</referencedby>
+        <referencedby refid="classLoopFunction_1ac6ada63adedd4667359f6b70a7001e08" compoundref="slicontrol_8cc" startline="144" endline="164">LoopFunction::execute</referencedby>
+        <referencedby refid="classExitFunction_1ab0b28bd2b77ebec61943241e81d9aba9" compoundref="slicontrol_8cc" startline="176" endline="194">ExitFunction::execute</referencedby>
+        <referencedby refid="classIparseFunction_1a7d59b27525ce59b0612ff5165060ff1a" compoundref="slicontrol_8cc" startline="660" endline="689">IparseFunction::execute</referencedby>
+        <referencedby refid="classLoadFunction_1a931df53d863c155e65d52e27a31175af" compoundref="slicontrol_8cc" startline="789" endline="814">LoadFunction::execute</referencedby>
+        <referencedby refid="classLookupFunction_1a18c6d646776c16458909272a80ce988c" compoundref="slicontrol_8cc" startline="831" endline="860">LookupFunction::execute</referencedby>
+        <referencedby refid="classRaiseerrorFunction_1a8acdd8bd27d26de1e7a83ea2bc69a856" compoundref="slicontrol_8cc" startline="1157" endline="1179">RaiseerrorFunction::execute</referencedby>
+        <referencedby refid="classSwitchFunction_1a703a6f3f69d692a05d18c88d157664ab" compoundref="slicontrol_8cc" startline="1366" endline="1403">SwitchFunction::execute</referencedby>
+        <referencedby refid="classSwitchdefaultFunction_1ab481539a86bb16964d3d28ce8c09616a" compoundref="slicontrol_8cc" startline="1406" endline="1452">SwitchdefaultFunction::execute</referencedby>
+        <referencedby refid="classCaseFunction_1afa094dd935bdb6c15cb4601ebb359ba1" compoundref="slicontrol_8cc" startline="1455" endline="1478">CaseFunction::execute</referencedby>
+        <referencedby refid="classCounttomarkFunction_1a3a2c87b461bc2596afc164ac76d81ddd" compoundref="slicontrol_8cc" startline="1488" endline="1514">CounttomarkFunction::execute</referencedby>
+        <referencedby refid="classPclocksFunction_1a00a3a83527dac846e605ec9f13d5d3a0" compoundref="slicontrol_8cc" startline="1541" endline="1568">PclocksFunction::execute</referencedby>
+        <referencedby refid="classPclockspersecFunction_1a06edb8e2f2719df7a4ceb5861cdbe8a7" compoundref="slicontrol_8cc" startline="1590" endline="1605">PclockspersecFunction::execute</referencedby>
+        <referencedby refid="classPgetrusageFunction_1a4a9749f39b6b9b00c7c0bcf48f93eaad" compoundref="slicontrol_8cc" startline="1632" endline="1655">PgetrusageFunction::execute</referencedby>
+        <referencedby refid="classDebugFunction_1a0ea71ae77a8cdcebd5c8983eb158dc21" compoundref="slicontrol_8cc" startline="2020" endline="2033">DebugFunction::execute</referencedby>
+        <referencedby refid="classGet__aFunction_1ab72dabcd68d607a41a839744fb566687" compoundref="slidata_8cc" startline="58" endline="80">Get_aFunction::execute</referencedby>
+        <referencedby refid="classGet__a__aFunction_1a32fd53efaba4706a8c842b9cf318015c" compoundref="slidata_8cc" startline="83" endline="147">Get_a_aFunction::execute</referencedby>
+        <referencedby refid="classGet__pFunction_1af9801475d06ac33c5c0f072d3136dccb" compoundref="slidata_8cc" startline="150" endline="172">Get_pFunction::execute</referencedby>
+        <referencedby refid="classGet__lpFunction_1aff9f8da214a91093ab1ef79a9a5a6b35" compoundref="slidata_8cc" startline="175" endline="196">Get_lpFunction::execute</referencedby>
+        <referencedby refid="classJoin__sFunction_1a4413051e31835331911998922d15a990" compoundref="slidata_8cc" startline="276" endline="296">Join_sFunction::execute</referencedby>
+        <referencedby refid="classInsert__sFunction_1ab81c4e533fa3fb0f55242f3472dd3e9b" compoundref="slidata_8cc" startline="348" endline="369">Insert_sFunction::execute</referencedby>
+        <referencedby refid="classInsert__aFunction_1a8f4576e27c1c9e8fe7fc827fc1d4e129" compoundref="slidata_8cc" startline="440" endline="461">Insert_aFunction::execute</referencedby>
+        <referencedby refid="classInsertElement__sFunction_1a0ff1e08436fc151eeb313f576f94741f" compoundref="slidata_8cc" startline="384" endline="405">InsertElement_sFunction::execute</referencedby>
+        <referencedby refid="classInsertElement__aFunction_1a6aef5b3335eeb39d4a4be79385d5af5c" compoundref="slidata_8cc" startline="464" endline="484">InsertElement_aFunction::execute</referencedby>
+        <referencedby refid="classReplace__sFunction_1a5a96e4144667a33ddaf3422477e0383b" compoundref="slidata_8cc" startline="536" endline="565">Replace_sFunction::execute</referencedby>
+        <referencedby refid="classReplace__aFunction_1a15fcfc1caa39511ed24be5da4a4fe30b" compoundref="slidata_8cc" startline="568" endline="597">Replace_aFunction::execute</referencedby>
+        <referencedby refid="classErase__sFunction_1ab5f76080bc0e0aec6f320ea0d8116d43" compoundref="slidata_8cc" startline="614" endline="642">Erase_sFunction::execute</referencedby>
+        <referencedby refid="classErase__aFunction_1aca9f92e76bdedb8a913b2821c395cdb8" compoundref="slidata_8cc" startline="645" endline="673">Erase_aFunction::execute</referencedby>
+        <referencedby refid="classErase__pFunction_1a0bd107272ebdce78a87183d4fa926ae6" compoundref="slidata_8cc" startline="676" endline="704">Erase_pFunction::execute</referencedby>
+        <referencedby refid="classReserve__aFunction_1ae27d33adb67654437f80324e39c0cb99" compoundref="slidata_8cc" startline="977" endline="996">Reserve_aFunction::execute</referencedby>
+        <referencedby refid="classResize__aFunction_1ab3d3bb6094aab8c4e22c668ad45d4c58" compoundref="slidata_8cc" startline="1012" endline="1031">Resize_aFunction::execute</referencedby>
+        <referencedby refid="classReserve__sFunction_1adec0e7c67b3105018a91b697c9b20f26" compoundref="slidata_8cc" startline="1129" endline="1149">Reserve_sFunction::execute</referencedby>
+        <referencedby refid="classResize__sFunction_1a38ec46696152cb8a790647c439d5770b" compoundref="slidata_8cc" startline="1152" endline="1172">Resize_sFunction::execute</referencedby>
+        <referencedby refid="classGetinterval__sFunction_1a2f664c1725f2a9f623b7cd1d5fbfad91" compoundref="slidata_8cc" startline="1223" endline="1251">Getinterval_sFunction::execute</referencedby>
+        <referencedby refid="classGetinterval__aFunction_1ab0eedf36879d2c8d0b93d1e28b2e4fa4" compoundref="slidata_8cc" startline="1255" endline="1284">Getinterval_aFunction::execute</referencedby>
+        <referencedby refid="classGet__sFunction_1ad35c2fe3c47217904b98905094147d6c" compoundref="slidata_8cc" startline="1393" endline="1416">Get_sFunction::execute</referencedby>
+        <referencedby refid="classPut__sFunction_1a7159845d8b8b2d06b155fdf845605163" compoundref="slidata_8cc" startline="708" endline="729">Put_sFunction::execute</referencedby>
+        <referencedby refid="classPut__aFunction_1a3e1126cd8a259134a0a0da47b765b9fd" compoundref="slidata_8cc" startline="733" endline="753">Put_aFunction::execute</referencedby>
+        <referencedby refid="classPut__pFunction_1abcd8cb3da4e7f6ab7a8ac9a302fae5c3" compoundref="slidata_8cc" startline="757" endline="777">Put_pFunction::execute</referencedby>
+        <referencedby refid="classPut__lpFunction_1a23d24458374166a187457ecd6fb52445" compoundref="slidata_8cc" startline="781" endline="801">Put_lpFunction::execute</referencedby>
+        <referencedby refid="classDictbeginFunction_1a3fa95279ddb7e1dd1d93b40d1c648345" compoundref="slidict_8cc" startline="449" endline="472">DictbeginFunction::execute</referencedby>
+        <referencedby refid="classDictendFunction_1a51bd4b50fd6b7bb45942595d1f51fb3b" compoundref="slidict_8cc" startline="492" endline="503">DictendFunction::execute</referencedby>
+        <referencedby refid="classDictconstructFunction_1a4a714112e05b609e5b63b08070d6c619" compoundref="slidict_8cc" startline="629" endline="678">DictconstructFunction::execute</referencedby>
+        <referencedby refid="classRestoredstackFunction_1a8eff6cb578d0ce1dbe608321e3c29197" compoundref="slidict_8cc" startline="945" endline="970">RestoredstackFunction::execute</referencedby>
+        <referencedby refid="classSLIgraphics_1_1ReadPGMFunction_1a017bd3640dae3912781d59cb88591e02" compoundref="sligraphics_8cc" startline="70" endline="116">SLIgraphics::ReadPGMFunction::execute</referencedby>
+        <referencedby refid="classSLIgraphics_1_1WritePGMFunction_1a5df725032dbc769cd58f9a1031a9225e" compoundref="sligraphics_8cc" startline="261" endline="358">SLIgraphics::WritePGMFunction::execute</referencedby>
+        <referencedby refid="classDiv__diFunction_1ad076751d8287b98805db1924ab99e4d1" compoundref="slimath_8cc" startline="308" endline="325">Div_diFunction::execute</referencedby>
+        <referencedby refid="classDiv__iiFunction_1a6add7a24f6908dbe4d1b192bc629cf1f" compoundref="slimath_8cc" startline="231" endline="248">Div_iiFunction::execute</referencedby>
+        <referencedby refid="classDiv__idFunction_1a798f8d1eb5b3462c3394ec3363677ff3" compoundref="slimath_8cc" startline="328" endline="346">Div_idFunction::execute</referencedby>
+        <referencedby refid="classDiv__ddFunction_1accc371b7bb3b7b4460352d9ce8cb3615" compoundref="slimath_8cc" startline="288" endline="305">Div_ddFunction::execute</referencedby>
+        <referencedby refid="classMod__iiFunction_1a3ba11e0a5bedbb08e32efb603c039d93" compoundref="slimath_8cc" startline="258" endline="285">Mod_iiFunction::execute</referencedby>
+        <referencedby refid="classLn__dFunction_1a1182db4c7e6c2a80a9cf8366e9244005" compoundref="slimath_8cc" startline="507" endline="521">Ln_dFunction::execute</referencedby>
+        <referencedby refid="classLog__dFunction_1a701d41d1b7f3aa9016585ab08504785b" compoundref="slimath_8cc" startline="481" endline="495">Log_dFunction::execute</referencedby>
+        <referencedby refid="classSqrt__dFunction_1a4dd71783377ba895ea900422c41db37a" compoundref="slimath_8cc" startline="548" endline="562">Sqrt_dFunction::execute</referencedby>
+        <referencedby refid="classPow__ddFunction_1a79b08d73ee5fb7f57b6bf5f230c80969" compoundref="slimath_8cc" startline="575" endline="593">Pow_ddFunction::execute</referencedby>
+        <referencedby refid="classPow__diFunction_1ac0923f0015f3f1a6d76ed22e8203c12f" compoundref="slimath_8cc" startline="596" endline="616">Pow_diFunction::execute</referencedby>
+        <referencedby refid="classInv__dFunction_1adf50634e78d24677de9c5e15040cafe2" compoundref="slimath_8cc" startline="849" endline="868">Inv_dFunction::execute</referencedby>
+        <referencedby refid="classPopFunction_1a3806832fc80382d1fa7e986e3b5554a0" compoundref="slistack_8cc" startline="46" endline="55">PopFunction::execute</referencedby>
+        <referencedby refid="classNpopFunction_1a9408bc97e94fb191ee8f32ded1d5162a" compoundref="slistack_8cc" startline="66" endline="86">NpopFunction::execute</referencedby>
+        <referencedby refid="classDupFunction_1a799355ee1729f53e29afe771fcef4e2a" compoundref="slistack_8cc" startline="98" endline="107">DupFunction::execute</referencedby>
+        <referencedby refid="classExchFunction_1a3f2688d6e887659d328dc494f20b5087" compoundref="slistack_8cc" startline="139" endline="148">ExchFunction::execute</referencedby>
+        <referencedby refid="classIndexFunction_1a97e740d3b55a9f8f16252c7bd813c311" compoundref="slistack_8cc" startline="158" endline="179">IndexFunction::execute</referencedby>
+        <referencedby refid="classRollFunction_1ab7b94aa99d7280f54b556c13da886475" compoundref="slistack_8cc" startline="244" endline="280">RollFunction::execute</referencedby>
+        <referencedby refid="classRolluFunction_1a15ec29027aa32e484f0dc658b638bdbe" compoundref="slistack_8cc" startline="291" endline="302">RolluFunction::execute</referencedby>
+        <referencedby refid="classRolldFunction_1aae044a8de48f461f8051762f34f3621b" compoundref="slistack_8cc" startline="313" endline="324">RolldFunction::execute</referencedby>
+        <referencedby refid="classOverFunction_1a818c2a0064f25fd4e0c8e7277e576ab9" compoundref="slistack_8cc" startline="119" endline="128">OverFunction::execute</referencedby>
+        <referencedby refid="classCopyFunction_1a71b4d78c5aaacdc99e2ee285b9bf5173" compoundref="slistack_8cc" startline="193" endline="217">CopyFunction::execute</referencedby>
+        <referencedby refid="classRestoreestackFunction_1ab57f3dfe40346099a01e6c191ad934ea" compoundref="slistack_8cc" startline="395" endline="408">RestoreestackFunction::execute</referencedby>
+        <referencedby refid="classRestoreostackFunction_1af9bdc7256f3e08450c360213c2803ec9" compoundref="slistack_8cc" startline="423" endline="437">RestoreostackFunction::execute</referencedby>
+        <referencedby refid="classTrieFunction_1a8cdb26a7ae4b1a3b6cd8e13157ce885c" compoundref="slitypecheck_8cc" startline="48" endline="70">TrieFunction::execute</referencedby>
+        <referencedby refid="classAddtotrieFunction_1a1cba5d0fe23d66917d4f2f841d727b92" compoundref="slitypecheck_8cc" startline="90" endline="149">AddtotrieFunction::execute</referencedby>
+        <referencedby refid="classTypeFunction_1a942ac57d38a765c38e5c5ae6a705fb3b" compoundref="slitypecheck_8cc" startline="325" endline="339">TypeFunction::execute</referencedby>
+        <referencedby refid="classSpecialFunctionsModule_1_1GammaIncFunction_1a0fc2a9c6acdaca68f751c200a0e89cac" compoundref="specialfunctionsmodule_8cc" startline="408" endline="411">SpecialFunctionsModule::GammaIncFunction::execute</referencedby>
+        <referencedby refid="classSpecialFunctionsModule_1_1LambertW0Function_1a700128daa1fe7f8b88b9d183c76ad3e9" compoundref="specialfunctionsmodule_8cc" startline="416" endline="419">SpecialFunctionsModule::LambertW0Function::execute</referencedby>
+        <referencedby refid="classSpecialFunctionsModule_1_1LambertWm1Function_1aea0ec210294dc3d704446b752658843e" compoundref="specialfunctionsmodule_8cc" startline="424" endline="427">SpecialFunctionsModule::LambertWm1Function::execute</referencedby>
+        <referencedby refid="classSpecialFunctionsModule_1_1ErfFunction_1a448a3e02aba34ef6f12ea77ddfa17136" compoundref="specialfunctionsmodule_8cc" startline="432" endline="435">SpecialFunctionsModule::ErfFunction::execute</referencedby>
+        <referencedby refid="classSpecialFunctionsModule_1_1ErfcFunction_1a054ce4ab117ebf93116fd9eba3711c11" compoundref="specialfunctionsmodule_8cc" startline="440" endline="443">SpecialFunctionsModule::ErfcFunction::execute</referencedby>
+        <referencedby refid="classSpecialFunctionsModule_1_1GaussDiskConvFunction_1afc19c63cdb952923748aa09d509ce435" compoundref="specialfunctionsmodule_8cc" startline="456" endline="459">SpecialFunctionsModule::GaussDiskConvFunction::execute</referencedby>
+        <referencedby refid="classSLIInterpreter_1a1d4268e9a4b8064b77e12fba24d15620" compoundref="interpret_8cc" startline="1313" endline="1363">SLIInterpreter::execute_</referencedby>
+        <referencedby refid="classSLIInterpreter_1a2e551e6c11e2e8158d163e2b5996c33d" compoundref="interpret_8cc" startline="1260" endline="1310">SLIInterpreter::execute_debug_</referencedby>
+        <referencedby refid="group__SLIError_1gaf0e0e8a833e50337078b8dd48df80a53" compoundref="interpret_8cc" startline="718" endline="734">SLIInterpreter::raiseagain</referencedby>
+        <referencedby refid="group__SLIError_1ga5d57aa6fa36a18f55937701fd1a0627b" compoundref="interpret_8cc" startline="580" endline="585">SLIInterpreter::raiseerror</referencedby>
+        <referencedby refid="group__SLIError_1gab1f76ff8c7308acedfa1017ffe2c7de4" compoundref="interpret_8cc" startline="737" endline="744">SLIInterpreter::raisesignal</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="group__SLIError_1ga5d57aa6fa36a18f55937701fd1a0627b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SLIInterpreter::raiseerror</definition>
+        <argsstring>(Name err)</argsstring>
+        <name>raiseerror</name>
+        <qualifiedname>SLIInterpreter::raiseerror</qualifiedname>
+        <param>
+          <type><ref refid="className" kindref="compound">Name</ref></type>
+          <declname>err</declname>
+        </param>
+        <briefdescription>
+<para>Cause the SLI interpreter to raise an error. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function is used by classes derived from <ref refid="classSLIFunction" kindref="compound">SLIFunction</ref> to raise an error. <linebreak/>
+<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror()</ref> is an interface to the SLI interpreter&apos;s error handling mechanism (see The Red Book for details). If an error is raised, the following actions are performed:<itemizedlist>
+<listitem><para>the value of errordict /newerror is set to true</para>
+</listitem><listitem><para>the value of errordict /command is set to the name of the command which raised the error</para>
+</listitem><listitem><para>If the value of errordict /recorstack is true, the state of the interpreter is saved:<itemizedlist>
+<listitem><para>the operand stack is copied to errordict /ostack</para>
+</listitem><listitem><para>the execution stack is copied to errordict /estack</para>
+</listitem><listitem><para>the dictionary stack is copied to errordict /dstack</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>the dictionary stack is cleared.</para>
+</listitem><listitem><para>stop is called. Stop then tries to find an enclosing stopped context and calls the associated function.</para>
+</listitem></itemizedlist>
+</para>
+<para>This mechanism is explained in detail in The PostScript Reference Manual. <linebreak/>
+If the user did not establish any stopped context, the default stopped context for the SLI interpreter will be executed, which includes display of an error message and stopping program execution. <linebreak/>
+Please note that before raiserror() is called, the state of the operand and execution stack shall be restored to their initial state.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The argument is the name of the error. For conveniency, there is also a variant of this function that takes a string as the argument.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror(const char*)</ref>, <ref refid="group__SLIError_1ga098156501ff35f206a32d389bf262e05" kindref="member">raiseerror(Name,Name)</ref>, <ref refid="group__SLIError_1gaf0e0e8a833e50337078b8dd48df80a53" kindref="member">raiseagain()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/interpret.h" line="678" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/interpret.cc" bodystart="580" bodyend="585"/>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="classSLIInterpreter_1a0c294456daa938f75fe79c099ebc75ee" compoundref="interpret_8cc" startline="924" endline="937">SLIInterpreter::getcurrentname</references>
+        <references refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" compoundref="tokenstack_8h" startline="96" endline="99">TokenStack::pop</references>
+        <references refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" compoundref="interpret_8h" startline="635" endline="638">SLIInterpreter::raiseerror</references>
+      </memberdef>
+      <memberdef kind="function" id="group__SLIError_1ga098156501ff35f206a32d389bf262e05" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SLIInterpreter::raiseerror</definition>
+        <argsstring>(Name cmd, Name err)</argsstring>
+        <name>raiseerror</name>
+        <qualifiedname>SLIInterpreter::raiseerror</qualifiedname>
+        <param>
+          <type><ref refid="className" kindref="compound">Name</ref></type>
+          <declname>cmd</declname>
+        </param>
+        <param>
+          <type><ref refid="className" kindref="compound">Name</ref></type>
+          <declname>err</declname>
+        </param>
+        <briefdescription>
+<para>Cause the SLI interpreter to raise an error. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function is used by classes derived from <ref refid="classSLIFunction" kindref="compound">SLIFunction</ref> to raise an error. <linebreak/>
+<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror()</ref> is an interface to the SLI interpreter&apos;s error handling mechanism (see The Red Book for details). If an error is raised, the following actions are performed:<itemizedlist>
+<listitem><para>the value of errordict /newerror is set to true</para>
+</listitem><listitem><para>the value of errordict /command is set to the name of the command which raised the error</para>
+</listitem><listitem><para>If the value of errordict /recorstack is true, the state of the interpreter is saved:<itemizedlist>
+<listitem><para>the operand stack is copied to errordict /ostack</para>
+</listitem><listitem><para>the execution stack is copied to errordict /estack</para>
+</listitem><listitem><para>the dictionary stack is copied to errordict /dstack</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>the dictionary stack is cleared.</para>
+</listitem><listitem><para>stop is called. Stop then tries to find an enclosing stopped context and calls the associated function.</para>
+</listitem></itemizedlist>
+</para>
+<para>This mechanism is explained in detail in The PostScript Reference Manual. <linebreak/>
+If the user did not establish any stopped context, the default stopped context for the SLI interpreter will be executed, which includes display of an error message and stopping program execution. <linebreak/>
+Please note that before raiserror() is called, the state of the operand and execution stack shall be restored to their initial state.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cmd</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The first argument is the name of the calling function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The second argument is the name of the error.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror(const char*)</ref>, <ref refid="group__SLIError_1ga5d57aa6fa36a18f55937701fd1a0627b" kindref="member">raiseerror(Name)</ref>, <ref refid="group__SLIError_1gaf0e0e8a833e50337078b8dd48df80a53" kindref="member">raiseagain()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/interpret.h" line="729" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/interpret.cc" bodystart="613" bodyend="648"/>
+        <references refid="classSLIInterpreter_1ab2aa62ab786830cbc79434c4a390eacb" compoundref="interpret_8h" startline="159">SLIInterpreter::BadErrorHandler</references>
+        <references refid="classSLIInterpreter_1a96c3eff127bf8a56860f05ff199cb6ff" compoundref="interpret_8cc" startline="311" endline="314">SLIInterpreter::baselookup</references>
+        <references refid="classSLIInterpreter_1a808ac5b5ef4987bff14743588ac5c586" compoundref="interpret_8h" startline="138">SLIInterpreter::commandname_name</references>
+        <references refid="classSLIInterpreter_1a2aa452e3851567a438fe4abc34fcdaea" compoundref="interpret_8h" startline="102">SLIInterpreter::DStack</references>
+        <references refid="classSLIInterpreter_1a68fdc1c805ac73fbb35d6a7cffbda75c" compoundref="interpret_8h" startline="143">SLIInterpreter::dstack_name</references>
+        <references refid="classSLIInterpreter_1a1b18ca5366d260f74cff5e78eba704dc" compoundref="interpret_8h" startline="100">SLIInterpreter::errordict</references>
+        <references refid="classSLIInterpreter_1a590251af158d35c7614fcee160cbe022" compoundref="interpret_8h" startline="137">SLIInterpreter::errorname_name</references>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="classSLIInterpreter_1a1c3be4d49737437ea8af10de75e29681" compoundref="interpret_8h" startline="141">SLIInterpreter::estack_name</references>
+        <references refid="classSLIInterpreter_1ae17c622fcc079a453649581c02f00a6f" compoundref="interpret_8h" startline="129">SLIInterpreter::false_name</references>
+        <references refid="classDictionary_1a94179a80d5b496321d68976e11dea85b" compoundref="dict_8h" startline="303" endline="306">Dictionary::insert</references>
+        <references refid="classDictionary_1a9ce327c0a94abb3a166d805e74b8af57" compoundref="dict_8h" startline="331" endline="336">Dictionary::insert_move</references>
+        <references refid="classDictionary_1a93d377a487a78812b2f626c843306695" compoundref="dict_8h" startline="247" endline="258">Dictionary::lookup</references>
+        <references refid="classSLIInterpreter_1a0375658238d1001fadafea960ac64e6a" compoundref="interpret_8h" startline="136">SLIInterpreter::newerror_name</references>
+        <references refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" compoundref="interpret_8h" startline="250">SLIInterpreter::OStack</references>
+        <references refid="classSLIInterpreter_1acfc2d7305a53fb15d807ad16c2bd09e8" compoundref="interpret_8h" startline="142">SLIInterpreter::ostack_name</references>
+        <references refid="classTokenStack_1a585f38fb0ed122da90489eccbfd7a187" compoundref="tokenstack_8h" startline="62" endline="65">TokenStack::push</references>
+        <references refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" compoundref="interpret_8h" startline="635" endline="638">SLIInterpreter::raiseerror</references>
+        <references refid="classSLIInterpreter_1a41324ebc0bc4df32082ea1d7303e0376" compoundref="interpret_8h" startline="140">SLIInterpreter::recordstacks_name</references>
+        <references refid="classSLIInterpreter_1ad7a9a4121a69a006ca9709aaf7553d83" compoundref="interpret_8h" startline="123">SLIInterpreter::stop_name</references>
+        <references refid="classTokenStack_1af5f5f068333e1fec6c754e2d4edcc7af" compoundref="tokenstack_8h" startline="192" endline="195">TokenStack::toArray</references>
+        <references refid="classDictionaryStack_1a3e10c9a812a39de9cf03e57ab2a9d7ae" compoundref="dictstack_8cc" startline="136" endline="153">DictionaryStack::toArray</references>
+        <references refid="classSLIInterpreter_1aa4f57028a7915ce53b2b866b33361b0c" compoundref="interpret_8h" startline="128">SLIInterpreter::true_name</references>
+      </memberdef>
+      <memberdef kind="function" id="group__SLIError_1gaf0e0e8a833e50337078b8dd48df80a53" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SLIInterpreter::raiseagain</definition>
+        <argsstring>()</argsstring>
+        <name>raiseagain</name>
+        <qualifiedname>SLIInterpreter::raiseagain</qualifiedname>
+        <briefdescription>
+<para>Re-raise the last error. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>raiseagain re-raises a previously raised error. This is useful if an error handler cannot cope with a particular error (e.g. a signal) and wants to pass it to an upper level handler. Thus, nestet error handlers are possible.</para>
+<para><simplesect kind="see"><para><ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror(const char*)</ref>, <ref refid="group__SLIError_1ga5d57aa6fa36a18f55937701fd1a0627b" kindref="member">raiseerror(Name)</ref>, <ref refid="group__SLIError_1ga098156501ff35f206a32d389bf262e05" kindref="member">raiseerror(Name,Name)</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/interpret.h" line="755" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/interpret.cc" bodystart="718" bodyend="734"/>
+        <references refid="classSLIInterpreter_1ab2aa62ab786830cbc79434c4a390eacb" compoundref="interpret_8h" startline="159">SLIInterpreter::BadErrorHandler</references>
+        <references refid="classSLIInterpreter_1a96c3eff127bf8a56860f05ff199cb6ff" compoundref="interpret_8cc" startline="311" endline="314">SLIInterpreter::baselookup</references>
+        <references refid="classSLIInterpreter_1a808ac5b5ef4987bff14743588ac5c586" compoundref="interpret_8h" startline="138">SLIInterpreter::commandname_name</references>
+        <references refid="classToken_1a397db8062278fec3e786aa62f9d9baf8" compoundref="token_8h" startline="348" endline="351">Token::empty</references>
+        <references refid="classSLIInterpreter_1a1b18ca5366d260f74cff5e78eba704dc" compoundref="interpret_8h" startline="100">SLIInterpreter::errordict</references>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="classDictionary_1a94179a80d5b496321d68976e11dea85b" compoundref="dict_8h" startline="303" endline="306">Dictionary::insert</references>
+        <references refid="classDictionary_1ae4575df896e8264944dd4d97e2fa4248" compoundref="dict_8h" startline="275" endline="286">Dictionary::known</references>
+        <references refid="classDictionary_1a93d377a487a78812b2f626c843306695" compoundref="dict_8h" startline="247" endline="258">Dictionary::lookup</references>
+        <references refid="classSLIInterpreter_1a0375658238d1001fadafea960ac64e6a" compoundref="interpret_8h" startline="136">SLIInterpreter::newerror_name</references>
+        <references refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" compoundref="interpret_8h" startline="250">SLIInterpreter::OStack</references>
+        <references refid="classTokenStack_1a585f38fb0ed122da90489eccbfd7a187" compoundref="tokenstack_8h" startline="62" endline="65">TokenStack::push</references>
+        <references refid="classTokenStack_1a9d3b72926bfa2090389f0782cd2b6e76" compoundref="tokenstack_8h" startline="68" endline="71">TokenStack::push_move</references>
+        <references refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" compoundref="interpret_8h" startline="635" endline="638">SLIInterpreter::raiseerror</references>
+        <references refid="classSLIInterpreter_1ad7a9a4121a69a006ca9709aaf7553d83" compoundref="interpret_8h" startline="123">SLIInterpreter::stop_name</references>
+        <references refid="classSLIInterpreter_1aa4f57028a7915ce53b2b866b33361b0c" compoundref="interpret_8h" startline="128">SLIInterpreter::true_name</references>
+        <referencedby refid="classRaiseagainFunction_1a8decaba7f4756abf4f1cb879796ddf36" compoundref="slicontrol_8cc" startline="1240" endline="1244">RaiseagainFunction::execute</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="group__SLIError_1gab1f76ff8c7308acedfa1017ffe2c7de4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SLIInterpreter::raisesignal</definition>
+        <argsstring>(int)</argsstring>
+        <name>raisesignal</name>
+        <qualifiedname>SLIInterpreter::raisesignal</qualifiedname>
+        <param>
+          <type>int</type>
+          <defname>sig</defname>
+        </param>
+        <briefdescription>
+<para>TO BE DOCUMENTED. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><xrefsect id="todo_1_todo000017"><xreftitle>Todo</xreftitle><xrefdescription><para>Document this function.</para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/interpret.h" line="762" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/interpret.cc" bodystart="737" bodyend="744"/>
+        <references refid="classSLIInterpreter_1a1b18ca5366d260f74cff5e78eba704dc" compoundref="interpret_8h" startline="100">SLIInterpreter::errordict</references>
+        <references refid="classSLIInterpreter_1a0c294456daa938f75fe79c099ebc75ee" compoundref="interpret_8cc" startline="924" endline="937">SLIInterpreter::getcurrentname</references>
+        <references refid="classDictionary_1a94179a80d5b496321d68976e11dea85b" compoundref="dict_8h" startline="303" endline="306">Dictionary::insert</references>
+        <references refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" compoundref="interpret_8h" startline="635" endline="638">SLIInterpreter::raiseerror</references>
+        <references refid="classSLIInterpreter_1a6764f86eb71b42dc872d437ba5dc3a3a" compoundref="interpret_8h" startline="139">SLIInterpreter::signo_name</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

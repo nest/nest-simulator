@@ -1,0 +1,318 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classSymbolDatum" kind="class" language="C++" prot="public">
+    <compoundname>SymbolDatum</compoundname>
+    <basecompoundref refid="classAggregateDatum" prot="public" virt="non-virtual">AggregateDatum&lt; Name, &amp;SLIInterpreter::Symboltype &gt;</basecompoundref>
+    <includes refid="symboldatum_8h" local="no">symboldatum.h</includes>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classSymbolDatum_1a532df3460c98721281b56a83f0979f52" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="classDatum" kindref="compound">Datum</ref> *</type>
+        <definition>Datum * SymbolDatum::clone</definition>
+        <argsstring>() const override</argsstring>
+        <name>clone</name>
+        <qualifiedname>SymbolDatum::clone</qualifiedname>
+        <reimplements refid="classAggregateDatum_1a1c0d053abf26dc9fedfff4ad587ed8fa">clone</reimplements>
+        <briefdescription>
+<para>Virtual copy constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Use this function to lazily copy a datum. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/symboldatum.h" line="54" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/symboldatum.h" bodystart="54" bodyend="57"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classSymbolDatum_1a381e42046f5188106e8779530aaec36a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SymbolDatum::SymbolDatum</definition>
+        <argsstring>(const Name &amp;n)</argsstring>
+        <name>SymbolDatum</name>
+        <qualifiedname>SymbolDatum::SymbolDatum</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/symboldatum.h" line="60" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/symboldatum.h" bodystart="60" bodyend="63"/>
+      </memberdef>
+      <memberdef kind="function" id="classSymbolDatum_1a6e87d7e5e3922d34e30dd2e263a23817" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SymbolDatum::SymbolDatum</definition>
+        <argsstring>(const SymbolDatum &amp;n)</argsstring>
+        <name>SymbolDatum</name>
+        <qualifiedname>SymbolDatum::SymbolDatum</qualifiedname>
+        <param>
+          <type>const <ref refid="classSymbolDatum" kindref="compound">SymbolDatum</ref> &amp;</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/symboldatum.h" line="64" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/symboldatum.h" bodystart="64" bodyend="67"/>
+      </memberdef>
+      <memberdef kind="function" id="classSymbolDatum_1ad454d93136031921f6914205d3bd27f5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SymbolDatum::~SymbolDatum</definition>
+        <argsstring>() override</argsstring>
+        <name>~SymbolDatum</name>
+        <qualifiedname>SymbolDatum::~SymbolDatum</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/symboldatum.h" line="68" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/symboldatum.h" bodystart="68" bodyend="70"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="6">
+        <label>AggregateDatum&lt; C, slt &gt;</label>
+        <link refid="classAggregateDatum"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>AggregateDatum&lt; Name, &amp;SLIInterpreter::Symboltype &gt;</label>
+        <link refid="classAggregateDatum"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="template-instance">
+          <edgelabel>&lt; Name, &amp;SLIInterpreter::Symboltype &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>C</label>
+      </node>
+      <node id="4">
+        <label>Datum</label>
+        <link refid="classDatum"/>
+      </node>
+      <node id="5">
+        <label>Name</label>
+        <link refid="className"/>
+      </node>
+      <node id="1">
+        <label>SymbolDatum</label>
+        <link refid="classSymbolDatum"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>TypedDatum&lt; slt &gt;</label>
+        <link refid="classTypedDatum"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="11">
+        <label>AggregateDatum&lt; C, slt &gt;</label>
+        <link refid="classAggregateDatum"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>memory</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>AggregateDatum&lt; Name, &amp;SLIInterpreter::Symboltype &gt;</label>
+        <link refid="classAggregateDatum"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>memory</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="template-instance">
+          <edgelabel>&lt; Name, &amp;SLIInterpreter::Symboltype &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>C</label>
+      </node>
+      <node id="4">
+        <label>Datum</label>
+        <link refid="classDatum"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>type</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>action</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Name</label>
+        <link refid="className"/>
+      </node>
+      <node id="7">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="5">
+        <label>SLIType</label>
+        <link refid="classSLIType"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>defaultaction</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>SymbolDatum</label>
+        <link refid="classSymbolDatum"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>TypedDatum&lt; slt &gt;</label>
+        <link refid="classTypedDatum"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>sli::pool</label>
+        <link refid="classsli_1_1pool"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>chunks</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>head</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>sli::pool::chunk</label>
+        <link refid="classsli_1_1pool_1_1chunk"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>sli::pool::link</label>
+        <link refid="structsli_1_1pool_1_1link"/>
+        <childnode refid="10" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/symboldatum.h" line="51" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/symboldatum.h" bodystart="52" bodyend="71"/>
+    <listofallmembers>
+      <member refid="classDatum_1aedcf75cc41ccd6a8247216941b10f719" prot="protected" virt="non-virtual"><scope>SymbolDatum</scope><name>action</name></member>
+      <member refid="classDatum_1a8a547bad7564cd6e79fd9b1a245c9e8b" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>addReference</name></member>
+      <member refid="classAggregateDatum_1a3e60449253d8572f169d47e65bfef2dc" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>AggregateDatum</name></member>
+      <member refid="classAggregateDatum_1ae627462efcc1de11715718aa8f2938d4" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>AggregateDatum</name></member>
+      <member refid="classAggregateDatum_1ae591fa7c64e24a5f1ec83634e2b695e3" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>AggregateDatum</name></member>
+      <member refid="className_1a092070d4f0ab7a1ae8a58ce4e8385fe9" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>capacity</name></member>
+      <member refid="classSymbolDatum_1a532df3460c98721281b56a83f0979f52" prot="private" virt="virtual"><scope>SymbolDatum</scope><name>clone</name></member>
+      <member refid="classDatum_1ae1880ae165f7a4aef90be6e8cfaa5ff5" prot="protected" virt="non-virtual"><scope>SymbolDatum</scope><name>Datum</name></member>
+      <member refid="classDatum_1ac7e934059aa105e87e0de888c890bf3a" prot="protected" virt="non-virtual"><scope>SymbolDatum</scope><name>Datum</name></member>
+      <member refid="classDatum_1a4ceb261c92a00bb5cfbdbb91104c25ff" prot="protected" virt="non-virtual"><scope>SymbolDatum</scope><name>Datum</name></member>
+      <member refid="classAggregateDatum_1a9b042cd4dc7c7854aeb7e8d992e4a089" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>equals</name></member>
+      <member refid="classDatum_1aa8bccc352dca610a10b7daee4ca876f7" prot="protected" virt="non-virtual"><scope>SymbolDatum</scope><name>executable_</name></member>
+      <member refid="classDatum_1a772aa172fff8b5035e1e243eb046ae13" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>execute</name></member>
+      <member refid="classDatum_1af968bcf24fef60342dcc5d374b8cd54e" prot="private" virt="virtual"><scope>SymbolDatum</scope><name>get_ptr</name></member>
+      <member refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>gettypename</name></member>
+      <member refid="className_1a6b0a79353b82e331c6cc34c61dc6d0aa" prot="private" virt="non-virtual"><scope>SymbolDatum</scope><name>handle_</name></member>
+      <member refid="className_1addaf7bbefc6ef1857a40f1f0c3a516a4" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>handle_t</name></member>
+      <member refid="className_1a5783a6bff0e208dba674dc2f94c013bb" prot="private" virt="non-virtual"><scope>SymbolDatum</scope><name>HandleMap_</name></member>
+      <member refid="className_1ab97d3064318911c56af142c826183b37" prot="private" virt="non-virtual"><scope>SymbolDatum</scope><name>handleMapInstance_</name></member>
+      <member refid="className_1a5f895bc9d2032ab6e217d68a5ac09164" prot="private" virt="non-virtual"><scope>SymbolDatum</scope><name>HandleTable_</name></member>
+      <member refid="className_1aef9590ebd5ffbfc2feb4629eea2c8a5f" prot="private" virt="non-virtual"><scope>SymbolDatum</scope><name>handleTableInstance_</name></member>
+      <member refid="classAggregateDatum_1a1d56861615db41c072ffef0ad31a28ab" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>info</name></member>
+      <member refid="className_1a60606fc47a14db50fed72e4396ebec2a" prot="public" virt="non-virtual" ambiguityscope="Name::"><scope>SymbolDatum</scope><name>info</name></member>
+      <member refid="classAggregateDatum_1a4da881d0a51c7eb1c15a6428a3f05d1f" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>input_form</name></member>
+      <member refid="className_1a164be5d83e26df92490ea1f61df7de73" prot="private" virt="non-virtual"><scope>SymbolDatum</scope><name>insert</name></member>
+      <member refid="classDatum_1a08d7463e1c6fb42a75f7edf49f9e2e3d" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>is_executable</name></member>
+      <member refid="classDatum_1ad27263ba100f9c536085ddcad183ab07" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>isoftype</name></member>
+      <member refid="classAggregateDatum_1ad20c8dc74cd26b007f0ae37a2affa6f1" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>list</name></member>
+      <member refid="classAggregateDatum_1a7bac2e665c17dc5ce3b9f50f73206e78" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>list</name></member>
+      <member refid="classAggregateDatum_1a503c36058cf50de10fb8d7c020724474" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>list</name></member>
+      <member refid="classAggregateDatum_1a0255b77acdc2d5a5c549f2980ba57069" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>list</name></member>
+      <member refid="classAggregateDatum_1abbc3b6c7abb20b6c746349f10b706c0e" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>list</name></member>
+      <member refid="className_1a81de05c7a7465d3c74e12435cd841c31" prot="public" virt="non-virtual" ambiguityscope="Name::"><scope>SymbolDatum</scope><name>list</name></member>
+      <member refid="className_1a7482efcf8561e648ba54b1fb30e2948a" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>list_handles</name></member>
+      <member refid="className_1a8ee5a44599eb7a686ee64c343e0c8e18" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>lookup</name></member>
+      <member refid="classAggregateDatum_1a1d0fe4e5a4588c99105630afde6c5efe" prot="protected" virt="non-virtual"><scope>SymbolDatum</scope><name>memory</name></member>
+      <member refid="classAggregateDatum_1aaf1cca4d4a9fa5709de31e65d61364b0" prot="protected" virt="non-virtual"><scope>SymbolDatum</scope><name>memory</name></member>
+      <member refid="classAggregateDatum_1ab26928c6c8a3c73efc739e8cdd5e1e64" prot="protected" virt="non-virtual"><scope>SymbolDatum</scope><name>memory</name></member>
+      <member refid="classAggregateDatum_1a7140004f968d27a7e53462089684a344" prot="protected" virt="non-virtual"><scope>SymbolDatum</scope><name>memory</name></member>
+      <member refid="classAggregateDatum_1aed5b4b00a7bf9cc00057057317f04c17" prot="protected" virt="non-virtual"><scope>SymbolDatum</scope><name>memory</name></member>
+      <member refid="classAggregateDatum_1a3ea96bbcae5a5853352d9b666b7acd02" prot="protected" virt="non-virtual"><scope>SymbolDatum</scope><name>memory</name></member>
+      <member refid="classAggregateDatum_1a2ce776964303337731fac9fdd1990ff9" prot="protected" virt="non-virtual"><scope>SymbolDatum</scope><name>memory</name></member>
+      <member refid="classAggregateDatum_1aec415b10f7a342bd7eed7e1fe6e57e75" prot="protected" virt="non-virtual"><scope>SymbolDatum</scope><name>memory</name></member>
+      <member refid="classAggregateDatum_1a68228de7370f241ea433bff20b6cd93e" prot="protected" virt="non-virtual"><scope>SymbolDatum</scope><name>memory</name></member>
+      <member refid="classAggregateDatum_1a8aebc0e6f644711be8c37a848a26c12c" prot="protected" virt="non-virtual"><scope>SymbolDatum</scope><name>memory</name></member>
+      <member refid="classAggregateDatum_1a5aeddf405a48ca49e0e2abd172bb5078" prot="protected" virt="non-virtual"><scope>SymbolDatum</scope><name>memory</name></member>
+      <member refid="classAggregateDatum_1aef5f8251c58ce408984433809badc21a" prot="protected" virt="non-virtual"><scope>SymbolDatum</scope><name>memory</name></member>
+      <member refid="classAggregateDatum_1aa86a512f8d5ed5b0cd1195cc20216dc1" prot="protected" virt="non-virtual"><scope>SymbolDatum</scope><name>memory</name></member>
+      <member refid="classAggregateDatum_1af2df76c4b6d57f6731314e41c0358554" prot="protected" virt="non-virtual"><scope>SymbolDatum</scope><name>memory</name></member>
+      <member refid="classAggregateDatum_1a9bacc99b90a2afbe9806146d56bbdc13" prot="protected" virt="non-virtual"><scope>SymbolDatum</scope><name>memory</name></member>
+      <member refid="className_1a12a92d46d52b216ccaa86e3cb1539e58" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>Name</name></member>
+      <member refid="className_1a64d8545d460530b1bb887c1d49fb3491" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>Name</name></member>
+      <member refid="className_1a46575d2e2b51c01a15529d42ca488b80" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>Name</name></member>
+      <member refid="className_1a816b89e2878723a738844f7913aba398" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>Name</name></member>
+      <member refid="className_1a2666638a472f84ae7adc6ef78619c982" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>num_handles</name></member>
+      <member refid="classDatum_1add98b474ddf98b8352c49052c026f42b" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>numReferences</name></member>
+      <member refid="classAggregateDatum_1a6f1b209dae72623cb398fffa530e4446" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>operator delete</name></member>
+      <member refid="classAggregateDatum_1a261a7f7910816653459217d14b9e4148" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>operator new</name></member>
+      <member refid="className_1ad1408e03b1aff27e8a38575b7c9160e8" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>operator!=</name></member>
+      <member refid="className_1a1482f9065b5b81f55f88eef6e6a69ab7" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>operator&lt;</name></member>
+      <member refid="classTypedDatum_1a5cc4fd0fc7b08a2b3e4c837082f63790" prot="protected" virt="non-virtual" ambiguityscope="TypedDatum::"><scope>SymbolDatum</scope><name>operator=</name></member>
+      <member refid="className_1ae7919d243044cf333066dd03a1efb7d7" prot="public" virt="non-virtual" ambiguityscope="Name::"><scope>SymbolDatum</scope><name>operator=</name></member>
+      <member refid="className_1acccca7d37f696a72e908e655b7388b0f" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>operator==</name></member>
+      <member refid="classAggregateDatum_1af293c13f61a4f9530ced7ec8ed130d66" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>pprint</name></member>
+      <member refid="classAggregateDatum_1a26313c86bd097134646f94493f36efef" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>pprint</name></member>
+      <member refid="classAggregateDatum_1ad147825fc6aff8984cef2ca27fb98df4" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>pprint</name></member>
+      <member refid="classAggregateDatum_1ae01240ecdf8b53703df7c1d4e44cddc5" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>pprint</name></member>
+      <member refid="classAggregateDatum_1ae9bbb6f6148d9c67d34ffae5d68dbd05" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>pprint</name></member>
+      <member refid="classAggregateDatum_1a64ca1e31ff73a8e9ca20f81ed6c2cfe4" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>pprint</name></member>
+      <member refid="classAggregateDatum_1a6bce6c1ef955d16615ca6e9724c7322e" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>pprint</name></member>
+      <member refid="classAggregateDatum_1a09c4a6bb020e907909fb5cc9f8a596ee" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>pprint</name></member>
+      <member refid="classAggregateDatum_1a09c4a6bb020e907909fb5cc9f8a596ee" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>pprint</name></member>
+      <member refid="classAggregateDatum_1a94b65c55f9f89c2da061aa04d2aac065" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>print</name></member>
+      <member refid="classAggregateDatum_1a723d8f818be8433586128275237d2315" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>print</name></member>
+      <member refid="classAggregateDatum_1ab77f980f46ecf2b682bcf46029467937" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>print</name></member>
+      <member refid="classAggregateDatum_1a0cc9506b933e8437485bc232a6405d94" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>print</name></member>
+      <member refid="classAggregateDatum_1a7b0870e57184d92fdbd16b30e5ed40ec" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>print</name></member>
+      <member refid="classAggregateDatum_1a70f7c4f18a7428ee677ab01eb0fdce51" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>print</name></member>
+      <member refid="classAggregateDatum_1af284784f719c44b56ed775f9c3211afd" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>print</name></member>
+      <member refid="className_1ae79d50919b623fcf1bea322c09148dcd" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>print_handle</name></member>
+      <member refid="classDatum_1abd911b2048efc2b685900bb2561ffd2e" prot="protected" virt="non-virtual"><scope>SymbolDatum</scope><name>reference_count_</name></member>
+      <member refid="classDatum_1a033ad3a3e54eab1bb9a6b47eeab0611e" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>removeReference</name></member>
+      <member refid="classDatum_1a46325ecc6d02cc01c26366b57423d9f4" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>set_executable</name></member>
+      <member refid="classSymbolDatum_1a381e42046f5188106e8779530aaec36a" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>SymbolDatum</name></member>
+      <member refid="classSymbolDatum_1a6e87d7e5e3922d34e30dd2e263a23817" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>SymbolDatum</name></member>
+      <member refid="className_1a7e3458f794f8a041d79172e2da29d6ce" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>toIndex</name></member>
+      <member refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>toString</name></member>
+      <member refid="classDatum_1a0697b4f1572af02085906c0fcf0fc7b1" prot="protected" virt="non-virtual"><scope>SymbolDatum</scope><name>type</name></member>
+      <member refid="classTypedDatum_1a9b89818e167d0110afcc09e5d75b738b" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>TypedDatum</name></member>
+      <member refid="classTypedDatum_1af95471a28fd63265bdd7a0a2cd2faadb" prot="protected" virt="non-virtual"><scope>SymbolDatum</scope><name>TypedDatum</name></member>
+      <member refid="classDatum_1ad1de5a550c726c5cc95e88ffd1e71ef9" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>unset_executable</name></member>
+      <member refid="classAggregateDatum_1a93eccbf4a38c3efd423ec9a16cf7daa0" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>~AggregateDatum</name></member>
+      <member refid="classDatum_1afbf982389b91a2b013be1de6bdf1483e" prot="public" virt="virtual"><scope>SymbolDatum</scope><name>~Datum</name></member>
+      <member refid="classSymbolDatum_1ad454d93136031921f6914205d3bd27f5" prot="public" virt="non-virtual"><scope>SymbolDatum</scope><name>~SymbolDatum</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

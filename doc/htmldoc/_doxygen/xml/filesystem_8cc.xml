@@ -1,0 +1,715 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="filesystem_8cc" kind="file" language="C++">
+    <compoundname>filesystem.cc</compoundname>
+    <includes refid="filesystem_8h" local="yes">filesystem.h</includes>
+    <includes local="no">dirent.h</includes>
+    <includes local="no">errno.h</includes>
+    <includes local="no">stdlib.h</includes>
+    <includes local="no">sys/stat.h</includes>
+    <includes local="no">unistd.h</includes>
+    <includes local="no">cassert</includes>
+    <includes local="no">ctime</includes>
+    <includes local="no">fstream</includes>
+    <includes local="no">mutex</includes>
+    <includes local="yes">compose.hpp</includes>
+    <includes refid="arraydatum_8h" local="yes">arraydatum.h</includes>
+    <includes refid="stringdatum_8h" local="yes">stringdatum.h</includes>
+    <incdepgraph>
+      <node id="42">
+        <label>lockptr.h</label>
+        <link refid="lockptr_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>aggregatedatum.h</label>
+        <link refid="aggregatedatum_8h"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>allocator.h</label>
+        <link refid="allocator_8h"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>arraydatum.h</label>
+        <link refid="arraydatum_8h"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>datum.h</label>
+        <link refid="datum_8h"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>filesystem.cc</label>
+        <link refid="filesystem_8cc"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>filesystem.h</label>
+        <link refid="filesystem_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>interpret.h</label>
+        <link refid="interpret_8h"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="41">
+        <label>lockptrdatum.h</label>
+        <link refid="lockptrdatum_8h"/>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>name.h</label>
+        <link refid="name_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>sliactions.h</label>
+        <link refid="sliactions_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>slibuiltins.h</label>
+        <link refid="slibuiltins_8h"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>sliexceptions.h</label>
+        <link refid="sliexceptions_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>slifunction.h</label>
+        <link refid="slifunction_8h"/>
+      </node>
+      <node id="4">
+        <label>slimodule.h</label>
+        <link refid="slimodule_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>slitype.h</label>
+        <link refid="slitype_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>stringdatum.h</label>
+        <link refid="stringdatum_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>tarrayobj.h</label>
+        <link refid="tarrayobj_8h"/>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>token.h</label>
+        <link refid="token_8h"/>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>tokenarray.h</label>
+        <link refid="tokenarray_8h"/>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>tokenstack.h</label>
+        <link refid="tokenstack_8h"/>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>algorithm</label>
+      </node>
+      <node id="12">
+        <label>cassert</label>
+      </node>
+      <node id="16">
+        <label>compose.hpp</label>
+      </node>
+      <node id="20">
+        <label>config.h</label>
+      </node>
+      <node id="37">
+        <label>cstddef</label>
+      </node>
+      <node id="22">
+        <label>cstdlib</label>
+      </node>
+      <node id="13">
+        <label>ctime</label>
+      </node>
+      <node id="27">
+        <label>deque</label>
+      </node>
+      <node id="7">
+        <label>dirent.h</label>
+      </node>
+      <node id="8">
+        <label>errno.h</label>
+      </node>
+      <node id="14">
+        <label>fstream</label>
+      </node>
+      <node id="34">
+        <label>iomanip</label>
+      </node>
+      <node id="5">
+        <label>iostream</label>
+      </node>
+      <node id="30">
+        <label>list</label>
+      </node>
+      <node id="28">
+        <label>map</label>
+      </node>
+      <node id="43">
+        <label>memory</label>
+      </node>
+      <node id="15">
+        <label>mutex</label>
+      </node>
+      <node id="9">
+        <label>stdlib.h</label>
+      </node>
+      <node id="6">
+        <label>string</label>
+      </node>
+      <node id="10">
+        <label>sys/stat.h</label>
+      </node>
+      <node id="25">
+        <label>typeinfo</label>
+      </node>
+      <node id="11">
+        <label>unistd.h</label>
+      </node>
+      <node id="18">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="filesystem_8cc_1ad5e0dbd36f0d71fce9b00b7f991b2f38" prot="public" static="no" mutable="no">
+        <type>std::mutex</type>
+        <definition>std::mutex mtx</definition>
+        <argsstring></argsstring>
+        <name>mtx</name>
+        <briefdescription>
+<para>@BeginDocumentation <ref refid="className" kindref="compound">Name</ref>: tmpnam - Generate a string that is a valid non-existing file-name. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Synopsis: tpmnam -&gt; filename</para>
+<para>Description: This command is a thin wrapper around the POSIX.1 tmpnam() kernel function. The tmpnam function generates a string that is a valid filename and that is not the name of an existing file. The tmpnam function generates a different name each time it is called, (up to a number of times that is defined by the compiler macro TMP_MAX).</para>
+<para>Author: R. Kupper</para>
+<para>References: Donald Lewin, &quot;The POSIX Programmer&apos;s Guide&quot; </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/filesystem.cc" line="303" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/filesystem.cc" bodystart="303" bodyend="-1"/>
+        <referencedby refid="classFilesystemModule_1_1TmpNamFunction_1aee0c02e374325f9ef35f824b8cf7978b" compoundref="filesystem_8cc" startline="305" endline="327">FilesystemModule::TmpNamFunction::execute</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/><sp/>filesystem.cc</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/><sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>NEST.</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="6"><highlight class="comment"><sp/>*<sp/><sp/>Copyright<sp/>(C)<sp/>2004<sp/>The<sp/>NEST<sp/>Initiative</highlight></codeline>
+<codeline lineno="7"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="8"><highlight class="comment"><sp/>*<sp/><sp/>NEST<sp/>is<sp/>free<sp/>software:<sp/>you<sp/>can<sp/>redistribute<sp/>it<sp/>and/or<sp/>modify</highlight></codeline>
+<codeline lineno="9"><highlight class="comment"><sp/>*<sp/><sp/>it<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>the<sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>as<sp/>published<sp/>by</highlight></codeline>
+<codeline lineno="10"><highlight class="comment"><sp/>*<sp/><sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>either<sp/>version<sp/>2<sp/>of<sp/>the<sp/>License,<sp/>or</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*<sp/><sp/>(at<sp/>your<sp/>option)<sp/>any<sp/>later<sp/>version.</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="13"><highlight class="comment"><sp/>*<sp/><sp/>NEST<sp/>is<sp/>distributed<sp/>in<sp/>the<sp/>hope<sp/>that<sp/>it<sp/>will<sp/>be<sp/>useful,</highlight></codeline>
+<codeline lineno="14"><highlight class="comment"><sp/>*<sp/><sp/>but<sp/>WITHOUT<sp/>ANY<sp/>WARRANTY;<sp/>without<sp/>even<sp/>the<sp/>implied<sp/>warranty<sp/>of</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*<sp/><sp/>MERCHANTABILITY<sp/>or<sp/>FITNESS<sp/>FOR<sp/>A<sp/>PARTICULAR<sp/>PURPOSE.<sp/><sp/>See<sp/>the</highlight></codeline>
+<codeline lineno="16"><highlight class="comment"><sp/>*<sp/><sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>for<sp/>more<sp/>details.</highlight></codeline>
+<codeline lineno="17"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="18"><highlight class="comment"><sp/>*<sp/><sp/>You<sp/>should<sp/>have<sp/>received<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>GNU<sp/>General<sp/>Public<sp/>License</highlight></codeline>
+<codeline lineno="19"><highlight class="comment"><sp/>*<sp/><sp/>along<sp/>with<sp/>NEST.<sp/><sp/>If<sp/>not,<sp/>see<sp/>&lt;http://www.gnu.org/licenses/&gt;.</highlight></codeline>
+<codeline lineno="20"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="21"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="filesystem_8h" kindref="compound">filesystem.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="comment">//<sp/>C<sp/>includes:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;dirent.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;errno.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdlib.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sys/stat.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;unistd.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="comment">//<sp/>C++<sp/>includes:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;cassert&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;ctime&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;fstream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;mutex&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Includes<sp/>from<sp/>libnestutil:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;compose.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Includes<sp/>from<sp/>sli:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="arraydatum_8h" kindref="compound">arraydatum.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="stringdatum_8h" kindref="compound">stringdatum.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="classFilesystemModule_1a8081fc6ac01a5a329dcb0ffaaeee4de9" refkind="member"><highlight class="normal"><ref refid="classFilesystemModule_1a8081fc6ac01a5a329dcb0ffaaeee4de9" kindref="member">FilesystemModule::init</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;FileNames_&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="classFilesystemModule_1ab5343b6f423a03342cfc381db071e8ee" kindref="member">filenamesfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;SetDirectory_&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="classFilesystemModule_1a1d3d5adfaad946fb7e96c886e83cde13" kindref="member">setdirectoryfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;Directory&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="classFilesystemModule_1ab3882d1ea86b262a77dfbd1369b0bdf1" kindref="member">directoryfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;MoveFile_&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="classFilesystemModule_1a65bce70b31f4f19b2c74e1727cfa6ab5" kindref="member">movefilefunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;CopyFile_&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="classFilesystemModule_1add55e0f848483ab21a8425e7fb026403" kindref="member">copyfilefunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;DeleteFile_&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="classFilesystemModule_1a49a705910719b2aff6a26507506b54ff" kindref="member">deletefilefunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;MakeDirectory_&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="classFilesystemModule_1aec7edf49cbe97685271af0c2adec135a" kindref="member">makedirectoryfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;RemoveDirectory_&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="classFilesystemModule_1a598dc505deedbbe6199163f6fb6a971d" kindref="member">removedirectoryfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;tmpnam&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="classFilesystemModule_1ab6a55794e6471c72e341bf3118e4b071" kindref="member">tmpnamfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;CompareFiles_s_s&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="classFilesystemModule_1aaad7c9e68b646ab5df8c711037343114" kindref="member">comparefilesfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string</highlight></codeline>
+<codeline lineno="62" refid="classFilesystemModule_1a763f1cb814e1867e1302fafc50648717" refkind="member"><highlight class="normal"><ref refid="classFilesystemModule_1a763f1cb814e1867e1302fafc50648717" kindref="member">FilesystemModule::name</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="63"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::string(<sp/></highlight><highlight class="stringliteral">&quot;Filesystem<sp/>access&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string</highlight></codeline>
+<codeline lineno="68" refid="classFilesystemModule_1ac58b05d71acf1b16a3af81b885f7bd27" refkind="member"><highlight class="normal"><ref refid="classFilesystemModule_1ac58b05d71acf1b16a3af81b885f7bd27" kindref="member">FilesystemModule::commandstring</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="69"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::string(<sp/></highlight><highlight class="stringliteral">&quot;(filesystem.sli)<sp/>run&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="classFilesystemModule_1_1FileNamesFunction_1adbcab430dfe54063318d6936c7b2ad57" refkind="member"><highlight class="normal"><ref refid="classFilesystemModule_1_1FileNamesFunction_1adbcab430dfe54063318d6936c7b2ad57" kindref="member">FilesystemModule::FileNamesFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="76"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">StringDatum</ref>*<sp/>sd<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classAggregateDatum" kindref="compound">StringDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>().<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/>assert(<sp/>sd<sp/>);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/>DIR*<sp/>TheDirectory<sp/>=<sp/>opendir(<sp/>sd-&gt;c_str()<sp/>);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>TheDirectory<sp/>)</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">ArrayDatum</ref>*<sp/>a<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="arraydatum_8h_1ae28f9f22dee7553c3f044e7f48e4f314" kindref="member">ArrayDatum</ref>();</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>dirent*<sp/>TheEntry;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(<sp/>(<sp/>TheEntry<sp/>=<sp/>readdir(<sp/>TheDirectory<sp/>)<sp/>)<sp/>)</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classToken" kindref="compound">Token</ref><sp/>string_token(<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="stringdatum_8h_1a3a3be330a17a12978173328265c8ff78" kindref="member">StringDatum</ref>(<sp/>TheEntry-&gt;d_name<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>a-&gt;push_back_move(<sp/>string_token<sp/>);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classToken" kindref="compound">Token</ref><sp/>array_token(<sp/>a<sp/>);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9d3b72926bfa2090389f0782cd2b6e76" kindref="member">push_move</ref>(<sp/>array_token<sp/>);</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1a07eed6312469265d3e3c4e7d5b38963f" kindref="member">BadIOError</ref><sp/>);</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="99"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102" refid="classFilesystemModule_1_1SetDirectoryFunction_1a8260f3938c3dfcb8257265e52e7903fb" refkind="member"><highlight class="normal"><ref refid="classFilesystemModule_1_1SetDirectoryFunction_1a8260f3938c3dfcb8257265e52e7903fb" kindref="member">FilesystemModule::SetDirectoryFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight><highlight class="comment">//<sp/>string<sp/>-&gt;<sp/>boolean</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">StringDatum</ref>*<sp/>sd<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classAggregateDatum" kindref="compound">StringDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;OStack.top().datum()<sp/>);</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/>assert(<sp/>sd<sp/>);</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>s<sp/>=<sp/>chdir(<sp/>sd-&gt;c_str()<sp/>);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/>i-&gt;OStack.pop();</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not<sp/>s<sp/>)</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;OStack.push(<sp/>i-&gt;baselookup(<sp/>i-&gt;true_name<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;OStack.push(<sp/>i-&gt;baselookup(<sp/>i-&gt;false_name<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/>i-&gt;EStack.pop();</highlight></codeline>
+<codeline lineno="118"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="135" refid="classFilesystemModule_1_1DirectoryFunction_1adf0c61082340943ff3593094af555c1d" refkind="member"><highlight class="normal"><ref refid="classFilesystemModule_1_1DirectoryFunction_1adf0c61082340943ff3593094af555c1d" kindref="member">FilesystemModule::DirectoryFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="136"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>SIZE<sp/>=<sp/>256;<sp/></highlight><highlight class="comment">//<sp/>incremental<sp/>buffer<sp/>size,<sp/>somewhat<sp/>arbitrary!</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>size<sp/>=<sp/>SIZE;</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>path_buffer<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">[<sp/>size<sp/>];</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(<sp/>not<sp/>getcwd(<sp/>path_buffer,<sp/>size<sp/>-<sp/>1<sp/>)<sp/>)</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/>{<sp/></highlight><highlight class="comment">//<sp/>try<sp/>again<sp/>with<sp/>a<sp/>bigger<sp/>buffer!</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>errno<sp/>!=<sp/>ERANGE<sp/>)</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1a07eed6312469265d3e3c4e7d5b38963f" kindref="member">BadIOError</ref><sp/>);<sp/></highlight><highlight class="comment">//<sp/>size<sp/>wasn&apos;t<sp/>reason</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal">[]<sp/>path_buffer;</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/>size<sp/>+=<sp/>SIZE;</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/>path_buffer<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">[<sp/>size<sp/>];</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(<sp/>path_buffer<sp/>);</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><ref refid="classToken" kindref="compound">Token</ref><sp/>sd(<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="stringdatum_8h_1a3a3be330a17a12978173328265c8ff78" kindref="member">StringDatum</ref>(<sp/>path_buffer<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal">[](<sp/>path_buffer<sp/>);</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9d3b72926bfa2090389f0782cd2b6e76" kindref="member">push_move</ref>(<sp/>sd<sp/>);</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="156"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="159" refid="classFilesystemModule_1_1MoveFileFunction_1a0d032ab8e11e1c69cf01456087ff2cb5" refkind="member"><highlight class="normal"><ref refid="classFilesystemModule_1_1MoveFileFunction_1a0d032ab8e11e1c69cf01456087ff2cb5" kindref="member">FilesystemModule::MoveFileFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight><highlight class="comment">//<sp/>string<sp/>string<sp/>-&gt;<sp/>boolean</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">StringDatum</ref>*<sp/>src<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classAggregateDatum" kindref="compound">StringDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;OStack.pick(<sp/>1<sp/>).datum()<sp/>);</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">StringDatum</ref>*<sp/>dst<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classAggregateDatum" kindref="compound">StringDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;OStack.pick(<sp/>0<sp/>).datum()<sp/>);</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/>assert(<sp/>src<sp/>);</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/>assert(<sp/>dst<sp/>);</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>s<sp/>=<sp/>link(<sp/>src-&gt;c_str(),<sp/>dst-&gt;c_str()<sp/>);</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not<sp/>s<sp/>)</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/>s<sp/>=<sp/>unlink(<sp/>src-&gt;c_str()<sp/>);</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>s<sp/>)<sp/></highlight><highlight class="comment">//<sp/>failed<sp/>to<sp/>remove<sp/>old<sp/>link:<sp/>undo<sp/>everything</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>t<sp/>=<sp/>unlink(<sp/>dst-&gt;c_str()<sp/>);</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>assert(<sp/>t<sp/>==<sp/>0<sp/>);<sp/></highlight><highlight class="comment">//<sp/>link<sp/>was<sp/>just<sp/>created<sp/>after<sp/>all!</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/>i-&gt;OStack.pop(<sp/>2<sp/>);</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not<sp/>s<sp/>)</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;OStack.push(<sp/>i-&gt;baselookup(<sp/>i-&gt;true_name<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;OStack.push(<sp/>i-&gt;baselookup(<sp/>i-&gt;false_name<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/>i-&gt;EStack.pop();</highlight></codeline>
+<codeline lineno="186"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"></highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="189" refid="classFilesystemModule_1_1CopyFileFunction_1a743714f75a8f44c10c2708c5324b2fcf" refkind="member"><highlight class="normal"><ref refid="classFilesystemModule_1_1CopyFileFunction_1a743714f75a8f44c10c2708c5324b2fcf" kindref="member">FilesystemModule::CopyFileFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight><highlight class="comment">//<sp/>string<sp/>string<sp/>-&gt;<sp/>-</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">StringDatum</ref>*<sp/>src<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classAggregateDatum" kindref="compound">StringDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;OStack.pick(<sp/>1<sp/>).datum()<sp/>);</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">StringDatum</ref>*<sp/>dst<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classAggregateDatum" kindref="compound">StringDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;OStack.pick(<sp/>0<sp/>).datum()<sp/>);</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/>assert(<sp/>src<sp/>);</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/>assert(<sp/>dst<sp/>);</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/>std::ofstream<sp/>deststream(<sp/>dst-&gt;c_str()<sp/>);</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not<sp/>deststream<sp/>)</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;message(<sp/><ref refid="classSLIInterpreter_1aafcfa7e2b250f23f2c66af03f0fea32e" kindref="member">SLIInterpreter::M_ERROR</ref>,<sp/></highlight><highlight class="stringliteral">&quot;CopyFile&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;Could<sp/>not<sp/>create<sp/>destination<sp/>file.&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;raiseerror(<sp/>i-&gt;BadIOError<sp/>);</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/>std::ifstream<sp/>sourcestream(<sp/>src-&gt;c_str()<sp/>);</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not<sp/>sourcestream<sp/>)</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;message(<sp/><ref refid="classSLIInterpreter_1aafcfa7e2b250f23f2c66af03f0fea32e" kindref="member">SLIInterpreter::M_ERROR</ref>,<sp/></highlight><highlight class="stringliteral">&quot;CopyFile&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;Could<sp/>not<sp/>open<sp/>source<sp/>file.&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;raiseerror(<sp/>i-&gt;BadIOError<sp/>);</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"></highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>copy<sp/>while<sp/>file<sp/>in<sp/>one<sp/>call<sp/>(see<sp/>Josuttis<sp/>chap<sp/>13.9<sp/>(File<sp/>Access),<sp/>p.<sp/>631)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/>deststream<sp/>&lt;&lt;<sp/>sourcestream.rdbuf();</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"></highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not<sp/>deststream<sp/>)</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;message(<sp/><ref refid="classSLIInterpreter_1aafcfa7e2b250f23f2c66af03f0fea32e" kindref="member">SLIInterpreter::M_ERROR</ref>,<sp/></highlight><highlight class="stringliteral">&quot;CopyFile&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;Error<sp/>copying<sp/>file.&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;raiseerror(<sp/>i-&gt;BadIOError<sp/>);</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"></highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/>i-&gt;OStack.pop(<sp/>2<sp/>);</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/>i-&gt;EStack.pop();</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"></highlight></codeline>
+<codeline lineno="226"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>closes<sp/>files<sp/>automatically</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="227"><highlight class="normal"></highlight></codeline>
+<codeline lineno="228"><highlight class="normal"></highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="230" refid="classFilesystemModule_1_1DeleteFileFunction_1a89f1f53eb9158028a68be9144ed2e5f1" refkind="member"><highlight class="normal"><ref refid="classFilesystemModule_1_1DeleteFileFunction_1a89f1f53eb9158028a68be9144ed2e5f1" kindref="member">FilesystemModule::DeleteFileFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="231"><highlight class="normal"></highlight><highlight class="comment">//<sp/>string<sp/>-&gt;<sp/>boolean</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="232"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">StringDatum</ref>*<sp/>sd<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classAggregateDatum" kindref="compound">StringDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;OStack.top().datum()<sp/>);</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/>assert(<sp/>sd<sp/>);</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>s<sp/>=<sp/>unlink(<sp/>sd-&gt;c_str()<sp/>);</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/>i-&gt;OStack.pop();</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not<sp/>s<sp/>)</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;OStack.push(<sp/>i-&gt;baselookup(<sp/>i-&gt;true_name<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;OStack.push(<sp/>i-&gt;baselookup(<sp/>i-&gt;false_name<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/>i-&gt;EStack.pop();</highlight></codeline>
+<codeline lineno="246"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"></highlight></codeline>
+<codeline lineno="248"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="249" refid="classFilesystemModule_1_1MakeDirectoryFunction_1a4a42c7df25356a044d1b6d47e36662ea" refkind="member"><highlight class="normal"><ref refid="classFilesystemModule_1_1MakeDirectoryFunction_1a4a42c7df25356a044d1b6d47e36662ea" kindref="member">FilesystemModule::MakeDirectoryFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="250"><highlight class="normal"></highlight><highlight class="comment">//<sp/>string<sp/>-&gt;<sp/>Boolean</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="251"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">StringDatum</ref>*<sp/>sd<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classAggregateDatum" kindref="compound">StringDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;OStack.top().datum()<sp/>);</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/>assert(<sp/>sd<sp/>);</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>s<sp/>=<sp/>mkdir(<sp/>sd-&gt;c_str(),<sp/>S_IRUSR<sp/>|<sp/>S_IWUSR<sp/>|<sp/>S_IXUSR<sp/>|<sp/>S_IRGRP<sp/>|<sp/>S_IXGRP<sp/>);</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/>i-&gt;OStack.pop();</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not<sp/>s<sp/>)</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;OStack.push(<sp/>i-&gt;baselookup(<sp/>i-&gt;true_name<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;OStack.push(<sp/>i-&gt;baselookup(<sp/>i-&gt;false_name<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/>i-&gt;EStack.pop();</highlight></codeline>
+<codeline lineno="265"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"></highlight></codeline>
+<codeline lineno="267"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="268" refid="classFilesystemModule_1_1RemoveDirectoryFunction_1a7621a6a921876c7e034031b94d565069" refkind="member"><highlight class="normal"><ref refid="classFilesystemModule_1_1RemoveDirectoryFunction_1a7621a6a921876c7e034031b94d565069" kindref="member">FilesystemModule::RemoveDirectoryFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="269"><highlight class="normal"></highlight><highlight class="comment">//<sp/>string<sp/>-&gt;<sp/>Boolean</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="270"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">StringDatum</ref>*<sp/>sd<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classAggregateDatum" kindref="compound">StringDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;OStack.top().datum()<sp/>);</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"><sp/><sp/>assert(<sp/>sd<sp/>);</highlight></codeline>
+<codeline lineno="273"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>s<sp/>=<sp/>rmdir(<sp/>sd-&gt;c_str()<sp/>);</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"><sp/><sp/>i-&gt;OStack.pop();</highlight></codeline>
+<codeline lineno="275"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not<sp/>s<sp/>)</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;OStack.push(<sp/>i-&gt;baselookup(<sp/>i-&gt;true_name<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;OStack.push(<sp/>i-&gt;baselookup(<sp/>i-&gt;false_name<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="283"><highlight class="normal"><sp/><sp/>i-&gt;EStack.pop();</highlight></codeline>
+<codeline lineno="284"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="285"><highlight class="normal"></highlight></codeline>
+<codeline lineno="303" refid="filesystem_8cc_1ad5e0dbd36f0d71fce9b00b7f991b2f38" refkind="member"><highlight class="normal">std::mutex<sp/><ref refid="filesystem_8cc_1ad5e0dbd36f0d71fce9b00b7f991b2f38" kindref="member">mtx</ref>;</highlight></codeline>
+<codeline lineno="304"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="305" refid="classFilesystemModule_1_1TmpNamFunction_1aee0c02e374325f9ef35f824b8cf7978b" refkind="member"><highlight class="normal"><ref refid="classFilesystemModule_1_1TmpNamFunction_1aee0c02e374325f9ef35f824b8cf7978b" kindref="member">FilesystemModule::TmpNamFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="306"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="307"><highlight class="normal"><sp/><sp/>std::lock_guard&lt;<sp/>std::mutex<sp/>&gt;<sp/>lock(<sp/><ref refid="filesystem_8cc_1ad5e0dbd36f0d71fce9b00b7f991b2f38" kindref="member">mtx</ref><sp/>);</highlight></codeline>
+<codeline lineno="308"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>seed<sp/>=<sp/>std::time(<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="309"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>env<sp/>=<sp/>getenv(<sp/></highlight><highlight class="stringliteral">&quot;TMPDIR&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="310"><highlight class="normal"><sp/><sp/>std::string<sp/>tmpdir(<sp/></highlight><highlight class="stringliteral">&quot;/tmp&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="311"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>env<sp/>)</highlight></codeline>
+<codeline lineno="312"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="313"><highlight class="normal"><sp/><sp/><sp/><sp/>tmpdir<sp/>=<sp/>std::string(<sp/>env<sp/>);</highlight></codeline>
+<codeline lineno="314"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="315"><highlight class="normal"></highlight></codeline>
+<codeline lineno="316"><highlight class="normal"><sp/><sp/>std::string<sp/>tempfile;</highlight></codeline>
+<codeline lineno="317"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">do</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="318"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="319"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>rng<sp/>=<sp/>rand_r(<sp/>&amp;seed<sp/>);</highlight></codeline>
+<codeline lineno="320"><highlight class="normal"><sp/><sp/><sp/><sp/>tempfile<sp/>=<sp/>tmpdir<sp/>+<sp/>String::compose(<sp/></highlight><highlight class="stringliteral">&quot;/nest-tmp-%1&quot;</highlight><highlight class="normal">,<sp/>rng<sp/>);</highlight></codeline>
+<codeline lineno="321"><highlight class="normal"><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(<sp/>std::ifstream(<sp/>tempfile.c_str()<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="322"><highlight class="normal"></highlight></codeline>
+<codeline lineno="323"><highlight class="normal"><sp/><sp/><ref refid="classToken" kindref="compound">Token</ref><sp/>filename_t(<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="stringdatum_8h_1a3a3be330a17a12978173328265c8ff78" kindref="member">StringDatum</ref>(<sp/>tempfile<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="324"><highlight class="normal"></highlight></codeline>
+<codeline lineno="325"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9d3b72926bfa2090389f0782cd2b6e76" kindref="member">push_move</ref>(<sp/>filename_t<sp/>);</highlight></codeline>
+<codeline lineno="326"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="327"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="328"><highlight class="normal"></highlight></codeline>
+<codeline lineno="341"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="342" refid="classFilesystemModule_1_1CompareFilesFunction_1a136b74903479339705d94f6425bc4c29" refkind="member"><highlight class="normal"><ref refid="classFilesystemModule_1_1CompareFilesFunction_1a136b74903479339705d94f6425bc4c29" kindref="member">FilesystemModule::CompareFilesFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="343"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="344"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a4bd843d0ad15faf88185a1ae885f8852" kindref="member">assert_stack_load</ref>(<sp/>2<sp/>);</highlight></codeline>
+<codeline lineno="345"><highlight class="normal"></highlight></codeline>
+<codeline lineno="346"><highlight class="normal"><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">StringDatum</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>flA<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classAggregateDatum" kindref="compound">StringDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1ac861cc2282484dd2a27dd1304aa719a4" kindref="member">pick</ref>(<sp/>1<sp/>).<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="347"><highlight class="normal"><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">StringDatum</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>flB<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classAggregateDatum" kindref="compound">StringDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1ac861cc2282484dd2a27dd1304aa719a4" kindref="member">pick</ref>(<sp/>0<sp/>).<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="348"><highlight class="normal"><sp/><sp/>assert(<sp/>flA<sp/>);</highlight></codeline>
+<codeline lineno="349"><highlight class="normal"><sp/><sp/>assert(<sp/>flB<sp/>);</highlight></codeline>
+<codeline lineno="350"><highlight class="normal"></highlight></codeline>
+<codeline lineno="351"><highlight class="normal"><sp/><sp/>std::ifstream<sp/>as(<sp/>flA-&gt;c_str(),<sp/>std::ifstream::in<sp/>|<sp/>std::ifstream::binary<sp/>);</highlight></codeline>
+<codeline lineno="352"><highlight class="normal"><sp/><sp/>std::ifstream<sp/>bs(<sp/>flB-&gt;c_str(),<sp/>std::ifstream::in<sp/>|<sp/>std::ifstream::binary<sp/>);</highlight></codeline>
+<codeline lineno="353"><highlight class="normal"></highlight></codeline>
+<codeline lineno="354"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not(<sp/>as.good()<sp/>and<sp/>bs.good()<sp/>)<sp/>)</highlight></codeline>
+<codeline lineno="355"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="356"><highlight class="normal"><sp/><sp/><sp/><sp/>as.close();</highlight></codeline>
+<codeline lineno="357"><highlight class="normal"><sp/><sp/><sp/><sp/>bs.close();</highlight></codeline>
+<codeline lineno="358"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classIOError" kindref="compound">IOError</ref>();</highlight></codeline>
+<codeline lineno="359"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="360"><highlight class="normal"></highlight></codeline>
+<codeline lineno="361"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>equal<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="362"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(<sp/>equal<sp/>and<sp/>as.good()<sp/>and<sp/>bs.good()<sp/>)</highlight></codeline>
+<codeline lineno="363"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="364"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ac<sp/>=<sp/>as.get();</highlight></codeline>
+<codeline lineno="365"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>bc<sp/>=<sp/>bs.get();</highlight></codeline>
+<codeline lineno="366"><highlight class="normal"></highlight></codeline>
+<codeline lineno="367"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not(<sp/>as.fail()<sp/>or<sp/>bs.fail()<sp/>)<sp/>)</highlight></codeline>
+<codeline lineno="368"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="369"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>equal<sp/>=<sp/>ac<sp/>==<sp/>bc;</highlight></codeline>
+<codeline lineno="370"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="371"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="372"><highlight class="normal"></highlight></codeline>
+<codeline lineno="373"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>as.fail()<sp/>!=<sp/>bs.fail()<sp/>)</highlight></codeline>
+<codeline lineno="374"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="375"><highlight class="normal"><sp/><sp/><sp/><sp/>equal<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>different<sp/>lengths</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="376"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="377"><highlight class="normal"></highlight></codeline>
+<codeline lineno="378"><highlight class="normal"><sp/><sp/>as.close();</highlight></codeline>
+<codeline lineno="379"><highlight class="normal"><sp/><sp/>bs.close();</highlight></codeline>
+<codeline lineno="380"><highlight class="normal"></highlight></codeline>
+<codeline lineno="381"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>(<sp/>2<sp/>);</highlight></codeline>
+<codeline lineno="382"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>equal<sp/>)</highlight></codeline>
+<codeline lineno="383"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="384"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a585f38fb0ed122da90489eccbfd7a187" kindref="member">push</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1a96c3eff127bf8a56860f05ff199cb6ff" kindref="member">baselookup</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1aa4f57028a7915ce53b2b866b33361b0c" kindref="member">true_name</ref><sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="385"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="386"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="387"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="388"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a585f38fb0ed122da90489eccbfd7a187" kindref="member">push</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1a96c3eff127bf8a56860f05ff199cb6ff" kindref="member">baselookup</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ae17c622fcc079a453649581c02f00a6f" kindref="member">false_name</ref><sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="389"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="390"><highlight class="normal"></highlight></codeline>
+<codeline lineno="391"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="392"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/filesystem.cc"/>
+  </compounddef>
+</doxygen>

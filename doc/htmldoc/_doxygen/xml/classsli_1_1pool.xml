@@ -1,0 +1,550 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classsli_1_1pool" kind="class" language="C++" prot="public">
+    <compoundname>sli::pool</compoundname>
+    <includes refid="allocator_8h" local="no">allocator.h</includes>
+    <innerclass refid="classsli_1_1pool_1_1chunk" prot="private">sli::pool::chunk</innerclass>
+    <innerclass refid="structsli_1_1pool_1_1link" prot="private">sli::pool::link</innerclass>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classsli_1_1pool_1af47e5ec360e02afd4a9c7c134c25bf3b" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t sli::pool::initial_block_size</definition>
+        <argsstring></argsstring>
+        <name>initial_block_size</name>
+        <qualifiedname>sli::pool::initial_block_size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="93" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classsli_1_1pool_1ae344e46bd32fafd2a304db8e0dd495ad" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t sli::pool::growth_factor</definition>
+        <argsstring></argsstring>
+        <name>growth_factor</name>
+        <qualifiedname>sli::pool::growth_factor</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="94" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" bodystart="94" bodyend="-1"/>
+        <referencedby refid="classsli_1_1pool_1aa4ec8f3aaccf68e6ac5eac14cf722f7f" compoundref="allocator_8h" startline="155" endline="170">alloc</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classsli_1_1pool_1a4042468546da9d084668b3307bee2dd6" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t sli::pool::block_size</definition>
+        <argsstring></argsstring>
+        <name>block_size</name>
+        <qualifiedname>sli::pool::block_size</qualifiedname>
+        <briefdescription>
+<para>number of elements per chunk </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="96" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" bodystart="96" bodyend="-1"/>
+        <referencedby refid="classsli_1_1pool_1aa4ec8f3aaccf68e6ac5eac14cf722f7f" compoundref="allocator_8h" startline="155" endline="170">alloc</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classsli_1_1pool_1ac86eca9bf8093307046745d12740521a" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t sli::pool::el_size</definition>
+        <argsstring></argsstring>
+        <name>el_size</name>
+        <qualifiedname>sli::pool::el_size</qualifiedname>
+        <briefdescription>
+<para>sizeof an element </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="97" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" bodystart="97" bodyend="-1"/>
+        <referencedby refid="classsli_1_1pool_1a1e20872f668995671db74b3baa37a147" compoundref="allocator_8h" startline="182" endline="185">get_el_size</referencedby>
+        <referencedby refid="classsli_1_1pool_1a908d0b93fdeee9823aa38d5f13bc56f5" compoundref="allocator_8h" startline="144" endline="147">size_of</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classsli_1_1pool_1a4664e3edc59abd74436e399c6a5b9f9d" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t sli::pool::instantiations</definition>
+        <argsstring></argsstring>
+        <name>instantiations</name>
+        <qualifiedname>sli::pool::instantiations</qualifiedname>
+        <briefdescription>
+<para>number of instantiated elements </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="98" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" bodystart="98" bodyend="-1"/>
+        <referencedby refid="classsli_1_1pool_1aa4ec8f3aaccf68e6ac5eac14cf722f7f" compoundref="allocator_8h" startline="155" endline="170">alloc</referencedby>
+        <referencedby refid="classsli_1_1pool_1a0f1e4e02302c70fb8e52fdfed49e4946" compoundref="allocator_8h" startline="136" endline="139">available</referencedby>
+        <referencedby refid="classsli_1_1pool_1ab7252655aaee55b020cc156ced585b6e" compoundref="allocator_8h" startline="173" endline="179">free</referencedby>
+        <referencedby refid="classsli_1_1pool_1ac86b38512de14616fb1ee038e5ba105d" compoundref="allocator_8h" startline="188" endline="191">get_instantiations</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classsli_1_1pool_1ad1810870f8bf2058d4cd599d6d333155" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t sli::pool::total</definition>
+        <argsstring></argsstring>
+        <name>total</name>
+        <qualifiedname>sli::pool::total</qualifiedname>
+        <briefdescription>
+<para>total number of allocated elements </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="99" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" bodystart="99" bodyend="-1"/>
+        <referencedby refid="classsli_1_1pool_1a0f1e4e02302c70fb8e52fdfed49e4946" compoundref="allocator_8h" startline="136" endline="139">available</referencedby>
+        <referencedby refid="classsli_1_1pool_1ab0fe0ad1965d8e7c1d6497ba6c2ea45d" compoundref="allocator_8h" startline="194" endline="197">get_total</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classsli_1_1pool_1a5e801ad6159d89697903e0f552b4db50" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t sli::pool::capacity</definition>
+        <argsstring></argsstring>
+        <name>capacity</name>
+        <qualifiedname>sli::pool::capacity</qualifiedname>
+        <briefdescription>
+<para>number of free elements </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="100" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classsli_1_1pool_1a2c0f9262a070509a31c986f0c403de27" prot="private" static="no" mutable="no">
+        <type><ref refid="classsli_1_1pool_1_1chunk" kindref="compound">chunk</ref> *</type>
+        <definition>chunk* sli::pool::chunks</definition>
+        <argsstring></argsstring>
+        <name>chunks</name>
+        <qualifiedname>sli::pool::chunks</qualifiedname>
+        <briefdescription>
+<para>linked list of memory chunks </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="101" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" bodystart="101" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classsli_1_1pool_1af92756c3f6e2b77057b2fa253ce7ad7a" prot="private" static="no" mutable="no">
+        <type><ref refid="structsli_1_1pool_1_1link" kindref="compound">link</ref> *</type>
+        <definition>link* sli::pool::head</definition>
+        <argsstring></argsstring>
+        <name>head</name>
+        <qualifiedname>sli::pool::head</qualifiedname>
+        <briefdescription>
+<para>head of free list </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="102" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" bodystart="102" bodyend="-1"/>
+        <referencedby refid="classsli_1_1pool_1aa4ec8f3aaccf68e6ac5eac14cf722f7f" compoundref="allocator_8h" startline="155" endline="170">alloc</referencedby>
+        <referencedby refid="classsli_1_1pool_1ab7252655aaee55b020cc156ced585b6e" compoundref="allocator_8h" startline="173" endline="179">free</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classsli_1_1pool_1ac3711c2d715b1705bef4d33fef4be68d" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool sli::pool::initialized_</definition>
+        <argsstring></argsstring>
+        <name>initialized_</name>
+        <qualifiedname>sli::pool::initialized_</qualifiedname>
+        <briefdescription>
+<para>True if the pool is initialized. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="104" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" bodystart="104" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classsli_1_1pool_1af5d5a0615c945320cad0d2defa103b40" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sli::pool::grow</definition>
+        <argsstring>(size_t)</argsstring>
+        <name>grow</name>
+        <qualifiedname>sli::pool::grow</qualifiedname>
+        <param>
+          <type>size_t</type>
+          <defname>nelements</defname>
+        </param>
+        <briefdescription>
+<para>make pool larger by n elements </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="106" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.cpp" bodystart="119" bodyend="134"/>
+      </memberdef>
+      <memberdef kind="function" id="classsli_1_1pool_1ae7dbc577476e3cab69882c0bdc2c0031" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sli::pool::grow</definition>
+        <argsstring>()</argsstring>
+        <name>grow</name>
+        <qualifiedname>sli::pool::grow</qualifiedname>
+        <briefdescription>
+<para>make pool larger </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="107" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.cpp" bodystart="137" bodyend="141"/>
+        <referencedby refid="classsli_1_1pool_1aa4ec8f3aaccf68e6ac5eac14cf722f7f" compoundref="allocator_8h" startline="155" endline="170">alloc</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classsli_1_1pool_1a130f50d9c75a0f58b7ba97c21705ef40" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>sli::pool::pool</definition>
+        <argsstring>()</argsstring>
+        <name>pool</name>
+        <qualifiedname>sli::pool::pool</qualifiedname>
+        <briefdescription>
+<para>Create pool for objects of size n. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Initial is the initial allocation block size, i.e. the number of objects per block. growth is the factor by which the allocations block increases after each growth. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="116" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.cpp" bodystart="25" bodyend="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classsli_1_1pool_1abee04588cd3aea18b32f8518ae01291f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>sli::pool::pool</definition>
+        <argsstring>(const pool &amp;)</argsstring>
+        <name>pool</name>
+        <qualifiedname>sli::pool::pool</qualifiedname>
+        <param>
+          <type>const <ref refid="classsli_1_1pool" kindref="compound">pool</ref> &amp;</type>
+          <defname>p</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="117" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.cpp" bodystart="39" bodyend="51"/>
+      </memberdef>
+      <memberdef kind="function" id="classsli_1_1pool_1a2698c608ada7e63ba42e8f44d0bc85e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classsli_1_1pool" kindref="compound">pool</ref> &amp;</type>
+        <definition>sli::pool &amp; sli::pool::operator=</definition>
+        <argsstring>(const pool &amp;)</argsstring>
+        <name>operator=</name>
+        <qualifiedname>sli::pool::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="classsli_1_1pool" kindref="compound">pool</ref> &amp;</type>
+          <defname>p</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="118" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.cpp" bodystart="98" bodyend="116"/>
+      </memberdef>
+      <memberdef kind="function" id="classsli_1_1pool_1a45c607299de521d2c9e4beb138d46e23" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>sli::pool::pool</definition>
+        <argsstring>(size_t n, size_t initial=100, size_t growth=1)</argsstring>
+        <name>pool</name>
+        <qualifiedname>sli::pool::pool</qualifiedname>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>initial</declname>
+          <defval>100</defval>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>growth</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="120" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.cpp" bodystart="54" bodyend="66"/>
+      </memberdef>
+      <memberdef kind="function" id="classsli_1_1pool_1a8a17abcfc7404189f53d206f5b7f504d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sli::pool::init</definition>
+        <argsstring>(size_t n, size_t initial=100, size_t growth=1)</argsstring>
+        <name>init</name>
+        <qualifiedname>sli::pool::init</qualifiedname>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>initial</declname>
+          <defval>100</defval>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>growth</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="121" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.cpp" bodystart="69" bodyend="84"/>
+      </memberdef>
+      <memberdef kind="function" id="classsli_1_1pool_1aa00547db5f20787c227bbe65356fb09c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>sli::pool::~pool</definition>
+        <argsstring>()</argsstring>
+        <name>~pool</name>
+        <qualifiedname>sli::pool::~pool</qualifiedname>
+        <briefdescription>
+<para>deallocate ALL memory </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="123" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.cpp" bodystart="86" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="classsli_1_1pool_1a77217a4f59992d41227b76444063be55" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sli::pool::reserve_additional</definition>
+        <argsstring>(size_t n)</argsstring>
+        <name>reserve_additional</name>
+        <qualifiedname>sli::pool::reserve_additional</qualifiedname>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+<para>Increase the pools capacity (free slots) by n. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>reserve_additional() ensures that the pool has at least n empty slots,
+i.e., that the pool can store at least n additional elements
+before more memory needs to be allocated from the operating
+system.
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="133" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.cpp" bodystart="144" bodyend="151"/>
+      </memberdef>
+      <memberdef kind="function" id="classsli_1_1pool_1a0f1e4e02302c70fb8e52fdfed49e4946" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t sli::pool::available</definition>
+        <argsstring>() const</argsstring>
+        <name>available</name>
+        <qualifiedname>sli::pool::available</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="136" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" bodystart="136" bodyend="139"/>
+        <references refid="classsli_1_1pool_1a4664e3edc59abd74436e399c6a5b9f9d" compoundref="allocator_8h" startline="98">instantiations</references>
+        <references refid="classsli_1_1pool_1ad1810870f8bf2058d4cd599d6d333155" compoundref="allocator_8h" startline="99">total</references>
+      </memberdef>
+      <memberdef kind="function" id="classsli_1_1pool_1aa4ec8f3aaccf68e6ac5eac14cf722f7f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void *</type>
+        <definition>void * sli::pool::alloc</definition>
+        <argsstring>()</argsstring>
+        <name>alloc</name>
+        <qualifiedname>sli::pool::alloc</qualifiedname>
+        <briefdescription>
+<para>allocate one element </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="141" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" bodystart="155" bodyend="170"/>
+        <references refid="classsli_1_1pool_1a4042468546da9d084668b3307bee2dd6" compoundref="allocator_8h" startline="96">block_size</references>
+        <references refid="classsli_1_1pool_1ae7dbc577476e3cab69882c0bdc2c0031" compoundref="allocator_8cpp" startline="137" endline="141">grow</references>
+        <references refid="classsli_1_1pool_1ae344e46bd32fafd2a304db8e0dd495ad" compoundref="allocator_8h" startline="94">growth_factor</references>
+        <references refid="classsli_1_1pool_1af92756c3f6e2b77057b2fa253ce7ad7a" compoundref="allocator_8h" startline="102">head</references>
+        <references refid="classsli_1_1pool_1a4664e3edc59abd74436e399c6a5b9f9d" compoundref="allocator_8h" startline="98">instantiations</references>
+        <references refid="structsli_1_1pool_1_1link_1aa02f00c675d0997833c3199b8a27bc9d" compoundref="allocator_8h" startline="60">sli::pool::link::next</references>
+        <referencedby refid="classAggregateDatum_1a261a7f7910816653459217d14b9e4148" compoundref="aggregatedatum_8h" startline="108" endline="115">AggregateDatum&lt; C, slt &gt;::operator new</referencedby>
+        <referencedby refid="classFunctionDatum_1a8ab7d0d501cc8c6f6157a7ead6a292d8" compoundref="functiondatum_8h" startline="157" endline="164">FunctionDatum::operator new</referencedby>
+        <referencedby refid="classNumericDatum_1a58b6978195e31d34ab1ad5161702b05d" compoundref="numericdatum_8h" startline="91" endline="98">NumericDatum&lt; D, slt &gt;::operator new</referencedby>
+        <referencedby refid="classTrieDatum_1adae6ccd6f32ce3b707f8cae4ff42f7da" compoundref="triedatum_8h" startline="137" endline="144">TrieDatum::operator new</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classsli_1_1pool_1ab7252655aaee55b020cc156ced585b6e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void sli::pool::free</definition>
+        <argsstring>(void *p)</argsstring>
+        <name>free</name>
+        <qualifiedname>sli::pool::free</qualifiedname>
+        <param>
+          <type>void *</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+<para>put element back into the pool </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="142" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" bodystart="173" bodyend="179"/>
+        <references refid="classsli_1_1pool_1af92756c3f6e2b77057b2fa253ce7ad7a" compoundref="allocator_8h" startline="102">head</references>
+        <references refid="classsli_1_1pool_1a4664e3edc59abd74436e399c6a5b9f9d" compoundref="allocator_8h" startline="98">instantiations</references>
+        <referencedby refid="classAggregateDatum_1a6f1b209dae72623cb398fffa530e4446" compoundref="aggregatedatum_8h" startline="118" endline="130">AggregateDatum&lt; C, slt &gt;::operator delete</referencedby>
+        <referencedby refid="classFunctionDatum_1aae90509c3cf23aee07b4bd659462f4b7" compoundref="functiondatum_8h" startline="167" endline="179">FunctionDatum::operator delete</referencedby>
+        <referencedby refid="classNumericDatum_1a17475c36227d1cd8ee70784801b9c505" compoundref="numericdatum_8h" startline="101" endline="113">NumericDatum&lt; D, slt &gt;::operator delete</referencedby>
+        <referencedby refid="classTrieDatum_1aaee616098599a6a0c3cc82a3522f95fa" compoundref="triedatum_8h" startline="147" endline="159">TrieDatum::operator delete</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classsli_1_1pool_1a908d0b93fdeee9823aa38d5f13bc56f5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t sli::pool::size_of</definition>
+        <argsstring>() const</argsstring>
+        <name>size_of</name>
+        <qualifiedname>sli::pool::size_of</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="144" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" bodystart="144" bodyend="147"/>
+        <references refid="classsli_1_1pool_1ac86eca9bf8093307046745d12740521a" compoundref="allocator_8h" startline="97">el_size</references>
+        <referencedby refid="classAggregateDatum_1a6f1b209dae72623cb398fffa530e4446" compoundref="aggregatedatum_8h" startline="118" endline="130">AggregateDatum&lt; C, slt &gt;::operator delete</referencedby>
+        <referencedby refid="classNumericDatum_1a17475c36227d1cd8ee70784801b9c505" compoundref="numericdatum_8h" startline="101" endline="113">NumericDatum&lt; D, slt &gt;::operator delete</referencedby>
+        <referencedby refid="classTrieDatum_1aaee616098599a6a0c3cc82a3522f95fa" compoundref="triedatum_8h" startline="147" endline="159">TrieDatum::operator delete</referencedby>
+        <referencedby refid="classAggregateDatum_1a261a7f7910816653459217d14b9e4148" compoundref="aggregatedatum_8h" startline="108" endline="115">AggregateDatum&lt; C, slt &gt;::operator new</referencedby>
+        <referencedby refid="classNumericDatum_1a58b6978195e31d34ab1ad5161702b05d" compoundref="numericdatum_8h" startline="91" endline="98">NumericDatum&lt; D, slt &gt;::operator new</referencedby>
+        <referencedby refid="classTrieDatum_1adae6ccd6f32ce3b707f8cae4ff42f7da" compoundref="triedatum_8h" startline="137" endline="144">TrieDatum::operator new</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classsli_1_1pool_1a1e20872f668995671db74b3baa37a147" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t sli::pool::get_el_size</definition>
+        <argsstring>() const</argsstring>
+        <name>get_el_size</name>
+        <qualifiedname>sli::pool::get_el_size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="149" column="17" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" bodystart="182" bodyend="185"/>
+        <references refid="classsli_1_1pool_1ac86eca9bf8093307046745d12740521a" compoundref="allocator_8h" startline="97">el_size</references>
+      </memberdef>
+      <memberdef kind="function" id="classsli_1_1pool_1ac86b38512de14616fb1ee038e5ba105d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t sli::pool::get_instantiations</definition>
+        <argsstring>() const</argsstring>
+        <name>get_instantiations</name>
+        <qualifiedname>sli::pool::get_instantiations</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="150" column="17" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" bodystart="188" bodyend="191"/>
+        <references refid="classsli_1_1pool_1a4664e3edc59abd74436e399c6a5b9f9d" compoundref="allocator_8h" startline="98">instantiations</references>
+      </memberdef>
+      <memberdef kind="function" id="classsli_1_1pool_1ab0fe0ad1965d8e7c1d6497ba6c2ea45d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t sli::pool::get_total</definition>
+        <argsstring>() const</argsstring>
+        <name>get_total</name>
+        <qualifiedname>sli::pool::get_total</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="151" column="17" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" bodystart="194" bodyend="197"/>
+        <references refid="classsli_1_1pool_1ad1810870f8bf2058d4cd599d6d333155" compoundref="allocator_8h" startline="99">total</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>pool is a specialized allocator class for many identical small objects. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>It targets a performance close to the optimal performance which is achieved by allocating all needed objects at once. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>sli::pool</label>
+        <link refid="classsli_1_1pool"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>chunks</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>head</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>sli::pool::chunk</label>
+        <link refid="classsli_1_1pool_1_1chunk"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>sli::pool::link</label>
+        <link refid="structsli_1_1pool_1_1link"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="56" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" bodystart="57" bodyend="152"/>
+    <listofallmembers>
+      <member refid="classsli_1_1pool_1aa4ec8f3aaccf68e6ac5eac14cf722f7f" prot="public" virt="non-virtual"><scope>sli::pool</scope><name>alloc</name></member>
+      <member refid="classsli_1_1pool_1a0f1e4e02302c70fb8e52fdfed49e4946" prot="public" virt="non-virtual"><scope>sli::pool</scope><name>available</name></member>
+      <member refid="classsli_1_1pool_1a4042468546da9d084668b3307bee2dd6" prot="private" virt="non-virtual"><scope>sli::pool</scope><name>block_size</name></member>
+      <member refid="classsli_1_1pool_1a5e801ad6159d89697903e0f552b4db50" prot="private" virt="non-virtual"><scope>sli::pool</scope><name>capacity</name></member>
+      <member refid="classsli_1_1pool_1a2c0f9262a070509a31c986f0c403de27" prot="private" virt="non-virtual"><scope>sli::pool</scope><name>chunks</name></member>
+      <member refid="classsli_1_1pool_1ac86eca9bf8093307046745d12740521a" prot="private" virt="non-virtual"><scope>sli::pool</scope><name>el_size</name></member>
+      <member refid="classsli_1_1pool_1ab7252655aaee55b020cc156ced585b6e" prot="public" virt="non-virtual"><scope>sli::pool</scope><name>free</name></member>
+      <member refid="classsli_1_1pool_1a1e20872f668995671db74b3baa37a147" prot="public" virt="non-virtual"><scope>sli::pool</scope><name>get_el_size</name></member>
+      <member refid="classsli_1_1pool_1ac86b38512de14616fb1ee038e5ba105d" prot="public" virt="non-virtual"><scope>sli::pool</scope><name>get_instantiations</name></member>
+      <member refid="classsli_1_1pool_1ab0fe0ad1965d8e7c1d6497ba6c2ea45d" prot="public" virt="non-virtual"><scope>sli::pool</scope><name>get_total</name></member>
+      <member refid="classsli_1_1pool_1af5d5a0615c945320cad0d2defa103b40" prot="private" virt="non-virtual"><scope>sli::pool</scope><name>grow</name></member>
+      <member refid="classsli_1_1pool_1ae7dbc577476e3cab69882c0bdc2c0031" prot="private" virt="non-virtual"><scope>sli::pool</scope><name>grow</name></member>
+      <member refid="classsli_1_1pool_1ae344e46bd32fafd2a304db8e0dd495ad" prot="private" virt="non-virtual"><scope>sli::pool</scope><name>growth_factor</name></member>
+      <member refid="classsli_1_1pool_1af92756c3f6e2b77057b2fa253ce7ad7a" prot="private" virt="non-virtual"><scope>sli::pool</scope><name>head</name></member>
+      <member refid="classsli_1_1pool_1a8a17abcfc7404189f53d206f5b7f504d" prot="public" virt="non-virtual"><scope>sli::pool</scope><name>init</name></member>
+      <member refid="classsli_1_1pool_1af47e5ec360e02afd4a9c7c134c25bf3b" prot="private" virt="non-virtual"><scope>sli::pool</scope><name>initial_block_size</name></member>
+      <member refid="classsli_1_1pool_1ac3711c2d715b1705bef4d33fef4be68d" prot="private" virt="non-virtual"><scope>sli::pool</scope><name>initialized_</name></member>
+      <member refid="classsli_1_1pool_1a4664e3edc59abd74436e399c6a5b9f9d" prot="private" virt="non-virtual"><scope>sli::pool</scope><name>instantiations</name></member>
+      <member refid="classsli_1_1pool_1a2698c608ada7e63ba42e8f44d0bc85e5" prot="public" virt="non-virtual"><scope>sli::pool</scope><name>operator=</name></member>
+      <member refid="classsli_1_1pool_1a130f50d9c75a0f58b7ba97c21705ef40" prot="public" virt="non-virtual"><scope>sli::pool</scope><name>pool</name></member>
+      <member refid="classsli_1_1pool_1abee04588cd3aea18b32f8518ae01291f" prot="public" virt="non-virtual"><scope>sli::pool</scope><name>pool</name></member>
+      <member refid="classsli_1_1pool_1a45c607299de521d2c9e4beb138d46e23" prot="public" virt="non-virtual"><scope>sli::pool</scope><name>pool</name></member>
+      <member refid="classsli_1_1pool_1a77217a4f59992d41227b76444063be55" prot="public" virt="non-virtual"><scope>sli::pool</scope><name>reserve_additional</name></member>
+      <member refid="classsli_1_1pool_1a908d0b93fdeee9823aa38d5f13bc56f5" prot="public" virt="non-virtual"><scope>sli::pool</scope><name>size_of</name></member>
+      <member refid="classsli_1_1pool_1ad1810870f8bf2058d4cd599d6d333155" prot="private" virt="non-virtual"><scope>sli::pool</scope><name>total</name></member>
+      <member refid="classsli_1_1pool_1aa00547db5f20787c227bbe65356fb09c" prot="public" virt="non-virtual"><scope>sli::pool</scope><name>~pool</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

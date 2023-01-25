@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classClonedictFunction" kind="class" language="C++" prot="public">
+    <compoundname>ClonedictFunction</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="slidict_8h" local="no">slidict.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classClonedictFunction_1a1bf8f20f335bcbbf6286cc988822b11f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>ClonedictFunction::ClonedictFunction</definition>
+        <argsstring>()</argsstring>
+        <name>ClonedictFunction</name>
+        <qualifiedname>ClonedictFunction::ClonedictFunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.h" line="200" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.h" bodystart="200" bodyend="202"/>
+      </memberdef>
+      <memberdef kind="function" id="classClonedictFunction_1aeefdd73d2b1d15cb3e512caba56b2fb2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void ClonedictFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>ClonedictFunction::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+<para>@BeginDocumentation <ref refid="className" kindref="compound">Name</ref>: clonedict - create a copy of a dictionary </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Synopsis: dict1 clonedict -&gt; dict1 dict2</para>
+<para>Description: clonedict creates a new dictionary dict2 with the same entries as dict1.</para>
+<para>Parameters: dict1 - a dictionary</para>
+<para>Examples: &lt;&lt; /a 1 &gt;&gt; clonedict</para>
+<para>Diagnostics: None.</para>
+<para>Author: Marc-Oliver Gewaltig</para>
+<para>SeeAlso: &lt;&lt;&gt;&gt;, dict, cleardict </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.h" line="203" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="759" bodyend="767"/>
+        <references refid="classSLIInterpreter_1a4bd843d0ad15faf88185a1ae885f8852" compoundref="interpret_8h" startline="905" endline="911">SLIInterpreter::assert_stack_load</references>
+        <references refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" compoundref="token_8h" startline="360" endline="364">Token::datum</references>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" compoundref="interpret_8h" startline="250">SLIInterpreter::OStack</references>
+        <references refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" compoundref="tokenstack_8h" startline="96" endline="99">TokenStack::pop</references>
+        <references refid="classTokenStack_1a585f38fb0ed122da90489eccbfd7a187" compoundref="tokenstack_8h" startline="62" endline="65">TokenStack::push</references>
+        <references refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" compoundref="tokenstack_8h" startline="116" endline="119">TokenStack::top</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>ClonedictFunction</label>
+        <link refid="classClonedictFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>ClonedictFunction</label>
+        <link refid="classClonedictFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.h" line="197" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.h" bodystart="198" bodyend="204"/>
+    <listofallmembers>
+      <member refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba" prot="public" virt="virtual"><scope>ClonedictFunction</scope><name>backtrace</name></member>
+      <member refid="classClonedictFunction_1a1bf8f20f335bcbbf6286cc988822b11f" prot="public" virt="non-virtual"><scope>ClonedictFunction</scope><name>ClonedictFunction</name></member>
+      <member refid="classClonedictFunction_1aeefdd73d2b1d15cb3e512caba56b2fb2" prot="public" virt="virtual"><scope>ClonedictFunction</scope><name>execute</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>ClonedictFunction</scope><name>SLIFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>ClonedictFunction</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

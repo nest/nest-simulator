@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classRegex" kind="class" language="C++" prot="public">
+    <compoundname>Regex</compoundname>
+    <includes refid="sliregexp_8h" local="no">sliregexp.h</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classRegex_1a587458a7ab57dd1477a482c2576bc689" prot="private" static="no" mutable="no">
+        <type>regex_t</type>
+        <definition>regex_t Regex::r</definition>
+        <argsstring></argsstring>
+        <name>r</name>
+        <qualifiedname>Regex::r</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="40" column="11" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="40" bodyend="-1"/>
+        <referencedby refid="classRegex_1ab0c97e4bb44adca5cbf36c8b746157ca" compoundref="sliregexp_8cc" startline="50" endline="53">get</referencedby>
+        <referencedby refid="classRegex_1a4b32acda8c0843ee5a68ebccba4ad993" compoundref="sliregexp_8cc" startline="44" endline="47">~Regex</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classRegex_1aac844880235ca7d00251aca1cc406c45" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Regex::Regex</definition>
+        <argsstring>()</argsstring>
+        <name>Regex</name>
+        <qualifiedname>Regex::Regex</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="43" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.cc" bodystart="40" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="function" id="classRegex_1a4b32acda8c0843ee5a68ebccba4ad993" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Regex::~Regex</definition>
+        <argsstring>()</argsstring>
+        <name>~Regex</name>
+        <qualifiedname>Regex::~Regex</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="44" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.cc" bodystart="44" bodyend="47"/>
+        <references refid="classRegex_1a587458a7ab57dd1477a482c2576bc689" compoundref="sliregexp_8h" startline="40">r</references>
+      </memberdef>
+      <memberdef kind="function" id="classRegex_1ab0c97e4bb44adca5cbf36c8b746157ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>regex_t *</type>
+        <definition>regex_t * Regex::get</definition>
+        <argsstring>()</argsstring>
+        <name>get</name>
+        <qualifiedname>Regex::get</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="45" column="11" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.cc" bodystart="50" bodyend="53"/>
+        <references refid="classRegex_1a587458a7ab57dd1477a482c2576bc689" compoundref="sliregexp_8h" startline="40">r</references>
+        <referencedby refid="classRegexpModule_1_1RegcompFunction_1a53639d7552193a3584196ca6ed941072" compoundref="sliregexp_8cc" startline="110" endline="139">RegexpModule::RegcompFunction::execute</referencedby>
+        <referencedby refid="classRegexpModule_1_1RegexecFunction_1a758ff72802b6e21876dddb2de99cf2f5" compoundref="sliregexp_8cc" startline="168" endline="214">RegexpModule::RegexecFunction::execute</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" line="38" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliregexp.h" bodystart="39" bodyend="46"/>
+    <listofallmembers>
+      <member refid="classRegex_1ab0c97e4bb44adca5cbf36c8b746157ca" prot="public" virt="non-virtual"><scope>Regex</scope><name>get</name></member>
+      <member refid="classRegex_1a587458a7ab57dd1477a482c2576bc689" prot="private" virt="non-virtual"><scope>Regex</scope><name>r</name></member>
+      <member refid="classRegex_1aac844880235ca7d00251aca1cc406c45" prot="public" virt="non-virtual"><scope>Regex</scope><name>Regex</name></member>
+      <member refid="classRegex_1a4b32acda8c0843ee5a68ebccba4ad993" prot="public" virt="non-virtual"><scope>Regex</scope><name>~Regex</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

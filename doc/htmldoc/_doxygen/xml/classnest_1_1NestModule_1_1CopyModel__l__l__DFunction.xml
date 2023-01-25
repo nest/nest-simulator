@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classnest_1_1NestModule_1_1CopyModel__l__l__DFunction" kind="class" language="C++" prot="public">
+    <compoundname>nest::NestModule::CopyModel_l_l_DFunction</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="nestmodule_8h" local="no">nestmodule.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1NestModule_1_1CopyModel__l__l__DFunction_1a79f13278240061e8b4eeb21a97ae382d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::NestModule::CopyModel_l_l_DFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>nest::NestModule::CopyModel_l_l_DFunction::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+<para>@BeginDocumentation <ref refid="className" kindref="compound">Name</ref>: CopyModel - copy a model to a new name, set parameters for copy, if given Synopsis: /model /new_model param_dict -&gt; - /model /new_model -&gt; - Parameters: /model - literal naming an existing model /new_model - literal name of the copy to create, must not exist before /param_dict - parameters to set in the new_model Description: A copy of model is created and registered under the name new_model. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If a parameter dictionary is given, the parameters are set in new_model. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/nestmodule.h" line="281" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/nestmodule.cpp" bodystart="785" bodyend="798"/>
+        <references refid="classSLIInterpreter_1a4bd843d0ad15faf88185a1ae885f8852" compoundref="interpret_8h" startline="905" endline="911">SLIInterpreter::assert_stack_load</references>
+        <references refid="classnest_1_1ModelManager_1ad5640bc6c249b00cf94e816b7d954318" compoundref="model__manager_8cpp" startline="186" endline="215">nest::ModelManager::copy_model</references>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="namespacenest_1a235f64c89ddf8992424ea32a13149a3e" compoundref="kernel__manager_8h" startline="272" endline="275">nest::kernel</references>
+        <references refid="classnest_1_1KernelManager_1a3558ff4918f9a1a561a11f65ae757c76" compoundref="kernel__manager_8h" startline="250">nest::KernelManager::model_manager</references>
+        <references refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" compoundref="interpret_8h" startline="250">SLIInterpreter::OStack</references>
+        <references refid="classTokenStack_1ac861cc2282484dd2a27dd1304aa719a4" compoundref="tokenstack_8h" startline="127" endline="130">TokenStack::pick</references>
+        <references refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" compoundref="tokenstack_8h" startline="96" endline="99">TokenStack::pop</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="1">
+        <label>nest::NestModule::CopyModel_l_l_DFunction</label>
+        <link refid="classnest_1_1NestModule_1_1CopyModel__l__l__DFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="1">
+        <label>nest::NestModule::CopyModel_l_l_DFunction</label>
+        <link refid="classnest_1_1NestModule_1_1CopyModel__l__l__DFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/nestmodule.h" line="278" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/nestmodule.h" bodystart="279" bodyend="282"/>
+    <listofallmembers>
+      <member refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba" prot="public" virt="virtual"><scope>nest::NestModule::CopyModel_l_l_DFunction</scope><name>backtrace</name></member>
+      <member refid="classnest_1_1NestModule_1_1CopyModel__l__l__DFunction_1a79f13278240061e8b4eeb21a97ae382d" prot="public" virt="virtual"><scope>nest::NestModule::CopyModel_l_l_DFunction</scope><name>execute</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>nest::NestModule::CopyModel_l_l_DFunction</scope><name>SLIFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>nest::NestModule::CopyModel_l_l_DFunction</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

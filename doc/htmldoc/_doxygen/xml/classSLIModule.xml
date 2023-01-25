@@ -1,0 +1,220 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classSLIModule" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>SLIModule</compoundname>
+    <derivedcompoundref refid="classFilesystemModule" prot="public" virt="non-virtual">FilesystemModule</derivedcompoundref>
+    <derivedcompoundref refid="classOOSupportModule" prot="public" virt="non-virtual">OOSupportModule</derivedcompoundref>
+    <derivedcompoundref refid="classProcesses" prot="public" virt="non-virtual">Processes</derivedcompoundref>
+    <derivedcompoundref refid="classRegexpModule" prot="public" virt="non-virtual">RegexpModule</derivedcompoundref>
+    <derivedcompoundref refid="classSLIArrayModule" prot="public" virt="non-virtual">SLIArrayModule</derivedcompoundref>
+    <derivedcompoundref refid="classSLIStartup" prot="public" virt="non-virtual">SLIStartup</derivedcompoundref>
+    <derivedcompoundref refid="classSLIgraphics" prot="public" virt="non-virtual">SLIgraphics</derivedcompoundref>
+    <derivedcompoundref refid="classSpecialFunctionsModule" prot="public" virt="non-virtual">SpecialFunctionsModule</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1ModelsModule" prot="public" virt="non-virtual">nest::ModelsModule</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1NestModule" prot="public" virt="non-virtual">nest::NestModule</derivedcompoundref>
+    <includes refid="slimodule_8h" local="no">slimodule.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classSLIModule_1a8e77a5438547cacc0eef34e5608591cb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type></type>
+        <definition>virtual SLIModule::~SLIModule</definition>
+        <argsstring>()</argsstring>
+        <name>~SLIModule</name>
+        <qualifiedname>SLIModule::~SLIModule</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slimodule.h" line="39" column="11" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slimodule.h" bodystart="39" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="function" id="classSLIModule_1a4fb2ff87fa14e0caeeea009cf0761957" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void SLIModule::init</definition>
+        <argsstring>(SLIInterpreter *)=0</argsstring>
+        <name>init</name>
+        <qualifiedname>SLIModule::init</qualifiedname>
+        <reimplementedby refid="classnest_1_1ModelsModule_1aaecea44044f9fb427884a67aae5ebc46">init</reimplementedby>
+        <reimplementedby refid="classnest_1_1NestModule_1a246da59f22b9398cc08e13bfc2355ae8">init</reimplementedby>
+        <reimplementedby refid="classFilesystemModule_1a8081fc6ac01a5a329dcb0ffaaeee4de9">init</reimplementedby>
+        <reimplementedby refid="classOOSupportModule_1a558c2160c21e7bf9425d3533695bb361">init</reimplementedby>
+        <reimplementedby refid="classProcesses_1a61d91f79c5cb92e4c0ce6aa4bc4eb412">init</reimplementedby>
+        <reimplementedby refid="classSLIArrayModule_1abfcf07e18a3f04b01bb7f5623e24885d">init</reimplementedby>
+        <reimplementedby refid="classSLIgraphics_1a64f59a5d5a6292ce303e67279c32cb8e">init</reimplementedby>
+        <reimplementedby refid="classRegexpModule_1adc8ec59b07601723c2b0a8efc433ecaa">init</reimplementedby>
+        <reimplementedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d">init</reimplementedby>
+        <reimplementedby refid="classSpecialFunctionsModule_1ac7ec77eec41d0b8fb7b30e3ca4cf84fd">init</reimplementedby>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+        </param>
+        <briefdescription>
+<para>Initialize the module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When this function is called, most of the interpreter&apos;s facilities are up and running. However, depending on where in the interpreter&apos;s bootstrap sequence the module is initialized, not all services may be available. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slimodule.h" line="49" column="16"/>
+        <referencedby refid="classSLIModule_1ac32734c42e93e16aaf644a842de40bc2" compoundref="slimodule_8cc" startline="29" endline="35">install</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classSLIModule_1a2e0c93f5145eb879abd3a8fdcfcedf6c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>const std::string</type>
+        <definition>virtual const std::string SLIModule::name</definition>
+        <argsstring>() const =0</argsstring>
+        <name>name</name>
+        <qualifiedname>SLIModule::name</qualifiedname>
+        <reimplementedby refid="classnest_1_1ModelsModule_1a163ce8ca41b2bafd4597f09a1afd0a96">name</reimplementedby>
+        <reimplementedby refid="classnest_1_1NestModule_1a1e7dec7fc52989640df50df371c8b5e5">name</reimplementedby>
+        <reimplementedby refid="classFilesystemModule_1a763f1cb814e1867e1302fafc50648717">name</reimplementedby>
+        <reimplementedby refid="classOOSupportModule_1aed1a7fa02900ff3e1908180072becc97">name</reimplementedby>
+        <reimplementedby refid="classProcesses_1ac157b59fe05b200fdfcef2c7647714c5">name</reimplementedby>
+        <reimplementedby refid="classSLIArrayModule_1a137a89ac15bf4efed9c7fbb7b9fce0c3">name</reimplementedby>
+        <reimplementedby refid="classSLIgraphics_1affb41e822b153a61faa4fa7fad75b96b">name</reimplementedby>
+        <reimplementedby refid="classRegexpModule_1a08e22e5ad1f8498b8b71bfec84e9246c">name</reimplementedby>
+        <reimplementedby refid="classSLIStartup_1a9afd5a12260b010e2ef13d9b3271d098">name</reimplementedby>
+        <reimplementedby refid="classSpecialFunctionsModule_1ab9abecb92c22791343cbb303b1b9d435">name</reimplementedby>
+        <briefdescription>
+<para>Return name of the module. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slimodule.h" line="54" column="29"/>
+        <referencedby refid="classSLIInterpreter_1a4e2329896e852a91514ee595d968c87a" compoundref="interpret_8cc" startline="491" endline="527">SLIInterpreter::addmodule</referencedby>
+        <referencedby refid="classSLIModule_1ac32734c42e93e16aaf644a842de40bc2" compoundref="slimodule_8cc" startline="29" endline="35">install</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classSLIModule_1a05bb33e2c5494f406dfdda137a305ead" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>const std::string</type>
+        <definition>const std::string SLIModule::commandstring</definition>
+        <argsstring>() const</argsstring>
+        <name>commandstring</name>
+        <qualifiedname>SLIModule::commandstring</qualifiedname>
+        <reimplementedby refid="classnest_1_1NestModule_1aff5c2c1acc88d945a176a0987be2cb6d">commandstring</reimplementedby>
+        <reimplementedby refid="classFilesystemModule_1ac58b05d71acf1b16a3af81b885f7bd27">commandstring</reimplementedby>
+        <reimplementedby refid="classOOSupportModule_1a5292361b3f4d0893c48127db443a0bd7">commandstring</reimplementedby>
+        <reimplementedby refid="classProcesses_1a81aa324e1c5ffd02c4cfbf18babf81fa">commandstring</reimplementedby>
+        <reimplementedby refid="classSLIArrayModule_1a4f1231a00b3b26d63b1053cbc675aca6">commandstring</reimplementedby>
+        <reimplementedby refid="classSLIgraphics_1a25d22f280d01d518199aa7304b0b991d">commandstring</reimplementedby>
+        <reimplementedby refid="classRegexpModule_1abaa12586d53576de0adcb8e23017a4fc">commandstring</reimplementedby>
+        <briefdescription>
+<para>Return sli command sequence to be executed for initialization. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slimodule.h" line="59" column="29" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slimodule.cc" bodystart="38" bodyend="41"/>
+        <referencedby refid="classSLIInterpreter_1a7b9a0d7ce52361709895f715e70e58fa" compoundref="interpret_8cc" startline="530" endline="542">SLIInterpreter::addlinkedusermodule</referencedby>
+        <referencedby refid="classSLIInterpreter_1a4e2329896e852a91514ee595d968c87a" compoundref="interpret_8cc" startline="491" endline="527">SLIInterpreter::addmodule</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classSLIModule_1ac32734c42e93e16aaf644a842de40bc2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SLIModule::install</definition>
+        <argsstring>(std::ostream &amp;, SLIInterpreter *)</argsstring>
+        <name>install</name>
+        <qualifiedname>SLIModule::install</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+        </param>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+<para>Print installation message via interpreter message command. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slimodule.h" line="64" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slimodule.cc" bodystart="29" bodyend="35"/>
+        <references refid="classSLIModule_1a4fb2ff87fa14e0caeeea009cf0761957">init</references>
+        <references refid="group__SLIMessaging_1gacbc035efd87bf843002900f7f1baf5b0" compoundref="interpret_8cc" startline="774" endline="824">SLIInterpreter::message</references>
+        <references refid="classSLIModule_1a2e0c93f5145eb879abd3a8fdcfcedf6c">name</references>
+        <referencedby refid="classSLIInterpreter_1a7b9a0d7ce52361709895f715e70e58fa" compoundref="interpret_8cc" startline="530" endline="542">SLIInterpreter::addlinkedusermodule</referencedby>
+        <referencedby refid="classSLIInterpreter_1a4e2329896e852a91514ee595d968c87a" compoundref="interpret_8cc" startline="491" endline="527">SLIInterpreter::addmodule</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Base class for all SLI Interpreter modules. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>FilesystemModule</label>
+        <link refid="classFilesystemModule"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>OOSupportModule</label>
+        <link refid="classOOSupportModule"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Processes</label>
+        <link refid="classProcesses"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>RegexpModule</label>
+        <link refid="classRegexpModule"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>SLIArrayModule</label>
+        <link refid="classSLIArrayModule"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>SLIModule</label>
+        <link refid="classSLIModule"/>
+      </node>
+      <node id="7">
+        <label>SLIStartup</label>
+        <link refid="classSLIStartup"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>SLIgraphics</label>
+        <link refid="classSLIgraphics"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>SpecialFunctionsModule</label>
+        <link refid="classSpecialFunctionsModule"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>nest::ModelsModule</label>
+        <link refid="classnest_1_1ModelsModule"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>nest::NestModule</label>
+        <link refid="classnest_1_1NestModule"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/slimodule.h" line="36" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slimodule.h" bodystart="37" bodyend="65"/>
+    <listofallmembers>
+      <member refid="classSLIModule_1a05bb33e2c5494f406dfdda137a305ead" prot="public" virt="virtual"><scope>SLIModule</scope><name>commandstring</name></member>
+      <member refid="classSLIModule_1a4fb2ff87fa14e0caeeea009cf0761957" prot="public" virt="pure-virtual"><scope>SLIModule</scope><name>init</name></member>
+      <member refid="classSLIModule_1ac32734c42e93e16aaf644a842de40bc2" prot="public" virt="non-virtual"><scope>SLIModule</scope><name>install</name></member>
+      <member refid="classSLIModule_1a2e0c93f5145eb879abd3a8fdcfcedf6c" prot="public" virt="pure-virtual"><scope>SLIModule</scope><name>name</name></member>
+      <member refid="classSLIModule_1a8e77a5438547cacc0eef34e5608591cb" prot="public" virt="virtual"><scope>SLIModule</scope><name>~SLIModule</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

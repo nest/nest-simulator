@@ -1,0 +1,491 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classBoolDatum" kind="class" language="C++" prot="public">
+    <compoundname>BoolDatum</compoundname>
+    <basecompoundref refid="classGenericDatum" prot="public" virt="non-virtual">GenericDatum&lt; bool, &amp;SLIInterpreter::Booltype &gt;</basecompoundref>
+    <includes refid="booldatum_8h" local="no">booldatum.h</includes>
+      <sectiondef kind="protected-static-attrib">
+      <memberdef kind="variable" id="classBoolDatum_1a64b112f3b731e5ef0556cc5beec4b0f6" prot="protected" static="yes" mutable="no">
+        <type><ref refid="classsli_1_1pool" kindref="compound">sli::pool</ref></type>
+        <definition>sli::pool BoolDatum::memory</definition>
+        <argsstring></argsstring>
+        <name>memory</name>
+        <qualifiedname>BoolDatum::memory</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.h" line="43" column="20" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classBoolDatum_1a49ba3cf365b6fb7f436d6681fea816ae" prot="public" static="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char * BoolDatum::true_string</definition>
+        <argsstring></argsstring>
+        <name>true_string</name>
+        <qualifiedname>BoolDatum::true_string</qualifiedname>
+        <initializer>= &quot;true&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.h" line="53" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.h" bodystart="53" bodyend="-1"/>
+        <referencedby refid="classBoolDatum_1acace9e5d7f3926889aa3f9878d76eed8" compoundref="booldatum_8cc" startline="33" endline="36">BoolDatum</referencedby>
+        <referencedby refid="classBoolDatum_1a4553041729112b822b325a1f13ea56d6" compoundref="booldatum_8cc" startline="61" endline="64">print</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classBoolDatum_1a531bf04af3916ec31fe389da29e6478c" prot="public" static="yes" mutable="no">
+        <type>const char *</type>
+        <definition>const char * BoolDatum::false_string</definition>
+        <argsstring></argsstring>
+        <name>false_string</name>
+        <qualifiedname>BoolDatum::false_string</qualifiedname>
+        <initializer>= &quot;false&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.h" line="54" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.h" bodystart="54" bodyend="-1"/>
+        <referencedby refid="classBoolDatum_1a4553041729112b822b325a1f13ea56d6" compoundref="booldatum_8cc" startline="61" endline="64">print</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classBoolDatum_1af1b0f5ed4bc89fe34444bbe94c2bc5c2" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="classDatum" kindref="compound">Datum</ref> *</type>
+        <definition>Datum * BoolDatum::clone</definition>
+        <argsstring>() const override</argsstring>
+        <name>clone</name>
+        <qualifiedname>BoolDatum::clone</qualifiedname>
+        <reimplements refid="classGenericDatum_1ac6c2c44af7ca1548fb10fb2edc20bc2f">clone</reimplements>
+        <briefdescription>
+<para>Virtual copy constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Use this function to lazily copy a datum. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.h" line="47" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.h" bodystart="47" bodyend="50"/>
+        <references refid="classBoolDatum_1a5687c7dec538195f369021b547b1ba71" compoundref="booldatum_8h" startline="56" endline="59">BoolDatum</references>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classBoolDatum_1a5687c7dec538195f369021b547b1ba71" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>BoolDatum::BoolDatum</definition>
+        <argsstring>()</argsstring>
+        <name>BoolDatum</name>
+        <qualifiedname>BoolDatum::BoolDatum</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.h" line="56" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.h" bodystart="56" bodyend="59"/>
+        <referencedby refid="classBoolDatum_1af1b0f5ed4bc89fe34444bbe94c2bc5c2" compoundref="booldatum_8h" startline="47" endline="50">clone</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classBoolDatum_1a302a5241fa301610994a63c5ca90219d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>BoolDatum::BoolDatum</definition>
+        <argsstring>(const BoolDatum &amp;)=default</argsstring>
+        <name>BoolDatum</name>
+        <qualifiedname>BoolDatum::BoolDatum</qualifiedname>
+        <param>
+          <type>const <ref refid="classBoolDatum" kindref="compound">BoolDatum</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.h" line="61" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classBoolDatum_1afbf1a710a02ac651899b83ccb3af4ea4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classBoolDatum" kindref="compound">BoolDatum</ref> &amp;</type>
+        <definition>BoolDatum &amp; BoolDatum::operator=</definition>
+        <argsstring>(const BoolDatum &amp;)=default</argsstring>
+        <name>operator=</name>
+        <qualifiedname>BoolDatum::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="classBoolDatum" kindref="compound">BoolDatum</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.h" line="62" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classBoolDatum_1a72ec8341915154be4976e50ff51ff3ac" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>BoolDatum::BoolDatum</definition>
+        <argsstring>(bool val)</argsstring>
+        <name>BoolDatum</name>
+        <qualifiedname>BoolDatum::BoolDatum</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.h" line="64" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.h" bodystart="64" bodyend="67"/>
+      </memberdef>
+      <memberdef kind="function" id="classBoolDatum_1acace9e5d7f3926889aa3f9878d76eed8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>BoolDatum::BoolDatum</definition>
+        <argsstring>(const Name &amp;)</argsstring>
+        <name>BoolDatum</name>
+        <qualifiedname>BoolDatum::BoolDatum</qualifiedname>
+        <param>
+          <type>const <ref refid="className" kindref="compound">Name</ref> &amp;</type>
+          <defname>val</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.h" line="68" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.cc" bodystart="33" bodyend="36"/>
+        <references refid="classGenericDatum_1a05aae244bfe71c9a356d21c80065fc8a" compoundref="genericdatum_8h" startline="47">GenericDatum&lt; bool, &amp;SLIInterpreter::Booltype &gt;::d</references>
+        <references refid="classBoolDatum_1a49ba3cf365b6fb7f436d6681fea816ae" compoundref="booldatum_8h" startline="53">true_string</references>
+      </memberdef>
+      <memberdef kind="function" id="classBoolDatum_1a45a0ef46998b2a9ee362ba1b611c1b04" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>BoolDatum::operator bool</definition>
+        <argsstring>() const</argsstring>
+        <name>operator bool</name>
+        <qualifiedname>BoolDatum::operator bool</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.h" line="70" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.h" bodystart="70" bodyend="73"/>
+        <references refid="classGenericDatum_1a05aae244bfe71c9a356d21c80065fc8a" compoundref="genericdatum_8h" startline="47">GenericDatum&lt; bool, &amp;SLIInterpreter::Booltype &gt;::d</references>
+      </memberdef>
+      <memberdef kind="function" id="classBoolDatum_1aa92ba7863c2d97302691b3321be7fa1c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>BoolDatum::operator Name</definition>
+        <argsstring>() const</argsstring>
+        <name>operator Name</name>
+        <qualifiedname>BoolDatum::operator Name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.h" line="75" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.cc" bodystart="38" bodyend="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classBoolDatum_1af72c750d6e79162e8e52f7cafd18e3a1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>BoolDatum::operator std::string</definition>
+        <argsstring>() const</argsstring>
+        <name>operator std::string</name>
+        <qualifiedname>BoolDatum::string</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.h" line="77" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.cc" bodystart="43" bodyend="46"/>
+      </memberdef>
+      <memberdef kind="function" id="classBoolDatum_1a84eed690ca90a4e858a87080d0bbcca4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void BoolDatum::input_form</definition>
+        <argsstring>(std::ostream &amp;) const override</argsstring>
+        <name>input_form</name>
+        <qualifiedname>BoolDatum::input_form</qualifiedname>
+        <reimplements refid="classDatum_1a90e482a3dc319a65759312da1f4f8b07">input_form</reimplements>
+        <param>
+          <type>std::ostream &amp;</type>
+          <defname>out</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.h" line="79" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.cc" bodystart="49" bodyend="52"/>
+        <references refid="classBoolDatum_1a4553041729112b822b325a1f13ea56d6" compoundref="booldatum_8cc" startline="61" endline="64">print</references>
+      </memberdef>
+      <memberdef kind="function" id="classBoolDatum_1a4553041729112b822b325a1f13ea56d6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void BoolDatum::print</definition>
+        <argsstring>(std::ostream &amp;) const override</argsstring>
+        <name>print</name>
+        <qualifiedname>BoolDatum::print</qualifiedname>
+        <reimplements refid="classDatum_1a6a4be93b0173f6026edc7695683ec0c4">print</reimplements>
+        <param>
+          <type>std::ostream &amp;</type>
+          <defname>out</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.h" line="80" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.cc" bodystart="61" bodyend="64"/>
+        <references refid="classGenericDatum_1a05aae244bfe71c9a356d21c80065fc8a" compoundref="genericdatum_8h" startline="47">GenericDatum&lt; bool, &amp;SLIInterpreter::Booltype &gt;::d</references>
+        <references refid="classBoolDatum_1a531bf04af3916ec31fe389da29e6478c" compoundref="booldatum_8h" startline="54">false_string</references>
+        <references refid="classBoolDatum_1a49ba3cf365b6fb7f436d6681fea816ae" compoundref="booldatum_8h" startline="53">true_string</references>
+        <referencedby refid="classBoolDatum_1a84eed690ca90a4e858a87080d0bbcca4" compoundref="booldatum_8cc" startline="49" endline="52">input_form</referencedby>
+        <referencedby refid="classBoolDatum_1a0606d9f7b17564ed57f3ed68c60ac3b4" compoundref="booldatum_8cc" startline="55" endline="58">pprint</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classBoolDatum_1a0606d9f7b17564ed57f3ed68c60ac3b4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void BoolDatum::pprint</definition>
+        <argsstring>(std::ostream &amp;) const override</argsstring>
+        <name>pprint</name>
+        <qualifiedname>BoolDatum::pprint</qualifiedname>
+        <reimplements refid="classDatum_1a9a0232698bafa153d6286a5f3534187a">pprint</reimplements>
+        <param>
+          <type>std::ostream &amp;</type>
+          <defname>out</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.h" line="81" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.cc" bodystart="55" bodyend="58"/>
+        <references refid="classBoolDatum_1a4553041729112b822b325a1f13ea56d6" compoundref="booldatum_8cc" startline="61" endline="64">print</references>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classBoolDatum_1adedc90abdc63d20097166ae042548ade" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void *</type>
+        <definition>void * BoolDatum::operator new</definition>
+        <argsstring>(size_t size)</argsstring>
+        <name>operator new</name>
+        <qualifiedname>BoolDatum::operator new</qualifiedname>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.h" line="83" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.cc" bodystart="67" bodyend="74"/>
+      </memberdef>
+      <memberdef kind="function" id="classBoolDatum_1a55019641234a33d2248515120480c68e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BoolDatum::operator delete</definition>
+        <argsstring>(void *p, size_t size)</argsstring>
+        <name>operator delete</name>
+        <qualifiedname>BoolDatum::operator delete</qualifiedname>
+        <param>
+          <type>void *</type>
+          <declname>p</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.h" line="85" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.cc" bodystart="77" bodyend="89"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>BoolDatum</label>
+        <link refid="classBoolDatum"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Datum</label>
+        <link refid="classDatum"/>
+      </node>
+      <node id="5">
+        <label>GenericDatum&lt; D, slt &gt;</label>
+        <link refid="classGenericDatum"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>GenericDatum&lt; bool, &amp;SLIInterpreter::Booltype &gt;</label>
+        <link refid="classGenericDatum"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="template-instance">
+          <edgelabel>&lt; bool, &amp;SLIInterpreter::Booltype &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>TypedDatum&lt; slt &gt;</label>
+        <link refid="classTypedDatum"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>BoolDatum</label>
+        <link refid="classBoolDatum"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>memory</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Datum</label>
+        <link refid="classDatum"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>type</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>action</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>GenericDatum&lt; D, slt &gt;</label>
+        <link refid="classGenericDatum"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>GenericDatum&lt; bool, &amp;SLIInterpreter::Booltype &gt;</label>
+        <link refid="classGenericDatum"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="template-instance">
+          <edgelabel>&lt; bool, &amp;SLIInterpreter::Booltype &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Name</label>
+        <link refid="className"/>
+      </node>
+      <node id="7">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="5">
+        <label>SLIType</label>
+        <link refid="classSLIType"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>defaultaction</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>TypedDatum&lt; slt &gt;</label>
+        <link refid="classTypedDatum"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>sli::pool</label>
+        <link refid="classsli_1_1pool"/>
+        <childnode refid="10" relation="usage">
+          <edgelabel>chunks</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>head</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>sli::pool::chunk</label>
+        <link refid="classsli_1_1pool_1_1chunk"/>
+        <childnode refid="10" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>sli::pool::link</label>
+        <link refid="structsli_1_1pool_1_1link"/>
+        <childnode refid="11" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.h" line="40" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/booldatum.h" bodystart="41" bodyend="86"/>
+    <listofallmembers>
+      <member refid="classDatum_1aedcf75cc41ccd6a8247216941b10f719" prot="protected" virt="non-virtual"><scope>BoolDatum</scope><name>action</name></member>
+      <member refid="classDatum_1a8a547bad7564cd6e79fd9b1a245c9e8b" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>addReference</name></member>
+      <member refid="classBoolDatum_1a5687c7dec538195f369021b547b1ba71" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>BoolDatum</name></member>
+      <member refid="classBoolDatum_1a302a5241fa301610994a63c5ca90219d" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>BoolDatum</name></member>
+      <member refid="classBoolDatum_1a72ec8341915154be4976e50ff51ff3ac" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>BoolDatum</name></member>
+      <member refid="classBoolDatum_1acace9e5d7f3926889aa3f9878d76eed8" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>BoolDatum</name></member>
+      <member refid="classBoolDatum_1af1b0f5ed4bc89fe34444bbe94c2bc5c2" prot="private" virt="virtual"><scope>BoolDatum</scope><name>clone</name></member>
+      <member refid="classGenericDatum_1a05aae244bfe71c9a356d21c80065fc8a" prot="protected" virt="non-virtual"><scope>BoolDatum</scope><name>d</name></member>
+      <member refid="classDatum_1ae1880ae165f7a4aef90be6e8cfaa5ff5" prot="protected" virt="non-virtual"><scope>BoolDatum</scope><name>Datum</name></member>
+      <member refid="classDatum_1ac7e934059aa105e87e0de888c890bf3a" prot="protected" virt="non-virtual"><scope>BoolDatum</scope><name>Datum</name></member>
+      <member refid="classDatum_1a4ceb261c92a00bb5cfbdbb91104c25ff" prot="protected" virt="non-virtual"><scope>BoolDatum</scope><name>Datum</name></member>
+      <member refid="classGenericDatum_1ac6c31d39409b207bf51723c2e7570652" prot="public" virt="virtual"><scope>BoolDatum</scope><name>equals</name></member>
+      <member refid="classDatum_1aa8bccc352dca610a10b7daee4ca876f7" prot="protected" virt="non-virtual"><scope>BoolDatum</scope><name>executable_</name></member>
+      <member refid="classDatum_1a772aa172fff8b5035e1e243eb046ae13" prot="public" virt="virtual"><scope>BoolDatum</scope><name>execute</name></member>
+      <member refid="classBoolDatum_1a531bf04af3916ec31fe389da29e6478c" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>false_string</name></member>
+      <member refid="classGenericDatum_1a45a92fd2f3a0237c4a6784011a9be0a6" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>GenericDatum</name></member>
+      <member refid="classGenericDatum_1ae50b6763e3dd2d99ed522ddc674fa52c" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>GenericDatum</name></member>
+      <member refid="classGenericDatum_1aa51ce5c1a9eb84f585c6734f87446570" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>GenericDatum</name></member>
+      <member refid="classGenericDatum_1a2204e0bfb80429863ebbd37005235c1e" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>get</name></member>
+      <member refid="classGenericDatum_1aa6ecf44c6f8e079fd19929317a470098" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>get</name></member>
+      <member refid="classGenericDatum_1aebc8f100e1b14b92715c6b6902a96944" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>get_lval</name></member>
+      <member refid="classDatum_1af968bcf24fef60342dcc5d374b8cd54e" prot="private" virt="virtual"><scope>BoolDatum</scope><name>get_ptr</name></member>
+      <member refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>gettypename</name></member>
+      <member refid="classGenericDatum_1ad67c32fc84eb3058c64ffde32d41f95f" prot="public" virt="virtual"><scope>BoolDatum</scope><name>info</name></member>
+      <member refid="classBoolDatum_1a84eed690ca90a4e858a87080d0bbcca4" prot="public" virt="virtual"><scope>BoolDatum</scope><name>input_form</name></member>
+      <member refid="classDatum_1a08d7463e1c6fb42a75f7edf49f9e2e3d" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>is_executable</name></member>
+      <member refid="classDatum_1ad27263ba100f9c536085ddcad183ab07" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>isoftype</name></member>
+      <member refid="classDatum_1a0cc07c59ff578f522ba46b7bd0e33fb5" prot="public" virt="virtual"><scope>BoolDatum</scope><name>list</name></member>
+      <member refid="classBoolDatum_1a64b112f3b731e5ef0556cc5beec4b0f6" prot="protected" virt="non-virtual"><scope>BoolDatum</scope><name>memory</name></member>
+      <member refid="classDatum_1add98b474ddf98b8352c49052c026f42b" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>numReferences</name></member>
+      <member refid="classBoolDatum_1a45a0ef46998b2a9ee362ba1b611c1b04" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>operator bool</name></member>
+      <member refid="classBoolDatum_1a55019641234a33d2248515120480c68e" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>operator delete</name></member>
+      <member refid="classBoolDatum_1aa92ba7863c2d97302691b3321be7fa1c" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>operator Name</name></member>
+      <member refid="classBoolDatum_1adedc90abdc63d20097166ae042548ade" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>operator new</name></member>
+      <member refid="classBoolDatum_1af72c750d6e79162e8e52f7cafd18e3a1" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>operator std::string</name></member>
+      <member refid="classBoolDatum_1afbf1a710a02ac651899b83ccb3af4ea4" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>operator=</name></member>
+      <member refid="classGenericDatum_1a4fed4a7d0a4f637a7261d1aaa8de1f94" prot="public" virt="non-virtual" ambiguityscope="GenericDatum&lt; bool, &amp;SLIInterpreter::Booltype &gt;::"><scope>BoolDatum</scope><name>operator=</name></member>
+      <member refid="classTypedDatum_1a5cc4fd0fc7b08a2b3e4c837082f63790" prot="protected" virt="non-virtual" ambiguityscope="TypedDatum::"><scope>BoolDatum</scope><name>operator=</name></member>
+      <member refid="classBoolDatum_1a0606d9f7b17564ed57f3ed68c60ac3b4" prot="public" virt="virtual"><scope>BoolDatum</scope><name>pprint</name></member>
+      <member refid="classBoolDatum_1a4553041729112b822b325a1f13ea56d6" prot="public" virt="virtual"><scope>BoolDatum</scope><name>print</name></member>
+      <member refid="classDatum_1abd911b2048efc2b685900bb2561ffd2e" prot="protected" virt="non-virtual"><scope>BoolDatum</scope><name>reference_count_</name></member>
+      <member refid="classDatum_1a033ad3a3e54eab1bb9a6b47eeab0611e" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>removeReference</name></member>
+      <member refid="classDatum_1a46325ecc6d02cc01c26366b57423d9f4" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>set_executable</name></member>
+      <member refid="classBoolDatum_1a49ba3cf365b6fb7f436d6681fea816ae" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>true_string</name></member>
+      <member refid="classDatum_1a0697b4f1572af02085906c0fcf0fc7b1" prot="protected" virt="non-virtual"><scope>BoolDatum</scope><name>type</name></member>
+      <member refid="classTypedDatum_1a9b89818e167d0110afcc09e5d75b738b" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>TypedDatum</name></member>
+      <member refid="classTypedDatum_1af95471a28fd63265bdd7a0a2cd2faadb" prot="protected" virt="non-virtual"><scope>BoolDatum</scope><name>TypedDatum</name></member>
+      <member refid="classDatum_1ad1de5a550c726c5cc95e88ffd1e71ef9" prot="public" virt="non-virtual"><scope>BoolDatum</scope><name>unset_executable</name></member>
+      <member refid="classDatum_1afbf982389b91a2b013be1de6bdf1483e" prot="public" virt="virtual"><scope>BoolDatum</scope><name>~Datum</name></member>
+      <member refid="classGenericDatum_1aae4ad6c4faefad474c914e8199aaec0a" prot="public" virt="virtual"><scope>BoolDatum</scope><name>~GenericDatum</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

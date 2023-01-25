@@ -1,0 +1,1450 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classTokenArrayObj" kind="class" language="C++" prot="public">
+    <compoundname>TokenArrayObj</compoundname>
+    <derivedcompoundref refid="classTokenStack" prot="private" virt="non-virtual">TokenStack</derivedcompoundref>
+    <includes refid="tarrayobj_8h" local="no">tarrayobj.h</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classTokenArrayObj_1a7734ae6b1928dffa2abab4207a489eb9" prot="private" static="no" mutable="no">
+        <type><ref refid="classToken" kindref="compound">Token</ref> *</type>
+        <definition>Token* TokenArrayObj::p</definition>
+        <argsstring></argsstring>
+        <name>p</name>
+        <qualifiedname>TokenArrayObj::p</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="43" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="43" bodyend="-1"/>
+        <referencedby refid="classTokenArrayObj_1abc5e26e8edeeca0fdcdba1842b0cccb2" compoundref="tarrayobj_8cc" startline="79" endline="129">allocate</referencedby>
+        <referencedby refid="classTokenArrayObj_1a5665d291b27dc4a781de12ec18c1f691" compoundref="tarrayobj_8cc" startline="468" endline="484">assign</referencedby>
+        <referencedby refid="classTokenArrayObj_1a3c850480835efbc05239eeaf0012a873" compoundref="tarrayobj_8cc" startline="448" endline="465">assign_move</referencedby>
+        <referencedby refid="classTokenArrayObj_1ae0579e65377ba605818004cd2cc344f2" compoundref="tarrayobj_8h" startline="69" endline="72">begin</referencedby>
+        <referencedby refid="classTokenArrayObj_1a547b59a87709fd9b4f86dc40b6d98c1f" compoundref="tarrayobj_8h" startline="87" endline="90">capacity</referencedby>
+        <referencedby refid="classTokenArrayObj_1a869a7392dd8236814e27678536716d48" compoundref="tarrayobj_8cc" startline="320" endline="328">clear</referencedby>
+        <referencedby refid="classTokenArrayObj_1a5ee67f5db59d134471ac688367b5b2af" compoundref="tarrayobj_8cc" startline="307" endline="317">erase</referencedby>
+        <referencedby refid="classTokenArrayObj_1a17e3f3a748eaa75699fb3012e7e99eef" compoundref="tarrayobj_8h" startline="105" endline="109">get</referencedby>
+        <referencedby refid="classTokenArrayObj_1aa6ee3816ef290d18ac09f57813245db0" compoundref="tarrayobj_8h" startline="112" endline="115">index_is_valid</referencedby>
+        <referencedby refid="classTokenArrayObj_1ab722a1dca518300f0a7d8920e1861368" compoundref="tarrayobj_8cc" startline="642" endline="649">info</referencedby>
+        <referencedby refid="classTokenArrayObj_1a254deb1d61930625815f4f8e5e0ee507" compoundref="tarrayobj_8cc" startline="386" endline="411">insert</referencedby>
+        <referencedby refid="classTokenArrayObj_1a0ac6c65b8d19b5a8f035978f9566ba0c" compoundref="tarrayobj_8cc" startline="414" endline="445">insert_move</referencedby>
+        <referencedby refid="classTokenArrayObj_1a568c87d8399ea52e3b14878a84daa2c2" compoundref="tarrayobj_8cc" startline="149" endline="191">operator=</referencedby>
+        <referencedby refid="classTokenArrayObj_1ac4cbda39be6c2b3127584eec6579255f" compoundref="tarrayobj_8cc" startline="618" endline="639">operator==</referencedby>
+        <referencedby refid="classTokenArrayObj_1a4607f906a4df4b000c7235a3d6e5b68e" compoundref="tarrayobj_8h" startline="93" endline="96">operator[]</referencedby>
+        <referencedby refid="classTokenArrayObj_1a2e62c183495a1a5fa06c114e507b9cfe" compoundref="tarrayobj_8cc" startline="335" endline="368">reduce</referencedby>
+        <referencedby refid="classTokenArrayObj_1a48de53e5a325c76cef0134b7f709e1d1" compoundref="tarrayobj_8cc" startline="512" endline="593">replace_move</referencedby>
+        <referencedby refid="classTokenArrayObj_1a3ae6e338a2ad89fb15ede793e3f9fab2" compoundref="tarrayobj_8h" startline="81" endline="84">size</referencedby>
+        <referencedby refid="classTokenArrayObj_1a5bdd6929ed88ecc495ed159fbf9f0a16" compoundref="tarrayobj_8cc" startline="49" endline="67">TokenArrayObj</referencedby>
+        <referencedby refid="classTokenArrayObj_1aba732dcef9cd9ed9c1f899a500414dfc" compoundref="tarrayobj_8cc" startline="652" endline="679">valid</referencedby>
+        <referencedby refid="classTokenArrayObj_1a2e4afec72115f3a5a3c5ef42ad2d62cb" compoundref="tarrayobj_8cc" startline="70" endline="76">~TokenArrayObj</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classTokenArrayObj_1a987b2ab8759d16d384ba4ed0dbeb0d47" prot="private" static="no" mutable="no">
+        <type><ref refid="classToken" kindref="compound">Token</ref> *</type>
+        <definition>Token* TokenArrayObj::begin_of_free_storage</definition>
+        <argsstring></argsstring>
+        <name>begin_of_free_storage</name>
+        <qualifiedname>TokenArrayObj::begin_of_free_storage</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="44" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="44" bodyend="-1"/>
+        <referencedby refid="classTokenArrayObj_1abc5e26e8edeeca0fdcdba1842b0cccb2" compoundref="tarrayobj_8cc" startline="79" endline="129">allocate</referencedby>
+        <referencedby refid="classTokenArrayObj_1a2d6c8b2b5902c2e3d4d275dbdd118806" compoundref="tarrayobj_8cc" startline="596" endline="614">append_move</referencedby>
+        <referencedby refid="classTokenArrayObj_1a5665d291b27dc4a781de12ec18c1f691" compoundref="tarrayobj_8cc" startline="468" endline="484">assign</referencedby>
+        <referencedby refid="classTokenArrayObj_1a3c850480835efbc05239eeaf0012a873" compoundref="tarrayobj_8cc" startline="448" endline="465">assign_move</referencedby>
+        <referencedby refid="classTokenArrayObj_1a869a7392dd8236814e27678536716d48" compoundref="tarrayobj_8cc" startline="320" endline="328">clear</referencedby>
+        <referencedby refid="classTokenArrayObj_1ad3ac5af8d89adcb82c115b05d22a327e" compoundref="tarrayobj_8h" startline="75" endline="78">end</referencedby>
+        <referencedby refid="classTokenArrayObj_1aa2a3d4b983626addfbd6baeda87b19a6" compoundref="tarrayobj_8cc" startline="268" endline="302">erase</referencedby>
+        <referencedby refid="classTokenArrayObj_1aa6ee3816ef290d18ac09f57813245db0" compoundref="tarrayobj_8h" startline="112" endline="115">index_is_valid</referencedby>
+        <referencedby refid="classTokenArrayObj_1ab722a1dca518300f0a7d8920e1861368" compoundref="tarrayobj_8cc" startline="642" endline="649">info</referencedby>
+        <referencedby refid="classTokenArrayObj_1a254deb1d61930625815f4f8e5e0ee507" compoundref="tarrayobj_8cc" startline="386" endline="411">insert</referencedby>
+        <referencedby refid="classTokenArrayObj_1a0ac6c65b8d19b5a8f035978f9566ba0c" compoundref="tarrayobj_8cc" startline="414" endline="445">insert_move</referencedby>
+        <referencedby refid="classTokenArrayObj_1a568c87d8399ea52e3b14878a84daa2c2" compoundref="tarrayobj_8cc" startline="149" endline="191">operator=</referencedby>
+        <referencedby refid="classTokenArrayObj_1a35f4b863f0c45ff8ff781311d240f1d4" compoundref="tarrayobj_8h" startline="225" endline="228">pop_back</referencedby>
+        <referencedby refid="classTokenArrayObj_1acb9ae70c2c56bd378e2b806f8fb4ccf5" compoundref="tarrayobj_8h" startline="163" endline="171">push_back</referencedby>
+        <referencedby refid="classTokenArrayObj_1acc595719821218d739d2f08ee59f875b" compoundref="tarrayobj_8h" startline="207" endline="216">push_back_by_pointer</referencedby>
+        <referencedby refid="classTokenArrayObj_1a6fd0347cd75400a2e45866da64cb3fef" compoundref="tarrayobj_8h" startline="190" endline="198">push_back_by_ref</referencedby>
+        <referencedby refid="classTokenArrayObj_1ac1904faf968a3d437b475c027188d67b" compoundref="tarrayobj_8h" startline="174" endline="182">push_back_move</referencedby>
+        <referencedby refid="classTokenArrayObj_1a2e62c183495a1a5fa06c114e507b9cfe" compoundref="tarrayobj_8cc" startline="335" endline="368">reduce</referencedby>
+        <referencedby refid="classTokenArrayObj_1a48de53e5a325c76cef0134b7f709e1d1" compoundref="tarrayobj_8cc" startline="512" endline="593">replace_move</referencedby>
+        <referencedby refid="classTokenArrayObj_1a3ae6e338a2ad89fb15ede793e3f9fab2" compoundref="tarrayobj_8h" startline="81" endline="84">size</referencedby>
+        <referencedby refid="classTokenArrayObj_1a5bdd6929ed88ecc495ed159fbf9f0a16" compoundref="tarrayobj_8cc" startline="49" endline="67">TokenArrayObj</referencedby>
+        <referencedby refid="classTokenArrayObj_1aba732dcef9cd9ed9c1f899a500414dfc" compoundref="tarrayobj_8cc" startline="652" endline="679">valid</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classTokenArrayObj_1ade8da102bbb31a5411aff3ac61aeee5d" prot="private" static="no" mutable="no">
+        <type><ref refid="classToken" kindref="compound">Token</ref> *</type>
+        <definition>Token* TokenArrayObj::end_of_free_storage</definition>
+        <argsstring></argsstring>
+        <name>end_of_free_storage</name>
+        <qualifiedname>TokenArrayObj::end_of_free_storage</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="45" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="45" bodyend="-1"/>
+        <referencedby refid="classTokenArrayObj_1abc5e26e8edeeca0fdcdba1842b0cccb2" compoundref="tarrayobj_8cc" startline="79" endline="129">allocate</referencedby>
+        <referencedby refid="classTokenArrayObj_1a2d6c8b2b5902c2e3d4d275dbdd118806" compoundref="tarrayobj_8cc" startline="596" endline="614">append_move</referencedby>
+        <referencedby refid="classTokenArrayObj_1a547b59a87709fd9b4f86dc40b6d98c1f" compoundref="tarrayobj_8h" startline="87" endline="90">capacity</referencedby>
+        <referencedby refid="classTokenArrayObj_1a869a7392dd8236814e27678536716d48" compoundref="tarrayobj_8cc" startline="320" endline="328">clear</referencedby>
+        <referencedby refid="classTokenArrayObj_1ab722a1dca518300f0a7d8920e1861368" compoundref="tarrayobj_8cc" startline="642" endline="649">info</referencedby>
+        <referencedby refid="classTokenArrayObj_1a0ac6c65b8d19b5a8f035978f9566ba0c" compoundref="tarrayobj_8cc" startline="414" endline="445">insert_move</referencedby>
+        <referencedby refid="classTokenArrayObj_1a568c87d8399ea52e3b14878a84daa2c2" compoundref="tarrayobj_8cc" startline="149" endline="191">operator=</referencedby>
+        <referencedby refid="classTokenArrayObj_1aba732dcef9cd9ed9c1f899a500414dfc" compoundref="tarrayobj_8cc" startline="652" endline="679">valid</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classTokenArrayObj_1aa2311be67b26807bd805683b8ba35b0e" prot="private" static="no" mutable="no">
+        <type>unsigned int</type>
+        <definition>unsigned int TokenArrayObj::alloc_block_size</definition>
+        <argsstring></argsstring>
+        <name>alloc_block_size</name>
+        <qualifiedname>TokenArrayObj::alloc_block_size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="46" column="16" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="46" bodyend="-1"/>
+        <referencedby refid="classTokenArrayObj_1abc5e26e8edeeca0fdcdba1842b0cccb2" compoundref="tarrayobj_8cc" startline="79" endline="129">allocate</referencedby>
+        <referencedby refid="classTokenArrayObj_1a869a7392dd8236814e27678536716d48" compoundref="tarrayobj_8cc" startline="320" endline="328">clear</referencedby>
+        <referencedby refid="classTokenArrayObj_1ab722a1dca518300f0a7d8920e1861368" compoundref="tarrayobj_8cc" startline="642" endline="649">info</referencedby>
+        <referencedby refid="classTokenArrayObj_1acb9ae70c2c56bd378e2b806f8fb4ccf5" compoundref="tarrayobj_8h" startline="163" endline="171">push_back</referencedby>
+        <referencedby refid="classTokenArrayObj_1acc595719821218d739d2f08ee59f875b" compoundref="tarrayobj_8h" startline="207" endline="216">push_back_by_pointer</referencedby>
+        <referencedby refid="classTokenArrayObj_1a6fd0347cd75400a2e45866da64cb3fef" compoundref="tarrayobj_8h" startline="190" endline="198">push_back_by_ref</referencedby>
+        <referencedby refid="classTokenArrayObj_1ac1904faf968a3d437b475c027188d67b" compoundref="tarrayobj_8h" startline="174" endline="182">push_back_move</referencedby>
+        <referencedby refid="classTokenArrayObj_1a437e62e0eefb7ab76fd7415679cfcff0" compoundref="tarrayobj_8cc" startline="227" endline="235">reserve</referencedby>
+        <referencedby refid="classTokenArrayObj_1ac36cbb44b6fb9090015bfee48d882963" compoundref="tarrayobj_8cc" startline="132" endline="140">resize</referencedby>
+        <referencedby refid="classTokenArrayObj_1aa1a67fc90463084ab507414b259fb4c1" compoundref="tarrayobj_8cc" startline="214" endline="224">shrink</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classTokenArrayObj_1a1d5f9731af9dd9ab8e02b86291ce5215" prot="private" static="no" mutable="no">
+        <type>unsigned int</type>
+        <definition>unsigned int TokenArrayObj::refs_</definition>
+        <argsstring></argsstring>
+        <name>refs_</name>
+        <qualifiedname>TokenArrayObj::refs_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="47" column="16" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="47" bodyend="-1"/>
+        <referencedby refid="classTokenArrayObj_1a96bb24db75c4f85d4b54328b9fe0a620" compoundref="tarrayobj_8h" startline="145" endline="148">add_reference</referencedby>
+        <referencedby refid="classTokenArrayObj_1a9c1d38c6a043a7aa1c2dacd09da8553a" compoundref="tarrayobj_8h" startline="126" endline="129">references</referencedby>
+        <referencedby refid="classTokenArrayObj_1af2dbb1efca7e88d46fcac1dae94380bf" compoundref="tarrayobj_8h" startline="132" endline="142">remove_reference</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="classTokenArrayObj_1a3db3812aefaa67070e812b8676f3ebcd" prot="private" static="yes" mutable="no">
+        <type>size_t</type>
+        <definition>size_t TokenArrayObj::allocations</definition>
+        <argsstring></argsstring>
+        <name>allocations</name>
+        <qualifiedname>TokenArrayObj::allocations</qualifiedname>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="53" column="17" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="53" bodyend="-1"/>
+        <referencedby refid="classTokenArrayObj_1ac1c5bd7db68942951e40a64f3fd0f7dc" compoundref="tarrayobj_8h" startline="276" endline="279">getallocations</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classTokenArrayObj_1abc5e26e8edeeca0fdcdba1842b0cccb2" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TokenArrayObj::allocate</definition>
+        <argsstring>(size_t, size_t, size_t, const Token &amp;=Token())</argsstring>
+        <name>allocate</name>
+        <qualifiedname>TokenArrayObj::allocate</qualifiedname>
+        <param>
+          <type>size_t</type>
+          <defname>new_s</defname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <defname>new_c</defname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <defname>new_a</defname>
+        </param>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <defname>t</defname>
+          <defval><ref refid="classToken" kindref="compound">Token</ref>()</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="51" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.cc" bodystart="79" bodyend="129"/>
+        <references refid="classTokenArrayObj_1aa2311be67b26807bd805683b8ba35b0e" compoundref="tarrayobj_8h" startline="46">alloc_block_size</references>
+        <references refid="classTokenArrayObj_1a987b2ab8759d16d384ba4ed0dbeb0d47" compoundref="tarrayobj_8h" startline="44">begin_of_free_storage</references>
+        <references refid="classTokenArrayObj_1ade8da102bbb31a5411aff3ac61aeee5d" compoundref="tarrayobj_8h" startline="45">end_of_free_storage</references>
+        <references refid="classTokenArrayObj_1a7734ae6b1928dffa2abab4207a489eb9" compoundref="tarrayobj_8h" startline="43">p</references>
+        <references refid="classTokenArrayObj_1a3ae6e338a2ad89fb15ede793e3f9fab2" compoundref="tarrayobj_8h" startline="81" endline="84">size</references>
+        <referencedby refid="classTokenArrayObj_1a437e62e0eefb7ab76fd7415679cfcff0" compoundref="tarrayobj_8cc" startline="227" endline="235">reserve</referencedby>
+        <referencedby refid="classTokenArrayObj_1ac36cbb44b6fb9090015bfee48d882963" compoundref="tarrayobj_8cc" startline="132" endline="140">resize</referencedby>
+        <referencedby refid="classTokenArrayObj_1aa1a67fc90463084ab507414b259fb4c1" compoundref="tarrayobj_8cc" startline="214" endline="224">shrink</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classTokenArrayObj_1af190faf317305ba4fb9016eba03ebbc2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>TokenArrayObj::TokenArrayObj</definition>
+        <argsstring>()</argsstring>
+        <name>TokenArrayObj</name>
+        <qualifiedname>TokenArrayObj::TokenArrayObj</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="56" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="56" bodyend="61"/>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1ad7753029ef94a15fc0e5961caaa4a71d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TokenArrayObj::TokenArrayObj</definition>
+        <argsstring>(size_t, const Token &amp;=Token(), size_t=0)</argsstring>
+        <name>TokenArrayObj</name>
+        <qualifiedname>TokenArrayObj::TokenArrayObj</qualifiedname>
+        <param>
+          <type>size_t</type>
+          <defname>s</defname>
+        </param>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <defname>t</defname>
+          <defval><ref refid="classToken" kindref="compound">Token</ref>()</defval>
+        </param>
+        <param>
+          <type>size_t</type>
+          <defname>alloc</defname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="63" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.cc" bodystart="36" bodyend="46"/>
+        <references refid="classTokenArrayObj_1ac36cbb44b6fb9090015bfee48d882963" compoundref="tarrayobj_8cc" startline="132" endline="140">resize</references>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a5bdd6929ed88ecc495ed159fbf9f0a16" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TokenArrayObj::TokenArrayObj</definition>
+        <argsstring>(const TokenArrayObj &amp;)</argsstring>
+        <name>TokenArrayObj</name>
+        <qualifiedname>TokenArrayObj::TokenArrayObj</qualifiedname>
+        <param>
+          <type>const <ref refid="classTokenArrayObj" kindref="compound">TokenArrayObj</ref> &amp;</type>
+          <defname>a</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="64" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.cc" bodystart="49" bodyend="67"/>
+        <references refid="classTokenArrayObj_1a987b2ab8759d16d384ba4ed0dbeb0d47" compoundref="tarrayobj_8h" startline="44">begin_of_free_storage</references>
+        <references refid="classTokenArrayObj_1a7734ae6b1928dffa2abab4207a489eb9" compoundref="tarrayobj_8h" startline="43">p</references>
+        <references refid="classTokenArrayObj_1ac36cbb44b6fb9090015bfee48d882963" compoundref="tarrayobj_8cc" startline="132" endline="140">resize</references>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a2e4afec72115f3a5a3c5ef42ad2d62cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>TokenArrayObj::~TokenArrayObj</definition>
+        <argsstring>()</argsstring>
+        <name>~TokenArrayObj</name>
+        <qualifiedname>TokenArrayObj::~TokenArrayObj</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="66" column="11" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.cc" bodystart="70" bodyend="76"/>
+        <references refid="classTokenArrayObj_1a7734ae6b1928dffa2abab4207a489eb9" compoundref="tarrayobj_8h" startline="43">p</references>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1ae0579e65377ba605818004cd2cc344f2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classToken" kindref="compound">Token</ref> *</type>
+        <definition>Token * TokenArrayObj::begin</definition>
+        <argsstring>() const</argsstring>
+        <name>begin</name>
+        <qualifiedname>TokenArrayObj::begin</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="69" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="69" bodyend="72"/>
+        <references refid="classTokenArrayObj_1a7734ae6b1928dffa2abab4207a489eb9" compoundref="tarrayobj_8h" startline="43">p</references>
+        <referencedby refid="classTokenArray_1a07f7fb5750c1f8f344cef37087d67d1a" compoundref="tokenarray_8h" startline="294" endline="298">TokenArray::assign_move</referencedby>
+        <referencedby refid="classTokenArray_1a56314c4f339a8c3dfe3a21548d2de55a" compoundref="tokenarray_8h" startline="141" endline="144">TokenArray::begin</referencedby>
+        <referencedby refid="classTokenStack_1a718dc49b82f89b99d9d8a59155adb97d" compoundref="tokenstack_8h" startline="55" endline="58">TokenStack::clear</referencedby>
+        <referencedby refid="classTokenArray_1ab04922d5aac72f027e0f6fab06b67347" compoundref="tokenarray_8h" startline="386" endline="396">TokenArray::erase</referencedby>
+        <referencedby refid="classTokenArrayObj_1a568c87d8399ea52e3b14878a84daa2c2" compoundref="tarrayobj_8cc" startline="149" endline="191">operator=</referencedby>
+        <referencedby refid="classTokenArrayObj_1ac4cbda39be6c2b3127584eec6579255f" compoundref="tarrayobj_8cc" startline="618" endline="639">operator==</referencedby>
+        <referencedby refid="classTokenArrayObj_1a2e62c183495a1a5fa06c114e507b9cfe" compoundref="tarrayobj_8cc" startline="335" endline="368">reduce</referencedby>
+        <referencedby refid="classTokenArray_1ada12f20e57487e4fe4a2a680eae3975f" compoundref="tokenarray_8h" startline="205" endline="215">TokenArray::rotate</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1ad3ac5af8d89adcb82c115b05d22a327e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classToken" kindref="compound">Token</ref> *</type>
+        <definition>Token * TokenArrayObj::end</definition>
+        <argsstring>() const</argsstring>
+        <name>end</name>
+        <qualifiedname>TokenArrayObj::end</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="75" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="75" bodyend="78"/>
+        <references refid="classTokenArrayObj_1a987b2ab8759d16d384ba4ed0dbeb0d47" compoundref="tarrayobj_8h" startline="44">begin_of_free_storage</references>
+        <referencedby refid="classTokenArrayObj_1a5665d291b27dc4a781de12ec18c1f691" compoundref="tarrayobj_8cc" startline="468" endline="484">assign</referencedby>
+        <referencedby refid="classTokenArrayObj_1a3c850480835efbc05239eeaf0012a873" compoundref="tarrayobj_8cc" startline="448" endline="465">assign_move</referencedby>
+        <referencedby refid="classTokenStack_1a718dc49b82f89b99d9d8a59155adb97d" compoundref="tokenstack_8h" startline="55" endline="58">TokenStack::clear</referencedby>
+        <referencedby refid="classTokenArray_1ad49f197e0fa072b80f71ea82a64671e5" compoundref="tokenarray_8h" startline="150" endline="153">TokenArray::end</referencedby>
+        <referencedby refid="classTokenArrayObj_1aa2a3d4b983626addfbd6baeda87b19a6" compoundref="tarrayobj_8cc" startline="268" endline="302">erase</referencedby>
+        <referencedby refid="classTokenArrayObj_1a568c87d8399ea52e3b14878a84daa2c2" compoundref="tarrayobj_8cc" startline="149" endline="191">operator=</referencedby>
+        <referencedby refid="classTokenArrayObj_1ac4cbda39be6c2b3127584eec6579255f" compoundref="tarrayobj_8cc" startline="618" endline="639">operator==</referencedby>
+        <referencedby refid="classTokenStack_1ac861cc2282484dd2a27dd1304aa719a4" compoundref="tokenstack_8h" startline="127" endline="130">TokenStack::pick</referencedby>
+        <referencedby refid="classTokenStack_1a5841a50ccd805ec06df007961dabe623" compoundref="tokenstack_8h" startline="109" endline="112">TokenStack::pop</referencedby>
+        <referencedby refid="classTokenStack_1a95e2901fa3dd87a0edb31c81bb6eeb9b" compoundref="tokenstack_8h" startline="102" endline="106">TokenStack::pop_move</referencedby>
+        <referencedby refid="classTokenArrayObj_1a2e62c183495a1a5fa06c114e507b9cfe" compoundref="tarrayobj_8cc" startline="335" endline="368">reduce</referencedby>
+        <referencedby refid="classTokenArrayObj_1a48de53e5a325c76cef0134b7f709e1d1" compoundref="tarrayobj_8cc" startline="512" endline="593">replace_move</referencedby>
+        <referencedby refid="classTokenStack_1aff7181edbbbd1994ab6386d166d3a35b" compoundref="tokenstack_8h" startline="161" endline="176">TokenStack::roll</referencedby>
+        <referencedby refid="classTokenStack_1a0f58b17e8e9871f5679774bc9f8d1c51" compoundref="tokenstack_8h" startline="143" endline="146">TokenStack::swap</referencedby>
+        <referencedby refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" compoundref="tokenstack_8h" startline="116" endline="119">TokenStack::top</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a3ae6e338a2ad89fb15ede793e3f9fab2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t TokenArrayObj::size</definition>
+        <argsstring>() const</argsstring>
+        <name>size</name>
+        <qualifiedname>TokenArrayObj::size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="81" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="81" bodyend="84"/>
+        <references refid="classTokenArrayObj_1a987b2ab8759d16d384ba4ed0dbeb0d47" compoundref="tarrayobj_8h" startline="44">begin_of_free_storage</references>
+        <references refid="classTokenArrayObj_1a7734ae6b1928dffa2abab4207a489eb9" compoundref="tarrayobj_8h" startline="43">p</references>
+        <referencedby refid="classTokenArrayObj_1abc5e26e8edeeca0fdcdba1842b0cccb2" compoundref="tarrayobj_8cc" startline="79" endline="129">allocate</referencedby>
+        <referencedby refid="classTokenArrayObj_1a2d6c8b2b5902c2e3d4d275dbdd118806" compoundref="tarrayobj_8cc" startline="596" endline="614">append_move</referencedby>
+        <referencedby refid="classTokenArrayObj_1a48954375b7022000be0d08adc66b0520" compoundref="tarrayobj_8h" startline="268" endline="271">empty</referencedby>
+        <referencedby refid="classTokenArrayObj_1a5ee67f5db59d134471ac688367b5b2af" compoundref="tarrayobj_8cc" startline="307" endline="317">erase</referencedby>
+        <referencedby refid="classTokenArrayObj_1a254deb1d61930625815f4f8e5e0ee507" compoundref="tarrayobj_8cc" startline="386" endline="411">insert</referencedby>
+        <referencedby refid="classTokenArrayObj_1a0ac6c65b8d19b5a8f035978f9566ba0c" compoundref="tarrayobj_8cc" startline="414" endline="445">insert_move</referencedby>
+        <referencedby refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" compoundref="tokenstack_8h" startline="184" endline="187">TokenStack::load</referencedby>
+        <referencedby refid="classTokenArrayObj_1ac4cbda39be6c2b3127584eec6579255f" compoundref="tarrayobj_8cc" startline="618" endline="639">operator==</referencedby>
+        <referencedby refid="classTokenArrayObj_1acb9ae70c2c56bd378e2b806f8fb4ccf5" compoundref="tarrayobj_8h" startline="163" endline="171">push_back</referencedby>
+        <referencedby refid="classTokenArrayObj_1acc595719821218d739d2f08ee59f875b" compoundref="tarrayobj_8h" startline="207" endline="216">push_back_by_pointer</referencedby>
+        <referencedby refid="classTokenArrayObj_1a6fd0347cd75400a2e45866da64cb3fef" compoundref="tarrayobj_8h" startline="190" endline="198">push_back_by_ref</referencedby>
+        <referencedby refid="classTokenArrayObj_1ac1904faf968a3d437b475c027188d67b" compoundref="tarrayobj_8h" startline="174" endline="182">push_back_move</referencedby>
+        <referencedby refid="classTokenArrayObj_1add976b7a363c46bad4510fd5b16daa79" compoundref="tarrayobj_8cc" startline="373" endline="383">reduce</referencedby>
+        <referencedby refid="classTokenArrayObj_1a48de53e5a325c76cef0134b7f709e1d1" compoundref="tarrayobj_8cc" startline="512" endline="593">replace_move</referencedby>
+        <referencedby refid="classTokenArrayObj_1a437e62e0eefb7ab76fd7415679cfcff0" compoundref="tarrayobj_8cc" startline="227" endline="235">reserve</referencedby>
+        <referencedby refid="classTokenArrayObj_1a42cf4d628fb4e562a2cff09e02929d1f" compoundref="tarrayobj_8h" startline="154" endline="160">reserve_token</referencedby>
+        <referencedby refid="classTokenArrayObj_1ac36cbb44b6fb9090015bfee48d882963" compoundref="tarrayobj_8cc" startline="132" endline="140">resize</referencedby>
+        <referencedby refid="classTokenArrayObj_1aa1a67fc90463084ab507414b259fb4c1" compoundref="tarrayobj_8cc" startline="214" endline="224">shrink</referencedby>
+        <referencedby refid="classTokenArray_1ad6bd1a13ab4eae2de7c05e311a3c4207" compoundref="tokenarray_8h" startline="159" endline="162">TokenArray::size</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a547b59a87709fd9b4f86dc40b6d98c1f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t TokenArrayObj::capacity</definition>
+        <argsstring>() const</argsstring>
+        <name>capacity</name>
+        <qualifiedname>TokenArrayObj::capacity</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="87" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="87" bodyend="90"/>
+        <references refid="classTokenArrayObj_1ade8da102bbb31a5411aff3ac61aeee5d" compoundref="tarrayobj_8h" startline="45">end_of_free_storage</references>
+        <references refid="classTokenArrayObj_1a7734ae6b1928dffa2abab4207a489eb9" compoundref="tarrayobj_8h" startline="43">p</references>
+        <referencedby refid="classTokenArray_1aebea7010ed48eddd4c72c5f2ccb1eaac" compoundref="tokenarray_8h" startline="168" endline="171">TokenArray::capacity</referencedby>
+        <referencedby refid="classTokenArrayObj_1a568c87d8399ea52e3b14878a84daa2c2" compoundref="tarrayobj_8cc" startline="149" endline="191">operator=</referencedby>
+        <referencedby refid="classTokenArrayObj_1acb9ae70c2c56bd378e2b806f8fb4ccf5" compoundref="tarrayobj_8h" startline="163" endline="171">push_back</referencedby>
+        <referencedby refid="classTokenArrayObj_1acc595719821218d739d2f08ee59f875b" compoundref="tarrayobj_8h" startline="207" endline="216">push_back_by_pointer</referencedby>
+        <referencedby refid="classTokenArrayObj_1a6fd0347cd75400a2e45866da64cb3fef" compoundref="tarrayobj_8h" startline="190" endline="198">push_back_by_ref</referencedby>
+        <referencedby refid="classTokenArrayObj_1ac1904faf968a3d437b475c027188d67b" compoundref="tarrayobj_8h" startline="174" endline="182">push_back_move</referencedby>
+        <referencedby refid="classTokenArrayObj_1a437e62e0eefb7ab76fd7415679cfcff0" compoundref="tarrayobj_8cc" startline="227" endline="235">reserve</referencedby>
+        <referencedby refid="classTokenArrayObj_1a42cf4d628fb4e562a2cff09e02929d1f" compoundref="tarrayobj_8h" startline="154" endline="160">reserve_token</referencedby>
+        <referencedby refid="classTokenArrayObj_1aa1a67fc90463084ab507414b259fb4c1" compoundref="tarrayobj_8cc" startline="214" endline="224">shrink</referencedby>
+        <referencedby refid="classTokenStack_1a9773ab5ea14e36d433002f99cde84a94" compoundref="tokenstack_8h" startline="179" endline="182">TokenStack::size</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a4607f906a4df4b000c7235a3d6e5b68e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+        <definition>Token &amp; TokenArrayObj::operator[]</definition>
+        <argsstring>(size_t i)</argsstring>
+        <name>operator[]</name>
+        <qualifiedname>TokenArrayObj::operator[]</qualifiedname>
+        <param>
+          <type>size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="93" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="93" bodyend="96"/>
+        <references refid="classTokenArrayObj_1a7734ae6b1928dffa2abab4207a489eb9" compoundref="tarrayobj_8h" startline="43">p</references>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a3625eb92c8f49e6bc9b60105a12d0196" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+        <definition>const Token &amp; TokenArrayObj::operator[]</definition>
+        <argsstring>(size_t i) const</argsstring>
+        <name>operator[]</name>
+        <qualifiedname>TokenArrayObj::operator[]</qualifiedname>
+        <param>
+          <type>size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="99" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="99" bodyend="102"/>
+        <references refid="classTokenArrayObj_1a7734ae6b1928dffa2abab4207a489eb9" compoundref="tarrayobj_8h" startline="43">p</references>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a17e3f3a748eaa75699fb3012e7e99eef" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+        <definition>const Token &amp; TokenArrayObj::get</definition>
+        <argsstring>(long i) const</argsstring>
+        <name>get</name>
+        <qualifiedname>TokenArrayObj::get</qualifiedname>
+        <param>
+          <type>long</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="105" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="105" bodyend="109"/>
+        <references refid="classTokenArrayObj_1a7734ae6b1928dffa2abab4207a489eb9" compoundref="tarrayobj_8h" startline="43">p</references>
+        <referencedby refid="classTokenArray_1a513041b8e344d2eb05613bbc7d762e71" compoundref="tokenarray_8h" startline="193" endline="196">TokenArray::get</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1aa6ee3816ef290d18ac09f57813245db0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool TokenArrayObj::index_is_valid</definition>
+        <argsstring>(long i) const</argsstring>
+        <name>index_is_valid</name>
+        <qualifiedname>TokenArrayObj::index_is_valid</qualifiedname>
+        <param>
+          <type>long</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="112" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="112" bodyend="115"/>
+        <references refid="classTokenArrayObj_1a987b2ab8759d16d384ba4ed0dbeb0d47" compoundref="tarrayobj_8h" startline="44">begin_of_free_storage</references>
+        <references refid="classTokenArrayObj_1a7734ae6b1928dffa2abab4207a489eb9" compoundref="tarrayobj_8h" startline="43">p</references>
+        <referencedby refid="classTokenArray_1ab1c1a27321c9114a4bbfa0af86d3826b" compoundref="tokenarray_8h" startline="199" endline="202">TokenArray::index_is_valid</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a3dddb29836c1f64d87209792951e1417" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TokenArrayObj::rotate</definition>
+        <argsstring>(Token *, Token *, Token *)</argsstring>
+        <name>rotate</name>
+        <qualifiedname>TokenArrayObj::rotate</qualifiedname>
+        <param>
+          <type><ref refid="classToken" kindref="compound">Token</ref> *</type>
+          <defname>first</defname>
+        </param>
+        <param>
+          <type><ref refid="classToken" kindref="compound">Token</ref> *</type>
+          <defname>middle</defname>
+        </param>
+        <param>
+          <type><ref refid="classToken" kindref="compound">Token</ref> *</type>
+          <defname>last</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="117" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.cc" bodystart="239" bodyend="265"/>
+        <referencedby refid="classTokenStack_1aff7181edbbbd1994ab6386d166d3a35b" compoundref="tokenstack_8h" startline="161" endline="176">TokenStack::roll</referencedby>
+        <referencedby refid="classTokenArray_1ada12f20e57487e4fe4a2a680eae3975f" compoundref="tokenarray_8h" startline="205" endline="215">TokenArray::rotate</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1aa1a67fc90463084ab507414b259fb4c1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool TokenArrayObj::shrink</definition>
+        <argsstring>()</argsstring>
+        <name>shrink</name>
+        <qualifiedname>TokenArrayObj::shrink</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="122" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.cc" bodystart="214" bodyend="224"/>
+        <references refid="classTokenArrayObj_1aa2311be67b26807bd805683b8ba35b0e" compoundref="tarrayobj_8h" startline="46">alloc_block_size</references>
+        <references refid="classTokenArrayObj_1abc5e26e8edeeca0fdcdba1842b0cccb2" compoundref="tarrayobj_8cc" startline="79" endline="129">allocate</references>
+        <references refid="classTokenArrayObj_1a547b59a87709fd9b4f86dc40b6d98c1f" compoundref="tarrayobj_8h" startline="87" endline="90">capacity</references>
+        <references refid="classTokenArrayObj_1a3ae6e338a2ad89fb15ede793e3f9fab2" compoundref="tarrayobj_8h" startline="81" endline="84">size</references>
+        <referencedby refid="classTokenArray_1ae312cbe93ac28ab0c28c236cd7f1896b" compoundref="tokenarray_8h" startline="230" endline="233">TokenArray::shrink</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a437e62e0eefb7ab76fd7415679cfcff0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool TokenArrayObj::reserve</definition>
+        <argsstring>(size_t)</argsstring>
+        <name>reserve</name>
+        <qualifiedname>TokenArrayObj::reserve</qualifiedname>
+        <param>
+          <type>size_t</type>
+          <defname>new_capacity</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="123" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.cc" bodystart="227" bodyend="235"/>
+        <references refid="classTokenArrayObj_1aa2311be67b26807bd805683b8ba35b0e" compoundref="tarrayobj_8h" startline="46">alloc_block_size</references>
+        <references refid="classTokenArrayObj_1abc5e26e8edeeca0fdcdba1842b0cccb2" compoundref="tarrayobj_8cc" startline="79" endline="129">allocate</references>
+        <references refid="classTokenArrayObj_1a547b59a87709fd9b4f86dc40b6d98c1f" compoundref="tarrayobj_8h" startline="87" endline="90">capacity</references>
+        <references refid="classTokenArrayObj_1a3ae6e338a2ad89fb15ede793e3f9fab2" compoundref="tarrayobj_8h" startline="81" endline="84">size</references>
+        <referencedby refid="classTokenArrayObj_1a2d6c8b2b5902c2e3d4d275dbdd118806" compoundref="tarrayobj_8cc" startline="596" endline="614">append_move</referencedby>
+        <referencedby refid="classTokenArrayObj_1a5665d291b27dc4a781de12ec18c1f691" compoundref="tarrayobj_8cc" startline="468" endline="484">assign</referencedby>
+        <referencedby refid="classTokenArrayObj_1a3c850480835efbc05239eeaf0012a873" compoundref="tarrayobj_8cc" startline="448" endline="465">assign_move</referencedby>
+        <referencedby refid="classTokenArrayObj_1a254deb1d61930625815f4f8e5e0ee507" compoundref="tarrayobj_8cc" startline="386" endline="411">insert</referencedby>
+        <referencedby refid="classTokenArrayObj_1a0ac6c65b8d19b5a8f035978f9566ba0c" compoundref="tarrayobj_8cc" startline="414" endline="445">insert_move</referencedby>
+        <referencedby refid="classTokenArrayObj_1acb9ae70c2c56bd378e2b806f8fb4ccf5" compoundref="tarrayobj_8h" startline="163" endline="171">push_back</referencedby>
+        <referencedby refid="classTokenArrayObj_1acc595719821218d739d2f08ee59f875b" compoundref="tarrayobj_8h" startline="207" endline="216">push_back_by_pointer</referencedby>
+        <referencedby refid="classTokenArrayObj_1a6fd0347cd75400a2e45866da64cb3fef" compoundref="tarrayobj_8h" startline="190" endline="198">push_back_by_ref</referencedby>
+        <referencedby refid="classTokenArrayObj_1ac1904faf968a3d437b475c027188d67b" compoundref="tarrayobj_8h" startline="174" endline="182">push_back_move</referencedby>
+        <referencedby refid="classTokenArrayObj_1a48de53e5a325c76cef0134b7f709e1d1" compoundref="tarrayobj_8cc" startline="512" endline="593">replace_move</referencedby>
+        <referencedby refid="classTokenArray_1a8bae8fd6f068f93a2acd614f724486e2" compoundref="tokenarray_8h" startline="241" endline="244">TokenArray::reserve</referencedby>
+        <referencedby refid="classTokenArrayObj_1a42cf4d628fb4e562a2cff09e02929d1f" compoundref="tarrayobj_8h" startline="154" endline="160">reserve_token</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a9c1d38c6a043a7aa1c2dacd09da8553a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned int</type>
+        <definition>unsigned int TokenArrayObj::references</definition>
+        <argsstring>()</argsstring>
+        <name>references</name>
+        <qualifiedname>TokenArrayObj::references</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="126" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="126" bodyend="129"/>
+        <references refid="classTokenArrayObj_1a1d5f9731af9dd9ab8e02b86291ce5215" compoundref="tarrayobj_8h" startline="47">refs_</references>
+        <referencedby refid="classTokenArray_1ad0a89f939d5f22cb5c00f37cba564e1c" compoundref="tokenarray_8h" startline="71" endline="83">TokenArray::clone</referencedby>
+        <referencedby refid="classTokenArray_1a7004bbd3aa5262a2c4376f5834019900" compoundref="tokenarray_8h" startline="86" endline="98">TokenArray::detach</referencedby>
+        <referencedby refid="classTokenArray_1a98ecc1160d0fb5df24d4c3b241cdc9ea" compoundref="tokenarray_8h" startline="247" endline="250">TokenArray::references</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1af2dbb1efca7e88d46fcac1dae94380bf" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned int</type>
+        <definition>unsigned int TokenArrayObj::remove_reference</definition>
+        <argsstring>()</argsstring>
+        <name>remove_reference</name>
+        <qualifiedname>TokenArrayObj::remove_reference</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="132" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="132" bodyend="142"/>
+        <references refid="classTokenArrayObj_1a1d5f9731af9dd9ab8e02b86291ce5215" compoundref="tarrayobj_8h" startline="47">refs_</references>
+        <referencedby refid="classTokenArray_1ad0a89f939d5f22cb5c00f37cba564e1c" compoundref="tokenarray_8h" startline="71" endline="83">TokenArray::clone</referencedby>
+        <referencedby refid="classTokenArray_1a7004bbd3aa5262a2c4376f5834019900" compoundref="tokenarray_8h" startline="86" endline="98">TokenArray::detach</referencedby>
+        <referencedby refid="classTokenArray_1a2d0b05c71bc8035989df7addd275269e" compoundref="tokenarray_8cc" startline="32" endline="39">TokenArray::operator=</referencedby>
+        <referencedby refid="classTokenArray_1aeb8b77eec1c2358dc73c9c0f97c78877" compoundref="tokenarray_8h" startline="132" endline="135">TokenArray::~TokenArray</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a96bb24db75c4f85d4b54328b9fe0a620" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned int</type>
+        <definition>unsigned int TokenArrayObj::add_reference</definition>
+        <argsstring>()</argsstring>
+        <name>add_reference</name>
+        <qualifiedname>TokenArrayObj::add_reference</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="145" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="145" bodyend="148"/>
+        <references refid="classTokenArrayObj_1a1d5f9731af9dd9ab8e02b86291ce5215" compoundref="tarrayobj_8h" startline="47">refs_</references>
+        <referencedby refid="classTokenArray_1a15241d66aa7a6e3b98a8c26ae4116100" compoundref="tokenarray_8h" startline="117" endline="121">TokenArray::TokenArray</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1ac36cbb44b6fb9090015bfee48d882963" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TokenArrayObj::resize</definition>
+        <argsstring>(size_t, size_t, const Token &amp;=Token())</argsstring>
+        <name>resize</name>
+        <qualifiedname>TokenArrayObj::resize</qualifiedname>
+        <param>
+          <type>size_t</type>
+          <defname>s</defname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <defname>alloc</defname>
+        </param>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <defname>t</defname>
+          <defval><ref refid="classToken" kindref="compound">Token</ref>()</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="150" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.cc" bodystart="132" bodyend="140"/>
+        <references refid="classTokenArrayObj_1aa2311be67b26807bd805683b8ba35b0e" compoundref="tarrayobj_8h" startline="46">alloc_block_size</references>
+        <references refid="classTokenArrayObj_1abc5e26e8edeeca0fdcdba1842b0cccb2" compoundref="tarrayobj_8cc" startline="79" endline="129">allocate</references>
+        <references refid="classTokenArrayObj_1a3ae6e338a2ad89fb15ede793e3f9fab2" compoundref="tarrayobj_8h" startline="81" endline="84">size</references>
+        <referencedby refid="classTokenArrayObj_1a568c87d8399ea52e3b14878a84daa2c2" compoundref="tarrayobj_8cc" startline="149" endline="191">operator=</referencedby>
+        <referencedby refid="classTokenArray_1a59ae766db113506622e0df3aaaa29679" compoundref="tokenarray_8h" startline="258" endline="262">TokenArray::resize</referencedby>
+        <referencedby refid="classTokenArrayObj_1ad51ea1ad9898400490a466acd708f9ca" compoundref="tarrayobj_8cc" startline="143" endline="146">resize</referencedby>
+        <referencedby refid="classTokenArrayObj_1ad7753029ef94a15fc0e5961caaa4a71d" compoundref="tarrayobj_8cc" startline="36" endline="46">TokenArrayObj</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1ad51ea1ad9898400490a466acd708f9ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TokenArrayObj::resize</definition>
+        <argsstring>(size_t, const Token &amp;=Token())</argsstring>
+        <name>resize</name>
+        <qualifiedname>TokenArrayObj::resize</qualifiedname>
+        <param>
+          <type>size_t</type>
+          <defname>s</defname>
+        </param>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <defname>t</defname>
+          <defval><ref refid="classToken" kindref="compound">Token</ref>()</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="151" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.cc" bodystart="143" bodyend="146"/>
+        <references refid="classTokenArrayObj_1aa2311be67b26807bd805683b8ba35b0e" compoundref="tarrayobj_8h" startline="46">alloc_block_size</references>
+        <references refid="classTokenArrayObj_1ac36cbb44b6fb9090015bfee48d882963" compoundref="tarrayobj_8cc" startline="132" endline="140">resize</references>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a42cf4d628fb4e562a2cff09e02929d1f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void TokenArrayObj::reserve_token</definition>
+        <argsstring>(size_t n)</argsstring>
+        <name>reserve_token</name>
+        <qualifiedname>TokenArrayObj::reserve_token</qualifiedname>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="154" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="154" bodyend="160"/>
+        <references refid="classTokenArrayObj_1a547b59a87709fd9b4f86dc40b6d98c1f" compoundref="tarrayobj_8h" startline="87" endline="90">capacity</references>
+        <references refid="classTokenArrayObj_1a437e62e0eefb7ab76fd7415679cfcff0" compoundref="tarrayobj_8cc" startline="227" endline="235">reserve</references>
+        <references refid="classTokenArrayObj_1a3ae6e338a2ad89fb15ede793e3f9fab2" compoundref="tarrayobj_8h" startline="81" endline="84">size</references>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1acb9ae70c2c56bd378e2b806f8fb4ccf5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void TokenArrayObj::push_back</definition>
+        <argsstring>(const Token &amp;t)</argsstring>
+        <name>push_back</name>
+        <qualifiedname>TokenArrayObj::push_back</qualifiedname>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="163" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="163" bodyend="171"/>
+        <references refid="classTokenArrayObj_1aa2311be67b26807bd805683b8ba35b0e" compoundref="tarrayobj_8h" startline="46">alloc_block_size</references>
+        <references refid="classTokenArrayObj_1a987b2ab8759d16d384ba4ed0dbeb0d47" compoundref="tarrayobj_8h" startline="44">begin_of_free_storage</references>
+        <references refid="classTokenArrayObj_1a547b59a87709fd9b4f86dc40b6d98c1f" compoundref="tarrayobj_8h" startline="87" endline="90">capacity</references>
+        <references refid="classTokenArrayObj_1a437e62e0eefb7ab76fd7415679cfcff0" compoundref="tarrayobj_8cc" startline="227" endline="235">reserve</references>
+        <references refid="classTokenArrayObj_1a3ae6e338a2ad89fb15ede793e3f9fab2" compoundref="tarrayobj_8h" startline="81" endline="84">size</references>
+        <referencedby refid="classTokenStack_1a585f38fb0ed122da90489eccbfd7a187" compoundref="tokenstack_8h" startline="62" endline="65">TokenStack::push</referencedby>
+        <referencedby refid="classTokenArray_1acbf2202157ead1bb583c43a8465b3876" compoundref="tokenarray_8h" startline="266" endline="270">TokenArray::push_back</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1ac1904faf968a3d437b475c027188d67b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void TokenArrayObj::push_back_move</definition>
+        <argsstring>(Token &amp;t)</argsstring>
+        <name>push_back_move</name>
+        <qualifiedname>TokenArrayObj::push_back_move</qualifiedname>
+        <param>
+          <type><ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="174" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="174" bodyend="182"/>
+        <references refid="classTokenArrayObj_1aa2311be67b26807bd805683b8ba35b0e" compoundref="tarrayobj_8h" startline="46">alloc_block_size</references>
+        <references refid="classTokenArrayObj_1a987b2ab8759d16d384ba4ed0dbeb0d47" compoundref="tarrayobj_8h" startline="44">begin_of_free_storage</references>
+        <references refid="classTokenArrayObj_1a547b59a87709fd9b4f86dc40b6d98c1f" compoundref="tarrayobj_8h" startline="87" endline="90">capacity</references>
+        <references refid="classTokenArrayObj_1a437e62e0eefb7ab76fd7415679cfcff0" compoundref="tarrayobj_8cc" startline="227" endline="235">reserve</references>
+        <references refid="classTokenArrayObj_1a3ae6e338a2ad89fb15ede793e3f9fab2" compoundref="tarrayobj_8h" startline="81" endline="84">size</references>
+        <referencedby refid="classTokenArray_1a4dc85e56f15f6ace0de274d6f48628f8" compoundref="tokenarray_8h" startline="273" endline="278">TokenArray::push_back</referencedby>
+        <referencedby refid="classTokenArray_1a0c100429789331179672cb0427b983ba" compoundref="tokenarray_8h" startline="288" endline="291">TokenArray::push_back_dont_clone</referencedby>
+        <referencedby refid="classTokenArray_1a0f48b0876d34b34fb53f19928a90e764" compoundref="tokenarray_8h" startline="281" endline="285">TokenArray::push_back_move</referencedby>
+        <referencedby refid="classTokenStack_1a9d3b72926bfa2090389f0782cd2b6e76" compoundref="tokenstack_8h" startline="68" endline="71">TokenStack::push_move</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a6fd0347cd75400a2e45866da64cb3fef" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void TokenArrayObj::push_back_by_ref</definition>
+        <argsstring>(const Token &amp;t)</argsstring>
+        <name>push_back_by_ref</name>
+        <qualifiedname>TokenArrayObj::push_back_by_ref</qualifiedname>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+<para>Push back a reference. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function expects that enough space on the stack has been reserved and that the token points to a valid datum object. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="190" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="190" bodyend="198"/>
+        <references refid="classTokenArrayObj_1aa2311be67b26807bd805683b8ba35b0e" compoundref="tarrayobj_8h" startline="46">alloc_block_size</references>
+        <references refid="classTokenArrayObj_1a987b2ab8759d16d384ba4ed0dbeb0d47" compoundref="tarrayobj_8h" startline="44">begin_of_free_storage</references>
+        <references refid="classTokenArrayObj_1a547b59a87709fd9b4f86dc40b6d98c1f" compoundref="tarrayobj_8h" startline="87" endline="90">capacity</references>
+        <references refid="classTokenArrayObj_1a437e62e0eefb7ab76fd7415679cfcff0" compoundref="tarrayobj_8cc" startline="227" endline="235">reserve</references>
+        <references refid="classTokenArrayObj_1a3ae6e338a2ad89fb15ede793e3f9fab2" compoundref="tarrayobj_8h" startline="81" endline="84">size</references>
+        <referencedby refid="classTokenStack_1a93b45dc84823374ce277c972e41e8769" compoundref="tokenstack_8h" startline="79" endline="82">TokenStack::push_by_ref</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1acc595719821218d739d2f08ee59f875b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void TokenArrayObj::push_back_by_pointer</definition>
+        <argsstring>(Datum *rhs)</argsstring>
+        <name>push_back_by_pointer</name>
+        <qualifiedname>TokenArrayObj::push_back_by_pointer</qualifiedname>
+        <param>
+          <type><ref refid="classDatum" kindref="compound">Datum</ref> *</type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+<para>Push back a datum pointer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function assumes that enough space on the stack has been reserved. This function expects a valid datum pointer and increases the reference count of the datum. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="207" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="207" bodyend="216"/>
+        <references refid="classTokenArrayObj_1aa2311be67b26807bd805683b8ba35b0e" compoundref="tarrayobj_8h" startline="46">alloc_block_size</references>
+        <references refid="classTokenArrayObj_1a987b2ab8759d16d384ba4ed0dbeb0d47" compoundref="tarrayobj_8h" startline="44">begin_of_free_storage</references>
+        <references refid="classTokenArrayObj_1a547b59a87709fd9b4f86dc40b6d98c1f" compoundref="tarrayobj_8h" startline="87" endline="90">capacity</references>
+        <references refid="classTokenArrayObj_1a437e62e0eefb7ab76fd7415679cfcff0" compoundref="tarrayobj_8cc" startline="227" endline="235">reserve</references>
+        <references refid="classTokenArrayObj_1a3ae6e338a2ad89fb15ede793e3f9fab2" compoundref="tarrayobj_8h" startline="81" endline="84">size</references>
+        <referencedby refid="classTokenStack_1a75a8af662288b54a64d5185c90401dec" compoundref="tokenstack_8h" startline="90" endline="93">TokenStack::push_by_pointer</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a04590e6d2102f1e67c5517387a941e38" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void TokenArrayObj::assign_move</definition>
+        <argsstring>(Token *tp, Token &amp;t)</argsstring>
+        <name>assign_move</name>
+        <qualifiedname>TokenArrayObj::assign_move</qualifiedname>
+        <param>
+          <type><ref refid="classToken" kindref="compound">Token</ref> *</type>
+          <declname>tp</declname>
+        </param>
+        <param>
+          <type><ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="219" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="219" bodyend="222"/>
+        <referencedby refid="classTokenArray_1a07f7fb5750c1f8f344cef37087d67d1a" compoundref="tokenarray_8h" startline="294" endline="298">TokenArray::assign_move</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a35f4b863f0c45ff8ff781311d240f1d4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void TokenArrayObj::pop_back</definition>
+        <argsstring>()</argsstring>
+        <name>pop_back</name>
+        <qualifiedname>TokenArrayObj::pop_back</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="225" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="225" bodyend="228"/>
+        <references refid="classTokenArrayObj_1a987b2ab8759d16d384ba4ed0dbeb0d47" compoundref="tarrayobj_8h" startline="44">begin_of_free_storage</references>
+        <references refid="classTokenArrayObj_1a869a7392dd8236814e27678536716d48" compoundref="tarrayobj_8cc" startline="320" endline="328">clear</references>
+        <referencedby refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" compoundref="tokenstack_8h" startline="96" endline="99">TokenStack::pop</referencedby>
+        <referencedby refid="classTokenArray_1afae97b8d38fe5e2210fe9317f0935a84" compoundref="tokenarray_8h" startline="363" endline="367">TokenArray::pop_back</referencedby>
+        <referencedby refid="classTokenStack_1a95e2901fa3dd87a0edb31c81bb6eeb9b" compoundref="tokenstack_8h" startline="102" endline="106">TokenStack::pop_move</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a5ee67f5db59d134471ac688367b5b2af" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TokenArrayObj::erase</definition>
+        <argsstring>(size_t, size_t)</argsstring>
+        <name>erase</name>
+        <qualifiedname>TokenArrayObj::erase</qualifiedname>
+        <param>
+          <type>size_t</type>
+          <defname>i</defname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <defname>n</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="231" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.cc" bodystart="307" bodyend="317"/>
+        <references refid="classTokenArrayObj_1a5ee67f5db59d134471ac688367b5b2af" compoundref="tarrayobj_8cc" startline="307" endline="317">erase</references>
+        <references refid="classTokenArrayObj_1a7734ae6b1928dffa2abab4207a489eb9" compoundref="tarrayobj_8h" startline="43">p</references>
+        <references refid="classTokenArrayObj_1a3ae6e338a2ad89fb15ede793e3f9fab2" compoundref="tarrayobj_8h" startline="81" endline="84">size</references>
+        <referencedby refid="classTokenStack_1a718dc49b82f89b99d9d8a59155adb97d" compoundref="tokenstack_8h" startline="55" endline="58">TokenStack::clear</referencedby>
+        <referencedby refid="classTokenArrayObj_1a5ee67f5db59d134471ac688367b5b2af" compoundref="tarrayobj_8cc" startline="307" endline="317">erase</referencedby>
+        <referencedby refid="classTokenArray_1ab04922d5aac72f027e0f6fab06b67347" compoundref="tokenarray_8h" startline="386" endline="396">TokenArray::erase</referencedby>
+        <referencedby refid="classTokenStack_1a5841a50ccd805ec06df007961dabe623" compoundref="tokenstack_8h" startline="109" endline="112">TokenStack::pop</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1aa2a3d4b983626addfbd6baeda87b19a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TokenArrayObj::erase</definition>
+        <argsstring>(Token *, Token *)</argsstring>
+        <name>erase</name>
+        <qualifiedname>TokenArrayObj::erase</qualifiedname>
+        <param>
+          <type><ref refid="classToken" kindref="compound">Token</ref> *</type>
+          <defname>first</defname>
+        </param>
+        <param>
+          <type><ref refid="classToken" kindref="compound">Token</ref> *</type>
+          <defname>last</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="232" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.cc" bodystart="268" bodyend="302"/>
+        <references refid="classTokenArrayObj_1a987b2ab8759d16d384ba4ed0dbeb0d47" compoundref="tarrayobj_8h" startline="44">begin_of_free_storage</references>
+        <references refid="classTokenArrayObj_1ad3ac5af8d89adcb82c115b05d22a327e" compoundref="tarrayobj_8h" startline="75" endline="78">end</references>
+        <references refid="classDatum_1a033ad3a3e54eab1bb9a6b47eeab0611e" compoundref="datum_8h" startline="106" endline="113">Datum::removeReference</references>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a1cecfe789a23758545bd18daf8581e96" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void TokenArrayObj::erase</definition>
+        <argsstring>(Token *tp)</argsstring>
+        <name>erase</name>
+        <qualifiedname>TokenArrayObj::erase</qualifiedname>
+        <param>
+          <type><ref refid="classToken" kindref="compound">Token</ref> *</type>
+          <declname>tp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="234" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="234" bodyend="237"/>
+        <references refid="classTokenArrayObj_1a5ee67f5db59d134471ac688367b5b2af" compoundref="tarrayobj_8cc" startline="307" endline="317">erase</references>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a2e62c183495a1a5fa06c114e507b9cfe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TokenArrayObj::reduce</definition>
+        <argsstring>(Token *, Token *)</argsstring>
+        <name>reduce</name>
+        <qualifiedname>TokenArrayObj::reduce</qualifiedname>
+        <param>
+          <type><ref refid="classToken" kindref="compound">Token</ref> *</type>
+          <defname>first</defname>
+        </param>
+        <param>
+          <type><ref refid="classToken" kindref="compound">Token</ref> *</type>
+          <defname>last</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="240" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.cc" bodystart="335" bodyend="368"/>
+        <references refid="classTokenArrayObj_1ae0579e65377ba605818004cd2cc344f2" compoundref="tarrayobj_8h" startline="69" endline="72">begin</references>
+        <references refid="classTokenArrayObj_1a987b2ab8759d16d384ba4ed0dbeb0d47" compoundref="tarrayobj_8h" startline="44">begin_of_free_storage</references>
+        <references refid="classTokenArrayObj_1ad3ac5af8d89adcb82c115b05d22a327e" compoundref="tarrayobj_8h" startline="75" endline="78">end</references>
+        <references refid="classTokenArrayObj_1a7734ae6b1928dffa2abab4207a489eb9" compoundref="tarrayobj_8h" startline="43">p</references>
+        <referencedby refid="classTokenArray_1a9d0b109d43e4087c003495b7c3f1f098" compoundref="tokenarray_8h" startline="410" endline="417">TokenArray::reduce</referencedby>
+        <referencedby refid="classTokenArrayObj_1add976b7a363c46bad4510fd5b16daa79" compoundref="tarrayobj_8cc" startline="373" endline="383">reduce</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1add976b7a363c46bad4510fd5b16daa79" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TokenArrayObj::reduce</definition>
+        <argsstring>(size_t, size_t)</argsstring>
+        <name>reduce</name>
+        <qualifiedname>TokenArrayObj::reduce</qualifiedname>
+        <param>
+          <type>size_t</type>
+          <defname>i</defname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <defname>n</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="241" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.cc" bodystart="373" bodyend="383"/>
+        <references refid="classTokenArrayObj_1a7734ae6b1928dffa2abab4207a489eb9" compoundref="tarrayobj_8h" startline="43">p</references>
+        <references refid="classTokenArrayObj_1a2e62c183495a1a5fa06c114e507b9cfe" compoundref="tarrayobj_8cc" startline="335" endline="368">reduce</references>
+        <references refid="classTokenArrayObj_1a3ae6e338a2ad89fb15ede793e3f9fab2" compoundref="tarrayobj_8h" startline="81" endline="84">size</references>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a254deb1d61930625815f4f8e5e0ee507" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TokenArrayObj::insert</definition>
+        <argsstring>(size_t, size_t=1, const Token &amp;=Token())</argsstring>
+        <name>insert</name>
+        <qualifiedname>TokenArrayObj::insert</qualifiedname>
+        <param>
+          <type>size_t</type>
+          <defname>i</defname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <defname>n</defname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <defname>t</defname>
+          <defval><ref refid="classToken" kindref="compound">Token</ref>()</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="243" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.cc" bodystart="386" bodyend="411"/>
+        <references refid="classTokenArrayObj_1a987b2ab8759d16d384ba4ed0dbeb0d47" compoundref="tarrayobj_8h" startline="44">begin_of_free_storage</references>
+        <references refid="classTokenArrayObj_1a7734ae6b1928dffa2abab4207a489eb9" compoundref="tarrayobj_8h" startline="43">p</references>
+        <references refid="classTokenArrayObj_1a437e62e0eefb7ab76fd7415679cfcff0" compoundref="tarrayobj_8cc" startline="227" endline="235">reserve</references>
+        <references refid="classTokenArrayObj_1a3ae6e338a2ad89fb15ede793e3f9fab2" compoundref="tarrayobj_8h" startline="81" endline="84">size</references>
+        <referencedby refid="classTokenArrayObj_1a8a0f556c89b5e028c0ab7ce0dddb483b" compoundref="tarrayobj_8h" startline="245" endline="248">insert</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a8a0f556c89b5e028c0ab7ce0dddb483b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void TokenArrayObj::insert</definition>
+        <argsstring>(size_t i, const Token &amp;t)</argsstring>
+        <name>insert</name>
+        <qualifiedname>TokenArrayObj::insert</qualifiedname>
+        <param>
+          <type>size_t</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="245" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="245" bodyend="248"/>
+        <references refid="classTokenArrayObj_1a254deb1d61930625815f4f8e5e0ee507" compoundref="tarrayobj_8cc" startline="386" endline="411">insert</references>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a0ac6c65b8d19b5a8f035978f9566ba0c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TokenArrayObj::insert_move</definition>
+        <argsstring>(size_t, TokenArrayObj &amp;)</argsstring>
+        <name>insert_move</name>
+        <qualifiedname>TokenArrayObj::insert_move</qualifiedname>
+        <param>
+          <type>size_t</type>
+          <defname>i</defname>
+        </param>
+        <param>
+          <type><ref refid="classTokenArrayObj" kindref="compound">TokenArrayObj</ref> &amp;</type>
+          <defname>a</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="250" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.cc" bodystart="414" bodyend="445"/>
+        <references refid="classTokenArrayObj_1a987b2ab8759d16d384ba4ed0dbeb0d47" compoundref="tarrayobj_8h" startline="44">begin_of_free_storage</references>
+        <references refid="classTokenArrayObj_1ade8da102bbb31a5411aff3ac61aeee5d" compoundref="tarrayobj_8h" startline="45">end_of_free_storage</references>
+        <references refid="classTokenArrayObj_1a7734ae6b1928dffa2abab4207a489eb9" compoundref="tarrayobj_8h" startline="43">p</references>
+        <references refid="classTokenArrayObj_1a437e62e0eefb7ab76fd7415679cfcff0" compoundref="tarrayobj_8cc" startline="227" endline="235">reserve</references>
+        <references refid="classTokenArrayObj_1a3ae6e338a2ad89fb15ede793e3f9fab2" compoundref="tarrayobj_8h" startline="81" endline="84">size</references>
+        <referencedby refid="classTokenArray_1a9553012b514008a21fdc8b376ae273ff" compoundref="tokenarray_8h" startline="317" endline="333">TokenArray::insert_move</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a47cd2ac304d041eeb12121e8a433adcf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TokenArrayObj::insert_move</definition>
+        <argsstring>(size_t, Token &amp;)</argsstring>
+        <name>insert_move</name>
+        <qualifiedname>TokenArrayObj::insert_move</qualifiedname>
+        <param>
+          <type>size_t</type>
+          <defname>i</defname>
+        </param>
+        <param>
+          <type><ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <defname>t</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="251" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.cc" bodystart="487" bodyend="508"/>
+        <references refid="classTokenArrayObj_1a987b2ab8759d16d384ba4ed0dbeb0d47" compoundref="tarrayobj_8h" startline="44">begin_of_free_storage</references>
+        <references refid="classTokenArrayObj_1ade8da102bbb31a5411aff3ac61aeee5d" compoundref="tarrayobj_8h" startline="45">end_of_free_storage</references>
+        <references refid="classTokenArrayObj_1a7734ae6b1928dffa2abab4207a489eb9" compoundref="tarrayobj_8h" startline="43">p</references>
+        <references refid="classToken_1ac9b605f7eec9f1baabf8ffa701a65aa1" compoundref="token_8h" startline="157">Token::p</references>
+        <references refid="classTokenArrayObj_1a437e62e0eefb7ab76fd7415679cfcff0" compoundref="tarrayobj_8cc" startline="227" endline="235">reserve</references>
+        <references refid="classTokenArrayObj_1a3ae6e338a2ad89fb15ede793e3f9fab2" compoundref="tarrayobj_8h" startline="81" endline="84">size</references>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a3c850480835efbc05239eeaf0012a873" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TokenArrayObj::assign_move</definition>
+        <argsstring>(TokenArrayObj &amp;, size_t, size_t)</argsstring>
+        <name>assign_move</name>
+        <qualifiedname>TokenArrayObj::assign_move</qualifiedname>
+        <param>
+          <type><ref refid="classTokenArrayObj" kindref="compound">TokenArrayObj</ref> &amp;</type>
+          <defname>a</defname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <defname>i</defname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <defname>n</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="253" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.cc" bodystart="448" bodyend="465"/>
+        <references refid="classTokenArrayObj_1a987b2ab8759d16d384ba4ed0dbeb0d47" compoundref="tarrayobj_8h" startline="44">begin_of_free_storage</references>
+        <references refid="classTokenArrayObj_1ad3ac5af8d89adcb82c115b05d22a327e" compoundref="tarrayobj_8h" startline="75" endline="78">end</references>
+        <references refid="classTokenArrayObj_1a7734ae6b1928dffa2abab4207a489eb9" compoundref="tarrayobj_8h" startline="43">p</references>
+        <references refid="classTokenArrayObj_1a437e62e0eefb7ab76fd7415679cfcff0" compoundref="tarrayobj_8cc" startline="227" endline="235">reserve</references>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a5665d291b27dc4a781de12ec18c1f691" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TokenArrayObj::assign</definition>
+        <argsstring>(const TokenArrayObj &amp;, size_t, size_t)</argsstring>
+        <name>assign</name>
+        <qualifiedname>TokenArrayObj::assign</qualifiedname>
+        <param>
+          <type>const <ref refid="classTokenArrayObj" kindref="compound">TokenArrayObj</ref> &amp;</type>
+          <defname>a</defname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <defname>i</defname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <defname>n</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="254" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.cc" bodystart="468" bodyend="484"/>
+        <references refid="classTokenArrayObj_1a987b2ab8759d16d384ba4ed0dbeb0d47" compoundref="tarrayobj_8h" startline="44">begin_of_free_storage</references>
+        <references refid="classTokenArrayObj_1ad3ac5af8d89adcb82c115b05d22a327e" compoundref="tarrayobj_8h" startline="75" endline="78">end</references>
+        <references refid="classTokenArrayObj_1a7734ae6b1928dffa2abab4207a489eb9" compoundref="tarrayobj_8h" startline="43">p</references>
+        <references refid="classTokenArrayObj_1a437e62e0eefb7ab76fd7415679cfcff0" compoundref="tarrayobj_8cc" startline="227" endline="235">reserve</references>
+        <referencedby refid="classTokenArray_1adb8f2d0189a12fb2090205c1fc6ef67f" compoundref="tokenarray_8h" startline="301" endline="314">TokenArray::assign_move</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a48de53e5a325c76cef0134b7f709e1d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TokenArrayObj::replace_move</definition>
+        <argsstring>(size_t, size_t, TokenArrayObj &amp;)</argsstring>
+        <name>replace_move</name>
+        <qualifiedname>TokenArrayObj::replace_move</qualifiedname>
+        <param>
+          <type>size_t</type>
+          <defname>i</defname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <defname>n</defname>
+        </param>
+        <param>
+          <type><ref refid="classTokenArrayObj" kindref="compound">TokenArrayObj</ref> &amp;</type>
+          <defname>a</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="256" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.cc" bodystart="512" bodyend="593"/>
+        <references refid="classTokenArrayObj_1a987b2ab8759d16d384ba4ed0dbeb0d47" compoundref="tarrayobj_8h" startline="44">begin_of_free_storage</references>
+        <references refid="classTokenArrayObj_1ad3ac5af8d89adcb82c115b05d22a327e" compoundref="tarrayobj_8h" startline="75" endline="78">end</references>
+        <references refid="classTokenArrayObj_1a7734ae6b1928dffa2abab4207a489eb9" compoundref="tarrayobj_8h" startline="43">p</references>
+        <references refid="classDatum_1a033ad3a3e54eab1bb9a6b47eeab0611e" compoundref="datum_8h" startline="106" endline="113">Datum::removeReference</references>
+        <references refid="classTokenArrayObj_1a437e62e0eefb7ab76fd7415679cfcff0" compoundref="tarrayobj_8cc" startline="227" endline="235">reserve</references>
+        <references refid="classTokenArrayObj_1a3ae6e338a2ad89fb15ede793e3f9fab2" compoundref="tarrayobj_8h" startline="81" endline="84">size</references>
+        <referencedby refid="classTokenArray_1a7546f747b2ee6918fb1752454d0d3b7e" compoundref="tokenarray_8h" startline="344" endline="350">TokenArray::replace_move</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a2d6c8b2b5902c2e3d4d275dbdd118806" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TokenArrayObj::append_move</definition>
+        <argsstring>(TokenArrayObj &amp;)</argsstring>
+        <name>append_move</name>
+        <qualifiedname>TokenArrayObj::append_move</qualifiedname>
+        <param>
+          <type><ref refid="classTokenArrayObj" kindref="compound">TokenArrayObj</ref> &amp;</type>
+          <defname>a</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="258" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.cc" bodystart="596" bodyend="614"/>
+        <references refid="classTokenArrayObj_1a987b2ab8759d16d384ba4ed0dbeb0d47" compoundref="tarrayobj_8h" startline="44">begin_of_free_storage</references>
+        <references refid="classTokenArrayObj_1ade8da102bbb31a5411aff3ac61aeee5d" compoundref="tarrayobj_8h" startline="45">end_of_free_storage</references>
+        <references refid="classTokenArrayObj_1a437e62e0eefb7ab76fd7415679cfcff0" compoundref="tarrayobj_8cc" startline="227" endline="235">reserve</references>
+        <references refid="classTokenArrayObj_1a3ae6e338a2ad89fb15ede793e3f9fab2" compoundref="tarrayobj_8h" startline="81" endline="84">size</references>
+        <referencedby refid="classTokenArray_1a01be20e397b5d44c05a8ba478ead1148" compoundref="tokenarray_8h" startline="354" endline="360">TokenArray::append_move</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a869a7392dd8236814e27678536716d48" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TokenArrayObj::clear</definition>
+        <argsstring>()</argsstring>
+        <name>clear</name>
+        <qualifiedname>TokenArrayObj::clear</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="260" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.cc" bodystart="320" bodyend="328"/>
+        <references refid="classTokenArrayObj_1aa2311be67b26807bd805683b8ba35b0e" compoundref="tarrayobj_8h" startline="46">alloc_block_size</references>
+        <references refid="classTokenArrayObj_1a987b2ab8759d16d384ba4ed0dbeb0d47" compoundref="tarrayobj_8h" startline="44">begin_of_free_storage</references>
+        <references refid="classTokenArrayObj_1ade8da102bbb31a5411aff3ac61aeee5d" compoundref="tarrayobj_8h" startline="45">end_of_free_storage</references>
+        <references refid="classTokenArrayObj_1a7734ae6b1928dffa2abab4207a489eb9" compoundref="tarrayobj_8h" startline="43">p</references>
+        <referencedby refid="classTokenArrayObj_1a35f4b863f0c45ff8ff781311d240f1d4" compoundref="tarrayobj_8h" startline="225" endline="228">pop_back</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a568c87d8399ea52e3b14878a84daa2c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="classTokenArrayObj" kindref="compound">TokenArrayObj</ref> &amp;</type>
+        <definition>const TokenArrayObj &amp; TokenArrayObj::operator=</definition>
+        <argsstring>(const TokenArrayObj &amp;)</argsstring>
+        <name>operator=</name>
+        <qualifiedname>TokenArrayObj::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="classTokenArrayObj" kindref="compound">TokenArrayObj</ref> &amp;</type>
+          <defname>a</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="263" column="23" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.cc" bodystart="149" bodyend="191"/>
+        <references refid="classTokenArrayObj_1ae0579e65377ba605818004cd2cc344f2" compoundref="tarrayobj_8h" startline="69" endline="72">begin</references>
+        <references refid="classTokenArrayObj_1a987b2ab8759d16d384ba4ed0dbeb0d47" compoundref="tarrayobj_8h" startline="44">begin_of_free_storage</references>
+        <references refid="classTokenArrayObj_1a547b59a87709fd9b4f86dc40b6d98c1f" compoundref="tarrayobj_8h" startline="87" endline="90">capacity</references>
+        <references refid="classTokenArrayObj_1ad3ac5af8d89adcb82c115b05d22a327e" compoundref="tarrayobj_8h" startline="75" endline="78">end</references>
+        <references refid="classTokenArrayObj_1ade8da102bbb31a5411aff3ac61aeee5d" compoundref="tarrayobj_8h" startline="45">end_of_free_storage</references>
+        <references refid="classTokenArrayObj_1a7734ae6b1928dffa2abab4207a489eb9" compoundref="tarrayobj_8h" startline="43">p</references>
+        <references refid="classTokenArrayObj_1ac36cbb44b6fb9090015bfee48d882963" compoundref="tarrayobj_8cc" startline="132" endline="140">resize</references>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1ac4cbda39be6c2b3127584eec6579255f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool TokenArrayObj::operator==</definition>
+        <argsstring>(const TokenArrayObj &amp;) const</argsstring>
+        <name>operator==</name>
+        <qualifiedname>TokenArrayObj::operator==</qualifiedname>
+        <param>
+          <type>const <ref refid="classTokenArrayObj" kindref="compound">TokenArrayObj</ref> &amp;</type>
+          <defname>a</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="265" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.cc" bodystart="618" bodyend="639"/>
+        <references refid="classTokenArrayObj_1ae0579e65377ba605818004cd2cc344f2" compoundref="tarrayobj_8h" startline="69" endline="72">begin</references>
+        <references refid="classTokenArrayObj_1ad3ac5af8d89adcb82c115b05d22a327e" compoundref="tarrayobj_8h" startline="75" endline="78">end</references>
+        <references refid="classTokenArrayObj_1a7734ae6b1928dffa2abab4207a489eb9" compoundref="tarrayobj_8h" startline="43">p</references>
+        <references refid="classTokenArrayObj_1a3ae6e338a2ad89fb15ede793e3f9fab2" compoundref="tarrayobj_8h" startline="81" endline="84">size</references>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1a48954375b7022000be0d08adc66b0520" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool TokenArrayObj::empty</definition>
+        <argsstring>() const</argsstring>
+        <name>empty</name>
+        <qualifiedname>TokenArrayObj::empty</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="268" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="268" bodyend="271"/>
+        <references refid="classTokenArrayObj_1a3ae6e338a2ad89fb15ede793e3f9fab2" compoundref="tarrayobj_8h" startline="81" endline="84">size</references>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1ab722a1dca518300f0a7d8920e1861368" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TokenArrayObj::info</definition>
+        <argsstring>(std::ostream &amp;) const</argsstring>
+        <name>info</name>
+        <qualifiedname>TokenArrayObj::info</qualifiedname>
+        <param>
+          <type>std::ostream &amp;</type>
+          <defname>out</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="273" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.cc" bodystart="642" bodyend="649"/>
+        <references refid="classTokenArrayObj_1aa2311be67b26807bd805683b8ba35b0e" compoundref="tarrayobj_8h" startline="46">alloc_block_size</references>
+        <references refid="classTokenArrayObj_1a987b2ab8759d16d384ba4ed0dbeb0d47" compoundref="tarrayobj_8h" startline="44">begin_of_free_storage</references>
+        <references refid="classTokenArrayObj_1ade8da102bbb31a5411aff3ac61aeee5d" compoundref="tarrayobj_8h" startline="45">end_of_free_storage</references>
+        <references refid="classTokenArrayObj_1a7734ae6b1928dffa2abab4207a489eb9" compoundref="tarrayobj_8h" startline="43">p</references>
+      </memberdef>
+      <memberdef kind="function" id="classTokenArrayObj_1aba732dcef9cd9ed9c1f899a500414dfc" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool TokenArrayObj::valid</definition>
+        <argsstring>() const</argsstring>
+        <name>valid</name>
+        <qualifiedname>TokenArrayObj::valid</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="281" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.cc" bodystart="652" bodyend="679"/>
+        <references refid="classTokenArrayObj_1a987b2ab8759d16d384ba4ed0dbeb0d47" compoundref="tarrayobj_8h" startline="44">begin_of_free_storage</references>
+        <references refid="classTokenArrayObj_1ade8da102bbb31a5411aff3ac61aeee5d" compoundref="tarrayobj_8h" startline="45">end_of_free_storage</references>
+        <references refid="classTokenArrayObj_1a7734ae6b1928dffa2abab4207a489eb9" compoundref="tarrayobj_8h" startline="43">p</references>
+        <referencedby refid="classTokenArray_1a24eee3d8975f7d7dd01e6b26600bef6f" compoundref="tokenarray_8cc" startline="154" endline="161">TokenArray::valid</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classTokenArrayObj_1ac1c5bd7db68942951e40a64f3fd0f7dc" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>static size_t TokenArrayObj::getallocations</definition>
+        <argsstring>()</argsstring>
+        <name>getallocations</name>
+        <qualifiedname>TokenArrayObj::getallocations</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="276" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="276" bodyend="279"/>
+        <references refid="classTokenArrayObj_1a3db3812aefaa67070e812b8676f3ebcd" compoundref="tarrayobj_8h" startline="53">allocations</references>
+        <referencedby refid="classAllocations__aFunction_1a3f26ea354e5d7b9ec4de2c6544234bd7" compoundref="slidata_8cc" startline="50" endline="55">Allocations_aFunction::execute</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>TokenArrayObj</label>
+        <link refid="classTokenArrayObj"/>
+      </node>
+      <node id="2">
+        <label>TokenStack</label>
+        <link refid="classTokenStack"/>
+        <childnode refid="1" relation="private-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="3">
+        <label>Datum</label>
+        <link refid="classDatum"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>type</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>action</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Name</label>
+        <link refid="className"/>
+      </node>
+      <node id="6">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="4">
+        <label>SLIType</label>
+        <link refid="classSLIType"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>defaultaction</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Token</label>
+        <link refid="classToken"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>p</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>TokenArrayObj</label>
+        <link refid="classTokenArrayObj"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>begin_of_free_storage</edgelabel>
+          <edgelabel>end_of_free_storage</edgelabel>
+          <edgelabel>p</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" line="40" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tarrayobj.h" bodystart="41" bodyend="282"/>
+    <listofallmembers>
+      <member refid="classTokenArrayObj_1a96bb24db75c4f85d4b54328b9fe0a620" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>add_reference</name></member>
+      <member refid="classTokenArrayObj_1aa2311be67b26807bd805683b8ba35b0e" prot="private" virt="non-virtual"><scope>TokenArrayObj</scope><name>alloc_block_size</name></member>
+      <member refid="classTokenArrayObj_1abc5e26e8edeeca0fdcdba1842b0cccb2" prot="private" virt="non-virtual"><scope>TokenArrayObj</scope><name>allocate</name></member>
+      <member refid="classTokenArrayObj_1a3db3812aefaa67070e812b8676f3ebcd" prot="private" virt="non-virtual"><scope>TokenArrayObj</scope><name>allocations</name></member>
+      <member refid="classTokenArrayObj_1a2d6c8b2b5902c2e3d4d275dbdd118806" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>append_move</name></member>
+      <member refid="classTokenArrayObj_1a5665d291b27dc4a781de12ec18c1f691" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>assign</name></member>
+      <member refid="classTokenArrayObj_1a04590e6d2102f1e67c5517387a941e38" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>assign_move</name></member>
+      <member refid="classTokenArrayObj_1a3c850480835efbc05239eeaf0012a873" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>assign_move</name></member>
+      <member refid="classTokenArrayObj_1ae0579e65377ba605818004cd2cc344f2" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>begin</name></member>
+      <member refid="classTokenArrayObj_1a987b2ab8759d16d384ba4ed0dbeb0d47" prot="private" virt="non-virtual"><scope>TokenArrayObj</scope><name>begin_of_free_storage</name></member>
+      <member refid="classTokenArrayObj_1a547b59a87709fd9b4f86dc40b6d98c1f" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>capacity</name></member>
+      <member refid="classTokenArrayObj_1a869a7392dd8236814e27678536716d48" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>clear</name></member>
+      <member refid="classTokenArrayObj_1a48954375b7022000be0d08adc66b0520" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>empty</name></member>
+      <member refid="classTokenArrayObj_1ad3ac5af8d89adcb82c115b05d22a327e" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>end</name></member>
+      <member refid="classTokenArrayObj_1ade8da102bbb31a5411aff3ac61aeee5d" prot="private" virt="non-virtual"><scope>TokenArrayObj</scope><name>end_of_free_storage</name></member>
+      <member refid="classTokenArrayObj_1a5ee67f5db59d134471ac688367b5b2af" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>erase</name></member>
+      <member refid="classTokenArrayObj_1aa2a3d4b983626addfbd6baeda87b19a6" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>erase</name></member>
+      <member refid="classTokenArrayObj_1a1cecfe789a23758545bd18daf8581e96" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>erase</name></member>
+      <member refid="classTokenArrayObj_1a17e3f3a748eaa75699fb3012e7e99eef" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>get</name></member>
+      <member refid="classTokenArrayObj_1ac1c5bd7db68942951e40a64f3fd0f7dc" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>getallocations</name></member>
+      <member refid="classTokenArrayObj_1aa6ee3816ef290d18ac09f57813245db0" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>index_is_valid</name></member>
+      <member refid="classTokenArrayObj_1ab722a1dca518300f0a7d8920e1861368" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>info</name></member>
+      <member refid="classTokenArrayObj_1a254deb1d61930625815f4f8e5e0ee507" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>insert</name></member>
+      <member refid="classTokenArrayObj_1a8a0f556c89b5e028c0ab7ce0dddb483b" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>insert</name></member>
+      <member refid="classTokenArrayObj_1a0ac6c65b8d19b5a8f035978f9566ba0c" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>insert_move</name></member>
+      <member refid="classTokenArrayObj_1a47cd2ac304d041eeb12121e8a433adcf" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>insert_move</name></member>
+      <member refid="classTokenArrayObj_1a568c87d8399ea52e3b14878a84daa2c2" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>operator=</name></member>
+      <member refid="classTokenArrayObj_1ac4cbda39be6c2b3127584eec6579255f" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>operator==</name></member>
+      <member refid="classTokenArrayObj_1a4607f906a4df4b000c7235a3d6e5b68e" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>operator[]</name></member>
+      <member refid="classTokenArrayObj_1a3625eb92c8f49e6bc9b60105a12d0196" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>operator[]</name></member>
+      <member refid="classTokenArrayObj_1a7734ae6b1928dffa2abab4207a489eb9" prot="private" virt="non-virtual"><scope>TokenArrayObj</scope><name>p</name></member>
+      <member refid="classTokenArrayObj_1a35f4b863f0c45ff8ff781311d240f1d4" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>pop_back</name></member>
+      <member refid="classTokenArrayObj_1acb9ae70c2c56bd378e2b806f8fb4ccf5" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>push_back</name></member>
+      <member refid="classTokenArrayObj_1acc595719821218d739d2f08ee59f875b" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>push_back_by_pointer</name></member>
+      <member refid="classTokenArrayObj_1a6fd0347cd75400a2e45866da64cb3fef" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>push_back_by_ref</name></member>
+      <member refid="classTokenArrayObj_1ac1904faf968a3d437b475c027188d67b" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>push_back_move</name></member>
+      <member refid="classTokenArrayObj_1a2e62c183495a1a5fa06c114e507b9cfe" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>reduce</name></member>
+      <member refid="classTokenArrayObj_1add976b7a363c46bad4510fd5b16daa79" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>reduce</name></member>
+      <member refid="classTokenArrayObj_1a9c1d38c6a043a7aa1c2dacd09da8553a" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>references</name></member>
+      <member refid="classTokenArrayObj_1a1d5f9731af9dd9ab8e02b86291ce5215" prot="private" virt="non-virtual"><scope>TokenArrayObj</scope><name>refs_</name></member>
+      <member refid="classTokenArrayObj_1af2dbb1efca7e88d46fcac1dae94380bf" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>remove_reference</name></member>
+      <member refid="classTokenArrayObj_1a48de53e5a325c76cef0134b7f709e1d1" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>replace_move</name></member>
+      <member refid="classTokenArrayObj_1a437e62e0eefb7ab76fd7415679cfcff0" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>reserve</name></member>
+      <member refid="classTokenArrayObj_1a42cf4d628fb4e562a2cff09e02929d1f" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>reserve_token</name></member>
+      <member refid="classTokenArrayObj_1ac36cbb44b6fb9090015bfee48d882963" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>resize</name></member>
+      <member refid="classTokenArrayObj_1ad51ea1ad9898400490a466acd708f9ca" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>resize</name></member>
+      <member refid="classTokenArrayObj_1a3dddb29836c1f64d87209792951e1417" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>rotate</name></member>
+      <member refid="classTokenArrayObj_1aa1a67fc90463084ab507414b259fb4c1" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>shrink</name></member>
+      <member refid="classTokenArrayObj_1a3ae6e338a2ad89fb15ede793e3f9fab2" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>size</name></member>
+      <member refid="classTokenArrayObj_1af190faf317305ba4fb9016eba03ebbc2" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>TokenArrayObj</name></member>
+      <member refid="classTokenArrayObj_1ad7753029ef94a15fc0e5961caaa4a71d" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>TokenArrayObj</name></member>
+      <member refid="classTokenArrayObj_1a5bdd6929ed88ecc495ed159fbf9f0a16" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>TokenArrayObj</name></member>
+      <member refid="classTokenArrayObj_1aba732dcef9cd9ed9c1f899a500414dfc" prot="public" virt="non-virtual"><scope>TokenArrayObj</scope><name>valid</name></member>
+      <member refid="classTokenArrayObj_1a2e4afec72115f3a5a3c5ef42ad2d62cb" prot="public" virt="virtual"><scope>TokenArrayObj</scope><name>~TokenArrayObj</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

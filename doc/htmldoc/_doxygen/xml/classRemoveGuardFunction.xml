@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classRemoveGuardFunction" kind="class" language="C++" prot="public">
+    <compoundname>RemoveGuardFunction</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="slicontrol_8h" local="no">slicontrol.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classRemoveGuardFunction_1a9c42f6716c2997b6b687ef51825572f9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>RemoveGuardFunction::RemoveGuardFunction</definition>
+        <argsstring>()</argsstring>
+        <name>RemoveGuardFunction</name>
+        <qualifiedname>RemoveGuardFunction::RemoveGuardFunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" line="587" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" bodystart="587" bodyend="589"/>
+      </memberdef>
+      <memberdef kind="function" id="classRemoveGuardFunction_1a3483317d81a354d1d1e176ae7060fa6f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void RemoveGuardFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>RemoveGuardFunction::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+<para>@BeginDocumentation <ref refid="className" kindref="compound">Name</ref>: removeguard - removes the limit on the number of interpreter cycles </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Synopsis: removeguard -&gt; <ndash/></para>
+<para>Description: This command removes the restriction on the number of possible interpreter cycles, imposed by setguard.</para>
+<para>Parameters: none</para>
+<para>Author: Gewaltig</para>
+<para>Remarks: not part of PostScript</para>
+<para>SeeAlso: setguard </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" line="590" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.cc" bodystart="1908" bodyend="1912"/>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" compoundref="tokenstack_8h" startline="96" endline="99">TokenStack::pop</references>
+        <references refid="classSLIInterpreter_1a0db19873e691859c8c76cfbed3a44671" compoundref="interpret_8cc" startline="947" endline="950">SLIInterpreter::removecycleguard</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>RemoveGuardFunction</label>
+        <link refid="classRemoveGuardFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>RemoveGuardFunction</label>
+        <link refid="classRemoveGuardFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" line="584" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slicontrol.h" bodystart="585" bodyend="591"/>
+    <listofallmembers>
+      <member refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba" prot="public" virt="virtual"><scope>RemoveGuardFunction</scope><name>backtrace</name></member>
+      <member refid="classRemoveGuardFunction_1a3483317d81a354d1d1e176ae7060fa6f" prot="public" virt="virtual"><scope>RemoveGuardFunction</scope><name>execute</name></member>
+      <member refid="classRemoveGuardFunction_1a9c42f6716c2997b6b687ef51825572f9" prot="public" virt="non-virtual"><scope>RemoveGuardFunction</scope><name>RemoveGuardFunction</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>RemoveGuardFunction</scope><name>SLIFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>RemoveGuardFunction</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

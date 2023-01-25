@@ -1,0 +1,297 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters__" kind="struct" language="C++" prot="private">
+    <compoundname>nest::iaf_psc_alpha_multisynapse::Parameters_</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1aa3b31383d828b06664a902074394f26d" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::iaf_psc_alpha_multisynapse::Parameters_::Tau_</definition>
+        <argsstring></argsstring>
+        <name>Tau_</name>
+        <qualifiedname>nest::iaf_psc_alpha_multisynapse::Parameters_::Tau_</qualifiedname>
+        <briefdescription>
+<para>Membrane time constant in ms. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" line="133" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" bodystart="133" bodyend="-1"/>
+        <referencedby refid="classnest_1_1iaf__psc__alpha__multisynapse_1aa149e3ab77ee62c93a39ab7fa8dadda2" compoundref="iaf__psc__alpha__multisynapse_8cpp" startline="285" endline="322">nest::iaf_psc_alpha_multisynapse::pre_run_hook</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1ae3f1f960255718f1c440c28b15e2ee6b" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::iaf_psc_alpha_multisynapse::Parameters_::C_</definition>
+        <argsstring></argsstring>
+        <name>C_</name>
+        <qualifiedname>nest::iaf_psc_alpha_multisynapse::Parameters_::C_</qualifiedname>
+        <briefdescription>
+<para>Membrane capacitance in pF. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" line="136" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" bodystart="136" bodyend="-1"/>
+        <referencedby refid="classnest_1_1iaf__psc__alpha__multisynapse_1aa149e3ab77ee62c93a39ab7fa8dadda2" compoundref="iaf__psc__alpha__multisynapse_8cpp" startline="285" endline="322">nest::iaf_psc_alpha_multisynapse::pre_run_hook</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1a64789a885e659c24382eedbefc16f2f9" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::iaf_psc_alpha_multisynapse::Parameters_::refractory_time_</definition>
+        <argsstring></argsstring>
+        <name>refractory_time_</name>
+        <qualifiedname>nest::iaf_psc_alpha_multisynapse::Parameters_::refractory_time_</qualifiedname>
+        <briefdescription>
+<para>Refractory period in ms. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" line="139" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" bodystart="139" bodyend="-1"/>
+        <referencedby refid="classnest_1_1iaf__psc__alpha__multisynapse_1aa149e3ab77ee62c93a39ab7fa8dadda2" compoundref="iaf__psc__alpha__multisynapse_8cpp" startline="285" endline="322">nest::iaf_psc_alpha_multisynapse::pre_run_hook</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1ad37af29711ac8fe86ceba8affcc0bdaf" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::iaf_psc_alpha_multisynapse::Parameters_::E_L_</definition>
+        <argsstring></argsstring>
+        <name>E_L_</name>
+        <qualifiedname>nest::iaf_psc_alpha_multisynapse::Parameters_::E_L_</qualifiedname>
+        <briefdescription>
+<para>Resting potential in mV. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" line="142" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" bodystart="142" bodyend="-1"/>
+        <referencedby refid="classnest_1_1iaf__psc__alpha__multisynapse_1a62ce894a261dd568ea0366cbcdc25b9f" compoundref="iaf__psc__alpha__multisynapse_8h" startline="289" endline="303">nest::iaf_psc_alpha_multisynapse::get_state_element</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1aa0c0c3e7c70d7169825b3363a41a44b3" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::iaf_psc_alpha_multisynapse::Parameters_::I_e_</definition>
+        <argsstring></argsstring>
+        <name>I_e_</name>
+        <qualifiedname>nest::iaf_psc_alpha_multisynapse::Parameters_::I_e_</qualifiedname>
+        <briefdescription>
+<para>External current in pA. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" line="145" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" bodystart="145" bodyend="-1"/>
+        <referencedby refid="classnest_1_1iaf__psc__alpha__multisynapse_1abf3e3db6ae5397e09c887b6337da65dc" compoundref="iaf__psc__alpha__multisynapse_8cpp" startline="325" endline="382">nest::iaf_psc_alpha_multisynapse::update</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1a4f916cee72211b925da02a20703b7e6e" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::iaf_psc_alpha_multisynapse::Parameters_::V_reset_</definition>
+        <argsstring></argsstring>
+        <name>V_reset_</name>
+        <qualifiedname>nest::iaf_psc_alpha_multisynapse::Parameters_::V_reset_</qualifiedname>
+        <briefdescription>
+<para>Reset value of the membrane potential. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" line="148" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" bodystart="148" bodyend="-1"/>
+        <referencedby refid="classnest_1_1iaf__psc__alpha__multisynapse_1abf3e3db6ae5397e09c887b6337da65dc" compoundref="iaf__psc__alpha__multisynapse_8cpp" startline="325" endline="382">nest::iaf_psc_alpha_multisynapse::update</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1a146080372153fd401d40cda5ccc01091" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::iaf_psc_alpha_multisynapse::Parameters_::Theta_</definition>
+        <argsstring></argsstring>
+        <name>Theta_</name>
+        <qualifiedname>nest::iaf_psc_alpha_multisynapse::Parameters_::Theta_</qualifiedname>
+        <briefdescription>
+<para>Threshold, RELATIVE TO RESTING POTENTIAL(!). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>I.e. the real threshold is (E_L_+Theta_). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" line="152" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" bodystart="152" bodyend="-1"/>
+        <referencedby refid="classnest_1_1iaf__psc__alpha__multisynapse_1abf3e3db6ae5397e09c887b6337da65dc" compoundref="iaf__psc__alpha__multisynapse_8cpp" startline="325" endline="382">nest::iaf_psc_alpha_multisynapse::update</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1a43c67cb7cf9008b8646d4bd32c8b5540" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::iaf_psc_alpha_multisynapse::Parameters_::LowerBound_</definition>
+        <argsstring></argsstring>
+        <name>LowerBound_</name>
+        <qualifiedname>nest::iaf_psc_alpha_multisynapse::Parameters_::LowerBound_</qualifiedname>
+        <briefdescription>
+<para>Lower bound, RELATIVE TO RESTING POTENTIAL(!). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>I.e. the real lower bound is (LowerBound_+Theta_). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" line="156" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" bodystart="156" bodyend="-1"/>
+        <referencedby refid="classnest_1_1iaf__psc__alpha__multisynapse_1abf3e3db6ae5397e09c887b6337da65dc" compoundref="iaf__psc__alpha__multisynapse_8cpp" startline="325" endline="382">nest::iaf_psc_alpha_multisynapse::update</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1a5e1f91d7fa55a3d6419ff5696ac6e1db" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; double &gt;</type>
+        <definition>std::vector&lt; double &gt; nest::iaf_psc_alpha_multisynapse::Parameters_::tau_syn_</definition>
+        <argsstring></argsstring>
+        <name>tau_syn_</name>
+        <qualifiedname>nest::iaf_psc_alpha_multisynapse::Parameters_::tau_syn_</qualifiedname>
+        <briefdescription>
+<para><ref refid="classnest_1_1Time" kindref="compound">Time</ref> constants of synaptic currents in ms. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" line="159" column="17" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" bodystart="159" bodyend="-1"/>
+        <referencedby refid="classnest_1_1iaf__psc__alpha__multisynapse_1ae77caaced02a21dd5e867f55981efcb9" compoundref="iaf__psc__alpha__multisynapse_8cpp" startline="69" endline="77">nest::iaf_psc_alpha_multisynapse::insert_current_recordables</referencedby>
+        <referencedby refid="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1a3f57dd7b9f5c531422af7acdd32d4c75" compoundref="iaf__psc__alpha__multisynapse_8h" startline="313" endline="316">n_receptors_</referencedby>
+        <referencedby refid="classnest_1_1iaf__psc__alpha__multisynapse_1aa149e3ab77ee62c93a39ab7fa8dadda2" compoundref="iaf__psc__alpha__multisynapse_8cpp" startline="285" endline="322">nest::iaf_psc_alpha_multisynapse::pre_run_hook</referencedby>
+        <referencedby refid="classnest_1_1iaf__psc__alpha__multisynapse_1adbd9107e5712619349f2244a480b6cef" compoundref="iaf__psc__alpha__multisynapse_8cpp" startline="424" endline="461">nest::iaf_psc_alpha_multisynapse::set_status</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1a3b34fbf71e8f3f1b8d106e3b09d0e634" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::iaf_psc_alpha_multisynapse::Parameters_::has_connections_</definition>
+        <argsstring></argsstring>
+        <name>has_connections_</name>
+        <qualifiedname>nest::iaf_psc_alpha_multisynapse::Parameters_::has_connections_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" line="162" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" bodystart="162" bodyend="-1"/>
+        <referencedby refid="classnest_1_1iaf__psc__alpha__multisynapse_1abe1d982b85969213a0ff977c7fea676f" compoundref="iaf__psc__alpha__multisynapse_8cpp" startline="385" endline="394">nest::iaf_psc_alpha_multisynapse::handles_test_event</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1a3f57dd7b9f5c531422af7acdd32d4c75" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t nest::iaf_psc_alpha_multisynapse::Parameters_::n_receptors_</definition>
+        <argsstring>() const</argsstring>
+        <name>n_receptors_</name>
+        <qualifiedname>nest::iaf_psc_alpha_multisynapse::Parameters_::n_receptors_</qualifiedname>
+        <briefdescription>
+<para>Returns the size of tau_syn_. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" line="164" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" bodystart="313" bodyend="316"/>
+        <references refid="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1a5e1f91d7fa55a3d6419ff5696ac6e1db" compoundref="iaf__psc__alpha__multisynapse_8h" startline="159">tau_syn_</references>
+        <referencedby refid="classnest_1_1iaf__psc__alpha__multisynapse_1abe1d982b85969213a0ff977c7fea676f" compoundref="iaf__psc__alpha__multisynapse_8cpp" startline="385" endline="394">nest::iaf_psc_alpha_multisynapse::handles_test_event</referencedby>
+        <referencedby refid="classnest_1_1iaf__psc__alpha__multisynapse_1aa149e3ab77ee62c93a39ab7fa8dadda2" compoundref="iaf__psc__alpha__multisynapse_8cpp" startline="285" endline="322">nest::iaf_psc_alpha_multisynapse::pre_run_hook</referencedby>
+        <referencedby refid="classnest_1_1iaf__psc__alpha__multisynapse_1abf3e3db6ae5397e09c887b6337da65dc" compoundref="iaf__psc__alpha__multisynapse_8cpp" startline="325" endline="382">nest::iaf_psc_alpha_multisynapse::update</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1af1f06c53ff326f49f8fa3c6ec627606b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::iaf_psc_alpha_multisynapse::Parameters_::Parameters_</definition>
+        <argsstring>()</argsstring>
+        <name>Parameters_</name>
+        <qualifiedname>nest::iaf_psc_alpha_multisynapse::Parameters_::Parameters_</qualifiedname>
+        <briefdescription>
+<para>Sets default parameter values. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" line="166" column="5" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.cpp" bodystart="89" bodyend="101"/>
+      </memberdef>
+      <memberdef kind="function" id="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1a750381ca1500ec92ba4eac74857e4260" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::iaf_psc_alpha_multisynapse::Parameters_::get</definition>
+        <argsstring>(DictionaryDatum &amp;) const</argsstring>
+        <name>get</name>
+        <qualifiedname>nest::iaf_psc_alpha_multisynapse::Parameters_::get</qualifiedname>
+        <param>
+          <type><ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+          <defname>d</defname>
+        </param>
+        <briefdescription>
+<para>Store current values in dictionary. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" line="168" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.cpp" bodystart="118" bodyend="133"/>
+        <references refid="namespacenest_1_1names_1a87c37b74ee8ef5b94a8cf290a29adbde" compoundref="nest__names_8h" startline="110">nest::names::C_m</references>
+        <references refid="namespacenest_1_1names_1a8716ae8315df1d512b346b4243e2556d" compoundref="nest__names_8h" startline="169">nest::names::E_L</references>
+        <references refid="namespacenest_1_1names_1a72f6f87a2d431433ba6f20be774f25ae" compoundref="nest__names_8h" startline="249">nest::names::has_connections</references>
+        <references refid="namespacenest_1_1names_1a17aa476db9e655c644567ffca7c7d797" compoundref="nest__names_8h" startline="259">nest::names::I_e</references>
+        <references refid="namespacenest_1_1names_1a574a5ce9d6409ee95422666fd9341fc3" compoundref="nest__names_8h" startline="333">nest::names::n_synapses</references>
+        <references refid="namespacenest_1_1names_1af1fb8d4c65ef19902f7afc8e18e1389e" compoundref="nest__names_8h" startline="474">nest::names::t_ref</references>
+        <references refid="namespacenest_1_1names_1a653273480a7aaf3e4ea7505c82740c02" compoundref="nest__names_8h" startline="503">nest::names::tau_m</references>
+        <references refid="namespacenest_1_1names_1ad2f9a37e055291380f3d688c1fd647df" compoundref="nest__names_8h" startline="525">nest::names::tau_syn</references>
+        <references refid="namespacenest_1_1names_1a7bf6fc419b894f6e924f2e9392383e7e" compoundref="nest__names_8h" startline="591">nest::names::V_min</references>
+        <references refid="namespacenest_1_1names_1ae5244647d150458e7b04c11d820c8980" compoundref="nest__names_8h" startline="594">nest::names::V_reset</references>
+        <references refid="namespacenest_1_1names_1a8785fca1cb39c1bba08243740c7adabc" compoundref="nest__names_8h" startline="595">nest::names::V_th</references>
+        <referencedby refid="classnest_1_1iaf__psc__alpha__multisynapse_1a90d8bb22cd87cc9ac223d19723d910c3" compoundref="iaf__psc__alpha__multisynapse_8h" startline="348" endline="355">nest::iaf_psc_alpha_multisynapse::get_status</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1a2d95fe0016185129aae798b145a6f487" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double nest::iaf_psc_alpha_multisynapse::Parameters_::set</definition>
+        <argsstring>(const DictionaryDatum &amp;, Node *node)</argsstring>
+        <name>set</name>
+        <qualifiedname>nest::iaf_psc_alpha_multisynapse::Parameters_::set</qualifiedname>
+        <param>
+          <type>const <ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref> &amp;</type>
+          <defname>d</defname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1Node" kindref="compound">Node</ref> *</type>
+          <declname>node</declname>
+        </param>
+        <briefdescription>
+<para>Set values from dictionary. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Change in reversal potential E_L, to be passed to <ref refid="structnest_1_1iaf__psc__alpha__multisynapse_1_1State___1a309d64747a1a14469e04b34ec1341c2f" kindref="member">State_::set()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" line="173" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.cpp" bodystart="136" bodyend="210"/>
+        <references refid="namespacenest_1_1names_1a87c37b74ee8ef5b94a8cf290a29adbde" compoundref="nest__names_8h" startline="110">nest::names::C_m</references>
+        <references refid="namespacenest_1_1names_1a8716ae8315df1d512b346b4243e2556d" compoundref="nest__names_8h" startline="169">nest::names::E_L</references>
+        <references refid="namespacenest_1_1names_1a17aa476db9e655c644567ffca7c7d797" compoundref="nest__names_8h" startline="259">nest::names::I_e</references>
+        <references refid="namespacenest_1_1names_1af1fb8d4c65ef19902f7afc8e18e1389e" compoundref="nest__names_8h" startline="474">nest::names::t_ref</references>
+        <references refid="namespacenest_1_1names_1a653273480a7aaf3e4ea7505c82740c02" compoundref="nest__names_8h" startline="503">nest::names::tau_m</references>
+        <references refid="group__DictUtils_1ga44cdfb140502a5d84d5a798c259f0073" compoundref="dictutils_8h" startline="235" endline="255">updateValue</references>
+        <references refid="namespacenest_1_1names_1a7bf6fc419b894f6e924f2e9392383e7e" compoundref="nest__names_8h" startline="591">nest::names::V_min</references>
+        <references refid="namespacenest_1_1names_1ae5244647d150458e7b04c11d820c8980" compoundref="nest__names_8h" startline="594">nest::names::V_reset</references>
+        <references refid="namespacenest_1_1names_1a8785fca1cb39c1bba08243740c7adabc" compoundref="nest__names_8h" startline="595">nest::names::V_th</references>
+        <referencedby refid="classnest_1_1iaf__psc__alpha__multisynapse_1adbd9107e5712619349f2244a480b6cef" compoundref="iaf__psc__alpha__multisynapse_8cpp" startline="424" endline="461">nest::iaf_psc_alpha_multisynapse::set_status</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Independent parameters of the model. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" line="130" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/models/iaf_psc_alpha_multisynapse.h" bodystart="131" bodyend="174"/>
+    <listofallmembers>
+      <member refid="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1ae3f1f960255718f1c440c28b15e2ee6b" prot="public" virt="non-virtual"><scope>nest::iaf_psc_alpha_multisynapse::Parameters_</scope><name>C_</name></member>
+      <member refid="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1ad37af29711ac8fe86ceba8affcc0bdaf" prot="public" virt="non-virtual"><scope>nest::iaf_psc_alpha_multisynapse::Parameters_</scope><name>E_L_</name></member>
+      <member refid="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1a750381ca1500ec92ba4eac74857e4260" prot="public" virt="non-virtual"><scope>nest::iaf_psc_alpha_multisynapse::Parameters_</scope><name>get</name></member>
+      <member refid="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1a3b34fbf71e8f3f1b8d106e3b09d0e634" prot="public" virt="non-virtual"><scope>nest::iaf_psc_alpha_multisynapse::Parameters_</scope><name>has_connections_</name></member>
+      <member refid="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1aa0c0c3e7c70d7169825b3363a41a44b3" prot="public" virt="non-virtual"><scope>nest::iaf_psc_alpha_multisynapse::Parameters_</scope><name>I_e_</name></member>
+      <member refid="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1a43c67cb7cf9008b8646d4bd32c8b5540" prot="public" virt="non-virtual"><scope>nest::iaf_psc_alpha_multisynapse::Parameters_</scope><name>LowerBound_</name></member>
+      <member refid="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1a3f57dd7b9f5c531422af7acdd32d4c75" prot="public" virt="non-virtual"><scope>nest::iaf_psc_alpha_multisynapse::Parameters_</scope><name>n_receptors_</name></member>
+      <member refid="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1af1f06c53ff326f49f8fa3c6ec627606b" prot="public" virt="non-virtual"><scope>nest::iaf_psc_alpha_multisynapse::Parameters_</scope><name>Parameters_</name></member>
+      <member refid="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1a64789a885e659c24382eedbefc16f2f9" prot="public" virt="non-virtual"><scope>nest::iaf_psc_alpha_multisynapse::Parameters_</scope><name>refractory_time_</name></member>
+      <member refid="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1a2d95fe0016185129aae798b145a6f487" prot="public" virt="non-virtual"><scope>nest::iaf_psc_alpha_multisynapse::Parameters_</scope><name>set</name></member>
+      <member refid="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1aa3b31383d828b06664a902074394f26d" prot="public" virt="non-virtual"><scope>nest::iaf_psc_alpha_multisynapse::Parameters_</scope><name>Tau_</name></member>
+      <member refid="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1a5e1f91d7fa55a3d6419ff5696ac6e1db" prot="public" virt="non-virtual"><scope>nest::iaf_psc_alpha_multisynapse::Parameters_</scope><name>tau_syn_</name></member>
+      <member refid="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1a146080372153fd401d40cda5ccc01091" prot="public" virt="non-virtual"><scope>nest::iaf_psc_alpha_multisynapse::Parameters_</scope><name>Theta_</name></member>
+      <member refid="structnest_1_1iaf__psc__alpha__multisynapse_1_1Parameters___1a4f916cee72211b925da02a20703b7e6e" prot="public" virt="non-virtual"><scope>nest::iaf_psc_alpha_multisynapse::Parameters_</scope><name>V_reset_</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

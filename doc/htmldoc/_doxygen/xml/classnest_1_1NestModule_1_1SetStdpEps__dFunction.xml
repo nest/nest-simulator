@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classnest_1_1NestModule_1_1SetStdpEps__dFunction" kind="class" language="C++" prot="public">
+    <compoundname>nest::NestModule::SetStdpEps_dFunction</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="nestmodule_8h" local="no">nestmodule.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1NestModule_1_1SetStdpEps__dFunction_1a6e26173d5f6015daf50cfdba893d846c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::NestModule::SetStdpEps_dFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>nest::NestModule::SetStdpEps_dFunction::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+<para>Set epsilon that is used for comparing spike times in STDP. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Spike times in STDP synapses are currently represented as double values. The epsilon defines the maximum distance between spike times that is still considered 0.</para>
+<para>Note: See issue #894 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/nestmodule.h" line="550" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/nestmodule.cpp" bodystart="1716" bodyend="1725"/>
+        <references refid="classSLIInterpreter_1a4bd843d0ad15faf88185a1ae885f8852" compoundref="interpret_8h" startline="905" endline="911">SLIInterpreter::assert_stack_load</references>
+        <references refid="classnest_1_1KernelManager_1a0e27508a351fe5c17f42aea52caedb3e" compoundref="kernel__manager_8h" startline="247">nest::KernelManager::connection_manager</references>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="tokenutils_8cc_1aeb08d5341a6bafebc5f8513da1eccb2b" compoundref="tokenutils_8cc" startline="74" endline="91">getValue&lt; double &gt;</references>
+        <references refid="namespacenest_1a235f64c89ddf8992424ea32a13149a3e" compoundref="kernel__manager_8h" startline="272" endline="275">nest::kernel</references>
+        <references refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" compoundref="interpret_8h" startline="250">SLIInterpreter::OStack</references>
+        <references refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" compoundref="tokenstack_8h" startline="96" endline="99">TokenStack::pop</references>
+        <references refid="classnest_1_1ConnectionManager_1a5f6137160880e15f4d05c5b9f42dd0c0" compoundref="connection__manager_8cpp" startline="1483" endline="1507">nest::ConnectionManager::set_stdp_eps</references>
+        <references refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" compoundref="tokenstack_8h" startline="116" endline="119">TokenStack::top</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="1">
+        <label>nest::NestModule::SetStdpEps_dFunction</label>
+        <link refid="classnest_1_1NestModule_1_1SetStdpEps__dFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="1">
+        <label>nest::NestModule::SetStdpEps_dFunction</label>
+        <link refid="classnest_1_1NestModule_1_1SetStdpEps__dFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/nestmodule.h" line="547" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/nestmodule.h" bodystart="548" bodyend="551"/>
+    <listofallmembers>
+      <member refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba" prot="public" virt="virtual"><scope>nest::NestModule::SetStdpEps_dFunction</scope><name>backtrace</name></member>
+      <member refid="classnest_1_1NestModule_1_1SetStdpEps__dFunction_1a6e26173d5f6015daf50cfdba893d846c" prot="public" virt="virtual"><scope>nest::NestModule::SetStdpEps_dFunction</scope><name>execute</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>nest::NestModule::SetStdpEps_dFunction</scope><name>SLIFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>nest::NestModule::SetStdpEps_dFunction</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

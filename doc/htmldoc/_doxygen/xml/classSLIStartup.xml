@@ -1,0 +1,1278 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classSLIStartup" kind="class" language="C++" prot="public">
+    <compoundname>SLIStartup</compoundname>
+    <basecompoundref refid="classSLIModule" prot="public" virt="non-virtual">SLIModule</basecompoundref>
+    <includes refid="slistartup_8h" local="no">slistartup.h</includes>
+    <innerclass refid="classSLIStartup_1_1GetenvFunction" prot="public">SLIStartup::GetenvFunction</innerclass>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classSLIStartup_1a1169d7801230bba24106627fd4127ac1" prot="private" static="no" mutable="no">
+        <type>const std::string</type>
+        <definition>const std::string SLIStartup::sliprefix</definition>
+        <argsstring></argsstring>
+        <name>sliprefix</name>
+        <qualifiedname>SLIStartup::sliprefix</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="62" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="62" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1ab2ee2d2cdbf43b74f59cd89cf6801b53" prot="private" static="no" mutable="no">
+        <type>const std::string</type>
+        <definition>const std::string SLIStartup::slilibdir</definition>
+        <argsstring></argsstring>
+        <name>slilibdir</name>
+        <qualifiedname>SLIStartup::slilibdir</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="63" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="63" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a7576d07c2929b5d2f7e6a6a568c622e0" prot="private" static="no" mutable="no">
+        <type>const std::string</type>
+        <definition>const std::string SLIStartup::slidocdir</definition>
+        <argsstring></argsstring>
+        <name>slidocdir</name>
+        <qualifiedname>SLIStartup::slidocdir</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="64" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="64" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1ab3ac92ecd9a793b05f2948e6d20f451d" prot="private" static="no" mutable="no">
+        <type>const std::string</type>
+        <definition>const std::string SLIStartup::startupfile</definition>
+        <argsstring></argsstring>
+        <name>startupfile</name>
+        <qualifiedname>SLIStartup::startupfile</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="65" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="65" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1aadc910552230723ce33780901cbd0bb3" prot="private" static="no" mutable="no">
+        <type><ref refid="classToken" kindref="compound">Token</ref></type>
+        <definition>Token SLIStartup::commandline_args_</definition>
+        <argsstring></argsstring>
+        <name>commandline_args_</name>
+        <qualifiedname>SLIStartup::commandline_args_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="70" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="70" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+        <referencedby refid="classSLIStartup_1ace4fdafb45a74100b163b5c50e64eb1e" compoundref="slistartup_8cc" startline="135" endline="263">SLIStartup</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1acdd68dd3527ac8af99436975a473b173" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int SLIStartup::verbosity_</definition>
+        <argsstring></argsstring>
+        <name>verbosity_</name>
+        <qualifiedname>SLIStartup::verbosity_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="71" column="7" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="71" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+        <referencedby refid="classSLIStartup_1ace4fdafb45a74100b163b5c50e64eb1e" compoundref="slistartup_8cc" startline="135" endline="263">SLIStartup</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a9db4914e583c79261d5c125a3c149fcf" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool SLIStartup::debug_</definition>
+        <argsstring></argsstring>
+        <name>debug_</name>
+        <qualifiedname>SLIStartup::debug_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="72" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="72" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+        <referencedby refid="classSLIStartup_1ace4fdafb45a74100b163b5c50e64eb1e" compoundref="slistartup_8cc" startline="135" endline="263">SLIStartup</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classSLIStartup_1a5952255add952ee2446b290c9e25e170" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::argv_name</definition>
+        <argsstring></argsstring>
+        <name>argv_name</name>
+        <qualifiedname>SLIStartup::argv_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="75" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="75" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1ad2318b1d297b31c191075ea50db1d66e" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::version_name</definition>
+        <argsstring></argsstring>
+        <name>version_name</name>
+        <qualifiedname>SLIStartup::version_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="76" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="76" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1ab7eace7f6ddac72671dc2bee5d7f7343" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::exitcode_name</definition>
+        <argsstring></argsstring>
+        <name>exitcode_name</name>
+        <qualifiedname>SLIStartup::exitcode_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="77" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="77" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a871b67b4516dcf1ce8107447700aa959" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::prgbuilt_name</definition>
+        <argsstring></argsstring>
+        <name>prgbuilt_name</name>
+        <qualifiedname>SLIStartup::prgbuilt_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="78" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="78" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a4b67f32da2b0255649b626a6625bf919" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::prefix_name</definition>
+        <argsstring></argsstring>
+        <name>prefix_name</name>
+        <qualifiedname>SLIStartup::prefix_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="79" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="79" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a7f6608161044c31fd13f7bae03497937" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::prgdatadir_name</definition>
+        <argsstring></argsstring>
+        <name>prgdatadir_name</name>
+        <qualifiedname>SLIStartup::prgdatadir_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="80" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="80" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a47381112131f550d24f4f3af33751512" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::prgdocdir_name</definition>
+        <argsstring></argsstring>
+        <name>prgdocdir_name</name>
+        <qualifiedname>SLIStartup::prgdocdir_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="81" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="81" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a64e096849a6af99fc61a5089ffc85b53" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::host_name</definition>
+        <argsstring></argsstring>
+        <name>host_name</name>
+        <qualifiedname>SLIStartup::host_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="83" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="83" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a23d1acf325f26e32e3f78d411235f321" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::hostos_name</definition>
+        <argsstring></argsstring>
+        <name>hostos_name</name>
+        <qualifiedname>SLIStartup::hostos_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="84" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="84" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a5e44d0cb720b95de72d0bb815a3ca9f6" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::hostvendor_name</definition>
+        <argsstring></argsstring>
+        <name>hostvendor_name</name>
+        <qualifiedname>SLIStartup::hostvendor_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="85" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="85" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a814f91d2ad2db69465b05cc21b061978" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::hostcpu_name</definition>
+        <argsstring></argsstring>
+        <name>hostcpu_name</name>
+        <qualifiedname>SLIStartup::hostcpu_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="86" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="86" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a49dacb9532af24070940abd6fe6dca55" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::getenv_name</definition>
+        <argsstring></argsstring>
+        <name>getenv_name</name>
+        <qualifiedname>SLIStartup::getenv_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="88" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="88" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a01f55b501cf429c79a2e9d50591f33b9" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::statusdict_name</definition>
+        <argsstring></argsstring>
+        <name>statusdict_name</name>
+        <qualifiedname>SLIStartup::statusdict_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="89" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="89" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a59a1a5150dfa8b8da4a18f8b22ccff26" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::start_name</definition>
+        <argsstring></argsstring>
+        <name>start_name</name>
+        <qualifiedname>SLIStartup::start_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="90" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a252dbf82d4cb650bf7bc08731b68c97c" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::intsize_name</definition>
+        <argsstring></argsstring>
+        <name>intsize_name</name>
+        <qualifiedname>SLIStartup::intsize_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="92" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="92" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1aeefccbaaf80c2b548231e8185ed5eb0b" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::longsize_name</definition>
+        <argsstring></argsstring>
+        <name>longsize_name</name>
+        <qualifiedname>SLIStartup::longsize_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="93" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="93" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1aaba2511cde216b964a5cf73213b01b0a" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::havelonglong_name</definition>
+        <argsstring></argsstring>
+        <name>havelonglong_name</name>
+        <qualifiedname>SLIStartup::havelonglong_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="94" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="94" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a4add1642ab3fcee2bb98f84f9a774c54" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::longlongsize_name</definition>
+        <argsstring></argsstring>
+        <name>longlongsize_name</name>
+        <qualifiedname>SLIStartup::longlongsize_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="95" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="95" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a482e9bc6bd70ee5fedc281696c0d1538" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::doublesize_name</definition>
+        <argsstring></argsstring>
+        <name>doublesize_name</name>
+        <qualifiedname>SLIStartup::doublesize_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="96" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="96" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a50e4c00f7b3d946afb7567219ec9c1cd" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::pointersize_name</definition>
+        <argsstring></argsstring>
+        <name>pointersize_name</name>
+        <qualifiedname>SLIStartup::pointersize_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="97" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="97" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1afe02015a9264ed3ea29067654bfc694d" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::architecturedict_name</definition>
+        <argsstring></argsstring>
+        <name>architecturedict_name</name>
+        <qualifiedname>SLIStartup::architecturedict_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="98" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="98" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1ab1d1f5a46115dc1e703aac26ea27e008" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::platform_name</definition>
+        <argsstring></argsstring>
+        <name>platform_name</name>
+        <qualifiedname>SLIStartup::platform_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="100" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="100" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a2f92a515487514b018f1855c3c125aa6" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::threading_name</definition>
+        <argsstring></argsstring>
+        <name>threading_name</name>
+        <qualifiedname>SLIStartup::threading_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="101" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="101" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a92d72063d3d36be7d07c1549693d3f09" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::have_mpi_name</definition>
+        <argsstring></argsstring>
+        <name>have_mpi_name</name>
+        <qualifiedname>SLIStartup::have_mpi_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="103" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="103" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a9a391cd219e870a955e2971c062bc092" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::ismpi_name</definition>
+        <argsstring></argsstring>
+        <name>ismpi_name</name>
+        <qualifiedname>SLIStartup::ismpi_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="104" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="104" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1ad3a3c202e292408c3af32f0c7917dcbd" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::have_gsl_name</definition>
+        <argsstring></argsstring>
+        <name>have_gsl_name</name>
+        <qualifiedname>SLIStartup::have_gsl_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="105" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="105" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a63506f5c4609616030e5344b6bc98982" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::have_music_name</definition>
+        <argsstring></argsstring>
+        <name>have_music_name</name>
+        <qualifiedname>SLIStartup::have_music_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="106" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="106" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a165cea3e05be2f8b5cf8670ae5de7dd3" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::have_libneurosim_name</definition>
+        <argsstring></argsstring>
+        <name>have_libneurosim_name</name>
+        <qualifiedname>SLIStartup::have_libneurosim_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="107" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="107" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a696c3d239552874bd5529b423afec8c5" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::have_sionlib_name</definition>
+        <argsstring></argsstring>
+        <name>have_sionlib_name</name>
+        <qualifiedname>SLIStartup::have_sionlib_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="108" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="108" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a9b3bdf988dd330a806ac21c157ef7daa" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::ndebug_name</definition>
+        <argsstring></argsstring>
+        <name>ndebug_name</name>
+        <qualifiedname>SLIStartup::ndebug_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="109" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="109" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a0872bd341baccfda0214ecd7b659de65" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::mpiexec_name</definition>
+        <argsstring></argsstring>
+        <name>mpiexec_name</name>
+        <qualifiedname>SLIStartup::mpiexec_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="111" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="111" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a18128b76484ac246c722506d11762f32" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::mpiexec_numproc_flag_name</definition>
+        <argsstring></argsstring>
+        <name>mpiexec_numproc_flag_name</name>
+        <qualifiedname>SLIStartup::mpiexec_numproc_flag_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="112" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="112" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a1fc4167ffec4bd30bd168e2a06cb977e" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::mpiexec_max_numprocs_name</definition>
+        <argsstring></argsstring>
+        <name>mpiexec_max_numprocs_name</name>
+        <qualifiedname>SLIStartup::mpiexec_max_numprocs_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="113" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="113" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1aa087299247ec481841f2db2edb75ac45" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::mpiexec_preflags_name</definition>
+        <argsstring></argsstring>
+        <name>mpiexec_preflags_name</name>
+        <qualifiedname>SLIStartup::mpiexec_preflags_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="114" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="114" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a883e21d58eed66bac41e7683e3ce41d6" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::mpiexec_postflags_name</definition>
+        <argsstring></argsstring>
+        <name>mpiexec_postflags_name</name>
+        <qualifiedname>SLIStartup::mpiexec_postflags_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="115" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="115" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a610dc1a265f82dcd4d48238fff3b1e6f" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::exitcodes_name</definition>
+        <argsstring></argsstring>
+        <name>exitcodes_name</name>
+        <qualifiedname>SLIStartup::exitcodes_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="117" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="117" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a9e1b55f76d23811e868a10be8d1ddad7" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::exitcode_success_name</definition>
+        <argsstring></argsstring>
+        <name>exitcode_success_name</name>
+        <qualifiedname>SLIStartup::exitcode_success_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="118" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="118" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1ac8616bfe2908d75e783deee494516071" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::exitcode_skipped_name</definition>
+        <argsstring></argsstring>
+        <name>exitcode_skipped_name</name>
+        <qualifiedname>SLIStartup::exitcode_skipped_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="119" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="119" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1af50ef49f72112deb6c240bc69c74e1b2" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::exitcode_skipped_no_mpi_name</definition>
+        <argsstring></argsstring>
+        <name>exitcode_skipped_no_mpi_name</name>
+        <qualifiedname>SLIStartup::exitcode_skipped_no_mpi_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="120" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="120" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1ace87211637d6f87bd6f6f961c126fab4" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::exitcode_skipped_have_mpi_name</definition>
+        <argsstring></argsstring>
+        <name>exitcode_skipped_have_mpi_name</name>
+        <qualifiedname>SLIStartup::exitcode_skipped_have_mpi_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="121" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="121" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a28e339f4009bfc87b19f2e46464ae17e" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::exitcode_skipped_no_threading_name</definition>
+        <argsstring></argsstring>
+        <name>exitcode_skipped_no_threading_name</name>
+        <qualifiedname>SLIStartup::exitcode_skipped_no_threading_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="122" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="122" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1aa5fca4328cd01ff7c3b3856f4fdd695e" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::exitcode_skipped_no_gsl_name</definition>
+        <argsstring></argsstring>
+        <name>exitcode_skipped_no_gsl_name</name>
+        <qualifiedname>SLIStartup::exitcode_skipped_no_gsl_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="123" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="123" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a30e83b4b54aa825130d31a967f1808ee" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::exitcode_skipped_no_music_name</definition>
+        <argsstring></argsstring>
+        <name>exitcode_skipped_no_music_name</name>
+        <qualifiedname>SLIStartup::exitcode_skipped_no_music_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="124" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="124" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a7cb30a083b72b2bea7af9ed47c158255" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::exitcode_scripterror_name</definition>
+        <argsstring></argsstring>
+        <name>exitcode_scripterror_name</name>
+        <qualifiedname>SLIStartup::exitcode_scripterror_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="125" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="125" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1ab9cf112cd390426181a04a63f5c0b3f9" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::exitcode_abort_name</definition>
+        <argsstring></argsstring>
+        <name>exitcode_abort_name</name>
+        <qualifiedname>SLIStartup::exitcode_abort_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="126" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="126" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a2683cec1197faa6904ef7281a5b8212a" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::exitcode_userabort_name</definition>
+        <argsstring></argsstring>
+        <name>exitcode_userabort_name</name>
+        <qualifiedname>SLIStartup::exitcode_userabort_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="127" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="127" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1ae52e31e90ae4034f1b2aae27ba8d6048" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::exitcode_segfault_name</definition>
+        <argsstring></argsstring>
+        <name>exitcode_segfault_name</name>
+        <qualifiedname>SLIStartup::exitcode_segfault_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="128" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="128" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a996ad4e0b2eb4d7ab0d32afccb131e18" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::exitcode_exception_name</definition>
+        <argsstring></argsstring>
+        <name>exitcode_exception_name</name>
+        <qualifiedname>SLIStartup::exitcode_exception_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="129" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="129" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a23ad6b15459119b74eca605de822b0dc" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::exitcode_fatal_name</definition>
+        <argsstring></argsstring>
+        <name>exitcode_fatal_name</name>
+        <qualifiedname>SLIStartup::exitcode_fatal_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="130" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="130" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a83f2583d432427b18d29a1c6dc6b4305" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::exitcode_unknownerror_name</definition>
+        <argsstring></argsstring>
+        <name>exitcode_unknownerror_name</name>
+        <qualifiedname>SLIStartup::exitcode_unknownerror_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="131" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="131" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1aec5eb1e3469c2d4d5cf2fcf621f9ed0c" prot="public" static="no" mutable="no">
+        <type><ref refid="className" kindref="compound">Name</ref></type>
+        <definition>Name SLIStartup::environment_name</definition>
+        <argsstring></argsstring>
+        <name>environment_name</name>
+        <qualifiedname>SLIStartup::environment_name</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="133" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="133" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classSLIStartup_1a6279591f04c16a5d467a039e131bfe18" prot="public" static="no" mutable="no">
+        <type><ref refid="classSLIStartup_1_1GetenvFunction" kindref="compound">GetenvFunction</ref></type>
+        <definition>GetenvFunction SLIStartup::getenvfunction</definition>
+        <argsstring></argsstring>
+        <name>getenvfunction</name>
+        <qualifiedname>SLIStartup::getenvfunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="141" column="18" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="141" bodyend="-1"/>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">init</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classSLIStartup_1a1cedf9540cea01910164e275dedc9f69" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string SLIStartup::find_startup_file</definition>
+        <argsstring>(const std::string &amp;) const</argsstring>
+        <name>find_startup_file</name>
+        <qualifiedname>SLIStartup::find_startup_file</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="67" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classSLIStartup_1a796ae44bba3b2305694058b1b7a2a696" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string SLIStartup::getenv</definition>
+        <argsstring>(const std::string &amp;) const</argsstring>
+        <name>getenv</name>
+        <qualifiedname>SLIStartup::getenv</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <defname>v</defname>
+        </param>
+        <briefdescription>
+<para>@BeginDocumentation <ref refid="className" kindref="compound">Name</ref>: getenv - evaluates if a string is an evironment variable </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Synopsis: string getenv -&gt; path true string getenv -&gt; false</para>
+<para>Description: getenv checks if the string is an environment variable. If this is the case the path of the variable and true is pushed on the stack, otherwise a false is pushed on the stack and the string is lost.</para>
+<para>Examples:</para>
+<para>SLI ] (HOME) getenv SLI [2] pstack true (/home/gewaltig)</para>
+<para>SLI ] (NONEXISTING) getenv = false</para>
+<para>SLI ] (/home) getenv false</para>
+<para>Remarks: if getenv is used with the wrong argument (e.g. integer), the SLI Session is terminated</para>
+<para>Author: docu by Marc Oliver Gewaltig and Sirko Straube</para>
+<para>SeeAlso: environment </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="68" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.cc" bodystart="96" bodyend="107"/>
+        <references refid="classSLIStartup_1a796ae44bba3b2305694058b1b7a2a696" compoundref="slistartup_8cc" startline="96" endline="107">getenv</references>
+        <referencedby refid="classSLIStartup_1_1GetenvFunction_1a5f82485ea399b2fbbaa149e01125f636" compoundref="slistartup_8cc" startline="110" endline="133">SLIStartup::GetenvFunction::execute</referencedby>
+        <referencedby refid="classSLIStartup_1a796ae44bba3b2305694058b1b7a2a696" compoundref="slistartup_8cc" startline="96" endline="107">getenv</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classSLIStartup_1ace4fdafb45a74100b163b5c50e64eb1e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>SLIStartup::SLIStartup</definition>
+        <argsstring>(int, char **)</argsstring>
+        <name>SLIStartup</name>
+        <qualifiedname>SLIStartup::SLIStartup</qualifiedname>
+        <param>
+          <type>int</type>
+          <defname>argc</defname>
+        </param>
+        <param>
+          <type>char **</type>
+          <defname>argv</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="143" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.cc" bodystart="135" bodyend="263"/>
+        <references refid="classSLIStartup_1aadc910552230723ce33780901cbd0bb3" compoundref="slistartup_8h" startline="70">commandline_args_</references>
+        <references refid="classSLIStartup_1a9db4914e583c79261d5c125a3c149fcf" compoundref="slistartup_8h" startline="72">debug_</references>
+        <references refid="classSLIInterpreter_1a69034009aa7c7a7a11db939bf4803f14" compoundref="interpret_8h" startline="170">SLIInterpreter::M_ALL</references>
+        <references refid="classSLIInterpreter_1a8e1cdcbe896e2914564b1df5b5c79f78" compoundref="interpret_8h" startline="173">SLIInterpreter::M_DEBUG</references>
+        <references refid="classSLIInterpreter_1ae7af23ee84e18a135a44e5e6177011ca" compoundref="interpret_8h" startline="177">SLIInterpreter::M_DEPRECATED</references>
+        <references refid="classSLIInterpreter_1aafcfa7e2b250f23f2c66af03f0fea32e" compoundref="interpret_8h" startline="181">SLIInterpreter::M_ERROR</references>
+        <references refid="classSLIInterpreter_1a053e800c6bad0efff6edbb758daee802" compoundref="interpret_8h" startline="182">SLIInterpreter::M_FATAL</references>
+        <references refid="classSLIInterpreter_1ad07d680a9d59de3d7bad37ad6f43e731" compoundref="interpret_8h" startline="176">SLIInterpreter::M_INFO</references>
+        <references refid="classSLIInterpreter_1aa8f87482e288e0611b8200a5de89921f" compoundref="interpret_8h" startline="183">SLIInterpreter::M_QUIET</references>
+        <references refid="classSLIInterpreter_1ab598c268e2f4982a379aaf26eda6cf8e" compoundref="interpret_8h" startline="174">SLIInterpreter::M_STATUS</references>
+        <references refid="classSLIInterpreter_1aff69c7ddd8b138398cff86e27d04d47b" compoundref="interpret_8h" startline="180">SLIInterpreter::M_WARNING</references>
+        <references refid="classSLIStartup_1acdd68dd3527ac8af99436975a473b173" compoundref="slistartup_8h" startline="71">verbosity_</references>
+      </memberdef>
+      <memberdef kind="function" id="classSLIStartup_1ad8d5d86433b6bf3856e904e041d56f01" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SLIStartup::~SLIStartup</definition>
+        <argsstring>() override</argsstring>
+        <name>~SLIStartup</name>
+        <qualifiedname>SLIStartup::~SLIStartup</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="144" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="144" bodyend="146"/>
+      </memberdef>
+      <memberdef kind="function" id="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void SLIStartup::init</definition>
+        <argsstring>(SLIInterpreter *) override</argsstring>
+        <name>init</name>
+        <qualifiedname>SLIStartup::init</qualifiedname>
+        <reimplements refid="classSLIModule_1a4fb2ff87fa14e0caeeea009cf0761957">init</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+        </param>
+        <briefdescription>
+<para>Initialize the module. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When this function is called, most of the interpreter&apos;s facilities are up and running. However, depending on where in the interpreter&apos;s bootstrap sequence the module is initialized, not all services may be available. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="148" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.cc" bodystart="266" bodyend="436"/>
+        <references refid="classSLIStartup_1afe02015a9264ed3ea29067654bfc694d" compoundref="slistartup_8h" startline="98">architecturedict_name</references>
+        <references refid="classSLIStartup_1a5952255add952ee2446b290c9e25e170" compoundref="slistartup_8h" startline="75">argv_name</references>
+        <references refid="classSLIInterpreter_1a1ef43a348dce9987282b41fda73dc86d" compoundref="interpret_8cc" startline="961" endline="967">SLIInterpreter::backtrace_on</references>
+        <references refid="classSLIInterpreter_1a96c3eff127bf8a56860f05ff199cb6ff" compoundref="interpret_8cc" startline="311" endline="314">SLIInterpreter::baselookup</references>
+        <references refid="classSLIStartup_1aadc910552230723ce33780901cbd0bb3" compoundref="slistartup_8h" startline="70">commandline_args_</references>
+        <references refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" compoundref="interpret_8cc" startline="271" endline="282">SLIInterpreter::createcommand</references>
+        <references refid="classSLIStartup_1a9db4914e583c79261d5c125a3c149fcf" compoundref="slistartup_8h" startline="72">debug_</references>
+        <references refid="classSLIInterpreter_1a00d437b4b61acb86f8cf6ee97fce8b80" compoundref="interpret_8h" startline="454" endline="457">SLIInterpreter::debug_mode_on</references>
+        <references refid="classSLIInterpreter_1aa0717aebf8001f9be9cea57825e85f7e" compoundref="interpret_8cc" startline="329" endline="332">SLIInterpreter::def</references>
+        <references refid="classSLIStartup_1a482e9bc6bd70ee5fedc281696c0d1538" compoundref="slistartup_8h" startline="96">doublesize_name</references>
+        <references refid="slistartup_8cc_1aa006daaf11f1e2e45a6ababaf463212b">environ</references>
+        <references refid="classSLIStartup_1aec5eb1e3469c2d4d5cf2fcf621f9ed0c" compoundref="slistartup_8h" startline="133">environment_name</references>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="classSLIStartup_1ab9cf112cd390426181a04a63f5c0b3f9" compoundref="slistartup_8h" startline="126">exitcode_abort_name</references>
+        <references refid="slistartup_8h_1abe78d3d8ad8a455cc14180513d76e58e" compoundref="slistartup_8h" startline="46">EXITCODE_EXCEPTION</references>
+        <references refid="classSLIStartup_1a996ad4e0b2eb4d7ab0d32afccb131e18" compoundref="slistartup_8h" startline="129">exitcode_exception_name</references>
+        <references refid="slistartup_8h_1a0fb1b540205407734c38f39fa121e9ac" compoundref="slistartup_8h" startline="48">EXITCODE_FATAL</references>
+        <references refid="classSLIStartup_1a23ad6b15459119b74eca605de822b0dc" compoundref="slistartup_8h" startline="130">exitcode_fatal_name</references>
+        <references refid="classSLIStartup_1ab7eace7f6ddac72671dc2bee5d7f7343" compoundref="slistartup_8h" startline="77">exitcode_name</references>
+        <references refid="slistartup_8h_1ae76bdeeafe48a992baed47f9c5753946" compoundref="slistartup_8h" startline="47">EXITCODE_SCRIPTERROR</references>
+        <references refid="classSLIStartup_1a7cb30a083b72b2bea7af9ed47c158255" compoundref="slistartup_8h" startline="125">exitcode_scripterror_name</references>
+        <references refid="classSLIStartup_1ae52e31e90ae4034f1b2aae27ba8d6048" compoundref="slistartup_8h" startline="128">exitcode_segfault_name</references>
+        <references refid="slistartup_8h_1a3e2bd26394f1c95d27390aa1b4c8caab" compoundref="slistartup_8h" startline="52">EXITCODE_SKIPPED</references>
+        <references refid="slistartup_8h_1a5ac746927f23a300c7a600b4608635f1" compoundref="slistartup_8h" startline="54">EXITCODE_SKIPPED_HAVE_MPI</references>
+        <references refid="classSLIStartup_1ace87211637d6f87bd6f6f961c126fab4" compoundref="slistartup_8h" startline="121">exitcode_skipped_have_mpi_name</references>
+        <references refid="classSLIStartup_1ac8616bfe2908d75e783deee494516071" compoundref="slistartup_8h" startline="119">exitcode_skipped_name</references>
+        <references refid="slistartup_8h_1ad49daac461500708544e91077e2f4a21" compoundref="slistartup_8h" startline="56">EXITCODE_SKIPPED_NO_GSL</references>
+        <references refid="classSLIStartup_1aa5fca4328cd01ff7c3b3856f4fdd695e" compoundref="slistartup_8h" startline="123">exitcode_skipped_no_gsl_name</references>
+        <references refid="slistartup_8h_1a6b90117ebeb98e4245f5dd9e3d79a4ec" compoundref="slistartup_8h" startline="53">EXITCODE_SKIPPED_NO_MPI</references>
+        <references refid="classSLIStartup_1af50ef49f72112deb6c240bc69c74e1b2" compoundref="slistartup_8h" startline="120">exitcode_skipped_no_mpi_name</references>
+        <references refid="slistartup_8h_1a3fa2b2e3dc04ce652f698cd820eaa5c5" compoundref="slistartup_8h" startline="57">EXITCODE_SKIPPED_NO_MUSIC</references>
+        <references refid="classSLIStartup_1a30e83b4b54aa825130d31a967f1808ee" compoundref="slistartup_8h" startline="124">exitcode_skipped_no_music_name</references>
+        <references refid="slistartup_8h_1ad30ab748bec503c449cbb01bba36feeb" compoundref="slistartup_8h" startline="55">EXITCODE_SKIPPED_NO_THREADING</references>
+        <references refid="classSLIStartup_1a28e339f4009bfc87b19f2e46464ae17e" compoundref="slistartup_8h" startline="122">exitcode_skipped_no_threading_name</references>
+        <references refid="classSLIStartup_1a9e1b55f76d23811e868a10be8d1ddad7" compoundref="slistartup_8h" startline="118">exitcode_success_name</references>
+        <references refid="slistartup_8h_1a5dbdd8b9297384a8f8e884d21d50e660" compoundref="slistartup_8h" startline="44">EXITCODE_UNKNOWN_ERROR</references>
+        <references refid="classSLIStartup_1a83f2583d432427b18d29a1c6dc6b4305" compoundref="slistartup_8h" startline="131">exitcode_unknownerror_name</references>
+        <references refid="slistartup_8h_1ae1da049f30cedb81d73564c5c42f52f5" compoundref="slistartup_8h" startline="45">EXITCODE_USERABORT</references>
+        <references refid="classSLIStartup_1a2683cec1197faa6904ef7281a5b8212a" compoundref="slistartup_8h" startline="127">exitcode_userabort_name</references>
+        <references refid="classSLIStartup_1a610dc1a265f82dcd4d48238fff3b1e6f" compoundref="slistartup_8h" startline="117">exitcodes_name</references>
+        <references refid="classSLIStartup_1a49dacb9532af24070940abd6fe6dca55" compoundref="slistartup_8h" startline="88">getenv_name</references>
+        <references refid="classSLIStartup_1a6279591f04c16a5d467a039e131bfe18" compoundref="slistartup_8h" startline="141">getenvfunction</references>
+        <references refid="classSLIStartup_1ad3a3c202e292408c3af32f0c7917dcbd" compoundref="slistartup_8h" startline="105">have_gsl_name</references>
+        <references refid="classSLIStartup_1a165cea3e05be2f8b5cf8670ae5de7dd3" compoundref="slistartup_8h" startline="107">have_libneurosim_name</references>
+        <references refid="classSLIStartup_1a92d72063d3d36be7d07c1549693d3f09" compoundref="slistartup_8h" startline="103">have_mpi_name</references>
+        <references refid="classSLIStartup_1a63506f5c4609616030e5344b6bc98982" compoundref="slistartup_8h" startline="106">have_music_name</references>
+        <references refid="classSLIStartup_1a696c3d239552874bd5529b423afec8c5" compoundref="slistartup_8h" startline="108">have_sionlib_name</references>
+        <references refid="classSLIStartup_1aaba2511cde216b964a5cf73213b01b0a" compoundref="slistartup_8h" startline="94">havelonglong_name</references>
+        <references refid="classSLIStartup_1a64e096849a6af99fc61a5089ffc85b53" compoundref="slistartup_8h" startline="83">host_name</references>
+        <references refid="classSLIStartup_1a814f91d2ad2db69465b05cc21b061978" compoundref="slistartup_8h" startline="86">hostcpu_name</references>
+        <references refid="classSLIStartup_1a23d1acf325f26e32e3f78d411235f321" compoundref="slistartup_8h" startline="84">hostos_name</references>
+        <references refid="classSLIStartup_1a5e44d0cb720b95de72d0bb815a3ca9f6" compoundref="slistartup_8h" startline="85">hostvendor_name</references>
+        <references refid="classSLIStartup_1a252dbf82d4cb650bf7bc08731b68c97c" compoundref="slistartup_8h" startline="92">intsize_name</references>
+        <references refid="classSLIInterpreter_1ad274563ba63af36ffefebc44070571eb" compoundref="interpret_8h" startline="122">SLIInterpreter::iparse_name</references>
+        <references refid="classSLIStartup_1a4add1642ab3fcee2bb98f84f9a774c54" compoundref="slistartup_8h" startline="95">longlongsize_name</references>
+        <references refid="classSLIStartup_1aeefccbaaf80c2b548231e8185ed5eb0b" compoundref="slistartup_8h" startline="93">longsize_name</references>
+        <references refid="classSLIInterpreter_1a8e1cdcbe896e2914564b1df5b5c79f78" compoundref="interpret_8h" startline="173">SLIInterpreter::M_DEBUG</references>
+        <references refid="classSLIInterpreter_1a053e800c6bad0efff6edbb758daee802" compoundref="interpret_8h" startline="182">SLIInterpreter::M_FATAL</references>
+        <references refid="group__SLIMessaging_1gacbc035efd87bf843002900f7f1baf5b0" compoundref="interpret_8cc" startline="774" endline="824">SLIInterpreter::message</references>
+        <references refid="classSLIStartup_1a1fc4167ffec4bd30bd168e2a06cb977e" compoundref="slistartup_8h" startline="113">mpiexec_max_numprocs_name</references>
+        <references refid="classSLIStartup_1a0872bd341baccfda0214ecd7b659de65" compoundref="slistartup_8h" startline="111">mpiexec_name</references>
+        <references refid="classSLIStartup_1a18128b76484ac246c722506d11762f32" compoundref="slistartup_8h" startline="112">mpiexec_numproc_flag_name</references>
+        <references refid="classSLIStartup_1a883e21d58eed66bac41e7683e3ce41d6" compoundref="slistartup_8h" startline="115">mpiexec_postflags_name</references>
+        <references refid="classSLIStartup_1aa087299247ec481841f2db2edb75ac45" compoundref="slistartup_8h" startline="114">mpiexec_preflags_name</references>
+        <references refid="classSLIStartup_1a9b3bdf988dd330a806ac21c157ef7daa" compoundref="slistartup_8h" startline="109">ndebug_name</references>
+        <references refid="classSLIStartup_1ab1d1f5a46115dc1e703aac26ea27e008" compoundref="slistartup_8h" startline="100">platform_name</references>
+        <references refid="classSLIStartup_1a50e4c00f7b3d946afb7567219ec9c1cd" compoundref="slistartup_8h" startline="97">pointersize_name</references>
+        <references refid="classSLIStartup_1a4b67f32da2b0255649b626a6625bf919" compoundref="slistartup_8h" startline="79">prefix_name</references>
+        <references refid="classSLIStartup_1a871b67b4516dcf1ce8107447700aa959" compoundref="slistartup_8h" startline="78">prgbuilt_name</references>
+        <references refid="classSLIStartup_1a7f6608161044c31fd13f7bae03497937" compoundref="slistartup_8h" startline="80">prgdatadir_name</references>
+        <references refid="classSLIStartup_1a47381112131f550d24f4f3af33751512" compoundref="slistartup_8h" startline="81">prgdocdir_name</references>
+        <references refid="classTokenStack_1a585f38fb0ed122da90489eccbfd7a187" compoundref="tokenstack_8h" startline="62" endline="65">TokenStack::push</references>
+        <references refid="classTokenStack_1a9d3b72926bfa2090389f0782cd2b6e76" compoundref="tokenstack_8h" startline="68" endline="71">TokenStack::push_move</references>
+        <references refid="classSLIStartup_1a7576d07c2929b5d2f7e6a6a568c622e0" compoundref="slistartup_8h" startline="64">slidocdir</references>
+        <references refid="classSLIStartup_1ab2ee2d2cdbf43b74f59cd89cf6801b53" compoundref="slistartup_8h" startline="63">slilibdir</references>
+        <references refid="classSLIStartup_1a1169d7801230bba24106627fd4127ac1" compoundref="slistartup_8h" startline="62">sliprefix</references>
+        <references refid="classSLIStartup_1ab3ac92ecd9a793b05f2948e6d20f451d" compoundref="slistartup_8h" startline="65">startupfile</references>
+        <references refid="classSLIInterpreter_1a6890364beb77618192657b9629675b0d" compoundref="interpret_8h" startline="99">SLIInterpreter::statusdict</references>
+        <references refid="classSLIStartup_1a01f55b501cf429c79a2e9d50591f33b9" compoundref="slistartup_8h" startline="89">statusdict_name</references>
+        <references refid="classSLIStartup_1a2f92a515487514b018f1855c3c125aa6" compoundref="slistartup_8h" startline="101">threading_name</references>
+        <references refid="classlockPTR_1a0b8f1e953c32f47296c2b3491d860a48" compoundref="lockptr_8h" startline="297" endline="301">lockPTR&lt; D &gt;::valid</references>
+        <references refid="group__SLIMessaging_1ga0f5ec4cb38a20dfa11e33d6b3a2cfbbc" compoundref="interpret_8cc" startline="747" endline="750">SLIInterpreter::verbosity</references>
+        <references refid="classSLIStartup_1acdd68dd3527ac8af99436975a473b173" compoundref="slistartup_8h" startline="71">verbosity_</references>
+        <references refid="classSLIStartup_1ad2318b1d297b31c191075ea50db1d66e" compoundref="slistartup_8h" startline="76">version_name</references>
+      </memberdef>
+      <memberdef kind="function" id="classSLIStartup_1a9afd5a12260b010e2ef13d9b3271d098" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>const std::string</type>
+        <definition>const std::string SLIStartup::name</definition>
+        <argsstring>() const override</argsstring>
+        <name>name</name>
+        <qualifiedname>SLIStartup::name</qualifiedname>
+        <reimplements refid="classSLIModule_1a2e0c93f5145eb879abd3a8fdcfcedf6c">name</reimplements>
+        <briefdescription>
+<para>Return name of the module. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="151" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="151" bodyend="154"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>SLIModule</label>
+        <link refid="classSLIModule"/>
+      </node>
+      <node id="1">
+        <label>SLIStartup</label>
+        <link refid="classSLIStartup"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="4">
+        <label>Datum</label>
+        <link refid="classDatum"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>type</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>action</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Name</label>
+        <link refid="className"/>
+      </node>
+      <node id="7">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="2">
+        <label>SLIModule</label>
+        <link refid="classSLIModule"/>
+      </node>
+      <node id="1">
+        <label>SLIStartup</label>
+        <link refid="classSLIStartup"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>commandline_args_</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>architecturedict_name</edgelabel>
+          <edgelabel>argv_name</edgelabel>
+          <edgelabel>doublesize_name</edgelabel>
+          <edgelabel>environment_name</edgelabel>
+          <edgelabel>exitcode_abort_name</edgelabel>
+          <edgelabel>exitcode_exception_name</edgelabel>
+          <edgelabel>exitcode_fatal_name</edgelabel>
+          <edgelabel>exitcode_name</edgelabel>
+          <edgelabel>exitcode_scripterror_name</edgelabel>
+          <edgelabel>exitcode_segfault_name</edgelabel>
+          <edgelabel>...</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>getenvfunction</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>SLIStartup::GetenvFunction</label>
+        <link refid="classSLIStartup_1_1GetenvFunction"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>SLIType</label>
+        <link refid="classSLIType"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>defaultaction</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Token</label>
+        <link refid="classToken"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>p</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" line="60" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slistartup.h" bodystart="61" bodyend="155"/>
+    <listofallmembers>
+      <member refid="classSLIStartup_1afe02015a9264ed3ea29067654bfc694d" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>architecturedict_name</name></member>
+      <member refid="classSLIStartup_1a5952255add952ee2446b290c9e25e170" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>argv_name</name></member>
+      <member refid="classSLIStartup_1aadc910552230723ce33780901cbd0bb3" prot="private" virt="non-virtual"><scope>SLIStartup</scope><name>commandline_args_</name></member>
+      <member refid="classSLIModule_1a05bb33e2c5494f406dfdda137a305ead" prot="public" virt="virtual"><scope>SLIStartup</scope><name>commandstring</name></member>
+      <member refid="classSLIStartup_1a9db4914e583c79261d5c125a3c149fcf" prot="private" virt="non-virtual"><scope>SLIStartup</scope><name>debug_</name></member>
+      <member refid="classSLIStartup_1a482e9bc6bd70ee5fedc281696c0d1538" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>doublesize_name</name></member>
+      <member refid="classSLIStartup_1aec5eb1e3469c2d4d5cf2fcf621f9ed0c" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>environment_name</name></member>
+      <member refid="classSLIStartup_1ab9cf112cd390426181a04a63f5c0b3f9" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>exitcode_abort_name</name></member>
+      <member refid="classSLIStartup_1a996ad4e0b2eb4d7ab0d32afccb131e18" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>exitcode_exception_name</name></member>
+      <member refid="classSLIStartup_1a23ad6b15459119b74eca605de822b0dc" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>exitcode_fatal_name</name></member>
+      <member refid="classSLIStartup_1ab7eace7f6ddac72671dc2bee5d7f7343" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>exitcode_name</name></member>
+      <member refid="classSLIStartup_1a7cb30a083b72b2bea7af9ed47c158255" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>exitcode_scripterror_name</name></member>
+      <member refid="classSLIStartup_1ae52e31e90ae4034f1b2aae27ba8d6048" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>exitcode_segfault_name</name></member>
+      <member refid="classSLIStartup_1ace87211637d6f87bd6f6f961c126fab4" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>exitcode_skipped_have_mpi_name</name></member>
+      <member refid="classSLIStartup_1ac8616bfe2908d75e783deee494516071" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>exitcode_skipped_name</name></member>
+      <member refid="classSLIStartup_1aa5fca4328cd01ff7c3b3856f4fdd695e" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>exitcode_skipped_no_gsl_name</name></member>
+      <member refid="classSLIStartup_1af50ef49f72112deb6c240bc69c74e1b2" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>exitcode_skipped_no_mpi_name</name></member>
+      <member refid="classSLIStartup_1a30e83b4b54aa825130d31a967f1808ee" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>exitcode_skipped_no_music_name</name></member>
+      <member refid="classSLIStartup_1a28e339f4009bfc87b19f2e46464ae17e" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>exitcode_skipped_no_threading_name</name></member>
+      <member refid="classSLIStartup_1a9e1b55f76d23811e868a10be8d1ddad7" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>exitcode_success_name</name></member>
+      <member refid="classSLIStartup_1a83f2583d432427b18d29a1c6dc6b4305" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>exitcode_unknownerror_name</name></member>
+      <member refid="classSLIStartup_1a2683cec1197faa6904ef7281a5b8212a" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>exitcode_userabort_name</name></member>
+      <member refid="classSLIStartup_1a610dc1a265f82dcd4d48238fff3b1e6f" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>exitcodes_name</name></member>
+      <member refid="classSLIStartup_1a1cedf9540cea01910164e275dedc9f69" prot="private" virt="non-virtual"><scope>SLIStartup</scope><name>find_startup_file</name></member>
+      <member refid="classSLIStartup_1a796ae44bba3b2305694058b1b7a2a696" prot="private" virt="non-virtual"><scope>SLIStartup</scope><name>getenv</name></member>
+      <member refid="classSLIStartup_1a49dacb9532af24070940abd6fe6dca55" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>getenv_name</name></member>
+      <member refid="classSLIStartup_1a6279591f04c16a5d467a039e131bfe18" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>getenvfunction</name></member>
+      <member refid="classSLIStartup_1ad3a3c202e292408c3af32f0c7917dcbd" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>have_gsl_name</name></member>
+      <member refid="classSLIStartup_1a165cea3e05be2f8b5cf8670ae5de7dd3" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>have_libneurosim_name</name></member>
+      <member refid="classSLIStartup_1a92d72063d3d36be7d07c1549693d3f09" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>have_mpi_name</name></member>
+      <member refid="classSLIStartup_1a63506f5c4609616030e5344b6bc98982" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>have_music_name</name></member>
+      <member refid="classSLIStartup_1a696c3d239552874bd5529b423afec8c5" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>have_sionlib_name</name></member>
+      <member refid="classSLIStartup_1aaba2511cde216b964a5cf73213b01b0a" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>havelonglong_name</name></member>
+      <member refid="classSLIStartup_1a64e096849a6af99fc61a5089ffc85b53" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>host_name</name></member>
+      <member refid="classSLIStartup_1a814f91d2ad2db69465b05cc21b061978" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>hostcpu_name</name></member>
+      <member refid="classSLIStartup_1a23d1acf325f26e32e3f78d411235f321" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>hostos_name</name></member>
+      <member refid="classSLIStartup_1a5e44d0cb720b95de72d0bb815a3ca9f6" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>hostvendor_name</name></member>
+      <member refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" prot="public" virt="virtual"><scope>SLIStartup</scope><name>init</name></member>
+      <member refid="classSLIModule_1ac32734c42e93e16aaf644a842de40bc2" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>install</name></member>
+      <member refid="classSLIStartup_1a252dbf82d4cb650bf7bc08731b68c97c" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>intsize_name</name></member>
+      <member refid="classSLIStartup_1a9a391cd219e870a955e2971c062bc092" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>ismpi_name</name></member>
+      <member refid="classSLIStartup_1a4add1642ab3fcee2bb98f84f9a774c54" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>longlongsize_name</name></member>
+      <member refid="classSLIStartup_1aeefccbaaf80c2b548231e8185ed5eb0b" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>longsize_name</name></member>
+      <member refid="classSLIStartup_1a1fc4167ffec4bd30bd168e2a06cb977e" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>mpiexec_max_numprocs_name</name></member>
+      <member refid="classSLIStartup_1a0872bd341baccfda0214ecd7b659de65" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>mpiexec_name</name></member>
+      <member refid="classSLIStartup_1a18128b76484ac246c722506d11762f32" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>mpiexec_numproc_flag_name</name></member>
+      <member refid="classSLIStartup_1a883e21d58eed66bac41e7683e3ce41d6" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>mpiexec_postflags_name</name></member>
+      <member refid="classSLIStartup_1aa087299247ec481841f2db2edb75ac45" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>mpiexec_preflags_name</name></member>
+      <member refid="classSLIStartup_1a9afd5a12260b010e2ef13d9b3271d098" prot="public" virt="virtual"><scope>SLIStartup</scope><name>name</name></member>
+      <member refid="classSLIStartup_1a9b3bdf988dd330a806ac21c157ef7daa" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>ndebug_name</name></member>
+      <member refid="classSLIStartup_1ab1d1f5a46115dc1e703aac26ea27e008" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>platform_name</name></member>
+      <member refid="classSLIStartup_1a50e4c00f7b3d946afb7567219ec9c1cd" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>pointersize_name</name></member>
+      <member refid="classSLIStartup_1a4b67f32da2b0255649b626a6625bf919" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>prefix_name</name></member>
+      <member refid="classSLIStartup_1a871b67b4516dcf1ce8107447700aa959" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>prgbuilt_name</name></member>
+      <member refid="classSLIStartup_1a7f6608161044c31fd13f7bae03497937" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>prgdatadir_name</name></member>
+      <member refid="classSLIStartup_1a47381112131f550d24f4f3af33751512" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>prgdocdir_name</name></member>
+      <member refid="classSLIStartup_1a7576d07c2929b5d2f7e6a6a568c622e0" prot="private" virt="non-virtual"><scope>SLIStartup</scope><name>slidocdir</name></member>
+      <member refid="classSLIStartup_1ab2ee2d2cdbf43b74f59cd89cf6801b53" prot="private" virt="non-virtual"><scope>SLIStartup</scope><name>slilibdir</name></member>
+      <member refid="classSLIStartup_1a1169d7801230bba24106627fd4127ac1" prot="private" virt="non-virtual"><scope>SLIStartup</scope><name>sliprefix</name></member>
+      <member refid="classSLIStartup_1ace4fdafb45a74100b163b5c50e64eb1e" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>SLIStartup</name></member>
+      <member refid="classSLIStartup_1a59a1a5150dfa8b8da4a18f8b22ccff26" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>start_name</name></member>
+      <member refid="classSLIStartup_1ab3ac92ecd9a793b05f2948e6d20f451d" prot="private" virt="non-virtual"><scope>SLIStartup</scope><name>startupfile</name></member>
+      <member refid="classSLIStartup_1a01f55b501cf429c79a2e9d50591f33b9" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>statusdict_name</name></member>
+      <member refid="classSLIStartup_1a2f92a515487514b018f1855c3c125aa6" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>threading_name</name></member>
+      <member refid="classSLIStartup_1acdd68dd3527ac8af99436975a473b173" prot="private" virt="non-virtual"><scope>SLIStartup</scope><name>verbosity_</name></member>
+      <member refid="classSLIStartup_1ad2318b1d297b31c191075ea50db1d66e" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>version_name</name></member>
+      <member refid="classSLIModule_1a8e77a5438547cacc0eef34e5608591cb" prot="public" virt="virtual"><scope>SLIStartup</scope><name>~SLIModule</name></member>
+      <member refid="classSLIStartup_1ad8d5d86433b6bf3856e904e041d56f01" prot="public" virt="non-virtual"><scope>SLIStartup</scope><name>~SLIStartup</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classSLIArrayModule_1_1Eq__dvFunction" kind="class" language="C++" prot="private">
+    <compoundname>SLIArrayModule::Eq_dvFunction</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classSLIArrayModule_1_1Eq__dvFunction_1ad8cb6e30837683916d63b96878919381" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void SLIArrayModule::Eq_dvFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>SLIArrayModule::Eq_dvFunction::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="551" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.cc" bodystart="4138" bodyend="4141"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>SLIArrayModule::Eq_dvFunction</label>
+        <link refid="classSLIArrayModule_1_1Eq__dvFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>SLIArrayModule::Eq_dvFunction</label>
+        <link refid="classSLIArrayModule_1_1Eq__dvFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" line="548" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliarray.h" bodystart="549" bodyend="552"/>
+    <listofallmembers>
+      <member refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba" prot="public" virt="virtual"><scope>SLIArrayModule::Eq_dvFunction</scope><name>backtrace</name></member>
+      <member refid="classSLIArrayModule_1_1Eq__dvFunction_1ad8cb6e30837683916d63b96878919381" prot="public" virt="virtual"><scope>SLIArrayModule::Eq_dvFunction</scope><name>execute</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>SLIArrayModule::Eq_dvFunction</scope><name>SLIFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>SLIArrayModule::Eq_dvFunction</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classnest_1_1NestModule_1_1MemoryInfoFunction" kind="class" language="C++" prot="public">
+    <compoundname>nest::NestModule::MemoryInfoFunction</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="nestmodule_8h" local="no">nestmodule.h</includes>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classnest_1_1NestModule_1_1MemoryInfoFunction_1ab0013609f96f0b49214ec5edced43244" prot="private" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::NestModule::MemoryInfoFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>nest::NestModule::MemoryInfoFunction::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+<para>@BeginDocumentation <ref refid="className" kindref="compound">Name</ref>: MemoryInfo - Report current memory usage. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Description: MemoryInfo reports the current utilization of the memory manager for all models, which are used at least once. The output is sorted ascending according according to the name of the model is written to stdout. The unit of the data is byte. Note that MemoryInfo only gives you information about the memory requirements of the static model data inside of NEST. It does not tell anything about the memory situation on your computer. Synopsis: MemoryInfo -&gt; - Availability: NEST Author: Jochen Martin Eppler </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/nestmodule.h" line="358" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/nestmodule.cpp" bodystart="984" bodyend="988"/>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="namespacenest_1a235f64c89ddf8992424ea32a13149a3e" compoundref="kernel__manager_8h" startline="272" endline="275">nest::kernel</references>
+        <references refid="classnest_1_1ModelManager_1a3ddc2ab6cebf94540774acea4730e004" compoundref="model__manager_8cpp" startline="510" endline="543">nest::ModelManager::memory_info</references>
+        <references refid="classnest_1_1KernelManager_1a3558ff4918f9a1a561a11f65ae757c76" compoundref="kernel__manager_8h" startline="250">nest::KernelManager::model_manager</references>
+        <references refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" compoundref="tokenstack_8h" startline="96" endline="99">TokenStack::pop</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="1">
+        <label>nest::NestModule::MemoryInfoFunction</label>
+        <link refid="classnest_1_1NestModule_1_1MemoryInfoFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="1">
+        <label>nest::NestModule::MemoryInfoFunction</label>
+        <link refid="classnest_1_1NestModule_1_1MemoryInfoFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/nestmodule.h" line="356" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/nestmodule.h" bodystart="357" bodyend="359"/>
+    <listofallmembers>
+      <member refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba" prot="public" virt="virtual"><scope>nest::NestModule::MemoryInfoFunction</scope><name>backtrace</name></member>
+      <member refid="classnest_1_1NestModule_1_1MemoryInfoFunction_1ab0013609f96f0b49214ec5edced43244" prot="private" virt="virtual"><scope>nest::NestModule::MemoryInfoFunction</scope><name>execute</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>nest::NestModule::MemoryInfoFunction</scope><name>SLIFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>nest::NestModule::MemoryInfoFunction</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

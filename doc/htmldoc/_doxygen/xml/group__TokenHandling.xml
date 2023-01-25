@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="group__TokenHandling" kind="group">
+    <compoundname>TokenHandling</compoundname>
+    <title>Handling classes Token and Dictionary.</title>
+    <innerclass refid="classDictionary" prot="public">Dictionary</innerclass>
+    <innerclass refid="classToken" prot="public">Token</innerclass>
+    <innergroup refid="group__DictUtils">How to access the value contained in a Token contained in</innergroup>
+    <innergroup refid="group__TokenUtils">How to access the value contained in a Token.</innergroup>
+    <briefdescription>
+<para>Accessing the underlying vales of class <ref refid="classToken" kindref="compound">Token</ref> and <ref refid="classDictionary" kindref="compound">Dictionary</ref> entries can be a somewhat tricky issue, depending on how the data type is actually implemented. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The programmer needs detailed knowledge of the implementation (which usually involves an intermediate class which is derived from the generic class <ref refid="classDatum" kindref="compound">Datum</ref>.) However, the programmer in almost all cases is only interested in how to get and modify the underlying fundamental C++-types.</para>
+<para>The utility functions described in this group aim at simplifying the access to the underlying values by providing template specializations for each fundamental C++-type. The programmer can simply specify the fundamental C++-type to handle, while the implementation details are hidden.</para>
+<para><simplesect kind="note"><para>Some of the utility functions described here have since been superceded by new type conversion operators in class <ref refid="classToken" kindref="compound">Token</ref> (see there). These operators allow to use class <ref refid="classToken" kindref="compound">Token</ref> directly at positions, where a fundamental C++-datatype is required. Together with the indexing operator for class <ref refid="classDictionary" kindref="compound">Dictionary</ref>, it all boils down to comprehensive calls like the following: <programlisting><codeline><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>myvar<sp/>=<sp/>dict[</highlight><highlight class="stringliteral">&quot;myentry&quot;</highlight><highlight class="normal">];</highlight></codeline>
+<codeline><highlight class="normal">dict[</highlight><highlight class="stringliteral">&quot;entry2&quot;</highlight><highlight class="normal">]<sp/>=<sp/>23;</highlight></codeline>
+<codeline><highlight class="normal">Token1<sp/>=<sp/>Token2<sp/>+<sp/>1</highlight></codeline>
+</programlisting> </para>
+</simplesect>
+<simplesect kind="note"><para>It is left to the programmer&apos;s choice what method to use. It is recommendable to use the (implicit) type conversion operators where their operation is obvious to the reader of the source code. Sometimes using the type conversion operators tends to obscure the meaning of code. In these cases, the programmer is kindly asked to comment on the code, or to use the more explicit template functions described in this group. </para>
+</simplesect>
+<simplesect kind="note"><para>R. Kupper, 24-09-2003 </para>
+</simplesect>
+</para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

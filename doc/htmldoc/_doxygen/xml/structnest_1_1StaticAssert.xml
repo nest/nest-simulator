@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="structnest_1_1StaticAssert" kind="struct" language="C++" prot="public">
+    <compoundname>nest::StaticAssert</compoundname>
+    <includes refid="static__assert_8h" local="no">static_assert.h</includes>
+    <templateparamlist>
+      <param>
+        <type>bool</type>
+      </param>
+    </templateparamlist>
+    <briefdescription>
+<para>Compile time assertions. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Usage: <programlisting><codeline><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>StaticAssert&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">-test&gt;::success<sp/>unique-var-name;</highlight></codeline>
+</programlisting></para>
+<para>or</para>
+<para><programlisting><codeline><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>StaticAssert&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">-test&gt;::success<sp/>unique-type-name;</highlight></codeline>
+</programlisting></para>
+<para>Allows compilation if the bool-test is true. If bool-test is false, fails to compile because success is not defined. </para>
+    </detaileddescription>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/static_assert.h" line="46" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/static_assert.h" bodystart="47" bodyend="48"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

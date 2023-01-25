@@ -1,0 +1,245 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classnest_1_1GenericSecondaryConnectorModel" kind="class" language="C++" prot="public">
+    <compoundname>nest::GenericSecondaryConnectorModel</compoundname>
+    <basecompoundref refid="classnest_1_1GenericConnectorModel" prot="public" virt="non-virtual">nest::GenericConnectorModel&lt; ConnectionT &gt;</basecompoundref>
+    <includes refid="connector__model_8h" local="no">connector_model.h</includes>
+    <templateparamlist>
+      <param>
+        <type>typename ConnectionT</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classnest_1_1GenericSecondaryConnectorModel_1a0ff0e43c5b5c9b9ed721cc86be51bc33" prot="private" static="no" mutable="no">
+        <type>ConnectionT::EventType *</type>
+        <definition>ConnectionT::EventType* nest::GenericSecondaryConnectorModel&lt; ConnectionT &gt;::pev_</definition>
+        <argsstring></argsstring>
+        <name>pev_</name>
+        <qualifiedname>nest::GenericSecondaryConnectorModel::pev_</qualifiedname>
+        <briefdescription>
+<para>used to create secondary events that belong to secondary connections </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="279" column="35" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" bodystart="279" bodyend="-1"/>
+        <referencedby refid="classnest_1_1GenericSecondaryConnectorModel_1a0d1fefd6ac1d91f707124a8cc0db2f6c" compoundref="connector__model_8h" startline="282" endline="296">nest::GenericSecondaryConnectorModel&lt; ConnectionT &gt;::GenericSecondaryConnectorModel</referencedby>
+        <referencedby refid="classnest_1_1GenericSecondaryConnectorModel_1a5a7b8e5e3b633530f5a7e8f31e94922d" compoundref="connector__model_8h" startline="335" endline="338">nest::GenericSecondaryConnectorModel&lt; ConnectionT &gt;::get_event</referencedby>
+        <referencedby refid="classnest_1_1GenericSecondaryConnectorModel_1aa5f729b29a2f03c06b6830009f7ea873" compoundref="connector__model_8h" startline="326" endline="332">nest::GenericSecondaryConnectorModel&lt; ConnectionT &gt;::~GenericSecondaryConnectorModel</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1GenericSecondaryConnectorModel_1a0d1fefd6ac1d91f707124a8cc0db2f6c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>nest::GenericSecondaryConnectorModel&lt; ConnectionT &gt;::GenericSecondaryConnectorModel</definition>
+        <argsstring>(const std::string name, const bool has_delay, const bool requires_symmetric, const bool supports_wfr)</argsstring>
+        <name>GenericSecondaryConnectorModel</name>
+        <qualifiedname>nest::GenericSecondaryConnectorModel::GenericSecondaryConnectorModel</qualifiedname>
+        <param>
+          <type>const std::string</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>has_delay</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>requires_symmetric</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>supports_wfr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="282" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" bodystart="282" bodyend="296"/>
+        <references refid="classnest_1_1GenericSecondaryConnectorModel_1a0ff0e43c5b5c9b9ed721cc86be51bc33" compoundref="connector__model_8h" startline="279">nest::GenericSecondaryConnectorModel&lt; ConnectionT &gt;::pev_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1GenericSecondaryConnectorModel_1a0d244e1b80d62f2816936a0cb411e720" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>nest::GenericSecondaryConnectorModel&lt; ConnectionT &gt;::GenericSecondaryConnectorModel</definition>
+        <argsstring>(const GenericSecondaryConnectorModel &amp;cm, const std::string name)</argsstring>
+        <name>GenericSecondaryConnectorModel</name>
+        <qualifiedname>nest::GenericSecondaryConnectorModel::GenericSecondaryConnectorModel</qualifiedname>
+        <param>
+          <type>const <ref refid="classnest_1_1GenericSecondaryConnectorModel" kindref="compound">GenericSecondaryConnectorModel</ref> &amp;</type>
+          <declname>cm</declname>
+        </param>
+        <param>
+          <type>const std::string</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="298" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" bodystart="298" bodyend="302"/>
+        <references refid="classnest_1_1GenericSecondaryConnectorModel_1a0ff0e43c5b5c9b9ed721cc86be51bc33" compoundref="connector__model_8h" startline="279">nest::GenericSecondaryConnectorModel&lt; ConnectionT &gt;::pev_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1GenericSecondaryConnectorModel_1a221eeee98b613a3f3c3492a24c583b66" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="classnest_1_1ConnectorModel" kindref="compound">ConnectorModel</ref> *</type>
+        <definition>ConnectorModel * nest::GenericSecondaryConnectorModel&lt; ConnectionT &gt;::clone</definition>
+        <argsstring>(std::string name, synindex syn_id) const</argsstring>
+        <name>clone</name>
+        <qualifiedname>nest::GenericSecondaryConnectorModel::clone</qualifiedname>
+        <reimplements refid="classnest_1_1GenericConnectorModel_1a9111ebca3dccccd7734b8e679b062766">clone</reimplements>
+        <param>
+          <type>std::string</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1a2d283b4b36e5ee3b6f1d84b35c9ed475" kindref="member">synindex</ref></type>
+          <declname>syn_id</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="306" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" bodystart="306" bodyend="317"/>
+        <references refid="classnest_1_1SecondaryEvent_1a94981d28268bf2a0c63e9f37b74f05fe">nest::SecondaryEvent::add_syn_id</references>
+        <references refid="classnest_1_1ConnectorModel_1a8042f48a6d4718a3dbae8ca1e5ccedc2">nest::ConnectorModel::get_event</references>
+        <references refid="classnest_1_1ConnectorModel_1a89c5c4799f7d82cabc071a3dbd16190a" compoundref="connector__model_8h" startline="116" endline="119">nest::ConnectorModel::is_primary</references>
+        <references refid="classnest_1_1ConnectorModel_1a87685961db1b5547f2a30a8b7d4764e1">nest::ConnectorModel::set_syn_id</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1GenericSecondaryConnectorModel_1a5e5848eac71fd4be14e48b12cda6439f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="classnest_1_1SecondaryEvent" kindref="compound">SecondaryEvent</ref> *</type>
+        <definition>SecondaryEvent * nest::GenericSecondaryConnectorModel&lt; ConnectionT &gt;::create_event</definition>
+        <argsstring>() const</argsstring>
+        <name>create_event</name>
+        <qualifiedname>nest::GenericSecondaryConnectorModel::create_event</qualifiedname>
+        <reimplements refid="classnest_1_1GenericConnectorModel_1a40676f56d24124f9be12fc0e1e3f6100">create_event</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="320" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" bodystart="320" bodyend="323"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1GenericSecondaryConnectorModel_1aa5f729b29a2f03c06b6830009f7ea873" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>nest::GenericSecondaryConnectorModel&lt; ConnectionT &gt;::~GenericSecondaryConnectorModel</definition>
+        <argsstring>()</argsstring>
+        <name>~GenericSecondaryConnectorModel</name>
+        <qualifiedname>nest::GenericSecondaryConnectorModel::~GenericSecondaryConnectorModel</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="326" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" bodystart="326" bodyend="332"/>
+        <references refid="classnest_1_1GenericSecondaryConnectorModel_1a0ff0e43c5b5c9b9ed721cc86be51bc33" compoundref="connector__model_8h" startline="279">nest::GenericSecondaryConnectorModel&lt; ConnectionT &gt;::pev_</references>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1GenericSecondaryConnectorModel_1a5a7b8e5e3b633530f5a7e8f31e94922d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>ConnectionT::EventType *</type>
+        <definition>ConnectionT::EventType * nest::GenericSecondaryConnectorModel&lt; ConnectionT &gt;::get_event</definition>
+        <argsstring>() const</argsstring>
+        <name>get_event</name>
+        <qualifiedname>nest::GenericSecondaryConnectorModel::get_event</qualifiedname>
+        <reimplements refid="classnest_1_1GenericConnectorModel_1a2c9dd7f6de9f793e1c1e26fc42b7739c">get_event</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="335" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" bodystart="335" bodyend="338"/>
+        <references refid="classnest_1_1GenericSecondaryConnectorModel_1a0ff0e43c5b5c9b9ed721cc86be51bc33" compoundref="connector__model_8h" startline="279">nest::GenericSecondaryConnectorModel&lt; ConnectionT &gt;::pev_</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="3">
+        <label>nest::ConnectorModel</label>
+        <link refid="classnest_1_1ConnectorModel"/>
+      </node>
+      <node id="2">
+        <label>nest::GenericConnectorModel&lt; ConnectionT &gt;</label>
+        <link refid="classnest_1_1GenericConnectorModel"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>nest::GenericSecondaryConnectorModel&lt; ConnectionT &gt;</label>
+        <link refid="classnest_1_1GenericSecondaryConnectorModel"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="3">
+        <label>nest::ConnectorModel</label>
+        <link refid="classnest_1_1ConnectorModel"/>
+      </node>
+      <node id="2">
+        <label>nest::GenericConnectorModel&lt; ConnectionT &gt;</label>
+        <link refid="classnest_1_1GenericConnectorModel"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>nest::GenericSecondaryConnectorModel&lt; ConnectionT &gt;</label>
+        <link refid="classnest_1_1GenericSecondaryConnectorModel"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" line="275" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.h" bodystart="276" bodyend="339"/>
+    <listofallmembers>
+      <member refid="classnest_1_1GenericConnectorModel_1a55662c78049406c5119cd0c81e6de812" prot="public" virt="virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>add_connection</name></member>
+      <member refid="classnest_1_1GenericConnectorModel_1a0786c7e789e6ad238b87ee53ec0035f7" prot="private" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>add_connection_</name></member>
+      <member refid="classnest_1_1GenericConnectorModel_1a8b22d67222d48edbd71796d62b1c8310" prot="public" virt="virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>calibrate</name></member>
+      <member refid="classnest_1_1GenericConnectorModel_1a512860a2f499cf64b6857c3e13e23645" prot="public" virt="virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>check_synapse_params</name></member>
+      <member refid="classnest_1_1GenericSecondaryConnectorModel_1a221eeee98b613a3f3c3492a24c583b66" prot="public" virt="virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>clone</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a7f255fe802affaaa97b3c8088c15ced2" prot="public" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>ConnectorModel</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a35e5eb9a749494f77250cfe1bf370fc3" prot="public" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>ConnectorModel</name></member>
+      <member refid="classnest_1_1GenericConnectorModel_1a41c6629d2cfd9cf775da4c48fdc6e1ef" prot="private" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>cp_</name></member>
+      <member refid="classnest_1_1GenericSecondaryConnectorModel_1a5e5848eac71fd4be14e48b12cda6439f" prot="public" virt="virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>create_event</name></member>
+      <member refid="classnest_1_1GenericConnectorModel_1a633de754da630c5e5009f1bf676682c1" prot="private" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>default_connection_</name></member>
+      <member refid="classnest_1_1ConnectorModel_1ae7911aa0186184953e5b35033ee317f9" prot="protected" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>default_delay_needs_check_</name></member>
+      <member refid="classnest_1_1GenericConnectorModel_1a93d071655a98a9d658c7eb3e959481ba" prot="public" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>GenericConnectorModel</name></member>
+      <member refid="classnest_1_1GenericConnectorModel_1ae1c6258af8224f5183595a2c2fcf9db5" prot="public" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>GenericConnectorModel</name></member>
+      <member refid="classnest_1_1GenericSecondaryConnectorModel_1a0d1fefd6ac1d91f707124a8cc0db2f6c" prot="public" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>GenericSecondaryConnectorModel</name></member>
+      <member refid="classnest_1_1GenericSecondaryConnectorModel_1a0d244e1b80d62f2816936a0cb411e720" prot="public" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>GenericSecondaryConnectorModel</name></member>
+      <member refid="classnest_1_1GenericConnectorModel_1a6f3434036fe2eb3872087bd29dc32c56" prot="public" virt="virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>get_common_properties</name></member>
+      <member refid="classnest_1_1GenericConnectorModel_1a8b086b764ac6c27ee1860eb84881b342" prot="public" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>get_default_connection</name></member>
+      <member refid="classnest_1_1GenericSecondaryConnectorModel_1a5a7b8e5e3b633530f5a7e8f31e94922d" prot="public" virt="virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>get_event</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a697f7ef525ecca6e04c4d2c23ba7736f" prot="public" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>get_name</name></member>
+      <member refid="classnest_1_1GenericConnectorModel_1aa8c72dbdf47431532cab0e66946c9d27" prot="public" virt="virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>get_status</name></member>
+      <member refid="classnest_1_1ConnectorModel_1ad2f8242253ebfdc77e436ca6ec395532" prot="public" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>has_delay</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a2ad89edaf1088a735a3921ae0319248d" prot="protected" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>has_delay_</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a89c5c4799f7d82cabc071a3dbd16190a" prot="public" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>is_primary</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a2f26b5f18c9294d4dc4be257e00a184e" prot="protected" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>is_primary_</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a42cc2d70a67df540eb6fb4aa04ec128d" prot="protected" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>name_</name></member>
+      <member refid="classnest_1_1GenericSecondaryConnectorModel_1a0ff0e43c5b5c9b9ed721cc86be51bc33" prot="private" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>pev_</name></member>
+      <member refid="classnest_1_1GenericConnectorModel_1ad8735784f78fe43e81ff588e918c9e18" prot="private" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>receptor_type_</name></member>
+      <member refid="classnest_1_1ConnectorModel_1ac7cbf31918bf689a1603ab4494996dda" prot="public" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>requires_clopath_archiving</name></member>
+      <member refid="classnest_1_1ConnectorModel_1ac871a941b48ca79f799c11716f27ff1b" prot="protected" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>requires_clopath_archiving_</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a8b60378043cfd359fdd847aa900fd7b6" prot="public" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>requires_symmetric</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a8e4639c750f3ef47daeea32e57ea4039" prot="protected" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>requires_symmetric_</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a451935bde247cd67427fd408a2b8305b" prot="public" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>requires_urbanczik_archiving</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a9c0e416745f9ecd7e955d36b25038e96" prot="protected" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>requires_urbanczik_archiving_</name></member>
+      <member refid="classnest_1_1GenericConnectorModel_1aa02f22324265fc3bbb1447322c97aa9a" prot="public" virt="virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>set_status</name></member>
+      <member refid="classnest_1_1GenericConnectorModel_1a663e4289f1edcd9b4619edcaf8ef10d9" prot="public" virt="virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>set_syn_id</name></member>
+      <member refid="classnest_1_1ConnectorModel_1af0c532f7ac6ce31b54b914294daf580f" prot="public" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>supports_wfr</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a58285ffe47b712d7d451b6795ba784f7" prot="protected" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>supports_wfr_</name></member>
+      <member refid="classnest_1_1GenericConnectorModel_1a20dcb39b4807eb02c6d55d737f4afa83" prot="private" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>used_default_delay</name></member>
+      <member refid="classnest_1_1ConnectorModel_1a59234daf4de0418aaf86563f9b6ce192" prot="public" virt="virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>~ConnectorModel</name></member>
+      <member refid="classnest_1_1GenericSecondaryConnectorModel_1aa5f729b29a2f03c06b6830009f7ea873" prot="public" virt="non-virtual"><scope>nest::GenericSecondaryConnectorModel</scope><name>~GenericSecondaryConnectorModel</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

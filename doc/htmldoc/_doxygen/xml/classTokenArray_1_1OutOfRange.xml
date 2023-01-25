@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classTokenArray_1_1OutOfRange" kind="class" language="C++" prot="public">
+    <compoundname>TokenArray::OutOfRange</compoundname>
+    <includes refid="tokenarray_8h" local="no">tokenarray.h</includes>
+    <briefdescription>
+<para>Exception classes. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/tokenarray.h" line="451" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/tokenarray.h" bodystart="452" bodyend="453"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

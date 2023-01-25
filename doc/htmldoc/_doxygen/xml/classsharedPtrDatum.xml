@@ -1,0 +1,337 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classsharedPtrDatum" kind="class" language="C++" prot="public">
+    <compoundname>sharedPtrDatum</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">std::shared_ptr&lt; D &gt;</basecompoundref>
+    <basecompoundref refid="classTypedDatum" prot="public" virt="non-virtual">TypedDatum&lt; slt &gt;</basecompoundref>
+    <includes refid="sharedptrdatum_8h" local="no">sharedptrdatum.h</includes>
+    <templateparamlist>
+      <param>
+        <type>class D</type>
+      </param>
+      <param>
+        <type><ref refid="classSLIType" kindref="compound">SLIType</ref> *</type>
+        <declname>slt</declname>
+        <defname>slt</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classsharedPtrDatum_1af6cc79baff64204749ee25425cc1bfe8" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="classDatum" kindref="compound">Datum</ref> *</type>
+        <definition>Datum * sharedPtrDatum&lt; D, slt &gt;::clone</definition>
+        <argsstring>() const</argsstring>
+        <name>clone</name>
+        <qualifiedname>sharedPtrDatum::clone</qualifiedname>
+        <reimplements refid="classDatum_1ab06887e171572f71a041209053b1a0ff">clone</reimplements>
+        <briefdescription>
+<para>Virtual copy constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Use this function to lazily copy a datum. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sharedptrdatum.h" line="38" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sharedptrdatum.h" bodystart="38" bodyend="41"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classsharedPtrDatum_1a76b1cb6d43330b8a0a4a693c97c63b49" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>sharedPtrDatum&lt; D, slt &gt;::sharedPtrDatum</definition>
+        <argsstring>()=default</argsstring>
+        <name>sharedPtrDatum</name>
+        <qualifiedname>sharedPtrDatum::sharedPtrDatum</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sharedptrdatum.h" line="44" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classsharedPtrDatum_1afb193af4d33eea0c689fbe13acbaed90" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>sharedPtrDatum&lt; D, slt &gt;::sharedPtrDatum</definition>
+        <argsstring>(const std::shared_ptr&lt; D &gt; d)</argsstring>
+        <name>sharedPtrDatum</name>
+        <qualifiedname>sharedPtrDatum::sharedPtrDatum</qualifiedname>
+        <param>
+          <type>const std::shared_ptr&lt; D &gt;</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sharedptrdatum.h" line="46" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sharedptrdatum.h" bodystart="46" bodyend="50"/>
+      </memberdef>
+      <memberdef kind="function" id="classsharedPtrDatum_1aac3209a317c2e90311ba66499eff0785" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>sharedPtrDatum&lt; D, slt &gt;::sharedPtrDatum</definition>
+        <argsstring>(D *d)</argsstring>
+        <name>sharedPtrDatum</name>
+        <qualifiedname>sharedPtrDatum::sharedPtrDatum</qualifiedname>
+        <param>
+          <type>D *</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+<para>Constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>d</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>a pointer to an object to manage</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+The shared_ptr will control the destruction of the object. The object is automatically destroyed, so no references to it should be kept after construction. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sharedptrdatum.h" line="59" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sharedptrdatum.h" bodystart="59" bodyend="63"/>
+      </memberdef>
+      <memberdef kind="function" id="classsharedPtrDatum_1a472e166ee32d65780beede5e4da70320" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>sharedPtrDatum&lt; D, slt &gt;::~sharedPtrDatum</definition>
+        <argsstring>()=default</argsstring>
+        <name>~sharedPtrDatum</name>
+        <qualifiedname>sharedPtrDatum::~sharedPtrDatum</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sharedptrdatum.h" line="65" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classsharedPtrDatum_1a819975796b3f7e33edf434ae5d5de9aa" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>void sharedPtrDatum&lt; D, slt &gt;::print</definition>
+        <argsstring>(std::ostream &amp;out) const</argsstring>
+        <name>print</name>
+        <qualifiedname>sharedPtrDatum::print</qualifiedname>
+        <reimplements refid="classDatum_1a6a4be93b0173f6026edc7695683ec0c4">print</reimplements>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>out</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sharedptrdatum.h" line="68" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sharedptrdatum.h" bodystart="68" bodyend="71"/>
+        <references refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" compoundref="datum_8h" startline="172" endline="175">Datum::gettypename</references>
+      </memberdef>
+      <memberdef kind="function" id="classsharedPtrDatum_1aab58f0ca26ad58e7403a85f44725c541" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>void NodeCollectionIteratorDatum::pprint</definition>
+        <argsstring>(std::ostream &amp;out) const</argsstring>
+        <name>pprint</name>
+        <qualifiedname>sharedPtrDatum::pprint</qualifiedname>
+        <reimplements refid="classDatum_1a9a0232698bafa153d6286a5f3534187a">pprint</reimplements>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>out</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sharedptrdatum.h" line="74" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sharedptrdatum.h" bodystart="74" bodyend="78"/>
+        <references refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" compoundref="datum_8h" startline="172" endline="175">Datum::gettypename</references>
+        <referencedby refid="classsharedPtrDatum_1a34b8840a1f4e4c4e2ae9f8e671bada12" compoundref="sharedptrdatum_8h" startline="81" endline="84">sharedPtrDatum&lt; D, slt &gt;::info</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classsharedPtrDatum_1a34b8840a1f4e4c4e2ae9f8e671bada12" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>void sharedPtrDatum&lt; D, slt &gt;::info</definition>
+        <argsstring>(std::ostream &amp;out) const</argsstring>
+        <name>info</name>
+        <qualifiedname>sharedPtrDatum::info</qualifiedname>
+        <reimplements refid="classDatum_1af7725a211bd45f39beae0f5771038c75">info</reimplements>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>out</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sharedptrdatum.h" line="81" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sharedptrdatum.h" bodystart="81" bodyend="84"/>
+        <references refid="classsharedPtrDatum_1aab58f0ca26ad58e7403a85f44725c541" compoundref="sharedptrdatum_8h" startline="74" endline="78">sharedPtrDatum&lt; D, slt &gt;::pprint</references>
+      </memberdef>
+      <memberdef kind="function" id="classsharedPtrDatum_1ac69766d9ade2db9094c2dcf449e09ac2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>bool</type>
+        <definition>bool sharedPtrDatum&lt; D, slt &gt;::equals</definition>
+        <argsstring>(const Datum *other) const</argsstring>
+        <name>equals</name>
+        <qualifiedname>sharedPtrDatum::equals</qualifiedname>
+        <reimplements refid="classDatum_1a30302c3f9b5e9f86fc01021599011a7f">equals</reimplements>
+        <param>
+          <type>const <ref refid="classDatum" kindref="compound">Datum</ref> *</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Tests for equality between this and another datum. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dat</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>datum to check against </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sharedptrdatum.h" line="91" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sharedptrdatum.h" bodystart="91" bodyend="95"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Smart pointer data object. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="4">
+        <label>Datum</label>
+        <link refid="classDatum"/>
+      </node>
+      <node id="3">
+        <label>TypedDatum&lt; slt &gt;</label>
+        <link refid="classTypedDatum"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>sharedPtrDatum&lt; AbstractMask, &amp;NestModule::MaskType &gt;</label>
+        <link refid="classsharedPtrDatum"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; AbstractMask, &amp;NestModule::MaskType &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>sharedPtrDatum&lt; D, slt &gt;</label>
+        <link refid="classsharedPtrDatum"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>sharedPtrDatum&lt; nest::NodeCollection, &amp;nest::NestModule::NodeCollectionType &gt;</label>
+        <link refid="classsharedPtrDatum"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; nest::NodeCollection, &amp;nest::NestModule::NodeCollectionType &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>sharedPtrDatum&lt; nest::Parameter, &amp;nest::NestModule::ParameterType &gt;</label>
+        <link refid="classsharedPtrDatum"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; nest::Parameter, &amp;nest::NestModule::ParameterType &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::shared_ptr&lt; D &gt;</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="4">
+        <label>Datum</label>
+        <link refid="classDatum"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>type</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>action</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Name</label>
+        <link refid="className"/>
+      </node>
+      <node id="7">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="5">
+        <label>SLIType</label>
+        <link refid="classSLIType"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>defaultaction</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>TypedDatum&lt; slt &gt;</label>
+        <link refid="classTypedDatum"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>sharedPtrDatum&lt; D, slt &gt;</label>
+        <link refid="classsharedPtrDatum"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::shared_ptr&lt; D &gt;</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/sharedptrdatum.h" line="35" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sharedptrdatum.h" bodystart="36" bodyend="96"/>
+    <listofallmembers>
+      <member refid="classDatum_1aedcf75cc41ccd6a8247216941b10f719" prot="protected" virt="non-virtual"><scope>sharedPtrDatum</scope><name>action</name></member>
+      <member refid="classDatum_1a8a547bad7564cd6e79fd9b1a245c9e8b" prot="public" virt="non-virtual"><scope>sharedPtrDatum</scope><name>addReference</name></member>
+      <member refid="classsharedPtrDatum_1af6cc79baff64204749ee25425cc1bfe8" prot="private" virt="virtual"><scope>sharedPtrDatum</scope><name>clone</name></member>
+      <member refid="classDatum_1ae1880ae165f7a4aef90be6e8cfaa5ff5" prot="protected" virt="non-virtual"><scope>sharedPtrDatum</scope><name>Datum</name></member>
+      <member refid="classDatum_1ac7e934059aa105e87e0de888c890bf3a" prot="protected" virt="non-virtual"><scope>sharedPtrDatum</scope><name>Datum</name></member>
+      <member refid="classDatum_1a4ceb261c92a00bb5cfbdbb91104c25ff" prot="protected" virt="non-virtual"><scope>sharedPtrDatum</scope><name>Datum</name></member>
+      <member refid="classsharedPtrDatum_1ac69766d9ade2db9094c2dcf449e09ac2" prot="public" virt="virtual"><scope>sharedPtrDatum</scope><name>equals</name></member>
+      <member refid="classDatum_1aa8bccc352dca610a10b7daee4ca876f7" prot="protected" virt="non-virtual"><scope>sharedPtrDatum</scope><name>executable_</name></member>
+      <member refid="classDatum_1a772aa172fff8b5035e1e243eb046ae13" prot="public" virt="virtual"><scope>sharedPtrDatum</scope><name>execute</name></member>
+      <member refid="classDatum_1af968bcf24fef60342dcc5d374b8cd54e" prot="private" virt="virtual"><scope>sharedPtrDatum</scope><name>get_ptr</name></member>
+      <member refid="classDatum_1af7a6a22e2fadd9d3b75e15d7d4dc3998" prot="public" virt="non-virtual"><scope>sharedPtrDatum</scope><name>gettypename</name></member>
+      <member refid="classsharedPtrDatum_1a34b8840a1f4e4c4e2ae9f8e671bada12" prot="public" virt="virtual"><scope>sharedPtrDatum</scope><name>info</name></member>
+      <member refid="classDatum_1a90e482a3dc319a65759312da1f4f8b07" prot="public" virt="virtual"><scope>sharedPtrDatum</scope><name>input_form</name></member>
+      <member refid="classDatum_1a08d7463e1c6fb42a75f7edf49f9e2e3d" prot="public" virt="non-virtual"><scope>sharedPtrDatum</scope><name>is_executable</name></member>
+      <member refid="classDatum_1ad27263ba100f9c536085ddcad183ab07" prot="public" virt="non-virtual"><scope>sharedPtrDatum</scope><name>isoftype</name></member>
+      <member refid="classDatum_1a0cc07c59ff578f522ba46b7bd0e33fb5" prot="public" virt="virtual"><scope>sharedPtrDatum</scope><name>list</name></member>
+      <member refid="classDatum_1add98b474ddf98b8352c49052c026f42b" prot="public" virt="non-virtual"><scope>sharedPtrDatum</scope><name>numReferences</name></member>
+      <member refid="classTypedDatum_1a5cc4fd0fc7b08a2b3e4c837082f63790" prot="protected" virt="non-virtual"><scope>sharedPtrDatum</scope><name>operator=</name></member>
+      <member refid="classsharedPtrDatum_1aab58f0ca26ad58e7403a85f44725c541" prot="public" virt="virtual"><scope>sharedPtrDatum</scope><name>pprint</name></member>
+      <member refid="classsharedPtrDatum_1a819975796b3f7e33edf434ae5d5de9aa" prot="public" virt="virtual"><scope>sharedPtrDatum</scope><name>print</name></member>
+      <member refid="classDatum_1abd911b2048efc2b685900bb2561ffd2e" prot="protected" virt="non-virtual"><scope>sharedPtrDatum</scope><name>reference_count_</name></member>
+      <member refid="classDatum_1a033ad3a3e54eab1bb9a6b47eeab0611e" prot="public" virt="non-virtual"><scope>sharedPtrDatum</scope><name>removeReference</name></member>
+      <member refid="classDatum_1a46325ecc6d02cc01c26366b57423d9f4" prot="public" virt="non-virtual"><scope>sharedPtrDatum</scope><name>set_executable</name></member>
+      <member refid="classsharedPtrDatum_1a76b1cb6d43330b8a0a4a693c97c63b49" prot="public" virt="non-virtual"><scope>sharedPtrDatum</scope><name>sharedPtrDatum</name></member>
+      <member refid="classsharedPtrDatum_1afb193af4d33eea0c689fbe13acbaed90" prot="public" virt="non-virtual"><scope>sharedPtrDatum</scope><name>sharedPtrDatum</name></member>
+      <member refid="classsharedPtrDatum_1aac3209a317c2e90311ba66499eff0785" prot="public" virt="non-virtual"><scope>sharedPtrDatum</scope><name>sharedPtrDatum</name></member>
+      <member refid="classDatum_1a0697b4f1572af02085906c0fcf0fc7b1" prot="protected" virt="non-virtual"><scope>sharedPtrDatum</scope><name>type</name></member>
+      <member refid="classTypedDatum_1a9b89818e167d0110afcc09e5d75b738b" prot="public" virt="non-virtual"><scope>sharedPtrDatum</scope><name>TypedDatum</name></member>
+      <member refid="classTypedDatum_1af95471a28fd63265bdd7a0a2cd2faadb" prot="protected" virt="non-virtual"><scope>sharedPtrDatum</scope><name>TypedDatum</name></member>
+      <member refid="classDatum_1ad1de5a550c726c5cc95e88ffd1e71ef9" prot="public" virt="non-virtual"><scope>sharedPtrDatum</scope><name>unset_executable</name></member>
+      <member refid="classDatum_1afbf982389b91a2b013be1de6bdf1483e" prot="public" virt="virtual"><scope>sharedPtrDatum</scope><name>~Datum</name></member>
+      <member refid="classsharedPtrDatum_1a472e166ee32d65780beede5e4da70320" prot="public" virt="non-virtual"><scope>sharedPtrDatum</scope><name>~sharedPtrDatum</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

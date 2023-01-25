@@ -1,0 +1,166 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classsli_1_1pool_1_1chunk" kind="class" language="C++" prot="private">
+    <compoundname>sli::pool::chunk</compoundname>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classsli_1_1pool_1_1chunk_1ad3bde488277cd23d66ecf985385642e4" prot="private" static="no" mutable="no">
+        <type>const size_t</type>
+        <definition>const size_t sli::pool::chunk::csize</definition>
+        <argsstring></argsstring>
+        <name>csize</name>
+        <qualifiedname>sli::pool::chunk::csize</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="65" column="18" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" bodystart="65" bodyend="-1"/>
+        <referencedby refid="classsli_1_1pool_1_1chunk_1a4a85feb7d905e86e72b864602cf1d25b" compoundref="allocator_8h" startline="87" endline="90">size</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classsli_1_1pool_1_1chunk_1a542f85da8578952ee61eeb1defa182f3" prot="public" static="no" mutable="no">
+        <type><ref refid="classsli_1_1pool_1_1chunk" kindref="compound">chunk</ref> *</type>
+        <definition>chunk* sli::pool::chunk::next</definition>
+        <argsstring></argsstring>
+        <name>next</name>
+        <qualifiedname>sli::pool::chunk::next</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="70" column="11" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classsli_1_1pool_1_1chunk_1ab4af267a70e850917912ac2670e03346" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* sli::pool::chunk::mem</definition>
+        <argsstring></argsstring>
+        <name>mem</name>
+        <qualifiedname>sli::pool::chunk::mem</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="71" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" bodystart="71" bodyend="-1"/>
+        <referencedby refid="classsli_1_1pool_1_1chunk_1a3b5b0836600e1aa143a5d62460883e09" compoundref="allocator_8h" startline="80" endline="84">~chunk</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classsli_1_1pool_1_1chunk_1a1e1d47c042560db5e148dedd769252d2" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>sli::pool::chunk::chunk</definition>
+        <argsstring>(const chunk &amp;)</argsstring>
+        <name>chunk</name>
+        <qualifiedname>sli::pool::chunk::chunk</qualifiedname>
+        <param>
+          <type>const <ref refid="classsli_1_1pool_1_1chunk" kindref="compound">chunk</ref> &amp;</type>
+        </param>
+        <briefdescription>
+<para>not implemented </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="66" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="classsli_1_1pool_1_1chunk_1accb88a1a2075e3c800701568f74be1b9" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classsli_1_1pool_1_1chunk" kindref="compound">chunk</ref> &amp;</type>
+        <definition>chunk &amp; sli::pool::chunk::operator=</definition>
+        <argsstring>(const chunk &amp;)</argsstring>
+        <name>operator=</name>
+        <qualifiedname>sli::pool::chunk::operator=</qualifiedname>
+        <param>
+          <type>const <ref refid="classsli_1_1pool_1_1chunk" kindref="compound">chunk</ref> &amp;</type>
+        </param>
+        <briefdescription>
+<para>not implemented </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="67" column="11"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classsli_1_1pool_1_1chunk_1a7a12772ebfd7bfcb1934e9f82ce854f1" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>sli::pool::chunk::chunk</definition>
+        <argsstring>(size_t s)</argsstring>
+        <name>chunk</name>
+        <qualifiedname>sli::pool::chunk::chunk</qualifiedname>
+        <param>
+          <type>size_t</type>
+          <declname>s</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="73" column="14" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" bodystart="73" bodyend="78"/>
+      </memberdef>
+      <memberdef kind="function" id="classsli_1_1pool_1_1chunk_1a3b5b0836600e1aa143a5d62460883e09" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>sli::pool::chunk::~chunk</definition>
+        <argsstring>()</argsstring>
+        <name>~chunk</name>
+        <qualifiedname>sli::pool::chunk::~chunk</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="80" column="5" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" bodystart="80" bodyend="84"/>
+        <references refid="classsli_1_1pool_1_1chunk_1ab4af267a70e850917912ac2670e03346" compoundref="allocator_8h" startline="71">mem</references>
+      </memberdef>
+      <memberdef kind="function" id="classsli_1_1pool_1_1chunk_1a4a85feb7d905e86e72b864602cf1d25b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t sli::pool::chunk::size</definition>
+        <argsstring>() const</argsstring>
+        <name>size</name>
+        <qualifiedname>sli::pool::chunk::size</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="87" column="5" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" bodystart="87" bodyend="90"/>
+        <references refid="classsli_1_1pool_1_1chunk_1ad3bde488277cd23d66ecf985385642e4" compoundref="allocator_8h" startline="65">csize</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>sli::pool::chunk</label>
+        <link refid="classsli_1_1pool_1_1chunk"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" line="63" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/allocator.h" bodystart="64" bodyend="91"/>
+    <listofallmembers>
+      <member refid="classsli_1_1pool_1_1chunk_1a1e1d47c042560db5e148dedd769252d2" prot="private" virt="non-virtual"><scope>sli::pool::chunk</scope><name>chunk</name></member>
+      <member refid="classsli_1_1pool_1_1chunk_1a7a12772ebfd7bfcb1934e9f82ce854f1" prot="public" virt="non-virtual"><scope>sli::pool::chunk</scope><name>chunk</name></member>
+      <member refid="classsli_1_1pool_1_1chunk_1ad3bde488277cd23d66ecf985385642e4" prot="private" virt="non-virtual"><scope>sli::pool::chunk</scope><name>csize</name></member>
+      <member refid="classsli_1_1pool_1_1chunk_1ab4af267a70e850917912ac2670e03346" prot="public" virt="non-virtual"><scope>sli::pool::chunk</scope><name>mem</name></member>
+      <member refid="classsli_1_1pool_1_1chunk_1a542f85da8578952ee61eeb1defa182f3" prot="public" virt="non-virtual"><scope>sli::pool::chunk</scope><name>next</name></member>
+      <member refid="classsli_1_1pool_1_1chunk_1accb88a1a2075e3c800701568f74be1b9" prot="private" virt="non-virtual"><scope>sli::pool::chunk</scope><name>operator=</name></member>
+      <member refid="classsli_1_1pool_1_1chunk_1a4a85feb7d905e86e72b864602cf1d25b" prot="public" virt="non-virtual"><scope>sli::pool::chunk</scope><name>size</name></member>
+      <member refid="classsli_1_1pool_1_1chunk_1a3b5b0836600e1aa143a5d62460883e09" prot="public" virt="non-virtual"><scope>sli::pool::chunk</scope><name>~chunk</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

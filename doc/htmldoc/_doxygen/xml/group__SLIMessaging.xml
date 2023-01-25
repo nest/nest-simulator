@@ -1,0 +1,216 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="group__SLIMessaging" kind="group">
+    <compoundname>SLIMessaging</compoundname>
+    <title>Displaying messages to the user</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__SLIMessaging_1ga0f5ec4cb38a20dfa11e33d6b3a2cfbbc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SLIInterpreter::verbosity</definition>
+        <argsstring>(int)</argsstring>
+        <name>verbosity</name>
+        <qualifiedname>SLIInterpreter::verbosity</qualifiedname>
+        <param>
+          <type>int</type>
+          <defname>level</defname>
+        </param>
+        <briefdescription>
+<para>Set the verbosity level of the SLI messaging mechanism. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Only messages having an error level that is equal to or greater than this level will be displayed by the interpreter.</para>
+<para><simplesect kind="see"><para><ref refid="group__SLIMessaging_1ga2971786fa516d575d0db5436c8cce1f9" kindref="member">verbosity(void)</ref>, <ref refid="group__SLIMessaging_1gacbc035efd87bf843002900f7f1baf5b0" kindref="member">message()</ref>, debug(), status(), info(), warning(), error(), fatal() </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/interpret.h" line="775" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/interpret.cc" bodystart="747" bodyend="750"/>
+        <references refid="classSLIInterpreter_1af0909391400ac821d469a33aeefb23dd" compoundref="interpret_8h" startline="88">SLIInterpreter::verbositylevel</references>
+        <referencedby refid="classSetVerbosityFunction_1a3d35f5157556a0de39957d5aba34c849" compoundref="slicontrol_8cc" startline="2036" endline="2044">SetVerbosityFunction::execute</referencedby>
+        <referencedby refid="classVerbosityFunction_1a8878260a83ad667d4e36e7d3040cb399" compoundref="slicontrol_8cc" startline="2055" endline="2060">VerbosityFunction::execute</referencedby>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">SLIStartup::init</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="group__SLIMessaging_1ga2971786fa516d575d0db5436c8cce1f9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int SLIInterpreter::verbosity</definition>
+        <argsstring>() const</argsstring>
+        <name>verbosity</name>
+        <qualifiedname>SLIInterpreter::verbosity</qualifiedname>
+        <briefdescription>
+<para>Retrieve the current verbosity level of the SLI messaging mechanism. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Only messages having an error level that is equal to or greater than this level will be displayed by the interpreter. <linebreak/>
+You may use any positive integer here. For conveniency, there exist five predifined error levels: <linebreak/>
+<ref refid="classSLIInterpreter_1a69034009aa7c7a7a11db939bf4803f14" kindref="member">SLIInterpreter::M_ALL</ref>=0, display all messages <linebreak/>
+<ref refid="classSLIInterpreter_1a8e1cdcbe896e2914564b1df5b5c79f78" kindref="member">SLIInterpreter::M_DEBUG</ref>=5, display debugging messages and above <linebreak/>
+<ref refid="classSLIInterpreter_1ab598c268e2f4982a379aaf26eda6cf8e" kindref="member">SLIInterpreter::M_STATUS</ref>=7, display status messages and above <linebreak/>
+<ref refid="classSLIInterpreter_1ad07d680a9d59de3d7bad37ad6f43e731" kindref="member">SLIInterpreter::M_INFO</ref>=10, display information messages and above <linebreak/>
+<ref refid="classSLIInterpreter_1a63715d65dc436afe9be8e14dcc639768" kindref="member">SLIInterpreter::M_PROGRESS</ref>=15, display test-related messages and above <linebreak/>
+<ref refid="classSLIInterpreter_1ae7af23ee84e18a135a44e5e6177011ca" kindref="member">SLIInterpreter::M_DEPRECATED</ref>=18, display deprecation warnings and above <linebreak/>
+<ref refid="classSLIInterpreter_1aff69c7ddd8b138398cff86e27d04d47b" kindref="member">SLIInterpreter::M_WARNING</ref>=20, display warning messages and above <linebreak/>
+<ref refid="classSLIInterpreter_1aafcfa7e2b250f23f2c66af03f0fea32e" kindref="member">SLIInterpreter::M_ERROR</ref>=30, display error messages and above <linebreak/>
+<ref refid="classSLIInterpreter_1a053e800c6bad0efff6edbb758daee802" kindref="member">SLIInterpreter::M_FATAL</ref>=40, display failure messages and above <linebreak/>
+<ref refid="classSLIInterpreter_1aa8f87482e288e0611b8200a5de89921f" kindref="member">SLIInterpreter::M_QUIET</ref>=100, suppress all messages <linebreak/>
+Thus, by calling verbosity(SLIInterpreter::M_WARNING) you indicate that you are interested in seeing error messages and more important messages only.</para>
+<para><simplesect kind="see"><para><ref refid="group__SLIMessaging_1ga2971786fa516d575d0db5436c8cce1f9" kindref="member">verbosity(void)</ref>, <ref refid="group__SLIMessaging_1gacbc035efd87bf843002900f7f1baf5b0" kindref="member">message()</ref>, debug(), status(), info(), warning(), error(), fatal() </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/interpret.h" line="801" column="7" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/interpret.cc" bodystart="753" bodyend="756"/>
+        <references refid="classSLIInterpreter_1af0909391400ac821d469a33aeefb23dd" compoundref="interpret_8h" startline="88">SLIInterpreter::verbositylevel</references>
+      </memberdef>
+      <memberdef kind="function" id="group__SLIMessaging_1gacbc035efd87bf843002900f7f1baf5b0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SLIInterpreter::message</definition>
+        <argsstring>(int level, const char from[], const char text[], const char errorname[]=&quot;&quot;) const</argsstring>
+        <name>message</name>
+        <qualifiedname>SLIInterpreter::message</qualifiedname>
+        <param>
+          <type>int</type>
+          <declname>level</declname>
+        </param>
+        <param>
+          <type>const char</type>
+          <declname>from</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>const char</type>
+          <declname>text</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>const char</type>
+          <declname>errorname</declname>
+          <array>[]</array>
+          <defval>&quot;&quot;</defval>
+        </param>
+        <briefdescription>
+<para>Display a message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>level</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The error level that shall be associated with the message. You may use any positive integer here. For convenience, there exist five predefined error levels: <linebreak/>
+(<ref refid="classSLIInterpreter_1a69034009aa7c7a7a11db939bf4803f14" kindref="member">SLIInterpreter::M_ALL</ref>=0, for use with <ref refid="group__SLIMessaging_1ga0f5ec4cb38a20dfa11e33d6b3a2cfbbc" kindref="member">verbosity(int)</ref> only, see there), <linebreak/>
+ <ref refid="classSLIInterpreter_1a8e1cdcbe896e2914564b1df5b5c79f78" kindref="member">SLIInterpreter::M_DEBUG</ref>=5, a debugging message <linebreak/>
+ <ref refid="classSLIInterpreter_1ab598c268e2f4982a379aaf26eda6cf8e" kindref="member">SLIInterpreter::M_STATUS</ref>=7, a status message <linebreak/>
+ <ref refid="classSLIInterpreter_1ad07d680a9d59de3d7bad37ad6f43e731" kindref="member">SLIInterpreter::M_INFO</ref>=10, an informational message <linebreak/>
+ <ref refid="classSLIInterpreter_1a63715d65dc436afe9be8e14dcc639768" kindref="member">SLIInterpreter::M_PROGRESS</ref>=15, a test-related message <linebreak/>
+ <ref refid="classSLIInterpreter_1ae7af23ee84e18a135a44e5e6177011ca" kindref="member">SLIInterpreter::M_DEPRECATED</ref>=18, a deprecation warning <linebreak/>
+ <ref refid="classSLIInterpreter_1aff69c7ddd8b138398cff86e27d04d47b" kindref="member">SLIInterpreter::M_WARNING</ref>=20, a warning message <linebreak/>
+ <ref refid="classSLIInterpreter_1aafcfa7e2b250f23f2c66af03f0fea32e" kindref="member">SLIInterpreter::M_ERROR</ref>=30, an error message <linebreak/>
+ <ref refid="classSLIInterpreter_1a053e800c6bad0efff6edbb758daee802" kindref="member">SLIInterpreter::M_FATAL</ref>=40, a failure message. <linebreak/>
+(<ref refid="classSLIInterpreter_1aa8f87482e288e0611b8200a5de89921f" kindref="member">SLIInterpreter::M_QUIET</ref>=100, for use with <ref refid="group__SLIMessaging_1ga0f5ec4cb38a20dfa11e33d6b3a2cfbbc" kindref="member">verbosity(int)</ref> only, see there),</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>from</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A string specifying the name of the function that sends the message. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>test</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A string specifying the message text.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+The message will ony be displayed if the current verbosity level is greater than or equal to the specified level. <linebreak/>
+ If two or more messages are issued after each other, that have the same <emphasis>from</emphasis> and <emphasis>level</emphasis> argument, the messages will be grouped together in the output.</para>
+<para><simplesect kind="see"><para><ref refid="group__SLIMessaging_1ga2971786fa516d575d0db5436c8cce1f9" kindref="member">verbosity(void)</ref>, <ref refid="group__SLIMessaging_1ga0f5ec4cb38a20dfa11e33d6b3a2cfbbc" kindref="member">verbosity(int)</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/interpret.h" line="832" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/interpret.cc" bodystart="774" bodyend="824"/>
+        <references refid="classSLIInterpreter_1aeadc51a3dc40b521c0a5504130c2a422" compoundref="interpret_8h" startline="188">SLIInterpreter::M_ALL_NAME</references>
+        <references refid="classSLIInterpreter_1a8e1cdcbe896e2914564b1df5b5c79f78" compoundref="interpret_8h" startline="173">SLIInterpreter::M_DEBUG</references>
+        <references refid="classSLIInterpreter_1a3a1d933681f180131590e3ff7963320e" compoundref="interpret_8h" startline="189">SLIInterpreter::M_DEBUG_NAME</references>
+        <references refid="classSLIInterpreter_1ae7af23ee84e18a135a44e5e6177011ca" compoundref="interpret_8h" startline="177">SLIInterpreter::M_DEPRECATED</references>
+        <references refid="classSLIInterpreter_1aa7c04a939c7dd80bb0eb8db804bcd239" compoundref="interpret_8h" startline="193">SLIInterpreter::M_DEPRECATED_NAME</references>
+        <references refid="classSLIInterpreter_1aafcfa7e2b250f23f2c66af03f0fea32e" compoundref="interpret_8h" startline="181">SLIInterpreter::M_ERROR</references>
+        <references refid="classSLIInterpreter_1a44234827b12fe44cfb0745cdc9686a32" compoundref="interpret_8h" startline="195">SLIInterpreter::M_ERROR_NAME</references>
+        <references refid="classSLIInterpreter_1a053e800c6bad0efff6edbb758daee802" compoundref="interpret_8h" startline="182">SLIInterpreter::M_FATAL</references>
+        <references refid="classSLIInterpreter_1a21f57d65e99452db0d20860908773fb7" compoundref="interpret_8h" startline="196">SLIInterpreter::M_FATAL_NAME</references>
+        <references refid="classSLIInterpreter_1ad07d680a9d59de3d7bad37ad6f43e731" compoundref="interpret_8h" startline="176">SLIInterpreter::M_INFO</references>
+        <references refid="classSLIInterpreter_1a33eb44511dc26a8f6d897ca221e786bf" compoundref="interpret_8h" startline="191">SLIInterpreter::M_INFO_NAME</references>
+        <references refid="classSLIInterpreter_1a63715d65dc436afe9be8e14dcc639768" compoundref="interpret_8h" startline="179">SLIInterpreter::M_PROGRESS</references>
+        <references refid="classSLIInterpreter_1a38952d40cc46abf06928c44e972549e7" compoundref="interpret_8h" startline="192">SLIInterpreter::M_PROGRESS_NAME</references>
+        <references refid="classSLIInterpreter_1ab598c268e2f4982a379aaf26eda6cf8e" compoundref="interpret_8h" startline="174">SLIInterpreter::M_STATUS</references>
+        <references refid="classSLIInterpreter_1abc5a2a83b757e4a25b1fd765bd24cd49" compoundref="interpret_8h" startline="190">SLIInterpreter::M_STATUS_NAME</references>
+        <references refid="classSLIInterpreter_1aff69c7ddd8b138398cff86e27d04d47b" compoundref="interpret_8h" startline="180">SLIInterpreter::M_WARNING</references>
+        <references refid="classSLIInterpreter_1ad9a2d169a4de0b88b06a2b74afcc68b4" compoundref="interpret_8h" startline="194">SLIInterpreter::M_WARNING_NAME</references>
+        <references refid="group__SLIMessaging_1gacbc035efd87bf843002900f7f1baf5b0" compoundref="interpret_8cc" startline="774" endline="824">SLIInterpreter::message</references>
+        <references refid="classSLIInterpreter_1af0909391400ac821d469a33aeefb23dd" compoundref="interpret_8h" startline="88">SLIInterpreter::verbositylevel</references>
+        <referencedby refid="classSLIInterpreter_1a4e2329896e852a91514ee595d968c87a" compoundref="interpret_8cc" startline="491" endline="527">SLIInterpreter::addmodule</referencedby>
+        <referencedby refid="classSLIInterpreter_1a6b0ba787a213ef0bd84caf57c39e0de6" compoundref="interpret_8cc" startline="970" endline="978">SLIInterpreter::backtrace_off</referencedby>
+        <referencedby refid="classSLIInterpreter_1a1ef43a348dce9987282b41fda73dc86d" compoundref="interpret_8cc" startline="961" endline="967">SLIInterpreter::backtrace_on</referencedby>
+        <referencedby refid="classProcesses_1_1ForkFunction_1a823948bb729b7557d08eb7791ffbcf4e" compoundref="processes_8cc" startline="277" endline="327">Processes::ForkFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1IMap__ivFunction_1a0dac376ff89c51870e22f1053fc88e28" compoundref="sliarray_8cc" startline="1079" endline="1191">SLIArrayModule::IMap_ivFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1IMap__dvFunction_1afad30d283cbf7574273f2b97281a21a0" compoundref="sliarray_8cc" startline="1213" endline="1326">SLIArrayModule::IMap_dvFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1ArraycreateFunction_1a63f19d64b2c65e15b1082c34806f7d95" compoundref="sliarray_8cc" startline="892" endline="932">SLIArrayModule::ArraycreateFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1SortFunction_1afd28e1f5cbb9525546446bbe720febcb" compoundref="sliarray_8cc" startline="548" endline="607">SLIArrayModule::SortFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Put__a__a__tFunction_1a8ef92650f869aefb264bd341104c2884" compoundref="sliarray_8cc" startline="1813" endline="1897">SLIArrayModule::Put_a_a_tFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1AreaFunction_1a3a06a665d8c098da30320769540ebd6c" compoundref="sliarray_8cc" startline="2041" endline="2137">SLIArrayModule::AreaFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Area2Function_1abae669ae9be29d1cfb2ddf9eb2b30763" compoundref="sliarray_8cc" startline="2305" endline="2402">SLIArrayModule::Area2Function::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Cv1dFunction_1ae89a050ea858ee1da0e242a454818c9d" compoundref="sliarray_8cc" startline="2427" endline="2472">SLIArrayModule::Cv1dFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Cv2dFunction_1a53214436a73b79f8756b441f48497194" compoundref="sliarray_8cc" startline="2498" endline="2536">SLIArrayModule::Cv2dFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1GetMaxFunction_1a12cfde41cb2810be41a7c9cc27afb72f" compoundref="sliarray_8cc" startline="2551" endline="2599">SLIArrayModule::GetMaxFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1GetMinFunction_1a03f1707a3e081dc14a0eed642bdbcf29" compoundref="sliarray_8cc" startline="2613" endline="2662">SLIArrayModule::GetMinFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1GaborFunction_1ab2034e33aef653f08ec5999887c9e1ab" compoundref="sliarray_8cc" startline="2683" endline="2776">SLIArrayModule::GaborFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Gauss2dFunction_1ad04d755826f2d699a068daa24e55230e" compoundref="sliarray_8cc" startline="2795" endline="2882">SLIArrayModule::Gauss2dFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Add__iv__ivFunction_1a18d3df7edaa78762d90efcff93f40bf4" compoundref="sliarray_8cc" startline="2949" endline="2984">SLIArrayModule::Add_iv_ivFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Sub__iv__ivFunction_1a8503a5b4e904de863d0637aee925d5b2" compoundref="sliarray_8cc" startline="3048" endline="3083">SLIArrayModule::Sub_iv_ivFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Mul__iv__ivFunction_1acb9078bfd4b7bf835104c46468df994c" compoundref="sliarray_8cc" startline="3086" endline="3121">SLIArrayModule::Mul_iv_ivFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Div__iv__ivFunction_1a62ea47b8cd8b42d22166a43f88217967" compoundref="sliarray_8cc" startline="3193" endline="3236">SLIArrayModule::Div_iv_ivFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Add__dv__dvFunction_1ac14df1b76137565c1442470c40e03550" compoundref="sliarray_8cc" startline="3262" endline="3297">SLIArrayModule::Add_dv_dvFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Sub__dv__dvFunction_1a3f734a69a48b080dd6f2f8cea2130cff" compoundref="sliarray_8cc" startline="3300" endline="3335">SLIArrayModule::Sub_dv_dvFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Mul__dv__dvFunction_1accf09e7bf77df23d652e9a45460dc0e0" compoundref="sliarray_8cc" startline="3473" endline="3508">SLIArrayModule::Mul_dv_dvFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Div__dv__dvFunction_1aa646c236981a12f71d5ecb98c6b82769" compoundref="sliarray_8cc" startline="3511" endline="3554">SLIArrayModule::Div_dv_dvFunction::execute</referencedby>
+        <referencedby refid="classSLIArrayModule_1_1Inv__dvFunction_1abcbcb2745ef331f9668d0948432751e7" compoundref="sliarray_8cc" startline="3438" endline="3469">SLIArrayModule::Inv_dvFunction::execute</referencedby>
+        <referencedby refid="classCloseinputFunction_1a17423afafe74f9c44c219840290a9c4e" compoundref="slicontrol_8cc" startline="501" endline="553">CloseinputFunction::execute</referencedby>
+        <referencedby refid="classStopFunction_1a863876b5ded1356bac44f22242d849df" compoundref="slicontrol_8cc" startline="435" endline="491">StopFunction::execute</referencedby>
+        <referencedby refid="classStartFunction_1a58f71284021246e43f78f1ad343e1f63" compoundref="slicontrol_8cc" startline="2063" endline="2073">StartFunction::execute</referencedby>
+        <referencedby refid="classRaiseerrorFunction_1a8acdd8bd27d26de1e7a83ea2bc69a856" compoundref="slicontrol_8cc" startline="1157" endline="1179">RaiseerrorFunction::execute</referencedby>
+        <referencedby refid="classPclocksFunction_1a00a3a83527dac846e605ec9f13d5d3a0" compoundref="slicontrol_8cc" startline="1541" endline="1568">PclocksFunction::execute</referencedby>
+        <referencedby refid="classPclockspersecFunction_1a06edb8e2f2719df7a4ceb5861cdbe8a7" compoundref="slicontrol_8cc" startline="1590" endline="1605">PclockspersecFunction::execute</referencedby>
+        <referencedby refid="classPgetrusageFunction_1a4a9749f39b6b9b00c7c0bcf48f93eaad" compoundref="slicontrol_8cc" startline="1632" endline="1655">PgetrusageFunction::execute</referencedby>
+        <referencedby refid="classMessageFunction_1a35c4bb1201f075b46b948141acd06fab" compoundref="slicontrol_8cc" startline="2076" endline="2092">MessageFunction::execute</referencedby>
+        <referencedby refid="classGet__a__aFunction_1a32fd53efaba4706a8c842b9cf318015c" compoundref="slidata_8cc" startline="83" endline="147">Get_a_aFunction::execute</referencedby>
+        <referencedby refid="classJoin__sFunction_1a4413051e31835331911998922d15a990" compoundref="slidata_8cc" startline="276" endline="296">Join_sFunction::execute</referencedby>
+        <referencedby refid="classDictconstructFunction_1a4a714112e05b609e5b63b08070d6c619" compoundref="slidict_8cc" startline="629" endline="678">DictconstructFunction::execute</referencedby>
+        <referencedby refid="classSLIgraphics_1_1ReadPGMFunction_1a017bd3640dae3912781d59cb88591e02" compoundref="sligraphics_8cc" startline="70" endline="116">SLIgraphics::ReadPGMFunction::execute</referencedby>
+        <referencedby refid="classSLIgraphics_1_1WritePGMFunction_1a5df725032dbc769cd58f9a1031a9225e" compoundref="sligraphics_8cc" startline="261" endline="358">SLIgraphics::WritePGMFunction::execute</referencedby>
+        <referencedby refid="classAddtotrieFunction_1a1cba5d0fe23d66917d4f2f841d727b92" compoundref="slitypecheck_8cc" startline="90" endline="149">AddtotrieFunction::execute</referencedby>
+        <referencedby refid="classFunctionDatum_1a7278334758fee3af962b54efe4576e1e" compoundref="functiondatum_8h" startline="104" endline="115">FunctionDatum::execute</referencedby>
+        <referencedby refid="classSLIInterpreter_1a1d4268e9a4b8064b77e12fba24d15620" compoundref="interpret_8cc" startline="1313" endline="1363">SLIInterpreter::execute_</referencedby>
+        <referencedby refid="classSLIInterpreter_1a2e551e6c11e2e8158d163e2b5996c33d" compoundref="interpret_8cc" startline="1260" endline="1310">SLIInterpreter::execute_debug_</referencedby>
+        <referencedby refid="classSLIStartup_1a419cfd2ff41cf0bc4b64576d3d98330d" compoundref="slistartup_8cc" startline="266" endline="436">SLIStartup::init</referencedby>
+        <referencedby refid="classSLIModule_1ac32734c42e93e16aaf644a842de40bc2" compoundref="slimodule_8cc" startline="29" endline="35">SLIModule::install</referencedby>
+        <referencedby refid="group__SLIMessaging_1gacbc035efd87bf843002900f7f1baf5b0" compoundref="interpret_8cc" startline="774" endline="824">SLIInterpreter::message</referencedby>
+        <referencedby refid="classSLIInterpreter_1a1f76b68c473ace082511ddaa9eca5733" compoundref="interpret_8cc" startline="651" endline="715">SLIInterpreter::print_error</referencedby>
+        <referencedby refid="neststartup_8cpp_1a78f1d00fa0ad0ecf041edd6130354e63" compoundref="neststartup_8cpp" startline="64" endline="67">sli_logging</referencedby>
+        <referencedby refid="classSLIInterpreter_1a46a16463860bc84385c4b242778e8caa" compoundref="interpret_8cc" startline="759" endline="771">SLIInterpreter::terminate</referencedby>
+        <referencedby refid="classSLIInterpreter_1ad182047df2a018c8c8339cf1f8969d81" compoundref="interpret_8cc" startline="953" endline="958">SLIInterpreter::toggle_stack_display</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

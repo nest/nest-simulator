@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classCallbacktypeFunction" kind="class" language="C++" prot="public">
+    <compoundname>CallbacktypeFunction</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="sliactions_8h" local="no">sliactions.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classCallbacktypeFunction_1aa079b8fb003080b6fd49800128a68dfb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>CallbacktypeFunction::CallbacktypeFunction</definition>
+        <argsstring>()</argsstring>
+        <name>CallbacktypeFunction</name>
+        <qualifiedname>CallbacktypeFunction::CallbacktypeFunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliactions.h" line="80" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliactions.h" bodystart="80" bodyend="82"/>
+      </memberdef>
+      <memberdef kind="function" id="classCallbacktypeFunction_1a6aac8e93eaf8ed14ae0314dfe2d1b581" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void CallbacktypeFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>CallbacktypeFunction::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliactions.h" line="83" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliactions.cc" bodystart="114" bodyend="129"/>
+        <references refid="classSLIInterpreter_1a96c3eff127bf8a56860f05ff199cb6ff" compoundref="interpret_8cc" startline="311" endline="314">SLIInterpreter::baselookup</references>
+        <references refid="classSLIInterpreter_1ab2b27c4fd5359bbb3f439c4cf59f1c82" compoundref="interpret_8h" startline="248">SLIInterpreter::ct</references>
+        <references refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" compoundref="token_8h" startline="360" endline="364">Token::datum</references>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="classGenericDatum_1a2204e0bfb80429863ebbd37005235c1e" compoundref="genericdatum_8h" startline="74" endline="77">GenericDatum&lt; D, slt &gt;::get</references>
+        <references refid="classSLIInterpreter_1abb465fa1eefb1546c85a739b0aed6d37" compoundref="interpret_8h" startline="109">SLIInterpreter::isetcallback_name</references>
+        <references refid="classTokenStack_1a585f38fb0ed122da90489eccbfd7a187" compoundref="tokenstack_8h" startline="62" endline="65">TokenStack::push</references>
+        <references refid="classTokenStack_1a9d3b72926bfa2090389f0782cd2b6e76" compoundref="tokenstack_8h" startline="68" endline="71">TokenStack::push_move</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>CallbacktypeFunction</label>
+        <link refid="classCallbacktypeFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>CallbacktypeFunction</label>
+        <link refid="classCallbacktypeFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliactions.h" line="77" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliactions.h" bodystart="78" bodyend="84"/>
+    <listofallmembers>
+      <member refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba" prot="public" virt="virtual"><scope>CallbacktypeFunction</scope><name>backtrace</name></member>
+      <member refid="classCallbacktypeFunction_1aa079b8fb003080b6fd49800128a68dfb" prot="public" virt="non-virtual"><scope>CallbacktypeFunction</scope><name>CallbacktypeFunction</name></member>
+      <member refid="classCallbacktypeFunction_1a6aac8e93eaf8ed14ae0314dfe2d1b581" prot="public" virt="virtual"><scope>CallbacktypeFunction</scope><name>execute</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>CallbacktypeFunction</scope><name>SLIFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>CallbacktypeFunction</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classXIfstreamtypeFunction" kind="class" language="C++" prot="public">
+    <compoundname>XIfstreamtypeFunction</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="sliactions_8h" local="no">sliactions.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classXIfstreamtypeFunction_1a816b0c275040de4754a8b7363c4ecbaf" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>XIfstreamtypeFunction::XIfstreamtypeFunction</definition>
+        <argsstring>()</argsstring>
+        <name>XIfstreamtypeFunction</name>
+        <qualifiedname>XIfstreamtypeFunction::XIfstreamtypeFunction</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliactions.h" line="98" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliactions.h" bodystart="98" bodyend="100"/>
+      </memberdef>
+      <memberdef kind="function" id="classXIfstreamtypeFunction_1a038a5196dfa6d7fab615661129a07c46" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void XIfstreamtypeFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>XIfstreamtypeFunction::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliactions.h" line="101" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliactions.cc" bodystart="141" bodyend="147"/>
+        <references refid="classSLIInterpreter_1a96c3eff127bf8a56860f05ff199cb6ff" compoundref="interpret_8cc" startline="311" endline="314">SLIInterpreter::baselookup</references>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="classSLIInterpreter_1ad274563ba63af36ffefebc44070571eb" compoundref="interpret_8h" startline="122">SLIInterpreter::iparse_name</references>
+        <references refid="classTokenStack_1a585f38fb0ed122da90489eccbfd7a187" compoundref="tokenstack_8h" startline="62" endline="65">TokenStack::push</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="1">
+        <label>XIfstreamtypeFunction</label>
+        <link refid="classXIfstreamtypeFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="1">
+        <label>XIfstreamtypeFunction</label>
+        <link refid="classXIfstreamtypeFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliactions.h" line="95" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliactions.h" bodystart="96" bodyend="102"/>
+    <listofallmembers>
+      <member refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba" prot="public" virt="virtual"><scope>XIfstreamtypeFunction</scope><name>backtrace</name></member>
+      <member refid="classXIfstreamtypeFunction_1a038a5196dfa6d7fab615661129a07c46" prot="public" virt="virtual"><scope>XIfstreamtypeFunction</scope><name>execute</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>XIfstreamtypeFunction</scope><name>SLIFunction</name></member>
+      <member refid="classXIfstreamtypeFunction_1a816b0c275040de4754a8b7363c4ecbaf" prot="public" virt="non-virtual"><scope>XIfstreamtypeFunction</scope><name>XIfstreamtypeFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>XIfstreamtypeFunction</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

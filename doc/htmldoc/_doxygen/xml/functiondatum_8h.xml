@@ -1,0 +1,445 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="functiondatum_8h" kind="file" language="C++">
+    <compoundname>functiondatum.h</compoundname>
+    <includes refid="allocator_8h" local="yes">allocator.h</includes>
+    <includes refid="datum_8h" local="yes">datum.h</includes>
+    <includes refid="interpret_8h" local="yes">interpret.h</includes>
+    <includes refid="slifunction_8h" local="yes">slifunction.h</includes>
+    <includedby refid="functiondatum_8cc" local="yes">functiondatum.cc</includedby>
+    <includedby refid="interpret_8cc" local="yes">interpret.cc</includedby>
+    <includedby refid="sliactions_8cc" local="yes">sliactions.cc</includedby>
+    <includedby refid="slibuiltins_8cc" local="yes">slibuiltins.cc</includedby>
+    <includedby refid="slicontrol_8cc" local="yes">slicontrol.cc</includedby>
+    <incdepgraph>
+      <node id="2">
+        <label>allocator.h</label>
+        <link refid="allocator_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>datum.h</label>
+        <link refid="datum_8h"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>functiondatum.h</label>
+        <link refid="functiondatum_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>interpret.h</label>
+        <link refid="interpret_8h"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>name.h</label>
+        <link refid="name_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>sliactions.h</label>
+        <link refid="sliactions_8h"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>slibuiltins.h</label>
+        <link refid="slibuiltins_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>sliexceptions.h</label>
+        <link refid="sliexceptions_8h"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>slifunction.h</label>
+        <link refid="slifunction_8h"/>
+      </node>
+      <node id="19">
+        <label>slimodule.h</label>
+        <link refid="slimodule_8h"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>slitype.h</label>
+        <link refid="slitype_8h"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>tarrayobj.h</label>
+        <link refid="tarrayobj_8h"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>token.h</label>
+        <link refid="token_8h"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>tokenarray.h</label>
+        <link refid="tokenarray_8h"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>tokenstack.h</label>
+        <link refid="tokenstack_8h"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>algorithm</label>
+      </node>
+      <node id="4">
+        <label>cassert</label>
+      </node>
+      <node id="3">
+        <label>config.h</label>
+      </node>
+      <node id="25">
+        <label>cstddef</label>
+      </node>
+      <node id="5">
+        <label>cstdlib</label>
+      </node>
+      <node id="12">
+        <label>deque</label>
+      </node>
+      <node id="21">
+        <label>iomanip</label>
+      </node>
+      <node id="9">
+        <label>iostream</label>
+      </node>
+      <node id="16">
+        <label>list</label>
+      </node>
+      <node id="13">
+        <label>map</label>
+      </node>
+      <node id="6">
+        <label>string</label>
+      </node>
+      <node id="10">
+        <label>typeinfo</label>
+      </node>
+      <node id="22">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>functiondatum.cc</label>
+        <link refid="functiondatum_8cc"/>
+      </node>
+      <node id="1">
+        <label>functiondatum.h</label>
+        <link refid="functiondatum_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>interpret.cc</label>
+        <link refid="interpret_8cc"/>
+      </node>
+      <node id="4">
+        <label>sliactions.cc</label>
+        <link refid="sliactions_8cc"/>
+      </node>
+      <node id="5">
+        <label>slibuiltins.cc</label>
+        <link refid="slibuiltins_8cc"/>
+      </node>
+      <node id="6">
+        <label>slicontrol.cc</label>
+        <link refid="slicontrol_8cc"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classFunctionDatum" prot="public">FunctionDatum</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/><sp/>functiondatum.h</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/><sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>NEST.</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="6"><highlight class="comment"><sp/>*<sp/><sp/>Copyright<sp/>(C)<sp/>2004<sp/>The<sp/>NEST<sp/>Initiative</highlight></codeline>
+<codeline lineno="7"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="8"><highlight class="comment"><sp/>*<sp/><sp/>NEST<sp/>is<sp/>free<sp/>software:<sp/>you<sp/>can<sp/>redistribute<sp/>it<sp/>and/or<sp/>modify</highlight></codeline>
+<codeline lineno="9"><highlight class="comment"><sp/>*<sp/><sp/>it<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>the<sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>as<sp/>published<sp/>by</highlight></codeline>
+<codeline lineno="10"><highlight class="comment"><sp/>*<sp/><sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>either<sp/>version<sp/>2<sp/>of<sp/>the<sp/>License,<sp/>or</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*<sp/><sp/>(at<sp/>your<sp/>option)<sp/>any<sp/>later<sp/>version.</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="13"><highlight class="comment"><sp/>*<sp/><sp/>NEST<sp/>is<sp/>distributed<sp/>in<sp/>the<sp/>hope<sp/>that<sp/>it<sp/>will<sp/>be<sp/>useful,</highlight></codeline>
+<codeline lineno="14"><highlight class="comment"><sp/>*<sp/><sp/>but<sp/>WITHOUT<sp/>ANY<sp/>WARRANTY;<sp/>without<sp/>even<sp/>the<sp/>implied<sp/>warranty<sp/>of</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*<sp/><sp/>MERCHANTABILITY<sp/>or<sp/>FITNESS<sp/>FOR<sp/>A<sp/>PARTICULAR<sp/>PURPOSE.<sp/><sp/>See<sp/>the</highlight></codeline>
+<codeline lineno="16"><highlight class="comment"><sp/>*<sp/><sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>for<sp/>more<sp/>details.</highlight></codeline>
+<codeline lineno="17"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="18"><highlight class="comment"><sp/>*<sp/><sp/>You<sp/>should<sp/>have<sp/>received<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>GNU<sp/>General<sp/>Public<sp/>License</highlight></codeline>
+<codeline lineno="19"><highlight class="comment"><sp/>*<sp/><sp/>along<sp/>with<sp/>NEST.<sp/><sp/>If<sp/>not,<sp/>see<sp/>&lt;http://www.gnu.org/licenses/&gt;.</highlight></codeline>
+<codeline lineno="20"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="21"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>FUNCTIONDATUM_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>FUNCTIONDATUM_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="26"><highlight class="comment"><sp/><sp/><sp/><sp/>Datum<sp/>class<sp/>for<sp/>SLI<sp/>builtin<sp/>functions.</highlight></codeline>
+<codeline lineno="27"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Includes<sp/>from<sp/>libnestutil:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="allocator_8h" kindref="compound">allocator.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Includes<sp/>from<sp/>sli:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="datum_8h" kindref="compound">datum.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="interpret_8h" kindref="compound">interpret.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="slifunction_8h" kindref="compound">slifunction.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="38"><highlight class="comment"><sp/><sp/>Each<sp/>SLI<sp/>command<sp/>is<sp/>represented<sp/>by<sp/>a<sp/>derived<sp/>class<sp/>of<sp/>class<sp/>SLIFunction.</highlight></codeline>
+<codeline lineno="39"><highlight class="comment"><sp/><sp/>For<sp/>each<sp/>command,<sp/>the<sp/>constructor<sp/>of<sp/>the<sp/>interpreter<sp/>must<sp/>then<sp/>create</highlight></codeline>
+<codeline lineno="40"><highlight class="comment"><sp/><sp/>a<sp/>SLIDatum<sp/>object<sp/>from<sp/>a<sp/>given<sp/>name<sp/>(e.g.<sp/>&quot;add&quot;)<sp/>and<sp/>a<sp/>const<sp/>&amp;<sp/>to</highlight></codeline>
+<codeline lineno="41"><highlight class="comment"><sp/><sp/>an<sp/>instance<sp/>of<sp/>the<sp/>derived<sp/>SLIFunction<sp/>(e.g.<sp/>AddFunction).<sp/>This<sp/>new</highlight></codeline>
+<codeline lineno="42"><highlight class="comment"><sp/><sp/>datum<sp/>object<sp/>must<sp/>then<sp/>be<sp/>registered<sp/>in<sp/>the<sp/>dictionary<sp/>(hopefully</highlight></codeline>
+<codeline lineno="43"><highlight class="comment"><sp/><sp/>by<sp/>the<sp/>same<sp/>name<sp/>as<sp/>before).</highlight></codeline>
+<codeline lineno="44"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="classFunctionDatum" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classFunctionDatum" kindref="compound">FunctionDatum</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classTypedDatum" kindref="compound">TypedDatum</ref>&lt;<sp/>&amp;SLIInterpreter::Functiontype<sp/>&gt;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="48" refid="classFunctionDatum_1afc60156bef208e5f2b0e52e79f367749" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classsli_1_1pool" kindref="compound">sli::pool</ref><sp/><ref refid="classFunctionDatum_1afc60156bef208e5f2b0e52e79f367749" kindref="member">memory</ref>;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="classFunctionDatum_1afb476b05b4a7a21b619ca1b548db5172" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="className" kindref="compound">Name</ref><sp/><ref refid="classFunctionDatum_1afb476b05b4a7a21b619ca1b548db5172" kindref="member">name</ref>;</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="classFunctionDatum_1aa6814ab6a007db26560d91389d736106" refkind="member"><highlight class="normal"><sp/><sp/>std::string<sp/><ref refid="classFunctionDatum_1aa6814ab6a007db26560d91389d736106" kindref="member">deprecation_info_</ref>;</highlight></codeline>
+<codeline lineno="56" refid="classFunctionDatum_1a1a034a9bbbf47a10747e440c7bdccfa3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classFunctionDatum_1a1a034a9bbbf47a10747e440c7bdccfa3" kindref="member">deprecation_warning_issued_</ref>;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><ref refid="classDatum" kindref="compound">Datum</ref>*</highlight></codeline>
+<codeline lineno="59" refid="classFunctionDatum_1abe5a7a0a91a503931ede587269af5c95" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classFunctionDatum_1abe5a7a0a91a503931ede587269af5c95" kindref="member">clone</ref>()</highlight><highlight class="keyword"><sp/>const<sp/>override</highlight></codeline>
+<codeline lineno="60"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="classFunctionDatum" kindref="compound">FunctionDatum</ref>(<sp/>*</highlight><highlight class="keyword">this</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><ref refid="classDatum" kindref="compound">Datum</ref>*</highlight></codeline>
+<codeline lineno="65" refid="classFunctionDatum_1a94aeda1bb6da71d006956fc4ff886776" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classFunctionDatum_1a94aeda1bb6da71d006956fc4ff886776" kindref="member">get_ptr</ref>()</highlight><highlight class="keyword"><sp/>override</highlight></codeline>
+<codeline lineno="66"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classDatum_1a8a547bad7564cd6e79fd9b1a245c9e8b" kindref="member">Datum::addReference</ref>();</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">this</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><ref refid="classSLIFunction" kindref="compound">SLIFunction</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;</highlight></codeline>
+<codeline lineno="72" refid="classFunctionDatum_1aacff06cee927addef47c003fa96a19a0" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classFunctionDatum_1aacff06cee927addef47c003fa96a19a0" kindref="member">operator=</ref>(<sp/><ref refid="classSLIFunction" kindref="compound">SLIFunction</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>f<sp/>)</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Warning:<sp/>Definition<sp/>of<sp/>FunctionDatum<sp/>(&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/><ref refid="classFunctionDatum_1afb476b05b4a7a21b619ca1b548db5172" kindref="member">name</ref><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;)<sp/>changed!!\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classDatum_1aedcf75cc41ccd6a8247216941b10f719" kindref="member">action</ref><sp/>=<sp/>&amp;f;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>f;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="81" refid="classFunctionDatum_1a7a9f8425846ec06c6258f5f37d593ad3" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classFunctionDatum_1a7a9f8425846ec06c6258f5f37d593ad3" kindref="member">FunctionDatum</ref>(<sp/><ref refid="classFunctionDatum" kindref="compound">FunctionDatum</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>fd<sp/>)</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/>:<sp/><ref refid="classTypedDatum" kindref="compound">TypedDatum</ref>&lt;<sp/>&amp;<ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>::Functiontype<sp/>&gt;(<sp/>fd<sp/>)</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classFunctionDatum_1afb476b05b4a7a21b619ca1b548db5172" kindref="member">name</ref>(<sp/>fd.<ref refid="classFunctionDatum_1afb476b05b4a7a21b619ca1b548db5172" kindref="member">name</ref><sp/>)</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classFunctionDatum_1aa6814ab6a007db26560d91389d736106" kindref="member">deprecation_info_</ref>(<sp/>fd.<ref refid="classFunctionDatum_1aa6814ab6a007db26560d91389d736106" kindref="member">deprecation_info_</ref><sp/>)</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classFunctionDatum_1a1a034a9bbbf47a10747e440c7bdccfa3" kindref="member">deprecation_warning_issued_</ref>(<sp/>false<sp/>)</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classDatum_1a46325ecc6d02cc01c26366b57423d9f4" kindref="member">set_executable</ref>();</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90" refid="classFunctionDatum_1a33ff30b816aa777d257668e6cc58fc37" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classFunctionDatum_1a33ff30b816aa777d257668e6cc58fc37" kindref="member">FunctionDatum</ref>(<sp/><ref refid="className" kindref="compound">Name</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>n,<sp/><ref refid="classSLIFunction" kindref="compound">SLIFunction</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">*<sp/>f,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>deprecation_info<sp/>)</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/>:<sp/><ref refid="classTypedDatum" kindref="compound">TypedDatum</ref>&lt;<sp/>&amp;<ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>::Functiontype<sp/>&gt;()</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classFunctionDatum_1afb476b05b4a7a21b619ca1b548db5172" kindref="member">name</ref>(<sp/>n<sp/>)</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classFunctionDatum_1aa6814ab6a007db26560d91389d736106" kindref="member">deprecation_info_</ref>(<sp/>deprecation_info<sp/>)</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classFunctionDatum_1a1a034a9bbbf47a10747e440c7bdccfa3" kindref="member">deprecation_warning_issued_</ref>(<sp/>false<sp/>)</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classDatum_1aedcf75cc41ccd6a8247216941b10f719" kindref="member">action</ref><sp/>=<sp/>f;</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classDatum_1a46325ecc6d02cc01c26366b57423d9f4" kindref="member">set_executable</ref>();</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="104" refid="classFunctionDatum_1a7278334758fee3af962b54efe4576e1e" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classFunctionDatum_1a7278334758fee3af962b54efe4576e1e" kindref="member">execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>override</highlight></codeline>
+<codeline lineno="105"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not(<sp/><ref refid="classFunctionDatum_1a1a034a9bbbf47a10747e440c7bdccfa3" kindref="member">deprecation_warning_issued_</ref><sp/>or<sp/><ref refid="classFunctionDatum_1aa6814ab6a007db26560d91389d736106" kindref="member">deprecation_info_</ref>.empty()<sp/>)<sp/>)</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIMessaging_1gacbc035efd87bf843002900f7f1baf5b0" kindref="member">message</ref>(<sp/><ref refid="classSLIInterpreter_1ae7af23ee84e18a135a44e5e6177011ca" kindref="member">SLIInterpreter::M_DEPRECATED</ref>,</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;SLIInterpreter&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="stringliteral">&quot;SLI<sp/>function<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/><ref refid="classFunctionDatum_1afb476b05b4a7a21b619ca1b548db5172" kindref="member">name</ref>.<ref refid="className_1a6f4aaf5ff7b467bc4243af2ca6054a26" kindref="member">toString</ref>()<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;<sp/>is<sp/>deprecated<sp/>in<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/><ref refid="classFunctionDatum_1aa6814ab6a007db26560d91389d736106" kindref="member">deprecation_info_</ref><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;.&quot;</highlight><highlight class="normal"><sp/>).c_str()<sp/>);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classFunctionDatum_1a1a034a9bbbf47a10747e440c7bdccfa3" kindref="member">deprecation_warning_issued_</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classDatum_1aedcf75cc41ccd6a8247216941b10f719" kindref="member">action</ref>-&gt;<ref refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d" kindref="member">execute</ref>(<sp/>i<sp/>);</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118" refid="classFunctionDatum_1af0789d22a959624ff4160ee6a2ffbf0e" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classFunctionDatum_1af0789d22a959624ff4160ee6a2ffbf0e" kindref="member">print</ref>(<sp/>std::ostream&amp;<sp/>o<sp/>)</highlight><highlight class="keyword"><sp/>const<sp/>override</highlight></codeline>
+<codeline lineno="119"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/>o<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;-&apos;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/><ref refid="classFunctionDatum_1afb476b05b4a7a21b619ca1b548db5172" kindref="member">name</ref><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;-&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124" refid="classFunctionDatum_1af3c4542edf2a937bbd78c1663f7e8cbb" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classFunctionDatum_1af3c4542edf2a937bbd78c1663f7e8cbb" kindref="member">pprint</ref>(<sp/>std::ostream&amp;<sp/>o<sp/>)</highlight><highlight class="keyword"><sp/>const<sp/>override</highlight></codeline>
+<codeline lineno="125"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classFunctionDatum_1af0789d22a959624ff4160ee6a2ffbf0e" kindref="member">print</ref>(<sp/>o<sp/>);</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130" refid="classFunctionDatum_1a8caa18578d9c3c3b35e18b2c3140c94f" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classFunctionDatum_1a8caa18578d9c3c3b35e18b2c3140c94f" kindref="member">info</ref>(<sp/>std::ostream&amp;<sp/>out<sp/>)</highlight><highlight class="keyword"><sp/>const<sp/>override</highlight></codeline>
+<codeline lineno="131"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/>out<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;FunctionDatum::info\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/>out<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;name<sp/>=<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/><ref refid="classFunctionDatum_1afb476b05b4a7a21b619ca1b548db5172" kindref="member">name</ref><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="137" refid="classFunctionDatum_1abb9003db3ab2e9ff16fee8ac9876607c" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classFunctionDatum_1abb9003db3ab2e9ff16fee8ac9876607c" kindref="member">equals</ref>(<sp/><ref refid="classDatum" kindref="compound">Datum</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">*<sp/>dat<sp/>)</highlight><highlight class="keyword"><sp/>const<sp/>override</highlight></codeline>
+<codeline lineno="138"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classFunctionDatum" kindref="compound">FunctionDatum</ref>*<sp/>fd<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classFunctionDatum" kindref="compound">FunctionDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/></highlight><highlight class="keyword">const_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classDatum" kindref="compound">Datum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>dat<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not<sp/>fd<sp/>)</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classDatum_1aedcf75cc41ccd6a8247216941b10f719" kindref="member">action</ref><sp/>==<sp/>fd-&gt;<ref refid="classDatum_1aedcf75cc41ccd6a8247216941b10f719" kindref="member">action</ref>;</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="className" kindref="compound">Name</ref>&amp;</highlight></codeline>
+<codeline lineno="149" refid="classFunctionDatum_1ad88df509baf6b1236fa250c916cf5eae" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classFunctionDatum_1ad88df509baf6b1236fa250c916cf5eae" kindref="member">getname</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="150"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classFunctionDatum_1afb476b05b4a7a21b619ca1b548db5172" kindref="member">name</ref>;</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classFunctionDatum_1a0e4efeb7f53868430780d913b8a86fed" kindref="member">backtrace</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*</highlight></codeline>
+<codeline lineno="157" refid="classFunctionDatum_1a8ab7d0d501cc8c6f6157a7ead6a292d8" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal">(<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>size<sp/>)</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>size<sp/>!=<sp/></highlight><highlight class="keyword">sizeof</highlight><highlight class="normal">(<sp/><ref refid="classFunctionDatum" kindref="compound">FunctionDatum</ref><sp/>)<sp/>)</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>return<sp/>::operator<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal">(<sp/>size<sp/>);</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classFunctionDatum_1afc60156bef208e5f2b0e52e79f367749" kindref="member">memory</ref>.<ref refid="classsli_1_1pool_1aa4ec8f3aaccf68e6ac5eac14cf722f7f" kindref="member">alloc</ref>();</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="167" refid="classFunctionDatum_1aae90509c3cf23aee07b4bd659462f4b7" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal">(<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>p,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>size<sp/>)</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not<sp/>p<sp/>)</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>size<sp/>!=<sp/></highlight><highlight class="keyword">sizeof</highlight><highlight class="normal">(<sp/><ref refid="classFunctionDatum" kindref="compound">FunctionDatum</ref><sp/>)<sp/>)</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>::operator<sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal">(<sp/>p<sp/>);</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classFunctionDatum_1afc60156bef208e5f2b0e52e79f367749" kindref="member">memory</ref>.<ref refid="classsli_1_1pool_1ab7252655aaee55b020cc156ced585b6e" kindref="member">free</ref>(<sp/>p<sp/>);</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="180"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"></highlight></codeline>
+<codeline lineno="182"><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/functiondatum.h"/>
+  </compounddef>
+</doxygen>

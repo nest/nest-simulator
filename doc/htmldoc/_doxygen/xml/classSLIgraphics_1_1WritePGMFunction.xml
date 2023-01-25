@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classSLIgraphics_1_1WritePGMFunction" kind="class" language="C++" prot="private">
+    <compoundname>SLIgraphics::WritePGMFunction</compoundname>
+    <basecompoundref refid="classSLIFunction" prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classSLIgraphics_1_1WritePGMFunction_1a5df725032dbc769cd58f9a1031a9225e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void SLIgraphics::WritePGMFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <qualifiedname>SLIgraphics::WritePGMFunction::execute</qualifiedname>
+        <reimplements refid="classSLIFunction_1abb5b37eaff928b43534627ed6f668e7d">execute</reimplements>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+<para>@BeginDocumentation <ref refid="className" kindref="compound">Name</ref>:writePGM - write out a grey-level image in PGM format </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Synopsis:string arraytype int int int writePGM fname [grayvals] maxval height width writePGM</para>
+<para>Description:This writes an array of integers as grey-level image using the PGM (PortableGrayMap) format. On Unix systems, man 5 pgm should give you a description of the PGM image format.</para>
+<para>Parameters:fname - name of file to be written [grayvals] - one-dim. array containing the pixel gray values, starting at the upper left corner and continuing rowwise (normal english reading order). maxval - the maximum gray value width - width of image in pixels (no. of columns) height - height of image (no. of rows)</para>
+<para>Remarks:So far, only the plain ASCII variant of the PGM Format is used. In the PGM manual, this is referred to as &quot;P2&quot;.</para>
+<para>Examples:(FancyImage.pgm) [grayvals] 255 24 16 writePGM This writes an image named FancyImage.pgm with the gray values from the array, having 16 columns and 24 rows.</para>
+<para>Author:Schmuker, Gewaltig</para>
+<para>FirstVersion:9.1.2003</para>
+<para>SeeAlso:readPGM </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sligraphics.h" line="56" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sligraphics.cc" bodystart="261" bodyend="358"/>
+        <references refid="classSLIInterpreter_1a07eed6312469265d3e3c4e7d5b38963f" compoundref="interpret_8h" startline="155">SLIInterpreter::BadIOError</references>
+        <references refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" compoundref="token_8h" startline="360" endline="364">Token::datum</references>
+        <references refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" compoundref="interpret_8h" startline="251">SLIInterpreter::EStack</references>
+        <references refid="classGenericDatum_1a2204e0bfb80429863ebbd37005235c1e" compoundref="genericdatum_8h" startline="74" endline="77">GenericDatum&lt; D, slt &gt;::get</references>
+        <references refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" compoundref="tokenstack_8h" startline="184" endline="187">TokenStack::load</references>
+        <references refid="classSLIInterpreter_1aafcfa7e2b250f23f2c66af03f0fea32e" compoundref="interpret_8h" startline="181">SLIInterpreter::M_ERROR</references>
+        <references refid="group__SLIMessaging_1gacbc035efd87bf843002900f7f1baf5b0" compoundref="interpret_8cc" startline="774" endline="824">SLIInterpreter::message</references>
+        <references refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" compoundref="interpret_8h" startline="250">SLIInterpreter::OStack</references>
+        <references refid="classTokenStack_1ac861cc2282484dd2a27dd1304aa719a4" compoundref="tokenstack_8h" startline="127" endline="130">TokenStack::pick</references>
+        <references refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" compoundref="tokenstack_8h" startline="96" endline="99">TokenStack::pop</references>
+        <references refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" compoundref="interpret_8h" startline="635" endline="638">SLIInterpreter::raiseerror</references>
+        <references refid="classSLIInterpreter_1af98b93bb76491e6bc67e7636ca8e9ea9" compoundref="interpret_8h" startline="149">SLIInterpreter::StackUnderflowError</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="1">
+        <label>SLIgraphics::WritePGMFunction</label>
+        <link refid="classSLIgraphics_1_1WritePGMFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="1">
+        <label>SLIgraphics::WritePGMFunction</label>
+        <link refid="classSLIgraphics_1_1WritePGMFunction"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/sligraphics.h" line="53" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sligraphics.h" bodystart="54" bodyend="57"/>
+    <listofallmembers>
+      <member refid="classSLIFunction_1a68fd2ac46dd904673f3a8c96009221ba" prot="public" virt="virtual"><scope>SLIgraphics::WritePGMFunction</scope><name>backtrace</name></member>
+      <member refid="classSLIgraphics_1_1WritePGMFunction_1a5df725032dbc769cd58f9a1031a9225e" prot="public" virt="virtual"><scope>SLIgraphics::WritePGMFunction</scope><name>execute</name></member>
+      <member refid="classSLIFunction_1a3c4393dfc6f80af057a81d34a1a8bbad" prot="public" virt="non-virtual"><scope>SLIgraphics::WritePGMFunction</scope><name>SLIFunction</name></member>
+      <member refid="classSLIFunction_1a1d35138a5956abbaf4a57d051bcb397b" prot="public" virt="virtual"><scope>SLIgraphics::WritePGMFunction</scope><name>~SLIFunction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

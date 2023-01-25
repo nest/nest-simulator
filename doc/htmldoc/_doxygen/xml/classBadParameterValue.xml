@@ -1,0 +1,153 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classBadParameterValue" kind="class" language="C++" prot="public">
+    <compoundname>BadParameterValue</compoundname>
+    <basecompoundref refid="classSLIException" prot="public" virt="non-virtual">SLIException</basecompoundref>
+    <includes refid="sliexceptions_8h" local="no">sliexceptions.h</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classBadParameterValue_1a938d5605b4c1ab519f3b03ba65d77329" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string BadParameterValue::msg_</definition>
+        <argsstring></argsstring>
+        <name>msg_</name>
+        <qualifiedname>BadParameterValue::msg_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" line="258" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" bodystart="258" bodyend="-1"/>
+        <referencedby refid="classBadParameterValue_1a66ec7ec6884d0a6315bdeebdbb2b0145" compoundref="sliexceptions_8cc" startline="123" endline="126">message</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classBadParameterValue_1a3558ca84ac835c3b11611d718081be0e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>BadParameterValue::BadParameterValue</definition>
+        <argsstring>()</argsstring>
+        <name>BadParameterValue</name>
+        <qualifiedname>BadParameterValue::BadParameterValue</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>detailed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>error message </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" line="262" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" bodystart="262" bodyend="266"/>
+      </memberdef>
+      <memberdef kind="function" id="classBadParameterValue_1a8c98a14c28bc512c5a22741a408d6fd8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>BadParameterValue::BadParameterValue</definition>
+        <argsstring>(std::string msg)</argsstring>
+        <name>BadParameterValue</name>
+        <qualifiedname>BadParameterValue::BadParameterValue</qualifiedname>
+        <param>
+          <type>std::string</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" line="268" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" bodystart="268" bodyend="272"/>
+      </memberdef>
+      <memberdef kind="function" id="classBadParameterValue_1a8a36f18cf1b87632d96ee0cb37fb6830" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>BadParameterValue::~BadParameterValue</definition>
+        <argsstring>() override</argsstring>
+        <name>~BadParameterValue</name>
+        <qualifiedname>BadParameterValue::~BadParameterValue</qualifiedname>
+        <exceptions> throw ()</exceptions>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" line="274" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" bodystart="274" bodyend="276"/>
+      </memberdef>
+      <memberdef kind="function" id="classBadParameterValue_1a66ec7ec6884d0a6315bdeebdbb2b0145" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>std::string</type>
+        <definition>std::string BadParameterValue::message</definition>
+        <argsstring>() const override</argsstring>
+        <name>message</name>
+        <qualifiedname>BadParameterValue::message</qualifiedname>
+        <reimplements refid="classSLIException_1a8f0a43c586456cc0e161d683ff316531">message</reimplements>
+        <briefdescription>
+<para>Returns a diagnostic message or empty string. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" line="278" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.cc" bodystart="123" bodyend="126"/>
+        <references refid="classBadParameterValue_1a938d5605b4c1ab519f3b03ba65d77329" compoundref="sliexceptions_8h" startline="258">msg_</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Exception to be thrown if a parameter value is not acceptable. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>BadParameterValue</label>
+        <link refid="classBadParameterValue"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIException</label>
+        <link refid="classSLIException"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>std::exception</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>BadParameterValue</label>
+        <link refid="classBadParameterValue"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIException</label>
+        <link refid="classSLIException"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>std::exception</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" line="256" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/sliexceptions.h" bodystart="257" bodyend="279"/>
+    <listofallmembers>
+      <member refid="classBadParameterValue_1a3558ca84ac835c3b11611d718081be0e" prot="public" virt="non-virtual"><scope>BadParameterValue</scope><name>BadParameterValue</name></member>
+      <member refid="classBadParameterValue_1a8c98a14c28bc512c5a22741a408d6fd8" prot="public" virt="non-virtual"><scope>BadParameterValue</scope><name>BadParameterValue</name></member>
+      <member refid="classBadParameterValue_1a66ec7ec6884d0a6315bdeebdbb2b0145" prot="public" virt="virtual"><scope>BadParameterValue</scope><name>message</name></member>
+      <member refid="classBadParameterValue_1a938d5605b4c1ab519f3b03ba65d77329" prot="private" virt="non-virtual"><scope>BadParameterValue</scope><name>msg_</name></member>
+      <member refid="classSLIException_1ace48f5938754e82931bab7f54471dd3f" prot="public" virt="non-virtual"><scope>BadParameterValue</scope><name>SLIException</name></member>
+      <member refid="classSLIException_1a5da1b6d493d134687d9ce01e9799b59d" prot="public" virt="non-virtual"><scope>BadParameterValue</scope><name>SLIException</name></member>
+      <member refid="classSLIException_1a4ac56d362c7d86819a47c76571c9c031" prot="public" virt="non-virtual"><scope>BadParameterValue</scope><name>what</name></member>
+      <member refid="classSLIException_1af0e8f12a5e346db4c028d23a2974f016" prot="private" virt="non-virtual"><scope>BadParameterValue</scope><name>what_</name></member>
+      <member refid="classBadParameterValue_1a8a36f18cf1b87632d96ee0cb37fb6830" prot="public" virt="non-virtual"><scope>BadParameterValue</scope><name>~BadParameterValue</name></member>
+      <member refid="classSLIException_1a671677b69bcc3895df94a069067c0578" prot="public" virt="non-virtual"><scope>BadParameterValue</scope><name>~SLIException</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

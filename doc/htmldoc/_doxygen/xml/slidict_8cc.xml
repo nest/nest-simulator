@@ -1,0 +1,1318 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="slidict_8cc" kind="file" language="C++">
+    <compoundname>slidict.cc</compoundname>
+    <includes refid="slidict_8h" local="yes">slidict.h</includes>
+    <includes refid="arraydatum_8h" local="yes">arraydatum.h</includes>
+    <includes refid="booldatum_8h" local="yes">booldatum.h</includes>
+    <includes refid="dictdatum_8h" local="yes">dictdatum.h</includes>
+    <includes refid="dictstack_8h" local="yes">dictstack.h</includes>
+    <includes refid="integerdatum_8h" local="yes">integerdatum.h</includes>
+    <includes refid="iostreamdatum_8h" local="yes">iostreamdatum.h</includes>
+    <includes refid="namedatum_8h" local="yes">namedatum.h</includes>
+    <includes refid="tokenutils_8h" local="yes">tokenutils.h</includes>
+    <incdepgraph>
+      <node id="33">
+        <label>lockptr.h</label>
+        <link refid="lockptr_8h"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>aggregatedatum.h</label>
+        <link refid="aggregatedatum_8h"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>allocator.h</label>
+        <link refid="allocator_8h"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>arraydatum.h</label>
+        <link refid="arraydatum_8h"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>booldatum.h</label>
+        <link refid="booldatum_8h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>datum.h</label>
+        <link refid="datum_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>dict.h</label>
+        <link refid="dict_8h"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>dictdatum.h</label>
+        <link refid="dictdatum_8h"/>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>dictstack.h</label>
+        <link refid="dictstack_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>genericdatum.h</label>
+        <link refid="genericdatum_8h"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>integerdatum.h</label>
+        <link refid="integerdatum_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>interpret.h</label>
+        <link refid="interpret_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="42">
+        <label>iostreamdatum.h</label>
+        <link refid="iostreamdatum_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>lockptrdatum.h</label>
+        <link refid="lockptrdatum_8h"/>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>name.h</label>
+        <link refid="name_8h"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>namedatum.h</label>
+        <link refid="namedatum_8h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="41">
+        <label>numericdatum.h</label>
+        <link refid="numericdatum_8h"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>sliactions.h</label>
+        <link refid="sliactions_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>slibuiltins.h</label>
+        <link refid="slibuiltins_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>slidict.cc</label>
+        <link refid="slidict_8cc"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>slidict.h</label>
+        <link refid="slidict_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>sliexceptions.h</label>
+        <link refid="sliexceptions_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>slifunction.h</label>
+        <link refid="slifunction_8h"/>
+      </node>
+      <node id="9">
+        <label>slimodule.h</label>
+        <link refid="slimodule_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>slitype.h</label>
+        <link refid="slitype_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>tarrayobj.h</label>
+        <link refid="tarrayobj_8h"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>token.h</label>
+        <link refid="token_8h"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>tokenarray.h</label>
+        <link refid="tokenarray_8h"/>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>tokenstack.h</label>
+        <link refid="tokenstack_8h"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>tokenutils.h</label>
+        <link refid="tokenutils_8h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>algorithm</label>
+      </node>
+      <node id="14">
+        <label>cassert</label>
+      </node>
+      <node id="20">
+        <label>config.h</label>
+      </node>
+      <node id="24">
+        <label>cstddef</label>
+      </node>
+      <node id="31">
+        <label>cstdlib</label>
+      </node>
+      <node id="15">
+        <label>deque</label>
+      </node>
+      <node id="18">
+        <label>iomanip</label>
+      </node>
+      <node id="10">
+        <label>iostream</label>
+      </node>
+      <node id="5">
+        <label>list</label>
+      </node>
+      <node id="16">
+        <label>map</label>
+      </node>
+      <node id="34">
+        <label>memory</label>
+      </node>
+      <node id="11">
+        <label>string</label>
+      </node>
+      <node id="3">
+        <label>typeinfo</label>
+      </node>
+      <node id="19">
+        <label>vector</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="slidict_8cc_1a19c81ff2216ab988acfe5fddb637808f" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classDictFunction" kindref="compound">DictFunction</ref></type>
+        <definition>const DictFunction dictfunction</definition>
+        <argsstring></argsstring>
+        <name>dictfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" line="972" column="20" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="972" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1a6a862694b895dfd3c3e7ff8c2e751862" compoundref="slidict_8cc" startline="997" endline="1022">init_slidict</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slidict_8cc_1a5cfa2a718903b52af2108f08c240fcb6" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classDictputFunction" kindref="compound">DictputFunction</ref></type>
+        <definition>const DictputFunction dictputfunction</definition>
+        <argsstring></argsstring>
+        <name>dictputfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" line="973" column="23" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="973" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1a6a862694b895dfd3c3e7ff8c2e751862" compoundref="slidict_8cc" startline="997" endline="1022">init_slidict</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slidict_8cc_1a4426638c018398fa9d502e54721691bf" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classDictgetFunction" kindref="compound">DictgetFunction</ref></type>
+        <definition>const DictgetFunction dictgetfunction</definition>
+        <argsstring></argsstring>
+        <name>dictgetfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" line="974" column="23" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="974" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1a6a862694b895dfd3c3e7ff8c2e751862" compoundref="slidict_8cc" startline="997" endline="1022">init_slidict</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slidict_8cc_1ad0aeca2bd330ee5e1db95ab1b36d7ad1" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classDictinfoFunction" kindref="compound">DictinfoFunction</ref></type>
+        <definition>const DictinfoFunction dictinfofunction</definition>
+        <argsstring></argsstring>
+        <name>dictinfofunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" line="975" column="24" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="975" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1a6a862694b895dfd3c3e7ff8c2e751862" compoundref="slidict_8cc" startline="997" endline="1022">init_slidict</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slidict_8cc_1a6231314b3c1abc92d68d5616a5cad60c" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classDicttopinfoFunction" kindref="compound">DicttopinfoFunction</ref></type>
+        <definition>const DicttopinfoFunction dicttopinfofunction</definition>
+        <argsstring></argsstring>
+        <name>dicttopinfofunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" line="976" column="27" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="976" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1a6a862694b895dfd3c3e7ff8c2e751862" compoundref="slidict_8cc" startline="997" endline="1022">init_slidict</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slidict_8cc_1aaff2028328074f3253395faa3b0ff466" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classWhoFunction" kindref="compound">WhoFunction</ref></type>
+        <definition>const WhoFunction whofunction</definition>
+        <argsstring></argsstring>
+        <name>whofunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" line="977" column="19" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="977" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1a6a862694b895dfd3c3e7ff8c2e751862" compoundref="slidict_8cc" startline="997" endline="1022">init_slidict</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slidict_8cc_1a174ae5c43fbf2fc8083b0b1840521231" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classDictbeginFunction" kindref="compound">DictbeginFunction</ref></type>
+        <definition>const DictbeginFunction dictbeginfunction</definition>
+        <argsstring></argsstring>
+        <name>dictbeginfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" line="978" column="25" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="978" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1a6a862694b895dfd3c3e7ff8c2e751862" compoundref="slidict_8cc" startline="997" endline="1022">init_slidict</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slidict_8cc_1a7fc4726ba564d36939bb19bc73d10c62" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classDictendFunction" kindref="compound">DictendFunction</ref></type>
+        <definition>const DictendFunction dictendfunction</definition>
+        <argsstring></argsstring>
+        <name>dictendfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" line="979" column="23" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="979" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1a6a862694b895dfd3c3e7ff8c2e751862" compoundref="slidict_8cc" startline="997" endline="1022">init_slidict</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slidict_8cc_1a8d21275750cf11ed36f72f90b84020d1" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classDictconstructFunction" kindref="compound">DictconstructFunction</ref></type>
+        <definition>const DictconstructFunction dictconstructfunction</definition>
+        <argsstring></argsstring>
+        <name>dictconstructfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" line="980" column="29" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="980" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1a6a862694b895dfd3c3e7ff8c2e751862" compoundref="slidict_8cc" startline="997" endline="1022">init_slidict</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slidict_8cc_1a2c047022bb7bffea749454f1b152ef5d" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classLength__dFunction" kindref="compound">Length_dFunction</ref></type>
+        <definition>const Length_dFunction length_dfunction</definition>
+        <argsstring></argsstring>
+        <name>length_dfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" line="981" column="24" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="981" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1a6a862694b895dfd3c3e7ff8c2e751862" compoundref="slidict_8cc" startline="997" endline="1022">init_slidict</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slidict_8cc_1a6ca6f8288d4f65a6643cdd47ee751563" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classEmpty__DFunction" kindref="compound">Empty_DFunction</ref></type>
+        <definition>const Empty_DFunction empty_Dfunction</definition>
+        <argsstring></argsstring>
+        <name>empty_Dfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" line="982" column="23" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="982" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1a6a862694b895dfd3c3e7ff8c2e751862" compoundref="slidict_8cc" startline="997" endline="1022">init_slidict</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slidict_8cc_1a31bab3c76cc806c6bbc782c3f27b1e29" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classDictstackFunction" kindref="compound">DictstackFunction</ref></type>
+        <definition>const DictstackFunction dictstackfunction</definition>
+        <argsstring></argsstring>
+        <name>dictstackfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" line="983" column="25" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="983" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1a6a862694b895dfd3c3e7ff8c2e751862" compoundref="slidict_8cc" startline="997" endline="1022">init_slidict</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slidict_8cc_1a9652b975d1da5992117bdaaa20a211b6" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classCountdictstackFunction" kindref="compound">CountdictstackFunction</ref></type>
+        <definition>const CountdictstackFunction countdictstackfunction</definition>
+        <argsstring></argsstring>
+        <name>countdictstackfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" line="984" column="30" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="984" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1a6a862694b895dfd3c3e7ff8c2e751862" compoundref="slidict_8cc" startline="997" endline="1022">init_slidict</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slidict_8cc_1a69b092581f9fb470aec066c6e0897dd7" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classCleardictstackFunction" kindref="compound">CleardictstackFunction</ref></type>
+        <definition>const CleardictstackFunction cleardictstackfunction</definition>
+        <argsstring></argsstring>
+        <name>cleardictstackfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" line="985" column="30" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="985" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1a6a862694b895dfd3c3e7ff8c2e751862" compoundref="slidict_8cc" startline="997" endline="1022">init_slidict</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slidict_8cc_1a9ef1a68bd066619978eaf686ee93c3d5" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classCurrentdictFunction" kindref="compound">CurrentdictFunction</ref></type>
+        <definition>const CurrentdictFunction currentdictfunction</definition>
+        <argsstring></argsstring>
+        <name>currentdictfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" line="986" column="27" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="986" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1a6a862694b895dfd3c3e7ff8c2e751862" compoundref="slidict_8cc" startline="997" endline="1022">init_slidict</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slidict_8cc_1ad44b6568fc08577bba790bc5c13d3ac2" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classKnownFunction" kindref="compound">KnownFunction</ref></type>
+        <definition>const KnownFunction knownfunction</definition>
+        <argsstring></argsstring>
+        <name>knownfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" line="987" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="987" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1a6a862694b895dfd3c3e7ff8c2e751862" compoundref="slidict_8cc" startline="997" endline="1022">init_slidict</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slidict_8cc_1a64b1d23bf72dc385a0fb1fc2c761f52d" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classUndefFunction" kindref="compound">UndefFunction</ref></type>
+        <definition>const UndefFunction undeffunction</definition>
+        <argsstring></argsstring>
+        <name>undeffunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" line="988" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="988" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1a6a862694b895dfd3c3e7ff8c2e751862" compoundref="slidict_8cc" startline="997" endline="1022">init_slidict</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slidict_8cc_1aac31d6242e9fde94e5dbbb073e1a4146" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classCleardictFunction" kindref="compound">CleardictFunction</ref></type>
+        <definition>const CleardictFunction cleardictfunction</definition>
+        <argsstring></argsstring>
+        <name>cleardictfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" line="989" column="25" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="989" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1a6a862694b895dfd3c3e7ff8c2e751862" compoundref="slidict_8cc" startline="997" endline="1022">init_slidict</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slidict_8cc_1a3a31a5615df25aea9cc10c9b65746229" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classClonedictFunction" kindref="compound">ClonedictFunction</ref></type>
+        <definition>const ClonedictFunction clonedictfunction</definition>
+        <argsstring></argsstring>
+        <name>clonedictfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" line="990" column="25" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="990" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1a6a862694b895dfd3c3e7ff8c2e751862" compoundref="slidict_8cc" startline="997" endline="1022">init_slidict</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slidict_8cc_1a27dfa002ebfce0caaaa46961b04ed564" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classCva__dFunction" kindref="compound">Cva_dFunction</ref></type>
+        <definition>const Cva_dFunction cva_dfunction</definition>
+        <argsstring></argsstring>
+        <name>cva_dfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" line="991" column="21" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="991" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1a6a862694b895dfd3c3e7ff8c2e751862" compoundref="slidict_8cc" startline="997" endline="1022">init_slidict</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slidict_8cc_1a1b3d5a6451c1716bff05d4c842f7e782" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classKeysFunction" kindref="compound">KeysFunction</ref></type>
+        <definition>const KeysFunction keysfunction</definition>
+        <argsstring></argsstring>
+        <name>keysfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" line="992" column="20" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="992" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1a6a862694b895dfd3c3e7ff8c2e751862" compoundref="slidict_8cc" startline="997" endline="1022">init_slidict</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slidict_8cc_1a51e31f17acd6fd73b5a740fd2b6fe015" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classValuesFunction" kindref="compound">ValuesFunction</ref></type>
+        <definition>const ValuesFunction valuesfunction</definition>
+        <argsstring></argsstring>
+        <name>valuesfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" line="993" column="22" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="993" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1a6a862694b895dfd3c3e7ff8c2e751862" compoundref="slidict_8cc" startline="997" endline="1022">init_slidict</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="slidict_8cc_1a4ed494637ad608799610f603238d2c4d" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classRestoredstackFunction" kindref="compound">RestoredstackFunction</ref></type>
+        <definition>const RestoredstackFunction restoredstackfunction</definition>
+        <argsstring></argsstring>
+        <name>restoredstackfunction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" line="994" column="29" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="994" bodyend="-1"/>
+        <referencedby refid="interpret_8cc_1a6a862694b895dfd3c3e7ff8c2e751862" compoundref="slidict_8cc" startline="997" endline="1022">init_slidict</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="slidict_8cc_1af65ec562a0c9fd773dad2d07069f0d3d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void init_slidict</definition>
+        <argsstring>(SLIInterpreter *i)</argsstring>
+        <name>init_slidict</name>
+        <param>
+          <type><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref> *</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" line="997" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc" bodystart="997" bodyend="1022"/>
+        <references refid="slidict_8cc_1aac31d6242e9fde94e5dbbb073e1a4146" compoundref="slidict_8cc" startline="989">cleardictfunction</references>
+        <references refid="slidict_8cc_1a69b092581f9fb470aec066c6e0897dd7" compoundref="slidict_8cc" startline="985">cleardictstackfunction</references>
+        <references refid="slidict_8cc_1a3a31a5615df25aea9cc10c9b65746229" compoundref="slidict_8cc" startline="990">clonedictfunction</references>
+        <references refid="slidict_8cc_1a9652b975d1da5992117bdaaa20a211b6" compoundref="slidict_8cc" startline="984">countdictstackfunction</references>
+        <references refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" compoundref="interpret_8cc" startline="271" endline="282">SLIInterpreter::createcommand</references>
+        <references refid="slidict_8cc_1a9ef1a68bd066619978eaf686ee93c3d5" compoundref="slidict_8cc" startline="986">currentdictfunction</references>
+        <references refid="slidict_8cc_1a27dfa002ebfce0caaaa46961b04ed564" compoundref="slidict_8cc" startline="991">cva_dfunction</references>
+        <references refid="slidict_8cc_1a174ae5c43fbf2fc8083b0b1840521231" compoundref="slidict_8cc" startline="978">dictbeginfunction</references>
+        <references refid="slidict_8cc_1a8d21275750cf11ed36f72f90b84020d1" compoundref="slidict_8cc" startline="980">dictconstructfunction</references>
+        <references refid="slidict_8cc_1a7fc4726ba564d36939bb19bc73d10c62" compoundref="slidict_8cc" startline="979">dictendfunction</references>
+        <references refid="slidict_8cc_1a19c81ff2216ab988acfe5fddb637808f" compoundref="slidict_8cc" startline="972">dictfunction</references>
+        <references refid="slidict_8cc_1a4426638c018398fa9d502e54721691bf" compoundref="slidict_8cc" startline="974">dictgetfunction</references>
+        <references refid="slidict_8cc_1ad0aeca2bd330ee5e1db95ab1b36d7ad1" compoundref="slidict_8cc" startline="975">dictinfofunction</references>
+        <references refid="slidict_8cc_1a5cfa2a718903b52af2108f08c240fcb6" compoundref="slidict_8cc" startline="973">dictputfunction</references>
+        <references refid="slidict_8cc_1a31bab3c76cc806c6bbc782c3f27b1e29" compoundref="slidict_8cc" startline="983">dictstackfunction</references>
+        <references refid="slidict_8cc_1a6231314b3c1abc92d68d5616a5cad60c" compoundref="slidict_8cc" startline="976">dicttopinfofunction</references>
+        <references refid="slidict_8cc_1a6ca6f8288d4f65a6643cdd47ee751563" compoundref="slidict_8cc" startline="982">empty_Dfunction</references>
+        <references refid="classSLIInterpreter_1af10afcb60ee15c1629b400d15041a057" compoundref="interpret_8h" startline="124">SLIInterpreter::end_name</references>
+        <references refid="slidict_8cc_1a1b3d5a6451c1716bff05d4c842f7e782" compoundref="slidict_8cc" startline="992">keysfunction</references>
+        <references refid="slidict_8cc_1ad44b6568fc08577bba790bc5c13d3ac2" compoundref="slidict_8cc" startline="987">knownfunction</references>
+        <references refid="slidict_8cc_1a2c047022bb7bffea749454f1b152ef5d" compoundref="slidict_8cc" startline="981">length_dfunction</references>
+        <references refid="slidict_8cc_1a4ed494637ad608799610f603238d2c4d" compoundref="slidict_8cc" startline="994">restoredstackfunction</references>
+        <references refid="slidict_8cc_1a64b1d23bf72dc385a0fb1fc2c761f52d" compoundref="slidict_8cc" startline="988">undeffunction</references>
+        <references refid="slidict_8cc_1a51e31f17acd6fd73b5a740fd2b6fe015" compoundref="slidict_8cc" startline="993">valuesfunction</references>
+        <references refid="slidict_8cc_1aaff2028328074f3253395faa3b0ff466" compoundref="slidict_8cc" startline="977">whofunction</references>
+        <referencedby refid="classSLIInterpreter_1a3c2b1137a8836c59a8273cd3c0538287" compoundref="interpret_8cc" startline="220" endline="234">SLIInterpreter::initexternals</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/><sp/>slidict.cc</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/><sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>NEST.</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="6"><highlight class="comment"><sp/>*<sp/><sp/>Copyright<sp/>(C)<sp/>2004<sp/>The<sp/>NEST<sp/>Initiative</highlight></codeline>
+<codeline lineno="7"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="8"><highlight class="comment"><sp/>*<sp/><sp/>NEST<sp/>is<sp/>free<sp/>software:<sp/>you<sp/>can<sp/>redistribute<sp/>it<sp/>and/or<sp/>modify</highlight></codeline>
+<codeline lineno="9"><highlight class="comment"><sp/>*<sp/><sp/>it<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>the<sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>as<sp/>published<sp/>by</highlight></codeline>
+<codeline lineno="10"><highlight class="comment"><sp/>*<sp/><sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>either<sp/>version<sp/>2<sp/>of<sp/>the<sp/>License,<sp/>or</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*<sp/><sp/>(at<sp/>your<sp/>option)<sp/>any<sp/>later<sp/>version.</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="13"><highlight class="comment"><sp/>*<sp/><sp/>NEST<sp/>is<sp/>distributed<sp/>in<sp/>the<sp/>hope<sp/>that<sp/>it<sp/>will<sp/>be<sp/>useful,</highlight></codeline>
+<codeline lineno="14"><highlight class="comment"><sp/>*<sp/><sp/>but<sp/>WITHOUT<sp/>ANY<sp/>WARRANTY;<sp/>without<sp/>even<sp/>the<sp/>implied<sp/>warranty<sp/>of</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*<sp/><sp/>MERCHANTABILITY<sp/>or<sp/>FITNESS<sp/>FOR<sp/>A<sp/>PARTICULAR<sp/>PURPOSE.<sp/><sp/>See<sp/>the</highlight></codeline>
+<codeline lineno="16"><highlight class="comment"><sp/>*<sp/><sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>for<sp/>more<sp/>details.</highlight></codeline>
+<codeline lineno="17"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="18"><highlight class="comment"><sp/>*<sp/><sp/>You<sp/>should<sp/>have<sp/>received<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>GNU<sp/>General<sp/>Public<sp/>License</highlight></codeline>
+<codeline lineno="19"><highlight class="comment"><sp/>*<sp/><sp/>along<sp/>with<sp/>NEST.<sp/><sp/>If<sp/>not,<sp/>see<sp/>&lt;http://www.gnu.org/licenses/&gt;.</highlight></codeline>
+<codeline lineno="20"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="21"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="24"><highlight class="comment"><sp/><sp/><sp/><sp/>SLI<sp/>Dictionary<sp/>access</highlight></codeline>
+<codeline lineno="25"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="slidict_8h" kindref="compound">slidict.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Includes<sp/>from<sp/>sli:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="arraydatum_8h" kindref="compound">arraydatum.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="booldatum_8h" kindref="compound">booldatum.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="dictdatum_8h" kindref="compound">dictdatum.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="dictstack_8h" kindref="compound">dictstack.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="integerdatum_8h" kindref="compound">integerdatum.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="iostreamdatum_8h" kindref="compound">iostreamdatum.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="namedatum_8h" kindref="compound">namedatum.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="tokenutils_8h" kindref="compound">tokenutils.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59" refid="classDictFunction_1a0aeec0906782e917658965b64312acab" refkind="member"><highlight class="normal"><ref refid="classDictFunction_1a0aeec0906782e917658965b64312acab" kindref="member">DictFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="60"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>create<sp/>a<sp/>new<sp/>dictionary</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();<sp/></highlight><highlight class="comment">//<sp/>never<sp/>forget<sp/>me</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a585f38fb0ed122da90489eccbfd7a187" kindref="member">push</ref>(<sp/><ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref>(<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="classDictionary" kindref="compound">Dictionary</ref><sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100" refid="classDictputFunction_1a3ea668cab2ee261c382d6775ef34b635" refkind="member"><highlight class="normal"><ref refid="classDictputFunction_1a3ea668cab2ee261c382d6775ef34b635" kindref="member">DictputFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="101"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>&gt;=<sp/>3<sp/>)</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>call:<sp/>dict<sp/>key<sp/>val</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref>*<sp/>dict<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1ac861cc2282484dd2a27dd1304aa719a4" kindref="member">pick</ref>(<sp/>2<sp/>).<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>dict<sp/>)</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classLiteralDatum" kindref="compound">LiteralDatum</ref>*<sp/>key<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classLiteralDatum" kindref="compound">LiteralDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1ac861cc2282484dd2a27dd1304aa719a4" kindref="member">pick</ref>(<sp/>1<sp/>).<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>key<sp/>)</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/>*dict<sp/>)-&gt;insert_move(<sp/>*key,<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>DICTSTACK_CACHE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>(<sp/>*dict<sp/>)-&gt;is_on_dictstack()<sp/>)</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a2aa452e3851567a438fe4abc34fcdaea" kindref="member">DStack</ref>-&gt;<ref refid="classDictionaryStack_1ad60c536d820b6f24bbf9654ff1fdf52c" kindref="member">clear_token_from_cache</ref>(<sp/>*key<sp/>);</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>(<sp/>3<sp/>);</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();<sp/></highlight><highlight class="comment">//<sp/>never<sp/>forget<sp/>me</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classArgumentType" kindref="compound">ArgumentType</ref>(<sp/>1<sp/>);</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classArgumentType" kindref="compound">ArgumentType</ref>(<sp/>2<sp/>);</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classStackUnderflow" kindref="compound">StackUnderflow</ref>(<sp/>3,<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="136"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="167" refid="classDictgetFunction_1a519110e233b1d80161bbd9b95e0a5b5d" refkind="member"><highlight class="normal"><ref refid="classDictgetFunction_1a519110e233b1d80161bbd9b95e0a5b5d" kindref="member">DictgetFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="168"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>call:<sp/>dict<sp/>key<sp/>-&gt;<sp/>val</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>&gt;=<sp/>2<sp/>)</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref>*<sp/>dict<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1ac861cc2282484dd2a27dd1304aa719a4" kindref="member">pick</ref>(<sp/>1<sp/>).<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>dict<sp/>)</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classLiteralDatum" kindref="compound">LiteralDatum</ref>*<sp/>key<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classLiteralDatum" kindref="compound">LiteralDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1ac861cc2282484dd2a27dd1304aa719a4" kindref="member">pick</ref>(<sp/>0<sp/>).<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>key<sp/>)</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classToken" kindref="compound">Token</ref><sp/>value<sp/>=<sp/>(<sp/>*dict<sp/>)-&gt;lookup2(<sp/>*key<sp/>);</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();<sp/></highlight><highlight class="comment">//<sp/>never<sp/>forget<sp/>me</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>(<sp/>2<sp/>);</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9d3b72926bfa2090389f0782cd2b6e76" kindref="member">push_move</ref>(<sp/>value<sp/>);</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classArgumentType" kindref="compound">ArgumentType</ref>(<sp/>0<sp/>);</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classArgumentType" kindref="compound">ArgumentType</ref>(<sp/>1<sp/>);</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classStackUnderflow" kindref="compound">StackUnderflow</ref>(<sp/>2,<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="198"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="229" refid="classDictinfoFunction_1a50aec73b84c4770a948c1ff1688e7477" refkind="member"><highlight class="normal"><ref refid="classDictinfoFunction_1a50aec73b84c4770a948c1ff1688e7477" kindref="member">DictinfoFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="230"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>call:<sp/>ostream<sp/>dict</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="232"><highlight class="normal"></highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/>assert(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>&gt;<sp/>1<sp/>);</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/><ref refid="classlockPTRDatum" kindref="compound">OstreamDatum</ref>*<sp/>outd<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classlockPTRDatum" kindref="compound">OstreamDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1ac861cc2282484dd2a27dd1304aa719a4" kindref="member">pick</ref>(<sp/>1<sp/>).<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref>*<sp/>dict<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>().<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/>assert(<sp/>dict<sp/>);</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/>assert(<sp/>outd<sp/>);</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/>(<sp/>*dict<sp/>)-&gt;info(<sp/>**outd<sp/>);</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>(<sp/>2<sp/>);</highlight></codeline>
+<codeline lineno="241"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"></highlight></codeline>
+<codeline lineno="257"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="258" refid="classLength__dFunction_1ae039e5cbc9bc5bc31eb31ed9373e3ed2" refkind="member"><highlight class="normal"><ref refid="classLength__dFunction_1ae039e5cbc9bc5bc31eb31ed9373e3ed2" kindref="member">Length_dFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="259"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>call:<sp/>dict<sp/>length_d<sp/>-&gt;<sp/>int</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="261"><highlight class="normal"></highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/>assert(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>&gt;<sp/>0<sp/>);</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref>*<sp/>dict<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>().<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/>assert(<sp/>dict<sp/>);</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"><sp/><sp/><ref refid="classToken" kindref="compound">Token</ref><sp/>st(<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="integerdatum_8h_1ae9e7b850583ee9d781126bd856458aec" kindref="member">IntegerDatum</ref>(<sp/>(<sp/>*dict<sp/>)-&gt;size()<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="268"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9d3b72926bfa2090389f0782cd2b6e76" kindref="member">push_move</ref>(<sp/>st<sp/>);</highlight></codeline>
+<codeline lineno="269"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"></highlight></codeline>
+<codeline lineno="271"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="272" refid="classEmpty__DFunction_1a2df994df311760209041e957ca3aa3c1" refkind="member"><highlight class="normal"><ref refid="classEmpty__DFunction_1a2df994df311760209041e957ca3aa3c1" kindref="member">Empty_DFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="273"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>call:<sp/>dict<sp/>empty_D<sp/>dict<sp/>bool</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="275"><highlight class="normal"><sp/><sp/>assert(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>&gt;<sp/>0<sp/>);</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"></highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>dd<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref><sp/>const*<sp/></highlight><highlight class="keyword">const<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>().<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"></highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/>assert(<sp/>dd<sp/>);</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"></highlight></codeline>
+<codeline lineno="281"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a75a8af662288b54a64d5185c90401dec" kindref="member">push_by_pointer</ref>(<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="classBoolDatum" kindref="compound">BoolDatum</ref>(<sp/>(<sp/>*dd<sp/>)-&gt;empty()<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"></highlight></codeline>
+<codeline lineno="283"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="284"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="285"><highlight class="normal"></highlight></codeline>
+<codeline lineno="286"><highlight class="normal"></highlight></codeline>
+<codeline lineno="303"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="304" refid="classCountdictstackFunction_1ab7a6d7a916bc34312fec590c1f4a6b3b" refkind="member"><highlight class="normal"><ref refid="classCountdictstackFunction_1ab7a6d7a916bc34312fec590c1f4a6b3b" kindref="member">CountdictstackFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="305"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="306"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>call:<sp/>Countdictstack<sp/>-&gt;<sp/>int</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="307"><highlight class="normal"></highlight></codeline>
+<codeline lineno="308"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="309"><highlight class="normal"><sp/><sp/><ref refid="classToken" kindref="compound">Token</ref><sp/>st(<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="integerdatum_8h_1ae9e7b850583ee9d781126bd856458aec" kindref="member">IntegerDatum</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1a2aa452e3851567a438fe4abc34fcdaea" kindref="member">DStack</ref>-&gt;<ref refid="classDictionaryStack_1ab137abf2543962afa801918b55b32d6e" kindref="member">size</ref>()<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="310"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9d3b72926bfa2090389f0782cd2b6e76" kindref="member">push_move</ref>(<sp/>st<sp/>);</highlight></codeline>
+<codeline lineno="311"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="312"><highlight class="normal"></highlight></codeline>
+<codeline lineno="325"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="326" refid="classDictstackFunction_1a943178800705ab762102bdcbe9a987f0" refkind="member"><highlight class="normal"><ref refid="classDictstackFunction_1a943178800705ab762102bdcbe9a987f0" kindref="member">DictstackFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="327"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="328"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>call:<sp/>-<sp/><sp/>dictstack<sp/>-&gt;<sp/><sp/>array</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="329"><highlight class="normal"></highlight></codeline>
+<codeline lineno="330"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="331"><highlight class="normal"><sp/><sp/><ref refid="classTokenArray" kindref="compound">TokenArray</ref><sp/>ta;</highlight></codeline>
+<codeline lineno="332"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a2aa452e3851567a438fe4abc34fcdaea" kindref="member">DStack</ref>-&gt;<ref refid="classDictionaryStack_1a3e10c9a812a39de9cf03e57ab2a9d7ae" kindref="member">toArray</ref>(<sp/>ta<sp/>);</highlight></codeline>
+<codeline lineno="333"><highlight class="normal"><sp/><sp/><ref refid="classToken" kindref="compound">Token</ref><sp/>st(<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="arraydatum_8h_1ae28f9f22dee7553c3f044e7f48e4f314" kindref="member">ArrayDatum</ref>(<sp/>ta<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="334"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9d3b72926bfa2090389f0782cd2b6e76" kindref="member">push_move</ref>(<sp/>st<sp/>);</highlight></codeline>
+<codeline lineno="335"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="336"><highlight class="normal"></highlight></codeline>
+<codeline lineno="346"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="347" refid="classCurrentdictFunction_1aede7d701268eeef1d4397d396ff3f242" refkind="member"><highlight class="normal"><ref refid="classCurrentdictFunction_1aede7d701268eeef1d4397d396ff3f242" kindref="member">CurrentdictFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="348"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="349"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>call:<sp/>-<sp/><sp/>currentdict<sp/>-&gt;<sp/>dict</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="350"><highlight class="normal"></highlight></codeline>
+<codeline lineno="351"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="352"><highlight class="normal"><sp/><sp/><ref refid="classToken" kindref="compound">Token</ref><sp/>dt;</highlight></codeline>
+<codeline lineno="353"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a2aa452e3851567a438fe4abc34fcdaea" kindref="member">DStack</ref>-&gt;<ref refid="classDictionaryStack_1aa29e38886d0158d4cd2254753b38d0f3" kindref="member">top</ref>(<sp/>dt<sp/>);</highlight></codeline>
+<codeline lineno="354"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9d3b72926bfa2090389f0782cd2b6e76" kindref="member">push_move</ref>(<sp/>dt<sp/>);</highlight></codeline>
+<codeline lineno="355"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="356"><highlight class="normal"></highlight></codeline>
+<codeline lineno="367"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="368" refid="classCleardictstackFunction_1a01dcf7436ca32254d5bc20b0b4050993" refkind="member"><highlight class="normal"><ref refid="classCleardictstackFunction_1a01dcf7436ca32254d5bc20b0b4050993" kindref="member">CleardictstackFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="369"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="370"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Pop<sp/>all<sp/>non-permanent<sp/>dictionaries</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="371"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="372"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1a2aa452e3851567a438fe4abc34fcdaea" kindref="member">DStack</ref>-&gt;<ref refid="classDictionaryStack_1ab137abf2543962afa801918b55b32d6e" kindref="member">size</ref>()<sp/>&gt;<sp/>2<sp/>)</highlight></codeline>
+<codeline lineno="373"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="374"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a2aa452e3851567a438fe4abc34fcdaea" kindref="member">DStack</ref>-&gt;<ref refid="classDictionaryStack_1ad4eb8703d1963c570ae0607886d83275" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="375"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="376"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="377"><highlight class="normal"></highlight></codeline>
+<codeline lineno="391"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="392" refid="classDicttopinfoFunction_1ad2ba8ae6f359feac029c196231ce1602" refkind="member"><highlight class="normal"><ref refid="classDicttopinfoFunction_1ad2ba8ae6f359feac029c196231ce1602" kindref="member">DicttopinfoFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="393"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="394"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>call:<sp/>ostream<sp/>Dicttopinfo</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="395"><highlight class="normal"></highlight></codeline>
+<codeline lineno="396"><highlight class="normal"><sp/><sp/>assert(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>&gt;<sp/>0<sp/>);</highlight></codeline>
+<codeline lineno="397"><highlight class="normal"><sp/><sp/><ref refid="classlockPTRDatum" kindref="compound">OstreamDatum</ref>*<sp/>outd<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classlockPTRDatum" kindref="compound">OstreamDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>().<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="398"><highlight class="normal"><sp/><sp/>assert(<sp/>outd<sp/>);</highlight></codeline>
+<codeline lineno="399"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="400"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a2aa452e3851567a438fe4abc34fcdaea" kindref="member">DStack</ref>-&gt;<ref refid="classDictionaryStack_1a026e89ff56b7e0e3da0421f65d86090b" kindref="member">top_info</ref>(<sp/>**outd<sp/>);</highlight></codeline>
+<codeline lineno="401"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="402"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="403"><highlight class="normal"></highlight></codeline>
+<codeline lineno="420"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="421" refid="classWhoFunction_1a04ed295d22dc88f6f39aa1287d8070fc" refkind="member"><highlight class="normal"><ref refid="classWhoFunction_1a04ed295d22dc88f6f39aa1287d8070fc" kindref="member">WhoFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="422"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="423"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>call:<sp/>ostream</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="424"><highlight class="normal"></highlight></codeline>
+<codeline lineno="425"><highlight class="normal"><sp/><sp/>assert(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>&gt;<sp/>0<sp/>);</highlight></codeline>
+<codeline lineno="426"><highlight class="normal"><sp/><sp/><ref refid="classlockPTRDatum" kindref="compound">OstreamDatum</ref>*<sp/>outd<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classlockPTRDatum" kindref="compound">OstreamDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>().<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="427"><highlight class="normal"><sp/><sp/>assert(<sp/>outd<sp/>);</highlight></codeline>
+<codeline lineno="428"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="429"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a2aa452e3851567a438fe4abc34fcdaea" kindref="member">DStack</ref>-&gt;<ref refid="classDictionaryStack_1acfd66b8fe261db057215a9aae38192bf" kindref="member">info</ref>(<sp/>**outd<sp/>);</highlight></codeline>
+<codeline lineno="430"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="431"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="432"><highlight class="normal"></highlight></codeline>
+<codeline lineno="448"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="449" refid="classDictbeginFunction_1a3fa95279ddb7e1dd1d93b40d1c648345" refkind="member"><highlight class="normal"><ref refid="classDictbeginFunction_1a3fa95279ddb7e1dd1d93b40d1c648345" kindref="member">DictbeginFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="450"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="451"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>call:<sp/>dict</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="452"><highlight class="normal"></highlight></codeline>
+<codeline lineno="453"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>&gt;<sp/>0<sp/>)</highlight></codeline>
+<codeline lineno="454"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="455"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref>*<sp/>dict<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>().<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="456"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>dict<sp/>)</highlight></codeline>
+<codeline lineno="457"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="458"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="459"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a2aa452e3851567a438fe4abc34fcdaea" kindref="member">DStack</ref>-&gt;<ref refid="classDictionaryStack_1aa5c86944e162f4d0c10319a81cbd564b" kindref="member">push</ref>(<sp/>*dict<sp/>);</highlight></codeline>
+<codeline lineno="460"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="461"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="462"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="463"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="464"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="465"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1a0f433320b9ff523f5e70964bc29af548" kindref="member">ArgumentTypeError</ref><sp/>);</highlight></codeline>
+<codeline lineno="466"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="467"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="468"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="469"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="470"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1af98b93bb76491e6bc67e7636ca8e9ea9" kindref="member">StackUnderflowError</ref><sp/>);</highlight></codeline>
+<codeline lineno="471"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="472"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="473"><highlight class="normal"></highlight></codeline>
+<codeline lineno="491"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="492" refid="classDictendFunction_1a51bd4b50fd6b7bb45942595d1f51fb3b" refkind="member"><highlight class="normal"><ref refid="classDictendFunction_1a51bd4b50fd6b7bb45942595d1f51fb3b" kindref="member">DictendFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="493"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="494"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1a2aa452e3851567a438fe4abc34fcdaea" kindref="member">DStack</ref>-&gt;<ref refid="classDictionaryStack_1ab137abf2543962afa801918b55b32d6e" kindref="member">size</ref>()<sp/>&gt;<sp/>2<sp/>)<sp/></highlight><highlight class="comment">//<sp/>keep<sp/>at<sp/>least<sp/>systemdict<sp/>and<sp/>userdict</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="495"><highlight class="normal"><sp/><sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>see<sp/>sli-init.sli<sp/>for<sp/>details</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="496"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a2aa452e3851567a438fe4abc34fcdaea" kindref="member">DStack</ref>-&gt;<ref refid="classDictionaryStack_1ad4eb8703d1963c570ae0607886d83275" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="497"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="498"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="499"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="500"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="501"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror</ref>(<sp/></highlight><highlight class="stringliteral">&quot;DictStackUnderflow&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="502"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="503"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="504"><highlight class="normal"></highlight></codeline>
+<codeline lineno="543"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="544" refid="classUndefFunction_1a1e1950db6e4003a73d5f5a0bab8d9a00" refkind="member"><highlight class="normal"><ref refid="classUndefFunction_1a1e1950db6e4003a73d5f5a0bab8d9a00" kindref="member">UndefFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="545"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="546"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>call:<sp/>dict<sp/>key<sp/>-&gt;<sp/>-</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="547"><highlight class="normal"></highlight></codeline>
+<codeline lineno="548"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>&gt;<sp/>1<sp/>)</highlight></codeline>
+<codeline lineno="549"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="550"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref>*<sp/>dict<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1ac861cc2282484dd2a27dd1304aa719a4" kindref="member">pick</ref>(<sp/>1<sp/>).<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="551"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>dict<sp/>)</highlight></codeline>
+<codeline lineno="552"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="553"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classLiteralDatum" kindref="compound">LiteralDatum</ref>*<sp/>key<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classLiteralDatum" kindref="compound">LiteralDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1ac861cc2282484dd2a27dd1304aa719a4" kindref="member">pick</ref>(<sp/>0<sp/>).<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="554"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>key<sp/>)</highlight></codeline>
+<codeline lineno="555"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="556"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="557"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>DICTSTACK_CACHE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="558"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>(<sp/>*dict<sp/>)-&gt;is_on_dictstack()<sp/>)</highlight></codeline>
+<codeline lineno="559"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="560"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a2aa452e3851567a438fe4abc34fcdaea" kindref="member">DStack</ref>-&gt;<ref refid="classDictionaryStack_1ad60c536d820b6f24bbf9654ff1fdf52c" kindref="member">clear_token_from_cache</ref>(<sp/>*key<sp/>);</highlight></codeline>
+<codeline lineno="561"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="562"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="563"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/>*dict<sp/>)-&gt;erase(<sp/>*key<sp/>);</highlight></codeline>
+<codeline lineno="564"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>(<sp/>2<sp/>);</highlight></codeline>
+<codeline lineno="565"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="566"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="567"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="568"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="569"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classArgumentType" kindref="compound">ArgumentType</ref>(<sp/>0<sp/>);</highlight></codeline>
+<codeline lineno="570"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="571"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="572"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="573"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="574"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classArgumentType" kindref="compound">ArgumentType</ref>(<sp/>1<sp/>);</highlight></codeline>
+<codeline lineno="575"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="576"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="577"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="578"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="579"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classStackUnderflow" kindref="compound">StackUnderflow</ref>(<sp/>2,<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="580"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="581"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="582"><highlight class="normal"></highlight></codeline>
+<codeline lineno="628"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="629" refid="classDictconstructFunction_1a4a714112e05b609e5b63b08070d6c619" refkind="member"><highlight class="normal"><ref refid="classDictconstructFunction_1a4a714112e05b609e5b63b08070d6c619" kindref="member">DictconstructFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="630"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="631"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>call:<sp/>mark<sp/>key1<sp/>val1<sp/>...<sp/>keyn<sp/>valn<sp/>-&gt;<sp/>dict</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="632"><highlight class="normal"></highlight></codeline>
+<codeline lineno="633"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>load<sp/>=<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>();</highlight></codeline>
+<codeline lineno="634"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>load<sp/>==<sp/>0<sp/>)</highlight></codeline>
+<codeline lineno="635"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="636"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/><ref refid="classStackUnderflow" kindref="compound">StackUnderflow</ref>(<sp/>1,<sp/>0<sp/>);</highlight></codeline>
+<codeline lineno="637"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="638"><highlight class="normal"></highlight></codeline>
+<codeline lineno="639"><highlight class="normal"><sp/><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref>*<sp/>dictd<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref>(<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="classDictionary" kindref="compound">Dictionary</ref><sp/>);</highlight></codeline>
+<codeline lineno="640"><highlight class="normal"><sp/><sp/><ref refid="classToken" kindref="compound">Token</ref><sp/>dict(<sp/>dictd<sp/>);</highlight></codeline>
+<codeline lineno="641"><highlight class="normal"></highlight></codeline>
+<codeline lineno="642"><highlight class="normal"><sp/><sp/><ref refid="classLiteralDatum" kindref="compound">LiteralDatum</ref>*<sp/>key<sp/>=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="643"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classToken" kindref="compound">Token</ref><sp/>mark<sp/>=<sp/>i-&gt;<ref refid="classSLIInterpreter_1a96c3eff127bf8a56860f05ff199cb6ff" kindref="member">baselookup</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1afe0e3fe443a8fa59dfaf31a4a5f46526" kindref="member">mark_name</ref><sp/>);</highlight></codeline>
+<codeline lineno="644"><highlight class="normal"></highlight></codeline>
+<codeline lineno="645"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n<sp/>=<sp/>0;<sp/></highlight></codeline>
+<codeline lineno="646"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(<sp/>n<sp/>&lt;<sp/>load<sp/>and<sp/>not(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1ac861cc2282484dd2a27dd1304aa719a4" kindref="member">pick</ref>(<sp/>n<sp/>)<sp/>==<sp/>mark<sp/>)<sp/>)</highlight></codeline>
+<codeline lineno="647"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="648"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classToken" kindref="compound">Token</ref>&amp;<sp/>val<sp/>=<sp/>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1ac861cc2282484dd2a27dd1304aa719a4" kindref="member">pick</ref>(<sp/>n<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="649"><highlight class="normal"><sp/><sp/><sp/><sp/>key<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classLiteralDatum" kindref="compound">LiteralDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1ac861cc2282484dd2a27dd1304aa719a4" kindref="member">pick</ref>(<sp/>n<sp/>+<sp/>1<sp/>).<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="650"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not<sp/>key<sp/>)</highlight></codeline>
+<codeline lineno="651"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="652"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIMessaging_1gacbc035efd87bf843002900f7f1baf5b0" kindref="member">message</ref>(<sp/>30,<sp/></highlight><highlight class="stringliteral">&quot;DictConstruct&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;Literal<sp/>expected.<sp/>Maybe<sp/>initializer<sp/>list<sp/>is<sp/>in<sp/>the<sp/>wrong<sp/>order.&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="653"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1a0f433320b9ff523f5e70964bc29af548" kindref="member">ArgumentTypeError</ref><sp/>);</highlight></codeline>
+<codeline lineno="654"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal"><sp/>dictd;</highlight></codeline>
+<codeline lineno="655"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="656"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="657"><highlight class="normal"><sp/><sp/><sp/><sp/>(<sp/>*dictd<sp/>)-&gt;insert_move(<sp/>*key,<sp/>val<sp/>);</highlight></codeline>
+<codeline lineno="658"><highlight class="normal"><sp/><sp/><sp/><sp/>n<sp/>+=<sp/>2;<sp/></highlight><highlight class="comment">//<sp/>count<sp/>number<sp/>of<sp/>elements</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="659"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="660"><highlight class="normal"></highlight></codeline>
+<codeline lineno="661"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>n<sp/>==<sp/>load<sp/>)</highlight></codeline>
+<codeline lineno="662"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="663"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIMessaging_1gacbc035efd87bf843002900f7f1baf5b0" kindref="member">message</ref>(<sp/>30,<sp/></highlight><highlight class="stringliteral">&quot;DictConstruct&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;&lt;&lt;<sp/>expected.&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="664"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1a0f433320b9ff523f5e70964bc29af548" kindref="member">ArgumentTypeError</ref><sp/>);</highlight></codeline>
+<codeline lineno="665"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="666"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="667"><highlight class="normal"></highlight></codeline>
+<codeline lineno="668"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>n<sp/>%<sp/>2<sp/>!=<sp/>0<sp/>)<sp/></highlight><highlight class="comment">//<sp/>there<sp/>must<sp/>be<sp/>an<sp/>even<sp/>number<sp/>of<sp/>objects</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="669"><highlight class="normal"><sp/><sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>above<sp/>the<sp/>mark</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="670"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIMessaging_1gacbc035efd87bf843002900f7f1baf5b0" kindref="member">message</ref>(<sp/>30,<sp/></highlight><highlight class="stringliteral">&quot;DictConstruct&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;Initializer<sp/>list<sp/>must<sp/>be<sp/>pairs<sp/>of<sp/>literal<sp/>and<sp/>value.&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="671"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1a0f433320b9ff523f5e70964bc29af548" kindref="member">ArgumentTypeError</ref><sp/>);</highlight></codeline>
+<codeline lineno="672"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="673"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="674"><highlight class="normal"></highlight></codeline>
+<codeline lineno="675"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="676"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>(<sp/>n<sp/>);</highlight></codeline>
+<codeline lineno="677"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>().<ref refid="classToken_1a2f61f1702fa6214de27ccff368df11f5" kindref="member">move</ref>(<sp/>dict<sp/>);</highlight></codeline>
+<codeline lineno="678"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="679"><highlight class="normal"></highlight></codeline>
+<codeline lineno="680"><highlight class="normal"></highlight></codeline>
+<codeline lineno="696"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="697" refid="classKnownFunction_1a370ff2065291c06b110507618dc27d78" refkind="member"><highlight class="normal"><ref refid="classKnownFunction_1a370ff2065291c06b110507618dc27d78" kindref="member">KnownFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="698"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="699"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>call:<sp/>dict<sp/>key<sp/>-&gt;<sp/>bool</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="700"><highlight class="normal"></highlight></codeline>
+<codeline lineno="701"><highlight class="normal"><sp/><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref>*<sp/>dict<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1ac861cc2282484dd2a27dd1304aa719a4" kindref="member">pick</ref>(<sp/>1<sp/>).<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="702"><highlight class="normal"><sp/><sp/><ref refid="classLiteralDatum" kindref="compound">LiteralDatum</ref>*<sp/>key<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classLiteralDatum" kindref="compound">LiteralDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1ac861cc2282484dd2a27dd1304aa719a4" kindref="member">pick</ref>(<sp/>0<sp/>).<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="703"><highlight class="normal"></highlight></codeline>
+<codeline lineno="704"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>known<sp/>=<sp/>(<sp/>*dict<sp/>)-&gt;known(<sp/>*key<sp/>);</highlight></codeline>
+<codeline lineno="705"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();<sp/></highlight><highlight class="comment">//<sp/>never<sp/>forget<sp/>me</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="706"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>(<sp/>1<sp/>);</highlight></codeline>
+<codeline lineno="707"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>()<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="classBoolDatum" kindref="compound">BoolDatum</ref>(<sp/>known<sp/>);</highlight></codeline>
+<codeline lineno="708"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="709"><highlight class="normal"></highlight></codeline>
+<codeline lineno="718"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="719" refid="classCleardictFunction_1a3f46e75ae430cdd923fbfc827b514c53" refkind="member"><highlight class="normal"><ref refid="classCleardictFunction_1a3f46e75ae430cdd923fbfc827b514c53" kindref="member">CleardictFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="720"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="721"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a4bd843d0ad15faf88185a1ae885f8852" kindref="member">assert_stack_load</ref>(<sp/>1<sp/>);</highlight></codeline>
+<codeline lineno="722"><highlight class="normal"><sp/><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref>*<sp/>dict<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>().<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="723"><highlight class="normal"><sp/><sp/>assert(<sp/>dict<sp/>);</highlight></codeline>
+<codeline lineno="724"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>DICTSTACK_CACHE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="725"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>(<sp/>*dict<sp/>)-&gt;is_on_dictstack()<sp/>)</highlight></codeline>
+<codeline lineno="726"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="727"><highlight class="normal"><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a2aa452e3851567a438fe4abc34fcdaea" kindref="member">DStack</ref>-&gt;<ref refid="classDictionaryStack_1a892a08eff00f92879170fe0133848b89" kindref="member">clear_dict_from_cache</ref>(<sp/>*dict<sp/>);</highlight></codeline>
+<codeline lineno="728"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="729"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="730"><highlight class="normal"><sp/><sp/>(<sp/>*dict<sp/>)-&gt;clear();</highlight></codeline>
+<codeline lineno="731"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();<sp/></highlight><highlight class="comment">//<sp/>never<sp/>forget<sp/>me</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="732"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="733"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="734"><highlight class="normal"></highlight></codeline>
+<codeline lineno="758"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="759" refid="classClonedictFunction_1aeefdd73d2b1d15cb3e512caba56b2fb2" refkind="member"><highlight class="normal"><ref refid="classClonedictFunction_1aeefdd73d2b1d15cb3e512caba56b2fb2" kindref="member">ClonedictFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="760"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="761"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a4bd843d0ad15faf88185a1ae885f8852" kindref="member">assert_stack_load</ref>(<sp/>1<sp/>);</highlight></codeline>
+<codeline lineno="762"><highlight class="normal"><sp/><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref>*<sp/>dict<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>().<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="763"><highlight class="normal"><sp/><sp/>assert(<sp/>dict<sp/>);</highlight></codeline>
+<codeline lineno="764"><highlight class="normal"></highlight></codeline>
+<codeline lineno="765"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a585f38fb0ed122da90489eccbfd7a187" kindref="member">push</ref>(<sp/><ref refid="dictdatum_8h_1a4a4d8eba002ed1473f9f196598b268bc" kindref="member">DictionaryDatum</ref>(<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="classDictionary" kindref="compound">Dictionary</ref>(<sp/>*(<sp/>*dict<sp/>)<sp/>)<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="766"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();<sp/></highlight><highlight class="comment">//<sp/>never<sp/>forget<sp/>me</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="767"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="768"><highlight class="normal"></highlight></codeline>
+<codeline lineno="826"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="827" refid="classCva__dFunction_1a7dece55010db0710d0ac6876417f4037" refkind="member"><highlight class="normal"><ref refid="classCva__dFunction_1a7dece55010db0710d0ac6876417f4037" kindref="member">Cva_dFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="828"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="829"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="830"><highlight class="normal"><sp/><sp/>assert(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>&gt;<sp/>0<sp/>);</highlight></codeline>
+<codeline lineno="831"><highlight class="normal"><sp/><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref>*<sp/>dict<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>().<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="832"><highlight class="normal"><sp/><sp/>assert(<sp/>dict<sp/>);</highlight></codeline>
+<codeline lineno="833"><highlight class="normal"><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">ArrayDatum</ref>*<sp/>ad<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="arraydatum_8h_1ae28f9f22dee7553c3f044e7f48e4f314" kindref="member">ArrayDatum</ref>();</highlight></codeline>
+<codeline lineno="834"><highlight class="normal"><sp/><sp/>ad-&gt;reserve(<sp/>(<sp/>*dict<sp/>)-&gt;size()<sp/>*<sp/>2<sp/>);</highlight></codeline>
+<codeline lineno="835"><highlight class="normal"></highlight></codeline>
+<codeline lineno="836"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(<sp/>TokenMap::const_iterator<sp/>t<sp/>=<sp/>(<sp/>*dict<sp/>)-&gt;begin();<sp/>t<sp/>!=<sp/>(<sp/>*dict<sp/>)-&gt;end();<sp/>++t<sp/>)</highlight></codeline>
+<codeline lineno="837"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="838"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classToken" kindref="compound">Token</ref><sp/>nt(<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="classLiteralDatum" kindref="compound">LiteralDatum</ref>(<sp/>(<sp/>*t<sp/>).first<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="839"><highlight class="normal"><sp/><sp/><sp/><sp/>ad-&gt;push_back_move(<sp/>nt<sp/>);</highlight></codeline>
+<codeline lineno="840"><highlight class="normal"><sp/><sp/><sp/><sp/>ad-&gt;push_back(<sp/>(<sp/>*t<sp/>).second<sp/>);</highlight></codeline>
+<codeline lineno="841"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="842"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="843"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a585f38fb0ed122da90489eccbfd7a187" kindref="member">push</ref>(<sp/>ad<sp/>);</highlight></codeline>
+<codeline lineno="844"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="845"><highlight class="normal"></highlight></codeline>
+<codeline lineno="877"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="878" refid="classKeysFunction_1a3bda2554f94bb7cedad50d09d0680bdf" refkind="member"><highlight class="normal"><ref refid="classKeysFunction_1a3bda2554f94bb7cedad50d09d0680bdf" kindref="member">KeysFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="879"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="880"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="881"><highlight class="normal"><sp/><sp/>assert(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>&gt;<sp/>0<sp/>);</highlight></codeline>
+<codeline lineno="882"><highlight class="normal"><sp/><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref>*<sp/>dict<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>().<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="883"><highlight class="normal"><sp/><sp/>assert(<sp/>dict<sp/>);</highlight></codeline>
+<codeline lineno="884"><highlight class="normal"><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">ArrayDatum</ref>*<sp/>ad<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="arraydatum_8h_1ae28f9f22dee7553c3f044e7f48e4f314" kindref="member">ArrayDatum</ref>();</highlight></codeline>
+<codeline lineno="885"><highlight class="normal"></highlight></codeline>
+<codeline lineno="886"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(<sp/>TokenMap::const_iterator<sp/>t<sp/>=<sp/>(<sp/>*dict<sp/>)-&gt;begin();<sp/>t<sp/>!=<sp/>(<sp/>*dict<sp/>)-&gt;end();<sp/>++t<sp/>)</highlight></codeline>
+<codeline lineno="887"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="888"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classToken" kindref="compound">Token</ref><sp/>nt(<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="classLiteralDatum" kindref="compound">LiteralDatum</ref>(<sp/>(<sp/>*t<sp/>).first<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="889"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(<sp/>not<sp/>nt.<ref refid="classToken_1a397db8062278fec3e786aa62f9d9baf8" kindref="member">empty</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="890"><highlight class="normal"><sp/><sp/><sp/><sp/>ad-&gt;push_back_move(<sp/>nt<sp/>);</highlight></codeline>
+<codeline lineno="891"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="892"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="893"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a585f38fb0ed122da90489eccbfd7a187" kindref="member">push</ref>(<sp/>ad<sp/>);</highlight></codeline>
+<codeline lineno="894"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="895"><highlight class="normal"></highlight></codeline>
+<codeline lineno="927"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="928" refid="classValuesFunction_1adcbf9b5fa9231a27c58562f4495be132" refkind="member"><highlight class="normal"><ref refid="classValuesFunction_1adcbf9b5fa9231a27c58562f4495be132" kindref="member">ValuesFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="929"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="930"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="931"><highlight class="normal"><sp/><sp/>assert(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a9ca4715bf5e4dc851ca0b2c41eb6c586" kindref="member">load</ref>()<sp/>&gt;<sp/>0<sp/>);</highlight></codeline>
+<codeline lineno="932"><highlight class="normal"><sp/><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref>*<sp/>dict<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>().<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="933"><highlight class="normal"><sp/><sp/>assert(<sp/>dict<sp/>);</highlight></codeline>
+<codeline lineno="934"><highlight class="normal"><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">ArrayDatum</ref>*<sp/>ad<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="arraydatum_8h_1ae28f9f22dee7553c3f044e7f48e4f314" kindref="member">ArrayDatum</ref>();</highlight></codeline>
+<codeline lineno="935"><highlight class="normal"></highlight></codeline>
+<codeline lineno="936"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(<sp/>TokenMap::const_iterator<sp/>t<sp/>=<sp/>(<sp/>*dict<sp/>)-&gt;begin();<sp/>t<sp/>!=<sp/>(<sp/>*dict<sp/>)-&gt;end();<sp/>++t<sp/>)</highlight></codeline>
+<codeline lineno="937"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="938"><highlight class="normal"><sp/><sp/><sp/><sp/>ad-&gt;push_back(<sp/>(<sp/>*t<sp/>).second<sp/>);</highlight></codeline>
+<codeline lineno="939"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="940"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="941"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a585f38fb0ed122da90489eccbfd7a187" kindref="member">push</ref>(<sp/>ad<sp/>);</highlight></codeline>
+<codeline lineno="942"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="943"><highlight class="normal"></highlight></codeline>
+<codeline lineno="944"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="945" refid="classRestoredstackFunction_1a8eff6cb578d0ce1dbe608321e3c29197" refkind="member"><highlight class="normal"><ref refid="classRestoredstackFunction_1a8eff6cb578d0ce1dbe608321e3c29197" kindref="member">RestoredstackFunction::execute</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="946"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="947"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a4bd843d0ad15faf88185a1ae885f8852" kindref="member">assert_stack_load</ref>(<sp/>1<sp/>);</highlight></codeline>
+<codeline lineno="948"><highlight class="normal"><sp/><sp/><ref refid="classAggregateDatum" kindref="compound">ArrayDatum</ref>*<sp/>ad<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="classAggregateDatum" kindref="compound">ArrayDatum</ref>*<sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a25006b53032030f38d6512076ee70abf" kindref="member">top</ref>().<ref refid="classToken_1a309bb2d7f89471b3aa7ca63cfbde65e4" kindref="member">datum</ref>()<sp/>);</highlight></codeline>
+<codeline lineno="949"><highlight class="normal"><sp/><sp/>assert(<sp/>ad<sp/>);</highlight></codeline>
+<codeline lineno="950"><highlight class="normal"><sp/><sp/><ref refid="classTokenArray" kindref="compound">TokenArray</ref><sp/>ta<sp/>=<sp/>*ad;</highlight></codeline>
+<codeline lineno="951"><highlight class="normal"><sp/><sp/><ref refid="classDictionaryStack" kindref="compound">DictionaryStack</ref>*<sp/>olddstack<sp/>=<sp/>i-&gt;<ref refid="classSLIInterpreter_1a2aa452e3851567a438fe4abc34fcdaea" kindref="member">DStack</ref>;<sp/></highlight><highlight class="comment">//<sp/>copy<sp/>current<sp/>dstack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="952"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a2aa452e3851567a438fe4abc34fcdaea" kindref="member">DStack</ref><sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="classDictionaryStack" kindref="compound">DictionaryStack</ref>;</highlight></codeline>
+<codeline lineno="953"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>j<sp/>=<sp/>0;<sp/>j<sp/>&lt;<sp/>ta.<ref refid="classTokenArray_1ad6bd1a13ab4eae2de7c05e311a3c4207" kindref="member">size</ref>();<sp/>++j<sp/>)</highlight></codeline>
+<codeline lineno="954"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="955"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">try</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="956"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="957"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classlockPTRDatum" kindref="compound">DictionaryDatum</ref><sp/>dict<sp/>=<sp/>getValue&lt;<sp/>DictionaryDatum<sp/>&gt;(<sp/>ta[<sp/>j<sp/>]<sp/>);</highlight></codeline>
+<codeline lineno="958"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a2aa452e3851567a438fe4abc34fcdaea" kindref="member">DStack</ref>-&gt;<ref refid="classDictionaryStack_1aa5c86944e162f4d0c10319a81cbd564b" kindref="member">push</ref>(<sp/>ta[<sp/>j<sp/>]<sp/>);</highlight></codeline>
+<codeline lineno="959"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="960"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">catch</highlight><highlight class="normal"><sp/>(<sp/>...<sp/>)</highlight></codeline>
+<codeline lineno="961"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="962"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal"><sp/>i-&gt;<ref refid="classSLIInterpreter_1a2aa452e3851567a438fe4abc34fcdaea" kindref="member">DStack</ref>;</highlight></codeline>
+<codeline lineno="963"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a2aa452e3851567a438fe4abc34fcdaea" kindref="member">DStack</ref><sp/>=<sp/>olddstack;</highlight></codeline>
+<codeline lineno="964"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>i-&gt;<ref refid="group__SLIError_1ga458cc1c0524cbf3902a74a835e9214e6" kindref="member">raiseerror</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1a0f433320b9ff523f5e70964bc29af548" kindref="member">ArgumentTypeError</ref><sp/>);</highlight></codeline>
+<codeline lineno="965"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="966"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="967"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="968"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1ab50b50d10259d50fd78939273af5e4f5" kindref="member">OStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="969"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a3fe2d135bbae0ac57317ff6db9e39055" kindref="member">EStack</ref>.<ref refid="classTokenStack_1a759f4b3c1c8955ab6f236de28a7f1cc0" kindref="member">pop</ref>();</highlight></codeline>
+<codeline lineno="970"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="971"><highlight class="normal"></highlight></codeline>
+<codeline lineno="972" refid="slidict_8cc_1a19c81ff2216ab988acfe5fddb637808f" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classDictFunction" kindref="compound">DictFunction</ref><sp/><ref refid="slidict_8cc_1a19c81ff2216ab988acfe5fddb637808f" kindref="member">dictfunction</ref>;</highlight></codeline>
+<codeline lineno="973" refid="slidict_8cc_1a5cfa2a718903b52af2108f08c240fcb6" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classDictputFunction" kindref="compound">DictputFunction</ref><sp/><ref refid="slidict_8cc_1a5cfa2a718903b52af2108f08c240fcb6" kindref="member">dictputfunction</ref>;</highlight></codeline>
+<codeline lineno="974" refid="slidict_8cc_1a4426638c018398fa9d502e54721691bf" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classDictgetFunction" kindref="compound">DictgetFunction</ref><sp/><ref refid="slidict_8cc_1a4426638c018398fa9d502e54721691bf" kindref="member">dictgetfunction</ref>;</highlight></codeline>
+<codeline lineno="975" refid="slidict_8cc_1ad0aeca2bd330ee5e1db95ab1b36d7ad1" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classDictinfoFunction" kindref="compound">DictinfoFunction</ref><sp/><ref refid="slidict_8cc_1ad0aeca2bd330ee5e1db95ab1b36d7ad1" kindref="member">dictinfofunction</ref>;</highlight></codeline>
+<codeline lineno="976" refid="slidict_8cc_1a6231314b3c1abc92d68d5616a5cad60c" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classDicttopinfoFunction" kindref="compound">DicttopinfoFunction</ref><sp/><ref refid="slidict_8cc_1a6231314b3c1abc92d68d5616a5cad60c" kindref="member">dicttopinfofunction</ref>;</highlight></codeline>
+<codeline lineno="977" refid="slidict_8cc_1aaff2028328074f3253395faa3b0ff466" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classWhoFunction" kindref="compound">WhoFunction</ref><sp/><ref refid="slidict_8cc_1aaff2028328074f3253395faa3b0ff466" kindref="member">whofunction</ref>;</highlight></codeline>
+<codeline lineno="978" refid="slidict_8cc_1a174ae5c43fbf2fc8083b0b1840521231" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classDictbeginFunction" kindref="compound">DictbeginFunction</ref><sp/><ref refid="slidict_8cc_1a174ae5c43fbf2fc8083b0b1840521231" kindref="member">dictbeginfunction</ref>;</highlight></codeline>
+<codeline lineno="979" refid="slidict_8cc_1a7fc4726ba564d36939bb19bc73d10c62" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classDictendFunction" kindref="compound">DictendFunction</ref><sp/><ref refid="slidict_8cc_1a7fc4726ba564d36939bb19bc73d10c62" kindref="member">dictendfunction</ref>;</highlight></codeline>
+<codeline lineno="980" refid="slidict_8cc_1a8d21275750cf11ed36f72f90b84020d1" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classDictconstructFunction" kindref="compound">DictconstructFunction</ref><sp/><ref refid="slidict_8cc_1a8d21275750cf11ed36f72f90b84020d1" kindref="member">dictconstructfunction</ref>;</highlight></codeline>
+<codeline lineno="981" refid="slidict_8cc_1a2c047022bb7bffea749454f1b152ef5d" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classLength__dFunction" kindref="compound">Length_dFunction</ref><sp/><ref refid="slidict_8cc_1a2c047022bb7bffea749454f1b152ef5d" kindref="member">length_dfunction</ref>;</highlight></codeline>
+<codeline lineno="982" refid="slidict_8cc_1a6ca6f8288d4f65a6643cdd47ee751563" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classEmpty__DFunction" kindref="compound">Empty_DFunction</ref><sp/><ref refid="slidict_8cc_1a6ca6f8288d4f65a6643cdd47ee751563" kindref="member">empty_Dfunction</ref>;</highlight></codeline>
+<codeline lineno="983" refid="slidict_8cc_1a31bab3c76cc806c6bbc782c3f27b1e29" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classDictstackFunction" kindref="compound">DictstackFunction</ref><sp/><ref refid="slidict_8cc_1a31bab3c76cc806c6bbc782c3f27b1e29" kindref="member">dictstackfunction</ref>;</highlight></codeline>
+<codeline lineno="984" refid="slidict_8cc_1a9652b975d1da5992117bdaaa20a211b6" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classCountdictstackFunction" kindref="compound">CountdictstackFunction</ref><sp/><ref refid="slidict_8cc_1a9652b975d1da5992117bdaaa20a211b6" kindref="member">countdictstackfunction</ref>;</highlight></codeline>
+<codeline lineno="985" refid="slidict_8cc_1a69b092581f9fb470aec066c6e0897dd7" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classCleardictstackFunction" kindref="compound">CleardictstackFunction</ref><sp/><ref refid="slidict_8cc_1a69b092581f9fb470aec066c6e0897dd7" kindref="member">cleardictstackfunction</ref>;</highlight></codeline>
+<codeline lineno="986" refid="slidict_8cc_1a9ef1a68bd066619978eaf686ee93c3d5" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classCurrentdictFunction" kindref="compound">CurrentdictFunction</ref><sp/><ref refid="slidict_8cc_1a9ef1a68bd066619978eaf686ee93c3d5" kindref="member">currentdictfunction</ref>;</highlight></codeline>
+<codeline lineno="987" refid="slidict_8cc_1ad44b6568fc08577bba790bc5c13d3ac2" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classKnownFunction" kindref="compound">KnownFunction</ref><sp/><ref refid="slidict_8cc_1ad44b6568fc08577bba790bc5c13d3ac2" kindref="member">knownfunction</ref>;</highlight></codeline>
+<codeline lineno="988" refid="slidict_8cc_1a64b1d23bf72dc385a0fb1fc2c761f52d" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classUndefFunction" kindref="compound">UndefFunction</ref><sp/><ref refid="slidict_8cc_1a64b1d23bf72dc385a0fb1fc2c761f52d" kindref="member">undeffunction</ref>;</highlight></codeline>
+<codeline lineno="989" refid="slidict_8cc_1aac31d6242e9fde94e5dbbb073e1a4146" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classCleardictFunction" kindref="compound">CleardictFunction</ref><sp/><ref refid="slidict_8cc_1aac31d6242e9fde94e5dbbb073e1a4146" kindref="member">cleardictfunction</ref>;</highlight></codeline>
+<codeline lineno="990" refid="slidict_8cc_1a3a31a5615df25aea9cc10c9b65746229" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classClonedictFunction" kindref="compound">ClonedictFunction</ref><sp/><ref refid="slidict_8cc_1a3a31a5615df25aea9cc10c9b65746229" kindref="member">clonedictfunction</ref>;</highlight></codeline>
+<codeline lineno="991" refid="slidict_8cc_1a27dfa002ebfce0caaaa46961b04ed564" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classCva__dFunction" kindref="compound">Cva_dFunction</ref><sp/><ref refid="slidict_8cc_1a27dfa002ebfce0caaaa46961b04ed564" kindref="member">cva_dfunction</ref>;</highlight></codeline>
+<codeline lineno="992" refid="slidict_8cc_1a1b3d5a6451c1716bff05d4c842f7e782" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classKeysFunction" kindref="compound">KeysFunction</ref><sp/><ref refid="slidict_8cc_1a1b3d5a6451c1716bff05d4c842f7e782" kindref="member">keysfunction</ref>;</highlight></codeline>
+<codeline lineno="993" refid="slidict_8cc_1a51e31f17acd6fd73b5a740fd2b6fe015" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classValuesFunction" kindref="compound">ValuesFunction</ref><sp/><ref refid="slidict_8cc_1a51e31f17acd6fd73b5a740fd2b6fe015" kindref="member">valuesfunction</ref>;</highlight></codeline>
+<codeline lineno="994" refid="slidict_8cc_1a4ed494637ad608799610f603238d2c4d" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classRestoredstackFunction" kindref="compound">RestoredstackFunction</ref><sp/><ref refid="slidict_8cc_1a4ed494637ad608799610f603238d2c4d" kindref="member">restoredstackfunction</ref>;</highlight></codeline>
+<codeline lineno="995"><highlight class="normal"></highlight></codeline>
+<codeline lineno="996"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="997" refid="interpret_8cc_1a6a862694b895dfd3c3e7ff8c2e751862" refkind="member"><highlight class="normal"><ref refid="slidict_8cc_1af65ec562a0c9fd773dad2d07069f0d3d" kindref="member">init_slidict</ref>(<sp/><ref refid="classSLIInterpreter" kindref="compound">SLIInterpreter</ref>*<sp/>i<sp/>)</highlight></codeline>
+<codeline lineno="998"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="999"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;dict&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slidict_8cc_1a19c81ff2216ab988acfe5fddb637808f" kindref="member">dictfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="1000"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;put_d&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slidict_8cc_1a5cfa2a718903b52af2108f08c240fcb6" kindref="member">dictputfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="1001"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;get_d&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slidict_8cc_1a4426638c018398fa9d502e54721691bf" kindref="member">dictgetfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="1002"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;info_d&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slidict_8cc_1ad0aeca2bd330ee5e1db95ab1b36d7ad1" kindref="member">dictinfofunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="1003"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;length_d&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slidict_8cc_1a2c047022bb7bffea749454f1b152ef5d" kindref="member">length_dfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="1004"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;empty_D&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slidict_8cc_1a6ca6f8288d4f65a6643cdd47ee751563" kindref="member">empty_Dfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="1005"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;topinfo_d&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slidict_8cc_1a6231314b3c1abc92d68d5616a5cad60c" kindref="member">dicttopinfofunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="1006"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;info_ds&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slidict_8cc_1aaff2028328074f3253395faa3b0ff466" kindref="member">whofunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="1007"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;begin&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slidict_8cc_1a174ae5c43fbf2fc8083b0b1840521231" kindref="member">dictbeginfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="1008"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/>i-&gt;<ref refid="classSLIInterpreter_1af10afcb60ee15c1629b400d15041a057" kindref="member">end_name</ref>,<sp/>&amp;<ref refid="slidict_8cc_1a7fc4726ba564d36939bb19bc73d10c62" kindref="member">dictendfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="1009"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;undef&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slidict_8cc_1a64b1d23bf72dc385a0fb1fc2c761f52d" kindref="member">undeffunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="1010"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;&gt;&gt;&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slidict_8cc_1a8d21275750cf11ed36f72f90b84020d1" kindref="member">dictconstructfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="1011"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;dictstack&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slidict_8cc_1a31bab3c76cc806c6bbc782c3f27b1e29" kindref="member">dictstackfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="1012"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;countdictstack&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slidict_8cc_1a9652b975d1da5992117bdaaa20a211b6" kindref="member">countdictstackfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="1013"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;cleardictstack&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slidict_8cc_1a69b092581f9fb470aec066c6e0897dd7" kindref="member">cleardictstackfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="1014"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;currentdict&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slidict_8cc_1a9ef1a68bd066619978eaf686ee93c3d5" kindref="member">currentdictfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="1015"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;known&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slidict_8cc_1ad44b6568fc08577bba790bc5c13d3ac2" kindref="member">knownfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="1016"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;cleardict&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slidict_8cc_1aac31d6242e9fde94e5dbbb073e1a4146" kindref="member">cleardictfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="1017"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;clonedict&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slidict_8cc_1a3a31a5615df25aea9cc10c9b65746229" kindref="member">clonedictfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="1018"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;cva_d&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slidict_8cc_1a27dfa002ebfce0caaaa46961b04ed564" kindref="member">cva_dfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="1019"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;keys&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slidict_8cc_1a1b3d5a6451c1716bff05d4c842f7e782" kindref="member">keysfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="1020"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;values&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slidict_8cc_1a51e31f17acd6fd73b5a740fd2b6fe015" kindref="member">valuesfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="1021"><highlight class="normal"><sp/><sp/>i-&gt;<ref refid="classSLIInterpreter_1a249c58e5896d4ebcb768024088e47593" kindref="member">createcommand</ref>(<sp/></highlight><highlight class="stringliteral">&quot;restoredstack&quot;</highlight><highlight class="normal">,<sp/>&amp;<ref refid="slidict_8cc_1a4ed494637ad608799610f603238d2c4d" kindref="member">restoredstackfunction</ref><sp/>);</highlight></codeline>
+<codeline lineno="1022"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/slidict.cc"/>
+  </compounddef>
+</doxygen>

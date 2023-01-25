@@ -1,0 +1,1359 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.5" xml:lang="en-US">
+  <compounddef id="classScanner" kind="class" language="C++" prot="public">
+    <compoundname>Scanner</compoundname>
+    <includes refid="scanner_8h" local="no">scanner.h</includes>
+      <sectiondef kind="private-type">
+      <memberdef kind="enum" id="classScanner_1a6ab41fc39295b90b2c25b062d6094391" prot="private" static="no" strong="no">
+        <type></type>
+        <name>ScanStates</name>
+        <qualifiedname>Scanner::ScanStates</qualifiedname>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a3561ea89f325457996b728aa513411cd" prot="private">
+          <name>start</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a44a06175f892f96fc927fd3482466ca1" prot="private">
+          <name>intdgtst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391af23e49f1fcb133d2a4c90d72c64f1053" prot="private">
+          <name>intexpst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a8354213dfbeb588d5b3d760cae11b5fd" prot="private">
+          <name>nullst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a4ffc6fb618240974b6748c5b0bbeab13" prot="private">
+          <name>aheadintst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a7c8329c587ce2319427fd6366b72509c" prot="private">
+          <name>decpfirstst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a6dcc760d121f781664e976d03c361a04" prot="private">
+          <name>decpdgtst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a44e42cd03793fff036e7bdbe36df81ab" prot="private">
+          <name>decpointst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391ad8c993165ddd681eebec7eb220e49080" prot="private">
+          <name>fracdgtst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391add63f8b7bc01008a41786c65eec8bc30" prot="private">
+          <name>minusst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391aadf3ef4e65c010075387ad043a0becef" prot="private">
+          <name>plusst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391af70094dd882f6e0f854de1793a5b6997" prot="private">
+          <name>aheadsgst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391af98d5bfd8a4ecb47f717a978cbc4fd9d" prot="private">
+          <name>sgalphast</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391ac1e80b2731246228602be2a323bf4eda" prot="private">
+          <name>aheadfracst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a2e31df0192981cda567e30b7e5b3a013" prot="private">
+          <name>expntlst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a49e1732189ddf7bd0457eeaf7bb9239c" prot="private">
+          <name>plexpst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a60e1271a7f3ddb8b36d06c8202d88d73" prot="private">
+          <name>mnexpst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391aaaecf9de7b7138a372f2cd4cad8822d1" prot="private">
+          <name>openbracketst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a911612f93afcd9560571a33bb92589ed" prot="private">
+          <name>closebracketst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391af8a036397e813e4090792c7db87412fc" prot="private">
+          <name>openbracest</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a9b1e84c5bcc85ec47b93341c34a12f6d" prot="private">
+          <name>closebracest</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a0a9f77a7149f3c2a8451a43be91c1b51" prot="private">
+          <name>openparst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391acb51d2cca9512868f1ec0db782e63fb3" prot="private">
+          <name>closeparst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a6f50ca8b3d092c5908a2088ce828b373" prot="private">
+          <name>expdigst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a9753a41511a52c2113f589fe4aef4c39" prot="private">
+          <name>dotalphast</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a3f520fda72dc4f0f8aeb12448d4c0a11" prot="private">
+          <name>alphast</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391afba9c510dba84e2ac1cb0e1d3e0b268d" prot="private">
+          <name>aheadalphst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a19a6bb7c19ac7e4b7a389067104d515a" prot="private">
+          <name>slashst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a1e4d31a99998c0e144c4f82140b03af4" prot="private">
+          <name>literalst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a457ab74135455007aec0cbb51f02c7f4" prot="private">
+          <name>aheadlitst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391aaa2e8c38e4ad7daad7940fb19824d1cb" prot="private">
+          <name>percentst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a327e8b46fbc1c0049e00ae2279b0f925" prot="private">
+          <name>whitest</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a46fa7de874221c6dd0c59c8475076be8" prot="private">
+          <name>asteriskst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391ae6d2d458df271bf55e9938447c32eaee" prot="private">
+          <name>ccommentst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a561647ff30f0446db26f8e4c910662b8" prot="private">
+          <name>startstringst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391ad776d273d77219b390e5182573ffa8f6" prot="private">
+          <name>stringst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a0197bb7d11c10e4eaa7194d607e99a09" prot="private">
+          <name>backslashst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a5b83f62be429746f487c59858534da7c" prot="private">
+          <name>newlinest</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391abb4ac2a6b1de3fad8565da1ae8628df8" prot="private">
+          <name>tabulatorst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391ae1e706dd82c454ccb096271e31ede712" prot="private">
+          <name>backslashcst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391ad6b868638ebc600c0e386c3a649c529c" prot="private">
+          <name>oparenthcst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391aa97aec24f5c60dda007eed65bda828ca" prot="private">
+          <name>cparenthcst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391ac39c364209d15c7aa4ddec1e6a97ce5e" prot="private">
+          <name>end</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a0377bb446fda36657c260c371fb5df32" prot="private">
+          <name>eofst</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a27061a48b629820c1262054499774102" prot="private">
+          <name>error</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a6ab41fc39295b90b2c25b062d6094391a48a9348d5fcbf19e41b6a75991a8db26" prot="private">
+          <name>lastscanstate</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="51" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" bodystart="52" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="enum" id="classScanner_1a97044ce4080f4c924a895876f50c1753" prot="private" static="no" strong="no">
+        <type></type>
+        <name>Codes</name>
+        <qualifiedname>Scanner::Codes</qualifiedname>
+        <enumvalue id="classScanner_1a97044ce4080f4c924a895876f50c1753a3ecbf392c13beeb54fa7a79862a0e7a5" prot="private">
+          <name>invalid</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a97044ce4080f4c924a895876f50c1753a907ea63cab02c9c88c4199241f2e1937" prot="private">
+          <name>whitespace</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a97044ce4080f4c924a895876f50c1753a3ba271a51c41ff7c8897905a25fdbd7b" prot="private">
+          <name>eof</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a97044ce4080f4c924a895876f50c1753ae48673dc185b4086066d72b86ff5a5eb" prot="private">
+          <name>digit</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a97044ce4080f4c924a895876f50c1753a6f82e2070e7ce9dd52615973bae0587e" prot="private">
+          <name>null</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a97044ce4080f4c924a895876f50c1753a68489d7618a9e7825d6859f921548502" prot="private">
+          <name>expntl</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a97044ce4080f4c924a895876f50c1753a8ba4dbe8254b87a871a6e5d9e8464102" prot="private">
+          <name>decpoint</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a97044ce4080f4c924a895876f50c1753a16a4bd79447ce1764fb2b36c2f43f506" prot="private">
+          <name>plus</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a97044ce4080f4c924a895876f50c1753a6cb65db52f214113c1a6a2a42e6a579d" prot="private">
+          <name>minus</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a97044ce4080f4c924a895876f50c1753a7c830947cf39c2faf9e62c05835a6c11" prot="private">
+          <name>openbracket</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a97044ce4080f4c924a895876f50c1753ae5b2b964ee8a32517b7446b2d0ea7b99" prot="private">
+          <name>closebracket</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a97044ce4080f4c924a895876f50c1753ac576192f4bb6ea88f490c391466f6f1b" prot="private">
+          <name>openbrace</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a97044ce4080f4c924a895876f50c1753ae81f6248b7b3ecb166e37091c4b824ac" prot="private">
+          <name>closebrace</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a97044ce4080f4c924a895876f50c1753a19eb5ea7809c916b2a501b7c3560fd20" prot="private">
+          <name>openparenth</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a97044ce4080f4c924a895876f50c1753aba2e646cfeeaf15eb847e1b747a94acc" prot="private">
+          <name>closeparenth</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a97044ce4080f4c924a895876f50c1753a0bebf3a8503f24fe2b1482d0f69a0385" prot="private">
+          <name>alpha</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a97044ce4080f4c924a895876f50c1753a4aa39771602972d95af0c0f6f13b809c" prot="private">
+          <name>slash</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a97044ce4080f4c924a895876f50c1753a4644dd1de130a1b762d9b5c233a3bce3" prot="private">
+          <name>backslash</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a97044ce4080f4c924a895876f50c1753a60700626c49cd47acfa7a44a51e1078b" prot="private">
+          <name>newline</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a97044ce4080f4c924a895876f50c1753a67a863962ff59790d2b10785ca656ff9" prot="private">
+          <name>tabulator</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a97044ce4080f4c924a895876f50c1753a3180d4d034bf79a061347e2ba4fef522" prot="private">
+          <name>asterisk</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a97044ce4080f4c924a895876f50c1753af88e39955b3db8687d48838242424721" prot="private">
+          <name>percent</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a97044ce4080f4c924a895876f50c1753ab4a1cd9a799a1644866ace2444df2080" prot="private">
+          <name>eoln</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a97044ce4080f4c924a895876f50c1753a7580254fdafda431e6734a7af4683c4c" prot="private">
+          <name>other</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classScanner_1a97044ce4080f4c924a895876f50c1753a3fce109a593209281496cb703d2ba03a" prot="private">
+          <name>lastcode</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="101" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" bodystart="102" bodyend="128"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classScanner_1a8f6f26cf7dd4ec6631622ce362af778d" prot="private" static="no" mutable="no">
+        <type>std::istream *</type>
+        <definition>std::istream* Scanner::in</definition>
+        <argsstring></argsstring>
+        <name>in</name>
+        <qualifiedname>Scanner::in</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="43" column="16" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" bodystart="43" bodyend="-1"/>
+        <referencedby refid="classScanner_1a878b187e95bf7df8f99d2728ea58da30" compoundref="scanner_8h" startline="166" endline="169">GetSource</referencedby>
+        <referencedby refid="classScanner_1a728ec43cf0ee0ec80c595a58d046d9a1" compoundref="scanner_8cc" startline="528" endline="808">operator()</referencedby>
+        <referencedby refid="classScanner_1a3b260463bbfbba748cf72caf16578a77" compoundref="scanner_8cc" startline="514" endline="525">source</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classScanner_1a9dd2ea09bc2a6f81b5bc1b9c036f6af4" prot="private" static="no" mutable="no">
+        <type><ref refid="classCharCode" kindref="compound">CharCode</ref></type>
+        <definition>CharCode Scanner::code</definition>
+        <argsstring></argsstring>
+        <name>code</name>
+        <qualifiedname>Scanner::code</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="45" column="12" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" bodystart="45" bodyend="-1"/>
+        <referencedby refid="classScanner_1a728ec43cf0ee0ec80c595a58d046d9a1" compoundref="scanner_8cc" startline="528" endline="808">operator()</referencedby>
+        <referencedby refid="classScanner_1ae5eceda2bab876a28f397671aafb6eb5" compoundref="scanner_8cc" startline="93" endline="511">Scanner</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classScanner_1adf4ce846a783e1f1194d41b66e234089" prot="private" static="no" mutable="no">
+        <type>unsigned long</type>
+        <definition>unsigned long Scanner::line</definition>
+        <argsstring></argsstring>
+        <name>line</name>
+        <qualifiedname>Scanner::line</qualifiedname>
+        <briefdescription>
+<para>Current line number. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="47" column="17" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" bodystart="47" bodyend="-1"/>
+        <referencedby refid="classScanner_1a4195e1a3f30ec5ac747e2b1159ccd3d4" compoundref="scanner_8h" startline="200" endline="206">clear_context</referencedby>
+        <referencedby refid="classScanner_1ab45b888988b46abd70df08a68ca6c0b0" compoundref="scanner_8h" startline="185" endline="188">get_line</referencedby>
+        <referencedby refid="classScanner_1a728ec43cf0ee0ec80c595a58d046d9a1" compoundref="scanner_8cc" startline="528" endline="808">operator()</referencedby>
+        <referencedby refid="classScanner_1ab33dfe9fe91c1a17114381978b46d2e4" compoundref="scanner_8cc" startline="811" endline="816">print_error</referencedby>
+        <referencedby refid="classScanner_1a3b260463bbfbba748cf72caf16578a77" compoundref="scanner_8cc" startline="514" endline="525">source</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classScanner_1a25ac63eeafac609c050a11e59b2a6acd" prot="private" static="no" mutable="no">
+        <type>unsigned long</type>
+        <definition>unsigned long Scanner::col</definition>
+        <argsstring></argsstring>
+        <name>col</name>
+        <qualifiedname>Scanner::col</qualifiedname>
+        <briefdescription>
+<para>Current column in line. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="48" column="17" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" bodystart="48" bodyend="-1"/>
+        <referencedby refid="classScanner_1a4195e1a3f30ec5ac747e2b1159ccd3d4" compoundref="scanner_8h" startline="200" endline="206">clear_context</referencedby>
+        <referencedby refid="classScanner_1ae78254e60dfe2a46d5bd74cbfd486474" compoundref="scanner_8h" startline="194" endline="197">get_col</referencedby>
+        <referencedby refid="classScanner_1a728ec43cf0ee0ec80c595a58d046d9a1" compoundref="scanner_8cc" startline="528" endline="808">operator()</referencedby>
+        <referencedby refid="classScanner_1ab33dfe9fe91c1a17114381978b46d2e4" compoundref="scanner_8cc" startline="811" endline="816">print_error</referencedby>
+        <referencedby refid="classScanner_1a3b260463bbfbba748cf72caf16578a77" compoundref="scanner_8cc" startline="514" endline="525">source</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classScanner_1ad72e6759ac3756ec8bd76153bc8c6749" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Scanner::context</definition>
+        <argsstring></argsstring>
+        <name>context</name>
+        <qualifiedname>Scanner::context</qualifiedname>
+        <briefdescription>
+<para>Current context. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="49" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" bodystart="49" bodyend="-1"/>
+        <referencedby refid="classScanner_1a4195e1a3f30ec5ac747e2b1159ccd3d4" compoundref="scanner_8h" startline="200" endline="206">clear_context</referencedby>
+        <referencedby refid="classScanner_1a728ec43cf0ee0ec80c595a58d046d9a1" compoundref="scanner_8cc" startline="528" endline="808">operator()</referencedby>
+        <referencedby refid="classScanner_1ab33dfe9fe91c1a17114381978b46d2e4" compoundref="scanner_8cc" startline="811" endline="816">print_error</referencedby>
+        <referencedby refid="classScanner_1a3b260463bbfbba748cf72caf16578a77" compoundref="scanner_8cc" startline="514" endline="525">source</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classScanner_1a10953b97b961bfad07907f194d393c94" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string Scanner::old_context</definition>
+        <argsstring></argsstring>
+        <name>old_context</name>
+        <qualifiedname>Scanner::old_context</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="50" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" bodystart="50" bodyend="-1"/>
+        <referencedby refid="classScanner_1a4195e1a3f30ec5ac747e2b1159ccd3d4" compoundref="scanner_8h" startline="200" endline="206">clear_context</referencedby>
+        <referencedby refid="classScanner_1a728ec43cf0ee0ec80c595a58d046d9a1" compoundref="scanner_8cc" startline="528" endline="808">operator()</referencedby>
+        <referencedby refid="classScanner_1ab33dfe9fe91c1a17114381978b46d2e4" compoundref="scanner_8cc" startline="811" endline="816">print_error</referencedby>
+        <referencedby refid="classScanner_1a3b260463bbfbba748cf72caf16578a77" compoundref="scanner_8cc" startline="514" endline="525">source</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classScanner_1a2e479a9acd8694acdebfb2a56f157d00" prot="private" static="no" mutable="no">
+        <type>enum <ref refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391" kindref="member">ScanStates</ref></type>
+        <definition>enum ScanStates Scanner::trans[lastscanstate][lastcode]</definition>
+        <argsstring>[lastscanstate][lastcode]</argsstring>
+        <name>trans</name>
+        <qualifiedname>Scanner::trans</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="130" column="18" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" bodystart="130" bodyend="-1"/>
+        <referencedby refid="classScanner_1a728ec43cf0ee0ec80c595a58d046d9a1" compoundref="scanner_8cc" startline="528" endline="808">operator()</referencedby>
+        <referencedby refid="classScanner_1ae5eceda2bab876a28f397671aafb6eb5" compoundref="scanner_8cc" startline="93" endline="511">Scanner</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classScanner_1a9ad059d618dc8d9c634fa958cb09c697" prot="private" static="no" mutable="no">
+        <type>const unsigned char</type>
+        <definition>const unsigned char Scanner::space</definition>
+        <argsstring></argsstring>
+        <name>space</name>
+        <qualifiedname>Scanner::space</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="133" column="23" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" bodystart="133" bodyend="-1"/>
+        <referencedby refid="classScanner_1ae5eceda2bab876a28f397671aafb6eb5" compoundref="scanner_8cc" startline="93" endline="511">Scanner</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classScanner_1ad9bcdd78d6d6e8497f91e12559eac72d" prot="private" static="no" mutable="no">
+        <type>const unsigned char</type>
+        <definition>const unsigned char Scanner::tab</definition>
+        <argsstring></argsstring>
+        <name>tab</name>
+        <qualifiedname>Scanner::tab</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="134" column="23" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" bodystart="134" bodyend="-1"/>
+        <referencedby refid="classScanner_1ae5eceda2bab876a28f397671aafb6eb5" compoundref="scanner_8cc" startline="93" endline="511">Scanner</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classScanner_1a6abb6e9b05fcd53146f7781464e266d1" prot="private" static="no" mutable="no">
+        <type>const unsigned char</type>
+        <definition>const unsigned char Scanner::endoln</definition>
+        <argsstring></argsstring>
+        <name>endoln</name>
+        <qualifiedname>Scanner::endoln</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="135" column="23" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" bodystart="135" bodyend="-1"/>
+        <referencedby refid="classScanner_1a728ec43cf0ee0ec80c595a58d046d9a1" compoundref="scanner_8cc" startline="528" endline="808">operator()</referencedby>
+        <referencedby refid="classScanner_1ae5eceda2bab876a28f397671aafb6eb5" compoundref="scanner_8cc" startline="93" endline="511">Scanner</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classScanner_1ad083d4cf569b406e8a7a0a59188f93e6" prot="private" static="no" mutable="no">
+        <type>const unsigned char</type>
+        <definition>const unsigned char Scanner::cr</definition>
+        <argsstring></argsstring>
+        <name>cr</name>
+        <qualifiedname>Scanner::cr</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="136" column="23" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" bodystart="136" bodyend="-1"/>
+        <referencedby refid="classScanner_1ae5eceda2bab876a28f397671aafb6eb5" compoundref="scanner_8cc" startline="93" endline="511">Scanner</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classScanner_1a1b2a9f726d724283b204d18c8f2fa9f7" prot="private" static="no" mutable="no">
+        <type>const unsigned char</type>
+        <definition>const unsigned char Scanner::endof</definition>
+        <argsstring></argsstring>
+        <name>endof</name>
+        <qualifiedname>Scanner::endof</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="137" column="23" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" bodystart="137" bodyend="-1"/>
+        <referencedby refid="classScanner_1a728ec43cf0ee0ec80c595a58d046d9a1" compoundref="scanner_8cc" startline="528" endline="808">operator()</referencedby>
+        <referencedby refid="classScanner_1ae5eceda2bab876a28f397671aafb6eb5" compoundref="scanner_8cc" startline="93" endline="511">Scanner</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classScanner_1ab3d6704996138d0e066c9f9053103a5f" prot="public" static="no" mutable="no">
+        <type><ref refid="classSymbolDatum" kindref="compound">SymbolDatum</ref></type>
+        <definition>SymbolDatum Scanner::BeginArraySymbol</definition>
+        <argsstring></argsstring>
+        <name>BeginArraySymbol</name>
+        <qualifiedname>Scanner::BeginArraySymbol</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="146" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" bodystart="146" bodyend="-1"/>
+        <referencedby refid="classParser_1a1477eb52ba5b4021f7cc7290ac7d3ab7" compoundref="parser_8cc" startline="73" endline="208">Parser::operator()</referencedby>
+        <referencedby refid="classScanner_1a728ec43cf0ee0ec80c595a58d046d9a1" compoundref="scanner_8cc" startline="528" endline="808">operator()</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classScanner_1aef71eaa03605efb876521c80e92b752f" prot="public" static="no" mutable="no">
+        <type><ref refid="classSymbolDatum" kindref="compound">SymbolDatum</ref></type>
+        <definition>SymbolDatum Scanner::EndArraySymbol</definition>
+        <argsstring></argsstring>
+        <name>EndArraySymbol</name>
+        <qualifiedname>Scanner::EndArraySymbol</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="147" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" bodystart="147" bodyend="-1"/>
+        <referencedby refid="classParser_1a1477eb52ba5b4021f7cc7290ac7d3ab7" compoundref="parser_8cc" startline="73" endline="208">Parser::operator()</referencedby>
+        <referencedby refid="classScanner_1a728ec43cf0ee0ec80c595a58d046d9a1" compoundref="scanner_8cc" startline="528" endline="808">operator()</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classScanner_1a0a9c94e3fd5696ff0ea29554d1561a58" prot="public" static="no" mutable="no">
+        <type><ref refid="classSymbolDatum" kindref="compound">SymbolDatum</ref></type>
+        <definition>SymbolDatum Scanner::BeginProcedureSymbol</definition>
+        <argsstring></argsstring>
+        <name>BeginProcedureSymbol</name>
+        <qualifiedname>Scanner::BeginProcedureSymbol</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="148" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" bodystart="148" bodyend="-1"/>
+        <referencedby refid="classParser_1a1477eb52ba5b4021f7cc7290ac7d3ab7" compoundref="parser_8cc" startline="73" endline="208">Parser::operator()</referencedby>
+        <referencedby refid="classScanner_1a728ec43cf0ee0ec80c595a58d046d9a1" compoundref="scanner_8cc" startline="528" endline="808">operator()</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classScanner_1a32e7ce3e991ff0f939c42d858080b9c4" prot="public" static="no" mutable="no">
+        <type><ref refid="classSymbolDatum" kindref="compound">SymbolDatum</ref></type>
+        <definition>SymbolDatum Scanner::EndProcedureSymbol</definition>
+        <argsstring></argsstring>
+        <name>EndProcedureSymbol</name>
+        <qualifiedname>Scanner::EndProcedureSymbol</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="149" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" bodystart="149" bodyend="-1"/>
+        <referencedby refid="classParser_1a1477eb52ba5b4021f7cc7290ac7d3ab7" compoundref="parser_8cc" startline="73" endline="208">Parser::operator()</referencedby>
+        <referencedby refid="classScanner_1a728ec43cf0ee0ec80c595a58d046d9a1" compoundref="scanner_8cc" startline="528" endline="808">operator()</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classScanner_1af3a50e3eed2f34fac6b1d09c2e0b2908" prot="public" static="no" mutable="no">
+        <type><ref refid="classSymbolDatum" kindref="compound">SymbolDatum</ref></type>
+        <definition>SymbolDatum Scanner::EndSymbol</definition>
+        <argsstring></argsstring>
+        <name>EndSymbol</name>
+        <qualifiedname>Scanner::EndSymbol</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="150" column="15" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" bodystart="150" bodyend="-1"/>
+        <referencedby refid="classIparsestdinFunction_1a39112ef77e3073f05c4ec4b096cc6e78" compoundref="slicontrol_8cc" startline="619" endline="632">IparsestdinFunction::execute</referencedby>
+        <referencedby refid="classParsestdinFunction_1ae0d612cb18cae7263ba533ba4340f8ab" compoundref="slicontrol_8cc" startline="643" endline="657">ParsestdinFunction::execute</referencedby>
+        <referencedby refid="classIparseFunction_1a7d59b27525ce59b0612ff5165060ff1a" compoundref="slicontrol_8cc" startline="660" endline="689">IparseFunction::execute</referencedby>
+        <referencedby refid="classToken__sFunction_1a815a864867352b958ee64d9ba3062192" compoundref="slicontrol_8cc" startline="1756" endline="1783">Token_sFunction::execute</referencedby>
+        <referencedby refid="classToken__isFunction_1a4b8952da312c9b3f2ca5baf6d9dd388a" compoundref="slicontrol_8cc" startline="1796" endline="1819">Token_isFunction::execute</referencedby>
+        <referencedby refid="classSymbol__sFunction_1a29d0c6f843a373b1ae04b2d44cd43ae9" compoundref="slicontrol_8cc" startline="1831" endline="1858">Symbol_sFunction::execute</referencedby>
+        <referencedby refid="classParser_1a1477eb52ba5b4021f7cc7290ac7d3ab7" compoundref="parser_8cc" startline="73" endline="208">Parser::operator()</referencedby>
+        <referencedby refid="classScanner_1a728ec43cf0ee0ec80c595a58d046d9a1" compoundref="scanner_8cc" startline="528" endline="808">operator()</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classScanner_1ac70c99c0528cc1b790abbc4e5991631c" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int Scanner::digval</definition>
+        <argsstring>(unsigned char c) const</argsstring>
+        <name>digval</name>
+        <qualifiedname>Scanner::digval</qualifiedname>
+        <param>
+          <type>unsigned char</type>
+          <declname>c</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="139" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" bodystart="139" bodyend="142"/>
+        <referencedby refid="classScanner_1a728ec43cf0ee0ec80c595a58d046d9a1" compoundref="scanner_8cc" startline="528" endline="808">operator()</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classScanner_1ae5eceda2bab876a28f397671aafb6eb5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Scanner::Scanner</definition>
+        <argsstring>(std::istream *)</argsstring>
+        <name>Scanner</name>
+        <qualifiedname>Scanner::Scanner</qualifiedname>
+        <param>
+          <type>std::istream *</type>
+          <defname>is</defname>
+        </param>
+        <briefdescription>
+<para>Initialise scanner with a stream. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><ref refid="classScanner" kindref="compound">Scanner</ref> (implemented as a DFA) <linebreak/>
+ </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="155" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.cc" bodystart="93" bodyend="511"/>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391afba9c510dba84e2ac1cb0e1d3e0b268d" compoundref="scanner_8h" startline="79">aheadalphst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391ac1e80b2731246228602be2a323bf4eda" compoundref="scanner_8h" startline="66">aheadfracst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a4ffc6fb618240974b6748c5b0bbeab13" compoundref="scanner_8h" startline="57">aheadintst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a457ab74135455007aec0cbb51f02c7f4" compoundref="scanner_8h" startline="82">aheadlitst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391af70094dd882f6e0f854de1793a5b6997" compoundref="scanner_8h" startline="64">aheadsgst</references>
+        <references refid="classScanner_1a97044ce4080f4c924a895876f50c1753a0bebf3a8503f24fe2b1482d0f69a0385" compoundref="scanner_8h" startline="118">alpha</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a3f520fda72dc4f0f8aeb12448d4c0a11" compoundref="scanner_8h" startline="78">alphast</references>
+        <references refid="classScanner_1a97044ce4080f4c924a895876f50c1753a3180d4d034bf79a061347e2ba4fef522" compoundref="scanner_8h" startline="123">asterisk</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a46fa7de874221c6dd0c59c8475076be8" compoundref="scanner_8h" startline="85">asteriskst</references>
+        <references refid="classScanner_1a97044ce4080f4c924a895876f50c1753a4644dd1de130a1b762d9b5c233a3bce3" compoundref="scanner_8h" startline="120">backslash</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391ae1e706dd82c454ccb096271e31ede712" compoundref="scanner_8h" startline="92">backslashcst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a0197bb7d11c10e4eaa7194d607e99a09" compoundref="scanner_8h" startline="89">backslashst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391ae6d2d458df271bf55e9938447c32eaee" compoundref="scanner_8h" startline="86">ccommentst</references>
+        <references refid="classScanner_1a97044ce4080f4c924a895876f50c1753ae81f6248b7b3ecb166e37091c4b824ac" compoundref="scanner_8h" startline="115">closebrace</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a9b1e84c5bcc85ec47b93341c34a12f6d" compoundref="scanner_8h" startline="73">closebracest</references>
+        <references refid="classScanner_1a97044ce4080f4c924a895876f50c1753ae5b2b964ee8a32517b7446b2d0ea7b99" compoundref="scanner_8h" startline="113">closebracket</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a911612f93afcd9560571a33bb92589ed" compoundref="scanner_8h" startline="71">closebracketst</references>
+        <references refid="classScanner_1a97044ce4080f4c924a895876f50c1753aba2e646cfeeaf15eb847e1b747a94acc" compoundref="scanner_8h" startline="117">closeparenth</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391acb51d2cca9512868f1ec0db782e63fb3" compoundref="scanner_8h" startline="75">closeparst</references>
+        <references refid="classScanner_1a9dd2ea09bc2a6f81b5bc1b9c036f6af4" compoundref="scanner_8h" startline="45">code</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391aa97aec24f5c60dda007eed65bda828ca" compoundref="scanner_8h" startline="94">cparenthcst</references>
+        <references refid="classScanner_1ad083d4cf569b406e8a7a0a59188f93e6" compoundref="scanner_8h" startline="136">cr</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a6dcc760d121f781664e976d03c361a04" compoundref="scanner_8h" startline="59">decpdgtst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a7c8329c587ce2319427fd6366b72509c" compoundref="scanner_8h" startline="58">decpfirstst</references>
+        <references refid="classScanner_1a97044ce4080f4c924a895876f50c1753a8ba4dbe8254b87a871a6e5d9e8464102" compoundref="scanner_8h" startline="109">decpoint</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a44e42cd03793fff036e7bdbe36df81ab" compoundref="scanner_8h" startline="60">decpointst</references>
+        <references refid="classScanner_1a97044ce4080f4c924a895876f50c1753ae48673dc185b4086066d72b86ff5a5eb" compoundref="scanner_8h" startline="106">digit</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a9753a41511a52c2113f589fe4aef4c39" compoundref="scanner_8h" startline="77">dotalphast</references>
+        <references refid="classScanner_1a1b2a9f726d724283b204d18c8f2fa9f7" compoundref="scanner_8h" startline="137">endof</references>
+        <references refid="classScanner_1a6abb6e9b05fcd53146f7781464e266d1" compoundref="scanner_8h" startline="135">endoln</references>
+        <references refid="classScanner_1a97044ce4080f4c924a895876f50c1753a3ba271a51c41ff7c8897905a25fdbd7b" compoundref="scanner_8h" startline="105">eof</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a0377bb446fda36657c260c371fb5df32" compoundref="scanner_8h" startline="96">eofst</references>
+        <references refid="classScanner_1a97044ce4080f4c924a895876f50c1753ab4a1cd9a799a1644866ace2444df2080" compoundref="scanner_8h" startline="125">eoln</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a27061a48b629820c1262054499774102" compoundref="scanner_8h" startline="97">error</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a6f50ca8b3d092c5908a2088ce828b373" compoundref="scanner_8h" startline="76">expdigst</references>
+        <references refid="classScanner_1a97044ce4080f4c924a895876f50c1753a68489d7618a9e7825d6859f921548502" compoundref="scanner_8h" startline="108">expntl</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a2e31df0192981cda567e30b7e5b3a013" compoundref="scanner_8h" startline="67">expntlst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391ad8c993165ddd681eebec7eb220e49080" compoundref="scanner_8h" startline="61">fracdgtst</references>
+        <references refid="classCharCode_1a6a3f8c8148e8d6fff95004ba0b74c26a" compoundref="charcode_8cc" startline="45" endline="53">CharCode::Group</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a44a06175f892f96fc927fd3482466ca1" compoundref="scanner_8h" startline="54">intdgtst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391af23e49f1fcb133d2a4c90d72c64f1053" compoundref="scanner_8h" startline="55">intexpst</references>
+        <references refid="classScanner_1a97044ce4080f4c924a895876f50c1753a3ecbf392c13beeb54fa7a79862a0e7a5" compoundref="scanner_8h" startline="103">invalid</references>
+        <references refid="classScanner_1a97044ce4080f4c924a895876f50c1753a3fce109a593209281496cb703d2ba03a" compoundref="scanner_8h" startline="127">lastcode</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a48a9348d5fcbf19e41b6a75991a8db26" compoundref="scanner_8h" startline="98">lastscanstate</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a1e4d31a99998c0e144c4f82140b03af4" compoundref="scanner_8h" startline="81">literalst</references>
+        <references refid="classScanner_1a97044ce4080f4c924a895876f50c1753a6cb65db52f214113c1a6a2a42e6a579d" compoundref="scanner_8h" startline="111">minus</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391add63f8b7bc01008a41786c65eec8bc30" compoundref="scanner_8h" startline="62">minusst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a60e1271a7f3ddb8b36d06c8202d88d73" compoundref="scanner_8h" startline="69">mnexpst</references>
+        <references refid="classScanner_1a97044ce4080f4c924a895876f50c1753a60700626c49cd47acfa7a44a51e1078b" compoundref="scanner_8h" startline="121">newline</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a5b83f62be429746f487c59858534da7c" compoundref="scanner_8h" startline="90">newlinest</references>
+        <references refid="classScanner_1a97044ce4080f4c924a895876f50c1753a6f82e2070e7ce9dd52615973bae0587e" compoundref="scanner_8h" startline="107">null</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a8354213dfbeb588d5b3d760cae11b5fd" compoundref="scanner_8h" startline="56">nullst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391ad6b868638ebc600c0e386c3a649c529c" compoundref="scanner_8h" startline="93">oparenthcst</references>
+        <references refid="classScanner_1a97044ce4080f4c924a895876f50c1753ac576192f4bb6ea88f490c391466f6f1b" compoundref="scanner_8h" startline="114">openbrace</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391af8a036397e813e4090792c7db87412fc" compoundref="scanner_8h" startline="72">openbracest</references>
+        <references refid="classScanner_1a97044ce4080f4c924a895876f50c1753a7c830947cf39c2faf9e62c05835a6c11" compoundref="scanner_8h" startline="112">openbracket</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391aaaecf9de7b7138a372f2cd4cad8822d1" compoundref="scanner_8h" startline="70">openbracketst</references>
+        <references refid="classScanner_1a97044ce4080f4c924a895876f50c1753a19eb5ea7809c916b2a501b7c3560fd20" compoundref="scanner_8h" startline="116">openparenth</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a0a9f77a7149f3c2a8451a43be91c1b51" compoundref="scanner_8h" startline="74">openparst</references>
+        <references refid="classScanner_1a97044ce4080f4c924a895876f50c1753af88e39955b3db8687d48838242424721" compoundref="scanner_8h" startline="124">percent</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391aaa2e8c38e4ad7daad7940fb19824d1cb" compoundref="scanner_8h" startline="83">percentst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a49e1732189ddf7bd0457eeaf7bb9239c" compoundref="scanner_8h" startline="68">plexpst</references>
+        <references refid="classScanner_1a97044ce4080f4c924a895876f50c1753a16a4bd79447ce1764fb2b36c2f43f506" compoundref="scanner_8h" startline="110">plus</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391aadf3ef4e65c010075387ad043a0becef" compoundref="scanner_8h" startline="63">plusst</references>
+        <references refid="classCharCode_1a4b31fa0c289165ac35e4d0387b478372" compoundref="charcode_8cc" startline="31" endline="42">CharCode::Range</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391af98d5bfd8a4ecb47f717a978cbc4fd9d" compoundref="scanner_8h" startline="65">sgalphast</references>
+        <references refid="classScanner_1a97044ce4080f4c924a895876f50c1753a4aa39771602972d95af0c0f6f13b809c" compoundref="scanner_8h" startline="119">slash</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a19a6bb7c19ac7e4b7a389067104d515a" compoundref="scanner_8h" startline="80">slashst</references>
+        <references refid="classScanner_1a9ad059d618dc8d9c634fa958cb09c697" compoundref="scanner_8h" startline="133">space</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a3561ea89f325457996b728aa513411cd" compoundref="scanner_8h" startline="53">start</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a561647ff30f0446db26f8e4c910662b8" compoundref="scanner_8h" startline="87">startstringst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391ad776d273d77219b390e5182573ffa8f6" compoundref="scanner_8h" startline="88">stringst</references>
+        <references refid="classScanner_1ad9bcdd78d6d6e8497f91e12559eac72d" compoundref="scanner_8h" startline="134">tab</references>
+        <references refid="classScanner_1a97044ce4080f4c924a895876f50c1753a67a863962ff59790d2b10785ca656ff9" compoundref="scanner_8h" startline="122">tabulator</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391abb4ac2a6b1de3fad8565da1ae8628df8" compoundref="scanner_8h" startline="91">tabulatorst</references>
+        <references refid="classScanner_1a2e479a9acd8694acdebfb2a56f157d00" compoundref="scanner_8h" startline="130">trans</references>
+        <references refid="classScanner_1a97044ce4080f4c924a895876f50c1753a907ea63cab02c9c88c4199241f2e1937" compoundref="scanner_8h" startline="104">whitespace</references>
+      </memberdef>
+      <memberdef kind="function" id="classScanner_1a3b260463bbfbba748cf72caf16578a77" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Scanner::source</definition>
+        <argsstring>(std::istream *)</argsstring>
+        <name>source</name>
+        <qualifiedname>Scanner::source</qualifiedname>
+        <param>
+          <type>std::istream *</type>
+          <defname>in_s</defname>
+        </param>
+        <briefdescription>
+<para>Set new input stream. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="160" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.cc" bodystart="514" bodyend="525"/>
+        <references refid="classScanner_1a25ac63eeafac609c050a11e59b2a6acd" compoundref="scanner_8h" startline="48">col</references>
+        <references refid="classScanner_1ad72e6759ac3756ec8bd76153bc8c6749" compoundref="scanner_8h" startline="49">context</references>
+        <references refid="classScanner_1a8f6f26cf7dd4ec6631622ce362af778d" compoundref="scanner_8h" startline="43">in</references>
+        <references refid="classScanner_1adf4ce846a783e1f1194d41b66e234089" compoundref="scanner_8h" startline="47">line</references>
+        <references refid="classScanner_1a10953b97b961bfad07907f194d393c94" compoundref="scanner_8h" startline="50">old_context</references>
+        <referencedby refid="classParser_1a9374eb05a1fcab6b37c7c38ea7f02ff4" compoundref="parser_8h" startline="74" endline="78">Parser::readSymbol</referencedby>
+        <referencedby refid="classParser_1a6c2821ae06e5f3f9b1c20eb0876e06de" compoundref="parser_8h" startline="67" endline="71">Parser::readToken</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classScanner_1a878b187e95bf7df8f99d2728ea58da30" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::istream *</type>
+        <definition>std::istream * Scanner::GetSource</definition>
+        <argsstring>()</argsstring>
+        <name>GetSource</name>
+        <qualifiedname>Scanner::GetSource</qualifiedname>
+        <briefdescription>
+<para>Return input stream. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="166" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" bodystart="166" bodyend="169"/>
+        <references refid="classScanner_1a8f6f26cf7dd4ec6631622ce362af778d" compoundref="scanner_8h" startline="43">in</references>
+      </memberdef>
+      <memberdef kind="function" id="classScanner_1a728ec43cf0ee0ec80c595a58d046d9a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Scanner::operator()</definition>
+        <argsstring>(Token &amp;)</argsstring>
+        <name>operator()</name>
+        <qualifiedname>Scanner::operator()</qualifiedname>
+        <param>
+          <type><ref refid="classToken" kindref="compound">Token</ref> &amp;</type>
+          <defname>t</defname>
+        </param>
+        <briefdescription>
+<para>Scan input until the next <ref refid="classToken" kindref="compound">Token</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="174" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.cc" bodystart="528" bodyend="808"/>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391afba9c510dba84e2ac1cb0e1d3e0b268d" compoundref="scanner_8h" startline="79">aheadalphst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391ac1e80b2731246228602be2a323bf4eda" compoundref="scanner_8h" startline="66">aheadfracst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a4ffc6fb618240974b6748c5b0bbeab13" compoundref="scanner_8h" startline="57">aheadintst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a457ab74135455007aec0cbb51f02c7f4" compoundref="scanner_8h" startline="82">aheadlitst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391af70094dd882f6e0f854de1793a5b6997" compoundref="scanner_8h" startline="64">aheadsgst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a3f520fda72dc4f0f8aeb12448d4c0a11" compoundref="scanner_8h" startline="78">alphast</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391ae1e706dd82c454ccb096271e31ede712" compoundref="scanner_8h" startline="92">backslashcst</references>
+        <references refid="classScanner_1ab3d6704996138d0e066c9f9053103a5f" compoundref="scanner_8h" startline="146">BeginArraySymbol</references>
+        <references refid="classScanner_1a0a9c94e3fd5696ff0ea29554d1561a58" compoundref="scanner_8h" startline="148">BeginProcedureSymbol</references>
+        <references refid="classToken_1aa82cb2b6a7055ab37744fc5268729823" compoundref="token_8h" startline="332" endline="339">Token::clear</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a9b1e84c5bcc85ec47b93341c34a12f6d" compoundref="scanner_8h" startline="73">closebracest</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a911612f93afcd9560571a33bb92589ed" compoundref="scanner_8h" startline="71">closebracketst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391acb51d2cca9512868f1ec0db782e63fb3" compoundref="scanner_8h" startline="75">closeparst</references>
+        <references refid="classScanner_1a9dd2ea09bc2a6f81b5bc1b9c036f6af4" compoundref="scanner_8h" startline="45">code</references>
+        <references refid="classScanner_1a25ac63eeafac609c050a11e59b2a6acd" compoundref="scanner_8h" startline="48">col</references>
+        <references refid="classScanner_1ad72e6759ac3756ec8bd76153bc8c6749" compoundref="scanner_8h" startline="49">context</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391aa97aec24f5c60dda007eed65bda828ca" compoundref="scanner_8h" startline="94">cparenthcst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a6dcc760d121f781664e976d03c361a04" compoundref="scanner_8h" startline="59">decpdgtst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a44e42cd03793fff036e7bdbe36df81ab" compoundref="scanner_8h" startline="60">decpointst</references>
+        <references refid="classScanner_1ac70c99c0528cc1b790abbc4e5991631c" compoundref="scanner_8h" startline="139" endline="142">digval</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a9753a41511a52c2113f589fe4aef4c39" compoundref="scanner_8h" startline="77">dotalphast</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391ac39c364209d15c7aa4ddec1e6a97ce5e" compoundref="scanner_8h" startline="95">end</references>
+        <references refid="classScanner_1aef71eaa03605efb876521c80e92b752f" compoundref="scanner_8h" startline="147">EndArraySymbol</references>
+        <references refid="classScanner_1a1b2a9f726d724283b204d18c8f2fa9f7" compoundref="scanner_8h" startline="137">endof</references>
+        <references refid="classScanner_1a6abb6e9b05fcd53146f7781464e266d1" compoundref="scanner_8h" startline="135">endoln</references>
+        <references refid="classScanner_1a32e7ce3e991ff0f939c42d858080b9c4" compoundref="scanner_8h" startline="149">EndProcedureSymbol</references>
+        <references refid="classScanner_1af3a50e3eed2f34fac6b1d09c2e0b2908" compoundref="scanner_8h" startline="150">EndSymbol</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a0377bb446fda36657c260c371fb5df32" compoundref="scanner_8h" startline="96">eofst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a27061a48b629820c1262054499774102" compoundref="scanner_8h" startline="97">error</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a6f50ca8b3d092c5908a2088ce828b373" compoundref="scanner_8h" startline="76">expdigst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a2e31df0192981cda567e30b7e5b3a013" compoundref="scanner_8h" startline="67">expntlst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391ad8c993165ddd681eebec7eb220e49080" compoundref="scanner_8h" startline="61">fracdgtst</references>
+        <references refid="classScanner_1a8f6f26cf7dd4ec6631622ce362af778d" compoundref="scanner_8h" startline="43">in</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a44a06175f892f96fc927fd3482466ca1" compoundref="scanner_8h" startline="54">intdgtst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391af23e49f1fcb133d2a4c90d72c64f1053" compoundref="scanner_8h" startline="55">intexpst</references>
+        <references refid="classScanner_1adf4ce846a783e1f1194d41b66e234089" compoundref="scanner_8h" startline="47">line</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a1e4d31a99998c0e144c4f82140b03af4" compoundref="scanner_8h" startline="81">literalst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391add63f8b7bc01008a41786c65eec8bc30" compoundref="scanner_8h" startline="62">minusst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a60e1271a7f3ddb8b36d06c8202d88d73" compoundref="scanner_8h" startline="69">mnexpst</references>
+        <references refid="classToken_1a2f61f1702fa6214de27ccff368df11f5" compoundref="token_8h" startline="232" endline="240">Token::move</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a5b83f62be429746f487c59858534da7c" compoundref="scanner_8h" startline="90">newlinest</references>
+        <references refid="classScanner_1a10953b97b961bfad07907f194d393c94" compoundref="scanner_8h" startline="50">old_context</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391ad6b868638ebc600c0e386c3a649c529c" compoundref="scanner_8h" startline="93">oparenthcst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391af8a036397e813e4090792c7db87412fc" compoundref="scanner_8h" startline="72">openbracest</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391aaaecf9de7b7138a372f2cd4cad8822d1" compoundref="scanner_8h" startline="70">openbracketst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a0a9f77a7149f3c2a8451a43be91c1b51" compoundref="scanner_8h" startline="74">openparst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391aadf3ef4e65c010075387ad043a0becef" compoundref="scanner_8h" startline="63">plusst</references>
+        <references refid="classScanner_1ab33dfe9fe91c1a17114381978b46d2e4" compoundref="scanner_8cc" startline="811" endline="816">print_error</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391af98d5bfd8a4ecb47f717a978cbc4fd9d" compoundref="scanner_8h" startline="65">sgalphast</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a3561ea89f325457996b728aa513411cd" compoundref="scanner_8h" startline="53">start</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391ad776d273d77219b390e5182573ffa8f6" compoundref="scanner_8h" startline="88">stringst</references>
+        <references refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391abb4ac2a6b1de3fad8565da1ae8628df8" compoundref="scanner_8h" startline="91">tabulatorst</references>
+        <references refid="classScanner_1a2e479a9acd8694acdebfb2a56f157d00" compoundref="scanner_8h" startline="130">trans</references>
+      </memberdef>
+      <memberdef kind="function" id="classScanner_1ab33dfe9fe91c1a17114381978b46d2e4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Scanner::print_error</definition>
+        <argsstring>(const char *)</argsstring>
+        <name>print_error</name>
+        <qualifiedname>Scanner::print_error</qualifiedname>
+        <param>
+          <type>const char *</type>
+          <defname>msg</defname>
+        </param>
+        <briefdescription>
+<para>Issue an error message. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="179" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.cc" bodystart="811" bodyend="816"/>
+        <references refid="classScanner_1a25ac63eeafac609c050a11e59b2a6acd" compoundref="scanner_8h" startline="48">col</references>
+        <references refid="classScanner_1ad72e6759ac3756ec8bd76153bc8c6749" compoundref="scanner_8h" startline="49">context</references>
+        <references refid="classScanner_1adf4ce846a783e1f1194d41b66e234089" compoundref="scanner_8h" startline="47">line</references>
+        <references refid="classScanner_1a10953b97b961bfad07907f194d393c94" compoundref="scanner_8h" startline="50">old_context</references>
+        <referencedby refid="classParser_1a1477eb52ba5b4021f7cc7290ac7d3ab7" compoundref="parser_8cc" startline="73" endline="208">Parser::operator()</referencedby>
+        <referencedby refid="classScanner_1a728ec43cf0ee0ec80c595a58d046d9a1" compoundref="scanner_8cc" startline="528" endline="808">operator()</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classScanner_1ab45b888988b46abd70df08a68ca6c0b0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned long</type>
+        <definition>unsigned long Scanner::get_line</definition>
+        <argsstring>() const</argsstring>
+        <name>get_line</name>
+        <qualifiedname>Scanner::get_line</qualifiedname>
+        <briefdescription>
+<para>Return current line number in input stream. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="185" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" bodystart="185" bodyend="188"/>
+        <references refid="classScanner_1adf4ce846a783e1f1194d41b66e234089" compoundref="scanner_8h" startline="47">line</references>
+      </memberdef>
+      <memberdef kind="function" id="classScanner_1ae78254e60dfe2a46d5bd74cbfd486474" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned long</type>
+        <definition>unsigned long Scanner::get_col</definition>
+        <argsstring>() const</argsstring>
+        <name>get_col</name>
+        <qualifiedname>Scanner::get_col</qualifiedname>
+        <briefdescription>
+<para>Return position in current line in input stream. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="194" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" bodystart="194" bodyend="197"/>
+        <references refid="classScanner_1a25ac63eeafac609c050a11e59b2a6acd" compoundref="scanner_8h" startline="48">col</references>
+      </memberdef>
+      <memberdef kind="function" id="classScanner_1a4195e1a3f30ec5ac747e2b1159ccd3d4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Scanner::clear_context</definition>
+        <argsstring>()</argsstring>
+        <name>clear_context</name>
+        <qualifiedname>Scanner::clear_context</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="200" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" bodystart="200" bodyend="206"/>
+        <references refid="classScanner_1a25ac63eeafac609c050a11e59b2a6acd" compoundref="scanner_8h" startline="48">col</references>
+        <references refid="classScanner_1ad72e6759ac3756ec8bd76153bc8c6749" compoundref="scanner_8h" startline="49">context</references>
+        <references refid="classScanner_1adf4ce846a783e1f1194d41b66e234089" compoundref="scanner_8h" startline="47">line</references>
+        <references refid="classScanner_1a10953b97b961bfad07907f194d393c94" compoundref="scanner_8h" startline="50">old_context</references>
+        <referencedby refid="classParser_1a42e12df78b7b635c65937a71af247e74" compoundref="parser_8h" startline="87" endline="93">Parser::clear_context</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="14">
+        <label>AggregateDatum&lt; C, slt &gt;</label>
+        <link refid="classAggregateDatum"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="15" relation="public-inheritance">
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>memory</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>AggregateDatum&lt; Name, &amp;SLIInterpreter::Symboltype &gt;</label>
+        <link refid="classAggregateDatum"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="public-inheritance">
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>memory</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="template-instance">
+          <edgelabel>&lt; Name, &amp;SLIInterpreter::Symboltype &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>C</label>
+      </node>
+      <node id="2">
+        <label>CharCode</label>
+        <link refid="classCharCode"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Datum</label>
+        <link refid="classDatum"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>type</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>action</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>Name</label>
+        <link refid="className"/>
+      </node>
+      <node id="10">
+        <label>SLIFunction</label>
+        <link refid="classSLIFunction"/>
+      </node>
+      <node id="8">
+        <label>SLIType</label>
+        <link refid="classSLIType"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>defaultaction</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Scanner</label>
+        <link refid="classScanner"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>code</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>BeginArraySymbol</edgelabel>
+          <edgelabel>BeginProcedureSymbol</edgelabel>
+          <edgelabel>EndArraySymbol</edgelabel>
+          <edgelabel>EndProcedureSymbol</edgelabel>
+          <edgelabel>EndSymbol</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>SymbolDatum</label>
+        <link refid="classSymbolDatum"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>TypedDatum&lt; slt &gt;</label>
+        <link refid="classTypedDatum"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>sli::pool</label>
+        <link refid="classsli_1_1pool"/>
+        <childnode refid="12" relation="usage">
+          <edgelabel>chunks</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>head</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>sli::pool::chunk</label>
+        <link refid="classsli_1_1pool_1_1chunk"/>
+        <childnode refid="12" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>sli::pool::link</label>
+        <link refid="structsli_1_1pool_1_1link"/>
+        <childnode refid="13" relation="usage">
+          <edgelabel>next</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>std::vector&lt; size_t &gt;</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" line="41" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/sli/scanner.h" bodystart="42" bodyend="207"/>
+    <listofallmembers>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391afba9c510dba84e2ac1cb0e1d3e0b268d" prot="private" virt="non-virtual"><scope>Scanner</scope><name>aheadalphst</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391ac1e80b2731246228602be2a323bf4eda" prot="private" virt="non-virtual"><scope>Scanner</scope><name>aheadfracst</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a4ffc6fb618240974b6748c5b0bbeab13" prot="private" virt="non-virtual"><scope>Scanner</scope><name>aheadintst</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a457ab74135455007aec0cbb51f02c7f4" prot="private" virt="non-virtual"><scope>Scanner</scope><name>aheadlitst</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391af70094dd882f6e0f854de1793a5b6997" prot="private" virt="non-virtual"><scope>Scanner</scope><name>aheadsgst</name></member>
+      <member refid="classScanner_1a97044ce4080f4c924a895876f50c1753a0bebf3a8503f24fe2b1482d0f69a0385" prot="private" virt="non-virtual"><scope>Scanner</scope><name>alpha</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a3f520fda72dc4f0f8aeb12448d4c0a11" prot="private" virt="non-virtual"><scope>Scanner</scope><name>alphast</name></member>
+      <member refid="classScanner_1a97044ce4080f4c924a895876f50c1753a3180d4d034bf79a061347e2ba4fef522" prot="private" virt="non-virtual"><scope>Scanner</scope><name>asterisk</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a46fa7de874221c6dd0c59c8475076be8" prot="private" virt="non-virtual"><scope>Scanner</scope><name>asteriskst</name></member>
+      <member refid="classScanner_1a97044ce4080f4c924a895876f50c1753a4644dd1de130a1b762d9b5c233a3bce3" prot="private" virt="non-virtual"><scope>Scanner</scope><name>backslash</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391ae1e706dd82c454ccb096271e31ede712" prot="private" virt="non-virtual"><scope>Scanner</scope><name>backslashcst</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a0197bb7d11c10e4eaa7194d607e99a09" prot="private" virt="non-virtual"><scope>Scanner</scope><name>backslashst</name></member>
+      <member refid="classScanner_1ab3d6704996138d0e066c9f9053103a5f" prot="public" virt="non-virtual"><scope>Scanner</scope><name>BeginArraySymbol</name></member>
+      <member refid="classScanner_1a0a9c94e3fd5696ff0ea29554d1561a58" prot="public" virt="non-virtual"><scope>Scanner</scope><name>BeginProcedureSymbol</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391ae6d2d458df271bf55e9938447c32eaee" prot="private" virt="non-virtual"><scope>Scanner</scope><name>ccommentst</name></member>
+      <member refid="classScanner_1a4195e1a3f30ec5ac747e2b1159ccd3d4" prot="public" virt="non-virtual"><scope>Scanner</scope><name>clear_context</name></member>
+      <member refid="classScanner_1a97044ce4080f4c924a895876f50c1753ae81f6248b7b3ecb166e37091c4b824ac" prot="private" virt="non-virtual"><scope>Scanner</scope><name>closebrace</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a9b1e84c5bcc85ec47b93341c34a12f6d" prot="private" virt="non-virtual"><scope>Scanner</scope><name>closebracest</name></member>
+      <member refid="classScanner_1a97044ce4080f4c924a895876f50c1753ae5b2b964ee8a32517b7446b2d0ea7b99" prot="private" virt="non-virtual"><scope>Scanner</scope><name>closebracket</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a911612f93afcd9560571a33bb92589ed" prot="private" virt="non-virtual"><scope>Scanner</scope><name>closebracketst</name></member>
+      <member refid="classScanner_1a97044ce4080f4c924a895876f50c1753aba2e646cfeeaf15eb847e1b747a94acc" prot="private" virt="non-virtual"><scope>Scanner</scope><name>closeparenth</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391acb51d2cca9512868f1ec0db782e63fb3" prot="private" virt="non-virtual"><scope>Scanner</scope><name>closeparst</name></member>
+      <member refid="classScanner_1a9dd2ea09bc2a6f81b5bc1b9c036f6af4" prot="private" virt="non-virtual"><scope>Scanner</scope><name>code</name></member>
+      <member refid="classScanner_1a97044ce4080f4c924a895876f50c1753" prot="private" virt="non-virtual"><scope>Scanner</scope><name>Codes</name></member>
+      <member refid="classScanner_1a25ac63eeafac609c050a11e59b2a6acd" prot="private" virt="non-virtual"><scope>Scanner</scope><name>col</name></member>
+      <member refid="classScanner_1ad72e6759ac3756ec8bd76153bc8c6749" prot="private" virt="non-virtual"><scope>Scanner</scope><name>context</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391aa97aec24f5c60dda007eed65bda828ca" prot="private" virt="non-virtual"><scope>Scanner</scope><name>cparenthcst</name></member>
+      <member refid="classScanner_1ad083d4cf569b406e8a7a0a59188f93e6" prot="private" virt="non-virtual"><scope>Scanner</scope><name>cr</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a6dcc760d121f781664e976d03c361a04" prot="private" virt="non-virtual"><scope>Scanner</scope><name>decpdgtst</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a7c8329c587ce2319427fd6366b72509c" prot="private" virt="non-virtual"><scope>Scanner</scope><name>decpfirstst</name></member>
+      <member refid="classScanner_1a97044ce4080f4c924a895876f50c1753a8ba4dbe8254b87a871a6e5d9e8464102" prot="private" virt="non-virtual"><scope>Scanner</scope><name>decpoint</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a44e42cd03793fff036e7bdbe36df81ab" prot="private" virt="non-virtual"><scope>Scanner</scope><name>decpointst</name></member>
+      <member refid="classScanner_1a97044ce4080f4c924a895876f50c1753ae48673dc185b4086066d72b86ff5a5eb" prot="private" virt="non-virtual"><scope>Scanner</scope><name>digit</name></member>
+      <member refid="classScanner_1ac70c99c0528cc1b790abbc4e5991631c" prot="private" virt="non-virtual"><scope>Scanner</scope><name>digval</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a9753a41511a52c2113f589fe4aef4c39" prot="private" virt="non-virtual"><scope>Scanner</scope><name>dotalphast</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391ac39c364209d15c7aa4ddec1e6a97ce5e" prot="private" virt="non-virtual"><scope>Scanner</scope><name>end</name></member>
+      <member refid="classScanner_1aef71eaa03605efb876521c80e92b752f" prot="public" virt="non-virtual"><scope>Scanner</scope><name>EndArraySymbol</name></member>
+      <member refid="classScanner_1a1b2a9f726d724283b204d18c8f2fa9f7" prot="private" virt="non-virtual"><scope>Scanner</scope><name>endof</name></member>
+      <member refid="classScanner_1a6abb6e9b05fcd53146f7781464e266d1" prot="private" virt="non-virtual"><scope>Scanner</scope><name>endoln</name></member>
+      <member refid="classScanner_1a32e7ce3e991ff0f939c42d858080b9c4" prot="public" virt="non-virtual"><scope>Scanner</scope><name>EndProcedureSymbol</name></member>
+      <member refid="classScanner_1af3a50e3eed2f34fac6b1d09c2e0b2908" prot="public" virt="non-virtual"><scope>Scanner</scope><name>EndSymbol</name></member>
+      <member refid="classScanner_1a97044ce4080f4c924a895876f50c1753a3ba271a51c41ff7c8897905a25fdbd7b" prot="private" virt="non-virtual"><scope>Scanner</scope><name>eof</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a0377bb446fda36657c260c371fb5df32" prot="private" virt="non-virtual"><scope>Scanner</scope><name>eofst</name></member>
+      <member refid="classScanner_1a97044ce4080f4c924a895876f50c1753ab4a1cd9a799a1644866ace2444df2080" prot="private" virt="non-virtual"><scope>Scanner</scope><name>eoln</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a27061a48b629820c1262054499774102" prot="private" virt="non-virtual"><scope>Scanner</scope><name>error</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a6f50ca8b3d092c5908a2088ce828b373" prot="private" virt="non-virtual"><scope>Scanner</scope><name>expdigst</name></member>
+      <member refid="classScanner_1a97044ce4080f4c924a895876f50c1753a68489d7618a9e7825d6859f921548502" prot="private" virt="non-virtual"><scope>Scanner</scope><name>expntl</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a2e31df0192981cda567e30b7e5b3a013" prot="private" virt="non-virtual"><scope>Scanner</scope><name>expntlst</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391ad8c993165ddd681eebec7eb220e49080" prot="private" virt="non-virtual"><scope>Scanner</scope><name>fracdgtst</name></member>
+      <member refid="classScanner_1ae78254e60dfe2a46d5bd74cbfd486474" prot="public" virt="non-virtual"><scope>Scanner</scope><name>get_col</name></member>
+      <member refid="classScanner_1ab45b888988b46abd70df08a68ca6c0b0" prot="public" virt="non-virtual"><scope>Scanner</scope><name>get_line</name></member>
+      <member refid="classScanner_1a878b187e95bf7df8f99d2728ea58da30" prot="public" virt="non-virtual"><scope>Scanner</scope><name>GetSource</name></member>
+      <member refid="classScanner_1a8f6f26cf7dd4ec6631622ce362af778d" prot="private" virt="non-virtual"><scope>Scanner</scope><name>in</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a44a06175f892f96fc927fd3482466ca1" prot="private" virt="non-virtual"><scope>Scanner</scope><name>intdgtst</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391af23e49f1fcb133d2a4c90d72c64f1053" prot="private" virt="non-virtual"><scope>Scanner</scope><name>intexpst</name></member>
+      <member refid="classScanner_1a97044ce4080f4c924a895876f50c1753a3ecbf392c13beeb54fa7a79862a0e7a5" prot="private" virt="non-virtual"><scope>Scanner</scope><name>invalid</name></member>
+      <member refid="classScanner_1a97044ce4080f4c924a895876f50c1753a3fce109a593209281496cb703d2ba03a" prot="private" virt="non-virtual"><scope>Scanner</scope><name>lastcode</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a48a9348d5fcbf19e41b6a75991a8db26" prot="private" virt="non-virtual"><scope>Scanner</scope><name>lastscanstate</name></member>
+      <member refid="classScanner_1adf4ce846a783e1f1194d41b66e234089" prot="private" virt="non-virtual"><scope>Scanner</scope><name>line</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a1e4d31a99998c0e144c4f82140b03af4" prot="private" virt="non-virtual"><scope>Scanner</scope><name>literalst</name></member>
+      <member refid="classScanner_1a97044ce4080f4c924a895876f50c1753a6cb65db52f214113c1a6a2a42e6a579d" prot="private" virt="non-virtual"><scope>Scanner</scope><name>minus</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391add63f8b7bc01008a41786c65eec8bc30" prot="private" virt="non-virtual"><scope>Scanner</scope><name>minusst</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a60e1271a7f3ddb8b36d06c8202d88d73" prot="private" virt="non-virtual"><scope>Scanner</scope><name>mnexpst</name></member>
+      <member refid="classScanner_1a97044ce4080f4c924a895876f50c1753a60700626c49cd47acfa7a44a51e1078b" prot="private" virt="non-virtual"><scope>Scanner</scope><name>newline</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a5b83f62be429746f487c59858534da7c" prot="private" virt="non-virtual"><scope>Scanner</scope><name>newlinest</name></member>
+      <member refid="classScanner_1a97044ce4080f4c924a895876f50c1753a6f82e2070e7ce9dd52615973bae0587e" prot="private" virt="non-virtual"><scope>Scanner</scope><name>null</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a8354213dfbeb588d5b3d760cae11b5fd" prot="private" virt="non-virtual"><scope>Scanner</scope><name>nullst</name></member>
+      <member refid="classScanner_1a10953b97b961bfad07907f194d393c94" prot="private" virt="non-virtual"><scope>Scanner</scope><name>old_context</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391ad6b868638ebc600c0e386c3a649c529c" prot="private" virt="non-virtual"><scope>Scanner</scope><name>oparenthcst</name></member>
+      <member refid="classScanner_1a97044ce4080f4c924a895876f50c1753ac576192f4bb6ea88f490c391466f6f1b" prot="private" virt="non-virtual"><scope>Scanner</scope><name>openbrace</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391af8a036397e813e4090792c7db87412fc" prot="private" virt="non-virtual"><scope>Scanner</scope><name>openbracest</name></member>
+      <member refid="classScanner_1a97044ce4080f4c924a895876f50c1753a7c830947cf39c2faf9e62c05835a6c11" prot="private" virt="non-virtual"><scope>Scanner</scope><name>openbracket</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391aaaecf9de7b7138a372f2cd4cad8822d1" prot="private" virt="non-virtual"><scope>Scanner</scope><name>openbracketst</name></member>
+      <member refid="classScanner_1a97044ce4080f4c924a895876f50c1753a19eb5ea7809c916b2a501b7c3560fd20" prot="private" virt="non-virtual"><scope>Scanner</scope><name>openparenth</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a0a9f77a7149f3c2a8451a43be91c1b51" prot="private" virt="non-virtual"><scope>Scanner</scope><name>openparst</name></member>
+      <member refid="classScanner_1a728ec43cf0ee0ec80c595a58d046d9a1" prot="public" virt="non-virtual"><scope>Scanner</scope><name>operator()</name></member>
+      <member refid="classScanner_1a97044ce4080f4c924a895876f50c1753a7580254fdafda431e6734a7af4683c4c" prot="private" virt="non-virtual"><scope>Scanner</scope><name>other</name></member>
+      <member refid="classScanner_1a97044ce4080f4c924a895876f50c1753af88e39955b3db8687d48838242424721" prot="private" virt="non-virtual"><scope>Scanner</scope><name>percent</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391aaa2e8c38e4ad7daad7940fb19824d1cb" prot="private" virt="non-virtual"><scope>Scanner</scope><name>percentst</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a49e1732189ddf7bd0457eeaf7bb9239c" prot="private" virt="non-virtual"><scope>Scanner</scope><name>plexpst</name></member>
+      <member refid="classScanner_1a97044ce4080f4c924a895876f50c1753a16a4bd79447ce1764fb2b36c2f43f506" prot="private" virt="non-virtual"><scope>Scanner</scope><name>plus</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391aadf3ef4e65c010075387ad043a0becef" prot="private" virt="non-virtual"><scope>Scanner</scope><name>plusst</name></member>
+      <member refid="classScanner_1ab33dfe9fe91c1a17114381978b46d2e4" prot="public" virt="non-virtual"><scope>Scanner</scope><name>print_error</name></member>
+      <member refid="classScanner_1ae5eceda2bab876a28f397671aafb6eb5" prot="public" virt="non-virtual"><scope>Scanner</scope><name>Scanner</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391" prot="private" virt="non-virtual"><scope>Scanner</scope><name>ScanStates</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391af98d5bfd8a4ecb47f717a978cbc4fd9d" prot="private" virt="non-virtual"><scope>Scanner</scope><name>sgalphast</name></member>
+      <member refid="classScanner_1a97044ce4080f4c924a895876f50c1753a4aa39771602972d95af0c0f6f13b809c" prot="private" virt="non-virtual"><scope>Scanner</scope><name>slash</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a19a6bb7c19ac7e4b7a389067104d515a" prot="private" virt="non-virtual"><scope>Scanner</scope><name>slashst</name></member>
+      <member refid="classScanner_1a3b260463bbfbba748cf72caf16578a77" prot="public" virt="non-virtual"><scope>Scanner</scope><name>source</name></member>
+      <member refid="classScanner_1a9ad059d618dc8d9c634fa958cb09c697" prot="private" virt="non-virtual"><scope>Scanner</scope><name>space</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a3561ea89f325457996b728aa513411cd" prot="private" virt="non-virtual"><scope>Scanner</scope><name>start</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a561647ff30f0446db26f8e4c910662b8" prot="private" virt="non-virtual"><scope>Scanner</scope><name>startstringst</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391ad776d273d77219b390e5182573ffa8f6" prot="private" virt="non-virtual"><scope>Scanner</scope><name>stringst</name></member>
+      <member refid="classScanner_1ad9bcdd78d6d6e8497f91e12559eac72d" prot="private" virt="non-virtual"><scope>Scanner</scope><name>tab</name></member>
+      <member refid="classScanner_1a97044ce4080f4c924a895876f50c1753a67a863962ff59790d2b10785ca656ff9" prot="private" virt="non-virtual"><scope>Scanner</scope><name>tabulator</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391abb4ac2a6b1de3fad8565da1ae8628df8" prot="private" virt="non-virtual"><scope>Scanner</scope><name>tabulatorst</name></member>
+      <member refid="classScanner_1a2e479a9acd8694acdebfb2a56f157d00" prot="private" virt="non-virtual"><scope>Scanner</scope><name>trans</name></member>
+      <member refid="classScanner_1a97044ce4080f4c924a895876f50c1753a907ea63cab02c9c88c4199241f2e1937" prot="private" virt="non-virtual"><scope>Scanner</scope><name>whitespace</name></member>
+      <member refid="classScanner_1a6ab41fc39295b90b2c25b062d6094391a327e8b46fbc1c0049e00ae2279b0f925" prot="private" virt="non-virtual"><scope>Scanner</scope><name>whitest</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

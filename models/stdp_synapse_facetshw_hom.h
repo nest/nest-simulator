@@ -235,6 +235,10 @@ public:
   typedef STDPFACETSHWHomCommonProperties< targetidentifierT > CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
@@ -345,6 +349,9 @@ private:
                                  // properties or "static"?
   double t_lastspike_;
 };
+
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties stdp_facetshw_synapse_hom< targetidentifierT >::properties;
 
 template < typename targetidentifierT >
 inline bool

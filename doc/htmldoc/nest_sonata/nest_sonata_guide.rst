@@ -1,6 +1,6 @@
 .. _nest_sonata:
 
-The NEST SONATA guide 
+NEST SONATA guide 
 =====================
 
 NEST supports building and simulating networks of point neurons described by the SONATA format [1]_. 
@@ -53,17 +53,17 @@ NEST assumes the following structure of the nodes HDF5 files:
     │  ├─ <population_name>             Group - required - usually only one but can be more population groups per file
     │  │  ├─ node_type_id               Dataset {N_total_nodes} - required
 
-**Note:** NEST assumes that the implicit row numbers in the ``node_type_id`` dataset correspond to the ``node_id``s. 
+**Note:** NEST assumes that the implicit row numbers in the ``node_type_id`` dataset correspond to the ``node_id``\s. 
 
-NEST supports the following SONATA node ``model_type``s:
+NEST supports the following SONATA node ``model_type``\s:
 
 * ``point_neuron``
 * ``point_process``
 * ``virtual`` 
 
 Both ``point_neuron`` and ``point_process`` mean that the node is a neuron model (explicitly simulated) whereas ``virtual`` 
-means that the node only provide inputs to the simulated system. ``virtual`` nodes are modelled as ``spike_generator``s 
-(see :doc:`../models/spike_generator` ). NEST requires that only one ``model_type`` is present per node types CSV file. 
+means that the node only provide inputs to the simulated system. ``virtual`` nodes are modelled as ``spike_generator``\s 
+(see :doc:`../models/spike_generator`\). NEST requires that only one ``model_type`` is present per node types CSV file. 
 
 The required headers for node types CSV files that describe neuron models are: 
 
@@ -98,25 +98,10 @@ circumvented by assigning a single node its own node type id.
 
 Below is an example of a node types CSV file with the required headers for neuron nodes: 
 
-.. list-table::
-   :widths: 25 25 25 25
-   :header-rows: 4
+.. csv-table::
+   :file: ./node_types_example.csv
 
-   * - node_type_id
-     - model_type
-     - model_template
-     - dynamics_params
-   * - 1
-     - point_process
-     - nest:iaf_psc_alpha
-     - params_1.json
-   * - 2
-     - point_process
-     - nest:iaf_psc_alpha
-     - params_2.json
-
-
-The only required CSV header for ``virtual`` nodes is ``model_type``. The ``spike_generator``s spike-times arrays are expected
+The only required CSV header for ``virtual`` nodes is ``model_type``. The ``spike_generator``\s spike-times arrays are expected
 to be provided in HDF5 datasets with the configuration details specified in the JSON configuration file.  
 
 
@@ -163,7 +148,7 @@ edge types CSV file.
 
 In the SONATA format, edges within a population can be organized into one or more edge groups. Synaptic properties that 
 are specified on an individual-basis are stored in these edge groups. The groups are identified by an ``edge_id`` key. 
-NEST assumes the ``edge_id``s are contiguous numeric keys starting from zero, i.e. 0, 1, 2, ... 
+NEST assumes the ``edge_id``\s are contiguous numeric keys starting from zero, i.e. 0, 1, 2, ... 
 
 **Note:** NEST currently only supports one edge group per edge population. Furthermore, NEST only reads the ``delay`` 
 and ``syn_weight`` datasets, given that they are provided. This means that only axonal delays and synaptic weights can 
@@ -172,22 +157,13 @@ CSV file(s).
 
 Below is an example of a edge types CSV file: 
 
-.. list-table::
-   :widths: 25 25 25 25
-   :header-rows: 4
-
-   * - edge_type_id
-     - model_template
-     - delay
-     - dynamics_params
-   * - 1
-     - static_synapse
-     - 2.0
-     - params_1.json
-   * - 2
-     - static_synapse
-     - 2.5
-     - params_2.json
++--------------+----------------+-------+-----------------+
+| edge_type_id | model_template | delay | dynamics_params | 
++==============+================+=======+=================+
+| 1            | static_synapse | 2.0   | params_1.json   |
++--------------+----------------+-------+-----------------+
+| 2            | static_synapse | 2.5   | params_2.json   |
++--------------+----------------+-------+-----------------+
 
 **Note:** Only the synaptic properties ``delay`` and ``syn_weight`` can be provided as headers in the edge types CSV file. 
 Other synaptic properties must be given in the JSON file under ``dynamics_params``. 

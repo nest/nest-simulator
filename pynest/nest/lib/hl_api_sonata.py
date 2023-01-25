@@ -19,10 +19,6 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Class for building and simulating networks represented by the SONATA format
-"""
-
 import os
 import json
 import numpy as np
@@ -51,14 +47,14 @@ __all__ = [
 
 
 class SonataNetwork():
-    """Class for network models represented by the SONATA format.
+    """Class for building and simulating networks represented by the SONATA format.
 
     ``SonataNetwork`` provides native NEST support for building and simulating
     network models represented by the SONATA format. In the SONATA format,
     information about nodes, edges (synapses) and their respective properties 
     are stored in the table-based file formats HDF5 and CSV. Model metadata, 
     such as the path relation between files on disk and simulation parameters, 
-    are stored in JSON configuration files. See :ref:`nest_sonata` for details 
+    are stored in JSON configuration files. See the :ref:`nest_sonata` for details 
     on the NEST support of the SONATA format.
 
     The constructor takes the JSON configuration file specifying the paths to
@@ -208,7 +204,7 @@ class SonataNetwork():
         Returns
         -------
         node_collections : dict
-            A dictionary containing the created :py:class:`.NodeCollection` s. 
+            A dictionary containing the created :py:class:`.NodeCollection`\s. 
             The population names are keys.
         """
 
@@ -572,7 +568,7 @@ class SonataNetwork():
         Returns
         -------
         node_collections : dict
-            A dictionary containing the created :py:class:`.NodeCollection` s. 
+            A dictionary containing the created :py:class:`.NodeCollection`\s. 
             The population names are keys.
         """
 
@@ -610,10 +606,10 @@ class SonataNetwork():
 
         Simulate(T_sim)
 
-    @ property
+    @property
     def node_collections(self):
         return self._node_collections
 
-    @ property
+    @property
     def config(self):
         return self._conf

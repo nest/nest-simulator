@@ -30,7 +30,7 @@ simulated system). The SONATA files can be found in the
 `pynest/examples/300_pointneurons <https://github.com/nest/nest-simulator/tree/master/pynest/examples/300_pointneurons>`_ 
 directory.
 
-See :ref:`nest_sonata` for details on the NEST support of the SONATA format. 
+See the :ref:`nest_sonata` for details on the NEST support of the SONATA format. 
 
 References
 ~~~~~~~~~~
@@ -90,11 +90,11 @@ sonata_net = nest.SonataNetwork(net_config, sim_config=sim_config)
 # For large networks, the edges HDF5 files might not fit into memory in their
 # entirety. In the NEST kernel, the edges HDF5 datasets are therefore
 # read sequentially in chunks. The chunk size is modifiable through the
-# keyword argument `chunk_size` so that the user is able to achieve a balance
+# keyword argument ``chunk_size`` so that the user is able to achieve a balance
 # between the number of read operations and memory overhead.
 #
 # :py:meth:`~.SonataNetwork.BuildNetwork()` returns a dictionary containing
-# the created :py:class:`.NodeCollection` s. The population names are the
+# the created :py:class:`.NodeCollection`\s. The population names are the
 # dictionary keys.
 
 node_collections = sonata_net.BuildNetwork(chunk_size=2**20)
@@ -112,7 +112,7 @@ print(f"number of connections: {kernel_status['num_connections']:,}")
 # ``output`` components in the SONATA config. This means that recording devices
 # must be created and connected manually.
 #
-# Here, we create a `spike_recorder` to record the spiking events of neurons.
+# Here, we create a ``spike_recorder`` to record the spiking events of neurons.
 # We wish to connect the spike recorder to the internal population and only
 # record from a subset of the neurons in the population. We extract the
 # internal population's :py:class:`.NodeCollection` from the ``node_collections`` dictionary

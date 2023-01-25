@@ -49,7 +49,7 @@ Here you can dive into various topics about NEST.
        :link-type: ref
 
 
-   .. grid-item-card:: |sonata| The NEST SONATA guide
+   .. grid-item-card:: |sonata| NEST SONATA guide
        :class-title: sd-d-flex-row sd-align-minor-center
        :link:  nest_sonata 
        :link-type: ref

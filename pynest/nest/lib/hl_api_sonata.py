@@ -51,10 +51,10 @@ class SonataNetwork():
 
     ``SonataNetwork`` provides native NEST support for building and simulating
     network models represented by the SONATA format. In the SONATA format,
-    information about nodes, edges (synapses) and their respective properties 
-    are stored in the table-based file formats HDF5 and CSV. Model metadata, 
-    such as the path relation between files on disk and simulation parameters, 
-    are stored in JSON configuration files. See the :ref:`nest_sonata` for details 
+    information about nodes, edges (synapses) and their respective properties
+    are stored in the table-based file formats HDF5 and CSV. Model metadata,
+    such as the path relation between files on disk and simulation parameters,
+    are stored in JSON configuration files. See the :ref:`nest_sonata` for details
     on the NEST support of the SONATA format.
 
     The constructor takes the JSON configuration file specifying the paths to
@@ -65,11 +65,11 @@ class SonataNetwork():
     Parameters
     ----------
     config : [str | pathlib.Path | pathlib.PurePath]
-        String or pathlib object describing the path to the JSON 
+        String or pathlib object describing the path to the JSON
         configuration file.
     sim_config : [str | pathlib.Path | pathlib.PurePath], optional
-        String or pathlib object describing the path to a JSON configuration 
-        file containing simulation parameters. This is only needed if simulation 
+        String or pathlib object describing the path to a JSON configuration
+        file containing simulation parameters. This is only needed if simulation
         parameters are given in a separate configuration file.
 
     Example
@@ -124,7 +124,7 @@ class SonataNetwork():
             msg = "'target_simulator' in configuration file must be 'NEST'."
             raise ValueError(msg)
 
-        if not "dt" in self._conf["run"]:
+        if "dt" not in self._conf["run"]:
             msg = ("Time resolution 'dt' must be specified in configuration "
                    "file")
             raise ValueError(msg)
@@ -140,7 +140,7 @@ class SonataNetwork():
         Parameters
         ----------
         config : [str | pathlib.Path | pathlib.PurePath]
-            String or pathlib object describing the path to the JSON 
+            String or pathlib object describing the path to the JSON
             configuration file.
 
         Returns
@@ -204,8 +204,8 @@ class SonataNetwork():
         Returns
         -------
         node_collections : dict
-            A dictionary containing the created :py:class:`.NodeCollection`\s. 
-            The population names are keys.
+            A dictionary containing the created :py:class:`.NodeCollection`
+            for each population. The population names are keys.
         """
 
         # Iterate node config files
@@ -551,10 +551,10 @@ class SonataNetwork():
     def BuildNetwork(self, chunk_size=None):
         """Build SONATA network.
 
-        Convenience function for building the SONATA network. The function 
-        first calls the membership function :py:func:`Create()` to create the 
-        network nodes and then the membership function :py:func:`Connect()` 
-        to create their connections. 
+        Convenience function for building the SONATA network. The function
+        first calls the membership function :py:func:`Create()` to create the
+        network nodes and then the membership function :py:func:`Connect()`
+        to create their connections.
 
         For more details, see :py:func:`Create()` and :py:func:`Connect()`.
 
@@ -568,8 +568,8 @@ class SonataNetwork():
         Returns
         -------
         node_collections : dict
-            A dictionary containing the created :py:class:`.NodeCollection`\s. 
-            The population names are keys.
+            A dictionary containing the created :py:class:`.NodeCollection`
+            for each population. The population names are keys.
         """
 
         if chunk_size is not None:
@@ -586,7 +586,7 @@ class SonataNetwork():
         """Simulate the SONATA network.
 
         The simulation time and resolution are expected to be provided in the
-        JSON configuration file. 
+        JSON configuration file.
         """
 
         # Verify that network is built

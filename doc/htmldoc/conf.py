@@ -22,9 +22,7 @@
 
 import sys
 import os
-import re
-import pip
-import subprocess
+
 from urllib.request import urlretrieve
 
 from pathlib import Path

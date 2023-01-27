@@ -24,7 +24,7 @@ Choice of compiler
 ------------------
 
 We :ref:`systematically test <cont_integration>` NEST using the GNU
-gcc and the Clang compiler suites.  Compilation with other up-to-date
+gcc and the Clang compiler suites. Compilation with other up-to-date
 compilers should also work, but we do not regularly test against those
 compilers and can thus only provide limited support.
 

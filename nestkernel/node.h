@@ -829,6 +829,9 @@ public:
 private:
   void set_node_id_( index ); //!< Set global node id
 
+  /**
+   * Set the original NodeCollection of this node.
+   */
   void set_nc_( NodeCollectionPTR );
 
   /** Return a new dictionary datum .
@@ -905,7 +908,7 @@ private:
   bool initialized_;   //!< state and buffers have been initialized
   bool node_uses_wfr_; //!< node uses waveform relaxation method
 
-  NodeCollectionPTR nc_ptr_;
+  NodeCollectionPTR nc_ptr_; //!< Original NodeCollection of this node, used to extract node-specific metadata
 };
 
 inline bool

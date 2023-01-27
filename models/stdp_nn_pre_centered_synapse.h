@@ -339,6 +339,7 @@ stdp_nn_pre_centered_synapse< targetidentifierT >::get_status( DictionaryDatum& 
   def< double >( d, names::mu_plus, mu_plus_ );
   def< double >( d, names::mu_minus, mu_minus_ );
   def< double >( d, names::Wmax, Wmax_ );
+  def< double >( d, names::Kplus, Kplus_ );
   def< long >( d, names::size_of, sizeof( *this ) );
 }
 
@@ -354,11 +355,17 @@ stdp_nn_pre_centered_synapse< targetidentifierT >::set_status( const DictionaryD
   updateValue< double >( d, names::mu_plus, mu_plus_ );
   updateValue< double >( d, names::mu_minus, mu_minus_ );
   updateValue< double >( d, names::Wmax, Wmax_ );
+  updateValue< double >( d, names::Kplus, Kplus_ );
 
   // check if weight_ and Wmax_ have the same sign
   if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) )
   {
     throw BadProperty( "Weight and Wmax must have same sign." );
+  }
+
+  if ( Kplus_ < 0 )
+  {
+    throw BadProperty( "Kplus must be non-negative." );
   }
 }
 

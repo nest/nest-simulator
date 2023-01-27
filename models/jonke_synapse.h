@@ -405,6 +405,7 @@ jonke_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
+  def< double >( d, names::Kplus, Kplus_ );
   def< long >( d, names::size_of, sizeof( *this ) );
 }
 
@@ -414,6 +415,12 @@ jonke_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
+  updateValue< double >( d, names::Kplus, Kplus_ );
+
+  if ( Kplus_ < 0 )
+  {
+    throw BadProperty( "Kplus must be non-negative." );
+  }
 }
 
 template < typename targetidentifierT >

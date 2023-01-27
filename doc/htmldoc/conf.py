@@ -341,32 +341,45 @@ copy_example_file(source_dir / "pynest/examples/Potjans_2014/README.rst")
 copy_example_file(source_dir / "pynest/examples/hpc_benchmark_connectivity.svg")
 
 
-# -- Optionally patch the documentation for hotfix back-ports -------------
 
-# To fix documentation errors in releases, like broken links or spelling
-# errors, without having to create a new software release. It is also
-# possible to customise the look and feel of the NEST documentation
-# in individual installations.
+def patch_documentation():
+    """Apply a hot-fix patch to the documentation before building it.
 
-print("preparing patch...")
+    This function is useful in situations where the online documentation should
+    be modified, but the reason for a new documentation build does not justify
+    a new release of NEST. Example situations are the discovery of broken links
+    spelling errors, or styling issues. Moreover, this mechanism can be used to
+    customize to the look and feel of the NEST documentation in individual
+    installations.
 
-try:
-    current_hash = check_output("git rev-parse HEAD", shell=True, encoding='utf8').strip()
-    # Add the release hash to the log
-    print(f"  current git hash: {current_hash}")
-    # User action: name the patch file `{current_hash}_doc.patch` and place it online
-    patch_file = f'{current_hash}_doc.patch'
-    # User action: Create an environment variable `patch_url` in the administration
-    # console of the readthedocs project
-    patch_url = f'{os.environ["patch_url"]}/{patch_file}'
-    print(f"  retrieving {patch_url}")
-    # Download the patch
-    urlretrieve(patch_url, patch_file)
-    print(f"apply {patch_file}")
-    # Patch the documentation
-    result = check_output('patch -p3', stdin=open(patch_file, 'r'), stderr=subprocess.STDOUT, shell=True)
-    print("patch result:")
-    print(result)
-except Exception as exc:
-    print("no patch applied:")
-    print(exc)
+    In order to make use of this function, the environment variable ``patch_url``
+    has to be set to the URL where documentation patch files are located. The
+    environment variable must either be set locally or via the admin panel of
+    Read the Docs.
+
+    Patch files under the ``patch_url`` are expected to have names in the format
+    ``{git_hash}_doc.patch``, where ``{git_hash}`` is the full hash of the version the
+    patch applies to.
+
+    The basic algorithm implemented by this function is the following:
+    1. obtain the Git hash of the version currently checked out
+    2. log the hash by printing it to the console
+    3. retrieve the patch
+
+    """
+    
+    print("Preparing patch...")
+    try:
+        git_hash = check_output("git rev-parse HEAD", shell=True, encoding='utf8').strip()
+        print(f"  current git hash: {git_hash}")
+        patch_file = f'{git_hash}_doc.patch'
+        patch_url = f'{os.environ["patch_url"]}/{patch_file}'
+        print(f"  retrieving {patch_url}")
+        urlretrieve(patch_url, patch_file)
+        print(f"  applying {patch_file}")
+        result = check_output('patch -p3', stdin=open(patch_file, 'r'), stderr=subprocess.STDOUT, shell=True)
+        print(f"Patch result: {result}")
+    except Exception as exc:
+        print(f"Error while applying patch: {exc}")
+        
+patch_documentation()

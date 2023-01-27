@@ -339,7 +339,6 @@ copy_example_file(source_dir / "pynest/examples/Potjans_2014/README.rst")
 copy_example_file(source_dir / "pynest/examples/hpc_benchmark_connectivity.svg")
 
 
-
 def patch_documentation():
     """Apply a hot-fix patch to the documentation before building it.
 
@@ -365,7 +364,7 @@ def patch_documentation():
     3. retrieve the patch
 
     """
-    
+
     print("Preparing patch...")
     try:
         git_hash = check_output("git rev-parse HEAD", shell=True, encoding='utf8').strip()
@@ -379,5 +378,6 @@ def patch_documentation():
         print(f"Patch result: {result}")
     except Exception as exc:
         print(f"Error while applying patch: {exc}")
-        
+
+
 patch_documentation()

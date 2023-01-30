@@ -393,7 +393,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
       std::vector< double > source_pos_vector( D );
       const std::vector< double > target_pos_vector = target_pos.get_vector();
 
-      const unsigned long target_number_connections =
+      unsigned long target_number_connections =
         std::round( number_of_connections_->value( rng, source_pos_vector, target_pos_vector, source, tgt ) );
 
       // Get (position,node ID) pairs for sources inside mask
@@ -438,19 +438,17 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         std::vector< bool > is_selected( positions.size() );
 
         // Draw `target_number_connections` sources
-        for ( int i = 0; i < ( int ) target_number_connections; ++i )
+        while ( target_number_connections > 0)
         {
           index random_id = lottery( rng );
           if ( not allow_multapses_ and is_selected[ random_id ] )
           {
-            --i;
             continue;
           }
 
           index source_id = positions[ random_id ].second;
           if ( not allow_autapses_ and source_id == target_id )
           {
-            --i;
             continue;
           }
           positions[ random_id ].first.get_vector( source_pos_vector );
@@ -463,6 +461,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           }
 
           is_selected[ random_id ] = true;
+          --target_number_connections;
         }
       }
       else
@@ -483,12 +482,11 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         std::vector< bool > is_selected( positions.size() );
 
         // Draw `target_number_connections` sources
-        for ( int i = 0; i < ( int ) target_number_connections; ++i )
+        while ( target_number_connections > 0)
         {
           index random_id = rng->ulrand( positions.size() );
           if ( not allow_multapses_ and is_selected[ random_id ] )
           {
-            --i;
             continue;
           }
           positions[ random_id ].first.get_vector( source_pos_vector );
@@ -502,6 +500,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           }
 
           is_selected[ random_id ] = true;
+          --target_number_connections;
         }
       }
     }
@@ -521,7 +520,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
       RngPtr rng = get_vp_specific_rng( target_thread );
       Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
 
-      const unsigned long target_number_connections = std::round( number_of_connections_->value( rng, tgt ) );
+      unsigned long target_number_connections = std::round( number_of_connections_->value( rng, tgt ) );
 
       std::vector< double > source_pos_vector( D );
       const std::vector< double > target_pos_vector = target_pos.get_vector();
@@ -564,19 +563,17 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         std::vector< bool > is_selected( positions->size() );
 
         // Draw `target_number_connections` sources
-        for ( int i = 0; i < ( int ) target_number_connections; ++i )
+        while ( target_number_connections > 0)
         {
           index random_id = lottery( rng );
           if ( not allow_multapses_ and is_selected[ random_id ] )
           {
-            --i;
             continue;
           }
 
           index source_id = ( *positions )[ random_id ].second;
           if ( not allow_autapses_ and source_id == target_id )
           {
-            --i;
             continue;
           }
 
@@ -590,6 +587,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           }
 
           is_selected[ random_id ] = true;
+          --target_number_connections;
         }
       }
       else
@@ -602,19 +600,17 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         std::vector< bool > is_selected( positions->size() );
 
         // Draw `target_number_connections` sources
-        for ( int i = 0; i < ( int ) target_number_connections; ++i )
+        while ( target_number_connections > 0)
         {
           index random_id = rng->ulrand( positions->size() );
           if ( not allow_multapses_ and is_selected[ random_id ] )
           {
-            --i;
             continue;
           }
 
           index source_id = ( *positions )[ random_id ].second;
           if ( not allow_autapses_ and source_id == target_id )
           {
-            --i;
             continue;
           }
 
@@ -628,6 +624,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           }
 
           is_selected[ random_id ] = true;
+          --target_number_connections;
         }
       }
     }

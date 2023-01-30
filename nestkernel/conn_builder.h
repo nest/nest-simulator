@@ -439,16 +439,14 @@ protected:
   void connect_();
 
 private:
-  // From conn_spec
   NodeCollectionPTR astrocytes_;
-  double p_; //!< probability of neuron=>neuron connection
+  double p_; //!< connection probability for neuron=>neuron connections
   double p_syn_astro_; //!< probability of astrocyte pairing
-  bool astro_pool_by_index_; // if true, select astrocyte pool per target by index
-  size_t max_astro_per_target_; // max number of astrocytes per tartget neuron
-  // From syn_spec
-  index synapse_model_id_astro_; // synapse model astrocyte=>neuron
-  double c_spill_; // Coefficient c_spill
-  double w_; // summed synaptic weight of neuron=>neuron and neuron=>astrocyte connections
+  bool astro_pool_by_index_; //!< if true, select astrocyte pool per target by index
+  size_t max_astro_per_target_; //!< max number of astrocytes per tartget neuron
+  index synapse_model_id_astro_; // synapse model for astrocyte=>neuron connection
+  double c_spill_; // coefficient c_spill
+  double w_; // synaptic weight of neuron=>neuron connections
   double d_; // synaptic delay of neuron=>neuron and neuron=>astrocyte connections
   double w_sic_; // synaptic weight of astrocyte=>neuron connection
 };

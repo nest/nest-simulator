@@ -68,36 +68,48 @@ extern "C" int aeif_cond_alpha_astro_dynamics( double, const double*, double*, v
  */
 extern "C" int aeif_cond_alpha_astro_dynamics_DT0( double, const double*, double*, void* );
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
-@ingroup aeif
-@ingroup cond
+/* BeginUserDocs: neuron, integrate-and-fire, adaptive threshold, conductance-based
 
-Name: aeif_cond_alpha_astro -  Conductance based exponential integrate-and-fire neuron
-                         model according to Brette and Gerstner (2005).
-Description:
+Short description
++++++++++++++++++
 
-aeif_cond_alpha_astro is the adaptive exponential integrate and fire neuron according
-to Brette and Gerstner (2005).
-Synaptic conductances are modelled as alpha-functions.
+Conductance based exponential integrate-and-fire neuron model supporting
+neuron-astrocyte interactions
+
+Description
++++++++++++
+
+``aeif_cond_alpha_astro`` is an adaptive exponential integrate and fire neuron
+which supports neuron-astrocyte interactions. It receives current from
+astrocytes (I_astro). Synaptic conductances are modelled as alpha-functions.
 
 This implementation uses the embedded 4th order Runge-Kutta-Fehlberg solver with
 adaptive step size to integrate the differential equation.
 
 The membrane potential is given by the following differential equation:
-@f[ C_m \frac{dV}{dt} = -g_L(V-E_L)+g_L\Delta_T\exp\left(\frac{V-V_{th}}{\Delta_T}\right) - g_e(t)(V-E_e) \\
-                                                     -g_i(t)(V-E_i)-w +I_e @f]
+
+.. math::
+
+ C_m \frac{dV}{dt} =
+ -g_L(V-E_L)+g_L\Delta_T\exp\left(\frac{V-V_{th}}{\Delta_T}\right) -
+ g_e(t)(V-E_e) \\
+                                                     -g_i(t)(V-E_i)-w +I_e +I_astro(t)
 
 and
 
-@f[ \tau_w \frac{dw}{dt} = a(V-E_L) - w @f]
+.. math::
 
-Parameters:
+ \tau_w \frac{dw}{dt} = a(V-E_L) - w
+
+For implementation details see the
+`aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
+
+See also [1]_.
+
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
-
-\verbatim embed:rst
 
 ======== ======= =======================================
 **Dynamic state variables:**
@@ -110,7 +122,6 @@ The following parameters can be set in the status dictionary.
  w       pA      Spike-adaptation current
 ======== ======= =======================================
 
-
 ======== ======= =======================================
 **Membrane Parameters**
 --------------------------------------------------------
@@ -121,7 +132,6 @@ The following parameters can be set in the status dictionary.
  g_L     nS      Leak conductance
  I_e     pA      Constant external input current
 ======== ======= =======================================
-
 
 ======== ======= ==================================
 **Spike adaptation parameters**
@@ -152,32 +162,39 @@ gsl_error_tol real    This parameter controls the admissible error of the
                       GSL integrator. Reduce it if NEST complains about
                       numerical instabilities.
 ============= ======= =========================================================
-\endverbatim
 
-Authors: Marc-Oliver Gewaltig; full revision by Tanguy Fardet on December 2016
+Sends
++++++
 
-Sends: SpikeEvent
+SpikeEvent
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+Receives
+++++++++
 
-References:
+SpikeEvent, CurrentEvent, DataLoggingRequest, SICEvent
 
-\verbatim embed:rst
-.. [1] Brette R and Gerstner W (2005). Adaptive Exponential
-       Integrate-and-Fire Model as an Effective Description of Neuronal
-       Activity. J Neurophysiol 94:3637-3642
+References
+++++++++++
+
+.. [1] Brette R and Gerstner W (2005). Adaptive exponential
+       integrate-and-fire model as an effective description of neuronal
+       activity. Journal of Neurophysiology. 943637-3642
        DOI: https://doi.org/10.1152/jn.00686.2005
-\endverbatim
 
-SeeAlso: iaf_cond_alpha, aeif_cond_exp
-*/
+See also
+++++++++
+
+iaf_cond_alpha, aeif_cond_exp, astrocyte, sic_connection
+
+EndUserDocs */
+
 class aeif_cond_alpha_astro : public ArchivingNode
 {
 
 public:
   aeif_cond_alpha_astro();
   aeif_cond_alpha_astro( const aeif_cond_alpha_astro& );
-  ~aeif_cond_alpha_astro();
+  ~aeif_cond_alpha_astro() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -187,26 +204,26 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( SICEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( SICEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( SICEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( SICEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
   void init_state_( const Node& proto );
-  void init_buffers_();
-  void pre_run_hook();
-  void update( Time const&, const long, const long );
+  void init_buffers_() override;
+  void pre_run_hook() override;
+  void update( Time const&, const long, const long ) override;
 
   // END Boilerplate function declarations ----------------------------
 
@@ -234,17 +251,16 @@ private:
     double E_ex;       //!< Excitatory reversal Potential in mV
     double E_in;       //!< Inhibitory reversal Potential in mV
     double E_L;        //!< Leak reversal Potential (aka resting potential) in mV
-    double Delta_T;    //!< Slope faktor in ms.
-    double tau_w;      //!< adaptation time-constant in ms.
-    double a;          //!< Subthreshold adaptation in nS.
+    double Delta_T;    //!< Slope factor in mV
+    double tau_w;      //!< Adaptation time-constant in ms
+    double a;          //!< Subthreshold adaptation in nS
     double b;          //!< Spike-triggered adaptation in pA
-    double V_th;       //!< Spike threshold in mV.
-    double t_ref;      //!< Refractory period in ms.
-    double tau_syn_ex; //!< Excitatory synaptic rise time.
-    double tau_syn_in; //!< Excitatory synaptic rise time.
-    double I_e;        //!< Intrinsic current in pA.
+    double V_th;       //!< Spike threshold in mV
+    double tau_syn_ex; //!< Excitatory synaptic rise time
+    double tau_syn_in; //!< Excitatory synaptic rise time
+    double I_e;        //!< Intrinsic current in pA
 
-    double gsl_error_tol; //!< error bound for GSL integrator
+    double gsl_error_tol; //!< Error bound for GSL integrator
 
     Parameters_(); //!< Sets default parameter values
 
@@ -257,8 +273,7 @@ public:
 
   /**
    * State variables of the model.
-   * @note Copy constructor and assignment operator required because
-   *       of C-style array.
+   * @note Copy constructor required because of C-style array.
    */
   struct State_
   {
@@ -315,13 +330,12 @@ public:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing the GSL system
 
-    // IntergrationStep_ should be reset with the neuron on ResetNetwork,
-    // but remain unchanged during calibration. Since it is initialized with
-    // step_, and the resolution cannot change after nodes have been created,
-    // it is safe to place both here.
+    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // cannot change after nodes have been created, it is safe to place both
+    // here.
     double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
-    
+
     RingBuffer sic_currents_;
 
     /**

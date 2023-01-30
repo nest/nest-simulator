@@ -1,5 +1,5 @@
 /*
- *  gap_junction.h
+ *  sic_connection.h
  *
  *  This file is part of NEST.
  *
@@ -28,48 +28,57 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup gap
+/* BeginUserDocs: synapse
 
-Name: gap_junction - Synapse type for gap-junction connections.
+Short description
++++++++++++++++++
 
-Description:
+Synapse type for connections from astrocytes to neurons
 
-gap_junction is a connector to create gap junctions between pairs
-of neurons. Gap junctions are bidirectional connections.
-In order to create one accurate gap-junction connection between
-neurons i and j two NEST connections are required: For each created
-connection a second connection with the exact same parameters in
-the opposite direction is required. NEST provides the possibility
-to create both connections with a single call to Connect via
-the make_symmetric flag:
+Description
++++++++++++
 
-    i j << /rule /one_to_one /make_symmetric true >> /gap_junction Connect
+``sic_connection`` is a connector to create connections from astrocytes to
+neurons. It is adapted from ``gap_junction`` but unidirectional. 
+``sic_connection`` sends current to neurons. The value of current is
+determined by astrocytes. The neuron model compatible with this connector is
+``aeif_cond_alpha_astro``.
 
-The value of the parameter "delay" is ignored for connections of
-type gap_junction.
+As a part of neuron-astrocyte networks, connections of this type should be
+created with the connectivity rule ``pairwise_bernoulli_astro``.
 
-Transmits: SICConnectionEvent
+The value of the parameter ``delay`` is ignored for connections of
+type ``sic_connection``.
 
-References:
+See also [1]_, [2]_.
 
-\verbatim embed:rst
-.. [1] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann,
-       M (2015). A unified framework for spiking and gap-junction interactions
-       in distributed neuronal network simulations. Frontiers in
-       Neuroinformatics 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
+Sends
++++++
 
-.. [2] Mancilla JG, Lewis,TJ, Pinto DJ, Rinzel J, Connors BW (2007).
-       Synchronization of electrically coupled pairs of inhibitory
-       interneurons in neocortex. Journal of Neuroscience 27:2058-2073.
-       DOI: https://doi.org/10.1523/JNEUROSCI.2715-06.2007
-\endverbatim
+SICEvent
 
-Author: Jan Hahne, Moritz Helias, Susanne Kunkel
+References
+++++++++++
 
-SeeAlso: synapsedict, hh_psc_alpha_gap
-*/
+.. [1] Nadkarni S, and Jung P. Spontaneous oscillations of dressed neurons: A
+       new mechanism for epilepsy? Physical Review Letters, 91:26. DOI:
+       10.1103/PhysRevLett.91.268101
+.. [2] Li, Y. X., & Rinzel, J. (1994). Equations for InsP3 receptor-mediated
+       [Ca2+]i oscillations derived from a detailed kinetic model: a
+       Hodgkin-Huxley like formalism. Journal of theoretical Biology, 166(4),
+       461-473.
+.. [3] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann M
+       (2015). A unified framework for spiking and gap-junction interactions
+       in distributed neuronal netowrk simulations. Frontiers in
+       Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
+
+See also
+++++++++
+
+gap_junction, astrocyte, aeif_cond_alpha_astro
+
+EndUserDocs */
+
 template < typename targetidentifierT >
 class SICConnection : public Connection< targetidentifierT >
 {
@@ -133,6 +142,12 @@ public:
     weight_ = w;
   }
 
+  void
+  set_delay( double )
+  {
+    throw BadProperty( "sic_connection connection has no delay" );
+  }
+
 private:
   double weight_; //!< connection weight
 };
@@ -156,7 +171,7 @@ SICConnection< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
   // If the delay is set, we throw a BadProperty
   if ( d->known( names::delay ) )
   {
-    throw BadProperty( "gap_junction connection has no delay" );
+    throw BadProperty( "sic_connection connection has no delay" );
   }
 
   ConnectionBase::set_status( d, cm );

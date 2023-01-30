@@ -39,8 +39,8 @@
 #include "event.h"
 #include "nest_types.h"
 #include "node.h"
-#include "ring_buffer.h"
 #include "recordables_map.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 namespace nest
@@ -58,45 +58,51 @@ namespace nest
  */
 extern "C" int astrocyte_dynamics( double, const double*, double*, void* );
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup psc
-@ingroup hh
-@ingroup gap
+/* BeginUserDocs: astrocyte, current-based
 
-Name:
-astrocyte - contains variables IP3_astro, Ca_astro, f_IP3R_astro
+Short description
++++++++++++++++++
 
-Description:
-The model defines dynamics of the following variables:
+A model of astrocyte with dynamics of three variables: IP3_astro, Ca_astro,
+f_IP3R_astro
+
+Description
++++++++++++
+
+``astrocyte`` is a model of astrocyte. The model defines dynamics of the
+following variables:
+
 ============  ========   ==========================================================
 IP3_astro     uM         IP3 concentration in the astrocytic cytosol
 Ca_astro      uM         Calcium concentration in the astrocytic cytosol
 f_IP3_astro   unitless   The fraction of active IP3 receptors on the astrocytic ER
 ============  ========   ==========================================================
 
-The model is developed using the template for Hodgkin-Huxley neuron model with gap-junction support
-(hh_psc_alpha) however, the spiking mechanism implemented in this model is not needed here.
+The model is developed by adapting a Hodgkin-Huxley neuron model
+(``hh_psc_alpha_gap``). It can be connected to a presynaptic neuron with a
+``tsodyks_synapse``, and to a postsynaptic neuron with a ``sic_connection``.
 
-1. Post-synaptic currents:
-Synaptic release of glutamate affects IP3 production according to the model described in
-Nadkarni & Jung (2003). The percent of released glutamate (model parameter) binds to the astrocyte while the rest
-binds to the postsynaptic neuron.
+``astrocyte`` receives presynaptic input through the ``tsodyks_synapse``, which
+determines its dynamics. The dynamics then determine the current being sent to
+the postsynaptic neuron through the ``sic_connection``. The connections should
+be created with the connectivity rule ``pairwise_bernoulli_astro``.
 
-2. Spikes: Spikes do not exhist in the astrocyte model, however the spiking-related mechanisms were not removed from
-the code to avoid incmpatibilities with the rest of the simulator.
+Presynaptic release of glutamate affects the dynamics according to the model
+described in Nadkarni & Jung (2003) [1].
 
-3. Gap Junctions: Used to implement the interaction from astrocyte to neuron in the form of Slow Inward Current (SIC).
-Gap Junctions are implemented by a gap current of the form
-\f$ g_ij( V_i - V_j) \f$
+Spikes do not exist in the astrocyte model. However, the spiking-related
+mechanisms were not removed from the code to avoid incompatibilities with the
+rest of the simulator.
 
+See also [1]_, [2]_, [3]_.
 
-Parameters:
+Parameters
+++++++++++
+
 The following parameters can be set in the status dictionary.
 
-\verbatim embed:rst
 ==============  ======    ==================================================================
-Ca_tot_astro    uM        Total free astrocytic calcium concntration
+Ca_tot_astro    uM        Total free astrocytic calcium concentration
 IP3_0_astro     uM        Baseline value of the astrocytic IP3 concentration
 K_act_astro     uM        Astrocytic IP3R dissociation constant of calcium (activation)
 K_inh_astro     uM        Astrocytic IP3R dissociation constant of calcium (inhibition)
@@ -104,36 +110,46 @@ K_IP3_1_astro   uM        Astrocytic IP3R dissociation constant of IP3
 K_IP3_2_astro   uM        Astrocytic IP3R dissociation constant of IP3
 K_SERCA_astro   uM        Activation constant of astrocytic SERCA pump
 r_ER_cyt_astro  unitless  Ratio between astrocytic ER and cytosol volumes
-r_IP3_astro     uM/ms     Rate constant of astrocytic IP3 production
+r_IP3_astro               Rate constant of astrocytic IP3 production
 r_IP3R_astro    1/(uM*ms) Astrocytic IP3R binding constant for calcium inhibition
 r_L_astro       1/ms      Rate constant for calcium leak from the astrocytic ER to cytosol
 v_IP3R_astro    1/ms      Maximum rate of calcium release via astrocytic IP3R
 v_SERCA_astro   uM/ms     Maximum rate of calcium uptake by astrocytic IP3R
 tau_IP3_astro   ms        Time constant of astrocytic IP3 degradation
 ==============  ======    ==================================================================
-\endverbatim
 
-References:
+References
+++++++++++
 
-\verbatim embed:rst
 .. [1] Nadkarni S, and Jung P. Spontaneous oscillations of dressed neurons: A
-	new mechanism for epilepsy? Physical Review Letters, 91:26. DOI: 10.1103/PhysRevLett.91.268101
-.. [2] TO DO: add the paper on network modeling
+       new mechanism for epilepsy? Physical Review Letters, 91:26. DOI:
+       10.1103/PhysRevLett.91.268101
+.. [2] Li, Y. X., & Rinzel, J. (1994). Equations for InsP3 receptor-mediated
+       [Ca2+]i oscillations derived from a detailed kinetic model: a
+       Hodgkin-Huxley like formalism. Journal of theoretical Biology, 166(4),
+       461-473.
 .. [3] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann M
        (2015). A unified framework for spiking and gap-junction interactions
        in distributed neuronal netowrk simulations. Frontiers in
        Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
-\endverbatim
 
+Sends
++++++
 
-Sends: SpikeEvent, GapJunctionEvent
+SICEvent
 
-Receives: SpikeEvent, GapJunctionEvent, CurrentEvent, DataLoggingRequest
+Receives
+++++++++
 
-Authors: Jan Hahne, Jonas Stapmanns, Mikko Lehtimaki, Jugoslava Acimovic TO DO: add other authors
+SpikeEvent, CurrentEvent, DataLoggingRequest
 
-SeeAlso: hh_psc_alpha, hh_cond_exp_traub, gap_junction
-*/
+See also
+++++++++
+
+aeif_cond_alpha_astro, sic_connection, hh_psc_alpha_gap
+
+EndUserDocs */
+
 class astrocyte : public ArchivingNode
 {
 
@@ -142,7 +158,7 @@ public:
 
   astrocyte();
   astrocyte( const astrocyte& );
-  ~astrocyte();
+  ~astrocyte() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -153,43 +169,43 @@ public:
   using Node::handles_test_event;
   using Node::sends_secondary_event;
 
-  port send_test_event( Node& target, rport receptor_type, synindex, bool );
+  port send_test_event( Node& target, rport receptor_type, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
-  void handle( GapJunctionEvent& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
+  void handle( GapJunctionEvent& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
-  port handles_test_event( GapJunctionEvent&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
+  port handles_test_event( GapJunctionEvent&, rport ) override;
 
   void
-  sends_secondary_event( GapJunctionEvent& )
+  sends_secondary_event( GapJunctionEvent& ) override
   {
   }
 
   void
-  sends_secondary_event( SICEvent& )
+  sends_secondary_event( SICEvent& ) override
   {
   }
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
   void init_state_( const Node& proto );
-  void init_buffers_();
-  void pre_run_hook();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
   /** This is the actual update function. The additional boolean parameter
    * determines if the function is called by update (false) or wfr_update (true)
    */
   bool update_( Time const&, const long, const long, const bool );
 
-  void update( Time const&, const long, const long );
-  bool wfr_update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
+  bool wfr_update( Time const&, const long, const long ) override;
 
   // END Boilerplate function declarations ----------------------------
 
@@ -209,20 +225,21 @@ private:
   struct Parameters_
   {
 
-    double Ca_tot_astro_;
-    double IP3_0_astro_;
-    double K_IP3_1_astro_;
-    double K_IP3_2_astro_;
-    double K_SERCA_astro_;
-    double K_act_astro_;
-    double K_inh_astro_;
-    double r_ER_cyt_astro_;
-    double r_IP3_astro_;
-    double r_IP3R_astro_;
-    double r_L_astro_;
-    double tau_IP3_astro_;
-    double v_IP3R_astro_;
-    double v_SERCA_astro_;
+    double Ca_tot_astro_;   //!< Total free astrocytic calcium concentration in uM
+    double IP3_0_astro_;    //!< Baseline value of the astrocytic IP3 concentration in uM
+    double K_IP3_1_astro_;  //!< Astrocytic IP3R dissociation constant of IP3 in uM
+    double K_IP3_2_astro_;  //!< Astrocytic IP3R dissociation constant of IP3 in uM
+    double K_SERCA_astro_;  //!< Activation constant of astrocytic SERCA pump in uM
+    double K_act_astro_;    //!< Astrocytic IP3R dissociation constant of calcium (activation) in uM
+    double K_inh_astro_;    //!< Astrocytic IP3R dissociation constant of calcium (inhibition) in uM
+    double r_ER_cyt_astro_; //!< Ratio between astrocytic ER and cytosol volumes
+    double r_IP3_astro_;    //!< Rate constant of astrocytic IP3 production
+    double r_IP3R_astro_;   //!< Astrocytic IP3R binding constant for calcium in 1/(uM*ms)
+    double r_L_astro_;      //!< Rate constant for calcium leak from the astrocytic ER to cytosol in 1/ms
+    double tau_IP3_astro_;  //!< Time constant of astrocytic IP3 degradation in ms
+    double v_IP3R_astro_;   //!< Maximum rate of calcium release via astrocytic IP3R in 1/ms
+    double v_SERCA_astro_;  //!< Maximum rate of calcium uptake by astrocytic IP3R in uM/ms
+
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
@@ -234,8 +251,7 @@ public:
 
   /**
    * State variables of the model.
-   * @note Copy constructor and assignment operator required because
-   *       of C-style array.
+   * @note Copy constructor required because of C-style array.
    */
   struct State_
   {
@@ -249,8 +265,8 @@ public:
     enum StateVecElems
     {
       IP3_astro = 0,
-      Ca_astro,   // 1
-      f_IP3R_astro,   // 2
+      Ca_astro,     // 1
+      f_IP3R_astro, // 2
       STATE_VEC_SIZE
     };
 
@@ -273,7 +289,7 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( astrocyte& ); //!<Sets buffer pointers to 0
+    Buffers_( astrocyte& ); //!< Sets buffer pointers to 0
     //! Sets buffer pointers to 0
     Buffers_( const Buffers_&, astrocyte& );
 
@@ -290,10 +306,9 @@ private:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // IntergrationStep_ should be reset with the neuron on ResetNetwork,
-    // but remain unchanged during calibration. Since it is initialized with
-    // step_, and the resolution cannot change after nodes have been created,
-    // it is safe to place both here.
+    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // cannot change after nodes have been created, it is safe to place both
+    // here.
     double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
@@ -322,16 +337,16 @@ private:
    * Internal variables of the model.
    * TO DO: These are not needed for the astrocyte model. Test whether they can be removed.
    */
-  struct Variables_
-  {
-    /** initial value to normalise excitatory synaptic current */
-    double PSCurrInit_E_;
+  // struct Variables_
+  // {
+  //   /** initial value to normalise excitatory synaptic current */
+  //   double PSCurrInit_E_;
 
-    /** initial value to normalise inhibitory synaptic current */
-    double PSCurrInit_I_;
+  //   /** initial value to normalise inhibitory synaptic current */
+  //   double PSCurrInit_I_;
 
-    int RefractoryCounts_;
-  };
+  //   int RefractoryCounts_;
+  // };
 
   // Access functions for UniversalDataLogger -------------------------------
 
@@ -342,6 +357,8 @@ private:
   {
     return S_.y_[ elem ];
   }
+
+  //! Read out SIC values; for testing, to be deleted
   double sic_ = 0.0;
   double
   get_sic_() const
@@ -353,7 +370,7 @@ private:
 
   Parameters_ P_;
   State_ S_;
-  Variables_ V_;
+  // Variables_ V_;
   Buffers_ B_;
 
   //! Mapping of recordables names to access functions

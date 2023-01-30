@@ -436,7 +436,7 @@ DiffusionConnectionEvent::get_diffusion_factor() const
 
 /**
  * Event for SIC_connections between astrocytes and neurons. The event transmits
- * the slow invert current to the connected neurons.
+ * the slow inward current to the connected neurons.
  */
 class SICEvent : public DataSecondaryEvent< double, SICEvent >
 {

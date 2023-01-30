@@ -1691,7 +1691,7 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
     c_spill_ = 0.3;
   }
 
-  // weight for astrocyte=>neuron connection
+  // for astrocyte=>neuron connection
   if ( syn_specs[0]->known( names::synapse_model_astro ) )
   {
     const std::string syn_name = ( *syn_specs[0] )[ names::synapse_model_astro ];
@@ -1770,7 +1770,7 @@ nest::BernoulliAstroBuilder::connect_()
             "Some astrocytes will be excluded from neuron-astrocyte pairings. ");
         }
       }
-      // uneven pairings in a special case 
+      // uneven pairings in a special case
       if ( max_astro_per_target_ > 0 and max_astro_per_target_ % 2 == 0 and default_n_target_per_astro % 2 == 1)
       {
         LOG( M_WARNING,
@@ -1828,7 +1828,7 @@ nest::BernoulliAstroBuilder::connect_()
         {
           if ( max_astro_per_target_ > 0 )
           {
-            // shifting, for even pairings as much as possible
+            // shifting, for even pairings
             n_astro_overlap_per_target = max_astro_per_target_ - default_n_astro_per_target_;
             int shift = std::ceil( n_astro_overlap_per_target/2.0 );
             if ( targets_size > astrocytes_size )
@@ -1906,7 +1906,7 @@ nest::BernoulliAstroBuilder::connect_()
           // increase i which counts the number of incoming connections
           ++i;
 
-          // if target is local, connect source -> target
+          // if target is local, connect source=>target
           if ( target_thread == tid )
           {
             assert( target != NULL );
@@ -1936,7 +1936,7 @@ nest::BernoulliAstroBuilder::connect_()
             anode_id = ( *astrocytes_ )[ synced_rng->ulrand( astrocytes_size ) ];
           }
 
-          // if astrocyte is local, connect source -> astrocyte
+          // if astrocyte is local, connect source=>astrocyte
           astrocyte = kernel().node_manager.get_node_or_proxy( anode_id, tid );
           astrocyte_thread = tid;
           if ( astrocyte->is_proxy() )
@@ -1961,7 +1961,7 @@ nest::BernoulliAstroBuilder::connect_()
           {
             continue;
           }
-          // if target is local, connect astrocyte -> target
+          // if target is local, connect astrocyte=>target
           if ( target_thread == tid )
           {
             assert( target != NULL );

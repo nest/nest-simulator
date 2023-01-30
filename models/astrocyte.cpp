@@ -28,9 +28,9 @@
 // C++ includes:
 #include <cmath> // in case we need isnan() // fabs
 #include <cstdio>
-#include <iomanip>
+// #include <iomanip>
 #include <iostream>
-#include <limits>
+// #include <limits>
 
 // Includes from libnestutil:
 #include "numerics.h"
@@ -41,10 +41,10 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
+// #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
+// #include "doubledatum.h"
+// #include "integerdatum.h"
 
 nest::RecordablesMap< nest::astrocyte > nest::astrocyte::recordablesMap_;
 
@@ -60,7 +60,7 @@ RecordablesMap< astrocyte >::create()
   insert_( names::IP3_astro, &astrocyte::get_y_elem_< astrocyte::State_::IP3_astro > );
   insert_( names::Ca_astro, &astrocyte::get_y_elem_< astrocyte::State_::Ca_astro > );
   insert_( names::f_IP3R_astro, &astrocyte::get_y_elem_< astrocyte::State_::f_IP3R_astro > );
-  insert_( names::SIC, &astrocyte::get_sic_ );
+  insert_( names::SIC, &astrocyte::get_sic_ ); // for testing, to be deleted
 }
 
 extern "C" int
@@ -95,7 +95,7 @@ astrocyte_dynamics( double time, const double y[], double f[], void* pnode )
   const double I_channel = node.P_.r_ER_cyt_astro_ * node.P_.v_IP3R_astro_ * std::pow(m_inf, 3) * std::pow(n_inf, 3) *
     std::pow(f_ip3r, 3) * (calc_ER - calc);
 
-
+  // (To be preserved)
   // // set I_gap depending on interpolation order
   // double gap = 0.0;
   //
@@ -308,9 +308,9 @@ nest::astrocyte::State_::set( const DictionaryDatum& d )
 
 nest::astrocyte::Buffers_::Buffers_( astrocyte& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -318,9 +318,9 @@ nest::astrocyte::Buffers_::Buffers_( astrocyte& n )
 
 nest::astrocyte::Buffers_::Buffers_( const Buffers_&, astrocyte& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -409,7 +409,7 @@ nest::astrocyte::init_buffers_()
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ = B_.step_;
 
-  if ( B_.s_ == 0 )
+  if ( not B_.s_ )
   {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
@@ -418,7 +418,7 @@ nest::astrocyte::init_buffers_()
     gsl_odeiv_step_reset( B_.s_ );
   }
 
-  if ( B_.c_ == 0 )
+  if ( not B_.c_ )
   {
     B_.c_ = gsl_odeiv_control_y_new( 1e-6, 0.0 );
   }
@@ -427,7 +427,7 @@ nest::astrocyte::init_buffers_()
     gsl_odeiv_control_init( B_.c_, 1e-6, 0.0, 1.0, 0.0 );
   }
 
-  if ( B_.e_ == 0 )
+  if ( not B_.e_ )
   {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }
@@ -437,7 +437,7 @@ nest::astrocyte::init_buffers_()
   }
 
   B_.sys_.function = astrocyte_dynamics;
-  B_.sys_.jacobian = NULL;
+  B_.sys_.jacobian = nullptr;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
 
@@ -464,7 +464,7 @@ bool
 nest::astrocyte::update_( Time const& origin, const long from, const long to, const bool called_from_wfr_update )
 {
 
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   const size_t interpolation_order = kernel().simulation_manager.get_wfr_interpolation_order();
@@ -593,29 +593,28 @@ nest::astrocyte::update_( Time const& origin, const long from, const long to, co
 
   } // end for-loop
 
+  // (To be preserved)
   // if not called_from_wfr_update perform constant extrapolation
   // and reset last_y_values
-  if ( not called_from_wfr_update )
-  {
-    for ( long temp = from; temp < to; ++temp )
-    {
-      // TODO: this is for the connection between two astrocytes
-      new_coefficients[ temp * ( interpolation_order + 1 ) + 0 ] = S_.y_[ State_::IP3_astro ];
-    }
-
-    std::vector< double >( kernel().connection_manager.get_min_delay(), 0.0 ).swap( B_.last_y_values );
-  }
-
+  // if ( not called_from_wfr_update )
+  // {
+  //   for ( long temp = from; temp < to; ++temp )
+  //   {
+  //     // TODO: this is for the connection between two astrocytes
+  //     new_coefficients[ temp * ( interpolation_order + 1 ) + 0 ] = S_.y_[ State_::IP3_astro ];
+  //   }
+  //   std::vector< double >( kernel().connection_manager.get_min_delay(), 0.0 ).swap( B_.last_y_values );
+  // }
   // Send gap-event
-  GapJunctionEvent ge;
-  ge.set_coeffarray( new_coefficients );
-  kernel().event_delivery_manager.send_secondary( *this, ge );
+  // GapJunctionEvent ge;
+  // ge.set_coeffarray( new_coefficients );
+  // kernel().event_delivery_manager.send_secondary( *this, ge );
 
   // Send sic-event
   SICEvent sic;
   sic.set_coeffarray( sic_values );
   kernel().event_delivery_manager.send_secondary( *this, sic );
-  sic_ = sic_values[0];
+  sic_ = sic_values[0]; // for testing, to be deleted
 
   // Reset variables
   B_.sumj_g_ij_ = 0.0;
@@ -644,7 +643,6 @@ nest::astrocyte::handle( CurrentEvent& e )
   const double c = e.get_current();
   const double w = e.get_weight();
 
-  // add weighted current; HEP 2002-10-04
   B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 

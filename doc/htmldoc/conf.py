@@ -250,15 +250,16 @@ def config_inited_handler(app, config):
 def add_button_to_examples(app, env, docnames):
     # Function finds all restructured text files in auto_examples
     # and injects the multistring prolog, which is rendered
-    # as a  button link in HTML with target to link to a Jupyter notebook service.
+    # as a button link in HTML with target to a Jupyter notebook of
+    # the same name and a service to run it.
     # The nameholder in the link is replaced with the file name.
     #
     # The rst files are generated at build time by Sphinx_gallery.
     # The notebooks that the target points to are linked with
-    # service that runs notebooks using nbgitpuller.
-    # and are located in nest/next-simulator-examples/
+    # serviceis (like EBRAINS) that runs notebooks using nbgitpuller.
+    # and are located in nest/next-simulator-examples/.
     # The notebooks are generated from the CI workflow of nest
-    # on GitHub, which converts the source Python files to .ipynb
+    # on GitHub, which converts the source Python files to .ipynb.
 
     # The link to run the notebook is rendered in an image within a card directive.
     example_prolog ="""

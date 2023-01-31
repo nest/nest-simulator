@@ -45,7 +45,6 @@ PyNEST examples
     .. grid-item-card:: NEST Sudoku solver
            :img-top: ../static/img/sudoku_solution.gif
 
-           * :doc:`../auto_examples/sudoku/sudoku_net`
            * :doc:`../auto_examples/sudoku/sudoku_solver`
            * :doc:`../auto_examples/sudoku/plot_progress`
 
@@ -53,7 +52,6 @@ PyNEST examples
            :img-top: ../static/img/pong_sim.gif
 
            * :doc:`../auto_examples/pong/run_simulations`
-           * :doc:`../auto_examples/pong/pong`
            * :doc:`../auto_examples/pong/generate_gif`
 
 .. grid:: 1 1 2 3
@@ -215,6 +213,7 @@ PyNEST examples
 
            * :doc:`../auto_examples/recording_demo`
            * :doc:`../auto_examples/store_restore_network`
+           * :doc:`music_cont_out_proxy_example/nest_script`
 
 
 .. grid:: 1 1 2 3

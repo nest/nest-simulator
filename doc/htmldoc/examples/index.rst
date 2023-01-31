@@ -42,6 +42,22 @@ PyNEST examples
 
 .. grid:: 1 1 2 3
 
+    .. grid-item-card:: NEST Sudoku solver
+           :img-top: ../static/img/sudoku_solution.gif
+
+           * :doc:`../auto_examples/sudoku/sudoku_net`
+           * :doc:`../auto_examples/sudoku/sudoku_solver`
+           * :doc:`../auto_examples/sudoku/plot_progress`
+
+    .. grid-item-card:: NEST Pong game
+           :img-top: ../static/img/pong_sim.gif
+
+           * :doc:`../auto_examples/pong/run_simulations`
+           * :doc:`../auto_examples/pong/pong`
+           * :doc:`../auto_examples/pong/generate_gif`
+
+.. grid:: 1 1 2 3
+
     .. grid-item-card:: Random balanced networks (Brunel)
            :img-top: ../static/img/pynest/brunel_alpha.png
 
@@ -52,20 +68,18 @@ PyNEST examples
            * :doc:`../auto_examples/brunel_alpha_evolution_strategies`
 
 
-
-
     .. grid-item-card:: Cortical microcircuit (Potjans)
            :img-top: ../static/img/pynest/raster_plot.png
 
            * :doc:`cortical_microcircuit_index`
 
+    .. grid-item-card:: GLIF (from Allen institute)
+           :img-top: ../static/img/pynest/glif_cond.png
 
-    .. grid-item-card:: NEST Sudoku solver
-           :img-top: ../static/img/sudoku_solution.gif
+           * :doc:`../auto_examples/glif_cond_neuron`
+           * :doc:`../auto_examples/glif_psc_neuron`
 
-           * :doc:`../auto_examples/sudoku/sudoku_net`
-           * :doc:`../auto_examples/sudoku/sudoku_solver`
-           * :doc:`../auto_examples/sudoku/plot_progress`
+
 
 .. grid:: 1 1 2 3
 
@@ -105,20 +119,13 @@ PyNEST examples
 
            * :doc:`../auto_examples/BrodyHopfield`
 
-
-    .. grid-item-card:: GLIF (from Allen institute)
-           :img-top: ../static/img/pynest/glif_cond.png
-
-           * :doc:`../auto_examples/glif_cond_neuron`
-           * :doc:`../auto_examples/glif_psc_neuron`
-
-.. grid:: 1 1 2 3
-
     .. grid-item-card:: Brette and Gerstner
            :img-top: ../static/img/pynest/brette_gerstner2c.png
 
            * :doc:`../auto_examples/brette_gerstner_fig_2c`
            * :doc:`../auto_examples/brette_gerstner_fig_3d`
+
+.. grid:: 1 1 2 3
 
 
     .. grid-item-card:: Precise spiking
@@ -306,3 +313,9 @@ PyNEST examples
    ../auto_examples/sudoku/sudoku_net
    ../auto_examples/sudoku/sudoku_solver
    ../auto_examples/sudoku/plot_progress
+
+.. toctree::
+   :hidden:
+   ../auto_examples/pong/run_simulations
+   ../auto_examples/pong/pong
+   ../auto_examples/pong/generate_gif

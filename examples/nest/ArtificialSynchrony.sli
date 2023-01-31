@@ -81,8 +81,7 @@ AH 09) =
 /V_reset 0.0 def                % reset potential
 /V_th  20.0 def                 % threshold potential
 /t_refra 0.25 def               % refractory time
-/tau_syn_ex 1.648 def           % syn. time constant 3/2ln3
-/INTERPOL 3 def                 % cubic interpolation (canonical model)
+/tau_syn 1.648 def              % syn. time constant 3/2ln3
 
 /gamma 0.5 def                  % parameter determining the degree of synchrony at the beginning
 
@@ -111,7 +110,7 @@ AH 09) =
 
 %%%%%%%%%%%%%%%%%  Start Simulation Section   %%%%%%%%%%%%%%%%%%%%%%%%%
 1 1 2 {
-/sim Set   % sim = 1 Canon / sim = 2 Grid
+/sim Set   % sim = 1 Precise / sim = 2 Grid
 
 sim 1 eq {
  /params <<
@@ -119,12 +118,12 @@ sim 1 eq {
         /E_L E_L
         /I_e I_e
         /tau_m tau_m
-        /tau_syn tau_syn_ex
+        /tau_syn_ex tau_syn
+        /tau_syn_in tau_syn
         /V_m  E_L
         /V_reset V_reset
         /V_th  V_th
         /t_ref t_refra
-        /Interpol_Order INTERPOL
      >> def
  }
  {
@@ -133,7 +132,7 @@ sim 1 eq {
         /E_L E_L
         /I_e I_e
         /tau_m tau_m
-        /tau_syn_ex tau_syn_ex
+        /tau_syn_ex tau_syn
         /V_m  E_L
         /V_reset V_reset
         /V_th  V_th
@@ -144,14 +143,14 @@ sim 1 eq {
 
 () =
 1 1 40 { (#) =only } for
-sim 1 eq {(\nRun the canonical simulations first: )= }
+sim 1 eq {(\nRun the precise simulations first: )= }
          {(\nRun the grid constrained simulations now: )= } ifelse
 
 userdict begin
  0.0 0.2 5.0 {
   cvd /strength Set
 
-  (weigth [pA]:\t) =only strength =
+  (weight [pA]:\t) =only strength =
 
   %set resolution and limits on delays
   % limits must be set BEFORE connecting any elements
@@ -163,7 +162,7 @@ userdict begin
       /overwrite_files true          % overwrite previous output
   >> SetKernelStatus
 
-  sim 1 eq { /neurons /iaf_psc_alpha_canon nr Create def }
+  sim 1 eq { /neurons /iaf_psc_alpha_ps nr Create def }
            { /neurons /iaf_psc_alpha nr Create def } ifelse
 
   % connect neurons all to all
@@ -212,7 +211,7 @@ userdict begin
   % /spike_recorder << /record_to record_to >> Create /detec Set
   /voltmeter << /record_to record_to /interval 1.0 >> Create /volt Set
 
-  sim 1 eq {volt  <<  /label (voltmeter-Canon-) strength cvs join >> SetStatus}
+  sim 1 eq {volt  <<  /label (voltmeter-Precise-) strength cvs join >> SetStatus}
            {volt  <<  /label (voltmeter-Grid-) strength cvs join >> SetStatus} ifelse
   (-DONE-) =
 

@@ -129,7 +129,7 @@
 /* "Define if NAN is available" */
 #cmakedefine HAVE_NAN 1
 
-/* "Define if std::nan(NULL) is available" */
+/* "Define if std::nan(nullptr) is available" */
 #cmakedefine HAVE_STD_NAN 1
 
 /* define for ostream */

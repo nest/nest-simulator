@@ -49,7 +49,7 @@ class TargetIdentifierPtrRport
 
 public:
   TargetIdentifierPtrRport()
-    : target_( 0 )
+    : target_( nullptr )
     , rport_( 0 )
   {
   }
@@ -63,7 +63,7 @@ public:
   get_status( DictionaryDatum& d ) const
   {
     // Do nothing if called on synapse prototype
-    if ( target_ != 0 )
+    if ( target_ )
     {
       def< long >( d, names::rport, rport_ );
       def< long >( d, names::target, target_->get_node_id() );
@@ -155,7 +155,7 @@ public:
     if ( rprt != 0 )
     {
       throw IllegalConnection(
-        "Only rport==0 allowed for HPC synpases. Use normal synapse models "
+        "Only rport==0 allowed for HPC synapses. Use normal synapse models "
         "instead. See Kunkel et al, Front Neuroinform 8:78 (2014), Sec "
         "3.3.2." );
     }

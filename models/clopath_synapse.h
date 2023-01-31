@@ -31,6 +31,7 @@
 #include "connection.h"
 #include "connector_model.h"
 #include "event.h"
+#include "nest.h"
 #include "ring_buffer.h"
 
 // Includes from sli:
@@ -79,7 +80,7 @@ Wmin     real    Minimum allowed weight
 =======  ======  ==========================================================
 
 Other parameters like the amplitudes for long-term potentiation (LTP) and
-depression (LTD) are stored in in the neuron models that are compatible with the
+depression (LTD) are stored in the neuron models that are compatible with the
 Clopath synapse.
 
 Transmits
@@ -115,6 +116,11 @@ class clopath_synapse : public Connection< targetidentifierT >
 public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
+
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::REQUIRES_CLOPATH_ARCHIVING
+    | ConnectionModelProperties::SUPPORTS_HPC | ConnectionModelProperties::SUPPORTS_LBL
+    | ConnectionModelProperties::SUPPORTS_WFR;
 
   /**
    * Default Constructor.
@@ -164,7 +170,7 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
       return invalid_port;
     }
@@ -211,6 +217,8 @@ private:
   double t_lastspike_;
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties clopath_synapse< targetidentifierT >::properties;
 
 /**
  * Send an event to the receiver of this connection.

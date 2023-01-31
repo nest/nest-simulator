@@ -71,7 +71,7 @@ class TestSTDPNNSynapses:
         # While the random sequences, fairly long, would supposedly
         # reveal small differences in the weight change between NEST
         # and ours, some low-probability events (say, coinciding
-        # spikes) can well not have occured. To generate and
+        # spikes) can well not have occurred. To generate and
         # test every possible combination of pre/post order, we
         # append some hardcoded spike sequences:
         # pre: 1       5 6 7   9    11 12 13
@@ -175,7 +175,7 @@ class TestSTDPNNSynapses:
         n_steps = int(self.simulation_duration / self.resolution)
         for time_in_simulation_steps in range(n_steps):
             if time_in_simulation_steps in pre_spikes_forced_to_grid:
-                # A presynaptic spike occured now.
+                # A presynaptic spike occurred now.
 
                 # Adjusting the current time to make it exact.
                 t = _pre_spikes[pre_spikes_forced_to_grid.index(time_in_simulation_steps)]
@@ -203,7 +203,7 @@ class TestSTDPNNSynapses:
                 t_previous_pre = t
 
             if time_in_simulation_steps in post_spikes_forced_to_grid:
-                # A postsynaptic spike occured now.
+                # A postsynaptic spike occurred now.
 
                 # Adjusting the current time to make it exact.
                 t = _post_spikes[post_spikes_forced_to_grid.index(time_in_simulation_steps)]

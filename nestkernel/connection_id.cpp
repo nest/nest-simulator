@@ -87,8 +87,8 @@ ConnectionID::to_ArrayDatum() const
 bool
 ConnectionID::operator==( const ConnectionID& c ) const
 {
-  return ( source_node_id_ == c.source_node_id_ ) and ( target_node_id_ == c.target_node_id_ )
-    and ( target_thread_ == c.target_thread_ ) and ( port_ == c.port_ ) and ( synapse_modelid_ == c.synapse_modelid_ );
+  return source_node_id_ == c.source_node_id_ and ( target_node_id_ == c.target_node_id_ )
+    and target_thread_ == c.target_thread_ and port_ == c.port_ and ( synapse_modelid_ == c.synapse_modelid_ );
 }
 
 void

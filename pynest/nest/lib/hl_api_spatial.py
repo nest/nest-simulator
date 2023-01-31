@@ -139,7 +139,7 @@ def CreateMask(masktype, specs, anchor=None):
                 {'lower_left'  : [float, float, float],
                  'upper_right' : [float, float, float],
                  'azimuth_angle: float  # default: 0.0,
-                 'polar_angle  : float  # defualt: 0.0}
+                 'polar_angle  : float  # default: 0.0}
             #or
             'spherical' :
                 {'radius' : float}

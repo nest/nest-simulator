@@ -100,7 +100,10 @@ extensions = [
     'VersionSyncRole',
 ]
 
-mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa
+mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+# "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+# "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa
+
 panels_add_bootstrap_css = False
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['templates']
@@ -116,7 +119,7 @@ sphinx_gallery_conf = {
 }
 
 # General information about the project.
-project = u'NEST simulator user documentation'
+project = u'NEST Simulator user documentation'
 copyright = u'2004, nest-simulator'
 author = u'nest-simulator'
 
@@ -131,7 +134,7 @@ author = u'nest-simulator'
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -157,7 +160,7 @@ numfig_format = {'figure': 'Figure %s', 'table': 'Table %s',
 # a list of builtin themes.
 #
 html_theme = 'sphinx_material'
-html_title = 'NEST simulator documentation'
+html_title = 'NEST Simulator Documentation'
 html_logo = str(doc_build_dir / 'static/img/nest_logo.png')
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -182,7 +185,7 @@ html_theme_options = {
     'master_doc': True,
     # Set the repo location to get a badge with stats
     'repo_url': 'https://github.com/nest/nest-simulator/',
-    'repo_name': 'NEST simulator',
+    'repo_name': 'NEST Simulator',
     # "nav_links": [
     #     {"href": "index", "internal": True, "title": "NEST docs home"}
     #     ],
@@ -249,7 +252,6 @@ def setup(app):
     app.connect("source-read", toc_customizer)
     app.add_css_file('css/custom.css')
     app.add_css_file('css/pygments.css')
-    app.add_js_file("js/copybutton.js")
     app.add_js_file("js/custom.js")
 
     # for events see
@@ -304,7 +306,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'nestsimulator', u'NEST simulator Documentation',
+    (master_doc, 'nestsimulator', u'NEST Simulator Documentation',
      [author], 1)
 ]
 
@@ -315,7 +317,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'NESTsimulator', u'NEST simulator Documentation',
+    (master_doc, 'NESTsimulator', u'NEST Simulator Documentation',
      author, 'NESTsimulator', 'One line description of project.',
      'Miscellaneous'),
 ]

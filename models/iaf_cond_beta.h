@@ -156,7 +156,7 @@ class iaf_cond_beta : public ArchivingNode
 public:
   iaf_cond_beta();
   iaf_cond_beta( const iaf_cond_beta& );
-  ~iaf_cond_beta();
+  ~iaf_cond_beta() override;
 
   /*
    * Import all overloaded virtual functions that we
@@ -167,24 +167,24 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node& tagret, rport receptor_type, synindex, bool );
+  port send_test_event( Node& tagret, rport receptor_type, synindex, bool ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
+  void init_buffers_() override;
   double get_normalisation_factor( double, double );
-  void pre_run_hook();
-  void update( Time const&, const long, const long );
+  void pre_run_hook() override;
+  void update( Time const&, const long, const long ) override;
 
   // END Boilerplate function declarations ----------------------------
 
@@ -220,7 +220,7 @@ private:
     Parameters_(); //!< Set default parameter values
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // State variables class --------------------------------------------
@@ -296,7 +296,7 @@ private:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
     double step_;            //!< step size in ms
@@ -437,6 +437,6 @@ iaf_cond_beta::set_status( const DictionaryDatum& d )
 
 } // namespace
 
-#endif // IAF_COND_BETA_H
-
 #endif // HAVE_GSL
+
+#endif // IAF_COND_BETA_H

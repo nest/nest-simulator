@@ -175,7 +175,7 @@ public:
 inline long
 STDPDopaCommonProperties::get_vt_node_id() const
 {
-  if ( vt_ != 0 )
+  if ( vt_ )
   {
     return vt_->get_node_id();
   }
@@ -196,6 +196,10 @@ class stdp_dopamine_synapse : public Connection< targetidentifierT >
 public:
   typedef STDPDopaCommonProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
+
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
 
   /**
    * Default Constructor.
@@ -256,7 +260,7 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
       return invalid_port;
     }
@@ -280,7 +284,7 @@ public:
   void
   check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& cp )
   {
-    if ( cp.vt_ == 0 )
+    if ( not cp.vt_ )
     {
       throw BadProperty( "No volume transmitter has been assigned to the dopamine synapse." );
     }
@@ -329,6 +333,9 @@ private:
   double t_lastspike_;
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties stdp_dopamine_synapse< targetidentifierT >::properties;
+
 //
 // Implementation of class stdp_dopamine_synapse.
 //
@@ -356,6 +363,7 @@ stdp_dopamine_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) con
   def< double >( d, names::weight, weight_ );
 
   // own properties, different for individual synapse
+  def< double >( d, names::Kplus, Kplus_ );
   def< double >( d, names::c, c_ );
   def< double >( d, names::n, n_ );
 }
@@ -368,8 +376,14 @@ stdp_dopamine_synapse< targetidentifierT >::set_status( const DictionaryDatum& d
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
 
+  updateValue< double >( d, names::Kplus, Kplus_ );
   updateValue< double >( d, names::c, c_ );
   updateValue< double >( d, names::n, n_ );
+
+  if ( Kplus_ < 0 )
+  {
+    throw BadProperty( "Kplus must be non-negative." );
+  }
 }
 
 template < typename targetidentifierT >
@@ -458,7 +472,7 @@ stdp_dopamine_synapse< targetidentifierT >::process_dopa_spikes_( const std::vec
   // process dopa spikes in (t0, t1]
   // propagate weight from t0 to t1
   if ( ( dopa_spikes.size() > dopa_spikes_idx_ + 1 )
-    && ( t1 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_ > -1.0 * kernel().connection_manager.get_stdp_eps() ) )
+    and ( t1 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_ > -1.0 * kernel().connection_manager.get_stdp_eps() ) )
   {
     // there is at least 1 dopa spike in (t0, t1]
     // propagate weight up to first dopa spike and update dopamine trace
@@ -472,7 +486,7 @@ stdp_dopamine_synapse< targetidentifierT >::process_dopa_spikes_( const std::vec
     // process remaining dopa spikes in (t0, t1]
     double cd;
     while ( ( dopa_spikes.size() > dopa_spikes_idx_ + 1 )
-      && ( t1 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_ > -1.0 * kernel().connection_manager.get_stdp_eps() ) )
+      and ( t1 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_ > -1.0 * kernel().connection_manager.get_stdp_eps() ) )
     {
       // propagate weight up to next dopa spike and update dopamine trace
       // weight and dopamine trace n are at time of last dopa spike td but

@@ -341,7 +341,7 @@ copy_example_file(source_dir / "pynest/examples/Potjans_2014/README.rst")
 copy_example_file(source_dir / "pynest/examples/hpc_benchmark_connectivity.svg")
 
 
-def patch_documentation():
+def patch_documentation(patch_url):
     """Apply a hot-fix patch to the documentation before building it.
 
     This function is useful in situations where the online documentation should
@@ -361,9 +361,9 @@ def patch_documentation():
     patch applies to.
 
     The basic algorithm implemented by this function is the following:
-    1. obtain the Git hash of the version currently checked out
-    2. log the hash by printing it to the console
-    3. retrieve the patch
+      1. obtain the Git hash of the version currently checked out
+      2. log the hash by printing it to the console
+      3. retrieve the patch
 
     """
 
@@ -372,7 +372,7 @@ def patch_documentation():
         git_hash = check_output("git rev-parse HEAD", shell=True, encoding='utf8').strip()
         print(f"  current git hash: {git_hash}")
         patch_file = f'{git_hash}_doc.patch'
-        patch_url = f'{os.environ["patch_url"]}/{patch_file}'
+        patch_url = f'{patch_url}/{patch_file}'
         print(f"  retrieving {patch_url}")
         urlretrieve(patch_url, patch_file)
         print(f"  applying {patch_file}")
@@ -382,4 +382,6 @@ def patch_documentation():
         print(f"Error while applying patch: {exc}")
 
 
-patch_documentation()
+patch_url = os.getenv("patch_url")
+if patch_url is not None:
+    patch_documentation(patch_url)

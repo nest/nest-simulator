@@ -30,6 +30,7 @@
 #include "delay_checker.h"
 #include "event.h"
 #include "kernel_manager.h"
+#include "nest.h"
 #include "nest_names.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"
@@ -96,7 +97,6 @@ class ConnTestDummyNodeBase : public Node
   }
 };
 
-
 /**
  * Base class for representing connections.
  * It provides the mandatory properties receiver port and target,
@@ -115,10 +115,8 @@ class Connection
 {
 
 public:
-  // this typedef may be overwritten in the derived connection classes in order
-  // to attach a specific event type to this connection type, used in secondary
-  // connections not used in primary connectors
-  typedef SecondaryEvent EventType;
+  // properties used when registering a connection with the ModelManager
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::NONE;
 
   Connection()
     : target_()
@@ -128,6 +126,14 @@ public:
 
   Connection( const Connection< targetidentifierT >& rhs ) = default;
   Connection& operator=( const Connection< targetidentifierT >& rhs ) = default;
+
+  /**
+   * Get a pointer to an instance of a SecondaryEvent if this connection supports secondary events.
+   *
+   * To prevent erronous calls of this function on primary connections, the base class implementation
+   * below just contains `assert(false)`.
+   */
+  SecondaryEvent* get_secondary_event();
 
   /**
    * Get all properties of this connection and put them into a dictionary.
@@ -297,19 +303,18 @@ protected:
    */
   void check_connection_( Node& dummy_target, Node& source, Node& target, const rport receptor_type );
 
-  /* the order of the members below is critical
-     as it influcences the size of the object. Please leave unchanged
-     as
-     targetidentifierT target_;
-     SynIdDelay syn_id_delay_;        //!< syn_id (char) and delay (24 bit) in
-     timesteps of this
-     connection
-  */
+  /* the order of the members below is critical as it influcences the size of the object.
+   * Please leave unchanged as:
+   *   targetidentifierT target_;
+   *   SynIdDelay syn_id_delay_;
+   */
   targetidentifierT target_;
   //! syn_id (9 bit), delay (21 bit) in timesteps of this connection and more_targets and disabled flags (each 1 bit)
   SynIdDelay syn_id_delay_;
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties Connection< targetidentifierT >::properties;
 
 template < typename targetidentifierT >
 inline void
@@ -390,6 +395,13 @@ Connection< targetidentifierT >::trigger_update_weight( const thread,
   const CommonSynapseProperties& )
 {
   throw IllegalConnection( "Connection does not support updates that are triggered by a volume transmitter." );
+}
+
+template < typename targetidentifierT >
+SecondaryEvent*
+Connection< targetidentifierT >::get_secondary_event()
+{
+  assert( false );
 }
 
 } // namespace nest

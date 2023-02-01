@@ -340,7 +340,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
       {
         // count this event negatively, assuming it comes as single event
         // transition 1->0
-        // assume it will stay alone, so meaning a down tansition
+        // assume it will stay alone, so meaning a down transition
 
         if ( S_.tentative_down_ ) // really was a down transition, because we
                                   // now have another event

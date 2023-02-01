@@ -402,7 +402,7 @@ DicttopinfoFunction::execute( SLIInterpreter* i ) const
 }
 
 /** @BeginDocumentation
-   Name: info_ds - print contents of all dictionaries on the dicitonary stack to
+   Name: info_ds - print contents of all dictionaries on the dictionary stack to
                    stream
 
    Synopsis: ostream info_ds -> -
@@ -513,7 +513,7 @@ DictendFunction::execute( SLIInterpreter* i ) const
 
    Description:
      undef removes the definition of a name from the supplied dictionary.
-     The name does not have to be present in the dicitonary.
+     The name does not have to be present in the dictionary.
 
    Examples:
      SLI ] /d << /a 1 /b 2 >> def

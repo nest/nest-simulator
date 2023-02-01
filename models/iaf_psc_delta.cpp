@@ -54,7 +54,7 @@ template <>
 void
 RecordablesMap< iaf_psc_delta >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &iaf_psc_delta::get_V_m_ );
 }
 

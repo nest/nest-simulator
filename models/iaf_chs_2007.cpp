@@ -196,7 +196,7 @@ nest::iaf_chs_2007::pre_run_hook()
 
   const double h = Time::get_resolution().get_ms();
 
-  // numbering of state vaiables: i_0 = 0, i_syn_ = 1, V_syn_ = 2, V_spike _= 3,
+  // numbering of state variables: i_0 = 0, i_syn_ = 1, V_syn_ = 2, V_spike _= 3,
   // V_m_ = 4
 
   // these P are independent

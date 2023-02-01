@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BETA_NORMALIZATION_FACTOR_H_
-#define BETA_NORMALIZATION_FACTOR_H_
+#ifndef BETA_NORMALIZATION_FACTOR_H
+#define BETA_NORMALIZATION_FACTOR_H
 
 #include <cmath>
 #include <limits>
@@ -97,4 +97,4 @@ beta_normalization_factor( const double tau_rise, const double tau_decay )
 } // of namespace nest
 
 
-#endif /* BETA_NORMALIZATION_FACTOR_H_ */
+#endif /* BETA_NORMALIZATION_FACTOR_H */

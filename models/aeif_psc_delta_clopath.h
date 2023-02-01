@@ -74,8 +74,8 @@ connecting to a Clopath synapse.
 
 Note that there are two points that are not mentioned in the paper but
 present in a MATLAB implementation by Claudia Clopath [3]_. The first one is the
-clamping of the membrane potential to a fixed value after a spike occured to
-mimik a real spike and not just the upswing. This is important since the finite
+clamping of the membrane potential to a fixed value after a spike occurred to
+mimic a real spike and not just the upswing. This is important since the finite
 duration of the spike influences the evolution of the convolved versions
 (``u_bar_[plus/minus]``) of the membrane potential and thus the change of the
 synaptic weight. Secondly, there is a delay with which ``u_bar_[plus/minus]`` are
@@ -134,7 +134,7 @@ tau_w      ms      Adaptation time constant
 tau_z      ms      Spike afterpotential current time constant
 I_sp       pA      Depolarizing spike afterpotential current magnitude
 V_peak     mV      Spike detection threshold
-V_th_max   mV      Value of V_th afer a spike
+V_th_max   mV      Value of V_th after a spike
 V_th_rest  mV      Resting value of V_th
 ========== ======  ===================================================
 
@@ -260,7 +260,7 @@ private:
     double tau_w;           //!< Adaptation time constant in ms
     double tau_z;           //!< Spike afterpotential current time constant in ms
     double tau_V_th;        //!< Adaptive threshold time constant in ms
-    double V_th_max;        //!< Value of V_th afer a spike in mV
+    double V_th_max;        //!< Value of V_th after a spike in mV
     double V_th_rest;       //!< Resting value of V_th in mV
     double tau_u_bar_plus;  //!< Time constant of u_bar_plus in ms
     double tau_u_bar_minus; //!< Time constant of u_bar_minus in ms
@@ -279,7 +279,7 @@ private:
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
 public:
@@ -346,7 +346,7 @@ public:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing the GSL system
 
-    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
     double step_;            //!< step size in ms

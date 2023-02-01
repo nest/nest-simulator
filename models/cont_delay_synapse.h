@@ -81,6 +81,10 @@ public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL | ConnectionModelProperties::SUPPORTS_WFR;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
@@ -231,6 +235,9 @@ cont_delay_synapse< targetidentifierT >::send( Event& e, thread t, const CommonS
   // reset offset to original value
   e.set_offset( orig_event_offset );
 }
+
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties cont_delay_synapse< targetidentifierT >::properties;
 
 } // of namespace nest
 

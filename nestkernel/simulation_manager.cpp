@@ -543,7 +543,6 @@ nest::SimulationManager::run( Time const& t )
   assert_valid_simtime( t );
 
   kernel().random_manager.check_rng_synchrony();
-  kernel().io_manager.pre_run_hook();
 
   if ( not prepared_ )
   {
@@ -559,6 +558,8 @@ nest::SimulationManager::run( Time const& t )
   {
     return;
   }
+
+  kernel().io_manager.pre_run_hook();
 
   // Reset local spike counters within event_delivery_manager
   kernel().event_delivery_manager.reset_counters();

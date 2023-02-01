@@ -107,7 +107,7 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
    * Add a compartment (or compartments) to the tree, so that the new compartment
    * has the compartment specified by "parent_idx" as parent. The parent
    * has to be in the tree, otherwise an error will be raised.  We add either a
-   * single compartment or multiple compartments, depending on wether the
+   * single compartment or multiple compartments, depending on whether the
    * entry was a list of dicts or a single dict
    */
   const auto add_compartments_list_or_dict = [ this, statusdict ]( const Name name )
@@ -143,7 +143,7 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
    * Add a receptor (or receptors) to the tree, so that the new receptor
    * targets the compartment specified by "comp_idx". The compartment
    * has to be in the tree, otherwise an error will be raised.  We add either a
-   * single receptor or multiple receptors, depending on wether the
+   * single receptor or multiple receptors, depending on whether the
    * entry was a list of dicts or a single dict
    */
   const auto add_receptors_list_or_dict = [ this, statusdict ]( const Name name )

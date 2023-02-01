@@ -61,7 +61,7 @@ template <>
 void
 RecordablesMap< aeif_cond_exp >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &aeif_cond_exp::get_y_elem_< aeif_cond_exp::State_::V_M > );
   insert_( names::g_ex, &aeif_cond_exp::get_y_elem_< aeif_cond_exp::State_::G_EXC > );
   insert_( names::g_in, &aeif_cond_exp::get_y_elem_< aeif_cond_exp::State_::G_INH > );
@@ -176,7 +176,7 @@ nest::aeif_cond_exp::State_::operator=( const State_& s )
 }
 
 /* ----------------------------------------------------------------
- * Paramater and state extractions and manipulation functions
+ * Parameter and state extractions and manipulation functions
  * ---------------------------------------------------------------- */
 
 void

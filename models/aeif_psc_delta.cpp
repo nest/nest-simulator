@@ -61,7 +61,7 @@ template <>
 void
 RecordablesMap< aeif_psc_delta >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &aeif_psc_delta::get_y_elem_< aeif_psc_delta::State_::V_M > );
   insert_( names::w, &aeif_psc_delta::get_y_elem_< aeif_psc_delta::State_::W > );
 }
@@ -162,7 +162,7 @@ nest::aeif_psc_delta::State_::operator=( const State_& s )
 }
 
 /* ----------------------------------------------------------------
- * Paramater and state extractions and manipulation functions
+ * Parameter and state extractions and manipulation functions
  * ---------------------------------------------------------------- */
 
 void

@@ -108,8 +108,8 @@ To create spatially distributed nodes (see :ref:`spatial_networks` for more), us
   grid_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[10, 8]))
   nest.PlotLayer(grid_nodes);
 
- image:: ../static/img/NEST3_23_0.png
-:width: 500px
+.. image:: ../static/img/NEST3_23_0.png
+  :width: 500px
 
 .. code-block:: ipython
 
@@ -351,6 +351,8 @@ The ``nest.math.min()`` and ``nest.math.max()`` functions are used to clip
 a parameter. Essentially they work like the standard ``min()`` and
 ``max()`` functions, ``nest.math.min()`` yielding the smaller of two
 values, and ``nest.math.max()`` yielding the larger of two values.
+Note that the order of inputs matter, meaning that the first argument
+must be a parameter, and the second argument must be a threshold value.
 
 ::
 

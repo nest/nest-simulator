@@ -34,6 +34,8 @@ The parameter `A_se` from the publications is represented by the
 synaptic weight. The variable `x` in the synapse properties is the
 factor that scales the synaptic weight.
 
+See also [3]_.
+
 Parameters
 ~~~~~~~~~~
 

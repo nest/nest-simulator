@@ -56,7 +56,7 @@ template <>
 void
 RecordablesMap< pp_psc_delta >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &pp_psc_delta::get_V_m_ );
   insert_( names::E_sfa, &pp_psc_delta::get_E_sfa_ );
 }

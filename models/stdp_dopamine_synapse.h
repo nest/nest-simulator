@@ -197,6 +197,10 @@ public:
   typedef STDPDopaCommonProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
@@ -329,6 +333,9 @@ private:
   double t_lastspike_;
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties stdp_dopamine_synapse< targetidentifierT >::properties;
+
 //
 // Implementation of class stdp_dopamine_synapse.
 //
@@ -356,6 +363,7 @@ stdp_dopamine_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) con
   def< double >( d, names::weight, weight_ );
 
   // own properties, different for individual synapse
+  def< double >( d, names::Kplus, Kplus_ );
   def< double >( d, names::c, c_ );
   def< double >( d, names::n, n_ );
 }
@@ -368,8 +376,14 @@ stdp_dopamine_synapse< targetidentifierT >::set_status( const DictionaryDatum& d
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
 
+  updateValue< double >( d, names::Kplus, Kplus_ );
   updateValue< double >( d, names::c, c_ );
   updateValue< double >( d, names::n, n_ );
+
+  if ( Kplus_ < 0 )
+  {
+    throw BadProperty( "Kplus must be non-negative." );
+  }
 }
 
 template < typename targetidentifierT >

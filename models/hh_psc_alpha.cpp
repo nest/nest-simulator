@@ -52,7 +52,7 @@ template <>
 void
 RecordablesMap< hh_psc_alpha >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &hh_psc_alpha::get_y_elem_< hh_psc_alpha::State_::V_M > );
   insert_( names::I_syn_ex, &hh_psc_alpha::get_y_elem_< hh_psc_alpha::State_::I_EXC > );
   insert_( names::I_syn_in, &hh_psc_alpha::get_y_elem_< hh_psc_alpha::State_::I_INH > );

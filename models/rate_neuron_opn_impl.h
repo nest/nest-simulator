@@ -341,7 +341,7 @@ nest::rate_neuron_opn< TNonlinearities >::update_( Time const& origin,
     // clear last_y_values
     std::vector< double >( buffer_size, 0.0 ).swap( B_.last_y_values );
 
-    // modifiy new_rates for rate-neuron-event as proxy for next min_delay
+    // modify new_rates for rate-neuron-event as proxy for next min_delay
     for ( long temp = from; temp < to; ++temp )
     {
       new_rates[ temp ] = S_.noisy_rate_;

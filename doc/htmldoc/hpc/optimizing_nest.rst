@@ -17,6 +17,13 @@ we have provided a few guides to help you out. There are a few things to conside
 hardware and software of the HPC system you are using for improving the overall
 performance.
 
+
+Although there will be some variation between scripts and HPC systems, in general, we recommend that 
+
+ * resources are fully utilized (e.g., all available cores are used).
+ * one thread pinned to one core (no simultaneous multithreading)
+ * More than one MPI process is used (for NEST 3)
+
 .. grid:: 1 1 2 2
 
     .. grid-item-card:: Overview of HPC systems
@@ -40,7 +47,7 @@ performance.
          :link: threads
          :link-type: ref
 
-         Learn about threading and OpenMP
+         Learn about threading and useful OpenMP settings
 
     .. grid-item-card:: MPI processes
          :class-title: sd-d-flex-row sd-align-minor-center

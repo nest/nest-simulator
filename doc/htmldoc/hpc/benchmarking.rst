@@ -32,7 +32,7 @@ For more details on the conceptual ideas behind beNNch, refer to Albers et al. (
 .. seealso:: 
 
     For further details, see the accompanying `beNNch GitHub Page <https://inm-6.github.io/beNNch>`_.
-    And for a detailed step-by-step walk though see `https://inm-6.github.io/beNNch/walk-through.html`_.
+    And for a detailed step-by-step walk though see `Walk through guide <https://inm-6.github.io/beNNch/walk-through.html>`_.
 
     Example PyNEST script: :doc:`../auto_examples/hpc_benchmark`
 

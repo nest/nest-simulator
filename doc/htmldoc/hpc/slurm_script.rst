@@ -14,6 +14,7 @@ Always consult the documentation of the system you are running on to find out ex
 You will likely need to alter the job script to optimize the performance on the system your're using.
 Finding the optimal parameters for your script may require some trial and error.
 
+In this example, our HPC system contains 1 node with 2 sockets and 64 cores per socket.
 
 .. seealso::
 
@@ -29,7 +30,7 @@ Finding the optimal parameters for your script may require some trial and error.
    #SBATCH --partition=normal
    #SBATCH --time=01:00:00
    #SBATCH --nodes=1
-   #SBATCH --ntasks-per-node=1
+   #SBATCH --ntasks-per-node=2
    #SBATCH --cpus-per-task=64
    #SBATCH --hint=nomultithread
 
@@ -38,28 +39,20 @@ Finding the optimal parameters for your script may require some trial and error.
 
 
    # On some systems, MPI is run by default
-   srun python3 my_nest_simulation.py
+   srun --exclusive python3 my_nest_simulation.py
 
    # On other systems, you must explicitly call MPI:
-   module load openmpi
    mpirun -n <num_of_processes> python3 my_nest_simulation.py
 
 
 
 ----
 
-Here are some additional settings that may be useful in your Slurm script.
+.. note::
 
-.. list-table:: Additional Slurm settings
-   :header-rows: 1
-
-   * - Setting
-     - Description
-   * - `export CPU_AFFINITY=True`
-     - Bind to a specific processor
-   * - `--exclusive`
-     - Prevents other processes or jobs from doing work on the same node
-
+    Slurm can set pinning to specific processors for you with the environment variable ``CPU_AFFINITY``.
+    Setting this to `True` may lead to problems with any pinning settings you
+    may have set manually. We recommend setting this to ``None``.
 
 
 Let's break this script down line by line.
@@ -90,7 +83,7 @@ Name of your account
 
 ::
 
-   #SBATCH --partition=normal
+   #SBATCH --partition=my_partition
 
 The partition describes what architecture or hardware specifications your job will use.
 For example, some systems have GPU and CPU partitions.
@@ -115,9 +108,8 @@ trying to increase the speed of the simulation.
 
 .. note::
 
-   How much memory does your simulation need?
-
-   To get a rough estimate of the memory requirements for your simulation, you can ???
+   How many nodes do you need for your simulations?
+   Depends on how much memory is available for each node.
 
    For example: The :ref:`microcircuit model <toc_microcircuit>` requires around 16 GB of memory and the `multi-area-model <https://github.com/INM-6/multi-area-model>`_ requires 1.4 TB.
    If a node has 128 GB of memory then one node is more than sufficient for the microcircuit model but the multi-area model
@@ -143,17 +135,14 @@ varies depending on what HPC system you are using).
 
 ::
 
-   #SBATCH --ntasks-per-node=1
+   #SBATCH --ntasks-per-node=2
 
    #SBATCH --cpus-per-task=64
 
-In this example, we are assuming there are 64 cores in a node. We are using 1 MPI process (``ntasks-per-node``) and 64 threads
+In this example, we are assuming there are 128 cores in a node. We are using 2 MPI processes (``ntasks-per-node``) and 64 threads
 (``cpus-per-task``). We can increase the ``ntasks-per-node``
-to 2, but then we would need to decrease the ``cpus-per-task`` to 32 (because we want the total to be 64).
-
-When using more thant 1 MPI process, *if possible* on the system you are using, we recommend using ``mpirun`` explicity. It should ensure each process represents a subset of your entire
-script. For example, if you have 4 processes (``ntasks-per-node = 4``) and use ``mpirun -n 4``, your script,
-``my_nest_simulation.py``, will be divided up into the 4 processes. 
+to 4, but then we would want to decrease the ``cpus-per-task`` to 32 (because we want the total to be 128).
+This ensures we are fully utilizing the resources.
 
 |
 
@@ -182,25 +171,25 @@ will prevent the threads from moving around.
 
 
 You can then tell the job script to schedule your simulation.
+Setting the ``exclusive`` option prevents other processes or jobs from doing work on the same node.
 
 ::
 
-   srun python my_nest_simulation.py
+   srun --exclusive python my_nest_simulation.py
 
 Or, if you are using multiple MPI processes, you can invoke the MPI software explicitly:
 
 ::
 
-  module load openmpi
   mpirun -n <num_of_processes> python3 my_nest_simulation.py
 
-.. note:: 
 
-   ``openmpi`` is but one MPI software available. Always check what is available on the system you are using.
-    The `Slurm documentation <https://slurm.schedmd.com/mpi_guide.html#open_mpi>`_  contains additional options for running MPI.
 
 
 ----
+
+local_num_threads
+-----------------
 
 Here is an example of the NEST script  ``my_nest_simulation.py``.
 

@@ -40,6 +40,8 @@ documentation on :ref:`Random numbers in NEST <random_numbers>`
 
 
 
+.. _sec_virt_proc:
+
 Virtual processes
 -----------------
 

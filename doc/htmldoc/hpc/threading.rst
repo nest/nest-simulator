@@ -5,11 +5,13 @@ Threading
 
 The smallest unit of executable program is known as a thread and is a virtual component.
 
-We can adjust the number of :ref:`MPI processes <mpi_process>` and threads, but the product of the two  must be the total number of cores.
+We can adjust the number of :ref:`MPI processes <mpi_process>` and threads, but the product of the two should be the total number of cores.
 For example, with 8 cores, we can have 2 processes and 4 threads per process or 1 process with 8 threads.
 In NEST, we recommend only having one thread per core.
 
-We can control the number and placement of threads with programs like `OpenMP <https://www.openmp.org/>`_.
+We can control the number and placement of threads with programs that implement standards such as `OpenMP <https://www.openmp.org/>`_.
+
+For a detailed investigation, we recommend reading Kurth et al. 2022 [1]_.
 
 .. seealso::
 
@@ -25,11 +27,39 @@ Pinning threads
 Pinning threads allows you to control the distribution of threads across available cores on your system, and is particularly
 useful in high performance computing (HPC) systems.
 
-See also Anno et al. 2022 [1]_ for detailed investigation into this topic.
+Although allowing threads to move can be beneficial in some cases, we find for NEST, pinning threads typically decreases
+run time because NEST balances the work load internally. See our overview :ref:`handling threads with virtual processes <sec_virt_proc>`.
 
-We recommend that you include  ``OMP_NUM_THREADS=$CPUS_PER_TASK`` and ``OMP_PROC_BIND=True`` in your :ref:`job script <slurm_script>`.
+There are different types of pinning schemes, and the optimal scheme will depend on your script.
+Here we show two different example schemes.
 
-For more advanced cases, you may want to look into pinning schemes, detailed below.
+
+Sequential pinning scheme
+`````````````````````````
+
+.. figure:: ../static/img/CPUs-lin-lin.gif
+
+   Sequential placing
+
+   In this scheme, the cores of 1 processor are filled before going to next
+
+   Setting to use for this case: ``export OMP_PROC_BIND = close``
+
+Distant pinning scheme
+``````````````````````
+
+.. figure:: ../static/img/CPUs-lin-sparse.gif
+
+   Distant placing
+
+   Maximizes distance between threads in hardware
+
+   Setting to use for this case: ``export OMP_PROC_BIND = spread``
+
+
+
+Table of OpenMP settings
+````````````````````````
 
 .. list-table:: OpenMP settings
    :header-rows: 1
@@ -53,45 +83,6 @@ For more advanced cases, you may want to look into pinning schemes, detailed bel
 
    For general details on pinning in HPC systems see `the HPC wiki article <https://hpc-wiki.info/hpc/Binding/Pinning>`_.
 
-
-Sequential pinning scheme
-`````````````````````````
-
-.. figure:: ../static/img/CPUs-lin-lin.gif
-
-   Sequential placing
-
-   In this scheme, the cores of 1 processor are filled before going to next
-
-   Setting to use for this case: ``export OMP_PROC_BIND = close``
-
-   .. list-table::
-      :header-rows: 1
-
-      * - Possible disadvantage
-        - Possible advantage
-      * - This scheme could be slower: threads need to fight for resources
-        - You might save energy: shut  off unused processors
-          This scheme may allow sharing of memory prefetching
-
-Distant pinning scheme
-``````````````````````
-
-.. figure:: ../static/img/CPUs-lin-sparse.gif
-
-   Distant placing
-
-   Maximizes distance between threads in hardware
-
-   Setting to use for this case: ``export OMP_PROC_BIND = spread``
-
-   .. list-table::
-      :header-rows: 1
-
-      * - Possible disadvantage
-        - Possible advantage
-      * - This scheme could increase energy usage, as multiple processors are used
-        - It could be faster: resources available for each thread
 
 
 

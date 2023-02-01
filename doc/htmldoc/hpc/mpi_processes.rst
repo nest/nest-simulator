@@ -4,13 +4,12 @@ MPI process
 ===========
 
 
-An MPI process is process of a computer program that is being executed by one or many threads and employs a Message Passing Interface (MPI) to communicate its data with the other processes.
+An MPI process is process of a computer program that is being executed by one or many threads and employs an implementation of the Message Passing Interface (MPI) to communicate its data with the other processes.
 
-We typically use the standard Message Passing Interface (MPI) to instruct how processes work in parallel (See e.g.,
-`OpenMPI <https://www.open-mpi.org/>`_).
+An example is the commonly used program `OpenMPI <https://www.open-mpi.org/>`_.
 
-The number of MPI processes on each each node is related to the number of :ref:`threads <threads>` you want for each MPI process.
-Multiplied together, the values should equal the total number of cores in a node. (The number of cores varies depending on what system you are using).
+In practice, the number of MPI processes on each each node is related to the number of :ref:`threads <threads>` you want for each MPI process.
+Multiplied together, we suggest that the values should equal the total number of cores in a node.
 
 .. seealso::
 
@@ -18,7 +17,6 @@ Multiplied together, the values should equal the total number of cores in a node
     * :ref:`threads`
     * :ref:`slurm_script`
 
-It's usually unclear whether MPI :ref:`pins threads to cores <pinning_threads>`.
 After allocation of resources on which one wants to run the MPI processes, you also need to export environment
 variables related the implementation of the multiprocessing API.
 
@@ -29,7 +27,7 @@ variables related the implementation of the multiprocessing API.
 .. list-table:: OpenMPI settings
    :header-rows: 1
 
-   * - Setting
+   * - Keyword arguments
      - Description
    * - `exoort MPI_= True`
      - make it work
@@ -39,8 +37,6 @@ variables related the implementation of the multiprocessing API.
      - map MPI processes to socket/node
    * - ``--bind-to socket/node``
      - bind MPI processes to socket/node
-   * - ``--rankfile rank.file``
-     - pass rankfile to precisely define threads on which to run a process (length of characters processed in rankfile is limited)
    * - ``--report-bindings``
      - report bindings of launched processes
    * - ``--display-allocation``
@@ -52,19 +48,19 @@ variables related the implementation of the multiprocessing API.
    For general details on pinning options in OpenMPI see `the HPC wiki article <https://hpc-wiki.info/hpc/Binding/Pinning>`_.
    The `Slurm documentation <https://slurm.schedmd.com/mpi_guide.html#open_mpi>`_  contains additional options for running MPI.
 
-In addition, you can consider the number of physical processors (also known as  CPUs) you are using.
+In addition, you can consider the number of processors (also known as  CPUs) you are using.
 See :ref:`overview_hardware`.
 
-.. list-table:: Process to (CPU) processor scenarios
+.. list-table:: Number of processes X the threads per cores
   :header-rows: 1
 
   * - Scenario
     - Description
-  * - Less processes than processors
+  * - Is less than number of cores
     - Resources may be underutilized.
-  * - One process per processor
+  * - Is equal to the number of cores
     - Resources are fully utilized
-  * - More processes than processors
+  * - Is greater than the number of cores
     - Resources are oversubscribed
 
 In the first two scenarios, the simulation may show better performance because it will not be slowed by processes interfering
@@ -72,8 +68,5 @@ with eachother (e.g., virtual memory thrashing).
 
 Over-subscribing processes is typically used in development in testing and can help identify performance bottlenecks.
 But performance can be degraded in this scenario.
-
-
-
 
 

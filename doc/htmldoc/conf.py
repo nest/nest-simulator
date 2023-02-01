@@ -93,6 +93,7 @@ extensions = [
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
     'sphinx.ext.mathjax',
+    'IPython.sphinxext.ipython_console_highlighting',
     'nbsphinx',
     'sphinx_design',
     'HoverXTooltip',
@@ -138,7 +139,15 @@ language = 'en'
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = ['Thumbs.db', '.DS_Store', 'nest_by_example', 'README.md']
+exclude_patterns = [
+    '**.ipynb_checkpoints',
+    '.DS_Store',
+    'README.md',
+    'Thumbs.db',
+    'auto_examples/**.ipynb',
+    'auto_examples/index.rst',
+    'nest_by_example',
+]
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'manni'
@@ -222,7 +231,7 @@ intersphinx_mapping = {
     'desktop': ('https://nest-desktop.readthedocs.io/en/latest/', None),
     'gpu': ('https://nest-gpu.readthedocs.io/en/latest/', None),
     'neuromorph': ('https://electronicvisions.github.io/hbp-sp9-guidebook/', None),
-    'arbor': ('https://docs.arbor-sim.org/en/latest/objects.inv', None),
+    'arbor': ('https://docs.arbor-sim.org/en/latest/', None),
     'tvb': ('http://docs.thevirtualbrain.org/', None),
     'extmod': ('https://nest-extension-module.readthedocs.io/en/latest/', None),
 }
@@ -323,7 +332,7 @@ texinfo_documents = [
 
 
 def copy_example_file(src):
-    copyfile(src, doc_build_dir / "examples" / src.parts[-1])
+    copyfile(src, doc_build_dir / "static/img" / src.parts[-1])
 
 
 def copy_acknowledgments_file(src):
@@ -337,7 +346,6 @@ copy_acknowledgments_file(source_dir / "ACKNOWLEDGMENTS.md")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/box_plot.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/raster_plot.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/microcircuit.png")
-copy_example_file(source_dir / "pynest/examples/Potjans_2014/README.rst")
 copy_example_file(source_dir / "pynest/examples/hpc_benchmark_connectivity.svg")
 
 

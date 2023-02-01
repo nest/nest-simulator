@@ -229,6 +229,13 @@ public:
   bool have_nodes_changed() const;
   void set_have_nodes_changed( const bool changed );
 
+  /**
+   * @brief Map the the node ID to its original primitive NodeCollection object.
+   * @param node_id  node ID
+   * @return The primitive nodeCollection object containing the node ID that falls in [first, last)
+   */
+  NodeCollectionPTR node_id_to_nodeCollection( const index node_id ) const;
+
 private:
   /**
    * Initialize the network data structures.
@@ -289,6 +296,14 @@ private:
    */
   void add_music_nodes_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr );
 
+  /**
+   * @brief Append the NodeCollection instance into the NodeManager::nodeCollection_container.
+   * @param ncp  The NodeCollection instance.
+   */
+  void append_nodeCollection_( NodeCollectionPTR ncp );
+
+  void clear_nodeCollection_container();
+
 private:
   /**
    * The network as sparse array of local nodes. One entry per thread,
@@ -314,6 +329,12 @@ private:
 
   // private stop watch for benchmarking purposes
   Stopwatch sw_construction_create_;
+
+  // Store all original primitive NodeCollection objects created by the kernel
+  std::vector< NodeCollectionPTR > nodeCollection_container_;
+
+  // Store the index of the last element in each NodeCollection instance.
+  std::vector< index > nodeCollection_last_;
 };
 
 inline index

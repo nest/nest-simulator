@@ -829,11 +829,6 @@ public:
 private:
   void set_node_id_( index ); //!< Set global node id
 
-  /**
-   * Set the original NodeCollection of this node.
-   */
-  void set_nc_( NodeCollectionPTR );
-
   /** Return a new dictionary datum .
    *
    * This function is called by get_status_base() and returns a new
@@ -907,8 +902,6 @@ private:
   bool frozen_;        //!< node shall not be updated if true
   bool initialized_;   //!< state and buffers have been initialized
   bool node_uses_wfr_; //!< node uses waveform relaxation method
-
-  NodeCollectionPTR nc_ptr_; //!< Original NodeCollection of this node, used to extract node-specific metadata
 };
 
 inline bool
@@ -977,11 +970,6 @@ Node::get_node_id() const
   return node_id_;
 }
 
-inline NodeCollectionPTR
-Node::get_nc() const
-{
-  return nc_ptr_;
-}
 
 inline void
 Node::set_node_id_( index i )
@@ -989,12 +977,6 @@ Node::set_node_id_( index i )
   node_id_ = i;
 }
 
-
-inline void
-Node::set_nc_( NodeCollectionPTR nc_ptr )
-{
-  nc_ptr_ = nc_ptr;
-}
 
 inline int
 Node::get_model_id() const

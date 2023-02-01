@@ -23,7 +23,9 @@
 #include "node_manager.h"
 
 // C++ includes:
+#include <algorithm>
 #include <set>
+
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -54,6 +56,7 @@ NodeManager::NodeManager()
   , num_thread_local_devices_()
   , have_nodes_changed_( true )
   , exceptions_raised_() // cannot call kernel(), not complete yet
+  , nodeCollection_container_()
 {
 }
 
@@ -61,6 +64,7 @@ NodeManager::~NodeManager()
 {
   // We must destruct nodes here, since devices may need to close files.
   destruct_nodes_();
+  clear_nodeCollection_container();
 }
 
 void
@@ -79,6 +83,7 @@ void
 NodeManager::finalize()
 {
   destruct_nodes_();
+  clear_nodeCollection_container();
 }
 
 void
@@ -135,6 +140,7 @@ NodeManager::add_node( index model_id, long n )
     .swap( exceptions_raised_ );
 
   auto nc_ptr = NodeCollectionPTR( new NodeCollectionPrimitive( min_node_id, max_node_id, model_id ) );
+  append_nodeCollection_( nc_ptr );
 
   if ( model->has_proxies() )
   {
@@ -211,7 +217,6 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
       {
         Node* node = model.create( t );
         node->set_node_id_( node_id );
-        node->set_nc_( nc_ptr );
         node->set_model_id( model.get_model_id() );
         node->set_thread( t );
         node->set_vp( vp );
@@ -250,7 +255,6 @@ NodeManager::add_devices_( Model& model, index min_node_id, index max_node_id, N
 
         Node* node = model.create( t );
         node->set_node_id_( node_id );
-        node->set_nc_( nc_ptr );
         node->set_model_id( model.get_model_id() );
         node->set_thread( t );
         node->set_vp( kernel().vp_manager.thread_to_vp( t ) );
@@ -287,7 +291,6 @@ NodeManager::add_music_nodes_( Model& model, index min_node_id, index max_node_i
 
           Node* node = model.create( 0 );
           node->set_node_id_( node_id );
-          node->set_nc_( nc_ptr );
           node->set_model_id( model.get_model_id() );
           node->set_thread( 0 );
           node->set_vp( kernel().vp_manager.thread_to_vp( 0 ) );
@@ -306,6 +309,28 @@ NodeManager::add_music_nodes_( Model& model, index min_node_id, index max_node_i
       exceptions_raised_.at( t ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   } // omp parallel
+}
+
+NodeCollectionPTR
+NodeManager::node_id_to_nodeCollection( const index node_id ) const
+{
+  auto it = std::lower_bound( nodeCollection_last_.begin(), nodeCollection_last_.end(), node_id );
+  size_t pos = it - nodeCollection_last_.begin();
+  return nodeCollection_container_.at( pos );
+}
+
+void
+NodeManager::append_nodeCollection_( NodeCollectionPTR ncp )
+{
+  nodeCollection_container_.push_back( ncp );
+  nodeCollection_last_.push_back( ncp->get_last() );
+}
+
+void
+NodeManager::clear_nodeCollection_container()
+{
+  nodeCollection_container_.clear();
+  nodeCollection_last_.clear();
 }
 
 NodeCollectionPTR

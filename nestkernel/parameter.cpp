@@ -137,7 +137,7 @@ NodePosParameter::get_node_pos_( Node* node ) const
   {
     throw KernelException( "NodePosParameter: not node" );
   }
-  NodeCollectionPTR nc = node->get_nc();
+  NodeCollectionPTR nc = kernel().node_manager.node_id_to_nodeCollection(node->get_node_id());
   if ( not nc.get() )
   {
     throw KernelException( "NodePosParameter: not nc" );

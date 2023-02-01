@@ -368,6 +368,11 @@ public:
    */
   virtual bool has_proxies() const = 0;
 
+  index get_first() const;
+
+  index get_last() const;
+
+
 private:
   unsigned long fingerprint_; //!< Unique identity of the kernel that created the NodeCollection
   static NodeCollectionPTR create_();
@@ -797,6 +802,7 @@ NodeCollectionPrimitive::has_proxies() const
 {
   return not nodes_have_no_proxies_;
 }
+
 
 inline NodeCollectionComposite::const_iterator
 NodeCollectionComposite::begin( NodeCollectionPTR cp ) const

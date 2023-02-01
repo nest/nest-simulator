@@ -268,6 +268,19 @@ NodeCollection::create( const std::vector< index >& node_ids_vector )
   return NodeCollection::create_( node_ids_vector );
 }
 
+index
+NodeCollection::get_first() const
+{
+  return ( *begin() ).node_id;
+}
+
+index
+NodeCollection::get_last() const
+{
+  size_t offset = size() - 1;
+  return ( *( begin() + offset ) ).node_id;
+}
+
 NodeCollectionPTR
 NodeCollection::create_()
 {

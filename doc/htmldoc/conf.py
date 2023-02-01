@@ -115,7 +115,8 @@ sphinx_gallery_conf = {
      # path where to save gallery generated examples
      'gallery_dirs': str(doc_build_dir / 'auto_examples'),
      # 'backreferences_dir': False
-     'plot_gallery': 'False'
+     'plot_gallery': False,
+     'download_all_examples': False
 }
 
 # General information about the project.
@@ -256,8 +257,8 @@ def add_button_to_examples(app, env, docnames):
     #
     # The rst files are generated at build time by Sphinx_gallery.
     # The notebooks that the target points to are linked with
-    # serviceis (like EBRAINS) that runs notebooks using nbgitpuller.
-    # and are located in nest/next-simulator-examples/.
+    # services (like EBRAINS) that runs notebooks using nbgitpuller.
+    # and are located in nest/next-simulator-examples/ repo.
     # The notebooks are generated from the CI workflow of nest
     # on GitHub, which converts the source Python files to .ipynb.
 
@@ -271,38 +272,41 @@ def add_button_to_examples(app, env, docnames):
     :text-align: center
 
     .. image:: https://nest-simulator.org/TryItOnEBRAINS.png
-         :target: https://lab.ebrains.eu/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2Fnest%2Fnest-simulator-examples&urlpath=lab%2Ftree%2Fnest-simulator-examples%2Fnotebooks%2Fnotebooks%2Ffilepath.ipynb&branch=main
+         :target: https://lab.ebrains.eu/hub/user-redirect/git-pull?repo=\
+https%3A%2F%2Fgithub.com%2Fnest%2Fnest-simulator-examples\
+&urlpath=lab%2Ftree%2Fnest-simulator-examples%2Fnotebooks%2F\
+notebooks%2Ffilepath.ipynb&branch=main
 
     For details and troubleshooting see :ref:`run_jupyter`."""
 
     # Find all relevant files
     # Inject prolog into Python example
-    files = glob.glob(str(doc_build_dir / 'auto_examples/**/*.rst'), recursive = True)
+    files = list(Path(doc_build_dir / "auto_examples/").rglob("**/*.rst"))
     for file in files:
 
+        if file.stem == 'index':
+            continue
+
+        get_path = file.parent
+        get_subdir = get_path.stem
+
         lines = []
-        with open(file, 'r') as f:
-            name = os.path.basename(file)
-            # get the path of file only
-            path2dir = os.path.dirname(file)
-            # get the last segement of path
-            path2sub = os.path.basename(path2dir)
-            # no extension
-            name_noext = os.path.splitext(name)[0]
+        with open(file, "r") as f:
+
             lines = f.readlines()
 
             # get name of file and subdirectory to replace in link target
-            if path2sub != "examples":
-                path2example = path2sub + "%2F" + name_noext
-                prolog = example_prolog.replace('filepath', path2example)
+            if get_subdir != "auto_examples":
+                path2example = get_subdir  + "%2F" + file.stem
+                prolog = example_prolog.replace("filepath", path2example)
 
             else:
-                path2example = os.path.splitext(name)[0]
-                prolog = example_prolog.replace('filepath', path2example)
+                path2example = file.stem
+                prolog = example_prolog.replace("filepath", path2example)
 
         # find the first heading of the file
         for i, item in enumerate(lines):
-             if item.startswith('----'):
+             if item.startswith("-----"):
                  break
         # insert prolog into rst file after heading
         lines.insert(i + 1, prolog + '\n')

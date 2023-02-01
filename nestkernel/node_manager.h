@@ -271,7 +271,7 @@ private:
    * @param min_node_id node ID of first neuron to create.
    * @param max_node_id node ID of last neuron to create (inclusive).
    */
-  void add_neurons_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr );
+  void add_neurons_( Model& model, index min_node_id, index max_node_id );
 
   /**
    * Add device nodes.
@@ -282,7 +282,7 @@ private:
    * @param min_node_id node ID of first neuron to create.
    * @param max_node_id node ID of last neuron to create (inclusive).
    */
-  void add_devices_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr );
+  void add_devices_( Model& model, index min_node_id, index max_node_id );
 
   /**
    * Add MUSIC nodes.
@@ -294,7 +294,7 @@ private:
    * @param min_node_id node ID of first neuron to create.
    * @param max_node_id node ID of last neuron to create (inclusive).
    */
-  void add_music_nodes_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr );
+  void add_music_nodes_( Model& model, index min_node_id, index max_node_id );
 
   /**
    * @brief Append the NodeCollection instance into the NodeManager::nodeCollection_container.

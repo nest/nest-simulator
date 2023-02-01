@@ -144,15 +144,15 @@ NodeManager::add_node( index model_id, long n )
 
   if ( model->has_proxies() )
   {
-    add_neurons_( *model, min_node_id, max_node_id, nc_ptr );
+    add_neurons_( *model, min_node_id, max_node_id );
   }
   else if ( not model->one_node_per_process() )
   {
-    add_devices_( *model, min_node_id, max_node_id, nc_ptr );
+    add_devices_( *model, min_node_id, max_node_id );
   }
   else
   {
-    add_music_nodes_( *model, min_node_id, max_node_id, nc_ptr );
+    add_music_nodes_( *model, min_node_id, max_node_id );
   }
 
   // check if any exceptions have been raised
@@ -190,7 +190,7 @@ NodeManager::add_node( index model_id, long n )
 
 
 void
-NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr )
+NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id )
 {
   const size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
   // Upper limit for number of neurons per thread; in practice, either
@@ -237,7 +237,7 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
 }
 
 void
-NodeManager::add_devices_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr )
+NodeManager::add_devices_( Model& model, index min_node_id, index max_node_id )
 {
   const size_t n_per_thread = max_node_id - min_node_id + 1;
 
@@ -275,7 +275,7 @@ NodeManager::add_devices_( Model& model, index min_node_id, index max_node_id, N
 }
 
 void
-NodeManager::add_music_nodes_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr )
+NodeManager::add_music_nodes_( Model& model, index min_node_id, index max_node_id )
 {
 #pragma omp parallel
   {

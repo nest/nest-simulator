@@ -38,7 +38,6 @@
 #include "nest_names.h"
 #include "nest_time.h"
 #include "nest_types.h"
-#include "node_collection.h"
 #include "secondary_event.h"
 
 // Includes from sli:
@@ -198,10 +197,6 @@ public:
    */
   index get_node_id() const;
 
-  /**
-   * Return lockpointer to the NodeCollection that created this node.
-   */
-  NodeCollectionPTR get_nc() const;
 
   /**
    * Return model ID of the node.

@@ -197,7 +197,7 @@ def ResetKernel():
     are reset. The only exception is that dynamically loaded modules are not
     unloaded. This may change in a future version of NEST.
 
-   """
+    """
 
     sr('ResetKernel')
 

@@ -33,7 +33,6 @@ import subprocess
 from subprocess import check_output
 
 
-
 source_dir = os.environ.get('NESTSRCDIR', False)
 if source_dir:
     source_dir = Path(source_dir)

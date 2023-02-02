@@ -111,6 +111,11 @@ public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::REQUIRES_URBANCZIK_ARCHIVING
+    | ConnectionModelProperties::SUPPORTS_HPC | ConnectionModelProperties::SUPPORTS_LBL
+    | ConnectionModelProperties::SUPPORTS_WFR;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
@@ -197,6 +202,8 @@ private:
   double t_lastspike_;
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties urbanczik_synapse< targetidentifierT >::properties;
 
 /**
  * Send an event to the receiver of this connection.

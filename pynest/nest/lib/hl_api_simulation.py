@@ -127,7 +127,7 @@ def Prepare():
 def Cleanup():
     """Cleans up resources after a `Run` calls.
 
-    `Cleanup` is automatically called by `Simulate` and `RunManager` .
+    `Cleanup` is automatically called by `Simulate` and `RunManager`.
 
     Closes state for a series of runs, such as flushing and closing files.
     A `Prepare` is needed after a `Cleanup` before any more calls to `Run`.

@@ -29,8 +29,9 @@ from pathlib import Path
 from shutil import copyfile
 import json
 
-from subprocess import check_output, CalledProcessError
-from mock import Mock as MagicMock
+import subprocess
+from subprocess import check_output
+
 
 
 source_dir = os.environ.get('NESTSRCDIR', False)

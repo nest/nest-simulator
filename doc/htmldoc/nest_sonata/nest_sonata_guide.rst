@@ -22,14 +22,14 @@ and edges in the table-based file formats HDF5 and CSV.
 The cell and synapse properties of the nodes and edges, respectively, can be described either individually or for 
 whole subsets. Nodes that share a global set of properties constitute a node type. Similarly, a subset of edges 
 that share a global set of properties constitute an edge type. Whether a property is stored individually or on a 
-per-type basis is up to the modeller. The number of node or edge types in a network model is typically small compared 
+per-type basis is up to the modeler. The number of node or edge types in a network model is typically small compared 
 to the number of nodes or edges. Therefore, the node and edge type files are stored in the CSV format such that a 
 particular node or edge type can be easily accessed by its node or edge type id.
 
 Each node and edge in the network is explicitly tabulated in the binary format HDF5. Populations are hierarchically
-organized by utilizing HDF5 groups and datasets. The SONATA format requires certain HDF5 datasets, for instance 
+organized by utilizing HDF5 groups and datasets. The SONATA format requires certain HDF5 datasets, for instance, 
 a dataset containing all the node type ids. Properties that are 
-stored on an individual-basis, for instance synaptic weights, are also stored in HDF5 datasets. 
+stored on an individual basis, for instance, synaptic weights, are also stored in HDF5 datasets. 
 
 Simulation parameters and the locations of the HDF5 and CSV files specifying the network are stored in JSON 
 configuration files. 
@@ -37,8 +37,8 @@ configuration files.
 
 .. _sec:sonata_nodes:
 
-The NEST support of SONATA nodes 
---------------------------------
+NEST support of SONATA nodes 
+----------------------------
 
 In the SONATA format, node populations are serialized in nodes HDF5 files and have a single associated node types 
 CSV file that assigns properties to all nodes with a given node type id. A node types CSV file may be shared by 
@@ -62,7 +62,7 @@ NEST supports the following SONATA node ``model_type``\s:
 * ``virtual`` 
 
 Both ``point_neuron`` and ``point_process`` mean that the node is a neuron model (explicitly simulated) whereas ``virtual`` 
-means that the node only provide inputs to the simulated system. ``virtual`` nodes are modelled as ``spike_generator``\s 
+means that the node only provide inputs to the simulated system. ``virtual`` nodes are modeled as ``spike_generator``\s 
 (see :doc:`../models/spike_generator`\). NEST requires that only one ``model_type`` is present per node types CSV file. 
 
 The required headers for node types CSV files that describe neuron models are: 
@@ -93,7 +93,7 @@ node type:
     }
 
 
-NEST does not support node properties stored on an individual-basis in HDF5 datasets. This restriction can be 
+NEST does not support node properties stored on an individual basis in HDF5 datasets. This restriction can be 
 circumvented by assigning a single node its own node type id. 
 
 Below is an example of a node types CSV file with the required headers for neuron nodes: 
@@ -106,7 +106,7 @@ Below is an example of a node types CSV file with the required headers for neuro
 | 2            | point_process | nest:iaf_psc_alpha | params_2.json   |
 +--------------+---------------+--------------------+-----------------+
 
-The only required CSV header for ``virtual`` nodes is ``model_type``. The ``spike_generator``\s spike-times arrays are expected
+The only required CSV header for ``virtual`` nodes is ``model_type``. The ``spike_generator``\s spike-time arrays are expected
 to be provided in HDF5 datasets with the configuration details specified in the JSON configuration file.  
 
 
@@ -148,12 +148,12 @@ NEST assumes the following structure of the edges HDF5 files:
 
 
 Together the ``source_node_id`` and ``target_node_id`` datasets explicitly tabulate all individual connections. 
-The ``edge_type_id`` dataset attributes each edge its edge type id which is used to assign synaptic properties from the 
+The ``edge_type_id`` dataset attributes each edge its edge type id, which is used to assign synaptic properties from the 
 edge types CSV file. 
 
 In the SONATA format, edges within a population can be organized into one or more edge groups. Synaptic properties that 
-are specified on an individual-basis are stored in these edge groups. The groups are identified by an ``edge_id`` key. 
-NEST assumes the ``edge_id``\s are contiguous numeric keys starting from zero, i.e. 0, 1, 2, ... 
+are specified on an individual basis are stored in these edge groups. The groups are identified by an ``edge_id`` key. 
+NEST assumes the ``edge_id``\s are contiguous numeric keys starting from zero, that is, 0, 1, 2, ... 
 
 **Note:** NEST currently only supports one edge group per edge population. Furthermore, NEST only reads the ``delay`` 
 and ``syn_weight`` datasets, given that they are provided. This means that only axonal delays and synaptic weights can 
@@ -179,9 +179,9 @@ Other synaptic properties must be given in the JSON file under ``dynamics_params
 The SONATA configuration files
 ------------------------------
 
-Model metadata, such as the relative location of the network files, and simulation parameters are stored in the 
+Model metadata, such as the relative location of the network files and simulation parameters, are stored in the 
 SONATA configuration ("config") file(s) in the JSON format. Below is an example SONATA config with the components NEST 
-expects included:
+expects to be included:
 
 .. code-block:: json
 

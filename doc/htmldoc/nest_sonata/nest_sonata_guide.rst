@@ -53,7 +53,10 @@ NEST assumes the following structure of the node HDF5 files:
     │  ├─ <population_name>             Group - required - usually only one but can be more population groups per file
     │  │  ├─ node_type_id               Dataset {N_total_nodes} - required
 
-**Note:** NEST assumes that the implicit row numbers in the ``node_type_id`` dataset correspond to the ``node_id``\s. 
+
+.. note::
+
+    NEST assumes that the implicit row numbers in the ``node_type_id`` dataset correspond to the ``node_id``\s. 
 
 NEST supports the following SONATA node ``model_type``\s:
 
@@ -155,10 +158,12 @@ In the SONATA format, edges within a population can be organized into one or mor
 are specified on an individual basis are stored in these edge groups. The groups are identified by an ``edge_id`` key. 
 NEST assumes the ``edge_id``\s are contiguous numeric keys starting from zero, that is, 0, 1, 2, ... 
 
-**Note:** NEST currently only supports one edge group per edge population. Furthermore, NEST only reads the ``delay`` 
-and ``syn_weight`` datasets, given that they are provided. This means that only axonal delays and synaptic weights can 
-be stored on an individual basis in the HDF5 format. Other synaptic properties must be given in the edge type 
-CSV file(s). 
+.. note::
+
+    NEST currently only supports one edge group per edge population. Furthermore, NEST only reads the ``delay`` 
+    and ``syn_weight`` datasets, given that they are provided. This means that only axonal delays and synaptic weights 
+    can be stored on an individual basis in the HDF5 format. Other synaptic properties must be given in the edge type 
+    CSV file(s). 
 
 Below is an example of a edge type CSV file: 
 
@@ -170,8 +175,10 @@ Below is an example of a edge type CSV file:
 | 2            | static_synapse | 2.5   | params_2.json   |
 +--------------+----------------+-------+-----------------+
 
-**Note:** Only the synaptic properties ``delay`` and ``syn_weight`` can be provided as headers in the edge types CSV file. 
-Other synaptic properties must be given in the JSON file under ``dynamics_params``. 
+.. note::
+
+    Only the synaptic properties ``delay`` and ``syn_weight`` can be provided as headers in the edge types CSV file. 
+    Other synaptic properties must be given in the JSON file under ``dynamics_params``. 
 
 
 .. _sec:sonata_config:
@@ -231,8 +238,10 @@ expects to be included:
       }
     }
 
-**Note:** NEST supports the use of two config files, i.e. one network and one simulation config. NEST does not 
-currently support SONATA Spike Train Reports or utilize other ``output`` components in the SONATA config.
+.. note::
+
+    NEST supports the use of two config files, i.e. one network and one simulation config. NEST does not currently 
+    support SONATA Spike Train Reports or utilize other ``output`` components in the SONATA config.
 
 
 .. _sec:sonata_examples:

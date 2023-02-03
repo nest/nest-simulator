@@ -40,11 +40,11 @@ configuration files.
 NEST support of SONATA nodes 
 ----------------------------
 
-In the SONATA format, node populations are serialized in nodes HDF5 files and have a single associated node types 
-CSV file that assigns properties to all nodes with a given node type id. A node types CSV file may be shared by 
+In the SONATA format, node populations are serialized in node HDF5 files and have a single associated node type 
+CSV file that assigns properties to all nodes with a given node type id. A node type CSV file may be shared by 
 multiple node population HDF5 files.
 
-NEST assumes the following structure of the nodes HDF5 files: 
+NEST assumes the following structure of the node HDF5 files: 
 
 :: 
 
@@ -63,9 +63,9 @@ NEST supports the following SONATA node ``model_type``\s:
 
 Both ``point_neuron`` and ``point_process`` mean that the node is a neuron model (explicitly simulated) whereas ``virtual`` 
 means that the node only provide inputs to the simulated system. ``virtual`` nodes are modeled as ``spike_generator``\s 
-(see :doc:`../models/spike_generator`\). NEST requires that only one ``model_type`` is present per node types CSV file. 
+(see :doc:`../models/spike_generator`\). NEST requires that only one ``model_type`` is present per node type CSV file. 
 
-The required headers for node types CSV files that describe neuron models are: 
+The required headers for node type CSV files that describe neuron models are: 
 
 * ``node_type_id``
 * ``model_type``
@@ -74,7 +74,7 @@ The required headers for node types CSV files that describe neuron models are:
 
 For a given ``node_type_id``, the ``model_template`` entry is the name of the NEST neuron model with prefix ``nest:``. NEST 
 does not require the ``model_template`` entries to be the same, but the creation of the nodes described in a single node 
-types CSV file is faster if the neuron models are the same. 
+type CSV file is faster if the neuron models are the same. 
 
 For a given ``node_type_id``, the ``dynamics_params`` entry is expected to be a reference to a JSON file that describes 
 the parametrization of the neuron model. Below is an example of a JSON file describing the parametrization of a given 
@@ -96,7 +96,7 @@ node type:
 NEST does not support node properties stored on an individual basis in HDF5 datasets. This restriction can be 
 circumvented by assigning a single node its own node type id. 
 
-Below is an example of a node types CSV file with the required headers for neuron nodes: 
+Below is an example of a node type CSV file with the required headers for neuron nodes: 
 
 +--------------+---------------+--------------------+-----------------+
 | node_type_id | model_type    | model_template     | dynamics_params | 
@@ -115,10 +115,10 @@ to be provided in HDF5 datasets with the configuration details specified in the 
 The NEST support of SONATA edges  
 --------------------------------
 
-Analogous to nodes, edge populations are serialized in edges HDF5 files and have a single associated edge types 
+Analogous to nodes, edge populations are serialized in edge HDF5 files and have a single associated edge types 
 CSV file that assigns properties to all edges with a given edge type id.
 
-NEST assumes the following structure of the edges HDF5 files: 
+NEST assumes the following structure of the edge HDF5 files: 
 
 :: 
 
@@ -157,10 +157,10 @@ NEST assumes the ``edge_id``\s are contiguous numeric keys starting from zero, t
 
 **Note:** NEST currently only supports one edge group per edge population. Furthermore, NEST only reads the ``delay`` 
 and ``syn_weight`` datasets, given that they are provided. This means that only axonal delays and synaptic weights can 
-be stored on an individual-basis in the HDF5 format. Other synaptic properties must be given in the edge types 
+be stored on an individual basis in the HDF5 format. Other synaptic properties must be given in the edge type 
 CSV file(s). 
 
-Below is an example of a edge types CSV file: 
+Below is an example of a edge type CSV file: 
 
 +--------------+----------------+-------+-----------------+
 | edge_type_id | model_template | delay | dynamics_params | 

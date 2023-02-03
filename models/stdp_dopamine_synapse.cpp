@@ -31,6 +31,8 @@
 // Includes from sli:
 #include "dictdatum.h"
 
+#define ClassToString( cls ) #cls
+
 namespace nest
 {
 //
@@ -82,10 +84,16 @@ STDPDopaCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& 
   long vtnode_id;
   if ( updateValue< long >( d, names::vt, vtnode_id ) )
   {
-    const thread tid = kernel().vp_manager.get_thread_id();
-    Node* vt = kernel().node_manager.get_node_or_proxy( vtnode_id, tid );
-    vt_ = dynamic_cast< volume_transmitter* >( vt );
-    if ( not vt_ )
+    std::string model_name = ClassToString( volume_transmitter );
+    const index model = kernel().modelrange_manager.get_model_id( vtnode_id );
+    const index current_model_type_id = kernel().model_manager.get_node_model( model )->get_type_id();
+    const index expected_model_type_id = kernel().model_manager.get_node_model_id( model_name );
+    if ( current_model_type_id == expected_model_type_id )
+    {
+      const thread tid = kernel().vp_manager.get_thread_id();
+      vt_ = static_cast< volume_transmitter* >( kernel().node_manager.get_node_or_proxy( vtnode_id, tid ) );
+    }
+    else
     {
       throw BadProperty( "Dopamine source must be volume transmitter" );
     }

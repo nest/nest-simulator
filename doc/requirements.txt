@@ -20,6 +20,7 @@ scipy
 seaborn
 sphinx>=4.0.2
 sphinx_autobuild
+sphinxcontrib-mermaid
 sphinx-design
 sphinx_gallery
 sphinx-material

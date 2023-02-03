@@ -105,6 +105,7 @@ mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
 # "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
 # "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa
 mermaid_output_format = "raw"
+mermaid_version =  ""
 
 panels_add_bootstrap_css = False
 # Add any paths that contain templates here, relative to this directory.
@@ -255,6 +256,7 @@ def setup(app):
     app.add_css_file('css/custom.css')
     app.add_css_file('css/pygments.css')
     app.add_js_file("js/custom.js")
+    app.add_js_file("js/mermaid.js")
 
     # for events see
     # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events

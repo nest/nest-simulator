@@ -99,6 +99,8 @@ public:
   {
   }
 
+  SecondaryEvent* get_secondary_event();
+
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
@@ -162,6 +164,13 @@ SICConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
   def< long >( d, names::size_of, sizeof( *this ) );
+}
+
+template < typename targetidentifierT >
+SecondaryEvent*
+SICConnection< targetidentifierT >::get_secondary_event()
+{
+  return new SICEvent();
 }
 
 template < typename targetidentifierT >

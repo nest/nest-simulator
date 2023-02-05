@@ -458,7 +458,7 @@ const Name structural_plasticity_update_interval( "structural_plasticity_update_
 const Name synapse_id( "synapse_id" );
 const Name synapse_label( "synapse_label" );
 const Name synapse_model( "synapse_model" );
-const Name synapse_model_astro( "synapse_model_astro" );
+const Name synapse_model_sic( "synapse_model_sic" );
 const Name synapse_models( "synapse_models" );
 const Name synapse_modelid( "synapse_modelid" );
 const Name synapse_parameters( "synapse_parameters" );
@@ -612,6 +612,7 @@ const Name Wmax( "Wmax" );
 const Name Wmin( "Wmin" );
 const Name w( "w" );
 const Name weight( "weight" );
+const Name weight_astro( "weight_astro" );
 const Name weight_sic( "weight_sic" );
 const Name weight_per_lut_entry( "weight_per_lut_entry" );
 const Name weight_recorder( "weight_recorder" );

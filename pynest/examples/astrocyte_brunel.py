@@ -71,7 +71,7 @@ network_params = {
 
 syn_params = {
     "synapse_model": "tsodyks_synapse",
-    "synapse_model_astro": "sic_connection",
+    "synapse_model_sic": "sic_connection",
     "c_spill": 0.1,
     "weight_sic": 0.005,
     "J_ee": 2.67436, # excitatory-to-excitatory synaptic weight in nS
@@ -222,7 +222,7 @@ def build_astro(scale, poisson_time):
         "tau_fac": syn_params["tau_fac_ee"],
         "tau_rec": syn_params["tau_rec_ee"],
         "c_spill": syn_params["c_spill"],
-        "synapse_model_astro": syn_params["synapse_model_astro"],
+        "synapse_model_sic": syn_params["synapse_model_sic"],
         "weight_sic": syn_params["weight_sic"],
         }
     syn_params_ei = {

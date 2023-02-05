@@ -58,7 +58,7 @@ params = {
     'p_syn_astro': [0.1, 0.5],
     'max_astro_per_target': 5,
     'synapse_model': 'tsodyks_synapse',
-    'synapse_model_astro': 'sic_connection',
+    'synapse_model_sic': 'sic_connection',
     'weight': 10.,
     'weight_sic': 2.11,
     'c_spill': 0.3,
@@ -94,7 +94,7 @@ for i, p_syn_astro in enumerate(params['p_syn_astro']):
             max_astro_per_target=params['max_astro_per_target']),
         syn_spec=dict(
             synapse_model=params['synapse_model'],
-            synapse_model_astro=params['synapse_model_astro'],
+            synapse_model_sic=params['synapse_model_sic'],
             weight=params['weight'], weight_sic=params['weight_sic'],
             c_spill=params['c_spill'])
     )

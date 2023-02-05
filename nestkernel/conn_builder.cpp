@@ -1659,14 +1659,22 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   }
 
   // weight and delay for neuron=>neuron and neuron=>astrocyte connections
-  DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[0] );  
+  DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[0] );
   if ( syn_specs[0]->known( names::weight ) )
   {
-    w_ = ( *syn_specs[0] )[ names::weight ];
+    w_n2n_ = ( *syn_specs[0] )[ names::weight ];
   }
   else
   {
-    w_ = ( *syn_defaults )[ names::weight ];
+    w_n2n_ = ( *syn_defaults )[ names::weight ];
+  }
+  if ( syn_specs[0]->known( names::weight_astro ) )
+  {
+    w_n2a_ = ( *syn_specs[0] )[ names::weight_astro ];
+  }
+  else
+  {
+    w_n2a_ = ( *syn_defaults )[ names::weight ];
   }
   if ( syn_specs[0]->known( names::delay ) )
   {
@@ -1677,38 +1685,24 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
     d_ = ( *syn_defaults )[ names::delay ];
   }
 
-  // coefficient c_spill for neuron=>astrocyte connection
-  if ( syn_specs[0]->known( names::c_spill ) )
-  {
-    c_spill_ = ( *syn_specs[0] )[ names::c_spill ];
-    if ( c_spill_ < 0 or 1 < c_spill_ )
-    {
-      throw BadProperty( "Coefficient 0 <= c_spill <= 1 required." );
-    }
-  }
-  else
-  {
-    c_spill_ = 0.3;
-  }
-
   // for astrocyte=>neuron connection
-  if ( syn_specs[0]->known( names::synapse_model_astro ) )
+  if ( syn_specs[0]->known( names::synapse_model_sic ) )
   {
-    const std::string syn_name = ( *syn_specs[0] )[ names::synapse_model_astro ];
-    synapse_model_id_astro_ = kernel().model_manager.get_synapse_model_id( syn_name );
+    const std::string syn_name = ( *syn_specs[0] )[ names::synapse_model_sic ];
+    synapse_model_id_a2n_ = kernel().model_manager.get_synapse_model_id( syn_name );
   }
   else
   {
-    synapse_model_id_astro_ = kernel().model_manager.get_synapse_model_id( "sic_connection" );
+    synapse_model_id_a2n_ = kernel().model_manager.get_synapse_model_id( "sic_connection" );
   }
-  DictionaryDatum syn_defaults_astro = kernel().model_manager.get_connector_defaults( synapse_model_id_astro_ );
+  DictionaryDatum syn_defaults_a2n = kernel().model_manager.get_connector_defaults( synapse_model_id_a2n_ );
   if ( syn_specs[0]->known( names::weight_sic ) )
   {
-    w_sic_ = ( *syn_specs[0] )[ names::weight_sic ];
+    w_a2n_ = ( *syn_specs[0] )[ names::weight_sic ];
   }
   else
   {
-    w_sic_ = ( *syn_defaults_astro )[ names::weight ];
+    w_a2n_ = ( *syn_defaults_a2n )[ names::weight ];
   }
 }
 
@@ -1917,7 +1911,7 @@ nest::BernoulliAstroBuilder::connect_()
               synapse_model_id_[0],
               param_dicts_[ 0 ][ target_thread ],
               d_,
-              w_ * ( 1 - c_spill_) );
+              w_n2n_ );
           }
 
           // Bernoulli trial to determine whether to pair this neuron=>neuron connection with astrocyte
@@ -1953,7 +1947,7 @@ nest::BernoulliAstroBuilder::connect_()
               synapse_model_id_[0],
               param_dicts_[ 0 ][ astrocyte_thread ],
               d_,
-              w_*c_spill_ );
+              w_n2a_ );
           }
 
           // avoid connecting the same astrocyte to the target more than once
@@ -1969,10 +1963,10 @@ nest::BernoulliAstroBuilder::connect_()
             kernel().connection_manager.connect( anode_id,
               target,
               target_thread,
-              synapse_model_id_astro_,
+              synapse_model_id_a2n_,
               param_dicts_[ 0 ][ target_thread ],
               numerics::nan,
-              w_sic_ );
+              w_a2n_ );
             connected_anode_ids.insert( anode_id );
           }
         }

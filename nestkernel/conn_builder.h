@@ -444,11 +444,11 @@ private:
   double p_syn_astro_; //!< probability of astrocyte pairing
   bool astro_pool_by_index_; //!< if true, select astrocyte pool per target by index
   size_t max_astro_per_target_; //!< max number of astrocytes per tartget neuron
-  index synapse_model_id_astro_; // synapse model for astrocyte=>neuron connection
-  double c_spill_; // coefficient c_spill
-  double w_; // synaptic weight of neuron=>neuron connections
+  index synapse_model_id_a2n_; // synapse model for astrocyte=>neuron connection
+  double w_n2n_; // synaptic weight of neuron=>neuron connections
+  double w_n2a_; // synaptic weight of neuron=>astrocyte connections
   double d_; // synaptic delay of neuron=>neuron and neuron=>astrocyte connections
-  double w_sic_; // synaptic weight of astrocyte=>neuron connection
+  double w_a2n_; // synaptic weight of astrocyte=>neuron connection
 };
 
 class SymmetricBernoulliBuilder : public ConnBuilder

@@ -136,20 +136,21 @@ astrocyte_dynamics( double time, const double y[], double f[], void* pnode )
  * ---------------------------------------------------------------- */
 
 nest::astrocyte::Parameters_::Parameters_()
-  : Ca_tot_astro_( 2.0 )   // uM
-  , IP3_0_astro_( 0.16 )    // uM
-  , K_IP3_1_astro_( 0.13 )    // uM
-  , K_IP3_2_astro_( 0.9434 )    // uM
+  : Ca_tot_astro_( 2.0 )     // uM
+  , IP3_0_astro_( 0.16 )     // uM
+  , K_IP3_1_astro_( 0.13 )   // uM
+  , K_IP3_2_astro_( 0.9434 ) // uM
   , K_SERCA_astro_( 0.1 )    // uM
-  , K_act_astro_( 0.08234 )    // uM
+  , K_act_astro_( 0.08234 )  // uM
   , K_inh_astro_( 1.049 )    // uM
   , r_ER_cyt_astro_( 0.185 )
-  , r_IP3_astro_( 5.0 )      // uM / ms
-  , r_IP3R_astro_( 0.0002 )    // 1 / (uM*ms)
+  , r_IP3_astro_( 5.0 )      // uM / unit w
+  , r_IP3R_astro_( 0.0002 )  // 1 / (uM*ms)
   , r_L_astro_( 0.00011 )    // 1 / ms
-  , tau_IP3_astro_(7142.0 )   // ms
-  , v_IP3R_astro_( 0.006 )    // 1 / ms
-  , v_SERCA_astro_( 0.0009 )    // uM / ms
+  , SIC_thr_astro_( 196.69 ) // nM
+  , tau_IP3_astro_(7142.0 )  // ms
+  , v_IP3R_astro_( 0.006 )   // 1 / ms
+  , v_SERCA_astro_( 0.0009 ) // uM / ms
 {
 }
 
@@ -195,6 +196,7 @@ nest::astrocyte::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::r_ER_cyt_astro, r_ER_cyt_astro_ );
   def< double >( d, names::r_IP3_astro, r_IP3_astro_ );
   def< double >( d, names::r_IP3R_astro, r_IP3R_astro_ );
+  def< double >( d, names::SIC_thr_astro, SIC_thr_astro_ );
   def< double >( d, names::r_L_astro, r_L_astro_ );
   def< double >( d, names::v_IP3R_astro, v_IP3R_astro_ );
   def< double >( d, names::v_SERCA_astro, v_SERCA_astro_ );
@@ -214,6 +216,7 @@ nest::astrocyte::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::r_ER_cyt_astro, r_ER_cyt_astro_ );
   updateValue< double >( d, names::r_IP3_astro, r_IP3_astro_ );
   updateValue< double >( d, names::r_IP3R_astro, r_IP3R_astro_ );
+  updateValue< double >( d, names::SIC_thr_astro, SIC_thr_astro_ );
   updateValue< double >( d, names::r_L_astro, r_L_astro_ );
   updateValue< double >( d, names::v_IP3R_astro, v_IP3R_astro_ );
   updateValue< double >( d, names::v_SERCA_astro, v_SERCA_astro_ );
@@ -258,6 +261,10 @@ nest::astrocyte::Parameters_::set( const DictionaryDatum& d )
   if ( r_IP3R_astro_ < 0 )
   {
     throw BadProperty( "Astrocytic IP2R binding constant for calcium inhibition must be non-negative." );
+  }
+  if ( SIC_thr_astro_ < 0 )
+  {
+    throw BadProperty( "Calcium threshold for producing SIC must be non-negative." );
   }
   if ( r_L_astro_ < 0 )
   {
@@ -584,11 +591,11 @@ nest::astrocyte::update_( Time const& origin, const long from, const long to, co
       // this is to add the incoming spikes to the state variable
       S_.y_[ State_::IP3_astro ] += P_.r_IP3_astro_ * B_.spike_exc_.get_value_wfr_update( lag );
     }
-    double calc_thr = S_.y_[ State_::Ca_astro ] * 1000.0 - 196.69;
+    double calc_thr = S_.y_[ State_::Ca_astro ] * 1000.0 - P_.SIC_thr_astro_;
     if ( calc_thr > 1.0 )
     {
       /* The SIC is converted to pA from uA/cm2 in the original publication */
-      sic_values[ lag ] = std::pow(25, 2) * 3.14 * std::pow(10, -2) * std::log( calc_thr );
+      sic_values[ lag ] = std::log( calc_thr );
     }
 
   } // end for-loop

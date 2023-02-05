@@ -447,6 +447,7 @@ extern const Name rule;
 extern const Name S;
 extern const Name S_act_NMDA;
 extern const Name SIC;
+extern const Name SIC_thr_astro;
 extern const Name sdev;
 extern const Name senders;
 extern const Name send_buffer_size_secondary_events;

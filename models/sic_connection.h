@@ -95,7 +95,7 @@ public:
    */
   SICConnection()
     : ConnectionBase()
-    , weight_( 1.0 )
+    , weight_( std::pow(25, 2) * 3.14 * std::pow(10, -2) )
   {
   }
 

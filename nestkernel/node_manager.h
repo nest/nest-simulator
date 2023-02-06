@@ -58,6 +58,15 @@ public:
   void set_status( const DictionaryDatum& ) override;
   void get_status( DictionaryDatum& ) override;
 
+
+  /**
+   * @brief Querying whether the Node object with the provided ID has proxy or not.
+   * Since the Node object is a copy of the Model object, we simply retrieve this information from the original Model.
+   *  @param node_id the node ID.
+   * @return  true, if the Model is not a device, false otherwise.
+   * */  
+  bool has_proxy(index node_id);
+
   /**
    * Get properties of a node. The specified node must exist.
    * @throws nest::UnknownNode       Target does not exist in the network.

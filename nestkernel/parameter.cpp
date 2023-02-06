@@ -72,7 +72,7 @@ Parameter::apply( const NodeCollectionPTR& nc, const TokenArray& token_array )
           target_pos.size(),
           source_pos.size() ) );
     }
-    auto value = this->value( rng, source_pos, target_pos, *source_layer.get(), nullptr );
+    auto value = this->value( rng, source_pos, target_pos, *source_layer.get(), invalid_index );
     result.push_back( value );
   }
   return result;
@@ -96,10 +96,9 @@ NormalParameter::NormalParameter( const DictionaryDatum& d )
 }
 
 double
-NormalParameter::value( RngPtr rng, Node* node )
+NormalParameter::value( RngPtr rng, index node_id )
 {
-  const auto tid = node ? kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( node->get_node_id() ) )
-                        : kernel().vp_manager.get_thread_id();
+  const auto tid = kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( node_id ) );
   return normal_dists_[ tid ]( rng );
 }
 
@@ -122,30 +121,30 @@ LognormalParameter::LognormalParameter( const DictionaryDatum& d )
 }
 
 double
-LognormalParameter::value( RngPtr rng, Node* node )
+LognormalParameter::value( RngPtr rng, index node_id )
 {
-  const auto tid = node ? kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( node->get_node_id() ) )
-                        : kernel().vp_manager.get_thread_id();
+  const auto tid = kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( node_id ) );
   return lognormal_dists_[ tid ]( rng );
 }
 
 
 double
-NodePosParameter::get_node_pos_( Node* node ) const
+NodePosParameter::get_node_pos_( index node_id ) const
 {
+  Node* node = kernel().node_manager.get_node_or_proxy( node_id );
   if ( not node )
   {
-    throw KernelException( "NodePosParameter: not node" );
+    throw KernelException( "NodePosParameter: Cannot get node position from a NULL Object" );
   }
   NodeCollectionPTR nc = node->get_nc();
   if ( not nc.get() )
   {
-    throw KernelException( "NodePosParameter: not nc" );
+    throw KernelException( "NodePosParameter: NodeCollection stored in Node is a NUll Object" );
   }
   NodeCollectionMetadataPTR meta = nc->get_metadata();
   if ( not meta.get() )
   {
-    throw KernelException( "NodePosParameter: not meta" );
+    throw KernelException( "NodePosParameter: NodeCollection has no stored MetaData Object" );
   }
   auto const* const layer_meta = dynamic_cast< LayerMetadata const* >( meta.get() );
   if ( not layer_meta )
@@ -173,7 +172,7 @@ SpatialDistanceParameter::value( RngPtr,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
   const AbstractLayer& layer,
-  Node* )
+  index )
 {
   switch ( dimension_ )
   {
@@ -218,7 +217,7 @@ RedrawParameter::RedrawParameter( const std::shared_ptr< Parameter > p, const do
 }
 
 double
-RedrawParameter::value( RngPtr rng, Node* node )
+RedrawParameter::value( RngPtr rng, index node_id )
 {
   double value;
   size_t num_redraws = 0;
@@ -228,7 +227,7 @@ RedrawParameter::value( RngPtr rng, Node* node )
     {
       throw KernelException( String::compose( "Number of redraws exceeded limit of %1", max_redraws_ ) );
     }
-    value = p_->value( rng, node );
+    value = p_->value( rng, node_id );
   } while ( value < min_ or value > max_ );
   return value;
 }
@@ -238,7 +237,7 @@ RedrawParameter::value( RngPtr rng,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
   const AbstractLayer& layer,
-  Node* node )
+  index node_id )
 {
   double value;
   size_t num_redraws = 0;
@@ -248,7 +247,7 @@ RedrawParameter::value( RngPtr rng,
     {
       throw KernelException( String::compose( "Number of redraws exceeded limit of %1", max_redraws_ ) );
     }
-    value = p_->value( rng, source_pos, target_pos, layer, node );
+    value = p_->value( rng, source_pos, target_pos, layer, node_id );
   } while ( value < min_ or value > max_ );
 
   return value;
@@ -272,9 +271,9 @@ ExpDistParameter::value( RngPtr rng,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
   const AbstractLayer& layer,
-  Node* node )
+  index node_id )
 {
-  return std::exp( -p_->value( rng, source_pos, target_pos, layer, node ) * inv_beta_ );
+  return std::exp( -p_->value( rng, source_pos, target_pos, layer, node_id ) * inv_beta_ );
 }
 
 GaussianParameter::GaussianParameter( const DictionaryDatum& d )
@@ -295,9 +294,9 @@ GaussianParameter::value( RngPtr rng,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
   const AbstractLayer& layer,
-  Node* node )
+  index node_id )
 {
-  const auto dx = p_->value( rng, source_pos, target_pos, layer, node ) - mean_;
+  const auto dx = p_->value( rng, source_pos, target_pos, layer, node_id ) - mean_;
   return std::exp( -dx * dx * inv_two_std2_ );
 }
 
@@ -343,10 +342,10 @@ Gaussian2DParameter::value( RngPtr rng,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
   const AbstractLayer& layer,
-  Node* node )
+  index node_id )
 {
-  const auto dx = px_->value( rng, source_pos, target_pos, layer, node ) - mean_x_;
-  const auto dy = py_->value( rng, source_pos, target_pos, layer, node ) - mean_y_;
+  const auto dx = px_->value( rng, source_pos, target_pos, layer, node_id ) - mean_x_;
+  const auto dy = py_->value( rng, source_pos, target_pos, layer, node_id ) - mean_y_;
   return std::exp( -dx * dx * x_term_const_ - dy * dy * y_term_const_ + dx * dy * xy_term_const_ );
 }
 
@@ -374,9 +373,9 @@ GammaParameter::value( RngPtr rng,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
   const AbstractLayer& layer,
-  Node* node )
+  index node_id )
 {
-  const auto x = p_->value( rng, source_pos, target_pos, layer, node );
+  const auto x = p_->value( rng, source_pos, target_pos, layer, node_id );
   return std::pow( x, kappa_ - 1. ) * std::exp( -1. * inv_theta_ * x ) * delta_;
 }
 

@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE( test_redraw_value_impossible, *boost::unit_test::timeout( 
   // We need to go via a factory to avoid compiler confusion. Two somewhat arbitrary sequences are used for seeding.
   nest::RngPtr rng = nest::RandomGeneratorFactory< std::mt19937_64 >().create( { 1234567890, 23423423 } );
 
-  BOOST_CHECK_THROW( redraw_pd->value( rng, nullptr ), nest::KernelException );
+  BOOST_CHECK_THROW( redraw_pd->value( rng, nest::invalid_index ), nest::KernelException );
 }
 
 #endif /* BOOST_VERSION */
@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_CASE( test_uniform_int_returns_integer )
 
   for ( int i = 0; i < num_iterations; ++i )
   {
-    auto value = uniform_int_pd->value( rng, nullptr );
+    auto value = uniform_int_pd->value( rng, nest::invalid_index );
     // Test makes no sense if the return value of the Parameter is not floating point.
     static_assert( std::is_floating_point< decltype( value ) >::value, "Return type not floating point" );
     BOOST_REQUIRE_EQUAL( value, static_cast< long >( value ) );

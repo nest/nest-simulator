@@ -338,7 +338,7 @@ double
 get_value( const ParameterDatum& param )
 {
   RngPtr rng = get_rank_synced_rng();
-  return param->value( rng, nullptr );
+  return param->value( rng, invalid_index );
 }
 
 bool
@@ -355,8 +355,7 @@ apply( const ParameterDatum& param, const NodeCollectionDatum& nc )
   RngPtr rng = get_rank_synced_rng();
   for ( auto it = nc->begin(); it < nc->end(); ++it )
   {
-    auto node = kernel().node_manager.get_node_or_proxy( ( *it ).node_id );
-    result.push_back( param->value( rng, node ) );
+    result.push_back( param->value( rng, ( *it ).node_id ) );
   }
   return result;
 }

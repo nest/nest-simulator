@@ -86,9 +86,14 @@ ConnectionGeneratorBuilder::connect_()
     {
       // No need to check for locality of the target, as the mask
       // created by cg_set_masks() only contains local nodes.
-      Node* const target_node = kernel().node_manager.get_node_or_proxy( ( *targets_ )[ target ] );
-      const thread target_thread = target_node->get_thread();
-      single_connect_( ( *sources_ )[ source ], *target_node, target_thread, rng );
+      // Ayssar! TODO: then why calling `get_node_or_proxy`?
+      const vp = kernel().vp_manager.node_id_to_vp( target );
+      const thread target_thread = 0;
+      if ( kernel().vp_manager.is_local_vp( vp ) )
+      {
+        target_thread = kernel().vp_manager.vp_to_thread( vp );
+      }
+      single_connect_( ( *sources_ )[ source ], target, target_thread, rng );
     }
   }
   else if ( num_parameters == 2 )
@@ -115,14 +120,17 @@ ConnectionGeneratorBuilder::connect_()
     {
       // No need to check for locality of the target node, as the mask
       // created by cg_set_masks() only contains local nodes.
-      Node* target_node = kernel().node_manager.get_node_or_proxy( ( *targets_ )[ target ] );
-      const thread target_thread = target_node->get_thread();
-
-      update_param_dict_( ( *sources_ )[ source ], *target_node, target_thread, rng, 0 );
+      const vp = kernel().vp_manager.node_id_to_vp( target );
+      const thread target_thread = 0;
+      if ( kernel().vp_manager.is_local_vp( vp ) )
+      {
+        target_thread = kernel().vp_manager.vp_to_thread( vp );
+      }
+      update_param_dict_( ( *sources_ )[ source ], target, target_thread, rng, 0 );
 
       // Use the low-level connect() here, as we need to pass a custom weight and delay
       kernel().connection_manager.connect( ( *sources_ )[ source ],
-        target_node,
+        target,
         target_thread,
         synapse_model_id_[ 0 ],
         param_dicts_[ 0 ][ target_thread ],

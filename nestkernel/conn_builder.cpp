@@ -1660,30 +1660,12 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
 
   // weight and delay for neuron=>neuron and neuron=>astrocyte connections
   DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[0] );
-  if ( syn_specs[0]->known( names::weight ) )
-  {
-    w_n2n_ = ( *syn_specs[0] )[ names::weight ];
-  }
-  else
-  {
-    w_n2n_ = ( *syn_defaults )[ names::weight ];
-  }
-  if ( syn_specs[0]->known( names::weight_astro ) )
-  {
-    w_n2a_ = ( *syn_specs[0] )[ names::weight_astro ];
-  }
-  else
-  {
-    w_n2a_ = ( *syn_defaults )[ names::weight ];
-  }
-  if ( syn_specs[0]->known( names::delay ) )
-  {
-    d_ = ( *syn_specs[0] )[ names::delay ];
-  }
-  else
-  {
-    d_ = ( *syn_defaults )[ names::delay ];
-  }
+  weights_n2a_ = syn_specs[0]->known( names::weight_astro )
+    ? ConnParameter::create( ( *syn_specs[0] )[ names::weight_astro ], kernel().vp_manager.get_num_threads() )
+    : ConnParameter::create( ( *syn_defaults )[ names::weight ], kernel().vp_manager.get_num_threads() );
+  delays_n2a_ = syn_specs[0]->known( names::delay )
+    ? ConnParameter::create( ( *syn_specs[0] )[ names::delay ], kernel().vp_manager.get_num_threads() )
+    : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
 
   // for astrocyte=>neuron connection
   if ( syn_specs[0]->known( names::synapse_model_sic ) )
@@ -1696,14 +1678,9 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
     synapse_model_id_a2n_ = kernel().model_manager.get_synapse_model_id( "sic_connection" );
   }
   DictionaryDatum syn_defaults_a2n = kernel().model_manager.get_connector_defaults( synapse_model_id_a2n_ );
-  if ( syn_specs[0]->known( names::weight_sic ) )
-  {
-    w_a2n_ = ( *syn_specs[0] )[ names::weight_sic ];
-  }
-  else
-  {
-    w_a2n_ = ( *syn_defaults_a2n )[ names::weight ];
-  }
+  weights_a2n_ = syn_specs[0]->known( names::weight_sic )
+    ? ConnParameter::create( ( *syn_specs[0] )[ names::weight_sic ], kernel().vp_manager.get_num_threads() )
+    : ConnParameter::create( ( *syn_defaults_a2n )[ names::weight ], kernel().vp_manager.get_num_threads() );
 }
 
 
@@ -1904,14 +1881,7 @@ nest::BernoulliAstroBuilder::connect_()
           if ( target_thread == tid )
           {
             assert( target != NULL );
-            update_param_dict_( snode_id, *target, target_thread, synced_rng, 0 );
-            kernel().connection_manager.connect( snode_id,
-              target,
-              target_thread,
-              synapse_model_id_[0],
-              param_dicts_[ 0 ][ target_thread ],
-              d_,
-              w_n2n_ );
+            single_connect_( snode_id, *target, target_thread, synced_rng );
           }
 
           // Bernoulli trial to determine whether to pair this neuron=>neuron connection with astrocyte
@@ -1941,13 +1911,15 @@ nest::BernoulliAstroBuilder::connect_()
           {
             assert( astrocyte != NULL );
             update_param_dict_( snode_id, *astrocyte, astrocyte_thread, synced_rng, 0 );
+            double weight = weights_n2a_->value_double( astrocyte_thread, synced_rng, snode_id, astrocyte );
+            double delay = delays_n2a_->value_double( astrocyte_thread, synced_rng, snode_id, astrocyte );
             kernel().connection_manager.connect( snode_id,
               astrocyte,
               astrocyte_thread,
               synapse_model_id_[0],
               param_dicts_[ 0 ][ astrocyte_thread ],
-              d_,
-              w_n2a_ );
+              delay,
+              weight );
           }
 
           // avoid connecting the same astrocyte to the target more than once
@@ -1960,13 +1932,14 @@ nest::BernoulliAstroBuilder::connect_()
           {
             assert( target != NULL );
             update_param_dict_( anode_id, *target, target_thread, synced_rng, 0 );
+            double weight_a2n = weights_a2n_->value_double( target_thread, synced_rng, anode_id, target );
             kernel().connection_manager.connect( anode_id,
               target,
               target_thread,
               synapse_model_id_a2n_,
               param_dicts_[ 0 ][ target_thread ],
               numerics::nan,
-              w_a2n_ );
+              weight_a2n );
             connected_anode_ids.insert( anode_id );
           }
         }

@@ -118,6 +118,9 @@ div[role="main"] .md-source {
     display: none;
 }
 
+.md-typeset blockquote {
+	border-left: none;
+}
 
 [data-md-color-primary="orange"] .md-header, [data-md-color-primary="orange"] .md-hero {
   background-color: var(--nest-orange);

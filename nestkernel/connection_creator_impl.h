@@ -438,7 +438,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         std::vector< bool > is_selected( positions.size() );
 
         // Draw `target_number_connections` sources
-        while ( target_number_connections > 0)
+        while ( target_number_connections > 0 )
         {
           index random_id = lottery( rng );
           if ( not allow_multapses_ and is_selected[ random_id ] )
@@ -482,7 +482,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         std::vector< bool > is_selected( positions.size() );
 
         // Draw `target_number_connections` sources
-        while ( target_number_connections > 0)
+        while ( target_number_connections > 0 )
         {
           index random_id = rng->ulrand( positions.size() );
           if ( not allow_multapses_ and is_selected[ random_id ] )
@@ -563,7 +563,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         std::vector< bool > is_selected( positions->size() );
 
         // Draw `target_number_connections` sources
-        while ( target_number_connections > 0)
+        while ( target_number_connections > 0 )
         {
           index random_id = lottery( rng );
           if ( not allow_multapses_ and is_selected[ random_id ] )
@@ -600,7 +600,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         std::vector< bool > is_selected( positions->size() );
 
         // Draw `target_number_connections` sources
-        while ( target_number_connections > 0)
+        while ( target_number_connections > 0 )
         {
           index random_id = rng->ulrand( positions->size() );
           if ( not allow_multapses_ and is_selected[ random_id ] )

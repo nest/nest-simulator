@@ -116,7 +116,7 @@ sphinx_gallery_conf = {
      'gallery_dirs': str(doc_build_dir / 'auto_examples'),
      # 'backreferences_dir': False
      'plot_gallery': False,
-     'download_all_examples': False
+     'download_all_examples': False,
 }
 
 # General information about the project.
@@ -249,20 +249,24 @@ def config_inited_handler(app, config):
 
 
 def add_button_to_examples(app, env, docnames):
-    # Function finds all restructured text files in auto_examples
-    # and injects the multistring prolog, which is rendered
-    # as a button link in HTML with target to a Jupyter notebook of
-    # the same name and a service to run it.
-    # The nameholder in the link is replaced with the file name.
-    #
-    # The rst files are generated at build time by Sphinx_gallery.
-    # The notebooks that the target points to are linked with
-    # services (like EBRAINS) that runs notebooks using nbgitpuller.
-    # and are located in nest/next-simulator-examples/ repo.
-    # The notebooks are generated from the CI workflow of nest
-    # on GitHub, which converts the source Python files to .ipynb.
+    """Find all examples and include a link to launch notebook.
 
-    # The link to run the notebook is rendered in an image within a card directive.
+     Function finds all restructured text files in auto_examples
+     and injects the multistring prolog, which is rendered
+     as a button link in HTML. The target is set to a Jupyter notebook of
+     the same name and a service to run it.
+     The nameholder in the string is replaced with the file name.
+
+     The rst files are generated at build time by Sphinx_gallery.
+     The notebooks that the target points to are linked with
+     services (like EBRAINS JupyterHub) that runs notebooks using nbgitpuller.
+     See https://hub.jupyter.org/nbgitpuller/link.html
+     The notebooks are located in the repository nest/nest-simulator-examples/.
+     The notebooks are generated from the CI workflow of NEST
+     on GitHub, which converts the source Python files to .ipynb.
+
+     The link to run the notebook is rendered in an image within a card directive.
+    """
     example_prolog ="""
 .. only:: html
 
@@ -284,7 +288,9 @@ notebooks%2Ffilepath.ipynb&branch=main
     files = list(Path(doc_build_dir / "auto_examples/").rglob("**/*.rst"))
     for file in files:
 
-        if file.stem == 'index':
+        # Skip index files and benchmark file. These files do not have notebooks that can run
+        # on the service.
+        if file.stem == "index" or file.stem == "hpc_benchmark":
             continue
 
         get_path = file.parent
@@ -304,10 +310,11 @@ notebooks%2Ffilepath.ipynb&branch=main
                 path2example = file.stem
                 prolog = example_prolog.replace("filepath", path2example)
 
-        # find the first heading of the file
+        # find the first heading of the file.
         for i, item in enumerate(lines):
-             if item.startswith("-----"):
-                 break
+            if item.startswith("-----"):
+                break
+
         # insert prolog into rst file after heading
         lines.insert(i + 1, prolog + '\n')
 

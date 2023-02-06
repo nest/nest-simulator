@@ -64,8 +64,8 @@ public:
    * Since the Node object is a copy of the Model object, we simply retrieve this information from the original Model.
    *  @param node_id the node ID.
    * @return  true, if the Model is not a device, false otherwise.
-   * */  
-  bool has_proxy(index node_id);
+   * */
+  bool has_proxy( index node_id );
 
   /**
    * Get properties of a node. The specified node must exist.

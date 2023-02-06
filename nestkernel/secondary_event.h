@@ -150,13 +150,13 @@ read_from_comm_buffer( T& d, std::vector< unsigned int >::iterator& pos )
  * the memory location of the std::vector< DataType >.
  *
  * Conceptually, there is a one-to-one mapping between a SecondaryEvent
- * and a SecondaryConnectorModel. The synindex of this particular
- * SecondaryConnectorModel is stored as first element in the static set
- * supported_syn_ids_ on model registration. There are however reasons (e.g.
- * the usage of CopyModel or the creation of the labeled synapse model
+ * and a ConnectorModel using it. The synindex of this particular
+ * ConnectorModel is stored as first element in the static set
+ * ``supported_syn_ids_`` on model registration. There are however reasons (e.g.
+ * the usage of CopyModel() or the creation of the labeled synapse model
  * duplicates for pyNN) which make it necessary to register several
- * SecondaryConnectorModels with one SecondaryEvent. Therefore the synindices
- * of all these models are added to supported_syn_ids_.
+ * ConnectorModels with one SecondaryEvent. Therefore the synindices
+ * of all these models are added to ``supported_syn_ids_``.
  */
 template < typename DataType, typename Subclass >
 class DataSecondaryEvent : public SecondaryEvent

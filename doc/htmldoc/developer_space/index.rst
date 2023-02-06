@@ -106,10 +106,8 @@ Developer guides
    :hidden: 
    :glob:
 
-   ../installation/linux_install
    workflows/*
    workflows/documentation_workflow/*
    guidelines/*
    guidelines/styleguide/styleguide
    templates/*
-   *

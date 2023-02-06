@@ -45,6 +45,7 @@ class LoggingManager : public ManagerInterface
 {
 public:
   LoggingManager();
+  ~LoggingManager() override;
 
   void initialize() override;
   void finalize() override;

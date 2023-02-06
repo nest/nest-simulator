@@ -13,3 +13,15 @@ the new versions.
 * :ref:`NEST 3.2 <release_3.2>`
 * :ref:`NEST 3.1 <release_3.1>`
 * :ref:`NEST 3.0 <release_3.0>`
+
+
+.. toctree::
+   :hidden:
+   :glob:
+
+   v3.4/*
+   v3.3/*
+   v3.2/*
+   v3.1/*
+   v3.0/*
+

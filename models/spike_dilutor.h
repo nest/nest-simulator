@@ -54,7 +54,7 @@ and spikes are collected only from local sources.
 
    ``spike_dilutor`` is deprecated because it does not work with multiple threads.
    To create connections that transmit spikes with a given probability, use :doc:`bernoulli_synapse <bernoulli_synapse>`
-instead.
+   instead.
 
 .. admonition:: Does not work with threads
 

@@ -44,7 +44,7 @@ See Also
 
 :doc:`Script for generating output gifs <plot_progress>`
 
-:doc:`Helper functions <helpers>`
+:doc:`Helper functions <helpers_sudoku>`
 
 Notes
 ~~~~~
@@ -61,7 +61,7 @@ import sudoku_net
 import numpy as np
 import logging
 import pickle
-from helpers import get_puzzle, validate_solution, plot_field
+from helpers_sudoku import get_puzzle, validate_solution, plot_field
 import matplotlib.pyplot as plt
 
 nest.SetKernelStatus({'local_num_threads': 8})

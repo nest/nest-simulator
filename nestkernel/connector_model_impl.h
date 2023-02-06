@@ -30,6 +30,7 @@
 
 // Includes from libnestutil:
 #include "compose.hpp"
+#include "enum_bitfield.h"
 
 // Includes from nestkernel:
 #include "connector_base.h"
@@ -42,8 +43,7 @@
 namespace nest
 {
 
-// standard implementation to obtain the default delay, assuming that it
-// is located in GenericConnectorModel::default_connection
+// standard implementation to obtain the default delay
 // synapse types with homogeneous delays must provide a specialization
 // that returns the default delay from CommonProperties (or from elsewhere)
 // template<typename ConnectionT>
@@ -65,6 +65,13 @@ GenericConnectorModel< ConnectionT >::clone( std::string name, synindex syn_id )
 {
   ConnectorModel* new_cm = new GenericConnectorModel( *this, name ); // calls copy construtor
   new_cm->set_syn_id( syn_id );
+
+  const bool is_primary = new_cm->has_property( ConnectionModelProperties::IS_PRIMARY );
+  if ( not is_primary )
+  {
+    new_cm->get_secondary_event()->add_syn_id( syn_id );
+  }
+
   return new_cm;
 }
 
@@ -96,8 +103,8 @@ GenericConnectorModel< ConnectionT >::get_status( dictionary& d ) const
   d[ names::receptor_type ] = receptor_type_;
   d[ names::synapse_model ] = name_;
   d[ names::synapse_modelid ] = kernel().model_manager.get_synapse_model_id( name_ );
-  d[ names::requires_symmetric ] = requires_symmetric_;
-  d[ names::has_delay ] = has_delay_;
+  d[ names::requires_symmetric ] = has_property( ConnectionModelProperties::REQUIRES_SYMMETRIC );
+  d[ names::has_delay ] = has_property( ConnectionModelProperties::HAS_DELAY );
 }
 
 template < typename ConnectionT >
@@ -141,7 +148,7 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
   {
     try
     {
-      if ( has_delay_ )
+      if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
       {
         const double d = default_connection_.get_delay();
         kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( d );
@@ -190,7 +197,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 {
   if ( not numerics::is_nan( delay ) )
   {
-    if ( has_delay_ )
+    if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
     {
       kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
     }
@@ -209,7 +216,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 
     if ( p.update_value( names::delay, delay ) )
     {
-      if ( has_delay_ )
+      if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
       {
         kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
       }

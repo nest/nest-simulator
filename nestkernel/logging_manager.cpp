@@ -37,6 +37,10 @@ nest::LoggingManager::LoggingManager()
 {
 }
 
+nest::LoggingManager::~LoggingManager()
+{
+}
+
 void
 nest::LoggingManager::initialize()
 {

@@ -199,8 +199,7 @@ init_nest( int* argc, char** argv[] )
   kernel().model_manager.register_node_model< volume_transmitter >( "volume_transmitter" );
 
   kernel().model_manager.register_connection_model< bernoulli_synapse >( "bernoulli_synapse" );
-  kernel().model_manager.register_connection_model< clopath_synapse >(
-    "clopath_synapse", default_connection_model_flags | RegisterConnectionModelFlags::REQUIRES_CLOPATH_ARCHIVING );
+  kernel().model_manager.register_connection_model< clopath_synapse >( "clopath_synapse" );
   kernel().model_manager.register_connection_model< cont_delay_synapse >( "cont_delay_synapse" );
   kernel().model_manager.register_connection_model< ht_synapse >( "ht_synapse" );
   kernel().model_manager.register_connection_model< jonke_synapse >( "jonke_synapse" );
@@ -219,20 +218,14 @@ init_nest( int* argc, char** argv[] )
   kernel().model_manager.register_connection_model< tsodyks_synapse >( "tsodyks_synapse" );
   kernel().model_manager.register_connection_model< tsodyks_synapse_hom >( "tsodyks_synapse_hom" );
   kernel().model_manager.register_connection_model< tsodyks2_synapse >( "tsodyks2_synapse" );
-  kernel().model_manager.register_connection_model< urbanczik_synapse >(
-    "urbanczik_synapse", default_connection_model_flags | RegisterConnectionModelFlags::REQUIRES_URBANCZIK_ARCHIVING );
+  kernel().model_manager.register_connection_model< urbanczik_synapse >( "urbanczik_synapse" );
   kernel().model_manager.register_connection_model< vogels_sprekeler_synapse >( "vogels_sprekeler_synapse" );
 
   // register secondary connection models
-  kernel().model_manager.register_secondary_connection_model< GapJunction >(
-    "gap_junction", RegisterConnectionModelFlags::REQUIRES_SYMMETRIC | RegisterConnectionModelFlags::SUPPORTS_WFR );
-  kernel().model_manager.register_secondary_connection_model< RateConnectionInstantaneous >(
-    "rate_connection_instantaneous", RegisterConnectionModelFlags::SUPPORTS_WFR );
-  kernel().model_manager.register_secondary_connection_model< RateConnectionDelayed >(
-    "rate_connection_delayed", RegisterConnectionModelFlags::HAS_DELAY );
-  kernel().model_manager.register_secondary_connection_model< DiffusionConnection >(
-    "diffusion_connection", RegisterConnectionModelFlags::SUPPORTS_WFR );
-
+  kernel().model_manager.register_connection_model< GapJunction >( "gap_junction" );
+  kernel().model_manager.register_connection_model< RateConnectionInstantaneous >( "rate_connection_instantaneous" );
+  kernel().model_manager.register_connection_model< RateConnectionDelayed >( "rate_connection_delayed" );
+  kernel().model_manager.register_connection_model< DiffusionConnection >( "diffusion_connection" );
 
   // Add connection rules
   kernel().connection_manager.register_conn_builder< OneToOneBuilder >( "one_to_one" );

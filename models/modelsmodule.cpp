@@ -308,8 +308,7 @@ ModelsModule::init( SLIInterpreter* )
 
   // register all synapse models
   register_connection_model< bernoulli_synapse >( "bernoulli_synapse" );
-  register_connection_model< clopath_synapse >(
-    "clopath_synapse", default_connection_model_flags | RegisterConnectionModelFlags::REQUIRES_CLOPATH_ARCHIVING );
+  register_connection_model< clopath_synapse >( "clopath_synapse" );
   register_connection_model< cont_delay_synapse >( "cont_delay_synapse" );
   register_connection_model< ht_synapse >( "ht_synapse" );
   register_connection_model< jonke_synapse >( "jonke_synapse" );
@@ -328,19 +327,14 @@ ModelsModule::init( SLIInterpreter* )
   register_connection_model< tsodyks_synapse >( "tsodyks_synapse" );
   register_connection_model< tsodyks_synapse_hom >( "tsodyks_synapse_hom" );
   register_connection_model< tsodyks2_synapse >( "tsodyks2_synapse" );
-  register_connection_model< urbanczik_synapse >(
-    "urbanczik_synapse", default_connection_model_flags | RegisterConnectionModelFlags::REQUIRES_URBANCZIK_ARCHIVING );
+  register_connection_model< urbanczik_synapse >( "urbanczik_synapse" );
   register_connection_model< vogels_sprekeler_synapse >( "vogels_sprekeler_synapse" );
 
   // register secondary connection models
-  register_secondary_connection_model< GapJunction >(
-    "gap_junction", RegisterConnectionModelFlags::REQUIRES_SYMMETRIC | RegisterConnectionModelFlags::SUPPORTS_WFR );
-  register_secondary_connection_model< RateConnectionInstantaneous >(
-    "rate_connection_instantaneous", RegisterConnectionModelFlags::SUPPORTS_WFR );
-  register_secondary_connection_model< RateConnectionDelayed >(
-    "rate_connection_delayed", RegisterConnectionModelFlags::HAS_DELAY );
-  register_secondary_connection_model< DiffusionConnection >(
-    "diffusion_connection", RegisterConnectionModelFlags::SUPPORTS_WFR );
+  register_connection_model< GapJunction >( "gap_junction" );
+  register_connection_model< RateConnectionInstantaneous >( "rate_connection_instantaneous" );
+  register_connection_model< RateConnectionDelayed >( "rate_connection_delayed" );
+  register_connection_model< DiffusionConnection >( "diffusion_connection" );
 }
 
 } // namespace nest

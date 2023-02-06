@@ -114,6 +114,10 @@ public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
@@ -212,6 +216,8 @@ private:
   double t_lastspike_;
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties stdp_synapse< targetidentifierT >::properties;
 
 /**
  * Send an event to the receiver of this connection.
@@ -300,6 +306,7 @@ stdp_synapse< targetidentifierT >::get_status( dictionary& d ) const
   d[ names::mu_plus ] = mu_plus_;
   d[ names::mu_minus ] = mu_minus_;
   d[ names::Wmax ] = Wmax_;
+  d[ names::Kplus ] = Kplus_;
   d[ names::size_of ] = sizeof( *this );
 }
 
@@ -315,11 +322,17 @@ stdp_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorMod
   d.update_value( names::mu_plus, mu_plus_ );
   d.update_value( names::mu_minus, mu_minus_ );
   d.update_value( names::Wmax, Wmax_ );
+  d.update_value( names::Kplus, Kplus_ );
 
   // check if weight_ and Wmax_ has the same sign
   if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) )
   {
     throw BadProperty( "Weight and Wmax must have same sign." );
+  }
+
+  if ( Kplus_ < 0 )
+  {
+    throw BadProperty( "Kplus must be non-negative." );
   }
 }
 

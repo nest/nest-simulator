@@ -49,30 +49,31 @@ if ( BUILD_SPHINX_DOCS )
   #    `resolve_includes.py`
   # 6. This assembled Sphinx folder is marked to be installed, together with the logos.
   add_custom_target( sphinxdocs
-  COMMAND [ "${OUT_OF_TREE_BUILD}" = "True" ] && rm -rf "${DOC_BUILD_DIR}" || true
-  COMMAND [ "${OUT_OF_TREE_BUILD}" = "True" ] && cp -r "${DOC_SOURCE_DIR}" "${DOC_BUILD_DIR}" || true
-    COMMAND NESTSRCDIR=${PROJECT_SOURCE_DIR} ${SPHINX_EXECUTABLE} -b html
-    "${DOC_BUILD_DIR}"
-    "${DOC_BUILD_DIR}/html"
-  COMMAND cp "${DOC_BUILD_DIR}/models/*.rst" "${DOC_BUILD_DIR}/html/models"
+    COMMAND [ "${OUT_OF_TREE_BUILD}" = "True" ] && rm -rf "${DOC_BUILD_DIR}" || true
+    COMMAND [ "${OUT_OF_TREE_BUILD}" = "True" ] && cp -r "${DOC_SOURCE_DIR}" "${DOC_BUILD_DIR}" || true
+      COMMAND NESTSRCDIR=${PROJECT_SOURCE_DIR} ${SPHINX_EXECUTABLE} -b html
+      "${DOC_BUILD_DIR}"
+      "${DOC_BUILD_DIR}/html"
+    COMMAND cp "${DOC_BUILD_DIR}/models/*.rst" "${DOC_BUILD_DIR}/html/models"
     COMMAND ${Python_EXECUTABLE} "${DOC_BUILD_DIR}/resolve_includes.py" "${DOC_BUILD_DIR}/html/models"
-)
+  )
+  
   add_dependencies( docs sphinxdocs )
+  
+  install( DIRECTORY "${DOC_BUILD_DIR}/html"
+    DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}"
+    OPTIONAL
+  )
 
-install( DIRECTORY "${DOC_BUILD_DIR}/html"
-  DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}"
-  OPTIONAL
-)
-
-install( DIRECTORY logos
+  install( DIRECTORY logos
     DESTINATION ${CMAKE_INSTALL_DOCDIR}
-    )
+  )
 endif ()
 
 if ( BUILD_DOXYGEN_DOCS )
   add_custom_target( doxygendocs
-      COMMAND ${DOXYGEN_EXECUTABLE} "${CMAKE_CURRENT_BINARY_DIR}/fulldoc.conf"
-      WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
-      )
+    COMMAND ${DOXYGEN_EXECUTABLE} "${CMAKE_CURRENT_BINARY_DIR}/fulldoc.conf"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+  )
   add_dependencies( docs doxygendocs )
 endif ()

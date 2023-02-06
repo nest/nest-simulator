@@ -386,7 +386,7 @@ NodeManager::get_nodes( const dictionary& params, const bool local_only )
   std::sort( nodes.begin(), nodes.end() ); // ensure nodes are sorted prior to creating the NodeCollection
   NodeCollectionPTR nodecollection = NodeCollection::create( nodes );
 
-  return std::move( nodecollection );
+  return nodecollection;
 }
 
 bool

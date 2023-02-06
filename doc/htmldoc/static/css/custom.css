@@ -76,6 +76,7 @@ section#kernel-attributes dl.py.class dd dl.py.attribute dd dl.field-list.simple
   display: none;
 }
 
+
 /**************************************************************************************
  Settings for overriding material design theme 
  Setting nest colors to override sphinx material "orange" and other default colors
@@ -102,6 +103,21 @@ section#kernel-attributes dl.py.class dd dl.py.attribute dd dl.field-list.simple
 [data-md-color-primary=orange] .md-tabs {
   background-color: var(--nest-orange);
  }
+
+/* To add matching styling for the header in index.html */
+div[role="main"] .md-header {
+  background-color: var(--nest-orange);
+  scale: 140%;
+  padding-top: 0.3rem;
+  height: 2.6rem;
+	transition: background-color .25s,color .25s,box-shadow .25s;
+	box-shadow: 0 0 .2rem rgba(0,0,0,.1),0 .2rem .4rem rgba(0,0,0,.2);
+}
+
+div[role="main"] .md-source {
+    display: none;
+}
+
 
 [data-md-color-primary="orange"] .md-header, [data-md-color-primary="orange"] .md-hero {
   background-color: var(--nest-orange);

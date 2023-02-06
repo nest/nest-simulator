@@ -84,7 +84,9 @@ public:
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
-  typedef GapJunctionEvent EventType;
+
+  static constexpr ConnectionModelProperties properties =
+    ConnectionModelProperties::REQUIRES_SYMMETRIC | ConnectionModelProperties::SUPPORTS_WFR;
 
   /**
    * Default Constructor.
@@ -95,6 +97,8 @@ public:
     , weight_( 1.0 )
   {
   }
+
+  SecondaryEvent* get_secondary_event();
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -107,7 +111,7 @@ public:
   void
   check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
-    EventType ge;
+    GapJunctionEvent ge;
 
     s.sends_secondary_event( ge );
     ge.set_sender( s );
@@ -150,6 +154,9 @@ private:
 };
 
 template < typename targetidentifierT >
+constexpr ConnectionModelProperties GapJunction< targetidentifierT >::properties;
+
+template < typename targetidentifierT >
 void
 GapJunction< targetidentifierT >::get_status( dictionary& d ) const
 {
@@ -159,6 +166,13 @@ GapJunction< targetidentifierT >::get_status( dictionary& d ) const
   ConnectionBase::get_status( d );
   d[ names::weight ] = weight_;
   d[ names::size_of ] = sizeof( *this );
+}
+
+template < typename targetidentifierT >
+SecondaryEvent*
+GapJunction< targetidentifierT >::get_secondary_event()
+{
+  return new GapJunctionEvent();
 }
 
 template < typename targetidentifierT >

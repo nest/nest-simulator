@@ -108,8 +108,6 @@ Developer guides
 
        * :ref:`Developing NEST with IDEs <nest_ides>`
 
-       * :ref:`vim_sli`
-
 .. toctree::
    :maxdepth: 1
    :hidden: 
@@ -120,7 +118,6 @@ Developer guides
    workflows/documentation_workflow/*
    guidelines/*
    guidelines/styleguide/styleguide
-   guidelines/styleguide/vim_support_sli
    templates/*
    sli_docs/index
    *

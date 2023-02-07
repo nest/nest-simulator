@@ -42,6 +42,7 @@
 
 namespace nest
 {
+
 class ModelManager : public ManagerInterface
 {
 public:
@@ -132,12 +133,7 @@ public:
    * @param name The name under which the ConnectorModel will be registered.
    */
   template < template < typename targetidentifierT > class ConnectionT >
-  void register_connection_model( const std::string& name,
-    const RegisterConnectionModelFlags flags = default_connection_model_flags );
-
-  template < template < typename targetidentifierT > class ConnectionT >
-  void register_secondary_connection_model( const std::string& name,
-    const RegisterConnectionModelFlags flags = default_secondary_connection_model_flags );
+  void register_connection_model( const std::string& name );
 
   /**
    * @return The model ID for a Model with a given name
@@ -157,21 +153,6 @@ public:
   index get_synapse_model_id( std::string model_name );
 
   DictionaryDatum get_connector_defaults( synindex syn_id ) const;
-
-  /**
-   * Checks, whether synapse type requires symmetric connections
-   */
-  bool connector_requires_symmetric( const synindex syn_id ) const;
-
-  /**
-   * Checks, whether synapse type requires Clopath archiving
-   */
-  bool connector_requires_clopath_archiving( const synindex syn_id ) const;
-
-  /**
-   * Checks, whether synapse type requires Urbanczik archiving
-   */
-  bool connector_requires_urbanczik_archiving( const synindex syn_id ) const;
 
   void set_connector_defaults( synindex syn_id, const DictionaryDatum& d );
 
@@ -328,7 +309,7 @@ inline SecondaryEvent&
 ModelManager::get_secondary_event_prototype( const synindex syn_id, const thread tid )
 {
   assert_valid_syn_id( syn_id );
-  return *get_connection_model( syn_id, tid ).get_event();
+  return *get_connection_model( syn_id, tid ).get_secondary_event();
 }
 
 } // namespace nest

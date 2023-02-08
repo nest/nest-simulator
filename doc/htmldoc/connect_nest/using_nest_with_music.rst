@@ -71,11 +71,9 @@ continuing.
 
    import nest
 
-   if not nest.ll_api.sli_func("statusdict/have_music ::"):
-       import sys
-
+   if not nest.build_info["have_music"]:
        print("NEST was not compiled with support for MUSIC, not running.")
-       sys.exit()
+       exit()
 
    nest.set_verbosity(nest.verbosity.M_ERROR)
 
@@ -125,11 +123,9 @@ script, but without the spike generator.
 
   import nest
 
-  if not nest.ll_api.sli_func("statusdict/have_music ::"):
-      import sys
-
+  if not nest.build_info["have_music"]:
       print("NEST was not compiled with support for MUSIC, not running.")
-      sys.exit()
+      exit()
 
   nest.set_verbosity(nest.verbosity.M_ERROR)
 

@@ -578,7 +578,7 @@ public:
   }
 
   /**
-   * @returns the value of the sum.
+   * @returns the value of the sum._
    */
   double
   value( RngPtr rng, Node* node ) override

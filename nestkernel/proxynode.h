@@ -77,7 +77,7 @@ public:
   using Node::handle;
   using Node::sends_signal;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  port send_test_event( NodeInterface&, rport, synindex, bool ) override;
 
   void sends_secondary_event( GapJunctionEvent& ) override;
 

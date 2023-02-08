@@ -145,7 +145,7 @@ public:
    */
   DictionaryDatum get_status();
 
-  virtual port send_test_event( Node&, rport, synindex, bool ) = 0;
+  virtual port send_test_event( NodeInterface&, rport, synindex, bool ) = 0;
 
   virtual void sends_secondary_event( GapJunctionEvent& ge ) = 0;
   virtual void sends_secondary_event( InstantaneousRateConnectionEvent& re ) = 0;

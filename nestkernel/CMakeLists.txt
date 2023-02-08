@@ -52,6 +52,7 @@ set ( nestkernel_sources
       modelrange.h modelrange.cpp
       modelrange_manager.h modelrange_manager.cpp
       node.h node.cpp
+      node_interface.h node_interface.cpp
       parameter.h parameter.cpp
       per_thread_bool_indicator.h per_thread_bool_indicator.cpp
       proxynode.h proxynode.cpp

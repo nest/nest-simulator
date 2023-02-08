@@ -292,7 +292,7 @@ nest::ConnBuilder::disconnect()
 
 void
 nest::ConnBuilder::update_param_dict_( index snode_id,
-  Node& target,
+  index target,
   thread target_thread,
   RngPtr rng,
   index synapse_indx )
@@ -306,34 +306,34 @@ nest::ConnBuilder::update_param_dict_( index snode_id,
       // change value of dictionary entry without allocating new datum
       IntegerDatum* id = static_cast< IntegerDatum* >(
         ( ( *param_dicts_[ synapse_indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
-      ( *id ) = synapse_parameter.second->value_int( target_thread, rng, snode_id, &target );
+      ( *id ) = synapse_parameter.second->value_int( target_thread, rng, snode_id, target );
     }
     else
     {
       // change value of dictionary entry without allocating new datum
       DoubleDatum* dd = static_cast< DoubleDatum* >(
         ( ( *param_dicts_[ synapse_indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
-      ( *dd ) = synapse_parameter.second->value_double( target_thread, rng, snode_id, &target );
+      ( *dd ) = synapse_parameter.second->value_double( target_thread, rng, snode_id, target );
     }
   }
 }
 
 void
-nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_thread, RngPtr rng )
+nest::ConnBuilder::single_connect_( index snode_id, index target_id, thread target_thread, RngPtr rng )
 {
-  if ( this->requires_proxies() and not target.has_proxies() )
+  if ( this->requires_proxies() and not kernel().node_manager.has_proxy( target_id ) )
   {
     throw IllegalConnection( "Cannot use this rule to connect to nodes without proxies (usually devices)." );
   }
 
   for ( size_t synapse_indx = 0; synapse_indx < synapse_params_.size(); ++synapse_indx )
   {
-    update_param_dict_( snode_id, target, target_thread, rng, synapse_indx );
+    update_param_dict_( snode_id, target_id, target_thread, rng, synapse_indx );
 
     if ( default_weight_and_delay_[ synapse_indx ] )
     {
       kernel().connection_manager.connect( snode_id,
-        &target,
+        target_id,
         target_thread,
         synapse_model_id_[ synapse_indx ],
         param_dicts_[ synapse_indx ][ target_thread ] );
@@ -341,28 +341,28 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
     else if ( default_weight_[ synapse_indx ] )
     {
       kernel().connection_manager.connect( snode_id,
-        &target,
+        target_id,
         target_thread,
         synapse_model_id_[ synapse_indx ],
         param_dicts_[ synapse_indx ][ target_thread ],
-        delays_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target ) );
+        delays_[ synapse_indx ]->value_double( target_thread, rng, snode_id, target_id ) );
     }
     else if ( default_delay_[ synapse_indx ] )
     {
       kernel().connection_manager.connect( snode_id,
-        &target,
+        target_id,
         target_thread,
         synapse_model_id_[ synapse_indx ],
         param_dicts_[ synapse_indx ][ target_thread ],
         numerics::nan,
-        weights_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target ) );
+        weights_[ synapse_indx ]->value_double( target_thread, rng, snode_id, target_id ) );
     }
     else
     {
-      const double delay = delays_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target );
-      const double weight = weights_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target );
+      const double delay = delays_[ synapse_indx ]->value_double( target_thread, rng, snode_id, target_id );
+      const double weight = weights_[ synapse_indx ]->value_double( target_thread, rng, snode_id, target_id );
       kernel().connection_manager.connect( snode_id,
-        &target,
+        target_id,
         target_thread,
         synapse_model_id_[ synapse_indx ],
         param_dicts_[ synapse_indx ][ target_thread ],
@@ -644,7 +644,7 @@ nest::OneToOneBuilder::connect_()
             continue;
           }
 
-          single_connect_( snode_id, *target, tid, rng );
+          single_connect_( snode_id, tnode_id, tid, rng );
         }
       }
       else
@@ -670,7 +670,7 @@ nest::OneToOneBuilder::connect_()
             // as we iterate only over local nodes
             continue;
           }
-          single_connect_( snode_id, *target, tid, rng );
+          single_connect_( snode_id, tnode_id, tid, rng );
         }
       }
     }
@@ -777,7 +777,7 @@ nest::OneToOneBuilder::sp_connect_()
         Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
         const thread target_thread = target->get_thread();
 
-        single_connect_( snode_id, *target, target_thread, rng );
+        single_connect_( snode_id, tnode_id, target_thread, rng );
       }
     }
     catch ( std::exception& err )
@@ -920,7 +920,7 @@ nest::AllToAllBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, 
       continue;
     }
 
-    single_connect_( snode_id, *target, target_thread, rng );
+    single_connect_( snode_id, tnode_id, target_thread, rng );
   }
 }
 
@@ -963,7 +963,7 @@ nest::AllToAllBuilder::sp_connect_()
           }
           Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
           const thread target_thread = target->get_thread();
-          single_connect_( snode_id, *target, target_thread, rng );
+          single_connect_( snode_id, tnode_id, target_thread, rng );
         }
       }
     }
@@ -1153,7 +1153,7 @@ nest::FixedInDegreeBuilder::connect_()
           const index tnode_id = ( *target_it ).node_id;
           Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
 
-          const long indegree_value = std::round( indegree_->value( rng, target ) );
+          const long indegree_value = std::round( indegree_->value( rng, tnode_id ) );
           if ( target->is_proxy() )
           {
             // skip array parameters handled in other virtual processes
@@ -1178,7 +1178,7 @@ nest::FixedInDegreeBuilder::connect_()
             continue;
           }
           auto source = n->get_node();
-          const long indegree_value = std::round( indegree_->value( rng, source ) );
+          const long indegree_value = std::round( indegree_->value( rng, n->get_node_id() ) );
 
           inner_connect_( tid, rng, source, tnode_id, false, indegree_value );
         }
@@ -1237,7 +1237,7 @@ nest::FixedInDegreeBuilder::inner_connect_( const int tid,
       ch_ids.insert( s_id );
     }
 
-    single_connect_( snode_id, *target, target_thread, rng );
+    single_connect_( snode_id, tnode_id, target_thread, rng );
   }
 }
 
@@ -1313,8 +1313,7 @@ nest::FixedOutDegreeBuilder::connect_()
     std::vector< index > tgt_ids_;
     const long n_rnd = targets_->size();
 
-    Node* source_node = kernel().node_manager.get_node_or_proxy( snode_id );
-    const long outdegree_value = std::round( outdegree_->value( grng, source_node ) );
+    const long outdegree_value = std::round( outdegree_->value( grng, snode_id ) );
     for ( long j = 0; j < outdegree_value; ++j )
     {
       unsigned long t_id;
@@ -1358,7 +1357,7 @@ nest::FixedOutDegreeBuilder::connect_()
             continue;
           }
 
-          single_connect_( snode_id, *target, tid, rng );
+          single_connect_( snode_id, *tnode_id_it, tid, rng );
         }
       }
       catch ( std::exception& err )
@@ -1525,7 +1524,7 @@ nest::FixedTotalNumberBuilder::connect_()
 
           if ( allow_autapses_ or snode_id != tnode_id )
           {
-            single_connect_( snode_id, *target, target_thread, rng );
+            single_connect_( snode_id, tnode_id, target_thread, rng );
             num_conns_on_vp[ vp_id ]--;
           }
         }
@@ -1646,12 +1645,12 @@ nest::BernoulliBuilder::inner_connect_( const int tid, RngPtr rng, Node* target,
     {
       continue;
     }
-    if ( rng->drand() >= p_->value( rng, target ) )
+    if ( rng->drand() >= p_->value( rng, tnode_id ) )
     {
       continue;
     }
 
-    single_connect_( snode_id, *target, target_thread, rng );
+    single_connect_( snode_id, tnode_id, target_thread, rng );
   }
 }
 
@@ -1759,14 +1758,14 @@ nest::SymmetricBernoulliBuilder::connect_()
           if ( target_thread == tid )
           {
             assert( target );
-            single_connect_( snode_id, *target, target_thread, synced_rng );
+            single_connect_( snode_id, ( *tnode_id ).node_id, target_thread, synced_rng );
           }
 
           // if source is local: connect
           if ( source_thread == tid )
           {
             assert( source );
-            single_connect_( ( *tnode_id ).node_id, *source, source_thread, synced_rng );
+            single_connect_( ( *tnode_id ).node_id, snode_id, source_thread, synced_rng );
           }
 
           ++i;
@@ -1883,7 +1882,7 @@ nest::SPBuilder::connect_( const std::vector< index >& sources, const std::vecto
         }
         Node* const target = kernel().node_manager.get_node_or_proxy( *tnode_id_it, tid );
 
-        single_connect_( *snode_id_it, *target, tid, rng );
+        single_connect_( *snode_id_it, *tnode_id_it, tid, rng );
       }
     }
     catch ( std::exception& err )

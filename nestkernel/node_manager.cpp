@@ -89,6 +89,14 @@ NodeManager::change_number_of_threads()
   initialize();
 }
 
+bool
+NodeManager::has_proxy( index node_id )
+{
+  const index model_id = kernel().modelrange_manager.get_model_id( node_id );
+  Model* model = kernel().model_manager.get_node_model( model_id );
+  return model->has_proxies();
+}
+
 DictionaryDatum
 NodeManager::get_status( index idx )
 {

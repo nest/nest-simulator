@@ -122,7 +122,7 @@ public:
    * valid.
    *
    * \param snode_id node ID of the sending Node.
-   * \param target Pointer to target Node.
+   * \param target_id node ID of the target Node.
    * \param target_thread Thread that hosts the target node.
    * \param syn_id The synapse model to use.
    * \param params Parameter dictionary to configure the synapse.
@@ -130,7 +130,7 @@ public:
    * \param weight Weight of the connection.
    */
   void connect( const index snode_id,
-    Node* target,
+    index target_id,
     thread target_thread,
     const synindex syn_id,
     const DictionaryDatum& params,
@@ -472,7 +472,6 @@ private:
    */
   void connect_( Node& source,
     Node& target,
-    const index s_node_id,
     const thread tid,
     const synindex syn_id,
     const DictionaryDatum& params,
@@ -499,7 +498,6 @@ private:
    */
   void connect_to_device_( Node& source,
     Node& target,
-    const index s_node_id,
     const thread tid,
     const synindex syn_id,
     const DictionaryDatum& params,

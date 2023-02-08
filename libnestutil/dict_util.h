@@ -56,7 +56,7 @@ updateValueParam( DictionaryDatum const& d, Name const n, VT& value, nest::Node*
     auto vp = kernel().vp_manager.node_id_to_vp( node->get_node_id() );
     auto tid = kernel().vp_manager.vp_to_thread( vp );
     auto rng = get_vp_specific_rng( tid );
-    value = pd->get()->value( rng, node );
+    value = pd->get()->value( rng, node->get_node_id() );
     return true;
   }
   else

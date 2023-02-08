@@ -452,7 +452,7 @@ nest::ConnectionManager::connect( TokenArray sources, TokenArray targets, const 
     {
       auto target_node = kernel().node_manager.get_node_or_proxy( target );
       auto target_thread = target_node->get_thread();
-      connect_( *source_node, *target_node, source, target_thread, syn_id, syn_spec );
+      connect_( *source_node, *target_node, target_thread, syn_id, syn_spec );
     }
   }
 }
@@ -493,7 +493,7 @@ nest::ConnectionManager::update_delay_extrema_()
 // node ID node thread syn_id dict delay weight
 void
 nest::ConnectionManager::connect( const index snode_id,
-  Node* target,
+  index target_id,
   thread target_thread,
   const synindex syn_id,
   const DictionaryDatum& params,
@@ -504,18 +504,20 @@ nest::ConnectionManager::connect( const index snode_id,
 
   Node* source = kernel().node_manager.get_node_or_proxy( snode_id, target_thread );
 
+  Node* target = kernel().node_manager.get_node_or_proxy( target_id, target_thread );
+
   ConnectionType connection_type = connection_required( source, target, target_thread );
 
   switch ( connection_type )
   {
   case CONNECT:
-    connect_( *source, *target, snode_id, target_thread, syn_id, params, delay, weight );
+    connect_( *source, *target, target_thread, syn_id, params, delay, weight );
     break;
   case CONNECT_FROM_DEVICE:
     connect_from_device_( *source, *target, target_thread, syn_id, params, delay, weight );
     break;
   case CONNECT_TO_DEVICE:
-    connect_to_device_( *source, *target, snode_id, target_thread, syn_id, params, delay, weight );
+    connect_to_device_( *source, *target, target_thread, syn_id, params, delay, weight );
     break;
   case NO_CONNECTION:
     return;
@@ -548,13 +550,13 @@ nest::ConnectionManager::connect( const index snode_id,
   switch ( connection_type )
   {
   case CONNECT:
-    connect_( *source, *target, snode_id, target_thread, syn_id, params );
+    connect_( *source, *target, target_thread, syn_id, params );
     break;
   case CONNECT_FROM_DEVICE:
     connect_from_device_( *source, *target, target_thread, syn_id, params );
     break;
   case CONNECT_TO_DEVICE:
-    connect_to_device_( *source, *target, snode_id, target_thread, syn_id, params );
+    connect_to_device_( *source, *target, target_thread, syn_id, params );
     break;
   case NO_CONNECTION:
     connected = false;
@@ -714,7 +716,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
           }
         }
 
-        connect( *s, target_node, tid, synapse_model_id, param_dicts[ tid ], delay_buffer, weight_buffer );
+        connect( *s, *t, tid, synapse_model_id, param_dicts[ tid ], delay_buffer, weight_buffer );
 
         ALL_ENTRIES_ACCESSED( *param_dicts[ tid ], "connect_arrays", "Unread dictionary entries: " );
 
@@ -742,7 +744,6 @@ nest::ConnectionManager::connect_arrays( long* sources,
 void
 nest::ConnectionManager::connect_( Node& source,
   Node& target,
-  const index s_node_id,
   const thread tid,
   const synindex syn_id,
   const DictionaryDatum& params,
@@ -765,7 +766,7 @@ nest::ConnectionManager::connect_( Node& source,
 
   const bool is_primary = conn_model.has_property( ConnectionModelProperties::IS_PRIMARY );
   conn_model.add_connection( source, target, connections_[ tid ], syn_id, params, delay, weight );
-  source_table_.add_source( tid, syn_id, s_node_id, is_primary );
+  source_table_.add_source( tid, syn_id, source.get_node_id(), is_primary );
 
   increase_connection_count( tid, syn_id );
 
@@ -788,7 +789,6 @@ nest::ConnectionManager::connect_( Node& source,
 void
 nest::ConnectionManager::connect_to_device_( Node& source,
   Node& target,
-  const index s_node_id,
   const thread tid,
   const synindex syn_id,
   const DictionaryDatum& params,
@@ -796,7 +796,7 @@ nest::ConnectionManager::connect_to_device_( Node& source,
   const double weight )
 {
   // create entries in connection structure for connections to devices
-  target_table_devices_.add_connection_to_device( source, target, s_node_id, tid, syn_id, params, delay, weight );
+  target_table_devices_.add_connection_to_device( source, target, tid, syn_id, params, delay, weight );
 
   increase_connection_count( tid, syn_id );
 }

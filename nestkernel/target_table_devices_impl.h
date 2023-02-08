@@ -34,14 +34,13 @@
 inline void
 nest::TargetTableDevices::add_connection_to_device( Node& source,
   Node& target,
-  const index source_node_id,
   const thread tid,
   const synindex syn_id,
   const DictionaryDatum& p,
   const double d,
   const double w )
 {
-  const index lid = kernel().vp_manager.node_id_to_lid( source_node_id );
+  const index lid = kernel().vp_manager.node_id_to_lid( source.get_node_id() );
   assert( lid < target_to_devices_[ tid ].size() );
   assert( syn_id < target_to_devices_[ tid ][ lid ].size() );
 

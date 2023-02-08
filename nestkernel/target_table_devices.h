@@ -82,7 +82,6 @@ public:
    */
   void add_connection_to_device( Node& source,
     Node& target,
-    const index s_node_id,
     const thread tid,
     const synindex syn_id,
     const DictionaryDatum& p,

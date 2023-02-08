@@ -136,9 +136,9 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
-  using Node::handle;
-  using Node::handles_test_event;
-  using Node::sends_signal;
+  using NodeInterface::handle;
+  using NodeInterface::handles_test_event;
+  using NodeInterface::sends_signal;
   port send_test_event( NodeInterface&, rport, synindex, bool );
 
   void handle( DataLoggingReply& );
@@ -180,7 +180,8 @@ private:
     NodeCollectionPTR targets_;       //!< nodes to be observed
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum&, const Node&, const State_&, const Buffers_& ); //!< Set values from dictionary
+    void
+    set( const DictionaryDatum&, const NodeInterface&, const State_&, const Buffers_& ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------

@@ -53,7 +53,7 @@ namespace nest
 {
 class GenericConnBuilderFactory;
 class spikecounter;
-class Node;
+class NodeInterface;
 class Event;
 class SecondaryEvent;
 class DelayChecker;
@@ -121,8 +121,8 @@ public:
    * numerics::nan indicates this and weight/delay are set only, if they are
    * valid.
    *
-   * \param snode_id node ID of the sending Node.
-   * \param target Pointer to target Node.
+   * \param snode_id node ID of the sending NodeInterface.
+   * \param target Pointer to target NodeInterface.
    * \param target_thread Thread that hosts the target node.
    * \param syn_id The synapse model to use.
    * \param params Parameter dictionary to configure the synapse.
@@ -130,7 +130,7 @@ public:
    * \param weight Weight of the connection.
    */
   void connect( const index snode_id,
-    Node* target,
+    NodeInterface* target,
     thread target_thread,
     const synindex syn_id,
     const DictionaryDatum& params,
@@ -142,8 +142,8 @@ public:
    * global ID. The connection is established on the thread/process that owns
    * the target node.
    *
-   * \param snode_id node ID of the sending Node.
-   * \param target node ID of the target Node.
+   * \param snode_id node ID of the sending NodeInterface.
+   * \param target node ID of the target NodeInterface.
    * \param params Parameter dictionary to configure the synapse.
    * \param syn_id The synapse model to use.
    */
@@ -169,7 +169,7 @@ public:
    * \returns The type of connection as ConnectionType if the connection should
    * be made, ConnectionType::NO_CONNECTION otherwise.
    */
-  ConnectionType connection_required( Node*& source, Node*& target, thread tid );
+  ConnectionType connection_required( NodeInterface*& source, NodeInterface*& target, thread tid );
 
   // aka conndatum GetStatus
   DictionaryDatum get_synapse_status( const index source_node_id,
@@ -270,7 +270,7 @@ public:
   /**
    * Send event e to all targets of node source on thread t
    */
-  void send_local( thread t, Node& source, Event& e );
+  void send_local( thread t, NodeInterface& source, Event& e );
 
   /**
    * Resize the structures for the Connector objects if necessary.
@@ -461,17 +461,17 @@ private:
    * numerics::nan indicates this and weight/delay are set only, if they are
    * valid.
    *
-   * \param source A reference to the sending Node.
-   * \param target A reference to the receiving Node.
-   * \param s_node_id The node ID of the sending Node.
+   * \param source A reference to the sending NodeInterface.
+   * \param target A reference to the receiving NodeInterface.
+   * \param s_node_id The node ID of the sending NodeInterface.
    * \param tid The thread of the target node.
    * \param syn_id The synapse model to use.
    * \param params The parameters for the connection.
    * \param delay The delay of the connection (optional).
    * \param weight The weight of the connection (optional).
    */
-  void connect_( Node& source,
-    Node& target,
+  void connect_( NodeInterface& source,
+    NodeInterface& target,
     const index s_node_id,
     const thread tid,
     const synindex syn_id,
@@ -488,17 +488,17 @@ private:
    * are not a number. If delay or weight is omitted in an connect call,
    * NAN indicates this and weight/delay are set only, if they are valid.
    *
-   * \param source A reference to the sending Node.
-   * \param target A reference to the receiving Node.
-   * \param s_node_id The node ID of the sending Node.
+   * \param source A reference to the sending NodeInterface.
+   * \param target A reference to the receiving NodeInterface.
+   * \param s_node_id The node ID of the sending NodeInterface.
    * \param tid The thread of the target node.
    * \param syn_id The synapse model to use.
    * \param params The parameters for the connection.
    * \param delay The delay of the connection (optional).
    * \param weight The weight of the connection (optional).
    */
-  void connect_to_device_( Node& source,
-    Node& target,
+  void connect_to_device_( NodeInterface& source,
+    NodeInterface& target,
     const index s_node_id,
     const thread tid,
     const synindex syn_id,
@@ -515,17 +515,17 @@ private:
    * are not a number. If delay or weight is omitted in an connect call,
    * NAN indicates this and weight/delay are set only, if they are valid.
    *
-   * \param source A reference to the sending Node.
-   * \param target A reference to the receiving Node.
-   * \param s_node_id The node ID of the sending Node.
+   * \param source A reference to the sending NodeInterface.
+   * \param target A reference to the receiving NodeInterface.
+   * \param s_node_id The node ID of the sending NodeInterface.
    * \param tid The thread of the target node.
    * \param syn_id The synapse model to use.
    * \param params The parameters for the connection.
    * \param delay The delay of the connection (optional).
    * \param weight The weight of the connection (optional).
    */
-  void connect_from_device_( Node& source,
-    Node& target,
+  void connect_from_device_( NodeInterface& source,
+    NodeInterface& target,
     const thread tid,
     const synindex syn_id,
     const DictionaryDatum& params,

@@ -109,7 +109,7 @@ public:
   using ConnectionBase::get_target;
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( NodeInterface& s, NodeInterface& t, rport receptor_type, const CommonPropertiesType& )
   {
     GapJunctionEvent ge;
 

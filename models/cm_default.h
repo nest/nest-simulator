@@ -232,8 +232,8 @@ public:
   cm_default();
   cm_default( const cm_default& );
 
-  using Node::handle;
-  using Node::handles_test_event;
+  using NodeInterface::handle;
+  using NodeInterface::handles_test_event;
 
   port send_test_event( NodeInterface&, rport, synindex, bool ) override;
 

@@ -45,7 +45,7 @@ namespace nest
 class ConnectorBase;
 class CommonSynapseProperties;
 class TimeConverter;
-class Node;
+class NodeInterface;
 
 enum class ConnectionModelProperties : unsigned
 {
@@ -92,8 +92,8 @@ public:
    * omitted, NAN indicates this and weight/delay are set only if they are
    * valid.
    */
-  virtual void add_connection( Node& src,
-    Node& tgt,
+  virtual void add_connection( NodeInterface& src,
+    NodeInterface& tgt,
     std::vector< ConnectorBase* >& hetconn,
     const synindex syn_id,
     const DictionaryDatum& d,
@@ -167,8 +167,8 @@ public:
   {
   }
 
-  void add_connection( Node& src,
-    Node& tgt,
+  void add_connection( NodeInterface& src,
+    NodeInterface& tgt,
     std::vector< ConnectorBase* >& hetconn,
     const synindex syn_id,
     const DictionaryDatum& d,
@@ -211,8 +211,8 @@ public:
 private:
   void used_default_delay();
 
-  void add_connection_( Node& src,
-    Node& tgt,
+  void add_connection_( NodeInterface& src,
+    NodeInterface& tgt,
     std::vector< ConnectorBase* >& hetconn,
     const synindex syn_id,
     ConnectionT& c,

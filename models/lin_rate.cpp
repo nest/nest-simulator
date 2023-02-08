@@ -36,7 +36,7 @@ nonlinearities_lin_rate::get( DictionaryDatum& d ) const
 }
 
 void
-nonlinearities_lin_rate::set( const DictionaryDatum& d, Node* node )
+nonlinearities_lin_rate::set( const DictionaryDatum& d, NodeInterface* node )
 {
   updateValueParam< double >( d, names::g, g_, node );
   updateValueParam< double >( d, names::g_ex, g_ex_, node );

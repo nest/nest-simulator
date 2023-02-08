@@ -61,7 +61,7 @@ MusicRateInHandler::~MusicRateInHandler()
 }
 
 void
-MusicRateInHandler::register_channel( int channel, nest::Node* mp )
+MusicRateInHandler::register_channel( int channel, nest::NodeInterface* mp )
 {
   if ( static_cast< size_t >( channel ) >= channelmap_.size() )
   {

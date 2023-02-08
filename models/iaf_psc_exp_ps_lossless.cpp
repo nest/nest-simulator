@@ -119,7 +119,7 @@ nest::iaf_psc_exp_ps_lossless::Parameters_::get( DictionaryDatum& d ) const
 }
 
 double
-nest::iaf_psc_exp_ps_lossless::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::iaf_psc_exp_ps_lossless::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
@@ -219,7 +219,7 @@ void
 nest::iaf_psc_exp_ps_lossless::State_::set( const DictionaryDatum& d,
   const Parameters_& p,
   double delta_EL,
-  Node* node )
+  NodeInterface* node )
 {
   if ( updateValueParam< double >( d, names::V_m, y2_, node ) )
   {

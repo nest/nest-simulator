@@ -86,7 +86,7 @@ ConnectionGeneratorBuilder::connect_()
     {
       // No need to check for locality of the target, as the mask
       // created by cg_set_masks() only contains local nodes.
-      Node* const target_node = kernel().node_manager.get_node_or_proxy( ( *targets_ )[ target ] );
+      NodeInterface* const target_node = kernel().node_manager.get_node_or_proxy( ( *targets_ )[ target ] );
       const thread target_thread = target_node->get_thread();
       single_connect_( ( *sources_ )[ source ], *target_node, target_thread, rng );
     }
@@ -115,7 +115,7 @@ ConnectionGeneratorBuilder::connect_()
     {
       // No need to check for locality of the target node, as the mask
       // created by cg_set_masks() only contains local nodes.
-      Node* target_node = kernel().node_manager.get_node_or_proxy( ( *targets_ )[ target ] );
+      NodeInterface* target_node = kernel().node_manager.get_node_or_proxy( ( *targets_ )[ target ] );
       const thread target_thread = target_node->get_thread();
 
       update_param_dict_( ( *sources_ )[ source ], *target_node, target_thread, rng, 0 );

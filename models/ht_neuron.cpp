@@ -379,7 +379,7 @@ nest::ht_neuron::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::ht_neuron::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::ht_neuron::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   updateValueParam< double >( d, names::E_Na, E_Na, node );
   updateValueParam< double >( d, names::E_K, E_K, node );
@@ -561,7 +561,7 @@ nest::ht_neuron::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::ht_neuron::State_::set( const DictionaryDatum& d, const ht_neuron& node, Node* nodeptr )
+nest::ht_neuron::State_::set( const DictionaryDatum& d, const ht_neuron& node, NodeInterface* nodeptr )
 {
   updateValueParam< double >( d, names::V_m, y_[ V_M ], nodeptr );
   updateValueParam< double >( d, names::theta, y_[ THETA ], nodeptr );
@@ -642,7 +642,7 @@ nest::ht_neuron::~ht_neuron()
 }
 
 /* ----------------------------------------------------------------
- * Node initialization functions
+ * NodeInterface initialization functions
  * ---------------------------------------------------------------- */
 
 void

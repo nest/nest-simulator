@@ -36,7 +36,7 @@
 
 namespace nest
 {
-class Node;
+class NodeInterface;
 
 /**
  * Sparse representation of local nodes.
@@ -112,14 +112,14 @@ public:
      * @param Node to be represented
      * @param Index of node to be represented
      */
-    NodeEntry( Node&, index );
+    NodeEntry( NodeInterface&, index );
 
-    Node* get_node() const;    //!< return pointer to represented node
-    index get_node_id() const; //!< return ID of represented node
+    NodeInterface* get_node() const; //!< return pointer to represented node
+    index get_node_id() const;       //!< return ID of represented node
 
   private:
-    Node* node_;    //!< @note pointer to allow zero-entries for BlockVector compatibility
-    index node_id_; //!< store node ID locally for faster searching
+    NodeInterface* node_; //!< @note pointer to allow zero-entries for BlockVector compatibility
+    index node_id_;       //!< store node ID locally for faster searching
   };
 
   //! Iterator inherited from BlockVector
@@ -143,7 +143,7 @@ public:
   /**
    * Add single local node.
    */
-  void add_local_node( Node& );
+  void add_local_node( NodeInterface& );
 
   /**
    * Set max node ID to maximum in network.
@@ -168,14 +168,14 @@ public:
    *  The caller is responsible for providing proper
    *  proxy-node pointers for non-local nodes.
    */
-  Node* get_node_by_node_id( index ) const;
+  NodeInterface* get_node_by_node_id( index ) const;
 
   /**
    * Lookup node based on index into container.
    *
    * @note Required for target lookup by HPC synapses.
    */
-  Node* get_node_by_index( size_t ) const;
+  NodeInterface* get_node_by_index( size_t ) const;
 
   /**
    * Constant iterators for safe iteration of SparseNodeArray.
@@ -241,7 +241,7 @@ nest::SparseNodeArray::size() const
   return nodes_.size();
 }
 
-inline nest::Node*
+inline nest::NodeInterface*
 nest::SparseNodeArray::get_node_by_index( size_t idx ) const
 {
   assert( idx < nodes_.size() );
@@ -260,7 +260,7 @@ nest::SparseNodeArray::is_consistent_() const
   return nodes_.size() == 0 or global_max_node_id_ > 0;
 }
 
-inline nest::Node*
+inline nest::NodeInterface*
 nest::SparseNodeArray::NodeEntry::get_node() const
 {
   assert( node_ );

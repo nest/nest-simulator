@@ -163,7 +163,7 @@ nest::ConnBuilder::change_connected_synaptic_elements( index snode_id, index tno
   // check whether the source is on this mpi machine
   if ( kernel().node_manager.is_local_node_id( snode_id ) )
   {
-    Node* const source = kernel().node_manager.get_node_or_proxy( snode_id, tid );
+    NodeInterface* const source = kernel().node_manager.get_node_or_proxy( snode_id, tid );
     const thread source_thread = source->get_thread();
 
     // check whether the source is on our thread
@@ -181,7 +181,7 @@ nest::ConnBuilder::change_connected_synaptic_elements( index snode_id, index tno
   }
   else
   {
-    Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+    NodeInterface* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
     const thread target_thread = target->get_thread();
     // check whether the target is on our thread
     if ( tid != target_thread )
@@ -292,7 +292,7 @@ nest::ConnBuilder::disconnect()
 
 void
 nest::ConnBuilder::update_param_dict_( index snode_id,
-  Node& target,
+  NodeInterface& target,
   thread target_thread,
   RngPtr rng,
   index synapse_indx )
@@ -319,7 +319,7 @@ nest::ConnBuilder::update_param_dict_( index snode_id,
 }
 
 void
-nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_thread, RngPtr rng )
+nest::ConnBuilder::single_connect_( index snode_id, NodeInterface& target, thread target_thread, RngPtr rng )
 {
   if ( this->requires_proxies() and not target.has_proxies() )
   {
@@ -636,7 +636,7 @@ nest::OneToOneBuilder::connect_()
             continue;
           }
 
-          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+          NodeInterface* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
           if ( target->is_proxy() )
           {
             // skip array parameters handled in other virtual processes
@@ -653,7 +653,7 @@ nest::OneToOneBuilder::connect_()
         SparseNodeArray::const_iterator n;
         for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
         {
-          Node* target = n->get_node();
+          NodeInterface* target = n->get_node();
 
           const index tnode_id = n->get_node_id();
           const int idx = targets_->find( tnode_id );
@@ -715,7 +715,7 @@ nest::OneToOneBuilder::disconnect_()
           continue;
         }
 
-        Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+        NodeInterface* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is a proxy
@@ -774,7 +774,7 @@ nest::OneToOneBuilder::sp_connect_()
           skip_conn_parameter_( tid );
           continue;
         }
-        Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+        NodeInterface* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
         const thread target_thread = target->get_thread();
 
         single_connect_( snode_id, *target, target_thread, rng );
@@ -820,7 +820,7 @@ nest::OneToOneBuilder::sp_disconnect_()
           continue;
         }
 
-        Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+        NodeInterface* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
         const thread target_thread = target->get_thread();
 
         single_disconnect_( snode_id, *target, target_thread );
@@ -854,7 +854,7 @@ nest::AllToAllBuilder::connect_()
         for ( ; target_it < targets_->end(); ++target_it )
         {
           const index tnode_id = ( *target_it ).node_id;
-          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+          NodeInterface* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
           if ( target->is_proxy() )
           {
             skip_conn_parameter_( tid, sources_->size() );
@@ -892,7 +892,7 @@ nest::AllToAllBuilder::connect_()
 }
 
 void
-nest::AllToAllBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, index tnode_id, bool skip )
+nest::AllToAllBuilder::inner_connect_( const int tid, RngPtr rng, NodeInterface* target, index tnode_id, bool skip )
 {
   const thread target_thread = target->get_thread();
 
@@ -961,7 +961,7 @@ nest::AllToAllBuilder::sp_connect_()
             skip_conn_parameter_( tid, sources_->size() );
             continue;
           }
-          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+          NodeInterface* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
           const thread target_thread = target->get_thread();
           single_connect_( snode_id, *target, target_thread, rng );
         }
@@ -1004,7 +1004,7 @@ nest::AllToAllBuilder::disconnect_()
           continue;
         }
 
-        Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+        NodeInterface* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is a proxy
@@ -1062,7 +1062,7 @@ nest::AllToAllBuilder::sp_disconnect_()
             // Disconnecting: no parameter skipping required
             continue;
           }
-          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+          NodeInterface* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
           const thread target_thread = target->get_thread();
           single_disconnect_( snode_id, *target, target_thread );
         }
@@ -1151,7 +1151,7 @@ nest::FixedInDegreeBuilder::connect_()
         for ( ; target_it < targets_->end(); ++target_it )
         {
           const index tnode_id = ( *target_it ).node_id;
-          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+          NodeInterface* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
 
           const long indegree_value = std::round( indegree_->value( rng, target ) );
           if ( target->is_proxy() )
@@ -1196,7 +1196,7 @@ nest::FixedInDegreeBuilder::connect_()
 void
 nest::FixedInDegreeBuilder::inner_connect_( const int tid,
   RngPtr rng,
-  Node* target,
+  NodeInterface* target,
   index tnode_id,
   bool skip,
   long indegree_value )
@@ -1313,7 +1313,7 @@ nest::FixedOutDegreeBuilder::connect_()
     std::vector< index > tgt_ids_;
     const long n_rnd = targets_->size();
 
-    Node* source_node = kernel().node_manager.get_node_or_proxy( snode_id );
+    NodeInterface* source_node = kernel().node_manager.get_node_or_proxy( snode_id );
     const long outdegree_value = std::round( outdegree_->value( grng, source_node ) );
     for ( long j = 0; j < outdegree_value; ++j )
     {
@@ -1350,7 +1350,7 @@ nest::FixedOutDegreeBuilder::connect_()
         std::vector< index >::const_iterator tnode_id_it = tgt_ids_.begin();
         for ( ; tnode_id_it != tgt_ids_.end(); ++tnode_id_it )
         {
-          Node* const target = kernel().node_manager.get_node_or_proxy( *tnode_id_it, tid );
+          NodeInterface* const target = kernel().node_manager.get_node_or_proxy( *tnode_id_it, tid );
           if ( target->is_proxy() )
           {
             // skip array parameters handled in other virtual processes
@@ -1520,7 +1520,7 @@ nest::FixedTotalNumberBuilder::connect_()
           // targets_on_vp vector
           const long tnode_id = thread_local_targets[ t_index ];
 
-          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+          NodeInterface* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
           const thread target_thread = target->get_thread();
 
           if ( allow_autapses_ or snode_id != tnode_id )
@@ -1584,7 +1584,7 @@ nest::BernoulliBuilder::connect_()
         for ( ; target_it < targets_->end(); ++target_it )
         {
           const index tnode_id = ( *target_it ).node_id;
-          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+          NodeInterface* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
           if ( target->is_proxy() )
           {
             // skip array parameters handled in other virtual processes
@@ -1624,7 +1624,7 @@ nest::BernoulliBuilder::connect_()
 }
 
 void
-nest::BernoulliBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, index tnode_id )
+nest::BernoulliBuilder::inner_connect_( const int tid, RngPtr rng, NodeInterface* target, index tnode_id )
 {
   const thread target_thread = target->get_thread();
 
@@ -1706,9 +1706,9 @@ nest::SymmetricBernoulliBuilder::connect_()
       unsigned long indegree;
       index snode_id;
       std::set< index > previous_snode_ids;
-      Node* target;
+      NodeInterface* target;
       thread target_thread;
-      Node* source;
+      NodeInterface* source;
       thread source_thread;
 
       for ( NodeCollection::const_iterator tnode_id = targets_->begin(); tnode_id != targets_->end(); ++tnode_id )
@@ -1881,7 +1881,7 @@ nest::SPBuilder::connect_( const std::vector< index >& sources, const std::vecto
           skip_conn_parameter_( tid );
           continue;
         }
-        Node* const target = kernel().node_manager.get_node_or_proxy( *tnode_id_it, tid );
+        NodeInterface* const target = kernel().node_manager.get_node_or_proxy( *tnode_id_it, tid );
 
         single_connect_( *snode_id_it, *target, tid, rng );
       }

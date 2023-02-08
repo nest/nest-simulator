@@ -81,7 +81,7 @@ public:
   /**
    * get reference to registering node
    */
-  Node* get_node();
+  NodeInterface* get_node();
 
   /**
    * get node ID of volume transmitter

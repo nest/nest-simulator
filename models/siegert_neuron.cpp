@@ -115,7 +115,7 @@ nest::siegert_neuron::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::siegert_neuron::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::siegert_neuron::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   updateValueParam< double >( d, names::mean, mean_, node );
   updateValueParam< double >( d, names::theta, theta_, node );
@@ -158,7 +158,7 @@ nest::siegert_neuron::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::siegert_neuron::State_::set( const DictionaryDatum& d, Node* node )
+nest::siegert_neuron::State_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   updateValueParam< double >( d, names::rate, r_, node ); // Rate
 }
@@ -270,7 +270,7 @@ nest::siegert_neuron::siegert( double mu, double sigma_square )
 }
 
 /* ----------------------------------------------------------------
- * Node initialization functions
+ * NodeInterface initialization functions
  * ---------------------------------------------------------------- */
 
 void

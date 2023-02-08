@@ -104,7 +104,7 @@ nest::multimeter::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b, Node* node )
+nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b, NodeInterface* node )
 {
   if ( b.has_targets_
     and ( d->known( names::interval ) or d->known( names::offset ) or d->known( names::record_from ) ) )

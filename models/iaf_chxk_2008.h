@@ -155,8 +155,8 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
-  using Node::handle;
-  using Node::handles_test_event;
+  using NodeInterface::handle;
+  using NodeInterface::handles_test_event;
 
   port send_test_event( NodeInterface&, rport, synindex, bool ) override;
 
@@ -216,8 +216,8 @@ private:
 
     Parameters_(); //!< Set default parameter values
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( DictionaryDatum& ) const;                      //!< Store current values in dictionary
+    void set( const DictionaryDatum&, NodeInterface* node ); //!< Set values from dictionary
   };
 
   // State variables class --------------------------------------------
@@ -264,7 +264,7 @@ public:
      * Set state from values in dictionary.
      * Requires Parameters_ as argument to, e.g., check bounds.'
      */
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void set( const DictionaryDatum&, const Parameters_&, NodeInterface* );
   };
 
 private:

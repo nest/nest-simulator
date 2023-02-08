@@ -189,8 +189,8 @@ GenericConnectorModel< ConnectionT >::set_syn_id( synindex syn_id )
 
 template < typename ConnectionT >
 void
-GenericConnectorModel< ConnectionT >::add_connection( Node& src,
-  Node& tgt,
+GenericConnectorModel< ConnectionT >::add_connection( NodeInterface& src,
+  NodeInterface& tgt,
   std::vector< ConnectorBase* >& thread_local_connectors,
   const synindex syn_id,
   const DictionaryDatum& p,
@@ -265,8 +265,8 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 
 template < typename ConnectionT >
 void
-GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
-  Node& tgt,
+GenericConnectorModel< ConnectionT >::add_connection_( NodeInterface& src,
+  NodeInterface& tgt,
   std::vector< ConnectorBase* >& thread_local_connectors,
   const synindex syn_id,
   ConnectionT& connection,

@@ -42,7 +42,7 @@
 
 namespace nest
 {
-class Node;
+class NodeInterface;
 
 class SimulationManager : public ManagerInterface
 {
@@ -186,7 +186,7 @@ public:
 private:
   void call_update_(); //!< actually run simulation, aka wrap update_
   void update_();      //! actually perform simulation
-  bool wfr_update_( Node* );
+  bool wfr_update_( NodeInterface* );
   void advance_time_();   //!< Update time to next time step
   void print_progress_(); //!< TODO: Remove, replace by logging!
 

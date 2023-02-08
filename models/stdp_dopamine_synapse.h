@@ -157,7 +157,7 @@ public:
    */
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
-  Node* get_node();
+  NodeInterface* get_node();
 
   long get_vt_node_id() const;
 
@@ -282,7 +282,7 @@ public:
    * \param receptor_type The ID of the requested receptor type
    */
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& cp )
+  check_connection( NodeInterface& s, NodeInterface& t, rport receptor_type, const CommonPropertiesType& cp )
   {
     if ( not cp.vt_ )
     {
@@ -542,7 +542,7 @@ template < typename targetidentifierT >
 inline void
 stdp_dopamine_synapse< targetidentifierT >::send( Event& e, thread t, const STDPDopaCommonProperties& cp )
 {
-  Node* target = get_target( t );
+  NodeInterface* target = get_target( t );
 
   // purely dendritic delay
   double dendritic_delay = get_delay();

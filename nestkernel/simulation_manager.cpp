@@ -755,7 +755,7 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
 }
 
 bool
-nest::SimulationManager::wfr_update_( Node* n )
+nest::SimulationManager::wfr_update_( NodeInterface* n )
 {
   return ( n->wfr_update( clock_, from_step_, to_step_ ) );
 }
@@ -793,7 +793,7 @@ nest::SimulationManager::update_()
               i != kernel().node_manager.get_local_nodes( tid ).end();
               ++i )
         {
-          Node* node = i->get_node();
+          NodeInterface* node = i->get_node();
           node->update_synaptic_elements( Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms() );
         }
 #pragma omp barrier
@@ -806,7 +806,7 @@ nest::SimulationManager::update_()
               i != kernel().node_manager.get_local_nodes( tid ).end();
               ++i )
         {
-          Node* node = i->get_node();
+          NodeInterface* node = i->get_node();
           node->decay_synaptic_elements_vacant();
         }
 
@@ -870,14 +870,15 @@ nest::SimulationManager::update_()
         }
 
         bool max_iterations_reached = true;
-        const std::vector< Node* >& thread_local_wfr_nodes = kernel().node_manager.get_wfr_nodes_on_thread( tid );
+        const std::vector< NodeInterface* >& thread_local_wfr_nodes =
+          kernel().node_manager.get_wfr_nodes_on_thread( tid );
         for ( long n = 0; n < wfr_max_iterations_; ++n )
         {
           bool done_p = true;
 
           // this loop may be empty for those threads
           // that do not have any nodes requiring wfr_update
-          for ( std::vector< Node* >::const_iterator i = thread_local_wfr_nodes.begin();
+          for ( std::vector< NodeInterface* >::const_iterator i = thread_local_wfr_nodes.begin();
                 i != thread_local_wfr_nodes.end();
                 ++i )
           {
@@ -950,7 +951,7 @@ nest::SimulationManager::update_()
         // exceptions here and then handle them after the parallel region.
         try
         {
-          Node* node = n->get_node();
+          NodeInterface* node = n->get_node();
           if ( not( node )->is_frozen() )
           {
             ( node )->update( clock_, from_step_, to_step_ );
@@ -1038,7 +1039,7 @@ nest::SimulationManager::update_()
           i != kernel().node_manager.get_local_nodes( tid ).end();
           ++i )
     {
-      Node* node = i->get_node();
+      NodeInterface* node = i->get_node();
       node->update_synaptic_elements( Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
     }
 

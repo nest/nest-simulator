@@ -154,7 +154,7 @@ class hh_psc_alpha_gap : public ArchivingNode
 {
 
 public:
-  typedef Node base;
+  typedef NodeInterface base;
 
   hh_psc_alpha_gap();
   hh_psc_alpha_gap( const hh_psc_alpha_gap& );
@@ -165,9 +165,9 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
-  using Node::handle;
-  using Node::handles_test_event;
-  using Node::sends_secondary_event;
+  using NodeInterface::handle;
+  using NodeInterface::handles_test_event;
+  using NodeInterface::sends_secondary_event;
 
   port send_test_event( NodeInterface& target, rport receptor_type, synindex, bool ) override;
 
@@ -233,8 +233,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( DictionaryDatum& ) const;                      //!< Store current values in dictionary
+    void set( const DictionaryDatum&, NodeInterface* node ); //!< Set values from dictionary
   };
 
 public:
@@ -276,7 +276,7 @@ public:
     State_& operator=( const State_& );
 
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, Node* node );
+    void set( const DictionaryDatum&, NodeInterface* node );
   };
 
   // ----------------------------------------------------------------

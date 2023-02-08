@@ -99,7 +99,7 @@ public:
 
   bool is_off_grid() const override;
 
-  using Node::event_hook;
+  using NodeInterface::event_hook;
 
   port send_test_event( NodeInterface&, rport, synindex, bool ) override;
 
@@ -154,8 +154,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( DictionaryDatum& ) const;                      //!< Store current values in dictionary
+    void set( const DictionaryDatum&, NodeInterface* node ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------

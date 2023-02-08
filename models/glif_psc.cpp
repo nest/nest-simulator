@@ -142,7 +142,7 @@ nest::glif_psc::Parameters_::get( DictionaryDatum& d ) const
 }
 
 double
-nest::glif_psc::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::glif_psc::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
@@ -305,7 +305,7 @@ nest::glif_psc::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 }
 
 void
-nest::glif_psc::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
+nest::glif_psc::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, NodeInterface* node )
 {
   if ( updateValueParam< double >( d, names::V_m, U_, node ) )
   {

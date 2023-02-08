@@ -86,7 +86,7 @@ public:
 
   void sends_secondary_event( DelayedRateConnectionEvent& re ) override;
 
-  Node const& get_prototype() const override;
+  NodeInterface const& get_prototype() const override;
 
   void set_model_id( int ) override;
 
@@ -103,7 +103,7 @@ private:
   /**
    * Call placement new on the supplied memory position.
    */
-  Node* create_() override;
+  NodeInterface* create_() override;
 
   /**
    * Prototype node from which all instances are constructed.
@@ -150,10 +150,10 @@ GenericModel< ElementT >::clone( const std::string& newname ) const
 }
 
 template < typename ElementT >
-Node*
+NodeInterface*
 GenericModel< ElementT >::create_()
 {
-  Node* n = new ElementT( proto_ );
+  NodeInterface* n = new ElementT( proto_ );
   return n;
 }
 
@@ -251,7 +251,7 @@ GenericModel< ElementT >::get_element_size() const
 }
 
 template < typename ElementT >
-Node const&
+NodeInterface const&
 GenericModel< ElementT >::get_prototype() const
 {
   return proto_;

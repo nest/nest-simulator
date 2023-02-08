@@ -137,7 +137,7 @@ class siegert_neuron : public ArchivingNode
 {
 
 public:
-  typedef Node base;
+  typedef NodeInterface base;
 
   siegert_neuron();
   siegert_neuron( const siegert_neuron& );
@@ -149,9 +149,9 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
-  using Node::handle;
-  using Node::handles_test_event;
-  using Node::sends_secondary_event;
+  using NodeInterface::handle;
+  using NodeInterface::handles_test_event;
+  using NodeInterface::sends_secondary_event;
 
   void handle( DiffusionConnectionEvent& ) override;
   void handle( DataLoggingRequest& ) override;
@@ -218,7 +218,7 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 
-    void set( const DictionaryDatum&, Node* node );
+    void set( const DictionaryDatum&, NodeInterface* node );
   };
 
   // ----------------------------------------------------------------
@@ -233,7 +233,7 @@ private:
     State_(); //!< Default initialization
 
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, Node* node );
+    void set( const DictionaryDatum&, NodeInterface* node );
   };
 
   // ----------------------------------------------------------------

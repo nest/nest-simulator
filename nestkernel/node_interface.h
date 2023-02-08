@@ -104,7 +104,7 @@ class NodeInterface
   friend class Model;
   friend class SimulationManager;
 
-  NodeInterface& operator=( const Node& ); //!< not implemented
+  NodeInterface& operator=( const NodeInterface& ); //!< not implemented
 
 public:
   NodeInterface();

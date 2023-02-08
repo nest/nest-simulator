@@ -90,7 +90,7 @@ public:
    *
    * This function is called from the set_initialized_() function of
    * the @p device and their set_status() function. The companion
-   * function @p set_value_names() is called from Node::pre_run_hook()
+   * function @p set_value_names() is called from NodeInterface::pre_run_hook()
    * and makes the names of values to be recorded known.
    *
    * A backend needs to be able to cope with multiple calls to this

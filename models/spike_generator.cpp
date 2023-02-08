@@ -158,7 +158,7 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
   State_& s,
   const Time& origin,
   const Time& now,
-  Node* node )
+  NodeInterface* node )
 {
   bool precise_times_changed = updateValueParam< bool >( d, names::precise_times, precise_times_, node );
   bool shift_now_spikes_changed = updateValueParam< bool >( d, names::shift_now_spikes, shift_now_spikes_, node );

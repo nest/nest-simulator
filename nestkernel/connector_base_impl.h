@@ -53,7 +53,7 @@ Connector< ConnectionT >::send_weight_event( const thread tid,
     wr_e.set_delay_steps( e.get_delay_steps() );
     // Set weight_recorder as receiver
     index wr_node_id = cp.get_wr_node_id();
-    Node* wr_node = kernel().node_manager.get_node_or_proxy( wr_node_id, tid );
+    NodeInterface* wr_node = kernel().node_manager.get_node_or_proxy( wr_node_id, tid );
     wr_e.set_receiver( *wr_node );
     // Put the node_id of the postsynaptic node as receiver node ID
     wr_e.set_receiver_node_id( e.get_receiver_node_id() );

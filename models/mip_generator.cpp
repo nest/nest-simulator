@@ -53,7 +53,7 @@ nest::mip_generator::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::mip_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::mip_generator::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   updateValueParam< double >( d, names::rate, rate_, node );
   updateValueParam< double >( d, names::p_copy, p_copy_, node );

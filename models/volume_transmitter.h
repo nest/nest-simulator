@@ -133,8 +133,8 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
-  using Node::handle;
-  using Node::handles_test_event;
+  using NodeInterface::handle;
+  using NodeInterface::handles_test_event;
 
   void handle( SpikeEvent& ) override;
 
@@ -168,7 +168,7 @@ private:
   {
     Parameters_();
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, Node* node );
+    void set( const DictionaryDatum&, NodeInterface* node );
     long deliver_interval_; //!< update interval in d_min time steps
   };
 

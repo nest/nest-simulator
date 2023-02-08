@@ -97,7 +97,7 @@ nest::iaf_chs_2007::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_chs_2007::Parameters_::set( const DictionaryDatum& d, State_& s, Node* node )
+nest::iaf_chs_2007::Parameters_::set( const DictionaryDatum& d, State_& s, NodeInterface* node )
 {
   updateValueParam< double >( d, names::V_reset, U_reset_, node );
   updateValueParam< double >( d, names::V_epsp, U_epsp_, node );
@@ -139,7 +139,7 @@ nest::iaf_chs_2007::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_chs_2007::State_::set( DictionaryDatum const& d, Node* node )
+nest::iaf_chs_2007::State_::set( DictionaryDatum const& d, NodeInterface* node )
 {
   updateValueParam< double >( d, names::V_m, V_m_, node );
 }

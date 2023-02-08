@@ -88,8 +88,8 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
-  using Node::handle;
-  using Node::handles_test_event;
+  using NodeInterface::handle;
+  using NodeInterface::handles_test_event;
 
   void handle( SpikeEvent& ) override;
   port send_test_event( NodeInterface&, rport, synindex, bool ) override;

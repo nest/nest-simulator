@@ -107,7 +107,7 @@ nest::rate_neuron_ipn< TNonlinearities >::Parameters_::get( DictionaryDatum& d )
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TNonlinearities >::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::rate_neuron_ipn< TNonlinearities >::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   updateValueParam< double >( d, names::tau, tau_, node );
   updateValueParam< double >( d, names::lambda, lambda_, node );
@@ -164,7 +164,7 @@ nest::rate_neuron_ipn< TNonlinearities >::State_::get( DictionaryDatum& d ) cons
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TNonlinearities >::State_::set( const DictionaryDatum& d, Node* node )
+nest::rate_neuron_ipn< TNonlinearities >::State_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   updateValueParam< double >( d, names::rate, rate_, node ); // Rate
 }

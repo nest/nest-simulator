@@ -156,9 +156,9 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
-  using Node::handle;
-  using Node::handles_test_event;
-  using Node::receives_signal;
+  using NodeInterface::handle;
+  using NodeInterface::handles_test_event;
+  using NodeInterface::receives_signal;
 
   void handle( SpikeEvent& ) override;
 
@@ -233,7 +233,7 @@ private:
      * @returns true if the state needs to be reset after a change of
      *          binwidth or tau_max.
      */
-    bool set( const DictionaryDatum&, const correlospinmatrix_detector&, Node* );
+    bool set( const DictionaryDatum&, const correlospinmatrix_detector&, NodeInterface* );
 
     Time get_default_delta_tau();
   };
@@ -281,7 +281,7 @@ private:
     /**
      * @param bool if true, force state reset
      */
-    void set( const DictionaryDatum&, const Parameters_&, bool, Node* );
+    void set( const DictionaryDatum&, const Parameters_&, bool, NodeInterface* );
 
     void reset( const Parameters_& );
   };

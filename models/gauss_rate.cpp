@@ -34,7 +34,7 @@ nonlinearities_gauss_rate::get( DictionaryDatum& d ) const
 }
 
 void
-nonlinearities_gauss_rate::set( const DictionaryDatum& d, Node* node )
+nonlinearities_gauss_rate::set( const DictionaryDatum& d, NodeInterface* node )
 {
   updateValueParam< double >( d, names::g, g_, node );
   updateValueParam< double >( d, names::mu, mu_, node );

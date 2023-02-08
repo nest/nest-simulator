@@ -110,7 +110,7 @@ nest::inhomogeneous_poisson_generator::Parameters_::assert_valid_rate_time_and_i
 }
 
 void
-nest::inhomogeneous_poisson_generator::Parameters_::set( const DictionaryDatum& d, Buffers_& b, Node* )
+nest::inhomogeneous_poisson_generator::Parameters_::set( const DictionaryDatum& d, Buffers_& b, NodeInterface* )
 {
   const bool times = d->known( names::rate_times );
   const bool rates = updateValue< std::vector< double > >( d, names::rate_values, rate_values_ );

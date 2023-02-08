@@ -142,7 +142,7 @@ private:
      * @note Buffer is passed so that the position etc can be reset
      *       parameters have been changed.
      */
-    void set( const DictionaryDatum&, pulsepacket_generator&, Node* );
+    void set( const DictionaryDatum&, pulsepacket_generator&, NodeInterface* );
   };
 
   // ------------------------------------------------------------

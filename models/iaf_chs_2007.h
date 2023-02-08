@@ -122,8 +122,8 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
-  using Node::handle;
-  using Node::handles_test_event;
+  using NodeInterface::handle;
+  using NodeInterface::handles_test_event;
 
   port send_test_event( NodeInterface&, rport, synindex, bool ) override;
 
@@ -164,7 +164,7 @@ private:
     State_(); //!< Default initialization
 
     void get( DictionaryDatum& ) const;
-    void set( DictionaryDatum const&, Node* );
+    void set( DictionaryDatum const&, NodeInterface* );
   };
 
   // ----------------------------------------------------------------
@@ -210,7 +210,7 @@ private:
      * @note State is passed so that the position can be reset if the
      *       noise_ vector has been filled with new data.
      */
-    void set( const DictionaryDatum&, State_& s, Node* node );
+    void set( const DictionaryDatum&, State_& s, NodeInterface* node );
   };
 
 

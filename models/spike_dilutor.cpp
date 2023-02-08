@@ -54,7 +54,7 @@ nest::spike_dilutor::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::spike_dilutor::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::spike_dilutor::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   updateValueParam< double >( d, names::p_copy, p_copy_, node );
   if ( p_copy_ < 0 or p_copy_ > 1 )

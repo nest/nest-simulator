@@ -110,8 +110,8 @@ public:
 
   port send_test_event( NodeInterface&, rport, synindex, bool ) override;
 
-  using Node::handle;
-  using Node::handles_test_event;
+  using NodeInterface::handle;
+  using NodeInterface::handles_test_event;
 
   void handle( DataLoggingRequest& ) override;
 
@@ -154,7 +154,7 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     //! Set values from dictionary
-    void set( const DictionaryDatum&, Buffers_&, Node* );
+    void set( const DictionaryDatum&, Buffers_&, NodeInterface* );
 
     /**
      * Return time as Time object if valid, otherwise throw BadProperty

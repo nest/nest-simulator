@@ -171,8 +171,8 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
-  using Node::handle;
-  using Node::handles_test_event;
+  using NodeInterface::handle;
+  using NodeInterface::handles_test_event;
 
   port send_test_event( NodeInterface&, rport, synindex, bool ) override;
 
@@ -322,7 +322,7 @@ private:
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const DictionaryDatum&, Node* );
+    double set( const DictionaryDatum&, NodeInterface* );
   };
 
   // ----------------------------------------------------------------
@@ -351,7 +351,7 @@ private:
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum&, const Parameters_&, double, Node* );
+    void set( const DictionaryDatum&, const Parameters_&, double, NodeInterface* );
   };
 
   // ----------------------------------------------------------------

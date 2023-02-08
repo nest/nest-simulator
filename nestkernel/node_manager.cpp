@@ -92,7 +92,7 @@ NodeManager::change_number_of_threads()
 DictionaryDatum
 NodeManager::get_status( index idx )
 {
-  Node* target = get_mpi_local_node_or_device_head( idx );
+  NodeInterface* target = get_mpi_local_node_or_device_head( idx );
 
   assert( target );
 
@@ -209,7 +209,7 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
 
       while ( node_id <= max_node_id )
       {
-        Node* node = model.create( t );
+        NodeInterface* node = model.create( t );
         node->set_node_id_( node_id );
         node->set_nc_( nc_ptr );
         node->set_model_id( model.get_model_id() );
@@ -248,7 +248,7 @@ NodeManager::add_devices_( Model& model, index min_node_id, index max_node_id, N
         // keep track of number of thread local devices
         ++num_thread_local_devices_[ t ];
 
-        Node* node = model.create( t );
+        NodeInterface* node = model.create( t );
         node->set_node_id_( node_id );
         node->set_nc_( nc_ptr );
         node->set_model_id( model.get_model_id() );
@@ -285,7 +285,7 @@ NodeManager::add_music_nodes_( Model& model, index min_node_id, index max_node_i
           // keep track of number of thread local devices
           ++num_thread_local_devices_[ t ];
 
-          Node* node = model.create( 0 );
+          NodeInterface* node = model.create( 0 );
           node->set_node_id_( node_id );
           node->set_nc_( nc_ptr );
           node->set_model_id( model.get_model_id() );
@@ -393,7 +393,7 @@ NodeManager::get_nodes( const DictionaryDatum& params, const bool local_only )
 }
 
 bool
-NodeManager::is_local_node( Node* n ) const
+NodeManager::is_local_node( NodeInterface* n ) const
 {
   return kernel().vp_manager.is_local_vp( n->get_vp() );
 }
@@ -418,13 +418,13 @@ NodeManager::get_num_thread_local_devices( thread t ) const
   return num_thread_local_devices_[ t ];
 }
 
-Node*
+NodeInterface*
 NodeManager::get_node_or_proxy( index node_id, thread t )
 {
   assert( 0 <= t and ( t == -1 or t < kernel().vp_manager.get_num_threads() ) );
   assert( 0 < node_id and node_id <= size() );
 
-  Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
+  NodeInterface* node = local_nodes_[ t ].get_node_by_node_id( node_id );
   if ( not node )
   {
     return kernel().model_manager.get_proxy_node( t, node_id );
@@ -433,7 +433,7 @@ NodeManager::get_node_or_proxy( index node_id, thread t )
   return node;
 }
 
-Node*
+NodeInterface*
 NodeManager::get_node_or_proxy( index node_id )
 {
   assert( 0 < node_id and node_id <= size() );
@@ -445,7 +445,7 @@ NodeManager::get_node_or_proxy( index node_id )
   }
 
   thread t = kernel().vp_manager.vp_to_thread( vp );
-  Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
+  NodeInterface* node = local_nodes_[ t ].get_node_by_node_id( node_id );
   if ( not node )
   {
     return kernel().model_manager.get_proxy_node( t, node_id );
@@ -454,12 +454,12 @@ NodeManager::get_node_or_proxy( index node_id )
   return node;
 }
 
-Node*
+NodeInterface*
 NodeManager::get_mpi_local_node_or_device_head( index node_id )
 {
   thread t = kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( node_id ) );
 
-  Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
+  NodeInterface* node = local_nodes_[ t ].get_node_by_node_id( node_id );
 
   if ( not node )
   {
@@ -473,14 +473,14 @@ NodeManager::get_mpi_local_node_or_device_head( index node_id )
   return node;
 }
 
-std::vector< Node* >
+std::vector< NodeInterface* >
 NodeManager::get_thread_siblings( index node_id ) const
 {
   index num_threads = kernel().vp_manager.get_num_threads();
-  std::vector< Node* > siblings( num_threads );
+  std::vector< NodeInterface* > siblings( num_threads );
   for ( size_t t = 0; t < num_threads; ++t )
   {
-    Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
+    NodeInterface* node = local_nodes_[ t ].get_node_by_node_id( node_id );
     if ( not node )
     {
       throw NoThreadSiblingsAvailable( node_id );
@@ -528,7 +528,7 @@ NodeManager::ensure_valid_thread_local_ids()
 
         const size_t num_thread_local_wfr_nodes = std::count_if( local_nodes_[ tid ].begin(),
           local_nodes_[ tid ].end(),
-          []( const SparseNodeArray::NodeEntry& elem ) { return elem.get_node()->node_uses_wfr_; } );
+          []( const SparseNodeArray::NodeEntry& elem ) { return elem.get_node()->node_uses_wfr(); } );
         wfr_nodes_vec_[ tid ].reserve( num_thread_local_wfr_nodes );
 
         auto node_it = local_nodes_[ tid ].begin();
@@ -537,7 +537,7 @@ NodeManager::ensure_valid_thread_local_ids()
         {
           auto node = node_it->get_node();
           node->set_thread_lid( idx );
-          if ( node->node_uses_wfr_ )
+          if ( node->node_uses_wfr() )
           {
             wfr_nodes_vec_[ tid ].push_back( node );
           }
@@ -578,7 +578,7 @@ NodeManager::destruct_nodes_()
 }
 
 void
-NodeManager::set_status_single_node_( Node& target, const DictionaryDatum& d, bool clear_flags )
+NodeManager::set_status_single_node_( NodeInterface& target, const DictionaryDatum& d, bool clear_flags )
 {
   // proxies have no properties
   if ( not target.is_proxy() )
@@ -596,7 +596,7 @@ NodeManager::set_status_single_node_( Node& target, const DictionaryDatum& d, bo
 }
 
 void
-NodeManager::prepare_node_( Node* n )
+NodeManager::prepare_node_( NodeInterface* n )
 {
   // Frozen nodes are initialized and calibrated, so that they
   // have ring buffers and can accept incoming spikes.
@@ -746,7 +746,7 @@ NodeManager::set_status( index node_id, const DictionaryDatum& d )
 {
   for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
-    Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
+    NodeInterface* node = local_nodes_[ t ].get_node_by_node_id( node_id );
     if ( node )
     {
       set_status_single_node_( *node, d );

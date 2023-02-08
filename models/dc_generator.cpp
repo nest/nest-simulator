@@ -101,7 +101,7 @@ nest::dc_generator::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::dc_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::dc_generator::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   updateValueParam< double >( d, names::amplitude, amp_, node );
 }

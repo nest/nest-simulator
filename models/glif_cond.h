@@ -203,8 +203,8 @@ public:
 
   ~glif_cond() override;
 
-  using nest::Node::handle;
-  using nest::Node::handles_test_event;
+  using nest::NodeInterface::handle;
+  using nest::NodeInterface::handles_test_event;
 
   nest::port send_test_event( NodeInterface&, port, synindex, bool ) override;
 
@@ -277,7 +277,7 @@ private:
     Parameters_();
 
     void get( DictionaryDatum& ) const;
-    double set( const DictionaryDatum&, Node* );
+    double set( const DictionaryDatum&, NodeInterface* );
   };
 
 
@@ -319,7 +319,7 @@ private:
     State_( const Parameters_& );
 
     void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, double, Node* );
+    void set( const DictionaryDatum&, const Parameters_&, double, NodeInterface* );
   };
 
 

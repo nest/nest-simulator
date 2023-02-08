@@ -112,7 +112,7 @@ nest::music_cont_out_proxy::Parameters_::get( DictionaryDatum& d ) const
 
 void
 nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
-  const Node& self,
+  const NodeInterface& self,
   const State_& state,
   const Buffers_& buffers )
 {
@@ -318,8 +318,8 @@ nest::music_cont_out_proxy::get_status( DictionaryDatum& d ) const
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const std::vector< Node* > siblings = kernel().node_manager.get_thread_siblings( get_node_id() );
-    std::vector< Node* >::const_iterator s;
+    const std::vector< NodeInterface* > siblings = kernel().node_manager.get_thread_siblings( get_node_id() );
+    std::vector< NodeInterface* >::const_iterator s;
     for ( s = siblings.begin() + 1; s != siblings.end(); ++s )
     {
       ( *s )->get_status( d );

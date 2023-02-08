@@ -72,7 +72,7 @@ template < typename Iterator, int D >
 void
 ConnectionCreator::connect_to_target_( Iterator from,
   Iterator to,
-  Node* tgt_ptr,
+  NodeInterface* tgt_ptr,
   const Position< D >& tgt_pos,
   thread tgt_thread,
   const Layer< D >& source )
@@ -213,7 +213,7 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
 
       for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
       {
-        Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id, thread_id );
+        NodeInterface* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id, thread_id );
 
         if ( not tgt->is_proxy() )
         {
@@ -281,7 +281,7 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
 
   // We only need to check the first in the NodeCollection
-  Node* const first_in_tgt = kernel().node_manager.get_node_or_proxy( target_nc->operator[]( 0 ) );
+  NodeInterface* const first_in_tgt = kernel().node_manager.get_node_or_proxy( target_nc->operator[]( 0 ) );
   if ( not first_in_tgt->has_proxies() )
   {
     throw IllegalConnection( "Spatial Connect with pairwise_bernoulli to devices is not possible." );
@@ -299,7 +299,7 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
 
       for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
       {
-        Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id, thread_id );
+        NodeInterface* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id, thread_id );
 
         assert( not tgt->is_proxy() );
 
@@ -352,7 +352,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
   // 3. Draw source nodes and make connections
 
   // We only need to check the first in the NodeCollection
-  Node* const first_in_tgt = kernel().node_manager.get_node_or_proxy( target_nc->operator[]( 0 ) );
+  NodeInterface* const first_in_tgt = kernel().node_manager.get_node_or_proxy( target_nc->operator[]( 0 ) );
   if ( not first_in_tgt->has_proxies() )
   {
     throw IllegalConnection( "Spatial Connect with fixed_indegree to devices is not possible." );
@@ -366,7 +366,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
   // the network untouched if any target does not have proxies
   for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
   {
-    Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id );
+    NodeInterface* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id );
 
     assert( not tgt->is_proxy() );
   }
@@ -381,7 +381,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
     for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
     {
       index target_id = ( *tgt_it ).node_id;
-      Node* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
+      NodeInterface* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
 
       thread target_thread = tgt->get_thread();
       RngPtr rng = get_vp_specific_rng( target_thread );
@@ -516,7 +516,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
     for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
     {
       index target_id = ( *tgt_it ).node_id;
-      Node* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
+      NodeInterface* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
       thread target_thread = tgt->get_thread();
       RngPtr rng = get_vp_specific_rng( target_thread );
       Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
@@ -647,7 +647,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
   // the network untouched if any target does not have proxies
 
   // We only need to check the first in the NodeCollection
-  Node* const first_in_tgt = kernel().node_manager.get_node_or_proxy( target_nc->operator[]( 0 ) );
+  NodeInterface* const first_in_tgt = kernel().node_manager.get_node_or_proxy( target_nc->operator[]( 0 ) );
   if ( not first_in_tgt->has_proxies() )
   {
     throw IllegalConnection( "Spatial Connect with fixed_outdegree to devices is not possible." );
@@ -658,7 +658,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
 
   for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
   {
-    Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id );
+    NodeInterface* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id );
 
     assert( not tgt->is_proxy() );
   }
@@ -770,7 +770,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
         continue;
       }
 
-      Node* target_ptr = kernel().node_manager.get_node_or_proxy( target_id );
+      NodeInterface* target_ptr = kernel().node_manager.get_node_or_proxy( target_id );
       thread target_thread = target_ptr->get_thread();
 
       for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )

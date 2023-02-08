@@ -110,7 +110,7 @@ class Node : public NodeInterface
   friend class Model;
   friend class SimulationManager;
 
-  Node& operator=( const Node& ); //!< not implemented
+  NodeInterface& operator=( const NodeInterface& ); //!< not implemented
 
 public:
   Node();
@@ -431,7 +431,7 @@ protected:
    *       ones when intializing parameters or state from a prototype.
    */
   template < typename ConcreteNode >
-  const ConcreteNode& downcast( const Node& );
+  const ConcreteNode& downcast( const NodeInterface& );
 
 private:
   /**
@@ -592,7 +592,7 @@ Node::get_vp() const
 
 template < typename ConcreteNode >
 const ConcreteNode&
-Node::downcast( const Node& n )
+Node::downcast( const NodeInterface& n )
 {
   ConcreteNode const* tp = dynamic_cast< ConcreteNode const* >( &n );
   assert( tp != 0 );

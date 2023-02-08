@@ -88,7 +88,7 @@ nest::rate_transformer_node< TNonlinearities >::Parameters_::get( DictionaryDatu
 
 template < class TNonlinearities >
 void
-nest::rate_transformer_node< TNonlinearities >::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::rate_transformer_node< TNonlinearities >::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   updateValueParam< bool >( d, names::linear_summation, linear_summation_, node );
 }
@@ -102,7 +102,7 @@ nest::rate_transformer_node< TNonlinearities >::State_::get( DictionaryDatum& d 
 
 template < class TNonlinearities >
 void
-nest::rate_transformer_node< TNonlinearities >::State_::set( const DictionaryDatum& d, Node* node )
+nest::rate_transformer_node< TNonlinearities >::State_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   updateValueParam< double >( d, names::rate, rate_, node ); // Rate
 }

@@ -175,8 +175,8 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
-  using Node::handle;
-  using Node::handles_test_event;
+  using NodeInterface::handle;
+  using NodeInterface::handles_test_event;
 
   void handle( SpikeEvent& ) override;
 
@@ -249,7 +249,7 @@ private:
      * @returns true if the state needs to be reset after a change of
      *          binwidth or tau_max.
      */
-    bool set( const DictionaryDatum&, const correlomatrix_detector&, Node* node );
+    bool set( const DictionaryDatum&, const correlomatrix_detector&, NodeInterface* node );
 
     Time get_default_delta_tau();
   };
@@ -285,7 +285,7 @@ private:
     /**
      * @param bool if true, force state reset
      */
-    void set( const DictionaryDatum&, const Parameters_&, bool, Node* node );
+    void set( const DictionaryDatum&, const Parameters_&, bool, NodeInterface* node );
 
     void reset( const Parameters_& );
   };

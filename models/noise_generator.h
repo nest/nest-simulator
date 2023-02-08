@@ -157,10 +157,10 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
-  using Node::event_hook;
-  using Node::handle;
-  using Node::handles_test_event;
-  using Node::sends_signal;
+  using NodeInterface::event_hook;
+  using NodeInterface::handle;
+  using NodeInterface::handles_test_event;
+  using NodeInterface::sends_signal;
 
   port send_test_event( NodeInterface&, rport, synindex, bool ) override;
 
@@ -221,7 +221,7 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     //! Set values from dictionary
-    void set( const DictionaryDatum&, const noise_generator&, Node* node );
+    void set( const DictionaryDatum&, const noise_generator&, NodeInterface* node );
 
     Time get_default_dt();
   };

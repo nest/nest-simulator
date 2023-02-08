@@ -184,7 +184,7 @@ public:
 
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( NodeInterface& s, NodeInterface& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -219,7 +219,7 @@ template < typename targetidentifierT >
 inline void
 tsodyks2_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
-  Node* target = get_target( t );
+  NodeInterface* target = get_target( t );
   const double t_spike = e.get_stamp().get_ms();
   const double h = t_spike - t_lastspike_;
   double x_decay = std::exp( -h / tau_rec_ );

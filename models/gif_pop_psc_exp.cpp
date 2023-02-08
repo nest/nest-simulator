@@ -132,7 +132,7 @@ nest::gif_pop_psc_exp::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::gif_pop_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::gif_pop_psc_exp::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   updateValueParam< long >( d, names::N, N_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
@@ -218,7 +218,7 @@ nest::gif_pop_psc_exp::State_::get( DictionaryDatum& d, const Parameters_& ) con
 }
 
 void
-nest::gif_pop_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::gif_pop_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_&, NodeInterface* node )
 {
   updateValueParam< double >( d, names::V_m, V_m_, node );
   updateValueParam< double >( d, names::I_syn_ex, I_syn_ex_, node );
@@ -258,7 +258,7 @@ nest::gif_pop_psc_exp::gif_pop_psc_exp( const gif_pop_psc_exp& n )
 }
 
 /* ----------------------------------------------------------------
- * Node initialization functions
+ * NodeInterface initialization functions
  * ---------------------------------------------------------------- */
 
 void

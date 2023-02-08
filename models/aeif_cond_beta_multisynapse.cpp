@@ -204,7 +204,7 @@ aeif_cond_beta_multisynapse::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* node )
+aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   updateValueParam< double >( d, names::V_th, V_th, node );
   updateValueParam< double >( d, names::V_peak, V_peak_, node );
@@ -336,7 +336,7 @@ aeif_cond_beta_multisynapse::State_::get( DictionaryDatum& d ) const
 }
 
 void
-aeif_cond_beta_multisynapse::State_::set( const DictionaryDatum& d, Node* node )
+aeif_cond_beta_multisynapse::State_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
   updateValueParam< double >( d, names::w, y_[ W ], node );
@@ -404,7 +404,7 @@ aeif_cond_beta_multisynapse::~aeif_cond_beta_multisynapse()
 }
 
 /* ----------------------------------------------------------------
- * Node initialization functions
+ * NodeInterface initialization functions
  * ---------------------------------------------------------------- */
 
 void

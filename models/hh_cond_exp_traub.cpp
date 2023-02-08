@@ -200,7 +200,7 @@ nest::hh_cond_exp_traub::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::hh_cond_exp_traub::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::hh_cond_exp_traub::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   updateValueParam< double >( d, names::g_Na, g_Na, node );
   updateValueParam< double >( d, names::g_K, g_K, node );
@@ -243,7 +243,7 @@ nest::hh_cond_exp_traub::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::hh_cond_exp_traub::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::hh_cond_exp_traub::State_::set( const DictionaryDatum& d, const Parameters_&, NodeInterface* node )
 {
   updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
   updateValueParam< double >( d, names::Act_m, y_[ HH_M ], node );
@@ -314,7 +314,7 @@ nest::hh_cond_exp_traub::~hh_cond_exp_traub()
 }
 
 /* ----------------------------------------------------------------
- * Node initialization functions
+ * NodeInterface initialization functions
  * ---------------------------------------------------------------- */
 
 void

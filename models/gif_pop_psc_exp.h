@@ -167,8 +167,8 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
-  using Node::handle;
-  using Node::handles_test_event;
+  using NodeInterface::handle;
+  using NodeInterface::handles_test_event;
 
   port send_test_event( NodeInterface&, rport, synindex, bool ) override;
 
@@ -252,9 +252,9 @@ private:
     /** Binomial random number switch */
     bool BinoRand_;
 
-    Parameters_();                                  //!< Sets default parameter values
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    Parameters_();                                           //!< Sets default parameter values
+    void get( DictionaryDatum& ) const;                      //!< Store current values in dictionary
+    void set( const DictionaryDatum&, NodeInterface* node ); //!< Set values from dictionary
   };
 
   // ----------------------------------------------------------------
@@ -278,7 +278,7 @@ private:
     State_(); //!< Default initialization
 
     void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void set( const DictionaryDatum&, const Parameters_&, NodeInterface* );
   };
 
   // ----------------------------------------------------------------
@@ -448,9 +448,9 @@ gif_pop_psc_exp::get_status( DictionaryDatum& d ) const
   P_.get( d );
   S_.get( d, P_ );
   // MoD: In models derived from ArchivingNode, here get_status of the
-  // parent class is called. Since this model derives from Node, and
+  // parent class is called. Since this model derives from NodeInterface, and
   // not from ArchivingNode, this call has been disabled here
-  // (Node does not have a comparable method).
+  // (NodeInterface does not have a comparable method).
   //  ArchivingNode::get_status(d);
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -469,9 +469,9 @@ gif_pop_psc_exp::set_status( const DictionaryDatum& d )
   // consistent.
 
   // MoD: In models derived from ArchivingNode, here set_status of the
-  // parent class is called. Since this model derives from Node, and
+  // parent class is called. Since this model derives from NodeInterface, and
   // not from ArchivingNode, this call has been disabled here
-  // (Node does not have a comparable method).
+  // (NodeInterface does not have a comparable method).
   //  ArchivingNode::set_status(d);
 
   // if we get here, temporaries contain consistent set of properties

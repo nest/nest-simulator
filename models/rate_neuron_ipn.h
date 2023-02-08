@@ -108,7 +108,7 @@ class rate_neuron_ipn : public ArchivingNode
 {
 
 public:
-  typedef Node base;
+  typedef NodeInterface base;
 
   rate_neuron_ipn();
   rate_neuron_ipn( const rate_neuron_ipn& );
@@ -118,9 +118,9 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
-  using Node::handle;
-  using Node::handles_test_event;
-  using Node::sends_secondary_event;
+  using NodeInterface::handle;
+  using NodeInterface::handles_test_event;
+  using NodeInterface::sends_secondary_event;
 
   void handle( InstantaneousRateConnectionEvent& ) override;
   void handle( DelayedRateConnectionEvent& ) override;
@@ -202,7 +202,7 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 
-    void set( const DictionaryDatum&, Node* node );
+    void set( const DictionaryDatum&, NodeInterface* node );
   };
 
   // ----------------------------------------------------------------
@@ -224,7 +224,7 @@ private:
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum&, Node* node );
+    void set( const DictionaryDatum&, NodeInterface* node );
   };
 
   // ----------------------------------------------------------------

@@ -70,7 +70,7 @@ public:
    * Return a proxynode configured for thread tid and the given
    * node_id.
    */
-  Node* get_proxy_node( thread tid, index node_id );
+  NodeInterface* get_proxy_node( thread tid, index node_id );
 
   /**
    * Return pointer to protoype for given synapse id.
@@ -254,10 +254,10 @@ private:
 
   Model* proxynode_model_;
 
-  Node* create_proxynode_( thread t, int model_id );
+  NodeInterface* create_proxynode_( thread t, int model_id );
 
   //! Placeholders for remote nodes, one per thread
-  std::vector< std::vector< Node* > > proxy_nodes_;
+  std::vector< std::vector< NodeInterface* > > proxy_nodes_;
   //! True if any model defaults have been modified
   bool model_defaults_modified_;
 };

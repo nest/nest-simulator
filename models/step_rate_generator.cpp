@@ -159,7 +159,7 @@ nest::step_rate_generator::Parameters_::validate_time_( double t, const Time& t_
 }
 
 void
-nest::step_rate_generator::Parameters_::set( const DictionaryDatum& d, Buffers_& b, Node* )
+nest::step_rate_generator::Parameters_::set( const DictionaryDatum& d, Buffers_& b, NodeInterface* )
 {
   std::vector< double > new_times;
   const bool times_changed = updateValue< std::vector< double > >( d, names::amplitude_times, new_times );

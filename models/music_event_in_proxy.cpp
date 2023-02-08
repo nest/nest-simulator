@@ -112,7 +112,7 @@ nest::music_event_in_proxy::music_event_in_proxy( const music_event_in_proxy& n 
 
 
 /* ----------------------------------------------------------------
- * Node initialization functions
+ * NodeInterface initialization functions
  * ---------------------------------------------------------------- */
 
 void

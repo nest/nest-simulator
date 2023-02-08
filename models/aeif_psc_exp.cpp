@@ -194,7 +194,7 @@ nest::aeif_psc_exp::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::aeif_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::aeif_psc_exp::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   updateValueParam< double >( d, names::V_th, V_th, node );
   updateValueParam< double >( d, names::V_peak, V_peak_, node );
@@ -277,7 +277,7 @@ nest::aeif_psc_exp::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::aeif_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::aeif_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_&, NodeInterface* node )
 {
   updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
   updateValueParam< double >( d, names::I_syn_ex, y_[ I_EXC ], node );
@@ -348,7 +348,7 @@ nest::aeif_psc_exp::~aeif_psc_exp()
 }
 
 /* ----------------------------------------------------------------
- * Node initialization functions
+ * NodeInterface initialization functions
  * ---------------------------------------------------------------- */
 
 void

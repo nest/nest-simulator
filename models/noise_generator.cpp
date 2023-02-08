@@ -144,7 +144,7 @@ nest::noise_generator::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::noise_generator::Parameters_::set( const DictionaryDatum& d, const noise_generator& n, Node* node )
+nest::noise_generator::Parameters_::set( const DictionaryDatum& d, const noise_generator& n, NodeInterface* node )
 {
   updateValueParam< double >( d, names::mean, mean_, node );
   updateValueParam< double >( d, names::std, std_, node );

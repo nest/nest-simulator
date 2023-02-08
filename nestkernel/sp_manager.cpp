@@ -212,9 +212,9 @@ SPManager::builder_max_delay() const
  * @param syn_id
  */
 void
-SPManager::disconnect( const index snode_id, Node* target, thread target_thread, const index syn_id )
+SPManager::disconnect( const index snode_id, NodeInterface* target, thread target_thread, const index syn_id )
 {
-  Node* const source = kernel().node_manager.get_node_or_proxy( snode_id );
+  NodeInterface* const source = kernel().node_manager.get_node_or_proxy( snode_id );
   // normal nodes and devices with proxies
   if ( target->has_proxies() )
   {
@@ -540,7 +540,7 @@ SPManager::delete_synapse( const index snode_id,
   const int tid = kernel().vp_manager.get_thread_id();
   if ( kernel().node_manager.is_local_node_id( snode_id ) )
   {
-    Node* const source = kernel().node_manager.get_node_or_proxy( snode_id );
+    NodeInterface* const source = kernel().node_manager.get_node_or_proxy( snode_id );
     const thread source_thread = source->get_thread();
     if ( tid == source_thread )
     {
@@ -550,7 +550,7 @@ SPManager::delete_synapse( const index snode_id,
 
   if ( kernel().node_manager.is_local_node_id( tnode_id ) )
   {
-    Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id );
+    NodeInterface* const target = kernel().node_manager.get_node_or_proxy( tnode_id );
     const thread target_thread = target->get_thread();
     if ( tid == target_thread )
     {
@@ -656,7 +656,7 @@ nest::SPManager::get_synaptic_elements( std::string se_name,
     for ( node_it = local_nodes.begin(); node_it < local_nodes.end(); node_it++ )
     {
       node_id = node_it->get_node_id();
-      Node* node = node_it->get_node();
+      NodeInterface* node = node_it->get_node();
       n = node->get_synaptic_elements_vacant( se_name );
       if ( n > 0 )
       {

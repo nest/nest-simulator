@@ -35,7 +35,7 @@ gainfunction_ginzburg::get( DictionaryDatum& d ) const
 }
 
 void
-gainfunction_ginzburg::set( const DictionaryDatum& d, Node* node )
+gainfunction_ginzburg::set( const DictionaryDatum& d, NodeInterface* node )
 {
   updateValueParam< double >( d, names::theta, theta_, node );
   updateValueParam< double >( d, names::c_1, c1_, node );

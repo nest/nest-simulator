@@ -89,10 +89,10 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
-  using Node::handle;
-  using Node::handles_test_event;
-  using Node::receives_signal;
-  using Node::sends_signal;
+  using NodeInterface::handle;
+  using NodeInterface::handles_test_event;
+  using NodeInterface::receives_signal;
+  using NodeInterface::sends_signal;
 
   port send_test_event( NodeInterface&, rport, synindex, bool ) override;
 
@@ -139,8 +139,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( DictionaryDatum& ) const;                      //!< Store current values in dictionary
+    void set( const DictionaryDatum&, NodeInterface* node ); //!< Set values from dictionary
   };
 
   // ----------------------------------------------------------------
@@ -159,7 +159,7 @@ private:
     State_(); //!< Default initialization
 
     void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void set( const DictionaryDatum&, const Parameters_&, NodeInterface* );
   };
 
   // ----------------------------------------------------------------
@@ -358,7 +358,7 @@ binary_neuron< TGainfunction >::Parameters_::get( DictionaryDatum& d ) const
 
 template < class TGainfunction >
 void
-binary_neuron< TGainfunction >::Parameters_::set( const DictionaryDatum& d, Node* node )
+binary_neuron< TGainfunction >::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
   if ( tau_m_ <= 0 )
@@ -377,7 +377,7 @@ binary_neuron< TGainfunction >::State_::get( DictionaryDatum& d, const Parameter
 
 template < class TGainfunction >
 void
-binary_neuron< TGainfunction >::State_::set( const DictionaryDatum&, const Parameters_&, Node* )
+binary_neuron< TGainfunction >::State_::set( const DictionaryDatum&, const Parameters_&, NodeInterface* )
 {
 }
 

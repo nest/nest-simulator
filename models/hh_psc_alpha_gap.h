@@ -169,7 +169,7 @@ public:
   using Node::handles_test_event;
   using Node::sends_secondary_event;
 
-  port send_test_event( Node& target, rport receptor_type, synindex, bool ) override;
+  port send_test_event( NodeInterface& target, rport receptor_type, synindex, bool ) override;
 
   void handle( SpikeEvent& ) override;
   void handle( CurrentEvent& ) override;
@@ -384,7 +384,7 @@ hh_psc_alpha_gap::wfr_update( Time const& origin, const long from, const long to
 }
 
 inline port
-hh_psc_alpha_gap::send_test_event( Node& target, rport receptor_type, synindex, bool )
+hh_psc_alpha_gap::send_test_event( NodeInterface& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent se;
   se.set_sender( *this );

@@ -217,7 +217,7 @@ nest::music_cont_out_proxy::finalize()
 }
 
 nest::port
-nest::music_cont_out_proxy::send_test_event( Node& target, rport receptor_type, synindex, bool )
+nest::music_cont_out_proxy::send_test_event( NodeInterface& target, rport receptor_type, synindex, bool )
 {
 
   DataLoggingRequest e( P_.interval_, P_.record_from_ );

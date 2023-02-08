@@ -222,7 +222,7 @@ public:
   spike_generator();
   spike_generator( const spike_generator& );
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  port send_test_event( NodeInterface&, rport, synindex, bool ) override;
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
@@ -315,7 +315,7 @@ private:
 };
 
 inline port
-spike_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
+spike_generator::send_test_event( NodeInterface& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
   enforce_single_syn_type( syn_id );
 

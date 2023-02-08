@@ -46,7 +46,7 @@ multimeter::multimeter( const multimeter& n )
 }
 
 port
-multimeter::send_test_event( Node& target, rport receptor_type, synindex, bool )
+multimeter::send_test_event( NodeInterface& target, rport receptor_type, synindex, bool )
 {
   DataLoggingRequest e( P_.interval_, P_.offset_, P_.record_from_ );
   e.set_sender( *this );

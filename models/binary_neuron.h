@@ -94,7 +94,7 @@ public:
   using Node::receives_signal;
   using Node::sends_signal;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  port send_test_event( NodeInterface&, rport, synindex, bool ) override;
 
   void handle( SpikeEvent& ) override;
   void handle( CurrentEvent& ) override;
@@ -230,7 +230,7 @@ private:
 
 template < class TGainfunction >
 inline port
-binary_neuron< TGainfunction >::send_test_event( Node& target, rport receptor_type, synindex, bool )
+binary_neuron< TGainfunction >::send_test_event( NodeInterface& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

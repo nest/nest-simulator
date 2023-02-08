@@ -147,7 +147,7 @@ public:
   port handles_test_event( SpikeEvent&, rport ) override;
   port handles_test_event( CurrentEvent&, rport ) override;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  port send_test_event( NodeInterface&, rport, synindex, bool ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -269,7 +269,7 @@ private:
 };
 
 inline port
-izhikevich::send_test_event( Node& target, rport receptor_type, synindex, bool )
+izhikevich::send_test_event( NodeInterface& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

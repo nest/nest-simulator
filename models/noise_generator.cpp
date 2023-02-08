@@ -259,7 +259,7 @@ nest::noise_generator::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 nest::port
-nest::noise_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
+nest::noise_generator::send_test_event( NodeInterface& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
   StimulationDevice::enforce_single_syn_type( syn_id );
 

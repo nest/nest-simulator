@@ -168,7 +168,7 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  port send_test_event( NodeInterface&, rport, synindex, bool ) override;
 
   port handles_test_event( SpikeEvent&, rport ) override;
   port handles_test_event( CurrentEvent&, rport ) override;
@@ -415,7 +415,7 @@ private:
 };
 
 inline port
-nest::iaf_psc_exp_ps::send_test_event( Node& target, rport receptor_type, synindex, bool )
+nest::iaf_psc_exp_ps::send_test_event( NodeInterface& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

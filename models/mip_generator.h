@@ -117,7 +117,7 @@ public:
    */
   using Node::event_hook;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  port send_test_event( NodeInterface&, rport, synindex, bool ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -167,7 +167,7 @@ private:
 };
 
 inline port
-mip_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
+mip_generator::send_test_event( NodeInterface& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
   StimulationDevice::enforce_single_syn_type( syn_id );
 

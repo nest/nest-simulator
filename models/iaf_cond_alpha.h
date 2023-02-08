@@ -148,7 +148,7 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node& tagret, rport receptor_type, synindex, bool ) override;
+  port send_test_event( NodeInterface& tagret, rport receptor_type, synindex, bool ) override;
 
   port handles_test_event( SpikeEvent&, rport ) override;
   port handles_test_event( CurrentEvent&, rport ) override;
@@ -347,7 +347,7 @@ private:
 // Boilerplate inline function definitions ----------------------------------
 
 inline port
-iaf_cond_alpha::send_test_event( Node& target, rport receptor_type, synindex, bool )
+iaf_cond_alpha::send_test_event( NodeInterface& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

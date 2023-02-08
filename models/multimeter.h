@@ -161,7 +161,7 @@ public:
   using Node::handles_test_event;
   using Node::sends_signal;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  port send_test_event( NodeInterface&, rport, synindex, bool ) override;
 
   void handle( DataLoggingReply& ) override;
 

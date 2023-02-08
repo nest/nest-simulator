@@ -91,7 +91,7 @@ public:
   using Node::receives_signal;
   using Node::sends_signal;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  port send_test_event( NodeInterface&, rport, synindex, bool ) override;
   SignalType sends_signal() const override;
   SignalType receives_signal() const override;
 
@@ -123,7 +123,7 @@ private:
 };
 
 inline port
-parrot_neuron::send_test_event( Node& target, rport receptor_type, synindex, bool )
+parrot_neuron::send_test_event( NodeInterface& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

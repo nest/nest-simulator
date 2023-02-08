@@ -139,7 +139,7 @@ public:
   using Node::handle;
   using Node::handles_test_event;
   using Node::sends_signal;
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( NodeInterface&, rport, synindex, bool );
 
   void handle( DataLoggingReply& );
 

@@ -144,52 +144,6 @@ def list_of_changed_files(log_filename, msg_changed_files_section_start,
     return changed_files
 
 
-def msg_summary_vera(log_filename, msg_vera_section_start,
-                     msg_vera_section_end, msg_vera):
-    """Read the NEST GitHub Actions build log file, find the VERA++ sections,
-    extract the VERA messages per file and return a dictionary containing an
-    overall summary of the VERA++ code analysis.
-
-    Parameters
-    ----------
-    log_filename:           NEST GitHub Actions build log file name.
-    msg_vera_section_start: Message number string, e.g. "MSGBLD1234".
-    msg_vera_section_end:   Message number string, e.g. "MSGBLD1234".
-    msg_vera:               Message number string, e.g. "MSGBLD1234".
-
-    Returns
-    -------
-    None or a dictionary of dictionaries of VERA++ messages per file.
-    """
-
-    vera_msgs = None
-    in_a_vera_section = False
-    with open(log_filename) as fh:
-        for line in fh:
-            if not in_a_vera_section and is_message(line,
-                                                    msg_vera_section_start):
-                in_a_vera_section = True
-                source_filename = line.split(' ')[-1].strip()
-                single_file_vera_msgs = {}
-                if vera_msgs is None:
-                    vera_msgs = {}
-                vera_msgs.update({source_filename: single_file_vera_msgs})
-                continue
-
-            if in_a_vera_section:
-                if is_message(line, msg_vera):
-                    message = line.split(":")[-1].strip()
-                    if message not in single_file_vera_msgs:
-                        single_file_vera_msgs[message] = 0
-                    single_file_vera_msgs[message] += 1
-                    continue
-
-                if is_message(line, msg_vera_section_end):
-                    in_a_vera_section = False
-
-    return vera_msgs
-
-
 def msg_summary_cppcheck(log_filename, msg_cppcheck_section_start,
                          msg_cppcheck_section_end, msg_cppcheck):
     """Read the NEST GitHub Actions build log file, find the cppcheck sections,
@@ -618,14 +572,13 @@ def get_num_msgs_for_file(file_name, summary):
     return num_msgs
 
 
-def code_analysis_per_file_tables(summary_vera, summary_cppcheck,
+def code_analysis_per_file_tables(summary_cppcheck,
                                   summary_format, summary_pep8):
-    """Create formatted per-file-tables of VERA++, Cppcheck, clang-format and
+    """Create formatted per-file-tables of Cppcheck, clang-format and
     PEP8 messages. Concatenate and return them.
 
     Parameters
     ----------
-    summary_vera:     Dictionary of dictionaries of VERA++ messages per file.
     summary_cppcheck: Dictionary of dictionaries of cppcheck messages per file.
     summary_format:   Dictionary of dictionaries of clang-format messages per
                       file.
@@ -638,34 +591,24 @@ def code_analysis_per_file_tables(summary_vera, summary_cppcheck,
 
     all_tables = ''
 
-    # VERA++, cppcheck, clang-format
-    if summary_vera is not None and summary_cppcheck is not None and \
-       summary_format is not None:
+    # cppcheck, clang-format
+    if summary_cppcheck is not None and summary_format is not None:
 
         # Keys, i.e. file names, are identical in these dictionaries.
         # If this assertion raises an exception, please check ci_build.sh
         # which runs the GitHub Actions build.
         assert (summary_format.keys() == summary_cppcheck.keys())
-        assert (summary_format.keys() == summary_vera.keys())
 
-        # Again: Identical keys for clang-format, cppcheck and VERA++.
+        # Again: Identical keys for clang-format and cppcheck.
         for file in summary_format.keys():
             file_table = ''
 
-            num_msgs_vera = get_num_msgs_for_file(file, summary_vera)
             num_msgs_cppcheck = get_num_msgs_for_file(file, summary_cppcheck)
             num_msgs_format = get_num_msgs_for_file(file, summary_format)
 
-            if num_msgs_vera > 0 or \
-               num_msgs_cppcheck > 0 or \
-               num_msgs_format > 0:
+            if num_msgs_cppcheck > 0 or num_msgs_format > 0:
 
                 file_table = [['+ + + ' + file + ' + + +', '']]
-
-                if num_msgs_vera > 0:
-                    file_table.append(['VERA++ (MSGBLD0135):', 'Count'])
-                    for message, count in summary_vera[file].items():
-                        file_table.append([str(message), str(count)])
 
                 if num_msgs_cppcheck > 0:
                     file_table.append(['Cppcheck (MSGBLD0155):', 'Count'])
@@ -778,7 +721,6 @@ def printable_summary(list_of_changed_files,
                       status_make_install,
                       status_amazon_s3_upload,
                       status_tests,
-                      summary_vera,
                       summary_cppcheck,
                       summary_format,
                       summary_pep8,
@@ -792,7 +734,6 @@ def printable_summary(list_of_changed_files,
                       number_of_tests_skipped,
                       failed_tests,
                       test_time,
-                      ignore_vera,
                       ignore_cppcheck,
                       ignore_format,
                       ignore_pep8,
@@ -808,8 +749,6 @@ def printable_summary(list_of_changed_files,
     status_make_install:     Status of the 'make install': True, False or None
     status_amazon_s3_upload: Status of the Amazon S3 upload: True, False
     status_tests:            Status of the test suite run: True, False or None
-    summary_vera:            Dictionary of dictionaries of VERA++ messages per
-                             file.
     summary_cppcheck:        Dictionary of dictionaries of cppcheck messages
                              per file.
     summary_format:          Dictionary of dictionaries of clang-format
@@ -843,17 +782,12 @@ def printable_summary(list_of_changed_files,
 
     build_summary = header
 
-    if get_num_msgs(summary_vera) > 0 or \
-       get_num_msgs(summary_cppcheck) > 0 or \
-       get_num_msgs(summary_format) > 0 or \
-       get_num_msgs(summary_pep8) > 0:
+    if get_num_msgs(summary_cppcheck) > 0 or get_num_msgs(summary_format) > 0 or get_num_msgs(summary_pep8) > 0:
 
         build_summary += '  S T A T I C   C O D E   A N A L Y S I S\n'
 
-        # Create formatted per-file-tables of VERA++, Cppcheck, clang-format
-        # and PEP8 messages.
-        build_summary += code_analysis_per_file_tables(summary_vera,
-                                                       summary_cppcheck,
+        # Create formatted per-file-tables of Cppcheck, clang-format and PEP8 messages.
+        build_summary += code_analysis_per_file_tables(summary_cppcheck,
                                                        summary_format,
                                                        summary_pep8)
 
@@ -871,10 +805,6 @@ def printable_summary(list_of_changed_files,
         ['Changed Files :', ''],
         ['', 'No files have been changed.'],
         ['Static Code Analysis :', ''],
-        ['VERA++',
-         convert_summary_to_status_string(summary_vera, ignore_vera) +
-         '\n' + '\nNumber of messages (MSGBLD0135): ' +
-         str(get_num_msgs(summary_vera))],
         ['Cppcheck',
          convert_summary_to_status_string(summary_cppcheck, ignore_cppcheck) +
          '\n' + '\nNumber of messages (MSGBLD0155): ' +
@@ -935,11 +865,9 @@ def build_return_code(status_cmake_configure,
                       status_make,
                       status_make_install,
                       status_tests,
-                      summary_vera,
                       summary_cppcheck,
                       summary_format,
                       summary_pep8,
-                      ignore_vera,
                       ignore_cppcheck,
                       ignore_format,
                       ignore_pep8,
@@ -954,16 +882,12 @@ def build_return_code(status_cmake_configure,
     status_make:            Status of the 'make': True, False or None
     status_make_install:    Status of the 'make install': True, False or None
     status_tests:           Status of the test suite run: True, False or None
-    summary_vera:           Dictionary of dictionaries of VERA++ messages per
-                            file.
     summary_cppcheck:       Dictionary of dictionaries of cppcheck messages per
                             file.
     summary_format:         Dictionary of dictionaries of clang-format messages
                             per file.
     summary_pep8:           Dictionary of dictionaries of PEP8 messages per
                             file.
-    ignore_vera:            VERA++ messages will not cause the build to
-                            fail: True, False
     ignore_cppcheck:        CPPCHECK messages will not cause the build to
                             fail: True, False
     ignore_format:          CLANG-FORMAT messages will not cause the build to
@@ -981,8 +905,7 @@ def build_return_code(status_cmake_configure,
         (status_make) and                                                                      # noqa
         (status_make_install) and                                                              # noqa
         (skip_installcheck or status_tests) and                                                # noqa
-        (skip_code_analysis or ((ignore_vera or get_num_msgs(summary_vera) == 0) and           # noqa
-                                (ignore_cppcheck or get_num_msgs(summary_cppcheck) == 0) and   # noqa
+        (skip_code_analysis or ((ignore_cppcheck or get_num_msgs(summary_cppcheck) == 0) and   # noqa
                                 (ignore_format or get_num_msgs(summary_format) == 0) and       # noqa
                                 (ignore_pep8 or get_num_msgs(summary_pep8) == 0))              # noqa
         )                                                                                      # noqa
@@ -1018,15 +941,11 @@ if __name__ == '__main__':
     status_make_install = \
         is_message_pair_in_logfile(log_filename, "MSGBLD0270", "MSGBLD0280")
 
-    ignore_vera = is_message_in_logfile(log_filename, "MSGBLD1010")
     ignore_cppcheck = is_message_in_logfile(log_filename, "MSGBLD1020")
     ignore_format = is_message_in_logfile(log_filename, "MSGBLD1030")
     ignore_pep8 = is_message_in_logfile(log_filename, "MSGBLD1040")
 
     # Summarize the per file results from the static code analysis.
-    summary_vera = msg_summary_vera(log_filename, "MSGBLD0130",
-                                    "MSGBLD0140", "MSGBLD0135")
-
     summary_cppcheck = msg_summary_cppcheck(log_filename, "MSGBLD0150",
                                             "MSGBLD0160", "MSGBLD0155")
 
@@ -1052,11 +971,9 @@ if __name__ == '__main__':
                                   status_make,
                                   status_make_install,
                                   status_tests,
-                                  summary_vera,
                                   summary_cppcheck,
                                   summary_format,
                                   summary_pep8,
-                                  ignore_vera,
                                   ignore_cppcheck,
                                   ignore_format,
                                   ignore_pep8,
@@ -1076,7 +993,6 @@ if __name__ == '__main__':
                             status_make_install,
                             status_amazon_s3_upload,
                             status_tests,
-                            summary_vera,
                             summary_cppcheck,
                             summary_format,
                             summary_pep8,
@@ -1090,7 +1006,6 @@ if __name__ == '__main__':
                             number_of_tests_skipped,
                             failed_tests,
                             test_time,
-                            ignore_vera,
                             ignore_cppcheck,
                             ignore_format,
                             ignore_pep8,

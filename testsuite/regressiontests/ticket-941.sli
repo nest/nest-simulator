@@ -40,7 +40,7 @@ M_ERROR setverbosity
 
 /*
   We connect connect two parrot neurons to each other using
-  different synpase types. We use a different delay for each
+  different synapse types. We use a different delay for each
   pn1 -> pn2 connection so that we can detect actually
   existing connections by spike delays, thus cross-checking output
   from GetConnection.

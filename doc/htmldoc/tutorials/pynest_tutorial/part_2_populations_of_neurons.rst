@@ -53,7 +53,7 @@ exploit the optional arguments of :py:func:`.Create`:
 The variable ``neuronpop`` is a NodeCollection representing all the ids of the created
 neurons.
 
-Parameterising the neurons at creation is more efficient than using
+Parametrizing the neurons at creation is more efficient than using
 :py:func:`.SetStatus` after creation, so try to do this wherever possible.
 
 We can also set the parameters of a neuron model *before* creation,

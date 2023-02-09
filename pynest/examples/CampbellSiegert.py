@@ -44,7 +44,7 @@ References
 Authors
 ~~~~~~~
 
-S. Schrader, Siegert implentation by T. Tetzlaff
+S. Schrader, Siegert implementation by T. Tetzlaff
 """
 
 ###############################################################################

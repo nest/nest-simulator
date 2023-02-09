@@ -67,6 +67,9 @@ public:
 
   void set( const thread tid, const synindex syn_id, const index lcid, const unsigned int lag, const double offset );
 
+  template < class TargetT >
+  void set( const TargetT& target, const unsigned int lag );
+
   /**
    * Returns local connection ID.
    */
@@ -185,6 +188,20 @@ SpikeData::set( const thread tid, const synindex syn_id, const index lcid, const
   syn_id_ = syn_id;
 }
 
+
+template < class TargetT >
+inline void
+SpikeData::set( const TargetT& target, const unsigned int lag )
+{
+  // the assertions in the above function are granted by the TargetT object!
+  assert( lag < MAX_LAG );
+  lcid_ = target.get_lcid();
+  marker_ = SPIKE_DATA_ID_DEFAULT;
+  lag_ = lag;
+  tid_ = target.get_tid();
+  syn_id_ = target.get_syn_id();
+}
+
 inline index
 SpikeData::get_lcid() const
 {
@@ -270,6 +287,9 @@ public:
     const unsigned int lag,
     const double offset );
   void set( const thread tid, const synindex syn_id, const index lcid, const unsigned int lag, const double offset );
+
+  template < class TargetT >
+  void set( const TargetT& target, const unsigned int lag );
   double get_offset() const;
 };
 
@@ -292,6 +312,7 @@ inline OffGridSpikeData::OffGridSpikeData( const thread tid,
 {
 }
 
+
 inline void
 OffGridSpikeData::set( const thread tid,
   const synindex syn_id,
@@ -310,6 +331,15 @@ OffGridSpikeData::set( const thread tid,
   tid_ = tid;
   syn_id_ = syn_id;
   offset_ = offset;
+}
+
+
+template < class TargetT >
+inline void
+OffGridSpikeData::set( const TargetT& target, const unsigned int lag )
+{
+  SpikeData::set( target, lag );
+  offset_ = target.get_offset();
 }
 
 inline double

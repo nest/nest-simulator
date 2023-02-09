@@ -37,7 +37,7 @@
 
 ResetKernel
 
- 1000 ms   /t_relax Set % how long to wait for the state to stabiluze before reording the spikes
+ 1000 ms   /t_relax Set % how long to wait for the state to stabilize before reordering the spikes
  100 s    /t_sim Set % how long we simulate to compute the rate (1000 sec)
  1000 ms   /t_memmeasure Set % how long to measure the membrane potential
  16000     /n_ex  Set % size of the excitatory population

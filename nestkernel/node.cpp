@@ -52,7 +52,8 @@ Node::Node()
 }
 
 Node::Node( const Node& n )
-  : deprecation_warning( n.deprecation_warning )
+  : NodeInterface( n )
+  , deprecation_warning( n.deprecation_warning )
   , node_id_( 0 )
   , thread_lid_( n.thread_lid_ )
   , model_id_( n.model_id_ )

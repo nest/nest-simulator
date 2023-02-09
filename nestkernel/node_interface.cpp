@@ -37,7 +37,7 @@ NodeInterface::NodeInterface()
 {
 }
 
-NodeInterface::NodeInterface( const NodeInterface& n )
+NodeInterface::NodeInterface( const NodeInterface& )
 {
 }
 
@@ -361,12 +361,12 @@ NodeInterface::get_tau_syn_in( int )
 }
 
 void
-NodeInterface::event_hook( DSSpikeEvent& e )
+NodeInterface::event_hook( DSSpikeEvent& )
 {
 }
 
 void
-NodeInterface::event_hook( DSCurrentEvent& e )
+NodeInterface::event_hook( DSCurrentEvent& )
 {
 }
 

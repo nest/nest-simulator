@@ -10,7 +10,7 @@ What we mean by `models`
 Models in the context of NEST are C++ implementations of mathematical equations that describe the characteristics and behavior of
 different types of neurons and synapses, based on the relevant peer-reviewed publications for the model.
 
-We also use the term model in relation to network models (e.g., :ref:`microcircuit <toc_microcircuit>` and `multi-area model <https://inm-6.github.io/multi-area-model/>`_). These network models
+We also use the term model in relation to network models (e.g., :doc:`microcircuit <../auto_examples/Potjans_2014/index>` and `multi-area model <https://inm-6.github.io/multi-area-model/>`_). These network models
 can be considered a level of complexity higher than the neuron or synapse model. However, here, we focus on neuron and synapse models and not on network models.
 
 Find a model

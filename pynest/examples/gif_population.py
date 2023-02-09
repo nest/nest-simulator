@@ -32,6 +32,8 @@ elements (stc and sfa).
 
 Population dynamics are visualized by raster plot and as average firing rate.
 
+See [1]_ and [2]_ for details.
+
 References
 ~~~~~~~~~~
 

@@ -53,7 +53,7 @@ def version_role(pattern):
         else:
             level = "min"
 
-        with open(Path(__file__).parent.join('versions.json')) as fp:
+        with open(Path(__file__).parent / 'versions.json') as fp:
             data = json.load(fp)
 
         try:

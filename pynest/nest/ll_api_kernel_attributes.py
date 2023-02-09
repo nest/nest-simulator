@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# ll_api_ka.py
+# ll_api_kernel_attributes.py
 #
 # This file is part of NEST.
 #

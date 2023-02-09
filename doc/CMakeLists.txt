@@ -74,7 +74,7 @@ if ( BUILD_SPHINX_DOCS )
   add_custom_target( sphinxdocs
     WORKING_DIRECTORY ${_SPHINX_SOURCE_DIR}
     COMMAND ${SPHINX_EXECUTABLE} -b html . ${_SPHINX_BUILD_DIR}
-    COMMAND ${PYTHON_EXECUTABLE} resolve_includes.py
+    COMMAND ${Python_EXECUTABLE} resolve_includes.py
   )
   add_dependencies( docs sphinxdocs )
 

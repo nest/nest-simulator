@@ -5,7 +5,10 @@ class KernelAttribute:
     """
     Descriptor that dispatches attribute access to the nest kernel.
     """
-    def __init__(self, typehint, description, readonly=False, default=None, localonly=False):
+
+    def __init__(
+        self, typehint, description, readonly=False, default=None, localonly=False
+    ):
         self._readonly = readonly
         self._localonly = localonly
         self._default = default
@@ -30,7 +33,7 @@ class KernelAttribute:
         if instance is None:
             return self
 
-        sr('GetKernelStatus')
+        sr("GetKernelStatus")
         status_root = spp()
 
         if self._full_status:
@@ -44,4 +47,4 @@ class KernelAttribute:
             msg = f"`{self._name}` is a read only kernel attribute."
             raise AttributeError(msg)
         sps({self._name: value})
-        sr('SetKernelStatus')
+        sr("SetKernelStatus")

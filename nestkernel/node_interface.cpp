@@ -1,5 +1,5 @@
 /*
- *  node.cpp
+ *  node_interface.cpp
  *
  *  This file is part of NEST.
  *

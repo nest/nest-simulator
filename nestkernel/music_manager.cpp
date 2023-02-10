@@ -97,7 +97,7 @@ MUSICManager::enter_runtime( double h_min_delay )
   }
 }
 
-#else // #ifdef HAVE_MUSIC
+#else /* #ifdef HAVE_MUSIC */
 
 void
 MUSICManager::init_music( int*, char*** )
@@ -124,7 +124,7 @@ MUSICManager::music_finalize()
 
   music_runtime->finalize();
   delete music_runtime;
-#else // #ifdef HAVE_MUSIC
+#else /* #ifdef HAVE_MUSIC */
 #ifdef HAVE_MPI
   MPI_Finalize();
 #endif

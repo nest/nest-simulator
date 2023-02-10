@@ -83,6 +83,7 @@ public:
 protected:
   void connect_();
   void cg_set_masks();
+
   /**
    * Calculate the right border of the contiguous range of node IDs
    * starting at left.
@@ -96,6 +97,7 @@ protected:
    * \returns the right border of the range
    */
   index cg_get_right_border( index left, size_t step, const NodeCollectionPTR nodes );
+
   /**
    * Determine all contiguous ranges found in a given vector of node IDs
    * and add the ranges to the given RangeSet.

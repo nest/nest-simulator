@@ -113,14 +113,11 @@ public:
    * Updates the number of connected synaptic elements in the
    * target and the source.
    *
-   * Returns 0 if the target is either on another
-   * MPI machine or another thread. Returns 1 otherwise.
-   *
    * @param snode_id id of the source
    * @param tnode_id id of the target
    * @param tid thread id
    * @param update amount of connected synaptic elements to update
-   * @return
+   * @return flase if the target is either on another MPI process or thread, true otherwise
    */
   bool change_connected_synaptic_elements( index snode_id, index tnode_id, const int tid, int update );
 

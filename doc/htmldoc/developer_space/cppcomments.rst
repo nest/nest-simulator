@@ -14,12 +14,17 @@ Generate HTML from doxygen comments
 
 To generate HTML output of the doxgyen comments,
 
-in the build directory, after running ``cmake path/to/nest-simulator/``,
-run
+in the build directory, 
+
+run ``cmake`` with developer documentation on::
+
+  cmake -Dwith-devdoc=ON path/to/nest-simulator.
+
+then
 
 ::
 
-   make doc
+   make docs
    xdg-open doc/doxygen/html/index.html
 
 .. seealso::
@@ -65,12 +70,12 @@ C++ style
 
 .. code-block:: cpp
 
-  /*
-   *
-   *
-   */
+   //
+   //
+   //
+   //
 
-* Single or two line comments:
+  * Single or two line comments:
 
 .. code-block:: cpp
 

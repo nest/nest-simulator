@@ -55,7 +55,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   , parameters_requiring_skipping_()
   , param_dicts_()
 {
-  /* read out rule-related parameters -------------------------
+  /* read out rule-related parameters
    * - /rule has been taken care of above
    * - rule-specific params are handled by subclass c'tor
    */

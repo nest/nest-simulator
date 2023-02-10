@@ -65,9 +65,7 @@ class ConnBuilder
 {
 public:
   /**
-   * Connect sources to targets according to specifications in dictionary.
-   *
-   * Now we can connect with or without structural plasticity
+   * Connect sources to targets according to specifications in dictionary with or without structural plasticity
    *
    * To create a connection, call
    *
@@ -77,7 +75,7 @@ public:
    */
   virtual void connect();
 
-  //! Now we can delete synapses with or without structural plasticity
+  //! Delete synapses with or without structural plasticity
   virtual void disconnect();
 
   ConnBuilder( NodeCollectionPTR sources,
@@ -318,6 +316,7 @@ protected:
    * by the user to delete existing synapses.
    */
   void disconnect_() override;
+
   /**
    * Solves the disconnection of two nodes on a OneToOne basis with
    * structural plasticity.

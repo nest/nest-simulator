@@ -1,5 +1,5 @@
 Guidelines for C++ code comments
-=================================
+================================
 
 There are two types of code comments for C++ files: doxygen style and C++ style comments.
 
@@ -48,14 +48,15 @@ Doxygen style
 
 .. code-block:: cpp
 
-   //! Lorem ipusum . . .
+   //! The maximum delay of the simulation
+   long may_delay;
 
 
 * If a short comment is needed for variables, you can add a comment to the right of the code:
 
 .. code-block:: cpp
 
-  long max_delay_; //!< lorem ipsum
+  long max_delay_; //!< The maximum delay of the simulation
 
 C++ style
 ~~~~~~~~~
@@ -74,7 +75,3 @@ C++ style
 .. code-block:: cpp
 
  //
-
-
-
-

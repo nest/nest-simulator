@@ -113,22 +113,22 @@ public:
 
 protected:
   /**
-   * record spike history
+   * Record spike history
    */
   void set_spiketime( Time const& t_sp, double offset = 0.0 );
 
   /**
-   * return most recent spike time in ms
+   * Return most recent spike time in ms
    */
   inline double get_spiketime_ms() const;
 
   /**
-   * clear spike history
+   * Clear spike history
    */
   void clear_history();
 
   /**
-   * Number of incoming connections from stdp connectors.
+   * Number of incoming connections from STDP connectors.
    *
    * It is needed to determine, if every incoming connection has
    * read the spikehistory for a given point in time

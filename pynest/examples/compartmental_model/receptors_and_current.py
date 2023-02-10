@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 r"""Constructing and simulating compartmental models with different receptor types
-----------------------------------------------------------------
+------------------------------------------------------------------------------
 This example demonstrates how to initialize a three-compartment model with
 different receptor types. Each compartment receives a different receptor.
 

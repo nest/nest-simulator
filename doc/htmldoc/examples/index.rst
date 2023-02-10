@@ -71,7 +71,7 @@ PyNEST examples
     .. grid-item-card:: Cortical microcircuit (Potjans)
            :img-top: ../static/img/pynest/raster_plot.png
 
-           * :doc:`cortical_microcircuit_index`
+           * :doc:`../auto_examples/Potjans_2014/index`
 
     .. grid-item-card:: GLIF (from Allen institute)
            :img-top: ../static/img/pynest/glif_cond.png
@@ -232,9 +232,14 @@ PyNEST examples
            * :doc:`../auto_examples/csa_spatial_example`
 
 .. toctree::
-   :maxdepth: 1
    :hidden:
 
+   ../auto_examples/sudoku/index
+   ../auto_examples/pong/index
+   ../auto_examples/spatial/index
+   ../auto_examples/music_cont_out_proxy_example/index
+   ../auto_examples/compartmental_model/index
+   ../auto_examples/Potjans_2014/index
    ../auto_examples/one_neuron
    ../auto_examples/one_neuron_with_noise
    ../auto_examples/twoneurons
@@ -276,7 +281,6 @@ PyNEST examples
    ../auto_examples/brunel_siegert_nest
    ../auto_examples/brunel_exp_multisynapse_nest
    ../auto_examples/brunel_alpha_evolution_strategies
-   Cortical microcircuit model (based on Potjans and Diesmann, 2014) <cortical_microcircuit_index>
    ../auto_examples/spatial/conncomp
    ../auto_examples/spatial/conncon_sources
    ../auto_examples/spatial/conncon_targets
@@ -316,6 +320,7 @@ PyNEST examples
 
 .. toctree::
    :hidden:
+
    ../auto_examples/pong/run_simulations
    ../auto_examples/pong/pong
    ../auto_examples/pong/generate_gif

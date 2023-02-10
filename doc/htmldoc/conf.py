@@ -22,16 +22,13 @@
 
 import sys
 import os
-import re
-import pip
-import subprocess
+
+from urllib.request import urlretrieve
 
 from pathlib import Path
 from shutil import copyfile
 import json
-
-from subprocess import check_output, CalledProcessError
-from mock import Mock as MagicMock
+import subprocess
 
 
 source_dir = os.environ.get('NESTSRCDIR', False)
@@ -94,6 +91,7 @@ extensions = [
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
     'sphinx.ext.mathjax',
+    'IPython.sphinxext.ipython_console_highlighting',
     'nbsphinx',
     'sphinx_design',
     'HoverXTooltip',
@@ -139,7 +137,15 @@ language = 'en'
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = ['Thumbs.db', '.DS_Store', 'nest_by_example', 'README.md']
+exclude_patterns = [
+    '**.ipynb_checkpoints',
+    '.DS_Store',
+    'README.md',
+    'Thumbs.db',
+    'auto_examples/**.ipynb',
+    'auto_examples/index.rst',
+    'nest_by_example',
+]
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'manni'
@@ -223,7 +229,7 @@ intersphinx_mapping = {
     'desktop': ('https://nest-desktop.readthedocs.io/en/latest/', None),
     'gpu': ('https://nest-gpu.readthedocs.io/en/latest/', None),
     'neuromorph': ('https://electronicvisions.github.io/hbp-sp9-guidebook/', None),
-    'arbor': ('https://docs.arbor-sim.org/en/latest/objects.inv', None),
+    'arbor': ('https://docs.arbor-sim.org/en/latest/', None),
     'tvb': ('http://docs.thevirtualbrain.org/', None),
     'extmod': ('https://nest-extension-module.readthedocs.io/en/latest/', None),
 }
@@ -324,7 +330,7 @@ texinfo_documents = [
 
 
 def copy_example_file(src):
-    copyfile(src, doc_build_dir / "examples" / src.parts[-1])
+    copyfile(src, doc_build_dir / "static/img" / src.parts[-1])
 
 
 def copy_acknowledgments_file(src):
@@ -333,9 +339,59 @@ def copy_acknowledgments_file(src):
 
 # -- Copy Acknowledgments file ----------------------------
 copy_acknowledgments_file(source_dir / "ACKNOWLEDGMENTS.md")
+
 # -- Copy documentation for Microcircuit Model ----------------------------
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/box_plot.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/raster_plot.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/microcircuit.png")
-copy_example_file(source_dir / "pynest/examples/Potjans_2014/README.rst")
 copy_example_file(source_dir / "pynest/examples/hpc_benchmark_connectivity.svg")
+
+
+def patch_documentation(patch_url):
+    """Apply a hot-fix patch to the documentation before building it.
+
+    This function is useful in situations where the online documentation should
+    be modified, but the reason for a new documentation build does not justify
+    a new release of NEST. Example situations are the discovery of broken links
+    spelling errors, or styling issues. Moreover, this mechanism can be used to
+    customize to the look and feel of the NEST documentation in individual
+    installations.
+
+    In order to make use of this function, the environment variable ``patch_url``
+    has to be set to the URL where documentation patch files are located. The
+    environment variable must either be set locally or via the admin panel of
+    Read the Docs.
+
+    Patch files under the ``patch_url`` are expected to have names in the format
+    ``{git_hash}_doc.patch``, where ``{git_hash}`` is the full hash of the version the
+    patch applies to.
+
+    The basic algorithm implemented by this function is the following:
+      1. obtain the Git hash of the version currently checked out
+      2. log the hash by printing it to the console
+      3. retrieve the patch
+
+    """
+
+    print("Preparing patch...")
+    try:
+        git_dir = str(source_dir / ".git")
+        git_hash = subprocess.check_output(
+            f"GIT_DIR='{git_dir}' git rev-parse HEAD",
+            shell=True,
+            encoding='utf8').strip()
+        print(f"  current git hash: {git_hash}")
+        patch_file = f'{git_hash}_doc.patch'
+        patch_url = f'{patch_url}/{patch_file}'
+        print(f"  retrieving {patch_url}")
+        urlretrieve(patch_url, patch_file)
+        print(f"  applying {patch_file}")
+        result = subprocess.check_output('patch -p3', stdin=open(patch_file, 'r'), stderr=subprocess.STDOUT, shell=True)
+        print(f"Patch result: {result}")
+    except Exception as exc:
+        print(f"Error while applying patch: {exc}")
+
+
+patch_url = os.getenv("patch_url")
+if patch_url is not None:
+    patch_documentation(patch_url)

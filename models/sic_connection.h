@@ -39,7 +39,7 @@ Description
 +++++++++++
 
 ``sic_connection`` is a connector to create connections from astrocytes to
-neurons. It is adapted from ``gap_junction`` but unidirectional. 
+neurons. It is adapted from ``gap_junction`` but unidirectional.
 ``sic_connection`` sends current to neurons. The value of current is
 determined by astrocytes. The neuron model compatible with this connector is
 ``aeif_cond_alpha_astro``.
@@ -129,6 +129,7 @@ public:
   send( Event& e, thread t, const CommonSynapseProperties& )
   {
     e.set_weight( weight_ );
+    e.set_delay_steps( get_delay_steps() );
     e.set_receiver( *get_target( t ) );
     e.set_rport( get_rport() );
     e();
@@ -144,11 +145,11 @@ public:
     weight_ = w;
   }
 
-  void
-  set_delay( double )
-  {
-    throw BadProperty( "sic_connection connection has no delay" );
-  }
+  // void
+  // set_delay( double )
+  // {
+  //   throw BadProperty( "sic_connection connection has no delay" );
+  // }
 
 private:
   double weight_; //!< connection weight
@@ -177,11 +178,11 @@ template < typename targetidentifierT >
 void
 SICConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
-  // If the delay is set, we throw a BadProperty
-  if ( d->known( names::delay ) )
-  {
-    throw BadProperty( "sic_connection connection has no delay" );
-  }
+  // // If the delay is set, we throw a BadProperty
+  // if ( d->known( names::delay ) )
+  // {
+  //   throw BadProperty( "sic_connection connection has no delay" );
+  // }
 
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );

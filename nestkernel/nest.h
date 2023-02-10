@@ -213,4 +213,4 @@ void slice_positions_if_sliced_nc( DictionaryDatum& dict, const NodeCollectionDa
 }
 
 
-#endif // NEST_H
+#endif /* NEST_H */

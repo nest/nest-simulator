@@ -118,7 +118,7 @@ MUSICManager::enter_runtime( double )
 {
 }
 
-#endif // #ifdef HAVE_MUSIC
+#endif /* #ifdef HAVE_MUSIC */
 
 void
 MUSICManager::music_finalize()
@@ -137,7 +137,7 @@ MUSICManager::music_finalize()
 #ifdef HAVE_MPI
   MPI_Finalize();
 #endif
-#endif // #ifdef HAVE_MUSIC
+#endif /* #ifdef HAVE_MUSIC */
 }
 
 #ifdef HAVE_MUSIC

@@ -365,4 +365,4 @@ private:
 
 } // namespace
 
-#endif // RECORDING_BACKEND_SIONLIB_H
+#endif /* RECORDING_BACKEND_SIONLIB_H */

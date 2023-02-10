@@ -228,7 +228,7 @@ public:
     const int* recv_counts,
     const int* recv_displacements );
 
-#endif // HAVE_MPI
+#endif /* HAVE_MPI */
 
   template < class D >
   void communicate_Alltoall( std::vector< D >& send_buffer,
@@ -418,7 +418,7 @@ private:
     std::vector< T >& recv_buffer,
     std::vector< int >& displacements );
 
-#endif // #ifdef HAVE_MPI
+#endif /* #ifdef HAVE_MPI */
 
 public:
   /**
@@ -778,7 +778,7 @@ MPIManager::time_communicate_alltoallv( int, int )
   return 0.0;
 }
 
-#endif /* HAVE_MPI */
+#endif /* HAVE_MPI  */ */
 
 #ifdef HAVE_MPI
 template < class D >
@@ -825,7 +825,7 @@ MPIManager::communicate_secondary_events_Alltoallv( std::vector< D >& send_buffe
   recv_buffer.swap( send_buffer );
 }
 
-#endif // HAVE_MPI
+#endif /* HAVE_MPI */
 
 template < class D >
 void
@@ -858,4 +858,4 @@ MPIManager::communicate_off_grid_spike_data_Alltoall( std::vector< D >& send_buf
 }
 }
 
-#endif // MPI_MANAGER_H
+#endif /* MPI_MANAGER_H */

@@ -226,4 +226,4 @@ private:
 }
 
 
-#endif // MUSIC_MANAGER_H
+#endif /* MUSIC_MANAGER_H */

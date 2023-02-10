@@ -1612,7 +1612,7 @@ NestModule::CGSelectImplementation_s_sFunction::execute( SLIInterpreter* i ) con
   i->EStack.pop();
 }
 
-#endif // #ifdef HAVE_LIBNEUROSIM
+#endif /* #ifdef HAVE_LIBNEUROSIM */
 
 //
 // SLI functions for spatial networks

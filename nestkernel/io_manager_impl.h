@@ -51,4 +51,4 @@ IOManager::register_stimulation_backend( Name name )
 }
 }
 
-#endif // #ifndef IO_MANAGER_IMPL_H
+#endif /* #ifndef IO_MANAGER_IMPL_H */

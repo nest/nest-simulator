@@ -398,4 +398,4 @@ Connection< targetidentifierT >::trigger_update_weight( const thread,
 
 } // namespace nest
 
-#endif // CONNECTION_H
+#endif /* CONNECTION_H */

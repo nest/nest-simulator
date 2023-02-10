@@ -135,4 +135,4 @@ VPManager::get_assigned_ranks( const thread tid )
 
 } // namespace nest
 
-#endif // VP_MANAGER_IMPL_H
+#endif /* VP_MANAGER_IMPL_H */

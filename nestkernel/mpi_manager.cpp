@@ -52,7 +52,7 @@ MPI_Datatype MPI_Type< unsigned int >::type = MPI_INT;
 template <>
 MPI_Datatype MPI_Type< unsigned long >::type = MPI_UNSIGNED_LONG;
 
-#endif // #ifdef HAVE_MPI
+#endif /* #ifdef HAVE_MPI */
 
 nest::MPIManager::MPIManager()
   : num_processes_( 1 )
@@ -135,7 +135,7 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
     int provided_thread_level;
     MPI_Init_thread( argc, argv, MPI_THREAD_FUNNELED, &provided_thread_level );
     set_communicator( MPI_COMM_WORLD );
-#endif // #ifdef HAVE_MUSIC/
+#endif /* #ifdef HAVE_MUSIC/ */
   }
   else
   {
@@ -184,7 +184,7 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
   use_mpi_ = true;
 }
 
-#endif // #ifdef HAVE_MPI
+#endif /* #ifdef HAVE_MPI */
 
 void
 nest::MPIManager::initialize()
@@ -277,7 +277,7 @@ nest::MPIManager::mpi_finalize( int )
 {
 }
 
-#endif // #ifdef HAVE_MPI
+#endif /* #ifdef HAVE_MPI */
 
 #ifdef HAVE_MPI
 
@@ -1104,4 +1104,4 @@ nest::MPIManager::communicate_recv_counts_secondary_events()
   send_displacements_secondary_events_in_int_per_rank_[ 0 ] = 0;
 }
 
-#endif /* #ifdef HAVE_MPI */
+#endif /* #ifdef HAVE_MPI  */ */

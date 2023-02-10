@@ -186,4 +186,4 @@ private:
 
 } // namespace
 
-#endif // STIMULATION_BACKEND_MPI_H
+#endif /* STIMULATION_BACKEND_MPI_H */

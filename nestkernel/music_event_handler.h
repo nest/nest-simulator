@@ -102,6 +102,6 @@ private:
 
 } // namespace nest
 
-#endif // HAVE_MUSIC
+#endif /* HAVE_MUSIC */
 
-#endif // MUSIC_EVENT_HANDLER
+#endif /* MUSIC_EVENT_HANDLER */

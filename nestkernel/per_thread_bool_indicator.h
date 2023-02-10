@@ -137,4 +137,4 @@ private:
 
 } // namespace nest
 
-#endif // PER_THREAD_BOOL_INDICATOR_H
+#endif /* PER_THREAD_BOOL_INDICATOR_H */

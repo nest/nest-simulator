@@ -1459,4 +1459,4 @@ Event::set_rport( rport rp )
 }
 }
 
-#endif // EVENT_H
+#endif /* EVENT_H */

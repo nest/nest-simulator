@@ -274,4 +274,4 @@ nest::SparseNodeArray::NodeEntry::get_node_id() const
   return node_id_;
 }
 
-#endif // SPARSE_NODE_ARRAY_H
+#endif /* SPARSE_NODE_ARRAY_H */

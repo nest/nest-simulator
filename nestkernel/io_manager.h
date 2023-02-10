@@ -163,4 +163,4 @@ nest::IOManager::overwrite_files() const
 }
 
 
-#endif // IO_MANAGER_H
+#endif /* IO_MANAGER_H */

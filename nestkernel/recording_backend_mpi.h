@@ -176,4 +176,4 @@ private:
 
 } // namespace
 
-#endif // RECORDING_BACKEND_MPI_H
+#endif /* RECORDING_BACKEND_MPI_H */

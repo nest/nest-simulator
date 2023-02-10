@@ -321,4 +321,4 @@ OffGridTarget::get_offset() const
 
 } // namespace nest
 
-#endif // TARGET_H
+#endif /* TARGET_H */

@@ -70,4 +70,4 @@ ConnectionManager::send_from_device( const thread tid, const index ldid, Event& 
 
 } // namespace nest
 
-#endif // CONNECTION_MANAGER_IMPL_H
+#endif /* CONNECTION_MANAGER_IMPL_H */

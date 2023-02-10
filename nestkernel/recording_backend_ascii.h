@@ -224,4 +224,4 @@ private:
 
 } // namespace
 
-#endif // RECORDING_BACKEND_ASCII_H
+#endif /* RECORDING_BACKEND_ASCII_H */

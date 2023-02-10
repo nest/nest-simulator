@@ -331,4 +331,4 @@ public:
 
 } // namespace nest
 
-#endif // #ifndef CONNECTOR_MODEL_H
+#endif /* #ifndef CONNECTOR_MODEL_H */

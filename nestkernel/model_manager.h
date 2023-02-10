@@ -392,4 +392,4 @@ ModelManager::get_secondary_event_prototype( const synindex syn_id, const thread
 
 } // namespace nest
 
-#endif // MODEL_MANAGER_H
+#endif /* MODEL_MANAGER_H */

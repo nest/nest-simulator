@@ -188,4 +188,4 @@ operator>=( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
 
 } // namespace nest
 
-#endif // SOURCE_TABLE_POSITION_H
+#endif /* SOURCE_TABLE_POSITION_H */

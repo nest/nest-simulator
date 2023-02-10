@@ -571,4 +571,4 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const Da
 }
 }
 
-#endif // UNIVERSAL_DATA_LOGGER_H
+#endif /* UNIVERSAL_DATA_LOGGER_H */

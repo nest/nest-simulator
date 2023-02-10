@@ -28,7 +28,7 @@
 #ifdef HAVE_MPI
 // C includes:
 #include <mpi.h>
-#endif // #ifdef HAVE_MPI
+#endif /* #ifdef HAVE_MPI */
 
 #include "mpi_manager.h"
 
@@ -48,7 +48,7 @@ nest::MPIManager::get_process_id_of_vp( const thread vp ) const
 extern MPI::Intracomm comm;
 #else  // * #ifdef HAVE_MUSIC
 extern MPI_Comm comm;
-#endif // #ifdef HAVE_MUSIC
+#endif /* #ifdef HAVE_MUSIC */
 
 
 /*
@@ -99,6 +99,6 @@ nest::MPIManager::get_process_id_of_node_id( const index ) const
   return 0;
 }
 
-#endif // HAVE_MPI
+#endif /* HAVE_MPI */
 
-#endif // MPI_MANAGER_IMPL_H
+#endif /* MPI_MANAGER_IMPL_H */

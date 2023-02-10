@@ -84,6 +84,6 @@ private:
 
 } // namespace nest
 
-#endif // HAVE_MUSIC
+#endif /* HAVE_MUSIC */
 
-#endif // MUSIC_RATE_IN_HANDLER
+#endif /* MUSIC_RATE_IN_HANDLER */

@@ -63,4 +63,4 @@ void NodeCollectionDatum::pprint( std::ostream& ) const;
 template <>
 void NodeCollectionIteratorDatum::pprint( std::ostream& ) const;
 
-#endif // #ifndef NEST_DATUMS_H
+#endif /* #ifndef NEST_DATUMS_H */

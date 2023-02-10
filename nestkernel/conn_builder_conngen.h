@@ -119,6 +119,6 @@ private:
 
 } // namespace nest
 
-#endif // ifdef HAVE_LIBNEUROSIM
+#endif /* ifdef HAVE_LIBNEUROSIM */
 
-#endif // ifdef CONN_BUILDER_CONNGEN_H
+#endif /* ifdef CONN_BUILDER_CONNGEN_H */

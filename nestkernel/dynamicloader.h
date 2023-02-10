@@ -129,6 +129,6 @@ private:
 
 } // namespace
 
-#endif // HAVE_LIBLTDL
+#endif /* HAVE_LIBLTDL */
 
 #endif

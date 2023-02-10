@@ -108,4 +108,4 @@ public:
 };
 }
 
-#endif // MANAGER_INTERFACE_H
+#endif /* MANAGER_INTERFACE_H */

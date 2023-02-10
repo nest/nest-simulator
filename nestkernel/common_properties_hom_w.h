@@ -90,4 +90,4 @@ private:
 
 } // namespace nest
 
-#endif // COMMON_PROPERTIES_HOM_W_H
+#endif /* COMMON_PROPERTIES_HOM_W_H */

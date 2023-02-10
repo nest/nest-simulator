@@ -296,4 +296,4 @@ DynamicLoaderModule::initLinkedModules( SLIInterpreter& interpreter )
 
 } // namespace nest
 
-#endif // HAVE_LIBLTDL
+#endif /* HAVE_LIBLTDL */

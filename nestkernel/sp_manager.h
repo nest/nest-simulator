@@ -283,4 +283,4 @@ SPManager::get_structural_plasticity_update_interval() const
 
 } // namespace nest
 
-#endif // #ifndef SP_MANAGER_H
+#endif /* #ifndef SP_MANAGER_H */

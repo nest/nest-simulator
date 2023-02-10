@@ -136,4 +136,4 @@ nest::TargetTableDevices::set_synapse_status_to_device( const thread tid,
   }
 }
 
-#endif // TARGET_TABLE_DEVICES_IMPL_H
+#endif /* TARGET_TABLE_DEVICES_IMPL_H */

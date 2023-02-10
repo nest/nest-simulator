@@ -963,4 +963,4 @@ NodeCollectionComposite::empty() const
 }
 } // namespace nest
 
-#endif // #ifndef NODE_COLLECTION_H
+#endif /* #ifndef NODE_COLLECTION_H */

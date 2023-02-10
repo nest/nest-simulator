@@ -568,4 +568,4 @@ EventDeliveryManager::get_slice_modulo( delay d )
 
 } // namespace nest
 
-#endif // EVENT_DELIVERY_MANAGER_H
+#endif /* EVENT_DELIVERY_MANAGER_H */

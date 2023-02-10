@@ -376,4 +376,4 @@ NodeManager::set_have_nodes_changed( const bool changed )
 
 } // namespace
 
-#endif // NODE_MANAGER_H
+#endif /* NODE_MANAGER_H */

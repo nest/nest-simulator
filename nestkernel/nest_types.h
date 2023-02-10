@@ -235,4 +235,4 @@ enum SignalType
 };
 }
 
-#endif // NEST_TYPES_H
+#endif /* NEST_TYPES_H */

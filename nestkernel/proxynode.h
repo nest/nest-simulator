@@ -154,4 +154,4 @@ proxynode::is_proxy() const
 
 } // namespace
 
-#endif // PROXYNODE_H
+#endif /* PROXYNODE_H */

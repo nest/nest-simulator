@@ -144,4 +144,4 @@ private:
 
 } // namespace
 
-#endif // RECORDING_BACKEND_SCREEN_H
+#endif /* RECORDING_BACKEND_SCREEN_H */

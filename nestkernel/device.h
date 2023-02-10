@@ -225,4 +225,4 @@ nest::Device::get_t_max_() const
   return V_.t_max_;
 }
 
-#endif // DEVICE_H
+#endif /* DEVICE_H */

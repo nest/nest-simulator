@@ -93,6 +93,21 @@ public:
 
   void initLinkedModules( SLIInterpreter& );
 
+private:
+  /**
+   * Provide access to the list of linked modules managed DynamicLoader.
+   * This function controls access to the list of linked modules managed
+   * by DynamicLoaderModule via a Meyers' Singleton (Alexandrescu, ch 6.4).
+   * The list is filled by calls to @c registerLinkedModule().
+   */
+  static vecLinkedModules& getLinkedModules();
+
+  //! Vector to store handles and pointers to dynamic modules
+  vecDynModules dyn_modules;
+
+  //! Dictionary for dynamically loaded modules.
+  static Dictionary* moduledict_;
+
 public:
   class LoadModuleFunction : public SLIFunction
   {
@@ -109,22 +124,6 @@ public:
   /** @} */
 
   LoadModuleFunction loadmodule_function;
-
-private:
-  /**
-   * Provide access to the list of linked modules managed DynamicLoader.
-   *
-   * This function controls access to the list of linked modules managed
-   * by DynamicLoaderModule via a Meyers' Singleton (Alexandrescu, ch 6.4).
-   * The list is filled by calls to @c registerLinkedModule().
-   */
-  static vecLinkedModules& getLinkedModules();
-
-  // vector to store handles and pointers to dynamic modules
-  vecDynModules dyn_modules;
-
-  //! Dictionary for dynamically loaded modules.
-  static Dictionary* moduledict_;
 };
 
 } // namespace

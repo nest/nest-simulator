@@ -44,7 +44,7 @@ See Also
 
 :doc:`Script for generating output gifs <plot_progress>`
 
-:doc:`Helper functions <helpers>`
+:doc:`Helper functions <helpers_sudoku>`
 
 Notes
 ~~~~~
@@ -61,7 +61,8 @@ import sudoku_net
 import numpy as np
 import logging
 import pickle
-from helpers import get_puzzle, validate_solution, plot_field
+from helpers_sudoku import get_puzzle, validate_solution, plot_field
+import matplotlib.pyplot as plt
 
 nest.SetKernelStatus({'local_num_threads': 8})
 nest.set_verbosity("M_WARNING")
@@ -122,9 +123,10 @@ while not valid:
 
 img_name = "sudoku_solution.png"
 logging.info(f"storing final state to: {img_name}...")
-out_image = plot_field(puzzle, solution, True)
-out_image.show()
-out_image.save(img_name)
+fig, ax = plt.subplots()
+plot_field(puzzle, solution, ax, True)
+plt.show()
+plt.savefig(img_name)
 
 out_name = f"{noise_rate}Hz_puzzle_{puzzle_index}.pkl"
 logging.info(f"storing simulation data to {out_name}...")

@@ -25,7 +25,6 @@
 
 // C++ includes:
 #include <cmath>
-#include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -38,12 +37,10 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "arraydatum.h"
 #include "booldatum.h"
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
-#include "integerdatum.h"
 
 namespace nest
 {
@@ -141,7 +138,7 @@ nest::sinusoidal_poisson_generator::Parameters_::set( const DictionaryDatum& d,
   const sinusoidal_poisson_generator& n,
   Node* node )
 {
-  if ( not n.is_model_prototype() && d->known( names::individual_spike_trains ) )
+  if ( not n.is_model_prototype() and d->known( names::individual_spike_trains ) )
   {
     throw BadProperty(
       "The individual_spike_trains property can only be set as"
@@ -232,7 +229,7 @@ nest::sinusoidal_poisson_generator::pre_run_hook()
 void
 nest::sinusoidal_poisson_generator::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   const long start = origin.get_steps();

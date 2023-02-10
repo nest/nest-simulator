@@ -86,7 +86,8 @@ DynamicLoaderModule::getLinkedModules()
 
 
 DynamicLoaderModule::DynamicLoaderModule( SLIInterpreter& interpreter )
-  : loadmodule_function( dyn_modules )
+  : dyn_modules()
+  , loadmodule_function( dyn_modules )
 {
   interpreter.def( "moduledict", new DictionaryDatum( moduledict_ ) );
 }

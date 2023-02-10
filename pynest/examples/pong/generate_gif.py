@@ -74,7 +74,7 @@ DEFAULT_SPEED = 4
 
 
 def scale_coordinates(coordinates: np.array):
-    """Scale a numpy.array of coordinate tuples (x,y) from simulation scale to
+    """Scales a numpy.array of coordinate tuples (x,y) from simulation scale to
     pixel scale in the output image.
 
     Args:
@@ -91,7 +91,7 @@ def scale_coordinates(coordinates: np.array):
 
 
 def grayscale_to_heatmap(in_image, min_val, max_val, base_color):
-    """Transform a grayscale image to an RGB heat map. Heatmap will color small
+    """Transforms a grayscale image to an RGB heat map. Heatmap will color small
     values in base_color and high values in white.
 
     Args:

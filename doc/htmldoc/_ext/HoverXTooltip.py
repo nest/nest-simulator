@@ -138,15 +138,16 @@ def hxt_role_ref(pattern):
         term = pattern % (text,)
         desc = get_desc_from_glossary(term)
 
+        term_conv = term.replace(" ", "-")
         base_url = inliner.document.attributes['source']
 
         # for rtd builds
         if os.environ.get("READTHEDOCS") == "True":
             branch_name = base_url.split('/doc/')[0].split('/')[-1]
-            refuri = (f'/en/{branch_name}/ref_material/glossary.html#term-{term}')
+            refuri = (f'/en/{branch_name}/ref_material/glossary.html#term-{term_conv}')
         # for local builds
         else:
-            refuri = base_url.split('htmldoc')[0] + f'htmldoc/html/glossary.html#term-{term}'
+            refuri = base_url.split('htmldoc')[0] + f'htmldoc/html/ref_material/glossary.html#term-{term_conv}'
 
         # the tag in which the term and description is defined.
         ref_tag = "<a class='reference external' " \
@@ -242,8 +243,8 @@ def setup(app):
         TYPE: Description
     """
     # add external css/js files
-    app.add_js_file('js/bootstrap.min.js')
-    app.add_css_file('css/bootstrap.min.css')
+    app.add_js_file('js/bootstrap/bootstrap.bundle.min.js')
+    app.add_css_file('css/bootstrap/bootstrap.min.css')
 
     # add custom css file
     app.add_css_file('css/hoverxtooltip.css')

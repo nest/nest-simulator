@@ -3,7 +3,7 @@
 Related projects
 ================
 
-NEST simulator is part of a larger network of projects that focus on simulation, analysis, visualization, or modeling of
+NEST Simulator is part of a larger network of projects that focus on simulation, analysis, visualization, or modeling of
 biologically realistic neural networks.
 
 Here you can find further information about some of these projects.

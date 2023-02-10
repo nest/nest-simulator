@@ -341,7 +341,7 @@ public:
   bool
   contains( const Datum& d ) const
   {
-    return ( p ) and p->equals( &d );
+    return p and p->equals( &d );
   }
 
   bool
@@ -373,7 +373,6 @@ public:
   Datum*
   operator->() const
   {
-    //      assert(p!= NULL);
     return p;
   }
 
@@ -381,7 +380,6 @@ public:
   Datum&
   operator*() const
   {
-    //      assert(p != NULL);
     return *p;
   }
 

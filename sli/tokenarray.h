@@ -398,7 +398,7 @@ public:
   void
   erase( size_t i, size_t n )
   {
-    if ( i < size() && n > 0 )
+    if ( i < size() and n > 0 )
     {
       clone();
       data->erase( i, n );
@@ -409,7 +409,7 @@ public:
   void
   reduce( size_t i, size_t n )
   {
-    if ( i > 0 || n < size() )
+    if ( i > 0 or n < size() )
     {
       clone();
       data->reduce( i, n );
@@ -474,7 +474,7 @@ TokenArray::reverse()
 inline void
 TokenArray::rotate( long n = 1 )
 {
-  if ( size() == 0 || n == 0 )
+  if ( size() == 0 or n == 0 )
   {
     return;
   }

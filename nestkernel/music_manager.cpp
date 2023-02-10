@@ -29,13 +29,6 @@
 #endif
 #endif
 
-// C++ includes:
-// #include <cstdlib>
-
-// Includes from libnestutil:
-#include "compose.hpp"
-// #include "logging.h"
-
 // Includes from nestkernel:
 #include "kernel_manager.h"
 

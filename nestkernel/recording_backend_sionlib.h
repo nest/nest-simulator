@@ -186,7 +186,6 @@
  *     advantage.
  *
  * EndUserDocs */
-
 namespace nest
 {
 

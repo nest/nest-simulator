@@ -161,6 +161,11 @@ public:
    * Return offset.
    */
   double get_offset() const;
+
+  /**
+   *  Set the status of the target identifier to processed
+   */
+  void mark_for_removal();
 };
 
 //!< check legal size
@@ -289,6 +294,13 @@ Target::get_offset() const
 {
   return 0;
 }
+
+inline void
+Target::mark_for_removal()
+{
+  set_status( TARGET_ID_PROCESSED );
+}
+
 
 class OffGridTarget : public Target
 {

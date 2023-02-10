@@ -96,7 +96,7 @@ class RateInstantaneousAndDelayedTestCase(unittest.TestCase):
 
         # get shifted rate_2
         rate_2 = rate_2[times_2 > delay]
-        # adjust length of rate_1 to be able to substract
+        # adjust length of rate_1 to be able to subtract
         rate_1 = rate_1[:len(rate_2)]
 
         assert(np.sum(np.abs(rate_2 - rate_1)) < 1e-12)

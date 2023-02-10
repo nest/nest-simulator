@@ -33,7 +33,7 @@
 Datum* CYTHON_unpackConnectionGeneratorDatum( PyObject* );
 #else
 #define CYTHON_isConnectionGenerator( x ) 0
-#define CYTHON_unpackConnectionGeneratorDatum( x ) NULL
+#define CYTHON_unpackConnectionGeneratorDatum( x ) nullptr
 #endif
 
 class SLIInterpreter;

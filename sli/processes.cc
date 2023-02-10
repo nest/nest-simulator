@@ -32,7 +32,6 @@
 
 // C++ includes:
 #include <cassert>
-#include <climits>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -56,7 +55,6 @@
 #include "namedatum.h"
 #include "sliexceptions.h"
 #include "stringdatum.h"
-#include "tokenutils.h"
 
 
 // sstream has functions std::?stringstream
@@ -133,7 +131,7 @@ Processes::fd( std::ostream* s )
   {
     return STDOUT_FILENO;
   }
-  else if ( ( s == &std::cerr ) || ( s == &std::clog ) )
+  else if ( ( s == &std::cerr ) or ( s == &std::clog ) )
   {
     return STDERR_FILENO;
   }
@@ -367,7 +365,7 @@ Processes::Sysexec_aFunction::execute( SLIInterpreter* i ) const
   delete[] argv;
 
   if ( result == -1 )
-  {                                     // an error occured!
+  {                                     // an error occurred!
     i->OStack.push_move( array_token ); // restore operand stack
     i->raiseerror( systemerror( i ) );
   }
@@ -398,7 +396,7 @@ Processes::WaitPIDFunction::execute( SLIInterpreter* i ) const
   pid_t pidout = waitpid( pidin_d->get(), &stat_value, options );
 
   // Check for error
-  if ( pidout == -1 ) // an Error occured
+  if ( pidout == -1 ) // an Error occurred
   {
     i->raiseerror( systemerror( i ) );
   }
@@ -464,7 +462,7 @@ Processes::KillFunction::execute( SLIInterpreter* i ) const
   int result = kill( pid_d->get(), signal_d->get() );
 
   if ( result == -1 )
-  { // an error occured!
+  { // an error occurred!
     i->raiseerror( systemerror( i ) );
   }
   else
@@ -483,7 +481,7 @@ Processes::PipeFunction::execute( SLIInterpreter* i ) const
   int result = pipe( filedes );
 
   if ( result == -1 )
-  { // an error occured!
+  { // an error occurred!
     i->raiseerror( systemerror( i ) );
   }
   else
@@ -525,7 +523,7 @@ Processes::Dup2_is_isFunction::execute( SLIInterpreter* i ) const
   // istream)
 
   if ( result == -1 )
-  { // an error occured!
+  { // an error occurred!
     i->raiseerror( systemerror( i ) );
   }
   else
@@ -664,12 +662,12 @@ Processes::AvailableFunction::execute( SLIInterpreter* i ) const
     //       fcntl(fd,F_SETFL,flags); //reset to old value
     //       // ------------------------------
 
-    //       if ( (peekchar==-1) && (errno!=EAGAIN) && (errno!=ESPIPE) )
-    //         {// some unexpected error occured!
+    //       if ( (peekchar==-1) and (errno!=EAGAIN) and (errno!=ESPIPE) )
+    //         {// some unexpected error occurred!
     //           i->raiseerror(systemerror(i));
     //         }
     //       else
-    //         {// no error or EAGAIN or ESPIPE occured
+    //         {// no error or EAGAIN or ESPIPE occurred
     //           i->EStack.pop();
     //           bool result;
     //           if ( peekchar==-1 ) // errno==EAGAIN or errno==ESPIPE
@@ -706,7 +704,7 @@ Processes::AvailableFunction::execute( SLIInterpreter* i ) const
 
     bool result;
     if ( not( **istreamdatum ).good() )
-    { // an error occured. No data can be read.
+    { // an error occurred. No data can be read.
       // no data is currently available
       result = false;             // no data is available
       ( **istreamdatum ).clear(); // Lower eof and error Flag
@@ -856,7 +854,7 @@ Processes::SetNonblockFunction::execute( SLIInterpreter* i ) const
   int flags = fcntl( fd, F_GETFL );
   if ( flags == -1 )
   {
-    i->raiseerror( systemerror( i ) ); // an error occured!
+    i->raiseerror( systemerror( i ) ); // an error occurred!
   }
 
   // modify flags to the new value:
@@ -875,7 +873,7 @@ Processes::SetNonblockFunction::execute( SLIInterpreter* i ) const
 
 
   if ( result == -1 )
-  { // an error occured!
+  { // an error occurred!
     i->raiseerror( systemerror( i ) );
   }
   else

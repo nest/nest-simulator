@@ -82,6 +82,10 @@ set( with-includes OFF CACHE STRING "Add additional include paths [default=OFF].
 set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1' [default=OFF]. Separate multiple defines by ';'." )
 set( with-version-suffix "" CACHE STRING "Set a user defined version suffix [default='']." )
 
+# documentation build configuration
+set( with-userdoc OFF CACHE STRING "Build user documentation [default=OFF]")
+set( with-devdoc OFF CACHE STRING "Build developer documentation [default=OFF]")
+
 ################################################################################
 ##################      Project Directory variables           ##################
 ################################################################################
@@ -96,13 +100,6 @@ set( CMAKE_INSTALL_DATADIR "share/${PROJECT_NAME}" CACHE STRING "Relative direct
 ##################           Find utility programs            ##################
 ################################################################################
 
-# needed for pynest test suite
-if ( ${with-python} STREQUAL "ON" )
-  find_program( NOSETESTS NAMES nosetests )
-endif ()
-
-# needed for target doc and fulldoc
-find_package( Doxygen )
 find_program( SED NAMES sed gsed )
 
 ################################################################################
@@ -131,8 +128,6 @@ get_target_triple( NEST_TARGET_TRIPLE NEST_TARGET_ARCH NEST_TARGET_VENDOR NEST_T
 nest_process_with_python()
 include( GNUInstallDirs )
 nest_post_process_with_python()
-nest_process_with_optimize()
-nest_process_with_debug()
 nest_process_with_std()
 nest_process_with_intel_compiler_flags()
 nest_process_with_warning()
@@ -156,6 +151,14 @@ nest_process_with_mpi4py()
 nest_process_with_boost()
 nest_process_target_bits_split()
 nest_process_version_suffix()
+nest_process_userdoc()
+nest_process_devdoc()
+
+# These two function calls must come last, as to prevent unwanted interactions of the newly set flags
+# with detection/compilation operations carried out in earlier functions. The optimize/debug flags set
+# using these functions should only apply to the compilation of NEST.
+nest_process_with_optimize()
+nest_process_with_debug()
 
 nest_get_color_flags()
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NEST_C_COLOR_FLAGS}" )
@@ -345,11 +348,6 @@ configure_file(
 )
 
 configure_file(
-    "${PROJECT_SOURCE_DIR}/doc/normaldoc.conf.in"
-    "${PROJECT_BINARY_DIR}/doc/normaldoc.conf" @ONLY
-)
-
-configure_file(
     "${PROJECT_SOURCE_DIR}/doc/fulldoc.conf.in"
     "${PROJECT_BINARY_DIR}/doc/fulldoc.conf" @ONLY
 )
@@ -367,9 +365,5 @@ configure_file(
 install( FILES LICENSE README.md
     DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )
-
-add_custom_target( install-nodoc
-  COMMAND $(MAKE) NEST_INSTALL_NODOC=true install
-)
 
 nest_print_config_summary()

@@ -40,7 +40,7 @@ Description:
  The expected output is documented and briefly commented at the end of 
  the script.
 
- Cleary, the result of this script is not resolution independent. The 
+ Clearly, the result of this script is not resolution independent. The
  choice of the computation step size determines at which point in time 
  the current affects the neuron. 
 

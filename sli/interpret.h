@@ -435,7 +435,7 @@ public:
   bool
   step_mode() const
   {
-    return debug_mode_ && ( call_depth_ < max_call_depth_ );
+    return debug_mode_ and ( call_depth_ < max_call_depth_ );
   }
 
   /**

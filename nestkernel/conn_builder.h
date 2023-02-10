@@ -117,7 +117,7 @@ public:
    * @param tnode_id id of the target
    * @param tid thread id
    * @param update amount of connected synaptic elements to update
-   * @return flase if the target is either on another MPI process or thread, true otherwise
+   * @return false if the target is either on another MPI process or thread, true otherwise
    */
   bool change_connected_synaptic_elements( index snode_id, index tnode_id, const int tid, int update );
 

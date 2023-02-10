@@ -768,7 +768,7 @@ MPIManager::time_communicate_alltoallv( int, int )
   return 0.0;
 }
 
-#endif /* HAVE_MPI  */ */
+#endif /* HAVE_MPI  */
 
 #ifdef HAVE_MPI
 template < class D >

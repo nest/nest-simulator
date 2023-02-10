@@ -295,4 +295,4 @@ ConnectionGeneratorBuilder::cg_get_ranges( RangeSet& ranges, const NodeCollectio
 
 } // namespace nest
 
-#endif /* ifdef HAVE_LIBNEUROSIM  */ */
+#endif /* ifdef HAVE_LIBNEUROSIM  */

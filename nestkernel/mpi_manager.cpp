@@ -95,7 +95,7 @@ nest::MPIManager::init_mpi( int*, char*** )
   send_displacements_secondary_events_in_int_per_rank_.resize( 1, 0 );
 }
 
-#else // HAVE_MPI
+#else /* HAVE_MPI */
 
 void
 nest::MPIManager::set_communicator( MPI_Comm global_comm )
@@ -124,11 +124,11 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
     kernel().music_manager.init_music( argc, argv );
     // get a communicator from MUSIC
     set_communicator( static_cast< MPI_Comm >( kernel().music_manager.communicator() ) );
-#else  // #ifdef HAVE_MUSIC
+#else  /* #ifdef HAVE_MUSIC */
     int provided_thread_level;
     MPI_Init_thread( argc, argv, MPI_THREAD_FUNNELED, &provided_thread_level );
     set_communicator( MPI_COMM_WORLD );
-#endif /* #ifdef HAVE_MUSIC/ */
+#endif /* #ifdef HAVE_MUSIC */
   }
   else
   {
@@ -276,7 +276,7 @@ nest::MPIManager::mpi_finalize( int exitcode )
   }
 }
 
-#else // #ifdef HAVE_MPI
+#else /* #ifdef HAVE_MPI */
 
 void
 nest::MPIManager::mpi_finalize( int )
@@ -978,7 +978,7 @@ nest::MPIManager::time_communicate_alltoallv( int num_bytes, int samples )
   return foo.elapsed() / samples;
 }
 
-#else // #ifdef
+#else /* #ifdef */
 
 void
 nest::MPIManager::communicate( std::vector< unsigned int >& send_buffer,
@@ -1090,4 +1090,4 @@ nest::MPIManager::communicate_recv_counts_secondary_events()
   send_displacements_secondary_events_in_int_per_rank_[ 0 ] = 0;
 }
 
-#endif /* #ifdef HAVE_MPI  */ */
+#endif /* #ifdef HAVE_MPI  */

@@ -20,12 +20,10 @@
  *
  */
 
-/*
- * File:   sp_updater.h
- * Author: naveau
- *
- * Created on November 26, 2013, 2:28 PM
- */
+// File:   sp_updater.h
+// Author: naveau
+//
+// Created on November 26, 2013, 2:28 PM
 
 #ifndef SP_MANAGER_H
 #define SP_MANAGER_H

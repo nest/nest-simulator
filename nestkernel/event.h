@@ -303,13 +303,11 @@ public:
 protected:
   index sender_node_id_;        //!< node ID of sender or 0
   SpikeData sender_spike_data_; //!< spike data of sender node, in some cases required to retrieve node ID
-  /*
-   * The original formulation used references to Nodes as
-   * members, however, in order to avoid the reference of reference
-   * problem, we store sender and receiver as pointers and use
-   * references in the interface.
-   * Thus, we can still ensure that the pointers are never NULL.
-   */
+  // The original formulation used references to Nodes as
+  // members, however, in order to avoid the reference of reference
+  // problem, we store sender and receiver as pointers and use
+  // references in the interface.
+  // Thus, we can still ensure that the pointers are never NULL.
   Node* sender_;   //!< Pointer to sender or NULL.
   Node* receiver_; //!< Pointer to receiver or NULL.
 

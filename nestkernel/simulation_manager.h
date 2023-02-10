@@ -61,11 +61,9 @@ public:
   */
   void assert_valid_simtime( Time const& );
 
-  /*
-     Simulate can be broken up into .. prepare... run.. run.. cleanup..
-     instead of calling simulate multiple times, and thus reduplicating
-     effort in prepare, cleanup many times.
-  */
+  // Simulate can be broken up into .. prepare... run.. run.. cleanup..
+  // instead of calling simulate multiple times, and thus reduplicating
+  // effort in prepare, cleanup many times.
 
   /**
    * Initialize simulation for a set of run calls.

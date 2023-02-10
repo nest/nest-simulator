@@ -50,12 +50,11 @@ nest::VPManager::initialize()
 // When the VPManager is initialized, you will have 1 thread again.
 // Setting more threads will be done via nest::set_kernel_status
 #ifdef _OPENMP
-  /* The next line is required because we use the OpenMP
-   * threadprivate() directive in the allocator, see OpenMP
-   * API Specifications v 3.1, Ch 2.9.2, p 89, l 14f.
-   * It keeps OpenMP from automagically changing the number
-   * of threads used for parallel regions.
-   */
+  // The next line is required because we use the OpenMP
+  // threadprivate() directive in the allocator, see OpenMP
+  // API Specifications v 3.1, Ch 2.9.2, p 89, l 14f.
+  // It keeps OpenMP from automagically changing the number
+  // of threads used for parallel regions.
   omp_set_dynamic( false );
 #endif
   set_num_threads( 1 );

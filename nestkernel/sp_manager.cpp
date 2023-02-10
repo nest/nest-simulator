@@ -20,12 +20,10 @@
  *
  */
 
-/*
- * File:   sp_updater.cpp
- * Author: naveau
- *
- * Created on November 26, 2013, 2:28 PM
- */
+// File:   sp_updater.cpp
+// Author: naveau
+//
+// Created on November 26, 2013, 2:28 PM
 
 #include "sp_manager.h"
 
@@ -87,9 +85,7 @@ SPManager::finalize()
   sp_conn_builders_.clear();
 }
 
-/*
- * Methods to retrieve data regarding structural plasticity variables
- */
+// Methods to retrieve data regarding structural plasticity variables
 void
 SPManager::get_status( DictionaryDatum& d )
 {
@@ -129,9 +125,7 @@ SPManager::set_status( const DictionaryDatum& d )
   if ( not d->known( names::structural_plasticity_synapses ) )
   {
     return;
-  } /*
-     * Configure synapses model updated during the simulation.
-     */
+     // Configure synapses model updated during the simulation.
   Token synmodel;
   DictionaryDatum syn_specs, syn_spec;
   DictionaryDatum conn_spec = DictionaryDatum( new Dictionary() );
@@ -442,10 +436,8 @@ SPManager::delete_synapses_from_pre( const std::vector< index >& pre_deleted_id,
   const std::string& se_pre_name,
   const std::string& se_post_name )
 {
-  /*
-   * Synapses deletion due to the loss of a pre-synaptic element need a
-   * communication of the lists of target
-   */
+   // Synapses deletion due to the loss of a pre-synaptic element need a
+   // communication of the lists of target
 
   // Connectivity
   std::vector< std::vector< index > > connectivity;
@@ -520,11 +512,9 @@ SPManager::delete_synapses_from_post( std::vector< index >& post_deleted_id,
   std::string se_pre_name,
   std::string se_post_name )
 {
-  /*
-   * TODO: Synapses deletion due to the loss of a postsynaptic element can
-   * be done locally (except for the update of the number of pre-synaptic
-   * element)
-   */
+   // TODO: Synapses deletion due to the loss of a postsynaptic element can
+   // be done locally (except for the update of the number of pre-synaptic
+   // element)
 
   // Connectivity
   std::vector< std::vector< index > > connectivity;
@@ -649,9 +639,7 @@ nest::SPManager::global_shuffle( std::vector< index >& v )
   global_shuffle( v, v.size() );
 }
 
-/*
- * Shuffles the n first items of the vector v
- */
+// Shuffles the n first items of the vector v
 void
 nest::SPManager::global_shuffle( std::vector< index >& v, size_t n )
 {
@@ -676,9 +664,7 @@ nest::SPManager::global_shuffle( std::vector< index >& v, size_t n )
 }
 
 
-/*
- * Enable structural plasticity
- */
+// Enable structural plasticity
 void
 nest::SPManager::enable_structural_plasticity()
 {
@@ -701,9 +687,7 @@ nest::SPManager::enable_structural_plasticity()
   structural_plasticity_enabled_ = true;
 }
 
-/*
- Disable  structural plasticity
- */
+// Disable  structural plasticity
 void
 nest::SPManager::disable_structural_plasticity()
 {

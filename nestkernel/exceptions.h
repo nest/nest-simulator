@@ -313,10 +313,8 @@ public:
   std::string message() const override;
 };
 
-/*
- * Exception to be thrown if the parent
- * compartment does not exist
- */
+// Exception to be thrown if the parent
+// compartment does not exist
 class UnknownCompartment : public KernelException
 {
   long compartment_idx_;

@@ -167,12 +167,10 @@ Ntree< D, T, max_capacity, max_depth >::masked_iterator::masked_iterator( Ntree<
         }
       }
     }
-    /*
-     *      for(int i=0;i<anchors_.size();++i) {
-     *      std::cout << anchors_[i] << std::endl;
-     *    }
-     *     std::cout << "---" << std::endl;
-     */
+     //      for(int i=0;i<anchors_.size();++i) {
+     //      std::cout << anchors_[i] << std::endl;
+     //    }
+     //     std::cout << "---" << std::endl;
   }
 
   init_();
@@ -233,19 +231,17 @@ void
 Ntree< D, T, max_capacity, max_depth >::masked_iterator::next_leaf_()
 {
 
-  /*
-   * There are two states: the initial state, and "all in". In the
-   * all in state, we are in a subtree which is completely inside
-   * the mask. The allin_top_ is the top of this subtree. When
-   * exiting the subtree, the state changes to the initial
-   * state. In the initial state, we must check each quadrant to
-   * see if it is completely inside or outside the mask. If inside,
-   * we go all in. If outside, we move on to the next leaf. If
-   * neither, keep going until we find a leaf. Upon exiting from
-   * this function, we are either done (ntree_==0), or on a leaf
-   * node which at least intersects with the mask. If allin_top_!=0,
-   * the leaf is completely inside the mask.
-   */
+  // There are two states: the initial state, and "all in". In the
+  // all in state, we are in a subtree which is completely inside
+  // the mask. The allin_top_ is the top of this subtree. When
+  // exiting the subtree, the state changes to the initial
+  // state. In the initial state, we must check each quadrant to
+  // see if it is completely inside or outside the mask. If inside,
+  // we go all in. If outside, we move on to the next leaf. If
+  // neither, keep going until we find a leaf. Upon exiting from
+  // this function, we are either done (ntree_==0), or on a leaf
+  // node which at least intersects with the mask. If allin_top_!=0,
+  // the leaf is completely inside the mask.
 
   if ( allin_top_ )
   {
@@ -488,11 +484,9 @@ Ntree< D, T, max_capacity, max_depth >::insert( Position< D > pos, const T& node
 
     for ( int i = 0; i < D; ++i )
     {
-      /* 
-       * Comparing against an epsilon value in case there are round-off errors.
-       * Using a negative epsilon value because the round-off error may go both ways
-       * and the difference we check against may therefore be +/- 10^-16.
-       */
+      // Comparing against an epsilon value in case there are round-off errors.
+      // Using a negative epsilon value because the round-off error may go both ways
+      // and the difference we check against may therefore be +/- 10^-16.
       assert( ( pos - lower_left_ )[ i ] > -std::numeric_limits< double >::epsilon()
         and ( lower_left_ + extent_ - pos )[ i ] > -std::numeric_limits< double >::epsilon() );
     }

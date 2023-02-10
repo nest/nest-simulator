@@ -73,11 +73,9 @@ SLIType NestModule::NodeCollectionType;
 SLIType NestModule::NodeCollectionIteratorType;
 SLIType NestModule::ParameterType;
 
-/*
- * At the time when NestModule is constructed, the SLI Interpreter
- * must already be initialized. NestModule relies on the presence of
- * the following SLI datastructures: Name, Dictionary
- */
+// At the time when NestModule is constructed, the SLI Interpreter
+// must already be initialized. NestModule relies on the presence of
+// the following SLI datastructures: Name, Dictionary
 
 NestModule::NestModule()
 {
@@ -110,11 +108,9 @@ NestModule::commandstring() const
 ParameterDatum
 NestModule::create_parameter( const Token& t )
 {
-  /*
-   * t can be an existing ParameterDatum, a DoubleDatum containing a
-   * constant value for this parameter, or a Dictionary containing
-   * parameters
-   */
+  // t can be an existing ParameterDatum, a DoubleDatum containing a
+  // constant value for this parameter, or a Dictionary containing
+  // parameters
   ParameterDatum* pd = dynamic_cast< ParameterDatum* >( t.datum() );
   if ( pd )
   {
@@ -191,12 +187,10 @@ NestModule::create_mask( const Token& t )
       throw BadProperty( "Mask must be masktype or dictionary." );
     }
 
-    /*
-     * The dictionary should contain one key which is the name of the
-     * mask type, and optionally the key 'anchor'. To find the unknown
-     * mask type key, we must loop through all keys. The value for the
-     * anchor key will be stored in the anchor_token variable.
-     */
+    // The dictionary should contain one key which is the name of the
+    // mask type, and optionally the key 'anchor'. To find the unknown
+    // mask type key, we must loop through all keys. The value for the
+    // anchor key will be stored in the anchor_token variable.
     Token anchor_token;
     bool has_anchor = false;
     AbstractMask* mask = nullptr;

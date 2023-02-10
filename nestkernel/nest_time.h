@@ -139,11 +139,9 @@ time_abs( long long n )
 
 class Time
 {
-  /*
-   * tic_t: tics in  a step, signed long or long long
-   * delay: steps, signed long
-   * double: milliseconds (double!)
-   */
+  // tic_t: tics in  a step, signed long or long long
+  // delay: steps, signed long
+  // double: milliseconds (double!)
   friend class TimeConverter;
 
   /////////////////////////////////////////////////////////////

@@ -139,7 +139,7 @@ public:
   void set( const DictionaryDatum& d );
 
 
-  /*
+  /**
    * Updates the number of available synaptic elements according to the mean
    * calcium concentration of the neuron at time t.
    *
@@ -163,7 +163,7 @@ public:
   {
     return std::floor( z_ ) - z_connected_;
   }
-  /*
+  /**
    * Retrieves the current number of synaptic elements bound to a synapse
    */
   int
@@ -171,7 +171,7 @@ public:
   {
     return z_connected_;
   }
-  /*
+  /**
    * Retrieves the value of tau_vacant
    */
   double
@@ -179,7 +179,7 @@ public:
   {
     return tau_vacant_;
   }
-  /*
+  /**
    * Changes the number of bound synaptic elements by n.
    *
    * @param n number of new connections. Can be negative.
@@ -194,7 +194,7 @@ public:
     }
   }
 
-  /*
+  /**
    * Used to define the dynamics of the synaptic elements using a Growth Curve
    */
   void
@@ -207,7 +207,7 @@ public:
     }
   }
 
-  /*
+  /**
    * Retrieves the current value of the growth rate
    */
   double

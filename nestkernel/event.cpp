@@ -20,12 +20,10 @@
  *
  */
 
-/*
- *  @file event.cpp
- *  Implementation of Event::operator() for all event types.
- *  @note Must be isolated here, since it requires full access to
- *  classes Node and Scheduler.
- */
+//  @file event.cpp
+//  Implementation of Event::operator() for all event types.
+//  @note Must be isolated here, since it requires full access to
+//  classes Node and Scheduler.
 
 #include "event.h"
 

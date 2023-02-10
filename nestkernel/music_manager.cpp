@@ -95,11 +95,9 @@ MUSICManager::enter_runtime( double h_min_delay )
   std::string msg = String::compose( "Entering MUSIC runtime with tick = %1 ms", h_min_delay );
   LOG( M_INFO, "MUSICManager::enter_runtime", msg );
 
-  /*
-   * MUSIC needs the step size in seconds
-   * std::cout << "nest::MPIManager::enter_runtime\n";
-   * std::cout << "timestep = " << h_min_delay*1e-3 << std::endl;
-   */
+  // MUSIC needs the step size in seconds
+  // std::cout << "nest::MPIManager::enter_runtime\n";
+  // std::cout << "timestep = " << h_min_delay*1e-3 << std::endl;
   if ( music_runtime == 0 )
   {
     music_runtime = new MUSIC::Runtime( music_setup, h_min_delay * 1e-3 );

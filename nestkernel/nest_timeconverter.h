@@ -20,12 +20,9 @@
  *
  */
 
-/*
- * first version
- * date: april 2008
- * author: Moritz Helias
- *
- */
+// first version
+// date: april 2008
+// author: Moritz Helias
 
 #ifndef NEST_TIME_CONVERTER_H
 #define NEST_TIME_CONVERTER_H

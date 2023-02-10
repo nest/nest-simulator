@@ -125,6 +125,7 @@ SPManager::set_status( const DictionaryDatum& d )
   if ( not d->known( names::structural_plasticity_synapses ) )
   {
     return;
+  }
      // Configure synapses model updated during the simulation.
   Token synmodel;
   DictionaryDatum syn_specs, syn_spec;
@@ -686,5 +687,6 @@ nest::SPManager::disable_structural_plasticity()
 {
   structural_plasticity_enabled_ = false;
 }
+
 
 } // namespace nest

@@ -3,9 +3,9 @@
 Threading
 =========
 
-The smallest unit of executable program is known as a thread and is a virtual component.
+The smallest unit of executable program is known as a thread.
 
-We can adjust the number of :ref:`MPI processes <mpi_process>` and threads, but the product of the two should be the total number of cores.
+We can adjust the number of :ref:`MPI processes <mpi_process>` and threads, but the product of the two should ideally be the total number of cores.
 For example, with 8 cores, we can have 2 processes and 4 threads per process or 1 process with 8 threads.
 In NEST, we recommend only having one thread per core.
 

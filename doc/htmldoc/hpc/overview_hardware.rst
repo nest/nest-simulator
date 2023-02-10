@@ -36,15 +36,11 @@ Note that these are not terms used specifically for NEST, but are common in HPC 
 
         This a representation of a typical hardware setup.
 
-        * In a supercomputer or cluster, there are many nodes.
+        A supercomputer or cluster will have many nodes.
 
-        * Each node contains processors (also called CPUs) and each one has its own cores and cache (L1, L2, L3)
+        A node can contain sockets where the individual processors (also called CPUs) are located.
+        Each processor has some number of cores, which execute computations and cache (L1, L2, L3) as local memory store.
 
-        * Each node is basically its own computer and comprises other components not shown here.
-
-        * The cores are where the computations are performed.
-
-        * The cache is the local memory store for that processor.
 
     .. grid-item-card:: Software components (right side of image)
 
@@ -52,14 +48,10 @@ Note that these are not terms used specifically for NEST, but are common in HPC 
 
         * A set of data and instructions that belong together is referred to as a task or process. This can be your entire simulation
           script or a subset of it.
+          To allow processes to run in parallel, we typically use the standard Message Passing Interface (MPI) 
+          to instruct how they work (See e.g., `OpenMPI <https://www.open-mpi.org/>`_).
 
-        * We typically use the standard Message Passing Interface (MPI) to instruct how processes work in parallel (See e.g.,
-          `OpenMPI <https://www.open-mpi.org/>`_).
-
-        * The smallest unit of executable program is known as a thread. The thread is a virtual component.
-
-        * A single core can have one or two threads. Therefore the total number of possible threads is double the number of cores.
-          *In NEST, we recommend only having one thread per core.*
+        * The smallest unit of executable program is known as a thread. We can control threads following standards like`OpenMP <https://www.openmp.org/>`_.
 
 To efficiently run your large and complex simulation, you need to configure the optimal number of :ref:`threads <threads>` and :ref:`processes <mpi_process>` for
 your simulation and the given hardware of the HPC system you are using.

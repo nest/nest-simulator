@@ -52,7 +52,7 @@ In this example, our HPC system contains 1 node with 2 sockets and 64 cores per 
 
     Slurm can set pinning to specific processors for you with the environment variable ``CPU_AFFINITY``.
     Setting this to `True` may lead to problems with any pinning settings you
-    may have set manually. We recommend setting this to ``None``.
+    have set manually. We recommend setting this to ``None``.
 
 
 Let's break this script down line by line.
@@ -109,7 +109,7 @@ trying to increase the speed of the simulation.
 .. note::
 
    How many nodes do you need for your simulations?
-   Depends on how much memory is available for each node.
+   This depends on how much memory is available for each node.
 
    For example: The :ref:`microcircuit model <toc_microcircuit>` requires around 16 GB of memory and the `multi-area-model <https://github.com/INM-6/multi-area-model>`_ requires 1.4 TB.
    If a node has 128 GB of memory then one node is more than sufficient for the microcircuit model but the multi-area model
@@ -188,21 +188,21 @@ Or, if you are using multiple MPI processes, you can invoke the MPI software exp
 
 ----
 
-local_num_threads
------------------
+Set ``local_num_threads`` in your NEST script
+---------------------------------------------
 
-Here is an example of the NEST script  ``my_nest_simulation.py``.
+Here is a simple example of the NEST script ``my_nest_simulation.py``.
 
-Don't forget to set ``local_num_threads`` in your script!
+To ensure the correct number of threads are used, you have to set ``local_num_threads`` in your script!
+It should match the number of ``cpus-per-task``.
 
 .. code-block:: python
 
    import nest
    from nest import Create, Connect, Simulate
 
-   # You must set the ``local_num_threads`` in your script.
-   # It should match the ``cpus-per-task`` in the job script
-   nest.local_num_threads = 64
+   # Set the local_num_threads to match the value in your job script.
+   nest.local_num_threads = 128
 
    # In this example, we set the number of neurons to match the
    # number of threads. In this scenario each neuron would  be
@@ -215,7 +215,11 @@ Don't forget to set ``local_num_threads`` in your script!
    nest.Connect(n, sr)
    nest.Simulate(100.)
 
-----
+.. seealso::
+
+    :ref:`parallel_computing`
+
+
 
 
 

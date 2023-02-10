@@ -19,7 +19,7 @@ For more details on the conceptual ideas behind beNNch, refer to Albers et al. (
 .. figure:: ../static/img/multi-area-model_5faa0e9c.png
 
     Example ``beNNch`` output (Figure 5C of [1]_) 
-    
+
     Strong-scaling performance of the `multi-area model <https://github.com/INM-6/multi-area-model>`_ simulated with NEST on JURECA-DC.
     The left graph shows the absolute wall-clock time measured with Python-level timers for both network construction and state propagation.
     Error bars indicate variability across three simulation repeats with different random seeds.

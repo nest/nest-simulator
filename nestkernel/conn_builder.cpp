@@ -1877,7 +1877,7 @@ nest::BernoulliAstroBuilder::connect_()
         size_t i = 0;
         while ( i < indegree )
         {
-          // choose target randomly
+          // choose source randomly
           snode_id = ( *sources_ )[ synced_rng->ulrand( sources_->size() ) ];
 
           // block multapses and handle autapses

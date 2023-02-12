@@ -72,7 +72,6 @@ network_params = {
 syn_params = {
     "synapse_model": "tsodyks_synapse",
     "synapse_model_sic": "sic_connection",
-    "c_spill": 0.1,
     "weight_sic": 0.005,
     "J_ee": 2.67436, # excitatory-to-excitatory synaptic weight in nS
     "J_ei": 1.05594, # excitatory-to-inhibitory synaptic weight in nS
@@ -221,7 +220,6 @@ def build_astro(scale, poisson_time):
         "tau_psc": tau_syn_ex,
         "tau_fac": syn_params["tau_fac_ee"],
         "tau_rec": syn_params["tau_rec_ee"],
-        "c_spill": syn_params["c_spill"],
         "synapse_model_sic": syn_params["synapse_model_sic"],
         "weight_sic": syn_params["weight_sic"],
         }
@@ -356,7 +354,7 @@ def run_simulation():
     hist_global = (np.histogram(times, bins)[0]/len(set(senders))).tolist() # spiking histogram of all neurons sampled
 
     # calculate local and global synchrony of neurons sampled
-    print("Calculating neuronal local and global synchrony ...")    
+    print("Calculating neuronal local and global synchrony ...")
     coefs, n_pass_, n_fail_ = get_corr(hists) # local (spike count correlation)
     lsync_mu, lsync_sd = np.mean(coefs), np.std(coefs)
     gsync = np.var(hist_global)/np.mean(np.var(hists, axis=1)) # global (variance of all/variance of individual)
@@ -390,7 +388,7 @@ def run_simulation():
     plt.savefig(os.path.join(data_path, "neuron_sic.png"))
     plt.close()
 
-    # plot astrocyte data 
+    # plot astrocyte data
     print("Plotting astrocyte dynamics ...")
     d = astro_data
     keys = list(d.keys())

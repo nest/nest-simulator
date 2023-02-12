@@ -344,7 +344,7 @@ nest::astrocyte::astrocyte()
   , B_( *this )
 {
   recordablesMap_.create();
-  Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
+  // Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
 }
 
 nest::astrocyte::astrocyte( const astrocyte& n )
@@ -353,7 +353,7 @@ nest::astrocyte::astrocyte( const astrocyte& n )
   , S_( n.S_ )
   , B_( n.B_, *this )
 {
-  Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
+  // Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
 }
 
 nest::astrocyte::~astrocyte()
@@ -467,44 +467,21 @@ nest::astrocyte::pre_run_hook()
  * TO DO: Check how to safely remove spike handling functions.
  * ---------------------------------------------------------------- */
 
-bool
-nest::astrocyte::update_( Time const& origin, const long from, const long to, const bool called_from_wfr_update )
+inline void
+nest::astrocyte::update( Time const& origin, const long from, const long to )
 {
-
   assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  const size_t interpolation_order = kernel().simulation_manager.get_wfr_interpolation_order();
-  const double wfr_tol = kernel().simulation_manager.get_wfr_tol();
-  bool wfr_tol_exceeded = false;
-
   // allocate memory to store the new interpolation coefficients
-  // to be sent by gap event
-  const size_t buffer_size = kernel().connection_manager.get_min_delay() * ( interpolation_order + 1 );
-  std::vector< double > new_coefficients( buffer_size, 0.0 );
+  // to be sent by SIC event
   std::vector< double > sic_values( kernel().connection_manager.get_min_delay(), 0.0 );
-
-
-  // parameters needed for piecewise interpolation
-  double y_i = 0.0, y_ip1 = 0.0, hf_i = 0.0, hf_ip1 = 0.0;
-  double f_temp[ State_::STATE_VEC_SIZE ];
 
   for ( long lag = from; lag < to; ++lag )
   {
-
     // B_.lag is needed by astrocyte_dynamics to
     // determine the current section
     B_.lag_ = lag;
-
-    if ( called_from_wfr_update )
-    {
-      y_i = S_.y_[ State_::IP3_astro ];
-      if ( interpolation_order == 3 )
-      {
-        astrocyte_dynamics( 0, S_.y_, f_temp, reinterpret_cast< void* >( this ) );
-        hf_i = B_.step_ * f_temp[ State_::IP3_astro ];
-      }
-    }
 
     double t = 0.0;
 
@@ -535,100 +512,195 @@ nest::astrocyte::update_( Time const& origin, const long from, const long to, co
         throw GSLSolverFailure( get_name(), status );
       }
     }
+    // log state data
+    B_.logger_.record_data( origin.get_steps() + lag );
 
-    if ( not called_from_wfr_update )
-    {
-      // log state data
-      B_.logger_.record_data( origin.get_steps() + lag );
+    // set new input current
+    B_.I_stim_ = B_.currents_.get_value( lag );
 
-      // set new input current
-      B_.I_stim_ = B_.currents_.get_value( lag );
-    }
-    else // if(called_from_wfr_update)
-    {
-      // check if deviation from last iteration exceeds wfr_tol
-      wfr_tol_exceeded = wfr_tol_exceeded or fabs( S_.y_[ State_::IP3_astro ] - B_.last_y_values[ lag ] ) > wfr_tol;
-      B_.last_y_values[ lag ] = S_.y_[ State_::IP3_astro ];
+    // this is to add the incoming spikes to the state variable
+    S_.y_[ State_::IP3_astro ] += P_.r_IP3_astro_ * B_.spike_exc_.get_value( lag );
 
-      // update different interpolations
-
-      // constant term is the same for each interpolation order
-      new_coefficients[ lag * ( interpolation_order + 1 ) + 0 ] = y_i;
-
-      switch ( interpolation_order )
-      {
-      case 0:
-        break;
-
-      case 1:
-        y_ip1 = S_.y_[ State_::IP3_astro ];
-
-        new_coefficients[ lag * ( interpolation_order + 1 ) + 1 ] = y_ip1 - y_i;
-        break;
-
-      case 3:
-        y_ip1 = S_.y_[ State_::IP3_astro ];
-        astrocyte_dynamics( B_.step_, S_.y_, f_temp, reinterpret_cast< void* >( this ) );
-        hf_ip1 = B_.step_ * f_temp[ State_::IP3_astro ];
-
-        new_coefficients[ lag * ( interpolation_order + 1 ) + 1 ] = hf_i;
-        new_coefficients[ lag * ( interpolation_order + 1 ) + 2 ] = -3 * y_i + 3 * y_ip1 - 2 * hf_i - hf_ip1;
-        new_coefficients[ lag * ( interpolation_order + 1 ) + 3 ] = 2 * y_i - 2 * y_ip1 + hf_i + hf_ip1;
-        break;
-
-      default:
-        throw BadProperty( "Interpolation order must be 0, 1, or 3." );
-      }
-    }
-
-    if ( not called_from_wfr_update )
-    {
-      // this is to add the incoming spikes to the state variable
-      S_.y_[ State_::IP3_astro ] += P_.r_IP3_astro_ * B_.spike_exc_.get_value( lag );
-    }
-    else
-    {
-      // this is to add the incoming spikes to the state variable
-      S_.y_[ State_::IP3_astro ] += P_.r_IP3_astro_ * B_.spike_exc_.get_value_wfr_update( lag );
-    }
+    // normalize Calcium concentration
     double calc_thr = S_.y_[ State_::Ca_astro ] * 1000.0 - P_.SIC_thr_astro_;
     if ( calc_thr > 1.0 )
     {
-      /* The SIC is converted to pA from uA/cm2 in the original publication */
+      // originally this is multiplyed by std::pow(25, 2)*3.14*std::pow(10, -2)
+      // to convert to pA from uA/cm2; now users can set the SIC weight
       sic_values[ lag ] = std::log( calc_thr );
     }
 
-  } // end for-loop
+  } // end for loop
 
-  // (To be preserved)
-  // if not called_from_wfr_update perform constant extrapolation
-  // and reset last_y_values
-  // if ( not called_from_wfr_update )
-  // {
-  //   for ( long temp = from; temp < to; ++temp )
-  //   {
-  //     // TODO: this is for the connection between two astrocytes
-  //     new_coefficients[ temp * ( interpolation_order + 1 ) + 0 ] = S_.y_[ State_::IP3_astro ];
-  //   }
-  //   std::vector< double >( kernel().connection_manager.get_min_delay(), 0.0 ).swap( B_.last_y_values );
-  // }
-  // Send gap-event
-  // GapJunctionEvent ge;
-  // ge.set_coeffarray( new_coefficients );
-  // kernel().event_delivery_manager.send_secondary( *this, ge );
-
-  // Send sic-event
+  // Send SIC event
   SICEvent sic;
   sic.set_coeffarray( sic_values );
   kernel().event_delivery_manager.send_secondary( *this, sic );
   sic_ = sic_values[0]; // for testing, to be deleted
-
-  // Reset variables
-  B_.sumj_g_ij_ = 0.0;
-  std::vector< double >( buffer_size, 0.0 ).swap( B_.interpolation_coefficients );
-
-  return wfr_tol_exceeded;
 }
+
+// bool
+// nest::astrocyte::update_( Time const& origin, const long from, const long to, const bool called_from_wfr_update )
+// {
+//
+//   assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
+//   assert( from < to );
+//
+//   const size_t interpolation_order = kernel().simulation_manager.get_wfr_interpolation_order();
+//   const double wfr_tol = kernel().simulation_manager.get_wfr_tol();
+//   bool wfr_tol_exceeded = false;
+//
+//   // allocate memory to store the new interpolation coefficients
+//   // to be sent by gap event
+//   const size_t buffer_size = kernel().connection_manager.get_min_delay() * ( interpolation_order + 1 );
+//   std::vector< double > new_coefficients( buffer_size, 0.0 );
+//   std::vector< double > sic_values( kernel().connection_manager.get_min_delay(), 0.0 );
+//
+//
+//   // parameters needed for piecewise interpolation
+//   double y_i = 0.0, y_ip1 = 0.0, hf_i = 0.0, hf_ip1 = 0.0;
+//   double f_temp[ State_::STATE_VEC_SIZE ];
+//
+//   for ( long lag = from; lag < to; ++lag )
+//   {
+//
+//     // B_.lag is needed by astrocyte_dynamics to
+//     // determine the current section
+//     B_.lag_ = lag;
+//
+//     // if ( called_from_wfr_update )
+//     // {
+//     //   y_i = S_.y_[ State_::IP3_astro ];
+//     //   if ( interpolation_order == 3 )
+//     //   {
+//     //     astrocyte_dynamics( 0, S_.y_, f_temp, reinterpret_cast< void* >( this ) );
+//     //     hf_i = B_.step_ * f_temp[ State_::IP3_astro ];
+//     //   }
+//     // }
+//
+//     double t = 0.0;
+//
+//     // numerical integration with adaptive step size control:
+//     // ------------------------------------------------------
+//     // gsl_odeiv_evolve_apply performs only a single numerical
+//     // integration step, starting from t and bounded by step;
+//     // the while-loop ensures integration over the whole simulation
+//     // step (0, step] if more than one integration step is needed due
+//     // to a small integration step size;
+//     // note that (t+IntegrationStep > step) leads to integration over
+//     // (t, step] and afterwards setting t to step, but it does not
+//     // enforce setting IntegrationStep to step-t; this is of advantage
+//     // for a consistent and efficient integration across subsequent
+//     // simulation intervals
+//     while ( t < B_.step_ )
+//     {
+//       const int status = gsl_odeiv_evolve_apply( B_.e_,
+//         B_.c_,
+//         B_.s_,
+//         &B_.sys_,             // system of ODE
+//         &t,                   // from t
+//         B_.step_,             // to t <= step
+//         &B_.IntegrationStep_, // integration step size
+//         S_.y_ );              // neuronal state
+//       if ( status != GSL_SUCCESS )
+//       {
+//         throw GSLSolverFailure( get_name(), status );
+//       }
+//     }
+//
+//     if ( not called_from_wfr_update )
+//     {
+//       // log state data
+//       B_.logger_.record_data( origin.get_steps() + lag );
+//
+//       // set new input current
+//       B_.I_stim_ = B_.currents_.get_value( lag );
+//     }
+//     // else // if(called_from_wfr_update)
+//     // {
+//     //   // check if deviation from last iteration exceeds wfr_tol
+//     //   wfr_tol_exceeded = wfr_tol_exceeded or fabs( S_.y_[ State_::IP3_astro ] - B_.last_y_values[ lag ] ) > wfr_tol;
+//     //   B_.last_y_values[ lag ] = S_.y_[ State_::IP3_astro ];
+//     //
+//     //   // update different interpolations
+//     //
+//     //   // constant term is the same for each interpolation order
+//     //   new_coefficients[ lag * ( interpolation_order + 1 ) + 0 ] = y_i;
+//     //
+//     //   switch ( interpolation_order )
+//     //   {
+//     //   case 0:
+//     //     break;
+//     //
+//     //   case 1:
+//     //     y_ip1 = S_.y_[ State_::IP3_astro ];
+//     //
+//     //     new_coefficients[ lag * ( interpolation_order + 1 ) + 1 ] = y_ip1 - y_i;
+//     //     break;
+//     //
+//     //   case 3:
+//     //     y_ip1 = S_.y_[ State_::IP3_astro ];
+//     //     astrocyte_dynamics( B_.step_, S_.y_, f_temp, reinterpret_cast< void* >( this ) );
+//     //     hf_ip1 = B_.step_ * f_temp[ State_::IP3_astro ];
+//     //
+//     //     new_coefficients[ lag * ( interpolation_order + 1 ) + 1 ] = hf_i;
+//     //     new_coefficients[ lag * ( interpolation_order + 1 ) + 2 ] = -3 * y_i + 3 * y_ip1 - 2 * hf_i - hf_ip1;
+//     //     new_coefficients[ lag * ( interpolation_order + 1 ) + 3 ] = 2 * y_i - 2 * y_ip1 + hf_i + hf_ip1;
+//     //     break;
+//     //
+//     //   default:
+//     //     throw BadProperty( "Interpolation order must be 0, 1, or 3." );
+//     //   }
+//     // }
+//
+//     if ( not called_from_wfr_update )
+//     {
+//       // this is to add the incoming spikes to the state variable
+//       S_.y_[ State_::IP3_astro ] += P_.r_IP3_astro_ * B_.spike_exc_.get_value( lag );
+//     }
+//     // else
+//     // {
+//     //   // this is to add the incoming spikes to the state variable
+//     //   S_.y_[ State_::IP3_astro ] += P_.r_IP3_astro_ * B_.spike_exc_.get_value_wfr_update( lag );
+//     // }
+//     double calc_thr = S_.y_[ State_::Ca_astro ] * 1000.0 - P_.SIC_thr_astro_;
+//     if ( calc_thr > 1.0 )
+//     {
+//       /* The SIC is converted to pA from uA/cm2 in the original publication */
+//       sic_values[ lag ] = std::log( calc_thr );
+//     }
+//
+//   } // end for-loop
+//
+//   // (To be preserved)
+//   // if not called_from_wfr_update perform constant extrapolation
+//   // and reset last_y_values
+//   // if ( not called_from_wfr_update )
+//   // {
+//   //   for ( long temp = from; temp < to; ++temp )
+//   //   {
+//   //     // TODO: this is for the connection between two astrocytes
+//   //     new_coefficients[ temp * ( interpolation_order + 1 ) + 0 ] = S_.y_[ State_::IP3_astro ];
+//   //   }
+//   //   std::vector< double >( kernel().connection_manager.get_min_delay(), 0.0 ).swap( B_.last_y_values );
+//   // }
+//   // Send gap-event
+//   // GapJunctionEvent ge;
+//   // ge.set_coeffarray( new_coefficients );
+//   // kernel().event_delivery_manager.send_secondary( *this, ge );
+//
+//   // Send sic-event
+//   SICEvent sic;
+//   sic.set_coeffarray( sic_values );
+//   kernel().event_delivery_manager.send_secondary( *this, sic );
+//   sic_ = sic_values[0]; // for testing, to be deleted
+//
+//   // Reset variables
+//   B_.sumj_g_ij_ = 0.0;
+//   std::vector< double >( buffer_size, 0.0 ).swap( B_.interpolation_coefficients );
+//
+//   return wfr_tol_exceeded;
+// }
 
 void
 nest::astrocyte::handle( SpikeEvent& e )

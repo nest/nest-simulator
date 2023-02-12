@@ -206,7 +206,7 @@ private:
   bool update_( Time const&, const long, const long, const bool );
 
   void update( Time const&, const long, const long ) override;
-  bool wfr_update( Time const&, const long, const long ) override;
+  // bool wfr_update( Time const&, const long, const long ) override;
 
   // END Boilerplate function declarations ----------------------------
 
@@ -379,21 +379,21 @@ private:
   static RecordablesMap< astrocyte > recordablesMap_;
 };
 
-inline void
-astrocyte::update( Time const& origin, const long from, const long to )
-{
-  update_( origin, from, to, false );
-}
+// inline void
+// astrocyte::update( Time const& origin, const long from, const long to )
+// {
+//   update_( origin, from, to, false );
+// }
 
-inline bool
-astrocyte::wfr_update( Time const& origin, const long from, const long to )
-{
-  State_ old_state = S_; // save state before wfr_update
-  const bool wfr_tol_exceeded = update_( origin, from, to, true );
-  S_ = old_state; // restore old state
-
-  return not wfr_tol_exceeded;
-}
+// inline bool
+// astrocyte::wfr_update( Time const& origin, const long from, const long to )
+// {
+//   State_ old_state = S_; // save state before wfr_update
+//   const bool wfr_tol_exceeded = update_( origin, from, to, true );
+//   S_ = old_state; // restore old state
+//
+//   return not wfr_tol_exceeded;
+// }
 
 inline port
 astrocyte::send_test_event( Node& target, rport receptor_type, synindex, bool )

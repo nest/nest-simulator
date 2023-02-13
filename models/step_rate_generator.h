@@ -111,8 +111,7 @@ public:
   // port send_test_event( Node&, rport, synindex, bool );
   void sends_secondary_event( DelayedRateConnectionEvent& ) override {};
 
-  using Node::handle;
-  using Node::handles_test_event;
+
   using Node::sends_secondary_event;
 
   void handle( DataLoggingRequest& ) override;

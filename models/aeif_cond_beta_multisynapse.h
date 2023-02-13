@@ -189,13 +189,6 @@ public:
 
   friend int aeif_cond_beta_multisynapse_dynamics( double, const double*, double*, void* );
 
-  /**
-   * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
-   */
-  using Node::handle;
-  using Node::handles_test_event;
 
   port send_test_event( Node&, rport, synindex, bool ) override;
 

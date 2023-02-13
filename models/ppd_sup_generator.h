@@ -110,11 +110,7 @@ public:
 
   bool is_off_grid() const override;
 
-  /**
-   * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
-   */
+
   using Node::event_hook;
 
   port send_test_event( Node&, rport, synindex, bool ) override;

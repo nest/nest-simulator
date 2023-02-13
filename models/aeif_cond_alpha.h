@@ -195,13 +195,6 @@ public:
   aeif_cond_alpha( const aeif_cond_alpha& );
   ~aeif_cond_alpha() override;
 
-  /**
-   * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
-   */
-  using Node::handle;
-  using Node::handles_test_event;
 
   port send_test_event( Node&, rport, synindex, bool ) override;
 

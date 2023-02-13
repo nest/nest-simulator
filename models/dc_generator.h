@@ -96,8 +96,6 @@ public:
 
   port send_test_event( Node&, rport, synindex, bool ) override;
 
-  using Node::handle;
-  using Node::handles_test_event;
 
   void handle( DataLoggingRequest& ) override;
 

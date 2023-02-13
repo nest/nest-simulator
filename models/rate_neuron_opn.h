@@ -116,13 +116,7 @@ public:
   rate_neuron_opn();
   rate_neuron_opn( const rate_neuron_opn& );
 
-  /**
-   * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
-   */
-  using Node::handle;
-  using Node::handles_test_event;
+
   using Node::sends_secondary_event;
 
   void handle( InstantaneousRateConnectionEvent& ) override;

@@ -212,13 +212,6 @@ public:
   gif_psc_exp_multisynapse();
   gif_psc_exp_multisynapse( const gif_psc_exp_multisynapse& );
 
-  /**
-   * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
-   */
-  using Node::handle;
-  using Node::handles_test_event;
 
   port send_test_event( Node&, rport, synindex, bool ) override;
 

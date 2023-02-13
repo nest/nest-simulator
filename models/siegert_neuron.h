@@ -144,13 +144,7 @@ public:
 
   ~siegert_neuron() override;
 
-  /**
-   * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
-   */
-  using Node::handle;
-  using Node::handles_test_event;
+
   using Node::sends_secondary_event;
 
   void handle( DiffusionConnectionEvent& ) override;

@@ -148,13 +148,6 @@ public:
   mat2_psc_exp();
   mat2_psc_exp( const mat2_psc_exp& );
 
-  /**
-   * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
-   */
-  using Node::handle;
-  using Node::handles_test_event;
 
   port send_test_event( Node&, rport, synindex, bool ) override;
 

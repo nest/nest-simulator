@@ -154,13 +154,6 @@ public:
   hh_cond_exp_traub( const hh_cond_exp_traub& );
   ~hh_cond_exp_traub() override;
 
-  /**
-   * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
-   */
-  using Node::handle;
-  using Node::handles_test_event;
 
   port send_test_event( Node&, rport, synindex, bool ) override;
 

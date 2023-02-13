@@ -230,11 +230,6 @@ public:
   void set_data_from_stimulation_backend( std::vector< double >& input_spikes ) override;
 
 
-  /**
-   * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
-   */
   using Node::event_hook;
   using Node::sends_signal;
 

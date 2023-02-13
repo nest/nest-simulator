@@ -145,8 +145,6 @@ public:
    * see http://www.gotw.ca/gotw/005.htm.
    */
 
-  using Node::handle;
-  using Node::handles_test_event;
 
   port send_test_event( Node& tagret, rport receptor_type, synindex, bool ) override;
 

@@ -254,13 +254,6 @@ public:
   pp_cond_exp_mc_urbanczik( const pp_cond_exp_mc_urbanczik& );
   ~pp_cond_exp_mc_urbanczik() override;
 
-  /**
-   * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
-   */
-  using Node::handle;
-  using Node::handles_test_event;
 
   port send_test_event( Node&, rport, synindex, bool ) override;
 

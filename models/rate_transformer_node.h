@@ -113,8 +113,7 @@ public:
    * happily live without.
    */
 
-  using Node::handle;
-  using Node::handles_test_event;
+
   using Node::sends_secondary_event;
 
   void handle( InstantaneousRateConnectionEvent& ) override;

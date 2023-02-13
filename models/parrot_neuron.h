@@ -86,8 +86,7 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding,
    * Overloading, and Hiding
    */
-  using Node::handle;
-  using Node::handles_test_event;
+
   using Node::receives_signal;
   using Node::sends_signal;
 

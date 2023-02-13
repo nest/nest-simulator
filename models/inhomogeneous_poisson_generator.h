@@ -104,11 +104,7 @@ public:
   inhomogeneous_poisson_generator();
   inhomogeneous_poisson_generator( const inhomogeneous_poisson_generator& );
 
-  /**
-   * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
-   */
+
   using Node::event_hook;
 
   port send_test_event( Node&, rport, synindex, bool ) override;

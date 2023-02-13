@@ -153,13 +153,6 @@ public:
   iaf_cond_exp_sfa_rr( const iaf_cond_exp_sfa_rr& );
   ~iaf_cond_exp_sfa_rr() override;
 
-  /**
-   * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
-   */
-  using Node::handle;
-  using Node::handles_test_event;
 
   port send_test_event( Node&, rport, synindex, bool ) override;
 

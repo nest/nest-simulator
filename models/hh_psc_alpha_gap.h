@@ -160,13 +160,7 @@ public:
   hh_psc_alpha_gap( const hh_psc_alpha_gap& );
   ~hh_psc_alpha_gap() override;
 
-  /**
-   * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
-   */
-  using Node::handle;
-  using Node::handles_test_event;
+
   using Node::sends_secondary_event;
 
   port send_test_event( Node& target, rport receptor_type, synindex, bool ) override;

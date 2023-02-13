@@ -152,14 +152,9 @@ public:
   //! Allow multimeter to connect to local instances
   bool local_receiver() const override;
 
-  /**
-   * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
-   */
+
   using Node::event_hook;
-  using Node::handle;
-  using Node::handles_test_event;
+
   using Node::sends_signal;
 
   port send_test_event( Node&, rport, synindex, bool ) override;

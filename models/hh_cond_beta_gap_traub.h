@@ -183,13 +183,7 @@ public:
   hh_cond_beta_gap_traub( const hh_cond_beta_gap_traub& );
   ~hh_cond_beta_gap_traub() override;
 
-  /**
-   * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
-   */
-  using Node::handle;
-  using Node::handles_test_event;
+
   using Node::sends_secondary_event;
 
   port send_test_event( Node& target, rport receptor_type, synindex, bool ) override;

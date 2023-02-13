@@ -110,11 +110,7 @@ public:
   mip_generator();
   mip_generator( const mip_generator& rhs );
 
-  /**
-   * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
-   */
+
   using Node::event_hook;
 
   port send_test_event( Node&, rport, synindex, bool ) override;

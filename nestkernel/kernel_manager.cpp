@@ -27,13 +27,10 @@ nest::KernelManager* nest::KernelManager::kernel_manager_instance_ = nullptr;
 void
 nest::KernelManager::create_kernel_manager()
 {
-#pragma omp critical( create_kernel_manager )
+  if ( not kernel_manager_instance_ )
   {
-    if ( not kernel_manager_instance_ )
-    {
-      kernel_manager_instance_ = new KernelManager();
-      assert( kernel_manager_instance_ );
-    }
+    kernel_manager_instance_ = new KernelManager();
+    assert( kernel_manager_instance_ );
   }
 }
 

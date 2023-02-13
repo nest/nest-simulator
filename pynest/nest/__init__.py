@@ -426,6 +426,13 @@ class NestModule(types.ModuleType):
         k for k, v in vars().items() if isinstance(v, KernelAttribute) and v._readonly
     )
 
+    userdict = {}
+    """
+    The variable userdict allows users to store custom data with the NEST kernel.
+
+    Example: nest.userdict["nodes"] = [1,2,3,4]
+    """
+
 
 def _setattr_error(self, attr, val):
     """

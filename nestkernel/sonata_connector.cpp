@@ -39,7 +39,7 @@
 #include <iostream> // for debugging
 #include <stdio.h>  // for debugging
 
-#include "H5Cpp.h" // HDF5 C++ API
+#include "H5Cpp.h"
 
 extern "C" herr_t get_member_names_callback_( hid_t loc_id, const char* name, const H5L_info_t* linfo, void* opdata );
 

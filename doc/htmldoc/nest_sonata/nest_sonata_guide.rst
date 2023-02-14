@@ -257,7 +257,7 @@ NEST SONATA examples
 More about SONATA 
 -----------------
 
-For full specification of the SONATA format, see [1]_ and the `SONATA GitHub page <https://github.com/AllenInstitute/sonata>`_.
+For a full specification of the SONATA format, see [1]_ and the `SONATA GitHub page <https://github.com/AllenInstitute/sonata>`_.
 
 
 References

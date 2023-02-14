@@ -85,6 +85,7 @@ If false, spike times will be rounded to the nearest step if they are
 less than tic/2 from the step, otherwise NEST reports an error.
 If true, spike times are rounded to the nearest step if within tic/2
 from the step, otherwise they are rounded up to the *end* of the step.
+This setting has no effect if precise_times is true.
 
     `shift_now_spikes`   default: false
 
@@ -185,7 +186,8 @@ spike_weights
     Corresponding spike-weights, the unit depends on the receiver
 
 spike_multiplicities
-    Multiplicities of spikes, same length as spike_times; mostly for debugging
+    List of multiplicities of spikes, same length as spike_times; mostly
+    for debugging
 
 precise_times
     See above

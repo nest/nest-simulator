@@ -90,6 +90,7 @@
 #include "siegert_neuron.h"
 #include "sigmoid_rate.h"
 #include "sigmoid_rate_gg_1998.h"
+#include "static_injector_neuron.h"
 #include "tanh_rate.h"
 #include "threshold_lin_rate.h"
 
@@ -232,6 +233,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< gif_psc_exp >( "gif_psc_exp" );
   kernel().model_manager.register_node_model< gif_psc_exp_multisynapse >( "gif_psc_exp_multisynapse" );
   kernel().model_manager.register_node_model< glif_psc >( "glif_psc" );
+  kernel().model_manager.register_node_model< static_injector_neuron >( "static_injector_neuron" );
 
   kernel().model_manager.register_node_model< ac_generator >( "ac_generator" );
   kernel().model_manager.register_node_model< dc_generator >( "dc_generator" );

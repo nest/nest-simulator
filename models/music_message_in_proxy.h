@@ -179,7 +179,7 @@ private:
     /**
      * Set values from dictionary.
      */
-    void set( const DictionaryDatum&, State_&, Node* );
+    void set( const DictionaryDatum&, State_&, NodeInterface* );
   };
 
   // ------------------------------------------------------------
@@ -194,7 +194,7 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     //! Set values from dictionary
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void set( const DictionaryDatum&, const Parameters_&, NodeInterface* );
   };
 
   // ------------------------------------------------------------

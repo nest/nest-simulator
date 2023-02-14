@@ -25,6 +25,7 @@
 
 #ifdef HAVE_HDF5
 
+// C++ includes:
 #include <cstdlib> // for div()
 
 // Includes from nestkernel:
@@ -33,11 +34,6 @@
 
 // Includes from sli:
 #include "dictutils.h"
-
-#include <chrono>   // for debugging
-#include <fstream>  // for debugging
-#include <iostream> // for debugging
-#include <stdio.h>  // for debugging
 
 #include "H5Cpp.h"
 

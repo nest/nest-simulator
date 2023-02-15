@@ -190,16 +190,15 @@ class SonataNetwork():
     def Create(self):
         """Create the SONATA network nodes.
 
-        The network nodes are created on the Python level. In the SONATA format,
-        node populations are serialized in node HDF5 files. Each node in a
-        population has a node type. Each node population has a single associated
-        node types CSV file that assigns properties to all nodes with a given
-        node type.
+        Creates the network nodes. In the SONATA format, node populations are
+        serialized in node HDF5 files. Each node in a population has a node
+        type. Each node population has a single associated node types CSV file 
+        that assigns properties to all nodes with a given node type.
 
-        Please note that it is assumed that all relevant node
-        properties are stored in the node types CSV file. For neuron nodes, the
-        relevant properties are model type, model template and reference to a
-        JSON file describing the parametrization.
+        Please note that it is assumed that all relevant node properties are
+        stored in the node types CSV file. For neuron nodes, the relevant
+        properties are model type, model template and reference to a JSON 
+        file describing the parametrization.
 
         Returns
         -------
@@ -381,14 +380,14 @@ class SonataNetwork():
         Parameters
         ----------
         nodes_df : pandas.DataFrame
-            Node type CSV table as dataframe
+            Node type CSV table as dataframe.
         csv_fn : str
             Name of current CSV file. Used for more informative error messages.
 
         Returns
         -------
         dict :
-            Map of node properties for the different node type ids
+            Map of node properties for the different node type ids.
         """
 
         if "model_template" not in nodes_df.columns:
@@ -439,13 +438,11 @@ class SonataNetwork():
             chunk_size = self._chunk_size_default
 
         self._verify_chunk_size(chunk_size)
-        self._create_edges_maps()
 
-        graph_specs = {"nodes": self._node_collections,
-                       "edges": self._edges_maps}
+        graph_specs = self._create_graph_specs()
 
-        # Check if HDF5 files exist and are not blocked.
-        for d in self._edges_maps:
+        # Check whether HDF5 files exist and are not blocked.
+        for d in graph_specs['edges']:
             try:
                 f = h5py.File(d["edges_file"], "r")
                 f.close()
@@ -465,6 +462,49 @@ class SonataNetwork():
             raise TypeError("chunk_size must be passed as int")
         if chunk_size <= 0:
             raise ValueError("chunk_size must be strictly positive")
+
+    def _create_graph_specs(self):
+        """Create graph specifications dictionary.
+
+        The graph specifications (`graph_specs`) dictionary is passed to
+        the kernel where the connections are created. `graph_specs` has the
+        following structure:
+
+        {
+            "nodes":
+            {
+                "<pop_name_1>": NodeCollection,
+                "<pop_name_2>": NodeCollection,
+                ...
+            },
+            "edges":
+            [
+                {"edges_file": '<edges.h5>',
+                 "syn_specs": {"<edge_type_id_1>": syn_spec,
+                               "<edge_type_id_2>": syn_spec,
+                               ...
+                               }
+                 },
+                {"edges_file": '<edges.h5>',
+                 "syn_specs": {"<edge_type_id_1>": syn_spec,
+                               "<edge_type_id_2>": syn_spec,
+                               ...
+                               }
+                 },
+                ...
+            ]
+        }
+
+        Returns
+        -------
+        dict :
+            Map of SONATA graph specifications.
+        """
+
+        self._create_edges_maps()
+        graph_specs = {"nodes": self._node_collections,
+                       "edges": self._edges_maps}
+        return graph_specs
 
     def _create_edges_maps(self):
         """Create a collection of maps of edge properties.

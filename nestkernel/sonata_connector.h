@@ -42,119 +42,136 @@ namespace nest
 {
 
 /**
- * Create connections from SONATA files.
+ * @brief Manage connection creation from SONATA specifications.
  *
- * This class provides an interface for connecting nodes provided in SONTATA files.
- * The nodes have to first be created through the `SonataNetwork` PyNEST class, and
- * provided through the `graph_specs` dictionary, along with an array providing
- * connection parameters for the different SONATA files.
+ * This class provides an interface for creating connections between the
+ * nodes in a network specified by the SONATA format. The interface is
+ * used by `SonataNetwork` PyNEST class. The nodes must first be created
+ * by `SonataNetwork` before any connections can be created. Connections
+ * between sources and targets are explicitly tabulated in HDF5 files
+ * specified in the `graph_specs` dictionary. The connections are created
+ * with the `SonataConnector::connect()` function, which iterates the SONATA
+ * edge files, extracts the connection data and creates the specified
+ * one-to-one connections.
  *
- * The connections are created through the `SonataConnector::connect()` function,
- * which iterates the SONATA files, extracting the connection parameters and create
- * the individual connections.
- *
- * Note that HDF5 do NOT support MPI parallel and thread parallel runs simultaneously, see
- * https://portal.hdfgroup.org/display/knowledge/Questions+about+thread-safety+and+concurrent+access
+ * @note Files representing large-scale networks need to be read in chunks due
+ * to memory constraints; we implement this using HDF5 hyperslabs of
+ * configurable size. HDF5 files can only read with concurrency in an MPI
+ * parallel context. Although the HDF5 library can be compiled with
+ * thread-safety, it is not thread-efficient as the usage of locks that
+ * effectively serialize function calls. Since HDF5 does not provide support
+ * for thread-parallel reading, only one thread per MPI process reads
+ * connectivity data, before all threads create connections in parallel.
  */
-
 class SonataConnector
 {
 public:
+  /**
+   * @brief Constructor
+   * @param graph_specs Dictionary with created NodeCollections and SONATA edge specifications.
+   * @param chunk_size Size of the chunk to read in one read operation.
+   *
+   * See PyNEST `SonataNetwork._create_graph_specs` for an outline of the
+   * structure of `graph_specs`.
+   *
+   * The `chunk_size` applies to all HDF5 datasets that need to be read in
+   * each read operation to extract connectivity data.
+   */
   SonataConnector( const DictionaryDatum& graph_specs, const long chunk_size );
+
   ~SonataConnector();
 
   /**
-   * Connect all sources and targets given in SONATA files.
-   *
-   * Goes through all SONATA edge files, iterates the source, target and parameter datasets
-   * in the files and create all the connections. To create the connections, the nodes first
-   * have to be created on PyNEST level.
+   * @brief Connect sources to targets according to SONATA specifications.
    */
   void connect();
 
 private:
   /**
-   * Open an HDF5 edge file with read access only
+   * @brief Open an HDF5 edge file.
    *
-   * @param fname name of the edge file
+   * Open an HDF5 edge file with read access only.
    *
-   * @return H5File pointer
+   * @param fname Name of the edge file.
+   * @return H5File pointer.
    */
   H5::H5File* open_file_( std::string& fname );
 
   /**
-   * Open an HDF5 edge file group
-   *
-   * @param file H5File pointer
-   * @param grp_name name of the group
-   *
-   * @return H5 group pointer
+   * @brief Open an HDF5 edge file group.
+   * @param file H5File pointer.
+   * @param grp_name Name of the group.
+   * @return H5 group pointer.
    */
   H5::Group* open_group_( const H5::H5File* file, const std::string& grp_name );
 
   /**
-   * Open an HDF5 edge file subgroup
-   *
-   * @param group H5 group
-   * @param grp_name name of the group
-   *
-   * @return H5 subgroup pointer
+   * @brief Open an HDF5 edge file subgroup.
+   * @param group H5 group.
+   * @param grp_name Name of the group.
+   * @return H5 subgroup pointer.
    */
   H5::Group* open_group_( const H5::Group* group, const std::string& grp_name );
 
   /**
-   * Open datasets required by the SONATA format
+   * @brief Open required datasets.
    *
-   * @param pop_grp population group pointer
+   * Open HDF5 datasets required by the SONATA format.
+   *
+   * @param pop_grp Population group pointer.
    */
   void open_required_dsets_( const H5::Group* pop_grp );
 
   /**
-   * Try to open optional edge group id datasets
+   * @brief Open optional datasets.
    *
-   * @param edge_id_grp edge id group pointer
+   * Open the optional edge group datasets if they exist.
+   *
+   * @param edge_id_grp Edge id group pointer.
    */
   void try_open_edge_group_id_dsets_( const H5::Group* edge_id_grp );
 
   /**
-   * Close all open datasets
-   *
+   * @brief Close all open datasets.
    */
   void close_dsets_();
 
   /**
-   * Get attribute of dataset
-   *
-   * @param attribute_value value of attribute
-   * @param dataset dataset to get attribute from
-   * @param attribute_name name of attribute
+   * @brief Get dataset attribute.
+   * @param attribute_value Address to assign value of attribute.
+   * @param dataset Dataset to get attribute from.
+   * @param attribute_name Name of attribute.
    */
   void get_attribute_( std::string& attribute_value, const H5::DataSet& dataset, const std::string& attribute_name );
 
 
   /**
-   * Create map between type id and syn_spec given in edge_dict
+   * @brief Create map between edge type id and syn_spec.
    *
-   * Iterates edge_dict, extract synapse parameters and creates map between connection
-   * parameters and type id. Checks that all synapse parameters are valid parameters
-   * for the synapse.
+   * Iterates edge_dict, extracts synapse parameters and creates map between
+   * synapse parameters and edge type id. Checks that all synapse parameters
+   * are valid parameters for the synapse.
    *
-   * @param edge_dict dictionary containing edge type id's and synapse parameters
+   * @param edge_dict Dictionary containing edge type ids and synapse parameters.
    */
   void create_type_id_2_syn_spec_( DictionaryDatum edge_dict );
 
 
   /**
-   * Set synapse parameters in type_id_2_syn_spec_ and type_id_2_param_dicts_
+   * @brief Set synapse parameters.
    *
-   * @param syn_dict synapse dictionary from which to set synapse params
-   * @param synapse_model_id model id of synapse
-   * @param type_id SONATA edge type id for mapping synapse parameters
+   * Set synapse parameters in type_id_2_syn_spec_ and type_id_2_param_dicts_.
+   *
+   * @param syn_dict Synapse dictionary from which to set synapse params.
+   * @param synapse_model_id Model id of synapse
+   * @param type_id SONATA edge type id for mapping synapse parameters.
    */
   void set_synapse_params_( DictionaryDatum syn_dict, index synapse_model_id, int type_id );
 
   /**
-   * Get synapse parameters and convert them to correct datums for connecting
+   * @brief Get synapse parameters.
+   *
+   * Get synapse parameters and convert them to correct datums for connecting.
    *
    * @param snode_id id of source node
    * @param target target node
@@ -165,10 +182,10 @@ private:
   void get_synapse_params_( index snode_id, Node& target, thread target_thread, RngPtr rng, int edge_type_id );
 
   /**
-   * Get synapse property
+   * @brief Get synapse property.
    *
-   * The synapse property, i.e., synaptic weight or delay, is either set from a HDF5 dataset or CSV entry.
-   * Default value is NaN
+   * The synapse property, i.e., synaptic weight or delay, is either set
+   * from a HDF5 dataset or CSV entry. Default value is NaN.
    *
    * @param syn_spec synapse specification dictionary
    * @param index the index to access in data
@@ -184,28 +201,25 @@ private:
     const Name& name );
 
   /**
-   * Manage the sequential chunkwise connections to be made
-   *
+   * @brief Manage the sequential chunkwise connections to be created.
    */
   void sequential_chunkwise_connector_();
 
   /**
-   * Create connections in chunks
-   *
-   * @param chunk_size size of chunk to be read from datasets
-   * @param offset offset from start coordinate of data selection
+   * @brief Create connections in chunks.
+   * @param chunk_size Size of chunk to be read from datasets
+   * @param offset Offset from start coordinate of data selection
    */
   void connect_chunk_( const hsize_t chunk_size, const hsize_t offset );
 
   /**
-   * Read subset of dataset into memory
-   *
+   * @brief Read subset of dataset into memory.
    * @tparam T
-   * @param dataset HDF5 dataset to read
-   * @param data_buf buffer to store data in memory
-   * @param datatype type of data in dataset
-   * @param chunk_size size of chunk to be read from dataset
-   * @param offset offset from start coordinate of data selection
+   * @param dataset HDF5 dataset to read.
+   * @param data_buf Buffer to store data in memory.
+   * @param datatype Type of data in dataset.
+   * @param chunk_size Size of chunk to be read from dataset.
+   * @param offset Offset from start coordinate of data selection.
    */
   template < typename T >
   void read_subset_( const H5::DataSet& dataset,
@@ -214,21 +228,28 @@ private:
     hsize_t chunk_size,
     hsize_t offset );
 
-
   /**
-   * Find the number of edge id groups
+   * @brief Find the number of edge groups.
    *
-   * @param pop_grp population group pointer
-   * @param edge_id_grp_names buffer to store edge id group names
-   * @return hsize_t
+   * Finds the number of edge groups, i.e. ones with label "0", "1", ..., by
+   * iterating the names of the population's datasets and subgroups. We
+   * assume edge group labels are contiguous starting from zero, which is the
+   * SONATA default.
+   *
+   * @note Edge group labels can also be custom and are currently not handled
+   * by this function.
+   *
+   * @param pop_grp Population group pointer.
+   * @param edge_id_grp_names Buffer to store edge id group names.
+   * @return Number of edge groups.
    */
   hsize_t find_edge_id_groups_( H5::Group* pop_grp, std::vector< std::string >& edge_id_grp_names );
 
   /**
-   * Get the number of rows (elements) in dataset
+   * @brief Get the number of rows (elements) in dataset.
    *
-   * It is assumed that the dataset is one dimensional, which is the standard
-   * SONATA format
+   * It is assumed that the connectivity datasets are one dimensional, which is
+   * the standard of the SONATA format.
    *
    * @param dataset
    * @return hsize_t
@@ -236,7 +257,7 @@ private:
   hsize_t get_nrows_( H5::DataSet dataset );
 
   /**
-   * Reset all parameters
+   * @brief Reset all parameters
    */
   void reset_params_();
 

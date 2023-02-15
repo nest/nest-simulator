@@ -72,12 +72,14 @@ Removal of deprecated models
 * The models ``iaf_psc_alpha_canon`` and ``pp_pop_psc_delta`` have
   long been deprecated and were now removed from NEST. In case you
   depend on them, you will find similar functionality in the
-  replacement models ``iaf_psc_alpha_ps`` and ``gif_pop_psc_exp``,
-  respectively.
+  replacement models :doc:`iaf_psc_alpha_ps
+  </models/iaf_psc_alpha_ps>` and :doc:`iaf_psc_alpha_ps
+  </models/gif_pop_psc_exp>`, respectively.
 
 * Model ``spike_dilutor`` is now deprecated and can only be used in
   single-threaded mode. To implement connections which transmit spikes
-  with fixed probability, use ``bernoulli_synapse`` instead.
+  with fixed probability, use :doc:`bernoulli_synapse
+  </models/bernoulli_synapse>` instead.
 
 Changed port of NEST Server
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

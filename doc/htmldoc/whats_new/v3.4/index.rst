@@ -43,15 +43,18 @@ neuron.
 Extent and center for spatial layers with freely placed neurons
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Spatial layers in NEST can be created by specifying the node positions
-in the call to :py:func:`.Create` using ``spatial.free``. If omitted,
-the layer's ``extent`` will be determined automatically by the
-positions of the lower-leftmost and upper-rightmost nodes in the layer.
+Spatial layers in NEST can be created by specifying node positions in
+the call to :py:func:`.Create` using :ref:`spatial distributions
+<pynest_spatial>` from ``nest.spatial``.
 
-While earlier versions of NEST added a hard-coded padding to this,
-NEST 3.4 will only use the node positions. Likewise, the ``center`` is
-now computed as the midpoint between the lower-leftmost and the
-upper-rightmost nodes.
+When using :py:class:`.spatial.free`, the layer's ``extent`` will be
+determined automatically based on the positions of the lower-leftmost
+and upper-rightmost nodes in the layer, if omitted. While earlier
+versions of NEST added a hard-coded padding, NEST 3.4 will only use
+the node positions.
+
+Likewise, the ``center`` of a layer is now automatically computed as
+the midpoint between the lower-leftmost and the upper-rightmost nodes.
 
 When creating a layer with only a single node, the ``extent`` still
 has to be specified explicitly.

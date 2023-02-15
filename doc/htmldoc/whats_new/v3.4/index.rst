@@ -20,11 +20,9 @@ Documentation restructuring and new theme
 NEST documentation has a new theme! We did a major overhaul of the
 layout and structure of the documentation.  The changes aim to improve
 findability and access of content. With a more modern layout, our wide
-range of docs can be discovered more easily.
-
-The table of contents is simplified and the content is grouped based
-on topics (neurons, synapses etc) rather than type of documentation
-(e.g., 'guides').
+range of docs can be discovered more easily. The table of contents is
+simplified and the content is grouped based on topics (neurons,
+synapses etc) rather than type of documentation (e.g., 'guides').
 
 We would be highly interested in any feedback you might have on the
 new look-and-feel either on `our mailing list

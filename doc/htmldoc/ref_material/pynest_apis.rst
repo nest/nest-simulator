@@ -71,8 +71,6 @@ Functions related to parallel computing
 Functions related to spatially distributed nodes
 ------------------------------------------------
 
-.. _pynest_spatial:
-
 .. note::
 
  This used to be a separate topology module. Now, it is integrated into NEST 3.0.
@@ -100,6 +98,8 @@ Functions related to randomization
 
 Functions related to spatial distributions
 ------------------------------------------
+
+.. _pynest_spatial:
 
 .. automodule:: nest.spatial
     :members: distance

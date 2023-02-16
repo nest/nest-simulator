@@ -450,7 +450,7 @@ class SonataNetwork():
 
         sps(graph_specs)
         sps(chunk_size)
-        sr("Connect_sonata")
+        sr("ConnectSonata")
 
         self._is_network_built = True
 

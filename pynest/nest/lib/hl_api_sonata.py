@@ -415,8 +415,8 @@ class SonataNetwork():
         is then sent to the NEST kernel together with the edge HDF5 files to
         create the connections.
 
-        For large networks, the edges HDF5 files might not fit into memory in
-        their entirety. In the NEST kernel, the edges HDF5 datasets are therefore
+        For large networks, the edge HDF5 files might not fit into memory in
+        their entirety. In the NEST kernel, the edge HDF5 datasets are therefore
         read sequentially in chunks. The chunk size is modifiable so that the
         user is able to achieve a balance between the number of read operations
         and memory overhead.
@@ -601,8 +601,8 @@ class SonataNetwork():
         Parameters
         ----------
         chunk_size : int, optional
-            Size of chunks from all relevant edge HDF5 datasets that are
-            read into memory at once in order to create connections.
+            Size of chunk that is read into memory in one read operation. 
+            Applies to all HDF5 datasets relevant for creating the connections.
             Default: ``2**20``.
 
         Returns

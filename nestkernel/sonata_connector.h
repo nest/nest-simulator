@@ -154,13 +154,13 @@ private:
    *
    * @param edge_dict Dictionary containing edge type ids and synapse parameters.
    */
-  void create_type_id_2_syn_spec_( DictionaryDatum edge_dict );
+  void create_edge_type_id_2_syn_spec_( DictionaryDatum edge_dict );
 
 
   /**
    * @brief Set synapse parameters.
    *
-   * Set synapse parameters in type_id_2_syn_spec_ and type_id_2_param_dicts_.
+   * Set synapse parameters in edge_type_id_2_syn_spec_ and edge_type_id_2_param_dicts_.
    *
    * @param syn_dict Synapse dictionary from which to set synapse params.
    * @param synapse_model_id Model id of synapse
@@ -285,13 +285,13 @@ private:
   DictionaryDatum cur_edge_params_;
 
   //! Map from edge type id (SONATA specification) to synapse model
-  std::map< int, index > type_id_2_syn_model_;
+  std::map< int, index > edge_type_id_2_syn_model_;
 
   //! Map from edge type id (SONATA specification) to synapse dictionary with ConnParameter's
-  std::map< int, ConnParameterMap > type_id_2_syn_spec_;
+  std::map< int, ConnParameterMap > edge_type_id_2_syn_spec_;
 
   //! Map from edge type id (SONATA specification) to param dictionaries (one per thread) used when creating connections
-  std::map< int, std::vector< DictionaryDatum > > type_id_2_param_dicts_;
+  std::map< int, std::vector< DictionaryDatum > > edge_type_id_2_param_dicts_;
 
   //! Datasets
   std::string cur_fname_;

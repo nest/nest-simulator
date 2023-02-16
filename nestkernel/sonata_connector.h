@@ -127,9 +127,9 @@ private:
    *
    * Open the optional edge group datasets if they exist.
    *
-   * @param edge_id_grp Edge id group pointer.
+   * @param edge_grp Edge group pointer.
    */
-  void try_open_edge_group_id_dsets_( const H5::Group* edge_id_grp );
+  void try_open_edge_group_dsets_( const H5::Group* edge_grp );
 
   /**
    * @brief Close all open datasets.
@@ -229,7 +229,7 @@ private:
     hsize_t offset );
 
   /**
-   * @brief Find the number of edge groups.
+   * @brief Find the number and names of edge groups.
    *
    * Finds the number of edge groups, i.e. ones with label "0", "1", ..., by
    * iterating the names of the population's datasets and subgroups. We
@@ -240,10 +240,10 @@ private:
    * by this function.
    *
    * @param pop_grp Population group pointer.
-   * @param edge_id_grp_names Buffer to store edge id group names.
+   * @param edge_grp_names Buffer to store edge group names.
    * @return Number of edge groups.
    */
-  hsize_t find_edge_id_groups_( H5::Group* pop_grp, std::vector< std::string >& edge_id_grp_names );
+  hsize_t find_edge_groups_( H5::Group* pop_grp, std::vector< std::string >& edge_grp_names );
 
   /**
    * @brief Get the number of rows (elements) in dataset.

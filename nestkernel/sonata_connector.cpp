@@ -64,7 +64,7 @@ SonataConnector::connect()
   Structure of SONATA edge files:
 
   <edge_file.h5>                      Filename
-  ├─ edges                            Group - required
+  ├─ edges                            Group - required - top level group always named "edges"
   │  ├─ <population_name>             Group - required - usually only one but can be more population groups per file
   │  │  ├─ source_node_id             Dataset {N_total_edges} - required - with attribute specifying source population name
   │  │  ├─ edge_group_id              Dataset {N_total_edges} - required
@@ -78,11 +78,11 @@ SonataConnector::connect()
   │  │  │  ├─ target_to_source        Group
   │  │  │  │  ├─ node_id_to_range     Dataset {N_target_nodes x 2}
   │  │  │  │  ├─ range_to_edge_id     Dataset {N_target_nodes x 2}
-  │  │  ├─ <edge_id1>                 Group - required 
+  │  │  ├─ <edge_id1>                 Group - required - referred to as an edge group
   │  │  │  ├─ delay                   Dataset {M_edges} - optional
   │  │  │  ├─ syn_weight              Dataset {M_edges} - optional
   │  │  │  ├─ dynamics_params         Group - currently not supported
-  │  │  ├─ <edge_id2>                 Group - optional - currently no support for more than one edge id group
+  │  │  ├─ <edge_id2>                 Group - optional - currently no support for more than one edge group
   │  │  │  ├─ delay                   Dataset {K_edges} - optional
   │  │  │  ├─ syn_weight              Dataset {K_edges} - optional
   │  │  │  ├─ dynamics_params         Group
@@ -100,7 +100,7 @@ SonataConnector::connect()
     const auto edge_dict = getValue< DictionaryDatum >( edge_dict_datum );
     cur_fname_ = getValue< std::string >( edge_dict->lookup( "edges_file" ) );
     const auto file = open_file_( cur_fname_ );
-    const auto edges_grp = open_group_( file, "edges" );
+    const auto edges_top_level_grp = open_group_( file, "edges" );
 
     // Create map of edge type ids to NEST synapse_model ids
     cur_edge_params_ = getValue< DictionaryDatum >( edge_dict->lookup( "syn_specs" ) );
@@ -108,32 +108,33 @@ SonataConnector::connect()
 
     // Get names of population groups (usually just one population group)
     std::vector< std::string > pop_names;
-    H5Literate( edges_grp->getId(), H5_INDEX_NAME, H5_ITER_INC, NULL, get_member_names_callback_, &pop_names );
+    H5Literate(
+      edges_top_level_grp->getId(), H5_INDEX_NAME, H5_ITER_INC, NULL, get_member_names_callback_, &pop_names );
 
     // Iterate the population groups
     for ( const auto& pop_name : pop_names )
     {
 
-      const auto pop_grp = open_group_( edges_grp, pop_name );
+      const auto pop_grp = open_group_( edges_top_level_grp, pop_name );
 
-      // Find the number of edge id groups and edge id group names
-      // NOTE: current find_edge_id_groups_() is only meant as a temporary helper function
-      std::vector< std::string > edge_id_grp_names;
-      const auto num_edge_id_groups = find_edge_id_groups_( pop_grp, edge_id_grp_names );
+      // Find the number of edge groups and edge group names
+      // NOTE: current find_edge_groups_() is only meant as a temporary helper function
+      std::vector< std::string > edge_grp_names;
+      const auto num_edge_groups = find_edge_groups_( pop_grp, edge_grp_names );
 
-      // Currently only SONATA edge files with one edge id group is supported
-      // TODO: Handle more than one edge id group. Check with Allen whether we
-      // can require numeric keys, i.e. 0, 1, 2, ..., for edge id groups
-      if ( num_edge_id_groups != 1 )
+      // Currently only SONATA edge files with one edge group is supported
+      // TODO: Handle more than one edge group. Check with Allen whether we
+      // can require numeric keys, i.e. 0, 1, 2, ..., for edge groups
+      if ( num_edge_groups != 1 )
       {
         throw NotImplemented(
-          "Connecting with SONATA files with more than one edge id group is currently not implemented" );
+          "Connecting with SONATA files with more than one edge group is currently not implemented" );
       }
 
-      const auto edge_id_grp = open_group_( pop_grp, edge_id_grp_names[ 0 ] );
+      const auto edge_grp = open_group_( pop_grp, edge_grp_names[ 0 ] );
 
       open_required_dsets_( pop_grp );
-      try_open_edge_group_id_dsets_( edge_id_grp );
+      try_open_edge_group_dsets_( edge_grp );
 
       // Retrieve source and target attributes to find which node population to map to
       get_attribute_( source_attribute_value_, src_node_id_dset_, "node_population" );
@@ -148,7 +149,7 @@ SonataConnector::connect()
     } // end iteration over population groups
 
     // Close H5 objects in scope
-    edges_grp->close();
+    edges_top_level_grp->close();
     file->close();
 
   } // end iteration over edge files
@@ -249,18 +250,18 @@ SonataConnector::open_required_dsets_( const H5::Group* pop_grp )
 }
 
 void
-SonataConnector::try_open_edge_group_id_dsets_( const H5::Group* edge_id_grp )
+SonataConnector::try_open_edge_group_dsets_( const H5::Group* edge_grp )
 {
-  // TODO: Currently only works if the edge file has a single edge id group
+  // TODO: Currently only works if the edge file has a single edge group
 
-  weight_dataset_exist_ = H5Lexists( edge_id_grp->getId(), "syn_weight", H5P_DEFAULT ) > 0;
-  delay_dataset_exist_ = H5Lexists( edge_id_grp->getId(), "delay", H5P_DEFAULT ) > 0;
+  weight_dataset_exist_ = H5Lexists( edge_grp->getId(), "syn_weight", H5P_DEFAULT ) > 0;
+  delay_dataset_exist_ = H5Lexists( edge_grp->getId(), "delay", H5P_DEFAULT ) > 0;
 
   if ( weight_dataset_exist_ )
   {
     try
     {
-      syn_weight_dset_ = edge_id_grp->openDataSet( "syn_weight" );
+      syn_weight_dset_ = edge_grp->openDataSet( "syn_weight" );
     }
     catch ( const H5::Exception& e )
     {
@@ -272,7 +273,7 @@ SonataConnector::try_open_edge_group_id_dsets_( const H5::Group* edge_id_grp )
   {
     try
     {
-      delay_dset_ = edge_id_grp->openDataSet( "delay" );
+      delay_dset_ = edge_grp->openDataSet( "delay" );
     }
     catch ( const H5::Exception& e )
     {
@@ -463,29 +464,29 @@ SonataConnector::get_nrows_( H5::DataSet dataset )
 
 
 hsize_t
-SonataConnector::find_edge_id_groups_( H5::Group* pop_grp, std::vector< std::string >& edge_id_grp_names )
+SonataConnector::find_edge_groups_( H5::Group* pop_grp, std::vector< std::string >& edge_grp_names )
 {
 
   // Retrieve names of all first level datasets and groups of the population group
   std::vector< std::string > member_names;
   H5Literate( pop_grp->getId(), H5_INDEX_NAME, H5_ITER_INC, NULL, get_member_names_callback_, &member_names );
 
-  size_t num_edge_id_groups { 0 };
-  bool is_edge_id_name;
+  size_t num_edge_grps { 0 };
+  bool is_edge_grp_name;
 
   for ( const auto& name : member_names )
   {
     // TODO: The below bool is convoluted, try to write it cleaner
-    is_edge_id_name = ( name.find_first_not_of( "0123456789" ) == std::string::npos );
+    is_edge_grp_name = ( name.find_first_not_of( "0123456789" ) == std::string::npos );
 
-    if ( is_edge_id_name )
+    if ( is_edge_grp_name )
     {
-      edge_id_grp_names.push_back( name );
-      ++num_edge_id_groups;
+      edge_grp_names.push_back( name );
+      ++num_edge_grps;
     }
   }
 
-  return num_edge_id_groups;
+  return num_edge_grps;
 }
 
 

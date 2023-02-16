@@ -263,10 +263,10 @@ private:
 
   typedef std::map< Name, std::shared_ptr< ConnParameter > > ConnParameterMap;
 
-  //! Dictionary containing SONATA dynamics
+  //! Dictionary containing SONATA graph specifications
   DictionaryDatum graph_specs_;
 
-  //! Size of chunk
+  //! Size of chunk that is read into memory in one read operation. Applies to all relevant HDF5 datasets.
   hsize_t chunk_size_;
 
   //! Indicates whether weights are given as HDF5 dataset
@@ -281,7 +281,7 @@ private:
   //! Target node attribute
   std::string target_attribute_value_;
 
-  //! Edge parameters
+  //! Current edge parameters
   DictionaryDatum cur_edge_params_;
 
   //! Map from edge type id (SONATA specification) to synapse model

@@ -180,8 +180,7 @@ class SonataNetwork():
                 for dir, path in conf["manifest"].items():
                     config_obj = config_obj.replace(dir, path)
                 return config_obj[1:]
-            else:
-                return config_obj
+            return config_obj
 
         conf.update(recursive_substitutions(conf))
 

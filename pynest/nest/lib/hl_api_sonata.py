@@ -191,12 +191,12 @@ class SonataNetwork():
 
         Creates the network nodes. In the SONATA format, node populations are
         serialized in node HDF5 files. Each node in a population has a node
-        type. Each node population has a single associated node types CSV file 
+        type. Each node population has a single associated node types CSV file
         that assigns properties to all nodes with a given node type.
 
         Please note that it is assumed that all relevant node properties are
         stored in the node types CSV file. For neuron nodes, the relevant
-        properties are model type, model template and reference to a JSON 
+        properties are model type, model template and reference to a JSON
         file describing the parametrization.
 
         Returns
@@ -600,7 +600,7 @@ class SonataNetwork():
         Parameters
         ----------
         chunk_size : int, optional
-            Size of chunk that is read into memory in one read operation. 
+            Size of chunk that is read into memory in one read operation.
             Applies to all HDF5 datasets relevant for creating the connections.
             Default: ``2**20``.
 

@@ -465,10 +465,6 @@ SonataConnector::get_nrows_( H5::DataSet dataset )
 hsize_t
 SonataConnector::find_edge_id_groups_( H5::Group* pop_grp, std::vector< std::string >& edge_id_grp_names )
 {
-  // Find the number of edge id groups, i.e. ones with label "0", "1", ..., by finding
-  // the names of the population's datasets and subgroups
-  // Note we assume edge ids are contiguous starting from zero, which is the
-  // SONATA default. Edge id keys can also be custom (not handled here)
 
   // Retrieve names of all first level datasets and groups of the population group
   std::vector< std::string > member_names;
@@ -542,7 +538,7 @@ SonataConnector::set_synapse_params_( DictionaryDatum syn_dict, index synapse_mo
     names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
   };
 
-  std::map< Name, std::shared_ptr< ConnParameter > > synapse_params; // TODO: Use unique_ptr/shared_ptr
+  ConnParameterMap synapse_params;
 
   for ( Dictionary::const_iterator default_it = syn_defaults->begin(); default_it != syn_defaults->end(); ++default_it )
   {
@@ -554,6 +550,7 @@ SonataConnector::set_synapse_params_( DictionaryDatum syn_dict, index synapse_mo
 
     if ( syn_dict->known( param_name ) )
     {
+
       synapse_params[ param_name ] = std::shared_ptr< ConnParameter >(
         ConnParameter::create( ( *syn_dict )[ param_name ], kernel().vp_manager.get_num_threads() ) );
     }
@@ -561,10 +558,17 @@ SonataConnector::set_synapse_params_( DictionaryDatum syn_dict, index synapse_mo
 
   // Now create dictionary with dummy values that we will use to pass settings to the synapses created. We
   // create it here once to avoid re-creating the object over and over again.
+  type_id_2_param_dicts_[ type_id ].resize( kernel().vp_manager.get_num_threads(), nullptr );
+  type_id_2_syn_spec_[ type_id ] = synapse_params;
+
+  // TODO: Once NEST is SLIless, the below loop over threads should be parallelizable. In order to parallelize, the
+  // change would be to replace the for loop with #pragma omp parallel and get the thread id (tid) inside the parallel
+  // region. Currently, creation of NumericDatum objects is not thread-safe because sli::pool memory is a static
+  // member variable; thus is also the new operator a static member function.
+  // Note that this also applies to the equivalent loop in conn_builder.cpp
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    type_id_2_syn_spec_[ type_id ].push_back( synapse_params ); // DO WE NEED TO DEFINE THIS PER THREAD???
-    type_id_2_param_dicts_[ type_id ].push_back( new Dictionary );
+    type_id_2_param_dicts_[ type_id ][ tid ] = new Dictionary;
 
     for ( auto param : synapse_params )
     {
@@ -583,7 +587,7 @@ SonataConnector::set_synapse_params_( DictionaryDatum syn_dict, index synapse_mo
 void
 SonataConnector::get_synapse_params_( index snode_id, Node& target, thread target_thread, RngPtr rng, int edge_type_id )
 {
-  for ( auto const& syn_param : type_id_2_syn_spec_.at( edge_type_id ).at( target_thread ) )
+  for ( auto const& syn_param : type_id_2_syn_spec_.at( edge_type_id ) )
   {
     const Name param_name = syn_param.first;
     const auto param = syn_param.second;
@@ -628,14 +632,11 @@ void
 SonataConnector::reset_params_()
 {
   type_id_2_syn_model_.clear();
-  for ( auto params_vec_map : type_id_2_syn_spec_ )
+  for ( auto syn_params_vec_map : type_id_2_syn_spec_ )
   {
-    for ( auto params : params_vec_map.second )
+    for ( auto syn_params : syn_params_vec_map.second )
     {
-      for ( auto synapse_parameters : params )
-      {
-        synapse_parameters.second->reset();
-      }
+      syn_params.second->reset();
     }
   }
   type_id_2_syn_spec_.clear();

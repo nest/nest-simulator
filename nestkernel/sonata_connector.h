@@ -58,10 +58,10 @@ namespace nest
  * to memory constraints; we implement this using HDF5 hyperslabs of
  * configurable size. HDF5 files can only read with concurrency in an MPI
  * parallel context. Although the HDF5 library can be compiled with
- * thread-safety, it is not thread-efficient as the usage of locks that
- * effectively serialize function calls. Since HDF5 does not provide support
- * for thread-parallel reading, only one thread per MPI process reads
- * connectivity data, before all threads create connections in parallel.
+ * thread-safety, it is not thread-efficient as the usage of locks effectively
+ * serialize function calls. Since HDF5 does not provide support for
+ * thread-parallel reading, only one thread per MPI process reads connectivity
+ * data, before all threads create connections in parallel.
  */
 class SonataConnector
 {
@@ -261,16 +261,18 @@ private:
    */
   void reset_params_();
 
+  typedef std::map< Name, std::shared_ptr< ConnParameter > > ConnParameterMap;
+
   //! Dictionary containing SONATA dynamics
   DictionaryDatum graph_specs_;
 
   //! Size of chunk
   hsize_t chunk_size_;
 
-  //! Indicates whether weights are given as dataset in SONATA file
+  //! Indicates whether weights are given as HDF5 dataset
   bool weight_dataset_exist_;
 
-  //! Indicates whether delays are given as dataset in SONATA file
+  //! Indicates whether delays are given as HDF5 dataset
   bool delay_dataset_exist_;
 
   //! Source node attribute
@@ -282,13 +284,13 @@ private:
   //! Edge parameters
   DictionaryDatum cur_edge_params_;
 
-  //! Map from type id (in SONATA file) to synapse model
+  //! Map from edge type id (SONATA specification) to synapse model
   std::map< int, index > type_id_2_syn_model_;
 
-  //! Map from type id (in SONATA file) to synapse dictionary with ConnParameter's (one per thread)
-  std::map< int, std::vector< std::map< Name, std::shared_ptr< ConnParameter > > > > type_id_2_syn_spec_;
+  //! Map from edge type id (SONATA specification) to synapse dictionary with ConnParameter's
+  std::map< int, ConnParameterMap > type_id_2_syn_spec_;
 
-  //! Map from type id (in SONATA file) to param dictionaries (one per thread) used when creating connections
+  //! Map from edge type id (SONATA specification) to param dictionaries (one per thread) used when creating connections
   std::map< int, std::vector< DictionaryDatum > > type_id_2_param_dicts_;
 
   //! Datasets
@@ -304,5 +306,4 @@ private:
 } // namespace nest
 
 #endif // ifdef HAVE_HDF5
-
 #endif /* ifdef SONATA_CONNECTOR_H */

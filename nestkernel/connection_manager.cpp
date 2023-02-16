@@ -1667,6 +1667,8 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
   const auto& begin = iteration_state_.at( tid );
   for ( auto syn_id = begin.first ; syn_id < csd_maps.size() ; ++syn_id )
   {
+    const bool is_primary = kernel().model_manager.get_connection_model( syn_id, tid ).is_primary();
+    
     // We need to use an explicit iterator here since we need to store where we stop when the send buffer is full
     std::map< index, size_t >::const_iterator inner_begin;
     if ( syn_id == begin.first )
@@ -1701,18 +1703,33 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
       }
 
       TargetData next_target_data;
-      next_target_data.set_is_primary( true );
+      next_target_data.set_is_primary( is_primary );
       next_target_data.reset_marker();
       next_target_data.set_source_tid( kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( source_gid ) ) );
       next_target_data.set_source_lid( kernel().vp_manager.node_id_to_lid( source_gid ) );
       
-      TargetDataFields& target_fields = next_target_data.target_data;
-      target_fields.set_syn_id( syn_id );
-      target_fields.set_tid( 0 );  // meaningless, use 0 as fill
-      target_fields.set_lcid( source_2_idx->second );
+      if ( is_primary )
+      {
+        TargetDataFields& target_fields = next_target_data.target_data;
+        target_fields.set_syn_id( syn_id );
+        target_fields.set_tid( 0 );  // meaningless, use 0 as fill
+        target_fields.set_lcid( source_2_idx->second );
+      }
+      else
+      {
+        // TODO: I nail the TID here to 0, not sure this is correct.
+        const size_t relative_recv_buffer_pos = kernel().connection_manager.get_secondary_recv_buffer_position(
+                                                  0, syn_id, source_2_idx->second )
+          - kernel().mpi_manager.get_recv_displacement_secondary_events_in_int( source_rank );
+
+        SecondaryTargetDataFields& secondary_fields = next_target_data.secondary_data;
+        secondary_fields.set_recv_buffer_pos( relative_recv_buffer_pos );
+        secondary_fields.set_syn_id( syn_id );
+      }
       
       send_buffer_target_data.at( send_buffer_position.idx( source_rank ) ) = next_target_data;
       send_buffer_position.increase( source_rank );
+
     }
     
     if ( some_chunk_full )

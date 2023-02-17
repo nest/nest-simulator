@@ -93,7 +93,6 @@ const Name c( "c" );
 const Name c_1( "c_1" );
 const Name c_2( "c_2" );
 const Name c_3( "c_3" );
-const Name c_spill( "c_spill" );
 const Name capacity( "capacity" );
 const Name center( "center" );
 const Name circular( "circular" );

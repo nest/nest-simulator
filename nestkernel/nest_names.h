@@ -118,7 +118,6 @@ extern const Name c;
 extern const Name c_1;
 extern const Name c_2;
 extern const Name c_3;
-extern const Name c_spill;
 extern const Name capacity;
 extern const Name center;
 extern const Name circular;

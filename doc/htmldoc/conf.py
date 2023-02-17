@@ -267,7 +267,7 @@ def add_button_to_examples(app, env, docnames):
 
      The link to run the notebook is rendered in an image within a card directive.
     """
-    example_prolog ="""
+    example_prolog = """
 .. only:: html
 
   .. card:: Run this example as a Jupyter notebook
@@ -303,7 +303,7 @@ notebooks%2Ffilepath.ipynb&branch=main
 
             # get name of file and subdirectory to replace in link target
             if get_subdir != "auto_examples":
-                path2example = get_subdir  + "%2F" + file.stem
+                path2example = get_subdir + "%2F" + file.stem
                 prolog = example_prolog.replace("filepath", path2example)
 
             else:
@@ -319,8 +319,8 @@ notebooks%2Ffilepath.ipynb&branch=main
         lines.insert(i + 1, prolog + '\n')
 
         with open(file, 'w') as f:
-           lines = "".join(lines)
-           f.write(lines)
+            lines = "".join(lines)
+            f.write(lines)
 
 
 def toc_customizer(app, docname, source):

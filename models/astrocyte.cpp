@@ -144,7 +144,7 @@ nest::astrocyte::Parameters_::Parameters_()
   , K_act_astro_( 0.08234 )  // uM
   , K_inh_astro_( 1.049 )    // uM
   , r_ER_cyt_astro_( 0.185 )
-  , r_IP3_astro_( 5.0 )      // uM / unit w
+  , r_IP3_astro_( 5.0 )      // uM
   , r_IP3R_astro_( 0.0002 )  // 1 / (uM*ms)
   , r_L_astro_( 0.00011 )    // 1 / ms
   , SIC_thr_astro_( 196.69 ) // nM
@@ -156,7 +156,7 @@ nest::astrocyte::Parameters_::Parameters_()
 
 nest::astrocyte::State_::State_( const Parameters_& p )
 {
-  y_[ IP3_astro ] = p.IP3_0_astro_;
+  y_[ IP3_astro ] = p.IP3_0_astro_; // uM
   y_[ Ca_astro ] = 0.073;   // uM
   y_[ f_IP3R_astro ] = 0.793;
 }

@@ -1683,6 +1683,18 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
       ? ConnParameter::create( ( *syn_specs[synapse_indx] )[ names::delay ], kernel().vp_manager.get_num_threads() )
       : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
 
+    // warning when assigned delay is not a constant value
+    if ( syn_specs[ synapse_indx ]->known( names::delay ) )
+    {
+      if ( ( *( *syn_specs[ synapse_indx ] )[ names::delay ] ).gettypename() != "doubletype" )
+      {
+        LOG( M_WARNING,
+          "BernoulliAstroBuilder::BernoulliAstroBuilder",
+          "Assigned delay is not a constant value. "
+          "Synaptic delay to the paired astrocyte could be different from the synaptic delay between the neurons. ");
+      }
+    }
+
     // astrocyte=>neuron (no delays)
     if ( syn_specs[synapse_indx]->known( names::synapse_model_sic ) )
     {

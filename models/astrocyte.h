@@ -110,7 +110,7 @@ K_IP3_1_astro   uM        Astrocytic IP3R dissociation constant of IP3
 K_IP3_2_astro   uM        Astrocytic IP3R dissociation constant of IP3
 K_SERCA_astro   uM        Activation constant of astrocytic SERCA pump
 r_ER_cyt_astro  unitless  Ratio between astrocytic ER and cytosol volumes
-r_IP3_astro     uM/w      Rate constant of astrocytic IP3 production
+r_IP3_astro     uM        Step increase of astrocytic IP3 per unit synaptic weight
 r_IP3R_astro    1/(uM*ms) Astrocytic IP3R binding constant for calcium inhibition
 r_L_astro       1/ms      Rate constant for calcium leak from the astrocytic ER to cytosol
 SIC_thr_astro   nM        Calcium threshold for producing SIC
@@ -234,7 +234,7 @@ private:
     double K_act_astro_;    //!< Astrocytic IP3R dissociation constant of calcium (activation) in uM
     double K_inh_astro_;    //!< Astrocytic IP3R dissociation constant of calcium (inhibition) in uM
     double r_ER_cyt_astro_; //!< Ratio between astrocytic ER and cytosol volumes
-    double r_IP3_astro_;    //!< Rate constant of astrocytic IP3 production in uM/w
+    double r_IP3_astro_;    //!< Step increase of astrocytic IP3 per unit synaptic weight in uM
     double r_IP3R_astro_;   //!< Astrocytic IP3R binding constant for calcium in 1/(uM*ms)
     double r_L_astro_;      //!< Rate constant for calcium leak from the astrocytic ER to cytosol in 1/ms
     double SIC_thr_astro_;  //!< Calcium threshold for producing SIC in nM

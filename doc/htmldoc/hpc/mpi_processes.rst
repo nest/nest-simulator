@@ -17,7 +17,7 @@ Multiplied together, we suggest that the values should equal the total number of
     * :ref:`threads`
     * :ref:`slurm_script`
 
-After allocation of resources on which one wants to run the MPI processes, you also need to export environment
+After allocation of resources on which one wants to run the MPI processes, you also may want to export environment
 variables related the implementation of the multiprocessing API.
 
 

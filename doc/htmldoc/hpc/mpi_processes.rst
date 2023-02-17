@@ -20,17 +20,12 @@ Multiplied together, we suggest that the values should equal the total number of
 After allocation of resources on which one wants to run the MPI processes, you also need to export environment
 variables related the implementation of the multiprocessing API.
 
-.. note::
-
-   * OpenMPI: boost > 2.26(?) automatically contains an MPI implementation that can interfere with ???
 
 .. list-table:: OpenMPI settings
    :header-rows: 1
 
    * - Keyword arguments
      - Description
-   * - `exoort MPI_= True`
-     - make it work
    * - ``--enable-mpi-threads``
      - Enable thread support in OpenMPI
    * - ``--map-by socket/node``
@@ -48,18 +43,17 @@ variables related the implementation of the multiprocessing API.
    For general details on pinning options in OpenMPI see `the HPC wiki article <https://hpc-wiki.info/hpc/Binding/Pinning>`_.
    The `Slurm documentation <https://slurm.schedmd.com/mpi_guide.html#open_mpi>`_  contains additional options for running MPI.
 
-In addition, you can consider the number of processors (also known as  CPUs) you are using.
-See :ref:`overview_hardware`.
+In addition, you can consider the number of CPUs you are using.
 
-.. list-table:: Number of processes X the threads per cores
+.. list-table::
   :header-rows: 1
 
-  * - Scenario
+  * - Number of MPI processes x threads/core
     - Description
   * - Is less than number of cores
     - Resources may be underutilized.
   * - Is equal to the number of cores
-    - Resources are fully utilized
+    - Resources are fully utilized (recommended for NEST)
   * - Is greater than the number of cores
     - Resources are oversubscribed
 

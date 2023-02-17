@@ -14,13 +14,14 @@ Always consult the documentation of the system you are running on to find out ex
 You will likely need to alter the job script to optimize the performance on the system your're using.
 Finding the optimal parameters for your script may require some trial and error.
 
-In this example, our HPC system contains 1 node with 2 sockets and 64 cores per socket.
 
 .. seealso::
 
     * :ref:`overview_hardware`
     * :ref:`threads`
     * :ref:`mpi_process`
+
+In this example, we are using 1 node, which contains 2 sockets and 64 cores per socket.
 
 .. code-block:: sh
 
@@ -50,8 +51,8 @@ In this example, our HPC system contains 1 node with 2 sockets and 64 cores per 
 
 .. note::
 
-    Slurm can set pinning to specific processors for you with the environment variable ``CPU_AFFINITY``.
-    Setting this to `True` may lead to problems with any pinning settings you
+    Slurm can set pinning to specific CPUs for you with the environment variable ``CPU_AFFINITY``.
+    Setting this to ``True`` may lead to problems with any pinning settings you
     have set manually. We recommend setting this to ``None``.
 
 

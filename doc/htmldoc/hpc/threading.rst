@@ -41,7 +41,7 @@ Sequential pinning scheme
 
    Sequential placing
 
-   In this scheme, the cores of 1 processor are filled before going to next
+   In this scheme, the cores of 1 CPU are filled before going to next
 
    Setting to use for this case: ``export OMP_PROC_BIND = close``
 

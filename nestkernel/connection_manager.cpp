@@ -976,6 +976,11 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params )
   // as this may involve sorting connections by source node IDs.
   if ( connections_have_changed() )
   {
+    // check whether waveform relaxation is used on any MPI process;
+    // needs to be called before update_connection_intrastructure_since
+    // it resizes coefficient arrays for secondary events
+    kernel().node_manager.check_wfr_use();
+
 #pragma omp parallel
     {
       const thread tid = kernel().vp_manager.get_thread_id();

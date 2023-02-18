@@ -474,7 +474,7 @@ nest::SourceTable::fill_compressed_spike_data(
   compressed_spike_data.clear();
   compressed_spike_data.resize( num_synapse_models );
   compressed_spike_data_map_.clear();
-  compressed_spike_data_map_.resize( num_synapse_models, std::map< index, size_t >() );
+  compressed_spike_data_map_.resize( num_synapse_models, std::map< index, CSDMapEntry >() );
 
   // For each synapse type, and for each source neuron with at least one local target,
   // store in compressed_spike_data one SpikeData entry for each local thread that
@@ -500,10 +500,11 @@ nest::SourceTable::fill_compressed_spike_data(
           compressed_spike_data[ syn_id ].emplace_back( kernel().vp_manager.get_num_threads(),
             SpikeData( invalid_targetindex, invalid_synindex, invalid_lcid, 0 ) );
           
-          compressed_spike_data_map_[ syn_id ].insert( std::make_pair( source_gid, new_source_index ) );
+          compressed_spike_data_map_[ syn_id ].insert( std::make_pair( source_gid,
+                                                                      CSDMapEntry( new_source_index, target_thread ) ) );
         }
 
-        const auto source_index = compressed_spike_data_map_[ syn_id ].find( source_gid )->second;
+        const auto source_index = compressed_spike_data_map_[ syn_id ].find( source_gid )->second.get_source_index();
         
         assert( compressed_spike_data[ syn_id ][ source_index ][ target_thread ].get_lcid() == invalid_lcid );
         

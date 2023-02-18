@@ -49,6 +49,29 @@ namespace nest
 class TargetData;
 
 /**
+ * Entry of compressed_spike_data_map_.
+ *
+ * Combines source node index and target node thread.
+ *
+ * @TODO: Consider combining data in bitfield.
+ */
+class CSDMapEntry
+{
+public:
+  CSDMapEntry( size_t source_index, size_t target_thread ):
+    source_index_( source_index ),
+    target_thread_( target_thread )
+  {}
+  
+  size_t get_source_index() const { return source_index_; }
+  size_t get_target_thread() const { return target_thread_; }
+
+private:
+  size_t source_index_;
+  size_t target_thread_;
+};
+
+/**
  * This data structure stores the node IDs of presynaptic neurons
  * during postsynaptic connection creation, before the connection
  * information has been transferred to the presynaptic side. The core
@@ -148,9 +171,9 @@ private:
    * ConnectionManager. Data from this structure is transferred to the
    * presynaptic side during construction of the presynaptic
    * connection infrastructure. Arranged as a one-dimensional vector
-   * over synapse ids with an inner map (source node id -> index).
+   * over synapse ids with an inner map (source node id -> (source_index+target_thread).
    */
-  std::vector< std::map< index, size_t > > compressed_spike_data_map_;
+  std::vector< std::map< size_t, CSDMapEntry > > compressed_spike_data_map_;
 
 public:
   SourceTable();

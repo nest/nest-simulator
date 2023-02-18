@@ -642,7 +642,7 @@ private:
   double stdp_eps_;
   
   //! For each thread, store (syn_id, compressed_spike_data_map_::iterator) pair for next iteration while filling target buffers
-  std::vector< std::pair< size_t, std::map< index, size_t >::const_iterator > > iteration_state_;
+  std::vector< std::pair< size_t, std::map< index, CSDMapEntry >::const_iterator > > iteration_state_;
 };
 
 inline bool

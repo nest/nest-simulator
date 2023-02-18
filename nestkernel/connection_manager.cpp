@@ -1670,7 +1670,7 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
     const bool is_primary = kernel().model_manager.get_connection_model( syn_id, tid ).is_primary();
     
     // We need to use an explicit iterator here since we need to store where we stop when the send buffer is full
-    std::map< index, size_t >::const_iterator inner_begin;
+    std::map< index, CSDMapEntry >::const_iterator inner_begin;
     if ( syn_id == begin.first )
     {
       inner_begin = begin.second;
@@ -1698,7 +1698,7 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
         //
         // We store where we need to continue and stop iteration for now.
         some_chunk_full = true;
-        iteration_state_.at( tid ) = std::pair< size_t, std::map< index, size_t >::const_iterator >( syn_id, source_2_idx );
+        iteration_state_.at( tid ) = std::pair< size_t, std::map< index, CSDMapEntry >::const_iterator >( syn_id, source_2_idx );
         break;
       }
 
@@ -1713,13 +1713,15 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
         TargetDataFields& target_fields = next_target_data.target_data;
         target_fields.set_syn_id( syn_id );
         target_fields.set_tid( 0 );  // meaningless, use 0 as fill
-        target_fields.set_lcid( source_2_idx->second );
+        target_fields.set_lcid( source_2_idx->second.get_source_index() );
       }
       else
       {
-        // TODO: I nail the TID here to 0, not sure this is correct.
-        const size_t relative_recv_buffer_pos = kernel().connection_manager.get_secondary_recv_buffer_position(
-                                                  0, syn_id, source_2_idx->second )
+        const auto target_thread = source_2_idx->second.get_target_thread();
+        const SpikeData& conn_info = compressed_spike_data_[syn_id][source_2_idx->second.get_source_index()][target_thread];
+        assert( target_thread == conn_info.get_tid() );
+        const size_t relative_recv_buffer_pos = get_secondary_recv_buffer_position( target_thread
+                                                                                   , syn_id, conn_info.get_lcid()  )
           - kernel().mpi_manager.get_recv_displacement_secondary_events_in_int( source_rank );
 
         SecondaryTargetDataFields& secondary_fields = next_target_data.secondary_data;
@@ -1762,9 +1764,9 @@ nest::ConnectionManager::initialize_iteration_state()
   iteration_state_.clear();
   iteration_state_.reserve( num_threads );
 
-  std::map< index, size_t >::const_iterator begin = source_table_.compressed_spike_data_map_.at( 0 ).cbegin();
+  auto begin = source_table_.compressed_spike_data_map_.at( 0 ).cbegin();
   for ( thread t = 0 ; t < num_threads ; ++t )
   {
-    iteration_state_.push_back( std::pair< size_t, std::map< index, size_t >::const_iterator > ( 0, begin ) );
+    iteration_state_.push_back( std::pair< size_t, std::map< index, CSDMapEntry >::const_iterator > ( 0, begin ) );
   }
 }

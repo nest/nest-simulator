@@ -50,7 +50,6 @@ nest::SourceTable::initialize()
   current_positions_.resize( num_threads );
   saved_positions_.resize( num_threads );
   compressible_sources_.resize( num_threads );
-  compressed_spike_data_map_.resize( num_threads );
 
 #pragma omp parallel
   {
@@ -58,7 +57,6 @@ nest::SourceTable::initialize()
     sources_[ tid ].resize( 0 );
     resize_sources( tid );
     compressible_sources_[ tid ].resize( 0 );
-    compressed_spike_data_map_.resize( 0 );
   } // of omp parallel
 }
 
@@ -74,7 +72,6 @@ nest::SourceTable::finalize()
     }
   }
 
-  compressed_spike_data_map_.clear();
   sources_.clear();
   current_positions_.clear();
   saved_positions_.clear();

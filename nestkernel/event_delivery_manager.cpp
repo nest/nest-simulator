@@ -374,13 +374,18 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
   
   const double SHRINK_LIMIT = 0.7;
   const double SHRINK_FACTOR = 0.9;
+  const double GROW_EXTRA = 0.05;
   const size_t old_buff_size_per_rank = kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
-  if ( max_spikes_per_rank_prev_round > 0 and max_spikes_per_rank_prev_round < SHRINK_LIMIT * old_buff_size_per_rank )
+  
+  std::cerr << "Rank " << kernel().mpi_manager.get_rank() << ", max_prev: "  << max_spikes_per_rank_prev_round
+  << std::endl;
+  
+  if ( false and max_spikes_per_rank_prev_round > 0 and max_spikes_per_rank_prev_round < SHRINK_LIMIT * old_buff_size_per_rank )
   {
     const auto unused_buffer_entries_per_rank = old_buff_size_per_rank - max_spikes_per_rank_prev_round;
     const size_t new_buff_size_per_rank = std::max( 2UL, static_cast<size_t>(max_spikes_per_rank_prev_round + unused_buffer_entries_per_rank * SHRINK_FACTOR ) );
-    //std::cerr << "Shrinking buffers. Old: " << old_buff_size_per_rank << ", New: " << new_buff_size_per_rank
-    //          << ", Max count: " << max_spikes_per_rank_prev_round << std::endl;
+    std::cerr << "Rank: " << kernel().mpi_manager.get_rank() << ". Shrinking buffers. Old: " << old_buff_size_per_rank << ", New: " << new_buff_size_per_rank
+              << ", Max count: " << max_spikes_per_rank_prev_round << std::endl;
     kernel().mpi_manager.set_buffer_size_spike_data(
       kernel().mpi_manager.get_num_processes() * new_buff_size_per_rank );
     resize_send_recv_buffers_spike_data_();
@@ -421,6 +426,9 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
      }
      else
      {
+       // NOTE: This will overwrite the last spike in the section for each rank, but this is
+       // not a problem because we will communicate all spikes again in the second comm round
+       // in buffers that are then large enough.
        set_max_spikes_per_rank_(
          assigned_ranks, send_buffer_position, send_buffer, per_thread_max_spikes_per_rank );
      }
@@ -433,8 +441,10 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
     }
 #endif
     
+    std::cerr << "Rank: " << kernel().mpi_manager.get_rank() << " Pre , locmax: " << per_thread_max_spikes_per_rank << std::endl;
     kernel().mpi_manager.communicate_spike_data_Alltoall( send_buffer, recv_buffer );
-
+    std::cerr << "Rank: " << kernel().mpi_manager.get_rank() << " Post" << std::endl;
+    
 #ifdef TIMER_DETAILED
     {
       sw_communicate_spike_data_.stop();
@@ -443,12 +453,15 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 
     const auto max_per_thread_max_spikes_per_rank = get_max_spike_data_per_thread_( assigned_ranks, send_buffer_position,
                                                                                    recv_buffer );
+    std::cerr << "Rank: "  << kernel().mpi_manager.get_rank() << ", glomax: " << max_per_thread_max_spikes_per_rank << std::endl;
     all_spikes_transmitted = max_per_thread_max_spikes_per_rank == 0;
 
     if ( not all_spikes_transmitted )
     {
-      //std::cerr << "Growing buffers.   Old: " << kernel().mpi_manager.get_send_recv_count_spike_data_per_rank()
-      //  << ", New: " << max_per_thread_max_spikes_per_rank << std::endl;
+      const size_t new_size_per_rank = static_cast< size_t >( ( 1 + GROW_EXTRA ) * max_per_thread_max_spikes_per_rank );
+      
+      std::cerr << "Rank: " << kernel().mpi_manager.get_rank() << ". Growing buffers.   Old: " << kernel().mpi_manager.get_send_recv_count_spike_data_per_rank()
+        << ", New: " << max_per_thread_max_spikes_per_rank << std::endl;
 
       ++buffer_grow_count_;
       buffer_grow_delta_ += max_per_thread_max_spikes_per_rank - kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
@@ -464,7 +477,6 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
      We could in principle clear it here, but since it can conveniently be done thread-parallel,
      it is best to postpone.
    */
-  // TODO: consider reduce size of buffers again
 }
 
 template < typename TargetT, typename SpikeDataT >
@@ -492,6 +504,8 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
         const thread rank = emitted_spike.get_rank();
         ++num_spikes_per_rank[ rank ];
 
+        // We do not break if condition is false, because there may be spikes that
+        // can be send to other ranks than the one that is full.
         if ( not send_buffer_position.is_chunk_filled( rank ) )
         {
           send_buffer[ send_buffer_position.idx( rank ) ].set( emitted_spike, lag );
@@ -500,6 +514,9 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
       }
     }
   }
+  
+  // returns largest number of spikes sent to any rank from this rank in this round
+  // note: this is not a global maximum over what is sent from all ranks!
   return *std::max_element( num_spikes_per_rank.begin(), num_spikes_per_rank.end() );
 }
 

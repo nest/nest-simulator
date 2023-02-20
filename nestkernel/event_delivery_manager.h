@@ -268,7 +268,9 @@ private:
    * Moves spikes from on grid and off grid spike registers to correct
    * locations in MPI buffers.
    *
-   * @returns max number of spikes to be sent to any rank.
+   * @note Return value is just max number of spikes sent to any rank from this rank,
+   *       **not** a global maximum.
+   * @returns max number of spikes to be sent to any rank
    */
   template < typename TargetT, typename SpikeDataT >
   size_t collocate_spike_data_buffers_( const thread tid,
@@ -316,9 +318,9 @@ private:
                            const size_t max_per_thread_max_spikes_per_rank_ ) const;
 
   /**
-      * Get required buffer size.
+   * Get required buffer size.
    *
-   * @returns maximum over required buffer sizes communicated by all ranks
+   * @returns maximum over required buffer sizes communicated by all ranks or zero if buffers are large enough
    */
   template < typename SpikeDataT >
   size_t

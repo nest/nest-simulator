@@ -1681,7 +1681,8 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
   const auto& begin = iteration_state_.at( tid );
   for ( auto syn_id = begin.first; syn_id < csd_maps.size(); ++syn_id )
   {
-    const bool is_primary = kernel().model_manager.get_connection_model( syn_id, tid ).is_primary();
+    const auto& conn_model = kernel().model_manager.get_connection_model( syn_id, tid );
+    const bool is_primary = conn_model.has_property( ConnectionModelProperties::IS_PRIMARY );
 
     // We need to use an explicit iterator here since we need to store where we stop when the send buffer is full
     std::map< index, CSDMapEntry >::const_iterator inner_begin;

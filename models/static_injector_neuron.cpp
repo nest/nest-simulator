@@ -43,6 +43,11 @@ namespace nest
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
+static_injector_neuron::State_::State_()
+  : position_( 0 )
+{
+}
+
 static_injector_neuron::Parameters_::Parameters_()
   : spike_stamps_()
   , spike_offsets_()
@@ -51,11 +56,6 @@ static_injector_neuron::Parameters_::Parameters_()
   , precise_times_( false )
   , allow_offgrid_times_( false )
   , shift_now_spikes_( false )
-{
-}
-
-static_injector_neuron::State_::State_()
-  : position_( 0 )
 {
 }
 
@@ -122,7 +122,7 @@ static_injector_neuron::Parameters_::assert_valid_spike_time_and_insert_( double
       else
       {
         std::stringstream msg;
-        msg << "spike_generator: Time point " << t << " is not representable in current resolution.";
+        msg << "static_injector_neuron: Time point " << t << " is not representable in current resolution.";
         throw BadProperty( msg.str() );
       }
     }
@@ -276,14 +276,147 @@ static_injector_neuron::Parameters_::set( const DictionaryDatum& d,
 
 
 /* ----------------------------------------------------------------
- * Default and copy constructor for volume transmitter
+ * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
 static_injector_neuron::static_injector_neuron()
   : Node()
-  , P_()
   , S_()
+  , P_()
   , first_syn_id_( invalid_synindex )
 {
 }
+
+static_injector_neuron::static_injector_neuron( const static_injector_neuron& n )
+  : Node( n )
+  , S_( n.S_ )
+  , P_( n.P_ )
+  , first_syn_id_( invalid_synindex )
+{
 }
+
+/* ----------------------------------------------------------------
+ * Node initialization functions
+ * ---------------------------------------------------------------- */
+
+void
+static_injector_neuron::init_state_()
+{
+  Node::init_state_();
+}
+
+void
+static_injector_neuron::init_buffers_()
+{
+}
+
+void
+static_injector_neuron::pre_run_hook()
+{
+  // We do not need to recalibrate time objects, since they are
+  // recalibrated on instance construction and resolution cannot
+  // change after a single node instance has been created.
+
+  // by adding time objects, all overflows will be handled gracefully
+  V_.t_min_ = ( V_.origin_ + V_.start_ ).get_steps();
+  V_.t_max_ = ( V_.origin_ + V_.stop_ ).get_steps();
+}
+
+
+/* ----------------------------------------------------------------
+ * Other functions
+ * ---------------------------------------------------------------- */
+void
+static_injector_neuron::update( Time const& sliceT0, const long from, const long to )
+{
+  if ( P_.spike_stamps_.empty() )
+  {
+    return;
+  }
+
+  assert( not P_.precise_times_ or P_.spike_stamps_.size() == P_.spike_offsets_.size() );
+  assert( P_.spike_weights_.empty() or P_.spike_stamps_.size() == P_.spike_weights_.size() );
+  assert( P_.spike_multiplicities_.empty() or P_.spike_stamps_.size() == P_.spike_multiplicities_.size() );
+
+  const Time tstart = sliceT0 + Time::step( from );
+  const Time tstop = sliceT0 + Time::step( to );
+  const Time& origin = get_origin();
+
+  // We fire all spikes with time stamps up to including sliceT0 + to
+  while ( S_.position_ < P_.spike_stamps_.size() )
+  {
+    const Time tnext_stamp = origin + P_.spike_stamps_[ S_.position_ ];
+
+    // this might happen due to wrong usage of the generator
+    if ( tnext_stamp <= tstart )
+    {
+      ++S_.position_;
+      continue;
+    }
+    if ( tnext_stamp > tstop )
+    {
+      break;
+    }
+
+    long step = tnext_stamp.get_steps();
+
+    if ( get_t_min_() < step and step <= get_t_max_() )
+    {
+      SpikeEvent* se;
+
+      // if we have to deliver weighted spikes, we need to get the
+      // event back to set its weight according to the entry in
+      // spike_weights_, so we use a DSSpike event and event_hook()
+      if ( not P_.spike_weights_.empty() )
+      {
+        se = new DSSpikeEvent;
+      }
+      else
+      {
+        se = new SpikeEvent;
+      }
+
+      if ( P_.precise_times_ )
+      {
+        se->set_offset( P_.spike_offsets_[ S_.position_ ] );
+      }
+
+      if ( not P_.spike_multiplicities_.empty() )
+      {
+        se->set_multiplicity( P_.spike_multiplicities_[ S_.position_ ] );
+      }
+
+      // we need to subtract one from stamp which is added again in send()
+      long lag = Time( tnext_stamp - sliceT0 ).get_steps() - 1;
+
+      // all spikes are sent locally, so offset information is always preserved
+      kernel().event_delivery_manager.send( *this, *se, lag );
+      delete se;
+    }
+
+    ++S_.position_;
+  }
+}
+
+void
+static_injector_neuron::event_hook( DSSpikeEvent& e )
+{
+  e.set_weight( P_.spike_weights_[ S_.position_ ] * e.get_weight() );
+  e.get_receiver().handle( e );
+}
+
+void
+static_injector_neuron::enforce_single_syn_type( synindex syn_id )
+{
+  if ( first_syn_id_ == invalid_synindex )
+  {
+    first_syn_id_ = syn_id;
+  }
+  if ( syn_id != first_syn_id_ )
+  {
+    throw IllegalConnection( "All outgoing connections from a static injector neuron must use the same synapse type." );
+  }
+}
+
+
+} // namespace

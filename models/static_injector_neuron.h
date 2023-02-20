@@ -70,46 +70,49 @@ class static_injector_neuron : public Node
 
 public:
   static_injector_neuron();
+  static_injector_neuron( const static_injector_neuron& );
+
+  port send_test_event( Node&, rport, synindex, bool ) override;
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
   /**
    * Import sets of overloaded virtual functions.
    * @see Technical Issues / Virtual Functions: Overriding,
    * Overloading, and Hiding
    */
+  using Node::event_hook;
   using Node::receives_signal;
   using Node::sends_signal;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
-  SignalType sends_signal() const override;
-  SignalType receives_signal() const override;
+  void event_hook( DSSpikeEvent& ) override;
 
+  SignalType
+  sends_signal() const override
+  {
+    return ALL; // TODO: should this be ALL or SPIKE?
+  }
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  SignalType
+  receives_signal() const override
+  {
+    return NONE;
+  }
 
   void set_data( std::vector< double >& input_spikes );
 
 private:
+  void init_state_() override;
   void init_buffers_() override;
-  void
-  pre_run_hook() override
-  {
-  } // no variables
+  void pre_run_hook() override;
 
   void update( Time const&, const long, const long ) override;
 
-  /**
-   * Synapse type of the first outgoing connection made by the Device.
-   *
-   * Used to check that devices connect using only a single synapse type,
-   * see #481 and #737. Since this value must survive resets, it is
-   * stored here, even though it is an implementation detail.
-   */
-  synindex first_syn_id_;
-
-  void enforce_single_syn_type( synindex syn_id );
-
-  // ------------------------------------------------------------
+  Time const& get_origin() const;
+  Time const& get_start() const;
+  Time const& get_stop() const;
+  long get_t_min_() const;
+  long get_t_max_() const;
 
   struct State_
   {
@@ -117,10 +120,12 @@ private:
     size_t position_; //!< index of next spike to deliver
   };
 
-  // ------------------------------------------------------------
-
+  /**
+   * Independent parameters of the model.
+   */
   struct Parameters_
   {
+
     //! Spike time stamp as Time, rel to origin_
     std::vector< Time > spike_stamps_;
 
@@ -164,10 +169,54 @@ private:
     void assert_valid_spike_time_and_insert_( double, const Time&, const Time& );
   };
 
-  // ------------------------------------------------------------
+  /**
+   * Internal variables of the model.
+   */
+  struct Variables_
+  {
 
-  Parameters_ P_;
+    //! Origin of device time axis, relative to network time. Defaults to 0.
+    Time origin_;
+
+    //!< Start time, relative to origin. Defaults to 0.
+    Time start_;
+
+    //!< Stop time, relative to origin. Defaults to "infinity".
+    Time stop_;
+
+    /**
+     * Time step of device activation.
+     * t_min_ = origin_ + start_, in steps.
+     * @note This is an auxiliary variable that is initialized to -1 in the
+     * constructor and set to its proper value by calibrate. It should NOT
+     * be returned by get_parameters().
+     */
+    long t_min_;
+
+    /**
+     * Time step of device deactivation.
+     * t_max_ = origin_ + stop_, in steps.
+     * @note This is an auxiliary variable that is initialized to -1 in the
+     * constructor and set to its proper value by calibrate. It should NOT
+     * be returned by get_parameters().
+     */
+    long t_max_;
+  };
+
   State_ S_;
+  Parameters_ P_;
+  Variables_ V_;
+
+  /**
+   * Synapse type of the first outgoing connection made by the Device.
+   *
+   * Used to check that devices connect using only a single synapse type,
+   * see #481 and #737. Since this value must survive resets, it is
+   * stored here, even though it is an implementation detail.
+   */
+  synindex first_syn_id_;
+
+  void enforce_single_syn_type( synindex syn_id );
 };
 
 
@@ -176,75 +225,88 @@ static_injector_neuron::send_test_event( Node& target, rport receptor_type, syni
 {
   enforce_single_syn_type( syn_id );
 
-
-  SpikeEvent e;
-  e.set_sender( *this );
-  return target.handles_test_event( e, receptor_type );
+  if ( dummy_target )
+  {
+    DSSpikeEvent e;
+    e.set_sender( *this );
+    return target.handles_test_event( e, receptor_type );
+  }
+  else
+  {
+    SpikeEvent e;
+    e.set_sender( *this );
+    return target.handles_test_event( e, receptor_type );
+  }
 }
 
-void
-static_injector_neuron::enforce_single_syn_type( synindex syn_id )
+
+inline void
+static_injector_neuron::get_status( DictionaryDatum& d ) const
 {
-  if ( first_syn_id_ == invalid_synindex )
-  {
-    first_syn_id_ = syn_id;
-  }
-  if ( syn_id != first_syn_id_ )
-  {
-    throw IllegalConnection( "All outgoing connections from a device must use the same synapse type." );
-  }
+  P_.get( d );
+  // Node::get_status( d );
 }
 
 
-void
-static_injector_neuron::set_data( std::vector< double >& input_spikes )
+inline void
+static_injector_neuron::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 
-  if ( ptmp.precise_times_ and not input_spikes.empty() )
+  // To detect "now" spikes and shift them, we need the origin. In case
+  // it is set in this call, we need to extract it explicitly here.
+  Time origin;
+  double v;
+  if ( updateValue< double >( d, names::origin, v ) )
   {
-    throw BadProperty( "Option precise_times is not supported with an stimulation backend\n" );
+    origin = Time::ms( v );
+  }
+  else
+  {
+    origin = get_origin();
   }
 
-  // TODO: get_origin must be implemented in static_injector_neuron
-  // const Time& origin = StimulationDevice::get_origin();
-  // Tempororary placeholder:
-  Time origin = Time::step( 0 );
+  // throws if BadProperty
+  ptmp.set( d, S_, origin, kernel().simulation_manager.get_time(), this );
 
-  // For the input backend
-  if ( not input_spikes.empty() )
-  {
-
-    DictionaryDatum d = DictionaryDatum( new Dictionary );
-    std::vector< double > times_ms;
-    const size_t n_spikes = P_.spike_stamps_.size();
-    times_ms.reserve( n_spikes + input_spikes.size() );
-    for ( size_t n = 0; n < n_spikes; ++n )
-    {
-      times_ms.push_back( P_.spike_stamps_[ n ].get_ms() );
-    }
-    std::copy( input_spikes.begin(), input_spikes.end(), std::back_inserter( times_ms ) );
-    ( *d )[ names::spike_times ] = DoubleVectorDatum( times_ms );
-
-    ptmp.set( d, S_, origin, Time::step( times_ms[ times_ms.size() - 1 ] ), this );
-  }
+  // We now know that ptmp is consistent. We do not write it back
+  // to P_ before we are also sure that the properties to be set
+  // in the parent class are internally consistent.
+  // Node::set_status( d );
 
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
 }
-// -------------------------------
 
 
-inline SignalType
-static_injector_neuron::sends_signal() const
+inline Time const&
+static_injector_neuron::get_origin() const
 {
-  return SPIKE;
+  return V_.origin_;
 }
 
-inline SignalType
-static_injector_neuron::receives_signal() const
+inline Time const&
+static_injector_neuron::get_start() const
 {
-  return NONE;
+  return V_.start_;
+}
+
+inline Time const&
+static_injector_neuron::get_stop() const
+{
+  return V_.stop_;
+}
+
+inline long
+static_injector_neuron::get_t_min_() const
+{
+  return V_.t_min_;
+}
+
+inline long
+static_injector_neuron::get_t_max_() const
+{
+  return V_.t_max_;
 }
 
 } // namespace

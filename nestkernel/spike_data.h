@@ -326,6 +326,8 @@ public:
     const index lcid,
     const unsigned int lag,
     const double offset );
+  OffGridSpikeData( const OffGridSpikeData& rhs );
+  OffGridSpikeData& operator=( const OffGridSpikeData& rhs );
   void set( const thread tid, const synindex syn_id, const index lcid, const unsigned int lag, const double offset );
 
   template < class TargetT >
@@ -350,6 +352,24 @@ inline OffGridSpikeData::OffGridSpikeData( const thread tid,
   : SpikeData( tid, syn_id, lcid, lag )
   , offset_( offset )
 {
+}
+
+inline OffGridSpikeData::OffGridSpikeData( const OffGridSpikeData& rhs )
+  : SpikeData( rhs )
+  , offset_( rhs.offset_ )
+{
+}
+
+inline OffGridSpikeData&
+OffGridSpikeData::operator=( const OffGridSpikeData& rhs )
+{
+  lcid_ = rhs.lcid_;
+  marker_ = rhs.marker_;
+  lag_ = rhs.lag_;
+  tid_ = rhs.tid_;
+  syn_id_ = rhs.syn_id_;
+  offset_ = rhs.offset_;
+  return *this;
 }
 
 

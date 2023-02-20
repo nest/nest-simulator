@@ -724,7 +724,7 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
 #pragma omp barrier
 #pragma omp single
     {
-      kernel().connection_manager.initialize_iteration_state();  // could possibly be combined with s'th above
+      kernel().connection_manager.initialize_iteration_state(); // could possibly be combined with s'th above
     }
     kernel().event_delivery_manager.gather_target_data_compressed( tid );
   }
@@ -732,7 +732,7 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
   {
     kernel().event_delivery_manager.gather_target_data( tid );
   }
-  
+
 #ifdef TIMER_DETAILED
 #pragma omp barrier
   if ( tid == 0 )
@@ -879,7 +879,7 @@ nest::SimulationManager::update_()
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
 #endif
-      }  // if from_step == 0
+      } // if from_step == 0
 
       // preliminary update of nodes that use waveform relaxtion, only
       // necessary if secondary connections exist and any node uses

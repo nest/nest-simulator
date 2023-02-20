@@ -286,7 +286,8 @@ private:
   template < typename SpikeDataT >
   bool set_end_marker_( const AssignedRanks& assigned_ranks,
     const SendBufferPosition& send_buffer_position,
-    std::vector< SpikeDataT >& send_buffer, size_t per_thread_max_spikes_per_rank );
+    std::vector< SpikeDataT >& send_buffer,
+    size_t per_thread_max_spikes_per_rank );
 
   /**
    * Resets marker in MPI buffer that signals end of communication
@@ -303,12 +304,11 @@ private:
    * @returns maximum over required buffer sizes communicated by all ranks
    */
   template < typename SpikeDataT >
-  size_t
-  get_max_spike_data_per_thread_( const AssignedRanks& assigned_ranks,
+  size_t get_max_spike_data_per_thread_( const AssignedRanks& assigned_ranks,
     const SendBufferPosition& send_buffer_position,
-                                 std::vector< SpikeDataT >& recv_buffer ) const;
+    std::vector< SpikeDataT >& recv_buffer ) const;
 
-  
+
   /**
    * Reads spikes from MPI buffers and delivers them to ringbuffer of
    * nodes.
@@ -455,7 +455,7 @@ private:
   bool buffer_size_spike_data_has_changed_;
   //! whether size of MPI buffer for communication of spikes can be decreased
   bool decrease_buffer_size_spike_data_;
-  
+
   //! largest number of spikes sent between any two ranks in most recent gather round
   size_t max_per_thread_max_spikes_per_rank_;
   size_t buffer_shrink_count_;

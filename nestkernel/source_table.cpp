@@ -330,7 +330,7 @@ nest::SourceTable::populate_target_data_fields_( const SourceTablePosition& curr
     target_fields.set_syn_id( current_position.syn_id );
     if ( kernel().connection_manager.use_compressed_spikes() )
     {
-      assert( false );  // compressed connections handled elsewhere
+      assert( false ); // compressed connections handled elsewhere
     }
     else
     {
@@ -456,7 +456,7 @@ nest::SourceTable::collect_compressible_sources( const thread tid )
       ++lcid;
       while ( ( lcid < syn_sources.size() ) and ( syn_sources[ lcid ].get_node_id() == old_source_node_id ) )
       {
-        kernel().connection_manager.set_source_has_more_targets( tid, syn_id, lcid-1, true );
+        kernel().connection_manager.set_source_has_more_targets( tid, syn_id, lcid - 1, true );
         ++lcid;
       }
     }
@@ -477,7 +477,7 @@ nest::SourceTable::fill_compressed_spike_data(
   // store in compressed_spike_data one SpikeData entry for each local thread that
   // owns a local target. In compressed_spike_data_map_ store index into compressed_spike_data[syn_id]
   // where data for a given source is stored.
-  
+
   // TODO: I believe that at this point compressible_sources_ is ordered by source gid.
   //       Maybe one can exploit that to avoid searching with find() below.
   for ( synindex syn_id = 0; syn_id < kernel().model_manager.get_num_connection_models(); ++syn_id )
@@ -493,18 +493,18 @@ nest::SourceTable::fill_compressed_spike_data(
         {
           // Set up entry for new source
           const auto new_source_index = compressed_spike_data[ syn_id ].size();
-          
+
           compressed_spike_data[ syn_id ].emplace_back( kernel().vp_manager.get_num_threads(),
             SpikeData( invalid_targetindex, invalid_synindex, invalid_lcid, 0 ) );
-          
-          compressed_spike_data_map_[ syn_id ].insert( std::make_pair( source_gid,
-                                                                      CSDMapEntry( new_source_index, target_thread ) ) );
+
+          compressed_spike_data_map_[ syn_id ].insert(
+            std::make_pair( source_gid, CSDMapEntry( new_source_index, target_thread ) ) );
         }
 
         const auto source_index = compressed_spike_data_map_[ syn_id ].find( source_gid )->second.get_source_index();
-        
+
         assert( compressed_spike_data[ syn_id ][ source_index ][ target_thread ].get_lcid() == invalid_lcid );
-        
+
         compressed_spike_data[ syn_id ][ source_index ][ target_thread ] = connection.second;
       } // for connection
 

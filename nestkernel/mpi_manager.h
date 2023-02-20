@@ -596,7 +596,7 @@ MPIManager::set_buffer_size_spike_data( const size_t buffer_size )
 {
   assert( buffer_size >= static_cast< size_t >( 2 * get_num_processes() ) );
   buffer_size_spike_data_ = buffer_size;
-  
+
   send_recv_count_spike_data_per_rank_ = floor( get_buffer_size_spike_data() / get_num_processes() );
 
   assert( send_recv_count_spike_data_per_rank_ * get_num_processes() <= get_buffer_size_spike_data() );

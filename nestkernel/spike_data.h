@@ -50,7 +50,8 @@ namespace nest
  *      - In this case, lcid of end is the largest number of spikes written into any chunk of send buffer.
  * - INVALID:
  *      - In begin indicates that no spikes are transmitted (@note: END at begin means one spike transmitted)
- *      - In end, indicates that MPI process could not write all spikes. lcid of end is required chunk size to write all spikes.
+ *      - In end, indicates that MPI process could not write all spikes. lcid of end is required chunk size to write all
+ * spikes.
  *
  * @note Logic for reading from spike buffer
  * 1. If begin for a rank is INVALID, nothing to read
@@ -106,7 +107,7 @@ public:
    * Sets lcid value, only for communication of max buffer size
    */
   void set_lcid( size_t );
-  
+
   /**
    * Returns lag in min-delay interval.
    */
@@ -219,8 +220,6 @@ SpikeData::set( const thread tid, const synindex syn_id, const index lcid, const
   tid_ = tid;
   syn_id_ = syn_id;
 }
-
-
 
 
 template < class TargetT >

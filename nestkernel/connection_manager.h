@@ -316,9 +316,9 @@ public:
     const thread rank_start,
     const thread rank_end,
     std::vector< TargetData >& send_buffer_target_data,
-    SendBufferPosition& send_buffer_position);
+    SendBufferPosition& send_buffer_position );
 
-  
+
   void reject_last_target_data( const thread tid );
 
   void save_source_table_entry_point( const thread tid );
@@ -416,7 +416,7 @@ public:
   Stopwatch sw_construction_connect;
 
   const std::vector< SpikeData >& get_compressed_spike_data( const synindex syn_id, const index idx );
-  
+
   //! Set iteration_state_ entries for all threads to beginning of compressed_spike_data_map_.
   void initialize_iteration_state();
 
@@ -640,8 +640,9 @@ private:
   //! Maximum distance between (double) spike times in STDP that is
   //! still considered 0. See issue #894
   double stdp_eps_;
-  
-  //! For each thread, store (syn_id, compressed_spike_data_map_::iterator) pair for next iteration while filling target buffers
+
+  //! For each thread, store (syn_id, compressed_spike_data_map_::iterator) pair for next iteration while filling target
+  //! buffers
   std::vector< std::pair< size_t, std::map< index, CSDMapEntry >::const_iterator > > iteration_state_;
 };
 

@@ -58,13 +58,22 @@ class TargetData;
 class CSDMapEntry
 {
 public:
-  CSDMapEntry( size_t source_index, size_t target_thread ):
-    source_index_( source_index ),
-    target_thread_( target_thread )
-  {}
-  
-  size_t get_source_index() const { return source_index_; }
-  size_t get_target_thread() const { return target_thread_; }
+  CSDMapEntry( size_t source_index, size_t target_thread )
+    : source_index_( source_index )
+    , target_thread_( target_thread )
+  {
+  }
+
+  size_t
+  get_source_index() const
+  {
+    return source_index_;
+  }
+  size_t
+  get_target_thread() const
+  {
+    return target_thread_;
+  }
 
 private:
   size_t source_index_;
@@ -87,7 +96,7 @@ private:
 class SourceTable
 {
   friend class ConnectionManager;
-  
+
 private:
   /**
    * 3D structure storing node IDs of presynaptic neurons.

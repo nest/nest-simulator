@@ -779,7 +779,7 @@ nest::SimulationManager::update_()
   bool update_time_limit_exceeded = false;
 
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
-  std::vector< size_t > max_spikes_per_rank_per_thread( kernel().vp_manager.get_num_threads(), 0 );
+
 // parallel section begins
 #pragma omp parallel
   {
@@ -838,7 +838,7 @@ nest::SimulationManager::update_()
         if ( kernel().connection_manager.has_primary_connections() )
         {
           // Deliver spikes from receive buffer to ring buffers.
-          max_spikes_per_rank_per_thread[ tid ] = kernel().event_delivery_manager.deliver_events( tid );
+          kernel().event_delivery_manager.deliver_events( tid );
         }
         if ( kernel().connection_manager.secondary_connections_exist() )
         {
@@ -1013,15 +1013,12 @@ nest::SimulationManager::update_()
         sw_gather_spike_data_.start();
 #endif
 
-        const size_t max_spikes_per_rank = *std::max_element(max_spikes_per_rank_per_thread.begin(),
-                                                             max_spikes_per_rank_per_thread.end());
-
         // gather only at end of slice, i.e., end of min_delay step
         if ( to_step_ == kernel().connection_manager.get_min_delay() )
         {
           if ( kernel().connection_manager.has_primary_connections() )
           {
-            kernel().event_delivery_manager.gather_spike_data( tid, max_spikes_per_rank );
+            kernel().event_delivery_manager.gather_spike_data( tid );
           }
           if ( kernel().connection_manager.secondary_connections_exist() )
           {

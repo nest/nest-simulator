@@ -199,7 +199,7 @@ public:
    * Collocates spikes from register to MPI buffers, communicates via
    * MPI and delivers events to targets.
    */
-  void gather_spike_data( const thread tid, const size_t max_spikes_per_rank );
+  void gather_spike_data( const thread tid );
 
   /**
    * Collocates presynaptic connection information, communicates via
@@ -213,7 +213,7 @@ public:
   /**
    * Delivers events to targets.
    */
-  size_t deliver_events( const thread tid );
+  void deliver_events( const thread tid );
 
   /**
    * Collocates presynaptic connection information for secondary events (MPI
@@ -259,8 +259,7 @@ private:
   template < typename SpikeDataT >
   void gather_spike_data_( const thread tid,
     std::vector< SpikeDataT >& send_buffer,
-    std::vector< SpikeDataT >& recv_buffer,
-                           const size_t max_spikes_per_rank );
+    std::vector< SpikeDataT >& recv_buffer );
 
   void resize_send_recv_buffers_spike_data_();
 
@@ -279,14 +278,15 @@ private:
     std::vector< std::vector< std::vector< TargetT > >* >& spike_register,
     std::vector< SpikeDataT >& send_buffer );
 
-
   /**
-   * Marks end of valid regions in MPI buffers.
+   * Set end marker for per-rank-chunks signalling completion and providing shrink/grow infomation.
+   *
+   * @return True is spike transmission complete
    */
   template < typename SpikeDataT >
-  void set_end_and_invalid_markers_( const AssignedRanks& assigned_ranks,
+  bool set_end_marker_( const AssignedRanks& assigned_ranks,
     const SendBufferPosition& send_buffer_position,
-    std::vector< SpikeDataT >& send_buffer );
+    std::vector< SpikeDataT >& send_buffer, size_t per_thread_max_spikes_per_rank );
 
   /**
    * Resets marker in MPI buffer that signals end of communication
@@ -298,29 +298,9 @@ private:
     std::vector< SpikeDataT >& send_buffer ) const;
 
   /**
-   * Sets marker in MPI buffer that signals end of communication
-   * across MPI ranks.
-   */
-  template < typename SpikeDataT >
-  void set_complete_marker_spike_data_( const AssignedRanks& assigned_ranks,
-    const SendBufferPosition& send_buffer_position,
-    std::vector< SpikeDataT >& send_buffer ) const;
-
-
-  /**
-      * Put required buffer size into send buffer on all ranks.
-   */
-  template < typename SpikeDataT >
-  void
-  set_max_spikes_per_rank_( const AssignedRanks& assigned_ranks,
-    const SendBufferPosition& send_buffer_position,
-    std::vector< SpikeDataT >& send_buffer,
-                           const size_t max_per_thread_max_spikes_per_rank_ ) const;
-
-  /**
    * Get required buffer size.
    *
-   * @returns maximum over required buffer sizes communicated by all ranks or zero if buffers are large enough
+   * @returns maximum over required buffer sizes communicated by all ranks
    */
   template < typename SpikeDataT >
   size_t
@@ -334,7 +314,7 @@ private:
    * nodes.
    */
   template < typename SpikeDataT >
-  size_t deliver_events_( const thread tid, const std::vector< SpikeDataT >& recv_buffer );
+  void deliver_events_( const thread tid, const std::vector< SpikeDataT >& recv_buffer );
 
   /**
    * Deletes all spikes from spike registers and resets spike
@@ -476,6 +456,8 @@ private:
   //! whether size of MPI buffer for communication of spikes can be decreased
   bool decrease_buffer_size_spike_data_;
   
+  //! largest number of spikes sent between any two ranks in most recent gather round
+  size_t max_per_thread_max_spikes_per_rank_;
   size_t buffer_shrink_count_;
   size_t buffer_shrink_delta_;
   size_t buffer_grow_count_;

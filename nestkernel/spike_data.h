@@ -33,12 +33,39 @@
 namespace nest
 {
 
+/**
+ * Mark spike transmission status in SpikeData entries.
+ *
+ * @note Assumes that send buffer has at least two entries per rank, begin ≠ end.
+ * @note To ensure that we only need two bits for this flag, flags will be interpreted differently
+ *       depending on where they are used in a send buffer.
+ *
+ *  Below, begin and end refer to the first and last entries for a given rank-specific chunk of the send buffer.
+ *
+ * - DEFAULT: Normal entry, cannot occur in end
+ * - END: Marks last entry containing data. If it occurs in end, it implies COMPLETE.
+ *      - Implies that largest number of spikes written to any chunk is equal to chunk size
+ * - COMPLETE: Can only occur in end and indicates that MPI process could write all spikes to send buffer.
+ *      - END is in earlier position.
+ *      - In this case, lcid of end is the largest number of spikes written into any chunk of send buffer.
+ * - INVALID:
+ *      - In begin indicates that no spikes are transmitted (@note: END at begin means one spike transmitted)
+ *      - In end, indicates that MPI process could not write all spikes. lcid of end is required chunk size to write all spikes.
+ *
+ * @note Logic for reading from spike buffer
+ * 1. If begin for a rank is INVALID, nothing to read
+ * 2. Read until END is met.
+ * 3. Check end:
+ *    - If END, required chunk size is current chunk size
+ *    - COMPLETE or INVALID, required chunk size is given by lcid stored in end
+ *    - Spike transmission is complete if either END or COMPLETE.
+ */
 enum enum_status_spike_data_id
 {
   SPIKE_DATA_ID_DEFAULT,
   SPIKE_DATA_ID_END,
   SPIKE_DATA_ID_COMPLETE,
-  SPIKE_DATA_ID_INVALID,
+  SPIKE_DATA_ID_INVALID
 };
 
 /**
@@ -150,7 +177,7 @@ inline SpikeData::SpikeData()
 
 inline SpikeData::SpikeData( const SpikeData& rhs )
   : lcid_( rhs.lcid_ )
-  , marker_( SPIKE_DATA_ID_DEFAULT )
+  , marker_( rhs.marker_ )
   , lag_( rhs.lag_ )
   , tid_( rhs.tid_ )
   , syn_id_( rhs.syn_id_ )
@@ -170,7 +197,7 @@ inline SpikeData&
 SpikeData::operator=( const SpikeData& rhs )
 {
   lcid_ = rhs.lcid_;
-  marker_ = SPIKE_DATA_ID_DEFAULT;
+  marker_ = rhs.marker_;
   lag_ = rhs.lag_;
   tid_ = rhs.tid_;
   syn_id_ = rhs.syn_id_;

@@ -280,11 +280,9 @@ private:
 
   /**
    * Set end marker for per-rank-chunks signalling completion and providing shrink/grow infomation.
-   *
-   * @return True is spike transmission complete
    */
   template < typename SpikeDataT >
-  bool set_end_marker_( const AssignedRanks& assigned_ranks,
+  void set_end_marker_( const AssignedRanks& assigned_ranks,
     const SendBufferPosition& send_buffer_position,
     std::vector< SpikeDataT >& send_buffer,
     size_t per_thread_max_spikes_per_rank );

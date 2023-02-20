@@ -421,8 +421,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
     // At this point, all send_buffer entries with spikes to be transmitted, as well
     // as all chunk-end entries, have marker DEFAULT.
 
-    const bool collocate_completed =
-      set_end_marker_( assigned_ranks, send_buffer_position, send_buffer, per_thread_max_spikes_per_rank );
+    set_end_marker_( assigned_ranks, send_buffer_position, send_buffer, per_thread_max_spikes_per_rank );
 
 #ifdef TIMER_DETAILED
     {
@@ -525,7 +524,7 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
 }
 
 template < typename SpikeDataT >
-bool
+void
 EventDeliveryManager::set_end_marker_( const AssignedRanks& assigned_ranks,
   const SendBufferPosition& send_buffer_position,
   std::vector< SpikeDataT >& send_buffer,
@@ -570,8 +569,6 @@ EventDeliveryManager::set_end_marker_( const AssignedRanks& assigned_ranks,
       send_buffer[ end_idx ] = dummy;
     }
   }
-
-  return collocate_complete;
 }
 
 template < typename SpikeDataT >

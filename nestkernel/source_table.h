@@ -52,8 +52,6 @@ class TargetData;
  * Entry of compressed_spike_data_map_.
  *
  * Combines source node index and target node thread.
- *
- * @TODO: Consider combining data in bitfield.
  */
 class CSDMapEntry
 {
@@ -62,6 +60,8 @@ public:
     : source_index_( source_index )
     , target_thread_( target_thread )
   {
+    assert( source_index <= MAX_LCID );
+    assert( target_thread <= MAX_TID );
   }
 
   size_t
@@ -76,9 +76,12 @@ public:
   }
 
 private:
-  size_t source_index_;
-  size_t target_thread_;
+  size_t source_index_ : NUM_BITS_LCID;
+  size_t target_thread_ : NUM_BITS_TID;
 };
+
+//! check legal size
+using success_csdmapentry_size = StaticAssert< sizeof( CSDMapEntry ) == 8 >::success;
 
 /**
  * This data structure stores the node IDs of presynaptic neurons

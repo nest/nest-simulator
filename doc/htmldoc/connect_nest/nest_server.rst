@@ -476,7 +476,7 @@ line. For such situations, we recommend using a JSON file as input for
     }
 
 If we assume that the above JSON object is stored in a file called
-``simulation_script.json``, you can execute it using the follwing
+``simulation_script.json``, you can execute it using the following
 command:
 
 .. code-block:: sh

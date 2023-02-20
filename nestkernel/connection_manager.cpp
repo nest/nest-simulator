@@ -749,21 +749,21 @@ nest::ConnectionManager::connect_( Node& source,
   const double delay,
   const double weight )
 {
-  const bool is_primary = kernel().model_manager.get_connection_model( syn_id, tid ).is_primary();
+  ConnectorModel& conn_model = kernel().model_manager.get_connection_model( syn_id, tid );
 
-  const bool clopath_archiving = kernel().model_manager.connector_requires_clopath_archiving( syn_id );
+  const bool clopath_archiving = conn_model.has_property( ConnectionModelProperties::REQUIRES_CLOPATH_ARCHIVING );
   if ( clopath_archiving and not dynamic_cast< ClopathArchivingNode* >( &target ) )
   {
     throw NotImplemented( "This synapse model is not supported by the neuron model of at least one connection." );
   }
 
-  const bool urbanczik_archiving = kernel().model_manager.connector_requires_urbanczik_archiving( syn_id );
+  const bool urbanczik_archiving = conn_model.has_property( ConnectionModelProperties::REQUIRES_URBANCZIK_ARCHIVING );
   if ( urbanczik_archiving and not target.supports_urbanczik_archiving() )
   {
     throw NotImplemented( "This synapse model is not supported by the neuron model of at least one  connection." );
   }
 
-  ConnectorModel& conn_model = kernel().model_manager.get_connection_model( syn_id, tid );
+  const bool is_primary = conn_model.has_property( ConnectionModelProperties::IS_PRIMARY );
   conn_model.add_connection( source, target, connections_[ tid ], syn_id, params, delay, weight );
   source_table_.add_source( tid, syn_id, s_node_id, is_primary );
 
@@ -1374,7 +1374,10 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
 
     if ( connections_[ tid ][ syn_id ] )
     {
-      if ( not kernel().model_manager.get_connection_model( syn_id, tid ).is_primary() )
+      ConnectorModel& conn_model = kernel().model_manager.get_connection_model( syn_id, tid );
+      const bool is_primary = conn_model.has_property( ConnectionModelProperties::IS_PRIMARY );
+
+      if ( not is_primary )
       {
         positions.clear();
         const size_t lcid_end = get_num_connections_( tid, syn_id );
@@ -1530,7 +1533,9 @@ nest::ConnectionManager::deliver_secondary_events( const thread tid,
   const synindex syn_id_end = positions_tid.size();
   for ( synindex syn_id = 0; syn_id < syn_id_end; ++syn_id )
   {
-    if ( not called_from_wfr_update or kernel().model_manager.get_connection_models( tid )[ syn_id ]->supports_wfr() )
+    const ConnectorModel& conn_model = kernel().model_manager.get_connection_model( syn_id );
+    const bool supports_wfr = conn_model.has_property( ConnectionModelProperties::SUPPORTS_WFR );
+    if ( not called_from_wfr_update or supports_wfr )
     {
       if ( positions_tid[ syn_id ].size() > 0 )
       {

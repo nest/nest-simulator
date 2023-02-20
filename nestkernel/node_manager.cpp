@@ -547,9 +547,9 @@ NodeManager::ensure_valid_thread_local_ids()
       wfr_network_size_ = size();
 
       // wfr_is_used_ indicates, whether at least one
-      // of the threads has a neuron that uses waveform relaxtion
+      // of the threads has a neuron that uses waveform relaxation
       // all threads then need to perform a wfr_update
-      // step, because gather_events() has to be done in a
+      // step, because gather_events() has to be done in an
       // openmp single section
       wfr_is_used_ = false;
       for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )

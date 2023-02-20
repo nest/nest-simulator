@@ -8,7 +8,7 @@ Glossary
 .. _units_measure:
 
 Units of measure
----------------
+----------------
 
 .. glossary::
  :sorted:

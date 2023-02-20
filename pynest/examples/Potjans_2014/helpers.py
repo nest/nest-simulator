@@ -47,7 +47,7 @@ def num_synapses_from_conn_probs(conn_probs, popsize1, popsize2):
     conn_probs
         Matrix of connection probabilities.
     popsize1
-        Size of first poulation.
+        Size of first population.
     popsize2
         Size of second population.
 

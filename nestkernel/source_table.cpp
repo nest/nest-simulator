@@ -214,7 +214,10 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
   // targets on the same process, but different threads
   for ( size_t syn_id = 0; syn_id < sources_[ tid ].size(); ++syn_id )
   {
-    if ( not kernel().model_manager.get_connection_model( syn_id, tid ).is_primary() )
+    const ConnectorModel& conn_model = kernel().model_manager.get_connection_model( syn_id, tid );
+    const bool is_primary = conn_model.has_property( ConnectionModelProperties::IS_PRIMARY );
+
+    if ( not is_primary )
     {
       for ( BlockVector< Source >::const_iterator source_cit = sources_[ tid ][ syn_id ].begin();
             source_cit != sources_[ tid ][ syn_id ].end();

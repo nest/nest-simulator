@@ -93,7 +93,6 @@ if ( BUILD_SPHINX_DOCS )
     COMMAND ${Python_EXECUTABLE} "${DOC_BUILD_DIR}/resolve_includes.py" "${DOC_BUILD_DIR}/html/models"
   )
   add_dependencies( docs sphinxdocs )
-
   install( DIRECTORY "${DOC_BUILD_DIR}/html"
     DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}"
     OPTIONAL

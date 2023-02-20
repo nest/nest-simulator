@@ -155,7 +155,7 @@ private:
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
@@ -185,7 +185,7 @@ private:
      * @name update-hook communication.
      * The following variables are used for direct communication from
      * update() to event_hook(). They rely on the fact that event_hook()
-     * is called instantaneuously from update().
+     * is called instantaneously from update().
      * Spikes are sent at times t that fulfill
      *
      *   t_min_active_ < t <= t_max_active_

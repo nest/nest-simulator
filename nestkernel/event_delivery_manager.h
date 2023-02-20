@@ -421,11 +421,12 @@ private:
    * immediately sorted by the thread that will later move the spikes to the
    * MPI buffers.
    * - First dim: write threads (from node to register)
-   * - Second dim: read threads (from register to MPI buffer)
+   * - Second dim: read threads (from register to MPI buffer) --> REMOVE this dim in this test branch (for 1 MPI)  //
+   * TODO: Check if we should re-activate assinging to threads
    * - Third dim: lag
    * - Fourth dim: OffGridTarget (will be converted in OffGridSpikeData)
    */
-  std::vector< std::vector< std::vector< std::vector< OffGridTarget > > > > off_grid_emitted_spike_register_;
+  std::vector< std::vector< std::vector< OffGridTarget > >* > off_grid_emitted_spike_register_;
 
   /**
    * Buffer to collect the secondary events
@@ -483,15 +484,11 @@ EventDeliveryManager::reset_spike_register_( const thread tid )
     ( *it ).clear();
   }
 
-  for ( std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it =
-          off_grid_emitted_spike_register_[ tid ].begin();
-        it < off_grid_emitted_spike_register_[ tid ].end();
+  for ( std::vector< std::vector< OffGridTarget > >::iterator it = off_grid_emitted_spike_register_[ tid ]->begin();
+        it < off_grid_emitted_spike_register_[ tid ]->end();
         ++it )
   {
-    for ( std::vector< std::vector< OffGridTarget > >::iterator iit = it->begin(); iit < it->end(); ++iit )
-    {
-      iit->clear();
-    }
+    ( *it ).clear();
   }
 }
 
@@ -511,17 +508,12 @@ EventDeliveryManager::clean_spike_register_( const thread tid )
     std::vector< Target >::iterator new_end = std::remove_if( it->begin(), it->end(), is_marked_for_removal_ );
     it->erase( new_end, it->end() );
   }
-  for ( std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it =
-          off_grid_emitted_spike_register_[ tid ].begin();
-        it < off_grid_emitted_spike_register_[ tid ].end();
+  for ( std::vector< std::vector< OffGridTarget > >::iterator it = off_grid_emitted_spike_register_[ tid ]->begin();
+        it < off_grid_emitted_spike_register_[ tid ]->end();
         ++it )
   {
-    for ( std::vector< std::vector< OffGridTarget > >::iterator iit = it->begin(); iit < it->end(); ++iit )
-    {
-      std::vector< OffGridTarget >::iterator new_end =
-        std::remove_if( iit->begin(), iit->end(), is_marked_for_removal_ );
-      iit->erase( new_end, iit->end() );
-    }
+    std::vector< OffGridTarget >::iterator new_end = std::remove_if( it->begin(), it->end(), is_marked_for_removal_ );
+    it->erase( new_end, it->end() );
   }
 }
 

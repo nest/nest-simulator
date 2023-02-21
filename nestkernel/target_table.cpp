@@ -86,7 +86,7 @@ nest::TargetTable::compress_secondary_send_buffer_pos( const thread tid )
 void
 nest::TargetTable::add_target( const thread tid, const thread target_rank, const TargetData& target_data )
 {
-  const index lid = target_data.get_source_lid();
+  const size_t lid = target_data.get_source_lid();
 
   vector_util::grow( targets_[ tid ][ lid ] );
 

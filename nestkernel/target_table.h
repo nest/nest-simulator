@@ -90,14 +90,14 @@ public:
    * Returns all targets of a neuron. Used for filling
    * EventDeliveryManager::emitted_spikes_register_.
    */
-  const std::vector< Target >& get_targets( const thread tid, const index lid ) const;
+  const std::vector< Target >& get_targets( const thread tid, const size_t lid ) const;
 
   /**
    * Returns all MPI send buffer positions of a neuron. Used to fill
    * MPI buffer in EventDeliveryManager.
    */
   const std::vector< size_t >&
-  get_secondary_send_buffer_positions( const thread tid, const index lid, const synindex syn_id ) const;
+  get_secondary_send_buffer_positions( const thread tid, const size_t lid, const synindex syn_id ) const;
 
   /**
    * Clears all entries of targets_.
@@ -112,13 +112,13 @@ public:
 };
 
 inline const std::vector< Target >&
-TargetTable::get_targets( const thread tid, const index lid ) const
+TargetTable::get_targets( const thread tid, const size_t lid ) const
 {
   return targets_[ tid ][ lid ];
 }
 
 inline const std::vector< size_t >&
-TargetTable::get_secondary_send_buffer_positions( const thread tid, const index lid, const synindex syn_id ) const
+TargetTable::get_secondary_send_buffer_positions( const thread tid, const size_t lid, const synindex syn_id ) const
 {
   assert( syn_id < secondary_send_buffer_pos_[ tid ][ lid ].size() );
   return secondary_send_buffer_pos_[ tid ][ lid ][ syn_id ];

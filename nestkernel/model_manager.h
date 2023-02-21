@@ -70,7 +70,7 @@ public:
    * Return a proxynode configured for thread tid and the given
    * node_id.
    */
-  Node* get_proxy_node( thread tid, index node_id );
+  Node* get_proxy_node( thread tid, size_t node_id );
 
   /**
    * Return pointer to protoype for given synapse id.
@@ -96,7 +96,7 @@ public:
    * @see register_prototype_connection
    */
   template < class ModelT >
-  index register_node_model( const Name& name, std::string deprecation_info = std::string() );
+  size_t register_node_model( const Name& name, std::string deprecation_info = std::string() );
 
   /**
    * Copy an existing model and register it as a new model.
@@ -107,7 +107,7 @@ public:
    * @return model ID of new Model object.
    * @see copy_node_model_, copy_connection_model_
    */
-  index copy_model( Name old_name, Name new_name, DictionaryDatum params );
+  size_t copy_model( Name old_name, Name new_name, DictionaryDatum params );
 
   /**
    * Set the default parameters of a model.
@@ -139,18 +139,18 @@ public:
    * @return The model ID for a Model with a given name
    * @throws UnknownModelName if the model is not available
    */
-  index get_node_model_id( const Name ) const;
+  size_t get_node_model_id( const Name ) const;
 
   /**
    * @return The Model registered with the given model ID
    */
-  Model* get_node_model( index ) const;
+  Model* get_node_model( size_t ) const;
 
   /**
    * @return The numeric ID of a given synapse model
    * @throws UnknownSynapseType if the model is not available
    */
-  index get_synapse_model_id( std::string model_name );
+  size_t get_synapse_model_id( std::string model_name );
 
   DictionaryDatum get_connector_defaults( synindex syn_id ) const;
 
@@ -178,7 +178,7 @@ private:
 
   void clear_connection_models_();
 
-  index register_node_model_( Model* model );
+  size_t register_node_model_( Model* model );
 
   synindex register_connection_model_( ConnectorModel* );
 
@@ -189,7 +189,7 @@ private:
    * @return model ID of new Model object.
    * @see copy_model(), copy_connection_model_()
    */
-  index copy_node_model_( index old_id, Name new_name );
+  size_t copy_node_model_( size_t old_id, Name new_name );
 
   /**
    * Copy an existing synapse model and register it as a new model.
@@ -198,7 +198,7 @@ private:
    * @return model ID of new Model object.
    * @see copy_model(), copy_node_model_()
    */
-  index copy_connection_model_( index old_id, Name new_name );
+  size_t copy_connection_model_( size_t old_id, Name new_name );
 
   /**
    * Set the default parameters of a model.
@@ -206,7 +206,7 @@ private:
    * @param params default parameters to be set.
    * @see set_model_defaults, set_synapse_defaults_
    */
-  void set_node_defaults_( index model_id, const DictionaryDatum& params );
+  void set_node_defaults_( size_t model_id, const DictionaryDatum& params );
 
   /**
    * Set the default parameters of a model.
@@ -214,7 +214,7 @@ private:
    * @param params default parameters to be set.
    * @see set_model_defaults, set_node_defaults_
    */
-  void set_synapse_defaults_( index model_id, const DictionaryDatum& params );
+  void set_synapse_defaults_( size_t model_id, const DictionaryDatum& params );
 
   //! Compares model ids for sorting in memory_info
   static bool compare_model_by_id_( const int a, const int b );
@@ -264,7 +264,7 @@ private:
 
 
 inline Model*
-ModelManager::get_node_model( index m ) const
+ModelManager::get_node_model( size_t m ) const
 {
   assert( m < node_models_.size() );
   return node_models_[ m ];

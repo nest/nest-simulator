@@ -73,8 +73,8 @@ public:
    * @param rng   random number generator pointer
    * will be ignored except for random parameters.
    */
-  virtual double value_double( thread, RngPtr, index, Node* ) const = 0;
-  virtual long value_int( thread, RngPtr, index, Node* ) const = 0;
+  virtual double value_double( thread, RngPtr, size_t, Node* ) const = 0;
+  virtual long value_int( thread, RngPtr, size_t, Node* ) const = 0;
   virtual void
   skip( thread, size_t ) const
   {
@@ -134,13 +134,13 @@ public:
   }
 
   double
-  value_double( thread, RngPtr, index, Node* ) const override
+  value_double( thread, RngPtr, size_t, Node* ) const override
   {
     return value_;
   }
 
   long
-  value_int( thread, RngPtr, index, Node* ) const override
+  value_int( thread, RngPtr, size_t, Node* ) const override
   {
     throw KernelException( "ConnParameter calls value function with false return type." );
   }
@@ -180,13 +180,13 @@ public:
   }
 
   double
-  value_double( thread, RngPtr, index, Node* ) const override
+  value_double( thread, RngPtr, size_t, Node* ) const override
   {
     return static_cast< double >( value_ );
   }
 
   long
-  value_int( thread, RngPtr, index, Node* ) const override
+  value_int( thread, RngPtr, size_t, Node* ) const override
   {
     return value_;
   }
@@ -263,7 +263,7 @@ public:
   }
 
   double
-  value_double( thread tid, RngPtr, index, Node* ) const override
+  value_double( thread tid, RngPtr, size_t, Node* ) const override
   {
     if ( next_[ tid ] != values_->end() )
     {
@@ -276,7 +276,7 @@ public:
   }
 
   long
-  value_int( thread, RngPtr, index, Node* ) const override
+  value_int( thread, RngPtr, size_t, Node* ) const override
   {
     throw KernelException( "ConnParameter calls value function with false return type." );
   }
@@ -345,7 +345,7 @@ public:
   }
 
   long
-  value_int( thread tid, RngPtr, index, Node* ) const override
+  value_int( thread tid, RngPtr, size_t, Node* ) const override
   {
     if ( next_[ tid ] != values_->end() )
     {
@@ -358,7 +358,7 @@ public:
   }
 
   double
-  value_double( thread tid, RngPtr, index, Node* ) const override
+  value_double( thread tid, RngPtr, size_t, Node* ) const override
   {
     if ( next_[ tid ] != values_->end() )
     {
@@ -401,10 +401,10 @@ class ParameterConnParameterWrapper : public ConnParameter
 public:
   ParameterConnParameterWrapper( const ParameterDatum&, const size_t );
 
-  double value_double( thread target_thread, RngPtr rng, index snode_id, Node* target ) const override;
+  double value_double( thread target_thread, RngPtr rng, size_t snode_id, Node* target ) const override;
 
   long
-  value_int( thread target_thread, RngPtr rng, index snode_id, Node* target ) const override
+  value_int( thread target_thread, RngPtr rng, size_t snode_id, Node* target ) const override
   {
     return value_double( target_thread, rng, snode_id, target );
   }

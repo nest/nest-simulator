@@ -49,7 +49,7 @@ void install_module( const std::string& module_name );
 
 void reset_kernel();
 
-void enable_dryrun_mode( const index n_procs );
+void enable_dryrun_mode( const size_t n_procs );
 
 void register_logger_client( const deliver_logging_event_ptr client_callback );
 
@@ -68,13 +68,13 @@ RngPtr get_vp_specific_rng( thread tid );
 void set_kernel_status( const DictionaryDatum& dict );
 DictionaryDatum get_kernel_status();
 
-void set_node_status( const index node_id, const DictionaryDatum& dict );
-DictionaryDatum get_node_status( const index node_id );
+void set_node_status( const size_t node_id, const DictionaryDatum& dict );
+DictionaryDatum get_node_status( const size_t node_id );
 
 void set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict );
 DictionaryDatum get_connection_status( const ConnectionDatum& conn );
 
-NodeCollectionPTR create( const Name& model_name, const index n );
+NodeCollectionPTR create( const Name& model_name, const size_t n );
 
 NodeCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only );
 

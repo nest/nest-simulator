@@ -87,7 +87,7 @@ public:
    * @param lid index of node within layer
    * @returns position of node as std::vector
    */
-  virtual std::vector< double > get_position_vector( const index lid ) const = 0;
+  virtual std::vector< double > get_position_vector( const size_t lid ) const = 0;
 
   /**
    * Returns displacement of node from given position. When using periodic
@@ -96,7 +96,7 @@ public:
    * @param to        node in layer to which displacement is to be computed
    * @returns vector pointing from from_pos to node to's position
    */
-  virtual std::vector< double > compute_displacement( const std::vector< double >& from_pos, const index to ) const = 0;
+  virtual std::vector< double > compute_displacement( const std::vector< double >& from_pos, const size_t to ) const = 0;
   virtual double compute_displacement( const std::vector< double >& from_pos,
     const std::vector< double >& to_pos,
     const unsigned int dimension ) const = 0;
@@ -108,7 +108,7 @@ public:
    * @param to        node in layer to which displacement is to be computed
    * @returns length of vector pointing from from_pos to node to's position
    */
-  virtual double compute_distance( const std::vector< double >& from_pos, const index lid ) const = 0;
+  virtual double compute_distance( const std::vector< double >& from_pos, const size_t lid ) const = 0;
   virtual double compute_distance( const std::vector< double >& from_pos,
     const std::vector< double >& to_pos ) const = 0;
 
@@ -142,7 +142,7 @@ public:
    * @param node_collection NodeCollection of the layer
    * @returns nodes in layer inside mask.
    */
-  virtual std::vector< index > get_global_nodes( const MaskDatum& mask,
+  virtual std::vector< size_t > get_global_nodes( const MaskDatum& mask,
     const std::vector< double >& anchor,
     bool allow_oversized,
     NodeCollectionPTR node_collection ) = 0;
@@ -291,13 +291,13 @@ public:
    * @param sind index of node
    * @returns position of node.
    */
-  virtual Position< D > get_position( index sind ) const = 0;
+  virtual Position< D > get_position( size_t sind ) const = 0;
 
   /**
    * @param sind index of node
    * @returns position of node as std::vector
    */
-  std::vector< double > get_position_vector( const index sind ) const override;
+  std::vector< double > get_position_vector( const size_t sind ) const override;
 
   /**
    * Returns displacement of a position from another position. When using
@@ -318,9 +318,9 @@ public:
    * @param to        node in layer to which displacement is to be computed
    * @returns vector pointing from from_pos to node to's position
    */
-  Position< D > compute_displacement( const Position< D >& from_pos, const index to ) const;
+  Position< D > compute_displacement( const Position< D >& from_pos, const size_t to ) const;
 
-  std::vector< double > compute_displacement( const std::vector< double >& from_pos, const index to ) const override;
+  std::vector< double > compute_displacement( const std::vector< double >& from_pos, const size_t to ) const override;
 
   /**
    * Returns distance to node from given position. When using periodic
@@ -329,9 +329,9 @@ public:
    * @param to        node in layer to which displacement is to be computed
    * @returns length of vector pointing from from_pos to node to's position
    */
-  double compute_distance( const Position< D >& from_pos, const index lid ) const;
+  double compute_distance( const Position< D >& from_pos, const size_t lid ) const;
 
-  double compute_distance( const std::vector< double >& from_pos, const index lid ) const override;
+  double compute_distance( const std::vector< double >& from_pos, const size_t lid ) const override;
 
   double compute_distance( const std::vector< double >& from_pos, const std::vector< double >& to_pos ) const override;
 
@@ -343,7 +343,7 @@ public:
    * user should group together all ConnectLayers calls using the same
    * pool layer.
    */
-  std::shared_ptr< Ntree< D, index > > get_global_positions_ntree( NodeCollectionPTR node_collection );
+  std::shared_ptr< Ntree< D, size_t > > get_global_positions_ntree( NodeCollectionPTR node_collection );
 
   /**
    * Get positions globally, overriding the dimensions of the layer and
@@ -351,14 +351,14 @@ public:
    * coordinates are only used for the dimensions where the supplied
    * periodic flag is set.
    */
-  std::shared_ptr< Ntree< D, index > > get_global_positions_ntree( std::bitset< D > periodic,
+  std::shared_ptr< Ntree< D, size_t > > get_global_positions_ntree( std::bitset< D > periodic,
     Position< D > lower_left,
     Position< D > extent,
     NodeCollectionPTR node_collection );
 
-  std::vector< std::pair< Position< D >, index > >* get_global_positions_vector( NodeCollectionPTR node_collection );
+  std::vector< std::pair< Position< D >, size_t > >* get_global_positions_vector( NodeCollectionPTR node_collection );
 
-  virtual std::vector< std::pair< Position< D >, index > > get_global_positions_vector( const MaskDatum& mask,
+  virtual std::vector< std::pair< Position< D >, size_t > > get_global_positions_vector( const MaskDatum& mask,
     const Position< D >& anchor,
     bool allow_oversized,
     NodeCollectionPTR node_collection );
@@ -366,7 +366,7 @@ public:
   /**
    * Return a vector with the node IDs of the nodes inside the mask.
    */
-  std::vector< index > get_global_nodes( const MaskDatum& mask,
+  std::vector< size_t > get_global_nodes( const MaskDatum& mask,
     const std::vector< double >& anchor,
     bool allow_oversized,
     NodeCollectionPTR node_collection ) override;
@@ -419,17 +419,17 @@ protected:
    */
   void clear_vector_cache_() const override;
 
-  std::shared_ptr< Ntree< D, index > > do_get_global_positions_ntree_( NodeCollectionPTR node_collection );
+  std::shared_ptr< Ntree< D, size_t > > do_get_global_positions_ntree_( NodeCollectionPTR node_collection );
 
   /**
    * Insert global position info into ntree.
    */
-  virtual void insert_global_positions_ntree_( Ntree< D, index >& tree, NodeCollectionPTR node_collection ) = 0;
+  virtual void insert_global_positions_ntree_( Ntree< D, size_t >& tree, NodeCollectionPTR node_collection ) = 0;
 
   /**
    * Insert global position info into vector.
    */
-  virtual void insert_global_positions_vector_( std::vector< std::pair< Position< D >, index > >&,
+  virtual void insert_global_positions_vector_( std::vector< std::pair< Position< D >, size_t > >&,
     NodeCollectionPTR ) = 0;
 
   //! lower left corner (minimum coordinates) of layer
@@ -440,8 +440,8 @@ protected:
   /**
    * Global position information for a single layer
    */
-  static std::shared_ptr< Ntree< D, index > > cached_ntree_;
-  static std::vector< std::pair< Position< D >, index > >* cached_vector_;
+  static std::shared_ptr< Ntree< D, size_t > > cached_ntree_;
+  static std::vector< std::pair< Position< D >, size_t > >* cached_vector_;
 
   friend class MaskedLayer< D >;
 };
@@ -489,12 +489,12 @@ public:
    * @returns an iterator for the nodes inside the mask centered on the anchor
    * position
    */
-  typename Ntree< D, index >::masked_iterator begin( const Position< D >& anchor );
+  typename Ntree< D, size_t >::masked_iterator begin( const Position< D >& anchor );
 
   /**
    * @return end iterator
    */
-  typename Ntree< D, index >::masked_iterator end();
+  typename Ntree< D, size_t >::masked_iterator end();
 
 protected:
   /**
@@ -509,7 +509,7 @@ protected:
    */
   void check_mask_( Layer< D >& layer, bool allow_oversized );
 
-  std::shared_ptr< Ntree< D, index > > ntree_;
+  std::shared_ptr< Ntree< D, size_t > > ntree_;
   MaskDatum mask_;
 };
 
@@ -559,7 +559,7 @@ inline MaskedLayer< D >::~MaskedLayer()
 }
 
 template < int D >
-inline typename Ntree< D, index >::masked_iterator
+inline typename Ntree< D, size_t >::masked_iterator
 MaskedLayer< D >::begin( const Position< D >& anchor )
 {
   try
@@ -573,7 +573,7 @@ MaskedLayer< D >::begin( const Position< D >& anchor )
 }
 
 template < int D >
-inline typename Ntree< D, index >::masked_iterator
+inline typename Ntree< D, size_t >::masked_iterator
 MaskedLayer< D >::end()
 {
   return ntree_->masked_end();
@@ -615,28 +615,28 @@ inline Layer< D >::~Layer()
 
 template < int D >
 inline Position< D >
-Layer< D >::compute_displacement( const Position< D >& from_pos, const index to_lid ) const
+Layer< D >::compute_displacement( const Position< D >& from_pos, const size_t to_lid ) const
 {
   return compute_displacement( from_pos, get_position( to_lid ) );
 }
 
 template < int D >
 inline std::vector< double >
-Layer< D >::compute_displacement( const std::vector< double >& from_pos, const index to_lid ) const
+Layer< D >::compute_displacement( const std::vector< double >& from_pos, const size_t to_lid ) const
 {
   return std::vector< double >( compute_displacement( Position< D >( from_pos ), to_lid ).get_vector() );
 }
 
 template < int D >
 inline double
-Layer< D >::compute_distance( const Position< D >& from_pos, const index lid ) const
+Layer< D >::compute_distance( const Position< D >& from_pos, const size_t lid ) const
 {
   return compute_displacement( from_pos, lid ).length();
 }
 
 template < int D >
 inline double
-Layer< D >::compute_distance( const std::vector< double >& from_pos, const index lid ) const
+Layer< D >::compute_distance( const std::vector< double >& from_pos, const size_t lid ) const
 {
   return compute_displacement( Position< D >( from_pos ), lid ).length();
 }
@@ -656,7 +656,7 @@ Layer< D >::compute_distance( const std::vector< double >& from_pos, const std::
 
 template < int D >
 inline std::vector< double >
-Layer< D >::get_position_vector( const index sind ) const
+Layer< D >::get_position_vector( const size_t sind ) const
 {
   return get_position( sind ).get_vector();
 }
@@ -665,7 +665,7 @@ template < int D >
 inline void
 Layer< D >::clear_ntree_cache_() const
 {
-  cached_ntree_ = std::shared_ptr< Ntree< D, index > >();
+  cached_ntree_ = std::shared_ptr< Ntree< D, size_t > >();
   cached_ntree_md_ = NodeCollectionMetadataPTR( nullptr );
 }
 

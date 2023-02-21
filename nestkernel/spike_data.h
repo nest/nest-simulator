@@ -52,7 +52,7 @@ class SpikeData
 protected:
   static constexpr int MAX_LAG = generate_max_value( NUM_BITS_LAG );
 
-  index lcid_ : NUM_BITS_LCID;                       //!< local connection index
+  size_t lcid_ : NUM_BITS_LCID;                       //!< local connection index
   unsigned int marker_ : NUM_BITS_MARKER_SPIKE_DATA; //!< status flag
   unsigned int lag_ : NUM_BITS_LAG;                  //!< lag in this min-delay interval
   unsigned int tid_ : NUM_BITS_TID;                  //!< thread index
@@ -61,11 +61,11 @@ protected:
 public:
   SpikeData();
   SpikeData( const SpikeData& rhs );
-  SpikeData( const thread tid, const synindex syn_id, const index lcid, const unsigned int lag );
+  SpikeData( const thread tid, const synindex syn_id, const size_t lcid, const unsigned int lag );
 
   SpikeData& operator=( const SpikeData& rhs );
 
-  void set( const thread tid, const synindex syn_id, const index lcid, const unsigned int lag, const double offset );
+  void set( const thread tid, const synindex syn_id, const size_t lcid, const unsigned int lag, const double offset );
 
   template < class TargetT >
   void set( const TargetT& target, const unsigned int lag );
@@ -73,7 +73,7 @@ public:
   /**
    * Returns local connection ID.
    */
-  index get_lcid() const;
+  size_t get_lcid() const;
 
   /**
    * Returns lag in min-delay interval.
@@ -152,7 +152,7 @@ inline SpikeData::SpikeData( const SpikeData& rhs )
 {
 }
 
-inline SpikeData::SpikeData( const thread tid, const synindex syn_id, const index lcid, const unsigned int lag )
+inline SpikeData::SpikeData( const thread tid, const synindex syn_id, const size_t lcid, const unsigned int lag )
   : lcid_( lcid )
   , marker_( SPIKE_DATA_ID_DEFAULT )
   , lag_( lag )
@@ -173,7 +173,7 @@ SpikeData::operator=( const SpikeData& rhs )
 }
 
 inline void
-SpikeData::set( const thread tid, const synindex syn_id, const index lcid, const unsigned int lag, const double )
+SpikeData::set( const thread tid, const synindex syn_id, const size_t lcid, const unsigned int lag, const double )
 {
   assert( 0 <= tid );
   assert( tid <= MAX_TID );
@@ -202,7 +202,7 @@ SpikeData::set( const TargetT& target, const unsigned int lag )
   syn_id_ = target.get_syn_id();
 }
 
-inline index
+inline size_t
 SpikeData::get_lcid() const
 {
   return lcid_;
@@ -283,10 +283,10 @@ public:
   OffGridSpikeData();
   OffGridSpikeData( const thread tid,
     const synindex syn_id,
-    const index lcid,
+    const size_t lcid,
     const unsigned int lag,
     const double offset );
-  void set( const thread tid, const synindex syn_id, const index lcid, const unsigned int lag, const double offset );
+  void set( const thread tid, const synindex syn_id, const size_t lcid, const unsigned int lag, const double offset );
 
   template < class TargetT >
   void set( const TargetT& target, const unsigned int lag );
@@ -304,7 +304,7 @@ inline OffGridSpikeData::OffGridSpikeData()
 
 inline OffGridSpikeData::OffGridSpikeData( const thread tid,
   const synindex syn_id,
-  const index lcid,
+  const size_t lcid,
   const unsigned int lag,
   const double offset )
   : SpikeData( tid, syn_id, lcid, lag )
@@ -316,7 +316,7 @@ inline OffGridSpikeData::OffGridSpikeData( const thread tid,
 inline void
 OffGridSpikeData::set( const thread tid,
   const synindex syn_id,
-  const index lcid,
+  const size_t lcid,
   const unsigned int lag,
   const double offset )
 {

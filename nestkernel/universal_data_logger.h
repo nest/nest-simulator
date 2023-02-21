@@ -175,7 +175,7 @@ private:
   {
   public:
     DataLogger_( const DataLoggingRequest&, const RecordablesMap< HostNode >& );
-    index
+    size_t
     get_mm_node_id() const
     {
       return multimeter_;
@@ -186,7 +186,7 @@ private:
     void init();
 
   private:
-    index multimeter_; //!< node ID of multimeter for which the logger works
+    size_t multimeter_; //!< node ID of multimeter for which the logger works
     size_t num_vars_;  //!< number of variables recorded
 
     Time recording_interval_; //!< interval between two recordings
@@ -241,7 +241,7 @@ nest::UniversalDataLogger< HostNode >::connect_logging_device( const DataLogging
   }
 
   // ensure that we have not connected this multimeter before
-  const index mm_node_id = req.get_sender().get_node_id();
+  const size_t mm_node_id = req.get_sender().get_node_id();
 
   const auto item = std::find_if( data_loggers_.begin(),
     data_loggers_.end(),
@@ -432,7 +432,7 @@ private:
   {
   public:
     DataLogger_( const DataLoggingRequest&, const DynamicRecordablesMap< HostNode >& );
-    index
+    size_t
     get_mm_node_id() const
     {
       return multimeter_;
@@ -443,7 +443,7 @@ private:
     void init();
 
   private:
-    index multimeter_; //!< node ID of multimeter for which the logger works
+    size_t multimeter_; //!< node ID of multimeter for which the logger works
     size_t num_vars_;  //!< number of variables recorded
 
     Time recording_interval_; //!< interval between two recordings
@@ -499,7 +499,7 @@ nest::DynamicUniversalDataLogger< HostNode >::connect_logging_device( const Data
   }
 
   // ensure that we have not connected this multimeter before
-  const index mm_node_id = req.get_sender().get_node_id();
+  const size_t mm_node_id = req.get_sender().get_node_id();
   const size_t n_loggers = data_loggers_.size();
   size_t j = 0;
   while ( j < n_loggers and data_loggers_[ j ].get_mm_node_id() != mm_node_id )

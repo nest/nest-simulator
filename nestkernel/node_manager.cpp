@@ -90,7 +90,7 @@ NodeManager::change_number_of_threads()
 }
 
 DictionaryDatum
-NodeManager::get_status( index idx )
+NodeManager::get_status( size_t idx )
 {
   Node* target = get_mpi_local_node_or_device_head( idx );
 
@@ -102,7 +102,7 @@ NodeManager::get_status( index idx )
 }
 
 NodeCollectionPTR
-NodeManager::add_node( index model_id, long n )
+NodeManager::add_node( size_t model_id, long n )
 {
   sw_construction_create_.start();
 
@@ -117,8 +117,8 @@ NodeManager::add_node( index model_id, long n )
   assert( model );
   model->deprecation_warning( "Create" );
 
-  const index min_node_id = local_nodes_.at( 0 ).get_max_node_id() + 1;
-  const index max_node_id = min_node_id + n - 1;
+  const size_t min_node_id = local_nodes_.at( 0 ).get_max_node_id() + 1;
+  const size_t max_node_id = min_node_id + n - 1;
   if ( max_node_id < min_node_id )
   {
     LOG( M_ERROR,
@@ -184,7 +184,7 @@ NodeManager::add_node( index model_id, long n )
 
 
 void
-NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr )
+NodeManager::add_neurons_( Model& model, size_t min_node_id, size_t max_node_id, NodeCollectionPTR nc_ptr )
 {
   const size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
   // Upper limit for number of neurons per thread; in practice, either
@@ -194,7 +194,7 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
 
 #pragma omp parallel
   {
-    const index t = kernel().vp_manager.get_thread_id();
+    const size_t t = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -232,18 +232,18 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
 }
 
 void
-NodeManager::add_devices_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr )
+NodeManager::add_devices_( Model& model, size_t min_node_id, size_t max_node_id, NodeCollectionPTR nc_ptr )
 {
   const size_t n_per_thread = max_node_id - min_node_id + 1;
 
 #pragma omp parallel
   {
-    const index t = kernel().vp_manager.get_thread_id();
+    const size_t t = kernel().vp_manager.get_thread_id();
     try
     {
       model.reserve_additional( t, n_per_thread );
 
-      for ( index node_id = min_node_id; node_id <= max_node_id; ++node_id )
+      for ( size_t node_id = min_node_id; node_id <= max_node_id; ++node_id )
       {
         // keep track of number of thread local devices
         ++num_thread_local_devices_[ t ];
@@ -271,7 +271,7 @@ NodeManager::add_devices_( Model& model, index min_node_id, index max_node_id, N
 }
 
 void
-NodeManager::add_music_nodes_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr )
+NodeManager::add_music_nodes_( Model& model, size_t min_node_id, size_t max_node_id, NodeCollectionPTR nc_ptr )
 {
 #pragma omp parallel
   {
@@ -280,7 +280,7 @@ NodeManager::add_music_nodes_( Model& model, index min_node_id, index max_node_i
     {
       if ( t == 0 )
       {
-        for ( index node_id = min_node_id; node_id <= max_node_id; ++node_id )
+        for ( size_t node_id = min_node_id; node_id <= max_node_id; ++node_id )
         {
           // keep track of number of thread local devices
           ++num_thread_local_devices_[ t ];
@@ -342,7 +342,7 @@ NodeManager::get_nodes( const DictionaryDatum& params, const bool local_only )
       for ( auto node : get_local_nodes( tid ) )
       {
         bool match = true;
-        index node_id = node.get_node_id();
+        size_t node_id = node.get_node_id();
 
         DictionaryDatum node_status = get_status( node_id );
         for ( Dictionary::iterator dict_entry = params->begin(); dict_entry != params->end(); ++dict_entry )
@@ -399,27 +399,27 @@ NodeManager::is_local_node( Node* n ) const
 }
 
 bool
-NodeManager::is_local_node_id( index node_id ) const
+NodeManager::is_local_node_id( size_t node_id ) const
 {
   const thread vp = kernel().vp_manager.node_id_to_vp( node_id );
   return kernel().vp_manager.is_local_vp( vp );
 }
 
-index
+size_t
 NodeManager::get_max_num_local_nodes() const
 {
-  return static_cast< index >(
+  return static_cast< size_t >(
     ceil( static_cast< double >( size() ) / kernel().vp_manager.get_num_virtual_processes() ) );
 }
 
-index
+size_t
 NodeManager::get_num_thread_local_devices( thread t ) const
 {
   return num_thread_local_devices_[ t ];
 }
 
 Node*
-NodeManager::get_node_or_proxy( index node_id, thread t )
+NodeManager::get_node_or_proxy( size_t node_id, thread t )
 {
   assert( 0 <= t and ( t == -1 or t < kernel().vp_manager.get_num_threads() ) );
   assert( 0 < node_id and node_id <= size() );
@@ -434,7 +434,7 @@ NodeManager::get_node_or_proxy( index node_id, thread t )
 }
 
 Node*
-NodeManager::get_node_or_proxy( index node_id )
+NodeManager::get_node_or_proxy( size_t node_id )
 {
   assert( 0 < node_id and node_id <= size() );
 
@@ -455,7 +455,7 @@ NodeManager::get_node_or_proxy( index node_id )
 }
 
 Node*
-NodeManager::get_mpi_local_node_or_device_head( index node_id )
+NodeManager::get_mpi_local_node_or_device_head( size_t node_id )
 {
   thread t = kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( node_id ) );
 
@@ -474,9 +474,9 @@ NodeManager::get_mpi_local_node_or_device_head( index node_id )
 }
 
 std::vector< Node* >
-NodeManager::get_thread_siblings( index node_id ) const
+NodeManager::get_thread_siblings( size_t node_id ) const
 {
-  index num_threads = kernel().vp_manager.get_num_threads();
+  size_t num_threads = kernel().vp_manager.get_num_threads();
   std::vector< Node* > siblings( num_threads );
   for ( size_t t = 0; t < num_threads; ++t )
   {
@@ -568,7 +568,7 @@ NodeManager::destruct_nodes_()
 {
 #pragma omp parallel
   {
-    const index tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
     for ( auto node : local_nodes_[ tid ] )
     {
       delete node.get_node();
@@ -672,7 +672,7 @@ NodeManager::post_run_cleanup()
 {
 #pragma omp parallel
   {
-    index t = kernel().vp_manager.get_thread_id();
+    size_t t = kernel().vp_manager.get_thread_id();
     SparseNodeArray::const_iterator n;
     for ( n = local_nodes_[ t ].begin(); n != local_nodes_[ t ].end(); ++n )
     {
@@ -714,7 +714,7 @@ NodeManager::check_wfr_use()
 void
 NodeManager::print( std::ostream& out ) const
 {
-  const index max_node_id = size();
+  const size_t max_node_id = size();
   const double max_node_id_width = std::floor( std::log10( max_node_id ) );
   const double node_id_range_width = 6 + 2 * max_node_id_width;
 
@@ -722,8 +722,8 @@ NodeManager::print( std::ostream& out ) const
         it != kernel().modelrange_manager.end();
         ++it )
   {
-    const index first_node_id = it->get_first_node_id();
-    const index last_node_id = it->get_last_node_id();
+    const size_t first_node_id = it->get_first_node_id();
+    const size_t last_node_id = it->get_last_node_id();
     const Model* mod = kernel().model_manager.get_node_model( it->get_model_id() );
 
     std::stringstream node_id_range_strs;
@@ -742,7 +742,7 @@ NodeManager::print( std::ostream& out ) const
 }
 
 void
-NodeManager::set_status( index node_id, const DictionaryDatum& d )
+NodeManager::set_status( size_t node_id, const DictionaryDatum& d )
 {
   for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {

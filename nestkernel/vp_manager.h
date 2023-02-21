@@ -85,17 +85,17 @@ public:
   /**
    * Returns true if the given global node exists on this vp.
    */
-  bool is_node_id_vp_local( const index node_id ) const;
+  bool is_node_id_vp_local( const size_t node_id ) const;
 
   /**
    * Returns thread local index of a given global node.
    */
-  index node_id_to_lid( const index node_id ) const;
+  size_t node_id_to_lid( const size_t node_id ) const;
 
   /**
    * Returns the node ID of a given local index.
    */
-  index lid_to_node_id( const index lid ) const;
+  size_t lid_to_node_id( const size_t lid ) const;
 
   /**
    * Returns virtual process index.
@@ -110,7 +110,7 @@ public:
    * T the number of threads. This may be used by Network::add_node()
    * if the user has not specified anything.
    */
-  thread node_id_to_vp( const index node_id ) const;
+  thread node_id_to_vp( const size_t node_id ) const;
 
   /**
    * Convert a given VP ID to the corresponding thread ID
@@ -156,7 +156,7 @@ public:
 
 private:
   const bool force_singlethreading_;
-  index n_threads_; //!< Number of threads per process.
+  size_t n_threads_; //!< Number of threads per process.
 };
 }
 

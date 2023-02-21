@@ -278,7 +278,7 @@ public:
   size() override
   {
     size_t s = number_of_uints_covered< synindex >();
-    s += number_of_uints_covered< index >();
+    s += number_of_uints_covered< size_t >();
     s += number_of_uints_covered< DataType >() * coeff_length_;
 
     return s;

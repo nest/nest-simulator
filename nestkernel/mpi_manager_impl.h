@@ -85,7 +85,7 @@ nest::MPIManager::communicate_Allgatherv( std::vector< T >& send_buffer,
 }
 
 inline nest::thread
-nest::MPIManager::get_process_id_of_node_id( const index node_id ) const
+nest::MPIManager::get_process_id_of_node_id( const size_t node_id ) const
 {
   return node_id % kernel().vp_manager.get_num_virtual_processes() % num_processes_;
 }
@@ -94,7 +94,7 @@ nest::MPIManager::get_process_id_of_node_id( const index node_id ) const
 
 
 inline nest::thread
-nest::MPIManager::get_process_id_of_node_id( const index ) const
+nest::MPIManager::get_process_id_of_node_id( const size_t ) const
 {
   return 0;
 }

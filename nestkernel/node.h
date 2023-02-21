@@ -196,7 +196,7 @@ public:
    *
    * The smallest valid node ID is 1.
    */
-  index get_node_id() const;
+  size_t get_node_id() const;
 
   /**
    * Return lockpointer to the NodeCollection that created this node.
@@ -799,26 +799,26 @@ public:
    * set thread local index
 
    */
-  void set_thread_lid( const index );
+  void set_thread_lid( const size_t );
 
   /**
    * get thread local index
    */
-  index get_thread_lid() const;
+  size_t get_thread_lid() const;
 
   /**
    * Sets the local device id.
    * Throws an error if used on a non-device node.
    * @see get_local_device_id
    */
-  virtual void set_local_device_id( const index lsdid );
+  virtual void set_local_device_id( const size_t lsdid );
 
   /**
    * Gets the local device id.
    * Throws an error if used on a non-device node.
    * @see set_local_device_id
    */
-  virtual index get_local_device_id() const;
+  virtual size_t get_local_device_id() const;
 
   /**
    * Member of DeprecationWarning class to be used by models if parameters are
@@ -827,7 +827,7 @@ public:
   DeprecationWarning deprecation_warning;
 
 private:
-  void set_node_id_( index ); //!< Set global node id
+  void set_node_id_( size_t ); //!< Set global node id
 
   /**
    * Set the original NodeCollection of this node.
@@ -887,12 +887,12 @@ private:
    *
    * The node ID is unique within the network. The smallest valid node ID is 1.
    */
-  index node_id_;
+  size_t node_id_;
 
   /**
    * Local id of this node in the thread-local vector of nodes.
    */
-  index thread_lid_;
+  size_t thread_lid_;
 
   /**
    * Model ID.
@@ -971,7 +971,7 @@ Node::get_element_type() const
   return names::neuron;
 }
 
-inline index
+inline size_t
 Node::get_node_id() const
 {
   return node_id_;
@@ -984,7 +984,7 @@ Node::get_nc() const
 }
 
 inline void
-Node::set_node_id_( index i )
+Node::set_node_id_( size_t i )
 {
   node_id_ = i;
 }
@@ -1048,12 +1048,12 @@ Node::downcast( const Node& n )
 }
 
 inline void
-Node::set_thread_lid( const index tlid )
+Node::set_thread_lid( const size_t tlid )
 {
   thread_lid_ = tlid;
 }
 
-inline index
+inline size_t
 Node::get_thread_lid() const
 {
   return thread_lid_;

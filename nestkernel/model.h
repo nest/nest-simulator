@@ -191,12 +191,12 @@ public:
    * Set the model id on the prototype.
    */
   void
-  set_type_id( index id )
+  set_type_id( size_t id )
   {
     type_id_ = id;
   }
 
-  index
+  size_t
   get_type_id() const
   {
     return type_id_;
@@ -232,7 +232,7 @@ private:
    * For copied models, the type_id equals the type_id of the base model.
    * This number is needed to automatically save and restore copied models.
    */
-  index type_id_;
+  size_t type_id_;
 
   /**
    * Memory for all nodes sorted by threads.

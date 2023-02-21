@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE( test_target_object_type_constructor )
     const thread tid = std::rand() % ( MAX_TID + 1 );
     const thread rank = std::rand() % ( MAX_RANK + 1 );
     const synindex syn_id = std::rand() % ( MAX_SYN_ID + 1 );
-    const index lcid = std::rand() % ( MAX_LCID + 1 );
+    const size_t lcid = std::rand() % ( MAX_LCID + 1 );
 
     Target target_id_testInit( tid, rank, syn_id, lcid );
 
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE( test_target_object_type_set_get )
     const thread tid = std::rand() % ( MAX_TID + 1 );
     const thread rank = std::rand() % ( MAX_RANK + 1 );
     const synindex syn_id = std::rand() % ( MAX_SYN_ID + 1 );
-    const index lcid = std::rand() % ( MAX_LCID + 1 );
+    const size_t lcid = std::rand() % ( MAX_LCID + 1 );
 
     enum_status_target_id status_target_id = TARGET_ID_UNPROCESSED;
     if ( static_cast< bool >( std::rand() % 2 ) )

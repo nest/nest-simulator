@@ -96,19 +96,19 @@ private:
 public:
   Target();
   Target( const Target& target );
-  Target( const thread tid, const thread rank, const synindex syn_id, const index lcid );
+  Target( const thread tid, const thread rank, const synindex syn_id, const size_t lcid );
 
   Target& operator=( const Target& );
 
   /**
    * Set local connection id.
    */
-  void set_lcid( const index lcid );
+  void set_lcid( const size_t lcid );
 
   /**
    * Return local connection id.
    */
-  index get_lcid() const;
+  size_t get_lcid() const;
 
   /**
    * Set rank.
@@ -188,7 +188,7 @@ Target::operator=( const Target& other )
   return *this;
 }
 
-inline Target::Target( const thread tid, const thread rank, const synindex syn_id, const index lcid )
+inline Target::Target( const thread tid, const thread rank, const synindex syn_id, const size_t lcid )
   : remote_target_id_( 0 )
 {
   assert( tid <= MAX_TID );
@@ -204,13 +204,13 @@ inline Target::Target( const thread tid, const thread rank, const synindex syn_i
 }
 
 inline void
-Target::set_lcid( const index lcid )
+Target::set_lcid( const size_t lcid )
 {
   assert( lcid <= MAX_LCID );
   remote_target_id_ = ( remote_target_id_ & ( ~MASK_LCID ) ) | ( static_cast< uint64_t >( lcid ) << BITPOS_LCID );
 }
 
-inline index
+inline size_t
 Target::get_lcid() const
 {
   return ( ( remote_target_id_ & MASK_LCID ) >> BITPOS_LCID );

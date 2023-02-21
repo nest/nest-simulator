@@ -64,7 +64,7 @@ public:
    * @param model id of represented node
    * @param vp of represented node
    */
-  proxynode( index, index, index );
+  proxynode( size_t, size_t, size_t );
 
   /**
    * Import sets of overloaded virtual functions.

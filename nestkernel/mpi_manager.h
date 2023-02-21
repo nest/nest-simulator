@@ -110,7 +110,7 @@ public:
   /*
    * Return the process id of the node with the specified node ID.
    */
-  thread get_process_id_of_node_id( const index node_id ) const;
+  thread get_process_id_of_node_id( const size_t node_id ) const;
 
   /**
    * Finalize MPI communication (needs to be separate from MPIManager::finalize

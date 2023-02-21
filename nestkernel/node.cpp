@@ -129,12 +129,12 @@ Node::get_status_dict_()
 }
 
 void
-Node::set_local_device_id( const index )
+Node::set_local_device_id( const size_t )
 {
   assert( false and "set_local_device_id() called on a non-device node of type" );
 }
 
-index
+size_t
 Node::get_local_device_id() const
 {
   assert( false and "get_local_device_id() called on a non-device node." );

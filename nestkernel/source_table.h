@@ -138,7 +138,7 @@ private:
    * dimensional vector (thread|synapse) with an inner map (source
    * node id -> spike data).
    */
-  std::vector< std::vector< std::map< index, SpikeData > > > compressible_sources_;
+  std::vector< std::vector< std::map< size_t, SpikeData > > > compressible_sources_;
 
   /**
    * A structure to temporarily store locations of "unpacked spikes"
@@ -148,7 +148,7 @@ private:
    * connection infrastructure. Arranged as a two dimensional vector
    * (thread|synapse) with an inner map (source node id -> index).
    */
-  std::vector< std::vector< std::map< index, size_t > > > compressed_spike_data_map_;
+  std::vector< std::vector< std::map< size_t, size_t > > > compressed_spike_data_map_;
 
 public:
   SourceTable();
@@ -167,7 +167,7 @@ public:
   /**
    * Adds a source to sources_.
    */
-  void add_source( const thread tid, const synindex syn_id, const index node_id, const bool is_primary );
+  void add_source( const thread tid, const synindex syn_id, const size_t node_id, const bool is_primary );
 
   /**
    * Clears sources_.
@@ -212,7 +212,7 @@ public:
   /**
    * Returns the node ID of the source at tid|syn_id|lcid.
    */
-  index get_node_id( const thread tid, const synindex syn_id, const index lcid ) const;
+  size_t get_node_id( const thread tid, const synindex syn_id, const size_t lcid ) const;
 
   /**
    * Returns a reference to all sources local on thread; necessary
@@ -249,23 +249,23 @@ public:
    * connections.
    */
   void compute_buffer_pos_for_unique_secondary_sources( const thread tid,
-    std::map< index, size_t >& buffer_pos_of_source_node_id_syn_id_ );
+    std::map< size_t, size_t >& buffer_pos_of_source_node_id_syn_id_ );
 
   /**
    * Finds the first entry in sources_ at the given thread id and
    * synapse type that is equal to snode_id.
    */
-  index find_first_source( const thread tid, const synindex syn_id, const index snode_id ) const;
+  size_t find_first_source( const thread tid, const synindex syn_id, const size_t snode_id ) const;
 
   /**
    * Marks entry in sources_ at given position as disabled.
    */
-  void disable_connection( const thread tid, const synindex syn_id, const index lcid );
+  void disable_connection( const thread tid, const synindex syn_id, const size_t lcid );
 
   /**
    * Removes all entries from sources_ that are marked as disabled.
    */
-  index remove_disabled_sources( const thread tid, const synindex syn_id );
+  size_t remove_disabled_sources( const thread tid, const synindex syn_id );
 
   /**
    * Returns node IDs for entries in sources_ for the given thread
@@ -273,8 +273,8 @@ public:
    */
   void get_source_node_ids( const thread tid,
     const synindex syn_id,
-    const std::vector< index >& source_lcids,
-    std::vector< index >& sources );
+    const std::vector< size_t >& source_lcids,
+    std::vector< size_t >& sources );
 
   /**
    * Returns the number of unique node IDs for given thread id and
@@ -294,7 +294,7 @@ public:
    * Encodes combination of node ID and synapse types as single
    * long number.
    */
-  index pack_source_node_id_and_syn_id( const index source_node_id, const synindex syn_id ) const;
+  size_t pack_source_node_id_and_syn_id( const size_t source_node_id, const synindex syn_id ) const;
 
   void resize_compressible_sources();
 
@@ -307,7 +307,7 @@ public:
 };
 
 inline void
-SourceTable::add_source( const thread tid, const synindex syn_id, const index node_id, const bool is_primary )
+SourceTable::add_source( const thread tid, const synindex syn_id, const size_t node_id, const bool is_primary )
 {
   const Source src( node_id, is_primary );
   sources_[ tid ][ syn_id ].push_back( src );
@@ -419,8 +419,8 @@ SourceTable::no_targets_to_process( const thread tid )
   current_positions_[ tid ].lcid = -1;
 }
 
-inline index
-SourceTable::find_first_source( const thread tid, const synindex syn_id, const index snode_id ) const
+inline size_t
+SourceTable::find_first_source( const thread tid, const synindex syn_id, const size_t snode_id ) const
 {
   // binary search in sorted sources
   const BlockVector< Source >::const_iterator begin = sources_[ tid ][ syn_id ].begin();
@@ -433,7 +433,7 @@ SourceTable::find_first_source( const thread tid, const synindex syn_id, const i
   {
     if ( it->get_node_id() == snode_id and not it->is_disabled() )
     {
-      const index lcid = it - begin;
+      const size_t lcid = it - begin;
       return lcid;
     }
     ++it;
@@ -444,7 +444,7 @@ SourceTable::find_first_source( const thread tid, const synindex syn_id, const i
 }
 
 inline void
-SourceTable::disable_connection( const thread tid, const synindex syn_id, const index lcid )
+SourceTable::disable_connection( const thread tid, const synindex syn_id, const size_t lcid )
 {
   // disabling a source changes its node ID to 2^62 -1
   // source here
@@ -455,10 +455,10 @@ SourceTable::disable_connection( const thread tid, const synindex syn_id, const 
 inline void
 SourceTable::get_source_node_ids( const thread tid,
   const synindex syn_id,
-  const std::vector< index >& source_lcids,
-  std::vector< index >& sources )
+  const std::vector< size_t >& source_lcids,
+  std::vector< size_t >& sources )
 {
-  for ( std::vector< index >::const_iterator cit = source_lcids.begin(); cit != source_lcids.end(); ++cit )
+  for ( std::vector< size_t >::const_iterator cit = source_lcids.begin(); cit != source_lcids.end(); ++cit )
   {
     sources.push_back( sources_[ tid ][ syn_id ][ *cit ].get_node_id() );
   }
@@ -468,7 +468,7 @@ inline size_t
 SourceTable::num_unique_sources( const thread tid, const synindex syn_id ) const
 {
   size_t n = 0;
-  index last_source = 0;
+  size_t last_source = 0;
   for ( BlockVector< Source >::const_iterator cit = sources_[ tid ][ syn_id ].begin();
         cit != sources_[ tid ][ syn_id ].end();
         ++cit )
@@ -482,8 +482,8 @@ SourceTable::num_unique_sources( const thread tid, const synindex syn_id ) const
   return n;
 }
 
-inline index
-SourceTable::pack_source_node_id_and_syn_id( const index source_node_id, const synindex syn_id ) const
+inline size_t
+SourceTable::pack_source_node_id_and_syn_id( const size_t source_node_id, const synindex syn_id ) const
 {
   assert( source_node_id < 72057594037927936 );
   assert( syn_id < invalid_synindex );

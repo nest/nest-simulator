@@ -137,7 +137,7 @@ public:
   /**
    * Return node ID of receiving Node.
    */
-  index get_receiver_node_id() const;
+  size_t get_receiver_node_id() const;
 
   /**
    * Return reference to sending Node.
@@ -156,23 +156,23 @@ public:
    *
    * @note This will trigger an assertion if sender node id has not been set.
    */
-  index get_sender_node_id() const;
+  size_t get_sender_node_id() const;
 
   /**
    * Sender is not local. Retrieve node ID of sending Node from SourceTable and return it.
    */
-  index retrieve_sender_node_id_from_source_table() const;
+  size_t retrieve_sender_node_id_from_source_table() const;
 
   /**
    * Change node ID of sending Node.
    */
-  void set_sender_node_id( const index );
+  void set_sender_node_id( const size_t );
 
   /**
    * Set tid, syn_id, lcid of spike_data_.
    * These are required to retrieve the Node ID of a non-local sender from the SourceTable.
    */
-  void set_sender_node_id_info( const thread tid, const synindex syn_id, const index lcid );
+  void set_sender_node_id_info( const thread tid, const synindex syn_id, const size_t lcid );
 
   /**
    * Return time stamp of the event.
@@ -314,7 +314,7 @@ public:
   void set_stamp( Time const& );
 
 protected:
-  index sender_node_id_;        //!< node ID of sender or 0
+  size_t sender_node_id_;        //!< node ID of sender or 0
   SpikeData sender_spike_data_; //!< spike data of sender node, in some cases required to retrieve node ID
   /*
    * The original formulation used references to Nodes as
@@ -443,16 +443,16 @@ public:
   /**
    * Return node ID of receiving Node.
    */
-  index get_receiver_node_id() const;
+  size_t get_receiver_node_id() const;
 
   /**
    * Change node ID of receiving Node.
    */
 
-  void set_receiver_node_id( index );
+  void set_receiver_node_id( size_t );
 
 protected:
-  index receiver_node_id_; //!< node ID of receiver or 0.
+  size_t receiver_node_id_; //!< node ID of receiver or 0.
 };
 
 inline WeightRecorderEvent::WeightRecorderEvent()
@@ -467,12 +467,12 @@ WeightRecorderEvent::clone() const
 }
 
 inline void
-WeightRecorderEvent::set_receiver_node_id( index node_id )
+WeightRecorderEvent::set_receiver_node_id( size_t node_id )
 {
   receiver_node_id_ = node_id;
 }
 
-inline index
+inline size_t
 WeightRecorderEvent::get_receiver_node_id() const
 {
   return receiver_node_id_;
@@ -895,13 +895,13 @@ Event::set_sender( Node& s )
 }
 
 inline void
-Event::set_sender_node_id( const index node_id )
+Event::set_sender_node_id( const size_t node_id )
 {
   sender_node_id_ = node_id;
 }
 
 inline void
-Event::set_sender_node_id_info( const thread tid, const synindex syn_id, const index lcid )
+Event::set_sender_node_id_info( const thread tid, const synindex syn_id, const size_t lcid )
 {
   // lag and offset of SpikeData are not used here
   sender_spike_data_.set( tid, syn_id, lcid, 0, 0.0 );
@@ -919,7 +919,7 @@ Event::get_sender() const
   return *sender_;
 }
 
-inline index
+inline size_t
 Event::get_sender_node_id() const
 {
   assert( sender_node_id_ > 0 );

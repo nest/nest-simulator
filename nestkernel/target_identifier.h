@@ -170,7 +170,7 @@ TargetIdentifierIndex::set_target( Node* target )
 {
   kernel().node_manager.ensure_valid_thread_local_ids();
 
-  index target_lid = target->get_thread_lid();
+  size_t target_lid = target->get_thread_lid();
   if ( target_lid > max_targetindex )
   {
     throw IllegalConnection(

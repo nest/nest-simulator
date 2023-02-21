@@ -87,7 +87,7 @@ ModelManager::initialize()
   }
 
   // Re-create the node model list from the clean prototypes
-  for ( index i = 0; i < builtin_node_models_.size(); ++i )
+  for ( size_t i = 0; i < builtin_node_models_.size(); ++i )
   {
     // set the number of threads for the number of sli pools
     builtin_node_models_[ i ]->set_threads();
@@ -182,7 +182,7 @@ ModelManager::get_status( DictionaryDatum& dict )
   def< int >( dict, names::max_num_syn_models, MAX_SYN_ID + 1 );
 }
 
-index
+size_t
 ModelManager::copy_model( Name old_name, Name new_name, DictionaryDatum params )
 {
   if ( modeldict_->known( new_name ) or synapsedict_->known( new_name ) )
@@ -193,16 +193,16 @@ ModelManager::copy_model( Name old_name, Name new_name, DictionaryDatum params )
   const Token oldnodemodel = modeldict_->lookup( old_name );
   const Token oldsynmodel = synapsedict_->lookup( old_name );
 
-  index new_id;
+  size_t new_id;
   if ( not oldnodemodel.empty() )
   {
-    index old_id = static_cast< index >( oldnodemodel );
+    size_t old_id = static_cast< size_t >( oldnodemodel );
     new_id = copy_node_model_( old_id, new_name );
     set_node_defaults_( new_id, params );
   }
   else if ( not oldsynmodel.empty() )
   {
-    index old_id = static_cast< index >( oldsynmodel );
+    size_t old_id = static_cast< size_t >( oldsynmodel );
     new_id = copy_connection_model_( old_id, new_name );
     set_synapse_defaults_( new_id, params );
   }
@@ -214,10 +214,10 @@ ModelManager::copy_model( Name old_name, Name new_name, DictionaryDatum params )
   return new_id;
 }
 
-index
+size_t
 ModelManager::register_node_model_( Model* model )
 {
-  const index id = node_models_.size();
+  const size_t id = node_models_.size();
   const std::string name = model->get_name();
 
   model->set_model_id( id );
@@ -239,14 +239,14 @@ ModelManager::register_node_model_( Model* model )
   return id;
 }
 
-index
-ModelManager::copy_node_model_( index old_id, Name new_name )
+size_t
+ModelManager::copy_node_model_( size_t old_id, Name new_name )
 {
   Model* old_model = get_node_model( old_id );
   old_model->deprecation_warning( "CopyModel" );
 
   Model* new_model = old_model->clone( new_name.toString() );
-  const index new_id = node_models_.size();
+  const size_t new_id = node_models_.size();
   new_model->set_model_id( new_id );
 
   node_models_.push_back( new_model );
@@ -261,8 +261,8 @@ ModelManager::copy_node_model_( index old_id, Name new_name )
   return new_id;
 }
 
-index
-ModelManager::copy_connection_model_( index old_id, Name new_name )
+size_t
+ModelManager::copy_connection_model_( size_t old_id, Name new_name )
 {
   size_t new_id = connection_models_[ 0 ].size();
 
@@ -293,16 +293,16 @@ ModelManager::set_model_defaults( Name name, DictionaryDatum params )
   const Token nodemodel = modeldict_->lookup( name );
   const Token synmodel = synapsedict_->lookup( name );
 
-  index id;
+  size_t id;
   if ( not nodemodel.empty() )
   {
-    id = static_cast< index >( nodemodel );
+    id = static_cast< size_t >( nodemodel );
     set_node_defaults_( id, params );
     return true;
   }
   else if ( not synmodel.empty() )
   {
-    id = static_cast< index >( synmodel );
+    id = static_cast< size_t >( synmodel );
     set_synapse_defaults_( id, params );
     return true;
   }
@@ -314,7 +314,7 @@ ModelManager::set_model_defaults( Name name, DictionaryDatum params )
 
 
 void
-ModelManager::set_node_defaults_( index model_id, const DictionaryDatum& params )
+ModelManager::set_node_defaults_( size_t model_id, const DictionaryDatum& params )
 {
   params->clear_access_flags();
 
@@ -325,7 +325,7 @@ ModelManager::set_node_defaults_( index model_id, const DictionaryDatum& params 
 }
 
 void
-ModelManager::set_synapse_defaults_( index model_id, const DictionaryDatum& params )
+ModelManager::set_synapse_defaults_( size_t model_id, const DictionaryDatum& params )
 {
   params->clear_access_flags();
   assert_valid_syn_id( model_id );
@@ -362,7 +362,7 @@ ModelManager::set_synapse_defaults_( index model_id, const DictionaryDatum& para
   model_defaults_modified_ = true;
 }
 
-index
+size_t
 ModelManager::get_node_model_id( const Name name ) const
 {
   const Name model_name( name );
@@ -379,7 +379,7 @@ ModelManager::get_node_model_id( const Name name ) const
   return 0; // supress missing return value warning; never reached
 }
 
-index
+size_t
 ModelManager::get_synapse_model_id( std::string model_name )
 {
   const Token synmodel = synapsedict_->lookup( model_name );
@@ -387,7 +387,7 @@ ModelManager::get_synapse_model_id( std::string model_name )
   {
     throw UnknownSynapseType( model_name );
   }
-  return static_cast< index >( synmodel );
+  return static_cast< size_t >( synmodel );
 }
 
 DictionaryDatum
@@ -489,9 +489,9 @@ ModelManager::memory_info() const
 {
 
   std::cout.setf( std::ios::left );
-  std::vector< index > idx( node_models_.size() );
+  std::vector< size_t > idx( node_models_.size() );
 
-  for ( index i = 0; i < node_models_.size(); ++i )
+  for ( size_t i = 0; i < node_models_.size(); ++i )
   {
     idx[ i ] = i;
   }
@@ -505,7 +505,7 @@ ModelManager::memory_info() const
             << std::endl;
   std::cout << sep << std::endl;
 
-  for ( index i = 0; i < node_models_.size(); ++i )
+  for ( size_t i = 0; i < node_models_.size(); ++i )
   {
     Model* mod = node_models_[ idx[ i ] ];
     if ( mod->mem_capacity() != 0 )

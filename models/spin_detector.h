@@ -151,7 +151,7 @@ private:
    */
   void update( Time const&, const long, const long ) override;
 
-  index last_in_node_id_;
+  size_t last_in_node_id_;
   SpikeEvent last_event_;
   Time t_last_in_spike_;
 };

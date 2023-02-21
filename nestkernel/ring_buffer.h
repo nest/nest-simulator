@@ -360,10 +360,10 @@ class MultiChannelInputBuffer
 public:
   MultiChannelInputBuffer();
 
-  void add_value( const index slot, const index channel, const double value );
+  void add_value( const size_t slot, const size_t channel, const double value );
 
-  const std::array< double, num_channels >& get_values_all_channels( const index slot ) const;
-  void reset_values_all_channels( const index slot );
+  const std::array< double, num_channels >& get_values_all_channels( const size_t slot ) const;
+  void reset_values_all_channels( const size_t slot );
 
   void clear();
 
@@ -382,7 +382,7 @@ private:
 
 template < unsigned int num_channels >
 inline void
-MultiChannelInputBuffer< num_channels >::reset_values_all_channels( const index slot )
+MultiChannelInputBuffer< num_channels >::reset_values_all_channels( const size_t slot )
 {
   assert( slot < buffer_.size() );
   buffer_[ slot ].fill( 0.0 );
@@ -390,14 +390,14 @@ MultiChannelInputBuffer< num_channels >::reset_values_all_channels( const index 
 
 template < unsigned int num_channels >
 inline void
-MultiChannelInputBuffer< num_channels >::add_value( const index slot, const index channel, const double value )
+MultiChannelInputBuffer< num_channels >::add_value( const size_t slot, const size_t channel, const double value )
 {
   buffer_[ slot ][ channel ] += value;
 }
 
 template < unsigned int num_channels >
 inline const std::array< double, num_channels >&
-MultiChannelInputBuffer< num_channels >::get_values_all_channels( const index slot ) const
+MultiChannelInputBuffer< num_channels >::get_values_all_channels( const size_t slot ) const
 {
   assert( slot < buffer_.size() );
   return buffer_[ slot ];

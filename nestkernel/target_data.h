@@ -46,12 +46,12 @@ public:
   /**
    * Sets the local connection ID.
    */
-  void set_lcid( const index lcid );
+  void set_lcid( const size_t lcid );
 
   /**
    * Returns the local connection ID.
    */
-  index get_lcid() const;
+  size_t get_lcid() const;
 
   /**
    * Sets the target ID.
@@ -78,12 +78,12 @@ public:
 using success_target_data_fields_size = StaticAssert< sizeof( TargetDataFields ) == 8 >::success;
 
 inline void
-TargetDataFields::set_lcid( const index lcid )
+TargetDataFields::set_lcid( const size_t lcid )
 {
   lcid_ = lcid;
 }
 
-inline index
+inline size_t
 TargetDataFields::get_lcid() const
 {
   return lcid_;
@@ -205,9 +205,9 @@ public:
   bool is_complete_marker() const;
   bool is_end_marker() const;
   bool is_invalid_marker() const;
-  void set_source_lid( const index source_lid );
+  void set_source_lid( const size_t source_lid );
   void set_source_tid( const thread source_tid );
-  index get_source_lid() const;
+  size_t get_source_lid() const;
   thread get_source_tid() const;
   void set_is_primary( const bool is_primary );
   bool is_primary() const;
@@ -259,7 +259,7 @@ TargetData::is_invalid_marker() const
 }
 
 inline void
-TargetData::set_source_lid( const index source_lid )
+TargetData::set_source_lid( const size_t source_lid )
 {
   assert( source_lid < MAX_LID );
   source_lid_ = source_lid;
@@ -272,7 +272,7 @@ TargetData::set_source_tid( const thread source_tid )
   source_tid_ = source_tid;
 }
 
-inline index
+inline size_t
 TargetData::get_source_lid() const
 {
   return source_lid_;

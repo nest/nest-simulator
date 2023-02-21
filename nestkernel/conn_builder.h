@@ -80,7 +80,7 @@ public:
   ConnBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector< DictionaryDatum >& );
   virtual ~ConnBuilder();
 
-  index
+  size_t
   get_synapse_model() const
   {
     if ( synapse_model_id_.size() > 1 )
@@ -105,7 +105,7 @@ public:
 
   bool all_parameters_scalar_() const;
 
-  bool change_connected_synaptic_elements( index, index, const int, int );
+  bool change_connected_synaptic_elements( size_t, size_t, const int, int );
 
   virtual bool
   supports_symmetric() const
@@ -145,11 +145,11 @@ protected:
     throw NotImplemented( "This connection rule is not implemented for structural plasticity." );
   }
 
-  void update_param_dict_( index snode_id, Node& target, thread target_thread, RngPtr rng, index indx );
+  void update_param_dict_( size_t snode_id, Node& target, thread target_thread, RngPtr rng, size_t indx );
 
   //! Create connection between given nodes, fill parameter values
-  void single_connect_( index, Node&, thread, RngPtr );
-  void single_disconnect_( index, Node&, thread );
+  void single_connect_( size_t, Node&, thread, RngPtr );
+  void single_disconnect_( size_t, Node&, thread );
 
   /**
    * Moves pointer in parameter array.
@@ -206,7 +206,7 @@ protected:
   //! pointers to connection parameters specified as arrays
   std::vector< ConnParameter* > parameters_requiring_skipping_;
 
-  std::vector< index > synapse_model_id_;
+  std::vector< size_t > synapse_model_id_;
 
   //! dictionaries to pass to connect function, one per thread for every syn_spec
   std::vector< std::vector< DictionaryDatum > > param_dicts_;
@@ -314,7 +314,7 @@ protected:
   void sp_disconnect_() override;
 
 private:
-  void inner_connect_( const int, RngPtr, Node*, index, bool );
+  void inner_connect_( const int, RngPtr, Node*, size_t, bool );
 };
 
 
@@ -330,7 +330,7 @@ protected:
   void connect_() override;
 
 private:
-  void inner_connect_( const int, RngPtr, Node*, index, bool, long );
+  void inner_connect_( const int, RngPtr, Node*, size_t, bool, long );
   ParameterDatum indegree_;
 };
 
@@ -376,7 +376,7 @@ protected:
   void connect_() override;
 
 private:
-  void inner_connect_( const int, RngPtr, Node*, index );
+  void inner_connect_( const int, RngPtr, Node*, size_t );
   ParameterDatum p_; //!< connection probability
 };
 
@@ -430,7 +430,7 @@ public:
   /**
    *  @note Only for internal use by SPManager.
    */
-  void sp_connect( const std::vector< index >& sources, const std::vector< index >& targets );
+  void sp_connect( const std::vector< size_t >& sources, const std::vector< size_t >& targets );
 
 protected:
   using ConnBuilder::connect_;
@@ -442,7 +442,7 @@ protected:
    * @param sources nodes from which synapses can be created
    * @param targets target nodes for the newly created synapses
    */
-  void connect_( const std::vector< index >& sources, const std::vector< index >& targets );
+  void connect_( const std::vector< size_t >& sources, const std::vector< size_t >& targets );
 };
 
 inline void

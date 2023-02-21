@@ -125,11 +125,7 @@ const tic_t tic_t_min = LONG_MIN;
 /**
  *  Unsigned long type for enumerations.
  */
-typedef size_t index;
-#ifndef SIZE_MAX
-#define SIZE_MAX ( static_cast< std::size_t >( -1 ) )
-#endif
-__attribute__( ( __unused__ ) ) const index invalid_index = SIZE_MAX;
+__attribute__( ( __unused__ ) ) const size_t invalid_index = std::numeric_limits< size_t >::max();
 
 /**
  *  For enumerations of synapse types.
@@ -145,7 +141,7 @@ const synindex invalid_synindex = MAX_SYN_ID;
 //! target index into thread local node vector
 typedef unsigned short targetindex;
 const targetindex invalid_targetindex = USHRT_MAX;
-__attribute__( ( __unused__ ) ) const index max_targetindex = invalid_targetindex - 1;
+__attribute__( ( __unused__ ) ) const size_t max_targetindex = invalid_targetindex - 1;
 
 /**
  * Thread index type.

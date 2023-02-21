@@ -324,7 +324,7 @@ private:
   // dopa_spikes_idx_ refers to the dopamine spike that has just been processes
   // after trigger_update_weight a pseudo dopamine spike at t_trig is stored at
   // index 0 and dopa_spike_idx_ = 0
-  index dopa_spikes_idx_;
+  size_t dopa_spikes_idx_;
 
   // time of last update, which is either time of last presyn. spike or
   // time-driven update

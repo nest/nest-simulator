@@ -148,8 +148,8 @@ public:
    * hence treated just as devices during node creation, we need to
    * define the corresponding setter and getter for local_device_id.
    **/
-  void set_local_device_id( const index ldid ) override;
-  index get_local_device_id() const override;
+  void set_local_device_id( const size_t ldid ) override;
+  size_t get_local_device_id() const override;
 
   const std::vector< spikecounter >& deliver_spikes();
 
@@ -184,7 +184,7 @@ private:
   Parameters_ P_;
   Buffers_ B_;
 
-  index local_device_id_;
+  size_t local_device_id_;
 };
 
 inline port
@@ -220,12 +220,12 @@ volume_transmitter::deliver_spikes()
 }
 
 inline void
-volume_transmitter::set_local_device_id( const index ldid )
+volume_transmitter::set_local_device_id( const size_t ldid )
 {
   local_device_id_ = ldid;
 }
 
-inline index
+inline size_t
 volume_transmitter::get_local_device_id() const
 {
   return local_device_id_;

@@ -40,7 +40,7 @@ VPManager::get_vp() const
 }
 
 inline thread
-VPManager::node_id_to_vp( const index node_id ) const
+VPManager::node_id_to_vp( const size_t node_id ) const
 {
   return node_id % get_num_virtual_processes();
 }
@@ -70,23 +70,23 @@ VPManager::thread_to_vp( const thread tid ) const
 }
 
 inline bool
-VPManager::is_node_id_vp_local( const index node_id ) const
+VPManager::is_node_id_vp_local( const size_t node_id ) const
 {
-  return ( node_id % get_num_virtual_processes() == static_cast< index >( get_vp() ) );
+  return ( node_id % get_num_virtual_processes() == static_cast< size_t >( get_vp() ) );
 }
 
-inline index
-VPManager::node_id_to_lid( const index node_id ) const
+inline size_t
+VPManager::node_id_to_lid( const size_t node_id ) const
 {
   // starts at lid 0 for node_ids >= 1 (expected value for neurons, excl. node ID 0)
   return std::ceil( static_cast< double >( node_id ) / get_num_virtual_processes() ) - 1;
 }
 
-inline index
-VPManager::lid_to_node_id( const index lid ) const
+inline size_t
+VPManager::lid_to_node_id( const size_t lid ) const
 {
-  const index vp = get_vp();
-  return ( lid + static_cast< index >( vp == 0 ) ) * get_num_virtual_processes() + vp;
+  const size_t vp = get_vp();
+  return ( lid + static_cast< size_t >( vp == 0 ) ) * get_num_virtual_processes() + vp;
 }
 
 inline thread

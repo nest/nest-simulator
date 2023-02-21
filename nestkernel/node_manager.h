@@ -62,7 +62,7 @@ public:
    * Get properties of a node. The specified node must exist.
    * @throws nest::UnknownNode       Target does not exist in the network.
    */
-  DictionaryDatum get_status( index );
+  DictionaryDatum get_status( size_t );
 
   /**
    * Set properties of a Node. The specified node must exist.
@@ -71,7 +71,7 @@ public:
    *                                          entry.
    * @throws TypeMismatch   Array is not a flat & homogeneous array of integers.
    */
-  void set_status( index, const DictionaryDatum& );
+  void set_status( size_t, const DictionaryDatum& );
 
   /**
    * Add a number of nodes to the network.
@@ -82,7 +82,7 @@ public:
    * specified.
    * @returns NodeCollection as lock pointer
    */
-  NodeCollectionPTR add_node( index m, long n = 1 );
+  NodeCollectionPTR add_node( size_t m, long n = 1 );
 
   /**
    * Get node ID's of all nodes with the given properties.
@@ -103,17 +103,17 @@ public:
   /**
    * Return total number of network nodes.
    */
-  index size() const;
+  size_t size() const;
 
   /**
    * Returns the maximal number of nodes per virtual process.
    */
-  index get_max_num_local_nodes() const;
+  size_t get_max_num_local_nodes() const;
 
   /**
    * Returns the number of devices per thread.
    */
-  index get_num_thread_local_devices( thread t ) const;
+  size_t get_num_thread_local_devices( thread t ) const;
 
   /**
    * Print network information.
@@ -128,7 +128,7 @@ public:
   /**
    * Return true, if the given node ID is on the local machine
    */
-  bool is_local_node_id( index node_id ) const;
+  bool is_local_node_id( size_t node_id ) const;
 
   /**
    * Return pointer to the specified Node. The function expects that
@@ -141,13 +141,13 @@ public:
    *
    * @ingroup net_access
    */
-  Node* get_node_or_proxy( index node_id, thread tid );
+  Node* get_node_or_proxy( size_t node_id, thread tid );
 
   /**
    * Return pointer of the specified Node.
    * @param i Index of the specified Node.
    */
-  Node* get_node_or_proxy( index );
+  Node* get_node_or_proxy( size_t );
 
   /*
    * Return pointer of Node on the thread we are on.
@@ -157,7 +157,7 @@ public:
    *
    * @params node_id Index of the Node.
    */
-  Node* get_mpi_local_node_or_device_head( index );
+  Node* get_mpi_local_node_or_device_head( size_t );
 
   /**
    * Return a vector that contains the thread siblings.
@@ -167,7 +167,7 @@ public:
    *
    * @ingroup net_access
    */
-  std::vector< Node* > get_thread_siblings( index n ) const;
+  std::vector< Node* > get_thread_siblings( size_t n ) const;
 
   /**
    * Ensure that all nodes in the network have valid thread-local IDs.
@@ -264,7 +264,7 @@ private:
    * @param min_node_id node ID of first neuron to create.
    * @param max_node_id node ID of last neuron to create (inclusive).
    */
-  void add_neurons_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr );
+  void add_neurons_( Model& model, size_t min_node_id, size_t max_node_id, NodeCollectionPTR nc_ptr );
 
   /**
    * Add device nodes.
@@ -275,7 +275,7 @@ private:
    * @param min_node_id node ID of first neuron to create.
    * @param max_node_id node ID of last neuron to create (inclusive).
    */
-  void add_devices_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr );
+  void add_devices_( Model& model, size_t min_node_id, size_t max_node_id, NodeCollectionPTR nc_ptr );
 
   /**
    * Add MUSIC nodes.
@@ -287,7 +287,7 @@ private:
    * @param min_node_id node ID of first neuron to create.
    * @param max_node_id node ID of last neuron to create (inclusive).
    */
-  void add_music_nodes_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr );
+  void add_music_nodes_( Model& model, size_t min_node_id, size_t max_node_id, NodeCollectionPTR nc_ptr );
 
 private:
   /**
@@ -301,10 +301,10 @@ private:
   bool wfr_is_used_;                                  //!< there is at least one node that uses
                                                       //!< waveform relaxation
   //! Network size when wfr_nodes_vec_ was last updated
-  index wfr_network_size_;
+  size_t wfr_network_size_;
   size_t num_active_nodes_; //!< number of nodes created by prepare_nodes
 
-  std::vector< index > num_thread_local_devices_; //!< stores number of thread local devices
+  std::vector< size_t > num_thread_local_devices_; //!< stores number of thread local devices
 
   bool have_nodes_changed_; //!< true if new nodes have been created
                             //!< since startup or last call to simulate
@@ -316,7 +316,7 @@ private:
   Stopwatch sw_construction_create_;
 };
 
-inline index
+inline size_t
 NodeManager::size() const
 {
   return local_nodes_[ 0 ].get_max_node_id();

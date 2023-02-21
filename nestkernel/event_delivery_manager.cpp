@@ -247,7 +247,7 @@ EventDeliveryManager::update_moduli()
    * Note that for updating the modulos, it is sufficient
    * to rotate the buffer to the left.
    */
-  assert( moduli_.size() == ( index ) ( min_delay + max_delay ) );
+  assert( moduli_.size() == ( size_t ) ( min_delay + max_delay ) );
   std::rotate( moduli_.begin(), moduli_.begin() + min_delay, moduli_.end() );
 
   /*
@@ -617,8 +617,8 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
       {
         if ( spike_data.get_tid() == tid )
         {
-          const index syn_id = spike_data.get_syn_id();
-          const index lcid = spike_data.get_lcid();
+          const size_t syn_id = spike_data.get_syn_id();
+          const size_t lcid = spike_data.get_lcid();
 
           // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
           // only if needed, as this is computationally costly
@@ -628,17 +628,17 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
       }
       else
       {
-        const index syn_id = spike_data.get_syn_id();
+        const size_t syn_id = spike_data.get_syn_id();
         // for compressed spikes lcid holds the index in the
         // compressed_spike_data structure
-        const index idx = spike_data.get_lcid();
+        const size_t idx = spike_data.get_lcid();
         const std::vector< SpikeData >& compressed_spike_data =
           kernel().connection_manager.get_compressed_spike_data( syn_id, idx );
         for ( auto it = compressed_spike_data.cbegin(); it != compressed_spike_data.cend(); ++it )
         {
           if ( it->get_tid() == tid )
           {
-            const index lcid = it->get_lcid();
+            const size_t lcid = it->get_lcid();
 
             // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
             // only if needed, as this is computationally costly

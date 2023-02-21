@@ -420,13 +420,13 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
     size_t per_thread_max_spikes_per_rank;
     if ( off_grid_spiking_ )
     {
-      per_thread_max_spikes_per_rank =
-      collocate_spike_data_buffers_( tid, assigned_ranks, send_buffer_position, off_grid_emitted_spike_register_, send_buffer );
+      per_thread_max_spikes_per_rank = collocate_spike_data_buffers_(
+        tid, assigned_ranks, send_buffer_position, off_grid_emitted_spike_register_, send_buffer );
     }
     else
     {
-      per_thread_max_spikes_per_rank =
-      collocate_spike_data_buffers_( tid, assigned_ranks, send_buffer_position, emitted_spikes_register_, send_buffer );
+      per_thread_max_spikes_per_rank = collocate_spike_data_buffers_(
+        tid, assigned_ranks, send_buffer_position, emitted_spikes_register_, send_buffer );
     }
     // At this point, all send_buffer entries with spikes to be transmitted, as well
     // as all chunk-end entries, have marker DEFAULT.

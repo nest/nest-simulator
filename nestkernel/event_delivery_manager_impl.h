@@ -126,12 +126,10 @@ EventDeliveryManager::send_off_grid_remote( thread tid, SpikeEvent& e, const lon
 
   for ( std::vector< Target >::const_iterator it = targets.begin(); it != targets.end(); ++it )
   {
-    const thread assigned_tid = ( *it ).get_rank() / kernel().vp_manager.get_num_assigned_ranks_per_thread();
-
     // Unroll spike multiplicity as plastic synapses only handle individual spikes.
     for ( int i = 0; i < e.get_multiplicity(); ++i )
     {
-      off_grid_emitted_spike_register_[ tid ][ assigned_tid ][ lag ].push_back( OffGridTarget( *it, e.get_offset() ) );
+      ( *off_grid_emitted_spike_register_[ tid ] )[ lag ].push_back( OffGridTarget( *it, e.get_offset() ) );
     }
   }
 }

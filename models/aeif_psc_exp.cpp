@@ -427,9 +427,7 @@ nest::aeif_psc_exp::pre_run_hook()
 void
 nest::aeif_psc_exp::update( const Time& origin, const long from, const long to )
 {
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-  assert( State_::V_M == 0 );
+      assert( State_::V_M == 0 );
 
   for ( long lag = from; lag < to; ++lag )
   {

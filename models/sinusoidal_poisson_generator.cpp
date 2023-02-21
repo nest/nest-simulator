@@ -229,8 +229,6 @@ nest::sinusoidal_poisson_generator::pre_run_hook()
 void
 nest::sinusoidal_poisson_generator::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
 
   const long start = origin.get_steps();
 

@@ -315,9 +315,6 @@ nest::iaf_psc_exp_ps_lossless::pre_run_hook()
 void
 nest::iaf_psc_exp_ps_lossless::update( const Time& origin, const long from, const long to )
 {
-  assert( to >= 0 );
-  assert( static_cast< delay >( from ) < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
 
   // at start of slice, tell input queue to prepare for delivery
   if ( from == 0 )

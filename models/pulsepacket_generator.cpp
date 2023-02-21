@@ -166,9 +166,6 @@ nest::pulsepacket_generator::pre_run_hook()
 void
 nest::pulsepacket_generator::update( Time const& T, const long from, const long to )
 {
-  assert( to >= from );
-  assert( ( to - from ) <= kernel().connection_manager.get_min_delay() );
-
   if ( ( V_.start_center_idx_ == P_.pulse_times_.size() and B_.spiketimes_.empty() )
     or ( not StimulationDevice::is_active( T ) ) )
   {

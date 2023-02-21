@@ -1806,7 +1806,8 @@ nest::BernoulliAstroBuilder::connect_()
         {
           LOG( M_WARNING,
             "BernoulliAstroBuilder::connect",
-            "User demands p=1 and autapses not allowed, but targets overlap with sources. In this case, p=1 is approximated but not exact.");
+            "Indegree equals source size and targets overlap with sources, but autapses not allowed. "
+            "In this case, connection probability p could be not exact. ");
           indegree -= 1;
         }
         assert( indegree <= sources_->size() );

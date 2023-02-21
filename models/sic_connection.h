@@ -145,11 +145,11 @@ public:
     weight_ = w;
   }
 
-  // void
-  // set_delay( double )
-  // {
-  //   throw BadProperty( "sic_connection connection has no delay" );
-  // }
+  void
+  set_delay( double )
+  {
+    throw BadProperty( "sic_connection connection has no delay" );
+  }
 
 private:
   double weight_; //!< connection weight
@@ -178,11 +178,11 @@ template < typename targetidentifierT >
 void
 SICConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
-  // // If the delay is set, we throw a BadProperty
-  // if ( d->known( names::delay ) )
-  // {
-  //   throw BadProperty( "sic_connection connection has no delay" );
-  // }
+  // If the delay is set, we throw a BadProperty
+  if ( d->known( names::delay ) )
+  {
+    throw BadProperty( "sic_connection connection has no delay" );
+  }
 
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );

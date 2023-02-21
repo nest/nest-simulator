@@ -718,23 +718,23 @@ public:
    * The assignment is done after node creation by the Network class.
    * @see: NodeManager::add_node().
    */
-  void set_thread( thread );
+  void set_thread( size_t );
 
   /**
    * Retrieve the number of the thread to which the node is assigned.
    */
-  thread get_thread() const;
+  size_t get_thread() const;
 
   /**
    * Store the number of the virtual process to which the node is assigned.
    * This is assigned to the node in NodeManager::add_node().
    */
-  void set_vp( thread );
+  void set_vp( size_t );
 
   /**
    * Retrieve the number of the virtual process to which the node is assigned.
    */
-  thread get_vp() const;
+  size_t get_vp() const;
 
   /** Set the model id.
    * This method is called by NodeManager::add_node() when a node is created.
@@ -902,8 +902,8 @@ private:
    */
   int model_id_;
 
-  thread thread_;      //!< thread node is assigned to
-  thread vp_;          //!< virtual process node is assigned to
+  size_t thread_;      //!< thread node is assigned to
+  size_t vp_;          //!< virtual process node is assigned to
   bool frozen_;        //!< node shall not be updated if true
   bool initialized_;   //!< state and buffers have been initialized
   bool node_uses_wfr_; //!< node uses waveform relaxation method
@@ -1015,24 +1015,24 @@ Node::is_model_prototype() const
 }
 
 inline void
-Node::set_thread( thread t )
+Node::set_thread( size_t t )
 {
   thread_ = t;
 }
 
-inline thread
+inline size_t
 Node::get_thread() const
 {
   return thread_;
 }
 
 inline void
-Node::set_vp( thread vp )
+Node::set_vp( size_t vp )
 {
   vp_ = vp;
 }
 
-inline thread
+inline size_t
 Node::get_vp() const
 {
   return vp_;

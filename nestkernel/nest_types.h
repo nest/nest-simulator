@@ -144,17 +144,9 @@ const targetindex invalid_targetindex = USHRT_MAX;
 __attribute__( ( __unused__ ) ) const size_t max_targetindex = invalid_targetindex - 1;
 
 /**
- * Thread index type.
- * NEST threads are assigned non-negative numbers for
- * identification.
- * For invalid or undefined threads, the value -1 is used.
- */
-typedef int thread;
-
-/**
  * Value for invalid connection port number.
  */
-const thread invalid_thread = -1;
+const size_t invalid_thread = std::numeric_limits< size_t >::max();
 
 /**
  * Connection port number to distinguish incoming connections,

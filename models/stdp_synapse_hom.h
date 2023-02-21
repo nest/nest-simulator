@@ -198,7 +198,7 @@ public:
    * Send an event to the receiver of this connection.
    * \param e The event to send
    */
-  void send( Event& e, thread t, const STDPHomCommonProperties& );
+  void send( Event& e, size_t t, const STDPHomCommonProperties& );
 
   void
   set_weight( double w )
@@ -286,7 +286,7 @@ stdp_synapse_hom< targetidentifierT >::stdp_synapse_hom()
  */
 template < typename targetidentifierT >
 inline void
-stdp_synapse_hom< targetidentifierT >::send( Event& e, thread t, const STDPHomCommonProperties& cp )
+stdp_synapse_hom< targetidentifierT >::send( Event& e, size_t t, const STDPHomCommonProperties& cp )
 {
   // synapse STDP depressing/facilitation dynamics
 

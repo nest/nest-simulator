@@ -155,7 +155,7 @@ nest::VPManager::get_status( DictionaryDatum& d )
 }
 
 void
-nest::VPManager::set_num_threads( nest::thread n_threads )
+nest::VPManager::set_num_threads( size_t n_threads )
 {
   if ( kernel().sp_manager.is_structural_plasticity_enabled() and n_threads > 1 )
   {

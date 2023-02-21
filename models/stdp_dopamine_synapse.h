@@ -246,9 +246,9 @@ public:
    * Send an event to the receiver of this connection.
    * \param e The event to send
    */
-  void send( Event& e, thread t, const STDPDopaCommonProperties& cp );
+  void send( Event& e, size_t t, const STDPDopaCommonProperties& cp );
 
-  void trigger_update_weight( thread t,
+  void trigger_update_weight( size_t t,
     const std::vector< spikecounter >& dopa_spikes,
     double t_trig,
     const STDPDopaCommonProperties& cp );
@@ -540,7 +540,7 @@ stdp_dopamine_synapse< targetidentifierT >::depress_( double kminus, const STDPD
  */
 template < typename targetidentifierT >
 inline void
-stdp_dopamine_synapse< targetidentifierT >::send( Event& e, thread t, const STDPDopaCommonProperties& cp )
+stdp_dopamine_synapse< targetidentifierT >::send( Event& e, size_t t, const STDPDopaCommonProperties& cp )
 {
   Node* target = get_target( t );
 
@@ -592,7 +592,7 @@ stdp_dopamine_synapse< targetidentifierT >::send( Event& e, thread t, const STDP
 
 template < typename targetidentifierT >
 inline void
-stdp_dopamine_synapse< targetidentifierT >::trigger_update_weight( thread t,
+stdp_dopamine_synapse< targetidentifierT >::trigger_update_weight( size_t t,
   const std::vector< spikecounter >& dopa_spikes,
   const double t_trig,
   const STDPDopaCommonProperties& cp )

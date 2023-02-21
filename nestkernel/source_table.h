@@ -105,7 +105,7 @@ private:
    * thread is not responsible for the particular part of the MPI
    * buffer where this entry would be written.
    */
-  bool source_should_be_processed_( const thread rank_start, const thread rank_end, const Source& source ) const;
+  bool source_should_be_processed_( const size_t rank_start, const size_t rank_end, const Source& source ) const;
 
   /**
    * Returns true if the following entry in the SourceTable has the
@@ -126,7 +126,7 @@ private:
    */
   bool populate_target_data_fields_( const SourceTablePosition& current_position,
     const Source& current_source,
-    const thread source_rank,
+    const size_t source_rank,
     TargetData& next_target_data ) const;
 
   /**
@@ -167,12 +167,12 @@ public:
   /**
    * Adds a source to sources_.
    */
-  void add_source( const thread tid, const synindex syn_id, const size_t node_id, const bool is_primary );
+  void add_source( const size_t tid, const synindex syn_id, const size_t node_id, const bool is_primary );
 
   /**
    * Clears sources_.
    */
-  void clear( const thread tid );
+  void clear( const size_t tid );
 
   /**
    * Returns true if sources_ has been cleared.
@@ -182,43 +182,43 @@ public:
   /**
    * Returns the next target data, according to the current_positions_.
    */
-  bool get_next_target_data( const thread tid,
-    const thread rank_start,
-    const thread rank_end,
-    thread& source_rank,
+  bool get_next_target_data( const size_t tid,
+    const size_t rank_start,
+    const size_t rank_end,
+    size_t& source_rank,
     TargetData& next_target_data );
 
   /**
    * Rejects the last target data, and resets the current_positions_
    * accordingly.
    */
-  void reject_last_target_data( const thread tid );
+  void reject_last_target_data( const size_t tid );
 
   /**
    * Stores current_positions_ in saved_positions_.
    */
-  void save_entry_point( const thread tid );
+  void save_entry_point( const size_t tid );
 
   /**
    * Restores current_positions_ from saved_positions_.
    */
-  void restore_entry_point( const thread tid );
+  void restore_entry_point( const size_t tid );
 
   /**
    * Resets saved_positions_ to end of sources_.
    */
-  void reset_entry_point( const thread tid );
+  void reset_entry_point( const size_t tid );
 
   /**
    * Returns the node ID of the source at tid|syn_id|lcid.
    */
-  size_t get_node_id( const thread tid, const synindex syn_id, const size_t lcid ) const;
+  size_t get_node_id( const size_t tid, const synindex syn_id, const size_t lcid ) const;
 
   /**
    * Returns a reference to all sources local on thread; necessary
    * for sorting.
    */
-  std::vector< BlockVector< Source > >& get_thread_local_sources( const thread tid );
+  std::vector< BlockVector< Source > >& get_thread_local_sources( const size_t tid );
 
   /**
    * Determines maximal saved_positions_ after which it is safe to
@@ -230,48 +230,48 @@ public:
    * Resets all processed flags. Needed for restructuring connection
    * tables, e.g., during structural plasticity update.
    */
-  void reset_processed_flags( const thread tid );
+  void reset_processed_flags( const size_t tid );
 
   /**
    * Removes all entries marked as processed.
    */
-  void clean( const thread tid );
+  void clean( const size_t tid );
 
   /**
    * Sets current_positions_ for this thread to minimal values so that
    * these are not considered in find_maximal_position().
    */
-  void no_targets_to_process( const thread tid );
+  void no_targets_to_process( const size_t tid );
 
   /**
    * Computes MPI buffer positions for unique combination of source
    * node ID and synapse type across all threads for all secondary
    * connections.
    */
-  void compute_buffer_pos_for_unique_secondary_sources( const thread tid,
+  void compute_buffer_pos_for_unique_secondary_sources( const size_t tid,
     std::map< size_t, size_t >& buffer_pos_of_source_node_id_syn_id_ );
 
   /**
    * Finds the first entry in sources_ at the given thread id and
    * synapse type that is equal to snode_id.
    */
-  size_t find_first_source( const thread tid, const synindex syn_id, const size_t snode_id ) const;
+  size_t find_first_source( const size_t tid, const synindex syn_id, const size_t snode_id ) const;
 
   /**
    * Marks entry in sources_ at given position as disabled.
    */
-  void disable_connection( const thread tid, const synindex syn_id, const size_t lcid );
+  void disable_connection( const size_t tid, const synindex syn_id, const size_t lcid );
 
   /**
    * Removes all entries from sources_ that are marked as disabled.
    */
-  size_t remove_disabled_sources( const thread tid, const synindex syn_id );
+  size_t remove_disabled_sources( const size_t tid, const synindex syn_id );
 
   /**
    * Returns node IDs for entries in sources_ for the given thread
    * id, synapse type and local connections ids.
    */
-  void get_source_node_ids( const thread tid,
+  void get_source_node_ids( const size_t tid,
     const synindex syn_id,
     const std::vector< size_t >& source_lcids,
     std::vector< size_t >& sources );
@@ -282,13 +282,13 @@ public:
    * of targets that need to be communicated during construction of
    * the presynaptic connection infrastructure.
    */
-  size_t num_unique_sources( const thread tid, const synindex syn_id ) const;
+  size_t num_unique_sources( const size_t tid, const synindex syn_id ) const;
 
   /**
    * Resizes sources_ according to total number of threads and
    * synapse types.
    */
-  void resize_sources( const thread tid );
+  void resize_sources( const size_t tid );
 
   /**
    * Encodes combination of node ID and synapse types as single
@@ -299,22 +299,22 @@ public:
   void resize_compressible_sources();
 
   // creates maps of sources with more than one thread-local target
-  void collect_compressible_sources( const thread tid );
+  void collect_compressible_sources( const size_t tid );
   // fills the compressed_spike_data structure in ConnectionManager
   void fill_compressed_spike_data( std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data );
 
-  void clear_compressed_spike_data_map( const thread tid );
+  void clear_compressed_spike_data_map( const size_t tid );
 };
 
 inline void
-SourceTable::add_source( const thread tid, const synindex syn_id, const size_t node_id, const bool is_primary )
+SourceTable::add_source( const size_t tid, const synindex syn_id, const size_t node_id, const bool is_primary )
 {
   const Source src( node_id, is_primary );
   sources_[ tid ][ syn_id ].push_back( src );
 }
 
 inline void
-SourceTable::clear( const thread tid )
+SourceTable::clear( const size_t tid )
 {
   for ( std::vector< BlockVector< Source > >::iterator it = sources_[ tid ].begin(); it != sources_[ tid ].end(); ++it )
   {
@@ -325,7 +325,7 @@ SourceTable::clear( const thread tid )
 }
 
 inline void
-SourceTable::reject_last_target_data( const thread tid )
+SourceTable::reject_last_target_data( const size_t tid )
 {
   // The last target data returned by get_next_target_data() could not
   // be inserted into MPI buffer due to overflow. We hence need to
@@ -339,7 +339,7 @@ SourceTable::reject_last_target_data( const thread tid )
 }
 
 inline void
-SourceTable::save_entry_point( const thread tid )
+SourceTable::save_entry_point( const size_t tid )
 {
   if ( saved_entry_point_[ tid ].is_false() )
   {
@@ -366,14 +366,14 @@ SourceTable::save_entry_point( const thread tid )
 }
 
 inline void
-SourceTable::restore_entry_point( const thread tid )
+SourceTable::restore_entry_point( const size_t tid )
 {
   current_positions_[ tid ] = saved_positions_[ tid ];
   saved_entry_point_[ tid ].set_false();
 }
 
 inline void
-SourceTable::reset_entry_point( const thread tid )
+SourceTable::reset_entry_point( const size_t tid )
 {
   // Since we read the source table backwards, we need to set saved
   // values to the biggest possible value. These will be used to
@@ -400,7 +400,7 @@ SourceTable::reset_entry_point( const thread tid )
 }
 
 inline void
-SourceTable::reset_processed_flags( const thread tid )
+SourceTable::reset_processed_flags( const size_t tid )
 {
   for ( std::vector< BlockVector< Source > >::iterator it = sources_[ tid ].begin(); it != sources_[ tid ].end(); ++it )
   {
@@ -412,7 +412,7 @@ SourceTable::reset_processed_flags( const thread tid )
 }
 
 inline void
-SourceTable::no_targets_to_process( const thread tid )
+SourceTable::no_targets_to_process( const size_t tid )
 {
   current_positions_[ tid ].tid = -1;
   current_positions_[ tid ].syn_id = -1;
@@ -420,7 +420,7 @@ SourceTable::no_targets_to_process( const thread tid )
 }
 
 inline size_t
-SourceTable::find_first_source( const thread tid, const synindex syn_id, const size_t snode_id ) const
+SourceTable::find_first_source( const size_t tid, const synindex syn_id, const size_t snode_id ) const
 {
   // binary search in sorted sources
   const BlockVector< Source >::const_iterator begin = sources_[ tid ][ syn_id ].begin();
@@ -444,7 +444,7 @@ SourceTable::find_first_source( const thread tid, const synindex syn_id, const s
 }
 
 inline void
-SourceTable::disable_connection( const thread tid, const synindex syn_id, const size_t lcid )
+SourceTable::disable_connection( const size_t tid, const synindex syn_id, const size_t lcid )
 {
   // disabling a source changes its node ID to 2^62 -1
   // source here
@@ -453,7 +453,7 @@ SourceTable::disable_connection( const thread tid, const synindex syn_id, const 
 }
 
 inline void
-SourceTable::get_source_node_ids( const thread tid,
+SourceTable::get_source_node_ids( const size_t tid,
   const synindex syn_id,
   const std::vector< size_t >& source_lcids,
   std::vector< size_t >& sources )
@@ -465,7 +465,7 @@ SourceTable::get_source_node_ids( const thread tid,
 }
 
 inline size_t
-SourceTable::num_unique_sources( const thread tid, const synindex syn_id ) const
+SourceTable::num_unique_sources( const size_t tid, const synindex syn_id ) const
 {
   size_t n = 0;
   size_t last_source = 0;
@@ -493,7 +493,7 @@ SourceTable::pack_source_node_id_and_syn_id( const size_t source_node_id, const 
 }
 
 inline void
-SourceTable::clear_compressed_spike_data_map( const thread tid )
+SourceTable::clear_compressed_spike_data_map( const size_t tid )
 {
   for ( synindex syn_id = 0; syn_id < compressed_spike_data_map_[ tid ].size(); ++syn_id )
   {

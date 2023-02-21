@@ -35,7 +35,7 @@ inline void
 nest::TargetTableDevices::add_connection_to_device( Node& source,
   Node& target,
   const size_t source_node_id,
-  const thread tid,
+  const size_t tid,
   const synindex syn_id,
   const DictionaryDatum& p,
   const double d,
@@ -53,7 +53,7 @@ nest::TargetTableDevices::add_connection_to_device( Node& source,
 inline void
 nest::TargetTableDevices::add_connection_from_device( Node& source,
   Node& target,
-  const thread tid,
+  const size_t tid,
   const synindex syn_id,
   const DictionaryDatum& p,
   const double d,
@@ -73,7 +73,7 @@ nest::TargetTableDevices::add_connection_from_device( Node& source,
 }
 
 inline void
-nest::TargetTableDevices::send_to_device( const thread tid,
+nest::TargetTableDevices::send_to_device( const size_t tid,
   const size_t source_node_id,
   Event& e,
   const std::vector< ConnectorModel* >& cm )
@@ -91,7 +91,7 @@ nest::TargetTableDevices::send_to_device( const thread tid,
 }
 
 inline void
-nest::TargetTableDevices::send_to_device( const thread tid,
+nest::TargetTableDevices::send_to_device( const size_t tid,
   const size_t source_node_id,
   SecondaryEvent& e,
   const std::vector< ConnectorModel* >& cm )
@@ -107,7 +107,7 @@ nest::TargetTableDevices::send_to_device( const thread tid,
 }
 
 inline void
-nest::TargetTableDevices::get_synapse_status_to_device( const thread tid,
+nest::TargetTableDevices::get_synapse_status_to_device( const size_t tid,
   const size_t source_node_id,
   const synindex syn_id,
   DictionaryDatum& dict,
@@ -121,7 +121,7 @@ nest::TargetTableDevices::get_synapse_status_to_device( const thread tid,
 }
 
 inline void
-nest::TargetTableDevices::set_synapse_status_to_device( const thread tid,
+nest::TargetTableDevices::set_synapse_status_to_device( const size_t tid,
   const size_t source_node_id,
   const synindex syn_id,
   ConnectorModel& cm,

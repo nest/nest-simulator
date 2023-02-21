@@ -81,7 +81,7 @@ public:
    * Write status of the connection at position lcid to the dictionary
    * dict.
    */
-  virtual void get_synapse_status( const thread tid, const size_t lcid, DictionaryDatum& dict ) const = 0;
+  virtual void get_synapse_status( const size_t tid, const size_t lcid, DictionaryDatum& dict ) const = 0;
 
   /**
    * Set status of the connection at position lcid according to the
@@ -96,7 +96,7 @@ public:
    */
   virtual void get_connection( const size_t source_node_id,
     const size_t target_node_id,
-    const thread tid,
+    const size_t tid,
     const size_t lcid,
     const long synapse_label,
     std::deque< ConnectionID >& conns ) const = 0;
@@ -108,7 +108,7 @@ public:
    */
   virtual void get_connection_with_specified_targets( const size_t source_node_id,
     const std::vector< size_t >& target_neuron_node_ids,
-    const thread tid,
+    const size_t tid,
     const size_t lcid,
     const long synapse_label,
     std::deque< ConnectionID >& conns ) const = 0;
@@ -120,7 +120,7 @@ public:
    */
   virtual void get_all_connections( const size_t source_node_id,
     const size_t target_node_id,
-    const thread tid,
+    const size_t tid,
     const long synapse_label,
     std::deque< ConnectionID >& conns ) const = 0;
 
@@ -129,13 +129,13 @@ public:
    * node ID of target to source_lcids.
    */
   virtual void
-  get_source_lcids( const thread tid, const size_t target_node_id, std::vector< size_t >& source_lcids ) const = 0;
+  get_source_lcids( const size_t tid, const size_t target_node_id, std::vector< size_t >& source_lcids ) const = 0;
 
   /**
    * For a given start_lcid add node IDs of all targets that belong to the
    * same source to target_node_ids.
    */
-  virtual void get_target_node_ids( const thread tid,
+  virtual void get_target_node_ids( const size_t tid,
     const size_t start_lcid,
     const std::string& post_synaptic_element,
     std::vector< size_t >& target_node_ids ) const = 0;
@@ -143,28 +143,28 @@ public:
   /**
    * For a given lcid return the node ID of the target of the connection.
    */
-  virtual size_t get_target_node_id( const thread tid, const unsigned int lcid ) const = 0;
+  virtual size_t get_target_node_id( const size_t tid, const unsigned int lcid ) const = 0;
 
   /**
    * Send the event e to all connections of this Connector.
    */
-  virtual void send_to_all( const thread tid, const std::vector< ConnectorModel* >& cm, Event& e ) = 0;
+  virtual void send_to_all( const size_t tid, const std::vector< ConnectorModel* >& cm, Event& e ) = 0;
 
   /**
    * Send the event e to the connection at position lcid. Return bool
    * indicating whether the following connection belongs to the same
    * source.
    */
-  virtual size_t send( const thread tid, const size_t lcid, const std::vector< ConnectorModel* >& cm, Event& e ) = 0;
+  virtual size_t send( const size_t tid, const size_t lcid, const std::vector< ConnectorModel* >& cm, Event& e ) = 0;
 
   virtual void
-  send_weight_event( const thread tid, const unsigned int lcid, Event& e, const CommonSynapseProperties& cp ) = 0;
+  send_weight_event( const size_t tid, const unsigned int lcid, Event& e, const CommonSynapseProperties& cp ) = 0;
 
   /**
    * Update weights of dopamine modulated STDP connections.
    */
   virtual void trigger_update_weight( const long vt_node_id,
-    const thread tid,
+    const size_t tid,
     const std::vector< spikecounter >& dopa_spikes,
     const double t_trig,
     const std::vector< ConnectorModel* >& cm ) = 0;
@@ -185,7 +185,7 @@ public:
    * where the node_id of the target matches target_node_id. If there are no matches,
    * the function returns invalid_index.
    */
-  virtual size_t find_first_target( const thread tid, const size_t start_lcid, const size_t target_node_id ) const = 0;
+  virtual size_t find_first_target( const size_t tid, const size_t start_lcid, const size_t target_node_id ) const = 0;
 
   /**
    * Return lcid of first connection where the node ID of the target
@@ -193,7 +193,7 @@ public:
    * given in matching_lcids. If there is no match, the function returns
    * invalid_index.
    */
-  virtual size_t find_matching_target( const thread tid,
+  virtual size_t find_matching_target( const size_t tid,
     const std::vector< size_t >& matching_lcids,
     const size_t target_node_id ) const = 0;
 
@@ -243,7 +243,7 @@ public:
   }
 
   void
-  get_synapse_status( const thread tid, const size_t lcid, DictionaryDatum& dict ) const override
+  get_synapse_status( const size_t tid, const size_t lcid, DictionaryDatum& dict ) const override
   {
     assert( lcid < C_.size() );
 
@@ -271,7 +271,7 @@ public:
   void
   get_connection( const size_t source_node_id,
     const size_t target_node_id,
-    const thread tid,
+    const size_t tid,
     const size_t lcid,
     const long synapse_label,
     std::deque< ConnectionID >& conns ) const override
@@ -293,7 +293,7 @@ public:
   void
   get_connection_with_specified_targets( const size_t source_node_id,
     const std::vector< size_t >& target_neuron_node_ids,
-    const thread tid,
+    const size_t tid,
     const size_t lcid,
     const long synapse_label,
     std::deque< ConnectionID >& conns ) const override
@@ -316,7 +316,7 @@ public:
   void
   get_all_connections( const size_t source_node_id,
     const size_t target_node_id,
-    const thread tid,
+    const size_t tid,
     const long synapse_label,
     std::deque< ConnectionID >& conns ) const override
   {
@@ -327,7 +327,7 @@ public:
   }
 
   void
-  get_source_lcids( const thread tid, const size_t target_node_id, std::vector< size_t >& source_lcids ) const override
+  get_source_lcids( const size_t tid, const size_t target_node_id, std::vector< size_t >& source_lcids ) const override
   {
     for ( size_t lcid = 0; lcid < C_.size(); ++lcid )
     {
@@ -340,7 +340,7 @@ public:
   }
 
   void
-  get_target_node_ids( const thread tid,
+  get_target_node_ids( const size_t tid,
     const size_t start_lcid,
     const std::string& post_synaptic_element,
     std::vector< size_t >& target_node_ids ) const override
@@ -364,13 +364,13 @@ public:
   }
 
   size_t
-  get_target_node_id( const thread tid, const unsigned int lcid ) const override
+  get_target_node_id( const size_t tid, const unsigned int lcid ) const override
   {
     return C_[ lcid ].get_target( tid )->get_node_id();
   }
 
   void
-  send_to_all( const thread tid, const std::vector< ConnectorModel* >& cm, Event& e ) override
+  send_to_all( const size_t tid, const std::vector< ConnectorModel* >& cm, Event& e ) override
   {
     for ( size_t lcid = 0; lcid < C_.size(); ++lcid )
     {
@@ -382,7 +382,7 @@ public:
   }
 
   size_t
-  send( const thread tid, const size_t lcid, const std::vector< ConnectorModel* >& cm, Event& e ) override
+  send( const size_t tid, const size_t lcid, const std::vector< ConnectorModel* >& cm, Event& e ) override
   {
     typename ConnectionT::CommonPropertiesType const& cp =
       static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties();
@@ -413,11 +413,11 @@ public:
 
   // Implemented in connector_base_impl.h
   void
-  send_weight_event( const thread tid, const unsigned int lcid, Event& e, const CommonSynapseProperties& cp ) override;
+  send_weight_event( const size_t tid, const unsigned int lcid, Event& e, const CommonSynapseProperties& cp ) override;
 
   void
   trigger_update_weight( const long vt_node_id,
-    const thread tid,
+    const size_t tid,
     const std::vector< spikecounter >& dopa_spikes,
     const double t_trig,
     const std::vector< ConnectorModel* >& cm ) override
@@ -450,7 +450,7 @@ public:
   }
 
   size_t
-  find_first_target( const thread tid, const size_t start_lcid, const size_t target_node_id ) const override
+  find_first_target( const size_t tid, const size_t start_lcid, const size_t target_node_id ) const override
   {
     size_t lcid = start_lcid;
     while ( true )
@@ -470,7 +470,7 @@ public:
   }
 
   size_t
-  find_matching_target( const thread tid,
+  find_matching_target( const size_t tid,
     const std::vector< size_t >& matching_lcids,
     const size_t target_node_id ) const override
   {

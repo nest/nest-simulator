@@ -113,7 +113,7 @@ public:
   /**
    * Returns the number of devices per thread.
    */
-  size_t get_num_thread_local_devices( thread t ) const;
+  size_t get_num_thread_local_devices( size_t t ) const;
 
   /**
    * Print network information.
@@ -141,7 +141,7 @@ public:
    *
    * @ingroup net_access
    */
-  Node* get_node_or_proxy( size_t node_id, thread tid );
+  Node* get_node_or_proxy( size_t node_id, size_t tid );
 
   /**
    * Return pointer of the specified Node.
@@ -176,12 +176,12 @@ public:
    */
   void ensure_valid_thread_local_ids();
 
-  Node* thread_lid_to_node( thread t, targetindex thread_local_id ) const;
+  Node* thread_lid_to_node( size_t t, targetindex thread_local_id ) const;
 
   /**
    * Get list of nodes on given thread.
    */
-  const std::vector< Node* >& get_wfr_nodes_on_thread( thread ) const;
+  const std::vector< Node* >& get_wfr_nodes_on_thread( size_t ) const;
 
   /**
    * Prepare nodes for simulation and register nodes in node_list.
@@ -224,7 +224,7 @@ public:
   /**
    * Return a reference to the thread-local nodes of thread t.
    */
-  const SparseNodeArray& get_local_nodes( thread ) const;
+  const SparseNodeArray& get_local_nodes( size_t ) const;
 
   bool have_nodes_changed() const;
   void set_have_nodes_changed( const bool changed );
@@ -323,13 +323,13 @@ NodeManager::size() const
 }
 
 inline Node*
-NodeManager::thread_lid_to_node( thread t, targetindex thread_local_id ) const
+NodeManager::thread_lid_to_node( size_t t, targetindex thread_local_id ) const
 {
   return local_nodes_[ t ].get_node_by_index( thread_local_id );
 }
 
 inline const std::vector< Node* >&
-NodeManager::get_wfr_nodes_on_thread( thread t ) const
+NodeManager::get_wfr_nodes_on_thread( size_t t ) const
 {
   return wfr_nodes_vec_.at( t );
 }
@@ -341,7 +341,7 @@ NodeManager::wfr_is_used() const
 }
 
 inline const SparseNodeArray&
-NodeManager::get_local_nodes( thread t ) const
+NodeManager::get_local_nodes( size_t t ) const
 {
   return local_nodes_[ t ];
 }

@@ -87,7 +87,7 @@ public:
    * is allowed to modify the Model object for
    * 'administrative' purposes.
    */
-  Node* create( thread t );
+  Node* create( size_t t );
 
   /**
    * Deletes all nodes which belong to this model.
@@ -98,7 +98,7 @@ public:
   /**
    * Reserve space for n additional Nodes.
    */
-  void reserve_additional( thread t, size_t n );
+  void reserve_additional( size_t t, size_t n );
 
   /**
    * Return name of the Model.
@@ -212,7 +212,7 @@ private:
    * Set the number of threads.
    * @see set_threads()
    */
-  void set_threads_( thread t );
+  void set_threads_( size_t t );
 
   /**
    * Create a new object.
@@ -242,7 +242,7 @@ private:
 
 
 inline Node*
-Model::create( thread t )
+Model::create( size_t t )
 {
   assert( ( size_t ) t < memory_.size() );
   Node* n = create_();

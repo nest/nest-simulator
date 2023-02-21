@@ -105,7 +105,7 @@ public:
 
   bool all_parameters_scalar_() const;
 
-  bool change_connected_synaptic_elements( size_t, size_t, const int, int );
+  bool change_connected_synaptic_elements( size_t, size_t, const size_t, int );
 
   virtual bool
   supports_symmetric() const
@@ -145,11 +145,11 @@ protected:
     throw NotImplemented( "This connection rule is not implemented for structural plasticity." );
   }
 
-  void update_param_dict_( size_t snode_id, Node& target, thread target_thread, RngPtr rng, size_t indx );
+  void update_param_dict_( size_t snode_id, Node& target, size_t target_thread, RngPtr rng, size_t indx );
 
   //! Create connection between given nodes, fill parameter values
-  void single_connect_( size_t, Node&, thread, RngPtr );
-  void single_disconnect_( size_t, Node&, thread );
+  void single_connect_( size_t, Node&, size_t, RngPtr );
+  void single_disconnect_( size_t, Node&, size_t );
 
   /**
    * Moves pointer in parameter array.
@@ -160,7 +160,7 @@ protected:
    * node is not located on the current thread or MPI-process and read of an
    * array.
    */
-  void skip_conn_parameter_( thread, size_t n_skip = 1 );
+  void skip_conn_parameter_( size_t, size_t n_skip = 1 );
 
   /**
    * Returns true if conventional looping over targets is indicated.
@@ -455,7 +455,7 @@ ConnBuilder::register_parameters_requiring_skipping_( ConnParameter& param )
 }
 
 inline void
-ConnBuilder::skip_conn_parameter_( thread target_thread, size_t n_skip )
+ConnBuilder::skip_conn_parameter_( size_t target_thread, size_t n_skip )
 {
   for ( std::vector< ConnParameter* >::iterator it = parameters_requiring_skipping_.begin();
         it != parameters_requiring_skipping_.end();

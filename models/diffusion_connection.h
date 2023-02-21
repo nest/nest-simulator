@@ -134,7 +134,7 @@ public:
    * \param p The port under which this connection is stored in the Connector.
    */
   void
-  send( Event& e, thread t, const CommonSynapseProperties& )
+  send( Event& e, size_t t, const CommonSynapseProperties& )
   {
     e.set_drift_factor( drift_factor_ );
     e.set_diffusion_factor( diffusion_factor_ );

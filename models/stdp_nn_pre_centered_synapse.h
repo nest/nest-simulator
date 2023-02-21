@@ -172,7 +172,7 @@ public:
    * \param e The event to send
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, thread t, const CommonSynapseProperties& cp );
+  void send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -243,7 +243,7 @@ constexpr ConnectionModelProperties stdp_nn_pre_centered_synapse< targetidentifi
  */
 template < typename targetidentifierT >
 inline void
-stdp_nn_pre_centered_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
+stdp_nn_pre_centered_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   // synapse STDP depressing/facilitation dynamics
   double t_spike = e.get_stamp().get_ms();

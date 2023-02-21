@@ -49,7 +49,7 @@ nest::RecordingBackendMemory::finalize()
 void
 nest::RecordingBackendMemory::enroll( const RecordingDevice& device, const DictionaryDatum& params )
 {
-  thread t = device.get_thread();
+  size_t t = device.get_thread();
   size_t node_id = device.get_node_id();
 
   device_data_map::value_type::iterator device_data = device_data_[ t ].find( node_id );
@@ -65,7 +65,7 @@ nest::RecordingBackendMemory::enroll( const RecordingDevice& device, const Dicti
 void
 nest::RecordingBackendMemory::disenroll( const RecordingDevice& device )
 {
-  thread t = device.get_thread();
+  size_t t = device.get_thread();
   size_t node_id = device.get_node_id();
 
   device_data_map::value_type::iterator device_data = device_data_[ t ].find( node_id );
@@ -80,8 +80,8 @@ nest::RecordingBackendMemory::set_value_names( const RecordingDevice& device,
   const std::vector< Name >& double_value_names,
   const std::vector< Name >& long_value_names )
 {
-  const thread t = device.get_thread();
-  const thread node_id = device.get_node_id();
+  const size_t t = device.get_thread();
+  const size_t node_id = device.get_node_id();
 
   device_data_map::value_type::iterator device_data = device_data_[ t ].find( node_id );
   assert( device_data != device_data_[ t ].end() );
@@ -106,7 +106,7 @@ nest::RecordingBackendMemory::write( const RecordingDevice& device,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )
 {
-  thread t = device.get_thread();
+  size_t t = device.get_thread();
   size_t node_id = device.get_node_id();
 
   device_data_[ t ][ node_id ].push_back( event, double_values, long_values );
@@ -129,7 +129,7 @@ nest::RecordingBackendMemory::get_device_defaults( DictionaryDatum& params ) con
 void
 nest::RecordingBackendMemory::get_device_status( const RecordingDevice& device, DictionaryDatum& d ) const
 {
-  const thread t = device.get_thread();
+  const size_t t = device.get_thread();
   const size_t node_id = device.get_node_id();
 
   const auto device_data = device_data_[ t ].find( node_id );

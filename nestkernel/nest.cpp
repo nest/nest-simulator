@@ -87,13 +87,13 @@ get_rank_synced_rng()
 }
 
 RngPtr
-get_vp_synced_rng( thread tid )
+get_vp_synced_rng( size_t tid )
 {
   return kernel().random_manager.get_vp_synced_rng( tid );
 }
 
 RngPtr
-get_vp_specific_rng( thread tid )
+get_vp_specific_rng( size_t tid )
 {
   return kernel().random_manager.get_vp_specific_rng( tid );
 }
@@ -135,7 +135,7 @@ set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict 
   DictionaryDatum conn_dict = conn.get_dict();
   const size_t source_node_id = getValue< long >( conn_dict, nest::names::source );
   const size_t target_node_id = getValue< long >( conn_dict, nest::names::target );
-  const thread tid = getValue< long >( conn_dict, nest::names::target_thread );
+  const size_t tid = getValue< long >( conn_dict, nest::names::target_thread );
   const synindex syn_id = getValue< long >( conn_dict, nest::names::synapse_modelid );
   const port p = getValue< long >( conn_dict, nest::names::port );
 

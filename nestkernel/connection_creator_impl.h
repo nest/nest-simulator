@@ -74,7 +74,7 @@ ConnectionCreator::connect_to_target_( Iterator from,
   Iterator to,
   Node* tgt_ptr,
   const Position< D >& tgt_pos,
-  thread tgt_thread,
+  size_t tgt_thread,
   const Layer< D >& source )
 {
   RngPtr rng = get_vp_specific_rng( tgt_thread );
@@ -240,7 +240,7 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
     }
   } // omp parallel
   // check if any exceptions have been raised
-  for ( thread thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+  for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
   {
     if ( exceptions_raised_.at( thr ).get() )
     {
@@ -328,7 +328,7 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
     }
   } // omp parallel
   // check if any exceptions have been raised
-  for ( thread thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+  for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
   {
     if ( exceptions_raised_.at( thr ).get() )
     {
@@ -383,7 +383,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
       size_t target_id = ( *tgt_it ).node_id;
       Node* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
 
-      thread target_thread = tgt->get_thread();
+      size_t target_thread = tgt->get_thread();
       RngPtr rng = get_vp_specific_rng( target_thread );
       Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
 
@@ -517,7 +517,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
     {
       size_t target_id = ( *tgt_it ).node_id;
       Node* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
-      thread target_thread = tgt->get_thread();
+      size_t target_thread = tgt->get_thread();
       RngPtr rng = get_vp_specific_rng( target_thread );
       Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
 
@@ -771,7 +771,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
       }
 
       Node* target_ptr = kernel().node_manager.get_node_or_proxy( target_id );
-      thread target_thread = target_ptr->get_thread();
+      size_t target_thread = target_ptr->get_thread();
 
       for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
       {

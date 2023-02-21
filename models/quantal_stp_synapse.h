@@ -150,7 +150,7 @@ public:
    * \param e The event to send
    * \param cp Common properties to all synapses (empty).
    */
-  void send( Event& e, thread t, const CommonSynapseProperties& cp );
+  void send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -200,7 +200,7 @@ constexpr ConnectionModelProperties quantal_stp_synapse< targetidentifierT >::pr
  */
 template < typename targetidentifierT >
 inline void
-quantal_stp_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
+quantal_stp_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   const double t_spike = e.get_stamp().get_ms();
   const double h = t_spike - t_lastspike_;

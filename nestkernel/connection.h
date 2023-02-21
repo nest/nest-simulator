@@ -229,13 +229,13 @@ public:
    * triggers an update of a synaptic weight
    * this function is needed for neuromodulated synaptic plasticity
    */
-  void trigger_update_weight( const thread,
+  void trigger_update_weight( const size_t,
     const std::vector< spikecounter >&,
     const double,
     const CommonSynapseProperties& );
 
   Node*
-  get_target( const thread tid ) const
+  get_target( const size_t tid ) const
   {
     return target_.get_target_ptr( tid );
   }
@@ -389,7 +389,7 @@ Connection< targetidentifierT >::calibrate( const TimeConverter& tc )
 
 template < typename targetidentifierT >
 inline void
-Connection< targetidentifierT >::trigger_update_weight( const thread,
+Connection< targetidentifierT >::trigger_update_weight( const size_t,
   const std::vector< spikecounter >&,
   const double,
   const CommonSynapseProperties& )

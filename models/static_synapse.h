@@ -151,7 +151,7 @@ public:
   }
 
   void
-  send( Event& e, const thread tid, const CommonSynapseProperties& )
+  send( Event& e, const size_t tid, const CommonSynapseProperties& )
   {
     e.set_weight( weight_ );
     e.set_delay_steps( get_delay_steps() );

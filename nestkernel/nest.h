@@ -62,8 +62,8 @@ void register_connection_model( const std::string& name );
 void print_nodes_to_stream( std::ostream& out = std::cout );
 
 RngPtr get_rank_synced_rng();
-RngPtr get_vp_synced_rng( thread tid );
-RngPtr get_vp_specific_rng( thread tid );
+RngPtr get_vp_synced_rng( size_t tid );
+RngPtr get_vp_specific_rng( size_t tid );
 
 void set_kernel_status( const DictionaryDatum& dict );
 DictionaryDatum get_kernel_status();

@@ -154,7 +154,7 @@ public:
    * \param e The event to send
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, thread t, const CommonSynapseProperties& cp );
+  void send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -213,7 +213,7 @@ constexpr ConnectionModelProperties urbanczik_synapse< targetidentifierT >::prop
  */
 template < typename targetidentifierT >
 inline void
-urbanczik_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
+urbanczik_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   double t_spike = e.get_stamp().get_ms();
   // use accessor functions (inherited from Connection< >) to obtain delay and target

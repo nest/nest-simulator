@@ -150,7 +150,7 @@ NodeManager::add_node( size_t model_id, long n )
   }
 
   // check if any exceptions have been raised
-  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  for ( size_t t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
     if ( exceptions_raised_.at( t ).get() )
     {
@@ -319,7 +319,7 @@ NodeManager::get_nodes( const DictionaryDatum& params, const bool local_only )
     nodes_on_thread.resize( kernel().vp_manager.get_num_threads() );
 #pragma omp parallel
     {
-      thread tid = kernel().vp_manager.get_thread_id();
+      size_t tid = kernel().vp_manager.get_thread_id();
 
       for ( auto node : get_local_nodes( tid ) )
       {
@@ -336,7 +336,7 @@ NodeManager::get_nodes( const DictionaryDatum& params, const bool local_only )
   }
   else
   {
-    for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+    for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
     {
       // Select those nodes fulfilling the key/value pairs of the dictionary
       for ( auto node : get_local_nodes( tid ) )
@@ -401,7 +401,7 @@ NodeManager::is_local_node( Node* n ) const
 bool
 NodeManager::is_local_node_id( size_t node_id ) const
 {
-  const thread vp = kernel().vp_manager.node_id_to_vp( node_id );
+  const size_t vp = kernel().vp_manager.node_id_to_vp( node_id );
   return kernel().vp_manager.is_local_vp( vp );
 }
 
@@ -413,13 +413,13 @@ NodeManager::get_max_num_local_nodes() const
 }
 
 size_t
-NodeManager::get_num_thread_local_devices( thread t ) const
+NodeManager::get_num_thread_local_devices( size_t t ) const
 {
   return num_thread_local_devices_[ t ];
 }
 
 Node*
-NodeManager::get_node_or_proxy( size_t node_id, thread t )
+NodeManager::get_node_or_proxy( size_t node_id, size_t t )
 {
   assert( 0 <= t and ( t == -1 or t < kernel().vp_manager.get_num_threads() ) );
   assert( 0 < node_id and node_id <= size() );
@@ -438,13 +438,13 @@ NodeManager::get_node_or_proxy( size_t node_id )
 {
   assert( 0 < node_id and node_id <= size() );
 
-  thread vp = kernel().vp_manager.node_id_to_vp( node_id );
+  size_t vp = kernel().vp_manager.node_id_to_vp( node_id );
   if ( not kernel().vp_manager.is_local_vp( vp ) )
   {
     return kernel().model_manager.get_proxy_node( 0, node_id );
   }
 
-  thread t = kernel().vp_manager.vp_to_thread( vp );
+  size_t t = kernel().vp_manager.vp_to_thread( vp );
   Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
   if ( not node )
   {
@@ -457,7 +457,7 @@ NodeManager::get_node_or_proxy( size_t node_id )
 Node*
 NodeManager::get_mpi_local_node_or_device_head( size_t node_id )
 {
-  thread t = kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( node_id ) );
+  size_t t = kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( node_id ) );
 
   Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
 
@@ -522,7 +522,7 @@ NodeManager::ensure_valid_thread_local_ids()
       wfr_nodes_vec_.clear();
       wfr_nodes_vec_.resize( kernel().vp_manager.get_num_threads() );
 
-      for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+      for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
       {
         wfr_nodes_vec_[ tid ].clear();
 
@@ -552,7 +552,7 @@ NodeManager::ensure_valid_thread_local_ids()
       // step, because gather_events() has to be done in an
       // openmp single section
       wfr_is_used_ = false;
-      for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+      for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
       {
         if ( wfr_nodes_vec_[ tid ].size() > 0 )
         {
@@ -645,7 +645,7 @@ NodeManager::prepare_nodes()
   } // omp parallel
 
   // check if any exceptions have been raised
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     if ( exceptions_raised.at( tid ).get() )
     {
@@ -690,7 +690,7 @@ NodeManager::finalize_nodes()
 {
 #pragma omp parallel
   {
-    thread tid = kernel().vp_manager.get_thread_id();
+    size_t tid = kernel().vp_manager.get_thread_id();
     SparseNodeArray::const_iterator n;
     for ( n = local_nodes_[ tid ].begin(); n != local_nodes_[ tid ].end(); ++n )
     {
@@ -744,7 +744,7 @@ NodeManager::print( std::ostream& out ) const
 void
 NodeManager::set_status( size_t node_id, const DictionaryDatum& d )
 {
-  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  for ( size_t t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
     Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
     if ( node )

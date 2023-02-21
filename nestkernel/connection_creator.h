@@ -137,7 +137,7 @@ private:
     Iterator to,
     Node* tgt_ptr,
     const Position< D >& tgt_pos,
-    thread tgt_thread,
+    size_t tgt_thread,
     const Layer< D >& source );
 
   template < int D >

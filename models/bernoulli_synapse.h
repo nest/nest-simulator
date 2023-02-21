@@ -148,7 +148,7 @@ public:
   }
 
   void
-  send( Event& e, thread t, const CommonSynapseProperties& )
+  send( Event& e, size_t t, const CommonSynapseProperties& )
   {
     SpikeEvent e_spike = static_cast< SpikeEvent& >( e );
 

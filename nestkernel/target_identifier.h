@@ -71,7 +71,7 @@ public:
   }
 
   Node*
-  get_target_ptr( const thread ) const
+  get_target_ptr( const size_t ) const
   {
     return target_;
   }
@@ -135,7 +135,7 @@ public:
   }
 
   Node*
-  get_target_ptr( const thread tid ) const
+  get_target_ptr( const size_t tid ) const
   {
     assert( target_ != invalid_targetindex );
     return kernel().node_manager.thread_lid_to_node( tid, target_ );

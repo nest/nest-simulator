@@ -33,7 +33,7 @@ namespace nest
 
 template < typename ConnectionT >
 void
-Connector< ConnectionT >::send_weight_event( const thread tid,
+Connector< ConnectionT >::send_weight_event( const size_t tid,
   const unsigned int lcid,
   Event& e,
   const CommonSynapseProperties& cp )

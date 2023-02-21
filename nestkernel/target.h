@@ -96,7 +96,7 @@ private:
 public:
   Target();
   Target( const Target& target );
-  Target( const thread tid, const thread rank, const synindex syn_id, const size_t lcid );
+  Target( const size_t tid, const size_t rank, const synindex syn_id, const size_t lcid );
 
   Target& operator=( const Target& );
 
@@ -113,22 +113,22 @@ public:
   /**
    * Set rank.
    */
-  void set_rank( const thread rank );
+  void set_rank( const size_t rank );
 
   /**
    * Return rank.
    */
-  thread get_rank() const;
+  size_t get_rank() const;
 
   /**
    * Set thread id.
    */
-  void set_tid( const thread tid );
+  void set_tid( const size_t tid );
 
   /**
    * Return thread id.
    */
-  thread get_tid() const;
+  size_t get_tid() const;
 
   /**
    * Set the synapse-type id.
@@ -188,7 +188,7 @@ Target::operator=( const Target& other )
   return *this;
 }
 
-inline Target::Target( const thread tid, const thread rank, const synindex syn_id, const size_t lcid )
+inline Target::Target( const size_t tid, const size_t rank, const synindex syn_id, const size_t lcid )
   : remote_target_id_( 0 )
 {
   assert( tid <= MAX_TID );
@@ -217,26 +217,26 @@ Target::get_lcid() const
 }
 
 inline void
-Target::set_rank( const thread rank )
+Target::set_rank( const size_t rank )
 {
   assert( rank <= MAX_RANK );
   remote_target_id_ = ( remote_target_id_ & ( ~MASK_RANK ) ) | ( static_cast< uint64_t >( rank ) << BITPOS_RANK );
 }
 
-inline thread
+inline size_t
 Target::get_rank() const
 {
   return ( ( remote_target_id_ & MASK_RANK ) >> BITPOS_RANK );
 }
 
 inline void
-Target::set_tid( const thread tid )
+Target::set_tid( const size_t tid )
 {
   assert( tid <= MAX_TID );
   remote_target_id_ = ( remote_target_id_ & ( ~MASK_TID ) ) | ( static_cast< uint64_t >( tid ) << BITPOS_TID );
 }
 
-inline thread
+inline size_t
 Target::get_tid() const
 {
   return ( ( remote_target_id_ & MASK_TID ) >> BITPOS_TID );

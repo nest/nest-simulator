@@ -122,7 +122,7 @@ public:
    * \param p The port under which this connection is stored in the Connector.
    */
   void
-  send( Event& e, thread t, const CommonSynapseProperties& )
+  send( Event& e, size_t t, const CommonSynapseProperties& )
   {
     e.set_weight( weight_ );
     e.set_receiver( *get_target( t ) );

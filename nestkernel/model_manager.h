@@ -70,7 +70,7 @@ public:
    * Return a proxynode configured for thread tid and the given
    * node_id.
    */
-  Node* get_proxy_node( thread tid, size_t node_id );
+  Node* get_proxy_node( size_t tid, size_t node_id );
 
   /**
    * Return pointer to protoype for given synapse id.
@@ -80,9 +80,9 @@ public:
    *        num_connections and the min_ and max_delay setting in
    *        ConnectorBase was moved out to the ConnectionManager
    */
-  ConnectorModel& get_connection_model( synindex syn_id, thread t = 0 );
+  ConnectorModel& get_connection_model( synindex syn_id, size_t t = 0 );
 
-  const std::vector< ConnectorModel* >& get_connection_models( thread tid );
+  const std::vector< ConnectorModel* >& get_connection_models( size_t tid );
 
   /**
    * Register a node-model prototype.
@@ -160,7 +160,7 @@ public:
    * Asserts validity of synapse index, otherwise throws exception.
    * @throws UnknownSynapseType
    */
-  void assert_valid_syn_id( synindex syn_id, thread t = 0 ) const;
+  void assert_valid_syn_id( synindex syn_id, size_t t = 0 ) const;
 
   bool are_model_defaults_modified() const;
 
@@ -171,7 +171,7 @@ public:
    */
   void memory_info() const;
 
-  SecondaryEvent& get_secondary_event_prototype( const synindex syn_id, const thread tid );
+  SecondaryEvent& get_secondary_event_prototype( const synindex syn_id, const size_t tid );
 
 private:
   void clear_node_models_();
@@ -254,7 +254,7 @@ private:
 
   Model* proxynode_model_;
 
-  Node* create_proxynode_( thread t, int model_id );
+  Node* create_proxynode_( size_t t, int model_id );
 
   //! Placeholders for remote nodes, one per thread
   std::vector< std::vector< Node* > > proxy_nodes_;
@@ -277,14 +277,14 @@ ModelManager::are_model_defaults_modified() const
 }
 
 inline ConnectorModel&
-ModelManager::get_connection_model( synindex syn_id, thread t )
+ModelManager::get_connection_model( synindex syn_id, size_t t )
 {
   assert_valid_syn_id( syn_id );
   return *( connection_models_[ t ][ syn_id ] );
 }
 
 inline const std::vector< ConnectorModel* >&
-ModelManager::get_connection_models( thread tid )
+ModelManager::get_connection_models( size_t tid )
 {
   return connection_models_[ tid ];
 }
@@ -297,7 +297,7 @@ ModelManager::get_num_connection_models() const
 }
 
 inline void
-ModelManager::assert_valid_syn_id( synindex syn_id, thread t ) const
+ModelManager::assert_valid_syn_id( synindex syn_id, size_t t ) const
 {
   if ( syn_id >= connection_models_[ t ].size() or not connection_models_[ t ][ syn_id ] )
   {
@@ -306,7 +306,7 @@ ModelManager::assert_valid_syn_id( synindex syn_id, thread t ) const
 }
 
 inline SecondaryEvent&
-ModelManager::get_secondary_event_prototype( const synindex syn_id, const thread tid )
+ModelManager::get_secondary_event_prototype( const synindex syn_id, const size_t tid )
 {
   assert_valid_syn_id( syn_id );
   return *get_connection_model( syn_id, tid ).get_secondary_event();

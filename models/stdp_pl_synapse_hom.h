@@ -171,7 +171,7 @@ public:
    * Send an event to the receiver of this connection.
    * \param e The event to send
    */
-  void send( Event& e, thread t, const STDPPLHomCommonProperties& );
+  void send( Event& e, size_t t, const STDPPLHomCommonProperties& );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -249,7 +249,7 @@ constexpr ConnectionModelProperties stdp_pl_synapse_hom< targetidentifierT >::pr
  */
 template < typename targetidentifierT >
 inline void
-stdp_pl_synapse_hom< targetidentifierT >::send( Event& e, thread t, const STDPPLHomCommonProperties& cp )
+stdp_pl_synapse_hom< targetidentifierT >::send( Event& e, size_t t, const STDPPLHomCommonProperties& cp )
 {
   // synapse STDP depressing/facilitation dynamics
 

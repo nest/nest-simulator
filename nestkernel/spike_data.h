@@ -61,11 +61,11 @@ protected:
 public:
   SpikeData();
   SpikeData( const SpikeData& rhs );
-  SpikeData( const thread tid, const synindex syn_id, const size_t lcid, const unsigned int lag );
+  SpikeData( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag );
 
   SpikeData& operator=( const SpikeData& rhs );
 
-  void set( const thread tid, const synindex syn_id, const size_t lcid, const unsigned int lag, const double offset );
+  void set( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag, const double offset );
 
   template < class TargetT >
   void set( const TargetT& target, const unsigned int lag );
@@ -83,7 +83,7 @@ public:
   /**
    * Returns thread index.
    */
-  thread get_tid() const;
+  size_t get_tid() const;
 
   /**
    * Returns synapse-type index.
@@ -152,7 +152,7 @@ inline SpikeData::SpikeData( const SpikeData& rhs )
 {
 }
 
-inline SpikeData::SpikeData( const thread tid, const synindex syn_id, const size_t lcid, const unsigned int lag )
+inline SpikeData::SpikeData( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag )
   : lcid_( lcid )
   , marker_( SPIKE_DATA_ID_DEFAULT )
   , lag_( lag )
@@ -173,7 +173,7 @@ SpikeData::operator=( const SpikeData& rhs )
 }
 
 inline void
-SpikeData::set( const thread tid, const synindex syn_id, const size_t lcid, const unsigned int lag, const double )
+SpikeData::set( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag, const double )
 {
   assert( 0 <= tid );
   assert( tid <= MAX_TID );
@@ -214,7 +214,7 @@ SpikeData::get_lag() const
   return lag_;
 }
 
-inline thread
+inline size_t
 SpikeData::get_tid() const
 {
   return tid_;
@@ -281,12 +281,12 @@ private:
 
 public:
   OffGridSpikeData();
-  OffGridSpikeData( const thread tid,
+  OffGridSpikeData( const size_t tid,
     const synindex syn_id,
     const size_t lcid,
     const unsigned int lag,
     const double offset );
-  void set( const thread tid, const synindex syn_id, const size_t lcid, const unsigned int lag, const double offset );
+  void set( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag, const double offset );
 
   template < class TargetT >
   void set( const TargetT& target, const unsigned int lag );
@@ -302,7 +302,7 @@ inline OffGridSpikeData::OffGridSpikeData()
 {
 }
 
-inline OffGridSpikeData::OffGridSpikeData( const thread tid,
+inline OffGridSpikeData::OffGridSpikeData( const size_t tid,
   const synindex syn_id,
   const size_t lcid,
   const unsigned int lag,
@@ -314,7 +314,7 @@ inline OffGridSpikeData::OffGridSpikeData( const thread tid,
 
 
 inline void
-OffGridSpikeData::set( const thread tid,
+OffGridSpikeData::set( const size_t tid,
   const synindex syn_id,
   const size_t lcid,
   const unsigned int lag,

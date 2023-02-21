@@ -212,7 +212,7 @@ SPManager::builder_max_delay() const
  * @param syn_id
  */
 void
-SPManager::disconnect( const size_t snode_id, Node* target, thread target_thread, const size_t syn_id )
+SPManager::disconnect( const size_t snode_id, Node* target, size_t target_thread, const size_t syn_id )
 {
   Node* const source = kernel().node_manager.get_node_or_proxy( snode_id );
   // normal nodes and devices with proxies
@@ -241,8 +241,8 @@ SPManager::disconnect( const size_t snode_id, Node* target, thread target_thread
     {
       return;
     }
-    const thread n_threads = kernel().vp_manager.get_num_threads();
-    for ( thread t = 0; t < n_threads; t++ )
+    const size_t n_threads = kernel().vp_manager.get_num_threads();
+    for ( size_t t = 0; t < n_threads; t++ )
     {
       target = kernel().node_manager.get_node_or_proxy( target->get_node_id(), t );
       target_thread = target->get_thread();
@@ -270,7 +270,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
   {
 #pragma omp parallel
     {
-      const thread tid = kernel().vp_manager.get_thread_id();
+      const size_t tid = kernel().vp_manager.get_thread_id();
       kernel().simulation_manager.update_connection_infrastructure( tid );
     }
   }
@@ -541,7 +541,7 @@ SPManager::delete_synapse( const size_t snode_id,
   if ( kernel().node_manager.is_local_node_id( snode_id ) )
   {
     Node* const source = kernel().node_manager.get_node_or_proxy( snode_id );
-    const thread source_thread = source->get_thread();
+    const size_t source_thread = source->get_thread();
     if ( tid == source_thread )
     {
       source->connect_synaptic_element( se_pre_name, -1 );
@@ -551,7 +551,7 @@ SPManager::delete_synapse( const size_t snode_id,
   if ( kernel().node_manager.is_local_node_id( tnode_id ) )
   {
     Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id );
-    const thread target_thread = target->get_thread();
+    const size_t target_thread = target->get_thread();
     if ( tid == target_thread )
     {
       kernel().connection_manager.disconnect( tid, syn_id, snode_id, tnode_id );
@@ -649,7 +649,7 @@ nest::SPManager::get_synaptic_elements( std::string se_name,
   std::vector< int >::iterator deleted_n_it = se_deleted_n.begin();
   SparseNodeArray::const_iterator node_it;
 
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
     SparseNodeArray::const_iterator node_it;

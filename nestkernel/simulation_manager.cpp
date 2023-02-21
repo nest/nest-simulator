@@ -490,7 +490,7 @@ nest::SimulationManager::prepare()
   {
 #pragma omp parallel
     {
-      const thread tid = kernel().vp_manager.get_thread_id();
+      const size_t tid = kernel().vp_manager.get_thread_id();
       update_connection_infrastructure( tid );
     } // of omp parallel
   }
@@ -674,7 +674,7 @@ nest::SimulationManager::call_update_()
 }
 
 void
-nest::SimulationManager::update_connection_infrastructure( const thread tid )
+nest::SimulationManager::update_connection_infrastructure( const size_t tid )
 {
 #pragma omp barrier
   if ( tid == 0 )
@@ -775,7 +775,7 @@ nest::SimulationManager::update_()
 // parallel section begins
 #pragma omp parallel
   {
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     do
     {
@@ -1051,7 +1051,7 @@ nest::SimulationManager::update_()
   }
 
   // check if any exceptions have been raised
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     if ( exceptions_raised.at( tid ).get() )
     {

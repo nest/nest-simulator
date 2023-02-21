@@ -56,12 +56,12 @@ public:
   /**
    * Sets the target ID.
    */
-  void set_tid( const thread tid );
+  void set_tid( const size_t tid );
 
   /**
    * Returns the target ID.
    */
-  thread get_tid() const;
+  size_t get_tid() const;
 
   /**
    * Sets the synapse-type ID.
@@ -90,12 +90,12 @@ TargetDataFields::get_lcid() const
 }
 
 inline void
-TargetDataFields::set_tid( const thread tid )
+TargetDataFields::set_tid( const size_t tid )
 {
   tid_ = tid;
 }
 
-inline thread
+inline size_t
 TargetDataFields::get_tid() const
 {
   return tid_;
@@ -206,9 +206,9 @@ public:
   bool is_end_marker() const;
   bool is_invalid_marker() const;
   void set_source_lid( const size_t source_lid );
-  void set_source_tid( const thread source_tid );
+  void set_source_tid( const size_t source_tid );
   size_t get_source_lid() const;
-  thread get_source_tid() const;
+  size_t get_source_tid() const;
   void set_is_primary( const bool is_primary );
   bool is_primary() const;
 };
@@ -266,7 +266,7 @@ TargetData::set_source_lid( const size_t source_lid )
 }
 
 inline void
-TargetData::set_source_tid( const thread source_tid )
+TargetData::set_source_tid( const size_t source_tid )
 {
   assert( source_tid < MAX_TID );
   source_tid_ = source_tid;
@@ -278,7 +278,7 @@ TargetData::get_source_lid() const
   return source_lid_;
 }
 
-inline thread
+inline size_t
 TargetData::get_source_tid() const
 {
   return source_tid_;

@@ -87,30 +87,30 @@ public:
    * Since each process has the same number of threads, the total number
    * of threads is given by get_num_threads()*get_num_processes().
    */
-  thread get_num_processes() const;
+  size_t get_num_processes() const;
 
   /**
    * Set the number of processes state variable.
    * This is used by dryrun_mode.
    */
-  void set_num_processes( thread n_procs );
+  void set_num_processes( size_t n_procs );
 
   /**
    * Get rank of MPI process
    */
-  thread get_rank() const;
+  size_t get_rank() const;
 
   /**
    * Return the process id for a given virtual process. The real process' id
    * of a virtual process is defined by the relation: p = (vp mod P), where
    * P is the total number of processes.
    */
-  thread get_process_id_of_vp( const thread vp ) const;
+  size_t get_process_id_of_vp( const size_t vp ) const;
 
   /*
    * Return the process id of the node with the specified node ID.
    */
-  thread get_process_id_of_node_id( const size_t node_id ) const;
+  size_t get_process_id_of_node_id( const size_t node_id ) const;
 
   /**
    * Finalize MPI communication (needs to be separate from MPIManager::finalize
@@ -509,19 +509,19 @@ MPIManager::get_done_marker_position_in_secondary_events_recv_buffer( const size
     + get_recv_count_secondary_events_in_int( source_rank ) - 1;
 }
 
-inline thread
+inline size_t
 MPIManager::get_num_processes() const
 {
   return num_processes_;
 }
 
 inline void
-MPIManager::set_num_processes( thread n_procs )
+MPIManager::set_num_processes( size_t n_procs )
 {
   num_processes_ = n_procs;
 }
 
-inline thread
+inline size_t
 MPIManager::get_rank() const
 {
   return rank_;

@@ -219,7 +219,7 @@ public:
    * \param e The event to send
    * \param cp Common properties to all synapses (empty).
    */
-  void send( Event& e, thread t, const TsodyksHomCommonProperties& cp );
+  void send( Event& e, size_t t, const TsodyksHomCommonProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -267,7 +267,7 @@ constexpr ConnectionModelProperties tsodyks_synapse_hom< targetidentifierT >::pr
  */
 template < typename targetidentifierT >
 inline void
-tsodyks_synapse_hom< targetidentifierT >::send( Event& e, thread t, const TsodyksHomCommonProperties& cp )
+tsodyks_synapse_hom< targetidentifierT >::send( Event& e, size_t t, const TsodyksHomCommonProperties& cp )
 {
   const double t_spike = e.get_stamp().get_ms();
   const double h = t_spike - t_lastspike_;

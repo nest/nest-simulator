@@ -37,7 +37,7 @@ nest::TargetTableDevices::~TargetTableDevices()
 void
 nest::TargetTableDevices::initialize()
 {
-  const thread num_threads = kernel().vp_manager.get_num_threads();
+  const size_t num_threads = kernel().vp_manager.get_num_threads();
   target_to_devices_.resize( num_threads );
   target_from_devices_.resize( num_threads );
   sending_devices_node_ids_.resize( num_threads );
@@ -78,7 +78,7 @@ nest::TargetTableDevices::resize_to_number_of_neurons()
 {
 #pragma omp parallel
   {
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
     target_to_devices_[ tid ].resize( kernel().node_manager.get_max_num_local_nodes() + 1 );
     target_from_devices_[ tid ].resize( kernel().node_manager.get_num_thread_local_devices( tid ) + 1 );
     sending_devices_node_ids_[ tid ].resize( kernel().node_manager.get_num_thread_local_devices( tid ) + 1 );
@@ -90,7 +90,7 @@ nest::TargetTableDevices::resize_to_number_of_synapse_types()
 {
 #pragma omp parallel
   {
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
     for ( size_t lid = 0; lid < target_to_devices_[ tid ].size(); ++lid )
     {
       // make sure this device has support for all synapse types
@@ -107,7 +107,7 @@ nest::TargetTableDevices::resize_to_number_of_synapse_types()
 void
 nest::TargetTableDevices::get_connections_to_devices_( const size_t requested_source_node_id,
   const size_t requested_target_node_id,
-  const thread tid,
+  const size_t tid,
   const synindex syn_id,
   const long synapse_label,
   std::deque< ConnectionID >& conns ) const
@@ -133,7 +133,7 @@ nest::TargetTableDevices::get_connections_to_devices_( const size_t requested_so
 void
 nest::TargetTableDevices::get_connections_to_device_for_lid_( const size_t lid,
   const size_t requested_target_node_id,
-  const thread tid,
+  const size_t tid,
   const synindex syn_id,
   const long synapse_label,
   std::deque< ConnectionID >& conns ) const
@@ -153,7 +153,7 @@ nest::TargetTableDevices::get_connections_to_device_for_lid_( const size_t lid,
 void
 nest::TargetTableDevices::get_connections_from_devices_( const size_t requested_source_node_id,
   const size_t requested_target_node_id,
-  const thread tid,
+  const size_t tid,
   const synindex syn_id,
   const long synapse_label,
   std::deque< ConnectionID >& conns ) const
@@ -184,7 +184,7 @@ nest::TargetTableDevices::get_connections_from_devices_( const size_t requested_
 void
 nest::TargetTableDevices::get_connections( const size_t requested_source_node_id,
   const size_t requested_target_node_id,
-  const thread tid,
+  const size_t tid,
   const synindex syn_id,
   const long synapse_label,
   std::deque< ConnectionID >& conns ) const

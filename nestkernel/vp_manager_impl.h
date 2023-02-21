@@ -33,38 +33,38 @@
 namespace nest
 {
 
-inline thread
+inline size_t
 VPManager::get_vp() const
 {
   return kernel().mpi_manager.get_rank() + get_thread_id() * kernel().mpi_manager.get_num_processes();
 }
 
-inline thread
+inline size_t
 VPManager::node_id_to_vp( const size_t node_id ) const
 {
   return node_id % get_num_virtual_processes();
 }
 
-inline thread
-VPManager::vp_to_thread( const thread vp ) const
+inline size_t
+VPManager::vp_to_thread( const size_t vp ) const
 {
   return vp / kernel().mpi_manager.get_num_processes();
 }
 
-inline thread
+inline size_t
 VPManager::get_num_virtual_processes() const
 {
   return get_num_threads() * kernel().mpi_manager.get_num_processes();
 }
 
 inline bool
-VPManager::is_local_vp( const thread vp ) const
+VPManager::is_local_vp( const size_t vp ) const
 {
   return kernel().mpi_manager.get_process_id_of_vp( vp ) == kernel().mpi_manager.get_rank();
 }
 
-inline thread
-VPManager::thread_to_vp( const thread tid ) const
+inline size_t
+VPManager::thread_to_vp( const size_t tid ) const
 {
   return tid * kernel().mpi_manager.get_num_processes() + kernel().mpi_manager.get_rank();
 }
@@ -89,22 +89,22 @@ VPManager::lid_to_node_id( const size_t lid ) const
   return ( lid + static_cast< size_t >( vp == 0 ) ) * get_num_virtual_processes() + vp;
 }
 
-inline thread
+inline size_t
 VPManager::get_num_assigned_ranks_per_thread() const
 {
   return std::ceil( static_cast< double >( kernel().mpi_manager.get_num_processes() ) / n_threads_ );
 }
 
-inline thread
-VPManager::get_start_rank_per_thread( const thread tid ) const
+inline size_t
+VPManager::get_start_rank_per_thread( const size_t tid ) const
 {
   return tid * get_num_assigned_ranks_per_thread();
 }
 
-inline thread
-VPManager::get_end_rank_per_thread( const thread rank_start, const thread num_assigned_ranks_per_thread ) const
+inline size_t
+VPManager::get_end_rank_per_thread( const size_t rank_start, const size_t num_assigned_ranks_per_thread ) const
 {
-  thread rank_end = rank_start + num_assigned_ranks_per_thread;
+  size_t rank_end = rank_start + num_assigned_ranks_per_thread;
 
   // if we have more threads than ranks, or if ranks can not be
   // distributed evenly on threads, we need to make sure, that all
@@ -118,7 +118,7 @@ VPManager::get_end_rank_per_thread( const thread rank_start, const thread num_as
 }
 
 inline AssignedRanks
-VPManager::get_assigned_ranks( const thread tid )
+VPManager::get_assigned_ranks( const size_t tid )
 {
   AssignedRanks assigned_ranks;
   assigned_ranks.begin = get_start_rank_per_thread( tid );

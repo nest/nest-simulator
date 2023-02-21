@@ -140,7 +140,7 @@ public:
    * \param e The event to send
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, thread t, const CommonSynapseProperties& cp );
+  void send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -210,7 +210,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-cont_delay_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
+cont_delay_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   e.set_receiver( *get_target( t ) );
   e.set_weight( weight_ );

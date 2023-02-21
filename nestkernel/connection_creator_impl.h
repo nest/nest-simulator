@@ -711,10 +711,10 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
       probabilities.resize( target_pos_node_id_pairs.size(), 1.0 );
     }
 
-    long number_of_connections = std::round( number_of_connections_->value( grng, src ) );
+    unsigned long number_of_connections = std::round( number_of_connections_->value( grng, src ) );
 
     if ( target_pos_node_id_pairs.empty()
-      or ( not allow_multapses_ and ( target_pos_node_id_pairs.size() < number_of_connections ) ) )
+      or ( not allow_multapses_ and target_pos_node_id_pairs.size() < number_of_connections ) )
     {
       std::string msg = String::compose( "Global source ID %1: Not enough targets found", source_id );
       throw KernelException( msg.c_str() );

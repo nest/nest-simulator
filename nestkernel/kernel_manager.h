@@ -125,10 +125,15 @@
  connection_rules                      arraytype   - The list of available connection rules (read only).
  growth_curves                         arraytype   - The list of the available structural plasticity growth curves (read
                                                      only).
- growth_factor_buffer_spike_data       double      - If MPI buffers for communication of spikes resize on the fly, grow
-                                                     them by this factor each round, defaults to 1.5.
  growth_factor_buffer_target_data      double      - If MPI buffers for communication of connections resize on the fly,
                                                      grow them by this factor each round, defaults to 1.5.
+ buffer_shrink_limit    double - Shrink spike buffers if last transmission required less than buffer_shrink_limit * current size; default 0: no shrinking
+ buffer_shrink_factor    double - When buffer_shrink_limit indicates shrinking, shrink to buffer_shrink_factor * current size
+ buffer_grow_extra     double - If buffers must grow, grow to ( 1+ buffer_grow_extra ) * required size
+ buffer_shrink_count   integer - Number of shrinks that have been performed (read only)
+ buffer_grow_count    integer - Number of grows that have been performed (read only)
+ buffer_shrink_delta   integer - Total number of elements removed from buffers over all shrink ops, per rank (read only)
+ buffer_grow_delta   integer - Total number of elements added to buffers over all grow ops, per rank (read only)
  keep_source_table                     booltype    - Whether to keep source table after connection setup is complete,
                                                      defaults to true.
  local_spike_counter                   integertype - Number of spikes fired by neurons on a given MPI rank during the

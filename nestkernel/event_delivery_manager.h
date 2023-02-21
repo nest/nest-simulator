@@ -450,17 +450,18 @@ private:
   std::vector< TargetData > recv_buffer_target_data_;
   //! whether size of MPI buffer for communication of connections was changed
   bool buffer_size_target_data_has_changed_;
-  //! whether size of MPI buffer for communication of spikes was changed
-  bool buffer_size_spike_data_has_changed_;
-  //! whether size of MPI buffer for communication of spikes can be decreased
-  bool decrease_buffer_size_spike_data_;
 
   //! largest number of spikes sent between any two ranks in most recent gather round
   size_t max_per_thread_max_spikes_per_rank_;
-  size_t buffer_shrink_count_;
-  size_t buffer_shrink_delta_;
-  size_t buffer_grow_count_;
-  size_t buffer_grow_delta_;
+  
+  double send_recv_buffer_shrink_limit_;   //!< shrink buffer only if below this limit
+  double send_recv_buffer_shrink_factor_;  //!< shrink buffer by this factor
+  double send_recv_buffer_growth_extra_;   //!< when growing, add this fraction extra space
+  
+  size_t send_recv_buffer_shrink_count_;  //!< number of shrink ops done
+  size_t send_recv_buffer_shrink_delta_;  //!< sum of per-rank reductions
+  size_t send_recv_buffer_grow_count_;    //!< number of grow ops done
+  size_t send_recv_buffer_grow_delta_;    //!< sum of per-rank reductions
 
   PerThreadBoolIndicator gather_completed_checker_;
 

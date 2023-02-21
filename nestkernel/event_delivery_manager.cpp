@@ -58,13 +58,14 @@ EventDeliveryManager::EventDeliveryManager()
   , send_buffer_target_data_()
   , recv_buffer_target_data_()
   , buffer_size_target_data_has_changed_( false )
-  , buffer_size_spike_data_has_changed_( false )
-  , decrease_buffer_size_spike_data_( true )
   , max_per_thread_max_spikes_per_rank_( 0 )
-  , buffer_shrink_count_( 0 )
-  , buffer_shrink_delta_( 0 )
-  , buffer_grow_count_( 0 )
-  , buffer_grow_delta_( 0 )
+  , send_recv_buffer_shrink_limit_( 0.0 )
+  , send_recv_buffer_shrink_factor_( 0.8 )
+  , send_recv_buffer_growth_extra_( 0.05 )
+  , send_recv_buffer_shrink_count_( 0 )
+  , send_recv_buffer_shrink_delta_( 0 )
+  , send_recv_buffer_grow_count_( 0 )
+  , send_recv_buffer_grow_delta_( 0 )
   , gather_completed_checker_()
 {
 }
@@ -89,12 +90,13 @@ EventDeliveryManager::initialize()
   // Ensures that ResetKernel resets off_grid_spiking_
   off_grid_spiking_ = false;
   buffer_size_target_data_has_changed_ = false;
-  buffer_size_spike_data_has_changed_ = false;
-  decrease_buffer_size_spike_data_ = true;
-  buffer_shrink_count_ = 0;
-  buffer_shrink_delta_ = 0;
-  buffer_grow_count_ = 0;
-  buffer_grow_delta_ = 0;
+  send_recv_buffer_shrink_limit_ = 0.0;
+  send_recv_buffer_shrink_factor_ = 0.8;
+  send_recv_buffer_growth_extra_ = 0.05;
+  send_recv_buffer_shrink_count_ = 0;
+  send_recv_buffer_shrink_delta_ = 0;
+  send_recv_buffer_grow_count_ = 0;
+  send_recv_buffer_grow_delta_ = 0;
 
 #pragma omp parallel
   {
@@ -152,6 +154,36 @@ void
 EventDeliveryManager::set_status( const DictionaryDatum& dict )
 {
   updateValue< bool >( dict, names::off_grid_spiking, off_grid_spiking_ );
+
+  double bsl = send_recv_buffer_shrink_limit_;
+  if ( updateValue< double >( dict, "buffer_shrink_limit", bsl ) )
+  {
+    if ( bsl < 0 )
+    {
+      throw BadProperty( "buffer_shrink_limit >= 0 required." );
+    }
+    send_recv_buffer_shrink_limit_ = bsl;
+  }
+  
+  double bsf = send_recv_buffer_shrink_factor_;
+  if ( updateValue< double >( dict, "buffer_shrink_factor", bsf ) )
+  {
+    if ( bsf < 0 or bsf > 1 )
+    {
+      throw BadProperty( "0 <= buffer_shrink_limit <= 1 required." );
+    }
+    send_recv_buffer_shrink_factor_ = bsf;
+  }
+  
+  double bge = send_recv_buffer_growth_extra_;
+  if ( updateValue< double >( dict, "buffer_growth_extra", bge ) )
+  {
+    if ( bge < 0 )
+    {
+      throw BadProperty( "buffer_growth_extra >= 0 required." );
+    }
+    send_recv_buffer_growth_extra_ = bge;
+  }
 }
 
 void
@@ -160,10 +192,13 @@ EventDeliveryManager::get_status( DictionaryDatum& dict )
   def< bool >( dict, names::off_grid_spiking, off_grid_spiking_ );
   def< unsigned long >(
     dict, names::local_spike_counter, std::accumulate( local_spike_counter_.begin(), local_spike_counter_.end(), 0 ) );
-  def< unsigned long >( dict, "buffer_grow_count", buffer_grow_count_ );
-  def< unsigned long >( dict, "buffer_grow_delta", buffer_grow_delta_ );
-  def< unsigned long >( dict, "buffer_shrink_count", buffer_shrink_count_ );
-  def< unsigned long >( dict, "buffer_shrink_delta", buffer_shrink_delta_ );
+  def< double >( dict, "buffer_shrink_limit", send_recv_buffer_shrink_limit_ );
+  def< double >( dict, "buffer_shrink_factor", send_recv_buffer_shrink_factor_ );
+  def< double >( dict, "buffer_growth_extra", send_recv_buffer_growth_extra_ );
+  def< unsigned long >( dict, "buffer_grow_count", send_recv_buffer_grow_count_ );
+  def< unsigned long >( dict, "buffer_grow_delta", send_recv_buffer_grow_delta_ );
+  def< unsigned long >( dict, "buffer_shrink_count", send_recv_buffer_shrink_count_ );
+  def< unsigned long >( dict, "buffer_shrink_delta", send_recv_buffer_shrink_delta_ );
 
 #ifdef TIMER_DETAILED
   def< double >( dict, names::time_collocate_spike_data, sw_collocate_spike_data_.elapsed() );
@@ -382,21 +417,18 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
   assigned_ranks.size = assigned_ranks.end - assigned_ranks.begin;
   assigned_ranks.max_size = assigned_ranks.size;
 
-  const double SHRINK_LIMIT = 0.7;
-  const double SHRINK_FACTOR = 0.9;
-  const double GROW_EXTRA = 0.05;
   const size_t old_buff_size_per_rank = kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
 
-  if ( max_per_thread_max_spikes_per_rank_ < SHRINK_LIMIT * old_buff_size_per_rank )
+  if ( max_per_thread_max_spikes_per_rank_ < send_recv_buffer_shrink_limit_ * old_buff_size_per_rank )
   {
     const auto unused_buffer_entries_per_rank = old_buff_size_per_rank - max_per_thread_max_spikes_per_rank_;
     const size_t new_buff_size_per_rank = std::max( 2UL,
-      static_cast< size_t >( max_per_thread_max_spikes_per_rank_ + unused_buffer_entries_per_rank * SHRINK_FACTOR ) );
+      static_cast< size_t >( send_recv_buffer_shrink_factor_ * old_buff_size_per_rank ) );
     kernel().mpi_manager.set_buffer_size_spike_data(
       kernel().mpi_manager.get_num_processes() * new_buff_size_per_rank );
     resize_send_recv_buffers_spike_data_();
-    ++buffer_shrink_count_;
-    buffer_shrink_delta_ += old_buff_size_per_rank - new_buff_size_per_rank;
+    ++send_recv_buffer_shrink_count_;
+    send_recv_buffer_shrink_delta_ += old_buff_size_per_rank - new_buff_size_per_rank;
   }
 
   /* The following do-while loop is executed
@@ -470,11 +502,10 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
     if ( not all_spikes_transmitted )
     {
       const size_t new_size_per_rank =
-        static_cast< size_t >( ( 1 + GROW_EXTRA ) * max_per_thread_max_spikes_per_rank_ );
+        static_cast< size_t >( ( 1 + send_recv_buffer_growth_extra_ ) * max_per_thread_max_spikes_per_rank_ );
 
-      ++buffer_grow_count_;
-      buffer_grow_delta_ +=
-        max_per_thread_max_spikes_per_rank_ - kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
+      ++send_recv_buffer_grow_count_;
+      send_recv_buffer_grow_delta_ += new_size_per_rank - kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
 
       kernel().mpi_manager.set_buffer_size_spike_data( kernel().mpi_manager.get_num_processes() * new_size_per_rank );
       resize_send_recv_buffers_spike_data_();

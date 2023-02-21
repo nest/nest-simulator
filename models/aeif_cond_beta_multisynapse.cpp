@@ -493,7 +493,7 @@ aeif_cond_beta_multisynapse::pre_run_hook()
 void
 aeif_cond_beta_multisynapse::update( Time const& origin, const long from, const long to )
 {
-      assert( State_::V_M == 0 );
+  assert( State_::V_M == 0 );
 
   for ( long lag = from; lag < to; ++lag ) // proceed by stepsize B_.step_
   {

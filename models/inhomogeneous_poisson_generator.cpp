@@ -236,7 +236,7 @@ nest::inhomogeneous_poisson_generator::pre_run_hook()
 void
 nest::inhomogeneous_poisson_generator::update( Time const& origin, const long from, const long to )
 {
-      assert( P_.rate_times_.size() == P_.rate_values_.size() );
+  assert( P_.rate_times_.size() == P_.rate_values_.size() );
 
   const long t0 = origin.get_steps();
 

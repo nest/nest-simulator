@@ -434,7 +434,7 @@ nest::aeif_psc_alpha::pre_run_hook()
 void
 nest::aeif_psc_alpha::update( Time const& origin, const long from, const long to )
 {
-      assert( State_::V_M == 0 );
+  assert( State_::V_M == 0 );
 
   for ( long lag = from; lag < to; ++lag )
   {

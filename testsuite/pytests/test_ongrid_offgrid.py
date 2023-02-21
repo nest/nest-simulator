@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # test_ongrid_offgrid.py
 #
 # This file is part of NEST.
@@ -20,6 +22,7 @@
 import nest
 import pytest
 
+
 class TestOngridOffgrid:
     """
     Test that plain and precise neurons can exchange spikes also with multiplicity.
@@ -31,7 +34,7 @@ class TestOngridOffgrid:
     @pytest.fixture(autouse=True)
     def build_base(self):
         nest.ResetKernel()
-        self.g = nest.Create('spike_generator', params={'spike_times': [ 1.0, 1.0 ]})
+        self.g = nest.Create('spike_generator', params={'spike_times': [1.0, 1.0]})
         self.pre = {'plain': nest.Create('parrot_neuron'),
                     'precise': nest.Create('parrot_neuron_ps')}
         self.post = {'plain': nest.Create('parrot_neuron'),
@@ -70,4 +73,3 @@ class TestOngridOffgrid:
 
         # confirm postsynaptic neuron has received and thus emitted a spike
         assert self.post['plain'].t_spike > 0 and self.post['precise'].t_spike > 0
-    

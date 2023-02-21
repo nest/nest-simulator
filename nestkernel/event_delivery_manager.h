@@ -453,15 +453,15 @@ private:
 
   //! largest number of spikes sent between any two ranks in most recent gather round
   size_t max_per_thread_max_spikes_per_rank_;
-  
-  double send_recv_buffer_shrink_limit_;   //!< shrink buffer only if below this limit
-  double send_recv_buffer_shrink_factor_;  //!< shrink buffer by this factor
-  double send_recv_buffer_growth_extra_;   //!< when growing, add this fraction extra space
-  
-  size_t send_recv_buffer_shrink_count_;  //!< number of shrink ops done
-  size_t send_recv_buffer_shrink_delta_;  //!< sum of per-rank reductions
-  size_t send_recv_buffer_grow_count_;    //!< number of grow ops done
-  size_t send_recv_buffer_grow_delta_;    //!< sum of per-rank reductions
+
+  double send_recv_buffer_shrink_limit_;  //!< shrink buffer only if below this limit
+  double send_recv_buffer_shrink_factor_; //!< shrink buffer by this factor
+  double send_recv_buffer_growth_extra_;  //!< when growing, add this fraction extra space
+
+  size_t send_recv_buffer_shrink_count_; //!< number of shrink ops done
+  size_t send_recv_buffer_shrink_delta_; //!< sum of per-rank reductions
+  size_t send_recv_buffer_grow_count_;   //!< number of grow ops done
+  size_t send_recv_buffer_grow_delta_;   //!< sum of per-rank reductions
 
   PerThreadBoolIndicator gather_completed_checker_;
 

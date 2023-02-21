@@ -164,7 +164,7 @@ EventDeliveryManager::set_status( const DictionaryDatum& dict )
     }
     send_recv_buffer_shrink_limit_ = bsl;
   }
-  
+
   double bsf = send_recv_buffer_shrink_factor_;
   if ( updateValue< double >( dict, "buffer_shrink_factor", bsf ) )
   {
@@ -174,7 +174,7 @@ EventDeliveryManager::set_status( const DictionaryDatum& dict )
     }
     send_recv_buffer_shrink_factor_ = bsf;
   }
-  
+
   double bge = send_recv_buffer_growth_extra_;
   if ( updateValue< double >( dict, "buffer_growth_extra", bge ) )
   {
@@ -422,8 +422,8 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
   if ( max_per_thread_max_spikes_per_rank_ < send_recv_buffer_shrink_limit_ * old_buff_size_per_rank )
   {
     const auto unused_buffer_entries_per_rank = old_buff_size_per_rank - max_per_thread_max_spikes_per_rank_;
-    const size_t new_buff_size_per_rank = std::max( 2UL,
-      static_cast< size_t >( send_recv_buffer_shrink_factor_ * old_buff_size_per_rank ) );
+    const size_t new_buff_size_per_rank =
+      std::max( 2UL, static_cast< size_t >( send_recv_buffer_shrink_factor_ * old_buff_size_per_rank ) );
     kernel().mpi_manager.set_buffer_size_spike_data(
       kernel().mpi_manager.get_num_processes() * new_buff_size_per_rank );
     resize_send_recv_buffers_spike_data_();
@@ -453,17 +453,19 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
     std::vector< size_t > num_spikes_per_rank( kernel().mpi_manager.get_num_processes(), 0 );
 
     // Collocate spikes to send buffer
-    collocate_spike_data_buffers_( tid, assigned_ranks, send_buffer_position, emitted_spikes_register_, send_buffer,
-                                   num_spikes_per_rank );
+    collocate_spike_data_buffers_(
+      tid, assigned_ranks, send_buffer_position, emitted_spikes_register_, send_buffer, num_spikes_per_rank );
 
     if ( off_grid_spiking_ )
     {
-      collocate_spike_data_buffers_( tid, assigned_ranks, send_buffer_position, off_grid_emitted_spike_register_, send_buffer,
-                                     num_spikes_per_rank );
+      collocate_spike_data_buffers_(
+        tid, assigned_ranks, send_buffer_position, off_grid_emitted_spike_register_, send_buffer, num_spikes_per_rank );
     }
 
-    // Largest number of spikes sent from this rank to any other rank. This is *not* a global maximum, that is collected below.
-    const auto per_thread_max_spikes_per_rank = *std::max_element( num_spikes_per_rank.begin(), num_spikes_per_rank.end() );
+    // Largest number of spikes sent from this rank to any other rank. This is *not* a global maximum, that is collected
+    // below.
+    const auto per_thread_max_spikes_per_rank =
+      *std::max_element( num_spikes_per_rank.begin(), num_spikes_per_rank.end() );
 
     // At this point, all send_buffer entries with spikes to be transmitted, as well
     // as all chunk-end entries, have marker DEFAULT.
@@ -505,7 +507,8 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
         static_cast< size_t >( ( 1 + send_recv_buffer_growth_extra_ ) * max_per_thread_max_spikes_per_rank_ );
 
       ++send_recv_buffer_grow_count_;
-      send_recv_buffer_grow_delta_ += new_size_per_rank - kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
+      send_recv_buffer_grow_delta_ +=
+        new_size_per_rank - kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
 
       kernel().mpi_manager.set_buffer_size_spike_data( kernel().mpi_manager.get_num_processes() * new_size_per_rank );
       resize_send_recv_buffers_spike_data_();
@@ -534,7 +537,7 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
   // First dimension: loop over writing thread
   for ( auto& emitted_spikes_per_thread : emitted_spikes_register )
   {
-    
+
     // Third dimension: loop over lags
     for ( unsigned int lag = 0; lag < emitted_spikes_per_thread->size(); ++lag )
     {
@@ -542,12 +545,12 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
       for ( auto& emitted_spike : ( *emitted_spikes_per_thread )[ lag ] )
       {
         const thread rank = emitted_spike.get_rank();
-        
+
         // We need to count here even though send_buffer_position also counts,
         // but send_buffer_position will only count spikes actually written,
         // we need all spikes to have information for buffer resizing.
         ++num_spikes_per_rank[ rank ];
-        
+
         // We do not break if condition is false, because there may be spikes that
         // can be send to other ranks than the one that is full.
         if ( not send_buffer_position.is_chunk_filled( rank ) )
@@ -558,8 +561,6 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
       }
     }
   }
-  
-  
 }
 
 template < typename SpikeDataT >

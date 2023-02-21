@@ -229,7 +229,6 @@ nest::sinusoidal_poisson_generator::pre_run_hook()
 void
 nest::sinusoidal_poisson_generator::update( Time const& origin, const long from, const long to )
 {
-
   const long start = origin.get_steps();
 
   // random number generator

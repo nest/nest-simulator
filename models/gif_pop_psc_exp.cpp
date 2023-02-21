@@ -488,7 +488,6 @@ nest::gif_pop_psc_exp::get_history_size()
 void
 nest::gif_pop_psc_exp::update( Time const& origin, const long from, const long to )
 {
-
   for ( long lag = from; lag < to; ++lag )
   {
     // main update routine, see Fig. 11 of [1]

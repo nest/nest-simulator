@@ -315,7 +315,6 @@ nest::iaf_psc_exp_ps_lossless::pre_run_hook()
 void
 nest::iaf_psc_exp_ps_lossless::update( const Time& origin, const long from, const long to )
 {
-
   // at start of slice, tell input queue to prepare for delivery
   if ( from == 0 )
   {

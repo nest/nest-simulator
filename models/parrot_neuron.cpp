@@ -52,7 +52,6 @@ parrot_neuron::init_buffers_()
 void
 parrot_neuron::update( Time const& origin, const long from, const long to )
 {
-
   for ( long lag = from; lag < to; ++lag )
   {
     const unsigned long current_spikes_n = static_cast< unsigned long >( B_.n_spikes_.get_value( lag ) );

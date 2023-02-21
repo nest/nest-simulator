@@ -380,7 +380,6 @@ nest::hh_cond_exp_traub::pre_run_hook()
 void
 nest::hh_cond_exp_traub::update( Time const& origin, const long from, const long to )
 {
-
   for ( long lag = from; lag < to; ++lag )
   {
 

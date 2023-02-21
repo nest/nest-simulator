@@ -770,7 +770,6 @@ nest::ht_neuron::set_status( const DictionaryDatum& d )
 void
 ht_neuron::update( Time const& origin, const long from, const long to )
 {
-
   for ( long lag = from; lag < to; ++lag )
   {
     double tt = 0.0; // it's all relative!

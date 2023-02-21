@@ -273,7 +273,6 @@ nest::step_rate_generator::pre_run_hook()
 void
 nest::step_rate_generator::update( Time const& origin, const long from, const long to )
 {
-
   assert( P_.amp_time_stamps_.size() == P_.amp_values_.size() );
 
   const long t0 = origin.get_steps();

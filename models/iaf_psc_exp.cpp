@@ -283,7 +283,6 @@ nest::iaf_psc_exp::pre_run_hook()
 void
 nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
 {
-
   const double h = Time::get_resolution().get_ms();
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each

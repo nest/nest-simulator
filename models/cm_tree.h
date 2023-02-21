@@ -111,9 +111,7 @@ public:
 Short helper functions for solving the matrix equation. Can hopefully be inlined
 */
 inline void
-nest::Compartment::gather_input( const std::pair< double, double >& in )
-{
-  xx_ += in.first;
+nest::Compartment::gather_input( const std::pair< double, double >& in )  xx_ += in.first;
   yy_ += in.second;
 }
 inline std::pair< double, double >

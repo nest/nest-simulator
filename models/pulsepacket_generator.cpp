@@ -74,7 +74,6 @@ nest::pulsepacket_generator::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d, pulsepacket_generator& ppg, Node* node )
 {
-
   // We cannot use a single line here since short-circuiting may stop evaluation
   // prematurely. Therefore, neednewpulse must be second arg on second line.
   bool neednewpulse = updateValueParam< long >( d, names::activity, a_, node );

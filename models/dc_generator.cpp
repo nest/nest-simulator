@@ -161,7 +161,6 @@ nest::dc_generator::pre_run_hook()
 void
 nest::dc_generator::update( Time const& origin, const long from, const long to )
 {
-
   long start = origin.get_steps();
 
   CurrentEvent ce;

@@ -298,7 +298,6 @@ nest::iaf_psc_alpha_ps::get_next_event_( const long T, double& ev_offset, double
 void
 nest::iaf_psc_alpha_ps::update( Time const& origin, const long from, const long to )
 {
-
   // at start of slice, tell input queue to prepare for delivery
   if ( from == 0 )
   {

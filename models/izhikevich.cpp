@@ -101,7 +101,6 @@ nest::izhikevich::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::izhikevich::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-
   updateValueParam< double >( d, names::V_th, V_th_, node );
   updateValueParam< double >( d, names::V_min, V_min_, node );
   updateValueParam< double >( d, names::I_e, I_e_, node );
@@ -188,7 +187,6 @@ nest::izhikevich::pre_run_hook()
 void
 nest::izhikevich::update( Time const& origin, const long from, const long to )
 {
-
   const double h = Time::get_resolution().get_ms();
   double v_old, u_old;
 

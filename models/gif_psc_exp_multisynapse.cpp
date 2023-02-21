@@ -344,7 +344,6 @@ void
 nest::gif_psc_exp_multisynapse::update( Time const& origin, const long from, const long to )
 {
 
-
   for ( long lag = from; lag < to; ++lag )
   {
 

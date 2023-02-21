@@ -381,7 +381,6 @@ void
 nest::iaf_cond_exp_sfa_rr::update( Time const& origin, const long from, const long to )
 {
 
-
   for ( long lag = from; lag < to; ++lag )
   {
 

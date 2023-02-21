@@ -288,7 +288,6 @@ nest::noise_generator::send_test_event( Node& target, rport receptor_type, synin
 void
 nest::noise_generator::update( Time const& origin, const long from, const long to )
 {
-
   const long start = origin.get_steps();
 
   for ( long offs = from; offs < to; ++offs )

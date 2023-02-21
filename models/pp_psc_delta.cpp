@@ -141,7 +141,6 @@ nest::pp_psc_delta::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-
   updateValueParam< double >( d, names::I_e, I_e_, node );
   updateValueParam< double >( d, names::C_m, c_m_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
@@ -288,7 +287,6 @@ nest::pp_psc_delta::init_buffers_()
 void
 nest::pp_psc_delta::pre_run_hook()
 {
-
   B_.logger_.init();
 
   V_.h_ = Time::get_resolution().get_ms();
@@ -356,7 +354,6 @@ nest::pp_psc_delta::pre_run_hook()
 void
 nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
 {
-
 
   for ( long lag = from; lag < to; ++lag )
   {

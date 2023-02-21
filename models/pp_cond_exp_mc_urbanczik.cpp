@@ -574,7 +574,6 @@ void
 nest::pp_cond_exp_mc_urbanczik::update( Time const& origin, const long from, const long to )
 {
 
-
   for ( long lag = from; lag < to; ++lag )
   {
 

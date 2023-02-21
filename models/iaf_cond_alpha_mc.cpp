@@ -575,7 +575,6 @@ void
 nest::iaf_cond_alpha_mc::update( Time const& origin, const long from, const long to )
 {
 
-
   for ( long lag = from; lag < to; ++lag )
   {
 

@@ -217,7 +217,6 @@ nest::iaf_chs_2007::pre_run_hook()
 void
 nest::iaf_chs_2007::update( const Time& origin, const long from, const long to )
 {
-
   // evolve from timestep 'from' to timestep 'to' with steps of h each
   for ( long lag = from; lag < to; ++lag )
   {

@@ -274,7 +274,6 @@ nest::iaf_psc_exp_ps::pre_run_hook()
 void
 nest::iaf_psc_exp_ps::update( const Time& origin, const long from, const long to )
 {
-
   // at start of slice, tell input queue to prepare for delivery
   if ( from == 0 )
   {

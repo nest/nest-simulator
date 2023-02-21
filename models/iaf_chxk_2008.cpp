@@ -352,7 +352,6 @@ nest::iaf_chxk_2008::pre_run_hook()
 void
 nest::iaf_chxk_2008::update( Time const& origin, const long from, const long to )
 {
-
   for ( long lag = from; lag < to; ++lag )
   {
 

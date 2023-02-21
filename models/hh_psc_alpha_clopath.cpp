@@ -411,7 +411,6 @@ nest::hh_psc_alpha_clopath::pre_run_hook()
 void
 nest::hh_psc_alpha_clopath::update( Time const& origin, const long from, const long to )
 {
-
   for ( long lag = from; lag < to; ++lag )
   {
 

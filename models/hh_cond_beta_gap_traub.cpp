@@ -470,7 +470,6 @@ nest::hh_cond_beta_gap_traub::update_( Time const& origin,
   const long to,
   const bool called_from_wfr_update )
 {
-
   const size_t interpolation_order = kernel().simulation_manager.get_wfr_interpolation_order();
   const double wfr_tol = kernel().simulation_manager.get_wfr_tol();
   bool wfr_tol_exceeded = false;

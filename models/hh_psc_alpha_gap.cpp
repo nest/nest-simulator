@@ -449,7 +449,6 @@ nest::hh_psc_alpha_gap::pre_run_hook()
 bool
 nest::hh_psc_alpha_gap::update_( Time const& origin, const long from, const long to, const bool called_from_wfr_update )
 {
-
   const size_t interpolation_order = kernel().simulation_manager.get_wfr_interpolation_order();
   const double wfr_tol = kernel().simulation_manager.get_wfr_tol();
   bool wfr_tol_exceeded = false;

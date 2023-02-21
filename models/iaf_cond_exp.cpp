@@ -344,7 +344,6 @@ nest::iaf_cond_exp::pre_run_hook()
 void
 nest::iaf_cond_exp::update( Time const& origin, const long from, const long to )
 {
-
   for ( long lag = from; lag < to; ++lag )
   {
 

@@ -383,7 +383,6 @@ nest::hh_psc_alpha::pre_run_hook()
 void
 nest::hh_psc_alpha::update( Time const& origin, const long from, const long to )
 {
-
   for ( long lag = from; lag < to; ++lag )
   {
 

@@ -319,7 +319,6 @@ nest::gif_psc_exp::pre_run_hook()
 void
 nest::gif_psc_exp::update( Time const& origin, const long from, const long to )
 {
-
   for ( long lag = from; lag < to; ++lag )
   {
 

@@ -413,7 +413,6 @@ void
 nest::aeif_psc_delta::update( const Time& origin, const long from, const long to )
 {
   assert( State_::V_M == 0 );
-  
 
   const double h = Time::get_resolution().get_ms();
   const double tau_m_ = P_.C_m / P_.g_L;

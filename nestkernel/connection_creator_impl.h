@@ -440,13 +440,13 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         // Draw `target_number_connections` sources
         while ( target_number_connections > 0)
         {
-          index random_id = lottery( rng );
+          const index random_id = lottery( rng );
           if ( not allow_multapses_ and is_selected[ random_id ] )
           {
             continue;
           }
 
-          index source_id = positions[ random_id ].second;
+          const index source_id = positions[ random_id ].second;
           if ( not allow_autapses_ and source_id == target_id )
           {
             continue;
@@ -484,13 +484,13 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         // Draw `target_number_connections` sources
         while ( target_number_connections > 0)
         {
-          index random_id = rng->ulrand( positions.size() );
+          const index random_id = rng->ulrand( positions.size() );
           if ( not allow_multapses_ and is_selected[ random_id ] )
           {
             continue;
           }
           positions[ random_id ].first.get_vector( source_pos_vector );
-          index source_id = positions[ random_id ].second;
+          const index source_id = positions[ random_id ].second;
           for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
           {
             const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
@@ -565,13 +565,13 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         // Draw `target_number_connections` sources
         while ( target_number_connections > 0)
         {
-          index random_id = lottery( rng );
+          const index random_id = lottery( rng );
           if ( not allow_multapses_ and is_selected[ random_id ] )
           {
             continue;
           }
 
-          index source_id = ( *positions )[ random_id ].second;
+          const index source_id = ( *positions )[ random_id ].second;
           if ( not allow_autapses_ and source_id == target_id )
           {
             continue;
@@ -602,13 +602,13 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         // Draw `target_number_connections` sources
         while ( target_number_connections > 0)
         {
-          index random_id = rng->ulrand( positions->size() );
+          const index random_id = rng->ulrand( positions->size() );
           if ( not allow_multapses_ and is_selected[ random_id ] )
           {
             continue;
           }
 
-          index source_id = ( *positions )[ random_id ].second;
+          const index source_id = ( *positions )[ random_id ].second;
           if ( not allow_autapses_ and source_id == target_id )
           {
             continue;
@@ -711,7 +711,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
       probabilities.resize( target_pos_node_id_pairs.size(), 1.0 );
     }
 
-    const auto number_of_connections = std::round( number_of_connections_->value( grng, src ) );
+    long number_of_connections = std::round( number_of_connections_->value( grng, src ) );
 
     if ( target_pos_node_id_pairs.empty()
       or ( not allow_multapses_ and ( target_pos_node_id_pairs.size() < number_of_connections ) ) )
@@ -731,18 +731,16 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
     std::vector< bool > is_selected( target_pos_node_id_pairs.size() );
 
     // Draw `number_of_connections` targets
-    for ( long i = 0; i < ( long ) number_of_connections; ++i )
+    while( number_of_connections > 0 )
     {
-      index random_id = lottery( get_rank_synced_rng() );
+      const index random_id = lottery( get_rank_synced_rng() );
       if ( not allow_multapses_ and is_selected[ random_id ] )
       {
-        --i;
         continue;
       }
-      index target_id = target_pos_node_id_pairs[ random_id ].second;
+      const index target_id = target_pos_node_id_pairs[ random_id ].second;
       if ( not allow_autapses_ and source_id == target_id )
       {
-        --i;
         continue;
       }
 
@@ -768,7 +766,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
       }
 
       Node* target_ptr = kernel().node_manager.get_node_or_proxy( target_id );
-      thread target_thread = target_ptr->get_thread();
+      const thread target_thread = target_ptr->get_thread();
 
       for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
       {
@@ -780,6 +778,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
           rng_delay_vec[ indx ],
           rng_weight_vec[ indx ] );
       }
+      --number_of_connections;
     }
   }
 }

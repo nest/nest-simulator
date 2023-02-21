@@ -267,16 +267,16 @@ private:
    * Moves spikes from on grid and off grid spike registers to correct
    * locations in MPI buffers.
    *
-   * @note Return value is just max number of spikes sent to any rank from this rank,
-   *       **not** a global maximum.
-   * @returns max number of spikes to be sent to any rank
+   * Accumulates count of spikes to be sent to any rank in num_spikes_per_rank.
+   * Passed as argument, so that values accumulate as we call once for plain and once for offgrid spikes.
    */
   template < typename TargetT, typename SpikeDataT >
-  size_t collocate_spike_data_buffers_( const thread tid,
+  void collocate_spike_data_buffers_( const thread tid,
     const AssignedRanks& assigned_ranks,
     SendBufferPosition& send_buffer_position,
     std::vector< std::vector< std::vector< TargetT > >* >& spike_register,
-    std::vector< SpikeDataT >& send_buffer );
+    std::vector< SpikeDataT >& send_buffer,
+    std::vector< size_t >& num_spikes_per_rank );
 
   /**
    * Set end marker for per-rank-chunks signalling completion and providing shrink/grow infomation.

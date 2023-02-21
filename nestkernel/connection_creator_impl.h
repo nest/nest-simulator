@@ -731,7 +731,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
     std::vector< bool > is_selected( target_pos_node_id_pairs.size() );
 
     // Draw `number_of_connections` targets
-    while( number_of_connections > 0 )
+    while ( number_of_connections > 0 )
     {
       const index random_id = lottery( get_rank_synced_rng() );
       if ( not allow_multapses_ and is_selected[ random_id ] )

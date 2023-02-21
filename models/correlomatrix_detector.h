@@ -180,7 +180,7 @@ public:
 
   void handle( SpikeEvent& ) override;
 
-  port handles_test_event( SpikeEvent&, rport ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -297,8 +297,8 @@ private:
   State_ S_;
 };
 
-inline port
-correlomatrix_detector::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+correlomatrix_detector::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type < 0 or receptor_type > P_.N_channels_ - 1 )
   {

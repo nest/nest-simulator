@@ -76,7 +76,7 @@ public:
     return target_;
   }
 
-  rport
+  size_t
   get_rport() const
   {
     return rport_;
@@ -89,14 +89,14 @@ public:
   }
 
   void
-  set_rport( rport rprt )
+  set_rport( size_t rprt )
   {
     rport_ = rprt;
   }
 
 private:
   Node* target_; //!< Target node
-  rport rport_;  //!< Receiver port at the target node
+  size_t rport_;  //!< Receiver port at the target node
 };
 
 
@@ -141,7 +141,7 @@ public:
     return kernel().node_manager.thread_lid_to_node( tid, target_ );
   }
 
-  rport
+  size_t
   get_rport() const
   {
     return 0;
@@ -150,7 +150,7 @@ public:
   void set_target( Node* target );
 
   void
-  set_rport( rport rprt )
+  set_rport( size_t rprt )
   {
     if ( rprt != 0 )
     {

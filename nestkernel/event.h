@@ -220,7 +220,7 @@ public:
    * @retval A negative return value indicates that no port number
    * was available.
    */
-  port get_port() const;
+  size_t get_port() const;
 
   /**
    * Return the receiver port number of the event.
@@ -228,7 +228,7 @@ public:
    * Event was sent.
    * @note A return value of 0 indicates that the r-port is not used.
    */
-  rport get_rport() const;
+  size_t get_rport() const;
 
   /**
    * Set the port number.
@@ -238,7 +238,7 @@ public:
    * object.
    * @param p Port number of the connection, or -1 if unknown.
    */
-  void set_port( port p );
+  void set_port( size_t p );
 
   /**
    * Set the receiver port number (r-port).
@@ -248,7 +248,7 @@ public:
    * number defaults to zero.
    * @param p Receiver port number of the connection, or 0 if unused.
    */
-  void set_rport( rport p );
+  void set_rport( size_t p );
 
   /**
    * Return the creation time offset of the Event.
@@ -335,7 +335,7 @@ protected:
    * locate target-specific information.  @note A negative port
    * number indicates an unknown port.
    */
-  port p_;
+  size_t p_;
 
   /**
    * Receiver port number (r-port).
@@ -346,7 +346,7 @@ protected:
    * @note The use of this port number is optional.
    * @note An r-port number of 0 indicates that the port is not used.
    */
-  rport rp_;
+  size_t rp_;
 
   /**
    * Transmission delay.
@@ -988,26 +988,26 @@ Event::set_offset( double t )
   offset_ = t;
 }
 
-inline port
+inline size_t
 Event::get_port() const
 {
   return p_;
 }
 
-inline rport
+inline size_t
 Event::get_rport() const
 {
   return rp_;
 }
 
 inline void
-Event::set_port( port p )
+Event::set_port( size_t p )
 {
   p_ = p;
 }
 
 inline void
-Event::set_rport( rport rp )
+Event::set_rport( size_t rp )
 {
   rp_ = rp;
 }

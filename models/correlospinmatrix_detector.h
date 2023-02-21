@@ -162,7 +162,7 @@ public:
 
   void handle( SpikeEvent& ) override;
 
-  port handles_test_event( SpikeEvent&, rport ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
 
   SignalType receives_signal() const override;
 
@@ -256,7 +256,7 @@ private:
                                     * rport of last event coming in
                                     * (needed for decoding logic of binary events)
                                     */
-    rport last_i_;
+    size_t last_i_;
     /**
      * time of last event coming in (needed for decoding logic of binary events)
      */
@@ -293,8 +293,8 @@ private:
   State_ S_;
 };
 
-inline port
-correlospinmatrix_detector::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+correlospinmatrix_detector::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type < 0 or receptor_type > P_.N_channels_ - 1 )
   {

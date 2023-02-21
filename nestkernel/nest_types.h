@@ -144,31 +144,14 @@ const targetindex invalid_targetindex = USHRT_MAX;
 __attribute__( ( __unused__ ) ) const size_t max_targetindex = invalid_targetindex - 1;
 
 /**
- * Value for invalid connection port number.
+ * Value for invalid connection thread id.
  */
 const size_t invalid_thread = std::numeric_limits< size_t >::max();
 
 /**
- * Connection port number to distinguish incoming connections,
- * also called receiver port.
- * Connections between Nodes are assigned port numbers.
- * Valid port numbers start at zero (0).
- * The value -1 is used for invalid or unassigned ports.
- */
-typedef long rport;
-
-/**
- * Connection port number to distinguish outgoing connections.
- * Connections between Nodes are assigned port numbers.
- * Valid port numbers start at zero (0).
- * The value -1 is used for invalid or unassigned ports.
- */
-typedef long port;
-
-/**
  * Value for invalid connection port number.
  */
-const rport invalid_port = -1;
+const size_t invalid_port = std::numeric_limits< size_t >::max();
 
 /**
  * Weight of a connection.

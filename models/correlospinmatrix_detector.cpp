@@ -300,7 +300,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
 {
   // The receiver port identifies the sending node in our
   // sender list.
-  const rport curr_i = e.get_rport();
+  const size_t curr_i = e.get_rport();
 
   // If this assertion breaks, the sender does not honor the
   // receiver port during connection or sending.

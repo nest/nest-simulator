@@ -138,7 +138,7 @@ public:
 
   void handle( SpikeEvent& ) override;
 
-  port handles_test_event( SpikeEvent&, rport ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
 
   void get_status( DictionaryDatum& d ) const override;
   void set_status( const DictionaryDatum& d ) override;
@@ -187,8 +187,8 @@ private:
   size_t local_device_id_;
 };
 
-inline port
-volume_transmitter::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+volume_transmitter::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

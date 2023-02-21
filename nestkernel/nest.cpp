@@ -137,7 +137,7 @@ set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict 
   const size_t target_node_id = getValue< long >( conn_dict, nest::names::target );
   const size_t tid = getValue< long >( conn_dict, nest::names::target_thread );
   const synindex syn_id = getValue< long >( conn_dict, nest::names::synapse_modelid );
-  const port p = getValue< long >( conn_dict, nest::names::port );
+  const size_t p = getValue< long >( conn_dict, nest::names::port );
 
   dict->clear_access_flags();
 

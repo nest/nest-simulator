@@ -130,7 +130,7 @@ public:
    * @param map of access functions
    * @return rport for future logging requests
    */
-  port connect_logging_device( const DataLoggingRequest&, const RecordablesMap< HostNode >& );
+  size_t connect_logging_device( const DataLoggingRequest&, const RecordablesMap< HostNode >& );
 
   /**
    * Answer DataLoggingRequest.
@@ -229,7 +229,7 @@ private:
 // must be defined in this file, since it is required by check_connection(),
 // which typically is in h-files.
 template < typename HostNode >
-port
+size_t
 nest::UniversalDataLogger< HostNode >::connect_logging_device( const DataLoggingRequest& req,
   const RecordablesMap< HostNode >& rmap )
 {
@@ -387,7 +387,7 @@ public:
    * @param map of access functions
    * @return rport for future logging requests
    */
-  port connect_logging_device( const DataLoggingRequest&, const DynamicRecordablesMap< HostNode >& );
+  size_t connect_logging_device( const DataLoggingRequest&, const DynamicRecordablesMap< HostNode >& );
 
   /**
    * Answer DataLoggingRequest.
@@ -487,7 +487,7 @@ private:
 // must be defined in this file, since it is required by check_connection(),
 // which typically is in h-files.
 template < typename HostNode >
-port
+size_t
 nest::DynamicUniversalDataLogger< HostNode >::connect_logging_device( const DataLoggingRequest& req,
   const DynamicRecordablesMap< HostNode >& rmap )
 {

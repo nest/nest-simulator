@@ -127,7 +127,7 @@ public:
 
   void handle( SpikeEvent& ) override;
 
-  port handles_test_event( SpikeEvent&, rport ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
 
   Type get_type() const override;
   SignalType receives_signal() const override;
@@ -156,8 +156,8 @@ private:
   Time t_last_in_spike_;
 };
 
-inline port
-spin_detector::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+spin_detector::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

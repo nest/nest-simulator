@@ -216,13 +216,13 @@ nest::music_cont_out_proxy::finalize()
 {
 }
 
-nest::port
-nest::music_cont_out_proxy::send_test_event( Node& target, rport receptor_type, synindex, bool )
+size_t
+nest::music_cont_out_proxy::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
 
   DataLoggingRequest e( P_.interval_, P_.record_from_ );
   e.set_sender( *this );
-  port p = target.handles_test_event( e, receptor_type );
+  size_t p = target.handles_test_event( e, receptor_type );
   if ( p != invalid_port and not is_model_prototype() )
   {
     B_.has_targets_ = true;
@@ -363,9 +363,9 @@ nest::music_cont_out_proxy::handle( DataLoggingReply& reply )
   // easy access to relevant information
   DataLoggingReply::Container const& info = reply.get_info();
 
-  const index port = reply.get_port();
+  const index size_t = reply.get_port();
   const size_t record_width = P_.record_from_.size();
-  const size_t offset = port * record_width;
+  const size_t offset = size_t * record_width;
   const DataLoggingReply::DataItem item = info[ info.size() - 1 ].data;
   if ( info[ info.size() - 1 ].timestamp.is_finite() )
   {

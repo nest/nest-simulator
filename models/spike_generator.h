@@ -51,15 +51,11 @@ Description
 A spike generator can be used to generate spikes at specific times
 which are given to the spike generator as an array.
 
-Spike times are given in milliseconds, and must be sorted with the
-earliest spike first. All spike times must be strictly in the future.
-Trying to set a spike time in the past or at the current time step
-will cause a NEST error. Setting a spike time of 0.0 will also result
-in an error.
-
-Spike times may not coincide with a time step, i.e., are not a multiple
-of the simulation resolution. Three options control how spike times that
-do not coincide with a step are handled (see examples below):
+Spike times are given in milliseconds as an array. The `spike_times`
+array must be sorted with the earliest spike first. All spike times
+must be strictly in the future. Trying to set a spike time in the
+past or at the current time step will cause a NEST error. Setting a
+spike time of 0.0 will also result in an error.
 
 Multiple occurrences of the same time indicate that more than one
 event is to be generated at this particular time.
@@ -69,6 +65,10 @@ It contains one weight value per spike time. If set, the spikes
 are delivered with the respective weight multiplied with the
 weight of the connection. To disable this functionality, the
 spike_weights array can be set to an empty array.
+
+Spike times may not coincide with a time step, i.e., are not a multiple
+of the simulation resolution. Three options control how spike times that
+do not coincide with a step are handled (see also examples below):
 
     `precise_times`  default: false
 
@@ -180,23 +180,23 @@ Assume we have simulated 10.0 ms and simulation time is thus 10.0 (step
 .. include:: ../models/stimulation_device.rst
 
 spike_times
-    List of spike times in ms
+    List of spike times in ms.
 
 spike_weights
-    Corresponding spike-weights, the unit depends on the receiver
+    List of corresponding spike-weights, the unit depends on the receiver.
 
 spike_multiplicities
     List of multiplicities of spikes, same length as spike_times; mostly
-    for debugging
+    for debugging.
 
 precise_times
-    See above
+    See above.
 
 allow_offgrid_times
-    See above
+    See above.
 
 shift_now_spikes
-    See above
+    See above.
 
 Set spike times from a stimulation backend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -213,7 +213,7 @@ SpikeEvent
 See also
 ++++++++
 
-poisson_generator
+poisson_generator, static_injector_neuron
 
 EndUserDocs
 */

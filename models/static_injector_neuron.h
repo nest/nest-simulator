@@ -99,6 +99,12 @@ public:
     return NONE;
   }
 
+  bool
+  is_off_grid() const override
+  {
+    return P_.precise_times_;
+  }
+
   void set_data( std::vector< double >& input_spikes );
 
 private:
@@ -125,6 +131,15 @@ private:
    */
   struct Parameters_
   {
+
+    //! Origin of device time axis, relative to network time. Defaults to 0.
+    Time origin_;
+
+    //!< Start time, relative to origin. Defaults to 0.
+    Time start_;
+
+    //!< Stop time, relative to origin. Defaults to "infinity".
+    Time stop_;
 
     //! Spike time stamp as Time, rel to origin_
     std::vector< Time > spike_stamps_;
@@ -174,15 +189,6 @@ private:
    */
   struct Variables_
   {
-
-    //! Origin of device time axis, relative to network time. Defaults to 0.
-    Time origin_;
-
-    //!< Start time, relative to origin. Defaults to 0.
-    Time start_;
-
-    //!< Stop time, relative to origin. Defaults to "infinity".
-    Time stop_;
 
     /**
      * Time step of device activation.
@@ -282,19 +288,19 @@ static_injector_neuron::set_status( const DictionaryDatum& d )
 inline Time const&
 static_injector_neuron::get_origin() const
 {
-  return V_.origin_;
+  return P_.origin_;
 }
 
 inline Time const&
 static_injector_neuron::get_start() const
 {
-  return V_.start_;
+  return P_.start_;
 }
 
 inline Time const&
 static_injector_neuron::get_stop() const
 {
-  return V_.stop_;
+  return P_.stop_;
 }
 
 inline long
@@ -310,22 +316,5 @@ static_injector_neuron::get_t_max_() const
 }
 
 } // namespace
-
-
-/* Need to set this somewhere if precise_times = true
-
-// activate off-grid communication only after nodes have been created
-  // successfully
-  if ( model->is_off_grid() )
-  {
-    kernel().event_delivery_manager.set_off_grid_communication( true );
-    LOG( M_INFO,
-      "NodeManager::add_node",
-      "Neuron models emitting precisely timed spikes exist: "
-      "the kernel property off_grid_spiking has been set to true.\n\n"
-      "NOTE: Mixing precise-spiking and normal neuron models may "
-      "lead to inconsistent results." );
-  }
-*/
 
 #endif // STATIC_INJECTOR_NEURON_H

@@ -31,7 +31,7 @@ nest.set(resolution=dt)
 parrot = nest.Create("parrot_neuron", n=1)
 #parrot = nest.Create("parrot_neuron_ps", n=1)
 
-injector = nest.Create("static_injector_neuron",
+injector = nest.Create("spike_generator",
                        n=1,
                        params={"spike_times": spike_times,
                                "precise_times": True,

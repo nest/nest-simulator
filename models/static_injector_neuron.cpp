@@ -49,7 +49,10 @@ static_injector_neuron::State_::State_()
 }
 
 static_injector_neuron::Parameters_::Parameters_()
-  : spike_stamps_()
+  : origin_( Time::step( 0 ) )
+  , start_( Time::step( 0 ) )
+  , stop_( Time::pos_inf() )
+  , spike_stamps_()
   , spike_offsets_()
   , spike_weights_()
   , spike_multiplicities_()
@@ -82,6 +85,9 @@ static_injector_neuron::Parameters_::get( DictionaryDatum& d ) const
       ( *times_ms )[ n ] -= spike_offsets_[ n ];
     }
   }
+  ( *d )[ names::origin ] = origin_.get_ms();
+  ( *d )[ names::start ] = start_.get_ms();
+  ( *d )[ names::stop ] = stop_.get_ms();
   ( *d )[ names::spike_times ] = DoubleVectorDatum( times_ms );
   ( *d )[ names::spike_weights ] = DoubleVectorDatum( new std::vector< double >( spike_weights_ ) );
   ( *d )[ names::spike_multiplicities ] = IntVectorDatum( new std::vector< long >( spike_multiplicities_ ) );
@@ -313,13 +319,34 @@ static_injector_neuron::init_buffers_()
 void
 static_injector_neuron::pre_run_hook()
 {
+  // TODO: below comment might not apply
   // We do not need to recalibrate time objects, since they are
   // recalibrated on instance construction and resolution cannot
   // change after a single node instance has been created.
 
+  /* The resolution of the simulation may have changed since the
+     original parameters were set. We thus must calibrate the copies
+     to ensure consistency of the time values.
+  */
+
+  if ( is_off_grid() )
+  {
+    kernel().event_delivery_manager.set_off_grid_communication( true );
+    LOG( M_INFO,
+      "NodeManager::add_node",
+      "Neuron models emitting precisely timed spikes exist: "
+      "the kernel property off_grid_spiking has been set to true.\n\n"
+      "NOTE: Mixing precise-spiking and normal neuron models may "
+      "lead to inconsistent results." );
+  }
+
+  P_.origin_.calibrate();
+  P_.start_.calibrate();
+  P_.stop_.calibrate();
+
   // by adding time objects, all overflows will be handled gracefully
-  V_.t_min_ = ( V_.origin_ + V_.start_ ).get_steps();
-  V_.t_max_ = ( V_.origin_ + V_.stop_ ).get_steps();
+  V_.t_min_ = ( P_.origin_ + P_.start_ ).get_steps();
+  V_.t_max_ = ( P_.origin_ + P_.stop_ ).get_steps();
 }
 
 

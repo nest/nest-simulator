@@ -127,7 +127,7 @@ EventDeliveryManager::send_off_grid_remote( thread tid, SpikeEvent& e, const lon
   for ( std::vector< Target >::const_iterator it = targets.begin(); it != targets.end(); ++it )
   {
     // Unroll spike multiplicity as plastic synapses only handle individual spikes.
-    for ( int i = 0; i < e.get_multiplicity(); ++i )
+    for ( size_t i = 0; i < e.get_multiplicity(); ++i )
     {
       ( *off_grid_emitted_spike_register_[ tid ] )[ lag ].push_back( OffGridTarget( *it, e.get_offset() ) );
     }

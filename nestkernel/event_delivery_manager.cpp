@@ -533,6 +533,9 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
   std::vector< SpikeDataT >& send_buffer,
   std::vector< size_t >& num_spikes_per_rank )
 {
+  // TODO: Re-introduce assigned_ranks concept; assert mainly suppresses unused variable warnings
+  assert( tid == 0 and assigned_ranks.begin <= assigned_ranks.end );
+
   // First dimension: loop over writing thread
   for ( auto& emitted_spikes_per_thread : emitted_spikes_register )
   {
@@ -572,9 +575,9 @@ EventDeliveryManager::set_end_marker_( const AssignedRanks& assigned_ranks,
   // See comment in source_table.h for logic.
 
   const bool collocate_complete =
-    per_thread_max_spikes_per_rank <= kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
+    per_thread_max_spikes_per_rank <= static_cast< size_t >( kernel().mpi_manager.get_send_recv_count_spike_data_per_rank() );
 
-  for ( size_t rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
+  for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
   {
     const size_t end_idx = send_buffer_position.end( rank ) - 1;
     if ( not collocate_complete )
@@ -632,7 +635,7 @@ EventDeliveryManager::get_max_spike_data_per_thread_( const AssignedRanks& assig
   // TODO: send_buffer_position not needed here, only used to get endpoint of each per-rank section of buffer
 
   size_t maximum = 0;
-  for ( size_t target_rank = assigned_ranks.begin; target_rank < assigned_ranks.end; ++target_rank )
+  for ( thread target_rank = assigned_ranks.begin; target_rank < assigned_ranks.end; ++target_rank )
   {
     const auto& end_entry = recv_buffer[ send_buffer_position.end( target_rank ) - 1 ];
     size_t max_per_thread_max_spikes_per_rank = 0;
@@ -726,7 +729,7 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
     const unsigned int num_batches = num_valid_entries / BATCH_SIZE;
     const unsigned int num_remaining_entries = num_valid_entries - num_batches * BATCH_SIZE;
 
-    index tid_batch[ BATCH_SIZE ];
+    thread tid_batch[ BATCH_SIZE ];
     index syn_id_batch[ BATCH_SIZE ];
     index lcid_batch[ BATCH_SIZE ];
 

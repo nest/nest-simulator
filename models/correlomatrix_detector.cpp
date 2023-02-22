@@ -318,7 +318,7 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
 
     // throw away all spikes which are too old to
     // enter the correlation window
-    const delay min_delay = kernel().connection_manager.get_min_delay();
+    const long min_delay = kernel().connection_manager.get_min_delay();
     while ( not otherSpikes.empty() and ( spike_i - otherSpikes.front().timestep_ ) >= tau_edge + min_delay )
     {
       otherSpikes.pop_front();

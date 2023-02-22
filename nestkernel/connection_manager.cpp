@@ -473,12 +473,12 @@ nest::ConnectionManager::update_delay_extrema_()
 
   if ( kernel().mpi_manager.get_num_processes() > 1 )
   {
-    std::vector< delay > min_delays( kernel().mpi_manager.get_num_processes() );
+    std::vector< long > min_delays( kernel().mpi_manager.get_num_processes() );
     min_delays[ kernel().mpi_manager.get_rank() ] = min_delay_;
     kernel().mpi_manager.communicate( min_delays );
     min_delay_ = *std::min_element( min_delays.begin(), min_delays.end() );
 
-    std::vector< delay > max_delays( kernel().mpi_manager.get_num_processes() );
+    std::vector< long > max_delays( kernel().mpi_manager.get_num_processes() );
     max_delays[ kernel().mpi_manager.get_rank() ] = max_delay_;
     kernel().mpi_manager.communicate( max_delays );
     max_delay_ = *std::max_element( max_delays.begin(), max_delays.end() );

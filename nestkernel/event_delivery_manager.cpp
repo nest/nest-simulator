@@ -197,8 +197,8 @@ EventDeliveryManager::configure_secondary_buffers()
 void
 EventDeliveryManager::init_moduli()
 {
-  delay min_delay = kernel().connection_manager.get_min_delay();
-  delay max_delay = kernel().connection_manager.get_max_delay();
+  long min_delay = kernel().connection_manager.get_min_delay();
+  long max_delay = kernel().connection_manager.get_max_delay();
   assert( min_delay != 0 );
   assert( max_delay != 0 );
 
@@ -211,7 +211,7 @@ EventDeliveryManager::init_moduli()
 
   moduli_.resize( min_delay + max_delay );
 
-  for ( delay d = 0; d < min_delay + max_delay; ++d )
+  for ( long d = 0; d < min_delay + max_delay; ++d )
   {
     moduli_[ d ] = ( kernel().simulation_manager.get_clock().get_steps() + d ) % ( min_delay + max_delay );
   }
@@ -221,7 +221,7 @@ EventDeliveryManager::init_moduli()
   // The slice_moduli_ table maps time steps to these bins
   const size_t nbuff = static_cast< size_t >( std::ceil( static_cast< double >( min_delay + max_delay ) / min_delay ) );
   slice_moduli_.resize( min_delay + max_delay );
-  for ( delay d = 0; d < min_delay + max_delay; ++d )
+  for ( long d = 0; d < min_delay + max_delay; ++d )
   {
     slice_moduli_[ d ] = ( ( kernel().simulation_manager.get_clock().get_steps() + d ) / min_delay ) % nbuff;
   }
@@ -238,8 +238,8 @@ EventDeliveryManager::init_moduli()
 void
 EventDeliveryManager::update_moduli()
 {
-  delay min_delay = kernel().connection_manager.get_min_delay();
-  delay max_delay = kernel().connection_manager.get_max_delay();
+  long min_delay = kernel().connection_manager.get_min_delay();
+  long max_delay = kernel().connection_manager.get_max_delay();
   assert( min_delay != 0 );
   assert( max_delay != 0 );
 
@@ -256,7 +256,7 @@ EventDeliveryManager::update_moduli()
    min_delay_.  Reference time is the time at the beginning of the slice.
    */
   const size_t nbuff = static_cast< size_t >( std::ceil( static_cast< double >( min_delay + max_delay ) / min_delay ) );
-  for ( delay d = 0; d < min_delay + max_delay; ++d )
+  for ( long d = 0; d < min_delay + max_delay; ++d )
   {
     slice_moduli_[ d ] = ( ( kernel().simulation_manager.get_clock().get_steps() + d ) / min_delay ) % nbuff;
   }

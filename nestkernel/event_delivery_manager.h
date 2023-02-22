@@ -167,14 +167,14 @@ public:
   /**
    * Return (T+d) mod max_delay.
    */
-  delay get_modulo( delay d );
+  long get_modulo( long d );
 
 
   /**
    * Index to slice-based buffer.
    * Return ((T+d)/min_delay) % ceil(max_delay/min_delay).
    */
-  delay get_slice_modulo( delay d );
+  long get_slice_modulo( long d );
 
   /**
    * Resize spike_register and comm_buffer to correct dimensions.
@@ -367,7 +367,7 @@ private:
    * each slice is completed.
    * @see RingBuffer
    */
-  std::vector< delay > moduli_;
+  std::vector< long > moduli_;
 
   /**
    * Table of pre-computed slice-based modulos.
@@ -379,7 +379,7 @@ private:
    * the table anew.
    * @see SliceRingBuffer
    */
-  std::vector< delay > slice_moduli_;
+  std::vector< long > slice_moduli_;
 
   /**
    * Register for node IDs of neurons that spiked. This is a 4-dim
@@ -527,22 +527,22 @@ EventDeliveryManager::read_toggle() const
   return 1 - write_toggle();
 }
 
-inline delay
-EventDeliveryManager::get_modulo( delay d )
+inline long
+EventDeliveryManager::get_modulo( long d )
 {
   // Note, here d may be 0, since bin 0 represents the "current" time
   // when all events due are read out.
-  assert( static_cast< std::vector< delay >::size_type >( d ) < moduli_.size() );
+  assert( static_cast< std::vector< long >::size_type >( d ) < moduli_.size() );
 
   return moduli_[ d ];
 }
 
-inline delay
-EventDeliveryManager::get_slice_modulo( delay d )
+inline long
+EventDeliveryManager::get_slice_modulo( long d )
 {
   // Note, here d may be 0, since bin 0 represents the "current" time
   // when all events due are read out.
-  assert( static_cast< std::vector< delay >::size_type >( d ) < slice_moduli_.size() );
+  assert( static_cast< std::vector< long >::size_type >( d ) < slice_moduli_.size() );
 
   return slice_moduli_[ d ];
 }

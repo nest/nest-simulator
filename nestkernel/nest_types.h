@@ -154,14 +154,10 @@ const size_t invalid_thread = std::numeric_limits< size_t >::max();
 const size_t invalid_port = std::numeric_limits< size_t >::max();
 
 /**
- * Delay of a connection.
- * The delay defines the number of simulation steps which elapse
- * before an Event arrives at the receiving Node.
- * Delays must be equal or larger than one.
+ * Values for min and max delay.
  */
-typedef long delay;
-const long delay_min = LONG_MIN;
-const long delay_max = LONG_MAX;
+const long delay_min = std::numeric_limits< long >::min();
+const long delay_max = std::numeric_limits< long >::max();
 
 /**
  * enum type of signal conveyed by spike events of a node.

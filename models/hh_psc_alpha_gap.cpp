@@ -450,7 +450,7 @@ bool
 nest::hh_psc_alpha_gap::update_( Time const& origin, const long from, const long to, const bool called_from_wfr_update )
 {
 
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( long ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   const size_t interpolation_order = kernel().simulation_manager.get_wfr_interpolation_order();

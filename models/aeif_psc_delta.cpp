@@ -412,7 +412,7 @@ nest::aeif_psc_delta::pre_run_hook()
 void
 nest::aeif_psc_delta::update( const Time& origin, const long from, const long to )
 {
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( long ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
   const double h = Time::get_resolution().get_ms();

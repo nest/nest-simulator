@@ -243,13 +243,13 @@ public:
    * Return minimal connection delay, which is precomputed by
    * update_delay_extrema_().
    */
-  delay get_min_delay() const;
+  long get_min_delay() const;
 
   /**
    * Return maximal connection delay, which is precomputed by
    * update_delay_extrema_().
    */
-  delay get_max_delay() const;
+  long get_max_delay() const;
 
   bool get_user_set_delay_extrema() const;
 
@@ -589,9 +589,9 @@ private:
   //! ConnBuilder factories, indexed by connruledict_ elements.
   std::vector< GenericConnBuilderFactory* > connbuilder_factories_;
 
-  delay min_delay_; //!< Value of the smallest delay in the network.
+  long min_delay_; //!< Value of the smallest delay in the network.
 
-  delay max_delay_; //!< Value of the largest delay in the network in steps.
+  long max_delay_; //!< Value of the largest delay in the network in steps.
 
   //! Whether to keep source table after connection setup is complete.
   bool keep_source_table_;
@@ -637,13 +637,13 @@ ConnectionManager::valid_connection_rule( std::string rule_name )
   return connruledict_->known( rule_name );
 }
 
-inline delay
+inline long
 ConnectionManager::get_min_delay() const
 {
   return min_delay_;
 }
 
-inline delay
+inline long
 ConnectionManager::get_max_delay() const
 {
   return max_delay_;

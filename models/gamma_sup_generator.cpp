@@ -229,7 +229,7 @@ nest::gamma_sup_generator::pre_run_hook()
 void
 nest::gamma_sup_generator::update( Time const& T, const long from, const long to )
 {
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( long ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   if ( P_.rate_ <= 0 or P_.num_targets_ == 0 )

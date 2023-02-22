@@ -133,7 +133,7 @@ public:
    * ConnectionManager::min_delay() methods have to respect this delay
    * as well.
    */
-  delay builder_min_delay() const;
+  long builder_min_delay() const;
 
   /**
    * Returns the maximum delay of all SP builders.
@@ -142,7 +142,7 @@ public:
    * ConnectionManager::max_delay() methods have to respect this delay
    * as well.
    */
-  delay builder_max_delay() const;
+  long builder_max_delay() const;
 
   // Creation of synapses
   bool create_synapses( std::vector< size_t >& pre_vacant_id,

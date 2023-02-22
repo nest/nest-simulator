@@ -1806,7 +1806,7 @@ nest::SPBuilder::SPBuilder( NodeCollectionPTR sources,
 }
 
 void
-nest::SPBuilder::update_delay( delay& d ) const
+nest::SPBuilder::update_delay( long& d ) const
 {
   if ( get_default_delay() )
   {

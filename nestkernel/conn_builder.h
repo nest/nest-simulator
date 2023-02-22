@@ -425,7 +425,7 @@ public:
    * SPBuilder only uses the default delay. If not, the min/max_delay
    * has to be specified explicitly with the kernel status.
    */
-  void update_delay( delay& d ) const;
+  void update_delay( long& d ) const;
 
   /**
    *  @note Only for internal use by SPManager.

@@ -370,7 +370,7 @@ void
 nest::iaf_cond_alpha::update( Time const& origin, const long from, const long to )
 {
 
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( long ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )

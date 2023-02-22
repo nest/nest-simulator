@@ -191,14 +191,14 @@ public:
    * @param t delay.
    */
 
-  void set_delay_steps( delay );
+  void set_delay_steps( long );
 
   /**
    * Return transmission delay of the event.
    * The delay refers to the time until the event is
    * expected to arrive at the receiver.
    */
-  delay get_delay_steps() const;
+  long get_delay_steps() const;
 
   /**
    * Relative spike delivery time in steps.
@@ -354,7 +354,7 @@ protected:
    * delivered at the receiver.
    * The delay must be at least 1.
    */
-  delay d_;
+  long d_;
 
   /**
    * Time stamp.
@@ -954,7 +954,7 @@ Event::set_stamp( Time const& s )
                     // get_rel_delivery_steps)
 }
 
-inline delay
+inline long
 Event::get_delay_steps() const
 {
   return d_;
@@ -971,7 +971,7 @@ Event::get_rel_delivery_steps( const Time& t ) const
 }
 
 inline void
-Event::set_delay_steps( delay d )
+Event::set_delay_steps( long d )
 {
   d_ = d;
 }

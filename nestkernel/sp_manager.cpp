@@ -176,11 +176,11 @@ SPManager::set_status( const DictionaryDatum& d )
   }
 }
 
-delay
+long
 SPManager::builder_min_delay() const
 {
-  delay min_delay = Time::pos_inf().get_steps();
-  delay builder_delay = Time::pos_inf().get_steps();
+  long min_delay = Time::pos_inf().get_steps();
+  long builder_delay = Time::pos_inf().get_steps();
 
   for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin(); i != sp_conn_builders_.end(); i++ )
   {
@@ -190,11 +190,11 @@ SPManager::builder_min_delay() const
   return min_delay;
 }
 
-delay
+long
 SPManager::builder_max_delay() const
 {
-  delay max_delay = Time::neg_inf().get_steps();
-  delay builder_delay = Time::neg_inf().get_steps();
+  long max_delay = Time::neg_inf().get_steps();
+  long builder_delay = Time::neg_inf().get_steps();
 
   for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin(); i != sp_conn_builders_.end(); i++ )
   {

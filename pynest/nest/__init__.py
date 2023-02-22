@@ -312,7 +312,7 @@ class NestModule(types.ModuleType):
             + " manager will make changes in the structure of the network ("
             + " creation and deletion of plastic synapses)"
         ),
-        default=10000.0,
+        default=10000,
     )
     growth_curves = KernelAttribute(
         "list[str]",
@@ -490,6 +490,7 @@ def _lazy_module_property(module_name, optional=False, optional_hint=""):
       users install missing optional modules
     :type optional_hint: str
     """
+
     def lazy_loader(self):
         cls = type(self)
         delattr(cls, module_name)

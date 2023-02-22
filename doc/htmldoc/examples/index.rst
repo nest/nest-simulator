@@ -213,7 +213,7 @@ PyNEST examples
 
            * :doc:`../auto_examples/recording_demo`
            * :doc:`../auto_examples/store_restore_network`
-           * :doc:`music_cont_out_proxy_example/nest_script`
+           * :doc:`../auto_examples/music_cont_out_proxy_example/nest_script`
 
 
 .. grid:: 1 1 2 3

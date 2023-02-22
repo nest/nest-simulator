@@ -285,7 +285,7 @@ notebooks%2Ffilepath.ipynb&branch=main
 
     # Find all relevant files
     # Inject prolog into Python example
-    files = list(Path(doc_build_dir / "auto_examples/").rglob("**/*.rst"))
+    files = list(Path(doc_build_dir / "auto_examples/").rglob("*.rst"))
     for file in files:
 
         # Skip index files and benchmark file. These files do not have notebooks that can run
@@ -296,7 +296,6 @@ notebooks%2Ffilepath.ipynb&branch=main
         get_path = file.parent
         get_subdir = get_path.stem
 
-        lines = []
         with open(file, "r") as f:
 
             lines = f.readlines()

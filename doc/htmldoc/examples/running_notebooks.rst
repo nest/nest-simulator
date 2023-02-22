@@ -18,7 +18,7 @@ Prerequisites
 
   You will be redirected to https://lab.ebrains.eu
 
-2. If not signed into EBRAINS already, you will be asked to sign in.
+2. If you are not signed into EBRAINS already, you will be asked to sign in.
 
   .. image:: ../static/img/signin-ebrains.png
 
@@ -37,7 +37,7 @@ Now you can run the notebook and change variables to test how it works!
 .. important::
 
    If you want to save any changes you made you need to move the file to either your shared folder in EBRAINS or
-   download it onto your computer.
+   download it to your computer.
 
 ----
 

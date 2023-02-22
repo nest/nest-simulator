@@ -272,22 +272,22 @@ public:
   /**
    * Return the weight.
    */
-  weight get_weight() const;
+  double get_weight() const;
 
   /**
    * Set weight of the event.
    */
-  void set_weight( weight t );
+  void set_weight( double t );
 
   /**
    * Set drift_factor of the event (see DiffusionConnectionEvent).
    */
-  virtual void set_drift_factor( weight ) {};
+  virtual void set_drift_factor( double ) {};
 
   /**
    * Set diffusion_factor of the event (see DiffusionConnectionEvent).
    */
-  virtual void set_diffusion_factor( weight ) {};
+  virtual void set_diffusion_factor( double ) {};
 
   /**
    * Returns true if the pointer to the sender node is valid.
@@ -383,7 +383,7 @@ protected:
   /**
    * Weight of the connection.
    */
-  weight w_;
+  double w_;
 };
 
 
@@ -926,14 +926,14 @@ Event::get_sender_node_id() const
   return sender_node_id_;
 }
 
-inline weight
+inline double
 Event::get_weight() const
 {
   return w_;
 }
 
 inline void
-Event::set_weight( weight w )
+Event::set_weight( double w )
 {
   w_ = w;
 }

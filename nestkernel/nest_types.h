@@ -154,16 +154,6 @@ const size_t invalid_thread = std::numeric_limits< size_t >::max();
 const size_t invalid_port = std::numeric_limits< size_t >::max();
 
 /**
- * Weight of a connection.
- * Connections have a weight which is used to scale the influence
- * of an event.
- * A weight of 0 should have the same influence on the receiving node
- * as a non-existing connection. Otherwise, there is no default range for
- * connection weights.
- */
-typedef double weight;
-
-/**
  * Delay of a connection.
  * The delay defines the number of simulation steps which elapse
  * before an Event arrives at the receiving Node.

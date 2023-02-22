@@ -62,6 +62,44 @@ static_injector_neuron::Parameters_::Parameters_()
 {
 }
 
+static_injector_neuron::Parameters_::Parameters_( const Parameters_& p )
+  : origin_( p.origin_ )
+  , start_( p.start_ )
+  , stop_( p.stop_ )
+  , spike_stamps_( p.spike_stamps_ )
+  , spike_offsets_( p.spike_offsets_ )
+  , spike_weights_( p.spike_weights_ )
+  , spike_multiplicities_( p.spike_multiplicities_ )
+  , precise_times_( p.precise_times_ )
+  , allow_offgrid_times_( p.allow_offgrid_times_ )
+  , shift_now_spikes_( p.shift_now_spikes_ )
+{
+  /* The resolution of the simulation may have changed since the
+     original parameters were set. We thus must calibrate the copies
+     to ensure consistency of the time values.
+  */
+  origin_.calibrate();
+  start_.calibrate();
+  stop_.calibrate();
+}
+
+static_injector_neuron::Parameters_&
+static_injector_neuron::Parameters_::operator=( const Parameters_& p )
+{
+  origin_ = p.origin_;
+  start_ = p.start_;
+  stop_ = p.stop_;
+  spike_stamps_ = p.spike_stamps_;
+  spike_offsets_ = p.spike_offsets_;
+  spike_weights_ = p.spike_weights_;
+  spike_multiplicities_ = p.spike_multiplicities_;
+  precise_times_ = p.precise_times_;
+  allow_offgrid_times_ = p.allow_offgrid_times_;
+  shift_now_spikes_ = p.shift_now_spikes_;
+
+  return *this;
+}
+
 
 /* ----------------------------------------------------------------
  * Parameter extraction and manipulation functions
@@ -170,6 +208,15 @@ static_injector_neuron::Parameters_::set( const DictionaryDatum& d,
   const Time& now,
   Node* node )
 {
+  update_( d, names::origin, origin_ );
+  update_( d, names::start, start_ );
+  update_( d, names::stop, stop_ );
+
+  if ( stop_ < start_ )
+  {
+    throw BadProperty( "stop >= start required." );
+  }
+
   bool precise_times_changed = updateValueParam< bool >( d, names::precise_times, precise_times_, node );
   bool shift_now_spikes_changed = updateValueParam< bool >( d, names::shift_now_spikes, shift_now_spikes_, node );
   bool allow_offgrid_times_changed =
@@ -281,6 +328,31 @@ static_injector_neuron::Parameters_::set( const DictionaryDatum& d,
 }
 
 
+void
+static_injector_neuron::Parameters_::update_( const DictionaryDatum& d, const Name& name, Time& value )
+{
+  /* We cannot update the Time values directly, since updateValue()
+     doesn't support Time objects. We thus read the value in ms into
+     a double first and then update the time object if a value was given.
+
+     To be valid, time values must either be on the time grid,
+     or be infinite. Infinite values are handled gracefully.
+  */
+
+  double val;
+  if ( updateValue< double >( d, name, val ) )
+  {
+    const Time t = Time::ms( val );
+    if ( t.is_finite() and not t.is_grid_time() )
+    {
+      throw BadProperty( name.toString() +  " must be a multiple "
+                                 "of the simulation resolution." );
+    }
+    value = t;
+  }
+}
+
+
 /* ----------------------------------------------------------------
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
@@ -319,30 +391,22 @@ static_injector_neuron::init_buffers_()
 void
 static_injector_neuron::pre_run_hook()
 {
-  // TODO: below comment might not apply
   // We do not need to recalibrate time objects, since they are
   // recalibrated on instance construction and resolution cannot
   // change after a single node instance has been created.
 
-  /* The resolution of the simulation may have changed since the
-     original parameters were set. We thus must calibrate the copies
-     to ensure consistency of the time values.
-  */
-
+  // Off-grid communication needs to be activated here since this model
+  // is not an exclusive precise spiking model
   if ( is_off_grid() )
   {
     kernel().event_delivery_manager.set_off_grid_communication( true );
     LOG( M_INFO,
-      "NodeManager::add_node",
-      "Neuron models emitting precisely timed spikes exist: "
-      "the kernel property off_grid_spiking has been set to true.\n\n"
+      "static_injector_neuron::pre_run_hook",
+      "Static injecor neuron has been configured to emit precisely timed "
+      "spikes: the kernel property off_grid_spiking has been set to true.\n\n"
       "NOTE: Mixing precise-spiking and normal neuron models may "
       "lead to inconsistent results." );
   }
-
-  P_.origin_.calibrate();
-  P_.start_.calibrate();
-  P_.stop_.calibrate();
 
   // by adding time objects, all overflows will be handled gracefully
   V_.t_min_ = ( P_.origin_ + P_.start_ ).get_steps();

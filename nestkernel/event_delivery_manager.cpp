@@ -421,7 +421,6 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 
   if ( max_per_thread_max_spikes_per_rank_ < send_recv_buffer_shrink_limit_ * old_buff_size_per_rank )
   {
-    const auto unused_buffer_entries_per_rank = old_buff_size_per_rank - max_per_thread_max_spikes_per_rank_;
     const size_t new_buff_size_per_rank =
       std::max( 2UL, static_cast< size_t >( send_recv_buffer_shrink_factor_ * old_buff_size_per_rank ) );
     kernel().mpi_manager.set_buffer_size_spike_data(

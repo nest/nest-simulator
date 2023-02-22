@@ -1737,7 +1737,7 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
         const auto target_thread = source_2_idx->second.get_target_thread();
         const SpikeData& conn_info =
           compressed_spike_data_[ syn_id ][ source_2_idx->second.get_source_index() ][ target_thread ];
-        assert( target_thread == conn_info.get_tid() );
+        assert( target_thread == static_cast< unsigned long >( conn_info.get_tid() ) );
         const size_t relative_recv_buffer_pos =
           get_secondary_recv_buffer_position( target_thread, syn_id, conn_info.get_lcid() )
           - kernel().mpi_manager.get_recv_displacement_secondary_events_in_int( source_rank );

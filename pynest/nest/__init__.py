@@ -155,7 +155,7 @@ class NestModule(types.ModuleType):
         "float",
         (
             "The number of milliseconds per tic. Calculated by "
-            "ms_per_tic = 1 / tics_per_ms"
+            + "ms_per_tic = 1 / tics_per_ms"
         ),
         readonly=True,
     )
@@ -163,7 +163,7 @@ class NestModule(types.ModuleType):
         "float",
         (
             "The number of tics per millisecond. Change of tics_per_ms "
-            "requires simultaneous specification of resolution"
+            + "requires simultaneous specification of resolution"
         ),
         default=1000.0
     )

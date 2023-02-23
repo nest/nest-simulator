@@ -574,8 +574,8 @@ EventDeliveryManager::set_end_marker_( const AssignedRanks& assigned_ranks,
 {
   // See comment in source_table.h for logic.
 
-  const bool collocate_complete =
-    per_thread_max_spikes_per_rank <= static_cast< size_t >( kernel().mpi_manager.get_send_recv_count_spike_data_per_rank() );
+  const bool collocate_complete = per_thread_max_spikes_per_rank
+    <= static_cast< size_t >( kernel().mpi_manager.get_send_recv_count_spike_data_per_rank() );
 
   for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
   {

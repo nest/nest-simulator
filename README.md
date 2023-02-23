@@ -13,7 +13,7 @@
 [![Fedora package](https://img.shields.io/fedora/v/nest?logo=fedora)](https://src.fedoraproject.org/rpms/nest)
 [![Conda version](https://img.shields.io/conda/vn/conda-forge/nest-simulator.svg?logo=conda-forge&logoColor=white)](https://anaconda.org/conda-forge/nest-simulator)
 [![Homebrew version](https://img.shields.io/homebrew/v/nest.svg?logo=apple)](https://formulae.brew.sh/formula/nest)
-[![Docker Image Version](https://img.shields.io/docker/v/nestsim/nest/3.4?color=blue&label=Docker&logo=docker&logoColor=white)](https://hub.docker.com/r/nestsim/nest/tags)
+![Docker Image Version](https://img.shields.io/docker/v/nestsim/nest?color=blue&label=docker&logo=docker&logoColor=white&sort=semver)
 [![Virtual applicance](https://img.shields.io/badge/VM-v3.4-blue?logo=CodeSandbox)](https://nest-simulator.readthedocs.io/en/latest/installation/livemedia.html#live-media)
 
 [![YouTube Video Views](https://img.shields.io/youtube/views/K7KXmIv6ROY?style=social)](https://www.youtube.com/results?search_query=nest-simulator+neurons)

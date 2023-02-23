@@ -1804,10 +1804,10 @@ nest::BernoulliAstroBuilder::connect_()
         // when p=1 and autapses not allowed but targets overlap with sources, the indegree must be forced to decrease by 1
         if ( not allow_autapses_ and indegree == sources_->size() and sources_->find( tnode_id ) >= 0 )
         {
-          LOG( M_WARNING,
-            "BernoulliAstroBuilder::connect",
-            "Indegree equals source size and targets overlap with sources, but autapses not allowed. "
-            "In this case, connection probability p could be not exact. ");
+          // LOG( M_WARNING,
+          //   "BernoulliAstroBuilder::connect",
+          //   "Indegree equals source size and targets overlap with sources, but autapses not allowed. "
+          //   "In this case, connection probability p could be not exact. ");
           indegree -= 1;
         }
         assert( indegree <= sources_->size() );

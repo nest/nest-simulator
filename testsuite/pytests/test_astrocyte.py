@@ -32,12 +32,11 @@ import nest
 
 """
 Comparing the astrocyte model to the reference solution
-obrained using the LSODAR solver (see
+obrained using the Scipy ODEINT solver (see
 ``doc/htmldoc/model_details/astrocyte_model_implementation.ipynb``).
 
 The reference solution is stored in ``test_astrocyte.dat`` and was
-generated using the same dictionary of parameters, the data is then downsampled
-to keep one value every 0.01 ms and compare with the NEST simulation.
+generated using the same dictionary of parameters.
 
 Details:
   We assess that the difference between the
@@ -48,12 +47,11 @@ HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
 path = os.path.abspath(os.path.dirname(__file__))
 
 # --------------------------------------------------------------------------- #
-#  Tolerances to compare LSODAR and NEST implementations
+#  Tolerances to compare ODEINT and NEST implementations
 # -------------------------
 #
 
-# higher for the potential because of the divergence at spike times
-di_tolerances_lsodar = {
+di_tolerances_odeint = {
     "astrocyte": {"IP3_astro": 1e-4, "Ca_astro": 1e-4, "f_IP3R_astro": 1e-4},
 }
 
@@ -67,10 +65,11 @@ models = ["astrocyte"]
 
 num_models = len(models)
 
-# parameters with which the LSODAR reference solution was generated
+# parameters with which the ODEINT reference solution was generated
 
 astrocyte_default = nest.GetDefaults('astrocyte')
 astrocyte_param = {
+    # use different values for state variables to produce dynamics
     'IP3_astro': 1.0,
     'Ca_astro': 1.0,
     'f_IP3R_astro': 1.0,
@@ -133,21 +132,14 @@ class AstrocyteTestCase(unittest.TestCase):
             per model, containing one value per entry in `recordables`).
         '''
         rel_diff = {model: {} for model in multimeters.keys()}
-        # V_lim = (params["V_th"] + params["V_peak"]) / 2.
 
         for model, mm in iter(multimeters.items()):
             dmm = nest.GetStatus(mm, "events")[0]
             for record in recordables:
-                print(dmm[record])
-                # ignore places where a divide by zero would occur
                 rds = np.abs(reference[record] - dmm[record])
                 nonzero = np.where(~np.isclose(reference[record], 0.))[0]
                 if np.any(nonzero):
                     rds = rds[nonzero] / np.abs(reference[record][nonzero])
-                # # ignore events around spike times for V if it diverges
-                # if record == "V_m" and params["Delta_T"] > 0.:
-                #     spiking = (dmm[record] > V_lim)
-                #     rds = rds[~spiking]
                 rel_diff[model][record] = np.average(rds)
         return rel_diff
 
@@ -162,16 +154,16 @@ class AstrocyteTestCase(unittest.TestCase):
                                     model, var, diff, di_tol[model][var]))
 
     @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
-    def test_closeness_nest_lsodar(self):
-        # Compare models to the LSODAR implementation.
+    def test_closeness_nest_odeint(self):
+        # Compare models to the ODEINT implementation.
 
         simtime = 100.
 
-        # get lsodar reference
-        lsodar = np.loadtxt(os.path.join(path, 'test_astrocyte.dat')).T
-        IP3_astro_interp = interp1d(lsodar[0, :], lsodar[1, :])
-        Ca_astro_interp = interp1d(lsodar[0, :], lsodar[2, :])
-        f_IP3R_astro_interp = interp1d(lsodar[0, :], lsodar[3, :])
+        # get ODEINT reference
+        odeint = np.loadtxt(os.path.join(path, 'test_astrocyte.dat')).T
+        IP3_astro_interp = interp1d(odeint[0, :], odeint[1, :])
+        Ca_astro_interp = interp1d(odeint[0, :], odeint[2, :])
+        f_IP3R_astro_interp = interp1d(odeint[0, :], odeint[3, :])
 
         # create the neurons and devices
         cells = {model: nest.Create(model, params=astrocyte_param)
@@ -184,7 +176,7 @@ class AstrocyteTestCase(unittest.TestCase):
             nest.Connect(mm, cells[model])
         nest.Simulate(simtime)
 
-        # relative differences: interpolate LSODAR to match NEST times
+        # relative differences: interpolate ODEINT to match NEST times
         mm0 = next(iter(multimeters.values()))
         nest_times = nest.GetStatus(mm0, "events")[0]["times"]
         reference = {
@@ -194,7 +186,7 @@ class AstrocyteTestCase(unittest.TestCase):
 
         rel_diff = self.compute_difference(multimeters, astrocyte_param, reference,
                                            ['IP3_astro', 'Ca_astro', 'f_IP3R_astro'])
-        self.assert_pass_tolerance(rel_diff, di_tolerances_lsodar)
+        self.assert_pass_tolerance(rel_diff, di_tolerances_odeint)
 
 
 # --------------------------------------------------------------------------- #

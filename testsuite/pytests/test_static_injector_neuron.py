@@ -21,20 +21,73 @@
 
 import nest
 import pytest
-from pprint import pprint
-
-nest.ResetKernel()
-
-#nest.set(resolution=0.1, ms_per_tic=0.001, tics_per_ms=1000.0)
-nest.set(resolution=0.1, tics_per_ms=1000.0)
-
-sg = nest.Create("spike_generator",
-                 params={"spike_times": [1.0, 1.9999, 3.0001]})
+import numpy as np
 
 
-pprint(nest.GetStatus(sg))
+@pytest.fixture
+def reset():
+    nest.ResetKernel()
 
-inj_nrn = nest.Create("static_injector_neuron",
-                      params={"spike_times": [1.0, 1.9999, 3.0001]})
 
-pprint(nest.GetStatus(inj_nrn))
+@pytest.mark.parametrize(
+    ('in_spike_times', 'expected_spike_times', 'precise_times', 'allow_offgrid_times'),
+    [
+        ([1.0, 1.9999, 3.0001], [1.0, 2.0, 3.0], False, False),
+        ([1.0, 1.05, 3.0001],  [1.0, 1.1, 3.0], False, True),
+        ([1.0, 1.05, 3.0001],  [1.0, 1.05, 3.0001], True, False),
+    ]
+)
+def test_set_spike_times(
+    reset,
+    in_spike_times,
+    expected_spike_times,
+    precise_times,
+    allow_offgrid_times
+):
+    """
+    Verify correct handling of spike times not coinciding with a step for
+    different options. We set NEST to work with default resolution (step size)
+    of 0.1 ms and default tic length of 0.001 ms.
+    """
+    nest.set(resolution=0.1, tics_per_ms=1000.0)
+
+    inj_nrn = nest.Create("static_injector_neuron",
+                          params={'spike_times': in_spike_times,
+                                  'precise_times': precise_times,
+                                  'allow_offgrid_times': allow_offgrid_times}
+                          )
+
+    out_spike_times = nest.GetStatus(inj_nrn, "spike_times")[0]
+    assert np.array_equal(out_spike_times, np.array(expected_spike_times))
+
+
+@pytest.mark.parametrize('parrot_model', ['parrot_neuron', 'parrot_neuron_ps'])
+def test_static_injector_neuron_in_simulation(reset, parrot_model):
+    """
+    Verify behavior of static injector neuron in simulations by using 
+    parrot neuron's spike repetition properties.
+    """
+    spike_time = 1.01
+    delay = 0.2
+    simtime = 2.0
+
+    source = nest.Create("static_injector_neuron", 1,
+                         {"spike_times": [spike_time],
+                          'precise_times': True})
+    parrot = parrot = nest.Create(parrot_model)
+    srec = nest.Create("spike_recorder")
+
+    nest.Connect(source, parrot, syn_spec={"delay": delay})
+    nest.Connect(parrot, srec)
+
+    nest.Simulate(simtime)
+
+    spike_data = srec.events
+    post_time = spike_data['times']
+
+    expected_post_time = spike_time + delay
+    if parrot_model == 'parrot_neuron':
+        # round-up
+        expected_post_time = np.true_divide(np.ceil(expected_post_time * 10), 10)
+
+    assert post_time == expected_post_time

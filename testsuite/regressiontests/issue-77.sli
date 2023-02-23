@@ -70,6 +70,7 @@ M_ERROR setverbosity
              /gauss_rate_ipn              % rate neuron
              /sigmoid_rate_gg_1998_ipn    % rate neuron
              /sigmoid_rate_ipn            % rate neuron
+             /static_injector_neuron      % spike emitting neuron, does not support spike input
              /rate_transformer_lin             % rate transformer
              /rate_transformer_tanh            % rate transformer
              /rate_transformer_threshold_lin   % rate transformer

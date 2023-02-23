@@ -146,7 +146,7 @@
                                                      element.
  structural_plasticity_update_interval integertype - Defines the time interval in ms at which the structural plasticity
                                                      manager will make changes in the structure of the network (creation
-                                                     and deletion of plastic synapses), defaults to 10000.0.
+                                                     and deletion of plastic synapses), defaults to 10000.
  synapse_models                        arraytype   - The list of the available synapse models (read only).
 
  Waveform relaxation method (wfr)

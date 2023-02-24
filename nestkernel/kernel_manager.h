@@ -60,12 +60,12 @@
                                                      s; read only).
  min_update_time                       doubletype  - Shortest wall-clock time measured so far for a full update step (in
                                                      s; read only).
- ms_per_tic                            doubletype  - The number of milliseconds per tic, calculated by.
+ ms_per_tic                            doubletype  - The number of milliseconds per tic, calculated by
                                                      ms_per_tic = 1 / tics_per_ms (read_only).
  resolution                            doubletype  - The resolution of the simulation (in ms), defaults to 0.1.
  time                                  doubletype  - The current simulation time (in ms).
  tics_per_ms                           doubletype  - The number of tics per millisecond, defaults to 1000.0.
- tics_per_step                         integertype - The number of tics per simulation time step, calculated by.
+ tics_per_step                         integertype - The number of tics per simulation time step, calculated by
                                                      tics_per_step = resolution * tics_per_ms (read_only).
  to_do                                 integertype - The number of steps yet to be simulated (read only).
  T_max                                 doubletype  - The largest representable time value (in ms; read only).

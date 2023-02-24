@@ -318,7 +318,7 @@ private:
   struct Parameters_
   {
 
-    //! Origin of device time axis, relative to network time. Defaults to 0.
+    //! Origin of time axis, relative to network time. Defaults to 0.
     Time origin_;
 
     //!< Start time, relative to origin. Defaults to 0.
@@ -381,7 +381,7 @@ private:
   {
 
     /**
-     * Time step of device activation.
+     * Time step of static injector neuron activation.
      * t_min_ = origin_ + start_, in steps.
      * @note This is an auxiliary variable that is initialized to -1 in the
      * constructor and set to its proper value by calibrate. It should NOT
@@ -390,7 +390,7 @@ private:
     long t_min_;
 
     /**
-     * Time step of device deactivation.
+     * Time step of static injector neuron deactivation.
      * t_max_ = origin_ + stop_, in steps.
      * @note This is an auxiliary variable that is initialized to -1 in the
      * constructor and set to its proper value by calibrate. It should NOT

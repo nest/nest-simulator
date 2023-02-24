@@ -723,7 +723,7 @@ public:
   /**
    * Retrieve the number of the thread to which the node is assigned.
    */
-  virtual thread get_thread() const;
+  thread get_thread() const;
 
   /**
    * Store the number of the virtual process to which the node is assigned.

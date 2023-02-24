@@ -117,8 +117,8 @@ Example:
      nest.Create("static_injector_neuron",
                  params={"spike_times": [1.0, 2.0, 3.0]})
 
-  Instructs the spike generator to generate events at 1.0, 2.0, and
-  3.0 milliseconds, relative to the device-timer origin.
+  Instructs the static injector neuron to emit events at 1.0, 2.0, and
+  3.0 milliseconds, relative to the timer origin.
 
 Example:
 

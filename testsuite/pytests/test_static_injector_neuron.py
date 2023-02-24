@@ -64,7 +64,7 @@ def test_set_spike_times(
 @pytest.mark.parametrize('parrot_model', ['parrot_neuron', 'parrot_neuron_ps'])
 def test_static_injector_neuron_in_simulation(reset, parrot_model):
     """
-    Verify behavior of static injector neuron in simulations by using 
+    Verify behavior of static injector neuron in simulations by using
     parrot neuron's spike repetition properties.
     """
     spike_time = 1.01

@@ -80,11 +80,10 @@ Description
 +++++++++++
 
 ``aeif_cond_alpha_astro`` is an adaptive exponential integrate and fire neuron
-which supports neuron-astrocyte interactions. It receives current from
-astrocytes (I_astro). Synaptic conductances are modelled as alpha-functions.
-
-This implementation uses the embedded 4th order Runge-Kutta-Fehlberg solver with
-adaptive step size to integrate the differential equation.
+adated from ``aeif_cond_alpha`` to support neuron-astrocyte interactions. It can
+be connected with astrocytes through ``sic_connection``, which sends SICEvent to
+model a continuous current input (I_sic), with amplitudes determined by the
+astrocytes.
 
 The membrane potential is given by the following differential equation:
 
@@ -93,7 +92,7 @@ The membrane potential is given by the following differential equation:
  C_m \frac{dV}{dt} =
  -g_L(V-E_L)+g_L\Delta_T\exp\left(\frac{V-V_{th}}{\Delta_T}\right) -
  g_e(t)(V-E_e) \\
-                                                     -g_i(t)(V-E_i)-w +I_e +I_astro(t)
+                                                     -g_i(t)(V-E_i)-w +I_e + I_{sic}
 
 and
 
@@ -101,7 +100,8 @@ and
 
  \tau_w \frac{dw}{dt} = a(V-E_L) - w
 
-For implementation details see the
+For implementation details of the adaptive exponential integrate and fire neuron
+model, see the
 `aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
 
 See also [1]_.

@@ -33,19 +33,19 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Synapse type for connections from astrocytes to neurons
+Connection type from astrocytes to neurons
 
 Description
 +++++++++++
 
-``sic_connection`` is a connector to create connections from astrocytes to
-neurons. It is adapted from ``gap_junction`` but unidirectional.
-``sic_connection`` sends current to neurons. The value of current is
-determined by astrocytes. The neuron model compatible with this connector is
-``aeif_cond_alpha_astro``.
+``sic_connection`` connects an astrocyte to a target neuron. It sends SICEvent
+to the neuron to model a continuous current input, with amplitudes determined by
+the astrocyte. The source node of ``sic_connection`` should be ``astrocyte``,
+and the target node should be ``aeif_cond_alpha_astro``. ``sic_connection`` is
+adapted from ``gap_junction`` but unidirectional. 
 
-As a part of neuron-astrocyte networks, connections of this type should be
-created with the connectivity rule ``pairwise_bernoulli_astro``.
+Connections of this type can be created with the ``pairwise_bernoulli_astro``
+rule, as a part of a neuron-astrocyte network.
 
 The value of the parameter ``delay`` is ignored for connections of
 type ``sic_connection``.
@@ -75,7 +75,7 @@ References
 See also
 ++++++++
 
-gap_junction, astrocyte, aeif_cond_alpha_astro
+astrocyte, aeif_cond_alpha_astro, gap_junction
 
 EndUserDocs */
 

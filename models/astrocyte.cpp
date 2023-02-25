@@ -171,7 +171,6 @@ nest::astrocyte::State_::State_( const State_& s )
 
 nest::astrocyte::State_& nest::astrocyte::State_::operator=( const State_& s )
 {
-  assert( this != &s ); // would be bad logical error in program
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
   {
     y_[ i ] = s.y_[ i ];

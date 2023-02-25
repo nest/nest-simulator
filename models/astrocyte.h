@@ -58,41 +58,39 @@ namespace nest
  */
 extern "C" int astrocyte_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs: astrocyte, current-based
+/* BeginUserDocs: astrocyte
 
 Short description
 +++++++++++++++++
 
-A model of astrocyte with dynamics of three variables: IP3_astro, Ca_astro,
-f_IP3R_astro
+A model of astrocyte with dynamics of three variables
 
 Description
 +++++++++++
 
-``astrocyte`` is a model of astrocyte. The model defines dynamics of the
+``astrocyte`` is a model of astrocyte developed by adapting a Hodgkin-Huxley
+neuron model (``hh_psc_alpha_gap``). It can be connected with neuron models to
+study neuron-astrocyte interactions. The model defines dynamics of the
 following variables:
 
-============  ========   ==========================================================
-IP3_astro     uM         IP3 concentration in the astrocytic cytosol
+============  ========   ==============================================================
+IP3_astro     uM         Inositol trisphosphate concentration in the astrocytic cytosol
 Ca_astro      uM         Calcium concentration in the astrocytic cytosol
-f_IP3_astro   unitless   The fraction of active IP3 receptors on the astrocytic ER
-============  ========   ==========================================================
+f_IP3R_astro  unitless   The fraction of active IP3 receptors on the astrocytic ER
+============  ========   ==============================================================
 
-The model is developed by adapting a Hodgkin-Huxley neuron model
-(``hh_psc_alpha_gap``). It can be connected to a presynaptic neuron with a
-``tsodyks_synapse``, and to a postsynaptic neuron with a ``sic_connection``.
+Incoming spike events to an ``astrocyte`` determine its dynamics according to
+the model described in Nadkarni & Jung (2003) [1], with an adaptation of the IP3
+production mechanism in equation (4). The astrocyte dynamics then determine
+the SICEvent being sent from the astrocyte to its target neurons through the
+``sic_connection``. The SICEvent models a continuous current input as in
+equation (9) in [1], with the weight of ``sic_connection`` as the scaling
+coefficient.
 
-``astrocyte`` receives presynaptic input through the ``tsodyks_synapse``, which
-determines its dynamics. The dynamics then determine the current being sent to
-the postsynaptic neuron through the ``sic_connection``. The connections should
-be created with the connectivity rule ``pairwise_bernoulli_astro``.
-
-Presynaptic release of glutamate affects the dynamics according to the model
-described in Nadkarni & Jung (2003) [1].
-
-Spikes do not exist in the astrocyte model. However, the spiking-related
-mechanisms were not removed from the code to avoid incompatibilities with the
-rest of the simulator.
+The connectivity of a neuron-astrocyte network should be created with the
+``pairwise_bernoulli_astro`` rule. ``sic_connection`` should be used to connect
+target neurons to the astrocyte. The target node for ``sic_connection`` can only
+be the ``aeif_cond_alpha_astro`` model.
 
 See also [1]_, [2]_, [3]_.
 
@@ -101,7 +99,17 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-==============  ========= ==================================================================
+==============  ========= ==============================================================
+**Dynamic state variables**
+----------------------------------------------------------------------------------------
+IP3_astro       uM        Inositol trisphosphate concentration in the astrocytic cytosol
+Ca_astro        uM        Calcium concentration in the astrocytic cytosol
+f_IP3R_astro    unitless  The fraction of active IP3 receptors on the astrocytic ER
+==============  ========= ==============================================================
+
+==============  ========= ================================================================
+**Constant variables**
+------------------------------------------------------------------------------------------
 Ca_tot_astro    uM        Total free astrocytic calcium concentration
 IP3_0_astro     uM        Baseline value of the astrocytic IP3 concentration
 K_act_astro     uM        Astrocytic IP3R dissociation constant of calcium (activation)
@@ -117,7 +125,7 @@ SIC_thr_astro   nM        Calcium threshold for producing SIC
 v_IP3R_astro    1/ms      Maximum rate of calcium release via astrocytic IP3R
 v_SERCA_astro   uM/ms     Maximum rate of calcium uptake by astrocytic IP3R
 tau_IP3_astro   ms        Time constant of astrocytic IP3 degradation
-==============  ========= ==================================================================
+==============  ========= ================================================================
 
 References
 ++++++++++

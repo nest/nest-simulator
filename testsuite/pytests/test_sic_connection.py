@@ -52,8 +52,8 @@ class SICConnectionTestCase(unittest.TestCase):
             for tmodel in [y for y in nest.node_models]:
                 nest.ResetKernel()
 
-                source = nest.Create(smodel, 1)
-                target = nest.Create(tmodel, 1)
+                source = nest.Create(smodel)
+                target = nest.Create(tmodel)
 
                 if smodel in supported_sources and tmodel in supported_targets:
                     nest.Connect(source, target, syn_spec={"synapse_model": "sic_connection"})

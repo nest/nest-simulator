@@ -170,7 +170,6 @@ nest::aeif_cond_alpha_astro::State_::State_( const State_& s )
 
 nest::aeif_cond_alpha_astro::State_& nest::aeif_cond_alpha_astro::State_::operator=( const State_& s )
 {
-  assert( this != &s ); // would be bad logical error in program
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
   {
     y_[ i ] = s.y_[ i ];

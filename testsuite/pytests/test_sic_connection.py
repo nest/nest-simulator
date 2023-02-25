@@ -96,8 +96,6 @@ class SICConnectionTestCase(unittest.TestCase):
         f_v = np.vectorize(lambda x: np.log(x*1000.0 - 196.69) if x*1000.0 - 196.69 > 1.0 else 0.0)
         expected_sic_values = f_v(Ca_astro)
 
-        # print(f'\nActual SIC values:\n{actual_sic_values}')
-        # print(f'\nExpected SIC values:\n{expected_sic_values}')
         self.assertTrue(np.allclose(
             actual_sic_values[10:], expected_sic_values[:-10], rtol=1e-7))
 

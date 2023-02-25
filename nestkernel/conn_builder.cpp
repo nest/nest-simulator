@@ -1945,6 +1945,7 @@ nest::BernoulliAstroBuilder::connect_()
               update_param_dict_( snode_id, *astrocyte, astrocyte_thread, synced_rng, synapse_indx );
               double weight = weights_n2a_[synapse_indx]->value_double( astrocyte_thread, synced_rng, snode_id, astrocyte );
               double delay = delays_n2a_[synapse_indx]->value_double( astrocyte_thread, synced_rng, snode_id, astrocyte );
+              // not compatible with connections that block individual weights
               kernel().connection_manager.connect( snode_id,
                 astrocyte,
                 astrocyte_thread,

@@ -81,16 +81,20 @@ f_IP3R_astro  unitless   The fraction of active IP3 receptors on the astrocytic 
 
 Incoming spike events to an ``astrocyte`` determine its dynamics according to
 the model described in Nadkarni & Jung (2003) [1], with an adaptation of the IP3
-production mechanism in equation (4). The astrocyte dynamics then determine
-the SICEvent being sent from the astrocyte to its target neurons through the
-``sic_connection``. The SICEvent models a continuous current input as in
-equation (9) in [1], with the weight of ``sic_connection`` as the scaling
-coefficient.
+production mechanism in equation (4).
+
+The astrocyte dynamics determine the SICEvent being sent from the astrocyte
+to its target neurons through the ``sic_connection``. The SICEvent models a
+continuous current input as in equation (9) in [1], with the weight of
+``sic_connection`` as the scaling coefficient.
 
 The connectivity of a neuron-astrocyte network should be created with the
 ``pairwise_bernoulli_astro`` rule. ``sic_connection`` should be used to connect
 target neurons to the astrocyte. The target node for ``sic_connection`` can only
 be the ``aeif_cond_alpha_astro`` model.
+
+For implementation details see the
+`astrocyte_model_implementation <../model_details/astrocyte_model_implementation.ipynb>`_ notebook.
 
 See also [1]_, [2]_, [3]_.
 

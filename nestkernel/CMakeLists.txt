@@ -196,7 +196,7 @@ set_target_properties( nestkernel
     SOVERSION 3
     )
 target_link_libraries( nestkernel
-    nestutil sli_lib
+    nestutil
     ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES} ${HDF5_LIBRARIES}
     )
 

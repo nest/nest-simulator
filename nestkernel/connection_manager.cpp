@@ -743,7 +743,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
 }
 
 void
-nest::ConnectionManager::connect_sonata( const DictionaryDatum& graph_specs, const long chunk_size )
+nest::ConnectionManager::connect_sonata( const dictionary& graph_specs, const long chunk_size )
 {
 #ifdef HAVE_HDF5
   SonataConnector sonata_connector( graph_specs, chunk_size );

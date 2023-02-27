@@ -31,10 +31,13 @@
 #include <map>
 #include <vector>
 
+// Includes from libnestutil
+#include "dict_util.h"
+
 // Includes from nestkernel:
 #include "conn_parameter.h"
 #include "kernel_manager.h"
-#include "nest_datums.h"
+//#include "nest_datums.h"
 
 #include "H5Cpp.h"
 
@@ -77,7 +80,7 @@ public:
    * The `chunk_size` applies to all HDF5 datasets that need to be read in
    * each read operation to extract connectivity data.
    */
-  SonataConnector( const DictionaryDatum& graph_specs, const long chunk_size );
+  SonataConnector( const dictionary& graph_specs, const long chunk_size );
 
   ~SonataConnector();
 
@@ -154,7 +157,7 @@ private:
    *
    * @param edge_dict Dictionary containing edge type ids and synapse parameters.
    */
-  void create_edge_type_id_2_syn_spec_( DictionaryDatum edge_dict );
+  void create_edge_type_id_2_syn_spec_( dictionary edge_dict );
 
 
   /**
@@ -166,7 +169,7 @@ private:
    * @param synapse_model_id Model id of synapse
    * @param type_id SONATA edge type id for mapping synapse parameters.
    */
-  void set_synapse_params_( DictionaryDatum syn_dict, index synapse_model_id, int type_id );
+  void set_synapse_params_( dictionary syn_dict, index synapse_model_id, int type_id );
 
   /**
    * @brief Get synapse parameters.
@@ -194,7 +197,7 @@ private:
    * @param name name of the synaptic property
    * @return double
    */
-  double get_syn_property_( const DictionaryDatum& syn_spec,
+  double get_syn_property_( const dictionary& syn_spec,
     hsize_t index,
     const bool dataset_exists,
     std::vector< double >& data,
@@ -264,7 +267,7 @@ private:
   typedef std::map< Name, std::shared_ptr< ConnParameter > > ConnParameterMap;
 
   //! Dictionary containing SONATA graph specifications
-  DictionaryDatum graph_specs_;
+  dictionary graph_specs_;
 
   //! Size of chunk that is read into memory in one read operation. Applies to all relevant HDF5 datasets.
   hsize_t chunk_size_;
@@ -282,7 +285,7 @@ private:
   std::string target_attribute_value_;
 
   //! Current edge parameters
-  DictionaryDatum cur_edge_params_;
+  dictionary cur_edge_params_;
 
   //! Map from edge type id (SONATA specification) to synapse model
   std::map< int, index > edge_type_id_2_syn_model_;
@@ -291,7 +294,7 @@ private:
   std::map< int, ConnParameterMap > edge_type_id_2_syn_spec_;
 
   //! Map from edge type id (SONATA specification) to param dictionaries (one per thread) used when creating connections
-  std::map< int, std::vector< DictionaryDatum > > edge_type_id_2_param_dicts_;
+  std::map< int, std::vector< dictionary > > edge_type_id_2_param_dicts_;
 
   //! Datasets
   std::string cur_fname_;

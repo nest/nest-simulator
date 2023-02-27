@@ -27,13 +27,13 @@
 
 // C++ includes:
 #include <cstdlib> // for div()
+                  
+// Includes from libnestutil
+#include "dict_util.h"
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
 #include "vp_manager_impl.h"
-
-// Includes from sli:
-#include "dictutils.h"
 
 #include "H5Cpp.h"
 
@@ -42,7 +42,7 @@ extern "C" herr_t get_member_names_callback_( hid_t loc_id, const char* name, co
 namespace nest
 {
 
-SonataConnector::SonataConnector( const DictionaryDatum& graph_specs, const long chunk_size )
+SonataConnector::SonataConnector( const dictionary& graph_specs, const long chunk_size )
   : graph_specs_( graph_specs )
   , chunk_size_( chunk_size )
   , weight_dataset_exist_( false )
@@ -91,19 +91,18 @@ SonataConnector::connect()
   */
   // clang-format on
 
-  auto edges_container = getValue< ArrayDatum >( graph_specs_->lookup( "edges" ) );
+  auto edges_container = graph_specs_[ "edges" ]; 
 
   // Iterate edge files
-  for ( auto edge_dict_datum : edges_container )
+  for ( auto edge_dict : edges_container )
   {
 
-    const auto edge_dict = getValue< DictionaryDatum >( edge_dict_datum );
-    cur_fname_ = getValue< std::string >( edge_dict->lookup( "edges_file" ) );
+    cur_fname_ = edge_dict[ "edges_file" ];
     const auto file = open_file_( cur_fname_ );
     const auto edges_top_level_grp = open_group_( file, "edges" );
 
     // Create map of edge type ids to NEST synapse_model ids
-    cur_edge_params_ = getValue< DictionaryDatum >( edge_dict->lookup( "syn_specs" ) );
+    cur_edge_params_ = edge_dict[ "syn_specs" ];
     create_edge_type_id_2_syn_spec_( cur_edge_params_ );
 
     // Get names of population groups (usually just one population group)
@@ -381,9 +380,9 @@ SonataConnector::connect_chunk_( const hsize_t chunk_size, const hsize_t offset 
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
 
   // Retrieve the correct NodeCollections
-  const auto nest_nodes = getValue< DictionaryDatum >( graph_specs_->lookup( "nodes" ) );
-  const auto src_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( source_attribute_value_ ) );
-  const auto tgt_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( target_attribute_value_ ) );
+  const auto nest_nodes = graph_specs_[ "nodes" ];
+  const auto src_nc = nest_nodes[ source_attribute_value_ ];
+  const auto tgt_nc = nest_nodes[ target_attribute_value_ ];
   const auto snode_begin = src_nc->begin();
   const auto tnode_begin = tgt_nc->begin();
 
@@ -413,7 +412,7 @@ SonataConnector::connect_chunk_( const hsize_t chunk_size, const hsize_t offset 
         const thread target_thread = target->get_thread();
 
         const auto edge_type_id = edge_type_id_data_subset[ i ];
-        const auto syn_spec = getValue< DictionaryDatum >( cur_edge_params_->lookup( std::to_string( edge_type_id ) ) );
+        const auto syn_spec = cur_edge_params_[ std::to_string( edge_type_id ) ];
         const double weight =
           get_syn_property_( syn_spec, i, weight_dataset_exist_, syn_weight_data_subset, names::weight );
         const double delay = get_syn_property_( syn_spec, i, delay_dataset_exist_, delay_data_subset, names::delay );
@@ -515,13 +514,13 @@ SonataConnector::read_subset_( const H5::DataSet& dataset,
 }
 
 void
-SonataConnector::create_edge_type_id_2_syn_spec_( DictionaryDatum edge_params )
+SonataConnector::create_edge_type_id_2_syn_spec_( dictionary edge_params )
 {
   for ( auto it = edge_params->begin(); it != edge_params->end(); ++it )
   {
     const auto type_id = std::stoi( it->first.toString() );
-    auto d = getValue< DictionaryDatum >( it->second );
-    const auto syn_name = getValue< std::string >( ( *d )[ "synapse_model" ] );
+    auto d =  it->second;
+    const auto syn_name = ( *d )[ "synapse_model" ];
 
     // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
     const index synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
@@ -532,16 +531,16 @@ SonataConnector::create_edge_type_id_2_syn_spec_( DictionaryDatum edge_params )
 }
 
 void
-SonataConnector::set_synapse_params_( DictionaryDatum syn_dict, index synapse_model_id, int type_id )
+SonataConnector::set_synapse_params_( dictionary syn_dict, index synapse_model_id, int type_id )
 {
-  DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
+  auto syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
   std::set< Name > skip_syn_params_ = {
     names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
   };
 
   ConnParameterMap synapse_params;
 
-  for ( Dictionary::const_iterator default_it = syn_defaults->begin(); default_it != syn_defaults->end(); ++default_it )
+  for ( auto default_it = syn_defaults->begin(); default_it != syn_defaults->end(); ++default_it )
   {
     const Name param_name = default_it->first;
     if ( skip_syn_params_.find( param_name ) != skip_syn_params_.end() )
@@ -558,7 +557,8 @@ SonataConnector::set_synapse_params_( DictionaryDatum syn_dict, index synapse_mo
   }
 
   // Now create dictionary with dummy values that we will use to pass settings to the synapses created. We
-  // create it here once to avoid re-creating the object over and over again.
+  // create it here once to avoid re-creating the object over and over again. 
+  // TODO: See if nullptr can be changed to dictionary
   edge_type_id_2_param_dicts_[ type_id ].resize( kernel().vp_manager.get_num_threads(), nullptr );
   edge_type_id_2_syn_spec_[ type_id ] = synapse_params;
 
@@ -569,17 +569,17 @@ SonataConnector::set_synapse_params_( DictionaryDatum syn_dict, index synapse_mo
   // Note that this also applies to the equivalent loop in conn_builder.cpp
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    edge_type_id_2_param_dicts_[ type_id ][ tid ] = new Dictionary;
+    edge_type_id_2_param_dicts_[ type_id ][ tid ].emplace_back();
 
     for ( auto param : synapse_params )
     {
       if ( param.second->provides_long() )
       {
-        ( *edge_type_id_2_param_dicts_.at( type_id ).at( tid ) )[ param.first ] = Token( new IntegerDatum( 0 ) );
+        ( *edge_type_id_2_param_dicts_.at( type_id ).at( tid ) )[ param.first ] = 0;
       }
       else
       {
-        ( *edge_type_id_2_param_dicts_.at( type_id ).at( tid ) )[ param.first ] = Token( new DoubleDatum( 0.0 ) );
+       ( *edge_type_id_2_param_dicts_.at( type_id ).at( tid ) )[ param.first ] = 0.0;
       }
     }
   }
@@ -594,24 +594,30 @@ SonataConnector::get_synapse_params_( index snode_id, Node& target, thread targe
     const auto param = syn_param.second;
 
     if ( param->provides_long() )
-    {
+    { 
+      auto dd =  ( *edge_type_id_2_param_dicts_.at( edge_type_id ).at( target_thread ) )[ param_name ]; 
       // change value of dictionary entry without allocating new datum
+      /*
       IntegerDatum* dd = static_cast< IntegerDatum* >(
         ( ( *edge_type_id_2_param_dicts_.at( edge_type_id ).at( target_thread ) )[ param_name ] ).datum() );
-      ( *dd ) = param->value_int( target_thread, rng, snode_id, &target );
+      */
+      ( *dd ) = param->value_int( target_thread, rng, snode_id, &target ); 
     }
     else
     {
       // change value of dictionary entry without allocating new datum
+      auto dd =  ( *edge_type_id_2_param_dicts_.at( edge_type_id ).at( target_thread ) )[ param_name ]; 
+      /*
       DoubleDatum* dd = static_cast< DoubleDatum* >(
         ( ( *edge_type_id_2_param_dicts_.at( edge_type_id ).at( target_thread ) )[ param_name ] ).datum() );
+      */
       ( *dd ) = param->value_double( target_thread, rng, snode_id, &target );
     }
   }
 }
 
 double
-SonataConnector::get_syn_property_( const DictionaryDatum& syn_spec,
+SonataConnector::get_syn_property_( const dictionary& syn_spec,
   hsize_t index,
   const bool dataset_exists,
   std::vector< double >& data,
@@ -633,6 +639,7 @@ void
 SonataConnector::reset_params_()
 {
   edge_type_id_2_syn_model_.clear();
+  /*
   for ( auto syn_params_vec_map : edge_type_id_2_syn_spec_ )
   {
     for ( auto syn_params : syn_params_vec_map.second )
@@ -640,6 +647,7 @@ SonataConnector::reset_params_()
       syn_params.second->reset();
     }
   }
+  */
   edge_type_id_2_syn_spec_.clear();
   edge_type_id_2_param_dicts_.clear();
 }

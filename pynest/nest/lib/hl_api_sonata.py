@@ -27,7 +27,7 @@ import itertools
 from pathlib import Path, PurePath
 
 from .. import pynestkernel as kernel
-from ..ll_api import sps, sr, sli_func
+#from ..ll_api import sps, sr, sli_func
 from .hl_api_models import GetDefaults
 from .hl_api_nodes import Create
 from .hl_api_simulation import SetKernelStatus, Simulate
@@ -39,7 +39,8 @@ try:
 except ImportError:
     have_h5py = False
 
-have_hdf5 = sli_func("statusdict/have_hdf5 ::")
+#have_hdf5 = sli_func("statusdict/have_hdf5 ::")
+have_hdf5 = True
 
 __all__ = [
     "SonataNetwork"
@@ -448,9 +449,9 @@ class SonataNetwork():
             except BlockingIOError as err:
                 raise BlockingIOError(f"{err.strerror} for {os.path.realpath(d['edges_file'])}") from None
 
-        sps(graph_specs)
-        sps(chunk_size)
-        sr("ConnectSonata")
+#        sps(graph_specs)
+#        sps(chunk_size)
+#        sr("ConnectSonata")
 
         self._is_network_built = True
 

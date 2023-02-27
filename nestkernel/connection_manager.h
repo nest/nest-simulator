@@ -154,6 +154,8 @@ public:
     size_t n,
     std::string syn_model );
 
+  void connect_sonata( const DictionaryDatum& graph_specs, const long chunk_size );
+
   index find_connection( const thread tid, const synindex syn_id, const index snode_id, const index tnode_id );
 
   void disconnect( const thread tid, const synindex syn_id, const index snode_id, const index tnode_id );

@@ -32,6 +32,7 @@
 #include <iomanip>
 #include <limits>
 #include <set>
+#include <string>
 #include <vector>
 
 // Includes from libnestutil:
@@ -52,8 +53,10 @@
 #include "mpi_manager_impl.h"
 #include "nest_names.h"
 #include "node.h"
+#include "sonata_connector.h"
 #include "target_table_devices_impl.h"
 #include "vp_manager_impl.h"
+
 
 
 nest::ConnectionManager::ConnectionManager()
@@ -737,6 +740,21 @@ nest::ConnectionManager::connect_arrays( long* sources,
   }
 
   sw_construction_connect.stop();
+}
+
+void
+nest::ConnectionManager::connect_sonata( const DictionaryDatum& graph_specs, const long chunk_size )
+{
+#ifdef HAVE_HDF5
+  SonataConnector sonata_connector( graph_specs, chunk_size );
+
+  // Set flag before calling sonata_connector.connect() in case exception is thrown after some connections have been
+  // created.
+  set_connections_have_changed();
+  sonata_connector.connect();
+#else
+  throw KernelException( "Cannot use connect_sonata because NEST was compiled without HDF5 support" );
+#endif
 }
 
 void

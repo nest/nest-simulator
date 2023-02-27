@@ -66,6 +66,7 @@ set ( nestkernel_sources
       conn_builder.h conn_builder_impl.h conn_builder.cpp
       conn_builder_factory.h
       conn_builder_conngen.h conn_builder_conngen.cpp
+      sonata_connector.h sonata_connector.cpp
       music_event_handler.h music_event_handler.cpp
       music_rate_in_handler.h music_rate_in_handler.cpp
       music_manager.cpp music_manager.h
@@ -195,8 +196,8 @@ set_target_properties( nestkernel
     SOVERSION 3
     )
 target_link_libraries( nestkernel
-    nestutil
-    ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES}
+    nestutil sli_lib
+    ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES} ${HDF5_LIBRARIES}
     )
 
 target_include_directories( nestkernel PRIVATE

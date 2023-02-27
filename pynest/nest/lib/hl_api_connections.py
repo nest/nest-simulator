@@ -194,6 +194,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     ---------
     :ref:`connection_management`
     """
+
     use_connect_arrays, pre, post = _process_input_nodes(pre, post, conn_spec)
 
     # Converting conn_spec to dict, without putting it on the SLI stack.

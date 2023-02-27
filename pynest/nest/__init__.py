@@ -90,6 +90,7 @@ class NestModule(types.ModuleType):
         _rel_import_star(self, ".lib.hl_api_nodes")
         _rel_import_star(self, ".lib.hl_api_parallel_computing")
         _rel_import_star(self, ".lib.hl_api_simulation")
+        _rel_import_star(self, ".lib.hl_api_sonata")
         _rel_import_star(self, ".lib.hl_api_spatial")
         _rel_import_star(self, ".lib.hl_api_types")
 

@@ -40,6 +40,8 @@
 // Includes from sli:
 #include "dictutils.h"
 
+#include "compose.hpp"
+
 namespace nest
 {
 EventDeliveryManager::EventDeliveryManager()
@@ -686,6 +688,8 @@ template < typename SpikeDataT >
 void
 EventDeliveryManager::deliver_events_( const thread tid, const std::vector< SpikeDataT >& recv_buffer )
 {
+#define BATCH_SIZE 1024
+  
   const unsigned int send_recv_count_spike_data_per_rank =
     kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
   const std::vector< ConnectorModel* >& cm = kernel().model_manager.get_connection_models( tid );
@@ -729,6 +733,8 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
     const unsigned int num_batches = num_valid_entries / BATCH_SIZE;
     const unsigned int num_remaining_entries = num_valid_entries - num_batches * BATCH_SIZE;
 
+    assert( num_batches == 0 );
+    
     thread tid_batch[ BATCH_SIZE ];
     index syn_id_batch[ BATCH_SIZE ];
     index lcid_batch[ BATCH_SIZE ];
@@ -770,6 +776,8 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
       {
         if ( tid_batch[ j ] == tid )
         {
+          kernel().write_to_dump( String::compose( "denc %1 %2 %3 %4 %5", j, tid, syn_id_batch[j], lcid_batch[j],
+                                                   se_batch[j].get_stamp() ));
           kernel().connection_manager.send( tid_batch[ j ], syn_id_batch[ j ], lcid_batch[ j ], cm, se_batch[ j ] );
         }
       }
@@ -848,6 +856,8 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
       {
         if ( lcid_batch[ j ] != invalid_lcid )
         {
+          kernel().write_to_dump( String::compose( "decm %1 %2 %3 %4 %5", j, tid, syn_id_batch[j], lcid_batch[j],
+                                                  se_batch[j].get_stamp() ));
           kernel().connection_manager.send( tid, syn_id_batch[ j ], lcid_batch[ j ], cm, se_batch[ j ] );
         }
       }

@@ -23,8 +23,6 @@
 #ifndef EVENT_DELIVERY_MANAGER_H
 #define EVENT_DELIVERY_MANAGER_H
 
-#define BATCH_SIZE 8
-
 // C++ includes:
 #include <cassert>
 #include <limits>

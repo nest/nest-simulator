@@ -90,6 +90,7 @@ nest::KernelManager::initialize()
 
   ++fingerprint_;
   initialized_ = true;
+  dump_.open( String::compose("kd_%1_%2.log", mpi_manager.get_num_processes(), mpi_manager.get_rank()).c_str() );
 }
 
 void
@@ -113,6 +114,7 @@ nest::KernelManager::cleanup()
 void
 nest::KernelManager::finalize()
 {
+  dump_.close();
   for ( auto&& m_it = managers.rbegin(); m_it != managers.rend(); ++m_it )
   {
     ( *m_it )->finalize();
@@ -165,3 +167,14 @@ nest::KernelManager::get_status( DictionaryDatum& dict )
     manager->get_status( dict );
   }
 }
+
+void
+nest::KernelManager::write_to_dump(const std::string &msg)
+{
+#pragma omp critical
+  {
+    std::cerr << msg << std::endl;
+    dump_ << msg << std::endl;
+  }
+}
+

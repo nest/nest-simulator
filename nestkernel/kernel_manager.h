@@ -41,6 +41,9 @@
 // Includes from sli:
 #include "dictdatum.h"
 
+#include <fstream>
+#include "compose.hpp"
+
 /** @BeginDocumentation
  Name: kernel - Global properties of the simulation kernel.
 
@@ -238,6 +241,8 @@ public:
   bool is_initialized() const;
 
   unsigned long get_fingerprint() const;
+  
+  void write_to_dump( const std::string& msg );
 
   LoggingManager logging_manager;
   MPIManager mpi_manager;
@@ -256,6 +261,7 @@ public:
 private:
   std::vector< ManagerInterface* > managers;
   bool initialized_; //!< true if the kernel is initialized
+  std::ofstream dump_;
 };
 
 KernelManager& kernel();

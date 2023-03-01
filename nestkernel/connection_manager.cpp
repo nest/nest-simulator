@@ -1663,7 +1663,12 @@ nest::ConnectionManager::collect_compressed_spike_data( const thread tid )
 #pragma omp barrier
 #pragma omp single
     {
+      source_table_.dump_sources();
+      source_table_.dump_compressible_sources();
+
       source_table_.fill_compressed_spike_data( compressed_spike_data_ );
+
+      source_table_.dump_compressed_spike_data( compressed_spike_data_ );
     } // of omp single; implicit barrier
   }
 }

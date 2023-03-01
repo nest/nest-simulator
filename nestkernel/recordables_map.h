@@ -54,7 +54,7 @@ namespace nest
  *       to all objects. Creation by a constructor leads to static
  *       initialization conflicts with the Name class. Thus,
  *       creation is deferred to the plain constructor of the host
- *       Node class, which is called only once to create the
+ *       NodeInterface class, which is called only once to create the
  *       model prototype instance.
  *
  * @see multimeter, UniversalDataLogger
@@ -77,7 +77,7 @@ public:
    * Create the map.
    * This function must be specialized for each class owning a
    * Recordables map and must fill the map. This should happen
-   * as part of the original constructor for the Node.
+   * as part of the original constructor for the NodeInterface.
    */
   void create();
 
@@ -183,7 +183,7 @@ public:
    * Create the map.
    * This function must be specialized for each class instance owning a
    * Recordables map and must fill the map. This should happen
-   * as part of the original constructor for the Node.
+   * as part of the original constructor for the NodeInterface.
    */
   void create( HostNode& n );
 

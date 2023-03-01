@@ -32,8 +32,8 @@
 #include "vp_manager_impl.h"
 
 inline void
-nest::TargetTableDevices::add_connection_to_device( Node& source,
-  Node& target,
+nest::TargetTableDevices::add_connection_to_device( NodeInterface& source,
+  NodeInterface& target,
   const index source_node_id,
   const thread tid,
   const synindex syn_id,
@@ -51,8 +51,8 @@ nest::TargetTableDevices::add_connection_to_device( Node& source,
 }
 
 inline void
-nest::TargetTableDevices::add_connection_from_device( Node& source,
-  Node& target,
+nest::TargetTableDevices::add_connection_from_device( NodeInterface& source,
+  NodeInterface& target,
   const thread tid,
   const synindex syn_id,
   const DictionaryDatum& p,

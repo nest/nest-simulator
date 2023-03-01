@@ -63,7 +63,7 @@ nest::cm_default::cm_default( const cm_default& n )
 }
 
 /* ----------------------------------------------------------------
- * Node initialization functions
+ * NodeInterface initialization functions
  * ----------------------------------------------------------------
  */
 void

@@ -43,15 +43,15 @@ class TimeConverter;
 
 /**
  * Base class for all Models.
- * Each Node class is associated with a corresponding Model
+ * Each NodeInterface class is associated with a corresponding Model
  * class. The Model class is responsible for the creation and class
- * wide parametrisation of its associated Node objects.
+ * wide parametrisation of its associated NodeInterface objects.
  *
  * class Model manages the thread-sorted memory pool of the model.
  * The default constructor uses one thread as default. Use set_threads() to
  * use more than one thread.
  * @ingroup user_interface
- * @see Node
+ * @see NodeInterface
  */
 class Model
 {
@@ -82,12 +82,12 @@ public:
   void set_threads();
 
   /**
-   * Allocate new Node and return its pointer.
+   * Allocate new NodeInterface and return its pointer.
    * create() is not const, because it
    * is allowed to modify the Model object for
    * 'administrative' purposes.
    */
-  Node* create( thread t );
+  NodeInterface* create( thread t );
 
   /**
    * Deletes all nodes which belong to this model.
@@ -104,9 +104,9 @@ public:
    * Return name of the Model.
    * This function returns the name of the Model as C++ string. The
    * name is defined by the constructor. The result is identical to the value
-   * of Node::get_name();
+   * of NodeInterface::get_name();
    * @see Model::Model()
-   * @see Node::get_name()
+   * @see NodeInterface::get_name()
    */
   std::string get_name() const;
 
@@ -145,7 +145,7 @@ public:
    */
   DictionaryDatum get_status();
 
-  virtual port send_test_event( Node&, rport, synindex, bool ) = 0;
+  virtual port send_test_event( NodeInterface&, rport, synindex, bool ) = 0;
 
   virtual void sends_secondary_event( GapJunctionEvent& ge ) = 0;
   virtual void sends_secondary_event( InstantaneousRateConnectionEvent& re ) = 0;
@@ -168,7 +168,7 @@ public:
   /**
    * Return const reference to the prototype.
    */
-  virtual Node const& get_prototype() const = 0;
+  virtual NodeInterface const& get_prototype() const = 0;
 
   /**
    * Set the model id on the prototype.
@@ -217,7 +217,7 @@ private:
   /**
    * Create a new object.
    */
-  virtual Node* create_() = 0;
+  virtual NodeInterface* create_() = 0;
 
   /**
    * Name of the Model.
@@ -237,15 +237,15 @@ private:
   /**
    * Memory for all nodes sorted by threads.
    */
-  std::vector< std::vector< Node* > > memory_;
+  std::vector< std::vector< NodeInterface* > > memory_;
 };
 
 
-inline Node*
+inline NodeInterface*
 Model::create( thread t )
 {
   assert( ( size_t ) t < memory_.size() );
-  Node* n = create_();
+  NodeInterface* n = create_();
   memory_[ t ].emplace_back( n );
   return n;
 }

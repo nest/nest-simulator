@@ -155,10 +155,10 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
-  using Node::handle;
-  using Node::handles_test_event;
+  using NodeInterface::handle;
+  using NodeInterface::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  port send_test_event( NodeInterface&, rport, synindex, bool ) override;
 
   bool
   is_off_grid() const override
@@ -216,8 +216,8 @@ private:
 
     Parameters_(); //!< Set default parameter values
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( DictionaryDatum& ) const;                      //!< Store current values in dictionary
+    void set( const DictionaryDatum&, NodeInterface* node ); //!< Set values from dictionary
   };
 
   // State variables class --------------------------------------------
@@ -264,7 +264,7 @@ public:
      * Set state from values in dictionary.
      * Requires Parameters_ as argument to, e.g., check bounds.'
      */
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void set( const DictionaryDatum&, const Parameters_&, NodeInterface* );
   };
 
 private:
@@ -388,7 +388,7 @@ private:
 // Boilerplate inline function definitions ----------------------------------
 
 inline port
-iaf_chxk_2008::send_test_event( Node& target, rport receptor_type, synindex, bool )
+iaf_chxk_2008::send_test_event( NodeInterface& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

@@ -42,7 +42,7 @@
 namespace nest
 {
 
-class Node;
+class NodeInterface;
 
 /**
  * Encapsulate information sent between nodes.
@@ -127,12 +127,12 @@ public:
   /**
    * Change pointer to receiving Node.
    */
-  void set_receiver( Node& );
+  void set_receiver( NodeInterface& );
 
   /**
    * Return reference to receiving Node.
    */
-  Node& get_receiver() const;
+  NodeInterface& get_receiver() const;
 
   /**
    * Return node ID of receiving Node.
@@ -144,12 +144,12 @@ public:
    *
    * @note This will cause a segmentation fault if sender has not been set via set_sender().
    */
-  Node& get_sender() const;
+  NodeInterface& get_sender() const;
 
   /**
    * Change pointer to sending Node.
    */
-  void set_sender( Node& );
+  void set_sender( NodeInterface& );
 
   /**
    * Sender is local. Return node ID of sending Node.
@@ -323,8 +323,8 @@ protected:
    * references in the interface.
    * Thus, we can still ensure that the pointers are never nullptr.
    */
-  Node* sender_;   //!< Pointer to sender or nullptr.
-  Node* receiver_; //!< Pointer to receiver or nullptr.
+  NodeInterface* sender_;   //!< Pointer to sender or nullptr.
+  NodeInterface* receiver_; //!< Pointer to receiver or nullptr.
 
 
   /**
@@ -883,13 +883,13 @@ Event::is_valid() const
 }
 
 inline void
-Event::set_receiver( Node& r )
+Event::set_receiver( NodeInterface& r )
 {
   receiver_ = &r;
 }
 
 inline void
-Event::set_sender( Node& s )
+Event::set_sender( NodeInterface& s )
 {
   sender_ = &s;
 }
@@ -907,13 +907,13 @@ Event::set_sender_node_id_info( const thread tid, const synindex syn_id, const i
   sender_spike_data_.set( tid, syn_id, lcid, 0, 0.0 );
 }
 
-inline Node&
+inline NodeInterface&
 Event::get_receiver() const
 {
   return *receiver_;
 }
 
-inline Node&
+inline NodeInterface&
 Event::get_sender() const
 {
   return *sender_;

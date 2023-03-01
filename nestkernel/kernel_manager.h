@@ -163,7 +163,7 @@
  Miscellaneous
  dict_miss_is_error                    booltype    - Whether missed dictionary entries are treated as errors.
 
- SeeAlso: Simulate, Node
+ SeeAlso: Simulate, NodeInterface
 */
 
 namespace nest

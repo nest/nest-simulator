@@ -166,7 +166,7 @@ public:
   using Device::init_buffers;
   using Device::init_state;
   using Device::pre_run_hook;
-  using Node::pre_run_hook;
+  using NodeInterface::pre_run_hook;
 
   void pre_run_hook() override;
 

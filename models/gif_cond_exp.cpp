@@ -226,7 +226,7 @@ nest::gif_cond_exp::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::gif_cond_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::gif_cond_exp::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
 
   updateValueParam< double >( d, names::I_e, I_e_, node );
@@ -324,7 +324,7 @@ nest::gif_cond_exp::State_::get( DictionaryDatum& d, const Parameters_& ) const
 }
 
 void
-nest::gif_cond_exp::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::gif_cond_exp::State_::set( const DictionaryDatum& d, const Parameters_&, NodeInterface* node )
 {
   updateValueParam< double >( d, names::V_m, neuron_state_[ V_M ], node );
   updateValueParam< double >( d, names::g_ex, neuron_state_[ G_EXC ], node );
@@ -390,7 +390,7 @@ nest::gif_cond_exp::~gif_cond_exp()
 }
 
 /* ----------------------------------------------------------------
- * Node initialization functions
+ * NodeInterface initialization functions
  * ---------------------------------------------------------------- */
 
 void

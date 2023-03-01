@@ -39,6 +39,7 @@
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node_collection.h"
+#include "node_interface.h"
 #include "secondary_event.h"
 
 // Includes from sli:
@@ -100,7 +101,7 @@ class TimeConverter;
    SeeAlso: GetStatus, SetStatus, elementstates
  */
 
-class Node
+class Node : public NodeInterface
 {
   friend class NodeManager;
   friend class ModelManager;
@@ -109,7 +110,7 @@ class Node
   friend class Model;
   friend class SimulationManager;
 
-  Node& operator=( const Node& ); //!< not implemented
+  NodeInterface& operator=( const NodeInterface& ); //!< not implemented
 
 public:
   Node();
@@ -117,34 +118,22 @@ public:
   virtual ~Node();
 
   /**
-   * Virtual copy constructor.
-   * This function should create a new object by
-   * calling the derived class' copy constructor and
-   * return its pointer.
-   */
-  virtual Node*
-  clone() const
-  {
-    return nullptr;
-  }
-
-  /**
    * Returns true if the node has proxies on remote threads. This is
    * used to discriminate between different types of nodes, when adding
    * new nodes to the network.
    */
-  virtual bool has_proxies() const;
+  bool has_proxies() const override;
 
   /**
    * Returns true if the node supports the Urbanczik-Senn plasticity rule
    */
-  virtual bool supports_urbanczik_archiving() const;
+  bool supports_urbanczik_archiving() const override;
 
   /**
    * Returns true if the node only receives events from nodes/devices
    * on the same thread.
    */
-  virtual bool local_receiver() const;
+  bool local_receiver() const override;
 
   /**
    * Returns true if the node exists only once per process, but does
@@ -154,20 +143,20 @@ public:
    *
    * TODO: Is this true for *any* model at all? Maybe MUSIC related?
    */
-  virtual bool one_node_per_process() const;
+  bool one_node_per_process() const override;
 
   /**
    * Returns true if the node sends/receives off-grid events. This is
    * used to discriminate between different types of nodes when adding
    * new nodes to the network.
    */
-  virtual bool is_off_grid() const;
+  bool is_off_grid() const override;
 
   /**
    * Returns true if the node is a proxy node. This is implemented because
    * the use of RTTI is rather expensive.
    */
-  virtual bool is_proxy() const;
+  bool is_proxy() const override;
 
   /**
    * Return class name.
@@ -175,7 +164,7 @@ public:
    * This name is identical to the name that is used to identify
    * the model in the interpreter's model dictionary.
    */
-  std::string get_name() const;
+  std::string get_name() const override;
 
   /**
    * Return the element type of the node.
@@ -186,7 +175,7 @@ public:
    * This function is overwritten with a corresponding value in the
    * derived classes
    */
-  virtual Name get_element_type() const;
+  Name get_element_type() const override;
 
   /**
    * Return global Network ID.
@@ -196,12 +185,12 @@ public:
    *
    * The smallest valid node ID is 1.
    */
-  index get_node_id() const;
+  index get_node_id() const override;
 
   /**
    * Return lockpointer to the NodeCollection that created this node.
    */
-  NodeCollectionPTR get_nc() const;
+  NodeCollectionPTR get_nc() const override;
 
   /**
    * Return model ID of the node.
@@ -210,32 +199,23 @@ public:
    * @note The model ID is not stored in the model prototype instance.
    *       It is only set when actual nodes are created from a prototype.
    */
-  int get_model_id() const;
-
-  /**
-   * Prints out one line of the tree view of the network.
-   */
-  virtual std::string
-  print_network( int, int, std::string = "" )
-  {
-    return std::string();
-  }
+  int get_model_id() const override;
 
   /**
    * Returns true if node is frozen, i.e., shall not be updated.
    */
-  bool is_frozen() const;
+  bool is_frozen() const override;
 
   /**
    * Returns true if the node uses the waveform relaxation method
    */
-  bool node_uses_wfr() const;
+  bool node_uses_wfr() const override;
 
   /**
    * Sets node_uses_wfr_ member variable
    * (to be able to set it to "true" for any class derived from Node)
    */
-  void set_node_uses_wfr( const bool );
+  void set_node_uses_wfr( const bool ) override;
 
   /**
    * Initialize node prior to first simulation after node has been created.
@@ -245,23 +225,15 @@ public:
    * called on a given node, otherwise it returns immediately. init() calls
    * virtual functions init_state_() and init_buffers_().
    */
-  void init();
+  void init() override;
 
-  /**
-   * Re-calculate dependent parameters of the node.
-   * This function is called each time a simulation is begun/resumed.
-   * It must re-calculate all internal Variables of the node required
-   * for spike handling or updating the node.
-   *
-   */
-  virtual void pre_run_hook() = 0;
 
   /**
    * Re-calculate time-based properties of the node.
    * This function is called after a change in resolution.
    */
-  virtual void
-  calibrate_time( const TimeConverter& )
+  void
+  calibrate_time( const TimeConverter& ) override
   {
   }
 
@@ -271,8 +243,8 @@ public:
    * SimulationManager::run() returns. Typical use-cases are devices
    * that need to flush buffers.
    */
-  virtual void
-  post_run_cleanup()
+  void
+  post_run_cleanup() override
   {
   }
 
@@ -282,286 +254,13 @@ public:
    * full simulation, i.e., a cycle of Prepare, Run, Cleanup. Typical
    * use-cases are devices that need to close files.
    */
-  virtual void
-  finalize()
+  void
+  finalize() override
   {
   }
 
-  /**
-   * Bring the node from state $t$ to $t+n*dt$.
-   *
-   * n->update(T, from, to) performs the update steps beginning
-   * at T+from .. T+to-1, ie, emitting events with time stamps
-   * T+from+1 .. T+to.
-   *
-   * @param Time   network time at beginning of time slice.
-   * @param long initial step inside time slice
-   * @param long post-final step inside time slice
-   *
-   */
-  virtual void update( Time const&, const long, const long ) = 0;
-
-  /**
-   * Bring the node from state $t$ to $t+n*dt$, sends SecondaryEvents
-   * (e.g. GapJunctionEvent) and resets state variables to values at $t$.
-   *
-   * n->wfr_update(T, from, to) performs the update steps beginning
-   * at T+from .. T+to-1.
-   *
-   * Does not emit spikes, does not log state variables.
-   *
-   * throws UnexpectedEvent if not reimplemented in derived class
-   *
-   * @param Time   network time at beginning of time slice.
-   * @param long initial step inside time slice
-   * @param long post-final step inside time slice
-   *
-   */
-  virtual bool wfr_update( Time const&, const long, const long );
-
-  /**
-   * @defgroup status_interface Configuration interface.
-   * Functions and infrastructure, responsible for the configuration
-   * of Nodes from the SLI Interpreter level.
-   *
-   * Each node can be configured from the SLI level through a named
-   * parameter interface. In order to change parameters, the user
-   * can specify name value pairs for each parameter. These pairs
-   * are stored in a data structure which is called Dictionary.
-   * Likewise, the user can query the configuration of any node by
-   * requesting a dictionary with name value pairs.
-   *
-   * The configuration interface consists of four functions which
-   * implement storage and retrieval of named parameter sets.
-   */
-
-  /**
-   * Change properties of the node according to the
-   * entries in the dictionary.
-   * @param d Dictionary with named parameter settings.
-   * @ingroup status_interface
-   */
-  virtual void set_status( const DictionaryDatum& ) = 0;
-
-  /**
-   * Export properties of the node by setting
-   * entries in the status dictionary.
-   * @param d Dictionary.
-   * @ingroup status_interface
-   */
-  virtual void get_status( DictionaryDatum& ) const = 0;
 
 public:
-  /**
-   * @defgroup event_interface Communication.
-   * Functions and infrastructure, responsible for communication
-   * between Nodes.
-   *
-   * Nodes communicate by sending an receiving events. The
-   * communication interface consists of two parts:
-   * -# Functions to handle incoming events.
-   * -# Functions to check if a connection between nodes is possible.
-   *
-   * @see Event
-   */
-
-  /**
-   * Send an event to the receiving_node passed as an argument.
-   * This is required during the connection handshaking to test,
-   * if the receiving_node can handle the event type and receptor_type sent
-   * by the source node.
-   *
-   * If dummy_target is true, this indicates that receiving_node is derived from
-   * ConnTestDummyNodeBase and used in the first call to send_test_event().
-   * This can be ignored in most cases, but Nodes sending DS*Events to their
-   * own event hooks and then *Events to their proper targets must send
-   * DS*Events when called with the dummy target, and *Events when called with
-   * the real target, see #478.
-   */
-  virtual port send_test_event( Node& receiving_node, rport receptor_type, synindex syn_id, bool dummy_target );
-
-  /**
-   * Check if the node can handle a particular event and receptor type.
-   * This function is called upon connection setup by send_test_event().
-   *
-   * handles_test_event() function is used to verify that the receiver
-   * can handle the event. It can also be used by the receiver to
-   * return information to the sender in form of the returned port.
-   * The default implementation throws an IllegalConnection
-   * exception.  Any node class should define handles_test_event()
-   * functions for all those event types it can handle.
-   *
-   * See Kunkel et al, Front Neuroinform 8:78 (2014), Sec 3.
-   *
-   * @note The semantics of all other handles_test_event() functions is
-   * identical.
-   * @ingroup event_interface
-   * @throws IllegalConnection
-   */
-  virtual port handles_test_event( SpikeEvent&, rport receptor_type );
-  virtual port handles_test_event( WeightRecorderEvent&, rport receptor_type );
-  virtual port handles_test_event( RateEvent&, rport receptor_type );
-  virtual port handles_test_event( DataLoggingRequest&, rport receptor_type );
-  virtual port handles_test_event( CurrentEvent&, rport receptor_type );
-  virtual port handles_test_event( ConductanceEvent&, rport receptor_type );
-  virtual port handles_test_event( DoubleDataEvent&, rport receptor_type );
-  virtual port handles_test_event( DSSpikeEvent&, rport receptor_type );
-  virtual port handles_test_event( DSCurrentEvent&, rport receptor_type );
-  virtual port handles_test_event( GapJunctionEvent&, rport receptor_type );
-  virtual port handles_test_event( InstantaneousRateConnectionEvent&, rport receptor_type );
-  virtual port handles_test_event( DiffusionConnectionEvent&, rport receptor_type );
-  virtual port handles_test_event( DelayedRateConnectionEvent&, rport receptor_type );
-
-  /**
-   * Required to check, if source neuron may send a SecondaryEvent.
-   * This base class implementation throws IllegalConnection
-   * and needs to be overwritten in the derived class.
-   * @ingroup event_interface
-   * @throws IllegalConnection
-   */
-  virtual void sends_secondary_event( GapJunctionEvent& ge );
-
-  /**
-   * Required to check, if source neuron may send a SecondaryEvent.
-   * This base class implementation throws IllegalConnection
-   * and needs to be overwritten in the derived class.
-   * @ingroup event_interface
-   * @throws IllegalConnection
-   */
-  virtual void sends_secondary_event( InstantaneousRateConnectionEvent& re );
-
-  /**
-   * Required to check, if source neuron may send a SecondaryEvent.
-   * This base class implementation throws IllegalConnection
-   * and needs to be overwritten in the derived class.
-   * @ingroup event_interface
-   * @throws IllegalConnection
-   */
-  virtual void sends_secondary_event( DiffusionConnectionEvent& de );
-
-  /**
-   * Required to check, if source neuron may send a SecondaryEvent.
-   * This base class implementation throws IllegalConnection
-   * and needs to be overwritten in the derived class.
-   * @ingroup event_interface
-   * @throws IllegalConnection
-   */
-  virtual void sends_secondary_event( DelayedRateConnectionEvent& re );
-
-  /**
-   * Register a STDP connection
-   *
-   * @throws IllegalConnection
-   *
-   */
-  virtual void register_stdp_connection( double, double );
-
-  /**
-   * Handle incoming spike events.
-   * @param thrd Id of the calling thread.
-   * @param e Event object.
-   *
-   * This handler has to be implemented if a Node should
-   * accept spike events.
-   * @see class SpikeEvent
-   * @ingroup event_interface
-   */
-  virtual void handle( SpikeEvent& e );
-
-  /**
-   * Handle incoming weight recording events.
-   * @param thrd Id of the calling thread.
-   * @param e Event object.
-   *
-   * This handler has to be implemented if a Node should
-   * accept weight recording events.
-   * @see class WeightRecordingEvent
-   * @ingroup event_interface
-   */
-  virtual void handle( WeightRecorderEvent& e );
-
-  /**
-   * Handler for rate events.
-   * @see handle(SpikeEvent&)
-   * @ingroup event_interface
-   * @throws UnexpectedEvent
-   */
-  virtual void handle( RateEvent& e );
-
-  /**
-   * Handler for universal data logging request.
-   * @see handle(SpikeEvent&)
-   * @ingroup event_interface
-   * @throws UnexpectedEvent
-   */
-  virtual void handle( DataLoggingRequest& e );
-
-  /**
-   * Handler for universal data logging request.
-   * @see handle(SpikeEvent&)
-   * @ingroup event_interface
-   * @throws UnexpectedEvent
-   * @note There is no connect_sender() for DataLoggingReply, since
-   *       this event is only used as "back channel" for DataLoggingRequest.
-   */
-  virtual void handle( DataLoggingReply& e );
-
-  /**
-   * Handler for current events.
-   * @see handle(thread, SpikeEvent&)
-   * @ingroup event_interface
-   * @throws UnexpectedEvent
-   */
-  virtual void handle( CurrentEvent& e );
-
-  /**
-   * Handler for conductance events.
-   * @see handle(thread, SpikeEvent&)
-   * @ingroup event_interface
-   * @throws UnexpectedEvent
-   */
-  virtual void handle( ConductanceEvent& e );
-
-  /**
-   * Handler for DoubleData events.
-   * @see handle(thread, SpikeEvent&)
-   * @ingroup event_interface
-   * @throws UnexpectedEvent
-   */
-  virtual void handle( DoubleDataEvent& e );
-
-  /**
-   * Handler for gap junction events.
-   * @see handle(thread, GapJunctionEvent&)
-   * @ingroup event_interface
-   * @throws UnexpectedEvent
-   */
-  virtual void handle( GapJunctionEvent& e );
-
-  /**
-   * Handler for rate neuron events.
-   * @see handle(thread, InstantaneousRateConnectionEvent&)
-   * @ingroup event_interface
-   * @throws UnexpectedEvent
-   */
-  virtual void handle( InstantaneousRateConnectionEvent& e );
-
-  /**
-   * Handler for rate neuron events.
-   * @see handle(thread, InstantaneousRateConnectionEvent&)
-   * @ingroup event_interface
-   * @throws UnexpectedEvent
-   */
-  virtual void handle( DiffusionConnectionEvent& e );
-
-  /**
-   * Handler for delay rate neuron events.
-   * @see handle(thread, DelayedRateConnectionEvent&)
-   * @ingroup event_interface
-   * @throws UnexpectedEvent
-   */
-  virtual void handle( DelayedRateConnectionEvent& e );
-
   /**
    * @defgroup SP_functions Structural Plasticity in NEST.
    * Functions related to accessibility and setup of variables required for
@@ -576,8 +275,8 @@ public:
    * Return 0.0 if not overridden
    * @ingroup SP_functions
    */
-  virtual double
-  get_Ca_minus() const
+  double
+  get_Ca_minus() const override
   {
     return 0.0;
   }
@@ -588,185 +287,70 @@ public:
    * Return 0.0 if not overridden
    * @ingroup SP_functions
    */
-  virtual double
-  get_synaptic_elements( Name ) const
+  double
+  get_synaptic_elements( Name ) const override
   {
     return 0.0;
   }
 
-  /**
-   * Get the number of vacant synaptic element for the current Node
-   * Return 0 if not overridden
-   * @ingroup SP_functions
-   */
-  virtual int
-  get_synaptic_elements_vacant( Name ) const
+  int
+  get_synaptic_elements_vacant( Name ) const override
   {
     return 0;
   }
 
-  /**
-   * Get the number of connected synaptic element for the current Node
-   * Return 0 if not overridden
-   * @ingroup SP_functions
-   */
-  virtual int
-  get_synaptic_elements_connected( Name ) const
+
+  int
+  get_synaptic_elements_connected( Name ) const override
   {
     return 0;
   }
 
-  /**
-   * Get the number of all synaptic elements for the current Node at time t
-   * Return an empty map if not overridden
-   * @ingroup SP_functions
-   */
-  virtual std::map< Name, double >
-  get_synaptic_elements() const
+
+  std::map< Name, double >
+  get_synaptic_elements() const override
   {
     return std::map< Name, double >();
   }
 
-  /**
-   * Triggers the update of all SynapticElements
-   * stored in the synaptic_element_map_. It also updates the calcium
-   * concentration.
-   * @param t double time when the update is being performed
-   * @ingroup SP_functions
-   */
-  virtual void update_synaptic_elements( double ) {};
 
-  /**
-   * Is used to reduce the number of synaptic elements in the node through
-   * time. This amount is defined by tau_vacant.
-   * @ingroup SP_functions
-   */
-  virtual void decay_synaptic_elements_vacant() {};
+  void update_synaptic_elements( double ) override {};
 
-  /**
-   * Is used to update the number of connected
-   * synaptic elements (SynapticElement::z_connected_) when a synapse
-   * is formed or deleted.
-   * @param type Name, name of the synaptic element to connect
-   * @param n int number of new connections of the given type
-   * @ingroup SP_functions
-   */
-  virtual void connect_synaptic_element( Name, int ) {};
 
-  /**
-   * return the Kminus value at t (in ms).
-   * @throws UnexpectedEvent
-   */
-  virtual double get_K_value( double t );
+  void decay_synaptic_elements_vacant() override {};
 
-  virtual double get_LTD_value( double t );
 
-  /**
-   * write the Kminus, nearest_neighbor_Kminus, and Kminus_triplet
-   * values at t (in ms) to the provided locations.
-   * @throws UnexpectedEvent
-   */
-  virtual void get_K_values( double t, double& Kminus, double& nearest_neighbor_Kminus, double& Kminus_triplet );
+  void connect_synaptic_element( Name, int ) override {};
 
-  /**
-   * return the spike history for (t1,t2].
-   * @throws UnexpectedEvent
-   */
-  virtual void get_history( double t1,
-    double t2,
-    std::deque< histentry >::iterator* start,
-    std::deque< histentry >::iterator* finish );
 
-  // for Clopath synapse
-  virtual void get_LTP_history( double t1,
-    double t2,
-    std::deque< histentry_extended >::iterator* start,
-    std::deque< histentry_extended >::iterator* finish );
-  // for Urbanczik synapse
-  virtual void get_urbanczik_history( double t1,
-    double t2,
-    std::deque< histentry_extended >::iterator* start,
-    std::deque< histentry_extended >::iterator* finish,
-    int );
-  // make neuron parameters accessible in Urbanczik synapse
-  virtual double get_C_m( int comp );
-  virtual double get_g_L( int comp );
-  virtual double get_tau_L( int comp );
-  virtual double get_tau_s( int comp );
-  virtual double get_tau_syn_ex( int comp );
-  virtual double get_tau_syn_in( int comp );
+  void event_hook( DSSpikeEvent& ) override;
 
-  /**
-   * Modify Event object parameters during event delivery.
-   * Some Nodes want to perform a function on an event for each
-   * of their targets. An example is the poisson_generator which
-   * needs to draw a random number for each target. The DSSpikeEvent,
-   * DirectSendingSpikeEvent, calls sender->event_hook(thread, *this)
-   * in its operator() function instead of calling target->handle().
-   * The default implementation of Node::event_hook() just calls
-   * target->handle(DSSpikeEvent&). Any reimplementation must also
-   * execute this call. Otherwise the event will not be delivered.
-   * If needed, target->handle(DSSpikeEvent) may be called more than
-   * once.
-   */
-  virtual void event_hook( DSSpikeEvent& );
+  void event_hook( DSCurrentEvent& ) override;
 
-  virtual void event_hook( DSCurrentEvent& );
 
-  /**
-   * Store the number of the thread to which the node is assigned.
-   * The assignment is done after node creation by the Network class.
-   * @see: NodeManager::add_node().
-   */
-  void set_thread( thread );
+  void set_thread( thread ) override;
 
-  /**
-   * Retrieve the number of the thread to which the node is assigned.
-   */
-  thread get_thread() const;
+  thread get_thread() const override;
 
-  /**
-   * Store the number of the virtual process to which the node is assigned.
-   * This is assigned to the node in NodeManager::add_node().
-   */
-  void set_vp( thread );
+  void set_vp( thread ) override;
 
-  /**
-   * Retrieve the number of the virtual process to which the node is assigned.
-   */
-  thread get_vp() const;
+  thread get_vp() const override;
 
-  /** Set the model id.
-   * This method is called by NodeManager::add_node() when a node is created.
-   * @see get_model_id()
-   */
-  void set_model_id( int );
 
-  /** Execute post-initialization actions in node models.
-   * This method is called by NodeManager::add_node() on a node once
-   * is fully initialized, i.e. after node ID, nc, model_id, thread, vp is
-   * set.
-   */
-  void set_initialized();
+  void set_model_id( int ) override;
 
-  /**
-   * @returns type of signal this node produces
-   * used in check_connection to only connect neurons which send / receive
-   * compatible information
-   */
+  void set_initialized() override;
+
+
   virtual SignalType
-  sends_signal() const
+  sends_signal() const override
   {
     return SPIKE;
   }
 
-  /**
-   * @returns type of signal this node consumes
-   * used in check_connection to only connect neurons which send / receive
-   * compatible information
-   */
+
   virtual SignalType
-  receives_signal() const
+  receives_signal() const override
   {
     return SPIKE;
   }
@@ -780,7 +364,7 @@ public:
    *  calls the custom function get_status(DictionaryDatum) with
    *  the created status dictionary as argument.
    */
-  DictionaryDatum get_status_base();
+  DictionaryDatum get_status_base() override;
 
   /**
    * Set status dictionary of a node.
@@ -788,37 +372,25 @@ public:
    * Forwards to set_status() of the derived class.
    * @internal
    */
-  void set_status_base( const DictionaryDatum& );
+  void set_status_base( const DictionaryDatum& ) override;
 
   /**
    * Returns true if node is model prototype.
    */
-  bool is_model_prototype() const;
+  bool is_model_prototype() const override;
 
   /**
    * set thread local index
 
    */
-  void set_thread_lid( const index );
+  void set_thread_lid( const index ) override;
 
   /**
    * get thread local index
    */
-  index get_thread_lid() const;
+  index get_thread_lid() const override;
 
-  /**
-   * Sets the local device id.
-   * Throws an error if used on a non-device node.
-   * @see get_local_device_id
-   */
-  virtual void set_local_device_id( const index lsdid );
-
-  /**
-   * Gets the local device id.
-   * Throws an error if used on a non-device node.
-   * @see set_local_device_id
-   */
-  virtual index get_local_device_id() const;
+  virtual index get_local_device_id() const override;
 
   /**
    * Member of DeprecationWarning class to be used by models if parameters are
@@ -826,32 +398,12 @@ public:
    */
   DeprecationWarning deprecation_warning;
 
-private:
-  void set_node_id_( index ); //!< Set global node id
-
-  /**
-   * Set the original NodeCollection of this node.
-   */
-  void set_nc_( NodeCollectionPTR );
-
-  /** Return a new dictionary datum .
-   *
-   * This function is called by get_status_base() and returns a new
-   * empty dictionary by default.  Some nodes may contain a
-   * permanent status dictionary which is then returned by
-   * get_status_dict_().
-   */
-  virtual DictionaryDatum get_status_dict_();
-
 protected:
-  /**
-   * Configure state variables depending on runtime information.
-   *
-   * Overload this method if the node needs to adapt state variables prior to
-   * first simulation to runtime information, e.g., the number of incoming
-   * connections.
-   */
-  virtual void init_state_();
+  void set_node_id_( index ) override;
+
+  void set_nc_( NodeCollectionPTR ) override;
+
+  void init_state_() override;
 
   /**
    * Configure persistent internal data structures.
@@ -859,15 +411,15 @@ protected:
    * Let node configure persistent internal data structures, such as input
    * buffers or ODE solvers, to runtime information prior to first simulation.
    */
-  virtual void init_buffers_();
+  void init_buffers_() override;
 
-  virtual void set_initialized_();
+  void set_initialized_() override;
 
-  Model& get_model_() const;
+  Model& get_model_() const override;
 
   //! Mark node as frozen.
   void
-  set_frozen_( bool frozen )
+  set_frozen_( bool frozen ) override
   {
     frozen_ = frozen;
   }
@@ -879,7 +431,7 @@ protected:
    *       ones when intializing parameters or state from a prototype.
    */
   template < typename ConcreteNode >
-  const ConcreteNode& downcast( const Node& );
+  const ConcreteNode& downcast( const NodeInterface& );
 
 private:
   /**
@@ -1040,7 +592,7 @@ Node::get_vp() const
 
 template < typename ConcreteNode >
 const ConcreteNode&
-Node::downcast( const Node& n )
+Node::downcast( const NodeInterface& n )
 {
   ConcreteNode const* tp = dynamic_cast< ConcreteNode const* >( &n );
   assert( tp != 0 );

@@ -128,7 +128,7 @@ iaf_psc_exp_multisynapse::Parameters_::get( DictionaryDatum& d ) const
 }
 
 double
-iaf_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* node )
+iaf_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
@@ -204,7 +204,10 @@ iaf_psc_exp_multisynapse::State_::get( DictionaryDatum& d, const Parameters_& p 
 }
 
 void
-iaf_psc_exp_multisynapse::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
+iaf_psc_exp_multisynapse::State_::set( const DictionaryDatum& d,
+  const Parameters_& p,
+  double delta_EL,
+  NodeInterface* node )
 {
   // If the dictionary contains a value for the membrane potential, V_m, adjust
   // it with the resting potential, E_L_. If not, adjust the membrane potential

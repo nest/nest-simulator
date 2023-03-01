@@ -110,7 +110,7 @@ get_position( NodeCollectionPTR layer_nc )
 std::vector< double >
 get_position( const index node_id )
 {
-  Node* node = kernel().node_manager.get_node_or_proxy( node_id );
+  NodeInterface* node = kernel().node_manager.get_node_or_proxy( node_id );
 
   if ( not kernel().node_manager.is_local_node_id( node_id ) )
   {
@@ -343,7 +343,7 @@ distance( const ArrayDatum conns )
       throw KernelException( "Distance is currently implemented for local nodes only." );
     }
 
-    Node* trgt_node = kernel().node_manager.get_node_or_proxy( trgt );
+    NodeInterface* trgt_node = kernel().node_manager.get_node_or_proxy( trgt );
 
     NodeCollectionPTR trgt_nc = trgt_node->get_nc();
     NodeCollectionMetadataPTR meta = trgt_nc->get_metadata();

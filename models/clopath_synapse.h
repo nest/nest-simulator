@@ -177,7 +177,7 @@ public:
   };
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( NodeInterface& s, NodeInterface& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
 
@@ -233,7 +233,7 @@ clopath_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSyna
   double t_spike = e.get_stamp().get_ms();
   // use accessor functions (inherited from Connection< >) to obtain delay and
   // target
-  Node* target = get_target( t );
+  NodeInterface* target = get_target( t );
   double dendritic_delay = get_delay();
 
   // get spike history in relevant range (t1, t2] from postsynaptic neuron

@@ -222,7 +222,7 @@ nest::glif_cond::Parameters_::get( DictionaryDatum& d ) const
 }
 
 double
-nest::glif_cond::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::glif_cond::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
@@ -413,7 +413,7 @@ nest::glif_cond::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 }
 
 void
-nest::glif_cond::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
+nest::glif_cond::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, NodeInterface* node )
 {
   if ( updateValueParam< double >( d, names::V_m, y_[ V_M ], node ) )
   {
@@ -516,7 +516,7 @@ nest::glif_cond::~glif_cond()
 
 
 /* ----------------------------------------------------------------
- * Node initialization functions
+ * NodeInterface initialization functions
  * ---------------------------------------------------------------- */
 
 void

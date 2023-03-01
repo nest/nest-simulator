@@ -47,7 +47,7 @@
 
 namespace nest
 {
-class Node;
+class NodeInterface;
 class ConnParameter;
 class SparseNodeArray;
 
@@ -145,11 +145,11 @@ protected:
     throw NotImplemented( "This connection rule is not implemented for structural plasticity." );
   }
 
-  void update_param_dict_( index snode_id, Node& target, thread target_thread, RngPtr rng, index indx );
+  void update_param_dict_( index snode_id, NodeInterface& target, thread target_thread, RngPtr rng, index indx );
 
   //! Create connection between given nodes, fill parameter values
-  void single_connect_( index, Node&, thread, RngPtr );
-  void single_disconnect_( index, Node&, thread );
+  void single_connect_( index, NodeInterface&, thread, RngPtr );
+  void single_disconnect_( index, NodeInterface&, thread );
 
   /**
    * Moves pointer in parameter array.
@@ -314,7 +314,7 @@ protected:
   void sp_disconnect_() override;
 
 private:
-  void inner_connect_( const int, RngPtr, Node*, index, bool );
+  void inner_connect_( const int, RngPtr, NodeInterface*, index, bool );
 };
 
 
@@ -330,7 +330,7 @@ protected:
   void connect_() override;
 
 private:
-  void inner_connect_( const int, RngPtr, Node*, index, bool, long );
+  void inner_connect_( const int, RngPtr, NodeInterface*, index, bool, long );
   ParameterDatum indegree_;
 };
 
@@ -376,7 +376,7 @@ protected:
   void connect_() override;
 
 private:
-  void inner_connect_( const int, RngPtr, Node*, index );
+  void inner_connect_( const int, RngPtr, NodeInterface*, index );
   ParameterDatum p_; //!< connection probability
 };
 

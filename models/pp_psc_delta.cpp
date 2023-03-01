@@ -139,7 +139,7 @@ nest::pp_psc_delta::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
 
   updateValueParam< double >( d, names::I_e, I_e_, node );
@@ -227,7 +227,7 @@ nest::pp_psc_delta::State_::get( DictionaryDatum& d, const Parameters_& ) const
 }
 
 void
-nest::pp_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::pp_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_&, NodeInterface* node )
 {
   updateValueParam< double >( d, names::V_m, y3_, node );
   updateValueParam< double >( d, names::E_sfa, q_, node );

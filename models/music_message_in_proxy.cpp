@@ -68,7 +68,7 @@ nest::music_message_in_proxy::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::music_message_in_proxy::Parameters_::set( const DictionaryDatum& d, State_& s, Node* node )
+nest::music_message_in_proxy::Parameters_::set( const DictionaryDatum& d, State_& s, NodeInterface* node )
 {
   if ( not s.published_ )
   {
@@ -85,7 +85,7 @@ nest::music_message_in_proxy::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::music_message_in_proxy::State_::set( const DictionaryDatum&, const Parameters_&, Node* )
+nest::music_message_in_proxy::State_::set( const DictionaryDatum&, const Parameters_&, NodeInterface* )
 {
 }
 
@@ -110,7 +110,7 @@ nest::music_message_in_proxy::music_message_in_proxy( const music_message_in_pro
 
 
 /* ----------------------------------------------------------------
- * Node initialization functions
+ * NodeInterface initialization functions
  * ---------------------------------------------------------------- */
 
 void

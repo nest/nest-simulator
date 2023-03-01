@@ -239,7 +239,7 @@ nest::hh_psc_alpha_gap::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::hh_psc_alpha_gap::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::hh_psc_alpha_gap::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
   updateValueParam< double >( d, names::C_m, C_m, node );
@@ -284,7 +284,7 @@ nest::hh_psc_alpha_gap::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::hh_psc_alpha_gap::State_::set( const DictionaryDatum& d, Node* node )
+nest::hh_psc_alpha_gap::State_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
   updateValueParam< double >( d, names::Act_m, y_[ HH_M ], node );
@@ -358,7 +358,7 @@ nest::hh_psc_alpha_gap::~hh_psc_alpha_gap()
 }
 
 /* ----------------------------------------------------------------
- * Node initialization functions
+ * NodeInterface initialization functions
  * ---------------------------------------------------------------- */
 
 void

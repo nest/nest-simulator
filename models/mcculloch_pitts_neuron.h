@@ -134,8 +134,8 @@ public:
   {
   }
 
-  void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-  void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+  void get( DictionaryDatum& ) const;                      //!< Store current values in dictionary
+  void set( const DictionaryDatum&, NodeInterface* node ); //!< Set values from dictionary
 
   bool operator()( RngPtr, double h );
 };

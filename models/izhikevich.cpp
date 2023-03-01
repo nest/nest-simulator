@@ -99,7 +99,7 @@ nest::izhikevich::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::izhikevich::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::izhikevich::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
 
   updateValueParam< double >( d, names::V_th, V_th_, node );
@@ -125,7 +125,7 @@ nest::izhikevich::State_::get( DictionaryDatum& d, const Parameters_& ) const
 }
 
 void
-nest::izhikevich::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::izhikevich::State_::set( const DictionaryDatum& d, const Parameters_&, NodeInterface* node )
 {
   updateValueParam< double >( d, names::U_m, u_, node );
   updateValueParam< double >( d, names::V_m, v_, node );

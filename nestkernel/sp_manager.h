@@ -49,7 +49,7 @@
 
 namespace nest
 {
-class Node;
+class NodeInterface;
 
 class SPBuilder;
 
@@ -107,7 +107,7 @@ public:
    * \param target_thread Thread that hosts the target node.
    * \param syn_id The synapse model to use.
    */
-  void disconnect( const index snode_id, Node* target, thread target_thread, const index syn_id );
+  void disconnect( const index snode_id, NodeInterface* target, thread target_thread, const index syn_id );
 
   void update_structural_plasticity();
   void update_structural_plasticity( SPBuilder* );

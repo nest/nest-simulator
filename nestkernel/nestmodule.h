@@ -46,7 +46,7 @@ class AbstractMask;
 template < int D >
 class Layer;
 
-class Node;
+class NodeInterface;
 class Parameter;
 
 /**

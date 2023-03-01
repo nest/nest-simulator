@@ -43,7 +43,7 @@
 namespace nest
 {
 
-class Node;
+class NodeInterface;
 class Model;
 
 class NodeManager : public ManagerInterface
@@ -123,7 +123,7 @@ public:
   /**
    * Return true, if the given Node is on the local machine
    */
-  bool is_local_node( Node* ) const;
+  bool is_local_node( NodeInterface* ) const;
 
   /**
    * Return true, if the given node ID is on the local machine
@@ -141,13 +141,13 @@ public:
    *
    * @ingroup net_access
    */
-  Node* get_node_or_proxy( index node_id, thread tid );
+  NodeInterface* get_node_or_proxy( index node_id, thread tid );
 
   /**
    * Return pointer of the specified Node.
    * @param i Index of the specified Node.
    */
-  Node* get_node_or_proxy( index );
+  NodeInterface* get_node_or_proxy( index );
 
   /*
    * Return pointer of Node on the thread we are on.
@@ -157,7 +157,7 @@ public:
    *
    * @params node_id Index of the Node.
    */
-  Node* get_mpi_local_node_or_device_head( index );
+  NodeInterface* get_mpi_local_node_or_device_head( index );
 
   /**
    * Return a vector that contains the thread siblings.
@@ -167,7 +167,7 @@ public:
    *
    * @ingroup net_access
    */
-  std::vector< Node* > get_thread_siblings( index n ) const;
+  std::vector< NodeInterface* > get_thread_siblings( index n ) const;
 
   /**
    * Ensure that all nodes in the network have valid thread-local IDs.
@@ -176,12 +176,12 @@ public:
    */
   void ensure_valid_thread_local_ids();
 
-  Node* thread_lid_to_node( thread t, targetindex thread_local_id ) const;
+  NodeInterface* thread_lid_to_node( thread t, targetindex thread_local_id ) const;
 
   /**
    * Get list of nodes on given thread.
    */
-  const std::vector< Node* >& get_wfr_nodes_on_thread( thread ) const;
+  const std::vector< NodeInterface* >& get_wfr_nodes_on_thread( thread ) const;
 
   /**
    * Prepare nodes for simulation and register nodes in node_list.
@@ -246,13 +246,13 @@ private:
    *        each call so Node::set_status_()
    * @throws UnaccessedDictionaryEntry
    */
-  void set_status_single_node_( Node&, const DictionaryDatum&, bool clear_flags = true );
+  void set_status_single_node_( NodeInterface&, const DictionaryDatum&, bool clear_flags = true );
 
   /**
    * Initialized buffers, register in list of nodes to update/finalize.
    * @see prepare_nodes_()
    */
-  void prepare_node_( Node* );
+  void prepare_node_( NodeInterface* );
 
   /**
    * Add normal neurons.
@@ -296,10 +296,10 @@ private:
    */
   std::vector< SparseNodeArray > local_nodes_;
 
-  std::vector< std::vector< Node* > > wfr_nodes_vec_; //!< Nodelists for unfrozen nodes that
-                                                      //!< use the waveform relaxation method
-  bool wfr_is_used_;                                  //!< there is at least one node that uses
-                                                      //!< waveform relaxation
+  std::vector< std::vector< NodeInterface* > > wfr_nodes_vec_; //!< Nodelists for unfrozen nodes that
+                                                               //!< use the waveform relaxation method
+  bool wfr_is_used_;                                           //!< there is at least one node that uses
+                                                               //!< waveform relaxation
   //! Network size when wfr_nodes_vec_ was last updated
   index wfr_network_size_;
   size_t num_active_nodes_; //!< number of nodes created by prepare_nodes
@@ -322,13 +322,13 @@ NodeManager::size() const
   return local_nodes_[ 0 ].get_max_node_id();
 }
 
-inline Node*
+inline NodeInterface*
 NodeManager::thread_lid_to_node( thread t, targetindex thread_local_id ) const
 {
   return local_nodes_[ t ].get_node_by_index( thread_local_id );
 }
 
-inline const std::vector< Node* >&
+inline const std::vector< NodeInterface* >&
 NodeManager::get_wfr_nodes_on_thread( thread t ) const
 {
   return wfr_nodes_vec_.at( t );

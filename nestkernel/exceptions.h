@@ -578,7 +578,7 @@ public:
 /**
  * Exception to be thrown if a status parameter
  * is incomplete or inconsistent.
- * Thrown by Node::set_/get_property methods.
+ * Thrown by NodeInterface::set_/get_property methods.
  * @ingroup KernelExceptions
  */
 class BadProperty : public KernelException
@@ -608,7 +608,7 @@ public:
 /**
  * Exception to be thrown if a parameter
  * cannot be set.
- * Thrown by Node::set_/get_property methods.
+ * Thrown by NodeInterface::set_/get_property methods.
  * @ingroup KernelExceptions
  */
 class BadParameter : public KernelException
@@ -638,7 +638,7 @@ public:
 /**
  * Exception to be thrown if the dimensions
  * of two or more objects do not agree.
- * Thrown by Node::set_/get_property methods.
+ * Thrown by NodeInterface::set_/get_property methods.
  * @ingroup KernelExceptions
  */
 class DimensionMismatch : public KernelException

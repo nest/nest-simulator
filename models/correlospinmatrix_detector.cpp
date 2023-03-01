@@ -134,7 +134,7 @@ nest::correlospinmatrix_detector::State_::get( DictionaryDatum& d ) const
 bool
 nest::correlospinmatrix_detector::Parameters_::set( const DictionaryDatum& d,
   const correlospinmatrix_detector& n,
-  Node* node )
+  NodeInterface* node )
 {
   bool reset = false;
   double t;
@@ -206,7 +206,7 @@ nest::correlospinmatrix_detector::Parameters_::set( const DictionaryDatum& d,
 }
 
 void
-nest::correlospinmatrix_detector::State_::set( const DictionaryDatum&, const Parameters_&, bool, Node* )
+nest::correlospinmatrix_detector::State_::set( const DictionaryDatum&, const Parameters_&, bool, NodeInterface* )
 {
 }
 

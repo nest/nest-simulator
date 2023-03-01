@@ -198,10 +198,10 @@ public:
 
   glif_psc( const glif_psc& );
 
-  using nest::Node::handle;
-  using nest::Node::handles_test_event;
+  using nest::NodeInterface::handle;
+  using nest::NodeInterface::handles_test_event;
 
-  nest::port send_test_event( nest::Node&, nest::port, nest::synindex, bool ) override;
+  nest::port send_test_event( nest::NodeInterface&, nest::port, nest::synindex, bool ) override;
 
   void handle( nest::SpikeEvent& ) override;
   void handle( nest::CurrentEvent& ) override;
@@ -267,7 +267,7 @@ private:
     Parameters_();
 
     void get( DictionaryDatum& ) const;
-    double set( const DictionaryDatum&, Node* );
+    double set( const DictionaryDatum&, NodeInterface* );
   };
 
   struct State_
@@ -287,7 +287,7 @@ private:
     State_( const Parameters_& );
 
     void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, double, Node* );
+    void set( const DictionaryDatum&, const Parameters_&, double, NodeInterface* );
   };
 
 
@@ -390,7 +390,7 @@ nest::glif_psc::Parameters_::n_receptors_() const
 }
 
 inline nest::port
-nest::glif_psc::send_test_event( nest::Node& target, nest::port receptor_type, nest::synindex, bool )
+nest::glif_psc::send_test_event( nest::NodeInterface& target, nest::port receptor_type, nest::synindex, bool )
 {
   nest::SpikeEvent e;
   e.set_sender( *this );

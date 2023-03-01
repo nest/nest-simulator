@@ -191,10 +191,10 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
-  using Node::handle;
-  using Node::handles_test_event;
+  using NodeInterface::handle;
+  using NodeInterface::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  port send_test_event( NodeInterface&, rport, synindex, bool ) override;
 
   void handle( SpikeEvent& ) override;
   void handle( CurrentEvent& ) override;
@@ -249,8 +249,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( DictionaryDatum& ) const;                      //!< Store current values in dictionary
+    void set( const DictionaryDatum&, NodeInterface* node ); //!< Set values from dictionary
 
     //! Return the number of receptor ports
     inline size_t
@@ -294,7 +294,7 @@ private:
     State_( const Parameters_& ); //!< Default initialization
 
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, Node* node );
+    void set( const DictionaryDatum&, NodeInterface* node );
 
   }; // State_
 
@@ -393,7 +393,7 @@ private:
 };
 
 inline port
-aeif_cond_alpha_multisynapse::send_test_event( Node& target, rport receptor_type, synindex, bool )
+aeif_cond_alpha_multisynapse::send_test_event( NodeInterface& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

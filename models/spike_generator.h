@@ -222,7 +222,7 @@ public:
   spike_generator();
   spike_generator( const spike_generator& );
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  port send_test_event( NodeInterface&, rport, synindex, bool ) override;
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
@@ -235,8 +235,8 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
-  using Node::event_hook;
-  using Node::sends_signal;
+  using NodeInterface::event_hook;
+  using NodeInterface::sends_signal;
 
   void event_hook( DSSpikeEvent& ) override;
 
@@ -296,7 +296,7 @@ private:
      *       spike_times_ or spike_weights_ vector has been filled with
      *       new data, or if the origin was reset.
      */
-    void set( const DictionaryDatum&, State_&, const Time&, const Time&, Node* node );
+    void set( const DictionaryDatum&, State_&, const Time&, const Time&, NodeInterface* node );
 
     /**
      * Insert spike time to arrays, throw BadProperty for invalid spike times.
@@ -315,7 +315,7 @@ private:
 };
 
 inline port
-spike_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
+spike_generator::send_test_event( NodeInterface& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
   enforce_single_syn_type( syn_id );
 

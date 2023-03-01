@@ -109,9 +109,9 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
-  using Node::event_hook;
+  using NodeInterface::event_hook;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  port send_test_event( NodeInterface&, rport, synindex, bool ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -147,7 +147,7 @@ private:
     //!< Store current values in dictionary
     void get( DictionaryDatum& ) const;
     //!< Set values from dictionary
-    void set( const DictionaryDatum&, Buffers_&, Node* );
+    void set( const DictionaryDatum&, Buffers_&, NodeInterface* );
     //!< Align rate time to grid if necessary and insert it into rate_times_
     void assert_valid_rate_time_and_insert( const double t );
   };
@@ -176,7 +176,7 @@ private:
 };
 
 inline port
-inhomogeneous_poisson_generator::send_test_event( Node& target,
+inhomogeneous_poisson_generator::send_test_event( NodeInterface& target,
   rport receptor_type,
   synindex syn_id,
   bool dummy_target )

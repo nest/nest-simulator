@@ -144,7 +144,7 @@ nest::noise_generator::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::noise_generator::Parameters_::set( const DictionaryDatum& d, const noise_generator& n, Node* node )
+nest::noise_generator::Parameters_::set( const DictionaryDatum& d, const noise_generator& n, NodeInterface* node )
 {
   updateValueParam< double >( d, names::mean, mean_, node );
   updateValueParam< double >( d, names::std, std_, node );
@@ -259,7 +259,7 @@ nest::noise_generator::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 nest::port
-nest::noise_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
+nest::noise_generator::send_test_event( NodeInterface& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
   StimulationDevice::enforce_single_syn_type( syn_id );
 

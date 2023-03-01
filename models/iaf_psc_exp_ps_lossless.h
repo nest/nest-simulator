@@ -161,10 +161,10 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
-  using Node::handle;
-  using Node::handles_test_event;
+  using NodeInterface::handle;
+  using NodeInterface::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  port send_test_event( NodeInterface&, rport, synindex, bool ) override;
 
   port handles_test_event( SpikeEvent&, port ) override;
   port handles_test_event( CurrentEvent&, port ) override;
@@ -319,8 +319,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;               //!< Store current values in dictionary
-    double set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( DictionaryDatum& ) const;                        //!< Store current values in dictionary
+    double set( const DictionaryDatum&, NodeInterface* node ); //!< Set values from dictionary
   };
 
   // ----------------------------------------------------------------
@@ -342,7 +342,7 @@ private:
     State_(); //!< Default initialization
 
     void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, double delta_EL, Node* );
+    void set( const DictionaryDatum&, const Parameters_&, double delta_EL, NodeInterface* );
   };
 
   // ----------------------------------------------------------------
@@ -462,7 +462,7 @@ private:
 };
 
 inline port
-iaf_psc_exp_ps_lossless::send_test_event( Node& target, rport receptor_type, synindex, bool )
+iaf_psc_exp_ps_lossless::send_test_event( NodeInterface& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

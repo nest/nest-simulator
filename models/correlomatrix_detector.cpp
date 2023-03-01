@@ -137,7 +137,9 @@ nest::correlomatrix_detector::State_::get( DictionaryDatum& d ) const
 }
 
 bool
-nest::correlomatrix_detector::Parameters_::set( const DictionaryDatum& d, const correlomatrix_detector& n, Node* node )
+nest::correlomatrix_detector::Parameters_::set( const DictionaryDatum& d,
+  const correlomatrix_detector& n,
+  NodeInterface* node )
 {
   bool reset = false;
   double t;
@@ -199,7 +201,7 @@ nest::correlomatrix_detector::Parameters_::set( const DictionaryDatum& d, const 
 }
 
 void
-nest::correlomatrix_detector::State_::set( const DictionaryDatum&, const Parameters_&, bool, Node* )
+nest::correlomatrix_detector::State_::set( const DictionaryDatum&, const Parameters_&, bool, NodeInterface* )
 {
 }
 

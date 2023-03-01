@@ -32,7 +32,7 @@ nonlinearities_sigmoid_rate_gg_1998::get( DictionaryDatum& d ) const
 }
 
 void
-nonlinearities_sigmoid_rate_gg_1998::set( const DictionaryDatum& d, Node* node )
+nonlinearities_sigmoid_rate_gg_1998::set( const DictionaryDatum& d, NodeInterface* node )
 {
   updateValueParam< double >( d, names::g, g_, node );
 }

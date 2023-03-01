@@ -118,7 +118,9 @@ nest::correlation_detector::State_::get( DictionaryDatum& d ) const
 }
 
 bool
-nest::correlation_detector::Parameters_::set( const DictionaryDatum& d, const correlation_detector& n, Node* node )
+nest::correlation_detector::Parameters_::set( const DictionaryDatum& d,
+  const correlation_detector& n,
+  NodeInterface* node )
 {
   bool reset = false;
   double t;
@@ -160,7 +162,10 @@ nest::correlation_detector::Parameters_::set( const DictionaryDatum& d, const co
 }
 
 void
-nest::correlation_detector::State_::set( const DictionaryDatum& d, const Parameters_& p, bool reset_required, Node* )
+nest::correlation_detector::State_::set( const DictionaryDatum& d,
+  const Parameters_& p,
+  bool reset_required,
+  NodeInterface* )
 {
   std::vector< long > nev;
   if ( updateValue< std::vector< long > >( d, names::n_events, nev ) )

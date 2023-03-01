@@ -361,7 +361,7 @@ nest::iaf_cond_alpha_mc::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_cond_alpha_mc::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::iaf_cond_alpha_mc::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   // allow setting the membrane potential
   updateValueParam< double >( d, names::V_th, V_th, node );
@@ -426,7 +426,7 @@ nest::iaf_cond_alpha_mc::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_cond_alpha_mc::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::iaf_cond_alpha_mc::State_::set( const DictionaryDatum& d, const Parameters_&, NodeInterface* node )
 {
   // extract from sub-dictionaries
   for ( size_t n = 0; n < NCOMP; ++n )
@@ -485,7 +485,7 @@ nest::iaf_cond_alpha_mc::~iaf_cond_alpha_mc()
 }
 
 /* ----------------------------------------------------------------
- * Node initialization functions
+ * NodeInterface initialization functions
  * ---------------------------------------------------------------- */
 
 void

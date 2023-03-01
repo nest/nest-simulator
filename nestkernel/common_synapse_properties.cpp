@@ -76,7 +76,7 @@ CommonSynapseProperties::set_status( const DictionaryDatum& d, ConnectorModel& )
   }
 }
 
-Node*
+NodeInterface*
 CommonSynapseProperties::get_node()
 {
   return nullptr;

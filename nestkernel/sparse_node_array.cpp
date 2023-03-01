@@ -29,7 +29,7 @@
 #include "vp_manager_impl.h"
 
 
-nest::SparseNodeArray::NodeEntry::NodeEntry( Node& node, index node_id )
+nest::SparseNodeArray::NodeEntry::NodeEntry( NodeInterface& node, index node_id )
   : node_( &node )
   , node_id_( node_id )
 {
@@ -67,7 +67,7 @@ nest::SparseNodeArray::clear()
 }
 
 void
-nest::SparseNodeArray::add_local_node( Node& node )
+nest::SparseNodeArray::add_local_node( NodeInterface& node )
 {
   const index node_id = node.get_node_id();
 
@@ -124,7 +124,7 @@ nest::SparseNodeArray::set_max_node_id( index node_id )
   }
 }
 
-nest::Node*
+nest::NodeInterface*
 nest::SparseNodeArray::get_node_by_node_id( index node_id ) const
 {
   assert( is_consistent_() );

@@ -157,11 +157,11 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
-  using Node::handle;
-  using Node::handles_test_event;
-  using Node::sends_signal;
+  using NodeInterface::handle;
+  using NodeInterface::handles_test_event;
+  using NodeInterface::sends_signal;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  port send_test_event( NodeInterface&, rport, synindex, bool ) override;
 
   void handle( DataLoggingReply& ) override;
 
@@ -198,7 +198,7 @@ private:
     Parameters_( const Parameters_& );
     Parameters_& operator=( const Parameters_& );
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Buffers_&, Node* node );
+    void set( const DictionaryDatum&, const Buffers_&, NodeInterface* node );
   };
 
   // ------------------------------------------------------------
@@ -238,8 +238,8 @@ nest::multimeter::get_status( DictionaryDatum& d ) const
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const std::vector< Node* > siblings = kernel().node_manager.get_thread_siblings( get_node_id() );
-    std::vector< Node* >::const_iterator s;
+    const std::vector< NodeInterface* > siblings = kernel().node_manager.get_thread_siblings( get_node_id() );
+    std::vector< NodeInterface* >::const_iterator s;
     for ( s = siblings.begin() + 1; s != siblings.end(); ++s )
     {
       ( *s )->get_status( d );

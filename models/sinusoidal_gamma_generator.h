@@ -193,16 +193,16 @@ public:
   sinusoidal_gamma_generator();
   sinusoidal_gamma_generator( const sinusoidal_gamma_generator& );
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  port send_test_event( NodeInterface&, rport, synindex, bool ) override;
 
   /**
    * Import sets of overloaded virtual functions.
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
-  using Node::event_hook;
-  using Node::handle;
-  using Node::handles_test_event;
+  using NodeInterface::event_hook;
+  using NodeInterface::handle;
+  using NodeInterface::handles_test_event;
 
   void handle( DataLoggingRequest& ) override;
 
@@ -270,7 +270,7 @@ private:
      * @note State is passed so that the position can be reset if the
      *       spike_times_ vector has been filled with new data.
      */
-    void set( const DictionaryDatum&, const sinusoidal_gamma_generator&, Node* );
+    void set( const DictionaryDatum&, const sinusoidal_gamma_generator&, NodeInterface* );
   };
 
   struct State_
@@ -348,7 +348,10 @@ private:
 };
 
 inline port
-sinusoidal_gamma_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
+sinusoidal_gamma_generator::send_test_event( NodeInterface& target,
+  rport receptor_type,
+  synindex syn_id,
+  bool dummy_target )
 {
   StimulationDevice::enforce_single_syn_type( syn_id );
 

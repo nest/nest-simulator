@@ -204,7 +204,7 @@ public:
   /**
    * Create a NodeCollection from a single node ID. Results in a primitive.
    *
-   * @param node_id Node ID from which to create the NodeCollection
+   * @param node_id NodeInterface ID from which to create the NodeCollection
    * @return a NodeCollection pointer to the created NodeCollection
    */
   static NodeCollectionPTR create( const index node_id );

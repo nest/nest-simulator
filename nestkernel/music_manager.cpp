@@ -199,7 +199,7 @@ MUSICManager::unregister_music_in_port( std::string portname )
 }
 
 void
-MUSICManager::register_music_event_in_proxy( std::string portname, int channel, nest::Node* mp )
+MUSICManager::register_music_event_in_proxy( std::string portname, int channel, nest::NodeInterface* mp )
 {
   std::map< std::string, MusicEventHandler >::iterator it;
   it = music_event_in_portmap_.find( portname );
@@ -217,7 +217,7 @@ MUSICManager::register_music_event_in_proxy( std::string portname, int channel, 
 }
 
 void
-MUSICManager::register_music_rate_in_proxy( std::string portname, int channel, nest::Node* mp )
+MUSICManager::register_music_rate_in_proxy( std::string portname, int channel, nest::NodeInterface* mp )
 {
   std::map< std::string, MusicRateInHandler >::iterator it;
   it = music_rate_in_portmap_.find( portname );

@@ -65,7 +65,7 @@ nest::music_cont_in_proxy::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::music_cont_in_proxy::Parameters_::set( const DictionaryDatum& d, State_& s, Node* node )
+nest::music_cont_in_proxy::Parameters_::set( const DictionaryDatum& d, State_& s, NodeInterface* node )
 {
   if ( d->known( names::port_name ) and s.published_ )
   {
@@ -111,7 +111,7 @@ nest::music_cont_in_proxy::music_cont_in_proxy( const music_cont_in_proxy& n )
 
 
 /* ----------------------------------------------------------------
- * Node initialization functions
+ * NodeInterface initialization functions
  * ---------------------------------------------------------------- */
 
 void

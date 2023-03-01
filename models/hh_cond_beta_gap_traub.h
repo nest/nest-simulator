@@ -177,7 +177,7 @@ class hh_cond_beta_gap_traub : public ArchivingNode
 {
 
 public:
-  typedef Node base;
+  typedef NodeInterface base;
 
   hh_cond_beta_gap_traub();
   hh_cond_beta_gap_traub( const hh_cond_beta_gap_traub& );
@@ -188,11 +188,11 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
-  using Node::handle;
-  using Node::handles_test_event;
-  using Node::sends_secondary_event;
+  using NodeInterface::handle;
+  using NodeInterface::handles_test_event;
+  using NodeInterface::sends_secondary_event;
 
-  port send_test_event( Node& target, rport receptor_type, synindex, bool ) override;
+  port send_test_event( NodeInterface& target, rport receptor_type, synindex, bool ) override;
 
   void handle( SpikeEvent& ) override;
   void handle( CurrentEvent& ) override;
@@ -263,8 +263,8 @@ private:
 
     Parameters_();
 
-    void get( DictionaryDatum& ) const;        //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* ); //!< Set values from dictionary
+    void get( DictionaryDatum& ) const;                 //!< Store current values in dictionary
+    void set( const DictionaryDatum&, NodeInterface* ); //!< Set values from dictionary
   };
 
 public:
@@ -300,7 +300,7 @@ public:
     State_& operator=( const State_& );
 
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void set( const DictionaryDatum&, const Parameters_&, NodeInterface* );
   };
 
   // Variables class -------------------------------------------------------
@@ -417,7 +417,7 @@ hh_cond_beta_gap_traub::wfr_update( Time const& origin, const long from, const l
 }
 
 inline port
-hh_cond_beta_gap_traub::send_test_event( Node& target, rport receptor_type, synindex, bool )
+hh_cond_beta_gap_traub::send_test_event( NodeInterface& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

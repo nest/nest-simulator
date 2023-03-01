@@ -202,7 +202,7 @@ public:
   };
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( NodeInterface& s, NodeInterface& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -241,7 +241,7 @@ tsodyks_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSyna
   const double t_spike = e.get_stamp().get_ms();
   const double h = t_spike - t_lastspike_;
 
-  Node* target = get_target( t );
+  NodeInterface* target = get_target( t );
 
 
   // t_lastspike_ = 0 initially

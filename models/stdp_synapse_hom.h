@@ -234,7 +234,7 @@ public:
    * \param receptor_type The ID of the requested receptor type
    */
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( NodeInterface& s, NodeInterface& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -294,7 +294,7 @@ stdp_synapse_hom< targetidentifierT >::send( Event& e, thread t, const STDPHomCo
 
   // t_lastspike_ = 0 initially
 
-  Node* target = get_target( t );
+  NodeInterface* target = get_target( t );
   double dendritic_delay = get_delay();
 
   // get spike history in relevant range (t1, t2] from postsynaptic neuron

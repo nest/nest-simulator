@@ -232,10 +232,10 @@ public:
   cm_default();
   cm_default( const cm_default& );
 
-  using Node::handle;
-  using Node::handles_test_event;
+  using NodeInterface::handle;
+  using NodeInterface::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  port send_test_event( NodeInterface&, rport, synindex, bool ) override;
 
   void handle( SpikeEvent& ) override;
   void handle( CurrentEvent& ) override;
@@ -290,7 +290,7 @@ private:
 
 
 inline port
-nest::cm_default::send_test_event( Node& target, rport receptor_type, synindex, bool )
+nest::cm_default::send_test_event( NodeInterface& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

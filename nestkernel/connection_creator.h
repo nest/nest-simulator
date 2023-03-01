@@ -135,7 +135,7 @@ private:
   template < typename Iterator, int D >
   void connect_to_target_( Iterator from,
     Iterator to,
-    Node* tgt_ptr,
+    NodeInterface* tgt_ptr,
     const Position< D >& tgt_pos,
     thread tgt_thread,
     const Layer< D >& source );

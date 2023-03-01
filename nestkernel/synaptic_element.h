@@ -81,7 +81,7 @@
 
   Author: Mikael Naveau, Sandra Diaz
 
-  SeeAlso: GrowthCurve, SPManager, SPBuilder, Node, ArchivingNode.
+  SeeAlso: GrowthCurve, SPManager, SPBuilder, NodeInterface, ArchivingNode.
 */
 
 // C++ includes:

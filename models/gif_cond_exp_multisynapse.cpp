@@ -180,7 +180,7 @@ nest::gif_cond_exp_multisynapse::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::gif_cond_exp_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::gif_cond_exp_multisynapse::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   updateValueParam< double >( d, names::I_e, I_e_, node );
   updateValueParam< double >( d, names::E_L, E_L_, node );
@@ -315,7 +315,7 @@ nest::gif_cond_exp_multisynapse::State_::get( DictionaryDatum& d, const Paramete
 }
 
 void
-nest::gif_cond_exp_multisynapse::State_::set( const DictionaryDatum& d, const Parameters_& p, Node* node )
+nest::gif_cond_exp_multisynapse::State_::set( const DictionaryDatum& d, const Parameters_& p, NodeInterface* node )
 {
   updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
   y_.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS + State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * p.n_receptors(), 0.0 );
@@ -387,7 +387,7 @@ nest::gif_cond_exp_multisynapse::~gif_cond_exp_multisynapse()
 }
 
 /* ----------------------------------------------------------------
- * Node initialization functions
+ * NodeInterface initialization functions
  * ---------------------------------------------------------------- */
 
 void

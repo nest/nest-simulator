@@ -164,7 +164,7 @@ nest::iaf_cond_exp::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_cond_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::iaf_cond_exp::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   // allow setting the membrane potential
   updateValueParam< double >( d, names::V_th, V_th_, node );
@@ -209,7 +209,7 @@ nest::iaf_cond_exp::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_cond_exp::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::iaf_cond_exp::State_::set( const DictionaryDatum& d, const Parameters_&, NodeInterface* node )
 {
   updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
   updateValueParam< double >( d, names::g_ex, y_[ G_EXC ], node );
@@ -275,7 +275,7 @@ nest::iaf_cond_exp::~iaf_cond_exp()
 }
 
 /* ----------------------------------------------------------------
- * Node initialization functions
+ * NodeInterface initialization functions
  * ---------------------------------------------------------------- */
 
 void

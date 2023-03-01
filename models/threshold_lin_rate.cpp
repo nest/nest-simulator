@@ -34,7 +34,7 @@ nonlinearities_threshold_lin_rate::get( DictionaryDatum& d ) const
 }
 
 void
-nonlinearities_threshold_lin_rate::set( const DictionaryDatum& d, Node* node )
+nonlinearities_threshold_lin_rate::set( const DictionaryDatum& d, NodeInterface* node )
 {
   updateValueParam< double >( d, names::g, g_, node );
   updateValueParam< double >( d, names::theta, theta_, node );

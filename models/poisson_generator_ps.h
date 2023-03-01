@@ -99,9 +99,9 @@ public:
 
   bool is_off_grid() const override;
 
-  using Node::event_hook;
+  using NodeInterface::event_hook;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  port send_test_event( NodeInterface&, rport, synindex, bool ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -154,8 +154,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( DictionaryDatum& ) const;                      //!< Store current values in dictionary
+    void set( const DictionaryDatum&, NodeInterface* node ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
@@ -204,7 +204,7 @@ private:
 };
 
 inline port
-poisson_generator_ps::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
+poisson_generator_ps::send_test_event( NodeInterface& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
   StimulationDevice::enforce_single_syn_type( syn_id );
 

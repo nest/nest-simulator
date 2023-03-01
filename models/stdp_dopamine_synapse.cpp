@@ -83,7 +83,7 @@ STDPDopaCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& 
   if ( updateValue< long >( d, names::vt, vtnode_id ) )
   {
     const thread tid = kernel().vp_manager.get_thread_id();
-    Node* vt = kernel().node_manager.get_node_or_proxy( vtnode_id, tid );
+    NodeInterface* vt = kernel().node_manager.get_node_or_proxy( vtnode_id, tid );
     vt_ = dynamic_cast< volume_transmitter* >( vt );
     if ( not vt_ )
     {
@@ -101,7 +101,7 @@ STDPDopaCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& 
   updateValue< double >( d, names::Wmax, Wmax_ );
 }
 
-Node*
+NodeInterface*
 STDPDopaCommonProperties::get_node()
 {
   if ( not vt_ )

@@ -94,10 +94,10 @@ public:
   //! Allow multimeter to connect to local instances
   bool local_receiver() const override;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  port send_test_event( NodeInterface&, rport, synindex, bool ) override;
 
-  using Node::handle;
-  using Node::handles_test_event;
+  using NodeInterface::handle;
+  using NodeInterface::handles_test_event;
 
   void handle( DataLoggingRequest& ) override;
 
@@ -130,8 +130,8 @@ private:
     Parameters_( const Parameters_& );
     Parameters_& operator=( const Parameters_& p );
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( DictionaryDatum& ) const;                      //!< Store current values in dictionary
+    void set( const DictionaryDatum&, NodeInterface* node ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
@@ -179,7 +179,7 @@ private:
 };
 
 inline port
-dc_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
+dc_generator::send_test_event( NodeInterface& target, rport receptor_type, synindex syn_id, bool )
 {
   StimulationDevice::enforce_single_syn_type( syn_id );
 

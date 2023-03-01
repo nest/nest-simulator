@@ -136,7 +136,7 @@ nest::sinusoidal_poisson_generator::State_::get( DictionaryDatum& d ) const
 void
 nest::sinusoidal_poisson_generator::Parameters_::set( const DictionaryDatum& d,
   const sinusoidal_poisson_generator& n,
-  Node* node )
+  NodeInterface* node )
 {
   if ( not n.is_model_prototype() and d->known( names::individual_spike_trains ) )
   {

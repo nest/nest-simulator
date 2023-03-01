@@ -74,10 +74,10 @@ public:
    * way of doing things, although all other compilers
    * happily live without.
    */
-  using Node::handle;
-  using Node::sends_signal;
+  using NodeInterface::handle;
+  using NodeInterface::sends_signal;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  port send_test_event( NodeInterface&, rport, synindex, bool ) override;
 
   void sends_secondary_event( GapJunctionEvent& ) override;
 
@@ -110,12 +110,6 @@ public:
   }
 
   bool is_proxy() const override;
-
-  thread
-  get_thread() const
-  {
-    assert( false );
-  }
 
 private:
   void

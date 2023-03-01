@@ -77,17 +77,17 @@ public:
    * \see send_local()
    */
   template < class EventT >
-  void send( Node& source, EventT& e, const long lag = 0 );
+  void send( NodeInterface& source, EventT& e, const long lag = 0 );
 
   /**
    * Send a secondary event remote.
    */
-  void send_secondary( Node& source, SecondaryEvent& e );
+  void send_secondary( NodeInterface& source, SecondaryEvent& e );
 
   /**
    * Send event e to all targets of node source on thread t
    */
-  void send_local( thread t, Node& source, Event& e );
+  void send_local( thread t, NodeInterface& source, Event& e );
 
   /**
    * Add node ID of event sender to the spike_register.
@@ -351,8 +351,8 @@ private:
    * devices directly to targets.
    */
   template < class EventT >
-  void send_local_( Node& source, EventT& e, const long lag );
-  void send_local_( Node& source, SecondaryEvent& e, const long lag );
+  void send_local_( NodeInterface& source, EventT& e, const long lag );
+  void send_local_( NodeInterface& source, SecondaryEvent& e, const long lag );
 
   //--------------------------------------------------//
 

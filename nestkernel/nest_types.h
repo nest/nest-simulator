@@ -195,7 +195,7 @@ typedef double weight;
 /**
  * Delay of a connection.
  * The delay defines the number of simulation steps which elapse
- * before an Event arrives at the receiving Node.
+ * before an Event arrives at the receiving NodeInterface.
  * Delays must be equal or larger than one.
  */
 typedef long delay;

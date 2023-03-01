@@ -234,7 +234,7 @@ public:
     const double,
     const CommonSynapseProperties& );
 
-  Node*
+  NodeInterface*
   get_target( const thread tid ) const
   {
     return target_.get_target_ptr( tid );
@@ -301,7 +301,10 @@ protected:
    * \param the last spike produced by the presynaptic neuron (for STDP and
    * maturing connections)
    */
-  void check_connection_( Node& dummy_target, Node& source, Node& target, const rport receptor_type );
+  void check_connection_( NodeInterface& dummy_target,
+    NodeInterface& source,
+    NodeInterface& target,
+    const rport receptor_type );
 
   /* the order of the members below is critical as it influcences the size of the object.
    * Please leave unchanged as:
@@ -318,9 +321,9 @@ constexpr ConnectionModelProperties Connection< targetidentifierT >::properties;
 
 template < typename targetidentifierT >
 inline void
-Connection< targetidentifierT >::check_connection_( Node& dummy_target,
-  Node& source,
-  Node& target,
+Connection< targetidentifierT >::check_connection_( NodeInterface& dummy_target,
+  NodeInterface& source,
+  NodeInterface& target,
   const rport receptor_type )
 {
   // 1. does this connection support the event type sent by source

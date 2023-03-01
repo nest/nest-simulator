@@ -206,7 +206,7 @@ nest::iaf_chxk_2008::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_chxk_2008::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::iaf_chxk_2008::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   // allow setting the membrane potential
   updateValueParam< double >( d, names::V_th, V_th, node );
@@ -239,7 +239,7 @@ nest::iaf_chxk_2008::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_chxk_2008::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::iaf_chxk_2008::State_::set( const DictionaryDatum& d, const Parameters_&, NodeInterface* node )
 {
   updateValueParam< double >( d, names::V_m, y[ V_M ], node );
 }
@@ -282,7 +282,7 @@ nest::iaf_chxk_2008::~iaf_chxk_2008()
 }
 
 /* ----------------------------------------------------------------
- * Node initialization functions
+ * NodeInterface initialization functions
  * ---------------------------------------------------------------- */
 
 void

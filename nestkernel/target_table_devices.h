@@ -40,7 +40,7 @@
 
 namespace nest
 {
-class Node;
+class NodeInterface;
 class ConnectorModel;
 
 /**
@@ -80,8 +80,8 @@ public:
   /**
    * Adds a connection from the neuron source to the device target.
    */
-  void add_connection_to_device( Node& source,
-    Node& target,
+  void add_connection_to_device( NodeInterface& source,
+    NodeInterface& target,
     const index s_node_id,
     const thread tid,
     const synindex syn_id,
@@ -92,8 +92,8 @@ public:
   /**
    * Adds a connection from the device source to the neuron target.
    */
-  void add_connection_from_device( Node& source,
-    Node& target,
+  void add_connection_from_device( NodeInterface& source,
+    NodeInterface& target,
     const thread tid,
     const synindex syn_id,
     const DictionaryDatum& p,

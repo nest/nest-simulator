@@ -34,7 +34,7 @@ namespace nest
 
 template < class EventT >
 inline void
-EventDeliveryManager::send_local_( Node& source, EventT& e, const long lag )
+EventDeliveryManager::send_local_( NodeInterface& source, EventT& e, const long lag )
 {
   assert( not source.has_proxies() );
   e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
@@ -45,7 +45,7 @@ EventDeliveryManager::send_local_( Node& source, EventT& e, const long lag )
 }
 
 inline void
-EventDeliveryManager::send_local_( Node& source, SecondaryEvent& e, const long )
+EventDeliveryManager::send_local_( NodeInterface& source, SecondaryEvent& e, const long )
 {
   assert( not source.has_proxies() );
   e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( 1 ) );
@@ -57,14 +57,14 @@ EventDeliveryManager::send_local_( Node& source, SecondaryEvent& e, const long )
 
 template < class EventT >
 inline void
-EventDeliveryManager::send( Node& source, EventT& e, const long lag )
+EventDeliveryManager::send( NodeInterface& source, EventT& e, const long lag )
 {
   send_local_( source, e, lag );
 }
 
 template <>
 inline void
-EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const long lag )
+EventDeliveryManager::send< SpikeEvent >( NodeInterface& source, SpikeEvent& e, const long lag )
 {
   const thread tid = source.get_thread();
   const index source_node_id = source.get_node_id();
@@ -94,7 +94,7 @@ EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const lon
 
 template <>
 inline void
-EventDeliveryManager::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const long lag )
+EventDeliveryManager::send< DSSpikeEvent >( NodeInterface& source, DSSpikeEvent& e, const long lag )
 {
   e.set_sender_node_id( source.get_node_id() );
   send_local_( source, e, lag );
@@ -139,7 +139,7 @@ EventDeliveryManager::send_off_grid_remote( thread tid, SpikeEvent& e, const lon
 }
 
 inline void
-EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
+EventDeliveryManager::send_secondary( NodeInterface& source, SecondaryEvent& e )
 {
   const thread tid = kernel().vp_manager.get_thread_id();
   const index source_node_id = source.get_node_id();

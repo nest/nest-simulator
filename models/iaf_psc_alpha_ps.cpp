@@ -113,7 +113,7 @@ nest::iaf_psc_alpha_ps::Parameters_::get( DictionaryDatum& d ) const
 }
 
 double
-nest::iaf_psc_alpha_ps::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::iaf_psc_alpha_ps::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
@@ -195,7 +195,10 @@ nest::iaf_psc_alpha_ps::State_::get( DictionaryDatum& d, const Parameters_& p ) 
 }
 
 void
-nest::iaf_psc_alpha_ps::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
+nest::iaf_psc_alpha_ps::State_::set( const DictionaryDatum& d,
+  const Parameters_& p,
+  double delta_EL,
+  NodeInterface* node )
 {
   if ( updateValueParam< double >( d, names::V_m, V_m_, node ) )
   {

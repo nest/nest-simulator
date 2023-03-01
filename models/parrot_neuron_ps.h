@@ -88,11 +88,11 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
-  using Node::handle;
-  using Node::handles_test_event;
+  using NodeInterface::handle;
+  using NodeInterface::handles_test_event;
 
   void handle( SpikeEvent& ) override;
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  port send_test_event( NodeInterface&, rport, synindex, bool ) override;
   port handles_test_event( SpikeEvent&, rport ) override;
 
   void get_status( DictionaryDatum& ) const override;
@@ -124,7 +124,7 @@ private:
 };
 
 inline port
-parrot_neuron_ps::send_test_event( Node& target, rport receptor_type, synindex, bool )
+parrot_neuron_ps::send_test_event( NodeInterface& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

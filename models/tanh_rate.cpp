@@ -33,7 +33,7 @@ nonlinearities_tanh_rate::get( DictionaryDatum& d ) const
 }
 
 void
-nonlinearities_tanh_rate::set( const DictionaryDatum& d, Node* node )
+nonlinearities_tanh_rate::set( const DictionaryDatum& d, NodeInterface* node )
 {
   updateValueParam< double >( d, names::g, g_, node );
   updateValueParam< double >( d, names::theta, theta_, node );

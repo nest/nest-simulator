@@ -44,7 +44,7 @@ namespace nest
  * Class implementing common interface and properties common for all devices.
  *
  * This class provides a common interface for all derived device classes.
- * Each class derived from Node and implementing a device, should have a
+ * Each class derived from NodeInterface and implementing a device, should have a
  * member derived from class Device. This member will contribute the
  * implementation of device specific properties.
  *

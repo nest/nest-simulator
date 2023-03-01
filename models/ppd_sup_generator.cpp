@@ -128,7 +128,7 @@ nest::ppd_sup_generator::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::ppd_sup_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::ppd_sup_generator::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
 
   updateValueParam< double >( d, names::dead_time, dead_time_, node );

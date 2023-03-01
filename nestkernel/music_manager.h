@@ -110,7 +110,7 @@ public:
    * notified, if a MUSIC event is being received on the respective
    * channel and port.
    */
-  void register_music_event_in_proxy( std::string portname, int channel, nest::Node* mp );
+  void register_music_event_in_proxy( std::string portname, int channel, nest::NodeInterface* mp );
 
   /**
    * Register a node (of type music_input_proxy) with a given MUSIC
@@ -118,7 +118,7 @@ public:
    * notified, if a MUSIC event is being received on the respective
    * channel and port.
    */
-  void register_music_rate_in_proxy( std::string portname, int channel, nest::Node* mp );
+  void register_music_rate_in_proxy( std::string portname, int channel, nest::NodeInterface* mp );
 
   /**
    * Set the acceptable latency (latency) for a music input port (portname).

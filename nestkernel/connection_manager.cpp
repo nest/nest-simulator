@@ -228,8 +228,8 @@ nest::ConnectionManager::get_synapse_status( const index source_node_id,
   ( *dict )[ names::synapse_id ] = syn_id;
   ( *dict )[ names::port ] = lcid;
 
-  const Node* source = kernel().node_manager.get_node_or_proxy( source_node_id, tid );
-  const Node* target = kernel().node_manager.get_node_or_proxy( target_node_id, tid );
+  const NodeInterface* source = kernel().node_manager.get_node_or_proxy( source_node_id, tid );
+  const NodeInterface* target = kernel().node_manager.get_node_or_proxy( target_node_id, tid );
 
   // synapses from neurons to neurons and from neurons to globally
   // receiving devices
@@ -266,8 +266,8 @@ nest::ConnectionManager::set_synapse_status( const index source_node_id,
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
 
-  const Node* source = kernel().node_manager.get_node_or_proxy( source_node_id, tid );
-  const Node* target = kernel().node_manager.get_node_or_proxy( target_node_id, tid );
+  const NodeInterface* source = kernel().node_manager.get_node_or_proxy( source_node_id, tid );
+  const NodeInterface* target = kernel().node_manager.get_node_or_proxy( target_node_id, tid );
 
   try
   {
@@ -493,7 +493,7 @@ nest::ConnectionManager::update_delay_extrema_()
 // node ID node thread syn_id dict delay weight
 void
 nest::ConnectionManager::connect( const index snode_id,
-  Node* target,
+  NodeInterface* target,
   thread target_thread,
   const synindex syn_id,
   const DictionaryDatum& params,
@@ -502,7 +502,7 @@ nest::ConnectionManager::connect( const index snode_id,
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
 
-  Node* source = kernel().node_manager.get_node_or_proxy( snode_id, target_thread );
+  NodeInterface* source = kernel().node_manager.get_node_or_proxy( snode_id, target_thread );
 
   ConnectionType connection_type = connection_required( source, target, target_thread );
 
@@ -538,9 +538,9 @@ nest::ConnectionManager::connect( const index snode_id,
     return false;
   }
 
-  Node* target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+  NodeInterface* target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
   const thread target_thread = target->get_thread();
-  Node* source = kernel().node_manager.get_node_or_proxy( snode_id, target_thread );
+  NodeInterface* source = kernel().node_manager.get_node_or_proxy( snode_id, target_thread );
 
   ConnectionType connection_type = connection_required( source, target, target_thread );
   bool connected = true;
@@ -740,8 +740,8 @@ nest::ConnectionManager::connect_arrays( long* sources,
 }
 
 void
-nest::ConnectionManager::connect_( Node& source,
-  Node& target,
+nest::ConnectionManager::connect_( NodeInterface& source,
+  NodeInterface& target,
   const index s_node_id,
   const thread tid,
   const synindex syn_id,
@@ -786,8 +786,8 @@ nest::ConnectionManager::connect_( Node& source,
 }
 
 void
-nest::ConnectionManager::connect_to_device_( Node& source,
-  Node& target,
+nest::ConnectionManager::connect_to_device_( NodeInterface& source,
+  NodeInterface& target,
   const index s_node_id,
   const thread tid,
   const synindex syn_id,
@@ -802,8 +802,8 @@ nest::ConnectionManager::connect_to_device_( Node& source,
 }
 
 void
-nest::ConnectionManager::connect_from_device_( Node& source,
-  Node& target,
+nest::ConnectionManager::connect_from_device_( NodeInterface& source,
+  NodeInterface& target,
   const thread tid,
   const synindex syn_id,
   const DictionaryDatum& params,
@@ -1391,7 +1391,7 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
 }
 
 nest::ConnectionManager::ConnectionType
-nest::ConnectionManager::connection_required( Node*& source, Node*& target, thread tid )
+nest::ConnectionManager::connection_required( NodeInterface*& source, NodeInterface*& target, thread tid )
 {
   // The caller has to check and guarantee that the target is not a
   // proxy and that it is on thread tid.

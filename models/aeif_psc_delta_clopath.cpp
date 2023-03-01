@@ -227,7 +227,7 @@ nest::aeif_psc_delta_clopath::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::aeif_psc_delta_clopath::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::aeif_psc_delta_clopath::Parameters_::set( const DictionaryDatum& d, NodeInterface* node )
 {
   updateValueParam< double >( d, names::V_th_max, V_th_max, node );
   updateValueParam< double >( d, names::V_th_rest, V_th_rest, node );
@@ -329,7 +329,7 @@ nest::aeif_psc_delta_clopath::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::aeif_psc_delta_clopath::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::aeif_psc_delta_clopath::State_::set( const DictionaryDatum& d, const Parameters_&, NodeInterface* node )
 {
   updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
   updateValueParam< double >( d, names::w, y_[ W ], node );
@@ -397,7 +397,7 @@ nest::aeif_psc_delta_clopath::~aeif_psc_delta_clopath()
 }
 
 /* ----------------------------------------------------------------
- * Node initialization functions
+ * NodeInterface initialization functions
  * ---------------------------------------------------------------- */
 
 void

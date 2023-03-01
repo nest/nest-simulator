@@ -220,7 +220,7 @@ NodeCollection::create( const IntVectorDatum& node_ids_datum )
 
   if ( not std::is_sorted( node_ids.begin(), node_ids.end() ) )
   {
-    throw BadProperty( "Node IDs must be sorted in ascending order" );
+    throw BadProperty( "NodeInterface IDs must be sorted in ascending order" );
   }
   return NodeCollection::create_( node_ids );
 }
@@ -242,7 +242,7 @@ NodeCollection::create( const TokenArray& node_ids_array )
 
   if ( not std::is_sorted( node_ids.begin(), node_ids.end() ) )
   {
-    throw BadProperty( "Node IDs must be sorted in ascending order" );
+    throw BadProperty( "NodeInterface IDs must be sorted in ascending order" );
   }
   return NodeCollection::create_( node_ids );
 }

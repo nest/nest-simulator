@@ -46,7 +46,7 @@ multimeter::multimeter( const multimeter& n )
 }
 
 port
-multimeter::send_test_event( Node& target, rport receptor_type, synindex, bool )
+multimeter::send_test_event( NodeInterface& target, rport receptor_type, synindex, bool )
 {
   DataLoggingRequest e( P_.interval_, P_.offset_, P_.record_from_ );
   e.set_sender( *this );
@@ -104,7 +104,7 @@ nest::multimeter::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b, Node* node )
+nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b, NodeInterface* node )
 {
   if ( b.has_targets_
     and ( d->known( names::interval ) or d->known( names::offset ) or d->known( names::record_from ) ) )

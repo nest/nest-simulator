@@ -463,6 +463,11 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
         tid, assigned_ranks, send_buffer_position, off_grid_emitted_spike_register_, send_buffer, num_spikes_per_rank );
     }
 
+    for ( auto c: num_spikes_per_rank )
+    {
+      kernel().write_to_dump( String::compose("nspr %1", c));
+    }
+    
     // Largest number of spikes sent from this rank to any other rank. This is *not* a global maximum, that is collected
     // below.
     const auto per_thread_max_spikes_per_rank =

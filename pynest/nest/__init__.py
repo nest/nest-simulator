@@ -417,6 +417,11 @@ class NestModule(types.ModuleType):
         ),
         default=float("+inf"),
     )
+    buffer_growth_extra = KernelAttribute(
+        "float",
+        "foo",
+        default=0.05
+        )
 
     # Kernel attribute indices, used for fast lookup in `ll_api.py`
     _kernel_attr_names = builtins.set(

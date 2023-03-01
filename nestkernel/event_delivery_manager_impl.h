@@ -103,12 +103,24 @@ EventDeliveryManager::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const
 inline void
 EventDeliveryManager::send_remote( thread tid, SpikeEvent& e, const long lag )
 {
+  kernel().write_to_dump( String::compose("sr called: r%1 t%2 s%3 m%4",
+                                          kernel().mpi_manager.get_rank(),
+                                          kernel().vp_manager.get_thread_id(),
+                                          e.get_sender().get_node_id(),
+                                          e.get_multiplicity()));
   // Put the spike in a buffer for the remote machines
   const index lid = kernel().vp_manager.node_id_to_lid( e.get_sender().get_node_id() );
   const std::vector< Target >& targets = kernel().connection_manager.get_remote_targets_of_local_node( tid, lid );
 
   for ( std::vector< Target >::const_iterator it = targets.begin(); it != targets.end(); ++it )
   {
+    kernel().write_to_dump( String::compose("r%1 t%2 s%3 m%4 l%5 tr%6", kernel().mpi_manager.get_rank(),
+                                            kernel().vp_manager.get_thread_id(),
+                                            e.get_sender().get_node_id(),
+                                            e.get_multiplicity(),
+                                            it->get_lcid(),
+                                            it->get_rank()
+                                            ));
     // Unroll spike multiplicity as plastic synapses only handle individual spikes.
     for ( size_t i = 0; i < e.get_multiplicity(); ++i )
     {

@@ -631,15 +631,16 @@ SonataConnector::get_synapse_params_( index snode_id, Node& target, thread targe
       // IntegerDatum* dd = static_cast< IntegerDatum* >(
       //  ( ( *edge_type_id_2_param_dicts_.at( edge_type_id ).at( target_thread ) )[ param_name ] ).datum() );
 
-      ( *dd ) = param->value_int( target_thread, rng, snode_id, &target );
+      dd = param->value_int( target_thread, rng, snode_id, &target );
     }
     else
     {
+      auto dd = edge_type_id_2_param_dicts_.at( edge_type_id ).at( target_thread ).at( param_name );
       // change value of dictionary entry without allocating new datum
-      auto dd = ( *edge_type_id_2_param_dicts_.at( edge_type_id ).at( target_thread ) )[ param_name ];
+      // auto dd = ( *edge_type_id_2_param_dicts_.at( edge_type_id ).at( target_thread ) )[ param_name ];
       // DoubleDatum* dd = static_cast< DoubleDatum* >(
       //  ( ( *edge_type_id_2_param_dicts_.at( edge_type_id ).at( target_thread ) )[ param_name ] ).datum() );
-      ( *dd ) = param->value_double( target_thread, rng, snode_id, &target );
+      dd = param->value_double( target_thread, rng, snode_id, &target );
     }
   }
 }

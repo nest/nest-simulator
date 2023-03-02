@@ -691,6 +691,9 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
 #pragma omp single
   {
     kernel().connection_manager.compute_target_data_buffer_size();
+    kernel().write_to_dump( String::compose( "Tgt Buff Size New: r%1 t%2 bsz%3",  kernel().mpi_manager.get_rank(),
+                                            kernel().vp_manager.get_thread_id(),
+                                           kernel().mpi_manager.get_buffer_size_target_data() ) );
     kernel().event_delivery_manager.resize_send_recv_buffers_target_data();
 
     // check whether primary and secondary connections exists on any

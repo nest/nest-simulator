@@ -958,6 +958,9 @@ EventDeliveryManager::gather_target_data_compressed( const thread tid )
 
   while ( gather_completed_checker_.any_false() )
   {
+    kernel().write_to_dump( String::compose( "GTDC Entering While: r%1 t%2",
+                                            kernel().mpi_manager.get_rank(), tid ) );
+    
     // assume this is the last gather round and change to false otherwise
     gather_completed_checker_[ tid ].set_true();
 
@@ -965,7 +968,9 @@ EventDeliveryManager::gather_target_data_compressed( const thread tid )
     {
       if ( kernel().mpi_manager.adaptive_target_buffers() and buffer_size_target_data_has_changed_ )
       {
+        kernel().write_to_dump( String::compose( "resize from: r%1 t%2 bsz%3 ", kernel().mpi_manager.get_rank(), tid, kernel().mpi_manager.get_buffer_size_target_data() ) );
         resize_send_recv_buffers_target_data();
+        kernel().write_to_dump( String::compose( "resize to  : r%1 t%2 bzz%3", kernel().mpi_manager.get_rank(), tid, kernel().mpi_manager.get_buffer_size_target_data() ) );
       }
     } // of omp single; implicit barrier
 
@@ -1105,6 +1110,10 @@ EventDeliveryManager::collocate_target_data_buffers_compressed_( const thread ti
   // reset markers
   for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
   {
+    kernel().write_to_dump( String::compose( "marker reset: r%1 t%2 br%3",
+                                            kernel().mpi_manager.get_rank(),
+                                            tid, rank) );
+
     // reset last entry to avoid accidentally communicating done
     // marker
     send_buffer_target_data_[ send_buffer_position.end( rank ) - 1 ].reset_marker();

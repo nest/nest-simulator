@@ -29,6 +29,7 @@
 
 // C++ includes:
 #include <map>
+#include <string>
 #include <vector>
 
 // Includes from libnestutil
@@ -201,7 +202,7 @@ private:
     hsize_t index,
     const bool dataset_exists,
     std::vector< double >& data,
-    const Name& name );
+    const std::string& name );
 
   /**
    * @brief Manage the sequential chunkwise connections to be created.
@@ -264,7 +265,7 @@ private:
    */
   void reset_params_();
 
-  typedef std::map< Name, std::shared_ptr< ConnParameter > > ConnParameterMap;
+  typedef std::map< std::string, std::shared_ptr< ConnParameter > > ConnParameterMap;
 
   //! Dictionary containing SONATA graph specifications
   dictionary graph_specs_;

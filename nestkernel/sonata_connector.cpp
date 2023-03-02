@@ -26,8 +26,11 @@
 #ifdef HAVE_HDF5
 
 // C++ includes:
-#include <cstdlib> // for div()
-                  
+#include <boost/any.hpp> // TODO: probably not needed if boost::any_cast goes away
+#include <cstdlib>       // for div()
+#include <string>
+#include <vector>
+
 // Includes from libnestutil
 #include "dict_util.h"
 
@@ -91,18 +94,27 @@ SonataConnector::connect()
   */
   // clang-format on
 
-  auto edges_container = graph_specs_[ "edges" ]; 
+
+  // auto edges_container = graph_specs_[ "edges" ];
+  // auto edges_container = graph_specs_.at( "edges" );
+  auto edges_container = boost::any_cast< std::vector< dictionary > >( graph_specs_.at( "edges" ) );
+
 
   // Iterate edge files
   for ( auto edge_dict : edges_container )
   {
 
-    cur_fname_ = edge_dict[ "edges_file" ];
+    // cur_fname_ = edge_dict[ "edges_file" ];
+    cur_fname_ = boost::any_cast< std::string >( edge_dict.at( "edges_file" ) );
+
+
     const auto file = open_file_( cur_fname_ );
     const auto edges_top_level_grp = open_group_( file, "edges" );
 
     // Create map of edge type ids to NEST synapse_model ids
-    cur_edge_params_ = edge_dict[ "syn_specs" ];
+    // cur_edge_params_ = edge_dict[ "syn_specs" ];
+    cur_edge_params_ = boost::any_cast< dictionary >( edge_dict.at( "syn_specs" ) );
+
     create_edge_type_id_2_syn_spec_( cur_edge_params_ );
 
     // Get names of population groups (usually just one population group)
@@ -351,6 +363,7 @@ SonataConnector::sequential_chunkwise_connector_()
   }
 }
 
+///*
 void
 SonataConnector::connect_chunk_( const hsize_t chunk_size, const hsize_t offset )
 {
@@ -380,9 +393,14 @@ SonataConnector::connect_chunk_( const hsize_t chunk_size, const hsize_t offset 
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
 
   // Retrieve the correct NodeCollections
-  const auto nest_nodes = graph_specs_[ "nodes" ];
-  const auto src_nc = nest_nodes[ source_attribute_value_ ];
-  const auto tgt_nc = nest_nodes[ target_attribute_value_ ];
+  // const auto nest_nodes = graph_specs_[ "nodes" ];
+  // const auto src_nc = nest_nodes[ source_attribute_value_ ];
+  // const auto tgt_nc = nest_nodes[ target_attribute_value_ ];
+
+  const auto nest_nodes = boost::any_cast< dictionary >( graph_specs_.at( "nodes" ) );
+  const auto src_nc = boost::any_cast< NodeCollectionPTR >( nest_nodes.at( source_attribute_value_ ) );
+  const auto tgt_nc = boost::any_cast< NodeCollectionPTR >( nest_nodes.at( target_attribute_value_ ) );
+
   const auto snode_begin = src_nc->begin();
   const auto tnode_begin = tgt_nc->begin();
 
@@ -412,7 +430,10 @@ SonataConnector::connect_chunk_( const hsize_t chunk_size, const hsize_t offset 
         const thread target_thread = target->get_thread();
 
         const auto edge_type_id = edge_type_id_data_subset[ i ];
-        const auto syn_spec = cur_edge_params_[ std::to_string( edge_type_id ) ];
+
+        // const auto syn_spec = cur_edge_params_[ std::to_string( edge_type_id ) ];
+        const auto syn_spec = boost::any_cast< dictionary >( cur_edge_params_.at( std::to_string( edge_type_id ) ) );
+
         const double weight =
           get_syn_property_( syn_spec, i, weight_dataset_exist_, syn_weight_data_subset, names::weight );
         const double delay = get_syn_property_( syn_spec, i, delay_dataset_exist_, delay_data_subset, names::delay );
@@ -516,11 +537,11 @@ SonataConnector::read_subset_( const H5::DataSet& dataset,
 void
 SonataConnector::create_edge_type_id_2_syn_spec_( dictionary edge_params )
 {
-  for ( auto it = edge_params->begin(); it != edge_params->end(); ++it )
+  for ( auto& syn_kv_pair : edge_params )
   {
-    const auto type_id = std::stoi( it->first.toString() );
-    auto d =  it->second;
-    const auto syn_name = ( *d )[ "synapse_model" ];
+    const auto type_id = std::stoi( syn_kv_pair.first );
+    auto d = boost::any_cast< dictionary >( syn_kv_pair.second );
+    const auto syn_name = boost::any_cast< std::string >( d.at( "synapse_model" ) );
 
     // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
     const index synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
@@ -534,33 +555,38 @@ void
 SonataConnector::set_synapse_params_( dictionary syn_dict, index synapse_model_id, int type_id )
 {
   auto syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
-  std::set< Name > skip_syn_params_ = {
+  // TODO: skip_syn_params_ only needs to be defined once somewhere
+  std::set< std::string > skip_syn_params_ = {
     names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
   };
 
   ConnParameterMap synapse_params;
 
-  for ( auto default_it = syn_defaults->begin(); default_it != syn_defaults->end(); ++default_it )
+  for ( auto& syn_kv_pair : syn_defaults )
   {
-    const Name param_name = default_it->first;
+    const std::string param_name = syn_kv_pair.first;
     if ( skip_syn_params_.find( param_name ) != skip_syn_params_.end() )
     {
       continue; // weight, delay or other not-settable parameter
     }
 
-    if ( syn_dict->known( param_name ) )
+    if ( syn_dict.known( param_name ) )
     {
-
       synapse_params[ param_name ] = std::shared_ptr< ConnParameter >(
-        ConnParameter::create( ( *syn_dict )[ param_name ], kernel().vp_manager.get_num_threads() ) );
+        ConnParameter::create( syn_dict.at( param_name ), kernel().vp_manager.get_num_threads() ) );
     }
   }
 
+
   // Now create dictionary with dummy values that we will use to pass settings to the synapses created. We
-  // create it here once to avoid re-creating the object over and over again. 
+  // create it here once to avoid re-creating the object over and over again.
   // TODO: See if nullptr can be changed to dictionary
-  edge_type_id_2_param_dicts_[ type_id ].resize( kernel().vp_manager.get_num_threads(), nullptr );
+  // edge_type_id_2_param_dicts_[ type_id ].resize( kernel().vp_manager.get_num_threads(), nullptr );
+  edge_type_id_2_param_dicts_.at( type_id ).resize( kernel().vp_manager.get_num_threads() );
+
   edge_type_id_2_syn_spec_[ type_id ] = synapse_params;
+
+  // const auto nest_nodes = boost::any_cast< dictionary >( graph_specs_.at( "nodes" ) );
 
   // TODO: Once NEST is SLIless, the below loop over threads should be parallelizable. In order to parallelize, the
   // change would be to replace the for loop with #pragma omp parallel and get the thread id (tid) inside the parallel
@@ -569,17 +595,19 @@ SonataConnector::set_synapse_params_( dictionary syn_dict, index synapse_model_i
   // Note that this also applies to the equivalent loop in conn_builder.cpp
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    edge_type_id_2_param_dicts_[ type_id ][ tid ].emplace_back();
+    // edge_type_id_2_param_dicts_[ type_id ][ tid ].emplace_back();
 
     for ( auto param : synapse_params )
     {
       if ( param.second->provides_long() )
       {
-        ( *edge_type_id_2_param_dicts_.at( type_id ).at( tid ) )[ param.first ] = 0;
+        //( *edge_type_id_2_param_dicts_.at( type_id ).at( tid ) )[ param.first ] = 0;
+        edge_type_id_2_param_dicts_.at( type_id ).at( tid ).at( param.first ) = 0;
       }
       else
       {
-       ( *edge_type_id_2_param_dicts_.at( type_id ).at( tid ) )[ param.first ] = 0.0;
+        //( *edge_type_id_2_param_dicts_.at( type_id ).at( tid ) )[ param.first ] = 0.0;
+        edge_type_id_2_param_dicts_.at( type_id ).at( tid ).at( param.first ) = 0.0;
       }
     }
   }
@@ -590,27 +618,27 @@ SonataConnector::get_synapse_params_( index snode_id, Node& target, thread targe
 {
   for ( auto const& syn_param : edge_type_id_2_syn_spec_.at( edge_type_id ) )
   {
-    const Name param_name = syn_param.first;
+    const auto param_name = syn_param.first;
     const auto param = syn_param.second;
 
     if ( param->provides_long() )
-    { 
-      auto dd =  ( *edge_type_id_2_param_dicts_.at( edge_type_id ).at( target_thread ) )[ param_name ]; 
-      // change value of dictionary entry without allocating new datum
-      /*
-      IntegerDatum* dd = static_cast< IntegerDatum* >(
-        ( ( *edge_type_id_2_param_dicts_.at( edge_type_id ).at( target_thread ) )[ param_name ] ).datum() );
-      */
-      ( *dd ) = param->value_int( target_thread, rng, snode_id, &target ); 
+    {
+
+      auto dd = edge_type_id_2_param_dicts_.at( edge_type_id ).at( target_thread ).at( param_name );
+      // auto dd = ( *edge_type_id_2_param_dicts_.at( edge_type_id ).at( target_thread ) )[ param_name ];
+      //  change value of dictionary entry without allocating new datum
+
+      // IntegerDatum* dd = static_cast< IntegerDatum* >(
+      //  ( ( *edge_type_id_2_param_dicts_.at( edge_type_id ).at( target_thread ) )[ param_name ] ).datum() );
+
+      ( *dd ) = param->value_int( target_thread, rng, snode_id, &target );
     }
     else
     {
       // change value of dictionary entry without allocating new datum
-      auto dd =  ( *edge_type_id_2_param_dicts_.at( edge_type_id ).at( target_thread ) )[ param_name ]; 
-      /*
-      DoubleDatum* dd = static_cast< DoubleDatum* >(
-        ( ( *edge_type_id_2_param_dicts_.at( edge_type_id ).at( target_thread ) )[ param_name ] ).datum() );
-      */
+      auto dd = ( *edge_type_id_2_param_dicts_.at( edge_type_id ).at( target_thread ) )[ param_name ];
+      // DoubleDatum* dd = static_cast< DoubleDatum* >(
+      //  ( ( *edge_type_id_2_param_dicts_.at( edge_type_id ).at( target_thread ) )[ param_name ] ).datum() );
       ( *dd ) = param->value_double( target_thread, rng, snode_id, &target );
     }
   }
@@ -621,15 +649,15 @@ SonataConnector::get_syn_property_( const dictionary& syn_spec,
   hsize_t index,
   const bool dataset_exists,
   std::vector< double >& data,
-  const Name& name )
+  const std::string& name )
 {
   if ( dataset_exists )
   {
     return data[ index ];
   }
-  else if ( syn_spec->known( name ) )
+  else if ( syn_spec.known( name ) )
   {
-    return static_cast< double >( ( *syn_spec )[ name ] );
+    return boost::any_cast< double >( syn_spec.at( name ) );
   }
   // default value is NaN
   return numerics::nan;
@@ -639,7 +667,6 @@ void
 SonataConnector::reset_params_()
 {
   edge_type_id_2_syn_model_.clear();
-  /*
   for ( auto syn_params_vec_map : edge_type_id_2_syn_spec_ )
   {
     for ( auto syn_params : syn_params_vec_map.second )
@@ -647,10 +674,10 @@ SonataConnector::reset_params_()
       syn_params.second->reset();
     }
   }
-  */
   edge_type_id_2_syn_spec_.clear();
   edge_type_id_2_param_dicts_.clear();
 }
+//*/
 
 } // end namespace nest
 

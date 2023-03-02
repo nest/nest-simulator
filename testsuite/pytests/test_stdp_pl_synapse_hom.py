@@ -336,9 +336,12 @@ class TestSTDPPlSynapse:
             self.init_params()
             for self.nest_neuron_model in ["iaf_psc_alpha_ax_delay"]:
                 for self.neuron_parameters["t_ref"] in [.1, .5, 1., 1.5, 2., 2.5]:
-                    print(self.dendritic_delay, self.axonal_delay, self.neuron_parameters["t_ref"], self.nest_neuron_model)
                     fname_snip = "_[nest_neuron_mdl=" + self.nest_neuron_model + "]"
                     fname_snip += "_[dend_delay=" + str(self.dendritic_delay) + "]"
                     fname_snip += "_[ax_delay=" + str(self.axonal_delay) + "]"
                     fname_snip += "_[t_ref=" + str(self.neuron_parameters["t_ref"]) + "]"
                     self.do_nest_simulation_and_compare_to_reproduced_weight(fname_snip=fname_snip)
+
+
+if __name__ == "__main__":
+    TestSTDPPlSynapse().test_stdp_synapse()

@@ -164,7 +164,7 @@ nest::ClopathArchivingNode::get_LTP_history( double t1,
   else
   {
     std::deque< histentry_extended >::iterator runner = ltp_history_.begin();
- 
+
     // To have a well defined discretization of the integral, we make sure
     // that we exclude the entry at t1 but include the one at t2 by subtracting
     // a small number so that runner->t_ is never equal to t1 or t2.

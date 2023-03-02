@@ -126,7 +126,7 @@ SPManager::set_status( const DictionaryDatum& d )
   {
     return;
   }
-     // Configure synapses model updated during the simulation.
+  // Configure synapses model updated during the simulation.
   Token synmodel;
   DictionaryDatum syn_specs, syn_spec;
   DictionaryDatum conn_spec = DictionaryDatum( new Dictionary() );
@@ -430,8 +430,8 @@ SPManager::delete_synapses_from_pre( const std::vector< index >& pre_deleted_id,
   const std::string& se_pre_name,
   const std::string& se_post_name )
 {
-   // Synapses deletion due to the loss of a pre-synaptic element need a
-   // communication of the lists of target
+  // Synapses deletion due to the loss of a pre-synaptic element need a
+  // communication of the lists of target
 
   // Connectivity
   std::vector< std::vector< index > > connectivity;
@@ -506,9 +506,9 @@ SPManager::delete_synapses_from_post( std::vector< index >& post_deleted_id,
   std::string se_pre_name,
   std::string se_post_name )
 {
-   // TODO: Synapses deletion due to the loss of a postsynaptic element can
-   // be done locally (except for the update of the number of pre-synaptic
-   // element)
+  // TODO: Synapses deletion due to the loss of a postsynaptic element can
+  // be done locally (except for the update of the number of pre-synaptic
+  // element)
 
   // Connectivity
   std::vector< std::vector< index > > connectivity;

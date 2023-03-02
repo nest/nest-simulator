@@ -493,15 +493,13 @@ Position< D, T >::operator=( const std::vector< T >& y )
 }
 
 template < int D, class T >
-inline T&
-Position< D, T >::operator[]( int i )
+inline T& Position< D, T >::operator[]( int i )
 {
   return x_[ i ];
 }
 
 template < int D, class T >
-inline const T&
-Position< D, T >::operator[]( int i ) const
+inline const T& Position< D, T >::operator[]( int i ) const
 {
   return x_[ i ];
 }
@@ -562,8 +560,7 @@ Position< D, T >::operator-() const
 
 template < int D, class T >
 template < class OT >
-inline Position< D, T >
-Position< D, T >::operator*( const Position< D, OT >& other ) const
+inline Position< D, T > Position< D, T >::operator*( const Position< D, OT >& other ) const
 {
   Position p = *this;
   p *= other;
@@ -599,8 +596,7 @@ Position< D, T >::operator-( const T& a ) const
 }
 
 template < int D, class T >
-inline Position< D, T >
-Position< D, T >::operator*( const T& a ) const
+inline Position< D, T > Position< D, T >::operator*( const T& a ) const
 {
   Position p = *this;
   p *= a;

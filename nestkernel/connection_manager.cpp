@@ -80,12 +80,12 @@ nest::ConnectionManager::ConnectionManager()
 
 nest::ConnectionManager::~ConnectionManager()
 {
-   // Memory leak on purpose!
-   // The ConnectionManager is deleted, when the network is deleted, and
-   // this happens only, when main() is finished and we give the allocated memory
-   // back to the system anyway. Hence, why bother cleaning up our highly
-   // scattered connection infrastructure? They do not have any open files, which
-   // need to be closed or similar.
+  // Memory leak on purpose!
+  // The ConnectionManager is deleted, when the network is deleted, and
+  // this happens only, when main() is finished and we give the allocated memory
+  // back to the system anyway. Hence, why bother cleaning up our highly
+  // scattered connection infrastructure? They do not have any open files, which
+  // need to be closed or similar.
 }
 
 void
@@ -624,8 +624,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
   }
 
   // Increments pointers to weight and delay, if they are specified.
-  auto increment_wd = [ weights, delays ]( decltype( weights ) & w, decltype( delays ) & d )
-  {
+  auto increment_wd = [weights, delays]( decltype( weights ) & w, decltype( delays ) & d ) {
     if ( weights )
     {
       ++w;

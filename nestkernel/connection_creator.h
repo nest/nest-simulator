@@ -45,7 +45,7 @@ class MaskedLayer;
 
 /**
  * This class is a representation of the dictionary of connection
- * properties given as an argument to the ConnectLayers function. 
+ * properties given as an argument to the ConnectLayers function.
  *
  * The connect method is responsible for generating the connection according
  * to the given parameters. This method is templated with the dimension

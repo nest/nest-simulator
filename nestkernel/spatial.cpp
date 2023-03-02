@@ -441,8 +441,7 @@ dump_layer_connections( const Token& syn_model,
   }
 }
 
-DictionaryDatum
-get_layer_status( NodeCollectionPTR )
+DictionaryDatum get_layer_status( NodeCollectionPTR )
 {
   assert( false and "not implemented" );
 

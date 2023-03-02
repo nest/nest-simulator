@@ -167,10 +167,10 @@ Ntree< D, T, max_capacity, max_depth >::masked_iterator::masked_iterator( Ntree<
         }
       }
     }
-     //      for(int i=0;i<anchors_.size();++i) {
-     //      std::cout << anchors_[i] << std::endl;
-     //    }
-     //     std::cout << "---" << std::endl;
+    //      for(int i=0;i<anchors_.size();++i) {
+    //      std::cout << anchors_[i] << std::endl;
+    //    }
+    //     std::cout << "---" << std::endl;
   }
 
   init_();

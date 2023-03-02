@@ -127,8 +127,7 @@ nc_const_iterator::print_me( std::ostream& out ) const
       << ", ex: " << element_idx_ << "]]";
 }
 
-NodeIDTriple
-nc_const_iterator::operator*() const
+NodeIDTriple nc_const_iterator::operator*() const
 {
   NodeIDTriple gt;
   if ( primitive_collection_ )
@@ -799,8 +798,7 @@ NodeCollectionComposite::operator+( const NodeCollectionPrimitive& rhs ) const
   }
 }
 
-index
-NodeCollectionComposite::operator[]( const size_t i ) const
+index NodeCollectionComposite::operator[]( const size_t i ) const
 {
   if ( is_sliced_ )
   {

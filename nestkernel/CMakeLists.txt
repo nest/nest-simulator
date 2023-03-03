@@ -58,6 +58,7 @@ set(nestkernel_sources
   ring_buffer.h ring_buffer_impl.h ring_buffer.cpp
   secondary_event.h
   slice_ring_buffer.cpp slice_ring_buffer.h
+  sonata_connector.cpp sonata_connector.h
   spikecounter.h spikecounter.cpp
   stimulation_device.h stimulation_device.cpp
   target_identifier.h
@@ -204,7 +205,7 @@ endif()
 
 target_link_libraries(nestkernel
   nestutil
-  ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES}
+  ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES} ${HDF5_LIBRARIES}
 )
 
 target_include_directories(nestkernel PRIVATE

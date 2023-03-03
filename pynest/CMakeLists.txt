@@ -17,42 +17,41 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-if ( HAVE_PYTHON )
+if(HAVE_PYTHON)
+  if(CYTHON_FOUND)
+    include(UseCython)
+    set_source_files_properties(nestkernel_api.pyx PROPERTIES CYTHON_IS_CXX TRUE)
+    cython_add_module(nestkernel_api nestkernel_api.pyx)
+  else()
+    message(FATAL_ERROR "Building PyNEST requires Cython.")
+  endif()
 
-  if ( CYTHON_FOUND )
-    include( UseCython )
-    set_source_files_properties( nestkernel_api.pyx PROPERTIES CYTHON_IS_CXX TRUE )
-    cython_add_module( nestkernel_api nestkernel_api.pyx )
-  else ()
-    message( FATAL_ERROR "Building PyNEST requires Cython." )
-  endif ()
-
-  target_link_libraries( nestkernel_api
-      nestutil nestkernel
-      ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES}
-      )
-
-  target_include_directories( nestkernel_api PRIVATE
-      ${PROJECT_BINARY_DIR}/libnestutil
-      ${PROJECT_SOURCE_DIR}/libnestutil
-      ${PROJECT_SOURCE_DIR}/pynest
-      ${PROJECT_SOURCE_DIR}/nestkernel
-      ${PROJECT_SOURCE_DIR}/nestkernel/spatial
-      ${PROJECT_SOURCE_DIR}/thirdparty
-      ${SLI_MODULE_INCLUDE_DIRS}
-      ${Python_INCLUDE_DIRS}
-      )
-
-  target_compile_definitions( nestkernel_api PRIVATE
-      -D_IS_PYNEST
-      )
-
-  install(DIRECTORY  nest/ ${PROJECT_BINARY_DIR}/pynest/nest/
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest
-      PATTERN "versionchecker.py.in" EXCLUDE
+  target_link_libraries(nestkernel_api
+    nestutil nestkernel
+    ${EXTERNAL_MODULE_LIBRARIES}
   )
-  install( TARGETS nestkernel_api DESTINATION ${PYEXECDIR}/nest/ )
-  install( CODE "
+
+  target_include_directories(nestkernel_api PRIVATE
+    ${PROJECT_BINARY_DIR}/libnestutil
+    ${PROJECT_SOURCE_DIR}/libnestutil
+    ${PROJECT_SOURCE_DIR}/pynest
+    ${PROJECT_SOURCE_DIR}/nestkernel
+    ${PROJECT_SOURCE_DIR}/nestkernel/spatial
+    ${PROJECT_SOURCE_DIR}/thirdparty
+    ${SLI_MODULE_INCLUDE_DIRS}
+    ${Python_INCLUDE_DIRS}
+  )
+
+  target_compile_definitions(nestkernel_api PRIVATE
+    -D_IS_PYNEST
+  )
+
+  install(DIRECTORY nest/ ${PROJECT_BINARY_DIR}/pynest/nest/
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest
+    PATTERN "versionchecker.py.in" EXCLUDE
+  )
+  install(TARGETS nestkernel_api DESTINATION ${PYEXECDIR}/nest/)
+  install(CODE "
       execute_process(
           COMMAND ${PYTHON} ${CMAKE_CURRENT_BINARY_DIR}/setup.py install_egg_info
             --install-dir=${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}
@@ -68,8 +67,7 @@ if ( HAVE_PYTHON )
       "
   )
 
-  install( DIRECTORY examples/
-      DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples/pynest
+  install(DIRECTORY examples/
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples/pynest
   )
-
-endif ()
+endif()

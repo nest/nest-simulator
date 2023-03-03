@@ -164,6 +164,7 @@ cdef extern from "nest.h" namespace "nest":
     NodeCollectionPTR node_collection_array_index(NodeCollectionPTR node_collection, const long* array, unsigned long n) except +
     NodeCollectionPTR node_collection_array_index(NodeCollectionPTR node_collection, const cbool* array, unsigned long n) except +
     void connect_arrays( long* sources, long* targets, double* weights, double* delays, vector[string]& p_keys, double* p_values, size_t n, string syn_model ) except +
+    void connect_sonata( const dictionary& graph_specs, const long chunk_size ) except +
     vector[double] apply( const ParameterPTR param, const NodeCollectionPTR nc ) except +
     vector[double] apply( const ParameterPTR param, const dictionary& positions ) except +
 

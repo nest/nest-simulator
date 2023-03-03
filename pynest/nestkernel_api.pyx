@@ -464,8 +464,11 @@ def llapi_disconnect_syncoll(object conns):
 
 @catch_cpp_error
 def llapi_connect_layers(NodeCollectionObject pre, NodeCollectionObject post, object projections):
-    print("### 9", projections)
     connect_layers(pre.thisptr, post.thisptr, pydict_to_dictionary(projections))
+
+@catch_cpp_error
+def llapi_connect_sonata(object graph_specs, long chunk_size):
+    connect_sonata(pydict_to_dictionary(graph_specs), chunk_size)
 
 @catch_cpp_error
 def llapi_create_mask(object specs):

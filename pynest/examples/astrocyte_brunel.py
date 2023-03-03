@@ -23,8 +23,31 @@
 Random balanced network with astrocytes
 ------------------------------------------------------------
 
-This script simulates a network with excitatory and inhibitory neurons and
-astrocytes.
+This script simulates a random balanced network with excitatory and inhibitory
+neurons and astrocytes. The ``astrocyte`` model is according to Nadkarni & Jung
+(2003) [1]_. The ``aeif_cond_alpha_astro`` model is an adaptive exponential
+integrate and fire neuron supporting neuron-astrocyte interactions.
+
+The network is created using the ``pairwise_bernoulli_astro`` rule, with the
+``tsodyks_synapse`` as the connections from neurons to neruons and astrocytes,
+and the ``sic_connection`` as the connections from astrocytes to neurons.
+
+This network is an example of an astrocytic effect on neuronal excitabitlity.
+With the slow inward current (SIC) delivered from the astrocytes through the
+``sic_connection``, the neurons show higher firing rates and more synchronized
+bursting actitivity. The degrees of local and global synchrony are quantitized
+by pairwise spike count correlations and a measure of global synchrony in [2]_
+respectively, as shown in a plot made in this script (neuron_synchrony.png).
+Plots of astrocytic dynamics and SIC in neurons are also made in this script.
+
+References
+~~~~~~~~~~
+
+.. [1] Nadkarni S, and Jung P. Spontaneous oscillations of dressed neurons: A
+       new mechanism for epilepsy? Physical Review Letters, 91:26. DOI:
+       10.1103/PhysRevLett.91.268101
+
+.. [2] Golomb, D. (2007). Neuronal synchrony measures. Scholarpedia, 2(1), 1347.
 
 """
 
@@ -43,76 +66,77 @@ import nest.raster_plot
 import matplotlib.pyplot as plt
 
 ###############################################################################
-# Simulation parameters
+# Simulation parameters.
 
 sim_params = {
-    "dt": 0.1, # simulation resolution
-    "pre_sim_time": 100.0, # time before simulation
-    "sim_time": 1000.0, # simulation time
-    "N_rec": 1000, # number of neurons recorded
-    "N_sample": 100, # number of neurons sampled for analysis
+    "dt": 0.1,  # simulation resolution
+    "pre_sim_time": 1000.0,  # time before simulation
+    "sim_time": 1000.0,  # simulation time
+    "N_rec": 1000,  # number of neurons recorded
+    "N_sample": 100,  # number of neurons sampled for analysis
     "data_path": "data"
     }
 
 ###############################################################################
-# Network parameters
+# Network parameters.
 
 network_params = {
-    "N_ex": 8000, # number of excitatory neurons
-    "N_in": 2000, # number of inhibitory neurons
-    "N_astro": 1000, # number of astrocytes
-    "p": 0.1, # neuron-neuron connection probability.
-    "p_syn_astro": 0.1, # synapse-astrocyte pairing probability
-    "max_astro_per_target": 100, # Max number of astrocytes per target neuron
-    "astro_pool_by_index": False, # Astrocyte pool selection by index
-    "poisson_rate": 100, # rate of poisson input
-    "poisson_prob": 1.0, # connection probability of poisson input
+    "N_ex": 8000,  # number of excitatory neurons
+    "N_in": 2000,  # number of inhibitory neurons
+    "N_astro": 1000,  # number of astrocytes
+    "p": 0.1,  # neuron-neuron connection probability.
+    "p_syn_astro": 1.0,  # synapse-astrocyte pairing probability
+    "max_astro_per_target": 1,  # max number of astrocytes per target neuron
+    "astro_pool_by_index": True,  # Astrocyte pool selection by index
+    "poisson_rate": 100,  # rate of Poisson input
+    "poisson_per_neuron": 1,  # average Poisson input per neuron
     }
 
 syn_params = {
     "synapse_model": "tsodyks_synapse",
     "synapse_model_sic": "sic_connection",
-    "weight_sic": 0.005,
-    "J_ee": 2.67436, # excitatory-to-excitatory synaptic weight in nS
-    "J_ei": 1.05594, # excitatory-to-inhibitory synaptic weight in nS
-    "J_ie": -5.96457, # inhibitory-to-excitatory synaptic weight in nS
-    "J_ii": -3.58881, # inhibitory-to-inhibitory synaptic weight in nS
-    "tau_rec_ee": 2882.9445, # excitatory-to-excitatory depression time constant in ms
-    "tau_rec_ei": 5317.747, # excitatory-to-inhibitory depression time constant in ms
-    "tau_rec_ie": 226.859, # inhibitory-to-excitatory depression time constant in ms
-    "tau_rec_ii": 2542.207,  # inhibitory-to-inhibitory depression time constant in ms
-    "tau_fac_ee": 0.0, # excitatory-to-excitatory facilitation time constant in ms
-    "tau_fac_ei": 0.0, # excitatory-to-inhibitory facilitation time constant in ms
-    "tau_fac_ie": 0.0, # inhibitory-to-excitatory facilitation time constant in ms
-    "tau_fac_ii": 0.0,  # inhibitory-to-inhibitory facilitation time constant in ms
-    "U_ee": 0.928, # excitatory-to-excitatory release probability parameter
-    "U_ei": 0.264, # excitatory-to-inhibitory release probability parameter
-    "U_ie": 0.541, # inhibitory-to-excitatory release probability parameter
-    "U_ii": 0.189, # inhibitory-to-inhibitory release probability parameter
+    "weight_sic": 20.0,
+    "J_ee": 3.0,  # excitatory-to-excitatory synaptic weight in nS
+    "J_ei": 3.0,  # excitatory-to-inhibitory synaptic weight in nS
+    "J_ie": -6.0,  # inhibitory-to-excitatory synaptic weight in nS
+    "J_ii": -6.0,  # inhibitory-to-inhibitory synaptic weight in nS
+    "tau_rec_ee": 2882.9445, # excitatory-to-excitatory depression time constant
+    "tau_rec_ei": 5317.747,  # excitatory-to-inhibitory depression time constant
+    "tau_rec_ie": 226.859,  # inhibitory-to-excitatory depression time constant
+    "tau_rec_ii": 2542.207,  # inhibitory-to-inhibitory depression time constant
+    "tau_fac_ee": 0.0,  # excitatory-to-excitatory facilitation time constant
+    "tau_fac_ei": 0.0,  # excitatory-to-inhibitory facilitation time constant
+    "tau_fac_ie": 0.0,  # inhibitory-to-excitatory facilitation time constant
+    "tau_fac_ii": 0.0,  # inhibitory-to-inhibitory facilitation time constant
+    "U_ee": 0.928,  # excitatory-to-excitatory release probability parameter
+    "U_ei": 0.264,  # excitatory-to-inhibitory release probability parameter
+    "U_ie": 0.541,  # inhibitory-to-excitatory release probability parameter
+    "U_ii": 0.189,  # inhibitory-to-inhibitory release probability parameter
     }
 
 ###############################################################################
-# Astrocyte parameters
+# Astrocyte parameters.
 
+# Need to update!
 astro_params = {
-    'Ca_tot_astro': 2.0, # Total free astrocytic calcium concentration in uM
-    'IP3_0_astro': 0.16, # Baseline value of the astrocytic IP3 concentration in uM
-    'K_act_astro': 0.08234, # Astrocytic IP3R dissociation constant of calcium (activation) in uM
-    'K_inh_astro': 1.049, # Astrocytic IP3R dissociation constant of calcium (inhibition) in uM
-    'K_IP3_1_astro': 0.13, # Astrocytic IP3R dissociation constant of IP3 in uM
-    'K_IP3_2_astro': 0.9434, # Astrocytic IP3R dissociation constant of IP3 in uM
-    'K_SERCA_astro': 0.1, # Activation constant of astrocytic SERCA pump in uM
-    'r_ER_cyt_astro': 0.185, # Ratio between astrocytic ER and cytosol volumes
-    'r_IP3_astro': 0.1, # Rate constant of astrocytic IP3 production in uM/ms
-    'r_IP3R_astro': 0.001, # Astrocytic IP3R binding constant for calcium inhibition in 1/(uM*ms)
-    'r_L_astro': 0.00011, # Rate constant for calcium leak from the astrocytic ER to cytosol in 1/ms
-    'tau_IP3_astro': 300.0, # Time constant of astrocytic IP3 degradation
-    'v_IP3R_astro': 0.006, # Maximum rate of calcium release via astrocytic IP3R in 1/ms
-    'v_SERCA_astro': 0.0009, # Maximum rate of calcium uptake by astrocytic IP3R in uM/ms
+    'Ca_tot_astro': 2.0,  # Total free astrocytic calcium concentration
+    'IP3_0_astro': 0.16,  # Baseline value of the astrocytic IP3 concentration
+    'K_act_astro': 0.08234,  # Astrocytic IP3R dissociation constant of calcium
+    'K_inh_astro': 1.049,  # Astrocytic IP3R dissociation constant of calcium
+    'K_IP3_1_astro': 0.13,  # Astrocytic IP3R dissociation constant of IP3
+    'K_IP3_2_astro': 0.9434,  # Astrocytic IP3R dissociation constant of IP3
+    'K_SERCA_astro': 0.1,  # Activation constant of astrocytic SERCA pump
+    'r_ER_cyt_astro': 0.185,  # Ratio between astrocytic ER and cytosol volumes
+    'r_IP3_astro': 0.1,  # Rate constant of astrocytic IP3 production
+    'r_IP3R_astro': 0.001,  # Astrocytic IP3R binding constant for calcium
+    'r_L_astro': 0.00011,  # Rate constant for calcium leak from ER to cytosol
+    'tau_IP3_astro': 300.0,  # Time constant of astrocytic IP3 degradation
+    'v_IP3R_astro': 0.006,  # Maximum rate of calcium release via IP3R
+    'v_SERCA_astro': 0.0009,  # Maximum rate of calcium uptake by IP3R
     }
 
 ###############################################################################
-# Neuron parameters
+# Neuron parameters.
 
 neuron_model = "aeif_cond_alpha_astro"
 tau_syn_ex = 2.0
@@ -157,7 +181,7 @@ neuron_params_in = {
     }
 
 ###############################################################################
-# Function for network building
+# Function for network building.
 
 def build_astro(scale, poisson_time):
     """Build a Brunel network with astrocytes."""
@@ -178,16 +202,20 @@ def build_astro(scale, poisson_time):
         )
 
     # Connect Poisson generator (noise)
-    # Use fixed-outdegree connections
     print("Connecting Poisson generator")
-    conn_spec_ne = {
-        "rule": "fixed_outdegree",
-        "outdegree": int(len(nodes_ex)*network_params["poisson_prob"])
-        }
-    conn_spec_ni = {
-        "rule": "fixed_outdegree",
-        "outdegree": int(len(nodes_in)*network_params["poisson_prob"])
-        }
+    if isinstance(network_params["poisson_per_neuron"], float) or \
+       isinstance(network_params["poisson_per_neuron"], int):
+        conn_spec_ne = {
+            "rule": "fixed_outdegree",
+            "outdegree": int(len(nodes_ex)*network_params["poisson_per_neuron"])
+            }
+        conn_spec_ni = {
+            "rule": "fixed_outdegree",
+            "outdegree": int(len(nodes_in)*network_params["poisson_per_neuron"])
+            }
+    else:
+        conn_spec_ne = None
+        conn_spec_ni = None
     syn_params_ne = {
         "synapse_model": "static_synapse", "weight": syn_params["J_ee"]
         }
@@ -255,7 +283,7 @@ def build_astro(scale, poisson_time):
     return nodes_ex, nodes_in, nodes_astro, nodes_noise
 
 ###############################################################################
-# Function for calculating correlation
+# Function for calculating correlation.
 
 def get_corr(hlist):
     """Calculate pairwise correlation coefficients for a list of histograms."""

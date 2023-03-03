@@ -26,12 +26,13 @@ import pandas as pd
 import itertools
 from pathlib import Path, PurePath
 
-from .. import pynestkernel as kernel
-#from ..ll_api import sps, sr, sli_func
+from .. import nestkernel_api as nestkernel
 from .hl_api_models import GetDefaults
 from .hl_api_nodes import Create
 from .hl_api_simulation import SetKernelStatus, Simulate
 from .hl_api_types import NodeCollection
+from .hl_api_exceptions import NESTError
+
 
 try:
     import h5py
@@ -39,6 +40,7 @@ try:
 except ImportError:
     have_h5py = False
 
+# TODO
 #have_hdf5 = sli_func("statusdict/have_hdf5 ::")
 have_hdf5 = True
 
@@ -104,11 +106,11 @@ class SonataNetwork():
         if not have_hdf5:
             msg = ("SonataNetwork unavailable because NEST was compiled "
                    "without HDF5 support")
-            raise kernel.NESTError(msg)
+            raise NESTError(msg)
         if not have_h5py:
             msg = ("SonataNetwork unavailable because h5py is not installed "
                    "or could not be imported")
-            raise kernel.NESTError(msg)
+            raise NESTError(msg)
 
         self._node_collections = {}
         self._edges_maps = []
@@ -130,7 +132,7 @@ class SonataNetwork():
                    "file")
             raise ValueError(msg)
 
-        SetKernelStatus({"resolution": self._conf["run"]["dt"]})
+        #SetKernelStatus({"resolution": self._conf["run"]["dt"]})
 
     def _parse_config(self, config):
         """Parse JSON configuration file.
@@ -432,7 +434,7 @@ class SonataNetwork():
         if not self._is_nodes_created:
             msg = ("The SONATA network nodes must be created before any "
                    "connections can be made")
-            raise kernel.NESTError(msg)
+            raise NESTError(msg)
 
         if chunk_size is None:
             chunk_size = self._chunk_size_default
@@ -449,9 +451,7 @@ class SonataNetwork():
             except BlockingIOError as err:
                 raise BlockingIOError(f"{err.strerror} for {os.path.realpath(d['edges_file'])}") from None
 
-#        sps(graph_specs)
-#        sps(chunk_size)
-#        sr("ConnectSonata")
+        nestkernel.llapi_connect_sonata(graph_specs, chunk_size)
 
         self._is_network_built = True
 
@@ -633,7 +633,7 @@ class SonataNetwork():
         if not self._is_network_built:
             msg = ("The SONATA network must be built before a simulation "
                    "can be done")
-            raise kernel.NESTError(msg)
+            raise NESTError(msg)
 
         if "tstop" in self._conf["run"]:
             T_sim = self._conf["run"]["tstop"]

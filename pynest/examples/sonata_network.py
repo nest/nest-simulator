@@ -57,9 +57,13 @@ nest.ResetKernel()
 
 n_procs = 1
 n_threads = 1
-nest.set(total_num_virtual_procs=n_procs * n_threads,
-         print_time=True)
-
+''' 
+nest.set(total_num_virtual_procs=n_procs * n_threads, print_time=True)
+'''
+'''
+nest.SetKernelStatus({"total_num_virtual_procs": n_procs * n_threads,
+                      "print_time": True})
+'''
 ###############################################################################
 # Specify the path to the SONATA .json configuration file(s).
 # The `300_pointneurons` model has two configuration files: one network and
@@ -98,15 +102,16 @@ sonata_net = nest.SonataNetwork(net_config, sim_config=sim_config)
 # the created :py:class:`.NodeCollection`\s. The population names are the
 # dictionary keys.
 
+#node_collections = sonata_net.Create()
 node_collections = sonata_net.BuildNetwork(chunk_size=2**20)
 
 ###############################################################################
 # We can now verify whether the built network has the expected number of
 # nodes and connections.
 
-kernel_status = nest.GetKernelStatus()
-print(f"number of nodes: {kernel_status['network_size']:,}")
-print(f"number of connections: {kernel_status['num_connections']:,}")
+#kernel_status = nest.GetKernelStatus()
+#print(f"number of nodes: {kernel_status['network_size']:,}")
+#print(f"number of connections: {kernel_status['num_connections']:,}")
 
 ###############################################################################
 # NEST does not currently support SONATA Spike Train Reports or utilize other
@@ -120,21 +125,21 @@ print(f"number of connections: {kernel_status['num_connections']:,}")
 # by using the internal population's name. Then we slice the :py:class:`.NodeCollection`
 # with a list specifying the node ids of the neurons we wish to record from.
 
-s_rec = nest.Create("spike_recorder")
-pop_name = "internal"
-record_node_ids = [1, 80, 160, 240, 270]
-nest.Connect(node_collections[pop_name][record_node_ids], s_rec)
+#s_rec = nest.Create("spike_recorder")
+#pop_name = "internal"
+#record_node_ids = [1, 80, 160, 240, 270]
+#nest.Connect(node_collections[pop_name][record_node_ids], s_rec)
 
 ###############################################################################
 # Finally, we call the membership function :py:meth:`~.SonataNetwork.Simulate`
 # to simulate the network. Note that the simulation time and resolution are
 # expected to be provided in the SONATA config.
 
-sonata_net.Simulate()
+# sonata_net.Simulate()
 
 ###############################################################################
 # After the simulation has finished, we can obtain the data recorded by the
 # spike recorder for further analysis.
 
-nest.raster_plot.from_device(s_rec)
-plt.show()
+# nest.raster_plot.from_device(s_rec)
+# plt.show()

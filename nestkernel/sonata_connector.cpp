@@ -28,6 +28,7 @@
 // C++ includes:
 #include <boost/any.hpp> // TODO: probably not needed if boost::any_cast goes away
 #include <cstdlib>       // for div()
+#include <iostream>      // for debugging
 #include <string>
 #include <vector>
 
@@ -98,6 +99,7 @@ SonataConnector::connect()
   // auto edges_container = graph_specs_[ "edges" ];
   // auto edges_container = graph_specs_.at( "edges" );
   auto edges_container = boost::any_cast< std::vector< dictionary > >( graph_specs_.at( "edges" ) );
+  // std::vector< dictionary > edges_container = graph_specs_.at( "edges" );
 
 
   // Iterate edge files
@@ -539,7 +541,16 @@ SonataConnector::create_edge_type_id_2_syn_spec_( dictionary edge_params )
 {
   for ( auto& syn_kv_pair : edge_params )
   {
-    const auto type_id = std::stoi( syn_kv_pair.first );
+    std::cerr << "Before conversion\n";
+    std::cerr << "The value: " << syn_kv_pair.first << "\n";
+    std::cerr << "The value: " << boost::any_cast< std::string >( syn_kv_pair.first ) << "\n";
+
+    // const auto type_id = std::stoi( syn_kv_pair.first );
+    // const auto type_id = boost::any_cast< int >( syn_kv_pair.first );
+    const int type_id = std::stoi( boost::any_cast< std::string >( syn_kv_pair.first ) );
+    std::cerr << "After conversion\n";
+
+
     auto d = boost::any_cast< dictionary >( syn_kv_pair.second );
     const auto syn_name = boost::any_cast< std::string >( d.at( "synapse_model" ) );
 
@@ -555,7 +566,7 @@ void
 SonataConnector::set_synapse_params_( dictionary syn_dict, index synapse_model_id, int type_id )
 {
   auto syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
-  // TODO: skip_syn_params_ only needs to be defined once somewhere
+  // TODO: skip_syn_params_ only needs to be defined once somewhere, probably best in .h file
   std::set< std::string > skip_syn_params_ = {
     names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
   };

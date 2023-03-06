@@ -45,6 +45,7 @@ import numpy
 
 
 from libc.stdlib cimport malloc, free
+from libc.stdint cimport uint64_t, int64_t
 
 
 def init(args):
@@ -133,6 +134,10 @@ cdef object any_to_pyobj(any operand):
         return any_cast[long](operand)
     if is_type[size_t](operand):
         return any_cast[size_t](operand)
+    if is_type[uint64_t](operand):
+        return any_cast[uint64_t](operand)
+    if is_type[int64_t](operand):
+        return any_cast[int64_t](operand)
     if is_type[double](operand):
         return any_cast[double](operand)
     if is_type[cbool](operand):

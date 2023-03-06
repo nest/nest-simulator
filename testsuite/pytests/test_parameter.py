@@ -24,104 +24,103 @@ Simple Parameter tests
 """
 
 import nest
-import unittest
+import pytest
+
+va, vb = 5, 7
+a = nest.CreateParameter('constant', {'value': va})
+b = nest.CreateParameter('constant', {'value': vb})
 
 
-class TestParameter(unittest.TestCase):
-
-    def setUp(self):
-        nest.ResetKernel()
-
-    def test_add(self):
-        low = 55.
-        high = 75.
-        val = 33.
-        e = nest.random.uniform(low, high) + val
-
-        self.assertGreater(e.GetValue(), low + val)
-        self.assertLess(e.GetValue(), high + val)
-
-    def test_radd(self):
-        low = 55.
-        high = 75.
-        val = 33.
-        e = val + nest.random.uniform(low, high)
-
-        self.assertGreater(e.GetValue(), low + val)
-        self.assertLess(e.GetValue(), high + val)
-
-    def test_sub(self):
-        low = 55.
-        high = 75.
-        val = 33.
-        e = nest.random.uniform(low, high) - val
-
-        self.assertGreater(e.GetValue(), low - val)
-        self.assertLess(e.GetValue(), high - val)
-
-    def test_rsub(self):
-        low = 55.
-        high = 75.
-        val = 33.
-        e = val - nest.random.uniform(low, high)
-
-        self.assertGreater(e.GetValue(), val - high)
-        self.assertLess(e.GetValue(), val - low)
-
-    def test_neg(self):
-        low = 55.
-        high = 75.
-        e = -nest.random.uniform(low, high)
-
-        self.assertGreater(e.GetValue(), -high)
-        self.assertLess(e.GetValue(), -low)
-
-    def test_rsub_all_neg(self):
-        low = -55.
-        high = -75.
-        val = -33.
-        e = val - nest.random.uniform(high, low)
-
-        self.assertGreater(e.GetValue(), val - low)
-        self.assertLess(e.GetValue(), val - high)
-
-    def test_mul(self):
-        low = 55.
-        high = 75.
-        val = 3.
-        e = nest.random.uniform(low, high) * val
-
-        self.assertGreater(e.GetValue(), low * val)
-        self.assertLess(e.GetValue(), high * val)
-
-    def test_rmul(self):
-        low = 55.
-        high = 75.
-        val = 3.
-        e = val * nest.random.uniform(low, high)
-
-        self.assertGreater(e.GetValue(), val * low)
-        self.assertLess(e.GetValue(), val * high)
-
-    def test_div(self):
-        low = 55.
-        high = 75.
-        val = 3.
-        e = nest.random.uniform(low, high) / val
-
-        self.assertGreater(e.GetValue(), low / val)
-        self.assertLess(e.GetValue(), high / val)
+@pytest.fixture(autouse=True)
+def reset_kernel():
+    nest.ResetKernel()
 
 
-def suite():
-    suite = unittest.makeSuite(TestParameter, 'test')
-    return suite
+@pytest.mark.parametrize('op_a, op_b', [[a, b], [a, vb], [vb, a]])
+def test_add(op_a, op_b):
+
+    try:
+        val_a = op_a.GetValue()
+    except AttributeError:
+        val_a = op_a
+    try:
+        val_b = op_b.GetValue()
+    except AttributeError:
+        val_b = op_b
+        
+    assert (op_a + op_b).GetValue() == val_a + val_b
+
+    
+@pytest.mark.parametrize('op_a, op_b', [[a, b], [a, vb], [vb, a]])
+def test_sub(op_a, op_b):
+
+    try:
+        val_a = op_a.GetValue()
+    except AttributeError:
+        val_a = op_a
+    try:
+        val_b = op_b.GetValue()
+    except AttributeError:
+        val_b = op_b
+        
+    assert (op_a - op_b).GetValue() == val_a - val_b
 
 
-def run():
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suite())
+@pytest.mark.parametrize('op_a, op_b', [[a, b], [a, vb], [vb, a]])
+def test_mul(op_a, op_b):
+
+    try:
+        val_a = op_a.GetValue()
+    except AttributeError:
+        val_a = op_a
+    try:
+        val_b = op_b.GetValue()
+    except AttributeError:
+        val_b = op_b
+        
+    assert (op_a * op_b).GetValue() == val_a * val_b
 
 
-if __name__ == "__main__":
-    run()
+@pytest.mark.parametrize('op_a, op_b', [[a, b], [a, vb], [vb, a]])
+def test_div(op_a, op_b):
+
+    try:
+        val_a = op_a.GetValue()
+    except AttributeError:
+        val_a = op_a
+    try:
+        val_b = op_b.GetValue()
+    except AttributeError:
+        val_b = op_b
+        
+    assert (op_a / op_b).GetValue() == val_a / val_b
+
+
+@pytest.mark.parametrize('op_a, op_b', [[a, b], [a, vb], [vb, a]])
+def test_mod(op_a, op_b):
+
+    try:
+        val_a = op_a.GetValue()
+    except AttributeError:
+        val_a = op_a
+    try:
+        val_b = op_b.GetValue()
+    except AttributeError:
+        val_b = op_b
+        
+    assert (op_a % op_b).GetValue() == val_a % val_b
+
+
+@pytest.mark.parametrize('op_a, op_b', [[a, b], [a, vb], [vb, a]])
+def test_pow(op_a, op_b):
+
+    try:
+        val_a = op_a.GetValue()
+    except AttributeError:
+        val_a = op_a
+    try:
+        val_b = op_b.GetValue()
+    except AttributeError:
+        val_b = op_b
+        
+    assert (op_a ** op_b).GetValue() == val_a ** val_b

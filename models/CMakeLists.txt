@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-set( models_sources
+set(models_sources
     ac_generator.h ac_generator.cpp
     aeif_cond_alpha.h aeif_cond_alpha.cpp
     aeif_cond_alpha_multisynapse.h aeif_cond_alpha_multisynapse.cpp
@@ -83,6 +83,7 @@ set( models_sources
     mat2_psc_exp.h mat2_psc_exp.cpp
     mcculloch_pitts_neuron.h mcculloch_pitts_neuron.cpp
     mip_generator.h mip_generator.cpp
+
     # modelsmodule.h modelsmodule.cpp
     multimeter.h multimeter.cpp
     music_cont_in_proxy.h music_cont_in_proxy.cpp
@@ -140,29 +141,40 @@ set( models_sources
     vogels_sprekeler_synapse.h
     weight_recorder.h weight_recorder.cpp
     spike_dilutor.h spike_dilutor.cpp
-    )
+)
 
-add_library( models ${models_sources} )
-set_target_properties( models
-    PROPERTIES
-    VERSION ${NEST_VERSION}
-    SOVERSION 3
-    )
-target_link_libraries( models nestutil nestkernel )
+add_library(models ${models_sources})
 
-target_include_directories( models PRIVATE
+if(APPLE)
+    set_target_properties(models
+        PROPERTIES
+        VERSION ${NEST_VERSION}
+        SOVERSION 3
+        LINK_FLAGS "-Wl,-undefined -Wl,dynamic_lookup"
+    )
+else()
+    set_target_properties(models
+        PROPERTIES
+        VERSION ${NEST_VERSION}
+        SOVERSION 3
+    )
+endif()
+
+target_link_libraries(models nestutil nestkernel)
+
+target_include_directories(models PRIVATE
     ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
     ${PROJECT_SOURCE_DIR}/nestkernel
-    )
+)
 
-install( TARGETS models
+install(TARGETS models
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    )
+)
 
-FILTER_HEADERS("${models_sources}" install_headers )
-install( FILES ${install_headers}
+FILTER_HEADERS("${models_sources}" install_headers)
+install(FILES ${install_headers}
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)

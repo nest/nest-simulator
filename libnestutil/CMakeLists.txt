@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-set( nestutil_sources
+set(nestutil_sources
     allocator.h allocator.cpp
     beta_normalization_factor.h
     block_vector.h
@@ -36,33 +36,41 @@ set( nestutil_sources
     stopwatch.h stopwatch.cpp
     string_utils.h
     vector_util.h
+)
+
+add_library(nestutil ${nestutil_sources})
+
+if(APPLE)
+    set_target_properties(nestutil
+        PROPERTIES
+        VERSION ${NEST_VERSION}
+        SOVERSION 3
+        LINK_FLAGS "-Wl,-undefined -Wl,dynamic_lookup"
     )
-
-add_library( nestutil ${nestutil_sources} )
-
-set_target_properties( nestutil
-    PROPERTIES
-    VERSION ${NEST_VERSION}
-    SOVERSION 3
+else()
+    set_target_properties(nestutil
+        PROPERTIES
+        VERSION ${NEST_VERSION}
+        SOVERSION 3
     )
+endif()
 
+target_link_libraries(nestutil ${GSL_LIBRARIES} ${SIONLIB_LIBS})
 
-target_link_libraries( nestutil ${GSL_LIBRARIES} ${SIONLIB_LIBS} )
-
-target_include_directories( nestutil PRIVATE
+target_include_directories(nestutil PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
     ${PROJECT_SOURCE_DIR}/nestkernel
     ${PROJECT_SOURCE_DIR}/thirdparty
     ${Boost_INCLUDE_DIRS}
-    )
+)
 
-install( TARGETS nestutil
+install(TARGETS nestutil
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    )
+)
 
-FILTER_HEADERS("${nestutil_sources}" install_headers )
-install( FILES ${install_headers} ${PROJECT_BINARY_DIR}/libnestutil/config.h
+FILTER_HEADERS("${nestutil_sources}" install_headers)
+install(FILES ${install_headers} ${PROJECT_BINARY_DIR}/libnestutil/config.h
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)

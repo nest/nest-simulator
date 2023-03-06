@@ -65,6 +65,7 @@ import nest
 import nest.raster_plot
 import matplotlib.pyplot as plt
 
+
 ###############################################################################
 # Simulation parameters.
 
@@ -335,7 +336,7 @@ def run_simulation():
         "multimeter", params={"record_from": ["IP3_astro", "Ca_astro"]})
     nest.Connect(mm_neuron, (exc + inh)[:sim_params["N_rec"]])
     nest.Connect(mm_astro, astro)
-
+    
     # time after building
     endbuild = time.time()
 

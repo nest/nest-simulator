@@ -547,7 +547,7 @@ SonataConnector::create_edge_type_id_2_syn_spec_( dictionary edge_params )
 
     // const auto type_id = std::stoi( syn_kv_pair.first );
     // const auto type_id = boost::any_cast< int >( syn_kv_pair.first );
-    const int type_id = std::stoi( boost::any_cast< std::string >( syn_kv_pair.first ) );
+    const auto type_id = std::stoi( boost::any_cast< std::string >( syn_kv_pair.first ) );
     std::cerr << "After conversion\n";
 
 

@@ -128,7 +128,8 @@ public:
   void get( dictionary& d ) const override;
   void set( const dictionary& d ) override;
 
-  double update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const;
+  double
+  update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const override;
 
 private:
   double eps_;
@@ -213,10 +214,11 @@ class GrowthCurveGaussian : public GrowthCurve
 {
 public:
   GrowthCurveGaussian();
-  void get( dictionary& d ) const;
-  void set( const dictionary& d );
+  void get( dictionary& d ) const override;
+  void set( const dictionary& d ) override;
 
-  double update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const;
+  double
+  update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const override;
 
 private:
   double eta_;

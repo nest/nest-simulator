@@ -90,7 +90,7 @@ public:
   void sends_secondary_event( DelayedRateConnectionEvent& ) override;
 
   void
-  handle( SpikeEvent& )
+  handle( SpikeEvent& ) override
   {
   }
 

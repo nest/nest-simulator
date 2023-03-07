@@ -28,11 +28,8 @@
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
-#include "propagator_stability.h"
-
-// Includes from nestkernel:
 #include "exceptions.h"
+#include "iaf_propagator.h"
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
@@ -451,8 +448,7 @@ nest::glif_psc::pre_run_hook()
 
     // these are determined according to a numeric stability criterion
     // input time parameter shall be in ms, capacity in pF
-    V_.P31_[ i ] = propagator_31( P_.tau_syn_[ i ], Tau_, P_.C_m_, h );
-    V_.P32_[ i ] = propagator_32( P_.tau_syn_[ i ], Tau_, P_.C_m_, h );
+    std::tie( V_.P31_[ i ], V_.P32_[ i ] ) = IAFPropagatorAlpha( P_.tau_syn_[ i ], Tau_, P_.C_m_ ).evaluate( h );
 
     V_.PSCInitialValues_[ i ] = 1.0 * numerics::e / P_.tau_syn_[ i ];
     B_.spikes_[ i ].resize();

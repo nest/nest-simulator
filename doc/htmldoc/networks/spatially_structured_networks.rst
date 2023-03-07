@@ -403,11 +403,6 @@ be of interest:
     :start-after: #{ layer1s #}
     :end-before: #{ end #}
 
-.. literalinclude:: scripts/layers.log
-    :start-after: #{ layer1s.log #}
-    :end-before: #{ end.log #}
-
-
 
 The ``spatial`` property is read-only; changing any value will
 not change properties of the spatially distributed NodeCollection.
@@ -422,10 +417,6 @@ not change properties of the spatially distributed NodeCollection.
 .. literalinclude:: scripts/layers.py
     :start-after: #{ layer1p #}
     :end-before: #{ end #}
-
-.. literalinclude:: scripts/layers.log
-    :start-after: #{ layer1p.log #}
-    :end-before: #{ end.log #}
 
 .. _sec_connections:
 
@@ -1231,7 +1222,7 @@ Synapse models and properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 By default, :py:func:`.Connect` creates connections using the default synapse
-model in NEST, ``static_synapse``. You can specify a different model by
+model in NEST, :hxt_ref:`static_synapse`. You can specify a different model by
 adding a ``'synapse_model'`` entry to the synapse specification
 dictionary, as in this example:
 
@@ -1282,7 +1273,7 @@ distributed NodeCollection to that spike recorder:
 Connecting a layer of neurons to a layer of recording devices as
 described in the section on :ref:`sec_dev_subregions`, is only
 possible using the ``pairwise_bernoulli`` rule. Note that voltmeter
-and multimeter do not suffer from this restriction, since they are
+and :hxt_ref:`multimeter` do not suffer from this restriction, since they are
 connected as sources, not as targets.
 
 .. _sec_inspection:

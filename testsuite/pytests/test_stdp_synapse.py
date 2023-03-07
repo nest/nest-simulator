@@ -72,7 +72,7 @@ class TestSTDPSynapse:
         # While the random sequences, fairly long, would supposedly
         # reveal small differences in the weight change between NEST
         # and ours, some low-probability events (say, coinciding
-        # spikes) can well not have occured. To generate and
+        # spikes) can well not have occurred. To generate and
         # test every possible combination of pre/post order, we
         # append some hardcoded spike sequences
         self.hardcoded_pre_times = np.array(
@@ -94,7 +94,7 @@ class TestSTDPSynapse:
                                                                                                          self.init_weight,
                                                                                                          fname_snip=fname_snip)
 
-        # ``weight_by_nest`` containts only weight values at pre spike times, ``weight_reproduced_independently``
+        # ``weight_by_nest`` contains only weight values at pre spike times, ``weight_reproduced_independently``
         # contains the weight at pre *and* post times: check that weights are equal for pre spike times
         assert len(weight_by_nest) > 0
         np.testing.assert_allclose(t_weight_by_nest, t_weight_reproduced_independently)

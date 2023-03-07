@@ -35,7 +35,7 @@
 
     It can be observed how the current charges the membrane, a spike
     is emitted, the threshold potential is updated and evaluated whereas
-    the membrane potential is not resetted and further evaluated, too.
+    the membrane potential is not reset and further evaluated, too.
     Additionally the neuron becomes refractory after emitting a spike.
 
     The timing of the various events on the simulation grid is of

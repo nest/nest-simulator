@@ -31,7 +31,7 @@ Networks <pynest_examples>`, or
 have a look at at the source directory of your NEST installation in the
 subdirectory: ``pynest/examples/``.
 
-PyNEST - an interface to the NEST simulator
+PyNEST - an interface to the NEST Simulator
 -------------------------------------------
 
 .. _Python-Interface:
@@ -42,7 +42,7 @@ PyNEST - an interface to the NEST simulator
 
    Python Interface Figure.
    The Python interpreter imports NEST as a module and
-   dynamically loads the NEST simulator kernel (``pynestkernel.so``).
+   dynamically loads the NEST Simulator kernel (``pynestkernel.so``).
    A simulation script of
    the user (``mysimulation.py``) uses functions defined in this high-level
    API. These functions generate code in SLI (Simulation Language
@@ -54,7 +54,7 @@ is designed for the simulation of large heterogeneous networks of point
 neurons. It is open source software released under the GPL licence. The
 simulator comes with an interface to Python [2]_. :numref:`Python-Interface`
 illustrates the interaction between the user's simulation script
-(``mysimulation.py``) and the NEST simulator. Eppler et al. [3]_
+(``mysimulation.py``) and the NEST Simulator. Eppler et al. [3]_
 contains a technically detailed description of the implementation of this
 interface and parts of this text are based on this reference. The
 simulation kernel is written in C++ to obtain the highest possible performance
@@ -155,7 +155,7 @@ of keys, as an optional argument to :py:meth:`~.NodeCollection.get`:
     neuron.get(["V_reset", "V_th"])
 
 In the first case we query the value of the constant background current
-``I_e``; the result is given as a floating point element. In the second
+:hxt_ref:`I_e`; the result is given as a floating point element. In the second
 case, we query the values of the reset potential and threshold of the
 neuron, and receive the result as a dictionary . If :py:meth:`~.NodeCollection.get` is
 called on a NodeCollection with more than one element, the returned dictionary
@@ -192,7 +192,7 @@ directly
     neuron.I_e = 376.0
     neuron.I_e
 
-Next we create a ``multimeter``, a *device* we can use to record the
+Next we create a :hxt_ref:`multimeter`, a *device* we can use to record the
 membrane voltage of a neuron over time. The property ``record_from``
 expects a list of the names of the variables we would like to
 record. The variables exposed to the multimeter vary from model to
@@ -276,9 +276,9 @@ the multimeter.
     Vms = dmm["events"]["V_m"]
     ts = dmm["events"]["times"]
 
-In the first line, we obtain a dictionary with status parameters for the ``multimeter``.
+In the first line, we obtain a dictionary with status parameters for the :hxt_ref:`multimeter`.
 This dictionary contains an entry named ``events`` which holds the
-recorded data. It is itself a dictionary with the entries ``V_m`` and
+recorded data. It is itself a dictionary with the entries :hxt_ref:`V_m` and
 ``times``, which we store separately in ``Vms`` and ``ts``, in the
 second and third line, respectively. If you are having trouble imagining
 dictionaries of dictionaries and what you are extracting from where, try
@@ -341,7 +341,7 @@ now connect this newly created neuron to the multimeter:
 
 Run the simulation and plot the results, they will look incorrect. To
 fix this you must plot the two neuron traces separately. Replace the
-code that extracts the events from the ``multimeter`` with the following
+code that extracts the events from the :hxt_ref:`multimeter` with the following
 lines.
 
 ::
@@ -568,7 +568,7 @@ References
 .. [2] Python Software Foundation. The Python programming language,
    2008. http://www.python.org.
 
-.. [3] Eppler JM et al. 2009 PyNEST: A convenient interface to the NEST simulator.
+.. [3] Eppler JM et al. 2009 PyNEST: A convenient interface to the NEST Simulator.
    2:12. 10.3389/neuro.11.012.2008.
 
 .. [4] Hunter JD. 2007 Matplotlib: A 2d graphics environment.

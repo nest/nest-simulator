@@ -139,7 +139,7 @@ def CreateMask(masktype, specs, anchor=None):
                 {'lower_left'  : [float, float, float],
                  'upper_right' : [float, float, float],
                  'azimuth_angle: float  # default: 0.0,
-                 'polar_angle  : float  # defualt: 0.0}
+                 'polar_angle  : float  # default: 0.0}
             #or
             'spherical' :
                 {'radius' : float}
@@ -162,7 +162,7 @@ def CreateMask(masktype, specs, anchor=None):
         By default the top-left corner of a grid mask, i.e., the grid
         mask element with grid index [0, 0], is aligned with the driver
         node. It can be changed by means of the 'anchor' parameter:
-            ::
+        ::
 
                 'anchor' :
                     {'row' : float,
@@ -492,7 +492,8 @@ def DumpLayerNodes(layer, outname):
 
     Write `node ID` and position data to `outname` file. For each node in `layer`,
     a line with the following information is written:
-        ::
+
+    ::
 
             node ID x-position y-position [z-position]
 

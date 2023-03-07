@@ -99,7 +99,12 @@ Functions related to randomization
 Functions related to spatial distributions
 ------------------------------------------
 
-.. automodule:: nest.spatial.hl_api_spatial
+.. _pynest_spatial:
+
+.. automodule:: nest.spatial
+    :members: distance
+
+.. automodule:: nest.spatial
     :members:
 
 .. automodule:: nest.spatial_distributions.hl_api_spatial_distributions

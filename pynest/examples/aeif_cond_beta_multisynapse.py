@@ -32,7 +32,7 @@ import matplotlib.pyplot as plt
 neuron = nest.Create('aeif_cond_beta_multisynapse', params={
     "V_peak": 0.0,
     "a": 4.0,
-    "b": 80.5
+    "b": 80.5,
     'E_rev': [0.0, 0.0, 0.0, -85.0],
     'tau_decay': [50.0, 20.0, 20.0, 20.0],
     'tau_rise': [10.0, 10.0, 1.0, 1.0],

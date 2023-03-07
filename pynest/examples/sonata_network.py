@@ -56,14 +56,9 @@ nest.ResetKernel()
 # simulation of the network model.
 
 n_procs = 1
-n_threads = 1
-''' 
+n_threads = 2
 nest.set(total_num_virtual_procs=n_procs * n_threads, print_time=True)
-'''
-'''
-nest.SetKernelStatus({"total_num_virtual_procs": n_procs * n_threads,
-                      "print_time": True})
-'''
+
 ###############################################################################
 # Specify the path to the SONATA .json configuration file(s).
 # The `300_pointneurons` model has two configuration files: one network and
@@ -102,7 +97,6 @@ sonata_net = nest.SonataNetwork(net_config, sim_config=sim_config)
 # the created :py:class:`.NodeCollection`\s. The population names are the
 # dictionary keys.
 
-#node_collections = sonata_net.Create()
 node_collections = sonata_net.BuildNetwork(chunk_size=2**20)
 
 ###############################################################################
@@ -129,13 +123,19 @@ node_collections = sonata_net.BuildNetwork(chunk_size=2**20)
 #pop_name = "internal"
 #record_node_ids = [1, 80, 160, 240, 270]
 #nest.Connect(node_collections[pop_name][record_node_ids], s_rec)
+#nest.Connect(node_collections[pop_name], s_rec)
 
 ###############################################################################
 # Finally, we call the membership function :py:meth:`~.SonataNetwork.Simulate`
 # to simulate the network. Note that the simulation time and resolution are
 # expected to be provided in the SONATA config.
 
-# sonata_net.Simulate()
+sonata_net.Simulate()
+
+kernel_status = nest.GetKernelStatus()
+print(f"number of nodes: {kernel_status['network_size']:,}")
+print(f"number of connections: {kernel_status['num_connections']:,}")
+print(f"number of spikes: {kernel_status['local_spike_counter']:,}")
 
 ###############################################################################
 # After the simulation has finished, we can obtain the data recorded by the

@@ -1,5 +1,5 @@
 /*
- *  static_injector_neuron.cpp
+ *  spike_train_injector.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,7 +20,7 @@
  *
  */
 
-#include "static_injector_neuron.h"
+#include "spike_train_injector.h"
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
@@ -43,12 +43,12 @@ namespace nest
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-static_injector_neuron::State_::State_()
+spike_train_injector::State_::State_()
   : position_( 0 )
 {
 }
 
-static_injector_neuron::Parameters_::Parameters_()
+spike_train_injector::Parameters_::Parameters_()
   : origin_( Time::step( 0 ) )
   , start_( Time::step( 0 ) )
   , stop_( Time::pos_inf() )
@@ -62,7 +62,7 @@ static_injector_neuron::Parameters_::Parameters_()
 {
 }
 
-static_injector_neuron::Parameters_::Parameters_( const Parameters_& p )
+spike_train_injector::Parameters_::Parameters_( const Parameters_& p )
   : origin_( p.origin_ )
   , start_( p.start_ )
   , stop_( p.stop_ )
@@ -83,8 +83,8 @@ static_injector_neuron::Parameters_::Parameters_( const Parameters_& p )
   stop_.calibrate();
 }
 
-static_injector_neuron::Parameters_&
-static_injector_neuron::Parameters_::operator=( const Parameters_& p )
+spike_train_injector::Parameters_&
+spike_train_injector::Parameters_::operator=( const Parameters_& p )
 {
   origin_ = p.origin_;
   start_ = p.start_;
@@ -106,7 +106,7 @@ static_injector_neuron::Parameters_::operator=( const Parameters_& p )
  * ---------------------------------------------------------------- */
 
 void
-static_injector_neuron::Parameters_::get( DictionaryDatum& d ) const
+spike_train_injector::Parameters_::get( DictionaryDatum& d ) const
 {
   const size_t n_spikes = spike_stamps_.size();
   const size_t n_offsets = spike_offsets_.size();
@@ -135,9 +135,7 @@ static_injector_neuron::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-static_injector_neuron::Parameters_::assert_valid_spike_time_and_insert_( double t,
-  const Time& origin,
-  const Time& now )
+spike_train_injector::Parameters_::assert_valid_spike_time_and_insert_( double t, const Time& origin, const Time& now )
 {
   if ( t == 0.0 and not shift_now_spikes_ )
   {
@@ -166,7 +164,7 @@ static_injector_neuron::Parameters_::assert_valid_spike_time_and_insert_( double
       else
       {
         std::stringstream msg;
-        msg << "static_injector_neuron: Time point " << t << " is not representable in current resolution.";
+        msg << "spike_train_injector: Time point " << t << " is not representable in current resolution.";
         throw BadProperty( msg.str() );
       }
     }
@@ -202,7 +200,7 @@ static_injector_neuron::Parameters_::assert_valid_spike_time_and_insert_( double
 }
 
 void
-static_injector_neuron::Parameters_::set( const DictionaryDatum& d,
+spike_train_injector::Parameters_::set( const DictionaryDatum& d,
   State_& s,
   const Time& origin,
   const Time& now,
@@ -329,7 +327,7 @@ static_injector_neuron::Parameters_::set( const DictionaryDatum& d,
 
 
 void
-static_injector_neuron::Parameters_::update_( const DictionaryDatum& d, const Name& name, Time& value )
+spike_train_injector::Parameters_::update_( const DictionaryDatum& d, const Name& name, Time& value )
 {
   /* We cannot update the Time values directly, since updateValue()
      doesn't support Time objects. We thus read the value in ms into
@@ -357,7 +355,7 @@ static_injector_neuron::Parameters_::update_( const DictionaryDatum& d, const Na
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-static_injector_neuron::static_injector_neuron()
+spike_train_injector::spike_train_injector()
   : Node()
   , S_()
   , P_()
@@ -365,7 +363,7 @@ static_injector_neuron::static_injector_neuron()
 {
 }
 
-static_injector_neuron::static_injector_neuron( const static_injector_neuron& n )
+spike_train_injector::spike_train_injector( const spike_train_injector& n )
   : Node( n )
   , S_( n.S_ )
   , P_( n.P_ )
@@ -378,18 +376,18 @@ static_injector_neuron::static_injector_neuron( const static_injector_neuron& n 
  * ---------------------------------------------------------------- */
 
 void
-static_injector_neuron::init_state_()
+spike_train_injector::init_state_()
 {
   Node::init_state_();
 }
 
 void
-static_injector_neuron::init_buffers_()
+spike_train_injector::init_buffers_()
 {
 }
 
 void
-static_injector_neuron::pre_run_hook()
+spike_train_injector::pre_run_hook()
 {
   // We do not need to recalibrate time objects, since they are
   // recalibrated on instance construction and resolution cannot
@@ -401,7 +399,7 @@ static_injector_neuron::pre_run_hook()
   {
     kernel().event_delivery_manager.set_off_grid_communication( true );
     LOG( M_INFO,
-      "static_injector_neuron::pre_run_hook",
+      "spike_train_injector::pre_run_hook",
       "Static injecor neuron has been configured to emit precisely timed "
       "spikes: the kernel property off_grid_spiking has been set to true.\n\n"
       "NOTE: Mixing precise-spiking and normal neuron models may "
@@ -418,7 +416,7 @@ static_injector_neuron::pre_run_hook()
  * Other functions
  * ---------------------------------------------------------------- */
 void
-static_injector_neuron::update( Time const& sliceT0, const long from, const long to )
+spike_train_injector::update( Time const& sliceT0, const long from, const long to )
 {
   if ( P_.spike_stamps_.empty() )
   {
@@ -490,14 +488,14 @@ static_injector_neuron::update( Time const& sliceT0, const long from, const long
 }
 
 void
-static_injector_neuron::event_hook( DSSpikeEvent& e )
+spike_train_injector::event_hook( DSSpikeEvent& e )
 {
   e.set_weight( P_.spike_weights_[ S_.position_ ] * e.get_weight() );
   e.get_receiver().handle( e );
 }
 
 void
-static_injector_neuron::enforce_single_syn_type( synindex syn_id )
+spike_train_injector::enforce_single_syn_type( synindex syn_id )
 {
   if ( first_syn_id_ == invalid_synindex )
   {

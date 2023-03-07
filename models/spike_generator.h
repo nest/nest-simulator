@@ -213,7 +213,7 @@ SpikeEvent
 See also
 ++++++++
 
-poisson_generator, static_injector_neuron
+poisson_generator, spike_train_injector
 
 EndUserDocs
 */

@@ -115,7 +115,7 @@ set(models_sources
     spike_recorder.h spike_recorder.cpp
     spike_generator.h spike_generator.cpp
     spin_detector.h spin_detector.cpp
-    static_injector_neuron.h static_injector_neuron.cpp
+    spike_train_injector.h spike_train_injector.cpp
     static_synapse.h
     static_synapse_hom_w.h
     stdp_dopamine_synapse.h stdp_dopamine_synapse.cpp

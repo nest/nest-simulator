@@ -1,5 +1,5 @@
 /*
- *  static_injector_neuron.h
+ *  spike_train_injector.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STATIC_INJECTOR_NEURON_H
-#define STATIC_INJECTOR_NEURON_H
+#ifndef SPIKE_TRAIN_INJECTOR_H
+#define SPIKE_TRAIN_INJECTOR_H
 
 // C++ includes:
 #include <vector>
@@ -36,32 +36,32 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, static injector
+/* BeginUserDocs: neuron, spike train injector
 
 Short description
 +++++++++++++++++
 
-Neuron that emits prescribed spikes.
+Neuron that emits prescribed spike trains.
 
 Description
 +++++++++++
 
-The static injector neuron simply emits spikes at prescribed spike times
+The spike train injector neuron simply emits spikes at prescribed spike times
 which are given as an array. Incoming spikes will be ignored.
 
-The static injector neuron behaves similarly to a spike generator, but is
-treated internally as a neuron and not a device. Unlike a spike generator
-which is replicated at each virtual process, the static injector neuron
-resides on a single virtual process.
+The spike train injector neuron behaves similarly to a spike generator, but
+is treated internally as a neuron and not a device. Unlike a spike generator
+which is replicated at each virtual process, the spike train injector
+neuron resides on a single virtual process.
 
-Whether to use a spike generator or static injector neuron depends on the
-role the spike injecting mechanism has in a model. If the injections
+Whether to use a spike generator or spike train injector neuron depends on
+the role the spike injecting mechanism has in a model. If the injections
 originate from an external population represented by a single node in the
 network, a spike generator device is likely the best fit. On the other hand,
 if injecting neurons in an external population are modeled on an individual
 basis, a spike generator will bloat the memory usage with replications on
 each virtual process in multithreaded simulations. In the case of individual
-modeling, a static injector neuron is likely the best fit.
+modeling, a spike train injector neuron is likely the best fit.
 
 Spike times are given in milliseconds as an array. The `spike_times` array
 must be sorted with the earliest spike first. All spike times must be strictly
@@ -114,11 +114,11 @@ Example:
 
   ::
 
-     nest.Create("static_injector_neuron",
+     nest.Create("spike_train_injector",
                  params={"spike_times": [1.0, 2.0, 3.0]})
 
-  Instructs the static injector neuron to emit events at 1.0, 2.0, and
-  3.0 milliseconds, relative to the timer origin.
+  Instructs the spike train injector neuron to emit events at 1.0, 2.0,
+  and 3.0 milliseconds, relative to the timer origin.
 
 Example:
 
@@ -128,14 +128,14 @@ onto the grid will be handled as follows for different option settings:
 
   ::
 
-    nest.Create("static_injector_neuron",
+    nest.Create("spike_train_injector",
                params={"spike_times": [1.0, 1.9999, 3.0001]})
 
   ---> spikes at steps 10 (==1.0 ms), 20 (==2.0 ms) and 30 (==3.0 ms)
 
   ::
 
-    nest.Create("static_injector_neuron",
+    nest.Create("spike_train_injector",
                params={"spike_times": [1.0, 1.05, 3.0001]})
 
   ---> **Error!** Spike time 1.05 not within tic/2 of step
@@ -143,7 +143,7 @@ onto the grid will be handled as follows for different option settings:
 
   ::
 
-    nest.Create("static_injector_neuron",
+    nest.Create("spike_train_injector",
                params={"spike_times": [1.0, 1.05, 3.0001],
                "allow_offgrid_times": True})
 
@@ -152,7 +152,7 @@ onto the grid will be handled as follows for different option settings:
 
   ::
 
-    nest.Create("static_injector_neuron",
+    nest.Create("spike_train_injector",
                params={"spike_times": [1.0, 1.05, 3.0001],
                "precise_times": True})
 
@@ -164,7 +164,7 @@ Assume we have simulated 10.0 ms and simulation time is thus 10.0 (step
 
   ::
 
-    nest.Create("static_injector_neuron",
+    nest.Create("spike_train_injector",
                params={"spike_times": [10.0001]})
 
   ---> spike time is within tic/2 of step 100, rounded down to 100 thus
@@ -172,7 +172,7 @@ Assume we have simulated 10.0 ms and simulation time is thus 10.0 (step
 
   ::
 
-    nest.Create("static_injector_neuron",
+    nest.Create("spike_train_injector",
                params={"spike_times": [10.0001],
                "precise_times": True})
 
@@ -180,7 +180,7 @@ Assume we have simulated 10.0 ms and simulation time is thus 10.0 (step
 
   ::
 
-    nest.Create("static_injector_neuron",
+    nest.Create("spike_train_injector",
                params={"spike_times": [10.0001, 11.0001],
                "shift_now_spikes": True})
 
@@ -241,19 +241,19 @@ spike_generator
 EndUserDocs */
 
 /**
- * @brief Static injector neuron node.
+ * @brief Spike train injector node.
  *
  * See UserDocs for details.
  *
- * @note Spikes emitted by a static injector neuron will be counted by the
- * local spike count.
+ * @note Spikes emitted by a spike train injector neuron will be counted by
+ * the local spike count.
  */
-class static_injector_neuron : public Node
+class spike_train_injector : public Node
 {
 
 public:
-  static_injector_neuron();
-  static_injector_neuron( const static_injector_neuron& );
+  spike_train_injector();
+  spike_train_injector( const spike_train_injector& );
 
   port send_test_event( Node&, rport, synindex, bool ) override;
   void get_status( DictionaryDatum& ) const override;
@@ -381,7 +381,7 @@ private:
   {
 
     /**
-     * Time step of static injector neuron activation.
+     * Time step of spike train injector neuron activation.
      * t_min_ = origin_ + start_, in steps.
      * @note This is an auxiliary variable that is initialized to -1 in the
      * constructor and set to its proper value by calibrate. It should NOT
@@ -390,7 +390,7 @@ private:
     long t_min_;
 
     /**
-     * Time step of static injector neuron deactivation.
+     * Time step of spike train injector neuron deactivation.
      * t_max_ = origin_ + stop_, in steps.
      * @note This is an auxiliary variable that is initialized to -1 in the
      * constructor and set to its proper value by calibrate. It should NOT
@@ -418,7 +418,7 @@ private:
 
 
 inline port
-static_injector_neuron::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
+spike_train_injector::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
   enforce_single_syn_type( syn_id );
 
@@ -438,14 +438,14 @@ static_injector_neuron::send_test_event( Node& target, rport receptor_type, syni
 
 
 inline void
-static_injector_neuron::get_status( DictionaryDatum& d ) const
+spike_train_injector::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
 }
 
 
 inline void
-static_injector_neuron::set_status( const DictionaryDatum& d )
+spike_train_injector::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 
@@ -471,35 +471,35 @@ static_injector_neuron::set_status( const DictionaryDatum& d )
 
 
 inline Time const&
-static_injector_neuron::get_origin() const
+spike_train_injector::get_origin() const
 {
   return P_.origin_;
 }
 
 inline Time const&
-static_injector_neuron::get_start() const
+spike_train_injector::get_start() const
 {
   return P_.start_;
 }
 
 inline Time const&
-static_injector_neuron::get_stop() const
+spike_train_injector::get_stop() const
 {
   return P_.stop_;
 }
 
 inline long
-static_injector_neuron::get_t_min_() const
+spike_train_injector::get_t_min_() const
 {
   return V_.t_min_;
 }
 
 inline long
-static_injector_neuron::get_t_max_() const
+spike_train_injector::get_t_max_() const
 {
   return V_.t_max_;
 }
 
 } // namespace
 
-#endif // STATIC_INJECTOR_NEURON_H
+#endif // SPIKE_TRAIN_INJECTOR_H

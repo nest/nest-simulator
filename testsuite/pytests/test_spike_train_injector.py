@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_static_injector_neuron.py
+# test_spike_train_injector.py
 #
 # This file is part of NEST.
 #
@@ -25,7 +25,7 @@ import numpy as np
 
 
 @pytest.fixture
-def reset():
+def reset(autouse=True):
     nest.ResetKernel()
 
 
@@ -38,7 +38,6 @@ def reset():
     ]
 )
 def test_set_spike_times(
-    reset,
     in_spike_times,
     expected_spike_times,
     precise_times,
@@ -51,7 +50,7 @@ def test_set_spike_times(
     """
     nest.set(resolution=0.1, tics_per_ms=1000.0)
 
-    inj_nrn = nest.Create("static_injector_neuron",
+    inj_nrn = nest.Create("spike_train_injector",
                           params={'spike_times': in_spike_times,
                                   'precise_times': precise_times,
                                   'allow_offgrid_times': allow_offgrid_times}
@@ -62,16 +61,16 @@ def test_set_spike_times(
 
 
 @pytest.mark.parametrize('parrot_model', ['parrot_neuron', 'parrot_neuron_ps'])
-def test_static_injector_neuron_in_simulation(reset, parrot_model):
+def test_spike_train_injector_in_simulation(parrot_model):
     """
-    Verify behavior of static injector neuron in simulations by using
-    parrot neuron's spike repetition properties.
+    Verify behavior of spike train injector neuron in simulations by
+    using parrot neuron's spike repetition properties.
     """
     spike_time = 1.01
     delay = 0.2
     simtime = 2.0
 
-    source = nest.Create("static_injector_neuron", 1,
+    source = nest.Create("spike_train_injector", 1,
                          {"spike_times": [spike_time],
                           'precise_times': True})
     parrot = parrot = nest.Create(parrot_model)

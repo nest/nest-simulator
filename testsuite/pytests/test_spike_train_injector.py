@@ -23,9 +23,17 @@ import nest
 import pytest
 import numpy as np
 
+"""
+Test that spike_train_injector behaves as expected.
+
+This set of tests verifies that the spike_train_injector correctly handles
+the spike times for different options and emits spikes correctly in
+simulation.
+"""
+
 
 @pytest.fixture
-def reset(autouse=True):
+def reset_kernel():
     nest.ResetKernel()
 
 
@@ -38,6 +46,7 @@ def reset(autouse=True):
     ]
 )
 def test_set_spike_times(
+    reset_kernel,
     in_spike_times,
     expected_spike_times,
     precise_times,
@@ -61,7 +70,7 @@ def test_set_spike_times(
 
 
 @pytest.mark.parametrize('parrot_model', ['parrot_neuron', 'parrot_neuron_ps'])
-def test_spike_train_injector_in_simulation(parrot_model):
+def test_spike_train_injector_in_simulation(reset_kernel, parrot_model):
     """
     Verify behavior of spike train injector neuron in simulations by
     using parrot neuron's spike repetition properties.

@@ -1,8 +1,8 @@
 # Installation
 
-These installation instructions are for NEST 2.12 and later as well as the most recent version obtained from [GitHub](https://github.com/nest/nest-simulator). 
+These installation instructions are for NEST 2.14 and later as well as the most recent version obtained from [GitHub](https://github.com/nest/nest-simulator).
 
-Installation instructions for NEST 2.10 and earlier are provided [below](#instructions-for-nest-210-and-earlier).
+Installation instructions for NEST 2.12 and earlier are provided [below](#instructions-for-nest-210-and-earlier).
 
 ## Introduction
 
@@ -174,7 +174,7 @@ Installation instructions here have been tested under OS X 10.11 *El Capitan* an
 
         mkdir NEST       # directory for all NEST stuff
         cd NEST
-        tar zxf nest-2.14.1.tar.gz
+        tar zxf nest-2.14.2.tar.gz
         mkdir bld
         cd bld
 

@@ -111,6 +111,10 @@ you received in the NEST sources.
 
 Please cite NEST if you use it in your work.
 
+If you use NEST 2.14.2, please cite it as **Peyser, Alexander et al. (2023).
+NEST 2.14.2. Zenodo. 10.5281/zenodo.7704396**. The full citation is available
+in different formats on [Zenodo](http://dx.doi.org/10.5281/zenodo.7704396).
+
 If you use NEST 2.14.1, please cite it as **Peyser, Alexander et al. (2021).
 NEST 2.14.1. Zenodo. 10.5281/zenodo.4018724**. The full citation is available
 in different formats on [Zenodo](http://dx.doi.org/10.5281/zenodo.4018724).

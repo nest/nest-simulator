@@ -1068,7 +1068,7 @@ class Parameter:
             expo = float(exponent)
         except TypeError:
             raise TypeError("unsupported operand type for **: only int and float allow as exponent")
-        
+
         return sli_func("pow", self._datum, float(exponent))
 
     def __rpow__(self, lhs):

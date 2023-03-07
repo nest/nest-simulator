@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_parameter.py
+# test_parameter_operators.py
 #
 # This file is part of NEST.
 #
@@ -26,9 +26,10 @@ This set of tests confirms that arithmetic operations on NEST Parameter objects 
 correct results by comparing with operations on the undelying numeric values.
 It also confirms that operations on Parameter objects and plain numbers work.
 
-@note These tests only confirm that operators on parameters work in principle. Therefore,
-      we can use constant parameters for simplicity. We need to test elsewhere that
-      other types of Parameters produce correct values.
+.. note::
+
+   These tests only confirm that operators on parameters work in principle. Therefore,
+   we can use constant parameters for simplicity.
 """
 
 import nest
@@ -36,13 +37,21 @@ import pytest
 import operator
 
 
-
 @pytest.mark.parametrize('op, a, b',
-                         [[operator.pow, nest.CreateParameter('constant', {'value': 31}), nest.CreateParameter('constant', {'value':  5})],
-                          [operator.pow, 31, nest.CreateParameter('constant', {'value':  5})],
-                          [operator.mod, nest.CreateParameter('constant', {'value': 31}), nest.CreateParameter('constant', {'value':  5})],
-                          [operator.mod, nest.CreateParameter('constant', {'value':  31}), 5],
-                          [operator.pow, 31, nest.CreateParameter('constant', {'value':  5})]])
+                         [[operator.pow,
+                           nest.CreateParameter('constant', {'value': 31}),
+                           nest.CreateParameter('constant', {'value':  5})],
+                          [operator.pow,
+                           31,
+                           nest.CreateParameter('constant', {'value':  5})],
+                          [operator.mod,
+                           nest.CreateParameter('constant', {'value': 31}),
+                           nest.CreateParameter('constant', {'value':  5})],
+                          [operator.mod,
+                           nest.CreateParameter('constant', {'value':  31}), 5],
+                          [operator.pow,
+                           31,
+                           nest.CreateParameter('constant', {'value':  5})]])
 def test_unsupported_operators(op, a, b):
     """
     Test that unsupported operator-operand combinations raise a TypeError.
@@ -65,7 +74,7 @@ def test_unary_operators(op):
 
     val_a = 31
     a = nest.CreateParameter('constant', {'value': val_a})
-        
+
     assert op(a).GetValue() == op(val_a)
 
 
@@ -73,9 +82,12 @@ def test_unary_operators(op):
                                 operator.sub,
                                 operator.mul,
                                 operator.truediv])
-@pytest.mark.parametrize('a, b', [[nest.CreateParameter('constant', {'value': 31}), nest.CreateParameter('constant', {'value':  5})],
-                                  [31, nest.CreateParameter('constant', {'value':  5})],
-                                  [nest.CreateParameter('constant', {'value': 31}), 5]])
+@pytest.mark.parametrize('a, b', [[nest.CreateParameter('constant', {'value': 31}),
+                                   nest.CreateParameter('constant', {'value':  5})],
+                                  [31,
+                                   nest.CreateParameter('constant', {'value':  5})],
+                                  [nest.CreateParameter('constant', {'value': 31}),
+                                   5]])
 def test_binary_operators(op, a, b):
     """
     Perform tests for binary operators.
@@ -92,7 +104,7 @@ def test_binary_operators(op, a, b):
         val_b = b.GetValue()
     except AttributeError:
         val_b = b
-        
+
     assert op(a, b).GetValue() == op(val_a, val_b)
 
 
@@ -111,7 +123,7 @@ def test_incomplete_binary_operators(op, a, b):
         val_b = b.GetValue()
     except AttributeError:
         val_b = b
-        
+
     assert op(a, b).GetValue() == op(val_a, val_b)
 
 
@@ -121,11 +133,16 @@ def test_incomplete_binary_operators(op, a, b):
                                 operator.le,
                                 operator.gt,
                                 operator.ge])
-@pytest.mark.parametrize('a, b', [[nest.CreateParameter('constant', {'value': 31}), nest.CreateParameter('constant', {'value':  31})],
-                                  [nest.CreateParameter('constant', {'value': 31}), nest.CreateParameter('constant', {'value':  5})],
-                                  [nest.CreateParameter('constant', {'value': 5}), nest.CreateParameter('constant', {'value':  31})],
-                                  [31, nest.CreateParameter('constant', {'value':  5})],
-                                  [nest.CreateParameter('constant', {'value': 31}), 5]])
+@pytest.mark.parametrize('a, b', [[nest.CreateParameter('constant', {'value': 31}),
+                                   nest.CreateParameter('constant', {'value':  31})],
+                                  [nest.CreateParameter('constant', {'value': 31}),
+                                   nest.CreateParameter('constant', {'value':  5})],
+                                  [nest.CreateParameter('constant', {'value': 5}),
+                                   nest.CreateParameter('constant', {'value':  31})],
+                                  [31,
+                                   nest.CreateParameter('constant', {'value':  5})],
+                                  [nest.CreateParameter('constant', {'value': 31}),
+                                   5]])
 def test_comparison_operators(op, a, b):
     """
     Perform tests for comparison operators.
@@ -142,5 +159,5 @@ def test_comparison_operators(op, a, b):
         val_b = b.GetValue()
     except AttributeError:
         val_b = b
-        
+
     assert op(a, b).GetValue() == op(val_a, val_b)

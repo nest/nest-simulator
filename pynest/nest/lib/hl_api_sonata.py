@@ -363,7 +363,9 @@ class SonataNetwork():
                 # Map node id's to spike times
                 # TODO: Can this be done in a more efficient way?
                 spikes_map = {node_id: timestamps[node_ids == node_id] for node_id in range(n_nodes)}
-                params_lst = [{"spike_times": spikes_map[node_id], "precise_times": True} for node_id in range(n_nodes)]
+                #params_lst = [{"spike_times": spikes_map[node_id], "precise_times": True} for node_id in range(n_nodes)]
+                params_lst = [{"spike_times": spikes_map[node_id], "allow_offgrid_times": True}
+                              for node_id in range(n_nodes)]
 
                 # Create and store NC
                 nest_nodes = Create("spike_generator", n=n_nodes, params=params_lst)
@@ -531,6 +533,7 @@ class SonataNetwork():
             edges_df.rename(columns={"model_template": "synapse_model",
                                      "syn_weight": "weight"},
                             inplace=True)
+            edges_df["edge_type_id"] = edges_df["edge_type_id"].map(str)
 
             models_arr = edges_df["synapse_model"].to_numpy()
             is_one_model = (models_arr[0] == models_arr).all()
@@ -561,6 +564,7 @@ class SonataNetwork():
                         syn_specs[edge_type_id].pop("dynamics_params")
             else:
                 # More than one synapse model in CSV file
+                # TODO: new dictionary class requires cast edge_type_id key to str
                 syn_specs = {}
                 idx_map = {k: i for i, k in enumerate(list(edges_df), start=1)}
 

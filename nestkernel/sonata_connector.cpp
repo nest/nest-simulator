@@ -95,18 +95,17 @@ SonataConnector::connect()
   */
   // clang-format on
 
-
-  // auto edges_container = graph_specs_[ "edges" ];
-  // auto edges_container = graph_specs_.at( "edges" );
   auto edges_container = boost::any_cast< std::vector< dictionary > >( graph_specs_.at( "edges" ) );
-  // std::vector< dictionary > edges_container = graph_specs_.at( "edges" );
+
+  // synapse-specific parameters that should be skipped when we set default synapse parameters
+  skip_syn_params_ = {
+    names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
+  };
 
 
   // Iterate edge files
   for ( auto edge_dict : edges_container )
   {
-
-    // cur_fname_ = edge_dict[ "edges_file" ];
     cur_fname_ = boost::any_cast< std::string >( edge_dict.at( "edges_file" ) );
 
 
@@ -432,8 +431,6 @@ SonataConnector::connect_chunk_( const hsize_t chunk_size, const hsize_t offset 
         const thread target_thread = target->get_thread();
 
         const auto edge_type_id = edge_type_id_data_subset[ i ];
-
-        // const auto syn_spec = cur_edge_params_[ std::to_string( edge_type_id ) ];
         const auto syn_spec = boost::any_cast< dictionary >( cur_edge_params_.at( std::to_string( edge_type_id ) ) );
 
         const double weight =
@@ -541,16 +538,7 @@ SonataConnector::create_edge_type_id_2_syn_spec_( dictionary edge_params )
 {
   for ( auto& syn_kv_pair : edge_params )
   {
-    std::cerr << "Before conversion\n";
-    std::cerr << "The value: " << syn_kv_pair.first << "\n";
-    std::cerr << "The value: " << boost::any_cast< std::string >( syn_kv_pair.first ) << "\n";
-
-    // const auto type_id = std::stoi( syn_kv_pair.first );
-    // const auto type_id = boost::any_cast< int >( syn_kv_pair.first );
     const auto type_id = std::stoi( boost::any_cast< std::string >( syn_kv_pair.first ) );
-    std::cerr << "After conversion\n";
-
-
     auto d = boost::any_cast< dictionary >( syn_kv_pair.second );
     const auto syn_name = boost::any_cast< std::string >( d.at( "synapse_model" ) );
 
@@ -565,12 +553,7 @@ SonataConnector::create_edge_type_id_2_syn_spec_( dictionary edge_params )
 void
 SonataConnector::set_synapse_params_( dictionary syn_dict, index synapse_model_id, int type_id )
 {
-  auto syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
-  // TODO: skip_syn_params_ only needs to be defined once somewhere, probably best in .h file
-  std::set< std::string > skip_syn_params_ = {
-    names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
-  };
-
+  dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
   ConnParameterMap synapse_params;
 
   for ( auto& syn_kv_pair : syn_defaults )
@@ -593,7 +576,10 @@ SonataConnector::set_synapse_params_( dictionary syn_dict, index synapse_model_i
   // create it here once to avoid re-creating the object over and over again.
   // TODO: See if nullptr can be changed to dictionary
   // edge_type_id_2_param_dicts_[ type_id ].resize( kernel().vp_manager.get_num_threads(), nullptr );
-  edge_type_id_2_param_dicts_.at( type_id ).resize( kernel().vp_manager.get_num_threads() );
+
+  // std::to_string()
+  edge_type_id_2_param_dicts_[ type_id ].resize( kernel().vp_manager.get_num_threads() );
+  // edge_type_id_2_param_dicts_.at( type_id ).resize( kernel().vp_manager.get_num_threads() );
 
   edge_type_id_2_syn_spec_[ type_id ] = synapse_params;
 
@@ -612,13 +598,13 @@ SonataConnector::set_synapse_params_( dictionary syn_dict, index synapse_model_i
     {
       if ( param.second->provides_long() )
       {
-        //( *edge_type_id_2_param_dicts_.at( type_id ).at( tid ) )[ param.first ] = 0;
-        edge_type_id_2_param_dicts_.at( type_id ).at( tid ).at( param.first ) = 0;
+        long tmp_val = 0;
+        edge_type_id_2_param_dicts_.at( type_id ).at( tid )[ param.first ] = tmp_val;
       }
       else
       {
-        //( *edge_type_id_2_param_dicts_.at( type_id ).at( tid ) )[ param.first ] = 0.0;
-        edge_type_id_2_param_dicts_.at( type_id ).at( tid ).at( param.first ) = 0.0;
+        std::cerr << param.first << " provides double\n";
+        edge_type_id_2_param_dicts_.at( type_id ).at( tid )[ param.first ] = 0.0;
       }
     }
   }

@@ -20,107 +20,92 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Simple Parameter tests
+Test that Parameters support arithmetic operations correctly.
+
+This set of tests confirms that arithmetic operations on NEST Parameter objects yield
+correct results by comparing with operations on the undelying numeric values.
+It also confirms that operations on Parameter objects and plain numbers work.
+
+@note These tests only confirm that operators on parameters work in principle. Therefore,
+      we can use constant parameters for simplicity. We need to test elsewhere that
+      other types of Parameters produce correct values.
 """
 
 import nest
 import pytest
-
-va, vb = 5, 7
-a = nest.CreateParameter('constant', {'value': va})
-b = nest.CreateParameter('constant', {'value': vb})
+import operator
 
 
-@pytest.fixture(autouse=True)
-def reset_kernel():
-    nest.ResetKernel()
+@pytest.mark.parametrize('op', [operator.pos,
+                                operator.neg])
+def test_binary_operators(op):
+    """
+    Perform tests for unary operators.
 
+    Parametrization is over operators
+    """
 
-@pytest.mark.parametrize('op_a, op_b', [[a, b], [a, vb], [vb, a]])
-def test_add(op_a, op_b):
-
-    try:
-        val_a = op_a.GetValue()
-    except AttributeError:
-        val_a = op_a
-    try:
-        val_b = op_b.GetValue()
-    except AttributeError:
-        val_b = op_b
+    val_a = 31
+    nest.CreateParameter('constant', {'value': val_a})
         
-    assert (op_a + op_b).GetValue() == val_a + val_b
+    assert op(a).GetValue() == op(a)
 
-    
-@pytest.mark.parametrize('op_a, op_b', [[a, b], [a, vb], [vb, a]])
-def test_sub(op_a, op_b):
 
+@pytest.mark.parametrize('op', [operator.add,
+                                operator.sub,
+                                operator.mul,
+                                operator.truediv,
+                                operator.mod,
+                                operator.pow])
+@pytest.mark.parametrize('a, b', [[nest.CreateParameter('constant', {'value': 31}), nest.CreateParameter('constant', {'value':  5})],
+                                  [31, nest.CreateParameter('constant', {'value':  5})],
+                                  [nest.CreateParameter('constant', {'value': 31}), 5]])
+def test_binary_operators(op, a, b):
+    """
+    Perform tests for binary operators.
+
+    Outer parametrization is over operators, the inner over param-param, param-number and number-param combinations.
+    """
+
+    # Extract underlying numerical value if we are passed a parameter object.
     try:
-        val_a = op_a.GetValue()
+        val_a = a.GetValue()
     except AttributeError:
-        val_a = op_a
+        val_a = a
     try:
-        val_b = op_b.GetValue()
+        val_b = b.GetValue()
     except AttributeError:
-        val_b = op_b
+        val_b = b
         
-    assert (op_a - op_b).GetValue() == val_a - val_b
+    assert op(a, b).GetValue() == op(a, b)
 
 
-@pytest.mark.parametrize('op_a, op_b', [[a, b], [a, vb], [vb, a]])
-def test_mul(op_a, op_b):
+@pytest.mark.parametrize('op', [operator.eq,
+                                operator.ne,
+                                operator.lt,
+                                operator.le,
+                                operator.gt,
+                                operator.ge])
+@pytest.mark.parametrize('a, b', [[nest.CreateParameter('constant', {'value': 31}), nest.CreateParameter('constant', {'value':  31})],
+                                  [nest.CreateParameter('constant', {'value': 31}), nest.CreateParameter('constant', {'value':  5})],
+                                  [nest.CreateParameter('constant', {'value': 5}), nest.CreateParameter('constant', {'value':  31})],
+                                  [31, nest.CreateParameter('constant', {'value':  5})],
+                                  [nest.CreateParameter('constant', {'value': 31}), 5]])
+def test_comparison_operators(op, a, b):
+    """
+    Perform tests for comparison operators.
 
+    Outer parametrization is over operators, the inner over param-param, param-number and number-param combinations.
+    """
+
+    # Extract underlying numerical value if we are passed a parameter object.
     try:
-        val_a = op_a.GetValue()
+        val_a = a.GetValue()
     except AttributeError:
-        val_a = op_a
+        val_a = a
     try:
-        val_b = op_b.GetValue()
+        val_b = b.GetValue()
     except AttributeError:
-        val_b = op_b
+        val_b = b
         
-    assert (op_a * op_b).GetValue() == val_a * val_b
-
-
-@pytest.mark.parametrize('op_a, op_b', [[a, b], [a, vb], [vb, a]])
-def test_div(op_a, op_b):
-
-    try:
-        val_a = op_a.GetValue()
-    except AttributeError:
-        val_a = op_a
-    try:
-        val_b = op_b.GetValue()
-    except AttributeError:
-        val_b = op_b
-        
-    assert (op_a / op_b).GetValue() == val_a / val_b
-
-
-@pytest.mark.parametrize('op_a, op_b', [[a, b], [a, vb], [vb, a]])
-def test_mod(op_a, op_b):
-
-    try:
-        val_a = op_a.GetValue()
-    except AttributeError:
-        val_a = op_a
-    try:
-        val_b = op_b.GetValue()
-    except AttributeError:
-        val_b = op_b
-        
-    assert (op_a % op_b).GetValue() == val_a % val_b
-
-
-@pytest.mark.parametrize('op_a, op_b', [[a, b], [a, vb], [vb, a]])
-def test_pow(op_a, op_b):
-
-    try:
-        val_a = op_a.GetValue()
-    except AttributeError:
-        val_a = op_a
-    try:
-        val_b = op_b.GetValue()
-    except AttributeError:
-        val_b = op_b
-        
-    assert (op_a ** op_b).GetValue() == val_a ** val_b
+    assert op(a, b).GetValue() == op(a, b)

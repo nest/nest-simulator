@@ -1053,14 +1053,18 @@ class Parameter:
     def __rmul__(self, other):
         return self * other
 
-    def __div__(self, other):
-        return self._binop("div", other)
-
     def __truediv__(self, other):
         return self._binop("div", other)
 
+    def __rtruediv__(self, other):
+        rhs_inv = CreateParameter('constant', {'value': 1 / float(self.GetValue())})
+        return self._binop("mul", other)
+
     def __pow__(self, exponent):
         return sli_func("pow", self._datum, float(exponent))
+
+    def __rpow__(self, mantissa):
+        return sli_func("pow", float(mantissa), self._datum)
 
     def __lt__(self, other):
         return self._binop("compare", other, {'comparator': 0})

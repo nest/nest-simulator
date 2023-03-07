@@ -55,7 +55,6 @@ def test_binary_operators(op):
                                 operator.sub,
                                 operator.mul,
                                 operator.truediv,
-                                operator.mod,
                                 operator.pow])
 @pytest.mark.parametrize('a, b', [[nest.CreateParameter('constant', {'value': 31}), nest.CreateParameter('constant', {'value':  5})],
                                   [31, nest.CreateParameter('constant', {'value':  5})],

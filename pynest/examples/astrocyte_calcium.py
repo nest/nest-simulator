@@ -65,22 +65,22 @@ population_params = {
 astro_params = {
     'IP3_astro':    [0.16, 0.16, 0.16],     # Initial condition for IP3 concentration in the astrocytic cytosol
     'Ca_astro':     [0.073, 0.073, 0.073],   # Initial condition for calcium concentration in the astrocytic cytosol
-    'f_IP3R_astro': [0.792, 0.792, 0.792],   # Initial condition for fraction of IP3 receptors on the astrocytic ER that are not yet inactivated by calcium
+    'h_IP3R_astro': [0.792, 0.792, 0.792],   # Initial condition for fraction of IP3 receptors on the astrocytic ER that are not yet inactivated by calcium
     'Ca_tot_astro': 2.0,     # Total free astrocytic calcium concentration in uM
     'IP3_0_astro': [0.16, 0.4, 0.16],     # 0.16 Baseline value of the astrocytic IP3 concentration in uM
-    'K_act_astro': 0.08234,  # Astrocytic IP3R dissociation constant of calcium (activation) in uM
-    'K_inh_astro': 1.049,    # Astrocytic IP3R dissociation constant of calcium (inhibition) in uM
-    'K_IP3_1_astro': 0.13,   # Astrocytic IP3R dissociation constant of IP3 in uM
-    'K_IP3_2_astro': 0.9434, # Astrocytic IP3R dissociation constant of IP3 in uM
-    'K_SERCA_astro': 0.1,    # Half-activation constant of astrocytic SERCA pump in uM
-    'r_ER_cyt_astro': 0.185, # Ratio between astrocytic ER and cytosol volumes
-    'r_IP3_astro': 5.,       # Step increase in IP3 concentration at each spike time at each synapse interacting with the same astrocyte, in uM/ms
-    'r_IP3R_astro': 0.0002,   # Astrocytic IP3R binding constant for calcium inhibition in 1/(uM*ms)
-    'r_L_astro': 0.00011,    # Rate constant for calcium leak from the astrocytic ER to cytosol in 1/ms
+    'Kd_act_astro': 0.08234,  # Astrocytic IP3R dissociation constant of calcium (activation) in uM
+    'Kd_inh_astro': 1.049,    # Astrocytic IP3R dissociation constant of calcium (inhibition) in uM
+    'Kd_IP3_1_astro': 0.13,   # First astrocytic IP3R dissociation constant of IP3 in uM
+    'Kd_IP3_2_astro': 0.9434, # Second astrocytic IP3R dissociation constant of IP3 in uM
+    'Km_SERCA_astro': 0.1,    # Half-activation constant of astrocytic SERCA pump in uM
+    'ratio_ER_cyt_astro': 0.185, # Ratio between astrocytic ER and cytosol volumes
+    'incr_IP3_astro': 5.,       # Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte in uM
+    'k_IP3R_astro': 0.0002,   # Astrocytic IP3R binding constant for calcium inhibition in 1/(uM*ms)
+    'rate_L_astro': 0.00011,    # Rate constant for calcium leak from the astrocytic ER to cytosol in 1/ms
     'tau_IP3_astro': 7142.0, # Time constant of astrocytic IP3 degradation
-    'v_IP3R_astro': 0.006,   # Maximum rate of calcium release via astrocytic IP3R in 1/ms
-    'v_SERCA_astro': 0.0009, # Maximum rate of calcium uptake by astrocytic IP3R in uM/ms
-    #'sic_thr_astro': 196.69  # Threshold that determines the minimal level of intracellular astrocytic calcium sufficient to induce SIC 
+    'rate_IP3R_astro': 0.006,   # Maximum rate of calcium release via astrocytic IP3R in 1/ms
+    'rate_SERCA_astro': 0.0009, # Maximum rate of calcium uptake by astrocytic IP3R in uM/ms
+    #'SIC_th_astro': 196.69  # Threshold that determines the minimal level of intracellular astrocytic calcium sufficient to induce SIC
     }
 
 ###############################################################################
@@ -98,15 +98,15 @@ def build_astro(poisson_rate):
     print("Creating nodes")
     nodes_astro = nest.Create(
         "astrocyte", int(population_params["N_astro"]), params=astro_params)
-    
+
     nodes_noise = nest.Create(
-        "poisson_generator", 
+        "poisson_generator",
         params={
             "rate": poisson_rate,
             "start": 0.0, "stop": sim_params["sim_time"]
             }
         )
-    
+
     # Connect Poisson generator (noise) to one astrocyte
     print("Connecting Poisson generator")
     conn_spec_astro = {
@@ -116,11 +116,11 @@ def build_astro(poisson_rate):
     syn_params_astro = {
         "synapse_model": "static_synapse", "weight": 1.
         }
-    
+
     nest.Connect(
         nodes_noise, nodes_astro[2], conn_spec=conn_spec_astro, syn_spec=syn_params_astro
         )
-    
+
     return nodes_astro
 
 
@@ -174,7 +174,7 @@ def run_simulation():
     axes[0][0].set_title("Steady-state")
     axes[0][1].set_title("Oscillations")
     axes[0][2].set_title("Poisson input")
-    
+
     ylabels = [r'Ca$^{2+}$ ($\mu$M)', r'IP$_{3}$ ($\mu$M)']
     for iastro in range(population_params["N_astro"]):
        for i, key in enumerate(["Ca_astro", "IP3_astro"]):
@@ -183,11 +183,11 @@ def run_simulation():
             axes[i][iastro].set_ylabel(ylabels[i])
     plt.xlabel("Time (ms)")
     plt.tight_layout()
-    
+
     plt.savefig(os.path.join(data_path, "calcium_isolated_astrocyte.png"))
     plt.close()
     print("Done!")
-  
+
 
 if __name__ == "__main__":
     plt.rcParams.update({'font.size': 13})

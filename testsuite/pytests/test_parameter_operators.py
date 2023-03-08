@@ -34,7 +34,7 @@ It also confirms that operations on Parameter objects and plain numbers work.
 
 import nest
 import pytest
-import operator as op
+import operator as opr
 
 
 def const_param(val):
@@ -42,11 +42,11 @@ def const_param(val):
 
 
 @pytest.mark.parametrize('op, a, b', [
-    [op.pow, const_param(31), const_param(5)],
-    [op.pow,             31 , const_param(5)],
-    [op.mod, const_param(31), const_param(5)],
-    [op.mod, const_param(31),             5 ],
-    [op.pow,             31 , const_param(5)]
+    [opr.pow, const_param(31), const_param(5)],
+    [opr.pow, 31, const_param(5)],
+    [opr.mod, const_param(31), const_param(5)],
+    [opr.mod, const_param(31), 5],
+    [opr.pow, 31, const_param(5)]
 ])
 def test_unsupported_operators(op, a, b):
     """
@@ -59,8 +59,10 @@ def test_unsupported_operators(op, a, b):
         op(a, b)
 
 
-@pytest.mark.parametrize('op', [operator.neg,
-                                operator.pos])
+@pytest.mark.parametrize('op', [
+    opr.neg,
+    opr.pos
+])
 def test_unary_operators(op):
     """
     Perform tests for unary operators.
@@ -74,16 +76,17 @@ def test_unary_operators(op):
     assert op(a).GetValue() == op(val_a)
 
 
-@pytest.mark.parametrize('op', [operator.add,
-                                operator.sub,
-                                operator.mul,
-                                operator.truediv])
-@pytest.mark.parametrize('a, b', [[nest.CreateParameter('constant', {'value': 31}),
-                                   nest.CreateParameter('constant', {'value':  5})],
-                                  [31,
-                                   nest.CreateParameter('constant', {'value':  5})],
-                                  [nest.CreateParameter('constant', {'value': 31}),
-                                   5]])
+@pytest.mark.parametrize('op', [
+    opr.add,
+    opr.sub,
+    opr.mul,
+    opr.truediv
+])
+@pytest.mark.parametrize('a, b', [
+    [const_param(31), const_param(5)],
+    [31, const_param(5)],
+    [const_param(31), 5]
+])
 def test_binary_operators(op, a, b):
     """
     Perform tests for binary operators.
@@ -104,7 +107,8 @@ def test_binary_operators(op, a, b):
     assert op(a, b).GetValue() == op(val_a, val_b)
 
 
-@pytest.mark.parametrize('op, a, b', [[operator.pow, nest.CreateParameter('constant', {'value': 31}), 5]])
+@pytest.mark.parametrize('op, a, b', [
+    [opr.pow, const_param(31), 5]])
 def test_incomplete_binary_operators(op, a, b):
     """
     Perform tests for binary operators that do not support Parameter as any operand.
@@ -123,22 +127,21 @@ def test_incomplete_binary_operators(op, a, b):
     assert op(a, b).GetValue() == op(val_a, val_b)
 
 
-@pytest.mark.parametrize('op', [operator.eq,
-                                operator.ne,
-                                operator.lt,
-                                operator.le,
-                                operator.gt,
-                                operator.ge])
-@pytest.mark.parametrize('a, b', [[nest.CreateParameter('constant', {'value': 31}),
-                                   nest.CreateParameter('constant', {'value':  31})],
-                                  [nest.CreateParameter('constant', {'value': 31}),
-                                   nest.CreateParameter('constant', {'value':  5})],
-                                  [nest.CreateParameter('constant', {'value': 5}),
-                                   nest.CreateParameter('constant', {'value':  31})],
-                                  [31,
-                                   nest.CreateParameter('constant', {'value':  5})],
-                                  [nest.CreateParameter('constant', {'value': 31}),
-                                   5]])
+@pytest.mark.parametrize('op', [
+    opr.eq,
+    opr.ne,
+    opr.lt,
+    opr.le,
+    opr.gt,
+    opr.ge
+])
+@pytest.mark.parametrize('a, b', [
+    [const_param(31), const_param(31)],
+    [const_param(31), 31],
+    [31, const_param(31)],
+    [const_param(31), const_param(5)],
+    [const_param(5), const_param(31)],
+])
 def test_comparison_operators(op, a, b):
     """
     Perform tests for comparison operators.

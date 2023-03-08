@@ -34,7 +34,7 @@ It also confirms that operations on Parameter objects and plain numbers work.
 
 import nest
 import pytest
-import operator as opr
+import operator as ops
 
 
 def const_param(val):
@@ -42,11 +42,11 @@ def const_param(val):
 
 
 @pytest.mark.parametrize('op, a, b', [
-    [opr.pow, const_param(31), const_param(5)],
-    [opr.pow, 31, const_param(5)],
-    [opr.mod, const_param(31), const_param(5)],
-    [opr.mod, const_param(31), 5],
-    [opr.pow, 31, const_param(5)]
+    [ops.pow, const_param(31), const_param(5)],
+    [ops.pow, 31, const_param(5)],
+    [ops.mod, const_param(31), const_param(5)],
+    [ops.mod, const_param(31), 5],
+    [ops.pow, 31, const_param(5)]
 ])
 def test_unsupported_operators(op, a, b):
     """
@@ -60,8 +60,8 @@ def test_unsupported_operators(op, a, b):
 
 
 @pytest.mark.parametrize('op', [
-    opr.neg,
-    opr.pos
+    ops.neg,
+    ops.pos
 ])
 def test_unary_operators(op):
     """
@@ -77,10 +77,10 @@ def test_unary_operators(op):
 
 
 @pytest.mark.parametrize('op', [
-    opr.add,
-    opr.sub,
-    opr.mul,
-    opr.truediv
+    ops.add,
+    ops.sub,
+    ops.mul,
+    ops.truediv
 ])
 @pytest.mark.parametrize('a, b', [
     [const_param(31), const_param(5)],
@@ -108,7 +108,7 @@ def test_binary_operators(op, a, b):
 
 
 @pytest.mark.parametrize('op, a, b', [
-    [opr.pow, const_param(31), 5]])
+    [ops.pow, const_param(31), 5]])
 def test_incomplete_binary_operators(op, a, b):
     """
     Perform tests for binary operators that do not support Parameter as any operand.
@@ -128,12 +128,12 @@ def test_incomplete_binary_operators(op, a, b):
 
 
 @pytest.mark.parametrize('op', [
-    opr.eq,
-    opr.ne,
-    opr.lt,
-    opr.le,
-    opr.gt,
-    opr.ge
+    ops.eq,
+    ops.ne,
+    ops.lt,
+    ops.le,
+    ops.gt,
+    ops.ge
 ])
 @pytest.mark.parametrize('a, b', [
     [const_param(31), const_param(31)],

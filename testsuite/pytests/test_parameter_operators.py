@@ -34,24 +34,20 @@ It also confirms that operations on Parameter objects and plain numbers work.
 
 import nest
 import pytest
-import operator
+import operator as op
 
 
-@pytest.mark.parametrize('op, a, b',
-                         [[operator.pow,
-                           nest.CreateParameter('constant', {'value': 31}),
-                           nest.CreateParameter('constant', {'value':  5})],
-                          [operator.pow,
-                           31,
-                           nest.CreateParameter('constant', {'value':  5})],
-                          [operator.mod,
-                           nest.CreateParameter('constant', {'value': 31}),
-                           nest.CreateParameter('constant', {'value':  5})],
-                          [operator.mod,
-                           nest.CreateParameter('constant', {'value':  31}), 5],
-                          [operator.pow,
-                           31,
-                           nest.CreateParameter('constant', {'value':  5})]])
+def const_param(val):
+    return nest.CreateParameter('constant', {'value': val})
+
+
+@pytest.mark.parametrize('op, a, b', [
+    [op.pow, const_param(31), const_param(5)],
+    [op.pow,             31 , const_param(5)],
+    [op.mod, const_param(31), const_param(5)],
+    [op.mod, const_param(31),             5 ],
+    [op.pow,             31 , const_param(5)]
+])
 def test_unsupported_operators(op, a, b):
     """
     Test that unsupported operator-operand combinations raise a TypeError.

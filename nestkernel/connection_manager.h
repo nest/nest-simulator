@@ -218,8 +218,8 @@ public:
    */
   size_t get_num_connections( const synindex syn_id ) const;
 
-  void get_sources( const std::vector< size_t >& targets, 
-    const size_t syn_id, 
+  void get_sources( const std::vector< size_t >& targets,
+    const size_t syn_id,
     std::vector< std::vector< size_t > >& sources );
 
   void get_targets( const std::vector< size_t >& sources,
@@ -254,10 +254,11 @@ public:
 
   bool get_user_set_delay_extrema() const;
 
-  void send( const size_t tid, 
-    const synindex syn_id, 
-    const size_t lcid, 
-    const std::vector< ConnectorModel* >& cm, Event& e );
+  void send( const size_t tid,
+    const synindex syn_id,
+    const size_t lcid,
+    const std::vector< ConnectorModel* >& cm,
+    Event& e );
 
   /**
    * Send event e to all device targets of source source_node_id
@@ -761,16 +762,16 @@ ConnectionManager::get_next_target_data( const size_t tid,
 }
 
 inline const std::vector< size_t >&
-ConnectionManager::get_secondary_send_buffer_positions( const size_t tid, 
-  const size_t lid, 
+ConnectionManager::get_secondary_send_buffer_positions( const size_t tid,
+  const size_t lid,
   const synindex syn_id ) const
 {
   return target_table_.get_secondary_send_buffer_positions( tid, lid, syn_id );
 }
 
 inline size_t
-ConnectionManager::get_secondary_recv_buffer_position( const size_t tid, 
-  const synindex syn_id, 
+ConnectionManager::get_secondary_recv_buffer_position( const size_t tid,
+  const synindex syn_id,
   const size_t lcid ) const
 {
   return secondary_recv_buffer_pos_[ tid ][ syn_id ][ lcid ];

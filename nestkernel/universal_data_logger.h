@@ -187,7 +187,7 @@ private:
 
   private:
     size_t multimeter_; //!< node ID of multimeter for which the logger works
-    size_t num_vars_;  //!< number of variables recorded
+    size_t num_vars_;   //!< number of variables recorded
 
     Time recording_interval_; //!< interval between two recordings
     Time recording_offset_;   //!< offset relative to which interval is calculated
@@ -444,7 +444,7 @@ private:
 
   private:
     size_t multimeter_; //!< node ID of multimeter for which the logger works
-    size_t num_vars_;  //!< number of variables recorded
+    size_t num_vars_;   //!< number of variables recorded
 
     Time recording_interval_; //!< interval between two recordings
     Time recording_offset_;   //!< offset relative to which interval is calculated

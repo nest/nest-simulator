@@ -96,7 +96,7 @@ public:
 
 private:
   Node* target_; //!< Target node
-  size_t rport_;  //!< Receiver port at the target node
+  size_t rport_; //!< Receiver port at the target node
 };
 
 

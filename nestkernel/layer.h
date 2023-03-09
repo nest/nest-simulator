@@ -96,7 +96,7 @@ public:
    * @param to        node in layer to which displacement is to be computed
    * @returns vector pointing from from_pos to node to's position
    */
-  virtual std::vector< double > compute_displacement( const std::vector< double >& from_pos, 
+  virtual std::vector< double > compute_displacement( const std::vector< double >& from_pos,
     const size_t to ) const = 0;
   virtual double compute_displacement( const std::vector< double >& from_pos,
     const std::vector< double >& to_pos,

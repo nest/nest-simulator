@@ -142,7 +142,7 @@ Layer< D >::get_global_positions_ntree( NodeCollectionPTR node_collection )
 
   clear_ntree_cache_();
 
-  cached_ntree_ = std::shared_ptr< Ntree< D, size_t > >( 
+  cached_ntree_ = std::shared_ptr< Ntree< D, size_t > >(
     new Ntree< D, size_t >( this->lower_left_, this->extent_, this->periodic_ ) );
 
   return do_get_global_positions_ntree_( node_collection );
@@ -168,7 +168,7 @@ Layer< D >::get_global_positions_ntree( std::bitset< D > periodic,
     }
   }
 
-  cached_ntree_ = std::shared_ptr< Ntree< D, size_t > >( 
+  cached_ntree_ = std::shared_ptr< Ntree< D, size_t > >(
     new Ntree< D, size_t >( this->lower_left_, extent, periodic ) );
 
   do_get_global_positions_ntree_( node_collection );

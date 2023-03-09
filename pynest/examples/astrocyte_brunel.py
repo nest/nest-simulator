@@ -86,17 +86,17 @@ network_params = {
     "N_in": 2000,  # number of inhibitory neurons
     "N_astro": 1000,  # number of astrocytes
     "p": 0.1,  # neuron-neuron connection probability.
-    "p_syn_astro": 1.0,  # synapse-astrocyte pairing probability
-    "max_astro_per_target": 1,  # max number of astrocytes per target neuron
-    "astro_pool_by_index": True,  # Astrocyte pool selection by index
+    "p_syn_astro": 0.5,  # synapse-astrocyte pairing probability
+    "max_astro_per_target": 5,  # max number of astrocytes per target neuron
+    "astro_pool_by_index": False,  # Astrocyte pool selection by index
     "poisson_rate": 100,  # rate of Poisson input
     "poisson_per_neuron": 1,  # average Poisson input per neuron
     }
 
 syn_params = {
     "synapse_model": "tsodyks_synapse",
-    "synapse_model_sic": "sic_connection",
-    "weight_sic": 20.0,
+    "astro2post": "sic_connection",
+    "weight_astro2post": 4.0,
     "J_ee": 3.0,  # excitatory-to-excitatory synaptic weight in nS
     "J_ei": 3.0,  # excitatory-to-inhibitory synaptic weight in nS
     "J_ie": -6.0,  # inhibitory-to-excitatory synaptic weight in nS
@@ -244,13 +244,13 @@ def build_astro(scale, poisson_time):
     print("Connecting excitatory and inhibitory neurons")
     syn_params_ee = {
         "synapse_model": syn_params["synapse_model"],
-        "weight": syn_params["J_ee"],
+        "weight_pre2post": syn_params["J_ee"],
         "U": syn_params["U_ee"],
         "tau_psc": tau_syn_ex,
         "tau_fac": syn_params["tau_fac_ee"],
         "tau_rec": syn_params["tau_rec_ee"],
-        "synapse_model_sic": syn_params["synapse_model_sic"],
-        "weight_sic": syn_params["weight_sic"],
+        "astro2post": syn_params["astro2post"],
+        "weight_astro2post": syn_params["weight_astro2post"],
         }
     syn_params_ei = {
         "synapse_model": syn_params["synapse_model"],
@@ -366,8 +366,9 @@ def run_simulation():
 
     # plot a raster and a histogram of neurons recorded
     nest.raster_plot.from_device(sr_neuron, hist=True)
-    plt.title(f"n of neurons={sim_params['N_rec']}")
-    plt.savefig(os.path.join(data_path, "neuron_raster.png"))
+    plt.title("")
+    # plt.title(f"n of neurons={sim_params['N_rec']}")
+    plt.savefig(os.path.join(data_path, "neuron_raster.png"), bbox_inches="tight")
     plt.close()
 
     # sample neurons for spiking data
@@ -398,45 +399,58 @@ def run_simulation():
     print(f"n of neuron pairs included/excluded = {n_pass_}/{n_fail_}")
     print(f"Local and global synchrony = {lsync_mu:.3f} (s.d.={lsync_sd:.3f}) and {gsync:.3f}")
 
-    # plot neuron SIC data
-    print("Calculating SIC input per neuron ...")
-    d = neuron_data
-    keys = list(d.keys())
-    means = np.array([[np.mean(d[k][d["times"]==t]) for t in set(d["times"])] for k in d.keys()])
-    stds = np.array([[np.std(d[k][d["times"]==t]) for t in set(d["times"])] for k in d.keys()])
-    times = means[keys.index("times")]
-    m = means[keys.index("SIC")]
-    s = stds[keys.index("SIC")]
-    print("Plotting SIC input per neuron ...")
-    plt.fill_between(times, m+s, m-s, alpha=0.3, linewidth=0.0)
-    plt.plot(times, m, linewidth=2)
-    plt.title(f"n of neurons={len(set(d['senders']))}")
-    plt.xlabel("Time (ms)")
-    plt.ylabel("SIC/neuron (pA)")
-    plt.tight_layout()
-    plt.savefig(os.path.join(data_path, "neuron_sic.png"))
-    plt.close()
-
-    # plot astrocyte data
-    print("Plotting astrocyte dynamics ...")
+    # plot dynamics
+    print("Plotting dynamics ...")
+    # astrocyte data
     d = astro_data
-    keys = list(d.keys())
-    means = np.array([[np.mean(d[k][d["times"]==t]) for t in set(d["times"])] for k in d.keys()])
-    stds = np.array([[np.std(d[k][d["times"]==t]) for t in set(d["times"])] for k in d.keys()])
-    times = means[keys.index("times")]
+    d_t = d["times"]
+    d_ip3 = d["IP3_astro"]
+    d_cal = d["Ca_astro"]
+    m_ip3 = np.array([np.mean(d_ip3[d_t==t]) for t in set(d_t)])
+    s_ip3 = np.array([np.std(d_ip3[d_t==t]) for t in set(d_t)])
+    m_cal = np.array([np.mean(d_cal[d_t==t]) for t in set(d_t)])
+    s_cal = np.array([np.std(d_cal[d_t==t]) for t in set(d_t)])
+    t_astro = list(set(d_t))
+    # neuron data
+    d = neuron_data
+    d_t = d["times"]
+    d_sic = d["SIC"]
+    m_sic = np.array([np.mean(d_sic[d_t==t]) for t in set(d_t)])
+    s_sic = np.array([np.std(d_sic[d_t==t]) for t in set(d_t)])
+    t_neuro = list(set(d_t))
+    # plots
+    str_ip3 = r"IP$_{3}$"
+    str_cal = r"Ca$^{2+}$"
+    color_ip3 = "tab:blue"
+    color_cal = "tab:green"
+    color_sic = "tab:purple"
     fig, axes = plt.subplots(2, 1, sharex=True)
-    axes[0].set_title(f"n of astrocytes={len(set(d['senders']))}")
-    ylabels = [r'IP$_{3}$ ($\mu$M)', r'Ca$^{2+}$ ($\mu$M)']
-    for i, key in enumerate(["IP3_astro", "Ca_astro"]):
-        m = means[keys.index(key)]
-        s = stds[keys.index(key)]
-        axes[i].fill_between(
-            times, m+s, m-s, alpha=0.3, linewidth=0.0)
-        axes[i].plot(times, m, linewidth=2)
-        axes[i].set_ylabel(ylabels[i])
-    plt.xlabel("Time (ms)")
+    # astrocyte plot
+    axes[0].set_title(f"{str_ip3} and {str_cal} in astrocytes (n={len(set(astro_data['senders']))})")
+    axes[0].set_ylabel(r"IP$_{3}$ ($\mu$M)")
+    axes[0].tick_params(axis="y", labelcolor=color_ip3)
+    axes[0].fill_between(
+        t_astro, m_ip3+s_ip3, m_ip3-s_ip3, alpha=0.3, linewidth=0.0,
+        color=color_ip3)
+    axes[0].plot(t_astro, m_ip3, linewidth=2, color=color_ip3)
+    ax = axes[0].twinx()
+    ax.set_ylabel(r"Ca$^{2+}$ ($\mu$M)")
+    ax.tick_params(axis="y", labelcolor=color_cal)
+    axes[0].fill_between(
+        t_astro, m_cal+s_cal, m_cal-s_cal, alpha=0.3, linewidth=0.0,
+        color=color_cal)
+    ax.plot(t_astro, m_cal, linewidth=2, color=color_cal)
+    # neuron plot
+    axes[1].set_title(f"SIC in neurons (n={len(set(neuron_data['senders']))})")
+    axes[1].set_ylabel("SIC (pA)")
+    axes[1].set_xlabel("Time (ms)")
+    axes[0].fill_between(
+        t_neuro, m_sic+s_sic, m_sic-s_sic, alpha=0.3, linewidth=0.0,
+        color=color_sic)
+    axes[1].plot(t_neuro, m_sic, linewidth=2, color=color_sic)
+    # save
     plt.tight_layout()
-    plt.savefig(os.path.join(data_path, "astrocyte_dynamic.png"))
+    plt.savefig(os.path.join(data_path, "dynamics.png"))
     plt.close()
 
     print("Done!")

@@ -59,6 +59,16 @@ class TestPairwiseBernoulliAstro(connect_test_base.ConnectTestBase):
         nest.set_verbosity('M_FATAL')
         nest.Connect(self.pop1, self.pop2, conn_dict, syn_dict)
 
+    def testWeightSetting(self):
+        # test if weights are set correctly
+
+        # 'weight_pre2post' is used in this connectivity rule to stand for the
+        # weight for neuron-to-neuron connections, to differentiate from
+        # the 'weight_pre2astro' for the neuron-to-astrocyte connections
+        w0 = 0.351
+        syn_params = {'weight_pre2post': w0}
+        connect_test_base.check_synapse(['weight'], [w0], syn_params, self)
+
     def testStatistics(self):
         for fan in ['in', 'out']:
             expected = connect_test_base.get_expected_degrees_bernoulli(
@@ -120,7 +130,7 @@ class TestPairwiseBernoulliAstro(connect_test_base.ConnectTestBase):
         self.pop_astro = nest.Create('astrocyte', self.N_t)
         self.conn_dict['astrocyte'] = self.pop_astro
         conn_spec = self.conn_dict.copy()
-        # exclude astrocyte because it is not compatible
+        # astrocyte excluded because not compatible
         conn_spec['p_syn_astro'] = 0.0
         nest.Connect(self.pop1, self.pop2, conn_spec, syn_params)
         conns = nest.GetConnections(self.pop1, self.pop2)
@@ -129,8 +139,9 @@ class TestPairwiseBernoulliAstro(connect_test_base.ConnectTestBase):
         self.assertTrue(ports[0] == rtype)
 
     def testRPortAllSynapses(self):
+        # static_synapse_hom_w excluded because not compatible with astrocyte
         syns = ['cont_delay_synapse', 'ht_synapse', 'quantal_stp_synapse',
-                'static_synapse_hom_w', 'stdp_dopamine_synapse',
+                'stdp_dopamine_synapse',
                 'stdp_facetshw_synapse_hom', 'stdp_pl_synapse_hom',
                 'stdp_synapse_hom', 'stdp_synapse', 'tsodyks2_synapse',
                 'tsodyks_synapse'
@@ -149,7 +160,7 @@ class TestPairwiseBernoulliAstro(connect_test_base.ConnectTestBase):
             self.pop_astro = nest.Create('astrocyte', self.N_t)
             self.conn_dict['astrocyte'] = self.pop_astro
             conn_spec = self.conn_dict.copy()
-            # exclude astrocyte because it is not compatible
+            # astrocyte excluded because not compatible
             conn_spec['p_syn_astro'] = 0.0
             nest.Connect(self.pop1, self.pop2, conn_spec, syn_params)
             conns = nest.GetConnections(self.pop1, self.pop2)
@@ -158,10 +169,31 @@ class TestPairwiseBernoulliAstro(connect_test_base.ConnectTestBase):
             self.assertTrue(conn_params[0] == syn_params['receptor_type'])
             self.setUp()
 
+    def testWeightAllSynapses(self):
+        # test all synapses apart from static_synapse_hom_w where weight is not
+        # settable
+        syns = ['cont_delay_synapse', 'ht_synapse', 'quantal_stp_synapse',
+                'stdp_dopamine_synapse',
+                'stdp_facetshw_synapse_hom',
+                'stdp_pl_synapse_hom',
+                'stdp_synapse_hom', 'stdp_synapse', 'tsodyks2_synapse',
+                'tsodyks_synapse'
+                ]
+        syn_params = {'weight_pre2post': 0.372}
+
+        for syn in syns:
+            if syn == 'stdp_dopamine_synapse':
+                vol = nest.Create('volume_transmitter')
+                nest.SetDefaults('stdp_dopamine_synapse', {'vt': vol.get('global_id')})
+            syn_params['synapse_model'] = syn
+            connect_test_base.check_synapse(
+                ['weight'], [syn_params['weight_pre2post']], syn_params, self)
+            self.setUp()
+
     def testDelayAllSynapses(self):
+        # static_synapse_hom_w excluded because not compatible
         syns = ['cont_delay_synapse',
                 'ht_synapse', 'quantal_stp_synapse',
-                'static_synapse_hom_w',
                 'stdp_dopamine_synapse',
                 'stdp_facetshw_synapse_hom', 'stdp_pl_synapse_hom',
                 'stdp_synapse_hom', 'stdp_synapse', 'tsodyks2_synapse',
@@ -174,14 +206,9 @@ class TestPairwiseBernoulliAstro(connect_test_base.ConnectTestBase):
                 vol = nest.Create('volume_transmitter')
                 nest.SetDefaults('stdp_dopamine_synapse', {'vt': vol.get('global_id')})
             syn_params['synapse_model'] = syn
-            # exclude astrocyte because it is not compatible with
-            # static_synapse_hom_w connection
-            tmp = self.conn_dict['p_syn_astro']
-            self.conn_dict['p_syn_astro'] = 0.0
             connect_test_base.check_synapse(
                 ['delay'], [syn_params['delay']], syn_params, self)
             self.setUp()
-            self.conn_dict['p_syn_astro'] = tmp
 
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestPairwiseBernoulliAstro)

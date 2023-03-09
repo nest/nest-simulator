@@ -148,7 +148,7 @@ nest::astrocyte::Parameters_::Parameters_()
   , k_IP3R_astro_( 0.0002 )      // 1/(uM*ms)
   , rate_L_astro_( 0.00011 )     // 1/ms
   , SIC_th_astro_( 196.69 )      // nM
-  , tau_IP3_astro_(7142.0 )      // ms
+  , tau_IP3_astro_( 7142.0 )     // ms
   , rate_IP3R_astro_( 0.006 )    // 1/ms
   , rate_SERCA_astro_( 0.0009 )  // uM/ms
 {

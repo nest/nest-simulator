@@ -756,7 +756,9 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
         rng_weight_vec.push_back( weight_[ indx ]->value( grng, source_pos_vector, target_pos_vector, target, tgt ) );
         rng_delay_vec.push_back( delay_[ indx ]->value( grng, source_pos_vector, target_pos_vector, target, tgt ) );
       }
-
+      
+      --number_of_connections;
+      
       // We bail out for non-local neurons only now after all possible
       // random numbers haven been drawn. Bailing out any earlier may lead
       // to desynchronized global rngs.
@@ -778,7 +780,6 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
           rng_delay_vec[ indx ],
           rng_weight_vec[ indx ] );
       }
-      --number_of_connections;
     }
   }
 }

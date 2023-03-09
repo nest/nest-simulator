@@ -125,7 +125,7 @@ const tic_t tic_t_min = LONG_MIN;
 /**
  *  Unsigned long type for enumerations.
  */
-__attribute__( ( __unused__ ) ) const size_t invalid_index = std::numeric_limits< size_t >::max();
+__attribute__( ( __unused__ ) ) constexpr size_t invalid_index = std::numeric_limits< size_t >::max();
 
 /**
  *  For enumerations of synapse types.
@@ -146,18 +146,18 @@ __attribute__( ( __unused__ ) ) const size_t max_targetindex = invalid_targetind
 /**
  * Value for invalid connection thread id.
  */
-const size_t invalid_thread = std::numeric_limits< size_t >::max();
+constexpr size_t invalid_thread = std::numeric_limits< size_t >::max();
 
 /**
  * Value for invalid connection port number.
  */
-const size_t invalid_port = std::numeric_limits< size_t >::max();
+constexpr size_t invalid_port = std::numeric_limits< size_t >::max();
 
 /**
  * Values for min and max delay.
  */
-const long delay_min = std::numeric_limits< long >::min();
-const long delay_max = std::numeric_limits< long >::max();
+constexpr long delay_min = std::numeric_limits< long >::min();
+constexpr long delay_max = std::numeric_limits< long >::max();
 
 /**
  * enum type of signal conveyed by spike events of a node.

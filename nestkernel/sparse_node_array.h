@@ -114,11 +114,11 @@ public:
      */
     NodeEntry( Node&, size_t );
 
-    Node* get_node() const;    //!< return pointer to represented node
+    Node* get_node() const;     //!< return pointer to represented node
     size_t get_node_id() const; //!< return ID of represented node
 
   private:
-    Node* node_;    //!< @note pointer to allow zero-entries for BlockVector compatibility
+    Node* node_;     //!< @note pointer to allow zero-entries for BlockVector compatibility
     size_t node_id_; //!< store node ID locally for faster searching
   };
 
@@ -187,9 +187,9 @@ private:
   bool is_consistent_() const;
 
   BlockVector< NodeEntry > nodes_; //!< stores local node information
-  size_t global_max_node_id_;       //!< globally largest node ID
-  size_t local_min_node_id_;        //!< smallest local node ID
-  size_t local_max_node_id_;        //!< largest local node ID
+  size_t global_max_node_id_;      //!< globally largest node ID
+  size_t local_min_node_id_;       //!< smallest local node ID
+  size_t local_max_node_id_;       //!< largest local node ID
 
   double left_scale_;  //!< scale factor for left side of array
   double right_scale_; //!< scale factor for right side of array

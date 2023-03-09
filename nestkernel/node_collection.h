@@ -385,9 +385,9 @@ class NodeCollectionPrimitive : public NodeCollection
   friend class nc_const_iterator;
 
 private:
-  size_t first_;                        //!< The first node ID in the primitive
-  size_t last_;                         //!< The last node ID in the primitive
-  size_t model_id_;                     //!< Model ID of the node IDs
+  size_t first_;                       //!< The first node ID in the primitive
+  size_t last_;                        //!< The last node ID in the primitive
+  size_t model_id_;                    //!< Model ID of the node IDs
   NodeCollectionMetadataPTR metadata_; //!< Pointer to the metadata of the node IDs
   bool nodes_have_no_proxies_;         //!< Whether the primitive contains devices or not
 

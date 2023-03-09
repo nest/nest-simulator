@@ -191,11 +191,11 @@ private:
   void print_progress_(); //!< TODO: Remove, replace by logging!
 
   Time clock_;                     //!< SimulationManager clock, updated once per slice
-  long slice_;                    //!< current update slice
-  long to_do_;                    //!< number of pending steps
-  long to_do_total_;              //!< number of requested steps in current simulation
-  long from_step_;                //!< update clock_+from_step<=T<clock_+to_step_
-  long to_step_;                  //!< update clock_+from_step<=T<clock_+to_step_
+  long slice_;                     //!< current update slice
+  long to_do_;                     //!< number of pending steps
+  long to_do_total_;               //!< number of requested steps in current simulation
+  long from_step_;                 //!< update clock_+from_step<=T<clock_+to_step_
+  long to_step_;                   //!< update clock_+from_step<=T<clock_+to_step_
   timeval t_slice_begin_;          //!< Wall-clock time at the begin of a time slice
   timeval t_slice_end_;            //!< Wall-clock time at the end of time slice
   long t_real_;                    //!< Accumulated wall-clock time spent simulating (in us)

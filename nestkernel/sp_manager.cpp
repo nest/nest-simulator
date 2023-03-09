@@ -343,8 +343,8 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
   // Index of neurons having a vacant synaptic element
   std::vector< size_t > pre_vacant_id;  // pre synaptic elements (e.g Axon)
   std::vector< size_t > post_vacant_id; // postsynaptic element (e.g Den)
-  std::vector< int > pre_vacant_n;     // number of synaptic elements
-  std::vector< int > post_vacant_n;    // number of synaptic elements
+  std::vector< int > pre_vacant_n;      // number of synaptic elements
+  std::vector< int > post_vacant_n;     // number of synaptic elements
 
   // Index of neuron deleting a synaptic element
   std::vector< size_t > pre_deleted_id, post_deleted_id;

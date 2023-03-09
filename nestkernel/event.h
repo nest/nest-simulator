@@ -314,7 +314,7 @@ public:
   void set_stamp( Time const& );
 
 protected:
-  size_t sender_node_id_;        //!< node ID of sender or 0
+  size_t sender_node_id_;       //!< node ID of sender or 0
   SpikeData sender_spike_data_; //!< spike data of sender node, in some cases required to retrieve node ID
   /*
    * The original formulation used references to Nodes as

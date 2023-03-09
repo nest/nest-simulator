@@ -168,8 +168,8 @@ Layer< D >::get_global_positions_ntree( std::bitset< D > periodic,
     }
   }
 
-  cached_ntree_ = std::shared_ptr< Ntree< D, size_t > >(
-    new Ntree< D, size_t >( this->lower_left_, extent, periodic ) );
+  cached_ntree_ =
+    std::shared_ptr< Ntree< D, size_t > >( new Ntree< D, size_t >( this->lower_left_, extent, periodic ) );
 
   do_get_global_positions_ntree_( node_collection );
 

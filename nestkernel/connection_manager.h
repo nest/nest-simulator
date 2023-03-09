@@ -418,9 +418,9 @@ private:
 
   size_t get_num_connections_( const size_t tid, const synindex syn_id ) const;
 
-  void get_source_node_ids_( const size_t tid, 
-    const synindex syn_id, 
-    const size_t tnode_id, 
+  void get_source_node_ids_( const size_t tid,
+    const synindex syn_id,
+    const size_t tnode_id,
     std::vector< size_t >& sources );
 
   /**

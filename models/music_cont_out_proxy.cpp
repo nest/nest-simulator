@@ -237,13 +237,13 @@ nest::music_cont_out_proxy::pre_run_hook()
   // only publish the output port once,
   if ( S_.published_ == false )
   {
-    const index synmodel_id = kernel().model_manager.get_synapse_model_id( "static_synapse" );
+    const size_t synmodel_id = kernel().model_manager.get_synapse_model_id( "static_synapse" );
     std::vector< MUSIC::GlobalIndex > music_index_map;
 
     DictionaryDatum dummy_params = new Dictionary();
     for ( size_t i = 0; i < P_.targets_->size(); ++i )
     {
-      const index tnode_id = ( *P_.targets_ )[ i ];
+      const size_t tnode_id = ( *P_.targets_ )[ i ];
       if ( kernel().node_manager.is_local_node_id( tnode_id ) )
       {
         kernel().connection_manager.connect( get_node_id(), tnode_id, dummy_params, synmodel_id );
@@ -363,7 +363,7 @@ nest::music_cont_out_proxy::handle( DataLoggingReply& reply )
   // easy access to relevant information
   DataLoggingReply::Container const& info = reply.get_info();
 
-  const index size_t = reply.get_port();
+  const size_t size_t = reply.get_port();
   const size_t record_width = P_.record_from_.size();
   const size_t offset = size_t * record_width;
   const DataLoggingReply::DataItem item = info[ info.size() - 1 ].data;

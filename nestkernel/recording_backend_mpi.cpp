@@ -74,7 +74,7 @@ nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const Dictiona
   if ( device.get_type() == RecordingDevice::SPIKE_RECORDER )
   {
     size_t tid = device.get_thread();
-    index node_id = device.get_node_id();
+    size_t node_id = device.get_node_id();
 
     auto device_it = devices_[ tid ].find( node_id );
     if ( device_it != devices_[ tid ].end() )
@@ -323,8 +323,8 @@ nest::RecordingBackendMPI::write( const RecordingDevice& device,
 {
   // For each event send a message through the right MPI communicator
   const size_t thread_id = kernel().get_kernel_manager().vp_manager.get_thread_id();
-  const index sender = event.get_sender_node_id();
-  const index recorder = device.get_node_id();
+  const size_t sender = event.get_sender_node_id();
+  const size_t recorder = device.get_node_id();
   const Time stamp = event.get_stamp();
 
   auto it_devices = devices_[ thread_id ].find( recorder );
@@ -361,7 +361,7 @@ nest::RecordingBackendMPI::get_port( const RecordingDevice* device, std::string*
 }
 
 void
-nest::RecordingBackendMPI::get_port( const index index_node, const std::string& label, std::string* port_name )
+nest::RecordingBackendMPI::get_port( const size_t index_node, const std::string& label, std::string* port_name )
 {
   // path of the file : path+label+id+.txt
   // (file contains only one line with name of the port )

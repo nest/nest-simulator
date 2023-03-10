@@ -19,18 +19,17 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import nest
-import pytest
-from pytest import approx
-import math
-
 """
-Test that spike_train_injector behaves as expected.
+Test that ``spike_train_injector`` behaves as expected.
 
 This set of tests verifies that the spike_train_injector correctly handles
 the spike times for different options and emits spikes correctly in
 simulation.
 """
+
+import nest
+import pytest
+import math
 
 
 @pytest.fixture
@@ -69,7 +68,7 @@ def test_set_spike_times(
                           )
 
     out_spike_times = nest.GetStatus(inj_nrn, "spike_times")[0]
-    assert out_spike_times == approx(expected_spike_times)
+    assert out_spike_times == pytest.approx(expected_spike_times)
 
 
 @pytest.mark.parametrize('parrot_model', ['parrot_neuron', 'parrot_neuron_ps'])
@@ -103,4 +102,4 @@ def test_spike_train_injector_in_simulation(reset_kernel, parrot_model):
         # round-up
         expected_post_time = math.ceil(expected_post_time / nest.resolution) * nest.resolution
 
-    assert post_time == approx(expected_post_time)
+    assert post_time == pytest.approx(expected_post_time)

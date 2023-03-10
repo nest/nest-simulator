@@ -216,7 +216,6 @@ nest::gif_cond_exp::Parameters_::get( dictionary& d ) const
 void
 nest::gif_cond_exp::Parameters_::set( const dictionary& d, Node* node )
 {
-
   update_value_param( d, names::I_e, I_e_, node );
   update_value_param( d, names::E_L, E_L_, node );
   update_value_param( d, names::g_L, g_L_, node );
@@ -460,10 +459,6 @@ nest::gif_cond_exp::pre_run_hook()
 void
 nest::gif_cond_exp::update( Time const& origin, const long from, const long to )
 {
-
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
 

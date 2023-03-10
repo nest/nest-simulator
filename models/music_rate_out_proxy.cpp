@@ -216,7 +216,6 @@ nest::music_rate_out_proxy::set_status( const dictionary& d )
 void
 nest::music_rate_out_proxy::handle( InstantaneousRateConnectionEvent& e )
 {
-
   // propagate last rate in min delay interval to MUSIC port; we can not use
   // e.end() - 1 since the iterator is defined in terms of unsigned ints, not
   // the event DataType; instead we forward iterate using e.get_coeffvalue and

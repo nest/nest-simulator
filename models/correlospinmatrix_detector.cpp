@@ -198,7 +198,6 @@ nest::correlospinmatrix_detector::State_::set( const dictionary&, const Paramete
 void
 nest::correlospinmatrix_detector::State_::reset( const Parameters_& p )
 {
-
   last_i_ = 0;
   tentative_down_ = false;
   t_last_in_spike_ = Time::neg_inf();

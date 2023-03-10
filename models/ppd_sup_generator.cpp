@@ -126,7 +126,6 @@ nest::ppd_sup_generator::Parameters_::get( dictionary& d ) const
 void
 nest::ppd_sup_generator::Parameters_::set( const dictionary& d, Node* node )
 {
-
   update_value_param( d, names::dead_time, dead_time_, node );
   if ( dead_time_ < 0 )
   {
@@ -227,9 +226,6 @@ nest::ppd_sup_generator::pre_run_hook()
 void
 nest::ppd_sup_generator::update( Time const& T, const long from, const long to )
 {
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   if ( P_.rate_ <= 0 or P_.num_targets_ == 0 )
   {
     return;

@@ -363,9 +363,9 @@ nest::music_cont_out_proxy::handle( DataLoggingReply& reply )
   // easy access to relevant information
   DataLoggingReply::Container const& info = reply.get_info();
 
-  const size_t size_t = reply.get_port();
+  const size_t port = reply.get_port();
   const size_t record_width = P_.record_from_.size();
-  const size_t offset = size_t * record_width;
+  const size_t offset = port * record_width;
   const DataLoggingReply::DataItem item = info[ info.size() - 1 ].data;
   if ( info[ info.size() - 1 ].timestamp.is_finite() )
   {

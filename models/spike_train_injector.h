@@ -72,11 +72,6 @@ in an error.
 Multiple occurrences of the same time indicate that more than one event is to
 be generated at this particular time.
 
-Additionally, `spike_weights` can be set. This is an array as well. It contains
-one weight value per spike time. If set, the spikes are delivered with the
-respective weight multiplied with the weight of the connection. To disable
-this functionality, the spike_weights array can be set to an empty array.
-
 Spike times may not coincide with a time step, i.e., are not a multiple of
 the simulation resolution. Three options control how spike times that do not
 coincide with a step are handled (see also examples below):
@@ -207,9 +202,6 @@ stop
 spike_times
     List of spike times in ms.
 
-spike_weights
-    List of corresponding spike-weights, the unit depends on the receiver.
-
 spike_multiplicities
     List of multiplicities of spikes, same length as spike_times; mostly
     for debugging.
@@ -264,11 +256,8 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding,
    * Overloading, and Hiding
    */
-  using Node::event_hook;
   using Node::receives_signal;
   using Node::sends_signal;
-
-  void event_hook( DSSpikeEvent& ) override;
 
   SignalType
   sends_signal() const override
@@ -333,9 +322,8 @@ private:
     //! Spike time offset, if using precise_times_
     std::vector< double > spike_offsets_;
 
-    std::vector< double > spike_weights_; //!< Spike weights as double
-
-    std::vector< long > spike_multiplicities_; //!< Spike multiplicity
+    //! Spike multiplicity
+    std::vector< long > spike_multiplicities_;
 
     //! Interpret spike times as precise, i.e. send as step and offset
     bool precise_times_;
@@ -355,8 +343,8 @@ private:
     /**
      * Set values from dictionary.
      * @note State is passed so that the position can be reset if the
-     *       spike_times_ or spike_weights_ vector has been filled with
-     *       new data, or if the origin was reset.
+     *       spike_times_ vector has been filled with new data, or if
+     *       the origin was reset.
      */
     void set( const DictionaryDatum&, State_&, const Time&, const Time&, Node* node );
 
@@ -421,19 +409,9 @@ inline port
 spike_train_injector::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
   enforce_single_syn_type( syn_id );
-
-  if ( dummy_target )
-  {
-    DSSpikeEvent e;
-    e.set_sender( *this );
-    return target.handles_test_event( e, receptor_type );
-  }
-  else
-  {
-    SpikeEvent e;
-    e.set_sender( *this );
-    return target.handles_test_event( e, receptor_type );
-  }
+  SpikeEvent e;
+  e.set_sender( *this );
+  return target.handles_test_event( e, receptor_type );
 }
 
 

@@ -54,7 +54,6 @@ spike_train_injector::Parameters_::Parameters_()
   , stop_( Time::pos_inf() )
   , spike_stamps_()
   , spike_offsets_()
-  , spike_weights_()
   , spike_multiplicities_()
   , precise_times_( false )
   , allow_offgrid_times_( false )
@@ -68,7 +67,6 @@ spike_train_injector::Parameters_::Parameters_( const Parameters_& p )
   , stop_( p.stop_ )
   , spike_stamps_( p.spike_stamps_ )
   , spike_offsets_( p.spike_offsets_ )
-  , spike_weights_( p.spike_weights_ )
   , spike_multiplicities_( p.spike_multiplicities_ )
   , precise_times_( p.precise_times_ )
   , allow_offgrid_times_( p.allow_offgrid_times_ )
@@ -91,7 +89,6 @@ spike_train_injector::Parameters_::operator=( const Parameters_& p )
   stop_ = p.stop_;
   spike_stamps_ = p.spike_stamps_;
   spike_offsets_ = p.spike_offsets_;
-  spike_weights_ = p.spike_weights_;
   spike_multiplicities_ = p.spike_multiplicities_;
   precise_times_ = p.precise_times_;
   allow_offgrid_times_ = p.allow_offgrid_times_;
@@ -127,7 +124,6 @@ spike_train_injector::Parameters_::get( DictionaryDatum& d ) const
   ( *d )[ names::start ] = start_.get_ms();
   ( *d )[ names::stop ] = stop_.get_ms();
   ( *d )[ names::spike_times ] = DoubleVectorDatum( times_ms );
-  ( *d )[ names::spike_weights ] = DoubleVectorDatum( new std::vector< double >( spike_weights_ ) );
   ( *d )[ names::spike_multiplicities ] = IntVectorDatum( new std::vector< long >( spike_multiplicities_ ) );
   ( *d )[ names::precise_times ] = BoolDatum( precise_times_ );
   ( *d )[ names::allow_offgrid_times ] = BoolDatum( allow_offgrid_times_ );
@@ -269,30 +265,6 @@ spike_train_injector::Parameters_::set( const DictionaryDatum& d,
     }
   }
 
-  // spike_weights can be the same size as spike_times, or can be of size 0 to
-  // only use the spike_times array
-  bool updated_spike_weights = d->known( names::spike_weights );
-  if ( updated_spike_weights )
-  {
-    std::vector< double > spike_weights = getValue< std::vector< double > >( d->lookup( names::spike_weights ) );
-
-    if ( spike_weights.empty() )
-    {
-      spike_weights_.clear();
-    }
-    else
-    {
-      if ( spike_weights.size() != spike_stamps_.size() )
-      {
-        throw BadProperty(
-          "spike_weights must have the same number of elements as spike_times,"
-          " or 0 elements to clear the property." );
-      }
-
-      spike_weights_.swap( spike_weights );
-    }
-  }
-
   // spike_multiplicities can be the same size as spike_times,
   // or can be of size 0 to only use the spike_times array
   bool updated_spike_multiplicities = d->known( names::spike_multiplicities );
@@ -319,7 +291,7 @@ spike_train_injector::Parameters_::set( const DictionaryDatum& d,
   }
 
   // Set position to start if something changed
-  if ( updated_spike_times or updated_spike_weights or updated_spike_multiplicities or d->known( names::origin ) )
+  if ( updated_spike_times or updated_spike_multiplicities or d->known( names::origin ) )
   {
     s.position_ = 0;
   }
@@ -424,7 +396,6 @@ spike_train_injector::update( Time const& sliceT0, const long from, const long t
   }
 
   assert( not P_.precise_times_ or P_.spike_stamps_.size() == P_.spike_offsets_.size() );
-  assert( P_.spike_weights_.empty() or P_.spike_stamps_.size() == P_.spike_weights_.size() );
   assert( P_.spike_multiplicities_.empty() or P_.spike_stamps_.size() == P_.spike_multiplicities_.size() );
 
   const Time tstart = sliceT0 + Time::step( from );
@@ -452,18 +423,7 @@ spike_train_injector::update( Time const& sliceT0, const long from, const long t
     if ( get_t_min_() < step and step <= get_t_max_() )
     {
       SpikeEvent* se;
-
-      // if we have to deliver weighted spikes, we need to get the
-      // event back to set its weight according to the entry in
-      // spike_weights_, so we use a DSSpike event and event_hook()
-      if ( not P_.spike_weights_.empty() )
-      {
-        se = new DSSpikeEvent;
-      }
-      else
-      {
-        se = new SpikeEvent;
-      }
+      se = new SpikeEvent;
 
       if ( P_.precise_times_ )
       {
@@ -488,13 +448,6 @@ spike_train_injector::update( Time const& sliceT0, const long from, const long t
 }
 
 void
-spike_train_injector::event_hook( DSSpikeEvent& e )
-{
-  e.set_weight( P_.spike_weights_[ S_.position_ ] * e.get_weight() );
-  e.get_receiver().handle( e );
-}
-
-void
 spike_train_injector::enforce_single_syn_type( synindex syn_id )
 {
   if ( first_syn_id_ == invalid_synindex )
@@ -506,6 +459,5 @@ spike_train_injector::enforce_single_syn_type( synindex syn_id )
     throw IllegalConnection( "All outgoing connections from a static injector neuron must use the same synapse type." );
   }
 }
-
 
 } // namespace

@@ -54,9 +54,11 @@ def test_set_spike_times(
     allow_offgrid_times
 ):
     """
-    Verify correct handling of spike times not coinciding with a step for
-    different options. We set NEST to work with default resolution (step size)
-    of 0.1 ms and default tic length of 0.001 ms.
+    Test correct handling of spike times.
+
+    This test verifies correct handling of spike times not coinciding with
+    a step for different options. We set NEST to work with default resolution
+    (step size) of 0.1 ms and default tic length of 0.001 ms.
     """
     nest.set(resolution=0.1, tics_per_ms=1000.0)
 
@@ -73,8 +75,10 @@ def test_set_spike_times(
 @pytest.mark.parametrize('parrot_model', ['parrot_neuron', 'parrot_neuron_ps'])
 def test_spike_train_injector_in_simulation(reset_kernel, parrot_model):
     """
-    Verify behavior of spike train injector neuron in simulations by
-    using parrot neuron's spike repetition properties.
+    Test spike train injector in simulation.
+
+    This test verifies the behavior of the spike train injector neuron in
+    simulations by using parrot neuron's spike repetition properties.
     """
     spike_time = 1.01
     delay = 0.2

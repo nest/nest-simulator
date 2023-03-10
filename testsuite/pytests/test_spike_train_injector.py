@@ -21,7 +21,8 @@
 
 import nest
 import pytest
-import numpy as np
+from pytest import approx
+import math
 
 """
 Test that spike_train_injector behaves as expected.
@@ -66,7 +67,7 @@ def test_set_spike_times(
                           )
 
     out_spike_times = nest.GetStatus(inj_nrn, "spike_times")[0]
-    assert np.array_equal(out_spike_times, np.array(expected_spike_times))
+    assert out_spike_times == approx(expected_spike_times)
 
 
 @pytest.mark.parametrize('parrot_model', ['parrot_neuron', 'parrot_neuron_ps'])
@@ -82,7 +83,7 @@ def test_spike_train_injector_in_simulation(reset_kernel, parrot_model):
     source = nest.Create("spike_train_injector", 1,
                          {"spike_times": [spike_time],
                           'precise_times': True})
-    parrot = parrot = nest.Create(parrot_model)
+    parrot = nest.Create(parrot_model)
     srec = nest.Create("spike_recorder")
 
     nest.Connect(source, parrot, syn_spec={"delay": delay})
@@ -96,6 +97,6 @@ def test_spike_train_injector_in_simulation(reset_kernel, parrot_model):
     expected_post_time = spike_time + delay
     if parrot_model == 'parrot_neuron':
         # round-up
-        expected_post_time = np.true_divide(np.ceil(expected_post_time * 10), 10)
+        expected_post_time = math.ceil(expected_post_time / nest.resolution) * nest.resolution
 
-    assert post_time == expected_post_time
+    assert post_time == approx(expected_post_time)

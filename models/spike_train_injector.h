@@ -46,7 +46,7 @@ Neuron that emits prescribed spike trains.
 Description
 +++++++++++
 
-The spike train injector neuron simply emits spikes at prescribed spike times
+The spike train injector neuron emits spikes at prescribed spike times
 which are given as an array. Incoming spikes will be ignored.
 
 The spike train injector neuron behaves similarly to a spike generator, but

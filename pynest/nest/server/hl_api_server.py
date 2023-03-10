@@ -82,7 +82,7 @@ def do_exec(args, kwargs):
         response = dict()
         if RESTRICTION_OFF:
             with Capturing() as stdout:
-                exec(source_cleaned, get_globals(), locals_)
+                exec(source_cleaned, get_globals(globals().copy()), locals_)
             if len(stdout) > 0:
                 response['stdout'] = '\n'.join(stdout)
         else:
@@ -249,17 +249,20 @@ def get_arguments(request):
     return list(args), kwargs
 
 
-def get_globals():
+def get_globals(globalsDict={}):
     """ Get globals for exec function.
+
+        Convert environment variable MODULES to dict:
+        "MODULES=nest,numpy as np" to "{'nest': <module 'nest'> 'np': <module 'numpy'>}"
     """
-    copied_globals = globals().copy()
-
-    # Add modules to copied globals
-    modlist = [(module, importlib.import_module(module)) for module in MODULES]
+    modlist = [(module, importlib.import_module(module)) for module in MODULES if ' as ' not in module]
+    modlist.extend([
+        (module.split(' as ')[1], importlib.import_module(module.split(' as ')[0])) for module in MODULES
+        if ' as ' in module
+    ])
     modules = dict(modlist)
-    copied_globals.update(modules)
-
-    return copied_globals
+    globalsDict.update(modules)
+    return globalsDict
 
 
 def get_or_error(func):
@@ -305,12 +308,7 @@ def get_restricted_globals():
         _write_=RestrictedPython.Guards.full_write_guard,
     )
 
-    # Add modules to restricted globals
-    modlist = [(module, importlib.import_module(module)) for module in MODULES]
-    modules = dict(modlist)
-    restricted_globals.update(modules)
-
-    return restricted_globals
+    return get_globals(restricted_globals)
 
 
 def nestify(call_name, args, kwargs):

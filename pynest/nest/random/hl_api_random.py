@@ -36,6 +36,11 @@ def uniform(min=0.0, max=1.0):
 
     Samples are distributed uniformly in [min, max) (includes min, but excludes max).
 
+    Note
+    ----
+    See :ref:`this documentation <random_delays>` for details on the effect
+    of time discretization on delays drawn from a uniform distribution.
+
     Parameters
     ----------
     min : float, optional

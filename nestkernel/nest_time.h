@@ -286,7 +286,7 @@ public:
   /////////////////////////////////////////////////////////////
 
 protected:
-  explicit Time( tic_t tics )
+  Time( tic_t tics )
     : tics( tics )
   {
   } // This doesn't check ranges.

@@ -48,6 +48,12 @@ else ()
         )
 endif ()
 
+set_target_properties( nest_lib
+    PROPERTIES
+    VERSION ${NEST_VERSION}
+    SOVERSION 3
+    )
+
 target_link_libraries( nest
     nestutil nestkernel sli_lib sli_readline
     ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES} OpenMP::OpenMP_CXX )

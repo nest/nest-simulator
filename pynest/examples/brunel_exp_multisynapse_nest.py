@@ -30,7 +30,7 @@ The example demonstrate the usage of the multisynapse neuron
 model. Each spike arriving at the neuron triggers an exponential
 PSP. The time constant associated with the PSP is defined in the
 receptor type array tau_syn of each neuron. The receptor types of all
-connections are uniformally distributed, resulting in uniformally
+connections are uniformly distributed, resulting in uniformly
 distributed time constants of the PSPs.
 
 When connecting the network, customary synapse models are used, which
@@ -189,7 +189,7 @@ nest.CopyModel("static_synapse", "inhibitory",
 # generator is connected to all neurons in the population the default rule
 # (# ``all_to_all``) of ``Connect`` is used. The synaptic properties are
 # pre-defined # in a dictionary and inserted via ``syn_spec``. As synaptic model
-# the pre-defined synapses "excitatory" and "inhibitory" are choosen,
+# the pre-defined synapses "excitatory" and "inhibitory" are chosen,
 # thus setting ``weight`` and ``delay``. The receptor type is drawn from a
 # distribution for each connection, which is specified in the synapse
 # properties by assigning a dictionary to the keyword ``receptor_type``,
@@ -278,8 +278,9 @@ rate_in = events_in / simtime * 1000.0 / N_rec
 # inhibitory synapse model. The numbers are summed up resulting in the total
 # number of synapses.
 
-num_synapses = (nest.GetDefaults("excitatory")["num_connections"]
-                + nest.GetDefaults("inhibitory")["num_connections"])
+num_synapses_ex = nest.GetDefaults("excitatory")["num_connections"]
+num_synapses_in = nest.GetDefaults("inhibitory")["num_connections"]
+num_synapses = num_synapses_ex + num_synapses_in
 
 ###############################################################################
 # Establishing the time it took to build and simulate the network by taking
@@ -294,8 +295,8 @@ sim_time = endsimulate - endbuild
 print("Brunel network simulation (Python)")
 print(f"Number of neurons : {N_neurons}")
 print(f"Number of synapses: {num_synapses}")
-print(f"       Exitatory  : {int(CE * N_neurons) + N_neurons}")
-print(f"       Inhibitory : {int(CI * N_neurons)}")
+print(f"       Excitatory : {num_synapses_ex}")
+print(f"       Inhibitory : {num_synapses_in}")
 print(f"Excitatory rate   : {rate_ex:.2f} Hz")
 print(f"Inhibitory rate   : {rate_in:.2f} Hz")
 print(f"Building time     : {build_time:.2f} s")

@@ -3,34 +3,45 @@
 Install NEST
 ============
 
+.. grid:: 1 1 2 2
 
-Install pre-built NEST package
-------------------------------
+   .. grid-item-card::  |user| Install pre-built NEST package
+       :class-title: sd-d-flex-row sd-align-minor-center
 
-|user|  I'm a user who wants to :ref:`install NEST on my computer <user_install>`
+       I'm a user who wants to :ref:`install NEST on my computer <user_install>`
+
+
+   .. grid-item-card:: |teacher| Install NEST for a class or workshop
+       :class-title: sd-d-flex-row sd-align-minor-center
+
+       I'm a lecturer who wants to :ref:`use NEST to teach <lecturer>`
+
+
+.. grid:: 1 1 2 2
+
+    .. grid-item-card:: |admin| Install NEST for supercomputers and clusters
+       :class-title: sd-d-flex-row sd-align-minor-center
+
+       I'm an admin or user who wants to :ref:`run NEST on HPC <admin_install>`
+
+    .. grid-item-card:: |dev| Install NEST from source
+       :class-title: sd-d-flex-row sd-align-minor-center
+
+       I'm a developer who wants to :ref:`do development in NEST <dev_install>`
+
+.. grid:: 1 1 2 2
+
+    .. grid-item-card:: |nestml| Install NEST with NESTML
+       :class-title: sd-d-flex-row sd-align-minor-center
+
+       I'm a user who wants to :doc:`create or customize models <nestml:installation>`.
 
 |
 
-Install NEST for a class or workshop
-------------------------------------
 
-|lecturer| I'm a lecturer who wants to :ref:`use NEST to teach <lecturer>`
-
-|
-
-Install NEST for HPC
---------------------
-
-|admin| I'm an administrator or user who wants to :ref:`set up NEST on a large cluster or supercomputer <admin_install>`
-
-|
-
-Install NEST from source
-------------------------
-
-|dev| I'm a developer who wants to :ref:`do development in NEST <dev_install>`
 
 ----
+
 
 If installation didn't work, see the :ref:`troubleshooting section <troubleshooting>`.
 
@@ -45,19 +56,9 @@ If installation didn't work, see the :ref:`troubleshooting section <troubleshoot
    cmake_options
    *
 
-.. |user| image:: ../static/img/020-user_black.png
-   :target: user.html
-   :width: 100px
-
-.. |dev| image:: ../static/img/dev_black.png
-   :target: developer.html
-   :width: 100px
-
-.. |admin| image:: ../static/img/001-shuttle_black.png
-   :target: admin.html
-   :width: 100px
-
-.. |lecturer| image:: ../static/img/class_black.png
-   :target: lecturer.html
-   :width: 100px
-
+.. |user| image:: ../static/img/020-user.svg
+.. |teacher| image:: ../static/img/014-teacher.svg
+.. |admin| image:: ../static/img/001-shuttle.svg
+.. |dev| image:: ../static/img/dev_orange.svg
+.. |nestml| image:: ../static/img/nestml-logo.png
+      :scale: 15%

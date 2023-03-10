@@ -7,7 +7,7 @@ Those parrot neurons, or why you never connect devices to each other
 
 In ``receive.py`` in :ref:`Part 2 of the MUSIC tutorial <music_tutorial_2>`, we used parrot neurons as
 target for the input proxies, then connected the spike recorder to those
-neurons. Couldn’t we have connected the spike recorder directly to the
+neurons. Couldn't we have connected the spike recorder directly to the
 proxies?
 
 No, we could not. NEST devices are not generally implemented the same
@@ -17,7 +17,7 @@ simulation, but devices such as the spike recorder and the MUSIC event
 handler are usually duplicated aross all nodes.
 
 When you connect a set of neurons to a spike recorder, you normally
-don’t want all that spike data to travel across the network to a single
+don't want all that spike data to travel across the network to a single
 computing node where it gets saved. It would be very inefficient.
 Instead, the spike recorder is duplicated on each node and each clone
 saves the data from its local neurons. In the same way, the MUSIC event
@@ -26,7 +26,7 @@ channels that its local targets request.
 
 But if you connect the input proxies directly to the spike recorder,
 *all* channels have a local spike recorder target on every computing
-node. We would get duplicate spike traces, one for each MPI process on
+node. We would get duplicate spike traces, one for each :hxt_ref:`MPI` process on
 the receiving side. To test this, replace line 18 in
 ``receive.py`` with
 
@@ -58,10 +58,10 @@ channels, so all our input events are duplicated. Also, as you can see
 the input and output times are now identical, since a delay is never
 applied anywhere along the path from the inputs to the outputs.
 
-The lesson is that you don’t connect two NEST devices to each other
+The lesson is that you don't connect two NEST devices to each other
 unless the documentation specifically tells you that you can. Always add
 a layer of neuron models, such as parrot neurons, in between.
 This is true for devices in general of course, but this connection
 pattern, where you want to record the MUSIC input from another
-simulation, is so common that it’s worth warning about this.
+simulation, is so common that it's worth warning about this.
 

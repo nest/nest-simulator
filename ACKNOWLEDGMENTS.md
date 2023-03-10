@@ -1,10 +1,10 @@
 **Acknowledgments**
 
-NEST development has been supported by many organisations, programs, and 
-individuals since 1993. The following list of support received is therefore 
+NEST development has been supported by many organisations, programs, and
+individuals since 1993. The following list of support received is therefore
 necessarily incomplete.
 
-This project has received funding from the European Union’s Horizon 2020 
+This project has received funding from the European Union's Horizon 2020
 Framework Programme for Research and Innovation under Specific Grant Agreement:
 
 - No. 945539 (Human Brain Project SGA3),
@@ -13,7 +13,7 @@ Framework Programme for Research and Innovation under Specific Grant Agreement:
 - No. 754304 (DEEP-EST), and
 - No. 800858 (ICEI).
 
-The NEST developers gratefully acknowledge the support and funding received 
+The NEST developers gratefully acknowledge the support and funding received
 from:
 
 - Jülich Aachen Research Alliance (JARA),

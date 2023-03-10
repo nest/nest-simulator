@@ -85,7 +85,7 @@ void
 ArchivingNode::register_stdp_connection( double t_first_read, double delay )
 {
   // Mark all entries in the deque, which we will not read in future as read by
-  // this input input, so that we savely increment the incoming number of
+  // this input, so that we safely increment the incoming number of
   // connections afterwards without leaving spikes in the history.
   // For details see bug #218. MH 08-04-22
 

@@ -46,7 +46,7 @@ Description
 
 The ``poisson_generator`` simulates a neuron that is firing with Poisson
 statistics, that is, exponentially distributed interspike intervals. It will
-generate a `unique` spike train for each of it's targets. If you do not want
+generate a `unique` spike train for each of its targets. If you do not want
 this behavior and need the same spike train for all targets, you have to use a
 ``parrot_neuron`` between the poisson generator and the targets.
 
@@ -123,7 +123,7 @@ private:
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------

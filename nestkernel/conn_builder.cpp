@@ -205,9 +205,12 @@ nest::ConnBuilder::connect()
 {
   // We test here, and not in the ConnBuilder constructor, so the derived
   // classes are fully constructed when the test is executed
-  for ( auto syn_model : synapse_model_id_ )
+  for ( auto synapse_model_id : synapse_model_id_ )
   {
-    if ( kernel().model_manager.connector_requires_symmetric( syn_model ) and not( is_symmetric() or make_symmetric_ ) )
+    const ConnectorModel& synapse_model = kernel().model_manager.get_connection_model( synapse_model_id );
+    const bool requires_symmetric = synapse_model.has_property( ConnectionModelProperties::REQUIRES_SYMMETRIC );
+
+    if ( requires_symmetric and not( is_symmetric() or make_symmetric_ ) )
     {
       throw BadProperty(
         "Connections with this synapse model can only be created as "
@@ -1724,7 +1727,7 @@ nest::SymmetricBernoulliBuilder::connect_()
         // check whether the target is on this thread
         if ( target->is_proxy() )
         {
-          target_thread = invalid_thread_;
+          target_thread = invalid_thread;
         }
 
         previous_snode_ids.clear();
@@ -1749,20 +1752,20 @@ nest::SymmetricBernoulliBuilder::connect_()
 
           if ( source->is_proxy() )
           {
-            source_thread = invalid_thread_;
+            source_thread = invalid_thread;
           }
 
           // if target is local: connect
           if ( target_thread == tid )
           {
-            assert( target != NULL );
+            assert( target );
             single_connect_( snode_id, *target, target_thread, synced_rng );
           }
 
           // if source is local: connect
           if ( source_thread == tid )
           {
-            assert( source != NULL );
+            assert( source );
             single_connect_( ( *tnode_id ).node_id, *source, source_thread, synced_rng );
           }
 

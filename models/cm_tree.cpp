@@ -70,7 +70,6 @@ nest::Compartment::Compartment( const long compartment_index,
   , hh( 0.0 )
   , n_passed( 0 )
 {
-
   updateValue< double >( compartment_params, names::C_m, ca );
   updateValue< double >( compartment_params, names::g_C, gc );
   updateValue< double >( compartment_params, names::g_L, gl );
@@ -115,7 +114,7 @@ nest::Compartment::construct_matrix_element( const long lag )
   // matrix diagonal element
   gg = gg0;
 
-  if ( parent != nullptr )
+  if ( parent )
   {
     gg += gc__div__2;
     // matrix off diagonal element
@@ -130,7 +129,7 @@ nest::Compartment::construct_matrix_element( const long lag )
   // right hand side
   ff = ( ca__div__dt - gl__div__2 ) * v_comp + gl__times__el;
 
-  if ( parent != nullptr )
+  if ( parent )
   {
     ff -= gc__div__2 * ( v_comp - parent->v_comp );
   }
@@ -160,7 +159,7 @@ nest::CompTree::CompTree()
 
 /**
  * Add a compartment to the tree structure via the python interface
- * root shoud have -1 as parent index. Add root compartment first.
+ * root should have -1 as parent index. Add root compartment first.
  * Assumes parent of compartment is already added
  */
 void
@@ -190,7 +189,7 @@ nest::CompTree::add_compartment( Compartment* compartment, const long parent_ind
      * exception message
      */
     Compartment* parent = get_compartment( parent_index, get_root(), 0 );
-    if ( parent == nullptr )
+    if ( not parent )
     {
       std::string msg = "does not exist in tree, but was specified as a parent compartment";
       throw UnknownCompartment( parent_index, msg );
@@ -241,14 +240,14 @@ nest::CompTree::get_compartment( const long compartment_index, Compartment* comp
   else
   {
     auto child_it = compartment->children.begin();
-    while ( ( not r_compartment ) && child_it != compartment->children.end() )
+    while ( not r_compartment and child_it != compartment->children.end() )
     {
       r_compartment = get_compartment( compartment_index, &( *child_it ), 0 );
       ++child_it;
     }
   }
 
-  if ( ( not r_compartment ) && raise_flag )
+  if ( not r_compartment and raise_flag )
   {
     std::string msg = "does not exist in tree";
     throw UnknownCompartment( compartment_index, msg );
@@ -436,7 +435,7 @@ nest::CompTree::solve_matrix_downsweep( Compartment* compartment, std::vector< C
   std::pair< double, double > output = compartment->io();
 
   // move on to the parent layer
-  if ( compartment->parent != nullptr )
+  if ( compartment->parent )
   {
     Compartment* parent = compartment->parent;
     // gather input from child layers
@@ -488,7 +487,7 @@ nest::CompTree::print_tree() const
     std::cout << "C_m = " << compartment->ca << " nF, ";
     std::cout << "g_L = " << compartment->gl << " uS, ";
     std::cout << "e_L = " << compartment->el << " mV, ";
-    if ( compartment->parent != nullptr )
+    if ( compartment->parent )
     {
       std::cout << "Parent " << compartment->parent->comp_index << " --> ";
       std::cout << "g_c = " << compartment->gc << " uS, ";

@@ -3,34 +3,9 @@
 Configuration Options
 =====================
 
-There are two main ways of configuring NEST at runtime, via the configuration file or command line switches.
-
-NEST configuration file
------------------------
-
-Upon importing the NEST Python module or starting the ``nest`` executable from the command line for the first time, NEST will create a
-configuration file called ``.nestrc`` in your home directory.
-
-By adapting this file, you can set a number of options:
-
-* The browser for displaying the helpdesk
-* The pager for showing the built-in help in the terminal
-* The ``mpirun`` command for :ref:`parallel execution <parallel_computing>` of the testsuite
-
-In case your MPI Implementation requires special options (e.g. ``--oversubscribe`` to allow the use of more
-processes than available compute cores in OpenMPI versions above 3.0), you can add them to the ``mpirun`` command as shown in
-the following example:
-
-::
-
-    /mpirun
-    [/integertype /stringtype /stringtype]
-    [/numproc     /executable /scriptfile]
-    {
-     () [
-      (mpirun --oversubscribe -np ) numproc cvs ( ) executable ( ) scriptfile
-     ] {join} Fold
-    } Function def
+The behavior of the NEST executable can be tweaked by supplying it
+with command line switches, SLI scripts, and additional parameters for
+the scripts.
 
 Command line switches for the nest executable
 ---------------------------------------------

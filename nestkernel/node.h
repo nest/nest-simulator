@@ -32,14 +32,14 @@
 #include <vector>
 
 // Includes from nestkernel:
+#include "deprecation_warning.h"
 #include "event.h"
 #include "histentry.h"
 #include "nest_names.h"
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node_collection.h"
-
-#include "deprecation_warning.h"
+#include "secondary_event.h"
 
 // Includes from sli:
 #include "dictdatum.h"
@@ -125,7 +125,7 @@ public:
   virtual Node*
   clone() const
   {
-    return 0;
+    return nullptr;
   }
 
   /**
@@ -834,6 +834,9 @@ public:
 private:
   void set_node_id_( index ); //!< Set global node id
 
+  /**
+   * Set the original NodeCollection of this node.
+   */
   void set_nc_( NodeCollectionPTR );
 
   /** Return a new dictionary datum .
@@ -910,7 +913,7 @@ private:
   bool initialized_;   //!< state and buffers have been initialized
   bool node_uses_wfr_; //!< node uses waveform relaxation method
 
-  NodeCollectionPTR nc_ptr_;
+  NodeCollectionPTR nc_ptr_; //!< Original NodeCollection of this node, used to extract node-specific metadata
 };
 
 inline bool
@@ -1013,7 +1016,7 @@ Node::set_model_id( int i )
 inline bool
 Node::is_model_prototype() const
 {
-  return vp_ == invalid_thread_;
+  return vp_ == invalid_thread;
 }
 
 inline void

@@ -102,7 +102,7 @@ is composed of a series of blocks in the following order:
 The data layout of the NEST SIONlib file format v2 is shown in the
 following figure.
 
-.. figure:: ../_static/img/nest_sionlib_file_format_v2.png
+.. figure:: ../static/img/nest_sionlib_file_format_v2.png
    :alt: NEST SIONlib binary file format
 
    NEST SIONlib binary file format.

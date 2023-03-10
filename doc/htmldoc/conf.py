@@ -22,18 +22,13 @@
 
 import sys
 import os
-import re
-import pip
-import subprocess
+
+from urllib.request import urlretrieve
 
 from pathlib import Path
 from shutil import copyfile
 import json
-
-import sphinx_rtd_theme
-
-from subprocess import check_output, CalledProcessError
-from mock import Mock as MagicMock
+import subprocess
 
 
 source_dir = os.environ.get('NESTSRCDIR', False)
@@ -95,33 +90,34 @@ extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
-    'sphinx.ext.todo',
-    'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
-    'sphinx_tabs.tabs',
+    'IPython.sphinxext.ipython_console_highlighting',
     'nbsphinx',
-    'sphinx_rtd_theme',
+    'sphinx_design',
     'HoverXTooltip',
     'VersionSyncRole',
 ]
 
-mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa
+mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+# "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+# "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa
 
+panels_add_bootstrap_css = False
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ['templates']
 
 sphinx_gallery_conf = {
      # 'doc_module': ('sphinx_gallery', 'numpy'),
      # path to your examples scripts
-     'examples_dirs': source_dir / 'pynest/examples',
+     'examples_dirs': str(source_dir / 'pynest/examples'),
      # path where to save gallery generated examples
-     'gallery_dirs': doc_build_dir / 'auto_examples',
+     'gallery_dirs': str(doc_build_dir / 'auto_examples'),
      # 'backreferences_dir': False
      'plot_gallery': 'False'
 }
 
 # General information about the project.
-project = u'NEST simulator user documentation'
+project = u'NEST Simulator user documentation'
 copyright = u'2004, nest-simulator'
 author = u'nest-simulator'
 
@@ -136,12 +132,20 @@ author = u'nest-simulator'
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = ['Thumbs.db', '.DS_Store', 'nest_by_example', 'README.md']
+exclude_patterns = [
+    '**.ipynb_checkpoints',
+    '.DS_Store',
+    'README.md',
+    'Thumbs.db',
+    'auto_examples/**.ipynb',
+    'auto_examples/index.rst',
+    'nest_by_example',
+]
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'manni'
@@ -161,22 +165,49 @@ numfig_format = {'figure': 'Figure %s', 'table': 'Table %s',
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'sphinx_material'
+html_title = 'NEST Simulator Documentation'
 html_logo = str(doc_build_dir / 'static/img/nest_logo.png')
-html_theme_options = {'logo_only': True,
-                      'display_version': True,
-                      'style_external_links': True}
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-# html_theme_options = {}
+html_theme_options = {
+    # Set the name of the project to appear in the navigation.
+    # Set you GA account ID to enable tracking
+    # 'google_analytics_account': 'UA-XXXXX',
 
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
+    # Specify a base_url used to generate sitemap.xml. If not
+    # specified, then no sitemap will be built.
+    'base_url': 'https://nest-simulator.readthedocs.io/en/latest/',
+    'html_minify': False,
+    'html_prettify': False,
+    'css_minify': True,
+    # Set the color and the accent color
+    'color_primary': 'orange',
+    'color_accent': 'white',
+    'theme_color': 'ff6633',
+    'master_doc': True,
+    # Set the repo location to get a badge with stats
+    'repo_url': 'https://github.com/nest/nest-simulator/',
+    'repo_name': 'NEST Simulator',
+    # "nav_links": [
+    #     {"href": "index", "internal": True, "title": "NEST docs home"}
+    #     ],
+    # Visible levels of the global TOC; -1 means unlimited
+    'globaltoc_depth': 1,
+    # If False, expand all TOC entries
+    'globaltoc_collapse': True,
+    # If True, show hidden TOC entries
+    'globaltoc_includehidden': True,
+    }
+
 html_static_path = [str(doc_build_dir / 'static')]
+html_additional_pages = {'index': 'index.html'}
+html_sidebars = {
+    "**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]
+}
 
 # -- Options for HTMLHelp output ------------------------------------------
 
@@ -196,8 +227,9 @@ intersphinx_mapping = {
     'pynn': ('http://neuralensemble.org/docs/PyNN/', None),
     'elephant': ('https://elephant.readthedocs.io/en/latest/', None),
     'desktop': ('https://nest-desktop.readthedocs.io/en/latest/', None),
+    'gpu': ('https://nest-gpu.readthedocs.io/en/latest/', None),
     'neuromorph': ('https://electronicvisions.github.io/hbp-sp9-guidebook/', None),
-    'arbor': ('https://arbor.readthedocs.io/en/latest/', None),
+    'arbor': ('https://docs.arbor-sim.org/en/latest/', None),
     'tvb': ('http://docs.thevirtualbrain.org/', None),
     'extmod': ('https://nest-extension-module.readthedocs.io/en/latest/', None),
 }
@@ -226,7 +258,6 @@ def setup(app):
     app.connect("source-read", toc_customizer)
     app.add_css_file('css/custom.css')
     app.add_css_file('css/pygments.css')
-    app.add_js_file("js/copybutton.js")
     app.add_js_file("js/custom.js")
 
     # for events see
@@ -281,7 +312,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'nestsimulator', u'NEST simulator Documentation',
+    (master_doc, 'nestsimulator', u'NEST Simulator Documentation',
      [author], 1)
 ]
 
@@ -292,14 +323,14 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'NESTsimulator', u'NEST simulator Documentation',
+    (master_doc, 'NESTsimulator', u'NEST Simulator Documentation',
      author, 'NESTsimulator', 'One line description of project.',
      'Miscellaneous'),
 ]
 
 
 def copy_example_file(src):
-    copyfile(src, doc_build_dir / "examples" / src.parts[-1])
+    copyfile(src, doc_build_dir / "static/img" / src.parts[-1])
 
 
 def copy_acknowledgments_file(src):
@@ -308,9 +339,59 @@ def copy_acknowledgments_file(src):
 
 # -- Copy Acknowledgments file ----------------------------
 copy_acknowledgments_file(source_dir / "ACKNOWLEDGMENTS.md")
+
 # -- Copy documentation for Microcircuit Model ----------------------------
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/box_plot.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/raster_plot.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/microcircuit.png")
-copy_example_file(source_dir / "pynest/examples/Potjans_2014/README.rst")
 copy_example_file(source_dir / "pynest/examples/hpc_benchmark_connectivity.svg")
+
+
+def patch_documentation(patch_url):
+    """Apply a hot-fix patch to the documentation before building it.
+
+    This function is useful in situations where the online documentation should
+    be modified, but the reason for a new documentation build does not justify
+    a new release of NEST. Example situations are the discovery of broken links
+    spelling errors, or styling issues. Moreover, this mechanism can be used to
+    customize to the look and feel of the NEST documentation in individual
+    installations.
+
+    In order to make use of this function, the environment variable ``patch_url``
+    has to be set to the URL where documentation patch files are located. The
+    environment variable must either be set locally or via the admin panel of
+    Read the Docs.
+
+    Patch files under the ``patch_url`` are expected to have names in the format
+    ``{git_hash}_doc.patch``, where ``{git_hash}`` is the full hash of the version the
+    patch applies to.
+
+    The basic algorithm implemented by this function is the following:
+      1. obtain the Git hash of the version currently checked out
+      2. log the hash by printing it to the console
+      3. retrieve the patch
+
+    """
+
+    print("Preparing patch...")
+    try:
+        git_dir = str(source_dir / ".git")
+        git_hash = subprocess.check_output(
+            f"GIT_DIR='{git_dir}' git rev-parse HEAD",
+            shell=True,
+            encoding='utf8').strip()
+        print(f"  current git hash: {git_hash}")
+        patch_file = f'{git_hash}_doc.patch'
+        patch_url = f'{patch_url}/{patch_file}'
+        print(f"  retrieving {patch_url}")
+        urlretrieve(patch_url, patch_file)
+        print(f"  applying {patch_file}")
+        result = subprocess.check_output('patch -p3', stdin=open(patch_file, 'r'), stderr=subprocess.STDOUT, shell=True)
+        print(f"Patch result: {result}")
+    except Exception as exc:
+        print(f"Error while applying patch: {exc}")
+
+
+patch_url = os.getenv("patch_url")
+if patch_url is not None:
+    patch_documentation(patch_url)

@@ -59,6 +59,7 @@ set ( nestkernel_sources
       recording_device.h recording_device.cpp
       pseudo_recording_device.h
       ring_buffer.h ring_buffer_impl.h ring_buffer.cpp
+      secondary_event.h
       slice_ring_buffer.cpp slice_ring_buffer.h
       spikecounter.h spikecounter.cpp
       stimulation_device.h stimulation_device.cpp
@@ -136,6 +137,11 @@ set_source_files_properties( dynamicloader.cpp PROPERTIES COMPILE_OPTIONS "-O0" 
 
 
 add_library( nestkernel ${nestkernel_sources} )
+set_target_properties( nestkernel
+    PROPERTIES
+    VERSION ${NEST_VERSION}
+    SOVERSION 3
+    )
 target_link_libraries( nestkernel
     nestutil sli_lib
     ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES}

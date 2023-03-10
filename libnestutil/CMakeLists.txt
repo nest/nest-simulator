@@ -22,12 +22,12 @@ set( nestutil_sources
     block_vector.h
     dict_util.h
     enum_bitfield.h
+    iaf_propagator.h iaf_propagator.cpp
     iterator_pair.h
     lockptr.h
     logging_event.h logging_event.cpp
     logging.h
     numerics.h numerics.cpp
-    propagator_stability.h propagator_stability.cpp
     regula_falsi.h
     sort.h
     stopwatch.h stopwatch.cpp
@@ -36,6 +36,13 @@ set( nestutil_sources
     )
 
 add_library( nestutil ${nestutil_sources} )
+
+set_target_properties( nestutil
+    PROPERTIES
+    VERSION ${NEST_VERSION}
+    SOVERSION 3
+    )
+
 
 target_link_libraries( nestutil ${GSL_LIBRARIES} ${SIONLIB_LIBS} )
 

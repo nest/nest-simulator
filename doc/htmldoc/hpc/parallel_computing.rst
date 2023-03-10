@@ -38,7 +38,7 @@ Virtual processes
 -----------------
 
 We use the concept of local and remote threads, called *virtual processes*.
-A virtual process (VP) is a thread residing in one of NEST's MPI processes.
+A virtual process (VP) is a thread residing in one of NEST's :hxt_ref:`MPI` processes.
 For both thread and distributed parallelization, VPs simplify handling of
 neuron  and synapses distributions.
 Virtual processes are distributed round-robin (i.e. each VP is allocated equal
@@ -110,7 +110,7 @@ The first part is the name of the `model` (e.g., ``voltmeter`` or
 ``spike_recorder``) or, if set, the `label` of the recording device. Next is
 the node ID of the recording device, followed by the id of the VP
 assigned to the recorder. Spike files have the file extension ``gdf`` and
-analog recordings from the ``multimeter`` have ``dat`` as file extension.
+analog recordings from the :hxt_ref:`multimeter` have ``dat`` as file extension.
 
 The ``label`` and ``file_extension`` of a recording device can be set like any
 other parameter of a node using :py:func:`.SetStatus`.
@@ -132,7 +132,7 @@ Spikes between neurons
   to the `target neuron` may be handled by **different virtual processes**.
 
 * But the virtual process assigned to the `target_neuron` always handles the corresponding spike delivery
-  (see property ``vp`` in the status dictionary).
+  (see property :hxt_ref:`vp` in the status dictionary).
 
 Spikes between neurons and devices
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -212,7 +212,7 @@ cluster or supercomputer, you most likely already have this. In case
 you are using a pre-packaged MPI library, please make sure that you
 also have the MPI development packages installed.
 
-When using the :ref:`standard installation instructions <standard>`, it
+When installing :ref:`from source <dev_install>`, it
 is usually sufficient to add ``-Dwith-mpi=ON`` when calling `cmake`.
 However, more detailed information on this and related flags (e.g., for
 enabling the :ref:`recording backend for recording to binary files
@@ -238,8 +238,8 @@ command should look like this
 
     mpirun -np 128 python3 simulation.py
 
-Please refer to the MPI library documentation for details on the usage
-of ``mpirun``.
+Please refer to the documentation of your MPI implementation to learn
+more about the usage of ``mpirun``.
 
 MPI related commands
 ~~~~~~~~~~~~~~~~~~~~

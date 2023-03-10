@@ -59,7 +59,7 @@ nest::music_event_in_proxy::State_::State_()
 
 
 /* ----------------------------------------------------------------
- * Paramater extraction and manipulation functions
+ * Parameter extraction and manipulation functions
  * ---------------------------------------------------------------- */
 
 void

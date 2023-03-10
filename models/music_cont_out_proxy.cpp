@@ -116,13 +116,12 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
   const State_& state,
   const Buffers_& buffers )
 {
-
   if ( state.published_ == false )
   {
     updateValue< string >( d, names::port_name, port_name_ );
   }
 
-  if ( buffers.has_targets_ && ( d->known( names::interval ) || d->known( names::record_from ) ) )
+  if ( buffers.has_targets_ and ( d->known( names::interval ) or d->known( names::record_from ) ) )
   {
     throw BadProperty(
       "The recording interval and the list of properties to record "
@@ -219,11 +218,10 @@ nest::music_cont_out_proxy::finalize()
 nest::port
 nest::music_cont_out_proxy::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
-
   DataLoggingRequest e( P_.interval_, P_.record_from_ );
   e.set_sender( *this );
   port p = target.handles_test_event( e, receptor_type );
-  if ( p != invalid_port_ and not is_model_prototype() )
+  if ( p != invalid_port and not is_model_prototype() )
   {
     B_.has_targets_ = true;
   }
@@ -341,7 +339,7 @@ nest::music_cont_out_proxy::update( Time const& origin, const long from, const l
      the previous slice if we are called at the beginning of the
      slice. Otherwise, we do nothing.
    */
-  if ( origin.get_steps() == 0 || from != 0 )
+  if ( origin.get_steps() == 0 or from != 0 )
   {
     return;
   }

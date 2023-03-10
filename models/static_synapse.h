@@ -63,8 +63,11 @@ class static_synapse : public Connection< targetidentifierT >
 public:
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
-
   typedef Connection< targetidentifierT > ConnectionBase;
+
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
 
   /**
    * Default Constructor.
@@ -99,44 +102,44 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( RateEvent&, rport )
+    handles_test_event( RateEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( DataLoggingRequest&, rport )
+    handles_test_event( DataLoggingRequest&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( CurrentEvent&, rport )
+    handles_test_event( CurrentEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( ConductanceEvent&, rport )
+    handles_test_event( ConductanceEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( DoubleDataEvent&, rport )
+    handles_test_event( DoubleDataEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( DSSpikeEvent&, rport )
+    handles_test_event( DSSpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( DSCurrentEvent&, rport )
+    handles_test_event( DSCurrentEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
@@ -167,6 +170,9 @@ public:
     weight_ = w;
   }
 };
+
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties static_synapse< targetidentifierT >::properties;
 
 template < typename targetidentifierT >
 void

@@ -49,19 +49,10 @@ Description
 The spike train injector neuron emits spikes at prescribed spike times
 which are given as an array. Incoming spikes will be ignored.
 
-The spike train injector neuron behaves similarly to a spike generator, but
-is treated internally as a neuron and not a device. Unlike a spike generator
-which is replicated at each virtual process, the spike train injector
-neuron resides on a single virtual process.
+.. note::
 
-Whether to use a spike generator or spike train injector neuron depends on
-the role the spike injecting mechanism has in a model. If the injections
-originate from an external population represented by a single node in the
-network, a spike generator device is likely the best fit. On the other hand,
-if injecting neurons in an external population are modeled on an individual
-basis, a spike generator will bloat the memory usage with replications on
-each virtual process in multithreaded simulations. In the case of individual
-modeling, a spike train injector neuron is likely the best fit.
+   ``spike_train_injector`` is recommended if the spike trains have a similar
+   rate to normal neurons. For very high rates, use ``spike_generator``.
 
 Spike times are given in milliseconds as an array. The `spike_times` array
 must be sorted with the earliest spike first. All spike times must be strictly

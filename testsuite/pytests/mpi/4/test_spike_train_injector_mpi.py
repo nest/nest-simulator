@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_spike_train_injector.py
+# test_spike_train_injector_mpi.py
 #
 # This file is part of NEST.
 #

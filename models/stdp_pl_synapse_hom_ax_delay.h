@@ -260,7 +260,7 @@ private:
 };
 
 template < typename targetidentifierT >
-constexpr ConnectionModelProperties stdp_pl_synapse_hom< targetidentifierT >::properties;
+constexpr ConnectionModelProperties stdp_pl_synapse_hom_ax_delay< targetidentifierT >::properties;
 
 //
 // Implementation of class stdp_pl_synapse_hom_ax_delay.

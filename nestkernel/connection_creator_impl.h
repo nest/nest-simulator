@@ -757,11 +757,10 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
         rng_delay_vec.push_back( delay_[ indx ]->value( grng, source_pos_vector, target_pos_vector, target, tgt ) );
       }
 
+      // Each VP has now decided to create this connection and drawn any random parameter values
+      // required for it. Each VP thus counts the connection as created, but only the VP hosting the
+      // target neuron actually creates the connection.
       --number_of_connections;
-
-      // We bail out for non-local neurons only now after all possible
-      // random numbers haven been drawn. Bailing out any earlier may lead
-      // to desynchronized global rngs.
       if ( not kernel().node_manager.is_local_node_id( target_id ) )
       {
         continue;

@@ -231,7 +231,6 @@ private:
  * - All parameters are  doubles, thus calling the function value_int()
  *   throws an error.
  */
-
 class ArrayDoubleParameter : public ConnParameter
 {
 public:
@@ -274,7 +273,7 @@ public:
   }
 
   long
-  value_int( thread, RngPtr, index, Node* ) const
+  value_int( thread, RngPtr, index, Node* ) const override
   {
     throw KernelException( "ConnParameter calls value function with false return type." );
   }
@@ -313,7 +312,6 @@ private:
  * - All parameters are integer, thus calling the function value_double()
  *   throws an error.
  */
-
 class ArrayLongParameter : public ConnParameter
 {
 public:

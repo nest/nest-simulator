@@ -201,9 +201,6 @@ nest::ac_generator::pre_run_hook()
 void
 nest::ac_generator::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 and ( long ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   long start = origin.get_steps();
 
   CurrentEvent ce;

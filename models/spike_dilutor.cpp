@@ -119,9 +119,6 @@ nest::spike_dilutor::pre_run_hook()
 void
 nest::spike_dilutor::update( Time const& T, const long from, const long to )
 {
-  assert( to >= 0 and static_cast< long >( from ) < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
     if ( not device_.is_active( T ) )

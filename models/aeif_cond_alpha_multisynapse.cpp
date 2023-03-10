@@ -484,8 +484,6 @@ aeif_cond_alpha_multisynapse::pre_run_hook()
 void
 aeif_cond_alpha_multisynapse::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 and ( long ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
   assert( State_::V_M == 0 );
 
   for ( long lag = from; lag < to; ++lag ) // proceed by stepsize B_.step_

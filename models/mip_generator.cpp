@@ -119,9 +119,6 @@ nest::mip_generator::pre_run_hook()
 void
 nest::mip_generator::update( Time const& T, const long from, const long to )
 {
-  assert( to >= 0 and static_cast< long >( from ) < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
     if ( not StimulationDevice::is_active( T ) or P_.rate_ <= 0 )

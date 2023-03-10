@@ -471,8 +471,6 @@ nest::aeif_psc_delta_clopath::pre_run_hook()
 void
 nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const long to )
 {
-  assert( to >= 0 and ( long ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
   assert( State_::V_M == 0 );
 
   for ( long lag = from; lag < to; ++lag )

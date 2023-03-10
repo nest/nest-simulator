@@ -163,7 +163,6 @@ private:
 inline size_t
 spike_dilutor::send_test_event( Node& target, size_t receptor_type, synindex syn_id, bool )
 {
-
   device_.enforce_single_syn_type( syn_id );
 
   SpikeEvent e;

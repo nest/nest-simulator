@@ -64,7 +64,6 @@ nest::poisson_generator_ps::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::poisson_generator_ps::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-
   updateValueParam< double >( d, names::dead_time, dead_time_, node );
   if ( dead_time_ < 0 )
   {
@@ -178,9 +177,6 @@ nest::poisson_generator_ps::pre_run_hook()
 void
 nest::poisson_generator_ps::update( Time const& T, const long from, const long to )
 {
-  assert( to >= 0 and ( long ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   if ( P_.rate_ <= 0 or P_.num_targets_ == 0 )
   {
     return;

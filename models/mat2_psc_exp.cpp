@@ -302,9 +302,6 @@ nest::mat2_psc_exp::pre_run_hook()
 void
 nest::mat2_psc_exp::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 and ( long ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   // evolve from timestep 'from' to timestep 'to' with steps of h each
   for ( long lag = from; lag < to; ++lag )
   {

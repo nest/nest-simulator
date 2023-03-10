@@ -267,9 +267,6 @@ nest::iaf_psc_delta::pre_run_hook()
 void
 nest::iaf_psc_delta::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 and ( long ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   const double h = Time::get_resolution().get_ms();
   for ( long lag = from; lag < to; ++lag )
   {

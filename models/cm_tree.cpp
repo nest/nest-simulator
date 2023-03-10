@@ -70,7 +70,6 @@ nest::Compartment::Compartment( const long compartment_index,
   , hh( 0.0 )
   , n_passed( 0 )
 {
-
   compartment_params.update_value( names::C_m, ca );
   compartment_params.update_value( names::g_C, gc );
   compartment_params.update_value( names::g_L, gl );

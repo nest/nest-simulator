@@ -99,7 +99,6 @@ nest::izhikevich::Parameters_::get( dictionary& d ) const
 void
 nest::izhikevich::Parameters_::set( const dictionary& d, Node* node )
 {
-
   update_value_param( d, names::V_th, V_th_, node );
   update_value_param( d, names::V_min, V_min_, node );
   update_value_param( d, names::I_e, I_e_, node );
@@ -107,7 +106,9 @@ nest::izhikevich::Parameters_::set( const dictionary& d, Node* node )
   update_value_param( d, names::b, b_, node );
   update_value_param( d, names::c, c_, node );
   update_value_param( d, names::d, d_, node );
+
   d.update_value( names::consistent_integration, consistent_integration_ );
+
   const double h = Time::get_resolution().get_ms();
   if ( not consistent_integration_ and h != 1.0 )
   {
@@ -186,9 +187,6 @@ nest::izhikevich::pre_run_hook()
 void
 nest::izhikevich::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   const double h = Time::get_resolution().get_ms();
   double v_old, u_old;
 

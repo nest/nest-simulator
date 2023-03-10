@@ -109,7 +109,6 @@ nest::music_cont_out_proxy::Parameters_::set( const dictionary& d,
   const State_& state,
   const Buffers_& buffers )
 {
-
   if ( state.published_ == false )
   {
     d.update_value( names::port_name, port_name_ );
@@ -203,7 +202,6 @@ nest::music_cont_out_proxy::finalize()
 nest::port
 nest::music_cont_out_proxy::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
-
   DataLoggingRequest e( P_.interval_, P_.record_from_ );
   e.set_sender( *this );
   port p = target.handles_test_event( e, receptor_type );

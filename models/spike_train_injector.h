@@ -397,7 +397,7 @@ private:
 
 
 inline port
-spike_train_injector::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
+spike_train_injector::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
 {
   enforce_single_syn_type( syn_id );
   SpikeEvent e;

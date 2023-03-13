@@ -111,14 +111,14 @@ def _unsupported_binary_op(op, a, b):
     ensuring that unexpected passing will be marked as error. For consistency with general
     Python behavior, we require that a `TypeError` is raised.
     """
-
+    
     return pytest.param(op, a, b, marks=pytest.mark.xfail(raises=TypeError, strict=True))
 
 
 @pytest.mark.parametrize('op, a, b', [
     [ops.pow, _const_param(31), 5],
-    _unsupported_binary_op(ops.pow, _const_param(31), _const_param(5)),
-    _unsupported_binary_op(ops.pow, 31, _const_param(5))
+     _unsupported_binary_op(ops.pow, _const_param(31), _const_param(5)),
+     _unsupported_binary_op(ops.pow, 31, _const_param(5))
     ])
 def test_incomplete_binary_operators(op, a, b):
     """

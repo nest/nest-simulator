@@ -82,7 +82,9 @@ def do_exec(args, kwargs):
         response = dict()
         if RESTRICTION_OFF:
             with Capturing() as stdout:
-                exec(source_cleaned, get_globals(globals().copy()), locals_)
+                globals_ = globals().copy()
+                globals_.update(get_modules_from_env())
+                exec(source_cleaned, globals_, locals_)
             if len(stdout) > 0:
                 response['stdout'] = '\n'.join(stdout)
         else:
@@ -249,20 +251,25 @@ def get_arguments(request):
     return list(args), kwargs
 
 
-def get_globals(globalsDict={}):
-    """ Get globals for exec function.
+def get_modules_from_env():
+    """ Get modules from env NEST_SERVER_MODULES.
 
-        Convert environment variable MODULES to dict:
-        "MODULES=nest,numpy as np" to "{'nest': <module 'nest'> 'np': <module 'numpy'>}"
+        It converts environment variable NEST_SERVER_MODULES:
+            "NEST_SERVER_MODULES=nest,numpy as np,random from numpy"
+        to formatted dictionary for updating globals:
+            "{'nest': <module 'nest'> 'np': <module 'numpy'>, 'random': <module 'numpy.random'>}"
     """
-    modlist = [(module, importlib.import_module(module)) for module in MODULES if ' as ' not in module]
-    modlist.extend([
-        (module.split(' as ')[1], importlib.import_module(module.split(' as ')[0])) for module in MODULES
-        if ' as ' in module
-    ])
-    modules = dict(modlist)
-    globalsDict.update(modules)
-    return globalsDict
+    modules = {}
+    for module in MODULES:
+        if ' as ' in module:
+            modname, modvar = module.split(' as ')
+            modules[modvar] = importlib.import_module(modname)
+        elif ' from ' in module:
+            modvar, modname = module.split(' from ')
+            modules[modvar] = importlib.import_module(f'{modname}.{modvar}')
+        else:
+            modules[module] = importlib.import_module(module)
+    return modules
 
 
 def get_or_error(func):
@@ -308,7 +315,8 @@ def get_restricted_globals():
         _write_=RestrictedPython.Guards.full_write_guard,
     )
 
-    return get_globals(restricted_globals)
+    restricted_globals.update(get_modules_from_env())
+    return restricted_globals
 
 
 def nestify(call_name, args, kwargs):

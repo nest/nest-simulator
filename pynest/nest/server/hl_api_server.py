@@ -355,7 +355,7 @@ def api_client(call_name, args, kwargs):
     else:
         response = call
 
-    return response
+    return nest.serializable(response)
 
 
 def set_mpi_comm(comm):

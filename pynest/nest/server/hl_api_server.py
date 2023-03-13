@@ -253,7 +253,7 @@ def get_modules_from_env():
     """ Get modules from env NEST_SERVER_MODULES.
 
         It converts environment variable NEST_SERVER_MODULES:
-            "NEST_SERVER_MODULES=nest,numpy as np,random from numpy"
+            "NEST_SERVER_MODULES='nest,numpy as np,random from numpy'"
         to formatted dictionary for updating globals:
             "{'nest': <module 'nest'> 'np': <module 'numpy'>, 'random': <module 'numpy.random'>}"
     """

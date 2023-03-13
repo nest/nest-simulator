@@ -89,10 +89,12 @@ def do_exec(args, kwargs):
             if len(stdout) > 0:
                 response["stdout"] = "\n".join(stdout)
         else:
-            code = RestrictedPython.compile_restricted(source_cleaned, "<inline>", "exec")  # noqa
-            exec(code, get_restricted_globals(), locals_)
-            if "_print" in locals_:
-                response["stdout"] = "".join(locals_["_print"].txt)
+            code = RestrictedPython.compile_restricted(source_cleaned, '<inline>', 'exec')  # noqa
+            globals_ = get_restricted_globals()
+            globals_.update(get_modules_from_env())
+            exec(code, globals_, locals_)
+            if '_print' in locals_:
+                response['stdout'] = ''.join(locals_['_print'].txt)
 
         if "return" in kwargs:
             if isinstance(kwargs["return"], list):
@@ -316,7 +318,6 @@ def get_restricted_globals():
         _write_=RestrictedPython.Guards.full_write_guard,
     )
 
-    restricted_globals.update(get_modules_from_env())
     return restricted_globals
 
 

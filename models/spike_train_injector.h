@@ -54,7 +54,7 @@ and is thus not able to process incoming spikes or currents.
 .. note::
 
    ``spike_train_injector`` is recommended if the spike trains have a similar
-   rate to normal neurons. For very high rates, use
+   rate to regular neurons. For very high rates, use
    :doc:`spike generator </models/spike_generator>`.
 
 Spike times are given in milliseconds as an array. The `spike_times` array

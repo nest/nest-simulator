@@ -28,9 +28,7 @@ from urllib.request import urlretrieve
 from pathlib import Path
 from shutil import copyfile
 import json
-
-from subprocess import check_output, CalledProcessError
-from mock import Mock as MagicMock
+import subprocess
 
 
 source_dir = os.environ.get('NESTSRCDIR', False)
@@ -378,14 +376,17 @@ def patch_documentation(patch_url):
     print("Preparing patch...")
     try:
         git_dir = str(source_dir / ".git")
-        git_hash = check_output(f"GIT_DIR={git_dir} git rev-parse HEAD", shell=True, encoding='utf8').strip()
+        git_hash = subprocess.check_output(
+            f"GIT_DIR='{git_dir}' git rev-parse HEAD",
+            shell=True,
+            encoding='utf8').strip()
         print(f"  current git hash: {git_hash}")
         patch_file = f'{git_hash}_doc.patch'
         patch_url = f'{patch_url}/{patch_file}'
         print(f"  retrieving {patch_url}")
         urlretrieve(patch_url, patch_file)
         print(f"  applying {patch_file}")
-        result = check_output('patch -p3', stdin=open(patch_file, 'r'), stderr=subprocess.STDOUT, shell=True)
+        result = subprocess.check_output('patch -p3', stdin=open(patch_file, 'r'), stderr=subprocess.STDOUT, shell=True)
         print(f"Patch result: {result}")
     except Exception as exc:
         print(f"Error while applying patch: {exc}")

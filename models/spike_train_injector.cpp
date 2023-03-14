@@ -135,7 +135,7 @@ spike_train_injector::Parameters_::assert_valid_spike_time_and_insert_( double t
 {
   if ( t == 0.0 and not shift_now_spikes_ )
   {
-    throw BadProperty( "spike time cannot be set to 0." );
+    throw BadProperty( "Spike time cannot be set to 0." );
   }
 
   Time t_spike;
@@ -315,8 +315,7 @@ spike_train_injector::Parameters_::update_( const DictionaryDatum& d, const Name
     const Time t = Time::ms( val );
     if ( t.is_finite() and not t.is_grid_time() )
     {
-      throw BadProperty( name.toString() +  " must be a multiple "
-                                 "of the simulation resolution." );
+      throw BadProperty( name.toString() +  " must be a multiple of the simulation resolution." );
     }
     value = t;
   }

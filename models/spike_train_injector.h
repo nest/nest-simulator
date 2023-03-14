@@ -36,7 +36,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, spike train injector
+/* BeginUserDocs: neuron, device, spike, generator
 
 Short description
 +++++++++++++++++
@@ -47,7 +47,8 @@ Description
 +++++++++++
 
 The spike train injector neuron emits spikes at prescribed spike times
-which are given as an array. Incoming spikes will be ignored.
+which are given as an array. The neuron does not allow incoming connections
+and is thus not able to process incoming spikes or currents.
 
 .. note::
 
@@ -241,26 +242,6 @@ public:
   port send_test_event( Node&, rport, synindex, bool ) override;
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
-
-  /**
-   * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding,
-   * Overloading, and Hiding
-   */
-  using Node::receives_signal;
-  using Node::sends_signal;
-
-  SignalType
-  sends_signal() const override
-  {
-    return ALL;
-  }
-
-  SignalType
-  receives_signal() const override
-  {
-    return NONE;
-  }
 
   bool
   is_off_grid() const override

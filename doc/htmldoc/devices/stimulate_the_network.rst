@@ -17,7 +17,7 @@ The most commonly used generators for spike trains are:
 - :doc:`../models/poisson_generator`
 - :doc:`../models/spike_generator`
 
-For injecting prescribed spike trains with rate similar to normal neurons:
+For injecting prescribed spike trains (e.g. to mimic the output of regular neurons):
 
 - :doc:`../models/spike_train_injector`
 

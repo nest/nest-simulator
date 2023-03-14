@@ -71,10 +71,10 @@ are delivered with the respective weight multiplied with the
 weight of the connection. To disable this functionality, the
 spike_weights array can be set to an empty array.
 
-Spike times may not coincide with a time step, i.e., are not a multiple
-of the simulation resolution. Three options control how spike times that
-do not coincide with a step are handled (see also examples below):
-
+The spike generator supports spike times that do not coincide with a time
+step, i.e., are not falling on the grid defined by the simulation resolution.
+There are three options that control how spike times that do not coincide
+with a step are handled (see also examples below):
     `precise_times`  default: false
 
 If false, spike times will be rounded to simulation steps, i.e., multiples
@@ -188,7 +188,8 @@ spike_times
     List of spike times in ms.
 
 spike_weights
-    List of corresponding spike-weights, the unit depends on the receiver.
+    List of corresponding spike weights, the unit depends on the receiver.
+    (e.g. nS for conductance-based neurons, or pA for current based ones)
 
 spike_multiplicities
     List of multiplicities of spikes, same length as spike_times; mostly

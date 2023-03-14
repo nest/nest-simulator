@@ -104,7 +104,7 @@ def test_binary_operators(op, a, b):
 
 def _unsupported_binary_op(op, a, b):
     """
-    Represent test cases where at op is not supported for at least one of a or b.
+    Represent test cases where an op is not supported for at least one of a or b.
 
     The syntax for representing individual test cases with expected failure is much more
     verbose than a simple `[op, a, b]`. This helper function returns the correct representation,

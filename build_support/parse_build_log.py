@@ -321,6 +321,9 @@ def makebuild_summary(log_filename, msg_make_section_start,
     # If a certain build_type (e.g. 'MINIMAL' or 'FULL') only builds
     # with some warnings, this would be a good point to re-set the
     # expected_warnings variable conditionally for that build_type.
+    # NOTE: The sonata_connector.cpp warnings are due to a bug in
+    # HDF 1.10.4 and has been fixed in later versions. However, only
+    # HDF 1.10.4 is available for Ubuntu 20.04, which the CI uses.
 
     nest_warning_re = re.compile(f'.*({build_dir}.*: warning:.*)')
     known_warnings = [
@@ -342,15 +345,15 @@ def makebuild_summary(log_filename, msg_make_section_start,
          '(const r123::Engine<r123::Philox4x32_R<10> >&)’ is deprecated [-Wdeprecated-copy]'),
         (f'{build_dir}/nestkernel/connection_creator_impl.h:121:37: warning: ISO C++ requires the name'
          ' after \'::~\' to be found in the same scope as the name before \'::~\' [-Wdtor-name]'),
-        (f'{build_dir}/nestkernel/sonata_connector.cpp:210:64: warning: implicitly-declared'
+        (f'{build_dir}/nestkernel/sonata_connector.cpp:215:64: warning: implicitly-declared'
          ' ‘H5::DataSet& H5::DataSet::operator=(const H5::DataSet&)’ is deprecated [-Wdeprecated-copy]'),
-        (f'{build_dir}/nestkernel/sonata_connector.cpp:219:64: warning: implicitly-declared'
+        (f'{build_dir}/nestkernel/sonata_connector.cpp:224:64: warning: implicitly-declared'
          ' ‘H5::DataSet& H5::DataSet::operator=(const H5::DataSet&)’ is deprecated [-Wdeprecated-copy]'),
-        (f'{build_dir}/nestkernel/sonata_connector.cpp:228:63: warning: implicitly-declared'
+        (f'{build_dir}/nestkernel/sonata_connector.cpp:233:63: warning: implicitly-declared'
          ' ‘H5::DataSet& H5::DataSet::operator=(const H5::DataSet&)’ is deprecated [-Wdeprecated-copy]'),
-        (f'{build_dir}/nestkernel/sonata_connector.cpp:264:62: warning: implicitly-declared'
+        (f'{build_dir}/nestkernel/sonata_connector.cpp:269:62: warning: implicitly-declared'
          ' ‘H5::DataSet& H5::DataSet::operator=(const H5::DataSet&)’ is deprecated [-Wdeprecated-copy]'),
-        (f'{build_dir}/nestkernel/sonata_connector.cpp:276:52: warning: implicitly-declared'
+        (f'{build_dir}/nestkernel/sonata_connector.cpp:281:52: warning: implicitly-declared'
          ' ‘H5::DataSet& H5::DataSet::operator=(const H5::DataSet&)’ is deprecated [-Wdeprecated-copy]'),
     ]
 

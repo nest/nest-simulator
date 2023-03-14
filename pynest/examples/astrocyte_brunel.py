@@ -118,22 +118,21 @@ syn_params = {
 ###############################################################################
 # Astrocyte parameters.
 
-# Need to update!
 astro_params = {
     'Ca_tot_astro': 2.0,  # Total free astrocytic calcium concentration
-    'IP3_0_astro': 0.16,  # Baseline value of the astrocytic IP3 concentration
-    'Kd_act_astro': 0.08234,  # Astrocytic IP3R dissociation constant of calcium
-    'Kd_inh_astro': 1.049,  # Astrocytic IP3R dissociation constant of calcium
+    'IP3_0_astro': 0.16,  # Baseline value of astrocytic IP3 concentration
+    'Kd_act_astro': 0.08234,  # Astrocytic IP3R dissociation constant of calcium (activation)
+    'Kd_inh_astro': 1.049,  # Astrocytic IP3R dissociation constant of calcium (inhibition)
     'Kd_IP3_1_astro': 0.13,  # First astrocytic IP3R dissociation constant of IP3
     'Kd_IP3_2_astro': 0.9434,  # Second astrocytic IP3R dissociation constant of IP3
-    'Km_SERCA_astro': 0.1,  # Activation constant of astrocytic SERCA pump
+    'Km_SERCA_astro': 0.1,  # Half-activation constant of astrocytic SERCA pump
     'ratio_ER_cyt_astro': 0.185,  # Ratio between astrocytic ER and cytosol volumes
     'incr_IP3_astro': 0.1,  # Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte
     'k_IP3R_astro': 0.001,  # Astrocytic IP3R binding constant for calcium
     'rate_L_astro': 0.00011,  # Rate constant for calcium leak from ER to cytosol
     'tau_IP3_astro': 300.0,  # Time constant of astrocytic IP3 degradation
-    'rate_IP3R_astro': 0.006,  # Maximum rate of calcium release via IP3R
-    'rate_SERCA_astro': 0.0009,  # Maximum rate of calcium uptake by IP3R
+    'rate_IP3R_astro': 0.006,  # Maximum rate of calcium release via astrocytic IP3R
+    'rate_SERCA_astro': 0.0009,  # Maximum rate of calcium uptake by astrocytic SERCA pump
     }
 
 ###############################################################################

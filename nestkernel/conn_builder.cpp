@@ -1677,6 +1677,9 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
       synapse_model_id_[ synapse_indx ] = kernel().model_manager.get_synapse_model_id( "tsodyks_synapse" );
     }
     DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
+    // weights_n2n_[ synapse_indx ] = syn_specs[ synapse_indx ]->known( names::weight )
+    //   ? ConnParameter::create( ( *syn_specs[ synapse_indx ] )[ names::weight ], kernel().vp_manager.get_num_threads() )
+    //   : ConnParameter::create( ( *syn_defaults )[ names::weight ], kernel().vp_manager.get_num_threads() );
     weights_n2n_[ synapse_indx ] = syn_specs[ synapse_indx ]->known( names::weight_pre2post )
       ? ConnParameter::create( ( *syn_specs[ synapse_indx ] )[ names::weight_pre2post ], kernel().vp_manager.get_num_threads() )
       : ConnParameter::create( ( *syn_defaults )[ names::weight ], kernel().vp_manager.get_num_threads() );
@@ -1908,7 +1911,16 @@ nest::BernoulliAstroBuilder::connect_()
           {
             continue;
           }
+
+          // determine the source
           connected_snode_ids.insert( snode_id );
+
+          // prepare delays for connections; n2n and n2a delays are the same
+          std::vector< double > delays( synapse_model_id_.size() );
+          for ( size_t synapse_indx = 0; synapse_indx < synapse_model_id_.size(); ++synapse_indx )
+          {
+            delays[ synapse_indx ] = delays_astro_[ synapse_indx ]->value_double( target_thread, synced_rng, snode_id, target );
+          }
 
           // increase i which counts the number of incoming connections
           ++i;
@@ -1920,16 +1932,16 @@ nest::BernoulliAstroBuilder::connect_()
             for ( size_t synapse_indx = 0; synapse_indx < synapse_model_id_.size(); ++synapse_indx )
             {
               update_param_dict_( snode_id, *target, target_thread, synced_rng, synapse_indx );
-              double weight = weights_n2n_[ synapse_indx ]->value_double( target_thread, rng, snode_id, target );
-              double delay = delays_astro_[ synapse_indx ]->value_double( target_thread, rng, snode_id, target );
+              double weight_n2n = weights_n2n_[ synapse_indx ]->value_double( target_thread, rng, snode_id, target );
+              // double delay = delays_astro_[ synapse_indx ]->value_double( target_thread, rng, snode_id, target );
               // not compatible with connections that block individual weights
               kernel().connection_manager.connect( snode_id,
                 target,
                 target_thread,
                 synapse_model_id_[ synapse_indx ],
                 param_dicts_[ synapse_indx ][ target_thread ],
-                delay,
-                weight );
+                delays[ synapse_indx ],
+                weight_n2n );
             }
             // single_connect_( snode_id, *target, target_thread, synced_rng );
           }
@@ -1963,17 +1975,18 @@ nest::BernoulliAstroBuilder::connect_()
             for ( size_t synapse_indx = 0; synapse_indx < synapse_model_id_.size(); ++synapse_indx )
             {
               update_param_dict_( snode_id, *astrocyte, astrocyte_thread, synced_rng, synapse_indx );
-              double weight = weights_n2a_[ synapse_indx ]->value_double( astrocyte_thread, rng, snode_id, astrocyte );
-              double delay = delays_astro_[ synapse_indx ]->value_double( astrocyte_thread, rng, snode_id, astrocyte );
+              double weight_n2a = weights_n2a_[ synapse_indx ]->value_double( astrocyte_thread, rng, snode_id, astrocyte );
+              // double delay = delays_astro_[ synapse_indx ]->value_double( astrocyte_thread, rng, snode_id, astrocyte );
               // not compatible with connections that block individual weights
               kernel().connection_manager.connect( snode_id,
                 astrocyte,
                 astrocyte_thread,
                 synapse_model_id_[ synapse_indx ],
                 param_dicts_[ synapse_indx ][ astrocyte_thread ],
-                delay,
-                weight );
+                delays[ synapse_indx ],
+                weight_n2a );
             }
+            // single_connect_( snode_id, *astrocyte, astrocyte_thread, synced_rng );
           }
 
           // avoid connecting the same astrocyte to the target more than once

@@ -316,10 +316,6 @@ private:
      * @param current simulation time
      */
     void assert_valid_spike_time_and_insert_( double, const Time&, const Time& );
-
-  private:
-    //! Update given Time parameter including error checking
-    static void update_( const DictionaryDatum&, const Name&, Time& );
   };
 
   State_ S_;

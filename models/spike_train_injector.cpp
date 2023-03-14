@@ -239,29 +239,6 @@ spike_train_injector::Parameters_::set( const DictionaryDatum& d,
   }
 }
 
-void
-spike_train_injector::Parameters_::update_( const DictionaryDatum& d, const Name& name, Time& value )
-{
-  /* We cannot update the Time values directly, since updateValue()
-     doesn't support Time objects. We thus read the value in ms into
-     a double first and then update the time object if a value was given.
-
-     To be valid, time values must either be on the time grid,
-     or be infinite. Infinite values are handled gracefully.
-  */
-
-  double val;
-  if ( updateValue< double >( d, name, val ) )
-  {
-    const Time t = Time::ms( val );
-    if ( t.is_finite() and not t.is_grid_time() )
-    {
-      throw BadProperty( name.toString() + " must be a multiple of the simulation resolution." );
-    }
-    value = t;
-  }
-}
-
 
 /* ----------------------------------------------------------------
  * Default constructor defining default state

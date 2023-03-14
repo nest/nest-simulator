@@ -256,6 +256,7 @@ spike_train_injector::State_::State_()
 
 spike_train_injector::spike_train_injector()
   : Node()
+  , Device()
   , S_()
   , P_()
 {
@@ -263,6 +264,7 @@ spike_train_injector::spike_train_injector()
 
 spike_train_injector::spike_train_injector( const spike_train_injector& n )
   : Node( n )
+  , Device( n )
   , S_( n.S_ )
   , P_( n.P_ )
 {

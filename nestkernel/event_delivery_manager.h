@@ -282,8 +282,7 @@ private:
     std::vector< SpikeDataT >& send_buffer ) const;
 
   /**
-   * Sets marker in MPI buffer that signals end of communication
-   * across MPI ranks.
+   * Sets marker in MPI buffer that signals end of communication across MPI ranks.
    */
   template < typename SpikeDataT >
   void set_complete_marker_spike_data_( const AssignedRanks& assigned_ranks,
@@ -291,21 +290,18 @@ private:
     std::vector< SpikeDataT >& send_buffer ) const;
 
   /**
-   * Reads spikes from MPI buffers and delivers them to ringbuffer of
-   * nodes.
+   * Reads spikes from MPI buffers and delivers them to ringbuffer of nodes.
    */
   template < typename SpikeDataT >
   bool deliver_events_( const thread tid, const std::vector< SpikeDataT >& recv_buffer );
 
   /**
-   * Deletes all spikes from spike registers and resets spike
-   * counters.
+   * Deletes all spikes from spike registers and resets spike counters.
    */
   void reset_spike_register_( const thread tid );
 
   /**
-   * Resizes spike registers according minimal delay so it can
-   * accommodate all possible lags.
+   * Resizes spike registers according minimal delay so it can accommodate all possible lags.
    */
   void resize_spike_register_( const thread tid );
 
@@ -333,31 +329,27 @@ private:
     SendBufferPosition& send_buffer_position );
 
   /**
-   * Sets marker in MPI buffer that signals end of communication
-   * across MPI ranks.
+   * Sets marker in MPI buffer that signals end of communication across MPI ranks.
    */
   void set_complete_marker_target_data_( const AssignedRanks& assigned_ranks,
     const SendBufferPosition& send_buffer_position );
 
   /**
-   * Reads TargetData objects from MPI buffers and creates Target
-   * objects on TargetTable (presynaptic part of connection
-   * infrastructure).
+   * Reads TargetData objects from MPI buffers and creates Target objects on TargetTable (presynaptic part of
+   * connection infrastructure).
    */
   bool distribute_target_data_buffers_( const thread tid );
 
   /**
-   * Sends event e to all targets of node source. Delivers events from
-   * devices directly to targets.
+   * Sends event e to all targets of node source. Delivers events from devices directly to targets.
    */
-  template < class EventT >
+  template < typename EventT >
   void send_local_( Node& source, EventT& e, const long lag );
   void send_local_( Node& source, SecondaryEvent& e, const long lag );
 
   //--------------------------------------------------//
 
-  bool off_grid_spiking_; //!< indicates whether spikes are not constrained to
-                          //!< the grid
+  bool off_grid_spiking_; //!< indicates whether spikes are not constrained to the grid
 
   /**
    * Table of pre-computed modulos.
@@ -406,15 +398,13 @@ private:
   std::vector< std::vector< std::vector< std::vector< OffGridTarget > > > > off_grid_emitted_spike_register_;
 
   /**
-   * Buffer to collect the secondary events
-   * after serialization.
+   * Buffer to collect the secondary events after serialization.
    */
   std::vector< unsigned int > send_buffer_secondary_events_;
   std::vector< unsigned int > recv_buffer_secondary_events_;
 
   /**
-   * Number of generated spike events (both off- and on-grid) during the last
-   * call to simulate.
+   * Number of generated spike events (both off- and on-grid) during the last call to simulate.
    */
   std::vector< unsigned long > local_spike_counter_;
 
@@ -448,10 +438,10 @@ inline void
 EventDeliveryManager::reset_spike_register_( const thread tid )
 {
   for ( std::vector< std::vector< std::vector< Target > > >::iterator it = emitted_spikes_register_[ tid ].begin();
-        it < emitted_spikes_register_[ tid ].end();
+        it != emitted_spikes_register_[ tid ].end();
         ++it )
   {
-    for ( std::vector< std::vector< Target > >::iterator iit = it->begin(); iit < it->end(); ++iit )
+    for ( std::vector< std::vector< Target > >::iterator iit = it->begin(); iit != it->end(); ++iit )
     {
       ( *iit ).clear();
     }
@@ -459,10 +449,10 @@ EventDeliveryManager::reset_spike_register_( const thread tid )
 
   for ( std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it =
           off_grid_emitted_spike_register_[ tid ].begin();
-        it < off_grid_emitted_spike_register_[ tid ].end();
+        it != off_grid_emitted_spike_register_[ tid ].end();
         ++it )
   {
-    for ( std::vector< std::vector< OffGridTarget > >::iterator iit = it->begin(); iit < it->end(); ++iit )
+    for ( std::vector< std::vector< OffGridTarget > >::iterator iit = it->begin(); iit != it->end(); ++iit )
     {
       iit->clear();
     }
@@ -479,10 +469,10 @@ inline void
 EventDeliveryManager::clean_spike_register_( const thread tid )
 {
   for ( std::vector< std::vector< std::vector< Target > > >::iterator it = emitted_spikes_register_[ tid ].begin();
-        it < emitted_spikes_register_[ tid ].end();
+        it != emitted_spikes_register_[ tid ].end();
         ++it )
   {
-    for ( std::vector< std::vector< Target > >::iterator iit = it->begin(); iit < it->end(); ++iit )
+    for ( std::vector< std::vector< Target > >::iterator iit = it->begin(); iit != it->end(); ++iit )
     {
       std::vector< Target >::iterator new_end = std::remove_if( iit->begin(), iit->end(), is_marked_for_removal_ );
       iit->erase( new_end, iit->end() );
@@ -490,10 +480,10 @@ EventDeliveryManager::clean_spike_register_( const thread tid )
   }
   for ( std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it =
           off_grid_emitted_spike_register_[ tid ].begin();
-        it < off_grid_emitted_spike_register_[ tid ].end();
+        it != off_grid_emitted_spike_register_[ tid ].end();
         ++it )
   {
-    for ( std::vector< std::vector< OffGridTarget > >::iterator iit = it->begin(); iit < it->end(); ++iit )
+    for ( std::vector< std::vector< OffGridTarget > >::iterator iit = it->begin(); iit != it->end(); ++iit )
     {
       std::vector< OffGridTarget >::iterator new_end =
         std::remove_if( iit->begin(), iit->end(), is_marked_for_removal_ );

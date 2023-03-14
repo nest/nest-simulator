@@ -61,8 +61,7 @@ class ConnectTestBase(unittest.TestCase):
     # number of threads
     nr_threads = 2
 
-    # for now only tests if a multi-thread connect is successful, not whether
-    # the the threading is actually used
+    # for now only tests if a multi-thread connect is successful, not whether the threading is actually used
     def setUp(self):
         nest.ResetKernel()
         nest.local_num_threads = self.nr_threads

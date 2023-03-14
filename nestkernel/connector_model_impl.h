@@ -45,14 +45,15 @@
 namespace nest
 {
 
-// standard implementation to obtain the default delay
+// standard implementation to obtain the default delay, assuming that it
+// is located in GenericConnectorModel::default_connection
 // synapse types with homogeneous delays must provide a specialization
 // that returns the default delay from CommonProperties (or from else where)
 // template<typename ConnectionT>
 // double get_default_delay(const GenericConnectorModel<ConnectionT> &cm)
 // {
 //   //std::cout << "standard implementation of get_default_delay" << std::endl;
-//   return cm.get_default_connection().get_delay();
+//   return cm.get_default_delay();
 // }
 
 // template<typename ConnectionT>
@@ -82,7 +83,15 @@ void
 GenericConnectorModel< ConnectionT >::calibrate( const TimeConverter& tc )
 {
   // calibrate the delay of the default properties here
-  default_connection_.calibrate( tc );
+  Time t = tc.from_old_steps( default_delay_ );
+  default_delay_ = t.get_steps();
+  t = tc.from_old_steps( default_axonal_delay_ );
+  default_axonal_delay_ = t.get_steps();
+
+  if ( default_delay_ + default_axonal_delay_ == 0 )
+  {
+    default_delay_ = 1;
+  }
 
   // Calibrate will be called after a change in resolution, when there are no
   // network elements present.
@@ -101,6 +110,8 @@ GenericConnectorModel< ConnectionT >::get_status( DictionaryDatum& d ) const
 
   // then get default properties for individual synapses
   default_connection_.get_status( d );
+  ( *d )[ names::delay ] = default_delay_;
+  ( *d )[ names::axonal_delay ] = default_axonal_delay_;
 
   ( *d )[ names::receptor_type ] = receptor_type_;
   ( *d )[ names::synapse_model ] = LiteralDatum( name_ );
@@ -130,6 +141,12 @@ GenericConnectorModel< ConnectionT >::set_status( const DictionaryDatum& d )
   cp_.set_status( d, *this );
   default_connection_.set_status( d, *this );
 
+  if ( updateValue< double >( d, names::delay, default_delay_ )
+    or updateValue< double >( d, names::axonal_delay, default_axonal_delay_ ) )
+  {
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( default_delay_ + default_axonal_delay_ );
+  }
+
   kernel().connection_manager.get_delay_checker().enable_delay_update();
 
   // we've possibly just got a new default delay. So enforce checking next time
@@ -150,18 +167,13 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
   {
     try
     {
-      if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
-      {
-        const double d = default_connection_.get_delay();
-        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( d );
-      }
       // Let connections without delay contribute to the delay extrema with
       // wfr_comm_interval. For those connections the min_delay is important
       // as it determines the length of the global communication interval.
       // The call to assert_valid_delay_ms needs to happen only once
       // (either here or in add_connection()) when the first connection
       // without delay is created.
-      else
+      if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
       {
         const double wfr_comm_interval = kernel().simulation_manager.get_wfr_comm_interval();
         kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( wfr_comm_interval );
@@ -169,7 +181,7 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
     }
     catch ( BadDelay& e )
     {
-      throw BadDelay( default_connection_.get_delay(),
+      throw BadDelay( default_connection_.get_dendritic_delay(),
         String::compose( "Default delay of '%1' must be between min_delay %2 "
                          "and max_delay %3.",
           get_name(),
@@ -195,38 +207,59 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   const synindex syn_id,
   const DictionaryDatum& p,
   const double delay,
+  const double axonal_delay,
   const double weight )
 {
-  if ( not numerics::is_nan( delay ) )
+  nest::delay actual_dendritic_delay;
+  // check if dendritic delay was not provided explicitly
+  if ( numerics::is_nan( delay ) )
   {
-    if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
+    double delay_temp;
+    if ( updateValue< double >( p, names::delay, delay_temp ) )
     {
-      kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
-    }
-
-    if ( p->known( names::delay ) )
-    {
-      throw BadParameter(
-        "Parameter dictionary must not contain delay if delay is given "
-        "explicitly." );
-    }
-  }
-  else
-  {
-    // check delay
-    double delay = 0.0;
-
-    if ( updateValue< double >( p, names::delay, delay ) )
-    {
-      if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
-      {
-        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
-      }
+      actual_dendritic_delay = Time::delay_ms_to_steps( delay_temp );
     }
     else
     {
-      used_default_delay();
+      used_default_delay(); // TODO JV (pt): This might now not be correct anymore after introducing axonal delays
+      actual_dendritic_delay = Time::delay_ms_to_steps( default_delay_ );
     }
+  }
+  else // dendritic delay provided
+  {
+    actual_dendritic_delay = Time::delay_ms_to_steps( delay );
+    if ( p->known( names::delay ) )
+    {
+      throw BadParameter( "Parameter dictionary must not contain delay if delay is given explicitly." );
+    }
+  }
+  nest::delay actual_axonal_delay;
+  // check if axonal delay was not provided explicitly
+  if ( numerics::is_nan( axonal_delay ) )
+  {
+    double delay_temp;
+    if ( updateValue< double >( p, names::axonal_delay, delay_temp ) )
+    {
+      actual_axonal_delay = Time::delay_ms_to_steps( delay_temp );
+    }
+    else
+    {
+      used_default_delay(); // TODO JV (pt): This might now not be correct anymore after introducing axonal delays
+      actual_axonal_delay = Time::delay_ms_to_steps( default_axonal_delay_ );
+    }
+  }
+  else // axonal delay provided
+  {
+    actual_axonal_delay = Time::delay_ms_to_steps( axonal_delay );
+    if ( p->known( names::axonal_delay ) )
+    {
+      throw BadParameter( "Parameter dictionary must not contain axonal delay if axonal delay is given explicitly." );
+    }
+  }
+  if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
+  {
+    KernelManager::get_kernel_manager().connection_manager.get_delay_checker().assert_valid_delay_ms(
+      Time::delay_steps_to_ms( actual_dendritic_delay + actual_axonal_delay ) );
   }
 
   // create a new instance of the default connection
@@ -237,16 +270,17 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     connection.set_weight( weight );
   }
 
-  if ( not numerics::is_nan( delay ) )
-  {
-    connection.set_delay( delay );
-  }
-
   if ( not p->empty() )
   {
     // Reference to connector model needed here to check delay (maybe this could
     // be done one level above?).
     connection.set_status( p, *this );
+  }
+
+  connection.set_dendritic_delay_steps( actual_dendritic_delay );
+  if ( actual_axonal_delay != 0 )
+  {
+    connection.set_axonal_delay( Time::delay_steps_to_ms( actual_axonal_delay ) );
   }
 
   // We must use a local variable here to hold the actual value of the
@@ -258,20 +292,6 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   updateValue< long >( p, names::music_channel, actual_receptor_type );
 #endif
   updateValue< long >( p, names::receptor_type, actual_receptor_type );
-
-  add_connection_( src, tgt, thread_local_connectors, syn_id, connection, actual_receptor_type );
-}
-
-
-template < typename ConnectionT >
-void
-GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
-  Node& tgt,
-  std::vector< ConnectorBase* >& thread_local_connectors,
-  const synindex syn_id,
-  ConnectionT& connection,
-  const rport receptor_type )
-{
   assert( syn_id != invalid_synindex );
 
   if ( not thread_local_connectors[ syn_id ] )
@@ -283,7 +303,7 @@ GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
 
   ConnectorBase* connector = thread_local_connectors[ syn_id ];
   // The following line will throw an exception, if it does not work.
-  connection.check_connection( src, tgt, receptor_type, get_common_properties() );
+  connection.check_connection( src, tgt, actual_receptor_type, actual_dendritic_delay, actual_axonal_delay, get_common_properties() );
 
   assert( connector );
 

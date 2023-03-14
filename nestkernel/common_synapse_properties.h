@@ -27,7 +27,6 @@
 #include "connector_model.h"
 #include "nest_datums.h"
 #include "nest_types.h"
-#include "node.h"
 
 // Includes from sli:
 #include "dictdatum.h"
@@ -38,6 +37,7 @@ namespace nest
 
 // forward declarations
 class ConnectorModel;
+class Node;
 class TimeConverter;
 
 /**

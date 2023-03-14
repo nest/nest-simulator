@@ -34,7 +34,6 @@
 #include "numerics.h"
 
 // Includes from nestkernel:
-#include "connection_manager_impl.h"
 #include "event_delivery_manager.h"
 #include "kernel_manager.h"
 
@@ -482,7 +481,7 @@ nest::SimulationManager::prepare()
   prepared_ = true;
 
   // check whether waveform relaxation is used on any MPI process;
-  // needs to be called before update_connection_intrastructure_since
+  // needs to be called before update_connection_infrastructure_since
   // it resizes coefficient arrays for secondary events
   kernel().node_manager.check_wfr_use();
 
@@ -718,8 +717,7 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
   }
 #endif
 
-  // communicate connection information from postsynaptic to
-  // presynaptic side
+  // communicate connection information from postsynaptic to presynaptic side
   kernel().event_delivery_manager.gather_target_data( tid );
 
 #ifdef TIMER_DETAILED
@@ -849,7 +847,7 @@ nest::SimulationManager::update_()
 #endif
       }
 
-      // preliminary update of nodes that use waveform relaxtion, only
+      // preliminary update of nodes that use waveform relaxation, only
       // necessary if secondary connections exist and any node uses
       // wfr
       if ( kernel().connection_manager.secondary_connections_exist() and kernel().node_manager.wfr_is_used() )

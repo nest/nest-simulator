@@ -108,10 +108,10 @@ public:
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
-  using ConnectionBase::get_delay_steps;
+  using ConnectionBase::get_dendritic_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
-  using ConnectionBase::set_delay_steps;
+  using ConnectionBase::set_dendritic_delay_steps;
 
   //! Used by ConnectorModel::add_connection() for fast initialization
   void
@@ -191,7 +191,7 @@ public:
   };
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, const rport receptor_type, const delay dendritic_delay, const delay axonal_delay, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -223,12 +223,12 @@ cont_delay_synapse< targetidentifierT >::send( Event& e, thread t, const CommonS
   // seems save.
   if ( total_offset < Time::get_resolution().get_ms() )
   {
-    e.set_delay_steps( get_delay_steps() );
+    e.set_delay_steps( get_dendritic_delay_steps() );
     e.set_offset( total_offset );
   }
   else
   {
-    e.set_delay_steps( get_delay_steps() - 1 );
+    e.set_delay_steps( get_dendritic_delay_steps() - 1 );
     e.set_offset( total_offset - Time::get_resolution().get_ms() );
   }
   e();

@@ -104,6 +104,7 @@ ConnectionCreator::connect_to_target_( Iterator from,
           synapse_model_[ indx ],
           param_dicts_[ indx ][ tgt_thread ],
           delay_[ indx ]->value( rng, source_pos, target_pos, source, tgt_ptr ),
+          axonal_delay_[ indx ]->value( rng, source_pos, target_pos, source, tgt_ptr ),
           weight_[ indx ]->value( rng, source_pos, target_pos, source, tgt_ptr ) );
       }
     }
@@ -211,7 +212,7 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
       NodeCollection::const_iterator target_begin = target_nc->begin();
       NodeCollection::const_iterator target_end = target_nc->end();
 
-      for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
+      for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it )
       {
         Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id, thread_id );
 
@@ -297,7 +298,7 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
       NodeCollection::const_iterator target_begin = target_nc->local_begin();
       NodeCollection::const_iterator target_end = target_nc->end();
 
-      for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
+      for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it )
       {
         Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id, thread_id );
 
@@ -364,7 +365,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
   // protect against connecting to devices without proxies
   // we need to do this before creating the first connection to leave
   // the network untouched if any target does not have proxies
-  for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
+  for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it )
   {
     Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id );
 
@@ -378,7 +379,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
 
     std::vector< std::pair< Position< D >, index > > positions;
 
-    for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
+    for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it )
     {
       index target_id = ( *tgt_it ).node_id;
       Node* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
@@ -458,8 +459,9 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           {
             const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
             const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
+            const double a = axonal_delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
             kernel().connection_manager.connect(
-              source_id, tgt, target_thread, synapse_model_[ indx ], param_dicts_[ indx ][ target_thread ], d, w );
+              source_id, tgt, target_thread, synapse_model_[ indx ], param_dicts_[ indx ][ target_thread ], d, a, w );
           }
 
           is_selected[ random_id ] = true;
@@ -497,8 +499,9 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           {
             const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
             const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
+            const double a = axonal_delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
             kernel().connection_manager.connect(
-              source_id, tgt, target_thread, synapse_model_[ indx ], param_dicts_[ indx ][ target_thread ], d, w );
+              source_id, tgt, target_thread, synapse_model_[ indx ], param_dicts_[ indx ][ target_thread ], d, a, w );
           }
 
           is_selected[ random_id ] = true;
@@ -513,7 +516,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
     // Get (position,node ID) pairs for all nodes in source layer
     std::vector< std::pair< Position< D >, index > >* positions = source.get_global_positions_vector( source_nc );
 
-    for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
+    for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it )
     {
       index target_id = ( *tgt_it ).node_id;
       Node* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
@@ -585,8 +588,9 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           {
             const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
             const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
+            const double a = axonal_delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
             kernel().connection_manager.connect(
-              source_id, tgt, target_thread, synapse_model_[ indx ], param_dicts_[ indx ][ target_thread ], d, w );
+              source_id, tgt, target_thread, synapse_model_[ indx ], param_dicts_[ indx ][ target_thread ], d, a, w );
           }
 
           is_selected[ random_id ] = true;
@@ -623,8 +627,9 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           {
             const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
             const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
+            const double a = axonal_delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
             kernel().connection_manager.connect(
-              source_id, tgt, target_thread, synapse_model_[ indx ], param_dicts_[ indx ][ target_thread ], d, w );
+              source_id, tgt, target_thread, synapse_model_[ indx ], param_dicts_[ indx ][ target_thread ], d, a, w );
           }
 
           is_selected[ random_id ] = true;
@@ -656,7 +661,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
   NodeCollection::const_iterator target_begin = target_nc->MPI_local_begin();
   NodeCollection::const_iterator target_end = target_nc->end();
 
-  for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
+  for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it )
   {
     Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id );
 
@@ -755,11 +760,14 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
 
       std::vector< double > rng_weight_vec;
       std::vector< double > rng_delay_vec;
+      std::vector< double > rng_axonal_delay_vec;
       for ( size_t indx = 0; indx < weight_.size(); ++indx )
       {
         const auto tgt = kernel().node_manager.get_node_or_proxy( target_pos_node_id_pairs[ indx ].second );
         rng_weight_vec.push_back( weight_[ indx ]->value( grng, source_pos_vector, target_pos_vector, target, tgt ) );
         rng_delay_vec.push_back( delay_[ indx ]->value( grng, source_pos_vector, target_pos_vector, target, tgt ) );
+        rng_axonal_delay_vec.push_back(
+          axonal_delay_[ indx ]->value( grng, source_pos_vector, target_pos_vector, target, tgt ) );
       }
 
       // We bail out for non-local neurons only now after all possible
@@ -781,6 +789,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
           synapse_model_[ indx ],
           param_dicts_[ indx ][ target_thread ],
           rng_delay_vec[ indx ],
+          rng_axonal_delay_vec[ indx ],
           rng_weight_vec[ indx ] );
       }
     }

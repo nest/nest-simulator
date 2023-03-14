@@ -134,8 +134,9 @@ public:
     thread target_thread,
     const synindex syn_id,
     const DictionaryDatum& params,
-    const double delay = numerics::nan,
-    const double weight = numerics::nan );
+    const double delay,
+    const double axonal_delay,
+    const double weight );
 
   /**
    * Connect two nodes. The source and target nodes are defined by their
@@ -153,6 +154,7 @@ public:
     long* targets,
     double* weights,
     double* delays,
+    double* axonal_delays,
     std::vector< std::string >& p_keys,
     double* p_values,
     size_t n,
@@ -482,6 +484,7 @@ private:
     const synindex syn_id,
     const DictionaryDatum& params,
     const double delay = numerics::nan,
+    const double axonal_delay = numerics::nan,
     const double weight = numerics::nan );
 
   /**

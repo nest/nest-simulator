@@ -164,8 +164,8 @@ SPManager::set_status( const DictionaryDatum& d )
     // We use a ConnBuilder with dummy values to check the synapse parameters
     SPBuilder* conn_builder = new SPBuilder( sources, targets, conn_spec, { syn_spec } );
 
-    // check that the user defined the min and max delay properly, if the
-    // default delay is not used.
+    // TODO JV (pt): Consider axonal delays here
+    // check that the user defined the min and max delay properly, if the default delay is not used.
     if ( not conn_builder->get_default_delay() and not kernel().connection_manager.get_user_set_delay_extrema() )
     {
       throw BadProperty(
@@ -179,6 +179,7 @@ SPManager::set_status( const DictionaryDatum& d )
 delay
 SPManager::builder_min_delay() const
 {
+  // TODO JV (pt): Consider axonal delays here
   delay min_delay = Time::pos_inf().get_steps();
   delay builder_delay = Time::pos_inf().get_steps();
 
@@ -193,6 +194,7 @@ SPManager::builder_min_delay() const
 delay
 SPManager::builder_max_delay() const
 {
+  // TODO JV (pt): Consider axonal delays here
   delay max_delay = Time::neg_inf().get_steps();
   delay builder_delay = Time::neg_inf().get_steps();
 

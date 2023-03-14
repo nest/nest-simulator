@@ -171,6 +171,7 @@ private:
   std::vector< std::vector< DictionaryDatum > > param_dicts_;
   std::vector< std::shared_ptr< Parameter > > weight_;
   std::vector< std::shared_ptr< Parameter > > delay_;
+  std::vector< std::shared_ptr< Parameter > > axonal_delay_;
 };
 
 } // namespace nest

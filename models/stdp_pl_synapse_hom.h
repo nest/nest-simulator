@@ -153,8 +153,8 @@ public:
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
-  using ConnectionBase::get_delay;
-  using ConnectionBase::get_delay_steps;
+  using ConnectionBase::get_dendritic_delay;
+  using ConnectionBase::get_dendritic_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
@@ -201,13 +201,13 @@ public:
    * \param receptor_type The ID of the requested receptor type
    */
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& cp )
+  check_connection( Node& s, Node& t, const rport receptor_type, const delay dendritic_delay, const delay axonal_delay, const CommonPropertiesType& cp )
   {
     ConnTestDummyNode dummy_target;
 
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-    const double delay = get_delay();
+    const double delay = get_dendritic_delay();
     if ( cp.axonal_delay_ > delay )
     {
       throw BadProperty( "Axonal delay should not exceed total synaptic delay." );
@@ -272,7 +272,7 @@ stdp_pl_synapse_hom< targetidentifierT >::send( Event& e, thread t, const STDPPL
 
   Node* target = get_target( t );
 
-  const double dendritic_delay = get_delay() - cp.axonal_delay_;
+  const double dendritic_delay = get_dendritic_delay() - cp.axonal_delay_;
 
   // get spike history in relevant range (t1, t2] from postsynaptic neuron
   std::deque< histentry >::iterator start;
@@ -299,7 +299,7 @@ stdp_pl_synapse_hom< targetidentifierT >::send( Event& e, thread t, const STDPPL
 
   e.set_receiver( *target );
   e.set_weight( weight_ );
-  e.set_delay_steps( get_delay_steps() );
+  e.set_delay_steps( get_dendritic_delay_steps() );
   e.set_rport( get_rport() );
   e();
 

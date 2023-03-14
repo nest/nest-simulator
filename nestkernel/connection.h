@@ -76,7 +76,7 @@ class ConnTestDummyNodeBase : public Node
   {
   }
   void
-  update( const nest::Time&, long, long ) override
+  update( const nest::Time&, const long, const long ) override
   {
   }
   void
@@ -167,7 +167,7 @@ public:
 
   /**
    * Framework for STDP with predominantly axonal delays:
-   * Correct this synapse and the corresponding presiously sent spike
+   * Correct this synapse and the corresponding previously sent spike
    * taking into account a new post-synaptic spike.
    */
   void correct_synapse_stdp_ax_delay( const thread tid,
@@ -180,7 +180,7 @@ public:
    * Return the delay of the connection in ms
    */
   double
-  get_delay() const
+  get_dendritic_delay() const
   {
     return syn_id_delay_.get_delay_ms();
   }
@@ -189,7 +189,7 @@ public:
    * Return the delay of the connection in steps
    */
   long
-  get_delay_steps() const
+  get_dendritic_delay_steps() const
   {
     return syn_id_delay_.delay;
   }
@@ -198,7 +198,7 @@ public:
    * Set the delay of the connection
    */
   void
-  set_delay( const double delay )
+  set_dendritic_delay( const double delay )
   {
     syn_id_delay_.set_delay_ms( delay );
   }
@@ -207,9 +207,27 @@ public:
    * Set the delay of the connection in steps
    */
   void
-  set_delay_steps( const long delay )
+  set_dendritic_delay_steps( const long delay )
   {
     syn_id_delay_.delay = delay;
+  }
+
+  /**
+   * Set the proportion of the transmission delay attributed to the axon.
+   */
+  void
+  set_axonal_delay( const double )
+  {
+    throw UnexpectedEvent( "Connection does not support axonal delays." );
+  }
+
+  /**
+   * Get the proportion of the transmission delay attributed to the axon.
+   */
+  double
+  get_axonal_delay() const
+  {
+    throw UnexpectedEvent( "Connection does not support axonal delays." );
   }
 
   /**

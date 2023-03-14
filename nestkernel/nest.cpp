@@ -192,12 +192,14 @@ connect_arrays( long* sources,
   long* targets,
   double* weights,
   double* delays,
+  double* axonal_delays,
   std::vector< std::string >& p_keys,
   double* p_values,
   size_t n,
   std::string syn_model )
 {
-  kernel().connection_manager.connect_arrays( sources, targets, weights, delays, p_keys, p_values, n, syn_model );
+  kernel().connection_manager.connect_arrays(
+    sources, targets, weights, delays, axonal_delays, p_keys, p_values, n, syn_model );
 }
 
 ArrayDatum

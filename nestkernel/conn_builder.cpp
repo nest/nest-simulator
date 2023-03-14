@@ -36,7 +36,6 @@
 
 // Includes from sli:
 #include "dict.h"
-#include "fdstream.h"
 #include "name.h"
 
 nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
@@ -65,15 +64,21 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   // read out synapse-related parameters ----------------------
 
   // synapse-specific parameters that should be skipped when we set default synapse parameters
-  skip_syn_params_ = {
-    names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
-  };
+  skip_syn_params_ = { names::weight,
+    names::delay,
+    names::axonal_delay,
+    names::min_delay,
+    names::max_delay,
+    names::num_connections,
+    names::synapse_model };
 
   default_weight_.resize( syn_specs.size() );
   default_delay_.resize( syn_specs.size() );
-  default_weight_and_delay_.resize( syn_specs.size() );
+  default_axonal_delay_.resize( syn_specs.size() );
+  // default_weight_and_delay_.resize( syn_specs.size() );
   weights_.resize( syn_specs.size() );
   delays_.resize( syn_specs.size() );
+  axonal_delays_.resize( syn_specs.size() );
   synapse_params_.resize( syn_specs.size() );
   synapse_model_id_.resize( syn_specs.size() );
   synapse_model_id_[ 0 ] = kernel().model_manager.get_synapse_model_id( "static_synapse" );
@@ -85,7 +90,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
     auto syn_params = syn_specs[ synapse_indx ];
 
     set_synapse_model_( syn_params, synapse_indx );
-    set_default_weight_or_delay_( syn_params, synapse_indx );
+    set_default_weight_or_delays_( syn_params, synapse_indx );
 
     DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
 
@@ -106,6 +111,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   {
     reset_weights_();
     reset_delays_();
+    reset_axonal_delays_();
 
     for ( auto params : synapse_params_ )
     {
@@ -130,6 +136,11 @@ nest::ConnBuilder::~ConnBuilder()
   }
 
   for ( auto delay : delays_ )
+  {
+    delete delay;
+  }
+
+  for ( auto delay : axonal_delays_ )
   {
     delete delay;
   }
@@ -241,6 +252,7 @@ nest::ConnBuilder::connect()
       // call reset on all parameters
       reset_weights_();
       reset_delays_();
+      reset_axonal_delays_();
 
       for ( auto params : synapse_params_ )
       {
@@ -330,45 +342,31 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
   {
     update_param_dict_( snode_id, target, target_thread, rng, synapse_indx );
 
-    if ( default_weight_and_delay_[ synapse_indx ] )
+    double delay = numerics::nan;
+    double axonal_delay = numerics::nan;
+    double weight = numerics::nan;
+
+    if ( not default_delay_[ synapse_indx ] )
     {
-      kernel().connection_manager.connect( snode_id,
-        &target,
-        target_thread,
-        synapse_model_id_[ synapse_indx ],
-        param_dicts_[ synapse_indx ][ target_thread ] );
+      delay = delays_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target );
     }
-    else if ( default_weight_[ synapse_indx ] )
+    if ( not default_axonal_delay_[ synapse_indx ] )
     {
-      kernel().connection_manager.connect( snode_id,
-        &target,
-        target_thread,
-        synapse_model_id_[ synapse_indx ],
-        param_dicts_[ synapse_indx ][ target_thread ],
-        delays_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target ) );
+      axonal_delay = axonal_delays_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target );
     }
-    else if ( default_delay_[ synapse_indx ] )
+    if ( not default_weight_[ synapse_indx ] )
     {
-      kernel().connection_manager.connect( snode_id,
-        &target,
-        target_thread,
-        synapse_model_id_[ synapse_indx ],
-        param_dicts_[ synapse_indx ][ target_thread ],
-        numerics::nan,
-        weights_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target ) );
+      weight = weights_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target );
     }
-    else
-    {
-      const double delay = delays_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target );
-      const double weight = weights_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target );
-      kernel().connection_manager.connect( snode_id,
-        &target,
-        target_thread,
-        synapse_model_id_[ synapse_indx ],
-        param_dicts_[ synapse_indx ][ target_thread ],
-        delay,
-        weight );
-    }
+
+    kernel().connection_manager.connect( snode_id,
+      &target,
+      target_thread,
+      synapse_model_id_[ synapse_indx ],
+      param_dicts_[ synapse_indx ][ target_thread ],
+      delay,
+      axonal_delay,
+      weight );
   }
 }
 
@@ -417,6 +415,14 @@ nest::ConnBuilder::all_parameters_scalar_() const
     }
   }
 
+  for ( auto delay : axonal_delays_ )
+  {
+    if ( delay )
+    {
+      all_scalar = all_scalar and delay->is_scalar();
+    }
+  }
+
   for ( auto params : synapse_params_ )
   {
     for ( auto synapse_parameter : params )
@@ -454,22 +460,23 @@ nest::ConnBuilder::set_synapse_model_( DictionaryDatum syn_params, size_t synaps
 }
 
 void
-nest::ConnBuilder::set_default_weight_or_delay_( DictionaryDatum syn_params, size_t synapse_indx )
+nest::ConnBuilder::set_default_weight_or_delays_( DictionaryDatum syn_params, size_t synapse_indx )
 {
   DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
 
-  // All synapse models have the possibility to set the delay (see SynIdDelay), but some have
+  // All synapse models have the possibility to set the delay, but some have
   // homogeneous weights, hence it should be possible to set the delay without the weight.
   default_weight_[ synapse_indx ] = not syn_params->known( names::weight );
 
   default_delay_[ synapse_indx ] = not syn_params->known( names::delay );
+  default_axonal_delay_[ synapse_indx ] = not syn_params->known( names::axonal_delay );
 
   // If neither weight nor delay are given in the dict, we handle this separately. Important for
   // hom_w synapses, on which weight cannot be set. However, we use default weight and delay for
   // _all_ types of synapses.
-  default_weight_and_delay_[ synapse_indx ] = ( default_weight_[ synapse_indx ] and default_delay_[ synapse_indx ] );
+  // default_weight_and_delay_[ synapse_indx ] = ( default_weight_[ synapse_indx ] and default_delay_[ synapse_indx ] );
 
-  if ( not default_weight_and_delay_[ synapse_indx ] )
+  if ( not( default_weight_[ synapse_indx ] and default_delay_[ synapse_indx ] ) )
   {
     weights_[ synapse_indx ] = syn_params->known( names::weight )
       ? ConnParameter::create( ( *syn_params )[ names::weight ], kernel().vp_manager.get_num_threads() )
@@ -487,6 +494,14 @@ nest::ConnBuilder::set_default_weight_or_delay_( DictionaryDatum syn_params, siz
       : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
   }
   register_parameters_requiring_skipping_( *delays_[ synapse_indx ] );
+
+  if ( not default_axonal_delay_[ synapse_indx ] )
+  {
+    axonal_delays_[ synapse_indx ] = syn_params->known( names::axonal_delay )
+      ? ConnParameter::create( ( *syn_params )[ names::axonal_delay ], kernel().vp_manager.get_num_threads() )
+      : ConnParameter::create( ( *syn_defaults )[ names::axonal_delay ], kernel().vp_manager.get_num_threads() );
+    register_parameters_requiring_skipping_( *axonal_delays_[ synapse_indx ] );
+  }
 }
 
 void
@@ -591,6 +606,18 @@ nest::ConnBuilder::reset_delays_()
   }
 }
 
+void
+nest::ConnBuilder::reset_axonal_delays_()
+{
+  for ( auto delay : axonal_delays_ )
+  {
+    if ( delay )
+    {
+      delay->reset();
+    }
+  }
+}
+
 nest::OneToOneBuilder::OneToOneBuilder( const NodeCollectionPTR sources,
   const NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
@@ -676,8 +703,7 @@ nest::OneToOneBuilder::connect_()
     }
     catch ( std::exception& err )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
+      // We must create a new exception here, err's lifetime ends at the end of the catch block.
       exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   }

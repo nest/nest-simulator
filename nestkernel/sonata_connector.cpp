@@ -93,6 +93,11 @@ SonataConnector::connect()
 
   auto edges_container = getValue< ArrayDatum >( graph_specs_->lookup( "edges" ) );
 
+  // synapse-specific parameters that should be skipped when we set default synapse parameters
+  skip_syn_params_ = {
+    names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
+  };
+
   // Iterate edge files
   for ( auto edge_dict_datum : edges_container )
   {
@@ -535,10 +540,6 @@ void
 SonataConnector::set_synapse_params_( DictionaryDatum syn_dict, index synapse_model_id, int type_id )
 {
   DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
-  std::set< Name > skip_syn_params_ = {
-    names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
-  };
-
   ConnParameterMap synapse_params;
 
   for ( Dictionary::const_iterator default_it = syn_defaults->begin(); default_it != syn_defaults->end(); ++default_it )

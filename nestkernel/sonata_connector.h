@@ -263,6 +263,9 @@ private:
 
   typedef std::map< Name, std::shared_ptr< ConnParameter > > ConnParameterMap;
 
+  //! synapse-specific parameters that should be skipped when we set default synapse parameters
+  std::set< Name > skip_syn_params_;
+
   //! Dictionary containing SONATA graph specifications
   DictionaryDatum graph_specs_;
 

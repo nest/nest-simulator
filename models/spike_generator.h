@@ -38,7 +38,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: device, generator
+/* BeginUserDocs: device, spike, generator
 
 Short description
 +++++++++++++++++
@@ -54,7 +54,7 @@ which are given to the spike generator as an array.
 .. note::
 
    ``spike_generator`` is recommended if the spike trains have a very
-   high rate. For rates similar to normal neurons, use
+   high rate. For rates similar to regular neurons, use
    :doc:`spike train injector </models/spike_train_injector>`.
 
 Spike times are given in milliseconds as an array. The `spike_times`
@@ -76,6 +76,7 @@ The spike generator supports spike times that do not coincide with a time
 step, i.e., are not falling on the grid defined by the simulation resolution.
 There are three options that control how spike times that do not coincide
 with a step are handled (see also examples below):
+
     `precise_times`  default: false
 
 If false, spike times will be rounded to simulation steps, i.e., multiples

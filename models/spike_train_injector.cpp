@@ -40,13 +40,8 @@ namespace nest
 {
 
 /* ----------------------------------------------------------------
- * Default constructors defining default parameters and state
+ * Default constructors defining default parameters
  * ---------------------------------------------------------------- */
-
-spike_train_injector::State_::State_()
-  : position_( 0 )
-{
-}
 
 spike_train_injector::Parameters_::Parameters_()
   : origin_( Time::step( 0 ) )
@@ -297,7 +292,6 @@ spike_train_injector::Parameters_::set( const DictionaryDatum& d,
   }
 }
 
-
 void
 spike_train_injector::Parameters_::update_( const DictionaryDatum& d, const Name& name, Time& value )
 {
@@ -324,6 +318,16 @@ spike_train_injector::Parameters_::update_( const DictionaryDatum& d, const Name
 
 
 /* ----------------------------------------------------------------
+ * Default constructors defining default parameters and state
+ * ---------------------------------------------------------------- */
+
+spike_train_injector::State_::State_()
+  : position_( 0 )
+{
+}
+
+
+/* ----------------------------------------------------------------
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
@@ -342,6 +346,7 @@ spike_train_injector::spike_train_injector( const spike_train_injector& n )
   , first_syn_id_( invalid_synindex )
 {
 }
+
 
 /* ----------------------------------------------------------------
  * Node initialization functions

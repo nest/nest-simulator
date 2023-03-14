@@ -63,9 +63,10 @@ in an error.
 Multiple occurrences of the same time indicate that more than one event is to
 be generated at this particular time.
 
-Spike times may not coincide with a time step, i.e., are not a multiple of
-the simulation resolution. Three options control how spike times that do not
-coincide with a step are handled (see also examples below):
+The spike generator supports spike times that do not coincide with a time
+step, i.e., are not falling on the grid defined by the simulation resolution.
+There are three options that control how spike times that do not coincide
+with a step are handled (see also examples below):
 
     `precise_times`  default: false
 

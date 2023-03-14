@@ -38,7 +38,7 @@
 
 
 /* ----------------------------------------------------------------
- * Default constructors defining default parameters and state
+ * Default constructors defining default parameters
  * ---------------------------------------------------------------- */
 
 nest::spike_generator::Parameters_::Parameters_()
@@ -49,11 +49,6 @@ nest::spike_generator::Parameters_::Parameters_()
   , precise_times_( false )
   , allow_offgrid_times_( false )
   , shift_now_spikes_( false )
-{
-}
-
-nest::spike_generator::State_::State_()
-  : position_( 0 )
 {
 }
 
@@ -272,6 +267,16 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
 
 
 /* ----------------------------------------------------------------
+ * Default constructors defining default parameters and state
+ * ---------------------------------------------------------------- */
+
+nest::spike_generator::State_::State_()
+  : position_( 0 )
+{
+}
+
+
+/* ----------------------------------------------------------------
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
@@ -392,6 +397,7 @@ nest::spike_generator::event_hook( DSSpikeEvent& e )
   e.set_weight( P_.spike_weights_[ S_.position_ ] * e.get_weight() );
   e.get_receiver().handle( e );
 }
+
 
 /* ----------------------------------------------------------------
  * Other functions

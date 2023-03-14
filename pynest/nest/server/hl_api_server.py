@@ -258,7 +258,7 @@ def get_modules_from_env():
 
         This function converts the content of the environment variable NEST_SERVER_MODULES:
         to a formatted dictionary for updating the Python `globals`.
-        
+
         Here is an example:
             `NEST_SERVER_MODULES="nest,numpy as np,random from numpy"`
         is converted to the following dictionary:

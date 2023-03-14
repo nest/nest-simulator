@@ -40,56 +40,17 @@ namespace nest
 {
 
 /* ----------------------------------------------------------------
- * Default constructors defining default parameters
+ * Default constructor defining default parameters
  * ---------------------------------------------------------------- */
 
 spike_train_injector::Parameters_::Parameters_()
-  : origin_( Time::step( 0 ) )
-  , start_( Time::step( 0 ) )
-  , stop_( Time::pos_inf() )
-  , spike_stamps_()
+  : spike_stamps_()
   , spike_offsets_()
   , spike_multiplicities_()
   , precise_times_( false )
   , allow_offgrid_times_( false )
   , shift_now_spikes_( false )
 {
-}
-
-spike_train_injector::Parameters_::Parameters_( const Parameters_& p )
-  : origin_( p.origin_ )
-  , start_( p.start_ )
-  , stop_( p.stop_ )
-  , spike_stamps_( p.spike_stamps_ )
-  , spike_offsets_( p.spike_offsets_ )
-  , spike_multiplicities_( p.spike_multiplicities_ )
-  , precise_times_( p.precise_times_ )
-  , allow_offgrid_times_( p.allow_offgrid_times_ )
-  , shift_now_spikes_( p.shift_now_spikes_ )
-{
-  /* The resolution of the simulation may have changed since the
-     original parameters were set. We thus must calibrate the copies
-     to ensure consistency of the time values.
-  */
-  origin_.calibrate();
-  start_.calibrate();
-  stop_.calibrate();
-}
-
-spike_train_injector::Parameters_&
-spike_train_injector::Parameters_::operator=( const Parameters_& p )
-{
-  origin_ = p.origin_;
-  start_ = p.start_;
-  stop_ = p.stop_;
-  spike_stamps_ = p.spike_stamps_;
-  spike_offsets_ = p.spike_offsets_;
-  spike_multiplicities_ = p.spike_multiplicities_;
-  precise_times_ = p.precise_times_;
-  allow_offgrid_times_ = p.allow_offgrid_times_;
-  shift_now_spikes_ = p.shift_now_spikes_;
-
-  return *this;
 }
 
 
@@ -101,9 +62,9 @@ void
 spike_train_injector::Parameters_::get( DictionaryDatum& d ) const
 {
   const size_t n_spikes = spike_stamps_.size();
-
   auto* times_ms = new std::vector< double >();
   times_ms->reserve( n_spikes );
+
   for ( size_t n = 0; n < n_spikes; ++n )
   {
     times_ms->push_back( spike_stamps_[ n ].get_ms() );
@@ -112,9 +73,7 @@ spike_train_injector::Parameters_::get( DictionaryDatum& d ) const
       ( *times_ms )[ n ] -= spike_offsets_[ n ];
     }
   }
-  ( *d )[ names::origin ] = origin_.get_ms();
-  ( *d )[ names::start ] = start_.get_ms();
-  ( *d )[ names::stop ] = stop_.get_ms();
+
   ( *d )[ names::spike_times ] = DoubleVectorDatum( times_ms );
   ( *d )[ names::spike_multiplicities ] = IntVectorDatum( new std::vector< long >( spike_multiplicities_ ) );
   ( *d )[ names::precise_times ] = BoolDatum( precise_times_ );
@@ -194,15 +153,6 @@ spike_train_injector::Parameters_::set( const DictionaryDatum& d,
   const Time& now,
   Node* node )
 {
-  update_( d, names::origin, origin_ );
-  update_( d, names::start, start_ );
-  update_( d, names::stop, stop_ );
-
-  if ( stop_ < start_ )
-  {
-    throw BadProperty( "stop >= start required." );
-  }
-
   bool precise_times_changed = updateValueParam< bool >( d, names::precise_times, precise_times_, node );
   bool shift_now_spikes_changed = updateValueParam< bool >( d, names::shift_now_spikes, shift_now_spikes_, node );
   bool allow_offgrid_times_changed =
@@ -314,7 +264,7 @@ spike_train_injector::Parameters_::update_( const DictionaryDatum& d, const Name
 
 
 /* ----------------------------------------------------------------
- * Default constructors defining default parameters and state
+ * Default constructor defining default state
  * ---------------------------------------------------------------- */
 
 spike_train_injector::State_::State_()
@@ -371,21 +321,27 @@ spike_train_injector::pre_run_hook()
     kernel().event_delivery_manager.set_off_grid_communication( true );
     LOG( M_INFO,
       "spike_train_injector::pre_run_hook",
-      "Static injecor neuron has been configured to emit precisely timed "
+      "Spike train injector has been configured to emit precisely timed "
       "spikes: the kernel property off_grid_spiking has been set to true.\n\n"
       "NOTE: Mixing precise-spiking and normal neuron models may "
       "lead to inconsistent results." );
   }
 
-  // by adding time objects, all overflows will be handled gracefully
-  V_.t_min_ = ( P_.origin_ + P_.start_ ).get_steps();
-  V_.t_max_ = ( P_.origin_ + P_.stop_ ).get_steps();
+  Device::pre_run_hook();
 }
 
 
 /* ----------------------------------------------------------------
  * Other functions
  * ---------------------------------------------------------------- */
+
+bool
+spike_train_injector::is_active( const Time& T ) const
+{
+  long step = T.get_steps();
+  return get_t_min_() < step and step <= get_t_max_();
+}
+
 void
 spike_train_injector::update( Time const& sliceT0, const long from, const long to )
 {
@@ -399,7 +355,7 @@ spike_train_injector::update( Time const& sliceT0, const long from, const long t
 
   const Time tstart = sliceT0 + Time::step( from );
   const Time tstop = sliceT0 + Time::step( to );
-  const Time& origin = get_origin();
+  const Time& origin = Device::get_origin();
 
   // We fire all spikes with time stamps up to including sliceT0 + to
   while ( S_.position_ < P_.spike_stamps_.size() )

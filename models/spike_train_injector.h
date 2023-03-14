@@ -28,6 +28,7 @@
 
 // Includes from nestkernel:
 #include "connection.h"
+#include "device.h"
 #include "event.h"
 #include "nest_time.h"
 #include "nest_types.h"
@@ -234,7 +235,7 @@ EndUserDocs */
  * @note Spikes emitted by a spike train injector neuron will be counted by
  * the local spike count.
  */
-class spike_train_injector : public Node
+class spike_train_injector : public Node, public Device
 {
 
 public:
@@ -244,6 +245,7 @@ public:
   port send_test_event( Node&, rport, synindex, bool ) override;
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
+  bool is_active( const Time& ) const override;
 
   bool
   is_off_grid() const override
@@ -260,12 +262,6 @@ private:
 
   void update( Time const&, const long, const long ) override;
 
-  Time const& get_origin() const;
-  Time const& get_start() const;
-  Time const& get_stop() const;
-  long get_t_min_() const;
-  long get_t_max_() const;
-
   /**
    * State variables of the model.
    */
@@ -280,16 +276,6 @@ private:
    */
   struct Parameters_
   {
-
-    //! Origin of time axis, relative to network time. Defaults to 0.
-    Time origin_;
-
-    //!< Start time, relative to origin. Defaults to 0.
-    Time start_;
-
-    //!< Stop time, relative to origin. Defaults to "infinity".
-    Time stop_;
-
     //! Spike time stamp as Time, rel to origin_
     std::vector< Time > spike_stamps_;
 
@@ -308,9 +294,9 @@ private:
     //! Shift spike times at present to next step
     bool shift_now_spikes_;
 
-    Parameters_();                                //!< Sets default parameter values
-    Parameters_( const Parameters_& );            //= default;
-    Parameters_& operator=( const Parameters_& ); // = default;
+    Parameters_(); //!< Sets default parameter values
+    Parameters_( const Parameters_& ) = default;
+    Parameters_& operator=( const Parameters_& ) = default;
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 
@@ -336,39 +322,13 @@ private:
     static void update_( const DictionaryDatum&, const Name&, Time& );
   };
 
-  /**
-   * Internal variables of the model.
-   */
-  struct Variables_
-  {
-
-    /**
-     * Time step of spike train injector neuron activation.
-     * t_min_ = origin_ + start_, in steps.
-     * @note This is an auxiliary variable that is initialized to -1 in the
-     * constructor and set to its proper value by calibrate. It should NOT
-     * be returned by get_parameters().
-     */
-    long t_min_;
-
-    /**
-     * Time step of spike train injector neuron deactivation.
-     * t_max_ = origin_ + stop_, in steps.
-     * @note This is an auxiliary variable that is initialized to -1 in the
-     * constructor and set to its proper value by calibrate. It should NOT
-     * be returned by get_parameters().
-     */
-    long t_max_;
-  };
-
   State_ S_;
   Parameters_ P_;
-  Variables_ V_;
 };
 
 
 inline port
-spike_train_injector::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
+spike_train_injector::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -380,6 +340,7 @@ inline void
 spike_train_injector::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
+  Device::get_status( d );
 }
 
 
@@ -398,47 +359,20 @@ spike_train_injector::set_status( const DictionaryDatum& d )
   }
   else
   {
-    origin = get_origin();
+    origin = Device::get_origin();
   }
 
   // throws if BadProperty
   ptmp.set( d, S_, origin, kernel().simulation_manager.get_time(), this );
 
+  // We now know that ptmp is consistent. We do not write it back
+  // to P_ before we are also sure that the properties to be set
+  // in the parent class are internally consistent.
+  Device::set_status( d );
+
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
 }
 
-
-inline Time const&
-spike_train_injector::get_origin() const
-{
-  return P_.origin_;
-}
-
-inline Time const&
-spike_train_injector::get_start() const
-{
-  return P_.start_;
-}
-
-inline Time const&
-spike_train_injector::get_stop() const
-{
-  return P_.stop_;
-}
-
-inline long
-spike_train_injector::get_t_min_() const
-{
-  return V_.t_min_;
-}
-
-inline long
-spike_train_injector::get_t_max_() const
-{
-  return V_.t_max_;
-}
-
 } // namespace
-
 #endif // SPIKE_TRAIN_INJECTOR_H

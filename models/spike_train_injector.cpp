@@ -436,7 +436,6 @@ spike_train_injector::update( Time const& sliceT0, const long from, const long t
       // we need to subtract one from stamp which is added again in send()
       long lag = Time( tnext_stamp - sliceT0 ).get_steps() - 1;
 
-      // all spikes are sent locally, so offset information is always preserved
       kernel().event_delivery_manager.send( *this, se, lag );
     }
 

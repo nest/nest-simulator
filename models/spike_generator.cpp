@@ -63,8 +63,6 @@ nest::spike_generator::Parameters_::get( DictionaryDatum& d ) const
   const size_t n_spikes = spike_stamps_.size();
   const size_t n_offsets = spike_offsets_.size();
 
-  assert( ( precise_times_ and n_offsets == n_spikes ) or ( not precise_times_ and n_offsets == 0 ) );
-
   auto* times_ms = new std::vector< double >();
   times_ms->reserve( n_spikes );
   for ( size_t n = 0; n < n_spikes; ++n )

@@ -101,9 +101,6 @@ void
 spike_train_injector::Parameters_::get( DictionaryDatum& d ) const
 {
   const size_t n_spikes = spike_stamps_.size();
-  const size_t n_offsets = spike_offsets_.size();
-
-  assert( ( precise_times_ and n_offsets == n_spikes ) or ( not precise_times_ and n_offsets == 0 ) );
 
   auto* times_ms = new std::vector< double >();
   times_ms->reserve( n_spikes );
@@ -309,7 +306,7 @@ spike_train_injector::Parameters_::update_( const DictionaryDatum& d, const Name
     const Time t = Time::ms( val );
     if ( t.is_finite() and not t.is_grid_time() )
     {
-      throw BadProperty( name.toString() +  " must be a multiple of the simulation resolution." );
+      throw BadProperty( name.toString() + " must be a multiple of the simulation resolution." );
     }
     value = t;
   }
@@ -334,7 +331,6 @@ spike_train_injector::spike_train_injector()
   : Node()
   , S_()
   , P_()
-  , first_syn_id_( invalid_synindex )
 {
 }
 
@@ -342,7 +338,6 @@ spike_train_injector::spike_train_injector( const spike_train_injector& n )
   : Node( n )
   , S_( n.S_ )
   , P_( n.P_ )
-  , first_syn_id_( invalid_synindex )
 {
 }
 
@@ -426,41 +421,26 @@ spike_train_injector::update( Time const& sliceT0, const long from, const long t
 
     if ( get_t_min_() < step and step <= get_t_max_() )
     {
-      SpikeEvent* se;
-      se = new SpikeEvent;
+      SpikeEvent se;
 
       if ( P_.precise_times_ )
       {
-        se->set_offset( P_.spike_offsets_[ S_.position_ ] );
+        se.set_offset( P_.spike_offsets_[ S_.position_ ] );
       }
 
       if ( not P_.spike_multiplicities_.empty() )
       {
-        se->set_multiplicity( P_.spike_multiplicities_[ S_.position_ ] );
+        se.set_multiplicity( P_.spike_multiplicities_[ S_.position_ ] );
       }
 
       // we need to subtract one from stamp which is added again in send()
       long lag = Time( tnext_stamp - sliceT0 ).get_steps() - 1;
 
       // all spikes are sent locally, so offset information is always preserved
-      kernel().event_delivery_manager.send( *this, *se, lag );
-      delete se;
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     ++S_.position_;
-  }
-}
-
-void
-spike_train_injector::enforce_single_syn_type( synindex syn_id )
-{
-  if ( first_syn_id_ == invalid_synindex )
-  {
-    first_syn_id_ = syn_id;
-  }
-  if ( syn_id != first_syn_id_ )
-  {
-    throw IllegalConnection( "All outgoing connections from a static injector neuron must use the same synapse type." );
   }
 }
 

@@ -54,7 +54,8 @@ which are given to the spike generator as an array.
 .. note::
 
    ``spike_generator`` is recommended if the spike trains have a very
-   high rate. For rates similar to normal neurons, use ``spike_train_injector``.
+   high rate. For rates similar to normal neurons, use
+   :doc:`spike train injector </models/spike_train_injector>`.
 
 Spike times are given in milliseconds as an array. The `spike_times`
 array must be sorted with the earliest spike first. All spike times

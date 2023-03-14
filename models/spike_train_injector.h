@@ -53,7 +53,8 @@ and is thus not able to process incoming spikes or currents.
 .. note::
 
    ``spike_train_injector`` is recommended if the spike trains have a similar
-   rate to normal neurons. For very high rates, use ``spike_generator``.
+   rate to normal neurons. For very high rates, use
+   :doc:`spike generator </models/spike_generator>`.
 
 Spike times are given in milliseconds as an array. The `spike_times` array
 must be sorted with the earliest spike first. All spike times must be strictly
@@ -363,25 +364,12 @@ private:
   State_ S_;
   Parameters_ P_;
   Variables_ V_;
-
-  /**
-   * Synapse type of the first outgoing connection made by the node.
-   *
-   * Used to check that this node (which should act similar to devices)
-   * connect using only a single synapse type, see #481 and #737.
-   * Since this value must survive resets, it is stored here, even though
-   * it is an implementation detail.
-   */
-  synindex first_syn_id_;
-
-  void enforce_single_syn_type( synindex syn_id );
 };
 
 
 inline port
 spike_train_injector::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
 {
-  enforce_single_syn_type( syn_id );
   SpikeEvent e;
   e.set_sender( *this );
   return target.handles_test_event( e, receptor_type );

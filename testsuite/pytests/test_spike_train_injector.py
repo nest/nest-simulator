@@ -59,6 +59,7 @@ def test_set_spike_times(
     a step for different options. We set NEST to work with default resolution
     (step size) of 0.1 ms and default tic length of 0.001 ms.
     """
+
     nest.set(resolution=0.1, tics_per_ms=1000.0)
 
     inj_nrn = nest.Create("spike_train_injector",
@@ -79,6 +80,7 @@ def test_spike_train_injector_in_simulation(reset_kernel, parrot_model):
     This test verifies the behavior of the spike train injector neuron in
     simulations by using parrot neuron's spike repetition properties.
     """
+
     spike_time = 1.01
     delay = 0.2
     simtime = 2.0

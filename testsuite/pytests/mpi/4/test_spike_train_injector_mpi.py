@@ -62,7 +62,7 @@ def test_spike_train_injector_multiplicities(times, multiplicities, precise):
     expected = []
     for t, m in zip(times, multiplicities):
         expected.extend([t + delay] * m)
-    
+
     for p, ev in zip(parrots, srec.events):
         if p.local:
             assert ev["senders"] == pytest.approx(p.global_id)

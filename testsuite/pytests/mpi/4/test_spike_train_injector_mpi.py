@@ -27,7 +27,15 @@ import nest
 import pytest
 
 
-def test_spike_train_injector_multiplicities():
+@pytest.fixture(autouse=True)
+def reset_kernel():
+    nest.ResetKernel()
+
+
+@pytest.mark.parametrize('times, multiplicities, precise',
+                         [[[1, 2], [3, 5], False],
+                          [[1.007, 1.993], [2, 7], True]])
+def test_spike_train_injector_multiplicities(times, multiplicities, precise):
     """
     Test spike train multiplicity with spike_train_injector model.
 
@@ -35,20 +43,27 @@ def test_spike_train_injector_multiplicities():
     MPI parallelsimulations by using parrot neuron's spike repetition
     properties.
     """
+
     inj = nest.Create("spike_train_injector",
-                      params={"spike_times": [1., 2.],
-                              "spike_multiplicities": [3, 5]
+                      params={"spike_times": times,
+                              "spike_multiplicities": multiplicities,
+                              "precise_times": precise
                               })
 
-    parrots = nest.Create("parrot_neuron", 4)
+    parrots = nest.Create("parrot_neuron" if not precise else "parrot_neuron_ps", 4)
     srec = nest.Create("spike_recorder", 4)
 
-    nest.Connect(inj, parrots)
+    delay = 1.3
+    nest.Connect(inj, parrots, syn_spec={'delay': delay})
     nest.Connect(parrots, srec, 'one_to_one')
 
     nest.Simulate(4.0)
 
+    expected = []
+    for t, m in zip(times, multiplicities):
+        expected.extend([t + delay] * m)
+    
     for p, ev in zip(parrots, srec.events):
         if p.local:
             assert ev["senders"] == pytest.approx(p.global_id)
-            assert ev["times"] == pytest.approx([2, 2, 2, 3, 3, 3, 3, 3])
+            assert ev["times"] == pytest.approx(expected)

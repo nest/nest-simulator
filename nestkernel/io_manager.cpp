@@ -297,7 +297,8 @@ IOManager::cleanup()
 bool
 IOManager::is_valid_recording_backend( const Name backend_name ) const
 {
-  std::map< Name, RecordingBackend* >::const_iterator backend;
+  auto backend = recording_backends_.find( backend_name );
+  return backend != recording_backends_.end();
   backend = recording_backends_.find( backend_name );
   return backend != recording_backends_.end();
 }

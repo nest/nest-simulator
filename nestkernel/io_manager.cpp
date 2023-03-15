@@ -299,8 +299,6 @@ IOManager::is_valid_recording_backend( const Name backend_name ) const
 {
   auto backend = recording_backends_.find( backend_name );
   return backend != recording_backends_.end();
-  backend = recording_backends_.find( backend_name );
-  return backend != recording_backends_.end();
 }
 
 bool

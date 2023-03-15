@@ -352,7 +352,6 @@ public:
   virtual void get_status( DictionaryDatum& ) const = 0;
 
 public:
-
   /**
    * @defgroup event_interface Communication.
    * Functions and infrastructure, responsible for communication
@@ -680,7 +679,6 @@ public:
   {
     return SPIKE;
   }
-
 
   /**
    *  Return a dictionary with the node's properties.

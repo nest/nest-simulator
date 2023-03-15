@@ -398,7 +398,6 @@ Node::sends_secondary_event( DelayedRateConnectionEvent& )
   throw IllegalConnection( "The source node does not support delayed rate output." );
 }
 
-
 double
 Node::get_LTD_value( double )
 {

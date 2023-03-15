@@ -62,7 +62,7 @@ public:
    * \fn double get_Ca_minus()
    * return the current value of Ca_minus
    */
-  double get_Ca_minus() const override;
+  double get_Ca_minus() const;
 
   /**
    * \fn double get_synaptic_elements(Name n)
@@ -71,47 +71,47 @@ public:
    * actual vacant and connected elements is an integer truncated from this
    * value
    */
-  double get_synaptic_elements( Name n ) const override;
+  double get_synaptic_elements( Name n ) const;
 
   /**
    * \fn int get_synaptic_elements_vacant(Name n)
    * Get the number of synaptic elements of type n which are available
    * for new synapse creation
    */
-  int get_synaptic_elements_vacant( Name n ) const override;
+  int get_synaptic_elements_vacant( Name n ) const;
 
   /**
    * \fn int get_synaptic_elements_connected(Name n)
    * get the number of synaptic element of type n which are currently
    * connected
    */
-  int get_synaptic_elements_connected( Name n ) const override;
+  int get_synaptic_elements_connected( Name n ) const;
 
   /**
    * \fn std::map<Name, double> get_synaptic_elements()
    * get the number of all synaptic elements for the current Node
    */
-  std::map< Name, double > get_synaptic_elements() const override;
+  std::map< Name, double > get_synaptic_elements() const;
 
   /**
    * \fn void update_synaptic_elements()
    * Change the number of synaptic elements in the node depending on the
    * dynamics described by the corresponding growth curve
    */
-  void update_synaptic_elements( double t ) override;
+  void update_synaptic_elements( double t );
 
   /**
    * \fn void decay_synaptic_elements_vacant()
    * Delete a certain portion of the vacant synaptic elements which are not
    * in use
    */
-  void decay_synaptic_elements_vacant() override;
+  void decay_synaptic_elements_vacant();
 
   /**
    * \fn void connect_synaptic_element()
    * Change the number of connected synaptic elements by n
    */
-  void connect_synaptic_element( Name name, int n ) override;
+  void connect_synaptic_element( Name name, int n );
 
   void get_status( DictionaryDatum& d ) const override;
   void set_status( const DictionaryDatum& d ) override;

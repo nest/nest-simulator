@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "node.h"
 
 // Includes from libnestutil:
@@ -39,25 +38,16 @@ namespace nest
 {
 
 Node::Node()
-  : deprecation_warning()
-  , node_id_( 0 )
-  , thread_lid_( invalid_index )
-  , model_id_( -1 )
-  , thread_( invalid_thread )
-  , vp_( invalid_thread )
-  , frozen_( false )
+  : NESTObjectInterface()
+  , deprecation_warning()
   , initialized_( false )
   , node_uses_wfr_( false )
 {
 }
 
 Node::Node( const Node& n )
-  : deprecation_warning( n.deprecation_warning )
-  , node_id_( 0 )
-  , thread_lid_( n.thread_lid_ )
-  , model_id_( n.model_id_ )
-  , thread_( n.thread_ )
-  , vp_( n.vp_ )
+  : NESTObjectInterface( n )
+  , deprecation_warning( n.deprecation_warning )
   , frozen_( n.frozen_ )
   // copy must always initialized its own buffers
   , initialized_( false )
@@ -104,56 +94,20 @@ Node::set_initialized_()
 {
 }
 
-std::string
-Node::get_name() const
-{
-  if ( model_id_ < 0 )
-  {
-    return std::string( "UnknownNode" );
-  }
-
-  return kernel().model_manager.get_node_model( model_id_ )->get_name();
-}
-
 Model&
 Node::get_model_() const
 {
-  assert( model_id_ >= 0 );
-  return *kernel().model_manager.get_node_model( model_id_ );
-}
-
-DictionaryDatum
-Node::get_status_dict_()
-{
-  return DictionaryDatum( new Dictionary );
-}
-
-void
-Node::set_local_device_id( const index )
-{
-  assert( false and "set_local_device_id() called on a non-device node of type" );
-}
-
-index
-Node::get_local_device_id() const
-{
-  assert( false and "get_local_device_id() called on a non-device node." );
-  return invalid_index;
+  index model_id = get_model_id();
+  assert( model_id >= 0 );
+  return *kernel().model_manager.get_node_model( model_id );
 }
 
 DictionaryDatum
 Node::get_status_base()
 {
-  DictionaryDatum dict = get_status_dict_();
+  DictionaryDatum dict = NESTObjectInterface::get_status_base();
 
-  // add information available for all nodes
   ( *dict )[ names::local ] = kernel().node_manager.is_local_node( this );
-  ( *dict )[ names::model ] = LiteralDatum( get_name() );
-  ( *dict )[ names::model_id ] = get_model_id();
-  ( *dict )[ names::global_id ] = get_node_id();
-  ( *dict )[ names::vp ] = get_vp();
-  ( *dict )[ names::element_type ] = LiteralDatum( get_element_type() );
-
   // add information available only for local nodes
   if ( not is_proxy() )
   {
@@ -172,16 +126,7 @@ Node::get_status_base()
 void
 Node::set_status_base( const DictionaryDatum& dict )
 {
-  try
-  {
-    set_status( dict );
-  }
-  catch ( BadProperty& e )
-  {
-    throw BadProperty(
-      String::compose( "Setting status of a '%1' with node ID %2: %3", get_name(), get_node_id(), e.message() ) );
-  }
-
+  NESTObjectInterface::set_status_base( dict );
   updateValue< bool >( dict, names::frozen, frozen_ );
 }
 
@@ -233,7 +178,8 @@ Node::handles_test_event( SpikeEvent&, rport )
 {
   throw IllegalConnection(
     "The target node or synapse model does not support spike input.\n"
-    "  Note that volt/multimeters must be connected as Connect(meter, neuron)." );
+    "  Note that volt/multimeters must be connected as Connect(meter, "
+    "neuron)." );
 }
 
 void
@@ -245,7 +191,9 @@ Node::handle( WeightRecorderEvent& )
 port
 Node::handles_test_event( WeightRecorderEvent&, rport )
 {
-  throw IllegalConnection( "The target node or synapse model does not support weight recorder events." );
+  throw IllegalConnection(
+    "The target node or synapse model does not support weight recorder "
+    "events." );
 }
 
 void
@@ -281,7 +229,9 @@ Node::handle( DataLoggingRequest& )
 port
 Node::handles_test_event( DataLoggingRequest&, rport )
 {
-  throw IllegalConnection( "The target node or synapse model does not support data logging requests." );
+  throw IllegalConnection(
+    "The target node or synapse model does not support data logging "
+    "requests." );
 }
 
 void
@@ -353,7 +303,9 @@ Node::handle( InstantaneousRateConnectionEvent& )
 port
 Node::handles_test_event( InstantaneousRateConnectionEvent&, rport )
 {
-  throw IllegalConnection( "The target node or synapse model does not support instantaneous rate input." );
+  throw IllegalConnection(
+    "The target node or synapse model does not support instantaneous rate "
+    "input." );
 }
 
 void
@@ -398,7 +350,6 @@ Node::sends_secondary_event( DelayedRateConnectionEvent& )
   throw IllegalConnection( "The source node does not support delayed rate output." );
 }
 
-
 double
 Node::get_LTD_value( double )
 {
@@ -410,7 +361,6 @@ Node::get_K_value( double )
 {
   throw UnexpectedEvent();
 }
-
 
 void
 Node::get_K_values( double, double&, double&, double& )
@@ -491,4 +441,4 @@ Node::event_hook( DSCurrentEvent& e )
   e.get_receiver().handle( e );
 }
 
-} // namespace
+} // namespace nest

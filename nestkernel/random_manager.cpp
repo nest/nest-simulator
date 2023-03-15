@@ -32,9 +32,11 @@
 #include "vp_manager_impl.h"
 
 // Includes from libnestutil:
+#ifdef HAVE_RANDOM123
 #include "Random123/conventional/Engine.hpp"
 #include "Random123/philox.h"
 #include "Random123/threefry.h"
+#endif
 
 
 const std::string nest::RandomManager::DEFAULT_RNG_TYPE_ = "mt19937_64";
@@ -93,12 +95,20 @@ nest::RandomManager::finalize()
 }
 
 void
+nest::RandomManager::change_number_of_threads()
+{
+  finalize();
+  initialize();
+}
+
+void
 nest::RandomManager::reset_rngs_()
 {
   // Delete existing RNGs.
   delete rank_synced_rng_;
 
-  auto delete_rngs = []( std::vector< RngPtr >& rng_vec ) {
+  auto delete_rngs = []( std::vector< RngPtr >& rng_vec )
+  {
     for ( auto rng : rng_vec )
     {
       delete rng;
@@ -186,9 +196,7 @@ nest::RandomManager::check_rng_synchrony() const
   for ( auto n = 0; n < NUM_ROUNDS; ++n )
   {
     const auto r = rank_synced_rng_->drand();
-    const auto min = kernel().mpi_manager.min_cross_ranks( r );
-    const auto max = kernel().mpi_manager.max_cross_ranks( r );
-    if ( min != max )
+    if ( not kernel().mpi_manager.equal_cross_ranks( r ) )
     {
       throw KernelException( "Rank-synchronized random number generators are out of sync." );
     }
@@ -207,11 +215,13 @@ nest::RandomManager::check_rng_synchrony() const
       local_max = std::max( r, local_max );
     }
 
-    // Finding the local min and max on each thread and then determining the
-    // global min/max, ensures that all ranks will learn about sync errors.
-    const long min = kernel().mpi_manager.min_cross_ranks( local_min );
-    const long max = kernel().mpi_manager.max_cross_ranks( local_max );
-    if ( min != max )
+    // If local values are not equal, flag this in local_min.
+    if ( local_min != local_max )
+    {
+      local_min = -std::numeric_limits< double >::infinity();
+    }
+
+    if ( not kernel().mpi_manager.equal_cross_ranks( local_min ) )
     {
       throw KernelException( "Thread-synchronized random number generators are out of sync." );
     }

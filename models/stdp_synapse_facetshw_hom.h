@@ -151,7 +151,7 @@ References
 See also
 ++++++++
 
-stdp_synapse, synapsedict, tsodyks_synapse, static_synapse
+stdp_synapse, tsodyks_synapse, static_synapse
 
 EndUserDocs */
 
@@ -235,6 +235,10 @@ public:
   typedef STDPFACETSHWHomCommonProperties< targetidentifierT > CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
@@ -246,6 +250,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   stdp_facetshw_synapse_hom( const stdp_facetshw_synapse_hom& ) = default;
+  stdp_facetshw_synapse_hom& operator=( const stdp_facetshw_synapse_hom& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -280,9 +285,9 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
@@ -344,6 +349,9 @@ private:
                                  // properties or "static"?
   double t_lastspike_;
 };
+
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties stdp_facetshw_synapse_hom< targetidentifierT >::properties;
 
 template < typename targetidentifierT >
 inline bool
@@ -411,7 +419,7 @@ stdp_facetshw_synapse_hom< targetidentifierT >::send( Event& e,
     const_cast< STDPFACETSHWHomCommonProperties< targetidentifierT >& >( cp );
 
   // init the readout time
-  if ( init_flag_ == false )
+  if ( not init_flag_ )
   {
     synapse_id_ = cp.no_synapses_;
     ++cp_nonconst.no_synapses_;
@@ -432,7 +440,7 @@ stdp_facetshw_synapse_hom< targetidentifierT >::send( Event& e,
     bool eval_1 = eval_function_( a_causal_, a_acausal_, a_thresh_th_, a_thresh_tl_, cp.configbit_1_ );
 
     // select LUT, update weight and reset capacitors
-    if ( eval_0 == true && eval_1 == false )
+    if ( eval_0 == true and eval_1 == false )
     {
       discrete_weight_ = lookup_( discrete_weight_, cp.lookuptable_0_ );
       if ( cp.reset_pattern_[ 0 ] )
@@ -444,7 +452,7 @@ stdp_facetshw_synapse_hom< targetidentifierT >::send( Event& e,
         a_acausal_ = 0;
       }
     }
-    else if ( eval_0 == false && eval_1 == true )
+    else if ( eval_0 == false and eval_1 == true )
     {
       discrete_weight_ = lookup_( discrete_weight_, cp.lookuptable_1_ );
       if ( cp.reset_pattern_[ 2 ] )
@@ -456,7 +464,7 @@ stdp_facetshw_synapse_hom< targetidentifierT >::send( Event& e,
         a_acausal_ = 0;
       }
     }
-    else if ( eval_0 == true && eval_1 == true )
+    else if ( eval_0 == true and eval_1 == true )
     {
       discrete_weight_ = lookup_( discrete_weight_, cp.lookuptable_2_ );
       if ( cp.reset_pattern_[ 4 ] )

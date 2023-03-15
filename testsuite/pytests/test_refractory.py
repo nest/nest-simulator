@@ -57,7 +57,6 @@ neurons_interspike = [
 ]
 
 neurons_interspike_ps = [
-    "iaf_psc_alpha_canon",
     "iaf_psc_alpha_ps",
     "iaf_psc_delta_ps",
     "iaf_psc_exp_ps",
@@ -87,8 +86,9 @@ ignore_model = [
     "step_rate_generator"        # No regular neuron model
 ]
 
-tested_models = [m for m in nest.Models("nodes") if (nest.GetDefaults(
-                 m, "element_type") == "neuron" and m not in ignore_model)]
+tested_models = [m for m in nest.node_models
+                 if nest.GetDefaults(m, "element_type") == "neuron"
+                 and m not in ignore_model]
 
 # Additional parameters for the connector
 add_connect_param = {
@@ -156,7 +156,7 @@ class TestRefractoryCase(unittest.TestCase):
             name_Vm = "V_m.s" if model in mc_models else "V_m"
             Vs = nest.GetStatus(vm, "events")[0][name_Vm]
 
-            # Get the index at which the spike occured
+            # Get the index at which the spike occurred
             idx_spike = np.argwhere(times == spike_times[0])[0][0]
 
             # Find end of refractory period between 1st and 2nd spike

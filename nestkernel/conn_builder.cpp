@@ -76,7 +76,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   delays_.resize( syn_specs.size() );
   synapse_params_.resize( syn_specs.size() );
   synapse_model_id_.resize( syn_specs.size() );
-  synapse_model_id_[ 0 ] = kernel().model_manager.get_synapsedict()->lookup( "static_synapse" );
+  synapse_model_id_[ 0 ] = kernel().model_manager.get_synapse_model_id( "static_synapse" );
   param_dicts_.resize( syn_specs.size() );
 
   // loop through vector of synapse dictionaries, and set synapse parameters
@@ -205,9 +205,12 @@ nest::ConnBuilder::connect()
 {
   // We test here, and not in the ConnBuilder constructor, so the derived
   // classes are fully constructed when the test is executed
-  for ( auto syn_model : synapse_model_id_ )
+  for ( auto synapse_model_id : synapse_model_id_ )
   {
-    if ( kernel().model_manager.connector_requires_symmetric( syn_model ) and not( is_symmetric() or make_symmetric_ ) )
+    const ConnectorModel& synapse_model = kernel().model_manager.get_connection_model( synapse_model_id );
+    const bool requires_symmetric = synapse_model.has_property( ConnectionModelProperties::REQUIRES_SYMMETRIC );
+
+    if ( requires_symmetric and not( is_symmetric() or make_symmetric_ ) )
     {
       throw BadProperty(
         "Connections with this synapse model can only be created as "
@@ -440,16 +443,13 @@ nest::ConnBuilder::set_synapse_model_( DictionaryDatum syn_params, size_t synaps
     throw BadProperty( "Synapse spec must contain synapse model." );
   }
   const std::string syn_name = ( *syn_params )[ names::synapse_model ];
-  if ( not kernel().model_manager.get_synapsedict()->known( syn_name ) )
-  {
-    throw UnknownSynapseType( syn_name );
-  }
 
-  index synapse_model_id = kernel().model_manager.get_synapsedict()->lookup( syn_name );
+  // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
+  const index synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
   synapse_model_id_[ synapse_indx ] = synapse_model_id;
 
   // We need to make sure that Connect can process all synapse parameters specified.
-  const ConnectorModel& synapse_model = kernel().model_manager.get_synapse_prototype( synapse_model_id );
+  const ConnectorModel& synapse_model = kernel().model_manager.get_connection_model( synapse_model_id );
   synapse_model.check_synapse_params( syn_params );
 }
 
@@ -1727,7 +1727,7 @@ nest::SymmetricBernoulliBuilder::connect_()
         // check whether the target is on this thread
         if ( target->is_proxy() )
         {
-          target_thread = invalid_thread_;
+          target_thread = invalid_thread;
         }
 
         previous_snode_ids.clear();
@@ -1752,20 +1752,20 @@ nest::SymmetricBernoulliBuilder::connect_()
 
           if ( source->is_proxy() )
           {
-            source_thread = invalid_thread_;
+            source_thread = invalid_thread;
           }
 
           // if target is local: connect
           if ( target_thread == tid )
           {
-            assert( target != NULL );
+            assert( target );
             single_connect_( snode_id, *target, target_thread, synced_rng );
           }
 
           // if source is local: connect
           if ( source_thread == tid )
           {
-            assert( source != NULL );
+            assert( source );
             single_connect_( ( *tnode_id ).node_id, *source, source_thread, synced_rng );
           }
 
@@ -1840,7 +1840,8 @@ nest::SPBuilder::connect_()
 /**
  * In charge of dynamically creating the new synapses
  */
-void nest::SPBuilder::connect_( NodeCollectionPTR, NodeCollectionPTR )
+void
+nest::SPBuilder::connect_( NodeCollectionPTR, NodeCollectionPTR )
 {
   throw NotImplemented( "Connection without structural plasticity is not possible for this connection builder." );
 }

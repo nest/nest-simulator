@@ -23,9 +23,16 @@
 #include "modelsmodule.h"
 
 // Includes from nestkernel
+#include "common_synapse_properties.h"
+#include "connector_model_impl.h"
+#include "genericmodel.h"
 #include "genericmodel_impl.h"
+#include "kernel_manager.h"
+#include "model.h"
+#include "model_manager_impl.h"
+#include "target_identifier.h"
 
-// Generated includes:
+// Generated includes
 #include "config.h"
 
 // Neuron models
@@ -38,6 +45,7 @@
 #include "aeif_psc_delta_clopath.h"
 #include "aeif_psc_exp.h"
 #include "amat2_psc_exp.h"
+#include "cm_default.h"
 #include "erfc_neuron.h"
 #include "gauss_rate.h"
 #include "gif_cond_exp.h"
@@ -62,7 +70,6 @@
 #include "iaf_cond_exp.h"
 #include "iaf_cond_exp_sfa_rr.h"
 #include "iaf_psc_alpha.h"
-#include "iaf_psc_alpha_canon.h"
 #include "iaf_psc_alpha_multisynapse.h"
 #include "iaf_psc_alpha_ps.h"
 #include "iaf_psc_delta.h"
@@ -79,7 +86,6 @@
 #include "parrot_neuron.h"
 #include "parrot_neuron_ps.h"
 #include "pp_cond_exp_mc_urbanczik.h"
-#include "pp_pop_psc_delta.h"
 #include "pp_psc_delta.h"
 #include "siegert_neuron.h"
 #include "sigmoid_rate.h"
@@ -115,7 +121,7 @@
 #include "volume_transmitter.h"
 #include "weight_recorder.h"
 
-// Prototypes for synapses
+// Synapse models
 #include "bernoulli_synapse.h"
 #include "clopath_synapse.h"
 #include "common_synapse_properties.h"
@@ -147,15 +153,6 @@
 #include "urbanczik_synapse.h"
 #include "vogels_sprekeler_synapse.h"
 
-// Includes from nestkernel:
-#include "common_synapse_properties.h"
-#include "connector_model_impl.h"
-#include "genericmodel.h"
-#include "kernel_manager.h"
-#include "model.h"
-#include "model_manager_impl.h"
-#include "target_identifier.h"
-
 #ifdef HAVE_MUSIC
 #include "music_cont_in_proxy.h"
 #include "music_cont_out_proxy.h"
@@ -165,6 +162,7 @@
 #include "music_rate_in_proxy.h"
 #include "music_rate_out_proxy.h"
 #endif
+
 
 namespace nest
 {
@@ -180,7 +178,7 @@ ModelsModule::~ModelsModule()
 }
 
 const std::string
-ModelsModule::name( void ) const
+ModelsModule::name() const
 {
   return std::string( "NEST Standard Models Module" ); // Return name of the module
 }
@@ -211,10 +209,10 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< rate_transformer_tanh >( "rate_transformer_tanh" );
   kernel().model_manager.register_node_model< rate_transformer_threshold_lin >( "rate_transformer_threshold_lin" );
 
+  kernel().model_manager.register_node_model< cm_default >( "cm_default" );
+
   kernel().model_manager.register_node_model< iaf_chs_2007 >( "iaf_chs_2007" );
   kernel().model_manager.register_node_model< iaf_psc_alpha >( "iaf_psc_alpha" );
-  kernel().model_manager.register_node_model< iaf_psc_alpha_canon >(
-    "iaf_psc_alpha_canon", /*private_model*/ false, /*deprecation_info*/ "a future version of NEST" );
   kernel().model_manager.register_node_model< iaf_psc_alpha_multisynapse >( "iaf_psc_alpha_multisynapse" );
   kernel().model_manager.register_node_model< iaf_psc_alpha_ps >( "iaf_psc_alpha_ps" );
   kernel().model_manager.register_node_model< iaf_psc_delta >( "iaf_psc_delta" );
@@ -222,15 +220,15 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< iaf_psc_exp >( "iaf_psc_exp" );
   kernel().model_manager.register_node_model< iaf_psc_exp_htum >( "iaf_psc_exp_htum" );
   kernel().model_manager.register_node_model< iaf_psc_exp_multisynapse >( "iaf_psc_exp_multisynapse" );
+
   kernel().model_manager.register_node_model< iaf_psc_exp_ps >( "iaf_psc_exp_ps" );
   kernel().model_manager.register_node_model< iaf_psc_exp_ps_lossless >( "iaf_psc_exp_ps_lossless" );
+
   kernel().model_manager.register_node_model< amat2_psc_exp >( "amat2_psc_exp" );
   kernel().model_manager.register_node_model< mat2_psc_exp >( "mat2_psc_exp" );
   kernel().model_manager.register_node_model< parrot_neuron >( "parrot_neuron" );
   kernel().model_manager.register_node_model< parrot_neuron_ps >( "parrot_neuron_ps" );
   kernel().model_manager.register_node_model< pp_psc_delta >( "pp_psc_delta" );
-  kernel().model_manager.register_node_model< pp_pop_psc_delta >(
-    "pp_pop_psc_delta", /*private_model*/ false, /*deprecation_info*/ "a future version of NEST" );
   kernel().model_manager.register_node_model< gif_psc_exp >( "gif_psc_exp" );
   kernel().model_manager.register_node_model< gif_psc_exp_multisynapse >( "gif_psc_exp_multisynapse" );
   kernel().model_manager.register_node_model< glif_psc >( "glif_psc" );
@@ -253,7 +251,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< ginzburg_neuron >( "ginzburg_neuron" );
   kernel().model_manager.register_node_model< mcculloch_pitts_neuron >( "mcculloch_pitts_neuron" );
   kernel().model_manager.register_node_model< izhikevich >( "izhikevich" );
-  kernel().model_manager.register_node_model< spike_dilutor >( "spike_dilutor" );
+  kernel().model_manager.register_node_model< spike_dilutor >(
+    "spike_dilutor", /*deprecation_info*/ "a future version of NEST" );
 
   kernel().model_manager.register_node_model< spike_recorder >( "spike_recorder" );
   kernel().model_manager.register_node_model< weight_recorder >( "weight_recorder" );
@@ -309,8 +308,7 @@ ModelsModule::init( SLIInterpreter* )
 
   // register all synapse models
   register_connection_model< bernoulli_synapse >( "bernoulli_synapse" );
-  register_connection_model< clopath_synapse >(
-    "clopath_synapse", default_connection_model_flags | RegisterConnectionModelFlags::REQUIRES_CLOPATH_ARCHIVING );
+  register_connection_model< clopath_synapse >( "clopath_synapse" );
   register_connection_model< cont_delay_synapse >( "cont_delay_synapse" );
   register_connection_model< ht_synapse >( "ht_synapse" );
   register_connection_model< jonke_synapse >( "jonke_synapse" );
@@ -329,20 +327,14 @@ ModelsModule::init( SLIInterpreter* )
   register_connection_model< tsodyks_synapse >( "tsodyks_synapse" );
   register_connection_model< tsodyks_synapse_hom >( "tsodyks_synapse_hom" );
   register_connection_model< tsodyks2_synapse >( "tsodyks2_synapse" );
-  register_connection_model< urbanczik_synapse >(
-    "urbanczik_synapse", default_connection_model_flags | RegisterConnectionModelFlags::REQUIRES_URBANCZIK_ARCHIVING );
+  register_connection_model< urbanczik_synapse >( "urbanczik_synapse" );
   register_connection_model< vogels_sprekeler_synapse >( "vogels_sprekeler_synapse" );
 
   // register secondary connection models
-  register_secondary_connection_model< GapJunction >(
-    "gap_junction", RegisterConnectionModelFlags::REQUIRES_SYMMETRIC | RegisterConnectionModelFlags::SUPPORTS_WFR );
-
-  register_secondary_connection_model< RateConnectionInstantaneous >(
-    "rate_connection_instantaneous", RegisterConnectionModelFlags::SUPPORTS_WFR );
-  register_secondary_connection_model< RateConnectionDelayed >(
-    "rate_connection_delayed", RegisterConnectionModelFlags::HAS_DELAY );
-  register_secondary_connection_model< DiffusionConnection >(
-    "diffusion_connection", RegisterConnectionModelFlags::SUPPORTS_WFR );
+  register_connection_model< GapJunction >( "gap_junction" );
+  register_connection_model< RateConnectionInstantaneous >( "rate_connection_instantaneous" );
+  register_connection_model< RateConnectionDelayed >( "rate_connection_delayed" );
+  register_connection_model< DiffusionConnection >( "diffusion_connection" );
 }
 
 } // namespace nest

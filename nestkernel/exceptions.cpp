@@ -35,12 +35,24 @@ std::string
 nest::UnknownModelName::message() const
 {
   std::ostringstream msg;
-  msg << "/" << n_.toString() + " is not a known model name. "
-    "Please check the modeldict for a list of available models.";
+  msg << "/" << n_.toString() + " is not a known model name.";
 #ifndef HAVE_GSL
-  msg << " A frequent cause for this error is that NEST was compiled "
-         "without the GNU Scientific Library, which is required for "
-         "the conductance-based neuron models.";
+  msg << " A frequent cause for this error is that NEST was compiled"
+         " without the GNU Scientific Library, which is required for"
+         " the conductance-based neuron models.";
+#endif
+  return msg.str();
+}
+
+std::string
+nest::UnknownComponent::message() const
+{
+  std::ostringstream msg;
+  msg << "/" << n_.toString() + " is not a known component.";
+#ifndef HAVE_GSL
+  msg << " A frequent cause for this error is that NEST was compiled"
+         " without the GNU Scientific Library, which is required for"
+         " the conductance-based neuron models.";
 #endif
   return msg.str();
 }
@@ -50,15 +62,6 @@ nest::NewModelNameExists::message() const
 {
   std::ostringstream msg;
   msg << "/" << n_.toString() + " is the name of an existing model and cannot be re-used.";
-  return msg.str();
-}
-
-std::string
-nest::UnknownModelID::message() const
-{
-  std::ostringstream msg;
-
-  msg << id_ << " is an invalid model ID. Probably modeldict is corrupted.";
   return msg.str();
 }
 
@@ -138,6 +141,15 @@ nest::NodeWithProxiesExpected::message() const
 }
 
 std::string
+nest::UnknownCompartment::message() const
+{
+  std::ostringstream msg;
+
+  msg << "Compartment " << compartment_idx_ << " " << info_ << ".";
+  return msg.str();
+}
+
+std::string
 nest::UnknownReceptorType::message() const
 {
   std::ostringstream msg;
@@ -160,6 +172,10 @@ nest::UnknownPort::message() const
 {
   std::ostringstream out;
   out << "Port with id " << id_ << " does not exist.";
+  if ( not info_.empty() )
+  {
+    out << " " << info_ << ".";
+  }
   return out.str();
 }
 
@@ -427,6 +443,14 @@ nest::BackendNotPrepared::message() const
 {
   std::ostringstream msg;
   msg << "Backend " << backend_ << " may not be cleanup()'d without preparation (multiple cleanups?).";
+  return msg.str();
+}
+
+std::string
+nest::BackendAlreadyRegistered::message() const
+{
+  std::ostringstream msg;
+  msg << "Backend " << backend_ << " has already been registered.";
   return msg.str();
 }
 

@@ -45,10 +45,20 @@ Description
 +++++++++++
 
 The device repeats incoming spikes with a certain probability.
-Targets will receive diffenrent spike trains.
+Targets will receive different spike trains.
 
 In parallel simulations, a copy of the device is present on each process
 and spikes are collected only from local sources.
+
+.. admonition:: Deprecated model
+
+   ``spike_dilutor`` is deprecated because it does not work with multiple threads.
+   To create connections that transmit spikes with a given probability, use :doc:`bernoulli_synapse <bernoulli_synapse>`
+   instead.
+
+.. admonition:: Does not work with threads
+
+   ``spike_dilutor`` only works in single-threaded simulations. It can be used with MPI-parallel simulations.
 
 Parameters
 ++++++++++
@@ -80,6 +90,7 @@ public:
   {
     return false;
   }
+
   bool
   local_receiver() const override
   {
@@ -106,7 +117,7 @@ public:
 private:
   void init_state_() override;
   void init_buffers_() override;
-  void calibrate() override;
+  void pre_run_hook() override;
 
   void update( Time const&, const long, const long ) override;
 
@@ -123,9 +134,10 @@ private:
 
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_& ) = default;
+    Parameters_& operator=( const Parameters_& ) = default;
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   struct Buffers_
@@ -143,6 +155,7 @@ private:
       return StimulationDevice::Type::SPIKE_GENERATOR;
     }
   } device_;
+
   Parameters_ P_;
   Buffers_ B_;
 };
@@ -150,7 +163,6 @@ private:
 inline port
 spike_dilutor::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
 {
-
   device_.enforce_single_syn_type( syn_id );
 
   SpikeEvent e;

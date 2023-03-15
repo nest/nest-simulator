@@ -45,6 +45,12 @@
 #define NEST_INSTALL_DOCDIR "@CMAKE_INSTALL_DOCDIR@"
 #define NEST_INSTALL_LIBDIR "@CMAKE_INSTALL_LIBDIR@/nest"
 
+#define MPIEXEC "@MPIEXEC@"
+#define MPIEXEC_NUMPROC_FLAG "@MPIEXEC_NUMPROC_FLAG@"
+#define MPIEXEC_MAX_NUMPROCS "@MPIEXEC_MAX_NUMPROCS@"
+#define MPIEXEC_PREFLAGS "@MPIEXEC_PREFLAGS@"
+#define MPIEXEC_POSTFLAGS "@MPIEXEC_POSTFLAGS@"
+
 #define NEST_EXITCODE_ABORT @NEST_EXITCODE_ABORT@
 #define NEST_EXITCODE_SEGFAULT @NEST_EXITCODE_SEGFAULT@
 
@@ -123,7 +129,7 @@
 /* "Define if NAN is available" */
 #cmakedefine HAVE_NAN 1
 
-/* "Define if std::nan(NULL) is available" */
+/* "Define if std::nan(nullptr) is available" */
 #cmakedefine HAVE_STD_NAN 1
 
 /* define for ostream */
@@ -155,21 +161,6 @@
 
 /* define if the compiler fails with ICE */
 #cmakedefine HAVE_XLC_ICE_ON_USING 1
-
-/* Configuring for Blue Gene */
-#cmakedefine IS_BLUEGENE 1
-
-/* Configuring for Blue Gene/L */
-#cmakedefine IS_BLUEGENE_L 1
-
-/* Configuring for Blue Gene/P */
-#cmakedefine IS_BLUEGENE_P 1
-
-/* Configuring for Blue Gene/Q */
-#cmakedefine IS_BLUEGENE_Q 1
-
-/* Configuring for K */
-#cmakedefine IS_K 1
 
 /* Is SIONlib available? */
 #cmakedefine HAVE_SIONLIB 1

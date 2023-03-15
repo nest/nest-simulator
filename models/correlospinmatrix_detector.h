@@ -49,14 +49,15 @@ Device for measuring the covariance matrix from several inputs
 Description
 +++++++++++
 
-The ``correlospinmatrix_detector`` is a recording device. It is used
-to record correlations from binary neurons from several binary sources and
-calculates the raw auto and cross correlation binned to bins of duration
-``delta_tau``. The result can be obtained via :py:func:`.GetStatus`` under the key
-``/count_covariance``. The result is a tensor of rank 3 of size
-``N_channels x N_channels``, with each entry :math:`C_{ij}` being a vector of size
-:math:`2\cdot\tau_{max}/\delta_{\tau} + 1` containing the histogram for the
-different time lags.
+The ``correlospinmatrix_detector`` is a device that receives input from several
+binary neuron sources and calculates the raw auto and cross correlation binned
+to bins of duration delta_tau, which defaults to the simulation resolution.
+
+The result can be obtained from the node's status dictionary under the key
+``count_covariance`` in the format of a tensor of rank 3 of size
+``N_channels`` x ``N_channels``, with each entry :math:`C_{ij}` being a vector
+of size :math:`2\cdot\tau_{max}/\delta_{\tau} + 1` containing the histogram for
+the different time lags.
 
 The bins are centered around the time difference they represent, and are
 left-closed and right-open in the lower triangular part of the matrix. On the
@@ -89,12 +90,14 @@ Tstop            real      Time when to stop counting events. This time should
                            effects of the correlation counts.
 delta_tau        ms        Bin width. This has to be an odd multiple of
                            the resolution, to allow the symmetry between
-                           positive and negative time-lags.
+                           positive and negative time-lags. Defaults to the
+                           simulation resolution.
 tau_max          ms        One-sided width. In the lower triagnular part
                            events with differences in [0, tau_max+delta_tau/2)
                            are counted. On the diagonal and in the upper
                            triangular part events with differences in
-                           (0, tau_max+delta_tau/2].
+                           (0, tau_max+delta_tau/2]. Defaults to 10 times the
+                           value of delta_tau.
 N_channels       integer   The number of pools. This defines the range of
                            receptor_type. Default is 1.
                            Setting N_channels clears count_covariance,
@@ -137,13 +140,13 @@ public:
    * spikes also from sources which live on other threads.
    */
   bool
-  has_proxies() const
+  has_proxies() const override
   {
     return true;
   }
 
   Name
-  get_element_type() const
+  get_element_type() const override
   {
     return names::recorder;
   }
@@ -157,23 +160,23 @@ public:
   using Node::handles_test_event;
   using Node::receives_signal;
 
-  void handle( SpikeEvent& );
+  void handle( SpikeEvent& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
 
-  SignalType receives_signal() const;
+  SignalType receives_signal() const override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
-  void calibrate_time( const TimeConverter& tc );
+  void calibrate_time( const TimeConverter& tc ) override;
 
 private:
-  void init_state_();
-  void init_buffers_();
-  void calibrate();
+  void init_state_() override;
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   // ------------------------------------------------------------
 
@@ -226,11 +229,13 @@ private:
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 
     /**
-     * Set values from dicitonary.
+     * Set values from dictionary.
      * @returns true if the state needs to be reset after a change of
      *          binwidth or tau_max.
      */
     bool set( const DictionaryDatum&, const correlospinmatrix_detector&, Node* );
+
+    Time get_default_delta_tau();
   };
 
   // ------------------------------------------------------------
@@ -291,7 +296,7 @@ private:
 inline port
 correlospinmatrix_detector::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type < 0 || receptor_type > P_.N_channels_ - 1 )
+  if ( receptor_type < 0 or receptor_type > P_.N_channels_ - 1 )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
@@ -299,7 +304,7 @@ correlospinmatrix_detector::handles_test_event( SpikeEvent&, rport receptor_type
 }
 
 inline void
-nest::correlospinmatrix_detector::get_status( DictionaryDatum& d ) const
+correlospinmatrix_detector::get_status( DictionaryDatum& d ) const
 {
   device_.get_status( d );
   P_.get( d );
@@ -307,14 +312,14 @@ nest::correlospinmatrix_detector::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-nest::correlospinmatrix_detector::set_status( const DictionaryDatum& d )
+correlospinmatrix_detector::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_;
   const bool reset_required = ptmp.set( d, *this, this );
 
   device_.set_status( d );
   P_ = ptmp;
-  if ( reset_required == true )
+  if ( reset_required )
   {
     S_.reset( P_ );
   }
@@ -322,20 +327,15 @@ nest::correlospinmatrix_detector::set_status( const DictionaryDatum& d )
 
 
 inline SignalType
-nest::correlospinmatrix_detector::receives_signal() const
+correlospinmatrix_detector::receives_signal() const
 {
   return BINARY;
 }
 
-inline void
-nest::correlospinmatrix_detector::calibrate_time( const TimeConverter& tc )
+inline Time
+correlospinmatrix_detector::Parameters_::get_default_delta_tau()
 {
-  P_.delta_tau_ = tc.from_old_tics( P_.delta_tau_.get_tics() );
-  P_.tau_max_ = tc.from_old_tics( P_.tau_max_.get_tics() );
-  P_.Tstart_ = tc.from_old_tics( P_.Tstart_.get_tics() );
-  P_.Tstop_ = tc.from_old_tics( P_.Tstop_.get_tics() );
-
-  S_.t_last_in_spike_ = tc.from_old_tics( S_.t_last_in_spike_.get_tics() );
+  return Time::get_resolution();
 }
 
 } // namespace

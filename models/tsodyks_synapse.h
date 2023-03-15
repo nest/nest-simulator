@@ -73,20 +73,20 @@ However, there are no technical restrictions using this model of synaptic
 plasticity also in conjunction with neuron models that have a different
 dynamics for their synaptic current or conductance. The effective synaptic
 weight, which will be transmitted to the postsynaptic neuron upon occurrence
-of a spike at time t is :math:`u(t) \cdot x(t) \cdot w`, where ``u(t)`` and ``x(t)`` are defined in
-Eq (3) and (4), w is the synaptic weight specified upon connection.
+of a spike at time t is :math:`u(t) \cdot x(t) \cdot w`, where ``u(t)`` and ``x(t)``
+are defined in Eq (3) and (4), w is the synaptic weight specified upon connection.
 The interpretation is as follows: The quantity :math:`u(t) \cdot x(t)` is the release
 probability times the amount of releasable synaptic vesicles at time t of the
 presynaptic neuron's spike, so this equals the amount of transmitter expelled
 into the synaptic cleft.
 
-The amount of transmitter than relaxes back to 0 with time constant tau_psc
+The amount of transmitter then relaxes back to 0 with time constant tau_psc
 of the synapse's variable y. Since the dynamics of ``y(t)`` is linear, the
 postsynaptic neuron can reconstruct from the amplitude of the synaptic
-impulse :math:`u(t) \cdot x(t) \cdot w` the full shape of ``y(t)``. The postsynaptic neuron, however,
-might choose to have a synaptic current that is not necessarily identical to
-the concentration of transmitter ``y(t)`` in the synaptic cleft. It may realize
-an arbitrary postsynaptic effect depending on ``y(t)``.
+impulse :math:`u(t) \cdot x(t) \cdot w` the full shape of ``y(t)``. The postsynaptic
+neuron, however, might choose to have a synaptic current that is not necessarily
+identical to the concentration of transmitter ``y(t)`` in the synaptic cleft. It may
+realize an arbitrary postsynaptic effect depending on ``y(t)``.
 
 .. warning::
 
@@ -138,6 +138,10 @@ public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
@@ -149,6 +153,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   tsodyks_synapse( const tsodyks_synapse& ) = default;
+  tsodyks_synapse& operator=( const tsodyks_synapse& ) = default;
 
   /**
    * Default Destructor.
@@ -190,9 +195,9 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
@@ -221,6 +226,8 @@ private:
   double t_lastspike_; //!< time point of last spike emitted
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties tsodyks_synapse< targetidentifierT >::properties;
 
 /**
  * Send an event to the receiver of this connection.
@@ -335,7 +342,7 @@ tsodyks_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Conn
   updateValue< double >( d, names::weight, weight_ );
 
   updateValue< double >( d, names::U, U_ );
-  if ( U_ > 1.0 || U_ < 0.0 )
+  if ( U_ > 1.0 or U_ < 0.0 )
   {
     throw BadProperty( "U must be in [0,1]." );
   }

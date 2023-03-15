@@ -121,6 +121,10 @@ public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
@@ -132,6 +136,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   stdp_triplet_synapse( const stdp_triplet_synapse& ) = default;
+  stdp_triplet_synapse& operator=( const stdp_triplet_synapse& ) = default;
 
   /**
    * Default Destructor.
@@ -173,9 +178,9 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
@@ -237,6 +242,9 @@ private:
   double t_lastspike_;
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties stdp_triplet_synapse< targetidentifierT >::properties;
+
 /**
  * Send an event to the receiver of this connection.
  * \param e The event to send
@@ -247,7 +255,6 @@ template < typename targetidentifierT >
 inline void
 stdp_triplet_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
-
   double t_spike = e.get_stamp().get_ms();
   double dendritic_delay = get_delay();
   Node* target = get_target( t );
@@ -357,7 +364,7 @@ stdp_triplet_synapse< targetidentifierT >::set_status( const DictionaryDatum& d,
     throw BadProperty( "State Kplus must be positive." );
   }
 
-  if ( not( Kplus_triplet_ >= 0 ) )
+  if ( Kplus_triplet_ < 0 )
   {
     throw BadProperty( "State Kplus_triplet must be positive." );
   }

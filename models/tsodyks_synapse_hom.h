@@ -78,7 +78,7 @@ probability times the amount of releasable synaptic vesicles at time `t` of the
 presynaptic neuron's spike, so this equals the amount of transmitter expelled
 into the synaptic cleft.
 
-The amount of transmitter than relaxes back to 0 with time constant tau_psc
+The amount of transmitter then relaxes back to 0 with time constant tau_psc
 of the synapse's variable y. Since the dynamics of y(t) is linear, the
 postsynaptic neuron can reconstruct from the amplitude of the synaptic
 impulse u(t)*x(t)*w the full shape of y(t). The postsynaptic neuron, however,
@@ -172,6 +172,10 @@ public:
   typedef TsodyksHomCommonProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
@@ -183,6 +187,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   tsodyks_synapse_hom( const tsodyks_synapse_hom& ) = default;
+  tsodyks_synapse_hom& operator=( const tsodyks_synapse_hom& ) = default;
 
   /**
    * Default Destructor.
@@ -223,9 +228,9 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
@@ -252,6 +257,8 @@ private:
   double t_lastspike_; //!< time point of last spike emitted
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties tsodyks_synapse_hom< targetidentifierT >::properties;
 
 /**
  * Send an event to the receiver of this connection.

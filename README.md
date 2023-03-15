@@ -13,8 +13,8 @@
 [![Fedora package](https://img.shields.io/fedora/v/nest?logo=fedora)](https://src.fedoraproject.org/rpms/nest)
 [![Conda version](https://img.shields.io/conda/vn/conda-forge/nest-simulator.svg?logo=conda-forge&logoColor=white)](https://anaconda.org/conda-forge/nest-simulator)
 [![Homebrew version](https://img.shields.io/homebrew/v/nest.svg?logo=apple)](https://formulae.brew.sh/formula/nest)
-[![Docker Image Version](https://img.shields.io/docker/v/nestsim/nest?label=docker&sort=semver&logo=docker&logoColor=white)](https://hub.docker.com/r/nestsim/nest)
-[![Virtual applicance](https://img.shields.io/badge/VM-v3.1-blue?logo=CodeSandbox)](https://nest-simulator.readthedocs.io/en/latest/download.html#download-livemedia)
+[![Docker Image Version](https://img.shields.io/docker/v/nestsim/nest?color=blue&label=docker&logo=docker&logoColor=white&sort=semver)](https://hub.docker.com/r/nestsim/nest)
+[![Virtual applicance](https://img.shields.io/badge/VM-v3.4-blue?logo=CodeSandbox)](https://nest-simulator.readthedocs.io/en/latest/installation/livemedia.html#live-media)
 
 [![YouTube Video Views](https://img.shields.io/youtube/views/K7KXmIv6ROY?style=social)](https://www.youtube.com/results?search_query=nest-simulator+neurons)
 [![Twitter Follow](https://img.shields.io/twitter/follow/nestsimulator?style=social)](https://twitter.com/nestsimulator)
@@ -88,7 +88,7 @@ summary](https://www.nest-simulator.org/features/).
   at any time during a simulation.
 - NEST is fast and memory efficient. It makes best use of your multi-core
   computer and compute clusters with minimal user intervention.
-- NEST runs on a wide range of UNIX-like systems, from MacBooks to BlueGene
+- NEST runs on a wide range of UNIX-like systems, from MacBooks to
   supercomputers.
 - NEST has minimal dependencies. All it really needs is a C++ compiler.
   Everything else is optional.

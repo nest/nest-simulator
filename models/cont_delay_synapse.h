@@ -81,6 +81,10 @@ public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL | ConnectionModelProperties::SUPPORTS_WFR;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
@@ -145,44 +149,44 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( RateEvent&, rport )
+    handles_test_event( RateEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( DataLoggingRequest&, rport )
+    handles_test_event( DataLoggingRequest&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( CurrentEvent&, rport )
+    handles_test_event( CurrentEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( ConductanceEvent&, rport )
+    handles_test_event( ConductanceEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( DoubleDataEvent&, rport )
+    handles_test_event( DoubleDataEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( DSSpikeEvent&, rport )
+    handles_test_event( DSSpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
     port
-    handles_test_event( DSCurrentEvent&, rport )
+    handles_test_event( DSCurrentEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
@@ -231,6 +235,9 @@ cont_delay_synapse< targetidentifierT >::send( Event& e, thread t, const CommonS
   // reset offset to original value
   e.set_offset( orig_event_offset );
 }
+
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties cont_delay_synapse< targetidentifierT >::properties;
 
 } // of namespace nest
 

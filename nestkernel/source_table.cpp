@@ -217,7 +217,10 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
   // targets on the same process, but different threads
   for ( size_t syn_id = 0; syn_id < sources_[ tid ].size(); ++syn_id )
   {
-    if ( not kernel().model_manager.get_synapse_prototype( syn_id, tid ).is_primary() )
+    const ConnectorModel& conn_model = kernel().model_manager.get_connection_model( syn_id, tid );
+    const bool is_primary = conn_model.has_property( ConnectionModelProperties::IS_PRIMARY );
+
+    if ( not is_primary )
     {
       for ( BlockVector< Source >::const_iterator source_cit = sources_[ tid ][ syn_id ].begin();
             source_cit != sources_[ tid ][ syn_id ].end();
@@ -269,7 +272,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
 void
 nest::SourceTable::resize_sources( const thread tid )
 {
-  sources_[ tid ].resize( kernel().model_manager.get_num_synapse_prototypes() );
+  sources_[ tid ].resize( kernel().model_manager.get_num_connection_models() );
 }
 
 bool
@@ -455,7 +458,7 @@ nest::SourceTable::resize_compressible_sources()
   {
     compressible_sources_[ tid ].clear();
     compressible_sources_[ tid ].resize(
-      kernel().model_manager.get_num_synapse_prototypes(), std::map< index, SpikeData >() );
+      kernel().model_manager.get_num_connection_models(), std::map< index, SpikeData >() );
   }
 }
 
@@ -488,13 +491,13 @@ nest::SourceTable::fill_compressed_spike_data(
   std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data )
 {
   compressed_spike_data.clear();
-  compressed_spike_data.resize( kernel().model_manager.get_num_synapse_prototypes() );
+  compressed_spike_data.resize( kernel().model_manager.get_num_connection_models() );
 
   for ( thread tid = 0; tid < static_cast< thread >( compressible_sources_.size() ); ++tid )
   {
     compressed_spike_data_map_[ tid ].clear();
     compressed_spike_data_map_[ tid ].resize(
-      kernel().model_manager.get_num_synapse_prototypes(), std::map< index, size_t >() );
+      kernel().model_manager.get_num_connection_models(), std::map< index, size_t >() );
   }
 
   // pseudo-random thread selector to balance memory usage across

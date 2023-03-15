@@ -50,13 +50,13 @@ class NodeManager : public ManagerInterface
 {
 public:
   NodeManager();
-  ~NodeManager();
+  ~NodeManager() override;
 
-  virtual void initialize();
-  virtual void finalize();
-
-  virtual void set_status( const DictionaryDatum& );
-  virtual void get_status( DictionaryDatum& );
+  void initialize() override;
+  void finalize() override;
+  void change_number_of_threads() override;
+  void set_status( const DictionaryDatum& ) override;
+  void get_status( DictionaryDatum& ) override;
 
   /**
    * Get properties of a node. The specified node must exist.
@@ -81,7 +81,6 @@ public:
    * @param n Number of Nodes to be created. Defaults to 1 if not
    * specified.
    * @returns NodeCollection as lock pointer
-   * @throws nest::UnknownModelID
    */
   NodeCollectionPTR add_node( index m, long n = 1 );
 

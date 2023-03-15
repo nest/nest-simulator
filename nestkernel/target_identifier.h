@@ -49,20 +49,21 @@ class TargetIdentifierPtrRport
 
 public:
   TargetIdentifierPtrRport()
-    : target_( 0 )
+    : target_( nullptr )
     , rport_( 0 )
   {
   }
 
 
   TargetIdentifierPtrRport( const TargetIdentifierPtrRport& t ) = default;
+  TargetIdentifierPtrRport& operator=( const TargetIdentifierPtrRport& t ) = default;
 
 
   void
   get_status( DictionaryDatum& d ) const
   {
     // Do nothing if called on synapse prototype
-    if ( target_ != 0 )
+    if ( target_ )
     {
       def< long >( d, names::rport, rport_ );
       def< long >( d, names::target, target_->get_node_id() );
@@ -104,7 +105,7 @@ private:
  *
  * This class represents a connection target using a thread-local index, while
  * fixing the rport to 0. Connection classes with this class as template
- * argument provide "hpc" synapses with minimal memory requirement..
+ * argument provide "hpc" synapses with minimal memory requirement.
  *
  * See Kunkel et al, Front Neuroinform 8:78 (2014), Sec 3.3.
  */
@@ -119,6 +120,7 @@ public:
 
 
   TargetIdentifierIndex( const TargetIdentifierIndex& t ) = default;
+  TargetIdentifierIndex& operator=( const TargetIdentifierIndex& t ) = default;
 
 
   void
@@ -153,7 +155,7 @@ public:
     if ( rprt != 0 )
     {
       throw IllegalConnection(
-        "Only rport==0 allowed for HPC synpases. Use normal synapse models "
+        "Only rport==0 allowed for HPC synapses. Use normal synapse models "
         "instead. See Kunkel et al, Front Neuroinform 8:78 (2014), Sec "
         "3.3.2." );
     }

@@ -205,18 +205,23 @@ public:
   typedef JonkeCommonProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
   jonke_synapse();
 
-
   /**
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
   jonke_synapse( const jonke_synapse& ) = default;
+
+  jonke_synapse& operator=( const jonke_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -259,9 +264,9 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
@@ -322,6 +327,8 @@ private:
   double t_lastspike_;
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties jonke_synapse< targetidentifierT >::properties;
 
 /**
  * Send an event to the receiver of this connection.
@@ -398,6 +405,7 @@ jonke_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
+  def< double >( d, names::Kplus, Kplus_ );
   def< long >( d, names::size_of, sizeof( *this ) );
 }
 
@@ -407,6 +415,12 @@ jonke_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
+  updateValue< double >( d, names::Kplus, Kplus_ );
+
+  if ( Kplus_ < 0 )
+  {
+    throw BadProperty( "Kplus must be non-negative." );
+  }
 }
 
 template < typename targetidentifierT >

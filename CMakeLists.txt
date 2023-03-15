@@ -27,9 +27,11 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 project( nest CXX C )
 set( NEST_USER_EMAIL "users@nest-simulator.org" )
 
+include( ColorMessages )
+
 # check if the given CMAKE_INSTALL_PREFIX is not empty
 if("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
-  message(FATAL_ERROR "CMAKE_INSTALL_PREFIX cannot be an empty string")
+  printError("CMAKE_INSTALL_PREFIX cannot be an empty string")
 endif()
 
 # handle relative installation prefixes
@@ -37,7 +39,7 @@ if( NOT IS_ABSOLUTE ${CMAKE_INSTALL_PREFIX})
     # convert relative path to absolute path
     get_filename_component(absPath ${CMAKE_INSTALL_PREFIX} ABSOLUTE BASE_DIR ${CMAKE_BINARY_DIR})
     set(CMAKE_INSTALL_PREFIX ${absPath})
-    message(STATUS "Relative CMAKE_INSTALL_PREFIX has been set to absolute path ${CMAKE_INSTALL_PREFIX}")
+    printInfo("Relative CMAKE_INSTALL_PREFIX has been converted to absolute path ${CMAKE_INSTALL_PREFIX}")
 endif()
 
 ################################################################################
@@ -45,11 +47,11 @@ endif()
 ################################################################################
 
 # use Python to build PyNEST
-set( with-python ON CACHE STRING "Build PyNEST [default=ON]. To set a specific Python, give the install path." )
+set( with-python ON CACHE STRING "Build PyNEST [default=ON]." )
 option( cythonize-pynest "Use Cython to cythonize pynestkernel.pyx [default=ON]. If OFF, PyNEST has to be build from a pre-cythonized pynestkernel.pyx." ON )
 
 # select parallelization scheme
-set( with-mpi OFF CACHE STRING "Build with MPI parallelization [default=OFF]. Optionally give directory with MPI installation." )
+set( with-mpi OFF CACHE STRING "Build with MPI parallelization [default=OFF]." )
 set( with-openmp ON CACHE BOOL "Build with OpenMP multi-threading [default=ON]. Optionally set OMP compiler flags." )
 
 # external libraries
@@ -70,20 +72,19 @@ set( target-bits-split "standard" CACHE STRING "Split of the 64-bit target neuro
 
 # generic build configuration
 option( static-libraries "Build static executable and libraries [default=OFF]" OFF )
-set( with-optimize ON CACHE STRING "Enable user defined optimizations [default=OFF (uses '-O2')]. When ON, '-O3' is used. Separate multiple flags by ';'." )
+set( with-optimize ON CACHE STRING "Enable user defined optimizations [default=ON (uses '-O2')]. When OFF, no '-O' flag is passed to the compiler. Explicit compiler flags can be given; separate multiple flags by ';'." )
 set( with-warning ON CACHE STRING "Enable user defined warnings [default=ON (uses '-Wall')]. Separate  multiple flags by ';'." )
 set( with-debug OFF CACHE STRING "Enable user defined debug flags [default=OFF]. When ON, '-g' is used. Separate  multiple flags by ';'." )
+set( with-cpp-std "c++11" CACHE STRING "C++ standard to use for compilation [default='c++11']." )
 set( with-intel-compiler-flags OFF CACHE STRING "User defined flags for the Intel compiler [default='-fp-model strict']. Separate multiple flags by ';'." )
 set( with-libraries OFF CACHE STRING "Link additional libraries [default=OFF]. Give full path. Separate multiple libraries by ';'." )
 set( with-includes OFF CACHE STRING "Add additional include paths [default=OFF]. Give full path without '-I'. Separate multiple include paths by ';'." )
 set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1' [default=OFF]. Separate multiple defines by ';'." )
 set( with-version-suffix "" CACHE STRING "Set a user defined version suffix [default='']." )
 
-# cross-compiling
-# should be set via toolchain files
-set( enable-bluegene OFF CACHE STRING "Configure for BlueGene." )
-option( k-computer "Enable K computer." OFF )
-
+# documentation build configuration
+set( with-userdoc OFF CACHE STRING "Build user documentation [default=OFF]")
+set( with-devdoc OFF CACHE STRING "Build developer documentation [default=OFF]")
 
 ################################################################################
 ##################      Project Directory variables           ##################
@@ -99,13 +100,6 @@ set( CMAKE_INSTALL_DATADIR "share/${PROJECT_NAME}" CACHE STRING "Relative direct
 ##################           Find utility programs            ##################
 ################################################################################
 
-# needed for pynest test suite
-if ( ${with-python} STREQUAL "ON" )
-  find_program( NOSETESTS NAMES nosetests )
-endif ()
-
-# needed for target doc and fulldoc
-find_package( Doxygen )
 find_program( SED NAMES sed gsed )
 
 ################################################################################
@@ -121,14 +115,10 @@ include( WriteStaticModules_h )
 include( CheckExtraCompilerFeatures )
 include( ConfigureSummary )
 include( GetTriple )
-include( DefaultCompilerFlags )
 
 # get triples arch-vendor-os
 get_host_triple( NEST_HOST_TRIPLE NEST_HOST_ARCH NEST_HOST_VENDOR NEST_HOST_OS )
 get_target_triple( NEST_TARGET_TRIPLE NEST_TARGET_ARCH NEST_TARGET_VENDOR NEST_TARGET_OS )
-
-# set default compiler flags
-nest_set_default_compiler_flags()
 
 # Process the command line arguments
 # IMPORTANT: Do not change the order of nest_process_with_python() and include( GNUInstallDirs )!
@@ -138,15 +128,12 @@ nest_set_default_compiler_flags()
 nest_process_with_python()
 include( GNUInstallDirs )
 nest_post_process_with_python()
-nest_process_with_optimize()
-nest_process_with_debug()
+nest_process_with_std()
 nest_process_with_intel_compiler_flags()
 nest_process_with_warning()
 nest_process_with_libraries()
 nest_process_with_includes()
 nest_process_with_defines()
-nest_process_k_computer()
-nest_process_enable_bluegene()
 nest_process_static_libraries()
 nest_process_external_modules()
 nest_process_tics_per_ms()
@@ -164,6 +151,14 @@ nest_process_with_mpi4py()
 nest_process_with_boost()
 nest_process_target_bits_split()
 nest_process_version_suffix()
+nest_process_userdoc()
+nest_process_devdoc()
+
+# These two function calls must come last, as to prevent unwanted interactions of the newly set flags
+# with detection/compilation operations carried out in earlier functions. The optimize/debug flags set
+# using these functions should only apply to the compilation of NEST.
+nest_process_with_optimize()
+nest_process_with_debug()
 
 nest_get_color_flags()
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NEST_C_COLOR_FLAGS}" )
@@ -194,7 +189,7 @@ nest_check_random123()
 
 include( NestVersionInfo )
 get_version_info()
-message("-- NEST version: ${NEST_VERSION_STRING}")
+printInfo("-- NEST version: ${NEST_VERSION_STRING}")
 
 ################################################################################
 ##################         Enable Testing Targets             ##################
@@ -270,7 +265,7 @@ elseif ( ${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel" )
   set( ALL_CFLAGS "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_MINSIZEREL}" )
   set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_MINSIZEREL}" )
 else ()
-  message( FATAL_ERROR "Unknown build type: '${CMAKE_BUILD_TYPE}'" )
+  printError( "Unknown build type: '${CMAKE_BUILD_TYPE}'" )
 endif ()
 if ( with-defines )
   foreach ( def ${with-defines} )
@@ -284,10 +279,9 @@ foreach ( def ${SIONLIB_DEFINES} )
     set( ALL_CXXFLAGS "${ALL_CXXFLAGS} ${def}" )
 endforeach ()
 
-# all libraries
-set( ALL_LIBS
+# libraries required to link extension modules
+set( MODULE_LINK_LIBS
   "-lnestutil"
-  "-lnest"
   "-lsli"
   "-lnestkernel"
   "${OpenMP_CXX_FLAGS}"
@@ -301,9 +295,15 @@ set( ALL_LIBS
   "${BOOST_LIBRARIES}" )
 
 if ( with-libraries )
-  set( ALL_LIBS "${ALL_LIBS};${with-libraries}" )
+  set( MODULE_LINK_LIBS "${MODULE_LINK_LIBS};${with-libraries}" )
 endif ()
-string( REPLACE ";" " " ALL_LIBS "${ALL_LIBS}" )
+string( REPLACE ";" " " MODULE_LINK_LIBS "${MODULE_LINK_LIBS}" )
+
+# libraries requied to link NEST
+set( ALL_LIBS
+  "-lnest"
+  ${MODULE_LINK_LIBS} )
+
 
 # all includes
 set( ALL_INCLUDES_tmp
@@ -348,11 +348,6 @@ configure_file(
 )
 
 configure_file(
-    "${PROJECT_SOURCE_DIR}/doc/normaldoc.conf.in"
-    "${PROJECT_BINARY_DIR}/doc/normaldoc.conf" @ONLY
-)
-
-configure_file(
     "${PROJECT_SOURCE_DIR}/doc/fulldoc.conf.in"
     "${PROJECT_BINARY_DIR}/doc/fulldoc.conf" @ONLY
 )
@@ -370,9 +365,5 @@ configure_file(
 install( FILES LICENSE README.md
     DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )
-
-add_custom_target( install-nodoc
-  COMMAND make NEST_INSTALL_NODOC=true install
-)
 
 nest_print_config_summary()

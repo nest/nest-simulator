@@ -53,7 +53,7 @@ extern "C" int gif_cond_exp_dynamics( double, const double*, double*, void* );
 Short description
 +++++++++++++++++
 
-Conductance-based generalized integrate-and-fire neuron model
+Conductance-based generalized integrate-and-fire neuron (GIF) model (from the Gerstner lab)
 
 Description
 +++++++++++
@@ -221,7 +221,7 @@ class gif_cond_exp : public ArchivingNode
 public:
   gif_cond_exp();
   gif_cond_exp( const gif_cond_exp& );
-  ~gif_cond_exp();
+  ~gif_cond_exp() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -231,25 +231,25 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   // make dynamics function quasi-member
   friend int gif_cond_exp_dynamics( double, const double*, double*, void* );
@@ -371,7 +371,7 @@ private:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
     double step_;            //!< step size in ms

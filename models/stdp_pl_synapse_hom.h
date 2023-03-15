@@ -131,6 +131,9 @@ public:
   typedef STDPPLHomCommonProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
 
   /**
    * Default Constructor.
@@ -143,6 +146,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   stdp_pl_synapse_hom( const stdp_pl_synapse_hom& ) = default;
+  stdp_pl_synapse_hom& operator=( const stdp_pl_synapse_hom& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -176,9 +180,9 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
@@ -230,6 +234,9 @@ private:
   double Kplus_;
   double t_lastspike_;
 };
+
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties stdp_pl_synapse_hom< targetidentifierT >::properties;
 
 //
 // Implementation of class stdp_pl_synapse_hom.

@@ -56,10 +56,10 @@ pairing scheme (fig. 7C in [1]_).
 
 When a presynaptic spike occurs, it is taken into account in the depression
 part of the STDP weight change rule with the nearest preceding postsynaptic
-one, but only if the latter occured not earlier than the previous presynaptic
+one, but only if the latter occurred not earlier than the previous presynaptic
 one. When a postsynaptic spike occurs, it is accounted in the facilitation
 rule with the nearest preceding presynaptic one, but only if the latter
-occured not earlier than the previous postsynaptic one. So, a spike can
+occurred not earlier than the previous postsynaptic one. So, a spike can
 participate neither in two depression pairs nor in two potentiation pairs.
 
 The pairs exactly coinciding (so that ``presynaptic_spike == postsynaptic_spike
@@ -125,6 +125,10 @@ public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
@@ -137,6 +141,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   stdp_nn_restr_synapse( const stdp_nn_restr_synapse& ) = default;
+  stdp_nn_restr_synapse& operator=( const stdp_nn_restr_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -172,9 +177,9 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
@@ -221,6 +226,8 @@ private:
   double t_lastspike_;
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties stdp_nn_restr_synapse< targetidentifierT >::properties;
 
 /**
  * Send an event to the receiver of this connection.
@@ -340,7 +347,7 @@ stdp_nn_restr_synapse< targetidentifierT >::set_status( const DictionaryDatum& d
   updateValue< double >( d, names::Wmax, Wmax_ );
 
   // check if weight_ and Wmax_ have the same sign
-  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) )
+  if ( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) != ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) )
   {
     throw BadProperty( "Weight and Wmax must have same sign." );
   }

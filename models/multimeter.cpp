@@ -51,7 +51,7 @@ multimeter::send_test_event( Node& target, rport receptor_type, synindex, bool )
   DataLoggingRequest e( P_.interval_, P_.offset_, P_.record_from_ );
   e.set_sender( *this );
   port p = target.handles_test_event( e, receptor_type );
-  if ( p != invalid_port_ and not is_model_prototype() )
+  if ( p != invalid_port and not is_model_prototype() )
   {
     B_.has_targets_ = true;
   }
@@ -107,7 +107,7 @@ void
 nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b, Node* node )
 {
   if ( b.has_targets_
-    && ( d->known( names::interval ) || d->known( names::offset ) || d->known( names::record_from ) ) )
+    and ( d->known( names::interval ) or d->known( names::offset ) or d->known( names::record_from ) ) )
   {
     throw BadProperty(
       "The recording interval, the interval offset and the list of properties "
@@ -139,7 +139,7 @@ nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b,
   {
     // if offset is different from the default value (0), it must be at least
     // as large as the resolution
-    if ( v != 0 && Time( Time::ms( v ) ) < Time::get_resolution() )
+    if ( v != 0 and Time( Time::ms( v ) ) < Time::get_resolution() )
     {
       throw BadProperty(
         "The offset for the sampling interval must be at least as long as the "
@@ -170,9 +170,9 @@ nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b,
 }
 
 void
-multimeter::calibrate()
+multimeter::pre_run_hook()
 {
-  RecordingDevice::calibrate( P_.record_from_, RecordingBackend::NO_LONG_VALUE_NAMES );
+  RecordingDevice::pre_run_hook( P_.record_from_, RecordingBackend::NO_LONG_VALUE_NAMES );
 }
 
 void
@@ -183,7 +183,7 @@ multimeter::update( Time const& origin, const long from, const long )
      previous slice if we are called at the beginning of the slice. Otherwise,
      we do nothing.
    */
-  if ( origin.get_steps() == 0 || from != 0 )
+  if ( origin.get_steps() == 0 or from != 0 )
   {
     return;
   }

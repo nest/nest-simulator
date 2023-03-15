@@ -91,6 +91,10 @@ public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL | ConnectionModelProperties::SUPPORTS_WFR;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
@@ -103,6 +107,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   vogels_sprekeler_synapse( const vogels_sprekeler_synapse& ) = default;
+  vogels_sprekeler_synapse& operator=( const vogels_sprekeler_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase.
@@ -141,9 +146,9 @@ public:
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
     port
-    handles_test_event( SpikeEvent&, rport )
+    handles_test_event( SpikeEvent&, rport ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
@@ -189,6 +194,8 @@ private:
   double t_lastspike_;
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties vogels_sprekeler_synapse< targetidentifierT >::properties;
 
 /**
  * Send an event to the receiver of this connection.

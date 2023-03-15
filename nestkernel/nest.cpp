@@ -168,15 +168,7 @@ create( const Name& model_name, const index n_nodes )
     throw RangeCheck();
   }
 
-  const Token model = kernel().model_manager.get_modeldict()->lookup( model_name );
-  if ( model.empty() )
-  {
-    throw UnknownModelName( model_name );
-  }
-
-  // create
-  const index model_id = static_cast< index >( model );
-
+  const index model_id = kernel().model_manager.get_node_model_id( model_name );
   return kernel().node_manager.add_node( model_id, n_nodes );
 }
 
@@ -218,6 +210,18 @@ get_connections( const DictionaryDatum& dict )
   ALL_ENTRIES_ACCESSED( *dict, "GetConnections", "Unread dictionary entries: " );
 
   return array;
+}
+
+void
+disconnect( const ArrayDatum& conns )
+{
+  for ( size_t conn_index = 0; conn_index < conns.size(); ++conn_index )
+  {
+    const auto conn_datum = getValue< ConnectionDatum >( conns.get( conn_index ) );
+    const auto target_node = kernel().node_manager.get_node_or_proxy( conn_datum.get_target_node_id() );
+    kernel().sp_manager.disconnect(
+      conn_datum.get_source_node_id(), target_node, conn_datum.get_target_thread(), conn_datum.get_synapse_model_id() );
+  }
 }
 
 void
@@ -270,36 +274,52 @@ copy_model( const Name& oldmodname, const Name& newmodname, const DictionaryDatu
 }
 
 void
-set_model_defaults( const Name& modelname, const DictionaryDatum& dict )
+set_model_defaults( const std::string component, const DictionaryDatum& dict )
 {
-  kernel().model_manager.set_model_defaults( modelname, dict );
+  if ( kernel().model_manager.set_model_defaults( component, dict ) )
+  {
+    return;
+  }
+
+  if ( kernel().io_manager.is_valid_recording_backend( component ) )
+  {
+    kernel().io_manager.set_recording_backend_status( component, dict );
+    return;
+  }
+
+  throw UnknownComponent( component );
 }
 
 DictionaryDatum
-get_model_defaults( const Name& modelname )
+get_model_defaults( const std::string component )
 {
-  const Token nodemodel = kernel().model_manager.get_modeldict()->lookup( modelname );
-  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( modelname );
-
-  DictionaryDatum dict;
-
-  if ( not nodemodel.empty() )
+  try
   {
-    const long model_id = static_cast< long >( nodemodel );
-    Model* m = kernel().model_manager.get_model( model_id );
-    dict = m->get_status();
+    const index model_id = kernel().model_manager.get_node_model_id( component );
+    return kernel().model_manager.get_node_model( model_id )->get_status();
   }
-  else if ( not synmodel.empty() )
+  catch ( UnknownModelName& )
   {
-    const long synapse_id = static_cast< long >( synmodel );
-    dict = kernel().model_manager.get_connector_defaults( synapse_id );
-  }
-  else
-  {
-    throw UnknownModelName( modelname.toString() );
+    // ignore errors; throw at the end of the function if that's reached
   }
 
-  return dict;
+  try
+  {
+    const index synapse_model_id = kernel().model_manager.get_synapse_model_id( component );
+    return kernel().model_manager.get_connector_defaults( synapse_model_id );
+  }
+  catch ( UnknownSynapseType& )
+  {
+    // ignore errors; throw at the end of the function if that's reached
+  }
+
+  if ( kernel().io_manager.is_valid_recording_backend( component ) )
+  {
+    return kernel().io_manager.get_recording_backend_status( component );
+  }
+
+  throw UnknownComponent( component );
+  return DictionaryDatum(); // supress missing return value warning; never reached
 }
 
 ParameterDatum
@@ -385,5 +405,32 @@ node_collection_array_index( const Datum* datum, const bool* array, unsigned lon
   }
   return new NodeCollectionDatum( NodeCollection::create( node_ids ) );
 }
+
+void
+slice_positions_if_sliced_nc( DictionaryDatum& dict, const NodeCollectionDatum& nc )
+{
+  // If metadata contains node positions and the NodeCollection is sliced, get only positions of the sliced nodes.
+  if ( dict->known( names::positions ) )
+  {
+    const auto positions = getValue< TokenArray >( dict, names::positions );
+    if ( nc->size() != positions.size() )
+    {
+      TokenArray sliced_points;
+      // Iterate only local nodes
+      NodeCollection::const_iterator nc_begin = nc->has_proxies() ? nc->MPI_local_begin() : nc->begin();
+      NodeCollection::const_iterator nc_end = nc->end();
+      for ( auto node = nc_begin; node < nc_end; ++node )
+      {
+        // Because the local ID also includes non-local nodes, it must be adapted to represent
+        // the index for the local node position.
+        const auto index =
+          static_cast< size_t >( std::floor( ( *node ).lid / kernel().mpi_manager.get_num_processes() ) );
+        sliced_points.push_back( positions[ index ] );
+      }
+      def2< TokenArray, ArrayDatum >( dict, names::positions, sliced_points );
+    }
+  }
+}
+
 
 } // namespace nest

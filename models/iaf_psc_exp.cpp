@@ -22,26 +22,22 @@
 
 #include "iaf_psc_exp.h"
 
-// C++ includes:
-#include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
+#include "iaf_propagator.h"
 #include "numerics.h"
-#include "propagator_stability.h"
 
 // Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
 #include "exceptions.h"
+#include "iaf_propagator.h"
 #include "kernel_manager.h"
+#include "numerics.h"
 #include "ring_buffer_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -57,7 +53,7 @@ template <>
 void
 RecordablesMap< iaf_psc_exp >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &iaf_psc_exp::get_V_m_ );
   insert_( names::I_syn_ex, &iaf_psc_exp::get_I_syn_ex_ );
   insert_( names::I_syn_in, &iaf_psc_exp::get_I_syn_in_ );
@@ -154,7 +150,7 @@ nest::iaf_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Capacitance must be strictly positive." );
   }
-  if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 )
+  if ( Tau_ <= 0 or tau_ex_ <= 0 or tau_in_ <= 0 )
   {
     throw BadProperty( "Membrane and synapse time constants must be strictly positive." );
   }
@@ -241,7 +237,7 @@ nest::iaf_psc_exp::init_buffers_()
 }
 
 void
-nest::iaf_psc_exp::calibrate()
+nest::iaf_psc_exp::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -255,8 +251,8 @@ nest::iaf_psc_exp::calibrate()
   V_.P22_ = std::exp( -h / P_.Tau_ );
 
   // these are determined according to a numeric stability criterion
-  V_.P21ex_ = propagator_32( P_.tau_ex_, P_.Tau_, P_.C_, h );
-  V_.P21in_ = propagator_32( P_.tau_in_, P_.Tau_, P_.C_, h );
+  V_.P21ex_ = IAFPropagatorExp( P_.tau_ex_, P_.Tau_, P_.C_ ).evaluate( h );
+  V_.P21in_ = IAFPropagatorExp( P_.tau_in_, P_.Tau_, P_.C_ ).evaluate( h );
 
   V_.P20_ = P_.Tau_ / P_.C_ * ( 1.0 - V_.P22_ );
 
@@ -287,9 +283,6 @@ nest::iaf_psc_exp::calibrate()
 void
 nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   const double h = Time::get_resolution().get_ms();
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each

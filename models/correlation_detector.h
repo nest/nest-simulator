@@ -49,10 +49,14 @@ Device for evaluating cross correlation between two spike sources
 Description
 +++++++++++
 
-The ``correlation_detector`` device is a recording device. It is used to record
-spikes from two pools of spike inputs and calculates the ``count_histogram`` of
-inter-spike intervals (raw cross correlation) binned to bins of duration
-``delta_tau``. The result can be obtained via :py:func:`.GetStatus` under the key
+The ``correlation_detector`` is a device that receives spikes from two pools of
+spike inputs and calculates the ``count_histogram`` of inter-spike intervals
+(raw cross correlation) binned to bins of duration :math:`\delta_\tau`.
+The corresponding parameter ``delta_tau`` defaults to 5 times the simulation
+resolution.
+
+The result can be obtained from the node's status dictionary under the key
+``count_histogram``.
 
 In parallel it records a weighted histogram, where the connection weights
 are used to weight every count. In order to minimize numerical errors, the
@@ -104,13 +108,14 @@ the
                               effects of the correlation counts.
 delta_tau            ms       Bin width. This has to be an odd multiple of
                               the resolution, to allow the symmetry between
-                              positive and negative time-lags.
-tau_max              ms       One-sided width. In the lower triagnular part
-                              events with differences in [0,
-tau_max+delta_tau/2)
+                              positive and negative time-lags. Defaults to 5
+                              times the simulation resolution
+tau_max              ms       One-sided width. In the lower triangular part
+                              events with differences in [0, tau_max+delta_tau/2)
                               are counted. On the diagonal and in the upper
                               triangular part events with differences in
-                              (0, tau_max+delta_tau/2].
+                              (0, tau_max+delta_tau/2]. Defaults to 10 times the
+                              value of delta_tau.
 N_channels           integer  The number of pools. This defines the range of
                               receptor_type. Default is 1.
                               Setting N_channels clears count_covariance,
@@ -164,13 +169,13 @@ public:
    * spikes also from sources which live on other threads.
    */
   bool
-  has_proxies() const
+  has_proxies() const override
   {
     return true;
   }
 
   Name
-  get_element_type() const
+  get_element_type() const override
   {
     return names::recorder;
   }
@@ -183,21 +188,21 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  void handle( SpikeEvent& );
+  void handle( SpikeEvent& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
+  port handles_test_event( SpikeEvent&, rport ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
-  void calibrate_time( const TimeConverter& tc );
+  void calibrate_time( const TimeConverter& tc ) override;
 
 private:
-  void init_state_();
-  void init_buffers_();
-  void calibrate();
+  void init_state_() override;
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   // ------------------------------------------------------------
 
@@ -247,11 +252,13 @@ private:
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 
     /**
-     * Set values from dicitonary.
+     * Set values from dictionary.
      * @returns true if the state needs to be reset after a change of
      *          binwidth or tau_max.
      */
     bool set( const DictionaryDatum&, const correlation_detector&, Node* );
+
+    Time get_default_delta_tau();
   };
 
   // ------------------------------------------------------------
@@ -303,7 +310,7 @@ private:
 inline port
 correlation_detector::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type < 0 || receptor_type > 1 )
+  if ( receptor_type < 0 or receptor_type > 1 )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
@@ -312,7 +319,7 @@ correlation_detector::handles_test_event( SpikeEvent&, rport receptor_type )
 }
 
 inline void
-nest::correlation_detector::get_status( DictionaryDatum& d ) const
+correlation_detector::get_status( DictionaryDatum& d ) const
 {
   device_.get_status( d );
   P_.get( d );
@@ -320,7 +327,7 @@ nest::correlation_detector::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-nest::correlation_detector::set_status( const DictionaryDatum& d )
+correlation_detector::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_;
   const bool reset_required = ptmp.set( d, *this, this );
@@ -332,13 +339,10 @@ nest::correlation_detector::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-inline void
-nest::correlation_detector::calibrate_time( const TimeConverter& tc )
+inline Time
+correlation_detector::Parameters_::get_default_delta_tau()
 {
-  P_.delta_tau_ = tc.from_old_tics( P_.delta_tau_.get_tics() );
-  P_.tau_max_ = tc.from_old_tics( P_.tau_max_.get_tics() );
-  P_.Tstart_ = tc.from_old_tics( P_.Tstart_.get_tics() );
-  P_.Tstop_ = tc.from_old_tics( P_.Tstop_.get_tics() );
+  return 5 * Time::get_resolution();
 }
 
 

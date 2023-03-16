@@ -42,6 +42,7 @@ Node::Node()
   , deprecation_warning()
   , initialized_( false )
   , node_uses_wfr_( false )
+  , frozen_( false )
 {
 }
 

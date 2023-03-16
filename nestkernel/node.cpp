@@ -40,9 +40,9 @@ namespace nest
 Node::Node()
   : NESTObjectInterface()
   , deprecation_warning()
+  , frozen_( false )
   , initialized_( false )
   , node_uses_wfr_( false )
-  , frozen_( false )
 {
 }
 
@@ -99,7 +99,6 @@ Model&
 Node::get_model_() const
 {
   index model_id = get_model_id();
-  assert( model_id >= 0 );
   return *kernel().model_manager.get_node_model( model_id );
 }
 

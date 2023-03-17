@@ -27,7 +27,7 @@ import unittest
 import nest
 import numpy as np
 
-HAVE_GSL = nest.GetKernelStatus("build_info")["have_gsl"]
+HAVE_GSL = nest.build_info["have_gsl"]
 
 
 class WeightRecorderTestCase(unittest.TestCase):

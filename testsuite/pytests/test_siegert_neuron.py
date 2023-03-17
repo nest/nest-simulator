@@ -25,7 +25,7 @@ import nest
 import unittest
 import numpy as np
 
-HAVE_GSL = nest.GetKernelStatus("build_info")["have_gsl"]
+HAVE_GSL = nest.build_info["have_gsl"]
 
 
 @unittest.skipIf(not HAVE_GSL, "GSL is not available")

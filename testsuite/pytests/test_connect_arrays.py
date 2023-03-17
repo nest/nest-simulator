@@ -26,7 +26,7 @@ import nest
 
 nest.set_verbosity(nest.verbosity.M_WARNING)
 
-HAVE_OPENMP = nest.GetKernelStatus("build_info")["threading"] != "no"
+HAVE_OPENMP = nest.build_info["threading"] != "no"
 
 
 class TestConnectArrays(unittest.TestCase):

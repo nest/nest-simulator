@@ -23,7 +23,7 @@
 import nest
 import unittest
 
-HAVE_GSL = nest.GetKernelStatus("build_info")["have_gsl"]
+HAVE_GSL = nest.build_info["have_gsl"]
 
 
 @unittest.skipIf(nest.NumProcesses() < 2, 'Requires >= 2 MPI process')

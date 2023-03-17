@@ -22,7 +22,7 @@
 import nest
 import unittest
 
-HAVE_OPENMP = nest.GetKernelStatus("build_info")["threading"] != "no"
+HAVE_OPENMP = nest.build_info["threading"] != "no"
 
 
 @unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')

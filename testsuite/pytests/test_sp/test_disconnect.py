@@ -29,7 +29,7 @@ try:
 except ImportError:
     have_mpi4py = False
 
-have_mpi = nest.GetKernelStatus("build_info")["have_mpi"]
+have_mpi = nest.build_info["have_mpi"]
 test_with_mpi = have_mpi and have_mpi4py and nest.num_processes > 1
 
 

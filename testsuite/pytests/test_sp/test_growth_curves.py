@@ -28,7 +28,7 @@ import nest
 import time
 import sys
 
-HAVE_OPENMP = nest.GetKernelStatus("build_info")["threading"] != "no"
+HAVE_OPENMP = nest.build_info["threading"] != "no"
 
 
 class SynapticElementIntegrator:

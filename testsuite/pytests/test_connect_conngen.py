@@ -38,7 +38,7 @@ try:
 except ImportError:
     HAVE_NUMPY = False
 
-HAVE_LIBNEUROSIM = nest.GetKernelStatus("build_info")["have_libneurosim"]
+HAVE_LIBNEUROSIM = nest.build_info["have_libneurosim"]
 
 
 @unittest.skipIf(not HAVE_CSA, 'Python CSA package is not available')

@@ -33,7 +33,7 @@ class ThreadTestCase(unittest.TestCase):
     def nest_multithreaded(self):
         """Return True, if we have a thread-enabled NEST, False otherwise"""
 
-        return nest.GetKernelStatus("build_info")["threading"] != "no"
+        return nest.build_info["threading"] != "no"
 
     def test_Threads(self):
         """Multiple threads"""

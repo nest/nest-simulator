@@ -30,7 +30,7 @@ __author__ = 'sdiaz'
 # and multiple threads are set, or if multiple threads are set and
 # the enable_structural_plasticity function is called.
 
-HAVE_OPENMP = nest.GetKernelStatus("build_info")["threading"] != "no"
+HAVE_OPENMP = nest.build_info["threading"] != "no"
 
 
 @unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')

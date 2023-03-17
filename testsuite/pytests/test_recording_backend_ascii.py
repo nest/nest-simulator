@@ -119,7 +119,7 @@ class TestRecordingBackendASCII(unittest.TestCase):
 
             self.assertEqual(len(lines), mm.get("n_events")+3)
 
-            version = nest.GetKernelStatus("build_info")["version"]
+            version = nest.build_info["version"]
             self.assertEqual(lines[0], "# NEST version: {}\n".format(version))
 
             header_2 = "# RecordingBackendASCII version:"

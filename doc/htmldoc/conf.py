@@ -293,25 +293,26 @@ notebooks%2Ffilepath.ipynb&branch=main
         if file.stem == "index" or file.stem == "hpc_benchmark":
             continue
 
-        with open(file, "r+") as f:
-            # get name of file and subdirectory to replace in link target
+        with open(file, "r") as f:
             parent = Path(doc_build_dir / "auto_examples/")
             path2example = os.path.relpath(file, parent)
+            path2example = os.path.splitext(path2example)[0]
             path2example = path2example.replace("/", "%2F")
             prolog = example_prolog.replace("filepath", path2example)
 
-            data = f.readlines()
-            for i, item in enumerate(data):
-                if item.startswith("-----"):
-                    break
+            lines = f.readlines()
 
-            # insert prolog into rst file after heading
-            data.insert(i + 1, prolog + '\n')
+        # find the first heading of the file.
+        for i, item in enumerate(lines):
+            if item.startswith("-----"):
+                break
 
-            data = "".join(data)
-            f.truncate(0)  # clear everything from the file
-            f.seek(0)  # set pointer to the beginning of the file
-            f.write(data)
+        # insert prolog into rst file after heading
+        lines.insert(i + 1, prolog + '\n')
+
+        with open(file, 'w') as f:
+            lines = "".join(lines)
+            f.write(lines)
 
 
 def toc_customizer(app, docname, source):

@@ -294,13 +294,13 @@ notebooks%2Ffilepath.ipynb&branch=main
             continue
 
         with open(file, "r+") as f:
-            data = f.readlines()
             # get name of file and subdirectory to replace in link target
             parent = Path(doc_build_dir / "auto_examples/")
             path2example = os.path.relpath(file, parent)
             path2example = path2example.replace("/", "%2F")
             prolog = example_prolog.replace("filepath", path2example)
 
+            data = f.readlines()
             for i, item in enumerate(data):
                 if item.startswith("-----"):
                     break
@@ -309,9 +309,10 @@ notebooks%2Ffilepath.ipynb&branch=main
             data.insert(i + 1, prolog + '\n')
 
             data = "".join(data)
-            f.truncate(0) # clear everything from the file
-            f.seek(0) # set pointer to the beginning of the file
+            f.truncate(0)  # clear everything from the file
+            f.seek(0)  # set pointer to the beginning of the file
             f.write(data)
+
 
 def toc_customizer(app, docname, source):
     if docname == "models/models-toc":

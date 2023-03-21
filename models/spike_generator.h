@@ -73,7 +73,7 @@ weight of the connection. To disable this functionality, the
 spike_weights array can be set to an empty array.
 
 The spike generator supports spike times that do not coincide with a time
-step, i.e., are not falling on the grid defined by the simulation resolution.
+step, that is, are not falling on the grid defined by the simulation resolution.
 There are three options that control how spike times that do not coincide
 with a step are handled (see also examples below):
 

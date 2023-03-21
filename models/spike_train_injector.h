@@ -68,10 +68,10 @@ be generated at this particular time.
 
 The spike generator supports spike times that do not coincide with a time
 step, that is, are not falling on the grid defined by the simulation resolution.
-There are three options that control how spike times that do not coincide
-with a step are handled (see also examples below):
+Spike times that do not coincide with a step are handled with one of three
+options (see examples below):
 
-Option 1:   ``precise_times``  default: false
+Option 1:   ``precise_times``   default: false
 
 If false, spike times will be rounded to simulation steps, i.e., multiples
 of the resolution. The rounding is controlled by the two other flags. If true,
@@ -80,13 +80,13 @@ step and offset. This should only be used if all neurons receiving the spike
 train can handle precise timing information. In this case, the other two
 options are ignored.
 
-Option 2:  ` `allow_offgrid_times``   default: false
+Option 2:   ``allow_offgrid_times``   default: false
 
 If false, spike times will be rounded to the nearest step if they are less
 than tic/2 from the step, otherwise NEST reports an error. If true, spike
 times are rounded to the nearest step if within tic/2 from the step, otherwise
 they are rounded up to the *end* of the step. This setting has no effect if
-precise_times is true.
+``precise_times`` is `true`.
 
 Option 3:   ``shift_now_spikes``   default: false
 

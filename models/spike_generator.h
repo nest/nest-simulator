@@ -53,9 +53,11 @@ which are given to the spike generator as an array.
 
 .. note::
 
-   ``spike_generator`` is recommended if the spike trains have a very
-   high rate. For rates similar to regular neurons, use
+   If the spike trains have a very high rate, we recommend using the
+   ``spike_generator``. For rates similar to regular neurons, use
    :doc:`spike train injector </models/spike_train_injector>`.
+
+
 
 Spike times are given in milliseconds as an array. The `spike_times`
 array must be sorted with the earliest spike first. All spike times
@@ -74,10 +76,10 @@ spike_weights array can be set to an empty array.
 
 The spike generator supports spike times that do not coincide with a time
 step, i.e., are not falling on the grid defined by the simulation resolution.
-There are three options that control how spike times that do not coincide
-with a step are handled (see also examples below):
+Spike times that do not coincide with a step are handled with one of three
+options (see examples below):
 
-    `precise_times`  default: false
+Option 1:   ``precise_times``   default: false
 
 If false, spike times will be rounded to simulation steps, i.e., multiples
 of the resolution. The rounding is controlled by the two other flags.
@@ -86,7 +88,7 @@ combination of step and offset. This should only be used if all neurons
 receiving the spike train can handle precise timing information. In this
 case, the other two options are ignored.
 
-    `allow_offgrid_times`   default: false
+Option 2:   ``allow_offgrid_times``   default: false
 
 If false, spike times will be rounded to the nearest step if they are
 less than tic/2 from the step, otherwise NEST reports an error.
@@ -94,7 +96,7 @@ If true, spike times are rounded to the nearest step if within tic/2
 from the step, otherwise they are rounded up to the *end* of the step.
 This setting has no effect if ``precise_times`` is `true`.
 
-    `shift_now_spikes`   default: false
+Option 3:   ``shift_now_spikes``   default: false
 
 This option is mainly for use by the PyNN-NEST interface.
 If false, spike times rounded down to the current point in time will

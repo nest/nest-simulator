@@ -604,13 +604,13 @@ function( NEST_PROCESS_WITH_BOOST )
   endif ()
 endfunction()
 
-function( NEST_PROCESS_WITH_SONATA )
+function( NEST_PROCESS_WITH_HDF5 )
 
   set( HAVE_HDF5 OFF PARENT_SCOPE )
-  if ( with-sonata )
-    if ( NOT ${with-sonata} STREQUAL "ON" )
+  if ( with-hdf5 )
+    if ( NOT ${with-hdf5} STREQUAL "ON" )
       # a path is set
-      set( HDF5_ROOT "${with-sonata}" )
+      set( HDF5_ROOT "${with-hdf5}" )
     endif ()
 
     find_package( HDF5 REQUIRED COMPONENTS C CXX )

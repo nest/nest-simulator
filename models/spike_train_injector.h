@@ -116,12 +116,12 @@ Assume that NEST works with default resolution (step size) of 0.1 ms
 and default tic length of 0.001 ms. Then, spikes times not falling
 onto the grid will be handled as follows for different option settings:
 
-  ::
+::
 
     nest.Create("spike_train_injector",
                params={"spike_times": [1.0, 1.9999, 3.0001]})
 
-  ---> spikes at steps 10 (==1.0 ms), 20 (==2.0 ms) and 30 (==3.0 ms)
+---> spikes at steps 10 (==1.0 ms), 20 (==2.0 ms) and 30 (==3.0 ms)
 
   ::
 

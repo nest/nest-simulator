@@ -68,14 +68,9 @@ class SonataConnector
 public:
   /**
    * @brief Constructor
-   * @param graph_specs Dictionary with created NodeCollections and SONATA edge specifications.
-   * @param chunk_size Size of the chunk to read in one read operation.
    *
-   * See PyNEST `SonataNetwork._create_graph_specs` for an outline of the
-   * structure of `graph_specs`.
-   *
-   * The `chunk_size` applies to all HDF5 datasets that need to be read in
-   * each read operation to extract connectivity data.
+   * @param graph_specs Specification dictionary, see PyNEST `SonataNetwork._create_graph_specs` for details.
+   * @param chunk_size Size of the chunk to read in one read operation, applies to all HDF5 datasets.
    */
   SonataConnector( const DictionaryDatum& graph_specs, const long chunk_size );
 

@@ -111,13 +111,13 @@ return different `spike_times` values at different resolutions.
 
 Example:
 
-  ::
+::
 
      nest.Create("spike_generator",
                  params={"spike_times": [1.0, 2.0, 3.0]})
 
-  Instructs the spike generator to generate events at 1.0, 2.0, and
-  3.0 milliseconds, relative to the device-timer origin.
+Instructs the spike generator to generate events at 1.0, 2.0, and
+3.0 milliseconds, relative to the device-timer origin.
 
 Example:
 
@@ -125,66 +125,66 @@ Assume that NEST works with default resolution (step size) of 0.1 ms
 and default tic length of 0.001 ms. Then, spikes times not falling
 onto the grid will be handled as follows for different option settings:
 
-  ::
+::
 
     nest.Create("spike_generator",
                params={"spike_times": [1.0, 1.9999, 3.0001]})
 
-  ---> spikes at steps 10 (==1.0 ms), 20 (==2.0 ms) and 30 (==3.0 ms)
+---> spikes at steps 10 (==1.0 ms), 20 (==2.0 ms) and 30 (==3.0 ms)
 
-  ::
+::
 
     nest.Create("spike_generator",
                params={"spike_times": [1.0, 1.05, 3.0001]})
 
-  ---> **Error!** Spike time 1.05 not within tic/2 of step
+---> **Error!** Spike time 1.05 not within tic/2 of step
 
 
-  ::
+::
 
     nest.Create("spike_generator",
                params={"spike_times": [1.0, 1.05, 3.0001],
                "allow_offgrid_times": True})
 
-  ---> spikes at steps 10, 11 (mid-step time rounded up),
-         30 (time within tic/2 of step moved to step)
+---> spikes at steps 10, 11 (mid-step time rounded up),
+      30 (time within tic/2 of step moved to step)
 
-  ::
+::
 
     nest.Create("spike_generator",
                params={"spike_times": [1.0, 1.05, 3.0001],
                "precise_times": True})
 
-  ---> spikes at step 10, offset 0.0; step 11, offset -0.05;
-         step 31, offset -0.0999
+---> spikes at step 10, offset 0.0; step 11, offset -0.05;
+      step 31, offset -0.0999
 
 Assume we have simulated 10.0 ms and simulation time is thus 10.0 (step
 100). Then, any spike times set at this time must be later than step 100.
 
-  ::
+::
 
     nest.Create("spike_generator",
                params={"spike_times": [10.0001]})
 
-  ---> spike time is within tic/2 of step 100, rounded down to 100 thus
-         not in the future; **spike will not be emitted**
+---> spike time is within tic/2 of step 100, rounded down to 100 thus
+      not in the future; **spike will not be emitted**
 
-  ::
+::
 
     nest.Create("spike_generator",
                params={"spike_times": [10.0001],
                "precise_times": True})
 
-  ---> spike at step 101, offset -0.0999 is in the future
+---> spike at step 101, offset -0.0999 is in the future
 
-  ::
+::
 
     nest.Create("spike_generator",
                params={"spike_times": [10.0001, 11.0001],
                "shift_now_spikes": True})
 
-  ---> spike at step 101, spike shifted into the future, and spike at step
-        110, not shifted, since it is in the future anyways
+---> spike at step 101, spike shifted into the future, and spike at step
+      110, not shifted, since it is in the future anyways
 
 .. include:: ../models/stimulation_device.rst
 

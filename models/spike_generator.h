@@ -92,7 +92,7 @@ If false, spike times will be rounded to the nearest step if they are
 less than tic/2 from the step, otherwise NEST reports an error.
 If true, spike times are rounded to the nearest step if within tic/2
 from the step, otherwise they are rounded up to the *end* of the step.
-This setting has no effect if precise_times is true.
+This setting has no effect if ``precise_times`` is `true`.
 
     `shift_now_spikes`   default: false
 
@@ -191,7 +191,7 @@ spike_times
 
 spike_weights
     List of corresponding spike weights, the unit depends on the receiver.
-    (e.g. nS for conductance-based neurons, or pA for current based ones)
+    (e.g., nS for conductance-based neurons or pA for current based ones)
 
 spike_multiplicities
     List of multiplicities of spikes, same length as spike_times; mostly

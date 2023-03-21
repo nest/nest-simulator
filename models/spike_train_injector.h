@@ -67,11 +67,11 @@ Multiple occurrences of the same time indicate that more than one event is to
 be generated at this particular time.
 
 The spike generator supports spike times that do not coincide with a time
-step, i.e., are not falling on the grid defined by the simulation resolution.
+step, that is, are not falling on the grid defined by the simulation resolution.
 There are three options that control how spike times that do not coincide
 with a step are handled (see also examples below):
 
-    `precise_times`  default: false
+Option 1:   ``precise_times``  default: false
 
 If false, spike times will be rounded to simulation steps, i.e., multiples
 of the resolution. The rounding is controlled by the two other flags. If true,
@@ -80,7 +80,7 @@ step and offset. This should only be used if all neurons receiving the spike
 train can handle precise timing information. In this case, the other two
 options are ignored.
 
-    `allow_offgrid_times`   default: false
+Option 2:  ` `allow_offgrid_times``   default: false
 
 If false, spike times will be rounded to the nearest step if they are less
 than tic/2 from the step, otherwise NEST reports an error. If true, spike
@@ -88,7 +88,7 @@ times are rounded to the nearest step if within tic/2 from the step, otherwise
 they are rounded up to the *end* of the step. This setting has no effect if
 precise_times is true.
 
-    `shift_now_spikes`   default: false
+Option 3:   ``shift_now_spikes``   default: false
 
 This option is mainly for use by the PyNN-NEST interface. If false, spike
 times rounded down to the current point in time will be considered in the past

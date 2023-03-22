@@ -46,7 +46,6 @@ References
 # Import all necessary packages for simulation, analysis and plotting.
 
 import nest
-import matplotlib.pyplot as plt
 from pathlib import Path
 
 nest.ResetKernel()
@@ -137,4 +136,4 @@ sonata_net.Simulate()
 # spike recorder for further analysis.
 
 nest.raster_plot.from_device(s_rec)
-plt.show()
+nest.raster_plot.show()

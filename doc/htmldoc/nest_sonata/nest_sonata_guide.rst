@@ -34,6 +34,31 @@ stored on an individual basis, for instance, synaptic weights, are also stored i
 Simulation parameters and the locations of the HDF5 and CSV files specifying the network are stored in JSON 
 configuration files. 
 
+.. _sec:sonata_examples:
+
+NEST SONATA Example
+--------------------
+
+Here is a minimal example of how to build and simulate from SONATA specifications:
+
+.. code-block:: python
+
+    # Instantiate SonataNetwork
+    sonata_net = nest.SonataNetwork("path/to/config.json")
+
+    # Create and connect nodes
+    node_collections = sonata_net.BuildNetwork()
+
+    # Connect spike recorder to a population
+    s_rec = nest.Create("spike_recorder")
+    nest.Connect(node_collections["name_of_population_to_record"], s_rec)
+
+    # Simulate the network
+    sonata_net.Simulate()
+
+For more detailed examples, see
+
+* :doc:`../auto_examples/sonata_network`
 
 .. _sec:sonata_nodes:
 
@@ -242,15 +267,6 @@ expects to be included:
 
     NEST supports the use of two config files, i.e. one network and one simulation config. NEST does not currently 
     support SONATA Spike Train Reports or utilize other ``output`` components in the SONATA config.
-
-
-.. _sec:sonata_examples:
-
-NEST SONATA examples 
---------------------
-
-* :doc:`../auto_examples/sonata_network`
-
 
 .. _sec:sonata_refs:
 

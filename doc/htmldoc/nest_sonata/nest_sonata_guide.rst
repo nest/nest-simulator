@@ -89,7 +89,7 @@ NEST supports the following SONATA node ``model_type``\s:
 * ``point_process``
 * ``virtual`` 
 
-Both ``point_neuron`` and ``point_process`` mean that the node is a neuron model (explicitly simulated) whereas ``virtual`` 
+Both ``point_neuron`` and ``point_process`` mean that the node is a neuron model (explicitly simulated; the two terms can be used interchangeably) whereas ``virtual`` 
 means that the node only provide inputs to the simulated system. ``virtual`` nodes are modeled as ``spike_generator``\s 
 (see :doc:`../models/spike_generator`\). NEST requires that only one ``model_type`` is present per node type CSV file. 
 
@@ -186,7 +186,7 @@ NEST assumes the ``edge_id``\s are contiguous numeric keys starting from zero, t
 .. note::
 
     NEST currently only supports one edge group per edge population. Furthermore, NEST only reads the ``delay`` 
-    and ``syn_weight`` datasets, given that they are provided. This means that only axonal delays and synaptic weights 
+    and ``syn_weight`` datasets, given that they are provided. This means that only connection delays and synaptic weights 
     can be stored on an individual basis in the HDF5 format. Other synaptic properties must be given in the edge type 
     CSV file(s). 
 

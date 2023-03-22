@@ -80,19 +80,15 @@ class SonataNetwork():
 
             nest.ResetKernel()
 
-            # Specify path to the SONATA .json configuration file
-            config = "path/to/config.json"
-
             # Instantiate SonataNetwork
-            sonata_net = nest.SonataNetwork(config)
+            sonata_net = nest.SonataNetwork("path/to/config.json")
 
             # Create and connect nodes
             node_collections = sonata_net.BuildNetwork()
 
             # Connect spike recorder to a population
             s_rec = nest.Create("spike_recorder")
-            pop_name = "name_of_population_to_record"
-            nest.Connect(node_collections[pop_name], s_rec)
+            nest.Connect(node_collections["name_of_population_to_record"], s_rec)
 
             # Simulate the network
             sonata_net.Simulate()

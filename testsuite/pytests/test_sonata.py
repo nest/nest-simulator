@@ -23,13 +23,24 @@ import nest
 import pytest
 from pathlib import Path
 
-skip_if_no_hdf5 = pytest.mark.skipif(not nest.ll_api.sli_func("statusdict/have_hdf5 ::"),
-                                     reason="requires NEST built with HDF5 support")
+# Skip all tests in this module if no HDF5
+have_hdf5 = nest.ll_api.sli_func("statusdict/have_hdf5 ::")
+pytestmark = pytest.mark.skipif(not have_hdf5, reason="Requires NEST built with HDF5 support")
 
-root_path = Path(__file__).resolve().parent
-sonata_path = root_path.joinpath("300_pointneurons")
-config = sonata_path.joinpath("circuit_config.json")
-sim_config = sonata_path.joinpath("simulation_config.json")
+# We consider two possible cases:
+# - When running via `make installcheck`, this file is in $INSTALLDIR/share/nest/testsuite/pytests,
+#   while the data is in $INSTALLDIR/share/doc/nest/examples/pynest/sonata_example.
+# - When running from the source dir, this file is in $SOURCEDIR/testsuite/pytests,
+#   while the data is in $SOURCEDIR/pynest/examples/sonata_example.
+for relpath in ['../../../doc/nest/examples/pynest', '../../pynest/examples']:
+    sonata_path = Path(__file__).parent / relpath / 'sonata_example' / '300_pointneurons'
+    config = sonata_path / 'circuit_config.json'
+    sim_config = sonata_path / 'simulation_config.json'
+    have_sonata_files = config.is_file() and sim_config.is_file()
+    if have_sonata_files:
+        break
+else:
+    have_sonata_files = False
 
 
 EXPECTED_NUM_NODES = 400  # 300 'internal' nodes + 100 'external' nodes
@@ -43,16 +54,12 @@ CHUNK_SIZES = [2**10, 2**20]
 NUM_THREADS = [1, 2, 4]
 
 
-@pytest.fixture
-def reset():
-    pytest.importorskip('h5py')  # Skip test if h5py is not found
-    nest.ResetKernel()
-
-
-@skip_if_no_hdf5
 @pytest.mark.parametrize("chunk_size", CHUNK_SIZES)
 @pytest.mark.parametrize("num_threads", NUM_THREADS)
-def testSonataNetwork(reset, num_threads, chunk_size):
+def testSonataNetwork(num_threads, chunk_size):
+    # Tests must fail if input files not found, since that points to a misconfiguration of the NEST installation.
+    assert have_sonata_files, f"SONATA input files not found {testhist}"
+    nest.ResetKernel()
     nest.set(total_num_virtual_procs=num_threads)
     sonata_net = nest.SonataNetwork(config, sim_config)
     sonata_net.BuildNetwork(chunk_size=chunk_size)

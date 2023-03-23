@@ -981,7 +981,7 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params )
     update_delay_extrema_();
 
     // Check whether waveform relaxation is used on any MPI process;
-    // needs to be called before update_connection_intrastructure_since
+    // needs to be called before update_connection_infrastructure since
     // it resizes coefficient arrays for secondary events
     kernel().node_manager.check_wfr_use();
 

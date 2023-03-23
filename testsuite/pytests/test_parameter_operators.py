@@ -41,10 +41,11 @@ def _const_param(val):
     return nest.CreateParameter('constant', {'value': val})
 
 
-def to_numeric(item):
+def _to_numeric(item):
     return item.GetValue() if hasattr(item, 'GetValue') else item
 
 
+@pytest.mark.xfail(raises=TypeError, strict=True)
 @pytest.mark.parametrize('op, a, b', [
     [ops.mod, _const_param(31), _const_param(5)],
     [ops.mod, _const_param(31), 5],
@@ -57,8 +58,7 @@ def test_unsupported_operators(op, a, b):
     A side-purpose of this test is to document unsupported operators.
     """
 
-    with pytest.raises(TypeError):
-        op(a, b)
+    op(a, b)
 
 
 @pytest.mark.parametrize('op', [
@@ -96,8 +96,8 @@ def test_binary_operators(op, a, b):
     Outer parametrization is over operators, the inner over param-param, param-number and number-param combinations.
     """
 
-    val_a = to_numeric(a)
-    val_b = to_numeric(b)
+    val_a = _to_numeric(a)
+    val_b = _to_numeric(b)
 
     assert op(a, b).GetValue() == op(val_a, val_b)
 
@@ -125,8 +125,8 @@ def test_incomplete_binary_operators(op, a, b):
     Perform tests for binary operators that do not support parameters as all operands.
     """
 
-    val_a = to_numeric(a)
-    val_b = to_numeric(b)
+    val_a = _to_numeric(a)
+    val_b = _to_numeric(b)
 
     assert op(a, b).GetValue() == op(val_a, val_b)
 
@@ -153,7 +153,7 @@ def test_comparison_operators(op, a, b):
     Outer parametrization is over operators, the inner over param-param, param-number and number-param combinations.
     """
 
-    val_a = to_numeric(a)
-    val_b = to_numeric(b)
+    val_a = _to_numeric(a)
+    val_b = _to_numeric(b)
 
     assert op(a, b).GetValue() == op(val_a, val_b)

@@ -30,7 +30,7 @@ pytestmark = pytest.mark.skipif(not have_hdf5, reason="Requires NEST built with 
 # We consider two possible cases:
 # - When running via `make installcheck`, this file is in $INSTALLDIR/share/nest/testsuite/pytests,
 #   while the data is in $INSTALLDIR/share/doc/nest/examples/pynest/sonata_example.
-# - When running from the source dir, this file is in $SOURCEDIR/testsuite/pytests, 
+# - When running from the source dir, this file is in $SOURCEDIR/testsuite/pytests,
 #   while the data is in $SOURCEDIR/pynest/examples/sonata_example.
 for relpath in ['../../../doc/nest/examples/pynest', '../../pynest/examples']:
     sonata_path = Path(__file__).parent / relpath / 'sonata_example' / '300_pointneurons'
@@ -41,7 +41,6 @@ for relpath in ['../../../doc/nest/examples/pynest', '../../pynest/examples']:
         break
 else:
     have_sonata_files = False
-
 
 
 EXPECTED_NUM_NODES = 400  # 300 'internal' nodes + 100 'external' nodes

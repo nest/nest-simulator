@@ -46,28 +46,22 @@ References
 # Import all necessary packages for simulation, analysis and plotting.
 
 import nest
+import matplotlib.pyplot as plt
 from pathlib import Path
 
+nest.set_verbosity('M_ERROR')
 nest.ResetKernel()
 
 ###############################################################################
-# Set the number of MPI processes and threads to use in the building and
-# simulation of the network model.
-
-n_procs = 1
-n_threads = 1
-nest.set(total_num_virtual_procs=n_procs * n_threads,
-         print_time=True)
-
-###############################################################################
 # Specify the path to the SONATA .json configuration file(s).
-# The `300_pointneurons` model has two configuration files: one network and
-# one simulation config.
+# The `300_pointneurons` model has two configuration files:
+# One circuit and one simulation configuration file.
+# We locate the configuration files relative to this example script.
 
 base_path = Path(__file__).resolve().parent
-sonata_path = base_path.joinpath("300_pointneurons")
-net_config = sonata_path.joinpath("circuit_config.json")
-sim_config = sonata_path.joinpath("simulation_config.json")
+sonata_path = base_path / "300_pointneurons"
+net_config = sonata_path / "circuit_config.json"
+sim_config = sonata_path / "simulation_config.json"
 
 ###############################################################################
 # SONATA networks are built and simulated through the :py:class:`.SonataNetwork`
@@ -103,9 +97,9 @@ node_collections = sonata_net.BuildNetwork(chunk_size=2**20)
 # We can now verify whether the built network has the expected number of
 # nodes and connections.
 
-kernel_status = nest.GetKernelStatus()
-print(f"number of nodes: {kernel_status['network_size']:,}")
-print(f"number of connections: {kernel_status['num_connections']:,}")
+print(f'Network built from SONATA specifications in directory "{sonata_path.name}"')
+print(f"  Number of nodes      : {nest.network_size}")
+print(f"  Number of connections: {nest.num_connections}")
 
 ###############################################################################
 # NEST does not currently support SONATA Spike Train Reports or utilize other
@@ -136,4 +130,4 @@ sonata_net.Simulate()
 # spike recorder for further analysis.
 
 nest.raster_plot.from_device(s_rec)
-nest.raster_plot.show()
+plt.show()

@@ -356,10 +356,11 @@ class SonataNetwork():
                 # Map node id's to spike times
                 # TODO: Can this be done in a more efficient way?
                 spikes_map = {node_id: timestamps[node_ids == node_id] for node_id in range(n_nodes)}
-                params_lst = [{"spike_times": spikes_map[node_id], "precise_times": True} for node_id in range(n_nodes)]
+                params_lst = [{"spike_times": spikes_map[node_id], "allow_offgrid_times": True}
+                              for node_id in range(n_nodes)]
 
                 # Create and store NC
-                nest_nodes = Create("spike_generator", n=n_nodes, params=params_lst)
+                nest_nodes = Create("spike_train_injector", n=n_nodes, params=params_lst)
                 self._node_collections[pop_name] = nest_nodes
 
     def _create_node_type_parameter_map(self, nodes_df, csv_fn):

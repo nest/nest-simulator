@@ -45,7 +45,7 @@ else:
 
 EXPECTED_NUM_NODES = 400  # 300 'internal' nodes + 100 'external' nodes
 EXPECTED_NUM_CONNECTIONS = 48432
-EXPECTED_NUM_SPIKES = 18794
+EXPECTED_NUM_SPIKES = 18828
 
 # Meaning of chunk sizes for 300_pointneurons model:
 # 2**10=1024 : Edge HDF5 files will be read in chunks
@@ -62,9 +62,13 @@ def testSonataNetwork(num_threads, chunk_size):
     nest.ResetKernel()
     nest.set(total_num_virtual_procs=num_threads)
     sonata_net = nest.SonataNetwork(config, sim_config)
-    sonata_net.BuildNetwork(chunk_size=chunk_size)
+    node_collections = sonata_net.BuildNetwork(chunk_size=chunk_size)
+    srec = nest.Create("spike_recorder")
+    nest.Connect(node_collections["internal"], srec)
     sonata_net.Simulate()
+    spike_data = s_rec.events
+    post_times = spike_data['times']
     kernel_status = nest.GetKernelStatus()
     assert kernel_status['network_size'] == EXPECTED_NUM_NODES
     assert kernel_status['num_connections'] == EXPECTED_NUM_CONNECTIONS
-    assert kernel_status['local_spike_counter'] == EXPECTED_NUM_SPIKES
+    assert post_times.size == EXPECTED_NUM_SPIKES

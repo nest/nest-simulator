@@ -66,7 +66,7 @@ def testSonataNetwork(num_threads, chunk_size):
     srec = nest.Create("spike_recorder")
     nest.Connect(node_collections["internal"], srec)
     sonata_net.Simulate()
-    spike_data = s_rec.events
+    spike_data = srec.events
     post_times = spike_data['times']
     kernel_status = nest.GetKernelStatus()
     assert kernel_status['network_size'] == EXPECTED_NUM_NODES

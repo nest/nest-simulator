@@ -116,7 +116,6 @@ Here you can dive into various topics about NEST.
    Built-in timers <nest_behavior/built-in_timers>
    Connect NEST with other tools <connect_nest/index>
    Parallel computing <hpc/parallel_computing>
-   Benchmarking <hpc/benchmarking>
    From NEST 2.x to 3.x <whats_new/v3.0/refguide_nest2_nest3>
    Glossary <ref_material/glossary>
 

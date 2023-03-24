@@ -43,7 +43,7 @@ else:
     have_sonata_files = False
 
 
-EXPECTED_NUM_NODES = 400  # 300 'internal' nodes + 100 'external' nodes
+EXPECTED_NUM_NODES = 401  # 300 'internal' + 100 'external' + 1 device
 EXPECTED_NUM_CONNECTIONS = 48432
 EXPECTED_NUM_SPIKES = 18828
 

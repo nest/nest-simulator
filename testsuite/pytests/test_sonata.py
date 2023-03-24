@@ -56,15 +56,18 @@ NUM_THREADS = [1, 2, 4]
 
 @pytest.mark.parametrize("chunk_size", CHUNK_SIZES)
 @pytest.mark.parametrize("num_threads", NUM_THREADS)
-def testSonataNetwork(num_threads, chunk_size):
-    # Tests must fail if input files not found, since that points to a misconfiguration of the NEST installation.
-    assert have_sonata_files, f"SONATA input files not found {testhist}"
+def test_SonataNetwork(num_threads, chunk_size):
+    # Tests must fail if input files not found, since that points to a
+    # misconfiguration of the NEST installation.
+    assert have_sonata_files, "SONATA files not found"
+
     nest.ResetKernel()
     nest.set(total_num_virtual_procs=num_threads)
     sonata_net = nest.SonataNetwork(config, sim_config)
     node_collections = sonata_net.BuildNetwork(chunk_size=chunk_size)
 
     # Verify network was built correctly
+    kernel_status = nest.GetKernelStatus()
     assert kernel_status['network_size'] == EXPECTED_NUM_NODES
     assert kernel_status['num_connections'] == EXPECTED_NUM_CONNECTIONS
 
@@ -74,5 +77,4 @@ def testSonataNetwork(num_threads, chunk_size):
     sonata_net.Simulate()
     spike_data = srec.events
     post_times = spike_data['times']
-    kernel_status = nest.GetKernelStatus()
     assert post_times.size == EXPECTED_NUM_SPIKES

@@ -43,7 +43,7 @@ else:
     have_sonata_files = False
 
 
-EXPECTED_NUM_NODES = 401  # 300 'internal' + 100 'external' + 1 device
+EXPECTED_NUM_NODES = 400  # 300 'internal' + 100 'external'
 EXPECTED_NUM_CONNECTIONS = 48432
 EXPECTED_NUM_SPIKES = 18828
 
@@ -63,12 +63,16 @@ def testSonataNetwork(num_threads, chunk_size):
     nest.set(total_num_virtual_procs=num_threads)
     sonata_net = nest.SonataNetwork(config, sim_config)
     node_collections = sonata_net.BuildNetwork(chunk_size=chunk_size)
+
+    # Verify network was built correctly
+    assert kernel_status['network_size'] == EXPECTED_NUM_NODES
+    assert kernel_status['num_connections'] == EXPECTED_NUM_CONNECTIONS
+
+    # Verify network dynamics
     srec = nest.Create("spike_recorder")
     nest.Connect(node_collections["internal"], srec)
     sonata_net.Simulate()
     spike_data = srec.events
     post_times = spike_data['times']
     kernel_status = nest.GetKernelStatus()
-    assert kernel_status['network_size'] == EXPECTED_NUM_NODES
-    assert kernel_status['num_connections'] == EXPECTED_NUM_CONNECTIONS
     assert post_times.size == EXPECTED_NUM_SPIKES

@@ -28,7 +28,7 @@ def _set_resolution():
     """
     Set resolution to power of two to avoid rounding issues.
     """
-    
+
     nest.ResetKernel()
     nest.resolution = 2**-3
 
@@ -37,6 +37,7 @@ def _set_resolution():
 models = [model for model in nest.node_models
           if ('recordables' in (dflts := nest.GetDefaults(model))
               and dflts['recordables'])]
+
 
 @pytest.mark.parametrize('model', models)
 def test_recordables_are_recorded(_set_resolution, model):
@@ -53,7 +54,7 @@ def test_recordables_are_recorded(_set_resolution, model):
     recording_interval = 2
     simtime = 10
     num_data_expected = simtime / recording_interval - 1
-    
+
     nrn = nest.Create(model)
     recordables = nrn.recordables
     mm = nest.Create('multimeter', {'interval': recording_interval,
@@ -67,7 +68,7 @@ def test_recordables_are_recorded(_set_resolution, model):
         assert r in result
         assert len(result[r]) == num_data_expected
 
-        
+
 def test_multimeter_freeze():
     """
     Ensure that frozen parameter can be set to False but not True on multimeter.

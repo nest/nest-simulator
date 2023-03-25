@@ -34,9 +34,9 @@ def _set_resolution():
 
 
 # Obtain all models with non-empty recordables list
-models = [model for model in nest.node_models
+models = (model for model in nest.node_models
           if ('recordables' in (dflts := nest.GetDefaults(model))
-              and dflts['recordables'])]
+              and dflts['recordables']))
 
 
 @pytest.mark.parametrize('model', models)

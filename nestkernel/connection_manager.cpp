@@ -1330,11 +1330,17 @@ nest::ConnectionManager::compute_target_data_buffer_size()
   // has its own data structures, we need to count connections on every
   // thread separately to compute the total number of sources.
   size_t num_target_data = 0;
+
+  // TODO:
+  // This heuristic is probably wrong. It certainly needs modification for
+  // handling compressed spikes. But it is only for estimating an initial
+  // size, code should work fine also if the initial buffer size is too
+  // small or too large.
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     num_target_data += get_num_target_data( tid );
   }
-
+  
   // Determine maximum number of target data across all ranks, because
   // all ranks need identically sized buffers.
   std::vector< long > global_num_target_data( kernel().mpi_manager.get_num_processes() );
@@ -1346,14 +1352,7 @@ nest::ConnectionManager::compute_target_data_buffer_size()
   const size_t min_num_target_data = 2 * kernel().mpi_manager.get_num_processes();
 
   // Adjust target data buffers accordingly
-  if ( min_num_target_data < max_num_target_data )
-  {
-    kernel().mpi_manager.set_buffer_size_target_data( max_num_target_data );
-  }
-  else
-  {
-    kernel().mpi_manager.set_buffer_size_target_data( min_num_target_data );
-  }
+  kernel().mpi_manager.set_buffer_size_target_data( std::max( min_num_target_data, max_num_target_data ) );
 }
 
 void
@@ -1720,6 +1719,8 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
         some_chunk_full = true;
         iteration_state_.at( tid ) =
           std::pair< size_t, std::map< index, CSDMapEntry >::const_iterator >( syn_id, source_2_idx );
+        kernel().write_to_dump( String::compose( "chunk full : r%1 t%2 src_rank %3 syn %4 s2i.1 %5 ", kernel().mpi_manager.get_rank(), tid, source_rank, syn_id, source_2_idx->first ) );
+
         break;
       }
 
@@ -1751,6 +1752,9 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
         secondary_fields.set_recv_buffer_pos( relative_recv_buffer_pos );
         secondary_fields.set_syn_id( syn_id );
       }
+
+      kernel().write_to_dump( String::compose( "writing : r%1 t%2 src_rank %3 src_gid %4 ", kernel().mpi_manager.get_rank(), tid, source_rank, source_gid ) );
+
 
       send_buffer_target_data.at( send_buffer_position.idx( source_rank ) ) = next_target_data;
       send_buffer_position.increase( source_rank );

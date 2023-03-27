@@ -963,14 +963,14 @@ EventDeliveryManager::gather_target_data_compressed( const thread tid )
     
     // assume this is the last gather round and change to false otherwise
     gather_completed_checker_[ tid ].set_true();
-
+    
 #pragma omp single
     {
       if ( kernel().mpi_manager.adaptive_target_buffers() and buffer_size_target_data_has_changed_ )
       {
-        kernel().write_to_dump( String::compose( "resize from: r%1 t%2 bsz%3 ", kernel().mpi_manager.get_rank(), tid, kernel().mpi_manager.get_buffer_size_target_data() ) );
+        kernel().write_to_dump( String::compose( "resize from: r%1 t%2 bsz %3 ", kernel().mpi_manager.get_rank(), tid, send_buffer_target_data_.size() ) );
         resize_send_recv_buffers_target_data();
-        kernel().write_to_dump( String::compose( "resize to  : r%1 t%2 bzz%3", kernel().mpi_manager.get_rank(), tid, kernel().mpi_manager.get_buffer_size_target_data() ) );
+        kernel().write_to_dump( String::compose( "resize to  : r%1 t%2 bsz %3", kernel().mpi_manager.get_rank(), tid, send_buffer_target_data_.size() ) );
       }
     } // of omp single; implicit barrier
 

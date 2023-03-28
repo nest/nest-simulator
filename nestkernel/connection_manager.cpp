@@ -1340,7 +1340,7 @@ nest::ConnectionManager::compute_target_data_buffer_size()
   {
     num_target_data += get_num_target_data( tid );
   }
-  
+
   // Determine maximum number of target data across all ranks, because
   // all ranks need identically sized buffers.
   std::vector< long > global_num_target_data( kernel().mpi_manager.get_num_processes() );
@@ -1685,12 +1685,12 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
   const auto& csd_maps = source_table_.compressed_spike_data_map_;
   auto syn_id = iteration_state_.at( tid ).first;
   auto source_2_idx = iteration_state_.at( tid ).second;
-  
+
   if ( syn_id >= csd_maps.size() )
   {
-    return true;  // this thread has previously written all its targets
+    return true; // this thread has previously written all its targets
   }
-  
+
   do
   {
     const auto& conn_model = kernel().model_manager.get_connection_model( syn_id, tid );
@@ -1706,9 +1706,12 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
         continue;
       }
 
-      FULL_LOGGING_ONLY(
-        kernel().write_to_dump( String::compose( "FTB for s2i : r%1 t%2 syn %3 csdm_sz %4 gid %5", kernel().mpi_manager.get_rank(), tid, syn_id, csd_maps[syn_id].size(), source_gid ) );
-        )
+      FULL_LOGGING_ONLY( kernel().write_to_dump( String::compose( "FTB for s2i : r%1 t%2 syn %3 csdm_sz %4 gid %5",
+        kernel().mpi_manager.get_rank(),
+        tid,
+        syn_id,
+        csd_maps[ syn_id ].size(),
+        source_gid ) ); )
 
       if ( send_buffer_position.is_chunk_filled( source_rank ) )
       {
@@ -1719,12 +1722,15 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
         // We store where we need to continue and stop iteration for now.
         iteration_state_.at( tid ) =
           std::pair< size_t, std::map< index, CSDMapEntry >::const_iterator >( syn_id, source_2_idx );
-        
-        FULL_LOGGING_ONLY(
-          kernel().write_to_dump( String::compose( "chunk full : r%1 t%2 src_rank %3 syn %4 s2i.1 %5 ", kernel().mpi_manager.get_rank(), tid, source_rank, syn_id, source_2_idx->first ) );
-          )
 
-        return false;  // there is data left to communicate
+        FULL_LOGGING_ONLY( kernel().write_to_dump( String::compose( "chunk full : r%1 t%2 src_rank %3 syn %4 s2i.1 %5 ",
+          kernel().mpi_manager.get_rank(),
+          tid,
+          source_rank,
+          syn_id,
+          source_2_idx->first ) ); )
+
+        return false; // there is data left to communicate
       }
 
       TargetData next_target_data;
@@ -1756,15 +1762,17 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
         secondary_fields.set_syn_id( syn_id );
       }
 
-      FULL_LOGGING_ONLY(
-        kernel().write_to_dump( String::compose( "writing : r%1 t%2 src_rank %3 src_gid %4 ", kernel().mpi_manager.get_rank(), tid, source_rank, source_gid ) );
-                        )
+      FULL_LOGGING_ONLY( kernel().write_to_dump( String::compose( "writing : r%1 t%2 src_rank %3 src_gid %4 ",
+        kernel().mpi_manager.get_rank(),
+        tid,
+        source_rank,
+        source_gid ) ); )
 
       send_buffer_target_data.at( send_buffer_position.idx( source_rank ) ) = next_target_data;
       send_buffer_position.increase( source_rank );
-      
+
       ++source_2_idx;
-    }  // end while
+    } // end while
 
     ++syn_id;
     if ( syn_id < csd_maps.size() )
@@ -1778,11 +1786,9 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
   // this thread has nothing to do in the next round.
   iteration_state_.at( tid ) =
     std::pair< size_t, std::map< index, CSDMapEntry >::const_iterator >( syn_id, source_2_idx );
-  
-  FULL_LOGGING_ONLY(
-    kernel().write_to_dump( String::compose( "fill done : r%1 t%2 syn %3",
-                                            kernel().mpi_manager.get_rank(), tid, syn_id ) );
-                    )
+
+  FULL_LOGGING_ONLY( kernel().write_to_dump(
+    String::compose( "fill done : r%1 t%2 syn %3", kernel().mpi_manager.get_rank(), tid, syn_id ) ); )
 
   // Mark end of data for this round
   for ( thread rank = rank_start; rank < rank_end; ++rank )

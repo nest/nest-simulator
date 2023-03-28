@@ -469,49 +469,41 @@ nest::SourceTable::collect_compressible_sources( const thread tid )
 void
 nest::SourceTable::dump_sources() const
 {
-  FULL_LOGGING_ONLY(
-    for ( size_t tid = 0 ; tid < sources_.size() ; ++tid )
+  FULL_LOGGING_ONLY( for ( size_t tid = 0; tid < sources_.size(); ++tid ) {
+    for ( size_t syn_id = 0; syn_id < sources_[ tid ].size(); ++syn_id )
     {
-      for ( size_t syn_id = 0 ; syn_id < sources_[tid].size() ; ++syn_id )
+      for ( size_t lcid = 0; lcid < sources_[ tid ][ syn_id ].size(); ++lcid )
       {
-        for ( size_t lcid = 0 ; lcid < sources_[tid][syn_id].size() ; ++lcid )
-        {
-          kernel().write_to_dump(
-              String::compose("src  : r%1 t%2 s%3 tg%4 l%5 tt%6",
-                              kernel().mpi_manager.get_rank(),
-                  kernel().vp_manager.get_thread_id(),
-                  sources_[tid][syn_id][lcid].get_node_id(),
-                  kernel().connection_manager.get_target_node_id(tid, syn_id, lcid),
-                  lcid,
-                  tid));
-        }
+        kernel().write_to_dump( String::compose( "src  : r%1 t%2 s%3 tg%4 l%5 tt%6",
+          kernel().mpi_manager.get_rank(),
+          kernel().vp_manager.get_thread_id(),
+          sources_[ tid ][ syn_id ][ lcid ].get_node_id(),
+          kernel().connection_manager.get_target_node_id( tid, syn_id, lcid ),
+          lcid,
+          tid ) );
       }
     }
-                    )
+  } )
 }
 
 
 void
 nest::SourceTable::dump_compressible_sources() const
 {
-  FULL_LOGGING_ONLY(
-    for ( size_t tid = 0 ; tid < compressible_sources_.size() ; ++tid )
+  FULL_LOGGING_ONLY( for ( size_t tid = 0; tid < compressible_sources_.size(); ++tid ) {
+    for ( size_t syn_id = 0; syn_id < compressible_sources_[ tid ].size(); ++syn_id )
     {
-      for ( size_t syn_id = 0 ; syn_id < compressible_sources_[tid].size() ; ++syn_id )
+      for ( const auto& entry : compressible_sources_[ tid ][ syn_id ] )
       {
-        for ( const auto& entry : compressible_sources_[tid][syn_id] )
-        {
-          kernel().write_to_dump(
-              String::compose("csrc : r%1 t%2 s%3 l%4 tt%5",
-                              kernel().mpi_manager.get_rank(),
-                  kernel().vp_manager.get_thread_id(),
-                  entry.first,
-                              entry.second.get_lcid(),
-                  entry.second.get_tid()));
-        }
+        kernel().write_to_dump( String::compose( "csrc : r%1 t%2 s%3 l%4 tt%5",
+          kernel().mpi_manager.get_rank(),
+          kernel().vp_manager.get_thread_id(),
+          entry.first,
+          entry.second.get_lcid(),
+          entry.second.get_tid() ) );
       }
     }
-                    )
+  } )
 }
 
 void
@@ -565,36 +557,38 @@ nest::SourceTable::fill_compressed_spike_data(
   }   // for syn_id
 }
 
-void nest::SourceTable::dump_compressed_spike_data( const std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data ) const
+void
+nest::SourceTable::dump_compressed_spike_data(
+  const std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data ) const
 {
   FULL_LOGGING_ONLY(
-    for ( const auto& tab: compressed_spike_data_map_ )
-    {
-      for ( const auto& entry: tab )
+    for ( const auto& tab
+          : compressed_spike_data_map_ ) {
+      for ( const auto& entry : tab )
       {
-        kernel().write_to_dump(String::compose("csdm : r%1 t%2 s%3 sx%4 tt%5",
-                                                  kernel().mpi_manager.get_rank(),
-                                                   kernel().vp_manager.get_thread_id(),
-                                                   entry.first,
-                                                   entry.second.get_source_index(),
-                                                   entry.second.get_target_thread()));
+        kernel().write_to_dump( String::compose( "csdm : r%1 t%2 s%3 sx%4 tt%5",
+          kernel().mpi_manager.get_rank(),
+          kernel().vp_manager.get_thread_id(),
+          entry.first,
+          entry.second.get_source_index(),
+          entry.second.get_target_thread() ) );
       }
     }
-  
-    for ( const auto& tab: compressed_spike_data )
-    {
-      for ( size_t six = 0 ; six < tab.size() ; ++six )
+
+    for ( const auto& tab
+          : compressed_spike_data ) {
+      for ( size_t six = 0; six < tab.size(); ++six )
       {
-        for ( size_t tx = 0 ; tx < tab[six].size() ; ++tx )
+        for ( size_t tx = 0; tx < tab[ six ].size(); ++tx )
         {
-          kernel().write_to_dump(String::compose("csd  : r%1 t%2 six%3 tx%4 l%5 tt%6",
-                                                 kernel().mpi_manager.get_rank(),
-                                                 kernel().vp_manager.get_thread_id(),
-                                                 six, tx,
-                                                 tab[six][tx].get_lcid(),
-                                                 tab[six][tx].get_tid()));
+          kernel().write_to_dump( String::compose( "csd  : r%1 t%2 six%3 tx%4 l%5 tt%6",
+            kernel().mpi_manager.get_rank(),
+            kernel().vp_manager.get_thread_id(),
+            six,
+            tx,
+            tab[ six ][ tx ].get_lcid(),
+            tab[ six ][ tx ].get_tid() ) );
         }
       }
-    }
-                    )
+    } )
 }

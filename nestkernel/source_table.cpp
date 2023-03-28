@@ -469,6 +469,7 @@ nest::SourceTable::collect_compressible_sources( const thread tid )
 void
 nest::SourceTable::dump_sources() const
 {
+  return;
   for ( size_t tid = 0 ; tid < sources_.size() ; ++tid )
   {
     for ( size_t syn_id = 0 ; syn_id < sources_[tid].size() ; ++syn_id )

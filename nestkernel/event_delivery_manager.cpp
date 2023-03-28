@@ -954,6 +954,10 @@ EventDeliveryManager::gather_target_data_compressed( const thread tid )
 
   const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
 
+  kernel().write_to_dump(String::compose( "Assigned Ranks: r%1 t%2 ar_beg%3 ar_end%4",
+                                         kernel().mpi_manager.get_rank(), tid, assigned_ranks.begin, assigned_ranks.end ) );
+
+  
   kernel().connection_manager.prepare_target_table( tid );
 
   while ( gather_completed_checker_.any_false() )
@@ -986,6 +990,10 @@ EventDeliveryManager::gather_target_data_compressed( const thread tid )
     {
       set_complete_marker_target_data_( assigned_ranks, send_buffer_position );
     }
+    
+    kernel().write_to_dump( String::compose( "Gather complete: r%1 t%2 loc %3 glob %4", kernel().mpi_manager.get_rank(), tid,
+                                            gather_completed_checker_[tid].is_true(), gather_completed_checker_.all_true() ) );
+
 #pragma omp barrier
 
 #pragma omp single
@@ -999,7 +1007,9 @@ EventDeliveryManager::gather_target_data_compressed( const thread tid )
 #endif
     } // of omp single (implicit barrier)
 
-
+    // Up to here, gather_completed_checker_ just has local info: has this thread been able to write
+    // all data it is responsible for to buffers. Now combine with information on whether other ranks
+    // have sent all their data. Note: All threads will return the same value for distribute_completed.
     const bool distribute_completed = distribute_target_data_buffers_( tid );
     gather_completed_checker_[ tid ].logical_and( distribute_completed );
 
@@ -1011,6 +1021,9 @@ EventDeliveryManager::gather_target_data_compressed( const thread tid )
         buffer_size_target_data_has_changed_ = kernel().mpi_manager.increase_buffer_size_target_data();
       }
     }
+    kernel().write_to_dump( String::compose( "Distrib complete: r%1 t%2 loc %3 glob %4 szchg %5", kernel().mpi_manager.get_rank(), tid,
+                                            gather_completed_checker_[tid].is_true(), gather_completed_checker_.all_true(),
+                                            gather_completed_checker_.any_false() and kernel().mpi_manager.adaptive_target_buffers()) );
   } // of while
 
   kernel().connection_manager.clear_source_table( tid );
@@ -1155,7 +1168,7 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid )
       are_others_completed = false;
     }
 
-    // Were targets sent by this rank?
+    // Were any targets sent by this rank?
     if ( recv_buffer_target_data_[ rank * send_recv_count_target_data_per_rank ].is_invalid_marker() )
     {
       continue;

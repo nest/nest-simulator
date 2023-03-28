@@ -173,7 +173,7 @@ nest::KernelManager::write_to_dump(const std::string &msg)
 {
 #pragma omp critical
   {
-    dump_ << msg << std::endl;
+    dump_ << msg << std::endl << std::flush;
   }
 }
 

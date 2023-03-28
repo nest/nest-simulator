@@ -1679,35 +1679,34 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
   std::vector< TargetData >& send_buffer_target_data,
   SendBufferPosition& send_buffer_position )
 {
-  bool some_chunk_full = false;
-
+  // At this point, NEST has at least one synapse type (because we can only get here at least
+  // one connection has been created) and we know that iteration_state_ for each thread
+  // contains a valid entry.
   const auto& csd_maps = source_table_.compressed_spike_data_map_;
-  const auto& begin = iteration_state_.at( tid );
-  for ( auto syn_id = begin.first; syn_id < csd_maps.size(); ++syn_id )
+  auto syn_id = iteration_state_.at( tid ).first;
+  auto source_2_idx = iteration_state_.at( tid ).second;
+  
+  if ( syn_id >= csd_maps.size() )
+  {
+    return true;  // this thread has previously written all its targets
+  }
+  
+  do
   {
     const auto& conn_model = kernel().model_manager.get_connection_model( syn_id, tid );
     const bool is_primary = conn_model.has_property( ConnectionModelProperties::IS_PRIMARY );
 
-    // We need to use an explicit iterator here since we need to store where we stop when the send buffer is full
-    std::map< index, CSDMapEntry >::const_iterator inner_begin;
-    if ( syn_id == begin.first )
-    {
-      inner_begin = begin.second;
-    }
-    else
-    {
-      inner_begin = csd_maps.at( syn_id ).begin();
-    }
-
-    for ( auto source_2_idx = inner_begin; source_2_idx != csd_maps.at( syn_id ).end(); ++source_2_idx )
+    while ( source_2_idx != csd_maps.at( syn_id ).end() )
     {
       const auto source_gid = source_2_idx->first;
       const auto source_rank = kernel().mpi_manager.get_process_id_of_node_id( source_gid );
-
       if ( not( rank_start <= source_rank and source_rank < rank_end ) )
       {
+        ++source_2_idx;
         continue;
       }
+
+      kernel().write_to_dump( String::compose( "FTB for s2i : r%1 t%2 syn %3 csdm_sz %4 gid %5", kernel().mpi_manager.get_rank(), tid, syn_id, csd_maps[syn_id].size(), source_gid ) );
 
       if ( send_buffer_position.is_chunk_filled( source_rank ) )
       {
@@ -1716,12 +1715,12 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
         // Since sources should be evenly distributed, this should not matter very much.
         //
         // We store where we need to continue and stop iteration for now.
-        some_chunk_full = true;
         iteration_state_.at( tid ) =
           std::pair< size_t, std::map< index, CSDMapEntry >::const_iterator >( syn_id, source_2_idx );
+        
         kernel().write_to_dump( String::compose( "chunk full : r%1 t%2 src_rank %3 syn %4 s2i.1 %5 ", kernel().mpi_manager.get_rank(), tid, source_rank, syn_id, source_2_idx->first ) );
 
-        break;
+        return false;  // there is data left to communicate
       }
 
       TargetData next_target_data;
@@ -1755,17 +1754,29 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
 
       kernel().write_to_dump( String::compose( "writing : r%1 t%2 src_rank %3 src_gid %4 ", kernel().mpi_manager.get_rank(), tid, source_rank, source_gid ) );
 
-
       send_buffer_target_data.at( send_buffer_position.idx( source_rank ) ) = next_target_data;
       send_buffer_position.increase( source_rank );
-    }
+      
+      ++source_2_idx;
+    }  // end while
 
-    if ( some_chunk_full )
+    ++syn_id;
+    if ( syn_id < csd_maps.size() )
     {
-      break; // continue break from inner loop
+      source_2_idx = csd_maps.at( syn_id ).begin();
     }
-  }
+  } while ( syn_id < csd_maps.size() );
 
+  // Store iteration state for this thread. If we get here, ther is nothing more to do for
+  // this thread so we store a non-existing syn_id with a meaningless iterator to inform that
+  // this thread has nothing to do in the next round.
+  iteration_state_.at( tid ) =
+    std::pair< size_t, std::map< index, CSDMapEntry >::const_iterator >( syn_id, source_2_idx );
+  
+  kernel().write_to_dump( String::compose( "fill done : r%1 t%2 syn %3", kernel().mpi_manager.get_rank(), tid, syn_id ) );
+
+  
+  
   // Mark end of data for this round
   for ( thread rank = rank_start; rank < rank_end; ++rank )
   {
@@ -1779,8 +1790,8 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
     }
   }
 
-  // We finished writing all sources if no chunk filled up
-  return not some_chunk_full;
+  // If we get here, this thread has written everything.
+  return true;
 }
 
 void
@@ -1790,6 +1801,9 @@ nest::ConnectionManager::initialize_iteration_state()
   iteration_state_.clear();
   iteration_state_.reserve( num_threads );
 
+  // This method only runs if at least one connection has been created,
+  // so we must have at least one synapse model and we can start iteration
+  // at the beginning of its compressed spike data map.
   auto begin = source_table_.compressed_spike_data_map_.at( 0 ).cbegin();
   for ( thread t = 0; t < num_threads; ++t )
   {

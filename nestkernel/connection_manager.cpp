@@ -1662,12 +1662,12 @@ nest::ConnectionManager::collect_compressed_spike_data( const thread tid )
 #pragma omp barrier
 #pragma omp single
     {
-      source_table_.dump_sources();
-      source_table_.dump_compressible_sources();
+      FULL_LOGGING_ONLY( source_table_.dump_sources(); )
+      FULL_LOGGING_ONLY( source_table_.dump_compressible_sources(); )
 
       source_table_.fill_compressed_spike_data( compressed_spike_data_ );
 
-      source_table_.dump_compressed_spike_data( compressed_spike_data_ );
+      FULL_LOGGING_ONLY( source_table_.dump_compressed_spike_data( compressed_spike_data_ ); )
     } // of omp single; implicit barrier
   }
 }
@@ -1706,7 +1706,9 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
         continue;
       }
 
-      kernel().write_to_dump( String::compose( "FTB for s2i : r%1 t%2 syn %3 csdm_sz %4 gid %5", kernel().mpi_manager.get_rank(), tid, syn_id, csd_maps[syn_id].size(), source_gid ) );
+      FULL_LOGGING_ONLY(
+        kernel().write_to_dump( String::compose( "FTB for s2i : r%1 t%2 syn %3 csdm_sz %4 gid %5", kernel().mpi_manager.get_rank(), tid, syn_id, csd_maps[syn_id].size(), source_gid ) );
+        )
 
       if ( send_buffer_position.is_chunk_filled( source_rank ) )
       {
@@ -1718,7 +1720,9 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
         iteration_state_.at( tid ) =
           std::pair< size_t, std::map< index, CSDMapEntry >::const_iterator >( syn_id, source_2_idx );
         
-        kernel().write_to_dump( String::compose( "chunk full : r%1 t%2 src_rank %3 syn %4 s2i.1 %5 ", kernel().mpi_manager.get_rank(), tid, source_rank, syn_id, source_2_idx->first ) );
+        FULL_LOGGING_ONLY(
+          kernel().write_to_dump( String::compose( "chunk full : r%1 t%2 src_rank %3 syn %4 s2i.1 %5 ", kernel().mpi_manager.get_rank(), tid, source_rank, syn_id, source_2_idx->first ) );
+          )
 
         return false;  // there is data left to communicate
       }
@@ -1752,7 +1756,9 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
         secondary_fields.set_syn_id( syn_id );
       }
 
-      kernel().write_to_dump( String::compose( "writing : r%1 t%2 src_rank %3 src_gid %4 ", kernel().mpi_manager.get_rank(), tid, source_rank, source_gid ) );
+      FULL_LOGGING_ONLY(
+        kernel().write_to_dump( String::compose( "writing : r%1 t%2 src_rank %3 src_gid %4 ", kernel().mpi_manager.get_rank(), tid, source_rank, source_gid ) );
+                        )
 
       send_buffer_target_data.at( send_buffer_position.idx( source_rank ) ) = next_target_data;
       send_buffer_position.increase( source_rank );
@@ -1773,10 +1779,11 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
   iteration_state_.at( tid ) =
     std::pair< size_t, std::map< index, CSDMapEntry >::const_iterator >( syn_id, source_2_idx );
   
-  kernel().write_to_dump( String::compose( "fill done : r%1 t%2 syn %3", kernel().mpi_manager.get_rank(), tid, syn_id ) );
+  FULL_LOGGING_ONLY(
+    kernel().write_to_dump( String::compose( "fill done : r%1 t%2 syn %3",
+                                            kernel().mpi_manager.get_rank(), tid, syn_id ) );
+                    )
 
-  
-  
   // Mark end of data for this round
   for ( thread rank = rank_start; rank < rank_end; ++rank )
   {

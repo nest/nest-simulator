@@ -465,7 +465,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 
     for ( auto c: num_spikes_per_rank )
     {
-      kernel().write_to_dump( String::compose("nspr %1", c));
+      FULL_LOGGING_ONLY( kernel().write_to_dump( String::compose("nspr %1", c)); )
     }
     
     // Largest number of spikes sent from this rank to any other rank. This is *not* a global maximum, that is collected
@@ -781,8 +781,10 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
       {
         if ( tid_batch[ j ] == tid )
         {
-          kernel().write_to_dump( String::compose( "denc %1 %2 %3 %4 %5", j, tid, syn_id_batch[j], lcid_batch[j],
-                                                   se_batch[j].get_stamp() ));
+          FULL_LOGGING_ONLY(
+            kernel().write_to_dump( String::compose( "denc %1 %2 %3 %4 %5",
+                                                    j, tid, syn_id_batch[j], lcid_batch[j], se_batch[j].get_stamp() ));
+                            )
           kernel().connection_manager.send( tid_batch[ j ], syn_id_batch[ j ], lcid_batch[ j ], cm, se_batch[ j ] );
         }
       }
@@ -861,8 +863,10 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
       {
         if ( lcid_batch[ j ] != invalid_lcid )
         {
-          kernel().write_to_dump( String::compose( "decm %1 %2 %3 %4 %5", j, tid, syn_id_batch[j], lcid_batch[j],
-                                                  se_batch[j].get_stamp() ));
+          FULL_LOGGING_ONLY(
+            kernel().write_to_dump( String::compose( "decm %1 %2 %3 %4 %5",
+                                                    j, tid, syn_id_batch[j], lcid_batch[j], se_batch[j].get_stamp() ));
+                            )
           kernel().connection_manager.send( tid, syn_id_batch[ j ], lcid_batch[ j ], cm, se_batch[ j ] );
         }
       }
@@ -954,16 +958,20 @@ EventDeliveryManager::gather_target_data_compressed( const thread tid )
 
   const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
 
-  kernel().write_to_dump(String::compose( "Assigned Ranks: r%1 t%2 ar_beg%3 ar_end%4",
-                                         kernel().mpi_manager.get_rank(), tid, assigned_ranks.begin, assigned_ranks.end ) );
+  FULL_LOGGING_ONLY(
+    kernel().write_to_dump(String::compose( "Assigned Ranks: r%1 t%2 ar_beg%3 ar_end%4",
+                                            kernel().mpi_manager.get_rank(), tid, assigned_ranks.begin, assigned_ranks.end ) );
+                    )
 
   
   kernel().connection_manager.prepare_target_table( tid );
 
   while ( gather_completed_checker_.any_false() )
   {
-    kernel().write_to_dump( String::compose( "GTDC Entering While: r%1 t%2",
+    FULL_LOGGING_ONLY(
+      kernel().write_to_dump( String::compose( "GTDC Entering While: r%1 t%2",
                                             kernel().mpi_manager.get_rank(), tid ) );
+                      )
     
     // assume this is the last gather round and change to false otherwise
     gather_completed_checker_[ tid ].set_true();
@@ -972,9 +980,17 @@ EventDeliveryManager::gather_target_data_compressed( const thread tid )
     {
       if ( kernel().mpi_manager.adaptive_target_buffers() and buffer_size_target_data_has_changed_ )
       {
-        kernel().write_to_dump( String::compose( "resize from: r%1 t%2 bsz %3 ", kernel().mpi_manager.get_rank(), tid, send_buffer_target_data_.size() ) );
+        FULL_LOGGING_ONLY(
+          kernel().write_to_dump( String::compose( "resize from: r%1 t%2 bsz %3 ",
+                                                  kernel().mpi_manager.get_rank(), tid, send_buffer_target_data_.size() ) );
+                          )
+        
         resize_send_recv_buffers_target_data();
-        kernel().write_to_dump( String::compose( "resize to  : r%1 t%2 bsz %3", kernel().mpi_manager.get_rank(), tid, send_buffer_target_data_.size() ) );
+        
+        FULL_LOGGING_ONLY(
+          kernel().write_to_dump( String::compose( "resize to  : r%1 t%2 bsz %3",
+                                                  kernel().mpi_manager.get_rank(), tid, send_buffer_target_data_.size() ) );
+                          )
       }
     } // of omp single; implicit barrier
 
@@ -991,8 +1007,12 @@ EventDeliveryManager::gather_target_data_compressed( const thread tid )
       set_complete_marker_target_data_( assigned_ranks, send_buffer_position );
     }
     
-    kernel().write_to_dump( String::compose( "Gather complete: r%1 t%2 loc %3 glob %4", kernel().mpi_manager.get_rank(), tid,
-                                            gather_completed_checker_[tid].is_true(), gather_completed_checker_.all_true() ) );
+    FULL_LOGGING_ONLY(
+      kernel().write_to_dump( String::compose( "Gather complete: r%1 t%2 loc %3 glob %4",
+                                              kernel().mpi_manager.get_rank(), tid,
+                                            gather_completed_checker_[tid].is_true(),
+                                              gather_completed_checker_.all_true() ) );
+                      )
 
 #pragma omp barrier
 
@@ -1021,9 +1041,14 @@ EventDeliveryManager::gather_target_data_compressed( const thread tid )
         buffer_size_target_data_has_changed_ = kernel().mpi_manager.increase_buffer_size_target_data();
       }
     }
-    kernel().write_to_dump( String::compose( "Distrib complete: r%1 t%2 loc %3 glob %4 szchg %5", kernel().mpi_manager.get_rank(), tid,
-                                            gather_completed_checker_[tid].is_true(), gather_completed_checker_.all_true(),
+    
+    FULL_LOGGING_ONLY(
+      kernel().write_to_dump( String::compose( "Distrib complete: r%1 t%2 loc %3 glob %4 szchg %5",
+                                              kernel().mpi_manager.get_rank(), tid,
+                                            gather_completed_checker_[tid].is_true(),
+                                              gather_completed_checker_.all_true(),
                                             gather_completed_checker_.any_false() and kernel().mpi_manager.adaptive_target_buffers()) );
+                      )
   } // of while
 
   kernel().connection_manager.clear_source_table( tid );
@@ -1123,9 +1148,11 @@ EventDeliveryManager::collocate_target_data_buffers_compressed_( const thread ti
   // reset markers
   for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
   {
-    kernel().write_to_dump( String::compose( "marker reset: r%1 t%2 br%3",
+    FULL_LOGGING_ONLY(
+      kernel().write_to_dump( String::compose( "marker reset: r%1 t%2 br%3",
                                             kernel().mpi_manager.get_rank(),
                                             tid, rank) );
+                      )
 
     // reset last entry to avoid accidentally communicating done
     // marker

@@ -90,7 +90,10 @@ nest::KernelManager::initialize()
 
   ++fingerprint_;
   initialized_ = true;
-  // dump_.open( String::compose("kd_%1_%2.log", mpi_manager.get_num_processes(), mpi_manager.get_rank()).c_str() );
+  FULL_LOGGING_ONLY(
+                    dump_.open( String::compose("kd_%1_%2.log",
+                                                 mpi_manager.get_num_processes(),
+                                                 mpi_manager.get_rank()).c_str() ); )
 }
 
 void
@@ -114,7 +117,8 @@ nest::KernelManager::cleanup()
 void
 nest::KernelManager::finalize()
 {
-  // dump_.close();
+  FULL_LOGGING_ONLY( dump_.close(); )
+  
   for ( auto&& m_it = managers.rbegin(); m_it != managers.rend(); ++m_it )
   {
     ( *m_it )->finalize();
@@ -168,14 +172,15 @@ nest::KernelManager::get_status( DictionaryDatum& dict )
   }
 }
 
+// Cannot use macro here because of #pragma in method
+#ifdef FULL_LOGGING
 void
 nest::KernelManager::write_to_dump(const std::string &msg)
 {
-  return;
-  
 #pragma omp critical
+  // In critical section to avoid any garbling of output.
   {
     dump_ << msg << std::endl << std::flush;
   }
 }
-
+#endif

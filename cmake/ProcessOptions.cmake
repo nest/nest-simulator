@@ -661,3 +661,11 @@ function( NEST_PROCESS_DEVDOC )
     set( BUILD_DOCS ON PARENT_SCOPE )
   endif ()
 endfunction ()
+
+
+function( NEST_PROCESS_FULL_LOGGING )
+  if ( with-full-logging )
+    message( STATUS "Configuring full logging" )
+    set( FULL_LOGGING ON PARENT_SCOPE )
+  endif ()
+endfunction ()

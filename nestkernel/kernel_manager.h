@@ -23,6 +23,9 @@
 #ifndef KERNEL_MANAGER_H
 #define KERNEL_MANAGER_H
 
+// Includes from libnestutil
+#include "config.h"
+
 // Includes from nestkernel:
 #include "connection_manager.h"
 #include "event_delivery_manager.h"
@@ -170,6 +173,12 @@
  SeeAlso: Simulate, Node
 */
 
+#ifdef FULL_LOGGING
+#define FULL_LOGGING_ONLY( code ) code
+#else
+#define FULL_LOGGING_ONLY( code )
+#endif
+
 namespace nest
 {
 
@@ -242,7 +251,8 @@ public:
 
   unsigned long get_fingerprint() const;
   
-  void write_to_dump( const std::string& msg );
+  //! Write data to file per rank and thread, if FULL_LOGGING is set; has critical section
+  FULL_LOGGING_ONLY( void write_to_dump( const std::string& msg ); )
 
   LoggingManager logging_manager;
   MPIManager mpi_manager;
@@ -260,8 +270,8 @@ public:
 
 private:
   std::vector< ManagerInterface* > managers;
-  bool initialized_; //!< true if the kernel is initialized
-  std::ofstream dump_;
+  bool initialized_;     //!< true if the kernel is initialized
+  FULL_LOGGING_ONLY( std::ofstream dump_; )
 };
 
 KernelManager& kernel();

@@ -86,6 +86,8 @@ set( with-version-suffix "" CACHE STRING "Set a user defined version suffix [def
 set( with-userdoc OFF CACHE STRING "Build user documentation [default=OFF]")
 set( with-devdoc OFF CACHE STRING "Build developer documentation [default=OFF]")
 
+set( with-full-logging OFF CACHE STRING "Write much debug output to rank-and-thread-specific log file [default=OFF]")
+
 ################################################################################
 ##################      Project Directory variables           ##################
 ################################################################################
@@ -153,6 +155,7 @@ nest_process_target_bits_split()
 nest_process_version_suffix()
 nest_process_userdoc()
 nest_process_devdoc()
+nest_process_full_logging()
 
 # These two function calls must come last, as to prevent unwanted interactions of the newly set flags
 # with detection/compilation operations carried out in earlier functions. The optimize/debug flags set

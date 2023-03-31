@@ -224,7 +224,7 @@ public:
       throw BadProperty(
         "Combination of axonal and dendritic delay has to be more than 0." ); // TODO JV (pt): Or does it actually?
     }
-    t.register_stdp_connection( t_lastspike_ - dendritic_delay + 2.0 * axonal_delay, dendritic_delay + axonal_delay );
+    t.register_stdp_connection( t_lastspike_ - dendritic_delay + axonal_delay, dendritic_delay + axonal_delay );
   }
 
   void

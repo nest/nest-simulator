@@ -336,10 +336,15 @@ Layer< D >::dump_connections( std::ostream& out,
       long target_node_id = getValue< long >( result_dict, names::target );
       double weight = getValue< double >( result_dict, names::weight );
       double delay = getValue< double >( result_dict, names::delay );
-      double axonal_delay = getValue< double >( result_dict, names::axonal_delay );
 
       // Print source, target, weight, delay, rports
-      out << source_node_id << ' ' << target_node_id << ' ' << weight << ' ' << delay << ' ' << axonal_delay;
+      out << source_node_id << ' ' << target_node_id << ' ' << weight << ' ' << delay;
+
+      if ( result_dict->known( names::axonal_delay ) )
+      {
+        double axonal_delay = getValue< double >( result_dict, names::axonal_delay );
+        out << ' ' << axonal_delay;
+      }
 
       Layer< D >* tgt_layer = dynamic_cast< Layer< D >* >( target_layer.get() );
 

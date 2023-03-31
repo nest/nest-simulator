@@ -173,7 +173,7 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
       // The call to assert_valid_delay_ms needs to happen only once
       // (either here or in add_connection()) when the first connection
       // without delay is created.
-      if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
+      if ( not has_property( ConnectionModelProperties::HAS_DELAY ) )
       {
         const double wfr_comm_interval = kernel().simulation_manager.get_wfr_comm_interval();
         kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( wfr_comm_interval );

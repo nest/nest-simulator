@@ -185,10 +185,13 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
     }
     catch ( BadDelay& e )
     {
-      throw BadDelay( default_connection_.get_dendritic_delay(),
-        String::compose( "Default delay of '%1' must be between min_delay %2 "
-                         "and max_delay %3.",
+      throw BadDelay( Time::delay_steps_to_ms( default_delay_ + default_axonal_delay_ ),
+        String::compose( "Default delay of '%1' (total: %2, axonal: %3, dendritic: %4) must be between min_delay %5 "
+                         "and max_delay %6.",
           get_name(),
+          Time::delay_steps_to_ms( default_delay_ + default_axonal_delay_ ),
+          Time::delay_steps_to_ms( default_axonal_delay_ ),
+          Time::delay_steps_to_ms( default_delay_ ),
           Time::delay_steps_to_ms( kernel().connection_manager.get_min_delay() ),
           Time::delay_steps_to_ms( kernel().connection_manager.get_max_delay() ) ) );
     }

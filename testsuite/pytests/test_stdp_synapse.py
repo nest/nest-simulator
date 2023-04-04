@@ -172,8 +172,8 @@ class TestSTDPSynapse:
 
         def facilitate(w, Kpre, Wmax_=1.):
             norm_w = (w / self.synapse_parameters["Wmax"]) + (
-                        self.synapse_parameters["lambda"] * pow(1 - (w / self.synapse_parameters["Wmax"]),
-                                                                self.synapse_parameters["mu_plus"]) * Kpre)
+                    self.synapse_parameters["lambda"] * pow(1 - (w / self.synapse_parameters["Wmax"]),
+                                                            self.synapse_parameters["mu_plus"]) * Kpre)
             if norm_w < 1.0:
                 return norm_w * self.synapse_parameters["Wmax"]
             else:
@@ -181,8 +181,8 @@ class TestSTDPSynapse:
 
         def depress(w, Kpost):
             norm_w = (w / self.synapse_parameters["Wmax"]) - (
-                        self.synapse_parameters["alpha"] * self.synapse_parameters["lambda"] * pow(
-                    w / self.synapse_parameters["Wmax"], self.synapse_parameters["mu_minus"]) * Kpost)
+                    self.synapse_parameters["alpha"] * self.synapse_parameters["lambda"] * pow(
+                w / self.synapse_parameters["Wmax"], self.synapse_parameters["mu_minus"]) * Kpost)
             if norm_w > 0.0:
                 return norm_w * self.synapse_parameters["Wmax"]
             else:

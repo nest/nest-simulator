@@ -108,7 +108,7 @@ public:
   void
   write( const Name&, const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& );
 
-  void enroll_recorder( const Name&, const RecordingDevice&, const DictionaryDatum& );
+  void enroll_recorder( const Name&, const NESTObjectInterface&, const DictionaryDatum& );
   void enroll_stimulator( const Name&, StimulationDevice&, const DictionaryDatum& );
 
   void set_recording_value_names( const Name& backend_name,

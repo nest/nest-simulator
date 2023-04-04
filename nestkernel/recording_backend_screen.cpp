@@ -41,7 +41,7 @@ nest::RecordingBackendScreen::finalize()
 }
 
 void
-nest::RecordingBackendScreen::enroll( const RecordingDevice& device, const DictionaryDatum& params )
+nest::RecordingBackendScreen::enroll( const NESTObjectInterface& device, const DictionaryDatum& params )
 {
   const index node_id = device.get_node_id();
   const thread t = device.get_thread();
@@ -57,7 +57,7 @@ nest::RecordingBackendScreen::enroll( const RecordingDevice& device, const Dicti
 }
 
 void
-nest::RecordingBackendScreen::disenroll( const RecordingDevice& device )
+nest::RecordingBackendScreen::disenroll( const NESTObjectInterface& device )
 {
   const index node_id = device.get_node_id();
   const thread t = device.get_thread();

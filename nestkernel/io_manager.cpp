@@ -311,7 +311,7 @@ IOManager::write( const Name& backend_name,
 }
 
 void
-IOManager::enroll_recorder( const Name& backend_name, const RecordingDevice& device, const DictionaryDatum& params )
+IOManager::enroll_recorder( const Name& backend_name, const NESTObjectInterface& device, const DictionaryDatum& params )
 {
   for ( auto& it : recording_backends_ )
   {

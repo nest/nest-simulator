@@ -129,6 +129,14 @@ EndUserDocs */
 class RecordingDevice : public DeviceNode, public Device
 {
 public:
+
+  enum Type
+  {
+    MULTIMETER,
+    SPIKE_RECORDER,
+    SPIN_DETECTOR,
+    WEIGHT_RECORDER
+  };
   RecordingDevice();
   RecordingDevice( const RecordingDevice& );
 
@@ -138,13 +146,6 @@ public:
 
   bool is_active( Time const& T ) const override;
 
-  enum Type
-  {
-    MULTIMETER,
-    SPIKE_RECORDER,
-    SPIN_DETECTOR,
-    WEIGHT_RECORDER
-  };
 
   virtual Type get_type() const = 0;
 

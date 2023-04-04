@@ -45,6 +45,7 @@ nest::RecordingDevice::RecordingDevice( const RecordingDevice& rd )
 void
 nest::RecordingDevice::set_initialized_()
 {
+  std::cout << P_.record_to_ << std::endl;
   kernel().io_manager.enroll_recorder( P_.record_to_, *this, backend_params_ );
 }
 

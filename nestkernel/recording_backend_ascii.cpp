@@ -56,7 +56,7 @@ nest::RecordingBackendASCII::finalize()
 }
 
 void
-nest::RecordingBackendASCII::enroll( const RecordingDevice& device, const DictionaryDatum& params )
+nest::RecordingBackendASCII::enroll( const NESTObjectInterface& device, const DictionaryDatum& params )
 {
   const thread t = device.get_thread();
   const index node_id = device.get_node_id();
@@ -74,7 +74,7 @@ nest::RecordingBackendASCII::enroll( const RecordingDevice& device, const Dictio
 }
 
 void
-nest::RecordingBackendASCII::disenroll( const RecordingDevice& device )
+nest::RecordingBackendASCII::disenroll( const NESTObjectInterface& device )
 {
   const thread t = device.get_thread();
   const thread node_id = device.get_node_id();
@@ -154,7 +154,7 @@ nest::RecordingBackendASCII::write( const RecordingDevice& device,
 }
 
 const std::string
-nest::RecordingBackendASCII::compute_vp_node_id_string_( const RecordingDevice& device ) const
+nest::RecordingBackendASCII::compute_vp_node_id_string_( const NESTObjectInterface& device ) const
 {
   const double num_vps = kernel().vp_manager.get_num_virtual_processes();
   const double num_nodes = kernel().node_manager.size();

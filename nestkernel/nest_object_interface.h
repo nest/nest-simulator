@@ -25,6 +25,7 @@
 #define NEST_OBJECT_INTERFACE_H
 
 // Includes from nestkernel:
+#include "nest_enum_types.h"
 #include "nest_names.h"
 #include "nest_types.h"
 
@@ -43,6 +44,7 @@ public:
   NESTObjectInterface();
   NESTObjectInterface( const NESTObjectInterface& );
   virtual ~NESTObjectInterface();
+
   /**
    * Return class name.
    * Returns name of node model (e.g. "iaf_psc_alpha") as string.

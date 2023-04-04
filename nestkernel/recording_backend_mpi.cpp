@@ -28,6 +28,8 @@
 #include "exceptions.h"
 #include "recording_backend_mpi.h"
 #include "recording_device.h"
+#include "recording_device_ng.h"
+
 
 nest::RecordingBackendMPI::RecordingBackendMPI()
   : enrolled_( false )
@@ -92,8 +94,12 @@ nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const Dictiona
   }
 }
 
+
+
+
+
 void
-nest::RecordingBackendMPI::disenroll( const RecordingDevice& device )
+nest::RecordingBackendMPI::disenroll( const NESTObjectInterface& device )
 {
   const auto tid = device.get_thread();
   const auto node_id = device.get_node_id();

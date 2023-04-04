@@ -693,7 +693,7 @@ template < typename SpikeDataT >
 void
 EventDeliveryManager::deliver_events_( const thread tid, const std::vector< SpikeDataT >& recv_buffer )
 {
-#define BATCH_SIZE 65536
+#define BATCH_SIZE 8
 
   const unsigned int send_recv_count_spike_data_per_rank =
     kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
@@ -737,8 +737,6 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
 
     const unsigned int num_batches = num_valid_entries / BATCH_SIZE;
     const unsigned int num_remaining_entries = num_valid_entries - num_batches * BATCH_SIZE;
-
-    assert( num_batches == 0 );
 
     thread tid_batch[ BATCH_SIZE ];
     index syn_id_batch[ BATCH_SIZE ];

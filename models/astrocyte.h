@@ -81,7 +81,8 @@ h_IP3R unitless The fraction of active IP3 receptors on the astrocytic ER
 
 Incoming spike events to an ``astrocyte`` determine its dynamics according to
 the model described in Nadkarni & Jung (2003) [1], with an adaptation of the IP3
-production mechanism in equation (4).
+production mechanism in equation (4). The model is based on the original study
+by Li & Rinzel (1994) [2].
 
 The astrocyte dynamics determine the SICEvent being sent from the astrocyte
 to its target neurons through the ``sic_connection``. The SICEvent models a
@@ -154,7 +155,7 @@ SICEvent
 Receives
 ++++++++
 
-SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent, DataLoggingRequest
 
 See also
 ++++++++
@@ -185,19 +186,10 @@ public:
   port send_test_event( Node& target, rport receptor_type, synindex, bool ) override;
 
   void handle( SpikeEvent& ) override;
-  void handle( CurrentEvent& ) override;
   void handle( DataLoggingRequest& ) override;
-  void handle( GapJunctionEvent& ) override;
 
   port handles_test_event( SpikeEvent&, rport ) override;
-  port handles_test_event( CurrentEvent&, rport ) override;
   port handles_test_event( DataLoggingRequest&, rport ) override;
-  port handles_test_event( GapJunctionEvent&, rport ) override;
-
-  void
-  sends_secondary_event( GapJunctionEvent& ) override
-  {
-  }
 
   void
   sends_secondary_event( SICEvent& ) override
@@ -218,7 +210,6 @@ private:
   bool update_( Time const&, const long, const long, const bool );
 
   void update( Time const&, const long, const long ) override;
-  // bool wfr_update( Time const&, const long, const long ) override;
 
   // END Boilerplate function declarations ----------------------------
 
@@ -312,7 +303,6 @@ private:
 
     /** buffers and sums up incoming spikes/currents */
     RingBuffer spike_exc_;
-    RingBuffer currents_;
 
     /** GSL ODE stuff */
     gsl_odeiv_step* s_;    //!< stepping function
@@ -328,39 +318,9 @@ private:
 
     // remembers current lag for piecewise interpolation
     long lag_;
-    // remembers y_values from last wfr_update
-    std::vector< double > last_y_values;
-    // summarized gap weight
-    double sumj_g_ij_;
-    // summarized coefficients of the interpolation polynomial
-    std::vector< double > interpolation_coefficients;
-
-    /**
-     * Input current injected by CurrentEvent.
-     * This variable is used to transport the current applied into the
-     * _dynamics function computing the derivative of the state vector.
-     * It must be a part of Buffers_, since it is initialized once before
-     * the first simulation, but not modified before later Simulate calls.
-     */
-    double I_stim_;
   };
 
   // ----------------------------------------------------------------
-
-  /**
-   * Internal variables of the model.
-   * TO DO: These are not needed for the astrocyte model. Test whether they can be removed.
-   */
-  // struct Variables_
-  // {
-  //   /** initial value to normalise excitatory synaptic current */
-  //   double PSCurrInit_E_;
-
-  //   /** initial value to normalise inhibitory synaptic current */
-  //   double PSCurrInit_I_;
-
-  //   int RefractoryCounts_;
-  // };
 
   // Access functions for UniversalDataLogger -------------------------------
 
@@ -384,28 +344,11 @@ private:
 
   Parameters_ P_;
   State_ S_;
-  // Variables_ V_;
   Buffers_ B_;
 
   //! Mapping of recordables names to access functions
   static RecordablesMap< astrocyte > recordablesMap_;
 };
-
-// inline void
-// astrocyte::update( Time const& origin, const long from, const long to )
-// {
-//   update_( origin, from, to, false );
-// }
-
-// inline bool
-// astrocyte::wfr_update( Time const& origin, const long from, const long to )
-// {
-//   State_ old_state = S_; // save state before wfr_update
-//   const bool wfr_tol_exceeded = update_( origin, from, to, true );
-//   S_ = old_state; // restore old state
-//
-//   return not wfr_tol_exceeded;
-// }
 
 inline port
 astrocyte::send_test_event( Node& target, rport receptor_type, synindex, bool )
@@ -427,16 +370,6 @@ astrocyte::handles_test_event( SpikeEvent&, rport receptor_type )
 }
 
 inline port
-astrocyte::handles_test_event( CurrentEvent&, rport receptor_type )
-{
-  if ( receptor_type != 0 )
-  {
-    throw UnknownReceptorType( receptor_type, get_name() );
-  }
-  return 0;
-}
-
-inline port
 astrocyte::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
@@ -444,16 +377,6 @@ astrocyte::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
-}
-
-inline port
-astrocyte::handles_test_event( GapJunctionEvent&, rport receptor_type )
-{
-  if ( receptor_type != 0 )
-  {
-    throw UnknownReceptorType( receptor_type, get_name() );
-  }
-  return 0;
 }
 
 inline void

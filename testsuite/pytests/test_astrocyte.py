@@ -52,7 +52,7 @@ path = os.path.abspath(os.path.dirname(__file__))
 #
 
 di_tolerances_odeint = {
-    "astrocyte": {"IP3_astro": 1e-4, "Ca_astro": 1e-4, "h_IP3R_astro": 1e-4},
+    "astrocyte": {"IP3": 1e-4, "Ca": 1e-4, "h_IP3R": 1e-4},
 }
 
 
@@ -70,23 +70,23 @@ num_models = len(models)
 astrocyte_default = nest.GetDefaults('astrocyte')
 astrocyte_param = {
     # use different values for state variables to produce dynamics
-    'IP3_astro': 1.0,
-    'Ca_astro': 1.0,
-    'h_IP3R_astro': 1.0,
-    'Ca_tot_astro': astrocyte_default['Ca_tot_astro'],
-    'IP3_0_astro': astrocyte_default['IP3_0_astro'],
-    'Kd_act_astro': astrocyte_default['Kd_act_astro'],
-    'Kd_inh_astro': astrocyte_default['Kd_inh_astro'],
-    'Kd_IP3_1_astro': astrocyte_default['Kd_IP3_1_astro'],
-    'Kd_IP3_2_astro': astrocyte_default['Kd_IP3_2_astro'],
-    'Km_SERCA_astro': astrocyte_default['Km_SERCA_astro'],
-    'ratio_ER_cyt_astro': astrocyte_default['ratio_ER_cyt_astro'],
-    'incr_IP3_astro': astrocyte_default['incr_IP3_astro'],
-    'k_IP3R_astro': astrocyte_default['k_IP3R_astro'],
-    'rate_L_astro': astrocyte_default['rate_L_astro'],
-    'tau_IP3_astro': astrocyte_default['tau_IP3_astro'],
-    'rate_IP3R_astro': astrocyte_default['rate_IP3R_astro'],
-    'rate_SERCA_astro': astrocyte_default['rate_SERCA_astro'],
+    'IP3': 1.0,
+    'Ca': 1.0,
+    'h_IP3R': 1.0,
+    'Ca_tot': astrocyte_default['Ca_tot'],
+    'IP3_0': astrocyte_default['IP3_0'],
+    'Kd_act': astrocyte_default['Kd_act'],
+    'Kd_inh': astrocyte_default['Kd_inh'],
+    'Kd_IP3_1': astrocyte_default['Kd_IP3_1'],
+    'Kd_IP3_2': astrocyte_default['Kd_IP3_2'],
+    'Km_SERCA': astrocyte_default['Km_SERCA'],
+    'ratio_ER_cyt': astrocyte_default['ratio_ER_cyt'],
+    'incr_IP3': astrocyte_default['incr_IP3'],
+    'k_IP3R': astrocyte_default['k_IP3R'],
+    'rate_L': astrocyte_default['rate_L'],
+    'tau_IP3': astrocyte_default['tau_IP3'],
+    'rate_IP3R': astrocyte_default['rate_IP3R'],
+    'rate_SERCA': astrocyte_default['rate_SERCA'],
 }
 
 
@@ -172,7 +172,7 @@ class AstrocyteTestCase(unittest.TestCase):
         # connect them and simulate
         for model, mm in iter(multimeters.items()):
             nest.SetStatus(mm, {"interval": nest.resolution,
-                                "record_from": ["IP3_astro", "Ca_astro", "h_IP3R_astro"]})
+                                "record_from": ["IP3", "Ca", "h_IP3R"]})
             nest.Connect(mm, cells[model])
         nest.Simulate(simtime)
 
@@ -180,12 +180,12 @@ class AstrocyteTestCase(unittest.TestCase):
         mm0 = next(iter(multimeters.values()))
         nest_times = nest.GetStatus(mm0, "events")[0]["times"]
         reference = {
-            'IP3_astro': IP3_astro_interp(nest_times),
-            'Ca_astro': Ca_astro_interp(nest_times),
-            'h_IP3R_astro': h_IP3R_astro_interp(nest_times)}
+            'IP3': IP3_astro_interp(nest_times),
+            'Ca': Ca_astro_interp(nest_times),
+            'h_IP3R': h_IP3R_astro_interp(nest_times)}
 
         rel_diff = self.compute_difference(multimeters, astrocyte_param, reference,
-                                           ['IP3_astro', 'Ca_astro', 'h_IP3R_astro'])
+                                           ['IP3', 'Ca', 'h_IP3R'])
         self.assert_pass_tolerance(rel_diff, di_tolerances_odeint)
 
 

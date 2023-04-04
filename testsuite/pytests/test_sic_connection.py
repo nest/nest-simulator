@@ -70,12 +70,12 @@ class SICConnectionTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         # Create neurons and devices
-        astrocyte = nest.Create('astrocyte', {'Ca_astro': 0.2})
+        astrocyte = nest.Create('astrocyte', {'Ca': 0.2})
         neuron = nest.Create('aeif_cond_alpha_astro')
 
         mm_neuron = nest.Create('multimeter', params={
                          'record_from': ['SIC'], 'interval': 0.1})
-        mm_astro = nest.Create('multimeter', params={'record_from': ['Ca_astro'], 'interval': 0.1})
+        mm_astro = nest.Create('multimeter', params={'record_from': ['Ca'], 'interval': 0.1})
 
         nest.Connect(astrocyte, neuron, syn_spec={'synapse_model': 'sic_connection'})
         nest.Connect(mm_neuron, neuron)
@@ -92,9 +92,9 @@ class SICConnectionTestCase(unittest.TestCase):
         actual_sic_values = data_neuron[0]['events']['SIC']
 
         data_astro = nest.GetStatus(mm_astro)
-        Ca_astro = data_astro[0]['events']['Ca_astro']
+        Ca = data_astro[0]['events']['Ca']
         f_v = np.vectorize(lambda x: np.log(x*1000.0 - 196.69) if x*1000.0 - 196.69 > 1.0 else 0.0)
-        expected_sic_values = f_v(Ca_astro)
+        expected_sic_values = f_v(Ca)
 
         self.assertTrue(np.allclose(
             actual_sic_values[10:], expected_sic_values[:-10], rtol=1e-7))

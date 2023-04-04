@@ -73,11 +73,11 @@ neuron model (``hh_psc_alpha_gap``). It can be connected with neuron models to
 study neuron-astrocyte interactions. The model defines dynamics of the
 following variables:
 
-============  ========   ==============================================================
-IP3_astro     uM         Inositol trisphosphate concentration in the astrocytic cytosol
-Ca_astro      uM         Calcium concentration in the astrocytic cytosol
-h_IP3R_astro  unitless   The fraction of active IP3 receptors on the astrocytic ER
-============  ========   ==============================================================
+====== ======== ==============================================================
+IP3    uM       Inositol trisphosphate concentration in the astrocytic cytosol
+Ca     uM       Calcium concentration in the astrocytic cytosol
+h_IP3R unitless The fraction of active IP3 receptors on the astrocytic ER
+====== ======== ==============================================================
 
 Incoming spike events to an ``astrocyte`` determine its dynamics according to
 the model described in Nadkarni & Jung (2003) [1], with an adaptation of the IP3
@@ -103,33 +103,33 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-==============  ========= ==============================================================
+======  ========= ==============================================================
 **Dynamic state variables**
-----------------------------------------------------------------------------------------
-IP3_astro       uM        Inositol trisphosphate concentration in the astrocytic cytosol
-Ca_astro        uM        Calcium concentration in the astrocytic cytosol
-h_IP3R_astro    unitless  The fraction of active IP3 receptors on the astrocytic ER
-==============  ========= ==============================================================
+--------------------------------------------------------------------------------
+IP3     uM        Inositol trisphosphate concentration in the astrocytic cytosol
+Ca      uM        Calcium concentration in the astrocytic cytosol
+h_IP3R  unitless  The fraction of active IP3 receptors on the astrocytic ER
+======  ========= ==============================================================
 
-================== ========= ========================================================================================================
+============ ========= ========================================================================================================
 **Parameters**
--------------------------------------------------------------------------------------------------------------------------------------
-Ca_tot_astro       uM        Total free astrocytic calcium concentration
-IP3_0_astro        uM        Baseline value of the astrocytic IP3 concentration
-Kd_act_astro       uM        Astrocytic IP3R dissociation constant of calcium (activation)
-Kd_inh_astro       uM        Astrocytic IP3R dissociation constant of calcium (inhibition)
-Kd_IP3_1_astro     uM        First astrocytic IP3R dissociation constant of IP3
-Kd_IP3_2_astro     uM        Second astrocytic IP3R dissociation constant of IP3
-Km_SERCA_astro     uM        Half-activation constant of astrocytic SERCA pump
-ratio_ER_cyt_astro unitless  Ratio between astrocytic ER and cytosol volumes
-incr_IP3_astro     uM        Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte
-k_IP3R_astro       1/(uM*ms) Astrocytic IP3R binding constant for calcium inhibition
-rate_L_astro       1/ms      Rate constant for calcium leak from the astrocytic ER to cytosol
-SIC_th_astro       nM        Threshold that determines the minimal level of intracellular astrocytic calcium sufficient to induce SIC
-rate_IP3R_astro    1/ms      Maximum rate of calcium release via astrocytic IP3R
-rate_SERCA_astro   uM/ms     Maximum rate of calcium uptake by astrocytic IP3R
-tau_IP3_astro      ms        Time constant of astrocytic IP3 degradation
-================== ========= ========================================================================================================
+-------------------------------------------------------------------------------------------------------------------------------
+Ca_tot       uM        Total free astrocytic calcium concentration
+IP3_0        uM        Baseline value of the astrocytic IP3 concentration
+Kd_act       uM        Astrocytic IP3R dissociation constant of calcium (activation)
+Kd_inh       uM        Astrocytic IP3R dissociation constant of calcium (inhibition)
+Kd_IP3_1     uM        First astrocytic IP3R dissociation constant of IP3
+Kd_IP3_2     uM        Second astrocytic IP3R dissociation constant of IP3
+Km_SERCA     uM        Half-activation constant of astrocytic SERCA pump
+ratio_ER_cyt unitless  Ratio between astrocytic ER and cytosol volumes
+incr_IP3     uM        Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte
+k_IP3R       1/(uM*ms) Astrocytic IP3R binding constant for calcium inhibition
+rate_L       1/ms      Rate constant for calcium leak from the astrocytic ER to cytosol
+SIC_th       nM        Threshold that determines the minimal level of intracellular astrocytic calcium sufficient to induce SIC
+rate_IP3R    1/ms      Maximum rate of calcium release via astrocytic IP3R
+rate_SERCA   uM/ms     Maximum rate of calcium uptake by astrocytic IP3R
+tau_IP3      ms        Time constant of astrocytic IP3 degradation
+============ ========= ========================================================================================================
 
 References
 ++++++++++
@@ -238,21 +238,21 @@ private:
   struct Parameters_
   {
 
-    double Ca_tot_astro_;       //!< Total free astrocytic calcium concentration in uM
-    double IP3_0_astro_;        //!< Baseline value of the astrocytic IP3 concentration in uM
-    double Kd_IP3_1_astro_;     //!< First astrocytic IP3R dissociation constant of IP3 in uM
-    double Kd_IP3_2_astro_;     //!< Second astrocytic IP3R dissociation constant of IP3 in uM
-    double Km_SERCA_astro_;     //!< Activation constant of astrocytic SERCA pump in uM
-    double Kd_act_astro_;       //!< Astrocytic IP3R dissociation constant of calcium (activation) in uM
-    double Kd_inh_astro_;       //!< Astrocytic IP3R dissociation constant of calcium (inhibition) in uM
-    double ratio_ER_cyt_astro_; //!< Ratio between astrocytic ER and cytosol volumes
-    double incr_IP3_astro_;     //!< Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte in uM
-    double k_IP3R_astro_;       //!< Astrocytic IP3R binding constant for calcium in 1/(uM*ms)
-    double rate_L_astro_;       //!< Rate constant for calcium leak from the astrocytic ER to cytosol in 1/ms
-    double SIC_th_astro_;       //!< Calcium threshold for producing SIC in nM
-    double tau_IP3_astro_;      //!< Time constant of astrocytic IP3 degradation in ms
-    double rate_IP3R_astro_;    //!< Maximum rate of calcium release via astrocytic IP3R in 1/ms
-    double rate_SERCA_astro_;   //!< Maximum rate of calcium uptake by astrocytic IP3R in uM/ms
+    double Ca_tot_;       //!< Total free astrocytic calcium concentration in uM
+    double IP3_0_;        //!< Baseline value of the astrocytic IP3 concentration in uM
+    double Kd_IP3_1_;     //!< First astrocytic IP3R dissociation constant of IP3 in uM
+    double Kd_IP3_2_;     //!< Second astrocytic IP3R dissociation constant of IP3 in uM
+    double Km_SERCA_;     //!< Activation constant of astrocytic SERCA pump in uM
+    double Kd_act_;       //!< Astrocytic IP3R dissociation constant of calcium (activation) in uM
+    double Kd_inh_;       //!< Astrocytic IP3R dissociation constant of calcium (inhibition) in uM
+    double ratio_ER_cyt_; //!< Ratio between astrocytic ER and cytosol volumes
+    double incr_IP3_;     //!< Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte in uM
+    double k_IP3R_;       //!< Astrocytic IP3R binding constant for calcium in 1/(uM*ms)
+    double rate_L_;       //!< Rate constant for calcium leak from the astrocytic ER to cytosol in 1/ms
+    double SIC_th_;       //!< Calcium threshold for producing SIC in nM
+    double tau_IP3_;      //!< Time constant of astrocytic IP3 degradation in ms
+    double rate_IP3R_;    //!< Maximum rate of calcium release via astrocytic IP3R in 1/ms
+    double rate_SERCA_;   //!< Maximum rate of calcium uptake by astrocytic IP3R in uM/ms
 
     Parameters_(); //!< Sets default parameter values
 
@@ -278,9 +278,9 @@ public:
      */
     enum StateVecElems
     {
-      IP3_astro = 0,
-      Ca_astro,     // 1
-      h_IP3R_astro, // 2
+      IP3 = 0,
+      Ca,     // 1
+      h_IP3R, // 2
       STATE_VEC_SIZE
     };
 

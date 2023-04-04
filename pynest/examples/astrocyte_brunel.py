@@ -119,20 +119,20 @@ syn_params = {
 # Astrocyte parameters.
 
 astro_params = {
-    'Ca_tot_astro': 2.0,  # Total free astrocytic calcium concentration
-    'IP3_0_astro': 0.16,  # Baseline value of astrocytic IP3 concentration
-    'Kd_act_astro': 0.08234,  # Astrocytic IP3R dissociation constant of calcium (activation)
-    'Kd_inh_astro': 1.049,  # Astrocytic IP3R dissociation constant of calcium (inhibition)
-    'Kd_IP3_1_astro': 0.13,  # First astrocytic IP3R dissociation constant of IP3
-    'Kd_IP3_2_astro': 0.9434,  # Second astrocytic IP3R dissociation constant of IP3
-    'Km_SERCA_astro': 0.1,  # Half-activation constant of astrocytic SERCA pump
-    'ratio_ER_cyt_astro': 0.185,  # Ratio between astrocytic ER and cytosol volumes
-    'incr_IP3_astro': 0.1,  # Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte
-    'k_IP3R_astro': 0.001,  # Astrocytic IP3R binding constant for calcium
-    'rate_L_astro': 0.00011,  # Rate constant for calcium leak from ER to cytosol
-    'tau_IP3_astro': 300.0,  # Time constant of astrocytic IP3 degradation
-    'rate_IP3R_astro': 0.006,  # Maximum rate of calcium release via astrocytic IP3R
-    'rate_SERCA_astro': 0.0009,  # Maximum rate of calcium uptake by astrocytic SERCA pump
+    'Ca_tot': 2.0,  # Total free astrocytic calcium concentration
+    'IP3_0': 0.16,  # Baseline value of astrocytic IP3 concentration
+    'Kd_act': 0.08234,  # Astrocytic IP3R dissociation constant of calcium (activation)
+    'Kd_inh': 1.049,  # Astrocytic IP3R dissociation constant of calcium (inhibition)
+    'Kd_IP3_1': 0.13,  # First astrocytic IP3R dissociation constant of IP3
+    'Kd_IP3_2': 0.9434,  # Second astrocytic IP3R dissociation constant of IP3
+    'Km_SERCA': 0.1,  # Half-activation constant of astrocytic SERCA pump
+    'ratio_ER_cyt': 0.185,  # Ratio between astrocytic ER and cytosol volumes
+    'incr_IP3': 0.1,  # Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte
+    'k_IP3R': 0.001,  # Astrocytic IP3R binding constant for calcium
+    'rate_L': 0.00011,  # Rate constant for calcium leak from ER to cytosol
+    'tau_IP3': 300.0,  # Time constant of astrocytic IP3 degradation
+    'rate_IP3R': 0.006,  # Maximum rate of calcium release via astrocytic IP3R
+    'rate_SERCA': 0.0009,  # Maximum rate of calcium uptake by astrocytic SERCA pump
     }
 
 ###############################################################################
@@ -332,7 +332,7 @@ def run_simulation():
     sr_neuron = nest.Create("spike_recorder")
     mm_neuron = nest.Create("multimeter", params={"record_from": ["SIC"]})
     mm_astro = nest.Create(
-        "multimeter", params={"record_from": ["IP3_astro", "Ca_astro"]})
+        "multimeter", params={"record_from": ["IP3", "Ca"]})
     nest.Connect(mm_neuron, (exc + inh)[:sim_params["N_rec"]])
     nest.Connect(mm_astro, astro)
 
@@ -403,8 +403,8 @@ def run_simulation():
     # astrocyte data
     d = astro_data
     d_t = d["times"]
-    d_ip3 = d["IP3_astro"]
-    d_cal = d["Ca_astro"]
+    d_ip3 = d["IP3"]
+    d_cal = d["Ca"]
     m_ip3 = np.array([np.mean(d_ip3[d_t==t]) for t in set(d_t)])
     s_ip3 = np.array([np.std(d_ip3[d_t==t]) for t in set(d_t)])
     m_cal = np.array([np.mean(d_cal[d_t==t]) for t in set(d_t)])

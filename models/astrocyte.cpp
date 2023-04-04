@@ -57,9 +57,9 @@ void
 RecordablesMap< astrocyte >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::IP3_astro, &astrocyte::get_y_elem_< astrocyte::State_::IP3_astro > );
-  insert_( names::Ca_astro, &astrocyte::get_y_elem_< astrocyte::State_::Ca_astro > );
-  insert_( names::h_IP3R_astro, &astrocyte::get_y_elem_< astrocyte::State_::h_IP3R_astro > );
+  insert_( names::IP3, &astrocyte::get_y_elem_< astrocyte::State_::IP3 > );
+  insert_( names::Ca, &astrocyte::get_y_elem_< astrocyte::State_::Ca > );
+  insert_( names::h_IP3R, &astrocyte::get_y_elem_< astrocyte::State_::h_IP3R > );
   insert_( names::SIC, &astrocyte::get_sic_ ); // for testing, to be deleted
 }
 
@@ -80,19 +80,19 @@ astrocyte_dynamics( double time, const double y[], double f[], void* pnode )
   // good compiler will optimize the verbosity away ...
 
   // shorthand for state variables
-  const double& ip3 = y[ S::IP3_astro ];
-  const double& calc = y[ S::Ca_astro ];
-  const double& f_ip3r = y[ S::h_IP3R_astro ];
+  const double& ip3 = y[ S::IP3 ];
+  const double& calc = y[ S::Ca ];
+  const double& f_ip3r = y[ S::h_IP3R ];
 
-  const double alpha_f_ip3r = node.P_.k_IP3R_astro_ * node.P_.Kd_inh_astro_ * ( ip3 + node.P_.Kd_IP3_1_astro_ ) / ( ip3 +
-      node.P_.Kd_IP3_2_astro_ );
-  const double beta_f_ip3r = node.P_.k_IP3R_astro_ * calc;
-  const double I_pump = node.P_.rate_SERCA_astro_ * std::pow(calc, 2) / (std::pow(node.P_.Km_SERCA_astro_, 2) + std::pow(calc, 2));
-  const double m_inf = ip3 / (ip3 + node.P_.Kd_IP3_1_astro_);
-  const double n_inf = calc / (calc + node.P_.Kd_act_astro_);
-  const double calc_ER = (node.P_.Ca_tot_astro_ - calc) / node.P_.ratio_ER_cyt_astro_;
-  const double I_leak = node.P_.ratio_ER_cyt_astro_ * node.P_.rate_L_astro_ * (calc_ER - calc);
-  const double I_channel = node.P_.ratio_ER_cyt_astro_ * node.P_.rate_IP3R_astro_ * std::pow(m_inf, 3) * std::pow(n_inf, 3) *
+  const double alpha_f_ip3r = node.P_.k_IP3R_ * node.P_.Kd_inh_ * ( ip3 + node.P_.Kd_IP3_1_ ) / ( ip3 +
+      node.P_.Kd_IP3_2_ );
+  const double beta_f_ip3r = node.P_.k_IP3R_ * calc;
+  const double I_pump = node.P_.rate_SERCA_ * std::pow(calc, 2) / (std::pow(node.P_.Km_SERCA_, 2) + std::pow(calc, 2));
+  const double m_inf = ip3 / (ip3 + node.P_.Kd_IP3_1_);
+  const double n_inf = calc / (calc + node.P_.Kd_act_);
+  const double calc_ER = (node.P_.Ca_tot_ - calc) / node.P_.ratio_ER_cyt_;
+  const double I_leak = node.P_.ratio_ER_cyt_ * node.P_.rate_L_ * (calc_ER - calc);
+  const double I_channel = node.P_.ratio_ER_cyt_ * node.P_.rate_IP3R_ * std::pow(m_inf, 3) * std::pow(n_inf, 3) *
     std::pow(f_ip3r, 3) * (calc_ER - calc);
 
   // (To be preserved)
@@ -123,9 +123,9 @@ astrocyte_dynamics( double time, const double y[], double f[], void* pnode )
   //   throw BadProperty( "Interpolation order must be 0, 1, or 3." );
   // }
 
-  f[ S::IP3_astro ] = ( node.P_.IP3_0_astro_ - ip3 ) / node.P_.tau_IP3_astro_;
-  f[ S::Ca_astro ] = I_channel - I_pump + I_leak;
-  f[ S::h_IP3R_astro ] = alpha_f_ip3r * ( 1.0 - f_ip3r ) - beta_f_ip3r * f_ip3r;
+  f[ S::IP3 ] = ( node.P_.IP3_0_ - ip3 ) / node.P_.tau_IP3_;
+  f[ S::Ca ] = I_channel - I_pump + I_leak;
+  f[ S::h_IP3R ] = alpha_f_ip3r * ( 1.0 - f_ip3r ) - beta_f_ip3r * f_ip3r;
 
   return GSL_SUCCESS;
 }
@@ -136,29 +136,29 @@ astrocyte_dynamics( double time, const double y[], double f[], void* pnode )
  * ---------------------------------------------------------------- */
 
 nest::astrocyte::Parameters_::Parameters_()
-  : Ca_tot_astro_( 2.0 )         // uM
-  , IP3_0_astro_( 0.16 )         // uM
-  , Kd_IP3_1_astro_( 0.13 )      // uM
-  , Kd_IP3_2_astro_( 0.9434 )    // uM
-  , Km_SERCA_astro_( 0.1 )       // uM
-  , Kd_act_astro_( 0.08234 )     // uM
-  , Kd_inh_astro_( 1.049 )       // uM
-  , ratio_ER_cyt_astro_( 0.185 )
-  , incr_IP3_astro_( 5.0 )       // uM
-  , k_IP3R_astro_( 0.0002 )      // 1/(uM*ms)
-  , rate_L_astro_( 0.00011 )     // 1/ms
-  , SIC_th_astro_( 196.69 )      // nM
-  , tau_IP3_astro_( 7142.0 )     // ms
-  , rate_IP3R_astro_( 0.006 )    // 1/ms
-  , rate_SERCA_astro_( 0.0009 )  // uM/ms
+  : Ca_tot_( 2.0 )         // uM
+  , IP3_0_( 0.16 )         // uM
+  , Kd_IP3_1_( 0.13 )      // uM
+  , Kd_IP3_2_( 0.9434 )    // uM
+  , Km_SERCA_( 0.1 )       // uM
+  , Kd_act_( 0.08234 )     // uM
+  , Kd_inh_( 1.049 )       // uM
+  , ratio_ER_cyt_( 0.185 )
+  , incr_IP3_( 5.0 )       // uM
+  , k_IP3R_( 0.0002 )      // 1/(uM*ms)
+  , rate_L_( 0.00011 )     // 1/ms
+  , SIC_th_( 196.69 )      // nM
+  , tau_IP3_( 7142.0 )     // ms
+  , rate_IP3R_( 0.006 )    // 1/ms
+  , rate_SERCA_( 0.0009 )  // uM/ms
 {
 }
 
 nest::astrocyte::State_::State_( const Parameters_& p )
 {
-  y_[ IP3_astro ] = p.IP3_0_astro_; // uM
-  y_[ Ca_astro ] = 0.073;           // uM
-  y_[ h_IP3R_astro ] = 0.793;
+  y_[ IP3 ] = p.IP3_0_; // uM
+  y_[ Ca ] = 0.073;           // uM
+  y_[ h_IP3R ] = 0.793;
 }
 
 nest::astrocyte::State_::State_( const State_& s )
@@ -185,99 +185,99 @@ nest::astrocyte::State_& nest::astrocyte::State_::operator=( const State_& s )
 void
 nest::astrocyte::Parameters_::get( DictionaryDatum& d ) const
 {
-  def< double >( d, names::Ca_tot_astro, Ca_tot_astro_ );
-  def< double >( d, names::IP3_0_astro, IP3_0_astro_ );
-  def< double >( d, names::Kd_act_astro, Kd_act_astro_ );
-  def< double >( d, names::Kd_inh_astro, Kd_inh_astro_ );
-  def< double >( d, names::Kd_IP3_1_astro, Kd_IP3_1_astro_ );
-  def< double >( d, names::Kd_IP3_2_astro, Kd_IP3_2_astro_ );
-  def< double >( d, names::Km_SERCA_astro, Km_SERCA_astro_ );
-  def< double >( d, names::ratio_ER_cyt_astro, ratio_ER_cyt_astro_ );
-  def< double >( d, names::incr_IP3_astro, incr_IP3_astro_ );
-  def< double >( d, names::k_IP3R_astro, k_IP3R_astro_ );
-  def< double >( d, names::SIC_th_astro, SIC_th_astro_ );
-  def< double >( d, names::rate_L_astro, rate_L_astro_ );
-  def< double >( d, names::rate_IP3R_astro, rate_IP3R_astro_ );
-  def< double >( d, names::rate_SERCA_astro, rate_SERCA_astro_ );
-  def< double >( d, names::tau_IP3_astro, tau_IP3_astro_ );
+  def< double >( d, names::Ca_tot, Ca_tot_ );
+  def< double >( d, names::IP3_0, IP3_0_ );
+  def< double >( d, names::Kd_act, Kd_act_ );
+  def< double >( d, names::Kd_inh, Kd_inh_ );
+  def< double >( d, names::Kd_IP3_1, Kd_IP3_1_ );
+  def< double >( d, names::Kd_IP3_2, Kd_IP3_2_ );
+  def< double >( d, names::Km_SERCA, Km_SERCA_ );
+  def< double >( d, names::ratio_ER_cyt, ratio_ER_cyt_ );
+  def< double >( d, names::incr_IP3, incr_IP3_ );
+  def< double >( d, names::k_IP3R, k_IP3R_ );
+  def< double >( d, names::SIC_th, SIC_th_ );
+  def< double >( d, names::rate_L, rate_L_ );
+  def< double >( d, names::rate_IP3R, rate_IP3R_ );
+  def< double >( d, names::rate_SERCA, rate_SERCA_ );
+  def< double >( d, names::tau_IP3, tau_IP3_ );
 }
 
 void
 nest::astrocyte::Parameters_::set( const DictionaryDatum& d )
 {
-  updateValue< double >( d, names::Ca_tot_astro, Ca_tot_astro_ );
-  updateValue< double >( d, names::IP3_0_astro, IP3_0_astro_ );
-  updateValue< double >( d, names::Kd_act_astro, Kd_act_astro_ );
-  updateValue< double >( d, names::Kd_inh_astro, Kd_inh_astro_ );
-  updateValue< double >( d, names::Kd_IP3_1_astro, Kd_IP3_1_astro_ );
-  updateValue< double >( d, names::Kd_IP3_2_astro, Kd_IP3_2_astro_ );
-  updateValue< double >( d, names::Km_SERCA_astro, Km_SERCA_astro_ );
-  updateValue< double >( d, names::ratio_ER_cyt_astro, ratio_ER_cyt_astro_ );
-  updateValue< double >( d, names::incr_IP3_astro, incr_IP3_astro_ );
-  updateValue< double >( d, names::k_IP3R_astro, k_IP3R_astro_ );
-  updateValue< double >( d, names::SIC_th_astro, SIC_th_astro_ );
-  updateValue< double >( d, names::rate_L_astro, rate_L_astro_ );
-  updateValue< double >( d, names::rate_IP3R_astro, rate_IP3R_astro_ );
-  updateValue< double >( d, names::rate_SERCA_astro, rate_SERCA_astro_ );
-  updateValue< double >( d, names::tau_IP3_astro, tau_IP3_astro_ );
+  updateValue< double >( d, names::Ca_tot, Ca_tot_ );
+  updateValue< double >( d, names::IP3_0, IP3_0_ );
+  updateValue< double >( d, names::Kd_act, Kd_act_ );
+  updateValue< double >( d, names::Kd_inh, Kd_inh_ );
+  updateValue< double >( d, names::Kd_IP3_1, Kd_IP3_1_ );
+  updateValue< double >( d, names::Kd_IP3_2, Kd_IP3_2_ );
+  updateValue< double >( d, names::Km_SERCA, Km_SERCA_ );
+  updateValue< double >( d, names::ratio_ER_cyt, ratio_ER_cyt_ );
+  updateValue< double >( d, names::incr_IP3, incr_IP3_ );
+  updateValue< double >( d, names::k_IP3R, k_IP3R_ );
+  updateValue< double >( d, names::SIC_th, SIC_th_ );
+  updateValue< double >( d, names::rate_L, rate_L_ );
+  updateValue< double >( d, names::rate_IP3R, rate_IP3R_ );
+  updateValue< double >( d, names::rate_SERCA, rate_SERCA_ );
+  updateValue< double >( d, names::tau_IP3, tau_IP3_ );
 
-  if ( Ca_tot_astro_ <= 0 )
+  if ( Ca_tot_ <= 0 )
   {
     throw BadProperty( "Total free astrocytic concentration must be positive." );
   }
-  if ( IP3_0_astro_ < 0 )
+  if ( IP3_0_ < 0 )
   {
     throw BadProperty( "Baseline value of astrocytic IP3 must be non-negative." );
   }
-  if ( Kd_act_astro_ <= 0 )
+  if ( Kd_act_ <= 0 )
   {
     throw BadProperty( "Astrocytic IP3R dissociation constant of calcium (activation) must be positive." );
   }
-  if ( Kd_inh_astro_ < 0 )
+  if ( Kd_inh_ < 0 )
   {
     throw BadProperty( "Astrocytic IP3R dissociation constant of calcium (inhibition) must be non-negative." );
   }
-  if ( Kd_IP3_1_astro_ <= 0 )
+  if ( Kd_IP3_1_ <= 0 )
   {
     throw BadProperty( "Astrocytic IP3R dissociation constant of IP3 must be positive." );
   }
-  if ( Kd_IP3_2_astro_ <= 0 )
+  if ( Kd_IP3_2_ <= 0 )
   {
     throw BadProperty( "Astrocytic IP3R dissociation constant of IP3 must be positive." );
   }
-  if ( Km_SERCA_astro_ <= 0 )
+  if ( Km_SERCA_ <= 0 )
   {
     throw BadProperty( "Activation constant of astrocytic SERCA pump must be positive." );
   }
-  if ( ratio_ER_cyt_astro_ <= 0 )
+  if ( ratio_ER_cyt_ <= 0 )
   {
     throw BadProperty( "Ratio between astrocytic ER and cytosol volumes must be positive." );
   }
-  if ( incr_IP3_astro_ < 0 )
+  if ( incr_IP3_ < 0 )
   {
     throw BadProperty( "Rate constant of strocytic IP3R production must be non-negative." );
   }
-  if ( k_IP3R_astro_ < 0 )
+  if ( k_IP3R_ < 0 )
   {
     throw BadProperty( "Astrocytic IP2R binding constant for calcium inhibition must be non-negative." );
   }
-  if ( SIC_th_astro_ < 0 )
+  if ( SIC_th_ < 0 )
   {
     throw BadProperty( "Calcium threshold for producing SIC must be non-negative." );
   }
-  if ( rate_L_astro_ < 0 )
+  if ( rate_L_ < 0 )
   {
     throw BadProperty( "Rate constant of calcium leak from astrocytic ER to cytosol must be non-negative." );
   }
-  if ( rate_IP3R_astro_ < 0 )
+  if ( rate_IP3R_ < 0 )
   {
     throw BadProperty( "Maximal rate of calcium release via astrocytic IP3R must be non-negative." );
   }
-  if ( rate_SERCA_astro_ < 0 )
+  if ( rate_SERCA_ < 0 )
   {
     throw BadProperty( "Maximal rate of calcium uptake by astrocytic SERCA pump must be non-negative." );
   }
-  if ( tau_IP3_astro_ <= 0 )
+  if ( tau_IP3_ <= 0 )
   {
     throw BadProperty( "Time constant of astrocytic IP3 degradation must be positive." );
   }
@@ -286,27 +286,27 @@ nest::astrocyte::Parameters_::set( const DictionaryDatum& d )
 void
 nest::astrocyte::State_::get( DictionaryDatum& d ) const
 {
-  def< double >( d, names::IP3_astro, y_[ IP3_astro ] );
-  def< double >( d, names::Ca_astro, y_[ Ca_astro ] );
-  def< double >( d, names::h_IP3R_astro, y_[ h_IP3R_astro ] );
+  def< double >( d, names::IP3, y_[ IP3 ] );
+  def< double >( d, names::Ca, y_[ Ca ] );
+  def< double >( d, names::h_IP3R, y_[ h_IP3R ] );
 }
 
 void
 nest::astrocyte::State_::set( const DictionaryDatum& d )
 {
-  updateValue< double >( d, names::IP3_astro, y_[ IP3_astro ] );
-  updateValue< double >( d, names::Ca_astro, y_[ Ca_astro ] );
-  updateValue< double >( d, names::h_IP3R_astro, y_[ h_IP3R_astro ] );
+  updateValue< double >( d, names::IP3, y_[ IP3 ] );
+  updateValue< double >( d, names::Ca, y_[ Ca ] );
+  updateValue< double >( d, names::h_IP3R, y_[ h_IP3R ] );
 
-  if ( y_[ IP3_astro ] <  0 )
+  if ( y_[ IP3 ] <  0 )
   {
     throw BadProperty( "IP3 concentration in the astrocyte cytosol must be non-negative." );
   }
-  if ( y_[ Ca_astro ] < 0 )
+  if ( y_[ Ca ] < 0 )
   {
     throw BadProperty( "Calcium concentration in the astrocyte cytosol must be non-negative." );
   }
-  if ( y_[ h_IP3R_astro ] < 0 || y_[ h_IP3R_astro ] > 1 )
+  if ( y_[ h_IP3R ] < 0 || y_[ h_IP3R ] > 1 )
   {
      throw BadProperty( "The fraction of active IP3 receptors on the astrocytic ER must be between 0 and 1." );
   }
@@ -518,10 +518,10 @@ nest::astrocyte::update( Time const& origin, const long from, const long to )
     B_.I_stim_ = B_.currents_.get_value( lag );
 
     // this is to add the incoming spikes to the state variable
-    S_.y_[ State_::IP3_astro ] += P_.incr_IP3_astro_ * B_.spike_exc_.get_value( lag );
+    S_.y_[ State_::IP3 ] += P_.incr_IP3_ * B_.spike_exc_.get_value( lag );
 
     // normalize Calcium concentration
-    double calc_thr = S_.y_[ State_::Ca_astro ] * 1000.0 - P_.SIC_th_astro_;
+    double calc_thr = S_.y_[ State_::Ca ] * 1000.0 - P_.SIC_th_;
     if ( calc_thr > 1.0 )
     {
       // originally this is multiplyed by std::pow(25, 2)*3.14*std::pow(10, -2)
@@ -569,11 +569,11 @@ nest::astrocyte::update( Time const& origin, const long from, const long to )
 //
 //     // if ( called_from_wfr_update )
 //     // {
-//     //   y_i = S_.y_[ State_::IP3_astro ];
+//     //   y_i = S_.y_[ State_::IP3 ];
 //     //   if ( interpolation_order == 3 )
 //     //   {
 //     //     astrocyte_dynamics( 0, S_.y_, f_temp, reinterpret_cast< void* >( this ) );
-//     //     hf_i = B_.step_ * f_temp[ State_::IP3_astro ];
+//     //     hf_i = B_.step_ * f_temp[ State_::IP3 ];
 //     //   }
 //     // }
 //
@@ -618,8 +618,8 @@ nest::astrocyte::update( Time const& origin, const long from, const long to )
 //     // else // if(called_from_wfr_update)
 //     // {
 //     //   // check if deviation from last iteration exceeds wfr_tol
-//     //   wfr_tol_exceeded = wfr_tol_exceeded or fabs( S_.y_[ State_::IP3_astro ] - B_.last_y_values[ lag ] ) > wfr_tol;
-//     //   B_.last_y_values[ lag ] = S_.y_[ State_::IP3_astro ];
+//     //   wfr_tol_exceeded = wfr_tol_exceeded or fabs( S_.y_[ State_::IP3 ] - B_.last_y_values[ lag ] ) > wfr_tol;
+//     //   B_.last_y_values[ lag ] = S_.y_[ State_::IP3 ];
 //     //
 //     //   // update different interpolations
 //     //
@@ -632,15 +632,15 @@ nest::astrocyte::update( Time const& origin, const long from, const long to )
 //     //     break;
 //     //
 //     //   case 1:
-//     //     y_ip1 = S_.y_[ State_::IP3_astro ];
+//     //     y_ip1 = S_.y_[ State_::IP3 ];
 //     //
 //     //     new_coefficients[ lag * ( interpolation_order + 1 ) + 1 ] = y_ip1 - y_i;
 //     //     break;
 //     //
 //     //   case 3:
-//     //     y_ip1 = S_.y_[ State_::IP3_astro ];
+//     //     y_ip1 = S_.y_[ State_::IP3 ];
 //     //     astrocyte_dynamics( B_.step_, S_.y_, f_temp, reinterpret_cast< void* >( this ) );
-//     //     hf_ip1 = B_.step_ * f_temp[ State_::IP3_astro ];
+//     //     hf_ip1 = B_.step_ * f_temp[ State_::IP3 ];
 //     //
 //     //     new_coefficients[ lag * ( interpolation_order + 1 ) + 1 ] = hf_i;
 //     //     new_coefficients[ lag * ( interpolation_order + 1 ) + 2 ] = -3 * y_i + 3 * y_ip1 - 2 * hf_i - hf_ip1;
@@ -655,14 +655,14 @@ nest::astrocyte::update( Time const& origin, const long from, const long to )
 //     if ( not called_from_wfr_update )
 //     {
 //       // this is to add the incoming spikes to the state variable
-//       S_.y_[ State_::IP3_astro ] += P_.incr_IP3_astro_ * B_.spike_exc_.get_value( lag );
+//       S_.y_[ State_::IP3 ] += P_.incr_IP3_ * B_.spike_exc_.get_value( lag );
 //     }
 //     // else
 //     // {
 //     //   // this is to add the incoming spikes to the state variable
-//     //   S_.y_[ State_::IP3_astro ] += P_.incr_IP3_astro_ * B_.spike_exc_.get_value_wfr_update( lag );
+//     //   S_.y_[ State_::IP3 ] += P_.incr_IP3_ * B_.spike_exc_.get_value_wfr_update( lag );
 //     // }
-//     double calc_thr = S_.y_[ State_::Ca_astro ] * 1000.0 - P_.SIC_th_astro_;
+//     double calc_thr = S_.y_[ State_::Ca ] * 1000.0 - P_.SIC_th_;
 //     if ( calc_thr > 1.0 )
 //     {
 //       /* The SIC is converted to pA from uA/cm2 in the original publication */
@@ -679,7 +679,7 @@ nest::astrocyte::update( Time const& origin, const long from, const long to )
 //   //   for ( long temp = from; temp < to; ++temp )
 //   //   {
 //   //     // TODO: this is for the connection between two astrocytes
-//   //     new_coefficients[ temp * ( interpolation_order + 1 ) + 0 ] = S_.y_[ State_::IP3_astro ];
+//   //     new_coefficients[ temp * ( interpolation_order + 1 ) + 0 ] = S_.y_[ State_::IP3 ];
 //   //   }
 //   //   std::vector< double >( kernel().connection_manager.get_min_delay(), 0.0 ).swap( B_.last_y_values );
 //   // }

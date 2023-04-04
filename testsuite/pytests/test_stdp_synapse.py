@@ -89,10 +89,8 @@ class TestSTDPSynapse:
             self.plot_weight_evolution(pre_spikes, post_spikes, t_weight_by_nest, weight_by_nest, fname_snip=fname_snip,
                                        title_snip=self.nest_neuron_model + " (NEST)")
 
-        t_weight_reproduced_independently, weight_reproduced_independently = self.reproduce_weight_drift(pre_spikes,
-                                                                                                         post_spikes,
-                                                                                                         self.init_weight,
-                                                                                                         fname_snip=fname_snip)
+        t_weight_reproduced_independently, weight_reproduced_independently = \
+            self.reproduce_weight_drift(pre_spikes, post_spikes, self.init_weight, fname_snip=fname_snip)
 
         # ``weight_by_nest`` contains only weight values at pre spike times, ``weight_reproduced_independently``
         # contains the weight at pre *and* post times: check that weights are equal for pre spike times
@@ -130,10 +128,10 @@ class TestSTDPSynapse:
         spike_senders = nest.Create(
             "spike_generator",
             2,
-            params=({"spike_times": self.hardcoded_pre_times
-                                    + self.simulation_duration - self.hardcoded_trains_length},
-                    {"spike_times": self.hardcoded_post_times
-                                    + self.simulation_duration - self.hardcoded_trains_length})
+            params=({"spike_times": self.hardcoded_pre_times +
+                     self.simulation_duration - self.hardcoded_trains_length},
+                    {"spike_times": self.hardcoded_post_times +
+                     self.simulation_duration - self.hardcoded_trains_length})
         )
         pre_spike_generator = spike_senders[0]
         post_spike_generator = spike_senders[1]
@@ -180,9 +178,9 @@ class TestSTDPSynapse:
                 return self.synapse_parameters["Wmax"]
 
         def depress(w, Kpost):
-            norm_w = (w / self.synapse_parameters["Wmax"]) - (
-                    self.synapse_parameters["alpha"] * self.synapse_parameters["lambda"] * pow(
-                w / self.synapse_parameters["Wmax"], self.synapse_parameters["mu_minus"]) * Kpost)
+            norm_w = (w / self.synapse_parameters["Wmax"]) - \
+                     (self.synapse_parameters["alpha"] * self.synapse_parameters["lambda"] *
+                      pow(w / self.synapse_parameters["Wmax"], self.synapse_parameters["mu_minus"]) * Kpost)
             if norm_w > 0.0:
                 return norm_w * self.synapse_parameters["Wmax"]
             else:

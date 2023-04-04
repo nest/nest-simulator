@@ -158,10 +158,10 @@ private:
 public:
   GenericConnectorModel( const std::string name )
     : ConnectorModel( name, ConnectionT::properties )
-    , default_delay_( 1.0 )
-    , default_axonal_delay_( 0.0 )
+    , default_axonal_delay_( 0 )
     , receptor_type_( 0 )
   {
+    default_delay_ = Time::delay_ms_to_steps( 1.0 );
   }
 
   GenericConnectorModel( const GenericConnectorModel& cm, const std::string name )

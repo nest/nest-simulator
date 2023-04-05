@@ -1690,18 +1690,18 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
       ? ConnParameter::create( ( *syn_specs[ synapse_indx ] )[ names::delay ], kernel().vp_manager.get_num_threads() )
       : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
 
-    // warning when the assigned delays cannot be paired between neurons and astrocytes (not a fixed value or an array)
-    if ( syn_specs[ synapse_indx ]->known( names::delay ) )
-    {
-      const Name type_str =  ( *( *syn_specs[ synapse_indx ] )[ names::delay ] ).gettypename();
-      if ( type_str != "doubletype" and type_str != "arraytype" )
-      {
-        LOG( M_WARNING,
-          "BernoulliAstroBuilder::BernoulliAstroBuilder",
-          "Assigned delay is not a fixed value or an array. "
-          "The synaptic delay to a postsynaptic neuron could be different from the astrocyte it is paired with. ");
-      }
-    }
+    // // warning when the assigned delays cannot be paired between neurons and astrocytes (not a fixed value or an array)
+    // if ( syn_specs[ synapse_indx ]->known( names::delay ) )
+    // {
+    //   const Name type_str =  ( *( *syn_specs[ synapse_indx ] )[ names::delay ] ).gettypename();
+    //   if ( type_str != "doubletype" and type_str != "arraytype" )
+    //   {
+    //     LOG( M_WARNING,
+    //       "BernoulliAstroBuilder::BernoulliAstroBuilder",
+    //       "Assigned delay is not a fixed value or an array. "
+    //       "The synaptic delay to a postsynaptic neuron could be different from the astrocyte it is paired with. ");
+    //   }
+    // }
 
     // astrocyte=>neuron (no delays)
     if ( syn_specs[ synapse_indx ]->known( names::astro2post ) )

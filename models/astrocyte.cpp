@@ -355,6 +355,8 @@ nest::astrocyte::init_buffers_()
 {
   B_.spike_exc_.clear(); // includes resize
 
+  B_.sic_values.resize( kernel().connection_manager.get_min_delay(), 0.0 );
+
   ArchivingNode::clear_history();
 
   B_.logger_.reset();
@@ -417,10 +419,6 @@ nest::astrocyte::update( Time const& origin, const long from, const long to )
   assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  // allocate memory to store the new interpolation coefficients
-  // to be sent by SIC event
-  std::vector< double > sic_values( kernel().connection_manager.get_min_delay(), 0.0 );
-
   for ( long lag = from; lag < to; ++lag )
   {
     // B_.lag is needed by astrocyte_dynamics to
@@ -469,16 +467,16 @@ nest::astrocyte::update( Time const& origin, const long from, const long to )
     {
       // originally this is multiplyed by std::pow(25, 2)*3.14*std::pow(10, -2)
       // to convert to pA from uA/cm2; now users can set the SIC weight
-      sic_values[ lag ] = std::log( calc_thr );
+      B_.sic_values[ lag ] = std::log( calc_thr );
     }
 
   } // end for loop
 
   // Send SIC event
   SICEvent sic;
-  sic.set_coeffarray( sic_values );
+  sic.set_coeffarray( B_.sic_values );
   kernel().event_delivery_manager.send_secondary( *this, sic );
-  sic_ = sic_values[0]; // for testing, to be deleted
+  sic_ = B_.sic_values[0]; // for testing, to be deleted
 }
 
 void

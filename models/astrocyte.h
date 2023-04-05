@@ -318,6 +318,9 @@ private:
 
     // remembers current lag for piecewise interpolation
     long lag_;
+
+    // values to be sent by SIC event
+    std::vector< double > sic_values;
   };
 
   // ----------------------------------------------------------------

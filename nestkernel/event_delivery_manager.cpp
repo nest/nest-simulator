@@ -463,10 +463,8 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
         tid, assigned_ranks, send_buffer_position, off_grid_emitted_spike_register_, send_buffer, num_spikes_per_rank );
     }
 
-    for ( auto c : num_spikes_per_rank )
-    {
-      FULL_LOGGING_ONLY( kernel().write_to_dump( String::compose( "nspr %1", c ) ); )
-    }
+    FULL_LOGGING_ONLY( for ( auto c
+                             : num_spikes_per_rank ) { kernel().write_to_dump( String::compose( "nspr %1", c ) ); } )
 
     // Largest number of spikes sent from this rank to any other rank. This is *not* a global maximum, that is collected
     // below.
@@ -579,7 +577,7 @@ EventDeliveryManager::set_end_marker_( const AssignedRanks& assigned_ranks,
   std::vector< SpikeDataT >& send_buffer,
   size_t per_thread_max_spikes_per_rank )
 {
-  // See comment in source_table.h for logic.
+  // See comment in spike_data.h for logic.
 
   const bool collocate_complete = per_thread_max_spikes_per_rank
     <= static_cast< size_t >( kernel().mpi_manager.get_send_recv_count_spike_data_per_rank() );

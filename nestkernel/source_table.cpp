@@ -557,9 +557,10 @@ nest::SourceTable::fill_compressed_spike_data(
   }   // for syn_id
 }
 
+// Argument name only needed if full logging is activated. Macro-protect to avoid unused argument warning.
 void
 nest::SourceTable::dump_compressed_spike_data(
-  const std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data ) const
+  const std::vector< std::vector< std::vector< SpikeData > > >& FULL_LOGGING_ONLY( compressed_spike_data ) ) const
 {
   FULL_LOGGING_ONLY(
     for ( const auto& tab

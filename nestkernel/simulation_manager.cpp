@@ -833,6 +833,8 @@ nest::SimulationManager::update_()
 
       } // of structural plasticity
 
+      // Do not deliver events at beginning of first slice, nothing can be there yet
+      // and invalid markers have not been properly set in send buffers.
       if ( slice_ > 0 and from_step_ == 0 )
       {
 #ifdef TIMER_DETAILED

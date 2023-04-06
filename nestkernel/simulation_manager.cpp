@@ -833,7 +833,7 @@ nest::SimulationManager::update_()
 
       } // of structural plasticity
 
-      if ( from_step_ == 0 )
+      if ( slice_ > 0 and from_step_ == 0 )
       {
 #ifdef TIMER_DETAILED
         if ( tid == 0 )

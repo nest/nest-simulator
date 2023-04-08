@@ -68,8 +68,4 @@ if ( HAVE_PYTHON )
       "
   )
 
-  install( DIRECTORY examples/
-      DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples/pynest
-  )
-
 endif ()

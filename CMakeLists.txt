@@ -360,6 +360,10 @@ configure_file(
 
 install( FILES LICENSE README.md
     DESTINATION ${CMAKE_INSTALL_DOCDIR}
-    )
+)
+
+install( DIRECTORY examples/
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples
+)
 
 nest_print_config_summary()

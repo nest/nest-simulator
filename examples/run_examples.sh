@@ -48,7 +48,7 @@ if [ "${#}" -eq 0 ]; then
     else
         EXAMPLES="$(grep -rl --include=\*\.sli 'autorun=true' examples/)"
     fi
-    EXAMPLES+=" $(find ../pynest/examples -name '*.py')"
+    EXAMPLES+=" $(find . -name '*.py')"
 else
     EXAMPLES+=${@}
 fi
@@ -58,7 +58,8 @@ if [ ! -z "${SKIP_LIST+x}" ]; then
 fi
 
 # turn off plotting to the screen and waiting for input
-export MPLCONFIGDIR="$(pwd)/matplotlib/"
+export MPLCONFIGDIR=$(mktemp -d)
+echo "backend : svg" > $MPLCONFIGDIR/matplotlibrc
 
 time_format="  time: {real: %E, user: %U, system: %S}\n\
   memory: {total: %K, max_rss: %M}"

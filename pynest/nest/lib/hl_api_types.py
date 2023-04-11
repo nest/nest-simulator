@@ -930,7 +930,8 @@ class CollocatedSynapses:
     Example
     -------
 
-    ::
+      ::
+
         nodes = nest.Create('iaf_psc_alpha', 3)
         syn_spec = nest.CollocatedSynapses({'weight': 4., 'delay': 1.5},
                                        {'synapse_model': 'stdp_synapse'},

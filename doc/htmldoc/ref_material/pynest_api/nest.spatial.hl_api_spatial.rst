@@ -1,6 +1,13 @@
 Spatial positions module
 ========================
 
+The spatial module contains parameters related to spatial positions of the nodes.
+
+Syntax::
+
+  nest.spatial.grid(shape, center,
+    extent, edge_wrap)
+
 .. automodule:: nest.spatial.hl_api_spatial
    :members:
 

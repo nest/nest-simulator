@@ -65,7 +65,7 @@ a:hover{color:var(--nest-orange); text-decoration:underline;}
 section#kernel-attributes-nest-nestmodule em.property{
   display: none;
 }
-.sig.sig-object.py dt:target {
+dt:target {
 	margin-top: -0.55rem;
 	padding-top: 0.45rem;
 }

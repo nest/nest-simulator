@@ -22,10 +22,9 @@ Functions related to spatially distributed nodes
 * :doc:`nest.lib.hl_api_spatial`
 
 
-Functions related to setting and getting parameters
----------------------------------------------------
+Functions related to setting and getting parameters, nodes
+----------------------------------------------------------
 
-* :doc:`nest.lib.hl_api_info`
 * :doc:`nest.lib.hl_api_types`
 
 Functions related to connections
@@ -63,12 +62,6 @@ Functions related to mathematical expressions
 * :doc:`nest.math.hl_api_math`
 
 * :doc:`nest.logic.hl_api_logic`
-
-Functions related to spatial distributions
-------------------------------------------
-
-* :doc:`nest.spatial.hl_api_spatial`
-* :doc:`nest.spatial_distributions.hl_api_spatial_distributions`
 
 Functions related to server
 ---------------------------

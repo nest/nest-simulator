@@ -971,19 +971,19 @@ class Mask:
         self._datum = datum
 
     # Generic binary operation
-    def _binop(self, op, other):
-        if not isinstance(other, Mask):
+    def _binop(self, op, rhs):
+        if not isinstance(rhs, Mask):
             raise NotImplementedError()
-        return sli_func(op, self._datum, other._datum)
+        return sli_func(op, self._datum, rhs._datum)
 
-    def __or__(self, other):
-        return self._binop("or", other)
+    def __or__(self, rhs):
+        return self._binop("or", rhs)
 
-    def __and__(self, other):
-        return self._binop("and", other)
+    def __and__(self, rhs):
+        return self._binop("and", rhs)
 
-    def __sub__(self, other):
-        return self._binop("sub", other)
+    def __sub__(self, rhs):
+        return self._binop("sub", rhs)
 
     def Inside(self, point):
         """
@@ -1022,64 +1022,76 @@ class Parameter:
         self._datum = datum
 
     # Generic binary operation
-    def _binop(self, op, other, params=None):
-        if isinstance(other, (int, float)):
-            other = CreateParameter('constant', {'value': float(other)})
-        if not isinstance(other, Parameter):
+    def _binop(self, op, rhs, params=None):
+        if isinstance(rhs, (int, float)):
+            rhs = CreateParameter('constant', {'value': float(rhs)})
+        if not isinstance(rhs, Parameter):
             raise NotImplementedError()
 
         if params is None:
-            return sli_func(op, self._datum, other._datum)
+            return sli_func(op, self._datum, rhs._datum)
         else:
-            return sli_func(op, self._datum, other._datum, params)
+            return sli_func(op, self._datum, rhs._datum, params)
 
-    def __add__(self, other):
-        return self._binop("add", other)
+    def __add__(self, rhs):
+        return self._binop("add", rhs)
 
-    def __radd__(self, other):
-        return self + other
+    def __radd__(self, lhs):
+        return self + lhs
 
-    def __sub__(self, other):
-        return self._binop("sub", other)
+    def __sub__(self, rhs):
+        return self._binop("sub", rhs)
 
-    def __rsub__(self, other):
-        return self * (-1) + other
+    def __rsub__(self, lhs):
+        return self * (-1) + lhs
+
+    def __pos__(self):
+        return self
 
     def __neg__(self):
         return self * (-1)
 
-    def __mul__(self, other):
-        return self._binop("mul", other)
+    def __mul__(self, rhs):
+        return self._binop("mul", rhs)
 
-    def __rmul__(self, other):
-        return self * other
+    def __rmul__(self, lhs):
+        return self * lhs
 
-    def __div__(self, other):
-        return self._binop("div", other)
+    def __truediv__(self, rhs):
+        return self._binop("div", rhs)
 
-    def __truediv__(self, other):
-        return self._binop("div", other)
+    def __rtruediv__(self, lhs):
+        rhs_inv = CreateParameter('constant', {'value': 1 / float(self.GetValue())})
+        return rhs_inv._binop("mul", lhs)
 
     def __pow__(self, exponent):
+        try:
+            expo = float(exponent)
+        except TypeError:
+            raise TypeError("unsupported operand type for **: only int and float allow as exponent")
+
         return sli_func("pow", self._datum, float(exponent))
 
-    def __lt__(self, other):
-        return self._binop("compare", other, {'comparator': 0})
+    def __rpow__(self, lhs):
+        raise TypeError("unsupported operand type for **: only int and float allow as exponent")
 
-    def __le__(self, other):
-        return self._binop("compare", other, {'comparator': 1})
+    def __lt__(self, rhs):
+        return self._binop("compare", rhs, {'comparator': 0})
 
-    def __eq__(self, other):
-        return self._binop("compare", other, {'comparator': 2})
+    def __le__(self, rhs):
+        return self._binop("compare", rhs, {'comparator': 1})
 
-    def __ne__(self, other):
-        return self._binop("compare", other, {'comparator': 3})
+    def __eq__(self, rhs):
+        return self._binop("compare", rhs, {'comparator': 2})
 
-    def __ge__(self, other):
-        return self._binop("compare", other, {'comparator': 4})
+    def __ne__(self, rhs):
+        return self._binop("compare", rhs, {'comparator': 3})
 
-    def __gt__(self, other):
-        return self._binop("compare", other, {'comparator': 5})
+    def __ge__(self, rhs):
+        return self._binop("compare", rhs, {'comparator': 4})
+
+    def __gt__(self, rhs):
+        return self._binop("compare", rhs, {'comparator': 5})
 
     def GetValue(self):
         """

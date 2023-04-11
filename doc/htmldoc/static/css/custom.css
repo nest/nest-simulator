@@ -77,6 +77,13 @@ section#kernel-attributes-nest-nestmodule dl.field-list.simple dt.field-odd{
 section#kernel-attributes-nest-nestmodule dl.field-list.simple dd.field-odd{
   padding-left: 4rem;
 
+.sphx-glr-download-link-note {
+
+ display: none;
+}
+
+.sphx-glr-download-jupyter {
+  display: none;
 }
 /**************************************************************************************
  Settings for overriding material design theme 
@@ -119,6 +126,9 @@ div[role="main"] .md-source {
     display: none;
 }
 
+.md-typeset blockquote {
+	border-left: none;
+}
 
 [data-md-color-primary="orange"] .md-header, [data-md-color-primary="orange"] .md-hero {
   background-color: var(--nest-orange);

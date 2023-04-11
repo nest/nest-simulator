@@ -218,7 +218,7 @@ if __name__ == "__main__":
         with noisy input, d:  dopaminergic synapses without noise,
         dn: dopaminergic synapses with noisy input.""")
 
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
 
     level = logging.DEBUG if args.debug else logging.INFO
     format = '%(asctime)s - %(message)s'

@@ -23,5 +23,6 @@ Here is a list of attributes that can be get and/or set on the ``nest`` module:
 
 
 .. autoclass:: nest.NestModule
-   :inherited-members:
+   :members:
+   :no-undoc-members:
 

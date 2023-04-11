@@ -1,7 +1,8 @@
 Helper module
 =============
 
-Functions to provide additonal information.
+Functions to provide additional information.
+
 
 .. automodule:: nest.lib.hl_api_helper
    :members:

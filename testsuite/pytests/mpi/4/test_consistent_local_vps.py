@@ -26,7 +26,7 @@ import nest
 HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 
 
-@unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')            
+@unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')
 def test_consistent_local_vps():
     """
     Test local_vps field of kernel status.

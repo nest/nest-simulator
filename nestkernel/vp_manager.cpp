@@ -95,7 +95,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
 
   if ( force_singlethreading_ and n_threads > 1 )
   {
-    throw BadProperty( "This installation of NEST was built without support for multiple threads." ); 
+    throw BadProperty( "This installation of NEST was built without support for multiple threads." );
   }
 
   // We only want to act if new values differ from the old

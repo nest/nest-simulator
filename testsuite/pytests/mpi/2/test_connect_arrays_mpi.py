@@ -35,7 +35,7 @@ HAVE_MPI = nest.ll_api.sli_func("statusdict/have_mpi ::")
 HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 
 
-@unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')            
+@unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')
 @unittest.skipIf(not HAVE_MPI4PY, 'mpi4py is not available')
 class TestConnectArraysMPICase(unittest.TestCase):
     """

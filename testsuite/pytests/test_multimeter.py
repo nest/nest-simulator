@@ -46,7 +46,8 @@ def test_recordables_are_recorded(_set_resolution, model):
     recording from all recordables and test that data is provided.
     I also checks that the recording interval can be set.
 
-    @note This test does not check if the data is meaningful.
+    .. note::
+       This test does not check if the data is meaningful.
     """
 
     recording_interval = 2

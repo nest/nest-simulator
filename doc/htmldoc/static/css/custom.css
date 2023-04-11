@@ -53,6 +53,10 @@ a:active {color:var(--nest-orange);}
 a:hover{color:var(--nest-orange); text-decoration:underline;}
 
 /* set api function and class names style */
+
+.sig-prename.descclassname { 
+ display:None;
+}
 .sig.sig-object.py {
    font-weight: bold;
 	 background-color: #ffd1c1;
@@ -61,7 +65,7 @@ a:hover{color:var(--nest-orange); text-decoration:underline;}
 section#kernel-attributes-nest-nestmodule em.property{
   display: none;
 }
-section#kernel-attributes-nest-nestmodule dt:target {
+.sig.sig-object.py dt:target {
 	margin-top: -0.55rem;
 	padding-top: 0.45rem;
 }

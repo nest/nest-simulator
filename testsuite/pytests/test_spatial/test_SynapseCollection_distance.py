@@ -25,6 +25,7 @@ Tests distance between sources and targets of SynapseCollection
 
 import pytest
 import math
+import numpy as np
 import nest
 
 
@@ -42,20 +43,12 @@ def _calculate_distance(conns, s_nodes, t_nodes):
     src = conns.source
     trgt = conns.target
 
-    in_3d = len(s_pos[0]) == 3
+    dim = len(s_pos[0])
 
-    ref_distance = []
-    for s, t in zip(src, trgt):
-        x_ref = t_pos[t_nodes.index(t)][0] - s_pos[s_nodes.index(s)][0]
-        y_ref = t_pos[t_nodes.index(t)][1] - s_pos[s_nodes.index(s)][1]
-        z_ref = 0.0
-        if in_3d:
-            z_ref = t_pos[t_nodes.index(t)][2] - s_pos[s_nodes.index(s)][2]
+    ref_distance = [np.linalg.norm(np.array(t_pos[t_nodes.index(t)]) - np.array(s_pos[s_nodes.index(s)]), ord=2)
+                    for s, t in zip(conns.source, conns.target)]
 
-        ref_dist = math.sqrt(x_ref * x_ref + y_ref * y_ref + z_ref * z_ref)
-        ref_distance.append(ref_dist)
-
-    return tuple(ref_distance)
+    return ref_distance
 
 
 def test_SynapseCollection_distance_simple():
